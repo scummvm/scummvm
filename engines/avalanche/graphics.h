@@ -59,13 +59,15 @@ public:
 	void loadDigits();
 	void loadMouse(byte which);
 
+	// We have to handle the drawing of rectangles a little bit differently to mimic Pascal's bar() and rectangle() methods properly.
+	// Now it is possible to use the original coordinates everywhere.
+	void drawFilledRectangle(Common::Rect rect, Color color);
+	void drawRectangle(Common::Rect rect, Color color);
 	void drawDot(int x, int y, Color color);
 	void drawLine(int x1, int y1, int x2, int y2, int penX, int penY, Color color);
 	Common::Point drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawTriangle(Common::Point *p, Color color);
-	void drawFilledRectangle(Common::Rect rect, Color color);
-	void drawRectangle(Common::Rect rect, Color color);
 	void drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawBigText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
 	void drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);

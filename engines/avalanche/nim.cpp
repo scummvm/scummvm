@@ -152,13 +152,13 @@ void Nim::setup() {
 	_vm->fadeIn();
 	_vm->_graphics->nimLoad();
 
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlack);
 	// Upper left rectangle.
-	_vm->_graphics->drawRectangle(Common::Rect(10, 5, 381, 71), kColorRed);
-	_vm->_graphics->drawFilledRectangle(Common::Rect(11, 6, 380, 70), kColorBrown);
+	_vm->_graphics->drawRectangle(Common::Rect(10, 5, 380, 70), kColorRed);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(11, 6, 379, 69), kColorBrown);
 	// Bottom right rectangle.
-	_vm->_graphics->drawRectangle(Common::Rect(394, 50, 635, 198), kColorRed);
-	_vm->_graphics->drawFilledRectangle(Common::Rect(395, 51, 634, 197), kColorBrown);
+	_vm->_graphics->drawRectangle(Common::Rect(394, 50, 634, 197), kColorRed);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(395, 51, 633, 196), kColorBrown);
 		
 	_vm->_graphics->nimDrawLogo();
 	_vm->_graphics->nimDrawInitials();

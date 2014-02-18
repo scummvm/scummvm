@@ -209,7 +209,7 @@ void GhostRoom::run() {
 	CursorMan.showMouse(false);
 	_vm->_graphics->saveScreen();
 	_vm->fadeOut();
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlack); // Black out the whole screen.
 	_vm->fadeIn();
 
 	// Only load the pictures if it's our first time walking into the room.
@@ -230,12 +230,12 @@ void GhostRoom::run() {
 		int xBound = x % 30;
 		if ((22 <= xBound) && (xBound <= 27)) {
 			if (xBound == 27)
-				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 135, x + 17, 137), kColorBlack);
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 135, x + 16, 136), kColorBlack);
 			_vm->_graphics->ghostDrawPicture(_eyes[0], x, 136);
 			_vm->_graphics->drawDot(x + 16, 137, kColorBlack);
 		} else {
 			if (xBound == 21)
-				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 137, x + 18, 139), kColorBlack);
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x, 137, x + 17, 138), kColorBlack);
 			_vm->_graphics->ghostDrawPicture(_eyes[0], x, 135);
 			_vm->_graphics->drawDot(x + 16, 136, kColorBlack); // Eyes would leave a trail 1 pixel high behind them.
 		}
@@ -298,7 +298,7 @@ void GhostRoom::run() {
 	wait(777);
 
 	// Erase "aargh":
-	_vm->_graphics->drawFilledRectangle(Common::Rect(172, 78, 348, 112), kColorBlack);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(172, 78, 347, 111), kColorBlack);
 	_vm->_graphics->refreshScreen();
 
 	for (int i = 4; i >= 0; i--) {
@@ -307,7 +307,7 @@ void GhostRoom::run() {
 	}
 
 	// Erase the exclamation mark:
-	_vm->_graphics->drawFilledRectangle(Common::Rect(246, 127, 252, 134), kColorBlack);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(246, 127, 251, 133), kColorBlack);
 	_vm->_graphics->refreshScreen();
 
 	// Avvy hurries back:
@@ -320,12 +320,12 @@ void GhostRoom::run() {
 		int xBound = x % 30;
 		if ((22 <= xBound) && (xBound <= 27)) {
 			if (xBound == 22)
-				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 134, x + 38, 138), kColorBlack);
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 134, x + 38, 137), kColorBlack);
 			_vm->_graphics->ghostDrawPicture(_eyes[1], x + 23, 136);
 			_vm->_graphics->drawDot(x + 22, 137, kColorBlack);
 		} else {
 			if (xBound == 28)
-				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 135, x + 38, 139), kColorBlack);
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 135, x + 38, 138), kColorBlack);
 			_vm->_graphics->ghostDrawPicture(_eyes[1], x + 23, 135);
 			_vm->_graphics->drawDot(x + 22, 136, kColorBlack); // Eyes would leave a trail 1 pixel high behind them.
 		}
