@@ -309,7 +309,26 @@ void sceneHandler09_showBall() {
 }
 
 void sceneHandler09_cycleHangers() {
-	warning("STUB: sceneHandler09_cycleHangers()");
+	for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
+		Movement *mov = g_vars->scene09_hangers[i]->ani->_movement;
+
+		if (mov && mov->_id == MV_VSN_CYCLE2) {
+			int idx;
+
+			if (g_vars->scene09_hangers[i]->phase >= 0)
+				idx = 18 - g_vars->scene09_hangers[i]->phase / 5;
+			else
+				idx = 18 - g_vars->scene09_hangers[i]->phase * 10 / 43;
+
+			if (idx > 38)
+				idx = 38;
+
+			if (idx < 1)
+				idx = 1;
+
+			mov->setDynamicPhaseIndex(idx);
+		}
+	}
 }
 
 void sceneHandler09_limitHangerPhase() {
