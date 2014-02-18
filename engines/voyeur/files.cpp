@@ -1110,7 +1110,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 			int mask = (nbytes + 0x3FFF) >> 14;
 			_imgData = NULL;
 
-			if (state._boltPageFrame != 0) {
+			if (state._boltPageFrame != NULL) {
 				_maskData = mask;
 				state.decompress(state._boltPageFrame, nbytes, state._curMemberPtr->_mode);
 				return;
