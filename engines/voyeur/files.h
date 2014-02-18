@@ -444,7 +444,7 @@ public:
 	VInitCycleResource(BoltFilesState &state, const byte *src);
 	virtual ~VInitCycleResource() {}
 
-	void vStartCycle(int flags = 0);
+	void vStartCycle();
 	void vStopCycle();
 };
 

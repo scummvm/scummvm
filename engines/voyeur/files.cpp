@@ -1541,7 +1541,7 @@ VInitCycleResource::VInitCycleResource(BoltFilesState &state, const byte *src):
 	}
 }
 
-void VInitCycleResource::vStartCycle(int flags) {
+void VInitCycleResource::vStartCycle() {
 	EventsManager &evt = _state._vm->_eventsManager;
 	evt._cycleIntNode._flags |= 1;
 	evt._cyclePtr = this;
@@ -1551,7 +1551,7 @@ void VInitCycleResource::vStartCycle(int flags) {
 		evt._cycleTime[i] = 0;
 	}
 
-	evt._cycleStatus = flags | 1;
+	evt._cycleStatus = 1;
 	evt._cycleIntNode._flags &= ~1;
 }
 
