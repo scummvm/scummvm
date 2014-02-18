@@ -365,6 +365,17 @@ bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 					name = value;
 				} else if (key == "CAPTION") {
 					retVal = true;
+					// Remove any translation tags, if they are included in the game description.
+					// This can potentially remove parts of a string that has translation tags
+					// and contains a "/" in its description (e.g. /tag/Name start / name end will
+					// result in "name end"), but it's a very rare case, and this code is just used
+					// for fallback anyway.
+					if (value.hasPrefix("/")) {
+						value.deleteChar(0);
+						while (value.contains("/")) {
+							value.deleteChar(0);
+						}
+					}
 					caption = value;
 				}
 			}
