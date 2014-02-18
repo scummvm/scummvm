@@ -790,7 +790,10 @@ Graphics::Surface GraphicManager::loadPictureGraphic(Common::File &file) {
 				byte pixel = file.readByte();
 				for (int bit = 0; bit < 8; bit++) {
 					byte pixelBit = (pixel >> bit) & 1;
-					*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
+					// If the picture's width is not a multiple of 8, and we get over the boundary with the 'x' cycle, pixelBit is surely == 0.
+					// Otherwise, it doesn't cause trouble, since addign 0 doesn't have an effect at all.
+					if (pixelBit != 0)
+						*(byte *)picture.getBasePtr(x + 7 - bit, y) += (pixelBit << plane);
 				}
 			}
 		}
