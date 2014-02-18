@@ -852,7 +852,6 @@ void VoyeurEngine::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 bool VoyeurSavegameHeader::read(Common::InSaveFile *f) {
-	char id[4];
 	_thumbnail = NULL;
 
 	uint32 signature = f->readUint32BE();
