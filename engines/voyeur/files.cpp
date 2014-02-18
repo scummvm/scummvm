@@ -33,11 +33,6 @@ BoltFilesState::BoltFilesState() {
 	_curLibPtr = NULL;
 	_curGroupPtr = NULL;
 	_curMemberPtr = NULL;
-	_curMemInfoPtr = NULL;
-	_fromGroupFlag = 0;
-	_xorMask = 0;
-	_encrypt = false;
-	_curFilePosition = 0;
 	_bufferEnd = 0;
 	_bufferBegin = 0;
 	_bytesLeft = 0;
@@ -46,7 +41,7 @@ BoltFilesState::BoltFilesState() {
 	_bufPos = NULL;
 	_historyIndex = 0;
 	_runLength = 0;
-	_decompState = 0;
+	_decompState = false;
 	_runType = 0;
 	_runValue = 0;
 	_runOffset = 0;
@@ -65,7 +60,7 @@ byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 	byte *bufP = buf;
 
 	if (mode & 8) {
-		_decompState = 1;
+		_decompState = true;
 		_runType = 0;
 		_runLength = size;
 	}
@@ -116,9 +111,9 @@ byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 		int len;
 		if (_runLength <= size) {
 			len = _runLength;
-			_decompState = 0;
+			_decompState = false;
 		} else {
-			_decompState = 1;
+			_decompState = true;
 			len = size;
 			_runLength -= size;
 			if (_runType == 1)
@@ -170,7 +165,7 @@ void BoltFilesState::nextBlock() {
 	_bufferBegin = _bufferEnd;
 	int bytesRead = _curFd->read(_bufStart, _bufSize);
 
-	_bufferEnd = _curFilePosition = _curFd->pos();
+	_bufferEnd = _curFd->pos();
 	_bytesLeft = bytesRead - 1;
 	_bufPos = _bufStart;
 }
@@ -222,7 +217,6 @@ byte *FilesManager::fload(const Common::String &filename, int *size) {
 BoltFile::BoltFile(const Common::String &filename, BoltFilesState &state): _state(state) {
 	if (!_file.open(filename))
 		error("Could not open %s", filename.c_str());
-	_state._curFilePosition = 0;
 
 	// Read in the file header
 	byte header[16];
@@ -245,7 +239,6 @@ BoltFile::~BoltFile() {
 }
 
 BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {
-	++_state._fromGroupFlag;
 	_state._curLibPtr = this;
 	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
 
@@ -253,9 +246,6 @@ BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {
 		// Load the group index
 		_state._curGroupPtr->load(id & 0xff00);
 	}
-
-	if (_state._curGroupPtr->_callInitGro)
-		initGro();
 
 	if (process) {
 		// Pre-process the resources
@@ -270,7 +260,6 @@ BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {
 	}
 
 	resolveAll();
-	--_state._fromGroupFlag;
 
 	return _state._curGroupPtr;
 }
@@ -398,15 +387,10 @@ byte *BoltFile::getBoltMember(uint32 id) {
 
 	// Get the entry
 	_state._curMemberPtr = &_state._curGroupPtr->_entries[id & 0xff];
-	if (_state._curMemberPtr->_initMemRequired)
-		initMem(_state._curMemberPtr->_initMemRequired);
 
 	// Return the data for the entry if it's already been loaded
 	if (_state._curMemberPtr->_data)
 		return _state._curMemberPtr->_data;
-
-	_state._xorMask = _state._curMemberPtr->_xorMask;
-	_state._encrypt = (_state._curMemberPtr->_mode & 0x10) != 0;
 
 	if (_state._curGroupPtr->_processed) {
 		error("Processed resources are not supported");
@@ -426,7 +410,7 @@ byte *BoltFile::getBoltMember(uint32 id) {
 		}
 	}
 
-	_state._decompState = 0;
+	_state._decompState = false;
 	_state._historyIndex = 0;
 
 	// Initialize the resource
@@ -1085,27 +1069,18 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 		}
 	} else if (_flags & PICFLAG_PIC_OFFSET) {
 		int mode = 0;
-		if (_bounds.width() == 320) {
+		if (_bounds.width() == 320)
 			mode = 147;
-			state._sImageShift = 2;
-			state._SVGAReset = false;
-		} else {
-			state._SVGAReset = true;
+		else {
 			if (_bounds.width() == 640) {
-				if (_bounds.height() == 400) {
+				if (_bounds.height() == 400)
 					mode = 220;
-					state._sImageShift = 3;
-				} else {
+				else
 					mode = 221;
-					state._sImageShift = 3;
-				}
-			} else if (_bounds.width() == 800) {
+			} else if (_bounds.width() == 800)
 				mode = 222;
-				state._sImageShift = 3;
-			} else if (_bounds.width() == 1024) {
+			else if (_bounds.width() == 1024)
 				mode = 226;
-				state._sImageShift = 3;
-			}
 		}
 
 		if (mode != state._vm->_graphicsManager._SVGAMode) {
@@ -1135,18 +1110,10 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 			int mask = (nbytes + 0x3FFF) >> 14;
 			_imgData = NULL;
 
-			if (state._boltPageFrame == 0)
-				state.EMSGetFrameAddr(&state._boltPageFrame);
 			if (state._boltPageFrame != 0) {
-				if (!state.EMSAllocatePages(&_planeSize)) {
-					_maskData = mask;
-
-					for (int idx = 0; idx < mask; ++idx)
-						state.EMSMapPageHandle(_planeSize, idx, idx);
-					
-					state.decompress(state._boltPageFrame, nbytes, state._curMemberPtr->_mode);
-					return;
-				}
+				_maskData = mask;
+				state.decompress(state._boltPageFrame, nbytes, state._curMemberPtr->_mode);
+				return;
 			}
 		}
 

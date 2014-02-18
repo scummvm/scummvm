@@ -63,11 +63,6 @@ public:
 	BoltFile *_curLibPtr;
 	BoltGroup *_curGroupPtr;
 	BoltEntry *_curMemberPtr;
-	byte *_curMemInfoPtr;
-	int _fromGroupFlag;
-	byte _xorMask;
-	bool _encrypt;
-	int _curFilePosition;
 	int _bufferEnd;
 	int _bufferBegin;
 	int _bytesLeft;
@@ -78,7 +73,7 @@ public:
 	int _historyIndex;
 	byte _historyBuffer[0x200];
 	int _runLength;
-	int _decompState;
+	bool _decompState;
 	int _runType;
 	int _runValue;
 	int _runOffset;
@@ -86,18 +81,11 @@ public:
 	Common::Array<ResolveEntry> _resolves;
 
 	byte *_boltPageFrame;
-	int _sImageShift;
-	bool _SVGAReset;
 public:
 	BoltFilesState();
 
 	byte *decompress(byte *buf, int size, int mode);
 	void nextBlock();
-
-	// Methods in the original stubbed under ScummVM
-	void EMSGetFrameAddr(byte **pageFrame) {} 
-	bool EMSAllocatePages(uint *planeSize) { return false; }
-	void EMSMapPageHandle(int planeSize, int idx1, int idx2) {}
 };
 
 class BoltFile {
@@ -112,12 +100,6 @@ private:
 	void resolveAll();
 	byte *getBoltMember(uint32 id);
 
-	// Methods in the original that are stubbed in ScummVM
-	void termType() {}
-	void initMem(int id) {}
-	void termMem() {}
-	void initGro() {}
-	void termGro() {}
 public:
 	Common::File _file;
 public:
