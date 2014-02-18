@@ -118,6 +118,8 @@ void ShootEmUp::run() {
 		updateTime();
 		check321();
 		readKbd();
+
+		_vm->_graphics->refreshScreen();
 	} while (_time != 0);
 
 	_vm->fadeOut();
@@ -128,8 +130,8 @@ void ShootEmUp::run() {
 }
 
 bool ShootEmUp::overlap(uint16 a1x, uint16 a1y, uint16 a2x, uint16 a2y, uint16 b1x, uint16 b1y, uint16 b2x, uint16 b2y) {
-	warning("STUB: ShootEmUp::overlap()");
-	return false;
+	// By De Morgan's law:
+	return (a2x >= b1x) && (b2x >= a1x) && (a2y >= b1y) && (b2y >= a1y);
 }
 
 byte ShootEmUp::getStockNumber(byte x) {
@@ -151,8 +153,20 @@ void ShootEmUp::plotThem() {
 	warning("STUB: ShootEmUp::plotThem()");
 }
 
-void ShootEmUp::define(int16 xx, int16 yy, byte pp, int8 ixx, int8 iyy, int16 time, bool isAMissile, bool doWeWipe) {
-	warning("STUB: ShootEmUp::define()");
+void ShootEmUp::define(int16 x, int16 y, byte p, int8 ix, int8 iy, int16 time, bool isAMissile, bool doWeWipe) {
+	for (int i = 0; i < 99; i++) {
+		if (_sprites[i]._x == kFlag) {
+			_sprites[i]._x = x;
+			_sprites[i]._y = y;
+			_sprites[i]._p = p;
+			_sprites[i]._ix = ix;
+			_sprites[i]._iy = iy;
+			_sprites[i]._timeout = time;
+			_sprites[i]._cameo = false;
+			_sprites[i]._missile = isAMissile;
+			_sprites[i]._wipe = doWeWipe;
+		}
+	}
 }
 
 void ShootEmUp::defineCameo(int16 xx, int16 yy, byte pp, int16 time) {
@@ -184,7 +198,12 @@ void ShootEmUp::showTime() {
 }
 
 void ShootEmUp::gain(int8 howMuch) {
-	warning("STUB: ShootEmUp::gain()");
+	if ((_score + howMuch) == 0) // howMuch can be negative!
+		_score = 0;
+	else
+		_score += howMuch;
+
+	showScore();
 }
 
 void ShootEmUp::newEscape() {
@@ -326,7 +345,26 @@ void ShootEmUp::updateTime() {
 }
 
 void ShootEmUp::hitPeople() {
-	warning("STUB: ShootEmUp::hitPeople()");
+	if (_count321 != 0)
+		return;
+
+	for (int i = 0; i < 99; i++) {
+		if ((_sprites[i]._missile) && (_sprites[i]._x != kFlag)) {
+			for (int j = 0; j < 4; j++) {
+
+				bool overlaps = overlap(_sprites[i]._x, _sprites[i]._y, _sprites[i]._x + 7, _sprites[i]._y + 10,
+					_running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
+
+				if ((_running[j]._x != kFlag) && (overlaps)) {
+					_vm->_sound->playNote(7177, 1);
+					_sprites[i]._x = kFlag;
+					gain(-5);
+					define(_running[j]._x + 20, _running[j]._y + 3, 34 + _vm->_rnd->getRandomNumber(5), 1, 3, 9, false, true); // Oof!
+					define(_sprites[i]._x, _sprites[i]._y, 83, 1, 0, 17, false, true); // Oops!
+				}
+			}
+		}
+	}
 }
 
 void ShootEmUp::escapeCheck() {

@@ -91,7 +91,7 @@ private:
 	void blankIt();
 	void moveThem();
 	void plotThem();
-	void define(int16 xx, int16 yy, byte pp, int8 ixx, int8 iyy, int16 time, bool isAMissile, bool doWeWipe);
+	void define(int16 x, int16 y, byte p, int8 ix, int8 iy, int16 time, bool isAMissile, bool doWeWipe);
 	void defineCameo(int16 xx, int16 yy, byte pp, int16 time);
 	void showStock(byte x);
 	void drawNumber(int number, int size, int x);
