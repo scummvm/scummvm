@@ -61,8 +61,9 @@ public:
 
 	// We have to handle the drawing of rectangles a little bit differently to mimic Pascal's bar() and rectangle() methods properly.
 	// Now it is possible to use the original coordinates everywhere.
-	void drawFilledRectangle(Common::Rect rect, Color color);
 	void drawRectangle(Common::Rect rect, Color color);
+	void drawFilledRectangle(Common::Rect rect, Color color);
+	void blackOutScreen();
 	void drawDot(int x, int y, Color color);
 	void drawLine(int x1, int y1, int x2, int y2, int penX, int penY, Color color);
 	Common::Point drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);

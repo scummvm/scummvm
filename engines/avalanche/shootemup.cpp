@@ -206,7 +206,7 @@ void ShootEmUp::nextPage() {
 }
 
 void ShootEmUp::instructions() {
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlack); // Black out the whole screen.
+	_vm->_graphics->blackOutScreen();
 	_vm->_graphics->seuDrawPicture(25, 25, kFacingRight);
 	_vm->_graphics->drawNormalText("< Avvy, our hero, needs your help - you must move him around.", _vm->_font, 8, 60, 35, kColorWhite);
 	_vm->_graphics->drawNormalText("(He''s too terrified to move himself!)", _vm->_font, 8, 80, 45, kColorWhite);
@@ -270,7 +270,7 @@ void ShootEmUp::setup() {
 
 	_count321 = 255; // Counting down.
 
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlack); // Black out the whole screen.
+	_vm->_graphics->blackOutScreen();
 
 	// Set up status line:
 	_vm->_graphics->seuDrawPicture(0, 0, 16); // Score:

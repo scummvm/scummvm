@@ -209,7 +209,7 @@ void GhostRoom::run() {
 	CursorMan.showMouse(false);
 	_vm->_graphics->saveScreen();
 	_vm->fadeOut();
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlack); // Black out the whole screen.
+	_vm->_graphics->blackOutScreen();
 	_vm->fadeIn();
 
 	// Only load the pictures if it's our first time walking into the room.
