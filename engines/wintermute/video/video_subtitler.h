@@ -47,7 +47,7 @@ public:
 	void update(uint frame);
 private:
 	Common::Array<VideoSubtitle *> _subtitles;
-	long _lastSample;
+	uint32 _lastSample;
 };
 
 } // End of namespace Wintermute
