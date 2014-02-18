@@ -333,20 +333,20 @@ void sceneHandler09_cycleHangers() {
 
 void sceneHandler09_limitHangerPhase() {
 	for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
-		if (i != g_vars_scene09_var10) {
-			g_vars_scene09_hangers[i]->phase += g_vars_scene09_hangers[i]->field_8;
+		if (i != g_vars->scene09_var10) {
+			g_vars->scene09_hangers[i]->phase += g_vars->scene09_hangers[i]->field_8;
 
-			if (g_vars_scene09_hangers[i]->phase > 85)
-				g_vars_scene09_hangers[i]->phase = 85;
+			if (g_vars->scene09_hangers[i]->phase > 85)
+				g_vars->scene09_hangers[i]->phase = 85;
 
-			if (g_vars_scene09_hangers[i]->phase < -85)
-				g_vars_scene09_hangers[i]->phase = -85;
+			if (g_vars->scene09_hangers[i]->phase < -85)
+				g_vars->scene09_hangers[i]->phase = -85;
 
-			if (g_vars_scene09_hangers[i]->phase < 0)
-				g_vars_scene09_hangers[i]->field_8++;
+			if (g_vars->scene09_hangers[i]->phase < 0)
+				g_vars->scene09_hangers[i]->field_8++;
 
-			if (g_vars_scene09_hangers[i]->phase > 0)
-				g_vars_scene09_hangers[i]->field_8--;
+			if (g_vars->scene09_hangers[i]->phase > 0)
+				g_vars->scene09_hangers[i]->field_8--;
 		}
     }
 }
