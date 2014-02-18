@@ -41,10 +41,10 @@ public:
 	virtual ~VideoSubtitler(void);
 
 	bool _showSubtitle;
-	uint _currentSubtitle;
+	uint32 _currentSubtitle;
 	bool loadSubtitles(const Common::String &filename, const Common::String &subtitleFile);
 	void display();
-	void update(uint frame);
+	void update(uint32 frame);
 private:
 	Common::Array<VideoSubtitle *> _subtitles;
 	uint32 _lastSample;

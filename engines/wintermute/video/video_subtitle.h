@@ -37,12 +37,12 @@ class VideoSubtitle : public BaseClass {
 public:
 	VideoSubtitle(BaseGame *inGame);
 	VideoSubtitle(BaseGame *inGame, const Common::String &text, const uint &startFrame, const uint &endFrame);
-	uint getEndFrame();
-	uint getStartFrame();
+	uint32 getEndFrame();
+	uint32 getStartFrame();
 	Common::String getText();
 private:
-	uint _endFrame;
-	uint _startFrame;
+	uint32 _endFrame;
+	uint32 _startFrame;
 	Common::String _text;
 };
 

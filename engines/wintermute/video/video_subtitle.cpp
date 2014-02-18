@@ -44,11 +44,11 @@ VideoSubtitle::VideoSubtitle(BaseGame *inGame, const Common::String &text, const
 	_endFrame = endFrame;
 }
 
-uint VideoSubtitle::getStartFrame() {
+uint32 VideoSubtitle::getStartFrame() {
 	return _startFrame;
 }
 
-uint VideoSubtitle::getEndFrame() {
+uint32 VideoSubtitle::getEndFrame() {
 	return _endFrame;
 }
 

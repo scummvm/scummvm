@@ -201,7 +201,7 @@ void VideoSubtitler::display() {
 	}
 }
 
-void VideoSubtitler::update(uint frame) {
+void VideoSubtitler::update(uint32 frame) {
 	if (_subtitles.size() == 0) {
 		// Edge case: we have loaded subtitles early on... from a blank file.
 		return;
