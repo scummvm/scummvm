@@ -4624,7 +4624,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 						SET_FLAG(dsAddr_mansionVCRPlayedTapeBeforeFlag, 1);
 					}
 				} else
-					displayMessage(dsAddr_tvOffMsg); // "I just realised that the TV is off"
+					displayMessage(dsAddr_tvOffMsg); // "I just realized that the TV is off"
 			} else {
 				SET_FLAG(dsAddr_mansionVCRPlayingTapeFlag, 0);
 				if (CHECK_FLAG(dsAddr_mansionTVOnFlag, 1)) {
