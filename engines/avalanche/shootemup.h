@@ -86,11 +86,13 @@ private:
 	uint16 _escapeCount;
 	bool _escaping;
 	byte _timeThisSecond;
+	bool _cp;
 
 	bool overlap(uint16 a1x, uint16 a1y, uint16 a2x, uint16 a2y, uint16 b1x, uint16 b1y, uint16 b2x, uint16 b2y);
 	byte getStockNumber(byte x);
 	void blankIt();
 	void moveThem();
+	void blank(Common::Rect rect);
 	void plotThem();
 	void define(int16 x, int16 y, byte p, int8 ix, int8 iy, int16 time, bool isAMissile, bool doWeWipe);
 	void defineCameo(int16 xx, int16 yy, byte pp, int16 time);

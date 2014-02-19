@@ -115,6 +115,7 @@ public:
 	void seuLoad();
 	void seuFree();
 	void seuDrawPicture(int x, int y, byte which);
+	void seuDrawCameo(int destX, int destY, byte w1, byte w2);
 
 	void clearAlso();
 	void clearTextBar();

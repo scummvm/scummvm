@@ -81,6 +81,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_escapeCount = 0;
 	_escaping = false;
 	_timeThisSecond = 0;
+	_cp = false;
 }
 
 void ShootEmUp::run() {
@@ -120,6 +121,8 @@ void ShootEmUp::run() {
 		check321();
 		readKbd();
 
+		_cp = !_cp;
+
 		_vm->_graphics->refreshScreen();
 	} while (_time != 0);
 
@@ -150,8 +153,32 @@ void ShootEmUp::moveThem() {
 	warning("STUB: ShootEmUp::moveThem()");
 }
 
+void ShootEmUp::blank(Common::Rect rect) {
+	_rectangles[_rectNum++] = rect;
+}
+
 void ShootEmUp::plotThem() {
-	warning("STUB: ShootEmUp::plotThem()");
+	for (int i = 0; i < 99; i++) {
+		if (_sprites[i]._x != kFlag) {
+			if (_sprites[i]._cameo) {
+				_vm->_graphics->seuDrawCameo(_sprites[i]._x, _sprites[i]._y, _sprites[i]._p, _sprites[i]._cameoFrame);
+				if (!_cp) {
+					_sprites[i]._cameoFrame += 2;
+					_sprites[i]._p += 2;
+				}
+			} else
+				_vm->_graphics->seuDrawPicture(_sprites[i]._x, _sprites[i]._y, _sprites[i]._p);
+
+			if (_sprites[i]._wipe)
+				blank(Common::Rect(_sprites[i]._x, _sprites[i]._y, _sprites[i]._x + _rectangles[i].width(), _sprites[i]._y + _rectangles[i].height()));
+
+			if (_sprites[i]._timeout > 0) {
+				_sprites[i]._timeout--;
+				if (_sprites[i]._timeout == 0)
+					_sprites[i]._y = kFlag;
+			}
+		}
+	}
 }
 
 void ShootEmUp::define(int16 x, int16 y, byte p, int8 ix, int8 iy, int16 time, bool isAMissile, bool doWeWipe) {
@@ -275,6 +302,8 @@ void ShootEmUp::setup() {
 		_stockStatus[i] = _vm->_rnd->getRandomNumber(1);
 		showStock(i);
 	}
+
+	_cp = true;
 
 	_avvyWas = 320;
 	_avvyPos = 320;

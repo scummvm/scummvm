@@ -755,6 +755,31 @@ void GraphicManager::seuDrawPicture(int x, int y, byte which) {
 }
 
 /**
+ * @remarks	Originally called 'cameo_display'
+ */
+void GraphicManager::seuDrawCameo(int destX, int destY, byte w1, byte w2) {
+	// First we make the pixels of the previous sprite (cameo) blank:
+	uint16 maxX = _seuPictures[w2].w;
+	uint16 maxY = _seuPictures[w2].h;
+
+	if (destX + maxX > _surface.w)
+		maxX = _surface.w - destX;
+
+	if (destY + maxY > _surface.h)
+		maxY = _surface.h - destY;
+
+	for (uint16 y = 0; y < maxY; y++) {
+		for (uint16 x = 0; x < maxX; x++) {
+			if (*(const byte *)_seuPictures[w2].getBasePtr(x, y) != 0)
+				*(byte *)_surface.getBasePtr(x + destX, y + destY) = 0;
+		}
+	}
+
+	// Then we draw the desired sprite:
+	drawPicture(_surface, _seuPictures[w1], destX, destY);
+}
+
+/**
  * This function is for skipping the difference between a stored 'size' value associated with a picture
  * and the actual size of the pictures  when reading them from files for Ghostroom and Shoot em' up.
  * It's needed bacuse the original code loaded the pictures to arrays first and only used the useful parts
