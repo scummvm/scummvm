@@ -305,7 +305,43 @@ void sceneHandler09_eatBall() {
 }
 
 void sceneHandler09_showBall() {
-	warning("STUB: sceneHandler09_showBall()");
+	if (g_vars->scene09_var07.numBalls) {
+		StaticANIObject *ani = g_vars->scene09_var07.pHead->ani;
+		Ball *ph = g_vars->scene09_var07.pHead;
+		g_vars->scene09_var07.pHead = ph->p0;
+
+		if (g_vars->scene09_var07.pHead)
+			ph->p0->p1 = 0;
+		else
+			g_vars->scene09_var07.field_8 = 0;
+
+		ph->p0 = g_vars->scene09_var07.pTail;
+
+		g_vars->scene09_var07.pTail = ph;
+		g_vars->scene09_var07.numBalls--;
+
+		if (!g_vars->scene09_var07.numBalls) {
+			g_vars->scene09_var07.numBalls = 0;
+			g_vars->scene09_var07.pTail = 0;
+			g_vars->scene09_var07.field_8 = 0;
+			g_vars->scene09_var07.pHead = 0;
+
+			free(g_vars->scene09_var07.cPlex);
+			g_vars->scene09_var07.cPlex = 0;
+		}
+
+		Ball *ball = g_vars->scene09_balls.sub04(g_vars->scene09_balls.field_8, 0);
+		ball->ani = ani;
+
+		if (g_vars->scene09_balls.field_8)
+			g_vars->scene09_balls.field_8->p0 = ball;
+		else
+			g_vars->scene09_balls.pHead = ball;
+
+		g_vars->scene09_balls.field_8 = ball;
+
+		ani->show1(g_fp->_aniMan->_ox + 94, g_fp->_aniMan->_oy - 162, MV_BALL9_EXPLODE, 0);
+	}
 }
 
 void sceneHandler09_cycleHangers() {
