@@ -491,8 +491,6 @@ public:
 class ThreadResource {
 public:
 	static int _useCount[8];
-	static byte *_threadDataPtr;
-	static CMapResource *_cmd14Pal;
 	static void initUseCount();
 	static void unloadAllStacks(VoyeurEngine *vm);
 
@@ -505,7 +503,6 @@ private:
 	byte *getDataOffset();
 	void getButtonsText();
 	void getButtonsFlags();
-	void getButtonsUnused();
 	void performOpenCard();
 	const byte *getRecordOffset(const byte *p);
 	const byte *getNextRecord(const byte *p);
@@ -543,18 +540,13 @@ public:
 	int _savedStackId;
 	int _newStateId;
 	int _newStackId;
-	int _flags;
-	int _fieldA[8];  // Useless variable
-	int _field2A[8]; // Useless variable
 	int _stateFlags;
 	int _stateCount;
 	int _parseCount;
 	uint32 _nextStateId;
 	byte *_threadInfoPtr;
 	byte _buttonFlags[64];
-	const byte *_field8E[64]; // Useless variable
 	byte _buttonIds[64];
-	const byte *_buttonUnused[48];
 	byte *_ctlPtr;
 	byte *_playCommandsPtr;
 public:

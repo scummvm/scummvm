@@ -808,7 +808,7 @@ void VoyeurEngine::doTapePlaying() {
 }
 
 bool VoyeurEngine::checkForMurder() {
-	int v = _controlPtr->_state->_victimMurderIndex;
+	int oldMurderIndex = _controlPtr->_state->_victimMurderIndex;
 
 	for (int idx = 0; idx < _voy._eventCount; ++idx) {
 		VoyeurEvent &evt = _voy._events[idx];
@@ -854,7 +854,7 @@ bool VoyeurEngine::checkForMurder() {
 		}
 	}
 
-	_controlPtr->_state->_victimMurderIndex = v;
+	_controlPtr->_state->_victimMurderIndex = oldMurderIndex;
 	_voy._videoEventId = -1;
 	return false;
 }

@@ -28,13 +28,9 @@
 namespace Voyeur {
 
 int ThreadResource::_useCount[8];
-byte *ThreadResource::_threadDataPtr;
-CMapResource *ThreadResource::_cmd14Pal;
 
 void ThreadResource::init() {
 	Common::fill(&_useCount[0], &_useCount[8], 0);
-	_threadDataPtr = nullptr;
-	_cmd14Pal = nullptr;
 }
 
 ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
@@ -43,7 +39,6 @@ ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
 	_stackId = READ_LE_UINT16(&src[0]);
 	_savedStateId = READ_LE_UINT16(&src[0]);
 	_savedStackId = READ_LE_UINT16(&src[0]);
-	_flags = src[8];
 	_ctlPtr = nullptr;
 	_aptPos = Common::Point(-1, -1);
 }
@@ -88,13 +83,10 @@ void ThreadResource::unloadAStack(int stackId) {
 }
 
 bool ThreadResource::doState() {
-	_flags |= 1;
-
 	if (!getStateInfo()) 
 		return false;
 
 	getButtonsFlags();
-	getButtonsUnused();
 
 	_vm->_glGoState = -1;
 	_vm->_glGoStack = -1;
@@ -108,11 +100,9 @@ bool ThreadResource::doState() {
 }
 
 bool ThreadResource::getStateInfo() {
-	_flags &= 0xff;
 	int id = READ_LE_UINT16(_ctlPtr);
 
 	if (id <= _stateId) {
-		_flags |= 0x8000;
 		return false;
 	} else {
 		uint32 fld = READ_LE_UINT32(_ctlPtr + 2);
@@ -137,8 +127,7 @@ bool ThreadResource::getStateInfo() {
 
 byte *ThreadResource::getDataOffset() {
 	uint32 offset = READ_LE_UINT32(_ctlPtr + 10);
-	_threadDataPtr = _ctlPtr + offset;
-	return _threadDataPtr;
+	return _ctlPtr + offset;
 }
 
 void ThreadResource::getButtonsText() {
@@ -149,12 +138,10 @@ void ThreadResource::getButtonsText() {
 			++p;
 			if (*p++ & 0x80) {
 				assert(idx < 63);
-				_field8E[idx] = getRecordOffset(p);
 				p += 4;
 			}
 
 			++idx;
-			_field8E[idx] = NULL;
 		}
 	}
 }
@@ -175,17 +162,6 @@ void ThreadResource::getButtonsFlags() {
 
 			++idx;
 		}
-	}
-}
-
-void ThreadResource::getButtonsUnused() {
-	int idx = 0;
-	
-	for (const byte *p = _threadInfoPtr; *p++ != 0x4A; p = getNextRecord(p)) {
-		assert(idx < 47);
-		_buttonUnused[idx++] = getRecordOffset(p);
-		_buttonUnused[idx] = nullptr;
-		p += 4;
 	}
 }
 
@@ -310,8 +286,6 @@ void ThreadResource::cardAction(const byte *card) {
 }
 
 bool ThreadResource::chooseSTAMPButton(int buttonId) {
-	_flags &= ~1;
-
 	for (int idx = 0; idx < _stateCount; ++idx) {
 		if (_buttonIds[idx] == buttonId) {
 			const byte *card = getSTAMPCard(idx);
@@ -888,11 +862,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	case 41:
 		bVal = *card++;
 		assert(bVal < 8);
-		_fieldA[bVal] = READ_LE_UINT32(card);
-		card += 4;
-
-		_field2A[bVal] = READ_LE_UINT16(card);
-		card += 2;
+		card += 6;
 	
 	case 45:
 		_newStateId = _nextStateId;
@@ -1553,10 +1523,7 @@ bool ThreadResource::goToState(int stackId, int stateId) {
 }
 
 void ThreadResource::savePrevious() {
-	if (_savedStateId == _stateId && _stackId == _savedStackId) {
-		_flags &= ~1;
-	} else {
-		_flags |= 1;
+	if (_savedStateId != _stateId || _stackId != _savedStackId) {
 		_savedStateId = _stateId;
 		_savedStackId = _stackId;
 	}
