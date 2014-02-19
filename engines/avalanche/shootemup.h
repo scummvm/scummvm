@@ -62,6 +62,7 @@ private:
 	static const byte kFacingRight;
 	static const byte kFacingLeft;
 	static const long int kFlag;
+	static const byte kFrameDelayMax;
 
 	AvalancheEngine *_vm;
 

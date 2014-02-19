@@ -36,6 +36,7 @@ const byte ShootEmUp::kStocks = 27;
 const byte ShootEmUp::kFacingRight = 87;
 const byte ShootEmUp::kFacingLeft = 93;
 const long int ShootEmUp::kFlag = -20047;
+const byte ShootEmUp::kFrameDelayMax = 2;
 
 ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_vm = vm;
@@ -308,8 +309,22 @@ void ShootEmUp::setup() {
 	initRunner(20, 100, 61, 67, (-(int8)_vm->_rnd->getRandomNumber(4)) + 1, _vm->_rnd->getRandomNumber(3) - 2);
 }
 
-void ShootEmUp::initRunner(int16 xx, int16 yy, byte f1, byte f2, int8 ixx, int8 iyy) {
-	warning("STUB: ShootEmUp::initRunner()");
+void ShootEmUp::initRunner(int16 x, int16 y, byte f1, byte f2, int8 ix, int8 iy) {
+	for (int i = 0; i < 4; i++) {
+		if (_running[i]._x == kFlag) {
+			_running[i]._x = x;
+			_running[i]._y = y;
+			_running[i]._frame = f1;
+			_running[i]._tooHigh = f2;
+			_running[i]._lowest = f1;
+			_running[i]._ix = ix;
+			_running[i]._iy = iy;
+			if ((ix = 0) && (iy = 0))
+				_running[i]._ix = 2; // To stop them running on the spot!
+			_running[i]._frameDelay = kFrameDelayMax;
+			return;
+		}
+	}
 }
 
 void ShootEmUp::moveAvvy() {
