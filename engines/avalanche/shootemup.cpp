@@ -33,10 +33,13 @@
 namespace Avalanche {
 
 const byte ShootEmUp::kStocks = 27;
+const byte ShootEmUp::kAvvyShoots = 86;
 const byte ShootEmUp::kFacingRight = 87;
 const byte ShootEmUp::kFacingLeft = 93;
 const long int ShootEmUp::kFlag = -20047;
 const byte ShootEmUp::kFrameDelayMax = 2;
+const byte ShootEmUp::kAvvyY = 150;
+const byte ShootEmUp::kShooting[7] = { 87, 80, 81, 82, 81, 80, 87 };
 
 ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_vm = vm;
@@ -82,6 +85,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_escaping = false;
 	_timeThisSecond = 0;
 	_cp = false;
+	_wasFacing = 0;
 }
 
 void ShootEmUp::run() {
@@ -362,7 +366,36 @@ void ShootEmUp::initRunner(int16 x, int16 y, byte f1, byte f2, int8 ix, int8 iy)
 }
 
 void ShootEmUp::moveAvvy() {
-	warning("STUB: ShootEmUp::moveAvvy()");
+	if (_avvyWas < _avvyPos)
+		_avvyFacing = kFacingRight;
+	else if (_avvyWas > _avvyPos)
+		_avvyFacing = kFacingLeft;
+
+	if (!_firing) {
+		if (_avvyWas == _avvyPos)
+			_avvyAnim = 1;
+		else {
+			_avvyAnim++;
+			if (_avvyAnim == 6)
+				_avvyAnim = 0;
+		}
+	}
+
+	if (_avvyFacing == kAvvyShoots)
+		define(_avvyPos, kAvvyY, kShooting[_avvyAnim], 0, 0, 1, false, true);
+	else
+		define(_avvyPos, kAvvyY, _avvyAnim + _avvyFacing, 0, 0, 1, false, true);
+
+	_avvyWas = _avvyPos;
+
+	if (_avvyFacing == kAvvyShoots) {
+		if (_avvyAnim == 6) {
+			_avvyFacing = _wasFacing;
+			_avvyAnim = 0;
+			_firing = false;
+		} else
+			_avvyAnim++;
+	}
 }
 
 void ShootEmUp::readKbd() {
