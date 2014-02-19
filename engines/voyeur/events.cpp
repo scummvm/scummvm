@@ -90,7 +90,7 @@ void EventsManager::startMainClockInt() {
 	_mainIntNode._intFunc = &EventsManager::mainVoyeurIntFunc;
 	_mainIntNode._flags = 0;
 	_mainIntNode._curTime = 0;
-	_mainIntNode._timeReset = _vm->_graphicsManager._palFlag ? 50 : 60;
+	_mainIntNode._timeReset = 60;
 }
 
 void EventsManager::mainVoyeurIntFunc() {

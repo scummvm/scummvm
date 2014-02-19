@@ -1238,7 +1238,7 @@ void ThreadResource::doRoom() {
 
 			_vm->flipPageAndWait();
 
-			vm._graphicsManager.fadeUpICF1(0);
+			vm._graphicsManager.fadeUpICF1();
 			voy._eventFlags &= EVTFLAG_RECORDING;
 			vm._eventsManager.showCursor();
 		}
@@ -1595,7 +1595,7 @@ void ThreadResource::freeTheApt() {
 	_vm->_graphicsManager.fadeDownICF1(5);
 	_vm->flipPageAndWaitForFade();
 
-	_vm->_graphicsManager.fadeUpICF1(0);
+	_vm->_graphicsManager.fadeUpICF1();
 
 	if (_vm->_currentVocId != -1) {
 		_vm->_soundManager.stopVOCPlay();

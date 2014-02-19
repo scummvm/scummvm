@@ -832,7 +832,7 @@ int DisplayResource::drawText(const Common::String &msg) {
 	ViewPortResource *viewPort = !(_flags & DISPFLAG_VIEWPORT) ? NULL :
 		(ViewPortResource *)this;
 
-	if (gfxManager._drawTextPermFlag || (fontInfo._fontFlags & DISPFLAG_1) || fontInfo._justify ||
+	if ((fontInfo._fontFlags & DISPFLAG_1) || fontInfo._justify ||
 			(gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT))) {
 		msgWidth = viewPort->textWidth(msg);
 		yp = pos.y;

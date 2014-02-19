@@ -31,25 +31,17 @@ namespace Voyeur {
 
 /*------------------------------------------------------------------------*/
 
-DrawInfo::DrawInfo(int penColor, const Common::Point &pos, int flags) {
+DrawInfo::DrawInfo(int penColor, const Common::Point &pos) {
 	_penColor = penColor;
 	_pos = pos;
-	_flags = flags;
 }
 
 /*------------------------------------------------------------------------*/
 
-GraphicsManager::GraphicsManager(): _defaultDrawInfo(1, Common::Point(), 0), _drawPtr(&_defaultDrawInfo) {
-	_SVGAPage = 0;
+GraphicsManager::GraphicsManager(): _defaultDrawInfo(1, Common::Point()), _drawPtr(&_defaultDrawInfo) {
 	_SVGAMode = 0;
-	_SVGAReset = 0;
-	_screenOffset = 0;
 	_planeSelect = 0;
-	_sImageShift = 3;
-	_palFlag = false;
-	_MCGAMode = false;
 	_saveBack = true;
-	_drawTextPermFlag = false;
 	_clipPtr = NULL;
 	_viewPortListPtr = NULL;
 	_backgroundPage = NULL;
@@ -71,8 +63,6 @@ GraphicsManager::~GraphicsManager() {
 }
 
 void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
-	_MCGAMode = true;
-
 	if (viewPort->_activePage) {
 		viewPort->_activePage->_flags |= 1;
 		Common::Rect *clipRect = _clipPtr;
@@ -252,10 +242,9 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	}
 
 	if (srcFlags & DISPFLAG_1000) {
-		srcImgData = srcPic->_imgData + (var4C << 14) + _screenOffset;
+		srcImgData = srcPic->_imgData + (var4C << 14);
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
 			if (var4C < 4) {
-				EMSMapPageHandle(srcPic->_planeSize, srcPic->_imgData[idx], var4C);
 				++var4C;
 			}
 		}
@@ -263,10 +252,9 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		srcImgData = srcPic->_imgData;
 	}
 	if (destFlags & DISPFLAG_1000) {
-		destImgData = destPic->_imgData + (var4C << 14) + _screenOffset;
+		destImgData = destPic->_imgData + (var4C << 14);
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
 			if (var4C < 4) {
-				EMSMapPageHandle(destPic->_planeSize, destPic->_imgData[idx], var4C);
 				++var4C;
 			}
 		}		
@@ -274,7 +262,6 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		destImgData = destPic->_imgData;
 	}
 
-	_SVGAPage = _SVGAReset;
 	if (srcPic->_select != 0xff)
 		return;
 

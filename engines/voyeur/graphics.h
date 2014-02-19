@@ -50,9 +50,8 @@ class DrawInfo {
 public:
 	int _penColor;
 	Common::Point _pos;
-	int _flags;
 public:
-	DrawInfo(int penColor, const Common::Point &pos, int flags);
+	DrawInfo(int penColor, const Common::Point &pos);
 };
 
 typedef void (GraphicsManager::*GraphicMethodPtr)(); 
@@ -63,32 +62,21 @@ typedef void (GraphicsManager::*ViewPortRestorePtr)(ViewPortResource *);
 class GraphicsManager {
 public:
 	VoyeurEngine *_vm;
-	bool _palFlag;
 	byte _VGAColors[PALETTE_SIZE];
-	Common::Array<byte *> _colorChain;
 	PictureResource *_backgroundPage;
-	int _SVGAPage;
 	int _SVGAMode;
-	int _SVGAReset;
 	ViewPortListResource *_viewPortListPtr;
 	ViewPortResource **_vPort;
-	bool _MCGAMode;
 	bool _saveBack;
 	Common::Rect *_clipPtr;
-	int _screenOffset;
 	uint _planeSelect;
-	int _sImageShift;
 	Graphics::Surface _screenSurface;
 	CMapResource *_backColors;
 	FontInfoResource *_fontPtr;
 	PictureResource *_fontChar;
 	DrawInfo *_drawPtr;
 	DrawInfo _defaultDrawInfo;
-	bool _drawTextPermFlag;
 private:
-	static void fadeIntFunc();
-	static void vDoCycleInt();
-
 	void restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
 		PictureResource *srcPic, PictureResource *destPic);
 public:
@@ -116,7 +104,7 @@ public:
 	void setColors(int start, int count, const byte *pal);	
 	void screenReset();
 	void fadeDownICF1(int steps);
-	void fadeUpICF1(int steps);
+	void fadeUpICF1(int steps = 0);
 	void fadeDownICF(int steps);
 	void drawDot();
 
@@ -124,9 +112,6 @@ public:
 	 * Synchronizes the game data
 	 */
 	void synchronize(Common::Serializer &s);
-
-	// Methods in the original that are stubbed in ScummVM
-	void EMSMapPageHandle(int v1, int v2, int v3) {}
 };
 
 } // End of namespace Voyeur
