@@ -30,6 +30,9 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "mads/events.h"
+#include "mads/msurface.h"
+#include "mads/resources.h"
 #include "mads/sound.h"
 
 /**
@@ -46,13 +49,22 @@ namespace MADS {
 #define DEBUG_INTERMEDIATE 2
 #define DEBUG_DETAILED 3
 
-#define MAX_RESOLVE 1000
-
 enum MADSDebugChannels {
 	kDebugPath      = 1 << 0,
 	kDebugScripts	= 1 << 1
 };
 
+enum {
+	GType_RexNebular = 0,
+	GType_DragonSphere = 1,
+	GType_Phantom = 2,
+	GType_Riddle = 3
+};
+
+enum {
+	GF_MADS = 1 << 0,
+	GF_M4 = 1 << 1
+};
 
 struct MADSGameDescription;
 
@@ -61,13 +73,26 @@ class MADSEngine : public Engine {
 private:
 	const MADSGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	SoundManager _soundManager;
 
+	bool _easyMouse;
+	bool _invObjectStill;
+	bool _textWindowStill;
+
+	/**
+	 * Handles basic initialisation
+	 */
 	void initialise();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+public:
+	EventsManager *_events;
+	Palette *_palette;
+	ResourcesManager *_resources;
+	MSurface *_screen;
+	SoundManager *_sound;
+
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	virtual ~MADSEngine();
@@ -76,7 +101,8 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint16 getVersion() const;
-	bool getIsDemo() const;
+	uint32 getGameID() const;
+	uint32 getGameFeatures() const;
 
 	int getRandomNumber(int maxNumber);
 };

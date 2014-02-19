@@ -20,33 +20,15 @@
  *
  */
 
-#include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
-#include "common/memstream.h"
-#include "mads/sound.h"
+#include "common/scummsys.h"
+#include "common/events.h"
+#include "mads/mads.h"
+#include "mads/events.h"
 
 namespace MADS {
 
-SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
+EventsManager::EventsManager(MADSEngine *vm) {
 	_vm = vm;
-	_mixer = mixer;
-	_asound = nullptr;
-}
-
-SoundManager::~SoundManager() {
-	delete _asound;
-}
-
-void SoundManager::test() {
-	_asound = new Nebular::ASound1(_mixer);
-	_asound->command(5);
-	_asound->command(28);
-	_asound->command(19);
-}
-
-void SoundManager::poll() {
-	if (_asound)
-		_asound->poll();
 }
 
 } // End of namespace MADS

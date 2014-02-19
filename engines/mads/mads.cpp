@@ -20,35 +20,57 @@
  *
  */
 
-#include "mads/mads.h"
-#include "mads/sound.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "engines/util.h"
 #include "common/events.h"
+#include "engines/util.h"
+#include "mads/mads.h"
+#include "mads/resources.h"
+#include "mads/sound.h"
+#include "mads/msurface.h"
+#include "mads/msprite.h"
 
 namespace MADS {
 
-MADSEngine *g_vm;
-
 MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		Engine(syst), _randomSource("MADS") {
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+		_gameDescription(gameDesc), Engine(syst), _randomSource("MADS") {
+	
+	// Initialise fields
+	_easyMouse = true;
+	_invObjectStill = false;
+	_textWindowStill = false;
+	_palette = nullptr;
+	_resources = nullptr;
+	_screen = nullptr;
+	_sound = nullptr;
 }
 
 MADSEngine::~MADSEngine() {
+	delete _events;
+	delete _resources;
+	delete _screen;
+	delete _sound;
 }
 
 void MADSEngine::initialise() {
-	_soundManager.setVm(this, _mixer);
+	// Set up debug channels
+	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+
+	// Initial sub-system engine references
+	MSurface::setVm(this);
+	MSprite::setVm(this);
+
+	_events = new EventsManager(this);
+	_resources = new ResourcesManager(this);
+	_screen = MSurface::init();
+	_sound = new SoundManager(this, _mixer);
 }
 
 Common::Error MADSEngine::run() {
 	initGraphics(320, 200, false);
 	initialise();
-	_soundManager.test();
 
 	Common::Event e;
 	while (!shouldQuit()) {

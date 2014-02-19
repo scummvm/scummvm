@@ -20,33 +20,38 @@
  *
  */
 
-#include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
-#include "common/memstream.h"
-#include "mads/sound.h"
+#ifndef MADS_RESOURCES_H
+#define MADS_RESOURCES_H
+
+#include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace MADS {
 
-SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
-	_vm = vm;
-	_mixer = mixer;
-	_asound = nullptr;
-}
+class MADSEngine;
 
-SoundManager::~SoundManager() {
-	delete _asound;
-}
+class ResourcesManager {
+private:
+	MADSEngine *_vm;
+public:
+	ResourcesManager(MADSEngine *vm);
 
-void SoundManager::test() {
-	_asound = new Nebular::ASound1(_mixer);
-	_asound->command(5);
-	_asound->command(28);
-	_asound->command(19);
-}
+	/**
+	 * Return a named resource
+	 */
+	Common::SeekableReadStream *get(const Common::String &resourceName) {
+		// TODO
+		return nullptr;
+	}
 
-void SoundManager::poll() {
-	if (_asound)
-		_asound->poll();
-}
+	/**
+	 * Release a previously loaded resource
+	 */
+	void toss(const Common::String &resourceName) {
+		// TODO
+	}
+};
 
 } // End of namespace MADS
+
+#endif /* MADS_RESOURCES_H */

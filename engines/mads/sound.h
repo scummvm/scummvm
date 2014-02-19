@@ -38,10 +38,9 @@ private:
 	Audio::Mixer *_mixer;
 	Nebular::ASound *_asound;
 public:
-	SoundManager();
+	SoundManager(MADSEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
 	
-	void setVm(MADSEngine *vm, Audio::Mixer *mixer);
 	void test();
 	void poll();
 };

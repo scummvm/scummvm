@@ -33,9 +33,9 @@
 
 namespace MADS {
 
-namespace Nebular {
-
 class SoundManager;
+
+namespace Nebular {
 
 /**
  * Represents the data for a channel on the Adlib

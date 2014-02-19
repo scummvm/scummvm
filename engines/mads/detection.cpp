@@ -38,7 +38,18 @@ namespace MADS {
 
 struct MADSGameDescription {
 	ADGameDescription desc;
+
+	int gameID;
+	uint32 features;
 };
+
+uint32 MADSEngine::getGameID() const {
+	return _gameDescription->gameID;
+}
+
+uint32 MADSEngine::getGameFeatures() const {
+	return _gameDescription->gameID;
+}
 
 uint32 MADSEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
@@ -50,10 +61,6 @@ Common::Language MADSEngine::getLanguage() const {
 
 Common::Platform MADSEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
-}
-
-bool MADSEngine::getIsDemo() const {
-	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
 } // End of namespace MADS
@@ -165,7 +172,7 @@ SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int s
 
 
 #if PLUGIN_ENABLED_DYNAMIC(MADS)
-REGISTER_PLUGIN_DYNAMIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
+	REGISTER_PLUGIN_STATIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
 #endif
