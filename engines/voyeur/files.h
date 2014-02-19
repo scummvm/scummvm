@@ -549,14 +549,6 @@ public:
 	byte _buttonIds[64];
 	byte *_ctlPtr;
 	byte *_playCommandsPtr;
-public:
-	ThreadResource(BoltFilesState &state, const byte *src);
-	virtual ~ThreadResource() {}
-
-	/**
-	 * Initialize the thread
-	 */
-	void initThreadStruct(int idx, int id);
 
 	/**
 	 * Loads the specified stack
@@ -569,14 +561,23 @@ public:
 	void unloadAStack(int stackId);
 
 	/**
-	 * Go to a new state and/or stack
-	 */
-	bool goToState(int stackId, int stateId);
-
-	/**
 	 * Initializes data for the thread based on the current state
 	 */
 	bool doState();
+
+public:
+	ThreadResource(BoltFilesState &state, const byte *src);
+	virtual ~ThreadResource() {}
+
+	/**
+	 * Initialize the thread
+	 */
+	void initThreadStruct(int idx, int id);
+
+	/**
+	 * Go to a new state and/or stack
+	 */
+	bool goToState(int stackId, int stateId);
 
 	bool chooseSTAMPButton(int buttonId);
 
