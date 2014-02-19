@@ -439,7 +439,36 @@ void ShootEmUp::bumpFolk() {
 }
 
 void ShootEmUp::peopleRunning() {
-	warning("STUB: ShootEmUp::peopleRunning()");
+	if (_count321 != 0)
+		return;
+
+	for (int i = 0; i < 4; i++) {
+		if (_running[i]._x != kFlag) {
+			if (((_running[i]._y + _running[i]._iy) <= 53) || ((_running[i]._y + _running[i]._iy) >= 120))
+				_running[i]._iy = -(_running[i]._iy);
+
+			byte frame = 0;
+			if (_running[i]._ix < 0)
+				frame = _running[i]._frame;
+			else
+				frame = _running[i]._frame + 7;
+			define(_running[i]._x, _running[i]._y, frame, 0, 0, 1, false, true);
+
+			if (_running[i]._frameDelay == 0) {
+				_running[i]._frame++;
+				if (_running[i]._frame == _running[i]._tooHigh)
+					_running[i]._frame = _running[i]._lowest;
+				_running[i]._frameDelay = kFrameDelayMax;
+				_running[i]._y += _running[i]._iy;
+			} else
+				_running[i]._frameDelay--;
+
+			if (((_running[i]._x + _running[i]._ix) <= 0) || ((_running[i]._x + _running[i]._ix) >= 620))
+				turnAround(i, true);
+
+			_running[i]._x += _running[i]._ix;
+		}
+	}
 }
 
 void ShootEmUp::updateTime() {
