@@ -376,7 +376,7 @@ void BaseRenderOSystem::addDirtyRect(const Common::Rect &rect) {
 void BaseRenderOSystem::drawTickets() {
 	RenderQueueIterator it = _renderQueue.begin();
 	// Clean out the old tickets
-	// Note: We draw invalid tickets too, otherwise we wouldn't be honouring
+	// Note: We draw invalid tickets too, otherwise we wouldn't be honoring
 	// the draw request they obviously made BEFORE becoming invalid, either way
 	// we have a copy of their data, so their invalidness won't affect us.
 	while (it != _renderQueue.end()) {
@@ -402,7 +402,7 @@ void BaseRenderOSystem::drawTickets() {
 	it = _renderQueue.begin();
 	_lastFrameIter = _renderQueue.end();
 	// A special case: If the screen has one giant OPAQUE rect to be drawn, then we skip filling
-	// the background colour. Typical use-case: Fullscreen FMVs.
+	// the background color. Typical use-case: Fullscreen FMVs.
 	// Caveat: The FPS-counter will invalidate this.
 	if (it != _lastFrameIter && _renderQueue.front() == _renderQueue.back() && (*it)->_transform._alphaDisable == true) {
 		// If our single opaque rect fills the dirty rect, we can skip filling.
