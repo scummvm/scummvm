@@ -6721,19 +6721,19 @@ bool Scene800::Button::startAction(CursorType action, Event &event) {
 }
 
 bool Scene800::CableJunction::startAction(CursorType action, Event &event) {
-	if (action != R2_OPTICAL_FIBRE) {
+	if (action != R2_OPTICAL_FIBER) {
 		return NamedHotspot::startAction(action, event);
 	} else {
 		Scene800 *scene = (Scene800 *)R2_GLOBALS._sceneManager._scene;
 
 		R2_GLOBALS._player.disableControl();
-		scene->_opticalFibre.postInit();
+		scene->_opticalFiber.postInit();
 		scene->_sceneMode = 803;
 
 		if (R2_INVENTORY.getObjectScene(R2_READER) == 800)
-			scene->setAction(&scene->_sequenceManager1, scene, 813, &R2_GLOBALS._player, &scene->_opticalFibre, &scene->_reader, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 813, &R2_GLOBALS._player, &scene->_opticalFiber, &scene->_reader, NULL);
 		else
-			scene->setAction(&scene->_sequenceManager1, scene, 803, &R2_GLOBALS._player, &scene->_opticalFibre, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 803, &R2_GLOBALS._player, &scene->_opticalFiber, NULL);
 
 		return true;
 	}
@@ -6751,8 +6751,8 @@ bool Scene800::DeviceSlot::startAction(CursorType action, Event &event) {
 		_lookLineNum = 27;
 		scene->_sceneMode = 809;
 
-		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800)
-			scene->setAction(&scene->_sequenceManager1, scene, 815, &R2_GLOBALS._player, &scene->_reader, &scene->_opticalFibre, NULL);
+		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBER) == 800)
+			scene->setAction(&scene->_sequenceManager1, scene, 815, &R2_GLOBALS._player, &scene->_reader, &scene->_opticalFiber, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager1, scene, 809, &R2_GLOBALS._player, &scene->_reader, NULL);
 		return true;
@@ -6761,9 +6761,9 @@ bool Scene800::DeviceSlot::startAction(CursorType action, Event &event) {
 		scene->_reader.postInit();
 		scene->_sceneMode = 804;
 
-		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800) {
+		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBER) == 800) {
 			scene->setAction(&scene->_sequenceManager1, scene, 814, &R2_GLOBALS._player,
-				&scene->_reader, &scene->_opticalFibre, NULL);
+				&scene->_reader, &scene->_opticalFiber, NULL);
 		} else {
 			scene->setAction(&scene->_sequenceManager1, scene, 804, &R2_GLOBALS._player,
 				&scene->_reader, NULL);
@@ -6879,22 +6879,22 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 	_autodocCover.setPosition(Common::Point(119, 161));
 	_autodocCover.setDetails(800, 6, 7, -1, 1, (SceneItem *)NULL);
 
-	if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800) {
-		_opticalFibre.postInit();
+	if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBER) == 800) {
+		_opticalFiber.postInit();
 		if (R2_INVENTORY.getObjectScene(R2_READER) == 800)
-			_opticalFibre.setup(800, 4, 1);
+			_opticalFiber.setup(800, 4, 1);
 		else
-			_opticalFibre.setup(800, 7, 2);
+			_opticalFiber.setup(800, 7, 2);
 
-		_opticalFibre.setPosition(Common::Point(220, 124));
-		_opticalFibre.fixPriority(140);
+		_opticalFiber.setPosition(Common::Point(220, 124));
+		_opticalFiber.fixPriority(140);
 	}
 
 	if (R2_INVENTORY.getObjectScene(R2_READER) == 800) {
 		_reader.postInit();
 
-		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 800) {
-			_opticalFibre.setup(800, 4, 1);
+		if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBER) == 800) {
+			_opticalFiber.setup(800, 4, 1);
 			_reader.hide();
 		} else {
 			_reader.setup(800, 7, 1);
@@ -6969,7 +6969,7 @@ void Scene800::signal() {
 		break;
 	case 803:
 		R2_GLOBALS._player.enableControl();
-		R2_INVENTORY.setObjectScene(R2_OPTICAL_FIBRE, 800);
+		R2_INVENTORY.setObjectScene(R2_OPTICAL_FIBER, 800);
 		break;
 	case 804:
 		R2_GLOBALS._player.enableControl();
@@ -7265,7 +7265,7 @@ void Scene825::doButtonPress(int buttonId) {
 
 			if (R2_GLOBALS.getFlag(4)) {
 				if ((R2_INVENTORY.getObjectScene(R2_READER) != 800) ||
-						(R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) != 800)) {
+						(R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBER) != 800)) {
 					_sceneText.setPosition(Common::Point(116, 75));
 					_sceneText.setup(ACCESS_CODE_REQUIRED);
 				} else if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) != 800) {
@@ -7282,7 +7282,7 @@ void Scene825::doButtonPress(int buttonId) {
 				R2_GLOBALS.setFlag(2);
 
 				if ((R2_INVENTORY.getObjectScene(R2_READER) != 800) ||
-						(R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) != 800)) {
+						(R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBER) != 800)) {
 					_sceneText.setPosition(Common::Point(116, 75));
 					_sceneText.setup(ACCESS_CODE_REQUIRED);
 				} else {
@@ -7382,14 +7382,14 @@ void Scene825::doButtonPress(int buttonId) {
  *--------------------------------------------------------------------------*/
 
 bool Scene850::Indicator::startAction(CursorType action, Event &event) {
-	if ((action != CURSOR_USE) || (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) != 850))
+	if ((action != CURSOR_USE) || (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBER) != 850))
 		return NamedHotspot::startAction(action, event);
 	else {
 		Scene850 *scene = (Scene850 *)R2_GLOBALS._sceneManager._scene;
 
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 851;
-		scene->setAction(&scene->_sequenceManager1, scene, 851, &R2_GLOBALS._player, &scene->_fibre, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 851, &R2_GLOBALS._player, &scene->_fiber, NULL);
 		return true;
 	}
 }
@@ -7488,10 +7488,10 @@ void Scene850::postInit(SceneObjectList *OwnerList) {
 	_panel.fixPriority(82);
 	_panel.setDetails(850, 24, -1, -1, 1, (SceneItem *)NULL);
 
-	if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBRE) == 850) {
-		_fibre.postInit();
-		_fibre.setup(850, 6, 1);
-		_fibre.setPosition(Common::Point(280, 87));
+	if (R2_INVENTORY.getObjectScene(R2_OPTICAL_FIBER) == 850) {
+		_fiber.postInit();
+		_fiber.setup(850, 6, 1);
+		_fiber.setPosition(Common::Point(280, 87));
 	}
 
 	R2_GLOBALS._player.postInit();
@@ -7538,8 +7538,8 @@ void Scene850::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 851:
-		R2_INVENTORY.setObjectScene(R2_OPTICAL_FIBRE, 1);
-		_fibre.remove();
+		R2_INVENTORY.setObjectScene(R2_OPTICAL_FIBER, 1);
+		_fiber.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 852:

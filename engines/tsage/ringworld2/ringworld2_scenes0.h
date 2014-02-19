@@ -809,7 +809,7 @@ public:
 	Button _button;
 	CableJunction _cableJunction;
 	DeviceSlot _deviceSlot;
-	SceneActor _autodocCover, _opticalFibre, _reader;
+	SceneActor _autodocCover, _opticalFiber, _reader;
 	Door _door;
 	Tray _tray;
 	ComScanner _comScanner;
@@ -885,7 +885,7 @@ public:
 	NamedHotspot _background, _eastDoor, _compartment, _sickBayIndicator;
 	NamedHotspot _liftControls;
 	Indicator _indicator;
-	SceneActor _spark, _fibre;
+	SceneActor _spark, _fiber;
 	LiftDoor _liftDoor;
 	SickBayDoor _sickBayDoor;
 	Clamp _clamp;

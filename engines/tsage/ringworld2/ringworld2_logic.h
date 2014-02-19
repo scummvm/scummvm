@@ -178,7 +178,7 @@ public:
 	InvObject _chargedPowerCapsule;
 	InvObject _aerosol;
 	InvObject _remoteControl;
-	InvObject _opticalFibre;
+	InvObject _opticalFiber;
 	InvObject _clamp;
 	InvObject _attractorHarness;
 	InvObject _fuelCell;

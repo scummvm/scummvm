@@ -653,7 +653,7 @@ bool Ringworld2Debugger::Cmd_ListObjects(int argc, const char **argv) {
 	DebugPrintf("11 - R2_CHARGED_POWER_CAPSULE\n");
 	DebugPrintf("12 - R2_AEROSOL\n");
 	DebugPrintf("13 - R2_REMOTE_CONTROL\n");
-	DebugPrintf("14 - R2_OPTICAL_FIBRE\n");
+	DebugPrintf("14 - R2_OPTICAL_FIBER\n");
 	DebugPrintf("15 - R2_CLAMP\n");
 	DebugPrintf("16 - R2_ATTRACTOR_CABLE_HARNESS\n");
 	DebugPrintf("17 - R2_FUEL_CELL\n");

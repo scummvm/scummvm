@@ -814,7 +814,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 		_chargedPowerCapsule(1, 12),
 		_aerosol(1, 13),
 		_remoteControl(1, 14),
-		_opticalFibre(1, 15),
+		_opticalFiber(1, 15),
 		_clamp(1, 16),
 		_attractorHarness(1, 17),
 		_fuelCell(2, 2),
@@ -869,7 +869,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 	_itemList.push_back(&_chargedPowerCapsule);
 	_itemList.push_back(&_aerosol);
 	_itemList.push_back(&_remoteControl);
-	_itemList.push_back(&_opticalFibre);
+	_itemList.push_back(&_opticalFiber);
 	_itemList.push_back(&_clamp);
 	_itemList.push_back(&_attractorHarness);
 	_itemList.push_back(&_fuelCell);
@@ -933,7 +933,7 @@ void Ringworld2InvObjectList::reset() {
 	setObjectScene(R2_CHARGED_POWER_CAPSULE, 400);
 	setObjectScene(R2_AEROSOL, 500);
 	setObjectScene(R2_REMOTE_CONTROL, 1550);
-	setObjectScene(R2_OPTICAL_FIBRE, 850);
+	setObjectScene(R2_OPTICAL_FIBER, 850);
 	setObjectScene(R2_CLAMP, 850);
 	setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 0);
 	setObjectScene(R2_FUEL_CELL, 1550);
