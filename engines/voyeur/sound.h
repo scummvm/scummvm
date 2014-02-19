@@ -50,9 +50,6 @@ public:
 	void startVOCPlay(int soundId);
 	int getVOCStatus();
 	uint32 getVOCFrame();
-
-	// Methods in the original that are stubbed in ScummVM
-	void continueVocMap() {}
 };
 
 } // End of namespace Voyeur

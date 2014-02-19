@@ -325,8 +325,6 @@ bool VoyeurEngine::doLock() {
 			while (_soundManager.getVOCStatus()) {
 				if (shouldQuit())
 					break;
-
-				_soundManager.continueVocMap();
 				_eventsManager.delay(1);
 			}
 

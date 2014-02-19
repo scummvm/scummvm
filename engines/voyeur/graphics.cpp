@@ -244,9 +244,8 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	if (srcFlags & DISPFLAG_1000) {
 		srcImgData = srcPic->_imgData + (var4C << 14);
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
-			if (var4C < 4) {
+			if (var4C < 4)
 				++var4C;
-			}
 		}
 	} else {
 		srcImgData = srcPic->_imgData;
@@ -254,9 +253,8 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	if (destFlags & DISPFLAG_1000) {
 		destImgData = destPic->_imgData + (var4C << 14);
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
-			if (var4C < 4) {
+			if (var4C < 4)
 				++var4C;
-			}
 		}		
 	} else {
 		destImgData = destPic->_imgData;
