@@ -20,43 +20,20 @@
  *
  */
 
-#ifndef MADS_RESOURCES_H
-#define MADS_RESOURCES_H
-
 #include "common/scummsys.h"
-#include "common/stream.h"
-#include "common/str.h"
+#include "mads/mads.h"
+#include "mads/game.h"
+#include "mads/graphics.h"
+#include "mads/msurface.h"
 
 namespace MADS {
 
-class MADSEngine;
+Game *Game::init(MADSEngine *vm) {
+	return new Game(vm);
+}
 
-class ResourcesManager {
-private:
-	MADSEngine *_vm;
-public:
-	ResourcesManager(MADSEngine *vm);
-
-	/**
-	 * Return a named resource
-	 */
-	Common::SeekableReadStream *get(const Common::String &resourceName, bool loadFlag = false) {
-		// TODO
-		return nullptr;
-	}
-
-	Common::SeekableReadStream *openFile(const Common::String &resourceName) { 
-		return get(resourceName, false); 
-	}
-
-	/**
-	 * Release a previously loaded resource
-	 */
-	void toss(const Common::String &resourceName) {
-		// TODO
-	}
-};
+Game::Game(MADSEngine *vm): _vm(vm), _surface(MSurface::init(
+		MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT)) {
+}
 
 } // End of namespace MADS
-
-#endif /* MADS_RESOURCES_H */

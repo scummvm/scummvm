@@ -20,43 +20,11 @@
  *
  */
 
-#ifndef MADS_RESOURCES_H
-#define MADS_RESOURCES_H
-
 #include "common/scummsys.h"
-#include "common/stream.h"
-#include "common/str.h"
+#include "mads/mads.h"
+#include "mads/graphics.h"
 
 namespace MADS {
 
-class MADSEngine;
-
-class ResourcesManager {
-private:
-	MADSEngine *_vm;
-public:
-	ResourcesManager(MADSEngine *vm);
-
-	/**
-	 * Return a named resource
-	 */
-	Common::SeekableReadStream *get(const Common::String &resourceName, bool loadFlag = false) {
-		// TODO
-		return nullptr;
-	}
-
-	Common::SeekableReadStream *openFile(const Common::String &resourceName) { 
-		return get(resourceName, false); 
-	}
-
-	/**
-	 * Release a previously loaded resource
-	 */
-	void toss(const Common::String &resourceName) {
-		// TODO
-	}
-};
 
 } // End of namespace MADS
-
-#endif /* MADS_RESOURCES_H */

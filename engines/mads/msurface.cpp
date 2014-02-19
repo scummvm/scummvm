@@ -21,10 +21,11 @@
  */
 
 #include "engines/util.h"
-#include "mads/mads.h"
 #include "mads/compression.h"
-#include "mads/msurface.h"
+#include "mads/graphics.h"
+#include "mads/mads.h"
 #include "mads/msprite.h"
+#include "mads/msurface.h"
 
 namespace MADS {
 
@@ -370,8 +371,8 @@ void MSurfaceMADS::loadCodes(Common::SeekableReadStream *source) {
 		return;
 	}
 
-	uint16 widthVal = 320;
-	uint16 heightVal = 156;
+	uint16 widthVal = MADS_SCREEN_WIDTH;
+	uint16 heightVal = MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT;
 	byte *walkMap = new byte[source->size()];
 
 	create(widthVal, heightVal);
@@ -536,8 +537,8 @@ void MSurfaceMADS::loadInterface(int index, RGBList **palData) {
 
 	// Chunk 1, data
 	intStream = intFile.getItemStream(1);
-	create(320, 44);
-	intStream->read(pixels, 320 * 44);
+	create(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
+	intStream->read(pixels, MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
 	delete intStream;
 }
 

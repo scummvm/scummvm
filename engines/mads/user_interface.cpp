@@ -20,43 +20,24 @@
  *
  */
 
-#ifndef MADS_RESOURCES_H
-#define MADS_RESOURCES_H
-
 #include "common/scummsys.h"
-#include "common/stream.h"
-#include "common/str.h"
+#include "mads/mads.h"
+#include "mads/graphics.h"
+#include "mads/user_interface.h"
+#include "mads/msurface.h"
 
 namespace MADS {
 
-class MADSEngine;
+UserInterface *UserInterface::init(MADSEngine *vm) {
+	return new UserInterface(vm);
+}
 
-class ResourcesManager {
-private:
-	MADSEngine *_vm;
-public:
-	ResourcesManager(MADSEngine *vm);
+UserInterface::UserInterface(MADSEngine *vm): _vm(vm), _surface(
+	MSurface::init(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT)) {
+}
 
-	/**
-	 * Return a named resource
-	 */
-	Common::SeekableReadStream *get(const Common::String &resourceName, bool loadFlag = false) {
-		// TODO
-		return nullptr;
-	}
-
-	Common::SeekableReadStream *openFile(const Common::String &resourceName) { 
-		return get(resourceName, false); 
-	}
-
-	/**
-	 * Release a previously loaded resource
-	 */
-	void toss(const Common::String &resourceName) {
-		// TODO
-	}
-};
+UserInterface::~UserInterface() {
+	delete _surface;
+}
 
 } // End of namespace MADS
-
-#endif /* MADS_RESOURCES_H */

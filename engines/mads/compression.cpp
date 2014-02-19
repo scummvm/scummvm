@@ -25,6 +25,8 @@
 namespace MADS {
 
 const char *const madsPackString = "MADSPACK";
+const char *const FabInputExceededError = "FabDecompressor - Passed end of input buffer during decompression";
+const char *const FabOutputExceededError = "FabDecompressor - Decompressed data exceeded specified size";
 
 bool MadsPack::isCompressed(Common::SeekableReadStream *stream) {
 	// Check whether the passed stream is packed
@@ -93,9 +95,6 @@ MadsPack::~MadsPack() {
 }
 
 //--------------------------------------------------------------------------
-
-const char *FabInputExceededError = "FabDecompressor - Passed end of input buffer during decompression";
-const char *FabOutputExceededError = "FabDecompressor - Decompressed data exceeded specified size";
 
 void FabDecompressor::decompress(const byte *srcData, int srcSize, byte *destData, int destSize) {
 	byte copyLen, copyOfsShift, copyOfsMask, copyLenMask;

@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 #include "mads/mads.h"
+#include "mads/graphics.h"
 #include "mads/resources.h"
 #include "mads/sound.h"
 #include "mads/msurface.h"
@@ -40,17 +41,24 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_easyMouse = true;
 	_invObjectStill = false;
 	_textWindowStill = false;
+
+	_events = nullptr;
+	_font = nullptr;
 	_palette = nullptr;
 	_resources = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
+	_userInterface = nullptr;
 }
 
 MADSEngine::~MADSEngine() {
 	delete _events;
+	delete _font;
+	delete _palette;
 	delete _resources;
 	delete _screen;
 	delete _sound;
+	delete _userInterface;
 }
 
 void MADSEngine::initialise() {
@@ -63,13 +71,18 @@ void MADSEngine::initialise() {
 	MSprite::setVm(this);
 
 	_events = new EventsManager(this);
+	_palette = new Palette(this);
+	_font = Font::init(this);
 	_resources = new ResourcesManager(this);
-	_screen = MSurface::init();
+	_screen = MSurface::init(true);
 	_sound = new SoundManager(this, _mixer);
+	_userInterface = UserInterface::init(this);
+
+	_screen->empty();
 }
 
 Common::Error MADSEngine::run() {
-	initGraphics(320, 200, false);
+	initGraphics(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, false);
 	initialise();
 
 	Common::Event e;

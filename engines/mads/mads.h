@@ -31,9 +31,11 @@
 #include "engines/engine.h"
 #include "graphics/surface.h"
 #include "mads/events.h"
+#include "mads/font.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"
+#include "mads/user_interface.h"
 
 /**
  * This is the namespace of the MADS engine.
@@ -88,10 +90,12 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
 	EventsManager *_events;
+	Font *_font;
 	Palette *_palette;
 	ResourcesManager *_resources;
 	MSurface *_screen;
 	SoundManager *_sound;
+	UserInterface *_userInterface;
 
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
