@@ -2566,14 +2566,14 @@ void DreamWebEngine::showGun() {
 	greyscaleSum();
 	_fadeDirection = 1;
 	_fadeCount = 63;
-	_colourPos = 0;
+	_colorPos = 0;
 	_numToFade = 128;
 	hangOn(130);
 	endPalToStart();
 	clearEndPal();
 	_fadeDirection = 1;
 	_fadeCount = 63;
-	_colourPos = 0;
+	_colorPos = 0;
 	_numToFade = 128;
 	hangOn(200);
 	_roomsSample = 34;
@@ -2749,7 +2749,7 @@ void DreamWebEngine::entryAnims() {
 			// Make doors open
 			removeSetObject(4);
 			placeSetObject(5);
-		} else if (_vars._location == 47) {	// Dream centre
+		} else if (_vars._location == 47) {	// Dream center
 			placeSetObject(4);
 			placeSetObject(5);
 		} else if (_vars._location == 38) {	// Car park

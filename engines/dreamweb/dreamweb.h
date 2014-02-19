@@ -415,7 +415,7 @@ public:
 	uint8 _saveLoadPage;
 	uint8 _currentSlot;
 	uint8 _cursorPos;
-	uint8 _colourPos;
+	uint8 _colorPos;
 	uint8 _fadeDirection;
 	uint8 _numToFade;
 	uint8 _fadeCount;
@@ -515,8 +515,8 @@ public:
 	int findCommand(const char *const cmdList[]);
 
 	// from newplace.cpp
-	void getUnderCentre();
-	void putUnderCentre();
+	void getUnderCenter();
+	void putUnderCenter();
 	void showArrows();
 	uint8 getLocation(uint8 index);
 	void setLocation(uint8 index);
@@ -996,7 +996,7 @@ public:
 	void useDryer();
 	void callEdensDLift();
 	void callEdensLift();
-	void openYourNeighbour();
+	void openYourNeighbor();
 	void openRyan();
 	void openPoolBoss();
 	void openEden();

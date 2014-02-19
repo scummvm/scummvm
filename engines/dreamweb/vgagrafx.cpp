@@ -235,7 +235,7 @@ void DreamWebEngine::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y
 
 void DreamWebEngine::showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, uint8 effectsFlag, uint8 width, uint8 height) {
 	if (effectsFlag) {
-		if (effectsFlag & 128) { //centred
+		if (effectsFlag & 128) { //centered
 			x -= width / 2;
 			y -= height / 2;
 		}

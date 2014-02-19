@@ -199,7 +199,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_saveLoadPage = 0;
 	_currentSlot = 0;
 	_cursorPos = 0;
-	_colourPos = 0;
+	_colorPos = 0;
 	_fadeDirection = 0;
 	_numToFade = 0;
 	_fadeCount = 0;

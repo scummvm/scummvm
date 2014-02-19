@@ -113,7 +113,7 @@ void DreamWebEngine::lookAtPlace() {
 
 	delPointer();
 	delTextLine();
-	getUnderCentre();
+	getUnderCenter();
 	showFrame(_newplaceGraphics3, 60, 72, 0, 0);
 	showFrame(_newplaceGraphics3, 60, 72 + 55, 4, 0);
 	if (_foreignRelease)
@@ -127,15 +127,15 @@ void DreamWebEngine::lookAtPlace() {
 	hangOnP(500);
 	_pointerMode = 0;
 	_pointerFrame = 0;
-	putUnderCentre();
+	putUnderCenter();
 	workToScreenM();
 }
 
-void DreamWebEngine::getUnderCentre() {
+void DreamWebEngine::getUnderCenter() {
 	multiGet(_mapStore, 58, 72, 254, 110);
 }
 
-void DreamWebEngine::putUnderCentre() {
+void DreamWebEngine::putUnderCenter() {
 	multiPut(_mapStore, 58, 72, 254, 110);
 }
 

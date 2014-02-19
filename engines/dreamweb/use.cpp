@@ -73,7 +73,7 @@ void DreamWebEngine::useRoutine() {
 		{ &DreamWebEngine::openLouis,               "ENTA" },
 		{ &DreamWebEngine::openRyan,                "ENTB" },
 		{ &DreamWebEngine::openPoolBoss,            "ENTE" },
-		{ &DreamWebEngine::openYourNeighbour,       "ENTC" },
+		{ &DreamWebEngine::openYourNeighbor,       "ENTC" },
 		{ &DreamWebEngine::openEden,                "ENTD" },
 		{ &DreamWebEngine::openSarters,             "ENTH" },
 		{ &DreamWebEngine::wearWatch,               "WWAT" },
@@ -458,7 +458,7 @@ void DreamWebEngine::callEdensDLift() {
 	}
 }
 
-void DreamWebEngine::openYourNeighbour() {
+void DreamWebEngine::openYourNeighbor() {
 	enterCode(255, 255, 255, 255);
 	_getBack = 1;
 }
