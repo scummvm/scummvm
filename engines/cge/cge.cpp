@@ -73,7 +73,7 @@ void CGEEngine::initSceneValues() {
 void CGEEngine::init() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::setup()");
 
-	// Initialise fields
+	// Initialize fields
 	_lastFrame = 0;
 	_lastTick = 0;
 	_hero = NULL;
@@ -87,7 +87,7 @@ void CGEEngine::init() {
 	// Create debugger console
 	_console = new CGEConsole(this);
 
-	// Initialise engine objects
+	// Initialize engine objects
 	_font = new Font(this, "CGE");
 	_text = new Text(this, "CGE");
 	_talk = NULL;
