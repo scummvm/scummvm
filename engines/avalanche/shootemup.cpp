@@ -411,11 +411,31 @@ void ShootEmUp::collisionCheck() {
 }
 
 void ShootEmUp::turnAround(byte who, bool randomX) {
-	warning("STUB: ShootEmUp::turnAround()");
+	if (randomX) {
+		int8 ix = (_vm->_rnd->getRandomNumber(4) + 1);
+		if (_running[who]._ix > 0)
+			_running[who]._ix = -(ix);
+		else
+			_running[who]._ix = ix;
+	} else
+		_running[who]._ix = -(_running[who]._ix);
+
+	_running[who]._iy = -(_running[who]._iy);
 }
 
 void ShootEmUp::bumpFolk() {
-	warning("STUB: ShootEmUp::bumpFolk()");
+	for (int i = 0; i < 4; i++) {
+		if (_running[i]._x != kFlag) {
+			for (int j = i + 1; j < 4; j++) {
+				bool overlaps = overlap(_running[i]._x, _running[i]._y, _running[i]._x + 17, _running[i]._y + 24,
+										_running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
+				if ((_running[i]._x != kFlag) && overlaps) {
+					turnAround(i, false); // Opp. directions.
+					turnAround(j, false);
+				}
+			}
+		}
+	}
 }
 
 void ShootEmUp::peopleRunning() {
