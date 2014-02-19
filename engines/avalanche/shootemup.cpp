@@ -86,6 +86,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_timeThisSecond = 0;
 	_cp = false;
 	_wasFacing = 0;
+	_score = 0;
 }
 
 void ShootEmUp::run() {
