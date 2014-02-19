@@ -332,7 +332,7 @@ public:
 	byte *_field30;
 
 	// Rect lists and counts. Note that _rectListCount values of '-1' seem to have
-	// special significance, which is why I'm not making them redundant in favour 
+	// special significance, which is why I'm not making them redundant in favor 
 	// of the arrays' .size() method
 	Common::Array<Common::Rect> *_rectListPtr[3];
 	int _rectListCount[3];
@@ -390,7 +390,7 @@ public:
 	virtual ~FontResource();
 };
 
-enum FontJustify { ALIGN_LEFT = 0, ALIGN_CENTRE = 1, ALIGN_RIGHT = 2 };
+enum FontJustify { ALIGN_LEFT = 0, ALIGN_CENTER = 1, ALIGN_RIGHT = 2 };
 
 class FontInfoResource {
 public:

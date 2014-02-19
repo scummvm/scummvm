@@ -307,7 +307,7 @@ void VoyeurEngine::doClosingCredits() {
 		if (flags & 1) {
 			fi._foreColor = 1;
 			fi._curFont = _bVoy->boltEntry(0x402)._fontResource;
-			fi._justify = ALIGN_CENTRE;
+			fi._justify = ALIGN_CENTER;
 			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
@@ -319,7 +319,7 @@ void VoyeurEngine::doClosingCredits() {
 		if (flags & 0x40) {
 			fi._foreColor = 2;
 			fi._curFont = _bVoy->boltEntry(0x400)._fontResource;
-			fi._justify = ALIGN_CENTRE;
+			fi._justify = ALIGN_CENTER;
 			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
@@ -352,7 +352,7 @@ void VoyeurEngine::doClosingCredits() {
 		if (flags & 4) {
 			fi._foreColor = 1;
 			fi._curFont = _bVoy->boltEntry(0x402)._fontResource;
-			fi._justify = ALIGN_CENTRE;
+			fi._justify = ALIGN_CENTER;
 			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
@@ -362,7 +362,7 @@ void VoyeurEngine::doClosingCredits() {
 
 			fi._foreColor = 2;
 			fi._curFont = _bVoy->boltEntry(0x400)._fontResource;
-			fi._justify = ALIGN_CENTRE;
+			fi._justify = ALIGN_CENTER;
 			fi._justifyWidth = 384;
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry) + 13);
@@ -399,7 +399,7 @@ void VoyeurEngine::doPiracy() {
 	fi._backColor = 2;
 	fi._fontSaveBack = false;
 	fi._fontFlags = 0;
-	fi._justify = ALIGN_CENTRE;
+	fi._justify = ALIGN_CENTER;
 	fi._justifyWidth = 384;
 	fi._justifyHeight = 230;
 

@@ -279,7 +279,7 @@ bool VoyeurEngine::doLock() {
 
 			// Display the last play time
 			_graphicsManager._fontPtr->_pos = Common::Point(0, 97);
-			_graphicsManager._fontPtr->_justify = ALIGN_CENTRE;
+			_graphicsManager._fontPtr->_justify = ALIGN_CENTER;
 			_graphicsManager._fontPtr->_justifyWidth = 384;
 			_graphicsManager._fontPtr->_justifyHeight = 97;
 
@@ -646,7 +646,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	fi._foreColor = 224;
 	fi._fontSaveBack = 0;
 	fi._pos = Common::Point(0, 116);
-	fi._justify = ALIGN_CENTRE;
+	fi._justify = ALIGN_CENTER;
 	fi._justifyWidth = 384;
 	fi._justifyHeight = 120;
 
@@ -654,7 +654,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	
 	if (!location.empty()) {
 		fi._pos = Common::Point(0, 138);
-		fi._justify = ALIGN_CENTRE;
+		fi._justify = ALIGN_CENTER;
 		fi._justifyWidth = 384;
 		fi._justifyHeight = 140;
 
