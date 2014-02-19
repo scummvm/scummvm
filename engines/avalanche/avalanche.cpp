@@ -279,9 +279,9 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 		if (!_favoriteSong.empty())
 			_favoriteSong.clear();
-		uint16 favourite_songSize = 0;
-		sz.syncAsUint16LE(favourite_songSize);
-		for (uint16 i = 0; i < favourite_songSize; i++) {
+		uint16 favoriteSongSize = 0;
+		sz.syncAsUint16LE(favoriteSongSize);
+		for (uint16 i = 0; i < favoriteSongSize; i++) {
 			sz.syncAsByte(actChr);
 			_favoriteSong += actChr;
 		}

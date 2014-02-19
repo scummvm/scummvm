@@ -455,7 +455,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	mx -= lx;
 	my -= ly + 2;
 
-	bool centre = false;
+	bool center = false;
 
 	byte iconIndent = 0;
 	switch (_useIcon) {
@@ -481,11 +481,11 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 		if (!_scroll[i].empty())
 			switch (_scroll[i][_scroll[i].size() - 1]) {
 			case kControlCenter:
-				centre = true;
+				center = true;
 				_scroll[i].deleteLastChar();
 				break;
 			case kControlLeftJustified:
-				centre = false;
+				center = false;
 				_scroll[i].deleteLastChar();
 				break;
 			case kControlQuestion:
@@ -497,7 +497,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 				break;
 			}
 
-		if (centre)
+		if (center)
 			say(320 - _scroll[i].size() * 4 + iconIndent, my, _scroll[i]);
 		else
 			say(mx + iconIndent, my, _scroll[i]);
