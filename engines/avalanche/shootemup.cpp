@@ -150,7 +150,12 @@ void ShootEmUp::blankIt() {
 }
 
 void ShootEmUp::moveThem() {
-	warning("STUB: ShootEmUp::moveThem()");
+	for (int i = 0; i < 99; i++) {
+		if (_sprites[i]._x != kFlag) {
+			_sprites[i]._x += _sprites[i]._ix;
+			_sprites[i]._y += _sprites[i]._iy;
+		}
+	}
 }
 
 void ShootEmUp::blank(Common::Rect rect) {
