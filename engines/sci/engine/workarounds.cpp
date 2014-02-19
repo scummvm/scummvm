@@ -411,6 +411,11 @@ const SciWorkaroundEntry kStrAt_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+const SciWorkaroundEntry kStrCpy_workarounds[] = {
+	{ GID_MOTHERGOOSE,   23,   23,  0,          "talkScript", "changeState",    -1,    0, { WORKAROUND_FAKE,      0 } }, // when talking to the girl in scene 23, there's no destination parameter (script bug - wrong instruction order). The original source is used directly afterwards in kDisplay, to show the girl's text - bug #6485
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kStrLen_workarounds[] = {
 	{ GID_QFG2,          210,     2,  0,                   "", "export 21",   0xdeb,    0, { WORKAROUND_FAKE,      0 } }, // When saying something incorrect at the WIT, an integer is passed instead of a reference - bug #5489
