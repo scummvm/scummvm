@@ -234,11 +234,11 @@ void ASound::noise() {
 	int randomVal = getRandomNumber();
 
 	if (_v1) {
-		setFrequency(_channelNum1, (randomVal ^ 0xFFFF) & _freqMask1 + _freqBase1);
+		setFrequency(_channelNum1, ((randomVal ^ 0xFFFF) & _freqMask1) + _freqBase1);
 	}
 
 	if (_v2) {
-		setFrequency(_channelNum2, randomVal & _freqMask2 + _freqBase2);		
+		setFrequency(_channelNum2, (randomVal & _freqMask2) + _freqBase2);		
 	}
 }
 
@@ -731,7 +731,7 @@ void ASound::loadSample(int sampleIndex) {
 void ASound::processSample() {
 	// Write out vib flags and split point
 	write2(8, 0x40 + _v11, 0x3F);
-	int depthRhythm = _ports[0xBD] & 0x3F | (_amDep ? 0x80 : 0) |
+	int depthRhythm = (_ports[0xBD] & 0x3F) | (_amDep ? 0x80 : 0) |
 		(_vibDep ? 0x40 : 0);
 	write2(8, 0xBD, depthRhythm);
 	write2(8, 8, _splitPoint ? 0x40 : 0);
@@ -758,7 +758,7 @@ void ASound::processSample() {
 	write2(8, 0xE0 + _v11, _samplePtr->_waveformSelect & 3);
 	
 	// Write out total level & scaling level
-	val = -(_samplePtr->_totalLevel & 0x3F - 0x3F) | (_samplePtr->_scalingLevel << 6);
+	val = -((_samplePtr->_totalLevel & 0x3F) - 0x3F) | (_samplePtr->_scalingLevel << 6);
 	write2(8, 0x40 + _v11, val);
 }
 

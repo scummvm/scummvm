@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	resources.o \
 	sound.o \
 	sound_nebular.o \
-	sprite.o \
 	user_interface.o
 
 # This module can be built as a plugin

@@ -69,6 +69,8 @@ protected:
 	MSurface(bool isScreen = false);
 	MSurface(int w, int h);
 public:
+	virtual ~MSurface() {}
+
 	void create(int w, int h) {
 		Graphics::Surface::create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 	}
@@ -155,7 +157,7 @@ class MSurfaceM4: public MSurface {
 	friend class MSurface;
 protected:
 	MSurfaceM4(bool isScreen = false): MSurface(isScreen) {}
-	MSurfaceM4(int w, int h): MSurface(w, h) {}
+	MSurfaceM4(int widthVal, int heightVal): MSurface(widthVal, heightVal) {}
 
 	void loadBackgroundStream(Common::SeekableReadStream *source);
 public:
@@ -167,18 +169,10 @@ class MSurfaceRiddle: public MSurfaceM4 {
 	friend class MSurface;
 protected:
 	MSurfaceRiddle(bool isScreen = false): MSurfaceM4(isScreen) {}
-	MSurfaceRiddle(int w, int h): MSurfaceM4(w, h) {}
+	MSurfaceRiddle(int widthVal, int heightVal): MSurfaceM4(widthVal, heightVal) {}
 public:
 	virtual void loadBackground(const Common::String &sceneName);
 };
-/*
-	void rexLoadBackground(Common::SeekableReadStream *source, RGBList **palData = NULL);
-	void madsLoadBackground(int roomNumber, RGBList **palData = NULL);
-	void m4LoadBackground(Common::SeekableReadStream *source);
-
-	void madsloadInterface(int index, RGBList **palData);
-	
-	*/
 
 } // End of namespace MADS
 
