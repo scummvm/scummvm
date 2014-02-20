@@ -7,7 +7,6 @@ void glopMaterial(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
 	float v[4] = { p[3].f, p[4].f, p[5].f, p[6].f };
-	int i;
 	GLMaterial *m;
 
 	if (mode == TGL_FRONT_AND_BACK) {
@@ -22,19 +21,19 @@ void glopMaterial(GLContext *c, GLParam *p) {
 
 	switch (type) {
 	case TGL_EMISSION:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->emission.v[i] = v[i];
 		break;
 	case TGL_AMBIENT:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->ambient.v[i] = v[i];
 		break;
 	case TGL_DIFFUSE:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->diffuse.v[i] = v[i];
 		break;
 	case TGL_SPECULAR:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->specular.v[i] = v[i];
 		break;
 	case TGL_SHININESS:
@@ -42,9 +41,9 @@ void glopMaterial(GLContext *c, GLParam *p) {
 		m->shininess_i = (int)(v[0] / 128.0f) * SPECULAR_BUFFER_RESOLUTION;
 		break;
 	case TGL_AMBIENT_AND_DIFFUSE:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->diffuse.v[i] = v[i];
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->ambient.v[i] = v[i];
 		break;
 	default:
@@ -65,13 +64,12 @@ void glopLight(GLContext *c, GLParam *p) {
 	int type = p[2].i;
 	V4 v;
 	GLLight *l;
-	int i;
 
 	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0 + T_MAX_LIGHTS);
 
 	l = &c->lights[light - TGL_LIGHT0];
 
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		v.v[i] = p[3 + i].f;
 
 	switch(type) {
@@ -101,7 +99,7 @@ void glopLight(GLContext *c, GLParam *p) {
 		}
 		break;
 	case TGL_SPOT_DIRECTION:
-		for (i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			l->spot_direction.v[i] = v.v[i];
 			l->norm_spot_direction.v[i] = v.v[i];
 		}
@@ -136,11 +134,10 @@ void glopLight(GLContext *c, GLParam *p) {
 void glopLightModel(GLContext *c, GLParam *p) {
 	int pname = p[1].i;
 	float v[4] = { p[2].f, p[3].f, p[4].f, p[5].f };
-	int i;
 
 	switch (pname) {
 	case TGL_LIGHT_MODEL_AMBIENT:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			c->ambient_light_model.v[i] = v[i];
 		break;
 	case TGL_LIGHT_MODEL_LOCAL_VIEWER:

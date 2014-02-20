@@ -99,7 +99,7 @@ void gl_print_op(FILE *f, GLParam *p) {
 void gl_compile_op(GLContext *c, GLParam *p) {
 	int op, op_size;
 	GLParamBuffer *ob, *ob1;
-	int index,i;
+	int index;
 
 	op = p[0].op;
 	op_size = op_table_size[op];
@@ -121,7 +121,7 @@ void gl_compile_op(GLContext *c, GLParam *p) {
 		index = 0;
 	}
 
-	for (i = 0; i < op_size; i++) {
+	for (int i = 0; i < op_size; i++) {
 		ob->ops[index] = p[i];
 		index++;
 	}
@@ -219,17 +219,17 @@ int glIsList(unsigned int list) {
 
 unsigned int glGenLists(int range) {
 	GLContext *c = gl_get_context();
-	int count, i, list;
+	int count, list;
 	GLList **lists;
 
 	lists = c->shared_state.lists;
 	count = 0;
-	for (i = 0; i < MAX_DISPLAY_LISTS; i++) {
+	for (int i = 0; i < MAX_DISPLAY_LISTS; i++) {
 		if (!lists[i]) {
 			count++;
 			if (count == range) {
 				list = i - range + 1;
-				for (i = 0; i < range; i++) {
+				for (int i = 0; i < range; i++) {
 					alloc_list(c, list + i);
 				}
 				return list;

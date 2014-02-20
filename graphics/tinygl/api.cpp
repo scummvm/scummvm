@@ -233,10 +233,9 @@ void tglMatrixMode(int mode) {
 
 void tglLoadMatrixf(const float *m) {
 	TinyGL::GLParam p[17];
-	int i;
 
 	p[0].op = TinyGL::OP_LoadMatrix;
-	for (i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++)
 		p[i + 1].f = m[i];
 
 	TinyGL::gl_add_op(p);
@@ -252,10 +251,9 @@ void tglLoadIdentity() {
 
 void tglMultMatrixf(const float *m) {
 	TinyGL::GLParam p[17];
-	int i;
 
 	p[0].op = TinyGL::OP_MultMatrix;
-	for (i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++)
 		p[i + 1].f = m[i];
 
 	TinyGL::gl_add_op(p);
@@ -341,7 +339,7 @@ void tglFrustum(double left, double right, double bottom, double top, double nea
 
 void tglMaterialfv(int mode, int type, float *v) {
 	TinyGL::GLParam p[7];
-	int i, n;
+	int n;
 
 	assert(mode == TGL_FRONT  || mode == TGL_BACK || mode==TGL_FRONT_AND_BACK);
 
@@ -351,9 +349,9 @@ void tglMaterialfv(int mode, int type, float *v) {
 	n = 4;
 	if (type == TGL_SHININESS)
 		n = 1;
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		p[3 + i].f = v[i];
-	for (i = n; i < 4; i++)
+	for (int i = n; i < 4; i++)
 		p[3 + i].f = 0;
 
 	TinyGL::gl_add_op(p);
@@ -361,13 +359,12 @@ void tglMaterialfv(int mode, int type, float *v) {
 
 void tglMaterialf(int mode, int type, float v) {
 	TinyGL::GLParam p[7];
-	int i;
 
 	p[0].op = TinyGL::OP_Material;
 	p[1].i = mode;
 	p[2].i = type;
 	p[3].f = v;
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 		p[4 + i].f = 0;
 
 	TinyGL::gl_add_op(p);
@@ -385,13 +382,12 @@ void tglColorMaterial(int mode, int type) {
 
 void tglLightfv(int light, int type, float *v) {
 	TinyGL::GLParam p[7];
-	int i;
 
 	p[0].op = TinyGL::OP_Light;
 	p[1].i = light;
 	p[2].i = type;
 	// TODO: 3 composants
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		p[3 + i].f = v[i];
 
 	TinyGL::gl_add_op(p);
@@ -400,13 +396,12 @@ void tglLightfv(int light, int type, float *v) {
 
 void tglLightf(int light, int type, float v) {
 	TinyGL::GLParam p[7];
-	int i;
 
 	p[0].op = TinyGL::OP_Light;
 	p[1].i = light;
 	p[2].i = type;
 	p[3].f = v;
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 		p[4 + i].f = 0;
 
 	TinyGL::gl_add_op(p);
@@ -414,12 +409,11 @@ void tglLightf(int light, int type, float v) {
 
 void tglLightModeli(int pname, int param) {
 	TinyGL::GLParam p[6];
-	int i;
 
 	p[0].op = TinyGL::OP_LightModel;
 	p[1].i = pname;
 	p[2].f = (float)param;
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 		p[3 + i].f = 0;
 
 	TinyGL::gl_add_op(p);
@@ -427,11 +421,10 @@ void tglLightModeli(int pname, int param) {
 
 void tglLightModelfv(int pname, float *param) {
 	TinyGL::GLParam p[6];
-	int i;
 
 	p[0].op = TinyGL::OP_LightModel;
 	p[1].i = pname;
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		p[2 + i].f = param[i];
 
 	TinyGL::gl_add_op(p);

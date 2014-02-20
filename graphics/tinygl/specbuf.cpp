@@ -4,11 +4,10 @@
 namespace TinyGL {
 
 static void calc_buf(GLSpecBuf *buf, const float shininess) {
-	int i;
 	float val, inc;
 	val = 0.0f;
 	inc = 1.0f / SPECULAR_BUFFER_SIZE;
-	for (i = 0; i <= SPECULAR_BUFFER_SIZE; i++) {
+	for (int i = 0; i <= SPECULAR_BUFFER_SIZE; i++) {
 		buf->buf[i] = pow(val, shininess);
 		val += inc;
 	}

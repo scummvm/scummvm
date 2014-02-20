@@ -6,9 +6,8 @@
 namespace TinyGL {
 
 void gl_M4_Id(M4 *a) {
-	int i, j;
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
 			if (i == j)
 				a->m[i][j] = 1.0;
 			else
@@ -18,9 +17,8 @@ void gl_M4_Id(M4 *a) {
 }
 
 int gl_M4_IsId(M4 *a) {
-	int i, j;
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
 		if (i == j) { 
 			if (a->m[i][j] != 1.0)
 				return 0;
@@ -32,12 +30,11 @@ int gl_M4_IsId(M4 *a) {
 }
 
 void gl_M4_Mul(M4 *c, M4 *a, M4 *b) {
-	int i, j ,k;
 	float s;
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
 			s = 0.0;
-			for (k = 0; k < 4; k++)
+			for (int k = 0; k < 4; k++)
 				s += a->m[i][k] * b->m[k][j];
 			c->m[i][j]=s;
 		}
@@ -46,17 +43,16 @@ void gl_M4_Mul(M4 *c, M4 *a, M4 *b) {
 
 // c=c*a
 void gl_M4_MulLeft(M4 *c, M4 *b) {
-	int i, j, k;
 	float s;
 	M4 a;
 
 	//memcpy(&a, c, 16 * sizeof(float));
 	a = *c;
 
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
 			s = 0.0;
-			for (k = 0; k < 4; k++)
+			for (int k = 0; k < 4; k++)
 				s += a.m[i][k] * b->m[k][j];
 			c->m[i][j]=s;
 		}
@@ -137,19 +133,19 @@ void gl_M4_InvOrtho(M4 *a, M4 b) {
 // Note : m is destroyed
 
 int Matrix_Inv(float *r, float *m, int n) {
-	int i, j, k, l;
+	int k;
 	float max, tmp, t;
 
 	// identitée dans r
-	for (i = 0; i < n * n; i++)
+	for (int i = 0; i < n * n; i++)
 		r[i]=0;
-	for (i = 0; i < n; i++)
+	for (int i = 0; i < n; i++)
 		r[i * n + i] = 1;
 	 
-	for (j = 0; j < n; j++) {
+	for (int j = 0; j < n; j++) {
 		max = m[j * n + j];
 		k = j;
-		for (i = j + 1; i < n; i++) {
+		for (int i = j + 1; i < n; i++) {
 			if (fabs(m[i * n + j]) > fabs(max)) {
 				 k = i;
 				 max = m[i * n + j];
@@ -160,7 +156,7 @@ int Matrix_Inv(float *r, float *m, int n) {
 			return 1;
 		
 		if (k != j) {
-			 for (i = 0; i < n; i++) {
+			 for (int i = 0; i < n; i++) {
 					tmp = m[j * n + i];
 					m[j * n + i] = m[k * n + i];
 					m[k * n + i] = tmp;
@@ -172,16 +168,16 @@ int Matrix_Inv(float *r, float *m, int n) {
 		}
 
 		max = 1 / max;
-		for (i = 0; i < n; i++) {
+		for (int i = 0; i < n; i++) {
 			m[j * n + i] *= max;
 			r[j * n + i] *= max;
 		}
 		
 			
-		for (l = 0; l < n; l++) {
+		for (int l = 0; l < n; l++) {
 			if (l != j) {
 				t = m[l * n + j];
-				for (i = 0; i < n; i++) {
+				for (int i = 0; i < n; i++) {
 					m[l * n + i] -= m[j * n + i] * t;
 					r[l * n + i] -= r[j * n + i] * t;
 				}

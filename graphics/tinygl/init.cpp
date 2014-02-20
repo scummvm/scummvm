@@ -15,10 +15,9 @@ void initSharedState(GLContext *c) {
 
 void endSharedState(GLContext *c) {
 	GLSharedState *s = &c->shared_state;
-	int i;
 
 	free_texture(c, 0);
-	for (i = 0; i< MAX_DISPLAY_LISTS; i++) {
+	for (int i = 0; i< MAX_DISPLAY_LISTS; i++) {
 		// TODO
 	}
 	gl_free(s->lists);
@@ -30,7 +29,6 @@ void glInit(void *zbuffer1) {
 	ZBuffer *zbuffer = (ZBuffer *)zbuffer1;
 	GLContext *c;
 	GLViewport *v;
-	int i;
 
 	c = (GLContext *)gl_zalloc(sizeof(GLContext));
 	gl_ctx = c;
@@ -61,7 +59,7 @@ void glInit(void *zbuffer1) {
 	c->in_begin=0;
 
 	// lights
-	for (i = 0; i < T_MAX_LIGHTS; i++) {
+	for (int i = 0; i < T_MAX_LIGHTS; i++) {
 		GLLight *l = &c->lights[i];
 		l->ambient = gl_V4_New(0, 0, 0, 1);
 		l->diffuse = gl_V4_New(1, 1, 1, 1);
@@ -84,7 +82,7 @@ void glInit(void *zbuffer1) {
 	c->light_model_two_side = 0;
 
 	// default materials */
-	for (i = 0; i < 2; i++) {
+	for (int i = 0; i < 2; i++) {
 		GLMaterial *m = &c->materials[i];
 		m->emission = gl_V4_New(0, 0, 0, 1);
 		m->ambient = gl_V4_New(0.2f, 0.2f, 0.2f, 1);
@@ -147,7 +145,7 @@ void glInit(void *zbuffer1) {
 	c->matrix_stack_depth_max[1] = MAX_PROJECTION_STACK_DEPTH;
 	c->matrix_stack_depth_max[2] = MAX_TEXTURE_STACK_DEPTH;
 
-	for (i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		c->matrix_stack[i] = (M4 *)gl_zalloc(c->matrix_stack_depth_max[i] * sizeof(M4));
 		c->matrix_stack_ptr[i] = c->matrix_stack[i];
 	}

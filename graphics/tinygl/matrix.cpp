@@ -6,9 +6,7 @@
 namespace TinyGL {
 
 void gl_print_matrix(const float *m) {
-	int i;
-
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		fprintf(stderr, "%f %f %f %f\n", m[i], m[4 + i], m[8 + i], m[12 + i]);
 	}
 }
@@ -36,14 +34,12 @@ void glopMatrixMode(GLContext *c, GLParam *p) {
 
 void glopLoadMatrix(GLContext *c, GLParam *p) {
 	M4 *m;
-	int i;
-  
 	GLParam *q;
 
 	m = c->matrix_stack_ptr[c->matrix_mode];
 	q = p + 1;
 
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		m->m[0][i] = q[0].f;
 		m->m[1][i] = q[1].f;
 		m->m[2][i] = q[2].f;
@@ -62,12 +58,10 @@ void glopLoadIdentity(GLContext *c, GLParam *) {
 
 void glopMultMatrix(GLContext *c, GLParam *p) {
 	M4 m;
-	int i;
-
 	GLParam *q;
 	q = p + 1;
 
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		m.m[0][i] = q[0].f;
 		m.m[1][i] = q[1].f;
 		m.m[2][i] = q[2].f;

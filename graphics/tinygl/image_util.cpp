@@ -19,7 +19,7 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 	unsigned char *pix, *pix_src;
 	int point1_offset = 0, point2_offset = 0, point3_offset = 0;
 	float x1, y1, x1inc, y1inc;
-	int xi, yi, j, xf, yf, x, y;
+	int xi, yi, xf, yf;
 
 	pix = dest;
 	pix_src = src;
@@ -28,16 +28,16 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 	y1inc = (float)(ysize_src - 1) / (float)(ysize_dest - 1);
 
 	y1 = 0;
-	for (y = 0; y < ysize_dest; y++) {
+	for (int y = 0; y < ysize_dest; y++) {
 		x1 = 0;
-		for (x = 0; x < xsize_dest; x++) {
+		for (int x = 0; x < xsize_dest; x++) {
 			xi = (int)x1;
 			yi = (int)y1;
 			xf = (int)((x1 - floor(x1)) * INTERP_NORM);
 			yf = (int)((y1 - floor(y1)) * INTERP_NORM);
 
 			if ((xf + yf) <= INTERP_NORM) {
-				for (j = 0; j < 3; j++) {
+				for (int j = 0; j < 3; j++) {
 					point1_offset = (yi * xsize_src + xi) * 4 + j;
 					if ((xi + 1) < xsize_src)
 						point2_offset = (yi * xsize_src + xi + 1) * 4 + j;
@@ -53,7 +53,7 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 			} else {
 				xf = INTERP_NORM - xf;
 				yf = INTERP_NORM - yf;
-				for (j = 0; j < 3; j++) {
+				for (int j = 0; j < 3; j++) {
 					pix[j] = interpolate(pix_src[point1_offset], pix_src[point2_offset], pix_src[point3_offset], xf, yf);
 					if ((xi + 1) < xsize_src) {
 						if ((yi + 1) < ysize_src)
@@ -92,7 +92,7 @@ void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_
                                  unsigned char *src, int xsize_src, int ysize_src) {
 	unsigned char *pix, *pix_src, *pix1;
 	int x1, y1, x1inc, y1inc;
-	int xi, yi, x, y;
+	int xi, yi;
 
 	pix = dest;
 	pix_src = src;
@@ -101,9 +101,9 @@ void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_
 	y1inc = (int)((float)((ysize_src) << FRAC_BITS) / (float)(ysize_dest));
 
 	y1 = 0;
-	for (y = 0; y < ysize_dest; y++) {
+	for (int y = 0; y < ysize_dest; y++) {
 		x1 = 0;
-		for (x = 0; x < xsize_dest; x++) {
+		for (int x = 0; x < xsize_dest; x++) {
 			xi = x1 >> FRAC_BITS;
 			yi = y1 >> FRAC_BITS;
 			pix1 = pix_src + (yi * xsize_src + xi) * 4;

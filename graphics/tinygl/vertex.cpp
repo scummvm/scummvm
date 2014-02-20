@@ -190,7 +190,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 
 void glopVertex(GLContext *c, GLParam *p) {
 	GLVertex *v;
-	int n, i, cnt;
+	int n, cnt;
 
 	assert(c->in_begin != 0);
 
@@ -310,7 +310,7 @@ void glopVertex(GLContext *c, GLParam *p) {
 		if (n == 4) {
 			gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
 			gl_draw_triangle(c, &c->vertex[1], &c->vertex[3], &c->vertex[2]);
-			for (i = 0; i < 2; i++)
+			for (int i = 0; i < 2; i++)
 				c->vertex[i] = c->vertex[i + 2];
 			n = 2;
 		}

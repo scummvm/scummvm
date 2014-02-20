@@ -83,7 +83,7 @@ void glopLoadName(GLContext *c, GLParam *p) {
 
 void gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax) {
 	unsigned int *ptr;
-	int n, i;
+	int n;
 
 	if (!c->select_overflow) {
 		if (!c->select_hit) {
@@ -96,7 +96,7 @@ void gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax) {
 				*ptr++ = c->name_stack_size;
 				*ptr++ = zmin;
 				*ptr++ = zmax;
-				for (i = 0; i < n; i++)
+				for (int i = 0; i < n; i++)
 					*ptr++ = c->name_stack[i];
 				c->select_ptr = ptr;
 				c->select_hits++;
