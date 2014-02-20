@@ -568,7 +568,7 @@ void ShootEmUp::updateTime() {
 	showTime();
 	_timeThisSecond = 0;
 
-	if (_time < kFlashTime) {
+	if (_time <= kFlashTime) {
 		int timeMode = 0;
 		if ((_time % 2) == 1)
 			timeMode = 20; // Normal 'Time:'
