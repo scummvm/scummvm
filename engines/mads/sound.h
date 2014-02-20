@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "mads/sound_nebular.h"
+#include "mads/nebular/sound_nebular.h"
 
 namespace MADS {
 

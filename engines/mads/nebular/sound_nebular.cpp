@@ -26,7 +26,7 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "mads/sound.h"
-#include "mads/sound_nebular.h"
+#include "mads/nebular/sound_nebular.h"
 
 namespace MADS {
 

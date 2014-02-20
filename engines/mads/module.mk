@@ -3,6 +3,7 @@ MODULE := engines/mads
 MODULE_OBJS := \
 	nebular/dialogs_nebular.o \
 	nebular/game_nebular.o \
+	nebular/sound_nebular.o \
 	compression.o \
 	detection.o \
 	events.o \
@@ -15,7 +16,6 @@ MODULE_OBJS := \
 	palette.o \
 	resources.o \
 	sound.o \
-	sound_nebular.o \
 	user_interface.o
 
 # This module can be built as a plugin
