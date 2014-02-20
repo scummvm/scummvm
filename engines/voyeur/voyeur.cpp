@@ -73,8 +73,7 @@ Common::Error VoyeurEngine::run() {
 	globalInitBolt();
 
 	// The original allows the victim to be explicitly specified via the command line.
-	// We don't currently support this in ScummVM, but I'm leaving the code below
-	// in case we ever want to make use of it.
+	// This is possible in ScummVM by using a boot parameter.
 	if (_iForceDeath >= 1 && _iForceDeath <= 4)
 		_voy._eventFlags |= EVTFLAG_VICTIM_PRESET;
 
