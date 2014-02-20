@@ -82,14 +82,14 @@ void glopPushMatrix(GLContext *c, GLParam *) {
 	assert((c->matrix_stack_ptr[n] - c->matrix_stack[n] + 1) < c->matrix_stack_depth_max[n]);
 
 	m = ++c->matrix_stack_ptr[n];
-  
+
 	gl_M4_Move(&m[0], &m[-1]);
 
 	gl_matrix_update(c);
 }
 
 void glopPopMatrix(GLContext *c, GLParam *) {
-	int n=c->matrix_mode;
+	int n = c->matrix_mode;
 
 	assert(c->matrix_stack_ptr[n] > c->matrix_stack[n]);
 	c->matrix_stack_ptr[n]--;
@@ -108,7 +108,7 @@ void glopRotate(GLContext *c, GLParam *p) {
 	u[2] = p[4].f;
 
 	// simple case detection
-	dir_code = ((u[0] != 0)<<2) | ((u[1] != 0)<<1) | (u[2] != 0);
+	dir_code = ((u[0] != 0) << 2) | ((u[1] != 0) << 1) | (u[2] != 0);
 
 	switch (dir_code) {
 	case 0:

@@ -19,9 +19,9 @@ void gl_M4_Id(M4 *a) {
 int gl_M4_IsId(M4 *a) {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-		if (i == j) { 
-			if (a->m[i][j] != 1.0)
-				return 0;
+			if (i == j) {
+				if (a->m[i][j] != 1.0)
+					return 0;
 			} else if (a->m[i][j] != 0.0)
 				return 0;
 		}
@@ -36,7 +36,7 @@ void gl_M4_Mul(M4 *c, M4 *a, M4 *b) {
 			s = 0.0;
 			for (int k = 0; k < 4; k++)
 				s += a->m[i][k] * b->m[k][j];
-			c->m[i][j]=s;
+			c->m[i][j] = s;
 		}
 	}
 }
@@ -54,7 +54,7 @@ void gl_M4_MulLeft(M4 *c, M4 *b) {
 			s = 0.0;
 			for (int k = 0; k < 4; k++)
 				s += a.m[i][k] * b->m[k][j];
-			c->m[i][j]=s;
+			c->m[i][j] = s;
 		}
 	}
 }
@@ -124,7 +124,7 @@ void gl_M4_InvOrtho(M4 *a, M4 b) {
 			s = 0;
 			for (j = 0; j < 3; j++)
 				s -= b.m[j][i] * b.m[j][3];
-			a->m[i][3]=s;
+			a->m[i][3] = s;
 		}
 	}
 }
@@ -138,33 +138,33 @@ int Matrix_Inv(float *r, float *m, int n) {
 
 	// identitée dans r
 	for (int i = 0; i < n * n; i++)
-		r[i]=0;
+		r[i] = 0;
 	for (int i = 0; i < n; i++)
 		r[i * n + i] = 1;
-	 
+
 	for (int j = 0; j < n; j++) {
 		max = m[j * n + j];
 		k = j;
 		for (int i = j + 1; i < n; i++) {
 			if (fabs(m[i * n + j]) > fabs(max)) {
-				 k = i;
-				 max = m[i * n + j];
+				k = i;
+				max = m[i * n + j];
 			}
 		}
 		// non intersible matrix
 		if (max == 0)
 			return 1;
-		
-		if (k != j) {
-			 for (int i = 0; i < n; i++) {
-					tmp = m[j * n + i];
-					m[j * n + i] = m[k * n + i];
-					m[k * n + i] = tmp;
 
-					tmp = r[j * n + i];
-					r[j * n + i] = r[k * n + i];
-					r[k * n + i] = tmp;
-			 }
+		if (k != j) {
+			for (int i = 0; i < n; i++) {
+				tmp = m[j * n + i];
+				m[j * n + i] = m[k * n + i];
+				m[k * n + i] = tmp;
+
+				tmp = r[j * n + i];
+				r[j * n + i] = r[k * n + i];
+				r[k * n + i] = tmp;
+			}
 		}
 
 		max = 1 / max;
@@ -172,8 +172,8 @@ int Matrix_Inv(float *r, float *m, int n) {
 			m[j * n + i] *= max;
 			r[j * n + i] *= max;
 		}
-		
-			
+
+
 		for (int l = 0; l < n; l++) {
 			if (l != j) {
 				t = m[l * n + j];
@@ -198,13 +198,13 @@ void gl_M4_Inv(M4 *a, M4 *b) {
 }
 
 void gl_M4_Rotate(M4 *a, float t, int u) {
-	float s,c;
-	int v,w;
+	float s, c;
+	int v, w;
 
 	if ((v = u + 1) > 2)
 		v = 0;
 	if ((w = v + 1) > 2)
-		w=0;
+		w = 0;
 	s = sin(t);
 	c = cos(t);
 	gl_M4_Id(a);
@@ -213,14 +213,14 @@ void gl_M4_Rotate(M4 *a, float t, int u) {
 	a->m[w][v] = s;
 	a->m[w][w] = c;
 }
-	
+
 // inverse of a 3x3 matrix
 void gl_M3_Inv(M3 *a, M3 *m) {
 	float det;
 
 	det = m->m[0][0] * m->m[1][1] * m->m[2][2] - m->m[0][0] * m->m[1][2] * m->m[2][1] -
-		m->m[1][0] * m->m[0][1] * m->m[2][2] + m->m[1][0] * m->m[0][2] * m->m[2][1] +
-		m->m[2][0] * m->m[0][1] * m->m[1][2] - m->m[2][0] * m->m[0][2] * m->m[1][1];
+		  m->m[1][0] * m->m[0][1] * m->m[2][2] + m->m[1][0] * m->m[0][2] * m->m[2][1] +
+		  m->m[2][0] * m->m[0][1] * m->m[1][2] - m->m[2][0] * m->m[0][2] * m->m[1][1];
 
 	a->m[0][0] = (m->m[1][1] * m->m[2][2] - m->m[1][2] * m->m[2][1]) / det;
 	a->m[0][1] = -(m->m[0][1] * m->m[2][2] - m->m[0][2] * m->m[2][1]) / det;

@@ -30,12 +30,12 @@ enum {
 #define SPECULAR_BUFFER_RESOLUTION 1024
 
 
-#define MAX_MODELVIEW_STACK_DEPTH	35
-#define MAX_PROJECTION_STACK_DEPTH	8
-#define MAX_TEXTURE_STACK_DEPTH		8
-#define MAX_NAME_STACK_DEPTH		64
-#define MAX_TEXTURE_LEVELS			11
-#define T_MAX_LIGHTS				32
+#define MAX_MODELVIEW_STACK_DEPTH   35
+#define MAX_PROJECTION_STACK_DEPTH  8
+#define MAX_TEXTURE_STACK_DEPTH     8
+#define MAX_NAME_STACK_DEPTH        64
+#define MAX_TEXTURE_LEVELS          11
+#define T_MAX_LIGHTS                32
 
 #define VERTEX_HASH_SIZE 1031
 
@@ -49,7 +49,7 @@ enum {
 typedef struct GLSpecBuf {
 	int shininess_i;
 	int last_used;
-	float buf[SPECULAR_BUFFER_SIZE+1];
+	float buf[SPECULAR_BUFFER_SIZE + 1];
 	struct GLSpecBuf *next;
 } GLSpecBuf;
 
@@ -326,7 +326,7 @@ void glClose();
 #endif
 
 #ifndef LOCAL_PI
-#define LOCAL_PI	(3.14159265358979323846)
+#define LOCAL_PI    (3.14159265358979323846)
 #endif
 
 // glopXXX functions

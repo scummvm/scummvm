@@ -60,10 +60,10 @@ error:
 }
 
 void ZB_close(ZBuffer *zb) {
-    if (zb->frame_buffer_allocated)
+	if (zb->frame_buffer_allocated)
 		zb->pbuf.free();
 
-    gl_free(zb->zbuf);
+	gl_free(zb->zbuf);
 	gl_free(zb);
 }
 
@@ -153,9 +153,9 @@ void memset_l(void *adr, int val, int count) {
 		p += 4;
 	}
 
-    n = count & 3;
-    for (int i = 0; i < n; i++)
-	*p++ = val;
+	n = count & 3;
+	for (int i = 0; i < n; i++)
+		*p++ = val;
 }
 
 void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b) {

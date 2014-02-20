@@ -65,10 +65,10 @@ void tglColor4fv(float *v) {
 	TinyGL::GLParam p[8];
 
 	p[0].op = TinyGL::OP_Color;
-	p[1].f=v[0];
-	p[2].f=v[1];
-	p[3].f=v[2];
-	p[4].f=v[3];
+	p[1].f = v[0];
+	p[2].f = v[1];
+	p[3].f = v[2];
+	p[4].f = v[3];
 	// direct convertion to integer to go faster if no shading
 	p[5].ui = (unsigned int)(v[0] * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN) + ZB_POINT_RED_MIN);
 	p[6].ui = (unsigned int)(v[1] * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN) + ZB_POINT_GREEN_MIN);
@@ -81,7 +81,7 @@ void tglColor3f(float x, float y, float z) {
 }
 
 void glColor3fv(float *v)  {
-  tglColor4f(v[0], v[1], v[2], 1);
+	tglColor4f(v[0], v[1], v[2], 1);
 }
 
 void tglColor4ub(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
@@ -341,7 +341,7 @@ void tglMaterialfv(int mode, int type, float *v) {
 	TinyGL::GLParam p[7];
 	int n;
 
-	assert(mode == TGL_FRONT  || mode == TGL_BACK || mode==TGL_FRONT_AND_BACK);
+	assert(mode == TGL_FRONT  || mode == TGL_BACK || mode == TGL_FRONT_AND_BACK);
 
 	p[0].op = TinyGL::OP_Material;
 	p[1].i = mode;
@@ -464,9 +464,9 @@ void tglClearDepth(double depth) {
 
 // textures
 
-void tglTexImage2D( int target, int level, int components,
-                   int width, int height, int border,
-                   int format, int type, void *pixels) {
+void tglTexImage2D(int target, int level, int components,
+				   int width, int height, int border,
+				   int format, int type, void *pixels) {
 	TinyGL::GLParam p[10];
 
 	p[0].op = TinyGL::OP_TexImage2D;
@@ -495,7 +495,7 @@ void tglBindTexture(int target, int texture) {
 
 void tglTexEnvi(int target, int pname, int param) {
 	TinyGL::GLParam p[8];
-  
+
 	p[0].op = TinyGL::OP_TexEnv;
 	p[1].i = target;
 	p[2].i = pname;
@@ -510,7 +510,7 @@ void tglTexEnvi(int target, int pname, int param) {
 
 void tglTexParameteri(int target, int pname, int param) {
 	TinyGL::GLParam p[8];
-  
+
 	p[0].op = TinyGL::OP_TexParameter;
 	p[1].i = target;
 	p[2].i = pname;

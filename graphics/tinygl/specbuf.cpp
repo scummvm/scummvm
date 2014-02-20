@@ -20,7 +20,7 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 		if (found->last_used < oldest->last_used) {
 			oldest = found;
 		}
-		found = found->next; 
+		found = found->next;
 	}
 	if (found) {
 		found->last_used = c->specbuf_used_counter++;
@@ -37,7 +37,7 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 		buf->last_used = c->specbuf_used_counter++;
 		buf->shininess_i = shininess_i;
 		calc_buf(buf, shininess);
-		return buf;     
+		return buf;
 	}
 	//overwrite the lru buffer
 	oldest->shininess_i = shininess_i;

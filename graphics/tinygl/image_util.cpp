@@ -15,7 +15,7 @@ static inline int interpolate(int v00, int v01, int v10, int xf, int yf) {
 // TODO: more accurate resampling
 
 void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
-                    unsigned char *src, int xsize_src, int ysize_src) {
+					unsigned char *src, int xsize_src, int ysize_src) {
 	unsigned char *pix, *pix_src;
 	int point1_offset = 0, point2_offset = 0, point3_offset = 0;
 	float x1, y1, x1inc, y1inc;
@@ -89,7 +89,7 @@ void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
 
 // resizing with no interlating nor nearest pixel
 void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_dest,
-                                 unsigned char *src, int xsize_src, int ysize_src) {
+								 unsigned char *src, int xsize_src, int ysize_src) {
 	unsigned char *pix, *pix_src, *pix1;
 	int x1, y1, x1inc, y1inc;
 	int xi, yi;

@@ -39,7 +39,7 @@ static void delete_list(GLContext *c, int list) {
 
 	l = find_list(c, list);
 	assert(l);
-  
+
 	// free param buffer
 	pb = l->first_op_buffer;
 	while (pb) {
@@ -47,7 +47,7 @@ static void delete_list(GLContext *c, int list) {
 		gl_free(pb);
 		pb = pb1;
 	}
-  
+
 	gl_free(l);
 	c->shared_state.lists[list] = NULL;
 }
@@ -61,7 +61,7 @@ static GLList *alloc_list(GLContext *c, int list) {
 
 	ob->next = NULL;
 	l->first_op_buffer = ob;
-  
+
 	ob->ops[0].op = OP_EndList;
 
 	c->shared_state.lists[list] = l;
@@ -114,7 +114,7 @@ void gl_compile_op(GLContext *c, GLParam *p) {
 
 		ob->next = ob1;
 		ob->ops[index].op = OP_NextBuffer;
-		ob->ops[index+1].p = (void *)ob1;
+		ob->ops[index + 1].p = (void *)ob1;
 
 		c->current_op_buffer = ob1;
 		ob = ob1;
@@ -129,7 +129,7 @@ void gl_compile_op(GLContext *c, GLParam *p) {
 }
 
 void gl_add_op(GLParam *p) {
-	GLContext *c=gl_get_context();
+	GLContext *c = gl_get_context();
 	int op;
 
 	op = p[0].op;
@@ -169,9 +169,9 @@ void glopCallList(GLContext *c, GLParam *p) {
 		if (op == OP_EndList)
 			break;
 		if (op == OP_NextBuffer) {
-			p =(GLParam *)p[1].p;
+			p = (GLParam *)p[1].p;
 		} else {
-			op_table_func[op](c,p);
+			op_table_func[op](c, p);
 			p += op_table_size[op];
 		}
 	}
@@ -191,7 +191,7 @@ void glNewList(unsigned int list, int mode) {
 
 	c->current_op_buffer = l->first_op_buffer;
 	c->current_op_buffer_index = 0;
-  
+
 	c->compile_flag = 1;
 	c->exec_flag = (mode == TGL_COMPILE_AND_EXECUTE);
 }
@@ -201,11 +201,11 @@ void glEndList() {
 	GLParam p[1];
 
 	assert(c->compile_flag == 1);
-  
+
 	// end of list
 	p[0].op = OP_EndList;
 	gl_compile_op(c, p);
-  
+
 	c->compile_flag = 0;
 	c->exec_flag = 1;
 }
@@ -235,7 +235,7 @@ unsigned int glGenLists(int range) {
 				return list;
 			}
 		} else {
-			count=0;
+			count = 0;
 		}
 	}
 	return 0;

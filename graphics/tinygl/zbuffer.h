@@ -26,7 +26,7 @@ namespace TinyGL {
 // display modes
 #define ZB_MODE_5R6G5B  1  // true color 16 bits
 
- #define RGB_TO_PIXEL(r,g,b) zb->cmode.RGBToColor(r, g, b)
+#define RGB_TO_PIXEL(r,g,b) zb->cmode.RGBToColor(r, g, b)
 typedef byte PIXEL;
 
 #define PSZSH 4
@@ -62,11 +62,11 @@ typedef struct {
 } ZBuffer;
 
 typedef struct {
-	int x,y,z;     // integer coordinates in the zbuffer
-	int s,t;       // coordinates for the mapping
-	int r,g,b;     // color indexes
+	int x, y, z;   // integer coordinates in the zbuffer
+	int s, t;      // coordinates for the mapping
+	int r, g, b;   // color indexes
 
-	float sz,tz;   // temporary coordinates for mapping
+	float sz, tz;  // temporary coordinates for mapping
 } ZBufferPoint;
 
 // zbuffer.c
@@ -91,21 +91,21 @@ void ZB_copyFrameBuffer(ZBuffer *zb, void *buf, int linesize);
 
 // zline.c
 
-void ZB_plot(ZBuffer *zb,ZBufferPoint *p);
-void ZB_line(ZBuffer *zb,ZBufferPoint *p1,ZBufferPoint *p2);
-void ZB_line_z(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2);
+void ZB_plot(ZBuffer *zb, ZBufferPoint *p);
+void ZB_line(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2);
+void ZB_line_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2);
 
 // ztriangle.c */
 
 void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture);
 void ZB_fillTriangleDepthOnly(ZBuffer *zb, ZBufferPoint *p1,
-						 ZBufferPoint *p2, ZBufferPoint *p3);
+							  ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p1,
 						 ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p1,
-						 ZBufferPoint *p2, ZBufferPoint *p3);
+								   ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p1,
-						 ZBufferPoint *p2, ZBufferPoint *p3);
+							   ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p1,
 						   ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p1,

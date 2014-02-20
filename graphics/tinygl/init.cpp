@@ -17,7 +17,7 @@ void endSharedState(GLContext *c) {
 	GLSharedState *s = &c->shared_state;
 
 	free_texture(c, 0);
-	for (int i = 0; i< MAX_DISPLAY_LISTS; i++) {
+	for (int i = 0; i < MAX_DISPLAY_LISTS; i++) {
 		// TODO
 	}
 	gl_free(s->lists);
@@ -38,7 +38,7 @@ void glInit(void *zbuffer1) {
 	// allocate GLVertex array
 	c->vertex_max = POLYGON_MAX_VERTEX;
 	c->vertex = (GLVertex *)gl_malloc(POLYGON_MAX_VERTEX * sizeof(GLVertex));
-  
+
 	// viewport
 	v = &c->viewport;
 	v->xmin = 0;
@@ -56,7 +56,7 @@ void glInit(void *zbuffer1) {
 	c->compile_flag = 0;
 	c->print_flag = 0;
 
-	c->in_begin=0;
+	c->in_begin = 0;
 
 	// lights
 	for (int i = 0; i < T_MAX_LIGHTS; i++) {
@@ -67,7 +67,7 @@ void glInit(void *zbuffer1) {
 		l->position = gl_V4_New(0, 0, 1, 0);
 		l->norm_position = gl_V3_New(0, 0, 1);
 		l->spot_direction = gl_V3_New(0, 0, -1);
-		l->norm_spot_direction = gl_V3_New(0, 0,- 1);
+		l->norm_spot_direction = gl_V3_New(0, 0, - 1);
 		l->spot_exponent = 0;
 		l->spot_cutoff = 180;
 		l->attenuation[0] = 1;
@@ -75,10 +75,10 @@ void glInit(void *zbuffer1) {
 		l->attenuation[2] = 0;
 		l->enabled = 0;
 	}
-	c->first_light=NULL;
-	c->ambient_light_model=gl_V4_New(0.2f,0.2f,0.2f,1);
-	c->local_light_model=0;
-	c->lighting_enabled=0;
+	c->first_light = NULL;
+	c->ambient_light_model = gl_V4_New(0.2f, 0.2f, 0.2f, 1);
+	c->local_light_model = 0;
+	c->lighting_enabled = 0;
 	c->light_model_two_side = 0;
 
 	// default materials */
@@ -125,7 +125,7 @@ void glInit(void *zbuffer1) {
 	c->current_cull_face = TGL_BACK;
 	c->current_shade_model = TGL_SMOOTH;
 	c->cull_face_enabled = 0;
-  
+
 	// clear
 	c->clear_color.v[0] = 0;
 	c->clear_color.v[1] = 0;
@@ -140,7 +140,7 @@ void glInit(void *zbuffer1) {
 
 	// matrix
 	c->matrix_mode = 0;
-  
+
 	c->matrix_stack_depth_max[0] = MAX_MODELVIEW_STACK_DEPTH;
 	c->matrix_stack_depth_max[1] = MAX_PROJECTION_STACK_DEPTH;
 	c->matrix_stack_depth_max[2] = MAX_TEXTURE_STACK_DEPTH;

@@ -105,7 +105,7 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 }
 
 void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture) {
-	zb->current_texture=texture;
+	zb->current_texture = texture;
 }
 
 void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
