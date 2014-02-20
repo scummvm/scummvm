@@ -92,6 +92,7 @@ private:
 	bool _cp;
 	byte _wasFacing;
 	byte _escapeStock;
+	bool _gotOut;
 
 	bool overlap(uint16 a1x, uint16 a1y, uint16 a2x, uint16 a2y, uint16 b1x, uint16 b1y, uint16 b2x, uint16 b2y);
 	byte getStockNumber(byte index);

@@ -88,6 +88,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_wasFacing = 0;
 	_score = 0;
 	_escapeStock = 0;
+	_gotOut = false;
 }
 
 void ShootEmUp::run() {
@@ -524,7 +525,41 @@ void ShootEmUp::hitPeople() {
 }
 
 void ShootEmUp::escapeCheck() {
-	warning("STUB: ShootEmUp::escapeCheck()");
+	if (_count321 != 0)
+		return;
+
+	if (_escapeCount > 0) {
+		_escapeCount--;
+		return;
+	}
+
+	// Escape_count = 0; now what ?
+
+	if (_escaping) {
+		if (_gotOut) {
+			newEscape();
+			_escaping = false;
+			_vm->_graphics->seuDrawPicture(_escapeStock * 90 + 20, 30, kStocks + 4);
+		} else {
+			_vm->_graphics->seuDrawPicture(_escapeStock * 90 + 20, 30, kStocks + 5);
+			_escapeCount = 20;
+			_gotOut = true;
+			define(_escapeStock * 90 + 20, 50, 25, 0, 2, 17, false, true); // Escaped!
+			gain(-10);
+			_hasEscaped[_escapeStock] = true;
+
+			_howManyHaveEscaped++;
+
+			if (_howManyHaveEscaped == 7)
+				_time = 0;
+		}
+	} else {
+		_escapeStock = getStockNumber(_vm->_rnd->getRandomNumber(6));
+		_escaping = true;
+		_gotOut = false;
+		_vm->_graphics->seuDrawPicture(_escapeStock * 90 + 20, 30, kStocks + 2); // Smiling!
+		_escapeCount = 200;
+	}
 }
 
 void ShootEmUp::check321() {
