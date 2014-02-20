@@ -138,10 +138,15 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	if (srcDisplay->_flags & DISPFLAG_VIEWPORT) {
 		// A viewport was passed, not a picture
 		srcPic = ((ViewPortResource *)srcDisplay)->_currentPic;
+	} else {
+		srcPic = (PictureResource *)srcDisplay;
+	}
+
+	if (destDisplay->_flags & DISPFLAG_VIEWPORT) {
+		// A viewport was passed, not a picture
 		destViewPort = (ViewPortResource *)destDisplay;
 		destPic = destViewPort->_currentPic;
 	} else {
-		srcPic = (PictureResource *)srcDisplay;
 		destPic = (PictureResource *)destDisplay;
 	}
 
