@@ -28,12 +28,12 @@
 
 namespace MADS {
 
-RGBList::RGBList(int numEntries, RGB8 *srcData, bool freeData) {
+RGBList::RGBList(int numEntries, byte *srcData, bool freeData) {
 	_size = numEntries;
-	assert(numEntries <= 256);
+	assert(numEntries <= PALETTE_COUNT);
 
 	if (srcData == NULL) {
-		_data = new RGB8[numEntries];
+		_data = new byte[numEntries * 3];
 		_freeData = true;
 	} else {
 		_data = srcData;
@@ -54,19 +54,22 @@ RGBList::~RGBList() {
 
 #define VGA_COLOR_TRANS(x) (x == 0x3f ? 255 : x << 2)
 
+Palette *Palette::init(MADSEngine *vm) {
+	if (vm->getGameFeatures() & GF_MADS) {
+		return new PaletteMADS(vm);
+	} else {
+		return new PaletteM4(vm);
+	}
+}
+
 Palette::Palette(MADSEngine *vm) : _vm(vm) {
 	reset();
 	_fading_in_progress = false;
-	Common::fill(&_usageCount[0], &_usageCount[256], 0);
+	Common::fill(&_usageCount[0], &_usageCount[PALETTE_COUNT], 0);
 }
 
 void Palette::setPalette(const byte *colors, uint start, uint num) {
 	g_system->getPaletteManager()->setPalette(colors, start, num);
-	reset();
-}
-
-void Palette::setPalette(const RGB8 *colors, uint start, uint num) {
-	g_system->getPaletteManager()->setPalette((const byte *)colors, start, num);
 	reset();
 }
 
@@ -75,21 +78,21 @@ void Palette::grabPalette(byte *colors, uint start, uint num) {
 	reset();
 }
 
-uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, RGB8 *paletteData) {
+uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, byte *paletteData) {
 	byte index = 0;
 	int32 minDist = 0x7fffffff;
-	RGB8 palData[256];
+	byte palData[PALETTE_SIZE];
 	int Rdiff, Gdiff, Bdiff;
 
 	if (paletteData == NULL) {
-		g_system->getPaletteManager()->grabPalette((byte *)palData, 0, 256);
+		g_system->getPaletteManager()->grabPalette(palData, 0, PALETTE_COUNT);
 		paletteData = &palData[0];
 	}
 
-	for (int palIndex = 0; palIndex < 256; ++palIndex) {
-		Rdiff = r - paletteData[palIndex].r;
-		Gdiff = g - paletteData[palIndex].g;
-		Bdiff = b - paletteData[palIndex].b;
+	for (int palIndex = 0; palIndex < PALETTE_COUNT; ++palIndex) {
+		Rdiff = r - paletteData[palIndex * 3];
+		Gdiff = g - paletteData[palIndex * 3 + 1];
+		Bdiff = b - paletteData[palIndex * 3 + 2];
 
 		if (Rdiff * Rdiff + Gdiff * Gdiff + Bdiff * Bdiff < minDist) {
 			minDist = Rdiff * Rdiff + Gdiff * Gdiff + Bdiff * Bdiff;
@@ -101,8 +104,8 @@ uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, RGB8 *paletteData) {
 }
 
 void Palette::reset() {
-	RGB8 palData[256];
-	g_system->getPaletteManager()->grabPalette((byte *)palData, 0, 256);
+	byte palData[PALETTE_SIZE];
+	g_system->getPaletteManager()->grabPalette(palData, 0, PALETTE_COUNT);
 
 	BLACK = palIndexFromRgb(0, 0, 0, palData);
 	BLUE = palIndexFromRgb(0, 0, 255, palData);
@@ -126,13 +129,13 @@ void Palette::fadeIn(int numSteps, uint delayAmount, RGBList *destPalette) {
 	fadeIn(numSteps, delayAmount, destPalette->data(), destPalette->size());
 }
 
-void Palette::fadeIn(int numSteps, uint delayAmount, RGB8 *destPalette, int numColors) {
+void Palette::fadeIn(int numSteps, uint delayAmount, byte *destPalette, int numColors) {
 	if (_fading_in_progress)
 		return;
 
 	_fading_in_progress = true;
-	RGB8 blackPalette[256];
-	Common::fill((byte *)&blackPalette[0], (byte *)&blackPalette[256], 0);
+	byte blackPalette[PALETTE_SIZE];
+	Common::fill(&blackPalette[0], &blackPalette[PALETTE_SIZE], 0);
 
 	// Initially set the black palette
 	_vm->_palette->setPalette(blackPalette, 0, numColors);
@@ -143,52 +146,8 @@ void Palette::fadeIn(int numSteps, uint delayAmount, RGB8 *destPalette, int numC
 	_fading_in_progress = false;
 }
 
-RGB8 *Palette::decodeMadsPalette(Common::SeekableReadStream *palStream, int *numColors) {
-	*numColors = palStream->readUint16LE();
-	assert(*numColors <= 252);
-
-	RGB8 *palData = new RGB8[*numColors];
-	Common::fill((byte *)&palData[0], (byte *)&palData[*numColors], 0);
-
-	for (int i = 0; i < *numColors; ++i) {
-		byte r = palStream->readByte();
-		byte g = palStream->readByte();
-		byte b = palStream->readByte();
-		palData[i].r = VGA_COLOR_TRANS(r);
-		palData[i].g = VGA_COLOR_TRANS(g);
-		palData[i].b = VGA_COLOR_TRANS(b);
-
-		// The next 3 bytes are unused
-		palStream->skip(3);
-	}
-
-	return palData;
-}
-
-int Palette::setMadsPalette(Common::SeekableReadStream *palStream, int indexStart) {
-	int colorCount;
-	RGB8 *palData = Palette::decodeMadsPalette(palStream, &colorCount);
-	_vm->_palette->setPalette(palData, indexStart, colorCount);
-	delete palData;
-	return colorCount;
-}
-
-void Palette::setMadsSystemPalette() {
-	// Rex Nebular default system palette
-	resetColorCounts();
-
-	RGB8 palData[4];
-	palData[0].r = palData[0].g = palData[0].b = 0;
-	palData[1].r = palData[1].g = palData[1].b = 0x54;
-	palData[2].r = palData[2].g = palData[2].b = 0xb4;
-	palData[3].r = palData[3].g = palData[3].b = 0xff;
-	
-	setPalette(palData, 0, 4);
-	blockRange(0, 4);
-}
-
 void Palette::resetColorCounts() {
-	Common::fill(&_usageCount[0], &_usageCount[256], 0);
+	Common::fill(&_usageCount[0], &_usageCount[PALETTE_COUNT], 0);
 }
 
 void Palette::blockRange(int startIndex, int size) {
@@ -197,41 +156,41 @@ void Palette::blockRange(int startIndex, int size) {
 }
 
 void Palette::addRange(RGBList *list) {
-	RGB8 *data = list->data();
+	byte *data = list->data();
 	byte *palIndexes = list->palIndexes();
-	RGB8 palData[256];
-	g_system->getPaletteManager()->grabPalette((byte *)&palData[0], 0, 256);
+	byte palData[PALETTE_COUNT];
+	g_system->getPaletteManager()->grabPalette(palData, 0, PALETTE_COUNT);
 	bool paletteChanged = false;
 	
 	for (int colIndex = 0; colIndex < list->size(); ++colIndex) {
 		// Scan through for an existing copy of the RGB value
 		int palIndex = -1; 
-		while (++palIndex < 256) {
+		while (++palIndex < PALETTE_COUNT) {
 			if (_usageCount[palIndex] <= 0)
 				// Palette index is to be skipped
 				continue;
 
-			if ((palData[palIndex].r == data[colIndex].r) && 
-				(palData[palIndex].g == data[colIndex].g) &&
-				(palData[palIndex].b == data[colIndex].b)) 
+			if ((palData[palIndex * 3] == data[colIndex * 3]) && 
+				(palData[palIndex * 3 + 1] == data[colIndex * 3 + 1]) &&
+				(palData[palIndex * 3 + 2] == data[colIndex * 3 + 2])) 
 				// Match found
 				break;
 		}
 
-		if (palIndex == 256) {
+		if (palIndex == PALETTE_COUNT) {
 			// No match found, so find a free slot to use
 			palIndex = -1;
-			while (++palIndex < 256) {
+			while (++palIndex < PALETTE_COUNT) {
 				if (_usageCount[palIndex] == 0)
 					break;
 			}
 
-			if (palIndex == 256) 
+			if (palIndex == PALETTE_COUNT) 
 				error("addRange - Ran out of palette space to allocate");
 
-			palData[palIndex].r = data[colIndex].r;
-			palData[palIndex].g = data[colIndex].g;
-			palData[palIndex].b = data[colIndex].b;
+			palData[palIndex * 3] = data[colIndex * 3];
+			palData[palIndex * 3 + 1] = data[colIndex * 3 + 1];
+			palData[palIndex * 3 + 2] = data[colIndex * 3 + 2];
 			paletteChanged = true;
 		}
 
@@ -240,7 +199,7 @@ void Palette::addRange(RGBList *list) {
 	}
 
 	if (paletteChanged) {
-		g_system->getPaletteManager()->setPalette((byte *)&palData[0], 0, 256);
+		g_system->getPaletteManager()->setPalette(&palData[0], 0, 256);
 		reset();
 	}
 }
@@ -259,9 +218,9 @@ void Palette::deleteAllRanges() {
 		_usageCount[colIndex] = 0;
 }
 
-void Palette::fadeRange(RGB8 *srcPal, RGB8 *destPal,  int startIndex, int endIndex, 
+void Palette::fadeRange(byte *srcPal, byte *destPal,  int startIndex, int endIndex, 
 					 int numSteps, uint delayAmount) {
-	RGB8 tempPal[256];
+	byte tempPal[256 * 3];
 
 	// perform the fade
 	for(int stepCtr = 1; stepCtr <= numSteps; ++stepCtr) {
@@ -274,16 +233,62 @@ void Palette::fadeRange(RGB8 *srcPal, RGB8 *destPal,  int startIndex, int endInd
 
 		for (int i = startIndex; i <= endIndex; ++i) {
 			// Handle the intermediate rgb values for fading
-			tempPal[i].r = (byte) (srcPal[i].r + (destPal[i].r - srcPal[i].r) * stepCtr / numSteps);   
-			tempPal[i].g = (byte) (srcPal[i].g + (destPal[i].g - srcPal[i].g) * stepCtr / numSteps); 
-			tempPal[i].b = (byte) (srcPal[i].b + (destPal[i].b - srcPal[i].b) * stepCtr / numSteps); 
+			tempPal[i * 3] = (byte) (srcPal[i * 3] + (destPal[i * 3] - srcPal[i * 3]) * stepCtr / numSteps);   
+			tempPal[i * 3 + 1] = (byte) (srcPal[i * 3 + 1] + (destPal[i * 3 + 1] - srcPal[i * 3 + 1]) * stepCtr / numSteps); 
+			tempPal[i * 3 + 2] = (byte) (srcPal[i * 3 + 2] + (destPal[i * 3 + 2] - srcPal[i * 3 + 2]) * stepCtr / numSteps); 
 		}
 		
-		_vm->_palette->setPalette(&tempPal[startIndex], startIndex, endIndex - startIndex + 1);
+		_vm->_palette->setPalette(&tempPal[startIndex * 3], startIndex, endIndex - startIndex + 1);
 	}
 
 	// Make sure the end palette exactly matches what is wanted
-	_vm->_palette->setPalette(&destPal[startIndex], startIndex, endIndex - startIndex + 1);
+	_vm->_palette->setPalette(&destPal[startIndex * 3], startIndex, endIndex - startIndex + 1);
+}
+
+/*------------------------------------------------------------------------*/
+
+byte *PaletteMADS::decodePalette(Common::SeekableReadStream *palStream, int *numColors) {
+	*numColors = palStream->readUint16LE();
+	assert(*numColors <= 252);
+
+	byte *palData = new byte[*numColors * 3];
+	Common::fill(&palData[0], &palData[*numColors * 3], 0);
+
+	for (int i = 0; i < *numColors; ++i) {
+		byte r = palStream->readByte();
+		byte g = palStream->readByte();
+		byte b = palStream->readByte();
+		palData[i * 3] = VGA_COLOR_TRANS(r);
+		palData[i * 3 + 1] = VGA_COLOR_TRANS(g);
+		palData[i * 3 + 2] = VGA_COLOR_TRANS(b);
+
+		// The next 3 bytes are unused
+		palStream->skip(3);
+	}
+
+	return palData;
+}
+
+int PaletteMADS::loadPalette(Common::SeekableReadStream *palStream, int indexStart) {
+	int colorCount;
+	byte *palData = decodePalette(palStream, &colorCount);
+	_vm->_palette->setPalette(palData, indexStart, colorCount);
+
+	delete palData;
+	return colorCount;
+}
+
+void PaletteMADS::setSystemPalette() {
+	resetColorCounts();
+
+	byte palData[4 * 3];
+	palData[0 * 3] = palData[0 * 3 + 1] = palData[0 * 3 + 2] = 0;
+	palData[1 * 3] = palData[1 * 3 + 1] = palData[1 * 3 + 2] = 0x54;
+	palData[2 * 3] = palData[2 * 3 + 1] = palData[2 * 3 + 2] = 0xb4;
+	palData[3 * 3] = palData[3 * 3 + 1] = palData[3 * 3 + 2] = 0xff;
+	
+	setPalette(palData, 0, 4);
+	blockRange(0, 4);
 }
 
 } // End of namespace MADS

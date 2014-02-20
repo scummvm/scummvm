@@ -71,7 +71,7 @@ void MADSEngine::initialise() {
 	MSprite::setVm(this);
 
 	_events = new EventsManager(this);
-	_palette = new Palette(this);
+	_palette = Palette::init(this);
 	_font = Font::init(this);
 	_resources = new ResourcesManager(this);
 	_screen = MSurface::init(true);

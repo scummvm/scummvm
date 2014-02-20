@@ -43,7 +43,7 @@ struct SpriteInfo {
 	int scaleX, scaleY;
 	uint8 encoding;
 	byte *inverseColorTable;
-	RGB8 *palette;
+	byte *palette;
 };
 
 /*

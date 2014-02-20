@@ -234,9 +234,9 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 						} else {
 							byte destPixel = *tempDst;
 							byte r, g, b;
-							r = CLIP((info.palette[destPixel].r * pixel) >> 10, 0, 31);
-							g = CLIP((info.palette[destPixel].g * pixel) >> 10, 0, 31);
-							b = CLIP((info.palette[destPixel].b * pixel) >> 10, 0, 31);
+							r = CLIP((info.palette[destPixel * 3] * pixel) >> 10, 0, 31);
+							g = CLIP((info.palette[destPixel * 3 + 1] * pixel) >> 10, 0, 31);
+							b = CLIP((info.palette[destPixel * 3 + 2] * pixel) >> 10, 0, 31);
 							pixel = info.inverseColorTable[(b << 10) | (g << 5) | r];
 						}
 					}
@@ -429,10 +429,10 @@ void MSurfaceMADS::loadBackground(int roomNumber, RGBList **palData) {
 	tileDataUncomp = tileData.getItemStream(2);
 	// Set palette
 	if (!palData) {
-		_vm->_palette->setMadsPalette(tileDataUncomp, 4);
+		_vm->_palette->loadPalette(tileDataUncomp, 4);
 	} else {
 		int numColors;
-		RGB8 *rgbList = _vm->_palette->decodeMadsPalette(tileDataUncomp, &numColors);
+		byte *rgbList = _vm->_palette->decodePalette(tileDataUncomp, &numColors);
 		*palData = new RGBList(numColors, rgbList, true);
 	}
 	delete tileDataUncomp;
@@ -495,18 +495,16 @@ void MSurfaceMADS::loadInterface(int index, RGBList **palData) {
 	char resourceName[20];
 	sprintf(resourceName, "i%d.int", index);
 	MadsPack intFile(resourceName, _vm);
-	RGB8 *palette = new RGB8[16];
+	byte *palette = new byte[16 * 3];
 
 	// Chunk 0, palette
 	Common::SeekableReadStream *intStream = intFile.getItemStream(0);
 	
 	for (int i = 0; i < 16; i++) {
-		palette[i].r = intStream->readByte() << 2;
-		palette[i].g = intStream->readByte() << 2;
-		palette[i].b = intStream->readByte() << 2;
-		intStream->readByte();
-		intStream->readByte();
-		intStream->readByte();
+		palette[i * 3] = intStream->readByte() << 2;
+		palette[i * 3 + 1] = intStream->readByte() << 2;
+		palette[i * 3 + 2] = intStream->readByte() << 2;
+		intStream->skip(3);
 	}
 	*palData = new RGBList(16, palette, true);
 	delete intStream;
@@ -551,10 +549,10 @@ void MSurfaceNebular::loadBackgroundStream(Common::SeekableReadStream *source, R
 
 	// Set palette
 	if (!palData) {
-		_vm->_palette->setMadsPalette(sourceUnc, 4);
+		_vm->_palette->loadPalette(sourceUnc, 4);
 	} else {
 		int numColors;
-		RGB8 *rgbList = _vm->_palette->decodeMadsPalette(sourceUnc, &numColors);
+		byte *rgbList = _vm->_palette->decodePalette(sourceUnc, &numColors);
 		*palData = new RGBList(numColors, rgbList, true);
 	}
 	delete sourceUnc;
@@ -598,7 +596,7 @@ void MSurfaceM4::loadBackgroundStream(Common::SeekableReadStream *source) {
 	MSurface *tileBuffer = MSurface::init();
 	uint curTileX = 0, curTileY = 0;
 	int clipX = 0, clipY = 0;
-	RGB8 palette[256];
+	byte palette[256];
 
 	source->skip(4);
 	/*uint32 size =*/ source->readUint32LE();
@@ -612,12 +610,13 @@ void MSurfaceM4::loadBackgroundStream(Common::SeekableReadStream *source) {
 
 	// BGR data, which is converted to RGB8
 	for (uint i = 0; i < 256; i++) {
-		palette[i].b = source->readByte() << 2;
-		palette[i].g = source->readByte() << 2;
-		palette[i].r = source->readByte() << 2;
-		palette[i].u = source->readByte() << 2;
+		byte r, g, b;
+		palette[i * 3] = r = source->readByte() << 2;
+		palette[i * 3 + 1] = g = source->readByte() << 2;
+		palette[i * 3 + 2] = b = source->readByte() << 2;
+		source->skip(1);
 
-		if ((blackIndex == 0) && !palette[i].r && !palette[i].g && !palette[i].b)
+		if ((blackIndex == 0) && !r && !g && !b)
 			blackIndex = i;
 	}
 	
