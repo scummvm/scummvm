@@ -690,7 +690,7 @@ void ThreadResource::parsePlayCommands() {
 
 const byte *ThreadResource::cardPerform(const byte *card) {
 	uint16 id = *card++;
-	int varD = 5;
+	int subId = 5;
 	uint32 v2;
 	byte bVal;
 	uint32 idx1, idx2;
@@ -805,17 +805,17 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	case 24:
 	case 27:
 	case 28:
-		varD -= 3;	
+		subId -= 3;	
 		// Deliberate fall-through
 
 	case 21:
 	case 22:
 	case 25:
 	case 26:
-		bVal = card[varD];
+		bVal = card[subId];
 		if (bVal == 61) {
 			if (cardPerform2(card, id)) {
-				card += varD;
+				card += subId;
 				while (*card != 30 && *card != 29)
 					card = cardPerform(card);
 
@@ -830,7 +830,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 					}
 				}
 			} else {
-				card += varD;
+				card += subId;
 				int count = 1;
 				while (count > 0) {
 					card = getNextRecord(card);
@@ -848,11 +848,11 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 			++card;
 		} else {
 			if (cardPerform2(card, id)) {
-				card += varD;
+				card += subId;
 				card = cardPerform(card);
 				while (*card++ != 61) ;		
 			} else {
-				card += varD;
+				card += subId;
 				while (*card != 61 && *card != 29)
 					++card;
 			}

@@ -111,7 +111,7 @@ void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, int idx, con
 
 void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 		const Common::Point &initialOffset) {
-	int var4C = 0;
+	int imageDataShift = 0;
 	int width1, width2;
 	int widthDiff, widthDiff2;
 	int height1;
@@ -242,19 +242,19 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	}
 
 	if (srcFlags & DISPFLAG_1000) {
-		srcImgData = srcPic->_imgData + (var4C << 14);
+		srcImgData = srcPic->_imgData + (imageDataShift << 14);
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
-			if (var4C < 4)
-				++var4C;
+			if (imageDataShift < 4)
+				++imageDataShift;
 		}
 	} else {
 		srcImgData = srcPic->_imgData;
 	}
 	if (destFlags & DISPFLAG_1000) {
-		destImgData = destPic->_imgData + (var4C << 14);
+		destImgData = destPic->_imgData + (imageDataShift << 14);
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
-			if (var4C < 4)
-				++var4C;
+			if (imageDataShift < 4)
+				++imageDataShift;
 		}		
 	} else {
 		destImgData = destPic->_imgData;

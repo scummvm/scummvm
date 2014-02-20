@@ -472,15 +472,15 @@ void VoyeurEngine::reviewTape() {
 
 		_currentVocId = 151;
 		_voy._vocSecondsOffset = 0;
-		bool var1E = true;
+		bool needRedraw = true;
 		do {
 			if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
 				_voy._musicStartTime = _voy._RTVNum;
 				_soundManager.startVOCPlay(_currentVocId);
 			}
 
-			if (var1E) {
-				var1E = false;
+			if (needRedraw) {
+				needRedraw = false;
 				flipPageAndWait();
 
 				_graphicsManager._drawPtr->_penColor = 0;
@@ -595,7 +595,7 @@ void VoyeurEngine::reviewTape() {
 				case 2:
 					if (eventStart > 0) {
 						--eventStart;
-						var1E = true;
+						needRedraw = true;
 					}
 					foundIndex = -1;
 					break;
@@ -605,7 +605,7 @@ void VoyeurEngine::reviewTape() {
 						eventStart -= 8;
 						if (eventStart < 0)
 							eventStart = 0;
-						var1E = true;
+						needRedraw = true;
 					}
 					foundIndex = -1;
 					break;
@@ -613,7 +613,7 @@ void VoyeurEngine::reviewTape() {
 				case 4:
 					if ((_voy._eventCount - 8) > eventStart) {
 						++eventStart;
-						var1E = true;
+						needRedraw = true;
 					}
 					foundIndex = -1;
 					break;
@@ -623,7 +623,7 @@ void VoyeurEngine::reviewTape() {
 						eventStart += 8;
 						if ((_voy._eventCount - 8) < eventStart)
 							eventStart = _voy._eventCount - 8;
-						var1E = true;
+						needRedraw = true;
 					}
 					foundIndex = -1;
 					break;
