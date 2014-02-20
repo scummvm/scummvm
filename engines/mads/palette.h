@@ -91,6 +91,11 @@ public:
 	 * Creates a new palette instance
 	 */
 	static Palette *init(MADSEngine *vm);
+	
+	/**
+	 * Destructor
+	 */
+	virtual ~Palette() {}
 
 	/**
 	 * Sets a new palette

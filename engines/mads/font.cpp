@@ -112,14 +112,14 @@ int Font::write(MSurface *surface, const Common::String &msg, const Common::Poin
 	const char *text = msg.c_str();
 	while (*text) {
 		char theChar = (*text++) & 0x7F;
-		int charWidth = _charWidths[theChar];
+		int charWidth = _charWidths[(byte)theChar];
 		
 		if (charWidth > 0) {
 
 			if (xPos + charWidth >= width)
 				return xPos;
 
-			uint8 *charData = &_charData[_charOffs[theChar]];
+			uint8 *charData = &_charData[_charOffs[(byte)theChar]];
 			int bpp = getBpp(charWidth);
 
 			if (skipY != 0)
