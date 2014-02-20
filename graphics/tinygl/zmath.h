@@ -5,17 +5,17 @@ namespace TinyGL {
 
 // Matrix & Vertex
 
-typedef struct {
+struct M4 {
 	float m[4][4];
-} M4;
+};
 
-typedef struct {
+struct M3 {
 	float m[3][3];
-} M3;
+};
 
-typedef struct {
+struct M34 {
 	float m[3][4];
-} M34;
+};
 
 
 #define X v[0]
@@ -23,13 +23,13 @@ typedef struct {
 #define Z v[2]
 #define W v[3]
 
-typedef struct {
+struct V3 {
 	float v[3];
-} V3;
+};
 
-typedef struct {
+struct V4 {
 	float v[4];
-} V4;
+};
 
 void gl_M4_Id(M4 *a);
 int gl_M4_IsId(const M4 *a);

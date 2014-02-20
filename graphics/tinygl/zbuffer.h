@@ -39,7 +39,7 @@ struct Buffer {
 	bool used;
 };
 
-typedef struct {
+struct ZBuffer {
 	int xsize, ysize;
 	int linesize; // line size, in bytes
 	Graphics::PixelFormat cmode;
@@ -59,15 +59,15 @@ typedef struct {
 	unsigned char *dctable;
 	int *ctable;
 	Graphics::PixelBuffer current_texture;
-} ZBuffer;
+};
 
-typedef struct {
+struct ZBufferPoint {
 	int x, y, z;   // integer coordinates in the zbuffer
 	int s, t;      // coordinates for the mapping
 	int r, g, b;   // color indexes
 
 	float sz, tz;  // temporary coordinates for mapping
-} ZBufferPoint;
+};
 
 // zbuffer.c
 
