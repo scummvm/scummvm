@@ -1207,7 +1207,8 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	_pages[0] = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x28));
 	_pages[1] = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x2C));
 
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x30), &_field30);
+	byte *dummy;
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x30), &dummy);
 
 	// Get the rect list
 	for (int listIndex = 0; listIndex < 3; ++listIndex) {
@@ -1236,8 +1237,7 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	_clipRect = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 0x4A),
 		ys + READ_LE_UINT16(src + 0x4C));
 
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x7A), &_field7A);
-
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x7A), &dummy);
 	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x7E), (GraphicMethodPtr *)&_fn1);
 	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x82), (GraphicMethodPtr *)&_setupFn);
 	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x86), (GraphicMethodPtr *)&_addFn);

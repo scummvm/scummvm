@@ -325,11 +325,9 @@ public:
 	int _pageIndex;
 	int _lastPage;
 	Common::Rect _bounds;
-	int _field18;  // Useless variable
 	PictureResource *_currentPic;
 	PictureResource *_activePage;
 	PictureResource *_pages[2];
-	byte *_field30;
 
 	// Rect lists and counts. Note that _rectListCount values of '-1' seem to have
 	// special significance, which is why I'm not making them redundant in favor 
@@ -338,7 +336,6 @@ public:
 	int _rectListCount[3];
 
 	Common::Rect _clipRect;
-	byte *_field7A;
 	GraphicMethodPtr _fn1;
 	ViewPortSetupPtr _setupFn;
 	ViewPortAddPtr _addFn;
