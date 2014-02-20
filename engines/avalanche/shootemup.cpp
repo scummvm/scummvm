@@ -366,6 +366,9 @@ void ShootEmUp::setup() {
 	for (int i = 0; i < 4; i++)
 		_running[i]._x = kFlag;
 
+	for (int i = 0; i < 99; i++)
+		_sprites[i]._x = kFlag;
+
 	newEscape();
 
 	_count321 = 255; // Counting down.
