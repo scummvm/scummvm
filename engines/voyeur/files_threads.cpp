@@ -751,7 +751,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		idx2 = *card++;
 
 		int &v1 = _vm->_controlPtr->_state->_vals[idx1];
-		int &v2 = _vm->_controlPtr->_state->_vals[idx2];
+		v2 = _vm->_controlPtr->_state->_vals[idx2];
 		v1 *= v2;
 		break;
 	}

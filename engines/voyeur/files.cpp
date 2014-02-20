@@ -711,10 +711,10 @@ RectResource::RectResource(const byte *src, int size, bool isExtendedRects) {
 	}
 
 	for (int i = 0; i < count; ++i, src += 8) {
-		int arrIndex = 0, count = 0;
+		int arrIndex = 0, rectCount = 0;
 		if (isExtendedRects) {
 			arrIndex = READ_LE_UINT16(src);
-			count = READ_LE_UINT16(src + 2);
+			rectCount = READ_LE_UINT16(src + 2);
 			src += 4;
 		}
 
@@ -723,7 +723,7 @@ RectResource::RectResource(const byte *src, int size, bool isExtendedRects) {
 		int x2 = READ_LE_UINT16(src + 4); 
 		int y2 = READ_LE_UINT16(src + 6);
 
-		_entries.push_back(RectEntry(x1, y1, x2, y2, arrIndex, count));
+		_entries.push_back(RectEntry(x1, y1, x2, y2, arrIndex, rectCount));
 	}
 
 	left = _entries[0].left;
@@ -766,36 +766,36 @@ void DisplayResource::sFillBox(int width, int height) {
 }
 
 bool DisplayResource::clipRect(Common::Rect &rect) {
-	Common::Rect clipRect;
+	Common::Rect clippingRect;
 	if (_vm->_graphicsManager._clipPtr) {
-		clipRect = *_vm->_graphicsManager._clipPtr;
+		clippingRect = *_vm->_graphicsManager._clipPtr;
 	} else if (_flags & DISPFLAG_VIEWPORT) {
-		clipRect = ((ViewPortResource *)this)->_clipRect;
+		clippingRect = ((ViewPortResource *)this)->_clipRect;
 	} else {
-		clipRect = ((PictureResource *)this)->_bounds;
+		clippingRect = ((PictureResource *)this)->_bounds;
 	}
 
 	Common::Rect r = rect;
-	if (r.left < clipRect.left) {
-		if (r.right <= clipRect.left)
+	if (r.left < clippingRect.left) {
+		if (r.right <= clippingRect.left)
 			return false;
-		r.setWidth(r.right - clipRect.left);
+		r.setWidth(r.right - clippingRect.left);
 	}
-	if (r.right >= clipRect.right) {
-		if (r.left >= clipRect.left)
+	if (r.right >= clippingRect.right) {
+		if (r.left >= clippingRect.left)
 			return false;
-		r.setWidth(clipRect.right - r.left);
+		r.setWidth(clippingRect.right - r.left);
 	}
 
-	if (r.top < clipRect.top) {
-		if (r.bottom <= clipRect.top)
+	if (r.top < clippingRect.top) {
+		if (r.bottom <= clippingRect.top)
 			return false;
-		r.setHeight(r.bottom - clipRect.top);
+		r.setHeight(r.bottom - clippingRect.top);
 	}
-	if (r.bottom >= clipRect.bottom) {
-		if (r.top >= clipRect.top)
+	if (r.bottom >= clippingRect.bottom) {
+		if (r.top >= clippingRect.top)
 			return false;
-		r.setWidth(clipRect.bottom - r.top);
+		r.setWidth(clippingRect.bottom - r.top);
 	}
 
 	rect = r;
