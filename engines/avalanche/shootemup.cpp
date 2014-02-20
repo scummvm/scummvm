@@ -218,6 +218,7 @@ void ShootEmUp::define(int16 x, int16 y, byte p, int8 ix, int8 iy, int16 time, b
 			_sprites[i]._cameo = false;
 			_sprites[i]._missile = isAMissile;
 			_sprites[i]._wipe = doWeWipe;
+			return;
 		}
 	}
 }
@@ -235,6 +236,7 @@ void ShootEmUp::defineCameo(int16 x, int16 y, byte p, int16 time) {
 			_sprites[i]._cameoFrame = p + 1;
 			_sprites[i]._missile = false;
 			_sprites[i]._wipe = false;
+			return;
 		}
 	}
 }
