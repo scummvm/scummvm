@@ -44,6 +44,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 
 	_events = nullptr;
 	_font = nullptr;
+	_game = nullptr;
 	_palette = nullptr;
 	_resources = nullptr;
 	_screen = nullptr;
@@ -54,6 +55,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 MADSEngine::~MADSEngine() {
 	delete _events;
 	delete _font;
+	delete _game;
 	delete _palette;
 	delete _resources;
 	delete _screen;
@@ -77,6 +79,7 @@ void MADSEngine::initialise() {
 	_screen = MSurface::init(true);
 	_sound = new SoundManager(this, _mixer);
 	_userInterface = UserInterface::init(this);
+	_game = Game::init(this);
 
 	_screen->empty();
 }
@@ -85,11 +88,11 @@ Common::Error MADSEngine::run() {
 	initGraphics(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, false);
 	initialise();
 
-	Common::Event e;
-	while (!shouldQuit()) {
-		g_system->getEventManager()->pollEvent(e);
-		g_system->delayMillis(10);
-	}
+	// Run the game
+	_game->run();
+
+	// Dummy loop to keep application active
+	_events->handleEvents();
 
 	return Common::kNoError;
 }

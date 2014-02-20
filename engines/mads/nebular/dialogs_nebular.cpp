@@ -21,23 +21,17 @@
  */
 
 #include "common/scummsys.h"
-#include "common/events.h"
-#include "engines/util.h"
+#include "common/config-manager.h"
 #include "mads/mads.h"
-#include "mads/events.h"
+#include "mads/graphics.h"
+#include "mads/msurface.h"
+#include "mads/nebular/dialogs_nebular.h"
 
 namespace MADS {
 
-EventsManager::EventsManager(MADSEngine *vm) {
-	_vm = vm;
-}
+namespace Nebular {
 
-void EventsManager::handleEvents() {
-	Common::Event e;
-	while (!_vm->shouldQuit()) {
-		g_system->getEventManager()->pollEvent(e);
-		g_system->delayMillis(10);
-	}
-}
+
+} // End of namespace Nebular
 
 } // End of namespace MADS

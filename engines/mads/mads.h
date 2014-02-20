@@ -32,6 +32,7 @@
 #include "graphics/surface.h"
 #include "mads/events.h"
 #include "mads/font.h"
+#include "mads/game.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"
@@ -91,6 +92,7 @@ protected:
 public:
 	EventsManager *_events;
 	Font *_font;
+	Game *_game;
 	Palette *_palette;
 	ResourcesManager *_resources;
 	MSurface *_screen;

@@ -23,17 +23,29 @@
 #include "common/scummsys.h"
 #include "mads/mads.h"
 #include "mads/game.h"
+#include "mads/nebular/game_nebular.h"
 #include "mads/graphics.h"
 #include "mads/msurface.h"
 
 namespace MADS {
 
 Game *Game::init(MADSEngine *vm) {
-	return new Game(vm);
+	if (vm->getGameID() == GType_RexNebular)
+		return new Nebular::GameNebular(vm);
+
+	return nullptr;
 }
 
-Game::Game(MADSEngine *vm): _vm(vm), _surface(MSurface::init(
-		MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT)) {
+Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr) {
+}
+
+Game::~Game() {
+	delete _surface;
+}
+
+void Game::run() {
+	if (!checkCopyProtection())
+		return;
 }
 
 } // End of namespace MADS

@@ -35,7 +35,7 @@ private:
 public:
 	EventsManager(MADSEngine *vm);
 
-	void handleEvents() { /* TODO */ }
+	void handleEvents();
 };
 
 } // End of namespace MADS

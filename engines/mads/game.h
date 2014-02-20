@@ -30,15 +30,25 @@ namespace MADS {
 class MADSEngine;
 
 class Game {
-private:
+protected:
 	MADSEngine *_vm;
 	MSurface *_surface;
 
 	Game(MADSEngine *vm);
+
+	/**
+	 * Perform any copy protection check
+	 */
+	virtual bool checkCopyProtection() = 0;
 public:
 	static Game *init(MADSEngine *vm);
 public:
-	~Game();
+	virtual ~Game();
+
+	/**
+	 * Run the game
+	 */
+	void run();
 };
 
 } // End of namespace MADS

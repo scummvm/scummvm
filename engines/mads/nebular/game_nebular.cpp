@@ -21,23 +21,29 @@
  */
 
 #include "common/scummsys.h"
-#include "common/events.h"
-#include "engines/util.h"
+#include "common/config-manager.h"
 #include "mads/mads.h"
-#include "mads/events.h"
+#include "mads/game.h"
+#include "mads/graphics.h"
+#include "mads/msurface.h"
+#include "mads/nebular/game_nebular.h"
 
 namespace MADS {
 
-EventsManager::EventsManager(MADSEngine *vm) {
-	_vm = vm;
+namespace Nebular {
+
+GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
+	_surface =MSurface::init(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
 }
 
-void EventsManager::handleEvents() {
-	Common::Event e;
-	while (!_vm->shouldQuit()) {
-		g_system->getEventManager()->pollEvent(e);
-		g_system->delayMillis(10);
-	}
+bool GameNebular::checkCopyProtection() {
+	if (!ConfMan.getBool("copy_protection") || (ConfMan.hasKey("passed_protection") &&
+			ConfMan.getInt("passed_protection") == 1))
+		return true;
+
+	return false;
 }
+
+} // End of namespace Nebular
 
 } // End of namespace MADS

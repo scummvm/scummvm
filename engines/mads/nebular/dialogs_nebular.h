@@ -20,24 +20,23 @@
  *
  */
 
+#ifndef MADS_GAME_NEBULAR_H
+#define MADS_GAME_NEBULAR_H
+
 #include "common/scummsys.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "mads/mads.h"
-#include "mads/events.h"
+#include "mads/game.h"
 
 namespace MADS {
 
-EventsManager::EventsManager(MADSEngine *vm) {
-	_vm = vm;
-}
+namespace Nebular {
 
-void EventsManager::handleEvents() {
-	Common::Event e;
-	while (!_vm->shouldQuit()) {
-		g_system->getEventManager()->pollEvent(e);
-		g_system->delayMillis(10);
-	}
-}
+class CopyProtectionDialog {
+public:
+	static bool show() { return false; }
+};
+
+} // End of namespace Nebular
 
 } // End of namespace MADS
+
+#endif /* MADS_GAME_NEBULAR_H */

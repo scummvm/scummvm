@@ -1,6 +1,8 @@
 MODULE := engines/mads
 
 MODULE_OBJS := \
+	nebular/dialogs_nebular.o \
+	nebular/game_nebular.o \
 	compression.o \
 	detection.o \
 	events.o \
