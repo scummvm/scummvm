@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -285,6 +285,11 @@ Common::Error SciEngine::run() {
 		initStackBaseWithSelector(SELECTOR(play));
 		// We set this, so that the game automatically quit right after init
 		_gamestate->variables[VAR_GLOBAL][4] = TRUE_REG;
+
+		// Jones only initializes its menus when restarting/restoring, thus set
+		// the gameIsRestarting flag here before initializing. Fixes bug #6536.
+		if (g_sci->getGameId() == GID_JONES)
+			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTORE;
 
 		_gamestate->_executionStackPosChanged = false;
 		run_vm(_gamestate);
@@ -576,7 +581,7 @@ bool SciEngine::initGame() {
 
 	// Script 0 should always be at segment 1
 	if (script0Segment != 1) {
-		debug(2, "Failed to instantiate script.000");
+		debug(2, "Failed to instantiate script 0");
 		return false;
 	}
 

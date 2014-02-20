@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -30,7 +30,7 @@ class String;
 namespace ZVision {
 
 /**
- * A generic single value storage class. It is useful for storing different 
+ * A generic single value storage class. It is useful for storing different
  * value types in a single List, Hashmap, etc.
  */
 class SingleValueContainer {
@@ -94,7 +94,7 @@ public:
 	SingleValueContainer& operator=(const SingleValueContainer &rhs);
 
 	/**
-	 * Retrieve a bool from the container. If the container is not storing a 
+	 * Retrieve a bool from the container. If the container is not storing a
 	 * bool, this will return false and display a warning().
 	 *
 	 * @param returnValue    Pointer to where you want the value stored
@@ -102,7 +102,7 @@ public:
 	 */
 	bool getBoolValue(bool *returnValue) const;
 	/**
-	 * Retrieve a byte from the container. If the container is not storing a 
+	 * Retrieve a byte from the container. If the container is not storing a
 	 * byte, this will return false and display a warning().
 	 *
 	 * @param returnValue    Pointer to where you want the value stored
@@ -110,7 +110,7 @@ public:
 	 */
 	bool getByteValue(byte *returnValue) const;
 	/**
-	 * Retrieve an int16 from the container. If the container is not storing an 
+	 * Retrieve an int16 from the container. If the container is not storing an
 	 * int16, this will return false and display a warning().
 	 *
 	 * @param returnValue    Pointer to where you want the value stored
@@ -118,7 +118,7 @@ public:
 	 */
 	bool getInt16Value(int16 *returnValue) const;
 	/**
-	 * Retrieve a uint16 from the container. If the container is not storing a 
+	 * Retrieve a uint16 from the container. If the container is not storing a
 	 * uint16, this will return false and display a warning().
 	 *
 	 * @param returnValue    Pointer to where you want the value stored
@@ -126,7 +126,7 @@ public:
 	 */
 	bool getUInt16Value(uint16 *returnValue) const;
 	/**
-	 * Retrieve an int32 from the container. If the container is not storing an 
+	 * Retrieve an int32 from the container. If the container is not storing an
 	 * int32, this will return false and display a warning().
 	 *
 	 * @param returnValue    Pointer to where you want the value stored
@@ -134,7 +134,7 @@ public:
 	 */
 	bool getInt32Value(int32 *returnValue) const;
 	/**
-	 * Retrieve a uint32 from the container. If the container is not storing a 
+	 * Retrieve a uint32 from the container. If the container is not storing a
 	 * uint32, this will return false and display a warning().
 	 *
 	 * @param returnValue    Pointer to where you want the value stored
@@ -142,7 +142,7 @@ public:
 	 */
 	bool getUInt32Value(uint32 *returnValue) const;
 	/**
-	 * Retrieve a float from the container. If the container is not storing a 
+	 * Retrieve a float from the container. If the container is not storing a
 	 * float, this will return false and display a warning().
 	 *
 	 * @param returnValue    Pointer to where you want the value stored
@@ -150,7 +150,7 @@ public:
 	 */
 	bool getFloatValue(float *returnValue) const;
 	/**
-	 * Retrieve a double from the container. If the container is not storing a 
+	 * Retrieve a double from the container. If the container is not storing a
 	 * double, this will return false and display a warning().
 	 *
 	 * @param returnValue    Pointer to where you want the value stored
@@ -158,9 +158,9 @@ public:
 	 */
 	bool getDoubleValue(double *returnValue) const;
 	/**
-	 * Retrieve a String from the container. If the container is not storing a 
+	 * Retrieve a String from the container. If the container is not storing a
 	 * string, this will return false and display a warning().
-	 * 
+	 *
 	 * Caution: Strings are internally stored as char[]. getStringValue uses
 	 * Common::String::operator=(char *) to do the assigment, which uses both
 	 * strlen() AND memmove().

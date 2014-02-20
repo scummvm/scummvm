@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -47,7 +47,7 @@
 
 
 namespace ZVision {
- 
+
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		: Engine(syst),
 		  _gameDescription(gameDesc),
@@ -61,13 +61,13 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 		  _saveManager(nullptr),
 		  _stringManager(nullptr),
 		  _cursorManager(nullptr) {
- 
+
 	debug(1, "ZVision::ZVision");
 }
 
 ZVision::~ZVision() {
 	debug(1, "ZVision::~ZVision");
- 
+
 	// Dispose of resources
 	delete _console;
 	delete _cursorManager;
@@ -76,15 +76,15 @@ ZVision::~ZVision() {
 	delete _renderManager;
 	delete _scriptManager;
 	delete _rnd;
- 
+
 	// Remove all of our debug levels
 	DebugMan.clearAllDebugChannels();
 }
 
 void ZVision::initialize() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	// TODO: There are 10 file clashes when we flatten the directories. 
-	// From a quick look, the files are exactly the same, so it shouldn't matter. 
+	// TODO: There are 10 file clashes when we flatten the directories.
+	// From a quick look, the files are exactly the same, so it shouldn't matter.
 	// But I'm noting it here just in-case it does become a problem.
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data1", 0, 4, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data2", 0, 4, true);
@@ -142,7 +142,7 @@ Common::Error ZVision::run() {
 
 		processEvents();
 
-		// Call _renderManager->update() first so the background renders 
+		// Call _renderManager->update() first so the background renders
 		// before anything that puzzles/controls will render
 		_renderManager->update(deltaTime);
 		_scriptManager->update(deltaTime);

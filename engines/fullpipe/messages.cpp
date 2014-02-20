@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -47,7 +47,7 @@ ExCommand *ExCommand::createClone() {
 	return new ExCommand(this);
 }
 
-ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) : 
+ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) :
 	Message(parentId, messageKind, x, y, a7, a8, sceneClickX, sceneClickY, a11) {
 	_field_3C = 1;
 	_messageNum = messageNum;
@@ -182,7 +182,7 @@ ExCommand2 *ExCommand2::createClone() {
 
 Message::Message() {
 	_messageKind = 0;
-	_parentId = 0;		
+	_parentId = 0;
 
 	_x = 0;
 	_y = 0;
@@ -900,7 +900,7 @@ void processMessages() {
 }
 
 void updateGlobalMessageQueue(int id, int objid) {
-	MessageQueue *m = g_fp->_globalMessageQueueList->getMessageQueueById(id);  
+	MessageQueue *m = g_fp->_globalMessageQueueList->getMessageQueueById(id);
 	if (m) {
 		m->update();
 	}

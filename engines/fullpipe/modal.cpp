@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -755,8 +755,75 @@ ModalMainMenu::ModalMainMenu() {
 	_field_34 = 0;
 }
 
+ModalHelp::ModalHelp() {
+	_mainMenuScene = 0;
+	_bg = 0;
+	_isRunning = false;
+	_rect = g_fp->_sceneRect;
+	_hx = g_fp->_currentScene->_x;
+	_hy = g_fp->_currentScene->_y;
+
+	g_fp->_sceneRect.left = 0;
+	g_fp->_sceneRect.bottom = 600;
+	g_fp->_sceneRect.top = 0;
+	g_fp->_sceneRect.right = 800;
+}
+
+ModalHelp::~ModalHelp() {
+	g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+
+	g_fp->_sceneRect = _rect;
+
+	g_fp->_currentScene->_x = _hx;
+	g_fp->_currentScene->_y = _hy;
+}
+
+bool ModalHelp::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17) {
+		int msg = cmd->_messageNum;
+
+		if (msg == 29 || msg == 36 || msg == 107) {
+			_isRunning = 0;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ModalHelp::init(int counterdiff) {
+	g_fp->setCursor(PIC_CSR_DEFAULT);
+
+	return _isRunning;
+}
+
+void ModalHelp::update() {
+	g_fp->_sceneRect.left = 0;
+	g_fp->_sceneRect.top = 0;
+	g_fp->_sceneRect.right = 800;
+	g_fp->_sceneRect.bottom = 600;
+
+	_bg->draw(0, 0, 0, 0);
+}
+
+void ModalHelp::launch() {
+	_mainMenuScene = g_fp->accessScene(SC_MAINMENU);
+
+	if (_mainMenuScene) {
+		_bg = _mainMenuScene->getPictureObjectById(PIC_HLP_BGR, 0)->_picture;
+		_isRunning = 1;
+	}
+}
+
 void FullpipeEngine::openHelp() {
-	warning("STUB: FullpipeEngine::openHelp()");
+	if (!_modalObject) {
+		ModalHelp *help = new ModalHelp;
+
+		_modalObject = help;
+
+		help->launch();
+	}
 }
 
 void FullpipeEngine::openMainMenu() {

@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "teenagent/teenagent.h"
@@ -4623,7 +4624,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 						SET_FLAG(dsAddr_mansionVCRPlayedTapeBeforeFlag, 1);
 					}
 				} else
-					displayMessage(dsAddr_tvOffMsg); // "I just realised that the TV is off"
+					displayMessage(dsAddr_tvOffMsg); // "I just realized that the TV is off"
 			} else {
 				SET_FLAG(dsAddr_mansionVCRPlayingTapeFlag, 0);
 				if (CHECK_FLAG(dsAddr_mansionTVOnFlag, 1)) {

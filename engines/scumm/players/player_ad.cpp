@@ -748,7 +748,7 @@ void Player_AD::parseNote(int channel, int num, const byte *offset) {
 		const int note = channel * 2 + num;
 		_notes[note].state = -1;
 		processNote(note, offset);
-		_notes[note].playTime = 0; 
+		_notes[note].playTime = 0;
 
 		if (*offset & 0x20) {
 			_notes[note].playTime = (*(offset + 4) >> 4) * 118;

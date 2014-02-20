@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -219,7 +219,7 @@ void Inventory2::rebuildItemRects() {
 		InventoryIcon *icn = new InventoryIcon();
 
 		icn->inventoryItemId = _itemsPool[idx]->id;
-		
+
 		icn->pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormal, 0);
 		icn->pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectHover, 0);
 		icn->pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectSelected, 0);
@@ -352,7 +352,7 @@ bool Inventory2::handleLeftClick(ExCommand *cmd) {
 	bool res = false;
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
-		if (cmd->_x >= _inventoryIcons[i]->x1 && cmd->_x <= _inventoryIcons[i]->x2 && 
+		if (cmd->_x >= _inventoryIcons[i]->x1 && cmd->_x <= _inventoryIcons[i]->x2 &&
 			cmd->_y >= _inventoryIcons[i]->y1 && cmd->_y <= _inventoryIcons[i]->y2) {
 			if (getSelectedItemId()) {
 				if (getSelectedItemId() != _inventoryIcons[i]->inventoryItemId)

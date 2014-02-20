@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -113,7 +113,7 @@ void DreamWebEngine::lookAtPlace() {
 
 	delPointer();
 	delTextLine();
-	getUnderCentre();
+	getUnderCenter();
 	showFrame(_newplaceGraphics3, 60, 72, 0, 0);
 	showFrame(_newplaceGraphics3, 60, 72 + 55, 4, 0);
 	if (_foreignRelease)
@@ -127,15 +127,15 @@ void DreamWebEngine::lookAtPlace() {
 	hangOnP(500);
 	_pointerMode = 0;
 	_pointerFrame = 0;
-	putUnderCentre();
+	putUnderCenter();
 	workToScreenM();
 }
 
-void DreamWebEngine::getUnderCentre() {
+void DreamWebEngine::getUnderCenter() {
 	multiGet(_mapStore, 58, 72, 254, 110);
 }
 
-void DreamWebEngine::putUnderCentre() {
+void DreamWebEngine::putUnderCenter() {
 	multiPut(_mapStore, 58, 72, 254, 110);
 }
 

@@ -158,8 +158,18 @@ void OpenGLSdlGraphicsManager::resetGraphicsScale() {
 Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> formats;
 
+	// Our default mode is (memory layout wise) RGBA8888 which is a different
+	// logical layout depending on the endianness. We chose this mode because
+	// it is the only 32bit color mode we can safely assume to be present in
+	// OpenGL and OpenGL ES implementations. Thus, we need to supply different
+	// logical formats based on endianness.
+#ifdef SCUMM_LITTLE_ENDIAN
+	// ABGR8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#else
 	// RGBA8888
 	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#endif
 	// RGB565
 	formats.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	// RGBA5551
@@ -168,6 +178,13 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
 
 #ifndef USE_GLES
+#ifdef SCUMM_LITTLE_ENDIAN
+	// RGBA8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
+	// ABGR8888
+	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
 	// ARGB8888, this should not be here, but Sword25 requires it. :-/
 	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
 
@@ -308,6 +325,14 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		flags |= SDL_RESIZABLE;
 	}
 
+	if (_hwScreen) {
+		// When a video mode has been setup already we notify the manager that
+		// the context is about to be destroyed.
+		// We do this because on Windows SDL_SetVideoMode can destroy and
+		// recreate the OpenGL context.
+		notifyContextDestroy();
+	}
+
 	_hwScreen = SDL_SetVideoMode(width, height, 32, flags);
 
 	if (!_hwScreen) {
@@ -319,8 +344,18 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	}
 
 	if (_hwScreen) {
-		const Graphics::PixelFormat rgba8888 = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		notifyContextChange(rgba8888, rgba8888);
+		// This is pretty confusing since RGBA8888 talks about the memory
+		// layout here. This is a different logical layout depending on
+		// whether we run on little endian or big endian. However, we can
+		// only safely assume that RGBA8888 in memory layout is supported.
+		// Thus, we chose this one.
+		const Graphics::PixelFormat rgba8888 =
+#ifdef SCUMM_LITTLE_ENDIAN
+		                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
+		                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#endif
+		notifyContextCreate(rgba8888, rgba8888);
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
 	}
 

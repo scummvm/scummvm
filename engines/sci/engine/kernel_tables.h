@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -431,7 +431,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "[r0]i[r0]",             NULL,            NULL },
 	{ MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
-	{ MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "[r0]i[r0](r)",          NULL,            NULL },
+	{ MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "[r0]i[r0](r0)",         NULL,            NULL },
 	{ MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },
 	{ MAP_CALL(SetCursor),         SIG_SCI21, SIGFOR_ALL,    "i(i)([io])(i*)",        NULL,            NULL },
 	// TODO: SCI2.1 may supply an object optionally (mother goose sci21 right on startup) - find out why
@@ -454,7 +454,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                 NULL,            kStrAt_workarounds },
 	{ MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
 	{ MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rr(i)",                 NULL,            NULL },
-	{ MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "r[r0](i)",              NULL,            NULL },
+	{ MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "r[r0](i)",              NULL,            kStrCpy_workarounds },
 	{ MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                  NULL,            kStrLen_workarounds },
 	{ MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",                NULL,            NULL },

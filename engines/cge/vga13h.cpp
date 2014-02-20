@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -26,6 +26,7 @@
  */
 
 #include "common/array.h"
+#include "common/config-manager.h"
 #include "common/rect.h"
 #include "graphics/palette.h"
 #include "cge/general.h"
@@ -210,10 +211,10 @@ Sprite *Sprite::expand() {
 			error("Bad SPR [%s]", fname);
 		Common::String line;
 		char tmpStr[kLineMax + 1];
-		int len = 0, lcnt = 0;
+		int lcnt = 0;
 
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
-			len = line.size();
+			int len = line.size();
 			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 			lcnt++;
 			if (len == 0 || *tmpStr == '.')
@@ -637,6 +638,10 @@ Vga::Vga(CGEEngine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _
 		_page[idx]->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
+	if (ConfMan.getBool("enable_color_blind"))
+		_mono = 1;
+	
+
 	_oldColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	_newColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	getColors(_oldColors);
@@ -756,7 +761,7 @@ void Vga::setColors(Dac *tab, int lum) {
 	if (_mono) {
 		destP = _newColors;
 		for (int idx = 0; idx < kPalCount; idx++, destP++) {
-			// Form a greyscalce colour from 30% R, 59% G, 11% B
+			// Form a greyscalce color from 30% R, 59% G, 11% B
 			uint8 intensity = (((int)destP->_r * 77) + ((int)destP->_g * 151) + ((int)destP->_b * 28)) >> 8;
 			destP->_r = intensity;
 			destP->_g = intensity;

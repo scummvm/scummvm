@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -408,6 +408,11 @@ const SciWorkaroundEntry kSetPort_workarounds[] = {
 const SciWorkaroundEntry kStrAt_workarounds[] = {
 	{ GID_CASTLEBRAIN,   220,   220,  0,         "robotJokes", "animateOnce",    -1,    0, { WORKAROUND_FAKE,      0 } }, // when trying to view the terminal at the end of the maze without having collected any robot jokes - bug #5127
 	{ GID_ISLANDBRAIN,   300,   310,  0,         "childBreed", "changeState",0x1c7c,    0, { WORKAROUND_FAKE,      0 } }, // when clicking Breed to get the second-generation cyborg hybrid (Standard difficulty), the two parameters are swapped - bug #5088
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+const SciWorkaroundEntry kStrCpy_workarounds[] = {
+	{ GID_MOTHERGOOSE,   23,   23,  0,          "talkScript", "changeState",    -1,    0, { WORKAROUND_FAKE,      0 } }, // when talking to the girl in scene 23, there's no destination parameter (script bug - wrong instruction order). The original source is used directly afterwards in kDisplay, to show the girl's text - bug #6485
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

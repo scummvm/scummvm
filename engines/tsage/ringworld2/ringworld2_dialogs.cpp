@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -197,6 +197,11 @@ int RightClickDialog::execute() {
 
 void CharacterDialog::show() {
 	CharacterDialog *dlg = new CharacterDialog();
+	CursorType cursorNum = R2_GLOBALS._events.getCursor();
+
+	// Reset the current cursor
+	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
+
 	dlg->draw();
 
 	// Make the default button the currently active character
@@ -315,12 +320,15 @@ void CharacterDialog::show() {
 			}
 		}
 
-		// Reset the current cursor
-		R2_GLOBALS._events.setCursor(CURSOR_USE);
-
 		// Change to whichever scene the newly selected character is in
 		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex]);
-	}
+
+		// Force the reset the current cursor
+		R2_GLOBALS._events.setCursor(CURSOR_USE);
+
+	} else
+		// Restore previous cursor
+		R2_GLOBALS._events.setCursor(cursorNum);
 }
 
 CharacterDialog::CharacterDialog() {

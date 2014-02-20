@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1217,7 +1217,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 	g_globals->_events.setCursor(CURSOR_WALK);
 	g_globals->_player.disableControl();
 
-	if ((g_globals->_sceneManager._previousScene == 9200) || (g_globals->_sceneManager._previousScene != 9850)) {
+	if (g_globals->_sceneManager._previousScene != 9850) {
 		_sceneMode = 0;
 		if (RING_INVENTORY._helmet._sceneNumber != 1) {
 			setAction(&_sequenceManager, this, 9501, &g_globals->_player, &_candle, NULL);

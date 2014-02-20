@@ -372,16 +372,18 @@ void TinyTSA::receiveNotification(Notification *notification, const Notification
 			}
 			break;
 		case kTinyTSA37DownloadToOpMemReview:
-			switch (GameState.getTSAState()) {
-			case kPlayerOnWayToNorad:
-				g_opticalChip->playOpMemMovie(kPoseidonSpotID);
-				break;
-			case kPlayerOnWayToMars:
-				g_opticalChip->playOpMemMovie(kAriesSpotID);
-				break;
-			case kPlayerOnWayToWSC:
-				g_opticalChip->playOpMemMovie(kMercurySpotID);
-				break;
+			if (_vm->itemInBiochips(kOpticalBiochip)) {
+				switch (GameState.getTSAState()) {
+				case kPlayerOnWayToNorad:
+					g_opticalChip->playOpMemMovie(kPoseidonSpotID);
+					break;
+				case kPlayerOnWayToMars:
+					g_opticalChip->playOpMemMovie(kAriesSpotID);
+					break;
+				case kPlayerOnWayToWSC:
+					g_opticalChip->playOpMemMovie(kMercurySpotID);
+					break;
+				}
 			}
 
 			requestExtraSequence(kTinyTSA37OpMemReviewToMainMenu, kExtraCompletedFlag, kFilterNoInput);

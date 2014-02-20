@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -220,8 +220,12 @@ void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 }
 
 void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
-	if (cmd)
-		_globalMessageQueueList->getMessageQueueById(cmd->_parId)->activateExCommandsByKind(34);
+	if (cmd) {
+		MessageQueue *mq = _globalMessageQueueList->getMessageQueueById(cmd->_parId);
+
+		if (mq)
+			mq->activateExCommandsByKind(34);
+	}
 
 	_lift->changeStatics2(ST_LFT_CLOSED);
 
@@ -234,7 +238,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 	ex->_excFlags |= 3;
 	mq->addExCommandToEnd(ex);
 
-	if (!ex) {
+	if (!cmd) {
 		ex = new ExCommand(_aniMan->_id, 2, 40, 0, 0, 0, 1, 0, 0, 0);
 		ex->_keyCode = _aniMan->_okeyCode;
 		ex->_excFlags |= 2;

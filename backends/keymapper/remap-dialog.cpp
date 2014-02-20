@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "backends/keymapper/remap-dialog.h"
@@ -256,6 +257,12 @@ void RemapDialog::clearMapping(uint i) {
 void RemapDialog::startRemapping(uint i) {
 	if (_topAction + i >= _currentActions.size())
 		return;
+
+	if (_keymapper->isRemapping()) {
+		// Handle a second click on the button as a stop to remapping
+		stopRemapping(true);
+		return;
+	}
 
 	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
 	Action *activeRemapAction = _currentActions[_topAction + i].action;

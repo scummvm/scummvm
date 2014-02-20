@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -341,7 +341,7 @@ bool BaseSurfaceOSystem::display(int x, int y, Rect32 rect, TSpriteBlendMode ble
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTrans(int x, int y, Rect32 rect, uint32 alpha, TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
-	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY)); 
+	return drawSprite(x, y, &rect, nullptr, TransformStruct(kDefaultZoomX, kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -441,13 +441,13 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect,
 		transform._alphaDisable = true;
 	}
 
-	renderer->drawSurface(this, _surface, &srcRect, &position, transform); 
+	renderer->drawSurface(this, _surface, &srcRect, &position, transform);
 	return STATUS_OK;
 }
 
 bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_loaded = true;
-	if (surface.format == _surface->format && surface.w == _surface->w && surface.h == _surface->h) {
+	if (surface.format == _surface->format && surface.pitch == _surface->pitch && surface.h == _surface->h) {
 		const byte *src = (const byte *)surface.getBasePtr(0, 0);
 		byte *dst = (byte *)_surface->getBasePtr(0, 0);
 		memcpy(dst, src, surface.pitch * surface.h);

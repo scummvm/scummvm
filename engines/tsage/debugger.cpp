@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -653,7 +653,7 @@ bool Ringworld2Debugger::Cmd_ListObjects(int argc, const char **argv) {
 	DebugPrintf("11 - R2_CHARGED_POWER_CAPSULE\n");
 	DebugPrintf("12 - R2_AEROSOL\n");
 	DebugPrintf("13 - R2_REMOTE_CONTROL\n");
-	DebugPrintf("14 - R2_OPTICAL_FIBRE\n");
+	DebugPrintf("14 - R2_OPTICAL_FIBER\n");
 	DebugPrintf("15 - R2_CLAMP\n");
 	DebugPrintf("16 - R2_ATTRACTOR_CABLE_HARNESS\n");
 	DebugPrintf("17 - R2_FUEL_CELL\n");

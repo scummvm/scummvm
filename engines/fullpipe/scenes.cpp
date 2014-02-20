@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,6 +31,7 @@
 #include "fullpipe/behavior.h"
 
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/interaction.h"
 
@@ -154,6 +155,25 @@ Vars::Vars() {
 	scene08_inArcade = false;
 	scene08_stairsVisible = true;
 	scene08_manOffsetY = 0;
+
+	scene09_flyingBall = 0;
+	scene09_var05 = 0;
+	scene09_glotatel = 0;
+	scene09_spitter = 0;
+	scene09_grit = 0;
+	scene09_var02 = 0;
+	scene09_var08 = 1;
+	scene09_var09 = 0;
+	scene09_var10 = -1;
+	scene09_var11 = -1;
+	scene09_var12 = -1000;
+	scene09_numMovingHangers = 0;
+	scene09_var13 = 0;
+	scene09_var15 = 0;
+	scene09_var17 = 0;
+	scene09_var19 = 0;
+	scene09_var18.x = 0;
+	scene09_var18.y = -15;
 
 	scene10_gum = 0;
 	scene10_packet = 0;
@@ -299,6 +319,22 @@ Vars::Vars() {
 	scene26_sockPic = 0;
 	scene26_sock = 0;
 	scene26_activeVent = 0;
+
+	scene27_hitZone = 0;
+	scene27_driver = 0;
+	scene27_maid = 0;
+	scene27_batHandler = 0;
+	scene27_driverHasVent = true;
+	scene27_bat = 0;
+	scene27_dudeIsAiming = false;
+	scene27_maxPhaseReached = false;
+	scene27_wipeIsNeeded = false;
+	scene27_driverPushedButton = false;
+	scene27_numLostBats = 0;
+	scene27_knockCount = 0;
+	scene27_aimStartX = 0;
+	scene27_aimStartY = 0;
+	scene27_launchPhase = 0;
 
 	scene28_fliesArePresent = true;
 	scene28_beardedDirection = true;
@@ -618,7 +654,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene08_updateCursor;
 		break;
 
-#if 0
 	case SC_9:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_9");
 		scene->preloadMovements(sceneVar);
@@ -629,7 +664,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		insertMessageHandler(sceneHandler09, 2, 2);
 		_updateCursorCallback = scene09_updateCursor;
 		break;
-#endif
 
 	case SC_10:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_10");
@@ -847,7 +881,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene26_updateCursor;
 		break;
 
-#if 0
 	case SC_27:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_27");
 		scene->preloadMovements(sceneVar);
@@ -858,7 +891,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		addMessageHandler(sceneHandler27, 2);
 		_updateCursorCallback = scene27_updateCursor;
 		break;
-#endif
 
 	case SC_28:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_28");
@@ -1211,7 +1243,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 		break;
 
 	case SC_23:
-		if (getObjectState("Верхний люк_23") == getObjectEnumState("Верхний люк_23", "Открыт")) {
+		if (getObjectState(sO_UpperHatch_23) == getObjectEnumState(sO_UpperHatch_23, sO_Opened)) {
 			updateMapPiece(PIC_MAP_S23_1, 0);
 			updateMapPiece(PIC_MAP_S23_2, 1);
 			updateMapPiece(PIC_MAP_P07, 1);
@@ -1284,7 +1316,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_31:
 		updateMapPiece(PIC_MAP_S31_2, 1);
 
-		if (getObjectState("Кактус") == getObjectEnumState("Кактус", "Вырос"))
+		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S31_1, 1);
 
 		if (pre->keyCode == TrubaRight)
@@ -1295,7 +1327,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_32:
 		updateMapPiece(PIC_MAP_S32_2, 1);
 
-		if (getObjectState("Кактус") == getObjectEnumState("Кактус", "Вырос"))
+		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S32_1, 1);
 
 		break;
@@ -1354,6 +1386,29 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 		}
 		break;
     }
+}
+
+void BallChain::init(Ball **ball) {
+	*ball = pTail;
+	pTail = (Ball *)ball;
+	numBalls--;
+
+	if (!numBalls) {
+		for (Ball *i = pHead; i; i = i->p0 )
+			;
+		numBalls = 0;
+		pTail = 0;
+		field_8 = 0;
+		pHead = 0;
+		free(cPlex);
+		cPlex = 0;
+	}
+}
+
+Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
+	warning("STUB: BallChain::sub04");
+
+	return pTail;
 }
 
 

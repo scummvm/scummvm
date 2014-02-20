@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -114,6 +114,10 @@ bool RobotDecoder::load(GuiResourceId id) {
 	// others), so it must be some new functionality added in RAMA's robot
 	// videos. Skip it for now.
 	if (g_sci->getGameId() == GID_RAMA && id == 1003)
+		return false;
+
+	// Robots for the options in the RAMA menu
+	if (g_sci->getGameId() == GID_RAMA && (id >= 1004 && id <= 1009))
 		return false;
 
 	// TODO: The robot video in the Lighthouse demo gets stuck

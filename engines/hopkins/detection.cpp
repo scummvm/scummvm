@@ -8,16 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  *
  */
 
@@ -29,6 +28,7 @@
 #include "common/memstream.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
@@ -69,6 +69,30 @@ static const PlainGameDescriptor hopkinsGames[] = {
 
 #include "hopkins/detection_tables.h"
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_GORE_DEFAULT_OFF,
+		{
+			_s("Gore Mode"),
+			_s("Enable Gore Mode when available"),
+			"enable_gore",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_GORE_DEFAULT_ON,
+		{
+			_s("Gore Mode"),
+			_s("Enable Gore Mode when available"),
+			"enable_gore",
+			true
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 const static char *directoryGlobs[] = {
 	"voice",
 	"link",
@@ -77,7 +101,7 @@ const static char *directoryGlobs[] = {
 
 class HopkinsMetaEngine : public AdvancedMetaEngine {
 public:
-	HopkinsMetaEngine() : AdvancedMetaEngine(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), hopkinsGames) {
+	HopkinsMetaEngine() : AdvancedMetaEngine(Hopkins::gameDescriptions, sizeof(Hopkins::HopkinsGameDescription), hopkinsGames, optionsList) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -190,7 +214,7 @@ SaveStateDescriptor HopkinsMetaEngine::querySaveMetaInfos(const char *target, in
 
 
 #if PLUGIN_ENABLED_DYNAMIC(HOPKINS)
-REGISTER_PLUGIN_DYNAMIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
+	REGISTER_PLUGIN_STATIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
 #endif

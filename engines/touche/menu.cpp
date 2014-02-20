@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -569,29 +569,29 @@ int ToucheEngine::displayQuitDialog() {
 				quitLoop = true;
 				switch (_language) {
 				case Common::FR_FRA:
-					if (event.kbd.ascii == 'o' || event.kbd.ascii == 'O') {
+					if (event.kbd.keycode == Common::KEYCODE_o) {
 						ret = 1;
 					}
 					break;
 				case Common::DE_DEU:
-					if (event.kbd.ascii == 'j' || event.kbd.ascii == 'J') {
+					if (event.kbd.keycode == Common::KEYCODE_j) {
 						ret = 1;
 					}
 					break;
 				case Common::ES_ESP:
-					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S') {
+					if (event.kbd.keycode == Common::KEYCODE_s) {
 						ret = 1;
 					}
 					break;
 				case Common::PL_POL:
-					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S' || event.kbd.ascii == 't' || event.kbd.ascii == 'T') {
+					if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_t) {
 						ret = 1;
 					}
 					break;
 				default:
 					// According to cyx, the Italian version uses the same
 					// keys as the English one.
-					if (event.kbd.ascii == 'y' || event.kbd.ascii == 'Y') {
+					if (event.kbd.keycode == Common::KEYCODE_y) {
 						ret = 1;
 					}
 					break;

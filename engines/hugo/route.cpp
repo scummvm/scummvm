@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -384,9 +384,9 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 	_segment[_segmentNumb]._x2 = herox2;
 	_segmentNumb++;
 
-	Common::Point *routeNode;                       // Ptr to route node
 	// Look in segments[] for straight lines from destination to hero
 	for (i = 0, _routeListIndex = 0; i < _segmentNumb - 1; i++) {
+		Common::Point *routeNode;                   // Ptr to route node
 		if ((routeNode = newNode()) == 0)           // New node for new segment
 			return false;                           // Too many nodes
 		routeNode->y = _segment[i]._y;
@@ -438,7 +438,7 @@ bool Route::findRoute(const int16 cx, const int16 cy) {
 void Route::processRoute() {
 	debugC(1, kDebugRoute, "processRoute");
 
-	static bool turnedFl = false;                   // Used to get extra cylce for turning
+	static bool turnedFl = false;                   // Used to get extra cycle for turning
 
 	if (_routeIndex < 0)
 		return;

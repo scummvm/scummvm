@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef TEENAGENT_RESOURCES_H
@@ -494,7 +495,7 @@ const uint16 dsAddr_noDepraveMsg = 0x4d02; // "Nah, I don't want to deprave the 
 // No Read Again Message : 0x4d2a to 0x4d5a
 const uint16 dsAddr_noReadAgainMsg = 0x4d2a; // "I don't want to read it again. I might like it."
 // TV Off Message : 0x4d5b to 0x4d7f
-const uint16 dsAddr_tvOffMsg = 0x4d5b; // "I just realised that the TV is off"
+const uint16 dsAddr_tvOffMsg = 0x4d5b; // "I just realized that the TV is off"
 // Not Happen Message : 0x4d80 to 0x4d92
 const uint16 dsAddr_NotHappenMsg = 0x4d80; // "Nothing happened"
 // Tape Started Message : 0x4d93 to 0x4da5

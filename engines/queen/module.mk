@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	credits.o \
 	cutaway.o \
 	debug.o \
+	detection.o \
 	display.o \
 	graphics.o \
 	grid.o \

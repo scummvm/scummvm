@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -82,6 +82,7 @@ namespace Video {
 #define ID_CVID MKTAG('c','v','i','d')
 #define ID_IV32 MKTAG('i','v','3','2')
 #define ID_DUCK MKTAG('D','U','C','K')
+#define ID_DUCK2 MKTAG('d','u','c','k') // Some videos have DUCK tag in lowercase
 #define ID_MPG2 MKTAG('m','p','g','2')
 #define ID_MJPG MKTAG('m','j','p','g')
 
@@ -782,6 +783,7 @@ Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 		return new Indeo3Decoder(_bmInfo.width, _bmInfo.height);
 #ifdef VIDEO_CODECS_TRUEMOTION1_H
 	case ID_DUCK:
+	case ID_DUCK2:
 		return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
 #endif
 #ifdef USE_MPEG2

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -465,7 +465,7 @@ enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MOD
 };
 
 // Actor effect enumeration used in Return to Ringworld 2
-enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_3 = 3,
+enum Effect { EFFECT_NONE = 0, EFFECT_SHADED = 1, EFFECT_SMOKE = 3,
 	EFFECT_SHADOW_MAP = 5, EFFECT_SHADED2 = 6 };
 
 class SceneObject;

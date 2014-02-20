@@ -2779,8 +2779,8 @@ case $_backend in
 		;;
 	iphone)
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
-		LIBS="$LIBS -framework QuartzCore -framework GraphicsServices -framework CoreFoundation"
-		LIBS="$LIBS -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		LIBS="$LIBS -framework QuartzCore -framework CoreFoundation -framework Foundation"
+		LIBS="$LIBS -framework AudioToolbox -framework CoreAudio"
 		;;
 	linuxmoto)
 		DEFINES="$DEFINES -DLINUXMOTO"

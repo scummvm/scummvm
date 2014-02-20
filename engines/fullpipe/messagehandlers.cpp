@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -151,7 +151,7 @@ int global_messageHandler1(ExCommand *cmd) {
 
 			if (g_fp->_updateFlag && (invItem = g_fp->_inventory->getHoveredItem(&g_fp->_mouseScreenPos))) {
 				g_fp->_cursorId = PIC_CSR_ITN;
-				if (!g_fp->_currSelectedInventoryItemId && !g_fp->_aniMan->_movement && 
+				if (!g_fp->_currSelectedInventoryItemId && !g_fp->_aniMan->_movement &&
 					!(g_fp->_aniMan->_flags & 0x100) && g_fp->_aniMan->isIdle()) {
 					int st = g_fp->_aniMan->_statics->_staticsId;
 					ExCommand *newex = 0;

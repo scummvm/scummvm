@@ -33,6 +33,7 @@ MODULE_OBJS = \
 	scenes/scene06.o \
 	scenes/scene07.o \
 	scenes/scene08.o \
+	scenes/scene09.o \
 	scenes/scene10.o \
 	scenes/scene11.o \
 	scenes/scene12.o \
@@ -49,6 +50,7 @@ MODULE_OBJS = \
 	scenes/scene24.o \
 	scenes/scene25.o \
 	scenes/scene26.o \
+	scenes/scene27.o \
 	scenes/scene28.o \
 	scenes/scene30.o \
 	scenes/scene31.o \

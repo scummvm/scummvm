@@ -1,24 +1,24 @@
 /* ScummVM - Graphic Adventure Engine
-*
-* ScummVM is the legal property of its developers, whose names
-* are too numerous to list here. Please refer to the COPYRIGHT
-* file distributed with this source distribution.
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
-
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-*
-*/
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
 #include "common/system.h"
 #include "common/events.h"
@@ -184,10 +184,10 @@ void ToonEngine::parseInput() {
 	Common::Event event;
 	while (_event->pollEvent(event)) {
 
-		bool hasModifier = event.kbd.hasFlags(Common::KBD_ALT|Common::KBD_CTRL|Common::KBD_SHIFT);
+		const bool hasModifier = (event.kbd.flags & Common::KBD_NON_STICKY) != 0;
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if ((event.kbd.ascii == 27 || event.kbd.ascii == 32) && !hasModifier) {
+			if ((event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) && !hasModifier) {
 				_audioManager->stopCurrentVoice();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F5 && !hasModifier) {
@@ -198,21 +198,21 @@ void ToonEngine::parseInput() {
 				if (canLoadGameStateCurrently())
 					loadGame(-1);
 			}
-			if (event.kbd.ascii == 't' && !hasModifier) {
+			if (event.kbd.keycode == Common::KEYCODE_t && !hasModifier) {
 				_showConversationText = !_showConversationText;
 			}
-			if (event.kbd.ascii == 'm' && !hasModifier) {
+			if (event.kbd.keycode == Common::KEYCODE_m && !hasModifier) {
 				_audioManager->muteMusic(!_audioManager->isMusicMuted());
 			}
-			if (event.kbd.ascii == 'd' && !hasModifier) {
+			if (event.kbd.keycode == Common::KEYCODE_d && !hasModifier) {
 				_audioManager->muteVoice(!_audioManager->isVoiceMuted());
 			}
-			if (event.kbd.ascii == 's' && !hasModifier) {
+			if (event.kbd.keycode == Common::KEYCODE_s && !hasModifier) {
 				_audioManager->muteSfx(!_audioManager->isSfxMuted());
 			}
 
 			if (event.kbd.flags & Common::KBD_ALT) {
-				int slotNum = event.kbd.ascii - '0';
+				int slotNum = event.kbd.keycode - (event.kbd.keycode >= Common::KEYCODE_KP0 ? Common::KEYCODE_KP0 : Common::KEYCODE_0);
 				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
 					if (saveGame(slotNum, "")) {
 						// ok
@@ -229,7 +229,7 @@ void ToonEngine::parseInput() {
 			}
 
 			if (event.kbd.flags & Common::KBD_CTRL) {
-				int slotNum = event.kbd.ascii - '0';
+				int slotNum = event.kbd.keycode - (event.kbd.keycode >= Common::KEYCODE_KP0 ? Common::KEYCODE_KP0 : Common::KEYCODE_0);
 				if (slotNum >= 0 && slotNum <= 9 && canLoadGameStateCurrently()) {
 					if (loadGame(slotNum)) {
 						// ok

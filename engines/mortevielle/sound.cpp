@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -91,13 +91,12 @@ int SoundManager::decodeMusic(const byte *PSrc, byte *PDest, int size) {
 	static const int tab[16] = { -96, -72, -48, -32, -20, -12, -8, -4, 0, 4, 8, 12, 20, 32, 48, 72 };
 
 	uint seed = 128;
-	int v;
 	int decompSize = 0;
 	int skipSize = 0;
 
 	for (int idx1 = 0; idx1 < size; ++idx1) {
 		byte srcByte = *PSrc++;
-		v = tab[srcByte >> 4];
+		int v = tab[srcByte >> 4];
 		seed += v;
 		*PDest++ = seed & 0xff;
 
@@ -204,7 +203,7 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 				}
 			} else { // 2
 				debugC(5, kMortevielleSounds, "litph - vadson");
-				const static int ambiantNoiseAdr[] = {0,     14020, 
+				const static int ambiantNoiseAdr[] = {0,     14020,
 													  14020, 18994,
 													  18994, 19630,
 													  19630, 22258,
@@ -696,7 +695,7 @@ void SoundManager::handlePhoneme() {
 	uint16 startPos = _cfiphBuffer[_phonemeNumb - 1] + deca[_soundType];
 	uint16 endPos = _cfiphBuffer[_phonemeNumb] + deca[_soundType];
 	int wordCount = endPos - startPos;
-	
+
 	startPos /= 2;
 	endPos /= 2;
 	assert((endPos - startPos) < 1711);

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -88,6 +88,7 @@ namespace Fullpipe {
 #define PIC_CSR_ITN_RED 5329
 #define PIC_CSR_LIFT 5176
 #define PIC_CSR_MAP 5339
+#define PIC_HLP_BGR 3562
 #define PIC_IN1_GAMETITLE 5169
 #define PIC_IN1_PIPETITLE 5167
 #define PIC_INV_MENU 991
@@ -215,6 +216,7 @@ namespace Fullpipe {
 #define SC_INTRO2 3907
 #define SC_INV 858
 #define SC_LDR 635
+#define SC_MAINMENU 4620
 #define SC_MAP 5222
 #define SC_TITLES 5166
 #define SND_CMN_031 3516
@@ -582,6 +584,36 @@ namespace Fullpipe {
 #define ST_MAN8_HANDSUP 773
 #define ST_MAN8_STAND 774
 #define ST_VMT_MIN 766
+
+// Scene 9
+#define ANI_BALL9 933
+#define ANI_GLOTATEL 924
+#define ANI_GRIT_9 2719
+#define ANI_PLEVATEL 919
+#define ANI_VISUNCHIK 904
+#define MSG_SC9_EATBALL 941
+#define MSG_SC9_FLOWN 943
+#define MSG_SC9_FROMLADDER 4207
+#define MSG_SC9_PLVCLICK 965
+#define MSG_SC9_SETSCROLL 964
+#define MSG_SC9_SHOWBALL 936
+#define MSG_SC9_STARTTIOTIA 4942
+#define MSG_SC9_TOLADDER 4206
+#define MV_BALL9_EXPLODE 939
+#define MV_GLT_FLYAWAY 931
+#define MV_MAN9_SHOOT 922
+#define MV_VSN_CYCLE2 2987
+#define PIC_SC9_LADDER_R 2700
+#define QU_SC9_EATBALL 942
+#define QU_TTA9_GOL 4937
+#define SND_9_006 3650
+#define SND_9_018 4200
+#define SND_9_019 4201
+#define ST_GLT_SIT 926
+#define ST_GRT9_GRIT 2722
+#define ST_GRT9_NORM 2721
+#define ST_PLV_SIT 921
+#define ST_VSN_NORMAL 906
 
 // Scene 10
 #define ANI_GUM 978
@@ -1080,6 +1112,52 @@ namespace Fullpipe {
 #define ST_CHI_NORM 1960
 #define ST_VNT26_RIGHT2 3348
 #define ST_VNT26_UP2 1948
+
+// Scene 27
+#define ANI_BITA 2026
+#define ANI_BITAHANDLER 3349
+#define ANI_MAID 2015
+#define ANI_VODILLA 1994
+#define MSG_SC27_CLICKBET 2048
+#define MSG_SC27_HANDLERTOBACK 3372
+#define MSG_SC27_HANDLERTOFRONT 3371
+#define MSG_SC27_SHOWNEXTBET 3369
+#define MSG_SC27_STARTBET 2047
+#define MSG_SC27_STARTWIPE 2057
+#define MSG_SC27_TAKEVENT 4584
+#define MV_BTA_FALL 2049
+#define MV_BTH_1_0 3366
+#define MV_BTH_2_1 3364
+#define MV_BTH_3_2 3362
+#define MV_BTH_4_3 3360
+#define MV_BTH_5_4 3358
+#define MV_MAN27_FLOW 1990
+#define MV_MAN27_THROWBET 1989
+#define PIC_SC27_HITZONE2 4756
+#define QU_DRV_GIVEVENT 2040
+#define QU_DRV_PUSHBUTTON 2056
+#define QU_DRV_PUSHBUTTON_NOVENT 4578
+#define QU_MID_CLEANVENT 4583
+#define QU_MID_SWITCHBACK 2044
+#define QU_SC27_RESTARTBETS 3370
+#define QU_SC27_SHOWBET 3368
+#define SND_27_026 4127
+#define SND_27_027 4128
+#define SND_27_044 4687
+#define ST_BTA_FALL 2054
+#define ST_BTA_HILITE 2052
+#define ST_BTA_NORM 2028
+#define ST_BTH_1 3365
+#define ST_BTH_2 3363
+#define ST_BTH_3 3361
+#define ST_BTH_4 3359
+#define ST_BTH_5 3357
+#define ST_DRV_SITNOVENT 1999
+#define ST_DRV_VENT 1996
+#define ST_MID_BROOM 2022
+#define ST_MID_SPADE 3489
+#define ST_MID_SWAB 2017
+#define ST_MID_SWAB2 2019
 
 // Scene 28
 #define ANI_LIFT 982

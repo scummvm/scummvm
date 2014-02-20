@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -3682,7 +3682,8 @@ void TuckerEngine::setActionForInventoryObject() {
 		_actionRequiresTwoObjects = false;
 		return;
 	}
-	if ((_partNum == 3 && (_actionObj1Num == 6 || _actionObj1Num == 3 || _actionObj1Num == 17)) ||
+	// Items with unary usage i.e. "Use X", rather than "Use X on Y"
+	if ((_partNum == 3 && (_actionObj1Num == 6 || _actionObj1Num == 3 || _actionObj1Num == 17 || _actionObj1Num == 33)) ||
 		(_partNum == 2 && _actionObj1Num == 19) ||
 		(_partNum == 3 && (_actionObj1Num == 42 && _selectedObjectNum == 18)) ) {
 		_actionVerbLocked = 0;
