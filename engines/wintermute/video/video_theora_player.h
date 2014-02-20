@@ -138,7 +138,7 @@ private:
 
 	bool _playbackStarted;
 
-	bool _subtitles;
+	bool _foundSubtitles;
 
 	// helpers
 	void SetDefaults();

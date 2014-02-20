@@ -86,7 +86,7 @@ void VideoTheoraPlayer::SetDefaults() {
 	_theoraDecoder = nullptr;
 
 	_subtitler = new VideoSubtitler(_gameRef);
-	_subtitles = false;
+	_foundSubtitles = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -134,10 +134,10 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 
 	if (_subtitler->loadSubtitles(_filename, subtitleFile)) {
 		// We have subtitles
-		_subtitles = true;
+		_foundSubtitles = true;
 	} else {
 		// We couldn't load subtitles...
-		_subtitles = false;
+		_foundSubtitles = false;
 	}
 
 	_theoraDecoder->loadStream(_file);
@@ -224,7 +224,7 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		_state = THEORA_STATE_PLAYING;
 		_looping = looping;
 		_playbackType = type;
-		if (_subtitler && _subtitles && _gameRef->_subtitles) {
+		if (_subtitler && _foundSubtitles && _gameRef->_subtitles) {
 			_subtitler->update(_theoraDecoder->getFrameCount());
 			_subtitler->display();
 		}
@@ -302,7 +302,7 @@ bool VideoTheoraPlayer::update() {
 	}
 
 	if (_theoraDecoder) {
-		if (_subtitler && _subtitles && _gameRef->_subtitles) {
+		if (_subtitler && _foundSubtitles && _gameRef->_subtitles) {
 			_subtitler->update(_theoraDecoder->getCurFrame());
 		}
 
@@ -430,7 +430,7 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 		res = STATUS_FAILED;
 	}
 
-	if (_subtitler && _subtitles && _gameRef->_subtitles) {
+	if (_subtitler && _foundSubtitles && _gameRef->_subtitles) {
 		_subtitler->display();
 	}
 	return res;
