@@ -48,7 +48,7 @@ uint32 MADSEngine::getGameID() const {
 }
 
 uint32 MADSEngine::getGameFeatures() const {
-	return _gameDescription->gameID;
+	return _gameDescription->features;
 }
 
 uint32 MADSEngine::getFeatures() const {

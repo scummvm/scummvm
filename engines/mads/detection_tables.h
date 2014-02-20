@@ -37,6 +37,8 @@ static const MADSGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
+		GType_RexNebular,
+		GF_MADS
 	},
 
 	{ AD_TABLE_END_MARKER }
