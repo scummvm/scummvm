@@ -433,7 +433,41 @@ void ShootEmUp::animate() {
 }
 
 void ShootEmUp::collisionCheck() {
-	warning("STUB: ShootEmUp::collisionCheck()");
+	for (int i = 0; i < 99; i++) {
+		if ((_sprites[i]._x != kFlag) && (_sprites[i]._missile) &&
+			(_sprites[i]._y < 60) && (_sprites[i]._timeout == 1)) {
+			int distFromSide = (_sprites[i]._x - 20) % 90;
+			int thisStock = (_sprites[i]._x - 20) / 90;
+			if ((!_hasEscaped[thisStock]) && (distFromSide > 17) && (distFromSide < 34)) {
+				_vm->_sound->playNote(999, 3);
+				_vm->_system->delayMillis(3);
+				define(_sprites[i]._x + 20, _sprites[i]._y, 26 + _vm->_rnd->getRandomNumber(1), 3, 1, 12, false, true); // Well done!
+				define(thisStock * 90 + 20, 30, 31, 0, 0, 7, false, false); // Face of man
+				defineCameo(thisStock * 90 + 20 + 10, 35, 40, 7); // Splat!
+				define(thisStock * 90 + 20 + 20, 50, 34 + _vm->_rnd->getRandomNumber(4), 0, 2, 9, false, true); // Oof!
+				_stockStatus[thisStock] = 17;
+				gain(3); // Score for hitting a face.
+
+				if (_escaping && (_escapeStock = thisStock)) { // Hit the escaper.
+					_vm->_sound->playNote(1777, 1);
+					_vm->_system->delayMillis(1);
+					gain(5); // Bonus for hitting escaper.
+					_escaping = false;
+					newEscape();
+				}
+			} else {
+				define(_sprites[i]._x, _sprites[i]._y, 83 + _vm->_rnd->getRandomNumber(2), 2, 2, 17, false, true); // Missed!
+				if ((!_hasEscaped[thisStock]) && (distFromSide > 3) && (distFromSide < 43)) {
+					define(thisStock * 90 + 20, 30, 30, 0, 0, 7, false, false); // Face of man
+					if (distFromSide > 35)
+						defineCameo(_sprites[i]._x - 27, 35, 40, 7); // Splat!
+					else
+						defineCameo(_sprites[i]._x - 7, 35, 40, 7);
+					_stockStatus[thisStock] = 17;
+				}
+			}
+		}
+	}
 }
 
 void ShootEmUp::turnAround(byte who, bool randomX) {
