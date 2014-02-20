@@ -27,14 +27,6 @@
 
 namespace Math {
 
-inline float radianToDegree(float rad) {
-	return rad * 180.f / LOCAL_PI;
-}
-
-inline float degreeToRadian(float degree) {
-	return degree * LOCAL_PI / 180.f;
-}
-
 inline float square(float x) {
 	return x * x;
 }

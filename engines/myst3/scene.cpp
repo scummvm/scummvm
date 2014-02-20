@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/math.h"
+
 #include "engines/myst3/scene.h"
 #include "engines/myst3/node.h"
 #include "engines/myst3/myst3.h"
@@ -111,8 +113,8 @@ void Scene::drawSunspotFlare(const SunSpot &s) {
 static Math::Vector3d directionToVector(float pitch, float heading) {
 	Math::Vector3d v;
 
-	float radHeading = Math::degreeToRadian(heading);
-	float radPitch = Math::degreeToRadian(pitch);
+	float radHeading = Common::deg2rad(heading);
+	float radPitch = Common::deg2rad(pitch);
 
 	v.setValue(0, cos(radPitch) * cos(radHeading));
 	v.setValue(1, sin(radPitch));

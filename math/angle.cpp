@@ -21,9 +21,9 @@
  */
 
 #include "common/streamdebug.h"
+#include "common/math.h"
 
 #include "math/angle.h"
-#include "math/utils.h"
 
 namespace Math {
 
@@ -57,7 +57,7 @@ void Angle::setDegrees(float degrees) {
 }
 
 void Angle::setRadians(float radians) {
-	_degrees = radianToDegree(radians);
+	_degrees = Common::rad2deg(radians);
 }
 
 float Angle::getDegrees() const {
@@ -65,7 +65,7 @@ float Angle::getDegrees() const {
 }
 
 float Angle::getRadians() const {
-	return degreeToRadian(getDegrees());
+	return Common::deg2rad(getDegrees());
 }
 
 float Angle::getDegrees(float low) const {
@@ -82,7 +82,7 @@ float Angle::getDegrees(float low) const {
 
 float Angle::getRadians(float low) const {
 	float d = getDegrees(low);
-	return degreeToRadian(d);
+	return Common::deg2rad(d);
 }
 
 float Angle::getCosine() const {
@@ -134,7 +134,7 @@ Angle &Angle::operator-=(float degrees) {
 }
 
 Angle Angle::fromRadians(float radians) {
-	return Angle(radianToDegree(radians));
+	return Angle(Common::rad2deg(radians));
 }
 
 Angle Angle::arcCosine(float x) {
