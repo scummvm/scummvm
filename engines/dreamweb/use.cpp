@@ -73,7 +73,7 @@ void DreamWebEngine::useRoutine() {
 		{ &DreamWebEngine::openLouis,               "ENTA" },
 		{ &DreamWebEngine::openRyan,                "ENTB" },
 		{ &DreamWebEngine::openPoolBoss,            "ENTE" },
-		{ &DreamWebEngine::openYourNeighbor,       "ENTC" },
+		{ &DreamWebEngine::openYourNeighbor,        "ENTC" },
 		{ &DreamWebEngine::openEden,                "ENTD" },
 		{ &DreamWebEngine::openSarters,             "ENTH" },
 		{ &DreamWebEngine::wearWatch,               "WWAT" },
