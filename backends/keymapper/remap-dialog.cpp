@@ -258,6 +258,12 @@ void RemapDialog::startRemapping(uint i) {
 	if (_topAction + i >= _currentActions.size())
 		return;
 
+	if (_keymapper->isRemapping()) {
+		// Handle a second click on the button as a stop to remapping
+		stopRemapping(true);
+		return;
+	}
+
 	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
 	Action *activeRemapAction = _currentActions[_topAction + i].action;
 	_keymapWidgets[i].keyButton->setLabel("...");
