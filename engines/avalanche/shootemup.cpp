@@ -116,6 +116,8 @@ void ShootEmUp::run() {
 	setup();
 	
 	do {
+		uint32 beginLoop = _vm->_system->getMillis();
+
 		blankIt();
 		hitPeople();
 		plotThem();
@@ -133,6 +135,11 @@ void ShootEmUp::run() {
 		_cp = !_cp;
 
 		_vm->_graphics->refreshScreen();
+
+		uint32 delay = _vm->_system->getMillis() - beginLoop;
+		if (delay <= 55)
+			_vm->_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
+
 	} while (_time != 0);
 
 	_vm->fadeOut();
