@@ -215,8 +215,21 @@ void ShootEmUp::define(int16 x, int16 y, byte p, int8 ix, int8 iy, int16 time, b
 	}
 }
 
-void ShootEmUp::defineCameo(int16 xx, int16 yy, byte pp, int16 time) {
-	warning("STUB: ShootEmUp::defineCameo()");
+void ShootEmUp::defineCameo(int16 x, int16 y, byte p, int16 time) {
+	for (int i = 0; i < 99; i++) {
+		if (_sprites[i]._x == kFlag) {
+			_sprites[i]._x = x;
+			_sprites[i]._y = y;
+			_sprites[i]._p = p;
+			_sprites[i]._ix = 0;
+			_sprites[i]._iy = 0;
+			_sprites[i]._timeout = time;
+			_sprites[i]._cameo = true;
+			_sprites[i]._cameoFrame = p + 1;
+			_sprites[i]._missile = false;
+			_sprites[i]._wipe = false;
+		}
+	}
 }
 
 void ShootEmUp::showStock(byte index) {
