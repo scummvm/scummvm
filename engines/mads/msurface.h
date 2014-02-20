@@ -33,6 +33,9 @@ namespace MADS {
 class MADSEngine;
 class MSprite;
 
+/**
+ * Basic sprite information
+ */
 struct SpriteInfo {
 	MSprite *sprite;
 	int hotX, hotY;
@@ -43,6 +46,9 @@ struct SpriteInfo {
 	RGB8 *palette;
 };
 
+/*
+ * MADS graphics surface
+ */
 class MSurface : public Graphics::Surface {
 public:
 	static MADSEngine *_vm;
@@ -61,46 +67,126 @@ public:
 	/**
 	 * Create a surface
 	 */
-	static MSurface *init(int w, int h);
+	static MSurface *init(int width, int height);
 private:
 	byte _color;
 	bool _isScreen;
 protected:
+	/**
+	 * Basic constructor
+	 */
 	MSurface(bool isScreen = false);
-	MSurface(int w, int h);
+
+	/**
+	 * Constructor for a surface with fixed dimensions
+	 */
+	MSurface(int width, int height);
+public:
+	/**
+	 * Helper method for calculating new dimensions when scaling a sprite
+	 */
+	static int scaleValue(int value, int scale, int err);	
 public:
 	virtual ~MSurface() {}
 
-	void create(int w, int h) {
-		Graphics::Surface::create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	/**
+	 * Reinitialises a surface to have a given set of dimensions
+	 */
+	void setSize(int width, int height) {
+		Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
+	/**
+	 * Sets the color used for drawing on the surface
+	 */
 	void setColor(byte value) { _color = value; }
-	byte getColor() { return _color; }
+
+	/**
+	 * Returns the currently active color
+	 */
+	byte getColor() const { return _color; }
+	
+	/**
+	 * Draws a vertical line using the currently set color
+	 */
 	void vLine(int x, int y1, int y2);
+
+	/**
+	 * Draws a horizontal line using the currently set color
+	 */
 	void hLine(int x1, int x2, int y);
+
+	/**
+	 * Draws a vertical line using an Xor on each pixel
+	 */
 	void vLineXor(int x, int y1, int y2);
+
+	/**
+	 * Draws a horizontal line using an Xor on each pixel
+	 */
 	void hLineXor(int x1, int x2, int y);
+
+	/**
+	 * Draws an arbitrary line on the screen using a specified color
+	 */
 	void line(int x1, int y1, int x2, int y2, byte color);
+
+	/**
+	 * Draws a rectangular frame using the currently set color
+	 */
 	void frameRect(int x1, int y1, int x2, int y2);
+
+	/**
+	 * Draws a rectangular frame using a specified color
+	 */
+	void frameRect(const Common::Rect &r, uint8 color);
+
+	/**
+	 * Draws a filled in box using the currently set color
+	 */
 	void fillRect(int x1, int y1, int x2, int y2);
 
-	static int scaleValue(int value, int scale, int err);	
-	void drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &clipRect);
-
-	// Surface methods
-	int width() { return w; }
-	int height() { return h; }
-	void setSize(int sizeX, int sizeY);
-	byte *getData();
-	byte *getBasePtr(int x, int y);
-	void freeData();
-	void empty();
-	void frameRect(const Common::Rect &r, uint8 color);
+	/**
+	 * Draws a filled in box using a specified color
+	 */
 	void fillRect(const Common::Rect &r, uint8 color);
-	void copyFrom(MSurface *src, const Common::Rect &srcBounds, int destX, int destY,
-		int transparentColor = -1);
 
+	/**
+	 * Draws a sprite
+	 * @param pt		Position to draw sprite at
+	 * @param info		General sprite details
+	 * @param clipRect	Clipping rectangle to constrain sprite drawing within
+	 */
+	void drawSprite(const Common::Point &pt, SpriteInfo &info, const Common::Rect &clipRect);
+
+	/**
+	 * Returns the width of the surface
+	 */
+	int getWidth() const { return w; }
+
+	/**
+	 * Returns the height of the surface
+	 */
+	int getHeight() const { return h; }
+
+	/**
+	 * Returns a pointer to the surface data
+	 */
+	byte *getData() { return (byte *)Graphics::Surface::getPixels(); }
+	
+	/**
+	 * Returns a pointer to a given position within the surface
+	 */
+	byte *getBasePtr(int x, int y) { return (byte *)Graphics::Surface::getBasePtr(x, y); }
+
+	/**
+	 * Clears the surface
+	 */
+	void empty();
+
+	/**
+	 * Updates the surface. If it's the screen surface, copies it to the physical screen.
+	 */
 	void update() { 
 		if (_isScreen) {
 			g_system->copyRectToScreen((const byte *)pixels, pitch, 0, 0, w, h);
@@ -108,25 +194,67 @@ public:
 		}
 	}
 
-	// copyTo methods
+	/**
+	 * Copys a sub-section of another surface into the current one.
+	 * @param src			Source surface
+	 * @param srcBounds		Area of source surface to copy
+	 * @param destPos		Destination position to draw in current surface
+	 * @param transparentColor	Transparency palette index
+	 */
+	void copyFrom(MSurface *src, const Common::Rect &srcBounds, const Common::Point &destPos,
+		int transparentColor = -1);
+
+	/**
+	 * Copies the surface to a given destination surface
+	 */
 	void copyTo(MSurface *dest, int transparentColor = -1) { 
-		dest->copyFrom(this, Common::Rect(width(), height()), 0, 0, transparentColor);		
-	}
-	void copyTo(MSurface *dest, int x, int y, int transparentColor = -1) {
-		dest->copyFrom(this, Common::Rect(width(), height()), x, y, transparentColor);
-	}
-	void copyTo(MSurface *dest, const Common::Rect &srcBounds, int destX, int destY,
-				int transparentColor = -1) {
-		dest->copyFrom(this, srcBounds, destX, destY, transparentColor);
+		dest->copyFrom(this, Common::Rect(w, h), Common::Point(), transparentColor);		
 	}
 
+	/**
+	 * Copies the surface to a given destination surface
+	 */
+	void copyTo(MSurface *dest, const Common::Point &pt, int transparentColor = -1) {
+		dest->copyFrom(this, Common::Rect(w, h), pt, transparentColor);
+	}
+
+	/**
+	 * Copies the surface to a given destination surface
+	 */
+	void copyTo(MSurface *dest, const Common::Rect &srcBounds, const Common::Point &destPos,
+				int transparentColor = -1) {
+		dest->copyFrom(this, srcBounds, destPos, transparentColor);
+	}
+
+	/**
+	 * Translates the data of a surface using a specified RGBList translation matrix.
+	 */
 	void translate(RGBList *list, bool isTransparent = false);
 
 	// Base virtual methods
+	/**
+	 * Loads a background by scene name
+	 */
 	virtual void loadBackground(const Common::String &sceneName) {}
+
+	/**
+	 * Load background by room number
+	 */
 	virtual void loadBackground(int roomNumber, RGBList **palData) = 0;
+
+	/**
+	 * Load background from a passed stream
+	 */
 	virtual void loadBackground(Common::SeekableReadStream *source, RGBList **palData) {}
+
+	/**
+	 * Load scene codes from a passed stream
+	 */
 	virtual void loadCodes(Common::SeekableReadStream *source) = 0;
+
+	/**
+	 * Load a given user interface by index
+	 */
 	virtual void loadInterface(int index, RGBList **palData) {}
 };
 
@@ -134,7 +262,7 @@ class MSurfaceMADS: public MSurface {
 	friend class MSurface;
 protected:
 	MSurfaceMADS(bool isScreen = false): MSurface(isScreen) {}
-	MSurfaceMADS(int w, int h): MSurface(w, h) {}
+	MSurfaceMADS(int width, int height): MSurface(width, height) {}
 public:
 	virtual void loadCodes(Common::SeekableReadStream *source);
 	virtual void loadBackground(const Common::String &sceneName) {}
@@ -146,7 +274,7 @@ class MSurfaceNebular: public MSurfaceMADS {
 	friend class MSurface;
 protected:
 	MSurfaceNebular(bool isScreen = false): MSurfaceMADS(isScreen) {}
-	MSurfaceNebular(int w, int h): MSurfaceMADS(w, h) {}
+	MSurfaceNebular(int width, int height): MSurfaceMADS(width, height) {}
 private:
 	void loadBackgroundStream(Common::SeekableReadStream *source, RGBList **palData);
 public:
@@ -157,7 +285,7 @@ class MSurfaceM4: public MSurface {
 	friend class MSurface;
 protected:
 	MSurfaceM4(bool isScreen = false): MSurface(isScreen) {}
-	MSurfaceM4(int widthVal, int heightVal): MSurface(widthVal, heightVal) {}
+	MSurfaceM4(int width, int height): MSurface(width, height) {}
 
 	void loadBackgroundStream(Common::SeekableReadStream *source);
 public:
@@ -169,7 +297,7 @@ class MSurfaceRiddle: public MSurfaceM4 {
 	friend class MSurface;
 protected:
 	MSurfaceRiddle(bool isScreen = false): MSurfaceM4(isScreen) {}
-	MSurfaceRiddle(int widthVal, int heightVal): MSurfaceM4(widthVal, heightVal) {}
+	MSurfaceRiddle(int width, int height): MSurfaceM4(width, height) {}
 public:
 	virtual void loadBackground(const Common::String &sceneName);
 };

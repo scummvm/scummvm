@@ -41,23 +41,23 @@ MSurface *MSurface::init(bool isScreen) {
 	}
 }
 
-MSurface *MSurface::init(int w, int h) {
+MSurface *MSurface::init(int width, int height) {
 	if (_vm->getGameID() == GType_RexNebular) {
-		return new MSurfaceNebular(w, h);
+		return new MSurfaceNebular(width, height);
 	} else if (_vm->getGameFeatures() & GF_MADS) {
-		return new MSurfaceMADS(w, h);
+		return new MSurfaceMADS(width, height);
 	} else {
-		return new MSurfaceM4(w, h);
+		return new MSurfaceM4(width, height);
 	}
 }
 
 MSurface::MSurface(bool isScreen) { 
-	create(g_system->getWidth(), g_system->getHeight());
+	setSize(g_system->getWidth(), g_system->getHeight());
 	_isScreen = isScreen;
 }
 
-MSurface::MSurface(int Width, int Height) { 
-	create(Width, Height); 
+MSurface::MSurface(int width, int height) { 
+	setSize(width, height); 
 	_isScreen = false; 
 }
 
@@ -137,7 +137,7 @@ int MSurface::scaleValue(int value, int scale, int err) {
 	return scaled;
 }
 
-void MSurface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &clipRect) {
+void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Common::Rect &clipRect) {
 
 	enum {
 		kStatusSkip,
@@ -155,11 +155,7 @@ void MSurface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &cl
 	int scaledWidth = scaleValue(info.width, info.scaleX, errX);
 	int scaledHeight = scaleValue(info.height, info.scaleY, errY);
 
-	/*
-	printf("MSurface::drawSprite() info.width = %d; info.scaleX = %d; info.height = %d; info.scaleY = %d; scaledWidth = %d; scaledHeight = %d\n",
-		info.width, info.scaleX, info.height, info.scaleY, scaledWidth, scaledHeight); fflush(stdout);
-	*/
-	
+	int x = pt.x, y = pt.y;
 	int clipX = 0, clipY = 0;
 	// Clip the sprite's width and height according to the clip rectangle's dimensions
 	// This clips the sprite to the bottom and right
@@ -175,8 +171,6 @@ void MSurface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &cl
 		clipY = y;
 		scaledHeight = y + scaledHeight;
 	}
-
-	//printf("MSurface::drawSprite() width = %d; height = %d; scaledWidth = %d; scaledHeight = %d\n", info.width, info.height, scaledWidth, scaledHeight); fflush(stdout);
 
 	// Check if sprite is inside the screen. If it's not, there's no need to draw it
 	if (scaledWidth + x <= 0 || scaledHeight + y <= 0)	// check left and top (in case x,y are negative)
@@ -206,16 +200,16 @@ void MSurface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &cl
 				// Scale current line
 				byte *lineDst = scaledLineBuf;
 				int curErrX = errX;
-				int widthVal = scaledWidth;
+				int width = scaledWidth;
 				byte *tempSrc = src;
 				int startX = clipX;
-				while (widthVal > 0) {
+				while (width > 0) {
 					byte pixel = *tempSrc++;
 					curErrX -= info.scaleX;
 					while (curErrX < 0) {
 						if (startX == 0) {
 							*lineDst++ = pixel;
-							widthVal--;
+							width--;
 						} else {
 							startX++;
 						}
@@ -276,19 +270,6 @@ void MSurface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &cl
 
 }
 
-// Surface methods
-
-byte *MSurface::getData() {
-	return (byte *)Graphics::Surface::getPixels();
-}
-
-byte *MSurface::getBasePtr(int x, int y) {
-	return (byte *)Graphics::Surface::getBasePtr(x, y);
-}
-
-void MSurface::freeData() {
-}
-
 void MSurface::empty() {
 	Common::fill(getBasePtr(0, 0), getBasePtr(w, h), _vm->_palette->BLACK);
 }
@@ -301,9 +282,10 @@ void MSurface::fillRect(const Common::Rect &r, uint8 color) {
 	Graphics::Surface::fillRect(r, color);
 }
 
-void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds, int destX, int destY,
-						 int transparentColor) {
-	// Validation of the rectangle and position
+void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds, 
+		const Common::Point &destPos, int transparentColor) {
+	// Validation of the rectangle and position	
+	int destX = destPos.x, destY = destPos.y;		
 	if ((destX >= w) || (destY >= h))
 		return;
 
@@ -327,8 +309,8 @@ void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds, int destX,
 	// Copy the specified area
 
 	byte *data = src->getData();
-	byte *srcPtr = data + (src->width() * copyRect.top + copyRect.left);
-	byte *destPtr = (byte *)pixels + (destY * width()) + destX;
+	byte *srcPtr = data + (src->getWidth() * copyRect.top + copyRect.left);
+	byte *destPtr = (byte *)pixels + (destY * getWidth()) + destX;
 
 	for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
 		if (transparentColor == -1)
@@ -340,27 +322,21 @@ void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds, int destX,
 				if (srcPtr[xCtr] != transparentColor) destPtr[xCtr] = srcPtr[xCtr];
 		}
 
-		srcPtr += src->width();
-		destPtr += width();
+		srcPtr += src->getWidth();
+		destPtr += getWidth();
 	}
-
-	src->freeData();
 }
-
-#undef COL_TRANS
 
 void MSurface::translate(RGBList *list, bool isTransparent) {
 	byte *p = getBasePtr(0, 0);
 	byte *palIndexes = list->palIndexes();
 
-	for (int i = 0; i < width() * height(); ++i, ++p) {
+	for (int i = 0; i < getWidth() * getHeight(); ++i, ++p) {
 		if (!isTransparent || (*p != 0)) {
 			assert(*p < list->size());
 			*p = palIndexes[*p];
 		}
 	}
-
-	freeData();
 }
 
 /*------------------------------------------------------------------------*/
@@ -371,18 +347,18 @@ void MSurfaceMADS::loadCodes(Common::SeekableReadStream *source) {
 		return;
 	}
 
-	uint16 widthVal = MADS_SCREEN_WIDTH;
-	uint16 heightVal = MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT;
+	uint16 width = MADS_SCREEN_WIDTH;
+	uint16 height = MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT;
 	byte *walkMap = new byte[source->size()];
 
-	create(widthVal, heightVal);
+	setSize(width, height);
 	source->read(walkMap, source->size());
 
 	byte *ptr = (byte *)getBasePtr(0, 0);
 
-	for (int y = 0; y < heightVal; y++) {
-		for (int x = 0; x < widthVal; x++) {
-			int ofs = x + (y * widthVal);
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			int ofs = x + (y * width);
 			if ((walkMap[ofs / 8] << (ofs % 8)) & 0x80)
 				*ptr++ = 1;		// walkable
 			else
@@ -444,8 +420,8 @@ void MSurfaceMADS::loadBackground(int roomNumber, RGBList **palData) {
 	assert(tileCountMap == tileCount);
 	assert(tileWidth == tileWidthMap);
 	assert(tileHeight == tileHeightMap);
-	assert(screenWidth == _vm->_screen->width());
-	assert(screenHeight <= _vm->_screen->height());
+	assert(screenWidth == _vm->_screen->getWidth());
+	assert(screenHeight <= _vm->_screen->getHeight());
 
 	// --------------------------------------------------------------------------------
 
@@ -508,7 +484,7 @@ void MSurfaceMADS::loadBackground(int roomNumber, RGBList **palData) {
 			TileSetIterator tile = tileSet.begin();
 			for (i = 0; i < tileIndex; i++)
 				++tile;
-			((*tile).get())->copyTo(this, x * tileWidth, y * tileHeight);
+			((*tile).get())->copyTo(this, Common::Point(x * tileWidth, y * tileHeight));
 		}
 	}
 	tileSet.clear();
@@ -537,7 +513,7 @@ void MSurfaceMADS::loadInterface(int index, RGBList **palData) {
 
 	// Chunk 1, data
 	intStream = intFile.getItemStream(1);
-	create(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
+	setSize(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
 	intStream->read(pixels, MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
 	delete intStream;
 }
@@ -562,14 +538,14 @@ void MSurfaceNebular::loadBackgroundStream(Common::SeekableReadStream *source, R
 	int sceneWidth = sourceUnc->readUint16LE();
 	int sceneHeight = sourceUnc->readUint16LE();
 	int sceneSize = sceneWidth * sceneHeight;
-	if (sceneWidth > this->width()) {
-		warning("Background width is %i, too large to fit in screen. Setting it to %i", sceneWidth, this->width());
-		sceneWidth = this->width();
+	if (sceneWidth > this->getWidth()) {
+		warning("Background width is %i, too large to fit in screen. Setting it to %i", sceneWidth, getWidth());
+		sceneWidth = this->getWidth();
 		sceneSize = sceneWidth * sceneHeight;
 	}
-	if (sceneHeight > this->height()) {
-		warning("Background height is %i, too large to fit in screen.Setting it to %i", sceneHeight, this->height());
-		sceneHeight = this->height();
+	if (sceneHeight > getHeight()) {
+		warning("Background height is %i, too large to fit in screen.Setting it to %i", sceneHeight, getHeight());
+		sceneHeight = getHeight();
 		sceneSize = sceneWidth * sceneHeight;
 	}
 
@@ -590,7 +566,6 @@ void MSurfaceNebular::loadBackgroundStream(Common::SeekableReadStream *source, R
 	byte *pData = (byte *)pixels;
 	sourceUnc->read(pData, sceneSize);
 	
-	freeData();
 	delete sourceUnc;
 }
 
@@ -602,11 +577,11 @@ void MSurfaceM4::loadCodes(Common::SeekableReadStream *source) {
 		return;
 	}
 
-	uint16 widthVal = source->readUint16LE();
-	uint16 heightVal = source->readUint16LE();
+	uint16 width = source->readUint16LE();
+	uint16 height = source->readUint16LE();
 
-	create(widthVal, heightVal);
-	source->read(pixels, widthVal * heightVal);
+	setSize(width, height);
+	source->read(pixels, width * height);
 }
 
 void MSurfaceM4::loadBackground(int roomNumber, RGBList **palData) {
@@ -627,8 +602,8 @@ void MSurfaceM4::loadBackgroundStream(Common::SeekableReadStream *source) {
 
 	source->skip(4);
 	/*uint32 size =*/ source->readUint32LE();
-	uint32 widthVal = source->readUint32LE();
-	uint32 heightVal = source->readUint32LE();
+	uint32 width = source->readUint32LE();
+	uint32 height = source->readUint32LE();
 	uint32 tilesX = source->readUint32LE();
 	uint32 tilesY = source->readUint32LE();
 	uint32 tileWidth = source->readUint32LE();
@@ -651,25 +626,26 @@ void MSurfaceM4::loadBackgroundStream(Common::SeekableReadStream *source) {
 	// resize or create the surface
 	// Note that the height of the scene in game scenes is smaller than the screen height, 
 	// as the bottom part of the screen is the inventory
-	assert(width() == (int)widthVal);
+	assert(getWidth() == (int)width);
 
-	tileBuffer->create(tileWidth, tileHeight);
+	tileBuffer->setSize(tileWidth, tileHeight);
 
 	for (curTileY = 0; curTileY < tilesY; curTileY++) {
-		clipY = MIN(heightVal, (1 + curTileY) * tileHeight) - (curTileY * tileHeight);
+		clipY = MIN(height, (1 + curTileY) * tileHeight) - (curTileY * tileHeight);
 
 		for (curTileX = 0; curTileX < tilesX; curTileX++) {
-			clipX = MIN(widthVal, (1 + curTileX) * tileWidth) - (curTileX * tileWidth);
+			clipX = MIN(width, (1 + curTileX) * tileWidth) - (curTileX * tileWidth);
 
 			// Read a tile and copy it to the destination surface
 			source->read(tileBuffer->getData(), tileWidth * tileHeight);
 			Common::Rect srcBounds(0, 0, clipX, clipY);
-			copyFrom(tileBuffer, srcBounds, curTileX * tileWidth, curTileY * tileHeight);
+			copyFrom(tileBuffer, srcBounds, 
+				Common::Point(curTileX * tileWidth, curTileY * tileHeight));
 		}
 	}
 
-	if (heightVal < (uint)height())
-		fillRect(Common::Rect(0, heightVal, width(), height()), blackIndex);
+	if (height < (uint)getHeight())
+		fillRect(Common::Rect(0, height, getWidth(), getHeight()), blackIndex);
 
 	delete tileBuffer;
 }

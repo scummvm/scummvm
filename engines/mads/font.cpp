@@ -79,9 +79,9 @@ int Font::write(MSurface *surface, const Common::String &msg, const Common::Poin
 	*/
 
 	if (width > 0)
-		width = MIN(surface->width(), pt.x + width);
+		width = MIN(surface->getWidth(), pt.x + width);
 	else
-		width = surface->width();
+		width = surface->getWidth();
 
 	int x = pt.x + 1;
 	int y = pt.y + 1;
@@ -97,8 +97,8 @@ int Font::write(MSurface *surface, const Common::String &msg, const Common::Poin
 		return x;
 
 	int bottom = y + height - 1;
-	if (bottom > surface->height() - 1) {
-		height -= MIN(height, bottom - (surface->height() - 1));
+	if (bottom > surface->getHeight() - 1) {
+		height -= MIN(height, bottom - (surface->getHeight() - 1));
 	}
 
 	if (height <= 0)
@@ -142,7 +142,7 @@ int Font::write(MSurface *surface, const Common::String &msg, const Common::Poin
 					charData++;
 				}
 
-				destPtr += surface->width() - bpp * 4;
+				destPtr += surface->getWidth() - bpp * 4;
 
 			}
 
@@ -155,7 +155,6 @@ int Font::write(MSurface *surface, const Common::String &msg, const Common::Poin
 		
 	}
 
-	surface->freeData();
 	return xPos;
 
 }
