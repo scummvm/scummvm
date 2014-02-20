@@ -66,6 +66,8 @@ private:
 	static const byte kFrameDelayMax;
 	static const byte kAvvyY;
 	static const byte kShooting[7];
+	static const byte kTimesASecond;
+	static const byte kFlashTime;
 
 	AvalancheEngine *_vm;
 

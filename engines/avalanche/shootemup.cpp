@@ -40,6 +40,8 @@ const long int ShootEmUp::kFlag = -20047;
 const byte ShootEmUp::kFrameDelayMax = 2;
 const byte ShootEmUp::kAvvyY = 150;
 const byte ShootEmUp::kShooting[7] = { 87, 80, 81, 82, 81, 80, 87 };
+const byte ShootEmUp::kTimesASecond = 18;
+const byte ShootEmUp::kFlashTime = 20; // If flash_time is <= this, the word "time" will flash. Should be about 20.
 
 ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_vm = vm;
@@ -532,7 +534,27 @@ void ShootEmUp::peopleRunning() {
 }
 
 void ShootEmUp::updateTime() {
-	warning("STUB: ShootEmUp::updateTime()");
+	if (_count321 != 0)
+		return;
+
+	_timeThisSecond++;
+
+	if (_timeThisSecond < kTimesASecond)
+		return;
+
+	_time--;
+	showTime();
+	_timeThisSecond = 0;
+
+	if (_time < kFlashTime) {
+		int timeMode = 0;
+		if ((_time % 2) == 1)
+			timeMode = 20; // Normal 'Time:'
+		else
+			timeMode = 86; // Flash 'Time:'
+
+		_vm->_graphics->seuDrawPicture(110, 0, timeMode);
+	}
 }
 
 void ShootEmUp::hitPeople() {
