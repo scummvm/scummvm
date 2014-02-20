@@ -1019,7 +1019,7 @@ void VoyeurEngine::makeViewFinder() {
 	}
 
 	(*_graphicsManager._vPort)->drawIfaceTime();
-	doTimeBar(true);
+	doTimeBar();
 	pal->startFade();
 
 	flipPageAndWaitForFade();
@@ -1271,10 +1271,10 @@ void VoyeurEngine::getComputerBrush() {
 	}
 }
 
-void VoyeurEngine::doTimeBar(bool force) {
+void VoyeurEngine::doTimeBar() {
 	flashTimeBar();
 
-	if ((force || _timeBarVal != _voy._RTVNum) && _voy._RTVLimit > 0) {
+	if (_voy._RTVLimit > 0) {
 		if (_voy._RTVNum > _voy._RTVLimit || _voy._RTVNum < 0)
 			_voy._RTVNum = _voy._RTVLimit - 1;
 		

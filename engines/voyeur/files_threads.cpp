@@ -1339,7 +1339,7 @@ int ThreadResource::doInterface() {
 
 	do {
 		_vm->_voyeurArea = AREA_INTERFACE;
-		_vm->doTimeBar(true);
+		_vm->doTimeBar();
 		_vm->_eventsManager.getMouseInfo();
 
 		if (checkMansionScroll())

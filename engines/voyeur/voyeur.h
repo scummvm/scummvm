@@ -242,7 +242,7 @@ public:
 	/**
 	 * Displays the time/charge remaining on the video camera screen
 	 */
-	void doTimeBar(bool force);
+	void doTimeBar();
 
 	/**
 	 * If necessary, flashes the time remaining bar on the video camera screen
