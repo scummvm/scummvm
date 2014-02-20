@@ -609,7 +609,7 @@ uint32 Scene1005::getTextIndex() {
 	uint32 textIndex;
 	textIndex = getTextIndex1();
 	if (getGlobalVar(V_ENTRANCE_OPEN)) {
-		textIndex = getTextIndex2();
+		textIndex = getKloggsTextIndex();
 	}
 	if (getGlobalVar(V_TEXT_FLAG1) && getGlobalVar(V_TEXT_INDEX) == textIndex) {
 		textIndex = getTextIndex3();
@@ -690,9 +690,9 @@ uint32 Scene1005::getTextIndex1() {
 	return textIndex;
 }
 
-uint32 Scene1005::getTextIndex2() {
+uint32 Scene1005::getKloggsTextIndex() {
 	uint32 textIndex = getGlobalVar(V_TEXT_COUNTING_INDEX1);
-	if (textIndex + 1 >= 10) {
+	if (textIndex + 1 > 10) {
 		setGlobalVar(V_TEXT_COUNTING_INDEX1, 0);
 		textIndex = 0;
 	} else {

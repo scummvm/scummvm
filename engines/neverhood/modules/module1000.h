@@ -101,7 +101,7 @@ protected:
 	void drawTextToBackground();
 	uint32 getTextIndex();
 	uint32 getTextIndex1();
-	uint32 getTextIndex2();
+	uint32 getKloggsTextIndex();
 	uint32 getTextIndex3();
 };
 
