@@ -200,7 +200,7 @@ void ShootEmUp::plotThem() {
 			if (_sprites[i]._timeout > 0) {
 				_sprites[i]._timeout--;
 				if (_sprites[i]._timeout == 0)
-					_sprites[i]._y = kFlag;
+					_sprites[i]._x = kFlag;
 			}
 		}
 	}
