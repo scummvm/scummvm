@@ -301,7 +301,64 @@ void sceneHandler09_spitterClick() {
 }
 
 void sceneHandler09_eatBall() {
-	warning("STUB: sceneHandler09_eatBall()");
+	if (g_vars->scene09_flyingBall) {
+		g_vars->scene09_flyingBall->hide();
+
+		Ball *ball = g_vars->scene09_balls.pHead;
+		if (ball) {
+			while (ball && ball->ani != g_vars->scene09_flyingBall)
+				ball = ball->p0;
+
+			if (ball) {
+				if (ball == g_vars->scene09_balls.pHead)
+					g_vars->scene09_balls.pHead = ball->p0;
+				else
+					ball->p1->p0 = ball->p0;
+
+				if (ball == g_vars->scene09_balls.field_8)
+					g_vars->scene09_balls.field_8 = ball->p1;
+				else
+					ball->p0->p1 = ball->p1;
+
+				ball->p0 = g_vars->scene09_balls.pTail;
+				g_vars->scene09_balls.pTail = ball;
+
+				g_vars->scene09_balls.numBalls--;
+
+				if (!g_vars->scene09_balls.numBalls)
+					g_vars->scene09_balls.reset();
+			}
+		}
+
+		ball = g_vars->scene09_var07.sub04(g_vars->scene09_var07.field_8, 0);
+		ball->ani = g_vars->scene09_flyingBall;
+
+		if (g_vars->scene09_var07.field_8)
+			g_vars->scene09_var07.field_8->p0 = ball;
+		else
+			g_vars->scene09_var07.pHead = ball;
+
+		g_vars->scene09_var07.field_8 = ball;
+
+		g_vars->scene09_flyingBall = 0;
+		g_vars->scene09_var05++;
+
+		if (g_vars->scene09_var05 >= 3) {
+			MessageQueue *mq = g_vars->scene09_glotatel->getMessageQueue();
+
+			if (mq) {
+				ExCommand *ex = new ExCommand(ANI_GLOTATEL, 1, MV_GLT_FLYAWAY, 0, 0, 0, 1, 0, 0, 0);
+				ex->_excFlags |= 2;
+
+				mq->addExCommandToEnd(ex);
+			}
+
+			g_fp->setObjectState(sO_Jug, g_fp->getObjectEnumState(sO_Jug, sO_Unblocked));
+			g_fp->setObjectState(sO_RightStairs_9, g_fp->getObjectEnumState(sO_RightStairs_9, sO_IsOpened));
+
+			g_vars->scene09_var08 = 0;
+		}
+	}
 }
 
 void sceneHandler09_showBall() {
