@@ -121,10 +121,9 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	ViewPortResource *destViewPort = NULL;
 	Common::Rect newBounds;
 	Common::Rect backBounds;
-	int var22 = 0;
-	int var24 = 0;
+	int tmpWidth = 0;
+	int tmpHeight = 0;
 	bool isClipped = false;
-	int var26;
 	byte pixel = 0;
 	int runLength;
 
@@ -132,17 +131,18 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	byte *srcP, *destP;
 	byte byteVal, byteVal2;
 
-	// Get the picture parameters, or deference viewport pointers to get their pictures
-	PictureResource *srcPic = (PictureResource *)srcDisplay;
-	PictureResource *destPic = (PictureResource *)destDisplay;
+	PictureResource *srcPic;
+	PictureResource *destPic;
 
+	// Get the picture parameters, or deference viewport pointers to get their pictures
 	if (srcDisplay->_flags & DISPFLAG_VIEWPORT) {
 		// A viewport was passed, not a picture
 		srcPic = ((ViewPortResource *)srcDisplay)->_currentPic;
-	}
-	if (destDisplay->_flags & DISPFLAG_VIEWPORT) {
 		destViewPort = (ViewPortResource *)destDisplay;
 		destPic = destViewPort->_currentPic;
+	} else {
+		srcPic = (PictureResource *)srcDisplay;
+		destPic = (PictureResource *)destDisplay;
 	}
 
 	Common::Point offset = Common::Point(initialOffset.x + srcPic->_bounds.left - destPic->_bounds.left, 
@@ -168,10 +168,10 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			newBounds = Common::Rect(0, 0, destPic->_bounds.width(), destPic->_bounds.height());
 		}
 
-		var24 = offset.y - newBounds.top;
-		if (var24 < 0) {
-			srcOffset -= var24 * width2;
-			height1 += var24;
+		tmpHeight = offset.y - newBounds.top;
+		if (tmpHeight < 0) {
+			srcOffset -= tmpHeight * width2;
+			height1 += tmpHeight;
 			offset.y = newBounds.top;
 			
 			if (height1 <= 0)
@@ -180,17 +180,17 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			isClipped = true;
 		}
 
-		int var20 = newBounds.bottom - (offset.y + height1);
-		if (var20 < 0) {
-			height1 += var20;
+		int yMin = newBounds.bottom - (offset.y + height1);
+		if (yMin < 0) {
+			height1 += yMin;
 			if (height1 <= 0)
 				return;
 		}
 
-		var22 = offset.x - newBounds.left;
-		if (var22 < 0) {
-			srcOffset -= var22;
-			width2 += var22;
+		tmpWidth = offset.x - newBounds.left;
+		if (tmpWidth < 0) {
+			srcOffset -= tmpWidth;
+			width2 += tmpWidth;
 			offset.x = newBounds.left;
 
 			if (width2 <= 0)
@@ -199,9 +199,9 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			isClipped = true;
 		}
 
-		var26 = newBounds.right - (offset.x + width2);
-		if (var26 < 0) {
-			width2 += var26;
+		int xMin = newBounds.right - (offset.x + width2);
+		if (xMin < 0) {
+			width2 += xMin;
 			if (width2 <= 0)
 				return;
 
@@ -247,16 +247,14 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			if (imageDataShift < 4)
 				++imageDataShift;
 		}
-	} else {
-		srcImgData = srcPic->_imgData;
-	}
-	if (destFlags & DISPFLAG_1000) {
+
 		destImgData = destPic->_imgData + (imageDataShift << 14);
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
 			if (imageDataShift < 4)
 				++imageDataShift;
 		}		
 	} else {
+		srcImgData = srcPic->_imgData;
 		destImgData = destPic->_imgData;
 	}
 
@@ -357,12 +355,12 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 						srcP = srcImgData;
 						if (isClipped) {
 							// loc_26199
-							var22 = (var22 < 0) ? -var22 : 0;
-							var26 = var22 + width2;
-							var24 = (var24 < 0) ? -var24 : 0;
+							tmpWidth = (tmpWidth < 0) ? -tmpWidth : 0;
+							int xMax = tmpWidth + width2;
+							tmpHeight = (tmpHeight < 0) ? -tmpHeight : 0;
 
 							width2 = srcPic->_bounds.width();
-							height1 = var24 + height1;
+							height1 = tmpHeight + height1;
 							
 							for (int yp = 0; yp < height1; ++yp) {
 								runLength = 0;
@@ -378,14 +376,14 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 										}
 									}
 
-									if (yp >= var24 && xp >= var22 && xp < var26) {
+									if (yp >= tmpHeight && xp >= tmpWidth && xp < xMax) {
 										if (pixel > 0)
 											*destP = pixel;
 										++destP;
 									}
 								}
 
-								if (yp >= var24)
+								if (yp >= tmpHeight)
 									destP += widthDiff2;
 							}
 						} else {
@@ -435,11 +433,11 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 						if (isClipped) {
 							// loc_26424
-							var22 = (var22 < 0) ? -var22 : 0;
-							var26 = var22 + width2;
-							var24 = (var24 < 0) ? -var24 : 0;
+							tmpWidth = (tmpWidth < 0) ? -tmpWidth : 0;
+							int xMax = tmpWidth + width2;
+							tmpHeight = (tmpHeight < 0) ? -tmpHeight : 0;
 							width2 = srcPic->_bounds.width();
-							height1 = var24 + height1;
+							height1 = tmpHeight + height1;
 
 							for (int yp = 0; yp < height1; ++yp) {
 								runLength = 0;
@@ -455,12 +453,12 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 										}
 									}
 
-									if (yp >= var24 && xp >= var22 && xp < var26) {
+									if (yp >= tmpHeight && xp >= tmpWidth && xp < xMax) {
 										*destP++ = pixel;
 									}
 								}
 
-								if (yp >= var24)
+								if (yp >= tmpHeight)
 									destP += widthDiff2;
 							}
 						} else {
@@ -558,12 +556,12 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 							if (isClipped) {
 								// loc_266E3
 								destP = (byte *)_screenSurface.getPixels() + screenOffset;
-								var22 = (var22 < 0) ? -var22 : 0;
-								var26 = var22 + width2;
-								var24 = (var24 < 0) ? -var24 : 0;
+								tmpWidth = (tmpWidth < 0) ? -tmpWidth : 0;
+								int xMax = tmpWidth + width2;
+								tmpHeight = (tmpHeight < 0) ? -tmpHeight : 0;
 								pick = 0x7F;
 								width2 = srcPic->_bounds.width();
-								height1 = var24 + height1;
+								height1 = tmpHeight + height1;
 
 								for (int yp = 0; yp < height1; ++yp) {
 									int runLength = 0;
@@ -578,14 +576,14 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 											}
 										}
 
-										if (yp >= var24 && xp >= var22 && xp < var26) {
+										if (yp >= tmpHeight && xp >= tmpWidth && xp < xMax) {
 											if (pixel) {
 												*destP = (pixel & pick) ^ onOff;
 											}
 											++destP;
 										}
 									}
-									if (yp >= var24)
+									if (yp >= tmpHeight)
 										destP += widthDiff2;
 								}
 							} else {
@@ -632,11 +630,11 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 						srcP = srcImgData;
 						if (isClipped) {
 							// loc_269FD
-							var22 = (var22 < 0) ? -var22 : 0;
-							var26 = var22 + width2;
-							var24 = (var24 < 0) ? -var24 : 0;
+							tmpWidth = (tmpWidth < 0) ? -tmpWidth : 0;
+							int xMax = tmpWidth + width2;
+							tmpHeight = (tmpHeight < 0) ? -tmpHeight : 0;
 							width2 = srcPic->_bounds.width();
-							height1 = var24 + height1;
+							height1 = tmpHeight + height1;
 
 							for (int yp = 0; yp < height1; ++yp) {
 								runLength = 0;
@@ -652,7 +650,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 										}
 									}
 
-									if (yp >= var24 && xp >= var22 && xp < var26) {
+									if (yp >= tmpHeight && xp >= tmpWidth && xp < xMax) {
 										*destP++ = (pixel & 0x80) ^ onOff;
 									}
 								}
@@ -704,11 +702,11 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 							if (isClipped) {
 								// loc_26D6A
-								var22 = (var22 < 0) ? -var22 : 0;
-								var26 = var22 + width2;
-								var24 = (var24 < 0) ? -var24 : 0;
+								tmpWidth = (tmpWidth < 0) ? -tmpWidth : 0;
+								int xMax = tmpWidth + width2;
+								tmpHeight = (tmpHeight < 0) ? -tmpHeight : 0;
 								width2 = srcPic->_bounds.width();
-								height1 = var24 + height1;
+								height1 = tmpHeight + height1;
 
 								for (int yp = 0; yp < height1; ++yp) {
 									runLength = 0;
@@ -724,7 +722,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 											}
 										}
 
-										if (yp >= var24 && xp >= var22 && xp < var26) {
+										if (yp >= tmpHeight && xp >= tmpWidth && xp < xMax) {
 											if (pixel)
 												*destP = (pixel & pick) ^ onOff;
 
@@ -732,7 +730,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 										}
 									}
 
-									if (yp >= var24)
+									if (yp >= tmpHeight)
 										destP += widthDiff2;
 								}
 							} else {
@@ -785,11 +783,11 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 							
 							if (isClipped) {
 								// loc_2700A
-								var22 = (var22 < 0) ? -var22 : 0;
-								var26 = var22 + width2;
-								var24 = (var24 < 0) ? -var24 : 0;
+								tmpWidth = (tmpWidth < 0) ? -tmpWidth : 0;
+								int xMax = tmpWidth + width2;
+								tmpHeight = (tmpHeight < 0) ? -tmpHeight : 0;
 								width2 = srcPic->_bounds.width();
-								height1 = var24 + height1;
+								height1 = tmpHeight + height1;
 
 								for (int yp = 0; yp < height1; ++yp) {
 									runLength = 0;
@@ -805,12 +803,12 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 											}
 										}
 
-										if (yp >= var24 && xp >= var22 && xp < var26) {
+										if (yp >= tmpHeight && xp >= tmpWidth && xp < xMax) {
 											*destP++ = (pixel & pick) ^ onOff;
 										}
 									}
 
-									if (yp >= var24)
+									if (yp >= tmpHeight)
 										destP += widthDiff2;
 								}
 							} else {
