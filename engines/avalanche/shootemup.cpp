@@ -87,6 +87,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_cp = false;
 	_wasFacing = 0;
 	_score = 0;
+	_escapeStock = 0;
 }
 
 void ShootEmUp::run() {
@@ -143,9 +144,13 @@ bool ShootEmUp::overlap(uint16 a1x, uint16 a1y, uint16 a2x, uint16 a2y, uint16 b
 	return (a2x >= b1x) && (b2x >= a1x) && (a2y >= b1y) && (b2y >= a1y);
 }
 
-byte ShootEmUp::getStockNumber(byte x) {
-	warning("STUB: ShootEmUp::getStockNumber()");
-	return 0;
+byte ShootEmUp::getStockNumber(byte index) {
+	while (_hasEscaped[index]) {
+		index++;
+		if (index == 7)
+			index = 0;
+	}
+	return index;
 }
 
 void ShootEmUp::blankIt() {
@@ -211,8 +216,17 @@ void ShootEmUp::defineCameo(int16 xx, int16 yy, byte pp, int16 time) {
 	warning("STUB: ShootEmUp::defineCameo()");
 }
 
-void ShootEmUp::showStock(byte x) {
-	warning("STUB: ShootEmUp::showStock()");
+void ShootEmUp::showStock(byte index) {
+	if (_escaping && (index == _escapeStock)) {
+		_vm->_graphics->seuDrawPicture(index * 90 + 20, 30, kStocks + 2);
+		return;
+	}
+
+	if (_stockStatus[index] > 5)
+		return;
+
+	_vm->_graphics->seuDrawPicture(index * 90 + 20, 30, kStocks + _stockStatus[index]);
+	_stockStatus[index] = 1 - _stockStatus[index];
 }
 
 void ShootEmUp::drawNumber(int number, int size, int x) {
@@ -404,7 +418,17 @@ void ShootEmUp::readKbd() {
 }
 
 void ShootEmUp::animate() {
-	warning("STUB: ShootEmUp::animate()");
+	if (_vm->_rnd->getRandomNumber(9) == 1)
+		showStock(getStockNumber(_vm->_rnd->getRandomNumber(5)));
+	for (int i = 0; i < 7; i++) {
+		if (_stockStatus[i] > 5) {
+			_stockStatus[i]--;
+			if (_stockStatus[i] == 8) {
+				_stockStatus[i] = 0;
+				showStock(i);
+			}
+		}
+	}
 }
 
 void ShootEmUp::collisionCheck() {
