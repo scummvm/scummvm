@@ -51,14 +51,25 @@ MSurface *MSurface::init(int width, int height) {
 	}
 }
 
-MSurface::MSurface(bool isScreen) { 
+MSurface::MSurface(bool isScreen) {
+	pixels = nullptr;
 	setSize(g_system->getWidth(), g_system->getHeight());
 	_isScreen = isScreen;
 }
 
 MSurface::MSurface(int width, int height) { 
+	pixels = nullptr;
 	setSize(width, height); 
 	_isScreen = false; 
+}
+
+MSurface::~MSurface() {
+	Graphics::Surface::free();
+}
+
+void MSurface::setSize(int width, int height) {
+	Graphics::Surface::free();
+	Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 void MSurface::vLine(int x, int y1, int y2) {
@@ -271,7 +282,7 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 }
 
 void MSurface::empty() {
-	Common::fill(getBasePtr(0, 0), getBasePtr(w, h), _vm->_palette->BLACK);
+	Common::fill(getBasePtr(0, 0), getBasePtr(0, h), _vm->_palette->BLACK);
 }
 
 void MSurface::frameRect(const Common::Rect &r, uint8 color) {

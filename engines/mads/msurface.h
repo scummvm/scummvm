@@ -87,14 +87,15 @@ public:
 	 */
 	static int scaleValue(int value, int scale, int err);	
 public:
-	virtual ~MSurface() {}
+	/**
+	 * Destructor
+	 */
+	virtual ~MSurface();
 
 	/**
 	 * Reinitialises a surface to have a given set of dimensions
 	 */
-	void setSize(int width, int height) {
-		Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	}
+	void setSize(int width, int height);
 
 	/**
 	 * Sets the color used for drawing on the surface
