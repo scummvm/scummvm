@@ -275,7 +275,7 @@ void ShootEmUp::showTime() {
 }
 
 void ShootEmUp::gain(int8 howMuch) {
-	if ((_score + howMuch) == 0) // howMuch can be negative!
+	if ((_score + howMuch) < 0) // howMuch can be negative!
 		_score = 0;
 	else
 		_score += howMuch;
