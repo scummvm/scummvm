@@ -619,7 +619,25 @@ void ShootEmUp::escapeCheck() {
 }
 
 void ShootEmUp::check321() {
-	warning("STUB: ShootEmUp::check321()");
+	if (_count321 == 0)
+		return;
+
+	_count321--;
+
+	switch (_count321) {
+	case 84:
+		define(320, 60, 16, 2, 1, 94, false, true);
+		break;
+	case 169:
+		define(320, 60, 15, 0, 1, 94, false, true);
+		break;
+	case 254:
+		define(320, 60, 14, -2, 1, 94, false, true);
+		define(0, 100, 18, 2, 0, 254, false, true);
+		break;
+	default:
+		break;
+	}
 }
 
 } // End of namespace Avalanche
