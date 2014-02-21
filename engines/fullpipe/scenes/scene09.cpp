@@ -461,8 +461,43 @@ void sceneHandler09_collideBall(Ball *ball) {
 	}
 }
 
+void sceneHandler09_ballExplode(Ball *ball) {
+	warning("STUB: sceneHandler09_ballExplode()");
+}
+
 void sceneHandler09_checkHangerCollide() {
-	warning("STUB: sceneHandler09_checkHangerCollide()");
+	for (Ball *ball = g_vars->scene09_balls.pHead; ball; ball = ball->p0) {
+		int newx = ball->ani->_ox + 5;
+
+		ball->ani->setOXY(newx, ball->ani->_oy);
+
+		if (newx <= 1398 || g_vars->scene09_flyingBall) {
+			if (g_vars->scene09_var08)
+				goto LABEL_11;
+		} else if (g_vars->scene09_var08) {
+			sceneHandler09_collideBall(ball);
+			continue;
+		}
+
+		if (newx > 1600) {
+			sceneHandler09_ballExplode(ball);
+			continue;
+		}
+
+	LABEL_11:
+		int pixel;
+
+		for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
+			for (int j = 0; j < 4; j++) {
+				g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_var18[j].x, ball->ani->_oy + g_vars->scene09_var18[j].y, &pixel);
+
+				if (pixel) {
+					sceneHandler09_ballExplode(ball);
+					break;
+				}
+			}
+		}
+	}
 }
 
 void sceneHandler09_hangerStartCycle() {

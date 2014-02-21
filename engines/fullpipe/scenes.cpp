@@ -172,8 +172,14 @@ Vars::Vars() {
 	scene09_var15 = 0;
 	scene09_var17 = 0;
 	scene09_var19 = 0;
-	scene09_var18.x = 0;
-	scene09_var18.y = -15;
+	scene09_var18[0].x = 0;
+	scene09_var18[0].y = -15;
+	scene09_var18[1].x = 15;
+	scene09_var18[1].y = 0;
+	scene09_var18[2].x = 0;
+	scene09_var18[2].y = 0;
+	scene09_var18[3].x = 0;
+	scene09_var18[3].y = 0;
 
 	scene10_gum = 0;
 	scene10_packet = 0;
