@@ -1487,8 +1487,16 @@ caanoo | gp2x | gp2xwiz | openpandora | ps2)
 esac
 
 if test "$_debug_build" != no; then
-	# debug mode not explicitly disabled -> compile with -g
-	CXXFLAGS="$CXXFLAGS -g"
+	# debug mode not explicitly disabled -> compile with debug information
+	case $_host_os in
+	amigaos*)
+		# AmigaOS debugger uses plain stabs, with no gdb extensions.
+		CXXFLAGS="$CXXFLAGS -gstabs"
+	;;
+	*)
+		# Use the system default format for debug info.
+		CXXFLAGS="$CXXFLAGS -g"
+	esac
 fi
 
 if test "$_release_build" = yes; then
