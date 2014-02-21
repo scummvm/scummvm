@@ -347,11 +347,6 @@ void ShootEmUp::setup() {
 	_score = 0;
 	_time = 120;
 
-	for (int i = 0; i < 7; i++) {
-		_stockStatus[i] = _vm->_rnd->getRandomNumber(1);
-		showStock(i);
-	}
-
 	_cp = true;
 
 	_avvyWas = 320;
@@ -374,6 +369,11 @@ void ShootEmUp::setup() {
 	_count321 = 255; // Counting down.
 
 	_vm->_graphics->blackOutScreen();
+
+	for (int i = 0; i < 7; i++) {
+		_stockStatus[i] = _vm->_rnd->getRandomNumber(1);
+		showStock(i);
+	}
 
 	// Set up status line:
 	_vm->_graphics->seuDrawPicture(0, 0, 16); // Score:
