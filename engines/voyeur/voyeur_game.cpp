@@ -425,7 +425,6 @@ void VoyeurEngine::reviewTape() {
 	Common::Rect tempRect(58, 30, 58 + 223, 30 + 124);
 	Common::Point pt;
 	int foundIndex;
-	int eventNum;
 
 	_bVoy->getBoltGroup(0x900);
 	PictureResource *cursor = _bVoy->boltEntry(0x903)._picResource;
@@ -550,7 +549,7 @@ void VoyeurEngine::reviewTape() {
 					_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
 					int yp = 45;
-					eventNum = eventStart;
+					int eventNum = eventStart;
 					for (int idx = 0; idx < 8 && eventNum < _voy._eventCount; ++idx, ++eventNum) {
 						_graphicsManager._fontPtr->_picFlags = 0;
 						_graphicsManager._fontPtr->_picSelect = 0xff;
@@ -1395,7 +1394,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 		if (count == 0 || evidIdx >= eventId)
 			continue;
 		
-		PictureResource *pic = _voy._evPicPtrs[arrIndex];
+		pic = _voy._evPicPtrs[arrIndex];
 		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort,
 			Common::Point((384 - pic->_bounds.width()) / 2,
 			(240 - pic->_bounds.height()) / 2));
