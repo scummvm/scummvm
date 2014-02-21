@@ -779,6 +779,14 @@ void GraphicManager::seuDrawCameo(int destX, int destY, byte w1, byte w2) {
 	drawPicture(_surface, _seuPictures[w1], destX, destY);
 }
 
+uint16 GraphicManager::seuGetPicWidth(int which) {
+	return _seuPictures[which].w;
+}
+
+uint16 GraphicManager::seuGetPicHeight(int which) {
+	return _seuPictures[which].h;
+}
+
 /**
  * This function is for skipping the difference between a stored 'size' value associated with a picture
  * and the actual size of the pictures  when reading them from files for Ghostroom and Shoot em' up.

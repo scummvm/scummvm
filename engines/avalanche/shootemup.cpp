@@ -195,7 +195,7 @@ void ShootEmUp::plotThem() {
 				_vm->_graphics->seuDrawPicture(_sprites[i]._x, _sprites[i]._y, _sprites[i]._p);
 
 			if (_sprites[i]._wipe)
-				blank(Common::Rect(_sprites[i]._x, _sprites[i]._y, _sprites[i]._x + _rectangles[i].width(), _sprites[i]._y + _rectangles[i].height()));
+				blank(Common::Rect(_sprites[i]._x, _sprites[i]._y, _sprites[i]._x + _vm->_graphics->seuGetPicWidth(_sprites[i]._p), _sprites[i]._y + _vm->_graphics->seuGetPicHeight(_sprites[i]._p)));
 
 			if (_sprites[i]._timeout > 0) {
 				_sprites[i]._timeout--;
