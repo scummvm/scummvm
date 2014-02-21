@@ -233,7 +233,7 @@ void FontM4::setFont(const Common::String &filename) {
 	_sysFont = false;
 	_filename = filename;
 
-	Common::SeekableReadStream *fontFile = _vm->_resources->openFile(filename);
+	Common::SeekableReadStream *fontFile = nullptr; //_vm->_resources->openFile(filename);
 	
 	if (fontFile->readUint32LE() != MKTAG('F', 'O', 'N', 'T')) {
 		warning("Font: FONT tag expected");
@@ -272,7 +272,7 @@ void FontM4::setFont(const Common::String &filename) {
 	_charData = new uint8[fontSize];
 	fontFile->read(_charData, fontSize);
 
-	_vm->_resources->toss(filename);
+//	_vm->_resources->toss(filename);
 }
 
 int FontM4::getBpp(int charWidth) {

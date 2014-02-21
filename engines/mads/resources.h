@@ -24,7 +24,7 @@
 #define MADS_RESOURCES_H
 
 #include "common/scummsys.h"
-#include "common/stream.h"
+#include "common/file.h"
 #include "common/str.h"
 
 namespace MADS {
@@ -32,29 +32,32 @@ namespace MADS {
 class MADSEngine;
 
 class ResourcesManager {
-private:
-	MADSEngine *_vm;
 public:
-	ResourcesManager(MADSEngine *vm);
+	/**
+	 * Instantiates the resource manager
+	 */
+	static void init(MADSEngine *vm);
+};
+
+/**
+ * Derived file class
+ */
+class File: public Common::File {
+public:
+	/**
+	 * Constructor
+	 */
+	File(): Common::File() {}
 
 	/**
-	 * Return a named resource
+	 * Constructor
 	 */
-	Common::SeekableReadStream *get(const Common::String &resourceName, bool loadFlag = false) {
-		// TODO
-		return nullptr;
-	}
-
-	Common::SeekableReadStream *openFile(const Common::String &resourceName) { 
-		return get(resourceName, false); 
-	}
+	File(const Common::String &filename) { openFile(filename); }
 
 	/**
-	 * Release a previously loaded resource
+	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	void toss(const Common::String &resourceName) {
-		// TODO
-	}
+	void openFile(const Common::String &filename);
 };
 
 } // End of namespace MADS

@@ -72,10 +72,10 @@ void MADSEngine::initialise() {
 	MSurface::setVm(this);
 	MSprite::setVm(this);
 
+	ResourcesManager::init(this);
 	_events = new EventsManager(this);
 	_palette = Palette::init(this);
 	_font = Font::init(this);
-	_resources = new ResourcesManager(this);
 	_screen = MSurface::init(true);
 	_sound = new SoundManager(this, _mixer);
 	_userInterface = UserInterface::init(this);

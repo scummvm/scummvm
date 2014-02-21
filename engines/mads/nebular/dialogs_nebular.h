@@ -31,6 +31,8 @@ namespace MADS {
 namespace Nebular {
 
 class CopyProtectionDialog {
+private:
+
 public:
 	static bool show() { return false; }
 };

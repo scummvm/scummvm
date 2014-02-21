@@ -26,6 +26,7 @@
 #include "mads/mads.h"
 #include "mads/msprite.h"
 #include "mads/msurface.h"
+#include "mads/resources.h"
 
 namespace MADS {
 
@@ -412,14 +413,14 @@ void MSurfaceMADS::loadBackground(int roomNumber, RGBList **palData) {
 		tileMap[i] = mapStream->readUint16LE();
 	delete mapStream;
 
-	_vm->_resources->toss(resourceName);
+//	_vm->_resources->toss(resourceName);
 
 	// --------------------------------------------------------------------------------
 
 	// Tile map data, which needs to be kept compressed, as the tile offsets refer to
 	// the compressed data. Each tile is then uncompressed separately
 	sprintf(resourceName, "rm%d.tt", roomNumber);
-	Common::SeekableReadStream *tileDataComp = _vm->_resources->get(resourceName);
+	Common::SeekableReadStream *tileDataComp = nullptr; //_vm->_resources->get(resourceName);
 	MadsPack tileData(tileDataComp);
 	Common::SeekableReadStream *tileDataUncomp = tileData.getItemStream(0);
 
@@ -499,7 +500,7 @@ void MSurfaceMADS::loadBackground(int roomNumber, RGBList **palData) {
 		}
 	}
 	tileSet.clear();
-	_vm->_resources->toss(resourceName);
+//	_vm->_resources->toss(resourceName);
 }
 
 void MSurfaceMADS::loadInterface(int index, RGBList **palData) {
@@ -534,10 +535,10 @@ void MSurfaceNebular::loadBackground(int roomNumber, RGBList **palData) {
 	empty();
 
 	Common::String resourceName = Common::String::format("rm%d.art", roomNumber);
-	Common::SeekableReadStream *stream = _vm->_resources->get(resourceName);	
+	Common::SeekableReadStream *stream = nullptr; //_vm->_resources->get(resourceName);	
 	loadBackgroundStream(stream, palData);
 
-	_vm->_resources->toss(resourceName);
+//	_vm->_resources->toss(resourceName);
 }
 
 void MSurfaceNebular::loadBackgroundStream(Common::SeekableReadStream *source, RGBList **palData) {
@@ -597,10 +598,10 @@ void MSurfaceM4::loadBackground(int roomNumber, RGBList **palData) {
 	if (palData)
 		*palData = NULL;
 	Common::String resourceName = Common::String::format("%i.tt", roomNumber);
-	Common::SeekableReadStream *stream = _vm->_resources->get(resourceName);	
+	Common::SeekableReadStream *stream = nullptr;//_vm->_resources->get(resourceName);	
 	loadBackgroundStream(stream);
 
-	_vm->_resources->toss(resourceName);
+//	_vm->_resources->toss(resourceName);
 }
 
 void MSurfaceM4::loadBackgroundStream(Common::SeekableReadStream *source) {
@@ -663,15 +664,11 @@ void MSurfaceM4::loadBackgroundStream(Common::SeekableReadStream *source) {
 /*------------------------------------------------------------------------*/
 
 void MSurfaceRiddle::loadBackground(const Common::String &sceneName) {
-	char resourceName[20];
-	Common::SeekableReadStream *stream;
 	// Loads a Riddle scene
 	Common::String resName = Common::String::format("%s.tt", sceneName.c_str());
-	stream = _vm->_resources->get(resourceName);
+	File stream(resName);
 
-	loadBackgroundStream(stream);
-
-	_vm->_resources->toss(resourceName);
+	loadBackgroundStream(&stream);
 }
 
 } // End of namespace MADS
