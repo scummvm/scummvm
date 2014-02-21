@@ -41,7 +41,7 @@ private:
 	struct Sprite {
 		int8 _ix, _iy;
 		int16 _x, _y;
-		byte _p;
+		int8 _p;
 		int16 _timeout;
 		bool _cameo;
 		byte _cameoFrame;
@@ -102,8 +102,8 @@ private:
 	void moveThem();
 	void blank(Common::Rect rect);
 	void plotThem();
-	void define(int16 x, int16 y, byte p, int8 ix, int8 iy, int16 time, bool isAMissile, bool doWeWipe);
-	void defineCameo(int16 x, int16 y, byte p, int16 time);
+	void define(int16 x, int16 y, int8 p, int8 ix, int8 iy, int16 time, bool isAMissile, bool doWeWipe);
+	void defineCameo(int16 x, int16 y, int8 p, int16 time);
 	void showStock(byte index);
 	void drawNumber(int number, int size, int x);
 	void showScore();

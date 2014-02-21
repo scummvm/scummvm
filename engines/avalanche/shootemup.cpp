@@ -206,12 +206,12 @@ void ShootEmUp::plotThem() {
 	}
 }
 
-void ShootEmUp::define(int16 x, int16 y, byte p, int8 ix, int8 iy, int16 time, bool isAMissile, bool doWeWipe) {
+void ShootEmUp::define(int16 x, int16 y, int8 p, int8 ix, int8 iy, int16 time, bool isAMissile, bool doWeWipe) {
 	for (int i = 0; i < 99; i++) {
 		if (_sprites[i]._x == kFlag) {
 			_sprites[i]._x = x;
 			_sprites[i]._y = y;
-			_sprites[i]._p = p;
+			_sprites[i]._p = p - 1;
 			_sprites[i]._ix = ix;
 			_sprites[i]._iy = iy;
 			_sprites[i]._timeout = time;
@@ -223,7 +223,7 @@ void ShootEmUp::define(int16 x, int16 y, byte p, int8 ix, int8 iy, int16 time, b
 	}
 }
 
-void ShootEmUp::defineCameo(int16 x, int16 y, byte p, int16 time) {
+void ShootEmUp::defineCameo(int16 x, int16 y, int8 p, int16 time) {
 	for (int i = 0; i < 99; i++) {
 		if (_sprites[i]._x == kFlag) {
 			_sprites[i]._x = x;
