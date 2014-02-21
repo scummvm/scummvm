@@ -28,6 +28,7 @@
 #include "math/matrix4.h"
 
 #include "engines/grim/object.h"
+#include "engines/grim/costume/chore.h"
 
 namespace Grim {
 
@@ -54,6 +55,7 @@ public:
 	virtual void playChore(int num);
 	void playChoreLooping(const char *name);
 	virtual void playChoreLooping(int num);
+	void setChoreType(int num, Chore::ChoreType choreType);
 	void setChoreLastFrame(int num);
 	void setChoreLooping(int num, bool val);
 	void stopChore(int num);
@@ -62,7 +64,7 @@ public:
 	ModelNode *getModelNodes();
 	Model *getModel();
 	void setColormap(const Common::String &map);
-	void stopChores();
+	void stopChores(bool ignoreLoopingChores = false);
 	int isChoring(const char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
@@ -95,7 +97,7 @@ public:
 	Component *getComponent(int num) { return _components[num]; }
 protected:
 	virtual Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
-
+	virtual void sortPlayingChores() {};
 	void load(TextSplitter &ts, Costume *prevCost);
 
 	ModelComponent *getMainModelComponent() const;
