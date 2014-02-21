@@ -317,7 +317,7 @@ class ViewPortResource: public DisplayResource {
 private:
 	BoltFilesState &_state;
 private:
-	void setupViewPort(PictureResource *page, Common::Rect *clipRect, ViewPortSetupPtr setupFn,
+	void setupViewPort(PictureResource *page, Common::Rect *clippingRect, ViewPortSetupPtr setupFn,
 		ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn);
 public:
 	ViewPortResource *_parent;
@@ -346,7 +346,7 @@ public:
 	virtual ~ViewPortResource();
 
 	void setupViewPort();
-	void setupViewPort(PictureResource *pic, Common::Rect *clipRect = NULL);
+	void setupViewPort(PictureResource *pic, Common::Rect *clippingRect = NULL);
 	void addSaveRect(int pageIndex, const Common::Rect &r);
 	void fillPic(byte onOff = 0);
 	void drawIfaceTime();

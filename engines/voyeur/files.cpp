@@ -1252,7 +1252,7 @@ ViewPortResource::~ViewPortResource() {
 		delete _rectListPtr[i];
 }
 
-void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRect,
+void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clippingRect,
 		ViewPortSetupPtr setupFn, ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn) {
 	PictureResource *pic = _currentPic;
 	Common::Rect r = _bounds;
@@ -1284,24 +1284,24 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRe
 			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
 	}
 
-	if (clipRect) {
+	if (clippingRect) {
 		// Clip based on the passed clip rectangles
-		xDiff = clipRect->left - r.left;
-		yDiff = clipRect->top - r.top;
+		xDiff = clippingRect->left - r.left;
+		yDiff = clippingRect->top - r.top;
 
 		if (xDiff > 0) {
 			int width = r.width();
-			r.left = clipRect->left;
+			r.left = clippingRect->left;
 			r.setWidth(xDiff <= width ? width - xDiff : 0);
 		}
 		if (yDiff > 0) {
 			int height = r.height();
-			r.top = clipRect->top;
+			r.top = clippingRect->top;
 			r.setHeight(yDiff <= height ? height - yDiff : 0);
 		}
 		
-		xDiff = r.right - clipRect->right;
-		yDiff = r.bottom - clipRect->bottom;
+		xDiff = r.right - clippingRect->right;
+		yDiff = r.bottom - clippingRect->bottom;
 
 		if (xDiff > 0)
 			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0);
@@ -1325,8 +1325,8 @@ void ViewPortResource::setupViewPort() {
 		&GraphicsManager::restoreMCGASaveRect);
 }
 
-void ViewPortResource::setupViewPort(PictureResource *pic, Common::Rect *clipRect) {
-	setupViewPort(pic, clipRect,
+void ViewPortResource::setupViewPort(PictureResource *pic, Common::Rect *clippingRect) {
+	setupViewPort(pic, clippingRect,
 		&GraphicsManager::setupMCGASaveRect, &GraphicsManager::addRectOptSaveRect,
 		&GraphicsManager::restoreMCGASaveRect);
 }
