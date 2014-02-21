@@ -5,7 +5,7 @@ namespace TinyGL {
 
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
-void ZB_plot(ZBuffer * zb, ZBufferPoint * p) {
+void ZB_plot(ZBuffer *zb, ZBufferPoint *p) {
 	unsigned int *pz;
 	PIXEL *pp;
 
@@ -14,7 +14,7 @@ void ZB_plot(ZBuffer * zb, ZBufferPoint * p) {
 	if (ZCMP((unsigned int)p->z, *pz)) {
 		*pp = RGB_TO_PIXEL(p->r, p->g, p->b);
 		*pz = p->z;
-    }
+	}
 }
 
 #define INTERP_Z
@@ -45,7 +45,7 @@ void ZB_line_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
 	color1 = RGB_TO_PIXEL(p1->r, p1->g, p1->b);
 	color2 = RGB_TO_PIXEL(p2->r, p2->g, p2->b);
 
-    // choose if the line should have its color interpolated or not
+	// choose if the line should have its color interpolated or not
 	if (color1 == color2) {
 		ZB_line_flat_z(zb, p1, p2, color1);
 	} else {

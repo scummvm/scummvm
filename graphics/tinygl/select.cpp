@@ -23,7 +23,7 @@ int glRenderMode(int mode) {
 	default:
 		assert(0);
 	}
-	switch(mode) {
+	switch (mode) {
 	case TGL_RENDER:
 		c->render_mode = TGL_RENDER;
 		break;
@@ -45,7 +45,7 @@ void glSelectBuffer(int size, unsigned int *buf) {
 	GLContext *c = gl_get_context();
 
 	assert(c->render_mode != TGL_SELECT);
-  
+
 	c->select_buffer = buf;
 	c->select_size = size;
 }
@@ -77,18 +77,18 @@ void glopLoadName(GLContext *c, GLParam *p) {
 	if (c->render_mode == TGL_SELECT) {
 		assert(c->name_stack_size > 0);
 		c->name_stack[c->name_stack_size - 1] = p[1].i;
-		c->select_hit=NULL;
+		c->select_hit = NULL;
 	}
 }
 
 void gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax) {
 	unsigned int *ptr;
-	int n, i;
+	int n;
 
 	if (!c->select_overflow) {
 		if (!c->select_hit) {
 			n = c->name_stack_size;
-			if ((c->select_ptr-c->select_buffer + 3 + n) > c->select_size) {
+			if ((c->select_ptr - c->select_buffer + 3 + n) > c->select_size) {
 				c->select_overflow = 1;
 			} else {
 				ptr = c->select_ptr;
@@ -96,7 +96,7 @@ void gl_add_select(GLContext *c, unsigned int zmin, unsigned int zmax) {
 				*ptr++ = c->name_stack_size;
 				*ptr++ = zmin;
 				*ptr++ = zmax;
-				for (i = 0; i < n; i++)
+				for (int i = 0; i < n; i++)
 					*ptr++ = c->name_stack[i];
 				c->select_ptr = ptr;
 				c->select_hits++;

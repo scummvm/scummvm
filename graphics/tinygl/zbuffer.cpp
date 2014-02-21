@@ -60,10 +60,10 @@ error:
 }
 
 void ZB_close(ZBuffer *zb) {
-    if (zb->frame_buffer_allocated)
+	if (zb->frame_buffer_allocated)
 		zb->pbuf.free();
 
-    gl_free(zb->zbuf);
+	gl_free(zb->zbuf);
 	gl_free(zb);
 }
 
@@ -98,12 +98,12 @@ void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize) {
 static void ZB_copyBuffer(ZBuffer *zb, void *buf, int linesize) {
 	unsigned char *p1;
 	byte *q;
-	int y, n;
+	int n;
 
 	q = zb->pbuf.getRawBuffer();
 	p1 = (unsigned char *)buf;
 	n = zb->xsize * zb->pixelbytes;
-	for (y = 0; y < zb->ysize; y++) {
+	for (int y = 0; y < zb->ysize; y++) {
 		memcpy(p1, q, n);
 		p1 += linesize;
 		q = q + zb->linesize;
@@ -116,7 +116,7 @@ void ZB_copyFrameBuffer(ZBuffer *zb, void *buf, int linesize) {
 
 // adr must be aligned on an 'int'
 void memset_s(void *adr, int val, int count) {
-	int i, n, v;
+	int n, v;
 	unsigned int *p;
 	unsigned short *q;
 
@@ -124,7 +124,7 @@ void memset_s(void *adr, int val, int count) {
 	v = val | (val << 16);
 
 	n = count >> 3;
-	for (i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		p[0] = v;
 		p[1] = v;
 		p[2] = v;
@@ -134,18 +134,18 @@ void memset_s(void *adr, int val, int count) {
 
 	q = (unsigned short *) p;
 	n = count & 7;
-	for (i = 0; i < n; i++)
+	for (int i = 0; i < n; i++)
 		*q++ = val;
 }
 
 void memset_l(void *adr, int val, int count) {
-	int i, n, v;
+	int n, v;
 	unsigned int *p;
 
 	p = (unsigned int *)adr;
 	v = val;
 	n = count >> 2;
-	for (i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		p[0] = v;
 		p[1] = v;
 		p[2] = v;
@@ -153,14 +153,13 @@ void memset_l(void *adr, int val, int count) {
 		p += 4;
 	}
 
-    n = count & 3;
-    for (i = 0; i < n; i++)
-	*p++ = val;
+	n = count & 3;
+	for (int i = 0; i < n; i++)
+		*p++ = val;
 }
 
 void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b) {
 	uint32 color;
-	int y;
 	byte *pp;
 
 	if (clear_z) {
@@ -168,7 +167,7 @@ void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, in
 	}
 	if (clear_color) {
 		pp = zb->pbuf.getRawBuffer();
-		for (y = 0; y < zb->ysize; y++) {
+		for (int y = 0; y < zb->ysize; y++) {
 			color = zb->cmode.RGBToColor(r, g, b);
 			memset_s(pp, color, zb->xsize);
 			pp = pp + zb->linesize;

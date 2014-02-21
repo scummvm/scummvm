@@ -30,12 +30,12 @@ enum {
 #define SPECULAR_BUFFER_RESOLUTION 1024
 
 
-#define MAX_MODELVIEW_STACK_DEPTH	35
-#define MAX_PROJECTION_STACK_DEPTH	8
-#define MAX_TEXTURE_STACK_DEPTH		8
-#define MAX_NAME_STACK_DEPTH		64
-#define MAX_TEXTURE_LEVELS			11
-#define T_MAX_LIGHTS				32
+#define MAX_MODELVIEW_STACK_DEPTH   35
+#define MAX_PROJECTION_STACK_DEPTH  8
+#define MAX_TEXTURE_STACK_DEPTH     8
+#define MAX_NAME_STACK_DEPTH        64
+#define MAX_TEXTURE_LEVELS          11
+#define T_MAX_LIGHTS                32
 
 #define VERTEX_HASH_SIZE 1031
 
@@ -46,14 +46,14 @@ enum {
 #define TGL_OFFSET_LINE    0x2
 #define TGL_OFFSET_POINT   0x4
 
-typedef struct GLSpecBuf {
+struct GLSpecBuf {
 	int shininess_i;
 	int last_used;
-	float buf[SPECULAR_BUFFER_SIZE+1];
+	float buf[SPECULAR_BUFFER_SIZE + 1];
 	struct GLSpecBuf *next;
-} GLSpecBuf;
+};
 
-typedef struct GLLight {
+struct GLLight {
 	V4 ambient;
 	V4 diffuse;
 	V4 specular;
@@ -69,9 +69,9 @@ typedef struct GLLight {
 	// we use a linked list to know which are the enabled lights
 	int enabled;
 	struct GLLight *next, *prev;
-} GLLight;
+};
 
-typedef struct GLMaterial {
+struct GLMaterial {
 	V4 emission;
 	V4 ambient;
 	V4 diffuse;
@@ -81,35 +81,35 @@ typedef struct GLMaterial {
 	// computed values
 	int shininess_i;
 	int do_specular;
-} GLMaterial;
+};
 
 
-typedef struct GLViewport {
+struct GLViewport {
 	int xmin, ymin, xsize, ysize;
 	V3 scale;
 	V3 trans;
 	int updated;
-} GLViewport;
+};
 
-typedef union {
+union GLParam {
 	int op;
 	float f;
 	int i;
 	unsigned int ui;
 	void *p;
-} GLParam;
+};
 
-typedef struct GLParamBuffer {
+struct GLParamBuffer {
 	GLParam ops[OP_BUFFER_MAX_SIZE];
 	struct GLParamBuffer *next;
-} GLParamBuffer;
+};
 
-typedef struct GLList {
+struct GLList {
 	GLParamBuffer *first_op_buffer;
 	// TODO: extensions for an hash table or a better allocating scheme
-} GLList;
+};
 
-typedef struct GLVertex {
+struct GLVertex {
 	int edge_flag;
 	V3 normal;
 	V4 coord;
@@ -121,30 +121,30 @@ typedef struct GLVertex {
 	V4 pc;                // coordinates in the normalized volume
 	int clip_code;        // clip code
 	ZBufferPoint zp;      // integer coordinates for the rasterization
-} GLVertex;
+};
 
-typedef struct GLImage {
+struct GLImage {
 	Graphics::PixelBuffer pixmap;
 	int xsize, ysize;
-} GLImage;
+};
 
 // textures
 
 #define TEXTURE_HASH_TABLE_SIZE 256
 
-typedef struct GLTexture {
+struct GLTexture {
 	GLImage images[MAX_TEXTURE_LEVELS];
 	int handle;
 	struct GLTexture *next, *prev;
-} GLTexture;
+};
 
 
 // shared state
 
-typedef struct GLSharedState {
+struct GLSharedState {
 	GLList **lists;
 	GLTexture **texture_hash_table;
-} GLSharedState;
+};
 
 struct GLContext;
 
@@ -152,7 +152,7 @@ typedef void (*gl_draw_triangle_func)(GLContext *c, GLVertex *p0, GLVertex *p1, 
 
 // display context
 
-typedef struct GLContext {
+struct GLContext {
 	// Z buffer
 	ZBuffer *zb;
 
@@ -274,7 +274,7 @@ typedef struct GLContext {
 	int depth_test;
 
 	int color_mask;
-} GLContext;
+};
 
 extern GLContext *gl_ctx;
 
@@ -326,7 +326,7 @@ void glClose();
 #endif
 
 #ifndef LOCAL_PI
-#define LOCAL_PI	(3.14159265358979323846)
+#define LOCAL_PI    (3.14159265358979323846)
 #endif
 
 // glopXXX functions

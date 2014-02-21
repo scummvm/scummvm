@@ -53,10 +53,10 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 		c->color_material_enabled = v;
 		break;
 	case TGL_TEXTURE_2D:
-		c->texture_2d_enabled=v;
+		c->texture_2d_enabled = v;
 		break;
 	case TGL_NORMALIZE:
-		c->normalize_enabled=v;
+		c->normalize_enabled = v;
 		break;
 	case TGL_DEPTH_TEST:
 		c->depth_test = v;
@@ -66,31 +66,31 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 			c->offset_states |= TGL_OFFSET_FILL;
 		else
 			c->offset_states &= ~TGL_OFFSET_FILL;
-		break; 
+		break;
 	case TGL_POLYGON_OFFSET_POINT:
 		if (v)
 			c->offset_states |= TGL_OFFSET_POINT;
 		else
 			c->offset_states &= ~TGL_OFFSET_POINT;
-		break; 
+		break;
 	case TGL_POLYGON_OFFSET_LINE:
 		if (v)
 			c->offset_states |= TGL_OFFSET_LINE;
 		else
 			c->offset_states &= ~TGL_OFFSET_LINE;
-		break; 
+		break;
 	case TGL_SHADOW_MASK_MODE:
 		if (v)
 			c->shadow_mode |= 1;
 		else
 			c->shadow_mode &= ~1;
-		break; 
+		break;
 	case TGL_SHADOW_MODE:
 		if (v)
 			c->shadow_mode |= 2;
 		else
 			c->shadow_mode &= ~2;
-		break; 
+		break;
 	default:
 		if (code >= TGL_LIGHT0 && code < TGL_LIGHT0 + T_MAX_LIGHTS) {
 			gl_enable_disable_light(c, code - TGL_LIGHT0, v);
@@ -119,8 +119,8 @@ void glopFrontFace(GLContext *c, GLParam *p) {
 void glopPolygonMode(GLContext *c, GLParam *p) {
 	int face = p[1].i;
 	int mode = p[2].i;
-  
-	switch(face) {
+
+	switch (face) {
 	case TGL_BACK:
 		c->polygon_mode_back = mode;
 		break;

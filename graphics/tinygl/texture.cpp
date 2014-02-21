@@ -20,7 +20,6 @@ static GLTexture *find_texture(GLContext *c, int h) {
 void free_texture(GLContext *c, int h) {
 	GLTexture *t, **ht;
 	GLImage *im;
-	int i;
 
 	t = find_texture(c, h);
 	if (!t->prev) {
@@ -32,7 +31,7 @@ void free_texture(GLContext *c, int h) {
 	if (t->next)
 		t->next->prev = t->prev;
 
-	for (i = 0; i < MAX_TEXTURE_LEVELS; i++) {
+	for (int i = 0; i < MAX_TEXTURE_LEVELS; i++) {
 		im = &t->images[i];
 		if (im->pixmap)
 			im->pixmap.free();
@@ -232,11 +231,11 @@ void glopPixelStore(GLContext *, GLParam *p) {
 
 void tglGenTextures(int n, unsigned int *textures) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	int max, i;
+	int max;
 	TinyGL::GLTexture *t;
 
 	max = 0;
-	for (i = 0; i < TEXTURE_HASH_TABLE_SIZE; i++) {
+	for (int i = 0; i < TEXTURE_HASH_TABLE_SIZE; i++) {
 		t = c->shared_state.texture_hash_table[i];
 		while (t) {
 			if (t->handle > max)
@@ -244,17 +243,16 @@ void tglGenTextures(int n, unsigned int *textures) {
 			t = t->next;
 		}
 	}
-	for (i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		textures[i] = max + i + 1;
 	}
 }
 
 void tglDeleteTextures(int n, const unsigned int *textures) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	int i;
 	TinyGL::GLTexture *t;
 
-	for (i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		t = TinyGL::find_texture(c, textures[i]);
 		if (t) {
 			if (t == c->current_texture) {

@@ -107,7 +107,7 @@ void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *
 			dx2 = (pr2->x - pr1->x);
 			dy2 = (pr2->y - pr1->y);
 			if (dy2 > 0)
-				dx2dy2 = ( dx2 << 16) / dy2;
+				dx2dy2 = (dx2 << 16) / dy2;
 			else
 				dx2dy2 = 0;
 			x2 = pr1->x << 16;
@@ -280,8 +280,8 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 		if (update_right) {
 			dx2 = (pr2->x - pr1->x);
 			dy2 = (pr2->y - pr1->y);
-			if (dy2>0)
-				dx2dy2 = ( dx2 << 16) / dy2;
+			if (dy2 > 0)
+				dx2dy2 = (dx2 << 16) / dy2;
 			else
 				dx2dy2 = 0;
 			x2 = pr1->x << 16;

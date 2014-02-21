@@ -1,10 +1,10 @@
 
 #include "graphics/tinygl/zgl.h"
 
-#define VERTEX_ARRAY	0x0001
-#define COLOR_ARRAY		0x0002
-#define NORMAL_ARRAY	0x0004
-#define TEXCOORD_ARRAY	0x0008
+#define VERTEX_ARRAY    0x0001
+#define COLOR_ARRAY     0x0002
+#define NORMAL_ARRAY    0x0004
+#define TEXCOORD_ARRAY  0x0008
 
 namespace TinyGL {
 
@@ -15,13 +15,13 @@ void glopArrayElement(GLContext *c, GLParam *param) {
 
 	if (states & COLOR_ARRAY) {
 		GLParam p[5];
-		int size = c->color_array_size; 
+		int size = c->color_array_size;
 		i = idx * (size + c->color_array_stride);
 		p[1].f = c->color_array[i];
 		p[2].f = c->color_array[i + 1];
 		p[3].f = c->color_array[i + 2];
 		p[4].f = size > 3 ? c->color_array[i + 3] : 1.0f;
-		glopColor(c, p);  
+		glopColor(c, p);
 	}
 	if (states & NORMAL_ARRAY) {
 		i = idx * (3 + c->normal_array_stride);
@@ -44,8 +44,8 @@ void glopArrayElement(GLContext *c, GLParam *param) {
 		i = idx * (size + c->vertex_array_stride);
 		p[1].f = c->vertex_array[i];
 		p[2].f = c->vertex_array[i + 1];
-		p[3].f = size > 2 ? c->vertex_array[i+2] : 0.0f;
-		p[4].f = size > 3 ? c->vertex_array[i+3] : 1.0f;
+		p[3].f = size > 2 ? c->vertex_array[i + 2] : 0.0f;
+		p[4].f = size > 3 ? c->vertex_array[i + 3] : 1.0f;
 		glopVertex(c, p);
 	}
 }
@@ -65,10 +65,10 @@ void glEnableClientState(TGLenum array) {
 	GLParam p[2];
 	p[0].op = OP_EnableClientState;
 
-	switch(array) {
+	switch (array) {
 	case TGL_VERTEX_ARRAY:
 		p[1].i = VERTEX_ARRAY;
-		break;  
+		break;
 	case TGL_NORMAL_ARRAY:
 		p[1].i = NORMAL_ARRAY;
 		break;
@@ -92,11 +92,11 @@ void glopDisableClientState(GLContext *c, GLParam *p) {
 void glDisableClientState(TGLenum array) {
 	GLParam p[2];
 	p[0].op = OP_DisableClientState;
-    
-	switch(array) {
+
+	switch (array) {
 	case TGL_VERTEX_ARRAY:
 		p[1].i = ~VERTEX_ARRAY;
-		break;  
+		break;
 	case TGL_NORMAL_ARRAY:
 		p[1].i = ~NORMAL_ARRAY;
 		break;
@@ -132,7 +132,7 @@ void  glVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid 
 void glopColorPointer(GLContext *c, GLParam *p) {
 	c->color_array_size = p[1].i;
 	c->color_array_stride = p[2].i;
-	c->color_array = (float *)p[3].p;  
+	c->color_array = (float *)p[3].p;
 }
 
 void  glColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {

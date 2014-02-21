@@ -113,7 +113,7 @@
 		zz = (float)p1->z;
 		p1->sz = (float)p1->s * zz;
 		p1->tz = (float)p1->t * zz;
-		zz=(float) p2->z;
+		zz = (float) p2->z;
 		p2->sz = (float)p2->s * zz;
 		p2->tz = (float)p2->t * zz;
 
@@ -228,8 +228,8 @@
 		if (update_right) {
 			dx2 = (pr2->x - pr1->x);
 			dy2 = (pr2->y - pr1->y);
-			if (dy2>0)
-				dx2dy2 = ( dx2 << 16) / dy2;
+			if (dy2 > 0)
+				dx2dy2 = (dx2 << 16) / dy2;
 			else
 				dx2dy2 = 0;
 			x2 = pr1->x << 16;
@@ -237,7 +237,7 @@
 
 		// we draw all the scan line of the part
 
-		while (nb_lines>0) {
+		while (nb_lines > 0) {
 			nb_lines--;
 #ifndef DRAW_LINE
 			// generic draw line

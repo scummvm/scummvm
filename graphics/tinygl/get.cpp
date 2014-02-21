@@ -3,7 +3,7 @@
 
 #include "graphics/tinygl/zgl.h"
 
-void tglGetIntegerv(int pname,int *params) {
+void tglGetIntegerv(int pname, int *params) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	switch (pname) {
@@ -40,21 +40,20 @@ void tglGetFloatv(int pname, float *v) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	switch (pname) {
 	case TGL_TEXTURE_MATRIX:
-		mnr++; 
+		mnr++;
 	case TGL_PROJECTION_MATRIX:
-		mnr++; 
-	case TGL_MODELVIEW_MATRIX:
-		{
-			float *p = &c->matrix_stack_ptr[mnr]->m[0][0];;
-			for (i = 0; i < 4; i++) {
-				*v++ = p[0];
-				*v++ = p[4];
-				*v++ = p[8];
-				*v++ = p[12];
-				p++;
-			}
-		} 
-		break;
+		mnr++;
+	case TGL_MODELVIEW_MATRIX: {
+		float *p = &c->matrix_stack_ptr[mnr]->m[0][0];;
+		for (i = 0; i < 4; i++) {
+			*v++ = p[0];
+			*v++ = p[4];
+			*v++ = p[8];
+			*v++ = p[12];
+			p++;
+		}
+	}
+	break;
 	case TGL_LINE_WIDTH:
 		*v = 1.0f;
 		break;

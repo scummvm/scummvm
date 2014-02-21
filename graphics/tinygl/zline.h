@@ -85,22 +85,22 @@
 
 // fin macro
 
-    if (dx == 0 && dy == 0) {
+	if (dx == 0 && dy == 0) {
 		PUTPIXEL();
-    } else if (dx > 0) {
+	} else if (dx > 0) {
 		if (dx >= dy) {
 			DRAWLINE(dx, dy, sx + 1, 1);
 		} else {
 			DRAWLINE(dy, dx, sx + 1, sx);
 		}
-    } else {
+	} else {
 		dx = -dx;
 		if (dx >= dy) {
 			DRAWLINE(dx, dy, sx - 1, -1);
 		} else {
 			DRAWLINE(dy, dx, sx - 1, sx);
 		}
-    }
+	}
 }
 
 #undef INTERP_Z

@@ -6,12 +6,12 @@ namespace TinyGL {
 // fill triangle profile
 // #define TINYGL_PROFILE
 
-#define CLIP_XMIN	(1 << 0)
-#define CLIP_XMAX	(1 << 1)
-#define CLIP_YMIN	(1 << 2)
-#define CLIP_YMAX	(1 << 3)
-#define CLIP_ZMIN	(1 << 4)
-#define CLIP_ZMAX	(1 << 5)
+#define CLIP_XMIN   (1 << 0)
+#define CLIP_XMAX   (1 << 1)
+#define CLIP_YMIN   (1 << 2)
+#define CLIP_YMAX   (1 << 3)
+#define CLIP_ZMIN   (1 << 4)
+#define CLIP_ZMAX   (1 << 5)
 
 void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 	float winv;
@@ -64,9 +64,9 @@ static void gl_add_select1(GLContext *c, int z1, int z2, int z3) {
 void gl_draw_point(GLContext *c, GLVertex *p0) {
 	if (p0->clip_code == 0) {
 		if (c->render_mode == TGL_SELECT) {
-			gl_add_select(c,p0->zp.z,p0->zp.z);
+			gl_add_select(c, p0->zp.z, p0->zp.z);
 		} else {
-			ZB_plot(c->zb,&p0->zp);
+			ZB_plot(c->zb, &p0->zp);
 		}
 	}
 }
@@ -88,7 +88,7 @@ static inline void interpolate(GLVertex *q, GLVertex *p0, GLVertex *p1, float t)
 
 // Line Clipping algorithm from 'Computer Graphics', Principles and
 // Practice
-static inline int ClipLine1(float denom,float num,float *tmin,float *tmax) {
+static inline int ClipLine1(float denom, float num, float *tmin, float *tmax) {
 	float t;
 
 	if (denom > 0) {
@@ -120,42 +120,42 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 
 	if ((cc1 | cc2) == 0) {
 		if (c->render_mode == TGL_SELECT) {
-			gl_add_select1(c,p1->zp.z,p2->zp.z,p2->zp.z);
-	} else {
-		if (c->depth_test)
-			ZB_line_z(c->zb,&p1->zp,&p2->zp);
-		else
-			ZB_line(c->zb,&p1->zp,&p2->zp);
+			gl_add_select1(c, p1->zp.z, p2->zp.z, p2->zp.z);
+		} else {
+			if (c->depth_test)
+				ZB_line_z(c->zb, &p1->zp, &p2->zp);
+			else
+				ZB_line(c->zb, &p1->zp, &p2->zp);
 		}
-	} else if ( (cc1&cc2) != 0 ) {
+	} else if ((cc1 & cc2) != 0) {
 		return;
 	} else {
-		dx=p2->pc.X-p1->pc.X;
-		dy=p2->pc.Y-p1->pc.Y;
-		dz=p2->pc.Z-p1->pc.Z;
-		dw=p2->pc.W-p1->pc.W;
-		x1=p1->pc.X;
-		y1=p1->pc.Y;
-		z1=p1->pc.Z;
-		w1=p1->pc.W;
+		dx = p2->pc.X - p1->pc.X;
+		dy = p2->pc.Y - p1->pc.Y;
+		dz = p2->pc.Z - p1->pc.Z;
+		dw = p2->pc.W - p1->pc.W;
+		x1 = p1->pc.X;
+		y1 = p1->pc.Y;
+		z1 = p1->pc.Z;
+		w1 = p1->pc.W;
 
-		tmin=0;
-		tmax=1;
+		tmin = 0;
+		tmax = 1;
 		if (ClipLine1(dx + dw, -x1 - w1, &tmin, &tmax) &&
 				ClipLine1(-dx + dw, x1 - w1, &tmin, &tmax) &&
 				ClipLine1(dy + dw, -y1 - w1, &tmin, &tmax) &&
 				ClipLine1(-dy + dw, y1 - w1, &tmin, &tmax) &&
 				ClipLine1(dz + dw, -z1 - w1, &tmin, &tmax) &&
 				ClipLine1(-dz + dw, z1 - w1, &tmin, &tmax)) {
-			interpolate(&q1,p1,p2,tmin);
-			interpolate(&q2,p1,p2,tmax);
-			gl_transform_to_viewport(c,&q1);
-			gl_transform_to_viewport(c,&q2);
+			interpolate(&q1, p1, p2, tmin);
+			interpolate(&q2, p1, p2, tmax);
+			gl_transform_to_viewport(c, &q1);
+			gl_transform_to_viewport(c, &q2);
 
 			if (c->depth_test)
-				ZB_line_z(c->zb,&q1.zp,&q2.zp);
+				ZB_line_z(c->zb, &q1.zp, &q2.zp);
 			else
-				ZB_line(c->zb,&q1.zp,&q2.zp);
+				ZB_line(c->zb, &q1.zp, &q2.zp);
 		}
 	}
 }
@@ -194,7 +194,7 @@ clip_func(clip_ymax, +, Y, X, Z)
 clip_func(clip_zmin, -, Z, X, Y)
 clip_func(clip_zmax, +, Z, X, Y)
 
-float (*clip_proc[6])(V4 *, V4 *, V4 *)=  {
+float(*clip_proc[6])(V4 *, V4 *, V4 *) =  {
 	clip_xmin, clip_xmax,
 	clip_ymin, clip_ymax,
 	clip_zmin, clip_zmax
@@ -217,7 +217,7 @@ static inline void updateTmp(GLContext *c, GLVertex *q,
 		q->tex_coord.Y = p0->tex_coord.Y + (p1->tex_coord.Y - p0->tex_coord.Y) * t;
 	}
 
-	q->clip_code=gl_clipcode(q->pc.X, q->pc.Y, q->pc.Z, q->pc.W);
+	q->clip_code = gl_clipcode(q->pc.X, q->pc.Y, q->pc.Z, q->pc.W);
 	if (q->clip_code == 0)
 		gl_transform_to_viewport(c, q);
 }
@@ -226,19 +226,19 @@ static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0,
 								  GLVertex *p1, GLVertex *p2, int clip_bit);
 
 void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
-	int co,c_and,cc[3],front;
+	int co, c_and, cc[3], front;
 	float norm;
 
-	cc[0]=p0->clip_code;
-	cc[1]=p1->clip_code;
-	cc[2]=p2->clip_code;
+	cc[0] = p0->clip_code;
+	cc[1] = p1->clip_code;
+	cc[2] = p2->clip_code;
 
-	co=cc[0] | cc[1] | cc[2];
+	co = cc[0] | cc[1] | cc[2];
 
 	// we handle the non clipped case here to go faster
 	if (co == 0) {
 		norm = (float)(p1->zp.x - p0->zp.x) * (float)(p2->zp.y - p0->zp.y) -
-				(float)(p2->zp.x - p0->zp.x) * (float)(p1->zp.y - p0->zp.y);
+			   (float)(p2->zp.x - p0->zp.x) * (float)(p1->zp.y - p0->zp.y);
 		if (norm == 0)
 			return;
 
@@ -255,7 +255,7 @@ void gl_draw_triangle(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 			} else if (c->current_cull_face == TGL_FRONT) {
 				if (front != 0)
 					return;
-				c->draw_triangle_back(c,p0,p1,p2);
+				c->draw_triangle_back(c, p0, p1, p2);
 			} else {
 				return;
 			}
@@ -327,7 +327,7 @@ static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0,
 			updateTmp(c, &tmp1, q[0], q[1], tt);
 
 			tt = clip_proc[clip_bit](&tmp2.pc, &q[0]->pc, &q[2]->pc);
-			updateTmp(c, &tmp2, q[0], q[2],tt);
+			updateTmp(c, &tmp2, q[0], q[2], tt);
 
 			tmp1.edge_flag = q[0]->edge_flag;
 			edge_flag_tmp = q[2]->edge_flag;
@@ -361,7 +361,7 @@ static void gl_draw_triangle_clip(GLContext *c, GLVertex *p0,
 	}
 }
 
-void gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1,GLVertex *p2) {
+void gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	gl_add_select1(c, p0->zp.z, p1->zp.z, p2->zp.z);
 }
 
@@ -412,7 +412,7 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 
 // Render a clipped triangle in line mode
 
-void gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1,GLVertex *p2) {
+void gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	if (c->depth_test) {
 		if (p0->edge_flag)
 			ZB_line_z(c->zb, &p0->zp, &p1->zp);

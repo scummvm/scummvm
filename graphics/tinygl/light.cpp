@@ -7,13 +7,12 @@ void glopMaterial(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
 	float v[4] = { p[3].f, p[4].f, p[5].f, p[6].f };
-	int i;
 	GLMaterial *m;
 
 	if (mode == TGL_FRONT_AND_BACK) {
-		p[1].i=TGL_FRONT;
-		glopMaterial(c,p);
-		mode=TGL_BACK;
+		p[1].i = TGL_FRONT;
+		glopMaterial(c, p);
+		mode = TGL_BACK;
 	}
 	if (mode == TGL_FRONT)
 		m = &c->materials[0];
@@ -22,19 +21,19 @@ void glopMaterial(GLContext *c, GLParam *p) {
 
 	switch (type) {
 	case TGL_EMISSION:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->emission.v[i] = v[i];
 		break;
 	case TGL_AMBIENT:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->ambient.v[i] = v[i];
 		break;
 	case TGL_DIFFUSE:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->diffuse.v[i] = v[i];
 		break;
 	case TGL_SPECULAR:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->specular.v[i] = v[i];
 		break;
 	case TGL_SHININESS:
@@ -42,9 +41,9 @@ void glopMaterial(GLContext *c, GLParam *p) {
 		m->shininess_i = (int)(v[0] / 128.0f) * SPECULAR_BUFFER_RESOLUTION;
 		break;
 	case TGL_AMBIENT_AND_DIFFUSE:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->diffuse.v[i] = v[i];
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			m->ambient.v[i] = v[i];
 		break;
 	default:
@@ -65,16 +64,15 @@ void glopLight(GLContext *c, GLParam *p) {
 	int type = p[2].i;
 	V4 v;
 	GLLight *l;
-	int i;
 
 	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0 + T_MAX_LIGHTS);
 
 	l = &c->lights[light - TGL_LIGHT0];
 
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		v.v[i] = p[3 + i].f;
 
-	switch(type) {
+	switch (type) {
 	case TGL_AMBIENT:
 		l->ambient = v;
 		break;
@@ -84,24 +82,23 @@ void glopLight(GLContext *c, GLParam *p) {
 	case TGL_SPECULAR:
 		l->specular = v;
 		break;
-	case TGL_POSITION:
-		{
-			V4 pos;
-			gl_M4_MulV4(&pos, c->matrix_stack_ptr[0], &v);
+	case TGL_POSITION: {
+		V4 pos;
+		gl_M4_MulV4(&pos, c->matrix_stack_ptr[0], &v);
 
-			l->position=pos;
+		l->position = pos;
 
-			if (l->position.v[3] == 0) {
-				l->norm_position.X = pos.X;
-				l->norm_position.Y = pos.Y;
-				l->norm_position.Z = pos.Z;
+		if (l->position.v[3] == 0) {
+			l->norm_position.X = pos.X;
+			l->norm_position.Y = pos.Y;
+			l->norm_position.Z = pos.Z;
 
-				gl_V3_Norm(&l->norm_position);
-			}
+			gl_V3_Norm(&l->norm_position);
 		}
-		break;
+	}
+	break;
 	case TGL_SPOT_DIRECTION:
-		for (i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			l->spot_direction.v[i] = v.v[i];
 			l->norm_spot_direction.v[i] = v.v[i];
 		}
@@ -110,15 +107,14 @@ void glopLight(GLContext *c, GLParam *p) {
 	case TGL_SPOT_EXPONENT:
 		l->spot_exponent = v.v[0];
 		break;
-	case TGL_SPOT_CUTOFF:
-		{
-			float a = v.v[0];
-			assert(a == 180 || (a >= 0 && a <= 90));
-			l->spot_cutoff=a;
-			if (a != 180)
-				l->cos_spot_cutoff = (float)(cos(a * LOCAL_PI / 180.0));
-		}
-		break;
+	case TGL_SPOT_CUTOFF: {
+		float a = v.v[0];
+		assert(a == 180 || (a >= 0 && a <= 90));
+		l->spot_cutoff = a;
+		if (a != 180)
+			l->cos_spot_cutoff = (float)(cos(a * LOCAL_PI / 180.0));
+	}
+	break;
 	case TGL_CONSTANT_ATTENUATION:
 		l->attenuation[0] = v.v[0];
 		break;
@@ -136,11 +132,10 @@ void glopLight(GLContext *c, GLParam *p) {
 void glopLightModel(GLContext *c, GLParam *p) {
 	int pname = p[1].i;
 	float v[4] = { p[2].f, p[3].f, p[4].f, p[5].f };
-	int i;
 
 	switch (pname) {
 	case TGL_LIGHT_MODEL_AMBIENT:
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 			c->ambient_light_model.v[i] = v[i];
 		break;
 	case TGL_LIGHT_MODEL_LOCAL_VIEWER:
@@ -157,12 +152,12 @@ void glopLightModel(GLContext *c, GLParam *p) {
 
 
 static inline float clampf(float a, float min, float max) {
-  if (a < min)
-	  return min;
-  else if (a > max)
-	  return max;
-  else
-	  return a;
+	if (a < min)
+		return min;
+	else if (a > max)
+		return max;
+	else
+		return a;
 }
 
 void gl_enable_disable_light(GLContext *c, int light, int v) {
@@ -181,9 +176,9 @@ void gl_enable_disable_light(GLContext *c, int light, int v) {
 		if (!l->prev)
 			c->first_light = l->next;
 		else
-			l->prev->next=l->next;
+			l->prev->next = l->next;
 		if (l->next)
-			l->next->prev=l->prev;
+			l->next->prev = l->prev;
 	}
 }
 
@@ -218,9 +213,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 		if (l->position.v[3] == 0) {
 			// light at infinity
 			d.X = l->position.v[0];
-			d.Y=l->position.v[1];
-			d.Z=l->position.v[2];
-			att=1;
+			d.Y = l->position.v[1];
+			d.Z = l->position.v[2];
+			att = 1;
 		} else {
 			// distance attenuation
 			d.X = l->position.v[0] - v->ec.v[0];
@@ -248,8 +243,8 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 			// spot light
 			if (l->spot_cutoff != 180) {
 				dot_spot = -(d.X * l->norm_spot_direction.v[0] +
-							d.Y * l->norm_spot_direction.v[1] +
-							d.Z * l->norm_spot_direction.v[2]);
+							 d.Y * l->norm_spot_direction.v[1] +
+							 d.Z * l->norm_spot_direction.v[2]);
 				if (twoside && dot_spot < 0)
 					dot_spot = -dot_spot;
 				if (dot_spot < l->cos_spot_cutoff) {
@@ -271,9 +266,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 				vcoord.Y = v->ec.Y;
 				vcoord.Z = v->ec.Z;
 				gl_V3_Norm(&vcoord);
-				s.X = d.X-vcoord.X;
-				s.Y = d.Y-vcoord.X;
-				s.Z = d.Z-vcoord.X;
+				s.X = d.X - vcoord.X;
+				s.Y = d.Y - vcoord.X;
+				s.Z = d.Z - vcoord.X;
 			} else {
 				s.X = d.X;
 				s.Y = d.Y;

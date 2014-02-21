@@ -4,11 +4,10 @@
 namespace TinyGL {
 
 static void calc_buf(GLSpecBuf *buf, const float shininess) {
-	int i;
 	float val, inc;
 	val = 0.0f;
 	inc = 1.0f / SPECULAR_BUFFER_SIZE;
-	for (i = 0; i <= SPECULAR_BUFFER_SIZE; i++) {
+	for (int i = 0; i <= SPECULAR_BUFFER_SIZE; i++) {
 		buf->buf[i] = pow(val, shininess);
 		val += inc;
 	}
@@ -21,7 +20,7 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 		if (found->last_used < oldest->last_used) {
 			oldest = found;
 		}
-		found = found->next; 
+		found = found->next;
 	}
 	if (found) {
 		found->last_used = c->specbuf_used_counter++;
@@ -38,7 +37,7 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 		buf->last_used = c->specbuf_used_counter++;
 		buf->shininess_i = shininess_i;
 		calc_buf(buf, shininess);
-		return buf;     
+		return buf;
 	}
 	//overwrite the lru buffer
 	oldest->shininess_i = shininess_i;
