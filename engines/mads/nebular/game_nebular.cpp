@@ -41,11 +41,10 @@ bool GameNebular::checkCopyProtection() {
 	if (!ConfMan.getBool("copy_protection"))
 		return true;
 
-	MessageDialog *dlg = new MessageDialog(_vm, 40, "Line 1", "Line 2", nullptr);
+	CopyProtectionDialog *dlg = new CopyProtectionDialog(_vm, false);
 	dlg->show();
 	delete dlg;
 
-	//CopyProtectionDialog::show(_vm);
 	return false;
 }
 

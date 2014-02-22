@@ -99,6 +99,11 @@ private:
 	 * Append text to the currently end line.
 	 */
 	void appendLine(const Common::String &line);
+
+	/**
+	 * Clean up after finishing displaying the dialog
+	 */
+	void restorePalette();
 protected:
 	Common::String _fontName;
 	int _innerWidth;

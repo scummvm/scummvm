@@ -34,7 +34,7 @@ Dialog::Dialog(MADSEngine *vm): _vm(vm), _savedSurface(nullptr),
 }
 
 Dialog::~Dialog() {
-	delete _savedSurface;
+	restore(_vm->_screen);
 }
 
 
@@ -46,9 +46,11 @@ void Dialog::save(MSurface *s) {
 }
 
 void Dialog::restore(MSurface *s) {
-	_savedSurface->copyTo(s, _position);
-	delete _savedSurface;
-	_savedSurface = nullptr;
+	if (_savedSurface) {
+		_savedSurface->copyTo(s, _position);
+		delete _savedSurface;
+		_savedSurface = nullptr;
+	}
 }
 
 void Dialog::draw() {
@@ -109,26 +111,28 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	_numLines = 0;
 	Common::fill(&_lineXp[0], &_lineXp[TEXT_DIALOG_MAX_LINES], 0);
 	
+	// Save the high end of the palette, and set up the entries for dialog display
 	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3], 
 		&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3 + 8 * 3], 
 		&_savedPalette[0]);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_CONTENT1, 2, 0x24, 0x20);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_EDGE, 2, 0x27, 0x1C);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FC, 2, 0x24, 0x20);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FE, 1, 0x37, 0x37);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_CONTENT1, 2, 0x90, 0x80);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_EDGE, 2, 0x9C, 0x70);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FC, 2, 0x90, 0x80);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FE, 1, 0xDC, 0xDC);
 
 	_vm->_palette->setPalette(_vm->_palette->_mainPalette + (TEXTDIALOG_CONTENT1 * 3),
 		TEXTDIALOG_CONTENT1, 8);
 }
 
 TextDialog::~TextDialog() {
+	restorePalette();
 }
 
 void TextDialog::addLine(const Common::String &line, bool underline) {
 	if (_lineWidth > 0 || _currentX > 0)
 		incNumLines();
 
-	int stringWidth = _vm->_font->getWidth(line);
+	int stringWidth = _vm->_font->getWidth(line, 1);
 	if (stringWidth >= _innerWidth || (int)line.size() >= _lineSize) {
 		wordWrap(line);
 	} else {
@@ -249,17 +253,17 @@ void TextDialog::draw() {
 				_position.x + _width - 4);
 		} else {
 			// Draw a text line
-			int xp = (_lineXp[lineNum] & 0x7F) + 5;
+			int xp = (_lineXp[lineNum] & 0x7F) + _position.x + 5;
 			int yp = lineYp;
 			if (_lineXp[lineNum] & 0x40)
 				++yp;
 
 			_vm->_font->writeString(_vm->_screen, _lines[lineNum], 
-				Common::Point(xp, yp), 1);
+				Common::Point(xp, yp), 0, 1);
 
 			if (_lineXp[lineNum] & 0x80) {
 				// Draw an underline under the text
-				int lineWidth = _vm->_font->getWidth(_lines[lineNum]);
+				int lineWidth = _vm->_font->getWidth(_lines[lineNum], 1);
 				_vm->_screen->setColor(TEXTDIALOG_BLACK);
 				_vm->_screen->hLine(xp, yp + _vm->_font->getHeight(), xp + lineWidth);
 			}
@@ -267,6 +271,12 @@ void TextDialog::draw() {
 
 		lineYp += _vm->_font->getHeight() + 1;
 	}
+}
+
+void TextDialog::restorePalette() {
+	Common::copy(&_savedPalette[0], &_savedPalette[8 * 3],
+		&_vm->_palette->_mainPalette[248 * 3]);
+	_vm->_palette->setPalette(_vm->_palette->_mainPalette, 248, 8);
 }
 
 /*------------------------------------------------------------------------*/
@@ -286,7 +296,13 @@ MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...):
 }
 
 void MessageDialog::show() {
+	draw();
+	_vm->_events->showCursor();
 
+	while (!_vm->shouldQuit() && !_vm->_events->_keyPressed &&
+			!_vm->_events->_mouseClicked) {
+		_vm->_events->delay(1);
+	}
 }
 
 } // End of namespace MADS

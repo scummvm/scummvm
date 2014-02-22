@@ -37,6 +37,8 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_cursorSprites = nullptr;
 	_gameCounter = 0;
 	_priorFrameTime = 0;
+	_keyPressed = false;
+	_mouseClicked = false;
 }
 
 EventsManager::~EventsManager() {
@@ -72,9 +74,6 @@ void EventsManager::changeCursor() {
 
 void EventsManager::pollEvents() {
 	checkForNextFrameCounter();
-	_mouseClicked = false;
-	_mouseReleased = false;
-	_keyPressed = false;
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -82,7 +81,6 @@ void EventsManager::pollEvents() {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
-		case Common::EVENT_KEYUP:
 			return;
 
 		case Common::EVENT_KEYDOWN:
@@ -95,13 +93,16 @@ void EventsManager::pollEvents() {
 				_keyPressed = true;
 			}
 			return;
+		case Common::EVENT_KEYUP:
+			_keyPressed = false;
+			return;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseClicked = true;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_mouseReleased = true;
+			_mouseClicked = false;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;

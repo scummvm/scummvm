@@ -55,7 +55,6 @@ private:
 public:
 	SpriteAsset *_cursorSprites;
 	bool _mouseClicked;
-	bool _mouseReleased;
 	bool _keyPressed;
 public:
 	/**

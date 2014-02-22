@@ -31,13 +31,6 @@ namespace MADS {
 
 namespace Nebular {
 
-bool CopyProtectionDialog::show(MADSEngine *vm) {
-	CopyProtectionDialog *dlg = new CopyProtectionDialog(vm, false);
-
-	delete dlg;
-	return true;
-}
-
 CopyProtectionDialog::CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong):
 		TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 	getHogAnusEntry(_hogEntry);
@@ -76,6 +69,20 @@ CopyProtectionDialog::CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong
 	wordWrap("                    ");
 	wordWrap("\n");
 
+	// TODO: Rest of setup
+}
+
+bool CopyProtectionDialog::show() {
+	draw();
+	_vm->_events->showCursor();
+
+	// TODO: Replace with text input
+	while (!_vm->shouldQuit() && !_vm->_events->_keyPressed &&
+			!_vm->_events->_mouseClicked) {
+		_vm->_events->delay(1);
+	}
+
+	return true;
 }
 
 bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {

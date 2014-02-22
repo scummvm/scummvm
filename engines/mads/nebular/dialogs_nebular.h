@@ -44,19 +44,19 @@ private:
 	HOGANUS _hogEntry;
 
 	/**
-	 * Constructor
-	 */
-	CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong);
-
-	/**
 	 * Get a random copy protection entry from the HOGANUS resource
 	 */
 	bool getHogAnusEntry(HOGANUS &entry);
 public:
 	/**
+	 * Constructor
+	 */
+	CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong);
+
+	/**
 	 * Show the dialog
 	 */
-	static bool show(MADSEngine *vm);
+	bool show();
 };
 
 } // End of namespace Nebular
