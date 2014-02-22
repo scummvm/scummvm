@@ -240,8 +240,8 @@ void Palette::fadeRange(byte *srcPal, byte *destPal,  int startIndex, int endInd
 
 void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2) {
 	int rgbCtr = 0;
-	int rgbDiff = -(rgbValue2 - rgbValue1);
 	int rgbCurrent = rgbValue2;
+	int rgbDiff = -(rgbValue2 - rgbValue1);
 
 	if (count >  0) {
 		byte *pDest = palette + start * 3;
@@ -251,7 +251,7 @@ void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, in
 		do {
 			pDest[0] = pDest[1] = pDest[2] = rgbCurrent;
 
-			if (count > 1) {
+			if (numLeft > 1) {
 				rgbCtr += rgbDiff;
 				if (rgbCtr >= endVal) {
 					do {

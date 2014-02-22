@@ -67,6 +67,7 @@ void MADSEngine::initialise() {
 	// Set up debug channels
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
 
 	// Initial sub-system engine references
 	MSurface::setVm(this);

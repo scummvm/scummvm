@@ -24,10 +24,45 @@
 #define MADS_ASSETS_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
+#include "mads/msprite.h"
+#include "mads/palette.h"
 #include "mads/msprite.h"
 
 namespace MADS {
 
+struct SpriteAssetFrame {
+	uint32 stream;
+	int x, y, w, h;
+	uint32 comp;
+	MSprite *frame;
+};
+
+class SpriteAsset {
+private:
+	MADSEngine *_vm;
+	byte _palette[PALETTE_SIZE];
+	int _colorCount;
+	uint32 _srcSize;
+	int _frameRate, _pixelSpeed;
+	int _maxWidth, _maxHeight;
+	int _frameCount;
+	Common::Array<uint32> _frameOffsets;
+	Common::Array<SpriteAssetFrame> _frames;
+	uint32 _frameStartOffset;
+public:
+	SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int flags);
+	int getCount() { return _frameCount; }
+	int getFrameRate() const { return _frameRate; }
+	int getPixelSpeed() const { return _pixelSpeed; }
+	int getFrameWidth(int index);
+	int getFrameHeight(int index);
+	int getMaxFrameWidth() const { return _maxWidth; }
+	int getMaxFrameHeight() const { return _maxHeight; }
+	MSprite *getFrame(int frameIndex);
+	byte *getPalette() { return _palette; }
+	int getColorCount() { return _colorCount; }
+};
 
 } // End of namespace MADS
 

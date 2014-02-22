@@ -97,8 +97,8 @@ struct SpriteFrameHeader {
 
 class MSprite {
 public:
-	MSprite *init(MSurface &s);
-	MSprite *init(Common::SeekableReadStream *source, const Common::Point &offset, int widthVal, 
+	static MSprite *init(MSurface &s);
+	static MSprite *init(Common::SeekableReadStream *source, const Common::Point &offset, int widthVal, 
 		int heightVal, bool decodeRle = true, uint8 encodingVal = 0);
 protected:
 	static MADSEngine *_vm;

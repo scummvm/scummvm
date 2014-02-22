@@ -54,7 +54,8 @@ namespace MADS {
 
 enum MADSDebugChannels {
 	kDebugPath      = 1 << 0,
-	kDebugScripts	= 1 << 1
+	kDebugScripts	= 1 << 1,
+	kDebugGraphics	= 1 << 2
 };
 
 enum {

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "mads/msprite.h"
+#include "mads/assets.h"
 
 namespace MADS {
 
@@ -38,12 +39,13 @@ private:
 	MADSEngine *_vm;
 	CursorType _cursorId;
 	CursorType _newCursorId;
-	void *_cursorSprites;
 
 	/**
 	 * Updates the cursor image when the current cursor changes
 	 */
 	void changeCursor();
+public:
+	SpriteAsset *_cursorSprites;
 public:
 	/**
 	 * Constructor
@@ -64,6 +66,11 @@ public:
 	 * Sets the cursor
 	 */
 	void setCursor(CursorType cursorId);
+
+	/**
+	 * Sets the cursor
+	 */
+	void setCursor2(CursorType cursorId);
 
 	void handleEvents();
 };

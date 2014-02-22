@@ -46,9 +46,9 @@ MadsPack::MadsPack(Common::SeekableReadStream *stream) {
 }
 
 MadsPack::MadsPack(const Common::String &resourceName, MADSEngine *vm) {
-	Common::SeekableReadStream *stream = nullptr; //vm->_resources->get(resourceName);
-	initialise(stream);
-//	vm->_resources->toss(resourceName);
+	File file(resourceName);
+	initialise(&file);
+	file.close();
 }
 
 void MadsPack::initialise(Common::SeekableReadStream *stream) {

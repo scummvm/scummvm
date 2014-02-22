@@ -55,8 +55,10 @@ void Game::initSection(int sectionNumber) {
 
 	_vm->_palette->resetGamePalette(18, 10);
 	_vm->_palette->setLowRange();
-
-	// TODO
+	
+	assert(_vm->_events->_cursorSprites);
+	_vm->_events->setCursor2((_vm->_events->_cursorSprites->getCount() <= 1) ? 
+		CURSOR_ARROW : CURSOR_WAIT);
 }
 
 } // End of namespace MADS

@@ -38,10 +38,15 @@ EventsManager::~EventsManager() {
 }
 
 void EventsManager::loadCursors(const Common::String &spritesName) {
-	error("TODO: load SpriteSet");
+	_cursorSprites = new SpriteAsset(_vm, "*CURSOR.SS", 0x4000);
 }
 
 void EventsManager::setCursor(CursorType cursorId) {
+	_cursorId = cursorId;
+	changeCursor();
+}
+
+void EventsManager::setCursor2(CursorType cursorId) {
 	_cursorId = cursorId;
 	_newCursorId = cursorId;
 	changeCursor();
