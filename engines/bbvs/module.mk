@@ -6,10 +6,13 @@ MODULE_OBJS := \
 	dialogs.o \
 	gamemodule.o \
 	graphics.o \
+	logic.o \
 	saveload.o \
+	scene.o \
 	sound.o \
 	spritemodule.o \
 	videoplayer.o \
+	walk.o \
 	minigames/bbairguitar.o \
 	minigames/bbairguitar_anims.o \
 	minigames/bbant.o \

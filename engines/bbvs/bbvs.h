@@ -206,6 +206,13 @@ const int kDialogItemStatusCount = 50;
 const int kGameVarsCount = 2000;
 const int kSceneVisitedCount = 64;
 
+const int kMainMenu = 44;
+const int kCredits  = 45;
+
+static const int8 kWalkTurnTbl[] = {
+	7, 9, 4, 8, 6, 10, 5, 11
+};
+
 class BbvsEngine : public Engine {
 protected:
 	Common::Error run();
