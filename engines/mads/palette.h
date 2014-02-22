@@ -29,6 +29,13 @@ namespace MADS {
 
 class MADSEngine;
 
+struct RGB4 {
+	byte r;
+	byte g;
+	byte b;
+	byte u;
+};
+
 /**
  * Used to store a list of RGB values
  */
@@ -75,6 +82,11 @@ private:
 	 */
 	void fadeRange(byte *srcPal, byte *destPal,  int startIndex, int endIndex, 
 		int numSteps, uint delayAmount);
+
+	/**
+	 * Initialises a stanadrd range of colours for the given palette
+	 */
+	void initRange(byte *palette);
 protected:
 	MADSEngine *_vm;
 	bool _colorsChanged;
@@ -87,6 +99,7 @@ protected:
 	void reset();
 public:
 	byte _mainPalette[PALETTE_SIZE];
+	RGB4 _gamePalette[PALETTE_COUNT];
 public:
 	/**
 	 * Constructor
@@ -170,6 +183,16 @@ public:
 	 * Update a range of an arbitrary palette
 	 */
 	static void setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2);
+
+	/**
+	 * Resets the game palette
+	 */
+	void resetGamePalette(int v1, int v2);
+
+	/**
+	 * Set the first four palette entries with preset values
+	 */
+	void setLowRange();
 
 	// Color indexes
 	uint8 BLACK;

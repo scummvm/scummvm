@@ -30,6 +30,25 @@ namespace MADS {
 
 EventsManager::EventsManager(MADSEngine *vm) {
 	_vm = vm;
+	_cursorSprites = nullptr;
+}
+
+EventsManager::~EventsManager() {
+	delete _cursorSprites;
+}
+
+void EventsManager::loadCursors(const Common::String &spritesName) {
+	error("TODO: load SpriteSet");
+}
+
+void EventsManager::setCursor(CursorType cursorId) {
+	_cursorId = cursorId;
+	_newCursorId = cursorId;
+	changeCursor();
+}
+
+void EventsManager::changeCursor() {
+
 }
 
 void EventsManager::handleEvents() {

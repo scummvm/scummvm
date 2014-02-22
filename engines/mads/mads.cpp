@@ -81,6 +81,7 @@ void MADSEngine::initialise() {
 	_userInterface = UserInterface::init(this);
 	_game = Game::init(this);
 
+	_events->loadCursors("*CURSOR.SS");
 	_screen->empty();
 }
 

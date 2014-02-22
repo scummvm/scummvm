@@ -24,16 +24,46 @@
 #define MADS_EVENTS_H
 
 #include "common/scummsys.h"
+#include "mads/msprite.h"
 
 namespace MADS {
+
+enum CursorType { CURSOR_NONE = 0, CURSOR_ARROW = 1, CURSOR_WAIT = 2, CURSOR_GO_DOWN = 3, 
+	CURSOR_GO_UP = 4, CURSOR_GO_LEFT = 5, CURSOR_GO_RIGHT = 6 };
 
 class MADSEngine;
 
 class EventsManager {
 private:
 	MADSEngine *_vm;
+	CursorType _cursorId;
+	CursorType _newCursorId;
+	void *_cursorSprites;
+
+	/**
+	 * Updates the cursor image when the current cursor changes
+	 */
+	void changeCursor();
 public:
+	/**
+	 * Constructor
+	 */
 	EventsManager(MADSEngine *vm);
+
+	/**
+	 * Destructor
+	 */
+	~EventsManager();
+
+	/**
+	 * Loads the sprite set containing the cursors
+	 */
+	void loadCursors(const Common::String &spritesName);
+
+	/**
+	 * Sets the cursor
+	 */
+	void setCursor(CursorType cursorId);
 
 	void handleEvents();
 };

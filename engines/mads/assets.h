@@ -20,43 +20,15 @@
  *
  */
 
+#ifndef MADS_ASSETS_H
+#define MADS_ASSETS_H
+
 #include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/game.h"
-#include "mads/nebular/game_nebular.h"
-#include "mads/graphics.h"
-#include "mads/msurface.h"
+#include "mads/msprite.h"
 
 namespace MADS {
 
-Game *Game::init(MADSEngine *vm) {
-	if (vm->getGameID() == GType_RexNebular)
-		return new Nebular::GameNebular(vm);
-
-	return nullptr;
-}
-
-Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr) {
-	_sectionNumber = _priorSectionNumber = 0;
-}
-
-Game::~Game() {
-	delete _surface;
-}
-
-void Game::run() {
-	if (!checkCopyProtection())
-		return;
-}
-
-void Game::initSection(int sectionNumber) {
-	_priorSectionNumber = _sectionNumber;
-	_sectionNumber = sectionNumber;
-
-	_vm->_palette->resetGamePalette(18, 10);
-	_vm->_palette->setLowRange();
-
-	// TODO
-}
 
 } // End of namespace MADS
+
+#endif /* MADS_ASSETS_H */

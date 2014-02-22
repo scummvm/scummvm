@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	nebular/dialogs_nebular.o \
 	nebular/game_nebular.o \
 	nebular/sound_nebular.o \
+	assets.o \
 	compression.o \
 	detection.o \
 	dialogs.o \

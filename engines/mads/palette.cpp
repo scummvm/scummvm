@@ -310,4 +310,68 @@ void Palette::setSystemPalette() {
 	blockRange(0, 4);
 }
 
+void Palette::resetGamePalette(int lowRange, int highRange) {
+	Common::fill((byte *)&_gamePalette[0], (byte *)&_gamePalette[PALETTE_COUNT], 0);
+	initRange(_mainPalette);
+
+	// Init low range to common RGB values
+	if (lowRange) {
+		_gamePalette[0].r = 1;
+		_gamePalette[0].b = 0;
+
+		Common::fill(&_gamePalette[1], &_gamePalette[lowRange - 1], _gamePalette[0]);
+	}
+
+	// Init high range to common RGB values
+	if (highRange) {
+		_gamePalette[255].r = 1;
+		_gamePalette[255].b = 0;
+
+		Common::fill(&_gamePalette[255 - highRange], &_gamePalette[254], _gamePalette[255]);
+	}
+}
+
+void Palette::initRange(byte *palette) {
+	int var6 = 0;
+	int vdx = 0;
+	int vbx = 0;
+	do {
+		int vdi = (vdx == 1) ? 0 : 0x2A;
+		int var8 = 0;
+		int varE = vbx;
+		int var10 = vdx;
+		do {
+			int vdx = 0;
+			do {
+				int vcx = 0;
+				int var4 = vdx;
+				do {
+					int var2 = var6 + vcx;
+					byte *destP = &palette[var2 * 3];
+					
+					destP[0] = (var8) ? vdi & 0xFF : vbx & 0XFF;
+					destP[1] = (var4) ? vdi & 0xFF : vbx & 0XFF;
+					destP[2] = (vcx) ? vdi & 0xFF : vbx & 0XFF;					
+				} while (++vcx < 2);
+
+				var6 += 2;
+				vdx = var4;
+			} while (++vdx < 2);
+		} while (++var8 < 2);
+	
+		vdx = var10 + 1;
+		vbx = varE + 21;
+	} while (vbx < 42);
+
+	palette[19] = 21;
+}
+
+void Palette::setLowRange() {
+	_mainPalette[0] = _mainPalette[1] = _mainPalette[2] = 0; 
+	_mainPalette[3] = _mainPalette[4] = _mainPalette[5] = 0x15; 
+	_mainPalette[6] = _mainPalette[7] = _mainPalette[8] = 0x2A; 
+	_mainPalette[9] = _mainPalette[10] = _mainPalette[11] = 0x3F; 
+	_vm->_palette->setPalette(_mainPalette, 0, 4);
+}
+
 } // End of namespace MADS

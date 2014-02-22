@@ -40,8 +40,17 @@ protected:
 	 * Perform any copy protection check
 	 */
 	virtual bool checkCopyProtection() = 0;
+
+	/**
+	 * Initialises the current section number of the game
+	 */
+	void initSection(int sectionNumber);
+
 public:
 	static Game *init(MADSEngine *vm);
+public:
+	int _sectionNumber;
+	int _priorSectionNumber;
 public:
 	virtual ~Game();
 
