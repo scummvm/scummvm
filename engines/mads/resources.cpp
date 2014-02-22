@@ -22,7 +22,6 @@
 
 #include "common/scummsys.h"
 #include "common/archive.h"
-#include "common/substream.h"
 #include "common/textconsole.h"
 #include "mads/mads.h"
 #include "mads/resources.h"
@@ -155,9 +154,9 @@ Common::SeekableReadStream *HagArchive::createReadStreamForMember(const Common::
 		if (!f.open(hagIndex._filename))
 			error("Could not open HAG file");
 
-		// Return a substream for the specific resource
-		return new Common::SeekableSubReadStream(&f, 
-			hagEntry._offset, hagEntry._size, DisposeAfterUse::YES);
+		// Return a new stream for the specific resource
+		f.seek(hagEntry._offset);
+		return f.readStream(hagEntry._size);
 	}
 
 	return nullptr;
@@ -182,6 +181,8 @@ void HagArchive::loadIndex() {
 		int numEntries = hagFile.readUint16LE();
 
 		HagIndex hagIndex;
+		hagIndex._filename = filename;
+
 		for (int idx = 0; idx < numEntries; ++idx) {
 			// Read in the details of the next resource
 			char resourceBuffer[14];
