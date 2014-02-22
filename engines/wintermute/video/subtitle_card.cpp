@@ -31,17 +31,14 @@
 
 namespace Wintermute {
 
-SubtitleCard::SubtitleCard(BaseGame *inGame, 
-			   const Common::String &text, 
-			   const uint &startFrame, 
-			   const uint &endFrame) : _gameRef(inGame), 
-						   _startFrame(startFrame), 
+SubtitleCard::SubtitleCard(BaseGame *inGame,
+			   const Common::String &text,
+			   const uint &startFrame,
+			   const uint &endFrame) : _gameRef(inGame),
+						   _startFrame(startFrame),
 						   _endFrame(endFrame) {
-	// TODO: Fix expandStringByStringTable instead of this ugly hack
-	char *tmp = new char[text.size()];
-	strcpy(tmp, text.c_str());
-	_gameRef->expandStringByStringTable(&tmp);
-	_text = Common::String(tmp);
+	_text = text;
+	_gameRef->expandStringByStringTable(_text);
 }
 
 uint32 SubtitleCard::getStartFrame() const {
