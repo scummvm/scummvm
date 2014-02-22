@@ -28,16 +28,19 @@
 
 #include "engines/wintermute/video/subtitle_card.h"
 #include "engines/wintermute/base/base_game.h"
+
 namespace Wintermute {
 
-SubtitleCard::SubtitleCard(BaseGame *inGame): BaseClass(inGame) {
+SubtitleCard::SubtitleCard(BaseGame *inGame) {
+	_gameRef = inGame;
 	_startFrame = _endFrame = 0;
 }
 
-SubtitleCard::SubtitleCard(BaseGame *inGame, const Common::String &text, const uint &startFrame, const uint &endFrame): BaseClass(inGame) {
+SubtitleCard::SubtitleCard(BaseGame *inGame, const Common::String &text, const uint &startFrame, const uint &endFrame) {
 	// TODO: Fix expandStringByStringTable instead of this ugly hack
 	char *tmp = new char[text.size()];
 	strcpy(tmp, text.c_str());
+	_gameRef = inGame;
 	_gameRef->expandStringByStringTable(&tmp);
 	_text = Common::String(tmp);
 	_startFrame = startFrame;

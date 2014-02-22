@@ -29,11 +29,13 @@
 #ifndef WINTERMUTE_SUBTITLECARD_H
 #define WINTERMUTE_SUBTITLECARD_H
 
-#include "engines/wintermute/base/base.h"
+#include "common/str.h"
 
 namespace Wintermute {
 
-class SubtitleCard : public BaseClass {
+class BaseGame;
+
+class SubtitleCard {
 public:
 	SubtitleCard(BaseGame *inGame);
 	SubtitleCard(BaseGame *inGame, const Common::String &text, const uint &startFrame, const uint &endFrame);
@@ -41,6 +43,7 @@ public:
 	uint32 getStartFrame();
 	Common::String getText();
 private:
+	BaseGame* _gameRef;
 	uint32 _endFrame;
 	uint32 _startFrame;
 	Common::String _text;
