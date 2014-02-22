@@ -31,133 +31,6 @@ namespace MADS {
 
 namespace Nebular {
 
-TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName, 
-		const Common::Point &pos, int maxChars) {
-	_vm = vm;
-	_fontName = fontName;
-	_position = pos;
-	
-	_vm->_font->setFont(FONT_INTERFACE);
-	_vm->_font->setColors(TEXTDIALOG_FONT, TEXTDIALOG_FONT, TEXTDIALOG_FONT, TEXTDIALOG_FONT);
-
-	_innerWidth = (_vm->_font->maxWidth() + 1) * maxChars;
-	_width = _innerWidth + 10;
-	_lineSize = maxChars * 2;
-	_lineWidth = 0;
-	_currentX = 0;
-	_numLines = 0;
-	Common::fill(&_lineXp[0], &_lineXp[TEXT_DIALOG_MAX_LINES], 0);
-	
-	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_F8 * 3], 
-		&_vm->_palette->_mainPalette[TEXTDIALOG_F8 * 3 + 8 * 3], 
-		&_savedPalette[0]);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_F8, 2, 0x24, 0x20);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FA, 2, 0x27, 0x1C);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FC, 2, 0x24, 0x20);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FE, 1, 0x37, 0x37);
-
-	_vm->_palette->setPalette(_vm->_palette->_mainPalette + (TEXTDIALOG_F8 * 3),
-		TEXTDIALOG_F8, 8);
-}
-
-TextDialog::~TextDialog() {
-}
-
-void TextDialog::addLine(const Common::String &line, bool underline) {
-	if (_lineWidth > 0 || _currentX > 0)
-		incNumLines();
-
-	int stringWidth = _vm->_font->getWidth(line);
-	if (stringWidth >= _innerWidth || (int)line.size() >= _lineSize) {
-		wordWrap(line);
-	} else {
-		_lineXp[_numLines] = (_innerWidth / 2) - (stringWidth / 2);
-		_lines[_numLines] = line;
-
-		if (underline)
-			underlineLine();
-	}
-
-	incNumLines();
-}
-
-void TextDialog::underlineLine() {
-	_lineXp[_numLines] |= 0x80;
-}
-
-void TextDialog::incNumLines() {
-	_lineWidth = 0;
-	_currentX = 0;
-	if (++_numLines == TEXT_DIALOG_MAX_LINES)
-		error("Exceeded text dialog line max");
-}
-
-void TextDialog::wordWrap(const Common::String &line) {
-	Common::String tempLine;
-
-	if (!line.empty()) {
-		const char *srcP = line.c_str();
-		
-		do {
-			tempLine = "";
-			bool endWord = false;
-			bool newLine = false;
-			bool continueFlag = true;
-
-			do {
-				if (!*srcP) {
-					continueFlag = false;
-				} else {
-					tempLine += *srcP;
-
-					if (*srcP == 10) {
-						continueFlag = false;
-						newLine = true;
-						++srcP;
-						tempLine.deleteLastChar();
-					} else if (*srcP == ' ') {
-						++srcP;
-						endWord = true;
-					} else if (!endWord) {
-						++srcP;
-					} else {
-						tempLine.deleteLastChar();
-						continueFlag = false;
-					}
-				}
-			} while (continueFlag);
-
-			if (tempLine.hasSuffix(" "))
-				tempLine.deleteLastChar();
-
-			Common::String tempLine2;
-			if (_currentX > 0)
-				tempLine2 += ' ';
-			tempLine2 += tempLine;
-
-			int lineWidth = _vm->_font->getWidth(tempLine2, 1);
-			if (((_currentX + (int)tempLine2.size()) > _lineSize) ||
-					((_lineWidth + lineWidth) > _innerWidth)) {
-				incNumLines();
-				appendLine(tempLine);
-			} else {
-				appendLine(tempLine2);
-			}
-
-			if (newLine)
-				incNumLines();
-		} while (*srcP);
-	}
-}
-
-void TextDialog::appendLine(const Common::String &line) {
-	_currentX += line.size();
-	_lineWidth += _vm->_font->getWidth(line, 1);
-	_lines[_numLines] += line;
-}
-
-/*------------------------------------------------------------------------*/
-
 bool CopyProtectionDialog::show(MADSEngine *vm) {
 	CopyProtectionDialog *dlg = new CopyProtectionDialog(vm, false);
 
@@ -166,7 +39,7 @@ bool CopyProtectionDialog::show(MADSEngine *vm) {
 }
 
 CopyProtectionDialog::CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong):
-		TextDialog(vm, FONT_INTERFACE_MADS, Common::Point(-1, -1), 32) {
+		TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 	getHogAnusEntry(_hogEntry);
 
 	if (priorAnswerWrong) {

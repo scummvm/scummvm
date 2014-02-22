@@ -30,23 +30,13 @@
 
 namespace MADS {
 
-#define FONT_MENU "fontmenu.fnt"
-#define FONT_INTERFACE "fontintr.fnt"
-#define FONT_TINY "small.fnt"
-#define FONT_SMALL "small.fnt"
-#define FONT_MEDIUM "medium.fnt"
-#define FONT_LINE "fontline.fnt"
-#define FONT_CONVERSATION "fontconv.fnt"
-#define FONT_4X6 "4x6pp.fnt"
-#define FONT_5X6 "5x6pp.fnt"
-
-#define FONT_CONVERSATION_MADS "fontconv.ff"
-#define FONT_INTERFACE_MADS "fontintr.ff"
-#define FONT_MAIN_MADS "fontmain.ff"
-#define FONT_MENU_MADS "fontmenu.ff"	// Not in Rex (uses bitmap files for menu strings)
-#define FONT_MISC_MADS "fontmisc.ff"
-#define FONT_TELE_MADS "fonttele.ff"	// Not in Phantom
-#define FONT_PHAN_MADS "fontphan.ff"	// Phantom only
+#define FONT_CONVERSATION "fontconv.ff"
+#define FONT_INTERFACE "fontintr.ff"
+#define FONT_MAIN "fontmain.ff"
+#define FONT_MENU "fontmenu.ff"	// Not in Rex (uses bitmap files for menu strings)
+#define FONT_MISC "fontmisc.ff"
+#define FONT_TELE "fonttele.ff"	// Not in Phantom
+#define FONT_PHAN "fontphan.ff"	// Phantom only
 
 class MADSEngine;
 
