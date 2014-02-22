@@ -38,21 +38,13 @@ enum {
 MADSEngine *MSprite::_vm;
 
 MSprite *MSprite::init(MSurface &s) {
-	if (_vm->getGameFeatures() & GF_MADS) {
-		return new MSpriteMADS(s);
-	} else {
-		return new MSpriteM4(s);
-	}
+	return new MSprite(s);
 }
 
 MSprite *MSprite::init(Common::SeekableReadStream *source, const Common::Point &offset, 
 		int widthVal, int heightVal, bool decodeRle, uint8 encodingVal) {
 
-	if (_vm->getGameFeatures() & GF_MADS) {
-		return new MSpriteMADS(source, offset, widthVal, heightVal, decodeRle, encodingVal);
-	} else {
-		return new MSpriteM4(source, offset, widthVal, heightVal, decodeRle, encodingVal);
-	}
+	return new MSprite(source, offset, widthVal, heightVal, decodeRle, encodingVal);
 }
 
 MSprite::MSprite(MSurface &s): _surface(s) {
@@ -65,21 +57,15 @@ MSprite::MSprite(Common::SeekableReadStream *source, const Common::Point &offset
 		_encoding(encodingVal), _offset(offset) {
 
 	// Load the sprite data
-	load(source, widthVal, heightVal, decodeRle);
+	loadSprite(source);
 }
 
 MSprite::~MSprite() {
 }
 
-/*------------------------------------------------------------------------*/
-
-void MSpriteMADS::load(Common::SeekableReadStream *stream, int widthVal, int heightVal,
-		bool decodeRle) {
-	loadSprite(stream);
-}
 
 // TODO: The sprite outlines (pixel value 0xFD) are not shown
-void MSpriteMADS::loadSprite(Common::SeekableReadStream *source) {
+void MSprite::loadSprite(Common::SeekableReadStream *source) {
 	byte *outp, *lineStart;
 	bool newLine = false;
 
@@ -126,80 +112,6 @@ void MSpriteMADS::loadSprite(Common::SeekableReadStream *source) {
 					*outp++ = (cmd2 == 0xFD) ? 0 : cmd2;
 				}
 			}
-		}
-	}
-}
-
-/*------------------------------------------------------------------------*/
-
-void MSpriteM4::load(Common::SeekableReadStream *stream, int widthVal, int heightVal,
-		bool decodeRle) {
-	if (decodeRle) {
-		loadRle(stream);
-	} else {
-		// Raw sprite data, load directly
-		byte *dst = _surface.getData();
-		stream->read(dst, widthVal * heightVal);
-	}
-}
-
-void MSpriteM4::loadRle(Common::SeekableReadStream* rleData) {
-	byte *dst = _surface.getData();
-	for (;;) {
-		byte len = rleData->readByte();
-		if (len == 0) {
-			len = rleData->readByte();
-			if (len <= kMarker) {
-				if (len == kEndOfSprite)
-					break;
-			} else {
-				while (len--) {
-					*dst++ = rleData->readByte();
-				}
-			}
-		} else {
-			byte value = rleData->readByte();
-			while (len--)
-				*dst++ = value;
-		}
-	}
-}
-
-void MSpriteM4::loadDeltaRle(Common::SeekableReadStream* rleData, int destX, int destY) {
-	int lineNum = 0;
-	byte *dst = _surface.getBasePtr(destX, destY);
-
-	for (;;) {
-		byte len = rleData->readByte();
-		if (len == 0) {
-			len = rleData->readByte();
-			if (len <= kMarker) {
-				if (len == kEndOfLine) {
-					dst = _surface.getBasePtr(destX, destY + lineNum);
-					lineNum++;
-				} else if (len == kEndOfSprite)
-					break;
-			} else {
-				while (len--) {
-					byte pixel = rleData->readByte();
-					if (pixel == 0)
-						dst++;
-					else
-						*dst++ = pixel;
-					/* NOTE: The change below behaved differently than the old code,
-					   so I put the old code back in again above.
-					   If the pixel value is 0, nothing should be written to the
-					   output buffer, since 0 means transparent. */
-					//*dst++ = (pixel == 0xFD) ? 0 : pixel;
-				}
-			}
-		} else {
-			byte value = rleData->readByte();
-			if (value == 0)
-				dst += len;
-			else
-				while (len--)
-					*dst++ = value;
 		}
 	}
 }

@@ -65,11 +65,6 @@ enum {
 	GType_Riddle = 3
 };
 
-enum {
-	GF_MADS = 1 << 0,
-	GF_M4 = 1 << 1
-};
-
 struct MADSGameDescription;
 
 

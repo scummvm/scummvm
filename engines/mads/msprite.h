@@ -107,7 +107,7 @@ protected:
 	MSprite(Common::SeekableReadStream *source, const Common::Point &offset, 
 		int widthVal, int heightVal, bool decodeRle = true, uint8 encodingVal = 0);
 
-	virtual void load(Common::SeekableReadStream *stream, int widthVal, int heightVal, bool decodeRle) {}
+	void loadSprite(Common::SeekableReadStream *source);
 public:
 	static void setVm(MADSEngine *vm) { _vm = vm; }
 	virtual ~MSprite();
@@ -116,35 +116,6 @@ public:
 	Common::Point _pos;
 	Common::Point _offset;
 	uint8 _encoding;
-};
-
-class MSpriteMADS: public MSprite {
-	friend class MSprite;
-private:
-	void loadSprite(Common::SeekableReadStream *source);
-protected:
-	MSpriteMADS(MSurface &s): MSprite(s) {}
-	MSpriteMADS(Common::SeekableReadStream *source, const Common::Point &offset, 
-		int widthVal, int heightVal, bool decodeRle = true, uint8 encodingVal = 0):
-		MSprite(source, offset, widthVal, heightVal, decodeRle, encodingVal) {}
-
-	virtual void load(Common::SeekableReadStream *stream, int widthVal, int heightVal, bool decodeRle);
-};
-
-class MSpriteM4: public MSprite {
-	friend class MSprite;
-private:
-	// Loads a sprite from the given stream, and optionally decompresses the RLE-encoded data
-	// Loads an RLE compressed sprite; the surface must have been created before
-	void loadRle(Common::SeekableReadStream *rleData);
-	void loadDeltaRle(Common::SeekableReadStream *rleData, int destX, int destY);
-protected:
-	MSpriteM4(MSurface &s): MSprite(s) {}
-	MSpriteM4(Common::SeekableReadStream *source, const Common::Point &offset, 
-		int widthVal, int heightVal, bool decodeRle = true, uint8 encodingVal = 0):
-		MSprite(source, offset, widthVal, heightVal, decodeRle, encodingVal) {}
-
-	virtual void load(Common::SeekableReadStream *stream, int widthVal, int heightVal, bool decodeRle);
 };
 
 } // End of namespace MADS

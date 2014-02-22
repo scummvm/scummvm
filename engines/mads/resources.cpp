@@ -89,10 +89,7 @@ public:
 };
 
 void ResourcesManager::init(MADSEngine *vm) {
-	if (vm->getGameFeatures() & GF_MADS)
-		SearchMan.add("HAG", new HagArchive());
-	else
-		error("Unsupported game engine");
+	SearchMan.add("HAG", new HagArchive());
 }
 
 /*------------------------------------------------------------------------*/

@@ -35,20 +35,16 @@ MADSEngine *MSurface::_vm = nullptr;
 MSurface *MSurface::init(bool isScreen) {
 	if (_vm->getGameID() == GType_RexNebular) {
 		return new MSurfaceNebular(isScreen);
-	} else if (_vm->getGameFeatures() & GF_MADS) {
-		return new MSurfaceMADS(isScreen);
 	} else {
-		return new MSurfaceM4(isScreen);
+		return new MSurfaceMADS(isScreen);
 	}
 }
 
 MSurface *MSurface::init(int width, int height) {
 	if (_vm->getGameID() == GType_RexNebular) {
 		return new MSurfaceNebular(width, height);
-	} else if (_vm->getGameFeatures() & GF_MADS) {
-		return new MSurfaceMADS(width, height);
 	} else {
-		return new MSurfaceM4(width, height);
+		return new MSurfaceMADS(width, height);
 	}
 }
 
@@ -577,98 +573,6 @@ void MSurfaceNebular::loadBackgroundStream(Common::SeekableReadStream *source, R
 	sourceUnc->read(pData, sceneSize);
 	
 	delete sourceUnc;
-}
-
-/*------------------------------------------------------------------------*/
-
-void MSurfaceM4::loadCodes(Common::SeekableReadStream *source) {
-	if (!source) {
-		free();
-		return;
-	}
-
-	uint16 width = source->readUint16LE();
-	uint16 height = source->readUint16LE();
-
-	setSize(width, height);
-	source->read(pixels, width * height);
-}
-
-void MSurfaceM4::loadBackground(int roomNumber, RGBList **palData) {
-	if (palData)
-		*palData = NULL;
-	Common::String resourceName = Common::String::format("%i.tt", roomNumber);
-	Common::SeekableReadStream *stream = nullptr;//_vm->_resources->get(resourceName);	
-	loadBackgroundStream(stream);
-
-//	_vm->_resources->toss(resourceName);
-}
-
-void MSurfaceM4::loadBackgroundStream(Common::SeekableReadStream *source) {
-	MSurface *tileBuffer = MSurface::init();
-	uint curTileX = 0, curTileY = 0;
-	int clipX = 0, clipY = 0;
-	byte palette[256];
-
-	source->skip(4);
-	/*uint32 size =*/ source->readUint32LE();
-	uint32 width = source->readUint32LE();
-	uint32 height = source->readUint32LE();
-	uint32 tilesX = source->readUint32LE();
-	uint32 tilesY = source->readUint32LE();
-	uint32 tileWidth = source->readUint32LE();
-	uint32 tileHeight = source->readUint32LE();
-	uint8 blackIndex = 0;
-
-	// BGR data, which is converted to RGB8
-	for (uint i = 0; i < 256; i++) {
-		byte r, g, b;
-		palette[i * 3] = r = source->readByte() << 2;
-		palette[i * 3 + 1] = g = source->readByte() << 2;
-		palette[i * 3 + 2] = b = source->readByte() << 2;
-		source->skip(1);
-
-		if ((blackIndex == 0) && !r && !g && !b)
-			blackIndex = i;
-	}
-	
-	_vm->_palette->setPalette(palette, 0, 256);
-
-	// resize or create the surface
-	// Note that the height of the scene in game scenes is smaller than the screen height, 
-	// as the bottom part of the screen is the inventory
-	assert(getWidth() == (int)width);
-
-	tileBuffer->setSize(tileWidth, tileHeight);
-
-	for (curTileY = 0; curTileY < tilesY; curTileY++) {
-		clipY = MIN(height, (1 + curTileY) * tileHeight) - (curTileY * tileHeight);
-
-		for (curTileX = 0; curTileX < tilesX; curTileX++) {
-			clipX = MIN(width, (1 + curTileX) * tileWidth) - (curTileX * tileWidth);
-
-			// Read a tile and copy it to the destination surface
-			source->read(tileBuffer->getData(), tileWidth * tileHeight);
-			Common::Rect srcBounds(0, 0, clipX, clipY);
-			copyFrom(tileBuffer, srcBounds, 
-				Common::Point(curTileX * tileWidth, curTileY * tileHeight));
-		}
-	}
-
-	if (height < (uint)getHeight())
-		fillRect(Common::Rect(0, height, getWidth(), getHeight()), blackIndex);
-
-	delete tileBuffer;
-}
-
-/*------------------------------------------------------------------------*/
-
-void MSurfaceRiddle::loadBackground(const Common::String &sceneName) {
-	// Loads a Riddle scene
-	Common::String resName = Common::String::format("%s.tt", sceneName.c_str());
-	File stream(resName);
-
-	loadBackgroundStream(&stream);
 }
 
 } // End of namespace MADS

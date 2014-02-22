@@ -282,27 +282,6 @@ public:
 	virtual void loadBackground(int roomNumber, RGBList **palData);
 };
 
-class MSurfaceM4: public MSurface {
-	friend class MSurface;
-protected:
-	MSurfaceM4(bool isScreen = false): MSurface(isScreen) {}
-	MSurfaceM4(int width, int height): MSurface(width, height) {}
-
-	void loadBackgroundStream(Common::SeekableReadStream *source);
-public:
-	virtual void loadCodes(Common::SeekableReadStream *source);
-	virtual void loadBackground(int roomNumber, RGBList **palData);
-};
-
-class MSurfaceRiddle: public MSurfaceM4 {
-	friend class MSurface;
-protected:
-	MSurfaceRiddle(bool isScreen = false): MSurfaceM4(isScreen) {}
-	MSurfaceRiddle(int width, int height): MSurfaceM4(width, height) {}
-public:
-	virtual void loadBackground(const Common::String &sceneName);
-};
-
 } // End of namespace MADS
 
 #endif /* MADS_MSURFACE_H */
