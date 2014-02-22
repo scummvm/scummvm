@@ -574,9 +574,9 @@ void ShootEmUp::updateTime() {
 	if (_time <= kFlashTime) {
 		int timeMode = 0;
 		if ((_time % 2) == 1)
-			timeMode = 20; // Normal 'Time:'
+			timeMode = 19; // Normal 'Time:'
 		else
-			timeMode = 86; // Flash 'Time:'
+			timeMode = 85; // Flash 'Time:'
 
 		_vm->_graphics->seuDrawPicture(110, 0, timeMode);
 	}
