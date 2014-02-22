@@ -604,6 +604,7 @@ namespace Fullpipe {
 #define MV_MAN9_SHOOT 922
 #define MV_VSN_CYCLE2 2987
 #define PIC_SC9_LADDER_R 2700
+#define QU_SC9_BALLEXPLODE 938
 #define QU_SC9_EATBALL 942
 #define QU_TTA9_GOL 4937
 #define SND_9_006 3650

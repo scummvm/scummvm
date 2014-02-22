@@ -139,6 +139,7 @@ void scene09_initScene(Scene *sc) {
 	g_vars->scene09_var07.reset();
 
 	Ball *b9 = g_vars->scene09_var07.sub04(g_vars->scene09_var07.field_8, 0);
+
 	b9->ani = sc->getStaticANIObject1ById(ANI_BALL9, -1);
 	b9->ani->setAlpha(0xc8);
 
@@ -305,6 +306,7 @@ void sceneHandler09_eatBall() {
 		g_vars->scene09_flyingBall->hide();
 
 		Ball *ball = g_vars->scene09_balls.pHead;
+
 		if (ball) {
 			while (ball && ball->ani != g_vars->scene09_flyingBall)
 				ball = ball->p0;
@@ -462,7 +464,74 @@ void sceneHandler09_collideBall(Ball *ball) {
 }
 
 void sceneHandler09_ballExplode(Ball *ball) {
-	warning("STUB: sceneHandler09_ballExplode()");
+	if (ball == g_vars->scene09_balls.pHead)
+		g_vars->scene09_balls.pHead = ball->p0;
+	else
+		ball->p1->p0 = ball->p0;
+
+	if (ball == g_vars->scene09_balls.field_8)
+		g_vars->scene09_balls.field_8 = ball->p1;
+	else
+		ball->p0->p1 = ball->p1;
+
+	ball->p0 = g_vars->scene09_balls.pTail;
+
+	g_vars->scene09_balls.pTail = ball;
+	g_vars->scene09_balls.numBalls--;
+
+	if (!g_vars->scene09_balls.numBalls) {
+		g_vars->scene09_balls.pTail = 0;
+		g_vars->scene09_balls.field_8 = 0;
+		g_vars->scene09_balls.pHead = 0;
+		free(g_vars->scene09_balls.cPlex);
+		g_vars->scene09_balls.cPlex = 0;
+	}
+
+	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC9_BALLEXPLODE), 0, 1);
+
+	mq->replaceKeyCode(-1, ball->ani->_okeyCode);
+
+	if (!mq->chain(ball->ani))
+		delete mq;
+
+	Ball *runPtr = g_vars->scene09_var07.pTail;
+	Ball *lastP = g_vars->scene09_var07.field_8;
+
+	if (!g_vars->scene09_var07.pTail) {
+		g_vars->scene09_var07.cPlex = (byte *)calloc(g_vars->scene09_var07.cPlexLen, sizeof(Ball));
+
+		byte *p1 = g_vars->scene09_var07.cPlex + (g_vars->scene09_var07.cPlexLen - 1) * sizeof(Ball);
+
+		if (g_vars->scene09_var07.cPlexLen - 1 < 0) {
+			runPtr = g_vars->scene09_var07.pTail;
+		} else {
+			runPtr = g_vars->scene09_var07.pTail;
+
+			for (int j = 0; j < g_vars->scene09_var07.cPlexLen; j++) {
+				((Ball *)p1)->p1 = runPtr;
+				runPtr = (Ball *)p1;
+
+				p1 -= sizeof(Ball);
+			}
+
+			g_vars->scene09_var07.pTail = runPtr;
+		}
+	}
+
+	g_vars->scene09_var07.pTail = runPtr->p0;
+	runPtr->p1 = lastP;
+	runPtr->p0 = 0;
+	runPtr->ani = ball->ani;
+
+	g_vars->scene09_var07.numBalls++;
+
+	if (g_vars->scene09_var07.field_8) {
+		g_vars->scene09_var07.field_8->p0 = runPtr;
+		g_vars->scene09_var07.field_8 = runPtr;
+	} else {
+		g_vars->scene09_var07.pHead = runPtr;
+		g_vars->scene09_var07.field_8 = runPtr;
+	}
 }
 
 void sceneHandler09_checkHangerCollide() {
