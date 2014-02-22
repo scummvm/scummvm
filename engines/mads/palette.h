@@ -84,13 +84,14 @@ protected:
 	byte _fadedPalette[PALETTE_COUNT * 4];
 	int _usageCount[PALETTE_COUNT];
 
-	Palette(MADSEngine *vm);
 	void reset();
 public:
+	byte _mainPalette[PALETTE_SIZE];
+public:
 	/**
-	 * Creates a new palette instance
+	 * Constructor
 	 */
-	static Palette *init(MADSEngine *vm);
+	Palette(MADSEngine *vm);
 	
 	/**
 	 * Destructor
@@ -153,17 +154,22 @@ public:
 	/**
 	 * Decode a palette and return it, without affecting the Palette itself
 	 */
-	virtual byte *decodePalette(Common::SeekableReadStream *palStream, int *numColors) = 0;
+	byte *decodePalette(Common::SeekableReadStream *palStream, int *numColors);
 
 	/**
 	 * Loads a palette from a stream
 	 */
-	virtual int loadPalette(Common::SeekableReadStream *palStream, int indexStart = 0) = 0;
+	int loadPalette(Common::SeekableReadStream *palStream, int indexStart = 0);
 
 	/**
 	 * Sets a small set of system/core colors needed by the game
 	 */
-	virtual void setSystemPalette() = 0;
+	void setSystemPalette();
+
+	/**
+	 * Update a range of an arbitrary palette
+	 */
+	static void setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2);
 
 	// Color indexes
 	uint8 BLACK;
@@ -182,30 +188,6 @@ public:
 	uint8 PINK;
 	uint8 YELLOW;
 	uint8 WHITE;
-};
-
-class PaletteMADS: protected Palette {
-	friend class Palette;
-protected:
-	PaletteMADS(MADSEngine *vm): Palette(vm) {}
-public:
-	virtual byte *decodePalette(Common::SeekableReadStream *palStream, int *numColors);
-	virtual int loadPalette(Common::SeekableReadStream *palStream, int indexStart = 0);
-	virtual void setSystemPalette();
-};
-
-class PaletteM4: protected Palette {
-	friend class Palette;
-protected:
-	PaletteM4(MADSEngine *vm): Palette(vm) {}
-public:
-	virtual byte *decodePalette(Common::SeekableReadStream *palStream, int *numColors) {
-		return nullptr;
-	}
-	virtual int loadPalette(Common::SeekableReadStream *palStream, int indexStart = 0) {
-		return 0;
-	}
-	virtual void setSystemPalette() {}
 };
 
 } // End of namespace MADS

@@ -62,43 +62,22 @@ protected:
 	Common::String _filename;
 	uint8 _fontColors[4];
 
-protected:
+	int getBpp(int charWidth);
+public:
 	Font(MADSEngine *vm);
-
-	virtual void setFont(const Common::String &filename) = 0;
-	virtual int getBpp(int charWidth) = 0;
-public:
-	static Font *init(MADSEngine *vm);
-public:
 	virtual ~Font();
 
+	void setFont(const Common::String &filename);
 	void setColor(uint8 color);
-	void setColors(uint8 alt1, uint8 alt2, uint8 foreground);
+	void setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4);
 
+	int maxWidth() const { return _maxWidth; }
 	int getWidth(const Common::String &msg, int spaceWidth = -1);
 	int getHeight() const { return _maxHeight; }
 	int write(MSurface *surface, const Common::String &msg, const Common::Point &pt, int width, int spaceWidth, uint8 colors[]);
 	int writeString(MSurface *surface, const Common::String &msg, const Common::Point &pt, int width = 0, int spaceWidth = -1) {
 		return write(surface, msg, pt, width, spaceWidth, _fontColors);
 	}
-};
-
-class FontMADS: public Font {
-	friend class Font;
-protected:
-	virtual void setFont(const Common::String &filename);
-	virtual int getBpp(int charWidth);
-
-	FontMADS(MADSEngine *vm): Font(vm) {}
-};
-
-class FontM4: public Font {
-	friend class Font;
-protected:
-	virtual void setFont(const Common::String &filename);
-	virtual int getBpp(int charWidth);
-
-	FontM4(MADSEngine *vm): Font(vm) {}
 };
 
 } // End of namespace MADS

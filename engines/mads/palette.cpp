@@ -54,18 +54,11 @@ RGBList::~RGBList() {
 
 #define VGA_COLOR_TRANS(x) (x == 0x3f ? 255 : x << 2)
 
-Palette *Palette::init(MADSEngine *vm) {
-	if (vm->getGameFeatures() & GF_MADS) {
-		return new PaletteMADS(vm);
-	} else {
-		return new PaletteM4(vm);
-	}
-}
-
 Palette::Palette(MADSEngine *vm) : _vm(vm) {
 	reset();
 	_fading_in_progress = false;
 	Common::fill(&_usageCount[0], &_usageCount[PALETTE_COUNT], 0);
+	Common::fill(&_mainPalette[0], &_mainPalette[PALETTE_SIZE], 0);
 }
 
 void Palette::setPalette(const byte *colors, uint start, uint num) {
@@ -245,9 +238,35 @@ void Palette::fadeRange(byte *srcPal, byte *destPal,  int startIndex, int endInd
 	_vm->_palette->setPalette(&destPal[startIndex * 3], startIndex, endIndex - startIndex + 1);
 }
 
-/*------------------------------------------------------------------------*/
+void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2) {
+	int rgbCtr = 0;
+	int rgbDiff = -(rgbValue2 - rgbValue1);
+	int rgbCurrent = rgbValue2;
 
-byte *PaletteMADS::decodePalette(Common::SeekableReadStream *palStream, int *numColors) {
+	if (count >  0) {
+		byte *pDest = palette + start * 3;
+		int endVal = count - 1;
+		int numLeft = count;
+
+		do {
+			pDest[0] = pDest[1] = pDest[2] = rgbCurrent;
+
+			if (count > 1) {
+				rgbCtr += rgbDiff;
+				if (rgbCtr >= endVal) {
+					do {
+						++rgbCurrent;
+						rgbCtr += 1 - numLeft;
+					} while (rgbCtr >= endVal);
+				}
+			}
+
+			pDest += 3;
+		} while (--numLeft > 0);
+	}
+}
+
+byte *Palette::decodePalette(Common::SeekableReadStream *palStream, int *numColors) {
 	*numColors = palStream->readUint16LE();
 	assert(*numColors <= 252);
 
@@ -269,7 +288,7 @@ byte *PaletteMADS::decodePalette(Common::SeekableReadStream *palStream, int *num
 	return palData;
 }
 
-int PaletteMADS::loadPalette(Common::SeekableReadStream *palStream, int indexStart) {
+int Palette::loadPalette(Common::SeekableReadStream *palStream, int indexStart) {
 	int colorCount;
 	byte *palData = decodePalette(palStream, &colorCount);
 	_vm->_palette->setPalette(palData, indexStart, colorCount);
@@ -278,7 +297,7 @@ int PaletteMADS::loadPalette(Common::SeekableReadStream *palStream, int indexSta
 	return colorCount;
 }
 
-void PaletteMADS::setSystemPalette() {
+void Palette::setSystemPalette() {
 	resetColorCounts();
 
 	byte palData[4 * 3];

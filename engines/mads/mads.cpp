@@ -74,8 +74,8 @@ void MADSEngine::initialise() {
 
 	ResourcesManager::init(this);
 	_events = new EventsManager(this);
-	_palette = Palette::init(this);
-	_font = Font::init(this);
+	_palette = new Palette(this);
+	_font = new Font(this);
 	_screen = MSurface::init(true);
 	_sound = new SoundManager(this, _mixer);
 	_userInterface = UserInterface::init(this);

@@ -28,14 +28,6 @@
 
 namespace MADS {
 
-Font *Font::init(MADSEngine *vm) {
-	if (vm->getGameFeatures() & GF_MADS) {
-		return new FontMADS(vm);
-	} else {
-		return new FontM4(vm);
-	}
-}
-
 Font::Font(MADSEngine *vm) : _vm(vm) {
 	_sysFont = true;
 	
@@ -53,6 +45,43 @@ Font::~Font() {
 	}
 }
 
+void Font::setFont(const Common::String &filename) {
+	if (!_filename.empty() && (filename == _filename))
+		// Already using specified font, so don't bother reloading
+		return;
+
+	_sysFont = false;
+	_filename = filename;
+
+	MadsPack fontData(filename, _vm);
+	Common::SeekableReadStream *fontFile = fontData.getItemStream(0);
+
+	_maxHeight = fontFile->readByte();
+	_maxWidth = fontFile->readByte();
+
+	_charWidths = new uint8[128];
+	// Char data is shifted by 1
+	_charWidths[0] = 0;
+	fontFile->read(_charWidths + 1, 127);
+	fontFile->readByte();	// remainder
+
+	_charOffs = new uint16[128];
+
+	uint startOffs = 2 + 128 + 256;
+	uint fontSize = fontFile->size() - startOffs;
+
+	// Char data is shifted by 1
+	_charOffs[0] = 0;
+	for (int i = 1; i < 128; i++)
+		_charOffs[i] = fontFile->readUint16LE() - startOffs;
+	fontFile->readUint16LE();	// remainder
+
+	_charData = new uint8[fontSize];
+	fontFile->read(_charData, fontSize);
+
+	delete fontFile;
+}
+
 void Font::setColor(uint8 color) {
 	if (_sysFont)
 		_fontColors[1] = color;
@@ -60,14 +89,11 @@ void Font::setColor(uint8 color) {
 		_fontColors[3] = color;		
 }
 
-void Font::setColors(uint8 alt1, uint8 alt2, uint8 foreground) {
-	if (_sysFont)
-		_fontColors[1] = foreground;
-	else {
-		_fontColors[1] = alt1;
-		_fontColors[2] = alt2;
-		_fontColors[3] = foreground;
-	}
+void Font::setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4) {
+	_fontColors[0] = v1;
+	_fontColors[1] = v2;
+	_fontColors[2] = v3;
+	_fontColors[3] = v4;
 }
 
 int Font::write(MSurface *surface, const Common::String &msg, const Common::Point &pt, int width, int spaceWidth, uint8 colors[]) {
@@ -160,11 +186,6 @@ int Font::write(MSurface *surface, const Common::String &msg, const Common::Poin
 }
 
 int Font::getWidth(const Common::String &msg, int spaceWidth) {
-	/*
-	if (custom_ascii_converter) {			 // if there is a function to convert the extended ASCII characters
-		custom_ascii_converter(out_string);	 // call it with the string
-	}
-	*/
 	int width = 0;
 	const char *text = msg.c_str();
 
@@ -173,46 +194,7 @@ int Font::getWidth(const Common::String &msg, int spaceWidth) {
 	return width;
 }
 
-/*------------------------------------------------------------------------*/
-
-void FontMADS::setFont(const Common::String &filename) {
-	if (!_filename.empty() && (filename == _filename))
-		// Already using specified font, so don't bother reloading
-		return;
-
-	_sysFont = false;
-	_filename = filename;
-
-	MadsPack fontData(filename, _vm);
-	Common::SeekableReadStream *fontFile = fontData.getItemStream(0);
-
-	_maxHeight = fontFile->readByte();
-	_maxWidth = fontFile->readByte();
-
-	_charWidths = new uint8[128];
-	// Char data is shifted by 1
-	_charWidths[0] = 0;
-	fontFile->read(_charWidths + 1, 127);
-	fontFile->readByte();	// remainder
-
-	_charOffs = new uint16[128];
-
-	uint startOffs = 2 + 128 + 256;
-	uint fontSize = fontFile->size() - startOffs;
-
-	// Char data is shifted by 1
-	_charOffs[0] = 0;
-	for (int i = 1; i < 128; i++)
-		_charOffs[i] = fontFile->readUint16LE() - startOffs;
-	fontFile->readUint16LE();	// remainder
-
-	_charData = new uint8[fontSize];
-	fontFile->read(_charData, fontSize);
-
-	delete fontFile;
-}
-
-int FontMADS::getBpp(int charWidth) {
+int Font::getBpp(int charWidth) {
 	if (charWidth > 12)
 		return 4;
 	else if (charWidth > 8)
@@ -221,62 +203,6 @@ int FontMADS::getBpp(int charWidth) {
 		return 2;
 	else
 		return 1;
-}
-
-/*------------------------------------------------------------------------*/
-
-void FontM4::setFont(const Common::String &filename) {
-	if (!_filename.empty() && (filename == _filename))
-		// Already using specified font, so don't bother reloading
-		return;
-
-	_sysFont = false;
-	_filename = filename;
-
-	Common::SeekableReadStream *fontFile = nullptr; //_vm->_resources->openFile(filename);
-	
-	if (fontFile->readUint32LE() != MKTAG('F', 'O', 'N', 'T')) {
-		warning("Font: FONT tag expected");
-		return;
-	}
-
-	_maxHeight = fontFile->readByte();
-	_maxWidth = fontFile->readByte();
-	uint fontSize = fontFile->readUint32LE();
-	
-	//printf("Font::Font: _maxWidth = %d, _maxHeight = %d, fontSize = %d\n", _maxWidth, _maxHeight, fontSize);
-
-	if (fontFile->readUint32LE() != MKTAG('W', 'I', 'D', 'T')) {
-		warning("Font: WIDT tag expected");
-		return;
-	}
-
-	_charWidths = new uint8[256];
-	fontFile->read(_charWidths, 256);
-
-	if (fontFile->readUint32LE() != MKTAG('O', 'F', 'F', 'S')) {
-		warning("Font: OFFS tag expected\n");
-		return;
-	}
-
-	_charOffs = new uint16[256];
-
-	for (int i = 0; i < 256; i++)
-		_charOffs[i] = fontFile->readUint16LE();
-
-	if (fontFile->readUint32LE() != MKTAG('P', 'I', 'X', 'S')) {
-		warning("Font: PIXS tag expected\n");
-		return;
-	}
-
-	_charData = new uint8[fontSize];
-	fontFile->read(_charData, fontSize);
-
-//	_vm->_resources->toss(filename);
-}
-
-int FontM4::getBpp(int charWidth) {
-	return charWidth / 4 + 1;
 }
 
 } // End of namespace MADS
