@@ -70,8 +70,8 @@ public class ScummVMEvents implements
 	}
 
 	public boolean onGenericMotionEvent(final MotionEvent e) {
-    	// Make sure we're running on Android 3.1 or higher to use getAxisValue() 
-    	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+		// Make sure we're running on Android 3.1 or higher to use getAxisValue()
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
 			if((e.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0) {
 				_scummvm.pushEvent(JE_JOYSTICK, e.getAction(),
 						   (int)(e.getAxisValue(MotionEvent.AXIS_X)*100),
@@ -79,7 +79,7 @@ public class ScummVMEvents implements
 						   0, 0);
 				return true;
 			}
-    	}
+		}
 
 		return false;
 	}
