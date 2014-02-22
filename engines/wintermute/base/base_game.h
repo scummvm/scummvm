@@ -141,6 +141,7 @@ public:
 
 	// String Table
 	void expandStringByStringTable(char **str) const;
+	void expandStringByStringTable(Common::String &str) const;
 	char *getKeyFromStringTable(const char *str) const;
 
 	void LOG(bool res, const char *fmt, ...);
