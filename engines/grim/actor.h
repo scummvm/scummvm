@@ -597,16 +597,11 @@ private:
 	bool _walking;
 	Math::Vector3d _destPos;
 
-	// chores
-	// FIXME: there is another Chore class defined in engines/grim/costume/chore.h
-	// both Chore classes should be either merged or one of them renamed
-	//
-	// since the choreType is defined in the other Chore class it is necessary to
-	// use Grim::Chore::ChoreType as type in this class
-	class Chore {
+	//chores
+	class ActionChore {
 	public:
-		Chore();
-		Chore(Costume *cost, int chore, Grim::Chore::ChoreType choreType = Grim::Chore::CHORE_OTHER);
+		ActionChore();
+		ActionChore(Costume *cost, int chore, Chore::ChoreType choreType = Chore::CHORE_OTHER);
 
 		void play(bool fade = false, unsigned int time = fadeTime);
 		void playLooping(bool fade = false, unsigned int time = fadeTime);
@@ -620,26 +615,26 @@ private:
 		}
 
 		void saveState(SaveGame *state) const;
-		void restoreState(SaveGame *state, Actor *actor, Grim::Chore::ChoreType choreType = Grim::Chore::CHORE_OTHER);
+		void restoreState(SaveGame *state, Actor *actor, Chore::ChoreType choreType = Chore::CHORE_OTHER);
 
 		Costume *_costume;
 		int _chore;
 
 		static const unsigned int fadeTime;
 	};
-	Chore _restChore;
+	ActionChore _restChore;
 
-	Chore _walkChore;
+	ActionChore _walkChore;
 	bool _walkedLast, _walkedCur;
 	bool _running;
 
-	Chore _leftTurnChore, _rightTurnChore;
+	ActionChore _leftTurnChore, _rightTurnChore;
 	int _lastTurnDir, _currTurnDir;
 
-	Chore _talkChore[10];
+	ActionChore _talkChore[10];
 	int _talkAnim;
 
-	Chore _mumbleChore, _lastWearChore;
+	ActionChore _mumbleChore, _lastWearChore;
 
 	Shadow *_shadowArray;
 	int _activeShadowSlot;
@@ -651,11 +646,11 @@ private:
 	// Validate a yaw angle then set it appropriately
 	void setYaw(const Math::Angle &yaw);
 
-	Chore *getTurnChore(int dir) {
+	ActionChore *getTurnChore(int dir) {
 		return (dir > 0 ? &_leftTurnChore : &_rightTurnChore);
 	}
 
-	void freeCostumeChore(const Costume *toFree, Chore *chore);
+	void freeCostumeChore(const Costume *toFree, ActionChore *chore);
 
 	// lookAt
 	Math::Vector3d _lookAtVector;

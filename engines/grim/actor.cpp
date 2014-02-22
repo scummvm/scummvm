@@ -342,14 +342,14 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_walking = savedState->readBool();
 	_destPos = savedState->readVector3d();
 
-	_restChore.restoreState(savedState, this, Grim::Chore::CHORE_REST);
+	_restChore.restoreState(savedState, this, Chore::CHORE_REST);
 
-	_walkChore.restoreState(savedState, this, Grim::Chore::CHORE_WALK);
+	_walkChore.restoreState(savedState, this, Chore::CHORE_WALK);
 	_walkedLast = savedState->readBool();
 	_walkedCur = savedState->readBool();
 
-	_leftTurnChore.restoreState(savedState, this, Grim::Chore::CHORE_WALK);
-	_rightTurnChore.restoreState(savedState, this, Grim::Chore::CHORE_WALK);
+	_leftTurnChore.restoreState(savedState, this, Chore::CHORE_WALK);
+	_rightTurnChore.restoreState(savedState, this, Chore::CHORE_WALK);
 	_lastTurnDir = savedState->readLESint32();
 	_currTurnDir = savedState->readLESint32();
 
@@ -420,7 +420,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 		_haveSectorSortOrder = false;
 		_sectorSortOrder = 0;
 
-		_lastWearChore.restoreState(savedState, this, Grim::Chore::CHORE_WEAR);
+		_lastWearChore.restoreState(savedState, this, Chore::CHORE_WEAR);
 	}
 
 	if (_cleanBuffer) {
@@ -909,7 +909,7 @@ void Actor::setRestChore(int chore, Costume *cost) {
 		cost = getCurrentCostume();
 	}
 
-	_restChore = Chore(cost, chore, Grim::Chore::CHORE_REST);
+	_restChore = ActionChore(cost, chore, Chore::CHORE_REST);
 
 	_restChore.playLooping(true);
 }
@@ -935,7 +935,7 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 		cost = getCurrentCostume();
 	}
 
-	_walkChore = Chore(cost, chore, Grim::Chore::CHORE_WALK);
+	_walkChore = ActionChore(cost, chore, Chore::CHORE_WALK);
 }
 
 void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
@@ -953,8 +953,8 @@ void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
 	_rightTurnChore.stop(true);
 	_lastTurnDir = 0;
 
-	_leftTurnChore = Chore(cost, left_chore, Grim::Chore::CHORE_WALK);
-	_rightTurnChore = Chore(cost, right_chore, Grim::Chore::CHORE_WALK);
+	_leftTurnChore = ActionChore(cost, left_chore, Chore::CHORE_WALK);
+	_rightTurnChore = ActionChore(cost, right_chore, Chore::CHORE_WALK);
 
 	if ((left_chore >= 0 && right_chore < 0) || (left_chore < 0 && right_chore >= 0))
 		error("Unexpectedly got only one turn chore");
@@ -978,7 +978,7 @@ void Actor::setTalkChore(int index, int chore, Costume *cost) {
 
 	_talkChore[index].stop();
 
-	_talkChore[index] = Chore(cost, chore);
+	_talkChore[index] = ActionChore(cost, chore);
 }
 
 int Actor::getTalkChore(int index) const {
@@ -1001,7 +1001,7 @@ void Actor::setMumbleChore(int chore, Costume *cost) {
 		cost = getCurrentCostume();
 	}
 
-	_mumbleChore = Chore(cost, chore);
+	_mumbleChore = ActionChore(cost, chore);
 }
 
 bool Actor::playLastWearChore() {
@@ -1014,7 +1014,7 @@ bool Actor::playLastWearChore() {
 
 void Actor::setLastWearChore(int chore, Costume *cost) {
 	if (! _costumeStack.empty() && cost == _costumeStack.back()) {
-		_lastWearChore = Chore(cost, chore, Grim::Chore::CHORE_WEAR);
+		_lastWearChore = ActionChore(cost, chore, Chore::CHORE_WEAR);
 	}
 }
 
@@ -1299,8 +1299,8 @@ void Actor::popCostume() {
 		freeCostumeChore(_costumeStack.back(), &_walkChore);
 
 		if (_leftTurnChore._costume == _costumeStack.back()) {
-			_leftTurnChore = Chore();
-			_rightTurnChore = Chore();
+			_leftTurnChore = ActionChore();
+			_rightTurnChore = ActionChore();
 		}
 
 		freeCostumeChore(_costumeStack.back(), &_mumbleChore);
@@ -1768,9 +1768,9 @@ bool Actor::isInSet(const Common::String &set) const {
 	return _setName == set;
 }
 
-void Actor::freeCostumeChore(const Costume *toFree, Chore *chore) {
+void Actor::freeCostumeChore(const Costume *toFree, ActionChore *chore) {
 	if (chore->_costume == toFree) {
-		*chore = Chore();
+		*chore = ActionChore();
 	}
 }
 
@@ -2256,15 +2256,15 @@ void Actor::restoreCleanBuffer() {
 	}
 }
 
-unsigned const int Actor::Chore::fadeTime = 150;
+unsigned const int Actor::ActionChore::fadeTime = 150;
 
-Actor::Chore::Chore() :
+Actor::ActionChore::ActionChore() :
 	_costume(NULL),
 	_chore(-1) {
 
 }
 
-Actor::Chore::Chore(Costume *cost, int chore, Grim::Chore::ChoreType choreType) :
+Actor::ActionChore::ActionChore(Costume *cost, int chore, Chore::ChoreType choreType) :
 	_costume(cost),
 	_chore(chore) {
 	if (isValid()) {
@@ -2272,7 +2272,7 @@ Actor::Chore::Chore(Costume *cost, int chore, Grim::Chore::ChoreType choreType) 
 	}
 }
 
-void Actor::Chore::play(bool fade, unsigned int time) {
+void Actor::ActionChore::play(bool fade, unsigned int time) {
 	if (isValid()) {
 		_costume->playChore(_chore);
 		if (fade) {
@@ -2281,7 +2281,7 @@ void Actor::Chore::play(bool fade, unsigned int time) {
 	}
 }
 
-void Actor::Chore::playLooping(bool fade, unsigned int time) {
+void Actor::ActionChore::playLooping(bool fade, unsigned int time) {
 	if (isValid()) {
 		_costume->playChoreLooping(_chore);
 		if (fade) {
@@ -2290,7 +2290,7 @@ void Actor::Chore::playLooping(bool fade, unsigned int time) {
 	}
 }
 
-void Actor::Chore::stop(bool fade, unsigned int time) {
+void Actor::ActionChore::stop(bool fade, unsigned int time) {
 	if (isValid()) {
 		if (fade) {
 			_costume->fadeChoreOut(_chore, time);
@@ -2299,17 +2299,17 @@ void Actor::Chore::stop(bool fade, unsigned int time) {
 	}
 }
 
-void Actor::Chore::setLastFrame() {
+void Actor::ActionChore::setLastFrame() {
 	if (isValid()) {
 		_costume->setChoreLastFrame(_chore);
 	}
 }
 
-bool Actor::Chore::isPlaying() const {
+bool Actor::ActionChore::isPlaying() const {
 	return (isValid() && _costume->isChoring(_chore, false) >= 0);
 }
 
-void Actor::Chore::saveState(SaveGame *savedState) const {
+void Actor::ActionChore::saveState(SaveGame *savedState) const {
 	if (_costume) {
 		savedState->writeBool(true);
 		savedState->writeString(_costume->getFilename());
@@ -2319,7 +2319,7 @@ void Actor::Chore::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_chore);
 }
 
-void Actor::Chore::restoreState(SaveGame *savedState, Actor *actor, Grim::Chore::ChoreType choreType) {
+void Actor::ActionChore::restoreState(SaveGame *savedState, Actor *actor, Chore::ChoreType choreType) {
 	if (savedState->readBool()) {
 		Common::String fname = savedState->readString();
 		_costume = actor->findCostume(fname);
