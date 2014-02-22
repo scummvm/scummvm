@@ -37,7 +37,6 @@ class BaseGame;
 
 class SubtitleCard {
 public:
-	SubtitleCard(BaseGame *inGame);
 	SubtitleCard(BaseGame *inGame, const Common::String &text, const uint &startFrame, const uint &endFrame);
 	uint32 getEndFrame();
 	uint32 getStartFrame();
