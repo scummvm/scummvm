@@ -303,9 +303,9 @@ void ASound::playSound(int offset, int size) {
 	playSound(loadData(offset, size));
 }
 
-void ASound::playSound(byte *pData) {
+void ASound::playSound(byte *pData, int startingChannel) {
 	// Scan for a high level free channel
-	for (int i = 5; i < ADLIB_CHANNEL_COUNT; ++i) {
+	for (int i = startingChannel; i < ADLIB_CHANNEL_COUNT; ++i) {
 		if (!_channels[i]._activeCount) {
 			_channels[i].load(pData);
 			return;
@@ -313,7 +313,7 @@ void ASound::playSound(byte *pData) {
 	}
 
 	// None found, do a secondary scan for an interruptable channel
-	for (int i = ADLIB_CHANNEL_COUNT - 1; i >= ADLIB_CHANNEL_MIDWAY; --i) {
+	for (int i = ADLIB_CHANNEL_COUNT - 1; i >= startingChannel; --i) {
 		if (_channels[i]._fieldE == 0xFF) {
 			_channels[i].load(pData);
 			return;
@@ -928,10 +928,11 @@ ASound1::ASound1(Audio::Mixer *mixer): ASound(mixer, "asound.001", 0x1520) {
 		_samples.push_back(AdlibSample(_soundFile));
 }
 
-int ASound1::command(int commandId) {
+int ASound1::command(int commandId, int param) {
 	if (commandId > 41)
 		return 0;
 
+	_commandParam = param;
 	_frameCounter = 0;
 	return (this->*_commandList[commandId])();
 }
@@ -1060,12 +1061,22 @@ int ASound1::command25() {
 }
 
 int ASound1::command26() {
-	error("TODO: command26");
+	byte *pData = loadData(0xEEC, 10);
+	pData[5] = (command2627293032() + 0x7F) & 0xFF;
+
+	if (!isSoundActive(pData))
+		_channels[6].load(pData);
+
 	return 0;
 }
 
 int ASound1::command27() {
-	error("TODO: ASound::command27");
+	byte *pData = loadData(0xEE2, 10);
+	pData[5] = (command2627293032() + 0x40) & 0xFF;
+
+	if (!isSoundActive(pData))
+		_channels[7].load(pData);
+
 	return 0;
 }
 
@@ -1075,12 +1086,23 @@ int ASound1::command28() {
 }
 
 int ASound1::command29() {
-	error("TODO: ASound::command29");
+	byte *pData = loadData(0xC82, 36);
+	byte v = (command2627293032() + 0x40) & 0xFF;
+	pData[7] = pData[13] = pData[21] = pData[27] = v;
+
+	if (!isSoundActive(pData))
+		playSound(pData, 0);
+
 	return 0;
 }
 
 int ASound1::command30() {
-	error("TODO: ASound::command30");
+	byte *pData = loadData(0xEA6, 16);
+	pData[7] = (command2627293032() + 0x40) & 0xFF;
+
+	if (!isSoundActive(pData))
+		playSound(pData, 0);
+
 	return 0;
 }
 
@@ -1093,7 +1115,14 @@ int ASound1::command31() {
 }
 
 int ASound1::command32() {
-	error("TODO: ASound::command32");
+	byte *pData = loadData(0xEB4, 46);
+	int v = command2627293032() + 0x40;
+	pData[9] = pData[17] = pData[25] = pData[33] = v & 0xFF;
+	pData[11] = pData[19] = pData[27] = pData[35] = v >> 8;
+
+	if (!isSoundActive(pData))
+		playSound(pData, 0);
+
 	return 0;
 }
 
@@ -1169,10 +1198,8 @@ void ASound1::command111213() {
 	}
 }
 
-void ASound1::command2627293032() {
-	// TODO: This method takes a parameter off the stack for several levels up.
-	// i.e. something the caller's caller pushed onto the stack. Need to figure
-	// out a better way to pass parameters down if this is actually in use.
+int ASound1::command2627293032() {
+	return (_commandParam > 0x40) ? _commandParam - 0x40 : _commandParam & 0xff00;
 }
 
 } // End of namespace Nebular
