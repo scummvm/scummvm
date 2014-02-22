@@ -118,27 +118,6 @@ void Palette::reset() {
 	WHITE = palIndexFromRgb(255, 255, 255, palData);
 }
 
-void Palette::fadeIn(int numSteps, uint delayAmount, RGBList *destPalette) {
-	fadeIn(numSteps, delayAmount, destPalette->data(), destPalette->size());
-}
-
-void Palette::fadeIn(int numSteps, uint delayAmount, byte *destPalette, int numColors) {
-	if (_fading_in_progress)
-		return;
-
-	_fading_in_progress = true;
-	byte blackPalette[PALETTE_SIZE];
-	Common::fill(&blackPalette[0], &blackPalette[PALETTE_SIZE], 0);
-
-	// Initially set the black palette
-	_vm->_palette->setPalette(blackPalette, 0, numColors);
-
-	// Handle the actual fading
-	fadeRange(blackPalette, destPalette, 0, numColors - 1, numSteps, delayAmount);
-
-	_fading_in_progress = false;
-}
-
 void Palette::resetColorCounts() {
 	Common::fill(&_usageCount[0], &_usageCount[PALETTE_COUNT], 0);
 }
@@ -209,33 +188,6 @@ void Palette::deleteRange(RGBList *list) {
 void Palette::deleteAllRanges() {
 	for (int colIndex = 0; colIndex < 255; ++colIndex)
 		_usageCount[colIndex] = 0;
-}
-
-void Palette::fadeRange(byte *srcPal, byte *destPal,  int startIndex, int endIndex, 
-					 int numSteps, uint delayAmount) {
-	byte tempPal[256 * 3];
-
-	// perform the fade
-	for(int stepCtr = 1; stepCtr <= numSteps; ++stepCtr) {
-		// Delay the specified amount
-		uint32 startTime = g_system->getMillis();
-		while ((g_system->getMillis() - startTime) < delayAmount) {
-			_vm->_events->handleEvents();
-			g_system->delayMillis(10);
-		}
-
-		for (int i = startIndex; i <= endIndex; ++i) {
-			// Handle the intermediate rgb values for fading
-			tempPal[i * 3] = (byte) (srcPal[i * 3] + (destPal[i * 3] - srcPal[i * 3]) * stepCtr / numSteps);   
-			tempPal[i * 3 + 1] = (byte) (srcPal[i * 3 + 1] + (destPal[i * 3 + 1] - srcPal[i * 3 + 1]) * stepCtr / numSteps); 
-			tempPal[i * 3 + 2] = (byte) (srcPal[i * 3 + 2] + (destPal[i * 3 + 2] - srcPal[i * 3 + 2]) * stepCtr / numSteps); 
-		}
-		
-		_vm->_palette->setPalette(&tempPal[startIndex * 3], startIndex, endIndex - startIndex + 1);
-	}
-
-	// Make sure the end palette exactly matches what is wanted
-	_vm->_palette->setPalette(&destPal[startIndex * 3], startIndex, endIndex - startIndex + 1);
 }
 
 void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2) {

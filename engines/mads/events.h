@@ -39,13 +39,24 @@ private:
 	MADSEngine *_vm;
 	CursorType _cursorId;
 	CursorType _newCursorId;
+	uint32 _gameCounter;
+	uint32 _priorFrameTime;
+	Common::Point _mousePos;
 
 	/**
 	 * Updates the cursor image when the current cursor changes
 	 */
 	void changeCursor();
+
+	/**
+	 * Checks for whether the next game frame number has been reached.
+	 */
+	void checkForNextFrameCounter();
 public:
 	SpriteAsset *_cursorSprites;
+	bool _mouseClicked;
+	bool _mouseReleased;
+	bool _keyPressed;
 public:
 	/**
 	 * Constructor
@@ -72,7 +83,30 @@ public:
 	 */
 	void setCursor2(CursorType cursorId);
 
-	void handleEvents();
+	/**
+	 * Show the mouse cursor
+	 */
+	void showCursor();
+
+	/**
+	 * Hide the mouse cursor
+	 */
+	void hideCursor();
+
+	/**
+	 * Poll any pending events
+	 */
+	void pollEvents();
+
+	/**
+	 * Return the current mouse position
+	 */
+	Common::Point mousePos() const { return _mousePos; }
+
+	/**
+	 * Delay for a given number of frames
+	 */
+	void delay(int amount);
 };
 
 } // End of namespace MADS

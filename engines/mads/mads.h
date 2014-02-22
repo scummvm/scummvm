@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "mads/debugger.h"
 #include "mads/events.h"
 #include "mads/font.h"
 #include "mads/game.h"
@@ -86,6 +87,7 @@ protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:
+	Debugger *_debugger;
 	EventsManager *_events;
 	Font *_font;
 	Game *_game;

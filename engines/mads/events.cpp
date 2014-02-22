@@ -21,16 +21,22 @@
  */
 
 #include "common/scummsys.h"
+#include "graphics/cursorman.h"
 #include "common/events.h"
 #include "engines/util.h"
 #include "mads/mads.h"
 #include "mads/events.h"
+
+#define GAME_FRAME_RATE 50
+#define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE) 
 
 namespace MADS {
 
 EventsManager::EventsManager(MADSEngine *vm) {
 	_vm = vm;
 	_cursorSprites = nullptr;
+	_gameCounter = 0;
+	_priorFrameTime = 0;
 }
 
 EventsManager::~EventsManager() {
@@ -38,7 +44,7 @@ EventsManager::~EventsManager() {
 }
 
 void EventsManager::loadCursors(const Common::String &spritesName) {
-	_cursorSprites = new SpriteAsset(_vm, "*CURSOR.SS", 0x4000);
+	_cursorSprites = new SpriteAsset(_vm, spritesName, 0x4000);
 }
 
 void EventsManager::setCursor(CursorType cursorId) {
@@ -52,15 +58,86 @@ void EventsManager::setCursor2(CursorType cursorId) {
 	changeCursor();
 }
 
+void EventsManager::showCursor() {
+	CursorMan.showMouse(true);
+}
+
+void EventsManager::hideCursor() {
+	CursorMan.showMouse(false);
+}
+
 void EventsManager::changeCursor() {
 
 }
 
-void EventsManager::handleEvents() {
-	Common::Event e;
-	while (!_vm->shouldQuit()) {
-		g_system->getEventManager()->pollEvent(e);
+void EventsManager::pollEvents() {
+	checkForNextFrameCounter();
+	_mouseClicked = false;
+	_mouseReleased = false;
+	_keyPressed = false;
+
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		// Handle keypress
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+		case Common::EVENT_KEYUP:
+			return;
+
+		case Common::EVENT_KEYDOWN:
+			// Check for debugger
+			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
+				// Attach to the debugger
+				_vm->_debugger->attach();
+				_vm->_debugger->onFrame();
+			} else {
+				_keyPressed = true;
+			}
+			return;
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			_mouseClicked = true;
+			return;
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+			_mouseReleased = true;
+			return;
+		case Common::EVENT_MOUSEMOVE:
+			_mousePos = event.mouse;
+			break;
+		default:
+ 			break;
+		}
+	}
+}
+
+void EventsManager::checkForNextFrameCounter() {
+	// Check for next game frame
+	uint32 milli = g_system->getMillis();
+	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
+		++_gameCounter;
+		_priorFrameTime = milli;
+
+		// Give time to the debugger
+		_vm->_debugger->onFrame();
+
+		// Display the frame
+		_vm->_screen->updateScreen();
+
+		// Signal the ScummVM debugger
+		_vm->_debugger->onFrame();
+	}
+}
+
+void EventsManager::delay(int cycles) {
+	uint32 totalMilli = cycles * 1000 / GAME_FRAME_RATE;
+	uint32 delayEnd = g_system->getMillis() + totalMilli;
+
+	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
 		g_system->delayMillis(10);
+
+		pollEvents();
 	}
 }
 

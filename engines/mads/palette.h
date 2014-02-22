@@ -78,12 +78,6 @@ public:
 class Palette {
 private:
 	/**
-	 * Support method used by the fading code
-	 */
-	void fadeRange(byte *srcPal, byte *destPal,  int startIndex, int endIndex, 
-		int numSteps, uint delayAmount);
-
-	/**
 	 * Initialises a stanadrd range of colours for the given palette
 	 */
 	void initRange(byte *palette);
@@ -126,16 +120,6 @@ public:
 	 * specified RGB pair
 	 */
 	uint8 palIndexFromRgb(byte r, byte g, byte b, byte *paletteData = nullptr);
-
-	/**
-	 * Performs a fade in
-	 */
-	void fadeIn(int numSteps, uint delayAmount, byte *destPalette, int numColors);
-
-	/**
-	 * Performs a fade in
-	 */
-	void fadeIn(int numSteps, uint delayAmount, RGBList *destPalette);
 
 	// Methods used for reference counting color usage
 	/**

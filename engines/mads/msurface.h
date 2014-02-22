@@ -59,10 +59,9 @@ public:
 	static void setVm(MADSEngine *vm) { _vm = vm; }
 
 	/**
-	 * Create a new surface the same size as the screen.
-	 * @param isScreen		Set to true for the screen surface
+	 * Create a new surface.
 	 */
-	static MSurface *init(bool isScreen = false);
+	static MSurface *init();
 
 	/**
 	 * Create a surface
@@ -70,12 +69,11 @@ public:
 	static MSurface *init(int width, int height);
 private:
 	byte _color;
-	bool _isScreen;
 protected:
 	/**
 	 * Basic constructor
 	 */
-	MSurface(bool isScreen = false);
+	MSurface();
 
 	/**
 	 * Constructor for a surface with fixed dimensions
@@ -129,28 +127,37 @@ public:
 
 	/**
 	 * Draws an arbitrary line on the screen using a specified color
+	 * @param startPos		Starting position
+	 * @param endPos		Ending position
+	 * @param color			Color to use
 	 */
-	void line(int x1, int y1, int x2, int y2, byte color);
+	void line(const Common::Point &startPos, const Common::Point &endPos, byte color);
 
 	/**
 	 * Draws a rectangular frame using the currently set color
+	 * @param r		Bounds for rectangle
 	 */
-	void frameRect(int x1, int y1, int x2, int y2);
+	void frameRect(const Common::Rect &r);
 
 	/**
-	 * Draws a rectangular frame using a specified color
+	 * Draws a rectangular frame using the currently set color
+	 * @param r		Bounds for rectangle
+	 * @param color	Color to use
 	 */
-	void frameRect(const Common::Rect &r, uint8 color);
+	void frameRect(const Common::Rect &r, byte color);
 
 	/**
 	 * Draws a filled in box using the currently set color
+	 * @param r		Bounds for rectangle
 	 */
-	void fillRect(int x1, int y1, int x2, int y2);
+	void fillRect(const Common::Rect &r);
 
 	/**
-	 * Draws a filled in box using a specified color
+	 * Draws a filled in box using the currently set color
+	 * @param r		Bounds for rectangle
+	 * @param color	Color to use
 	 */
-	void fillRect(const Common::Rect &r, uint8 color);
+	void fillRect(const Common::Rect &r, byte color);
 
 	/**
 	 * Draws a sprite
@@ -171,6 +178,13 @@ public:
 	int getHeight() const { return h; }
 
 	/**
+	 * Returns the size of the surface as a Rect
+	 */
+	Common::Rect getBounds() const {
+		return Common::Rect(0, 0, w, h);
+	}
+
+	/**
 	 * Returns a pointer to the surface data
 	 */
 	byte *getData() { return (byte *)Graphics::Surface::getPixels(); }
@@ -186,14 +200,9 @@ public:
 	void empty();
 
 	/**
-	 * Updates the surface. If it's the screen surface, copies it to the physical screen.
+	 * Updates the screen with the contents of the surface
 	 */
-	void update() { 
-		if (_isScreen) {
-			g_system->copyRectToScreen((const byte *)pixels, pitch, 0, 0, w, h);
-			g_system->updateScreen(); 
-		}
-	}
+	void updateScreen();
 
 	/**
 	 * Copys a sub-section of another surface into the current one.
@@ -262,7 +271,7 @@ public:
 class MSurfaceMADS: public MSurface {
 	friend class MSurface;
 protected:
-	MSurfaceMADS(bool isScreen = false): MSurface(isScreen) {}
+	MSurfaceMADS(): MSurface() {}
 	MSurfaceMADS(int width, int height): MSurface(width, height) {}
 public:
 	virtual void loadCodes(Common::SeekableReadStream *source);
@@ -274,7 +283,7 @@ public:
 class MSurfaceNebular: public MSurfaceMADS {
 	friend class MSurface;
 protected:
-	MSurfaceNebular(bool isScreen = false): MSurfaceMADS(isScreen) {}
+	MSurfaceNebular(): MSurfaceMADS() {}
 	MSurfaceNebular(int width, int height): MSurfaceMADS(width, height) {}
 private:
 	void loadBackgroundStream(Common::SeekableReadStream *source, RGBList **palData);

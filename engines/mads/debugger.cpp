@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,35 +20,30 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
 #include "mads/mads.h"
-#include "mads/game.h"
-#include "mads/graphics.h"
-#include "mads/msurface.h"
-#include "mads/nebular/game_nebular.h"
-#include "mads/nebular/dialogs_nebular.h"
+#include "mads/debugger.h"
 
 namespace MADS {
 
-namespace Nebular {
-
-GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
-	_surface =MSurface::init(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
+Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
+	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
 }
+/*
+static int strToInt(const char *s) {
+	if (!*s)
+		// No string at all
+		return 0;
+	else if (toupper(s[strlen(s) - 1]) != 'H')
+		// Standard decimal string
+		return atoi(s);
 
-bool GameNebular::checkCopyProtection() {
-	if (!ConfMan.getBool("copy_protection"))
-		return true;
-
-	MessageDialog *dlg = new MessageDialog(_vm, 40, "Line 1", "Line 2", nullptr);
-	dlg->show();
-	delete dlg;
-
-	//CopyProtectionDialog::show(_vm);
-	return false;
+	// Hexadecimal string
+	uint tmp = 0;
+	int read = sscanf(s, "%xh", &tmp);
+	if (read < 1)
+		error("strToInt failed on string \"%s\"", s);
+	return (int)tmp;
 }
-
-} // End of namespace Nebular
+*/
 
 } // End of namespace MADS

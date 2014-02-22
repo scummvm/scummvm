@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,35 +20,26 @@
  *
  */
 
+#ifndef MADS_DEBUGGER_H
+#define MADS_DEBUGGER_H
+
 #include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "mads/mads.h"
-#include "mads/game.h"
-#include "mads/graphics.h"
-#include "mads/msurface.h"
-#include "mads/nebular/game_nebular.h"
-#include "mads/nebular/dialogs_nebular.h"
+#include "gui/debugger.h"
 
 namespace MADS {
 
-namespace Nebular {
+class MADSEngine;
 
-GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
-	_surface =MSurface::init(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
-}
+class Debugger : public GUI::Debugger {
+private:
+	MADSEngine *_vm;
+public:
+	Debugger(MADSEngine *vm);
+	virtual ~Debugger() {}
 
-bool GameNebular::checkCopyProtection() {
-	if (!ConfMan.getBool("copy_protection"))
-		return true;
-
-	MessageDialog *dlg = new MessageDialog(_vm, 40, "Line 1", "Line 2", nullptr);
-	dlg->show();
-	delete dlg;
-
-	//CopyProtectionDialog::show(_vm);
-	return false;
-}
-
-} // End of namespace Nebular
+protected:
+};
 
 } // End of namespace MADS
+
+#endif	/* MADS_DEBUGGER_H */

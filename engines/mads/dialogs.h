@@ -48,6 +48,16 @@ protected:
 	 * @param s		Screen surface to restore to.
 	 */
 	void restore(MSurface *s);
+
+	/**
+	 * Draws the content of a dialog with a gravelly alternating color.
+	 */
+	void drawContent(const Common::Rect &r, int seed, byte color1, byte color2);
+protected:
+	/**
+	 * Draw the dialog
+	 */
+	virtual void draw();
 public:
 	/**
 	 * Constructor
@@ -61,14 +71,14 @@ public:
 };
 
 enum {
-	TEXTDIALOG_F8 = 0XF8,
-	TEXTDIALOG_F9 = 0XF8,
-	TEXTDIALOG_FA = 0XF8,
-	TEXTDIALOG_FB = 0XF8,
-	TEXTDIALOG_FC = 0XF8,
-	TEXTDIALOG_FD = 0XF8,
-	TEXTDIALOG_FE = 0XF8,
-	TEXTDIALOG_FONT = 0
+	TEXTDIALOG_CONTENT1 = 0XF8,
+	TEXTDIALOG_CONTENT2 = 0XF9,
+	TEXTDIALOG_EDGE = 0XFA,
+	TEXTDIALOG_BACKGROUND = 0XFB,
+	TEXTDIALOG_FC = 0XFC,
+	TEXTDIALOG_FD = 0XFD,
+	TEXTDIALOG_FE = 0XFE,
+	TEXTDIALOG_BLACK = 0
 };
 
 #define TEXT_DIALOG_MAX_LINES 20
@@ -96,6 +106,8 @@ protected:
 	int _currentX;
 	int _numLines;
 	int _lineSize;
+	int _askXp;
+	int _askLineNum;
 	Common::String _lines[TEXT_DIALOG_MAX_LINES];
 	int _lineXp[TEXT_DIALOG_MAX_LINES];
 	byte _savedPalette[8 * 3];
@@ -125,11 +137,20 @@ public:
 	 */
 	~TextDialog();
 
+	/**
+	 * Draw the dialog
+	 */
+	virtual void draw();
 };
 
 class MessageDialog: protected TextDialog {
 public:
 	MessageDialog(MADSEngine *vm, int lines, ...);
+
+	/**
+	 * Show the dialog, and wait until a key or mouse press.
+	 */
+	void show();
 };
 
 } // End of namespace MADS

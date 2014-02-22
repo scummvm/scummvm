@@ -32,11 +32,11 @@ namespace MADS {
 
 MADSEngine *MSurface::_vm = nullptr;
 
-MSurface *MSurface::init(bool isScreen) {
+MSurface *MSurface::init() {
 	if (_vm->getGameID() == GType_RexNebular) {
-		return new MSurfaceNebular(isScreen);
+		return new MSurfaceNebular();
 	} else {
-		return new MSurfaceMADS(isScreen);
+		return new MSurfaceMADS();
 	}
 }
 
@@ -48,16 +48,13 @@ MSurface *MSurface::init(int width, int height) {
 	}
 }
 
-MSurface::MSurface(bool isScreen) {
+MSurface::MSurface() {
 	pixels = nullptr;
-	setSize(g_system->getWidth(), g_system->getHeight());
-	_isScreen = isScreen;
 }
 
 MSurface::MSurface(int width, int height) { 
 	pixels = nullptr;
 	setSize(width, height); 
-	_isScreen = false; 
 }
 
 MSurface::~MSurface() {
@@ -120,17 +117,24 @@ void MSurface::hLineXor(int x1, int x2, int y) {
 
 }
 
-void MSurface::line(int x1, int y1, int x2, int y2, byte color) {
-	Graphics::Surface::drawLine(x1, y1, x2, y2, color);
+void MSurface::line(const Common::Point &startPos, const Common::Point &endPos, byte color) {
+	Graphics::Surface::drawLine(startPos.x, startPos.y, endPos.x, endPos.y, color);
 }
 
-
-void MSurface::frameRect(int x1, int y1, int x2, int y2) {
-	Graphics::Surface::frameRect(Common::Rect(x1, y1, x2, y2), _color);
+void MSurface::frameRect(const Common::Rect &r) {
+	Graphics::Surface::frameRect(r, _color);
 }
 
-void MSurface::fillRect(int x1, int y1, int x2, int y2) {
-	Graphics::Surface::fillRect(Common::Rect(x1, y1, x2, y2), _color);
+void MSurface::frameRect(const Common::Rect &r, byte color) {
+	Graphics::Surface::frameRect(r, color);
+}
+
+void MSurface::fillRect(const Common::Rect &r) {
+	Graphics::Surface::fillRect(r, _color);
+}
+
+void MSurface::fillRect(const Common::Rect &r, byte color) {
+	Graphics::Surface::fillRect(r, color);
 }
 
 int MSurface::scaleValue(int value, int scale, int err) {
@@ -282,12 +286,9 @@ void MSurface::empty() {
 	Common::fill(getBasePtr(0, 0), getBasePtr(0, h), _vm->_palette->BLACK);
 }
 
-void MSurface::frameRect(const Common::Rect &r, uint8 color) {
-	Graphics::Surface::frameRect(r, color);
-}
-
-void MSurface::fillRect(const Common::Rect &r, uint8 color) {
-	Graphics::Surface::fillRect(r, color);
+void MSurface::updateScreen() { 
+	g_system->copyRectToScreen((const byte *)pixels, pitch, 0, 0, w, h);
+	g_system->updateScreen(); 
 }
 
 void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds, 

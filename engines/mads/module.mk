@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	nebular/sound_nebular.o \
 	assets.o \
 	compression.o \
+	debugger.o \
 	detection.o \
 	dialogs.o \
 	events.o \

@@ -51,6 +51,44 @@ void Dialog::restore(MSurface *s) {
 	_savedSurface = nullptr;
 }
 
+void Dialog::draw() {
+	// Save the screen portion the dialog will overlap
+	save(_vm->_screen);
+
+	// Draw the dialog
+	// Fill entire content of dialog
+	_vm->_screen->fillRect(Common::Rect(_position.x, _position.y,
+		_position.x + _width, _position.y + _height), TEXTDIALOG_BACKGROUND);
+
+	// Draw the outer edge line
+	_vm->_screen->frameRect(Common::Rect(_position.x, _position.y,
+		_position.x + _width, _position.y + _height), TEXTDIALOG_EDGE);
+
+	// Draw the gravelly dialog content
+	drawContent(Common::Rect(_position.x + 2, _position.y + 2,
+		_position.x + _width - 4, _position.y + _height - 4), 0,
+		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
+}
+
+void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte color2) {
+	uint16 currSeed = seed ? seed : 0xB78E;
+
+	for (int yp = 0; yp < r.height(); ++yp) {
+		byte *destP = _vm->_screen->getBasePtr(r.left, r.top + yp);
+		
+		for (int xp = 0; xp < r.width(); ++xp) {
+			uint16 seedAdjust = currSeed;
+			currSeed += 0x181D;
+			seedAdjust = (seedAdjust >> 9) | ((seedAdjust & 0x1ff) << 7);
+			currSeed ^= seedAdjust;
+			seedAdjust = (seedAdjust >> 3) | ((seedAdjust & 7) << 13);
+			currSeed += seedAdjust;
+
+			*destP++ = (currSeed & 0x10) ? color1 : color2;
+		}
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName, 
@@ -61,7 +99,7 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	_position = pos;
 	
 	_vm->_font->setFont(FONT_INTERFACE);
-	_vm->_font->setColors(TEXTDIALOG_FONT, TEXTDIALOG_FONT, TEXTDIALOG_FONT, TEXTDIALOG_FONT);
+	_vm->_font->setColors(TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK);
 
 	_innerWidth = (_vm->_font->maxWidth() + 1) * maxChars;
 	_width = _innerWidth + 10;
@@ -71,16 +109,16 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	_numLines = 0;
 	Common::fill(&_lineXp[0], &_lineXp[TEXT_DIALOG_MAX_LINES], 0);
 	
-	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_F8 * 3], 
-		&_vm->_palette->_mainPalette[TEXTDIALOG_F8 * 3 + 8 * 3], 
+	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3], 
+		&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3 + 8 * 3], 
 		&_savedPalette[0]);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_F8, 2, 0x24, 0x20);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FA, 2, 0x27, 0x1C);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_CONTENT1, 2, 0x24, 0x20);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_EDGE, 2, 0x27, 0x1C);
 	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FC, 2, 0x24, 0x20);
 	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FE, 1, 0x37, 0x37);
 
-	_vm->_palette->setPalette(_vm->_palette->_mainPalette + (TEXTDIALOG_F8 * 3),
-		TEXTDIALOG_F8, 8);
+	_vm->_palette->setPalette(_vm->_palette->_mainPalette + (TEXTDIALOG_CONTENT1 * 3),
+		TEXTDIALOG_CONTENT1, 8);
 }
 
 TextDialog::~TextDialog() {
@@ -179,6 +217,58 @@ void TextDialog::appendLine(const Common::String &line) {
 	_lines[_numLines] += line;
 }
 
+void TextDialog::draw() {
+	if (!_lineWidth)
+		--_numLines;
+
+	// Figure out the size and position for the dialog
+	_height = (_vm->_font->getHeight() + 1) * (_numLines + 1) + 10;
+	if (_position.x == -1)
+		_position.x = 160 - (_width / 2);
+	if (_position.y == -1)
+		_position.y = 100 - (_height / 2);
+
+	if ((_position.x + _width) > _vm->_screen->getWidth())
+		_position.x = _vm->_screen->getWidth() - (_position.x + _width);
+	if ((_position.y + _height) > _vm->_screen->getHeight())
+		_position.y = _vm->_screen->getHeight() - (_position.y + _height);
+
+//	int askYp = (_vm->_font->getHeight() + 1) * _vm->_font->getHeight() + 3; 
+
+	// Draw the underlying dialog
+	Dialog::draw();
+
+	// Draw the text lines
+	int lineYp = _position.y + 5; 
+	for (int lineNum = 0; lineNum < _numLines; ++lineNum) {
+		if (_lineXp[lineNum] == -1) {
+			// Draw a line across the entire dialog
+			_vm->_screen->setColor(TEXTDIALOG_BLACK);
+			_vm->_screen->hLine(_position.x + 2, 
+				lineYp + (_vm->_font->getHeight() + 1)  / 2,
+				_position.x + _width - 4);
+		} else {
+			// Draw a text line
+			int xp = (_lineXp[lineNum] & 0x7F) + 5;
+			int yp = lineYp;
+			if (_lineXp[lineNum] & 0x40)
+				++yp;
+
+			_vm->_font->writeString(_vm->_screen, _lines[lineNum], 
+				Common::Point(xp, yp), 1);
+
+			if (_lineXp[lineNum] & 0x80) {
+				// Draw an underline under the text
+				int lineWidth = _vm->_font->getWidth(_lines[lineNum]);
+				_vm->_screen->setColor(TEXTDIALOG_BLACK);
+				_vm->_screen->hLine(xp, yp + _vm->_font->getHeight(), xp + lineWidth);
+			}
+		}
+
+		lineYp += _vm->_font->getHeight() + 1;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...): 
@@ -193,8 +283,10 @@ MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...):
 		line = va_arg(va, const char *);
 	}
 	va_end(va);
+}
 
-	// TODO
+void MessageDialog::show() {
+
 }
 
 } // End of namespace MADS
