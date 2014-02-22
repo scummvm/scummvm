@@ -268,10 +268,10 @@ void BbvsEngine::drawScreen() {
 }
 
 void BbvsEngine::updateGame() {
-	int currTicks, inputTicks;
+	int inputTicks;
 
 	if (_gameTicks > 0) {
-		currTicks = _system->getMillis();
+		int currTicks = _system->getMillis();
 		inputTicks = (currTicks - _gameTicks) / 17;
 		_gameTicks = currTicks - (currTicks - _gameTicks) % 17;
 	} else {
@@ -1994,7 +1994,7 @@ void BbvsEngine::walkFindPath(WalkArea *sourceWalkArea, int infoCount) {
 }
 
 int BbvsEngine::calcDistance(const Common::Point &pt1, const Common::Point &pt2) {
-	return sqrt((pt1.x - pt2.x) * (pt1.x - pt2.x) + (pt1.y - pt2.y) * (pt1.y - pt2.y));
+	return (int)sqrt((double)(pt1.x - pt2.x) * (pt1.x - pt2.x) + (pt1.y - pt2.y) * (pt1.y - pt2.y));
 }
 
 void BbvsEngine::walkFoundPath(int count) {

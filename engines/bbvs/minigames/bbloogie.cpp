@@ -982,8 +982,8 @@ void MinigameBbLoogie::updateIndicator(int objIndex) {
 		int unk2div = loogieObj->unk2 / 8 * 8;
 		int v6 = 0;
 		if (unk2div >= 8) {
-			int v7 = 1;
 			if (unk2div != 8) {
+				int v7 = 1;
 				do {
 					v6 += 8 * kLoogieOffY[v7++];
 				} while (v7 != unk2mod);
@@ -1311,10 +1311,10 @@ int MinigameBbLoogie::run(bool fromMainGame) {
 
 void MinigameBbLoogie::update() {
 
-	int currTicks, inputTicks;
+	int inputTicks;
 
 	if (_gameTicks > 0) {
-		currTicks = _vm->_system->getMillis();
+		int currTicks = _vm->_system->getMillis();
 		inputTicks = (currTicks - _gameTicks) / 17;
 		_gameTicks = currTicks - (currTicks - _gameTicks) % 17;
 	} else {

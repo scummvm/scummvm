@@ -793,10 +793,10 @@ int MinigameBbAirGuitar::run(bool fromMainGame) {
 
 void MinigameBbAirGuitar::update() {
 
-	int currTicks, inputTicks;
+	int inputTicks;
 
 	if (_gameTicks > 0) {
-		currTicks = _vm->_system->getMillis();
+		int currTicks = _vm->_system->getMillis();
 		inputTicks = 3 * (currTicks - _gameTicks) / 50;
 		_gameTicks = currTicks - (currTicks - _gameTicks - 50 * inputTicks / 3);
 	} else {

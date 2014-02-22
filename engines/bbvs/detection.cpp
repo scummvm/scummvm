@@ -109,7 +109,7 @@ SaveStateList BbvsMetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 		if (slotNum >= 0 && slotNum <= 999) {
