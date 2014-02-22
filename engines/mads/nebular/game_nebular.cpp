@@ -27,6 +27,7 @@
 #include "mads/graphics.h"
 #include "mads/msurface.h"
 #include "mads/nebular/game_nebular.h"
+#include "mads/nebular/dialogs_nebular.h"
 
 namespace MADS {
 
@@ -37,10 +38,10 @@ GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
 }
 
 bool GameNebular::checkCopyProtection() {
-	if (!ConfMan.getBool("copy_protection") || (ConfMan.hasKey("passed_protection") &&
-			ConfMan.getInt("passed_protection") == 1))
+	if (!ConfMan.getBool("copy_protection"))
 		return true;
 
+	CopyProtectionDialog::show(_vm);
 	return false;
 }
 

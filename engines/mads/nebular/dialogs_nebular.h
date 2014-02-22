@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MADS_GAME_NEBULAR_H
-#define MADS_GAME_NEBULAR_H
+#ifndef MADS_DIALOGS_NEBULAR_H
+#define MADS_DIALOGS_NEBULAR_H
 
 #include "common/scummsys.h"
 #include "mads/game.h"
@@ -30,15 +30,37 @@ namespace MADS {
 
 namespace Nebular {
 
+struct HOGANUS {
+	int _bookId;
+	int _pageNum;
+	int _lineNum;
+	int _wordNum;
+	Common::String _word;
+};
+
 class CopyProtectionDialog {
 private:
+	MADSEngine *_vm;
+	HOGANUS _hogEntry;
 
+	/**
+	 * Constructor
+	 */
+	CopyProtectionDialog(MADSEngine *vm);
+
+	/**
+	 * Get a random copy protection entry from the HOGANUS resource
+	 */
+	bool getHogAnusEntry(HOGANUS &entry);
 public:
-	static bool show() { return false; }
+	/**
+	 * Show the dialog
+	 */
+	static bool show(MADSEngine *vm);
 };
 
 } // End of namespace Nebular
 
 } // End of namespace MADS
 
-#endif /* MADS_GAME_NEBULAR_H */
+#endif /* MADS_DIALOGS_NEBULAR_H */

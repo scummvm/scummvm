@@ -31,6 +31,45 @@ namespace MADS {
 
 namespace Nebular {
 
+bool CopyProtectionDialog::show(MADSEngine *vm) {
+	CopyProtectionDialog *dlg = new CopyProtectionDialog(vm);
+
+	delete dlg;
+	return true;
+}
+
+CopyProtectionDialog::CopyProtectionDialog(MADSEngine *vm): _vm(vm) {
+	getHogAnusEntry(_hogEntry);
+}
+
+bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
+	File f;
+	f.open("*HOGANUS.DAT");
+
+	// Read in the total number of entries, and randomly pick an entry to use
+	int numEntries = f.readUint16LE();
+	int entryIndex = _vm->getRandomNumber(numEntries - 2) + 1;
+
+	// Read in the encrypted entry
+	f.seek(28 * entryIndex + 2);
+	byte entryData[28];
+	f.read(entryData, 28);
+
+	// Decrypt it
+	for (int i = 0; i < 28; ++i)
+		entryData[i] = ~entryData[i];
+
+	// Fill out the fields
+	entry._bookId = entryData[0];
+	entry._pageNum = READ_LE_UINT16(&entryData[2]);
+	entry._lineNum = READ_LE_UINT16(&entryData[4]);
+	entry._wordNum = READ_LE_UINT16(&entryData[6]);
+	entry._word = Common::String((char *)&entryData[8]);
+
+	f.close();
+	return true;
+}
+
 
 } // End of namespace Nebular
 
