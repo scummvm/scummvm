@@ -74,6 +74,13 @@ struct AgeData
 	Common::Array<RoomData> rooms;
 };
 
+struct AmbientCue {
+	uint16 id;
+	uint16 minFrames;
+	uint16 maxFrames;
+	Common::Array<uint16> tracks;
+};
+
 class Myst3Engine;
 struct ExecutableVersion;
 
@@ -124,6 +131,11 @@ public:
 	 * Retrieve the file name of a sound from its id
 	 */
 	Common::String getSoundName(uint32 id);
+
+	/**
+	 * Retrieve an ambient cue from its id
+	 */
+	const AmbientCue& getAmbientCue(uint16 id);
 private:
 	Myst3Engine *_vm;
 	const ExecutableVersion *_executableVersion;
@@ -136,7 +148,8 @@ private:
 
 	Common::Array<Opcode> _nodeInitScript;
 
-	Common::HashMap< uint32, Common::String> _soundNames;
+	Common::HashMap<uint32, Common::String> _soundNames;
+	Common::HashMap<uint16, AmbientCue> _ambientCues;
 
 	RoomData *findRoomData(const uint32 &roomID);
 	Common::Array<NodePtr> loadRoomScripts(RoomData *room);
@@ -155,6 +168,7 @@ private:
 	HotSpot loadHotspot(Common::ReadStreamEndian & s);
 
 	void loadSoundNames(Common::ReadStreamEndian *s);
+	void loadAmbientCues(Common::ReadStreamEndian *s);
 
 	Common::SeekableSubReadStreamEndian *openDatabaseFile() const;
 	Common::SeekableReadStream *decompressPEFDataSegment(Common::SeekableReadStream *stream, uint segmentID) const;

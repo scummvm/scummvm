@@ -76,6 +76,15 @@ Database::Database(Myst3Engine *vm) :
 	file->seek(_executableVersion->soundNamesOffset);
 	loadSoundNames(file);
 
+	// TODO: Remove once the offset table is complete
+	if (!_executableVersion->ambientCuesOffset) {
+		error("The description for this executable (%s, %s) does not contain the ambient cues offset. Please contact the ResidualVM team.",
+				_executableVersion->executable, _executableVersion->description);
+	}
+
+	file->seek(_executableVersion->ambientCuesOffset);
+	loadAmbientCues(file);
+
 	delete file;
 
 	preloadCommonRooms();
@@ -904,7 +913,7 @@ uint32 Database::safeDiscDecode2(uint32 data) {
 #undef ROR32
 
 void Database::loadSoundNames(Common::ReadStreamEndian *s) {
-	_soundNames.clear(false);
+	_soundNames.clear();
 
 	while (1) {
 		uint32 id = s->readUint32();
@@ -928,6 +937,40 @@ Common::String Database::getSoundName(uint32 id) {
 		error("Unable to find a sound with id %d", id);
 
 	return result;
+}
+
+void Database::loadAmbientCues(Common::ReadStreamEndian *s) {
+	_ambientCues.clear();
+
+	while (1) {
+		uint16 id = s->readUint16();
+
+		if (!id)
+			break;
+
+		AmbientCue cue;
+		cue.id = id;
+		cue.minFrames = s->readUint16();
+		cue.maxFrames = s->readUint16();
+
+		while (1) {
+			uint16 track = s->readUint16();
+
+			if (!track)
+				break;
+
+			cue.tracks.push_back(track);
+		}
+
+		_ambientCues[id] = cue;
+	}
+}
+
+const AmbientCue& Database::getAmbientCue(uint16 id) {
+	if (_ambientCues.contains(id))
+		error("Unable to find an ambient cue with id %d", id);
+
+	return _ambientCues.getVal(id);
 }
 
 #ifdef USE_SAFEDISC

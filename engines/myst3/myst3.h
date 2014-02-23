@@ -55,6 +55,7 @@ struct ExecutableVersion {
 	uint32 ageTableOffset;
 	uint32 nodeInitScriptOffset;
 	uint32 soundNamesOffset;
+	uint32 ambientCuesOffset;
 	const SafeDiskKey *safeDiskKey;
 };
 
