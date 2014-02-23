@@ -42,6 +42,7 @@
 #include <AppKit/NSImageView.h>
 #include <AppKit/NSColor.h>
 #include <AppKit/NSBezierPath.h>
+#include <CoreFoundation/CFString.h>
 
 id _dockTile;
 NSImageView *_applicationIconView;
@@ -86,7 +87,7 @@ void MacOSXTaskbarManager::initOverlayIconView() {
 	if (_overlayIconView == nil) {
 		const double overlaySize = 0.75;
 		initApplicationIconView();
-		NSSize size = _applicationIconView.frame.size;
+		NSSize size = [_applicationIconView frame].size;
 		_overlayIconView = [[NSImageView alloc] initWithFrame:NSMakeRect(size.width * (1.0-overlaySize), 0.0f, size.width * overlaySize, size.height * overlaySize)];
 		[_overlayIconView setImageAlignment:NSImageAlignBottomRight];
 		[_applicationIconView addSubview:_overlayIconView];
@@ -137,7 +138,7 @@ void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
 		_progress = 0.0;
 	
 	 NSImage *mainIcon = [[NSApp applicationIconImage] copy];
-	double barSize = mainIcon.size.width;
+	double barSize = [mainIcon size].width;
 	double progressSize = barSize * _progress;
 	[mainIcon lockFocus];
 	[[NSColor colorWithDeviceRed:(40.0/255.0) green:(120.0/255.0) blue:(255.0/255.0) alpha:0.78] set];
@@ -184,9 +185,12 @@ void MacOSXTaskbarManager::notifyError() {
 	if (_dockTile == nil)
 		return;
 
-    initOverlayIconView();
-	[_overlayIconView setImage:[NSImage imageNamed:NSImageNameCaution]];
-	[_dockTile performSelector:@selector(display)];
+	// NSImageNameCaution was introduced in 10.6.
+	// For compatibility with older systems we should use something else (e.g. overlay label
+	// or our own icon).
+	//initOverlayIconView();
+	//[_overlayIconView setImage:[NSImage imageNamed:NSImageNameCaution]];
+	//[_dockTile performSelector:@selector(display)];
 }
 
 void MacOSXTaskbarManager::clearError() {
