@@ -67,8 +67,6 @@ public:
 	 * Create a surface
 	 */
 	static MSurface *init(int width, int height);
-private:
-	byte _color;
 protected:
 	/**
 	 * Basic constructor
@@ -96,68 +94,12 @@ public:
 	void setSize(int width, int height);
 
 	/**
-	 * Sets the color used for drawing on the surface
-	 */
-	void setColor(byte value) { _color = value; }
-
-	/**
-	 * Returns the currently active color
-	 */
-	byte getColor() const { return _color; }
-	
-	/**
-	 * Draws a vertical line using the currently set color
-	 */
-	void vLine(int x, int y1, int y2);
-
-	/**
-	 * Draws a horizontal line using the currently set color
-	 */
-	void hLine(int x1, int x2, int y);
-
-	/**
-	 * Draws a vertical line using an Xor on each pixel
-	 */
-	void vLineXor(int x, int y1, int y2);
-
-	/**
-	 * Draws a horizontal line using an Xor on each pixel
-	 */
-	void hLineXor(int x1, int x2, int y);
-
-	/**
 	 * Draws an arbitrary line on the screen using a specified color
 	 * @param startPos		Starting position
 	 * @param endPos		Ending position
 	 * @param color			Color to use
 	 */
 	void line(const Common::Point &startPos, const Common::Point &endPos, byte color);
-
-	/**
-	 * Draws a rectangular frame using the currently set color
-	 * @param r		Bounds for rectangle
-	 */
-	void frameRect(const Common::Rect &r);
-
-	/**
-	 * Draws a rectangular frame using the currently set color
-	 * @param r		Bounds for rectangle
-	 * @param color	Color to use
-	 */
-	void frameRect(const Common::Rect &r, byte color);
-
-	/**
-	 * Draws a filled in box using the currently set color
-	 * @param r		Bounds for rectangle
-	 */
-	void fillRect(const Common::Rect &r);
-
-	/**
-	 * Draws a filled in box using the currently set color
-	 * @param r		Bounds for rectangle
-	 * @param color	Color to use
-	 */
-	void fillRect(const Common::Rect &r, byte color);
 
 	/**
 	 * Draws a sprite

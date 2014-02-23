@@ -126,6 +126,11 @@ protected:
 	 * Adds one or more lines, word wrapping the passed text
 	 */
 	void wordWrap(const Common::String &line);
+
+	/**
+	 * Adds an input area following previously added text
+	 */
+	void addInput();
 public:
 	/**
 	 * Constructor
@@ -146,6 +151,11 @@ public:
 	 * Draw the dialog
 	 */
 	virtual void draw();
+
+	/**
+	 * Draw the dialog along with any input box
+	 */
+	void drawWithInput();
 };
 
 class MessageDialog: protected TextDialog {

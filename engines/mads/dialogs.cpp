@@ -62,13 +62,19 @@ void Dialog::draw() {
 	_vm->_screen->fillRect(Common::Rect(_position.x, _position.y,
 		_position.x + _width, _position.y + _height), TEXTDIALOG_BACKGROUND);
 
-	// Draw the outer edge line
-	_vm->_screen->frameRect(Common::Rect(_position.x, _position.y,
-		_position.x + _width, _position.y + _height), TEXTDIALOG_EDGE);
+	// Draw the outer edge lines
+	_vm->_screen->hLine(_position.x + 1, _position.y + _height - 2,
+		_position.x + _width - 2, TEXTDIALOG_EDGE);
+	_vm->_screen->hLine(_position.x, _position.y + _height - 1,
+		_position.x + _width - 1, TEXTDIALOG_EDGE);
+	_vm->_screen->vLine(_position.x + _width - 2, _position.y + 2,
+		_position.y + _height - 2, TEXTDIALOG_EDGE);
+	_vm->_screen->vLine(_position.x + _width - 1, _position.y + 1,
+		_position.y + _height - 1, TEXTDIALOG_EDGE);
 
 	// Draw the gravelly dialog content
 	drawContent(Common::Rect(_position.x + 2, _position.y + 2,
-		_position.x + _width - 4, _position.y + _height - 4), 0,
+		_position.x + _width - 2, _position.y + _height - 2), 0,
 		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
 }
 
@@ -86,7 +92,7 @@ void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte colo
 			seedAdjust = (seedAdjust >> 3) | ((seedAdjust & 7) << 13);
 			currSeed += seedAdjust;
 
-			*destP++ = (currSeed & 0x10) ? color1 : color2;
+			*destP++ = (currSeed & 0x10) ? color2 : color1;
 		}
 	}
 }
@@ -110,7 +116,9 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	_currentX = 0;
 	_numLines = 0;
 	Common::fill(&_lineXp[0], &_lineXp[TEXT_DIALOG_MAX_LINES], 0);
-	
+	_askLineNum = -1;
+	_askXp = 0;
+
 	// Save the high end of the palette, and set up the entries for dialog display
 	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3], 
 		&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3 + 8 * 3], 
@@ -221,6 +229,12 @@ void TextDialog::appendLine(const Common::String &line) {
 	_lines[_numLines] += line;
 }
 
+void TextDialog::addInput() {
+	_askXp = _currentX + 1;
+	_askLineNum = _numLines;
+	incNumLines();
+}
+
 void TextDialog::draw() {
 	if (!_lineWidth)
 		--_numLines;
@@ -237,8 +251,6 @@ void TextDialog::draw() {
 	if ((_position.y + _height) > _vm->_screen->getHeight())
 		_position.y = _vm->_screen->getHeight() - (_position.y + _height);
 
-//	int askYp = (_vm->_font->getHeight() + 1) * _vm->_font->getHeight() + 3; 
-
 	// Draw the underlying dialog
 	Dialog::draw();
 
@@ -247,10 +259,9 @@ void TextDialog::draw() {
 	for (int lineNum = 0; lineNum < _numLines; ++lineNum) {
 		if (_lineXp[lineNum] == -1) {
 			// Draw a line across the entire dialog
-			_vm->_screen->setColor(TEXTDIALOG_BLACK);
 			_vm->_screen->hLine(_position.x + 2, 
 				lineYp + (_vm->_font->getHeight() + 1)  / 2,
-				_position.x + _width - 4);
+				_position.x + _width - 4, TEXTDIALOG_BLACK);
 		} else {
 			// Draw a text line
 			int xp = (_lineXp[lineNum] & 0x7F) + _position.x + 5;
@@ -264,13 +275,25 @@ void TextDialog::draw() {
 			if (_lineXp[lineNum] & 0x80) {
 				// Draw an underline under the text
 				int lineWidth = _vm->_font->getWidth(_lines[lineNum], 1);
-				_vm->_screen->setColor(TEXTDIALOG_BLACK);
-				_vm->_screen->hLine(xp, yp + _vm->_font->getHeight(), xp + lineWidth);
+				_vm->_screen->hLine(xp, yp + _vm->_font->getHeight(), xp + lineWidth,
+					TEXTDIALOG_BLACK);
 			}
 		}
 
 		lineYp += _vm->_font->getHeight() + 1;
 	}
+}
+
+void TextDialog::drawWithInput() {
+	int innerWidth = _innerWidth;
+	int lineHeight = _vm->_font->getHeight() + 1;
+	int xp = _position.x + 5;
+
+	// Draw the content of the dialog
+	drawContent(Common::Rect(_position.x + 2, _position.y + 2,
+		_position.x + _width - 2, _position.y + _height - 2), 0,
+		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
+
 }
 
 void TextDialog::restorePalette() {

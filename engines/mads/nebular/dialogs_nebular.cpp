@@ -67,9 +67,8 @@ CopyProtectionDialog::CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong
 	wordWrap("right into this really COOL adventure game!\n");
 	wordWrap("\n");
 	wordWrap("                    ");
+	addInput();
 	wordWrap("\n");
-
-	// TODO: Rest of setup
 }
 
 bool CopyProtectionDialog::show() {
