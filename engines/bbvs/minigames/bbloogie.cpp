@@ -981,13 +981,11 @@ void MinigameBbLoogie::updateIndicator(int objIndex) {
 		int unk2mod = loogieObj->unk2 / 8;
 		int unk2div = loogieObj->unk2 / 8 * 8;
 		int v6 = 0;
-		if (unk2div >= 8) {
-			if (unk2div != 8) {
-				int v7 = 1;
-				do {
-					v6 += 8 * kLoogieOffY[v7++];
-				} while (v7 != unk2mod);
-			}
+		if (unk2div > 8) {
+			int v7 = 1;
+			do {
+				v6 += 8 * kLoogieOffY[v7++];
+			} while (v7 != unk2mod);
 		}
 		int yOfs = (loogieObj->unk2 % 8 + 1) * kLoogieOffY[loogieObj->unk2 / 8] + v6;
 		if (loogieObj->unk2 >= 30)
