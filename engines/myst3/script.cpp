@@ -75,6 +75,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1( 31, waterEffectSetSpeed,			kValue														);
 	OP_1( 32, waterEffectSetAttenuation,	kValue														);
 	OP_2( 33, waterEffectSetWave,			kValue,		kValue											);
+	OP_2( 34, shakeEffectSet,				kEvalValue,	kEvalValue										);
 	OP_2( 35, sunspotAdd,					kValue,		kValue											);
 	OP_3( 36, sunspotAddIntensity,			kValue,		kValue,		kValue								);
 	OP_4( 37, sunspotAddVarIntensity,		kValue,		kValue,		kValue,		kVar					);
@@ -623,6 +624,17 @@ void Script::waterEffectSetWave(Context &c, const Opcode &cmd) {
 
 	_vm->_state->setWaterEffectFrequency(cmd.args[0]);
 	_vm->_state->setWaterEffectAmpl(cmd.args[1]);
+}
+
+void Script::shakeEffectSet(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set shake effect amplitude to %d and period to %d",
+			cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 ampl = _vm->_state->valueOrVarValue(cmd.args[0]);
+	uint16 period = _vm->_state->valueOrVarValue(cmd.args[1]);
+
+	_vm->_state->setShakeEffectAmpl(ampl);
+	_vm->_state->setShakeEffectFramePeriod(period);
 }
 
 void Script::sunspotAdd(Context &c, const Opcode &cmd) {

@@ -101,6 +101,17 @@ public:
 	DECLARE_VAR(99, WaterEffectMaxStep)
 	DECLARE_VAR(100, WaterEffectAmplOffset)
 
+	DECLARE_VAR(105, MagnetEffectActive)
+	DECLARE_VAR(106, MagnetEffectSpeed)
+	DECLARE_VAR(107, MagnetEffectUnk1)
+	DECLARE_VAR(108, MagnetEffectUnk2)
+	DECLARE_VAR(109, MagnetEffectSound)
+	DECLARE_VAR(110, MagnetEffectNode)
+	DECLARE_VAR(111, MagnetEffectUnk3)
+
+	DECLARE_VAR(112, ShakeEffectAmpl)
+	DECLARE_VAR(113, ShakeEffectFramePeriod)
+
 	DECLARE_VAR(115, SunspotIntensity)
 	DECLARE_VAR(116, SunspotColor)
 	DECLARE_VAR(117, SunspotRadius)

@@ -112,14 +112,25 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(92, HotspotActiveRect, false)
 
-	VAR(93, WaterEffectRunning, true)
-	VAR(94, WaterEffectActive, true)
-	VAR(95, WaterEffectSpeed, true)
-	VAR(96, WaterEffectAttenuation, true)
-	VAR(97, WaterEffectFrequency, true)
-	VAR(98, WaterEffectAmpl, true)
-	VAR(99, WaterEffectMaxStep, true)
-	VAR(100, WaterEffectAmplOffset, true)
+	VAR(93, WaterEffectRunning, false)
+	VAR(94, WaterEffectActive, false)
+	VAR(95, WaterEffectSpeed, false)
+	VAR(96, WaterEffectAttenuation, false)
+	VAR(97, WaterEffectFrequency, false)
+	VAR(98, WaterEffectAmpl, false)
+	VAR(99, WaterEffectMaxStep, false)
+	VAR(100, WaterEffectAmplOffset, false)
+
+	VAR(105, MagnetEffectActive, true)
+	VAR(106, MagnetEffectSpeed, true)
+	VAR(107, MagnetEffectUnk1, true)
+	VAR(108, MagnetEffectUnk2, true)
+	VAR(109, MagnetEffectSound, true)
+	VAR(110, MagnetEffectNode, true)
+	VAR(111, MagnetEffectUnk3, true)
+
+	VAR(112, ShakeEffectAmpl, true)
+	VAR(113, ShakeEffectFramePeriod, true)
 
 	VAR(115, SunspotIntensity, false)
 	VAR(116, SunspotColor, false)

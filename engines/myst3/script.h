@@ -125,6 +125,7 @@ private:
 	DECLARE_OPCODE(waterEffectSetSpeed);
 	DECLARE_OPCODE(waterEffectSetAttenuation);
 	DECLARE_OPCODE(waterEffectSetWave);
+	DECLARE_OPCODE(shakeEffectSet);
 	DECLARE_OPCODE(sunspotAdd);
 	DECLARE_OPCODE(sunspotAddIntensity);
 	DECLARE_OPCODE(sunspotAddVarIntensity);
