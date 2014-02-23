@@ -345,7 +345,7 @@ void OSystem_Android::updateScreenRect() {
 	uint16 w = _game_texture->width();
 	uint16 h = _game_texture->height();
 
-	if (w && h && !_fullscreen) {
+	if (w && h && _ar_correction) {
 
 		float dpi[2];
 		JNI::getDPI(dpi);
@@ -484,8 +484,7 @@ void OSystem_Android::updateScreen() {
 		}
 
 		// clear pointer leftovers in dead areas
-		if ((_show_overlay) && !_fullscreen)
-			clearScreen(kClear);
+		clearScreen(kClear);
 
 	// TODO this doesnt work on those sucky drivers, do it differently
 	//	if (_show_overlay)
