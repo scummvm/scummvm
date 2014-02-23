@@ -431,6 +431,8 @@ void PegasusEngine::removeTimeBase(TimeBase *timeBase) {
 
 bool PegasusEngine::loadFromStream(Common::SeekableReadStream *stream) {
 	// Dispose currently running stuff
+	lowerInventoryDrawerSync();
+	lowerBiochipDrawerSync();
 	useMenu(0);
 	useNeighborhood(0);
 	removeAllItemsFromInventory();
