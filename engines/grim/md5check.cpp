@@ -181,6 +181,7 @@ const char *emi_artJam[] = {
 	"86ceeb03620d316f2dba86f68e40bebb", // spanish patched
 	"6b9c6c88a0cd95f92f60db823fca4baa", // french patched
 	"70a6fe11cc2de45f7b0650c8ea749156", // italian patched
+	"10cb2cf22497d0007263116db68692a6", // Mac version
 };
 const char *emi_artLuc[] = {
 	"1fcaef5755e6f6c3c30c89536022bd72", // english patched
