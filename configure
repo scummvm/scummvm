@@ -4001,6 +4001,10 @@ else
 		echo "win32"
 		_taskbar=yes
 		;;
+	darwin*)
+		echo "osx"
+		_taskbar=yes
+		;;
 	*)
 		if test "$_libunity" = yes; then
 			echo "unity"
