@@ -355,8 +355,8 @@ public:
 	StaticANIObject *scene09_spitter;
 	StaticANIObject *scene09_grit;
 	bool scene09_gulperIsPresent;
-	int scene09_var09;
-	int scene09_var10;
+	bool scene09_dudeIsOnLadder;
+	int scene09_interactingHanger;
 	int scene09_var11;
 	int scene09_var12;
 	BallChain scene09_balls;

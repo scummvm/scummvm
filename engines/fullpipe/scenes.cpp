@@ -163,8 +163,8 @@ Vars::Vars() {
 	scene09_grit = 0;
 	scene09_dudeY = 0;
 	scene09_gulperIsPresent = true;
-	scene09_var09 = 0;
-	scene09_var10 = -1;
+	scene09_dudeIsOnLadder = false;
+	scene09_interactingHanger = -1;
 	scene09_var11 = -1;
 	scene09_var12 = -1000;
 	scene09_numMovingHangers = 0;

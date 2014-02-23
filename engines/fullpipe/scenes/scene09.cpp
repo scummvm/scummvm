@@ -64,8 +64,8 @@ void scene09_initScene(Scene *sc) {
 	g_vars->scene09_spitter = sc->getStaticANIObject1ById(ANI_PLEVATEL, -1);
 	g_vars->scene09_grit = sc->getStaticANIObject1ById(ANI_GRIT_9, -1);
 	g_vars->scene09_gulperIsPresent = true;
-	g_vars->scene09_var09 = 0;
-	g_vars->scene09_var10 = -1;
+	g_vars->scene09_dudeIsOnLadder = false;
+	g_vars->scene09_interactingHanger = -1;
 	g_vars->scene09_var11 = -1;
 	g_vars->scene09_var12 = -1000;
 
@@ -215,7 +215,7 @@ void scene09_initScene(Scene *sc) {
 }
 
 int sceneHandler09_updateScreenCallback() {
-	int res = g_fp->drawArcadeOverlay(g_fp->_objectIdAtCursor == ANI_VISUNCHIK || g_vars->scene09_var10 >= 0);
+	int res = g_fp->drawArcadeOverlay(g_fp->_objectIdAtCursor == ANI_VISUNCHIK || g_vars->scene09_interactingHanger >= 0);
 
 	if (!res)
 		g_fp->_updateScreenCallback = 0;
@@ -226,7 +226,7 @@ int sceneHandler09_updateScreenCallback() {
 int scene09_updateCursor() {
 	g_fp->updateCursorCommon();
 
-	if (g_vars->scene09_var10 < 0) {
+	if (g_vars->scene09_interactingHanger < 0) {
 		if (g_fp->_objectIdAtCursor == ANI_VISUNCHIK) {
 			if (g_fp->_cursorId == PIC_CSR_ITN)
 				g_fp->_updateScreenCallback = sceneHandler09_updateScreenCallback;
@@ -428,7 +428,7 @@ void sceneHandler09_cycleHangers() {
 
 void sceneHandler09_limitHangerPhase() {
 	for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
-		if (i != g_vars->scene09_var10) {
+		if (i != g_vars->scene09_interactingHanger) {
 			g_vars->scene09_hangers[i]->phase += g_vars->scene09_hangers[i]->field_8;
 
 			if (g_vars->scene09_hangers[i]->phase > 85)
@@ -570,14 +570,14 @@ void sceneHandler09_checkHangerCollide() {
 }
 
 void sceneHandler09_hangerStartCycle() {
-	StaticANIObject *ani = g_vars->scene09_hangers[g_vars->scene09_var10]->ani;
+	StaticANIObject *ani = g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani;
 
 	if (ani->_movement) {
 		ani->startAnim(MV_VSN_CYCLE2, 0, -1);
-		g_vars->scene09_hangers[g_vars->scene09_var10]->field_8 = 0;
-		g_vars->scene09_hangers[g_vars->scene09_var10]->phase = g_vars->scene09_var11 + (g_fp->_mouseScreenPos.y - g_vars->scene09_var19) / 2;
+		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->field_8 = 0;
+		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase = g_vars->scene09_var11 + (g_fp->_mouseScreenPos.y - g_vars->scene09_var19) / 2;
 
-		if (g_vars->scene09_var12 != -1000 && g_vars->scene09_hangers[g_vars->scene09_var10]->phase != g_vars->scene09_var12) {
+		if (g_vars->scene09_var12 != -1000 && g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase != g_vars->scene09_var12) {
 			ExCommand *ex = new ExCommand(0, 35, SND_9_019, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_field_14 = 1;
@@ -587,7 +587,7 @@ void sceneHandler09_hangerStartCycle() {
 			g_vars->scene09_var12 = -1000;
 		}
 	} else {
-		g_vars->scene09_var10 = -1;
+		g_vars->scene09_interactingHanger = -1;
 	}
 }
 
@@ -608,14 +608,14 @@ int sceneHandler09(ExCommand *cmd) {
 		getCurrSceneSc2MotionController()->setEnabled();
 		getGameLoaderInteractionController()->enableFlag24();
 
-		g_vars->scene09_var09 = 0;
+		g_vars->scene09_dudeIsOnLadder = false;
 		break;
 
 	case MSG_SC9_TOLADDER:
 		getCurrSceneSc2MotionController()->clearEnabled();
 		getGameLoaderInteractionController()->disableFlag24();
 
-		g_vars->scene09_var09 = 1;
+		g_vars->scene09_dudeIsOnLadder = true;
 		break;
 
 	case MSG_SC9_PLVCLICK:
@@ -659,7 +659,7 @@ int sceneHandler09(ExCommand *cmd) {
 			sceneHandler09_limitHangerPhase();
 			sceneHandler09_checkHangerCollide();
 
-			if (g_vars->scene09_var10 >= 0)
+			if (g_vars->scene09_interactingHanger >= 0)
 				sceneHandler09_hangerStartCycle();
 
 			if (!g_vars->scene09_var17)
@@ -671,14 +671,14 @@ int sceneHandler09(ExCommand *cmd) {
 		}
 
 	case 30:
-		if (g_vars->scene09_var10 >= 0)  {
-			if (ABS(g_vars->scene09_hangers[g_vars->scene09_var10]->phase) < 15) {
-				g_vars->scene09_hangers[g_vars->scene09_var10]->ani->_callback2 = 0;
-				g_vars->scene09_hangers[g_vars->scene09_var10]->ani->changeStatics2(ST_VSN_NORMAL);
+		if (g_vars->scene09_interactingHanger >= 0)  {
+			if (ABS(g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase) < 15) {
+				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->_callback2 = 0;
+				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->changeStatics2(ST_VSN_NORMAL);
 			}
 		}
 
-		g_vars->scene09_var10 = -1;
+		g_vars->scene09_interactingHanger = -1;
 
 		break;
 
@@ -703,7 +703,7 @@ int sceneHandler09(ExCommand *cmd) {
 								break;
 						}
 
-						g_vars->scene09_var10 = hng;
+						g_vars->scene09_interactingHanger = hng;
 						g_vars->scene09_var11 = g_vars->scene09_hangers[hng]->phase;
 						g_vars->scene09_var12 = g_vars->scene09_hangers[hng]->phase;
 
@@ -726,7 +726,7 @@ int sceneHandler09(ExCommand *cmd) {
 				}
 			}
 
-			if (g_vars->scene09_var09 && g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC9_LADDER_R
+			if (g_vars->scene09_dudeIsOnLadder && g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC9_LADDER_R
 				&& !cmd->_keyCode && !g_fp->_aniMan->_movement) {
 				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC9_LADDER_R, 0), 0);
 			}
