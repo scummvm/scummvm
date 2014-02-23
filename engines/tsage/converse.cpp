@@ -449,7 +449,12 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 
 	// Draw the dialog
 	draw();
+
 	g_globals->_events.showCursor();
+
+	// Force the display of an arrow cursor during discussions in R2R
+	if (g_vm->getGameID() == GType_Ringworld2)
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	// WORKAROUND: On-screen dialogs are really meant to use a GfxManager instance
 	// for their lifetime, which prevents saving or loading. Since I don't want to spend a lot
