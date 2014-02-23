@@ -241,6 +241,10 @@ Script::Script(Myst3Engine *vm):
 	OP_3(222, ambientAddSound3,				kValue,		kEvalValue,	kValue								);
 	OP_4(223, ambientAddSound4,				kValue,		kEvalValue,	kValue,		kValue					);
 	OP_3(224, ambientAddSound5,				kValue,		kEvalValue,	kEvalValue							);
+	OP_2(225, ambientSetCue1,				kValue,		kEvalValue										);
+	OP_3(226, ambientSetCue2,				kValue,		kEvalValue,	kValue								);
+	OP_4(227, ambientSetCue3,				kValue,		kEvalValue,	kValue, kValue						);
+	OP_2(228, ambientSetCue4,				kValue,		kEvalValue										);
 	OP_1(229, runAmbientScriptNode,			kEvalValue													);
 	OP_4(230, runAmbientScriptNodeRoomAge,	kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue				);
 	OP_1(231, runSoundScriptNode,			kEvalValue													);
@@ -2477,6 +2481,45 @@ void Script::ambientAddSound5(Context &c, const Opcode &cmd) {
 	int32 u1 = _vm->_state->valueOrVarValue(cmd.args[2]);
 
 	_vm->_ambient->addSound(id, volume, 0, 0, u1, 0);
+}
+
+void Script::ambientSetCue1(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set ambient cue %d", cmd.op, cmd.args[0]);
+
+	int32 id = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+
+	_vm->_ambient->setCueSheet(id, volume, 0, 0);
+}
+
+void Script::ambientSetCue2(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set ambient cue %d", cmd.op, cmd.args[0]);
+
+	int32 id = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 heading = cmd.args[2];
+
+	_vm->_ambient->setCueSheet(id, volume, heading, 85);
+}
+
+void Script::ambientSetCue3(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set ambient cue %d", cmd.op, cmd.args[0]);
+
+	int32 id = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 heading = cmd.args[2];
+	int32 angle = cmd.args[3];
+
+	_vm->_ambient->setCueSheet(id, volume, heading, angle);
+}
+
+void Script::ambientSetCue4(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set ambient cue %d", cmd.op, cmd.args[0]);
+
+	int32 id = cmd.args[0];
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+
+	_vm->_ambient->setCueSheet(id, volume, 32766, 85);
 }
 
 void Script::runAmbientScriptNode(Context &c, const Opcode &cmd) {

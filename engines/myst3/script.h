@@ -291,6 +291,10 @@ private:
 	DECLARE_OPCODE(ambientAddSound3);
 	DECLARE_OPCODE(ambientAddSound4);
 	DECLARE_OPCODE(ambientAddSound5);
+	DECLARE_OPCODE(ambientSetCue1);
+	DECLARE_OPCODE(ambientSetCue2);
+	DECLARE_OPCODE(ambientSetCue3);
+	DECLARE_OPCODE(ambientSetCue4);
 	DECLARE_OPCODE(runAmbientScriptNode);
 	DECLARE_OPCODE(runAmbientScriptNodeRoomAge);
 	DECLARE_OPCODE(runSoundScriptNode);

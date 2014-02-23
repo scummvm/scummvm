@@ -28,6 +28,7 @@ namespace Myst3 {
 
 Ambient::Ambient(Myst3Engine *vm) :
 	_vm(vm) {
+	_cueSheet.reset();
 }
 
 Ambient::~Ambient() {
@@ -57,6 +58,7 @@ void Ambient::scaleVolume(uint32 volume) {
 
 void Ambient::loadNode(uint32 node, uint32 room, uint32 age) {
 	_sounds.clear();
+	_cueSheet.reset();
 
 	if (node == 0)
 		node = _vm->_state->getLocationNode();
@@ -93,6 +95,22 @@ void Ambient::addSound(uint32 id, int32 volume, int32 heading, int32 headingAngl
 	s.u2 = u2;
 
 	_sounds.push_back(s);
+}
+
+void Ambient::setCueSheet(uint32 id, int32 volume, int32 heading, int32 headingAngle) {
+	_cueSheet.reset();
+
+	if (volume >= 0) {
+		_cueSheet.volume = volume;
+		_cueSheet.volumeFlag = 0;
+	} else {
+		_cueSheet.volume = -volume;
+		_cueSheet.volumeFlag = 1;
+	}
+
+	_cueSheet.id = id;
+	_cueSheet.heading = heading;
+	_cueSheet.headingAngle = headingAngle;
 }
 
 void Ambient::applySounds(uint32 fadeOutDelay) {
