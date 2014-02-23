@@ -285,4 +285,78 @@ void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics
 	}
 }
 
+ShakeEffect::ShakeEffect(Myst3Engine *vm) :
+		Effect(vm),
+		_lastFrame(0),
+		_magnetEffectShakeStep(0),
+		_pitchOffset(0),
+		_headingOffset(0) {
+}
+
+ShakeEffect::~ShakeEffect() {
+
+}
+
+ShakeEffect *ShakeEffect::create(Myst3Engine *vm) {
+	if (vm->_state->getShakeEffectAmpl() == 0) {
+		return nullptr;
+	}
+
+	return new ShakeEffect(vm);
+}
+
+bool ShakeEffect::update() {
+	// Check if the effect is active
+	uint32 ampl = _vm->_state->getShakeEffectAmpl();
+	if (ampl == 0) {
+		return false;
+	}
+
+	// Check if the effect needs to be updated
+	uint frame = _vm->_state->getFrameCount();
+	if (frame < _lastFrame + _vm->_state->getShakeEffectFramePeriod()) {
+		return false;
+	}
+
+	if (_vm->_state->getMagnetEffectUnk3()) {
+		// If the magnet effect is also active, use its parameters
+		float magnetEffectAmpl = (_vm->_state->getMagnetEffectUnk1() + _vm->_state->getMagnetEffectUnk3()) / 32.0;
+
+		float shakeEffectAmpl;
+		if (_magnetEffectShakeStep >= 2) {
+			shakeEffectAmpl = ampl;
+		} else {
+			shakeEffectAmpl = -ampl;
+		}
+		_pitchOffset = shakeEffectAmpl / 200.0 * magnetEffectAmpl;
+
+		if (_magnetEffectShakeStep >= 1 && _magnetEffectShakeStep <= 2) {
+			shakeEffectAmpl = ampl;
+		} else {
+			shakeEffectAmpl = -ampl;
+		}
+		_headingOffset = shakeEffectAmpl / 200.0 * magnetEffectAmpl;
+
+		_magnetEffectShakeStep++;
+		_magnetEffectShakeStep %= 3;
+	} else {
+		// Shake effect only
+		uint randomAmpl;
+
+		randomAmpl = _vm->_rnd->getRandomNumberRng(0, ampl);
+		_pitchOffset = (randomAmpl - ampl / 2.0) / 100.0;
+
+		randomAmpl = _vm->_rnd->getRandomNumberRng(0, ampl);
+		_headingOffset = (randomAmpl - ampl / 2.0) / 100.0;
+	}
+
+	_lastFrame = frame;
+
+	return true;
+}
+
+void ShakeEffect::applyForFace(uint face, Graphics::Surface* src,
+		Graphics::Surface* dst) {
+}
+
 } /* namespace Myst3 */

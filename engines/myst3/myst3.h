@@ -77,6 +77,7 @@ class Renderer;
 class Menu;
 class Sound;
 class Ambient;
+class ShakeEffect;
 struct NodeData;
 struct Myst3GameDescription;
 
@@ -185,6 +186,9 @@ private:
 	Common::Array<Drawable *> _drawables;
 
 	uint16 _menuAction;
+
+	// Used Amateria's magnetic rings
+	ShakeEffect *_shakeEffect;
 
 	bool _inputSpacePressed;
 	bool _inputEnterPressed;

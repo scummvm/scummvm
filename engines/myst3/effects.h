@@ -86,5 +86,26 @@ private:
 	bool isRunning();
 };
 
+class ShakeEffect : public Effect {
+public:
+	static ShakeEffect *create(Myst3Engine *vm);
+	virtual ~ShakeEffect();
+
+	bool update();
+	void applyForFace(uint face, Graphics::Surface *src, Graphics::Surface *dst);
+
+	float getPitchOffset() { return _pitchOffset; }
+	float getHeadingOffset() { return _headingOffset; }
+
+protected:
+	ShakeEffect(Myst3Engine *vm);
+
+	uint32 _lastFrame;
+	uint _magnetEffectShakeStep;
+	float _pitchOffset;
+	float _headingOffset;
+
+};
+
 } /* namespace Myst3 */
 #endif /* EFFECTS_H_ */

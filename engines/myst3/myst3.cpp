@@ -36,6 +36,7 @@
 
 #include "engines/myst3/console.h"
 #include "engines/myst3/database.h"
+#include "engines/myst3/effects.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/nodecube.h"
 #include "engines/myst3/nodeframe.h"
@@ -504,6 +505,14 @@ void Myst3Engine::drawFrame() {
 		float pitch = _state->getLookAtPitch();
 		float heading = _state->getLookAtHeading();
 		float fov = _state->getLookAtFOV();
+
+		// Apply the shake effect
+		if (_shakeEffect) {
+			_shakeEffect->update();
+			pitch += _shakeEffect->getPitchOffset();
+			heading += _shakeEffect->getHeadingOffset();
+		}
+
 		_gfx->setupCameraPerspective(pitch, heading, fov);
 	} else {
 		_gfx->setupCameraOrtho2D();
@@ -638,6 +647,9 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 
 	runNodeInitScripts();
 
+	// The shake effect can only be created after running the scripts
+	_shakeEffect = ShakeEffect::create(this);
+
 	// WORKAROUND: In Narayan, the scripts in node NACH 9 test on var 39
 	// without first reinitializing it leading to Saavedro not always giving
 	// Releeshan to the player when he is trapped between both shields.
@@ -655,6 +667,10 @@ void Myst3Engine::unloadNode() {
 	for (uint i = 0; i < _sunspots.size(); i++)
 		delete _sunspots[i];
 	_sunspots.clear();
+
+	// Clean up the shake effect
+	delete _shakeEffect;
+	_state->setShakeEffectAmpl(0);
 
 	delete _node;
 	_node = 0;
