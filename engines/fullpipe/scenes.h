@@ -348,13 +348,13 @@ public:
 	bool scene08_stairsVisible;
 	int scene08_manOffsetY;
 
-	int scene09_var02;
+	int scene09_dudeY;
 	StaticANIObject *scene09_flyingBall;
-	int scene09_var05;
-	StaticANIObject *scene09_glotatel;
+	int scene09_numSwallenBalls;
+	StaticANIObject *scene09_gulper;
 	StaticANIObject *scene09_spitter;
 	StaticANIObject *scene09_grit;
-	int scene09_var08;
+	bool scene09_gulperIsPresent;
 	int scene09_var09;
 	int scene09_var10;
 	int scene09_var11;

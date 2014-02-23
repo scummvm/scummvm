@@ -59,11 +59,11 @@ void scene09_setupGrit(Scene *sc) {
 
 void scene09_initScene(Scene *sc) {
 	g_vars->scene09_flyingBall = 0;
-	g_vars->scene09_var05 = 0;
-	g_vars->scene09_glotatel = sc->getStaticANIObject1ById(ANI_GLOTATEL, -1);
+	g_vars->scene09_numSwallenBalls = 0;
+	g_vars->scene09_gulper = sc->getStaticANIObject1ById(ANI_GLOTATEL, -1);
 	g_vars->scene09_spitter = sc->getStaticANIObject1ById(ANI_PLEVATEL, -1);
 	g_vars->scene09_grit = sc->getStaticANIObject1ById(ANI_GRIT_9, -1);
-	g_vars->scene09_var08 = 1;
+	g_vars->scene09_gulperIsPresent = true;
 	g_vars->scene09_var09 = 0;
 	g_vars->scene09_var10 = -1;
 	g_vars->scene09_var11 = -1;
@@ -232,7 +232,7 @@ int scene09_updateCursor() {
 				g_fp->_updateScreenCallback = sceneHandler09_updateScreenCallback;
 		} else {
 			if (g_fp->_objectIdAtCursor == PIC_SC9_LADDER_R && g_fp->_cursorId == PIC_CSR_ITN)
-				g_fp->_cursorId = (g_vars->scene09_var02 < 350) ? PIC_CSR_GOD : PIC_CSR_GOU;
+				g_fp->_cursorId = (g_vars->scene09_dudeY < 350) ? PIC_CSR_GOD : PIC_CSR_GOU;
 		}
 	} else {
 		g_fp->_cursorId = PIC_CSR_ITN;
@@ -242,14 +242,14 @@ int scene09_updateCursor() {
 }
 
 void sceneHandler09_winArcade() {
-	if (g_vars->scene09_glotatel->_flags & 4) {
-		g_vars->scene09_glotatel->changeStatics2(ST_GLT_SIT);
-		g_vars->scene09_glotatel->startAnim(MV_GLT_FLYAWAY, 0, -1);
+	if (g_vars->scene09_gulper->_flags & 4) {
+		g_vars->scene09_gulper->changeStatics2(ST_GLT_SIT);
+		g_vars->scene09_gulper->startAnim(MV_GLT_FLYAWAY, 0, -1);
 
 		g_fp->setObjectState(sO_Jug, g_fp->getObjectEnumState(sO_Jug, sO_Unblocked));
 		g_fp->setObjectState(sO_RightStairs_9, g_fp->getObjectEnumState(sO_RightStairs_9, sO_IsOpened));
 
-		g_vars->scene09_var08 = 0;
+		g_vars->scene09_gulperIsPresent = false;
 	}
 }
 
@@ -343,10 +343,10 @@ void sceneHandler09_eatBall() {
 		g_vars->scene09_var07.field_8 = ball;
 
 		g_vars->scene09_flyingBall = 0;
-		g_vars->scene09_var05++;
+		g_vars->scene09_numSwallenBalls++;
 
-		if (g_vars->scene09_var05 >= 3) {
-			MessageQueue *mq = g_vars->scene09_glotatel->getMessageQueue();
+		if (g_vars->scene09_numSwallenBalls >= 3) {
+			MessageQueue *mq = g_vars->scene09_gulper->getMessageQueue();
 
 			if (mq) {
 				ExCommand *ex = new ExCommand(ANI_GLOTATEL, 1, MV_GLT_FLYAWAY, 0, 0, 0, 1, 0, 0, 0);
@@ -358,7 +358,7 @@ void sceneHandler09_eatBall() {
 			g_fp->setObjectState(sO_Jug, g_fp->getObjectEnumState(sO_Jug, sO_Unblocked));
 			g_fp->setObjectState(sO_RightStairs_9, g_fp->getObjectEnumState(sO_RightStairs_9, sO_IsOpened));
 
-			g_vars->scene09_var08 = 0;
+			g_vars->scene09_gulperIsPresent = false;
 		}
 	}
 }
@@ -447,17 +447,17 @@ void sceneHandler09_limitHangerPhase() {
 }
 
 void sceneHandler09_collideBall(Ball *ball) {
-	if (g_vars->scene09_var08) {
+	if (g_vars->scene09_gulperIsPresent) {
 		g_vars->scene09_flyingBall = ball->ani;
 
-		if (g_vars->scene09_glotatel) {
-			g_vars->scene09_glotatel->changeStatics2(ST_GLT_SIT);
+		if (g_vars->scene09_gulper) {
+			g_vars->scene09_gulper->changeStatics2(ST_GLT_SIT);
 
 			MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC9_EATBALL), 0, 0);
 
 			mq->setFlags(mq->getFlags() | 1);
 
-			if (!mq->chain(g_vars->scene09_glotatel))
+			if (!mq->chain(g_vars->scene09_gulper))
 				delete mq;
 		}
 	}
@@ -541,9 +541,9 @@ void sceneHandler09_checkHangerCollide() {
 		ball->ani->setOXY(newx, ball->ani->_oy);
 
 		if (newx <= 1398 || g_vars->scene09_flyingBall) {
-			if (g_vars->scene09_var08)
+			if (g_vars->scene09_gulperIsPresent)
 				goto LABEL_11;
-		} else if (g_vars->scene09_var08) {
+		} else if (g_vars->scene09_gulperIsPresent) {
 			sceneHandler09_collideBall(ball);
 			continue;
 		}
@@ -623,7 +623,7 @@ int sceneHandler09(ExCommand *cmd) {
 		break;
 
 	case MSG_SC9_FLOWN:
-		g_vars->scene09_var08 = 0;
+		g_vars->scene09_gulperIsPresent = false;
 		break;
 
 	case MSG_SC9_EATBALL:
@@ -641,7 +641,7 @@ int sceneHandler09(ExCommand *cmd) {
 			if (g_fp->_aniMan2) {
 				int x = g_fp->_aniMan2->_ox;
 
-				g_vars->scene09_var02 = g_fp->_aniMan2->_oy;
+				g_vars->scene09_dudeY = g_fp->_aniMan2->_oy;
 
 				if (x < g_fp->_sceneRect.left + 200)
 					g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;

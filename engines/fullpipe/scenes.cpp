@@ -157,12 +157,12 @@ Vars::Vars() {
 	scene08_manOffsetY = 0;
 
 	scene09_flyingBall = 0;
-	scene09_var05 = 0;
-	scene09_glotatel = 0;
+	scene09_numSwallenBalls = 0;
+	scene09_gulper = 0;
 	scene09_spitter = 0;
 	scene09_grit = 0;
-	scene09_var02 = 0;
-	scene09_var08 = 1;
+	scene09_dudeY = 0;
+	scene09_gulperIsPresent = true;
 	scene09_var09 = 0;
 	scene09_var10 = -1;
 	scene09_var11 = -1;
