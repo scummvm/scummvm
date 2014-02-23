@@ -267,6 +267,7 @@ Common::Error GrimEngine::run() {
 		}
 
 		ConfMan.setBool("check_gamedata", false);
+		ConfMan.flushToDisk();
 	}
 
 	g_resourceloader = new ResourceLoader();
