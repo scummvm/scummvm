@@ -58,10 +58,10 @@ void ScriptManager::initialize() {
 	cleanScriptScope(room);
 	cleanScriptScope(nodeview);
 
-	_currentLocation.node = '0';
-	_currentLocation.world = '0';
-	_currentLocation.room = '0';
-	_currentLocation.view = '0';
+	_currentLocation.node = 0;
+	_currentLocation.world = 0;
+	_currentLocation.room = 0;
+	_currentLocation.view = 0;
 
 	parseScrFile("universe.scr", universe);
 	changeLocation('g', 'a', 'r', 'y', 0);
@@ -489,46 +489,75 @@ void ScriptManager::do_changeLocation() {
 	setStateValue(StateKey_View, _nextLocation.view);
 	setStateValue(StateKey_ViewPos, _nextLocation.offset);
 
-	// Clear all the containers
 	_referenceTable.clear();
-	cleanScriptScope(nodeview);
-	cleanScriptScope(room);
-	cleanScriptScope(world);
-
 	addPuzzlesToReferenceTable(universe);
 
-	// Parse into puzzles and controls
-	Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
-	parseScrFile(fileName, nodeview);
-	addPuzzlesToReferenceTable(nodeview);
+	if (_nextLocation.world != _currentLocation.world) {
+		cleanScriptScope(nodeview);
+		cleanScriptScope(room);
+		cleanScriptScope(world);
 
-	fileName = Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room);
-	parseScrFile(fileName, room);
-	addPuzzlesToReferenceTable(room);
+		Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
+		parseScrFile(fileName, nodeview);
+		addPuzzlesToReferenceTable(nodeview);
 
-	fileName = Common::String::format("%c.scr", _nextLocation.world);
-	parseScrFile(fileName, world);
-	addPuzzlesToReferenceTable(world);
+		fileName = Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room);
+		parseScrFile(fileName, room);
+		addPuzzlesToReferenceTable(room);
+
+		fileName = Common::String::format("%c.scr", _nextLocation.world);
+		parseScrFile(fileName, world);
+		addPuzzlesToReferenceTable(world);
+	} else if (_nextLocation.room != _currentLocation.room) {
+		cleanScriptScope(nodeview);
+		cleanScriptScope(room);
+
+		addPuzzlesToReferenceTable(world);
+
+		Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
+		parseScrFile(fileName, nodeview);
+		addPuzzlesToReferenceTable(nodeview);
+
+		fileName = Common::String::format("%c%c.scr", _nextLocation.world, _nextLocation.room);
+		parseScrFile(fileName, room);
+		addPuzzlesToReferenceTable(room);
+
+	} else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
+		cleanScriptScope(nodeview);
+
+		addPuzzlesToReferenceTable(room);
+		addPuzzlesToReferenceTable(world);
+
+		Common::String fileName = Common::String::format("%c%c%c%c.scr", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view);
+		parseScrFile(fileName, nodeview);
+		addPuzzlesToReferenceTable(nodeview);
+	}
 
 	_activeControls = &nodeview._controls;
 
 	// Revert to the idle cursor
 	_engine->getCursorManager()->changeCursor(CursorIndex_Idle);
 
-	// Reset the background velocity
-	//_engine->getRenderManager()->setBackgroundVelocity(0);
-
-	// Remove any alphaEntries
-	//_engine->getRenderManager()->clearAlphaEntries();
-
 	// Change the background position
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
-	// Update _currentLocation
-	_currentLocation = _nextLocation;
-
-	execScope(room);
-	execScope(nodeview);
+	if (_currentLocation.world == 0 && _currentLocation.room == 0 && _currentLocation.node == 0 && _currentLocation.view == 0) {
+		_currentLocation = _nextLocation;
+		execScope(world);
+		execScope(room);
+		execScope(nodeview);
+	} else if (_nextLocation.world != _currentLocation.world) {
+		_currentLocation = _nextLocation;
+		execScope(room);
+		execScope(nodeview);
+	} else if (_nextLocation.room != _currentLocation.room) {
+		_currentLocation = _nextLocation;
+		execScope(room);
+		execScope(nodeview);
+	} else if (_nextLocation.node != _currentLocation.node || _nextLocation.view != _currentLocation.view) {
+		_currentLocation = _nextLocation;
+		execScope(nodeview);
+	}
 }
 
 void ScriptManager::serializeStateTable(Common::WriteStream *stream) {
