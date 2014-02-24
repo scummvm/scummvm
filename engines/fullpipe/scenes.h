@@ -366,8 +366,8 @@ public:
 	int scene09_var13;
 	int scene09_var15;
 	int scene09_var17;
-	int scene09_var19;
-	Common::Point scene09_var18[4];
+	int scene09_clickY;
+	Common::Point scene09_hangerOffsets[4];
 
 	StaticANIObject *scene10_gum;
 	StaticANIObject *scene10_packet;

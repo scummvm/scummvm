@@ -558,7 +558,7 @@ void sceneHandler09_checkHangerCollide() {
 
 		for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
 			for (int j = 0; j < 4; j++) {
-				g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_var18[j].x, ball->ani->_oy + g_vars->scene09_var18[j].y, &pixel);
+				g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->ani->_oy + g_vars->scene09_hangerOffsets[j].y, &pixel);
 
 				if (pixel) {
 					sceneHandler09_ballExplode(ball);
@@ -575,7 +575,7 @@ void sceneHandler09_hangerStartCycle() {
 	if (ani->_movement) {
 		ani->startAnim(MV_VSN_CYCLE2, 0, -1);
 		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->field_8 = 0;
-		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase = g_vars->scene09_var11 + (g_fp->_mouseScreenPos.y - g_vars->scene09_var19) / 2;
+		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase = g_vars->scene09_var11 + (g_fp->_mouseScreenPos.y - g_vars->scene09_clickY) / 2;
 
 		if (g_vars->scene09_var12 != -1000 && g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase != g_vars->scene09_var12) {
 			ExCommand *ex = new ExCommand(0, 35, SND_9_019, 0, 0, 0, 1, 0, 0, 0);
@@ -707,7 +707,7 @@ int sceneHandler09(ExCommand *cmd) {
 						g_vars->scene09_var11 = g_vars->scene09_hangers[hng]->phase;
 						g_vars->scene09_var12 = g_vars->scene09_hangers[hng]->phase;
 
-						g_vars->scene09_var19 = cmd->_y;
+						g_vars->scene09_clickY = cmd->_y;
 
 						if (!g_vars->scene09_hangers[hng]->ani->_movement || g_vars->scene09_hangers[hng]->ani->_movement->_id != MV_VSN_CYCLE2) {
 							g_vars->scene09_hangers[hng]->ani->changeStatics2(ST_VSN_NORMAL);
