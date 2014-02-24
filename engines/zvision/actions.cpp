@@ -607,6 +607,8 @@ ActionTimer::~ActionTimer() {
 }
 
 bool ActionTimer::execute() {
+	if (_engine->getScriptManager()->getSideFX(_slotkey))
+		return true;
 	_engine->getScriptManager()->addSideFX(new TimerNode(_engine, _slotkey, _time->getValue()));
 	return true;
 }
