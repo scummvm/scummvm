@@ -166,9 +166,8 @@ char *MidiDriver_CAMD::getDevice() {
 		}
 
 		// If the user has a preference outport set, use this instead
-		if(IDOS->GetVar("DefMidiOut", _outport, 128, 0)) {
-		retname = _outport;
-		}
+		if(IDOS->GetVar("DefMidiOut", _outport, 128, 0))
+			retname = _outport;
 
 		_ICamd->UnlockCAMD(key);
 	}
