@@ -77,9 +77,9 @@ protected:
 public:
 	SectionHandler(MADSEngine *vm): _vm(vm) {}
 
-	virtual void loadSection() = 0;
+	virtual void preLoadSection() = 0;
 	virtual void sectionPtr2() = 0;
-	virtual void sectionPtr3() = 0;
+	virtual void postLoadSection() = 0;
 };
 
 class Game {
@@ -88,6 +88,11 @@ private:
 	 * Main game loop
 	 */
 	void gameLoop();
+
+	/**
+	 * Inner game loop for executing gameplay within a game section
+	 */
+	void sectionLoop();
 protected:
 	MADSEngine *_vm;
 	MSurface *_surface;
@@ -100,8 +105,9 @@ protected:
 	int _saveSlot;
 	int _statusFlag;
 	DialogId _pendingDialog;
-
 	SectionHandler *_sectionHandler;
+	int _v1;
+	int _v2;
 
 	/**
 	 * Constructor

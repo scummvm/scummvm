@@ -43,6 +43,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr) {
 	_saveSlot = -1;
 	_statusFlag = 0;
 	_sectionHandler = nullptr;
+	_v1 = _v2 = 0;
 }
 
 Game::~Game() {
@@ -96,9 +97,30 @@ void Game::run() {
 }
 
 void Game::gameLoop() {
-	setSectionHandler();
+	while (!_vm->shouldQuit() && _statusFlag) {
+		setSectionHandler();
+		_sectionHandler->preLoadSection();
+		initSection(_scene._sectionNum);
+		_sectionHandler->postLoadSection();
 
-	// TODO: More stuff
+		_scene.clearSprites(true);
+
+		if (_scene._sectionNum == _scene._sectionNum2) {
+			sectionLoop();
+		}
+
+		// TODO: Extra reset methods
+		_vm->_events->resetCursor();
+		_vm->_events->freeCursors();
+		_vm->_sound->closeDriver();
+
+	}
+
+	_vm->_palette->close();
+}
+
+void Game::sectionLoop() {
+
 }
 
 void Game::initSection(int sectionNumber) {

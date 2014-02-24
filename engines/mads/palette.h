@@ -178,6 +178,13 @@ public:
 	 */
 	void setLowRange();
 
+	/**
+	 * Set up the palette as the game ends
+	 */
+	void close() {
+		warning("TODO: Palette::close");
+	}
+
 	// Color indexes
 	uint8 BLACK;
 	uint8 BLUE;

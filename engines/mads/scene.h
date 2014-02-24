@@ -24,8 +24,46 @@
 #define MADS_SCENE_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
+#include "common/rect.h"
 
 namespace MADS {
+
+enum SpriteType {
+	ST_NONE = 0, ST_FOREGROUND = 1, ST_BACKGROUND = -4, 
+	ST_FULL_SCREEN_REFRESH = -2, ST_EXPIRED = -1
+};
+
+class SpriteSlot {
+public:
+	SpriteType _spriteType;
+	int _seqIndex;
+	int _spriteListIndex;
+	int _frameNumber;
+	Common::Point _position;
+	int _depth;
+	int _scale;
+public:
+	SpriteSlot();
+	SpriteSlot(SpriteType type, int seqIndex);
+};
+
+class TextDisplay {
+public:
+	bool _active;
+	int _spacing;
+	Common::Rect _bounds;
+	int _expire;
+	int _col1;
+	int _col2;
+	Common::String _fontName;
+	Common::String _msg;
+
+	TextDisplay();
+};
+
+#define SPRITE_COUNT 50
+#define TEXT_DISPLAY_COUNT 40
 
 class Scene {
 public:
@@ -35,8 +73,21 @@ public:
 	int _priorSceneId;
 	int _nextSceneId;
 	int _currentSceneId;
-	
+	TextDisplay _textDisplay[TEXT_DISPLAY_COUNT];
+	Common::Array<SpriteSlot> _spriteSlots;
+	Common::Array<int> _spriteList;
+	int _spriteListIndex;
+
+	/**
+	 * Constructor
+	 */
 	Scene();
+
+	/**
+	 * Initialise the sprite data
+	 * @param flag		Also reset sprite list
+	 */
+	void clearSprites(bool flag);
 };
 
 } // End of namespace MADS

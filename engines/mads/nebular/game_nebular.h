@@ -50,9 +50,9 @@ public:
 	Section1Handler(MADSEngine *vm): SectionHandler(vm) {}
 
 	// TODO: Properly implement handler methods
-	virtual void loadSection() {}
+	virtual void preLoadSection() {}
 	virtual void sectionPtr2() {}
-	virtual void sectionPtr3() {}
+	virtual void postLoadSection() {}
 };
 
 // TODO: Properly implement handler classes

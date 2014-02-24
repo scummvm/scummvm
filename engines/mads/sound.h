@@ -24,6 +24,7 @@
 #define MADS_SOUND_H
 
 #include "common/scummsys.h"
+#include "common/queue.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "mads/nebular/sound_nebular.h"
@@ -36,13 +37,65 @@ class SoundManager {
 private:
 	MADSEngine *_vm;
 	Audio::Mixer *_mixer;
-	Nebular::ASound *_asound;
+	Nebular::ASound *_driver;
+	bool _pollSoundEnabled;
+	bool _soundPollFlag;
+	bool _newSoundsPaused;
+	Common::Queue<int> _queuedCommands;
 public:
 	SoundManager(MADSEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
-	
-	void test();
-	void poll();
+
+	/**
+	 * Initialises the sound driver for a given game section
+	 */
+	void init(int sectionNumber);
+
+	/**
+	 * Stop any currently active sound and remove the driver
+	 */
+	void closeDriver();
+
+	/**
+	 * Remove the driver
+	 */
+	void removeDriver();
+
+	/**
+	 * Sets the enabled status of the sound
+	 * @flag		True if sound should be enabled
+	 */
+	void setEnabled(bool flag);
+
+	/**
+	 * Temporarily pause the playback of any new sound commands
+	 */
+	void queueNewCommands();
+
+	/**
+	 * Stop queueing sound commands, and execute any previously queued ones
+	 */
+	void startQueuedCommands();
+
+	//@{
+	/**
+	 * Executes a command on the sound driver
+	 * @param commandid		Command Id to execute
+	 * @param param			Optional paramater specific to a few commands
+	 */
+	void command(int commandId, int param = 0);
+
+	/**
+	 * Stops any currently playing sound
+	 */
+	void stop();
+
+	/**
+	 * Noise
+	 * Some sort of random noise generation?
+	 */
+	void noise();
+	//@}
 };
 
 } // End of namespace MADS

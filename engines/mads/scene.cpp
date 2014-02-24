@@ -34,4 +34,44 @@ Scene::Scene() {
 	_currentSceneId = 0;
 }
 
+void Scene::clearSprites(bool flag) {
+	for (int i = 0; i < TEXT_DISPLAY_COUNT; ++i)
+		_textDisplay[i]._active = false;
+
+	if (flag)
+		_spriteList.clear();
+
+	_spriteSlots.clear();
+	_spriteSlots.push_back(SpriteSlot(ST_FULL_SCREEN_REFRESH, -1));
+}
+
+/*------------------------------------------------------------------------*/
+
+SpriteSlot::SpriteSlot() {
+	_spriteType = ST_NONE;
+	_seqIndex = 0;
+	_spriteListIndex = 0;
+	_frameNumber = 0;
+	_depth = 0;
+	_scale = 0;
+}
+
+SpriteSlot::SpriteSlot(SpriteType type, int seqIndex) {
+	_spriteType = type;
+	_seqIndex = seqIndex;
+	_spriteListIndex = 0;
+	_frameNumber = 0;
+	_depth = 0;
+	_scale = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+TextDisplay::TextDisplay() {
+	_active = false;
+	_spacing = 0;
+	_expire = 0;
+	_col1 = _col2 = 0;
+}
+
 } // End of namespace MADS
