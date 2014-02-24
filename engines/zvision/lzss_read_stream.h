@@ -45,7 +45,7 @@ public:
 
 private:
 	enum {
-	    BLOCK_SIZE = 0x1000
+		BLOCK_SIZE = 0x1000
 	};
 
 private:

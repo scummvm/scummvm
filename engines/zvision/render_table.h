@@ -36,9 +36,9 @@ public:
 
 public:
 	enum RenderState {
-	    PANORAMA,
-	    TILT,
-	    FLAT
+		PANORAMA,
+		TILT,
+		FLAT
 	};
 
 private:

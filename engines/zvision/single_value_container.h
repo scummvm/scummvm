@@ -36,15 +36,15 @@ namespace ZVision {
 class SingleValueContainer {
 public:
 	enum ValueType {
-	    BOOL,
-	    BYTE,
-	    INT16,
-	    UINT16,
-	    INT32,
-	    UINT32,
-	    FLOAT,
-	    DOUBLE,
-	    STRING
+		BOOL,
+		BYTE,
+		INT16,
+		UINT16,
+		INT32,
+		UINT32,
+		FLOAT,
+		DOUBLE,
+		STRING
 	};
 
 	// Constructors

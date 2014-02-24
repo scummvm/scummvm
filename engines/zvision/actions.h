@@ -369,7 +369,7 @@ public:
 
 private:
 	enum {
-	    DIFFERENT_DIMENSIONS = 0x1 // 0x1 flags that the destRect dimensions are different from the original video dimensions
+		DIFFERENT_DIMENSIONS = 0x1 // 0x1 flags that the destRect dimensions are different from the original video dimensions
 	};
 
 	Common::String _fileName;

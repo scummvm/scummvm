@@ -61,7 +61,7 @@ private:
 private:
 	// Audio Codecs
 	enum {
-	    kWaveFormatZorkPCM = 17 // special Zork PCM audio format (clashes with MS IMA ADPCM)
+		kWaveFormatZorkPCM = 17 // special Zork PCM audio format (clashes with MS IMA ADPCM)
 	};
 };
 

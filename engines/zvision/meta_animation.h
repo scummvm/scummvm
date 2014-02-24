@@ -64,8 +64,8 @@ public:
 
 private:
 	enum FileType {
-	    RLF = 1,
-	    AVI = 2
+		RLF = 1,
+		AVI = 2
 	};
 
 private:

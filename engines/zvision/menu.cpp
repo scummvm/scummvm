@@ -30,17 +30,17 @@
 namespace ZVision {
 
 enum {
-    SLOT_START_SLOT = 151,
-    SLOT_SPELL_1 = 191,
-    SLOT_USER_CHOSE_THIS_SPELL = 205,
-    SLOT_REVERSED_SPELLBOOK = 206
+	SLOT_START_SLOT = 151,
+	SLOT_SPELL_1 = 191,
+	SLOT_USER_CHOSE_THIS_SPELL = 205,
+	SLOT_REVERSED_SPELLBOOK = 206
 };
 
 enum {
-    menu_MAIN_SAVE = 0,
-    menu_MAIN_REST = 1,
-    menu_MAIN_PREF = 2,
-    menu_MAIN_EXIT = 3
+	menu_MAIN_SAVE = 0,
+	menu_MAIN_REST = 1,
+	menu_MAIN_PREF = 2,
+	menu_MAIN_EXIT = 3
 };
 
 menuHandler::menuHandler(ZVision *engine) {
@@ -264,8 +264,7 @@ void menuZgi::onMouseMove(const Common::Point &Pos) {
 			}
 			break;
 
-		case menu_MAIN:
-		{
+		case menu_MAIN: {
 			int last_item = mouse_on_item;
 			mouse_on_item = -1;
 
@@ -510,29 +509,25 @@ void menuZgi::process(uint32 deltatime) {
 		if (redraw) {
 			_engine->getRenderManager()->blitSurfaceToMenu(menuback[menu_MAIN][0], 30, scrollPos[menu_MAIN]);
 
-			if (menu_bar_flag & menuBar_Exit)
-			{
+			if (menu_bar_flag & menuBar_Exit) {
 				if (mouse_on_item == menu_MAIN_EXIT)
 					_engine->getRenderManager()->blitSurfaceToMenu(menubar[menu_MAIN_EXIT][1], 320 + 135, scrollPos[menu_MAIN]);
 				else
 					_engine->getRenderManager()->blitSurfaceToMenu(menubar[menu_MAIN_EXIT][0], 320 + 135, scrollPos[menu_MAIN]);
 			}
-			if (menu_bar_flag & menuBar_Settings)
-			{
+			if (menu_bar_flag & menuBar_Settings) {
 				if (mouse_on_item == menu_MAIN_PREF)
 					_engine->getRenderManager()->blitSurfaceToMenu(menubar[menu_MAIN_PREF][1], 320, scrollPos[menu_MAIN]);
 				else
 					_engine->getRenderManager()->blitSurfaceToMenu(menubar[menu_MAIN_PREF][0], 320, scrollPos[menu_MAIN]);
 			}
-			if (menu_bar_flag & menuBar_Restore)
-			{
+			if (menu_bar_flag & menuBar_Restore) {
 				if (mouse_on_item == menu_MAIN_REST)
 					_engine->getRenderManager()->blitSurfaceToMenu(menubar[menu_MAIN_REST][1], 320 - 135, scrollPos[menu_MAIN]);
 				else
 					_engine->getRenderManager()->blitSurfaceToMenu(menubar[menu_MAIN_REST][0], 320 - 135, scrollPos[menu_MAIN]);
 			}
-			if (menu_bar_flag & menuBar_Save)
-			{
+			if (menu_bar_flag & menuBar_Save) {
 				if (mouse_on_item == menu_MAIN_SAVE)
 					_engine->getRenderManager()->blitSurfaceToMenu(menubar[menu_MAIN_SAVE][1], 320 - 135 * 2, scrollPos[menu_MAIN]);
 				else
@@ -698,8 +693,7 @@ void menuNem::onMouseMove(const Common::Point &Pos) {
 
 void menuNem::process(uint32 deltatime) {
 	if (inmenu) {
-		if (!scrolled)
-		{
+		if (!scrolled) {
 			float scrl = 32.0 * 2.0 * (deltatime / 1000.0);
 
 			if (scrl == 0)
@@ -709,8 +703,7 @@ void menuNem::process(uint32 deltatime) {
 			redraw = true;
 		}
 
-		if (scrollPos >= 0)
-		{
+		if (scrollPos >= 0) {
 			scrolled = true;
 			scrollPos = 0;
 		}
@@ -747,8 +740,7 @@ void menuNem::process(uint32 deltatime) {
 		}
 	} else {
 		scrolled = false;
-		if (scrollPos > -32)
-		{
+		if (scrollPos > -32) {
 			float scrl = 32.0 * 2.0 * (deltatime / 1000.0);
 
 			if (scrl == 0)
@@ -759,8 +751,7 @@ void menuNem::process(uint32 deltatime) {
 
 			scrollPos -= scrl;
 			redraw = true;
-		}
-		else
+		} else
 			scrollPos = -32;
 
 		if (redraw) {

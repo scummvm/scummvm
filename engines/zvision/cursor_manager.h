@@ -40,15 +40,15 @@ class ZVision;
  * Mostly usable cursors
  */
 enum CursorIndex {
-    CursorIndex_Active = 0,
-    CursorIndex_DownArr = 3,
-    CursorIndex_HandPu = 6,
-    CursorIndex_Idle = 11,
-    CursorIndex_Left = 12,
-    CursorIndex_Right = 13,
-    CursorIndex_UpArr = 17,
-    CursorIndex_ItemIdle = 18,
-    CursorIndex_ItemAct = 19
+	CursorIndex_Active = 0,
+	CursorIndex_DownArr = 3,
+	CursorIndex_HandPu = 6,
+	CursorIndex_Idle = 11,
+	CursorIndex_Left = 12,
+	CursorIndex_Right = 13,
+	CursorIndex_UpArr = 17,
+	CursorIndex_ItemIdle = 18,
+	CursorIndex_ItemAct = 19
 };
 
 /**

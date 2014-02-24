@@ -42,8 +42,8 @@ public:
 
 private:
 	enum EncodingType {
-	    Masked,
-	    Simple
+		Masked,
+		Simple
 	};
 
 	struct Frame {
