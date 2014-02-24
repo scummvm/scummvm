@@ -39,8 +39,6 @@ protected:
 
 	virtual void initialiseGlobals();
 
-	virtual void showDialog();
-
 	virtual void setSectionHandler();
 };
 

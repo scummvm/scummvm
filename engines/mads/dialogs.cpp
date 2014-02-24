@@ -333,7 +333,7 @@ void MessageDialog::show() {
 
 Dialogs *Dialogs::init(MADSEngine *vm) {
 	if (vm->getGameID() == GType_RexNebular)
-		return new Dialogs(vm);
+		return new Nebular::DialogsNebular(vm);
 
 	error("Unknown game");
 }

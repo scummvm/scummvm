@@ -75,7 +75,7 @@ void Game::run() {
 		_statusFlag = _scene._sectionNum != 1;
 		_vm->_dialogs->_pendingDialog = DIALOG_DIFFICULTY;
 
-		showDialog();
+		_vm->_dialogs->showDialog();
 		_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 
 		_vm->_events->freeCursors();
@@ -138,7 +138,7 @@ void Game::sectionLoop() {
 			_player._stepEnabled = true;
 			_player._visible = true;
 			_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
-			_scene.addVisitedScene(_scene._nextSceneId);
+			addVisitedScene(_scene._nextSceneId);
 
 			// TODO: main section loop logic goes here
 
@@ -151,7 +151,7 @@ void Game::sectionLoop() {
 			// Check whether to show a dialog
 			if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globalFlags[5]) {
 				_scene.releasePlayerSprites();
-				showDialog();
+				_vm->_dialogs->showDialog();
 				_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 			}
 		}
@@ -211,6 +211,20 @@ void Game::setObjectRoom(int objectId, int roomNumber) {
 
 void Game::loadResourceSequence(const Common::String prefix, int v) {
 	warning("TODO: loadResourceSequence");
+}
+
+void Game::addVisitedScene(int sceneId) {
+	if (!visitedScenesExists(sceneId))
+		_visitedScenes.push_back(sceneId);
+}
+
+bool Game::visitedScenesExists(int sceneId) {
+	for (int i = 0; i < _visitedScenes.size(); ++i) {
+		if (_visitedScenes[i] == sceneId)
+			return true;
+	}
+
+	return false;
 }
 
 /*------------------------------------------------------------------------*/

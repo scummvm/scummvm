@@ -31,6 +31,16 @@ namespace MADS {
 
 namespace Nebular {
 
+class DialogsNebular: public Dialogs {
+	friend class Dialogs;
+protected:
+	DialogsNebular(MADSEngine *vm): Dialogs(vm) {}
+public:
+	virtual void showDialog() {
+		warning("TODO: showDialog");
+	}
+};
+
 struct HOGANUS {
 	int _bookId;
 	int _pageNum;

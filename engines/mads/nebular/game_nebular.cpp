@@ -152,10 +152,6 @@ void GameNebular::initialiseGlobals() {
 	loadResourceSequence("ROX", 1);
 }
 
-void GameNebular::showDialog() {
-	warning("TODO: showDialog");
-}
-
 void GameNebular::setSectionHandler() {
 	delete _sectionHandler;
 

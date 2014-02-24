@@ -34,7 +34,6 @@ Scene::Scene(MADSEngine *vm): _vm(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
-	_vocabCount = 0;
 	_vocabBuffer = nullptr;
 	_sceneLogic = nullptr;
 }
@@ -81,7 +80,7 @@ void Scene::clearDynamicHotspots() {
 
 void Scene::clearVocab() {
 	freeVocab();
-	_vocabCount = 0;
+	_activeVocabs.clear();
 }
 
 void Scene::freeVocab() {
@@ -103,20 +102,6 @@ int Scene::activeVocabIndexOf(int vocabId) {
 	}
 
 	return -1;
-}
-
-void Scene::addVisitedScene(int sceneId) {
-	if (!visitedScenesExists(sceneId))
-		_visitedScenes.push_back(sceneId);
-}
-
-bool Scene::visitedScenesExists(int sceneId) {
-	for (int i = 0; i < _visitedScenes.size(); ++i) {
-		if (_visitedScenes[i] == sceneId)
-			return true;
-	}
-
-	return false;
 }
 
 void Scene::loadScene() {

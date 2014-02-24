@@ -95,6 +95,16 @@ private:
 	 * Inner game loop for executing gameplay within a game section
 	 */
 	void sectionLoop();
+
+	/**
+	 * Returns true if a given Scene Id exists in the listed of previously visited scenes.
+	 */
+	bool visitedScenesExists(int sceneId);
+
+	/**
+	 * Adds a scene Id to the list of previously visited scenes, if it doesn't already exist
+	 */
+	void addVisitedScene(int sceneId);
 protected:
 	MADSEngine *_vm;
 	MSurface *_surface;
@@ -107,13 +117,14 @@ protected:
 	int _saveSlot;
 	int _statusFlag;
 	SectionHandler *_sectionHandler;
+	Common::Array<int> _visitedScenes;
+	byte *_quotes;
 	int _v1;
 	int _v2;
 	int _v3;
 	int _v4;
 	int _v5;
 	int _v6;
-	byte *_quotes;
 
 	/**
 	 * Constructor
@@ -154,11 +165,6 @@ protected:
 	 * Initialises global variables for a new game
 	 */
 	virtual void initialiseGlobals() = 0;
-
-	/**
-	 * Show a game dialog
-	 */
-	virtual void showDialog() = 0;
 
 	/**
 	 * Set up the section handler specific to each section

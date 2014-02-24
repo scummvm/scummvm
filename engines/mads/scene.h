@@ -136,10 +136,6 @@ private:
 	 */
 	int activeVocabIndexOf(int vocabId);
 
-	/**
-	 * Returns true if a given Scene Id exists in the listed of previously visited scenes.
-	 */
-	bool visitedScenesExists(int sceneId);
 protected:
 	MADSEngine *_vm;
 public:
@@ -157,9 +153,7 @@ public:
 	Common::Array<DynamicHotspot> _dynamicHotspots;
 	bool _dynamicHotspotsChanged;
 	byte *_vocabBuffer;
-	int _vocabCount;
 	Common::Array<int> _activeVocabs;
-	Common::Array<int> _visitedScenes;
 
 	/**
 	 * Constructor
@@ -201,11 +195,6 @@ public:
 	 * Add a given vocab entry to the active list
 	 */
 	void addActiveVocab(int vocabId);
-
-	/**
-	 * Add a scene to the visited scene list if it doesn't already exist
-	 */
-	void addVisitedScene(int sceneId);
 
 	/**
 	 * Loads the scene logic for a given scene

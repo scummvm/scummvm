@@ -174,7 +174,7 @@ enum DialogId {
 };
 
 class Dialogs {
-private:
+protected:
 	MADSEngine *_vm;
 
 	Dialogs(MADSEngine *vm);
@@ -183,6 +183,8 @@ public:
 public:
 	Common::Point _defaultPosition;
 	DialogId _pendingDialog;
+
+	virtual void showDialog() = 0;
 };
 
 } // End of namespace MADS
