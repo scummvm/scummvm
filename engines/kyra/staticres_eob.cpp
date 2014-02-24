@@ -1206,7 +1206,7 @@ void DarkMoonEngine::initStaticResource() {
 
 	_animIntro = new const DarkMoonAnimCommand*[44];
 	for (int i = 0; i < 44; i++)
-		_animIntro[i] = _staticres->loadEoB2SeqData(kEob2IntroAnimData00 + i, temp);
+		_animIntro[i] = _staticres->loadEoB2SeqData(kEoB2IntroAnimData00 + i, temp);
 
 	_shapesIntro = new const DarkMoonShapeDef*[13];
 	memset(_shapesIntro, 0, sizeof(DarkMoonShapeDef *) * 13);
@@ -1221,7 +1221,7 @@ void DarkMoonEngine::initStaticResource() {
 
 	_animFinale = new const DarkMoonAnimCommand*[21];
 	for (int i = 0; i < 21; i++)
-		_animFinale[i] = _staticres->loadEoB2SeqData(kEob2FinaleAnimData00 + i, temp);
+		_animFinale[i] = _staticres->loadEoB2SeqData(kEoB2FinaleAnimData00 + i, temp);
 
 	_shapesFinale = new const DarkMoonShapeDef*[13];
 	memset(_shapesFinale, 0, sizeof(DarkMoonShapeDef *) * 13);
