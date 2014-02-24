@@ -192,7 +192,7 @@ Common::Error ZVision::run() {
 		// Render the backBuffer to the screen
 		_renderManager->prepareBkg();
 		_renderManager->renderMenuToScreen();
-		_renderManager->renderSubsToScreen();
+		_renderManager->processSubs(deltaTime);
 		_renderManager->renderBackbufferToScreen();
 
 		// Update the screen

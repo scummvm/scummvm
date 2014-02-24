@@ -24,6 +24,7 @@
 
 #include "zvision/zvision.h"
 #include "zvision/render_manager.h"
+#include "zvision/text.h"
 
 #include "zvision/lzss_read_stream.h"
 
@@ -746,9 +747,14 @@ void RenderManager::updateSubArea(uint16 id, const Common::String &txt) {
 	}
 }
 
-void RenderManager::renderSubsToScreen() {
+void RenderManager::processSubs(uint16 deltatime) {
 	bool redraw = false;
 	for (subMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
+		if (it->_value.timer != -1) {
+			it->_value.timer -= deltatime;
+			if (it->_value.timer <= 0)
+				it->_value.todelete = true;
+		}
 		if (it->_value.todelete) {
 			_subsList.erase(it);
 			redraw = true;
@@ -761,7 +767,16 @@ void RenderManager::renderSubsToScreen() {
 		_subWnd.fillRect(Common::Rect(_subWnd.w, _subWnd.h), 0);
 
 		for (subMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
-			//draw subs
+			oneSub *sub = &it->_value;
+			if (sub->_txt.size()) {
+				Graphics::Surface *rndr = new Graphics::Surface();
+				rndr->create(sub->_r.width(), sub->_r.height(), _pixelFormat);
+				_engine->getTextRenderer()->drawTxtInOneLine(sub->_txt, *rndr);
+				blitSurfaceToSurface(*rndr, _subWnd, sub->_r.left - _subWndRect.left + _workingWindow.left, sub->_r.top - _subWndRect.top + _workingWindow.top);
+				rndr->free();
+				delete rndr;
+			}
+			sub->redraw = false;
 		}
 
 		_system->copyRectToScreen(_subWnd.getPixels(), _subWnd.pitch,

@@ -236,7 +236,7 @@ public:
 	void deleteSubArea(uint16 id);
 	void deleteSubArea(uint16 id, int16 delay);
 	void updateSubArea(uint16 id, const Common::String &txt);
-	void renderSubsToScreen();
+	void processSubs(uint16 deltatime);
 
 	Common::Point getBkgSize();
 
