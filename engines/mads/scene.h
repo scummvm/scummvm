@@ -20,52 +20,25 @@
  *
  */
 
-#ifndef MADS_GAME_NEBULAR_H
-#define MADS_GAME_NEBULAR_H
+#ifndef MADS_SCENE_H
+#define MADS_SCENE_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
 
 namespace MADS {
 
-namespace Nebular {
-
-class GameNebular: public Game {
-	friend class Game;
-protected:
-	GameNebular(MADSEngine *vm);
-
-	virtual int checkCopyProtection();
-
-	virtual void initialiseGlobals();
-
-	virtual void showDialog();
-
-	virtual void setSectionHandler();
-};
-
-
-class Section1Handler: public SectionHandler {
+class Scene {
 public:
-	Section1Handler(MADSEngine *vm): SectionHandler(vm) {}
-
-	// TODO: Properly implement handler methods
-	virtual void loadSection() {}
-	virtual void sectionPtr2() {}
-	virtual void sectionPtr3() {}
+	int _priorSectionNum;
+	int _sectionNum;
+	int _sectionNum2;
+	int _priorSceneId;
+	int _nextSceneId;
+	int _currentSceneId;
+	
+	Scene();
 };
-
-// TODO: Properly implement handler classes
-typedef Section1Handler Section2Handler;
-typedef Section1Handler Section3Handler;
-typedef Section1Handler Section4Handler;
-typedef Section1Handler Section5Handler;
-typedef Section1Handler Section6Handler;
-typedef Section1Handler Section7Handler;
-
-
-} // End of namespace Nebular
 
 } // End of namespace MADS
 
-#endif /* MADS_GAME_NEBULAR_H */
+#endif /* MADS_SCENE_H */

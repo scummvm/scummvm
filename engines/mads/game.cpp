@@ -26,6 +26,7 @@
 #include "mads/nebular/game_nebular.h"
 #include "mads/graphics.h"
 #include "mads/msurface.h"
+#include "mads/resources.h"
 
 namespace MADS {
 
@@ -38,15 +39,66 @@ Game *Game::init(MADSEngine *vm) {
 
 Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr) {
 	_sectionNumber = _priorSectionNumber = 0;
+	_difficultyLevel = DIFFICULTY_HARD;
+	_saveSlot = -1;
+	_statusFlag = 0;
+	_sectionHandler = nullptr;
 }
 
 Game::~Game() {
 	delete _surface;
+	delete _sectionHandler;
 }
 
 void Game::run() {
-	if (!checkCopyProtection())
-		return;
+	int protectionResult = checkCopyProtection();
+	switch (protectionResult) {
+	case 1:
+		// Copy protection failed
+		_scene._nextSceneId = 804;
+		initialiseGlobals();
+		_globalFlags[5] = 0xFFFF;
+		_saveSlot = -1;
+		break;
+	case 2:
+		_statusFlag = 0;
+		break;
+	default:
+		break;
+	}
+
+	if (_saveSlot == -1 && protectionResult != -1 && protectionResult != -2) {
+		initSection(_scene._sectionNum);
+		_statusFlag = _scene._sectionNum != 1;
+		_pendingDialog = DIALOG_DIFFICULTY;
+
+		showDialog();
+		_pendingDialog = DIALOG_NONE;
+
+		_vm->_events->freeCursors();
+		_scene._priorSectionNum = 0;
+		_scene._priorSceneId = 0;
+		_scene._sectionNum2 = -1;
+		_scene._currentSceneId = -1;
+	}
+
+	if (protectionResult != 1 && protectionResult != 2) {
+		initialiseGlobals();
+
+		if (_saveSlot != -1) {
+			warning("TODO: loadGame(\"REX.SAV\", 210)");
+			_statusFlag = false;
+		}
+	}
+
+	if (_statusFlag)
+		gameLoop();
+}
+
+void Game::gameLoop() {
+	setSectionHandler();
+
+	// TODO: More stuff
 }
 
 void Game::initSection(int sectionNumber) {
@@ -59,6 +111,75 @@ void Game::initSection(int sectionNumber) {
 	assert(_vm->_events->_cursorSprites);
 	_vm->_events->setCursor2((_vm->_events->_cursorSprites->getCount() <= 1) ? 
 		CURSOR_ARROW : CURSOR_WAIT);
+}
+
+void Game::loadObjects() {
+	File f("*OBJECTS.DAT");
+
+	// Get the total numer of inventory objects
+	int count = f.readUint16LE();
+	_objects.reserve(count);
+
+	// Read in each object
+	for (int i = 0; i < count; ++i) {
+		InventoryObject obj;
+		obj.load(f);
+		_objects.push_back(obj);
+
+		// If it's for the player's inventory, add the index to the inventory list
+		if (obj._roomNumber == PLAYER_INVENTORY) {
+			_inventoryList.push_back(i);
+			assert(_inventoryList.size() <= 32);
+		}
+	}
+}
+
+void Game::setObjectData(int objIndex, int id, const byte *p) {
+	// TODO: This whole method seems weird. Check it out more thoroughly once
+	// more of the engine is implemented
+	for (int i = 0; i < (int)_objects.size(); ++i) {
+		InventoryObject &obj = _objects[i];
+		if (obj._vocabList[0]._actionFlags1 <= i)
+			break;
+
+		if (obj._mutilateString[6 + i] == id) {
+			_objects[objIndex]._objFolder = p;
+		}
+	}
+}
+
+void Game::setObjectRoom(int objectId, int roomNumber) {
+	warning("TODO: setObjectRoom");
+}
+
+void Game::loadResourceSequence(const Common::String prefix, int v) {
+	warning("TODO: loadResourceSequence");
+}
+
+/*------------------------------------------------------------------------*/
+
+void InventoryObject::load(Common::SeekableReadStream &f) {
+	_descId = f.readUint16LE();
+	_roomNumber = f.readUint16LE();
+	_article = f.readByte();
+	_vocabCount = f.readByte();
+	
+	for (int i = 0; i < 3; ++i) {
+		_vocabList[i]._actionFlags1 = f.readByte();
+		_vocabList[i]._actionFlags2 = f.readByte();
+		_vocabList[i]._vocabId = f.readByte();
+	}
+
+	f.skip(4);	// field12
+	f.read(&_mutilateString[0], 10);
+	f.skip(16);
+}
+
+/*------------------------------------------------------------------------*/
+
+Player::Player() {
+	_direction = 8;
+	_newDirection = 8;
 }
 
 } // End of namespace MADS

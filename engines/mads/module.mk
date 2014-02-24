@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	msurface.o \
 	palette.o \
 	resources.o \
+	scene.o \
 	sound.o \
 	user_interface.o
 

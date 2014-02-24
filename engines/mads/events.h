@@ -93,6 +93,16 @@ public:
 	void hideCursor();
 
 	/**
+	 * Resets the cursor, if necessary
+	 */
+	void resetCursor();
+
+	/**
+	 * Free currently loaded cursors
+	 */
+	void freeCursors();
+
+	/**
 	 * Poll any pending events
 	 */
 	void pollEvents();

@@ -42,7 +42,7 @@ EventsManager::EventsManager(MADSEngine *vm) {
 }
 
 EventsManager::~EventsManager() {
-	delete _cursorSprites;
+	freeCursors();
 }
 
 void EventsManager::loadCursors(const Common::String &spritesName) {
@@ -68,8 +68,22 @@ void EventsManager::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
-void EventsManager::changeCursor() {
+void EventsManager::resetCursor() {
+	CursorType cursorId = (CursorType)MIN(_cursorSprites->getCount(), (int)CURSOR_WAIT);
+	_newCursorId = cursorId;
+	if (_cursorId != _newCursorId) {
+		changeCursor();
+		_cursorId = _newCursorId;
+	}
+}
 
+void EventsManager::changeCursor() {
+	warning("TODO: changeCursor");
+}
+
+void EventsManager::freeCursors() {
+	delete _cursorSprites;
+	_cursorSprites = nullptr;
 }
 
 void EventsManager::pollEvents() {

@@ -285,15 +285,16 @@ void TextDialog::draw() {
 }
 
 void TextDialog::drawWithInput() {
-	int innerWidth = _innerWidth;
-	int lineHeight = _vm->_font->getHeight() + 1;
-	int xp = _position.x + 5;
+	//int innerWidth = _innerWidth;
+	//int lineHeight = _vm->_font->getHeight() + 1;
+	//int xp = _position.x + 5;
 
 	// Draw the content of the dialog
 	drawContent(Common::Rect(_position.x + 2, _position.y + 2,
 		_position.x + _width - 2, _position.y + _height - 2), 0,
 		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
-
+	
+	error("TODO: drawWithInput");
 }
 
 void TextDialog::restorePalette() {
