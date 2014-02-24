@@ -1432,7 +1432,7 @@ void SceneExit::process(Event &event) {
 	if (!R2_GLOBALS._insetUp) {
 		SceneArea::process(event);
 
-		if (_enabled) {
+		if (_enabled && R2_GLOBALS._player._enabled) {
 			if (event.eventType == EVENT_BUTTON_DOWN) {
 				if (!_bounds.contains(mousePos))
 					_moving = false;
