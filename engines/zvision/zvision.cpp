@@ -34,6 +34,7 @@
 #include "zvision/detection.h"
 #include "zvision/menu.h"
 #include "zvision/search_manager.h"
+#include "zvision/text.h"
 
 #include "common/config-manager.h"
 #include "common/str.h"
@@ -93,6 +94,7 @@ void ZVision::initialize() {
 
 	_searchManager = new sManager(ConfMan.get("path"), 6);
 
+	_searchManager->addDir("FONTS");
 	_searchManager->addDir("addon");
 
 	if (_gameDescription->gameId == GID_GRANDINQUISITOR) {
@@ -152,6 +154,7 @@ void ZVision::initialize() {
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, &_pixelFormat);
+	_textRenderer = new textRenderer(this);
 
 	if (_gameDescription->gameId == GID_GRANDINQUISITOR)
 		_menu = new menuZgi(this);

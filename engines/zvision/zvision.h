@@ -53,6 +53,7 @@ class StringManager;
 class SaveManager;
 class RlfAnimation;
 class menuHandler;
+class textRenderer;
 
 class ZVision : public Engine {
 public:
@@ -101,6 +102,7 @@ private:
 	StringManager *_stringManager;
 	menuHandler *_menu;
 	sManager *_searchManager;
+	textRenderer *_textRenderer;
 
 	// Clock
 	Clock _clock;
@@ -139,6 +141,9 @@ public:
 	}
 	sManager *getSearchManager() const {
 		return _searchManager;
+	}
+	textRenderer *getTextRenderer() const {
+		return _textRenderer;
 	}
 	Common::RandomSource *getRandomSource() const {
 		return _rnd;
