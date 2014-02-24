@@ -46,6 +46,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 	_attenuate = 0;
 	_pantrack = false;
 	_pantrack_X = 0;
+	_sub = NULL;
 
 	Audio::RewindableAudioStream *audioStream;
 
@@ -69,12 +70,22 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool
 
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 1);
+
+	Common::String subname = filename;
+	subname.setChar('s', subname.size() - 3);
+	subname.setChar('u', subname.size() - 2);
+	subname.setChar('b', subname.size() - 1);
+
+	if (_engine->getSearchManager()->hasFile(subname))
+		_sub = new Subtitle(_engine, subname);
 }
 
 MusicNode::~MusicNode() {
 	_engine->_mixer->stopHandle(_handle);
 	if (_key != StateKey_NotSet)
 		_engine->getScriptManager()->setStateValue(_key, 2);
+	if (_sub)
+		delete _sub;
 	debug(1, "MusicNode: %d destroyed\n", _key);
 }
 
@@ -117,6 +128,9 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 
 		if (_pantrack || _volume != _newvol)
 			setVolume(_newvol);
+
+		if (_sub)
+			_sub->process(_engine->_mixer->getSoundElapsedTime(_handle) / 100);
 	}
 	return false;
 }

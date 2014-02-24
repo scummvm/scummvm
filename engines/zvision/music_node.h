@@ -25,6 +25,7 @@
 
 #include "audio/mixer.h"
 #include "zvision/sidefx.h"
+#include "zvision/subtitles.h"
 
 namespace Common {
 class String;
@@ -64,6 +65,7 @@ private:
 	int32 _crossfade_time;
 	bool _stereo;
 	Audio::SoundHandle _handle;
+	Subtitle *_sub;
 };
 
 class PanTrackNode : public SideFX {
