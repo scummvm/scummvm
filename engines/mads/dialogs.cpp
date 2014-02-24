@@ -329,4 +329,16 @@ void MessageDialog::show() {
 	}
 }
 
+/*------------------------------------------------------------------------*/
+
+Dialogs *Dialogs::init(MADSEngine *vm) {
+	if (vm->getGameID() == GType_RexNebular)
+		return new Dialogs(vm);
+
+	error("Unknown game");
+}
+
+Dialogs::Dialogs(MADSEngine *vm): _vm(vm) {
+}
+
 } // End of namespace MADS

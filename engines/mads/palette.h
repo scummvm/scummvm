@@ -24,6 +24,7 @@
 #define MADS_PALETTE_H
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace MADS {
 

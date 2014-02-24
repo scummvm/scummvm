@@ -168,6 +168,23 @@ public:
 	void show();
 };
 
+enum DialogId {
+	DIALOG_NONE = 0, DIALOG_GAME_MENU = 1, DIALOG_SAVE = 2, DIALOG_RESTORE = 3,
+	DIALOG_OPTIONS = 4, DIALOG_DIFFICULTY = 5, DIALOG_ERROR = 6
+};
+
+class Dialogs {
+private:
+	MADSEngine *_vm;
+
+	Dialogs(MADSEngine *vm);
+public:
+	static Dialogs *init(MADSEngine *vm);
+public:
+	Common::Point _defaultPosition;
+	DialogId _pendingDialog;
+};
+
 } // End of namespace MADS
 
 #endif /* MADS_DIALOGS_H */

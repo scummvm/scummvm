@@ -37,13 +37,15 @@ Game *Game::init(MADSEngine *vm) {
 	return nullptr;
 }
 
-Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr) {
+Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _scene(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
 	_difficultyLevel = DIFFICULTY_HARD;
 	_saveSlot = -1;
 	_statusFlag = 0;
 	_sectionHandler = nullptr;
 	_v1 = _v2 = 0;
+	_v3 = _v4 = 0;
+	_v5 = _v6 = 0;
 }
 
 Game::~Game() {
@@ -71,15 +73,15 @@ void Game::run() {
 	if (_saveSlot == -1 && protectionResult != -1 && protectionResult != -2) {
 		initSection(_scene._sectionNum);
 		_statusFlag = _scene._sectionNum != 1;
-		_pendingDialog = DIALOG_DIFFICULTY;
+		_vm->_dialogs->_pendingDialog = DIALOG_DIFFICULTY;
 
 		showDialog();
-		_pendingDialog = DIALOG_NONE;
+		_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 
 		_vm->_events->freeCursors();
 		_scene._priorSectionNum = 0;
 		_scene._priorSceneId = 0;
-		_scene._sectionNum2 = -1;
+		_scene._sectionNumPrior = -1;
 		_scene._currentSceneId = -1;
 	}
 
@@ -105,7 +107,7 @@ void Game::gameLoop() {
 
 		_scene.clearSprites(true);
 
-		if (_scene._sectionNum == _scene._sectionNum2) {
+		if (_scene._sectionNum == _scene._sectionNumPrior) {
 			sectionLoop();
 		}
 
@@ -113,14 +115,47 @@ void Game::gameLoop() {
 		_vm->_events->resetCursor();
 		_vm->_events->freeCursors();
 		_vm->_sound->closeDriver();
-
 	}
 
 	_vm->_palette->close();
 }
 
 void Game::sectionLoop() {
+	while (!_vm->shouldQuit() && _statusFlag && _scene._sectionNum == _scene._sectionNumPrior) {
 
+		if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globalFlags[5]) {
+			_v1 = 3;
+			_player._spritesChanged = true;
+			_v5 = 0;
+			_v6 = 0;
+			_vm->_events->resetCursor();
+
+			_quotes = nullptr;
+			_scene.clearVocab();
+			_scene.loadScene();
+
+			_v4 = 0;
+			_player._stepEnabled = true;
+			_player._visible = true;
+			_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
+			_scene.addVisitedScene(_scene._nextSceneId);
+
+			// TODO: main section loop logic goes here
+
+			// Clear the scene
+			_scene.free();
+			_scene._sectionNum = _scene._nextSceneId / 100;
+
+			// TODO: sub_1DD46(3)
+
+			// Check whether to show a dialog
+			if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globalFlags[5]) {
+				_scene.releasePlayerSprites();
+				showDialog();
+				_vm->_dialogs->_pendingDialog = DIALOG_NONE;
+			}
+		}
+	}
 }
 
 void Game::initSection(int sectionNumber) {
@@ -202,6 +237,10 @@ void InventoryObject::load(Common::SeekableReadStream &f) {
 Player::Player() {
 	_direction = 8;
 	_newDirection = 8;
+	_spritesLoaded = false;
+	_spriteListStart = _numSprites = 0;
+	_stepEnabled = false;
+	_visible = false;
 }
 
 } // End of namespace MADS

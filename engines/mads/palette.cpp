@@ -293,7 +293,7 @@ void Palette::initRange(byte *palette) {
 		int varE = vbx;
 		int var10 = vdx;
 		do {
-			int vdx = 0;
+			vdx = 0;
 			do {
 				int vcx = 0;
 				int var4 = vdx;

@@ -38,11 +38,6 @@ enum Difficulty {
 	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
 };
 
-enum DialogId {
-	DIALOG_NONE = 0, DIALOG_GAME_MENU = 1, DIALOG_SAVE = 2, DIALOG_RESTORE = 3,
-	DIALOG_OPTIONS = 4, DIALOG_DIFFICULTY = 5, DIALOG_ERROR = 6
-};
-
 class InventoryObject {
 public:
 	int _descId;
@@ -67,6 +62,12 @@ class Player {
 public:
 	int _direction;
 	int _newDirection;
+	bool _spritesLoaded;
+	int _spriteListStart;
+	int _numSprites;
+	bool _stepEnabled;
+	bool _spritesChanged;
+	bool _visible;
 public:
 	Player();
 };
@@ -76,6 +77,7 @@ protected:
 	MADSEngine *_vm;
 public:
 	SectionHandler(MADSEngine *vm): _vm(vm) {}
+	virtual ~SectionHandler() {}
 
 	virtual void preLoadSection() = 0;
 	virtual void sectionPtr2() = 0;
@@ -104,10 +106,14 @@ protected:
 	Scene _scene;
 	int _saveSlot;
 	int _statusFlag;
-	DialogId _pendingDialog;
 	SectionHandler *_sectionHandler;
 	int _v1;
 	int _v2;
+	int _v3;
+	int _v4;
+	int _v5;
+	int _v6;
+	byte *_quotes;
 
 	/**
 	 * Constructor
@@ -172,6 +178,8 @@ public:
 	 * Run the game
 	 */
 	void run();
+
+	Player &player() { return _player; }
 };
 
 } // End of namespace MADS

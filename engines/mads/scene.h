@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "mads/assets.h"
 
 namespace MADS {
 
@@ -62,32 +63,159 @@ public:
 	TextDisplay();
 };
 
+class DynamicHotspot {
+public:
+	int _seqIndex;
+	Common::Rect _bounds;
+	Common::Point _feetPos;
+	int _facing;
+	int _descId;
+	int _field14;
+	int _articleNumber;
+	int _cursor;
+
+	DynamicHotspot();
+};
+
 #define SPRITE_COUNT 50
 #define TEXT_DISPLAY_COUNT 40
+#define DYNAMIC_HOTSPOT_COUNT 8
+
+class MADSEngine;
+class Scene;
+
+class SceneLogic {
+protected:
+	Scene *_scene;
+public:
+	/**
+	 * Constructor
+	 */
+	SceneLogic(Scene *scene): _scene(scene) {}
+
+	/**
+	 * Called to initially setup a scene
+	 */
+	virtual void setup() = 0;
+
+	/**
+	 * Called as the scene is entered (made active)
+	 */
+	virtual void enter() = 0;
+
+	/**
+	 * Called one per frame
+	 */
+	virtual void step() = 0;
+
+	/**
+	 * Called before an action is started
+	 */
+	virtual void preActions() = 0;
+
+	/**
+	 * Handles scene actions
+	 */
+	virtual void actions() = 0;
+
+	/**
+	 * Post-action handling
+	 */
+	virtual void postActions() = 0;
+};
 
 class Scene {
+private:
+	/**
+	 * Free the voculary list buffer
+	 */
+	void freeVocab();
+
+	/**
+	 * Return the index of a given Vocab in the active vocab list
+	 */
+	int activeVocabIndexOf(int vocabId);
+
+	/**
+	 * Returns true if a given Scene Id exists in the listed of previously visited scenes.
+	 */
+	bool visitedScenesExists(int sceneId);
+protected:
+	MADSEngine *_vm;
 public:
+	SceneLogic *_sceneLogic;
 	int _priorSectionNum;
 	int _sectionNum;
-	int _sectionNum2;
+	int _sectionNumPrior;
 	int _priorSceneId;
 	int _nextSceneId;
 	int _currentSceneId;
 	TextDisplay _textDisplay[TEXT_DISPLAY_COUNT];
 	Common::Array<SpriteSlot> _spriteSlots;
-	Common::Array<int> _spriteList;
+	Common::Array<SpriteAsset *> _spriteList;
 	int _spriteListIndex;
+	Common::Array<DynamicHotspot> _dynamicHotspots;
+	bool _dynamicHotspotsChanged;
+	byte *_vocabBuffer;
+	int _vocabCount;
+	Common::Array<int> _activeVocabs;
+	Common::Array<int> _visitedScenes;
 
 	/**
 	 * Constructor
 	 */
-	Scene();
+	Scene(MADSEngine *vm);
+
+	/**
+	 * Destructor
+	 */
+	~Scene();
 
 	/**
 	 * Initialise the sprite data
 	 * @param flag		Also reset sprite list
 	 */
 	void clearSprites(bool flag);
+
+	/**
+	 * Delete any sprites used by the player
+	 */
+	void releasePlayerSprites();
+
+	/**
+	 * Delete a sprite entry
+	 */
+	void deleteSpriteEntry(int listIndex);
+
+	/**
+	 * Clear the dynamic hotspot list
+	 */
+	void clearDynamicHotspots();
+
+	/**
+	 * Clear the vocabulary list
+	 */
+	void clearVocab();
+
+	/**
+	 * Add a given vocab entry to the active list
+	 */
+	void addActiveVocab(int vocabId);
+
+	/**
+	 * Add a scene to the visited scene list if it doesn't already exist
+	 */
+	void addVisitedScene(int sceneId);
+
+	/**
+	 * Loads the scene logic for a given scene
+	 */
+	void loadScene();
+
+	/**
+	 * Clear the data for the scene
+	 */
+	void free();
 };
 
 } // End of namespace MADS

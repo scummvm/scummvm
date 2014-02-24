@@ -43,6 +43,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_textWindowStill = false;
 
 	_debugger = nullptr;
+	_dialogs = nullptr;
 	_events = nullptr;
 	_font = nullptr;
 	_game = nullptr;
@@ -55,6 +56,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 
 MADSEngine::~MADSEngine() {
 	delete _debugger;
+	delete _dialogs;
 	delete _events;
 	delete _font;
 	delete _game;
@@ -77,6 +79,7 @@ void MADSEngine::initialise() {
 
 	ResourcesManager::init(this);
 	_debugger = new Debugger(this);
+	_dialogs = Dialogs::init(this);
 	_events = new EventsManager(this);
 	_palette = new Palette(this);
 	_font = new Font(this);
