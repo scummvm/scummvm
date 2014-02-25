@@ -400,7 +400,7 @@ void ShootEmUp::initRunner(int16 x, int16 y, byte f1, byte f2, int8 ix, int8 iy)
 			_running[i]._lowest = f1;
 			_running[i]._ix = ix;
 			_running[i]._iy = iy;
-			if ((ix = 0) && (iy = 0))
+			if ((ix == 0) && (iy == 0))
 				_running[i]._ix = 2; // To stop them running on the spot!
 			_running[i]._frameDelay = kFrameDelayMax;
 			return;
