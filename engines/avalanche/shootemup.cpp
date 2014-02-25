@@ -39,7 +39,7 @@ const byte ShootEmUp::kFacingLeft = 93;
 const long int ShootEmUp::kFlag = -20047;
 const byte ShootEmUp::kFrameDelayMax = 2;
 const byte ShootEmUp::kAvvyY = 150;
-const byte ShootEmUp::kShooting[7] = { 87, 80, 81, 82, 81, 80, 87 };
+const byte ShootEmUp::kShooting[7] = { 86, 79, 80, 81, 80, 79, 86 };
 const byte ShootEmUp::kTimesASecond = 18;
 const byte ShootEmUp::kFlashTime = 20; // If flash_time is <= this, the word "time" will flash. Should be about 20.
 
@@ -211,7 +211,7 @@ void ShootEmUp::define(int16 x, int16 y, int8 p, int8 ix, int8 iy, int16 time, b
 		if (_sprites[i]._x == kFlag) {
 			_sprites[i]._x = x;
 			_sprites[i]._y = y;
-			_sprites[i]._p = p - 1;
+			_sprites[i]._p = p;
 			_sprites[i]._ix = ix;
 			_sprites[i]._iy = iy;
 			_sprites[i]._timeout = time;
@@ -446,10 +446,10 @@ void ShootEmUp::collisionCheck() {
 			if ((!_hasEscaped[thisStock]) && (distFromSide > 17) && (distFromSide < 34)) {
 				_vm->_sound->playNote(999, 3);
 				_vm->_system->delayMillis(3);
-				define(_sprites[i]._x + 20, _sprites[i]._y, 26 + _vm->_rnd->getRandomNumber(1), 3, 1, 12, false, true); // Well done!
-				define(thisStock * 90 + 20, 30, 31, 0, 0, 7, false, false); // Face of man
+				define(_sprites[i]._x + 20, _sprites[i]._y, 25 + _vm->_rnd->getRandomNumber(1), 3, 1, 12, false, true); // Well done!
+				define(thisStock * 90 + 20, 30, 30, 0, 0, 7, false, false); // Face of man
 				defineCameo(thisStock * 90 + 20 + 10, 35, 40, 7); // Splat!
-				define(thisStock * 90 + 20 + 20, 50, 34 + _vm->_rnd->getRandomNumber(4), 0, 2, 9, false, true); // Oof!
+				define(thisStock * 90 + 20 + 20, 50, 33 + _vm->_rnd->getRandomNumber(4), 0, 2, 9, false, true); // Oof!
 				_stockStatus[thisStock] = 17;
 				gain(3); // Score for hitting a face.
 
@@ -461,9 +461,9 @@ void ShootEmUp::collisionCheck() {
 					newEscape();
 				}
 			} else {
-				define(_sprites[i]._x, _sprites[i]._y, 83 + _vm->_rnd->getRandomNumber(2), 2, 2, 17, false, true); // Missed!
+				define(_sprites[i]._x, _sprites[i]._y, 82 + _vm->_rnd->getRandomNumber(2), 2, 2, 17, false, true); // Missed!
 				if ((!_hasEscaped[thisStock]) && (distFromSide > 3) && (distFromSide < 43)) {
-					define(thisStock * 90 + 20, 30, 30, 0, 0, 7, false, false); // Face of man
+					define(thisStock * 90 + 20, 30, 29, 0, 0, 7, false, false); // Face of man
 					if (distFromSide > 35)
 						defineCameo(_sprites[i]._x - 27, 35, 40, 7); // Splat!
 					else
@@ -514,9 +514,9 @@ void ShootEmUp::peopleRunning() {
 
 			byte frame = 0;
 			if (_running[i]._ix < 0)
-				frame = _running[i]._frame;
+				frame = _running[i]._frame - 1;
 			else
-				frame = _running[i]._frame + 7;
+				frame = _running[i]._frame + 6;
 			define(_running[i]._x, _running[i]._y, frame, 0, 0, 1, false, true);
 
 			if (_running[i]._frameDelay == 0) {
@@ -575,8 +575,8 @@ void ShootEmUp::hitPeople() {
 					_vm->_sound->playNote(7177, 1);
 					_sprites[i]._x = kFlag;
 					gain(-5);
-					define(_running[j]._x + 20, _running[j]._y + 3, 34 + _vm->_rnd->getRandomNumber(5), 1, 3, 9, false, true); // Oof!
-					define(_sprites[i]._x, _sprites[i]._y, 83, 1, 0, 17, false, true); // Oops!
+					define(_running[j]._x + 20, _running[j]._y + 3, 33 + _vm->_rnd->getRandomNumber(5), 1, 3, 9, false, true); // Oof!
+					define(_sprites[i]._x, _sprites[i]._y, 82, 1, 0, 17, false, true); // Oops!
 				}
 			}
 		}
@@ -603,7 +603,7 @@ void ShootEmUp::escapeCheck() {
 			_vm->_graphics->seuDrawPicture(_escapeStock * 90 + 20, 30, kStocks + 5);
 			_escapeCount = 20;
 			_gotOut = true;
-			define(_escapeStock * 90 + 20, 50, 25, 0, 2, 17, false, true); // Escaped!
+			define(_escapeStock * 90 + 20, 50, 24, 0, 2, 17, false, true); // Escaped!
 			gain(-10);
 			_hasEscaped[_escapeStock] = true;
 
@@ -631,14 +631,14 @@ void ShootEmUp::check321() {
 
 	switch (_count321) {
 	case 84:
-		define(320, 60, 16, 2, 1, 94, false, true);
+		define(320, 60, 15, 2, 1, 94, false, true);
 		break;
 	case 169:
-		define(320, 60, 15, 0, 1, 94, false, true);
+		define(320, 60, 14, 0, 1, 94, false, true);
 		break;
 	case 254:
-		define(320, 60, 14, -2, 1, 94, false, true);
-		define(0, 100, 18, 2, 0, 254, false, true);
+		define(320, 60, 13, -2, 1, 94, false, true);
+		define(0, 100, 17, 2, 0, 254, false, true);
 		break;
 	default:
 		break;
