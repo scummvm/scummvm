@@ -609,8 +609,10 @@ void ShootEmUp::escapeCheck() {
 
 			_howManyHaveEscaped++;
 
-			if (_howManyHaveEscaped == 7)
+			if (_howManyHaveEscaped == 7) {
+				_vm->_graphics->seuDrawPicture(266, 90, 23);
 				_time = 0;
+			}
 		}
 	} else {
 		_escapeStock = getStockNumber(_vm->_rnd->getRandomNumber(6));
