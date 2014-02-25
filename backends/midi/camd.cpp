@@ -57,7 +57,6 @@ private:
 	struct Library *_CamdBase;
 	struct CamdIFace *_ICamd;
 	struct MidiLink *_midi_link;
-	char _outport[128];
 
 	char *getDevice();
 	void closeAll();
@@ -146,6 +145,7 @@ void MidiDriver_CAMD::sysEx(const byte *msg, uint16 length) {
 
 char *MidiDriver_CAMD::getDevice() {
 	char *retname = NULL;
+	char *_outport = new char[1];
 
 	APTR key = _ICamd->LockCAMD(CD_Linkages);
 	if (key != NULL) {
@@ -157,7 +157,7 @@ char *MidiDriver_CAMD::getDevice() {
 
 			if (strstr(dev, "out") != NULL) {
 				// This is an output device, return this
-				strcpy(_outport, dev);
+				Common::strlcpy(_outport, dev, sizeof(_outport));
 				retname = _outport;
 			} else {
 				// Search the next one
