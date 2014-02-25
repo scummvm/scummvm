@@ -165,12 +165,9 @@ Vars::Vars() {
 	scene09_gulperIsPresent = true;
 	scene09_dudeIsOnLadder = false;
 	scene09_interactingHanger = -1;
-	scene09_var11 = -1;
-	scene09_var12 = -1000;
+	scene09_intHangerPhase = -1;
+	scene09_intHangerMaxPhase = -1000;
 	scene09_numMovingHangers = 0;
-	scene09_var13 = 0;
-	scene09_var15 = 0;
-	scene09_var17 = 0;
 	scene09_clickY = 0;
 	scene09_hangerOffsets[0].x = 0;
 	scene09_hangerOffsets[0].y = -15;

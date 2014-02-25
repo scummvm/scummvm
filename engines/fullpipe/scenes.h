@@ -357,15 +357,12 @@ public:
 	bool scene09_gulperIsPresent;
 	bool scene09_dudeIsOnLadder;
 	int scene09_interactingHanger;
-	int scene09_var11;
-	int scene09_var12;
+	int scene09_intHangerPhase;
+	int scene09_intHangerMaxPhase;
 	BallChain scene09_balls;
 	Common::Array<Hanger *> scene09_hangers;
-	BallChain scene09_var07;
+	BallChain scene09_flyingBalls;
 	int scene09_numMovingHangers;
-	int scene09_var13;
-	int scene09_var15;
-	int scene09_var17;
 	int scene09_clickY;
 	Common::Point scene09_hangerOffsets[4];
 
