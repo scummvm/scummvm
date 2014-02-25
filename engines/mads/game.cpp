@@ -132,7 +132,7 @@ void Game::sectionLoop() {
 
 			_quotes = nullptr;
 			_scene.clearVocab();
-			_scene.loadScene();
+			_scene.loadSceneLogic();
 
 			_v4 = 0;
 			_player._stepEnabled = true;
@@ -219,7 +219,7 @@ void Game::addVisitedScene(int sceneId) {
 }
 
 bool Game::visitedScenesExists(int sceneId) {
-	for (int i = 0; i < _visitedScenes.size(); ++i) {
+	for (uint i = 0; i < _visitedScenes.size(); ++i) {
 		if (_visitedScenes[i] == sceneId)
 			return true;
 	}

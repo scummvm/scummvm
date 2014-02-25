@@ -77,7 +77,7 @@ void MADSEngine::initialise() {
 	MSurface::setVm(this);
 	MSprite::setVm(this);
 
-	ResourcesManager::init(this);
+	Resources::init(this);
 	_debugger = new Debugger(this);
 	_dialogs = Dialogs::init(this);
 	_events = new EventsManager(this);

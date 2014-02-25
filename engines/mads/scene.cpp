@@ -36,6 +36,17 @@ Scene::Scene(MADSEngine *vm): _vm(vm) {
 	_currentSceneId = 0;
 	_vocabBuffer = nullptr;
 	_sceneLogic = nullptr;
+
+	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
+	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
+	_verbList.push_back(VerbInit(VERB_PUSH, 2, 0));
+	_verbList.push_back(VerbInit(VERB_OPEN, 2, 0));
+	_verbList.push_back(VerbInit(VERB_PUT, 1, -1));
+	_verbList.push_back(VerbInit(VERB_TALKTO, 2, 0));
+	_verbList.push_back(VerbInit(VERB_GIVE, 1, 2));
+	_verbList.push_back(VerbInit(VERB_PULL, 2, 0));
+	_verbList.push_back(VerbInit(VERB_CLOSE, 2, 0));
+	_verbList.push_back(VerbInit(VERB_THROW, 1, 2));
 }
 
 Scene::~Scene() {
@@ -104,7 +115,17 @@ int Scene::activeVocabIndexOf(int vocabId) {
 	return -1;
 }
 
-void Scene::loadScene() {
+void Scene::clearSequenceList() {
+	_sequenceList.clear();
+}
+
+void Scene::clearMessageList() {
+	_messageList.clear();
+	_talkFont = "*FONTCONV.FF";
+	_textSpacing  = -1;
+}
+
+void Scene::loadSceneLogic() {
 	delete _sceneLogic;
 
 	switch (_vm->getGameID()) {
@@ -113,6 +134,31 @@ void Scene::loadScene() {
 		break;
 	default:
 		error("Unknown game");
+	}
+}
+
+void Scene::loadHotspots() {
+	File f(Resources::formatName(RESPREFIX_RM, _currentSceneId, ".HH"));
+	int count = f.readUint16LE();
+
+	_hotspotList.clear();
+	for (int i = 0; i < count; ++i)
+		_hotspotList.push_back(Hotspot(f));
+}
+
+void Scene::loadVocab() {
+	// Add all the verbs to the active vocab list
+	for (uint i = 0; i < _verbList.size(); ++i)
+		addActiveVocab(_verbList[i]._id);
+
+	// Load the vocabs for any object descriptions and custom actions
+	for (uint objIndex = 0; objIndex < _vm->_game->_objects.size(); ++objIndex) {
+		InventoryObject &io = _vm->_game->_objects[objIndex];
+		addActiveVocab(io._descId);
+
+		if (io._vocabCount > 0) {
+			// TODO
+		}
 	}
 }
 
@@ -158,6 +204,71 @@ DynamicHotspot::DynamicHotspot() {
 	_field14 = 0;
 	_articleNumber = 0;
 	_cursor = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+SequenceEntry::SequenceEntry() {
+	_spriteListIndex = 0;
+	_flipped =0;
+	_frameIndex = 0;
+	_frameStart = 0;
+	_numSprites = 0;
+	_animType = 0;
+	_frameInc = 0;
+	_depth = 0;
+	_scale = 0;
+	_dynamicHotspotIndex = -1;
+	_triggerCountdown = 0;
+	_doneFlag = 0;
+	_entries._count = 0;
+	_abortMode = 0;
+	_actionNouns[0] = _actionNouns[1] = _actionNouns[2] = 0;
+	_numTicks = 0;
+	_extraTicks = 0;
+	_timeout = 0;
+}
+
+KernelMessage::KernelMessage() {
+	_flags = 0;
+	_seqInex = 0;
+	_asciiChar = '\0';
+	_asciiChar2 = '\0';
+	_colors = 0;
+	Common::Point _posiition;
+	_msgOffset = 0;
+	_numTicks = 0;
+	_frameTimer2 = 0;
+	_frameTimer = 0;
+	_timeout = 0;
+	_field1C = 0;
+	_abortMode = 0;
+	_nounList[0] = _nounList[1] = _nounList[2] = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+Hotspot::Hotspot() {
+	_facing = 0;
+	_articleNumber = 0;
+	_cursor = 0;
+	_vocabId = 0;
+	_verbId = 0;
+}
+
+Hotspot::Hotspot(Common::SeekableReadStream &f) {
+	_bounds.left = f.readSint16LE();
+	_bounds.top = f.readSint16LE();
+	_bounds.right = f.readSint16LE();
+	_bounds.bottom = f.readSint16LE();
+	_feetPos.x = f.readSint16LE();
+	_feetPos.y = f.readSint16LE();
+	_facing = f.readByte();
+	_articleNumber = f.readByte();
+	f.skip(1);
+	_cursor = f.readByte();
+	_vocabId = f.readUint16LE();
+	_verbId = f.readUint16LE();
 }
 
 } // End of namespace MADS

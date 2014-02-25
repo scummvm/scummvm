@@ -109,9 +109,6 @@ protected:
 	MADSEngine *_vm;
 	MSurface *_surface;
 	Difficulty _difficultyLevel;
-	Common::Array<uint16> _globalFlags;
-	Common::Array<InventoryObject> _objects;
-	Common::Array<int> _inventoryList;
 	Player _player;
 	Scene _scene;
 	int _saveSlot;
@@ -177,6 +174,9 @@ public:
 public:
 	int _sectionNumber;
 	int _priorSectionNumber;
+	Common::Array<uint16> _globalFlags;
+	Common::Array<InventoryObject> _objects;
+	Common::Array<int> _inventoryList;
 public:
 	virtual ~Game();
 

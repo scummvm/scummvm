@@ -30,6 +30,30 @@
 
 namespace MADS {
 
+enum {
+	VERB_LOOK        = 3,
+	VERB_TAKE        = 4,
+	VERB_PUSH        = 5,
+	VERB_OPEN        = 6,
+	VERB_PUT         = 7,
+	VERB_TALKTO      = 8,
+	VERB_GIVE        = 9,
+	VERB_PULL        = 10,
+	VERB_CLOSE       = 11,
+	VERB_THROW       = 12,
+	VERB_WALKTO      = 13
+};
+
+class VerbInit {
+public:
+	int _id;
+	int _action1;
+	int _action2;
+
+	VerbInit() {}
+	VerbInit(int id, int action1, int action2): _id(id), _action1(action1), _action2(action2) {}
+};
+
 enum SpriteType {
 	ST_NONE = 0, ST_FOREGROUND = 1, ST_BACKGROUND = -4, 
 	ST_FULL_SCREEN_REFRESH = -2, ST_EXPIRED = -1
@@ -75,6 +99,73 @@ public:
 	int _cursor;
 
 	DynamicHotspot();
+};
+
+class SequenceEntry {
+public:
+	int _spriteListIndex;
+	int _flipped;
+	int _frameIndex;
+	int _frameStart;
+	int _numSprites;
+	int _animType;
+	int _frameInc;
+	int _depth;
+	int _scale;
+	int _dynamicHotspotIndex;
+	
+	Common::Point _msgPos;
+
+	int _triggerCountdown;
+	bool _doneFlag;
+	struct {
+		int _count;
+		int _mode[5];
+		int _frameIndex[5];
+		int _abortVal[5];
+	} _entries;
+	int _abortMode;
+	int _actionNouns[3];
+	int _numTicks;
+	int _extraTicks;
+	int _timeout;
+
+	SequenceEntry();
+};
+
+class KernelMessage {
+public:
+	int _flags;
+	int _seqInex;
+	char _asciiChar;
+	char _asciiChar2;
+	int _colors;
+	Common::Point _posiition;
+	int _msgOffset;
+	int _numTicks;
+	int _frameTimer2;
+	int _frameTimer;
+	int _timeout;
+	int _field1C;
+	int _abortMode;
+	int _nounList[3];
+	Common::String _msg;
+
+	KernelMessage();
+};
+
+class Hotspot {
+public:
+	Common::Rect _bounds;
+	Common::Point _feetPos;
+	int _facing;
+	int _articleNumber;
+	int _cursor;
+	int _vocabId;
+	int _verbId;
+
+	Hotspot();
+	Hotspot(Common::SeekableReadStream &f);
 };
 
 #define SPRITE_COUNT 50
@@ -146,6 +237,7 @@ public:
 	int _priorSceneId;
 	int _nextSceneId;
 	int _currentSceneId;
+	Common::Array<VerbInit> _verbList;
 	TextDisplay _textDisplay[TEXT_DISPLAY_COUNT];
 	Common::Array<SpriteSlot> _spriteSlots;
 	Common::Array<SpriteAsset *> _spriteList;
@@ -154,6 +246,11 @@ public:
 	bool _dynamicHotspotsChanged;
 	byte *_vocabBuffer;
 	Common::Array<int> _activeVocabs;
+	Common::Array<SequenceEntry> _sequenceList;
+	Common::Array<KernelMessage> _messageList;
+	Common::String _talkFont;
+	int _textSpacing;
+	Common::Array<Hotspot> _hotspotList;
 
 	/**
 	 * Constructor
@@ -197,9 +294,29 @@ public:
 	void addActiveVocab(int vocabId);
 
 	/**
+	 * Clear the sequence list
+	 */
+	void clearSequenceList();
+
+	/**
+	 * Clear the message list
+	 */
+	void clearMessageList();
+
+	/**
 	 * Loads the scene logic for a given scene
 	 */
-	void loadScene();
+	void loadSceneLogic();
+
+	/**
+	 * Loads the hotstpots for the scene
+	 */
+	void loadHotspots();
+
+	/**
+	 * Loads the vocab list
+	 */
+	void loadVocab();
 
 	/**
 	 * Clear the data for the scene

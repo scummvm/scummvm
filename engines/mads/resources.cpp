@@ -88,19 +88,6 @@ public:
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 };
 
-void ResourcesManager::init(MADSEngine *vm) {
-	SearchMan.add("HAG", new HagArchive());
-}
-
-/*------------------------------------------------------------------------*/
-
-void File::openFile(const Common::String &filename) {
-	if (!Common::File::open(filename))
-		error("Could not open file - %s", filename.c_str());
-}
-
-/*------------------------------------------------------------------------*/
-
 const char *const MADSCONCAT_STRING = "MADSCONCAT";
 
 HagArchive::HagArchive() {
@@ -280,6 +267,47 @@ ResourceType HagArchive::getResourceType(const Common::String &resourceName) con
 	}
 
 	return RESTYPE_NO_EXT;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Resources::init(MADSEngine *vm) {
+	SearchMan.add("HAG", new HagArchive());
+}
+
+Common::String Resources::formatName(RESPREFIX resType, int id, const Common::String &ext) {
+	Common::String result = "*";
+
+	if (resType == 3 && !id) {
+		id = id / 100;
+	}
+
+	if (!ext.empty()) {
+		switch (resType) {
+		case RESPREFIX_GL:
+			result += "GL000";
+			break;
+		case RESPREFIX_SC:
+			result += Common::String::format("SC%.3d", id);
+			break;
+		case RESPREFIX_RM:
+			result += Common::String::format("RM%.3d", id);
+			break;
+		default:
+			break;
+		}
+
+		result += ext;
+	}
+
+	return result;
+}
+
+/*------------------------------------------------------------------------*/
+
+void File::openFile(const Common::String &filename) {
+	if (!Common::File::open(filename))
+		error("Could not open file - %s", filename.c_str());
 }
 
 } // End of namespace MADS

@@ -94,7 +94,7 @@ public:
 	Font *_font;
 	Game *_game;
 	Palette *_palette;
-	ResourcesManager *_resources;
+	Resources *_resources;
 	MSurface *_screen;
 	SoundManager *_sound;
 	UserInterface *_userInterface;
