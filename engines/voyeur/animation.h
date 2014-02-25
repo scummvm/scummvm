@@ -69,9 +69,9 @@ private:
 		bool isValid() const;
 
 	private:
-		uint32 _form;
-		uint32 _dataSize;
-		int _method;
+		uint32 _form;      // Unused variable
+		uint32 _dataSize;  // Unused variable
+		int _method;       // Unused variable
 		int _defSoundSize;
 	};
 

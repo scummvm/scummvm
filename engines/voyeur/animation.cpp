@@ -153,6 +153,19 @@ RL2Decoder::SoundFrame::SoundFrame(int offset, int size) {
 RL2Decoder::RL2FileHeader::RL2FileHeader() {
 	_frameOffsets = nullptr;
 	_frameSoundSizes = nullptr;
+
+	_channels = 0;
+	_colorCount = 0;
+	_numFrames = 0;
+	_rate = 0;
+	_soundRate = 0;
+	_videoBase = 0;
+	_backSize = 0;
+	_signature = MKTAG('N', 'O', 'N', 'E');
+	_form = 0;
+	_dataSize = 0;
+	_method = 0;
+	_defSoundSize = 0;
 }
 
 RL2Decoder::RL2FileHeader::~RL2FileHeader() {
