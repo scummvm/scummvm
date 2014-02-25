@@ -33,14 +33,22 @@ void ThreadResource::init() {
 	Common::fill(&_useCount[0], &_useCount[8], 0);
 }
 
-ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):
-		_vm(state._vm) {
+ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):_vm(state._vm) {
 	_stateId = READ_LE_UINT16(&src[0]);
 	_stackId = READ_LE_UINT16(&src[0]);
 	_savedStateId = READ_LE_UINT16(&src[0]);
 	_savedStackId = READ_LE_UINT16(&src[0]);
 	_ctlPtr = nullptr;
 	_aptPos = Common::Point(-1, -1);
+
+	_newStateId = -1;
+	_newStackId = -1;
+	_stateFlags = 0;
+	_stateCount = 0;
+	_parseCount = 0;
+	_nextStateId = -1;
+	_threadInfoPtr = nullptr;
+	_playCommandsPtr = nullptr;
 }
 
 void ThreadResource::initThreadStruct(int idx, int id) {
