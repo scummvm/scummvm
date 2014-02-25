@@ -66,8 +66,8 @@ void Help::switchPage(byte which) {
 
 	Common::String title = getLine(file);
 
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlue);
-	_vm->_graphics->drawFilledRectangle(Common::Rect(8, 40, 449, 199), kColorWhite);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlue);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(8, 40, 450, 200), kColorWhite);
 
 	byte index = file.readByte();
 	_vm->_graphics->helpDrawButton(-177, index);

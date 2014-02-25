@@ -300,7 +300,7 @@ void ShootEmUp::nextPage() {
 		}
 	}
 
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlack);
+	_vm->_graphics->blackOutScreen();
 }
 
 void ShootEmUp::instructions() {

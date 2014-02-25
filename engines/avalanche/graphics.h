@@ -59,8 +59,6 @@ public:
 	void loadDigits();
 	void loadMouse(byte which);
 
-	// We have to handle the drawing of rectangles a little bit differently to mimic Pascal's bar() and rectangle() methods properly.
-	// Now it is possible to use the original coordinates everywhere.
 	void drawRectangle(Common::Rect rect, Color color);
 	void drawFilledRectangle(Common::Rect rect, Color color);
 	void blackOutScreen();

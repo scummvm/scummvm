@@ -479,15 +479,15 @@ void GraphicManager::drawDebugLines() {
 }
 
 void GraphicManager::drawRectangle(Common::Rect rect, Color color) {
-	_surface.frameRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), color);
+	_surface.frameRect(rect, color);
 }
 
 void GraphicManager::drawFilledRectangle(Common::Rect rect, Color color) {
-	_surface.fillRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), color);
+	_surface.fillRect(rect, color);
 }
 
 void GraphicManager::blackOutScreen() {
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlack);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
 }
 
 void GraphicManager::nimLoad() {
@@ -691,7 +691,7 @@ void GraphicManager::helpDrawHighlight(byte which, Color color) {
 		return;
 
 	which &= 31;
-	drawRectangle(Common::Rect(466, 38 + which * 27, 555, 62 + which * 27), color);
+	drawRectangle(Common::Rect(466, 38 + which * 27, 556, 63 + which * 27), color);
 }
 
 /**
