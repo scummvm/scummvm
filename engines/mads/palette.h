@@ -175,6 +175,11 @@ public:
 	void resetGamePalette(int v1, int v2);
 
 	/**
+	 * Initialises game palette
+	 */
+	void initGamePalette();
+
+	/**
 	 * Set the first four palette entries with preset values
 	 */
 	void setLowRange();

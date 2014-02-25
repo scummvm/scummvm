@@ -155,7 +155,7 @@ void GameNebular::initialiseGlobals() {
 void GameNebular::setSectionHandler() {
 	delete _sectionHandler;
 
-	switch (_scene._sectionNum) {
+	switch (_sectionNumber) {
 	case 1:
 		_sectionHandler = new Section1Handler(_vm);
 		break;
@@ -176,6 +176,9 @@ void GameNebular::setSectionHandler() {
 		break;
 	case 7:
 		_sectionHandler = new Section7Handler(_vm);
+		break;
+	case 8:
+		_sectionHandler = new Section8Handler(_vm);
 		break;
 	default:
 		break;

@@ -70,6 +70,10 @@ public:
 	bool _visible;
 public:
 	Player();
+
+	void loadSprites(const Common::String &prefix) {
+		warning("TODO: Player::loadSprites");
+	}
 };
 
 class SectionHandler {
@@ -122,6 +126,8 @@ protected:
 	int _v4;
 	int _v5;
 	int _v6;
+	Common::String _aaName;
+	bool _playerSpritesFlag;
 
 	/**
 	 * Constructor
@@ -174,6 +180,7 @@ public:
 public:
 	int _sectionNumber;
 	int _priorSectionNumber;
+	int _currentSectionNumber;
 	Common::Array<uint16> _globalFlags;
 	Common::Array<InventoryObject> _objects;
 	Common::Array<int> _inventoryList;

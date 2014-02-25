@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	palette.o \
 	resources.o \
 	scene.o \
+	scene_data.o \
 	sound.o \
 	user_interface.o
 

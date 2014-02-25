@@ -283,6 +283,10 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 	}
 }
 
+void Palette::initGamePalette() {
+	// TODO
+}
+
 void Palette::initRange(byte *palette) {
 	int var6 = 0;
 	int vdx = 0;

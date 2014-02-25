@@ -60,7 +60,7 @@ typedef Section1Handler Section4Handler;
 typedef Section1Handler Section5Handler;
 typedef Section1Handler Section6Handler;
 typedef Section1Handler Section7Handler;
-
+typedef Section1Handler Section8Handler;
 
 } // End of namespace Nebular
 

@@ -28,9 +28,6 @@
 namespace MADS {
 
 Scene::Scene(MADSEngine *vm): _vm(vm) {
-	_sectionNum = 1;
-	_sectionNumPrior = -1;
-	_priorSectionNum = 0;
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
@@ -47,6 +44,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm) {
 	_verbList.push_back(VerbInit(VERB_PULL, 2, 0));
 	_verbList.push_back(VerbInit(VERB_CLOSE, 2, 0));
 	_verbList.push_back(VerbInit(VERB_THROW, 1, 2));
+	Common::fill((byte *)&_nullPalette[0], (byte *)&_nullPalette[3], 0);
 }
 
 Scene::~Scene() {
@@ -156,14 +154,41 @@ void Scene::loadVocab() {
 		InventoryObject &io = _vm->_game->_objects[objIndex];
 		addActiveVocab(io._descId);
 
-		if (io._vocabCount > 0) {
-			// TODO
+		for (int vocabIndex = 0; vocabIndex <io._vocabCount; ++vocabIndex) {
+			addActiveVocab(io._vocabList[vocabIndex]._vocabId);
 		}
+	}
+
+	// Load scene hotspot list vocabs and verbs
+	for (uint i = 0; i < _hotspotList.size(); ++i) {
+		addActiveVocab(_hotspotList[i]._vocabId);
+		if (_hotspotList[i]._verbId)
+			addActiveVocab(_hotspotList[i]._verbId);
+	}
+
+	loadVocabStrings();
+}
+
+void Scene::loadVocabStrings() {
+	freeVocab();
+	File f("*VOCAB.DAT");
+
+	byte *d = new byte[ f.size()];
+	f.read(d, f.size());
+
+
+	int vocabId = 1;
+	for (uint strIndex = 0; strIndex < _activeVocabs.size(); ++strIndex) {
+
 	}
 }
 
 void Scene::free() {
 	warning("TODO: Scene::free");
+}
+
+void Scene::setPalette(RGB4 *p) {
+	_scenePalette = p;
 }
 
 /*------------------------------------------------------------------------*/
