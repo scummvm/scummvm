@@ -46,13 +46,13 @@ const byte ShootEmUp::kFlashTime = 20; // If flash_time is <= this, the word "ti
 ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_vm = vm;
 
-	_time = 0;
+	_time = 120;
 	for (int i = 0; i < 7; i++)
 		_stockStatus[i] = 0;
 	for (int i = 0; i < 99; i++) {
 		_sprites[i]._ix = 0;
 		_sprites[i]._iy = 0;
-		_sprites[i]._x = 0;
+		_sprites[i]._x = kFlag;
 		_sprites[i]._y = 0;
 		_sprites[i]._p = 0;
 		_sprites[i]._timeout = 0;
@@ -62,15 +62,15 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 		_sprites[i]._wipe = false;
 	}
 	_rectNum = 0;
-	_avvyWas = 0;
-	_avvyPos = 0;
-	_avvyAnim = 0;
-	_avvyFacing = 0;
+	_avvyWas = 320;
+	_avvyPos = 320;
+	_avvyAnim = 1;
+	_avvyFacing = kFacingLeft;
 	_altWasPressedBefore = false;
-	_throwNext = 0;
+	_throwNext = 74;
 	_firing = false;
 	for (int i = 0; i < 4; i++) {
-		_running[i]._x = 0;
+		_running[i]._x = kFlag;
 		_running[i]._y = 0;
 		_running[i]._frame = 0;
 		_running[i]._tooHigh = 0;
@@ -81,7 +81,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	}
 	for (int i = 0; i < 7; i++)
 		_hasEscaped[i] = false;
-	_count321 = 0;
+	_count321 = 255; // Counting down.
 	_howManyHaveEscaped = 0;
 	_escapeCount = 0;
 	_escaping = false;
@@ -344,31 +344,9 @@ void ShootEmUp::instructions() {
 }
 
 void ShootEmUp::setup() {
-	_score = 0;
-	_time = 120;
-
-	_cp = true;
-
-	_avvyWas = 320;
-	_avvyPos = 320;
-	_avvyAnim = 1;
-	_avvyFacing = kFacingLeft;
-
-	_altWasPressedBefore = false;
-	_throwNext = 74;
-	_firing = false;
-
-	for (int i = 0; i < 4; i++)
-		_running[i]._x = kFlag;
-
-	for (int i = 0; i < 99; i++)
-		_sprites[i]._x = kFlag;
+	_vm->_graphics->blackOutScreen();
 
 	newEscape();
-
-	_count321 = 255; // Counting down.
-
-	_vm->_graphics->blackOutScreen();
 
 	for (int i = 0; i < 7; i++) {
 		_stockStatus[i] = _vm->_rnd->getRandomNumber(1);
