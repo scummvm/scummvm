@@ -743,10 +743,12 @@ RectResource::RectResource(int x1, int y1, int x2, int y2) {
 
 DisplayResource::DisplayResource() {
 	_vm = NULL;
+	_flags = 0;
 }
 
 DisplayResource::DisplayResource(VoyeurEngine *vm) {
 	_vm = vm;
+	_flags = 0;
 }
 
 void DisplayResource::sFillBox(int width, int height) {

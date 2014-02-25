@@ -38,6 +38,9 @@ RL2Decoder::RL2Decoder(Audio::Mixer::SoundType soundType) : _soundType(soundType
 	_paletteStart = 0;
 	_fileStream = nullptr;
 	_soundFrameNumber = -1;
+
+	_audioTrack = nullptr;
+	_videoTrack = nullptr;
 }
 
 RL2Decoder::~RL2Decoder() {
