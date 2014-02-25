@@ -77,6 +77,19 @@ SVoy::SVoy() {
 	_aptLoadMode = -1;
 	_eventFlags |= EVTFLAG_100;
 	_totalPhoneCalls = 0;
+
+	for (int i = 0; i < 6; i++)
+		_evPicPtrs[i] = nullptr;
+	for (int i = 0; i < 1000; i++) {
+		_events[i]._hour = 0;
+		_events[i]._minute = 0;
+		_events[i]._isAM = true;
+		_events[i]._type = EVTYPE_NONE;
+		_events[i]._audioVideoId = -1;
+		_events[i]._computerOn = 0;
+		_events[i]._computerOff = 0;
+		_events[i]._dead = 0;
+	}
 }
 
 void SVoy::setVm(VoyeurEngine *vm) {
@@ -343,6 +356,9 @@ bool SVoy::checkForKey() {
 			default:
 				break;
 			}
+			break;
+
+		default:
 			break;
 		}
 
