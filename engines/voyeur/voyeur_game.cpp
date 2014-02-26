@@ -1327,7 +1327,7 @@ void VoyeurEngine::checkPhoneCall() {
 			_soundManager.stopVOCPlay();
 			_soundManager.startVOCPlay(_currentVocId);
 			_checkPhoneVal = _voy._switchBGNum;
-			++_voy._phoneCallsReceived[soundIndex];
+			_voy._phoneCallsReceived[soundIndex] = true;
 			++_voy._totalPhoneCalls;
 		}
 	}
