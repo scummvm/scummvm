@@ -77,14 +77,11 @@ Common::Error VoyeurEngine::run() {
 	if (_iForceDeath >= 1 && _iForceDeath <= 4)
 		_voy._eventFlags |= EVTFLAG_VICTIM_PRESET;
 
-	_eventsManager.resetMouse();
 	if (doHeadTitle()) {
 		playStamp();
 		if (!shouldQuit())
 			doTailTitle();
 	}
-
-	//doHeadTitle();
 
 	return Common::kNoError;
 }

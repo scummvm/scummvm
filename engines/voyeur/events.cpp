@@ -85,10 +85,6 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_fadeCount = 1;
 }
 
-void EventsManager::resetMouse() {
-	// No implementation
-}
-
 void EventsManager::startMainClockInt() {
 	_mainIntNode._intFunc = &EventsManager::mainVoyeurIntFunc;
 	_mainIntNode._flags = 0;

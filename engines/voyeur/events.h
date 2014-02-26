@@ -115,7 +115,6 @@ public:
 	EventsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
 
-	void resetMouse();
 	void setMousePos(const Common::Point &p) { _mousePos = p; }
 	void startMainClockInt();
 	void sWaitFlip();
