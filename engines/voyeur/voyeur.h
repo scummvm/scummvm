@@ -157,7 +157,7 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
 	BoltFile *_bVoy;
-	Debugger _debugger;
+	Debugger *_debugger;
 	EventsManager _eventsManager;
 	FilesManager _filesManager;
 	GraphicsManager _graphicsManager;

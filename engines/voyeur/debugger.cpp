@@ -27,7 +27,7 @@
 
 namespace Voyeur {
 
-Debugger::Debugger() : GUI::Debugger() {
+Debugger::Debugger(VoyeurEngine *vm) : GUI::Debugger(), _vm(vm) {
 	// Register methods
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("exit", WRAP_METHOD(Debugger, Cmd_Exit));

@@ -40,6 +40,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1, 
 			Common::Point(1, 1), 1, 0, 0) {
 	_voy = nullptr;
+	_debugger = nullptr;
 	_bVoy = NULL;
 
 	_iForceDeath = ConfMan.getInt("boot_param");
@@ -68,6 +69,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 VoyeurEngine::~VoyeurEngine() {
 	delete _bVoy;
 	delete _voy;
+	delete _debugger;
 }
 
 Common::Error VoyeurEngine::run() {
@@ -94,11 +96,11 @@ int VoyeurEngine::getRandomNumber(int maxNumber) {
 }
 
 void VoyeurEngine::initializeManagers() {
-	_debugger.setVm(this);
 	_eventsManager.setVm(this);
 	_filesManager.setVm(this);
 	_graphicsManager.setVm(this);
 	_soundManager.setVm(this);
+	_debugger = new Debugger(this);
 	_voy = new SVoy(this);
 }
 

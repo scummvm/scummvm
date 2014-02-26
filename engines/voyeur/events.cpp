@@ -96,7 +96,7 @@ void EventsManager::mainVoyeurIntFunc() {
 	if (!(_vm->_voy->_eventFlags & EVTFLAG_TIME_DISABLED)) {
 		++_vm->_voy->_switchBGNum;
 
-		if (_vm->_debugger._isTimeActive) {
+		if (_vm->_debugger->_isTimeActive) {
 			// Increase camera discharge
 			++_vm->_voy->_RTVNum;
 
@@ -149,10 +149,10 @@ void EventsManager::checkForNextFrameCounter() {
 			mainVoyeurIntFunc();
 
 		// Give time to the debugger
-		_vm->_debugger.onFrame();
+		_vm->_debugger->onFrame();
 
 		// If mouse position display is on, display the position
-		if (_vm->_debugger._showMousePosition)
+		if (_vm->_debugger->_showMousePosition)
 			showMousePosition();
 
 		// Display the frame
@@ -161,7 +161,7 @@ void EventsManager::checkForNextFrameCounter() {
 		g_system->updateScreen();
 
 		// Signal the ScummVM debugger
-		_vm->_debugger.onFrame();
+		_vm->_debugger->onFrame();
 	}
 }
 
@@ -263,8 +263,8 @@ void EventsManager::pollEvents() {
 			// Check for debugger
 			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
 				// Attach to the debugger
-				_vm->_debugger.attach();
-				_vm->_debugger.onFrame();
+				_vm->_debugger->attach();
+				_vm->_debugger->onFrame();
 			}
 			return;
 		case Common::EVENT_LBUTTONDOWN:

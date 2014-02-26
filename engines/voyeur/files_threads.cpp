@@ -1299,7 +1299,7 @@ int ThreadResource::doInterface() {
 	if (_vm->_voy->_RTVNum >= _vm->_voy->_RTVLimit || _vm->_voy->_RTVNum < 0)
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit - 1;
 
-	if (_vm->_voy->_transitionId < 15 && _vm->_debugger._isTimeActive &&
+	if (_vm->_voy->_transitionId < 15 && _vm->_debugger->_isTimeActive &&
 			(_vm->_voy->_RTVLimit - 3) < _vm->_voy->_RTVNum) {
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit;
 		_vm->makeViewFinder();

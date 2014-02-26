@@ -61,10 +61,8 @@ protected:
 	 */
 	bool Cmd_Mouse(int argc, const char **argv);
 public:
-	Debugger();
+	Debugger(VoyeurEngine *vm);
 	virtual ~Debugger() {}
-	void setVm(VoyeurEngine *vm) { _vm = vm; }
-
 };
 
 } // End of namespace Voyeur
