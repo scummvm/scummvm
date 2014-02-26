@@ -46,7 +46,7 @@ ThreadResource::ThreadResource(BoltFilesState &state, const byte *src):_vm(state
 	_stateFlags = 0;
 	_stateCount = 0;
 	_parseCount = 0;
-	_nextStateId = -1;
+	_nextStateId = 0;
 	_threadInfoPtr = nullptr;
 	_playCommandsPtr = nullptr;
 }
@@ -65,6 +65,9 @@ void ThreadResource::initThreadStruct(int idx, int id) {
 
 bool ThreadResource::loadAStack(int stackId) {
 	if (_vm->_stampFlags & 1) {
+		if (stackId < 0)
+			error('loadAStack() - Invalid stackId %d', stackId);
+
 		unloadAStack(_stackId);
 		if  (!_useCount[stackId]) {
 			BoltEntry &boltEntry = _vm->_stampLibPtr->boltEntry(_vm->_controlPtr->_memberIds[stackId]);
