@@ -485,7 +485,15 @@ void Scene::objectList_sortByPriority(Common::Array<StaticANIObject *> &list, bo
 }
 
 void Scene::objectList_sortByPriority(Common::Array<PictureObject *> &list, bool skipFirst) {
-	Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
+	if (skipFirst) {
+		Common::Array<PictureObject *>::iterator s = list.begin();
+
+		++s;
+
+		Common::sort(s, list.end(), Scene::compareObjPriority);
+	} else {
+		Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
+	}
 }
 
 void Scene::draw() {
@@ -646,7 +654,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		g_fp->_globalPalette = _palette->_data;
 	}
 
-	debug(8, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+	debug(1, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	if (_picObjList.size() > 2) { // We need to z-sort them
 		objectList_sortByPriority(_picObjList, true);
@@ -658,11 +666,17 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	if (maxPri == -1)
 		maxPri = 60000;
 
-	debug(8, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+	debug(1, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	Common::Point point;
 
-	debug(8, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
+	debug(1, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
+
+	for (uint i = 0; i < _picObjList.size(); i++) {
+		debug(1, "%d: %d", i, ((PictureObject *)_picObjList[i])->_priority);
+	}
+
+
 	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
 
 		_bigPictureArray[0][0]->getDimensions(&point);
