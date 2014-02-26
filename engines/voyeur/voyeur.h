@@ -162,7 +162,7 @@ public:
 	FilesManager _filesManager;
 	GraphicsManager _graphicsManager;
 	SoundManager _soundManager;
-	SVoy _voy;
+	SVoy *_voy;
 
 	BoltFile *_stampLibPtr;
 	BoltGroup *_controlGroupPtr;

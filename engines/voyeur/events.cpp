@@ -93,17 +93,17 @@ void EventsManager::startMainClockInt() {
 }
 
 void EventsManager::mainVoyeurIntFunc() {
-	if (!(_vm->_voy._eventFlags & EVTFLAG_TIME_DISABLED)) {
-		++_vm->_voy._switchBGNum;
+	if (!(_vm->_voy->_eventFlags & EVTFLAG_TIME_DISABLED)) {
+		++_vm->_voy->_switchBGNum;
 
 		if (_vm->_debugger._isTimeActive) {
 			// Increase camera discharge
-			++_vm->_voy._RTVNum;
+			++_vm->_voy->_RTVNum;
 
 			// If the murder threshold has been set, and is passed, then flag the victim
 			// as murdered, which prevents sending the tape from succeeding
-			if (_vm->_voy._RTVNum >= _vm->_voy._murderThreshold)
-				_vm->_voy._victimMurdered = true;
+			if (_vm->_voy->_RTVNum >= _vm->_voy->_murderThreshold)
+				_vm->_voy->_victimMurdered = true;
 		}
 	}
 }
@@ -476,30 +476,30 @@ void EventsManager::vDoCycleInt() {
 
 
 void EventsManager::fadeIntFunc() {
-	switch (_vm->_voy._fadingType) {
+	switch (_vm->_voy->_fadingType) {
 	case 1:
-		if (_vm->_voy._fadingAmount1 < 63)
-			_vm->_voy._fadingAmount1 += _vm->_voy._fadingStep1;
-		if (_vm->_voy._fadingAmount2 < 63)
-			_vm->_voy._fadingAmount2 += _vm->_voy._fadingStep2;
-		if (_vm->_voy._fadingAmount1 > 63)
-			_vm->_voy._fadingAmount1 = 63;
-		if (_vm->_voy._fadingAmount2 > 63)
-			_vm->_voy._fadingAmount2 = 63;
-		if ((_vm->_voy._fadingAmount1 == 63) && (_vm->_voy._fadingAmount2 == 63))
-			_vm->_voy._fadingType = 0;
+		if (_vm->_voy->_fadingAmount1 < 63)
+			_vm->_voy->_fadingAmount1 += _vm->_voy->_fadingStep1;
+		if (_vm->_voy->_fadingAmount2 < 63)
+			_vm->_voy->_fadingAmount2 += _vm->_voy->_fadingStep2;
+		if (_vm->_voy->_fadingAmount1 > 63)
+			_vm->_voy->_fadingAmount1 = 63;
+		if (_vm->_voy->_fadingAmount2 > 63)
+			_vm->_voy->_fadingAmount2 = 63;
+		if ((_vm->_voy->_fadingAmount1 == 63) && (_vm->_voy->_fadingAmount2 == 63))
+			_vm->_voy->_fadingType = 0;
 		break;
 	case 2:
-		if (_vm->_voy._fadingAmount1 > 0)
-			_vm->_voy._fadingAmount1 -= _vm->_voy._fadingStep1;
-		if (_vm->_voy._fadingAmount2 > 0)
-			_vm->_voy._fadingAmount2 -= _vm->_voy._fadingStep2;
-		if (_vm->_voy._fadingAmount1 < 0)
-			_vm->_voy._fadingAmount1 = 0;
-		if (_vm->_voy._fadingAmount2 < 0)
-			_vm->_voy._fadingAmount2 = 0;
-		if ((_vm->_voy._fadingAmount1 == 0) && (_vm->_voy._fadingAmount2 == 0))
-			_vm->_voy._fadingType = 0;
+		if (_vm->_voy->_fadingAmount1 > 0)
+			_vm->_voy->_fadingAmount1 -= _vm->_voy->_fadingStep1;
+		if (_vm->_voy->_fadingAmount2 > 0)
+			_vm->_voy->_fadingAmount2 -= _vm->_voy->_fadingStep2;
+		if (_vm->_voy->_fadingAmount1 < 0)
+			_vm->_voy->_fadingAmount1 = 0;
+		if (_vm->_voy->_fadingAmount2 < 0)
+			_vm->_voy->_fadingAmount2 = 0;
+		if ((_vm->_voy->_fadingAmount1 == 0) && (_vm->_voy->_fadingAmount2 == 0))
+			_vm->_voy->_fadingType = 0;
 		break;
 	default:
 		break;
@@ -560,7 +560,7 @@ void EventsManager::hideCursor() {
 void EventsManager::getMouseInfo() {
 	pollEvents();
 
-	if (_vm->_voy._eventFlags & EVTFLAG_RECORDING) {
+	if (_vm->_voy->_eventFlags & EVTFLAG_RECORDING) {
 		if ((_gameCounter - _recordBlinkCounter) > 8) {
 			_recordBlinkCounter = _gameCounter;
 
@@ -586,7 +586,7 @@ void EventsManager::getMouseInfo() {
 }
 
 void EventsManager::startCursorBlink() {
-	if (_vm->_voy._eventFlags & EVTFLAG_RECORDING) {
+	if (_vm->_voy->_eventFlags & EVTFLAG_RECORDING) {
 		_vm->_graphicsManager.setOneColor(128, 55, 5, 5);
 		_vm->_graphicsManager.setColor(128, 220, 20, 20);
 		_intPtr._hasPalette = true;
@@ -606,8 +606,8 @@ void EventsManager::stopEvidDim() {
 }
 
 Common::String EventsManager::getEvidString(int eventIndex) {
-	assert(eventIndex <= _vm->_voy._eventCount);
-	VoyeurEvent &e = _vm->_voy._events[eventIndex];
+	assert(eventIndex <= _vm->_voy->_eventCount);
+	VoyeurEvent &e = _vm->_voy->_events[eventIndex];
 	return Common::String::format("%03d %.2d:%.2d %s %s", eventIndex + 1,
 		e._hour, e._minute, e._isAM ? AM : PM, EVENT_TYPE_STRINGS[e._type - 1]);
 }

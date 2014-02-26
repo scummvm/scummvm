@@ -39,6 +39,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 		_gameDescription(gameDesc), _randomSource("Voyeur"), _soundManager(_mixer),
 		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1, 
 			Common::Point(1, 1), 1, 0, 0) {
+	_voy = nullptr;
 	_bVoy = NULL;
 
 	_iForceDeath = ConfMan.getInt("boot_param");
@@ -66,6 +67,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 
 VoyeurEngine::~VoyeurEngine() {
 	delete _bVoy;
+	delete _voy;
 }
 
 Common::Error VoyeurEngine::run() {
@@ -75,7 +77,7 @@ Common::Error VoyeurEngine::run() {
 	// The original allows the victim to be explicitly specified via the command line.
 	// This is possible in ScummVM by using a boot parameter.
 	if (_iForceDeath >= 1 && _iForceDeath <= 4)
-		_voy._eventFlags |= EVTFLAG_VICTIM_PRESET;
+		_voy->_eventFlags |= EVTFLAG_VICTIM_PRESET;
 
 	if (doHeadTitle()) {
 		playStamp();
@@ -97,7 +99,7 @@ void VoyeurEngine::initializeManagers() {
 	_filesManager.setVm(this);
 	_graphicsManager.setVm(this);
 	_soundManager.setVm(this);
-	_voy.setVm(this);
+	_voy = new SVoy(this);
 }
 
 void VoyeurEngine::ESP_Init() {
@@ -119,7 +121,7 @@ void VoyeurEngine::globalInitBolt() {
 	assert(_graphicsManager._fontPtr->_curFont);
 
 	// Setup default flags
-	_voy._viewBounds = nullptr;
+	_voy->_viewBounds = nullptr;
 
 	_eventsManager.addFadeInt();
 }
@@ -176,21 +178,21 @@ bool VoyeurEngine::doHeadTitle() {
 		doTransitionCard("Saturday Afternoon", "Player's Apartment");
 		_eventsManager.delayClick(90);
 
-		if (_voy._eventFlags & EVTFLAG_VICTIM_PRESET) {
+		if (_voy->_eventFlags & EVTFLAG_VICTIM_PRESET) {
 			// Preset victim turned on, so add a default set of incriminating videos
-			_voy.addEvent(18, 1, EVTYPE_VIDEO, 33, 0, 998, -1);
-			_voy.addEvent(18, 2, EVTYPE_VIDEO, 41, 0, 998, -1);
-			_voy.addEvent(18, 3, EVTYPE_VIDEO, 47, 0, 998, -1);
-			_voy.addEvent(18, 4, EVTYPE_VIDEO, 53, 0, 998, -1);
-			_voy.addEvent(18, 5, EVTYPE_VIDEO, 46, 0, 998, -1);
-			_voy.addEvent(18, 6, EVTYPE_VIDEO, 50, 0, 998, -1);
-			_voy.addEvent(18, 7, EVTYPE_VIDEO, 40, 0, 998, -1);
-			_voy.addEvent(18, 8, EVTYPE_VIDEO, 43, 0, 998, -1);
-			_voy.addEvent(19, 1, EVTYPE_AUDIO, 20, 0, 998, -1);
+			_voy->addEvent(18, 1, EVTYPE_VIDEO, 33, 0, 998, -1);
+			_voy->addEvent(18, 2, EVTYPE_VIDEO, 41, 0, 998, -1);
+			_voy->addEvent(18, 3, EVTYPE_VIDEO, 47, 0, 998, -1);
+			_voy->addEvent(18, 4, EVTYPE_VIDEO, 53, 0, 998, -1);
+			_voy->addEvent(18, 5, EVTYPE_VIDEO, 46, 0, 998, -1);
+			_voy->addEvent(18, 6, EVTYPE_VIDEO, 50, 0, 998, -1);
+			_voy->addEvent(18, 7, EVTYPE_VIDEO, 40, 0, 998, -1);
+			_voy->addEvent(18, 8, EVTYPE_VIDEO, 43, 0, 998, -1);
+			_voy->addEvent(19, 1, EVTYPE_AUDIO, 20, 0, 998, -1);
 		} 
 	}
 
-	_voy._aptLoadMode = 140;
+	_voy->_aptLoadMode = 140;
 	return true;
 }
 
@@ -229,7 +231,7 @@ bool VoyeurEngine::doLock() {
 	byte *wrongVoc = _filesManager.fload("wrong.voc", &wrongVocSize);
 
 	if (_bVoy->getBoltGroup(0x700)) {
-		_voy._viewBounds = _bVoy->boltEntry(0x704)._rectResource;
+		_voy->_viewBounds = _bVoy->boltEntry(0x704)._rectResource;
 
 		Common::String password = "3333";
 		PictureResource *cursorPic = _bVoy->getPictureResource(0x702);
@@ -374,7 +376,7 @@ bool VoyeurEngine::doLock() {
 		flipPageAndWait();
 		_graphicsManager.resetPalette();
 
-		_voy._viewBounds = nullptr;
+		_voy->_viewBounds = nullptr;
 		_bVoy->freeBoltGroup(0x700);
 	}
 
@@ -438,17 +440,17 @@ void VoyeurEngine::doOpening() {
 	PictureResource *textPic = nullptr;
 	Common::Point textPos;
 
-	_voy._vocSecondsOffset = 0;
-	_voy._RTVNum = 0;
-	_voy._audioVisualStartTime = _voy._RTVNum;
-	_voy._eventFlags |= EVTFLAG_RECORDING;
+	_voy->_vocSecondsOffset = 0;
+	_voy->_RTVNum = 0;
+	_voy->_audioVisualStartTime = _voy->_RTVNum;
+	_voy->_eventFlags |= EVTFLAG_RECORDING;
 	_gameHour = 4;
 	_gameMinute  = 0;
 	_audioVideoId = 1;
 	_eventsManager._videoDead = -1;
-	_voy.addVideoEventStart();
+	_voy->addVideoEventStart();
 
-	_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
+	_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
 	for (int i = 0; i < 256; ++i)
 		_graphicsManager.setColor(i, 8, 8, 8);
@@ -500,12 +502,12 @@ void VoyeurEngine::doOpening() {
 		g_system->delayMillis(10);
 	}
 
-	if ((_voy._RTVNum - _voy._audioVisualStartTime) < 2)
+	if ((_voy->_RTVNum - _voy->_audioVisualStartTime) < 2)
 		_eventsManager.delay(60);
 
-	_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
-	_voy.addVideoEventEnd();
-	_voy._eventFlags &= ~EVTFLAG_RECORDING;
+	_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
+	_voy->addVideoEventEnd();
+	_voy->_eventFlags &= ~EVTFLAG_RECORDING;
 
 	_bVoy->freeBoltGroup(0x200);
 }
@@ -552,7 +554,7 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	RL2Decoder decoder;
 	decoder.loadVideo(videoId);
 
-	decoder.seek(Audio::Timestamp(_voy._vocSecondsOffset * 1000)); 
+	decoder.seek(Audio::Timestamp(_voy->_vocSecondsOffset * 1000)); 
 	decoder.start();
 	int endFrame = decoder.getCurFrame() + totalFrames; 
 
@@ -566,7 +568,7 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
 				(byte *)_graphicsManager._screenSurface.getPixels());
-			if (_voy._eventFlags & EVTFLAG_RECORDING)
+			if (_voy->_eventFlags & EVTFLAG_RECORDING)
 				_graphicsManager.drawDot();
 		}
 
@@ -582,14 +584,14 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 	// RL2 finished
 	_graphicsManager.screenReset();
-	_voy._eventFlags &= ~EVTFLAG_RECORDING;
+	_voy->_eventFlags &= ~EVTFLAG_RECORDING;
 
-	if (_voy._eventFlags & EVTFLAG_8) {
+	if (_voy->_eventFlags & EVTFLAG_8) {
 		assert(pic);
 		byte *imgData = (*_graphicsManager._vPort)->_currentPic->_imgData;
 		(*_graphicsManager._vPort)->_currentPic->_imgData = pic->_imgData;
 		pic->_imgData = imgData;
-		_voy._eventFlags &= ~EVTFLAG_8;
+		_voy->_eventFlags &= ~EVTFLAG_8;
 	}
 }
 
@@ -604,26 +606,26 @@ void VoyeurEngine::playAudio(int audioId) {
 	_graphicsManager._backColors->startFade();
 	flipPageAndWaitForFade();
 
-	_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
-	_soundManager.setVOCOffset(_voy._vocSecondsOffset);
+	_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
+	_soundManager.setVOCOffset(_voy->_vocSecondsOffset);
 	Common::String filename = _soundManager.getVOCFileName(
 		audioId + 159);
 	_soundManager.startVOCPlay(filename);
-	_voy._eventFlags |= EVTFLAG_RECORDING;
+	_voy->_eventFlags |= EVTFLAG_RECORDING;
 	_eventsManager.startCursorBlink();
 
 	while (!shouldQuit() && !_eventsManager._mouseClicked && 
 			_soundManager.getVOCStatus())
 		_eventsManager.delayClick(1);
 
-	_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
+	_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 	_soundManager.stopVOCPlay();
 
 	_bVoy->freeBoltGroup(0x7F00);
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
 
-	_voy._eventFlags &= ~EVTFLAG_RECORDING;
-	_voy._playStampMode = 129;
+	_voy->_eventFlags &= ~EVTFLAG_RECORDING;
+	_voy->_playStampMode = 129;
 }
 
 void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::String &location) {
@@ -680,11 +682,11 @@ void VoyeurEngine::flipPageAndWaitForFade() {
 }
 
 void VoyeurEngine::showEndingNews() {
-	_playStampGroupId = (_voy._incriminatedVictimNumber - 1) * 256 + 0x7700;
-	_voy._boltGroupId2 = (_controlPtr->_state->_victimIndex - 1) * 256 + 0x7B00;
+	_playStampGroupId = (_voy->_incriminatedVictimNumber - 1) * 256 + 0x7700;
+	_voy->_boltGroupId2 = (_controlPtr->_state->_victimIndex - 1) * 256 + 0x7B00;
 
 	_bVoy->getBoltGroup(_playStampGroupId);
-	_bVoy->getBoltGroup(_voy._boltGroupId2);
+	_bVoy->getBoltGroup(_voy->_boltGroupId2);
 
 	PictureResource *pic = _bVoy->boltEntry(_playStampGroupId)._picResource;
 	CMapResource *pal = _bVoy->boltEntry(_playStampGroupId + 1)._cMapResource;
@@ -697,8 +699,8 @@ void VoyeurEngine::showEndingNews() {
 
 	for (int idx = 1; idx < 4; ++idx) {
 		if (idx == 3) {
-			pic = _bVoy->boltEntry(_voy._boltGroupId2)._picResource;
-			pal = _bVoy->boltEntry(_voy._boltGroupId2 + 1)._cMapResource;
+			pic = _bVoy->boltEntry(_voy->_boltGroupId2)._picResource;
+			pal = _bVoy->boltEntry(_voy->_boltGroupId2 + 1)._cMapResource;
 		} else {
 			pic = _bVoy->boltEntry(_playStampGroupId + idx * 2)._picResource;
 			pal = _bVoy->boltEntry(_playStampGroupId + idx * 2 + 1)._cMapResource;
@@ -730,9 +732,9 @@ void VoyeurEngine::showEndingNews() {
 	}
 
 	_bVoy->freeBoltGroup(_playStampGroupId);
-	_bVoy->freeBoltGroup(_voy._boltGroupId2);
+	_bVoy->freeBoltGroup(_voy->_boltGroupId2);
 	_playStampGroupId = -1;
-	_voy._boltGroupId2 = -1;
+	_voy->_boltGroupId2 = -1;
 }
 
 /*------------------------------------------------------------------------*/
@@ -772,7 +774,7 @@ void VoyeurEngine::loadGame(int slot) {
 	Common::Serializer serializer(saveFile, NULL);
 
 	// Store the current time index before the game is loaded
-	_checkTransitionId = _voy._transitionId;
+	_checkTransitionId = _voy->_transitionId;
 
 	// Stop any playing sound
 	_soundManager.stopVOCPlay();
@@ -838,7 +840,7 @@ void VoyeurEngine::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_checkPhoneVal);
 
 	// Sub-systems
-	_voy.synchronize(s);
+	_voy->synchronize(s);
 	_graphicsManager.synchronize(s);
 	_mainThread->synchronize(s);
 	_controlPtr->_state->synchronize(s);

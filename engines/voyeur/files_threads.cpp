@@ -321,19 +321,19 @@ bool ThreadResource::chooseSTAMPButton(int buttonId) {
 }
 
 void ThreadResource::parsePlayCommands() {
-	_vm->_voy._playStampMode = -1;
-	_vm->_voy._audioVisualStartTime = 0;
-	_vm->_voy._audioVisualDuration = 0;
-	_vm->_voy._boltGroupId2 = -1;
-	_vm->_voy._computerTextId = -1;
-	_vm->_voy._eventFlags &= ~EVTFLAG_8;
+	_vm->_voy->_playStampMode = -1;
+	_vm->_voy->_audioVisualStartTime = 0;
+	_vm->_voy->_audioVisualDuration = 0;
+	_vm->_voy->_boltGroupId2 = -1;
+	_vm->_voy->_computerTextId = -1;
+	_vm->_voy->_eventFlags &= ~EVTFLAG_8;
 	_vm->_eventsManager._videoDead = -1;
 
 	// Reset hotspot data
-	_vm->_voy._videoHotspotTimes.reset();
-	_vm->_voy._audioHotspotTimes.reset();
-	_vm->_voy._evidenceHotspotTimes.reset();
-	Common::fill(&_vm->_voy._roomHotspotsEnabled[0], &_vm->_voy._roomHotspotsEnabled[20], false);
+	_vm->_voy->_videoHotspotTimes.reset();
+	_vm->_voy->_audioHotspotTimes.reset();
+	_vm->_voy->_evidenceHotspotTimes.reset();
+	Common::fill(&_vm->_voy->_roomHotspotsEnabled[0], &_vm->_voy->_roomHotspotsEnabled[20], false);
 	byte *dataP = _playCommandsPtr;
 	int v2, v3;
 	PictureResource *pic;
@@ -357,21 +357,21 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
-				_vm->_voy._audioVisualStartTime = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._audioVisualDuration = READ_LE_UINT16(dataP + 6);
+				_vm->_voy->_audioVisualStartTime = READ_LE_UINT16(dataP + 4);
+				_vm->_voy->_audioVisualDuration = READ_LE_UINT16(dataP + 6);
 
-				if (_vm->_voy._RTVNum < _vm->_voy._audioVisualStartTime ||
-						(_vm->_voy._audioVisualStartTime + _vm->_voy._audioVisualDuration)  < _vm->_voy._RTVNum) {
+				if (_vm->_voy->_RTVNum < _vm->_voy->_audioVisualStartTime ||
+						(_vm->_voy->_audioVisualStartTime + _vm->_voy->_audioVisualDuration)  < _vm->_voy->_RTVNum) {
 					_vm->_audioVideoId = -1;
 				} else {
-					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._audioVisualStartTime;
-					_vm->_voy.addAudioEventStart();
+					_vm->_voy->_vocSecondsOffset = _vm->_voy->_RTVNum - _vm->_voy->_audioVisualStartTime;
+					_vm->_voy->addAudioEventStart();
 
 					// Play the audio
 					assert(_vm->_audioVideoId < 38);
 					_vm->playAudio(_vm->_audioVideoId);
 
-					_vm->_voy.addAudioEventEnd();
+					_vm->_voy->addAudioEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 					_vm->_eventsManager.incrementTime(1);
 					_vm->_audioVideoId = -1;
@@ -388,22 +388,22 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				_vm->_audioVideoId = READ_LE_UINT16(dataP + 2) - 1;
-				_vm->_voy._audioVisualStartTime = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._audioVisualDuration = READ_LE_UINT16(dataP + 6);
+				_vm->_voy->_audioVisualStartTime = READ_LE_UINT16(dataP + 4);
+				_vm->_voy->_audioVisualDuration = READ_LE_UINT16(dataP + 6);
 
-				if (_vm->_voy._RTVNum < _vm->_voy._audioVisualStartTime ||
-						(_vm->_voy._audioVisualStartTime + _vm->_voy._audioVisualDuration)  < _vm->_voy._RTVNum) {
+				if (_vm->_voy->_RTVNum < _vm->_voy->_audioVisualStartTime ||
+						(_vm->_voy->_audioVisualStartTime + _vm->_voy->_audioVisualDuration)  < _vm->_voy->_RTVNum) {
 					_vm->_audioVideoId = -1;
 				} else {
-					_vm->_voy._vocSecondsOffset = _vm->_voy._RTVNum - _vm->_voy._audioVisualStartTime;
-					_vm->_voy.addVideoEventStart();
-					_vm->_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
-					_vm->_voy._eventFlags |= EVTFLAG_RECORDING;
+					_vm->_voy->_vocSecondsOffset = _vm->_voy->_RTVNum - _vm->_voy->_audioVisualStartTime;
+					_vm->_voy->addVideoEventStart();
+					_vm->_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
+					_vm->_voy->_eventFlags |= EVTFLAG_RECORDING;
 					_vm->playAVideo(_vm->_audioVideoId);
 
-					_vm->_voy._eventFlags &= ~EVTFLAG_RECORDING;
-					_vm->_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
-					_vm->_voy.addVideoEventEnd();
+					_vm->_voy->_eventFlags &= ~EVTFLAG_RECORDING;
+					_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
+					_vm->_voy->addVideoEventEnd();
 					_vm->_eventsManager.incrementTime(1);
 				
 					_vm->_audioVideoId = -1;
@@ -417,10 +417,10 @@ void ThreadResource::parsePlayCommands() {
 
 					_vm->_eventsManager._videoDead = -1;
 					if (_stateCount == 2 && _vm->_eventsManager._mouseClicked == 0) {
-						_vm->_voy._playStampMode = 132;
+						_vm->_voy->_playStampMode = 132;
 						parseIndex = 999;
 					} else {
-						_vm->_voy._playStampMode = 129;
+						_vm->_voy->_playStampMode = 129;
 					}
 				}
 			}
@@ -440,11 +440,11 @@ void ThreadResource::parsePlayCommands() {
 				_vm->_playStampGroupId = _vm->_resolvePtr[resolveIndex];
 			}
 
-			_vm->_voy._vocSecondsOffset = 0;
-			_vm->_voy._audioVisualStartTime = _vm->_voy._RTVNum;
-			_vm->_voy._eventFlags &= ~(EVTFLAG_TIME_DISABLED | EVTFLAG_RECORDING);
+			_vm->_voy->_vocSecondsOffset = 0;
+			_vm->_voy->_audioVisualStartTime = _vm->_voy->_RTVNum;
+			_vm->_voy->_eventFlags &= ~(EVTFLAG_TIME_DISABLED | EVTFLAG_RECORDING);
 			_vm->playAVideo(_vm->_audioVideoId);
-			_vm->_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
+			_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 
 			if (id != 22) {
 				_vm->_audioVideoId = -1;
@@ -498,30 +498,30 @@ void ThreadResource::parsePlayCommands() {
 			// if so, load the time information for the new time period
 			v2 = READ_LE_UINT16(dataP);
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
-				_vm->_voy._playStampMode = 5;
+				_vm->_voy->_playStampMode = 5;
 				int count = READ_LE_UINT16(dataP + 2);
-				_vm->_voy._RTVLimit = READ_LE_UINT16(dataP + 4);
+				_vm->_voy->_RTVLimit = READ_LE_UINT16(dataP + 4);
 
-				if (_vm->_voy._transitionId != count) {
-					if (_vm->_voy._transitionId > 1)
-						_vm->_voy._eventFlags &= ~EVTFLAG_100;
+				if (_vm->_voy->_transitionId != count) {
+					if (_vm->_voy->_transitionId > 1)
+						_vm->_voy->_eventFlags &= ~EVTFLAG_100;
 
-					_vm->_voy._transitionId = count;
+					_vm->_voy->_transitionId = count;
 					_vm->_gameMinute = LEVEL_M[count - 1];
 					_vm->_gameHour = LEVEL_H[count - 1];
 					//_vm->_v2A0A2 = 0;
-					_vm->_voy._RTVNum = 0;
-					_vm->_voy._RTANum = 255;
+					_vm->_voy->_RTVNum = 0;
+					_vm->_voy->_RTANum = 255;
 				}
 
-				_vm->_voy._isAM = (_vm->_voy._transitionId == 6);
+				_vm->_voy->_isAM = (_vm->_voy->_transitionId == 6);
 			}
 
 			dataP += 6;
 			break;
 
 		case 6:
-			_vm->_voy._playStampMode = 6;
+			_vm->_voy->_playStampMode = 6;
 			v2 = READ_LE_UINT16(dataP);
 			_vm->_playStampGroupId = _vm->_resolvePtr[v2];
 			dataP += 2;
@@ -534,12 +534,12 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				int idx = 0;
-				while (_vm->_voy._videoHotspotTimes._min[idx][v3] != 9999)
+				while (_vm->_voy->_videoHotspotTimes._min[idx][v3] != 9999)
 					++idx;
 
 				v2 = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._videoHotspotTimes._min[idx][v3] = v2;
-				_vm->_voy._videoHotspotTimes._max[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
+				_vm->_voy->_videoHotspotTimes._min[idx][v3] = v2;
+				_vm->_voy->_videoHotspotTimes._max[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
 			}
 
 			dataP += 8;
@@ -552,12 +552,12 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				int idx = 0;
-				while (_vm->_voy._audioHotspotTimes._min[idx][v3] != 9999)
+				while (_vm->_voy->_audioHotspotTimes._min[idx][v3] != 9999)
 					++idx;
 
 				v2 = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._audioHotspotTimes._min[idx][v3] = v2;
-				_vm->_voy._audioHotspotTimes._max[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
+				_vm->_voy->_audioHotspotTimes._min[idx][v3] = v2;
+				_vm->_voy->_audioHotspotTimes._max[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
 			}
 
 			dataP += 8;
@@ -570,12 +570,12 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
 				int idx = 0;
-				while (_vm->_voy._evidenceHotspotTimes._min[idx][v3] != 9999)
+				while (_vm->_voy->_evidenceHotspotTimes._min[idx][v3] != 9999)
 					++idx;
 
 				v2 = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._evidenceHotspotTimes._min[idx][v3] = v2;
-				_vm->_voy._evidenceHotspotTimes._max[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
+				_vm->_voy->_evidenceHotspotTimes._min[idx][v3] = v2;
+				_vm->_voy->_evidenceHotspotTimes._max[idx][v3] = v2 + READ_LE_UINT16(dataP + 6) - 2;
 			}
 
 			dataP += 8;
@@ -590,13 +590,13 @@ void ThreadResource::parsePlayCommands() {
 				int randomVal;
 				do {
 					randomVal = _vm->getRandomNumber(3) + 1;
-				} while (randomVal == _vm->_voy._victimNumber);
+				} while (randomVal == _vm->_voy->_victimNumber);
 
-				_vm->_voy._victimNumber = randomVal;
+				_vm->_voy->_victimNumber = randomVal;
 				_vm->_controlPtr->_state->_victimIndex = randomVal;
 			} else {
 				// Player has seen something that locks in the character to die
-				_vm->_voy._victimNumber = _vm->_iForceDeath;
+				_vm->_voy->_victimNumber = _vm->_iForceDeath;
 				_vm->_controlPtr->_state->_victimIndex = _vm->_iForceDeath;
 			}
 
@@ -604,15 +604,15 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 11:
-			_vm->_voy._eventFlags |= EVTFLAG_2;
+			_vm->_voy->_eventFlags |= EVTFLAG_2;
 			break;
 
 		case 12:
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
-				_vm->_voy._boltGroupId2 = _vm->_resolvePtr[READ_LE_UINT16(dataP + 2)];
-				_vm->_voy._roomHotspotsEnabled[READ_LE_UINT16(dataP + 4) - 1] = true;
+				_vm->_voy->_boltGroupId2 = _vm->_resolvePtr[READ_LE_UINT16(dataP + 2)];
+				_vm->_voy->_roomHotspotsEnabled[READ_LE_UINT16(dataP + 4) - 1] = true;
 			}
 
 			dataP += 6;
@@ -622,14 +622,14 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
-				_vm->_voy._computerTextId = READ_LE_UINT16(dataP + 2);
-				_vm->_voy._computerTimeMin = READ_LE_UINT16(dataP + 4);
-				_vm->_voy._computerTimeMax = READ_LE_UINT16(dataP + 6);
+				_vm->_voy->_computerTextId = READ_LE_UINT16(dataP + 2);
+				_vm->_voy->_computerTimeMin = READ_LE_UINT16(dataP + 4);
+				_vm->_voy->_computerTimeMax = READ_LE_UINT16(dataP + 6);
 
-				_vm->_voy._rect4E4.left = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4];
-				_vm->_voy._rect4E4.top = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4 + 1];
-				_vm->_voy._rect4E4.right = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4 + 2];
-				_vm->_voy._rect4E4.bottom = COMP_BUT_TABLE[_vm->_voy._computerTextId * 4 + 3];
+				_vm->_voy->_rect4E4.left = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4];
+				_vm->_voy->_rect4E4.top = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4 + 1];
+				_vm->_voy->_rect4E4.right = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4 + 2];
+				_vm->_voy->_rect4E4.bottom = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4 + 3];
 			}
 
 			dataP += 8;
@@ -637,7 +637,7 @@ void ThreadResource::parsePlayCommands() {
 
 		case 14:
 			_vm->_playStampGroupId = 2048;
-			_vm->_voy._playStampMode = 130;
+			_vm->_voy->_playStampMode = 130;
 			break;
 
 		case 15:
@@ -645,11 +645,11 @@ void ThreadResource::parsePlayCommands() {
 			break;
 
 		case 16:
-			_vm->_voy._playStampMode = 16;
+			_vm->_voy->_playStampMode = 16;
 			break;
 
 		case 17:
-			_vm->_voy._playStampMode = 17;
+			_vm->_voy->_playStampMode = 17;
 			break;
 
 		case 18:
@@ -659,37 +659,37 @@ void ThreadResource::parsePlayCommands() {
 			v3 = READ_LE_UINT16(dataP + 2);
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2)
-				_vm->_voy._murderThreshold = v3;
+				_vm->_voy->_murderThreshold = v3;
 			
 			dataP += 4;
 			break;
 
 		case 19:
-			_vm->_voy._aptLoadMode = 140;
+			_vm->_voy->_aptLoadMode = 140;
 			loadTheApt();
-			_vm->_voy._aptLoadMode = 141;
+			_vm->_voy->_aptLoadMode = 141;
 			freeTheApt();
 			break;
 
 		case 20:
-			_vm->_voy._aptLoadMode = -1;
+			_vm->_voy->_aptLoadMode = -1;
 			loadTheApt();
-			_vm->_voy._aptLoadMode = 141;
+			_vm->_voy->_aptLoadMode = 141;
 			freeTheApt();
 			break;
 
 		case 21:
-			_vm->_voy._aptLoadMode = -1;
+			_vm->_voy->_aptLoadMode = -1;
 			loadTheApt();
-			_vm->_voy._aptLoadMode = 140;
+			_vm->_voy->_aptLoadMode = 140;
 			freeTheApt();
 			break;
 
 		case 23:
-			_vm->_voy._transitionId = 17;
-			_vm->_voy._aptLoadMode = -1;
+			_vm->_voy->_transitionId = 17;
+			_vm->_voy->_aptLoadMode = -1;
 			loadTheApt();
-			_vm->_voy._aptLoadMode = 144;
+			_vm->_voy->_aptLoadMode = 144;
 			freeTheApt();
 			break;
 
@@ -954,7 +954,7 @@ int ThreadResource::doApt() {
 	loadTheApt();
 
 	_vm->_currentVocId = 151;
-	_vm->_voy._viewBounds = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._rectResource; 
+	_vm->_voy->_viewBounds = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._rectResource; 
 	Common::Array<RectEntry> &hotspots = _vm->_bVoy->boltEntry(
 		_vm->_playStampGroupId + 1)._rectResource->_entries;
 	_vm->_eventsManager.getMouseInfo();
@@ -966,7 +966,7 @@ int ThreadResource::doApt() {
 		_vm->_currentVocId = 153;
 	}
 
-	if (_vm->_voy._playStampMode == 16) {
+	if (_vm->_voy->_playStampMode == 16) {
 		hotspots[0].left = 999;
 		hotspots[3].left = 999;
 		_aptPos.x = hotspots[4].left + 28;
@@ -1015,7 +1015,7 @@ int ThreadResource::doApt() {
 				// Cursor is within hotspot area
 
 				// Don't allow the camera to be highlighted on Monday morning.
-				if (idx == 0 && _vm->_voy._transitionId == 17)
+				if (idx == 0 && _vm->_voy->_transitionId == 17)
 					continue;
 
 				// Set the highlighted hotspot Id
@@ -1024,7 +1024,7 @@ int ThreadResource::doApt() {
 				if (hotspotId != prevHotspotId) {
 					// Check for whether to replace hotspot Id for "Watch TV" for
 					// "Review the Tape" if player has already watched the TV
-					if ((_vm->_voy._eventFlags & EVTFLAG_100) && (hotspotId == 2))
+					if ((_vm->_voy->_eventFlags & EVTFLAG_100) && (hotspotId == 2))
 						hotspotId = 5;
 
 					// Draw the text description for the highlighted hotspot
@@ -1063,23 +1063,23 @@ int ThreadResource::doApt() {
 
 	switch (hotspotId) {
 	case 0:
-		_vm->_voy._aptLoadMode = 140;
+		_vm->_voy->_aptLoadMode = 140;
 		break;
 	case 1:
-		_vm->_voy._aptLoadMode = 143;
+		_vm->_voy->_aptLoadMode = 143;
 		break;
 	case 2:
-		_vm->_voy._aptLoadMode = 142;
+		_vm->_voy->_aptLoadMode = 142;
 	case 5:
-		_vm->_voy._aptLoadMode = 141;
+		_vm->_voy->_aptLoadMode = 141;
 		break;
 	default:
-		_vm->_voy._aptLoadMode = -1;
+		_vm->_voy->_aptLoadMode = -1;
 		break;
 	}
 
 	freeTheApt();
-	if (_vm->_voy._transitionId == 1 && hotspotId == 0)
+	if (_vm->_voy->_transitionId == 1 && hotspotId == 0)
 		_vm->checkTransition();
 
 	if (!hotspotId)
@@ -1090,7 +1090,7 @@ int ThreadResource::doApt() {
 
 void ThreadResource::doRoom() {
 	VoyeurEngine &vm = *_vm;
-	SVoy &voy = vm._voy;
+	SVoy voy = *vm._voy;
 	
 	vm.makeViewFinderP();
 	voy._fadingType = 0;
@@ -1198,14 +1198,14 @@ void ThreadResource::doRoom() {
 				vm.getComputerBrush();
 				_vm->flipPageAndWait();
 
-				vm._voy.addComputerEventStart();
+				vm._voy->addComputerEventStart();
 
 				vm._eventsManager._mouseClicked = false;
 				vm._eventsManager.startCursorBlink();
 
 				int totalChars = vm.doComputerText(9999); 
 				if (totalChars)
-					vm._voy.addComputerEventEnd(totalChars);
+					vm._voy->addComputerEventEnd(totalChars);
 
 				vm._bVoy->freeBoltGroup(0x4900);
 			} else {
@@ -1285,35 +1285,35 @@ int ThreadResource::doInterface() {
 	PictureResource *pic;
 	Common::Point pt;
 
-	_vm->_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
-	if (_vm->_voy._abortInterface) {
-		_vm->_voy._abortInterface = false;
+	_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
+	if (_vm->_voy->_abortInterface) {
+		_vm->_voy->_abortInterface = false;
 		return -2;
 	}
 
-	_vm->_voy._eventFlags &= ~EVTFLAG_100;
+	_vm->_voy->_eventFlags &= ~EVTFLAG_100;
 	_vm->_playStampGroupId = -1;
 	_vm->_eventsManager._intPtr._flashStep = 1;
 	_vm->_eventsManager._intPtr._flashTimer = 0;
 
-	if (_vm->_voy._RTVNum >= _vm->_voy._RTVLimit || _vm->_voy._RTVNum < 0)
-		_vm->_voy._RTVNum = _vm->_voy._RTVLimit - 1;
+	if (_vm->_voy->_RTVNum >= _vm->_voy->_RTVLimit || _vm->_voy->_RTVNum < 0)
+		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit - 1;
 
-	if (_vm->_voy._transitionId < 15 && _vm->_debugger._isTimeActive &&
-			(_vm->_voy._RTVLimit - 3) < _vm->_voy._RTVNum) {
-		_vm->_voy._RTVNum = _vm->_voy._RTVLimit;
+	if (_vm->_voy->_transitionId < 15 && _vm->_debugger._isTimeActive &&
+			(_vm->_voy->_RTVLimit - 3) < _vm->_voy->_RTVNum) {
+		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit;
 		_vm->makeViewFinder();
 
 		_vm->initIFace();
-		_vm->_voy._RTVNum = _vm->_voy._RTVLimit - 4;
-		_vm->_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
+		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit - 4;
+		_vm->_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
-		while (!_vm->shouldQuit() && _vm->_voy._RTVNum < _vm->_voy._RTVLimit) {
+		while (!_vm->shouldQuit() && _vm->_voy->_RTVNum < _vm->_voy->_RTVLimit) {
 			_vm->flashTimeBar();
 			_vm->_eventsManager.delayClick(1);
 		}
 
-		_vm->_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
+		_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 		chooseSTAMPButton(20);
 		parsePlayCommands();
 	}
@@ -1326,7 +1326,7 @@ int ThreadResource::doInterface() {
 	Common::Array<RectEntry> *hotspots = &_vm->_bVoy->boltEntry(
 		_vm->_playStampGroupId + 1)._rectResource->_entries;
 	_vm->_currentVocId = 151 - _vm->getRandomNumber(5);
-	_vm->_voy._vocSecondsOffset = _vm->getRandomNumber(29);
+	_vm->_voy->_vocSecondsOffset = _vm->getRandomNumber(29);
 
 	Common::String fname = _vm->_soundManager.getVOCFileName(_vm->_currentVocId);
 	_vm->_soundManager.startVOCPlay(fname);
@@ -1334,7 +1334,7 @@ int ThreadResource::doInterface() {
 	
 	_vm->_graphicsManager.setColor(240, 220, 220, 220);
 	_vm->_eventsManager._intPtr._hasPalette = true;
-	_vm->_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
+	_vm->_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
 	// Set the cusor 
 	PictureResource *crosshairsCursor = _vm->_bVoy->boltEntry(0x112)._picResource;
@@ -1376,13 +1376,13 @@ int ThreadResource::doInterface() {
 			if ((*hotspots)[hotspotIdx].contains(pt)) {
 				// Rect check done
 				for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
-					if (_vm->_voy._audioHotspotTimes.isInRange(arrIndex, hotspotIdx, _vm->_voy._RTVNum)) {
+					if (_vm->_voy->_audioHotspotTimes.isInRange(arrIndex, hotspotIdx, _vm->_voy->_RTVNum)) {
 						// Set the ear cursor for an audio event
 						_vm->_eventsManager.setCursor(listenCursor);
 						regionIndex = hotspotIdx;
 					}
 
-					if (_vm->_voy._evidenceHotspotTimes.isInRange(arrIndex, hotspotIdx, _vm->_voy._RTVNum)) {
+					if (_vm->_voy->_evidenceHotspotTimes.isInRange(arrIndex, hotspotIdx, _vm->_voy->_RTVNum)) {
 						// Set the magnifier cursor for an evidence event
 						_vm->_eventsManager.setCursor(mangifyCursor);
 						regionIndex = hotspotIdx;
@@ -1390,7 +1390,7 @@ int ThreadResource::doInterface() {
 				}
 
 				for (int arrIndex = 0; arrIndex < 8; ++arrIndex) {
-					if (_vm->_voy._videoHotspotTimes.isInRange(arrIndex, hotspotIdx, _vm->_voy._RTVNum)) {
+					if (_vm->_voy->_videoHotspotTimes.isInRange(arrIndex, hotspotIdx, _vm->_voy->_RTVNum)) {
 						// Set the eye cursor for a video event
 						_vm->_eventsManager.setCursor(eyeCursor);
 						regionIndex = hotspotIdx;
@@ -1405,42 +1405,42 @@ int ThreadResource::doInterface() {
 		}
 
 		// Regularly update the time display
-		if (_vm->_voy._RTANum & 2) {
+		if (_vm->_voy->_RTANum & 2) {
 			_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
 				_vm->_gameMinute / 10, Common::Point(190, 25));
 			_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
 				_vm->_gameMinute % 10, Common::Point(201, 25));
 
-			if (_vm->_voy._RTANum & 4) {
+			if (_vm->_voy->_RTANum & 4) {
 				int v = _vm->_gameHour / 10;
 				_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
 					v == 0 ? 10 : v, Common::Point(161, 25));
 				_vm->_graphicsManager.drawANumber(*_vm->_graphicsManager._vPort, 
 					_vm->_gameHour % 10, Common::Point(172, 25));
 
-				pic = _vm->_bVoy->boltEntry(_vm->_voy._isAM ? 272 : 273)._picResource;
+				pic = _vm->_bVoy->boltEntry(_vm->_voy->_isAM ? 272 : 273)._picResource;
 				_vm->_graphicsManager.sDrawPic(pic, *_vm->_graphicsManager._vPort, 
 					Common::Point(215, 27));
 			}
 		}
 
-		_vm->_voy._RTANum = 0;
+		_vm->_voy->_RTANum = 0;
 		_vm->flipPageAndWait();
 
 		pt = _vm->_eventsManager.getMousePos();
-		if ((_vm->_voy._RTVNum >= _vm->_voy._RTVLimit) || ((_vm->_voy._eventFlags & 0x80) &&
+		if ((_vm->_voy->_RTVNum >= _vm->_voy->_RTVLimit) || ((_vm->_voy->_eventFlags & 0x80) &&
 				_vm->_eventsManager._rightClick && (pt.x == 0))) {
 			// Time to transition to the next time period
 			_vm->_eventsManager.getMouseInfo();
 
-			if (_vm->_voy._transitionId == 15) {
+			if (_vm->_voy->_transitionId == 15) {
 				regionIndex = 20;
-				_vm->_voy._transitionId = 17;
+				_vm->_voy->_transitionId = 17;
 				_vm->_soundManager.stopVOCPlay();
 				_vm->checkTransition();
 				_vm->_eventsManager._leftClick = true;
 			} else {
-				_vm->_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
+				_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 
 				chooseSTAMPButton(20);
 				parsePlayCommands();
@@ -1452,7 +1452,7 @@ int ThreadResource::doInterface() {
 				hotspots = &_vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._rectResource->_entries;
 				_vm->_eventsManager.getMouseInfo();
 
-				_vm->_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
+				_vm->_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 				_vm->_eventsManager._intPtr._flashStep = 1;
 				_vm->_eventsManager._intPtr._flashTimer = 0;
 			}
@@ -1461,7 +1461,7 @@ int ThreadResource::doInterface() {
 		(!_vm->_eventsManager._leftClick || regionIndex == -1));
 
 	_vm->_eventsManager.hideCursor();
-	_vm->_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
+	_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 	_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
 	if (_vm->_currentVocId != -1)
 		_vm->_soundManager.stopVOCPlay();
@@ -1550,7 +1550,7 @@ void ThreadResource::clearButtonFlag(int idx, byte bits) {
 }
 
 void ThreadResource::loadTheApt() {
-	switch (_vm->_voy._transitionId) {
+	switch (_vm->_voy->_transitionId) {
 	case 1:
 	case 2:
 	case 5:
@@ -1578,13 +1578,13 @@ void ThreadResource::loadTheApt() {
 		break;
 	}
 
-	if (_vm->_voy._aptLoadMode == 143)
-		_vm->_voy._aptLoadMode = -1;
+	if (_vm->_voy->_aptLoadMode == 143)
+		_vm->_voy->_aptLoadMode = -1;
 
-	if (_vm->_voy._aptLoadMode  != -1) {
+	if (_vm->_voy->_aptLoadMode  != -1) {
 		doAptAnim(1);
 		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
-		_vm->_voy._aptLoadMode = -1;
+		_vm->_voy->_aptLoadMode = -1;
 		_vm->_graphicsManager._backgroundPage = _vm->_bVoy->boltEntry(
 			_vm->_playStampGroupId + 5)._picResource;
 		(*_vm->_graphicsManager._vPort)->setupViewPort(
@@ -1614,13 +1614,13 @@ void ThreadResource::freeTheApt() {
 		_vm->_currentVocId = -1;
 	}
 
-	if (_vm->_voy._aptLoadMode == -1) {
+	if (_vm->_voy->_aptLoadMode == -1) {
 		_vm->_graphicsManager.fadeDownICF(6);
 	} else {
 		doAptAnim(2);
 	}
 
-	if (_vm->_voy._aptLoadMode == 140) {
+	if (_vm->_voy->_aptLoadMode == 140) {
 		_vm->_graphicsManager.screenReset();
 		_vm->_graphicsManager.resetPalette();
 	}
@@ -1628,7 +1628,7 @@ void ThreadResource::freeTheApt() {
 	(*_vm->_graphicsManager._vPort)->setupViewPort(nullptr);
 	_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
 	_vm->_playStampGroupId = -1;
-	_vm->_voy._viewBounds = nullptr;
+	_vm->_voy->_viewBounds = nullptr;
 }
 
 void ThreadResource::doAptAnim(int mode) {
@@ -1636,7 +1636,7 @@ void ThreadResource::doAptAnim(int mode) {
 
 	// Figure out the resource to use
 	int id = 0;
-	switch (_vm->_voy._aptLoadMode) {
+	switch (_vm->_voy->_aptLoadMode) {
 	case 140:
 		id = 0x5A00;
 		break;
@@ -1657,7 +1657,7 @@ void ThreadResource::doAptAnim(int mode) {
 	}
 
 	int id2 = (id == 0x6C00 || id == 0x6F00) ? 1 : 2;
-	switch (_vm->_voy._transitionId) {
+	switch (_vm->_voy->_transitionId) {
 	case 3:
 		id += id2 << 8;
 		break;

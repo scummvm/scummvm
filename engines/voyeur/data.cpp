@@ -38,7 +38,7 @@ void VoyeurEvent::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-SVoy::SVoy() {
+SVoy::SVoy(VoyeurEngine *vm):_vm(vm) {
 	// Initialize all the data fields
 	_abortInterface = false;
 	_isAM = false;
@@ -90,10 +90,6 @@ SVoy::SVoy() {
 		_events[i]._computerOff = 0;
 		_events[i]._dead = 0;
 	}
-}
-
-void SVoy::setVm(VoyeurEngine *vm) {
-	_vm = vm;
 }
 
 void SVoy::addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId, 
@@ -282,7 +278,7 @@ void SVoy::reviewComputerEvent(int eventIndex) {
 
 bool SVoy::checkForKey() {
 	_vm->_controlPtr->_state->_victimEvidenceIndex = 0;
-	if (_vm->_voy._victimMurdered)
+	if (_vm->_voy->_victimMurdered)
 		return false;
 
 	for (int eventIdx = 0; eventIdx < _eventCount; ++eventIdx) {

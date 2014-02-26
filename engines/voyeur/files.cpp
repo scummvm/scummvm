@@ -1365,7 +1365,7 @@ void ViewPortResource::drawIfaceTime() {
 		_state._vm->_gameMinute % 10, Common::Point(201, 25));
 
 	// AM/PM indicator
-	PictureResource *pic = _state._vm->_bVoy->boltEntry(_state._vm->_voy._isAM ? 272 : 273)._picResource;
+	PictureResource *pic = _state._vm->_bVoy->boltEntry(_state._vm->_voy->_isAM ? 272 : 273)._picResource;
 	_state._vm->_graphicsManager.sDrawPic(pic, *_state._vm->_graphicsManager._vPort, 
 		Common::Point(215, 27));
 }

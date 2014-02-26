@@ -154,8 +154,7 @@ public:
 	CMapResource *_evCmPtrs[6];
 	VoyeurEvent _events[TOTAL_EVENTS];
 
-	SVoy();
-	void setVm(VoyeurEngine *vm);
+	SVoy(VoyeurEngine *vm);
 
 	/**
 	 * Synchronize the data

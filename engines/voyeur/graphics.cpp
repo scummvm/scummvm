@@ -999,45 +999,45 @@ void GraphicsManager::screenReset() {
 
 void GraphicsManager::fadeDownICF1(int steps) {
 	if (steps > 0) {
-		int stepAmount = _vm->_voy._fadingAmount2 / steps;
+		int stepAmount = _vm->_voy->_fadingAmount2 / steps;
 
 		for (int idx = 0; idx < steps; ++idx) {
-			_vm->_voy._fadingAmount2 -= stepAmount;
+			_vm->_voy->_fadingAmount2 -= stepAmount;
 			_vm->_eventsManager.delay(1);
 		}
 	}
 
-	_vm->_voy._fadingAmount2 = 0;
+	_vm->_voy->_fadingAmount2 = 0;
 }
 
 void GraphicsManager::fadeUpICF1(int steps) {
 	if (steps > 0) {
-		int stepAmount = (63 - _vm->_voy._fadingAmount2) / steps;
+		int stepAmount = (63 - _vm->_voy->_fadingAmount2) / steps;
 
 		for (int idx = 0; idx < steps; ++idx) {
-			_vm->_voy._fadingAmount2 += stepAmount;
+			_vm->_voy->_fadingAmount2 += stepAmount;
 			_vm->_eventsManager.delay(1);
 		}
 	}
 
-	_vm->_voy._fadingAmount2 = 63;
+	_vm->_voy->_fadingAmount2 = 63;
 }
 
 void GraphicsManager::fadeDownICF(int steps) {
 	if (steps > 0) {
 		_vm->_eventsManager.hideCursor();
-		int stepAmount1 = _vm->_voy._fadingAmount1 / steps;
-		int stepAmount2 = _vm->_voy._fadingAmount2 / steps;
+		int stepAmount1 = _vm->_voy->_fadingAmount1 / steps;
+		int stepAmount2 = _vm->_voy->_fadingAmount2 / steps;
 
 		for (int idx = 0; idx < steps; ++idx) {
-			_vm->_voy._fadingAmount1 -= stepAmount1;
-			_vm->_voy._fadingAmount2 -= stepAmount2;
+			_vm->_voy->_fadingAmount1 -= stepAmount1;
+			_vm->_voy->_fadingAmount2 -= stepAmount2;
 			_vm->_eventsManager.delay(1);
 		}
 	}
 
-	_vm->_voy._fadingAmount1 = 0;
-	_vm->_voy._fadingAmount2 = 0;
+	_vm->_voy->_fadingAmount1 = 0;
+	_vm->_voy->_fadingAmount2 = 0;
 }
 
 void GraphicsManager::drawDot() {
