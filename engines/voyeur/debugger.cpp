@@ -71,7 +71,7 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 			}
 		} else {
 			int timeId = atoi(argv[1]);
-			if (timeId >= 1 && timeId <= 17) {
+			if (timeId >= 1 && timeId < 17) {
 				int stateId = TIME_STATES[timeId - 1];
 				if (!stateId) {
 					DebugPrintf("Given time period is not used in-game\n");
