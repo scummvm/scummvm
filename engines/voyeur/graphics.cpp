@@ -49,6 +49,7 @@ GraphicsManager::GraphicsManager(): _defaultDrawInfo(1, Common::Point()), _drawP
 	_fontPtr = NULL;
 	Common::fill(&_VGAColors[0], &_VGAColors[PALETTE_SIZE], 0);
 	_fontChar = new PictureResource(0, 0xff, 0xff, 0, Common::Rect(), 0, NULL, 0);
+	_backColors = nullptr;
 }
 
 void GraphicsManager::sInitGraphics() {

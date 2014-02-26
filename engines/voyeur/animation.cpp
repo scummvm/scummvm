@@ -227,13 +227,14 @@ RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTr
 		Common::SeekableReadStream *stream): 
 		_header(header), _audioTrack(audioTrack), _fileStream(stream) {
 
+	_frameOffsets = nullptr;
+
 	// Set up surfaces
 	_surface = new Graphics::Surface();
 	_surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_backSurface = nullptr;
 
 	_hasBackFrame = header._backSize != 0;
-
-	_backSurface = NULL;
 	if (_hasBackFrame)
 		initBackSurface();
 
