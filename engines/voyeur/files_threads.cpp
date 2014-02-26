@@ -66,7 +66,7 @@ void ThreadResource::initThreadStruct(int idx, int id) {
 bool ThreadResource::loadAStack(int stackId) {
 	if (_vm->_stampFlags & 1) {
 		if (stackId < 0)
-			error('loadAStack() - Invalid stackId %d', stackId);
+			error("loadAStack() - Invalid stackId %d", stackId);
 
 		unloadAStack(_stackId);
 		if  (!_useCount[stackId]) {
@@ -874,6 +874,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		bVal = *card++;
 		assert(bVal < 8);
 		card += 6;
+		break;
 	
 	case 45:
 		_newStateId = _nextStateId;
