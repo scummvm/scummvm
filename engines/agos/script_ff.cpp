@@ -243,7 +243,7 @@ void AGOSEngine_Feeble::setupOpcodes() {
 		/* 164 */
 		OPCODE(oe2_getDollar2),
 		OPCODE(off_isAdjNoun),
-		OPCODE(oe2_b2Set),
+		OPCODE(off_b2Set),
 		OPCODE(oe2_b2Clear),
 		/* 168 */
 		OPCODE(oe2_b2Zero),
@@ -467,6 +467,31 @@ void AGOSEngine_Feeble::off_isAdjNoun() {
 		setScriptCondition(false);
 }
 
+void AGOSEngine_Feeble::off_b2Set() {
+	// 166: set bit2
+	uint bit = getVarOrByte();
+	_bitArrayTwo[bit / 16] |= (1 << (bit & 15));
+
+	if (getFeatures() & GF_BROKEN_FF_RATING) {
+		// WORKAROUND: The 4CD version of The Feeble File is missing the
+		// opcodes to set the loyalty rating. This approximates the script
+		// from the 2CD version. See bug #6525.
+
+		switch (bit) {
+		case 152:
+			// Kicking vending machine: Possibility of Undesirable Character Flaws
+			writeVariable(120, 1);
+			break;
+		case 153:
+			// Confessing: Confirmed Minor Character Flaws
+			writeVariable(120, 2);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void AGOSEngine_Feeble::off_hyperLinkOn() {
 	// 171: oracle hyperlink on
 	hyperLinkOn(getVarOrWord());
@@ -565,6 +590,26 @@ void AGOSEngine_Feeble::off_loadVideo() {
 
 	assert(_moviePlayer);
 	_moviePlayer->load();
+
+	if (getFeatures() & GF_BROKEN_FF_RATING) {
+		// WORKAROUND: The 4CD version of The Feeble File is missing the
+		// opcodes to set the loyalty rating. This approximates the script
+		// from the 2CD version. See bug #6525.
+
+		if (strcmp((const char *)filename, "MainMin.smk") == 0) {
+			// Being sent to Cygnus Alpha: Suspected Subversive Activity
+			writeVariable(120, 3);
+		} else if (strcmp((const char *)filename, "fxmadsam.smk") == 0) {
+			// Escaping from Cygnus Alpha: Confirmed Subversive Activity
+			writeVariable(120, 4);
+		} else if (strcmp((const char *)filename, "Statue1.smk") == 0) {
+			// Being brought before Filbert: Confirmed Treasonous Activity
+			writeVariable(120, 5);
+		} else if (strcmp((const char *)filename, "IceTrench.smk") == 0) {
+			// Arriving at rebel base: Freedom Fighters Operative
+			writeVariable(120, 6);
+		}
+	}
 }
 
 void AGOSEngine_Feeble::off_playVideo() {

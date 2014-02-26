@@ -2622,7 +2622,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE | GF_PACKED
+		GF_OLD_BUNDLE | GF_TALKIE | GF_PACKED | GF_BROKEN_FF_RATING
 	},
 
 	// The Feeble Files - English Windows 4CD
@@ -2645,7 +2645,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_FF,
 		GID_FEEBLEFILES,
-		GF_OLD_BUNDLE | GF_TALKIE
+		GF_OLD_BUNDLE | GF_TALKIE | GF_BROKEN_FF_RATING
 	},
 
 	// The Feeble Files - French Windows 4CD

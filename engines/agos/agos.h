@@ -1927,6 +1927,7 @@ public:
 	void off_listSaveGames();
 	void off_checkCD();
 	void off_screenTextBox();
+	void off_b2Set();
 	void off_isAdjNoun();
 	void off_hyperLinkOn();
 	void off_hyperLinkOff();
