@@ -77,7 +77,7 @@ void SoundManager::setEnabled(bool flag) {
 	_soundPollFlag = false;
 }
 
-void SoundManager::queueNewCommands() {
+void SoundManager::pauseNewCommands() {
 	_newSoundsPaused = true;
 }
 

@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	events.o \
 	font.o \
 	game.o \
+	game_data.o \
 	graphics.o \
 	mads.o \
 	msprite.o \

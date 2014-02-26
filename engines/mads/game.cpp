@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "mads/mads.h"
 #include "mads/game.h"
+#include "mads/game_data.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/graphics.h"
 #include "mads/msurface.h"
@@ -37,7 +38,8 @@ Game *Game::init(MADSEngine *vm) {
 	return nullptr;
 }
 
-Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _scene(vm) {
+Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr),
+		_objects(vm), _scene(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
 	_difficultyLevel = DIFFICULTY_HARD;
 	_saveSlot = -1;
@@ -110,7 +112,7 @@ void Game::gameLoop() {
 		initSection(_sectionNumber);
 		_sectionHandler->postLoadSection();
 
-		_scene.clearSprites(true);
+		_scene._spriteSlots.clear(true);
 
 		if (_sectionNumber == _currentSectionNumber) {
 			sectionLoop();
@@ -141,7 +143,7 @@ void Game::sectionLoop() {
 		_player._stepEnabled = true;
 		_player._visible = true;
 		_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
-		addVisitedScene(_scene._nextSceneId);
+		_visitedScenes.add(_scene._nextSceneId);
 
 		_scene._screenObjects._v8333C = -1;
 		_scene._screenObjects._v832EC = 0;
@@ -151,17 +153,18 @@ void Game::sectionLoop() {
 		_scene._sceneLogic->setup();
 		if (_player._spritesChanged || _v3) {
 			if (_player._spritesLoaded)
-				_scene.releasePlayerSprites();
+				_scene._spriteSlots.releasePlayerSprites();
 			_vm->_palette->resetGamePalette(18, 10);
-			_scene.clearSprites(true);
+			_scene._spriteSlots.clear(true);
 		} else {
 			_vm->_palette->initGamePalette();
 		}
 
 		// TODO: Further palette init
 		
-		//_scene.loadScene(_aaName, _scene._nextSceneId, 0);
-		_vm->_sound->queueNewCommands();
+		_scene.loadScene(_scene._nextSceneId, _aaName, 0);
+		_vm->_sound->pauseNewCommands();
+
 		if (!_player._spritesLoaded) {
 			_player.loadSprites("");
 			_playerSpritesFlag = false;
@@ -178,7 +181,7 @@ void Game::sectionLoop() {
 
 		// Check whether to show a dialog
 		if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globalFlags[5]) {
-			_scene.releasePlayerSprites();
+			_scene._spriteSlots.releasePlayerSprites();
 			_vm->_dialogs->showDialog();
 			_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 		}
@@ -198,91 +201,8 @@ void Game::initSection(int sectionNumber) {
 		CURSOR_ARROW : CURSOR_WAIT);
 }
 
-void Game::loadObjects() {
-	File f("*OBJECTS.DAT");
-
-	// Get the total numer of inventory objects
-	int count = f.readUint16LE();
-	_objects.reserve(count);
-
-	// Read in each object
-	for (int i = 0; i < count; ++i) {
-		InventoryObject obj;
-		obj.load(f);
-		_objects.push_back(obj);
-
-		// If it's for the player's inventory, add the index to the inventory list
-		if (obj._roomNumber == PLAYER_INVENTORY) {
-			_inventoryList.push_back(i);
-			assert(_inventoryList.size() <= 32);
-		}
-	}
-}
-
-void Game::setObjectData(int objIndex, int id, const byte *p) {
-	// TODO: This whole method seems weird. Check it out more thoroughly once
-	// more of the engine is implemented
-	for (int i = 0; i < (int)_objects.size(); ++i) {
-		InventoryObject &obj = _objects[i];
-		if (obj._vocabList[0]._actionFlags1 <= i)
-			break;
-
-		if (obj._mutilateString[6 + i] == id) {
-			_objects[objIndex]._objFolder = p;
-		}
-	}
-}
-
-void Game::setObjectRoom(int objectId, int roomNumber) {
-	warning("TODO: setObjectRoom");
-}
-
 void Game::loadResourceSequence(const Common::String prefix, int v) {
 	warning("TODO: loadResourceSequence");
-}
-
-void Game::addVisitedScene(int sceneId) {
-	if (!visitedScenesExists(sceneId))
-		_visitedScenes.push_back(sceneId);
-}
-
-bool Game::visitedScenesExists(int sceneId) {
-	for (uint i = 0; i < _visitedScenes.size(); ++i) {
-		if (_visitedScenes[i] == sceneId)
-			return true;
-	}
-
-	return false;
-}
-
-/*------------------------------------------------------------------------*/
-
-void InventoryObject::load(Common::SeekableReadStream &f) {
-	_descId = f.readUint16LE();
-	_roomNumber = f.readUint16LE();
-	_article = f.readByte();
-	_vocabCount = f.readByte();
-	
-	for (int i = 0; i < 3; ++i) {
-		_vocabList[i]._actionFlags1 = f.readByte();
-		_vocabList[i]._actionFlags2 = f.readByte();
-		_vocabList[i]._vocabId = f.readByte();
-	}
-
-	f.skip(4);	// field12
-	f.read(&_mutilateString[0], 10);
-	f.skip(16);
-}
-
-/*------------------------------------------------------------------------*/
-
-Player::Player() {
-	_direction = 8;
-	_newDirection = 8;
-	_spritesLoaded = false;
-	_spriteListStart = _numSprites = 0;
-	_stepEnabled = false;
-	_visible = false;
 }
 
 } // End of namespace MADS

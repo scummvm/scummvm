@@ -27,7 +27,7 @@
 
 namespace MADS {
 
-Scene::Scene(MADSEngine *vm): _vm(vm) {
+Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
@@ -50,36 +50,6 @@ Scene::Scene(MADSEngine *vm): _vm(vm) {
 Scene::~Scene() {
 	delete[] _vocabBuffer;
 	delete _sceneLogic;
-}
-
-void Scene::clearSprites(bool flag) {
-	for (int i = 0; i < TEXT_DISPLAY_COUNT; ++i)
-		_textDisplay[i]._active = false;
-
-	if (flag)
-		_spriteList.clear();
-
-	_spriteSlots.clear();
-	_spriteSlots.push_back(SpriteSlot(ST_FULL_SCREEN_REFRESH, -1));
-}
-
-/**
- * Releases any sprites used by the player
- */
-void Scene::releasePlayerSprites() {
-	Player &player = _vm->_game->player();
-
-	if (player._spritesLoaded && player._numSprites > 0) {
-		int spriteEnd = player._spriteListStart + player._numSprites - 1;
-		do {
-			deleteSpriteEntry(spriteEnd);
-		} while (--spriteEnd >= player._spriteListStart);
-	}
-}
-
-void Scene::deleteSpriteEntry(int listIndex) {
-	delete _spriteList[listIndex];
-	_spriteList.remove_at(listIndex);
 }
 
 void Scene::clearDynamicHotspots() {
@@ -135,6 +105,18 @@ void Scene::loadSceneLogic() {
 	}
 }
 
+void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
+	// Store the previously active scene number and set the new one
+	_priorSceneId = _currentSceneId;
+	_currentSceneId = sceneId;
+
+	_v1 = 0;
+	if (palFlag)
+		_vm->_palette->resetGamePalette(18, 10);
+
+
+}
+
 void Scene::loadHotspots() {
 	File f(Resources::formatName(RESPREFIX_RM, _currentSceneId, ".HH"));
 	int count = f.readUint16LE();
@@ -177,9 +159,9 @@ void Scene::loadVocabStrings() {
 	f.read(d, f.size());
 
 
-	int vocabId = 1;
+//	int vocabId = 1;
 	for (uint strIndex = 0; strIndex < _activeVocabs.size(); ++strIndex) {
-
+		// TODO: Rest of this method
 	}
 }
 
@@ -189,111 +171,6 @@ void Scene::free() {
 
 void Scene::setPalette(RGB4 *p) {
 	_scenePalette = p;
-}
-
-/*------------------------------------------------------------------------*/
-
-SpriteSlot::SpriteSlot() {
-	_spriteType = ST_NONE;
-	_seqIndex = 0;
-	_spriteListIndex = 0;
-	_frameNumber = 0;
-	_depth = 0;
-	_scale = 0;
-}
-
-SpriteSlot::SpriteSlot(SpriteType type, int seqIndex) {
-	_spriteType = type;
-	_seqIndex = seqIndex;
-	_spriteListIndex = 0;
-	_frameNumber = 0;
-	_depth = 0;
-	_scale = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
-TextDisplay::TextDisplay() {
-	_active = false;
-	_spacing = 0;
-	_expire = 0;
-	_col1 = _col2 = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
-DynamicHotspot::DynamicHotspot() {
-	_seqIndex = 0;
-	_facing = 0;
-	_descId = 0;
-	_field14 = 0;
-	_articleNumber = 0;
-	_cursor = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
-SequenceEntry::SequenceEntry() {
-	_spriteListIndex = 0;
-	_flipped =0;
-	_frameIndex = 0;
-	_frameStart = 0;
-	_numSprites = 0;
-	_animType = 0;
-	_frameInc = 0;
-	_depth = 0;
-	_scale = 0;
-	_dynamicHotspotIndex = -1;
-	_triggerCountdown = 0;
-	_doneFlag = 0;
-	_entries._count = 0;
-	_abortMode = 0;
-	_actionNouns[0] = _actionNouns[1] = _actionNouns[2] = 0;
-	_numTicks = 0;
-	_extraTicks = 0;
-	_timeout = 0;
-}
-
-KernelMessage::KernelMessage() {
-	_flags = 0;
-	_seqInex = 0;
-	_asciiChar = '\0';
-	_asciiChar2 = '\0';
-	_colors = 0;
-	Common::Point _posiition;
-	_msgOffset = 0;
-	_numTicks = 0;
-	_frameTimer2 = 0;
-	_frameTimer = 0;
-	_timeout = 0;
-	_field1C = 0;
-	_abortMode = 0;
-	_nounList[0] = _nounList[1] = _nounList[2] = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
-Hotspot::Hotspot() {
-	_facing = 0;
-	_articleNumber = 0;
-	_cursor = 0;
-	_vocabId = 0;
-	_verbId = 0;
-}
-
-Hotspot::Hotspot(Common::SeekableReadStream &f) {
-	_bounds.left = f.readSint16LE();
-	_bounds.top = f.readSint16LE();
-	_bounds.right = f.readSint16LE();
-	_bounds.bottom = f.readSint16LE();
-	_feetPos.x = f.readSint16LE();
-	_feetPos.y = f.readSint16LE();
-	_facing = f.readByte();
-	_articleNumber = f.readByte();
-	f.skip(1);
-	_cursor = f.readByte();
-	_vocabId = f.readUint16LE();
-	_verbId = f.readUint16LE();
 }
 
 } // End of namespace MADS

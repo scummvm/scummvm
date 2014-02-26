@@ -21,7 +21,7 @@
  */
 
 #include "common/scummsys.h"
-#include "mads/scene.h"
+#include "mads/scene_data.h"
 #include "mads/mads.h"
 #include "mads/nebular/nebular_scenes.h"
 
@@ -30,7 +30,7 @@ namespace MADS {
 SpriteSlot::SpriteSlot() {
 	_spriteType = ST_NONE;
 	_seqIndex = 0;
-	_spriteListIndex = 0;
+	_spritesIndex = 0;
 	_frameNumber = 0;
 	_depth = 0;
 	_scale = 0;
@@ -39,11 +39,42 @@ SpriteSlot::SpriteSlot() {
 SpriteSlot::SpriteSlot(SpriteType type, int seqIndex) {
 	_spriteType = type;
 	_seqIndex = seqIndex;
-	_spriteListIndex = 0;
+	_spritesIndex = 0;
 	_frameNumber = 0;
 	_depth = 0;
 	_scale = 0;
 }
+
+/*------------------------------------------------------------------------*/
+
+void SpriteSlots::clear(bool flag) {
+	_vm->_game->_scene._textDisplay.clear();
+
+	if (flag)
+		_vm->_game->_scene._sprites.clear();
+
+	Common::Array<SpriteSlot>::clear();
+	push_back(SpriteSlot(ST_FULL_SCREEN_REFRESH, -1));
+}
+
+/**
+ * Releases any sprites used by the player
+ */
+void SpriteSlots::releasePlayerSprites() {
+	Player &player = _vm->_game->player();
+
+	if (player._spritesLoaded && player._numSprites > 0) {
+		int spriteEnd = player._spritesStart + player._numSprites - 1;
+		do {
+			deleteEntry(spriteEnd);
+		} while (--spriteEnd >= player._spritesStart);
+	}
+}
+
+void SpriteSlots::deleteEntry(int index) {
+	remove_at(index);
+}
+
 
 /*------------------------------------------------------------------------*/
 
@@ -68,7 +99,7 @@ DynamicHotspot::DynamicHotspot() {
 /*------------------------------------------------------------------------*/
 
 SequenceEntry::SequenceEntry() {
-	_spriteListIndex = 0;
+	_spritesIndex = 0;
 	_flipped =0;
 	_frameIndex = 0;
 	_frameStart = 0;

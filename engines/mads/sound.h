@@ -70,7 +70,7 @@ public:
 	/**
 	 * Temporarily pause the playback of any new sound commands
 	 */
-	void queueNewCommands();
+	void pauseNewCommands();
 
 	/**
 	 * Stop queueing sound commands, and execute any previously queued ones

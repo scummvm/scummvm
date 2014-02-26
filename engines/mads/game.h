@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "mads/scene.h"
+#include "mads/game_data.h"
 
 namespace MADS {
 
@@ -38,56 +39,6 @@ enum Difficulty {
 	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
 };
 
-class InventoryObject {
-public:
-	int _descId;
-	int _roomNumber;
-	int _article;
-	int _vocabCount;
-	struct {
-		int _actionFlags1;
-		int _actionFlags2;
-		int _vocabId;
-	} _vocabList[3];
-	char _mutilateString[10];	// ???
-	const byte *_objFolder;		// ???
-
-	/**
-	 * Loads the data for a given object
-	 */
-	void load(Common::SeekableReadStream &f);
-};
-
-class Player {
-public:
-	int _direction;
-	int _newDirection;
-	bool _spritesLoaded;
-	int _spriteListStart;
-	int _numSprites;
-	bool _stepEnabled;
-	bool _spritesChanged;
-	bool _visible;
-public:
-	Player();
-
-	void loadSprites(const Common::String &prefix) {
-		warning("TODO: Player::loadSprites");
-	}
-};
-
-class SectionHandler {
-protected:
-	MADSEngine *_vm;
-public:
-	SectionHandler(MADSEngine *vm): _vm(vm) {}
-	virtual ~SectionHandler() {}
-
-	virtual void preLoadSection() = 0;
-	virtual void sectionPtr2() = 0;
-	virtual void postLoadSection() = 0;
-};
-
 class Game {
 private:
 	/**
@@ -99,26 +50,15 @@ private:
 	 * Inner game loop for executing gameplay within a game section
 	 */
 	void sectionLoop();
-
-	/**
-	 * Returns true if a given Scene Id exists in the listed of previously visited scenes.
-	 */
-	bool visitedScenesExists(int sceneId);
-
-	/**
-	 * Adds a scene Id to the list of previously visited scenes, if it doesn't already exist
-	 */
-	void addVisitedScene(int sceneId);
 protected:
 	MADSEngine *_vm;
 	MSurface *_surface;
 	Difficulty _difficultyLevel;
 	Player _player;
-	Scene _scene;
 	int _saveSlot;
 	int _statusFlag;
 	SectionHandler *_sectionHandler;
-	Common::Array<int> _visitedScenes;
+	VisitedScenes _visitedScenes;
 	byte *_quotes;
 	int _v1;
 	int _v2;
@@ -133,21 +73,6 @@ protected:
 	 * Constructor
 	 */
 	Game(MADSEngine *vm);
-
-	/**
-	 * Loads the game's object list
-	 */
-	void loadObjects();
-
-	/**
-	 * Set the associated data? pointer with an inventory object
-	 */
-	void setObjectData(int objIndex, int id, const byte *p);
-
-	/**
-	 * Sets the room number
-	 */
-	void setObjectRoom(int objectId, int roomNumber);
 
 	/**
 	 * Initialises the current section number of the game
@@ -182,8 +107,8 @@ public:
 	int _priorSectionNumber;
 	int _currentSectionNumber;
 	Common::Array<uint16> _globalFlags;
-	Common::Array<InventoryObject> _objects;
-	Common::Array<int> _inventoryList;
+	InventoryObjects _objects;
+	Scene _scene;
 public:
 	virtual ~Game();
 

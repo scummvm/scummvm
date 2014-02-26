@@ -55,10 +55,10 @@ public:
 	int _nextSceneId;
 	int _currentSceneId;
 	Common::Array<VerbInit> _verbList;
-	TextDisplay _textDisplay[TEXT_DISPLAY_COUNT];
-	Common::Array<SpriteSlot> _spriteSlots;
-	Common::Array<SpriteAsset *> _spriteList;
-	int _spriteListIndex;
+	Common::Array<TextDisplay> _textDisplay;
+	SpriteSlots _spriteSlots;
+	Common::Array<SpriteAsset *> _sprites;
+	int _spritesIndex;
 	Common::Array<DynamicHotspot> _dynamicHotspots;
 	bool _dynamicHotspotsChanged;
 	byte *_vocabBuffer;
@@ -71,6 +71,7 @@ public:
 	ScreenObjects _screenObjects;
 	RGB4 *_scenePalette;
 	RGB4 _nullPalette[2];
+	int _v1;
 
 	/**
 	 * Constructor
@@ -81,22 +82,6 @@ public:
 	 * Destructor
 	 */
 	~Scene();
-
-	/**
-	 * Initialise the sprite data
-	 * @param flag		Also reset sprite list
-	 */
-	void clearSprites(bool flag);
-
-	/**
-	 * Delete any sprites used by the player
-	 */
-	void releasePlayerSprites();
-
-	/**
-	 * Delete a sprite entry
-	 */
-	void deleteSpriteEntry(int listIndex);
 
 	/**
 	 * Clear the dynamic hotspot list
@@ -129,6 +114,14 @@ public:
 	void loadSceneLogic();
 
 	/**
+	 * Loads the resources associated with the given scene
+	 * @param sceneId		Scene to load
+	 * @param prefix		Prefix to use for retrieving animation data
+	 * @param palFlag		Flag for whether to reset the high/lo palette areas
+	 */
+	void loadScene(int sceneId, const Common::String &prefix, bool palFlag);
+
+	/**
 	 * Loads the hotstpots for the scene
 	 */
 	void loadHotspots();
@@ -142,6 +135,7 @@ public:
 	 * Set the scene palette
 	 */
 	void setPalette(RGB4 *p);
+
 
 	/**
 	 * Clear the data for the scene

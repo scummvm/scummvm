@@ -68,7 +68,7 @@ void GameNebular::initialiseGlobals() {
 	_globalFlags[21] = 0xFFFF;
 	_globalFlags[95] = 0xFFFF;
 
-	setObjectData(3, 17, nullptr);
+	_objects.setData(3, 17, nullptr);
 
 	// Put the values 0 through 3 in a random order in global slots 83 to 86
 	for (int i = 0; i < 4;) {
@@ -125,21 +125,21 @@ void GameNebular::initialiseGlobals() {
 	switch (_difficultyLevel) {
 	case DIFFICULTY_HARD:
 		_globalFlags[35] = 0;
-		setObjectRoom(9, 1);
-		setObjectRoom(50, 1);
+		_objects.setRoom(9, 1);
+		_objects.setRoom(50, 1);
 		_globalFlags[137] = 5;
 		_globalFlags[136] = 0;
 		break;
 	case DIFFICULTY_MEDIUM:
 		_globalFlags[35] = 0;
-		setObjectRoom(8, 1);
+		_objects.setRoom(8, 1);
 		_globalFlags[137] = 0xFFFF;
 		_globalFlags[136] = 6;
 		break;
 	case DIFFICULTY_EASY:
 		_globalFlags[35] = 2;
-		setObjectRoom(8, 1);
-		setObjectRoom(27, 1);
+		_objects.setRoom(8, 1);
+		_objects.setRoom(27, 1);
 		break;
 	default:
 		break;

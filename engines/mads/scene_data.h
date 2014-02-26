@@ -30,6 +30,9 @@
 
 namespace MADS {
 
+class MADSEngine;
+class Scene;
+
 enum {
 	VERB_LOOK        = 3,
 	VERB_TAKE        = 4,
@@ -70,7 +73,7 @@ class SpriteSlot {
 public:
 	SpriteType _spriteType;
 	int _seqIndex;
-	int _spriteListIndex;
+	int _spritesIndex;
 	int _frameNumber;
 	Common::Point _position;
 	int _depth;
@@ -78,6 +81,30 @@ public:
 public:
 	SpriteSlot();
 	SpriteSlot(SpriteType type, int seqIndex);
+};
+
+class SpriteSlots: public Common::Array<SpriteSlot> {
+private:
+	MADSEngine *_vm;
+public:
+	SpriteSlots(MADSEngine *vm): _vm(vm) {}
+
+	/**
+	 * Clears any pending slot data and schedules a full screen refresh.
+	 * @param flag		Also reset sprite list
+	 */
+	void clear(bool flag);
+
+	/**
+	 * Delete any sprites used by the player
+	 */
+	void releasePlayerSprites();
+
+	/**
+	 * Delete a sprite entry
+	 * @param index		Specifies the index in the array
+	 */
+	void deleteEntry(int index);
 };
 
 class TextDisplay {
@@ -110,7 +137,7 @@ public:
 
 class SequenceEntry {
 public:
-	int _spriteListIndex;
+	int _spritesIndex;
 	int _flipped;
 	int _frameIndex;
 	int _frameStart;
@@ -174,13 +201,6 @@ public:
 	Hotspot();
 	Hotspot(Common::SeekableReadStream &f);
 };
-
-#define SPRITE_COUNT 50
-#define TEXT_DISPLAY_COUNT 40
-#define DYNAMIC_HOTSPOT_COUNT 8
-
-class MADSEngine;
-class Scene;
 
 class SceneLogic {
 protected:
