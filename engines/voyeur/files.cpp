@@ -421,7 +421,7 @@ byte *BoltFile::getBoltMember(uint32 id) {
 }
 
 void BoltFile::initDefault() {
-	_state._curMemberPtr->_data = _state.decompress(0, _state._curMemberPtr->_size, 
+	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size, 
 		_state._curMemberPtr->_mode);	
 }
 
@@ -1094,7 +1094,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 			Graphics::Surface &s = state._vm->_graphicsManager._screenSurface;
 			s.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		} else {
-			// Direct sceren loading picture. In this case, the raw data of the resource
+			// Direct screen loading picture. In this case, the raw data of the resource
 			// is directly decompressed into the screen surface. Again, bizarre.
 			byte *pDest = (byte *)state._vm->_graphicsManager._screenSurface.getPixels();
 			state.decompress(pDest, SCREEN_WIDTH * SCREEN_HEIGHT, state._curMemberPtr->_mode);
