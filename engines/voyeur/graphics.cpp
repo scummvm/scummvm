@@ -295,7 +295,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 							srcP = (byte *)_screenSurface.getPixels() + srcOffset;
 
 							for (int yp = 0; yp < height1; ++yp) {
-								for (int xp = 0; xp < width2; ++width2, ++srcP, ++destP) {
+								for (int xp = 0; xp < width2; ++xp, ++srcP, ++destP) {
 									pixel = *srcP;
 									if (pixel)
 										*destP = pixel;
