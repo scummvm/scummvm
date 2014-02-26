@@ -80,6 +80,9 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_newLeftClick = _newRightClick = false;;
 
 	_videoDead = 0;
+
+	_fadeFirstCol = _fadeLastCol = 0;
+	_fadeCount = 1;
 }
 
 void EventsManager::resetMouse() {
@@ -372,7 +375,6 @@ void EventsManager::vDoFadeInt() {
 		_fadeStatus &= ~1;
 		return;
 	}
-
 
 	for (int i = _fadeFirstCol; i <= _fadeLastCol; ++i) {
 		ViewPortPalEntry &palEntry = _vm->_graphicsManager._viewPortListPtr->_palette[i];

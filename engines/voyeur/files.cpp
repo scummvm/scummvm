@@ -173,7 +173,7 @@ void BoltFilesState::nextBlock() {
 /*------------------------------------------------------------------------*/
 
 FilesManager::FilesManager() {
-
+	_curLibPtr = nullptr;
 }
 
 bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFile) {
@@ -1158,6 +1158,7 @@ PictureResource::PictureResource(int flags, int select, int pick, int onOff,
 	_maskData = maskData;
 	_imgData = imgData;
 	_planeSize = planeSize;
+	_freeImgData = DisposeAfterUse::NO;
 }
 
 PictureResource::~PictureResource() {
