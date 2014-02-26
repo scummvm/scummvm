@@ -462,6 +462,11 @@ public:
 
 	int scene18_var01;
 
+	int scene19_var01;
+	int scene19_var02;
+	int scene19_var03;
+	int scene19_var04;
+
 	int scene20_fliesCountdown;
 	StaticANIObject *scene20_grandma;
 

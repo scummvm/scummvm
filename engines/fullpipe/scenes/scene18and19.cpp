@@ -44,6 +44,12 @@ void scene19_preload(Scene *sc, int key) {
 	warning("WARNING: scene19_preload()");
 }
 
-
+void scene19_initScene2() {
+	g_fp->_aniMan2 = 0;
+	g_vars->scene19_var01 = 200;
+	g_vars->scene19_var02 = 200;
+	g_vars->scene19_var03 = 300;
+	g_vars->scene19_var04 = 300;
+}
 
 } // End of namespace Fullpipe
