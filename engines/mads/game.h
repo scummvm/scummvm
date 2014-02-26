@@ -61,7 +61,6 @@ protected:
 	VisitedScenes _visitedScenes;
 	byte *_quotes;
 	int _v1;
-	int _v2;
 	int _v3;
 	int _v4;
 	int _v5;
@@ -109,6 +108,7 @@ public:
 	Common::Array<uint16> _globalFlags;
 	InventoryObjects _objects;
 	Scene _scene;
+	int _v2;
 public:
 	virtual ~Game();
 

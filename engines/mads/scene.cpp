@@ -33,6 +33,8 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm) {
 	_currentSceneId = 0;
 	_vocabBuffer = nullptr;
 	_sceneLogic = nullptr;
+	_sceneInfo = nullptr;
+	_scenePalette = nullptr;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
@@ -50,6 +52,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm) {
 Scene::~Scene() {
 	delete[] _vocabBuffer;
 	delete _sceneLogic;
+	delete _sceneInfo;
 }
 
 void Scene::clearDynamicHotspots() {
@@ -84,11 +87,11 @@ int Scene::activeVocabIndexOf(int vocabId) {
 }
 
 void Scene::clearSequenceList() {
-	_sequenceList.clear();
+	_sequences.clear();
 }
 
 void Scene::clearMessageList() {
-	_messageList.clear();
+	_messages.clear();
 	_talkFont = "*FONTCONV.FF";
 	_textSpacing  = -1;
 }
@@ -114,16 +117,22 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	if (palFlag)
 		_vm->_palette->resetGamePalette(18, 10);
 
+	_spriteSlots.clear(false);
+	_sequences.clear();
+	_messages.clear();
 
+	setPalette(_nullPalette);
+	_sceneInfo = SceneInfo::load(_vm, _currentSceneId, _v1, Common::String(), _vm->_game->_v2 ? 17 : 16,
+		_depthSurface, _backgroundSurface);
 }
 
 void Scene::loadHotspots() {
 	File f(Resources::formatName(RESPREFIX_RM, _currentSceneId, ".HH"));
 	int count = f.readUint16LE();
 
-	_hotspotList.clear();
+	_hotspots.clear();
 	for (int i = 0; i < count; ++i)
-		_hotspotList.push_back(Hotspot(f));
+		_hotspots.push_back(Hotspot(f));
 }
 
 void Scene::loadVocab() {
@@ -142,10 +151,10 @@ void Scene::loadVocab() {
 	}
 
 	// Load scene hotspot list vocabs and verbs
-	for (uint i = 0; i < _hotspotList.size(); ++i) {
-		addActiveVocab(_hotspotList[i]._vocabId);
-		if (_hotspotList[i]._verbId)
-			addActiveVocab(_hotspotList[i]._verbId);
+	for (uint i = 0; i < _hotspots.size(); ++i) {
+		addActiveVocab(_hotspots[i]._vocabId);
+		if (_hotspots[i]._verbId)
+			addActiveVocab(_hotspots[i]._verbId);
 	}
 
 	loadVocabStrings();
@@ -170,7 +179,7 @@ void Scene::free() {
 }
 
 void Scene::setPalette(RGB4 *p) {
-	_scenePalette = p;
+//	_scenePalette = p;
 }
 
 } // End of namespace MADS

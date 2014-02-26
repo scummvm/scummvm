@@ -95,24 +95,15 @@ struct SpriteFrameHeader {
 	uint32 reserved8;
 };
 
-class MSprite {
-public:
-	static MSprite *init(MSurface &s);
-	static MSprite *init(Common::SeekableReadStream *source, const Common::Point &offset, int widthVal, 
-		int heightVal, bool decodeRle = true, uint8 encodingVal = 0);
-protected:
-	static MADSEngine *_vm;
-
-	MSprite(MSurface &s);
-	MSprite(Common::SeekableReadStream *source, const Common::Point &offset, 
-		int widthVal, int heightVal, bool decodeRle = true, uint8 encodingVal = 0);
-
+class MSprite: public MSurface {
+private:
 	void loadSprite(Common::SeekableReadStream *source);
 public:
-	static void setVm(MADSEngine *vm) { _vm = vm; }
+	MSprite();
+	MSprite(Common::SeekableReadStream *source, const Common::Point &offset, 
+		int widthVal, int heightVal, bool decodeRle = true, uint8 encodingVal = 0);
 	virtual ~MSprite();
 
-	MSurface &_surface;
 	Common::Point _pos;
 	Common::Point _offset;
 	uint8 _encoding;

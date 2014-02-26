@@ -34,7 +34,7 @@ namespace MADS {
 namespace Nebular {
 
 GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
-	_surface =MSurface::init(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
+	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
 }
 
 int GameNebular::checkCopyProtection() {

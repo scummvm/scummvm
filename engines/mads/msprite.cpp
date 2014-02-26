@@ -35,25 +35,13 @@ enum {
 	kMarker = 2
 };
 
-MADSEngine *MSprite::_vm;
-
-MSprite *MSprite::init(MSurface &s) {
-	return new MSprite(s);
-}
-
-MSprite *MSprite::init(Common::SeekableReadStream *source, const Common::Point &offset, 
-		int widthVal, int heightVal, bool decodeRle, uint8 encodingVal) {
-
-	return new MSprite(source, offset, widthVal, heightVal, decodeRle, encodingVal);
-}
-
-MSprite::MSprite(MSurface &s): _surface(s) {
+MSprite::MSprite(): MSurface() {
 	_encoding = 0;
 }
 
 MSprite::MSprite(Common::SeekableReadStream *source, const Common::Point &offset, 
 		int widthVal, int heightVal, bool decodeRle, uint8 encodingVal)
-		: _surface(*MSurface::init(widthVal, heightVal)), 
+		: MSurface(widthVal, heightVal), 
 		_encoding(encodingVal), _offset(offset) {
 
 	// Load the sprite data
@@ -69,14 +57,14 @@ void MSprite::loadSprite(Common::SeekableReadStream *source) {
 	byte *outp, *lineStart;
 	bool newLine = false;
 
-	outp = _surface.getData();
-	lineStart = _surface.getData();
+	outp = getData();
+	lineStart = getData();
 
 	while (1) {
 		byte cmd1, cmd2, count, pixel;
 
 		if (newLine) {
-			outp = lineStart + _surface.w;
+			outp = lineStart + getWidth();
 			lineStart = outp;
 			newLine = false;
 		}

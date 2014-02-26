@@ -39,7 +39,7 @@ Dialog::~Dialog() {
 
 
 void Dialog::save(MSurface *s) {
-	_savedSurface = MSurface::init(_width, _height);
+	_savedSurface = new MSurface(_width, _height);
 	s->copyTo(_savedSurface, 
 		Common::Rect(_position.x, _position.y, _position.x + _width, _position.y + _height),
 		Common::Point());

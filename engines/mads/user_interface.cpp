@@ -33,7 +33,7 @@ UserInterface *UserInterface::init(MADSEngine *vm) {
 }
 
 UserInterface::UserInterface(MADSEngine *vm): _vm(vm), _surface(
-	MSurface::init(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT)) {
+	new MSurface(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT)) {
 }
 
 UserInterface::~UserInterface() {

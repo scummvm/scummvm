@@ -82,7 +82,7 @@ SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int
 				_frameCount, frame.x, frame.y, frame.w, frame.h);
 		}
 
-		frame.frame = MSprite::init(spriteDataStream, Common::Point(frame.x, frame.y), 
+		frame.frame = new MSprite(spriteDataStream, Common::Point(frame.x, frame.y), 
 			frame.w, frame.h, false);
 		_frames.push_back(frame);
 	}

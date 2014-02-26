@@ -25,8 +25,11 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/str.h"
+#include "common/str-array.h"
 #include "common/rect.h"
 #include "mads/assets.h"
+#include "mads/game_data.h"
 
 namespace MADS {
 
@@ -240,6 +243,70 @@ public:
 	 * Post-action handling
 	 */
 	virtual void postActions() = 0;
+};
+
+struct RGB6 {
+	byte r;
+	byte g;
+	byte b;
+	byte unused[3];
+};
+
+struct ARTHeader {
+	int _width;
+	int _height;
+	int _palCount;
+	Common::Array<RGB6> _palette;
+	Common::Array<RGB4> _palData;
+
+	void load(Common::SeekableReadStream &f);
+};
+
+/**
+ * Handles general data for a given scene
+ */
+class SceneInfo {
+private:
+	MADSEngine *_vm;
+
+	SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &resName,
+		int v3, MSurface &depthSurface, MSurface &bgSurface);
+
+	/**
+	 * Loads the given surface with depth information of a given scene
+	 */
+	void loadCodes(MSurface &depthSurface);
+public:
+	int _sceneId;
+	int _artFileNum;
+	int _depthStyle;
+	int _width;
+	int _height;
+
+	int _nodeCount;
+	int _yBandsEnd;
+	int _yBandsStart;
+	int _maxScale;
+	int _minScale;
+	int _depthList[15];
+	int _field4A;
+
+	int _field4C;
+	Common::Array<InventoryObject> _objects;
+	Common::StringArray _setNames;
+	Common::Array<RGB4> _palette;
+public:
+	/**
+	 * Instantiates the class and loads the data
+	 */
+	static SceneInfo *load(MADSEngine *vm, int sceneId, int flags, 
+		const Common::String &resName, int v3, MSurface &depthSurface, MSurface &bgSurface);
+};
+
+class ScenePalette {
+public:
+	void clean(int *palCount);
+	void process(int *palCount);
 };
 
 } // End of namespace MADS

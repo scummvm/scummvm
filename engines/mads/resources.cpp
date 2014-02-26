@@ -303,6 +303,19 @@ Common::String Resources::formatName(RESPREFIX resType, int id, const Common::St
 	return result;
 }
 
+Common::String Resources::formatResource(const Common::String &resName, 
+		const Common::String &hagFilename) {
+	int v1 = 0, v2 = 0;
+
+	if (resName.hasPrefix("*")) {
+		// Resource file specified
+		error("TODO: formatResource");
+	} else {
+		// File outside of hag file
+		return resName;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 void File::openFile(const Common::String &filename) {

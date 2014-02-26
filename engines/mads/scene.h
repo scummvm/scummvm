@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "mads/assets.h"
+#include "mads/msurface.h"
 #include "mads/scene_data.h"
 
 namespace MADS {
@@ -63,15 +64,18 @@ public:
 	bool _dynamicHotspotsChanged;
 	byte *_vocabBuffer;
 	Common::Array<int> _activeVocabs;
-	Common::Array<SequenceEntry> _sequenceList;
-	Common::Array<KernelMessage> _messageList;
+	Common::Array<SequenceEntry> _sequences;
+	Common::Array<KernelMessage> _messages;
 	Common::String _talkFont;
 	int _textSpacing;
-	Common::Array<Hotspot> _hotspotList;
+	Common::Array<Hotspot> _hotspots;
 	ScreenObjects _screenObjects;
-	RGB4 *_scenePalette;
+	ScenePalette *_scenePalette;
 	RGB4 _nullPalette[2];
 	int _v1;
+	SceneInfo *_sceneInfo;
+	MSurface _backgroundSurface;
+	MSurface _depthSurface;
 
 	/**
 	 * Constructor

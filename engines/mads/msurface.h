@@ -50,24 +50,19 @@ struct SpriteInfo {
  * MADS graphics surface
  */
 class MSurface : public Graphics::Surface {
-public:
+private:
 	static MADSEngine *_vm;
-
+public:
 	/**
-	 * Sets the engine reference
+	 * Sets the engine refrence used all surfaces
 	 */
 	static void setVm(MADSEngine *vm) { _vm = vm; }
 
 	/**
-	 * Create a new surface.
+	 * Helper method for calculating new dimensions when scaling a sprite
 	 */
-	static MSurface *init();
-
-	/**
-	 * Create a surface
-	 */
-	static MSurface *init(int width, int height);
-protected:
+	static int scaleValue(int value, int scale, int err);	
+public:
 	/**
 	 * Basic constructor
 	 */
@@ -77,12 +72,7 @@ protected:
 	 * Constructor for a surface with fixed dimensions
 	 */
 	MSurface(int width, int height);
-public:
-	/**
-	 * Helper method for calculating new dimensions when scaling a sprite
-	 */
-	static int scaleValue(int value, int scale, int err);	
-public:
+
 	/**
 	 * Destructor
 	 */
@@ -182,55 +172,6 @@ public:
 	 * Translates the data of a surface using a specified RGBList translation matrix.
 	 */
 	void translate(RGBList *list, bool isTransparent = false);
-
-	// Base virtual methods
-	/**
-	 * Loads a background by scene name
-	 */
-	virtual void loadBackground(const Common::String &sceneName) {}
-
-	/**
-	 * Load background by room number
-	 */
-	virtual void loadBackground(int roomNumber, RGBList **palData) = 0;
-
-	/**
-	 * Load background from a passed stream
-	 */
-	virtual void loadBackground(Common::SeekableReadStream *source, RGBList **palData) {}
-
-	/**
-	 * Load scene codes from a passed stream
-	 */
-	virtual void loadCodes(Common::SeekableReadStream *source) = 0;
-
-	/**
-	 * Load a given user interface by index
-	 */
-	virtual void loadInterface(int index, RGBList **palData) {}
-};
-
-class MSurfaceMADS: public MSurface {
-	friend class MSurface;
-protected:
-	MSurfaceMADS(): MSurface() {}
-	MSurfaceMADS(int width, int height): MSurface(width, height) {}
-public:
-	virtual void loadCodes(Common::SeekableReadStream *source);
-	virtual void loadBackground(const Common::String &sceneName) {}
-	virtual void loadBackground(int roomNumber, RGBList **palData);
-	virtual void loadInterface(int index, RGBList **palData);
-};
-
-class MSurfaceNebular: public MSurfaceMADS {
-	friend class MSurface;
-protected:
-	MSurfaceNebular(): MSurfaceMADS() {}
-	MSurfaceNebular(int width, int height): MSurfaceMADS(width, height) {}
-private:
-	void loadBackgroundStream(Common::SeekableReadStream *source, RGBList **palData);
-public:
-	virtual void loadBackground(int roomNumber, RGBList **palData);
 };
 
 } // End of namespace MADS

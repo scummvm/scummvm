@@ -32,22 +32,6 @@ namespace MADS {
 
 MADSEngine *MSurface::_vm = nullptr;
 
-MSurface *MSurface::init() {
-	if (_vm->getGameID() == GType_RexNebular) {
-		return new MSurfaceNebular();
-	} else {
-		return new MSurfaceMADS();
-	}
-}
-
-MSurface *MSurface::init(int width, int height) {
-	if (_vm->getGameID() == GType_RexNebular) {
-		return new MSurfaceNebular(width, height);
-	} else {
-		return new MSurfaceMADS(width, height);
-	}
-}
-
 MSurface::MSurface() {
 	pixels = nullptr;
 }
@@ -120,7 +104,7 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 		return;
 	int heightAmt = scaledHeight;
 
-	byte *src = info.sprite->_surface.getData();
+	byte *src = info.sprite->getData();
 	byte *dst = getBasePtr(x - info.hotX - clipX, y - info.hotY - clipY);
 
 	int status = kStatusSkip;
@@ -278,33 +262,7 @@ void MSurface::translate(RGBList *list, bool isTransparent) {
 }
 
 /*------------------------------------------------------------------------*/
-
-void MSurfaceMADS::loadCodes(Common::SeekableReadStream *source) {
-	if (!source) {
-		free();
-		return;
-	}
-
-	uint16 width = MADS_SCREEN_WIDTH;
-	uint16 height = MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT;
-	byte *walkMap = new byte[source->size()];
-
-	setSize(width, height);
-	source->read(walkMap, source->size());
-
-	byte *ptr = (byte *)getBasePtr(0, 0);
-
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			int ofs = x + (y * width);
-			if ((walkMap[ofs / 8] << (ofs % 8)) & 0x80)
-				*ptr++ = 1;		// walkable
-			else
-				*ptr++ = 0;
-		}
-	}
-}
-
+/*
 void MSurfaceMADS::loadBackground(int roomNumber, RGBList **palData) {
 	// clear previous data
 	empty();
@@ -386,7 +344,7 @@ void MSurfaceMADS::loadBackground(int roomNumber, RGBList **palData) {
 	for (i = 0; i < tileCount; i++) {
 		tileDataUncomp->seek(i * 4, SEEK_SET);
 		uint32 tileOfs = tileDataUncomp->readUint32LE();
-		MSurface *newTile = MSurface::init(tileWidth, tileHeight);
+		MSurface *newTile = new MSurface(tileWidth, tileHeight);
 
 		if (i == tileCount - 1)
 			compressedTileDataSize = tileDataComp->size() - tileOfs;
@@ -454,7 +412,7 @@ void MSurfaceMADS::loadInterface(int index, RGBList **palData) {
 	delete intStream;
 }
 
-/*------------------------------------------------------------------------*/
+------------------------------------------------------------------------
 
 void MSurfaceNebular::loadBackground(int roomNumber, RGBList **palData) {
 	// clear previous data
@@ -504,5 +462,6 @@ void MSurfaceNebular::loadBackgroundStream(Common::SeekableReadStream *source, R
 	
 	delete sourceUnc;
 }
+*/
 
 } // End of namespace MADS
