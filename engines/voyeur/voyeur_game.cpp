@@ -28,7 +28,7 @@ namespace Voyeur {
 
 void VoyeurEngine::playStamp() {
 	_stampLibPtr = NULL;
-	_filesManager.openBoltLib("stampblt.blt", _stampLibPtr);
+	_filesManager->openBoltLib("stampblt.blt", _stampLibPtr);
 
 	_stampLibPtr->getBoltGroup(0);
 	_controlPtr->_state = _stampLibPtr->boltEntry(_controlPtr->_stateId >> 16)._stateResource;

@@ -41,6 +41,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 			Common::Point(1, 1), 1, 0, 0) {
 	_debugger = nullptr;
 	_eventsManager = nullptr;
+	_filesManager = nullptr;
 	_soundManager = nullptr;
 	_voy = nullptr;
 	_bVoy = NULL;
@@ -68,11 +69,21 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	initializeManagers();
 }
 
+void VoyeurEngine::initializeManagers() {
+	_graphicsManager.setVm(this);
+	_debugger = new Debugger(this);
+	_eventsManager = new EventsManager(this);
+	_filesManager = new FilesManager(this);
+	_soundManager = new SoundManager(this, _mixer);
+	_voy = new SVoy(this);
+}
+
 VoyeurEngine::~VoyeurEngine() {
 	delete _bVoy;
 	delete _voy;
 	delete _soundManager;
 	delete _eventsManager;
+	delete _filesManager;
 	delete _debugger;
 }
 
@@ -99,15 +110,6 @@ int VoyeurEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void VoyeurEngine::initializeManagers() {
-	_filesManager.setVm(this);
-	_graphicsManager.setVm(this);
-	_debugger = new Debugger(this);
-	_eventsManager = new EventsManager(this);
-	_soundManager = new SoundManager(this, _mixer);
-	_voy = new SVoy(this);
-}
-
 void VoyeurEngine::ESP_Init() {
 	ThreadResource::init();
 
@@ -118,7 +120,7 @@ void VoyeurEngine::ESP_Init() {
 void VoyeurEngine::globalInitBolt() {
 	initBolt();
 
-	_filesManager.openBoltLib("bvoy.blt", _bVoy);
+	_filesManager->openBoltLib("bvoy.blt", _bVoy);
 	_bVoy->getBoltGroup(0x000);
 	_bVoy->getBoltGroup(0x100);
 
@@ -233,8 +235,8 @@ void VoyeurEngine::showConversionScreen() {
 bool VoyeurEngine::doLock() {
 	bool result = true;
 	int buttonVocSize, wrongVocSize;
-	byte *buttonVoc = _filesManager.fload("button.voc", &buttonVocSize);
-	byte *wrongVoc = _filesManager.fload("wrong.voc", &wrongVocSize);
+	byte *buttonVoc = _filesManager->fload("button.voc", &buttonVocSize);
+	byte *wrongVoc = _filesManager->fload("wrong.voc", &wrongVocSize);
 
 	if (_bVoy->getBoltGroup(0x700)) {
 		_voy->_viewBounds = _bVoy->boltEntry(0x704)._rectResource;

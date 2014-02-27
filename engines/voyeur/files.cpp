@@ -172,8 +172,9 @@ void BoltFilesState::nextBlock() {
 
 /*------------------------------------------------------------------------*/
 
-FilesManager::FilesManager() {
+FilesManager::FilesManager(VoyeurEngine *vm) {
 	_curLibPtr = nullptr;
+	_boltFilesState._vm = vm;
 }
 
 bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFile) {

@@ -207,8 +207,7 @@ public:
 	BoltFilesState _boltFilesState;
 	BoltFile *_curLibPtr;
 public:
-	FilesManager();
-	void setVm(VoyeurEngine *vm) { _boltFilesState._vm = vm; }
+	FilesManager(VoyeurEngine *vm);
 
 	bool openBoltLib(const Common::String &filename, BoltFile *&boltFile);
 	byte *fload(const Common::String &filename, int *size = NULL);
