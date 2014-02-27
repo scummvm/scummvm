@@ -80,9 +80,9 @@ private:
 	void restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
 		PictureResource *srcPic, PictureResource *destPic);
 public:
-	GraphicsManager();
+	GraphicsManager(VoyeurEngine *vm);
 	~GraphicsManager();
-	void setVm(VoyeurEngine *vm) { _vm = vm; }
+
 	void sInitGraphics();
 
 	void setupMCGASaveRect(ViewPortResource *viewPort);

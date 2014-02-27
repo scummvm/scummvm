@@ -160,7 +160,7 @@ public:
 	Debugger *_debugger;
 	EventsManager *_eventsManager;
 	FilesManager *_filesManager;
-	GraphicsManager _graphicsManager;
+	GraphicsManager *_graphicsManager;
 	SoundManager *_soundManager;
 	SVoy *_voy;
 

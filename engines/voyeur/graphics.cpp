@@ -38,7 +38,7 @@ DrawInfo::DrawInfo(int penColor, const Common::Point &pos) {
 
 /*------------------------------------------------------------------------*/
 
-GraphicsManager::GraphicsManager(): _defaultDrawInfo(1, Common::Point()), _drawPtr(&_defaultDrawInfo) {
+GraphicsManager::GraphicsManager(VoyeurEngine *vm) : _defaultDrawInfo(1, Common::Point()), _drawPtr(&_defaultDrawInfo), _vm(vm) {
 	_SVGAMode = 0;
 	_planeSelect = 0;
 	_saveBack = true;
