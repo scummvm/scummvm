@@ -872,7 +872,14 @@ namespace Fullpipe {
 #define ST_SMG_SIT 1399
 
 // Scene 18
+#define ANI_BOY18 1477
+#define ANI_DOMINO_18 3174
+#define ANI_GIRL18 1484
+#define ANI_KRESLO 1459
+#define ANI_WHIRLIGIG_18 829
 #define PIC_SC18_RTRUBA 1520
+#define SND_18_006 3906
+#define SND_18_010 4994
 
 // Scene 19
 #define PIC_SC19_RTRUBA3 1515

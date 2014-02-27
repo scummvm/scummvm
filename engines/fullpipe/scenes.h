@@ -461,6 +461,34 @@ public:
 	int scene17_sceneEdgeX;
 
 	int scene18_var01;
+	int scene18_var16;
+	int scene18_var17;
+	int scene18_var18;
+	int scene18_var19;
+	StaticANIObject *scene18_whirlgig;
+	int scene18_var20;
+	int scene18_var04;
+	int scene18_var08;
+	bool scene18_var03;
+	int scene18_var21;
+	int scene18_var12;
+	int scene18_var22;
+	int scene18_var23;
+	int scene18_var24;
+	int scene18_var25;
+	int scene18_var26;
+	int scene18_var27;
+	int scene18_var13;
+	int scene18_var14;
+	int scene18_var28;
+	int scene18_var15;
+	StaticANIObject *scene18_boy;
+	StaticANIObject *scene18_girl;
+	StaticANIObject *scene18_domino;
+	int scene18_var29;
+	int scene18_var30;
+	int scene18_var05;
+	int scene18_var06;
 
 	int scene19_var01;
 	int scene19_var02;
