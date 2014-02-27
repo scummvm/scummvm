@@ -168,7 +168,7 @@ void SVoy::addVideoEventStart() {
 	e._type = EVTYPE_VIDEO;
 	e._audioVideoId = _vm->_audioVideoId;
 	e._computerOn = _vocSecondsOffset;
-	e._dead = _vm->_eventsManager._videoDead;
+	e._dead = _vm->_eventsManager->_videoDead;
 }
 
 void SVoy::addVideoEventEnd() {
@@ -186,7 +186,7 @@ void SVoy::addAudioEventStart() {
 	e._type = EVTYPE_AUDIO;
 	e._audioVideoId = _vm->_audioVideoId;
 	e._computerOn = _vocSecondsOffset;
-	e._dead = _vm->_eventsManager._videoDead;
+	e._dead = _vm->_eventsManager->_videoDead;
 }
 
 void SVoy::addAudioEventEnd() {

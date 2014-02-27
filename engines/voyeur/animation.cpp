@@ -467,7 +467,7 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 
 	PictureResource videoFrame(getVideoTrack()->getBackSurface());
 	int picCtr = 0;
-	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager._mouseClicked) {
+	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager->_mouseClicked) {
 		if (hasDirtyPalette()) {
 			const byte *palette = getPalette();
 
@@ -494,7 +494,7 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 				(byte *)vm->_graphicsManager._screenSurface.getPixels());
 		}
 		
-		vm->_eventsManager.getMouseInfo();
+		vm->_eventsManager->getMouseInfo();
 		g_system->delayMillis(10);
 	}
 }

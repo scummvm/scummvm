@@ -1530,7 +1530,7 @@ CMapResource::~CMapResource() {
 }
 
 void CMapResource::startFade() {
-	_vm->_eventsManager.startFade(this);
+	_vm->_eventsManager->startFade(this);
 }
 
 /*------------------------------------------------------------------------*/
@@ -1545,7 +1545,7 @@ VInitCycleResource::VInitCycleResource(BoltFilesState &state, const byte *src):
 }
 
 void VInitCycleResource::vStartCycle() {
-	EventsManager &evt = _state._vm->_eventsManager;
+	EventsManager &evt = *_state._vm->_eventsManager;
 	evt._cycleIntNode._flags |= 1;
 	evt._cyclePtr = this;
 
@@ -1559,7 +1559,7 @@ void VInitCycleResource::vStartCycle() {
 }
 
 void VInitCycleResource::vStopCycle() {
-	EventsManager &evt = _state._vm->_eventsManager;
+	EventsManager &evt = *_state._vm->_eventsManager;
 	evt._cycleIntNode._flags |= 1;
 	evt._cycleStatus &= ~1;
 }

@@ -112,8 +112,7 @@ public:
 	byte *_cycleNext[4];
 	VInitCycleResource *_cyclePtr;
 
-	EventsManager();
-	void setVm(VoyeurEngine *vm) { _vm = vm; }
+	EventsManager(VoyeurEngine *vm);
 
 	void setMousePos(const Common::Point &p) { _mousePos = p; }
 	void startMainClockInt();

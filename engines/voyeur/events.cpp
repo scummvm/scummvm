@@ -61,8 +61,8 @@ IntData::IntData() {
 
 /*------------------------------------------------------------------------*/
 
-EventsManager::EventsManager(): _intPtr(_gameData),
-		_fadeIntNode(0, 0, 3), _cycleIntNode(0, 0, 3) {
+EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
+		_fadeIntNode(0, 0, 3), _cycleIntNode(0, 0, 3), _vm(vm) {
 	_cycleStatus = 0;
 	_fadeStatus = 0;
 	_priorFrameTime = g_system->getMillis();
@@ -244,7 +244,7 @@ void EventsManager::delayClick(int cycles) {
 		g_system->delayMillis(10);
 		getMouseInfo();
 	} while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd 
-			&& !_vm->_eventsManager._mouseClicked);
+			&& !_vm->_eventsManager->_mouseClicked);
 }
 
 void EventsManager::pollEvents() {
@@ -268,18 +268,18 @@ void EventsManager::pollEvents() {
 			}
 			return;
 		case Common::EVENT_LBUTTONDOWN:
-			_vm->_eventsManager._newLeftClick = true;
-			_vm->_eventsManager._newMouseClicked = true;
+			_vm->_eventsManager->_newLeftClick = true;
+			_vm->_eventsManager->_newMouseClicked = true;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_vm->_eventsManager._newRightClick = true;
-			_vm->_eventsManager._newMouseClicked = true;
+			_vm->_eventsManager->_newRightClick = true;
+			_vm->_eventsManager->_newMouseClicked = true;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_vm->_eventsManager._newMouseClicked = false;
-			_vm->_eventsManager._newLeftClick = false;
-			_vm->_eventsManager._newRightClick = false;
+			_vm->_eventsManager->_newMouseClicked = false;
+			_vm->_eventsManager->_newLeftClick = false;
+			_vm->_eventsManager->_newRightClick = false;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -576,13 +576,13 @@ void EventsManager::getMouseInfo() {
 		}
 	}
 
-	_vm->_eventsManager._mouseClicked = _vm->_eventsManager._newMouseClicked;
-	_vm->_eventsManager._leftClick = _vm->_eventsManager._newLeftClick;
-	_vm->_eventsManager._rightClick = _vm->_eventsManager._newRightClick;
+	_vm->_eventsManager->_mouseClicked = _vm->_eventsManager->_newMouseClicked;
+	_vm->_eventsManager->_leftClick = _vm->_eventsManager->_newLeftClick;
+	_vm->_eventsManager->_rightClick = _vm->_eventsManager->_newRightClick;
 
-	_vm->_eventsManager._newMouseClicked = false;
-	_vm->_eventsManager._newLeftClick = false;
-	_vm->_eventsManager._newRightClick = false;
+	_vm->_eventsManager->_newMouseClicked = false;
+	_vm->_eventsManager->_newLeftClick = false;
+	_vm->_eventsManager->_newRightClick = false;
 }
 
 void EventsManager::startCursorBlink() {

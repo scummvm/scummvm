@@ -158,7 +158,7 @@ protected:
 public:
 	BoltFile *_bVoy;
 	Debugger *_debugger;
-	EventsManager _eventsManager;
+	EventsManager *_eventsManager;
 	FilesManager _filesManager;
 	GraphicsManager _graphicsManager;
 	SoundManager *_soundManager;
