@@ -1970,6 +1970,8 @@ protected:
 	virtual uint16 readUint16Wrapper(const void *src);
 	virtual uint32 readUint32Wrapper(const void *src);
 
+	void setLoyaltyRating(int rating);
+
 	void playVideo(const char *filename, bool lastSceneUsed = false);
 	void stopInteractiveVideo();
 

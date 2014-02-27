@@ -296,6 +296,10 @@ void AGOSEngine_Feeble::executeOpcode(int opcode) {
 	(this->*op) ();
 }
 
+void AGOSEngine_Feeble::setLoyaltyRating(int rating) {
+	writeVariable(120, rating);
+}
+
 // -----------------------------------------------------------------------
 // Feeble Files Opcodes
 // -----------------------------------------------------------------------
@@ -480,11 +484,11 @@ void AGOSEngine_Feeble::off_b2Set() {
 		switch (bit) {
 		case 152:
 			// Kicking vending machine: Possibility of Undesirable Character Flaws
-			writeVariable(120, 1);
+			setLoyaltyRating(1);
 			break;
 		case 153:
 			// Confessing: Confirmed Minor Character Flaws
-			writeVariable(120, 2);
+			setLoyaltyRating(2);
 			break;
 		default:
 			break;
@@ -598,16 +602,16 @@ void AGOSEngine_Feeble::off_loadVideo() {
 
 		if (strcmp((const char *)filename, "MainMin.smk") == 0) {
 			// Being sent to Cygnus Alpha: Suspected Subversive Activity
-			writeVariable(120, 3);
+			setLoyaltyRating(3);
 		} else if (strcmp((const char *)filename, "fxmadsam.smk") == 0) {
 			// Escaping from Cygnus Alpha: Confirmed Subversive Activity
-			writeVariable(120, 4);
+			setLoyaltyRating(4);
 		} else if (strcmp((const char *)filename, "Statue1.smk") == 0) {
 			// Being brought before Filbert: Confirmed Treasonous Activity
-			writeVariable(120, 5);
+			setLoyaltyRating(5);
 		} else if (strcmp((const char *)filename, "IceTrench.smk") == 0) {
 			// Arriving at rebel base: Freedom Fighters Operative
-			writeVariable(120, 6);
+			setLoyaltyRating(6);
 		}
 	}
 }
