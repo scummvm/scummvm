@@ -490,6 +490,18 @@ void AGOSEngine_Feeble::off_b2Set() {
 			// Confessing: Confirmed Minor Character Flaws
 			setLoyaltyRating(2);
 			break;
+		case 240:
+			// Being sent to Cygnus Alpha: Suspected Subversive Activity
+			setLoyaltyRating(3);
+			break;
+		case 251:
+			// Escaping from Cygnus Alpha: Confirmed Subversive Activity
+			setLoyaltyRating(4);
+			break;
+		case 253:
+			// Arriving at rebel base: Freedom Fighters Operative
+			setLoyaltyRating(6);
+			break;
 		default:
 			break;
 		}
@@ -600,18 +612,9 @@ void AGOSEngine_Feeble::off_loadVideo() {
 		// opcodes to set the loyalty rating. This approximates the script
 		// from the 2CD version. See bug #6525.
 
-		if (strcmp((const char *)filename, "MainMin.smk") == 0) {
-			// Being sent to Cygnus Alpha: Suspected Subversive Activity
-			setLoyaltyRating(3);
-		} else if (strcmp((const char *)filename, "fxmadsam.smk") == 0) {
-			// Escaping from Cygnus Alpha: Confirmed Subversive Activity
-			setLoyaltyRating(4);
-		} else if (strcmp((const char *)filename, "Statue1.smk") == 0) {
+		if (strcmp((const char *)filename, "Statue1.smk") == 0) {
 			// Being brought before Filbert: Confirmed Treasonous Activity
 			setLoyaltyRating(5);
-		} else if (strcmp((const char *)filename, "IceTrench.smk") == 0) {
-			// Arriving at rebel base: Freedom Fighters Operative
-			setLoyaltyRating(6);
 		}
 	}
 }
