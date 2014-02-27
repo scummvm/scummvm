@@ -181,7 +181,7 @@ void VoyeurEngine::playStamp() {
 		do {
 			if (flag) {
 				if (_currentVocId != -1) {
-					_soundManager.stopVOCPlay();
+					_soundManager->stopVOCPlay();
 					_currentVocId = -1;
 				}
 
@@ -263,7 +263,7 @@ void VoyeurEngine::doTailTitle() {
 				flipPageAndWaitForFade();
 				_eventsManager.delayClick(120);
 
-				_soundManager.stopVOCPlay();
+				_soundManager->stopVOCPlay();
 			}
 		}
 
@@ -294,7 +294,7 @@ void VoyeurEngine::doClosingCredits() {
 	_graphicsManager._fontPtr->_fontSaveBack = false;
 	_graphicsManager._fontPtr->_fontFlags = 0;
 
-	_soundManager.startVOCPlay(152);
+	_soundManager->startVOCPlay(152);
 	FontInfoResource &fi = *_graphicsManager._fontPtr;
 
 	for (int idx = 0; idx < 78; ++idx) {
@@ -380,7 +380,7 @@ void VoyeurEngine::doClosingCredits() {
 			break;
 	}
 
-	_soundManager.stopVOCPlay();
+	_soundManager->stopVOCPlay();
 	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
 	_bVoy->freeBoltGroup(0x400);
 }
@@ -473,9 +473,9 @@ void VoyeurEngine::reviewTape() {
 		_voy->_vocSecondsOffset = 0;
 		bool needRedraw = true;
 		do {
-			if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
+			if (_currentVocId != -1 && !_soundManager->getVOCStatus()) {
 				_voy->_musicStartTime = _voy->_RTVNum;
-				_soundManager.startVOCPlay(_currentVocId);
+				_soundManager->startVOCPlay(_currentVocId);
 			}
 
 			if (needRedraw) {
@@ -655,7 +655,7 @@ void VoyeurEngine::reviewTape() {
 			
 		if (_currentVocId != -1) {
 			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
-			_soundManager.stopVOCPlay();
+			_soundManager->stopVOCPlay();
 		}
 
 		// Break out if the exit button was pressed
@@ -688,19 +688,19 @@ void VoyeurEngine::reviewTape() {
 			_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
 			// Play suond for the given duration
-			_soundManager.setVOCOffset(_voy->_vocSecondsOffset);
-			_soundManager.startVOCPlay(_audioVideoId + 159);
+			_soundManager->setVOCOffset(_voy->_vocSecondsOffset);
+			_soundManager->startVOCPlay(_audioVideoId + 159);
 			uint32 secondsDuration = e._computerOff;
 
 			_eventsManager.getMouseInfo();
-			while (!_eventsManager._mouseClicked && _soundManager.getVOCStatus() && 
-					_soundManager.getVOCFrame() < secondsDuration) {
+			while (!_eventsManager._mouseClicked && _soundManager->getVOCStatus() && 
+					_soundManager->getVOCFrame() < secondsDuration) {
 				_eventsManager.getMouseInfo();
 				_eventsManager.delay(10);
 			}
 
 			_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
-			_soundManager.stopVOCPlay();
+			_soundManager->stopVOCPlay();
 			_bVoy->freeBoltGroup(0x7F00);
 			break;
 		}
@@ -709,7 +709,7 @@ void VoyeurEngine::reviewTape() {
 			_voy->reviewAnEvidEvent(eventIndex);
 			
 			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
-			_soundManager.stopVOCPlay();
+			_soundManager->stopVOCPlay();
 			_bVoy->getBoltGroup(0x900);
 			break;
 
@@ -717,7 +717,7 @@ void VoyeurEngine::reviewTape() {
 			_voy->reviewComputerEvent(eventIndex);
 			
 			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
-			_soundManager.stopVOCPlay();
+			_soundManager->stopVOCPlay();
 			_bVoy->getBoltGroup(0x900);
 			break;
 
@@ -796,12 +796,12 @@ void VoyeurEngine::doTapePlaying() {
 
 	cycle->vStartCycle();
 
-	_soundManager.startVOCPlay("vcr.voc");
-	while (!shouldQuit() && !_eventsManager._mouseClicked && _soundManager.getVOCStatus()) {
+	_soundManager->startVOCPlay("vcr.voc");
+	while (!shouldQuit() && !_eventsManager._mouseClicked && _soundManager->getVOCStatus()) {
 		_eventsManager.delayClick(2);
 	}
 
-	_soundManager.stopVOCPlay();
+	_soundManager->stopVOCPlay();
 	cycle->vStopCycle();
 	_bVoy->freeBoltGroup(0xA00);
 }
@@ -943,8 +943,8 @@ int VoyeurEngine::getChooseButton()  {
 
 	do {
 		do {
-			if (_currentVocId != -1 && !_soundManager.getVOCStatus())
-				_soundManager.startVOCPlay(_currentVocId);
+			if (_currentVocId != -1 && !_soundManager->getVOCStatus())
+				_soundManager->startVOCPlay(_currentVocId);
 
 			_eventsManager.getMouseInfo();
 			selectedIndex = -1;
@@ -1177,7 +1177,7 @@ int VoyeurEngine::doComputerText(int maxLen) {
 
 	if (_voy->_RTVNum > _voy->_computerTimeMax && maxLen == 9999) {
 		if (_currentVocId != -1)
-			_soundManager.startVOCPlay(_currentVocId);
+			_soundManager->startVOCPlay(_currentVocId);
 		font._justify = ALIGN_LEFT;
 		font._justifyWidth = 384;
 		font._justifyHeight = 100;
@@ -1185,7 +1185,7 @@ int VoyeurEngine::doComputerText(int maxLen) {
 		(*_graphicsManager._vPort)->drawText(END_OF_MESSAGE);
 	} else if (_voy->_RTVNum < _voy->_computerTimeMin && maxLen == 9999) {
 		if (_currentVocId != -1)
-			_soundManager.startVOCPlay(_currentVocId);
+			_soundManager->startVOCPlay(_currentVocId);
 		font._justify = ALIGN_LEFT;
 		font._justifyWidth = 384;
 		font._justifyHeight = 100;
@@ -1198,10 +1198,10 @@ int VoyeurEngine::doComputerText(int maxLen) {
 		bool showEnd = true;
 		int yp = 60;
 		do {
-			if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
+			if (_currentVocId != -1 && !_soundManager->getVOCStatus()) {
 				if (_voy->_vocSecondsOffset > 60)
 					_voy->_vocSecondsOffset = 0;
-				_soundManager.startVOCPlay(_currentVocId);
+				_soundManager->startVOCPlay(_currentVocId);
 			}
 
 			char c = *msg++;
@@ -1317,15 +1317,15 @@ void VoyeurEngine::checkPhoneCall() {
 	if ((_voy->_RTVLimit - _voy->_RTVNum) >= 36 && _voy->_totalPhoneCalls < 5 && 
 			_currentVocId <= 151 && _currentVocId > 146) {
 		if ((_voy->_switchBGNum < _checkPhoneVal || _checkPhoneVal > 180) &&
-				!_soundManager.getVOCStatus()) {
+				!_soundManager->getVOCStatus()) {
 			int soundIndex;
 			do {
 				soundIndex = getRandomNumber(4);
 			} while (_voy->_phoneCallsReceived[soundIndex]);
 			_currentVocId = 154 + soundIndex;
 
-			_soundManager.stopVOCPlay();
-			_soundManager.startVOCPlay(_currentVocId);
+			_soundManager->stopVOCPlay();
+			_soundManager->startVOCPlay(_currentVocId);
 			_checkPhoneVal = _voy->_switchBGNum;
 			_voy->_phoneCallsReceived[soundIndex] = true;
 			++_voy->_totalPhoneCalls;
@@ -1339,7 +1339,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 
 	if (_currentVocId != -1) {
 		_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
-		_soundManager.stopVOCPlay();
+		_soundManager->stopVOCPlay();
 	}
 
 	_bVoy->getBoltGroup(_voy->_boltGroupId2);
@@ -1381,11 +1381,11 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	while (!shouldQuit() && !_eventsManager._rightClick) {
 		_voyeurArea = AREA_EVIDENCE;
 
-		if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
+		if (_currentVocId != -1 && !_soundManager->getVOCStatus()) {
 			if (_voy->_vocSecondsOffset > 60)
 				_voy->_vocSecondsOffset = 0;
 
-			_soundManager.startVOCPlay(_currentVocId);
+			_soundManager->startVOCPlay(_currentVocId);
 		}
 
 		_eventsManager.delayClick(600);

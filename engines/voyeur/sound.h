@@ -38,8 +38,7 @@ private:
 	Audio::SoundHandle _soundHandle;
 	int _vocOffset;
 public:
-	SoundManager(Audio::Mixer *mixer);
-	void setVm(VoyeurEngine *vm) { _vm = vm; }
+	SoundManager(VoyeurEngine *vm, Audio::Mixer *mixer);
 
 	void playVOCMap(byte *voc, int vocSize);
 	void stopVOCPlay();

@@ -36,11 +36,12 @@ namespace Voyeur {
 VoyeurEngine *g_vm;
 
 VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("Voyeur"), _soundManager(_mixer),
+		_gameDescription(gameDesc), _randomSource("Voyeur"),
 		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1, 
 			Common::Point(1, 1), 1, 0, 0) {
-	_voy = nullptr;
 	_debugger = nullptr;
+	_soundManager = nullptr;
+	_voy = nullptr;
 	_bVoy = NULL;
 
 	_iForceDeath = ConfMan.getInt("boot_param");
@@ -69,6 +70,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 VoyeurEngine::~VoyeurEngine() {
 	delete _bVoy;
 	delete _voy;
+	delete _soundManager;
 	delete _debugger;
 }
 
@@ -99,8 +101,8 @@ void VoyeurEngine::initializeManagers() {
 	_eventsManager.setVm(this);
 	_filesManager.setVm(this);
 	_graphicsManager.setVm(this);
-	_soundManager.setVm(this);
 	_debugger = new Debugger(this);
+	_soundManager = new SoundManager(this, _mixer);
 	_voy = new SVoy(this);
 }
 
@@ -323,10 +325,10 @@ bool VoyeurEngine::doLock() {
 				_eventsManager._mouseClicked = false;
 			} while (!shouldQuit() && key == -1);
 
-			_soundManager.abortVOCMap();
-			_soundManager.playVOCMap(buttonVoc, buttonVocSize);
+			_soundManager->abortVOCMap();
+			_soundManager->playVOCMap(buttonVoc, buttonVocSize);
 
-			while (_soundManager.getVOCStatus()) {
+			while (_soundManager->getVOCStatus()) {
 				if (shouldQuit())
 					break;
 				_eventsManager.delay(1);
@@ -371,7 +373,7 @@ bool VoyeurEngine::doLock() {
 				continue;
 			}
 
-			_soundManager.playVOCMap(wrongVoc, wrongVocSize);
+			_soundManager->playVOCMap(wrongVoc, wrongVocSize);
 		}
 
 		_graphicsManager.fillPic(*_graphicsManager._vPort);
@@ -609,19 +611,19 @@ void VoyeurEngine::playAudio(int audioId) {
 	flipPageAndWaitForFade();
 
 	_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
-	_soundManager.setVOCOffset(_voy->_vocSecondsOffset);
-	Common::String filename = _soundManager.getVOCFileName(
+	_soundManager->setVOCOffset(_voy->_vocSecondsOffset);
+	Common::String filename = _soundManager->getVOCFileName(
 		audioId + 159);
-	_soundManager.startVOCPlay(filename);
+	_soundManager->startVOCPlay(filename);
 	_voy->_eventFlags |= EVTFLAG_RECORDING;
 	_eventsManager.startCursorBlink();
 
 	while (!shouldQuit() && !_eventsManager._mouseClicked && 
-			_soundManager.getVOCStatus())
+			_soundManager->getVOCStatus())
 		_eventsManager.delayClick(1);
 
 	_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
-	_soundManager.stopVOCPlay();
+	_soundManager->stopVOCPlay();
 
 	_bVoy->freeBoltGroup(0x7F00);
 	(*_graphicsManager._vPort)->setupViewPort(NULL);
@@ -716,16 +718,16 @@ void VoyeurEngine::showEndingNews() {
 		_bVoy->freeBoltMember(_playStampGroupId + (idx - 1) * 2 + 1);
 
 		Common::String fname = Common::String::format("news%d.voc", idx);
-		_soundManager.startVOCPlay(fname);
+		_soundManager->startVOCPlay(fname);
 
 		_eventsManager.getMouseInfo();
 		while (!shouldQuit() && !_eventsManager._mouseClicked && 
-				_soundManager.getVOCStatus()) {
+				_soundManager->getVOCStatus()) {
 			_eventsManager.delay(1);
 			_eventsManager.getMouseInfo();
 		}
 
-		_soundManager.stopVOCPlay();
+		_soundManager->stopVOCPlay();
 		if (idx == 3)
 			_eventsManager.delay(3);
 
@@ -779,7 +781,7 @@ void VoyeurEngine::loadGame(int slot) {
 	_checkTransitionId = _voy->_transitionId;
 
 	// Stop any playing sound
-	_soundManager.stopVOCPlay();
+	_soundManager->stopVOCPlay();
 
 	// Read in the savegame header
 	VoyeurSavegameHeader header;

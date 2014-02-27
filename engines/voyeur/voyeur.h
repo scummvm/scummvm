@@ -161,7 +161,7 @@ public:
 	EventsManager _eventsManager;
 	FilesManager _filesManager;
 	GraphicsManager _graphicsManager;
-	SoundManager _soundManager;
+	SoundManager *_soundManager;
 	SVoy *_voy;
 
 	BoltFile *_stampLibPtr;

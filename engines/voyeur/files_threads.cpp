@@ -451,7 +451,7 @@ void ThreadResource::parsePlayCommands() {
 				parseIndex = 999;
 			} else {
 				int count = _vm->_bVoy->getBoltGroup(_vm->_playStampGroupId)->_entries.size() / 2;
-				_vm->_soundManager.stopVOCPlay();
+				_vm->_soundManager->stopVOCPlay();
 				_vm->_eventsManager.getMouseInfo();
 
 				for (int i = 0; i < count; ++i) {
@@ -469,15 +469,15 @@ void ThreadResource::parsePlayCommands() {
 					}
 
 					Common::String file = Common::String::format("news%d.voc", i + 1);
-					_vm->_soundManager.startVOCPlay(file);
+					_vm->_soundManager->startVOCPlay(file);
 
 					while (!_vm->shouldQuit() && !_vm->_eventsManager._mouseClicked &&
-							_vm->_soundManager.getVOCStatus()) {
+							_vm->_soundManager->getVOCStatus()) {
 						_vm->_eventsManager.delayClick(1);
 						_vm->_eventsManager.getMouseInfo();
 					}
 
-					_vm->_soundManager.stopVOCPlay();
+					_vm->_soundManager->stopVOCPlay();
 
 					if (i == (count - 1))
 						_vm->_eventsManager.delayClick(480);
@@ -974,7 +974,7 @@ int ThreadResource::doApt() {
 	}
 
 	_vm->_eventsManager.setMousePos(Common::Point(_aptPos.x, _aptPos.y));
-	_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_currentVocId));
+	_vm->_soundManager->startVOCPlay(_vm->_soundManager->getVOCFileName(_vm->_currentVocId));
 	_vm->_currentVocId = 151;
 
 	_vm->_graphicsManager.setColor(129, 82, 82, 82);
@@ -1001,10 +1001,10 @@ int ThreadResource::doApt() {
 		}
 
 		_vm->_eventsManager.getMouseInfo();
-		if (!_vm->_soundManager.getVOCStatus()) {
+		if (!_vm->_soundManager->getVOCStatus()) {
 			// Previous sound ended, so start up a new one
 			_vm->_currentVocId = 151 - _vm->getRandomNumber(4);
-			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_currentVocId));
+			_vm->_soundManager->startVOCPlay(_vm->_soundManager->getVOCFileName(_vm->_currentVocId));
 		}
 
 		// Loop through the hotspot list
@@ -1124,7 +1124,7 @@ void ThreadResource::doRoom() {
 	voy._musicStartTime = voy._RTVNum;
 
 	voy._vocSecondsOffset = 0;
-	vm._soundManager.startVOCPlay(vm._currentVocId);
+	vm._soundManager->startVOCPlay(vm._currentVocId);
 	voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
 	bool breakFlag = false;
@@ -1134,10 +1134,10 @@ void ThreadResource::doRoom() {
 		vm._eventsManager._intPtr._hasPalette = true;
 
 		do {
-			if (vm._currentVocId != -1 && !vm._soundManager.getVOCStatus()) {
+			if (vm._currentVocId != -1 && !vm._soundManager->getVOCStatus()) {
 				voy._musicStartTime = voy._RTVNum;
 				voy._vocSecondsOffset = 0;
-				vm._soundManager.startVOCPlay(vm._currentVocId);
+				vm._soundManager->startVOCPlay(vm._currentVocId);
 			}
 
 			vm._eventsManager.getMouseInfo();
@@ -1192,7 +1192,7 @@ void ThreadResource::doRoom() {
 
 				if (vm._currentVocId != -1) {
 					voy._vocSecondsOffset = voy._RTVNum - voy._musicStartTime;
-					vm._soundManager.stopVOCPlay();
+					vm._soundManager->stopVOCPlay();
 				}
 
 				vm.getComputerBrush();
@@ -1273,7 +1273,7 @@ void ThreadResource::doRoom() {
 	}
 
 	if (vm._currentVocId != -1) {
-		vm._soundManager.stopVOCPlay();
+		vm._soundManager->stopVOCPlay();
 		vm._currentVocId = -1;
 	}
 
@@ -1328,8 +1328,8 @@ int ThreadResource::doInterface() {
 	_vm->_currentVocId = 151 - _vm->getRandomNumber(5);
 	_vm->_voy->_vocSecondsOffset = _vm->getRandomNumber(29);
 
-	Common::String fname = _vm->_soundManager.getVOCFileName(_vm->_currentVocId);
-	_vm->_soundManager.startVOCPlay(fname);
+	Common::String fname = _vm->_soundManager->getVOCFileName(_vm->_currentVocId);
+	_vm->_soundManager->startVOCPlay(fname);
 	_vm->_eventsManager.getMouseInfo();
 	
 	_vm->_graphicsManager.setColor(240, 220, 220, 220);
@@ -1358,9 +1358,9 @@ int ThreadResource::doInterface() {
 			_vm->doScroll(_vm->_mansionViewPos);
 
 		_vm->checkPhoneCall();
-		if (!_vm->_soundManager.getVOCStatus()) {
+		if (!_vm->_soundManager->getVOCStatus()) {
 			_vm->_currentVocId = 151 - _vm->getRandomNumber(5);
-			_vm->_soundManager.startVOCPlay(_vm->_soundManager.getVOCFileName(_vm->_currentVocId));
+			_vm->_soundManager->startVOCPlay(_vm->_soundManager->getVOCFileName(_vm->_currentVocId));
 		}
 
 		// Calculate the mouse position within the entire mansion
@@ -1436,7 +1436,7 @@ int ThreadResource::doInterface() {
 			if (_vm->_voy->_transitionId == 15) {
 				regionIndex = 20;
 				_vm->_voy->_transitionId = 17;
-				_vm->_soundManager.stopVOCPlay();
+				_vm->_soundManager->stopVOCPlay();
 				_vm->checkTransition();
 				_vm->_eventsManager._leftClick = true;
 			} else {
@@ -1464,7 +1464,7 @@ int ThreadResource::doInterface() {
 	_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 	_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
 	if (_vm->_currentVocId != -1)
-		_vm->_soundManager.stopVOCPlay();
+		_vm->_soundManager->stopVOCPlay();
 
 	return !_vm->_eventsManager._rightClick ? regionIndex : -2;
 }
@@ -1610,7 +1610,7 @@ void ThreadResource::freeTheApt() {
 	_vm->_graphicsManager.fadeUpICF1();
 
 	if (_vm->_currentVocId != -1) {
-		_vm->_soundManager.stopVOCPlay();
+		_vm->_soundManager->stopVOCPlay();
 		_vm->_currentVocId = -1;
 	}
 
