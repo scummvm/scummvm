@@ -1462,6 +1462,15 @@ void PegasusEngine::throwAwayEverything() {
 	g_interface = 0;
 }
 
+InputBits PegasusEngine::getInputFilter() {
+	InputBits filter = InputHandler::getInputFilter();
+
+	if (isPaused())
+		return filter & ~JMPPPInput::getItemPanelsInputFilter();
+
+	return filter;
+}
+
 void PegasusEngine::processShell() {
 	checkCallBacks();
 	checkNotifications();
