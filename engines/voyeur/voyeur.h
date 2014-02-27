@@ -80,7 +80,6 @@ private:
 	FontInfoResource _defaultFontInfo;
 
 	void ESP_Init();
-	void initializeManagers();
 	void globalInitBolt();
 	void initBolt();
 	void vInitInterrupts();

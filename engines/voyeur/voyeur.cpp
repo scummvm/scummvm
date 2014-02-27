@@ -67,10 +67,6 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
 
-	initializeManagers();
-}
-
-void VoyeurEngine::initializeManagers() {
 	_debugger = new Debugger(this);
 	_eventsManager = new EventsManager(this);
 	_filesManager = new FilesManager(this);
