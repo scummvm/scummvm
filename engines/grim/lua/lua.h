@@ -6,11 +6,11 @@
 ** See Copyright Notice at the end of this file
 */
 
-#include "common/scummsys.h"
-#include "common/str.h"
-
 #ifndef GRIM_LUA_H
 #define GRIM_LUA_H
+
+#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Common {
 	class String;

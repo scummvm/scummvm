@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef GRIM_STUFFIT_H
+#define GRIM_STUFFIT_H
+
 #include "common/archive.h"
 #include "common/scummsys.h"
 #include "common/endian.h"
@@ -27,9 +30,6 @@
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/str.h"
-
-#ifndef GRIM_STUFFIT_H
-#define GRIM_STUFFIT_H
 
 namespace Common {
 class BitStream;
