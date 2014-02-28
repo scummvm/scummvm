@@ -138,8 +138,6 @@ static void FreeScript(LpMpalScript lpmsScript) {
  * @returns		Pointer to the buffer after the item, or NULL on failure.
  */
 static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
-	byte *lpLock;
-
 	lpmdDialog->_nObj = READ_LE_UINT32(lpBuf);
 	lpBuf += 4;
 
@@ -155,7 +153,7 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 		lpmdDialog->_periodNums[i] = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
 		lpmdDialog->_periods[i] = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, *lpBuf + 1);
-		lpLock = (byte *)globalLock(lpmdDialog->_periods[i]);
+		byte *lpLock = (byte *)globalLock(lpmdDialog->_periods[i]);
 		Common::copy(lpBuf + 1, lpBuf + 1 + *lpBuf, lpLock);
 		globalUnlock(lpmdDialog->_periods[i]);
 		lpBuf += (*lpBuf) + 1;

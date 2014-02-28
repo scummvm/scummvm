@@ -1718,7 +1718,6 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
  * method that returns a pointer or handle.
  */
 MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...) {
-	char *n;
 	Common::String buf;
 	va_list v;
 	va_start(v, wQueryType);
@@ -1796,12 +1795,9 @@ MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...) {
 		error("mpalQuery(MPQ_ITEM_IS_ACTIVE, uint32 nItem) used incorrect variant");
 
 	} else if (wQueryType == MPQ_ITEM_NAME) {
-		/*
-		 *  uint32 mpalQuery(MPQ_ITEM_NAME, uint32 nItem, char *lpszName);
-		 */
 		lockVar();
 		int x = GETARG(uint32);
-		n = GETARG(char *);
+		char *n = GETARG(char *);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
 			n[0] = '\0';

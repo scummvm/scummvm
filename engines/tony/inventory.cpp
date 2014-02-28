@@ -457,8 +457,6 @@ bool RMInventory::rightRelease(const RMPoint &mpos, RMTonyAction &curAction) {
 #define INVSPEED 20
 
 void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen) {
-	bool bNeedRedraw = false;
-
 	if (_state != CLOSED) {
 		// Clean up the OT list
 		g_system->lockMutex(_csModifyInterface);
@@ -466,6 +464,8 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 
 		// DoFrame makes all the objects currently in the inventory be displayed
 		// @@@ Maybe we should do all takeable objects? Please does not help
+		bool bNeedRedraw = false;
+
 		for (int i = 0; i < _nInv; i++) {
 			if (_items[_inv[i]]._icon.doFrame(this, false) && (i >= _curPos && i <= _curPos + 7))
 				bNeedRedraw = true;
@@ -698,9 +698,8 @@ int RMInventory::loadState(byte *state) {
 		state += 4;
 	}
 
-	int x;
 	for (int i = 0; i < 256; i++) {
-		x = READ_LE_UINT32(state);
+		int x = READ_LE_UINT32(state);
 		state += 4;
 
 		if (i < _nItems) {
