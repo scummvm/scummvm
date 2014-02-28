@@ -3,12 +3,11 @@ MODULE := devtools/create_kyradat
 
 MODULE_OBJS := \
 	create_kyradat.o \
-	extract.o \
 	games.o \
 	md5.o \
 	pak.o \
-	search.o \
-	tables.o \
+	resources.o \
+	types.o \
 	util.o
 
 # Set the name of the executable

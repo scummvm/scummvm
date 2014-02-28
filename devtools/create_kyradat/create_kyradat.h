@@ -23,7 +23,7 @@
 #ifndef CREATE_KYRADAT_CREATE_KYRADAT_H
 #define CREATE_KYRADAT_CREATE_KYRADAT_H
 
-#include "util.h"
+#include "common/scummsys.h"
 
 // This list has to match orderwise (and thus value wise) the static data list of "engines/kyra/resource.h"!
 enum kExtractID {
@@ -227,7 +227,7 @@ enum kExtractID {
 	kEoBBaseCursedString,
 	kEoBBaseEnchantedString,
 	kEoBBaseMagicObjectStrings,
-	kEoBBaseMagicObject5String,
+	kEoBBaseMagicObjectString5,
 	kEoBBasePatternSuffix,
 	kEoBBasePatternGrFix1,
 	kEoBBasePatternGrFix2,
@@ -235,7 +235,7 @@ enum kExtractID {
 	kEoBBaseValidateCursedString,
 	kEoBBaseValidateNoDropString,
 	kEoBBasePotionStrings,
-	kEoBBaseWandString,
+	kEoBBaseWandStrings,
 	kEoBBaseItemMisuseStrings,
 
 	kEoBBaseTakenStrings,
@@ -347,7 +347,7 @@ enum kExtractID {
 
 	kEoBBaseDscItemPosIndex,
 	kEoBBaseDscItemShpX,
-	kEoBBaseDscItemPosUnk,
+	kEoBBaseDscItemScaleIndex,
 	kEoBBaseDscItemTileIndex,
 	kEoBBaseDscItemShapeMap,
 
@@ -628,7 +628,7 @@ enum kExtractID {
 	kLoLDscOvlMap,
 	kLoLDscScaleWidthData,
 	kLoLDscScaleHeightData,
-	kLoLDscY,
+	kLoLBaseDscY,
 
 	kLoLDscDoorScale,
 	kLoLDscDoor4,
@@ -668,6 +668,30 @@ enum kExtractID {
 	kMaxResIDs
 };
 
+enum ResTypes {
+	kStringList = 0,
+	kRawData = 1,
+	kRoomList = 2,
+	kShapeList = 3,
+	kAmigaSfxTable = 4,
+
+	k2SeqData = 5,
+	k2SeqItemAnimData = 6,
+	k2ItemAnimDefinition = 7,
+
+	kLoLCharData = 8,
+	kLoLSpellData = 9,
+	kLoLCompassData = 10,
+	kLoLFlightShpData = 11,
+	kLoLButtonData = 12,
+	kRawDataBe16 = 13,
+	kRawDataBe32 = 14,
+
+	kEoB2SequenceData = 15,
+	kEoB2ShapeData = 16,
+	kEoBNpcData = 17
+};
+
 struct ExtractFilename {
 	int id;
 	int type;
@@ -686,21 +710,19 @@ enum kGame {
 	kKyra1 = 0,
 	kKyra2,
 	kKyra3,
-	kLoL,
 	kEoB1,
-	kEoB2
+	kEoB2,
+	kLoL
 };
 
 struct Game {
 	int game;
-	int lang[3];
 	int platform;
 	int special;
-
-	const char *md5[2];
+	int lang;
 };
 
-#define GAME_DUMMY_ENTRY { -1, { -1, -1, -1 }, -1, -1, { 0, 0 } }
+#define GAME_DUMMY_ENTRY { -1, -1, -1, -1 }
 
 extern const Game * const gameDescs[];
 
