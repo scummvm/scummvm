@@ -104,4 +104,24 @@ void scene19_initScene2() {
 	g_vars->scene19_var04 = 300;
 }
 
+int scene18_updateCursor() {
+	if (g_vars->scene18_var15) {
+		g_fp->_cursorId = PIC_CSR_DEFAULT;
+	} else {
+		g_fp->updateCursorCommon();
+
+		if (g_fp->_cursorId == PIC_CSR_ITN) {
+			if (g_fp->_objectIdAtCursor == PIC_SC18_LADDER1) {
+				g_fp->_cursorId = (g_vars->scene18_var11 <= 250) ? PIC_CSR_GOD : PIC_CSR_GOU;
+			} else if (g_fp->_objectIdAtCursor == PIC_SC18_LADDER2 || g_fp->_objectIdAtCursor == PIC_SC18_LADDER3) {
+				g_fp->_cursorId = PIC_CSR_GOU;
+			}
+		} else if (g_fp->_cursorId == PIC_CSR_DEFAULT && g_fp->_objectIdAtCursor == PIC_SC18_DOMIN && g_vars->scene18_domino && (g_vars->scene18_domino->_flags & 4)) {
+			g_fp->_cursorId = PIC_CSR_ITN;
+		}
+	}
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe

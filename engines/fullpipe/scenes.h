@@ -471,6 +471,7 @@ public:
 	int scene18_var08;
 	bool scene18_var03;
 	int scene18_var21;
+	int scene18_var11;
 	int scene18_var12;
 	int scene18_var22;
 	int scene18_var23;
