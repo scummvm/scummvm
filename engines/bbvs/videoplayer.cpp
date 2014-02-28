@@ -46,7 +46,7 @@ void BbvsEngine::playVideo(int videoNum) {
 	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
 	if (!videoDecoder->loadFile(videoFilename)) {
 		delete videoDecoder;
-		warning("Unable to open video %s", videoFilename);
+		warning("Unable to open video %s", videoFilename.c_str());
 		return;
 	}
 
