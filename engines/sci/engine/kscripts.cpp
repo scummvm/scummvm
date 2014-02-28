@@ -257,6 +257,10 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 // Returns script dispatch address index in the supplied script
 reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	int script = argv[0].toUint16();
+
+	if (Sci::g_sci->getGameId() == GID_KQ4 && script == 701)
+		script--;
+
 	uint16 index = (argc > 1) ? argv[1].toUint16() : 0;
 
 	if (argv[0].getSegment())
