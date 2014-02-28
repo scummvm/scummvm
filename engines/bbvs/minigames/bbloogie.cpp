@@ -1117,7 +1117,7 @@ void MinigameBbLoogie::updatePrincipal(int objIndex) {
 			obj->ticks = getAnimation(18)->frameTicks[obj->frameIndex];
 		}
 		if (!isSoundPlaying(1)) {
-			_gameResult = 1;
+			_gameResult = true;
 			if (_fromMainGame) {
 				_principalAngry = true;
 				if (obj->x <= 140 || obj->x >= 165) {
@@ -1260,7 +1260,7 @@ void MinigameBbLoogie::playRndSound() {
 		playSound(_playerSounds1[_vm->getRandom(_playerSounds1Count)]);
 }
 
-int MinigameBbLoogie::run(bool fromMainGame) {
+bool MinigameBbLoogie::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 
@@ -1277,7 +1277,7 @@ int MinigameBbLoogie::run(bool fromMainGame) {
 
 	_gameState = kGSTitleScreen;
 	_gameTicks = 0;
-	_gameResult = 0;
+	_gameResult = false;
 	_gameDone = false;
 	initObjects();
 	initVars();

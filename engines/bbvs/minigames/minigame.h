@@ -49,14 +49,14 @@ class Minigame {
 public:
 	Minigame(BbvsEngine *vm);
 	virtual ~Minigame();
-	virtual int run(bool fromMainGame) = 0;
+	virtual bool run(bool fromMainGame) = 0;
 protected:
 	BbvsEngine *_vm;	
 	SpriteModule *_spriteModule;
 	
 	int _gameState;
 	int _gameTicks;
-	int _gameResult;
+	bool _gameResult;
 	bool _gameDone;
 	bool _fromMainGame;
 	int _hiScoreTable[kMinigameCount];

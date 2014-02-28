@@ -1181,7 +1181,7 @@ void MinigameBbTennis::hitSomething() {
 	++_score;
 }
 
-int MinigameBbTennis::run(bool fromMainGame) {
+bool MinigameBbTennis::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 	
@@ -1197,7 +1197,7 @@ int MinigameBbTennis::run(bool fromMainGame) {
 		_hiScore = loadHiscore(kMinigameBbTennis);
 
 	_gameState = 0;
-	_gameResult = 0;
+	_gameResult = false;
 	_gameDone = false;
 	initObjects();
 	initVars();

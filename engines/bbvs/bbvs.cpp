@@ -1305,12 +1305,12 @@ bool BbvsEngine::runMinigame(int minigameNum) {
 		break;
 	}
 	
-	int minigameResult = minigame->run(fromMainGame);
+	bool minigameResult = minigame->run(fromMainGame);
 	
 	delete minigame;
 
-	// Check if the prinicpal was hit with a megaloogie in the loogie minigame
-	if (minigameNum == 0 && minigameResult == 1)
+	// Check if the principal was hit with a megaloogie in the loogie minigame
+	if (minigameNum == 0 && minigameResult)
 		_gameVars[42] = 1;
 
 #if 0

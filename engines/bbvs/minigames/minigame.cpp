@@ -31,7 +31,7 @@ Minigame::Minigame(BbvsEngine *vm)
 	memset(_hiScoreTable, 0, sizeof(_hiScoreTable));
 	_gameState = 0;
 	_gameTicks = 0;
-	_gameResult = 0;
+	_gameResult = false;
 	_gameDone = false;
 	_fromMainGame = false;
 	_backgroundSpriteIndex = 0;

@@ -30,7 +30,7 @@ namespace Bbvs {
 class MinigameBbAnt : public Minigame {
 public:
 	MinigameBbAnt(BbvsEngine *vm) : Minigame(vm) {};
-	int run(bool fromMainGame);
+	bool run(bool fromMainGame);
 public:
 	
 	struct Obj {

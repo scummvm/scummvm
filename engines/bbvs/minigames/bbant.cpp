@@ -1167,7 +1167,7 @@ void MinigameBbAnt::updateObjs(uint mouseButtons) {
 
 }
 
-int MinigameBbAnt::run(bool fromMainGame) {
+bool MinigameBbAnt::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 	
@@ -1183,7 +1183,7 @@ int MinigameBbAnt::run(bool fromMainGame) {
 		_hiScore = loadHiscore(kMinigameBbAnt);
 
 	_gameState = 0;
-	_gameResult = 0;
+	_gameResult = false;
 	_gameDone = false;
 	initObjects();
 	initVars();

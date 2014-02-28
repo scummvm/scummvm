@@ -732,7 +732,7 @@ void MinigameBbAirGuitar::updateObjs() {
 	}
 }
 
-int MinigameBbAirGuitar::run(bool fromMainGame) {
+bool MinigameBbAirGuitar::run(bool fromMainGame) {
 
 	memset(_objects, 0, sizeof(_objects));
 
@@ -767,7 +767,7 @@ int MinigameBbAirGuitar::run(bool fromMainGame) {
 
 	_gameState = 0;
 	_gameTicks = 0;
-	_gameResult = 0;
+	_gameResult = false;
 	_gameDone = false;
 	initObjects();
 	
