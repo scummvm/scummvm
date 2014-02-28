@@ -821,27 +821,24 @@ void RMGfxSourceBuffer8RLE::setAlreadyCompressed() {
 }
 
 void RMGfxSourceBuffer8RLE::compressRLE() {
-	byte *startline;
 	byte *cur;
 	byte curdata;
 	byte *src;
-	byte *startsrc;
-	int rep;
 
 	// Perform RLE compression for lines
 	cur = _megaRLEBuf;
 	src = _buf;
 	for (int y = 0; y < _dimy; y++) {
 		// Save the beginning of the line
-		startline = cur;
+		byte *startline = cur;
 
 		// Leave space for the length of the line
 		cur += 2;
 
 		// It starts from the empty space
 		curdata = 0;
-		rep = 0;
-		startsrc = src;
+		int rep = 0;
+		byte *startsrc = src;
 		for (int x = 0; x < _dimx;) {
 			if ((curdata == 0 && *src == 0) || (curdata == 1 && *src == _alphaBlendColor)
 			        || (curdata == 2 && (*src != _alphaBlendColor && *src != 0))) {

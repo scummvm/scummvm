@@ -140,8 +140,6 @@ void RMOptionButton::setActiveState(bool bState) {
 \****************************************************************************/
 
 RMOptionSlide::RMOptionSlide(const RMPoint &pt, int nRange, int nStartValue, int slideSize) {
-	RMResRaw *raw;
-
 	_pos = pt;
 	_nSlideSize = slideSize;
 	_nMax = nRange;
@@ -154,6 +152,7 @@ RMOptionSlide::RMOptionSlide(const RMPoint &pt, int nRange, int nStartValue, int
 	_sliderSingle = NULL;
 
 	// Sliders
+	RMResRaw *raw;
 	INIT_GFX16_FROMRAW(20029, _sliderCenter);
 	INIT_GFX16_FROMRAW(20030, _sliderLeft);
 	INIT_GFX16_FROMRAW(20031, _sliderRight);
@@ -966,6 +965,8 @@ void RMOptionScreen::changeState(CORO_PARAM, OptionScreenState newState) {
 void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 	CORO_BEGIN_CONTEXT;
 	bool bLeftClick, bRightClick;
+	RMResRaw *raw;
+
 	RMPoint mousePos;
 	bool bRefresh;
 	int i;
