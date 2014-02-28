@@ -74,18 +74,6 @@ namespace Video {
 #define ID_PRMI MKTAG('P','R','M','I')
 #define ID_STRN MKTAG('s','t','r','n')
 
-// Codec tags
-#define ID_RLE  MKTAG('R','L','E',' ')
-#define ID_CRAM MKTAG('C','R','A','M')
-#define ID_MSVC MKTAG('m','s','v','c')
-#define ID_WHAM MKTAG('W','H','A','M')
-#define ID_CVID MKTAG('c','v','i','d')
-#define ID_IV32 MKTAG('i','v','3','2')
-#define ID_DUCK MKTAG('D','U','C','K')
-#define ID_DUCK2 MKTAG('d','u','c','k') // Some videos have DUCK tag in lowercase
-#define ID_MPG2 MKTAG('m','p','g','2')
-#define ID_MJPG MKTAG('m','j','p','g')
-
 // Stream Types
 enum {
 	kStreamTypePaletteChange = MKTAG16('p', 'c'),
@@ -265,9 +253,6 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 
 		if (bmInfo.clrUsed == 0)
 			bmInfo.clrUsed = 256;
-
-		if (sHeader.streamHandler == 0)
-			sHeader.streamHandler = bmInfo.compression;
 
 		byte *initialPalette = 0;
 
@@ -770,30 +755,34 @@ bool AVIDecoder::AVIVideoTrack::rewind() {
 }
 
 Image::Codec *AVIDecoder::AVIVideoTrack::createCodec() {
-	switch (_vidsHeader.streamHandler) {
-	case ID_CRAM:
-	case ID_MSVC:
-	case ID_WHAM:
-		return new Image::MSVideo1Decoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
-	case ID_RLE:
+	switch (_bmInfo.compression) {
+	case SWAP_CONSTANT_32(1):
 		return new Image::MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
-	case ID_CVID:
+	case MKTAG('C','R','A','M'):
+	case MKTAG('m','s','v','c'):
+	case MKTAG('W','H','A','M'):
+		return new Image::MSVideo1Decoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
+	case MKTAG('c','v','i','d'):
 		return new Image::CinepakDecoder(_bmInfo.bitCount);
-	case ID_IV32:
+	case MKTAG('I','V','3','2'):
 		return new Image::Indeo3Decoder(_bmInfo.width, _bmInfo.height);
 #ifdef VIDEO_CODECS_TRUEMOTION1_H
-	case ID_DUCK:
-	case ID_DUCK2:
+	case MKTAG('D','U','C','K'):
+	case MKTAG('d','u','c','k'):
 		return new Image::TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
 #endif
 #ifdef USE_MPEG2
-	case ID_MPG2:
+	case MKTAG('m','p','g','2'):
 		return new Image::MPEGDecoder();
 #endif
-	case ID_MJPG:
+	case MKTAG('M','J','P','G'):
+	case MKTAG('m','j','p','g'):
 		return new Image::MJPEGDecoder();
 	default:
-		warning("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
+		if (_bmInfo.compression & 0x00FFFFFF)
+			warning("Unknown/Unhandled AVI compression format \'%s\'", tag2str(_bmInfo.compression));
+		else
+			warning("Unknown/Unhandled AVI compression format %d", SWAP_BYTES_32(_bmInfo.compression));
 	}
 
 	return 0;
