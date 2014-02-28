@@ -33,8 +33,16 @@ class SeekableReadStream;
 namespace Image {
 
 /**
- * An abstract representation of a video codec used for decoding
- * video frames.
+ * An abstract representation of a image codec.
+ *
+ * Unlike ImageDecoder, the entire info for a frame may not be present
+ * within the stream. The codec may rely on the supporting container
+ * for parameters and can also rely on a previous (or future) frame.
+ * When decoding, the previous frame may not destroyed and could be
+ * maintained for use in the next one.
+ *
+ * An ImageDecoder can always be a Codec, but a Codec may not necessarily
+ * be able to be an ImageDecoder.
  *
  * Used in video:
  *  - AVIDecoder

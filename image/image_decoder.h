@@ -39,6 +39,8 @@ namespace Image {
 /**
  * A representation of an image decoder that maintains ownership of the surface
  * and palette it decodes to.
+ *
+ * This is designed for still frames only.
  */
 class ImageDecoder {
 public:
