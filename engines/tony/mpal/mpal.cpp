@@ -1524,7 +1524,6 @@ void mpalFree() {
 uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 	Common::String buf;
 	uint32 dwRet = 0;
-	char *n;
 
 	va_list v;
 	va_start(v, wQueryType);
@@ -1625,7 +1624,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		 */
 		lockVar();
 		int x = GETARG(uint32);
-		n = GETARG(char *);
+		char *n = GETARG(char *);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
 			n[0]='\0';
