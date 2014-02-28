@@ -59,8 +59,8 @@ void JPEGDecoder::destroy() {
 	_surface.free();
 }
 
-const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream *stream) {
-	if (!loadStream(*stream))
+const Graphics::Surface *JPEGDecoder::decodeFrame(Common::SeekableReadStream &stream) {
+	if (!loadStream(stream))
 		return 0;
 
 	return getSurface();

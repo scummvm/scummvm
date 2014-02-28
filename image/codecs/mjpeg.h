@@ -47,7 +47,7 @@ public:
 	MJPEGDecoder();
 	~MJPEGDecoder();
 
-	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:

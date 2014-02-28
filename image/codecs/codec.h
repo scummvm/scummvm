@@ -59,9 +59,8 @@ public:
 	 * containing the decoded frame.
 	 *
 	 * @return a pointer to the decoded frame
-	 * @note stream is not deleted
 	 */
-	virtual const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream) = 0;
+	virtual const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) = 0;
 
 	/**
 	 * Get the format that the surface returned from decodeImage() will

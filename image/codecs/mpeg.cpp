@@ -52,13 +52,13 @@ MPEGDecoder::~MPEGDecoder() {
 	}
 }
 
-const Graphics::Surface *MPEGDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *MPEGDecoder::decodeFrame(Common::SeekableReadStream &stream) {
 	uint32 framePeriod;
 	decodePacket(stream, framePeriod);
 	return _surface;
 }
 
-bool MPEGDecoder::decodePacket(Common::SeekableReadStream *packet, uint32 &framePeriod, Graphics::Surface *dst) {
+bool MPEGDecoder::decodePacket(Common::SeekableReadStream &packet, uint32 &framePeriod, Graphics::Surface *dst) {
 	// Decode as much as we can out of this packet
 	uint32 size = 0xFFFFFFFF;
 	mpeg2_state_t state;
@@ -70,7 +70,7 @@ bool MPEGDecoder::decodePacket(Common::SeekableReadStream *packet, uint32 &frame
 
 		switch (state) {
 		case STATE_BUFFER:
-			size = packet->read(_buffer, BUFFER_SIZE);
+			size = packet.read(_buffer, BUFFER_SIZE);
 			mpeg2_buffer(_mpegDecoder, _buffer, _buffer + size);
 			break;
 		case STATE_SLICE:

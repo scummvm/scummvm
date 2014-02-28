@@ -29,8 +29,8 @@
 namespace Image {
 
 #define CHECK_STREAM_PTR(n) \
-  if ((stream->pos() + n) > stream->size() ) { \
-	warning ("MS Video-1: Stream out of bounds (%d >= %d)", stream->pos() + n, stream->size()); \
+  if ((stream.pos() + n) > stream.size() ) { \
+	warning ("MS Video-1: Stream out of bounds (%d >= %d)", stream.pos() + n, stream.size()); \
     return; \
   }
 
@@ -46,7 +46,7 @@ MSVideo1Decoder::~MSVideo1Decoder() {
 	delete _surface;
 }
 
-void MSVideo1Decoder::decode8(Common::SeekableReadStream *stream) {
+void MSVideo1Decoder::decode8(Common::SeekableReadStream &stream) {
     byte colors[8];
     byte *pixels = (byte *)_surface->getPixels();
     uint16 stride = _surface->w;
@@ -73,8 +73,8 @@ void MSVideo1Decoder::decode8(Common::SeekableReadStream *stream) {
 
             /* get the next two bytes in the encoded data stream */
             CHECK_STREAM_PTR(2);
-            byte byte_a = stream->readByte();
-            byte byte_b = stream->readByte();
+            byte byte_a = stream.readByte();
+            byte byte_b = stream.readByte();
 
             /* check if the decode is finished */
             if (byte_a == 0 && byte_b == 0 && totalBlocks == 0) {
@@ -87,8 +87,8 @@ void MSVideo1Decoder::decode8(Common::SeekableReadStream *stream) {
                 uint16 flags = (byte_b << 8) | byte_a;
 
                 CHECK_STREAM_PTR(2);
-                colors[0] = stream->readByte();
-                colors[1] = stream->readByte();
+                colors[0] = stream.readByte();
+                colors[1] = stream.readByte();
 
                 for (byte pixel_y = 0; pixel_y < 4; pixel_y++) {
                     for (byte pixel_x = 0; pixel_x < 4; pixel_x++, flags >>= 1)
@@ -101,7 +101,7 @@ void MSVideo1Decoder::decode8(Common::SeekableReadStream *stream) {
 
                 CHECK_STREAM_PTR(8);
 				for (byte i = 0; i < 8; i++)
-					colors[i] = stream->readByte();
+					colors[i] = stream.readByte();
 
                 for (byte pixel_y = 0; pixel_y < 4; pixel_y++) {
                     for (byte pixel_x = 0; pixel_x < 4; pixel_x++, flags >>= 1)
@@ -125,7 +125,7 @@ void MSVideo1Decoder::decode8(Common::SeekableReadStream *stream) {
     }
 }
 
-const Graphics::Surface *MSVideo1Decoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *MSVideo1Decoder::decodeFrame(Common::SeekableReadStream &stream) {
 	if (_bitsPerPixel == 8)
 		decode8(stream);
 	else {

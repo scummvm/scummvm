@@ -39,7 +39,7 @@ MSRLEDecoder::~MSRLEDecoder() {
 	delete _surface;
 }
 
-const Graphics::Surface *MSRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *MSRLEDecoder::decodeFrame(Common::SeekableReadStream &stream) {
 	if (_bitsPerPixel == 8) {
 		decode8(stream);
 	} else
@@ -48,7 +48,7 @@ const Graphics::Surface *MSRLEDecoder::decodeImage(Common::SeekableReadStream *s
 	return _surface;
 }
 
-void MSRLEDecoder::decode8(Common::SeekableReadStream *stream) {
+void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 
 	int x = 0;
 	int y = _surface->h - 1;
@@ -60,9 +60,9 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream *stream) {
 	byte *output     = data + ((height - 1) * width);
 	byte *output_end = data + ((height)     * width);
 
-	while (!stream->eos()) {
-		byte count = stream->readByte();
-		byte value = stream->readByte();
+	while (!stream.eos()) {
+		byte count = stream.readByte();
+		byte value = stream.readByte();
 
 		if (count == 0) {
 			if (value == 0) {
@@ -84,8 +84,8 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream *stream) {
 			} else if (value == 2) {
 				// Skip
 
-				count = stream->readByte();
-				value = stream->readByte();
+				count = stream.readByte();
+				value = stream.readByte();
 
 				y -= value;
 				x += count;
@@ -101,15 +101,15 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream *stream) {
 				// Copy data
 
 				if (output + value > output_end) {
-					stream->skip(value);
+					stream.skip(value);
 					continue;
 				}
 
 				for (int i = 0; i < value; i++)
-					*output++ = stream->readByte();
+					*output++ = stream.readByte();
 
 				if (value & 1)
-					stream->skip(1);
+					stream.skip(1);
 
 				x += value;
 			}

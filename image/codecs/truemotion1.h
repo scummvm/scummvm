@@ -43,7 +43,7 @@ public:
 	TrueMotion1Decoder(uint16 width, uint16 height);
 	~TrueMotion1Decoder();
 
-	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 
 	// Always return RGB565
 	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
@@ -96,7 +96,7 @@ private:
 	} _header;
 
 	void selectDeltaTables(int deltaTableIndex);
-	void decodeHeader(Common::SeekableReadStream *stream);
+	void decodeHeader(Common::SeekableReadStream &stream);
 	void decode16();
 	int makeYdt16Entry(int p1, int p2);
 	int makeCdt16Entry(int p1, int p2);

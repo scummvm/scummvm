@@ -48,8 +48,8 @@ QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Cod
 }
 
 #define CHECK_STREAM_PTR(n) \
-  if ((stream->pos() + n) > stream->size()) { \
-    warning("QTRLE Problem: stream out of bounds (%d > %d)", stream->pos() + n, stream->size()); \
+  if ((stream.pos() + n) > stream.size()) { \
+    warning("QTRLE Problem: stream out of bounds (%d > %d)", stream.pos() + n, stream.size()); \
     return; \
   }
 
@@ -59,14 +59,14 @@ QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Cod
     return; \
   } \
 
-void QTRLEDecoder::decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
+void QTRLEDecoder::decode1(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
 	byte *rgb = (byte *)_surface->getPixels();
 
 	while (linesToChange) {
 		CHECK_STREAM_PTR(2);
-		byte skip = stream->readByte();
-		int8 rleCode = stream->readSByte();
+		byte skip = stream.readByte();
+		int8 rleCode = stream.readSByte();
 
 		if (rleCode == 0)
 			break;
@@ -83,8 +83,8 @@ void QTRLEDecoder::decode1(Common::SeekableReadStream *stream, uint32 rowPtr, ui
 			rleCode = -rleCode;
 			// get the next 2 bytes from the stream, treat them as groups of 8 pixels, and output them rleCode times */
 			CHECK_STREAM_PTR(2);
-			byte pi0 = stream->readByte();
-			byte pi1 = stream->readByte();
+			byte pi0 = stream.readByte();
+			byte pi1 = stream.readByte();
 			CHECK_PIXEL_PTR(rleCode * 2);
 
 			while (rleCode--) {
@@ -98,25 +98,25 @@ void QTRLEDecoder::decode1(Common::SeekableReadStream *stream, uint32 rowPtr, ui
 			CHECK_PIXEL_PTR(rleCode);
 
 			while (rleCode--)
-				rgb[pixelPtr++] = stream->readByte();
+				rgb[pixelPtr++] = stream.readByte();
 		}
 	}
 }
 
-void QTRLEDecoder::decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp) {
+void QTRLEDecoder::decode2_4(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange, byte bpp) {
 	uint32 pixelPtr = 0;
 	byte *rgb = (byte *)_surface->getPixels();
 	byte numPixels = (bpp == 4) ? 8 : 16;
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
-		pixelPtr = rowPtr + (numPixels * (stream->readByte() - 1));
+		pixelPtr = rowPtr + (numPixels * (stream.readByte() - 1));
 
-		for (int8 rleCode = stream->readSByte(); rleCode != -1; rleCode = stream->readSByte()) {
+		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
-				pixelPtr += (numPixels * (stream->readByte() - 1));
+				pixelPtr += (numPixels * (stream.readByte() - 1));
 			} else if (rleCode < 0) {
 				// decode the run length code
 				rleCode = -rleCode;
@@ -127,10 +127,10 @@ void QTRLEDecoder::decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, 
 				byte pi[16]; // 16 palette indices
 
 				for (int8 i = numPixels - 1; i >= 0; i--) {
-					pi[numPixels - 1 - i] = (stream->readByte() >> ((i * bpp) & 0x07)) & ((1 << bpp) - 1);
+					pi[numPixels - 1 - i] = (stream.readByte() >> ((i * bpp) & 0x07)) & ((1 << bpp) - 1);
 
 					if ((i & ((numPixels >> 2) - 1)) == 0)
-						stream->readByte();
+						stream.readByte();
 				}
 
 				CHECK_PIXEL_PTR(rleCode * numPixels);
@@ -145,7 +145,7 @@ void QTRLEDecoder::decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, 
 				CHECK_PIXEL_PTR(rleCode * (numPixels >> 2));
 
 				while (rleCode--) {
-					byte temp = stream->readByte();
+					byte temp = stream.readByte();
 					if (bpp == 4) {
 						rgb[pixelPtr++] = (temp >> 4) & 0x0f;
 						rgb[pixelPtr++] = temp & 0x0f;
@@ -163,19 +163,19 @@ void QTRLEDecoder::decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, 
 	}
 }
 
-void QTRLEDecoder::decode8(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
+void QTRLEDecoder::decode8(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
 	byte *rgb = (byte *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
-		pixelPtr = rowPtr + 4 * (stream->readByte() - 1);
+		pixelPtr = rowPtr + 4 * (stream.readByte() - 1);
 
-		for (int8 rleCode = stream->readSByte(); rleCode != -1; rleCode = stream->readSByte()) {
+		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
-				pixelPtr += 4 * (stream->readByte() - 1);
+				pixelPtr += 4 * (stream.readByte() - 1);
 			} else if (rleCode < 0) {
 				// decode the run length code
 				rleCode = -rleCode;
@@ -186,7 +186,7 @@ void QTRLEDecoder::decode8(Common::SeekableReadStream *stream, uint32 rowPtr, ui
 				byte pi[4];  // 4 palette indexes
 
 				for (byte i = 0; i < 4; i++)
-					pi[i] = stream->readByte();
+					pi[i] = stream.readByte();
 
 				CHECK_PIXEL_PTR(rleCode * 4);
 
@@ -200,7 +200,7 @@ void QTRLEDecoder::decode8(Common::SeekableReadStream *stream, uint32 rowPtr, ui
 				CHECK_PIXEL_PTR(rleCode);
 
 				while (rleCode--)
-					rgb[pixelPtr++] = stream->readByte();
+					rgb[pixelPtr++] = stream.readByte();
 			}
 		}
 
@@ -208,25 +208,25 @@ void QTRLEDecoder::decode8(Common::SeekableReadStream *stream, uint32 rowPtr, ui
 	}
 }
 
-void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
+void QTRLEDecoder::decode16(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
 	uint16 *rgb = (uint16 *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
-		pixelPtr = rowPtr + stream->readByte() - 1;
+		pixelPtr = rowPtr + stream.readByte() - 1;
 
-		for (int8 rleCode = stream->readSByte(); rleCode != -1; rleCode = stream->readSByte()) {
+		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
-				pixelPtr += stream->readByte() - 1;
+				pixelPtr += stream.readByte() - 1;
 			} else if (rleCode < 0) {
 				// decode the run length code
 				rleCode = -rleCode;
 				CHECK_STREAM_PTR(2);
 
-				uint16 rgb16 = stream->readUint16BE();
+				uint16 rgb16 = stream.readUint16BE();
 
 				CHECK_PIXEL_PTR(rleCode);
 
@@ -238,7 +238,7 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 				// copy pixels directly to output
 				while (rleCode--)
-					rgb[pixelPtr++] = stream->readUint16BE();
+					rgb[pixelPtr++] = stream.readUint16BE();
 			}
 		}
 
@@ -246,28 +246,28 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, u
 	}
 }
 
-void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
+void QTRLEDecoder::decode24(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
 	uint32 *rgb = (uint32 *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
-		pixelPtr = rowPtr + stream->readByte() - 1;
+		pixelPtr = rowPtr + stream.readByte() - 1;
 
-		for (int8 rleCode = stream->readSByte(); rleCode != -1; rleCode = stream->readSByte()) {
+		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
-				pixelPtr += stream->readByte() - 1;
+				pixelPtr += stream.readByte() - 1;
 			} else if (rleCode < 0) {
 				// decode the run length code
 				rleCode = -rleCode;
 
 				CHECK_STREAM_PTR(3);
 
-				byte r = stream->readByte();
-				byte g = stream->readByte();
-				byte b = stream->readByte();
+				byte r = stream.readByte();
+				byte g = stream.readByte();
+				byte b = stream.readByte();
 				uint32 color = _surface->format.RGBToColor(r, g, b);
 
 				CHECK_PIXEL_PTR(rleCode);
@@ -280,9 +280,9 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 				// copy pixels directly to output
 				while (rleCode--) {
-					byte r = stream->readByte();
-					byte g = stream->readByte();
-					byte b = stream->readByte();
+					byte r = stream.readByte();
+					byte g = stream.readByte();
+					byte b = stream.readByte();
 					rgb[pixelPtr++] = _surface->format.RGBToColor(r, g, b);
 				}
 			}
@@ -292,29 +292,29 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, u
 	}
 }
 
-void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
+void QTRLEDecoder::decode32(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
 	uint32 *rgb = (uint32 *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
-		pixelPtr = rowPtr + stream->readByte() - 1;
+		pixelPtr = rowPtr + stream.readByte() - 1;
 
-		for (int8 rleCode = stream->readSByte(); rleCode != -1; rleCode = stream->readSByte()) {
+		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
-				pixelPtr += stream->readByte() - 1;
+				pixelPtr += stream.readByte() - 1;
 			} else if (rleCode < 0) {
 				// decode the run length code
 				rleCode = -rleCode;
 
 				CHECK_STREAM_PTR(4);
 
-				byte a = stream->readByte();
-				byte r = stream->readByte();
-				byte g = stream->readByte();
-				byte b = stream->readByte();
+				byte a = stream.readByte();
+				byte r = stream.readByte();
+				byte g = stream.readByte();
+				byte b = stream.readByte();
 				uint32 color = _surface->format.ARGBToColor(a, r, g, b);
 
 				CHECK_PIXEL_PTR(rleCode);
@@ -327,10 +327,10 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 				// copy pixels directly to output
 				while (rleCode--) {
-					byte a = stream->readByte();
-					byte r = stream->readByte();
-					byte g = stream->readByte();
-					byte b = stream->readByte();
+					byte a = stream.readByte();
+					byte r = stream.readByte();
+					byte g = stream.readByte();
+					byte b = stream.readByte();
 					rgb[pixelPtr++] = _surface->format.ARGBToColor(a, r, g, b);
 				}
 			}
@@ -340,29 +340,29 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, u
 	}
 }
 
-const Graphics::Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &stream) {
 	uint16 startLine = 0;
 	uint16 height = _surface->h;
 
 	// check if this frame is even supposed to change
-	if (stream->size() < 8)
+	if (stream.size() < 8)
 		return _surface;
 
 	// start after the chunk size
-	stream->readUint32BE();
+	stream.readUint32BE();
 
 	// fetch the header
-	uint16 header = stream->readUint16BE();
+	uint16 header = stream.readUint16BE();
 
 	// if a header is present, fetch additional decoding parameters
 	if (header & 8) {
-		if (stream->size() < 14)
+		if (stream.size() < 14)
 			return _surface;
 
-		startLine = stream->readUint16BE();
-		stream->readUint16BE(); // Unknown
-		height = stream->readUint16BE();
-		stream->readUint16BE(); // Unknown
+		startLine = stream.readUint16BE();
+		stream.readUint16BE(); // Unknown
+		height = stream.readUint16BE();
+		stream.readUint16BE(); // Unknown
 	}
 
 	uint32 rowPtr = _surface->w * startLine;

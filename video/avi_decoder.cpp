@@ -711,7 +711,7 @@ AVIDecoder::AVIVideoTrack::~AVIVideoTrack() {
 void AVIDecoder::AVIVideoTrack::decodeFrame(Common::SeekableReadStream *stream) {
 	if (stream) {
 		if (_videoCodec)
-			_lastFrame = _videoCodec->decodeImage(stream);
+			_lastFrame = _videoCodec->decodeFrame(*stream);
 	} else {
 		// Empty frame
 		_lastFrame = 0;

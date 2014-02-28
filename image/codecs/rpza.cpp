@@ -61,7 +61,7 @@ RPZADecoder::~RPZADecoder() {
 		WRITE_UINT16((uint16 *)_surface->getPixels() + blockPtr, color); \
 	blockPtr++
 
-const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *RPZADecoder::decodeFrame(Common::SeekableReadStream &stream) {
 	uint16 colorA = 0, colorB = 0;
 	uint16 color4[4];
 
@@ -73,40 +73,40 @@ const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *st
 	uint16 tb;
 
 	// First byte is always 0xe1. Warn if it's different
-	byte firstByte = stream->readByte();
+	byte firstByte = stream.readByte();
 	if (firstByte != 0xe1)
 		warning("First RPZA chunk byte is 0x%02x instead of 0xe1", firstByte);
 
 	// Get chunk size, ingnoring first byte
-	uint32 chunkSize = stream->readUint16BE() << 8;
-	chunkSize += stream->readByte();
+	uint32 chunkSize = stream.readUint16BE() << 8;
+	chunkSize += stream.readByte();
 
 	// If length mismatch use size from MOV file and try to decode anyway
-	if (chunkSize != (uint32)stream->size()) {
+	if (chunkSize != (uint32)stream.size()) {
 		warning("MOV chunk size != encoded chunk size; using MOV chunk size");
-		chunkSize = stream->size();
+		chunkSize = stream.size();
 	}
 
 	// Number of 4x4 blocks in frame
 	int32 totalBlocks = ((_surface->w + 3) / 4) * ((_surface->h + 3) / 4);
 
 	// Process chunk data
-	while ((uint32)stream->pos() < chunkSize) {
-		byte opcode = stream->readByte(); // Get opcode
+	while ((uint32)stream.pos() < chunkSize) {
+		byte opcode = stream.readByte(); // Get opcode
 		byte numBlocks = (opcode & 0x1f) + 1; // Extract block counter from opcode
 
 		// If opcode MSbit is 0, we need more data to decide what to do
 		if ((opcode & 0x80) == 0) {
-			colorA = (opcode << 8) | stream->readByte();
+			colorA = (opcode << 8) | stream.readByte();
 			opcode = 0;
-			if (stream->readByte() & 0x80) {
+			if (stream.readByte() & 0x80) {
 				// Must behave as opcode 110xxxxx, using colorA computed
 				// above. Use fake opcode 0x20 to enter switch block at
 				// the right place
 				opcode = 0x20;
 				numBlocks = 1;
 			}
-			stream->seek(-1, SEEK_CUR);
+			stream.seek(-1, SEEK_CUR);
 		}
 
 		switch (opcode & 0xe0) {
@@ -116,7 +116,7 @@ const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *st
 			}
 			break;
 		case 0xa0: // Fill blocks with one color
-			colorA = stream->readUint16BE();
+			colorA = stream.readUint16BE();
 			while (numBlocks--) {
 				blockPtr = rowPtr + pixelPtr;
 				for (byte pixel_y = 0; pixel_y < 4; pixel_y++) {
@@ -131,9 +131,9 @@ const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *st
 
 		// Fill blocks with 4 colors
 		case 0xc0:
-			colorA = stream->readUint16BE();
+			colorA = stream.readUint16BE();
 		case 0x20:
-			colorB = stream->readUint16BE();
+			colorB = stream.readUint16BE();
 
 			// Sort out the colors
 			color4[0] = colorB;
@@ -162,7 +162,7 @@ const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *st
 			while (numBlocks--) {
 				blockPtr = rowPtr + pixelPtr;
 				for (byte pixel_y = 0; pixel_y < 4; pixel_y++) {
-					byte index = stream->readByte();
+					byte index = stream.readByte();
 					for (byte pixel_x = 0; pixel_x < 4; pixel_x++) {
 						byte idx = (index >> (2 * (3 - pixel_x))) & 0x03;
 						PUT_PIXEL(color4[idx]);
@@ -180,7 +180,7 @@ const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *st
 				for (byte pixel_x = 0; pixel_x < 4; pixel_x++) {
 					// We already have color of upper left pixel
 					if (pixel_y != 0 || pixel_x != 0)
-						colorA = stream->readUint16BE();
+						colorA = stream.readUint16BE();
 
 					PUT_PIXEL(colorA);
 				}

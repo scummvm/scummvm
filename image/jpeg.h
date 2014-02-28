@@ -58,7 +58,7 @@ public:
 	virtual const Graphics::Surface *getSurface() const;
 
 	// Codec API
-	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 	Graphics::PixelFormat getPixelFormat() const;
 
 	// Special API for JPEG

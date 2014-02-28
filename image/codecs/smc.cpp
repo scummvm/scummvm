@@ -29,7 +29,7 @@
 namespace Image {
 
 #define GET_BLOCK_COUNT() \
-  (opcode & 0x10) ? (1 + stream->readByte()) : 1 + (opcode & 0x0F);
+  (opcode & 0x10) ? (1 + stream.readByte()) : 1 + (opcode & 0x0F);
 
 #define ADVANCE_BLOCK() \
 { \
@@ -55,7 +55,7 @@ SMCDecoder::~SMCDecoder() {
 	delete _surface;
 }
 
-const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *SMCDecoder::decodeFrame(Common::SeekableReadStream &stream) {
 	byte *pixels = (byte *)_surface->getPixels();
 
 	uint32 numBlocks = 0;
@@ -77,9 +77,9 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 	uint32 colorOctetIndex = 0;
 	uint32 colorTableIndex = 0;  // indices to color pair, quad, or octet tables
 
-	int32 chunkSize = stream->readUint32BE() & 0x00FFFFFF;
-	if (chunkSize != stream->size())
-		warning("MOV chunk size != SMC chunk size (%d != %d); ignoring SMC chunk size", chunkSize, stream->size());
+	int32 chunkSize = stream.readUint32BE() & 0x00FFFFFF;
+	if (chunkSize != stream.size())
+		warning("MOV chunk size != SMC chunk size (%d != %d); ignoring SMC chunk size", chunkSize, stream.size());
 
 	int32 totalBlocks = ((_surface->w + 3) / 4) * ((_surface->h + 3) / 4);
 
@@ -88,8 +88,8 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 		// sanity checks
 
 		// make sure stream ptr hasn't gone out of bounds
-		if (stream->pos() > stream->size()) {
-			warning("SMC decoder just went out of bounds (stream ptr = %d, chunk size = %d)", stream->pos(), stream->size());
+		if (stream.pos() > stream.size()) {
+			warning("SMC decoder just went out of bounds (stream ptr = %d, chunk size = %d)", stream.pos(), stream.size());
 			return _surface;
 		}
 
@@ -99,7 +99,7 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 			return _surface;
 		}
 
-		byte opcode = stream->readByte();
+		byte opcode = stream.readByte();
 
 		switch (opcode & 0xF0) {
 		// skip n blocks
@@ -192,7 +192,7 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 		case 0x60:
 		case 0x70:
 			numBlocks = GET_BLOCK_COUNT();
-			pixel = stream->readByte();
+			pixel = stream.readByte();
 
 			while (numBlocks--) {
 				blockPtr = rowPtr + pixelPtr;
@@ -216,7 +216,7 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 				// fetch the next 2 colors from bytestream and store in next
 				// available entry in the color pair table
 				for (byte i = 0; i < CPAIR; i++) {
-					pixel = stream->readByte();
+					pixel = stream.readByte();
 					colorTableIndex = CPAIR * colorPairIndex + i;
 					_colorPairs[colorTableIndex] = pixel;
 				}
@@ -229,10 +229,10 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 				if (colorPairIndex == COLORS_PER_TABLE)
 					colorPairIndex = 0;
 			} else
-				colorTableIndex = CPAIR * stream->readByte();
+				colorTableIndex = CPAIR * stream.readByte();
 
 			while (numBlocks--) {
-				colorFlags = stream->readUint16BE();
+				colorFlags = stream.readUint16BE();
 				uint16 flagMask = 0x8000;
 				blockPtr = rowPtr + pixelPtr;
 				for (byte y = 0; y < 4; y++) {
@@ -262,7 +262,7 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 				// fetch the next 4 colors from bytestream and store in next
 				// available entry in the color quad table
 				for (byte i = 0; i < CQUAD; i++) {
-					pixel = stream->readByte();
+					pixel = stream.readByte();
 					colorTableIndex = CQUAD * colorQuadIndex + i;
 					_colorQuads[colorTableIndex] = pixel;
 				}
@@ -275,10 +275,10 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 				if (colorQuadIndex == COLORS_PER_TABLE)
 					colorQuadIndex = 0;
 			} else
-				colorTableIndex = CQUAD * stream->readByte();
+				colorTableIndex = CQUAD * stream.readByte();
 
 			while (numBlocks--) {
-				colorFlags = stream->readUint32BE();
+				colorFlags = stream.readUint32BE();
 
 				// flag mask actually acts as a bit shift count here
 				byte flagMask = 30;
@@ -306,7 +306,7 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 				// fetch the next 8 colors from bytestream and store in next
 				// available entry in the color octet table
 				for (byte i = 0; i < COCTET; i++) {
-					pixel = stream->readByte();
+					pixel = stream.readByte();
 					colorTableIndex = COCTET * colorOctetIndex + i;
 					_colorOctets[colorTableIndex] = pixel;
 				}
@@ -319,7 +319,7 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 				if (colorOctetIndex == COLORS_PER_TABLE)
 					colorOctetIndex = 0;
 			} else
-				colorTableIndex = COCTET * stream->readByte();
+				colorTableIndex = COCTET * stream.readByte();
 
 			while (numBlocks--) {
 				/*
@@ -331,7 +331,7 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 
 				// build the color flags
 				byte flagData[6];
-				stream->read(flagData, 6);
+				stream.read(flagData, 6);
 
 				colorFlagsA = ((READ_BE_UINT16(flagData) & 0xFFF0) << 8) | (READ_BE_UINT16(flagData + 2) >> 4);
 				colorFlagsB = ((READ_BE_UINT16(flagData + 4) & 0xFFF0) << 8) | ((flagData[1] & 0xF) << 8) |
@@ -369,7 +369,7 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 				blockPtr = rowPtr + pixelPtr;
 				for (byte y = 0; y < 4; y++) {
 					for (byte x = 0; x < 4; x++)
-						pixels[blockPtr++] = stream->readByte();
+						pixels[blockPtr++] = stream.readByte();
 
 					blockPtr += rowInc;
 				}

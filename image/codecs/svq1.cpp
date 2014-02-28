@@ -91,10 +91,10 @@ SVQ1Decoder::~SVQ1Decoder() {
 
 #define ALIGN(x, a) (((x)+(a)-1)&~((a)-1))
 
-const Graphics::Surface *SVQ1Decoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &stream) {
 	debug(1, "SVQ1Decoder::decodeImage()");
 
-	Common::BitStream32BEMSB frameData(*stream);
+	Common::BitStream32BEMSB frameData(stream);
 
 	uint32 frameCode = frameData.getBits(22);
 	debug(1, " frameCode: %d", frameCode);

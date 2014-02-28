@@ -163,9 +163,9 @@ void TrueMotion1Decoder::genVectorTable16(const byte *selVectorTable) {
 	}
 }
 
-void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream *stream) {
-	_buf = new byte[stream->size()];
-	stream->read(_buf, stream->size());
+void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream &stream) {
+	_buf = new byte[stream.size()];
+	stream.read(_buf, stream.size());
 
 	byte headerBuffer[128];  // logical maximum size of the header
 	const byte *selVectorTable;
@@ -243,7 +243,7 @@ void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream *stream) {
 		_indexStream = _mbChangeBits + _mbChangeBitsRowSize * (_height >> 2);
 	}
 
-	_indexStreamSize = stream->size() - (_indexStream - _buf);
+	_indexStreamSize = stream.size() - (_indexStream - _buf);
 
 	_lastDeltaset = _header.deltaset;
 	_lastVectable = _header.vectable;
@@ -397,7 +397,7 @@ void TrueMotion1Decoder::decode16() {
 	}
 }
 
-const Graphics::Surface *TrueMotion1Decoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *TrueMotion1Decoder::decodeFrame(Common::SeekableReadStream &stream) {
 	decodeHeader(stream);
 
 	if (compressionTypes[_header.compression].algorithm == ALGO_NOP) {

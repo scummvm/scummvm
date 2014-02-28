@@ -38,7 +38,7 @@ public:
 	MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
 	~MSRLEDecoder();
 
-	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 
 private:
@@ -46,7 +46,7 @@ private:
 
 	Graphics::Surface *_surface;
 
-	void decode8(Common::SeekableReadStream *stream);
+	void decode8(Common::SeekableReadStream &stream);
 };
 
 } // End of namespace Image

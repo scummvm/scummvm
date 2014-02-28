@@ -39,7 +39,7 @@ public:
 	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
 	~QTRLEDecoder();
 
-	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 	Graphics::PixelFormat getPixelFormat() const;
 
 private:
@@ -47,12 +47,12 @@ private:
 
 	Graphics::Surface *_surface;
 
-	void decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
-	void decode8(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode16(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode24(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode32(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	void decode1(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
+	void decode2_4(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
+	void decode8(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
+	void decode16(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
+	void decode24(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
+	void decode32(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 };
 
 } // End of namespace Image

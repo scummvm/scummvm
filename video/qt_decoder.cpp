@@ -725,7 +725,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 		return 0;
 	}
 
-	const Graphics::Surface *frame = entry->_videoCodec->decodeImage(frameData);
+	const Graphics::Surface *frame = entry->_videoCodec->decodeFrame(*frameData);
 	delete frameData;
 
 	// Update the palette

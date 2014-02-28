@@ -39,12 +39,12 @@ struct CDToonsDiff {
 	Common::Rect rect;
 };
 
-static Common::Rect readRect(Common::SeekableReadStream *stream) {
+static Common::Rect readRect(Common::SeekableReadStream &stream) {
 	Common::Rect rect;
-	rect.top = stream->readUint16BE();
-	rect.left = stream->readUint16BE();
-	rect.bottom = stream->readUint16BE();
-	rect.right = stream->readUint16BE();
+	rect.top = stream.readUint16BE();
+	rect.left = stream.readUint16BE();
+	rect.bottom = stream.readUint16BE();
+	rect.right = stream.readUint16BE();
 	return rect;
 }
 
@@ -67,14 +67,14 @@ CDToonsDecoder::~CDToonsDecoder() {
 		delete[] i->_value.data;
 }
 
-Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *stream) {
-	uint16 u0 = stream->readUint16BE(); // always 9?
-	uint16 frameId = stream->readUint16BE();
-	uint16 blocksValidUntil = stream->readUint16BE();
-	byte u6 = stream->readByte();
-	byte backgroundColor = stream->readByte();
+Graphics::Surface *CDToonsDecoder::decodeFrame(Common::SeekableReadStream &stream) {
+	uint16 u0 = stream.readUint16BE(); // always 9?
+	uint16 frameId = stream.readUint16BE();
+	uint16 blocksValidUntil = stream.readUint16BE();
+	byte u6 = stream.readByte();
+	byte backgroundColor = stream.readByte();
 	debugN(5, "CDToons frame %d, size %d, unknown %04x (at 0), blocks valid until %d, unknown 6 is %02x, bkg color is %02x\n",
-		frameId, stream->size(), u0, blocksValidUntil, u6, backgroundColor);
+		frameId, stream.size(), u0, blocksValidUntil, u6, backgroundColor);
 
 	Common::Rect clipRect = readRect(stream);
 	debugN(9, "CDToons clipRect: (%d, %d) to (%d, %d)\n",
@@ -84,31 +84,31 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 	debugN(9, "CDToons dirtyRect: (%d, %d) to (%d, %d)\n",
 		dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
 
-	uint32 flags = stream->readUint32BE();
+	uint32 flags = stream.readUint32BE();
 	if (flags & 0x80)
 		error("CDToons: frame already processed?");
 	debugN(5, "CDToons flags: %08x\n", flags);
 
-	uint16 blockCount = stream->readUint16BE();
-	uint16 blockOffset = stream->readUint16BE();
+	uint16 blockCount = stream.readUint16BE();
+	uint16 blockOffset = stream.readUint16BE();
 	debugN(9, "CDToons: %d blocks at 0x%04x\n",
 		blockCount, blockOffset);
 
 	// max block id?
-	uint16 u32 = stream->readUint16BE();
+	uint16 u32 = stream.readUint16BE();
 	debugN(5, "CDToons unknown at 32: %04x\n", u32);
 
-	byte actionCount = stream->readByte();
-	byte u35 = stream->readByte();
+	byte actionCount = stream.readByte();
+	byte u35 = stream.readByte();
 
-	uint16 paletteId = stream->readUint16BE();
-	byte paletteSet = stream->readByte();
+	uint16 paletteId = stream.readUint16BE();
+	byte paletteSet = stream.readByte();
 	debugN(9, "CDToons palette id %04x, palette byte %02x\n",
 		paletteId, paletteSet);
 
-	byte u39 = stream->readByte();
-	uint16 u40 = stream->readUint16BE();
-	uint16 u42 = stream->readUint16BE();
+	byte u39 = stream.readByte();
+	uint16 u40 = stream.readUint16BE();
+	uint16 u42 = stream.readUint16BE();
 	debugN(5, "CDToons: unknown at 35 is %02x, unknowns at 39: %02x, %04x, %04x\n",
 		u35, u39, u40, u42);
 
@@ -116,41 +116,41 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 
 	for (uint i = 0; i < actionCount; i++) {
 		CDToonsAction action;
-		action.blockId = stream->readUint16BE();
+		action.blockId = stream.readUint16BE();
 		action.rect = readRect(stream);
 		debugN(9, "CDToons action: render block %d at (%d, %d) to (%d, %d)\n",
 			action.blockId, action.rect.left, action.rect.top, action.rect.right, action.rect.bottom);
 		actions.push_back(action);
 	}
 
-	if (stream->pos() > blockOffset)
+	if (stream.pos() > blockOffset)
 		error("CDToons header ended at 0x%08x, but blocks should have started at 0x%08x",
-			stream->pos(), blockOffset);
+			stream.pos(), blockOffset);
 
-	if (stream->pos() != blockOffset)
-		error("CDToons had %d unknown bytes after header", blockOffset - stream->pos());
+	if (stream.pos() != blockOffset)
+		error("CDToons had %d unknown bytes after header", blockOffset - stream.pos());
 
 	for (uint i = 0; i < blockCount; i++) {
-		uint16 blockId = stream->readUint16BE();
+		uint16 blockId = stream.readUint16BE();
 		if (blockId >= 1200)
 			error("CDToons: block id %d was too high", blockId);
 		if (_blocks.contains(blockId))
 			error("CDToons: new block %d was already seen", blockId);
 
 		CDToonsBlock block;
-		block.flags = stream->readUint16BE();
+		block.flags = stream.readUint16BE();
 		// flag 1 = palette, flag 2 = data?
 		if (block.flags & 0x8000)
 			error("CDToons: block already processed?");
-		block.size = stream->readUint32BE();
+		block.size = stream.readUint32BE();
 		if (block.size < 14)
 			error("CDToons: block size was %d, too small", block.size);
 		block.size -= 14;
-		block.startFrame = stream->readUint16BE();
-		block.endFrame = stream->readUint16BE();
-		block.unknown12 = stream->readUint16BE();
+		block.startFrame = stream.readUint16BE();
+		block.endFrame = stream.readUint16BE();
+		block.unknown12 = stream.readUint16BE();
 		block.data = new byte[block.size];
-		stream->read(block.data, block.size);
+		stream.read(block.data, block.size);
 
 		debugN(9, "CDToons block id 0x%04x of size 0x%08x, flags %04x, from frame %d to %d, unknown at 12 is %04x\n",
 			blockId, block.size, block.flags, block.startFrame, block.endFrame, block.unknown12);
@@ -162,16 +162,16 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 	Common::Array<CDToonsDiff> diffs;
 
 	while (true) {
-		int32 nextPos = stream->pos();
-		uint32 tag = stream->readUint32BE();
-		uint32 size = stream->readUint32BE();
+		int32 nextPos = stream.pos();
+		uint32 tag = stream.readUint32BE();
+		uint32 size = stream.readUint32BE();
 		nextPos += size;
 
 		switch (tag) {
 		case MKTAG('D','i','f','f'):
 			{
 			debugN(5, "CDToons: Diff\n");
-			uint16 count = stream->readUint16BE();
+			uint16 count = stream.readUint16BE();
 
 			Common::Rect diffClipRect = readRect(stream);
 			debugN(9, "CDToons diffClipRect: (%d, %d) to (%d, %d)\n",
@@ -182,14 +182,14 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 				CDToonsDiff diff;
 
 				diff.rect = readRect(stream);
-				diff.size = stream->readUint32BE();
+				diff.size = stream.readUint32BE();
 				if (diff.size < 20)
 					error("CDToons: Diff block size was %d, too small", diff.size);
 
-				uint16 diffWidth = stream->readUint16BE();
-				uint16 diffHeight = stream->readUint16BE();
-				uint16 unknown16 = stream->readUint16BE();
-				uint16 unknown18 = stream->readUint16BE();
+				uint16 diffWidth = stream.readUint16BE();
+				uint16 diffHeight = stream.readUint16BE();
+				uint16 unknown16 = stream.readUint16BE();
+				uint16 unknown18 = stream.readUint16BE();
 				diff.size -= 8;
 
 				if (diffWidth != diff.rect.width() || diffHeight != diff.rect.height())
@@ -199,7 +199,7 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 					unknown16, unknown18);
 
 				diff.data = new byte[diff.size];
-				stream->read(diff.data, diff.size);
+				stream.read(diff.data, diff.size);
 				diffs.push_back(diff);
 			}
 			}
@@ -212,8 +212,8 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 
 			if (xFrmBegin)
 				error("CDToons: duplicate XFrm");
-			xFrmBegin = stream->readByte();
-			xFrmCount = stream->readByte();
+			xFrmBegin = stream.readByte();
+			xFrmCount = stream.readByte();
 			debugN(9, "CDToons XFrm: run %d actions from %d\n", xFrmCount, xFrmBegin - 1);
 
 			// TODO: don't ignore (if xFrmCount is non-zero)
@@ -248,7 +248,7 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 			if (!(flags & 0x40))
 				error("CDToons: useless FrtR?");
 
-			uint16 count = stream->readUint16BE();
+			uint16 count = stream.readUint16BE();
 			debugN(9, "CDToons FrtR: %d dirty rectangles\n", count);
 			for (uint i = 0; i < count; i++) {
 				Common::Rect dirtyRectFrtR = readRect(stream);
@@ -263,7 +263,7 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 			if (!(flags & 0x20))
 				error("CDToons: useless BckR?");
 
-			uint16 count = stream->readUint16BE();
+			uint16 count = stream.readUint16BE();
 			debugN(9, "CDToons BckR: %d subentries\n", count);
 			for (uint i = 0; i < count; i++) {
 				Common::Rect dirtyRectBckR = readRect(stream);
@@ -276,15 +276,15 @@ Graphics::Surface *CDToonsDecoder::decodeImage(Common::SeekableReadStream *strea
 			warning("Unknown CDToons tag '%s'", tag2str(tag));
 		}
 
-		if (stream->pos() > nextPos)
+		if (stream.pos() > nextPos)
 			error("CDToons ran off the end of a block while reading it (at %d, next block at %d)",
-				stream->pos(), nextPos);
-		if (stream->pos() != nextPos) {
-			warning("CDToons had %d unknown bytes after block", nextPos - stream->pos());
-			stream->seek(nextPos);
+				stream.pos(), nextPos);
+		if (stream.pos() != nextPos) {
+			warning("CDToons had %d unknown bytes after block", nextPos - stream.pos());
+			stream.seek(nextPos);
 		}
 
-		if (stream->pos() == stream->size())
+		if (stream.pos() == stream.size())
 			break;
 	}
 

@@ -2262,7 +2262,7 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 			return false;
 
 		Common::MemoryReadStream frameStream(_videoBuffer[0], _videoBufferLen[0]);
-		const Graphics::Surface *codecSurf = _codec->decodeImage(&frameStream);
+		const Graphics::Surface *codecSurf = _codec->decodeFrame(frameStream);
 		if (!codecSurf)
 			return false;
 

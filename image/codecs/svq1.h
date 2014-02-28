@@ -44,7 +44,7 @@ public:
 	SVQ1Decoder(uint16 width, uint16 height);
 	~SVQ1Decoder();
 
-	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
 
 private:

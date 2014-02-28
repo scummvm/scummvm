@@ -147,20 +147,20 @@ static const byte s_mjpegValACChrominance[] = {
 	0xf9, 0xfa
 };
 
-const Graphics::Surface *MJPEGDecoder::decodeImage(Common::SeekableReadStream *stream) {
+const Graphics::Surface *MJPEGDecoder::decodeFrame(Common::SeekableReadStream &stream) {
 	// We need to reconstruct an actual JPEG stream here, then feed it to the JPEG decoder
 	// Yes, this is a pain.
 
-	stream->readUint32BE(); // Skip nonsense JPEG header
-	uint16 inputSkip = stream->readUint16BE() + 4;
-	uint32 tag = stream->readUint32BE();
+	stream.readUint32BE(); // Skip nonsense JPEG header
+	uint16 inputSkip = stream.readUint16BE() + 4;
+	uint32 tag = stream.readUint32BE();
 
 	if (tag != MKTAG('A', 'V', 'I', '1')) {
 		warning("Invalid MJPEG tag found");
 		return 0;
 	}
 
-	uint32 outputSize = stream->size() - inputSkip + sizeof(s_jpegHeader) + DHT_SEGMENT_SIZE;
+	uint32 outputSize = stream.size() - inputSkip + sizeof(s_jpegHeader) + DHT_SEGMENT_SIZE;
 	byte *data = (byte *)malloc(outputSize);
 
 	if (!data) {
@@ -193,8 +193,8 @@ const Graphics::Surface *MJPEGDecoder::decodeImage(Common::SeekableReadStream *s
 	dataOffset += 162;
 
 	// Write the actual data
-	stream->seek(inputSkip);
-	stream->read(data + dataOffset, stream->size() - inputSkip);
+	stream.seek(inputSkip);
+	stream.read(data + dataOffset, stream.size() - inputSkip);
 
 	Common::MemoryReadStream convertedStream(data, outputSize, DisposeAfterUse::YES);
 	JPEGDecoder jpeg;

@@ -71,7 +71,7 @@ public:
 	CinepakDecoder(int bitsPerPixel = 24);
 	~CinepakDecoder();
 
-	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
@@ -80,8 +80,8 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	byte *_clipTable, *_clipTableBuf;
 
-	void loadCodebook(Common::SeekableReadStream *stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize);
-	void decodeVectors(Common::SeekableReadStream *stream, uint16 strip, byte chunkID, uint32 chunkSize);
+	void loadCodebook(Common::SeekableReadStream &stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize);
+	void decodeVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
 };
 
 } // End of namespace Image
