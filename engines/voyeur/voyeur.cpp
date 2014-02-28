@@ -89,12 +89,13 @@ Common::Error VoyeurEngine::run() {
 	ESP_Init();
 	globalInitBolt();
 
-	// The original allows the victim to be explicitly specified via the command line.
-	// This is possible in ScummVM by using a boot parameter.
-	if (_iForceDeath >= 1 && _iForceDeath <= 4)
-		_voy->_eventFlags |= EVTFLAG_VICTIM_PRESET;
-
 	if (doHeadTitle()) {
+		// The original allows the victim to be explicitly specified via the command line.
+		// This is possible in ScummVM by using a boot parameter.
+		if (_iForceDeath >= 1 && _iForceDeath <= 4)
+			_voy->_eventFlags |= EVTFLAG_VICTIM_PRESET;
+
+
 		playStamp();
 		if (!shouldQuit())
 			doTailTitle();
