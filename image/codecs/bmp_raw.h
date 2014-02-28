@@ -30,8 +30,7 @@ namespace Image {
 /**
  * Bitmap raw image decoder.
  *
- * Used in image:
- *  - BitmapDecoder
+ * Used by BMP/AVI.
  */
 class BitmapRawDecoder : public Codec {
 public:

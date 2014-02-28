@@ -31,8 +31,7 @@ namespace Image {
 /**
  * Apple RPZA decoder.
  *
- * Used in video:
- *  - QuickTimeDecoder
+ * Used by PICT/QuickTime.
  */
 class RPZADecoder : public Codec {
 public:

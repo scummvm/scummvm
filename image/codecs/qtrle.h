@@ -31,8 +31,7 @@ namespace Image {
 /**
  * QuickTime Run-Length Encoding decoder.
  *
- * Used in video:
- *  - QuickTimeDecoder
+ * Used by PICT/QuickTime.
  */
 class QTRLEDecoder : public Codec {
 public:

@@ -39,8 +39,9 @@ namespace Image {
 /**
  * Intel Indeo 3 decoder.
  *
+ * Used by BMP/AVI.
+ *
  * Used in video:
- *  - AVIDecoder
  *  - VMDDecoder
  */
 class Indeo3Decoder : public Codec {

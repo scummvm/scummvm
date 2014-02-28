@@ -39,8 +39,7 @@ namespace Image {
 /**
  * Motion JPEG decoder.
  *
- * Used in video:
- *  - AVIDecoder
+ * Used by BMP/AVI.
  */
 class MJPEGDecoder : public Codec {
 public:

@@ -41,8 +41,7 @@ struct CDToonsBlock {
 /**
  * Broderbund CDToons decoder.
  *
- * Used in video:
- *  - QuickTimeDecoder
+ * Used by PICT/QuickTime.
  */
 class CDToonsDecoder : public Codec {
 public:

@@ -44,6 +44,10 @@ namespace Image {
  * An ImageDecoder can always be a Codec, but a Codec may not necessarily
  * be able to be an ImageDecoder.
  *
+ * Used in image:
+ *  - BitmapDecoder
+ *  - PICTDecoder
+ *
  * Used in video:
  *  - AVIDecoder
  *  - QuickTimeDecoder

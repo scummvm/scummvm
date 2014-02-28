@@ -36,8 +36,7 @@ namespace Image {
 /**
  * Sorenson Vector Quantizer 1 decoder.
  *
- * Used in video:
- *  - QuickTimeDecoder
+ * Used by PICT/QuickTime.
  */
 class SVQ1Decoder : public Codec {
 public:

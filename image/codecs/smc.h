@@ -37,8 +37,7 @@ enum {
 /**
  * Apple SMC decoder.
  *
- * Used in video:
- *  - QuickTimeDecoder
+ * Used by PICT/QuickTime.
  */
 class SMCDecoder : public Codec {
 public:

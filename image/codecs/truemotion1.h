@@ -35,8 +35,7 @@ namespace Image {
 /**
  * Duck TrueMotion 1 decoder.
  *
- * Used in video:
- *  - AVIDecoder
+ * Used by BMP/AVI.
  */
 class TrueMotion1Decoder : public Codec {
 public:

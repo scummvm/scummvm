@@ -30,8 +30,7 @@ namespace Image {
 /**
  * Microsoft Video 1 decoder.
  *
- * Used in video:
- *  - AVIDecoder
+ * Used by BMP/AVI.
  */
 class MSVideo1Decoder : public Codec {
 public:

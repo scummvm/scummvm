@@ -30,8 +30,7 @@ namespace Image {
 /**
  * Microsoft Run-Length Encoding decoder.
  *
- * Used in video:
- *  - AVIDecoder
+ * Used by BMP/AVI.
  */
 class MSRLEDecoder : public Codec {
 public:

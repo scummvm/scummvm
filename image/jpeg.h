@@ -27,11 +27,7 @@
  *  - mohawk
  *  - wintermute
  *
- * Used in image:
- *  - PICTDecoder
- *
- * Used in video:
- *  - QuickTimeDecoder
+ * Used by PICT/QuickTime.
  */
 
 #ifndef IMAGE_JPEG_H
