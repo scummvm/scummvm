@@ -27,7 +27,7 @@
 #include "common/textconsole.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "image/codecs/bmp_raw.h"
+#include "image/codecs/codec.h"
 
 namespace Image {
 
@@ -93,13 +93,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 		return false;
 	}
 
-	uint32 compression = stream.readUint32LE();
-
-	if (compression != 0) {
-		warning("Compressed bitmaps not supported");
-		return false;
-	}
-
+	uint32 compression = stream.readUint32BE();
 	uint32 imageSize = stream.readUint32LE();
 	/* uint32 pixelsPerMeterX = */ stream.readUint32LE();
 	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
@@ -120,11 +114,15 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
+	// Create the codec (it will warn about unhandled compression)
+	_codec = createBitmapCodec(compression, width, height, bitsPerPixel);
+	if (!_codec)
+		return false;
+
 	// Grab the frame data
 	Common::SeekableSubReadStream subStream(&stream, imageOffset, imageOffset + imageSize);
 
 	// We only support raw bitmaps for now
-	_codec = new BitmapRawDecoder(width, height, bitsPerPixel);
 	_surface = _codec->decodeFrame(subStream);
 
 	return true;

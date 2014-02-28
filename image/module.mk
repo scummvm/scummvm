@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	codecs/bmp_raw.o \
 	codecs/cdtoons.o \
 	codecs/cinepak.o \
+	codecs/codec.o \
 	codecs/indeo3.o \
 	codecs/mjpeg.o \
 	codecs/msrle.o \

@@ -84,6 +84,11 @@ public:
 	virtual bool hasDirtyPalette() const { return false; }
 };
 
+/**
+ * Create a codec given a bitmap/AVI compression tag.
+ */
+Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel);
+
 } // End of namespace Image
 
 #endif

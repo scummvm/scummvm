@@ -34,13 +34,7 @@
 #include "audio/decoders/raw.h"
 
 // Video Codecs
-#include "image/codecs/cinepak.h"
-#include "image/codecs/indeo3.h"
-#include "image/codecs/mjpeg.h"
-#include "image/codecs/mpeg.h"
-#include "image/codecs/msvideo1.h"
-#include "image/codecs/msrle.h"
-#include "image/codecs/truemotion1.h"
+#include "image/codecs/codec.h"
 
 namespace Video {
 
@@ -755,37 +749,7 @@ bool AVIDecoder::AVIVideoTrack::rewind() {
 }
 
 Image::Codec *AVIDecoder::AVIVideoTrack::createCodec() {
-	switch (_bmInfo.compression) {
-	case SWAP_CONSTANT_32(1):
-		return new Image::MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
-	case MKTAG('C','R','A','M'):
-	case MKTAG('m','s','v','c'):
-	case MKTAG('W','H','A','M'):
-		return new Image::MSVideo1Decoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
-	case MKTAG('c','v','i','d'):
-		return new Image::CinepakDecoder(_bmInfo.bitCount);
-	case MKTAG('I','V','3','2'):
-		return new Image::Indeo3Decoder(_bmInfo.width, _bmInfo.height);
-#ifdef VIDEO_CODECS_TRUEMOTION1_H
-	case MKTAG('D','U','C','K'):
-	case MKTAG('d','u','c','k'):
-		return new Image::TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
-#endif
-#ifdef USE_MPEG2
-	case MKTAG('m','p','g','2'):
-		return new Image::MPEGDecoder();
-#endif
-	case MKTAG('M','J','P','G'):
-	case MKTAG('m','j','p','g'):
-		return new Image::MJPEGDecoder();
-	default:
-		if (_bmInfo.compression & 0x00FFFFFF)
-			warning("Unknown/Unhandled AVI compression format \'%s\'", tag2str(_bmInfo.compression));
-		else
-			warning("Unknown/Unhandled AVI compression format %d", SWAP_BYTES_32(_bmInfo.compression));
-	}
-
-	return 0;
+	return Image::createBitmapCodec(_bmInfo.compression, _bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 }
 
 void AVIDecoder::AVIVideoTrack::forceTrackEnd() {
