@@ -22,11 +22,11 @@
 
 // Based off ffmpeg's SMC decoder
 
-#include "video/codecs/smc.h"
+#include "image/codecs/smc.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-namespace Video {
+namespace Image {
 
 #define GET_BLOCK_COUNT() \
   (opcode & 0x10) ? (1 + stream->readByte()) : 1 + (opcode & 0x0F);
@@ -386,4 +386,4 @@ const Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *str
 	return _surface;
 }
 
-} // End of namespace Video
+} // End of namespace Image

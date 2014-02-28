@@ -20,35 +20,41 @@
  *
  */
 
-#ifndef VIDEO_CODECS_MSRLE_H
-#define VIDEO_CODECS_MSRLE_H
+#ifndef IMAGE_CODECS_QTRLE_H
+#define IMAGE_CODECS_QTRLE_H
 
-#include "video/codecs/codec.h"
+#include "graphics/pixelformat.h"
+#include "image/codecs/codec.h"
 
-namespace Video {
+namespace Image {
 
 /**
- * Microsoft Run-Length Encoding decoder.
+ * QuickTime Run-Length Encoding decoder.
  *
  * Used in video:
- *  - AVIDecoder
+ *  - QuickTimeDecoder
  */
-class MSRLEDecoder : public Codec {
+class QTRLEDecoder : public Codec {
 public:
-	MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
-	~MSRLEDecoder();
+	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
+	~QTRLEDecoder();
 
 	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
+	Graphics::PixelFormat getPixelFormat() const;
 
 private:
 	byte _bitsPerPixel;
 
 	Graphics::Surface *_surface;
 
-	void decode8(Common::SeekableReadStream *stream);
+	void decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	void decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
+	void decode8(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	void decode16(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	void decode24(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	void decode32(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

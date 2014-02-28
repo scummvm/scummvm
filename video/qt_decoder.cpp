@@ -39,13 +39,13 @@
 #include "common/util.h"
 
 // Video codecs
-#include "video/codecs/cinepak.h"
-#include "video/codecs/jpeg.h"
-#include "video/codecs/qtrle.h"
-#include "video/codecs/rpza.h"
-#include "video/codecs/smc.h"
-#include "video/codecs/cdtoons.h"
-#include "video/codecs/svq1.h"
+#include "image/codecs/cinepak.h"
+#include "image/codecs/jpeg.h"
+#include "image/codecs/qtrle.h"
+#include "image/codecs/rpza.h"
+#include "image/codecs/smc.h"
+#include "image/codecs/cdtoons.h"
+#include "image/codecs/svq1.h"
 
 namespace Video {
 
@@ -273,23 +273,23 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 	switch (_codecTag) {
 	case MKTAG('c','v','i','d'):
 		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
-		_videoCodec = new CinepakDecoder(_bitsPerSample & 0x1f);
+		_videoCodec = new Image::CinepakDecoder(_bitsPerSample & 0x1f);
 		break;
 	case MKTAG('r','p','z','a'):
 		// Apple Video ("Road Pizza"): Used by some Myst videos.
-		_videoCodec = new RPZADecoder(_parentTrack->width, _parentTrack->height);
+		_videoCodec = new Image::RPZADecoder(_parentTrack->width, _parentTrack->height);
 		break;
 	case MKTAG('r','l','e',' '):
 		// QuickTime RLE: Used by some Myst ME videos.
-		_videoCodec = new QTRLEDecoder(_parentTrack->width, _parentTrack->height, _bitsPerSample & 0x1f);
+		_videoCodec = new Image::QTRLEDecoder(_parentTrack->width, _parentTrack->height, _bitsPerSample & 0x1f);
 		break;
 	case MKTAG('s','m','c',' '):
 		// Apple SMC: Used by some Myst videos.
-		_videoCodec = new SMCDecoder(_parentTrack->width, _parentTrack->height);
+		_videoCodec = new Image::SMCDecoder(_parentTrack->width, _parentTrack->height);
 		break;
 	case MKTAG('S','V','Q','1'):
 		// Sorenson Video 1: Used by some Myst ME videos.
-		_videoCodec = new SVQ1Decoder(_parentTrack->width, _parentTrack->height);
+		_videoCodec = new Image::SVQ1Decoder(_parentTrack->width, _parentTrack->height);
 		break;
 	case MKTAG('S','V','Q','3'):
 		// Sorenson Video 3: Used by some Myst ME videos.
@@ -297,11 +297,11 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 		break;
 	case MKTAG('j','p','e','g'):
 		// JPEG: Used by some Myst ME 10th Anniversary videos.
-		_videoCodec = new JPEGDecoder();
+		_videoCodec = new Image::JPEGCodec();
 		break;
 	case MKTAG('Q','k','B','k'):
 		// CDToons: Used by most of the Broderbund games.
-		_videoCodec = new CDToonsDecoder(_parentTrack->width, _parentTrack->height);
+		_videoCodec = new Image::CDToonsDecoder(_parentTrack->width, _parentTrack->height);
 		break;
 	default:
 		warning("Unsupported codec \'%s\'", tag2str(_codecTag));

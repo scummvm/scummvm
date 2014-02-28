@@ -36,9 +36,9 @@
 
 #include "graphics/yuv_to_rgb.h"
 
-#include "video/codecs/indeo3.h"
+#include "image/codecs/indeo3.h"
 
-namespace Video {
+namespace Image {
 
 Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height) : _ModPred(0), _corrector_type(0) {
 	_iv_frame[0].the_buf = 0;
@@ -3484,4 +3484,4 @@ const uint32 Indeo3Decoder::correctionhighorder[] = {
 	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
 
-} // End of namespace Video
+} // End of namespace Image

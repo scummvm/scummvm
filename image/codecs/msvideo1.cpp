@@ -22,11 +22,11 @@
 
  // Based off ffmpeg's msvideo.cpp
 
-#include "video/codecs/msvideo1.h"
+#include "image/codecs/msvideo1.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-namespace Video {
+namespace Image {
 
 #define CHECK_STREAM_PTR(n) \
   if ((stream->pos() + n) > stream->size() ) { \
@@ -136,4 +136,4 @@ const Graphics::Surface *MSVideo1Decoder::decodeImage(Common::SeekableReadStream
     return _surface;
 }
 
-} // End of namespace Video
+} // End of namespace Image

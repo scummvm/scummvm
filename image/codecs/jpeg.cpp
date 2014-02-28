@@ -20,32 +20,47 @@
  *
  */
 
-#ifndef VIDEO_CODECS_RPZA_H
-#define VIDEO_CODECS_RPZA_H
+#include "common/system.h"
+#include "common/textconsole.h"
+#include "graphics/surface.h"
+#include "image/jpeg.h"
 
-#include "graphics/pixelformat.h"
-#include "video/codecs/codec.h"
+#include "image/codecs/jpeg.h"
 
-namespace Video {
+namespace Common {
+class SeekableReadStream;
+}
 
-/**
- * Apple RPZA decoder.
- *
- * Used in video:
- *  - QuickTimeDecoder
- */
-class RPZADecoder : public Codec {
-public:
-	RPZADecoder(uint16 width, uint16 height);
-	~RPZADecoder();
+namespace Image {
 
-	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); }
+JPEGCodec::JPEGCodec() : Codec() {
+	_pixelFormat = g_system->getScreenFormat();
+	_surface = NULL;
+}
 
-private:
-	Graphics::Surface *_surface;
-};
+JPEGCodec::~JPEGCodec() {
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+}
 
-} // End of namespace Video
+const Graphics::Surface *JPEGCodec::decodeImage(Common::SeekableReadStream *stream) {
+	JPEGDecoder jpeg;
 
-#endif
+	if (!jpeg.loadStream(*stream)) {
+		warning("Failed to decode JPEG frame");
+		return 0;
+	}
+
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+
+	_surface = jpeg.getSurface()->convertTo(_pixelFormat);
+
+	return _surface;
+}
+
+} // End of namespace Image

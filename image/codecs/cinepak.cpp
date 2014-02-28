@@ -20,7 +20,7 @@
  *
  */
 
-#include "video/codecs/cinepak.h"
+#include "image/codecs/cinepak.h"
 
 #include "common/debug.h"
 #include "common/stream.h"
@@ -32,7 +32,7 @@
 
 // Code here partially based off of ffmpeg ;)
 
-namespace Video {
+namespace Image {
 
 #define PUT_PIXEL(offset, lum, u, v) \
 	if (_pixelFormat.bytesPerPixel != 1) { \
@@ -306,4 +306,4 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream *stream, uint16 st
 	}
 }
 
-} // End of namespace Video
+} // End of namespace Image

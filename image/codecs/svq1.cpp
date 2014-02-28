@@ -23,9 +23,9 @@
 // Sorenson Video 1 Codec
 // Based off FFmpeg's SVQ1 decoder (written by Arpi and Nick Kurshev)
 
-#include "video/codecs/svq1.h"
-#include "video/codecs/svq1_cb.h"
-#include "video/codecs/svq1_vlc.h"
+#include "image/codecs/svq1.h"
+#include "image/codecs/svq1_cb.h"
+#include "image/codecs/svq1_vlc.h"
 
 #include "common/stream.h"
 #include "common/bitstream.h"
@@ -37,7 +37,7 @@
 
 #include "graphics/yuv_to_rgb.h"
 
-namespace Video {
+namespace Image {
 
 #define SVQ1_BLOCK_SKIP     0
 #define SVQ1_BLOCK_INTER    1
@@ -794,4 +794,4 @@ bool SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream *ss, byte *current, byt
 	return resultValid;
 }
 
-} // End of namespace Video
+} // End of namespace Image

@@ -25,12 +25,12 @@
 // Only compile if SCI32 is enabled, ZVISION is enabled, or if we're building dynamic modules
 #if defined(ENABLE_SCI32) || defined(ENABLE_ZVISION) || defined(DYNAMIC_MODULES)
 
-#ifndef VIDEO_CODECS_TRUEMOTION1_H
-#define VIDEO_CODECS_TRUEMOTION1_H
+#ifndef IMAGE_CODECS_TRUEMOTION1_H
+#define IMAGE_CODECS_TRUEMOTION1_H
 
-#include "video/codecs/codec.h"
+#include "image/codecs/codec.h"
 
-namespace Video {
+namespace Image {
 
 /**
  * Duck TrueMotion 1 decoder.
@@ -103,7 +103,7 @@ private:
 	void genVectorTable16(const byte *selVectorTable);
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
-#endif // VIDEO_CODECS_TRUEMOTION1_H
+#endif // IMAGE_CODECS_TRUEMOTION1_H
 #endif // SCI32/Plugins guard

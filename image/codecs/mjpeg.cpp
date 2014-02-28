@@ -31,13 +31,13 @@
 #include "graphics/surface.h"
 #include "image/jpeg.h"
 
-#include "video/codecs/mjpeg.h"
+#include "image/codecs/mjpeg.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
-namespace Video {
+namespace Image {
 
 MJPEGDecoder::MJPEGDecoder() : Codec() {
 	_pixelFormat = g_system->getScreenFormat();
@@ -197,7 +197,7 @@ const Graphics::Surface *MJPEGDecoder::decodeImage(Common::SeekableReadStream *s
 	stream->read(data + dataOffset, stream->size() - inputSkip);
 
 	Common::MemoryReadStream convertedStream(data, outputSize, DisposeAfterUse::YES);
-	Image::JPEGDecoder jpeg;
+	JPEGDecoder jpeg;
 
 	if (!jpeg.loadStream(convertedStream)) {
 		warning("Failed to decode MJPEG frame");
@@ -214,4 +214,4 @@ const Graphics::Surface *MJPEGDecoder::decodeImage(Common::SeekableReadStream *s
 	return _surface;
 }
 
-} // End of namespace Video
+} // End of namespace Image

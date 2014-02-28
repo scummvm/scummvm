@@ -20,20 +20,20 @@
  *
  */
 
-#ifndef VIDEO_CODECS_CINEPAK_H
-#define VIDEO_CODECS_CINEPAK_H
+#ifndef IMAGE_CODECS_CINEPAK_H
+#define IMAGE_CODECS_CINEPAK_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "graphics/pixelformat.h"
 
-#include "video/codecs/codec.h"
+#include "image/codecs/codec.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
-namespace Video {
+namespace Image {
 
 struct CinepakCodebook {
 	// These are not in the normal YUV colorspace, but in the Cinepak YUV colorspace instead.
@@ -84,6 +84,6 @@ private:
 	void decodeVectors(Common::SeekableReadStream *stream, uint16 strip, byte chunkID, uint32 chunkSize);
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

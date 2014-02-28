@@ -23,7 +23,7 @@
 // QuickTime RLE Decoder
 // Based off ffmpeg's QuickTime RLE decoder (written by Mike Melanson)
 
-#include "video/codecs/qtrle.h"
+#include "image/codecs/qtrle.h"
 
 #include "common/debug.h"
 #include "common/scummsys.h"
@@ -33,7 +33,7 @@
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
-namespace Video {
+namespace Image {
 
 QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
 	_bitsPerPixel = bitsPerPixel;
@@ -428,4 +428,4 @@ Graphics::PixelFormat QTRLEDecoder::getPixelFormat() const {
 	return Graphics::PixelFormat();
 }
 
-} // End of namespace Video
+} // End of namespace Image

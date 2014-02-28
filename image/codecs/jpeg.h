@@ -20,47 +20,41 @@
  *
  */
 
-#include "common/system.h"
-#include "common/textconsole.h"
-#include "graphics/surface.h"
-#include "image/jpeg.h"
+#ifndef IMAGE_CODECS_JPEG_H
+#define IMAGE_CODECS_JPEG_H
 
-#include "video/codecs/jpeg.h"
+#include "image/codecs/codec.h"
+#include "graphics/pixelformat.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
-namespace Video {
-
-JPEGDecoder::JPEGDecoder() : Codec() {
-	_pixelFormat = g_system->getScreenFormat();
-	_surface = NULL;
+namespace Graphics {
+struct Surface;
 }
 
-JPEGDecoder::~JPEGDecoder() {
-	if (_surface) {
-		_surface->free();
-		delete _surface;
-	}
-}
+namespace Image {
 
-const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream *stream) {
-	Image::JPEGDecoder jpeg;
+/**
+ * JPEG decoder.
+ *
+ * Used in video:
+ *  - QuickTimeDecoder
+ */
+class JPEGCodec : public Codec {
+public:
+	JPEGCodec();
+	~JPEGCodec();
 
-	if (!jpeg.loadStream(*stream)) {
-		warning("Failed to decode JPEG frame");
-		return 0;
-	}
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
-	if (_surface) {
-		_surface->free();
-		delete _surface;
-	}
+private:
+	Graphics::PixelFormat _pixelFormat;
+	Graphics::Surface *_surface;
+};
 
-	_surface = jpeg.getSurface()->convertTo(_pixelFormat);
+} // End of namespace Image
 
-	return _surface;
-}
-
-} // End of namespace Video
+#endif

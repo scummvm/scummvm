@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef VIDEO_CODECS_SVQ1_H
-#define VIDEO_CODECS_SVQ1_H
+#ifndef IMAGE_CODECS_SVQ1_H
+#define IMAGE_CODECS_SVQ1_H
 
-#include "video/codecs/codec.h"
+#include "image/codecs/codec.h"
 
 namespace Common {
 class BitStream;
@@ -31,7 +31,7 @@ class Huffman;
 struct Point;
 }
 
-namespace Video {
+namespace Image {
 
 /**
  * Sorenson Vector Quantizer 1 decoder.
@@ -83,6 +83,6 @@ private:
 	void putPixels16XY2C(byte *block, const byte *pixels, int lineSize, int h);
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

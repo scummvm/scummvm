@@ -34,13 +34,13 @@
 #include "audio/decoders/raw.h"
 
 // Video Codecs
-#include "video/codecs/cinepak.h"
-#include "video/codecs/indeo3.h"
-#include "video/codecs/mjpeg.h"
-#include "video/codecs/mpeg.h"
-#include "video/codecs/msvideo1.h"
-#include "video/codecs/msrle.h"
-#include "video/codecs/truemotion1.h"
+#include "image/codecs/cinepak.h"
+#include "image/codecs/indeo3.h"
+#include "image/codecs/mjpeg.h"
+#include "image/codecs/mpeg.h"
+#include "image/codecs/msvideo1.h"
+#include "image/codecs/msrle.h"
+#include "image/codecs/truemotion1.h"
 
 namespace Video {
 
@@ -769,29 +769,29 @@ bool AVIDecoder::AVIVideoTrack::rewind() {
 	return true;
 }
 
-Codec *AVIDecoder::AVIVideoTrack::createCodec() {
+Image::Codec *AVIDecoder::AVIVideoTrack::createCodec() {
 	switch (_vidsHeader.streamHandler) {
 	case ID_CRAM:
 	case ID_MSVC:
 	case ID_WHAM:
-		return new MSVideo1Decoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
+		return new Image::MSVideo1Decoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 	case ID_RLE:
-		return new MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
+		return new Image::MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 	case ID_CVID:
-		return new CinepakDecoder(_bmInfo.bitCount);
+		return new Image::CinepakDecoder(_bmInfo.bitCount);
 	case ID_IV32:
-		return new Indeo3Decoder(_bmInfo.width, _bmInfo.height);
+		return new Image::Indeo3Decoder(_bmInfo.width, _bmInfo.height);
 #ifdef VIDEO_CODECS_TRUEMOTION1_H
 	case ID_DUCK:
 	case ID_DUCK2:
-		return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
+		return new Image::TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
 #endif
 #ifdef USE_MPEG2
 	case ID_MPG2:
-		return new MPEGDecoder();
+		return new Image::MPEGDecoder();
 #endif
 	case ID_MJPG:
-		return new MJPEGDecoder();
+		return new Image::MJPEGDecoder();
 	default:
 		warning("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
 	}

@@ -53,9 +53,11 @@ namespace Graphics {
 struct PixelFormat;
 }
 
-namespace Video {
-
+namespace Image {
 class Codec;
+}
+
+namespace Video {
 
 /**
  * Decoder for Coktel videos.
@@ -516,7 +518,7 @@ private:
 	Graphics::Surface _8bppSurface[3]; ///< Fake 8bpp surfaces over the video buffers.
 
 	bool _externalCodec;
-	Codec *_codec;
+	Image::Codec *_codec;
 
 	int32 _subtitle;
 

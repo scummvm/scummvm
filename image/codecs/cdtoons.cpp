@@ -20,13 +20,13 @@
  *
  */
 
-#include "video/codecs/cdtoons.h"
+#include "image/codecs/cdtoons.h"
 #include "common/rect.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/array.h"
 
-namespace Video {
+namespace Image {
 
 struct CDToonsAction {
 	uint16 blockId;
@@ -445,4 +445,4 @@ void CDToonsDecoder::setPalette(byte *data) {
 	_palette[0] = _palette[1] = _palette[2] = 0;
 }
 
-} // End of namespace Video
+} // End of namespace Image

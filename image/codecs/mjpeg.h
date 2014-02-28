@@ -20,39 +20,11 @@
  *
  */
 
-#ifdef USE_MPEG2
+#ifndef IMAGE_CODECS_MJPEG_H
+#define IMAGE_CODECS_MJPEG_H
 
-#ifndef VIDEO_CODECS_MPEG_H
-#define VIDEO_CODECS_MPEG_H
-
-#include "video/codecs/codec.h"
+#include "image/codecs/codec.h"
 #include "graphics/pixelformat.h"
-
-#if defined(__PLAYSTATION2__)
-	typedef uint8 uint8_t;
-	typedef uint16 uint16_t;
-	typedef uint32 uint32_t;
-#elif defined(_WIN32_WCE)
-	typedef signed char int8_t;
-	typedef signed short int16_t;
-	typedef unsigned char uint8_t;
-	typedef unsigned short uint16_t;
-#elif defined(_MSC_VER) || defined (__SYMBIAN32__)
-	typedef signed char int8_t;
-	typedef signed short int16_t;
-	typedef unsigned char uint8_t;
-	typedef unsigned short uint16_t;
-	#if !defined(SDL_COMPILEDVERSION) || (SDL_COMPILEDVERSION < 1210)
-	typedef signed long int32_t;
-	typedef unsigned long uint32_t;
-	#endif
-#else
-#	include <inttypes.h>
-#endif
-
-extern "C" {
-	#include <mpeg2dec/mpeg2.h>
-}
 
 namespace Common {
 class SeekableReadStream;
@@ -62,37 +34,27 @@ namespace Graphics {
 struct Surface;
 }
 
-namespace Video {
+namespace Image {
 
-// MPEG 1/2 video decoder
-
-class MPEGDecoder : public Codec {
+/**
+ * Motion JPEG decoder.
+ *
+ * Used in video:
+ *  - AVIDecoder
+ */
+class MJPEGDecoder : public Codec {
 public:
-	MPEGDecoder();
-	~MPEGDecoder();
+	MJPEGDecoder();
+	~MJPEGDecoder();
 
-	// Codec interface
 	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
 	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
-
-	// MPEGPSDecoder call
-	bool decodePacket(Common::SeekableReadStream *packet, uint32 &framePeriod, Graphics::Surface *dst = 0);
 
 private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::Surface *_surface;
-
-	enum {
-		BUFFER_SIZE = 4096
-	};
-
-	byte _buffer[BUFFER_SIZE];
-	mpeg2dec_t *_mpegDecoder;
-	const mpeg2_info_t *_mpegInfo;
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
-#endif // VIDEO_CODECS_MPEG_H
-
-#endif // USE_MPEG2
+#endif

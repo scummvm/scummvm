@@ -23,12 +23,12 @@
 // These tables are modified from their FFmpeg counterparts so that
 // they work on both little and big endian systems.
 
-#ifndef VIDEO_CODECS_SVQ1_CB_H
-#define VIDEO_CODECS_SVQ1_CB_H
+#ifndef IMAGE_CODECS_SVQ1_CB_H
+#define IMAGE_CODECS_SVQ1_CB_H
 
 #include "common/scummsys.h"
 
-namespace Video {
+namespace Image {
 
 static const int8 s_svq1InterCodebook4x2[768] = {
     7,  2, -6, -7,  7,  3, -3, -4, -7, -2,  7,  8, -8, -4,  3,  4,
@@ -1506,6 +1506,6 @@ static const int8 *const s_svq1IntraCodebooks[6] = {
     0, 0
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

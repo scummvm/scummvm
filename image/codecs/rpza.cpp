@@ -22,14 +22,14 @@
 
  // Based off ffmpeg's RPZA decoder
 
-#include "video/codecs/rpza.h"
+#include "image/codecs/rpza.h"
 
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-namespace Video {
+namespace Image {
 
 RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec() {
 	// We need to increase the surface size to a multiple of 4
@@ -198,4 +198,4 @@ const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *st
 	return _surface;
 }
 
-} // End of namespace Video
+} // End of namespace Image

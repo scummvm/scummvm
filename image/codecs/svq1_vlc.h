@@ -23,12 +23,12 @@
 // These tables are modified versions of the FFmpeg ones so that they
 // will work with our BitStream class directly.
 
-#ifndef VIDEO_CODECS_SVQ1_VLC_H
-#define VIDEO_CODECS_SVQ1_VLC_H
+#ifndef IMAGE_CODECS_SVQ1_VLC_H
+#define IMAGE_CODECS_SVQ1_VLC_H
 
 #include "common/scummsys.h"
 
-namespace Video {
+namespace Image {
 
 static const byte s_svq1BlockTypeLengths[4] = {
 	1, 2, 3, 3
@@ -336,6 +336,6 @@ static const uint32 s_svq1MotionComponentCodes[33] = {
 	2, 3, 2
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

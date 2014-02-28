@@ -27,9 +27,9 @@
 #include "graphics/surface.h"
 #include "graphics/yuv_to_rgb.h"
 
-#include "video/codecs/mpeg.h"
+#include "image/codecs/mpeg.h"
 
-namespace Video {
+namespace Image {
 
 MPEGDecoder::MPEGDecoder() : Codec() {
 	_pixelFormat = g_system->getScreenFormat();
@@ -104,4 +104,4 @@ bool MPEGDecoder::decodePacket(Common::SeekableReadStream *packet, uint32 &frame
 	return foundFrame;
 }
 
-} // End of namespace Video
+} // End of namespace Image

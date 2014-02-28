@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef VIDEO_CODECS_CODEC_H
-#define VIDEO_CODECS_CODEC_H
+#ifndef IMAGE_CODECS_CODEC_H
+#define IMAGE_CODECS_CODEC_H
 
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
@@ -30,7 +30,7 @@ namespace Common {
 class SeekableReadStream;
 }
 
-namespace Video {
+namespace Image {
 
 /**
  * An abstract representation of a video codec used for decoding
@@ -77,6 +77,6 @@ public:
 	virtual bool hasDirtyPalette() const { return false; }
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

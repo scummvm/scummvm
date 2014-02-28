@@ -23,12 +23,12 @@
 // Based on the TrueMotion 1 decoder by Alex Beregszaszi & Mike Melanson in FFmpeg
 // These tables were originally part of VpVision from On2
 
-#ifndef VIDEO_CODECS_TRUEMOTION1DATA_H
-#define VIDEO_CODECS_TRUEMOTION1DATA_H
+#ifndef IMAGE_CODECS_TRUEMOTION1DATA_H
+#define IMAGE_CODECS_TRUEMOTION1DATA_H
 
 #include "common/scummsys.h"
 
-namespace Video {
+namespace Image {
 
 // Y delta tables, skinny and fat
 static const int16 ydt1[8] = { 0, -2, 2, -6, 6, -12, 12, -12 };
@@ -824,6 +824,6 @@ static const byte pc_tbl4[] = {
 
 static const byte * const tables[] = { pc_tbl2, pc_tbl3, pc_tbl4 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

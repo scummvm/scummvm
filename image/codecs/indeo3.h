@@ -29,12 +29,12 @@
  * written, produced, and directed by Alan Smithee
  */
 
-#ifndef VIDEO_CODECS_INDEO3_H
-#define VIDEO_CODECS_INDEO3_H
+#ifndef IMAGE_CODECS_INDEO3_H
+#define IMAGE_CODECS_INDEO3_H
 
-#include "video/codecs/codec.h"
+#include "image/codecs/codec.h"
 
-namespace Video {
+namespace Image {
 
 /**
  * Intel Indeo 3 decoder.
@@ -89,6 +89,6 @@ private:
 			const byte *buf2, int min_width_160);
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
-#endif // VIDEO_CODECS_INDEO3_H
+#endif

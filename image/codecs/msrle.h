@@ -20,41 +20,35 @@
  *
  */
 
-#ifndef VIDEO_CODECS_MJPEG_H
-#define VIDEO_CODECS_MJPEG_H
+#ifndef IMAGE_CODECS_MSRLE_H
+#define IMAGE_CODECS_MSRLE_H
 
-#include "video/codecs/codec.h"
-#include "graphics/pixelformat.h"
+#include "image/codecs/codec.h"
 
-namespace Common {
-class SeekableReadStream;
-}
-
-namespace Graphics {
-struct Surface;
-}
-
-namespace Video {
+namespace Image {
 
 /**
- * Motion JPEG decoder.
+ * Microsoft Run-Length Encoding decoder.
  *
  * Used in video:
  *  - AVIDecoder
  */
-class MJPEGDecoder : public Codec {
+class MSRLEDecoder : public Codec {
 public:
-	MJPEGDecoder();
-	~MJPEGDecoder();
+	MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
+	~MSRLEDecoder();
 
 	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 
 private:
-	Graphics::PixelFormat _pixelFormat;
+	byte _bitsPerPixel;
+
 	Graphics::Surface *_surface;
+
+	void decode8(Common::SeekableReadStream *stream);
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

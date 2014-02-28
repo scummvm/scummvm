@@ -20,53 +20,32 @@
  *
  */
 
-#ifndef VIDEO_CODECS_CDTOONS_H
-#define VIDEO_CODECS_CDTOONS_H
+#ifndef IMAGE_CODECS_RPZA_H
+#define IMAGE_CODECS_RPZA_H
 
-#include "video/codecs/codec.h"
+#include "graphics/pixelformat.h"
+#include "image/codecs/codec.h"
 
-#include "common/hashmap.h"
-
-namespace Video {
-
-struct CDToonsBlock {
-	uint16 flags;
-	uint32 size;
-	uint16 startFrame;
-	uint16 endFrame;
-	uint16 unknown12;
-	byte *data;
-};
+namespace Image {
 
 /**
- * Broderbund CDToons decoder.
+ * Apple RPZA decoder.
  *
  * Used in video:
  *  - QuickTimeDecoder
  */
-class CDToonsDecoder : public Codec {
+class RPZADecoder : public Codec {
 public:
-	CDToonsDecoder(uint16 width, uint16 height);
-	~CDToonsDecoder();
+	RPZADecoder(uint16 width, uint16 height);
+	~RPZADecoder();
 
-	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
-	bool containsPalette() const { return true; }
-	const byte *getPalette() { _dirtyPalette = false; return _palette; }
-	bool hasDirtyPalette() const { return _dirtyPalette; }
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); }
 
 private:
 	Graphics::Surface *_surface;
-	byte _palette[256 * 3];
-	bool _dirtyPalette;
-	uint16 _currentPaletteId;
-
-	Common::HashMap<uint16, CDToonsBlock> _blocks;
-
-	void renderBlock(byte *data, uint size, int x, int y, uint width, uint height);
-	void setPalette(byte *data);
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

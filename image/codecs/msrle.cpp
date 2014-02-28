@@ -22,11 +22,11 @@
 
 // Based off ffmpeg's msrledec.c
 
-#include "video/codecs/msrle.h"
+#include "image/codecs/msrle.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-namespace Video {
+namespace Image {
 
 MSRLEDecoder::MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) {
 	_surface = new Graphics::Surface();
@@ -129,4 +129,4 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream *stream) {
 	warning("MS RLE Codec: No end-of-picture code");
 }
 
-} // End of namespace Video
+} // End of namespace Image

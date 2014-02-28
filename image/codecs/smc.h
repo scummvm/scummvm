@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef VIDEO_CODECS_SMC_H
-#define VIDEO_CODECS_SMC_H
+#ifndef IMAGE_CODECS_SMC_H
+#define IMAGE_CODECS_SMC_H
 
-#include "video/codecs/codec.h"
+#include "image/codecs/codec.h"
 
-namespace Video {
+namespace Image {
 
 enum {
 	CPAIR = 2,
@@ -57,6 +57,6 @@ private:
 	byte _colorOctets[COLORS_PER_TABLE * COCTET];
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

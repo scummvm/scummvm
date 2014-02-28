@@ -20,41 +20,53 @@
  *
  */
 
-#ifndef VIDEO_CODECS_QTRLE_H
-#define VIDEO_CODECS_QTRLE_H
+#ifndef IMAGE_CODECS_CDTOONS_H
+#define IMAGE_CODECS_CDTOONS_H
 
-#include "graphics/pixelformat.h"
-#include "video/codecs/codec.h"
+#include "image/codecs/codec.h"
 
-namespace Video {
+#include "common/hashmap.h"
+
+namespace Image {
+
+struct CDToonsBlock {
+	uint16 flags;
+	uint32 size;
+	uint16 startFrame;
+	uint16 endFrame;
+	uint16 unknown12;
+	byte *data;
+};
 
 /**
- * QuickTime Run-Length Encoding decoder.
+ * Broderbund CDToons decoder.
  *
  * Used in video:
  *  - QuickTimeDecoder
  */
-class QTRLEDecoder : public Codec {
+class CDToonsDecoder : public Codec {
 public:
-	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
-	~QTRLEDecoder();
+	CDToonsDecoder(uint16 width, uint16 height);
+	~CDToonsDecoder();
 
-	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const;
+	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
+	bool containsPalette() const { return true; }
+	const byte *getPalette() { _dirtyPalette = false; return _palette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 private:
-	byte _bitsPerPixel;
-
 	Graphics::Surface *_surface;
+	byte _palette[256 * 3];
+	bool _dirtyPalette;
+	uint16 _currentPaletteId;
 
-	void decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
-	void decode8(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode16(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode24(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode32(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	Common::HashMap<uint16, CDToonsBlock> _blocks;
+
+	void renderBlock(byte *data, uint size, int x, int y, uint width, uint height);
+	void setPalette(byte *data);
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

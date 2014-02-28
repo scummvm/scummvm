@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef VIDEO_CODECS_MSVIDEO1_H
-#define VIDEO_CODECS_MSVIDEO1_H
+#ifndef IMAGE_CODECS_MSVIDEO1_H
+#define IMAGE_CODECS_MSVIDEO1_H
 
-#include "video/codecs/codec.h"
+#include "image/codecs/codec.h"
 
-namespace Video {
+namespace Image {
 
 /**
  * Microsoft Video 1 decoder.
@@ -50,6 +50,6 @@ private:
 	//void decode16(Common::SeekableReadStream *stream);
 };
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif

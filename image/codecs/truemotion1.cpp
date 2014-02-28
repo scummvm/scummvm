@@ -23,16 +23,16 @@
 // Based on the TrueMotion 1 decoder by Alex Beregszaszi & Mike Melanson in FFmpeg
 
 #include "common/scummsys.h"
-#include "video/codecs/truemotion1.h"
+#include "image/codecs/truemotion1.h"
 
-#ifdef VIDEO_CODECS_TRUEMOTION1_H
+#ifdef IMAGE_CODECS_TRUEMOTION1_H
 
-#include "video/codecs/truemotion1data.h"
+#include "image/codecs/truemotion1data.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
-namespace Video {
+namespace Image {
 
 enum {
 	FLAG_SPRITE = (1 << 5),
@@ -417,6 +417,6 @@ const Graphics::Surface *TrueMotion1Decoder::decodeImage(Common::SeekableReadStr
 	return _surface;
 }
 
-} // End of namespace Video
+} // End of namespace Image
 
 #endif
