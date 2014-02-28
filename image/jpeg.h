@@ -26,6 +26,12 @@
  *  - groovie
  *  - mohawk
  *  - wintermute
+ *
+ * Used in image:
+ *  - PICTDecoder
+ *
+ * Used in video:
+ *  - QuickTimeDecoder
  */
 
 #ifndef IMAGE_JPEG_H
@@ -33,6 +39,7 @@
 
 #include "graphics/surface.h"
 #include "image/image_decoder.h"
+#include "image/codecs/codec.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -40,7 +47,7 @@ class SeekableReadStream;
 
 namespace Image {
 
-class JPEGDecoder : public ImageDecoder {
+class JPEGDecoder : public ImageDecoder, public Codec {
 public:
 	JPEGDecoder();
 	~JPEGDecoder();
@@ -49,6 +56,10 @@ public:
 	virtual void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &str);
 	virtual const Graphics::Surface *getSurface() const;
+
+	// Codec API
+	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const;
 
 	// Special API for JPEG
 	enum ColorSpace {
@@ -90,6 +101,6 @@ private:
 	ColorSpace _colorSpace;
 };
 
-} // End of Graphics namespace
+} // End of namespace Image
 
-#endif // GRAPHICS_JPEG_H
+#endif

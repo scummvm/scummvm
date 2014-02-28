@@ -44,7 +44,7 @@ extern "C" {
 
 namespace Image {
 
-JPEGDecoder::JPEGDecoder() : ImageDecoder(), _surface(), _colorSpace(kColorSpaceRGBA) {
+JPEGDecoder::JPEGDecoder() : _surface(), _colorSpace(kColorSpaceRGBA) {
 }
 
 JPEGDecoder::~JPEGDecoder() {
@@ -57,6 +57,17 @@ const Graphics::Surface *JPEGDecoder::getSurface() const {
 
 void JPEGDecoder::destroy() {
 	_surface.free();
+}
+
+const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream *stream) {
+	if (!loadStream(*stream))
+		return 0;
+
+	return getSurface();
+}
+
+Graphics::PixelFormat JPEGDecoder::getPixelFormat() const {
+	return _surface.format;
 }
 
 #ifdef USE_JPEG

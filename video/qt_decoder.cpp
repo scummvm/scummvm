@@ -40,7 +40,7 @@
 
 // Video codecs
 #include "image/codecs/cinepak.h"
-#include "image/codecs/jpeg.h"
+#include "image/jpeg.h"
 #include "image/codecs/qtrle.h"
 #include "image/codecs/rpza.h"
 #include "image/codecs/smc.h"
@@ -297,7 +297,7 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 		break;
 	case MKTAG('j','p','e','g'):
 		// JPEG: Used by some Myst ME 10th Anniversary videos.
-		_videoCodec = new Image::JPEGCodec();
+		_videoCodec = new Image::JPEGDecoder();
 		break;
 	case MKTAG('Q','k','B','k'):
 		// CDToons: Used by most of the Broderbund games.
