@@ -539,7 +539,11 @@ static const char *const kEoB1MenuStringsRest2DOSGerman[4] = {
 
 static const StringListProvider kEoB1MenuStringsRest2DOSGermanProvider = { ARRAYSIZE(kEoB1MenuStringsRest2DOSGerman), kEoB1MenuStringsRest2DOSGerman };
 
-static const StringListProvider kEoB1MenuStringsRest4DOSGermanProvider = { 0, NULL };
+static const char *const kEoB1MenuStringsRest4DOSGerman[1] = {
+	"\rRast ist nicht moeglich, Monster sind in der Naehe."
+};
+
+static const StringListProvider kEoB1MenuStringsRest4DOSGermanProvider = { ARRAYSIZE(kEoB1MenuStringsRest4DOSGerman), kEoB1MenuStringsRest4DOSGerman };
 
 static const char *const kEoB1MenuStringsDefeatDOSGerman[1] = {
 	"   Dein ganzes team ist geschlagen.  Die Helfer des boesen koennen ihre Plaene ungehindert erfuellen!   \r"
