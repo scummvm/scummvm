@@ -29,6 +29,14 @@ Minigame::Minigame(BbvsEngine *vm)
 	: _vm(vm), _spriteModule(0) {
 
 	memset(_hiScoreTable, 0, sizeof(_hiScoreTable));
+	_gameState = 0;
+	_gameTicks = 0;
+	_gameResult = 0;
+	_gameDone = false;
+	_fromMainGame = false;
+	_backgroundSpriteIndex = 0;
+	_titleScreenSpriteIndex = 0;
+	_numbersAnim = nullptr;
 }
 
 Minigame::~Minigame() {
