@@ -1518,7 +1518,7 @@ void mpalFree() {
  *
  * @param wQueryType		Type of query. The list is in the QueryTypes enum.
  * @returns		4 bytes depending on the type of query
- * @remarks		This is the specialised version of the original single mpalQuery
+ * @remarks		This is the specialized version of the original single mpalQuery
  * method that returns numeric results.
  */
 uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
@@ -1714,7 +1714,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
  *
  * @param wQueryType		Type of query. The list is in the QueryTypes enum.
  * @returns		4 bytes depending on the type of query
- * @remarks		This is the specialised version of the original single mpalQuery
+ * @remarks		This is the specialized version of the original single mpalQuery
  * method that returns a pointer or handle.
  */
 MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...) {
@@ -1867,7 +1867,7 @@ MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...) {
  *
  * @param wQueryType		Type of query. The list is in the QueryTypes enum.
  * @returns		4 bytes depending on the type of query
- * @remarks		This is the specialised version of the original single mpalQuery
+ * @remarks		This is the specialized version of the original single mpalQuery
  * method that needs to run within a co-routine context.
  */
 void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet) {
