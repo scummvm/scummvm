@@ -89,6 +89,11 @@ public:
  */
 Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel);
 
+/**
+ * Create a codec given a QuickTime compression tag.
+ */
+Codec *createQuickTimeCodec(uint32 tag, int width, int height, int bitsPerPixel);
+
 } // End of namespace Image
 
 #endif

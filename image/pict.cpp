@@ -20,8 +20,8 @@
  *
  */
 
-#include "image/jpeg.h"
 #include "image/pict.h"
+#include "image/codecs/codec.h"
 
 #include "common/debug.h"
 #include "common/endian.h"
@@ -229,7 +229,7 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// NOTE: This is only a subset of the full PICT format.
 	//     - Only V2 (Extended) Images Supported
-	//     - CompressedQuickTime (JPEG) compressed data is supported
+	//     - CompressedQuickTime compressed data is supported
 	//     - DirectBitsRect/PackBitsRect compressed data is supported
 	for (uint32 opNum = 0; !stream.eos() && !stream.err() && stream.pos() < stream.size() && _continueParsing; opNum++) {
 		// PICT v2 opcodes are two bytes
@@ -550,31 +550,37 @@ void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) 
 	// Now we've reached the image descriptor, so read the relevant data from that
 	uint32 idStart = stream.pos();
 	uint32 idSize = stream.readUint32BE();
-	uint32 codec = stream.readUint32BE();
-	stream.skip(36); // miscellaneous stuff
-	uint32 jpegSize = stream.readUint32BE();
+	uint32 codecTag = stream.readUint32BE();
+	stream.skip(24); // miscellaneous stuff
+	uint16 width = stream.readUint16BE();
+	uint16 height = stream.readUint16BE();
+	stream.skip(8); // resolution, dpi
+	uint32 imageSize = stream.readUint32BE();
+	stream.skip(34);
+	uint16 bitsPerPixel = stream.readUint16BE();
 	stream.skip(idSize - (stream.pos() - idStart)); // more useless stuff
 
-	if (codec != MKTAG('j', 'p', 'e', 'g'))
-		error("Unhandled CompressedQuickTime format '%s'", tag2str(codec));
+	Common::SeekableSubReadStream imageStream(&stream, stream.pos(), stream.pos() + imageSize);
 
-	Common::SeekableSubReadStream jpegStream(&stream, stream.pos(), stream.pos() + jpegSize);
+	Codec *codec = createQuickTimeCodec(codecTag, width, height, bitsPerPixel);
+	if (!codec)
+		error("Unhandled CompressedQuickTime format");
 
-	JPEGDecoder jpeg;
-	if (!jpeg.loadStream(jpegStream))
-		error("PICTDecoder::decodeCompressedQuickTime(): Could not decode JPEG data");
+	const Graphics::Surface *surface = codec->decodeFrame(imageStream);
 
-	const Graphics::Surface *jpegSurface = jpeg.getSurface();
+	if (!surface)
+		error("PICTDecoder::decodeCompressedQuickTime(): Could not decode data");
 
 	if (!_outputSurface) {
 		_outputSurface = new Graphics::Surface();
-		_outputSurface->create(_imageRect.width(), _imageRect.height(), jpegSurface->format);
+		_outputSurface->create(_imageRect.width(), _imageRect.height(), surface->format);
 	}
 
-	for (uint16 y = 0; y < jpegSurface->h; y++)
-		memcpy(_outputSurface->getBasePtr(0 + xOffset, y + yOffset), jpegSurface->getBasePtr(0, y), jpegSurface->w * jpegSurface->format.bytesPerPixel);
+	for (uint16 y = 0; y < surface->h; y++)
+		memcpy(_outputSurface->getBasePtr(0 + xOffset, y + yOffset), surface->getBasePtr(0, y), surface->w * surface->format.bytesPerPixel);
 
 	stream.seek(startPos + dataSize);
+	delete codec;
 }
 
 } // End of namespace Image
