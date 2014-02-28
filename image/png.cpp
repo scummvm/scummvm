@@ -29,14 +29,14 @@
 #include <png.h>
 #endif
 
-#include "graphics/decoders/png.h"
+#include "image/png.h"
 
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
 #include "common/stream.h"
 
-namespace Graphics {
+namespace Image {
 
 PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0), _stream(0) {
 }
@@ -242,4 +242,4 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #endif
 }
 
-} // End of Graphics namespace
+} // End of namespace Image

@@ -32,7 +32,7 @@
 #include "common/textconsole.h"
 
 #include "graphics/palette.h"
-#include "graphics/decoders/jpeg.h"
+#include "image/jpeg.h"
 
 #ifdef USE_RGB_COLOR
 // Required for the YUV to RGB conversion
@@ -435,19 +435,17 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 
 	warning("Groovie::ROQ: JPEG frame (unfinished)");
 
-	Graphics::JPEGDecoder *jpg = new Graphics::JPEGDecoder();
-	jpg->setOutputColorSpace(Graphics::JPEGDecoder::kColorSpaceYUV);
+	Image::JPEGDecoder jpg;
+	jpg.setOutputColorSpace(Image::JPEGDecoder::kColorSpaceYUV);
 
 	uint32 startPos = _file->pos();
 	Common::SeekableSubReadStream subStream(_file, startPos, startPos + blockHeader.size, DisposeAfterUse::NO);
-	jpg->loadStream(subStream);
+	jpg.loadStream(subStream);
 
-	const Graphics::Surface *srcSurf = jpg->getSurface();
+	const Graphics::Surface *srcSurf = jpg.getSurface();
 	const byte *src = (const byte *)srcSurf->getPixels();
 	byte *ptr = (byte *)_currBuf->getPixels();
 	memcpy(ptr, src, _currBuf->w * _currBuf->h * srcSurf->format.bytesPerPixel);
-
-	delete jpg;
 
 	_file->seek(startPos + blockHeader.size);
 	return true;

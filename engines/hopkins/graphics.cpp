@@ -28,7 +28,7 @@
 
 #include "common/system.h"
 #include "graphics/palette.h"
-#include "graphics/decoders/pcx.h"
+#include "image/pcx.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "engines/util.h"
@@ -301,7 +301,7 @@ void GraphicsManager::fillSurface(byte *surface, byte *col, int size) {
 
 void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
 	Common::File f;
-	Graphics::PCXDecoder pcxDecoder;
+	Image::PCXDecoder pcxDecoder;
 
 	// Clear the passed surface
 	memset(surface, 0, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);

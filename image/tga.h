@@ -30,17 +30,17 @@
  *  - zvision
  */
 
-#ifndef GRAPHICS_DECODERS_TGA_H
-#define GRAPHICS_DECODERS_TGA_H
+#ifndef IMAGE_TGA_H
+#define IMAGE_TGA_H
 
 #include "graphics/surface.h"
-#include "graphics/decoders/image_decoder.h"
+#include "image/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
-namespace Graphics {
+namespace Image {
 
 /** TarGa image-decoder
  * The following variations of TGA are supported:
@@ -59,7 +59,7 @@ public:
 	TGADecoder();
 	virtual ~TGADecoder();
 	virtual void destroy();
-	virtual const Surface *getSurface() const { return &_surface; }
+	virtual const Graphics::Surface *getSurface() const { return &_surface; }
 	virtual const byte *getPalette() const { return _colorMap; }
 	virtual uint16 getPaletteColorCount() const { return _colorMapLength; }
 	virtual bool loadStream(Common::SeekableReadStream &stream);
@@ -85,8 +85,8 @@ private:
 	// Origin may be at the top, or bottom
 	bool _originTop;
 
-	PixelFormat _format;
-	Surface _surface;
+	Graphics::PixelFormat _format;
+	Graphics::Surface _surface;
 	// Loading helpers
 	bool readHeader(Common::SeekableReadStream &tga, byte &imageType, byte &pixelDepth);
 	bool readData(Common::SeekableReadStream &tga, byte imageType, byte pixelDepth);
@@ -95,6 +95,6 @@ private:
 	bool readColorMap(Common::SeekableReadStream &tga, byte imageType, byte pixelDepth);
 };
 
-} // End of namespace Graphics
+} // End of namespace Image
 
-#endif // GRAPHICS_DECODERS_TGA_H
+#endif

@@ -34,10 +34,11 @@
 #include "common/config-manager.h"
 
 #include "graphics/surface.h"
-#include "graphics/decoders/pcx.h"
 #include "graphics/thumbnail.h"
 
 #include "gui/saveload.h"
+
+#include "image/pcx.h"
 
 #include "hugo/hugo.h"
 #include "hugo/file.h"
@@ -110,7 +111,7 @@ Seq *FileManager::readPCX(Common::SeekableReadStream &f, Seq *seqPtr, byte *imag
 			error("Insufficient memory to run game.");
 	}
 
-	Graphics::PCXDecoder pcx;
+	Image::PCXDecoder pcx;
 	if (!pcx.loadStream(f))
 		error("Error while reading PCX image");
 

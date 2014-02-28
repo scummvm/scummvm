@@ -29,8 +29,9 @@
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/iff.h"
-#include "graphics/decoders/pcx.h"
+
+#include "image/iff.h"
+#include "image/pcx.h"
 
 #include "queen/display.h"
 #include "queen/input.h"
@@ -813,7 +814,7 @@ void Display::fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w,
 void Display::decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd) {
 	Common::MemoryReadStream str(src, srcSize);
 
-	::Graphics::PCXDecoder pcx;
+	Image::PCXDecoder pcx;
 	if (!pcx.loadStream(str))
 		error("Error while reading PCX image");
 
@@ -832,7 +833,7 @@ void Display::decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dst
 void Display::decodeIFF(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd, uint8 colorBase) {
 	Common::MemoryReadStream str(src, srcSize);
 
-	::Graphics::IFFDecoder iff;
+	Image::IFFDecoder iff;
 	if (!iff.loadStream(str))
 		error("Error while reading IFF image");
 

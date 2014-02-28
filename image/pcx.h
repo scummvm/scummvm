@@ -21,47 +21,46 @@
  */
 
 /**
- * @file
- * Image decoder used in engines:
+ * PCX decoder used in engines:
+ *  - dreamweb
  *  - hugo
- *  - mohawk
- *  - wintermute
+ *  - queen
+ *  - tucker
  */
 
-#ifndef GRAPHICS_DECODERS_BMP_H
-#define GRAPHICS_DECODERS_BMP_H
+#ifndef IMAGE_PCX_H
+#define IMAGE_PCX_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "graphics/decoders/image_decoder.h"
+#include "image/image_decoder.h"
 
 namespace Common{
 class SeekableReadStream;
 }
 
-namespace Graphics {
+namespace Image {
 
-struct PixelFormat;
-struct Surface;
-
-class BitmapDecoder : public ImageDecoder {
+class PCXDecoder : public ImageDecoder {
 public:
-	BitmapDecoder();
-	virtual ~BitmapDecoder();
+	PCXDecoder();
+	virtual ~PCXDecoder();
 
 	// ImageDecoder API
 	void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Surface *getSurface() const { return _surface; }
+	virtual const Graphics::Surface *getSurface() const { return _surface; }
 	const byte *getPalette() const { return _palette; }
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 
 private:
-	Surface *_surface;
+	void decodeRLE(Common::SeekableReadStream &stream, byte *dst, uint32 bytesPerScanline, bool compressed);
+
+	Graphics::Surface *_surface;
 	byte *_palette;
 	uint16 _paletteColorCount;
 };
 
-} // End of namespace Graphics
+} // End of namespace Image
 
 #endif

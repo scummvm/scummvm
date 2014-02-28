@@ -31,7 +31,8 @@
 #include "graphics/primitives.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/iff.h"
+
+#include "image/iff.h"
 
 namespace Gob {
 
@@ -814,7 +815,7 @@ bool Surface::loadTGA(Common::SeekableReadStream &stream) {
 }
 
 bool Surface::loadIFF(Common::SeekableReadStream &stream) {
-	Graphics::IFFDecoder decoder;
+	Image::IFFDecoder decoder;
 	decoder.loadStream(stream);
 
 	if (!decoder.getSurface())

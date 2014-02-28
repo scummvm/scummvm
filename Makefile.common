@@ -25,6 +25,7 @@ MODULES += \
 	engines \
 	video \
 	graphics \
+	image \
 	audio \
 	common \
 	po

@@ -43,7 +43,7 @@
 
 #include "common/util.h"
 
-#include "graphics/decoders/iff.h"
+#include "image/iff.h"
 
 namespace Saga {
 
@@ -463,7 +463,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 				_vm->_interface->setMode(kPanelSceneSubstitute);
 
 				if (file.open(sceneSubstitutes[i].image)) {
-					Graphics::IFFDecoder decoder;
+					Image::IFFDecoder decoder;
 					decoder.loadStream(file);
 					pal = decoder.getPalette();
 					rect.setWidth(decoder.getSurface()->w);

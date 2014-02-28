@@ -20,17 +20,17 @@
  *
  */
 
+#include "image/jpeg.h"
+#include "image/pict.h"
+
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
-
 #include "graphics/surface.h"
-#include "graphics/decoders/jpeg.h"
-#include "graphics/decoders/pict.h"
 
-namespace Graphics {
+namespace Image {
 
 // The PICT code is based off of the QuickDraw specs:
 // http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-461.html
@@ -363,12 +363,12 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 	switch (bytesPerPixel) {
 	case 1:
 		// Just copy to the image
-		_outputSurface->create(width, height, PixelFormat::createFormatCLUT8());
+		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		memcpy(_outputSurface->getPixels(), buffer, _outputSurface->w * _outputSurface->h);
 		break;
 	case 2:
 		// We have a 16-bit surface
-		_outputSurface->create(width, height, PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+		_outputSurface->create(width, height, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
 		for (uint16 y = 0; y < _outputSurface->h; y++)
 			for (uint16 x = 0; x < _outputSurface->w; x++)
 				WRITE_UINT16(_outputSurface->getBasePtr(x, y), READ_UINT16(buffer + (y * _outputSurface->w + x) * 2));
@@ -577,4 +577,4 @@ void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) 
 	stream.seek(startPos + dataSize);
 }
 
-} // End of namespace Graphics
+} // End of namespace Image

@@ -20,14 +20,14 @@
  *
  */
 
+#include "image/bmp.h"
+
 #include "common/stream.h"
 #include "common/textconsole.h"
-
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/bmp.h"
 
-namespace Graphics {
+namespace Image {
 
 BitmapDecoder::BitmapDecoder() {
 	_surface = 0;
@@ -180,4 +180,4 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-} // End of namespace Graphics
+} // End of namespace Image

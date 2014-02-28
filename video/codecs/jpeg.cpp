@@ -23,7 +23,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/jpeg.h"
+#include "image/jpeg.h"
 
 #include "video/codecs/jpeg.h"
 
@@ -46,7 +46,7 @@ JPEGDecoder::~JPEGDecoder() {
 }
 
 const Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream *stream) {
-	Graphics::JPEGDecoder jpeg;
+	Image::JPEGDecoder jpeg;
 
 	if (!jpeg.loadStream(*stream)) {
 		warning("Failed to decode JPEG frame");

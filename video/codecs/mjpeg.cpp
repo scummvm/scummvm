@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/jpeg.h"
+#include "image/jpeg.h"
 
 #include "video/codecs/mjpeg.h"
 
@@ -197,7 +197,7 @@ const Graphics::Surface *MJPEGDecoder::decodeImage(Common::SeekableReadStream *s
 	stream->read(data + dataOffset, stream->size() - inputSkip);
 
 	Common::MemoryReadStream convertedStream(data, outputSize, DisposeAfterUse::YES);
-	Graphics::JPEGDecoder jpeg;
+	Image::JPEGDecoder jpeg;
 
 	if (!jpeg.loadStream(convertedStream)) {
 		warning("Failed to decode MJPEG frame");

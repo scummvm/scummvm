@@ -38,8 +38,8 @@
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
 #include "engines/wintermute/wintermute.h"
-#include "graphics/decoders/bmp.h"
 #include "graphics/scaler.h"
+#include "image/bmp.h"
 #include "common/memstream.h"
 #include "common/str.h"
 #include "common/system.h"
@@ -170,7 +170,7 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 
 	if (thumbSize > 0) {
 		Common::MemoryReadStream thumbStream(thumbData, thumbSize, DisposeAfterUse::NO);
-		Graphics::BitmapDecoder bmpDecoder;
+		Image::BitmapDecoder bmpDecoder;
 		if (bmpDecoder.loadStream(thumbStream)) {
 			const Graphics::Surface *bmpSurface = bmpDecoder.getSurface();
 			TransparentSurface *scaleableSurface = new TransparentSurface(*bmpSurface, false);

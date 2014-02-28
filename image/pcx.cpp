@@ -20,12 +20,12 @@
  *
  */
 
+#include "image/pcx.h"
+
 #include "common/stream.h"
 #include "common/textconsole.h"
-
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/pcx.h"
 
 /**
  * Based on the PCX specs:
@@ -34,7 +34,7 @@
  * http://git.videolan.org/?p=ffmpeg.git;a=blob;f=libavcodec/pcx.c
  */
 
-namespace Graphics {
+namespace Image {
 
 PCXDecoder::PCXDecoder() {
 	_surface = 0;
@@ -211,4 +211,4 @@ void PCXDecoder::decodeRLE(Common::SeekableReadStream &stream, byte *dst, uint32
 	}
 }
 
-} // End of namespace Graphics
+} // End of namespace Image

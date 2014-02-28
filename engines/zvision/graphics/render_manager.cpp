@@ -32,7 +32,7 @@
 
 #include "engines/util.h"
 
-#include "graphics/decoders/tga.h"
+#include "image/tga.h"
 
 
 namespace ZVision {
@@ -238,7 +238,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 
 	uint32 imageWidth;
 	uint32 imageHeight;
-	Graphics::TGADecoder tga;
+	Image::TGADecoder tga;
 	uint16 *buffer;
 	bool isTransposed = _renderTable.getRenderState() == RenderTable::PANORAMA;
 	// All ZVision images are in RGB 555

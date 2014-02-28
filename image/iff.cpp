@@ -20,13 +20,13 @@
  *
  */
 
+#include "image/iff.h"
+
 #include "common/iff_container.h"
 #include "common/stream.h"
 #include "common/util.h"
 
-#include "graphics/decoders/iff.h"
-
-namespace Graphics {
+namespace Image {
 
 IFFDecoder::IFFDecoder() {
 	_surface = 0;
@@ -241,4 +241,4 @@ void IFFDecoder::packPixels(byte *scanlines, byte *data, const uint16 scanlinePi
 	}
 }
 
-} // End of namespace Graphics
+} // End of namespace Image

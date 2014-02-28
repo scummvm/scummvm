@@ -33,14 +33,14 @@
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/image/imgloader.h"
 #include "graphics/pixelformat.h"
-#include "graphics/decoders/png.h"
+#include "image/png.h"
 
 namespace Sword25 {
 
 bool ImgLoader::decodePNGImage(const byte *fileDataPtr, uint fileSize, byte *&uncompressedDataPtr, int &width, int &height, int &pitch) {
 	Common::MemoryReadStream *fileStr = new Common::MemoryReadStream(fileDataPtr, fileSize, DisposeAfterUse::NO);
 
-	Graphics::PNGDecoder png;
+	::Image::PNGDecoder png;
 	if (!png.loadStream(*fileStr)) // the fileStr pointer, and thus pFileData will be deleted after this is done
 		error("Error while reading PNG image");
 

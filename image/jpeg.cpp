@@ -24,13 +24,13 @@
 // here.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "graphics/pixelformat.h"
-#include "graphics/decoders/jpeg.h"
+#include "image/jpeg.h"
 
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "graphics/pixelformat.h"
 
 #ifdef USE_JPEG
 // The original release of libjpeg v6b did not contain any extern "C" in case
@@ -42,7 +42,7 @@ extern "C" {
 }
 #endif
 
-namespace Graphics {
+namespace Image {
 
 JPEGDecoder::JPEGDecoder() : ImageDecoder(), _surface(), _colorSpace(kColorSpaceRGBA) {
 }
@@ -51,7 +51,7 @@ JPEGDecoder::~JPEGDecoder() {
 	destroy();
 }
 
-const Surface *JPEGDecoder::getSurface() const {
+const Graphics::Surface *JPEGDecoder::getSurface() const {
 	return &_surface;
 }
 

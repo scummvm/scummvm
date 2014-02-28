@@ -21,14 +21,7 @@ MODULE_OBJS := \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	wincursor.o \
-	yuv_to_rgb.o \
-	decoders/bmp.o \
-	decoders/iff.o \
-	decoders/jpeg.o \
-	decoders/pcx.o \
-	decoders/pict.o \
-	decoders/png.o \
-	decoders/tga.o
+	yuv_to_rgb.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \

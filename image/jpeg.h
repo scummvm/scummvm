@@ -28,17 +28,17 @@
  *  - wintermute
  */
 
-#ifndef GRAPHICS_JPEG_H
-#define GRAPHICS_JPEG_H
+#ifndef IMAGE_JPEG_H
+#define IMAGE_JPEG_H
 
 #include "graphics/surface.h"
-#include "graphics/decoders/image_decoder.h"
+#include "image/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
-namespace Graphics {
+namespace Image {
 
 class JPEGDecoder : public ImageDecoder {
 public:
@@ -48,7 +48,7 @@ public:
 	// ImageDecoder API
 	virtual void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &str);
-	virtual const Surface *getSurface() const;
+	virtual const Graphics::Surface *getSurface() const;
 
 	// Special API for JPEG
 	enum ColorSpace {

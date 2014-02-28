@@ -29,22 +29,24 @@
  *  - saga
  */
 
-#ifndef GRAPHICS_DECODERS_IFF_H
-#define GRAPHICS_DECODERS_IFF_H
+#ifndef IMAGE_IFF_H
+#define IMAGE_IFF_H
 
 #include "common/array.h"
 #include "common/endian.h"
-
 #include "graphics/surface.h"
-#include "graphics/decoders/image_decoder.h"
+
+#include "image/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Graphics {
-
 struct Surface;
+}
+
+namespace Image {
 
 class IFFDecoder : public ImageDecoder {
 public:
@@ -78,7 +80,7 @@ public:
 	void destroy();
 	bool loadStream(Common::SeekableReadStream &stream);
 	const Header *getHeader() const { return &_header; }
-	const Surface *getSurface() const { return _surface; }
+	const Graphics::Surface *getSurface() const { return _surface; }
 	const byte *getPalette() const { return _palette; }
 	const Common::Array<PaletteRange> &getPaletteRanges() const { return _paletteRanges; }
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
@@ -104,7 +106,7 @@ public:
 private:
 
 	Header _header;
-	Surface *_surface;
+	Graphics::Surface *_surface;
 	byte *_palette;
 	Common::Array<PaletteRange> _paletteRanges;
 	Type _type;
@@ -119,6 +121,6 @@ private:
 	void packPixels(byte *scanlines, byte *data, const uint16 scanlinePitch, const uint16 outPitch);
 };
 
-} // End of namespace Graphics
+} // End of namespace Image
 
-#endif // GRAPHICS_DECODERS_IFF_H
+#endif

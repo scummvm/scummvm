@@ -21,9 +21,9 @@
  */
 
 #include "common/substream.h"
-#include "graphics/decoders/bmp.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "image/bmp.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
@@ -130,7 +130,7 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		uint32 filPos = in.pos();
 		Common::SeekableSubReadStream stream(&in, filPos, filPos + bmpSize);
 
-		Graphics::BitmapDecoder bitmapDecoder;
+		Image::BitmapDecoder bitmapDecoder;
 		if (!bitmapDecoder.loadStream(stream))
 			error("TopMenu::loadBmpArr(): Could not load bitmap");
 

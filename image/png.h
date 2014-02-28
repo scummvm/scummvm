@@ -28,21 +28,22 @@
  *  - libpng
  */
 
-#ifndef GRAPHICS_PNG_H
-#define GRAPHICS_PNG_H
+#ifndef IMAGE_PNG_H
+#define IMAGE_PNG_H
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
-#include "graphics/decoders/image_decoder.h"
+#include "image/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Graphics {
-
 struct Surface;
-struct PixelFormat;
+}
+
+namespace Image {
 
 class PNGDecoder : public ImageDecoder {
 public:
@@ -62,6 +63,6 @@ private:
 	Graphics::Surface *_outputSurface;
 };
 
-} // End of namespace Graphics
+} // End of namespace Image
 
-#endif // GRAPHICS_PNG_H
+#endif

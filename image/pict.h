@@ -28,23 +28,24 @@
  *  - sci
  */
 
-#ifndef GRAPHICS_PICT_H
-#define GRAPHICS_PICT_H
+#ifndef IMAGE_PICT_H
+#define IMAGE_PICT_H
 
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 
-#include "graphics/decoders/image_decoder.h"
-#include "graphics/pixelformat.h"
+#include "image/image_decoder.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Graphics {
-
 struct Surface;
+}
+
+namespace Image {
 
 #define DECLARE_OPCODE(x) void x(Common::SeekableReadStream &stream)
 
@@ -56,7 +57,7 @@ public:
 	// ImageDecoder API
 	bool loadStream(Common::SeekableReadStream &stream);
 	void destroy();
-	const Surface *getSurface() const { return _outputSurface; }
+	const Graphics::Surface *getSurface() const { return _outputSurface; }
 	const byte *getPalette() const { return _palette; }
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 
@@ -135,6 +136,6 @@ private:
 
 #undef DECLARE_OPCODE
 
-} // End of namespace Graphics
+} // End of namespace Image
 
 #endif

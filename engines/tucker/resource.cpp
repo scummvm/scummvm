@@ -30,7 +30,8 @@
 #include "audio/decoders/wave.h"
 
 #include "graphics/surface.h"
-#include "graphics/decoders/pcx.h"
+
+#include "image/pcx.h"
 
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"
@@ -302,7 +303,7 @@ void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
 		}
 	}
 
-	::Graphics::PCXDecoder pcx;
+	Image::PCXDecoder pcx;
 	if (!pcx.loadStream(f))
 		error("Error while reading PCX image");
 
