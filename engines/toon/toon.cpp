@@ -634,7 +634,6 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 
 	bool doExit = false;
 	bool exitGame = false;
-	int clickingOn, clickRelease;
 	int menuMask = MAINMENUMASK_BASE;
 	Common::SeekableReadStream *mainmenuMusicFile = NULL;
 	AudioStreamInstance *mainmenuMusic = NULL;
@@ -644,8 +643,8 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 	dirtyAllScreen();
 
 	while (!doExit) {
-		clickingOn = MAINMENUHOTSPOT_NONE;
-		clickRelease = false;
+		int clickingOn = MAINMENUHOTSPOT_NONE;
+		int clickRelease = false;
 
 		if (!musicPlaying) {
 			mainmenuMusicFile = resources()->openFile("BR091013.MUS");
@@ -4617,15 +4616,13 @@ void ToonEngine::unloadToonDat() {
 }
 
 char **ToonEngine::loadTextsVariants(Common::File &in) {
-	int  numTexts;
-	int  entryLen;
 	int  len;
 	char **res = 0;
 	char *pos = 0;
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
-		numTexts = in.readUint16BE();
-		entryLen = in.readUint16BE();
+		int numTexts = in.readUint16BE();
+		int entryLen = in.readUint16BE();
 		pos = (char *)malloc(entryLen);
 		if (varnt == _gameVariant) {
 			res = (char **)malloc(sizeof(char *) * numTexts);
