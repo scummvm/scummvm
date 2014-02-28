@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	pict.o \
 	png.o \
 	tga.o \
+	codecs/bmp_raw.o \
 	codecs/cdtoons.o \
 	codecs/cinepak.o \
 	codecs/indeo3.o \

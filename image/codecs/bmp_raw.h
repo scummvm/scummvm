@@ -20,50 +20,31 @@
  *
  */
 
-/**
- * @file
- * Image decoder used in engines:
- *  - hugo
- *  - mohawk
- *  - wintermute
- */
+#ifndef IMAGE_CODECS_BMP_RAW_H
+#define IMAGE_CODECS_BMP_RAW_H
 
-#ifndef IMAGE_BMP_H
-#define IMAGE_BMP_H
-
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "image/image_decoder.h"
-
-namespace Common {
-class SeekableReadStream;
-}
-
-namespace Graphics {
-struct Surface;
-}
+#include "image/codecs/codec.h"
 
 namespace Image {
 
-class Codec;
-
-class BitmapDecoder : public ImageDecoder {
+/**
+ * Bitmap raw image decoder.
+ *
+ * Used in image:
+ *  - BitmapDecoder
+ */
+class BitmapRawDecoder : public Codec {
 public:
-	BitmapDecoder();
-	virtual ~BitmapDecoder();
+	BitmapRawDecoder(int width, int height, int bitsPerPixel);
+	~BitmapRawDecoder();
 
-	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
+	Graphics::PixelFormat getPixelFormat() const;
 
 private:
-	Codec *_codec;
-	const Graphics::Surface *_surface;
-	byte *_palette;
-	uint16 _paletteColorCount;
+	Graphics::Surface *_surface;
+	int _width, _height;
+	int _bitsPerPixel;
 };
 
 } // End of namespace Image

@@ -23,9 +23,11 @@
 #include "image/bmp.h"
 
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/textconsole.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+#include "image/codecs/bmp_raw.h"
 
 namespace Image {
 
@@ -33,6 +35,7 @@ BitmapDecoder::BitmapDecoder() {
 	_surface = 0;
 	_palette = 0;
 	_paletteColorCount = 0;
+	_codec = 0;
 }
 
 BitmapDecoder::~BitmapDecoder() {
@@ -40,13 +43,15 @@ BitmapDecoder::~BitmapDecoder() {
 }
 
 void BitmapDecoder::destroy() {
-	if (_surface) {
-		_surface->free();
-		delete _surface; _surface = 0;
-	}
+	_surface = 0;
 
-	delete[] _palette; _palette = 0;
+	delete[] _palette;
+	_palette = 0;
+
 	_paletteColorCount = 0;
+
+	delete _codec;
+	_codec = 0;
 }
 
 bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -95,7 +100,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 		return false;
 	}
 
-	/* uint32 imageSize = */ stream.readUint32LE();
+	uint32 imageSize = stream.readUint32LE();
 	/* uint32 pixelsPerMeterX = */ stream.readUint32LE();
 	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
 	_paletteColorCount = stream.readUint32LE();
@@ -115,67 +120,12 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	// Start us at the beginning of the image
-	stream.seek(imageOffset);
+	// Grab the frame data
+	Common::SeekableSubReadStream subStream(&stream, imageOffset, imageOffset + imageSize);
 
-	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-
-	// BGRA for 24bpp and 32 bpp
-	if (bitsPerPixel == 24 || bitsPerPixel == 32)
-		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
-
-	_surface = new Graphics::Surface();
-	_surface->create(width, height, format);
-
-	int srcPitch = width * (bitsPerPixel >> 3);
-	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
-
-	if (bitsPerPixel == 8) {
-		byte *dst = (byte *)_surface->getPixels();
-
-		for (int32 i = 0; i < height; i++) {
-			stream.read(dst + (height - i - 1) * width, width);
-			stream.skip(extraDataLength);
-		}
-	} else if (bitsPerPixel == 24) {
-		byte *dst = (byte *)_surface->getBasePtr(0, height - 1);
-
-		for (int32 i = 0; i < height; i++) {
-			for (uint32 j = 0; j < width; j++) {
-				byte b = stream.readByte();
-				byte g = stream.readByte();
-				byte r = stream.readByte();
-				uint32 color = format.RGBToColor(r, g, b);
-
-				*((uint32 *)dst) = color;
-				dst += format.bytesPerPixel;
-			}
-
-			stream.skip(extraDataLength);
-			dst -= _surface->pitch * 2;
-		}
-	} else { // 32 bpp
-		byte *dst = (byte *)_surface->getBasePtr(0, height - 1);
-
-		for (int32 i = 0; i < height; i++) {
-			for (uint32 j = 0; j < width; j++) {
-				byte b = stream.readByte();
-				byte g = stream.readByte();
-				byte r = stream.readByte();
-				// Ignore the last byte, as in v3 it is unused
-				// and should thus NOT be used as alpha.
-				// ref: http://msdn.microsoft.com/en-us/library/windows/desktop/dd183376%28v=vs.85%29.aspx
-				stream.readByte();
-				uint32 color = format.RGBToColor(r, g, b);
-
-				*((uint32 *)dst) = color;
-				dst += format.bytesPerPixel;
-			}
-
-			stream.skip(extraDataLength);
-			dst -= _surface->pitch * 2;
-		}
-	}
+	// We only support raw bitmaps for now
+	_codec = new BitmapRawDecoder(width, height, bitsPerPixel);
+	_surface = _codec->decodeFrame(subStream);
 
 	return true;
 }
