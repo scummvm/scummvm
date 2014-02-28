@@ -220,7 +220,7 @@ void VoyeurEngine::showConversionScreen() {
 		return;
 
 	// Fade out the screen
-	cMap = _bVoy->getCMapResource(0x5040000);
+	cMap = _bVoy->getCMapResource(0x504);
 	cMap->_steps = 30;
 	cMap->startFade();
 	if (shouldQuit())
