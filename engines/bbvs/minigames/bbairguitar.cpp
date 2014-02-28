@@ -1037,7 +1037,7 @@ void MinigameBbAirGuitar::noteOn(int noteNum) {
 	if (_playerMode == 2 || _playerMode == 3) {
 		_ticksDelta = _vm->_system->getMillis() - _noteStartTime;
 		_track[_trackCount].ticks = _ticksDelta;
-		if (_trackCount < kMaxTracks)
+		if (_trackCount < kMaxTracks - 1)
 			++_trackCount;
 		_track[_trackCount].noteNum = noteNum;
 	}
