@@ -279,6 +279,7 @@ Vars::Vars() {
 	scene18_var20 = 1032;
 	scene18_var04 = -318;
 	scene18_var08 = 0;
+	scene18_var09 = 0;
 	scene18_var03 = false;
 	scene18_var21 = 0;
 	scene18_var11 = 0;

@@ -877,6 +877,7 @@ namespace Fullpipe {
 #define ANI_GIRL18 1484
 #define ANI_KRESLO 1459
 #define ANI_WHIRLIGIG_18 829
+#define MV_WHR18_SPIN 1300
 #define PIC_SC18_DOMIN 5184
 #define PIC_SC18_LADDER1 1471
 #define PIC_SC18_LADDER2 1472
@@ -886,7 +887,11 @@ namespace Fullpipe {
 #define SND_18_010 4994
 
 // Scene 19
+#define ANI_WHIRLGIG_19 1302
+#define MV_WHR19_SPIN 1317
 #define PIC_SC19_RTRUBA3 1515
+#define SND_19_015 3928
+#define SND_19_016 4995
 
 // Scene 20
 #define ANI_GRANDMA_20 2427

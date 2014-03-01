@@ -32,6 +32,7 @@ class MGM;
 class MctlLadder;
 struct Ring;
 class StaticANIObject;
+struct Swinger;
 
 int defaultUpdateCursor();
 
@@ -466,9 +467,11 @@ public:
 	int scene18_var18;
 	int scene18_var19;
 	StaticANIObject *scene18_whirlgig;
+	Common::Array<Swinger *> scene18_var07;
 	int scene18_var20;
 	int scene18_var04;
 	int scene18_var08;
+	int scene18_var09;
 	bool scene18_var03;
 	int scene18_var21;
 	int scene18_var11;
