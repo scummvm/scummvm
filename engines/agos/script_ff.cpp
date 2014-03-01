@@ -296,8 +296,37 @@ void AGOSEngine_Feeble::executeOpcode(int opcode) {
 	(this->*op) ();
 }
 
-void AGOSEngine_Feeble::setLoyaltyRating(int rating) {
-	writeVariable(120, rating);
+void AGOSEngine_Feeble::setLoyaltyRating(byte rating) {
+	// WORKAROUND: The 4CD version of The Feeble File is missing the parts
+	// of the script that set the loyalty rating. This approximates the
+	// script from the 2CD version. See bug #6525.
+
+	switch (rating) {
+	case 1:
+		// Kicking vending machine: Possibility of Undesirable Character Flaws
+		writeVariable(120, rating);
+		break;
+	case 2:
+		// Confessing: Confirmed Minor Character Flaws
+		writeVariable(120, 2);
+		break;
+	case 3:
+		// Being sent to Cygnus Alpha: Suspected Subversive Activity
+		writeVariable(120, 3);
+		break;
+	case 4:
+		// Escaping from Cygnus Alpha: Confirmed Subversive Activity
+		writeVariable(120, 4);
+		break;
+	case 5:
+		// Being brought before Filbert: Confirmed Treasonous Activity
+		writeVariable(120, 5);
+		break;
+	case 6:
+		// Arriving at rebel base: Freedom Fighters Operative
+		writeVariable(120, 6);
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------
@@ -477,29 +506,20 @@ void AGOSEngine_Feeble::off_b2Set() {
 	_bitArrayTwo[bit / 16] |= (1 << (bit & 15));
 
 	if (getFeatures() & GF_BROKEN_FF_RATING) {
-		// WORKAROUND: The 4CD version of The Feeble File is missing the
-		// opcodes to set the loyalty rating. This approximates the script
-		// from the 2CD version. See bug #6525.
-
 		switch (bit) {
 		case 152:
-			// Kicking vending machine: Possibility of Undesirable Character Flaws
 			setLoyaltyRating(1);
 			break;
 		case 153:
-			// Confessing: Confirmed Minor Character Flaws
 			setLoyaltyRating(2);
 			break;
 		case 240:
-			// Being sent to Cygnus Alpha: Suspected Subversive Activity
 			setLoyaltyRating(3);
 			break;
 		case 251:
-			// Escaping from Cygnus Alpha: Confirmed Subversive Activity
 			setLoyaltyRating(4);
 			break;
 		case 253:
-			// Arriving at rebel base: Freedom Fighters Operative
 			setLoyaltyRating(6);
 			break;
 		default:
@@ -608,12 +628,7 @@ void AGOSEngine_Feeble::off_loadVideo() {
 	_moviePlayer->load();
 
 	if (getFeatures() & GF_BROKEN_FF_RATING) {
-		// WORKAROUND: The 4CD version of The Feeble File is missing the
-		// opcodes to set the loyalty rating. This approximates the script
-		// from the 2CD version. See bug #6525.
-
 		if (strcmp((const char *)filename, "Statue1.smk") == 0) {
-			// Being brought before Filbert: Confirmed Treasonous Activity
 			setLoyaltyRating(5);
 		}
 	}
