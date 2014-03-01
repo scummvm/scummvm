@@ -304,7 +304,7 @@ void AGOSEngine_Feeble::setLoyaltyRating(byte rating) {
 	switch (rating) {
 	case 1:
 		// Kicking vending machine: Possibility of Undesirable Character Flaws
-		writeVariable(120, rating);
+		writeVariable(120, 1);
 		break;
 	case 2:
 		// Confessing: Confirmed Minor Character Flaws
