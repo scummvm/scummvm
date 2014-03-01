@@ -42,6 +42,8 @@ const byte ShootEmUp::kAvvyY = 150;
 const byte ShootEmUp::kShooting[7] = { 86, 79, 80, 81, 80, 79, 86 };
 const byte ShootEmUp::kTimesASecond = 18;
 const byte ShootEmUp::kFlashTime = 20; // If flash_time is <= this, the word "time" will flash. Should be about 20.
+const byte ShootEmUp::kLeftMargin = 10;
+const int16 ShootEmUp::kRightMargin = 605;
 
 ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_vm = vm;
@@ -423,11 +425,19 @@ void ShootEmUp::readKbd() {
 	Common::Event event;
 	_vm->getEvent(event);
 
-	if (_firing)
+	if ((event.type == Common::EVENT_KEYUP) && ((event.kbd.keycode == Common::KEYCODE_LALT) || (event.kbd.keycode == Common::KEYCODE_RALT))) {
+		// Don't let the player fire continuously by holding down one of the ALT keys.
+		_altWasPressedBefore = false;
+		return;
+	}
+
+	if (_firing) // So you can't stack up shots while the shooting animation plays.
 		return;
 
 	if (event.type == Common::EVENT_KEYDOWN) {
-		if ((event.kbd.keycode == Common::KEYCODE_LALT) || (event.kbd.keycode == Common::KEYCODE_RALT)) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_LALT: // Alt was pressed - shoot!
+		case Common::KEYCODE_RALT: // Falltrough is intended.
 			if (_altWasPressedBefore || (_count321 != 0))
 				return;
 
@@ -441,15 +451,20 @@ void ShootEmUp::readKbd() {
 			_wasFacing = _avvyFacing;
 			_avvyFacing = kAvvyShoots;
 			return;
+		case Common::KEYCODE_RSHIFT: // Right shift: move right.
+			_avvyPos += 5;
+			if (_avvyPos > kRightMargin)
+				_avvyPos = kRightMargin;
+			return;
+		case Common::KEYCODE_LSHIFT: // Left shift: move left.
+			_avvyPos -= 5;
+			if (_avvyPos < kLeftMargin)
+				_avvyPos = kLeftMargin;
+			return;
+		default:
+			break;
 		}
 	}
-
-	if ((event.type == Common::EVENT_KEYUP) && ((event.kbd.keycode == Common::KEYCODE_LALT) || (event.kbd.keycode == Common::KEYCODE_RALT))) {
-		_altWasPressedBefore = false;
-		return;
-	}
-	
-	warning("STUB: ShootEmUp::readKbd()");
 }
 
 void ShootEmUp::animate() {

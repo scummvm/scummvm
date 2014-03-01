@@ -68,6 +68,8 @@ private:
 	static const byte kShooting[7];
 	static const byte kTimesASecond;
 	static const byte kFlashTime;
+	static const byte kLeftMargin;
+	static const int16 kRightMargin;
 
 	AvalancheEngine *_vm;
 
