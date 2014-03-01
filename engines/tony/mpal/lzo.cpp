@@ -69,15 +69,9 @@ namespace Tony {
 namespace MPAL {
 
 #define pd(a, b)       ((uint32) ((a) - (b)))
-
 #define TEST_IP        (ip < ip_end)
-#define TEST_OP        1
-#define NEED_IP(x)     ((void) 0)
-#define NEED_OP(x)     ((void) 0)
-#define TEST_LB(m_pos) ((void) 0)
 
 #define M2_MAX_OFFSET 0x0800
-#define LZO1X
 
 /**
  * Decompresses an LZO compressed resource
@@ -100,36 +94,30 @@ int lzo1x_decompress(const byte *in, uint32 in_len, byte *out, uint32 *out_len) 
 		if (t < 4)
 			goto match_next;
 		assert(t > 0);
-		NEED_OP(t);
-		NEED_IP(t + 1);
 		do
 			*op++ = *ip++;
 		while (--t > 0);
 		goto first_literal_run;
 	}
 
-	while (TEST_IP && TEST_OP) {
+	while (TEST_IP) {
 		t = *ip++;
 		if (t >= 16)
 			goto match;
 		if (t == 0) {
-			NEED_IP(1);
 			while (*ip == 0) {
 				t += 255;
 				ip++;
-				NEED_IP(1);
 			}
 			t += 15 + *ip++;
 		}
 		assert(t > 0);
-		NEED_OP(t + 3);
-		NEED_IP(t + 4);
 
 		*op++ = *ip++;
 		*op++ = *ip++;
 		*op++ = *ip++;
 		do 
-			*op++ = *ip++; 
+			*op++ = *ip++;
 		while (--t > 0);
 
 first_literal_run:
@@ -140,9 +128,6 @@ first_literal_run:
 		m_pos = op - (1 + M2_MAX_OFFSET);
 		m_pos -= t >> 2;
 		m_pos -= *ip++ << 2;
-
-		TEST_LB(m_pos);
-		NEED_OP(3);
 
 		*op++ = *m_pos++;
 		*op++ = *m_pos++;
@@ -157,18 +142,14 @@ match:
 				m_pos -= (t >> 2) & 7;
 				m_pos -= *ip++ << 3;
 				t = (t >> 5) - 1;
-				TEST_LB(m_pos);
 				assert(t > 0);
-				NEED_OP(t + 3 - 1);
 				goto copy_match;
 			} else if (t >= 32) {
 				t &= 31;
 				if (t == 0) {
-					NEED_IP(1);
 					while (*ip == 0) {
 						t += 255;
 						ip++;
-						NEED_IP(1);
 					}
 					t += 31 + *ip++;
 				}
@@ -180,11 +161,9 @@ match:
 				m_pos -= (t & 8) << 11;
 				t &= 7;
 				if (t == 0) {
-					NEED_IP(1);
 					while (*ip == 0) {
 						t += 255;
 						ip++;
-						NEED_IP(1);
 					}
 					t += 7 + *ip++;
 				}
@@ -197,16 +176,12 @@ match:
 				m_pos = op - 1;
 				m_pos -= t >> 2;
 				m_pos -= *ip++ << 2;
-				TEST_LB(m_pos);
-				NEED_OP(2);
 				*op++ = *m_pos++;
 				*op++ = *m_pos;
 				goto match_done;
 			}
 
-			TEST_LB(m_pos);
 			assert(t > 0);
-			NEED_OP(t + 3 - 1);
 			{
 copy_match:
 				*op++ = *m_pos++;
@@ -224,8 +199,6 @@ match_done:
 match_next:
 			assert(t > 0);
 			assert(t < 4);
-			NEED_OP(t);
-			NEED_IP(t + 1);
 			*op++ = *ip++;
 			if (t > 1) {
 				*op++ = *ip++;
@@ -233,7 +206,7 @@ match_next:
 					*op++ = *ip++;
 			}
 			t = *ip++;
-		} while (TEST_IP && TEST_OP);
+		} while (TEST_IP);
 	}
 
 eof_found:
