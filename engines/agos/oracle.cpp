@@ -34,6 +34,18 @@
 
 namespace AGOS {
 
+void AGOSEngine_Feeble::handleMouseWheelUp() {
+	if (getGameType() == GType_FF && getBitFlag(99)) {
+		oracleTextDown();
+	}
+}
+
+void AGOSEngine_Feeble::handleMouseWheelDown() {
+	if (getGameType() == GType_FF && getBitFlag(99)) {
+		oracleTextUp();
+	}
+}
+
 void AGOSEngine_Feeble::checkLinkBox() {	// Check for boxes spilling over to next row of text
 	if (_hyperLink != 0) {
 		_variableArray[52] = _textWindow->x + _textWindow->textColumn - _variableArray[50];

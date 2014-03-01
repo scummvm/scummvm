@@ -834,6 +834,9 @@ protected:
 	void displayBoxStars();
 	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
 
+	virtual void handleMouseWheelUp() {}
+	virtual void handleMouseWheelDown() {}
+
 	virtual void initMouse();
 	virtual void handleMouseMoved();
 	virtual void drawMousePointer();
@@ -1974,6 +1977,9 @@ protected:
 
 	virtual void drawImage(VC10_state *state);
 	void scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY);
+
+	virtual void handleMouseWheelUp();
+	virtual void handleMouseWheelDown();
 
 	void drawMousePart(int image, byte x, byte y);
 	virtual void initMouse();
