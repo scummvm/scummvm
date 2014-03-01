@@ -31,6 +31,7 @@
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/timer_node.h"
 #include "zvision/music_node.h"
+#include "zvision/syncsound_node.h"
 #include "zvision/animation_node.h"
 
 #include "common/file.h"
@@ -587,6 +588,35 @@ bool ActionStreamVideo::execute() {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// ActionSyncSound
+//////////////////////////////////////////////////////////////////////////////
+
+ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	char fileName[25];
+	int not_used;
+
+	sscanf(line.c_str(), "%d %d %25s", &_syncto, &not_used, fileName);
+
+	_fileName = Common::String(fileName);
+}
+
+bool ActionSyncSound::execute() {
+	SideFX *fx = _engine->getScriptManager()->getSideFX(_syncto);
+	if (!fx)
+		return true;
+
+	if (!(fx->getType() & SideFX::SIDEFX_ANIM))
+		return true;
+
+	AnimationNode *animnode = (AnimationNode *)fx;
+	if (animnode->getFrameDelay() > 200) // Hack for fix incorrect framedelay in some animpreload
+		animnode->setNewFrameDelay(66); // ~15fps
+
+	_engine->getScriptManager()->addSideFX(new SyncSoundNode(_engine, _slotkey, _fileName, _syncto));
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ActionTimer

@@ -381,6 +381,16 @@ private:
 	bool _skippable;
 };
 
+class ActionSyncSound : public ResultAction {
+public:
+	ActionSyncSound(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	int _syncto;
+	Common::String _fileName;
+};
+
 class ActionTimer : public ResultAction {
 public:
 	ActionTimer(ZVision *engine, int32 slotkey, const Common::String &line);

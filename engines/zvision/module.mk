@@ -38,7 +38,8 @@ MODULE_OBJS := \
 	meta_animation.o \
 	search_manager.o \
 	text.o \
-	subtitles.o
+	subtitles.o \
+	syncsound_node.o
  
 MODULE_DIRS += \
 	engines/zvision

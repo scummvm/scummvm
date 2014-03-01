@@ -277,7 +277,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("streamvideo", true)) {
 					actionList.push_back(new ActionStreamVideo(_engine, slot, args));
 				} else if (act.matchString("syncsound", true)) {
-					// TODO: Implement ActionSyncSound
+					actionList.push_back(new ActionSyncSound(_engine, slot, args));
 				} else if (act.matchString("timer", true)) {
 					actionList.push_back(new ActionTimer(_engine, slot, args));
 				} else if (act.matchString("ttytext", true)) {
