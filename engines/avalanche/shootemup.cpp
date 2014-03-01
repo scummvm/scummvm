@@ -67,7 +67,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_avvyAnim = 1;
 	_avvyFacing = kFacingLeft;
 	_altWasPressedBefore = false;
-	_throwNext = 74;
+	_throwNext = 73;
 	_firing = false;
 	for (int i = 0; i < 4; i++) {
 		_running[i]._x = kFlag;
@@ -420,6 +420,35 @@ void ShootEmUp::moveAvvy() {
 }
 
 void ShootEmUp::readKbd() {
+	Common::Event event;
+	_vm->getEvent(event);
+
+	if (_firing)
+		return;
+
+	if (event.type == Common::EVENT_KEYDOWN) {
+		if ((event.kbd.keycode == Common::KEYCODE_LALT) || (event.kbd.keycode == Common::KEYCODE_RALT)) {
+			if (_altWasPressedBefore || (_count321 != 0))
+				return;
+
+			_altWasPressedBefore = true;
+			_firing = true;
+			define(_avvyPos + 27, kAvvyY + 5, _throwNext, 0, -2, 53, true, true);
+			_throwNext++;
+			if (_throwNext == 79)
+				_throwNext = 73;
+			_avvyAnim = 0;
+			_wasFacing = _avvyFacing;
+			_avvyFacing = kAvvyShoots;
+			return;
+		}
+	}
+
+	if ((event.type == Common::EVENT_KEYUP) && ((event.kbd.keycode == Common::KEYCODE_LALT) || (event.kbd.keycode == Common::KEYCODE_RALT))) {
+		_altWasPressedBefore = false;
+		return;
+	}
+	
 	warning("STUB: ShootEmUp::readKbd()");
 }
 
