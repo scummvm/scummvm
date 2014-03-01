@@ -26,6 +26,7 @@
 
 #include "zvision/clock.h"
 #include "zvision/render_manager.h"
+#include "zvision/subtitles.h"
 
 #include "common/system.h"
 
@@ -38,90 +39,32 @@
 
 namespace ZVision {
 
-// Taken/modified from SCI
-void scaleBuffer(const byte *src, byte *dst, uint32 srcWidth, uint32 srcHeight, byte bytesPerPixel, uint scaleAmount) {
-	assert(bytesPerPixel == 1 || bytesPerPixel == 2);
-
-	const uint32 newWidth = srcWidth * scaleAmount;
-	const uint32 pitch = newWidth * bytesPerPixel;
-	const byte *srcPtr = src;
-
-	if (bytesPerPixel == 1) {
-		for (uint32 y = 0; y < srcHeight; ++y) {
-			for (uint32 x = 0; x < srcWidth; ++x) {
-				const byte color = *srcPtr++;
-
-				for (uint i = 0; i < scaleAmount; ++i) {
-					dst[i] = color;
-					dst[pitch + i] = color;
-				}
-				dst += scaleAmount;
-			}
-			dst += pitch;
-		}
-	} else if (bytesPerPixel == 2) {
-		for (uint32 y = 0; y < srcHeight; ++y) {
-			for (uint32 x = 0; x < srcWidth; ++x) {
-				const byte color = *srcPtr++;
-				const byte color2 = *srcPtr++;
-
-				for (uint i = 0; i < scaleAmount; ++i) {
-					uint index = i * 2;
-
-					dst[index] = color;
-					dst[index + 1] = color2;
-					dst[pitch + index] = color;
-					dst[pitch + index + 1] = color2;
-				}
-				dst += 2 * scaleAmount;
-			}
-			dst += pitch;
-		}
-	}
-}
-
-void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect, bool skippable) {
-	byte bytesPerPixel = videoDecoder.getPixelFormat().bytesPerPixel;
-
-	uint16 origWidth = videoDecoder.getWidth();
-	uint16 origHeight = videoDecoder.getHeight();
-
-	uint scale = 1;
+void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, bool skippable, Subtitle *sub) {
+	Common::Rect dst = destRect;
 	// If destRect is empty, no specific scaling was requested. However, we may choose to do scaling anyway
-	if (destRect.isEmpty()) {
-		// Most videos are very small. Therefore we do a simple 2x scale
-		if (origWidth * 2 <= 640 && origHeight * 2 <= 480) {
-			scale = 2;
-		}
-	} else {
-		// Assume bilinear scaling. AKA calculate the scale from just the width.
-		// Also assume that the scaling is in integral intervals. AKA no 1.5x scaling
-		// TODO: Test ^these^ assumptions
-		scale = destRect.width() / origWidth;
+	if (dst.isEmpty())
+		dst = Common::Rect(vid.getWidth(), vid.getHeight());
 
-		// TODO: Test if we need to support downscale.
+	Graphics::Surface *scaled = NULL;
+
+	if (vid.getWidth() != dst.width() || vid.getHeight() != dst.height()) {
+		scaled = new Graphics::Surface;
+		scaled->create(dst.width(), dst.height(), vid.getPixelFormat());
 	}
 
-	uint16 pitch = origWidth * bytesPerPixel;
 
-	uint16 finalWidth = origWidth * scale;
-	uint16 finalHeight = origHeight * scale;
-
-	byte *scaledVideoFrameBuffer;
-	if (scale != 1) {
-		scaledVideoFrameBuffer = new byte[finalWidth * finalHeight * bytesPerPixel];
-	}
-
-	uint16 x = ((WINDOW_WIDTH - finalWidth) / 2) + destRect.left;
-	uint16 y = ((WINDOW_HEIGHT - finalHeight) / 2) + destRect.top;
+	uint16 x = _workingWindow.left + dst.left;
+	uint16 y = _workingWindow.top + dst.top;
+	uint16 finalWidth = dst.width() < _workingWindow.width() ? dst.width() : _workingWindow.width();
+	uint16 finalHeight = dst.height() < _workingWindow.height() ? dst.height() : _workingWindow.height();
 
 	_clock.stop();
-	videoDecoder.start();
+	vid.start();
 
 	// Only continue while the video is still playing
-	while (!shouldQuit() && !videoDecoder.endOfVideo() && videoDecoder.isPlaying()) {
+	while (!shouldQuit() && !vid.endOfVideo() && vid.isPlaying()) {
 		// Check for engine quit and video stop key presses
-		while (!videoDecoder.endOfVideo() && videoDecoder.isPlaying() && _eventMan->pollEvent(_event)) {
+		while (_eventMan->pollEvent(_event)) {
 			switch (_event.type) {
 			case Common::EVENT_KEYDOWN:
 				switch (_event.kbd.keycode) {
@@ -131,7 +74,7 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 					break;
 				case Common::KEYCODE_SPACE:
 					if (skippable) {
-						videoDecoder.stop();
+						vid.stop();
 					}
 					break;
 				default:
@@ -142,29 +85,32 @@ void ZVision::playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &d
 			}
 		}
 
-		if (videoDecoder.needsUpdate()) {
-			const Graphics::Surface *frame = videoDecoder.decodeNextFrame();
+		if (vid.needsUpdate()) {
+			const Graphics::Surface *frame = vid.decodeNextFrame();
+			if (sub)
+				sub->process(vid.getCurFrame());
 
 			if (frame) {
-				if (scale != 1) {
-					scaleBuffer((const byte *)frame->getPixels(), scaledVideoFrameBuffer, origWidth, origHeight, bytesPerPixel, scale);
-					_system->copyRectToScreen(scaledVideoFrameBuffer, pitch * 2, x, y, finalWidth, finalHeight);
-				} else {
-					_system->copyRectToScreen((const byte *)frame->getPixels(), pitch, x, y, finalWidth, finalHeight);
+				if (scaled) {
+					_renderManager->scaleBuffer(frame->getPixels(), scaled->getPixels(), frame->w, frame->h, frame->format.bytesPerPixel, scaled->w, scaled->h);
+					frame = scaled;
 				}
+				_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, x, y, finalWidth, finalHeight);
+				_renderManager->processSubs(0);
 			}
 		}
 
 		// Always update the screen so the mouse continues to render
 		_system->updateScreen();
 
-		_system->delayMillis(videoDecoder.getTimeToNextFrame());
+		_system->delayMillis(vid.getTimeToNextFrame() / 2);
 	}
 
 	_clock.start();
 
-	if (scale != 1) {
-		delete[] scaledVideoFrameBuffer;
+	if (scaled) {
+		scaled->free();
+		delete scaled;
 	}
 }
 

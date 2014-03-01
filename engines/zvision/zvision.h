@@ -54,6 +54,7 @@ class SaveManager;
 class RlfAnimation;
 class menuHandler;
 class textRenderer;
+class Subtitle;
 
 class ZVision : public Engine {
 public:
@@ -161,7 +162,7 @@ public:
 	 * @param destRect        Where to put the video. (In working window coords)
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
-	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true);
+	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, Subtitle *sub = NULL);
 
 	Common::String generateSaveFileName(uint slot);
 	Common::String generateAutoSaveFileName();

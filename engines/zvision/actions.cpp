@@ -577,12 +577,22 @@ bool ActionStreamVideo::execute() {
 			return true;
 		}
 
-		Common::Rect destRect;
-		if ((_flags & DIFFERENT_DIMENSIONS) == DIFFERENT_DIMENSIONS) {
-			destRect = Common::Rect(_x1, _y1, _x2, _y2);
-		}
+		Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
 
-		_engine->playVideo(decoder, destRect, _skippable);
+		Common::String subname = _fileName;
+		subname.setChar('s', subname.size() - 3);
+		subname.setChar('u', subname.size() - 2);
+		subname.setChar('b', subname.size() - 1);
+
+		Subtitle *sub = NULL;
+
+		if (_engine->getSearchManager()->hasFile(subname))
+			sub = new Subtitle(_engine, subname);
+
+		_engine->playVideo(decoder, destRect, _skippable, sub);
+
+		if (sub)
+			delete sub;
 	}
 
 	return true;

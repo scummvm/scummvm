@@ -35,6 +35,7 @@
 #include "zvision/menu.h"
 #include "zvision/search_manager.h"
 #include "zvision/text.h"
+#include "zvision/truetype_font.h"
 
 #include "common/config-manager.h"
 #include "common/str.h"

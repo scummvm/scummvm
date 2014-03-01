@@ -28,6 +28,8 @@
 
 namespace ZVision {
 
+class ZVision;
+
 class Subtitle {
 public:
 	Subtitle(ZVision *engine, const Common::String &subname);
