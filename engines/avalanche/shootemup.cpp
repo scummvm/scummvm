@@ -117,7 +117,7 @@ void ShootEmUp::run() {
 
 	setup();
 	
-	do {
+	while ((_time != 0) && (!_vm->shouldQuit())) {
 		uint32 beginLoop = _vm->_system->getMillis();
 
 		blankIt();
@@ -141,8 +141,7 @@ void ShootEmUp::run() {
 		uint32 delay = _vm->_system->getMillis() - beginLoop;
 		if (delay <= 55)
 			_vm->_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
-
-	} while (_time != 0);
+	};
 
 	_vm->fadeOut();
 	_vm->_graphics->restoreScreen();
