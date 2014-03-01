@@ -21,13 +21,16 @@
  */
 
 #include "engines/myst3/ambient.h"
+#include "engines/myst3/database.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
+#include "engines/myst3/sound.h"
 
 namespace Myst3 {
 
 Ambient::Ambient(Myst3Engine *vm) :
-	_vm(vm) {
+	_vm(vm),
+	_cueStartFrame(0) {
 	_cueSheet.reset();
 }
 
@@ -113,7 +116,61 @@ void Ambient::setCueSheet(uint32 id, int32 volume, int32 heading, int32 headingA
 	_cueSheet.headingAngle = headingAngle;
 }
 
+uint16 Ambient::delayForCue(uint32 id) {
+	const AmbientCue &cue = _vm->_db->getAmbientCue(id);
+
+	// Return a delay in frames inside the bounds
+	return _vm->_rnd->getRandomNumberRng(cue.minFrames, cue.maxFrames);
+}
+
+uint32 Ambient::nextCueSound(uint32 id) {
+	static uint32 lastId = 0;
+	const AmbientCue &cue = _vm->_db->getAmbientCue(id);
+
+	// Only one sound, no way it can be different from the previous one
+	if (cue.tracks.size() == 1) {
+		return cue.tracks[0];
+	}
+
+	// Make sure the new random sound is different from the last one
+	uint32 soundId;
+	do {
+		uint index = _vm->_rnd->getRandomNumber(cue.tracks.size() - 1);
+		soundId = cue.tracks[index];
+	} while (soundId == lastId);
+
+	lastId = soundId;
+
+	return soundId;
+}
+
+void Ambient::updateCue() {
+	if (_cueSheet.id) {
+		if (!_cueStartFrame) {
+			_cueStartFrame = _vm->_state->getFrameCount() + delayForCue(_cueSheet.id);
+		}
+		if (_vm->_state->getFrameCount() >= _cueStartFrame) {
+			_cueStartFrame = 0;
+			uint32 soundId = nextCueSound(_cueSheet.id);
+
+			uint heading;
+			if (_cueSheet.heading == 32766) {
+				heading = _vm->_rnd->getRandomNumberRng(0, 359);
+			} else {
+				heading = _cueSheet.heading;
+			}
+			_vm->_sound->playCue(soundId, _cueSheet.volume, heading, _cueSheet.headingAngle);
+		}
+	}
+}
+
 void Ambient::applySounds(uint32 fadeOutDelay) {
+	// Reset the random sounds
+	_cueStartFrame = 0;
+	if (!_cueSheet.id) {
+		_vm->_sound->stopCue();
+	}
+
 	// TODO
 }
 

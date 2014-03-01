@@ -20,6 +20,7 @@
  *
  */
 
+#include "engines/myst3/ambient.h"
 #include "engines/myst3/database.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/sound.h"
@@ -49,16 +50,32 @@ void Sound::playEffect(uint32 id, uint32 volume, uint16 heading, uint16 attenuat
 	channel->play(id, volume, heading, attenuation, 0, 0, 0, kEffect);
 }
 
+void Sound::playCue(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
+	SoundChannel *channel = _channels[13];
+	channel->play(id, volume, heading, attenuation, 0, 0, 0, kCue);
+}
+
+void Sound::stopCue(uint32 fadeDelay) {
+	SoundChannel *channel = _channels[13];
+	if (fadeDelay == 0) {
+		channel->stop();
+	} else {
+		channel->fade(0, -1, 0, fadeDelay);
+	}
+}
+
 SoundChannel *Sound::getChannelForSound(uint32 id, SoundType priority) {
 	// if the sound is already playing, return that channel
-	for (uint i = 0; i < kNumChannels; i++)
+	for (uint i = 0; i < kNumChannels - 1; i++)
 		if (_channels[i]->_id == id && _channels[i]->_playing)
 			return _channels[i];
 
 	// else return the first available channel
-	for (uint i = 0; i < kNumChannels; i++)
+	for (uint i = 0; i < kNumChannels - 1; i++)
 		if (!_channels[i]->_playing)
 			return _channels[i];
+
+	// Channel number 13 is reserved for cue sounds
 
 	error("No available channel for sound %d", id);
 }
@@ -68,6 +85,7 @@ void Sound::update() {
 		_channels[i]->update();
 
 	_vm->runBackgroundSoundScriptsFromNode(_vm->_state->getLocationNode());
+	_vm->_ambient->updateCue();
 }
 
 SoundChannel::SoundChannel(Myst3Engine *vm) :
@@ -148,6 +166,27 @@ void SoundChannel::update() {
 	if (!_playing) {
 		_vm->_state->setVar(_id, 0);
 		_stream = 0;
+	}
+}
+
+void SoundChannel::stop() {
+	if (!_playing)
+		return; // Nothing to do
+
+	_playing = g_system->getMixer()->isSoundHandleActive(_handle);
+
+	if (_playing) {
+		g_system->getMixer()->stopHandle(_handle);
+		_playing = false;
+	}
+
+	_stream = 0;
+}
+
+void SoundChannel::fade(uint32 targetVolume, int32 targetHeading, int32 targetAttenuation, uint32 fadeDelay) {
+	//TODO: Implement this mock
+	if (targetVolume == 0) {
+		stop();
 	}
 }
 

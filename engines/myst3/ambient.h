@@ -40,7 +40,9 @@ public:
 	void scaleVolume(uint32 volume);
 
 	void addSound(uint32 id, int32 volume, int32 heading, int32 headingAngle, int32 u1, int32 u2);
+
 	void setCueSheet(uint32 id, int32 volume, int32 heading, int32 headingAngle);
+	void updateCue();
 
 	uint32 _scriptAge;
 	uint32 _scriptRoom;
@@ -70,8 +72,13 @@ private:
 		}
 	};
 
+	uint16 delayForCue(uint32 id);
+	uint32 nextCueSound(uint32 id);
+
 	Common::Array<AmbientSound> _sounds;
+
 	AmbientSound _cueSheet;
+	uint32 _cueStartFrame;
 };
 
 } /* namespace Myst3 */

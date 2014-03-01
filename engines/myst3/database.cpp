@@ -967,7 +967,7 @@ void Database::loadAmbientCues(Common::ReadStreamEndian *s) {
 }
 
 const AmbientCue& Database::getAmbientCue(uint16 id) {
-	if (_ambientCues.contains(id))
+	if (!_ambientCues.contains(id))
 		error("Unable to find an ambient cue with id %d", id);
 
 	return _ambientCues.getVal(id);

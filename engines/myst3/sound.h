@@ -32,7 +32,7 @@ class Myst3Engine;
 enum SoundType {
 	kUnk0,
 	kUnk1,
-	kUnk2,
+	kCue,
 	kEffect,
 	kMusic
 };
@@ -43,7 +43,9 @@ public:
 	virtual ~SoundChannel();
 
 	void play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, uint unk1, uint unk2, uint unk3, SoundType type);
+	void fade(uint32 targetVolume, int32 targetHeading, int32 targetAttenuation, uint32 fadeDelay);
 	void update();
+	void stop();
 
 	uint32 _id;
 	bool _playing;
@@ -66,10 +68,14 @@ public:
 	virtual ~Sound();
 
 	void playEffect(uint32 id, uint32 volume, uint16 heading = 0, uint16 attenuation = 0);
+
+	void playCue(uint32 id, uint32 volume, uint16 heading, uint16 attenuation);
+	void stopCue(uint32 fadeDelay);
+
 	void update();
 
 private:
-	static const uint kNumChannels = 13;
+	static const uint kNumChannels = 14;
 
 	Myst3Engine *_vm;
 	SoundChannel *_channels[kNumChannels];
