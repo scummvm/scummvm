@@ -191,4 +191,21 @@ bool AnimationNode::stop() {
 	return false;
 }
 
+void AnimationNode::setNewFrameDelay(int32 newDelay) {
+	if (newDelay > 0) {
+		PlayNodes::iterator it = _playList.begin();
+		if (it != _playList.end()) {
+			playnode *nod = &(*it);
+			float percent = (float)nod->_delay / (float)_frmDelay;
+			nod->_delay = percent * newDelay; // Scale to new max
+		}
+
+		_frmDelay = newDelay;
+	}
+}
+
+int32 AnimationNode::getFrameDelay() {
+	return _frmDelay;
+}
+
 } // End of namespace ZVision
