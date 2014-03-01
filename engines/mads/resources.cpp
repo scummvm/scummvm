@@ -305,7 +305,7 @@ Common::String Resources::formatName(RESPREFIX resType, int id, const Common::St
 
 Common::String Resources::formatResource(const Common::String &resName, 
 		const Common::String &hagFilename) {
-	int v1 = 0, v2 = 0;
+//	int v1 = 0, v2 = 0;
 
 	if (resName.hasPrefix("*")) {
 		// Resource file specified

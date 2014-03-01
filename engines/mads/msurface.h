@@ -169,9 +169,9 @@ public:
 	}
 
 	/**
-	 * Translates the data of a surface using a specified RGBList translation matrix.
+	 * Translates the pixels of an image used the passed palette with RGB mapping
 	 */
-	void translate(RGBList *list, bool isTransparent = false);
+	void translate(Common::Array<RGB6> &palette);
 };
 
 } // End of namespace MADS

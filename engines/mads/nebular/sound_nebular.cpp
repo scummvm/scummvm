@@ -300,10 +300,10 @@ byte *ASound::loadData(int offset, int size) {
 
 void ASound::playSound(int offset, int size) {
 	// Load the specified data block
-	playSound(loadData(offset, size));
+	playSoundData(loadData(offset, size));
 }
 
-void ASound::playSound(byte *pData, int startingChannel) {
+void ASound::playSoundData(byte *pData, int startingChannel) {
 	// Scan for a high level free channel
 	for (int i = startingChannel; i < ADLIB_CHANNEL_COUNT; ++i) {
 		if (!_channels[i]._activeCount) {
@@ -1020,7 +1020,7 @@ int ASound1::command19() {
 int ASound1::command20() {
 	byte *pData = loadData(0xD18, 28);
 	if (!isSoundActive(pData))
-		playSound(pData);
+		playSoundData(pData);
 	return 0;
 }
 
@@ -1034,7 +1034,7 @@ int ASound1::command22() {
 	pData[6] = (getRandomNumber() & 7) + 85;
 
 	if (!isSoundActive(pData))
-		playSound(pData);
+		playSoundData(pData);
 
 	return 0;
 }
@@ -1055,7 +1055,7 @@ int ASound1::command24() {
 int ASound1::command25() {
 	byte *pData = loadData(0xD82, 16);
 	if (!isSoundActive(pData))
-		playSound(pData);
+		playSoundData(pData);
 
 	return 0;
 }
@@ -1091,7 +1091,7 @@ int ASound1::command29() {
 	pData[7] = pData[13] = pData[21] = pData[27] = v;
 
 	if (!isSoundActive(pData))
-		playSound(pData, 0);
+		playSoundData(pData, 0);
 
 	return 0;
 }
@@ -1101,7 +1101,7 @@ int ASound1::command30() {
 	pData[7] = (command2627293032() + 0x40) & 0xFF;
 
 	if (!isSoundActive(pData))
-		playSound(pData, 0);
+		playSoundData(pData, 0);
 
 	return 0;
 }
@@ -1109,7 +1109,7 @@ int ASound1::command30() {
 int ASound1::command31() {
 	byte *pData = loadData(0xDAE, 14);
 	if (!isSoundActive(pData))
-		playSound(pData);
+		playSoundData(pData);
 
 	return 0;
 }
@@ -1121,7 +1121,7 @@ int ASound1::command32() {
 	pData[11] = pData[19] = pData[27] = pData[35] = v >> 8;
 
 	if (!isSoundActive(pData))
-		playSound(pData, 0);
+		playSoundData(pData, 0);
 
 	return 0;
 }
@@ -1139,7 +1139,7 @@ int ASound1::command34() {
 
 	byte *pData = loadData(0xDD0, 22);
 	pData[8] = pData[15] = v;
-	playSound(pData);
+	playSoundData(pData);
 	return 0;
 }
 

@@ -70,8 +70,6 @@ public:
 	int _textSpacing;
 	Common::Array<Hotspot> _hotspots;
 	ScreenObjects _screenObjects;
-	ScenePalette *_scenePalette;
-	RGB4 _nullPalette[2];
 	int _v1;
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
@@ -134,12 +132,6 @@ public:
 	 * Loads the vocab list
 	 */
 	void loadVocab();
-	
-	/**
-	 * Set the scene palette
-	 */
-	void setPalette(RGB4 *p);
-
 
 	/**
 	 * Clear the data for the scene

@@ -67,7 +67,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~Dialog();
+	virtual ~Dialog();
 };
 
 enum {
@@ -145,7 +145,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~TextDialog();
+	virtual ~TextDialog();
 
 	/**
 	 * Draw the dialog
@@ -161,6 +161,8 @@ public:
 class MessageDialog: protected TextDialog {
 public:
 	MessageDialog(MADSEngine *vm, int lines, ...);
+
+	virtual ~MessageDialog() {}
 
 	/**
 	 * Show the dialog, and wait until a key or mouse press.
@@ -183,6 +185,8 @@ public:
 public:
 	Common::Point _defaultPosition;
 	DialogId _pendingDialog;
+
+	virtual ~Dialogs() {}
 
 	virtual void showDialog() = 0;
 };

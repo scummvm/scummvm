@@ -37,6 +37,17 @@ struct RGB4 {
 	byte u;
 };
 
+struct RGB6 {
+	byte r;
+	byte g;
+	byte b;
+	byte palIndex;
+	byte u2;
+	byte flags;
+
+	void load(Common::SeekableReadStream *f);
+};
+
 /**
  * Used to store a list of RGB values
  */
@@ -73,6 +84,44 @@ public:
 	int size() const { return _size; }
 };
 
+class PaletteUsage {
+private:
+	Common::Array<int> _data;
+
+	int rgbMerge(RGB6 &palEntry);
+
+	void prioritizeFromList(int lst[3]);
+public:
+	PaletteUsage();
+
+	void load(int count, ...);
+
+	/**
+	 * Returns whether the usage list is empty
+	 */
+	bool empty() const { return _data.size() == 0;  }
+
+	/**
+	 * Gets key entries from the passed palette
+	 * @param palette	6-bit per entry read in palette
+	 */
+	void getKeyEntries(Common::Array<RGB6> &palette);
+
+	/**
+	 * Prioritizes the palette index list based on the intensity of the
+	 * RGB values of the palette entries that they refer to
+	 */
+	void prioritize(Common::Array<RGB6> &palette);
+
+	bool process(Common::Array<RGB6> &palette, int v) {
+		warning("TODO: PaletteUsage::process");
+		return 0;
+	}
+
+	void transform(Common::Array<RGB6> &palette);
+};
+
+
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
 
@@ -95,6 +144,7 @@ protected:
 public:
 	byte _mainPalette[PALETTE_SIZE];
 	RGB4 _gamePalette[PALETTE_COUNT];
+	PaletteUsage _paletteUsage;
 public:
 	/**
 	 * Constructor

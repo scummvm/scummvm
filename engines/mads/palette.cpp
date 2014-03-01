@@ -28,6 +28,15 @@
 
 namespace MADS {
 
+void RGB6::load(Common::SeekableReadStream *f) {
+	r = f->readByte();
+	g = f->readByte();
+	b = f->readByte();
+	palIndex = f->readByte();
+	u2 = f->readByte();
+	flags = f->readByte();
+}
+
 RGBList::RGBList(int numEntries, byte *srcData, bool freeData) {
 	_size = numEntries;
 	assert(numEntries <= PALETTE_COUNT);
@@ -48,6 +57,111 @@ RGBList::~RGBList() {
 	if (_freeData)
 		delete[] _data;
 	delete[] _palIndexes;
+}
+
+/*------------------------------------------------------------------------*/
+
+PaletteUsage::PaletteUsage() {
+}
+
+void PaletteUsage::load(int count, ...) {
+	va_list va;
+	va_start(va, count);
+
+	_data.clear();
+	for (int i = 0; i < count; ++i)
+		_data.push_back(va_arg(va, int));
+
+	va_end(va);
+}
+
+
+void PaletteUsage::getKeyEntries(Common::Array<RGB6> &palette) {
+	_data.clear();
+
+	 for (uint i = 0; i < palette.size(); ++i) {
+		 byte *uPtr = &palette[i].flags;
+		 if ((*uPtr & 0x10) && _data.size() < 3) {
+			 _data.push_back(i);
+		 }
+	 }
+}
+
+void PaletteUsage::prioritize(Common::Array<RGB6> &palette) {
+	int lst[3];
+
+	for (uint i = 0; i < _data.size(); ++i) {
+		RGB6 &palEntry = palette[_data[i]];
+		lst[i] = rgbMerge(palEntry);
+	}
+	
+	prioritizeFromList(lst);
+}
+
+int PaletteUsage::rgbMerge(RGB6 &palEntry) {
+	return palEntry.r * 38 + palEntry.g * 76 + palEntry.b * 14;
+}
+
+void PaletteUsage::prioritizeFromList(int lst[3]) {
+	int idx1 = _data.size() - 1;
+	bool continueFlag;
+	int count2;
+
+	do {
+		continueFlag = false;
+		count2 = 0;
+
+		if (idx1 > 0) {
+			int numEntries = _data.size() - 1;
+			int usageIndex = 0, lstIndex = 0;
+
+			do {
+				if (lst[lstIndex] < lst[lstIndex + 1]) {
+					int lstVal = lst[lstIndex];
+					int usageVal = _data[usageIndex];
+
+					if (numEntries > 0) {
+						Common::copy(&lst[lstIndex + 1], &lst[lstIndex + numEntries], &lst[lstIndex]);
+						_data.remove_at(usageIndex);
+						_data.push_back(0);
+					}
+					
+					int newIdx = 0;
+					if (idx1 > 0 && !continueFlag) {
+						for (newIdx = 0; newIdx <= idx1; ++newIdx) {
+							if (lst[newIdx] > lstVal)
+								break;
+						}
+					}
+
+					continueFlag = true;
+					int idxDiff = _data.size() - newIdx - 1;
+					if (idxDiff > 0) {
+						Common::copy_backward(&lst[0], &lst[2], &lst[1]);
+						_data.remove_at(2);
+						_data.insert_at(0, 0);
+					}
+
+					lst[newIdx] = lstVal;
+					_data[newIdx] = usageVal;
+				}
+
+				++usageIndex;
+				--numEntries;
+				++lstIndex;
+				++count2;
+			} while (count2 > idx1 && !continueFlag);
+		}
+	} while (continueFlag);
+}
+
+void PaletteUsage::transform(Common::Array<RGB6> &palette) {
+	if (!empty()) {
+		for (uint i = 0; i < _data.size(); ++i) {
+			int palIndex = _data[i];
+			_data[i] = palette[palIndex].palIndex;
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/

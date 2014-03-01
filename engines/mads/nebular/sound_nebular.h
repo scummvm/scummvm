@@ -228,7 +228,7 @@ protected:
 	 * @param pData		Pointer to data block containing sound data
 	 * @param startingChannel	Channel to start scan from
 	 */
-	void playSound(byte *pData, int startingChannel = ADLIB_CHANNEL_COUNT);
+	void playSoundData(byte *pData, int startingChannel = ADLIB_CHANNEL_MIDWAY);
 
 	/**
 	 * Checks to see whether the given block of data is already loaded into a channel.
@@ -312,7 +312,7 @@ public:
 	 * @param commandId		Player ommand to execute.
 	 * @param param			Optional parameter used by a few commands
 	 */
-	virtual int command(int commandId, int param = 0) = 0;
+	virtual int command(int commandId, int param) = 0;
 
 	/**
 	 * Stop all currently playing sounds
@@ -402,7 +402,7 @@ private:
 public:
 	ASound1(Audio::Mixer *mixer);
 
-	virtual int command(int commandId, int param = 0);
+	virtual int command(int commandId, int param);
 };
 
 } // End of namespace Nebular

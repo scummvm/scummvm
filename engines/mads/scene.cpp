@@ -34,7 +34,6 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm) {
 	_vocabBuffer = nullptr;
 	_sceneLogic = nullptr;
 	_sceneInfo = nullptr;
-	_scenePalette = nullptr;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
@@ -46,7 +45,6 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm) {
 	_verbList.push_back(VerbInit(VERB_PULL, 2, 0));
 	_verbList.push_back(VerbInit(VERB_CLOSE, 2, 0));
 	_verbList.push_back(VerbInit(VERB_THROW, 1, 2));
-	Common::fill((byte *)&_nullPalette[0], (byte *)&_nullPalette[3], 0);
 }
 
 Scene::~Scene() {
@@ -121,7 +119,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_sequences.clear();
 	_messages.clear();
 
-	setPalette(_nullPalette);
+	// TODO: palletteUsage reset?  setPalette(_nullPalette);
 	_sceneInfo = SceneInfo::load(_vm, _currentSceneId, _v1, Common::String(), _vm->_game->_v2 ? 17 : 16,
 		_depthSurface, _backgroundSurface);
 }
@@ -176,10 +174,6 @@ void Scene::loadVocabStrings() {
 
 void Scene::free() {
 	warning("TODO: Scene::free");
-}
-
-void Scene::setPalette(RGB4 *p) {
-//	_scenePalette = p;
 }
 
 } // End of namespace MADS

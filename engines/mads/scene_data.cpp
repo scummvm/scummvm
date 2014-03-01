@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "mads/scene_data.h"
 #include "mads/mads.h"
+#include "mads/compression.h"
 #include "mads/resources.h"
 #include "mads/nebular/nebular_scenes.h"
 
@@ -126,7 +127,6 @@ KernelMessage::KernelMessage() {
 	_asciiChar = '\0';
 	_asciiChar2 = '\0';
 	_colors = 0;
-	Common::Point _posiition;
 	_msgOffset = 0;
 	_numTicks = 0;
 	_frameTimer2 = 0;
@@ -164,28 +164,28 @@ Hotspot::Hotspot(Common::SeekableReadStream &f) {
 
 /*------------------------------------------------------------------------*/
 
-void ARTHeader::load(Common::SeekableReadStream &f) {
-	_width = f.readUint16LE();
-	_height = f.readUint16LE();
+void ARTHeader::load(Common::SeekableReadStream *f) {
+	// Read in dimensions of image
+	_width = f->readUint16LE();
+	_height = f->readUint16LE();
 
-	_palCount = f.readUint16LE();
-	for (int i = 0; i < 256; ++i) {
+	// Read in palette information
+	int palCount = f->readUint16LE();
+	for (int i = 0; i < palCount; ++i) {
 		RGB6 rgb;
-		rgb.r = f.readByte();
-		rgb.g = f.readByte();
-		rgb.b = f.readByte();
-		f.read(&rgb.unused[0], 3);
-
+		rgb.load(f);
 		_palette.push_back(rgb);
 	}
+	f->skip(6 * (256 - palCount));
 
-	int palCount = f.readUint16LE();
+	// Read unknown???
+	palCount = f->readUint16LE();
 	for (int i = 0; i < palCount; ++i) {
 		RGB4 rgb;
-		rgb.r = f.readByte();
-		rgb.g = f.readByte();
-		rgb.b = f.readByte();
-		rgb.u = f.readByte();
+		rgb.r = f->readByte();
+		rgb.g = f->readByte();
+		rgb.b = f->readByte();
+		rgb.u = f->readByte();
 
 		_palData.push_back(rgb);
 	}
@@ -203,12 +203,9 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 	bool flag = true;
 	bool sceneFlag = sceneId >= 0;
 	bool ssFlag = false, wsFlag = false;
-	int handle = 0;
 	
-	SpriteAsset *spriteSets[10];
-	int xpList[10];
-	Common::fill(&spriteSets[0], &spriteSets[10], (SpriteAsset *)nullptr);
-	Common::fill(&xpList[0], &xpList[10], -1);
+	Common::Array<SpriteAsset *> spriteSets;
+	Common::Array<int> xpList;
 
 	// Figure out the resource to use
 	Common::String resourceName;
@@ -281,21 +278,53 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 
 	// Load in the ART header and palette
 	File artFile(resourceName);
+	MadsPack artResource(&artFile);
+	Common::SeekableReadStream *stream = artResource.getItemStream(0);
+
 	ARTHeader artHeader;
-	artHeader.load(artFile);
+	artHeader.load(stream);
 	artFile.close();
 
 	// Copy out the palette data
-	for (int i = 0; i < artHeader._palData.size(); ++i)
+	for (uint i = 0; i < artHeader._palData.size(); ++i)
 		_palette.push_back(artHeader._palData[i]);
-/*
+
 	if (!(flags & 1)) {
-		if (_vm->_game->_scene->_scenePalette) {
-			//_vm->_game->_scene->_scenePalette->clean(&artHeader._palCount);
-			//_vm->_game->_scene->_scenePalette->process(&artHeader._palCount)
+		if (!_vm->_palette->_paletteUsage.empty()) {
+			_vm->_palette->_paletteUsage.getKeyEntries(artHeader._palette);
+			_vm->_palette->_paletteUsage.prioritize(artHeader._palette);
+		}
+
+		_field4C = _vm->_palette->_paletteUsage.process(artHeader._palette, 0xF800);
+		if (_field4C > 0) {
+			_vm->_palette->_paletteUsage.transform(artHeader._palette);
+
+			for (uint i = 0; i < _palette.size(); ++i) {
+				byte g = _palette[i].g;
+				_palette[g].b = artHeader._palette[g].palIndex;
+			}
 		}
 	}
-	*/
+
+	// Read in the background surface data
+	assert(_width == bgSurface.w && _height == bgSurface.h);
+	stream->read(bgSurface.getPixels(), bgSurface.w * bgSurface.h);
+
+	if (flags & 1) {
+		for (uint i = 0; i < _setNames.size(); ++i) {
+			Common::String setResName;
+			if (sceneFlag || resName.hasPrefix("*"))
+				setResName += "*";
+			setResName += _setNames[i];
+
+			SpriteAsset *sprites = new SpriteAsset(_vm, setResName, flags);
+			spriteSets.push_back(sprites);
+			xpList.push_back(-1); // TODO:: sprites->_field6
+		}
+	}
+
+
+
 	warning("TODO");
 }
 
@@ -325,13 +354,5 @@ void SceneInfo::loadCodes(MSurface &depthSurface) {
 }
 
 /*------------------------------------------------------------------------*/
-
-void ScenePalette::clean(int *palCount) {
-	warning("TODO: ScenePalette::clean");
-}
-
-void ScenePalette::process(int *palCount) {
-	warning("TODO: ScenePalette::process");
-}
 
 } // End of namespace MADS

@@ -160,7 +160,7 @@ void Game::sectionLoop() {
 			_vm->_palette->initGamePalette();
 		}
 
-		// TODO: Further palette init
+		_vm->_palette->_paletteUsage.load(3, 0xF0, 0xF1, 0xF2);
 		
 		_scene.loadScene(_scene._nextSceneId, _aaName, 0);
 		_vm->_sound->pauseNewCommands();

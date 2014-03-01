@@ -215,6 +215,11 @@ public:
 	SceneLogic(Scene *scene): _scene(scene) {}
 
 	/**
+	 * Destructor
+	 */
+	virtual ~SceneLogic() {}
+
+	/**
 	 * Called to initially setup a scene
 	 */
 	virtual void setup() = 0;
@@ -245,21 +250,13 @@ public:
 	virtual void postActions() = 0;
 };
 
-struct RGB6 {
-	byte r;
-	byte g;
-	byte b;
-	byte unused[3];
-};
-
 struct ARTHeader {
 	int _width;
 	int _height;
-	int _palCount;
 	Common::Array<RGB6> _palette;
 	Common::Array<RGB4> _palData;
 
-	void load(Common::SeekableReadStream &f);
+	void load(Common::SeekableReadStream *f);
 };
 
 /**
@@ -301,12 +298,6 @@ public:
 	 */
 	static SceneInfo *load(MADSEngine *vm, int sceneId, int flags, 
 		const Common::String &resName, int v3, MSurface &depthSurface, MSurface &bgSurface);
-};
-
-class ScenePalette {
-public:
-	void clean(int *palCount);
-	void process(int *palCount);
 };
 
 } // End of namespace MADS
