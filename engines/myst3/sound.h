@@ -42,7 +42,7 @@ public:
 	SoundChannel(Myst3Engine *vm);
 	virtual ~SoundChannel();
 
-	void play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, uint unk1, uint unk2, bool loop, SoundType type);
+	void play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, bool loop, SoundType type);
 	void setVolume3D(uint32 volume, uint16 heading, uint16 attenuation);
 	void fade(uint32 targetVolume, int32 targetHeading, int32 targetAttenuation, uint32 fadeDelay);
 	void fadeOut(uint32 fadeDelay);

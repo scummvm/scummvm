@@ -187,7 +187,7 @@ void Ambient::applySounds(uint32 fadeOutDelay) {
 //			if (sound.volumeFlag) // TODO: Used in the original
 				volume = sound.volume;
 
-			channel->play(sound.id, volume, sound.heading, sound.headingAngle, 0, 0, true, kAmbient);
+			channel->play(sound.id, volume, sound.heading, sound.headingAngle, true, kAmbient);
 		}
 
 		if (channel->_playing) {

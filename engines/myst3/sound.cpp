@@ -47,12 +47,12 @@ void Sound::playEffect(uint32 id, uint32 volume, uint16 heading, uint16 attenuat
 	id = _vm->_state->valueOrVarValue(id);
 
 	SoundChannel *channel = getChannelForSound(id, kEffect);
-	channel->play(id, volume, heading, attenuation, 0, 0, false, kEffect);
+	channel->play(id, volume, heading, attenuation, false, kEffect);
 }
 
 void Sound::playCue(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
 	SoundChannel *channel = _channels[13];
-	channel->play(id, volume, heading, attenuation, 0, 0, false, kCue);
+	channel->play(id, volume, heading, attenuation, false, kCue);
 }
 
 void Sound::stopCue(uint32 fadeDelay) {
@@ -121,7 +121,7 @@ SoundChannel::SoundChannel(Myst3Engine *vm) :
 SoundChannel::~SoundChannel() {
 }
 
-void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, uint unk1, uint unk2, bool loop, SoundType type) {
+void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, bool loop, SoundType type) {
 	stop();
 
 	// Load the name of the sound from its id
