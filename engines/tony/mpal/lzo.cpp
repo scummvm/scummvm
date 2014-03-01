@@ -209,8 +209,11 @@ match:
 			NEED_OP(t + 3 - 1);
 			{
 copy_match:
-				*op++ = *m_pos++; *op++ = *m_pos++;
-				do *op++ = *m_pos++; while (--t > 0);
+				*op++ = *m_pos++;
+				*op++ = *m_pos++;
+				do
+					*op++ = *m_pos++;
+				while (--t > 0);
 			}
 
 match_done:
@@ -219,9 +222,16 @@ match_done:
 				break;
 
 match_next:
-			assert(t > 0); assert(t < 4); NEED_OP(t); NEED_IP(t+1);
+			assert(t > 0);
+			assert(t < 4);
+			NEED_OP(t);
+			NEED_IP(t + 1);
 			*op++ = *ip++;
-			if (t > 1) { *op++ = *ip++; if (t > 2) { *op++ = *ip++; } }
+			if (t > 1) {
+				*op++ = *ip++;
+				if (t > 2)
+					*op++ = *ip++;
+			}
 			t = *ip++;
 		} while (TEST_IP && TEST_OP);
 	}
@@ -235,5 +245,4 @@ eof_found:
 }
 
 } // end of namespace MPAL
-
 } // end of namespace Tony
