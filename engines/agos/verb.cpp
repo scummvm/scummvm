@@ -216,7 +216,14 @@ void AGOSEngine_Simon2::clearName() {
 		return;
 	}
 
-	AGOSEngine_Simon1::clearName();
+	if (_currentVerbBox == _lastVerbOn)
+		return;
+
+	resetNameWindow();
+	_lastVerbOn = _currentVerbBox;
+
+	if (_currentVerbBox != NULL && !(_currentVerbBox->flags & kBFBoxDead))
+		printVerbOf(_currentVerbBox->id);
 }
 
 void AGOSEngine_Simon1::clearName() {
