@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -32,6 +32,7 @@ class MGM;
 class MctlLadder;
 struct Ring;
 class StaticANIObject;
+struct Swinger;
 
 int defaultUpdateCursor();
 
@@ -348,26 +349,23 @@ public:
 	bool scene08_stairsVisible;
 	int scene08_manOffsetY;
 
-	int scene09_var02;
+	int scene09_dudeY;
 	StaticANIObject *scene09_flyingBall;
-	int scene09_var05;
-	StaticANIObject *scene09_glotatel;
+	int scene09_numSwallenBalls;
+	StaticANIObject *scene09_gulper;
 	StaticANIObject *scene09_spitter;
 	StaticANIObject *scene09_grit;
-	int scene09_var08;
-	int scene09_var09;
-	int scene09_var10;
-	int scene09_var11;
-	int scene09_var12;
+	bool scene09_gulperIsPresent;
+	bool scene09_dudeIsOnLadder;
+	int scene09_interactingHanger;
+	int scene09_intHangerPhase;
+	int scene09_intHangerMaxPhase;
 	BallChain scene09_balls;
 	Common::Array<Hanger *> scene09_hangers;
-	BallChain scene09_var07;
+	BallChain scene09_flyingBalls;
 	int scene09_numMovingHangers;
-	int scene09_var13;
-	int scene09_var15;
-	int scene09_var17;
-	int scene09_var19;
-	Common::Point scene09_var18;
+	int scene09_clickY;
+	Common::Point scene09_hangerOffsets[4];
 
 	StaticANIObject *scene10_gum;
 	StaticANIObject *scene10_packet;
@@ -464,6 +462,42 @@ public:
 	int scene17_sceneEdgeX;
 
 	int scene18_var01;
+	int scene18_var16;
+	int scene18_var17;
+	int scene18_var18;
+	int scene18_var19;
+	StaticANIObject *scene18_whirlgig;
+	Common::Array<Swinger *> scene18_var07;
+	int scene18_var20;
+	int scene18_var04;
+	int scene18_var08;
+	int scene18_var09;
+	bool scene18_var03;
+	int scene18_var21;
+	int scene18_var11;
+	int scene18_var12;
+	int scene18_var22;
+	int scene18_var23;
+	int scene18_var24;
+	int scene18_var25;
+	int scene18_var26;
+	int scene18_var27;
+	int scene18_var13;
+	int scene18_var14;
+	int scene18_var28;
+	int scene18_var15;
+	StaticANIObject *scene18_boy;
+	StaticANIObject *scene18_girl;
+	StaticANIObject *scene18_domino;
+	int scene18_var29;
+	int scene18_var30;
+	int scene18_var05;
+	int scene18_var06;
+
+	int scene19_var01;
+	int scene19_var02;
+	int scene19_var03;
+	int scene19_var04;
 
 	int scene20_fliesCountdown;
 	StaticANIObject *scene20_grandma;

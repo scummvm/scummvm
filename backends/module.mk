@@ -97,7 +97,8 @@ ifdef MACOSX
 MODULE_OBJS += \
 	midi/coreaudio.o \
 	midi/coremidi.o \
-	updates/macosx/macosx-updates.o
+	updates/macosx/macosx-updates.o \
+	taskbar/macosx/macosx-taskbar.o
 endif
 
 ifdef WIN32

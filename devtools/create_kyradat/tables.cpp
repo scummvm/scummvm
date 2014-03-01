@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -2773,222 +2773,222 @@ const ExtractEntrySearchData kEoB2IntroCPSFilesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData00Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData00Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000037, 0x000003E1, { { 0x38, 0xC2, 0x0F, 0xE1, 0x43, 0x6A, 0xE8, 0x7C, 0x82, 0x65, 0x9B, 0x4A, 0x9F, 0x83, 0xCD, 0xC8 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData01Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData01Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000037, 0x000003A3, { { 0x84, 0x44, 0xF4, 0x46, 0x4E, 0x2B, 0xD7, 0xC6, 0xAD, 0x14, 0xF1, 0x9E, 0x8A, 0xBE, 0x7B, 0x42 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData02Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData02Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000037, 0x00000446, { { 0x0C, 0xCA, 0x41, 0x0C, 0x89, 0x59, 0xD5, 0x28, 0x9A, 0xDC, 0x51, 0x1C, 0x0B, 0x8C, 0xD2, 0xDB } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData03Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData03Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002C, 0x0000010E, { { 0xAB, 0x48, 0x64, 0x02, 0xB3, 0xF3, 0x6C, 0x82, 0x9D, 0x37, 0x5F, 0x52, 0x0F, 0x5B, 0xDF, 0x96 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData04Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData04Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000021, 0x00000149, { { 0x3B, 0xAC, 0x14, 0x51, 0xDF, 0x5D, 0x22, 0x15, 0x46, 0x4E, 0xCD, 0xF3, 0xD4, 0x61, 0x29, 0x4A } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData05Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData05Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002C, 0x0000010E, { { 0x28, 0x29, 0x5F, 0x31, 0x23, 0x53, 0xBA, 0xD7, 0x24, 0xB9, 0x21, 0x70, 0x84, 0x8A, 0x1C, 0x2E } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData06Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData06Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000B0, 0x00001365, { { 0x91, 0x28, 0x2F, 0x10, 0x45, 0x4D, 0xCF, 0x3E, 0x70, 0x1E, 0xD4, 0xBA, 0x0E, 0x70, 0xDE, 0xD0 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData07Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData07Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000037, 0x000003C4, { { 0x8C, 0x72, 0xDE, 0x4F, 0x92, 0x52, 0x0A, 0xED, 0xF4, 0x79, 0xD6, 0x3D, 0x8F, 0x59, 0x9D, 0x69 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData08Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData08Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000042, 0x00000442, { { 0xD2, 0x91, 0x51, 0xEB, 0x91, 0x13, 0x43, 0xCE, 0x7E, 0x60, 0xB8, 0xFF, 0xA7, 0xE2, 0x4C, 0x11 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData09Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData09Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002C, 0x000004BC, { { 0xD6, 0xC7, 0x44, 0x2E, 0xE7, 0x2A, 0x44, 0x09, 0x39, 0xC3, 0xD3, 0xA8, 0x02, 0xC8, 0xA0, 0x19 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData10Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData10Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000006E, 0x00000C12, { { 0x91, 0xDB, 0x41, 0x7A, 0x4F, 0x7C, 0x7B, 0x83, 0x32, 0x13, 0x68, 0xF6, 0x58, 0x79, 0xDA, 0x99 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData11Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData11Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000B0, 0x0000073C, { { 0x17, 0x1F, 0x4D, 0x05, 0x3F, 0x14, 0x2E, 0x77, 0xD3, 0xDB, 0x78, 0x67, 0xBB, 0x18, 0xDC, 0x85 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData12Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData12Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000021, 0x00000228, { { 0xC9, 0x50, 0x68, 0x51, 0xD0, 0xC1, 0x5D, 0xD4, 0xFF, 0x08, 0x28, 0xDE, 0xC4, 0x41, 0x8C, 0xDB } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData13Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData13Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002C, 0x00000340, { { 0x03, 0xCA, 0x5D, 0xD1, 0x15, 0xFA, 0x60, 0xD7, 0x70, 0x64, 0x3D, 0x44, 0x08, 0xB8, 0xDB, 0xAD } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData14Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData14Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000042, 0x000007C0, { { 0x82, 0xA9, 0x0B, 0x90, 0x9D, 0x65, 0x1E, 0xC7, 0x03, 0x5E, 0xB7, 0xDF, 0x6E, 0x1F, 0xED, 0xD6 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData15Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData15Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002C, 0x00000504, { { 0xA7, 0x91, 0x4F, 0xAD, 0xB1, 0x77, 0x80, 0x3A, 0xC7, 0xDE, 0x35, 0x7A, 0x96, 0x16, 0xD2, 0x13 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData16Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData16Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000079, 0x00000B3D, { { 0xCC, 0x63, 0x5A, 0x11, 0xEE, 0x8A, 0xAE, 0x3A, 0x14, 0xC3, 0xBC, 0xDA, 0xAF, 0x1D, 0xD4, 0x2C } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData17Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData17Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000084, 0x00000911, { { 0x09, 0x1C, 0x4B, 0xD9, 0x0B, 0x2A, 0xD6, 0xC1, 0xE3, 0x8D, 0xFE, 0x43, 0x8F, 0x2E, 0x21, 0x51 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData18Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData18Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000058, 0x000008FA, { { 0xFE, 0x58, 0xD9, 0x67, 0x78, 0x97, 0xE2, 0xCD, 0x82, 0xB8, 0xC9, 0xC0, 0x1F, 0xCA, 0x7C, 0xF5 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData19Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData19Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000009A, 0x00000D6B, { { 0xA1, 0xDD, 0x7B, 0x8B, 0x25, 0xA5, 0x96, 0x5A, 0x33, 0x5E, 0x80, 0x5F, 0xA5, 0xBB, 0xAC, 0x11 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData20Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData20Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000009A, 0x00000D6C, { { 0x19, 0xF9, 0x93, 0x1D, 0x01, 0xEE, 0x7C, 0x8B, 0x6C, 0x3E, 0x35, 0x2C, 0x5C, 0x88, 0xCD, 0xB6 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData21Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData21Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000009A, 0x00000D83, { { 0xCB, 0x4F, 0x21, 0x29, 0x63, 0x5B, 0x8C, 0xF2, 0xBA, 0x03, 0x49, 0xD1, 0xAF, 0x22, 0xB0, 0xD5 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData22Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData22Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x00000200, { { 0x66, 0xEE, 0x45, 0xB1, 0x87, 0x66, 0xC4, 0x55, 0xCE, 0x60, 0x0C, 0x5B, 0xBB, 0x3C, 0x7D, 0x33 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData23Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData23Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x0000020D, { { 0xC4, 0x49, 0xE2, 0x5B, 0x2E, 0x17, 0x68, 0xC4, 0xBA, 0x20, 0xEC, 0xB1, 0xEB, 0x1A, 0xFB, 0xE0 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData24Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData24Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x00000214, { { 0xF1, 0x46, 0x82, 0xEF, 0x6D, 0xCA, 0x68, 0xA2, 0xF3, 0x55, 0x63, 0xD2, 0x13, 0x25, 0x19, 0xF7 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData25Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData25Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x00000256, { { 0x8F, 0xB9, 0xCD, 0xB8, 0x58, 0xCB, 0x90, 0x03, 0xFC, 0xB6, 0x95, 0x6F, 0x52, 0xF8, 0x7D, 0x19 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData26Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData26Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x00000263, { { 0x7A, 0x37, 0x07, 0xC4, 0x67, 0x72, 0x1F, 0xCB, 0xAC, 0x98, 0x46, 0x9A, 0xF3, 0x5F, 0xBA, 0x78 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData27Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData27Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x0000026A, { { 0x80, 0x11, 0xEE, 0x44, 0xDA, 0xE1, 0x26, 0x1F, 0x14, 0x7E, 0x93, 0x99, 0x44, 0x44, 0x9F, 0x85 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData28Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData28Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x000001F6, { { 0x45, 0xA1, 0xA5, 0xEC, 0x85, 0x06, 0xE2, 0x91, 0x28, 0xE0, 0xBB, 0x53, 0x74, 0x44, 0xD9, 0xA6 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData29Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData29Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x000001F9, { { 0x3F, 0x03, 0x2F, 0x8B, 0xFB, 0x6A, 0x97, 0x05, 0xED, 0xBB, 0xD6, 0xA0, 0xF5, 0x7A, 0x6D, 0x08 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData30Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData30Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x00000204, { { 0xA1, 0x37, 0x57, 0xC3, 0x72, 0x08, 0x98, 0xA6, 0xF4, 0x5E, 0x58, 0x9E, 0xF3, 0x11, 0x88, 0x1E } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData31Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData31Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x00000212, { { 0x19, 0xCC, 0x6F, 0xA8, 0x29, 0xB5, 0x3B, 0x15, 0x2F, 0x2C, 0x43, 0xED, 0x7A, 0xF5, 0xC5, 0x69 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData32Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData32Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000037, 0x000006C9, { { 0xBF, 0x65, 0xBA, 0x3F, 0x44, 0xEE, 0xB0, 0x5C, 0x8B, 0xBD, 0x15, 0xAB, 0x03, 0xD1, 0x55, 0x21 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData33Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData33Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000009A, 0x00001585, { { 0xB5, 0x44, 0x06, 0xC9, 0xE8, 0x27, 0x75, 0x6E, 0x63, 0x77, 0xE9, 0xA9, 0x68, 0x73, 0xF5, 0x78 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData34Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData34Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000058, 0x00000B43, { { 0x52, 0xB4, 0x1E, 0x14, 0x88, 0xBD, 0x8A, 0xD7, 0x38, 0xDF, 0x25, 0xB0, 0xAF, 0xAE, 0x76, 0xE1 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData35Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData35Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000037, 0x000005A4, { { 0xFB, 0x82, 0xE7, 0xB2, 0x54, 0xDB, 0xB5, 0xE1, 0xCE, 0xFB, 0xD1, 0x23, 0x39, 0x8F, 0xA1, 0x0D } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData36Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData36Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000042, 0x00000572, { { 0x2C, 0x16, 0xD9, 0xBE, 0xDB, 0xBA, 0x04, 0xCA, 0x97, 0xB5, 0x88, 0x43, 0xA8, 0x62, 0xE2, 0x04 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData37Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData37Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x0000024E, { { 0xFF, 0x28, 0xD8, 0x62, 0xC6, 0xAD, 0x48, 0xC7, 0x31, 0x84, 0x6C, 0xBA, 0x9F, 0x4D, 0x15, 0xDA } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData38Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData38Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000001D9, 0x00001FB1, { { 0x16, 0xB0, 0xDF, 0x86, 0x8C, 0xB3, 0x52, 0xEF, 0x21, 0x04, 0x22, 0x6D, 0xC0, 0x03, 0xB8, 0xC6 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData39Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData39Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000004D, 0x00000582, { { 0x11, 0x6C, 0xBB, 0xF6, 0x1B, 0x3C, 0xAE, 0xAA, 0x40, 0x27, 0x3F, 0x86, 0x33, 0x92, 0xCB, 0xA9 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData40Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData40Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000160, 0x000010A2, { { 0xD9, 0x9D, 0xF1, 0x7D, 0xE1, 0x7C, 0x61, 0xC0, 0xD4, 0xD3, 0x05, 0x0C, 0x79, 0xDD, 0xDB, 0xD1 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData41Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData41Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000037, 0x00000355, { { 0x92, 0x85, 0xBE, 0x5A, 0x38, 0x08, 0xF3, 0xDF, 0xC6, 0x56, 0x74, 0xC3, 0x0B, 0x3F, 0x72, 0x4D } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData42Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData42Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000021, 0x0000010B, { { 0x68, 0xF8, 0x1D, 0x74, 0x6D, 0x32, 0x1E, 0x3A, 0x1C, 0xD1, 0x1D, 0x4B, 0x89, 0x3D, 0x5F, 0x2B } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2IntroAnimData43Provider[] = {
+const ExtractEntrySearchData kEoB2IntroAnimData43Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000037, 0x00000116, { { 0xD5, 0x46, 0xCB, 0x3F, 0x27, 0xBD, 0x2B, 0xD6, 0x35, 0x69, 0x9E, 0x0A, 0x28, 0xDA, 0xC9, 0x84 } } } },
 	EXTRACT_END_ENTRY
 };
@@ -3031,107 +3031,107 @@ const ExtractEntrySearchData kEoB2FinaleCPSFilesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData00Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData00Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000079, 0x00000B66, { { 0x9B, 0x8C, 0x17, 0xFA, 0xD2, 0x4F, 0x4B, 0x0E, 0x3A, 0x43, 0xB1, 0x86, 0x0C, 0xDC, 0x73, 0xAB } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData01Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData01Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000063, 0x00000A03, { { 0xBB, 0x31, 0xEA, 0x35, 0xFB, 0x99, 0x4C, 0x3E, 0x72, 0xBD, 0x36, 0x6B, 0x5C, 0x03, 0x19, 0x7F } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData02Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData02Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002C, 0x000007C2, { { 0xF6, 0x83, 0x37, 0x58, 0x3C, 0x59, 0x84, 0x8F, 0x97, 0x80, 0xE2, 0xD8, 0xFD, 0x77, 0xA9, 0x54 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData03Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData03Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000042, 0x0000092B, { { 0x47, 0xE4, 0x34, 0xE8, 0x72, 0xCC, 0xA4, 0x4A, 0xA4, 0x8F, 0xBA, 0xBC, 0x0C, 0x04, 0x18, 0xAF } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData04Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData04Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000058, 0x0000080B, { { 0x16, 0xDB, 0x77, 0x4C, 0x8E, 0xFD, 0x44, 0xF6, 0x5E, 0x28, 0x0B, 0x74, 0x93, 0x45, 0x8F, 0xD9 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData05Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData05Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000004D, 0x00000C72, { { 0x6C, 0x57, 0x56, 0x7E, 0x87, 0x10, 0x9C, 0xE7, 0x69, 0xAC, 0x3B, 0x3F, 0xF6, 0x43, 0x5C, 0xD4 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData06Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData06Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000016, 0x00000264, { { 0x48, 0x49, 0x5D, 0x78, 0xE2, 0xF1, 0x0D, 0x87, 0xEE, 0xEE, 0xD1, 0xA1, 0xC6, 0x64, 0xCA, 0x13 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData07Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData07Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000042, 0x00000ABE, { { 0xFE, 0xA9, 0x5D, 0x87, 0xAF, 0x55, 0x04, 0x92, 0x41, 0xD3, 0xAD, 0x1D, 0xFF, 0x03, 0x81, 0x3C } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData08Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData08Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000021, 0x000004D8, { { 0x4E, 0xA7, 0xCC, 0x0B, 0x1B, 0x48, 0x22, 0x09, 0x33, 0xF7, 0x23, 0xF1, 0xF5, 0x9F, 0xA5, 0x7B } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData09Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData09Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000058, 0x000004BE, { { 0xF6, 0xEA, 0xA0, 0x7F, 0x54, 0x61, 0x79, 0x4C, 0x71, 0xD7, 0x9B, 0xA6, 0xC3, 0x45, 0xEE, 0x3E } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData10Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData10Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000009A, 0x00000FC4, { { 0xA9, 0xFB, 0x31, 0x55, 0xB8, 0x28, 0x63, 0xC3, 0x4B, 0x9E, 0x7D, 0x41, 0xC7, 0x1F, 0x2F, 0xBD } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData11Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData11Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000C6, 0x0000166B, { { 0xCC, 0x16, 0x50, 0xFF, 0xFF, 0xD5, 0xAE, 0x03, 0x40, 0xA3, 0x9A, 0x1F, 0xF8, 0x8E, 0x23, 0x7A } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData12Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData12Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000FD, 0x00001A69, { { 0x6A, 0x80, 0x89, 0x7E, 0xFC, 0xE4, 0x01, 0xF5, 0xA2, 0x11, 0xE7, 0x26, 0x20, 0x96, 0x62, 0x7B } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData13Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData13Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000FD, 0x00001886, { { 0xF9, 0x5B, 0x62, 0xDD, 0xAB, 0x14, 0x35, 0x77, 0x53, 0x05, 0xDB, 0xC5, 0xFD, 0x4D, 0x4F, 0x12 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData14Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData14Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000108, 0x00001895, { { 0x22, 0xA1, 0x88, 0x69, 0xF9, 0x1C, 0xA2, 0x64, 0x44, 0xCD, 0x00, 0xFA, 0xB1, 0x94, 0xEB, 0x3A } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData15Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData15Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000D1, 0x000016E5, { { 0xD8, 0xE9, 0xA5, 0xEE, 0x54, 0x1B, 0x3E, 0x32, 0xDA, 0x78, 0x90, 0xC2, 0x54, 0xFC, 0xD5, 0x39 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData16Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData16Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000008F, 0x00000C69, { { 0xBC, 0x41, 0xE5, 0xAF, 0x89, 0xE2, 0x54, 0x12, 0x9E, 0xB0, 0x5F, 0x28, 0xFF, 0x92, 0x9D, 0x89 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData17Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData17Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000DC, 0x0000170D, { { 0x7A, 0x7B, 0x74, 0xCB, 0x68, 0xC2, 0xFF, 0xC7, 0xBE, 0x47, 0xE9, 0x43, 0xF7, 0x15, 0x8D, 0x59 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData18Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData18Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000134, 0x00002651, { { 0x71, 0x26, 0x47, 0x0D, 0x7C, 0x96, 0x45, 0x0B, 0x82, 0xD0, 0x37, 0xB9, 0xD4, 0xD0, 0x84, 0xFC } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData19Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData19Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000004D, 0x000009C3, { { 0xDA, 0x96, 0xDF, 0x16, 0xEB, 0x5D, 0x49, 0xA4, 0x3F, 0xD3, 0x31, 0xBE, 0x49, 0x72, 0xF2, 0x71 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2FinaleAnimData20Provider[] = {
+const ExtractEntrySearchData kEoB2FinaleAnimData20Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000021, 0x000003D8, { { 0xD9, 0xC8, 0x58, 0x4B, 0x7D, 0x79, 0x86, 0xCB, 0xEB, 0x77, 0xC2, 0xD4, 0xB7, 0xB4, 0xE9, 0x6A } } } },
 	EXTRACT_END_ENTRY
 };
@@ -4263,50 +4263,50 @@ const ExtractEntry extractProviders[] = {
 
 	{ kEoB2IntroStrings, kEoB2IntroStringsProvider },
 	{ kEoB2IntroCPSFiles, kEoB2IntroCPSFilesProvider },
-	{ kEob2IntroAnimData00, kEob2IntroAnimData00Provider },
-	{ kEob2IntroAnimData01, kEob2IntroAnimData01Provider },
-	{ kEob2IntroAnimData02, kEob2IntroAnimData02Provider },
-	{ kEob2IntroAnimData03, kEob2IntroAnimData03Provider },
-	{ kEob2IntroAnimData04, kEob2IntroAnimData04Provider },
-	{ kEob2IntroAnimData05, kEob2IntroAnimData05Provider },
-	{ kEob2IntroAnimData06, kEob2IntroAnimData06Provider },
-	{ kEob2IntroAnimData07, kEob2IntroAnimData07Provider },
-	{ kEob2IntroAnimData08, kEob2IntroAnimData08Provider },
-	{ kEob2IntroAnimData09, kEob2IntroAnimData09Provider },
-	{ kEob2IntroAnimData10, kEob2IntroAnimData10Provider },
-	{ kEob2IntroAnimData11, kEob2IntroAnimData11Provider },
-	{ kEob2IntroAnimData12, kEob2IntroAnimData12Provider },
-	{ kEob2IntroAnimData13, kEob2IntroAnimData13Provider },
-	{ kEob2IntroAnimData14, kEob2IntroAnimData14Provider },
-	{ kEob2IntroAnimData15, kEob2IntroAnimData15Provider },
-	{ kEob2IntroAnimData16, kEob2IntroAnimData16Provider },
-	{ kEob2IntroAnimData17, kEob2IntroAnimData17Provider },
-	{ kEob2IntroAnimData18, kEob2IntroAnimData18Provider },
-	{ kEob2IntroAnimData19, kEob2IntroAnimData19Provider },
-	{ kEob2IntroAnimData20, kEob2IntroAnimData20Provider },
-	{ kEob2IntroAnimData21, kEob2IntroAnimData21Provider },
-	{ kEob2IntroAnimData22, kEob2IntroAnimData22Provider },
-	{ kEob2IntroAnimData23, kEob2IntroAnimData23Provider },
-	{ kEob2IntroAnimData24, kEob2IntroAnimData24Provider },
-	{ kEob2IntroAnimData25, kEob2IntroAnimData25Provider },
-	{ kEob2IntroAnimData26, kEob2IntroAnimData26Provider },
-	{ kEob2IntroAnimData27, kEob2IntroAnimData27Provider },
-	{ kEob2IntroAnimData28, kEob2IntroAnimData28Provider },
-	{ kEob2IntroAnimData29, kEob2IntroAnimData29Provider },
-	{ kEob2IntroAnimData30, kEob2IntroAnimData30Provider },
-	{ kEob2IntroAnimData31, kEob2IntroAnimData31Provider },
-	{ kEob2IntroAnimData32, kEob2IntroAnimData32Provider },
-	{ kEob2IntroAnimData33, kEob2IntroAnimData33Provider },
-	{ kEob2IntroAnimData34, kEob2IntroAnimData34Provider },
-	{ kEob2IntroAnimData35, kEob2IntroAnimData35Provider },
-	{ kEob2IntroAnimData36, kEob2IntroAnimData36Provider },
-	{ kEob2IntroAnimData37, kEob2IntroAnimData37Provider },
-	{ kEob2IntroAnimData38, kEob2IntroAnimData38Provider },
-	{ kEob2IntroAnimData39, kEob2IntroAnimData39Provider },
-	{ kEob2IntroAnimData40, kEob2IntroAnimData40Provider },
-	{ kEob2IntroAnimData41, kEob2IntroAnimData41Provider },
-	{ kEob2IntroAnimData42, kEob2IntroAnimData42Provider },
-	{ kEob2IntroAnimData43, kEob2IntroAnimData43Provider },
+	{ kEoB2IntroAnimData00, kEoB2IntroAnimData00Provider },
+	{ kEoB2IntroAnimData01, kEoB2IntroAnimData01Provider },
+	{ kEoB2IntroAnimData02, kEoB2IntroAnimData02Provider },
+	{ kEoB2IntroAnimData03, kEoB2IntroAnimData03Provider },
+	{ kEoB2IntroAnimData04, kEoB2IntroAnimData04Provider },
+	{ kEoB2IntroAnimData05, kEoB2IntroAnimData05Provider },
+	{ kEoB2IntroAnimData06, kEoB2IntroAnimData06Provider },
+	{ kEoB2IntroAnimData07, kEoB2IntroAnimData07Provider },
+	{ kEoB2IntroAnimData08, kEoB2IntroAnimData08Provider },
+	{ kEoB2IntroAnimData09, kEoB2IntroAnimData09Provider },
+	{ kEoB2IntroAnimData10, kEoB2IntroAnimData10Provider },
+	{ kEoB2IntroAnimData11, kEoB2IntroAnimData11Provider },
+	{ kEoB2IntroAnimData12, kEoB2IntroAnimData12Provider },
+	{ kEoB2IntroAnimData13, kEoB2IntroAnimData13Provider },
+	{ kEoB2IntroAnimData14, kEoB2IntroAnimData14Provider },
+	{ kEoB2IntroAnimData15, kEoB2IntroAnimData15Provider },
+	{ kEoB2IntroAnimData16, kEoB2IntroAnimData16Provider },
+	{ kEoB2IntroAnimData17, kEoB2IntroAnimData17Provider },
+	{ kEoB2IntroAnimData18, kEoB2IntroAnimData18Provider },
+	{ kEoB2IntroAnimData19, kEoB2IntroAnimData19Provider },
+	{ kEoB2IntroAnimData20, kEoB2IntroAnimData20Provider },
+	{ kEoB2IntroAnimData21, kEoB2IntroAnimData21Provider },
+	{ kEoB2IntroAnimData22, kEoB2IntroAnimData22Provider },
+	{ kEoB2IntroAnimData23, kEoB2IntroAnimData23Provider },
+	{ kEoB2IntroAnimData24, kEoB2IntroAnimData24Provider },
+	{ kEoB2IntroAnimData25, kEoB2IntroAnimData25Provider },
+	{ kEoB2IntroAnimData26, kEoB2IntroAnimData26Provider },
+	{ kEoB2IntroAnimData27, kEoB2IntroAnimData27Provider },
+	{ kEoB2IntroAnimData28, kEoB2IntroAnimData28Provider },
+	{ kEoB2IntroAnimData29, kEoB2IntroAnimData29Provider },
+	{ kEoB2IntroAnimData30, kEoB2IntroAnimData30Provider },
+	{ kEoB2IntroAnimData31, kEoB2IntroAnimData31Provider },
+	{ kEoB2IntroAnimData32, kEoB2IntroAnimData32Provider },
+	{ kEoB2IntroAnimData33, kEoB2IntroAnimData33Provider },
+	{ kEoB2IntroAnimData34, kEoB2IntroAnimData34Provider },
+	{ kEoB2IntroAnimData35, kEoB2IntroAnimData35Provider },
+	{ kEoB2IntroAnimData36, kEoB2IntroAnimData36Provider },
+	{ kEoB2IntroAnimData37, kEoB2IntroAnimData37Provider },
+	{ kEoB2IntroAnimData38, kEoB2IntroAnimData38Provider },
+	{ kEoB2IntroAnimData39, kEoB2IntroAnimData39Provider },
+	{ kEoB2IntroAnimData40, kEoB2IntroAnimData40Provider },
+	{ kEoB2IntroAnimData41, kEoB2IntroAnimData41Provider },
+	{ kEoB2IntroAnimData42, kEoB2IntroAnimData42Provider },
+	{ kEoB2IntroAnimData43, kEoB2IntroAnimData43Provider },
 	{ kEoB2IntroShapes00, kEoB2IntroShapes00Provider },
 	{ kEoB2IntroShapes01, kEoB2IntroShapes01Provider },
 	{ kEoB2IntroShapes04, kEoB2IntroShapes04Provider },
@@ -4315,27 +4315,27 @@ const ExtractEntry extractProviders[] = {
 	{ kEoB2FinaleStrings, kEoB2FinaleStringsProvider },
 	{ kEoB2CreditsData, kEoB2CreditsDataProvider },
 	{ kEoB2FinaleCPSFiles, kEoB2FinaleCPSFilesProvider },
-	{ kEob2FinaleAnimData00, kEob2FinaleAnimData00Provider },
-	{ kEob2FinaleAnimData01, kEob2FinaleAnimData01Provider },
-	{ kEob2FinaleAnimData02, kEob2FinaleAnimData02Provider },
-	{ kEob2FinaleAnimData03, kEob2FinaleAnimData03Provider },
-	{ kEob2FinaleAnimData04, kEob2FinaleAnimData04Provider },
-	{ kEob2FinaleAnimData05, kEob2FinaleAnimData05Provider },
-	{ kEob2FinaleAnimData06, kEob2FinaleAnimData06Provider },
-	{ kEob2FinaleAnimData07, kEob2FinaleAnimData07Provider },
-	{ kEob2FinaleAnimData08, kEob2FinaleAnimData08Provider },
-	{ kEob2FinaleAnimData09, kEob2FinaleAnimData09Provider },
-	{ kEob2FinaleAnimData10, kEob2FinaleAnimData10Provider },
-	{ kEob2FinaleAnimData11, kEob2FinaleAnimData11Provider },
-	{ kEob2FinaleAnimData12, kEob2FinaleAnimData12Provider },
-	{ kEob2FinaleAnimData13, kEob2FinaleAnimData13Provider },
-	{ kEob2FinaleAnimData14, kEob2FinaleAnimData14Provider },
-	{ kEob2FinaleAnimData15, kEob2FinaleAnimData15Provider },
-	{ kEob2FinaleAnimData16, kEob2FinaleAnimData16Provider },
-	{ kEob2FinaleAnimData17, kEob2FinaleAnimData17Provider },
-	{ kEob2FinaleAnimData18, kEob2FinaleAnimData18Provider },
-	{ kEob2FinaleAnimData19, kEob2FinaleAnimData19Provider },
-	{ kEob2FinaleAnimData20, kEob2FinaleAnimData20Provider },
+	{ kEoB2FinaleAnimData00, kEoB2FinaleAnimData00Provider },
+	{ kEoB2FinaleAnimData01, kEoB2FinaleAnimData01Provider },
+	{ kEoB2FinaleAnimData02, kEoB2FinaleAnimData02Provider },
+	{ kEoB2FinaleAnimData03, kEoB2FinaleAnimData03Provider },
+	{ kEoB2FinaleAnimData04, kEoB2FinaleAnimData04Provider },
+	{ kEoB2FinaleAnimData05, kEoB2FinaleAnimData05Provider },
+	{ kEoB2FinaleAnimData06, kEoB2FinaleAnimData06Provider },
+	{ kEoB2FinaleAnimData07, kEoB2FinaleAnimData07Provider },
+	{ kEoB2FinaleAnimData08, kEoB2FinaleAnimData08Provider },
+	{ kEoB2FinaleAnimData09, kEoB2FinaleAnimData09Provider },
+	{ kEoB2FinaleAnimData10, kEoB2FinaleAnimData10Provider },
+	{ kEoB2FinaleAnimData11, kEoB2FinaleAnimData11Provider },
+	{ kEoB2FinaleAnimData12, kEoB2FinaleAnimData12Provider },
+	{ kEoB2FinaleAnimData13, kEoB2FinaleAnimData13Provider },
+	{ kEoB2FinaleAnimData14, kEoB2FinaleAnimData14Provider },
+	{ kEoB2FinaleAnimData15, kEoB2FinaleAnimData15Provider },
+	{ kEoB2FinaleAnimData16, kEoB2FinaleAnimData16Provider },
+	{ kEoB2FinaleAnimData17, kEoB2FinaleAnimData17Provider },
+	{ kEoB2FinaleAnimData18, kEoB2FinaleAnimData18Provider },
+	{ kEoB2FinaleAnimData19, kEoB2FinaleAnimData19Provider },
+	{ kEoB2FinaleAnimData20, kEoB2FinaleAnimData20Provider },
 	{ kEoB2FinaleShapes00, kEoB2FinaleShapes00Provider },
 	{ kEoB2FinaleShapes03, kEoB2FinaleShapes03Provider },
 	{ kEoB2FinaleShapes07, kEoB2FinaleShapes07Provider },

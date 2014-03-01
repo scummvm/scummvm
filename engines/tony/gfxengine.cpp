@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -352,11 +352,10 @@ void RMGfxEngine::initCustomDll() {
 }
 
 void RMGfxEngine::itemIrq(uint32 dwItem, int nPattern, int nStatus) {
-	RMItem *item;
 	assert(GLOBALS._gfxEngine);
 
 	if (GLOBALS._gfxEngine->_bLocationLoaded) {
-		item = GLOBALS._gfxEngine->_loc.getItemFromCode(dwItem);
+		RMItem *item = GLOBALS._gfxEngine->_loc.getItemFromCode(dwItem);
 		if (item != NULL) {
 			if (nPattern != -1) {
 				item->setPattern(nPattern, true);
@@ -452,8 +451,8 @@ void RMGfxEngine::unloadLocation(CORO_PARAM, bool bDoOnExit, uint32 *result) {
 
 void RMGfxEngine::init() {
 	// Screen loading
-	RMResRaw *raw;
 	RMGfxSourceBuffer16 *load = NULL;
+	RMResRaw *raw;
 	INIT_GFX16_FROMRAW(20038, load);
 	_bigBuf.addPrim(new RMGfxPrimitive(load));
 	_bigBuf.drawOT(Common::nullContext);
@@ -722,9 +721,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 
 	if (_ctx->ver >= 5) {
 		// Version 5
-		bool bStat = false;
-
-		bStat = _ctx->f->readByte();
+		bool bStat = _ctx->f->readByte();
 		_tony.setShepherdess(bStat);
 		bStat = _ctx->f->readByte();
 		_inter.setPerorate(bStat);

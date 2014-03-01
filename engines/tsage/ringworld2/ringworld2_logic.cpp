@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -814,7 +814,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 		_chargedPowerCapsule(1, 12),
 		_aerosol(1, 13),
 		_remoteControl(1, 14),
-		_opticalFibre(1, 15),
+		_opticalFiber(1, 15),
 		_clamp(1, 16),
 		_attractorHarness(1, 17),
 		_fuelCell(2, 2),
@@ -869,7 +869,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 	_itemList.push_back(&_chargedPowerCapsule);
 	_itemList.push_back(&_aerosol);
 	_itemList.push_back(&_remoteControl);
-	_itemList.push_back(&_opticalFibre);
+	_itemList.push_back(&_opticalFiber);
 	_itemList.push_back(&_clamp);
 	_itemList.push_back(&_attractorHarness);
 	_itemList.push_back(&_fuelCell);
@@ -933,7 +933,7 @@ void Ringworld2InvObjectList::reset() {
 	setObjectScene(R2_CHARGED_POWER_CAPSULE, 400);
 	setObjectScene(R2_AEROSOL, 500);
 	setObjectScene(R2_REMOTE_CONTROL, 1550);
-	setObjectScene(R2_OPTICAL_FIBRE, 850);
+	setObjectScene(R2_OPTICAL_FIBER, 850);
 	setObjectScene(R2_CLAMP, 850);
 	setObjectScene(R2_ATTRACTOR_CABLE_HARNESS, 0);
 	setObjectScene(R2_FUEL_CELL, 1550);
@@ -1215,6 +1215,12 @@ void Ringworld2Game::processEvent(Event &event) {
 			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
+		case Common::KEYCODE_F5:
+			// F5 - Save
+			saveGame();
+			R2_GLOBALS._events.setCursorFromFlag();
+			break;
+
 		case Common::KEYCODE_F7:
 			// F7 - Restore
 			restoreGame();
@@ -1426,7 +1432,7 @@ void SceneExit::process(Event &event) {
 	if (!R2_GLOBALS._insetUp) {
 		SceneArea::process(event);
 
-		if (_enabled) {
+		if (_enabled && R2_GLOBALS._player._enabled) {
 			if (event.eventType == EVENT_BUTTON_DOWN) {
 				if (!_bounds.contains(mousePos))
 					_moving = false;

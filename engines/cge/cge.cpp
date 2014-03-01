@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -73,7 +73,7 @@ void CGEEngine::initSceneValues() {
 void CGEEngine::init() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::setup()");
 
-	// Initialise fields
+	// Initialize fields
 	_lastFrame = 0;
 	_lastTick = 0;
 	_hero = NULL;
@@ -87,7 +87,7 @@ void CGEEngine::init() {
 	// Create debugger console
 	_console = new CGEConsole(this);
 
-	// Initialise engine objects
+	// Initialize engine objects
 	_font = new Font(this, "CGE");
 	_text = new Text(this, "CGE");
 	_talk = NULL;

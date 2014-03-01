@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -599,13 +599,17 @@ namespace Fullpipe {
 #define MSG_SC9_SHOWBALL 936
 #define MSG_SC9_STARTTIOTIA 4942
 #define MSG_SC9_TOLADDER 4206
+#define MV_BALL9_EXPLODE 939
 #define MV_GLT_FLYAWAY 931
 #define MV_MAN9_SHOOT 922
 #define MV_VSN_CYCLE2 2987
 #define PIC_SC9_LADDER_R 2700
+#define QU_SC9_BALLEXPLODE 938
+#define QU_SC9_EATBALL 942
 #define QU_TTA9_GOL 4937
 #define SND_9_006 3650
 #define SND_9_018 4200
+#define SND_9_019 4201
 #define ST_GLT_SIT 926
 #define ST_GRT9_GRIT 2722
 #define ST_GRT9_NORM 2721
@@ -868,10 +872,26 @@ namespace Fullpipe {
 #define ST_SMG_SIT 1399
 
 // Scene 18
+#define ANI_BOY18 1477
+#define ANI_DOMINO_18 3174
+#define ANI_GIRL18 1484
+#define ANI_KRESLO 1459
+#define ANI_WHIRLIGIG_18 829
+#define MV_WHR18_SPIN 1300
+#define PIC_SC18_DOMIN 5184
+#define PIC_SC18_LADDER1 1471
+#define PIC_SC18_LADDER2 1472
+#define PIC_SC18_LADDER3 3299
 #define PIC_SC18_RTRUBA 1520
+#define SND_18_006 3906
+#define SND_18_010 4994
 
 // Scene 19
+#define ANI_WHIRLGIG_19 1302
+#define MV_WHR19_SPIN 1317
 #define PIC_SC19_RTRUBA3 1515
+#define SND_19_015 3928
+#define SND_19_016 4995
 
 // Scene 20
 #define ANI_GRANDMA_20 2427

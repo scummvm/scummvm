@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,7 +28,7 @@
 
 #include "common/system.h"
 #include "graphics/palette.h"
-#include "graphics/decoders/pcx.h"
+#include "image/pcx.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "engines/util.h"
@@ -301,7 +301,7 @@ void GraphicsManager::fillSurface(byte *surface, byte *col, int size) {
 
 void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
 	Common::File f;
-	Graphics::PCXDecoder pcxDecoder;
+	Image::PCXDecoder pcxDecoder;
 
 	// Clear the passed surface
 	memset(surface, 0, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);

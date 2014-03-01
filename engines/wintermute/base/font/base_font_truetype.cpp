@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -607,7 +607,7 @@ bool BaseFontTT::initFont() {
 			if (themeArchive->hasFile(fallbackFilename)) {
 				file = nullptr;
 				file = themeArchive->createReadStreamForMember(fallbackFilename);
-				_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
+				_deletableFont = Graphics::loadTTFFont(*file, _fontHeight, 96); // Use the same dpi as WME (96 vs 72).
 				_font = _deletableFont;
 			}
 			// We're not using BaseFileManager, so clean up after ourselves:

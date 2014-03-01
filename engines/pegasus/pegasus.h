@@ -272,6 +272,7 @@ private:
 	uint getNeighborhoodCD(const NeighborhoodID neighborhood) const;
 	uint _currentCD;
 	void initKeymap();
+	InputBits getInputFilter();
 
 	// Menu
 	GameMenu *_gameMenu;

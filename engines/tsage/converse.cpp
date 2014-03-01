@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -449,7 +449,12 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 
 	// Draw the dialog
 	draw();
+
 	g_globals->_events.showCursor();
+
+	// Force the display of an arrow cursor during discussions in R2R
+	if (g_vm->getGameID() == GType_Ringworld2)
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	// WORKAROUND: On-screen dialogs are really meant to use a GfxManager instance
 	// for their lifetime, which prevents saving or loading. Since I don't want to spend a lot

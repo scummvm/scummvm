@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -491,50 +491,50 @@ const ExtractFilename extractFilenames[] = {
 
 	{ kEoB2IntroStrings, k2TypeSfxList, true },
 	{ kEoB2IntroCPSFiles, kTypeStringList, true },
-	{ kEob2IntroAnimData00, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData01, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData02, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData03, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData04, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData05, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData06, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData07, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData08, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData09, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData10, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData11, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData12, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData13, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData14, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData15, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData16, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData17, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData18, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData19, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData20, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData21, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData22, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData23, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData24, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData25, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData26, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData27, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData28, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData29, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData30, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData31, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData32, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData33, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData34, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData35, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData36, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData37, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData38, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData39, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData40, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData41, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData42, kEoB2TypeSeqData, false },
-	{ kEob2IntroAnimData43, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData00, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData01, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData02, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData03, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData04, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData05, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData06, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData07, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData08, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData09, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData10, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData11, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData12, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData13, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData14, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData15, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData16, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData17, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData18, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData19, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData20, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData21, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData22, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData23, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData24, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData25, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData26, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData27, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData28, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData29, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData30, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData31, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData32, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData33, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData34, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData35, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData36, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData37, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData38, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData39, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData40, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData41, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData42, kEoB2TypeSeqData, false },
+	{ kEoB2IntroAnimData43, kEoB2TypeSeqData, false },
 	{ kEoB2IntroShapes00, kEoB2TypeShapeData, false },
 	{ kEoB2IntroShapes01, kEoB2TypeShapeData, false },
 	{ kEoB2IntroShapes04, kEoB2TypeShapeData, false },
@@ -543,27 +543,27 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB2FinaleStrings, k2TypeSfxList, true },
 	{ kEoB2CreditsData, kTypeRawData, true },
 	{ kEoB2FinaleCPSFiles, kTypeStringList, true },
-	{ kEob2FinaleAnimData00, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData01, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData02, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData03, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData04, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData05, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData06, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData07, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData08, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData09, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData10, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData11, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData12, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData13, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData14, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData15, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData16, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData17, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData18, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData19, kEoB2TypeSeqData, false },
-	{ kEob2FinaleAnimData20, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData00, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData01, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData02, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData03, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData04, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData05, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData06, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData07, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData08, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData09, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData10, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData11, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData12, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData13, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData14, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData15, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData16, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData17, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData18, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData19, kEoB2TypeSeqData, false },
+	{ kEoB2FinaleAnimData20, kEoB2TypeSeqData, false },
 	{ kEoB2FinaleShapes00, kEoB2TypeShapeData, false },
 	{ kEoB2FinaleShapes03, kEoB2TypeShapeData, false },
 	{ kEoB2FinaleShapes07, kEoB2TypeShapeData, false },
@@ -1858,94 +1858,94 @@ const char *getIdString(const int id) {
 		return "kEoB2IntroStrings";
 	case kEoB2IntroCPSFiles:
 		return "kEoB2IntroCPSFiles";
-	case kEob2IntroAnimData00:
-		return "kEob2IntroAnimData00";
-	case kEob2IntroAnimData01:
-		return "kEob2IntroAnimData01";
-	case kEob2IntroAnimData02:
-		return "kEob2IntroAnimData02";
-	case kEob2IntroAnimData03:
-		return "kEob2IntroAnimData03";
-	case kEob2IntroAnimData04:
-		return "kEob2IntroAnimData04";
-	case kEob2IntroAnimData05:
-		return "kEob2IntroAnimData05";
-	case kEob2IntroAnimData06:
-		return "kEob2IntroAnimData06";
-	case kEob2IntroAnimData07:
-		return "kEob2IntroAnimData07";
-	case kEob2IntroAnimData08:
-		return "kEob2IntroAnimData08";
-	case kEob2IntroAnimData09:
-		return "kEob2IntroAnimData09";
-	case kEob2IntroAnimData10:
-		return "kEob2IntroAnimData10";
-	case kEob2IntroAnimData11:
-		return "kEob2IntroAnimData11";
-	case kEob2IntroAnimData12:
-		return "kEob2IntroAnimData12";
-	case kEob2IntroAnimData13:
-		return "kEob2IntroAnimData13";
-	case kEob2IntroAnimData14:
-		return "kEob2IntroAnimData14";
-	case kEob2IntroAnimData15:
-		return "kEob2IntroAnimData15";
-	case kEob2IntroAnimData16:
-		return "kEob2IntroAnimData16";
-	case kEob2IntroAnimData17:
-		return "kEob2IntroAnimData17";
-	case kEob2IntroAnimData18:
-		return "kEob2IntroAnimData18";
-	case kEob2IntroAnimData19:
-		return "kEob2IntroAnimData19";
-	case kEob2IntroAnimData20:
-		return "kEob2IntroAnimData20";
-	case kEob2IntroAnimData21:
-		return "kEob2IntroAnimData21";
-	case kEob2IntroAnimData22:
-		return "kEob2IntroAnimData22";
-	case kEob2IntroAnimData23:
-		return "kEob2IntroAnimData23";
-	case kEob2IntroAnimData24:
-		return "kEob2IntroAnimData24";
-	case kEob2IntroAnimData25:
-		return "kEob2IntroAnimData25";
-	case kEob2IntroAnimData26:
-		return "kEob2IntroAnimData26";
-	case kEob2IntroAnimData27:
-		return "kEob2IntroAnimData27";
-	case kEob2IntroAnimData28:
-		return "kEob2IntroAnimData28";
-	case kEob2IntroAnimData29:
-		return "kEob2IntroAnimData29";
-	case kEob2IntroAnimData30:
-		return "kEob2IntroAnimData30";
-	case kEob2IntroAnimData31:
-		return "kEob2IntroAnimData31";
-	case kEob2IntroAnimData32:
-		return "kEob2IntroAnimData32";
-	case kEob2IntroAnimData33:
-		return "kEob2IntroAnimData33";
-	case kEob2IntroAnimData34:
-		return "kEob2IntroAnimData34";
-	case kEob2IntroAnimData35:
-		return "kEob2IntroAnimData35";
-	case kEob2IntroAnimData36:
-		return "kEob2IntroAnimData36";
-	case kEob2IntroAnimData37:
-		return "kEob2IntroAnimData37";
-	case kEob2IntroAnimData38:
-		return "kEob2IntroAnimData38";
-	case kEob2IntroAnimData39:
-		return "kEob2IntroAnimData39";
-	case kEob2IntroAnimData40:
-		return "kEob2IntroAnimData40";
-	case kEob2IntroAnimData41:
-		return "kEob2IntroAnimData41";
-	case kEob2IntroAnimData42:
-		return "kEob2IntroAnimData42";
-	case kEob2IntroAnimData43:
-		return "kEob2IntroAnimData43";
+	case kEoB2IntroAnimData00:
+		return "kEoB2IntroAnimData00";
+	case kEoB2IntroAnimData01:
+		return "kEoB2IntroAnimData01";
+	case kEoB2IntroAnimData02:
+		return "kEoB2IntroAnimData02";
+	case kEoB2IntroAnimData03:
+		return "kEoB2IntroAnimData03";
+	case kEoB2IntroAnimData04:
+		return "kEoB2IntroAnimData04";
+	case kEoB2IntroAnimData05:
+		return "kEoB2IntroAnimData05";
+	case kEoB2IntroAnimData06:
+		return "kEoB2IntroAnimData06";
+	case kEoB2IntroAnimData07:
+		return "kEoB2IntroAnimData07";
+	case kEoB2IntroAnimData08:
+		return "kEoB2IntroAnimData08";
+	case kEoB2IntroAnimData09:
+		return "kEoB2IntroAnimData09";
+	case kEoB2IntroAnimData10:
+		return "kEoB2IntroAnimData10";
+	case kEoB2IntroAnimData11:
+		return "kEoB2IntroAnimData11";
+	case kEoB2IntroAnimData12:
+		return "kEoB2IntroAnimData12";
+	case kEoB2IntroAnimData13:
+		return "kEoB2IntroAnimData13";
+	case kEoB2IntroAnimData14:
+		return "kEoB2IntroAnimData14";
+	case kEoB2IntroAnimData15:
+		return "kEoB2IntroAnimData15";
+	case kEoB2IntroAnimData16:
+		return "kEoB2IntroAnimData16";
+	case kEoB2IntroAnimData17:
+		return "kEoB2IntroAnimData17";
+	case kEoB2IntroAnimData18:
+		return "kEoB2IntroAnimData18";
+	case kEoB2IntroAnimData19:
+		return "kEoB2IntroAnimData19";
+	case kEoB2IntroAnimData20:
+		return "kEoB2IntroAnimData20";
+	case kEoB2IntroAnimData21:
+		return "kEoB2IntroAnimData21";
+	case kEoB2IntroAnimData22:
+		return "kEoB2IntroAnimData22";
+	case kEoB2IntroAnimData23:
+		return "kEoB2IntroAnimData23";
+	case kEoB2IntroAnimData24:
+		return "kEoB2IntroAnimData24";
+	case kEoB2IntroAnimData25:
+		return "kEoB2IntroAnimData25";
+	case kEoB2IntroAnimData26:
+		return "kEoB2IntroAnimData26";
+	case kEoB2IntroAnimData27:
+		return "kEoB2IntroAnimData27";
+	case kEoB2IntroAnimData28:
+		return "kEoB2IntroAnimData28";
+	case kEoB2IntroAnimData29:
+		return "kEoB2IntroAnimData29";
+	case kEoB2IntroAnimData30:
+		return "kEoB2IntroAnimData30";
+	case kEoB2IntroAnimData31:
+		return "kEoB2IntroAnimData31";
+	case kEoB2IntroAnimData32:
+		return "kEoB2IntroAnimData32";
+	case kEoB2IntroAnimData33:
+		return "kEoB2IntroAnimData33";
+	case kEoB2IntroAnimData34:
+		return "kEoB2IntroAnimData34";
+	case kEoB2IntroAnimData35:
+		return "kEoB2IntroAnimData35";
+	case kEoB2IntroAnimData36:
+		return "kEoB2IntroAnimData36";
+	case kEoB2IntroAnimData37:
+		return "kEoB2IntroAnimData37";
+	case kEoB2IntroAnimData38:
+		return "kEoB2IntroAnimData38";
+	case kEoB2IntroAnimData39:
+		return "kEoB2IntroAnimData39";
+	case kEoB2IntroAnimData40:
+		return "kEoB2IntroAnimData40";
+	case kEoB2IntroAnimData41:
+		return "kEoB2IntroAnimData41";
+	case kEoB2IntroAnimData42:
+		return "kEoB2IntroAnimData42";
+	case kEoB2IntroAnimData43:
+		return "kEoB2IntroAnimData43";
 	case kEoB2IntroShapes00:
 		return "kEoB2IntroShapes00";
 	case kEoB2IntroShapes01:
@@ -1960,48 +1960,48 @@ const char *getIdString(const int id) {
 		return "kEoB2CreditsData";
 	case kEoB2FinaleCPSFiles:
 		return "kEoB2FinaleCPSFiles";
-	case kEob2FinaleAnimData00:
-		return "kEob2FinaleAnimData00";
-	case kEob2FinaleAnimData01:
-		return "kEob2FinaleAnimData01";
-	case kEob2FinaleAnimData02:
-		return "kEob2FinaleAnimData02";
-	case kEob2FinaleAnimData03:
-		return "kEob2FinaleAnimData03";
-	case kEob2FinaleAnimData04:
-		return "kEob2FinaleAnimData04";
-	case kEob2FinaleAnimData05:
-		return "kEob2FinaleAnimData05";
-	case kEob2FinaleAnimData06:
-		return "kEob2FinaleAnimData06";
-	case kEob2FinaleAnimData07:
-		return "kEob2FinaleAnimData07";
-	case kEob2FinaleAnimData08:
-		return "kEob2FinaleAnimData08";
-	case kEob2FinaleAnimData09:
-		return "kEob2FinaleAnimData09";
-	case kEob2FinaleAnimData10:
-		return "kEob2FinaleAnimData10";
-	case kEob2FinaleAnimData11:
-		return "kEob2FinaleAnimData11";
-	case kEob2FinaleAnimData12:
-		return "kEob2FinaleAnimData12";
-	case kEob2FinaleAnimData13:
-		return "kEob2FinaleAnimData13";
-	case kEob2FinaleAnimData14:
-		return "kEob2FinaleAnimData14";
-	case kEob2FinaleAnimData15:
-		return "kEob2FinaleAnimData15";
-	case kEob2FinaleAnimData16:
-		return "kEob2FinaleAnimData16";
-	case kEob2FinaleAnimData17:
-		return "kEob2FinaleAnimData17";
-	case kEob2FinaleAnimData18:
-		return "kEob2FinaleAnimData18";
-	case kEob2FinaleAnimData19:
-		return "kEob2FinaleAnimData19";
-	case kEob2FinaleAnimData20:
-		return "kEob2FinaleAnimData20";
+	case kEoB2FinaleAnimData00:
+		return "kEoB2FinaleAnimData00";
+	case kEoB2FinaleAnimData01:
+		return "kEoB2FinaleAnimData01";
+	case kEoB2FinaleAnimData02:
+		return "kEoB2FinaleAnimData02";
+	case kEoB2FinaleAnimData03:
+		return "kEoB2FinaleAnimData03";
+	case kEoB2FinaleAnimData04:
+		return "kEoB2FinaleAnimData04";
+	case kEoB2FinaleAnimData05:
+		return "kEoB2FinaleAnimData05";
+	case kEoB2FinaleAnimData06:
+		return "kEoB2FinaleAnimData06";
+	case kEoB2FinaleAnimData07:
+		return "kEoB2FinaleAnimData07";
+	case kEoB2FinaleAnimData08:
+		return "kEoB2FinaleAnimData08";
+	case kEoB2FinaleAnimData09:
+		return "kEoB2FinaleAnimData09";
+	case kEoB2FinaleAnimData10:
+		return "kEoB2FinaleAnimData10";
+	case kEoB2FinaleAnimData11:
+		return "kEoB2FinaleAnimData11";
+	case kEoB2FinaleAnimData12:
+		return "kEoB2FinaleAnimData12";
+	case kEoB2FinaleAnimData13:
+		return "kEoB2FinaleAnimData13";
+	case kEoB2FinaleAnimData14:
+		return "kEoB2FinaleAnimData14";
+	case kEoB2FinaleAnimData15:
+		return "kEoB2FinaleAnimData15";
+	case kEoB2FinaleAnimData16:
+		return "kEoB2FinaleAnimData16";
+	case kEoB2FinaleAnimData17:
+		return "kEoB2FinaleAnimData17";
+	case kEoB2FinaleAnimData18:
+		return "kEoB2FinaleAnimData18";
+	case kEoB2FinaleAnimData19:
+		return "kEoB2FinaleAnimData19";
+	case kEoB2FinaleAnimData20:
+		return "kEoB2FinaleAnimData20";
 	case kEoB2FinaleShapes00:
 		return "kEoB2FinaleShapes00";
 	case kEoB2FinaleShapes03:

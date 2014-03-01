@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -157,23 +157,26 @@ Vars::Vars() {
 	scene08_manOffsetY = 0;
 
 	scene09_flyingBall = 0;
-	scene09_var05 = 0;
-	scene09_glotatel = 0;
+	scene09_numSwallenBalls = 0;
+	scene09_gulper = 0;
 	scene09_spitter = 0;
 	scene09_grit = 0;
-	scene09_var02 = 0;
-	scene09_var08 = 1;
-	scene09_var09 = 0;
-	scene09_var10 = -1;
-	scene09_var11 = -1;
-	scene09_var12 = -1000;
+	scene09_dudeY = 0;
+	scene09_gulperIsPresent = true;
+	scene09_dudeIsOnLadder = false;
+	scene09_interactingHanger = -1;
+	scene09_intHangerPhase = -1;
+	scene09_intHangerMaxPhase = -1000;
 	scene09_numMovingHangers = 0;
-	scene09_var13 = 0;
-	scene09_var15 = 0;
-	scene09_var17 = 0;
-	scene09_var19 = 0;
-	scene09_var18.x = 0;
-	scene09_var18.y = -15;
+	scene09_clickY = 0;
+	scene09_hangerOffsets[0].x = 0;
+	scene09_hangerOffsets[0].y = -15;
+	scene09_hangerOffsets[1].x = 15;
+	scene09_hangerOffsets[1].y = 0;
+	scene09_hangerOffsets[2].x = 0;
+	scene09_hangerOffsets[2].y = 0;
+	scene09_hangerOffsets[3].x = 0;
+	scene09_hangerOffsets[3].y = 0;
 
 	scene10_gum = 0;
 	scene10_packet = 0;
@@ -268,6 +271,41 @@ Vars::Vars() {
 	scene17_sceneEdgeX = 0;
 
 	scene18_var01 = 0;
+	scene18_var16 = 200;
+	scene18_var17 = 200;
+	scene18_var18 = 300;
+	scene18_var19 = 300;
+	scene18_whirlgig = 0;
+	scene18_var20 = 1032;
+	scene18_var04 = -318;
+	scene18_var08 = 0;
+	scene18_var09 = 0;
+	scene18_var03 = false;
+	scene18_var21 = 0;
+	scene18_var11 = 0;
+	scene18_var12 = 0;
+	scene18_var22 = 1;
+	scene18_var23 = -1;
+	scene18_var24 = 0;
+	scene18_var25 = 0;
+	scene18_var26 = 1;
+	scene18_var27 = -1;
+	scene18_var13 = -1;
+	scene18_var14 = -1;
+	scene18_var28 = 0;
+	scene18_var15 = 0;
+	scene18_boy = 0;
+	scene18_girl = 0;
+	scene18_domino = 0;
+	scene18_var29 = 290;
+	scene18_var30 = -363;
+	scene18_var05 = 283;
+	scene18_var06 = -350;
+
+	scene19_var01 = 0;
+	scene19_var02 = 0;
+	scene19_var03 = 0;
+	scene19_var04 = 0;
 
 	scene20_fliesCountdown = 0;
 	scene20_grandma = 0;

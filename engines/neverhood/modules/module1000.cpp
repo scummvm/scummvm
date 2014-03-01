@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -609,7 +609,7 @@ uint32 Scene1005::getTextIndex() {
 	uint32 textIndex;
 	textIndex = getTextIndex1();
 	if (getGlobalVar(V_ENTRANCE_OPEN)) {
-		textIndex = getTextIndex2();
+		textIndex = getKloggsTextIndex();
 	}
 	if (getGlobalVar(V_TEXT_FLAG1) && getGlobalVar(V_TEXT_INDEX) == textIndex) {
 		textIndex = getTextIndex3();
@@ -690,9 +690,9 @@ uint32 Scene1005::getTextIndex1() {
 	return textIndex;
 }
 
-uint32 Scene1005::getTextIndex2() {
+uint32 Scene1005::getKloggsTextIndex() {
 	uint32 textIndex = getGlobalVar(V_TEXT_COUNTING_INDEX1);
-	if (textIndex + 1 >= 10) {
+	if (textIndex + 1 > 10) {
 		setGlobalVar(V_TEXT_COUNTING_INDEX1, 0);
 		textIndex = 0;
 	} else {

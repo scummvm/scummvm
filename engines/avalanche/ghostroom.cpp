@@ -1,24 +1,24 @@
 /* ScummVM - Graphic Adventure Engine
-*
-* ScummVM is the legal property of its developers, whose names
-* are too numerous to list here. Please refer to the COPYRIGHT
-* file distributed with this source distribution.
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
-
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
-* GNU General Public License for more details.
-
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-*
-*/
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
 /*
 * This code is based on the original source code of Lord Avalot d'Argent version 1.3.
@@ -209,7 +209,7 @@ void GhostRoom::run() {
 	CursorMan.showMouse(false);
 	_vm->_graphics->saveScreen();
 	_vm->fadeOut();
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack); // Black out the whole screen.
+	_vm->_graphics->blackOutScreen();
 	_vm->fadeIn();
 
 	// Only load the pictures if it's our first time walking into the room.
@@ -257,7 +257,7 @@ void GhostRoom::run() {
 	}
 
 	// Blank out the Glerk's space.
-	_vm->_graphics->drawFilledRectangle(Common::Rect(456, 14, 530, 50), kColorBlack);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(456, 14, 531, 51), kColorBlack);
 	_vm->_graphics->refreshScreen();
 
 
@@ -265,7 +265,7 @@ void GhostRoom::run() {
 	for (int y = -64; y <= 103; y++) {
 		_vm->_graphics->ghostDrawGhost(_ghost[1 + (abs(y / 7) % 2) * 3], 0, y);
 		if (y > 0)
-			_vm->_graphics->drawFilledRectangle(Common::Rect(0, y - 1, 26 * 8, y), kColorBlack);
+			_vm->_graphics->drawFilledRectangle(Common::Rect(0, y - 1, 26 * 8 + 1, y + 1), kColorBlack);
 		_vm->_graphics->refreshScreen();
 
 		wait(27);
@@ -276,7 +276,7 @@ void GhostRoom::run() {
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 5; j++) {
-			_vm->_graphics->drawFilledRectangle(Common::Rect(0, 96, 26 * 8, 169), kColorBlack);
+			_vm->_graphics->drawFilledRectangle(Common::Rect(0, 96, 26 * 8, 170), kColorBlack);
 			_vm->_graphics->ghostDrawGhost(_ghost[kWaveOrder[j]], 0, 96 + kAdjustment[j]);
 
 			_aarghCount++;
@@ -320,12 +320,12 @@ void GhostRoom::run() {
 		int xBound = x % 30;
 		if ((22 <= xBound) && (xBound <= 27)) {
 			if (xBound == 22)
-				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 134, x + 38, 138), kColorBlack);
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 134, x + 39, 138), kColorBlack);
 			_vm->_graphics->ghostDrawPicture(_eyes[1], x + 23, 136);
 			_vm->_graphics->drawDot(x + 22, 137, kColorBlack);
 		} else {
 			if (xBound == 28)
-				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 135, x + 38, 139), kColorBlack);
+				_vm->_graphics->drawFilledRectangle(Common::Rect(x + 22, 135, x + 39, 139), kColorBlack);
 			_vm->_graphics->ghostDrawPicture(_eyes[1], x + 23, 135);
 			_vm->_graphics->drawDot(x + 22, 136, kColorBlack); // Eyes would leave a trail 1 pixel high behind them.
 		}

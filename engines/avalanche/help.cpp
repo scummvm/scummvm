@@ -1,24 +1,24 @@
 /* ScummVM - Graphic Adventure Engine
-*
-* ScummVM is the legal property of its developers, whose names
-* are too numerous to list here. Please refer to the COPYRIGHT
-* file distributed with this source distribution.
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
-
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-*
-*/
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
 /*
 * This code is based on the original source code of Lord Avalot d'Argent version 1.3.
@@ -180,6 +180,7 @@ bool Help::handleMouse(const Common::Event &event) {
 	} else { // LBUTTONDOWN or MOUSEMOVE
 		int highlightIs = 0;
 
+		// Decide which button we are hovering the cursor over:
 		if ((mousePos.x > 470) && (mousePos.x <= 550) && (((mousePos.y - 13) % 27) <= 20)) { // No click, so highlight.
 			highlightIs = (mousePos.y - 13) / 27 - 1;
 			if ((highlightIs < 0) || (5 < highlightIs))
@@ -187,20 +188,21 @@ bool Help::handleMouse(const Common::Event &event) {
 		} else
 			highlightIs = 177;
 
-		if (((highlightIs != 177) && (event.type == Common::EVENT_LBUTTONDOWN)) || _holdLeft) {
+		Color highlightColor = kColorLightblue;
+		// If we clicked on a button or we are holding down the button, we have to highlight it with cyan:
+		if (((highlightIs != 177) && ((event.type == Common::EVENT_LBUTTONDOWN)) || _holdLeft)) {
 			_holdLeft = true;
-			highlightIs += 32;
+			highlightColor = kColorLightcyan;
 		}
 
-		if (_highlightWas != highlightIs) {
+		// Erase the previous highlight only if it's needed:
+		if (_highlightWas != highlightIs) 
 			_vm->_graphics->helpDrawHighlight(_highlightWas, kColorBlue);
+			
+		// Highligt the current one with the proper color:
+		if (_buttons[highlightIs]._trigger != Common::KEYCODE_INVALID) {
 			_highlightWas = highlightIs;
-			if (_buttons[highlightIs & 31]._trigger != Common::KEYCODE_INVALID) {
-				if (highlightIs > 31)
-					_vm->_graphics->helpDrawHighlight(highlightIs, kColorLightcyan);
-				else
-					_vm->_graphics->helpDrawHighlight(highlightIs, kColorLightblue);
-			}
+			_vm->_graphics->helpDrawHighlight(highlightIs, highlightColor);
 		}
 	}
 
