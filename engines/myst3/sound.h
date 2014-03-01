@@ -31,7 +31,7 @@ class Myst3Engine;
 
 enum SoundType {
 	kUnk0,
-	kUnk1,
+	kAmbient,
 	kCue,
 	kEffect,
 	kMusic
@@ -42,21 +42,26 @@ public:
 	SoundChannel(Myst3Engine *vm);
 	virtual ~SoundChannel();
 
-	void play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, uint unk1, uint unk2, uint unk3, SoundType type);
+	void play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, uint unk1, uint unk2, bool loop, SoundType type);
+	void setVolume3D(uint32 volume, uint16 heading, uint16 attenuation);
 	void fade(uint32 targetVolume, int32 targetHeading, int32 targetAttenuation, uint32 fadeDelay);
+	void fadeOut(uint32 fadeDelay);
 	void update();
 	void stop();
+	void age(uint32 maxAge);
 
 	uint32 _id;
 	bool _playing;
 	SoundType _type;
+	uint32 _age;
+	uint32 _ambientFadeOutDelay;
 
 private:
 	Myst3Engine *_vm;
 
 	Common::String _name;
 	uint32 _volume;
-	Audio::RewindableAudioStream *_stream;
+	Audio::AudioStream *_stream;
 	Audio::SoundHandle _handle;
 
 	Audio::RewindableAudioStream *makeAudioStream(const Common::String &name) const;
@@ -67,12 +72,17 @@ public:
 	Sound(Myst3Engine *vm);
 	virtual ~Sound();
 
+	SoundChannel *getChannelForSound(uint32 id, SoundType type, bool *found = nullptr);
+
 	void playEffect(uint32 id, uint32 volume, uint16 heading = 0, uint16 attenuation = 0);
 
 	void playCue(uint32 id, uint32 volume, uint16 heading, uint16 attenuation);
 	void stopCue(uint32 fadeDelay);
 
 	void update();
+	void age();
+
+	void fadeOutOldSounds(uint32 fadeDelay);
 
 private:
 	static const uint kNumChannels = 14;
@@ -80,7 +90,6 @@ private:
 	Myst3Engine *_vm;
 	SoundChannel *_channels[kNumChannels];
 
-	SoundChannel *getChannelForSound(uint32 id, SoundType priority);
 };
 
 } /* namespace Myst3 */

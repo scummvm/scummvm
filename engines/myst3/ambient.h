@@ -39,7 +39,7 @@ public:
 	void applySounds(uint32 fadeOutDelay);
 	void scaleVolume(uint32 volume);
 
-	void addSound(uint32 id, int32 volume, int32 heading, int32 headingAngle, int32 u1, int32 u2);
+	void addSound(uint32 id, int32 volume, int32 heading, int32 headingAngle, int32 u1, int32 fadeOutDelay);
 
 	void setCueSheet(uint32 id, int32 volume, int32 heading, int32 headingAngle);
 	void updateCue();
@@ -59,7 +59,7 @@ private:
 		int32 heading;
 		int32 headingAngle;
 		int32 u1;
-		int32 u2;
+		int32 fadeOutDelay;
 
 		void reset() {
 			id = 0;
@@ -68,7 +68,7 @@ private:
 			heading = 0;
 			headingAngle = 0;
 			u1 = 0;
-			u2 = 0;
+			fadeOutDelay = 0;
 		}
 	};
 

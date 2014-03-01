@@ -77,7 +77,7 @@ void Ambient::loadNode(uint32 node, uint32 room, uint32 age) {
 		_vm->runAmbientScripts(32766);
 }
 
-void Ambient::addSound(uint32 id, int32 volume, int32 heading, int32 headingAngle, int32 u1, int32 u2) {
+void Ambient::addSound(uint32 id, int32 volume, int32 heading, int32 headingAngle, int32 u1, int32 fadeOutDelay) {
 	if (!volume)
 		volume = 1;
 
@@ -95,7 +95,7 @@ void Ambient::addSound(uint32 id, int32 volume, int32 heading, int32 headingAngl
 	s.heading = heading;
 	s.headingAngle = headingAngle;
 	s.u1 = u1;
-	s.u2 = u2;
+	s.fadeOutDelay = fadeOutDelay;
 
 	_sounds.push_back(s);
 }
@@ -168,10 +168,37 @@ void Ambient::applySounds(uint32 fadeOutDelay) {
 	// Reset the random sounds
 	_cueStartFrame = 0;
 	if (!_cueSheet.id) {
-		_vm->_sound->stopCue();
+		_vm->_sound->stopCue(fadeOutDelay);
 	}
 
-	// TODO
+	// Age all sounds
+	_vm->_sound->age();
+
+	// Setup the selected sounds
+	for (uint i = 0; i < _sounds.size(); i++) {
+		const AmbientSound &sound = _sounds[i];
+
+		bool existingChannel;
+		SoundChannel *channel = _vm->_sound->getChannelForSound(sound.id, kAmbient, &existingChannel);
+
+		// The sound was already playing
+		if (!existingChannel) {
+			uint volume = 0;
+//			if (sound.volumeFlag) // TODO: Used in the original
+				volume = sound.volume;
+
+			channel->play(sound.id, volume, sound.heading, sound.headingAngle, 0, 0, true, kAmbient);
+		}
+
+		if (channel->_playing) {
+			channel->fade(sound.volume, sound.heading, sound.headingAngle, fadeOutDelay);
+			channel->_age = 0;
+			channel->_ambientFadeOutDelay = sound.fadeOutDelay;
+		}
+	}
+
+	// Fade out old playing ambient sounds
+	_vm->_sound->fadeOutOldSounds(fadeOutDelay);
 }
 
 } /* namespace Myst3 */

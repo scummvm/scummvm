@@ -2447,9 +2447,9 @@ void Script::ambientAddSound2(Context &c, const Opcode &cmd) {
 
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
-	int32 u2 = cmd.args[2];
+	int32 fadeOutDelay = cmd.args[2];
 
-	_vm->_ambient->addSound(id, volume, 0, 0, 0, u2);
+	_vm->_ambient->addSound(id, volume, 0, 0, 0, fadeOutDelay);
 }
 
 void Script::ambientAddSound3(Context &c, const Opcode &cmd) {

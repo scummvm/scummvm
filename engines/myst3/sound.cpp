@@ -47,37 +47,40 @@ void Sound::playEffect(uint32 id, uint32 volume, uint16 heading, uint16 attenuat
 	id = _vm->_state->valueOrVarValue(id);
 
 	SoundChannel *channel = getChannelForSound(id, kEffect);
-	channel->play(id, volume, heading, attenuation, 0, 0, 0, kEffect);
+	channel->play(id, volume, heading, attenuation, 0, 0, false, kEffect);
 }
 
 void Sound::playCue(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
 	SoundChannel *channel = _channels[13];
-	channel->play(id, volume, heading, attenuation, 0, 0, 0, kCue);
+	channel->play(id, volume, heading, attenuation, 0, 0, false, kCue);
 }
 
 void Sound::stopCue(uint32 fadeDelay) {
 	SoundChannel *channel = _channels[13];
-	if (fadeDelay == 0) {
-		channel->stop();
-	} else {
-		channel->fade(0, -1, 0, fadeDelay);
-	}
+	channel->fadeOut(fadeDelay);
 }
 
-SoundChannel *Sound::getChannelForSound(uint32 id, SoundType priority) {
-	// if the sound is already playing, return that channel
-	for (uint i = 0; i < kNumChannels - 1; i++)
-		if (_channels[i]->_id == id && _channels[i]->_playing)
-			return _channels[i];
-
-	// else return the first available channel
-	for (uint i = 0; i < kNumChannels - 1; i++)
-		if (!_channels[i]->_playing)
-			return _channels[i];
-
+SoundChannel *Sound::getChannelForSound(uint32 id, SoundType type, bool *found) {
 	// Channel number 13 is reserved for cue sounds
 
-	error("No available channel for sound %d", id);
+	// if the sound is already playing, return that channel
+	for (uint i = 0; i < kNumChannels - 1; i++)
+		if (_channels[i]->_id == id && _channels[i]->_type == type && _channels[i]->_playing) {
+			if (found) *found = true;
+			return _channels[i];
+		}
+
+	// else return the channel with the oldest sound
+	SoundChannel *oldest = _channels[0];
+	for (uint i = 0; i < kNumChannels - 1; i++) {
+		if (_channels[i]->_age > oldest->_age) {
+			oldest = _channels[i];
+		}
+	}
+
+	if (found) *found = false;
+
+	return oldest;
 }
 
 void Sound::update() {
@@ -88,39 +91,57 @@ void Sound::update() {
 	_vm->_ambient->updateCue();
 }
 
+void Sound::age() {
+	for (uint i = 0; i < kNumChannels; i++)
+		_channels[i]->age(99);
+}
+
+void Sound::fadeOutOldSounds(uint32 fadeDelay) {
+	for (uint i = 0; i < kNumChannels; i++) {
+		if (_channels[i]->_playing && _channels[i]->_type == kAmbient && _channels[i]->_age == 1) {
+			uint32 delay = _channels[i]->_ambientFadeOutDelay;
+			if (_vm->_state->getAmbientOverrideFadeOutDelay() || delay == 0)
+				delay = fadeDelay;
+			_channels[i]->fadeOut(delay);
+
+		}
+	}
+	_vm->_state->setAmbientOverrideFadeOutDelay(false);
+}
+
 SoundChannel::SoundChannel(Myst3Engine *vm) :
 	_vm(vm),
 	_playing(false),
 	_id(0),
-	_stream(0) {
+	_stream(0),
+	_age(0),
+	_ambientFadeOutDelay(0) {
 }
 
 SoundChannel::~SoundChannel() {
 }
 
-void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, uint unk1, uint unk2, uint unk3, SoundType type) {
-	// TODO: Should stop and start again
-	if (_playing)
-		return;
+void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenuation, uint unk1, uint unk2, bool loop, SoundType type) {
+	stop();
 
 	// Load the name of the sound from its id
 	_name = _vm->_db->getSoundName(id);
 	_volume = volume;
 
 	// Open the file to a stream
-	_stream = makeAudioStream(_name);
+	_stream = Audio::makeLoopingAudioStream(makeAudioStream(_name), loop ? 0 : 1);
 
 	if (!_stream)
 		return;
 
-	uint16 mixerVolume = _volume * Audio::Mixer::kMaxChannelVolume / 100;
-
 	// Play the sound
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_handle, _stream, -1, mixerVolume);
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_handle, _stream);
+	setVolume3D(volume, heading, attenuation);
 
 	// Update state
 	_id = id;
 	_type = type;
+	_age = 0;
 	_playing = true;
 	_vm->_state->setVar(id, 1);
 }
@@ -180,14 +201,40 @@ void SoundChannel::stop() {
 		_playing = false;
 	}
 
+	_vm->_state->setVar(_id, 0);
+	_id = 0;
+	_age = 99;
+
 	_stream = 0;
 }
 
+void SoundChannel::setVolume3D(uint32 volume, uint16 heading, uint16 attenuation) {
+	uint16 mixerVolume = _volume * Audio::Mixer::kMaxChannelVolume / 100;
+
+	// TODO: 3D sound
+	g_system->getMixer()->setChannelVolume(_handle, mixerVolume);
+}
+
+void SoundChannel::fadeOut(uint32 fadeDelay) {
+	if (fadeDelay == 0) {
+		stop();
+	} else {
+		fade(0, -1, 0, fadeDelay);
+	}
+}
+
 void SoundChannel::fade(uint32 targetVolume, int32 targetHeading, int32 targetAttenuation, uint32 fadeDelay) {
-	//TODO: Implement this mock
+	//TODO: Implement
 	if (targetVolume == 0) {
 		stop();
+	} else {
+		setVolume3D(targetVolume, targetHeading, targetAttenuation);
 	}
+}
+
+void SoundChannel::age(uint32 maxAge) {
+	_age++;
+	_age = CLIP<uint32>(_age, 0, maxAge);
 }
 
 } /* namespace Myst3 */
