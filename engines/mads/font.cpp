@@ -205,4 +205,10 @@ int Font::getBpp(int charWidth) {
 		return 1;
 }
 
+Font *Font::getFont(const Common::String &fontName) {
+	Font *font = new Font(_vm);
+	font->setFont(fontName);
+	return font;
+}
+
 } // End of namespace MADS

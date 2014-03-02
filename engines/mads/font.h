@@ -68,6 +68,11 @@ public:
 	int writeString(MSurface *surface, const Common::String &msg, const Common::Point &pt, int width = 0, int spaceWidth = -1) {
 		return write(surface, msg, pt, width, spaceWidth, _fontColors);
 	}
+
+	/**
+	 * Returns a new Font instance using the specified font name
+	 */
+	Font *getFont(const Common::String &fontName);
 };
 
 } // End of namespace MADS

@@ -80,7 +80,7 @@ public:
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
 	MSurface _depthSurface;
-	MSurface _interfaceSurface;
+	InterfaceSurface _interfaceSurface;
 	bool _animFlag;
 	int _animVal1;
 	int _animCount;
@@ -89,6 +89,7 @@ public:
 	SceneNodeList _nodes;
 	Common::StringArray _vocabStrings;
 	Animation *_animation;
+	int _depthStyle;
 
 	/**
 	 * Constructor

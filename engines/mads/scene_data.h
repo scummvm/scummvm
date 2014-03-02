@@ -54,6 +54,9 @@ enum MadsActionMode { ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, AC
 enum MadsActionMode2 { ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5 };
 enum AbortTimerMode { ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2 };
 
+#define MADS_INTERFACE_HEIGHT 44
+#define MADS_SCENE_HEIGHT (MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT)
+
 #define DEPTH_BANDS_SIZE 15
 #define MAX_ROUTE_NODES 22
 
@@ -293,6 +296,11 @@ public:
 	void load(Common::SeekableReadStream *f);
 };
 typedef Common::Array<SceneNode> SceneNodeList;
+
+class InterfaceSurface : public MSurface {
+public:
+	void load(MADSEngine *vm, const Common::String &resName);
+};
 
 /**
  * Handles general data for a given scene

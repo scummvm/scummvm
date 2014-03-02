@@ -31,23 +31,102 @@
 
 namespace MADS {
 
+enum AnimFlag { ANIM_CUSTOM_FONT = 0x20 };
+
 class MADSEngine;
 class Scene;
+
+class AnimMessage {
+public:
+	int16 _soundId;
+	Common::String _msg;
+	Common::Point _pos;
+	byte _rgb1[3], _rgb2[3];
+	int _flags;
+	int _startFrame, _endFrame;
+	int _kernelMsgIndex;
+
+	/**
+	 * Loads data for the message from a stream
+	 */
+	void load(Common::SeekableReadStream *f);
+};
+
+class AnimFrameEntry {
+public:
+	int _frameNumber;
+	int _seqIndex;
+	SpriteSlotSubset _spriteSlot;
+
+	/**
+	 * Loads data for the record
+	 */
+	void load(Common::SeekableReadStream *f);
+};
+
+class AnimMiscEntry {
+public:
+	int _soundId;
+	int _msgIndex;
+	int _numTicks;
+	Common::Point _posAdjust;
+	Common::Point _scrollPos;
+
+	/**
+	* Loads data for the record
+	*/
+	void load(Common::SeekableReadStream *f);
+};
+
+class AAHeader {
+public:
+	int _spriteListCount;
+	int _miscEntriesCount;
+	int _frameEntriesCount;
+	int _messagesCount;
+	byte _flags;
+	int _animMode;
+	int _roomNumber;
+	int _field12;
+	int _spriteListIndex;
+	Common::Point _scrollPosition;
+	uint32 _scrollTicks;
+	Common::String _interfaceFile;
+	Common::StringArray _spriteSetNames;
+	Common::String _lbmFilename;
+	Common::String _spritesFilename;
+	Common::String _soundName;
+	Common::String _dsrName;
+	Common::String _fontResource;
+
+	/**
+	 * Loads the data for a animation file header
+	 */
+	AAHeader(Common::SeekableReadStream *f);
+};
 
 class Animation {
 private:
 	MADSEngine *_vm;
 	Scene *_scene;
+
+	void loadInterface(InterfaceSurface &interfaceSurface, MSurface &depthSurface,
+		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
 protected:
 	Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {}
 public:
 	static Animation *init(MADSEngine *vm, Scene *scene);
 public:
+	Common::Array<int> _spriteListIndexes;
+	Common::Array<AnimMessage> _messages;
+	Common::Array<AnimFrameEntry> _frameEntries;
+	Common::Array<AnimMiscEntry> _miscEntries;
+public:
 	/**
 	 * Loads animation data
 	 */
-	void load(MSurface *sceneSurface, MSurface *interfaceSurface, int sceneId, int flags, 
-		byte *palette, SceneInfo *sceneInfo);
+	void load(MSurface &depthSurface, InterfaceSurface &interfaceSurface, const Common::String &resName,
+		int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
 };
 
 } // End of namespace MADS

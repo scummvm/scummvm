@@ -24,6 +24,7 @@
 #include "mads/scene_data.h"
 #include "mads/mads.h"
 #include "mads/compression.h"
+#include "mads/graphics.h"
 #include "mads/resources.h"
 #include "mads/nebular/nebular_scenes.h"
 
@@ -214,6 +215,34 @@ void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 
 /*------------------------------------------------------------------------*/
 
+void InterfaceSurface::load(MADSEngine *vm, const Common::String &resName) {
+	File f(resName);
+	MadsPack madsPack(&f);
+
+	// Load in the palette
+	Common::SeekableReadStream *palStream = madsPack.getItemStream(0);
+
+	RGB4 *gamePalP = &vm->_palette->_gamePalette[0];
+	byte *palP = &vm->_palette->_mainPalette[0];
+
+	for (int i = 0; i < 16; ++i, gamePalP++, palP += 3) {
+		palP[0] = palStream->readByte();
+		palP[1] = palStream->readByte();
+		palP[2] = palStream->readByte();
+		gamePalP->r |= 1;
+		palStream->skip(3);
+	}
+	delete palStream;
+
+	// set the size for the interface
+	setSize(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
+	Common::SeekableReadStream *pixelsStream = madsPack.getItemStream(1);
+	pixelsStream->read(getData(), MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
+	delete pixelsStream;
+}
+
+/*------------------------------------------------------------------------*/
+
 SceneInfo *SceneInfo::init(MADSEngine *vm) {
 	if (vm->getGameID() == GType_RexNebular) {
 		return new SceneInfoNebular(vm);
@@ -356,7 +385,7 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 	artFile.close();
 
 	Common::Array<SpriteAsset *> spriteSets;
-	Common::Array<int> xpList;
+	Common::Array<int> indexList;
 
 	if (flags & 1) {
 		for (uint i = 0; i < setNames.size(); ++i) {
@@ -367,11 +396,11 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 
 			SpriteAsset *sprites = new SpriteAsset(_vm, setResName, flags);
 			spriteSets.push_back(sprites);
-			xpList.push_back(-1); // TODO:: sprites->_field6
+			indexList.push_back(-1); // TODO:: sprites->_field6
 		}
 	}
 
-	warning("TODO: sub_201E4(xpList, namesCount, &pal data2");
+	warning("TODO: sub_201E4(indexList, namesCount, &pal data2");
 
 	for (uint i = 0; i < spriteInfo.size(); ++i) {
 		SpriteInfo &si = spriteInfo[i];

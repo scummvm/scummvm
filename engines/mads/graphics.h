@@ -29,7 +29,6 @@ namespace MADS {
 
 #define MADS_SCREEN_WIDTH 320
 #define MADS_SCREEN_HEIGHT 200
-#define MADS_INTERFACE_HEIGHT 44
 
 } // End of namespace MADS
 
