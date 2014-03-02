@@ -149,8 +149,24 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	int flags = _vm->_game->_v2 ? 0x4101 : 0x4100;
 	if (!_vm->_textWindowStill)
 		flags |= 0x200;
+
 	_animation = Animation::init(_vm, this);
+	MSurface surface;
+	_animation->load(surface, _interfaceSurface, prefix, flags, nullptr, nullptr);
 	
+	_vm->_palette->_paletteUsage.load(0);
+
+	_bandsRange = _sceneInfo->_yBandsEnd - _sceneInfo->_yBandsStart;
+	_scaleRange = _sceneInfo->_maxScale - _sceneInfo->_minScale;
+
+	_spriteSlots.clear(false);
+	_screenY = 0;
+	_interfaceY = MADS_SCENE_HEIGHT;
+	_spritesCount = _sprites.size();
+
+	warning("TODO: sub_1EA80 / showMouse");
+
+	warning("TODO: inventory_anim_allocate");
 }
 
 void Scene::loadHotspots() {

@@ -84,7 +84,7 @@ int SpriteSets::add(SpriteAsset *asset, int idx) {
 	if (!idx)
 		idx = size();
 
-	if (idx >= (size() + 1))
+	if (idx >= (int)(size() + 1))
 		resize(idx + 1);
 	delete (*this)[idx];
 	(*this)[idx] = asset;

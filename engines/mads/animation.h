@@ -81,7 +81,7 @@ public:
 
 class AAHeader {
 public:
-	int _spriteListCount;
+	int _spriteSetsCount;
 	int _miscEntriesCount;
 	int _frameEntriesCount;
 	int _messagesCount;

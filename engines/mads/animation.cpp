@@ -23,12 +23,12 @@
 #include "mads/animation.h"
 #include "mads/compression.h"
 
-#define FILENAME_SIZE 64
+#define FILENAME_SIZE 13
 
 namespace MADS {
 	
 AAHeader::AAHeader(Common::SeekableReadStream *f) {
-	_spriteListCount = f->readUint16LE();
+	_spriteSetsCount = f->readUint16LE();
 	_miscEntriesCount = f->readUint16LE();
 	_frameEntriesCount = f->readUint16LE();
 	_messagesCount = f->readUint16LE();
@@ -43,43 +43,43 @@ AAHeader::AAHeader(Common::SeekableReadStream *f) {
 	_spriteListIndex = f->readUint16LE();
 	_scrollPosition.x = f->readSint16LE();
 	_scrollPosition.y = f->readSint16LE();
-	_scrollTicks = f->readUint16LE();
-	f->skip(8);
+	_scrollTicks = f->readUint32LE();
+	f->skip(6);
 
 	char buffer[FILENAME_SIZE];
 	f->read(buffer, FILENAME_SIZE);
-	buffer[FILENAME_SIZE] = '\0';
+	buffer[FILENAME_SIZE - 1] = '\0';
 	_interfaceFile = Common::String(buffer);
 
 	for (int i = 0; i < 10; ++i) {
 		f->read(buffer, FILENAME_SIZE);
-		buffer[FILENAME_SIZE] = '\0';
-		_spriteSetNames[i] = Common::String(buffer);
+		buffer[FILENAME_SIZE - 1] = '\0';
+		_spriteSetNames.push_back(Common::String(buffer));
 	}
 
 	f->skip(81);
 	f->read(buffer, FILENAME_SIZE);
-	buffer[FILENAME_SIZE] = '\0';
+	buffer[FILENAME_SIZE - 1] = '\0';
 	_lbmFilename = Common::String(buffer);
 
 	f->skip(365);
 	f->read(buffer, FILENAME_SIZE);
-	buffer[FILENAME_SIZE] = '\0';
+	buffer[FILENAME_SIZE - 1] = '\0';
 	_spritesFilename = Common::String(buffer);
 
 	f->skip(48);
 	f->read(buffer, FILENAME_SIZE);
-	buffer[FILENAME_SIZE] = '\0';
+	buffer[FILENAME_SIZE - 1] = '\0';
 	_soundName = Common::String(buffer);
 
 	f->skip(13);
 	f->read(buffer, FILENAME_SIZE);
-	buffer[FILENAME_SIZE] = '\0';
+	buffer[FILENAME_SIZE - 1] = '\0';
 	_dsrName = Common::String(buffer);
 
 	f->read(buffer, FILENAME_SIZE);
-	buffer[FILENAME_SIZE] = '\0';
-	Common::String fontResource(buffer);
+	buffer[FILENAME_SIZE - 1] = '\0';
+	_fontResource = Common::String(buffer);
 }
 
 /*------------------------------------------------------------------------*/
@@ -176,7 +176,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 
 	// Initialize the reference list
 	_spriteListIndexes.clear();
-	for (int i = 0; i < aaHeader._spriteListCount; ++i)
+	for (int i = 0; i < aaHeader._spriteSetsCount; ++i)
 		_spriteListIndexes.push_back(-1);
 
 	_messages.clear();
@@ -234,9 +234,9 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	for (uint i = 0; i < _spriteSets.size(); ++i)
 		delete _spriteSets[i];
 	_spriteSets.clear();
-	_spriteSets.resize(aaHeader._spriteListCount);
+	_spriteSets.resize(aaHeader._spriteSetsCount);
 
-	for (int i = 0; i < aaHeader._spriteListCount; ++i) {
+	for (int i = 0; i < aaHeader._spriteSetsCount; ++i) {
 		if (aaHeader._manualFlag && (i == aaHeader._spriteListIndex)) {
 			// Skip over field, since it's manually loaded
 			_spriteSets[i] = nullptr;
@@ -271,7 +271,6 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 
 	f.close();
 }
-
 
 void Animation::loadInterface(InterfaceSurface &interfaceSurface, MSurface &depthSurface,
 		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo) {

@@ -90,6 +90,11 @@ public:
 	Common::StringArray _vocabStrings;
 	Animation *_animation;
 	int _depthStyle;
+	int _bandsRange;
+	int _scaleRange;
+	int _screenY;
+	int _interfaceY;
+	int _spritesCount;
 
 	/**
 	 * Constructor
