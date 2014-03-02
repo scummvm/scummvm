@@ -53,9 +53,36 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_startupMode = 1;
 	_oldLev      = 0;
 	_pocPtr      = 0;
-	_bitmapPalette = NULL;
 	_quitFlag = false;
 	_showBoundariesFl = false;
+	_startGameSlot = -1;
+	_recentStep = -2;
+	_bitmapPalette = nullptr;
+	_pocLight = nullptr;
+	_keyboard = nullptr;
+	_mouse = nullptr;
+	_sprite = nullptr;
+	_miniScene = nullptr;
+	_shadow = nullptr;
+	_horzLine = nullptr;
+	_infoLine = nullptr;
+	_debugLine = nullptr;
+	_sceneLight = nullptr;
+	_commandHandler = nullptr;
+	_commandHandlerTurbo = nullptr;
+	_eventManager = nullptr;
+	_fx = nullptr;
+	_sound = nullptr;
+	_resman = nullptr;
+	for (int i = 0; i < 8; i++)
+		_pocket[i] = nullptr;
+	_hero = nullptr;
+	_text = nullptr;
+	_talk = nullptr;
+	_midiPlayer = nullptr;
+	_miniShp = nullptr;
+	_miniShpList = nullptr;
+	_console = nullptr;
 }
 
 void CGEEngine::initSceneValues() {

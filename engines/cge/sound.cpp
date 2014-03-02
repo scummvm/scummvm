@@ -228,6 +228,7 @@ MusicPlayer::MusicPlayer(CGEEngine *vm) : _vm(vm) {
 
 		_driver->setTimerCallback(this, &timerCallback);
 	}
+	_dataSize = -1;
 }
 
 MusicPlayer::~MusicPlayer() {
