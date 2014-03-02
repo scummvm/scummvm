@@ -64,7 +64,7 @@ public:
 	Common::Array<VerbInit> _verbList;
 	Common::Array<TextDisplay> _textDisplay;
 	SpriteSlots _spriteSlots;
-	Common::Array<SpriteAsset *> _sprites;
+	SpriteSets _sprites;
 	int _spritesIndex;
 	Common::Array<DynamicHotspot> _dynamicHotspots;
 	bool _dynamicHotspotsChanged;

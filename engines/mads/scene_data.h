@@ -130,6 +130,14 @@ public:
 	void deleteEntry(int index);
 };
 
+class SpriteSets: public Common::Array<SpriteAsset *> {
+public:
+	/**
+	 * Add a sprite asset to the list
+	 */
+	int add(SpriteAsset *asset, int idx = 0);
+};
+
 class TextDisplay {
 public:
 	bool _active;

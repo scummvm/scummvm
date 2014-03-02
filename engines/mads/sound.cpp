@@ -90,10 +90,6 @@ void SoundManager::startQueuedCommands() {
 	}
 }
 
-void SoundManager::loadDSRFile(const Common::String &filename) {
-	error("TODO: SoundManager::loadDSRFile");
-}
-
 void SoundManager::command(int commandId, int param) {
 	if (_newSoundsPaused) {
 		if (_queuedCommands.size() < 8)

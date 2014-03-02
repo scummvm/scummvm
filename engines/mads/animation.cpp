@@ -39,7 +39,7 @@ AAHeader::AAHeader(Common::SeekableReadStream *f) {
 	_animMode = f->readUint16LE();
 	_roomNumber = f->readUint16LE();
 	f->skip(2);
-	_field12 = f->readUint16LE() != 0;
+	_manualFlag = f->readUint16LE() != 0;
 	_spriteListIndex = f->readUint16LE();
 	_scrollPosition.x = f->readSint16LE();
 	_scrollPosition.y = f->readSint16LE();
@@ -137,9 +137,19 @@ Animation *Animation::init(MADSEngine *vm, Scene *scene) {
 	return new Animation(vm, scene);
 }
 
+Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
+	_font = nullptr;
+}
+
+Animation::~Animation() {
+	delete _font;
+	for (uint i = 0; i < _spriteSets.size(); ++i)
+		delete _spriteSets[i];
+}
+
 void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
-		const Common::String &resName, int flags, Common::Array<RGB4> *palAnimData, 
-		SceneInfo *sceneInfo) {
+	const Common::String &resName, int flags, Common::Array<RGB4> *palAnimData,
+	SceneInfo *sceneInfo) {
 	Common::String resourceName = resName;
 	if (!resourceName.contains("."))
 		resourceName += ".AA";
@@ -165,9 +175,11 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	}
 
 	// Initialize the reference list
+	_spriteListIndexes.clear();
 	for (int i = 0; i < aaHeader._spriteListCount; ++i)
 		_spriteListIndexes.push_back(-1);
 
+	_messages.clear();
 	if (aaHeader._messagesCount > 0) {
 		// Chunk 2: Following is a list of any messages for the animation
 		Common::SeekableReadStream *msgStream = madsPack.getItemStream(1);
@@ -181,6 +193,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 		delete msgStream;
 	}
 
+	_frameEntries.clear();
 	if (aaHeader._frameEntriesCount > 0) {
 		// Chunk 3: animation frame info
 		Common::SeekableReadStream *frameStream = madsPack.getItemStream(2);
@@ -194,6 +207,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 		delete frameStream;
 	}
 	
+	_miscEntries.clear();
 	if (aaHeader._miscEntriesCount > 0) {
 		// Chunk 4: Misc Data
 		Common::SeekableReadStream *miscStream = madsPack.getItemStream(3);
@@ -206,43 +220,55 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 
 		delete miscStream;
 	}
-	/*
+	
 	// If the animation specifies a font, then load it for access
-	if (_flags & ANIM_CUSTOM_FONT) {
-		Common::String fontName;
-		if (madsRes)
-			fontName += "*";
-		fontName += fontResource;
-
-		if (fontName != "")
-			_font = _vm->_font->getFont(fontName.c_str());
-		else
-			warning("Attempted to set a font with an empty name");
+	delete _font;
+	if (aaHeader._flags & ANIM_CUSTOM_FONT) {
+		Common::String fontName = "*" + aaHeader._fontResource;
+		_font = _vm->_font->getFont(fontName.c_str());
+	} else {
+		_font = nullptr;
 	}
-
-	// If a speech file is specified, then load it
-	if (!_dsrName.empty())
-		_vm->_sound->loadDSRFile(_dsrName.c_str());
-
+	
 	// Load all the sprite sets for the animation
-	for (int i = 0; i < spriteListCount; ++i) {
-		if (_field12 && (i == _spriteListIndex))
+	for (uint i = 0; i < _spriteSets.size(); ++i)
+		delete _spriteSets[i];
+	_spriteSets.clear();
+	_spriteSets.resize(aaHeader._spriteListCount);
+
+	for (int i = 0; i < aaHeader._spriteListCount; ++i) {
+		if (aaHeader._manualFlag && (i == aaHeader._spriteListIndex)) {
 			// Skip over field, since it's manually loaded
-			continue;
-
-		_spriteListIndexes[i] = _view->_spriteSlots.addSprites(_spriteSetNames[i].c_str());
+			_spriteSets[i] = nullptr;
+		} else {
+			_spriteSets[i] = new SpriteAsset(_vm, aaHeader._spriteSetNames[i], flags);
+		}
 	}
 
+	if (aaHeader._manualFlag) {
+		Common::String resName = "*" + aaHeader._spriteSetNames[aaHeader._spriteListIndex];
+		SpriteAsset *sprites = new SpriteAsset(_vm, resName, flags);
+		_spriteSets[aaHeader._spriteListIndex] = sprites;
 
-	if (_field12) {
-		Common::String resName;
-		if (madsRes)
-			resName += "*";
-		resName += _spriteSetNames[_spriteListIndex];
-
-		_spriteListIndexes[_spriteListIndex] = _view->_spriteSlots.addSprites(resName.c_str());
+		_spriteListIndexes[aaHeader._spriteListIndex] = _scene->_sprites.add(sprites);
 	}
-	*/
+
+	// TODO: List var_420/var_422 population that seems to overwrite other structures?
+
+	if (aaHeader._animMode == 4) {
+		// Remaps the sprite list indexes for frames to the loaded sprite list indexes
+		for (uint i = 0; i < _frameEntries.size(); ++i) {
+			int spriteListIndex = _frameEntries[i]._spriteSlot._spritesIndex;
+			_frameEntries[i]._spriteSlot._spritesIndex = _spriteListIndexes[spriteListIndex];
+		}
+	} else {
+		// Remaps the sprite list indexes for frames to the loaded sprite list indexes
+		for (uint i = 0; i < _frameEntries.size(); ++i) {
+			int spriteListIndex = _frameEntries[i]._spriteSlot._spritesIndex;
+			_frameEntries[i]._spriteSlot._spritesIndex = _spriteListIndexes[spriteListIndex];
+		}
+	}
+
 	f.close();
 }
 

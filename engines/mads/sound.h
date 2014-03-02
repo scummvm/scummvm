@@ -77,11 +77,6 @@ public:
 	 */
 	void startQueuedCommands();
 
-	/**
-	 * Loads a DSR resource
-	 */
-	void loadDSRFile(const Common::String &filename);
-
 	//@{
 	/**
 	 * Executes a command on the sound driver

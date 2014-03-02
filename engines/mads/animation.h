@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
+#include "mads/font.h"
 
 namespace MADS {
 
@@ -87,7 +88,7 @@ public:
 	byte _flags;
 	int _animMode;
 	int _roomNumber;
-	int _field12;
+	bool _manualFlag;
 	int _spriteListIndex;
 	Common::Point _scrollPosition;
 	uint32 _scrollTicks;
@@ -113,7 +114,7 @@ private:
 	void loadInterface(InterfaceSurface &interfaceSurface, MSurface &depthSurface,
 		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
 protected:
-	Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {}
+	Animation(MADSEngine *vm, Scene *scene);
 public:
 	static Animation *init(MADSEngine *vm, Scene *scene);
 public:
@@ -121,7 +122,14 @@ public:
 	Common::Array<AnimMessage> _messages;
 	Common::Array<AnimFrameEntry> _frameEntries;
 	Common::Array<AnimMiscEntry> _miscEntries;
+	Common::Array<SpriteAsset *> _spriteSets;
+	Font *_font;
 public:
+	/*
+	 * Destructor
+	 */
+	~Animation();
+
 	/**
 	 * Loads animation data
 	 */
