@@ -656,14 +656,15 @@ void CGEEngine::sceneUp() {
 
 	_vga->copyPage(0, 1);
 	selectPocket(-1);
-	if (_hero)
+	if (_hero) {
 		_vga->_showQ->insert(_vga->_showQ->remove(_hero));
 
-	if (_shadow) {
-		_vga->_showQ->remove(_shadow);
-		_shadow->makeXlat(_vga->glass(_vga->_sysPal, 204, 204, 204));
-		_vga->_showQ->insert(_shadow, _hero);
-		_shadow->_z = _hero->_z;
+		if (_shadow) {
+			_vga->_showQ->remove(_shadow);
+			_shadow->makeXlat(_vga->glass(_vga->_sysPal, 204, 204, 204));
+			_vga->_showQ->insert(_shadow, _hero);
+			_shadow->_z = _hero->_z;
+		}
 	}
 	feedSnail(_vga->_showQ->locate(BakRef + 999), kTake);
 	_vga->show();
