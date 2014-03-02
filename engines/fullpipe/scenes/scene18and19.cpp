@@ -63,8 +63,48 @@ void scene18_preload() {
 	}
 }
 
-void scene19_preload(Scene *sc, int key) {
-	warning("WARNING: scene19_preload()");
+void scene19_preload(Scene *sc, int entranceId) {
+	if (entranceId == TrubaRight) {
+		g_vars->scene18_var15 = 1;
+	} else {
+		g_vars->scene18_var15 = 0;
+		g_vars->scene19_var05 = (entranceId == PIC_SC19_RTRUBA3);
+	}
+
+	for (uint i = 0; i < g_vars->scene18_var07.size(); i++) {
+		if (!g_vars->scene18_var15 && (g_vars->scene18_var07[i]->sflags & 0x20)) {
+			Scene *oldsc = g_fp->_currentScene;
+
+			g_vars->scene18_var07[i]->sflags = 1;
+
+			g_fp->_currentScene = sc;
+			g_vars->scene18_var07[i]->ani->changeStatics2(ST_KSL_NORM);
+			g_vars->scene18_var07[i]->ani->_priority = 30;
+			g_fp->_currentScene = oldsc;
+		}
+
+		sc->deleteStaticANIObject(g_vars->scene18_var07[i]->ani);
+	}
+
+	if (g_vars->scene18_whirlgig->_movement) {
+		g_vars->scene18_var09 = g_vars->scene18_whirlgig->_movement->_currDynamicPhaseIndex + 1;
+
+		int mx;
+
+		if (g_vars->scene18_whirlgig->_movement->_currMovement)
+			mx = g_vars->scene18_whirlgig->_movement->_currMovement->_dynamicPhases.size();
+		else
+			mx = g_vars->scene18_whirlgig->_movement->_dynamicPhases.size();
+
+		if (g_vars->scene18_var09 > mx - 1)
+			g_vars->scene18_var09 = -1;
+	} else {
+		g_vars->scene18_var09 = 0;
+	}
+
+	sc->deleteStaticANIObject(g_vars->scene18_boy);
+	sc->deleteStaticANIObject(g_vars->scene18_girl);
+	sc->stopAllSounds();
 }
 
 void scene18_sub2(StaticANIObject *ani, Scene *sc) {

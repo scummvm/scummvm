@@ -892,6 +892,7 @@ namespace Fullpipe {
 #define PIC_SC19_RTRUBA3 1515
 #define SND_19_015 3928
 #define SND_19_016 4995
+#define ST_KSL_NORM 1461
 
 // Scene 20
 #define ANI_GRANDMA_20 2427

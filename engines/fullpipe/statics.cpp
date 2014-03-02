@@ -503,7 +503,6 @@ void Movement::draw(bool flipFlag, int angle) {
 	}
 }
 
-
 void StaticANIObject::loadMovementsPixelData() {
 	for (uint i = 0; i < _movements.size(); i++)
 		((Movement *)_movements[i])->loadPixelData();

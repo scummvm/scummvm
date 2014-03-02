@@ -334,6 +334,10 @@ void Scene::setPictureObjectsFlag4() {
 	}
 }
 
+void Scene::stopAllSounds() {
+	warning("STUB: Scene:stopAllSounds()");
+}
+
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_okeyCode == flags)

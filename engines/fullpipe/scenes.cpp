@@ -306,6 +306,7 @@ Vars::Vars() {
 	scene19_var02 = 0;
 	scene19_var03 = 0;
 	scene19_var04 = 0;
+	scene19_var05 = false;
 
 	scene20_fliesCountdown = 0;
 	scene20_grandma = 0;

@@ -78,6 +78,8 @@ class Scene : public Background {
 
 	void initObjectCursors(const char *name);
 
+	void stopAllSounds();
+
   private:
 	static bool compareObjPriority(const void *p1, const void *p2);
 	void objectList_sortByPriority(PtrList &list, bool skipFirst = false);
