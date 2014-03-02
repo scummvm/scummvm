@@ -52,6 +52,7 @@ public:
 
 	uint32 _id;
 	bool _playing;
+	bool _fading;
 	SoundType _type;
 	uint32 _age;
 	uint32 _ambientFadeOutDelay;
@@ -60,7 +61,11 @@ private:
 	Myst3Engine *_vm;
 
 	Common::String _name;
+
 	uint32 _volume;
+	int32 _heading;
+	uint32 _headingAngle;
+
 	Audio::AudioStream *_stream;
 	Audio::SoundHandle _handle;
 
@@ -83,6 +88,8 @@ public:
 	void age();
 
 	void fadeOutOldSounds(uint32 fadeDelay);
+
+	void compute3DVolumes(int32 heading, uint angle, int32 *left, int32 *right);
 
 private:
 	static const uint kNumChannels = 14;

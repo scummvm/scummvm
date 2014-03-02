@@ -109,9 +109,58 @@ void Sound::fadeOutOldSounds(uint32 fadeDelay) {
 	_vm->_state->setAmbientOverrideFadeOutDelay(false);
 }
 
+void Sound::compute3DVolumes(int32 heading, uint angle, int32 *left, int32 *right) {
+	// This table contains the left and right volume values for the cardinal directions
+	static const struct {
+		int32 angle;
+		int32 left;
+		int32 right;
+	} volumes[] = {
+		{ -180, 50,   50 },
+		{  -90, 100,   0 },
+		{    0, 100, 100 },
+		{   90, 0,   100 },
+		{  180, 50,   50 }
+	};
+
+	if (angle) {
+		// Compute the distance to the sound source
+		int32 headingDistance = heading - _vm->_state->getLookAtHeading();
+
+		// Make sure to use the shortest direction
+		while (ABS(headingDistance) > 180) {
+			if (headingDistance > 0) {
+				headingDistance -= 360;
+			} else {
+				headingDistance += 360;
+			}
+		}
+
+		// Find the appropriate quadrant
+		uint quadrant = 0;
+		while (headingDistance < volumes[quadrant].angle || headingDistance > volumes[quadrant + 1].angle)
+			quadrant++;
+
+		float positionInQuadrant = (headingDistance - volumes[quadrant].angle)
+				/ (float)(volumes[quadrant + 1].angle - volumes[quadrant].angle);
+
+		// Compute the left and right volumes using linear interpolation from the cardinal directions
+		*left = volumes[quadrant].left + (volumes[quadrant + 1].left - volumes[quadrant].left) * positionInQuadrant;
+		*right = volumes[quadrant].right + (volumes[quadrant + 1].right - volumes[quadrant].right) * positionInQuadrant;
+
+		// Add the base sound level
+		*left += (100 - angle) * (100 - *left) / 100;
+		*right += (100 - angle) * (100 - *right) / 100;
+	} else {
+		*left = 100;
+		*right = 100;
+	}
+}
+
 SoundChannel::SoundChannel(Myst3Engine *vm) :
 	_vm(vm),
 	_playing(false),
+	_fading(false),
 	_id(0),
 	_stream(0),
 	_age(0),
@@ -127,6 +176,8 @@ void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenua
 	// Load the name of the sound from its id
 	_name = _vm->_db->getSoundName(id);
 	_volume = volume;
+	_heading = heading;
+	_headingAngle = attenuation;
 
 	// Open the file to a stream
 	_stream = Audio::makeLoopingAudioStream(makeAudioStream(_name), loop ? 0 : 1);
@@ -140,7 +191,11 @@ void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenua
 
 	// Update state
 	_id = id;
-	_type = type;
+	if (_vm->_state->getVar(id) != 2) {
+		_type = type;
+	} else {
+		_type = kMusic;
+	}
 	_age = 0;
 	_playing = true;
 	_vm->_state->setVar(id, 1);
@@ -187,7 +242,11 @@ void SoundChannel::update() {
 	if (!_playing) {
 		_vm->_state->setVar(_id, 0);
 		_stream = 0;
+		return;
 	}
+
+	if (!_fading)
+		setVolume3D(_volume, _heading, _headingAngle);
 }
 
 void SoundChannel::stop() {
@@ -204,15 +263,29 @@ void SoundChannel::stop() {
 	_vm->_state->setVar(_id, 0);
 	_id = 0;
 	_age = 99;
+	_fading = false;
 
 	_stream = 0;
 }
 
 void SoundChannel::setVolume3D(uint32 volume, uint16 heading, uint16 attenuation) {
-	uint16 mixerVolume = _volume * Audio::Mixer::kMaxChannelVolume / 100;
+	int32 left, right;
+	_vm->_sound->compute3DVolumes(heading, attenuation, &left, &right);
 
-	// TODO: 3D sound
+	// Compute balance from the left and right volumes
+	int32 pan;
+	if (left == right) {
+		pan = 0;
+	} else if (left > right) {
+		pan = -127 * (left - right) / left;
+	} else {
+		pan = 127 * (right - left) / right;
+	}
+
+	uint mixerVolume = MAX(left, right) * volume * Audio::Mixer::kMaxChannelVolume / 100 / 100;
+
 	g_system->getMixer()->setChannelVolume(_handle, mixerVolume);
+	g_system->getMixer()->setChannelBalance(_handle, pan);
 }
 
 void SoundChannel::fadeOut(uint32 fadeDelay) {
@@ -228,6 +301,9 @@ void SoundChannel::fade(uint32 targetVolume, int32 targetHeading, int32 targetAt
 	if (targetVolume == 0) {
 		stop();
 	} else {
+		_volume = targetVolume;
+		_heading = targetHeading;
+		_headingAngle = targetAttenuation;
 		setVolume3D(targetVolume, targetHeading, targetAttenuation);
 	}
 }
