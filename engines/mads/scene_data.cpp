@@ -187,8 +187,17 @@ void ARTHeader::load(Common::SeekableReadStream *f) {
 		rgb.b = f->readByte();
 		rgb.u = f->readByte();
 
-		_palData.push_back(rgb);
+		_palAnimData.push_back(rgb);
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+void SceneNode::load(Common::SeekableReadStream *f) {
+	_walkPos.x = f->readSint16LE();
+	_walkPos.y = f->readSint16LE();
+	for (int i = 0; i < MAX_ROUTE_NODES; ++i)
+		_indexes[i] = f->readUint16LE();
 }
 
 /*------------------------------------------------------------------------*/
@@ -237,21 +246,25 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 	_depthStyle = infoStream->readUint16LE();
 	_width = infoStream->readUint16LE();
 	_height = infoStream->readUint16LE();
+
 	infoStream->skip(24);
-	_nodeCount = infoStream->readUint16LE();
+
+	int nodeCount = infoStream->readUint16LE();
 	_yBandsEnd = infoStream->readUint16LE();
 	_yBandsStart = infoStream->readUint16LE();
 	_maxScale = infoStream->readUint16LE();
 	_minScale = infoStream->readUint16LE();
-	for (int i = 0; i < 15; ++i)
+	for (int i = 0; i < DEPTH_BANDS_SIZE; ++i)
 		_depthList[i] = infoStream->readUint16LE();
 	_field4A = infoStream->readUint16LE();
 
 	// Load the set of objects that are associated with the scene
 	for (int i = 0; i < 20; ++i) {
-		InventoryObject obj;
-		obj.load(*infoStream);
-		_objects.push_back(obj);
+		SceneNode node;
+		node.load(infoStream);
+		
+		if (i < nodeCount)
+			_nodes.push_back(node);
 	}
 
 	int spriteSetsCount  = infoStream->readUint16LE();
@@ -313,8 +326,8 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 	delete stream;
 
 	// Copy out the palette data
-	for (uint i = 0; i < artHeader._palData.size(); ++i)
-		_palette.push_back(artHeader._palData[i]);
+	for (uint i = 0; i < artHeader._palAnimData.size(); ++i)
+		_palAnimData.push_back(artHeader._palAnimData[i]);
 
 	if (!(flags & 1)) {
 		if (!_vm->_palette->_paletteUsage.empty()) {
@@ -326,9 +339,9 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 		if (_field4C > 0) {
 			_vm->_palette->_paletteUsage.transform(artHeader._palette);
 
-			for (uint i = 0; i < _palette.size(); ++i) {
-				byte g = _palette[i].g;
-				_palette[g].b = artHeader._palette[g].palIndex;
+			for (uint i = 0; i < _palAnimData.size(); ++i) {
+				byte g = _palAnimData[i].g;
+				_palAnimData[g].b = artHeader._palAnimData[g].u;
 			}
 		}
 	}

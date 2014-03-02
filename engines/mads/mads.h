@@ -75,10 +75,6 @@ private:
 	const MADSGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
-	bool _easyMouse;
-	bool _invObjectStill;
-	bool _textWindowStill;
-
 	/**
 	 * Handles basic initialisation
 	 */
@@ -98,6 +94,9 @@ public:
 	MSurface *_screen;
 	SoundManager *_sound;
 	UserInterface *_userInterface;
+	bool _easyMouse;
+	bool _invObjectStill;
+	bool _textWindowStill;
 
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);

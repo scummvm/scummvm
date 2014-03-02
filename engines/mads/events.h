@@ -116,6 +116,11 @@ public:
 	 * Delay for a given number of frames
 	 */
 	void delay(int amount);
+
+	/**
+	 * Gets the current frame counter
+	 */
+	uint32 getFrameCounter() const { return _gameCounter; }
 };
 
 } // End of namespace MADS

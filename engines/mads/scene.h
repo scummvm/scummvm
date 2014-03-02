@@ -48,6 +48,11 @@ private:
 	 * Secondary loading vocab list
 	 */
 	void loadVocabStrings();
+
+	/*
+	 * Initialises the data for palette animation within the scene
+	 */
+	void initPaletteAnimation(Common::Array<RGB4> &animData, bool animFlag);
 protected:
 	MADSEngine *_vm;
 public:
@@ -74,6 +79,13 @@ public:
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
 	MSurface _depthSurface;
+	bool _animFlag;
+	int _animVal1;
+	int _animCount;
+	Common::Array<uint32> _animTicksList;
+	Common::Array<RGB4> _animPalData;
+	SceneNodeList _nodes;
+	Common::StringArray _vocabStrings;
 
 	/**
 	 * Constructor

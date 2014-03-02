@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "mads/scene.h"
+#include "mads/compression.h"
 #include "mads/mads.h"
 #include "mads/nebular/nebular_scenes.h"
 
@@ -34,6 +35,8 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm) {
 	_vocabBuffer = nullptr;
 	_sceneLogic = nullptr;
 	_sceneInfo = nullptr;
+	_animFlag = false;
+	_animVal1 = 0;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
@@ -123,15 +126,46 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_sceneInfo = SceneInfo::init(_vm);
 	_sceneInfo->load(_currentSceneId, _v1, Common::String(), _vm->_game->_v2 ? 17 : 16,
 		_depthSurface, _backgroundSurface);
+
+	// Initialise palette animation for the scene
+	initPaletteAnimation(_sceneInfo->_palAnimData, false);
+
+	// Copy over nodes
+	_nodes.clear();
+	for (uint i = 0; i < _sceneInfo->_nodes.size(); ++i)
+		_nodes.push_back(_sceneInfo->_nodes[i]);
+
+	// Load hotspots
+	loadHotspots();
+
+	// Load vocab
+	loadVocab();
+
+	// Load palette usage
+	_vm->_palette->_paletteUsage.load(1, 0xF);
+
+	// Load interface
+	int flags = _vm->_game->_v2 ? 0x4101 : 0x4100;
+	if (!_vm->_textWindowStill)
+		flags |= 0x200;
+	// TODO
 }
 
 void Scene::loadHotspots() {
 	File f(Resources::formatName(RESPREFIX_RM, _currentSceneId, ".HH"));
-	int count = f.readUint16LE();
+	MadsPack madsPack(&f);
 
+	Common::SeekableReadStream *stream = madsPack.getItemStream(0);
+	int count = stream->readUint16LE();
+	delete stream;
+
+	stream = madsPack.getItemStream(1);
 	_hotspots.clear();
 	for (int i = 0; i < count; ++i)
-		_hotspots.push_back(Hotspot(f));
+		_hotspots.push_back(Hotspot(*stream));
+
+	delete stream;
+	f.close();
 }
 
 void Scene::loadVocab() {
@@ -163,14 +197,42 @@ void Scene::loadVocabStrings() {
 	freeVocab();
 	File f("*VOCAB.DAT");
 
-	byte *d = new byte[ f.size()];
-	f.read(d, f.size());
+	char *textStrings = new char[f.size()];
+	f.read(textStrings, f.size());
 
-
-//	int vocabId = 1;
 	for (uint strIndex = 0; strIndex < _activeVocabs.size(); ++strIndex) {
-		// TODO: Rest of this method
+		const char *s = textStrings;
+		for (int vocabIndex = 0; vocabIndex < _activeVocabs[strIndex]; ++vocabIndex)
+			s += strlen(s) + 1;
+
+		_vocabStrings.push_back(s);
 	}
+
+	delete[] textStrings;
+	f.close();
+}
+
+void Scene::initPaletteAnimation(Common::Array<RGB4> &animData, bool animFlag) {
+	// Initialise the animation palette and ticks list
+	_animTicksList.clear();
+	_animPalData.clear();
+
+	for (uint i = 0; i < animData.size(); ++i) {
+		_animTicksList.push_back(_vm->_events->getFrameCounter());
+		_animPalData.push_back(animData[i]);
+	}
+
+	// Save the initial starting palette
+	Common::copy(&_vm->_palette->_mainPalette[0], &_vm->_palette->_mainPalette[PALETTE_SIZE],
+		&_vm->_palette->_savedPalette[0]);
+
+	// Calculate total
+	_animCount = 0;
+	for (uint i = 0; i < _animPalData.size(); ++i)
+		_animCount += _animPalData[i].r;
+
+	_animVal1 = (_animCount > 16) ? 3 : 0;
+	_animFlag = animFlag;
 }
 
 void Scene::free() {

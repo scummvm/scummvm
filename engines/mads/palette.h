@@ -30,6 +30,8 @@ namespace MADS {
 
 class MADSEngine;
 
+#define PALETTE_USAGE_COUNT 4
+
 struct RGB4 {
 	byte r;
 	byte g;
@@ -143,6 +145,7 @@ protected:
 	void reset();
 public:
 	byte _mainPalette[PALETTE_SIZE];
+	byte _savedPalette[PALETTE_SIZE];
 	RGB4 _gamePalette[PALETTE_COUNT];
 	PaletteUsage _paletteUsage;
 public:

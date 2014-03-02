@@ -50,6 +50,9 @@ enum {
 	VERB_WALKTO      = 13
 };
 
+#define DEPTH_BANDS_SIZE 15
+#define MAX_ROUTE_NODES 22
+
 class VerbInit {
 public:
 	int _id;
@@ -254,10 +257,28 @@ struct ARTHeader {
 	int _width;
 	int _height;
 	Common::Array<RGB6> _palette;
-	Common::Array<RGB4> _palData;
+	Common::Array<RGB4> _palAnimData;
 
 	void load(Common::SeekableReadStream *f);
 };
+
+class SceneNode {
+public:
+	Common::Point _walkPos;
+	int _indexes[MAX_ROUTE_NODES];
+	bool _active;
+
+	/**
+	 * Constructor
+	 */
+	SceneNode() : _active(false) {}
+
+	/**
+	 * Loads the scene node
+	 */
+	void load(Common::SeekableReadStream *f);
+};
+typedef Common::Array<SceneNode> SceneNodeList;
 
 /**
  * Handles general data for a given scene
@@ -291,17 +312,16 @@ public:
 	int _width;
 	int _height;
 
-	int _nodeCount;
 	int _yBandsEnd;
 	int _yBandsStart;
 	int _maxScale;
 	int _minScale;
-	int _depthList[15];
+	int _depthList[DEPTH_BANDS_SIZE];
 	int _field4A;
 
 	int _field4C;
-	Common::Array<InventoryObject> _objects;
-	Common::Array<RGB4> _palette;
+	Common::Array<RGB4> _palAnimData;
+	SceneNodeList _nodes;
 public:
 	/**
 	 * Destructor
