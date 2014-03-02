@@ -224,6 +224,7 @@ public:
 
 	void initMovements();
 	void loadMovementsPixelData();
+	void freeMovementsPixelData();
 	void preloadMovements(MovTable *mt);
 
 	void setSomeDynamicPhaseIndex(int val) { _someDynamicPhaseIndex = val; }

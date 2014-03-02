@@ -49,7 +49,18 @@ struct Swinger {
 };
 
 void scene18_preload() {
-	warning("WARNING: scene18_preload()");
+    g_fp->_scene3 = 0;
+
+	for (SceneTagList::iterator s = g_fp->_gameProject->_sceneTagList->begin(); s != g_fp->_gameProject->_sceneTagList->end(); ++s) {
+		if (s->_sceneId == SC_18) {
+			g_fp->_scene3 = s->_scene;
+			s->_scene = 0;
+
+			g_fp->_scene3->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1)->freeMovementsPixelData();
+
+			break;
+		}
+	}
 }
 
 void scene19_preload(Scene *sc, int key) {

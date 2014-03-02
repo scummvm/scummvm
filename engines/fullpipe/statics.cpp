@@ -509,6 +509,11 @@ void StaticANIObject::loadMovementsPixelData() {
 		((Movement *)_movements[i])->loadPixelData();
 }
 
+void StaticANIObject::freeMovementsPixelData() {
+	for (uint i = 0; i < _movements.size(); i++)
+		((Movement *)_movements[i])->freePixelData();
+}
+
 Statics *StaticANIObject::addReverseStatics(Statics *st) {
 	Statics *res = getStaticsById(st->_staticsId ^ 0x4000);
 
