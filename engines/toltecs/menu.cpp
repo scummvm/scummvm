@@ -195,7 +195,7 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 }
 
 ItemID MenuSystem::findItemAt(int x, int y) {
-	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
+	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); ++iter) {
 		if ((*iter).enabled && (*iter).rect.contains(x, y - _top))
 			return (*iter).id;
 	}
@@ -203,7 +203,7 @@ ItemID MenuSystem::findItemAt(int x, int y) {
 }
 
 MenuSystem::Item *MenuSystem::getItem(ItemID id) {
-	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
+	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); ++iter) {
 		if ((*iter).id == id)
 			return &(*iter);
 	}
@@ -323,7 +323,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 		break;
 	}
 
-	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
+	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); ++iter) {
 		if ((*iter).enabled)
 			drawItem((*iter).id, false);
 	}
@@ -508,7 +508,7 @@ int MenuSystem::loadSavegamesList() {
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 		if (slotNum > maxSlotNum)
