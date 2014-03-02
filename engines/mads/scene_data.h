@@ -50,8 +50,18 @@ enum {
 	VERB_WALKTO      = 13
 };
 
+enum MadsActionMode { ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6 };
+enum MadsActionMode2 { ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5 };
+enum AbortTimerMode { ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2 };
+
 #define DEPTH_BANDS_SIZE 15
 #define MAX_ROUTE_NODES 22
+
+struct ActionDetails {
+	int verbId;
+	int objectNameId;
+	int indirectObjectId;
+};
 
 class VerbInit {
 public:
@@ -75,15 +85,19 @@ enum SpriteType {
 	ST_FULL_SCREEN_REFRESH = -2, ST_EXPIRED = -1
 };
 
-class SpriteSlot {
+class SpriteSlotSubset {
 public:
-	SpriteType _spriteType;
-	int _seqIndex;
 	int _spritesIndex;
 	int _frameNumber;
 	Common::Point _position;
 	int _depth;
 	int _scale;
+};
+
+class SpriteSlot: public SpriteSlotSubset {
+public:
+	SpriteType _spriteType;
+	int _seqIndex;
 public:
 	SpriteSlot();
 	SpriteSlot(SpriteType type, int seqIndex);

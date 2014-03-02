@@ -148,7 +148,8 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	int flags = _vm->_game->_v2 ? 0x4101 : 0x4100;
 	if (!_vm->_textWindowStill)
 		flags |= 0x200;
-	// TODO
+	_animation = Animation::init(_vm, this);
+	
 }
 
 void Scene::loadHotspots() {

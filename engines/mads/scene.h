@@ -29,6 +29,7 @@
 #include "mads/assets.h"
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
+#include "mads/animation.h"
 
 namespace MADS {
 
@@ -79,6 +80,7 @@ public:
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
 	MSurface _depthSurface;
+	MSurface _interfaceSurface;
 	bool _animFlag;
 	int _animVal1;
 	int _animCount;
@@ -86,6 +88,7 @@ public:
 	Common::Array<RGB4> _animPalData;
 	SceneNodeList _nodes;
 	Common::StringArray _vocabStrings;
+	Animation *_animation;
 
 	/**
 	 * Constructor

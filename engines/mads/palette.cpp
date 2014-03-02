@@ -68,11 +68,9 @@ void PaletteUsage::load(int count, ...) {
 	va_list va;
 	va_start(va, count);
 
-	if (count > (int)_data.size())
-		_data.resize(count);
-
+	_data.clear();
 	for (int i = 0; i < count; ++i)
-		_data[i] = va_arg(va, int);
+		_data.push_back(va_arg(va, int));
 
 	va_end(va);
 }
