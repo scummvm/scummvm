@@ -205,14 +205,17 @@ void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 
 /*------------------------------------------------------------------------*/
 
-SceneInfo *SceneInfo::load(MADSEngine *vm, int sceneId, int v1, const Common::String &resName,
-		int v3, MSurface &depthSurface, MSurface &bgSurface) {
-	return new SceneInfo(vm, sceneId, v1, resName, v3, depthSurface, bgSurface);
+SceneInfo *SceneInfo::init(MADSEngine *vm) {
+	if (vm->getGameID() == GType_RexNebular) {
+		return new SceneInfoNebular(vm);
+	}
+	else {
+		return new SceneInfo(vm);
+	}
 }
 
-SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &resName,
+void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 		int flags, MSurface &depthSurface, MSurface &bgSurface) {
-	_vm = vm;
 	bool sceneFlag = sceneId >= 0;
 	
 	// Figure out the resource to use
@@ -308,7 +311,6 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 	ARTHeader artHeader;
 	artHeader.load(stream);
 	delete stream;
-	artFile.close();
 
 	// Copy out the palette data
 	for (uint i = 0; i < artHeader._palData.size(); ++i)
@@ -333,7 +335,12 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 
 	// Read in the background surface data
 	assert(_width == bgSurface.w && _height == bgSurface.h);
+	stream = artResource.getItemStream(1);
 	stream->read(bgSurface.getPixels(), bgSurface.w * bgSurface.h);
+
+	// Close the ART file
+	delete stream;
+	artFile.close();
 
 	Common::Array<SpriteAsset *> spriteSets;
 	Common::Array<int> xpList;
@@ -371,13 +378,17 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 
 void SceneInfo::loadCodes(MSurface &depthSurface) {
 	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ".DAT"));
+	MadsPack codesPack(&f);
+	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
 
 	uint16 width = _width;
 	uint16 height = _height;
-	byte *walkMap = new byte[f.size()];
+	byte *walkMap = new byte[stream->size()];
 
 	depthSurface.setSize(width, height);
-	f.read(walkMap, f.size());
+	stream->read(walkMap, f.size());
+	delete stream;
+	f.close();
 
 	byte *ptr = (byte *)depthSurface.getPixels();
 
@@ -395,5 +406,31 @@ void SceneInfo::loadCodes(MSurface &depthSurface) {
 }
 
 /*------------------------------------------------------------------------*/
+
+void SceneInfoNebular::loadCodes(MSurface &depthSurface) {
+	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ".DAT"));
+	MadsPack codesPack(&f);
+	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
+
+	byte *destP = depthSurface.getData();
+	byte *endP = depthSurface.getBasePtr(0, depthSurface.h);
+
+	byte runLength = stream->readByte();
+	while (destP < endP && runLength > 0) {
+		byte runValue = stream->readByte();
+
+		// Write out the run length
+		Common::fill(destP, destP + runLength, runValue);
+		destP += runLength;
+
+		// Get the next run length
+		runLength = stream->readByte();
+	}
+
+	if (destP < endP)
+		Common::fill(destP, endP, 0);
+	delete stream;
+	f.close();
+}
 
 } // End of namespace MADS

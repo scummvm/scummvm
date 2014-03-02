@@ -272,16 +272,18 @@ class SceneInfo {
 
 		void load(Common::SeekableReadStream *f);
 	};
-private:
+protected:
 	MADSEngine *_vm;
 
-	SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &resName,
-		int v3, MSurface &depthSurface, MSurface &bgSurface);
-
+	/**
+	 * Constructor
+	 */
+	SceneInfo(MADSEngine *vm) : _vm(vm) {}
+	
 	/**
 	 * Loads the given surface with depth information of a given scene
 	 */
-	void loadCodes(MSurface &depthSurface);
+	virtual void loadCodes(MSurface &depthSurface);
 public:
 	int _sceneId;
 	int _artFileNum;
@@ -302,10 +304,31 @@ public:
 	Common::Array<RGB4> _palette;
 public:
 	/**
-	 * Instantiates the class and loads the data
+	 * Destructor
 	 */
-	static SceneInfo *load(MADSEngine *vm, int sceneId, int flags, 
-		const Common::String &resName, int v3, MSurface &depthSurface, MSurface &bgSurface);
+	virtual ~SceneInfo() {}
+
+	/**
+	 * Instantiates the class
+	 */
+	static SceneInfo *init(MADSEngine *vm);
+
+	/**
+	 loads the data
+	 */
+	void load(int sceneId, int flags, const Common::String &resName, int v3, 
+		MSurface &depthSurface, MSurface &bgSurface);
+};
+
+class SceneInfoNebular : public SceneInfo {
+	friend class SceneInfo;
+protected:
+	virtual void loadCodes(MSurface &depthSurface);
+
+	/**
+	* Constructor
+	*/
+	SceneInfoNebular(MADSEngine *vm) : SceneInfo(vm) {}
 };
 
 } // End of namespace MADS

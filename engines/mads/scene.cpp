@@ -120,7 +120,8 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_messages.clear();
 
 	// TODO: palletteUsage reset?  setPalette(_nullPalette);
-	_sceneInfo = SceneInfo::load(_vm, _currentSceneId, _v1, Common::String(), _vm->_game->_v2 ? 17 : 16,
+	_sceneInfo = SceneInfo::init(_vm);
+	_sceneInfo->load(_currentSceneId, _v1, Common::String(), _vm->_game->_v2 ? 17 : 16,
 		_depthSurface, _backgroundSurface);
 }
 
