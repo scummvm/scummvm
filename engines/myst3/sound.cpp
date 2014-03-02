@@ -123,6 +123,27 @@ void Sound::compute3DVolumes(int32 heading, uint angle, int32 *left, int32 *righ
 		{  180, 50,   50 }
 	};
 
+#if 0
+	// This is the equivalent volume table for the xbox version, with 4.0 surround
+	static const struct {
+		int32 angle;
+		int32 frontLeft;
+		int32 frontRight;
+		int32 backLeft;
+		int32 backRight;
+	} surroundVolumes[] = {
+		{ -180,   0,   0, 100, 100 },
+		{ -135,   0,   0, 100,   0 },
+		{  -90, 100,   0, 100,   0 },
+		{  -40, 100,   0,   0,   0 },
+		{    0, 100, 100,   0,   0 },
+		{   40,   0, 100,   0,   0 },
+		{   90,   0, 100,   0, 100 },
+		{  135,   0,   0,   0, 100 },
+		{  180,   0,   0, 100, 100 },
+	};
+#endif
+
 	if (angle) {
 		// Compute the distance to the sound source
 		int32 headingDistance = heading - _vm->_state->getLookAtHeading();
