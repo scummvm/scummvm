@@ -517,6 +517,12 @@ void AGOSEngine::delay(uint amount) {
 			case Common::EVENT_RBUTTONUP:
 				_rightClick = true;
 				break;
+			case Common::EVENT_WHEELUP:
+				handleMouseWheelUp();
+				break;
+			case Common::EVENT_WHEELDOWN:
+				handleMouseWheelDown();
+				break;
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return;
