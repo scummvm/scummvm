@@ -30,7 +30,7 @@ namespace Myst3 {
 class Myst3Engine;
 
 enum SoundType {
-	kUnk0,
+	kAny,
 	kAmbient,
 	kCue,
 	kEffect,
@@ -52,10 +52,26 @@ public:
 
 	uint32 _id;
 	bool _playing;
+	bool _stopWhenSilent;
 	bool _fading;
 	SoundType _type;
 	uint32 _age;
 	uint32 _ambientFadeOutDelay;
+
+	int32 _fadeDuration; // In frames (@30 fps)
+	int32 _fadePosition;
+
+	int32 _fadeSourceVolume;
+	int32 _fadeTargetVolume;
+	int32 _fadeSourceHeading;
+	int32 _fadeTargetHeading;
+	int32 _fadeSourceAttenuation;
+	int32 _fadeTargetAttenuation;
+
+	bool _hasFadeArray;
+	uint32 _fadeArrayPosition;
+	uint32 _fadeDurations[4];
+	uint32 _fadeVolumes[4];
 
 private:
 	Myst3Engine *_vm;
@@ -70,6 +86,7 @@ private:
 	Audio::SoundHandle _handle;
 
 	Audio::RewindableAudioStream *makeAudioStream(const Common::String &name) const;
+	void updateFading();
 };
 
 class Sound {
