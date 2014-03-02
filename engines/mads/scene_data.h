@@ -263,6 +263,15 @@ struct ARTHeader {
  * Handles general data for a given scene
  */
 class SceneInfo {
+	class SpriteInfo {
+	public:
+		int _spriteSetIndex;
+		Common::Point _position;
+		int _depth;
+		int _scale;
+
+		void load(Common::SeekableReadStream *f);
+	};
 private:
 	MADSEngine *_vm;
 
@@ -290,7 +299,6 @@ public:
 
 	int _field4C;
 	Common::Array<InventoryObject> _objects;
-	Common::StringArray _setNames;
 	Common::Array<RGB4> _palette;
 public:
 	/**

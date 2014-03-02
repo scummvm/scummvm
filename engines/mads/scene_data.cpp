@@ -193,6 +193,18 @@ void ARTHeader::load(Common::SeekableReadStream *f) {
 
 /*------------------------------------------------------------------------*/
 
+void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
+	f->skip(3);
+	_spriteSetIndex = f->readByte();
+	f->skip(2);
+	_position.x = f->readSint16LE();
+	_position.y = f->readSint16LE();
+	_depth = f->readByte();
+	_scale = f->readByte();
+}
+
+/*------------------------------------------------------------------------*/
+
 SceneInfo *SceneInfo::load(MADSEngine *vm, int sceneId, int v1, const Common::String &resName,
 		int v3, MSurface &depthSurface, MSurface &bgSurface) {
 	return new SceneInfo(vm, sceneId, v1, resName, v3, depthSurface, bgSurface);
@@ -200,13 +212,9 @@ SceneInfo *SceneInfo::load(MADSEngine *vm, int sceneId, int v1, const Common::St
 
 SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &resName,
 		int flags, MSurface &depthSurface, MSurface &bgSurface) {
-	bool flag = true;
+	_vm = vm;
 	bool sceneFlag = sceneId >= 0;
-	bool ssFlag = false, wsFlag = false;
 	
-	Common::Array<SpriteAsset *> spriteSets;
-	Common::Array<int> xpList;
-
 	// Figure out the resource to use
 	Common::String resourceName;
 	if (sceneFlag) {
@@ -216,54 +224,70 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 	}
 
 	// Open the scene info resource for access
-	File infoFile(resName);
+	File infoFile(resourceName);
+	MadsPack infoPack(&infoFile);
 
 	// Read in basic data
-	_sceneId = infoFile.readUint16LE();
-	_artFileNum = infoFile.readUint16LE();
-	_depthStyle = infoFile.readUint16LE();
-	_width = infoFile.readUint16LE();
-	_height = infoFile.readUint16LE();
-	infoFile.skip(24);
-	_nodeCount = infoFile.readUint16LE();
-	_yBandsEnd = infoFile.readUint16LE();
-	_yBandsStart = infoFile.readUint16LE();
-	_maxScale = infoFile.readUint16LE();
-	_minScale = infoFile.readUint16LE();
+	Common::SeekableReadStream *infoStream = infoPack.getItemStream(0);
+	_sceneId = infoStream->readUint16LE();
+	_artFileNum = infoStream->readUint16LE();
+	_depthStyle = infoStream->readUint16LE();
+	_width = infoStream->readUint16LE();
+	_height = infoStream->readUint16LE();
+	infoStream->skip(24);
+	_nodeCount = infoStream->readUint16LE();
+	_yBandsEnd = infoStream->readUint16LE();
+	_yBandsStart = infoStream->readUint16LE();
+	_maxScale = infoStream->readUint16LE();
+	_minScale = infoStream->readUint16LE();
 	for (int i = 0; i < 15; ++i)
-		_depthList[i] = infoFile.readUint16LE();
-	_field4A = infoFile.readUint16LE();
+		_depthList[i] = infoStream->readUint16LE();
+	_field4A = infoStream->readUint16LE();
 
 	// Load the set of objects that are associated with the scene
 	for (int i = 0; i < 20; ++i) {
 		InventoryObject obj;
-		obj.load(infoFile);
+		obj.load(*infoStream);
 		_objects.push_back(obj);
 	}
 
-	int setCount  = infoFile.readUint16LE();
-	int field40E = infoFile.readUint16LE();
+	int spriteSetsCount  = infoStream->readUint16LE();
+	int spriteInfoCount = infoStream->readUint16LE();
 
-	for (int i = 0; i < 20; ++i) {
+	// Load in sprite sets 
+	Common::StringArray setNames;
+	for (int i = 0; i < 10; ++i) {
 		char name[64];
-		infoFile.read(name, 64);
-		_setNames.push_back(Common::String(name));
+		infoStream->read(name, 64);
+
+		if (i < spriteSetsCount)
+			setNames.push_back(Common::String(name));
 	}
 
+	// Load in sprite draw information
+	Common::Array<SpriteInfo> spriteInfo;
+	for (int i = 0; i < 50; ++i) {
+		SpriteInfo info;
+		info.load(infoStream);
+
+		if (i < spriteInfoCount)
+			spriteInfo.push_back(info);
+	}
+
+	delete infoStream;
 	infoFile.close();
+
 	int width = _width;
 	int height = _height;
 
 	if (!bgSurface.getPixels()) {
 		bgSurface.setSize(width, height);
-		ssFlag = true;
 	}
 
 	if (_depthStyle == 2)
 		width >>= 2;
 	if (!depthSurface.getPixels()) {
 		depthSurface.setSize(width, height);
-		wsFlag = true;
 	}
 
 	// Load the depth surface with the scene codes
@@ -271,7 +295,7 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 
 	// Get the ART resource
 	if (sceneFlag) {
-		resourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".ART");
+		resourceName = Resources::formatName(RESPREFIX_RM, _artFileNum, ".ART");
 	} else {
 		resourceName = "*" + Resources::formatResource(resName, resName);
 	}
@@ -283,6 +307,7 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 
 	ARTHeader artHeader;
 	artHeader.load(stream);
+	delete stream;
 	artFile.close();
 
 	// Copy out the palette data
@@ -310,12 +335,15 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 	assert(_width == bgSurface.w && _height == bgSurface.h);
 	stream->read(bgSurface.getPixels(), bgSurface.w * bgSurface.h);
 
+	Common::Array<SpriteAsset *> spriteSets;
+	Common::Array<int> xpList;
+
 	if (flags & 1) {
-		for (uint i = 0; i < _setNames.size(); ++i) {
+		for (uint i = 0; i < setNames.size(); ++i) {
 			Common::String setResName;
 			if (sceneFlag || resName.hasPrefix("*"))
 				setResName += "*";
-			setResName += _setNames[i];
+			setResName += setNames[i];
 
 			SpriteAsset *sprites = new SpriteAsset(_vm, setResName, flags);
 			spriteSets.push_back(sprites);
@@ -323,9 +351,22 @@ SceneInfo::SceneInfo(MADSEngine *vm, int sceneId, int v1, const Common::String &
 		}
 	}
 
+	warning("TODO: sub_201E4(xpList, namesCount, &pal data2");
 
+	for (uint i = 0; i < spriteInfo.size(); ++i) {
+		SpriteInfo &si = spriteInfo[i];
+		SpriteAsset *asset = spriteSets[si._spriteSetIndex];
+		assert(asset && _depthStyle != 2);
 
-	warning("TODO");
+		asset->drawScaled(asset->getCount(), depthSurface, bgSurface,
+			si._scale, si._depth, si._position);
+	}
+
+	// Free the sprite sets
+	for (int i = (int)spriteSets.size() - 1; i >= 0; --i) {
+		warning("TODO: sub_201C8 SPRITE_SET.field_6");
+		delete spriteSets[i];
+	}
 }
 
 void SceneInfo::loadCodes(MSurface &depthSurface) {

@@ -49,8 +49,6 @@ SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int
 		spriteStream->readUint16LE();
 	}
 	_frameCount = spriteStream->readUint16LE();
-	// we skip the rest of the data
-	delete spriteStream;
 
 	// Get the palette data
 	spriteStream = sprites.getItemStream(2);
@@ -64,7 +62,6 @@ SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int
 	delete[] palData;
 	delete spriteStream;
 
-	spriteStream = sprites.getItemStream(1);
 	Common::SeekableReadStream *spriteDataStream = sprites.getItemStream(3);
 
 	SpriteAssetFrame frame;
@@ -87,9 +84,13 @@ SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int
 		_frames.push_back(frame);
 	}
 
-	delete spriteStream;
 	delete spriteDataStream;
 	file.close();
+}
+
+void SpriteAsset::drawScaled(int frameNumber, MSurface &depthSurface, MSurface &destSurface,
+		int scale, int depth, const Common::Point &pos) {
+	warning("TODO: SpriteAsset::drawScaled");
 }
 
 } // End of namespace MADS

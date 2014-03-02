@@ -62,6 +62,9 @@ public:
 	MSprite *getFrame(int frameIndex);
 	byte *getPalette() { return _palette; }
 	int getColorCount() { return _colorCount; }
+
+	void drawScaled(int frameNumber, MSurface &depthSurface, MSurface &destSurface,
+		int scale, int depth, const Common::Point &pos);
 };
 
 } // End of namespace MADS

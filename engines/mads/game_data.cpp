@@ -53,7 +53,7 @@ void InventoryObject::load(Common::SeekableReadStream &f) {
 	for (int i = 0; i < 3; ++i) {
 		_vocabList[i]._actionFlags1 = f.readByte();
 		_vocabList[i]._actionFlags2 = f.readByte();
-		_vocabList[i]._vocabId = f.readByte();
+		_vocabList[i]._vocabId = f.readUint16LE();
 	}
 
 	f.skip(4);	// field12
