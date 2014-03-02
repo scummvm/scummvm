@@ -150,7 +150,6 @@ void SceneManager::fadeInIfNecessary() {
 
 void SceneManager::changeScene(int newSceneNumber) {
 	debug(1, "changeScene(%d)", newSceneNumber);
-	warning("Scene %d", newSceneNumber);
 
 	// Fade out the scene
 	ScenePalette scenePalette;
