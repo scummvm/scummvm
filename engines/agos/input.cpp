@@ -416,6 +416,93 @@ void AGOSEngine::hitarea_stuff_helper_2() {
 	_runScriptReturn1 = false;
 }
 
+#ifdef ENABLE_AGOS2
+void AGOSEngine_Feeble::handleMouseWheelUp() {
+	// TODO
+}
+
+void AGOSEngine_Feeble::handleMouseWheelDown() {
+	// TODO
+}
+#endif
+
+void AGOSEngine_Simon1::handleMouseWheelUp() {
+	HitArea *ha = findBox(206);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			if (_saveLoadRowCurPos != 1) {
+				if (_saveLoadRowCurPos < 7)
+					_saveLoadRowCurPos = 1;
+				else
+					_saveLoadRowCurPos -= 1;
+
+				_saveLoadEdit = false;
+				listSaveGames();
+			}
+	} else {	
+		AGOSEngine::handleMouseWheelUp();
+	}
+}
+
+void AGOSEngine_Simon1::handleMouseWheelDown() {
+	HitArea *ha = findBox(207);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			if (_saveDialogFlag) {
+				_saveLoadRowCurPos += 1;
+				if (_saveLoadRowCurPos >= _numSaveGameRows)
+					_saveLoadRowCurPos = _numSaveGameRows;
+			
+				_saveLoadEdit = false;
+				listSaveGames();
+			}
+	} else {	
+		AGOSEngine::handleMouseWheelDown();
+	}
+}
+
+void AGOSEngine_Elvira2::handleMouseWheelUp() {
+	HitArea *ha = findBox(224);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			_saveGameNameLen = 0;
+
+			if (_saveLoadRowCurPos < 3)
+				_saveLoadRowCurPos = 1;
+			else
+				_saveLoadRowCurPos -= 3;
+
+			listSaveGames();
+	} else {	
+		AGOSEngine::handleMouseWheelUp();
+	}
+}
+
+void AGOSEngine_Elvira2::handleMouseWheelDown() {
+	HitArea *ha =  findBox(224);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			_saveGameNameLen = 0;
+			_saveLoadRowCurPos += 3;
+			if (_saveLoadRowCurPos >= _numSaveGameRows)
+				_saveLoadRowCurPos = 1;
+
+			listSaveGames();
+	} else {	
+		AGOSEngine::handleMouseWheelDown();
+	}
+}
+
+void AGOSEngine::handleMouseWheelUp() {
+	HitArea *ha = findBox(0x7FFB);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+		inventoryUp(ha->window);
+	}
+}
+
+void AGOSEngine::handleMouseWheelDown() {
+	HitArea *ha = findBox(0x7FFC);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+		inventoryDown(ha->window);
+	}
+}
+
 void AGOSEngine::permitInput() {
 	if (_mortalFlag)
 		return;

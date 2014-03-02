@@ -510,6 +510,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_saveLoadType = 0;
 	_saveLoadSlot = 0;
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
+	memset(_saveBuf, 0, sizeof(_saveBuf));
 
 	_saveGameNameLen = 0;
 	_saveLoadRowCurPos = 0;

@@ -520,6 +520,12 @@ void AGOSEngine::delay(uint amount) {
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return;
+			case Common::EVENT_WHEELUP:
+				handleMouseWheelUp();
+				break;
+			case Common::EVENT_WHEELDOWN:
+				handleMouseWheelDown();
+				break;
 			default:
 				break;
 			}
