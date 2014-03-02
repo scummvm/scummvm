@@ -157,6 +157,22 @@ void Sound::compute3DVolumes(int32 heading, uint angle, int32 *left, int32 *righ
 	}
 }
 
+void Sound::computeVolumeBalance(int32 volume, int32 heading, uint attenuation, int32 *mixerVolume, int32 *balance) {
+	int32 left, right;
+	_vm->_sound->compute3DVolumes(heading, attenuation, &left, &right);
+
+	*mixerVolume = MAX(left, right) * volume * Audio::Mixer::kMaxChannelVolume / 100 / 100;
+
+	// Compute balance from the left and right volumes
+	if (left == right) {
+		*balance = 0;
+	} else if (left > right) {
+		*balance = -127 * (left - right) / left;
+	} else {
+		*balance = 127 * (right - left) / right;
+	}
+}
+
 SoundChannel::SoundChannel(Myst3Engine *vm) :
 	_vm(vm),
 	_playing(false),
@@ -164,7 +180,10 @@ SoundChannel::SoundChannel(Myst3Engine *vm) :
 	_id(0),
 	_stream(0),
 	_age(0),
-	_ambientFadeOutDelay(0) {
+	_ambientFadeOutDelay(0),
+	_volume(0),
+	_heading(0),
+	_headingAngle(0) {
 }
 
 SoundChannel::~SoundChannel() {
@@ -269,23 +288,11 @@ void SoundChannel::stop() {
 }
 
 void SoundChannel::setVolume3D(uint32 volume, uint16 heading, uint16 attenuation) {
-	int32 left, right;
-	_vm->_sound->compute3DVolumes(heading, attenuation, &left, &right);
-
-	// Compute balance from the left and right volumes
-	int32 pan;
-	if (left == right) {
-		pan = 0;
-	} else if (left > right) {
-		pan = -127 * (left - right) / left;
-	} else {
-		pan = 127 * (right - left) / right;
-	}
-
-	uint mixerVolume = MAX(left, right) * volume * Audio::Mixer::kMaxChannelVolume / 100 / 100;
+	int32 mixerVolume, balance;
+	_vm->_sound->computeVolumeBalance(volume, heading, attenuation, &mixerVolume, &balance);
 
 	g_system->getMixer()->setChannelVolume(_handle, mixerVolume);
-	g_system->getMixer()->setChannelBalance(_handle, pan);
+	g_system->getMixer()->setChannelBalance(_handle, balance);
 }
 
 void SoundChannel::fadeOut(uint32 fadeDelay) {

@@ -89,14 +89,14 @@ public:
 
 	void fadeOutOldSounds(uint32 fadeDelay);
 
-	void compute3DVolumes(int32 heading, uint angle, int32 *left, int32 *right);
-
+	void computeVolumeBalance(int32 volume, int32 heading, uint attenuation, int32 *mixerVolume, int32 *balance);
 private:
 	static const uint kNumChannels = 14;
 
 	Myst3Engine *_vm;
 	SoundChannel *_channels[kNumChannels];
 
+	void compute3DVolumes(int32 heading, uint angle, int32 *left, int32 *right);
 };
 
 } /* namespace Myst3 */

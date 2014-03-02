@@ -51,6 +51,7 @@ public:
 	void setForceOpaque(bool b) { _forceOpaque = b; }
 	void setStartFrame(int32 v) { _startFrame = v; }
 	void setEndFrame(int32 v) { _endFrame = v; }
+	void setVolume(int32 v) { _volume = v; }
 
 protected:
 	Myst3Engine *_vm;
@@ -74,6 +75,8 @@ protected:
 	int32 _startFrame;
 	int32 _endFrame;
 
+	int32 _volume;
+
 	void loadPosition(const VideoData &videoData);
 	void drawNextFrameToTexture();
 
@@ -96,12 +99,15 @@ public:
 	void setPlayingVar(uint16 v) { _playingVar = v; }
 	void setPosUVar(uint16 v) { _posUVar = v; }
 	void setPosVVar(uint16 v) { _posVVar = v; }
+	void setVolumeVar(uint16 v) { _volumeVar = v; }
 	void setStartFrameVar(uint16 v) { _startFrameVar = v; }
 	void setCondition(int16 condition) { _condition = condition; }
 	void setConditionBit(int16 cb) { _conditionBit = cb; }
 	void setDisableWhenComplete(bool upd) { _disableWhenComplete = upd; }
 	void setLoop(bool loop) { _loop = loop; }
 	void setScriptDriven(bool b) { _scriptDriven = b; }
+	void setSoundHeading(uint16 v) { _soundHeading = v; }
+	void setSoundAttenuation(uint16 v) { _soundAttenuation = v; }
 
 protected:
 	bool _enabled;
@@ -117,11 +123,17 @@ protected:
 	uint16 _endFrameVar;
 	uint16 _posUVar;
 	uint16 _posVVar;
+	uint16 _volumeVar;
+
+	uint32 _soundHeading;
+	uint32 _soundAttenuation;
 
 	uint16 _nextFrameReadVar;
 	uint16 _nextFrameWriteVar;
 
 	uint16 _playingVar;
+
+	void updateVolume();
 };
 
 class SimpleMovie : public Movie {

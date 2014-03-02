@@ -891,6 +891,28 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 		_state->setMovieForce2d(0);
 	}
 
+	if (_state->getMovieVolume1()) {
+		movie->setVolume(_state->getMovieVolume1());
+		_state->setMovieVolume1(0);
+	} else {
+		movie->setVolume(_state->getMovieVolume2());
+	}
+
+	if (_state->getMovieVolumeVar()) {
+		movie->setVolumeVar(_state->getMovieVolumeVar());
+		_state->setMovieVolumeVar(0);
+	}
+
+	if (_state->getMovieSoundHeading()) {
+		movie->setSoundHeading(_state->getMovieSoundHeading());
+		_state->setMovieSoundHeading(0);
+	}
+
+	if (_state->getMoviePanningStrenght()) {
+		movie->setSoundAttenuation(_state->getMoviePanningStrenght());
+		_state->setMoviePanningStrenght(0);
+	}
+
 	_movies.push_back(movie);
 }
 
@@ -910,6 +932,13 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 	if (_state->getMovieEndFrame()) {
 		movie.setEndFrame(_state->getMovieEndFrame());
 		_state->setMovieEndFrame(0);
+	}
+
+	if (_state->getMovieVolume1()) {
+		movie.setVolume(_state->getMovieVolume1());
+		_state->setMovieVolume1(0);
+	} else {
+		movie.setVolume(_state->getMovieVolume2());
 	}
 
 	if (fullframe) {

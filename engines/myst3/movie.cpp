@@ -22,6 +22,7 @@
 
 #include "engines/myst3/movie.h"
 #include "engines/myst3/myst3.h"
+#include "engines/myst3/sound.h"
 #include "engines/myst3/state.h"
 #include "engines/myst3/subtitles.h"
 
@@ -41,7 +42,8 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	_texture(0),
 	_force2d(false),
 	_forceOpaque(false),
-	_subtitles(0) {
+	_subtitles(0),
+	_volume(0) {
 
 	const DirectorySubEntry *binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMultitrackMovie);
 
@@ -181,7 +183,11 @@ ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :
 	_enabled(false),
 	_disableWhenComplete(false),
 	_scriptDriven(false),
-	_isLastFrame(false) {
+	_isLastFrame(false),
+	_soundHeading(0),
+	_soundAttenuation(0),
+	_volumeVar(0),
+	_loop(false) {
 
 }
 
@@ -249,6 +255,8 @@ void ScriptedMovie::update() {
 	}
 
 	if (_enabled) {
+		updateVolume();
+
 		if (_nextFrameReadVar) {
 			int32 nextFrame = _vm->_state->getVar(_nextFrameReadVar);
 			if (nextFrame > 0 && nextFrame <= (int32)_bink.getFrameCount()) {
@@ -303,6 +311,20 @@ void ScriptedMovie::update() {
 	}
 }
 
+void ScriptedMovie::updateVolume() {
+	int32 volume;
+	if (_volumeVar) {
+		volume = _vm->_state->getVar(_volumeVar);
+	} else {
+		volume = _volume;
+	}
+
+	int32 mixerVolume, balance;
+	_vm->_sound->computeVolumeBalance(volume, _soundHeading, _soundAttenuation, &mixerVolume, &balance);
+	_bink.setVolume(mixerVolume);
+	_bink.setBalance(balance);
+}
+
 ScriptedMovie::~ScriptedMovie() {
 }
 
@@ -318,6 +340,8 @@ bool SimpleMovie::update() {
 	if (_bink.getCurFrame() < (_startFrame - 1)) {
 		_bink.seekToFrame(_startFrame - 1);
 	}
+
+	_bink.setVolume(_volume * Audio::Mixer::kMaxChannelVolume / 100);
 
 	uint16 scriptStartFrame = _vm->_state->getMovieScriptStartFrame();
 	if (scriptStartFrame && _bink.getCurFrame() > scriptStartFrame) {

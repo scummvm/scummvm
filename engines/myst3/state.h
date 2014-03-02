@@ -130,6 +130,8 @@ public:
 
 	DECLARE_VAR(142, MovieStartFrame)
 	DECLARE_VAR(143, MovieEndFrame)
+	DECLARE_VAR(144, MovieVolume1)
+	DECLARE_VAR(145, MovieVolume2)
 	DECLARE_VAR(146, MovieOverrideSubtitles)
 	DECLARE_VAR(149, MovieConditionBit)
 	DECLARE_VAR(150, MoviePreloadToMemory)
@@ -139,6 +141,9 @@ public:
 	DECLARE_VAR(154, MovieStartFrameVar)
 	DECLARE_VAR(155, MovieEndFrameVar)
 	DECLARE_VAR(156, MovieForce2d)
+	DECLARE_VAR(157, MovieVolumeVar)
+	DECLARE_VAR(158, MovieSoundHeading)
+	DECLARE_VAR(159, MoviePanningStrenght)
 	DECLARE_VAR(160, MovieSynchronized)
 	DECLARE_VAR(163, MovieOverrideCondition)
 	DECLARE_VAR(164, MovieUVar)
