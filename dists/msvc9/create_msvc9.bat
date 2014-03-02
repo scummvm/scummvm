@@ -55,28 +55,28 @@ goto done
 echo.
 echo Creating project files with all engines enabled (stable and unstable)
 echo.
-create_project ..\.. --enable-all-engines --msvc --msvc-version 9
+create_project ..\.. --enable-all-engines --msvc --msvc-version 9  --disable-taskbar --disable-freetype --disable-jpeg --disable-engine=zvision
 goto done
 
 :stable
 echo.
 echo Creating normal project files, with only the stable engines enabled
 echo.
-create_project ..\.. --msvc --msvc-version 9
+create_project ..\.. --msvc --msvc-version 9  --disable-taskbar --disable-freetype --disable-jpeg --disable-engine=zvision
 goto done
 
 :tools
 echo.
 echo Creating tools project files
 echo.
-create_project ..\.. --tools --msvc --msvc-version 9
+create_project ..\.. --tools --msvc --msvc-version 9  --disable-taskbar --disable-freetype --disable-jpeg --disable-engine=zvision
 goto done
 
 :tests
 echo.
 echo Creating tests project files
 echo.
-create_project ..\.. --tests --msvc --msvc-version 9
+create_project ..\.. --tests --msvc --msvc-version 9  --disable-taskbar --disable-freetype --disable-jpeg --disable-engine=zvision
 goto done
 
 :clean_check
