@@ -526,8 +526,8 @@ void EventsManager::setCursor(PictureResource *pic) {
 	_vm->_graphicsManager->sDrawPic(pic, &cursor, Common::Point());
 }
 
-void EventsManager::setCursor(byte *cursorData, int width, int height) {
-	CursorMan.replaceCursor(cursorData, width, height, width / 2, height / 2, 0);
+void EventsManager::setCursor(byte *cursorData, int width, int height, int keyColor) {
+	CursorMan.replaceCursor(cursorData, width, height, width / 2, height / 2, keyColor);
 }
 
 void EventsManager::setCursorColor(int idx, int mode) {

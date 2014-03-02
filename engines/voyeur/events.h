@@ -126,7 +126,7 @@ public:
 	void addFadeInt();
 
 	void setCursor(PictureResource *pic);
-	void setCursor(byte *cursorData, int width, int height);
+	void setCursor(byte *cursorData, int width, int height, int keyColor);
 	void setCursorColor(int idx, int mode);
 	void showCursor();
 	void hideCursor();

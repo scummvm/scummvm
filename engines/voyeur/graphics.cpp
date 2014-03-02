@@ -845,7 +845,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	}
 
 	if (cursorData) {
-		_vm->_eventsManager->setCursor(cursorData, width2, height1);
+		_vm->_eventsManager->setCursor(cursorData, width2, height1, srcPic->_keyColor);
 		delete[] cursorData;
 	}
 }

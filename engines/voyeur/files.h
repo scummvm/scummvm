@@ -291,6 +291,7 @@ public:
 	Common::Rect _bounds;
 	uint32 _maskData;
 	uint _planeSize;
+	byte _keyColor;
 
 	/**
 	 * Image data for the picture

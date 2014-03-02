@@ -1036,6 +1036,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 	_maskData = READ_LE_UINT32(&src[14]);
 	_planeSize = READ_LE_UINT16(&src[22]);
 
+	_keyColor = 0;
 	_imgData = NULL;
 	_freeImgData = DisposeAfterUse::YES;
 

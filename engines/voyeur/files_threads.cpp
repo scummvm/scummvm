@@ -984,6 +984,14 @@ int ThreadResource::doApt() {
 
 	_vm->_eventsManager->_intPtr._hasPalette = true;
 
+	// Set up the cursors
+	PictureResource *unselectedCursor = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 2)._picResource;
+	PictureResource *selectedCursor = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 3)._picResource;
+	unselectedCursor->_keyColor = 0xff;
+	selectedCursor->_keyColor = 0xff;
+	_vm->_eventsManager->setCursor(unselectedCursor);
+	_vm->_eventsManager->showCursor();
+
 	// Main loop to allow users to move the cursor and select hotspots
 	int hotspotId;
 	int prevHotspotId = -1;
@@ -1009,7 +1017,7 @@ int ThreadResource::doApt() {
 
 		// Loop through the hotspot list
 		hotspotId = -1;
-		pt = _vm->_eventsManager->getMousePos();
+		pt = _vm->_eventsManager->getMousePos() + Common::Point(16, 16);
 		for (int idx = 0; idx < (int)hotspots.size(); ++idx) {
 			if (hotspots[idx].contains(pt)) {
 				// Cursor is within hotspot area
@@ -1042,11 +1050,8 @@ int ThreadResource::doApt() {
 		if (gmmHotspot.contains(pt))
 			hotspotId = 42;
 
-		// Draw either standard or highlighted eye cursor
-		pic = _vm->_bVoy->boltEntry((hotspotId == -1) ? _vm->_playStampGroupId + 2 :
-			_vm->_playStampGroupId + 3)._picResource;
-		_vm->_graphicsManager->sDrawPic(pic, *_vm->_graphicsManager->_vPort, pt);
-
+		// Update the cursor to either standard or highlighted eye cursor
+		_vm->_eventsManager->setCursor((hotspotId == -1) ? unselectedCursor : selectedCursor);
 		_vm->flipPageAndWait();
 
 		if (hotspotId == 42 && _vm->_eventsManager->_leftClick) {
@@ -1057,6 +1062,7 @@ int ThreadResource::doApt() {
 
 	} while (!_vm->shouldQuit() && (!_vm->_eventsManager->_leftClick || hotspotId == -1));
 
+	_vm->_eventsManager->hideCursor();
 	pt = _vm->_eventsManager->getMousePos();
 	_aptPos.x = pt.x;
 	_aptPos.y = pt.y;
@@ -1079,6 +1085,7 @@ int ThreadResource::doApt() {
 	}
 
 	freeTheApt();
+
 	if (_vm->_voy->_transitionId == 1 && hotspotId == 0)
 		_vm->checkTransition();
 
