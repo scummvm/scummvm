@@ -282,7 +282,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 				g_fp->_scene3 = 0;
 			}
 		} else {
-			scene19_preload(g_fp->accessScene(pre.preloadId1), pre.keyCode);
+			scene19_setMovements(g_fp->accessScene(pre.preloadId1), pre.keyCode);
 
 			g_vars->scene18_var01 = 1;
 

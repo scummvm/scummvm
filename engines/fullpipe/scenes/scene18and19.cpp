@@ -63,7 +63,7 @@ void scene18_preload() {
 	}
 }
 
-void scene19_preload(Scene *sc, int entranceId) {
+void scene19_setMovements(Scene *sc, int entranceId) {
 	if (entranceId == TrubaRight) {
 		g_vars->scene18_var15 = 1;
 	} else {
@@ -105,6 +105,16 @@ void scene19_preload(Scene *sc, int entranceId) {
 	sc->deleteStaticANIObject(g_vars->scene18_boy);
 	sc->deleteStaticANIObject(g_vars->scene18_girl);
 	sc->stopAllSounds();
+}
+
+void scene19_preload() {
+	for (SceneTagList::iterator s = g_fp->_gameProject->_sceneTagList->begin(); s != g_fp->_gameProject->_sceneTagList->end(); ++s) {
+		if (s->_sceneId == SC_18) {
+			s->_scene = g_fp->_scene3;
+
+			break;
+		}
+	}
 }
 
 void scene18_sub2(StaticANIObject *ani, Scene *sc) {

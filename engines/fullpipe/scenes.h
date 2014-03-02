@@ -110,7 +110,7 @@ int sceneHandler17(ExCommand *cmd);
 int scene17_updateCursor();
 
 void scene18_preload();
-void scene19_preload(Scene *sc, int key);
+void scene19_setMovements(Scene *sc, int key);
 
 void scene20_initScene(Scene *sc);
 int sceneHandler20(ExCommand *ex);

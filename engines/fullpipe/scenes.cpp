@@ -800,11 +800,13 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		sub_40E1B0();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_18");
 		scene->preloadMovements(sceneVar);
-		sub_4062D0();
-		if (dword_476C38)
+		g_fp->stopAllSounds();
+
+		if (g_vars->scene18_var01)
 			scene18_initScene1(scene);
 		else
 			scene18_initScene2(scene);
+
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_18");
 		setSceneMusicParameters(sceneVar);
@@ -813,27 +815,30 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		break;
 
 	case SC_19:
-		if (!g_scene3) {
-			g_scene3 = accessScene(SC_18);
+		if (!g_fp->_scene3) {
+			g_fp->_scene3 = accessScene(SC_18);
 			getGameLoader()->loadScene(SC_18);
 			scene18_initScene2(g_scene3);
-			sub_40C5F0();
-			scene19_sub_420B10(g_scene3, entrance->field_4);
-			dword_476C38 = 1;
+			scene18_preload();
+			scene19_setMovements(g_scene3, entrance->field_4);
+			g_vars->scene18_var01 = 1;
 		}
-		sub_40C650();
+
+		scene19_preload();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_19");
 		scene->preloadMovements(sceneVar);
-		sub_4062D0();
-		if (dword_476C38)
+		g_fp->stopAllSounds();
+
+		if (g_vars->scene18_var01)
 			scene18_initScene1(scene);
 		else
 			scene19_initScene2();
+
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_19");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler19, 2);
-		scene19_sub_4211D0(scene);
+		scene19_setSugarState(scene);
 		_updateCursorCallback = scene19_updateCursor;
 		break;
 #endif
