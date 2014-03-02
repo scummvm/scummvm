@@ -50,6 +50,30 @@ void Sound::playEffect(uint32 id, uint32 volume, uint16 heading, uint16 attenuat
 	channel->play(id, volume, heading, attenuation, false, kEffect);
 }
 
+void Sound::playEffectLooping(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
+	id = _vm->_state->valueOrVarValue(id);
+
+	SoundChannel *channel = getChannelForSound(id, kEffect);
+	channel->play(id, volume, heading, attenuation, true, kEffect);
+}
+
+void Sound::stopEffect(uint32 id, uint32 fadeDuration) {
+	bool found;
+	SoundChannel *channel = getChannelForSound(id, kEffect, &found);
+
+	if (found) {
+		channel->fadeOut(fadeDuration);
+	}
+}
+
+void Sound::stopMusic(uint32 fadeDelay) {
+	for (uint i = 0; i < kNumChannels; i++) {
+		SoundChannel *channel = _channels[i];
+		if (channel->_type == kMusic && channel->_playing)
+			channel->fadeOut(fadeDelay);
+	}
+}
+
 void Sound::playCue(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
 	SoundChannel *channel = _channels[13];
 	channel->play(id, volume, heading, attenuation, false, kCue);

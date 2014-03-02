@@ -235,6 +235,9 @@ Script::Script(Myst3Engine *vm):
 	OP_2(206, soundPlayVolume,				kEvalValue,	kEvalValue										);
 	OP_3(207, soundPlayVolumeDirection,		kEvalValue,	kEvalValue,	kEvalValue							);
 	OP_4(208, soundPlayVolumeDirectionAtt,	kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue				);
+	OP_1(209, soundStopEffect,				kEvalValue													);
+	OP_2(210, soundFadeOutEffect,			kEvalValue,	kEvalValue										);
+	OP_1(212, soundPlayLooping,				kEvalValue													);
 	OP_1(218, ambientSetFadeOutDelay,		kValue														);
 	OP_2(219, ambientAddSound1,				kEvalValue,	kEvalValue										);
 	OP_3(220, ambientAddSound2,				kEvalValue,	kEvalValue,	kValue								);
@@ -250,6 +253,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1(231, runSoundScriptNode,			kEvalValue													);
 	OP_2(232, runSoundScriptNodeRoom,		kEvalValue,	kEvalValue										);
 	OP_3(233, runSoundScriptNodeRoomAge,	kEvalValue,	kEvalValue,	kEvalValue							);
+	OP_1(234, soundStopMusic,				kEvalValue													);
 	OP_0(239, drawOneFrame																				);
 	OP_0(240, cursorHide																				);
 	OP_0(241, cursorShow																				);
@@ -2427,6 +2431,31 @@ void Script::soundPlayVolumeDirectionAtt(Context &c, const Opcode &cmd) {
 	_vm->_sound->playEffect(cmd.args[0], volume, heading, att);
 }
 
+void Script::soundStopEffect(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Stop sound effect %d", cmd.op, cmd.args[0]);
+
+	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	_vm->_sound->stopEffect(id, 0);
+}
+
+void Script::soundFadeOutEffect(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Stop sound effect %d", cmd.op, cmd.args[0]);
+
+	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
+	int32 fadeDuration = _vm->_state->valueOrVarValue(cmd.args[1]);
+
+	_vm->_sound->playEffect(id, fadeDuration);
+}
+
+void Script::soundPlayLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play sound effect looping %d", cmd.op, cmd.args[0]);
+
+	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	_vm->_sound->playEffectLooping(id, 100);
+}
+
 void Script::ambientSetFadeOutDelay(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Set fade out delay : %d", cmd.op, cmd.args[0]);
 
@@ -2567,6 +2596,14 @@ void Script::runSoundScriptNodeRoomAge(Context &c, const Opcode &cmd) {
 	int32 room = _vm->_state->valueOrVarValue(cmd.args[1]);
 	int32 age = _vm->_state->valueOrVarValue(cmd.args[0]);
 	_vm->runBackgroundSoundScriptsFromNode(node, room, age);
+}
+
+void Script::soundStopMusic(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Stop music", cmd.op);
+
+	int32 fadeOutDuration = _vm->_state->valueOrVarValue(cmd.args[0]);
+
+	_vm->_sound->stopMusic(fadeOutDuration);
 }
 
 void Script::drawOneFrame(Context &c, const Opcode &cmd) {

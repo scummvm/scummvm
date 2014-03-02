@@ -97,9 +97,13 @@ public:
 	SoundChannel *getChannelForSound(uint32 id, SoundType type, bool *found = nullptr);
 
 	void playEffect(uint32 id, uint32 volume, uint16 heading = 0, uint16 attenuation = 0);
+	void playEffectLooping(uint32 id, uint32 volume, uint16 heading = 0, uint16 attenuation = 0);
+	void stopEffect(uint32 id, uint32 fadeDuration);
 
 	void playCue(uint32 id, uint32 volume, uint16 heading, uint16 attenuation);
 	void stopCue(uint32 fadeDelay);
+
+	void stopMusic(uint32 fadeDelay);
 
 	void update();
 	void age();
