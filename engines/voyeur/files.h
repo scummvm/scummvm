@@ -106,7 +106,7 @@ public:
 	BoltFile(const Common::String &filename, BoltFilesState &state);
 	virtual ~BoltFile();
 
-	BoltGroup *getBoltGroup(uint16 id, bool process = true);
+	BoltGroup *getBoltGroup(uint16 id);
 	void freeBoltGroup(uint16 id, bool freeEntries = true);
 	void freeBoltMember(uint32 id);
 	byte *memberAddr(uint32 id);

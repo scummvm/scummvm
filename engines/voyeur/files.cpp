@@ -239,7 +239,7 @@ BoltFile::~BoltFile() {
 		_state._curLibPtr = NULL;
 }
 
-BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {
+BoltGroup *BoltFile::getBoltGroup(uint16 id) {
 	_state._curLibPtr = this;
 	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
 
@@ -248,16 +248,11 @@ BoltGroup *BoltFile::getBoltGroup(uint16 id, bool process) {
 		_state._curGroupPtr->load(id & 0xff00);
 	}
 
-	if (process) {
-		// Pre-process the resources
-		id &= 0xff00;
-		for (int idx = 0; idx < _state._curGroupPtr->_count; ++idx, ++id) {
-			byte *member = getBoltMember(id);
-			assert(member);
-		}
-	} else if (!_state._curGroupPtr->_processed) {
-		_state._curGroupPtr->_processed = true;
-		_state._curGroupPtr->load(id & 0xff00);
+	// Pre-process the resources
+	id &= 0xff00;
+	for (int idx = 0; idx < _state._curGroupPtr->_count; ++idx, ++id) {
+		byte *member = getBoltMember(id);
+		assert(member);
 	}
 
 	resolveAll();
