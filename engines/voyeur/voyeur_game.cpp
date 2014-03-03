@@ -1057,7 +1057,7 @@ void VoyeurEngine::initIFace() {
 		break;
 	}
 	if (playStamp1 != -1)
-		_bVoy->freeBoltGroup(playStamp1, true);
+		_bVoy->freeBoltGroup(playStamp1);
 
 	_bVoy->getBoltGroup(_playStampGroupId);
 	CMapResource *pal = _bVoy->boltEntry(_playStampGroupId + 2)._cMapResource;

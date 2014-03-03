@@ -1270,7 +1270,7 @@ void ThreadResource::doRoom() {
 	vm.makeViewFinderP();
 
 	if (voy._boltGroupId2 != -1) {
-		vm._bVoy->freeBoltGroup(voy._boltGroupId2, 1);
+		vm._bVoy->freeBoltGroup(voy._boltGroupId2);
 		voy._boltGroupId2 = -1;
 	}
 
@@ -1639,7 +1639,7 @@ void ThreadResource::freeTheApt() {
 }
 
 void ThreadResource::doAptAnim(int mode) {
-	_vm->_bVoy->freeBoltGroup(0x100, true);
+	_vm->_bVoy->freeBoltGroup(0x100);
 
 	// Figure out the resource to use
 	int id = 0;
