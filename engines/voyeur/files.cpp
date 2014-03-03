@@ -504,7 +504,7 @@ void BVoyBoltFile::sInitRect() {
 	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size, 
 		_state._curMemberPtr->_mode);
 
-	// Check whether the resouce Id is in the list of extended rects
+	// Check whether the resource Id is in the list of extended rects
 	bool isExtendedRects = false;
 	for (int i = 0; i < 49 && !isExtendedRects; ++i)
 		isExtendedRects = RESOLVE_TABLE[i] == (_state._curMemberPtr->_id & 0xff00);
