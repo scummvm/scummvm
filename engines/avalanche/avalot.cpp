@@ -201,6 +201,8 @@ void AvalancheEngine::setup() {
 
 	_menu->init();
 
+	_graphics->drawSoundLight(_sound->_soundFl);
+
 	int16 loadSlot = ConfMan.instance().getInt("save_slot");
 	if (loadSlot >= 0) {
 		_thinks = 2; // You always have money.
@@ -210,8 +212,6 @@ void AvalancheEngine::setup() {
 	} else {
 		newGame();
 
-		_soundFx = !_soundFx;
-		fxToggle();
 		thinkAbout(kObjectMoney, kThing);
 
 		_dialogs->displayScrollChain('Q', 83); // Info on the game, etc.
@@ -1155,7 +1155,7 @@ void AvalancheEngine::checkClick() {
 				_animation->_sprites[0]->_speedX = kRun;
 				_animation->updateSpeed();
 			} else if ((396 <= cursorPos.x) && (cursorPos.x <= 483))
-				fxToggle();
+				_sound->toggleSound();
 			else if ((535 <= cursorPos.x) && (cursorPos.x <= 640))
 				_mouseText.insertChar(kControlNewLine, 0);
 		} else if (!_dropsOk)
@@ -1164,7 +1164,14 @@ void AvalancheEngine::checkClick() {
 }
 
 void AvalancheEngine::errorLed() {
-	warning("STUB: errorled()");
+	_dialogs->setReadyLight(0);
+	_graphics->drawErrorLight(true);
+	for (int i = 177; i >= 1; i--) {
+		_sound->playNote(177 + (i * 177177) / 999, 1);
+		_system->delayMillis(1);
+	}
+	_graphics->drawErrorLight(false);
+	_dialogs->setReadyLight(2);
 }
 
 /**

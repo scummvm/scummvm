@@ -93,6 +93,7 @@ void Dialogs::setReadyLight(byte state) {
 	if (_vm->_ledStatus == state)
 		return; // Already like that!
 
+	// TODO: Implement different patterns for green color.
 	Color color = kColorBlack;
 	switch (state) {
 	case 0:
@@ -104,9 +105,7 @@ void Dialogs::setReadyLight(byte state) {
 		color = kColorGreen;
 		break; // Hit a key
 	}
-	warning("STUB: Dialogs::setReadyLight()");
-
-	CursorMan.showMouse(false);
+	
 	_vm->_graphics->drawReadyLight(color);
 	CursorMan.showMouse(true);
 	_vm->_ledStatus = state;
@@ -175,7 +174,8 @@ void Dialogs::scrollModeNormal() {
 				(event.kbd.keycode == Common::KEYCODE_PLUS)))) {
 				escape = true;
 				break;
-			}
+			} else if (event.type == Common::EVENT_KEYDOWN)
+				_vm->errorLed();
 		}
 	}
 
@@ -822,6 +822,8 @@ void Dialogs::displayText(Common::String text) {
 			}
 		}
 	}
+
+	setReadyLight(2);
 }
 
 void Dialogs::setTalkPos(int16 x, int16 y) {

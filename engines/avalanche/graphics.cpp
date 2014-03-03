@@ -992,7 +992,27 @@ void GraphicManager::drawCursor(byte pos) {
 }
 
 void GraphicManager::drawReadyLight(Color color) {
-	_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
+	_surface.fillRect(Common::Rect(419, 195, 439, 198), color);
+	_scrolls.fillRect(Common::Rect(419, 195, 439, 198), color);
+}
+
+void GraphicManager::drawSoundLight(bool state) {
+	Color color = kColorBlack;
+	if (state)
+		color = kColorCyan;
+	else
+		color = kColorBlack;
+	_surface.fillRect(Common::Rect(419, 175, 439, 178), color);
+}
+
+void GraphicManager::drawErrorLight(bool state) {
+	Color color = kColorBlack;
+	if (state)
+		color = kColorRed;
+	else
+		color = kColorBlack;
+	_surface.fillRect(Common::Rect(419, 184, 439, 187), color);
+	refreshScreen();
 }
 
 /**

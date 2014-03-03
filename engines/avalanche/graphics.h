@@ -131,6 +131,8 @@ public:
 	void drawToolbar();
 	void drawCursor(byte pos);
 	void drawReadyLight(Color color);
+	void drawSoundLight(bool state);
+	void drawErrorLight(bool state);
 	void drawSign(Common::String name, int16 xl, int16 yl, int16 y);
 	void drawIcon(int16 x, int16 y, byte which);
 	void drawScreenLine(int16 x, int16 y, int16 x2, int16 y2, Color color);

@@ -51,6 +51,7 @@ void SoundHandler::stopSound() {
  */
 void SoundHandler::toggleSound() {
 	_soundFl = !_soundFl;
+	_vm->_graphics->drawSoundLight(_soundFl);
 }
 
 void SoundHandler::syncVolume() {
