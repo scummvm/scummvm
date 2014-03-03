@@ -45,6 +45,7 @@
 #include "avalanche/ghostroom.h"
 #include "avalanche/help.h"
 #include "avalanche/shootemup.h"
+#include "avalanche/mainmenu.h"
 
 #include "common/serializer.h"
 
@@ -91,6 +92,7 @@ public:
 	GhostRoom *_ghostroom;
 	Help *_help;
 	ShootEmUp *_shootemup;
+	MainMenu *_mainmenu;
 
 	OSystem *_system;
 

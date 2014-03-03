@@ -210,6 +210,8 @@ void AvalancheEngine::setup() {
 
 		loadGame(loadSlot);
 	} else {
+		_mainmenu->run();
+
 		newGame();
 
 		thinkAbout(kObjectMoney, kThing);
