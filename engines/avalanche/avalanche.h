@@ -37,7 +37,7 @@
 #include "avalanche/sequence.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
-#include "avalanche/menu.h"
+#include "avalanche/dropdown.h"
 #include "avalanche/closing.h"
 #include "avalanche/sound.h"
 #include "avalanche/nim.h"
@@ -84,7 +84,7 @@ public:
 	Sequence *_sequence;
 	Timer *_timer;
 	Animation *_animation;
-	Menu *_menu;
+	DropDownMenu *_dropdown;
 	Closing *_closing;
 	SoundHandler *_sound;
 	Nim *_nim;

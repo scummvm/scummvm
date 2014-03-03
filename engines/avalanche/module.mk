@@ -9,7 +9,7 @@ MODULE_OBJS = \
 	console.o \
 	detection.o \
 	graphics.o \
-	menu.o \
+	dropdown.o \
 	parser.o \
 	dialogs.o \
 	sequence.o \

@@ -48,7 +48,7 @@ Background::~Background() {
  * @remarks	Originally called 'pics_link'
  */
 void Background::update() {
-	if (_vm->_menu->isActive())
+	if (_vm->_dropdown->isActive())
 		return; // No animation when the menus are up.
 
 	switch (_vm->_room) {

@@ -381,8 +381,8 @@ void Parser::init() {
 void Parser::handleInputText(const Common::Event &event) {
 	byte inChar = event.kbd.ascii;
 	warning("STUB: Parser::handleInputText()");
-//	if (_vm->_menu->_activeMenuItem._activeNow) {
-//		_vm->_menu->parseKey(inChar, _vm->_enhanced->extd);
+//	if (_vm->_dropdown->_activeMenuItem._activeNow) {
+//		_vm->_dropdown->parseKey(inChar, _vm->_enhanced->extd);
 //	} else {
 		if (_inputText.size() < 76) {
 			if ((inChar == '"') || (inChar == '`')) {
@@ -402,7 +402,7 @@ void Parser::handleInputText(const Common::Event &event) {
 }
 
 void Parser::handleBackspace() {
-	if (_vm->_menu->_activeMenuItem._activeNow)
+	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		return;
 
 	if (_inputTextPos > 0) {
@@ -416,7 +416,7 @@ void Parser::handleBackspace() {
 }
 
 void Parser::handleReturn() {
-	if (_vm->_menu->_activeMenuItem._activeNow)
+	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		tryDropdown();
 	else if (!_inputText.empty()) {
 		_inputTextBackup = _inputText;

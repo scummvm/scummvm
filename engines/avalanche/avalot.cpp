@@ -199,7 +199,7 @@ void AvalancheEngine::setup() {
 	_animation->_sprites[0]->_speedX = kWalk;
 	_animation->updateSpeed();
 
-	_menu->init();
+	_dropdown->init();
 
 	_graphics->drawSoundLight(_sound->_soundFl);
 
@@ -227,7 +227,7 @@ void AvalancheEngine::runAvalot() {
 		updateEvents(); // The event handler.
 
 		_clock->update();
-		_menu->update();
+		_dropdown->update();
 		_background->update();
 		_animation->animLink();
 		checkClick();
@@ -488,7 +488,7 @@ void AvalancheEngine::exitRoom(byte x) {
  * @remarks	Originally called 'new_town'
  */
 void AvalancheEngine::enterNewTown() {
-	_menu->setup();
+	_dropdown->setup();
 
 	switch (_room) {
 	case kRoomOutsideNottsPub: // Entry into Nottingham.
@@ -1104,7 +1104,7 @@ void AvalancheEngine::checkClick() {
 		_graphics->loadMouse(kCurIBeam); //I-beam
 	else if ((340 <= cursorPos.y) && (cursorPos.y <= 399))
 		_graphics->loadMouse(kCurScrewDriver); // screwdriver
-	else if (!_menu->isActive()) { // Dropdown can handle its own pointers.
+	else if (!_dropdown->isActive()) { // Dropdown can handle its own pointers.
 		if (_holdLeftMouse) {
 			_graphics->loadMouse(kCurCrosshair); // Mark's crosshairs
 			guideAvvy(cursorPos); // Normally, if you click on the picture, you're guiding Avvy around.
@@ -1115,7 +1115,7 @@ void AvalancheEngine::checkClick() {
 	if (_holdLeftMouse) {
 		if ((0 <= cursorPos.y) && (cursorPos.y <= 21)) { // Click on the dropdown menu.
 			if (_dropsOk)
-				_menu->update();
+				_dropdown->update();
 		} else if ((317 <= cursorPos.y) && (cursorPos.y <= 339)) { // Click on the command line.
 			_parser->_inputTextPos = (cursorPos.x - 23) / 8;
 			if (_parser->_inputTextPos > _parser->_inputText.size() + 1)
@@ -1397,7 +1397,7 @@ void AvalancheEngine::resetAllVariables() {
 	_animation->resetVariables();
 	_sequence->resetVariables();
 	_background->resetVariables();
-	_menu->resetVariables();
+	_dropdown->resetVariables();
 	_timer->resetVariables();
 }
 
@@ -1448,7 +1448,7 @@ void AvalancheEngine::newGame() {
 	enterRoom(kRoomYours, 1);
 	avvy->_visible = false;
 	drawScore();
-	_menu->setup();
+	_dropdown->setup();
 	_clock->update();
 	spriteRun();
 }

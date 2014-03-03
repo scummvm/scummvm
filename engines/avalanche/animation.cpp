@@ -1205,7 +1205,7 @@ void Animation::drawSprites() {
  * @remarks	Originally called 'trippancy_link'
  */
 void Animation::animLink() {
-	if (_vm->_menu->isActive() || _vm->_seeScroll)
+	if (_vm->_dropdown->isActive() || _vm->_seeScroll)
 		return;
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
 		AnimationType *curSpr = _sprites[i];
@@ -1329,7 +1329,7 @@ void Animation::handleMoveKey(const Common::Event &event) {
 	if (!_vm->_userMovesAvvy)
 		return;
 
-	if (_vm->_menu->_activeMenuItem._activeNow)
+	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		_vm->_parser->tryDropdown();
 	else {
 		switch (event.kbd.keycode) {
