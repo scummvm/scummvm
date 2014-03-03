@@ -59,6 +59,7 @@ public:
 	int _special;
 	int _ticksAmount;
 	uint32 _priorTimer;
+	int _unk3;
 public:
 	Player(MADSEngine *vm);
 

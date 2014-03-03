@@ -39,6 +39,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_special = 0;
 	_ticksAmount = 0;
 	_priorTimer = 0;
+	_unk3 = 0;
 }
 
 void Player::reset() {

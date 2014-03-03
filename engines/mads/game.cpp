@@ -140,6 +140,7 @@ void Game::sectionLoop() {
 
 		_quotes = nullptr;
 		_scene.clearVocab();
+		_scene._dynamicHotspots.clear();
 		_scene.loadSceneLogic();
 
 		_v4 = 0;
@@ -148,7 +149,7 @@ void Game::sectionLoop() {
 		_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
 		_visitedScenes.add(_scene._nextSceneId);
 
-		_scene._screenObjects._v8333C = -1;
+		_scene._screenObjects._v8333C = true;
 		_scene._screenObjects._v832EC = 0;
 		_scene._screenObjects._yp = 0;
 		_v3 = -1;

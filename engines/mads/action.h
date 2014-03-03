@@ -107,6 +107,8 @@ public:
 	void startAction();
 	void checkAction();
 	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
+	
+	void checkActionAtMousePos();
 };
 
 } // End of namespace MADS

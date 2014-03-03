@@ -287,7 +287,7 @@ void Animation::loadInterface(InterfaceSurface &interfaceSurface, MSurface &dept
 	else if (header._animMode == 4) {
 		// Load a scene interface
 		Common::String resourceName = "*" + header._interfaceFile;
-		interfaceSurface.load(_vm, resourceName);
+		interfaceSurface.load(resourceName);
 
 		if (palAnimData)
 			palAnimData->clear();

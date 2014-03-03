@@ -30,6 +30,114 @@
 
 namespace MADS {
 
+ScreenObject::ScreenObject() {
+	_category = CAT_NONE;
+	_descId = 0;
+	_layer = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+ScreenObjects::ScreenObjects(MADSEngine *vm): _vm(vm) {
+	_v8333C = false;
+	_v832EC = 0;
+	_yp = 0;
+	_v7FECA = 0;
+	_v7FED6 = 0;
+	_v8332A = 0;
+	_selectedObject = 0;
+	_category = CAT_NONE;
+	_objectIndex = 0;
+	_released = false;
+}
+
+void ScreenObjects::add(const Common::Rect &bounds, ScrCategory category, int descId) {
+	assert(size() < 100);
+
+	ScreenObject so;
+	so._bounds = bounds;
+	so._category = category;
+	so._descId = descId;
+	so._layer = 0x1413;
+
+	push_back(so);
+}
+
+void ScreenObjects::check(bool scanFlag) {
+	Scene &scene = _vm->_game->_scene;
+
+	if (!_vm->_events->_mouseButtons || _v832EC)
+		_v7FECA = false;
+
+	if ((_vm->_events->_vD6 || _v8332A || _yp || _v8333C) && scanFlag) {
+		_selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
+		if (_selectedObject > 0) {
+			_category = (ScrCategory)((*this)[_selectedObject - 1]._category & 7);
+			_objectIndex = (*this)[_selectedObject - 1]._descId;
+		}
+
+		// Handling for easy mouse
+		ScrCategory category = scene._interface._category;
+		if (_vm->_easyMouse && !_vm->_events->_vD4 && category != _category
+				&& scene._interface._category != CAT_NONE) {
+			_released = true;
+			if (category >= CAT_ACTION && category <= CAT_6) {
+				scene._interface.elementHighlighted();
+			} 
+		}
+
+		_released = _vm->_events->_mouseReleased;
+		if (_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_vD4))
+			scene._interface._category = _category;
+
+		if (!_vm->_events->_mouseButtons || _vm->_easyMouse) {
+			if (category >= CAT_ACTION && category <= CAT_6) {
+				scene._interface.elementHighlighted();
+			}
+		}
+
+		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && scene._action._v83338 > 1
+				&& scene._interface._category == CAT_INV_LIST) ||
+				(_vm->_easyMouse && scene._interface._category == CAT_HOTSPOT)) {
+			scene._action.checkActionAtMousePos();
+		}
+			
+		if (_vm->_events->_mouseReleased) {
+			scene.leftClick();
+			scene._interface._category = CAT_NONE;
+		}
+
+		if (_vm->_events->_mouseButtons || _vm->_easyMouse || _yp)
+			proc1();
+
+		if (_vm->_events->_mouseButtons || _vm->_easyMouse)
+			scene._action.set();
+
+		_v8333C = 0;
+	}
+
+	scene._action.refresh();
+
+	// Loop through image inter list
+	warning("TODO: iimageInterList loop");
+}
+
+int ScreenObjects::scanBackwards(const Common::Point &pt, int layer) {
+	for (int i = (int)size() - 1; i >= 0; --i) {
+		if ((*this)[i]._bounds.contains(pt) && ((*this)[i]._layer == layer))
+			return i + 1;
+	}
+
+	// Entry not found
+	return 0;
+}
+
+void ScreenObjects::proc1() {
+	warning("TODO: ScreenObjects::proc1");
+}
+
+/*------------------------------------------------------------------------*/
+
 SpriteSlot::SpriteSlot() {
 	_spriteType = ST_NONE;
 	_seqIndex = 0;
@@ -64,7 +172,7 @@ void SpriteSlots::clear(bool flag) {
  * Releases any sprites used by the player
  */
 void SpriteSlots::releasePlayerSprites() {
-	Player &player = _vm->_game->player();
+	Player &player = _vm->_game->_player;
 
 	if (player._spritesLoaded && player._numSprites > 0) {
 		int spriteEnd = player._spritesStart + player._numSprites - 1;
@@ -110,6 +218,34 @@ DynamicHotspot::DynamicHotspot() {
 	_field14 = 0;
 	_articleNumber = 0;
 	_cursor = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+DynamicHotspots::DynamicHotspots(MADSEngine *vm): _vm(vm) {
+	_changed = false;
+}
+
+void DynamicHotspots::clear() {
+	Common::Array<DynamicHotspot>::clear();
+	_changed = false;
+}
+
+void DynamicHotspots::refresh() {
+	Scene &scene = _vm->_game->_scene;
+
+	for (uint idx = 0; idx < size(); ++idx) {
+		DynamicHotspot &dh = (*this)[idx];
+
+		switch (scene._screenObjects._v832EC) {
+		case 0:
+		case 2:
+			scene._screenObjects.add(dh._bounds, CAT_12, dh._descId);
+			scene._screenObjects._v8333C = true;
+		default:
+			break;
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -216,6 +352,16 @@ void SceneNode::load(Common::SeekableReadStream *f) {
 
 /*------------------------------------------------------------------------*/
 
+InterfaceSurface::InterfaceSurface(MADSEngine *vm): _vm(vm) {
+	_category = CAT_NONE;
+}
+
+void InterfaceSurface::elementHighlighted() {
+	warning("TODO: InterfaceSurface::elementHighlighted");
+}
+
+/*------------------------------------------------------------------------*/
+
 void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 	f->skip(3);
 	_spriteSetIndex = f->readByte();
@@ -228,15 +374,15 @@ void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 
 /*------------------------------------------------------------------------*/
 
-void InterfaceSurface::load(MADSEngine *vm, const Common::String &resName) {
+void InterfaceSurface::load(const Common::String &resName) {
 	File f(resName);
 	MadsPack madsPack(&f);
 
 	// Load in the palette
 	Common::SeekableReadStream *palStream = madsPack.getItemStream(0);
 
-	RGB4 *gamePalP = &vm->_palette->_gamePalette[0];
-	byte *palP = &vm->_palette->_mainPalette[0];
+	RGB4 *gamePalP = &_vm->_palette->_gamePalette[0];
+	byte *palP = &_vm->_palette->_mainPalette[0];
 
 	for (int i = 0; i < 16; ++i, gamePalP++, palP += 3) {
 		palP[0] = palStream->readByte();

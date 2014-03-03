@@ -39,7 +39,13 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_priorFrameTime = 0;
 	_keyPressed = false;
 	_mouseClicked = false;
+	_mouseReleased = false;
 	_currentTimer = 0;
+	_mouseButtons = 0;
+	_vD2 = 0;
+	_vD4 = 0;
+	_vD6 = 0;
+	_vD8 = 0;
 }
 
 EventsManager::~EventsManager() {
@@ -115,6 +121,7 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseClicked = true;
+			_mouseButtons = 1;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:

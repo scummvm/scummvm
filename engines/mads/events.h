@@ -42,10 +42,7 @@ private:
 	uint32 _gameCounter;
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
-	int _vCC;
-	int _vD4;
-	int _vD8;
-	int _vD2;
+	Common::Point _currentPos;
 
 	/**
 	 * Updates the cursor image when the current cursor changes
@@ -59,8 +56,15 @@ private:
 public:
 	SpriteAsset *_cursorSprites;
 	bool _mouseClicked;
+	bool _mouseReleased;
+	byte _mouseButtons;
 	bool _keyPressed;
 	uint32 _currentTimer;
+	int _vCC;
+	int _vD2;
+	int _vD4;
+	int _vD6;
+	int _vD8;
 public:
 	/**
 	 * Constructor
@@ -116,6 +120,11 @@ public:
 	 * Return the current mouse position
 	 */
 	Common::Point mousePos() const { return _mousePos; }
+
+	/**
+	* Return the current mouse position
+	*/
+	Common::Point currentPos() const { return _currentPos; }
 
 	/**
 	 * Delay for a given number of frames

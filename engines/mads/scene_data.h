@@ -43,6 +43,21 @@ class Scene;
 #define DEPTH_BANDS_SIZE 15
 #define MAX_ROUTE_NODES 22
 
+enum ScrCategory {
+	CAT_NONE = 0, CAT_ACTION = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB = 3,
+	CAT_HOTSPOT = 4, CAT_INV_ANIM = 5, CAT_6 = 6, CAT_INV_SCROLLER = 7,
+	CAT_12 = 12
+};
+
+enum Layer {
+	LAYER_GUI = 19
+};
+
+enum SpriteType {
+	ST_NONE = 0, ST_FOREGROUND = 1, ST_BACKGROUND = -4,
+	ST_FULL_SCREEN_REFRESH = -2, ST_EXPIRED = -1
+};
+
 class VerbInit {
 public:
 	int _id;
@@ -53,16 +68,48 @@ public:
 	VerbInit(int id, int action1, int action2): _id(id), _action1(action1), _action2(action2) {}
 };
 
-class ScreenObjects {
+class ScreenObject {
 public:
-	int _v8333C;
-	int _v832EC;
-	int _yp;
+	Common::Rect _bounds;
+	ScrCategory _category;
+	int _descId;
+	int _layer;
+
+	ScreenObject();
 };
 
-enum SpriteType {
-	ST_NONE = 0, ST_FOREGROUND = 1, ST_BACKGROUND = -4, 
-	ST_FULL_SCREEN_REFRESH = -2, ST_EXPIRED = -1
+class ScreenObjects: public Common::Array<ScreenObject> {
+private:
+	MADSEngine *_vm;
+
+	int scanBackwards(const Common::Point &pt, int layer);
+
+	void proc1();
+public:
+	int _v832EC;
+	int _v7FECA;
+	int _v7FED6;
+	int _v8332A;
+	int _yp;
+	int _v8333C;
+	int _selectedObject;
+	ScrCategory _category;
+	int _objectIndex;
+	bool _released;
+
+	/*
+	 * Constructor
+	 */
+	ScreenObjects(MADSEngine *vm);
+
+	/**
+	 * Add a new item to the list
+	 */
+	void add(const Common::Rect &bounds, ScrCategory category, int descId);
+
+	/**
+	 */
+	void check(bool scanFlag);
 };
 
 class SpriteSlotSubset {
@@ -141,6 +188,28 @@ public:
 	int _cursor;
 
 	DynamicHotspot();
+};
+
+class DynamicHotspots : public Common::Array<DynamicHotspot> {
+private:
+	MADSEngine *_vm;
+public:
+	bool _changed;
+
+	/**
+	 * Constructor
+	 */
+	DynamicHotspots(MADSEngine *vm);
+
+	/**
+	 * Clear the list
+	 */
+	void clear();
+
+	/**
+	 * Refresh the list
+	 */
+	void refresh();
 };
 
 class SequenceEntry {
@@ -283,8 +352,22 @@ public:
 typedef Common::Array<SceneNode> SceneNodeList;
 
 class InterfaceSurface : public MSurface {
+private:
+	MADSEngine *_vm;
 public:
-	void load(MADSEngine *vm, const Common::String &resName);
+	ScrCategory _category;
+public:
+	/**
+	 * Constructor
+	 */
+	InterfaceSurface(MADSEngine *vm);
+
+	/**
+	 * Loads an interface from a specified resource
+	 */
+	void load(const Common::String &resName);
+
+	void elementHighlighted();
 };
 
 /**

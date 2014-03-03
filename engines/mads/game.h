@@ -55,7 +55,6 @@ protected:
 	MADSEngine *_vm;
 	MSurface *_surface;
 	Difficulty _difficultyLevel;
-	Player _player;
 	int _saveSlot;
 	int _statusFlag;
 	SectionHandler *_sectionHandler;
@@ -104,6 +103,7 @@ protected:
 public:
 	static Game *init(MADSEngine *vm);
 public:
+	Player _player;
 	int _sectionNumber;
 	int _priorSectionNumber;
 	int _currentSectionNumber;
@@ -123,8 +123,6 @@ public:
 	 * Run the game
 	 */
 	void run();
-
-	Player &player() { return _player; }
 };
 
 } // End of namespace MADS

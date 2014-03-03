@@ -337,4 +337,8 @@ bool MADSAction::isAction(int verbId, int objectNameId, int indirectObjectId) {
 	return true;
 }
 
+void MADSAction::checkActionAtMousePos() {
+	warning("TODO: checkActionAtMousePos");
+}
+
 } // End of namespace MADS

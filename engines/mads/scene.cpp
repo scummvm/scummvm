@@ -28,7 +28,8 @@
 
 namespace MADS {
 
-Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm) {
+Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm),
+		_dynamicHotspots(vm), _screenObjects(vm), _interface(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
@@ -58,11 +59,6 @@ Scene::~Scene() {
 	delete[] _vocabBuffer;
 	delete _sceneLogic;
 	delete _sceneInfo;
-}
-
-void Scene::clearDynamicHotspots() {
-	_dynamicHotspots.clear();
-	_dynamicHotspotsChanged = false;
 }
 
 void Scene::clearVocab() {
@@ -155,7 +151,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 
 	_animation = Animation::init(_vm, this);
 	MSurface surface;
-	_animation->load(surface, _interfaceSurface, prefix, flags, nullptr, nullptr);
+	_animation->load(surface, _interface, prefix, flags, nullptr, nullptr);
 	
 	_vm->_palette->_paletteUsage.load(0);
 
@@ -266,7 +262,34 @@ bool Scene::getDepthHighBits(const Common::Point &pt) {
 }
 
 void Scene::loop() {
+	_nextSceneId = _currentSceneId;
 
+	while (!_vm->shouldQuit() && !_reloadSceneFlag && _nextSceneId == _currentSceneId) {
+		// Handle drawing a game frame
+		doFrame();
+
+		if (_vm->_dialogs->_pendingDialog != DIALOG_NONE && !_vm->_game->_abortTimers
+			&& _vm->_game->_player._stepEnabled)
+			_reloadSceneFlag = true;
+	}
+}
+
+void Scene::doFrame() {
+	Player &player = _vm->_game->_player;
+
+	if (_action._selectedAction || !player._stepEnabled) {
+		_action.clear();
+		_action._selectedAction = 0;
+	}
+
+	if (!_vm->_game->_abortTimers && !player._unk3) {
+		if (_dynamicHotspots._changed)
+			_dynamicHotspots.refresh();
+	}
+}
+
+void Scene::leftClick() {
+	warning("TODO: Scene::leftClick");
 }
 
 void Scene::free() {

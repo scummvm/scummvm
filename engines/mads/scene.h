@@ -54,6 +54,11 @@ private:
 	 * Initialises the data for palette animation within the scene
 	 */
 	void initPaletteAnimation(Common::Array<RGB4> &animData, bool animFlag);
+
+	/**
+	 * Handles a single frame within the game scene
+	 */
+	void doFrame();
 protected:
 	MADSEngine *_vm;
 public:
@@ -66,8 +71,7 @@ public:
 	SpriteSlots _spriteSlots;
 	SpriteSets _sprites;
 	int _spritesIndex;
-	Common::Array<DynamicHotspot> _dynamicHotspots;
-	bool _dynamicHotspotsChanged;
+	DynamicHotspots _dynamicHotspots;
 	byte *_vocabBuffer;
 	Common::Array<int> _activeVocabs;
 	Common::Array<SequenceEntry> _sequences;
@@ -80,7 +84,7 @@ public:
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
 	MSurface _depthSurface;
-	InterfaceSurface _interfaceSurface;
+	InterfaceSurface _interface;
 	bool _animFlag;
 	int _animVal1;
 	int _animCount;
@@ -110,11 +114,6 @@ public:
 	 * Destructor
 	 */
 	~Scene();
-
-	/**
-	 * Clear the dynamic hotspot list
-	 */
-	void clearDynamicHotspots();
 
 	/**
 	 * Clear the vocabulary list
@@ -165,6 +164,11 @@ public:
 	 * Main scene loop
 	 */
 	void loop();
+
+	/**
+	 * Execute a click within the scene
+	 */
+	void leftClick();
 
 	/**
 	 * Clear the data for the scene
