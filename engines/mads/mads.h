@@ -67,6 +67,12 @@ enum {
 	GType_Riddle = 3
 };
 
+enum ScreenFade {
+	SCREEN_FADE_SMOOTH = 0,
+	SCREEN_FADE_MEDIUM = 1,
+	SCREEN_FADE_FAST = 2
+};
+
 struct MADSGameDescription;
 
 
@@ -97,7 +103,7 @@ public:
 	bool _easyMouse;
 	bool _invObjectStill;
 	bool _textWindowStill;
-
+	ScreenFade _screenFade;
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	virtual ~MADSEngine();

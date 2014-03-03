@@ -98,6 +98,8 @@ public:
 	int _v1A;
 	int _v1C;
 	MADSAction _action;
+	bool _roomChanged;
+	bool _reloadSceneFlag;
 
 	/**
 	 * Constructor
@@ -157,6 +159,12 @@ public:
 	 */
 	void loadVocab();
 
+	bool getDepthHighBits(const Common::Point &pt);
+
+	/**
+	 * Main scene loop
+	 */
+	void loop();
 
 	/**
 	 * Clear the data for the scene

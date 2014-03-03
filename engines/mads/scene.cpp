@@ -39,6 +39,8 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm) {
 	_animVal1 = 0;
 	_depthStyle = 0;
 	_v1A = _v1C = 0;
+	_roomChanged = false;
+	_reloadSceneFlag = false;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
@@ -252,6 +254,19 @@ void Scene::initPaletteAnimation(Common::Array<RGB4> &animData, bool animFlag) {
 
 	_animVal1 = (_animCount > 16) ? 3 : 0;
 	_animFlag = animFlag;
+}
+
+bool Scene::getDepthHighBits(const Common::Point &pt) {
+	if (_sceneInfo->_depthStyle == 2) {
+		return 0;
+	} else {
+		const byte *p = _depthSurface.getBasePtr(pt.x, pt.y);
+		return (*p & 0x70) >> 4;
+	}
+}
+
+void Scene::loop() {
+
 }
 
 void Scene::free() {

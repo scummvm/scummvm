@@ -35,6 +35,10 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_spritesStart = _numSprites = 0;
 	_stepEnabled = false;
 	_visible = false;
+	_visible3 = false;
+	_special = 0;
+	_ticksAmount = 0;
+	_priorTimer = 0;
 }
 
 void Player::reset() {
@@ -64,6 +68,23 @@ void Player::turnToDestFacing() {
 void Player::moveComplete() {
 	reset();
 	_action->_inProgress = false;
+}
+
+void Player::setupFrame() {
+	resetActionList();
+	warning("TODO: Player::setupFrame");
+}
+
+void Player::updateFrame() {
+	warning("TODO: Player::updateFrame");
+}
+
+void Player::resetActionList() {
+	warning("TODO: Player::resetActionList");
+}
+
+void Player::idle() {
+	warning("TODO: Player::idle");
 }
 
 } // End of namespace MADS

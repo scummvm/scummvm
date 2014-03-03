@@ -54,6 +54,8 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_v5 = _v6 = 0;
 	_aaName = "*I0.AA";
 	_playerSpritesFlag = false;
+	_currentTimer = 0;
+	_updateSceneFlag = false;
 }
 
 Game::~Game() {
@@ -181,7 +183,65 @@ void Game::sectionLoop() {
 		_player._direction = _player._newDirection;
 		_player.moveComplete();
 
-		// TODO: main section loop logic goes here
+		switch (_vm->_screenFade) {
+		case SCREEN_FADE_SMOOTH:
+			_abortTimers2 = 2;
+			break;
+		case SCREEN_FADE_FAST:
+			_abortTimers2 = 20;
+			break;
+		default:
+			_abortTimers2 = 21;
+			break;
+		}
+		_abortTimers = 0;
+		_abortTimersMode2 = ABORTMODE_1;
+		_currentTimer = _vm->_events->_currentTimer;
+
+		// Call the scene logic for entering the given scene
+		_scene._sceneLogic->enter();
+
+		// Set player data
+		_player._destPos = _player._playerPos;
+		_player._newDirection = _player._direction;
+		_player._destFacing = _player._direction;
+		_player.setupFrame();
+		_player.updateFrame();
+		_player._visible3 = _player._visible;
+		_player._special = _scene.getDepthHighBits(_player._playerPos);
+		_player._priorTimer = _vm->_events->_currentTimer + _player._ticksAmount;
+		_player.idle();
+
+		warning("TODO: _selectedObject IF block");
+
+		_v1 = 5;
+		_scene._roomChanged = false;
+
+		if ((_v5 || _v6) && !_updateSceneFlag) {
+			_scene._currentSceneId = _scene._priorSceneId;
+			_updateSceneFlag = true;
+		}
+		else {
+			_updateSceneFlag = false;
+			_scene.loop();
+		}
+
+		_vm->_events->resetCursor();
+		_v1 = 3;
+
+		delete _quotes;
+		_quotes = nullptr;
+		delete _scene._animation;
+		_scene._animation = nullptr;
+
+		_scene._reloadSceneFlag = false;
+
+		warning("TODO: sub_1DD8C, sub_1DD7E");
+
+		if (!_playerSpritesFlag) {
+			_player._spritesLoaded = false;
+			_player._spritesChanged = true;
+		}
 
 		// Clear the scene
 		_scene.free();

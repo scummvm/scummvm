@@ -39,6 +39,7 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_priorFrameTime = 0;
 	_keyPressed = false;
 	_mouseClicked = false;
+	_currentTimer = 0;
 }
 
 EventsManager::~EventsManager() {

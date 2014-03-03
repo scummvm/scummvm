@@ -60,6 +60,7 @@ public:
 	SpriteAsset *_cursorSprites;
 	bool _mouseClicked;
 	bool _keyPressed;
+	uint32 _currentTimer;
 public:
 	/**
 	 * Constructor

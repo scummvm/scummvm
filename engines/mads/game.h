@@ -65,6 +65,7 @@ protected:
 	int _v3;
 	int _v5;
 	int _v6;
+	bool _updateSceneFlag;
 	Common::String _aaName;
 	bool _playerSpritesFlag;
 	int _objectHiliteVocabIdx;
@@ -111,6 +112,10 @@ public:
 	Scene _scene;
 	int _v2;
 	int _v4;
+	int _abortTimers;
+	int _abortTimers2;
+	AbortTimerMode _abortTimersMode2;
+	uint32 _currentTimer;
 public:
 	virtual ~Game();
 

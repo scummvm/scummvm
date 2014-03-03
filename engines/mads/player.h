@@ -37,6 +37,8 @@ private:
 	MADSAction *_action;
 
 	void reset();
+
+	void resetActionList();
 public:
 	int _direction;
 	int _newDirection;
@@ -47,13 +49,16 @@ public:
 	bool _stepEnabled;
 	bool _spritesChanged;
 	bool _visible;
+	bool _visible3;
 	Common::Point _playerPos;
 	Common::Point _destPos;
 	bool _moving;
 	int _v844C0, _v844BE;
 	int _next;
 	int _routeCount;
-
+	int _special;
+	int _ticksAmount;
+	uint32 _priorTimer;
 public:
 	Player(MADSEngine *vm);
 
@@ -62,6 +67,12 @@ public:
 	void turnToDestFacing();
 
 	void moveComplete();
+
+	void setupFrame();
+
+	void updateFrame();
+
+	void idle();
 };
 
 } // End of namespace MADS
