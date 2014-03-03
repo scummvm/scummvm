@@ -436,7 +436,7 @@ void VoyeurEngine::showTitleScreen() {
 void VoyeurEngine::doOpening() {
 	_graphicsManager->screenReset();
 
-	if (!_bVoy->getBoltGroup(0x200, true))
+	if (!_bVoy->getBoltGroup(0x200))
 		return;
 
 	byte *frameTable = _bVoy->memberAddr(0x215);

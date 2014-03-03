@@ -1102,7 +1102,7 @@ void ThreadResource::doRoom() {
 	vm.makeViewFinderP();
 	voy._fadingType = 0;
 	
-	if (!vm._bVoy->getBoltGroup(vm._playStampGroupId, true))
+	if (!vm._bVoy->getBoltGroup(vm._playStampGroupId))
 		return;
 
 	vm._graphicsManager->_backColors = vm._bVoy->boltEntry(vm._playStampGroupId + 1)._cMapResource;
