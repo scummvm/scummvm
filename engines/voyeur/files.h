@@ -210,7 +210,7 @@ public:
 	FilesManager(VoyeurEngine *vm);
 
 	bool openBoltLib(const Common::String &filename, BoltFile *&boltFile);
-	byte *fload(const Common::String &filename, int *size = NULL);
+	byte *fload(const Common::String &filename, int *size);
 };
 
 class RectEntry: public Common::Rect {
@@ -348,7 +348,7 @@ public:
 	void setupViewPort();
 	void setupViewPort(PictureResource *pic, Common::Rect *clippingRect = NULL);
 	void addSaveRect(int pageIndex, const Common::Rect &r);
-	void fillPic(byte onOff = 0);
+	void fillPic(byte onOff);
 	void drawIfaceTime();
 	void drawPicPerm(PictureResource *pic, const Common::Point &pt);
 };

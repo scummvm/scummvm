@@ -302,7 +302,7 @@ void VoyeurEngine::doClosingCredits() {
 		int flags = READ_LE_UINT16(entry + 4);
 
 		if (flags & 0x10)
-			(*_graphicsManager->_vPort)->fillPic();
+			(*_graphicsManager->_vPort)->fillPic(0);
 
 		if (flags & 1) {
 			fi._foreColor = 1;
