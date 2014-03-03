@@ -107,7 +107,7 @@ public:
 	virtual ~BoltFile();
 
 	BoltGroup *getBoltGroup(uint16 id);
-	void freeBoltGroup(uint16 id, bool freeEntries = true);
+	void freeBoltGroup(uint16 id);
 	void freeBoltMember(uint32 id);
 	byte *memberAddr(uint32 id);
 	byte *memberAddrOffset(uint32 id);

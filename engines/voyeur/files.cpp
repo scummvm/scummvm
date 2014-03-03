@@ -260,7 +260,7 @@ BoltGroup *BoltFile::getBoltGroup(uint16 id) {
 	return _state._curGroupPtr;
 }
 
-void BoltFile::freeBoltGroup(uint16 id, bool freeEntries) {
+void BoltFile::freeBoltGroup(uint16 id) {
 	_state._curLibPtr = this;
 	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
 
