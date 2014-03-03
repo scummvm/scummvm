@@ -24,10 +24,11 @@
 #include "mads/mads.h"
 #include "mads/game.h"
 #include "mads/game_data.h"
-#include "mads/nebular/game_nebular.h"
+#include "mads/events.h"
 #include "mads/graphics.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
+#include "mads/nebular/game_nebular.h"
 
 namespace MADS {
 
@@ -170,6 +171,10 @@ void Game::sectionLoop() {
 			_playerSpritesFlag = false;
 		}
 
+		_vm->_events->initVars();
+		_scene._v1A = -1;
+		_scene._v1C = -1;
+		_objectHiliteVocabIdx = -1;
 
 		// TODO: main section loop logic goes here
 

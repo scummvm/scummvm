@@ -42,6 +42,10 @@ private:
 	uint32 _gameCounter;
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
+	int _vCC;
+	int _vD4;
+	int _vD8;
+	int _vD2;
 
 	/**
 	 * Updates the cursor image when the current cursor changes
@@ -121,6 +125,8 @@ public:
 	 * Gets the current frame counter
 	 */
 	uint32 getFrameCounter() const { return _gameCounter; }
+
+	void initVars();
 };
 
 } // End of namespace MADS

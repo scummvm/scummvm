@@ -157,4 +157,10 @@ void EventsManager::delay(int cycles) {
 	}
 }
 
+void EventsManager::initVars() {
+	_mousePos = Common::Point(-1, -1);
+	_vD4 = _vCC;
+	_vD2 = _vD8 = 0;
+}
+
 } // End of namespace MADS

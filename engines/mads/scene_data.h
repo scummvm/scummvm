@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/str-array.h"
 #include "common/rect.h"
+#include "mads/action.h"
 #include "mads/assets.h"
 #include "mads/game_data.h"
 
@@ -36,35 +37,11 @@ namespace MADS {
 class MADSEngine;
 class Scene;
 
-enum {
-	VERB_LOOK        = 3,
-	VERB_TAKE        = 4,
-	VERB_PUSH        = 5,
-	VERB_OPEN        = 6,
-	VERB_PUT         = 7,
-	VERB_TALKTO      = 8,
-	VERB_GIVE        = 9,
-	VERB_PULL        = 10,
-	VERB_CLOSE       = 11,
-	VERB_THROW       = 12,
-	VERB_WALKTO      = 13
-};
-
-enum MadsActionMode { ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6 };
-enum MadsActionMode2 { ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5 };
-enum AbortTimerMode { ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2 };
-
 #define MADS_INTERFACE_HEIGHT 44
 #define MADS_SCENE_HEIGHT 156
 
 #define DEPTH_BANDS_SIZE 15
 #define MAX_ROUTE_NODES 22
-
-struct ActionDetails {
-	int verbId;
-	int objectNameId;
-	int indirectObjectId;
-};
 
 class VerbInit {
 public:

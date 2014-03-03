@@ -67,6 +67,7 @@ protected:
 	int _v6;
 	Common::String _aaName;
 	bool _playerSpritesFlag;
+	int _objectHiliteVocabIdx;
 
 	/**
 	 * Constructor

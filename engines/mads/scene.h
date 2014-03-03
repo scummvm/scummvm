@@ -95,6 +95,8 @@ public:
 	int _screenY;
 	int _interfaceY;
 	int _spritesCount;
+	int _v1A;
+	int _v1C;
 
 	/**
 	 * Constructor
@@ -153,6 +155,7 @@ public:
 	 * Loads the vocab list
 	 */
 	void loadVocab();
+
 
 	/**
 	 * Clear the data for the scene

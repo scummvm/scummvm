@@ -38,6 +38,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm) {
 	_animFlag = false;
 	_animVal1 = 0;
 	_depthStyle = 0;
+	_v1A = _v1C = 0;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));

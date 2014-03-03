@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	nebular/sound_nebular.o \
 	nebular/nebular_scenes.o \
 	nebular/nebular_scenes8.o \
+	action.o \
 	animation.o \
 	assets.o \
 	compression.o \
