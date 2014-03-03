@@ -84,8 +84,39 @@ void Player::resetActionList() {
 	warning("TODO: Player::resetActionList");
 }
 
+void Player::setDest(const Common::Point &pt, int facing) {
+	warning("TODO: Player::setDest");
+}
+
+void Player::nextFrame() {
+	_priorTimer += _ticksAmount;
+	if (_vm->_events->_currentTimer >= _priorTimer) {
+		_priorTimer = _vm->_events->_currentTimer;
+		if (_moving) {
+			move();
+		} else {
+			idle();
+		}
+
+		postUpdate();
+		update();
+	}
+}
+
+void Player::move() {
+	warning("TODO: Player::move");
+}
+
 void Player::idle() {
 	warning("TODO: Player::idle");
+}
+
+void Player::postUpdate() {
+	warning("TODO: Player::postUpdate");
+}
+
+void Player::update() {
+	warning("TODO: Player::update");
 }
 
 } // End of namespace MADS

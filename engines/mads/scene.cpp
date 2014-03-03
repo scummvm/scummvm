@@ -42,6 +42,8 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm),
 	_v1A = _v1C = 0;
 	_roomChanged = false;
 	_reloadSceneFlag = false;
+	_destFacing = 0;
+	_freeAnimationFlag = false;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
@@ -276,6 +278,7 @@ void Scene::loop() {
 
 void Scene::doFrame() {
 	Player &player = _vm->_game->_player;
+	bool flag = false;
 
 	if (_action._selectedAction || !player._stepEnabled) {
 		_action.clear();
@@ -285,11 +288,103 @@ void Scene::doFrame() {
 	if (!_vm->_game->_abortTimers && !player._unk3) {
 		if (_dynamicHotspots._changed)
 			_dynamicHotspots.refresh();
+
+		_screenObjects.check(player._stepEnabled && !_action._startWalkFlag &&
+				!_vm->_game->_abortTimers2);
+	}
+
+	if (_action._selectedAction && player._stepEnabled && !_action._startWalkFlag &&
+			!_vm->_game->_abortTimers && !player._unk3) {
+		_action.startAction();
+		if (_action._activeAction._verbId == Nebular::NOUN_LOOK_AT) {
+			_action._activeAction._verbId = VERB_LOOK;
+			_action._savedSelectedRow = false;
+		}
+
+		flag = true;
+	}
+
+	if (flag || (_vm->_game->_abortTimers && _vm->_game->_abortTimersMode == ABORTMODE_2)) {
+		doPreactions();
+	}
+
+	checkStartWalk();
+	if (!_vm->_game->_abortTimers2)
+		_vm->_events->_currentTimer = _vm->_events->getFrameCounter();
+
+	if ((_action._inProgress && !player._moving && !_action._startWalkFlag &&
+			player._newDirection == player._direction) ||
+			(_vm->_game->_abortTimers && _vm->_game->_abortTimersMode == ABORTMODE_0)) {
+		doAction();
+	}
+
+	if (_currentSceneId != _nextSceneId) {
+		_freeAnimationFlag = true;
+	} else {
+		doSceneStep();
+		checkKeyboard();
+
+		if (_currentSceneId != _nextSceneId) {
+			_freeAnimationFlag = true;
+		} else {
+			player.nextFrame();
+
+			// Cursor update code
+			CursorType cursorId = CURSOR_ARROW;
+			if (_action._v83338 == 1 && !_screenObjects._v7FECA &&
+					_screenObjects._category == CAT_HOTSPOT) {
+				int idx = _screenObjects._selectedObject - _interface._screenObjectsCount;
+				if (idx >= (int)_hotspots.size()) {
+					idx -= _hotspots.size();
+					_vm->_events->_newCursorId = _dynamicHotspots[idx]._cursor;
+				} else {
+					_vm->_events->_newCursorId = _hotspots[idx]._cursor;
+				}
+
+				cursorId = _vm->_events->_newCursorId == CURSOR_NONE ? 
+					CURSOR_ARROW : _vm->_events->_newCursorId;
+			}
+
+			if (!player._stepEnabled)
+				cursorId = CURSOR_WAIT;
+			if (cursorId >= _vm->_events->_cursorSprites->getCount())
+				cursorId = (CursorType)_vm->_events->_cursorSprites->getCount();
+			_vm->_events->_newCursorId = cursorId;
+
+			if (cursorId != _vm->_events->_cursorId) {
+				_vm->_events->setCursor(cursorId);
+			}
+
+			// TODO: Rest of Scene::doFrame
+		}
 	}
 }
 
 void Scene::leftClick() {
 	warning("TODO: Scene::leftClick");
+}
+
+void Scene::doPreactions() {
+	warning("TODO: Scene::doPreactions");
+}
+
+void Scene::doAction() {
+	warning("TODO: Scene::doAction");
+}
+
+void Scene::checkStartWalk() {
+	if (_action._startWalkFlag && _action._walkFlag) {
+		_vm->_game->_player.setDest(_destPos, _destFacing);
+		_action._startWalkFlag = false;
+	}
+}
+
+void Scene::doSceneStep() {
+	warning("TODO: Scene::doSceneStep");
+}
+
+void Scene::checkKeyboard() {
+	warning("TODO: Scene::checkKeyboard");
 }
 
 void Scene::free() {

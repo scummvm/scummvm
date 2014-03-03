@@ -37,8 +37,6 @@ class MADSEngine;
 class EventsManager {
 private:
 	MADSEngine *_vm;
-	CursorType _cursorId;
-	CursorType _newCursorId;
 	uint32 _gameCounter;
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
@@ -55,6 +53,8 @@ private:
 	void checkForNextFrameCounter();
 public:
 	SpriteAsset *_cursorSprites;
+	CursorType _cursorId;
+	CursorType _newCursorId;
 	bool _mouseClicked;
 	bool _mouseReleased;
 	byte _mouseButtons;

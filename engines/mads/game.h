@@ -114,6 +114,7 @@ public:
 	int _v4;
 	int _abortTimers;
 	int _abortTimers2;
+	AbortTimerMode _abortTimersMode;
 	AbortTimerMode _abortTimersMode2;
 	uint32 _currentTimer;
 public:

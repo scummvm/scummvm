@@ -34,6 +34,7 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	_statusTextIndex = -1;
 	_selectedAction = 0;
 	_inProgress = false;
+	_savedSelectedRow = false;
 }
 
 void MADSAction::clear() {
@@ -49,9 +50,9 @@ void MADSAction::clear() {
 	_hotspotId = -1;
 	_v86F3A = -1;
 	_v86F4C = -1;
-	_action.verbId = -1;
-	_action.objectNameId = -1;
-	_action.indirectObjectId = -1;
+	_action._verbId = -1;
+	_action._objectNameId = -1;
+	_action._indirectObjectId = -1;
 	_textChanged = true;
 	_walkFlag = false;
 }

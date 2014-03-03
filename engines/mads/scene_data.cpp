@@ -217,7 +217,7 @@ DynamicHotspot::DynamicHotspot() {
 	_descId = 0;
 	_field14 = 0;
 	_articleNumber = 0;
-	_cursor = 0;
+	_cursor = CURSOR_NONE;
 }
 
 /*------------------------------------------------------------------------*/
@@ -292,7 +292,7 @@ KernelMessage::KernelMessage() {
 Hotspot::Hotspot() {
 	_facing = 0;
 	_articleNumber = 0;
-	_cursor = 0;
+	_cursor = CURSOR_NONE;
 	_vocabId = 0;
 	_verbId = 0;
 }
@@ -307,7 +307,7 @@ Hotspot::Hotspot(Common::SeekableReadStream &f) {
 	_facing = f.readByte();
 	_articleNumber = f.readByte();
 	f.skip(1);
-	_cursor = f.readByte();
+	_cursor = (CursorType)f.readByte();
 	_vocabId = f.readUint16LE();
 	_verbId = f.readUint16LE();
 }
@@ -354,6 +354,7 @@ void SceneNode::load(Common::SeekableReadStream *f) {
 
 InterfaceSurface::InterfaceSurface(MADSEngine *vm): _vm(vm) {
 	_category = CAT_NONE;
+	_screenObjectsCount = 0;
 }
 
 void InterfaceSurface::elementHighlighted() {

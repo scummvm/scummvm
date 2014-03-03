@@ -30,6 +30,7 @@
 #include "common/rect.h"
 #include "mads/action.h"
 #include "mads/assets.h"
+#include "mads/events.h"
 #include "mads/game_data.h"
 
 namespace MADS {
@@ -185,7 +186,7 @@ public:
 	int _descId;
 	int _field14;
 	int _articleNumber;
-	int _cursor;
+	CursorType _cursor;
 
 	DynamicHotspot();
 };
@@ -271,7 +272,7 @@ public:
 	Common::Point _feetPos;
 	int _facing;
 	int _articleNumber;
-	int _cursor;
+	CursorType _cursor;
 	int _vocabId;
 	int _verbId;
 
@@ -356,6 +357,7 @@ private:
 	MADSEngine *_vm;
 public:
 	ScrCategory _category;
+	int _screenObjectsCount;
 public:
 	/**
 	 * Constructor

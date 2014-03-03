@@ -50,9 +50,9 @@ enum {
 class MADSEngine;
 
 struct ActionDetails {
-	int verbId;
-	int objectNameId;
-	int indirectObjectId;
+	int _verbId;
+	int _objectNameId;
+	int _indirectObjectId;
 };
 
 struct MADSActionSavedFields {
@@ -86,6 +86,7 @@ public:
 	int _hotspotId;
 	MADSActionSavedFields _savedFields;
 	bool _walkFlag;
+	bool _savedSelectedRow;
 
 	// Unknown fields
 	int16 _v86F3A;

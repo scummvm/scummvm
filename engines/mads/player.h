@@ -39,6 +39,12 @@ private:
 	void reset();
 
 	void resetActionList();
+
+	void move();
+
+	void postUpdate();
+ 
+	void update();
 public:
 	int _direction;
 	int _newDirection;
@@ -74,6 +80,10 @@ public:
 	void updateFrame();
 
 	void idle();
+
+	void setDest(const Common::Point &pt, int facing);
+
+	void nextFrame();
 };
 
 } // End of namespace MADS

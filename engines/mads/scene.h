@@ -59,6 +59,16 @@ private:
 	 * Handles a single frame within the game scene
 	 */
 	void doFrame();
+
+	void doPreactions();
+
+	void doAction();
+
+	void checkStartWalk();
+
+	void doSceneStep();
+
+	void checkKeyboard();
 protected:
 	MADSEngine *_vm;
 public:
@@ -93,6 +103,7 @@ public:
 	SceneNodeList _nodes;
 	Common::StringArray _vocabStrings;
 	Animation *_animation;
+	bool _freeAnimationFlag;
 	int _depthStyle;
 	int _bandsRange;
 	int _scaleRange;
@@ -104,6 +115,8 @@ public:
 	MADSAction _action;
 	bool _roomChanged;
 	bool _reloadSceneFlag;
+	Common::Point _destPos;
+	int _destFacing;
 
 	/**
 	 * Constructor
