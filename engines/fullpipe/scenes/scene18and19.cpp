@@ -63,6 +63,13 @@ void scene18_preload() {
 	}
 }
 
+void scene18_setupEntrance() {
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+
+	if (var->getSubVarAsInt("Entrance") == TrubaRight)
+		var->setSubVarAsInt("Entrance", TrubaLeft);
+}
+
 void scene19_setMovements(Scene *sc, int entranceId) {
 	if (entranceId == TrubaRight) {
 		g_vars->scene18_var15 = 1;

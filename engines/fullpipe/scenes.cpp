@@ -797,7 +797,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 #if 0
 	case SC_18:
-		sub_40E1B0();
+		scene18_setupEntrance();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_18");
 		scene->preloadMovements(sceneVar);
 		g_fp->stopAllSounds();
