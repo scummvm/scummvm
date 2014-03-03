@@ -1281,10 +1281,6 @@ void AvalancheEngine::minorRedraw() {
 	fadeIn();
 }
 
-void AvalancheEngine::majorRedraw() {
-	_graphics->refreshScreen();
-}
-
 uint16 AvalancheEngine::bearing(byte whichPed) {
 	AnimationType *avvy = _animation->_sprites[0];
 	PedType *curPed = &_peds[whichPed];

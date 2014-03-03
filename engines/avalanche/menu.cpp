@@ -541,7 +541,7 @@ void Menu::runMenuGame() {
 		_vm->callVerb(kVerbCodeBoss);
 		break;
 	case 2:
-		_vm->majorRedraw();
+		_vm->_graphics->refreshScreen();
 		break;
 	case 3:
 		_vm->callVerb(kVerbCodeScore);

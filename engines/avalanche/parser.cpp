@@ -468,7 +468,7 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 		break;
 	case Common::KEYCODE_F7:
 		if (event.kbd.flags & Common::KBD_CTRL)
-			_vm->majorRedraw();
+			_vm->_graphics->refreshScreen();
 		else
 			_vm->callVerb(kVerbCodeOpen);
 		break;

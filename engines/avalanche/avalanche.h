@@ -248,9 +248,9 @@ public:
 	void gameOver();
 	uint16 bearing(byte whichPed); // Returns the bearing from ped 'whichped' to Avvy, in degrees.
 
-	// There are two kinds of redraw: Major and Minor. Minor is what happens when you load a game, etc. Major redraws EVERYTHING.
+	// There are two kinds of redraw: Major and Minor. Minor is what happens when you load a game, etc.
+	// Major was replaced with GraphicManager::refreshScreen(), it redraws EVERYTHING.
 	void minorRedraw();
-	void majorRedraw();
 
 	void spriteRun();
 
