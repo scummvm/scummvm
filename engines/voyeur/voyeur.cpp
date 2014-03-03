@@ -238,18 +238,15 @@ bool VoyeurEngine::doLock() {
 	byte *wrongVoc = _filesManager->fload("wrong.voc", &wrongVocSize);
 
 	if (_bVoy->getBoltGroup(0x700)) {
-		_voy->_viewBounds = _bVoy->boltEntry(0x704)._rectResource;
-
 		Common::String password = "3333";
-		PictureResource *cursorPic = _bVoy->getPictureResource(0x702);
-		assert(cursorPic);
 
-		// Get the mappings of keys on the keypad
-		byte *keyData = _bVoy->memberAddr(0x705);
-		int keyCount = READ_LE_UINT16(keyData);
-
-		_graphicsManager->_backColors = _bVoy->getCMapResource(0x7010000);
 		_graphicsManager->_backgroundPage = _bVoy->getPictureResource(0x700);
+		_graphicsManager->_backColors = _bVoy->getCMapResource(0x701);
+		PictureResource *cursorPic = _bVoy->getPictureResource(0x702);
+		_voy->_viewBounds = _bVoy->boltEntry(0x704)._rectResource;
+		Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(0x705)._rectResource->_entries;
+
+		assert(cursorPic);
 		(*_graphicsManager->_vPort)->setupViewPort();
 
 		_graphicsManager->_backColors->startFade();
@@ -306,17 +303,13 @@ bool VoyeurEngine::doLock() {
 				do {
 					// Scan through the list of key rects to check if a keypad key is highlighted
 					key = -1;
-					Common::Point mousePos = _eventsManager->getMousePos() + 
-						Common::Point(30, 20);
+					Common::Point mousePos = _eventsManager->getMousePos() + Common::Point(20, 10);
 
-					for (int keyIndex = 0; keyIndex < keyCount; ++keyIndex) { 
-						int x1 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 1) << 1));
-						int x2 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 3) << 1));
-						int y1 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 2) << 1));
-						int y2 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 4) << 1));
-
-						if (mousePos.x >= x1 && mousePos.x <= x2 && mousePos.y >= y1 && mousePos.y <= y2) {
+					int keyCount = hotspots.size();
+					for (int keyIndex = 0; keyIndex < keyCount; ++keyIndex) {
+						if (hotspots[keyIndex].contains(mousePos)) {
 							key = keyIndex;
+							break;
 						}
 					}
 
