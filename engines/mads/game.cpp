@@ -39,8 +39,8 @@ Game *Game::init(MADSEngine *vm) {
 	return nullptr;
 }
 
-Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr),
-		_objects(vm), _scene(vm) {
+Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm), 
+		_scene(vm), _player(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
 	_difficultyLevel = DIFFICULTY_HARD;
 	_saveSlot = -1;
@@ -175,6 +175,11 @@ void Game::sectionLoop() {
 		_scene._v1A = -1;
 		_scene._v1C = -1;
 		_objectHiliteVocabIdx = -1;
+
+		_scene._action.clear();
+		_player.turnToDestFacing();
+		_player._direction = _player._newDirection;
+		_player.moveComplete();
 
 		// TODO: main section loop logic goes here
 

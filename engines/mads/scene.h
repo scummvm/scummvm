@@ -97,6 +97,7 @@ public:
 	int _spritesCount;
 	int _v1A;
 	int _v1C;
+	MADSAction _action;
 
 	/**
 	 * Constructor

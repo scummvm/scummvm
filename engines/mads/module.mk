@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	msprite.o \
 	msurface.o \
 	palette.o \
+	player.o \
 	resources.o \
 	scene.o \
 	scene_data.o \

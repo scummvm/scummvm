@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "mads/scene.h"
 #include "mads/game_data.h"
+#include "mads/player.h"
 
 namespace MADS {
 
@@ -62,7 +63,6 @@ protected:
 	byte *_quotes;
 	int _v1;
 	int _v3;
-	int _v4;
 	int _v5;
 	int _v6;
 	Common::String _aaName;
@@ -110,6 +110,7 @@ public:
 	InventoryObjects _objects;
 	Scene _scene;
 	int _v2;
+	int _v4;
 public:
 	virtual ~Game();
 

@@ -91,24 +91,6 @@ public:
 	void setRoom(int objectId, int roomNumber);
 };
 
-class Player {
-public:
-	int _direction;
-	int _newDirection;
-	bool _spritesLoaded;
-	int _spritesStart;
-	int _numSprites;
-	bool _stepEnabled;
-	bool _spritesChanged;
-	bool _visible;
-public:
-	Player();
-
-	void loadSprites(const Common::String &prefix) {
-		warning("TODO: Player::loadSprites");
-	}
-};
-
 class SectionHandler {
 protected:
 	MADSEngine *_vm;

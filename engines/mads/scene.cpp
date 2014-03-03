@@ -28,7 +28,7 @@
 
 namespace MADS {
 
-Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm) {
+Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;

@@ -21,12 +21,13 @@
  */
 
 #include "common/scummsys.h"
+#include "mads/mads.h"
 #include "mads/action.h"
 #include "mads/scene.h"
 
 namespace MADS {
 
-MadsAction::MadsAction(Scene *scene) : _scene(scene) {
+MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	clear();
 	_currentAction = VERB_NONE;
 	_startWalkFlag = false;
@@ -35,7 +36,7 @@ MadsAction::MadsAction(Scene *scene) : _scene(scene) {
 	_inProgress = false;
 }
 
-void MadsAction::clear() {
+void MADSAction::clear() {
 	_v83338 = 1;
 	_actionMode = ACTMODE_NONE;
 	_actionMode2 = ACTMODE2_0;
@@ -44,7 +45,6 @@ void MadsAction::clear() {
 	_articleNumber = 0;
 	_lookFlag = false;
 	_v86F4A = 0;
-	_statusText[0] = '\0';
 	_selectedRow = -1;
 	_hotspotId = -1;
 	_v86F3A = -1;
@@ -56,7 +56,7 @@ void MadsAction::clear() {
 	_walkFlag = false;
 }
 
-void MadsAction::appendVocab(int vocabId, bool capitalise) {
+void MADSAction::appendVocab(int vocabId, bool capitalise) {
 	/*
 	char *s = _statusText + strlen(_statusText);
 	vocabStr = _madsVm->globals()->getVocab(vocabId);
@@ -68,7 +68,7 @@ void MadsAction::appendVocab(int vocabId, bool capitalise) {
 	*/
 }
 
-void MadsAction::set() {
+void MADSAction::set() {
 	/*
 	int hotspotCount = _madsVm->scene()->getSceneResources().hotspots->size();
 	bool flag = false; // FIXME: unused
@@ -212,7 +212,7 @@ void MadsAction::set() {
 	*/
 }
 
-void MadsAction::refresh() {
+void MADSAction::refresh() {
 	/*
 	// Exit immediately if nothing has changed
 	if (!_textChanged)
@@ -249,7 +249,7 @@ void MadsAction::refresh() {
 	*/
 }
 
-void MadsAction::startAction() {
+void MADSAction::startAction() {
 	/*
 	_madsVm->_player.moveComplete();
 
@@ -318,14 +318,14 @@ void MadsAction::startAction() {
 	*/
 }
 
-void MadsAction::checkAction() {
+void MADSAction::checkAction() {
 	/*
 	if (isAction(kVerbLookAt) || isAction(kVerbThrow))
 		_startWalkFlag = 0;
 	*/
 }
 
-bool MadsAction::isAction(int verbId, int objectNameId, int indirectObjectId) {
+bool MADSAction::isAction(int verbId, int objectNameId, int indirectObjectId) {
 	/*
 	if (_activeAction.verbId != verbId)
 		return false;

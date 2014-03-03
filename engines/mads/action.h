@@ -24,6 +24,7 @@
 #define MADS_ACTION_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace MADS {
 
@@ -46,7 +47,7 @@ enum {
 	VERB_WALKTO = 13
 };
 
-class Scene;
+class MADSEngine;
 
 struct ActionDetails {
 	int verbId;
@@ -54,7 +55,7 @@ struct ActionDetails {
 	int indirectObjectId;
 };
 
-struct MadsActionSavedFields {
+struct MADSActionSavedFields {
 	int articleNumber;
 	int actionMode;
 	int actionMode2;
@@ -62,11 +63,11 @@ struct MadsActionSavedFields {
 	int selectedRow;
 };
 
-class MadsAction {
+class MADSAction {
 private:
-	Scene *_scene;
-	char _statusText[100];
-	char _dialogTitle[100];
+	MADSEngine *_vm;
+	Common::String _statusText;
+	Common::String _dialogTitle;
 
 	void appendVocab(int vocabId, bool capitalise = false);
 public:
@@ -83,7 +84,7 @@ public:
 	bool _startWalkFlag;
 	int _statusTextIndex;
 	int _hotspotId;
-	MadsActionSavedFields _savedFields;
+	MADSActionSavedFields _savedFields;
 	bool _walkFlag;
 
 	// Unknown fields
@@ -97,11 +98,11 @@ public:
 	AbortTimerMode _v8453A;
 
 public:
-	MadsAction(Scene *scene);
+	MADSAction(MADSEngine *vm);
 
 	void clear();
 	void set();
-	const char *statusText() const { return _statusText; }
+	const Common::String &statusText() const { return _statusText; }
 	void refresh();
 	void startAction();
 	void checkAction();

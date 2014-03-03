@@ -102,15 +102,4 @@ void InventoryObjects::setRoom(int objectId, int roomNumber) {
 	warning("TODO: setObjectRoom");
 }
 
-/*------------------------------------------------------------------------*/
-
-Player::Player() {
-	_direction = 8;
-	_newDirection = 8;
-	_spritesLoaded = false;
-	_spritesStart = _numSprites = 0;
-	_stepEnabled = false;
-	_visible = false;
-}
-
 } // End of namespace MADS
