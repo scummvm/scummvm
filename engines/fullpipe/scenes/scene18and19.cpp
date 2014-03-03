@@ -70,6 +70,16 @@ void scene18_setupEntrance() {
 		var->setSubVarAsInt("Entrance", TrubaLeft);
 }
 
+void scene19_setSugarState(Scene *sc) {
+	if (g_fp->getObjectState(sO_Sugar) != g_fp->getObjectEnumState(sO_Sugar, sO_Present)) {
+		Scene *oldsc = g_fp->_currentScene;
+
+		g_fp->_currentScene = sc;
+		sc->getStaticANIObject1ById(ANI_CORDIE, -1)->changeStatics2(ST_CDI_EMPTY2);
+		g_fp->_currentScene = oldsc;
+	}
+}
+
 void scene19_setMovements(Scene *sc, int entranceId) {
 	if (entranceId == TrubaRight) {
 		g_vars->scene18_var15 = 1;

@@ -887,11 +887,13 @@ namespace Fullpipe {
 #define SND_18_010 4994
 
 // Scene 19
+#define ANI_CORDIE 1529
 #define ANI_WHIRLGIG_19 1302
 #define MV_WHR19_SPIN 1317
 #define PIC_SC19_RTRUBA3 1515
 #define SND_19_015 3928
 #define SND_19_016 4995
+#define ST_CDI_EMPTY2 1543
 #define ST_KSL_NORM 1461
 
 // Scene 20
