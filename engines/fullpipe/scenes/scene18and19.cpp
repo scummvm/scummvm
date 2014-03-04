@@ -325,4 +325,13 @@ int scene18_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+int scene19_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_fp->_objectIdAtCursor == PIC_SC19_RTRUBA31)
+		g_fp->_cursorId = g_vars->scene19_var05 != 0 ? PIC_CSR_GOR : PIC_CSR_DEFAULT;
+
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe

@@ -891,6 +891,7 @@ namespace Fullpipe {
 #define ANI_WHIRLGIG_19 1302
 #define MV_WHR19_SPIN 1317
 #define PIC_SC19_RTRUBA3 1515
+#define PIC_SC19_RTRUBA31 5320
 #define SND_19_015 3928
 #define SND_19_016 4995
 #define ST_CDI_EMPTY2 1543
