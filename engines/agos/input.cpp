@@ -426,7 +426,7 @@ void AGOSEngine_Feeble::handleMouseWheelUp() {
 	} else if (_mouse.x >= 172 && _mouse.x <= 469 && _mouse.y >= 287 && _mouse.y <= 382) {
 		HitArea *ha = findBox(0x7FFB);
 		if (ha != NULL && (ha->flags & kBFBoxInUse)) {
-			if (!isSpriteLoaded(21, 9))
+			if (!isSpriteLoaded(21, 9) && !isSpriteLoaded(23, 9))
 				inventoryUp(ha->window);
 		}
 	}
@@ -441,7 +441,7 @@ void AGOSEngine_Feeble::handleMouseWheelDown() {
 	} else if (_mouse.x >= 172 && _mouse.x <= 469 && _mouse.y >= 287 && _mouse.y <= 382) {
 		HitArea *ha = findBox(0x7FFC);
 		if (ha != NULL && (ha->flags & kBFBoxInUse)) {
-			if (!isSpriteLoaded(23, 9))
+			if (!isSpriteLoaded(21, 9) && !isSpriteLoaded(23, 9))
 					inventoryDown(ha->window);
 		}
 	}
