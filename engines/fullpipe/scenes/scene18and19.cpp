@@ -134,8 +134,58 @@ void scene19_preload() {
 	}
 }
 
-void scene18_sub2(StaticANIObject *ani, Scene *sc) {
-	warning("WARNING: scene18_sub2()");
+void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
+	Swinger *swinger;
+
+	g_vars->scene18_var07.clear();
+
+	Scene *oldsc = g_fp->_currentScene;
+	g_fp->_currentScene = sc;
+
+	for (int i = 0; i < 8; i++) {
+		swinger = new Swinger;
+
+		swinger->angle = (double)i * M_PI / 4.0;
+		swinger->sx = g_vars->scene18_var20 - (int)(cos(swinger->angle) * -575.0);
+		swinger->sy = g_vars->scene18_var04 - (int)(sin(swinger->angle) * -575.0) + 87;
+		swinger->ix = swinger->sx;
+		swinger->iy = swinger->sy;
+
+		if (i) {
+			StaticANIObject *newani = new StaticANIObject(ani);
+
+			ani = newani;
+
+			swinger->ani = newani;
+			swinger->sflags = 2;
+
+			sc->addStaticANIObject(newani, 1);
+		} else {
+			swinger->ani = ani;
+			swinger->sflags = g_vars->scene18_var03 != 0 ? 4 : 1;
+		}
+
+		ani->_statics = ani->getStaticsById(ST_KSL_NORM);
+		ani->_movement = 0;
+		ani->setOXY(swinger->sx, swinger->sy);
+		ani->_priority = 30;
+		ani->_flags |= 4;
+
+		if (swinger->sflags & 2) {
+			ani->startAnim(MV_KSL_SWINGBOY, 0, -1);
+		} else {
+			if (swinger->sflags & 4)
+				ani->startAnim(MV_KSL_SWINGGIRL, 0, -1);
+			else
+				ani->startAnim(MV_KSL_SWING, 0, -1);
+		}
+
+		ani->_movement->setDynamicPhaseIndex(g_fp->_rnd->getRandomNumber(17));
+
+		g_vars->scene18_var07.push_back(swinger);
+	}
+
+	g_fp->_currentScene = oldsc;
 }
 
 void scene18_initScene1(Scene *sc) {
@@ -272,7 +322,7 @@ void scene18_initScene2(Scene *sc) {
 		g_fp->playSound(SND_18_010, 1);
 	}
 
-	scene18_sub2(armchair, sc);
+	scene18_setupSwingers(armchair, sc);
 
 	g_vars->scene18_var21 = 0;
 	g_vars->scene18_var12 = 0;
