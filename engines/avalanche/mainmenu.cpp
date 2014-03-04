@@ -33,13 +33,14 @@ namespace Avalanche {
 MainMenu::MainMenu(AvalancheEngine *vm) {
 	_vm = vm;
 
-	registrant = Common::String("");
+	_registrant = Common::String("");
 }
 
 void MainMenu::run() {
 	_vm->_graphics->menuInitialize();
 	_vm->_graphics->menuLoadPictures();
 	loadRegiInfo();
+	loadFont();
 
 	option(1, "Play the game.");
 	option(2, "Read the background.");
@@ -47,11 +48,22 @@ void MainMenu::run() {
 	option(4, "View the documentation.");
 	option(5, "Registration info.");
 	option(6, "Exit back to DOS.");
-	centre(275, registrant);
+	centre(275, _registrant);
 	centre(303, "Make your choice, or wait for the demo.");
+
+	_vm->_graphics->menuRefreshScreen();
 
 	wait();
 	_vm->_graphics->menuClear();
+}
+
+void MainMenu::loadFont() {
+	Common::File file;
+	if (!file.open("avalot.fnt"))
+		error("AVALANCHE: Scrolls: File not found: avalot.fnt");
+	for (int16 i = 0; i < 256; i++)
+		file.read(_font[i], 16);
+	file.close();
 }
 
 void MainMenu::loadRegiInfo() {
@@ -59,7 +71,8 @@ void MainMenu::loadRegiInfo() {
 }
 
 void MainMenu::option(byte which, Common::String what) {
-	warning("STUB: MainMenu::option()");
+	_vm->_graphics->menuDrawBigText(_font, 127, 39 + which * 33, Common::String(which + 48) + ')', true);
+	_vm->_graphics->menuDrawBigText(_font, 191, 39 + which * 33, what, true);
 }
 
 void MainMenu::centre(int16 y, Common::String text) {

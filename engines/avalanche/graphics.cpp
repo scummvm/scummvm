@@ -353,9 +353,9 @@ void GraphicManager::drawNormalText(const Common::String text, FontType font, by
 }
 
 /**
- * Used in Help. Draws text double the size of the normal.
+ * Draws text double the size of the normal.
  */
-void GraphicManager::drawBigText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];
@@ -365,7 +365,7 @@ void GraphicManager::drawBigText(const Common::String text, FontType font, byte 
 					pixelBit = (pixel >> (bit / 2)) & 1;
 				for (int k = 0; k < 2; k++)
 					if (pixelBit)
-						*(byte *)_surface.getBasePtr(x + i * 16 + 16 - bit, y + j * 2 + k) = color;
+						*(byte *)surface.getBasePtr(x + i * 16 + 16 - bit, y + j * 2 + k) = color;
 			}
 		}
 	}
@@ -694,6 +694,10 @@ void GraphicManager::helpDrawHighlight(byte which, Color color) {
 	drawRectangle(Common::Rect(466, 38 + which * 27, 556, 63 + which * 27), color);
 }
 
+void GraphicManager::helpDrawBigText(const Common::String text, int16 x, int16 y, Color color) {
+	drawBigText(_surface, text, _vm->_font, 8, x, y, color);
+}
+
 /**
  * @remarks	Originally called 'titles'
  */
@@ -857,8 +861,10 @@ void GraphicManager::menuLoadPictures() {
 	title.free();
 
 	file.close();
+}
 
-	menuRefreshScreen();
+void GraphicManager::menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, bool notted) {
+	drawBigText(_menu, text, font, 14, x, y, kColorBlack);
 }
 
 /**

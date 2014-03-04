@@ -76,8 +76,8 @@ void Help::switchPage(byte which) {
 	_vm->_graphics->drawNormalText(title, _vm->_font, 8, 629 - 8 * title.size(), 26, kColorBlack);
 	_vm->_graphics->drawNormalText(title, _vm->_font, 8, 630 - 8 * title.size(), 25, kColorCyan);
 
-	_vm->_graphics->drawBigText("help!", _vm->_font, 8, 549, 1, kColorBlack);
-	_vm->_graphics->drawBigText("help!", _vm->_font, 8, 550, 0, kColorCyan);
+	_vm->_graphics->helpDrawBigText("help!", 549, 1, kColorBlack);
+	_vm->_graphics->helpDrawBigText("help!", 550, 0, kColorCyan);
 
 	byte y = 0;
 	do {
@@ -141,8 +141,8 @@ void Help::switchPage(byte which) {
 			break;
 		}
 
-		_vm->_graphics->drawBigText(text, _vm->_font, 8, 589 - (text.size() * 8), 18 + (y + 1) * 27, kColorBlack);
-		_vm->_graphics->drawBigText(text, _vm->_font, 8, 590 - (text.size() * 8), 17 + (y + 1) * 27, kColorCyan);
+		_vm->_graphics->helpDrawBigText(text, 589 - (text.size() * 8), 18 + (y + 1) * 27, kColorBlack);
+		_vm->_graphics->helpDrawBigText(text, 590 - (text.size() * 8), 17 + (y + 1) * 27, kColorCyan);
 
 		y++;
 		_buttonNum++;

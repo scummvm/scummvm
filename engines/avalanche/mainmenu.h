@@ -40,8 +40,10 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	Common::String registrant;
+	Common::String _registrant;
+	FontType _font;
 
+	void loadFont();
 	void loadRegiInfo();
 	void option(byte which, Common::String what);
 	void centre(int16 y, Common::String text);

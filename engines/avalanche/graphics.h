@@ -68,7 +68,6 @@ public:
 	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawTriangle(Common::Point *p, Color color);
 	void drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawBigText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
 	void drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawDigit(int index, int x, int y);
 	void drawDirection(int index, int x, int y);
@@ -107,6 +106,7 @@ public:
 	// Help's function:
 	void helpDrawButton(int y, byte which);
 	void helpDrawHighlight(byte which, Color color);
+	void helpDrawBigText(const Common::String text, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
 
 	// Shoot em' up's functions:
 	void seuDrawTitle();
@@ -124,6 +124,7 @@ public:
 	void menuInitialize();
 	void menuClear();
 	void menuLoadPictures();
+	void menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, bool notted);
 
 	void clearAlso();
 	void clearTextBar();
@@ -196,6 +197,7 @@ private:
 	Graphics::Surface loadPictureSign(Common::File &file, uint16 width, uint16 height); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
 
 	void drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
 	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
 
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
