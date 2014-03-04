@@ -1495,7 +1495,7 @@ void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 	_smushProgram->setUniform("texcrop", Math::Vector2d(float(_smushWidth) / nextHigher2(_smushWidth), float(_smushHeight) / nextHigher2(_smushHeight)));
-	_smushProgram->setUniform("scale", Math::Vector2d(float(_gameWidth)/ float(_smushWidth), float(_gameHeight) / float(_smushHeight)));
+	_smushProgram->setUniform("scale", Math::Vector2d(float(_smushWidth)/ float(_gameWidth), float(_smushHeight) / float(_gameHeight)));
 	_smushProgram->setUniform("offset", Math::Vector2d(float(offsetX) / float(_gameWidth), float(offsetY) / float(_gameHeight)));
 	_smushProgram->setUniform("swizzle", _smushSwizzle);
 	glBindTexture(GL_TEXTURE_2D, _smushTexId);
