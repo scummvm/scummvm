@@ -317,6 +317,7 @@ bool VoyeurEngine::doLock() {
 					_eventsManager->_intPtr._hasPalette = true;
 
 					_eventsManager->delay(1);
+					_eventsManager->getMouseInfo();
 				} while (!shouldQuit() && !_eventsManager->_mouseClicked);
 				_eventsManager->_mouseClicked = false;
 			} while (!shouldQuit() && key == -1);
