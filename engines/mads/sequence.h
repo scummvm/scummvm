@@ -98,7 +98,7 @@ public:
 	void setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot);
 	bool loadSprites(int seqIndex);
 	void tick();
-	void delay(uint32 v1, uint32 v2);
+	void delay(uint32 priorFrameTime, uint32 currentTime);
 	void setAnimRange(int seqIndex, int startVal, int endVal);
 	void scan();
 	void setDepth(int seqIndex, int depth);

@@ -86,6 +86,7 @@ public:
 	void reset();
 	void update();
 	void processText(int msgIndex);
+	void delay(uint32 priorFrameTime, uint32 currentTime);
 };
 
 class TextDisplay {

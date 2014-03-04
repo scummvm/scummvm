@@ -307,10 +307,10 @@ void SequenceList::tick() {
 	}
 }
 
-void SequenceList::delay(uint32 v1, uint32 v2) {
+void SequenceList::delay(uint32 priorFrameTime, uint32 currentTime) {
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if (_entries[idx]._active) {
-			_entries[idx]._timeout += v1 - v2;
+			_entries[idx]._timeout += currentTime - priorFrameTime;
 		}
 	}
 }

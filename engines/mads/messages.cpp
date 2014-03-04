@@ -75,7 +75,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	rec._position = pt;
 	rec._textDisplayIndex = -1;
 	rec._timeout = timeout;
-	rec._frameTimer = _vm->_game->_currentTimer;
+	rec._frameTimer = _vm->_game->_priorFrameTimer;
 	rec._abortTimers = abortTimers;
 	rec._abortMode = _vm->_game->_abortTimersMode2;
 
@@ -100,7 +100,7 @@ void KernelMessages::scrollMessage(int msgIndex, int numTicks, bool quoted) {
 	_entries[msgIndex]._flags |= quoted ? (KMSG_SCROLL | KMSG_QUOTED) : KMSG_SCROLL;
 	_entries[msgIndex]._msgOffset = 0;
 	_entries[msgIndex]._numTicks = numTicks;
-	_entries[msgIndex]._frameTimer2 = _vm->_game->_currentTimer;
+	_entries[msgIndex]._frameTimer2 = _vm->_game->_priorFrameTimer;
 
 	Common::String msg = _entries[msgIndex]._msg;
 	_entries[msgIndex]._asciiChar = msg[0];
@@ -145,7 +145,7 @@ void KernelMessages::reset() {
 }
 
 void KernelMessages::update() {
-	uint32 currentTimer = _vm->_game->_currentTimer;
+	uint32 currentTimer = _vm->_game->_priorFrameTimer;
 
 	for (uint i = 0; i < _entries.size(); ++i) {
 		if (((_entries[i]._flags & KMSG_ACTIVE) != 0) && 
@@ -157,7 +157,7 @@ void KernelMessages::update() {
 void KernelMessages::processText(int msgIndex) {
 	Scene &scene = _vm->_game->_scene;
 	KernelMessage &msg = _entries[msgIndex];
-	uint32 currentTimer = _vm->_game->_currentTimer;
+	uint32 currentTimer = _vm->_game->_priorFrameTimer;
 	bool flag = false;
 
 	if ((msg._flags & KMSG_EXPIRE) != 0) {
@@ -274,6 +274,12 @@ void KernelMessages::processText(int msgIndex) {
 			scene._textSpacing, msg._msg, _talkFont);
 		if (idx >= 0)
 			msg._textDisplayIndex = idx;
+	}
+}
+
+void KernelMessages::delay(uint32 priorFrameTime, uint32 currentTime) {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		_entries[i]._timeout += currentTime - priorFrameTime;
 	}
 }
 

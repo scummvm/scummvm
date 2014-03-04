@@ -116,7 +116,7 @@ public:
 	int _abortTimers2;
 	AbortTimerMode _abortTimersMode;
 	AbortTimerMode _abortTimersMode2;
-	uint32 _currentTimer;
+	uint32 _priorFrameTimer;
 public:
 	virtual ~Game();
 

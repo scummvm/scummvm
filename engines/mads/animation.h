@@ -119,7 +119,7 @@ public:
 	static Animation *init(MADSEngine *vm, Scene *scene);
 public:
 	Common::Array<int> _spriteListIndexes;
-	Common::Array<AnimMessage> _messages;
+	Common::Array<AnimMessage> _kernelMessages;
 	Common::Array<AnimFrameEntry> _frameEntries;
 	Common::Array<AnimMiscEntry> _miscEntries;
 	Common::Array<SpriteAsset *> _spriteSets;

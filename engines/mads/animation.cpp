@@ -179,7 +179,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	for (int i = 0; i < aaHeader._spriteSetsCount; ++i)
 		_spriteListIndexes.push_back(-1);
 
-	_messages.clear();
+	_kernelMessages.clear();
 	if (aaHeader._messagesCount > 0) {
 		// Chunk 2: Following is a list of any messages for the animation
 		Common::SeekableReadStream *msgStream = madsPack.getItemStream(1);
@@ -187,7 +187,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 		for (int i = 0; i < aaHeader._messagesCount; ++i) {
 			AnimMessage rec;
 			rec.load(msgStream);
-			_messages.push_back(rec);
+			_kernelMessages.push_back(rec);
 		}
 
 		delete msgStream;

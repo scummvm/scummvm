@@ -547,6 +547,10 @@ void InterfaceSurface::elementHighlighted() {
 	warning("TODO: InterfaceSurface::elementHighlighted");
 }
 
+void InterfaceSurface::writeText() {
+	warning("TODO: InterfaceSurface::writeText");
+}
+
 /*------------------------------------------------------------------------*/
 
 void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {

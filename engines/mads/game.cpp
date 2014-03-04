@@ -54,7 +54,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_v5 = _v6 = 0;
 	_aaName = "*I0.AA";
 	_playerSpritesFlag = false;
-	_currentTimer = 0;
+	_priorFrameTimer = 0;
 	_updateSceneFlag = false;
 	_abortTimersMode = ABORTMODE_0;
 	_abortTimersMode2 = ABORTMODE_0;
@@ -199,7 +199,7 @@ void Game::sectionLoop() {
 		}
 		_abortTimers = 0;
 		_abortTimersMode2 = ABORTMODE_1;
-		_currentTimer = _vm->_events->_currentTimer;
+		_priorFrameTimer = _vm->_events->_currentTimer;
 
 		// Call the scene logic for entering the given scene
 		_scene._sceneLogic->enter();

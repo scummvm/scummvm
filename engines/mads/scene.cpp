@@ -29,7 +29,7 @@
 namespace MADS {
 
 Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm),
-		_dirtyAreas(_vm), _dynamicHotspots(vm), _interface(vm), _messages(vm), 
+		_dirtyAreas(_vm), _dynamicHotspots(vm), _interface(vm), _kernelMessages(vm), 
 		_screenObjects(vm), _sequences(vm), _textDisplay(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
@@ -97,7 +97,7 @@ void Scene::clearSequenceList() {
 }
 
 void Scene::clearMessageList() {
-	_messages.clear();
+	_kernelMessages.clear();
 	_talkFont = "*FONTCONV.FF";
 	_textSpacing  = -1;
 }
@@ -125,7 +125,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 
 	_spriteSlots.clear(false);
 	_sequences.clear();
-	_messages.clear();
+	_kernelMessages.clear();
 
 	// TODO: palletteUsage reset?  setPalette(_nullPalette);
 	_sceneInfo = SceneInfo::init(_vm);
@@ -371,12 +371,43 @@ void Scene::doFrame() {
 			if (_vm->_debugger->_showMousePos) {
 				Common::Point pt = _vm->_events->mousePos();
 				Common::String msg = Common::String::format("(%d,%d)", pt.x, pt.y);
-				_messages.add(Common::Point(5, 5), 0x203, 0, 0, 1, msg);
+				_kernelMessages.add(Common::Point(5, 5), 0x203, 0, 0, 1, msg);
 			}
+
+			if (!_vm->_game->_abortTimers) {
+				if (_reloadSceneFlag || _currentSceneId != _nextSceneId)
+					_kernelMessages.reset();
+				_kernelMessages.update();
+			}
+
+			_vm->_game->_abortTimers2 = !_vm->_game->_abortTimers2;
+
+			warning("TODO: image_inter_list_call");
+
+			// Write any text needed by the interface
+			if (_vm->_game->_abortTimers2)
+				_interface.writeText();
+
+			// Draw any elements
+			drawElements(_vm->_game->_abortTimers2, _vm->_game->_abortTimers2);
+
+			// Handle message updates
+			if (_vm->_game->_abortTimers2) {
+				uint32 priorTime = _vm->_game->_priorFrameTimer;
+				uint32 newTime = _vm->_events->getFrameCounter();
+				_sequences.delay(newTime, priorTime);
+				_kernelMessages.delay(newTime, priorTime);
+			}
+
+			warning("TODO: sub_1DA5A");
 
 			// TODO: Rest of Scene::doFrame
 		}
 	}
+}
+
+void Scene::drawElements(bool transitionFlag, bool surfaceFlag) {
+
 }
 
 void Scene::leftClick() {

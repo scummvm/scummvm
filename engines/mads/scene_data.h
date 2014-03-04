@@ -360,6 +360,8 @@ public:
 	void load(const Common::String &resName);
 
 	void elementHighlighted();
+
+	void writeText();
 };
 
 /**

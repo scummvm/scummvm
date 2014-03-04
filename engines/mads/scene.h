@@ -87,7 +87,7 @@ public:
 	byte *_vocabBuffer;
 	Common::Array<int> _activeVocabs;
 	SequenceList _sequences;
-	KernelMessages _messages;
+	KernelMessages _kernelMessages;
 	Common::String _talkFont;
 	int _textSpacing;
 	Common::Array<Hotspot> _hotspots;
@@ -182,6 +182,11 @@ public:
 	 * Main scene loop
 	 */
 	void loop();
+
+	/**
+	 * Draw all the elements onto the scene
+	 */
+	void drawElements(bool transitionFlag, bool surfaceFlag);
 
 	/**
 	 * Execute a click within the scene
