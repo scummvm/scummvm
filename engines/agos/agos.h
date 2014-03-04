@@ -1937,6 +1937,7 @@ public:
 	void off_listSaveGames();
 	void off_checkCD();
 	void off_screenTextBox();
+	void off_b2Set();
 	void off_isAdjNoun();
 	void off_hyperLinkOn();
 	void off_hyperLinkOff();
@@ -1978,6 +1979,8 @@ protected:
 	virtual uint16 to16Wrapper(uint value);
 	virtual uint16 readUint16Wrapper(const void *src);
 	virtual uint32 readUint32Wrapper(const void *src);
+
+	void setLoyaltyRating(byte rating);
 
 	void playVideo(const char *filename, bool lastSceneUsed = false);
 	void stopInteractiveVideo();
