@@ -418,7 +418,7 @@ void AGOSEngine::hitarea_stuff_helper_2() {
 
 #ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::handleMouseWheelUp() {
-	if (!(getBitFlag(99)))
+	if (getGameType() == GType_PP || !(getBitFlag(99)))
 		return;
 
 	if (_mouse.x >= 128 && _mouse.x <= 515 && _mouse.y >= 102 && _mouse.y <= 206) {
@@ -433,7 +433,7 @@ void AGOSEngine_Feeble::handleMouseWheelUp() {
 }
 
 void AGOSEngine_Feeble::handleMouseWheelDown() {
-	if (!(getBitFlag(99)))
+	if (getGameType() == GType_PP || !(getBitFlag(99)))
 		return;
 
 	if (_mouse.x >= 128 && _mouse.x <= 515 && _mouse.y >= 102 && _mouse.y <= 206) {
