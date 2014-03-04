@@ -190,7 +190,7 @@ bool Help::handleMouse(const Common::Event &event) {
 
 		Color highlightColor = kColorLightblue;
 		// If we clicked on a button or we are holding down the button, we have to highlight it with cyan:
-		if (((highlightIs != 177) && ((event.type == Common::EVENT_LBUTTONDOWN)) || _holdLeft)) {
+		if (((highlightIs != 177) && (event.type == Common::EVENT_LBUTTONDOWN)) || _holdLeft) {
 			_holdLeft = true;
 			highlightColor = kColorLightcyan;
 		}
