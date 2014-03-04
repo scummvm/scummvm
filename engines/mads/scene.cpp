@@ -29,7 +29,8 @@
 namespace MADS {
 
 Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm),
-		_dynamicHotspots(vm), _screenObjects(vm), _interface(vm) {
+		_dynamicHotspots(vm), _screenObjects(vm), _interface(vm),
+		_sequences(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
@@ -354,6 +355,10 @@ void Scene::doFrame() {
 			if (cursorId != _vm->_events->_cursorId) {
 				_vm->_events->setCursor(cursorId);
 			}
+
+			if (!_vm->_game->_abortTimers)
+				_sequences.tick();
+
 
 			// TODO: Rest of Scene::doFrame
 		}

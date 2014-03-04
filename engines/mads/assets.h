@@ -31,11 +31,27 @@
 
 namespace MADS {
 
+#define SPRITE_SET_CHAR_INFO 4
+
 struct SpriteAssetFrame {
-	uint32 stream;
-	int x, y, w, h;
-	uint32 comp;
-	MSprite *frame;
+	uint32 _stream;
+	Common::Rect _bounds;
+	uint32 _comp;
+	MSprite *_frame;
+};
+
+class SpriteSetCharInfo {
+public:
+	SpriteSetCharInfo(Common::SeekableReadStream *s);
+
+	int _totalFrames;
+	int _numEntries;
+	int _frameList2[16];
+	int _frameList[16];
+	int _ticksList[16];
+	int _unk1;
+	int _ticksAmount;
+	int _yScale;
 };
 
 class SpriteAsset {
@@ -50,8 +66,26 @@ private:
 	Common::Array<uint32> _frameOffsets;
 	Common::Array<SpriteAssetFrame> _frames;
 	uint32 _frameStartOffset;
+	uint8 _mode;
+	bool _isBackground;
+
+	/**
+	 * Load the data for the asset
+	 */
+	void load(Common::SeekableReadStream *stream, int flags);
 public:
+	SpriteSetCharInfo *_charInfo;
+public:
+	/**
+	 * Constructor
+	 */
 	SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int flags);
+
+	/**
+	 * Constructor
+	 */
+	SpriteAsset(MADSEngine *vm, Common::SeekableReadStream *stream, int flags);
+
 	int getCount() { return _frameCount; }
 	int getFrameRate() const { return _frameRate; }
 	int getPixelSpeed() const { return _pixelSpeed; }
@@ -62,6 +96,7 @@ public:
 	MSprite *getFrame(int frameIndex);
 	byte *getPalette() { return _palette; }
 	int getColorCount() { return _colorCount; }
+	bool isBackground() const { return _isBackground; }
 
 	void drawScaled(int frameNumber, MSurface &depthSurface, MSurface &destSurface,
 		int scale, int depth, const Common::Point &pos);

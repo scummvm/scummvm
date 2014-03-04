@@ -30,6 +30,7 @@
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
 #include "mads/animation.h"
+#include "mads/sequence.h"
 
 namespace MADS {
 
@@ -84,7 +85,7 @@ public:
 	DynamicHotspots _dynamicHotspots;
 	byte *_vocabBuffer;
 	Common::Array<int> _activeVocabs;
-	Common::Array<SequenceEntry> _sequences;
+	SequenceList _sequences;
 	Common::Array<KernelMessage> _messages;
 	Common::String _talkFont;
 	int _textSpacing;

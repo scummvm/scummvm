@@ -223,53 +223,95 @@ DynamicHotspot::DynamicHotspot() {
 /*------------------------------------------------------------------------*/
 
 DynamicHotspots::DynamicHotspots(MADSEngine *vm): _vm(vm) {
-	_changed = false;
+	for (int i = 0; i < DYNAMIC_HOTSPOTS_SIZE; ++i) {
+		DynamicHotspot rec;
+		rec._active = false;
+		_entries.push_back(rec);
+	}
+
+	_changed = true;
+	_count = 0;
+}
+
+int DynamicHotspots::add(int descId, int field14, int seqIndex, const Common::Rect &bounds) {
+	// Find a free slot
+	uint idx = 0;
+	while ((idx < _entries.size()) && _entries[idx]._active)
+		++idx;
+	if (idx == _entries.size())
+		error("DynamicHotspots overflow");
+
+	_entries[idx]._active = true;
+	_entries[idx]._descId = descId;
+	_entries[idx]._seqIndex = seqIndex;
+	_entries[idx]._bounds = bounds;
+	_entries[idx]._feetPos.x = -3;
+	_entries[idx]._feetPos.y = 0;
+	_entries[idx]._facing = 5;
+	_entries[idx]._field14 = field14;
+	_entries[idx]._articleNumber = 6;
+	_entries[idx]._cursor = CURSOR_NONE;
+
+	++_count;
+	_changed = true;
+
+	if (seqIndex >= 0)
+		_vm->_game->_scene._sequences[seqIndex]._dynamicHotspotIndex = idx;
+
+	return idx;
+}
+
+int DynamicHotspots::setPosition(int index, int xp, int yp, int facing) {
+	if (index >= 0) {
+		_entries[index]._feetPos.x = xp;
+		_entries[index]._feetPos.y = yp;
+		_entries[index]._facing = facing;
+	}
+
+	return index;
+}
+
+int DynamicHotspots::setCursor(int index, CursorType cursor) {
+	if (index >= 0)
+		_entries[index]._cursor = cursor;
+
+	return index;
+}
+
+void DynamicHotspots::remove(int index) {
+	Scene &scene = _vm->_game->_scene;
+
+	if (_entries[index]._active) {
+		if (_entries[index]._seqIndex >= 0)
+			scene._sequences[_entries[index]._seqIndex]._dynamicHotspotIndex = -1;
+		_entries[index]._active = false;
+
+		--_count;
+		_changed = true;
+	}
 }
 
 void DynamicHotspots::clear() {
-	Common::Array<DynamicHotspot>::clear();
+	for (uint i = 0; i < _entries.size(); ++i)
+		_entries[i]._active = false;
+
+	_changed = false;
+	_count = 0;
+}
+
+void DynamicHotspots::reset() {
+	for (uint i = 0; i < _entries.size(); ++i)
+		remove(i);
+
+	_count = 0;
 	_changed = false;
 }
 
 void DynamicHotspots::refresh() {
-	Scene &scene = _vm->_game->_scene;
-
-	for (uint idx = 0; idx < size(); ++idx) {
-		DynamicHotspot &dh = (*this)[idx];
-
-		switch (scene._screenObjects._v832EC) {
-		case 0:
-		case 2:
-			scene._screenObjects.add(dh._bounds, CAT_12, dh._descId);
-			scene._screenObjects._v8333C = true;
-		default:
-			break;
-		}
-	}
+	error("DynamicHotspots::refresh");
 }
 
 /*------------------------------------------------------------------------*/
-
-SequenceEntry::SequenceEntry() {
-	_spritesIndex = 0;
-	_flipped =0;
-	_frameIndex = 0;
-	_frameStart = 0;
-	_numSprites = 0;
-	_animType = 0;
-	_frameInc = 0;
-	_depth = 0;
-	_scale = 0;
-	_dynamicHotspotIndex = -1;
-	_triggerCountdown = 0;
-	_doneFlag = 0;
-	_entries._count = 0;
-	_abortMode = 0;
-	_actionNouns[0] = _actionNouns[1] = _actionNouns[2] = 0;
-	_numTicks = 0;
-	_extraTicks = 0;
-	_timeout = 0;
-}
 
 KernelMessage::KernelMessage() {
 	_flags = 0;

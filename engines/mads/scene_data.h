@@ -153,6 +153,18 @@ public:
 	 * @param index		Specifies the index in the array
 	 */
 	void deleteEntry(int index);
+
+	SpriteAsset &getSprite(int idx) {
+		error("TODO");
+	}
+	void deleteTimer(int idx) { 
+		warning("TODO: SpriteSlots::deleteTimer"); 
+	}
+	int getIndex() {
+		warning("TODO: SpriteSlots::indexOf");
+		return -1;
+	}
+
 };
 
 class SpriteSets: public Common::Array<SpriteAsset *> {
@@ -179,6 +191,7 @@ public:
 
 class DynamicHotspot {
 public:
+	bool _active;
 	int _seqIndex;
 	Common::Rect _bounds;
 	Common::Point _feetPos;
@@ -191,58 +204,26 @@ public:
 	DynamicHotspot();
 };
 
-class DynamicHotspots : public Common::Array<DynamicHotspot> {
+#define DYNAMIC_HOTSPOTS_SIZE 8
+
+class DynamicHotspots {
 private:
 	MADSEngine *_vm;
+	Common::Array<DynamicHotspot> _entries;
+	int _count;
 public:
 	bool _changed;
-
-	/**
-	 * Constructor
-	 */
+public:
 	DynamicHotspots(MADSEngine *vm);
 
-	/**
-	 * Clear the list
-	 */
+	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
+	int add(int descId, int field14, int seqIndex, const Common::Rect &bounds);
+	int setPosition(int index, int xp, int yp, int facing);
+	int setCursor(int index, CursorType cursor);
+	void remove(int index);
 	void clear();
-
-	/**
-	 * Refresh the list
-	 */
+	void reset();
 	void refresh();
-};
-
-class SequenceEntry {
-public:
-	int _spritesIndex;
-	int _flipped;
-	int _frameIndex;
-	int _frameStart;
-	int _numSprites;
-	int _animType;
-	int _frameInc;
-	int _depth;
-	int _scale;
-	int _dynamicHotspotIndex;
-	
-	Common::Point _msgPos;
-
-	int _triggerCountdown;
-	bool _doneFlag;
-	struct {
-		int _count;
-		int _mode[5];
-		int _frameIndex[5];
-		int _abortVal[5];
-	} _entries;
-	int _abortMode;
-	int _actionNouns[3];
-	int _numTicks;
-	int _extraTicks;
-	int _timeout;
-
-	SequenceEntry();
 };
 
 class KernelMessage {

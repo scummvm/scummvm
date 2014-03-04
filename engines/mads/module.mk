@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	resources.o \
 	scene.o \
 	scene_data.o \
+	sequence.o \
 	sound.o \
 	user_interface.o
 
