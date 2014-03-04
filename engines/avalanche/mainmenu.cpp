@@ -37,7 +37,8 @@ MainMenu::MainMenu(AvalancheEngine *vm) {
 }
 
 void MainMenu::run() {
-	icons();
+	_vm->_graphics->menuInitialize();
+	_vm->_graphics->menuLoadIcons();
 	loadMenu();
 	loadRegiInfo();
 
@@ -51,10 +52,7 @@ void MainMenu::run() {
 	centre(303, "Make your choice, or wait for the demo.");
 
 	wait();
-}
-
-void MainMenu::icons() {
-	warning("STUB: MainMenu::icons()");
+	_vm->_graphics->menuClear();
 }
 
 void MainMenu::loadMenu() {

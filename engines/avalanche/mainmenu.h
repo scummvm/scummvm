@@ -42,7 +42,6 @@ private:
 
 	Common::String registrant;
 
-	void icons();
 	void loadMenu();
 	void loadRegiInfo();
 	void option(byte which, Common::String what);

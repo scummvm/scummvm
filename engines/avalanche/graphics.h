@@ -117,6 +117,14 @@ public:
 	uint16 seuGetPicWidth(int which);
 	uint16 seuGetPicHeight(int which);
 
+	// Main Menu's functions:
+	// The main menu uses a different screen height (350) from the game itself (200 * 2)
+	// so it needs it's own graphic functions on that matter.
+	void menuRefreshScreen();
+	void menuInitialize();
+	void menuClear();
+	void menuLoadIcons();
+
 	void clearAlso();
 	void clearTextBar();
 	void setAlsoLine(int x1, int y1, int x2, int y2, Color color);
@@ -157,6 +165,7 @@ private:
 	static const byte kEgaPaletteIndex[16];
 	static const byte kBackgroundHeight = 8 * 12080 / kScreenWidth; // With 640 width it's 151.
 	// The 8 = number of bits in a byte, and 12080 comes from Lucerna::load().
+	static const uint16 kMenuScreenHeight = 350;
 
 	Graphics::Surface _background;
 	Graphics::Surface _backup;
@@ -166,6 +175,7 @@ private:
 	Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
 	Graphics::Surface _scrolls;
 	Graphics::Surface _surface;
+	Graphics::Surface _menu;
 
 	// For the mini-game "Nim".
 	Graphics::Surface _nimStone;

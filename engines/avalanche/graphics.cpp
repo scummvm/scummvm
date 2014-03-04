@@ -787,6 +787,70 @@ uint16 GraphicManager::seuGetPicHeight(int which) {
 	return _seuPictures[which].h;
 }
 
+void GraphicManager::menuRefreshScreen() {
+	g_system->copyRectToScreen(_menu.getPixels(), _menu.pitch, 0, 0, kScreenWidth, kMenuScreenHeight);
+	g_system->updateScreen();
+}
+
+void GraphicManager::menuInitialize() {
+	initGraphics(kScreenWidth, kMenuScreenHeight, true);
+	_menu.create(kScreenWidth, kMenuScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+}
+
+void GraphicManager::menuClear() {
+	_menu.free();
+	initGraphics(kScreenWidth, 2 * kScreenHeight, true);
+}
+
+void GraphicManager::menuLoadIcons() {
+	_menu.fillRect(Common::Rect(0, 0, kScreenWidth, kMenuScreenHeight), kColorBlack);
+
+	Common::File file;
+
+	if (!file.open("menu.avd"))
+		error("AVALANCHE: MainMenu: File not found: menu.avd");
+
+	int height = 33;
+	int width = 9 * 8;
+	
+	for (int plane = 0; plane < 4; plane++) {
+		// The icons themselves:
+		int n = 0;
+		for (uint16 y = 70; y < 70 + height * 6; y++) {
+			for (uint16 x = 48; x < 48 + width; x += 8) {
+				if (n < 1773) { // Magic value deciphered from the original code.
+					byte pixel = file.readByte();
+					n++;
+					for (int i = 0; i < 8; i++) {
+						byte pixelBit = (pixel >> i) & 1;
+						*(byte *)_menu.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
+					}
+				}
+			}
+		}
+		// The right borders of the menuboxes:
+		for (int a = 0; a < 33; a++) {
+			byte pixel = file.readByte();
+			for (int b = 0; b < 6; b++) {
+				for (int i = 0; i < 8; i++) {
+					byte pixelBit = (pixel >> i) & 1;
+					*(byte *)_menu.getBasePtr(584 + 7 - i, 70 + b * 33 + a) += (pixelBit << plane);
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < 6; i++) {
+		_menu.fillRect(Common::Rect(114, 73 + i * 33, 584, 100 + i * 33), kColorLightgray);
+		_menu.fillRect(Common::Rect(114, 70 + i * 33, 584, 73 + i * 33), kColorWhite);
+		_menu.fillRect(Common::Rect(114, 100 + i * 33, 584, 103 + i * 33), kColorDarkgray);
+	}
+
+	menuRefreshScreen();
+	
+	file.close();
+}
+
 /**
  * This function is for skipping the difference between a stored 'size' value associated with a picture
  * and the actual size of the pictures  when reading them from files for Ghostroom and Shoot em' up.
