@@ -122,7 +122,7 @@ private:
 	// Keep tabs on any videos playing
 	Common::Array<VideoEntry> _videoStreams;
 
-	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop, byte volume = 0xff);
+	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop, uint16 volume = 0xff);
 	VideoHandle createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop, byte volume = 0xff);
 };
 
