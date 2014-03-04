@@ -418,11 +418,33 @@ void AGOSEngine::hitarea_stuff_helper_2() {
 
 #ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::handleMouseWheelUp() {
-	// TODO
+	if (!(getBitFlag(99)))
+		return;
+
+	if (_mouse.x >= 128 && _mouse.x <= 515 && _mouse.y >= 102 && _mouse.y <= 206) {
+		oracleTextDown();
+	} else if (_mouse.x >= 172 && _mouse.x <= 469 && _mouse.y >= 287 && _mouse.y <= 382) {
+		HitArea *ha = findBox(0x7FFB);
+		if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			if (!isSpriteLoaded(21, 9))
+				inventoryUp(ha->window);
+		}
+	}
 }
 
 void AGOSEngine_Feeble::handleMouseWheelDown() {
-	// TODO
+	if (!(getBitFlag(99)))
+		return;
+
+	if (_mouse.x >= 128 && _mouse.x <= 515 && _mouse.y >= 102 && _mouse.y <= 206) {
+		oracleTextUp();
+	} else if (_mouse.x >= 172 && _mouse.x <= 469 && _mouse.y >= 287 && _mouse.y <= 382) {
+		HitArea *ha = findBox(0x7FFC);
+		if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			if (!isSpriteLoaded(23, 9))
+					inventoryDown(ha->window);
+		}
+	}
 }
 #endif
 
