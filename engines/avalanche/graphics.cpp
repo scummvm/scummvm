@@ -802,7 +802,7 @@ void GraphicManager::menuClear() {
 	initGraphics(kScreenWidth, 2 * kScreenHeight, true);
 }
 
-void GraphicManager::menuLoadIcons() {
+void GraphicManager::menuLoadPictures() {
 	_menu.fillRect(Common::Rect(0, 0, kScreenWidth, kMenuScreenHeight), kColorBlack);
 
 	Common::File file;
@@ -845,10 +845,20 @@ void GraphicManager::menuLoadIcons() {
 		_menu.fillRect(Common::Rect(114, 70 + i * 33, 584, 73 + i * 33), kColorWhite);
 		_menu.fillRect(Common::Rect(114, 100 + i * 33, 584, 103 + i * 33), kColorDarkgray);
 	}
-
-	menuRefreshScreen();
 	
 	file.close();
+
+	// The title on the top of the screen:
+	if (!file.open("mainmenu.avd"))
+		error("AVALANCHE: MainMenu: File not found: mainmenu.avd");
+
+	Graphics::Surface title = loadPictureRaw(file, 640, 59);
+	drawPicture(_menu, title, 0, 0);
+	title.free();
+
+	file.close();
+
+	menuRefreshScreen();
 }
 
 /**

@@ -42,7 +42,6 @@ private:
 
 	Common::String registrant;
 
-	void loadMenu();
 	void loadRegiInfo();
 	void option(byte which, Common::String what);
 	void centre(int16 y, Common::String text);

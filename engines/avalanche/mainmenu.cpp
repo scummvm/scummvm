@@ -38,8 +38,7 @@ MainMenu::MainMenu(AvalancheEngine *vm) {
 
 void MainMenu::run() {
 	_vm->_graphics->menuInitialize();
-	_vm->_graphics->menuLoadIcons();
-	loadMenu();
+	_vm->_graphics->menuLoadPictures();
 	loadRegiInfo();
 
 	option(1, "Play the game.");
@@ -53,10 +52,6 @@ void MainMenu::run() {
 
 	wait();
 	_vm->_graphics->menuClear();
-}
-
-void MainMenu::loadMenu() {
-	warning("STUB: MainMenu::loadMenu()");
 }
 
 void MainMenu::loadRegiInfo() {

@@ -123,7 +123,7 @@ public:
 	void menuRefreshScreen();
 	void menuInitialize();
 	void menuClear();
-	void menuLoadIcons();
+	void menuLoadPictures();
 
 	void clearAlso();
 	void clearTextBar();
