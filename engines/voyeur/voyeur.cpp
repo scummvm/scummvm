@@ -278,7 +278,6 @@ bool VoyeurEngine::doLock() {
 
 		bool firstLoop = true;
 		bool breakFlag = false;
-		bool flag = false;
 		while (!breakFlag && !shouldQuit()) {
 			(*_graphicsManager->_vPort)->setupViewPort();
 			flipPageAndWait();
@@ -340,24 +339,16 @@ bool VoyeurEngine::doLock() {
 				}
 			} else if (key == 10) {
 				// Accept key
-				if (!flag) {
-					if ((password.empty() && displayString.empty()) || (password == displayString)) {
-						breakFlag = true;
-						result = true;
-						break;
-					}
-				} else {
-					if (displayString.size() > 0) {
-						result = true;
-						breakFlag = true;
-						break;
-					} 
+				if ((password.empty() && displayString.empty()) || (password == displayString)) {
+					breakFlag = true;
+					result = true;
+					break;
 				}
 			} else if (key == 11) {
 				// New code
 				if ((password.empty() && displayString.empty()) || (password != displayString)) {
 					(*_graphicsManager->_vPort)->setupViewPort();
-					flag = true;
+					password = displayString;
 					displayString = "";
 					continue;
 				}
