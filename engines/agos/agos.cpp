@@ -551,7 +551,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "execute");
 
 	// Add default file directories for Amiga/Macintosh
-	// verisons of Simon the Sorcerer 2
+	// versions of Simon the Sorcerer 2
 	SearchMan.addSubDirectoryMatching(gameDataDir, "voices");
 
 	// Add default file directories for Amiga & Macintosh

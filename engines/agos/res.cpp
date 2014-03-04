@@ -817,9 +817,9 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 
 	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
 		id == 2 && type == 2) {
-		// WORKAROUND: For the exta long strings in foreign languages
+		// WORKAROUND: For the extra long strings in foreign languages
 		// Allocate more space for text to cope with foreign languages that use
-		// up more space than english. I hope 6400 bytes are enough. This number
+		// up more space than English. I hope 6400 bytes are enough. This number
 		// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
 		extraBuffer += 6400;
 	}
