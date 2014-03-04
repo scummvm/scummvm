@@ -32,6 +32,7 @@
 #include "mads/assets.h"
 #include "mads/events.h"
 #include "mads/game_data.h"
+#include "mads/messages.h"
 
 namespace MADS {
 
@@ -43,6 +44,9 @@ class Scene;
 
 #define DEPTH_BANDS_SIZE 15
 #define MAX_ROUTE_NODES 22
+
+#define DIRTY_AREAS_SIZE 90
+#define DIRTY_AREAS_TEXT_DISPLAY_IDX 50
 
 enum ScrCategory {
 	CAT_NONE = 0, CAT_ACTION = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB = 3,
@@ -175,20 +179,6 @@ public:
 	int add(SpriteAsset *asset, int idx = 0);
 };
 
-class TextDisplay {
-public:
-	bool _active;
-	int _spacing;
-	Common::Rect _bounds;
-	int _expire;
-	int _col1;
-	int _col2;
-	Common::String _fontName;
-	Common::String _msg;
-
-	TextDisplay();
-};
-
 class DynamicHotspot {
 public:
 	bool _active;
@@ -226,27 +216,6 @@ public:
 	void refresh();
 };
 
-class KernelMessage {
-public:
-	int _flags;
-	int _seqInex;
-	char _asciiChar;
-	char _asciiChar2;
-	int _colors;
-	Common::Point _posiition;
-	int _msgOffset;
-	int _numTicks;
-	int _frameTimer2;
-	int _frameTimer;
-	int _timeout;
-	int _field1C;
-	int _abortMode;
-	int _nounList[3];
-	Common::String _msg;
-
-	KernelMessage();
-};
-
 class Hotspot {
 public:
 	Common::Rect _bounds;
@@ -259,6 +228,46 @@ public:
 
 	Hotspot();
 	Hotspot(Common::SeekableReadStream &f);
+};
+
+class DirtyArea {
+public:
+	Common::Rect _bounds;
+	Common::Rect _bounds2;
+	bool _textActive;
+	bool _active;
+
+	DirtyArea() { _active = false; }
+	void setArea(int width, int height, int maxWidth, int maxHeight);
+};
+
+class DirtyAreas {
+private:
+	MADSEngine *_vm;
+	Common::Array<DirtyArea> _entries;
+public:
+	DirtyAreas(MADSEngine *vm);
+
+	DirtyArea &operator[](uint idx) {
+		assert(idx < _entries.size());
+		return _entries[idx];
+	}
+
+	void setSpriteSlot(int dirtyIdx, const SpriteSlot &spriteSlot);
+
+	void setTextDisplay(int dirtyIdx, const TextDisplay &textDisplay);
+
+	/**
+	* Merge together any designated dirty areas that overlap
+	* @param startIndex	1-based starting dirty area starting index
+	* @param count			Number of entries to process
+	*/
+	void merge(int startIndex, int count);
+
+	bool intersects(int idx1, int idx2);
+	void mergeAreas(int idx1, int idx2);
+	void copy(MSurface *dest, MSurface *src, const Common::Point &posAdjust);
+	void clear();
 };
 
 class SceneLogic {

@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "mads/assets.h"
+#include "mads/messages.h"
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
 #include "mads/animation.h"
@@ -78,7 +79,7 @@ public:
 	int _nextSceneId;
 	int _currentSceneId;
 	Common::Array<VerbInit> _verbList;
-	Common::Array<TextDisplay> _textDisplay;
+	TextDisplayList _textDisplay;
 	SpriteSlots _spriteSlots;
 	SpriteSets _sprites;
 	int _spritesIndex;
@@ -86,11 +87,12 @@ public:
 	byte *_vocabBuffer;
 	Common::Array<int> _activeVocabs;
 	SequenceList _sequences;
-	Common::Array<KernelMessage> _messages;
+	KernelMessages _messages;
 	Common::String _talkFont;
 	int _textSpacing;
 	Common::Array<Hotspot> _hotspots;
 	ScreenObjects _screenObjects;
+	DirtyAreas _dirtyAreas;
 	int _v1;
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
@@ -104,6 +106,7 @@ public:
 	SceneNodeList _nodes;
 	Common::StringArray _vocabStrings;
 	Animation *_animation;
+	Animation *_activeAnimation;
 	bool _freeAnimationFlag;
 	int _depthStyle;
 	int _bandsRange;
@@ -118,6 +121,7 @@ public:
 	bool _reloadSceneFlag;
 	Common::Point _destPos;
 	int _destFacing;
+	Common::Point _posAdjust;
 
 	/**
 	 * Constructor

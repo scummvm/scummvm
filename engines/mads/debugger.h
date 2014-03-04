@@ -33,11 +33,13 @@ class MADSEngine;
 class Debugger : public GUI::Debugger {
 private:
 	MADSEngine *_vm;
+protected:
+	bool Cmd_Mouse(int argc, const char **argv);
+public:
+	bool _showMousePos;
 public:
 	Debugger(MADSEngine *vm);
 	virtual ~Debugger() {}
-
-protected:
 };
 
 } // End of namespace MADS

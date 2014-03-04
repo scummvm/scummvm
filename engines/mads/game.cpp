@@ -278,4 +278,22 @@ void Game::loadResourceSequence(const Common::String prefix, int v) {
 	warning("TODO: loadResourceSequence");
 }
 
+Common::String Game::getQuote(int quoteId) {
+	if (_quotes && *_quotes) {
+		// Loop through the list of quotes
+		char *p = (char *)_quotes;
+		while (*p) {
+			// Get a pointer to the quote Id after the string
+			char *idP = p + strlen(p) + 1;
+			if (READ_LE_UINT16(idP) == quoteId)
+				// Found the correct string, so return it
+				return Common::String(p);
+
+			p = idP + 2;
+		}
+	}
+
+	return Common::String();
+}
+
 } // End of namespace MADS

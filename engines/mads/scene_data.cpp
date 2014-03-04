@@ -202,11 +202,152 @@ int SpriteSets::add(SpriteAsset *asset, int idx) {
 
 /*------------------------------------------------------------------------*/
 
-TextDisplay::TextDisplay() {
-	_active = false;
-	_spacing = 0;
-	_expire = 0;
-	_col1 = _col2 = 0;
+void DirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) {
+	if (_bounds.left % 2) {
+		--_bounds.left;
+		++width;
+	}
+
+	if (_bounds.left < 0)
+		_bounds.left = 0;
+	else if (_bounds.left > maxWidth)
+		_bounds.left = maxWidth;
+	int right = _bounds.left + width;
+	if (right < 0)
+		right = 0;
+	if (right > maxWidth)
+		right = maxWidth;
+
+	_bounds.right = right;
+	_bounds2.left = _bounds.width() / 2;
+	_bounds2.right = _bounds.left + (_bounds.width() + 1) / 2 - 1;
+
+	if (_bounds.top < 0)
+		_bounds.top = 0;
+	else if (_bounds.top > maxHeight)
+		_bounds.top = maxHeight;
+	int bottom = _bounds.top + height;
+	if (bottom < 0)
+		bottom = 0;
+	if (bottom > maxHeight)
+		bottom = maxHeight;
+
+	_bounds.bottom = bottom;
+	_bounds2.top = _bounds.height() / 2;
+	_bounds2.bottom = _bounds.top + (_bounds.height() + 1) / 2 - 1;
+
+	_active = true;
+}
+
+/*------------------------------------------------------------------------*/
+
+DirtyAreas::DirtyAreas(MADSEngine *vm) : _vm(vm) {
+	for (int i = 0; i < DIRTY_AREAS_SIZE; ++i) {
+		DirtyArea rec;
+		rec._active = false;
+		_entries.push_back(rec);
+	}
+}
+
+void DirtyAreas::setSpriteSlot(int dirtyIdx, const SpriteSlot &spriteSlot) {
+	int width, height;
+	DirtyArea &dirtyArea = _entries[dirtyIdx];
+	Scene &scene = _vm->_game->_scene;
+
+	if (spriteSlot._spriteType == ST_FULL_SCREEN_REFRESH) {
+		// Special entry to refresh the entire screen
+		dirtyArea._bounds.left = 0;
+		dirtyArea._bounds.top = 0;
+		width = MADS_SCREEN_WIDTH;
+		height = MADS_SCENE_HEIGHT;
+	} else {
+		// Standard sprite slots
+		dirtyArea._bounds.left = spriteSlot._position.x - scene._posAdjust.x;
+		dirtyArea._bounds.top = spriteSlot._position.y - scene._posAdjust.y;
+
+		SpriteAsset &spriteSet = scene._spriteSlots.getSprite(spriteSlot._spritesIndex);
+		MSprite *frame = spriteSet.getFrame(((spriteSlot._frameNumber & 0x7fff) - 1) & 0x7f);
+
+		if (spriteSlot._scale == -1) {
+			width = frame->getWidth();
+			height = frame->getHeight();
+		} else {
+			width = frame->getWidth() * spriteSlot._scale / 100;
+			height = frame->getHeight() * spriteSlot._scale / 100;
+
+			dirtyArea._bounds.left -= width / 2;
+			dirtyArea._bounds.top += -(height - 1);
+		}
+	}
+
+	dirtyArea.setArea(width, height, MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
+}
+
+void DirtyAreas::setTextDisplay(int dirtyIdx, const TextDisplay &textDisplay) {
+	DirtyArea &dirtyArea = _entries[dirtyIdx];
+	dirtyArea._bounds.left = textDisplay._bounds.left;
+	dirtyArea._bounds.top = textDisplay._bounds.top;
+
+	dirtyArea.setArea(textDisplay._bounds.width(), textDisplay._bounds.height(), 
+		MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
+}
+
+void DirtyAreas::merge(int startIndex, int count) {
+	error("TODO: DirtyAreas::merge");
+	if (startIndex >= count)
+		return;
+
+	for (int outerCtr = startIndex - 1, idx = 0; idx < count; ++outerCtr, ++idx) {
+		if (!_entries[outerCtr]._active)
+			continue;
+
+		for (int innerCtr = outerCtr + 1; innerCtr < count; ++innerCtr) {
+			if (!_entries[innerCtr]._active || !intersects(outerCtr, innerCtr))
+				continue;
+
+			if (_entries[outerCtr]._textActive && _entries[innerCtr]._textActive)
+				mergeAreas(outerCtr, innerCtr);
+		}
+	}
+}
+
+/**
+* Returns true if two dirty areas intersect
+*/
+bool DirtyAreas::intersects(int idx1, int idx2) {
+	return _entries[idx1]._bounds2.intersects(_entries[idx2]._bounds2);
+}
+
+void DirtyAreas::mergeAreas(int idx1, int idx2) {
+	DirtyArea &da1 = _entries[idx1];
+	DirtyArea &da2 = _entries[idx2];
+
+	da1._bounds.extend(da2._bounds);
+
+	da1._bounds2.left = da1._bounds.width() / 2;
+	da1._bounds2.right = da1._bounds.left + (da1._bounds.width() + 1) / 2 - 1;
+	da1._bounds2.top = da1._bounds.height() / 2;
+	da1._bounds2.bottom = da1._bounds.top + (da1._bounds.height() + 1) / 2 - 1;
+
+	da2._active = false;
+	da1._textActive = true;
+}
+
+void DirtyAreas::copy(MSurface *dest, MSurface *src, const Common::Point &posAdjust) {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		const Common::Rect &srcBounds = _entries[i]._bounds;
+
+		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
+			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
+
+		if (_entries[i]._active && _entries[i]._bounds.isValidRect())
+			src->copyTo(dest, bounds, Common::Point(_entries[i]._bounds.left, _entries[i]._bounds.top));
+	}
+}
+
+void DirtyAreas::clear() {
+	for (uint i = 0; i < _entries.size(); ++i)
+		_entries[i]._active = false;
 }
 
 /*------------------------------------------------------------------------*/
@@ -315,18 +456,21 @@ void DynamicHotspots::refresh() {
 
 KernelMessage::KernelMessage() {
 	_flags = 0;
-	_seqInex = 0;
+	_sequenceIndex = 0;
 	_asciiChar = '\0';
 	_asciiChar2 = '\0';
-	_colors = 0;
+	_color1 = 0;
+	_color2 = 0;
 	_msgOffset = 0;
 	_numTicks = 0;
 	_frameTimer2 = 0;
 	_frameTimer = 0;
 	_timeout = 0;
-	_field1C = 0;
-	_abortMode = 0;
-	_nounList[0] = _nounList[1] = _nounList[2] = 0;
+	_abortTimers = 0;
+	_abortMode = ABORTMODE_0;
+	_actionDetails._verbId = 0;
+	_actionDetails._objectNameId = 0;
+	_actionDetails._indirectObjectId = 0;
 }
 
 /*------------------------------------------------------------------------*/

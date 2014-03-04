@@ -29,8 +29,8 @@
 namespace MADS {
 
 Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm),
-		_dynamicHotspots(vm), _screenObjects(vm), _interface(vm),
-		_sequences(vm) {
+		_dirtyAreas(_vm), _dynamicHotspots(vm), _interface(vm), _messages(vm), 
+		_screenObjects(vm), _sequences(vm), _textDisplay(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
@@ -45,6 +45,8 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm),
 	_reloadSceneFlag = false;
 	_destFacing = 0;
 	_freeAnimationFlag = false;
+	_animation = nullptr;
+	_activeAnimation = nullptr;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
@@ -356,9 +358,21 @@ void Scene::doFrame() {
 				_vm->_events->setCursor(cursorId);
 			}
 
-			if (!_vm->_game->_abortTimers)
+			if (!_vm->_game->_abortTimers) {
+				// Handle any active sequences
 				_sequences.tick();
 
+				// Handle any active animation
+				if (_activeAnimation)
+					_activeAnimation->update();
+			}
+
+			// If the debugget flag is set, show the mouse position
+			if (_vm->_debugger->_showMousePos) {
+				Common::Point pt = _vm->_events->mousePos();
+				Common::String msg = Common::String::format("(%d,%d)", pt.x, pt.y);
+				_messages.add(Common::Point(5, 5), 0x203, 0, 0, 1, msg);
+			}
 
 			// TODO: Rest of Scene::doFrame
 		}

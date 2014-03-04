@@ -135,6 +135,11 @@ public:
 	 */
 	void load(MSurface &depthSurface, InterfaceSurface &interfaceSurface, const Common::String &resName,
 		int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
+
+	/**
+	 * Update the animation
+	 */
+	void update();
 };
 
 } // End of namespace MADS

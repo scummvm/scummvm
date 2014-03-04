@@ -93,7 +93,6 @@ void Font::setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4) {
 	_fontColors[0] = v1;
 	_fontColors[1] = v2;
 	_fontColors[2] = v3;
-	_fontColors[3] = v4;
 }
 
 int Font::write(MSurface *surface, const Common::String &msg, const Common::Point &pt, int width, int spaceWidth, uint8 colors[]) {

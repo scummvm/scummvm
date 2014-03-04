@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	game_data.o \
 	graphics.o \
 	mads.o \
+	messages.o \
 	msprite.o \
 	msurface.o \
 	palette.o \

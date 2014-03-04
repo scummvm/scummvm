@@ -124,6 +124,11 @@ public:
 	 * Run the game
 	 */
 	void run();
+
+	/**
+	 * Get a quote
+	 */
+	Common::String getQuote(int quoteId);
 };
 
 } // End of namespace MADS

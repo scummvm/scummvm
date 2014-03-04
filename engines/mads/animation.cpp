@@ -297,4 +297,8 @@ void Animation::loadInterface(InterfaceSurface &interfaceSurface, MSurface &dept
 	}
 }
 
+void Animation::update() {
+	warning("TODO: Animation::update");
+}
+
 } // End of namespace MADS

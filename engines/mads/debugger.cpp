@@ -26,6 +26,8 @@
 namespace MADS {
 
 Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
+	_showMousePos = false;
+
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
 }
 /*
@@ -45,5 +47,15 @@ static int strToInt(const char *s) {
 	return (int)tmp;
 }
 */
+
+bool Debugger::Cmd_Mouse(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Format: mouse [ on | off ]\n");
+	} else {
+		_showMousePos = strcmp(argv[1], "on") == 0;
+	}
+
+	return true;
+}
 
 } // End of namespace MADS
