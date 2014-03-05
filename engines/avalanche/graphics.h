@@ -124,7 +124,7 @@ public:
 	void menuInitialize();
 	void menuClear();
 	void menuLoadPictures();
-	void menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, bool notted);
+	void menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, Color color);
 
 	void clearAlso();
 	void clearTextBar();

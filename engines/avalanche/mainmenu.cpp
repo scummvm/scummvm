@@ -48,8 +48,8 @@ void MainMenu::run() {
 	option(4, "View the documentation.");
 	option(5, "Registration info.");
 	option(6, "Exit back to DOS.");
-	centre(275, _registrant);
-	centre(303, "Make your choice, or wait for the demo.");
+	centre(274, _registrant);
+	centre(301, "Make your choice, or wait for the demo.");
 
 	_vm->_graphics->menuRefreshScreen();
 
@@ -67,16 +67,17 @@ void MainMenu::loadFont() {
 }
 
 void MainMenu::loadRegiInfo() {
+	_registrant = "(Unregistered evaluation copy.)";
 	warning("STUB: MainMenu::loadRegiInfo()");
 }
 
 void MainMenu::option(byte which, Common::String what) {
-	_vm->_graphics->menuDrawBigText(_font, 127, 39 + which * 33, Common::String(which + 48) + ')', true);
-	_vm->_graphics->menuDrawBigText(_font, 191, 39 + which * 33, what, true);
+	_vm->_graphics->menuDrawBigText(_font, 127, 39 + which * 33, Common::String(which + 48) + ')', kColorBlack);
+	_vm->_graphics->menuDrawBigText(_font, 191, 39 + which * 33, what, kColorBlack);
 }
 
 void MainMenu::centre(int16 y, Common::String text) {
-	warning("STUB: MainMenu::centre()");
+	_vm->_graphics->menuDrawBigText(_font, 320 - text.size() * 8, y, text, kColorLightgray);
 }
 
 void MainMenu::wait() {

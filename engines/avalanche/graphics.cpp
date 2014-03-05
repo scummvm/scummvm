@@ -863,8 +863,8 @@ void GraphicManager::menuLoadPictures() {
 	file.close();
 }
 
-void GraphicManager::menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, bool notted) {
-	drawBigText(_menu, text, font, 14, x, y, kColorBlack);
+void GraphicManager::menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, Color color) {
+	drawBigText(_menu, text, font, 14, x, y, color);
 }
 
 /**
