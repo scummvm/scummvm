@@ -20,44 +20,41 @@
  *
  */
 
-#ifndef MADS_GRAPHICS_H
-#define MADS_GRAPHICS_H
+#ifndef MADS_INTERFACE_H
+#define MADS_INTERFACE_H
 
 #include "common/scummsys.h"
-#include "common/array.h"
-#include "mads/msurface.h"
+#include "common/rect.h"
+#include "common/str.h"
 
 namespace MADS {
 
-#define MADS_SCREEN_WIDTH 320
-#define MADS_SCREEN_HEIGHT 200
-
-class ScreenSurface : public MSurface {
+class InterfaceSurface : public MSurface {
+private:
+	MADSEngine *_vm;
 public:
-	Common::Point _offset;
-	byte *_pixels;
-	int _pitch;
+	ScrCategory _category;
+	int _screenObjectsCount;
+	Common::Rect _bounds;
+	Common::Rect *_rectP;
 public:
 	/**
-	 * Constructor
-	 */
-	ScreenSurface() {}
+	* Constructor
+	*/
+	InterfaceSurface(MADSEngine *vm);
 
 	/**
-	 * Initialise the surface
-	 */
-	void init();
+	* Loads an interface from a specified resource
+	*/
+	void load(const Common::String &resName);
 
-	void setPointer(MSurface *s);
+	void elementHighlighted();
 
-	/**
-	 * Updates the screen with the contents of the surface
-	 */
-	void updateScreen();
+	void writeText();
 
-	void transition(bool transitionFlag, bool surfaceFlag);
+	void setBounds(const Common::Rect &r);
 };
 
 } // End of namespace MADS
 
-#endif /* MADS_GRAPHICS_H */
+#endif /* MADS_INTERFACE_H */

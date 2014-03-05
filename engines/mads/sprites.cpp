@@ -161,6 +161,19 @@ void SpriteSlots::deleteEntry(int index) {
 	remove_at(index);
 }
 
+void SpriteSlots::setDirtyAreas() {
+	Scene &scene = _vm->_game->_scene;
+
+	for (uint i = 0; i < size(); ++i) {
+		if ((*this)[i]._spriteType >= ST_NONE) {
+			scene._dirtyAreas[i].setSpriteSlot(&(*this)[i]);
+
+			scene._dirtyAreas[i]._textActive = ((*this)[i]._spriteType <= ST_NONE) ? 0 : 1;
+			(*this)[i]._spriteType = ST_NONE;
+		}
+	}
+}
+
 void SpriteSlots::fullRefresh(bool clearAll) {
 	if (clearAll)
 		Common::Array<SpriteSlot>::clear();
@@ -217,6 +230,13 @@ void SpriteSlots::drawBackground() {
 			scene._dirtyAreas[i]._active = true;
 			scene._dirtyAreas[i].setTextDisplay(&textDisplay);
 		}
+	}
+}
+
+void SpriteSlots::cleanUp() {
+	for (int i = (int)size() - 1; i >= 0; --i) {
+		if ((*this)[i]._spriteType >= ST_NONE)
+			remove_at(i);
 	}
 }
 

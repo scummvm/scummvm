@@ -163,6 +163,11 @@ public:
 	void deleteEntry(int index);
 
 	/**
+	 * Setup dirty areas for the sprite slots
+	 */
+	void setDirtyAreas();
+
+	/**
 	* Adds a full screen refresh to the sprite slots
 	*/
 	void fullRefresh(bool clearAll = false);
@@ -182,6 +187,8 @@ public:
 	 * Draw any sprites into the background of the scene
 	 */
 	void drawBackground();
+
+	void cleanUp();
 };
 
 class SpriteSets : public Common::Array<SpriteAsset *> {

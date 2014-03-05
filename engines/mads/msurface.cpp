@@ -199,11 +199,6 @@ void MSurface::empty() {
 	Common::fill(getBasePtr(0, 0), getBasePtr(0, h), _vm->_palette->BLACK);
 }
 
-void MSurface::updateScreen() { 
-	g_system->copyRectToScreen((const byte *)pixels, pitch, 0, 0, w, h);
-	g_system->updateScreen(); 
-}
-
 void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds, 
 		const Common::Point &destPos, int transparentColor) {
 	// Validation of the rectangle and position	

@@ -26,5 +26,23 @@
 
 namespace MADS {
 
+void ScreenSurface::init() {
+	setSize(g_system->getWidth(), g_system->getHeight());
+}
+
+void ScreenSurface::updateScreen() {
+	g_system->copyRectToScreen((const byte *)pixels, pitch, 0, 0, w, h);
+	g_system->updateScreen();
+}
+
+void ScreenSurface::transition(bool transitionFlag, bool surfaceFlag) {
+
+}
+
+void ScreenSurface::setPointer(MSurface *s) {
+	_pixels = s->getData();
+	_pitch = s->w;
+}
+
 
 } // End of namespace MADS

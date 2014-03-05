@@ -29,6 +29,7 @@
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
 #include "mads/font.h"
+#include "mads/interface.h"
 
 namespace MADS {
 

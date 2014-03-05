@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	game.o \
 	game_data.o \
 	graphics.o \
+	interface.o \
 	mads.o \
 	messages.o \
 	msurface.o \

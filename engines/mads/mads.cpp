@@ -82,7 +82,7 @@ void MADSEngine::initialise() {
 	_events = new EventsManager(this);
 	_palette = new Palette(this);
 	_font = new Font(this);
-	_screen.setSize(g_system->getWidth(), g_system->getHeight());
+	_screen.init();
 	_sound = new SoundManager(this, _mixer);
 	_userInterface = UserInterface::init(this);
 	_game = Game::init(this);

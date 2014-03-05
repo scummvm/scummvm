@@ -471,30 +471,6 @@ void ARTHeader::load(Common::SeekableReadStream *f) {
 
 /*------------------------------------------------------------------------*/
 
-void SceneNode::load(Common::SeekableReadStream *f) {
-	_walkPos.x = f->readSint16LE();
-	_walkPos.y = f->readSint16LE();
-	for (int i = 0; i < MAX_ROUTE_NODES; ++i)
-		_indexes[i] = f->readUint16LE();
-}
-
-/*------------------------------------------------------------------------*/
-
-InterfaceSurface::InterfaceSurface(MADSEngine *vm): _vm(vm) {
-	_category = CAT_NONE;
-	_screenObjectsCount = 0;
-}
-
-void InterfaceSurface::elementHighlighted() {
-	warning("TODO: InterfaceSurface::elementHighlighted");
-}
-
-void InterfaceSurface::writeText() {
-	warning("TODO: InterfaceSurface::writeText");
-}
-
-/*------------------------------------------------------------------------*/
-
 void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 	f->skip(3);
 	_spriteSetIndex = f->readByte();
@@ -503,34 +479,6 @@ void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 	_position.y = f->readSint16LE();
 	_depth = f->readByte();
 	_scale = f->readByte();
-}
-
-/*------------------------------------------------------------------------*/
-
-void InterfaceSurface::load(const Common::String &resName) {
-	File f(resName);
-	MadsPack madsPack(&f);
-
-	// Load in the palette
-	Common::SeekableReadStream *palStream = madsPack.getItemStream(0);
-
-	RGB4 *gamePalP = &_vm->_palette->_gamePalette[0];
-	byte *palP = &_vm->_palette->_mainPalette[0];
-
-	for (int i = 0; i < 16; ++i, gamePalP++, palP += 3) {
-		palP[0] = palStream->readByte();
-		palP[1] = palStream->readByte();
-		palP[2] = palStream->readByte();
-		gamePalP->r |= 1;
-		palStream->skip(3);
-	}
-	delete palStream;
-
-	// set the size for the interface
-	setSize(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
-	Common::SeekableReadStream *pixelsStream = madsPack.getItemStream(1);
-	pixelsStream->read(getData(), MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
-	delete pixelsStream;
 }
 
 /*------------------------------------------------------------------------*/

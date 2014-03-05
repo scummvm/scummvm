@@ -164,7 +164,6 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_scaleRange = _sceneInfo->_maxScale - _sceneInfo->_minScale;
 
 	_spriteSlots.clear(false);
-	_screenY = 0;
 	_interfaceY = MADS_SCENE_HEIGHT;
 	_spritesCount = _sprites.size();
 
@@ -432,6 +431,28 @@ void Scene::drawElements(bool transitionFlag, bool surfaceFlag) {
 
 	// Copy dirty areas to the main display surface
 	_dirtyAreas.copy(&_vm->_screen, &_backgroundSurface, _posAdjust);
+
+	// Set dirty areas
+	_spriteSlots.setDirtyAreas();
+	_textDisplay.setDirtyAreas();
+
+	//
+	_vm->_screen.setPointer(&_vm->_screen);
+	_interface.setBounds(Common::Rect(_vm->_screen._offset.x, _vm->_screen._offset.y,
+		_vm->_screen._offset.x + _vm->_screen.w, _vm->_screen._offset.y + _vm->_screen.h));
+
+	if (transitionFlag) {
+		// Fading in the screen
+		_vm->_screen.transition(transitionFlag, surfaceFlag);
+		_vm->_sound->startQueuedCommands();
+	} else {
+		// Copy dirty areas to the screen
+		_dirtyAreas.copy(&_vm->_screen, &_backgroundSurface, _vm->_screen._offset);
+	}
+
+	warning("TODO: sub_115A2");
+	_spriteSlots.cleanUp();
+	_textDisplay.cleanUp();
 }
 
 void Scene::leftClick() {

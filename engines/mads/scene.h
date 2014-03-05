@@ -112,7 +112,6 @@ public:
 	int _depthStyle;
 	int _bandsRange;
 	int _scaleRange;
-	int _screenY;
 	int _interfaceY;
 	int _spritesCount;
 	int _v1A;

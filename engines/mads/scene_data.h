@@ -277,27 +277,6 @@ public:
 };
 typedef Common::Array<SceneNode> SceneNodeList;
 
-class InterfaceSurface : public MSurface {
-private:
-	MADSEngine *_vm;
-public:
-	ScrCategory _category;
-	int _screenObjectsCount;
-public:
-	/**
-	 * Constructor
-	 */
-	InterfaceSurface(MADSEngine *vm);
-
-	/**
-	 * Loads an interface from a specified resource
-	 */
-	void load(const Common::String &resName);
-
-	void elementHighlighted();
-
-	void writeText();
-};
 
 /**
  * Handles general data for a given scene

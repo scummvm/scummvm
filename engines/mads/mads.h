@@ -35,6 +35,7 @@
 #include "mads/events.h"
 #include "mads/font.h"
 #include "mads/game.h"
+#include "mads/graphics.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"
@@ -97,7 +98,7 @@ public:
 	Game *_game;
 	Palette *_palette;
 	Resources *_resources;
-	MSurface _screen;
+	ScreenSurface _screen;
 	SoundManager *_sound;
 	UserInterface *_userInterface;
 	bool _easyMouse;

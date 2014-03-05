@@ -132,11 +132,6 @@ public:
 	void empty();
 
 	/**
-	 * Updates the screen with the contents of the surface
-	 */
-	void updateScreen();
-
-	/**
 	 * Copys a sub-section of another surface into the current one.
 	 * @param src			Source surface
 	 * @param srcBounds		Area of source surface to copy
