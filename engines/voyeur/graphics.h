@@ -91,7 +91,7 @@ public:
 	void addRectNoSaveBack(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);
 
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &initialOffset);
-	void fillPic(DisplayResource *display, byte onOff = 0);
+	void fillPic(DisplayResource *display, byte onOff);
 	void sDisplayPic(PictureResource *pic);
 	void drawANumber(DisplayResource *display, int num, const Common::Point &pt);
 	void flipPage();

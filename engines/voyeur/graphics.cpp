@@ -548,8 +548,8 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 		} else {
 			// loc_26673
-			int pick = srcPic->_pick;
-			int onOff = srcPic->_onOff;
+			byte pick = srcPic->_pick;
+			byte onOff = srcPic->_onOff;
 
 			if (!(srcFlags & PICFLAG_PIC_OFFSET)) {
 				srcP = srcImgData += srcOffset;

@@ -364,7 +364,7 @@ bool VoyeurEngine::doLock() {
 			_soundManager->playVOCMap(wrongVoc, wrongVocSize);
 		}
 
-		_graphicsManager->fillPic(*_graphicsManager->_vPort);
+		_graphicsManager->fillPic(*_graphicsManager->_vPort, 0);
 		flipPageAndWait();
 		_graphicsManager->resetPalette();
 
@@ -626,12 +626,12 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	_eventsManager->_intPtr._hasPalette = true;
 
 	(*_graphicsManager->_vPort)->setupViewPort(NULL);
-	(*_graphicsManager->_vPort)->fillPic(128);
+	(*_graphicsManager->_vPort)->fillPic(0x80);
 	_graphicsManager->flipPage();
 	_eventsManager->sWaitFlip();
 
 	flipPageAndWait();
-	(*_graphicsManager->_vPort)->fillPic(128);
+	(*_graphicsManager->_vPort)->fillPic(0x80);
 
 	FontInfoResource &fi = *_graphicsManager->_fontPtr;
 	fi._curFont = _bVoy->boltEntry(257)._fontResource;
