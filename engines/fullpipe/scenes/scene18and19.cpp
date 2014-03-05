@@ -535,4 +535,117 @@ int sceneHandler18(ExCommand *cmd) {
 	return 0;
 }
 
+void sceneHandler19_updateNumRides() {
+	warning("STUB: sceneHandler19_updateNumRides()");
+}
+
+int sceneHandler19(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_SC18_SHOWMANJUMP:
+		sceneHandler18and19_showManJump();
+		break;
+
+	case MSG_SC19_UPDATENUMRIDES:
+		sceneHandler19_updateNumRides();
+		break;
+
+	case MSG_SC18_SHOWGIRLJUMPTO:
+		sceneHandler18and19_showGirlJumpTo();
+		break;
+
+	case MSG_SC18_SHOWBOYJUMPTO:
+		sceneHandler18and19_showBoyJumpTo();
+		break;
+
+	case MSG_SC18_SHOWGIRLJUMP:
+		sceneHandler18and19_showGirlJump();
+		break;
+
+	case MSG_SC18_SHOWBOYJUMP:
+		sceneHandler18and19_showBoyJump();
+		break;
+
+	case 29:
+		if (g_vars->scene18_var15) {
+			switch (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY)) {
+			case PIC_SC19_RTRUBA1:
+				g_vars->scene18_var13 = 1;
+				g_vars->scene18_var14 = 331;
+				cmd->_messageKind = 0;
+				break;
+
+			case PIC_SC19_RTRUBA2:
+				g_vars->scene18_var13 = 2;
+				g_vars->scene18_var14 = 350;
+				cmd->_messageKind = 0;
+				break;
+
+			case PIC_SC19_RTRUBA3:
+				g_vars->scene18_var13 = 3;
+				g_vars->scene18_var14 = 9;
+				cmd->_messageKind = 0;
+				break;
+
+			default:
+				g_vars->scene18_var13 = -1;
+				g_vars->scene18_var14 = -1;
+				cmd->_messageKind = 0;
+				break;
+			}
+			break;
+		}
+
+		if (g_vars->scene19_var05) {
+			if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC19_RTRUBA3) {
+				if (g_fp->_aniMan->isIdle()) {
+					if (!(g_fp->_aniMan->_flags & 0x100)) {
+						PictureObject *pic = g_fp->_currentScene->getPictureObjectById(PIC_SC19_RTRUBA31, 0);
+
+						handleObjectInteraction(g_fp->_aniMan, pic, cmd->_keyCode);
+						break;
+					}
+				}
+			}
+		}
+		break;
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			g_vars->scene18_var11 = g_fp->_aniMan2->_oy;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene18_var16)
+				g_fp->_currentScene->_x = x - g_vars->scene18_var18 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene18_var16)
+				g_fp->_currentScene->_x = x + g_vars->scene18_var18 - g_fp->_sceneRect.right;
+		}
+
+		if (g_vars->scene18_var08) {
+			if (!g_vars->scene18_var12)
+				sceneHandler18and19_drawRiders();
+
+			g_vars->scene18_var12 = !g_vars->scene18_var12;
+
+			if (!g_vars->scene18_whirlgig->_movement) {
+				g_vars->scene18_whirlgig->startAnim(MV_WHR19_SPIN, 0, -1);
+
+				g_fp->_behaviorManager->updateBehaviors();
+				break;
+			}
+		} else {
+			sceneHandler18and19_animateRiders();
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
