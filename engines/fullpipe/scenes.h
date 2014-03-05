@@ -110,7 +110,19 @@ int sceneHandler17(ExCommand *cmd);
 int scene17_updateCursor();
 
 void scene18_preload();
+void scene18_setupEntrance();
+void scene18_initScene1(Scene *sc);
+void scene18_initScene2(Scene *sc);
+int sceneHandler18(ExCommand *cmd);
+int scene18_updateCursor();
+
+void scene19_preload();
+void scene19_setMovements(Scene *sc, int entranceId);
+void scene19_initScene2();
 void scene19_setMovements(Scene *sc, int key);
+int sceneHandler19(ExCommand *cmd);
+int scene19_updateCursor();
+void scene19_setSugarState(Scene *sc);
 
 void scene20_initScene(Scene *sc);
 int sceneHandler20(ExCommand *ex);

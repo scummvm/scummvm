@@ -795,7 +795,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene17_updateCursor;
 		break;
 
-#if 0
 	case SC_18:
 		scene18_setupEntrance();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_18");
@@ -817,10 +816,10 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	case SC_19:
 		if (!g_fp->_scene3) {
 			g_fp->_scene3 = accessScene(SC_18);
-			getGameLoader()->loadScene(SC_18);
-			scene18_initScene2(g_scene3);
+			g_fp->_gameLoader->loadScene(SC_18);
+			scene18_initScene2(g_fp->_scene3);
 			scene18_preload();
-			scene19_setMovements(g_scene3, entrance->field_4);
+			scene19_setMovements(g_fp->_scene3, entrance->_field_4);
 			g_vars->scene18_var01 = 1;
 		}
 
@@ -841,7 +840,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene19_setSugarState(scene);
 		_updateCursorCallback = scene19_updateCursor;
 		break;
-#endif
 
 	case SC_20:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_20");
