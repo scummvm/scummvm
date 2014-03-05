@@ -381,41 +381,46 @@ bool VoyeurEngine::doLock() {
 }
 
 void VoyeurEngine::showTitleScreen() {
-	if (_bVoy->getBoltGroup(0x500)) {
-		_graphicsManager->_backgroundPage = _bVoy->getPictureResource(0x500);
+	if (!_bVoy->getBoltGroup(0x500))
+		return;
 
-		(*_graphicsManager->_vPort)->setupViewPort();
-		flipPageAndWait();
+	_graphicsManager->_backgroundPage = _bVoy->getPictureResource(0x500);
 
-		// Immediate palette load to show the initial screen
-		CMapResource *cMap = _bVoy->getCMapResource(0x501);
-		assert(cMap);
-		cMap->_steps = 60;
-		cMap->startFade();
+	(*_graphicsManager->_vPort)->setupViewPort();
+	flipPageAndWait();
 
-		// Wait briefly
-		_eventsManager->delayClick(200);
-		if (shouldQuit())
-			return;
+	// Immediate palette load to show the initial screen
+	CMapResource *cMap = _bVoy->getCMapResource(0x501);
+	assert(cMap);
+	cMap->_steps = 60;
+	cMap->startFade();
 
-		// Fade out the screen
-		cMap = _bVoy->getCMapResource(0x504);
-		cMap->_steps = 30;
-		cMap->startFade();
-
-		flipPageAndWaitForFade();
-		if (shouldQuit())
-			return;
-
-		_graphicsManager->screenReset();
-		_eventsManager->delayClick(200);
-
-		// Voyeur title
-		playRL2Video("a1100100.rl2");
-		_graphicsManager->screenReset();
-
+	// Wait briefly
+	_eventsManager->delayClick(200);
+	if (shouldQuit()) {
 		_bVoy->freeBoltGroup(0x500);
+		return;
 	}
+
+	// Fade out the screen
+	cMap = _bVoy->getCMapResource(0x504);
+	cMap->_steps = 30;
+	cMap->startFade();
+
+	flipPageAndWaitForFade();
+	if (shouldQuit()) {
+		_bVoy->freeBoltGroup(0x500);
+		return;
+	}
+
+	_graphicsManager->screenReset();
+	_eventsManager->delayClick(200);
+
+	// Voyeur title
+	playRL2Video("a1100100.rl2");
+	_graphicsManager->screenReset();
+
+	_bVoy->freeBoltGroup(0x500);
 }
 
 void VoyeurEngine::doOpening() {
