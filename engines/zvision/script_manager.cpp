@@ -659,6 +659,10 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 		case MKTAG('T', 'I', 'M', 'R'): {
 			uint32 key = stream->readUint32LE();
 			uint32 time = stream->readUint32LE();
+			if (_engine->getGameId() == GID_GRANDINQUISITOR)
+				time /= 100;
+			else if (_engine->getGameId() == GID_NEMESIS)
+				time /= 1000;
 			addSideFX(new TimerNode(_engine, key, time));
 		}
 		break;
