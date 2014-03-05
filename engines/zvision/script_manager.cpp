@@ -30,6 +30,7 @@
 #include "zvision/save_manager.h"
 #include "zvision/actions.h"
 #include "zvision/utility.h"
+#include "zvision/timer_node.h"
 
 #include "common/algorithm.h"
 #include "common/hashmap.h"
@@ -283,6 +284,13 @@ void ScriptManager::setStateValue(uint32 key, int value) {
 	queuePuzzles(key);
 }
 
+void ScriptManager::setStateValueSilent(uint32 key, int value) {
+	if (value == 0)
+		_globalState.erase(key);
+	else
+		_globalState[key] = value;
+}
+
 uint ScriptManager::getStateFlag(uint32 key) {
 	if (_globalStateFlags.contains(key))
 		return _globalStateFlags[key];
@@ -294,6 +302,13 @@ void ScriptManager::setStateFlag(uint32 key, uint value) {
 	queuePuzzles(key);
 
 	_globalStateFlags[key] |= value;
+}
+
+void ScriptManager::setStateFlagSilent(uint32 key, uint value) {
+	if (value == 0)
+		_globalStateFlags.erase(key);
+	else
+		_globalStateFlags[key] = value;
 }
 
 void ScriptManager::unsetStateFlag(uint32 key, uint value) {
@@ -560,30 +575,114 @@ void ScriptManager::do_changeLocation() {
 	}
 }
 
-void ScriptManager::serializeStateTable(Common::WriteStream *stream) {
-	// Write the number of state value entries
-	stream->writeUint32LE(_globalState.size());
+void ScriptManager::serialize(Common::WriteStream *stream) {
+	stream->writeUint32BE(MKTAG('Z', 'N', 'S', 'G'));
+	stream->writeUint32LE(4);
+	stream->writeUint32LE(0);
+	stream->writeUint32BE(MKTAG('L', 'O', 'C', ' '));
+	stream->writeUint32LE(8);
+	stream->writeByte(getStateValue(StateKey_World));
+	stream->writeByte(getStateValue(StateKey_Room));
+	stream->writeByte(getStateValue(StateKey_Node));
+	stream->writeByte(getStateValue(StateKey_View));
+	stream->writeUint32LE(getStateValue(StateKey_ViewPos));
 
-	for (StateMap::iterator iter = _globalState.begin(); iter != _globalState.end(); ++iter) {
-		// Write out the key/value pair
-		stream->writeUint32LE(iter->_key);
-		stream->writeUint32LE(iter->_value);
-	}
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter)
+		(*iter)->serialize(stream);
+
+	stream->writeUint32BE(MKTAG('F', 'L', 'A', 'G'));
+
+	int32 slots = 20000;
+	if (_engine->getGameId() == GID_NEMESIS)
+		slots = 30000;
+
+	stream->writeUint32LE(slots * 2);
+
+	for (int32 i = 0; i < slots; i++)
+		stream->writeUint16LE(getStateFlag(i));
+
+	stream->writeUint32BE(MKTAG('P', 'U', 'Z', 'Z'));
+
+	stream->writeUint32LE(slots * 2);
+
+	for (int32 i = 0; i < slots; i++)
+		stream->writeSint16LE(getStateValue(i));
 }
 
-void ScriptManager::deserializeStateTable(Common::SeekableReadStream *stream) {
+void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	// Clear out the current table values
 	_globalState.clear();
+	_globalStateFlags.clear();
 
-	// Read the number of key/value pairs
-	uint32 numberOfPairs = stream->readUint32LE();
+	cleanScriptScope(nodeview);
+	cleanScriptScope(room);
+	cleanScriptScope(world);
 
-	for (uint32 i = 0; i < numberOfPairs; ++i) {
-		uint32 key = stream->readUint32LE();
-		uint32 value = stream->readUint32LE();
-		// Directly access the state table so we don't trigger Puzzle checks
-		_globalState[key] = value;
+	_currentLocation.node = 0;
+	_currentLocation.world = 0;
+	_currentLocation.room = 0;
+	_currentLocation.view = 0;
+
+	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++)
+		delete(*iter);
+
+	_activeSideFx.clear();
+
+	_referenceTable.clear();
+
+	if (stream->readUint32BE() != MKTAG('Z', 'N', 'S', 'G') || stream->readUint32LE() != 4) {
+		changeLocation('g', 'a', 'r', 'y', 0);
+		debug("ZNSG");
+		return;
 	}
+
+	stream->seek(4, SEEK_CUR);
+
+	if (stream->readUint32BE() != MKTAG('L', 'O', 'C', ' ') || stream->readUint32LE() != 8) {
+		changeLocation('g', 'a', 'r', 'y', 0);
+		debug("LOC");
+		return;
+	}
+
+	Location next_loc;
+
+	next_loc.world = stream->readByte();
+	next_loc.room = stream->readByte();
+	next_loc.node = stream->readByte();
+	next_loc.view = stream->readByte();
+	next_loc.offset = stream->readUint32LE() & 0x0000FFFF;
+
+	// What the fck, eos is not 'return pos >= size'
+	// while (!stream->eos()) {*/
+	while (stream->pos() < stream->size()) {
+		uint32 tag = stream->readUint32BE();
+		uint32 tag_size = stream->readUint32LE();
+		switch (tag) {
+		case MKTAG('T', 'I', 'M', 'R'): {
+			uint32 key = stream->readUint32LE();
+			uint32 time = stream->readUint32LE();
+			addSideFX(new TimerNode(_engine, key, time));
+		}
+		break;
+		case MKTAG('F', 'L', 'A', 'G'):
+			for (uint32 i = 0; i < tag_size / 2; i++)
+				setStateFlagSilent(i, stream->readUint16LE());
+			break;
+		case MKTAG('P', 'U', 'Z', 'Z'):
+			for (uint32 i = 0; i < tag_size / 2; i++)
+				setStateValueSilent(i, stream->readUint16LE());
+			break;
+		default:
+			stream->seek(tag_size, SEEK_CUR);
+		}
+	}
+
+	_nextLocation = next_loc;
+
+	do_changeLocation();
+	// Place for read prefs
+	_engine->setRenderDelay(10);
+	setStateValue(StateKey_RestoreFlag, 1);
 }
 
 Location ScriptManager::getCurrentLocation() const {

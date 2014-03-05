@@ -67,8 +67,10 @@ bool TimerNode::stop() {
 }
 
 void TimerNode::serialize(Common::WriteStream *stream) {
+	stream->writeUint32BE(MKTAG('T', 'I', 'M', 'R'));
+	stream->writeUint32LE(8); // size
 	stream->writeUint32LE(_key);
-	stream->writeUint32LE(_timeLeft);
+	stream->writeUint32LE(_timeLeft / (_engine->getGameId() == GID_NEMESIS ? 1000 : 100));
 }
 
 void TimerNode::deserialize(Common::SeekableReadStream *stream) {

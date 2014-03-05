@@ -230,8 +230,8 @@ public:
 	/** Mark next location */
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 
-	void serializeStateTable(Common::WriteStream *stream);
-	void deserializeStateTable(Common::SeekableReadStream *stream);
+	void serialize(Common::WriteStream *stream);
+	void deserialize(Common::SeekableReadStream *stream);
 
 	Location getCurrentLocation() const;
 
@@ -253,6 +253,8 @@ private:
 	int16 invertory_getItem(int8 id);
 	void invertory_setItem(int8 id, int16 item);
 
+	void setStateFlagSilent(uint32 key, uint value);
+	void setStateValueSilent(uint32 key, int value);
 
 public:
 	void invertory_add(int16 item);
