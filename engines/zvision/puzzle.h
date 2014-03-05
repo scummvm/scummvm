@@ -65,8 +65,8 @@ struct Puzzle {
 
 	enum StateFlags {
 		ONCE_PER_INST = 0x01,
-		DO_ME_NOW = 0x02, // Somewhat useless flag since anything that needs to be done immediately has no criteria
-		DISABLED = 0x04
+		DISABLED = 0x02,
+		DO_ME_NOW = 0x04
 	};
 
 	uint32 key;
