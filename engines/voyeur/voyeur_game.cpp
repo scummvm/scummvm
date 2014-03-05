@@ -1258,16 +1258,17 @@ int VoyeurEngine::doComputerText(int maxLen) {
 }
 
 void VoyeurEngine::getComputerBrush() {
-	if (_bVoy->getBoltGroup(0x4900)) {
-		PictureResource *pic = _bVoy->boltEntry(0x490E)._picResource;
-		int xp = (384 - pic->_bounds.width()) / 2;
-		int yp = (240 - pic->_bounds.height()) / 2 - 4;
+	if (!_bVoy->getBoltGroup(0x4900))
+		return;
 
-		(*_graphicsManager->_vPort)->drawPicPerm(pic, Common::Point(xp, yp));
+	PictureResource *pic = _bVoy->boltEntry(0x490E)._picResource;
+	int xp = (384 - pic->_bounds.width()) / 2;
+	int yp = (240 - pic->_bounds.height()) / 2 - 4;
 
-		CMapResource *pal = _bVoy->boltEntry(0x490F)._cMapResource;
-		pal->startFade();
-	}
+	(*_graphicsManager->_vPort)->drawPicPerm(pic, Common::Point(xp, yp));
+
+	CMapResource *pal = _bVoy->boltEntry(0x490F)._cMapResource;
+	pal->startFade();
 }
 
 void VoyeurEngine::doTimeBar() {
