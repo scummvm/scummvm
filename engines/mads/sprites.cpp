@@ -36,6 +36,24 @@ enum {
 	kMarker = 2
 };
 
+#define TRANSPARENT_COLOR_INDEX 0xFF
+
+class DepthEntry {
+public:
+	int depth;
+	int index;
+
+	DepthEntry(int depthAmt, int indexVal) { depth = depthAmt; index = indexVal; }
+};
+
+bool sortHelper(const DepthEntry &entry1, const DepthEntry &entry2) {
+	return entry1.depth < entry2.depth;
+}
+
+typedef Common::List<DepthEntry> DepthList;
+
+/*------------------------------------------------------------------------*/
+
 MSprite::MSprite(): MSurface() {
 	_encoding = 0;
 }
@@ -103,6 +121,10 @@ void MSprite::loadSprite(Common::SeekableReadStream *source) {
 			}
 		}
 	}
+}
+
+byte MSprite::getTransparencyIndex() const {
+	return TRANSPARENT_COLOR_INDEX;
 }
 
 /*------------------------------------------------------------------------*/
@@ -233,6 +255,71 @@ void SpriteSlots::drawBackground() {
 	}
 }
 
+void SpriteSlots::drawForeground(MSurface *s) {
+	DepthList depthList;
+	Scene &scene = _vm->_game->_scene;
+
+	// Get a list of sprite object depths for active objects
+	for (uint i = 0; i < size(); ++i) {
+		if ((*this)[i]._spriteType >= ST_NONE) {
+			DepthEntry rec(16 - (*this)[i]._depth, i);
+			depthList.push_back(rec);
+		}
+	}
+
+	// Sort the list in order of the depth
+	Common::sort(depthList.begin(), depthList.end(), sortHelper);
+
+	// Loop through each of the objects
+	DepthList::iterator i;
+	for (i = depthList.begin(); i != depthList.end(); ++i) {
+		DepthEntry &de = *i;
+		SpriteSlot &slot = (*this)[de.index];
+		assert(slot._spritesIndex < (int)scene._sprites.size());
+		SpriteAsset &spriteSet = *scene._sprites[slot._spritesIndex];
+
+		// Get the sprite frame
+		int frameNumber = slot._frameNumber & 0x7fff;
+		bool flipped = (slot._frameNumber & 0x8000) != 0;
+		MSprite *sprite = spriteSet.getFrame(frameNumber - 1);
+
+		MSurface *spr = sprite;
+		if (flipped) {
+			// Create a flipped copy of the sprite temporarily
+			spr = sprite->flipHorizontal();
+		}
+
+		if ((slot._scale < 100) && (slot._scale != -1)) {
+			// Minimalised drawing
+			s->copyFrom(spr, slot._position, slot._depth, &scene._depthSurface, 
+				slot._scale, sprite->getTransparencyIndex());
+		} else {
+			int xp, yp;
+
+			if (slot._scale == -1) {
+				xp = slot._position.x - scene._posAdjust.x;
+				yp = slot._position.y - scene._posAdjust.y;
+			} else {
+				xp = slot._position.x - (spr->w / 2) - scene._posAdjust.x;
+				yp = slot._position.y - spr->h - scene._posAdjust.y + 1;
+			}
+
+			if (slot._depth > 1) {
+				// Draw the frame with depth processing
+				s->copyFrom(spr, Common::Point(xp, yp), slot._depth, &scene._depthSurface, 
+					100, sprite->getTransparencyIndex());
+			} else {
+				// No depth, so simply draw the image
+				spr->copyTo(s, Common::Point(xp, yp), sprite->getTransparencyIndex());
+			}
+		}
+
+		// Free sprite if it was a flipped one
+		if (flipped)
+			delete spr;
+	}
+}
+
 void SpriteSlots::cleanUp() {
 	for (int i = (int)size() - 1; i >= 0; --i) {
 		if ((*this)[i]._spriteType >= ST_NONE)
@@ -253,7 +340,5 @@ int SpriteSets::add(SpriteAsset *asset, int idx) {
 
 	return idx;
 }
-
-/*------------------------------------------------------------------------*/
 
 } // End of namespace MADS

@@ -114,6 +114,8 @@ public:
 	Common::Point _pos;
 	Common::Point _offset;
 	uint8 _encoding;
+
+	byte getTransparencyIndex() const;
 };
 
 class SpriteSlotSubset {
@@ -187,6 +189,11 @@ public:
 	 * Draw any sprites into the background of the scene
 	 */
 	void drawBackground();
+
+	/**
+	* Draw any sprites into the foreground of the scene
+	*/
+	void drawForeground(MSurface *s);
 
 	void cleanUp();
 };

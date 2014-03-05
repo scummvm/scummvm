@@ -305,7 +305,7 @@ TextDisplayList::TextDisplayList(MADSEngine *vm) : _vm(vm) {
 	}
 }
 
-void TextDisplayList::clear() {
+void TextDisplayList::reset() {
 	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i)
 		(*this)[i]._active = false;
 }
@@ -361,18 +361,16 @@ void TextDisplayList::setDirtyAreas2() {
 	}
 }
 
-void TextDisplayList::draw(MSurface *view) {
-	error("TODO");
-	/*
-	for (uint idx = 0; idx < _entries.size(); ++idx) {
-		if (_entries[idx]._active && (_entries[idx]._expire >= 0)) {
-			_entries[idx]._font->setColors(_entries[idx]._color1, _entries[idx]._color2, 0);
-			_entries[idx]._font->writeString(view, _entries[idx]._msg,
-				Common::Point(_entries[idx]._bounds.left, _entries[idx]._bounds.top), 
-				_entries[idx]._bounds.width(), _entries[idx]._spacing);
+void TextDisplayList::draw(MSurface *s) {
+	for (uint idx = 0; idx < size(); ++idx) {
+		TextDisplay &td = (*this)[idx];
+		if (td._active && (td._expire >= 0)) {
+			td._font->setColors(0xFF, td._color1, td._color2, 0);
+			td._font->writeString(s, td._msg,
+				Common::Point(td._bounds.left, td._bounds.top), 
+				td._bounds.width(), td._spacing);
 		}
 	}
-	*/
 }
 
 void TextDisplayList::cleanUp() {

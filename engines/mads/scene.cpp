@@ -423,18 +423,30 @@ void Scene::doFrame() {
 }
 
 void Scene::drawElements(bool transitionFlag, bool surfaceFlag) {
-	// Draw any background objects
+	// Draw any sprites
+	_dirtyAreas.clear();
 	_spriteSlots.drawBackground();
 
+	// Process dirty areas
+	_textDisplay.setDirtyAreas();
+
 	// Merge any identified dirty areas
-	_dirtyAreas.merge(1, _dirtyAreas.size());
+	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
 	// Copy dirty areas to the main display surface
 	_dirtyAreas.copy(&_vm->_screen, &_backgroundSurface, _posAdjust);
 
-	// Set dirty areas
+	// Handle dirty areas for foreground objects
 	_spriteSlots.setDirtyAreas();
-	_textDisplay.setDirtyAreas();
+	_textDisplay.setDirtyAreas2();
+	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
+
+
+	// Draw foreground sprites
+	_spriteSlots.drawForeground(&_vm->_screen);
+
+	// Draw text elements onto the view
+	_textDisplay.draw(&_vm->_screen);
 
 	//
 	_vm->_screen.setPointer(&_vm->_screen);

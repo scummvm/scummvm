@@ -244,6 +244,168 @@ void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds,
 	}
 }
 
+void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
+	MSurface *depthsSurface, int scale, int transparentColor) {
+
+	int destX = destPos.x, destY = destPos.y;
+	if (scale == 100) {
+		// Copy the specified area
+		Common::Rect copyRect(0, 0, src->getWidth(), src->getHeight());
+
+		if (destX < 0) {
+			copyRect.left += -destX;
+			destX = 0;
+		}
+		else if (destX + copyRect.width() > w) {
+			copyRect.right -= destX + copyRect.width() - w;
+		}
+		if (destY < 0) {
+			copyRect.top += -destY;
+			destY = 0;
+		}
+		else if (destY + copyRect.height() > h) {
+			copyRect.bottom -= destY + copyRect.height() - h;
+		}
+
+		if (!copyRect.isValidRect())
+			return;
+
+		byte *data = src->getData();
+		byte *srcPtr = data + (src->getWidth() * copyRect.top + copyRect.left);
+		byte *depthsData = depthsSurface->getData();
+		byte *depthsPtr = depthsData + (depthsSurface->pitch * destY) + destX;
+		byte *destPtr = (byte *)pixels + (destY * pitch) + destX;
+
+		// 100% scaling variation
+		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
+			// Copy each byte one at a time checking against the depth
+			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
+				if ((depth <= (depthsPtr[xCtr] & 0x7f)) && (srcPtr[xCtr] != transparentColor))
+					destPtr[xCtr] = srcPtr[xCtr];
+			}
+
+			srcPtr += src->getWidth();
+			depthsPtr += depthsSurface->getWidth();
+			destPtr += getWidth();
+		}
+
+		return;
+	}
+
+	// Start of draw logic for scaled sprites
+	const byte *srcPixelsP = src->getData();
+
+	int destRight = this->getWidth() - 1;
+	int destBottom = this->getHeight() - 1;
+	bool normalFrame = true;	// TODO: false for negative frame numbers
+	int frameWidth = src->getWidth();
+	int frameHeight = src->getHeight();
+
+	int highestDim = MAX(frameWidth, frameHeight);
+	bool lineDist[MADS_SCREEN_WIDTH];
+	int distIndex = 0;
+	int distXCount = 0, distYCount = 0;
+
+	int distCtr = 0;
+	do {
+		distCtr += scale;
+		if (distCtr < 100) {
+			lineDist[distIndex] = false;
+		}
+		else {
+			lineDist[distIndex] = true;
+			distCtr -= 100;
+
+			if (distIndex < frameWidth)
+				++distXCount;
+
+			if (distIndex < frameHeight)
+				++distYCount;
+		}
+	} while (++distIndex < highestDim);
+
+	destX -= distXCount / 2;
+	destY -= distYCount - 1;
+
+	// Check x bounding area
+	int spriteLeft = 0;
+	int spriteWidth = distXCount;
+	int widthAmount = destX + distXCount - 1;
+
+	if (destX < 0) {
+		spriteWidth += destX;
+		spriteLeft -= destX;
+	}
+	widthAmount -= destRight;
+	if (widthAmount > 0)
+		spriteWidth -= widthAmount;
+
+	int spriteRight = spriteLeft + spriteWidth;
+	if (spriteWidth <= 0)
+		return;
+	if (!normalFrame) {
+		destX += distXCount - 1;
+		spriteLeft = -(distXCount - spriteRight);
+		spriteRight = (-spriteLeft + spriteWidth);
+	}
+
+	// Check y bounding area
+	int spriteTop = 0;
+	int spriteHeight = distYCount;
+	int heightAmount = destY + distYCount - 1;
+
+	if (destY < 0) {
+		spriteHeight += destY;
+		spriteTop -= destY;
+	}
+	heightAmount -= destBottom;
+	if (heightAmount > 0)
+		spriteHeight -= heightAmount;
+	int spriteBottom = spriteTop + spriteHeight;
+
+	if (spriteHeight <= 0)
+		return;
+
+	byte *destPixelsP = this->getBasePtr(destX + spriteLeft, destY + spriteTop);
+	const byte *depthPixelsP = depthsSurface->getBasePtr(destX + spriteLeft, destY + spriteTop);
+
+	spriteLeft = (spriteLeft * (normalFrame ? 1 : -1));
+
+	// Loop through the lines of the sprite
+	for (int yp = 0, sprY = -1; yp < frameHeight; ++yp, srcPixelsP += src->pitch) {
+		if (!lineDist[yp])
+			// Not a display line, so skip it
+			continue;
+		// Check whether the sprite line is in the display range
+		++sprY;
+		if ((sprY >= spriteBottom) || (sprY < spriteTop))
+			continue;
+
+		// Found a line to display. Loop through the pixels
+		const byte *srcP = srcPixelsP;
+		const byte *depthP = depthPixelsP;
+		byte *destP = destPixelsP;
+		for (int xp = 0, sprX = 0; xp < frameWidth; ++xp, ++srcP) {
+			if (xp < spriteLeft)
+				// Not yet reached start of display area
+				continue;
+			if (!lineDist[sprX++])
+				// Not a display pixel
+				continue;
+
+			if ((*srcP != transparentColor) && (depth <= (*depthP & 0x7f)))
+				*destP = *srcP;
+
+			++destP;
+			++depthP;
+		}
+
+		// Move to the next destination line
+		destPixelsP += this->pitch;
+		depthPixelsP += depthsSurface->pitch;
+	}
+}
+
 void MSurface::translate(Common::Array<RGB6> &palette) {
 	for (int y = 0; y < this->h; ++y) {
 		byte *pDest = getBasePtr(0, y);
@@ -252,6 +414,20 @@ void MSurface::translate(Common::Array<RGB6> &palette) {
 			*pDest = palette[*pDest].palIndex;
 		}
 	}
+}
+
+MSurface *MSurface::flipHorizontal() const {
+	MSurface *dest = new MSurface(this->w, this->h);
+
+	for (int y = 0; y < this->h; ++y) {
+		const byte *srcP = getBasePtr(this->w - 1, y);
+		byte *destP = dest->getData();
+
+		for (int x = 0; x < this->w; ++x)
+			*destP++ = *srcP--;
+	}
+
+	return dest;
 }
 
 } // End of namespace MADS

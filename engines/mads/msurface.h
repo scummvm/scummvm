@@ -127,6 +127,11 @@ public:
 	byte *getBasePtr(int x, int y) { return (byte *)Graphics::Surface::getBasePtr(x, y); }
 
 	/**
+	* Returns a pointer to a given position within the surface
+	*/
+	const byte *getBasePtr(int x, int y) const { return (const byte *)Graphics::Surface::getBasePtr(x, y); }
+
+	/**
 	 * Clears the surface
 	 */
 	void empty();
@@ -140,6 +145,17 @@ public:
 	 */
 	void copyFrom(MSurface *src, const Common::Rect &srcBounds, const Common::Point &destPos,
 		int transparentColor = -1);
+
+	/**
+	* Copys a sub-section of another surface into the current one.
+	* @param src			Source surface
+	* @param destPos		Destination position to draw in current surface
+	* @param depth			Depth of sprite
+	* @param depthSurface	Depth surface to use with sprite depth
+	* @param transparentColor	Transparency palette index
+	*/
+	void copyFrom(MSurface *src, const Common::Point &destPos, int depth, MSurface *depthSurface,
+		int scale, int transparentColor = -1);
 
 	/**
 	 * Copies the surface to a given destination surface
@@ -167,6 +183,11 @@ public:
 	 * Translates the pixels of an image used the passed palette with RGB mapping
 	 */
 	void translate(Common::Array<RGB6> &palette);
+
+	/**
+	 * Create a new surface which is a flipped horizontal copy of the current one
+	 */
+	MSurface *flipHorizontal() const;
 };
 
 } // End of namespace MADS

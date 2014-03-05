@@ -108,11 +108,6 @@ public:
 class TextDisplayList: public Common::Array<TextDisplay> {
 private:
 	MADSEngine *_vm;
-
-	/**
-	* Determine dirty areas for active text areas
-	*/
-	void setDirtyAreas2();
 public:
 	TextDisplayList(MADSEngine *vm);
 
@@ -122,13 +117,27 @@ public:
 	void expire(int idx);
 
 	int add(int xp, int yp, uint fontColor, int charSpacing, const Common::String &, Font *font);
-	void clear();
-	void draw(MSurface *view);
+	
+	/**
+	 * Reset all of the text display entries in the list to inactive
+	 */
+	void reset();
+
+	/**
+	 * Draw any text in the list to the specified surface
+	 * @param surface	Surface
+	 */
+	void draw(MSurface *s);
 	
 	/**
 	 * Determine dirty areas for active text areas
 	 */
 	void setDirtyAreas();
+
+	/**
+	* Secondary setup dirty areas for the text areas
+	*/
+	void setDirtyAreas2();
 
 	/**
 	* Deactivates any text display entries that are finished
