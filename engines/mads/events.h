@@ -24,8 +24,8 @@
 #define MADS_EVENTS_H
 
 #include "common/scummsys.h"
-#include "mads/msprite.h"
 #include "mads/assets.h"
+#include "mads/sprites.h"
 
 namespace MADS {
 

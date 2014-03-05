@@ -32,6 +32,7 @@
 #include "mads/scene_data.h"
 #include "mads/animation.h"
 #include "mads/sequence.h"
+#include "mads/sprites.h"
 
 namespace MADS {
 

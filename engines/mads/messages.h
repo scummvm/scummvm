@@ -105,10 +105,9 @@ public:
 
 #define TEXT_DISPLAY_SIZE 40
 
-class TextDisplayList {
+class TextDisplayList: public Common::Array<TextDisplay> {
 private:
 	MADSEngine *_vm;
-	Common::Array<TextDisplay> _entries;
 
 	/**
 	* Determine dirty areas for active text areas
@@ -116,13 +115,6 @@ private:
 	void setDirtyAreas2();
 public:
 	TextDisplayList(MADSEngine *vm);
-
-	/**
-	 * Item operator
-	 */
-	TextDisplay &operator[](int idx) {
-		return _entries[idx];
-	}
 
 	/**
 	 * Expire a given text display entry

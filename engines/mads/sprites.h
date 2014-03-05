@@ -20,13 +20,20 @@
  *
  */
 
-#ifndef MADS_MSPRITE_H
-#define MADS_MSPRITE_H
+#ifndef MADS_SPRITES_H
+#define MADS_SPRITES_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
+#include "mads/assets.h"
 #include "mads/msurface.h"
 
 namespace MADS {
+
+enum SpriteType {
+	ST_NONE = 0, ST_FOREGROUND = 1, ST_BACKGROUND = -4,
+	ST_FULL_SCREEN_REFRESH = -2, ST_EXPIRED = -1
+};
 
 class MADSEngine;
 
@@ -109,6 +116,82 @@ public:
 	uint8 _encoding;
 };
 
+class SpriteSlotSubset {
+public:
+	int _spritesIndex;
+	int _frameNumber;
+	Common::Point _position;
+	int _depth;
+	int _scale;
+};
+
+class SpriteSlot : public SpriteSlotSubset {
+private:
+	static MADSEngine *_vm;
+	friend class SpriteSlots;
+public:
+	SpriteType _spriteType;
+	int _seqIndex;
+public:
+	SpriteSlot();
+	SpriteSlot(SpriteType type, int seqIndex);
+
+	void setup(int dirtyAreaIndex);
+};
+
+class SpriteSlots : public Common::Array<SpriteSlot> {
+private:
+	MADSEngine *_vm;
+public:
+	SpriteSlots(MADSEngine *vm);
+
+	/**
+	* Clears any pending slot data and schedules a full screen refresh.
+	* @param flag		Also reset sprite list
+	*/
+	void clear(bool flag);
+
+	/**
+	* Delete any sprites used by the player
+	*/
+	void releasePlayerSprites();
+
+	/**
+	* Delete a sprite entry
+	* @param index		Specifies the index in the array
+	*/
+	void deleteEntry(int index);
+
+	/**
+	* Adds a full screen refresh to the sprite slots
+	*/
+	void fullRefresh(bool clearAll = false);
+
+	SpriteAsset &getSprite(int idx) {
+		error("TODO");
+	}
+	void deleteTimer(int idx) {
+		warning("TODO: SpriteSlots::deleteTimer");
+	}
+	int getIndex() {
+		warning("TODO: SpriteSlots::indexOf");
+		return -1;
+	}
+
+	/**
+	 * Draw any sprites into the background of the scene
+	 */
+	void drawBackground();
+};
+
+class SpriteSets : public Common::Array<SpriteAsset *> {
+public:
+	/**
+	* Add a sprite asset to the list
+	*/
+	int add(SpriteAsset *asset, int idx = 0);
+};
+
 } // End of namespace MADS
 
-#endif /* MADS_MSPRITE_H */
+#endif /* MADS_SPRITES_H */

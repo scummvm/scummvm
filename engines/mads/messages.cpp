@@ -301,13 +301,13 @@ TextDisplayList::TextDisplayList(MADSEngine *vm) : _vm(vm) {
 		TextDisplay rec;
 		rec._active = false;
 		rec._expire = 0;
-		_entries.push_back(rec);
+		push_back(rec);
 	}
 }
 
 void TextDisplayList::clear() {
 	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i)
-		_entries[i]._active = false;
+		(*this)[i]._active = false;
 }
 
 int TextDisplayList::add(int xp, int yp, uint fontColor, int charSpacing, 
@@ -315,20 +315,21 @@ int TextDisplayList::add(int xp, int yp, uint fontColor, int charSpacing,
 	int usedSlot = -1;
 
 	for (int idx = 0; idx < TEXT_DISPLAY_SIZE; ++idx) {
-		if (!_entries[idx]._active) {
+		TextDisplay &td = (*this)[idx];
+		if (!td._active) {
 			usedSlot = idx;
 
-			_entries[idx]._bounds.left = xp;
-			_entries[idx]._bounds.top = yp;
-			_entries[idx]._font = font;
-			_entries[idx]._msg = msg;
-			_entries[idx]._bounds.setWidth(font->getWidth(msg, charSpacing));
-			_entries[idx]._bounds.setHeight(font->getHeight());
-			_entries[idx]._color1 = fontColor & 0xff;
-			_entries[idx]._color2 = fontColor >> 8;
-			_entries[idx]._spacing = charSpacing;
-			_entries[idx]._expire = 1;
-			_entries[idx]._active = true;
+			td._bounds.left = xp;
+			td._bounds.top = yp;
+			td._font = font;
+			td._msg = msg;
+			td._bounds.setWidth(font->getWidth(msg, charSpacing));
+			td._bounds.setHeight(font->getHeight());
+			td._color1 = fontColor & 0xff;
+			td._color2 = fontColor >> 8;
+			td._spacing = charSpacing;
+			td._expire = 1;
+			td._active = true;
 			break;
 		}
 	}
@@ -340,11 +341,11 @@ void TextDisplayList::setDirtyAreas() {
 	Scene &scene = _vm->_game->_scene;
 
 	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < DIRTY_AREAS_SIZE; ++idx, ++dirtyIdx) {
-		if ((_entries[idx]._expire >= 0) || !_entries[idx]._active)
+		if (((*this)[idx]._expire >= 0) || !(*this)[idx]._active)
 			scene._dirtyAreas[dirtyIdx]._active = false;
 		else {
 			scene._dirtyAreas[dirtyIdx]._textActive = true;
-			scene._dirtyAreas.setTextDisplay(dirtyIdx, _entries[idx]);
+			scene._dirtyAreas[dirtyIdx].setTextDisplay(&(*this)[idx]);
 		}
 	}
 }
@@ -353,9 +354,9 @@ void TextDisplayList::setDirtyAreas2() {
 	Scene &scene = _vm->_game->_scene;
 
 	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < DIRTY_AREAS_SIZE; ++idx, ++dirtyIdx) {
-		if (_entries[idx]._active && (_entries[idx]._expire >= 0)) {
-			scene._dirtyAreas.setTextDisplay(dirtyIdx, _entries[idx]);
-			scene._dirtyAreas[dirtyIdx]._textActive = (_entries[idx]._expire <= 0) ? 0 : 1;
+		if ((*this)[idx]._active && ((*this)[idx]._expire >= 0)) {
+			scene._dirtyAreas[dirtyIdx].setTextDisplay(&(*this)[idx]);
+			scene._dirtyAreas[dirtyIdx]._textActive = ((*this)[idx]._expire <= 0) ? 0 : 1;
 		}
 	}
 }
@@ -375,16 +376,16 @@ void TextDisplayList::draw(MSurface *view) {
 }
 
 void TextDisplayList::cleanUp() {
-	for (uint idx = 0; idx < _entries.size(); ++idx) {
-		if (_entries[idx]._expire < 0) {
-			_entries[idx]._active = false;
-			_entries[idx]._expire = 0;
+	for (uint idx = 0; idx < size(); ++idx) {
+		if ((*this)[idx]._expire < 0) {
+			(*this)[idx]._active = false;
+			(*this)[idx]._expire = 0;
 		}
 	}
 }
 
 void TextDisplayList::expire(int idx) {
-	_entries[idx]._expire = -1;
+	(*this)[idx]._expire = -1;
 }
 
 } // End of namespace MADS

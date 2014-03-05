@@ -97,7 +97,7 @@ public:
 	Game *_game;
 	Palette *_palette;
 	Resources *_resources;
-	MSurface *_screen;
+	MSurface _screen;
 	SoundManager *_sound;
 	UserInterface *_userInterface;
 	bool _easyMouse;

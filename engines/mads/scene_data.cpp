@@ -138,76 +138,7 @@ void ScreenObjects::proc1() {
 
 /*------------------------------------------------------------------------*/
 
-SpriteSlot::SpriteSlot() {
-	_spriteType = ST_NONE;
-	_seqIndex = 0;
-	_spritesIndex = 0;
-	_frameNumber = 0;
-	_depth = 0;
-	_scale = 0;
-}
-
-SpriteSlot::SpriteSlot(SpriteType type, int seqIndex) {
-	_spriteType = type;
-	_seqIndex = seqIndex;
-	_spritesIndex = 0;
-	_frameNumber = 0;
-	_depth = 0;
-	_scale = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
-void SpriteSlots::clear(bool flag) {
-	_vm->_game->_scene._textDisplay.clear();
-
-	if (flag)
-		_vm->_game->_scene._sprites.clear();
-
-	Common::Array<SpriteSlot>::clear();
-	push_back(SpriteSlot(ST_FULL_SCREEN_REFRESH, -1));
-}
-
-/**
- * Releases any sprites used by the player
- */
-void SpriteSlots::releasePlayerSprites() {
-	Player &player = _vm->_game->_player;
-
-	if (player._spritesLoaded && player._numSprites > 0) {
-		int spriteEnd = player._spritesStart + player._numSprites - 1;
-		do {
-			deleteEntry(spriteEnd);
-		} while (--spriteEnd >= player._spritesStart);
-	}
-}
-
-void SpriteSlots::deleteEntry(int index) {
-	remove_at(index);
-}
-
-void SpriteSlots::fullRefresh(bool clearAll) {
-	if (clearAll)
-		Common::Array<SpriteSlot>::clear();
-
-	push_back(SpriteSlot(ST_FULL_SCREEN_REFRESH, -1));
-}
-
-/*------------------------------------------------------------------------*/
-
-int SpriteSets::add(SpriteAsset *asset, int idx) {
-	if (!idx)
-		idx = size();
-
-	if (idx >= (int)(size() + 1))
-		resize(idx + 1);
-	delete (*this)[idx];
-	(*this)[idx] = asset;
-
-	return idx;
-}
-
-/*------------------------------------------------------------------------*/
+MADSEngine *DirtyArea::_vm = nullptr;
 
 void DirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) {
 	if (_bounds.left % 2) {
@@ -246,57 +177,59 @@ void DirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) {
 	_active = true;
 }
 
-/*------------------------------------------------------------------------*/
 
-DirtyAreas::DirtyAreas(MADSEngine *vm) : _vm(vm) {
-	for (int i = 0; i < DIRTY_AREAS_SIZE; ++i) {
-		DirtyArea rec;
-		rec._active = false;
-		_entries.push_back(rec);
-	}
-}
-
-void DirtyAreas::setSpriteSlot(int dirtyIdx, const SpriteSlot &spriteSlot) {
+void DirtyArea::setSpriteSlot(const SpriteSlot *spriteSlot) {
 	int width, height;
-	DirtyArea &dirtyArea = _entries[dirtyIdx];
 	Scene &scene = _vm->_game->_scene;
 
-	if (spriteSlot._spriteType == ST_FULL_SCREEN_REFRESH) {
+	if (spriteSlot->_spriteType == ST_FULL_SCREEN_REFRESH) {
 		// Special entry to refresh the entire screen
-		dirtyArea._bounds.left = 0;
-		dirtyArea._bounds.top = 0;
+		_bounds.left = 0;
+		_bounds.top = 0;
 		width = MADS_SCREEN_WIDTH;
 		height = MADS_SCENE_HEIGHT;
 	} else {
 		// Standard sprite slots
-		dirtyArea._bounds.left = spriteSlot._position.x - scene._posAdjust.x;
-		dirtyArea._bounds.top = spriteSlot._position.y - scene._posAdjust.y;
+		_bounds.left = spriteSlot->_position.x - scene._posAdjust.x;
+		_bounds.top = spriteSlot->_position.y - scene._posAdjust.y;
 
-		SpriteAsset &spriteSet = scene._spriteSlots.getSprite(spriteSlot._spritesIndex);
-		MSprite *frame = spriteSet.getFrame(((spriteSlot._frameNumber & 0x7fff) - 1) & 0x7f);
+		SpriteAsset &spriteSet = scene._spriteSlots.getSprite(spriteSlot->_spritesIndex);
+		MSprite *frame = spriteSet.getFrame(((spriteSlot->_frameNumber & 0x7fff) - 1) & 0x7f);
 
-		if (spriteSlot._scale == -1) {
-			width = frame->getWidth();
-			height = frame->getHeight();
-		} else {
-			width = frame->getWidth() * spriteSlot._scale / 100;
-			height = frame->getHeight() * spriteSlot._scale / 100;
+		if (spriteSlot->_scale == -1) {
+			width = frame->w;
+			height = frame->h;
+		}
+		else {
+			width = frame->w * spriteSlot->_scale / 100;
+			height = frame->h * spriteSlot->_scale / 100;
 
-			dirtyArea._bounds.left -= width / 2;
-			dirtyArea._bounds.top += -(height - 1);
+			_bounds.left -= width / 2;
+			_bounds.top += -(height - 1);
 		}
 	}
 
-	dirtyArea.setArea(width, height, MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
+	setArea(width, height, MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 }
 
-void DirtyAreas::setTextDisplay(int dirtyIdx, const TextDisplay &textDisplay) {
-	DirtyArea &dirtyArea = _entries[dirtyIdx];
-	dirtyArea._bounds.left = textDisplay._bounds.left;
-	dirtyArea._bounds.top = textDisplay._bounds.top;
+void DirtyArea::setTextDisplay(const TextDisplay *textDisplay) {
+	_bounds.left = textDisplay->_bounds.left;
+	_bounds.top = textDisplay->_bounds.top;
 
-	dirtyArea.setArea(textDisplay._bounds.width(), textDisplay._bounds.height(), 
+	setArea(textDisplay->_bounds.width(), textDisplay->_bounds.height(),
 		MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
+}
+
+/*------------------------------------------------------------------------*/
+
+DirtyAreas::DirtyAreas(MADSEngine *vm) : _vm(vm) {
+	DirtyArea::_vm = vm;
+
+	for (int i = 0; i < DIRTY_AREAS_SIZE; ++i) {
+		DirtyArea rec;
+		rec._active = false;
+		push_back(rec);
+	}
 }
 
 void DirtyAreas::merge(int startIndex, int count) {
@@ -305,14 +238,14 @@ void DirtyAreas::merge(int startIndex, int count) {
 		return;
 
 	for (int outerCtr = startIndex - 1, idx = 0; idx < count; ++outerCtr, ++idx) {
-		if (!_entries[outerCtr]._active)
+		if (!(*this)[outerCtr]._active)
 			continue;
 
 		for (int innerCtr = outerCtr + 1; innerCtr < count; ++innerCtr) {
-			if (!_entries[innerCtr]._active || !intersects(outerCtr, innerCtr))
+			if (!(*this)[innerCtr]._active || !intersects(outerCtr, innerCtr))
 				continue;
 
-			if (_entries[outerCtr]._textActive && _entries[innerCtr]._textActive)
+			if ((*this)[outerCtr]._textActive && (*this)[innerCtr]._textActive)
 				mergeAreas(outerCtr, innerCtr);
 		}
 	}
@@ -322,12 +255,12 @@ void DirtyAreas::merge(int startIndex, int count) {
 * Returns true if two dirty areas intersect
 */
 bool DirtyAreas::intersects(int idx1, int idx2) {
-	return _entries[idx1]._bounds2.intersects(_entries[idx2]._bounds2);
+	return (*this)[idx1]._bounds2.intersects((*this)[idx2]._bounds2);
 }
 
 void DirtyAreas::mergeAreas(int idx1, int idx2) {
-	DirtyArea &da1 = _entries[idx1];
-	DirtyArea &da2 = _entries[idx2];
+	DirtyArea &da1 = (*this)[idx1];
+	DirtyArea &da2 = (*this)[idx2];
 
 	da1._bounds.extend(da2._bounds);
 
@@ -341,20 +274,22 @@ void DirtyAreas::mergeAreas(int idx1, int idx2) {
 }
 
 void DirtyAreas::copy(MSurface *dest, MSurface *src, const Common::Point &posAdjust) {
-	for (uint i = 0; i < _entries.size(); ++i) {
-		const Common::Rect &srcBounds = _entries[i]._bounds;
+	for (uint i = 0; i < size(); ++i) {
+		const Common::Rect &srcBounds = (*this)[i]._bounds;
 
 		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
 			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
 
-		if (_entries[i]._active && _entries[i]._bounds.isValidRect())
-			src->copyTo(dest, bounds, Common::Point(_entries[i]._bounds.left, _entries[i]._bounds.top));
+		if ((*this)[i]._active && (*this)[i]._bounds.isValidRect()) {
+			src->copyTo(dest, bounds, Common::Point((*this)[i]._bounds.left,
+				(*this)[i]._bounds.top));
+		}
 	}
 }
 
-void DirtyAreas::clear() {
-	for (uint i = 0; i < _entries.size(); ++i)
-		_entries[i]._active = false;
+void DirtyAreas::reset() {
+	for (uint i = 0; i < size(); ++i)
+		(*this)[i]._active = false;
 }
 
 /*------------------------------------------------------------------------*/

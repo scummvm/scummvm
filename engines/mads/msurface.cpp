@@ -24,9 +24,9 @@
 #include "mads/compression.h"
 #include "mads/graphics.h"
 #include "mads/mads.h"
-#include "mads/msprite.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
+#include "mads/sprites.h"
 
 namespace MADS {
 

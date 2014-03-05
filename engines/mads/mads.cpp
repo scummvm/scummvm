@@ -27,10 +27,10 @@
 #include "engines/util.h"
 #include "mads/mads.h"
 #include "mads/graphics.h"
+#include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"
-#include "mads/msurface.h"
-#include "mads/msprite.h"
+#include "mads/sprites.h"
 
 namespace MADS {
 
@@ -50,7 +50,6 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_game = nullptr;
 	_palette = nullptr;
 	_resources = nullptr;
-	_screen = nullptr;
 	_sound = nullptr;
 	_userInterface = nullptr;
 }
@@ -63,7 +62,6 @@ MADSEngine::~MADSEngine() {
 	delete _game;
 	delete _palette;
 	delete _resources;
-	delete _screen;
 	delete _sound;
 	delete _userInterface;
 }
@@ -84,13 +82,13 @@ void MADSEngine::initialise() {
 	_events = new EventsManager(this);
 	_palette = new Palette(this);
 	_font = new Font(this);
-	_screen = new MSurface(g_system->getWidth(), g_system->getHeight());
+	_screen.setSize(g_system->getWidth(), g_system->getHeight());
 	_sound = new SoundManager(this, _mixer);
 	_userInterface = UserInterface::init(this);
 	_game = Game::init(this);
 
 	_events->loadCursors("*CURSOR.SS");
-	_screen->empty();
+	_screen.empty();
 }
 
 Common::Error MADSEngine::run() {

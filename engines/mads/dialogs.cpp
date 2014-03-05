@@ -34,7 +34,7 @@ Dialog::Dialog(MADSEngine *vm): _vm(vm), _savedSurface(nullptr),
 }
 
 Dialog::~Dialog() {
-	restore(_vm->_screen);
+	restore(&_vm->_screen);
 }
 
 
@@ -55,21 +55,21 @@ void Dialog::restore(MSurface *s) {
 
 void Dialog::draw() {
 	// Save the screen portion the dialog will overlap
-	save(_vm->_screen);
+	save(&_vm->_screen);
 
 	// Draw the dialog
 	// Fill entire content of dialog
-	_vm->_screen->fillRect(Common::Rect(_position.x, _position.y,
+	_vm->_screen.fillRect(Common::Rect(_position.x, _position.y,
 		_position.x + _width, _position.y + _height), TEXTDIALOG_BACKGROUND);
 
 	// Draw the outer edge lines
-	_vm->_screen->hLine(_position.x + 1, _position.y + _height - 2,
+	_vm->_screen.hLine(_position.x + 1, _position.y + _height - 2,
 		_position.x + _width - 2, TEXTDIALOG_EDGE);
-	_vm->_screen->hLine(_position.x, _position.y + _height - 1,
+	_vm->_screen.hLine(_position.x, _position.y + _height - 1,
 		_position.x + _width - 1, TEXTDIALOG_EDGE);
-	_vm->_screen->vLine(_position.x + _width - 2, _position.y + 2,
+	_vm->_screen.vLine(_position.x + _width - 2, _position.y + 2,
 		_position.y + _height - 2, TEXTDIALOG_EDGE);
-	_vm->_screen->vLine(_position.x + _width - 1, _position.y + 1,
+	_vm->_screen.vLine(_position.x + _width - 1, _position.y + 1,
 		_position.y + _height - 1, TEXTDIALOG_EDGE);
 
 	// Draw the gravelly dialog content
@@ -82,7 +82,7 @@ void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte colo
 	uint16 currSeed = seed ? seed : 0xB78E;
 
 	for (int yp = 0; yp < r.height(); ++yp) {
-		byte *destP = _vm->_screen->getBasePtr(r.left, r.top + yp);
+		byte *destP = _vm->_screen.getBasePtr(r.left, r.top + yp);
 		
 		for (int xp = 0; xp < r.width(); ++xp) {
 			uint16 seedAdjust = currSeed;
@@ -246,10 +246,10 @@ void TextDialog::draw() {
 	if (_position.y == -1)
 		_position.y = 100 - (_height / 2);
 
-	if ((_position.x + _width) > _vm->_screen->getWidth())
-		_position.x = _vm->_screen->getWidth() - (_position.x + _width);
-	if ((_position.y + _height) > _vm->_screen->getHeight())
-		_position.y = _vm->_screen->getHeight() - (_position.y + _height);
+	if ((_position.x + _width) > _vm->_screen.getWidth())
+		_position.x = _vm->_screen.getWidth() - (_position.x + _width);
+	if ((_position.y + _height) > _vm->_screen.getHeight())
+		_position.y = _vm->_screen.getHeight() - (_position.y + _height);
 
 	// Draw the underlying dialog
 	Dialog::draw();
@@ -259,7 +259,7 @@ void TextDialog::draw() {
 	for (int lineNum = 0; lineNum < _numLines; ++lineNum) {
 		if (_lineXp[lineNum] == -1) {
 			// Draw a line across the entire dialog
-			_vm->_screen->hLine(_position.x + 2, 
+			_vm->_screen.hLine(_position.x + 2, 
 				lineYp + (_vm->_font->getHeight() + 1)  / 2,
 				_position.x + _width - 4, TEXTDIALOG_BLACK);
 		} else {
@@ -269,13 +269,13 @@ void TextDialog::draw() {
 			if (_lineXp[lineNum] & 0x40)
 				++yp;
 
-			_vm->_font->writeString(_vm->_screen, _lines[lineNum], 
+			_vm->_font->writeString(&_vm->_screen, _lines[lineNum], 
 				Common::Point(xp, yp), 0, 1);
 
 			if (_lineXp[lineNum] & 0x80) {
 				// Draw an underline under the text
 				int lineWidth = _vm->_font->getWidth(_lines[lineNum], 1);
-				_vm->_screen->hLine(xp, yp + _vm->_font->getHeight(), xp + lineWidth,
+				_vm->_screen.hLine(xp, yp + _vm->_font->getHeight(), xp + lineWidth,
 					TEXTDIALOG_BLACK);
 			}
 		}

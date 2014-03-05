@@ -163,6 +163,15 @@ void SpriteAsset::drawScaled(int frameNumber, MSurface &depthSurface, MSurface &
 	warning("TODO: SpriteAsset::drawScaled");
 }
 
+void SpriteAsset::draw(MSurface *surface, int frameNumber, const Common::Point &pt) {
+	error("TODO: draw");
+}
+
+void SpriteAsset::depthDraw(MSurface *surface, MSurface *depthSurface, int frameNumber,
+		const Common::Point &pt, int depth) {
+	error("TODO: depthDraw");
+}
+
 /*------------------------------------------------------------------------*/
 
 SpriteSetCharInfo::SpriteSetCharInfo(Common::SeekableReadStream *s) {

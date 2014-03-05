@@ -20,7 +20,6 @@ MODULE_OBJS := \
 	graphics.o \
 	mads.o \
 	messages.o \
-	msprite.o \
 	msurface.o \
 	palette.o \
 	player.o \
@@ -29,6 +28,7 @@ MODULE_OBJS := \
 	scene_data.o \
 	sequence.o \
 	sound.o \
+	sprites.o \
 	user_interface.o
 
 # This module can be built as a plugin

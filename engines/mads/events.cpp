@@ -148,7 +148,7 @@ void EventsManager::checkForNextFrameCounter() {
 		_vm->_debugger->onFrame();
 
 		// Display the frame
-		_vm->_screen->updateScreen();
+		_vm->_screen.updateScreen();
 
 		// Signal the ScummVM debugger
 		_vm->_debugger->onFrame();

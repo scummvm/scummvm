@@ -38,6 +38,7 @@ namespace MADS {
 
 class MADSEngine;
 class Scene;
+class SpriteSlot;
 
 #define MADS_INTERFACE_HEIGHT 44
 #define MADS_SCENE_HEIGHT 156
@@ -56,11 +57,6 @@ enum ScrCategory {
 
 enum Layer {
 	LAYER_GUI = 19
-};
-
-enum SpriteType {
-	ST_NONE = 0, ST_FOREGROUND = 1, ST_BACKGROUND = -4,
-	ST_FULL_SCREEN_REFRESH = -2, ST_EXPIRED = -1
 };
 
 class VerbInit {
@@ -117,72 +113,6 @@ public:
 	void check(bool scanFlag);
 };
 
-class SpriteSlotSubset {
-public:
-	int _spritesIndex;
-	int _frameNumber;
-	Common::Point _position;
-	int _depth;
-	int _scale;
-};
-
-class SpriteSlot: public SpriteSlotSubset {
-public:
-	SpriteType _spriteType;
-	int _seqIndex;
-public:
-	SpriteSlot();
-	SpriteSlot(SpriteType type, int seqIndex);
-};
-
-class SpriteSlots: public Common::Array<SpriteSlot> {
-private:
-	MADSEngine *_vm;
-public:
-	SpriteSlots(MADSEngine *vm): _vm(vm) {}
-
-	/**
-	 * Clears any pending slot data and schedules a full screen refresh.
-	 * @param flag		Also reset sprite list
-	 */
-	void clear(bool flag);
-
-	/**
-	 * Delete any sprites used by the player
-	 */
-	void releasePlayerSprites();
-
-	/**
-	 * Delete a sprite entry
-	 * @param index		Specifies the index in the array
-	 */
-	void deleteEntry(int index);
-
-	/**
-	 * Adds a full screen refresh to the sprite slots
-	 */
-	void fullRefresh(bool clearAll = false);
-
-	SpriteAsset &getSprite(int idx) {
-		error("TODO");
-	}
-	void deleteTimer(int idx) { 
-		warning("TODO: SpriteSlots::deleteTimer"); 
-	}
-	int getIndex() {
-		warning("TODO: SpriteSlots::indexOf");
-		return -1;
-	}
-};
-
-class SpriteSets: public Common::Array<SpriteAsset *> {
-public:
-	/**
-	 * Add a sprite asset to the list
-	 */
-	int add(SpriteAsset *asset, int idx = 0);
-};
-
 class DynamicHotspot {
 public:
 	bool _active;
@@ -235,6 +165,9 @@ public:
 };
 
 class DirtyArea {
+private:
+	static MADSEngine *_vm;
+	friend class DirtyAreas;
 public:
 	Common::Rect _bounds;
 	Common::Rect _bounds2;
@@ -242,25 +175,23 @@ public:
 	bool _active;
 
 	DirtyArea() { _active = false; }
+
 	void setArea(int width, int height, int maxWidth, int maxHeight);
+
+	void setSpriteSlot(const SpriteSlot *spriteSlot);
+
+	/**
+	* Set up a dirty area for a text display
+	*/
+	void setTextDisplay(const TextDisplay *textDisplay);
 };
 
-class DirtyAreas {
+class DirtyAreas: public Common::Array<DirtyArea> {
 private:
 	MADSEngine *_vm;
-	Common::Array<DirtyArea> _entries;
 public:
 	DirtyAreas(MADSEngine *vm);
-
-	DirtyArea &operator[](uint idx) {
-		assert(idx < _entries.size());
-		return _entries[idx];
-	}
-
-	void setSpriteSlot(int dirtyIdx, const SpriteSlot &spriteSlot);
-
-	void setTextDisplay(int dirtyIdx, const TextDisplay &textDisplay);
-
+	
 	/**
 	* Merge together any designated dirty areas that overlap
 	* @param startIndex	1-based starting dirty area starting index
@@ -271,7 +202,7 @@ public:
 	bool intersects(int idx1, int idx2);
 	void mergeAreas(int idx1, int idx2);
 	void copy(MSurface *dest, MSurface *src, const Common::Point &posAdjust);
-	void clear();
+	void reset();
 };
 
 class SceneLogic {

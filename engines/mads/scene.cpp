@@ -424,7 +424,14 @@ void Scene::doFrame() {
 }
 
 void Scene::drawElements(bool transitionFlag, bool surfaceFlag) {
+	// Draw any background objects
+	_spriteSlots.drawBackground();
 
+	// Merge any identified dirty areas
+	_dirtyAreas.merge(1, _dirtyAreas.size());
+
+	// Copy dirty areas to the main display surface
+	_dirtyAreas.copy(&_vm->_screen, &_backgroundSurface, _posAdjust);
 }
 
 void Scene::leftClick() {

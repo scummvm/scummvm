@@ -25,13 +25,15 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "mads/msprite.h"
 #include "mads/palette.h"
-#include "mads/msprite.h"
 
 namespace MADS {
 
 #define SPRITE_SET_CHAR_INFO 4
+
+class MADSEngine;
+class MSprite;
+class MSurface;
 
 struct SpriteAssetFrame {
 	uint32 _stream;
@@ -100,6 +102,9 @@ public:
 
 	void drawScaled(int frameNumber, MSurface &depthSurface, MSurface &destSurface,
 		int scale, int depth, const Common::Point &pos);
+	void draw(MSurface *surface, int frameNumber, const Common::Point &pt);
+	void depthDraw(MSurface *surface, MSurface *depthSurface, int frameNumber, 
+		const Common::Point &pt, int depth);
 };
 
 } // End of namespace MADS
