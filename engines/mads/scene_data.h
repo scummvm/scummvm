@@ -158,6 +158,11 @@ public:
 	 */
 	void deleteEntry(int index);
 
+	/**
+	 * Adds a full screen refresh to the sprite slots
+	 */
+	void fullRefresh(bool clearAll = false);
+
 	SpriteAsset &getSprite(int idx) {
 		error("TODO");
 	}
@@ -168,7 +173,6 @@ public:
 		warning("TODO: SpriteSlots::indexOf");
 		return -1;
 	}
-
 };
 
 class SpriteSets: public Common::Array<SpriteAsset *> {

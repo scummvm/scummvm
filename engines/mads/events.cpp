@@ -35,7 +35,8 @@ namespace MADS {
 EventsManager::EventsManager(MADSEngine *vm) {
 	_vm = vm;
 	_cursorSprites = nullptr;
-	_gameCounter = 0;
+	_frameCounter = 0;
+	_frameNumber = 0;
 	_priorFrameTime = 0;
 	_keyPressed = false;
 	_mouseClicked = false;
@@ -140,7 +141,7 @@ void EventsManager::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
-		++_gameCounter;
+		++_frameCounter;
 		_priorFrameTime = milli;
 
 		// Give time to the debugger
@@ -163,6 +164,12 @@ void EventsManager::delay(int cycles) {
 
 		pollEvents();
 	}
+}
+
+void EventsManager::waitForNextFrame() {
+	uint32 frameNum = getFrameCounter();
+	while (!_vm->shouldQuit() && !_vm->_game->_abortTimers && frameNum == _frameNumber)
+		delay(1);
 }
 
 void EventsManager::initVars() {

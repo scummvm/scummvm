@@ -368,10 +368,12 @@ void Scene::doFrame() {
 			}
 
 			// If the debugget flag is set, show the mouse position
+			int mouseTextIndex = 0;
 			if (_vm->_debugger->_showMousePos) {
 				Common::Point pt = _vm->_events->mousePos();
 				Common::String msg = Common::String::format("(%d,%d)", pt.x, pt.y);
-				_kernelMessages.add(Common::Point(5, 5), 0x203, 0, 0, 1, msg);
+				mouseTextIndex = _kernelMessages.add(Common::Point(5, 5), 
+					0x203, 0, 0, 1, msg);
 			}
 
 			if (!_vm->_game->_abortTimers) {
@@ -399,11 +401,26 @@ void Scene::doFrame() {
 				_kernelMessages.delay(newTime, priorTime);
 			}
 
-			warning("TODO: sub_1DA5A");
+			if (_vm->_debugger->_showMousePos)
+				// Mouse position display isn't persistent, so remove it
+				_kernelMessages.remove(mouseTextIndex);
 
-			// TODO: Rest of Scene::doFrame
+
+			warning("TODO: sub_1DA3E");
 		}
 	}
+
+	if (_vm->_game->_abortTimers2)
+		_animFlag = true;
+	_vm->_game->_abortTimers2 = 0;
+
+	if (_freeAnimationFlag) {
+		_activeAnimation->free();
+		_activeAnimation = nullptr;
+	}
+
+	// TODO: Verify correctness of frame wait
+
 }
 
 void Scene::drawElements(bool transitionFlag, bool surfaceFlag) {

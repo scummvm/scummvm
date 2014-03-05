@@ -43,8 +43,6 @@ private:
 	void move();
 
 	void postUpdate();
- 
-	void update();
 public:
 	int _direction;
 	int _newDirection;
@@ -66,6 +64,7 @@ public:
 	int _ticksAmount;
 	uint32 _priorTimer;
 	int _unk3;
+	bool _forceRefresh;
 public:
 	Player(MADSEngine *vm);
 
@@ -78,6 +77,8 @@ public:
 	void setupFrame();
 
 	void updateFrame();
+
+	void update();
 
 	void idle();
 

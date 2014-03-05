@@ -37,7 +37,8 @@ class MADSEngine;
 class EventsManager {
 private:
 	MADSEngine *_vm;
-	uint32 _gameCounter;
+	uint32 _frameCounter;
+	uint32 _frameNumber;
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
 	Common::Point _currentPos;
@@ -132,9 +133,14 @@ public:
 	void delay(int amount);
 
 	/**
+	 * Wait for the next frame
+	 */
+	void waitForNextFrame();
+
+	/**
 	 * Gets the current frame counter
 	 */
-	uint32 getFrameCounter() const { return _gameCounter; }
+	uint32 getFrameCounter() const { return _frameCounter; }
 
 	void initVars();
 };

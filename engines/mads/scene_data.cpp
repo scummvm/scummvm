@@ -186,6 +186,13 @@ void SpriteSlots::deleteEntry(int index) {
 	remove_at(index);
 }
 
+void SpriteSlots::fullRefresh(bool clearAll) {
+	if (clearAll)
+		Common::Array<SpriteSlot>::clear();
+
+	push_back(SpriteSlot(ST_FULL_SCREEN_REFRESH, -1));
+}
+
 /*------------------------------------------------------------------------*/
 
 int SpriteSets::add(SpriteAsset *asset, int idx) {

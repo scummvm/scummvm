@@ -40,6 +40,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_ticksAmount = 0;
 	_priorTimer = 0;
 	_unk3 = 0;
+	_forceRefresh = false;
 }
 
 void Player::reset() {
@@ -80,6 +81,10 @@ void Player::updateFrame() {
 	warning("TODO: Player::updateFrame");
 }
 
+void Player::update() {
+	warning("TODO: Player::update");
+}
+
 void Player::resetActionList() {
 	warning("TODO: Player::resetActionList");
 }
@@ -113,10 +118,6 @@ void Player::idle() {
 
 void Player::postUpdate() {
 	warning("TODO: Player::postUpdate");
-}
-
-void Player::update() {
-	warning("TODO: Player::update");
 }
 
 } // End of namespace MADS

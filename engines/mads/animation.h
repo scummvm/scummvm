@@ -119,16 +119,22 @@ public:
 	static Animation *init(MADSEngine *vm, Scene *scene);
 public:
 	Common::Array<int> _spriteListIndexes;
-	Common::Array<AnimMessage> _kernelMessages;
+	Common::Array<AnimMessage> _messages;
 	Common::Array<AnimFrameEntry> _frameEntries;
 	Common::Array<AnimMiscEntry> _miscEntries;
 	Common::Array<SpriteAsset *> _spriteSets;
 	Font *_font;
+	bool _resetFlag;
 public:
 	/*
 	 * Destructor
 	 */
 	~Animation();
+
+	/**
+	 * Releases scene resources used by the animation, and then deletes it
+	 */
+	void free();
 
 	/**
 	 * Loads animation data

@@ -139,12 +139,38 @@ Animation *Animation::init(MADSEngine *vm, Scene *scene) {
 
 Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_font = nullptr;
+	_resetFlag = false;
 }
 
 Animation::~Animation() {
 	delete _font;
 	for (uint i = 0; i < _spriteSets.size(); ++i)
 		delete _spriteSets[i];
+}
+
+void Animation::free() {
+	Scene &scene = _vm->_game->_scene;
+	Player &player = _vm->_game->_player;
+
+	if (!scene._freeAnimationFlag) {
+		scene._spriteSlots.fullRefresh(true);
+		scene._sequences.scan();
+	}
+
+	// Refresh the player
+	if (player._visible) {
+		player._forceRefresh = true;
+		player.update();
+	}
+
+	// Remove any kernel messages in use by the animation
+	for (uint i = 0; i < _messages.size(); ++i) {
+		int msgIndex = _messages[i]._kernelMsgIndex;
+		scene._kernelMessages.remove(msgIndex);
+	}
+
+	_resetFlag = false;
+	delete this;
 }
 
 void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
@@ -179,7 +205,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	for (int i = 0; i < aaHeader._spriteSetsCount; ++i)
 		_spriteListIndexes.push_back(-1);
 
-	_kernelMessages.clear();
+	_messages.clear();
 	if (aaHeader._messagesCount > 0) {
 		// Chunk 2: Following is a list of any messages for the animation
 		Common::SeekableReadStream *msgStream = madsPack.getItemStream(1);
@@ -187,7 +213,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 		for (int i = 0; i < aaHeader._messagesCount; ++i) {
 			AnimMessage rec;
 			rec.load(msgStream);
-			_kernelMessages.push_back(rec);
+			_messages.push_back(rec);
 		}
 
 		delete msgStream;
