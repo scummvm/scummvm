@@ -384,4 +384,155 @@ int scene19_updateCursor() {
 	return g_fp->_cursorId;
 }
 
+void sceneHandler18_clickBoard() {
+	warning("STUB: sceneHandler18_clickBoard()");
+}
+
+void sceneHandler18and19_showManJump() {
+	warning("STUB: sceneHandler18and19_showManJump()");
+}
+
+void sceneHandler18_showManJumpTo() {
+	warning("STUB: sceneHandler18_showManJumpTo()");
+}
+
+void sceneHandler18and19_showGirlJumpTo() {
+	warning("STUB: sceneHandler18and19_showGirlJumpTo()");
+}
+
+void sceneHandler18and19_showGirlJump() {
+	warning("STUB: sceneHandler18and19_showGirlJump()");
+}
+
+void sceneHandler18and19_showBoyJumpTo() {
+	warning("STUB: sceneHandler18and19_showBoyJumpTo()");
+}
+
+void sceneHandler18and19_showBoyJump() {
+	warning("STUB: sceneHandler18and19_showBoyJump()");
+}
+
+void sceneHandler18and19_drawRiders() {
+	warning("STUB: sceneHandler18and19_drawRiders()");
+}
+
+void sceneHandler18and19_animateRiders() {
+	warning("STUB: sceneHandler18and19_animateRiders()");
+}
+
+int sceneHandler18(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return 0;
+
+	switch (cmd->_messageNum) {
+	case MSG_SC18_CLICKBOARD:
+		sceneHandler18_clickBoard();
+		break;
+
+	case MSG_SC3_HIDEDOMINO:
+		g_vars->scene18_domino->_flags &= 0xFFFB;
+		break;
+
+	case MSG_SC18_SHOWMANJUMP:
+		sceneHandler18and19_showManJump();
+		break;
+
+	case MSG_SC18_MANREADY:
+		g_vars->scene18_var28 = 1;
+		break;
+
+	case MSG_SC18_SHOWMANJUMPTO:
+		sceneHandler18_showManJumpTo();
+		break;
+
+	case MSG_SC18_SHOWGIRLJUMPTO:
+		sceneHandler18and19_showGirlJumpTo();
+		break;
+
+	case MSG_SC18_SHOWGIRLJUMP:
+		sceneHandler18and19_showGirlJump();
+		break;
+
+	case MSG_SC18_SHOWBOYJUMPTO:
+		sceneHandler18and19_showBoyJumpTo();
+		break;
+
+	case MSG_SC18_SHOWBOYJUMP:
+		sceneHandler18and19_showBoyJump();
+		break;
+
+	case 29:
+		{
+			if (g_vars->scene18_var15) {
+				cmd->_messageKind = 0;
+				break;
+			}
+
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+
+				if (pic && pic->_id == PIC_SC18_DOMIN && g_vars->scene18_domino
+					&& (g_vars->scene18_domino->_flags & 4) && g_fp->_aniMan->isIdle()) {
+					if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene18_domino->_id) {
+						handleObjectInteraction(g_fp->_aniMan, g_vars->scene18_domino, cmd->_keyCode);
+						cmd->_messageKind = 0;
+						break;
+					}
+				}
+
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
+						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+						g_fp->processArcade(cmd);
+
+						g_vars->scene18_var28 = 0;
+
+						break;
+					}
+				}
+			}
+			break;
+		}
+
+	case 33:
+		if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			g_vars->scene18_var11 = g_fp->_aniMan2->_oy;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene18_var16)
+				g_fp->_currentScene->_x = x - g_vars->scene18_var18 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene18_var16)
+				g_fp->_currentScene->_x = x + g_vars->scene18_var18 - g_fp->_sceneRect.right;
+		}
+
+		if (g_vars->scene18_var28 && g_fp->_aniMan->_movement)
+			g_vars->scene18_var28 = 0;
+
+		if (g_vars->scene18_var08) {
+			if (!g_vars->scene18_var12)
+				sceneHandler18and19_drawRiders();
+
+			g_vars->scene18_var12 = g_vars->scene18_var12 == 0;
+
+			if (!g_vars->scene18_whirlgig->_movement) {
+				g_vars->scene18_whirlgig->startAnim(MV_WHR18_SPIN, 0, -1);
+				g_fp->_behaviorManager->updateBehaviors();
+				break;
+			}
+		} else {
+			sceneHandler18and19_animateRiders();
+		}
+
+		g_fp->_behaviorManager->updateBehaviors();
+		break;
+	}
+
+	return 0;
+}
+
 } // End of namespace Fullpipe
