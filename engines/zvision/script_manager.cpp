@@ -632,7 +632,6 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 
 	if (stream->readUint32BE() != MKTAG('Z', 'N', 'S', 'G') || stream->readUint32LE() != 4) {
 		changeLocation('g', 'a', 'r', 'y', 0);
-		debug("ZNSG");
 		return;
 	}
 
@@ -640,7 +639,6 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 
 	if (stream->readUint32BE() != MKTAG('L', 'O', 'C', ' ') || stream->readUint32LE() != 8) {
 		changeLocation('g', 'a', 'r', 'y', 0);
-		debug("LOC");
 		return;
 	}
 
