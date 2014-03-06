@@ -65,6 +65,7 @@ public:
 	uint32 _priorTimer;
 	int _unk3;
 	bool _forceRefresh;
+	Common::String _spritesPrefix;
 public:
 	Player(MADSEngine *vm);
 

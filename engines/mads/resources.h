@@ -47,7 +47,10 @@ public:
 	static void init(MADSEngine *vm);
 
 	static Common::String formatName(RESPREFIX resType, int id, const Common::String &ext);
+	static Common::String formatName(int prefix, char asciiCh, int id,
+		EXTTYPE extType, const Common::String &suffix);
 	static Common::String formatResource(const Common::String &resName, const Common::String &hagFilename);
+	static Common::String formatAAName(int idx);
 };
 
 /**

@@ -31,9 +31,24 @@ namespace MADS {
 
 namespace Nebular {
 
-class Scene804: public SceneLogic {
+class Scene8xx : public SceneLogic {
+protected:
+	/**
+	 * Initial setup code shared by several scenes
+	 */
+	void setup1();
+
+	/**
+	* Initial setup code shared by several scenes
+	*/
+	void setup2();
 public:
-	Scene804(Scene *scene): SceneLogic(scene) {}
+	Scene8xx(MADSEngine *vm) : SceneLogic(vm) {}
+};
+
+class Scene804: public Scene8xx {
+public:
+	Scene804(MADSEngine *vm) : Scene8xx(vm) {}
 
 	virtual void setup();
 

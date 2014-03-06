@@ -31,6 +31,10 @@ namespace MADS {
 
 namespace Nebular {
 
+enum {
+	SEX_MALE = 0, SEX_FEMALE = 2
+};
+
 enum Noun {
 	NOUN_BLOWGUN		= 0x29,
 	NOUN_BURGER			= 0x35,
@@ -81,7 +85,7 @@ enum Noun {
 
 class SceneFactory {
 public:
-	static SceneLogic *createScene(Scene *scene);
+	static SceneLogic *createScene(MADSEngine *vm);
 };
 
 } // End of namespace Nebular

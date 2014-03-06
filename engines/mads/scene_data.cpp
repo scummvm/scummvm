@@ -715,4 +715,10 @@ void SceneInfoNebular::loadCodes(MSurface &depthSurface) {
 	f.close();
 }
 
+/*------------------------------------------------------------------------*/
+
+SceneLogic::SceneLogic(MADSEngine *vm) : _vm(vm) {
+	_scene = &_vm->_game->_scene;
+}
+
 } // End of namespace MADS

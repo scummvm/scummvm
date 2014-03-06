@@ -107,7 +107,7 @@ void Scene::loadSceneLogic() {
 
 	switch (_vm->getGameID()) {
 	case GType_RexNebular:
-		_sceneLogic = Nebular::SceneFactory::createScene(this);
+		_sceneLogic = Nebular::SceneFactory::createScene(_vm);
 		break;
 	default:
 		error("Unknown game");

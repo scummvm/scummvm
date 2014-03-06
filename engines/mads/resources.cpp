@@ -303,6 +303,47 @@ Common::String Resources::formatName(RESPREFIX resType, int id, const Common::St
 	return result;
 }
 
+Common::String Resources::formatName(int prefix, char asciiCh, int id, EXTTYPE extType,
+		const Common::String &suffix) {
+	Common::String result;
+	if (prefix <= 0) {
+		result = "*";
+	}
+	else {
+		result = Common::String::format("%s%.3d",
+			(prefix < 100) ? "*SC" : "*RM", prefix);
+	}
+
+	result += Common::String::format("%c%d", asciiCh, id);
+	if (!suffix.empty())
+		result += suffix;
+
+	switch (extType) {
+	case EXT_SS:
+		result += ".SS";
+		break;
+	case EXT_AA:
+		result += ".AA";
+		break;
+	case EXT_DAT:
+		result += ".DAT";
+		break;
+	case EXT_HH:
+		result += ".HH";
+		break;
+	case EXT_ART:
+		result += ".ART";
+		break;
+	case EXT_INT:
+		result += ".INT";
+		break;
+	default:
+		break;
+	}
+
+	return result;
+}
+
 Common::String Resources::formatResource(const Common::String &resName, 
 		const Common::String &hagFilename) {
 //	int v1 = 0, v2 = 0;
@@ -314,6 +355,10 @@ Common::String Resources::formatResource(const Common::String &resName,
 		// File outside of hag file
 		return resName;
 	}
+}
+
+Common::String Resources::formatAAName(int idx) {
+	return formatName(0, 'I', idx, EXT_AA, "");
 }
 
 /*------------------------------------------------------------------------*/

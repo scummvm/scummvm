@@ -31,17 +31,19 @@ namespace MADS {
 
 namespace Nebular {
 
-SceneLogic *SceneFactory::createScene(Scene *scene) {
-	scene->addActiveVocab(NOUN_DROP);
-	scene->addActiveVocab(NOUN_DOLLOP);
-	scene->addActiveVocab(NOUN_DASH);
-	scene->addActiveVocab(NOUN_SPLASH);
-	scene->addActiveVocab(NOUN_ALCOHOL);
+SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
+	Scene &scene = vm->_game->_scene;
+
+	scene.addActiveVocab(NOUN_DROP);
+	scene.addActiveVocab(NOUN_DOLLOP);
+	scene.addActiveVocab(NOUN_DASH);
+	scene.addActiveVocab(NOUN_SPLASH);
+	scene.addActiveVocab(NOUN_ALCOHOL);
 
 	// TODO: Implement all the game scenes
-	assert(scene->_nextSceneId == 804);
+	assert(scene._nextSceneId == 804);
 
-	return new Scene804(scene);
+	return new Scene804(vm);
 }
 
 } // End of namespace Nebular

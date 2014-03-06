@@ -21,11 +21,35 @@
  */
 
 #include "common/scummsys.h"
+#include "mads/mads.h"
+#include "mads/scene.h"
+#include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes8.h"
 
 namespace MADS {
 
 namespace Nebular {
+
+void Scene8xx::setup1() {
+	_vm->_sound->command(5);
+	if ((_vm->_game->_globalFlags[178] && !_vm->_game->_globalFlags[179]) ||
+			_scene->_nextSceneId == 804 || _scene->_nextSceneId == 805 ||
+			_scene->_nextSceneId == 808 || _scene->_nextSceneId == 810) {
+		_vm->_game->_player._spritesPrefix = "";
+	} else {
+		_vm->_game->_player._spritesPrefix = _vm->_game->_globalFlags[0] 
+			== SEX_FEMALE ? "ROX" : "RXM";
+	}
+
+	_vm->_palette->setEntry(16, 0x0A, 0x3F, 0x3F);
+	_vm->_palette->setEntry(17, 0x0A, 0x2D, 0x2D);
+}
+
+void Scene8xx::setup2() {
+	_vm->_game->_aaName = Resources::formatAAName(5);
+}
+
+/*------------------------------------------------------------------------*/
 
 void Scene804::setup() {
 }

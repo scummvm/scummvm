@@ -207,12 +207,13 @@ public:
 
 class SceneLogic {
 protected:
+	MADSEngine *_vm;
 	Scene *_scene;
 public:
 	/**
 	 * Constructor
 	 */
-	SceneLogic(Scene *scene): _scene(scene) {}
+	SceneLogic(MADSEngine *vm);
 
 	/**
 	 * Destructor

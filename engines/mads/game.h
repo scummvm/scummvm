@@ -65,7 +65,6 @@ protected:
 	int _v5;
 	int _v6;
 	bool _updateSceneFlag;
-	Common::String _aaName;
 	bool _playerSpritesFlag;
 	int _objectHiliteVocabIdx;
 
@@ -117,6 +116,7 @@ public:
 	AbortTimerMode _abortTimersMode;
 	AbortTimerMode _abortTimersMode2;
 	uint32 _priorFrameTimer;
+	Common::String _aaName;
 public:
 	virtual ~Game();
 
