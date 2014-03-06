@@ -2409,7 +2409,7 @@ SceneBase *SceneViewWindow::constructMayanSceneObject(Window *viewWindow, const 
 	case 28:
 		return new ViewSingleTranslation(_vm, viewWindow, sceneStaticData, priorLocation, IDMYMC_DEATHGOD_DOOR_RIGHT_TRANS_TEXT, 46, 1, 315, 188, offsetof(GlobalFlags, myMCTransDoor), offsetof(GlobalFlags, myMCTransDGOffering));
 	case 29:
-		return new DeathGodCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, 4, TRANSITION_WALK, -1, 1010, 12);
+		return new DeathGodCavernDoorOfferingHead(_vm, viewWindow, sceneStaticData, priorLocation, 4, TRANSITION_WALK, -1, 1045, 13);
 	case 30:
 		return new WealthGodRopeDrop(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 31:
