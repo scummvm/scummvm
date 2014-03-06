@@ -52,7 +52,6 @@ IntData::IntData() {
 	_hasPalette = false;
 	_flashTimer = 0;
 	_flashStep = 0;
-	field26 = 0;
 	_skipFading = false;
 	_palStartIndex = 0;
 	_palEndIndex = 0;
@@ -185,13 +184,9 @@ void EventsManager::showMousePosition() {
 void EventsManager::voyeurTimer() {
 	_gameData._flashTimer += _gameData._flashStep;
 
-	if (--_gameData.field26 <= 0) {
-		if (_gameData._flipWait) {
-			_gameData._flipWait = false;
-			_gameData._skipFading = false;
-		}
-
-		_gameData.field26 >>= 8;
+	if (_gameData._flipWait) {
+		_gameData._flipWait = false;
+		_gameData._skipFading = false;
 	}
 
 	videoTimer();

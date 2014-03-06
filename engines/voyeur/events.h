@@ -55,7 +55,6 @@ public:
 	bool _flipWait;
 	int _flashTimer;
 	int _flashStep;
-	int field26;
 	bool _hasPalette;
 	bool _skipFading;
 	int _palStartIndex;
