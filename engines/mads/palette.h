@@ -165,6 +165,11 @@ public:
 	void setPalette(const byte *colors, uint start, uint num);
 
 	/**
+	 * Set a palette entry
+	 */
+	void setEntry(byte palIndex, byte r, byte g, byte b);
+
+	/**
 	 * Returns a subset of the currently loaded palette
 	 */
 	void grabPalette(byte *colors, uint start, uint num);

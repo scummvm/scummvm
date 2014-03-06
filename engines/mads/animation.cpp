@@ -27,7 +27,7 @@
 
 namespace MADS {
 	
-AAHeader::AAHeader(Common::SeekableReadStream *f) {
+void AAHeader::load(Common::SeekableReadStream *f) {
 	_spriteSetsCount = f->readUint16LE();
 	_miscEntriesCount = f->readUint16LE();
 	_frameEntriesCount = f->readUint16LE();
@@ -40,7 +40,7 @@ AAHeader::AAHeader(Common::SeekableReadStream *f) {
 	_roomNumber = f->readUint16LE();
 	f->skip(2);
 	_manualFlag = f->readUint16LE() != 0;
-	_spriteListIndex = f->readUint16LE();
+	_spritesIndex = f->readUint16LE();
 	_scrollPosition.x = f->readSint16LE();
 	_scrollPosition.y = f->readSint16LE();
 	_scrollTicks = f->readUint32LE();
@@ -184,33 +184,33 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	MadsPack madsPack(&f);
 
 	Common::SeekableReadStream *stream = madsPack.getItemStream(0);
-	AAHeader aaHeader(stream);
+	_header.load(stream);
 	delete stream;
 
-	if (aaHeader._animMode == 4)
+	if (_header._animMode == 4)
 		flags |= 0x4000;
 
 	if (flags & 0x100) {
-		loadInterface(interfaceSurface, depthSurface, aaHeader, flags, palAnimData, sceneInfo);
+		loadInterface(interfaceSurface, depthSurface, _header, flags, palAnimData, sceneInfo);
 	}
 	if (flags & 0x200) {
 		// No data
-		aaHeader._messagesCount = 0;
-		aaHeader._frameEntriesCount = 0;
-		aaHeader._miscEntriesCount = 0;
+		_header._messagesCount = 0;
+		_header._frameEntriesCount = 0;
+		_header._miscEntriesCount = 0;
 	}
 
 	// Initialize the reference list
 	_spriteListIndexes.clear();
-	for (int i = 0; i < aaHeader._spriteSetsCount; ++i)
+	for (int i = 0; i < _header._spriteSetsCount; ++i)
 		_spriteListIndexes.push_back(-1);
 
 	_messages.clear();
-	if (aaHeader._messagesCount > 0) {
+	if (_header._messagesCount > 0) {
 		// Chunk 2: Following is a list of any messages for the animation
 		Common::SeekableReadStream *msgStream = madsPack.getItemStream(1);
 
-		for (int i = 0; i < aaHeader._messagesCount; ++i) {
+		for (int i = 0; i < _header._messagesCount; ++i) {
 			AnimMessage rec;
 			rec.load(msgStream);
 			_messages.push_back(rec);
@@ -220,11 +220,11 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	}
 
 	_frameEntries.clear();
-	if (aaHeader._frameEntriesCount > 0) {
+	if (_header._frameEntriesCount > 0) {
 		// Chunk 3: animation frame info
 		Common::SeekableReadStream *frameStream = madsPack.getItemStream(2);
 
-		for (int i = 0; i < aaHeader._frameEntriesCount; i++) {
+		for (int i = 0; i < _header._frameEntriesCount; i++) {
 			AnimFrameEntry rec;
 			rec.load(frameStream);
 			_frameEntries.push_back(rec);
@@ -234,11 +234,11 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	}
 	
 	_miscEntries.clear();
-	if (aaHeader._miscEntriesCount > 0) {
+	if (_header._miscEntriesCount > 0) {
 		// Chunk 4: Misc Data
 		Common::SeekableReadStream *miscStream = madsPack.getItemStream(3);
 
-		for (int i = 0; i < aaHeader._miscEntriesCount; ++i) {
+		for (int i = 0; i < _header._miscEntriesCount; ++i) {
 			AnimMiscEntry rec;
 			rec.load(miscStream);
 			_miscEntries.push_back(rec);
@@ -249,8 +249,8 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	
 	// If the animation specifies a font, then load it for access
 	delete _font;
-	if (aaHeader._flags & ANIM_CUSTOM_FONT) {
-		Common::String fontName = "*" + aaHeader._fontResource;
+	if (_header._flags & ANIM_CUSTOM_FONT) {
+		Common::String fontName = "*" + _header._fontResource;
 		_font = _vm->_font->getFont(fontName.c_str());
 	} else {
 		_font = nullptr;
@@ -260,28 +260,28 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	for (uint i = 0; i < _spriteSets.size(); ++i)
 		delete _spriteSets[i];
 	_spriteSets.clear();
-	_spriteSets.resize(aaHeader._spriteSetsCount);
+	_spriteSets.resize(_header._spriteSetsCount);
 
-	for (int i = 0; i < aaHeader._spriteSetsCount; ++i) {
-		if (aaHeader._manualFlag && (i == aaHeader._spriteListIndex)) {
+	for (int i = 0; i < _header._spriteSetsCount; ++i) {
+		if (_header._manualFlag && (i == _header._spritesIndex)) {
 			// Skip over field, since it's manually loaded
 			_spriteSets[i] = nullptr;
 		} else {
-			_spriteSets[i] = new SpriteAsset(_vm, aaHeader._spriteSetNames[i], flags);
+			_spriteSets[i] = new SpriteAsset(_vm, _header._spriteSetNames[i], flags);
 		}
 	}
 
-	if (aaHeader._manualFlag) {
-		Common::String resName = "*" + aaHeader._spriteSetNames[aaHeader._spriteListIndex];
+	if (_header._manualFlag) {
+		Common::String resName = "*" + _header._spriteSetNames[_header._spritesIndex];
 		SpriteAsset *sprites = new SpriteAsset(_vm, resName, flags);
-		_spriteSets[aaHeader._spriteListIndex] = sprites;
+		_spriteSets[_header._spritesIndex] = sprites;
 
-		_spriteListIndexes[aaHeader._spriteListIndex] = _scene->_sprites.add(sprites);
+		_spriteListIndexes[_header._spritesIndex] = _scene->_sprites.add(sprites);
 	}
 
 	// TODO: List var_420/var_422 population that seems to overwrite other structures?
 
-	if (aaHeader._animMode == 4) {
+	if (_header._animMode == 4) {
 		// Remaps the sprite list indexes for frames to the loaded sprite list indexes
 		for (uint i = 0; i < _frameEntries.size(); ++i) {
 			int spriteListIndex = _frameEntries[i]._spriteSlot._spritesIndex;
@@ -296,6 +296,33 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	}
 
 	f.close();
+}
+
+void Animation::loadFrame(int frameNumber) {
+	Scene &scene = _vm->_game->_scene;
+	if (_skipLoad)
+		return;
+
+	Common::Point pt;
+	int listIndex = _spriteListIndexes[_header._spritesIndex];
+	SpriteAsset &spriteSet = scene._spriteSlots.getSprite(listIndex);
+
+	if (_unkIndex < 0) {
+		MSurface *frame = spriteSet.getFrame(0);
+		pt.x = frame->getBounds().left;
+		pt.y = frame->getBounds().top;
+	} else {
+		pt.x = _unkList[_unkIndex].x;
+		pt.y = _unkList[_unkIndex].y;
+		_unkIndex = 1 - _unkIndex;
+	}
+
+	if (drawFrame(spriteSet, pt, frameNumber))
+		error("proc1 failure");
+}
+
+bool Animation::drawFrame(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber) {
+	return 0;
 }
 
 void Animation::loadInterface(InterfaceSurface &interfaceSurface, MSurface &depthSurface,
@@ -323,8 +350,182 @@ void Animation::loadInterface(InterfaceSurface &interfaceSurface, MSurface &dept
 	}
 }
 
+bool Animation::hasScroll() const { 
+	return (_header._scrollPosition.x != 0) || (_header._scrollPosition.x != 0);
+}
+
 void Animation::update() {
-	warning("TODO: Animation::update");
+	Scene &scene = _vm->_game->_scene;
+
+	if (_header._manualFlag) {
+		int spriteListIndex = _spriteListIndexes[_header._spritesIndex];
+		int newIndex = -1;
+
+		for (uint idx = _oldFrameEntry; idx < _frameEntries.size(); ++idx) {
+			if (_frameEntries[idx]._frameNumber > _currentFrame)
+				break;
+			if (_frameEntries[idx]._spriteSlot._spritesIndex == spriteListIndex)
+				newIndex = _frameEntries[idx]._spriteSlot._frameNumber;
+		}
+
+		if (newIndex >= 0)
+			loadFrame(newIndex);
+	}
+
+	// If it's not time for the next frame, then exit
+	if (_vm->_events->_currentTimer < _nextFrameTimer)
+		return;
+
+	for (uint idx = 0; idx < scene._spriteSlots.size(); ++idx) {
+		if (scene._spriteSlots[idx]._seqIndex >= 0x80)
+			scene._spriteSlots[idx]._spriteType = ST_EXPIRED;
+	}
+
+	// Validate the current frame
+	if (_currentFrame >= (int)_miscEntries.size()) {
+		// Is the animation allowed to be repeated?
+		if (_resetFlag) {
+			_currentFrame = 0;
+			_oldFrameEntry = 0;
+		} else {
+			_freeFlag = true;
+			return;
+		}
+	}
+
+	// Handle executing any sound command for this frame
+	AnimMiscEntry &misc = _miscEntries[_currentFrame];
+	if (misc._soundId)
+		_vm->_sound->command(misc._soundId);
+
+	// Handle any screen scrolling
+	if (hasScroll()) {
+		scene._backgroundSurface.scrollX(_header._scrollPosition.x);
+		scene._backgroundSurface.scrollY(_header._scrollPosition.y);
+		scene._spriteSlots.fullRefresh();
+	}
+	
+	// Handle any offset adjustment for sprites as of this frame
+	bool paChanged = false;
+	if (scene._posAdjust.x != misc._posAdjust.x) {
+		scene._posAdjust.x = misc._posAdjust.x;
+		paChanged = true;
+	}
+	if (scene._posAdjust.y != misc._posAdjust.y) {
+		scene._posAdjust.y = misc._posAdjust.y;
+		paChanged = true;
+	}
+
+	int newIndex = -1;
+	if (paChanged) {
+		newIndex = scene._spriteSlots.getIndex();
+		scene._spriteSlots[newIndex]._seqIndex = -1;
+		scene._spriteSlots[newIndex]._spriteType = ST_FULL_SCREEN_REFRESH;
+	}
+
+	// Main frame animation loop - frames get animated by being placed, as necessary, into the
+	// main sprite slot array
+	while ((uint)_oldFrameEntry < _frameEntries.size()) {
+		if (_frameEntries[_oldFrameEntry]._frameNumber > _currentFrame)
+			break;
+		else if (_frameEntries[_oldFrameEntry]._frameNumber == _currentFrame) {
+			// Found the correct frame
+			int spriteSlotIndex = 0;
+			int index = 0;
+
+			for (;;) {
+				if ((spriteSlotIndex == 0) && (index < (int)scene._spriteSlots.size())) {
+					int seqIndex = _frameEntries[_oldFrameEntry]._seqIndex - scene._spriteSlots[index]._seqIndex;
+					if (seqIndex == 0x80) {
+						if (scene._spriteSlots[index] == _frameEntries[_oldFrameEntry]._spriteSlot) {
+							scene._spriteSlots[index]._spriteType = ST_NONE;
+							spriteSlotIndex = -1;
+						}
+					}
+					++index;
+					continue;
+				}
+
+				if (spriteSlotIndex == 0) {
+					int slotIndex = scene._spriteSlots.getIndex();
+					SpriteSlot &slot = scene._spriteSlots[slotIndex];
+					slot.copy(_frameEntries[_oldFrameEntry]._spriteSlot);
+					slot._seqIndex = _frameEntries[_oldFrameEntry]._seqIndex + 0x80;
+
+					SpriteAsset &spriteSet = scene._spriteSlots.getSprite(
+						scene._spriteSlots[slotIndex]._spritesIndex);
+					slot._spriteType = spriteSet.isBackground() ? ST_BACKGROUND : ST_FOREGROUND;
+				}
+				break;
+			}
+		}
+
+		++_oldFrameEntry;
+	}
+
+	// Handle the display of any messages
+	for (uint idx = 0; idx < _messages.size(); ++idx) {
+		if (_messages[idx]._kernelMsgIndex >= 0) {
+			// Handle currently active message
+			if ((_currentFrame < _messages[idx]._startFrame) || (_currentFrame > _messages[idx]._endFrame)) {
+				scene._kernelMessages.remove(_messages[idx]._kernelMsgIndex);
+				_messages[idx]._kernelMsgIndex = -1;
+				--_messageCtr;
+			}
+		} else if ((_currentFrame >= _messages[idx]._startFrame) && (_currentFrame <= _messages[idx]._endFrame)) {
+			// Start displaying the message
+			AnimMessage &me = _messages[idx];
+
+			// The color index to use is dependant on how many messages are currently on-screen
+			uint8 colIndex;
+			switch (_messageCtr) {
+			case 1:
+				colIndex = 252;
+				break;
+			case 2:
+				colIndex = 16;
+				break;
+			default:
+				colIndex = 250;
+				break;
+			}
+
+			_vm->_palette->setEntry(colIndex, me._rgb1[0], me._rgb1[1], me._rgb1[2]);
+			_vm->_palette->setEntry(colIndex + 1, me._rgb2[0], me._rgb2[1], me._rgb2[2]);
+
+			// Add a kernel message to display the given text
+			me._kernelMsgIndex = scene._kernelMessages.add(me._pos, colIndex * 0x101 + 0x100, 
+				0, 0, INDEFINITE_TIMEOUT, me._msg);
+			assert(me._kernelMsgIndex >= 0);
+			++_messageCtr;
+		}
+	}
+
+	// Move to the next frame
+	_currentFrame++;
+	if (_currentFrame >= (int)_miscEntries.size()) {
+		// Animation is complete
+		if (_abortTimers != 0) {
+			_vm->_game->_abortTimers = _abortTimers;
+			_vm->_game->_abortTimersMode = _abortMode;
+
+			if (_abortMode != ABORTMODE_1) {
+				// Copy the noun list
+				scene._action._action = _actionNouns;
+			}
+		}
+	}
+
+	int frameNum = MIN(_currentFrame, (int)_miscEntries.size() - 1);
+	_nextFrameTimer = _vm->_events->_currentTimer + _miscEntries[frameNum]._numTicks;
+}
+
+void Animation::setCurrentFrame(int frameNumber) {
+	_currentFrame = frameNumber;
+	_oldFrameEntry = 0;
+	_freeFlag = false;
+
+	_nextScrollTimer = _nextFrameTimer = _vm->_events->_currentTimer;
 }
 
 } // End of namespace MADS

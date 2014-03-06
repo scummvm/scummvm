@@ -406,6 +406,73 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	}
 }
 
+void MSurface::scrollX(int xAmount) {
+	if (xAmount == 0)
+		return;
+
+	byte buffer[80];
+	int direction = (xAmount > 0) ? -1 : 1;
+	int xSize = ABS(xAmount);
+	assert(xSize <= 80);
+
+	byte *srcP = getBasePtr(0, 0);
+
+	for (int y = 0; y < this->h; ++y, srcP += pitch) {
+		if (direction < 0) {
+			// Copy area to be overwritten
+			Common::copy(srcP, srcP + xSize, &buffer[0]);
+			// Shift the remainder of the line over the given area
+			Common::copy(srcP + xSize, srcP + this->w, srcP);
+			// Move buffered area to the end of the line
+			Common::copy(&buffer[0], &buffer[xSize], srcP + this->w - xSize);
+		}
+		else {
+			// Copy area to be overwritten
+			Common::copy_backward(srcP + this->w - xSize, srcP + this->w, &buffer[80]);
+			// Shift the remainder of the line over the given area
+			Common::copy_backward(srcP, srcP + this->w - xSize, srcP + this->w);
+			// Move buffered area to the start of the line
+			Common::copy_backward(&buffer[80 - xSize], &buffer[80], srcP + xSize);
+		}
+	}
+}
+
+void MSurface::scrollY(int yAmount) {
+	if (yAmount == 0)
+		return;
+
+	int direction = (yAmount > 0) ? 1 : -1;
+	int ySize = ABS(yAmount);
+	assert(ySize < (this->h / 2));
+	assert(this->w == pitch);
+
+	int blockSize = ySize * this->w;
+	byte *tempData = new byte[blockSize];
+	byte *pixelsP = getBasePtr(0, 0);
+
+	if (direction > 0) {
+		// Buffer the lines to be overwritten
+		byte *srcP = (byte *)getBasePtr(0, this->h - ySize);
+		Common::copy(srcP, srcP + (pitch * ySize), tempData);
+		// Vertically shift all the lines
+		Common::copy_backward(pixelsP, pixelsP + (pitch * (this->h - ySize)),
+			pixelsP + (pitch * this->h));
+		// Transfer the buffered lines top the top of the screen
+		Common::copy(tempData, tempData + blockSize, pixelsP);
+	}
+	else {
+		// Buffer the lines to be overwritten
+		Common::copy(pixelsP, pixelsP + (pitch * ySize), tempData);
+		// Vertically shift all the lines
+		Common::copy(pixelsP + (pitch * ySize), pixelsP + (pitch * this->h), pixelsP);
+		// Transfer the buffered lines to the bottom of the screen
+		Common::copy(tempData, tempData + blockSize, pixelsP + (pitch * (this->h - ySize)));
+	}
+
+	delete[] tempData;
+}
+
+
 void MSurface::translate(Common::Array<RGB6> &palette) {
 	for (int y = 0; y < this->h; ++y) {
 		byte *pDest = getBasePtr(0, y);

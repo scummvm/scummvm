@@ -180,6 +180,15 @@ void Palette::setPalette(const byte *colors, uint start, uint num) {
 	reset();
 }
 
+void Palette::setEntry(byte palIndex, byte r, byte g, byte b) {
+	_mainPalette[palIndex * 3] = r;
+	_mainPalette[palIndex * 3 + 1] = g;
+	_mainPalette[palIndex * 3 + 2] = b;
+
+	setPalette((const byte *)&_mainPalette[palIndex * 3], palIndex, 1);
+}
+
+
 void Palette::grabPalette(byte *colors, uint start, uint num) {
 	g_system->getPaletteManager()->grabPalette(colors, start, num);
 	reset();

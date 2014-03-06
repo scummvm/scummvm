@@ -180,6 +180,18 @@ public:
 	}
 
 	/**
+	 * Scroll the screen horizontally by a given amount
+	 * @param xAmount	Horizontal amount
+	 */
+	void scrollX(int xAmount);
+
+	/**
+	 * Scroll the screen vertically by a given amount
+	 * @param yAmount	Vertical amount
+	 */
+	void scrollY(int yAmount);
+
+	/**
 	 * Translates the pixels of an image used the passed palette with RGB mapping
 	 */
 	void translate(Common::Array<RGB6> &palette);

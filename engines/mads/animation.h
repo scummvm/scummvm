@@ -90,7 +90,7 @@ public:
 	int _animMode;
 	int _roomNumber;
 	bool _manualFlag;
-	int _spriteListIndex;
+	int _spritesIndex;
 	Common::Point _scrollPosition;
 	uint32 _scrollTicks;
 	Common::String _interfaceFile;
@@ -104,28 +104,57 @@ public:
 	/**
 	 * Loads the data for a animation file header
 	 */
-	AAHeader(Common::SeekableReadStream *f);
+	void load(Common::SeekableReadStream *f);
 };
 
 class Animation {
 private:
 	MADSEngine *_vm;
 	Scene *_scene;
+	AAHeader _header;
 
-	void loadInterface(InterfaceSurface &interfaceSurface, MSurface &depthSurface,
-		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
-protected:
-	Animation(MADSEngine *vm, Scene *scene);
-public:
-	static Animation *init(MADSEngine *vm, Scene *scene);
-public:
 	Common::Array<int> _spriteListIndexes;
 	Common::Array<AnimMessage> _messages;
 	Common::Array<AnimFrameEntry> _frameEntries;
 	Common::Array<AnimMiscEntry> _miscEntries;
 	Common::Array<SpriteAsset *> _spriteSets;
 	Font *_font;
+
+	int _currentFrame, _oldFrameEntry;
 	bool _resetFlag;
+	bool _freeFlag;
+	bool _skipLoad;
+	int _unkIndex;
+	Common::Point _unkList[2];
+	uint32 _nextFrameTimer;
+	uint32 _nextScrollTimer;
+	int _messageCtr;
+	int _abortTimers;
+	AbortTimerMode _abortMode;
+	ActionDetails _actionNouns;
+
+	/**
+	 * Load data for a given frame
+	 * @param frameNumber	Frame number
+	 */
+	void loadFrame(int frameNumber);
+
+	bool drawFrame(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);
+
+	/**
+	 * Load the user interface display for an animation
+	 */
+	void loadInterface(InterfaceSurface &interfaceSurface, MSurface &depthSurface,
+		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
+
+	/**
+	 * Returns true if there is a scroll required
+	 */
+	bool hasScroll() const;
+protected:
+	Animation(MADSEngine *vm, Scene *scene);
+public:
+	static Animation *init(MADSEngine *vm, Scene *scene);
 public:
 	/*
 	 * Destructor
@@ -147,6 +176,13 @@ public:
 	 * Update the animation
 	 */
 	void update();
+
+	virtual void setCurrentFrame(int frameNumber);
+	virtual int getCurrentFrame() const { return _currentFrame; }
+
+	bool freeFlag() const { return _freeFlag; }
+	bool getAnimMode() const { return _header._animMode; }
+	int roomNumber() const { return _header._roomNumber; }
 };
 
 } // End of namespace MADS

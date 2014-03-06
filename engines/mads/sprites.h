@@ -139,6 +139,8 @@ public:
 	SpriteSlot(SpriteType type, int seqIndex);
 
 	void setup(int dirtyAreaIndex);
+	bool operator==(const SpriteSlotSubset &other) const;
+	void copy(const SpriteSlotSubset &other);
 };
 
 class SpriteSlots : public Common::Array<SpriteSlot> {

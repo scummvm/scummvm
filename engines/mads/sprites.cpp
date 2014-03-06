@@ -149,6 +149,20 @@ SpriteSlot::SpriteSlot(SpriteType type, int seqIndex) {
 	_scale = 0;
 }
 
+bool SpriteSlot::operator==(const SpriteSlotSubset &other) const {
+	return (_spritesIndex == other._spritesIndex) && (_frameNumber == other._frameNumber) &&
+		(_position == other._position) && (_depth == other._depth) && 
+		(_scale == other._scale);
+}
+
+void SpriteSlot::copy(const SpriteSlotSubset &other) {
+	_spritesIndex = other._spritesIndex;
+	_frameNumber = other._frameNumber;
+	_position = other._position;
+	_depth = other._depth;
+	_scale = other._scale;
+}
+
 /*------------------------------------------------------------------------*/
 
 SpriteSlots::SpriteSlots(MADSEngine *vm) : _vm(vm) {
