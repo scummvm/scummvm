@@ -626,10 +626,10 @@ void ThreadResource::parsePlayCommands() {
 				_vm->_voy->_computerTimeMin = READ_LE_UINT16(dataP + 4);
 				_vm->_voy->_computerTimeMax = READ_LE_UINT16(dataP + 6);
 
-				_vm->_voy->_rect4E4.left = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4];
-				_vm->_voy->_rect4E4.top = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4 + 1];
-				_vm->_voy->_rect4E4.right = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4 + 2];
-				_vm->_voy->_rect4E4.bottom = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4 + 3];
+				_vm->_voy->_computerButtonRect.left = COMPUTER_BUTTON_TABLE[_vm->_voy->_computerTextId * 4];
+				_vm->_voy->_computerButtonRect.top = COMPUTER_BUTTON_TABLE[_vm->_voy->_computerTextId * 4 + 1];
+				_vm->_voy->_computerButtonRect.right = COMPUTER_BUTTON_TABLE[_vm->_voy->_computerTextId * 4 + 2];
+				_vm->_voy->_computerButtonRect.bottom = COMPUTER_BUTTON_TABLE[_vm->_voy->_computerTextId * 4 + 3];
 			}
 
 			dataP += 8;
@@ -1152,7 +1152,7 @@ void ThreadResource::doRoom() {
 			pt += Common::Point(30, 15);
 
 			hotspotId = -1;
-			if (voy._computerTextId != -1 && voy._rect4E4.contains(pt))
+			if (voy._computerTextId != -1 && voy._computerButtonRect.contains(pt))
 				hotspotId = 999;
 
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {

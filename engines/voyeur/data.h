@@ -148,7 +148,7 @@ public:
 	HotspotTimes<3> _evidenceHotspotTimes;
 	HotspotTimes<8> _videoHotspotTimes;
 
-	Common::Rect _rect4E4;
+	Common::Rect _computerButtonRect;
 	RectResource *_viewBounds;
 	PictureResource *_evPicPtrs[6];
 	CMapResource *_evCmPtrs[6];
