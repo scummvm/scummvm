@@ -555,7 +555,18 @@ int sceneHandler18(ExCommand *cmd) {
 }
 
 void sceneHandler19_updateNumRides() {
-	warning("STUB: sceneHandler19_updateNumRides()");
+	int numRides = g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarAsInt(sO_DudeSwinged) + 1;
+
+	if (numRides > 1) {
+		g_fp->setObjectState(sO_Girl, g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
+
+		g_vars->scene18_var23 = 1;
+		g_vars->scene18_var25++;
+
+		numRides = 0;
+	}
+
+	g_fp->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->setSubVarAsInt(sO_DudeSwinged, numRides);
 }
 
 int sceneHandler19(ExCommand *cmd) {
