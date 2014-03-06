@@ -389,7 +389,19 @@ void sceneHandler18_clickBoard() {
 }
 
 void sceneHandler18and19_showManJump() {
-	warning("STUB: sceneHandler18and19_showManJump()");
+	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_fp->_aniMan->_flags &= 0xFFFB;
+	g_fp->_aniMan->_flags &= 0xFEFF;
+	g_vars->scene18_var07[g_vars->scene18_var27]->sflags = 0x20;
+
+	g_vars->scene18_var07[g_vars->scene18_var27]->ani->changeStatics2(ST_KSL_JUMPMAN);
+	g_vars->scene18_var07[g_vars->scene18_var27]->ani->startAnim(MV_KSL_INMAN, 0, -1);
+	g_vars->scene18_var07[g_vars->scene18_var27]->ani->_priority = 20;
+
+	g_vars->scene18_var28 = 0;
+	g_vars->scene18_var15 = 1;
+
+	g_fp->_aniMan2 = g_vars->scene18_var07[g_vars->scene18_var27]->ani;
 }
 
 void sceneHandler18_showManJumpTo() {
