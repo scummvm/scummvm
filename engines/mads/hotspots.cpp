@@ -122,7 +122,21 @@ void DynamicHotspots::reset() {
 }
 
 void DynamicHotspots::refresh() {
-	error("DynamicHotspots::refresh");
+	for (uint i = 0; i < _entries.size(); ++i) {
+		DynamicHotspot &dh = (*this)[i];
+
+		if ((*this)[i]._active) {
+			switch (_vm->_game->_scene._screenObjects._v832EC) {
+			case 0:
+			case 2:
+				_vm->_game->_scene._screenObjects.add(dh._bounds, CAT_12, dh._descId);
+				_vm->_game->_scene._screenObjects._v8333C = true;
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
 
 } // End of namespace MADS
