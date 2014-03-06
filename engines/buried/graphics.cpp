@@ -461,9 +461,9 @@ bool GraphicsManager::checkPointAgainstMaskedBitmap(const Graphics::Surface *bit
 		uint32 color;
 
 		if (bitmap->format.bytesPerPixel == 2)
-			color = *((uint16 *)bitmap->getBasePtr(point.x - x, point.y - y));
+			color = *((const uint16 *)bitmap->getBasePtr(point.x - x, point.y - y));
 		else
-			color = *((uint32 *)bitmap->getBasePtr(point.x - x, point.y - y));
+			color = *((const uint32 *)bitmap->getBasePtr(point.x - x, point.y - y));
 
 		return transColor != color;
 	} else {
@@ -568,7 +568,7 @@ Graphics::Surface *GraphicsManager::remapPalettedFrame(const Graphics::Surface *
 
 	for (int y = 0; y < frame->h; y++)
 		for (int x = 0; x < frame->w; x++)
-			*((byte *)convertedSurface->getBasePtr(x, y)) = palMap[*((byte *)frame->getBasePtr(x, y))];
+			*((byte *)convertedSurface->getBasePtr(x, y)) = palMap[*((const byte *)frame->getBasePtr(x, y))];
 
 	return convertedSurface;
 }

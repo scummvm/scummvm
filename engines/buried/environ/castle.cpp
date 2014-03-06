@@ -74,10 +74,8 @@ int TopOfTowerGuardEncounter::paint(Window *viewWindow, Graphics::Surface *preBu
 
 	const Graphics::Surface *newFrame = ((SceneViewWindow *)viewWindow)->getStillFrame(_staticData.miscFrameIndex);
 
-	if (newFrame) {
-		Common::Rect absoluteRect = viewWindow->getAbsoluteRect();
+	if (newFrame)
 		_vm->_gfx->crossBlit(preBuffer, 0, 0, 432, 189, newFrame, 0, 0);
-	}
 
 	return SC_REPAINT;
 }
