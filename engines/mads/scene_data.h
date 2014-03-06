@@ -113,57 +113,6 @@ public:
 	void check(bool scanFlag);
 };
 
-class DynamicHotspot {
-public:
-	bool _active;
-	int _seqIndex;
-	Common::Rect _bounds;
-	Common::Point _feetPos;
-	int _facing;
-	int _descId;
-	int _field14;
-	int _articleNumber;
-	CursorType _cursor;
-
-	DynamicHotspot();
-};
-
-#define DYNAMIC_HOTSPOTS_SIZE 8
-
-class DynamicHotspots {
-private:
-	MADSEngine *_vm;
-	Common::Array<DynamicHotspot> _entries;
-	int _count;
-public:
-	bool _changed;
-public:
-	DynamicHotspots(MADSEngine *vm);
-
-	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
-	int add(int descId, int field14, int seqIndex, const Common::Rect &bounds);
-	int setPosition(int index, int xp, int yp, int facing);
-	int setCursor(int index, CursorType cursor);
-	void remove(int index);
-	void clear();
-	void reset();
-	void refresh();
-};
-
-class Hotspot {
-public:
-	Common::Rect _bounds;
-	Common::Point _feetPos;
-	int _facing;
-	int _articleNumber;
-	CursorType _cursor;
-	int _vocabId;
-	int _verbId;
-
-	Hotspot();
-	Hotspot(Common::SeekableReadStream &f);
-};
-
 class DirtyArea {
 private:
 	static MADSEngine *_vm;

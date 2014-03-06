@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "mads/assets.h"
+#include "mads/hotspots.h"
 #include "mads/messages.h"
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
