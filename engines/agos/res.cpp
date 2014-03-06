@@ -802,7 +802,6 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 		}
 	} else {
 		offs = _gameOffsetsPtr[id];
-
 		size = _gameOffsetsPtr[id + 1] - offs;
 		readGameFile(_vgaBufferPointers[11].vgaFile2, offs, size);
 	}
@@ -911,8 +910,16 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 	} else {
 		id = id * 2 + (type - 1);
 		offs = _gameOffsetsPtr[id];
-
 		dstSize = _gameOffsetsPtr[id + 1] - offs;
+
+		if (!dstSize) {
+			if (useError)
+				error("loadVGAVideoFile: Can't load id %d type %d", id, type);
+
+			_block = _blockEnd = NULL;
+			return;
+		}
+
 		dst = allocBlock(dstSize + extraBuffer);
 		readGameFile(dst, offs, dstSize);
 	}
