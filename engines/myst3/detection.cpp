@@ -235,6 +235,11 @@ public:
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
 		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
 
+		if (saveInfos.getDescription().empty()) {
+			// Unused slot
+			return SaveStateDescriptor();
+		}
+
 		// Open save
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(saveInfos.getDescription());
 
