@@ -46,6 +46,14 @@ Script::Script(Myst3Engine *vm):
 #define OP_4(op, x, type1, type2, type3, type4) _commands.push_back(Command(op, &Script::x, #x, 4, type1, type2, type3, type4))
 #define OP_5(op, x, type1, type2, type3, type4, type5) _commands.push_back(Command(op, &Script::x, #x, 5, type1, type2, type3, type4, type5))
 
+	// TODO: Implement these remaining opcodes
+	// 5: I'm pretty sure it's useless
+	// 144: drawTransition
+	// 213: soundPlayEffectFadeArray
+	// 214, 215, 216, 217: setupRandomSound
+	// 236: setupSoundForMovie
+	// 247: quit
+
 	OP_0(  0, badOpcode																					);
 	OP_1(  4, nodeCubeInit, 				kEvalValue													);
 	OP_5(  6, nodeCubeInitIndex, 			kVar, 		kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue	);
@@ -201,6 +209,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1(164, changeNode,					kValue														);
 	OP_2(165, changeNodeRoom,				kValue,		kValue											);
 	OP_3(166, changeNodeRoomAge,			kValue,		kValue,		kValue								);
+	OP_0(168, uselessOpcode																				);
 	OP_1(169, drawXFrames,					kValue														);
 	OP_1(171, drawWhileCond,				kCondition													);
 	OP_1(172, whileStart,					kCondition													);
@@ -367,6 +376,16 @@ void Script::badOpcode(Context &c, const Opcode &cmd) {
 
 	error("Trying to run invalid opcode %d", cmd.op);
 }
+
+void Script::uselessOpcode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Useless opcode", cmd.op);
+
+	// List of useless opcodes
+
+	// 167 and 168 form a pair. 168 resets what 167 sets up.
+	// Since 167 is never used, 168 is marked as useless.
+}
+
 
 void Script::nodeCubeInit(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Node cube init %d", cmd.op, cmd.args[0]);

@@ -96,6 +96,7 @@ private:
 	void runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames);
 
 	DECLARE_OPCODE(badOpcode);
+	DECLARE_OPCODE(uselessOpcode);
 
 	DECLARE_OPCODE(nodeCubeInit);
 	DECLARE_OPCODE(nodeCubeInitIndex);
