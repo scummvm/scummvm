@@ -268,6 +268,7 @@ void RlfAnimation::applyFrameToCurrent(const RlfAnimation::Frame &frame) {
 void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const {
 	uint32 sourceOffset = 0;
 	uint32 destOffset = 0;
+	int16 numberOfCopy = 0;
 
 	while (sourceOffset < sourceSize) {
 		int8 numberOfSamples = source[sourceOffset];
@@ -276,9 +277,9 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 		// If numberOfSamples is negative, the next abs(numberOfSamples) samples should
 		// be copied directly from source to dest
 		if (numberOfSamples < 0) {
-			numberOfSamples = ABS(numberOfSamples);
+			numberOfCopy = -numberOfSamples;
 
-			while (numberOfSamples > 0) {
+			while (numberOfCopy > 0) {
 				if (sourceOffset + 1 >= sourceSize) {
 					return;
 				} else if (destOffset + 1 >= destSize) {
@@ -293,7 +294,7 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 
 				sourceOffset += 2;
 				destOffset += 2;
-				numberOfSamples--;
+				numberOfCopy--;
 			}
 
 			// If numberOfSamples is >= 0, move destOffset forward ((numberOfSamples * 2) + 2)
@@ -314,6 +315,7 @@ void RlfAnimation::decodeMaskedRunLengthEncoding(int8 *source, int8 *dest, uint3
 void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint32 sourceSize, uint32 destSize) const {
 	uint32 sourceOffset = 0;
 	uint32 destOffset = 0;
+	int16 numberOfCopy = 0;
 
 	while (sourceOffset < sourceSize) {
 		int8 numberOfSamples = source[sourceOffset];
@@ -322,9 +324,9 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 		// If numberOfSamples is negative, the next abs(numberOfSamples) samples should
 		// be copied directly from source to dest
 		if (numberOfSamples < 0) {
-			numberOfSamples = ABS(numberOfSamples);
+			numberOfCopy = -numberOfSamples;
 
-			while (numberOfSamples > 0) {
+			while (numberOfCopy > 0) {
 				if (sourceOffset + 1 >= sourceSize) {
 					return;
 				} else if (destOffset + 1 >= destSize) {
@@ -339,7 +341,7 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 
 				sourceOffset += 2;
 				destOffset += 2;
-				numberOfSamples--;
+				numberOfCopy--;
 			}
 
 			// If numberOfSamples is >= 0, copy one sample from source to the
@@ -354,8 +356,8 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 			uint16 sampleColor = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 			sourceOffset += 2;
 
-			numberOfSamples += 2;
-			while (numberOfSamples > 0) {
+			numberOfCopy = numberOfSamples + 2;
+			while (numberOfCopy > 0) {
 				if (destOffset + 1 >= destSize) {
 					debug(2, "Frame decoding overflow\n\tsourceOffset=%u\tsourceSize=%u\n\tdestOffset=%u\tdestSize=%u", sourceOffset, sourceSize, destOffset, destSize);
 					return;
@@ -363,7 +365,7 @@ void RlfAnimation::decodeSimpleRunLengthEncoding(int8 *source, int8 *dest, uint3
 
 				WRITE_UINT16(dest + destOffset, sampleColor);
 				destOffset += 2;
-				numberOfSamples--;
+				numberOfCopy--;
 			}
 		}
 	}
