@@ -592,7 +592,7 @@ int KitchenUnitShopNet::gdiPaint(Window *viewWindow) {
 
 	if (!text.empty()) {
 		rect.translate(64, 128);
-		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), rect.height(), textColor, _lineHeight, kTextAlignLeft, true);
+		_vm->_gfx->renderText(_vm->_gfx->getScreen(), _textFont, text, rect.left, rect.top, rect.width(), rect.height(), textColor, _lineHeight, kTextAlignLeft, vtCenter);
 	}
 
 	return SC_FALSE;
@@ -699,19 +699,6 @@ int KitchenUnitPostBox::mouseUp(Window *viewWindow, const Common::Point &pointLo
 		newScene.transitionType = TRANSITION_VIDEO;
 		newScene.transitionStartFrame = -1;
 		newScene.transitionLength = -1;
-
-		int item;
-		switch (_selectedPackage) {
-		case 0:
-			item = ((SceneViewWindow *)viewWindow)->getGlobalFlags().faKIPostBoxSlotA;
-			break;
-		case 1:
-			item = ((SceneViewWindow *)viewWindow)->getGlobalFlags().faKIPostBoxSlotB;
-			break;
-		case 2:
-			item = ((SceneViewWindow *)viewWindow)->getGlobalFlags().faKIPostBoxSlotC;
-			break;
-		}
 
 		switch (((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, faKIPostBoxSlotA) + _selectedPackage)) {
 		case 2:
