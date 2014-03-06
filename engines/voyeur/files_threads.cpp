@@ -622,7 +622,7 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
-				_vm->_voy->_computerTextId = READ_LE_UINT16(dataP + 2);
+				_vm->_voy->_computerTextId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy->_computerTimeMin = READ_LE_UINT16(dataP + 4);
 				_vm->_voy->_computerTimeMax = READ_LE_UINT16(dataP + 6);
 
