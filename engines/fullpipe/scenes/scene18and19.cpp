@@ -424,6 +424,13 @@ void sceneHandler18and19_showBoyJump() {
 	warning("STUB: sceneHandler18and19_showBoyJump()");
 }
 
+void sceneHandler18and19_boyJumpTo() {
+	g_vars->scene18_boy->stopAnim_maybe();
+	g_vars->scene18_boy->show1(g_vars->scene18_var29, g_vars->scene18_var30, MV_BOY18_JUMPTO, 0);
+	g_vars->scene18_boy->_priority = 50;
+	g_vars->scene18_boy->startAnim(MV_BOY18_JUMPTO, 0, -1);
+}
+
 void sceneHandler18and19_drawRiders() {
 	warning("STUB: sceneHandler18and19_drawRiders()");
 }
