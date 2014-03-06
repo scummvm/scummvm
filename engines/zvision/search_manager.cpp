@@ -211,7 +211,7 @@ void sManager::loadZix(const Common::String &name) {
 		uint dr = 0;
 		char buf[32];
 		if (sscanf(line.c_str(), "%u %s", &dr, buf) == 2) {
-			if (dr < archives.size() && dr > 0) {
+			if (dr <= archives.size() && dr > 0) {
 				addFile(Common::String(buf), archives[dr - 1]);
 			}
 		}
