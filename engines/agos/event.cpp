@@ -468,6 +468,14 @@ void AGOSEngine::delay(uint amount) {
 					sprintf(_saveLoadName, "Quick %d", _saveLoadSlot);
 					_saveLoadType = (event.kbd.hasFlags(Common::KBD_ALT)) ? 1 : 2;
 					quickLoadOrSave();
+				} else if (event.kbd.hasFlags(Common::KBD_ALT)) {
+					if (event.kbd.keycode == Common::KEYCODE_u) {
+						dumpAllSubroutines();
+					} else if (event.kbd.keycode == Common::KEYCODE_i) {
+						dumpAllVgaImageFiles();
+					} else if (event.kbd.keycode == Common::KEYCODE_v) {
+						dumpAllVgaScriptFiles();
+					}
 				} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 					if (event.kbd.keycode == Common::KEYCODE_a) {
 						GUI::Dialog *_aboutDialog;
@@ -477,10 +485,6 @@ void AGOSEngine::delay(uint amount) {
 						_fastMode = !_fastMode;
 					} else if (event.kbd.keycode == Common::KEYCODE_d) {
 						_debugger->attach();
-					} else if (event.kbd.keycode == Common::KEYCODE_s) {
-						dumpAllSubroutines();
-					} else if (event.kbd.keycode == Common::KEYCODE_i) {
-						dumpAllVgaImageFiles();
 					}
 				}
 
