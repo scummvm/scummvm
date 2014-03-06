@@ -210,6 +210,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 		3
 	},
 
+	{
+		{
+			"amber",
+			"",
+			AD_ENTRY1("amber_jb.exe", "1a7acbba10a7246ba58c1d53fc7203f5"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		5
+	},
+
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
 };
 

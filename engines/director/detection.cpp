@@ -72,6 +72,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jman",       "The Journeyman Project" },
 	{ "majestic",   "Majestic Part I: Alien Encounter" },
 	{ "spyclub",    "Spy Club" },
+	{ "amber",      "AMBER: Journeys Beyond"},
 	{ 0, 0 }
 };
 
