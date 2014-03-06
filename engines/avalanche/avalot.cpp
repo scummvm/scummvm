@@ -211,7 +211,9 @@ void AvalancheEngine::setup() {
 		loadGame(loadSlot);
 	} else {
 		_mainmenu->run();
-
+		if (_letMeOut)
+			return;
+		
 		newGame();
 
 		thinkAbout(kObjectMoney, kThing);
@@ -223,7 +225,7 @@ void AvalancheEngine::setup() {
 void AvalancheEngine::runAvalot() {
 	setup();
 
-	do {
+	while (!_letMeOut && !shouldQuit()) {
 		uint32 beginLoop = _system->getMillis();
 
 		updateEvents(); // The event handler.
@@ -241,7 +243,7 @@ void AvalancheEngine::runAvalot() {
 		uint32 delay = _system->getMillis() - beginLoop;
 		if (delay <= 55)
 			_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
-	} while (!_letMeOut && !shouldQuit());
+	};
 
 	warning("STUB: run()");
 

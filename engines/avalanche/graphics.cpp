@@ -801,8 +801,11 @@ void GraphicManager::menuInitialize() {
 	_menu.create(kScreenWidth, kMenuScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
-void GraphicManager::menuClear() {
+void GraphicManager::menuFree() {
 	_menu.free();
+}
+
+void GraphicManager::menuRestoreScreen() {
 	initGraphics(kScreenWidth, 2 * kScreenHeight, true);
 }
 
@@ -865,6 +868,13 @@ void GraphicManager::menuLoadPictures() {
 
 void GraphicManager::menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, Color color) {
 	drawBigText(_menu, text, font, 14, x, y, color);
+}
+
+void GraphicManager::menuDrawIndicator(int x) { // TODO: Implement striped pattern for the indicator.
+	if (x > 0)
+		_menu.fillRect(Common::Rect(x - 1, 330, x, 337), kColorBlack);
+	_menu.fillRect(Common::Rect(x, 330, x + 1, 337), kColorWhite);
+	menuRefreshScreen();
 }
 
 /**

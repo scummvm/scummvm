@@ -37,6 +37,7 @@ MainMenu::MainMenu(AvalancheEngine *vm) {
 }
 
 void MainMenu::run() {
+	CursorMan.showMouse(false);
 	_vm->_graphics->menuInitialize();
 	_vm->_graphics->menuLoadPictures();
 	loadRegiInfo();
@@ -54,7 +55,6 @@ void MainMenu::run() {
 	_vm->_graphics->menuRefreshScreen();
 
 	wait();
-	_vm->_graphics->menuClear();
 }
 
 void MainMenu::loadFont() {
@@ -81,7 +81,36 @@ void MainMenu::centre(int16 y, Common::String text) {
 }
 
 void MainMenu::wait() {
-	warning("STUB: MainMenu::wait()");
+	int x = 0;
+	while (!_vm->shouldQuit()) {
+		_vm->_graphics->menuDrawIndicator(x);
+		_vm->_system->delayMillis(40);
+		x++;
+		if (x == 641)
+			x = 0;
+		Common::Event event;
+		_vm->getEvent(event);
+		if (event.type == Common::EVENT_KEYDOWN) {
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_SPACE:
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_1: // Falltroughs are inteded.
+				// Play the game
+				_vm->_graphics->menuFree();
+				_vm->_graphics->menuRestoreScreen();
+				CursorMan.showMouse(true);
+				return;
+			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_6: // Falltroughs are inteded.
+				// Exit back to DOS
+				_vm->_letMeOut = true;
+				_vm->_graphics->menuFree();
+				return;
+			default:
+				break;
+			}
+		}
+	}
 }
 
 } // End of namespace Avalanche

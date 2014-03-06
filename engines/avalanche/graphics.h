@@ -122,9 +122,11 @@ public:
 	// so it needs it's own graphic functions on that matter.
 	void menuRefreshScreen();
 	void menuInitialize();
-	void menuClear();
+	void menuFree();
+	void menuRestoreScreen();
 	void menuLoadPictures();
 	void menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, Color color);
+	void menuDrawIndicator(int x);
 
 	void clearAlso();
 	void clearTextBar();
