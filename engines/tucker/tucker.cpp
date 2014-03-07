@@ -1831,14 +1831,16 @@ void TuckerEngine::rememberSpeechSound() {
 }
 
 void TuckerEngine::redrawPanelItems() {
-	const uint8 *src = 0;
-	uint8 *dst = 0;
-	int sz = 0;
 	if (_forceRedrawPanelItems || (_redrawPanelItemsCounter != 0 && _panelState == 0)) {
 		_forceRedrawPanelItems = false;
 		if (_redrawPanelItemsCounter > 0) {
 			--_redrawPanelItemsCounter;
 		}
+
+		const uint8 *src = 0;
+		uint8 *dst = 0;
+		int sz = 0;
+
 		switch (_panelState) {
 		case 0:
 			src = _panelGfxBuf;

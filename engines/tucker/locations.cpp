@@ -2354,7 +2354,6 @@ void TuckerEngine::execData3PreUpdate_locationNum53() {
 }
 
 void TuckerEngine::updateSprite_locationNum54(int i) {
-	int state = 3;
 	if (_flagsTable[141] == 2) {
 		_spritesTable[i].needUpdate = 0;
 		setCharacterAnimation(0, i);
@@ -2367,6 +2366,7 @@ void TuckerEngine::updateSprite_locationNum54(int i) {
 		setCharacterAnimation(2, i);
 		_flagsTable[141] = 3;
 	} else {
+		int state = 3;
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 			_spritesTable[i].needUpdate = 2;
 			state = (getRandomNumber() < 12000) ? 2 : 4;
