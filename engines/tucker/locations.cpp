@@ -2371,7 +2371,6 @@ void TuckerEngine::updateSprite_locationNum54(int i) {
 			_spritesTable[i].needUpdate = 2;
 			state = (getRandomNumber() < 12000) ? 2 : 4;
 		} else if (_flagsTable[141] == 3) {
-			state = 3;
 			_flagsTable[141] = 0;
 			_flagsTable[224] = 1;
 			_spritesTable[i].counter = 0;
@@ -2380,11 +2379,9 @@ void TuckerEngine::updateSprite_locationNum54(int i) {
 				_csDataLoaded = false;
 			}
 		} else if (getRandomNumber() < 26000) {
-			state = 3;
 			_spritesTable[i].needUpdate = 0;
 			_spritesTable[i].updateDelay = 5;
 		} else {
-			state = 3;
 			_spritesTable[i].needUpdate = 0;
 		}
 		if (_inventoryItemsState[17] == 1) {
