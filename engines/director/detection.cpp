@@ -74,6 +74,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "spyclub",    "Spy Club" },
 	{ "amber",      "AMBER: Journeys Beyond"},
 	{ "vvvampire",  "Victor Vector & Yondo: The Vampire's Coffin"},
+	{ "vvdinosaur",  "Victor Vector & Yondo: The Last Dinosaur Egg"},
 	{ 0, 0 }
 };
 

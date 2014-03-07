@@ -252,6 +252,34 @@ static const DirectorGameDescription gameDescriptions[] = {
 		3
 	},
 
+	{
+		{
+			"vvdinosaur",
+			"",
+			AD_ENTRY1("DINOSAUR.EXE", "4e6303630f4dd588e730d09241cf7e76"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
+	{
+		{
+			"vvdinosaur",
+			"",
+			AD_ENTRY1("Start Game", "d41d8cd98f00b204e9800998ecf8427e"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
 };
 
