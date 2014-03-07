@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "mads/game.h"
 #include "mads/scene.h"
+#include "mads/nebular/globals_nebular.h"
 
 namespace MADS {
 
@@ -86,6 +87,19 @@ enum Noun {
 class SceneFactory {
 public:
 	static SceneLogic *createScene(MADSEngine *vm);
+};
+
+/**
+ * Specialized base class for Rex Nebular game scenes
+ */
+class NebularScene : public SceneLogic {
+protected:
+	Globals &_globals;
+public:
+	/**
+	 * Constructor
+	 */
+	NebularScene(MADSEngine *vm);
 };
 
 } // End of namespace Nebular

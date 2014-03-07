@@ -37,7 +37,6 @@ KernelMessages::KernelMessages(MADSEngine *vm): _vm(vm) {
 		_entries.push_back(rec);
 	}
 
-	scene._textSpacing = -1;
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
 	word_8469E = 0;
 }

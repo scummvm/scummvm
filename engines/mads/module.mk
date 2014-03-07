@@ -3,6 +3,7 @@ MODULE := engines/mads
 MODULE_OBJS := \
 	nebular/dialogs_nebular.o \
 	nebular/game_nebular.o \
+	nebular/globals_nebular.o \
 	nebular/sound_nebular.o \
 	nebular/nebular_scenes.o \
 	nebular/nebular_scenes8.o \

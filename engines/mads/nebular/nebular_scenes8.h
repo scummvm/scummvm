@@ -26,12 +26,13 @@
 #include "common/scummsys.h"
 #include "mads/game.h"
 #include "mads/scene.h"
+#include "mads/nebular/nebular_scenes.h"
 
 namespace MADS {
 
 namespace Nebular {
 
-class Scene8xx : public SceneLogic {
+class Scene8xx : public NebularScene {
 protected:
 	/**
 	 * Initial setup code shared by several scenes
@@ -42,8 +43,13 @@ protected:
 	* Initial setup code shared by several scenes
 	*/
 	void setup2();
+
+	/**
+	 * Common scene enter code used by multiple scenes
+	 */
+	void enter1();
 public:
-	Scene8xx(MADSEngine *vm) : SceneLogic(vm) {}
+	Scene8xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
 class Scene804: public Scene8xx {

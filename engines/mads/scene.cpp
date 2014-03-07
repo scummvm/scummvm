@@ -28,9 +28,10 @@
 
 namespace MADS {
 
-Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm),
-		_dirtyAreas(_vm), _dynamicHotspots(vm), _interface(vm), _kernelMessages(vm), 
-		_screenObjects(vm), _sequences(vm), _textDisplay(vm) {
+Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _dirtyAreas(_vm), 
+		_dynamicHotspots(vm), _interface(vm), _kernelMessages(vm), 
+		_screenObjects(vm), _sequences(vm), _spriteSlots(vm), 
+		_textDisplay(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
@@ -47,6 +48,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _spriteSlots(vm), _action(_vm),
 	_freeAnimationFlag = false;
 	_animation = nullptr;
 	_activeAnimation = nullptr;
+	_textSpacing = -1;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
@@ -424,7 +426,6 @@ void Scene::doFrame() {
 
 void Scene::drawElements(bool transitionFlag, bool surfaceFlag) {
 	// Draw any sprites
-	_dirtyAreas.clear();
 	_spriteSlots.drawBackground();
 
 	// Process dirty areas

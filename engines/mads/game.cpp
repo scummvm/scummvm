@@ -66,14 +66,14 @@ Game::~Game() {
 }
 
 void Game::run() {
+	initialiseGlobals();
+
 	_statusFlag = true;
 	int protectionResult = checkCopyProtection();
 	switch (protectionResult) {
 	case 1:
 		// Copy protection failed
 		_scene._nextSceneId = 804;
-		initialiseGlobals();
-		_globalFlags[5] = 0xFFFF;
 		_saveSlot = -1;
 		break;
 	case 2:
@@ -253,11 +253,7 @@ void Game::sectionLoop() {
 		// TODO: sub_1DD46(3)
 
 		// Check whether to show a dialog
-		if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globalFlags[5]) {
-			_scene._spriteSlots.releasePlayerSprites();
-			_vm->_dialogs->showDialog();
-			_vm->_dialogs->_pendingDialog = DIALOG_NONE;
-		}
+		checkShowDialog();
 	}
 }
 

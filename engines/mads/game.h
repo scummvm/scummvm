@@ -97,6 +97,12 @@ protected:
 	 * Set up the section handler specific to each section
 	 */
 	virtual void setSectionHandler() = 0;
+
+	/**
+	 * Checks for whether to show a dialog
+	 */
+	virtual void checkShowDialog() = 0;
+
 	//@}
 
 public:
@@ -106,7 +112,6 @@ public:
 	int _sectionNumber;
 	int _priorSectionNumber;
 	int _currentSectionNumber;
-	Common::Array<uint16> _globalFlags;
 	InventoryObjects _objects;
 	Scene _scene;
 	int _v2;

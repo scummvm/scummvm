@@ -46,6 +46,9 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	return new Scene804(vm);
 }
 
+NebularScene::NebularScene(MADSEngine *vm) : SceneLogic(vm) {
+}
+
 } // End of namespace Nebular
 
 } // End of namespace MADS

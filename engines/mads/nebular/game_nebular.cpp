@@ -28,6 +28,7 @@
 #include "mads/msurface.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/dialogs_nebular.h"
+#include "mads/nebular/globals_nebular.h"
 
 namespace MADS {
 
@@ -38,6 +39,9 @@ GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
 }
 
 int GameNebular::checkCopyProtection() {
+	// DEBUG: Flag copy protection failure
+	_globals[5] = 0xFFFF;
+	
 	if (!ConfMan.getBool("copy_protection"))
 		return true;
 
@@ -52,32 +56,27 @@ int GameNebular::checkCopyProtection() {
 }
 
 void GameNebular::initialiseGlobals() {
-	// Allocate globals space
-	_globalFlags.resize(210);
-	for (int i = 0; i < 210; ++i)
-		_globalFlags[i] = 0;
-
 	// Set specific values needed by the game
-	_globalFlags[4] = 8;
-	_globalFlags[33] = 1;
-	_globalFlags[10] = 0xFFFF;
-	_globalFlags[13] = 0xFFFF;
-	_globalFlags[15] = 0xFFFF;
-	_globalFlags[19] = 0xFFFF;
-	_globalFlags[20] = 0xFFFF;
-	_globalFlags[21] = 0xFFFF;
-	_globalFlags[95] = 0xFFFF;
+	_globals[4] = 8;
+	_globals[33] = 1;
+	_globals[10] = 0xFFFF;
+	_globals[13] = 0xFFFF;
+	_globals[15] = 0xFFFF;
+	_globals[19] = 0xFFFF;
+	_globals[20] = 0xFFFF;
+	_globals[21] = 0xFFFF;
+	_globals[95] = 0xFFFF;
 
 	_objects.setData(3, 17, nullptr);
 
 	// Put the values 0 through 3 in a random order in global slots 83 to 86
 	for (int i = 0; i < 4;) {
 		int randomVal = _vm->getRandomNumber(3);
-		_globalFlags[83 + i] = randomVal;
+		_globals[83 + i] = randomVal;
 
 		bool flag = false;
 		for (int idx2 = 0; idx2 < i; ++idx2) {
-			if (_globalFlags[83 + idx2] == randomVal)
+			if (_globals[83 + idx2] == randomVal)
 				flag = true;
 		}
 
@@ -88,11 +87,11 @@ void GameNebular::initialiseGlobals() {
 	// Put the values 0 through 3 in a random order in global slots 87 to 90
 	for (int i = 0; i < 4;) {
 		int randomVal = _vm->getRandomNumber(3);
-		_globalFlags[87 + i] = randomVal;
+		_globals[87 + i] = randomVal;
 
 		bool flag = false;
 		for (int idx2 = 0; idx2 < i; ++idx2) {
-			if (_globalFlags[87 + idx2] == randomVal)
+			if (_globals[87 + idx2] == randomVal)
 				flag = true;
 		}
 
@@ -100,20 +99,20 @@ void GameNebular::initialiseGlobals() {
 			++i;
 	}
 
-	_globalFlags[120] = 501;
-	_globalFlags[121] = 0xFFFF;
-	_globalFlags[55] = 0xFFFF;
-	_globalFlags[119] = 1;
-	_globalFlags[134] = 4;
+	_globals[120] = 501;
+	_globals[121] = 0xFFFF;
+	_globals[55] = 0xFFFF;
+	_globals[119] = 1;
+	_globals[134] = 4;
 
 	// Fill out the globals 200 to 209 with unique random values less than 10000
 	for (int i = 0; i < 10; ++i) {
 		int randomVal = _vm->getRandomNumber(9999);
-		_globalFlags[200 + i] = randomVal;
+		_globals[200 + i] = randomVal;
 
 		bool flag = false;
 		for (int idx2 = 0; idx2 < i; ++idx2) {
-			if (_globalFlags[200 + idx2] == randomVal)
+			if (_globals[200 + idx2] == randomVal)
 				flag = true;
 		}
 
@@ -124,20 +123,20 @@ void GameNebular::initialiseGlobals() {
 	// Difficulty level control
 	switch (_difficultyLevel) {
 	case DIFFICULTY_HARD:
-		_globalFlags[35] = 0;
+		_globals[35] = 0;
 		_objects.setRoom(9, 1);
 		_objects.setRoom(50, 1);
-		_globalFlags[137] = 5;
-		_globalFlags[136] = 0;
+		_globals[137] = 5;
+		_globals[136] = 0;
 		break;
 	case DIFFICULTY_MEDIUM:
-		_globalFlags[35] = 0;
+		_globals[35] = 0;
 		_objects.setRoom(8, 1);
-		_globalFlags[137] = 0xFFFF;
-		_globalFlags[136] = 6;
+		_globals[137] = 0xFFFF;
+		_globals[136] = 6;
 		break;
 	case DIFFICULTY_EASY:
-		_globalFlags[35] = 2;
+		_globals[35] = 2;
 		_objects.setRoom(8, 1);
 		_objects.setRoom(27, 1);
 		break;
@@ -182,6 +181,14 @@ void GameNebular::setSectionHandler() {
 		break;
 	default:
 		break;
+	}
+}
+
+void GameNebular::checkShowDialog() {
+	if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globals[5]) {
+		_scene._spriteSlots.releasePlayerSprites();
+		_vm->_dialogs->showDialog();
+		_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 	}
 }
 

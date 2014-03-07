@@ -105,6 +105,7 @@ public:
 	bool _invObjectStill;
 	bool _textWindowStill;
 	ScreenFade _screenFade;
+	bool _musicFlag;
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	virtual ~MADSEngine();

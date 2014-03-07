@@ -32,13 +32,12 @@ namespace Nebular {
 
 void Scene8xx::setup1() {
 	_vm->_sound->command(5);
-	if ((_vm->_game->_globalFlags[178] && !_vm->_game->_globalFlags[179]) ||
+	if ((_globals[178] && !_globals[179]) ||
 			_scene->_nextSceneId == 804 || _scene->_nextSceneId == 805 ||
 			_scene->_nextSceneId == 808 || _scene->_nextSceneId == 810) {
 		_vm->_game->_player._spritesPrefix = "";
 	} else {
-		_vm->_game->_player._spritesPrefix = _vm->_game->_globalFlags[0] 
-			== SEX_FEMALE ? "ROX" : "RXM";
+		_vm->_game->_player._spritesPrefix = _globals[0] == SEX_FEMALE ? "ROX" : "RXM";
 	}
 
 	_vm->_palette->setEntry(16, 0x0A, 0x3F, 0x3F);
@@ -47,6 +46,30 @@ void Scene8xx::setup1() {
 
 void Scene8xx::setup2() {
 	_vm->_game->_aaName = Resources::formatAAName(5);
+}
+
+void Scene8xx::enter1() {
+	if (_vm->_musicFlag) {
+		switch (_scene->_nextSceneId) {
+		case 801:
+		case 802:
+		case 803:
+		case 804:
+		case 806:
+		case 807:
+		case 808:
+			_vm->_sound->command(20);
+			break;
+		case 805:
+			_vm->_sound->command(23);
+			break;
+		case 810:
+			_vm->_sound->command(10);
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/
