@@ -409,7 +409,15 @@ void sceneHandler18_showManJumpTo() {
 }
 
 void sceneHandler18and19_showGirlJumpTo() {
-	warning("STUB: sceneHandler18and19_showGirlJumpTo()");
+	g_vars->scene18_girl->stopAnim_maybe();
+	g_vars->scene18_girl->hide();
+	g_vars->scene18_var07[g_vars->scene18_var33]->sflags = 4;
+
+	g_vars->scene18_var07[g_vars->scene18_var33]->ani->changeStatics2(ST_KSL_JUMPGIRL);
+	g_vars->scene18_var07[g_vars->scene18_var33]->ani->startAnim(MV_KSL_INGIRL, 0, -1);
+
+	g_vars->scene18_var23--;
+	g_vars->scene18_var25--;
 }
 
 void sceneHandler18and19_showGirlJump() {
