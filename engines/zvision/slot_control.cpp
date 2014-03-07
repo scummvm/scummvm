@@ -168,11 +168,18 @@ bool SlotControl::process(uint32 deltaTimeInMillis) {
 	if (_engine->canRender()) {
 		int cur_item = _engine->getScriptManager()->getStateValue(_key);
 		if (cur_item != _rendered_item) {
-			if (_rendered_item == 0) {
-				if (_bkg)
-					delete _bkg;
+			if (_rendered_item != 0 && cur_item == 0) {
+				_engine->getRenderManager()->blitSurfaceToBkg(*_bkg, _rectangle.left, _rectangle.top);
+				_rendered_item = cur_item;
+			} else {
+				if (_rendered_item == 0) {
+					if (_bkg)
+						delete _bkg;
 
-				_bkg = _engine->getRenderManager()->getBkgRect(_rectangle);
+					_bkg = _engine->getRenderManager()->getBkgRect(_rectangle);
+				} else {
+					_engine->getRenderManager()->blitSurfaceToBkg(*_bkg, _rectangle.left, _rectangle.top);
+				}
 
 				char buf[16];
 				if (_engine->getGameId() == GID_NEMESIS)
@@ -195,9 +202,6 @@ bool SlotControl::process(uint32 deltaTimeInMillis) {
 
 				delete srf;
 
-				_rendered_item = cur_item;
-			} else {
-				_engine->getRenderManager()->blitSurfaceToBkg(*_bkg, _rectangle.left, _rectangle.top);
 				_rendered_item = cur_item;
 			}
 		}
