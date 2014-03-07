@@ -538,12 +538,12 @@ void TuckerEngine::execData3PreUpdate_locationNum6Helper1() {
 		x2 = 15 - _flagsTable[27];
 	}
 	for (int i = 0; i < x1; ++i) {
-		execData3PreUpdate_locationNum6Helper2(20 * 640 + 325 + i * 8, _data3GfxBuf + _dataTable[238].sourceOffset);
-		execData3PreUpdate_locationNum6Helper2(20 * 640 + 445 - i * 8, _data3GfxBuf + _dataTable[238].sourceOffset);
+		execData3PreUpdate_locationNum6Helper2(20 * 640 + 325 + i * 8, _data3GfxBuf + _dataTable[238]._sourceOffset);
+		execData3PreUpdate_locationNum6Helper2(20 * 640 + 445 - i * 8, _data3GfxBuf + _dataTable[238]._sourceOffset);
 	}
 	for (int i = 0; i < x2; ++i) {
-		execData3PreUpdate_locationNum6Helper3(20 * 640 + 325 + x1 * 8 + i * 4, _data3GfxBuf + _dataTable[238].sourceOffset);
-		execData3PreUpdate_locationNum6Helper3(20 * 640 + 449 - x1 * 8 - i * 4, _data3GfxBuf + _dataTable[238].sourceOffset);
+		execData3PreUpdate_locationNum6Helper3(20 * 640 + 325 + x1 * 8 + i * 4, _data3GfxBuf + _dataTable[238]._sourceOffset);
+		execData3PreUpdate_locationNum6Helper3(20 * 640 + 449 - x1 * 8 - i * 4, _data3GfxBuf + _dataTable[238]._sourceOffset);
 	}
 	addDirtyRect(0, 20, 640, 51);
 }
@@ -1008,11 +1008,11 @@ void TuckerEngine::execData3PreUpdate_locationNum14() {
 		}
 		const int num = _updateLocation14ObjNum[i];
 		if (num > 0) {
-			const int w = _dataTable[num].xSize;
-			const int h = _dataTable[num].ySize;
+			const int w = _dataTable[num]._xSize;
+			const int h = _dataTable[num]._ySize;
 			const int x = _updateLocationXPosTable2[i] - w / 2;
 			const int y = _updateLocationYPosTable2[i] / 16 - h / 2;
-			Graphics::decodeRLE_248(_locationBackgroundGfxBuf + y * 640 + x, _data3GfxBuf + _dataTable[num].sourceOffset, w, h, 0, 0, false);
+			Graphics::decodeRLE_248(_locationBackgroundGfxBuf + y * 640 + x, _data3GfxBuf + _dataTable[num]._sourceOffset, w, h, 0, 0, false);
 			addDirtyRect(x, y, w, h);
 		}
 	}

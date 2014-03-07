@@ -829,8 +829,8 @@ void TuckerEngine::updateCharPosition() {
 			updateCharPositionHelper();
 			return;
 		case 1:
-			if (_locationAnimationsTable[_selectedCharacter2Num].getFlag == 1) {
-				_speechSoundNum = _speechSoundBaseNum + _locationAnimationsTable[_selectedCharacter2Num].inventoryNum;
+			if (_locationAnimationsTable[_selectedCharacter2Num]._getFlag == 1) {
+				_speechSoundNum = _speechSoundBaseNum + _locationAnimationsTable[_selectedCharacter2Num]._inventoryNum;
 				_characterSpeechDataPtr = _ptTextBuf;
 				updateCharPositionHelper();
 				return;
@@ -1200,12 +1200,12 @@ void TuckerEngine::setSoundVolumeDistance() {
 void TuckerEngine::updateData3DrawFlag() {
 	for (int i = 0; i < _locationAnimationsCount; ++i) {
 		LocationAnimation *a = &_locationAnimationsTable[i];
-		if (a->flagNum > 0 && a->flagValue != _flagsTable[a->flagNum]) {
-			a->drawFlag = 0;
-		} else if (a->getFlag == 0) {
-			a->drawFlag = 1;
+		if (a->_flagNum > 0 && a->_flagValue != _flagsTable[a->_flagNum]) {
+			a->_drawFlag = 0;
+		} else if (a->_getFlag == 0) {
+			a->_drawFlag = 1;
 		} else {
-			a->drawFlag = (_inventoryItemsState[a->inventoryNum] == 0) ? 1 : 0;
+			a->_drawFlag = (_inventoryItemsState[a->_inventoryNum] == 0) ? 1 : 0;
 		}
 	}
 }
@@ -1214,26 +1214,26 @@ void TuckerEngine::updateData3() {
 	updateData3DrawFlag();
 	for (int i = 0; i < _locationAnimationsCount; ++i) {
 		LocationAnimation *a = &_locationAnimationsTable[i];
-		if (a->animLastCounter != 0 && a->drawFlag != 0) {
-			if (a->animLastCounter == a->animCurrentCounter) {
-				a->animCurrentCounter = a->animInitCounter;
+		if (a->_animLastCounter != 0 && a->_drawFlag != 0) {
+			if (a->_animLastCounter == a->_animCurrentCounter) {
+				a->_animCurrentCounter = a->_animInitCounter;
 			} else {
-				++a->animCurrentCounter;
+				++a->_animCurrentCounter;
 			}
-			const int index = a->animCurrentCounter;
+			const int index = a->_animCurrentCounter;
 			if (_staticData3Table[index] == 998) {
 				_flagsTable[_staticData3Table[index + 1]] = _staticData3Table[index + 2];
-				a->animCurrentCounter = a->animInitCounter;
-				a->drawFlag = 0;
+				a->_animCurrentCounter = a->_animInitCounter;
+				a->_drawFlag = 0;
 			}
 			if (_locationNum == 24 && i == 0) {
 				// workaround bug #2872385: update fish animation sequence for correct
 				// position in aquarium.
-				if (a->animInitCounter == 505 && a->animCurrentCounter == 513) {
-					a->animCurrentCounter = 525;
+				if (a->_animInitCounter == 505 && a->_animCurrentCounter == 513) {
+					a->_animCurrentCounter = 525;
 				}
 			}
-			a->graphicNum = _staticData3Table[a->animCurrentCounter];
+			a->_graphicNum = _staticData3Table[a->_animCurrentCounter];
 		}
 	}
 	updateData3DrawFlag();
@@ -1532,11 +1532,11 @@ void TuckerEngine::updateSoundsTypes3_4() {
 
 void TuckerEngine::drawData3() {
 	for (int i = 0; i < _locationAnimationsCount; ++i) {
-		if (_locationAnimationsTable[i].drawFlag != 0) {
-			int num = _locationAnimationsTable[i].graphicNum;
+		if (_locationAnimationsTable[i]._drawFlag != 0) {
+			int num = _locationAnimationsTable[i]._graphicNum;
 			const Data *d = &_dataTable[num];
-			Graphics::decodeRLE(_locationBackgroundGfxBuf + d->yDest * 640 + d->xDest, _data3GfxBuf + d->sourceOffset, d->xSize, d->ySize);
-			addDirtyRect(d->xDest, d->yDest, d->xSize, d->ySize);
+			Graphics::decodeRLE(_locationBackgroundGfxBuf + d->_yDest * 640 + d->_xDest, _data3GfxBuf + d->_sourceOffset, d->_xSize, d->_ySize);
+			addDirtyRect(d->_xDest, d->_yDest, d->_xSize, d->_ySize);
 		}
 	}
 }
@@ -3433,8 +3433,8 @@ void TuckerEngine::setSelectedObjectKey() {
 	} else {
 		switch (_selectedObjectType) {
 		case 1:
-			_selectedObject.xPos = _locationAnimationsTable[_selectedCharacterNum].standX;
-			_selectedObject.yPos = _locationAnimationsTable[_selectedCharacterNum].standY;
+			_selectedObject.xPos = _locationAnimationsTable[_selectedCharacterNum]._standX;
+			_selectedObject.yPos = _locationAnimationsTable[_selectedCharacterNum]._standY;
 			break;
 		case 2:
 			_selectedObject.xPos = _charPosTable[_selectedCharacterNum]._xWalkTo;
@@ -3614,29 +3614,29 @@ int TuckerEngine::setLocationAnimationUnderCursor() {
 		return -1;
 	}
 	for (int i = _locationAnimationsCount - 1; i >= 0; --i) {
-		if (_locationAnimationsTable[i].drawFlag == 0) {
+		if (_locationAnimationsTable[i]._drawFlag == 0) {
 			continue;
 		}
-		int num = _locationAnimationsTable[i].graphicNum;
-		if (_mousePosX + _scrollOffset + 1 <= _dataTable[num].xDest) {
+		int num = _locationAnimationsTable[i]._graphicNum;
+		if (_mousePosX + _scrollOffset + 1 <= _dataTable[num]._xDest) {
 			continue;
 		}
-		if (_mousePosX + _scrollOffset >= _dataTable[num].xDest + _dataTable[num].xSize) {
+		if (_mousePosX + _scrollOffset >= _dataTable[num]._xDest + _dataTable[num]._xSize) {
 			continue;
 		}
-		if (_mousePosY <= _dataTable[num].yDest) {
+		if (_mousePosY <= _dataTable[num]._yDest) {
 			continue;
 		}
-		if (_mousePosY >= _dataTable[num].yDest + _dataTable[num].ySize) {
+		if (_mousePosY >= _dataTable[num]._yDest + _dataTable[num]._ySize) {
 			continue;
 		}
-		if (_locationAnimationsTable[i].selectable == 0) {
+		if (_locationAnimationsTable[i]._selectable == 0) {
 			return -1;
 		}
 		_selectedObjectType = 1;
 		_selectedCharacterNum = i;
 		_selectedCharacter2Num = i;
-		return _locationAnimationsTable[i].selectable;
+		return _locationAnimationsTable[i]._selectable;
 	}
 	return -1;
 }

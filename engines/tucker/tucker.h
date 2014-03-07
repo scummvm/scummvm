@@ -114,32 +114,32 @@ struct SpriteFrame {
 
 struct SpriteAnimation {
 	int _numParts;
-	int _rotateFlag;
+	int _rotateFlag;  // Useless variable
 	int _firstFrameIndex;
 };
 
 struct Data {
-	int sourceOffset;
-	int xSize;
-	int ySize;
-	int xDest;
-	int yDest;
-	int index;
+	int _sourceOffset;
+	int _xSize;
+	int _ySize;
+	int _xDest;
+	int _yDest;
+	int _index;
 };
 
 struct LocationAnimation {
-	int graphicNum;
-	int animInitCounter;
-	int animCurrentCounter;
-	int animLastCounter;
-	int getFlag;
-	int inventoryNum;
-	int flagNum;
-	int flagValue;
-	int selectable;
-	int standX;
-	int standY;
-	int drawFlag;
+	int _graphicNum;
+	int _animInitCounter;
+	int _animCurrentCounter;
+	int _animLastCounter;
+	int _getFlag;
+	int _inventoryNum;
+	int _flagNum;
+	int _flagValue;
+	int _selectable;
+	int _standX;
+	int _standY;
+	int _drawFlag;
 };
 
 struct LocationObject {

@@ -460,10 +460,10 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 		}
 		if (_partNum == 3 && _selectedObjectNum == 45) {
 			for (int i = 0; i < 13; ++i) {
-				const int offset = _dataTable[204 + i].yDest * 640 + _dataTable[204 + i].xDest;
+				const int offset = _dataTable[204 + i]._yDest * 640 + _dataTable[204 + i]._xDest;
 				static const int itemsTable[] = { 15, 44, 25, 19, 21, 24, 12, 27, 20, 29, 35, 23, 3 };
 				if (_inventoryItemsState[itemsTable[i]] > 1) {
-					Graphics::decodeRLE(_locationBackgroundGfxBuf + _scrollOffset + offset, _data3GfxBuf + _dataTable[204 + i].sourceOffset, _dataTable[204 + i].xSize, _dataTable[204 + i].ySize);
+					Graphics::decodeRLE(_locationBackgroundGfxBuf + _scrollOffset + offset, _data3GfxBuf + _dataTable[204 + i]._sourceOffset, _dataTable[204 + i]._xSize, _dataTable[204 + i]._ySize);
 				}
 			}
 		}

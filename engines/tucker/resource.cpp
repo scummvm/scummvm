@@ -571,12 +571,12 @@ void TuckerEngine::loadData() {
 			const int x = t.getNextInteger();
 			const int y = t.getNextInteger();
 			Data *d = &_dataTable[_dataCount];
-			d->sourceOffset = y * 320 + x;
-			d->xSize = t.getNextInteger();
-			d->ySize = t.getNextInteger();
-			d->xDest = t.getNextInteger();
-			d->yDest = t.getNextInteger();
-			d->index = count;
+			d->_sourceOffset = y * 320 + x;
+			d->_xSize = t.getNextInteger();
+			d->_ySize = t.getNextInteger();
+			d->_xDest = t.getNextInteger();
+			d->_yDest = t.getNextInteger();
+			d->_index = count;
 		}
 		++objNum;
 		++count;
@@ -592,9 +592,9 @@ void TuckerEngine::loadData() {
 
 int TuckerEngine::loadDataHelper(int offset, int index) {
 	for (int i = 0; i < _dataCount + 1; ++i) {
-		if (_dataTable[i].index == index) {
-			int sz = Graphics::encodeRLE(_loadTempBuf + _dataTable[i].sourceOffset, _data3GfxBuf + offset, _dataTable[i].xSize, _dataTable[i].ySize);
-			_dataTable[i].sourceOffset = offset;
+		if (_dataTable[i]._index == index) {
+			int sz = Graphics::encodeRLE(_loadTempBuf + _dataTable[i]._sourceOffset, _data3GfxBuf + offset, _dataTable[i]._xSize, _dataTable[i]._ySize);
+			_dataTable[i]._sourceOffset = offset;
 			offset += sz;
 		}
 	}
@@ -626,7 +626,7 @@ void TuckerEngine::loadData3() {
 			}
 			assert(_locationAnimationsCount < kLocationAnimationsTableSize);
 			LocationAnimation *d = &_locationAnimationsTable[_locationAnimationsCount++];
-			d->graphicNum = num;
+			d->_graphicNum = num;
 			const int seqNum = t.getNextInteger();
 			if (seqNum > 0) {
 				int anim = 0;
@@ -636,22 +636,22 @@ void TuckerEngine::loadData3() {
 					}
 					++anim;
 				}
-				d->animCurrentCounter = d->animInitCounter = anim;
+				d->_animCurrentCounter = d->_animInitCounter = anim;
 				while (_staticData3Table[anim + 1] != 999) {
 					++anim;
 				}
-				d->animLastCounter = anim;
+				d->_animLastCounter = anim;
 			} else {
-				d->animLastCounter = 0;
+				d->_animLastCounter = 0;
 			}
-			d->getFlag = t.getNextInteger();
-			d->inventoryNum = t.getNextInteger();
-			d->flagNum = t.getNextInteger();
-			d->flagValue = t.getNextInteger();
-			d->selectable = t.getNextInteger();
-			d->standX = t.getNextInteger();
-			d->standY = t.getNextInteger();
-			d->drawFlag = 0;
+			d->_getFlag = t.getNextInteger();
+			d->_inventoryNum = t.getNextInteger();
+			d->_flagNum = t.getNextInteger();
+			d->_flagValue = t.getNextInteger();
+			d->_selectable = t.getNextInteger();
+			d->_standX = t.getNextInteger();
+			d->_standY = t.getNextInteger();
+			d->_drawFlag = 0;
 		}
 	}
 }
