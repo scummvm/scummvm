@@ -926,10 +926,12 @@ void Game::inventoryDraw() {
 void Game::inventoryReload() {
 	// Make sure all items are loaded into memory (e.g., after loading a
 	// savegame) by re-putting them on the same spot in the inventory.
+	GameItem *tempItem = _currentItem;
 	for (uint i = 0; i < kInventorySlots; ++i) {
 		putItem(_inventory[i], i);
 	}
 	setPreviousItemPosition(0);
+	_currentItem = tempItem;
 }
 
 void Game::inventorySwitch(int keycode) {
@@ -1572,7 +1574,7 @@ Game::~Game() {
 	delete[] _items;
 }
 
-void Game::DoSync(Common::Serializer &s) {
+void Game::DoSync(Common::Serializer &s, uint8 saveVersion) {
 	s.syncAsUint16LE(_currentRoom._roomNum);
 
 	for (uint i = 0; i < _info._numObjects; ++i) {
@@ -1603,6 +1605,25 @@ void Game::DoSync(Common::Serializer &s) {
 		s.syncAsSint16LE(_dialogueVars[i]);
 	}
 
+	if(saveVersion >= 2) {
+		setPositionLoaded(true);
+		if (s.isSaving()) {
+			s.syncAsSint16LE(_hero.x);
+			s.syncAsSint16LE(_hero.y);
+
+			int handItemID = _currentItem ? _currentItem->_absNum : -1;
+			s.syncAsSint16LE(handItemID);
+		} else {
+			s.syncAsSint16LE(_heroLoading.x);
+			s.syncAsSint16LE(_heroLoading.y);
+
+			int handItemID = -1;
+			s.syncAsSint16LE(handItemID);
+			_currentItem = getItem(handItemID);
+		}
+	} else {
+		_currentItem = 0;
+	}
 }
 
 static double real_to_double(byte real[6]) {
