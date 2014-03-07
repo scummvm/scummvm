@@ -36,7 +36,8 @@ enum RESPREFIX {
 };
 
 enum EXTTYPE {
-	EXT_SS = 1, EXT_AA = 2, EXT_DAT = 3, EXT_HH = 4, EXT_ART = 5, EXT_INT = 6
+	EXT_NONE = -1, EXT_SS = 1, EXT_AA = 2, EXT_DAT = 3, EXT_HH = 4, 
+	EXT_ART = 5, EXT_INT = 6
 };
 
 class Resources {

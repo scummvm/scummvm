@@ -140,7 +140,6 @@ void Game::sectionLoop() {
 		_v6 = 0;
 		_vm->_events->resetCursor();
 
-		_quotes = nullptr;
 		_scene.clearVocab();
 		_scene._dynamicHotspots.clear();
 		_scene.loadSceneLogic();
@@ -223,8 +222,7 @@ void Game::sectionLoop() {
 		if ((_v5 || _v6) && !_updateSceneFlag) {
 			_scene._currentSceneId = _scene._priorSceneId;
 			_updateSceneFlag = true;
-		}
-		else {
+		} else {
 			_updateSceneFlag = false;
 			_scene.loop();
 		}
@@ -232,8 +230,6 @@ void Game::sectionLoop() {
 		_vm->_events->resetCursor();
 		_v1 = 3;
 
-		delete _quotes;
-		_quotes = nullptr;
 		delete _scene._animation;
 		_scene._animation = nullptr;
 
@@ -274,22 +270,27 @@ void Game::loadResourceSequence(const Common::String prefix, int v) {
 	warning("TODO: loadResourceSequence");
 }
 
-Common::String Game::getQuote(int quoteId) {
-	if (_quotes && *_quotes) {
-		// Loop through the list of quotes
-		char *p = (char *)_quotes;
-		while (*p) {
-			// Get a pointer to the quote Id after the string
-			char *idP = p + strlen(p) + 1;
-			if (READ_LE_UINT16(idP) == quoteId)
-				// Found the correct string, so return it
-				return Common::String(p);
+void Game::loadQuotes() {
+	File f("*QUOTES.DAT");
+	int curPos = 0;
 
-			p = idP + 2;
+	char buffer[128];
+	strcpy(buffer, "");
+
+	while (true) {
+		uint8 b = f.readByte();
+		if (f.eos()) break;
+
+		buffer[curPos++] = b;
+		if (buffer[curPos - 1] == '\0') {
+			// end of string, add it to the strings list
+			_quotes.push_back(buffer);
+			curPos = 0;
+			strcpy(buffer, "");
 		}
 	}
 
-	return Common::String();
+	f.close();
 }
 
 } // End of namespace MADS

@@ -383,9 +383,8 @@ void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 
 SceneInfo *SceneInfo::init(MADSEngine *vm) {
 	if (vm->getGameID() == GType_RexNebular) {
-		return new SceneInfoNebular(vm);
-	}
-	else {
+		return new Nebular::SceneInfoNebular(vm);
+	} else {
 		return new SceneInfo(vm);
 	}
 }
@@ -583,34 +582,6 @@ void SceneInfo::loadCodes(MSurface &depthSurface) {
 	}
 
 	delete[] walkMap;
-}
-
-/*------------------------------------------------------------------------*/
-
-void SceneInfoNebular::loadCodes(MSurface &depthSurface) {
-	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ".DAT"));
-	MadsPack codesPack(&f);
-	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
-
-	byte *destP = depthSurface.getData();
-	byte *endP = depthSurface.getBasePtr(0, depthSurface.h);
-
-	byte runLength = stream->readByte();
-	while (destP < endP && runLength > 0) {
-		byte runValue = stream->readByte();
-
-		// Write out the run length
-		Common::fill(destP, destP + runLength, runValue);
-		destP += runLength;
-
-		// Get the next run length
-		runLength = stream->readByte();
-	}
-
-	if (destP < endP)
-		Common::fill(destP, endP, 0);
-	delete stream;
-	f.close();
 }
 
 /*------------------------------------------------------------------------*/

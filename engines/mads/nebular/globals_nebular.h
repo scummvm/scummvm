@@ -35,6 +35,8 @@ class Globals {
 private:
 	Common::Array<uint16> _flags;
 public:
+	Common::Array<int> _spriteIndexes;
+
 	int _chairHotspotIndex;
 	int _v1;
 	int _v2;

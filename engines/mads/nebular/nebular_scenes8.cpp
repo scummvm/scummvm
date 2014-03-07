@@ -75,6 +75,38 @@ void Scene8xx::enter1() {
 /*------------------------------------------------------------------------*/
 
 void Scene804::setup() {
+	_globals._chairHotspotIndex = 0;
+	_globals._v1 = _globals._v2 = 0;
+	_globals._v3 = _globals._v4 = 0;
+	_globals._v5 = -1;
+	_globals._v6 = _globals._v7 = 0;
+	_globals._v8 = 0;
+	if (_globals[5]) {
+		// Copy protection failed
+		_globals[165] = 0xFFFF;
+		_globals[164] = 0;
+	}
+
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 4));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('f', 1));
+
+	_vm->_game->loadQuoteSet(791, 0);
+
+	if (_globals[165]) {
+		if (_globals[164]) {
+			_globals._spriteIndexes[19] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[4], 0, 1);
+			// TODO
+		} else {
+
+		}
+	} else {
+		// TODO
+	}
 }
 
 void Scene804::enter() {

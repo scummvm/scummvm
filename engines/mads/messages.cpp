@@ -30,8 +30,6 @@
 namespace MADS {
 
 KernelMessages::KernelMessages(MADSEngine *vm): _vm(vm) {
-	Scene &scene = _vm->_game->_scene;
-
 	for (int i = 0; i < KERNEL_MESSAGES_SIZE; ++i) {
 		KernelMessage rec;
 		_entries.push_back(rec);

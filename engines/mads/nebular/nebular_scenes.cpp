@@ -23,7 +23,10 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "mads/mads.h"
+#include "mads/compression.h"
+#include "mads/resources.h"
 #include "mads/scene.h"
+#include "mads/nebular/game_nebular.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes8.h"
 
@@ -46,7 +49,43 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	return new Scene804(vm);
 }
 
-NebularScene::NebularScene(MADSEngine *vm) : SceneLogic(vm) {
+/*------------------------------------------------------------------------*/
+
+NebularScene::NebularScene(MADSEngine *vm) : SceneLogic(vm),
+		_globals(static_cast<GameNebular *>(vm->_game)->_globals) {
+}
+
+Common::String NebularScene::formAnimName(char sepChar, int suffixNum) {
+	return Resources::formatName(_scene->_currentSceneId, sepChar, suffixNum,
+		EXT_NONE, "");
+}
+
+/*------------------------------------------------------------------------*/
+
+void SceneInfoNebular::loadCodes(MSurface &depthSurface) {
+	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ".DAT"));
+	MadsPack codesPack(&f);
+	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
+
+	byte *destP = depthSurface.getData();
+	byte *endP = depthSurface.getBasePtr(0, depthSurface.h);
+
+	byte runLength = stream->readByte();
+	while (destP < endP && runLength > 0) {
+		byte runValue = stream->readByte();
+
+		// Write out the run length
+		Common::fill(destP, destP + runLength, runValue);
+		destP += runLength;
+
+		// Get the next run length
+		runLength = stream->readByte();
+	}
+
+	if (destP < endP)
+		Common::fill(destP, endP, 0);
+	delete stream;
+	f.close();
 }
 
 } // End of namespace Nebular

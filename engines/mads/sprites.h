@@ -201,11 +201,25 @@ public:
 };
 
 class SpriteSets : public Common::Array<SpriteAsset *> {
+private:
+	MADSEngine *_vm;
 public:
+	/**
+	 * Constructor
+	 */
+	SpriteSets(MADSEngine *vm) : _vm(vm) {}
+
 	/**
 	* Add a sprite asset to the list
 	*/
 	int add(SpriteAsset *asset, int idx = 0);
+
+	/**
+	 * Adds a sprite asset to the list by name
+	 */
+	int addSprites(const Common::String &resName, int flags = 0);
+
+	int startCycle(int srcSpriteIndex, bool flipped, int cycleIndex);
 };
 
 } // End of namespace MADS

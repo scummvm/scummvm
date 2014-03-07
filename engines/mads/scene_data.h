@@ -288,17 +288,6 @@ public:
 		MSurface &depthSurface, MSurface &bgSurface);
 };
 
-class SceneInfoNebular : public SceneInfo {
-	friend class SceneInfo;
-protected:
-	virtual void loadCodes(MSurface &depthSurface);
-
-	/**
-	* Constructor
-	*/
-	SceneInfoNebular(MADSEngine *vm) : SceneInfo(vm) {}
-};
-
 } // End of namespace MADS
 
 #endif /* MADS_SCENE_DATA_H */

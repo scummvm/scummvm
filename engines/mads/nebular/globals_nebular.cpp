@@ -29,10 +29,9 @@ namespace MADS {
 namespace Nebular {
 
 Globals::Globals() {
-	// Initialise global flags
+	// Initialise lists
 	_flags.resize(210);
-	for (int i = 0; i < 210; ++i)
-		_flags[i] = 0;
+	_spriteIndexes.resize(30);
 
 	// Initialise game flags
 	_chairHotspotIndex = 0;

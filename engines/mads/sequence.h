@@ -102,6 +102,8 @@ public:
 	void setAnimRange(int seqIndex, int startVal, int endVal);
 	void scan();
 	void setDepth(int seqIndex, int depth);
+	int addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
+	int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
 };
 
 } // End of namespace MADS

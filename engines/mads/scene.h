@@ -98,7 +98,7 @@ public:
 	int _v1;
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
-	MSurface _depthSurface;
+	DepthSurface _depthSurface;
 	InterfaceSurface _interface;
 	bool _animFlag;
 	int _animVal1;

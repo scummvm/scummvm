@@ -355,4 +355,8 @@ int SpriteSets::add(SpriteAsset *asset, int idx) {
 	return idx;
 }
 
+int SpriteSets::addSprites(const Common::String &resName, int flags) {
+	return add(new SpriteAsset(_vm, resName, flags));
+}
+
 } // End of namespace MADS

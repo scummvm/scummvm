@@ -497,4 +497,17 @@ MSurface *MSurface::flipHorizontal() const {
 	return dest;
 }
 
+/*------------------------------------------------------------------------*/
+
+int DepthSurface::getDepth(const Common::Point &pt) {
+
+	if (_vm->_game->_scene._sceneInfo->_depthStyle == 2) {
+		int bits = (3 - (pt.x % 4)) * 2;
+		byte v = *getBasePtr(pt.x >> 2, pt.y);
+		return v >> bits;
+	} else {
+		return *getBasePtr(pt.x, pt.y) & 0xF;
+	}
+}
+
 } // End of namespace MADS

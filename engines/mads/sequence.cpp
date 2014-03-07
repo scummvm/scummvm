@@ -367,4 +367,23 @@ void SequenceList::scan() {
 void SequenceList::setDepth(int seqIndex, int depth) {
 	_entries[seqIndex]._depth = depth;
 }
+
+int SequenceList::addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
+	Scene &scene = _vm->_game->_scene;
+	MSprite *spriteFrame = scene._spriteSlots.getSprite(srcSpriteIdx).getFrame(0);
+	int depth = scene._depthSurface.getDepth(Common::Point(spriteFrame->_pos.x + 
+		(spriteFrame->w / 2), spriteFrame->_pos.y + (spriteFrame->h / 2)));
+
+	return add(srcSpriteIdx, flipped, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0,
+		true, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
+}
+
+int SequenceList::startCycle(int srcSpriteIndex, bool flipped, int cycleIndex) {
+	int result = addSpriteCycle(srcSpriteIndex, flipped, INDEFINITE_TIMEOUT, 0, 0, 0);
+	if (result >= 0)
+		setAnimRange(result, cycleIndex, cycleIndex);
+
+	return result;
+}
+
 } // End of namespace 

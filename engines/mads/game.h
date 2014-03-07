@@ -24,6 +24,7 @@
 #define MADS_GAME_H
 
 #include "common/scummsys.h"
+#include "common/str-array.h"
 #include "mads/scene.h"
 #include "mads/game_data.h"
 #include "mads/player.h"
@@ -51,6 +52,11 @@ private:
 	 * Inner game loop for executing gameplay within a game section
 	 */
 	void sectionLoop();
+
+	/**
+	 * Load quotes data
+	 */
+	void loadQuotes();
 protected:
 	MADSEngine *_vm;
 	MSurface *_surface;
@@ -59,7 +65,7 @@ protected:
 	int _statusFlag;
 	SectionHandler *_sectionHandler;
 	VisitedScenes _visitedScenes;
-	byte *_quotes;
+	Common::StringArray _quotes;
 	int _v1;
 	int _v3;
 	int _v5;
@@ -130,10 +136,14 @@ public:
 	 */
 	void run();
 
-	/**
-	 * Get a quote
-	 */
-	Common::String getQuote(int quoteId);
+	uint32 getQuotesSize() { return _quotes.size(); }
+	const Common::String &getQuote(uint32 index) { return _quotes[index - 1]; }
+
+	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
+	void clearQuotes() {}
+	void loadQuoteRange(int startNum, int endNum) {}
+	void loadQuoteSet(...) {}
+	void loadQuote(int quoteNum) {}
 };
 
 } // End of namespace MADS

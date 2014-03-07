@@ -95,11 +95,27 @@ public:
 class NebularScene : public SceneLogic {
 protected:
 	Globals &_globals;
+
+	/**
+	 * Forms an animation resoucre name
+	 */
+	Common::String formAnimName(char sepChar, int suffixNum);
 public:
 	/**
 	 * Constructor
 	 */
 	NebularScene(MADSEngine *vm);
+};
+
+class SceneInfoNebular : public SceneInfo {
+	friend class SceneInfo;
+protected:
+	virtual void loadCodes(MSurface &depthSurface);
+
+	/**
+	* Constructor
+	*/
+	SceneInfoNebular(MADSEngine *vm) : SceneInfo(vm) {}
 };
 
 } // End of namespace Nebular

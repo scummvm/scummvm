@@ -202,6 +202,21 @@ public:
 	MSurface *flipHorizontal() const;
 };
 
+class DepthSurface : public MSurface {
+private:
+	MADSEngine *_vm;
+public:
+	/**
+	 * Constructor
+	 */
+	DepthSurface(MADSEngine *vm) : _vm(vm) {}
+
+	/**
+	 * Returns the depth at a given position
+	 */
+	int getDepth(const Common::Point &pt);
+};
+
 } // End of namespace MADS
 
 #endif /* MADS_MSURFACE_H */
