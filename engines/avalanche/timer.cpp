@@ -331,7 +331,10 @@ void Timer::hangAround2() {
 
 	_vm->_tiedUp = false;
 
-	_vm->_shootemup->run();
+	// We don't need the ShootEmUp during the whole game, it's only playable once.
+	ShootEmUp *shootemup = new ShootEmUp(_vm);
+	shootemup->run();
+	delete shootemup;
 }
 
 void Timer::afterTheShootemup() {

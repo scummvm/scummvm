@@ -57,7 +57,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_nim = nullptr;
 	_ghostroom = nullptr;
 	_help = nullptr;
-	_shootemup = nullptr;
 
 	_platform = gd->desc.platform;
 	initVariables();
@@ -82,7 +81,6 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _nim;
 	delete _ghostroom;
 	delete _help;
-	delete _shootemup;
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -167,7 +165,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_nim = new Nim(this);
 	_ghostroom = new GhostRoom(this);
 	_help = new Help(this);
-	_shootemup = new ShootEmUp(this);
 
 	_graphics->init();
 	_dialogs->init();

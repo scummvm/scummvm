@@ -91,7 +91,6 @@ public:
 	Nim *_nim;
 	GhostRoom *_ghostroom;
 	Help *_help;
-	ShootEmUp *_shootemup;
 
 	OSystem *_system;
 
