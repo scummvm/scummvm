@@ -279,7 +279,7 @@ Audio::RewindableAudioStream *CompressedSound::load(CompressedSoundType type, in
 
 void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
 	char filename[80];
-	strcpy(filename, fname);
+	Common::strlcpy(filename, fname, sizeof(filename));
 
 	Common::File f;
 	if (!f.open(filename)) {
