@@ -38,12 +38,12 @@ typedef void (*SaveNotifierFn)(bool postFlag);
 class SavedObject;
 
 struct tSageSavegameHeader {
-	uint8 version;
-	Common::String saveName;
-	Graphics::Surface *thumbnail;
-	int saveYear, saveMonth, saveDay;
-	int saveHour, saveMinutes;
-	int totalFrames;
+	uint8 _version;
+	Common::String _saveName;
+	Graphics::Surface *_thumbnail;
+	int _saveYear, _saveMonth, _saveDay;
+	int _saveHour, _saveMinutes;
+	int _totalFrames;
 };
 
 /*--------------------------------------------------------------------------*/

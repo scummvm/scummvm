@@ -129,10 +129,10 @@ public:
 
 				if (in) {
 					if (TsAGE::Saver::readSavegameHeader(in, header)) {
-						saveList.push_back(SaveStateDescriptor(slot, header.saveName));
+						saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
-						header.thumbnail->free();
-						delete header.thumbnail;
+						header._thumbnail->free();
+						delete header._thumbnail;
 					}
 
 					delete in;
@@ -162,11 +162,11 @@ public:
 			delete f;
 
 			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
-			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-			desc.setSaveTime(header.saveHour, header.saveMinutes);
-			desc.setPlayTime(header.totalFrames * GAME_FRAME_TIME);
+			SaveStateDescriptor desc(slot, header._saveName);
+			desc.setThumbnail(header._thumbnail);
+			desc.setSaveDate(header._saveYear, header._saveMonth, header._saveDay);
+			desc.setSaveTime(header._saveHour, header._saveMinutes);
+			desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
 
 			return desc;
 		}
