@@ -150,7 +150,7 @@ void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 
 void DirectorEngine::loadEXEv7(Common::SeekableReadStream *stream) {
 	if (stream->readUint32LE() != MKTAG('P', 'J', '0', '0'))
-		error("Invalid projector tag found in v5 EXE");
+		error("Invalid projector tag found in v7 EXE");
 
 	uint32 rifxOffset = stream->readUint32LE();
 	stream->readUint32LE(); // unknown
