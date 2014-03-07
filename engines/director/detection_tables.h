@@ -224,6 +224,34 @@ static const DirectorGameDescription gameDescriptions[] = {
 		5
 	},
 
+	{
+		{
+			"vvvampire",
+			"",
+			AD_ENTRY1("VAMPIRE.EXE", "88f4f7406f34ec36e751a64f7c76f2c4"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
+	{
+		{
+			"vvvampire",
+			"",
+			AD_ENTRY1("The Vampire's Coffin", "d41d8cd98f00b204e9800998ecf8427e"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
 };
 
