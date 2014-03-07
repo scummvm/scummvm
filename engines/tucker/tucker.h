@@ -139,7 +139,7 @@ struct LocationAnimation {
 	int _selectable;
 	int _standX;
 	int _standY;
-	int _drawFlag;
+	bool _drawFlag;
 };
 
 struct LocationObject {

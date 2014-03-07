@@ -651,7 +651,7 @@ void TuckerEngine::loadData3() {
 			d->_selectable = t.getNextInteger();
 			d->_standX = t.getNextInteger();
 			d->_standY = t.getNextInteger();
-			d->_drawFlag = 0;
+			d->_drawFlag = false;
 		}
 	}
 }

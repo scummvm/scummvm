@@ -1201,11 +1201,11 @@ void TuckerEngine::updateData3DrawFlag() {
 	for (int i = 0; i < _locationAnimationsCount; ++i) {
 		LocationAnimation *a = &_locationAnimationsTable[i];
 		if (a->_flagNum > 0 && a->_flagValue != _flagsTable[a->_flagNum]) {
-			a->_drawFlag = 0;
+			a->_drawFlag = false;
 		} else if (a->_getFlag == 0) {
-			a->_drawFlag = 1;
+			a->_drawFlag = true;
 		} else {
-			a->_drawFlag = (_inventoryItemsState[a->_inventoryNum] == 0) ? 1 : 0;
+			a->_drawFlag = (_inventoryItemsState[a->_inventoryNum] == 0);
 		}
 	}
 }
@@ -1214,7 +1214,7 @@ void TuckerEngine::updateData3() {
 	updateData3DrawFlag();
 	for (int i = 0; i < _locationAnimationsCount; ++i) {
 		LocationAnimation *a = &_locationAnimationsTable[i];
-		if (a->_animLastCounter != 0 && a->_drawFlag != 0) {
+		if (a->_animLastCounter != 0 && a->_drawFlag) {
 			if (a->_animLastCounter == a->_animCurrentCounter) {
 				a->_animCurrentCounter = a->_animInitCounter;
 			} else {
@@ -1224,7 +1224,7 @@ void TuckerEngine::updateData3() {
 			if (_staticData3Table[index] == 998) {
 				_flagsTable[_staticData3Table[index + 1]] = _staticData3Table[index + 2];
 				a->_animCurrentCounter = a->_animInitCounter;
-				a->_drawFlag = 0;
+				a->_drawFlag = false;
 			}
 			if (_locationNum == 24 && i == 0) {
 				// workaround bug #2872385: update fish animation sequence for correct
@@ -1532,7 +1532,7 @@ void TuckerEngine::updateSoundsTypes3_4() {
 
 void TuckerEngine::drawData3() {
 	for (int i = 0; i < _locationAnimationsCount; ++i) {
-		if (_locationAnimationsTable[i]._drawFlag != 0) {
+		if (_locationAnimationsTable[i]._drawFlag) {
 			int num = _locationAnimationsTable[i]._graphicNum;
 			const Data *d = &_dataTable[num];
 			Graphics::decodeRLE(_locationBackgroundGfxBuf + d->_yDest * 640 + d->_xDest, _data3GfxBuf + d->_sourceOffset, d->_xSize, d->_ySize);
@@ -3614,9 +3614,9 @@ int TuckerEngine::setLocationAnimationUnderCursor() {
 		return -1;
 	}
 	for (int i = _locationAnimationsCount - 1; i >= 0; --i) {
-		if (_locationAnimationsTable[i]._drawFlag == 0) {
+		if (!_locationAnimationsTable[i]._drawFlag)
 			continue;
-		}
+
 		int num = _locationAnimationsTable[i]._graphicNum;
 		if (_mousePosX + _scrollOffset + 1 <= _dataTable[num]._xDest) {
 			continue;
