@@ -405,8 +405,8 @@ Common::String DropDownMenu::selectGender(byte x) {
 void DropDownMenu::setupMenuGame() {
 	_activeMenuItem.reset();
 	_activeMenuItem.setupOption("Help...", 'H', "f1", true);
-	_activeMenuItem.setupOption("Boss Key", 'B', "alt-B", false);
-	_activeMenuItem.setupOption("Untrash screen", 'U', "ctrl-f7", true);
+	_activeMenuItem.setupOption("Boss Key", 'B', "alt-B", true);
+	_activeMenuItem.setupOption("Untrash screen", 'U', "ctrl-f7", false);
 	_activeMenuItem.setupOption("Score and rank", 'S', "f9", true);
 	_activeMenuItem.setupOption("About Avvy...", 'A', "shift-f10", true);
 	_activeMenuItem.display();

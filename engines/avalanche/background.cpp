@@ -261,7 +261,7 @@ void Background::update() {
 	}
 }
 
-void Background::load(byte number) {
+void Background::loadSprites(byte number) {
 	Common::File f;
 	_filename = _filename.format("chunk%d.avd", number);
 	if (!f.open(_filename))

@@ -2052,8 +2052,7 @@ void Parser::doThat() {
 		_vm->_dialogs->displayText("Hello, Phaon!");
 		break;
 	case kVerbCodeBoss:
-		// bosskey();
-		warning("STUB: Parser::doThat() - case kVerbCodeboss");
+		bossKey();
 		break;
 	case kVerbCodePee:
 		if (_vm->getFlag('P')) {
@@ -2424,6 +2423,25 @@ void Parser::doThat() {
 		Common::String tmpStr = Common::String::format("%cUnhandled verb: %d", kControlBell, _verb);
 		_vm->_dialogs->displayText(tmpStr);
 	}
+}
+
+void Parser::bossKey() {
+	_vm->_graphics->saveScreen();
+	_vm->_graphics->blackOutScreen();
+	_vm->_graphics->loadMouse(kCurUpArrow);
+	_vm->loadBackground(98);
+	_vm->_graphics->drawNormalText("Graph/Histo/Draw/Sample: \"JANJUN93.GRA\": (W3-AB3)", _vm->_font, 8, 120, 169, kColorDarkgray);
+	_vm->_graphics->drawNormalText("Press any key or click the mouse to return.", _vm->_font, 8, 144, 182, kColorDarkgray);
+	_vm->_graphics->refreshScreen();
+	Common::Event event;
+	_vm->getEvent(event);
+	while ((!_vm->shouldQuit()) && (event.type != Common::EVENT_KEYDOWN) && (event.type != Common::EVENT_LBUTTONDOWN)){
+		_vm->getEvent(event);
+		_vm->_graphics->refreshScreen();
+	}
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+	_vm->loadBackground(_vm->_room);
 }
 
 void Parser::verbOpt(byte verb, Common::String &answer, char &ansKey) {

@@ -51,7 +51,7 @@ public:
 	~Background();
 
 	void update();
-	void load(byte number);
+	void loadSprites(byte number);
 	void release();
 
 	// Setting the destination to negative coordinates means the picture should be drawn to it's original position.

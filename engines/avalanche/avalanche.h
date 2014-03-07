@@ -236,6 +236,7 @@ public:
 	bool _isLoaded; // Is it a loaded gamestate?
 
 	void callVerb(VerbCode id);
+	void loadBackground(byte num);
 	void loadRoom(byte num);
 	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!
 	void incScore(byte num); // Add on no. of points

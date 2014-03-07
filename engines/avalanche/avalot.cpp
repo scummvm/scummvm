@@ -416,9 +416,7 @@ void AvalancheEngine::loadAlso(byte num) {
 	}
 }
 
-void AvalancheEngine::loadRoom(byte num) {
-	CursorMan.showMouse(false);
-
+void AvalancheEngine::loadBackground(byte num) {
 	Common::String filename = Common::String::format("place%d.avd", num);
 	Common::File file;
 	if (!file.open(filename))
@@ -440,9 +438,15 @@ void AvalancheEngine::loadRoom(byte num) {
 	_graphics->refreshBackground();
 
 	file.close();
+}
 
+void AvalancheEngine::loadRoom(byte num) {
+	CursorMan.showMouse(false);
+
+	loadBackground(num);
 	loadAlso(num);
-	_background->load(num);
+	_background->loadSprites(num);
+
 	CursorMan.showMouse(true);
 }
 

@@ -146,6 +146,7 @@ private:
 	void playHarp();
 	void winSequence();
 	void wipeText();
+	void bossKey();
 };
 
 } // End of namespace Avalanche
