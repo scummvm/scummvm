@@ -352,7 +352,7 @@ void TuckerEngine::mainLoop() {
 	_flagsTable[219] = 1;
 	_flagsTable[105] = 1;
 
-	_spriteAnimationFrameIndex =  _spriteAnimationsTable[14].firstFrameIndex;
+	_spriteAnimationFrameIndex =  _spriteAnimationsTable[14]._firstFrameIndex;
 
 	if (ConfMan.hasKey("save_slot")) {
 		const int slot = ConfMan.getInt("save_slot");
@@ -466,10 +466,10 @@ void TuckerEngine::mainLoop() {
 			}
 			_currentGfxBackground = _quadBackgroundGfxBuf + (_currentGfxBackgroundCounter / 10) * 44800;
 			if (_fadePaletteCounter < 34 && _locationNum == 22) {
-				_spritesTable[0].gfxBackgroundOffset = (_currentGfxBackgroundCounter / 10) * 640;
+				_spritesTable[0]._gfxBackgroundOffset = (_currentGfxBackgroundCounter / 10) * 640;
 				_mainSpritesBaseOffset = _currentGfxBackgroundCounter / 10;
 				if (_locationNum == 22 && _currentGfxBackgroundCounter <= 29) {
-					_spritesTable[0].gfxBackgroundOffset = 640;
+					_spritesTable[0]._gfxBackgroundOffset = 640;
 					_mainSpritesBaseOffset = 1;
 				}
 			}
@@ -489,7 +489,7 @@ void TuckerEngine::mainLoop() {
 		drawData3();
 		execData3PreUpdate();
 		for (int i = 0; i < _spritesCount; ++i) {
-			if (!_spritesTable[i].disabled) {
+			if (!_spritesTable[i]._disabled) {
 				drawSprite(i);
 			}
 		}
@@ -842,8 +842,8 @@ void TuckerEngine::updateCharPosition() {
 			break;
 		case 2:
 			_characterSpeechDataPtr = _ptTextBuf;
-			_speechSoundNum = 2175 + _charPosTable[_selectedCharacterNum].description;
-			if (_charPosTable[_selectedCharacterNum].description != 0) {
+			_speechSoundNum = 2175 + _charPosTable[_selectedCharacterNum]._description;
+			if (_charPosTable[_selectedCharacterNum]._description != 0) {
 				updateCharPositionHelper();
 				return;
 			}
@@ -856,27 +856,27 @@ void TuckerEngine::updateCharPosition() {
 	Action *action = 0;
 	for (int i = 0; i < _actionsCount && skip == 0; ++i) {
 		action = &_actionsTable[i];
-		if (action->key == actionKey) {
+		if (action->_key == actionKey) {
 			skip = 1;
-			if (action->testFlag1Num != 0) {
-				if (action->testFlag1Num < 500) {
-					if (_flagsTable[action->testFlag1Num] != action->testFlag1Value) {
+			if (action->_testFlag1Num != 0) {
+				if (action->_testFlag1Num < 500) {
+					if (_flagsTable[action->_testFlag1Num] != action->_testFlag1Value) {
 						skip = 0;
 					}
-				} else if (_inventoryItemsState[action->testFlag1Num - 500] != action->testFlag1Value) {
+				} else if (_inventoryItemsState[action->_testFlag1Num - 500] != action->_testFlag1Value) {
 					skip = 0;
 				}
-				debug(3, "updateCharPosition() flag1 %d value %d", action->testFlag1Num, action->testFlag1Value);
+				debug(3, "updateCharPosition() flag1 %d value %d", action->_testFlag1Num, action->_testFlag1Value);
 			}
-			if (action->testFlag2Num != 0) {
-				if (action->testFlag2Num < 500) {
-					if (_flagsTable[action->testFlag2Num] != action->testFlag2Value) {
+			if (action->_testFlag2Num != 0) {
+				if (action->_testFlag2Num < 500) {
+					if (_flagsTable[action->_testFlag2Num] != action->_testFlag2Value) {
 						skip = 0;
 					}
-				} else if (_inventoryItemsState[action->testFlag2Num - 500] != action->testFlag2Value) {
+				} else if (_inventoryItemsState[action->_testFlag2Num - 500] != action->_testFlag2Value) {
 					skip = 0;
 				}
-				debug(3, "updateCharPosition() flag2 %d value %d", action->testFlag2Num, action->testFlag2Value);
+				debug(3, "updateCharPosition() flag2 %d value %d", action->_testFlag2Num, action->_testFlag2Value);
 			}
 		}
 	}
@@ -886,25 +886,25 @@ void TuckerEngine::updateCharPosition() {
 		return;
 	}
 	assert(action);
-	if (action->speech != 6) {
-		if (action->speech < 100) {
-			_spriteAnimationFrameIndex = _spriteAnimationsTable[action->speech].firstFrameIndex;
-			_currentSpriteAnimationLength = _spriteAnimationsTable[action->speech].numParts;
-			_mirroredDrawing = action->flipX;
+	if (action->_speech != 6) {
+		if (action->_speech < 100) {
+			_spriteAnimationFrameIndex = _spriteAnimationsTable[action->_speech]._firstFrameIndex;
+			_currentSpriteAnimationLength = _spriteAnimationsTable[action->_speech]._numParts;
+			_mirroredDrawing = action->_flipX;
 			_characterFacingDirection = 5;
 			_mainLoopCounter2 = 0;
 		} else {
-			_backgroundSpriteCurrentAnimation = action->speech - 100;
+			_backgroundSpriteCurrentAnimation = action->_speech - 100;
 			_backgroundSpriteCurrentFrame = 0;
 			_mirroredDrawing = 0;
 		}
 	}
-	_pendingActionDelay = action->delay;
-	_charPositionFlagNum = action->setFlagNum;
-	_charPositionFlagValue = action->setFlagValue;
-	_pendingActionIndex = action->index;
-	_characterSoundFxDelayCounter = action->fxDelay;
-	_characterSoundFxNum = action->fxNum;
+	_pendingActionDelay = action->_delay;
+	_charPositionFlagNum = action->_setFlagNum;
+	_charPositionFlagValue = action->_setFlagValue;
+	_pendingActionIndex = action->_index;
+	_characterSoundFxDelayCounter = action->_fxDelay;
+	_characterSoundFxNum = action->_fxNum;
 	_previousActionVerb = _currentActionVerb;
 	_currentActionVerb = 0;
 }
@@ -1244,13 +1244,13 @@ void TuckerEngine::updateSfxData3_1() {
 		LocationSound *s = &_locationSoundsTable[i];
 		if ((s->type == 6 || s->type == 7) && s->updateType == 1) {
 			for (int j = 0; j < _spritesCount; ++j) {
-				if (_spritesTable[j].animationFrame == s->startFxSpriteNum && _spritesTable[j].state == s->startFxSpriteState) {
+				if (_spritesTable[j]._animationFrame == s->startFxSpriteNum && _spritesTable[j]._state == s->startFxSpriteState) {
 					if (s->type == 7) {
 						_flagsTable[s->flagNum] = s->flagValueStartFx;
 					}
 					startSound(s->offset, i, s->volume);
 				} else if (s->type == 7) {
-					if (_spritesTable[j].animationFrame == s->stopFxSpriteNum && _spritesTable[j].state == s->stopFxSpriteState) {
+					if (_spritesTable[j]._animationFrame == s->stopFxSpriteNum && _spritesTable[j]._state == s->stopFxSpriteState) {
 						_flagsTable[s->flagNum] = s->flagValueStopFx;
 						stopSound(i);
 					}
@@ -1750,28 +1750,28 @@ void TuckerEngine::drawCurrentSprite() {
 	// Workaround original game glitch: location 14 contains some colors from [0xE0-0xF8] in a walkable area (tracker item #3106542)
 	const bool color248Only = (_locationNum == 14);
 	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
-	int yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset;
+	int yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr->_yOffset;
 	int xPos = _xPosCurrent;
 	if (_mirroredDrawing == 0) {
-		xPos += chr->xOffset - 14;
+		xPos += chr->_xOffset - 14;
 	} else {
-		xPos -= chr->xSize + chr->xOffset - 14;
+		xPos -= chr->_xSize + chr->_xOffset - 14;
 	}
-	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->sourceOffset, chr->xSize, chr->ySize,
-		chr->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
-	addDirtyRect(xPos, yPos, chr->xSize, chr->ySize);
+	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->_sourceOffset, chr->_xSize, chr->_ySize,
+		chr->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
+	addDirtyRect(xPos, yPos, chr->_xSize, chr->_ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
-		yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->yOffset;
+		yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->_yOffset;
 		xPos = _xPosCurrent;
 		if (_mirroredDrawing == 0) {
-			xPos += chr2->xOffset - 14;
+			xPos += chr2->_xOffset - 14;
 		} else {
-			xPos -= chr2->xSize + chr2->xOffset - 14;
+			xPos -= chr2->_xSize + chr2->_xOffset - 14;
 		}
-		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->sourceOffset, chr2->xSize, chr2->ySize,
-			chr2->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
-		addDirtyRect(xPos, yPos, chr2->xSize, chr2->ySize);
+		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->_sourceOffset, chr2->_xSize, chr2->_ySize,
+			chr2->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
+		addDirtyRect(xPos, yPos, chr2->_xSize, chr2->_ySize);
 	}
 }
 
@@ -1894,25 +1894,25 @@ void TuckerEngine::redrawPanelItemsHelper() {
 
 void TuckerEngine::drawSprite(int num) {
 	Sprite *s = &_spritesTable[num];
-	if (s->animationFrame <= s->firstFrame && s->animationFrame > 0 && s->state != -1) {
-		const uint8 *p = s->animationData;
+	if (s->_animationFrame <= s->_firstFrame && s->_animationFrame > 0 && s->_state != -1) {
+		const uint8 *p = s->_animationData;
 		if (!p) {
 			return;
 		}
-		int frameOffset = READ_LE_UINT24(p + s->animationFrame * 4);
+		int frameOffset = READ_LE_UINT24(p + s->_animationFrame * 4);
 		int srcW = READ_LE_UINT16(p + frameOffset);
 		int srcH = READ_LE_UINT16(p + frameOffset + 2);
 		int srcX = READ_LE_UINT16(p + frameOffset + 8);
 		int srcY = READ_LE_UINT16(p + frameOffset + 10);
-		int xPos = s->gfxBackgroundOffset + srcX;
+		int xPos = s->_gfxBackgroundOffset + srcX;
 		if (xPos < 600 && (_scrollOffset + 320 < xPos || _scrollOffset - srcW > xPos)) {
 			return;
 		}
-		s->xSource = srcX;
-		s->gfxBackgroundOffset += s->backgroundOffset;
+		s->_xSource = srcX;
+		s->_gfxBackgroundOffset += s->_backgroundOffset;
 		uint8 *dstPtr = _locationBackgroundGfxBuf + srcY * 640 + xPos;
 		const uint8 *srcPtr = p + frameOffset + 12;
-		switch (s->colorType) {
+		switch (s->_colorType) {
 		case 0:
 			Graphics::decodeRLE(dstPtr, srcPtr, srcW, srcH);
 			break;
@@ -1920,11 +1920,11 @@ void TuckerEngine::drawSprite(int num) {
 			Graphics::decodeRLE_224(dstPtr, srcPtr, srcW, srcH);
 			break;
 		default:
-			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->yMaxBackground, s->flipX != 0);
+			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->_yMaxBackground, s->_flipX != 0);
 			break;
 		}
-		const int xR = srcX + (s->gfxBackgroundOffset % 640);
-		const int yR = srcY + (s->gfxBackgroundOffset / 640);
+		const int xR = srcX + (s->_gfxBackgroundOffset % 640);
+		const int yR = srcY + (s->_gfxBackgroundOffset / 640);
 		addDirtyRect(xR, yR, srcW, srcH);
 	}
 }
@@ -2227,14 +2227,14 @@ void TuckerEngine::updateCharacterAnimation() {
 				break;
 			}
 		}
-		_currentSpriteAnimationLength = _spriteAnimationsTable[num].numParts;
-		_spriteAnimationFrameIndex = _spriteAnimationsTable[num].firstFrameIndex;
+		_currentSpriteAnimationLength = _spriteAnimationsTable[num]._numParts;
+		_spriteAnimationFrameIndex = _spriteAnimationsTable[num]._firstFrameIndex;
 		frame = _spriteAnimationFramesTable[_spriteAnimationFrameIndex];
 	}
 	if (_characterAnimationNum > 0) {
 		num = _characterAnimationNum;
-		_currentSpriteAnimationLength = _spriteAnimationsTable[num].numParts;
-		_spriteAnimationFrameIndex = _spriteAnimationsTable[num].firstFrameIndex;
+		_currentSpriteAnimationLength = _spriteAnimationsTable[num]._numParts;
+		_spriteAnimationFrameIndex = _spriteAnimationsTable[num]._firstFrameIndex;
 		frame = _spriteAnimationFramesTable[_spriteAnimationFrameIndex];
 		_characterAnimationNum = 0;
 	}
@@ -2372,79 +2372,79 @@ void TuckerEngine::handleMap() {
 void TuckerEngine::clearSprites() {
 	memset(_spritesTable, 0, sizeof(_spritesTable));
 	for (int i = 0; i < kMaxCharacters; ++i) {
-		_spritesTable[i].state = -1;
-		_spritesTable[i].stateIndex = -1;
+		_spritesTable[i]._state = -1;
+		_spritesTable[i]._stateIndex = -1;
 	}
 }
 
 void TuckerEngine::updateSprites() {
 	const int count = (_locationNum == 9) ? 3 : _spritesCount;
 	for (int i = 0; i < count; ++i) {
-		if (_spritesTable[i].stateIndex > -1) {
-			++_spritesTable[i].stateIndex;
-			if (_characterStateTable[_spritesTable[i].stateIndex] == 99) {
-				_spritesTable[i].stateIndex = -1;
-				_spritesTable[i].state = -1;
+		if (_spritesTable[i]._stateIndex > -1) {
+			++_spritesTable[i]._stateIndex;
+			if (_characterStateTable[_spritesTable[i]._stateIndex] == 99) {
+				_spritesTable[i]._stateIndex = -1;
+				_spritesTable[i]._state = -1;
 				updateSprite(i);
 			} else {
-				_spritesTable[i].animationFrame = _characterStateTable[_spritesTable[i].stateIndex];
+				_spritesTable[i]._animationFrame = _characterStateTable[_spritesTable[i]._stateIndex];
 			}
 			continue;
 		}
-		if (_spritesTable[i].state == -1) {
+		if (_spritesTable[i]._state == -1) {
 			updateSprite(i);
 			continue;
 		}
-		if (_charSpeechSoundCounter > 0 && i == _actionCharacterNum && _spritesTable[i].needUpdate == 0) {
+		if (_charSpeechSoundCounter > 0 && i == _actionCharacterNum && _spritesTable[i]._needUpdate == 0) {
 			updateSprite(i);
 			continue;
 		}
-		if (_charSpeechSoundCounter == 0 && _spritesTable[i].needUpdate > 0) {
+		if (_charSpeechSoundCounter == 0 && _spritesTable[i]._needUpdate > 0) {
 			updateSprite(i);
 			continue;
 		}
-		if (_spritesTable[i].updateDelay > 0) {
-			--_spritesTable[i].updateDelay;
-			if (_spritesTable[i].updateDelay == 0) {
+		if (_spritesTable[i]._updateDelay > 0) {
+			--_spritesTable[i]._updateDelay;
+			if (_spritesTable[i]._updateDelay == 0) {
 				updateSprite(i);
 			}
 			continue;
 		}
-		if (_spritesTable[i].defaultUpdateDelay > 0) {
-			_spritesTable[i].updateDelay = _spritesTable[i].defaultUpdateDelay - 1;
-			++_spritesTable[i].animationFrame;
-			if (_spritesTable[i].animationFrame == _spritesTable[i].firstFrame) {
+		if (_spritesTable[i]._defaultUpdateDelay > 0) {
+			_spritesTable[i]._updateDelay = _spritesTable[i]._defaultUpdateDelay - 1;
+			++_spritesTable[i]._animationFrame;
+			if (_spritesTable[i]._animationFrame == _spritesTable[i]._firstFrame) {
 				updateSprite(i);
 			}
 			continue;
 		}
-		if (_spritesTable[i].nextAnimationFrame == 0) {
-			++_spritesTable[i].animationFrame;
-			if (_spritesTable[i].firstFrame - 1 < _spritesTable[i].animationFrame) {
-				if (_spritesTable[i].prevAnimationFrame == 1) {
-					--_spritesTable[i].animationFrame;
-					_spritesTable[i].nextAnimationFrame = 1;
+		if (_spritesTable[i]._nextAnimationFrame == 0) {
+			++_spritesTable[i]._animationFrame;
+			if (_spritesTable[i]._firstFrame - 1 < _spritesTable[i]._animationFrame) {
+				if (_spritesTable[i]._prevAnimationFrame == 1) {
+					--_spritesTable[i]._animationFrame;
+					_spritesTable[i]._nextAnimationFrame = 1;
 				} else {
 					updateSprite(i);
 				}
 			}
 			continue;
 		}
-		--_spritesTable[i].animationFrame;
-		if (_spritesTable[i].animationFrame == 0) {
+		--_spritesTable[i]._animationFrame;
+		if (_spritesTable[i]._animationFrame == 0) {
 			updateSprite(i);
 		}
 	}
 }
 
 void TuckerEngine::updateSprite(int i) {
-	_spritesTable[i].prevState = _spritesTable[i].state;
-	_spritesTable[i].prevAnimationFrame = 0;
-	_spritesTable[i].nextAnimationFrame = 0;
+	_spritesTable[i]._prevState = _spritesTable[i]._state;
+	_spritesTable[i]._prevAnimationFrame = 0;
+	_spritesTable[i]._nextAnimationFrame = 0;
 	_updateSpriteFlag1 = 0;
 	_updateSpriteFlag2 = 0;
-	_spritesTable[i].defaultUpdateDelay = 0;
-	_spritesTable[i].updateDelay = 0;
+	_spritesTable[i]._defaultUpdateDelay = 0;
+	_spritesTable[i]._updateDelay = 0;
 	switch (_locationNum) {
 	case 2:
 		updateSprite_locationNum2();
@@ -2634,7 +2634,7 @@ void TuckerEngine::updateSprite(int i) {
 		if (i == 0) {
 			updateSprite_locationNum32_0(0);
 		} else {
-			_spritesTable[i].state = -1;
+			_spritesTable[i]._state = -1;
 		}
 		break;
 	case 33:
@@ -2645,7 +2645,7 @@ void TuckerEngine::updateSprite(int i) {
 		} else if (i == 2) {
 			updateSprite_locationNum33_2(2);
 		} else {
-			_spritesTable[i].state = 12;
+			_spritesTable[i]._state = 12;
 		}
 		break;
 	case 34:
@@ -2656,7 +2656,7 @@ void TuckerEngine::updateSprite(int i) {
 		break;
 	case 37:
 		if (i == 0) {
-			_spritesTable[0].state = -1;
+			_spritesTable[0]._state = -1;
 		} else {
 			updateSprite_locationNum37(i);
 		}
@@ -2672,9 +2672,9 @@ void TuckerEngine::updateSprite(int i) {
 			updateSprite_locationNum43_2(i);
 		} else if (i < 2) {
 			if (_flagsTable[236] < 4) {
-				_spritesTable[i].state = i + 1;
+				_spritesTable[i]._state = i + 1;
 			} else {
-				_spritesTable[i].state = -1;
+				_spritesTable[i]._state = -1;
 			}
 		} else if (i == 3) {
 			updateSprite_locationNum43_3(3);
@@ -2687,10 +2687,10 @@ void TuckerEngine::updateSprite(int i) {
 		}
 		break;
 	case 45:
-		_spritesTable[0].state = 1;
+		_spritesTable[0]._state = 1;
 		break;
 	case 47:
-		_spritesTable[i].state = i + 1;
+		_spritesTable[i]._state = i + 1;
 		break;
 	case 48:
 		updateSprite_locationNum48(0);
@@ -2702,7 +2702,7 @@ void TuckerEngine::updateSprite(int i) {
 		if (i < 6) {
 			updateSprite_locationNum50(i);
 		} else {
-			_spritesTable[i].state = i + 1;
+			_spritesTable[i]._state = i + 1;
 		}
 		break;
 	case 51:
@@ -2784,7 +2784,7 @@ void TuckerEngine::updateSprite(int i) {
 		break;
 	case 69:
 		if (i == 0) {
-			_spritesTable[0].state = 1;
+			_spritesTable[0]._state = 1;
 		} else if (i == 1) {
 			updateSprite_locationNum69_1(1);
 		} else if (i == 2) {
@@ -2816,23 +2816,23 @@ void TuckerEngine::updateSprite(int i) {
 		updateSprite_locationNum82(0);
 		break;
 	case 98:
-		_spritesTable[0].state = 1;
+		_spritesTable[0]._state = 1;
 		break;
 	}
-	if (_spritesTable[i].stateIndex <= -1) {
+	if (_spritesTable[i]._stateIndex <= -1) {
 		if (_updateSpriteFlag1 == 0) {
-			_spritesTable[i].animationFrame = 1;
+			_spritesTable[i]._animationFrame = 1;
 		}
-		if (_spritesTable[i].state < 0 || !_sprC02Table[_spritesTable[i].state]) {
+		if (_spritesTable[i]._state < 0 || !_sprC02Table[_spritesTable[i]._state]) {
 //			warning("Invalid state %d for sprite %d location %d", _spritesTable[i].state, i, _locationNum);
 			return;
 		}
-		_spritesTable[i].animationData = _sprC02Table[_spritesTable[i].state];
-		_spritesTable[i].firstFrame = READ_LE_UINT16(_spritesTable[i].animationData);
+		_spritesTable[i]._animationData = _sprC02Table[_spritesTable[i]._state];
+		_spritesTable[i]._firstFrame = READ_LE_UINT16(_spritesTable[i]._animationData);
 		if (_updateSpriteFlag2 == 1) {
-			_spritesTable[i].state = _spritesTable[i].firstFrame;
-			_spritesTable[i].nextAnimationFrame = 1;
-			_spritesTable[i].prevAnimationFrame = 1;
+			_spritesTable[i]._state = _spritesTable[i]._firstFrame;
+			_spritesTable[i]._nextAnimationFrame = 1;
+			_spritesTable[i]._prevAnimationFrame = 1;
 		}
 	}
 }
@@ -3125,7 +3125,7 @@ int TuckerEngine::executeTableInstruction() {
 		return 0;
 	case kCode_bub:
 		i = readTableInstructionParam(3);
-		_spriteAnimationFrameIndex = _spriteAnimationsTable[i].firstFrameIndex;
+		_spriteAnimationFrameIndex = _spriteAnimationsTable[i]._firstFrameIndex;
 		_characterFacingDirection = 5;
 		_mainLoopCounter2 = 0;
 		return 0;
@@ -3171,14 +3171,14 @@ int TuckerEngine::executeTableInstruction() {
 		_yPosCurrent = readTableInstructionParam(3);
 		return 0;
 	case kCode_c0a:
-		_spritesTable[index].state = readTableInstructionParam(3);
-		if (_spritesTable[index].state == 999) {
-			_spritesTable[index].state = -1;
+		_spritesTable[index]._state = readTableInstructionParam(3);
+		if (_spritesTable[index]._state == 999) {
+			_spritesTable[index]._state = -1;
 		}
 		_mainLoopCounter1 = 0;
-		_spritesTable[index].updateDelay = 0;
-		_spritesTable[index].nextAnimationFrame = 0;
-		_spritesTable[index].prevAnimationFrame = 0;
+		_spritesTable[index]._updateDelay = 0;
+		_spritesTable[index]._nextAnimationFrame = 0;
+		_spritesTable[index]._prevAnimationFrame = 0;
 		return 0;
 	case kCode_c0c:
 		setCharacterAnimation(readTableInstructionParam(3), index);
@@ -3437,8 +3437,8 @@ void TuckerEngine::setSelectedObjectKey() {
 			_selectedObject.yPos = _locationAnimationsTable[_selectedCharacterNum].standY;
 			break;
 		case 2:
-			_selectedObject.xPos = _charPosTable[_selectedCharacterNum].xWalkTo;
-			_selectedObject.yPos = _charPosTable[_selectedCharacterNum].yWalkTo;
+			_selectedObject.xPos = _charPosTable[_selectedCharacterNum]._xWalkTo;
+			_selectedObject.yPos = _charPosTable[_selectedCharacterNum]._yWalkTo;
 			break;
 		case 3:
 			_selectedObject.xPos = _xPosCurrent;
@@ -3479,20 +3479,20 @@ void TuckerEngine::setSelectedObjectKey() {
 }
 
 void TuckerEngine::setCharacterAnimation(int count, int spr) {
-	_spritesTable[spr].animationFrame = 0;
-	_spritesTable[spr].stateIndex = 0;
+	_spritesTable[spr]._animationFrame = 0;
+	_spritesTable[spr]._stateIndex = 0;
 	for (int i = 0; i < count; ++i) {
-		while (_characterStateTable[_spritesTable[spr].stateIndex] != 99) {
-			++_spritesTable[spr].stateIndex;
+		while (_characterStateTable[_spritesTable[spr]._stateIndex] != 99) {
+			++_spritesTable[spr]._stateIndex;
 		}
-		++_spritesTable[spr].stateIndex;
+		++_spritesTable[spr]._stateIndex;
 	}
-	_spritesTable[spr].state = _characterStateTable[_spritesTable[spr].stateIndex];
-	++_spritesTable[spr].stateIndex;
-	_spritesTable[spr].animationFrame = _characterStateTable[_spritesTable[spr].stateIndex];
-	++_spritesTable[spr].stateIndex;
-	_spritesTable[spr].animationData = _sprC02Table[_spritesTable[spr].state];
-	_spritesTable[spr].firstFrame = READ_LE_UINT16(_spritesTable[spr].animationData);
+	_spritesTable[spr]._state = _characterStateTable[_spritesTable[spr]._stateIndex];
+	++_spritesTable[spr]._stateIndex;
+	_spritesTable[spr]._animationFrame = _characterStateTable[_spritesTable[spr]._stateIndex];
+	++_spritesTable[spr]._stateIndex;
+	_spritesTable[spr]._animationData = _sprC02Table[_spritesTable[spr]._state];
+	_spritesTable[spr]._firstFrame = READ_LE_UINT16(_spritesTable[spr]._animationData);
 }
 
 int TuckerEngine::testLocationMaskArea(int xBase, int yBase, int xPos, int yPos) {
@@ -3587,23 +3587,23 @@ int TuckerEngine::setCharacterUnderCursor() {
 		return -1;
 	}
 	for (int i = 0; i < _charPosCount; ++i) {
-		if (_mousePosX + _scrollOffset <= _charPosTable[i].xPos) {
+		if (_mousePosX + _scrollOffset <= _charPosTable[i]._xPos) {
 			continue;
 		}
-		if (_mousePosX + _scrollOffset >= _charPosTable[i].xPos + _charPosTable[i].xSize) {
+		if (_mousePosX + _scrollOffset >= _charPosTable[i]._xPos + _charPosTable[i]._xSize) {
 			continue;
 		}
-		if (_mousePosY <= _charPosTable[i].yPos) {
+		if (_mousePosY <= _charPosTable[i]._yPos) {
 			continue;
 		}
-		if (_mousePosY >= _charPosTable[i].yPos + _charPosTable[i].ySize) {
+		if (_mousePosY >= _charPosTable[i]._yPos + _charPosTable[i]._ySize) {
 			continue;
 		}
-		if (_charPosTable[i].flagNum == 0 || _flagsTable[_charPosTable[i].flagNum] == _charPosTable[i].flagValue) {
+		if (_charPosTable[i]._flagNum == 0 || _flagsTable[_charPosTable[i]._flagNum] == _charPosTable[i]._flagValue) {
 			_selectedObjectType = 2;
-			_selectedCharacterDirection = _charPosTable[i].direction;
+			_selectedCharacterDirection = _charPosTable[i]._direction;
 			_selectedCharacterNum = i;
-			return _charPosTable[i].name;
+			return _charPosTable[i]._name;
 		}
 	}
 	return -1;

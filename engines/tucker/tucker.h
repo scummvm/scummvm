@@ -53,69 +53,69 @@ class RewindableAudioStream;
 namespace Tucker {
 
 struct Action {
-	int key;
-	int testFlag1Num;
-	int testFlag1Value;
-	int testFlag2Num;
-	int testFlag2Value;
-	int speech;
-	int flipX;
-	int index;
-	int delay;
-	int setFlagNum;
-	int setFlagValue;
-	int fxNum;
-	int fxDelay;
+	int _key;
+	int _testFlag1Num;
+	int _testFlag1Value;
+	int _testFlag2Num;
+	int _testFlag2Value;
+	int _speech;
+	int _flipX;
+	int _index;
+	int _delay;
+	int _setFlagNum;
+	int _setFlagValue;
+	int _fxNum;
+	int _fxDelay;
 };
 
 struct Sprite {
-	int state;
-	int gfxBackgroundOffset;
-	int updateDelay;
-	int backgroundOffset;
-	int needUpdate;
-	int stateIndex;
-	int counter;
-	int disabled;
-	int colorType;
-	int animationFrame;
-	int firstFrame;
-	uint8 *animationData;
-	int prevState;
-	int nextAnimationFrame;
-	int prevAnimationFrame;
-	int defaultUpdateDelay;
-	int xSource;
-	int yMaxBackground;
-	int flipX;
+	int _state;
+	int _gfxBackgroundOffset;
+	int _updateDelay;
+	int _backgroundOffset;
+	int _needUpdate;
+	int _stateIndex;
+	int _counter;
+	int _disabled;
+	int _colorType;
+	int _animationFrame;
+	int _firstFrame;
+	uint8 *_animationData;
+	int _prevState;
+	int _nextAnimationFrame;
+	int _prevAnimationFrame;
+	int _defaultUpdateDelay;
+	int _xSource;
+	int _yMaxBackground;
+	int _flipX;
 };
 
 struct CharPos {
-	int xPos;
-	int yPos;
-	int xSize;
-	int ySize;
-	int xWalkTo;
-	int yWalkTo;
-	int flagNum;
-	int flagValue;
-	int direction;
-	int name;
-	int description;
+	int _xPos;
+	int _yPos;
+	int _xSize;
+	int _ySize;
+	int _xWalkTo;
+	int _yWalkTo;
+	int _flagNum;
+	int _flagValue;
+	int _direction;
+	int _name;
+	int _description;
 };
 
 struct SpriteFrame {
-	int sourceOffset;
-	int xOffset;
-	int yOffset;
-	int xSize;
-	int ySize;
+	int _sourceOffset;
+	int _xOffset;
+	int _yOffset;
+	int _xSize;
+	int _ySize;
 };
 
 struct SpriteAnimation {
-	int numParts;
-	int rotateFlag;
-	int firstFrameIndex;
+	int _numParts;
+	int _rotateFlag;
+	int _firstFrameIndex;
 };
 
 struct Data {

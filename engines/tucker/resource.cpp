@@ -408,8 +408,8 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 			loadImage(filename.c_str(), _loadTempBuf, 0);
 			++frame;
 		}
-		int sz = Graphics::encodeRLE(_loadTempBuf + _spriteFramesTable[i].sourceOffset, _spritesGfxBuf + spriteOffset, _spriteFramesTable[i].xSize, _spriteFramesTable[i].ySize);
-		_spriteFramesTable[i].sourceOffset = spriteOffset;
+		int sz = Graphics::encodeRLE(_loadTempBuf + _spriteFramesTable[i]._sourceOffset, _spritesGfxBuf + spriteOffset, _spriteFramesTable[i]._xSize, _spriteFramesTable[i]._ySize);
+		_spriteFramesTable[i]._sourceOffset = spriteOffset;
 		spriteOffset += sz;
 	}
 }
@@ -431,16 +431,16 @@ int TuckerEngine::loadCTable01(int index, int firstSpriteNum, int *framesCount) 
 			}
 			const int y = t.getNextInteger();
 			SpriteFrame *c = &_spriteFramesTable[lastSpriteNum++];
-			c->sourceOffset = y * 320 + x;
-			c->xSize = t.getNextInteger();
-			c->ySize = t.getNextInteger();
-			c->xOffset = t.getNextInteger();
-			if (c->xOffset > 300) {
-				c->xOffset -= 500;
+			c->_sourceOffset = y * 320 + x;
+			c->_xSize = t.getNextInteger();
+			c->_ySize = t.getNextInteger();
+			c->_xOffset = t.getNextInteger();
+			if (c->_xOffset > 300) {
+				c->_xOffset -= 500;
 			}
-			c->yOffset = t.getNextInteger();
-			if (c->yOffset > 300) {
-				c->yOffset -= 500;
+			c->_yOffset = t.getNextInteger();
+			if (c->_yOffset > 300) {
+				c->_yOffset -= 500;
 			}
 		}
 	}
@@ -455,17 +455,17 @@ void TuckerEngine::loadCTable02(int fl) {
 	loadFile("ctable02.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	while (t.findNextToken(kDataTokenDw)) {
-		_spriteAnimationsTable[entry].numParts = t.getNextInteger();
-		if (_spriteAnimationsTable[entry].numParts < 1) {
+		_spriteAnimationsTable[entry]._numParts = t.getNextInteger();
+		if (_spriteAnimationsTable[entry]._numParts < 1) {
 			return;
 		}
-		_spriteAnimationsTable[entry].rotateFlag = t.getNextInteger();
+		_spriteAnimationsTable[entry]._rotateFlag = t.getNextInteger();
 		int num = t.getNextInteger();
 		if (num != fl) {
 			continue;
 		}
 		int start = 0;
-		_spriteAnimationsTable[entry].firstFrameIndex = i;
+		_spriteAnimationsTable[entry]._firstFrameIndex = i;
 		while (start != 999) {
 			start = t.getNextInteger();
 			if (start == 9999) { // end marker in the demo version
@@ -726,20 +726,20 @@ void TuckerEngine::loadActionFile() {
 			int keyD = t.getNextInteger();
 			int keyE = t.getNextInteger();
 			Action *action = &_actionsTable[_actionsCount++];
-			action->key = keyE * 1000000 + keyD * 100000 + keyA * 10000 + keyB * 1000 + keyC;
-			action->testFlag1Num = t.getNextInteger();
-			action->testFlag1Value = t.getNextInteger();
-			action->testFlag2Num = t.getNextInteger();
-			action->testFlag2Value = t.getNextInteger();
-			action->speech = t.getNextInteger();
-			action->flipX = t.getNextInteger();
-			action->index = t.getNextInteger();
-			action->delay = t.getNextInteger();
-			action->setFlagNum = t.getNextInteger();
-			assert(action->setFlagNum >= 0 && action->setFlagNum < kFlagsTableSize);
-			action->setFlagValue = t.getNextInteger();
-			action->fxNum = t.getNextInteger();
-			action->fxDelay = t.getNextInteger();
+			action->_key = keyE * 1000000 + keyD * 100000 + keyA * 10000 + keyB * 1000 + keyC;
+			action->_testFlag1Num = t.getNextInteger();
+			action->_testFlag1Value = t.getNextInteger();
+			action->_testFlag2Num = t.getNextInteger();
+			action->_testFlag2Value = t.getNextInteger();
+			action->_speech = t.getNextInteger();
+			action->_flipX = t.getNextInteger();
+			action->_index = t.getNextInteger();
+			action->_delay = t.getNextInteger();
+			action->_setFlagNum = t.getNextInteger();
+			assert(action->_setFlagNum >= 0 && action->_setFlagNum < kFlagsTableSize);
+			action->_setFlagValue = t.getNextInteger();
+			action->_fxNum = t.getNextInteger();
+			action->_fxDelay = t.getNextInteger();
 		}
 	}
 }
@@ -756,17 +756,17 @@ void TuckerEngine::loadCharPos() {
 			}
 			assert(_charPosCount < 4);
 			CharPos *charPos = &_charPosTable[_charPosCount++];
-			charPos->xPos = i;
-			charPos->yPos = t.getNextInteger();
-			charPos->xSize = t.getNextInteger();
-			charPos->ySize = t.getNextInteger();
-			charPos->xWalkTo = t.getNextInteger();
-			charPos->yWalkTo = t.getNextInteger();
-			charPos->flagNum = t.getNextInteger();
-			charPos->flagValue = t.getNextInteger();
-			charPos->direction = t.getNextInteger();
-			charPos->name = t.getNextInteger();
-			charPos->description = t.getNextInteger();
+			charPos->_xPos = i;
+			charPos->_yPos = t.getNextInteger();
+			charPos->_xSize = t.getNextInteger();
+			charPos->_ySize = t.getNextInteger();
+			charPos->_xWalkTo = t.getNextInteger();
+			charPos->_yWalkTo = t.getNextInteger();
+			charPos->_flagNum = t.getNextInteger();
+			charPos->_flagValue = t.getNextInteger();
+			charPos->_direction = t.getNextInteger();
+			charPos->_name = t.getNextInteger();
+			charPos->_description = t.getNextInteger();
 		}
 		int quitLoop = 0;
 		size_t count = 0;
@@ -835,8 +835,8 @@ void TuckerEngine::loadSprC02_01() {
 	_spritesCount = _sprC02LookupTable2[_locationNum];
 	for (int i = 0; i < kMaxCharacters; ++i) {
 		memset(&_spritesTable[i], 0, sizeof(Sprite));
-		_spritesTable[i].state = -1;
-		_spritesTable[i].stateIndex = -1;
+		_spritesTable[i]._state = -1;
+		_spritesTable[i]._stateIndex = -1;
 	}
 }
 
@@ -1005,7 +1005,7 @@ void TuckerEngine::loadActionsTable() {
 					}
 				}
 			} else {
-				if (_spritesTable[_csDataTableCount - 1].firstFrame - 1 != _spritesTable[_csDataTableCount - 1].animationFrame) {
+				if (_spritesTable[_csDataTableCount - 1]._firstFrame - 1 != _spritesTable[_csDataTableCount - 1]._animationFrame) {
 					break;
 				}
 			}
