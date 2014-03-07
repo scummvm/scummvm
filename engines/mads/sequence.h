@@ -70,7 +70,7 @@ struct SequenceEntry {
 	SequenceSubEntries _entries;
 	AbortTimerMode _abortMode;
 
-	uint16 _actionNouns[3];
+	ActionDetails _actionNouns;
 	int _numTicks;
 	int _extraTicks;
 	uint32 _timeout;
@@ -84,7 +84,6 @@ class SequenceList {
 private:
 	MADSEngine *_vm;
 	Common::Array<SequenceEntry> _entries;
-	int _actionNouns[3];
 public:
 	SequenceList(MADSEngine *vm);
 
@@ -94,6 +93,7 @@ public:
 	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks,
 		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
 		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
+	int addTimer(int time, int abortVal);
 	void remove(int seqIndex);
 	void setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot);
 	bool loadSprites(int seqIndex);
@@ -102,8 +102,11 @@ public:
 	void setAnimRange(int seqIndex, int startVal, int endVal);
 	void scan();
 	void setDepth(int seqIndex, int depth);
+	void setMsgPosition(int seqIndex, const Common::Point &pt);
 	int addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
 	int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
+	int startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks, int triggerCountdown, 
+		int timeoutTicks, int extraTicks);
 };
 
 } // End of namespace MADS

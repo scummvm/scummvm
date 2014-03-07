@@ -218,8 +218,6 @@ public:
 	 * Adds a sprite asset to the list by name
 	 */
 	int addSprites(const Common::String &resName, int flags = 0);
-
-	int startCycle(int srcSpriteIndex, bool flipped, int cycleIndex);
 };
 
 } // End of namespace MADS

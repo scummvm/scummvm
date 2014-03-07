@@ -28,28 +28,27 @@
 
 namespace MADS {
 
-SequenceEntry::SequenceEntry() {
-	_spritesIndex = 0;
-	_flipped = 0;
-	_frameIndex = 0;
-	_frameStart = 0;
-	_numSprites = 0;
-	_animType = ANIMTYPE_NONE;
-	_frameInc = 0;
-	_depth = 0;
-	_scale = 0;
-	_dynamicHotspotIndex = -1;
-	_triggerCountdown = 0;
-	_doneFlag = 0;
-	_entries._count = 0;
-	_abortMode = ABORTMODE_0;
-	_actionNouns[0] = _actionNouns[1] = _actionNouns[2] = 0;
-	_numTicks = 0;
-	_extraTicks = 0;
-	_timeout = 0;
-}
+	SequenceEntry::SequenceEntry() {
+		_spritesIndex = 0;
+		_flipped = 0;
+		_frameIndex = 0;
+		_frameStart = 0;
+		_numSprites = 0;
+		_animType = ANIMTYPE_NONE;
+		_frameInc = 0;
+		_depth = 0;
+		_scale = 0;
+		_dynamicHotspotIndex = -1;
+		_triggerCountdown = 0;
+		_doneFlag = 0;
+		_entries._count = 0;
+		_abortMode = ABORTMODE_0;
+		_numTicks = 0;
+		_extraTicks = 0;
+		_timeout = 0;
+	}
 
-/*------------------------------------------------------------------------*/
+	/*------------------------------------------------------------------------*/
 
 #define TIMER_LIST_SIZE 30
 
@@ -126,8 +125,31 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 	_entries[seqIndex]._entries._count = 0;
 	_entries[seqIndex]._abortMode = _vm->_game->_abortTimersMode2;
 
-	for (int i = 0; i < 3; ++i)
-		_entries[seqIndex]._actionNouns[i] = _actionNouns[i];
+	_entries[seqIndex]._actionNouns = _vm->_game->_scene._action._activeAction;
+
+	return seqIndex;
+}
+
+int SequenceList::addTimer(int time, int abortVal) {
+	int seqIndex;
+	for (seqIndex = 0; seqIndex < _entries.size(); ++seqIndex) {
+		if (!_entries[seqIndex]._active)
+			break;
+	}
+	assert(seqIndex < (int)_entries.size());
+
+	SequenceEntry &se = _entries[seqIndex];
+	se._active = true;
+	se._spritesIndex = -1;
+	se._numTicks = time;
+	se._extraTicks = 0;
+	se._timeout = _vm->_events->_currentTimer + time;
+	se._triggerCountdown = true;
+	se._doneFlag = false;
+	se._entries._count = 0;
+	se._abortMode = _vm->_game->_abortTimersMode2;
+	se._actionNouns = _vm->_game->_scene._action._activeAction;
+	addSubEntry(seqIndex, SM_0, 0, abortVal);
 
 	return seqIndex;
 }
@@ -368,6 +390,11 @@ void SequenceList::setDepth(int seqIndex, int depth) {
 	_entries[seqIndex]._depth = depth;
 }
 
+void SequenceList::setMsgPosition(int seqIndex, const Common::Point &pt) {
+	_entries[seqIndex]._msgPos = pt;
+	_entries[seqIndex]._nonFixed = false;
+}
+
 int SequenceList::addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
 	Scene &scene = _vm->_game->_scene;
 	MSprite *spriteFrame = scene._spriteSlots.getSprite(srcSpriteIdx).getFrame(0);
@@ -384,6 +411,17 @@ int SequenceList::startCycle(int srcSpriteIndex, bool flipped, int cycleIndex) {
 		setAnimRange(result, cycleIndex, cycleIndex);
 
 	return result;
+}
+
+int SequenceList::startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks, 
+		int triggerCountdown, int timeoutTicks, int extraTicks) {
+	SpriteAsset *sprites = _vm->_game->_scene._sprites[srcSpriteIndex];
+	MSprite *frame = sprites->getFrame(0);
+	int depth = _vm->_game->_scene._depthSurface.getDepth(Common::Point(
+		frame->_pos.x + frame->w / 2, frame->_pos.y + frame->h / 2));
+
+	return add(srcSpriteIndex, flipped, 1, triggerCountdown, timeoutTicks, extraTicks,
+		numTicks, 0, 0, true, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);
 }
 
 } // End of namespace 

@@ -100,13 +100,33 @@ void Scene804::setup() {
 		if (_globals[164]) {
 			_globals._spriteIndexes[19] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[4], 0, 1);
-			// TODO
+			_scene->_sequences.addTimer(60, 100);
 		} else {
-
+			_globals._spriteIndexes[20] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[5], false, 1);
+			_globals._spriteIndexes[21] = _scene->_sequences.startReverseCycle(
+				_globals._spriteIndexes[6], false, 4, 0, 0, 0);
+			_scene->_sequences.addTimer(160, 70);
+			_vm->_game->_player._stepEnabled = false;
 		}
 	} else {
-		// TODO
+		if (_globals[167] == 0) {
+			_globals._spriteIndexes[22] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[7], false, 1);
+		}
+
+		if (_globals[164] == 0) {
+			_globals._spriteIndexes[22] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[18], false, 1);
+		}
+
+		_globals._spriteIndexes[0] = _scene->_sequences.startCycle(
+			_globals._spriteIndexes[0], false, 1);
+		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[15], Common::Point(133, 139));
+		_scene->_sequences.setDepth(_globals._spriteIndexes[15], 8);
 	}
+
+	// TODO: More setup
 }
 
 void Scene804::enter() {
