@@ -190,7 +190,6 @@ void AvalancheEngine::setup() {
 
 	_animation->resetAnims();
 
-	drawToolbar();
 	_dialogs->setReadyLight(2);
 
 	fadeIn();
@@ -210,11 +209,16 @@ void AvalancheEngine::setup() {
 
 		loadGame(loadSlot);
 	} else {
-		_mainmenu->run();
+		// We don't need the MainMenu during the whole game, only at the beginning of it.
+		MainMenu *mainmenu = new MainMenu(this);
+		mainmenu->run();
+		delete mainmenu;
 		if (_letMeOut)
 			return;
 		
 		newGame();
+
+		drawToolbar();
 
 		thinkAbout(kObjectMoney, kThing);
 

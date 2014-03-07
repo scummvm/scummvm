@@ -92,7 +92,6 @@ public:
 	GhostRoom *_ghostroom;
 	Help *_help;
 	ShootEmUp *_shootemup;
-	MainMenu *_mainmenu;
 
 	OSystem *_system;
 
