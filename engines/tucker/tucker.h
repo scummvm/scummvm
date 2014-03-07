@@ -73,21 +73,21 @@ struct Sprite {
 	int _gfxBackgroundOffset;
 	int _updateDelay;
 	int _backgroundOffset;
-	int _needUpdate;
 	int _stateIndex;
 	int _counter;
-	int _disabled;
 	int _colorType;
 	int _animationFrame;
 	int _firstFrame;
 	uint8 *_animationData;
 	int _prevState;
-	int _nextAnimationFrame;
-	int _prevAnimationFrame;
 	int _defaultUpdateDelay;
 	int _xSource;
 	int _yMaxBackground;
-	int _flipX;
+	bool _disabled;
+	bool _flipX;
+	bool _needUpdate;
+	bool _nextAnimationFrame;
+	bool _prevAnimationFrame;
 };
 
 struct CharPos {

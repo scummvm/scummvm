@@ -138,9 +138,9 @@ void TuckerEngine::updateSprite_locationNum2() {
 			_spritesTable[0]._state = -1;
 		} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
 			_spritesTable[0]._state = 4;
-			_spritesTable[0]._needUpdate = 1;
+			_spritesTable[0]._needUpdate = true;
 		} else {
-			_spritesTable[0]._needUpdate = 0;
+			_spritesTable[0]._needUpdate = false;
 			_spritesTable[0]._state = 5;
 			_flagsTable[10] = 1;
 			_spritesTable[0]._gfxBackgroundOffset = 0;
@@ -149,11 +149,11 @@ void TuckerEngine::updateSprite_locationNum2() {
 	}
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
 		_spritesTable[0]._state = 3;
-		_spritesTable[0]._needUpdate = 1;
+		_spritesTable[0]._needUpdate = true;
 		return;
 	}
 	if (_csDataHandled) {
-		_spritesTable[0]._needUpdate = 0;
+		_spritesTable[0]._needUpdate = false;
 		if (_flagsTable[199] == 0) {
 			_flagsTable[199] = 1;
 			setCharacterAnimation(0, 0);
@@ -243,9 +243,9 @@ void TuckerEngine::updateSprite_locationNum3_0(int i) {
 	int num;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		num = 5;
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 	} else if (_spritesTable[i]._prevState == 5 && _spritesTable[i]._animationFrame == 1) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		int r = getRandomNumber();
 		if (r < 12000) {
 			num = 3;
@@ -260,7 +260,7 @@ void TuckerEngine::updateSprite_locationNum3_0(int i) {
 		_spritesTable[i]._updateDelay = 10;
 	}
 	_spritesTable[i]._state = num;
-	_spritesTable[i]._prevAnimationFrame = 1;
+	_spritesTable[i]._prevAnimationFrame = true;
 }
 
 void TuckerEngine::updateSprite_locationNum3_1(int i) {
@@ -268,24 +268,24 @@ void TuckerEngine::updateSprite_locationNum3_1(int i) {
 	if (_flagsTable[207] == 1) {
 		num = -1;
 	} else if (_flagsTable[203] == 1) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		num = 20;
 		_flagsTable[203] = 2;
 	} else if (_flagsTable[203] == 2) {
 		num = 12;
 	} else if (_flagsTable[203] == 3) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		num = 19;
 		_flagsTable[203] = 0;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		if (_flagsTable[21] == 0) {
 			num = 7;
 		} else {
 			num = 8;
 		}
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (_csDataHandled) {
 			num = 6;
 			if (getRandomNumber() < 32000) {
@@ -314,7 +314,7 @@ void TuckerEngine::updateSprite_locationNum3_2(int i) {
 		_flagsTable[205] = 0;
 		num = 18;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		num = 17;
 	} else if (_flagsTable[45] == 1) {
 		_flagsTable[45] = 2;
@@ -322,13 +322,13 @@ void TuckerEngine::updateSprite_locationNum3_2(int i) {
 	} else if (_flagsTable[45] == 2) {
 		num = 17;
 		_spritesTable[i]._updateDelay = 5;
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 	} else if (_flagsTable[45] == 3) {
 		_flagsTable[45] = 0;
 		num = 16;
 		_updateSpriteFlag2 = 1;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		++_spritesTable[i]._counter;
 		if (_spritesTable[i]._counter <= 5) {
 			num = 14;
@@ -362,10 +362,10 @@ void TuckerEngine::updateSprite_locationNum4(int i) {
 	if (_flagsTable[9] == 2) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 			state = 1;
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 		} else {
 			state = 2;
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 		}
 	}
 	_spritesTable[i]._state = state;
@@ -410,7 +410,7 @@ void TuckerEngine::updateSprite_locationNum6_0(int i) {
 		state = 14;
 	} else if (_flagsTable[26] == 4 || _flagsTable[26] == 5) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-			_spritesTable[0]._needUpdate = 1;
+			_spritesTable[0]._needUpdate = true;
 			state = 3;
 			_spritesTable[0]._counter = 0;
 		} else if (_xPosCurrent < 370 && _flagsTable[26] == 4) {
@@ -440,18 +440,18 @@ void TuckerEngine::updateSprite_locationNum6_1(int i) {
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		if (_flagsTable[209] == 1) {
 			state = 9;
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 		} else {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			state = 10;
 		}
 	} else {
 		if (getRandomNumber() < 30000 || (_csDataHandled && _xPosCurrent == 248)) {
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 			state = 7;
 			_spritesTable[i]._updateDelay = 5;
 		} else {
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 			state = 7;
 			_miscSoundFxNum[0] = 3;
 			_miscSoundFxDelayCounter[0] = 70;
@@ -467,7 +467,7 @@ void TuckerEngine::updateSprite_locationNum6_2(int i) {
 	if (_flagsTable[26] < 5 || _flagsTable[207] > 0) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 12;
 	} else {
 		state = 12;
@@ -585,10 +585,10 @@ void TuckerEngine::updateSprite_locationNum7_0(int i) {
 	int state;
 	++_spritesTable[i]._counter;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 4;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (_spritesTable[i]._counter > 0) {
 			state = 2;
 			_spritesTable[i]._counter = 0;
@@ -602,10 +602,10 @@ void TuckerEngine::updateSprite_locationNum7_0(int i) {
 void TuckerEngine::updateSprite_locationNum7_1(int i) {
 	int state;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 5;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 5;
 		_spritesTable[i]._updateDelay = 5;
 	}
@@ -622,14 +622,14 @@ void TuckerEngine::updateSprite_locationNum8_1(int i) {
 		state = -1;
 	} else if (_flagsTable[28] == 18) {
 		state = 6;
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 	} else if (_flagsTable[29] == 0) {
 		state = 1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 1) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 5;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 3;
 	}
 	if (_flagsTable[28] == 19) {
@@ -674,7 +674,7 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 
 void TuckerEngine::updateSprite_locationNum9_0(int i) {
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		_spritesTable[i]._state = 3;
 	} else if (_updateLocationCounter2 > 0 || getRandomNumber() > 30000) {
 		_spritesTable[i]._state = 1;
@@ -730,16 +730,16 @@ void TuckerEngine::execData3PreUpdate_locationNum9() {
 
 void TuckerEngine::execData3PostUpdate_locationNum9() {
 	if (_spritesTable[1]._state == 4) {
-		if (_spritesTable[1]._flipX == 1) {
+		if (_spritesTable[1]._flipX) {
 			--_updateLocationXPosTable2[0];
 			if (_updateLocationXPosTable2[0] < -50) {
-				_spritesTable[1]._flipX = 0;
+				_spritesTable[1]._flipX = false;
 				_updateLocationXPosTable2[0] = -50;
 			}
 		} else {
 			++_updateLocationXPosTable2[0];
 			if (_updateLocationXPosTable2[0] > 500) {
-				_spritesTable[1]._flipX = 1;
+				_spritesTable[1]._flipX = true;
 				_updateLocationXPosTable2[0] = 500;
 			}
 		}
@@ -759,7 +759,7 @@ void TuckerEngine::updateSprite_locationNum10() {
 	if (_flagsTable[99] == 1) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		_spritesTable[0]._needUpdate = 1;
+		_spritesTable[0]._needUpdate = true;
 		if (r < 26000) {
 			state = 1;
 		} else if (r < 29000) {
@@ -771,10 +771,10 @@ void TuckerEngine::updateSprite_locationNum10() {
 		state = 2;
 		_spritesTable[0]._updateDelay = 4;
 	} else {
-		_spritesTable[0]._needUpdate = 0;
+		_spritesTable[0]._needUpdate = false;
 		if (r > 26000) {
 			state = 5;
-			_spritesTable[0]._prevAnimationFrame = 1;
+			_spritesTable[0]._prevAnimationFrame = true;
 		} else if (r > 24000) {
 			state = 6;
 			_miscSoundFxDelayCounter[0] = 120;
@@ -808,10 +808,10 @@ void TuckerEngine::execData3PreUpdate_locationNum10() {
 void TuckerEngine::updateSprite_locationNum11_0(int i) {
 	const int r = getRandomNumber();
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		_spritesTable[i]._state = 2;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (r > 28000) {
 			_spritesTable[i]._state = 3;
 		} else if (r > 20000) {
@@ -866,10 +866,10 @@ void TuckerEngine::updateSprite_locationNum12_0(int i) {
 	if (_flagsTable[207] > 0) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 5;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (_updateLocationCounter2 < 4) {
 			state = 1;
 		} else if (_updateLocationCounter2 < 8) {
@@ -920,13 +920,13 @@ void TuckerEngine::updateSprite_locationNum13(int i) {
 			_spritesTable[i]._stateIndex = -1;
 		} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 			state = 4;
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 		} else {
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 			state = 5;
 		}
 	} else if (_flagsTable[202] == 1) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		_flagsTable[202] = 0;
 		state = 6;
 	} else {
@@ -963,7 +963,7 @@ void TuckerEngine::execData3PreUpdate_locationNum13() {
 void TuckerEngine::updateSprite_locationNum14(int i) {
 	int state = 2;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = (getRandomNumber() < 12000) ? 1 : 3;
 	} else if (getRandomNumber() < 26000) {
 		_spritesTable[i]._updateDelay = 5;
@@ -1070,15 +1070,15 @@ void TuckerEngine::updateSprite_locationNum15_1(int i) {
 	int state;
 	int r = getRandomNumber();
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 6;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (r < 26000) {
 			state = 5;
 		} else if (r < 29000) {
 			state = 2;
-			_spritesTable[i]._prevAnimationFrame = 1;
+			_spritesTable[i]._prevAnimationFrame = true;
 		} else {
 			state = 4;
 			_spritesTable[4]._counter = 1;
@@ -1123,8 +1123,8 @@ void TuckerEngine::updateSprite_locationNum16_0(int i) {
 	} else if (_flagsTable[82] == 2) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		if (_spritesTable[0]._needUpdate == 0) {
-			_spritesTable[0]._needUpdate = 1;
+		if (!_spritesTable[0]._needUpdate) {
+			_spritesTable[0]._needUpdate = true;
 			state = 1;
 		} else {
 			state = 1;
@@ -1132,7 +1132,7 @@ void TuckerEngine::updateSprite_locationNum16_0(int i) {
 			_updateSpriteFlag1 = 1;
 		}
 	} else if (_csDataHandled) {
-		_spritesTable[0]._needUpdate = 0;
+		_spritesTable[0]._needUpdate = false;
 		state = 4;
 		_spritesTable[0]._updateDelay = 5;
 	} else if (r < 30000) {
@@ -1188,7 +1188,7 @@ void TuckerEngine::updateSprite_locationNum16_2(int i) {
 		}
 	} else if (_flagsTable[78] == 1) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			state = 8;
 		} else {
 			if (getRandomNumber() > 32000) {
@@ -1199,7 +1199,7 @@ void TuckerEngine::updateSprite_locationNum16_2(int i) {
 			} else {
 				state = 13;
 			}
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 		}
 	}
 	_spritesTable[i]._state = state;
@@ -1234,10 +1234,10 @@ void TuckerEngine::updateSprite_locationNum17() {
 void TuckerEngine::updateSprite_locationNum18() {
 	int state;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		_spritesTable[0]._needUpdate = 1;
+		_spritesTable[0]._needUpdate = true;
 		state = 2;
 	} else {
-		_spritesTable[0]._needUpdate = 0;
+		_spritesTable[0]._needUpdate = false;
 		state = 1;
 		const int r = getRandomNumber();
 		if (r > 31000) {
@@ -1255,11 +1255,11 @@ void TuckerEngine::updateSprite_locationNum19_0(int i) {
 	int state;
 	if (_flagsTable[206] == 1) {
 		state = 7;
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		_flagsTable[206] = 0;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		++_spritesTable[i]._counter;
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		if (_spritesTable[i]._counter > 10) {
 			_spritesTable[i]._counter = 0;
 			state = 2;
@@ -1267,23 +1267,23 @@ void TuckerEngine::updateSprite_locationNum19_0(int i) {
 			state = 1;
 		}
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (_spritesTable[i]._counter > 10) {
 			_spritesTable[i]._counter = 0;
 		}
 		if (_spritesTable[i]._counter == 2) {
 			state = 4;
-			_spritesTable[i]._prevAnimationFrame = 1;
+			_spritesTable[i]._prevAnimationFrame = true;
 		} else if (_spritesTable[i]._counter == 5) {
 			state = 5;
-			_spritesTable[i]._prevAnimationFrame = 1;
+			_spritesTable[i]._prevAnimationFrame = true;
 		} else {
 			state = 5;
 			_spritesTable[i]._updateDelay = 6;
 		}
 	}
 	_spritesTable[i]._state = state;
-	_spritesTable[i]._prevAnimationFrame = 1;
+	_spritesTable[i]._prevAnimationFrame = true;
 }
 
 void TuckerEngine::updateSprite_locationNum19_1(int i) {
@@ -1319,7 +1319,7 @@ void TuckerEngine::updateSprite_locationNum21() {
 		state = 7;
 		_locationSoundsTable[4].volume = 60;
 	} else if (_flagsTable[59] == 4) {
-		_spritesTable[0]._needUpdate = 1;
+		_spritesTable[0]._needUpdate = true;
 		_flagsTable[59] = 2;
 		state = 2;
 		setVolumeSound(2, 0);
@@ -1328,17 +1328,17 @@ void TuckerEngine::updateSprite_locationNum21() {
 		state = 4;
 		setVolumeSound(2, _locationSoundsTable[2].volume);
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		_spritesTable[0]._needUpdate = 1;
+		_spritesTable[0]._needUpdate = true;
 		state = 3;
 	} else if (_flagsTable[59] == 2) {
-		_spritesTable[0]._needUpdate = 0;
+		_spritesTable[0]._needUpdate = false;
 		state = 3;
 		_spritesTable[0]._updateDelay = 5;
 	} else if (_flagsTable[15] == 1) {
 		state = 3;
 		_spritesTable[0]._updateDelay = 5;
 	} else {
-		_spritesTable[0]._needUpdate = 0;
+		_spritesTable[0]._needUpdate = false;
 		state = 1;
 	}
 	_spritesTable[0]._state = state;
@@ -1406,10 +1406,10 @@ void TuckerEngine::updateSprite_locationNum22() {
 	if (_flagsTable[207] == 1) {
 		_spritesTable[0]._state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		_spritesTable[0]._needUpdate = 1;
+		_spritesTable[0]._needUpdate = true;
 		_spritesTable[0]._state = 2;
 	} else {
-		_spritesTable[0]._needUpdate = 0;
+		_spritesTable[0]._needUpdate = false;
 		_spritesTable[0]._state = 1;
 	}
 }
@@ -1427,13 +1427,13 @@ void TuckerEngine::updateSprite_locationNum23_0(int i) {
 void TuckerEngine::updateSprite_locationNum23_1(int i) {
 	int state;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 14;
 	} else if (getRandomNumber() < 30000) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 25;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 13;
 	}
 	_spritesTable[i]._state = state;
@@ -1443,15 +1443,15 @@ void TuckerEngine::updateSprite_locationNum23_2(int i) {
 	int state = 0;
 	if (_flagsTable[210] == 0) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			state = 6;
 		} else {
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 			state = (getRandomNumber() < 25000) ? 4 : 5;
 		}
 	} else if (_flagsTable[210] == 1) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			if (_flagsTable[211] == 10) {
 				state = 34;
 			} else if (_flagsTable[211] == 0) {
@@ -1461,7 +1461,7 @@ void TuckerEngine::updateSprite_locationNum23_2(int i) {
 				state = 31;
 			}
 		} else {
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 			if (_flagsTable[211] == 1) {
 				state = 32;
 				_flagsTable[211] = 0;
@@ -1471,10 +1471,10 @@ void TuckerEngine::updateSprite_locationNum23_2(int i) {
 		}
 	} else if (_flagsTable[210] == 2) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			state = 33;
 		} else {
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 			if (_flagsTable[212] == 0) {
 				state = 3;
 				_flagsTable[212] = 1;
@@ -1496,10 +1496,10 @@ void TuckerEngine::updateSprite_locationNum23_3(int i) {
 	if (_flagsTable[210] == 0 || _flagsTable[210] == 2) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 8;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 9;
 	}
 	_spritesTable[i]._state = state;
@@ -1512,10 +1512,10 @@ void TuckerEngine::updateSprite_locationNum24_0(int i) {
 		state = 5;
 	} else if (_flagsTable[103] == 0) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			state = 2;
 		} else {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			state = 1;
 			if (getRandomNumber() < 30000) {
 				_spritesTable[i]._updateDelay = 5;
@@ -1525,15 +1525,15 @@ void TuckerEngine::updateSprite_locationNum24_0(int i) {
 		state = -1;
 	} else {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			state = 4;
 		} else {
 			if (getRandomNumber() < 30000) {
-				_spritesTable[i]._needUpdate = 0;
+				_spritesTable[i]._needUpdate = false;
 				state = 6;
 				_spritesTable[i]._updateDelay = 5;
 			} else {
-				_spritesTable[i]._needUpdate = 0;
+				_spritesTable[i]._needUpdate = false;
 				state = 6;
 			}
 		}
@@ -1554,11 +1554,11 @@ void TuckerEngine::updateSprite_locationNum24_2(int i) {
 	if (_flagsTable[214] > 1) {
 		state = -1;
 	} else if (_flagsTable[214] == 1) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		_flagsTable[214] = 2;
 		state = 9;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		if (_flagsTable[213] == 1) {
 			state = 10;
 		} else if (_flagsTable[213] == 2) {
@@ -1567,7 +1567,7 @@ void TuckerEngine::updateSprite_locationNum24_2(int i) {
 			state = 8;
 		}
 	} else {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 7;
 	}
 	_spritesTable[i]._state = state;
@@ -1674,14 +1674,14 @@ void TuckerEngine::updateSprite_locationNum27(int i) {
 		state = 1;
 		_flagsTable[155] = 4;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 2;
 	} else if (getRandomNumber() < 30000) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 3;
 		_spritesTable[i]._updateDelay = 5;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 3;
 	}
 	_spritesTable[i]._state = state;
@@ -1701,9 +1701,9 @@ void TuckerEngine::updateSprite_locationNum28_0(int i) {
 	int state;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		state = 4;
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		++_spritesTable[i]._counter;
 		if (_spritesTable[i]._counter > 30) {
 			_spritesTable[i]._counter = 0;
@@ -1870,12 +1870,12 @@ void TuckerEngine::updateSprite_locationNum32_0(int i) {
 	} else if (_flagsTable[222] == 3) {
 		state = 18;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 4;
 	} else if (_csDataHandled) {
 		state = 5;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (_spritesTable[i]._counter > 13) {
 			_spritesTable[i]._counter = 0;
 		}
@@ -1887,14 +1887,14 @@ void TuckerEngine::updateSprite_locationNum32_0(int i) {
 void TuckerEngine::updateSprite_locationNum33_0(int i) {
 	int state = 5;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 7;
 	} else if (_flagsTable[87] == 1) {
 		state = 8;
 	} else if (_flagsTable[222] == 5) {
 		state = 4;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = (getRandomNumber() < 30000) ? 5 : 6;
 	}
 	_spritesTable[i]._state = state;
@@ -2001,13 +2001,13 @@ void TuckerEngine::updateSprite_locationNum41(int i) {
 		state = 1;
 		_flagsTable[158] = 2;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 3;
 	} else if (getRandomNumber() < 30000) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 5;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 4;
 	}
 	_spritesTable[i]._state = state;
@@ -2094,10 +2094,10 @@ void TuckerEngine::updateSprite_locationNum43_2(int i) {
 	if (_flagsTable[237] > 0) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 5;
 	} else if (_csDataHandled || _spritesTable[i]._counter == 2) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 6;
 	} else if (_spritesTable[i]._counter == 0) {
 		state = 3;
@@ -2114,10 +2114,10 @@ void TuckerEngine::updateSprite_locationNum43_3(int i) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		state = 7;
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 	} else {
 		state = 8;
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 	}
 	_spritesTable[i]._state = state;
 }
@@ -2128,10 +2128,10 @@ void TuckerEngine::updateSprite_locationNum43_4(int i) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		state = 9;
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 	} else {
 		state = 10;
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 	}
 	_spritesTable[i]._state = state;
 }
@@ -2182,10 +2182,10 @@ void TuckerEngine::updateSprite_locationNum48(int i) {
 		_flagsTable[160] = 3;
 		state = 3;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 2;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 2;
 		_spritesTable[i]._updateDelay = 5;
 	}
@@ -2211,10 +2211,10 @@ void TuckerEngine::updateSprite_locationNum49(int i) {
 		_flagsTable[185] = 0;
 		state = 4;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 2;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (getRandomNumber() < 30000 || _backgroundSpriteCurrentAnimation <= -1) {
 			state = 3;
 			_spritesTable[i]._updateDelay = 1;
@@ -2313,17 +2313,17 @@ void TuckerEngine::updateSprite_locationNum53_0(int i) {
 	}
 	int state;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 1;
 	} else if (_flagsTable[197] == 1) {
 		state = 3;
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		_flagsTable[197] = 2;
 	} else if (_flagsTable[192] == 1) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 5;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 5;
 		_spritesTable[i]._updateDelay = 5;
 	}
@@ -2355,7 +2355,7 @@ void TuckerEngine::execData3PreUpdate_locationNum53() {
 
 void TuckerEngine::updateSprite_locationNum54(int i) {
 	if (_flagsTable[141] == 2) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		setCharacterAnimation(0, i);
 		_flagsTable[141] = 1;
 		_spritesTable[i]._counter = 0;
@@ -2368,7 +2368,7 @@ void TuckerEngine::updateSprite_locationNum54(int i) {
 	} else {
 		int state = 3;
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			_spritesTable[i]._needUpdate = 2;
+			_spritesTable[i]._needUpdate = true;
 			state = (getRandomNumber() < 12000) ? 2 : 4;
 		} else if (_flagsTable[141] == 3) {
 			_flagsTable[141] = 0;
@@ -2379,10 +2379,10 @@ void TuckerEngine::updateSprite_locationNum54(int i) {
 				_csDataLoaded = false;
 			}
 		} else if (getRandomNumber() < 26000) {
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 			_spritesTable[i]._updateDelay = 5;
 		} else {
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 		}
 		if (_inventoryItemsState[17] == 1) {
 			_flagsTable[224] = 2;
@@ -2412,10 +2412,10 @@ void TuckerEngine::updateSprite_locationNum56(int i) {
 	if (_flagsTable[153] == 1) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 2;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 1;
 	}
 	_spritesTable[i]._state = state;
@@ -2424,10 +2424,10 @@ void TuckerEngine::updateSprite_locationNum56(int i) {
 void TuckerEngine::updateSprite_locationNum57_0(int i) {
 	int state;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 5;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (getRandomNumber() < 30000) {
 			state = 1;
 		} else if (getRandomNumber() < 16000) {
@@ -2495,24 +2495,24 @@ void TuckerEngine::updateSprite_locationNum59(int i) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		state = 3;
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 	} else if (_csDataHandled) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (_flagsTable[199] == 0) {
 			_flagsTable[199] = 1;
 			setCharacterAnimation(0, 0);
 			return;
 		}
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 3;
 		_spritesTable[i]._updateDelay = 5;
 	} else if (_flagsTable[199] == 1) {
 		_flagsTable[199] = 0;
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		setCharacterAnimation(1, 0);
 		return;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 1;
 	}
 	_spritesTable[i]._state = state;
@@ -2523,10 +2523,10 @@ void TuckerEngine::updateSprite_locationNum60_0(int i) {
 	if (_flagsTable[186] > 0) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 9;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = (getRandomNumber() > 32000) ? 8 : 7;
 	}
 	_spritesTable[i]._state = state;
@@ -2537,16 +2537,16 @@ void TuckerEngine::updateSprite_locationNum60_1(int i) {
 	int state;
 	if (_flagsTable[186] == 1) {
 		_flagsTable[186] = 2;
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 2;
 	} else if (_flagsTable[186] == 2) {
 		state = 6;
 		_flagsTable[187] = 1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 1;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = (getRandomNumber() > 32000) ? 5 : 4;
 	}
 	_spritesTable[i]._state = state;
@@ -2566,8 +2566,8 @@ void TuckerEngine::updateSprite_locationNum61_0(int i) {
 	} else if (_flagsTable[88] == 2) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 0) {
-		if (_spritesTable[i]._needUpdate == 0) {
-			_spritesTable[i]._needUpdate = 1;
+		if (!_spritesTable[i]._needUpdate) {
+			_spritesTable[i]._needUpdate = true;
 			state = 2;
 		} else {
 			state = 2;
@@ -2575,7 +2575,7 @@ void TuckerEngine::updateSprite_locationNum61_0(int i) {
 			_updateSpriteFlag1 = 1;
 		}
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		if (r < 30000) {
 			state = 7;
 			_spritesTable[i]._updateDelay = 5;
@@ -2595,10 +2595,10 @@ void TuckerEngine::updateSprite_locationNum61_1(int i) {
 	if (_flagsTable[151] == 1) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 14;
 	} else if (_csDataHandled || getRandomNumber() < 29000) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 12;
 		_spritesTable[i]._updateDelay = 5;
 	} else if (getRandomNumber() < 20000) {
@@ -2673,10 +2673,10 @@ void TuckerEngine::updateSprite_locationNum63_0(int i) {
 	} else if (_flagsTable[132] != 2 || _flagsTable[133] != 1 || _flagsTable[136] > 0) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 6;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = -1;
 	}
 	_spritesTable[i]._state = state;
@@ -2833,10 +2833,10 @@ void TuckerEngine::execData3PreUpdate_locationNum65() {
 void TuckerEngine::updateSprite_locationNum66_0(int i) {
 	int state;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 2;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 2;
 		_spritesTable[i]._updateDelay = 5;
 	}
@@ -2848,21 +2848,21 @@ void TuckerEngine::updateSprite_locationNum66_1(int i) {
 	int state;
 	if (_flagsTable[191] == 0 && _xPosCurrent > 568) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			state = 8;
 		} else {
 			state = 10;
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 		}
 	} else {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 			state = 9;
 		} else if (getRandomNumber() > 30000) {
 			state = 6;
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 		} else {
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 			state = 7;
 			_spritesTable[i]._updateDelay = 5;
 		}
@@ -2872,7 +2872,7 @@ void TuckerEngine::updateSprite_locationNum66_1(int i) {
 }
 
 void TuckerEngine::updateSprite_locationNum66_2(int i) {
-	_spritesTable[i]._disabled = 1;
+	_spritesTable[i]._disabled = true;
 	_spritesTable[i]._state = 3;
 }
 
@@ -2904,16 +2904,16 @@ void TuckerEngine::execData3PreUpdate_locationNum66() {
 }
 
 void TuckerEngine::execData3PostUpdate_locationNum66() {
-	if (_spritesTable[2]._flipX == 1) {
+	if (_spritesTable[2]._flipX) {
 		--_updateLocationXPosTable2[0];
 		if (_updateLocationXPosTable2[0] < -50) {
-			_spritesTable[2]._flipX = 0;
+			_spritesTable[2]._flipX = false;
 			_updateLocationXPosTable2[0] = -50;
 		}
 	} else {
 		++_updateLocationXPosTable2[0];
 		if (_updateLocationXPosTable2[0] > 500) {
-			_spritesTable[2]._flipX = 1;
+			_spritesTable[2]._flipX = true;
 			_updateLocationXPosTable2[0] = 500;
 		}
 	}
@@ -2936,10 +2936,10 @@ void TuckerEngine::updateSprite_locationNum69_1(int i) {
 	} else if (_flagsTable[236] == 4) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 			state = 9;
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 		} else {
 			state = 14;
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 		}
 	} else if (_flagsTable[236] == 5) {
 		state = 7;
@@ -2963,10 +2963,10 @@ void TuckerEngine::updateSprite_locationNum69_2(int i) {
 	} else if (_flagsTable[237] == 4 || _flagsTable[237] == 2 || _flagsTable[237] == 3 || _flagsTable[237] == 7) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 			state = 10;
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 		} else {
 			state = 12;
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 		}
 	} else if (_flagsTable[237] == 5) {
 		state = 16;
@@ -2994,10 +2994,10 @@ void TuckerEngine::updateSprite_locationNum69_3(int i) {
 		_flagsTable[238] = 1;
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 			state = 11;
-			_spritesTable[i]._needUpdate = 1;
+			_spritesTable[i]._needUpdate = true;
 		} else {
 			state = 13;
-			_spritesTable[i]._needUpdate = 0;
+			_spritesTable[i]._needUpdate = false;
 		}
 	} else {
 		state = -1;
@@ -3101,14 +3101,14 @@ void TuckerEngine::updateSprite_locationNum71(int i) {
 	if (_flagsTable[155] != 6 || _flagsTable[207] == 1) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 1;
 	} else if (getRandomNumber() < 30000) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 2;
 		_spritesTable[i]._updateDelay = 5;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 2;
 	}
 	_spritesTable[i]._state = state;
@@ -3119,10 +3119,10 @@ void TuckerEngine::updateSprite_locationNum72(int i) {
 	if (_flagsTable[155] == 7 || _flagsTable[207] == 1) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 2;
 	} else {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 1;
 	}
 	_spritesTable[i]._state = state;
@@ -3150,11 +3150,11 @@ void TuckerEngine::updateSprite_locationNum79(int i) {
 		_flagsTable[227] = 1;
 	} else if (_flagsTable[227] == 1 && _charSpeechSoundCounter > 0) {
 		state = 2;
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 	} else if (_flagsTable[227] == 2) {
 		state = 3;
 		_flagsTable[227] = 3;
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 	} else {
 		_spritesTable[i]._animationFrame = _spritesTable[i]._firstFrame - 1;
 		_spritesTable[i]._updateDelay = 5;
@@ -3167,11 +3167,11 @@ void TuckerEngine::updateSprite_locationNum79(int i) {
 void TuckerEngine::updateSprite_locationNum81_0(int i) {
 	int state;
 	if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 		state = 3;
 		_flagsTable[288] = 1;
 	} else if (_flagsTable[288] < 2) {
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 		state = 2;
 		if (_flagsTable[288] == 1) {
 			_flagsTable[288] = 2;
@@ -3194,13 +3194,13 @@ void TuckerEngine::updateSprite_locationNum82(int i) {
 	if (_charSpeechSoundCounter > 0) {
 		state = 1;
 		_flagsTable[229] = 1;
-		_spritesTable[i]._needUpdate = 1;
+		_spritesTable[i]._needUpdate = true;
 	} else if (_flagsTable[229] == 0) {
 		state = 1;
 	} else if (_flagsTable[229] == 1) {
 		state = 2;
 		_flagsTable[229] = 2;
-		_spritesTable[i]._needUpdate = 0;
+		_spritesTable[i]._needUpdate = false;
 	} else {
 		_spritesTable[i]._animationFrame = _spritesTable[i]._firstFrame - 1;
 		_spritesTable[i]._updateDelay = 5;

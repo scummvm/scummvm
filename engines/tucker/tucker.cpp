@@ -1920,7 +1920,7 @@ void TuckerEngine::drawSprite(int num) {
 			Graphics::decodeRLE_224(dstPtr, srcPtr, srcW, srcH);
 			break;
 		default:
-			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->_yMaxBackground, s->_flipX != 0);
+			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->_yMaxBackground, s->_flipX);
 			break;
 		}
 		const int xR = srcX + (s->_gfxBackgroundOffset % 640);
@@ -2395,11 +2395,11 @@ void TuckerEngine::updateSprites() {
 			updateSprite(i);
 			continue;
 		}
-		if (_charSpeechSoundCounter > 0 && i == _actionCharacterNum && _spritesTable[i]._needUpdate == 0) {
+		if (_charSpeechSoundCounter > 0 && i == _actionCharacterNum && !_spritesTable[i]._needUpdate) {
 			updateSprite(i);
 			continue;
 		}
-		if (_charSpeechSoundCounter == 0 && _spritesTable[i]._needUpdate > 0) {
+		if (_charSpeechSoundCounter == 0 && _spritesTable[i]._needUpdate) {
 			updateSprite(i);
 			continue;
 		}
@@ -2418,12 +2418,12 @@ void TuckerEngine::updateSprites() {
 			}
 			continue;
 		}
-		if (_spritesTable[i]._nextAnimationFrame == 0) {
+		if (!_spritesTable[i]._nextAnimationFrame) {
 			++_spritesTable[i]._animationFrame;
 			if (_spritesTable[i]._firstFrame - 1 < _spritesTable[i]._animationFrame) {
-				if (_spritesTable[i]._prevAnimationFrame == 1) {
+				if (_spritesTable[i]._prevAnimationFrame) {
 					--_spritesTable[i]._animationFrame;
-					_spritesTable[i]._nextAnimationFrame = 1;
+					_spritesTable[i]._nextAnimationFrame = true;
 				} else {
 					updateSprite(i);
 				}
@@ -2439,8 +2439,8 @@ void TuckerEngine::updateSprites() {
 
 void TuckerEngine::updateSprite(int i) {
 	_spritesTable[i]._prevState = _spritesTable[i]._state;
-	_spritesTable[i]._prevAnimationFrame = 0;
-	_spritesTable[i]._nextAnimationFrame = 0;
+	_spritesTable[i]._prevAnimationFrame = false;
+	_spritesTable[i]._nextAnimationFrame = false;
 	_updateSpriteFlag1 = 0;
 	_updateSpriteFlag2 = 0;
 	_spritesTable[i]._defaultUpdateDelay = 0;
@@ -2831,8 +2831,8 @@ void TuckerEngine::updateSprite(int i) {
 		_spritesTable[i]._firstFrame = READ_LE_UINT16(_spritesTable[i]._animationData);
 		if (_updateSpriteFlag2 == 1) {
 			_spritesTable[i]._state = _spritesTable[i]._firstFrame;
-			_spritesTable[i]._nextAnimationFrame = 1;
-			_spritesTable[i]._prevAnimationFrame = 1;
+			_spritesTable[i]._nextAnimationFrame = true;
+			_spritesTable[i]._prevAnimationFrame = true;
 		}
 	}
 }
@@ -3177,8 +3177,8 @@ int TuckerEngine::executeTableInstruction() {
 		}
 		_mainLoopCounter1 = 0;
 		_spritesTable[index]._updateDelay = 0;
-		_spritesTable[index]._nextAnimationFrame = 0;
-		_spritesTable[index]._prevAnimationFrame = 0;
+		_spritesTable[index]._nextAnimationFrame = false;
+		_spritesTable[index]._prevAnimationFrame = false;
 		return 0;
 	case kCode_c0c:
 		setCharacterAnimation(readTableInstructionParam(3), index);
