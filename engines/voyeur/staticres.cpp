@@ -57,7 +57,7 @@ const int BLIND_TABLE[] = {
 	5, 12, 6, 6, 13, 14, 13
 };
 
-const int COMPUTER_BUTTON_TABLE[] = {
+const int COMPUTER_SCREEN_TABLE[] = {
 	269, 128, 307, 163, 
 	269, 128, 307, 163, 
 	68, 79, 98, 102, 

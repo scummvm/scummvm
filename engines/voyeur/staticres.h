@@ -37,7 +37,7 @@ extern const int LEVEL_M[];
 
 extern const int BLIND_TABLE[];
 
-extern const int COMPUTER_BUTTON_TABLE[];
+extern const int COMPUTER_SCREEN_TABLE[];
 
 extern const char *const SZ_FILENAMES[];
 
