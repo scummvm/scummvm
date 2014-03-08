@@ -630,13 +630,13 @@ protected:
 	bool _gameDebug;
 	bool _displayGameHints;
 	int _execData3Counter;
-	bool _displaySpeechText;
 	int _currentSaveLoadGameState;
-
 	int _gameHintsIndex;
 	int _gameHintsCounter;
-	int _gameHintsDisplayText;
 	int _gameHintsStringNum;
+
+	bool _displaySpeechText;
+	bool _displayHintsText;
 
 	int _fileLoadSize;
 	uint8 *_loadTempBuf;

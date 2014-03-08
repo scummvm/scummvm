@@ -133,14 +133,15 @@ void TuckerEngine::resetVariables() {
 	_nextLocationNum = (_gameFlags & kGameFlagDemo) == 0 ? kStartupLocationGame : kStartupLocationDemo;
 	_gamePaused = false;
 	_gameDebug = false;
-	_displayGameHints = false;
 	_displaySpeechText = (_gameFlags & kGameFlagNoSubtitles) == 0 ? ConfMan.getBool("subtitles") : false;
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	_gameHintsIndex = 0;
 	_gameHintsCounter = 0;
-	_gameHintsDisplayText = 0;
 	_gameHintsStringNum = 0;
+
+	_displayGameHints = false;
+	_displayHintsText = false;
 
 	if ((_gameFlags & kGameFlagDemo) == 0) {
 		_locationWidthTable = _locationWidthTableGame;
@@ -452,7 +453,7 @@ void TuckerEngine::mainLoop() {
 					clearItemsGfx();
 					if (_gamePaused) {
 						drawPausedInfoBar();
-					} else if (_gameHintsDisplayText == 1 && _mouseIdleCounter > 1000) {
+					} else if (_displayHintsText && _mouseIdleCounter > 1000) {
 						drawGameHintString();
 					} else {
 						drawInfoString();
@@ -567,7 +568,7 @@ void TuckerEngine::mainLoop() {
 		}
 		if (_inputKeys[kInputKeyHelp]) {
 			_inputKeys[kInputKeyHelp] = false;
-			if (_displayGameHints && _gameHintsDisplayText == 1) {
+			if (_displayGameHints && _displayHintsText) {
 				_gameHintsStringNum = _gameHintsIndex + 1;
 				_mouseIdleCounter = 1100;
 			}
@@ -1122,18 +1123,18 @@ void TuckerEngine::updateCharactersPath() {
 	if (_characterFacingDirection == 5) {
 		_characterPrevFacingDirection = 5;
 	}
-	int flag = 0;
+	bool flag = false;
 	if (_yPosCurrent > _selectedObject._yPos) {
 		if (testLocationMask(_xPosCurrent, _yPosCurrent - 1) == 1) {
 			--_yPosCurrent;
 			_characterFacingDirection = 4;
-			flag = 1;
+			flag = true;
 		}
 	} else if (_yPosCurrent < _selectedObject._yPos) {
 		if (testLocationMask(_xPosCurrent, _yPosCurrent + 1) == 1) {
 			++_yPosCurrent;
 			_characterFacingDirection = 2;
-			flag = 1;
+			flag = true;
 		}
 	}
 	if (_xPosCurrent > _selectedObject._xPos) {
@@ -1141,17 +1142,17 @@ void TuckerEngine::updateCharactersPath() {
 			--_xPosCurrent;
 			_characterFacingDirection = 3;
 			_characterBackFrontFacing = 0;
-			flag = 1;
+			flag = true;
 		}
 	} else if (_xPosCurrent < _selectedObject._xPos) {
 		if (testLocationMask(_xPosCurrent + 1, _yPosCurrent) == 1) {
 			++_xPosCurrent;
 			_characterFacingDirection = 1;
 			_characterBackFrontFacing = 1;
-			flag = 1;
+			flag = true;
 		}
 	}
-	if (flag == 0) {
+	if (!flag) {
 		if (_selectedObjectLocationMask == 1) {
 			_selectedObjectLocationMask = 0;
 			_selectedObject._xPos = _selectedObject._xDefaultPos;
@@ -1473,31 +1474,31 @@ void TuckerEngine::updateGameHints() {
 	if (_gameHintsIndex == 0 && _flagsTable[3] > 0) {
 		_gameHintsIndex = 1;
 		_gameHintsCounter = 0;
-		_gameHintsDisplayText = 0;
+		_displayHintsText = false;
 	} else if (_gameHintsIndex == 1 && _flagsTable[12] > 0) {
 		_gameHintsIndex = 2;
 		_gameHintsCounter = 0;
-		_gameHintsDisplayText = 0;
+		_displayHintsText = false;
 	} else if (_gameHintsIndex == 2 && _flagsTable[20] > 0) {
 		_gameHintsIndex = 3;
 		_gameHintsCounter = 0;
-		_gameHintsDisplayText = 0;
+		_displayHintsText = false;
 	} else if (_gameHintsIndex == 3 && _flagsTable[9] > 0) {
 		_gameHintsIndex = 4;
 		_gameHintsCounter = 0;
-		_gameHintsDisplayText = 0;
+		_displayHintsText = false;
 	} else if (_gameHintsIndex == 4 && _flagsTable[23] > 0) {
 		_gameHintsIndex = 5;
 		_gameHintsCounter = 0;
-		_gameHintsDisplayText = 0;
+		_displayHintsText = false;
 	} else if (_flagsTable[19] > 0) {
 		_gameHintsIndex = 6;
 		_gameHintsCounter = 0;
-		_gameHintsDisplayText = 0;
+		_displayHintsText = false;
 	}
 	++_gameHintsCounter;
 	if (_gameHintsCounter > 1500) {
-		_gameHintsDisplayText = 1;
+		_displayHintsText = true;
 	}
 }
 
