@@ -37,28 +37,6 @@ void RGB6::load(Common::SeekableReadStream *f) {
 	flags = f->readByte();
 }
 
-RGBList::RGBList(int numEntries, byte *srcData, bool freeData) {
-	_size = numEntries;
-	assert(numEntries <= PALETTE_COUNT);
-
-	if (srcData == NULL) {
-		_data = new byte[numEntries * 3];
-		_freeData = true;
-	} else {
-		_data = srcData;
-		_freeData = freeData;
-	}
-
-	_palIndexes = new byte[numEntries];
-	Common::fill(&_palIndexes[0], &_palIndexes[numEntries], 0);
-}
-
-RGBList::~RGBList() {
-	if (_freeData)
-		delete[] _data;
-	delete[] _palIndexes;
-}
-
 /*------------------------------------------------------------------------*/
 
 PaletteUsage::PaletteUsage() {
@@ -220,97 +198,6 @@ uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, byte *paletteData) {
 }
 
 void Palette::reset() {
-	byte palData[PALETTE_SIZE];
-	g_system->getPaletteManager()->grabPalette(palData, 0, PALETTE_COUNT);
-
-	BLACK = palIndexFromRgb(0, 0, 0, palData);
-	BLUE = palIndexFromRgb(0, 0, 255, palData);
-	GREEN = palIndexFromRgb(0, 255, 0, palData);
-	CYAN = palIndexFromRgb(0, 255, 255, palData);
-	RED = palIndexFromRgb(255, 0, 0, palData);
-	VIOLET = palIndexFromRgb(255, 0, 255, palData);
-	BROWN = palIndexFromRgb(168, 84, 84, palData);
-	LIGHT_GRAY = palIndexFromRgb(168, 168, 168, palData);
-	DARK_GRAY = palIndexFromRgb(84, 84, 84, palData);
-	LIGHT_BLUE = palIndexFromRgb(0, 0, 127, palData);
-	LIGHT_GREEN = palIndexFromRgb(0, 127, 0, palData);
-	LIGHT_CYAN = palIndexFromRgb(0, 127, 127, palData);
-	LIGHT_RED = palIndexFromRgb(84, 0, 0, palData);
-	PINK = palIndexFromRgb(84, 0, 0, palData);
-	YELLOW = palIndexFromRgb(0, 84, 84, palData);
-	WHITE = palIndexFromRgb(255, 255, 255, palData);
-}
-
-void Palette::resetColorCounts() {
-	Common::fill(&_usageCount[0], &_usageCount[PALETTE_COUNT], 0);
-}
-
-void Palette::blockRange(int startIndex, int size) {
-	// Use a reference count of -1 to signal a palette index shouldn't be used
-	Common::fill(&_usageCount[startIndex], &_usageCount[startIndex + size], -1);
-}
-
-void Palette::addRange(RGBList *list) {
-	byte *data = list->data();
-	byte *palIndexes = list->palIndexes();
-	byte palData[PALETTE_COUNT];
-	g_system->getPaletteManager()->grabPalette(palData, 0, PALETTE_COUNT);
-	bool paletteChanged = false;
-	
-	for (int colIndex = 0; colIndex < list->size(); ++colIndex) {
-		// Scan through for an existing copy of the RGB value
-		int palIndex = -1; 
-		while (++palIndex < PALETTE_COUNT) {
-			if (_usageCount[palIndex] <= 0)
-				// Palette index is to be skipped
-				continue;
-
-			if ((palData[palIndex * 3] == data[colIndex * 3]) && 
-				(palData[palIndex * 3 + 1] == data[colIndex * 3 + 1]) &&
-				(palData[palIndex * 3 + 2] == data[colIndex * 3 + 2])) 
-				// Match found
-				break;
-		}
-
-		if (palIndex == PALETTE_COUNT) {
-			// No match found, so find a free slot to use
-			palIndex = -1;
-			while (++palIndex < PALETTE_COUNT) {
-				if (_usageCount[palIndex] == 0)
-					break;
-			}
-
-			if (palIndex == PALETTE_COUNT) 
-				error("addRange - Ran out of palette space to allocate");
-
-			palData[palIndex * 3] = data[colIndex * 3];
-			palData[palIndex * 3 + 1] = data[colIndex * 3 + 1];
-			palData[palIndex * 3 + 2] = data[colIndex * 3 + 2];
-			paletteChanged = true;
-		}
-
-		palIndexes[colIndex] = palIndex;
-		++_usageCount[palIndex];
-	}
-
-	if (paletteChanged) {
-		g_system->getPaletteManager()->setPalette(&palData[0], 0, 256);
-		reset();
-	}
-}
-
-void Palette::deleteRange(RGBList *list) {
-	// Release the reference count on each of the palette entries
-	for (int colIndex = 0; colIndex < list->size(); ++colIndex) {
-		int palIndex = list->palIndexes()[colIndex];
-		assert(_usageCount[palIndex] > 0);
-		--_usageCount[palIndex];
-	}
-}
-
-void Palette::deleteAllRanges() {
-	for (int colIndex = 0; colIndex < 255; ++colIndex)
-		_usageCount[colIndex] = 0;
 }
 
 void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2) {
@@ -373,8 +260,6 @@ int Palette::loadPalette(Common::SeekableReadStream *palStream, int indexStart) 
 }
 
 void Palette::setSystemPalette() {
-	resetColorCounts();
-
 	byte palData[4 * 3];
 	palData[0 * 3] = palData[0 * 3 + 1] = palData[0 * 3 + 2] = 0;
 	palData[1 * 3] = palData[1 * 3 + 1] = palData[1 * 3 + 2] = 0x54;
@@ -382,7 +267,6 @@ void Palette::setSystemPalette() {
 	palData[3 * 3] = palData[3 * 3 + 1] = palData[3 * 3 + 2] = 0xff;
 	
 	setPalette(palData, 0, 4);
-	blockRange(0, 4);
 }
 
 void Palette::resetGamePalette(int lowRange, int highRange) {

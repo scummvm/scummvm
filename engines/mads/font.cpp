@@ -30,11 +30,12 @@ namespace MADS {
 
 Font::Font(MADSEngine *vm) : _vm(vm) {
 	_sysFont = true;
-	
+	/*
 	_fontColors[0] = _vm->_palette->BLACK;
 	_fontColors[1] = _vm->_palette->WHITE;
 	_fontColors[2] = _vm->_palette->BLACK;
 	_fontColors[3] = _vm->_palette->DARK_GRAY;
+	*/
 }
 
 Font::~Font() {

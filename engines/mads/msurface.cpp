@@ -196,7 +196,7 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 }
 
 void MSurface::empty() {
-	Common::fill(getBasePtr(0, 0), getBasePtr(0, h), _vm->_palette->BLACK);
+	Common::fill(getBasePtr(0, 0), getBasePtr(0, h), 0);
 }
 
 void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds, 
