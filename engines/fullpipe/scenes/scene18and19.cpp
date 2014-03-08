@@ -411,6 +411,7 @@ void sceneHandler18_showManJumpTo() {
 void sceneHandler18and19_showGirlJumpTo() {
 	g_vars->scene18_girl->stopAnim_maybe();
 	g_vars->scene18_girl->hide();
+
 	g_vars->scene18_var07[g_vars->scene18_var33]->sflags = 4;
 
 	g_vars->scene18_var07[g_vars->scene18_var33]->ani->changeStatics2(ST_KSL_JUMPGIRL);
@@ -425,7 +426,15 @@ void sceneHandler18and19_showGirlJump() {
 }
 
 void sceneHandler18and19_showBoyJumpTo() {
-	warning("STUB: sceneHandler18and19_showBoyJumpTo()");
+	g_vars->scene18_boy->stopAnim_maybe();
+	g_vars->scene18_boy->hide();
+
+	g_vars->scene18_var07[g_vars->scene18_var33]->sflags = 2;
+	g_vars->scene18_var07[g_vars->scene18_var33]->ani->changeStatics2(ST_KSL_JUMPBOY);
+	g_vars->scene18_var07[g_vars->scene18_var33]->ani->startAnim(MV_KSL_INBOY, 0, -1);
+
+	g_vars->scene18_var23--;
+	g_vars->scene18_var24--;
 }
 
 void sceneHandler18and19_showBoyJump() {

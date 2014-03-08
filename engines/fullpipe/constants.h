@@ -888,6 +888,7 @@ namespace Fullpipe {
 #define MSG_SC18_SHOWMANJUMP 1510
 #define MSG_SC18_SHOWMANJUMPTO 1508
 #define MV_BOY18_JUMPTO 1481
+#define MV_KSL_INBOY 1491
 #define MV_KSL_INGIRL 1493
 #define MV_KSL_INMAN 1504
 #define MV_KSL_SWING 1460
@@ -901,6 +902,7 @@ namespace Fullpipe {
 #define PIC_SC18_RTRUBA 1520
 #define SND_18_006 3906
 #define SND_18_010 4994
+#define ST_KSL_JUMPBOY 1492
 #define ST_KSL_JUMPGIRL 1494
 #define ST_KSL_JUMPMAN 1505
 
