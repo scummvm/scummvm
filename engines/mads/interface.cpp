@@ -77,7 +77,7 @@ void InterfaceSurface::setup(int id) {
 		// Strip off any extension
 		const char *p = strchr(resName.c_str(), '.');
 		if (p) {
-			resName = Common::String(resName.c_str(), p - 1);
+			resName = Common::String(resName.c_str(), p);
 		}
 
 		// Add on suffix if necessary
