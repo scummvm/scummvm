@@ -90,6 +90,8 @@ SVoy::SVoy(VoyeurEngine *vm):_vm(vm) {
 		_events[i]._computerOff = 0;
 		_events[i]._dead = 0;
 	}
+	for (int i = 0; i < 6; i++)
+		_evCmPtrs[i] = nullptr;
 }
 
 void SVoy::addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId, 

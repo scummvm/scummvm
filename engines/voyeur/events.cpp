@@ -82,6 +82,9 @@ EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
 
 	_fadeFirstCol = _fadeLastCol = 0;
 	_fadeCount = 1;
+
+	for (int i = 0; i < 4; i++)
+		_cycleNext[i] = nullptr;
 }
 
 void EventsManager::startMainClockInt() {

@@ -1127,6 +1127,7 @@ PictureResource::PictureResource(Graphics::Surface *surface) {
 	_onOff = 0;
 	_maskData = 0;
 	_planeSize = 0;
+	_keyColor = 0;
 	
 	_bounds = Common::Rect(0, 0, surface->w, surface->h);
 	_imgData = (byte *)surface->getPixels();
@@ -1140,6 +1141,7 @@ PictureResource::PictureResource() {
 	_onOff = 0;
 	_maskData = 0;
 	_planeSize = 0;
+	_keyColor = 0;
 
 	_imgData = NULL;
 	_freeImgData = DisposeAfterUse::NO;
