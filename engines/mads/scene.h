@@ -94,6 +94,7 @@ public:
 	int _textSpacing;
 	Common::Array<Hotspot> _hotspots;
 	ScreenObjects _screenObjects;
+	ImageInterEntries _imageInterEntries;
 	DirtyAreas _dirtyAreas;
 	int _v1;
 	SceneInfo *_sceneInfo;
@@ -107,7 +108,7 @@ public:
 	Common::Array<RGB4> _animPalData;
 	SceneNodeList _nodes;
 	Common::StringArray _vocabStrings;
-	Animation *_animation;
+	Animation *_animationData;
 	Animation *_activeAnimation;
 	bool _freeAnimationFlag;
 	int _depthStyle;
@@ -115,7 +116,7 @@ public:
 	int _scaleRange;
 	int _interfaceY;
 	int _spritesCount;
-	int _v1A;
+	bool _v1A;
 	int _v1C;
 	MADSAction _action;
 	bool _roomChanged;
@@ -193,6 +194,11 @@ public:
 	 * Execute a click within the scene
 	 */
 	void leftClick();
+
+	/**
+	 * Load an animation
+	 */
+	void loadAnimation(const Common::String &resName, int abortTimers = 0);
 
 	/**
 	 * Clear the data for the scene

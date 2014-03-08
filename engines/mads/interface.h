@@ -26,17 +26,21 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "mads/msurface.h"
 
 namespace MADS {
 
 class InterfaceSurface : public MSurface {
 private:
 	MADSEngine *_vm;
+
+	void loadElements();
 public:
 	ScrCategory _category;
 	int _screenObjectsCount;
 	Common::Rect _bounds;
 	Common::Rect *_rectP;
+	MSurface _surface;
 public:
 	/**
 	* Constructor
@@ -47,6 +51,11 @@ public:
 	* Loads an interface from a specified resource
 	*/
 	void load(const Common::String &resName);
+
+	/**
+	 * Set up the interface
+	 */
+	void setup(int id);
 
 	void elementHighlighted();
 

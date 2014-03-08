@@ -131,7 +131,7 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 }
 
 int SequenceList::addTimer(int time, int abortVal) {
-	int seqIndex;
+	uint seqIndex;
 	for (seqIndex = 0; seqIndex < _entries.size(); ++seqIndex) {
 		if (!_entries[seqIndex]._active)
 			break;

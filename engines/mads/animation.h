@@ -130,8 +130,8 @@ private:
 	uint32 _nextScrollTimer;
 	int _messageCtr;
 	int _abortTimers;
-	AbortTimerMode _abortMode;
-	ActionDetails _actionNouns;
+	AbortTimerMode _abortTimersMode;
+	ActionDetails _actionDetails;
 
 	/**
 	 * Load data for a given frame
@@ -171,6 +171,11 @@ public:
 	 */
 	void load(MSurface &depthSurface, InterfaceSurface &interfaceSurface, const Common::String &resName,
 		int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
+
+	/**
+	 * Setups up a loaded animation for playback
+	 */
+	void startAnimation(int abortTimers);
 
 	/**
 	 * Update the animation

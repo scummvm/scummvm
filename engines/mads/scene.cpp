@@ -46,7 +46,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_reloadSceneFlag = false;
 	_destFacing = 0;
 	_freeAnimationFlag = false;
-	_animation = nullptr;
+	_animationData = nullptr;
 	_activeAnimation = nullptr;
 	_textSpacing = -1;
 
@@ -156,9 +156,9 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	if (!_vm->_textWindowStill)
 		flags |= 0x200;
 
-	_animation = Animation::init(_vm, this);
+	_animationData = Animation::init(_vm, this);
 	MSurface surface;
-	_animation->load(surface, _interface, prefix, flags, nullptr, nullptr);
+	_animationData->load(surface, _interface, prefix, flags, nullptr, nullptr);
 	
 	_vm->_palette->_paletteUsage.load(0);
 
@@ -493,6 +493,17 @@ void Scene::doSceneStep() {
 
 void Scene::checkKeyboard() {
 	warning("TODO: Scene::checkKeyboard");
+}
+
+void Scene::loadAnimation(const Common::String &resName, int abortTimers) {
+	assert(_activeAnimation == nullptr);
+	MSurface sceneSurface;
+	InterfaceSurface interfaceSurface(_vm);
+
+	_activeAnimation = Animation::init(_vm, this);
+	_activeAnimation->load(sceneSurface, interfaceSurface, resName, 
+		_vm->_game->_v2 ? 1 : 0, nullptr, nullptr);
+	_activeAnimation->startAnimation(abortTimers);
 }
 
 void Scene::free() {

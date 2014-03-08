@@ -68,6 +68,47 @@ void InterfaceSurface::load(const Common::String &resName) {
 	delete pixelsStream;
 }
 
+void InterfaceSurface::setup(int id) {
+	Scene &scene = _vm->_game->_scene;
+
+	if (scene._screenObjects._v832EC != id) {
+		Common::String resName = _vm->_game->_aaName;
+
+		// Strip off any extension
+		const char *p = strchr(resName.c_str(), '.');
+		if (p) {
+			resName = Common::String(resName.c_str(), p - 1);
+		}
+
+		// Add on suffix if necessary
+		if (id)
+			resName += "A";
+
+		resName += ".INT";
+		free();
+		load(resName);
+	}
+	scene._screenObjects._v832EC = id;
+
+	scene._imageInterEntries.clear();
+	scene._imageInterEntries.add(-2, 0xff);
+	_vm->_game->_ticksExpiry = _vm->_events->getFrameCounter();
+	scene._v1A = true;
+	_vm->_game->_objectHiliteVocabIdx = -1;
+	scene._v1C = -1;
+
+	// Make a copy of the surface
+	copyTo(&_surface);
+
+	if (_vm->_game->_v1 == 5)
+		scene._imageInterEntries.call(0);
+
+	scene._action.clear();
+	writeText();
+	loadElements();
+	scene._dynamicHotspots.refresh();
+}
+
 void InterfaceSurface::elementHighlighted() {
 	warning("TODO: InterfaceSurface::elementHighlighted");
 }
@@ -79,6 +120,10 @@ void InterfaceSurface::writeText() {
 
 void InterfaceSurface::setBounds(const Common::Rect &r) {
 	_bounds = r;
+}
+
+void InterfaceSurface::loadElements() {
+	warning("TODO: InterfaceSurface::loadElements");
 }
 
 /*------------------------------------------------------------------------*/

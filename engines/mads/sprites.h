@@ -220,6 +220,25 @@ public:
 	int addSprites(const Common::String &resName, int flags = 0);
 };
 
+class ImageInterEntry {
+public:
+	int _field0;
+	int _field2;
+	int _field3;
+	int _field4;
+	int _field6;
+	int _field8;
+
+	ImageInterEntry();
+};
+
+class ImageInterEntries: public Common::Array<ImageInterEntry> {
+public:
+	int add(int field0, int field2);
+
+	void call(int v1);
+};
+
 } // End of namespace MADS
 
 #endif /* MADS_SPRITES_H */

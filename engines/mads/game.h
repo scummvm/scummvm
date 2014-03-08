@@ -66,13 +66,11 @@ protected:
 	SectionHandler *_sectionHandler;
 	VisitedScenes _visitedScenes;
 	Common::StringArray _quotes;
-	int _v1;
 	int _v3;
 	int _v5;
 	int _v6;
 	bool _updateSceneFlag;
 	bool _playerSpritesFlag;
-	int _objectHiliteVocabIdx;
 
 	/**
 	 * Constructor
@@ -120,6 +118,7 @@ public:
 	int _currentSectionNumber;
 	InventoryObjects _objects;
 	Scene _scene;
+	int _v1;
 	int _v2;
 	int _v4;
 	int _abortTimers;
@@ -128,6 +127,8 @@ public:
 	AbortTimerMode _abortTimersMode2;
 	uint32 _priorFrameTimer;
 	Common::String _aaName;
+	uint32 _ticksExpiry;
+	int _objectHiliteVocabIdx;
 public:
 	virtual ~Game();
 

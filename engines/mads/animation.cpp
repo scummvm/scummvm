@@ -140,6 +140,8 @@ Animation *Animation::init(MADSEngine *vm, Scene *scene) {
 Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_font = nullptr;
 	_resetFlag = false;
+	_messageCtr = 0;
+	_skipLoad = false;
 }
 
 Animation::~Animation() {
@@ -296,6 +298,32 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	}
 
 	f.close();
+}
+
+void Animation::startAnimation(int abortTimers) {
+	_messageCtr = 0;
+	_skipLoad = true;
+
+	if (_header._manualFlag) {
+		_unkIndex = -1;
+		//SpriteAsset *asset = _scene->_sprites[_spriteListIndexes[_header._spritesIndex]];
+
+		// TODO: Weird stuff with _unkList. Seems like it's treated as pointers
+		// here, but in processText, it's used as POINTs?
+
+		loadFrame(1);
+	}
+
+	_currentFrame = 0;
+	_oldFrameEntry = 0;
+	_nextFrameTimer = _vm->_events->_currentTimer;
+	_abortTimers = abortTimers;
+	_abortTimersMode = _vm->_game->_abortTimersMode2;
+	_vm->_game->_scene._action._activeAction = _actionDetails;
+
+	for (int idx = 0; idx < _header._messagesCount; ++idx) {
+		_messages[idx]._kernelMsgIndex = -1;
+	}
 }
 
 void Animation::loadFrame(int frameNumber) {
@@ -507,11 +535,11 @@ void Animation::update() {
 		// Animation is complete
 		if (_abortTimers != 0) {
 			_vm->_game->_abortTimers = _abortTimers;
-			_vm->_game->_abortTimersMode = _abortMode;
+			_vm->_game->_abortTimersMode = _abortTimersMode;
 
-			if (_abortMode != ABORTMODE_1) {
+			if (_abortTimersMode != ABORTMODE_1) {
 				// Copy the noun list
-				scene._action._action = _actionNouns;
+				scene._action._action = _actionDetails;
 			}
 		}
 	}

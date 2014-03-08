@@ -58,6 +58,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_updateSceneFlag = false;
 	_abortTimersMode = ABORTMODE_0;
 	_abortTimersMode2 = ABORTMODE_0;
+	_ticksExpiry = 0;
 }
 
 Game::~Game() {
@@ -176,7 +177,7 @@ void Game::sectionLoop() {
 		}
 
 		_vm->_events->initVars();
-		_scene._v1A = -1;
+		_scene._v1A = true;
 		_scene._v1C = -1;
 		_objectHiliteVocabIdx = -1;
 
@@ -230,8 +231,8 @@ void Game::sectionLoop() {
 		_vm->_events->resetCursor();
 		_v1 = 3;
 
-		delete _scene._animation;
-		_scene._animation = nullptr;
+		delete _scene._animationData;
+		_scene._animationData = nullptr;
 
 		_scene._reloadSceneFlag = false;
 

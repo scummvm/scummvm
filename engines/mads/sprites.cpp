@@ -359,4 +359,30 @@ int SpriteSets::addSprites(const Common::String &resName, int flags) {
 	return add(new SpriteAsset(_vm, resName, flags));
 }
 
+/*------------------------------------------------------------------------*/
+
+ImageInterEntry::ImageInterEntry() {
+	_field0 = 0;
+	_field2 = 0;
+	_field3 = 0;
+	_field4 = 0;
+	_field6 = 0;
+	_field8 = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+int ImageInterEntries::add(int field0, int field2) {
+	ImageInterEntry ie;
+	ie._field0 = field0;
+	ie._field2 = field2;
+
+	push_back(ie);
+	return size() - 1;
+}
+
+void ImageInterEntries::call(int v1) {
+	debug("TODO: ImageInterEntries::call");
+}
+
 } // End of namespace MADS

@@ -126,7 +126,14 @@ void Scene804::setup() {
 		_scene->_sequences.setDepth(_globals._spriteIndexes[15], 8);
 	}
 
-	// TODO: More setup
+	_scene->loadAnimation(Resources::formatName(804, 'r', 1, EXT_AA, ""));
+
+	Scene8xx::enter1();
+
+	if (_globals[165] && !_globals[164]) {
+		_scene->_interface.setup(2);
+		_vm->_sound->command(19);
+	}
 }
 
 void Scene804::enter() {
