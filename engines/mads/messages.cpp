@@ -340,7 +340,7 @@ int TextDisplayList::add(int xp, int yp, uint fontColor, int charSpacing,
 void TextDisplayList::setDirtyAreas() {
 	Scene &scene = _vm->_game->_scene;
 
-	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < DIRTY_AREAS_SIZE; ++idx, ++dirtyIdx) {
+	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < size(); ++idx, ++dirtyIdx) {
 		if (((*this)[idx]._expire >= 0) || !(*this)[idx]._active)
 			scene._dirtyAreas[dirtyIdx]._active = false;
 		else {
@@ -353,7 +353,7 @@ void TextDisplayList::setDirtyAreas() {
 void TextDisplayList::setDirtyAreas2() {
 	Scene &scene = _vm->_game->_scene;
 
-	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < DIRTY_AREAS_SIZE; ++idx, ++dirtyIdx) {
+	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; idx < size(); ++idx, ++dirtyIdx) {
 		if ((*this)[idx]._active && ((*this)[idx]._expire >= 0)) {
 			scene._dirtyAreas[dirtyIdx].setTextDisplay(&(*this)[idx]);
 			scene._dirtyAreas[dirtyIdx]._textActive = ((*this)[idx]._expire <= 0) ? 0 : 1;

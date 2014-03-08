@@ -233,7 +233,6 @@ DirtyAreas::DirtyAreas(MADSEngine *vm) : _vm(vm) {
 }
 
 void DirtyAreas::merge(int startIndex, int count) {
-	error("TODO: DirtyAreas::merge");
 	if (startIndex >= count)
 		return;
 

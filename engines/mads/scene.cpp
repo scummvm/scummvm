@@ -422,7 +422,7 @@ void Scene::doFrame() {
 	}
 
 	// TODO: Verify correctness of frame wait
-
+	_vm->_events->waitForNextFrame();
 }
 
 void Scene::drawElements(bool transitionFlag, bool surfaceFlag) {
