@@ -492,6 +492,15 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	_updateScreenWidth = 0;
 	_updateScreenPicture = false;
 	_picBufPtr = _pic2BufPtr = 0;
+
+	_changeToNextSequence = false;
+	_updateFunc = nullptr;
+	_updateFuncIndex = 0;
+	_updateScreenCounter = 0;
+	_updateScreenIndex = -1;
+	_frameCounter = 0;
+	_frameTime = 0;
+	_lastFrameTime = 1;
 }
 
 AnimationSequencePlayer::~AnimationSequencePlayer() {

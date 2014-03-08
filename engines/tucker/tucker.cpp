@@ -43,6 +43,8 @@ namespace Tucker {
 TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 flags)
 	: Engine(system), _gameLang(language), _gameFlags(flags), _rnd("tucker") {
 	_console = new TuckerConsole(this);
+
+	resetVariables();
 }
 
 TuckerEngine::~TuckerEngine() {
@@ -119,7 +121,7 @@ void TuckerEngine::freeBuffers() {
 	free(_ptTextBuf);
 }
 
-void TuckerEngine::restart() {
+void TuckerEngine::resetVariables() {
 	_quitGame = false;
 	_fastMode = false;
 	_syncCounter = 0;
@@ -326,7 +328,7 @@ void TuckerEngine::restart() {
 
 void TuckerEngine::mainLoop() {
 	allocateBuffers();
-	restart();
+	resetVariables();
 
 	loadCharSizeDta();
 	if ((_gameFlags & kGameFlagDemo) != 0) {

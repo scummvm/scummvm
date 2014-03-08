@@ -284,7 +284,7 @@ protected:
 	int getRandomNumber();
 	void allocateBuffers();
 	void freeBuffers();
-	void restart();
+	void resetVariables();
 	void mainLoop();
 	void waitForTimer(int ticksCount);
 	void parseEvents();
