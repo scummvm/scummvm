@@ -176,9 +176,6 @@ public:
 	*/
 	void fullRefresh(bool clearAll = false);
 
-	SpriteAsset &getSprite(int idx) {
-		error("TODO");
-	}
 	void deleteTimer(int idx) {
 		warning("TODO: SpriteSlots::deleteTimer");
 	}

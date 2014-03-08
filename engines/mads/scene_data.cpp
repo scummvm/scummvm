@@ -193,7 +193,7 @@ void DirtyArea::setSpriteSlot(const SpriteSlot *spriteSlot) {
 		_bounds.left = spriteSlot->_position.x - scene._posAdjust.x;
 		_bounds.top = spriteSlot->_position.y - scene._posAdjust.y;
 
-		SpriteAsset &spriteSet = scene._spriteSlots.getSprite(spriteSlot->_spritesIndex);
+		SpriteAsset &spriteSet = *scene._sprites[spriteSlot->_spritesIndex];
 		MSprite *frame = spriteSet.getFrame(((spriteSlot->_frameNumber & 0x7fff) - 1) & 0x7f);
 
 		if (spriteSlot->_scale == -1) {

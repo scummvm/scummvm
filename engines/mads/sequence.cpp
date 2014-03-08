@@ -95,7 +95,7 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 	if (frameStart <= 0)
 		frameStart = 1;
 	if (numSprites == 0)
-		numSprites = scene._spriteSlots.getSprite(spriteListIndex).getCount();
+		numSprites = scene._sprites[spriteListIndex]->getCount();
 	if (frameStart == numSprites)
 		frameInc = 0;
 
@@ -169,7 +169,7 @@ void SequenceList::remove(int seqIndex) {
 void SequenceList::setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot) {
 	Scene &scene = _vm->_game->_scene;
 	SequenceEntry &timerEntry = _entries[seqIndex];
-	SpriteAsset &spriteSet = scene._spriteSlots.getSprite(timerEntry._spritesIndex);
+	SpriteAsset &spriteSet = *scene._sprites[timerEntry._spritesIndex];
 
 	spriteSlot._spriteType = spriteSet.isBackground() ? ST_BACKGROUND : ST_FOREGROUND;
 	spriteSlot._seqIndex = seqIndex;
@@ -209,7 +209,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 		int x2 = 0, y2 = 0;
 
 		if ((seqEntry._field13 != 0) || (seqEntry._dynamicHotspotIndex >= 0)) {
-			SpriteAsset &spriteSet = scene._spriteSlots.getSprite(seqEntry._spritesIndex);
+			SpriteAsset &spriteSet = *scene._sprites[seqEntry._spritesIndex];
 			MSprite *frame = spriteSet.getFrame(seqEntry._frameIndex - 1);
 			int width = frame->getWidth() * seqEntry._scale / 200;
 			int height = frame->getHeight() * seqEntry._scale / 100;
@@ -340,7 +340,7 @@ void SequenceList::delay(uint32 priorFrameTime, uint32 currentTime) {
 void SequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
 	Scene &scene = _vm->_game->_scene;	
 	SequenceEntry &seqEntry = _entries[seqIndex];
-	SpriteAsset &spriteSet = scene._spriteSlots.getSprite(seqEntry._spritesIndex);
+	SpriteAsset &spriteSet = *scene._sprites[seqEntry._spritesIndex];
 	int numSprites = spriteSet.getCount();
 	int tempStart = startVal, tempEnd = endVal;
 
@@ -397,7 +397,7 @@ void SequenceList::setMsgPosition(int seqIndex, const Common::Point &pt) {
 
 int SequenceList::addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
 	Scene &scene = _vm->_game->_scene;
-	MSprite *spriteFrame = scene._spriteSlots.getSprite(srcSpriteIdx).getFrame(0);
+	MSprite *spriteFrame = scene._sprites[srcSpriteIdx]->getFrame(0);
 	int depth = scene._depthSurface.getDepth(Common::Point(spriteFrame->_pos.x + 
 		(spriteFrame->w / 2), spriteFrame->_pos.y + (spriteFrame->h / 2)));
 

@@ -332,8 +332,8 @@ void Animation::loadFrame(int frameNumber) {
 		return;
 
 	Common::Point pt;
-	int listIndex = _spriteListIndexes[_header._spritesIndex];
-	SpriteAsset &spriteSet = scene._spriteSlots.getSprite(listIndex);
+	int spriteListIndex = _spriteListIndexes[_header._spritesIndex];
+	SpriteAsset &spriteSet = *scene._sprites[spriteListIndex];
 
 	if (_unkIndex < 0) {
 		MSurface *frame = spriteSet.getFrame(0);
@@ -480,8 +480,8 @@ void Animation::update() {
 					slot.copy(_frameEntries[_oldFrameEntry]._spriteSlot);
 					slot._seqIndex = _frameEntries[_oldFrameEntry]._seqIndex + 0x80;
 
-					SpriteAsset &spriteSet = scene._spriteSlots.getSprite(
-						scene._spriteSlots[slotIndex]._spritesIndex);
+					SpriteAsset &spriteSet = *scene._sprites[
+						scene._spriteSlots[slotIndex]._spritesIndex];
 					slot._spriteType = spriteSet.isBackground() ? ST_BACKGROUND : ST_FOREGROUND;
 				}
 				break;

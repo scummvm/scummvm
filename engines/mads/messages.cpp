@@ -194,7 +194,7 @@ void KernelMessages::processText(int msgIndex) {
 	if (msg._flags & KMSG_SEQ_ENTRY) {
 		SequenceEntry &seqEntry = scene._sequences[msg._sequenceIndex];
 		if (!seqEntry._nonFixed) {
-			SpriteAsset &spriteSet = scene._spriteSlots.getSprite(seqEntry._spritesIndex);
+			SpriteAsset &spriteSet = *scene._sprites[seqEntry._spritesIndex];
 			MSprite *frame = spriteSet.getFrame(seqEntry._frameIndex - 1);
 			x1 = frame->getBounds().left;
 			y1 = frame->getBounds().top;
