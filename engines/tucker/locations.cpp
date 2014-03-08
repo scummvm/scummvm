@@ -1656,7 +1656,7 @@ void TuckerEngine::execData3PreUpdate_locationNum26() {
 			stopSound(6);
 		}
 	}
-	if (_panelLockedFlag == 0) {
+	if (!_panelLockedFlag) {
 		if (_xPosCurrent > 207 && _xPosCurrent < 256) {
 			_objectKeysLocationTable[26] = 0;
 			_objectKeysPosXTable[26] = 260;
@@ -1746,7 +1746,7 @@ void TuckerEngine::updateSprite_locationNum28_2(int i) {
 
 void TuckerEngine::execData3PreUpdate_locationNum28() {
 	if (_flagsTable[86] == 0 && _xPosCurrent > 265 && _nextAction == 0) {
-		_panelLockedFlag = 0;
+		_panelLockedFlag = false;
 		_nextAction = 21;
 		_csDataLoaded = 0;
 		_pendingActionDelay = 0;
@@ -2040,8 +2040,8 @@ void TuckerEngine::execData3PreUpdate_locationNum41() {
 			}
 		}
 	}
-	if (_panelLockedFlag == 1 && _yPosCurrent > 130 && _selectedObject._yPos > 135 && _nextAction == 0 && _flagsTable[223] == 0) {
-		_panelLockedFlag = 0;
+	if (_panelLockedFlag && _yPosCurrent > 130 && _selectedObject._yPos > 135 && _nextAction == 0 && _flagsTable[223] == 0) {
+		_panelLockedFlag = false;
 		_csDataLoaded = false;
 		_nextLocationNum = 0;
 		_selectedObject._locationObjectLocationNum = 0;
@@ -2145,8 +2145,8 @@ void TuckerEngine::updateSprite_locationNum43_6(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum43() {
-	if (_panelLockedFlag == 1 && _xPosCurrent > 67 && _selectedObject._xPos > 68 && _locationMaskType == 0) {
-		_panelLockedFlag = 0;
+	if (_panelLockedFlag && _xPosCurrent > 67 && _selectedObject._xPos > 68 && _locationMaskType == 0) {
+		_panelLockedFlag = false;
 		_csDataLoaded = 0;
 		_nextAction = 5;
 	}
@@ -2301,7 +2301,7 @@ void TuckerEngine::updateSprite_locationNum51(int i) {
 
 
 void TuckerEngine::execData3PreUpdate_locationNum52() {
-	if (_selectedObject._xPos > 108 && _panelLockedFlag > 0 && _nextAction == 0 && _locationMaskType == 0) {
+	if (_selectedObject._xPos > 108 && _panelLockedFlag && _nextAction == 0 && _locationMaskType == 0) {
 		_nextAction = 1;
 		_csDataLoaded = 0;
 	}
@@ -2344,7 +2344,7 @@ void TuckerEngine::updateSprite_locationNum53_1(int i) {
 
 void TuckerEngine::execData3PreUpdate_locationNum53() {
 	if (_flagsTable[192] == 0 && _xPosCurrent < 200 && _nextAction == 0) {
-		_panelLockedFlag = 0;
+		_panelLockedFlag = false;
 		_nextAction = 14;
 		_csDataLoaded = 0;
 		_pendingActionDelay = 0;
@@ -2374,7 +2374,7 @@ void TuckerEngine::updateSprite_locationNum54(int i) {
 			_flagsTable[141] = 0;
 			_flagsTable[224] = 1;
 			_spritesTable[i]._counter = 0;
-			if (_panelLockedFlag == 0 && _xPosCurrent > 130 && _inventoryItemsState[17] == 0) {
+			if (!_panelLockedFlag && _xPosCurrent > 130 && _inventoryItemsState[17] == 0) {
 				_nextAction = 18;
 				_csDataLoaded = false;
 			}
@@ -2477,7 +2477,7 @@ void TuckerEngine::execData3PreUpdate_locationNum58() {
 	// workaround original game glitch #2872348: do not change position on location change
 	if (_nextLocationNum == 0 && _flagsTable[190] < 3 && _xPosCurrent > 310) {
 		_xPosCurrent = 310;
-		_panelLockedFlag = 0;
+		_panelLockedFlag = false;
 	}
 	if (_flagsTable[190] > 0 && _locationSoundsTable[0]._volume > 0) {
 		_locationSoundsTable[0]._volume = 0;
@@ -2889,7 +2889,7 @@ void TuckerEngine::execData3PreUpdate_locationNum66() {
 	// FIXME: shouldn't be executed after using the map
 	_flagsTable[137] = 0;
 	if (_xPosCurrent > 583 && _flagsTable[191] == 0 && _nextAction == 0 && _locationMaskType == 0) {
-		_panelLockedFlag = 0;
+		_panelLockedFlag = false;
 		_csDataLoaded = 0;
 		_nextLocationNum = 0;
 		_selectedObject._locationObjectLocationNum = 0;

@@ -685,7 +685,7 @@ protected:
 	int _switchPanelCounter;
 	int _conversationOptionsCount;
 	bool _fadedPanel;
-	int _panelLockedFlag;
+	bool _panelLockedFlag;
 	int _conversationOptionLinesCount;
 	int _inventoryItemsState[50];
 	int _inventoryObjectsList[40];

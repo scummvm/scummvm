@@ -191,7 +191,7 @@ void TuckerEngine::resetVariables() {
 	_switchPanelCounter = 0;
 	_conversationOptionsCount = 0;
 	_fadedPanel = false;
-	_panelLockedFlag = 0;
+	_panelLockedFlag = false;
 	_conversationOptionLinesCount = 0;
 	memset(_inventoryItemsState, 0, sizeof(_inventoryItemsState));
 	memset(_inventoryObjectsList, 0, sizeof(_inventoryObjectsList));
@@ -442,7 +442,7 @@ void TuckerEngine::mainLoop() {
 				updateGameHints();
 			}
 			if (_panelState == 0) {
-				if (_panelLockedFlag == 1 || _pendingActionDelay > 0) {
+				if (_panelLockedFlag || _pendingActionDelay > 0) {
 					if (!_fadedPanel) {
 						updateItemsGfxColors(0x60, 0x80);
 						_fadedPanel = true;
@@ -698,7 +698,7 @@ void TuckerEngine::setupNewLocation() {
 		_backgroundSpriteCurrentAnimation = -1;
 		_backgroundSpriteCurrentFrame = 0;
 	}
-	if (_panelLockedFlag == 0 || (_backgroundSpriteCurrentAnimation > 0 && _locationNum != 25)) {
+	if (!_panelLockedFlag || (_backgroundSpriteCurrentAnimation > 0 && _locationNum != 25)) {
 		_locationMaskType = 0;
 	} else {
 		_locationMaskType = 3;
@@ -982,7 +982,7 @@ void TuckerEngine::setBlackPalette() {
 
 void TuckerEngine::updateCursor() {
 	setCursorNum(0);
-	if (_backgroundSpriteCurrentAnimation == -1 && _panelLockedFlag == 0 && _selectedObject._locationObjectLocationNum > 0) {
+	if (_backgroundSpriteCurrentAnimation == -1 && !_panelLockedFlag && _selectedObject._locationObjectLocationNum > 0) {
 		_selectedObject._locationObjectLocationNum = 0;
 	}
 	if (_locationMaskType > 0 || _selectedObject._locationObjectLocationNum > 0 || _pendingActionDelay > 0) {
@@ -1107,13 +1107,13 @@ void TuckerEngine::playSounds() {
 }
 
 void TuckerEngine::updateCharactersPath() {
-	if (_panelLockedFlag == 0) {
+	if (!_panelLockedFlag) {
 		return;
 	}
 	if (_backgroundSpriteCurrentAnimation != -1 && _locationNum != 25) {
 		if (_xPosCurrent == _selectedObject._xPos && _yPosCurrent == _selectedObject._yPos) {
 			_locationMaskCounter = 1;
-			_panelLockedFlag = 0;
+			_panelLockedFlag = false;
 		}
 		return;
 	}
@@ -1157,7 +1157,7 @@ void TuckerEngine::updateCharactersPath() {
 			_selectedObject._xPos = _selectedObject._xDefaultPos;
 			_selectedObject._yPos = _selectedObject._yDefaultPos;
 		} else {
-			_panelLockedFlag = 0;
+			_panelLockedFlag = false;
 			_characterFacingDirection = 0;
 			if (_xPosCurrent == _selectedObject._xPos && _yPosCurrent == _selectedObject._yPos) {
 				_locationMaskCounter = 1;
@@ -1178,7 +1178,7 @@ void TuckerEngine::updateCharactersPath() {
 		return;
 	}
 	_locationMaskCounter = 1;
-	_panelLockedFlag = 0;
+	_panelLockedFlag = false;
 	_locationMaskIgnore = 0;
 	if (_characterPrevFacingDirection <= 0 || _characterPrevFacingDirection >= 5) {
 		return;
@@ -2056,7 +2056,7 @@ void TuckerEngine::updateCharacterAnimation() {
 				assert(_backgroundSpriteCurrentAnimation >= 0 && _backgroundSpriteCurrentAnimation < kSprA02TableSize);
 				_backgroundSpriteDataPtr = _sprA02Table[_backgroundSpriteCurrentAnimation];
 				_backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
-			} else if (_locationNum == 25 && _panelLockedFlag != 1 && (_backgroundSpriteCurrentAnimation == 3 || _backgroundSpriteCurrentAnimation == 6)) {
+			} else if (_locationNum == 25 && !_panelLockedFlag && (_backgroundSpriteCurrentAnimation == 3 || _backgroundSpriteCurrentAnimation == 6)) {
 				_backgroundSpriteCurrentFrame = 0;
 				_backgroundSpriteCurrentAnimation = -1;
 			} else {
@@ -2072,8 +2072,8 @@ void TuckerEngine::updateCharacterAnimation() {
 		}
 	}
 	if (_locationNum == 24 && _flagsTable[103] == 0) {
-		if (_panelLockedFlag == 1) {
-			_panelLockedFlag = 0;
+		if (_panelLockedFlag) {
+			_panelLockedFlag = false;
 			_selectedObject._locationObjectLocationNum = 0;
 			if (_actionVerb != 2) {
 				_speechSoundNum = 2236;
@@ -2112,7 +2112,7 @@ void TuckerEngine::updateCharacterAnimation() {
 			if (_characterBackFrontFacing == 0) {
 				if (_characterBackFrontFacing != _characterPrevBackFrontFacing) {
 					_backgroundSpriteCurrentAnimation = 10;
-				} else if (_panelLockedFlag == 1) {
+				} else if (_panelLockedFlag) {
 					_backgroundSpriteCurrentAnimation = 3;
 				} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 99) {
 					_backgroundSpriteCurrentAnimation = 8;
@@ -2122,7 +2122,7 @@ void TuckerEngine::updateCharacterAnimation() {
 			} else {
 				if (_characterBackFrontFacing != _characterPrevBackFrontFacing) {
 					_backgroundSpriteCurrentAnimation = 2;
-				} else if (_panelLockedFlag == 1) {
+				} else if (_panelLockedFlag) {
 					_backgroundSpriteCurrentAnimation = 6;
 				} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 99) {
 					_backgroundSpriteCurrentAnimation = 9;
@@ -2147,7 +2147,7 @@ void TuckerEngine::updateCharacterAnimation() {
 		_backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
 	}
 	int frame = _spriteAnimationFramesTable[_spriteAnimationFrameIndex];
-	if (_panelLockedFlag == 0 && _characterFacingDirection < 5 && _selectedObject._locationObjectLocationNum == 0) {
+	if (!_panelLockedFlag && _characterFacingDirection < 5 && _selectedObject._locationObjectLocationNum == 0) {
 		_characterFacingDirection = 0;
 	}
 	if (_charSpeechSoundCounter > 0 && _characterFacingDirection != 6 && _actionCharacterNum == 99) {
@@ -2291,10 +2291,10 @@ void TuckerEngine::handleMap() {
 		if (_handleMapCounter > 19) {
 			_handleMapCounter = 0;
 			_locationMaskCounter = 1;
-			_panelLockedFlag = 0;
+			_panelLockedFlag = false;
 		}
 	}
-	if (_panelLockedFlag == 0 && (_backgroundSpriteCurrentAnimation == -1 || _locationNum == 25) && _locationMaskType == 3) {
+	if (!_panelLockedFlag && (_backgroundSpriteCurrentAnimation == -1 || _locationNum == 25) && _locationMaskType == 3) {
 		setCursorType(0);
 		if (_locationMaskCounter == 1) {
 			_characterFacingDirection = 0;
@@ -2328,7 +2328,7 @@ void TuckerEngine::handleMap() {
 					_selectedObject._xPos = _selectedObject._locationObjectToWalkX2;
 					_selectedObject._yPos = _selectedObject._locationObjectToWalkY2;
 					_handleMapCounter = 1;
-					_panelLockedFlag = 1;
+					_panelLockedFlag = true;
 				}
 				return;
 			}
@@ -2361,7 +2361,7 @@ void TuckerEngine::handleMap() {
 			} else {
 				_selectedObject._xPos = _selectedObject._locationObjectToX2;
 				_selectedObject._yPos = _selectedObject._locationObjectToY2;
-				_panelLockedFlag = 1;
+				_panelLockedFlag = true;
 			}
 			_scrollOffset = 0;
 			_handleMapCounter = 0;
@@ -3166,7 +3166,7 @@ int TuckerEngine::executeTableInstruction() {
 		_selectedObject._xPos = readTableInstructionParam(3);
 		_selectedObject._yPos = readTableInstructionParam(3);
 		_locationMaskIgnore = 1;
-		_panelLockedFlag = 1;
+		_panelLockedFlag = true;
 		return 0;
 	case kCode_bux:
 		_xPosCurrent = readTableInstructionParam(3);
@@ -3409,7 +3409,7 @@ void TuckerEngine::setSelectedObjectKey() {
 	if (_mousePosY > 139 && _nextAction == 0) {
 		return;
 	}
-	_panelLockedFlag = 1;
+	_panelLockedFlag = true;
 	_locationMaskCounter = 0;
 	_actionRequiresTwoObjects = false;
 	_selectedObject._yPos = 0;
@@ -3663,11 +3663,11 @@ void TuckerEngine::setActionForInventoryObject() {
 	_currentActionObj2Num = _actionObj2Num;
 	_currentInfoString2SourceType = _actionObj2Type;
 	if (_actionVerb == 1 && _selectedObjectType == 3) {
-		if (_panelLockedFlag == 1) {
+		if (_panelLockedFlag) {
 			if (_locationMaskType != 0) {
 				return;
 			}
-			_panelLockedFlag = 0;
+			_panelLockedFlag = false;
 		}
 		if (handleSpecialObjectSelectionSequence() == 1) {
 			return;
