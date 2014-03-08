@@ -326,7 +326,7 @@ void TuckerEngine::updateSprite_locationNum3_2(int i) {
 	} else if (_flagsTable[45] == 3) {
 		_flagsTable[45] = 0;
 		num = 16;
-		_updateSpriteFlag2 = 1;
+		_updateSpriteFlag2 = true;
 	} else {
 		_spritesTable[i]._needUpdate = false;
 		++_spritesTable[i]._counter;
@@ -417,7 +417,7 @@ void TuckerEngine::updateSprite_locationNum6_0(int i) {
 			state = 2;
 		} else if (_spritesTable[0]._counter == 0) {
 			setCharacterAnimation(0, 0);
-			_updateSpriteFlag1 = 1;
+			_updateSpriteFlag1 = true;
 			++_spritesTable[0]._counter;
 			return;
 		} else {
@@ -829,7 +829,7 @@ void TuckerEngine::updateSprite_locationNum11_1(int i) {
 		_spritesTable[i]._state = 5;
 	} else {
 		_spritesTable[i]._animationFrame = 14;
-		_updateSpriteFlag1 = 1;
+		_updateSpriteFlag1 = true;
 		_spritesTable[i]._state = 5;
 	}
 }
@@ -840,7 +840,7 @@ void TuckerEngine::updateSprite_locationNum11_2(int i) {
 	} else {
 		_spritesTable[i]._animationFrame = 17;
 		_spritesTable[i]._state = 6;
-		_updateSpriteFlag1 = 1;
+		_updateSpriteFlag1 = true;
 	}
 }
 
@@ -1129,7 +1129,7 @@ void TuckerEngine::updateSprite_locationNum16_0(int i) {
 		} else {
 			state = 1;
 			_spritesTable[0]._animationFrame = 2;
-			_updateSpriteFlag1 = 1;
+			_updateSpriteFlag1 = true;
 		}
 	} else if (_csDataHandled) {
 		_spritesTable[0]._needUpdate = false;
@@ -1863,7 +1863,7 @@ void TuckerEngine::updateSprite_locationNum32_0(int i) {
 	} else if (_flagsTable[222] == 2) {
 		state = 19;
 		_spritesTable[i]._animationFrame = 23;
-		_updateSpriteFlag1 = 1;
+		_updateSpriteFlag1 = true;
 	} else if (_flagsTable[123] == 1) {
 		state = 17;
 		_flagsTable[123] = 2;
@@ -2020,7 +2020,7 @@ void TuckerEngine::execData3PreUpdate_locationNum41() {
 		} else if (_backgroundSpriteCurrentFrame == 7) {
 			_flagsTable[77] = 0;
 		}
-		if (_changeBackgroundSprite == 0) {
+		if (!_changeBackgroundSprite) {
 			if (_backgroundSpriteCurrentFrame == 16 && !isSoundPlaying(4)) {
 				_locationSoundsTable[4].type = 2;
 				startSound(_locationSoundsTable[4].offset, 4, _locationSoundsTable[4].volume);
@@ -2078,7 +2078,7 @@ void TuckerEngine::updateSprite_locationNum42(int i) {
 		state = 5;
 		_spritesTable[i]._updateDelay = 5;
 		_spritesTable[i]._state = _spritesTable[i]._firstFrame - 1; // FIXME: bug, fxNum ?
-		_updateSpriteFlag1 = 1;
+		_updateSpriteFlag1 = true;
 	} else {
 		state = 2;
 	}
@@ -2274,7 +2274,7 @@ void TuckerEngine::updateSprite_locationNum50(int i) {
 	} else {
 		_spritesTable[i]._animationFrame = _spritesTable[i]._firstFrame - 1;
 		_spritesTable[i]._updateDelay = 5;
-		_updateSpriteFlag1 = 1;
+		_updateSpriteFlag1 = true;
 		state = i + 1;
 	}
 	_spritesTable[i]._state = state;
@@ -2394,7 +2394,7 @@ void TuckerEngine::updateSprite_locationNum54(int i) {
 void TuckerEngine::updateSprite_locationNum55(int i) {
 	if (_flagsTable[193] > 0 && _flagsTable[193] < 14) {
 		setCharacterAnimation(_flagsTable[193] - 1, i);
-		_updateSpriteFlag1 = 1;
+		_updateSpriteFlag1 = true;
 		if (_flagsTable[193] == 1 || _flagsTable[193] == 3 || _flagsTable[193] == 5 || _flagsTable[193] == 7 || _flagsTable[193] == 11 || _flagsTable[193] == 13) {
 			++_flagsTable[193];
 		}
@@ -2572,7 +2572,7 @@ void TuckerEngine::updateSprite_locationNum61_0(int i) {
 		} else {
 			state = 2;
 			_spritesTable[0]._animationFrame = 2;
-			_updateSpriteFlag1 = 1;
+			_updateSpriteFlag1 = true;
 		}
 	} else {
 		_spritesTable[i]._needUpdate = false;
@@ -3137,7 +3137,7 @@ void TuckerEngine::updateSprite_locationNum74(int i) {
 		} else {
 			_spritesTable[i]._animationFrame = _spritesTable[i]._firstFrame - 1;
 			_spritesTable[i]._updateDelay = 5;
-			_updateSpriteFlag1 = 1;
+			_updateSpriteFlag1 = true;
 		}
 	}
 	_spritesTable[i]._state = stateTable[num] + i;
@@ -3158,7 +3158,7 @@ void TuckerEngine::updateSprite_locationNum79(int i) {
 	} else {
 		_spritesTable[i]._animationFrame = _spritesTable[i]._firstFrame - 1;
 		_spritesTable[i]._updateDelay = 5;
-		_updateSpriteFlag1 = 1;
+		_updateSpriteFlag1 = true;
 		state = 3;
 	}
 	_spritesTable[i]._state = state;
@@ -3179,7 +3179,7 @@ void TuckerEngine::updateSprite_locationNum81_0(int i) {
 	} else {
 		_spritesTable[i]._animationFrame = _spritesTable[i]._firstFrame - 1;
 		_spritesTable[i]._updateDelay = 5;
-		_updateSpriteFlag1 = 1;
+		_updateSpriteFlag1 = true;
 		state = 2;
 	}
 	_spritesTable[i]._state = state;
@@ -3204,7 +3204,7 @@ void TuckerEngine::updateSprite_locationNum82(int i) {
 	} else {
 		_spritesTable[i]._animationFrame = _spritesTable[i]._firstFrame - 1;
 		_spritesTable[i]._updateDelay = 5;
-		_updateSpriteFlag1 = 1;
+		_updateSpriteFlag1 = true;
 		state = 2;
 	}
 	_spritesTable[i]._state = state;

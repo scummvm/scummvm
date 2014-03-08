@@ -284,15 +284,15 @@ void TuckerEngine::resetVariables() {
 	_characterBackFrontFacing = _characterPrevBackFrontFacing = 0;
 	_characterAnimationNum = 0;
 	_noCharacterAnimationChange = 0;
-	_changeBackgroundSprite = 0;
 	_characterSpriteAnimationFrameCounter = 0;
 	_locationMaskIgnore = 0;
 	_locationMaskType = 0;
 	_locationMaskCounter = 0;
-	_updateSpriteFlag1 = 0;
-	_updateSpriteFlag2 = 0;
 	_handleMapCounter = 0;
 	_noPositionChangeAfterMap = false;
+	_changeBackgroundSprite = false;
+	_updateSpriteFlag1 = false;
+	_updateSpriteFlag2 = false;
 
 	_mirroredDrawing = 0;
 	_loadLocBufPtr = 0;
@@ -2035,7 +2035,7 @@ void TuckerEngine::updateCharacterAnimation() {
 			++_spriteAnimationFrameIndex;
 		}
 		_characterFacingDirection = 0;
-		if (_changeBackgroundSprite == 1) {
+		if (_changeBackgroundSprite) {
 			if (_backgroundSpriteCurrentFrame == 0) {
 				_backgroundSpriteDataPtr = _sprA02Table[_backgroundSpriteCurrentAnimation];
 				_backgroundSpriteCurrentFrame = _backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
@@ -2044,7 +2044,7 @@ void TuckerEngine::updateCharacterAnimation() {
 				if (_backgroundSpriteCurrentFrame < 1) {
 					_backgroundSpriteCurrentAnimation = -1;
 					_backgroundSpriteCurrentFrame = 0;
-					_changeBackgroundSprite = 0;
+					_changeBackgroundSprite = false;
 					if (_nextAction == 0) {
 						setCursorType(0);
 					}
@@ -2310,11 +2310,11 @@ void TuckerEngine::handleMap() {
 				if (_selectedObject.locationObject_toWalkX2 > 800) {
 					_backgroundSpriteCurrentAnimation = _selectedObject.locationObject_toWalkX2 - 900;
 					if (_selectedObject.locationObject_toWalkY2 > 499) {
-						_changeBackgroundSprite = 1;
+						_changeBackgroundSprite = true;
 						_backgroundSprOffset = _selectedObject.locationObject_toWalkY2 - 500;
 					} else {
 						_backgroundSprOffset = _selectedObject.locationObject_toWalkY2;
-						_changeBackgroundSprite = 0;
+						_changeBackgroundSprite = false;
 					}
 					_backgroundSpriteCurrentFrame = 0;
 					_mirroredDrawing = 0;
@@ -2351,10 +2351,10 @@ void TuckerEngine::handleMap() {
 			if (_selectedObject.locationObject_toX2 > 800) {
 				_backgroundSpriteCurrentAnimation = _selectedObject.locationObject_toX2 - 900;
 				if (_selectedObject.locationObject_toY2 > 499) {
-					_changeBackgroundSprite = 1;
+					_changeBackgroundSprite = true;
 					_backgroundSprOffset = _selectedObject.locationObject_toY2 - 500;
 				} else {
-					_changeBackgroundSprite = 0;
+					_changeBackgroundSprite = false;
 					_backgroundSprOffset = _selectedObject.locationObject_toY2;
 				}
 				_backgroundSpriteCurrentFrame = 0;
@@ -2443,8 +2443,8 @@ void TuckerEngine::updateSprite(int i) {
 	_spritesTable[i]._prevState = _spritesTable[i]._state;
 	_spritesTable[i]._prevAnimationFrame = false;
 	_spritesTable[i]._nextAnimationFrame = false;
-	_updateSpriteFlag1 = 0;
-	_updateSpriteFlag2 = 0;
+	_updateSpriteFlag1 = false;
+	_updateSpriteFlag2 = false;
 	_spritesTable[i]._defaultUpdateDelay = 0;
 	_spritesTable[i]._updateDelay = 0;
 	switch (_locationNum) {
@@ -2822,7 +2822,7 @@ void TuckerEngine::updateSprite(int i) {
 		break;
 	}
 	if (_spritesTable[i]._stateIndex <= -1) {
-		if (_updateSpriteFlag1 == 0) {
+		if (!_updateSpriteFlag1) {
 			_spritesTable[i]._animationFrame = 1;
 		}
 		if (_spritesTable[i]._state < 0 || !_sprC02Table[_spritesTable[i]._state]) {
@@ -2831,7 +2831,7 @@ void TuckerEngine::updateSprite(int i) {
 		}
 		_spritesTable[i]._animationData = _sprC02Table[_spritesTable[i]._state];
 		_spritesTable[i]._firstFrame = READ_LE_UINT16(_spritesTable[i]._animationData);
-		if (_updateSpriteFlag2 == 1) {
+		if (_updateSpriteFlag2) {
 			_spritesTable[i]._state = _spritesTable[i]._firstFrame;
 			_spritesTable[i]._nextAnimationFrame = true;
 			_spritesTable[i]._prevAnimationFrame = true;

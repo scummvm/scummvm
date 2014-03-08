@@ -232,7 +232,7 @@ enum CompressedSoundType {
 class CompressedSound {
 public:
 
-	CompressedSound() : _compressedSoundType(-1) {}
+	CompressedSound() : _compressedSoundType(-1), _compressedSoundFlags(0) {}
 
 	void openFile();
 	void closeFile();
@@ -814,15 +814,15 @@ protected:
 	int _characterPrevBackFrontFacing;
 	int _characterAnimationNum;
 	int _noCharacterAnimationChange;
-	int _changeBackgroundSprite;
 	int _characterSpriteAnimationFrameCounter;
 	int _locationMaskIgnore;
 	int _locationMaskType;
 	int _locationMaskCounter;
-	int _updateSpriteFlag1;
-	int _updateSpriteFlag2;
 	int _handleMapCounter;
 	bool _noPositionChangeAfterMap;
+	bool _changeBackgroundSprite;
+	bool _updateSpriteFlag1;
+	bool _updateSpriteFlag2;
 
 	int _mirroredDrawing;
 	uint8 *_loadLocBufPtr;
