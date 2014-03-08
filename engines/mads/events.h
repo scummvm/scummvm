@@ -60,7 +60,6 @@ public:
 	bool _mouseReleased;
 	byte _mouseButtons;
 	bool _keyPressed;
-	uint32 _currentTimer;
 	int _vCC;
 	int _vD2;
 	int _vD4;

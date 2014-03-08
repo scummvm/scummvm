@@ -124,6 +124,7 @@ public:
 	Common::Point _destPos;
 	int _destFacing;
 	Common::Point _posAdjust;
+	uint32 _frameStartTime;
 
 	/**
 	 * Constructor

@@ -317,7 +317,7 @@ void Animation::startAnimation(int abortTimers) {
 
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
-	_nextFrameTimer = _vm->_events->_currentTimer;
+	_nextFrameTimer = _vm->_game->_scene._frameStartTime;
 	_abortTimers = abortTimers;
 	_abortTimersMode = _vm->_game->_abortTimersMode2;
 	_vm->_game->_scene._action._activeAction = _actionDetails;
@@ -402,7 +402,7 @@ void Animation::update() {
 	}
 
 	// If it's not time for the next frame, then exit
-	if (_vm->_events->_currentTimer < _nextFrameTimer)
+	if (_vm->_game->_scene._frameStartTime < _nextFrameTimer)
 		return;
 
 	for (uint idx = 0; idx < scene._spriteSlots.size(); ++idx) {
@@ -546,7 +546,7 @@ void Animation::update() {
 	}
 
 	int frameNum = MIN(_currentFrame, (int)_miscEntries.size() - 1);
-	_nextFrameTimer = _vm->_events->_currentTimer + _miscEntries[frameNum]._numTicks;
+	_nextFrameTimer = _vm->_game->_scene._frameStartTime + _miscEntries[frameNum]._numTicks;
 }
 
 void Animation::setCurrentFrame(int frameNumber) {
@@ -554,7 +554,7 @@ void Animation::setCurrentFrame(int frameNumber) {
 	_oldFrameEntry = 0;
 	_freeFlag = false;
 
-	_nextScrollTimer = _nextFrameTimer = _vm->_events->_currentTimer;
+	_nextScrollTimer = _nextFrameTimer = _vm->_game->_scene._frameStartTime;
 }
 
 } // End of namespace MADS

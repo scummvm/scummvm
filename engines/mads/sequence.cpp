@@ -116,7 +116,7 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 	_entries[seqIndex]._numTicks = numTicks;
 	_entries[seqIndex]._extraTicks = extraTicks;
 
-	_entries[seqIndex]._timeout = _vm->_events->_currentTimer + delayTicks;
+	_entries[seqIndex]._timeout = scene._frameStartTime + delayTicks;
 
 	_entries[seqIndex]._triggerCountdown = triggerCountdown;
 	_entries[seqIndex]._doneFlag = false;
@@ -131,6 +131,7 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 }
 
 int SequenceList::addTimer(int time, int abortVal) {
+	Scene &scene = _vm->_game->_scene;
 	uint seqIndex;
 	for (seqIndex = 0; seqIndex < _entries.size(); ++seqIndex) {
 		if (!_entries[seqIndex]._active)
@@ -143,7 +144,7 @@ int SequenceList::addTimer(int time, int abortVal) {
 	se._spritesIndex = -1;
 	se._numTicks = time;
 	se._extraTicks = 0;
-	se._timeout = _vm->_events->_currentTimer + time;
+	se._timeout = scene._frameStartTime + time;
 	se._triggerCountdown = true;
 	se._doneFlag = false;
 	se._entries._count = 0;
@@ -309,12 +310,13 @@ bool SequenceList::loadSprites(int seqIndex) {
 * Handles counting down entries in the timer list for action
 */
 void SequenceList::tick() {
+	Scene &scene = _vm->_game->_scene;
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if ((_vm->_game->_abortTimers2 == 0) && (_vm->_game->_abortTimers != 0))
 			break;
 
 		SequenceEntry &seqEntry = _entries[idx];
-		uint32 currentTimer = _vm->_events->_currentTimer;
+		uint32 currentTimer = scene._frameStartTime;
 
 		if (!seqEntry._active || (currentTimer < seqEntry._timeout))
 			continue;

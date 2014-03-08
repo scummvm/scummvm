@@ -94,9 +94,11 @@ void Player::setDest(const Common::Point &pt, int facing) {
 }
 
 void Player::nextFrame() {
+	Scene &scene = _vm->_game->_scene;
+
 	_priorTimer += _ticksAmount;
-	if (_vm->_events->_currentTimer >= _priorTimer) {
-		_priorTimer = _vm->_events->_currentTimer;
+	if (scene._frameStartTime >= _priorTimer) {
+		_priorTimer = scene._frameStartTime;
 		if (_moving) {
 			move();
 		} else {

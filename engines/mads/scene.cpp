@@ -49,6 +49,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_animationData = nullptr;
 	_activeAnimation = nullptr;
 	_textSpacing = -1;
+	_frameStartTime = 0;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
@@ -314,7 +315,7 @@ void Scene::doFrame() {
 
 	checkStartWalk();
 	if (!_vm->_game->_abortTimers2)
-		_vm->_events->_currentTimer = _vm->_events->getFrameCounter();
+		_frameStartTime = _vm->_events->getFrameCounter();
 
 	if ((_action._inProgress && !player._moving && !_action._startWalkFlag &&
 			player._newDirection == player._direction) ||

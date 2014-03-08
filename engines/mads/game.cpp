@@ -84,6 +84,9 @@ void Game::run() {
 		break;
 	}
 
+	// Get the initial starting time for the first scene
+	_scene._frameStartTime = _vm->_events->getFrameCounter();
+
 	if (_saveSlot == -1 && protectionResult != -1 && protectionResult != -2) {
 		initSection(_sectionNumber);
 		_statusFlag = true;
@@ -199,7 +202,7 @@ void Game::sectionLoop() {
 		}
 		_abortTimers = 0;
 		_abortTimersMode2 = ABORTMODE_1;
-		_priorFrameTimer = _vm->_events->_currentTimer;
+		_priorFrameTimer = _scene._frameStartTime;
 
 		// Call the scene logic for entering the given scene
 		_scene._sceneLogic->enter();
@@ -212,7 +215,7 @@ void Game::sectionLoop() {
 		_player.updateFrame();
 		_player._visible3 = _player._visible;
 		_player._special = _scene.getDepthHighBits(_player._playerPos);
-		_player._priorTimer = _vm->_events->_currentTimer + _player._ticksAmount;
+		_player._priorTimer = _scene._frameStartTime + _player._ticksAmount;
 		_player.idle();
 
 		warning("TODO: _selectedObject IF block");

@@ -41,7 +41,6 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_keyPressed = false;
 	_mouseClicked = false;
 	_mouseReleased = false;
-	_currentTimer = 0;
 	_mouseButtons = 0;
 	_vD2 = 0;
 	_vD4 = 0;
