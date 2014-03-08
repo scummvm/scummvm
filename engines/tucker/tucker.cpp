@@ -524,7 +524,7 @@ void TuckerEngine::mainLoop() {
 				--_miscSoundFxDelayCounter[num];
 				if (_miscSoundFxDelayCounter[num] == 0) {
 					const int index = _miscSoundFxNum[num];
-					startSound(_locationSoundsTable[index].offset, index, _locationSoundsTable[index].volume);
+					startSound(_locationSoundsTable[index]._offset, index, _locationSoundsTable[index]._volume);
 				}
 			}
 		}
@@ -1018,7 +1018,7 @@ void TuckerEngine::updateCursor() {
 	} else {
 		num = getObjectUnderCursor();
 		if (num > -1) {
-			_selectedObjectNum = _locationObjectsTable[num].textNum;
+			_selectedObjectNum = _locationObjectsTable[num]._textNum;
 		}
 	}
 	handleMouseClickOnInventoryObject();
@@ -1094,14 +1094,14 @@ void TuckerEngine::stopSounds() {
 
 void TuckerEngine::playSounds() {
 	for (int i = 0; i < _locationSoundsCount; ++i) {
-		if (_locationSoundsTable[i].type == 1 || _locationSoundsTable[i].type == 2 || _locationSoundsTable[i].type == 5 ||
-			(_locationSoundsTable[i].type == 7 && _flagsTable[_locationSoundsTable[i].flagNum] == _locationSoundsTable[i].flagValueStartFx)) {
-			startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
+		if (_locationSoundsTable[i]._type == 1 || _locationSoundsTable[i]._type == 2 || _locationSoundsTable[i]._type == 5 ||
+			(_locationSoundsTable[i]._type == 7 && _flagsTable[_locationSoundsTable[i]._flagNum] == _locationSoundsTable[i]._flagValueStartFx)) {
+			startSound(_locationSoundsTable[i]._offset, i, _locationSoundsTable[i]._volume);
 		}
 	}
 	for (int i = 0; i < _locationMusicsCount; ++i) {
-		if (_locationMusicsTable[i].flag > 0) {
-			startMusic(_locationMusicsTable[i].offset, i, _locationMusicsTable[i].volume);
+		if (_locationMusicsTable[i]._flag > 0) {
+			startMusic(_locationMusicsTable[i]._offset, i, _locationMusicsTable[i]._volume);
 		}
 	}
 }
@@ -1244,16 +1244,16 @@ void TuckerEngine::updateData3() {
 void TuckerEngine::updateSfxData3_1() {
 	for (int i = 0; i < _locationSoundsCount; ++i) {
 		LocationSound *s = &_locationSoundsTable[i];
-		if ((s->type == 6 || s->type == 7) && s->updateType == 1) {
+		if ((s->_type == 6 || s->_type == 7) && s->_updateType == 1) {
 			for (int j = 0; j < _spritesCount; ++j) {
-				if (_spritesTable[j]._animationFrame == s->startFxSpriteNum && _spritesTable[j]._state == s->startFxSpriteState) {
-					if (s->type == 7) {
-						_flagsTable[s->flagNum] = s->flagValueStartFx;
+				if (_spritesTable[j]._animationFrame == s->_startFxSpriteNum && _spritesTable[j]._state == s->_startFxSpriteState) {
+					if (s->_type == 7) {
+						_flagsTable[s->_flagNum] = s->_flagValueStartFx;
 					}
-					startSound(s->offset, i, s->volume);
-				} else if (s->type == 7) {
-					if (_spritesTable[j]._animationFrame == s->stopFxSpriteNum && _spritesTable[j]._state == s->stopFxSpriteState) {
-						_flagsTable[s->flagNum] = s->flagValueStopFx;
+					startSound(s->_offset, i, s->_volume);
+				} else if (s->_type == 7) {
+					if (_spritesTable[j]._animationFrame == s->_stopFxSpriteNum && _spritesTable[j]._state == s->_stopFxSpriteState) {
+						_flagsTable[s->_flagNum] = s->_flagValueStopFx;
 						stopSound(i);
 					}
 				}
@@ -1265,15 +1265,15 @@ void TuckerEngine::updateSfxData3_1() {
 void TuckerEngine::updateSfxData3_2() {
 	for (int i = 0; i < _locationSoundsCount; ++i) {
 		LocationSound *s = &_locationSoundsTable[i];
-		if ((s->type == 6 || s->type == 7) && s->updateType == 0) {
-			if (s->startFxSpriteNum == _backgroundSpriteCurrentFrame && s->startFxSpriteState == _backgroundSpriteCurrentAnimation) {
-				if (s->type == 7) {
-					_flagsTable[s->flagNum] = s->flagValueStartFx;
+		if ((s->_type == 6 || s->_type == 7) && s->_updateType == 0) {
+			if (s->_startFxSpriteNum == _backgroundSpriteCurrentFrame && s->_startFxSpriteState == _backgroundSpriteCurrentAnimation) {
+				if (s->_type == 7) {
+					_flagsTable[s->_flagNum] = s->_flagValueStartFx;
 				}
-				startSound(s->offset, i, s->volume);
-			} else if (s->type == 7) {
-				if (s->stopFxSpriteNum == _backgroundSpriteCurrentFrame && s->stopFxSpriteState == _backgroundSpriteCurrentAnimation) {
-					_flagsTable[s->flagNum] = s->flagValueStopFx;
+				startSound(s->_offset, i, s->_volume);
+			} else if (s->_type == 7) {
+				if (s->_stopFxSpriteNum == _backgroundSpriteCurrentFrame && s->_stopFxSpriteState == _backgroundSpriteCurrentAnimation) {
+					_flagsTable[s->_flagNum] = s->_flagValueStopFx;
 					stopSound(i);
 				}
 			}
@@ -1505,7 +1505,7 @@ void TuckerEngine::startCharacterSounds() {
 	if (_characterSoundFxDelayCounter != 0) {
 		--_characterSoundFxDelayCounter;
 		if (_characterSoundFxDelayCounter <= 0) {
-			startSound(_locationSoundsTable[_characterSoundFxNum].offset, _characterSoundFxNum, _locationSoundsTable[_characterSoundFxNum].volume);
+			startSound(_locationSoundsTable[_characterSoundFxNum]._offset, _characterSoundFxNum, _locationSoundsTable[_characterSoundFxNum]._volume);
 		}
 	}
 }
@@ -1515,16 +1515,16 @@ void TuckerEngine::updateSoundsTypes3_4() {
 		return;
 	}
 	for (int i = 0; i < _locationSoundsCount; ++i) {
-		switch (_locationSoundsTable[i].type) {
+		switch (_locationSoundsTable[i]._type) {
 		case 3:
 			if (getRandomNumber() >= 32300) {
-				startSound(_locationSoundsTable[i].offset, 0, _locationSoundsTable[i].volume);
+				startSound(_locationSoundsTable[i]._offset, 0, _locationSoundsTable[i]._volume);
 				return;
 			}
 			break;
 		case 4:
 			if (getRandomNumber() >= 32763) {
-				startSound(_locationSoundsTable[i].offset, 0, _locationSoundsTable[i].volume);
+				startSound(_locationSoundsTable[i]._offset, 0, _locationSoundsTable[i]._volume);
 				return;
 			}
 			break;
@@ -1792,8 +1792,8 @@ void TuckerEngine::setVolumeMusic(int index, int volume) {
 }
 
 void TuckerEngine::startSound(int offset, int index, int volume) {
-	bool loop = (_locationSoundsTable[index].type == 2 || _locationSoundsTable[index].type == 5 || _locationSoundsTable[index].type == 7);
-	loadSound(Audio::Mixer::kSFXSoundType, _locationSoundsTable[index].num, volume, loop, &_sfxHandles[index]);
+	bool loop = (_locationSoundsTable[index]._type == 2 || _locationSoundsTable[index]._type == 5 || _locationSoundsTable[index]._type == 7);
+	loadSound(Audio::Mixer::kSFXSoundType, _locationSoundsTable[index]._num, volume, loop, &_sfxHandles[index]);
 }
 
 void TuckerEngine::stopSound(int index) {
@@ -1805,8 +1805,8 @@ bool TuckerEngine::isSoundPlaying(int index) {
 }
 
 void TuckerEngine::startMusic(int offset, int index, int volume) {
-	bool loop = (_locationMusicsTable[index].flag == 2);
-	loadSound(Audio::Mixer::kMusicSoundType, _locationMusicsTable[index].num, volume, loop, &_musicHandles[index]);
+	bool loop = (_locationMusicsTable[index]._flag == 2);
+	loadSound(Audio::Mixer::kMusicSoundType, _locationMusicsTable[index]._num, volume, loop, &_musicHandles[index]);
 }
 
 void TuckerEngine::stopMusic(int index) {
@@ -3214,8 +3214,8 @@ int TuckerEngine::executeTableInstruction() {
 		return 0;
 	case kCode_flx:
 		i = readTableInstructionParam(2);
-		_locationSoundsTable[i].type = 2;
-		startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
+		_locationSoundsTable[i]._type = 2;
+		startSound(_locationSoundsTable[i]._offset, i, _locationSoundsTable[i]._volume);
 		return 0;
 	case kCode_fxx:
 		i = readTableInstructionParam(2);
@@ -3225,7 +3225,7 @@ int TuckerEngine::executeTableInstruction() {
 		return 0;
 	case kCode_fx:
 		i = readTableInstructionParam(2);
-		startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
+		startSound(_locationSoundsTable[i]._offset, i, _locationSoundsTable[i]._volume);
 		_soundInstructionIndex = i;
 		return 0;
 	case kCode_gfg:
@@ -3384,21 +3384,21 @@ int TuckerEngine::getObjectUnderCursor() {
 		return -1;
 	}
 	for (int i = 0; i < _locationObjectsCount; ++i) {
-		if (_mousePosX + _scrollOffset + 1 <= _locationObjectsTable[i].xPos) {
+		if (_mousePosX + _scrollOffset + 1 <= _locationObjectsTable[i]._xPos) {
 			continue;
 		}
-		if (_mousePosX + _scrollOffset >= _locationObjectsTable[i].xPos + _locationObjectsTable[i].xSize) {
+		if (_mousePosX + _scrollOffset >= _locationObjectsTable[i]._xPos + _locationObjectsTable[i]._xSize) {
 			continue;
 		}
-		if (_mousePosY <= _locationObjectsTable[i].yPos) {
+		if (_mousePosY <= _locationObjectsTable[i]._yPos) {
 			continue;
 		}
-		if (_mousePosY >= _locationObjectsTable[i].yPos + _locationObjectsTable[i].ySize) {
+		if (_mousePosY >= _locationObjectsTable[i]._yPos + _locationObjectsTable[i]._ySize) {
 			continue;
 		}
 		_selectedObjectType = 0;
 		_selectedCharacterNum = i;
-		setCursorNum(_locationObjectsTable[i].cursorNum);
+		setCursorNum(_locationObjectsTable[i]._cursorNum);
 		return i;
 	}
 	return -1;
@@ -3420,16 +3420,16 @@ void TuckerEngine::setSelectedObjectKey() {
 			_selectedObject.xPos = x;
 			_selectedObject.yPos = _mousePosY;
 		} else {
-			_selectedObject.xPos = _locationObjectsTable[_selectedCharacterNum].standX;
-			_selectedObject.yPos = _locationObjectsTable[_selectedCharacterNum].standY;
+			_selectedObject.xPos = _locationObjectsTable[_selectedCharacterNum]._standX;
+			_selectedObject.yPos = _locationObjectsTable[_selectedCharacterNum]._standY;
 			if (_actionVerb == 0 || _actionVerb == 8) {
-				_selectedObject.locationObject_locationNum = _locationObjectsTable[_selectedCharacterNum].locationNum;
-				_selectedObject.locationObject_toX = _locationObjectsTable[_selectedCharacterNum].toX;
-				_selectedObject.locationObject_toY = _locationObjectsTable[_selectedCharacterNum].toY;
-				_selectedObject.locationObject_toX2 = _locationObjectsTable[_selectedCharacterNum].toX2;
-				_selectedObject.locationObject_toY2 = _locationObjectsTable[_selectedCharacterNum].toY2;
-				_selectedObject.locationObject_toWalkX2 = _locationObjectsTable[_selectedCharacterNum].toWalkX2;
-				_selectedObject.locationObject_toWalkY2 = _locationObjectsTable[_selectedCharacterNum].toWalkY2;
+				_selectedObject.locationObject_locationNum = _locationObjectsTable[_selectedCharacterNum]._locationNum;
+				_selectedObject.locationObject_toX = _locationObjectsTable[_selectedCharacterNum]._toX;
+				_selectedObject.locationObject_toY = _locationObjectsTable[_selectedCharacterNum]._toY;
+				_selectedObject.locationObject_toX2 = _locationObjectsTable[_selectedCharacterNum]._toX2;
+				_selectedObject.locationObject_toY2 = _locationObjectsTable[_selectedCharacterNum]._toY2;
+				_selectedObject.locationObject_toWalkX2 = _locationObjectsTable[_selectedCharacterNum]._toWalkX2;
+				_selectedObject.locationObject_toWalkY2 = _locationObjectsTable[_selectedCharacterNum]._toWalkY2;
 			}
 		}
 	} else {

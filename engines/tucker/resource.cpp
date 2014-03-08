@@ -673,22 +673,22 @@ void TuckerEngine::loadData4() {
 			}
 			assert(_locationObjectsCount < kLocationObjectsTableSize);
 			LocationObject *d = &_locationObjectsTable[_locationObjectsCount++];
-			d->xPos = i;
-			d->yPos = t.getNextInteger();
-			d->xSize = t.getNextInteger();
-			d->ySize = t.getNextInteger();
-			d->standX = t.getNextInteger();
-			d->standY = t.getNextInteger();
-			d->textNum = t.getNextInteger();
-			d->cursorNum = t.getNextInteger();
-			d->locationNum = t.getNextInteger();
-			if (d->locationNum > 0) {
-				d->toX = t.getNextInteger();
-				d->toY = t.getNextInteger();
-				d->toX2 = t.getNextInteger();
-				d->toY2 = t.getNextInteger();
-				d->toWalkX2 = t.getNextInteger();
-				d->toWalkY2 = t.getNextInteger();
+			d->_xPos = i;
+			d->_yPos = t.getNextInteger();
+			d->_xSize = t.getNextInteger();
+			d->_ySize = t.getNextInteger();
+			d->_standX = t.getNextInteger();
+			d->_standY = t.getNextInteger();
+			d->_textNum = t.getNextInteger();
+			d->_cursorNum = t.getNextInteger();
+			d->_locationNum = t.getNextInteger();
+			if (d->_locationNum > 0) {
+				d->_toX = t.getNextInteger();
+				d->_toY = t.getNextInteger();
+				d->_toX2 = t.getNextInteger();
+				d->_toY2 = t.getNextInteger();
+				d->_toWalkX2 = t.getNextInteger();
+				d->_toWalkY2 = t.getNextInteger();
 			}
 		}
 	}
@@ -857,35 +857,35 @@ void TuckerEngine::loadFx() {
 	_currentFxSet = 0;
 	for (int i = 0; i < _locationSoundsCount; ++i) {
 		LocationSound *s = &_locationSoundsTable[i];
-		s->offset = 0;
-		s->num = t.getNextInteger();
-		s->volume = t.getNextInteger();
-		s->type = t.getNextInteger();
-		switch (s->type) {
+		s->_offset = 0;
+		s->_num = t.getNextInteger();
+		s->_volume = t.getNextInteger();
+		s->_type = t.getNextInteger();
+		switch (s->_type) {
 		case 5:
 			_currentFxSet = 1;
 			_currentFxIndex = i;
-			_currentFxVolume = s->volume;
+			_currentFxVolume = s->_volume;
 			_currentFxDist = t.getNextInteger();
 			_currentFxScale = t.getNextInteger();
 			break;
 		case 6:
 		case 7:
 		case 8:
-			s->startFxSpriteState = t.getNextInteger();
-			s->startFxSpriteNum = t.getNextInteger();
-			s->updateType = t.getNextInteger();
-			if (s->type == 7) {
-				s->flagNum = t.getNextInteger();
-				s->flagValueStartFx = t.getNextInteger();
-				s->stopFxSpriteState = t.getNextInteger();
-				s->stopFxSpriteNum = t.getNextInteger();
-				s->flagValueStopFx = t.getNextInteger();
+			s->_startFxSpriteState = t.getNextInteger();
+			s->_startFxSpriteNum = t.getNextInteger();
+			s->_updateType = t.getNextInteger();
+			if (s->_type == 7) {
+				s->_flagNum = t.getNextInteger();
+				s->_flagValueStartFx = t.getNextInteger();
+				s->_stopFxSpriteState = t.getNextInteger();
+				s->_stopFxSpriteNum = t.getNextInteger();
+				s->_flagValueStopFx = t.getNextInteger();
 			}
 			break;
 		}
-		if (s->type == 8) {
-			s->type = 6;
+		if (s->_type == 8) {
+			s->_type = 6;
 		}
 	}
 	t.findNextToken(kDataTokenDw);
@@ -896,10 +896,10 @@ void TuckerEngine::loadFx() {
 		int flagValue = t.getNextInteger();
 		if (flagValue == _flagsTable[flagNum]) {
 			LocationMusic *m = &_locationMusicsTable[_locationMusicsCount++];
-			m->offset = 0;
-			m->num = t.getNextInteger();
-			m->volume = t.getNextInteger();
-			m->flag = t.getNextInteger();
+			m->_offset = 0;
+			m->_num = t.getNextInteger();
+			m->_volume = t.getNextInteger();
+			m->_flag = t.getNextInteger();
 		} else {
 			for (int j = 0; j < 3; ++j) {
 				t.getNextInteger();

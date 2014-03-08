@@ -143,43 +143,43 @@ struct LocationAnimation {
 };
 
 struct LocationObject {
-	int xPos;
-	int yPos;
-	int xSize;
-	int ySize;
-	int textNum;
-	int locationNum;
-	int toX;
-	int toY;
-	int toX2;
-	int toY2;
-	int toWalkX2;
-	int toWalkY2;
-	int standX;
-	int standY;
-	int cursorNum;
+	int _xPos;
+	int _yPos;
+	int _xSize;
+	int _ySize;
+	int _textNum;
+	int _locationNum;
+	int _toX;
+	int _toY;
+	int _toX2;
+	int _toY2;
+	int _toWalkX2;
+	int _toWalkY2;
+	int _standX;
+	int _standY;
+	int _cursorNum;
 };
 
 struct LocationSound {
-	int startFxSpriteState;
-	int startFxSpriteNum;
-	int updateType;
-	int stopFxSpriteState;
-	int stopFxSpriteNum;
-	int offset;
-	int type;
-	int volume;
-	int flagValueStartFx;
-	int flagValueStopFx;
-	int flagNum;
-	int num;
+	int _startFxSpriteState;
+	int _startFxSpriteNum;
+	int _updateType;
+	int _stopFxSpriteState;
+	int _stopFxSpriteNum;
+	int _offset;
+	int _type;
+	int _volume;
+	int _flagValueStartFx;
+	int _flagValueStopFx;
+	int _flagNum;
+	int _num;
 };
 
 struct LocationMusic {
-	int flag;
-	int offset;
-	int volume;
-	int num;
+	int _flag;
+	int _offset;
+	int _volume;
+	int _num;
 };
 
 enum {
