@@ -1351,7 +1351,7 @@ void TuckerEngine::execData3PreUpdate_locationNum21() {
 		_pendingActionDelay = 0;
 		_flagsTable[59] = 1;
 		_nextAction = 2;
-		_csDataLoaded = 0;
+		_csDataLoaded = false;
 	}
 	if (_flagsTable[58] > 0 && !isSoundPlaying(0)) {
 		const int r = getRandomNumber();
@@ -1397,7 +1397,7 @@ void TuckerEngine::execData3PreUpdate_locationNum22() {
 	}
 	if (_flagsTable[210] < 2 && !_csDataHandled && _flagsTable[54] == 1) {
 		_nextAction = 25;
-		_csDataLoaded = 0;
+		_csDataLoaded = false;
 		_flagsTable[210] = 2;
 	}
 }
@@ -1596,7 +1596,7 @@ void TuckerEngine::execData3PreUpdate_locationNum24() {
 	} else if (_inventoryItemsState[2] == 1 && _inventoryItemsState[11] == 1 && _flagsTable[156] == 1 && _flagsTable[145] == 3) {
 		_flagsTable[156] = 2;
 		_nextAction = 61;
-		_csDataLoaded = 0;
+		_csDataLoaded = false;
 	}
 	if (_flagsTable[103] > 0 && (_inventoryItemsState[2] > 0 || _inventoryItemsState[11] > 0 || _flagsTable[156] > 0 || _flagsTable[145] == 3) && _flagsTable[217] == 0) {
 		_flagsTable[217] = 1;
@@ -1748,7 +1748,7 @@ void TuckerEngine::execData3PreUpdate_locationNum28() {
 	if (_flagsTable[86] == 0 && _xPosCurrent > 265 && _nextAction == 0) {
 		_panelLockedFlag = false;
 		_nextAction = 21;
-		_csDataLoaded = 0;
+		_csDataLoaded = false;
 		_pendingActionDelay = 0;
 		_pendingActionIndex = 0;
 		_currentActionVerb = 0;
@@ -2147,7 +2147,7 @@ void TuckerEngine::updateSprite_locationNum43_6(int i) {
 void TuckerEngine::execData3PreUpdate_locationNum43() {
 	if (_panelLockedFlag && _xPosCurrent > 67 && _selectedObject._xPos > 68 && _locationMaskType == 0) {
 		_panelLockedFlag = false;
-		_csDataLoaded = 0;
+		_csDataLoaded = false;
 		_nextAction = 5;
 	}
 	if (_xPosCurrent > 55 && _spritesTable[2]._counter == 0) {
@@ -2303,7 +2303,7 @@ void TuckerEngine::updateSprite_locationNum51(int i) {
 void TuckerEngine::execData3PreUpdate_locationNum52() {
 	if (_selectedObject._xPos > 108 && _panelLockedFlag && _nextAction == 0 && _locationMaskType == 0) {
 		_nextAction = 1;
-		_csDataLoaded = 0;
+		_csDataLoaded = false;
 	}
 }
 
@@ -2346,7 +2346,7 @@ void TuckerEngine::execData3PreUpdate_locationNum53() {
 	if (_flagsTable[192] == 0 && _xPosCurrent < 200 && _nextAction == 0) {
 		_panelLockedFlag = false;
 		_nextAction = 14;
-		_csDataLoaded = 0;
+		_csDataLoaded = false;
 		_pendingActionDelay = 0;
 		_pendingActionIndex = 0;
 		_currentActionVerb = 0;
@@ -2890,7 +2890,7 @@ void TuckerEngine::execData3PreUpdate_locationNum66() {
 	_flagsTable[137] = 0;
 	if (_xPosCurrent > 583 && _flagsTable[191] == 0 && _nextAction == 0 && _locationMaskType == 0) {
 		_panelLockedFlag = false;
-		_csDataLoaded = 0;
+		_csDataLoaded = false;
 		_nextLocationNum = 0;
 		_selectedObject._locationObjectLocationNum = 0;
 		if (_flagsTable[131] == 0) {
