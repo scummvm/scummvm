@@ -414,7 +414,7 @@ void TuckerEngine::mainLoop() {
 				}
 				if (_flagsTable[158] == 1) {
 					_flagsTable[158] = 0;
-					_skipCurrentCharacterDraw = 1;
+					_skipCurrentCharacterDraw = true;
 				}
 				_mainLoopCounter1 = 0;
 			}
@@ -495,7 +495,7 @@ void TuckerEngine::mainLoop() {
 				drawSprite(i);
 			}
 		}
-		if (_skipCurrentCharacterDraw != 1) {
+		if (!_skipCurrentCharacterDraw) {
 			if (_backgroundSpriteCurrentAnimation > -1 && _backgroundSpriteCurrentFrame > 0) {
 				drawBackgroundSprites();
 			} else {
@@ -3141,13 +3141,13 @@ int TuckerEngine::executeTableInstruction() {
 		_selectedCharacterDirection = readTableInstructionParam(2);
 		return 0;
 	case kCode_bof:
-		_skipCurrentCharacterDraw = 1;
+		_skipCurrentCharacterDraw = true;
 		return 0;
 	case kCode_buh:
 		_noCharacterAnimationChange = readTableInstructionParam(2);
 		return 0;
 	case kCode_bon:
-		_skipCurrentCharacterDraw = 0;
+		_skipCurrentCharacterDraw = false;
 		return 0;
 	case kCode_bso:
 		_backgroundSprOffset = readTableInstructionParam(3);
