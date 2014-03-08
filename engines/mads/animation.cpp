@@ -207,10 +207,11 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	for (int i = 0; i < _header._spriteSetsCount; ++i)
 		_spriteListIndexes.push_back(-1);
 
+	int streamIndex = 1;
 	_messages.clear();
 	if (_header._messagesCount > 0) {
 		// Chunk 2: Following is a list of any messages for the animation
-		Common::SeekableReadStream *msgStream = madsPack.getItemStream(1);
+		Common::SeekableReadStream *msgStream = madsPack.getItemStream(streamIndex++);
 
 		for (int i = 0; i < _header._messagesCount; ++i) {
 			AnimMessage rec;
@@ -224,7 +225,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	_frameEntries.clear();
 	if (_header._frameEntriesCount > 0) {
 		// Chunk 3: animation frame info
-		Common::SeekableReadStream *frameStream = madsPack.getItemStream(2);
+		Common::SeekableReadStream *frameStream = madsPack.getItemStream(streamIndex++);
 
 		for (int i = 0; i < _header._frameEntriesCount; i++) {
 			AnimFrameEntry rec;
@@ -238,7 +239,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 	_miscEntries.clear();
 	if (_header._miscEntriesCount > 0) {
 		// Chunk 4: Misc Data
-		Common::SeekableReadStream *miscStream = madsPack.getItemStream(3);
+		Common::SeekableReadStream *miscStream = madsPack.getItemStream(streamIndex++);
 
 		for (int i = 0; i < _header._miscEntriesCount; ++i) {
 			AnimMiscEntry rec;
