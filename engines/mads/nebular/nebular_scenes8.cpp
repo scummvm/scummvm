@@ -75,6 +75,11 @@ void Scene8xx::enter1() {
 /*------------------------------------------------------------------------*/
 
 void Scene804::setup() {
+	Scene8xx::setup1();
+	Scene8xx::setup2();
+}
+
+void Scene804::enter() {
 	_globals._chairHotspotIndex = 0;
 	_globals._v1 = _globals._v2 = 0;
 	_globals._v3 = _globals._v4 = 0;
@@ -101,7 +106,8 @@ void Scene804::setup() {
 			_globals._spriteIndexes[19] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[4], 0, 1);
 			_scene->_sequences.addTimer(60, 100);
-		} else {
+		}
+		else {
 			_globals._spriteIndexes[20] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[5], false, 1);
 			_globals._spriteIndexes[21] = _scene->_sequences.startReverseCycle(
@@ -109,7 +115,8 @@ void Scene804::setup() {
 			_scene->_sequences.addTimer(160, 70);
 			_vm->_game->_player._stepEnabled = false;
 		}
-	} else {
+	}
+	else {
 		if (_globals[167] == 0) {
 			_globals._spriteIndexes[22] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[7], false, 1);
@@ -134,9 +141,6 @@ void Scene804::setup() {
 		_scene->_interface.setup(2);
 		_vm->_sound->command(19);
 	}
-}
-
-void Scene804::enter() {
 }
 
 void Scene804::step() {
