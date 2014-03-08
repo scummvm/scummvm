@@ -202,7 +202,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 		// Doesn't have an associated sprite anymore, so mark as done
 		seqEntry._doneFlag = true;
 	}
-	else if ((slotIndex = scene._spriteSlots.getIndex()) >= 0) {
+	else if ((slotIndex = scene._spriteSlots.add()) >= 0) {
 		SpriteSlot &spriteSlot = scene._spriteSlots[slotIndex];
 		setSpriteSlot(seqIndex, spriteSlot);
 
@@ -377,7 +377,7 @@ void SequenceList::scan() {
 
 	for (uint i = 0; i < _entries.size(); ++i) {
 		if (!_entries[i]._active && (_entries[i]._spritesIndex != -1)) {
-			int idx = scene._spriteSlots.getIndex();
+			int idx = scene._spriteSlots.add();
 			setSpriteSlot(i, scene._spriteSlots[idx]);
 		}
 	}

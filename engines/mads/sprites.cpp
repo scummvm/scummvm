@@ -70,7 +70,6 @@ MSprite::MSprite(Common::SeekableReadStream *source, const Common::Point &offset
 MSprite::~MSprite() {
 }
 
-
 // TODO: The sprite outlines (pixel value 0xFD) are not shown
 void MSprite::loadSprite(Common::SeekableReadStream *source) {
 	byte *outp, *lineStart;
@@ -215,6 +214,21 @@ void SpriteSlots::fullRefresh(bool clearAll) {
 		Common::Array<SpriteSlot>::clear();
 
 	push_back(SpriteSlot(ST_FULL_SCREEN_REFRESH, -1));
+}
+
+void SpriteSlots::deleteTimer(int seqIndex) {
+	for (uint idx = 0; idx < size(); ++idx) {
+		if ((*this)[idx]._seqIndex == seqIndex) {
+			remove_at(idx);
+			return;
+		}
+	}
+}
+
+int SpriteSlots::add() {
+	SpriteSlot ss;
+	push_back(ss);
+	return size() - 1;
 }
 
 void SpriteSlots::drawBackground() {

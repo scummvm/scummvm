@@ -176,13 +176,15 @@ public:
 	*/
 	void fullRefresh(bool clearAll = false);
 
-	void deleteTimer(int idx) {
-		warning("TODO: SpriteSlots::deleteTimer");
-	}
-	int getIndex() {
-		warning("TODO: SpriteSlots::indexOf");
-		return -1;
-	}
+	/**
+	 * Delete a timer entry with the given Id
+	 */
+	void deleteTimer(int seqIndex);
+
+	/**
+	 * Add a new slot entry and return it's index 
+	 */
+	int add();
 
 	/**
 	 * Draw any sprites into the background of the scene

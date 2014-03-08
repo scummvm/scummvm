@@ -447,7 +447,7 @@ void Animation::update() {
 
 	int newIndex = -1;
 	if (paChanged) {
-		newIndex = scene._spriteSlots.getIndex();
+		newIndex = scene._spriteSlots.add();
 		scene._spriteSlots[newIndex]._seqIndex = -1;
 		scene._spriteSlots[newIndex]._spriteType = ST_FULL_SCREEN_REFRESH;
 	}
@@ -476,7 +476,7 @@ void Animation::update() {
 				}
 
 				if (spriteSlotIndex == 0) {
-					int slotIndex = scene._spriteSlots.getIndex();
+					int slotIndex = scene._spriteSlots.add();
 					SpriteSlot &slot = scene._spriteSlots[slotIndex];
 					slot.copy(_frameEntries[_oldFrameEntry]._spriteSlot);
 					slot._seqIndex = _frameEntries[_oldFrameEntry]._seqIndex + 0x80;
