@@ -168,7 +168,7 @@ SpriteSlots::SpriteSlots(MADSEngine *vm) : _vm(vm) {
 	SpriteSlot::_vm = vm;
 }
 
-void SpriteSlots::clear(bool flag) {
+void SpriteSlots::reset(bool flag) {
 	_vm->_game->_scene._textDisplay.clear();
 
 	if (flag)

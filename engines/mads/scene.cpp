@@ -126,7 +126,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	if (palFlag)
 		_vm->_palette->resetGamePalette(18, 10);
 
-	_spriteSlots.clear(false);
+	_spriteSlots.reset(false);
 	_sequences.clear();
 	_kernelMessages.clear();
 
@@ -166,7 +166,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_bandsRange = _sceneInfo->_yBandsEnd - _sceneInfo->_yBandsStart;
 	_scaleRange = _sceneInfo->_maxScale - _sceneInfo->_minScale;
 
-	_spriteSlots.clear(false);
+	_spriteSlots.reset(false);
 	_interfaceY = MADS_SCENE_HEIGHT;
 	_spritesCount = _sprites.size();
 

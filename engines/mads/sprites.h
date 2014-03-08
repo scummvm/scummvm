@@ -153,7 +153,7 @@ public:
 	* Clears any pending slot data and schedules a full screen refresh.
 	* @param flag		Also reset sprite list
 	*/
-	void clear(bool flag);
+	void reset(bool flag = true);
 
 	/**
 	* Delete any sprites used by the player

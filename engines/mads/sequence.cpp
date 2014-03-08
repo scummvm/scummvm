@@ -50,10 +50,12 @@ namespace MADS {
 
 	/*------------------------------------------------------------------------*/
 
-#define TIMER_LIST_SIZE 30
+#define SEQUENCE_LIST_SIZE 30
 
 SequenceList::SequenceList(MADSEngine *vm) : _vm(vm) {
-	for (int i = 0; i < TIMER_LIST_SIZE; ++i) {
+	// IMPORTANT: Preallocate timer slots. Note that sprite slots refer to entries 
+	// in this list by index, so we can't just add or delete entries later
+	for (int i = 0; i < SEQUENCE_LIST_SIZE; ++i) {
 		SequenceEntry rec;
 		rec._active = false;
 		rec._dynamicHotspotIndex = -1;
@@ -239,7 +241,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 			if (seqEntry._frameIndex > seqEntry._numSprites) {
 				result = true;
 				if (seqEntry._animType == ANIMTYPE_CYCLED) {
-					// Reset back to the starting frame (cyclic)
+					//  back to the starting frame (cyclic)
 					seqEntry._frameIndex = seqEntry._frameStart;
 				}
 				else {

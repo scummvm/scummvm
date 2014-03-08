@@ -271,6 +271,7 @@ void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
 			_spriteSets[i] = nullptr;
 		} else {
 			_spriteSets[i] = new SpriteAsset(_vm, _header._spriteSetNames[i], flags);
+			_spriteListIndexes[i] = _vm->_game->_scene._sprites.add(_spriteSets[i]);
 		}
 	}
 

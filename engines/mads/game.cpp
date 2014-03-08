@@ -121,7 +121,7 @@ void Game::gameLoop() {
 		initSection(_sectionNumber);
 		_sectionHandler->postLoadSection();
 
-		_scene._spriteSlots.clear(true);
+		_scene._spriteSlots.reset();
 
 		if (_sectionNumber == _currentSectionNumber) {
 			sectionLoop();
@@ -164,7 +164,7 @@ void Game::sectionLoop() {
 			if (_player._spritesLoaded)
 				_scene._spriteSlots.releasePlayerSprites();
 			_vm->_palette->resetGamePalette(18, 10);
-			_scene._spriteSlots.clear(true);
+			_scene._spriteSlots.reset();
 		} else {
 			_vm->_palette->initGamePalette();
 		}
