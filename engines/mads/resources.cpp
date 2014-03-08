@@ -199,7 +199,7 @@ bool HagArchive::getHeaderEntry(const Common::String &resourceName,
 			Common::List<HagEntry>::iterator ei;
 			for (ei = hagIndex._entries.begin(); ei != hagIndex._entries.end(); ++ei) {
 				hagEntry = *ei;
-				if (hagEntry._resourceName == resName)
+				if (hagEntry._resourceName.compareToIgnoreCase(resName) == 0)
 					return true;
 			}
 		}
