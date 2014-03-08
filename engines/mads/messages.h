@@ -75,6 +75,7 @@ public:
 	int word_8469E;
 public:
 	KernelMessages(MADSEngine *vm);
+	~KernelMessages();
 
 	void clear();
 	int add(const Common::Point &pt, uint fontColor, uint8 flags, uint8 abortTimers, 

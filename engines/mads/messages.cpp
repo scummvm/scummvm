@@ -39,6 +39,10 @@ KernelMessages::KernelMessages(MADSEngine *vm): _vm(vm) {
 	word_8469E = 0;
 }
 
+KernelMessages::~KernelMessages() {
+	delete _talkFont;
+}
+
 void KernelMessages::clear() {
 	Scene &scene = _vm->_game->_scene;
 
@@ -46,7 +50,6 @@ void KernelMessages::clear() {
 		_entries[i]._flags = 0;
 
 	scene._textSpacing = -1;
-	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
 }
 
 int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags, 
