@@ -413,6 +413,7 @@ private:
 	int _fadePhases;
 	int _fadePhase;
 	uint _fadeTick;
+	bool _isFadeOut;
 	int _mouseChangeTick;
 
 	bool _enableQuickHero;
