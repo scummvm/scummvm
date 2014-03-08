@@ -64,8 +64,8 @@ void TuckerEngine::saveOrLoadGameStateData(S &s) {
 		saveOrLoadInt(s, _panelObjectsOffsetTable[i]);
 	}
 	saveOrLoadInt(s, _mainSpritesBaseOffset);
-	saveOrLoadInt(s, _selectedObject.xPos);
-	saveOrLoadInt(s, _selectedObject.yPos);
+	saveOrLoadInt(s, _selectedObject._xPos);
+	saveOrLoadInt(s, _selectedObject._yPos);
 	saveOrLoadInt(s, _locationNum);
 	saveOrLoadInt(s, _xPosCurrent);
 	saveOrLoadInt(s, _yPosCurrent);

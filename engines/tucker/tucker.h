@@ -747,17 +747,17 @@ protected:
 	int _actionPosY;
 	int _selectedObjectLocationMask;
 	struct {
-		int xDefaultPos;
-		int yDefaultPos;
-		int xPos;
-		int yPos;
-		int locationObject_locationNum;
-		int locationObject_toX;
-		int locationObject_toY;
-		int locationObject_toX2;
-		int locationObject_toY2;
-		int locationObject_toWalkX2;
-		int locationObject_toWalkY2;
+		int _xDefaultPos;
+		int _yDefaultPos;
+		int _xPos;
+		int _yPos;
+		int _locationObjectLocationNum;
+		int _locationObjectToX;
+		int _locationObjectToY;
+		int _locationObjectToX2;
+		int _locationObjectToY2;
+		int _locationObjectToWalkX2;
+		int _locationObjectToWalkY2;
 	} _selectedObject;
 	int _selectedCharacterDirection;
 	int _selectedCharacter2Num;

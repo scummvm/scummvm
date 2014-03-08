@@ -982,10 +982,10 @@ void TuckerEngine::setBlackPalette() {
 
 void TuckerEngine::updateCursor() {
 	setCursorNum(0);
-	if (_backgroundSpriteCurrentAnimation == -1 && _panelLockedFlag == 0 && _selectedObject.locationObject_locationNum > 0) {
-		_selectedObject.locationObject_locationNum = 0;
+	if (_backgroundSpriteCurrentAnimation == -1 && _panelLockedFlag == 0 && _selectedObject._locationObjectLocationNum > 0) {
+		_selectedObject._locationObjectLocationNum = 0;
 	}
-	if (_locationMaskType > 0 || _selectedObject.locationObject_locationNum > 0 || _pendingActionDelay > 0) {
+	if (_locationMaskType > 0 || _selectedObject._locationObjectLocationNum > 0 || _pendingActionDelay > 0) {
 		return;
 	}
 	if (_rightMouseButtonPressed) {
@@ -1111,7 +1111,7 @@ void TuckerEngine::updateCharactersPath() {
 		return;
 	}
 	if (_backgroundSpriteCurrentAnimation != -1 && _locationNum != 25) {
-		if (_xPosCurrent == _selectedObject.xPos && _yPosCurrent == _selectedObject.yPos) {
+		if (_xPosCurrent == _selectedObject._xPos && _yPosCurrent == _selectedObject._yPos) {
 			_locationMaskCounter = 1;
 			_panelLockedFlag = 0;
 		}
@@ -1123,27 +1123,27 @@ void TuckerEngine::updateCharactersPath() {
 		_characterPrevFacingDirection = 5;
 	}
 	int flag = 0;
-	if (_yPosCurrent > _selectedObject.yPos) {
+	if (_yPosCurrent > _selectedObject._yPos) {
 		if (testLocationMask(_xPosCurrent, _yPosCurrent - 1) == 1) {
 			--_yPosCurrent;
 			_characterFacingDirection = 4;
 			flag = 1;
 		}
-	} else if (_yPosCurrent < _selectedObject.yPos) {
+	} else if (_yPosCurrent < _selectedObject._yPos) {
 		if (testLocationMask(_xPosCurrent, _yPosCurrent + 1) == 1) {
 			++_yPosCurrent;
 			_characterFacingDirection = 2;
 			flag = 1;
 		}
 	}
-	if (_xPosCurrent > _selectedObject.xPos) {
+	if (_xPosCurrent > _selectedObject._xPos) {
 		if (testLocationMask(_xPosCurrent - 1, _yPosCurrent) == 1) {
 			--_xPosCurrent;
 			_characterFacingDirection = 3;
 			_characterBackFrontFacing = 0;
 			flag = 1;
 		}
-	} else if (_xPosCurrent < _selectedObject.xPos) {
+	} else if (_xPosCurrent < _selectedObject._xPos) {
 		if (testLocationMask(_xPosCurrent + 1, _yPosCurrent) == 1) {
 			++_xPosCurrent;
 			_characterFacingDirection = 1;
@@ -1154,12 +1154,12 @@ void TuckerEngine::updateCharactersPath() {
 	if (flag == 0) {
 		if (_selectedObjectLocationMask == 1) {
 			_selectedObjectLocationMask = 0;
-			_selectedObject.xPos = _selectedObject.xDefaultPos;
-			_selectedObject.yPos = _selectedObject.yDefaultPos;
+			_selectedObject._xPos = _selectedObject._xDefaultPos;
+			_selectedObject._yPos = _selectedObject._yDefaultPos;
 		} else {
 			_panelLockedFlag = 0;
 			_characterFacingDirection = 0;
-			if (_xPosCurrent == _selectedObject.xPos && _yPosCurrent == _selectedObject.yPos) {
+			if (_xPosCurrent == _selectedObject._xPos && _yPosCurrent == _selectedObject._yPos) {
 				_locationMaskCounter = 1;
 			}
 		}
@@ -1171,7 +1171,7 @@ void TuckerEngine::updateCharactersPath() {
 			return;
 		}
 	}
-	if (_xPosCurrent != _selectedObject.xPos || _yPosCurrent != _selectedObject.yPos) {
+	if (_xPosCurrent != _selectedObject._xPos || _yPosCurrent != _selectedObject._yPos) {
 		return;
 	}
 	if (_selectedObjectLocationMask != 0) {
@@ -1183,7 +1183,7 @@ void TuckerEngine::updateCharactersPath() {
 	if (_characterPrevFacingDirection <= 0 || _characterPrevFacingDirection >= 5) {
 		return;
 	}
-	if (_selectedObject.locationObject_locationNum == 0) {
+	if (_selectedObject._locationObjectLocationNum == 0) {
 		_characterFacingDirection = 5;
 		while (_spriteAnimationFramesTable[_spriteAnimationFrameIndex] != 999) {
 			++_spriteAnimationFrameIndex;
@@ -2074,7 +2074,7 @@ void TuckerEngine::updateCharacterAnimation() {
 	if (_locationNum == 24 && _flagsTable[103] == 0) {
 		if (_panelLockedFlag == 1) {
 			_panelLockedFlag = 0;
-			_selectedObject.locationObject_locationNum = 0;
+			_selectedObject._locationObjectLocationNum = 0;
 			if (_actionVerb != 2) {
 				_speechSoundNum = 2236;
 				startSpeechSound(_speechSoundNum, _speechVolume);
@@ -2147,7 +2147,7 @@ void TuckerEngine::updateCharacterAnimation() {
 		_backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
 	}
 	int frame = _spriteAnimationFramesTable[_spriteAnimationFrameIndex];
-	if (_panelLockedFlag == 0 && _characterFacingDirection < 5 && _selectedObject.locationObject_locationNum == 0) {
+	if (_panelLockedFlag == 0 && _characterFacingDirection < 5 && _selectedObject._locationObjectLocationNum == 0) {
 		_characterFacingDirection = 0;
 	}
 	if (_charSpeechSoundCounter > 0 && _characterFacingDirection != 6 && _actionCharacterNum == 99) {
@@ -2302,18 +2302,18 @@ void TuckerEngine::handleMap() {
 		}
 		return;
 	}
-	if (_selectedObject.locationObject_locationNum != 0 && _locationMaskCounter != 0 && (_backgroundSpriteCurrentAnimation <= -1 || _locationNum == 25)) {
+	if (_selectedObject._locationObjectLocationNum != 0 && _locationMaskCounter != 0 && (_backgroundSpriteCurrentAnimation <= -1 || _locationNum == 25)) {
 		if (_locationNum == 25 || _backgroundSpriteCurrentAnimation != 4) {
 			if (_locationMaskType == 0) {
 				_locationMaskType = 1;
 				setCursorType(2);
-				if (_selectedObject.locationObject_toWalkX2 > 800) {
-					_backgroundSpriteCurrentAnimation = _selectedObject.locationObject_toWalkX2 - 900;
-					if (_selectedObject.locationObject_toWalkY2 > 499) {
+				if (_selectedObject._locationObjectToWalkX2 > 800) {
+					_backgroundSpriteCurrentAnimation = _selectedObject._locationObjectToWalkX2 - 900;
+					if (_selectedObject._locationObjectToWalkY2 > 499) {
 						_changeBackgroundSprite = true;
-						_backgroundSprOffset = _selectedObject.locationObject_toWalkY2 - 500;
+						_backgroundSprOffset = _selectedObject._locationObjectToWalkY2 - 500;
 					} else {
-						_backgroundSprOffset = _selectedObject.locationObject_toWalkY2;
+						_backgroundSprOffset = _selectedObject._locationObjectToWalkY2;
 						_changeBackgroundSprite = false;
 					}
 					_backgroundSpriteCurrentFrame = 0;
@@ -2325,8 +2325,8 @@ void TuckerEngine::handleMap() {
 					}
 				} else {
 					_locationMaskCounter = 0;
-					_selectedObject.xPos = _selectedObject.locationObject_toWalkX2;
-					_selectedObject.yPos = _selectedObject.locationObject_toWalkY2;
+					_selectedObject._xPos = _selectedObject._locationObjectToWalkX2;
+					_selectedObject._yPos = _selectedObject._locationObjectToWalkY2;
 					_handleMapCounter = 1;
 					_panelLockedFlag = 1;
 				}
@@ -2335,7 +2335,7 @@ void TuckerEngine::handleMap() {
 			_locationMaskType = 2;
 			_panelState = 0;
 			setCursorType(0);
-			if (_selectedObject.locationObject_locationNum == 99) {
+			if (_selectedObject._locationObjectLocationNum == 99) {
 				_noPositionChangeAfterMap = true;
 				handleMapSequence();
 				return;
@@ -2345,28 +2345,28 @@ void TuckerEngine::handleMap() {
 				redrawScreen(_scrollOffset);
 				_fadePaletteCounter = 34;
 			}
-			_nextLocationNum = _selectedObject.locationObject_locationNum;
-			_xPosCurrent = _selectedObject.locationObject_toX;
-			_yPosCurrent = _selectedObject.locationObject_toY;
-			if (_selectedObject.locationObject_toX2 > 800) {
-				_backgroundSpriteCurrentAnimation = _selectedObject.locationObject_toX2 - 900;
-				if (_selectedObject.locationObject_toY2 > 499) {
+			_nextLocationNum = _selectedObject._locationObjectLocationNum;
+			_xPosCurrent = _selectedObject._locationObjectToX;
+			_yPosCurrent = _selectedObject._locationObjectToY;
+			if (_selectedObject._locationObjectToX2 > 800) {
+				_backgroundSpriteCurrentAnimation = _selectedObject._locationObjectToX2 - 900;
+				if (_selectedObject._locationObjectToY2 > 499) {
 					_changeBackgroundSprite = true;
-					_backgroundSprOffset = _selectedObject.locationObject_toY2 - 500;
+					_backgroundSprOffset = _selectedObject._locationObjectToY2 - 500;
 				} else {
 					_changeBackgroundSprite = false;
-					_backgroundSprOffset = _selectedObject.locationObject_toY2;
+					_backgroundSprOffset = _selectedObject._locationObjectToY2;
 				}
 				_backgroundSpriteCurrentFrame = 0;
 			} else {
-				_selectedObject.xPos = _selectedObject.locationObject_toX2;
-				_selectedObject.yPos = _selectedObject.locationObject_toY2;
+				_selectedObject._xPos = _selectedObject._locationObjectToX2;
+				_selectedObject._yPos = _selectedObject._locationObjectToY2;
 				_panelLockedFlag = 1;
 			}
 			_scrollOffset = 0;
 			_handleMapCounter = 0;
 			_locationMaskCounter = 0;
-			_selectedObject.locationObject_locationNum = 0;
+			_selectedObject._locationObjectLocationNum = 0;
 		}
 	}
 }
@@ -3163,8 +3163,8 @@ int TuckerEngine::executeTableInstruction() {
 		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 		return 0;
 	case kCode_buw:
-		_selectedObject.xPos = readTableInstructionParam(3);
-		_selectedObject.yPos = readTableInstructionParam(3);
+		_selectedObject._xPos = readTableInstructionParam(3);
+		_selectedObject._yPos = readTableInstructionParam(3);
 		_locationMaskIgnore = 1;
 		_panelLockedFlag = 1;
 		return 0;
@@ -3412,69 +3412,69 @@ void TuckerEngine::setSelectedObjectKey() {
 	_panelLockedFlag = 1;
 	_locationMaskCounter = 0;
 	_actionRequiresTwoObjects = false;
-	_selectedObject.yPos = 0;
-	_selectedObject.locationObject_locationNum = 0;
+	_selectedObject._yPos = 0;
+	_selectedObject._locationObjectLocationNum = 0;
 	_pendingActionIndex = 0;
 	if (_selectedObjectType == 0) {
 		if (_selectedObjectNum == 0) {
-			_selectedObject.xPos = x;
-			_selectedObject.yPos = _mousePosY;
+			_selectedObject._xPos = x;
+			_selectedObject._yPos = _mousePosY;
 		} else {
-			_selectedObject.xPos = _locationObjectsTable[_selectedCharacterNum]._standX;
-			_selectedObject.yPos = _locationObjectsTable[_selectedCharacterNum]._standY;
+			_selectedObject._xPos = _locationObjectsTable[_selectedCharacterNum]._standX;
+			_selectedObject._yPos = _locationObjectsTable[_selectedCharacterNum]._standY;
 			if (_actionVerb == 0 || _actionVerb == 8) {
-				_selectedObject.locationObject_locationNum = _locationObjectsTable[_selectedCharacterNum]._locationNum;
-				_selectedObject.locationObject_toX = _locationObjectsTable[_selectedCharacterNum]._toX;
-				_selectedObject.locationObject_toY = _locationObjectsTable[_selectedCharacterNum]._toY;
-				_selectedObject.locationObject_toX2 = _locationObjectsTable[_selectedCharacterNum]._toX2;
-				_selectedObject.locationObject_toY2 = _locationObjectsTable[_selectedCharacterNum]._toY2;
-				_selectedObject.locationObject_toWalkX2 = _locationObjectsTable[_selectedCharacterNum]._toWalkX2;
-				_selectedObject.locationObject_toWalkY2 = _locationObjectsTable[_selectedCharacterNum]._toWalkY2;
+				_selectedObject._locationObjectLocationNum = _locationObjectsTable[_selectedCharacterNum]._locationNum;
+				_selectedObject._locationObjectToX = _locationObjectsTable[_selectedCharacterNum]._toX;
+				_selectedObject._locationObjectToY = _locationObjectsTable[_selectedCharacterNum]._toY;
+				_selectedObject._locationObjectToX2 = _locationObjectsTable[_selectedCharacterNum]._toX2;
+				_selectedObject._locationObjectToY2 = _locationObjectsTable[_selectedCharacterNum]._toY2;
+				_selectedObject._locationObjectToWalkX2 = _locationObjectsTable[_selectedCharacterNum]._toWalkX2;
+				_selectedObject._locationObjectToWalkY2 = _locationObjectsTable[_selectedCharacterNum]._toWalkY2;
 			}
 		}
 	} else {
 		switch (_selectedObjectType) {
 		case 1:
-			_selectedObject.xPos = _locationAnimationsTable[_selectedCharacterNum]._standX;
-			_selectedObject.yPos = _locationAnimationsTable[_selectedCharacterNum]._standY;
+			_selectedObject._xPos = _locationAnimationsTable[_selectedCharacterNum]._standX;
+			_selectedObject._yPos = _locationAnimationsTable[_selectedCharacterNum]._standY;
 			break;
 		case 2:
-			_selectedObject.xPos = _charPosTable[_selectedCharacterNum]._xWalkTo;
-			_selectedObject.yPos = _charPosTable[_selectedCharacterNum]._yWalkTo;
+			_selectedObject._xPos = _charPosTable[_selectedCharacterNum]._xWalkTo;
+			_selectedObject._yPos = _charPosTable[_selectedCharacterNum]._yWalkTo;
 			break;
 		case 3:
-			_selectedObject.xPos = _xPosCurrent;
-			_selectedObject.yPos = _yPosCurrent;
+			_selectedObject._xPos = _xPosCurrent;
+			_selectedObject._yPos = _yPosCurrent;
 			break;
 		}
 	}
-	if (_selectedObject.yPos == 0) {
-		_selectedObject.xPos = x;
-		_selectedObject.yPos = _mousePosY;
+	if (_selectedObject._yPos == 0) {
+		_selectedObject._xPos = x;
+		_selectedObject._yPos = _mousePosY;
 	}
-	_selectedObjectLocationMask = testLocationMask(_selectedObject.xPos, _selectedObject.yPos);
+	_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
 	if (_selectedObjectLocationMask == 0 && _objectKeysLocationTable[_locationNum] == 1) {
-		if (_selectedObject.yPos < _objectKeysPosYTable[_locationNum]) {
-			while (_selectedObjectLocationMask == 0 && _selectedObject.yPos < _objectKeysPosYTable[_locationNum]) {
-				++_selectedObject.yPos;
-				_selectedObjectLocationMask = testLocationMask(_selectedObject.xPos, _selectedObject.yPos);
+		if (_selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
+			while (_selectedObjectLocationMask == 0 && _selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
+				++_selectedObject._yPos;
+				_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
 			}
 		} else {
-			while (_selectedObjectLocationMask == 0 && _selectedObject.yPos < _objectKeysPosYTable[_locationNum]) {
-				--_selectedObject.yPos;
-				_selectedObjectLocationMask = testLocationMask(_selectedObject.xPos, _selectedObject.yPos);
+			while (_selectedObjectLocationMask == 0 && _selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
+				--_selectedObject._yPos;
+				_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
 			}
 		}
 	}
 	if (_selectedObjectLocationMask == 1) {
-		_selectedObjectLocationMask = testLocationMaskArea(_xPosCurrent, _yPosCurrent, _selectedObject.xPos, _selectedObject.yPos);
+		_selectedObjectLocationMask = testLocationMaskArea(_xPosCurrent, _yPosCurrent, _selectedObject._xPos, _selectedObject._yPos);
 		if (_selectedObjectLocationMask == 1 && _objectKeysPosXTable[_locationNum] > 0) {
-			_selectedObject.xDefaultPos = _selectedObject.xPos;
-			_selectedObject.yDefaultPos = _selectedObject.yPos;
-			_selectedObject.xPos = _objectKeysPosXTable[_locationNum];
-			_selectedObject.yPos = _objectKeysPosYTable[_locationNum];
+			_selectedObject._xDefaultPos = _selectedObject._xPos;
+			_selectedObject._yDefaultPos = _selectedObject._yPos;
+			_selectedObject._xPos = _objectKeysPosXTable[_locationNum];
+			_selectedObject._yPos = _objectKeysPosYTable[_locationNum];
 			if (_objectKeysLocationTable[_locationNum] == 1) {
-				_selectedObject.xPos = _selectedObject.xDefaultPos;
+				_selectedObject._xPos = _selectedObject._xDefaultPos;
 			}
 		}
 	}

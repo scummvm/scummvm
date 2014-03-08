@@ -2040,11 +2040,11 @@ void TuckerEngine::execData3PreUpdate_locationNum41() {
 			}
 		}
 	}
-	if (_panelLockedFlag == 1 && _yPosCurrent > 130 && _selectedObject.yPos > 135 && _nextAction == 0 && _flagsTable[223] == 0) {
+	if (_panelLockedFlag == 1 && _yPosCurrent > 130 && _selectedObject._yPos > 135 && _nextAction == 0 && _flagsTable[223] == 0) {
 		_panelLockedFlag = 0;
 		_csDataLoaded = false;
 		_nextLocationNum = 0;
-		_selectedObject.locationObject_locationNum = 0;
+		_selectedObject._locationObjectLocationNum = 0;
 		_locationMaskType = 0;
 		_nextAction = _flagsTable[163] + 32;
 		++_flagsTable[163];
@@ -2145,7 +2145,7 @@ void TuckerEngine::updateSprite_locationNum43_6(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum43() {
-	if (_panelLockedFlag == 1 && _xPosCurrent > 67 && _selectedObject.xPos > 68 && _locationMaskType == 0) {
+	if (_panelLockedFlag == 1 && _xPosCurrent > 67 && _selectedObject._xPos > 68 && _locationMaskType == 0) {
 		_panelLockedFlag = 0;
 		_csDataLoaded = 0;
 		_nextAction = 5;
@@ -2301,7 +2301,7 @@ void TuckerEngine::updateSprite_locationNum51(int i) {
 
 
 void TuckerEngine::execData3PreUpdate_locationNum52() {
-	if (_selectedObject.xPos > 108 && _panelLockedFlag > 0 && _nextAction == 0 && _locationMaskType == 0) {
+	if (_selectedObject._xPos > 108 && _panelLockedFlag > 0 && _nextAction == 0 && _locationMaskType == 0) {
 		_nextAction = 1;
 		_csDataLoaded = 0;
 	}
@@ -2892,7 +2892,7 @@ void TuckerEngine::execData3PreUpdate_locationNum66() {
 		_panelLockedFlag = 0;
 		_csDataLoaded = 0;
 		_nextLocationNum = 0;
-		_selectedObject.locationObject_locationNum = 0;
+		_selectedObject._locationObjectLocationNum = 0;
 		if (_flagsTable[131] == 0) {
 			_nextAction = 13;
 		} else if (_flagsTable[130] == 0) {

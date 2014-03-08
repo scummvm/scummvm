@@ -306,7 +306,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 void TuckerEngine::handleMapSequence() {
 	loadImage("map2.pcx", _quadBackgroundGfxBuf + 89600, 0);
 	loadImage("map1.pcx", _loadTempBuf, 1);
-	_selectedObject.locationObject_locationNum = 0;
+	_selectedObject._locationObjectLocationNum = 0;
 	if (_flagsTable[7] > 0) {
 		copyMapRect(0, 0, 140, 86);
 	}
