@@ -457,7 +457,7 @@ void VoyeurEngine::doOpening() {
 	flipPageAndWait();
 	
 	RL2Decoder decoder;
-	decoder.loadFile("a2300100.rl2");
+	decoder.loadFile("a2300100.rl2", false);
 	decoder.start();
 	
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked) {
@@ -511,7 +511,7 @@ void VoyeurEngine::doOpening() {
 
 void VoyeurEngine::playRL2Video(const Common::String &filename) {
 	RL2Decoder decoder;
-	decoder.loadFile(filename);
+	decoder.loadFile(filename, false);
 	decoder.start();
 
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked) {

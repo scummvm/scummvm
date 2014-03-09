@@ -50,7 +50,7 @@ RL2Decoder::~RL2Decoder() {
 bool RL2Decoder::loadVideo(int videoId) {
 	Common::String filename = Common::String::format("%s.rl2", 
 		::Voyeur::SZ_FILENAMES[videoId * 2]);
-	return loadFile(filename);
+	return loadFile(filename, false);
 }
 
 bool RL2Decoder::loadFile(const Common::String &file, bool palFlag) {

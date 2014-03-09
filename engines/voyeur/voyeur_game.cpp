@@ -237,7 +237,7 @@ void VoyeurEngine::doTailTitle() {
 	
 	if (_bVoy->getBoltGroup(0x600)) {
 		RL2Decoder decoder;
-		decoder.loadFile("a1100200.rl2");
+		decoder.loadFile("a1100200.rl2", false);
 		decoder.start();
 		decoder.play(this);
 		
