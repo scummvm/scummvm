@@ -751,7 +751,7 @@ void VoyeurEngine::doGossip() {
 	pal->startFade();
 
 	// Transfer initial background to video decoder
-	PictureResource videoFrame(decoder.getVideoTrack()->getBackSurface());
+	PictureResource videoFrame(decoder.getRL2VideoTrack()->getBackSurface());
 	bgPic->_bounds.moveTo(0, 0);
 	_graphicsManager->sDrawPic(bgPic, &videoFrame, Common::Point(0, 0));
 

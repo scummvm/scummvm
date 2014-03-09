@@ -115,7 +115,7 @@ void RL2Decoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 
 void RL2Decoder::readNextPacket() {
 	int frameNumber = getCurFrame();
-	RL2AudioTrack *audioTrack = RL2Decoder::getAudioTrack();
+	RL2AudioTrack *audioTrack = getRL2AudioTrack();
 
 	// Handle queueing sound data
 	if (_soundFrameNumber == -1)
@@ -464,7 +464,7 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 	int paletteStart = getPaletteStart();
 	int paletteCount = getPaletteCount();
 
-	PictureResource videoFrame(getVideoTrack()->getBackSurface());
+	PictureResource videoFrame(getRL2VideoTrack()->getBackSurface());
 	int picCtr = 0;
 	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager->_mouseClicked) {
 		if (hasDirtyPalette()) {

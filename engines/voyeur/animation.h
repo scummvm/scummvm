@@ -186,8 +186,8 @@ public:
 	 * @param imgPos		Position to draw image data
 	 */
 	void play(VoyeurEngine *vm, int resourceOffset = 0, byte *frames = NULL, byte *imgPos = NULL);
-	RL2VideoTrack *getVideoTrack() { return _videoTrack; }
-	virtual RL2AudioTrack *getAudioTrack() { return _audioTrack; }
+	RL2VideoTrack *getRL2VideoTrack() { return _videoTrack; }
+	RL2AudioTrack *getRL2AudioTrack() { return _audioTrack; }
 };
 
 } // End of namespace Voyeur
