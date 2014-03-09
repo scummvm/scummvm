@@ -175,7 +175,7 @@ public:
 	virtual void close();
 
 	bool loadStream(Common::SeekableReadStream *stream);
-	bool loadFile(const Common::String &file, bool palFlag = false);
+	virtual bool loadFile(const Common::String &file, bool palFlag = false);
 	bool loadVideo(int videoId);
 	int getPaletteCount() const { return _header._colorCount; }
 
@@ -188,7 +188,7 @@ public:
 	 */
 	void play(VoyeurEngine *vm, int resourceOffset = 0, byte *frames = NULL, byte *imgPos = NULL);
 	RL2VideoTrack *getVideoTrack() { return _videoTrack; }
-	RL2AudioTrack *getAudioTrack() { return _audioTrack; }
+	virtual RL2AudioTrack *getAudioTrack() { return _audioTrack; }
 };
 
 } // End of namespace Voyeur
