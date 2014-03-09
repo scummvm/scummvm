@@ -189,6 +189,8 @@ bool sTTFont::loadFont(const Common::String &fontName, int32 point) {
 		newFontName = "arial.ttf";
 	}
 
+	bool sharp = (_style & STTF_SHARP) == STTF_SHARP;
+
 	Common::File *file = _engine->getSearchManager()->openFile(newFontName);
 
 	if (!file) {
@@ -210,7 +212,7 @@ bool sTTFont::loadFont(const Common::String &fontName, int32 point) {
 			if (themeArchive->hasFile("FreeSans.ttf")) {
 				Common::SeekableReadStream *stream = nullptr;
 				stream = themeArchive->createReadStreamForMember("FreeSans.ttf");
-				Graphics::Font *_newFont = Graphics::loadTTFFont(*stream, point, 60); // 66 dpi for 640 x 480 on 14" display
+				Graphics::Font *_newFont = Graphics::loadTTFFont(*stream, point, 60, sharp); // 66 dpi for 640 x 480 on 14" display
 				if (_newFont) {
 					if (!_font)
 						delete _font;
@@ -223,7 +225,7 @@ bool sTTFont::loadFont(const Common::String &fontName, int32 point) {
 			themeArchive = nullptr;
 		}
 	} else {
-		Graphics::Font *_newFont = Graphics::loadTTFFont(*file, point, 60); // 66 dpi for 640 x 480 on 14" display
+		Graphics::Font *_newFont = Graphics::loadTTFFont(*file, point, 60, sharp); // 66 dpi for 640 x 480 on 14" display
 		if (_newFont) {
 			if (!_font)
 				delete _font;
@@ -241,7 +243,7 @@ bool sTTFont::loadFont(const Common::String &fontName, int32 point) {
 }
 
 void sTTFont::setStyle(uint newStyle) {
-	if ((_style & (STTF_BOLD | STTF_ITALIC)) != (newStyle & (STTF_BOLD | STTF_ITALIC))) {
+	if ((_style & (STTF_BOLD | STTF_ITALIC | STTF_SHARP)) != (newStyle & (STTF_BOLD | STTF_ITALIC | STTF_SHARP))) {
 		_style = newStyle;
 		loadFont(_fntName, _lineHeight);
 	} else {

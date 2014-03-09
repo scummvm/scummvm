@@ -74,6 +74,7 @@ public:
 	bool strikeout;
 	bool skipcolor;
 	int32 statebox;
+	bool sharp;
 	// char image ??
 };
 

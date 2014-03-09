@@ -86,7 +86,8 @@ public:
 		STTF_BOLD = 1,
 		STTF_ITALIC = 2,
 		STTF_UNDERLINE = 4,
-		STTF_STRIKEOUT = 8
+		STTF_STRIKEOUT = 8,
+		STTF_SHARP = 16
 	};
 
 private:

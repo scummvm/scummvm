@@ -58,6 +58,7 @@ cTxtStyle::cTxtStyle() {
 	strikeout = false;
 	underline = false;
 	statebox = 0;
+	sharp = false;
 }
 
 txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
@@ -263,6 +264,9 @@ void cTxtStyle::setFontStyle(sTTFont &font) {
 	if (strikeout)
 		temp_stl |= sTTFont::STTF_STRIKEOUT;
 
+	if (sharp)
+		temp_stl |= sTTFont::STTF_SHARP;
+
 	font.setStyle(temp_stl);
 }
 
@@ -280,6 +284,9 @@ void cTxtStyle::setFont(sTTFont &font) {
 
 	if (strikeout)
 		temp_stl |= sTTFont::STTF_STRIKEOUT;
+
+	if (sharp)
+		temp_stl |= sTTFont::STTF_SHARP;
 
 	font.loadFont(fontname, size, temp_stl);
 }
