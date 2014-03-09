@@ -36,6 +36,7 @@ Console::Console(Myst3Engine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("var",				WRAP_METHOD(Console, Cmd_Var));
 	DCmd_Register("listNodes",			WRAP_METHOD(Console, Cmd_ListNodes));
 	DCmd_Register("run",				WRAP_METHOD(Console, Cmd_Run));
+	DCmd_Register("runOp",				WRAP_METHOD(Console, Cmd_RunOp));
 	DCmd_Register("go",					WRAP_METHOD(Console, Cmd_Go));
 	DCmd_Register("extract",			WRAP_METHOD(Console, Cmd_Extract));
 	DCmd_Register("fillInventory",		WRAP_METHOD(Console, Cmd_FillInventory));
@@ -219,6 +220,27 @@ bool Console::Cmd_Run(int argc, const char **argv) {
 	return false;
 }
 
+bool Console::Cmd_RunOp(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Usage :\n");
+		DebugPrintf("runOp [opcode] [argument 1] [argument 2] ... : Run specified command\n");
+		return true;
+	}
+
+	Opcode op;
+	op.op = atoi(argv[1]);
+
+	for (int i = 2; i < argc; i++) {
+		op.args.push_back(atoi(argv[i]));
+	}
+
+	DebugPrintf("Running opcode :\n");
+	DebugPrintf("%s\n", _vm->_scriptEngine->describeOpcode(op).c_str());
+
+	_vm->_scriptEngine->runSingleOp(op);
+
+	return false;
+}
 
 bool Console::Cmd_Go(int argc, const char **argv) {
 	if (argc != 3) {

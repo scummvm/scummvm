@@ -328,6 +328,11 @@ void Script::runOp(Context &c, const Opcode &op) {
 		warning("Trying to run invalid opcode %d", op.op);
 }
 
+void Script::runSingleOp(const Opcode &op) {
+	Context c;
+	runOp(c, op);
+}
+
 const Common::String Script::describeCommand(uint16 op) {
 	const Script::Command &cmd = findCommand(op);
 

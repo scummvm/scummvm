@@ -39,6 +39,8 @@ public:
 	virtual ~Script();
 
 	bool run(const Common::Array<Opcode> *script);
+	void runSingleOp(const Opcode &op);
+
 	const Common::String describeOpcode(const Opcode &opcode);
 
 private:
