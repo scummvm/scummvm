@@ -92,6 +92,8 @@ private:
 };
 
 Common::String readWideLine(Common::SeekableReadStream &stream);
+int8 getUtf8CharSize(char chr);
+uint16 readUtf8Char(const char *chr);
 
 } // End of namespace ZVision
 
