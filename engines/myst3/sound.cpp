@@ -30,6 +30,8 @@
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/wave.h"
 
+#include "common/config-manager.h"
+
 namespace Myst3 {
 
 Sound::Sound(Myst3Engine *vm) :
@@ -55,6 +57,28 @@ void Sound::playEffectLooping(uint32 id, uint32 volume, uint16 heading, uint16 a
 
 	SoundChannel *channel = getChannelForSound(id, kEffect);
 	channel->play(id, volume, heading, attenuation, true, kEffect);
+}
+
+void Sound::playEffectFadeInOut(uint32 id, uint32 volume, uint16 heading, uint16 attenuation,
+		uint32 fadeInDuration, uint32 playDuration, uint32 fadeOutDuration) {
+
+	SoundChannel *channel = getChannelForSound(id, kEffect);
+	channel->play(id, fadeInDuration == 0 ? volume : 0, heading, attenuation, true, kEffect);
+
+	uint32 effectiveVolume = channel->adjustVolume(volume);
+	if (channel->_playing) {
+		channel->_fadeArrayPosition = 0;
+		channel->_fadeDurations[0] = 0;
+		channel->_fadeDurations[1] = 0;
+		channel->_fadeDurations[2] = playDuration;
+		channel->_fadeDurations[3] = fadeOutDuration;
+		channel->_fadeVolumes[0] = 0;
+		channel->_fadeVolumes[1] = effectiveVolume;
+		channel->_fadeVolumes[2] = effectiveVolume;
+		channel->_fadeVolumes[3] = 0;
+		channel->fade(effectiveVolume, heading, attenuation, fadeInDuration);
+		channel->_hasFadeArray = true;
+	}
 }
 
 void Sound::stopEffect(uint32 id, uint32 fadeDuration) {
@@ -369,7 +393,16 @@ void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenua
 
 	// Load the name of the sound from its id
 	_name = _vm->_db->getSoundName(id);
-	_volume = volume;
+
+	// Set the sound type
+	if (_vm->_state->getVar(id) != 2) {
+		_type = type;
+	} else {
+		_type = kMusic;
+	}
+
+	// Set the sound parameters
+	_volume = adjustVolume(volume);
 	_heading = heading;
 	_headingAngle = attenuation;
 
@@ -385,14 +418,18 @@ void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenua
 
 	// Update state
 	_id = id;
-	if (_vm->_state->getVar(id) != 2) {
-		_type = type;
-	} else {
-		_type = kMusic;
-	}
 	_age = 0;
 	_playing = true;
 	_vm->_state->setVar(id, 1);
+}
+
+uint32 SoundChannel::adjustVolume(uint32 volume) {
+	uint32 musicVolume = CLIP<uint>(ConfMan.getInt("music_volume") * 100 / 256, 0, 100);
+
+	if (_type == kMusic)
+		return volume * musicVolume / 75;
+	else
+		return volume;
 }
 
 Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String &name) const {
@@ -431,6 +468,11 @@ void SoundChannel::update() {
 	if (!_playing)
 		return; // Nothing to update
 
+	if (!_fading)
+		setVolume3D(_volume, _heading, _headingAngle);
+	else
+		updateFading();
+
 	_playing = g_system->getMixer()->isSoundHandleActive(_handle);
 
 	if (!_playing || (_stopWhenSilent && !_volume)) {
@@ -439,11 +481,6 @@ void SoundChannel::update() {
 
 	if (!_playing)
 		return;
-
-	if (!_fading)
-		setVolume3D(_volume, _heading, _headingAngle);
-	else
-		updateFading();
 }
 
 void SoundChannel::stop() {
@@ -534,9 +571,9 @@ void SoundChannel::updateFading() {
 				_fading = false;
 			} else {
 				// This step of the fade array is complete, find the next one
-				while (_fadeArrayPosition < 4 && !_fadeDurations[_fadeArrayPosition]) {
+				do {
 					_fadeArrayPosition++;
-				}
+				} while (_fadeArrayPosition < 4 && !_fadeDurations[_fadeArrayPosition]);
 
 				if (_fadeArrayPosition < 4) {
 					// Setup the new fading step

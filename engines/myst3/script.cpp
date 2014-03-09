@@ -49,7 +49,6 @@ Script::Script(Myst3Engine *vm):
 	// TODO: Implement these remaining opcodes
 	// 5: I'm pretty sure it's useless
 	// 144: drawTransition
-	// 213: soundPlayEffectFadeArray
 	// 236: setupSoundForMovie
 	// 247: quit
 
@@ -246,6 +245,7 @@ Script::Script(Myst3Engine *vm):
 	OP_1(209, soundStopEffect,				kEvalValue													);
 	OP_2(210, soundFadeOutEffect,			kEvalValue,	kEvalValue										);
 	OP_1(212, soundPlayLooping,				kEvalValue													);
+	OP_5(213, soundPlayFadeInOut,			kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue	);
 	OP_5(214, soundChooseNext,				kVar,		kValue,		kValue,		kEvalValue,	kEvalValue	);
 	OP_5(215, soundRandomizeNext,			kVar,		kValue,		kValue,		kEvalValue,	kEvalValue	);
 	OP_5(216, soundChooseNextAfterOther,	kVar,		kValue,		kValue,		kEvalValue,	kEvalValue	); // Seven args
@@ -2476,6 +2476,25 @@ void Script::soundPlayLooping(Context &c, const Opcode &cmd) {
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 
 	_vm->_sound->playEffectLooping(id, 100);
+}
+
+void Script::soundPlayFadeInOut(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play sound effect fade in fade out %d", cmd.op, cmd.args[0]);
+
+	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+	int32 fadeInDuration = _vm->_state->valueOrVarValue(cmd.args[2]);
+
+	int32 playDuration;
+	if (cmd.args[3] == -1) {
+		playDuration = 108000;
+	} else {
+		playDuration = _vm->_state->valueOrVarValue(cmd.args[3]);
+	}
+
+	int32 fadeOutDuration = _vm->_state->valueOrVarValue(cmd.args[4]);
+
+	_vm->_sound->playEffectFadeInOut(id, volume, 0, 0, fadeInDuration, playDuration, fadeOutDuration);
 }
 
 void Script::soundChooseNext(Context &c, const Opcode &cmd) {

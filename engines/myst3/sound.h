@@ -57,6 +57,7 @@ public:
 	void stop();
 	void age(uint32 maxAge);
 	uint32 playedFrames();
+	uint32 adjustVolume(uint32 volume);
 
 	uint32 _id;
 	bool _playing;
@@ -106,6 +107,8 @@ public:
 
 	void playEffect(uint32 id, uint32 volume, uint16 heading = 0, uint16 attenuation = 0);
 	void playEffectLooping(uint32 id, uint32 volume, uint16 heading = 0, uint16 attenuation = 0);
+	void playEffectFadeInOut(uint32 id, uint32 volume, uint16 heading, uint16 attenuation,
+			uint32 fadeInDuration, uint32 playDuration, uint32 fadeOutDuration);
 	void stopEffect(uint32 id, uint32 fadeDuration);
 
 	void playCue(uint32 id, uint32 volume, uint16 heading, uint16 attenuation);
