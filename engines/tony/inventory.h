@@ -101,7 +101,7 @@ public:
 	/**
 	 * Initialization and closing
 	 */
-	void init();
+	virtual void init();
 	void close();
 	void reset();
 
