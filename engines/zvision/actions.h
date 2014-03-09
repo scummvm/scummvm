@@ -24,6 +24,7 @@
 #define ZVISION_ACTIONS_H
 
 #include "common/str.h"
+#include "common/rect.h"
 
 #include "audio/mixer.h"
 
@@ -401,6 +402,17 @@ private:
 	ValueSlot *_time;
 };
 
+class ActionTtyText : public ResultAction {
+public:
+	ActionTtyText(ZVision *engine, int32 slotkey, const Common::String &line);
+	~ActionTtyText();
+	bool execute();
+
+private:
+	Common::String _filename;
+	uint32 _delay;
+	Common::Rect _r;
+};
 } // End of namespace ZVision
 
 #endif

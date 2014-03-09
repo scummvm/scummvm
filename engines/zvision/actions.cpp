@@ -33,6 +33,7 @@
 #include "zvision/music_node.h"
 #include "zvision/syncsound_node.h"
 #include "zvision/animation_node.h"
+#include "zvision/ttytext_node.h"
 
 #include "common/file.h"
 
@@ -650,6 +651,30 @@ bool ActionTimer::execute() {
 	if (_engine->getScriptManager()->getSideFX(_slotkey))
 		return true;
 	_engine->getScriptManager()->addSideFX(new TimerNode(_engine, _slotkey, _time->getValue()));
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionTtyText
+//////////////////////////////////////////////////////////////////////////////
+
+ActionTtyText::ActionTtyText(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	char filename[64];
+	int32 x1, y1, x2, y2;
+	sscanf(line.c_str(), "%d %d %d %d %s %u", &x1, &y1, &x2, &y2, filename, &_delay);
+	_r = Common::Rect(x1, y1, x2, y2);
+	_filename = Common::String(filename);
+}
+
+ActionTtyText::~ActionTtyText() {
+	_engine->getScriptManager()->killSideFx(_slotkey);
+}
+
+bool ActionTtyText::execute() {
+	if (_engine->getScriptManager()->getSideFX(_slotkey))
+		return true;
+	_engine->getScriptManager()->addSideFX(new ttyTextNode(_engine, _slotkey, _filename, _r, _delay));
 	return true;
 }
 

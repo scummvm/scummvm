@@ -281,7 +281,7 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 				} else if (act.matchString("timer", true)) {
 					actionList.push_back(new ActionTimer(_engine, slot, args));
 				} else if (act.matchString("ttytext", true)) {
-					// TODO: Implement ActionTTYText
+					actionList.push_back(new ActionTtyText(_engine, slot, args));
 				} else if (act.matchString("universe_music", true)) {
 					actionList.push_back(new ActionMusic(_engine, slot, args, true));
 				} else if (act.matchString("copy_file", true)) {
