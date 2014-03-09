@@ -494,6 +494,8 @@ public:
 	int scene18_var25;
 	int scene18_var26;
 	int scene18_var27;
+	int scene18_var31;
+	int scene18_var32;
 	int scene18_var33;
 	int scene18_var13;
 	int scene18_var14;

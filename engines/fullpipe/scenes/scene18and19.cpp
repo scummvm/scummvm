@@ -448,8 +448,130 @@ void sceneHandler18and19_boyJumpTo() {
 	g_vars->scene18_boy->startAnim(MV_BOY18_JUMPTO, 0, -1);
 }
 
+void sceneHandler18and19_girlJumpTo() {
+	warning("STUB: sceneHandler18and19_girlJumpTo()");
+}
+
+void sceneHandler18and19_manStandArmchair() {
+	warning("STUB: sceneHandler18and19_manStandArmchair()");
+}
+
 void sceneHandler18and19_drawRiders() {
-	warning("STUB: sceneHandler18and19_drawRiders()");
+	g_vars->scene18_var21++;
+
+	if (g_vars->scene18_var21 >= 359)
+		g_vars->scene18_var21 = 0;
+
+	for (int i = 0; i < g_vars->scene18_var07.size(); i++) {
+		Swinger *swinger = g_vars->scene18_var07[i];
+
+		double oldangle = swinger->angle;
+
+		swinger->angle += M_PI / 180;
+
+		if (swinger->angle > 2 * M_PI) {
+			swinger->angle -= 2 * M_PI;
+			oldangle -= 2 * M_PI;
+		}
+
+		int ix = g_vars->scene18_var20 - (int)(cos(swinger->angle) * -575.0);
+		int iy = g_vars->scene18_var04 - (int)(sin(swinger->angle) * -575.0) + 87;
+
+		if (!g_vars->scene18_var21) {
+			ix = swinger->sx;
+			iy = swinger->sy;
+			swinger->angle = (double)i * M_PI / 4;
+		}
+
+		if (swinger->ani->_movement)
+			swinger->ani->setOXY(ix - swinger->ix + swinger->ani->_movement->_ox, iy - swinger->iy + swinger->ani->_movement->_oy);
+		else
+			swinger->ani->setOXY(ix - swinger->ix + swinger->ani->_ox, iy - swinger->iy + swinger->ani->_oy);
+
+		swinger->ix = ix;
+		swinger->iy = iy;
+
+		if (!swinger->ani->_movement) {
+			int mv = 0;
+
+			if (swinger->sflags & 2) {
+				mv = MV_KSL_SWINGBOY;
+			} else if (swinger->sflags & 4) {
+				mv = MV_KSL_SWINGGIRL;
+			} else if (swinger->sflags & 0x20) {
+				mv = MV_KSL_SWINGMAN;
+			} else if (swinger->sflags & 1) {
+				mv = MV_KSL_SWING;
+			}
+
+			if (mv)
+				swinger->ani->startAnim(mv, 0, -1);
+
+			if (swinger->ani->_movement)
+				swinger->ani->_movement->_counter = 0;
+		}
+
+		if (g_vars->scene18_var22) {
+			if ((swinger->sflags & 2) && swinger->angle >= 2.792526803190933 && oldangle < 2.792526803190933) { // 8 pi / 9
+				swinger->sflags = 8;
+				swinger->ani->changeStatics2(ST_KSL_BOY);
+				swinger->ani->startAnim(MV_KSL_JUMPBOY, 0, -1);
+				g_vars->scene18_var32 = i;
+			} else if ((swinger->sflags & 4) && swinger->angle >= 2.82743338823082 && oldangle < 2.82743338823082) { // 9 pi / 10
+				swinger->sflags = 16;
+				swinger->ani->changeStatics2(ST_KSL_GIRL);
+				swinger->ani->startAnim(MV_KSL_JUMPGIRL, 0, -1);
+				g_vars->scene18_var32 = i;
+			} else if (g_vars->scene18_var23) {
+				if (g_vars->scene18_var24 > 0 && (swinger->sflags & 1) && swinger->angle >= 3.228859116189517 && oldangle < 3.228859116189517) { // 37 pi / 36
+					g_vars->scene18_var33 = i;
+					sceneHandler18and19_boyJumpTo();
+				}
+			} else if (g_vars->scene18_var25 > 0 && (swinger->sflags & 1) && swinger->angle >= 3.263765701229403 && oldangle < 3.263765701229403) { // 187 pi / 180
+				g_vars->scene18_var33 = i;
+				sceneHandler18and19_girlJumpTo();
+			}
+
+			if (swinger->angle >= 3.490658503988667 && oldangle < 3.490658503988667) { // 10 pi / 9
+				if (g_vars->scene18_var26)
+					g_vars->scene18_var24++;
+
+				g_vars->scene18_var26 = 0;
+			}
+		}
+
+		if (g_vars->scene18_var28 && (swinger->sflags & 1) && swinger->angle >= 1.448623279155297 && oldangle < 1.448623279155297) { // 83 pi / 180
+			g_vars->scene18_var27 = i;
+			sceneHandler18and19_manStandArmchair();
+		}
+
+		if (!g_vars->scene18_var15)
+			continue;
+
+		if (i == g_vars->scene18_var27) {
+			if (swinger->angle >= 2.967059728390367 && oldangle < 2.967059728390367) { // 17 pi / 18
+				g_fp->_gameLoader->preloadScene(SC_18, TrubaRight);
+			} else if (swinger->angle >= 0.4363323129985833 && oldangle < 0.4363323129985833) { // 5 pi / 36
+				g_fp->_gameLoader->preloadScene(SC_19, TrubaRight);
+			} else if (swinger->angle >= 4.1887902047864 && oldangle < 4.1887902047864) { // 4 pi / 3
+				g_fp->_sceneRect.translate(1200, 0);
+			}
+		}
+
+		if (g_vars->scene18_var13 > 0) {
+			if (swinger->sflags & 0x20) {
+				double newa = (double)g_vars->scene18_var14 * 0.01745329251994333;// pi / 180
+
+				if (newa <= swinger->angle && oldangle < newa) {
+					swinger->ani->changeStatics2(ST_KSL_MAN);
+					swinger->ani->startAnim(MV_KSL_JUMPMAN, 0, -1);
+					swinger->ani->_priority = 35;
+
+					g_vars->scene18_var31 = i;
+				}
+			}
+		}
+	}
 }
 
 void sceneHandler18and19_animateRiders() {

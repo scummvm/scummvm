@@ -295,6 +295,8 @@ Vars::Vars() {
 	scene18_var14 = -1;
 	scene18_var28 = 0;
 	scene18_var15 = 0;
+	scene18_var31 = 0;
+	scene18_var32 = 0;
 	scene18_boy = 0;
 	scene18_girl = 0;
 	scene18_domino = 0;

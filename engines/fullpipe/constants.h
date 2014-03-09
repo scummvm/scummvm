@@ -891,9 +891,13 @@ namespace Fullpipe {
 #define MV_KSL_INBOY 1491
 #define MV_KSL_INGIRL 1493
 #define MV_KSL_INMAN 1504
+#define MV_KSL_JUMPBOY 1473
+#define MV_KSL_JUMPGIRL 1475
+#define MV_KSL_JUMPMAN 1509
 #define MV_KSL_SWING 1460
 #define MV_KSL_SWINGBOY 1462
 #define MV_KSL_SWINGGIRL 1464
+#define MV_KSL_SWINGMAN 1502
 #define MV_WHR18_SPIN 1300
 #define PIC_SC18_DOMIN 5184
 #define PIC_SC18_LADDER1 1471
@@ -902,9 +906,12 @@ namespace Fullpipe {
 #define PIC_SC18_RTRUBA 1520
 #define SND_18_006 3906
 #define SND_18_010 4994
+#define ST_KSL_BOY 1463
+#define ST_KSL_GIRL 1465
 #define ST_KSL_JUMPBOY 1492
 #define ST_KSL_JUMPGIRL 1494
 #define ST_KSL_JUMPMAN 1505
+#define ST_KSL_MAN 1503
 
 // Scene 19
 #define ANI_CORDIE 1529
