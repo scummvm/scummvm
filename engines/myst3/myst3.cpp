@@ -948,6 +948,8 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 		movie.setPosV(0);
 	}
 
+	movie.playStartupSound();
+
 	_drawables.push_back(&movie);
 
 	bool skip = false;

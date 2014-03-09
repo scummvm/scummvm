@@ -143,6 +143,8 @@ public:
 
 	bool update();
 
+	void playStartupSound();
+
 	void setSynchronized(bool b) { _synchronized = b; }
 private:
 	bool _synchronized;

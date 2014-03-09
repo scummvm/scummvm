@@ -49,7 +49,6 @@ Script::Script(Myst3Engine *vm):
 	// TODO: Implement these remaining opcodes
 	// 5: I'm pretty sure it's useless
 	// 144: drawTransition
-	// 236: setupSoundForMovie
 	// 247: quit
 
 	OP_0(  0, badOpcode																					);
@@ -266,6 +265,7 @@ Script::Script(Myst3Engine *vm):
 	OP_2(232, runSoundScriptNodeRoom,		kEvalValue,	kEvalValue										);
 	OP_3(233, runSoundScriptNodeRoomAge,	kEvalValue,	kEvalValue,	kEvalValue							);
 	OP_1(234, soundStopMusic,				kEvalValue													);
+	OP_2(236, movieSetStartupSound,			kEvalValue,	kEvalValue										);
 	OP_0(239, drawOneFrame																				);
 	OP_0(240, cursorHide																				);
 	OP_0(241, cursorShow																				);
@@ -2704,6 +2704,18 @@ void Script::soundStopMusic(Context &c, const Opcode &cmd) {
 	int32 fadeOutDuration = _vm->_state->valueOrVarValue(cmd.args[0]);
 
 	_vm->_sound->stopMusic(fadeOutDuration);
+}
+
+void Script::movieSetStartupSound(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set movie startup sound %d", cmd.op, cmd.args[0]);
+
+	int32 soundId = _vm->_state->valueOrVarValue(cmd.args[0]);
+	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
+
+	_vm->_state->setMovieStartSoundId(soundId);
+	_vm->_state->setMovieStartSoundVolume(volume);
+	_vm->_state->setMovieStartSoundHeading(0);
+	_vm->_state->setMovieStartSoundAttenuation(0);
 }
 
 void Script::drawOneFrame(Context &c, const Opcode &cmd) {

@@ -157,6 +157,10 @@ public:
 	DECLARE_VAR(167, MovieOverridePosU)
 	DECLARE_VAR(168, MovieOverridePosV)
 	DECLARE_VAR(173, MoviePlayingVar)
+	DECLARE_VAR(174, MovieStartSoundId)
+	DECLARE_VAR(175, MovieStartSoundVolume)
+	DECLARE_VAR(176, MovieStartSoundHeading)
+	DECLARE_VAR(177, MovieStartSoundAttenuation)
 
 	DECLARE_VAR(178, MovieUseBackground)
 	DECLARE_VAR(179, CameraSkipAnimation)

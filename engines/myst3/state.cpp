@@ -185,6 +185,10 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(171, MovieUnk171, true)
 	VAR(172, MovieUnk172, true)
 	VAR(173, MoviePlayingVar, true)
+	VAR(174, MovieStartSoundId, true)
+	VAR(175, MovieStartSoundVolume, true)
+	VAR(176, MovieStartSoundHeading, true)
+	VAR(177, MovieStartSoundAttenuation, true)
 
 	VAR(178, MovieUseBackground, false)
 	VAR(179, CameraSkipAnimation, true)

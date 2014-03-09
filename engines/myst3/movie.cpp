@@ -378,6 +378,19 @@ bool SimpleMovie::update() {
 	return !_bink.endOfVideo() && _bink.getCurFrame() < _endFrame;
 }
 
+void SimpleMovie::playStartupSound() {
+	int32 soundId = _vm->_state->getMovieStartSoundId();
+	if (soundId) {
+		uint32 volume = _vm->_state->getMovieStartSoundVolume();
+		uint32 heading = _vm->_state->getMovieStartSoundHeading();
+		uint32 attenuation = _vm->_state->getMovieStartSoundAttenuation();
+
+		_vm->_sound->playEffect(soundId, volume, heading, attenuation);
+
+		_vm->_state->setMovieStartSoundId(0);
+	}
+}
+
 SimpleMovie::~SimpleMovie() {
 }
 

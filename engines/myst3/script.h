@@ -312,6 +312,7 @@ private:
 	DECLARE_OPCODE(runSoundScriptNodeRoom);
 	DECLARE_OPCODE(runSoundScriptNodeRoomAge);
 	DECLARE_OPCODE(soundStopMusic);
+	DECLARE_OPCODE(movieSetStartupSound);
 	DECLARE_OPCODE(drawOneFrame);
 	DECLARE_OPCODE(cursorHide);
 	DECLARE_OPCODE(cursorShow);
