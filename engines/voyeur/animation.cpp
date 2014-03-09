@@ -50,10 +50,10 @@ RL2Decoder::~RL2Decoder() {
 bool RL2Decoder::loadVideo(int videoId) {
 	Common::String filename = Common::String::format("%s.rl2", 
 		::Voyeur::SZ_FILENAMES[videoId * 2]);
-	return loadFile(filename, false);
+	return loadRL2File(filename, false);
 }
 
-bool RL2Decoder::loadFile(const Common::String &file, bool palFlag) {
+bool RL2Decoder::loadRL2File(const Common::String &file, bool palFlag) {
 	bool result = VideoDecoder::loadFile(file);
 	_paletteStart = palFlag ? 0 : 128;
 	return result;
@@ -115,7 +115,7 @@ void RL2Decoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 
 void RL2Decoder::readNextPacket() {
 	int frameNumber = getCurFrame();
-	RL2AudioTrack *audioTrack = getAudioTrack();
+	RL2AudioTrack *audioTrack = RL2Decoder::getAudioTrack();
 
 	// Handle queueing sound data
 	if (_soundFrameNumber == -1)

@@ -237,7 +237,7 @@ void VoyeurEngine::doTailTitle() {
 	
 	if (_bVoy->getBoltGroup(0x600)) {
 		RL2Decoder decoder;
-		decoder.loadFile("a1100200.rl2", false);
+		decoder.loadRL2File("a1100200.rl2", false);
 		decoder.start();
 		decoder.play(this);
 		
@@ -742,7 +742,7 @@ void VoyeurEngine::doGossip() {
 
 	// Load the gossip animation
 	RL2Decoder decoder;
-	decoder.loadFile("a2050100.rl2", false);
+	decoder.loadRL2File("a2050100.rl2", false);
 	decoder.start();
 
 	// Get the resource data for the first gossip video
@@ -768,7 +768,7 @@ void VoyeurEngine::doGossip() {
 
 	// Play interview video
 	RL2Decoder decoder2;
-	decoder2.loadFile("a2110100.rl2", true);
+	decoder2.loadRL2File("a2110100.rl2", true);
 	decoder2.start();
 
 	_eventsManager->getMouseInfo();

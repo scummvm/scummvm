@@ -174,7 +174,7 @@ public:
 	virtual void close();
 
 	bool loadStream(Common::SeekableReadStream *stream);
-	virtual bool loadFile(const Common::String &file, bool palFlag);
+	bool loadRL2File(const Common::String &file, bool palFlag);
 	bool loadVideo(int videoId);
 	int getPaletteCount() const { return _header._colorCount; }
 
