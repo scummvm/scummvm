@@ -33,12 +33,11 @@ namespace Voyeur {
 
 class SoundManager {
 private:
-	VoyeurEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	int _vocOffset;
 public:
-	SoundManager(VoyeurEngine *vm, Audio::Mixer *mixer);
+	SoundManager(Audio::Mixer *mixer);
 
 	void playVOCMap(byte *voc, int vocSize);
 	void stopVOCPlay();

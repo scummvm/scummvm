@@ -28,7 +28,7 @@
 
 namespace Voyeur {
 
-	SoundManager::SoundManager(VoyeurEngine *vm, Audio::Mixer *mixer) : _vm(vm) {
+	SoundManager::SoundManager(Audio::Mixer *mixer) {
 	_mixer = mixer;
 	_vocOffset = 0;
 }

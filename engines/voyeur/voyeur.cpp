@@ -71,7 +71,7 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_eventsManager = new EventsManager(this);
 	_filesManager = new FilesManager(this);
 	_graphicsManager = new GraphicsManager(this);
-	_soundManager = new SoundManager(this, _mixer);
+	_soundManager = new SoundManager(_mixer);
 	_voy = new SVoy(this);
 }
 
