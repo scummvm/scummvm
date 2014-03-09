@@ -34,16 +34,14 @@ enum CharsetType {
 };
 
 struct Charset {
-	int charW;
-	int charH;
-	int xCount;
-	int yCount;
+	int _charW;
+	int _charH;
+	int _xCount;
+	int _yCount;
 };
 
 class Graphics {
 public:
-
-
 	static int encodeRLE(const uint8 *src, uint8 *dst, int w, int h);
 	static int encodeRAW(const uint8 *src, uint8 *dst, int w, int h);
 

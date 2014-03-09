@@ -351,11 +351,11 @@ void TuckerEngine::loadCharset2() {
 }
 
 void TuckerEngine::loadCharsetHelper() {
-	const int charW = Graphics::_charset.charW;
-	const int charH = Graphics::_charset.charH;
+	const int charW = Graphics::_charset._charW;
+	const int charH = Graphics::_charset._charH;
 	int offset = 0;
-	for (int y = 0; y < Graphics::_charset.yCount; ++y) {
-		for (int x = 0; x < Graphics::_charset.xCount; ++x) {
+	for (int y = 0; y < Graphics::_charset._yCount; ++y) {
+		for (int x = 0; x < Graphics::_charset._xCount; ++x) {
 			offset += Graphics::encodeRAW(_loadTempBuf + (y * 320) * charH + x * charW, _charsetGfxBuf + offset, charW, charH);
 		}
 	}

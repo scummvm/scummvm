@@ -2849,7 +2849,7 @@ void TuckerEngine::drawStringInteger(int num, int x, int y, int digits) {
 		Graphics::drawStringChar(_locationBackgroundGfxBuf, _scrollOffset + x, y, 640, numStr[i], 102, _charsetGfxBuf);
 		x += 8;
 	}
-	addDirtyRect(_scrollOffset + x, y, Graphics::_charset.charW * 3, Graphics::_charset.charH);
+	addDirtyRect(_scrollOffset + x, y, Graphics::_charset._charW * 3, Graphics::_charset._charH);
 }
 
 void TuckerEngine::drawStringAlt(int x, int y, int color, const uint8 *str, int strLen) {
@@ -2861,7 +2861,7 @@ void TuckerEngine::drawStringAlt(int x, int y, int color, const uint8 *str, int 
 		x += _charWidthTable[chr];
 		++pos;
 	}
-	addDirtyRect(xStart, y, x - xStart, Graphics::_charset.charH);
+	addDirtyRect(xStart, y, x - xStart, Graphics::_charset._charH);
 }
 
 void TuckerEngine::drawItemString(int x, int num, const uint8 *str) {
@@ -3824,7 +3824,7 @@ void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, 
 		x += _charWidthTable[dataPtr[pos]];
 		++pos;
 	}
-	addDirtyRect(xStart, y, x - xStart, Graphics::_charset.charH);
+	addDirtyRect(xStart, y, x - xStart, Graphics::_charset._charH);
 }
 
 void TuckerEngine::redrawScreen(int offset) {
