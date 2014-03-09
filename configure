@@ -2497,6 +2497,7 @@ if test -n "$_host"; then
 			;;
 		iphone)
 			DEFINES="$DEFINES -DIPHONE"
+			ASFLAGS="$ASFLAGS -arch armv6"
 			_backend="iphone"
 			_build_scalers=no
 			_mt32emu=no

@@ -71,6 +71,7 @@
 	@ <> = _palette
 	@ <> = _numstrips
 	@ <> = _scaleIndexY
+	.align 2
 _ClassicProc3RendererShadowARM:
 	@ shadow20 = false
 	@ shadowed = true

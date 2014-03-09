@@ -41,6 +41,7 @@
 	@ In addition, we assume that text, src and dst are all word (4 byte)
 	@ aligned. This is the same assumption that the old 'inline' version
 	@ made.
+	.align 2
 _asmDrawStripToScreen:
 	@ r0 = height
 	@ r1 = width
@@ -118,6 +119,7 @@ end:
 	@ In addition, we assume that src and dst are both word (4 byte)
 	@ aligned. This is the same assumption that the old 'inline' version
 	@ made.
+	.align 2
 _asmCopy8Col:
 	@ r0 = dst
 	@ r1 = dstPitch
