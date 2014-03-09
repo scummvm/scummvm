@@ -43,9 +43,8 @@
 
 namespace Groovie {
 
-ROQPlayer::ROQPlayer(GroovieEngine *vm) :
-	VideoPlayer(vm), _codingTypeCount(0),
-	_fg(&_vm->_graphicsMan->_foreground), _bg(&_vm->_graphicsMan->_background) {
+ROQPlayer::ROQPlayer(GroovieEngine *vm) : VideoPlayer(vm), _codingTypeCount(0), _bg(&_vm->_graphicsMan->_background) {
+	// _fg = &_vm->_graphicsMan->_foreground;
 
 	// Create the work surfaces
 	_currBuf = new Graphics::Surface();
