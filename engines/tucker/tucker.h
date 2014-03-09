@@ -356,7 +356,7 @@ protected:
 	void drawCreditsString(int x, int y, int num);
 	void updateCharSpeechSound(bool displayText);
 	void updateItemsGfxColors(int bit0, int bit7);
-	int testLocationMask(int x, int y);
+	bool testLocationMask(int x, int y);
 	int getStringWidth(int num, const uint8 *ptr);
 	int getPositionForLine(int num, const uint8 *ptr);
 	void resetCharacterAnimationIndex(int count);
@@ -369,7 +369,7 @@ protected:
 	int getObjectUnderCursor();
 	void setSelectedObjectKey();
 	void setCharacterAnimation(int count, int spr);
-	int testLocationMaskArea(int xBase, int yBase, int xPos, int yPos);
+	bool testLocationMaskArea(int xBase, int yBase, int xPos, int yPos);
 	void handleMouseClickOnInventoryObject();
 	int setCharacterUnderCursor();
 	int setLocationAnimationUnderCursor();
@@ -745,7 +745,7 @@ protected:
 	int _actionVerbLocked;
 	int _actionPosX;
 	int _actionPosY;
-	int _selectedObjectLocationMask;
+	bool _selectedObjectLocationMask;
 	struct {
 		int _xDefaultPos;
 		int _yDefaultPos;

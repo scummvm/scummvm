@@ -230,7 +230,7 @@ void TuckerEngine::resetVariables() {
 	_actionVerbLocked = 0;
 	_actionPosX = 0;
 	_actionPosY = 0;
-	_selectedObjectLocationMask = 0;
+	_selectedObjectLocationMask = false;
 	memset(&_selectedObject, 0, sizeof(_selectedObject));
 	_selectedCharacterDirection = 0;
 	_selectedCharacter2Num = 0;
@@ -1125,27 +1125,27 @@ void TuckerEngine::updateCharactersPath() {
 	}
 	bool flag = false;
 	if (_yPosCurrent > _selectedObject._yPos) {
-		if (testLocationMask(_xPosCurrent, _yPosCurrent - 1) == 1) {
+		if (testLocationMask(_xPosCurrent, _yPosCurrent - 1)) {
 			--_yPosCurrent;
 			_characterFacingDirection = 4;
 			flag = true;
 		}
 	} else if (_yPosCurrent < _selectedObject._yPos) {
-		if (testLocationMask(_xPosCurrent, _yPosCurrent + 1) == 1) {
+		if (testLocationMask(_xPosCurrent, _yPosCurrent + 1)) {
 			++_yPosCurrent;
 			_characterFacingDirection = 2;
 			flag = true;
 		}
 	}
 	if (_xPosCurrent > _selectedObject._xPos) {
-		if (testLocationMask(_xPosCurrent - 1, _yPosCurrent) == 1) {
+		if (testLocationMask(_xPosCurrent - 1, _yPosCurrent)) {
 			--_xPosCurrent;
 			_characterFacingDirection = 3;
 			_characterBackFrontFacing = 0;
 			flag = true;
 		}
 	} else if (_xPosCurrent < _selectedObject._xPos) {
-		if (testLocationMask(_xPosCurrent + 1, _yPosCurrent) == 1) {
+		if (testLocationMask(_xPosCurrent + 1, _yPosCurrent)) {
 			++_xPosCurrent;
 			_characterFacingDirection = 1;
 			_characterBackFrontFacing = 1;
@@ -1153,8 +1153,8 @@ void TuckerEngine::updateCharactersPath() {
 		}
 	}
 	if (!flag) {
-		if (_selectedObjectLocationMask == 1) {
-			_selectedObjectLocationMask = 0;
+		if (_selectedObjectLocationMask) {
+			_selectedObjectLocationMask = false;
 			_selectedObject._xPos = _selectedObject._xDefaultPos;
 			_selectedObject._yPos = _selectedObject._yDefaultPos;
 		} else {
@@ -1175,7 +1175,7 @@ void TuckerEngine::updateCharactersPath() {
 	if (_xPosCurrent != _selectedObject._xPos || _yPosCurrent != _selectedObject._yPos) {
 		return;
 	}
-	if (_selectedObjectLocationMask != 0) {
+	if (_selectedObjectLocationMask) {
 		return;
 	}
 	_locationMaskCounter = 1;
@@ -2916,7 +2916,7 @@ void TuckerEngine::updateItemsGfxColors(int color1, int color128) {
 	}
 }
 
-int TuckerEngine::testLocationMask(int x, int y) {
+bool TuckerEngine::testLocationMask(int x, int y) {
 	if (_locationMaskType > 0 || _locationMaskIgnore > 0) {
 		return 1;
 	}
@@ -2924,7 +2924,7 @@ int TuckerEngine::testLocationMask(int x, int y) {
 		y -= 3;
 	}
 	const int offset = y * 640 + x;
-	return _locationBackgroundMaskBuf[offset] > 0 ? 1 : 0;
+	return (_locationBackgroundMaskBuf[offset] > 0);
 }
 
 int TuckerEngine::getStringWidth(int num, const uint8 *ptr) {
@@ -3454,22 +3454,22 @@ void TuckerEngine::setSelectedObjectKey() {
 		_selectedObject._yPos = _mousePosY;
 	}
 	_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
-	if (_selectedObjectLocationMask == 0 && _objectKeysLocationTable[_locationNum] == 1) {
+	if (!_selectedObjectLocationMask && _objectKeysLocationTable[_locationNum] == 1) {
 		if (_selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
-			while (_selectedObjectLocationMask == 0 && _selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
+			while (!_selectedObjectLocationMask && _selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
 				++_selectedObject._yPos;
 				_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
 			}
 		} else {
-			while (_selectedObjectLocationMask == 0 && _selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
+			while (!_selectedObjectLocationMask && _selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
 				--_selectedObject._yPos;
 				_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
 			}
 		}
 	}
-	if (_selectedObjectLocationMask == 1) {
+	if (_selectedObjectLocationMask) {
 		_selectedObjectLocationMask = testLocationMaskArea(_xPosCurrent, _yPosCurrent, _selectedObject._xPos, _selectedObject._yPos);
-		if (_selectedObjectLocationMask == 1 && _objectKeysPosXTable[_locationNum] > 0) {
+		if (_selectedObjectLocationMask && _objectKeysPosXTable[_locationNum] > 0) {
 			_selectedObject._xDefaultPos = _selectedObject._xPos;
 			_selectedObject._yDefaultPos = _selectedObject._yPos;
 			_selectedObject._xPos = _objectKeysPosXTable[_locationNum];
@@ -3498,39 +3498,39 @@ void TuckerEngine::setCharacterAnimation(int count, int spr) {
 	_spritesTable[spr]._firstFrame = READ_LE_UINT16(_spritesTable[spr]._animationData);
 }
 
-int TuckerEngine::testLocationMaskArea(int xBase, int yBase, int xPos, int yPos) {
+bool TuckerEngine::testLocationMaskArea(int xBase, int yBase, int xPos, int yPos) {
 	while (true) {
 		bool loop = false;
 		if (yBase > yPos) {
-			if (testLocationMask(xBase, yBase - 1) == 1) {
+			if (testLocationMask(xBase, yBase - 1)) {
 				--yBase;
 				loop = true;
 			}
 		} else if (yBase < yPos) {
-			if (testLocationMask(xBase, yBase + 1) == 1) {
+			if (testLocationMask(xBase, yBase + 1)) {
 				++yBase;
 				loop = true;
 			}
 		}
 		if (xBase > xPos) {
-			if (testLocationMask(xBase - 1, yBase) == 1) {
+			if (testLocationMask(xBase - 1, yBase)) {
 				--xBase;
 				loop = true;
 			}
 		} else if (xBase < xPos) {
-			if (testLocationMask(xBase + 1, yBase) == 1) {
+			if (testLocationMask(xBase + 1, yBase)) {
 				++xBase;
 				loop = true;
 			}
 		}
 		if (xBase == xPos && yBase == yPos) {
-			return 0;
+			return false;
 		}
 		if (!loop) {
 			break;
 		}
 	}
-	return 1;
+	return true;
 }
 
 void TuckerEngine::handleMouseClickOnInventoryObject() {
