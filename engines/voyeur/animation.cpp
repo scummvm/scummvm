@@ -224,8 +224,7 @@ Common::Rational RL2Decoder::RL2FileHeader::getFrameRate() const {
 /*------------------------------------------------------------------------*/
 
 RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack, 
-		Common::SeekableReadStream *stream): 
-		_header(header), _audioTrack(audioTrack), _fileStream(stream) {
+		Common::SeekableReadStream *stream): _header(header), _fileStream(stream) {
 
 	_frameOffsets = nullptr;
 

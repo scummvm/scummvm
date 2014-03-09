@@ -130,7 +130,6 @@ private:
 	private:
 		Common::SeekableReadStream *_fileStream;
 		const RL2FileHeader &_header;
-		RL2AudioTrack *_audioTrack;
 		Graphics::Surface *_surface;
 		Graphics::Surface *_backSurface;
 		bool _hasBackFrame;
