@@ -289,6 +289,10 @@ private:
 	DECLARE_OPCODE(soundStopEffect);
 	DECLARE_OPCODE(soundFadeOutEffect);
 	DECLARE_OPCODE(soundPlayLooping);
+	DECLARE_OPCODE(soundChooseNext);
+	DECLARE_OPCODE(soundRandomizeNext);
+	DECLARE_OPCODE(soundChooseNextAfterOther);
+	DECLARE_OPCODE(soundRandomizeNextAfterOther);
 	DECLARE_OPCODE(ambientSetFadeOutDelay);
 	DECLARE_OPCODE(ambientAddSound1);
 	DECLARE_OPCODE(ambientAddSound2);

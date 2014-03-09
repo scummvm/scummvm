@@ -120,6 +120,11 @@ public:
 	DECLARE_VAR(120, AmbiantPreviousFadeOutDelay)
 	DECLARE_VAR(121, AmbientOverrideFadeOutDelay)
 
+	DECLARE_VAR(124, SoundNextMultipleSounds)
+	DECLARE_VAR(125, SoundNextIsChoosen)
+	DECLARE_VAR(126, SoundNextId)
+	DECLARE_VAR(127, SoundNextIsLast)
+
 	DECLARE_VAR(131, CursorLocked)
 	DECLARE_VAR(132, CursorHidden)
 

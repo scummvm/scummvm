@@ -37,6 +37,13 @@ enum SoundType {
 	kMusic
 };
 
+enum SoundNextCommand {
+	kRandom,
+	kNext,
+	kRandomIfOtherStarting,
+	kNextIfOtherStarting
+};
+
 class SoundChannel {
 public:
 	SoundChannel(Myst3Engine *vm);
@@ -49,6 +56,7 @@ public:
 	void update();
 	void stop();
 	void age(uint32 maxAge);
+	uint32 playedFrames();
 
 	uint32 _id;
 	bool _playing;
@@ -105,12 +113,17 @@ public:
 
 	void stopMusic(uint32 fadeDelay);
 
+	uint32 playedFrames(uint32 id);
+
 	void update();
 	void age();
 
 	void fadeOutOldSounds(uint32 fadeDelay);
 
 	void computeVolumeBalance(int32 volume, int32 heading, uint attenuation, int32 *mixerVolume, int32 *balance);
+
+	void setupNextSound(SoundNextCommand command, int16 controlVar, int16 startSoundId, int16 soundCount,
+			int32 soundMinDelay, int32 soundMaxDelay, int32 controlSoundId = 0, int32 controlSoundMaxPosition = 0);
 private:
 	static const uint kNumChannels = 14;
 

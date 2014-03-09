@@ -50,7 +50,6 @@ Script::Script(Myst3Engine *vm):
 	// 5: I'm pretty sure it's useless
 	// 144: drawTransition
 	// 213: soundPlayEffectFadeArray
-	// 214, 215, 216, 217: setupRandomSound
 	// 236: setupSoundForMovie
 	// 247: quit
 
@@ -247,6 +246,10 @@ Script::Script(Myst3Engine *vm):
 	OP_1(209, soundStopEffect,				kEvalValue													);
 	OP_2(210, soundFadeOutEffect,			kEvalValue,	kEvalValue										);
 	OP_1(212, soundPlayLooping,				kEvalValue													);
+	OP_5(214, soundChooseNext,				kVar,		kValue,		kValue,		kEvalValue,	kEvalValue	);
+	OP_5(215, soundRandomizeNext,			kVar,		kValue,		kValue,		kEvalValue,	kEvalValue	);
+	OP_5(216, soundChooseNextAfterOther,	kVar,		kValue,		kValue,		kEvalValue,	kEvalValue	); // Seven args
+	OP_5(217, soundRandomizeNextAfterOther,	kVar,		kValue,		kValue,		kEvalValue,	kEvalValue	); // Seven args
 	OP_1(218, ambientSetFadeOutDelay,		kValue														);
 	OP_2(219, ambientAddSound1,				kEvalValue,	kEvalValue										);
 	OP_3(220, ambientAddSound2,				kEvalValue,	kEvalValue,	kValue								);
@@ -2473,6 +2476,60 @@ void Script::soundPlayLooping(Context &c, const Opcode &cmd) {
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 
 	_vm->_sound->playEffectLooping(id, 100);
+}
+
+void Script::soundChooseNext(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Setup next sound with control var %d", cmd.op, cmd.args[0]);
+
+	int16 controlVar = cmd.args[0];
+	int16 startSoundId = cmd.args[1];
+	int16 soundCount = cmd.args[2];
+	int32 soundMinDelay = _vm->_state->valueOrVarValue(cmd.args[3]);
+	int32 soundMaxDelay = _vm->_state->valueOrVarValue(cmd.args[4]);
+
+	_vm->_sound->setupNextSound(kNext, controlVar, startSoundId, soundCount, soundMinDelay, soundMaxDelay);
+}
+
+void Script::soundRandomizeNext(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Setup next sound with control var %d", cmd.op, cmd.args[0]);
+
+	int16 controlVar = cmd.args[0];
+	int16 startSoundId = cmd.args[1];
+	int16 soundCount = cmd.args[2];
+	int32 soundMinDelay = _vm->_state->valueOrVarValue(cmd.args[3]);
+	int32 soundMaxDelay = _vm->_state->valueOrVarValue(cmd.args[4]);
+
+	_vm->_sound->setupNextSound(kRandom, controlVar, startSoundId, soundCount, soundMinDelay, soundMaxDelay);
+}
+
+void Script::soundChooseNextAfterOther(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Setup next sound with control var %d", cmd.op, cmd.args[0]);
+
+	int16 controlVar = cmd.args[0];
+	int16 startSoundId = cmd.args[1];
+	int16 soundCount = cmd.args[2];
+	int32 soundMinDelay = _vm->_state->valueOrVarValue(cmd.args[3]);
+	int32 soundMaxDelay = _vm->_state->valueOrVarValue(cmd.args[4]);
+
+	int32 controlSoundId = _vm->_state->valueOrVarValue(cmd.args[5]);
+	int32 controlSoundMaxPosition = _vm->_state->valueOrVarValue(cmd.args[6]);
+
+	_vm->_sound->setupNextSound(kNextIfOtherStarting, controlVar, startSoundId, soundCount, soundMinDelay, soundMaxDelay, controlSoundId, controlSoundMaxPosition);
+}
+
+void Script::soundRandomizeNextAfterOther(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Setup next sound with control var %d", cmd.op, cmd.args[0]);
+
+	int16 controlVar = cmd.args[0];
+	int16 startSoundId = cmd.args[1];
+	int16 soundCount = cmd.args[2];
+	int32 soundMinDelay = _vm->_state->valueOrVarValue(cmd.args[3]);
+	int32 soundMaxDelay = _vm->_state->valueOrVarValue(cmd.args[4]);
+
+	int32 controlSoundId = _vm->_state->valueOrVarValue(cmd.args[5]);
+	int32 controlSoundMaxPosition = _vm->_state->valueOrVarValue(cmd.args[6]);
+
+	_vm->_sound->setupNextSound(kRandomIfOtherStarting, controlVar, startSoundId, soundCount, soundMinDelay, soundMaxDelay, controlSoundId, controlSoundMaxPosition);
 }
 
 void Script::ambientSetFadeOutDelay(Context &c, const Opcode &cmd) {

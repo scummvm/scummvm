@@ -89,7 +89,7 @@ SoundChannel *Sound::getChannelForSound(uint32 id, SoundType type, bool *found) 
 
 	// if the sound is already playing, return that channel
 	for (uint i = 0; i < kNumChannels - 1; i++)
-		if (_channels[i]->_id == id && _channels[i]->_type == type && _channels[i]->_playing) {
+		if (_channels[i]->_id == id && (_channels[i]->_type == type || type == kAny ) && _channels[i]->_playing) {
 			if (found) *found = true;
 			return _channels[i];
 		}
@@ -218,6 +218,124 @@ void Sound::computeVolumeBalance(int32 volume, int32 heading, uint attenuation, 
 	}
 }
 
+uint32 Sound::playedFrames(uint32 id) {
+	bool soundPlaying;
+	SoundChannel *channel = getChannelForSound(id, kAny, &soundPlaying);
+
+	if (!soundPlaying) {
+		return -1;
+	}
+
+	return channel->playedFrames();
+}
+
+void Sound::setupNextSound(SoundNextCommand command, int16 controlVar, int16 startSoundId, int16 soundCount,
+		int32 soundMinDelay, int32 soundMaxDelay, int32 controlSoundId, int32 controlSoundMaxPosition) {
+
+	bool playSeveralSounds = _vm->_state->getSoundNextMultipleSounds();
+
+	_vm->_state->setSoundNextMultipleSounds(false);
+	_vm->_state->setSoundNextIsChoosen(false);
+	_vm->_state->setSoundNextId(0);
+	_vm->_state->setSoundNextIsLast(false);
+
+	uint32 controlLastFrame = _vm->_state->getVar(controlVar);
+	int32 playingSoundId = _vm->_state->getVar(controlVar + 1) >> 16;
+	int32 soundDelay = _vm->_state->getVar(controlVar + 1) & 0xFFFF;
+
+	if (!controlLastFrame) {
+		if (!playSeveralSounds) {
+			for (int16 i = startSoundId; i < startSoundId + soundCount; i++) {
+				int16 soundVarValue = _vm->_state->getVar(i);
+				if (soundVarValue)
+					return;
+			}
+		}
+
+		soundDelay = _vm->_rnd->getRandomNumberRng(soundMinDelay, soundMaxDelay);
+
+		_vm->_state->setVar(controlVar, 1);
+		_vm->_state->setVar(controlVar + 1, soundDelay | (playingSoundId << 16));
+		return;
+	}
+
+	uint currentFrame = _vm->_state->getFrameCount();
+	if (currentFrame == controlLastFrame) {
+		return;
+	}
+
+	if (currentFrame < controlLastFrame) {
+		soundDelay = 0;
+	} else if (currentFrame > controlLastFrame + 10) {
+		soundDelay -= 10;
+	} else {
+		soundDelay -= currentFrame - controlLastFrame;
+	}
+
+	if (soundDelay < 0) {
+		soundDelay = 0;
+	}
+
+	if (soundDelay) {
+		_vm->_state->setVar(controlVar, currentFrame);
+		_vm->_state->setVar(controlVar + 1, soundDelay | (playingSoundId << 16));
+		return;
+	}
+
+	bool shouldPlaySound;
+	if (command == kRandom || command == kNext) {
+		shouldPlaySound = true;
+	} else {
+		int32 controlSoundPosition = playedFrames(controlSoundId);
+
+		shouldPlaySound = controlSoundPosition >= 0 && controlSoundPosition <= controlSoundMaxPosition;
+	}
+
+	if (!shouldPlaySound) {
+		return;
+	}
+
+	switch (command) {
+	case kRandom:
+	case kRandomIfOtherStarting: {
+		if (soundCount == 1) {
+			playingSoundId = startSoundId;
+		} else {
+			int32 newSoundId;
+			do {
+				newSoundId = _vm->_rnd->getRandomNumberRng(startSoundId, startSoundId + soundCount - 1);
+			} while (newSoundId == playingSoundId);
+			playingSoundId = newSoundId;
+		}
+	}
+	break;
+	case kNext:
+	case kNextIfOtherStarting: {
+		if (!playingSoundId) {
+			playingSoundId = startSoundId;
+		} else {
+			playingSoundId++;
+		}
+
+		if (playingSoundId == startSoundId + soundCount - 1) {
+			_vm->_state->setSoundNextIsLast(true);
+		}
+
+		if (playingSoundId >= startSoundId + soundCount)
+			playingSoundId = startSoundId;
+	}
+	break;
+	}
+
+	_vm->_state->setVar(controlVar, 0);
+	_vm->_state->setVar(controlVar + 1, soundDelay | (playingSoundId << 16));
+
+	_vm->_state->setVar(playingSoundId, 2);
+
+	_vm->_state->setSoundNextIsChoosen(true);
+	_vm->_state->setSoundNextId(playingSoundId);
+}
+
 SoundChannel::SoundChannel(Myst3Engine *vm) :
 	_vm(vm),
 	_playing(false),
@@ -315,7 +433,7 @@ void SoundChannel::update() {
 
 	_playing = g_system->getMixer()->isSoundHandleActive(_handle);
 
-	if (_playing && (_stopWhenSilent && !_volume)) {
+	if (!_playing || (_stopWhenSilent && !_volume)) {
 		stop();
 	}
 
@@ -329,9 +447,6 @@ void SoundChannel::update() {
 }
 
 void SoundChannel::stop() {
-	if (!_playing)
-		return; // Nothing to do
-
 	_playing = g_system->getMixer()->isSoundHandleActive(_handle);
 
 	if (_playing) {
@@ -339,8 +454,11 @@ void SoundChannel::stop() {
 		_playing = false;
 	}
 
-	_vm->_state->setVar(_id, 0);
-	_id = 0;
+	if (_id != 0) {
+		_vm->_state->setVar(_id, 0);
+		_id = 0;
+	}
+
 	_age = 99;
 	_fading = false;
 	_stopWhenSilent = true;
@@ -442,6 +560,12 @@ void SoundChannel::updateFading() {
 		}
 		setVolume3D(_volume, _heading, _headingAngle);
 	}
+}
+
+uint32 SoundChannel::playedFrames() {
+	// TODO: Handle looping
+	Audio::Timestamp elapsed = g_system->getMixer()->getElapsedTime(_handle);
+	return elapsed.msecs() * 30 / 1000;
 }
 
 } /* namespace Myst3 */

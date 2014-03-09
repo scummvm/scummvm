@@ -140,6 +140,11 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(120, AmbiantPreviousFadeOutDelay, false)
 	VAR(121, AmbientOverrideFadeOutDelay, false)
 
+	VAR(124, SoundNextMultipleSounds, true)
+	VAR(125, SoundNextIsChoosen, true)
+	VAR(126, SoundNextId, true)
+	VAR(127, SoundNextIsLast, true)
+
 	VAR(131, CursorLocked, false)
 	VAR(132, CursorHidden, false)
 
