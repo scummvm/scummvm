@@ -285,6 +285,10 @@ void Costume::setChoreLooping(int num, bool val) {
 }
 
 void Costume::setChoreType(int num, Chore::ChoreType choreType) {
+	if (num < 0 || num >= _numChores) {
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		return;
+	}
 	_chores[num]->setChoreType(choreType);
 }
 
