@@ -54,7 +54,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 	_pixelSpeed = 0;
 	_maxWidth = 0;
 	_maxHeight = 0;
-	_field6 = -1;
+	_usageIndex = -1;
 
 	Common::SeekableReadStream *spriteStream = sprite.getItemStream(0);
 	_mode = spriteStream->readByte();

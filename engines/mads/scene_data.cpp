@@ -500,8 +500,8 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 			_vm->_palette->_paletteUsage.prioritize(artHeader._palette);
 		}
 
-		_field4C = _vm->_palette->_paletteUsage.process(artHeader._palette, 0xF800);
-		if (_field4C > 0) {
+		_usageIndex = _vm->_palette->_paletteUsage.process(artHeader._palette, 0xF800);
+		if (_usageIndex > 0) {
 			_vm->_palette->_paletteUsage.transform(artHeader._palette);
 
 			for (uint i = 0; i < _palAnimData.size(); ++i) {

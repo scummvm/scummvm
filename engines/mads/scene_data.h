@@ -267,7 +267,7 @@ public:
 	int _depthList[DEPTH_BANDS_SIZE];
 	int _field4A;
 
-	int _field4C;
+	int _usageIndex;
 	Common::Array<RGB4> _palAnimData;
 	SceneNodeList _nodes;
 public:

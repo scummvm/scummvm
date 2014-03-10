@@ -553,8 +553,8 @@ void Palette::initGamePalette() {
 				_vm->_game->_player._spritesStart + idx];
 			
 			uint32 mask = 1;
-			if (asset->_field6)
-				mask <<= asset->_field6;
+			if (asset->_usageIndex)
+				mask <<= asset->_usageIndex;
 			
 			palMask = mask;
 		}
