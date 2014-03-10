@@ -23,6 +23,7 @@
 #include "illusions/illusions.h"
 #include "illusions/resourcesystem.h"
 #include "illusions/backgroundresource.h"
+#include "illusions/graphics.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
@@ -72,7 +73,12 @@ Common::Error IllusionsEngine::run() {
 	_resSys = new ResourceSystem();
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
 	
-	_resSys->loadResource(0x00110002, 0, 0);
+	_resSys->loadResource(0x0011000B, 0, 0);
+
+	BackgroundItem *backgroundItem = *(_backgroundItems.begin());
+	_system->copyRectToScreen(backgroundItem->_surfaces[0]->getPixels(), backgroundItem->_surfaces[0]->pitch,
+		0, 0, 640, 480);
+	_system->updateScreen();
 
 	while (!shouldQuit()) {
 		updateEvents();
@@ -119,6 +125,24 @@ void IllusionsEngine::updateEvents() {
 			break;
 		}
 	}
+}
+
+BackgroundItem *IllusionsEngine::allocBackgroundItem() {
+	BackgroundItem *backgroundItem = new BackgroundItem(this);
+	_backgroundItems.push_back(backgroundItem);
+	return backgroundItem;
+}
+
+Graphics::Surface *IllusionsEngine::allocSurface(int16 width, int16 height) {
+	// TODO Use screen pixel format?
+	Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(width, height, pixelFormat16);
+	return surface; 
+}
+
+Graphics::Surface *IllusionsEngine::allocSurface(SurfInfo &surfInfo) {
+	return allocSurface(surfInfo._dimensions._width, surfInfo._dimensions._height);
 }
 
 } // End of namespace Illusions

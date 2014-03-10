@@ -23,11 +23,14 @@
 #ifndef ILLUSIONS_BACKGROUNDRESOURCE_H
 #define ILLUSIONS_BACKGROUNDRESOURCE_H
 
+#include "illusions/graphics.h"
 #include "illusions/resourcesystem.h"
+#include "graphics/surface.h"
 
 #include "common/array.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/rect.h"
 #include "common/substream.h"
 #include "common/system.h"
 
@@ -47,6 +50,55 @@ protected:
 	IllusionsEngine *_vm;
 };
 
+struct TileMap {
+	int16 _width, _height;
+	//field_4 dd
+	byte *_map;
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+};
+
+struct BgInfo {
+	uint32 _flags;
+	//field_4 dw
+	int16 _priorityBase;
+	SurfInfo _surfInfo;
+	Common::Point _panPoint;
+	TileMap _tileMap;
+	byte *_tilePixels;
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+};
+
+class BackgroundResource {
+public:
+	BackgroundResource();
+	~BackgroundResource();
+	void load(byte *data, uint32 dataSize);
+	int findMasterBgIndex();
+public:
+
+	uint _bgInfosCount;
+	BgInfo *_bgInfos;
+
+};
+
+const uint kMaxBackgroundItemSurfaces = 3;
+
+class BackgroundItem {
+public:
+	BackgroundItem(IllusionsEngine *vm);
+	~BackgroundItem();
+	void initSurface();
+	void drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
+public:
+	IllusionsEngine *_vm;
+	uint32 _tag;
+	int _pauseCtr;
+	BackgroundResource *_bgRes;
+	Common::Point _panPoints[kMaxBackgroundItemSurfaces];
+	Graphics::Surface *_surfaces[kMaxBackgroundItemSurfaces];
+	// TODO SavedCamera savedCamera;
+	// TODO? byte *savedPalette;
+};
 
 } // End of namespace Illusions
 

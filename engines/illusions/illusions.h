@@ -36,6 +36,7 @@
 #include "common/winexe.h"
 #include "common/winexe_pe.h"
 #include "engines/engine.h"
+#include "graphics/surface.h"
 
 struct ADGameDescription;
 
@@ -45,6 +46,11 @@ namespace Illusions {
 
 class ResourceSystem;
 
+struct SurfInfo;
+
+class BackgroundItem;
+class BackgroundResource;
+
 class IllusionsEngine : public Engine {
 protected:
 	Common::Error run();
@@ -53,14 +59,21 @@ public:
 	IllusionsEngine(OSystem *syst, const ADGameDescription *gd);
 	~IllusionsEngine();
 	const Common::String getTargetName() { return _targetName; }
+	
 private:
 	const ADGameDescription *_gameDescription;
 	Graphics::PixelFormat _pixelFormat;
 public:	
 	Common::RandomSource *_random;
 	ResourceSystem *_resSys;
-
+	
 	void updateEvents();
+
+	Common::List<BackgroundItem*> _backgroundItems;
+	BackgroundItem *allocBackgroundItem();
+	
+	Graphics::Surface *allocSurface(int16 width, int16 height);
+	Graphics::Surface *allocSurface(SurfInfo &surfInfo);
 
 #if 0
 
