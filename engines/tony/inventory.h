@@ -102,7 +102,7 @@ public:
 	 * Initialization and closing
 	 */
 	using RMGfxWoodyBuffer::init;
-	virtual void init();
+	void init();
 	void close();
 	void reset();
 

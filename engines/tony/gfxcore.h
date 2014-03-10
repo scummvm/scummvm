@@ -220,7 +220,7 @@ public:
 	virtual ~RMGfxSourceBuffer16();
 
 	// Initialization
-	virtual void create(int dimx, int dimy);
+	void create(int dimx, int dimy);
 
 	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -263,7 +263,7 @@ public:
 	virtual ~RMGfxSourceBuffer8();
 
 	// Initialization
-	virtual void create(int dimx, int dimy);
+	void create(int dimx, int dimy);
 
 	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
@@ -424,7 +424,7 @@ public:
 	RMGfxSourceBuffer4(int dimx, int dimy);
 
 	// Initialization
-	virtual void create(int dimx, int dimy);
+	void create(int dimx, int dimy);
 
 	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
