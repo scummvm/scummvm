@@ -23,7 +23,9 @@
 #include "illusions/illusions.h"
 #include "illusions/resourcesystem.h"
 #include "illusions/backgroundresource.h"
+#include "illusions/camera.h"
 #include "illusions/graphics.h"
+#include "illusions/input.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
