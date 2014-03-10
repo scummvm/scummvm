@@ -235,7 +235,7 @@ class ImageInterEntries: public Common::Array<ImageInterEntry> {
 public:
 	int add(int field0, int field2);
 
-	void call(int v1);
+	void call(int v1, int v2);
 };
 
 } // End of namespace MADS

@@ -77,6 +77,7 @@ private:
 	void load(Common::SeekableReadStream *stream, int flags);
 public:
 	SpriteSetCharInfo *_charInfo;
+	int _field6;
 public:
 	/**
 	 * Constructor

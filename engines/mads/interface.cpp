@@ -101,7 +101,7 @@ void InterfaceSurface::setup(int id) {
 	copyTo(&_surface);
 
 	if (_vm->_game->_v1 == 5)
-		scene._imageInterEntries.call(0);
+		scene._imageInterEntries.call(0, 0);
 
 	scene._action.clear();
 	writeText();

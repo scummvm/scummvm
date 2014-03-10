@@ -395,7 +395,7 @@ int ImageInterEntries::add(int field0, int field2) {
 	return size() - 1;
 }
 
-void ImageInterEntries::call(int v1) {
+void ImageInterEntries::call(int v1, int v2) {
 	debug("TODO: ImageInterEntries::call");
 }
 

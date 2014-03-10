@@ -22,7 +22,9 @@
 
 #include "common/scummsys.h"
 #include "mads/mads.h"
+#include "mads/game.h"
 #include "mads/graphics.h"
+#include "mads/palette.h"
 
 namespace MADS {
 
@@ -35,8 +37,41 @@ void ScreenSurface::updateScreen() {
 	g_system->updateScreen();
 }
 
-void ScreenSurface::transition(bool transitionFlag, bool surfaceFlag) {
+void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag) {
+	switch (transitionType) {
+	case kTransitionFadeOutIn:
+		fadeOut();
+		fadeIn();
+		break;
 
+	case kTransitionFadeIn:
+		fadeIn();
+		break;
+
+	case kTransitionBoxInBottomLeft:
+	case kTransitionBoxInBottomRight:
+	case kTransitionBoxInTopLeft:
+	case kTransitionBoxInTopRight:
+		error("TODO: transition");
+		break;
+
+	case kTransitionPanLeftToRight:
+	case kTransitionPanRightToLeft:
+		error("TODO: transition");
+
+	case kTransitionCircleIn1:
+	case kTransitionCircleIn2:
+	case kTransitionCircleIn3:
+	case kTransitionCircleIn4:
+		error("TODO circle transition");
+
+	case kCenterVertTransition:
+		error("TODO: center vert transition");
+
+	default:
+		// Quick transitions
+		break;
+	}
 }
 
 void ScreenSurface::setPointer(MSurface *s) {
@@ -44,5 +79,13 @@ void ScreenSurface::setPointer(MSurface *s) {
 	_pitch = s->w;
 }
 
+void ScreenSurface::fadeOut() {
+	warning("TODO: Proper fade out");
+}
+
+void ScreenSurface::fadeIn() {
+	warning("TODO: Proper fade in");
+	_vm->_palette->setFullPalette(_vm->_palette->_mainPalette);
+}
 
 } // End of namespace MADS

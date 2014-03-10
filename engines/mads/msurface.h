@@ -50,7 +50,7 @@ struct SpriteInfo {
  * MADS graphics surface
  */
 class MSurface : public Graphics::Surface {
-private:
+protected:
 	static MADSEngine *_vm;
 public:
 	/**

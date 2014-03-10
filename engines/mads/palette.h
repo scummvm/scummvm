@@ -37,28 +37,36 @@ struct RGB4 {
 	byte g;
 	byte b;
 	byte u;
+
+	RGB4() { r = g = b = u = 0; }
 };
 
 struct RGB6 {
 	byte r;
 	byte g;
 	byte b;
-	byte palIndex;
-	byte u2;
-	byte flags;
+	byte _palIndex;
+	byte _u2;
+	byte _flags;
 
 	void load(Common::SeekableReadStream *f);
 };
 
 class PaletteUsage {
 private:
-	Common::Array<int> _data;
+	MADSEngine *_vm;
+	Common::Array<uint16> _data;
 
 	int rgbMerge(RGB6 &palEntry);
 
 	void prioritizeFromList(int lst[3]);
+
+	int getGamePalFreeIndex(int *palIndex);
 public:
-	PaletteUsage();
+	/**
+	 * Constructor
+	 */
+	PaletteUsage(MADSEngine *vm);
 
 	void load(int count, ...);
 
@@ -66,6 +74,8 @@ public:
 	 * Returns whether the usage list is empty
 	 */
 	bool empty() const { return _data.size() == 0;  }
+
+	uint16 &operator[](int index) { return _data[index]; }
 
 	/**
 	 * Gets key entries from the passed palette
@@ -79,14 +89,28 @@ public:
 	 */
 	void prioritize(Common::Array<RGB6> &palette);
 
-	bool process(Common::Array<RGB6> &palette, int v) {
-		warning("TODO: PaletteUsage::process");
-		return 0;
-	}
+	int process(Common::Array<RGB6> &palette, int v);
 
 	void transform(Common::Array<RGB6> &palette);
 };
 
+class RGBList {
+private:
+	uint16 _data[32];
+public:
+	RGBList() { clear(); }
+
+	void clear();
+
+	void reset();
+
+	/**
+	 * Scans for a free slot
+	 */
+	int scan();
+
+	uint16 &operator[](int idx) { return _data[idx]; }
+};
 
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
@@ -99,12 +123,6 @@ private:
 	void initRange(byte *palette);
 protected:
 	MADSEngine *_vm;
-	bool _colorsChanged;
-
-	bool _fading_in_progress;
-	byte _originalPalette[PALETTE_COUNT * 4];
-	byte _fadedPalette[PALETTE_COUNT * 4];
-	int _usageCount[PALETTE_COUNT];
 
 	void reset();
 public:
@@ -112,6 +130,10 @@ public:
 	byte _savedPalette[PALETTE_SIZE];
 	RGB4 _gamePalette[PALETTE_COUNT];
 	PaletteUsage _paletteUsage;
+	RGBList _rgbList;
+	int _v1;
+	int _lowRange;
+	int _highRange;
 public:
 	/**
 	 * Constructor
@@ -139,6 +161,20 @@ public:
 	void grabPalette(byte *colors, uint start, uint num);
 	
 	/**
+	 * Gets the entire palette at once
+	 */
+	void getFullPalette(byte palette[PALETTE_SIZE]) {
+		grabPalette(&palette[0], 0, PALETTE_COUNT);
+	}
+
+	/**
+	 * Sets the entire palette at once
+	 */
+	void setFullPalette(byte palette[PALETTE_SIZE]) {
+		setPalette(&palette[0], 0, PALETTE_COUNT);
+	}
+
+	/**
 	 * Returns the palette index in the palette that most closely matches the
 	 * specified RGB pair
 	 */
@@ -164,6 +200,8 @@ public:
 	 */
 	static void setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2);
 
+	static void processLists(int count, byte *pal1, byte *pal2);
+
 	/**
 	 * Resets the game palette
 	 */
@@ -185,6 +223,8 @@ public:
 	void close() {
 		warning("TODO: Palette::close");
 	}
+
+	void fadeOut(byte palette[PALETTE_SIZE], int v1, int v2, int v3, int v4, int v5, int v6);
 };
 
 } // End of namespace MADS

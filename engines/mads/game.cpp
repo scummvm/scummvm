@@ -191,15 +191,16 @@ void Game::sectionLoop() {
 
 		switch (_vm->_screenFade) {
 		case SCREEN_FADE_SMOOTH:
-			_abortTimers2 = 2;
+			_abortTimers2 = kTransitionFadeOutIn;
 			break;
 		case SCREEN_FADE_FAST:
-			_abortTimers2 = 20;
+			_abortTimers2 = kCenterVertTransition;
 			break;
 		default:
-			_abortTimers2 = 21;
+			_abortTimers2 = kTransitionNone;
 			break;
 		}
+
 		_abortTimers = 0;
 		_abortTimersMode2 = ABORTMODE_1;
 		_priorFrameTimer = _scene._frameStartTime;

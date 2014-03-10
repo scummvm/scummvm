@@ -384,16 +384,15 @@ void Scene::doFrame() {
 				_kernelMessages.update();
 			}
 
-			_vm->_game->_abortTimers2 = !_vm->_game->_abortTimers2;
-
-			warning("TODO: image_inter_list_call");
+			_imageInterEntries.call(_vm->_game->_abortTimers2 == kTransitionFadeIn ? 0xff : 0,
+				_vm->_game->_abortTimers2);
 
 			// Write any text needed by the interface
 			if (_vm->_game->_abortTimers2)
 				_interface.writeText();
 
 			// Draw any elements
-			drawElements(_vm->_game->_abortTimers2, _vm->_game->_abortTimers2);
+			drawElements((ScreenTransition)_vm->_game->_abortTimers2, _vm->_game->_abortTimers2);
 
 			// Handle message updates
 			if (_vm->_game->_abortTimers2) {
@@ -425,7 +424,7 @@ void Scene::doFrame() {
 	_vm->_events->waitForNextFrame();
 }
 
-void Scene::drawElements(bool transitionFlag, bool surfaceFlag) {
+void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	// Draw any sprites
 	_spriteSlots.drawBackground();
 
@@ -455,9 +454,9 @@ void Scene::drawElements(bool transitionFlag, bool surfaceFlag) {
 	_interface.setBounds(Common::Rect(_vm->_screen._offset.x, _vm->_screen._offset.y,
 		_vm->_screen._offset.x + _vm->_screen.w, _vm->_screen._offset.y + _vm->_screen.h));
 
-	if (transitionFlag) {
+	if (transitionType) {
 		// Fading in the screen
-		_vm->_screen.transition(transitionFlag, surfaceFlag);
+		_vm->_screen.transition(transitionType, surfaceFlag);
 		_vm->_sound->startQueuedCommands();
 	} else {
 		// Copy dirty areas to the screen

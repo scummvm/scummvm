@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "mads/assets.h"
+#include "mads/graphics.h"
 #include "mads/hotspots.h"
 #include "mads/messages.h"
 #include "mads/msurface.h"
@@ -189,7 +190,7 @@ public:
 	/**
 	 * Draw all the elements onto the scene
 	 */
-	void drawElements(bool transitionFlag, bool surfaceFlag);
+	void drawElements(ScreenTransition transitionType, bool surfaceFlag);
 
 	/**
 	 * Execute a click within the scene

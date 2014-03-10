@@ -32,7 +32,30 @@ namespace MADS {
 #define MADS_SCREEN_WIDTH 320
 #define MADS_SCREEN_HEIGHT 200
 
+enum ScreenTransition {
+	kTransitionNone = 0,
+	kTransitionFadeIn, kTransitionFadeOutIn,
+	kTransitionBoxInBottomLeft, kTransitionBoxInBottomRight,
+	kTransitionBoxInTopLeft, kTransitionBoxInTopRight,
+	kTransitionPanLeftToRight, kTransitionPanRightToLeft,
+	kTransitionCircleIn1, kTransitionCircleIn2,
+	kTransitionCircleIn3, kTransitionCircleIn4,
+	kVertTransition1, kVertTransition2, kVertTransition3,
+	kVertTransition4, kVertTransition5, kVertTransition6,
+	kVertTransition7, kCenterVertTransition
+};
+
 class ScreenSurface : public MSurface {
+private:
+	/**
+	 * Handles screen fade out
+	 */
+	void fadeOut();
+
+	/**
+	 * Handles screen fade in
+	 */
+	void fadeIn();
 public:
 	Common::Point _offset;
 	byte *_pixels;
@@ -55,7 +78,7 @@ public:
 	 */
 	void updateScreen();
 
-	void transition(bool transitionFlag, bool surfaceFlag);
+	void transition(ScreenTransition transitionType, bool surfaceFlag);
 };
 
 } // End of namespace MADS
