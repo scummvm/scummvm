@@ -23,12 +23,15 @@
 #include "illusions/resourcesystem.h"
 
 #include "common/algorithm.h"
+#include "common/debug.h"
 
 namespace Illusions {
 
 // Resource
 
 void Resource::loadData() {
+	debug("Resource::loadData()");
+	
 	Common::File fd;
 	if (!fd.open(_filename))
 		error("Resource::loadData() Could not open %s for reading", _filename.c_str());
@@ -38,6 +41,8 @@ void Resource::loadData() {
 }
 
 void Resource::unloadData() {
+	debug("Resource::unloadData()");
+	
 	delete _data;
 	_data = 0;
 	_dataSize = 0;
@@ -70,13 +75,17 @@ void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
 
 	resourceLoader->buildFilename(resource);
 
-	if (resourceLoader->isFlag(kRlfLoadFile))
+	if (resourceLoader->isFlag(kRlfLoadFile)) {
+		debug("ResourceSystem::loadResource() kRlfLoadFile");
 		resource->loadData();
+	}
 	
 	resourceLoader->load(resource);
 	
-	if (resourceLoader->isFlag(kRlfFreeDataAfterUse))
+	if (resourceLoader->isFlag(kRlfFreeDataAfterUse)) {
+		debug("ResourceSystem::loadResource() kRlfFreeDataAfterUse");
 		resource->unloadData();
+	}
 	
 	resource->_loaded = true;
 
