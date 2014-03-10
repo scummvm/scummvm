@@ -425,7 +425,28 @@ void sceneHandler18and19_showGirlJumpTo() {
 }
 
 void sceneHandler18and19_showGirlJump() {
-	warning("STUB: sceneHandler18and19_showGirlJump()");
+	StaticANIObject *ani = g_vars->scene18_var07[g_vars->scene18_var32]->ani;
+	int x, y;
+
+	if (ani->_movement) {
+		x = ani->_movement->_ox;
+		y = ani->_movement->_oy;
+	} else {
+		x = ani->_ox;
+		y = ani->_oy;
+	}
+
+	g_vars->scene18_girl->show1(x - 62, y - 10, MV_GRL18_JUMPFROM, 0);
+	g_vars->scene18_girl->_priority = 50;
+	g_vars->scene18_girl->startAnim(MV_GRL18_JUMPFROM, 0, -1);
+
+	g_vars->scene18_var07[g_vars->scene18_var32]->sflags = 1;
+
+	g_vars->scene18_var07[g_vars->scene18_var32]->ani->changeStatics2(ST_KSL_REACT);
+	g_vars->scene18_var07[g_vars->scene18_var32]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
+
+	g_vars->scene18_var23 = 1;
+	g_vars->scene18_var25++;
 }
 
 void sceneHandler18and19_showBoyJumpTo() {
