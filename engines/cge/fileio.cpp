@@ -118,7 +118,7 @@ uint16 ResourceManager::read(byte *buf, uint16 length) {
 }
 
 BtPage *ResourceManager::getPage(int level, uint16 pageId) {
-	debugC(1, kCGEDebugFile, "IoHand::getPage(%d, %d)", level, pageId);
+	debugC(1, kCGEDebugFile, "ResourceManager::getPage(%d, %d)", level, pageId);
 
 	if (_buff[level]._pageNo != pageId) {
 		int32 pos = pageId * kBtSize;
@@ -142,7 +142,7 @@ BtPage *ResourceManager::getPage(int level, uint16 pageId) {
 }
 
 BtKeypack *ResourceManager::find(const char *key) {
-	debugC(1, kCGEDebugFile, "IoHand::find(%s)", key);
+	debugC(1, kCGEDebugFile, "ResourceManager::find(%s)", key);
 
 	int lev = 0;
 	uint16 nxt = kBtValRoot;
