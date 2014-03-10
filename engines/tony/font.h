@@ -347,6 +347,7 @@ public:
 	virtual ~RMDialogChoice();
 
 	// Initialization and closure
+	using RMGfxWoodyBuffer::init;
 	void init();
 	void close();
 
