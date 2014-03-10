@@ -109,6 +109,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MYST3BIN/M3DATA/TEXT/PAL");
 
 	settingsInitDefaults();
+	syncSoundSettings();
 }
 
 Myst3Engine::~Myst3Engine() {
@@ -1470,6 +1471,18 @@ void Myst3Engine::settingsApplyFromVars() {
 		closeArchives();
 		openArchives();
 	}
+
+	syncSoundSettings();
+}
+
+void Myst3Engine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	uint soundOverall = ConfMan.getInt("overall_volume");
+	uint soundVolumeMusic = ConfMan.getInt("music_volume");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundOverall);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic * soundOverall / 256);
 }
 
 } // end of namespace Myst3

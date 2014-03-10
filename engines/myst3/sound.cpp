@@ -413,7 +413,7 @@ void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenua
 		return;
 
 	// Play the sound
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_handle, _stream);
+	g_system->getMixer()->playStream(mixerSoundType(), &_handle, _stream);
 	setVolume3D(volume, heading, attenuation);
 
 	// Update state
@@ -423,11 +423,22 @@ void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenua
 	_vm->_state->setVar(id, 1);
 }
 
-uint32 SoundChannel::adjustVolume(uint32 volume) {
-	uint32 musicVolume = CLIP<uint>(ConfMan.getInt("music_volume") * 100 / 256, 0, 100);
+Audio::Mixer::SoundType SoundChannel::mixerSoundType() {
+	switch (_type) {
+	case kCue:
+	case kEffect:
+		return Audio::Mixer::kSFXSoundType;
+	case kAmbient:
+	case kMusic:
+		return  Audio::Mixer::kMusicSoundType;
+	default:
+		error("Impossible");
+	}
+}
 
+uint32 SoundChannel::adjustVolume(uint32 volume) {
 	if (_type == kMusic)
-		return volume * musicVolume / 75;
+		return volume * 100 / 75;
 	else
 		return volume;
 }

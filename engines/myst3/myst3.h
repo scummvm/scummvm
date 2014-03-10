@@ -89,6 +89,7 @@ class Myst3Engine : public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run();
+	virtual void syncSoundSettings();
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
 	GameState *_state;

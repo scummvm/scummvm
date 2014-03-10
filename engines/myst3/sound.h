@@ -96,6 +96,7 @@ private:
 
 	Audio::RewindableAudioStream *makeAudioStream(const Common::String &name) const;
 	void updateFading();
+	Audio::Mixer::SoundType mixerSoundType();
 };
 
 class Sound {
