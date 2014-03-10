@@ -373,9 +373,25 @@ void GfxOpenGLS::setupCamera(float fov, float nclip, float fclip, float roll) {
 }
 
 void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
+	Math::Matrix4 projMatrix = _projMatrix;
+	projMatrix.transpose();
+
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		_currentPos = pos;
 		_currentQuat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
+
+		Math::Matrix4 invertZ;
+		invertZ(2,2) = -1.0f;
+
+		Math::Matrix4 viewMatrix = _currentQuat.toMatrix();
+		viewMatrix.transpose();
+
+		Math::Matrix4 camPos;
+		camPos(0,3) = -_currentPos.x();
+		camPos(1,3) = -_currentPos.y();
+		camPos(2,3) = -_currentPos.z();
+
+		_mvpMatrix = projMatrix * invertZ * viewMatrix * camPos;
 	} else {
 		Math::Matrix4 viewMatrix = makeRotationMatrix(Math::Angle(roll), Math::Vector3d(0, 0, 1));
 		Math::Vector3d up_vec(0, 0, 1);
@@ -405,7 +421,72 @@ void GfxOpenGLS::getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, 
 }
 
 void GfxOpenGLS::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
+	if (_currentShadowArray) {
+		*x1 = -1;
+		*y1 = -1;
+		*x2 = -1;
+		*y2 = -1;
+		return;
+	}
 
+	Math::Matrix4 modelMatrix = _currentActor->getFinalMatrix();
+	Math::Matrix4 mvpMatrix = _mvpMatrix * modelMatrix;
+
+	GLdouble top = 1000;
+	GLdouble right = -1000;
+	GLdouble left = 1000;
+	GLdouble bottom = -1000;
+
+	for (uint i = 0; i < model->_numFaces; i++) {
+		int *indices = (int *)model->_faces[i]._indexes;
+
+		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
+			int index = indices[j];
+			const Math::Vector3d &dv = model->_drawVertices[index];
+
+			Math::Vector4d v = Math::Vector4d(dv.x(), dv.y(), dv.z(), 1.0f);
+			v = mvpMatrix * v;
+			v /= v.w();
+
+			GLdouble winX = (1 + v.x()) / 2.0f * _gameWidth;
+			GLdouble winY = (1 + v.y()) / 2.0f * _gameHeight;
+
+			if (winX > right)
+				right = winX;
+			if (winX < left)
+				left = winX;
+			if (winY < top)
+				top = winY;
+			if (winY > bottom)
+				bottom = winY;
+		}
+	}
+
+	double t = bottom;
+	bottom = _gameHeight - top;
+	top = _gameHeight - t;
+
+	if (left < 0)
+		left = 0;
+	if (right >= _gameWidth)
+		right = _gameWidth - 1;
+	if (top < 0)
+		top = 0;
+	if (bottom >= _gameHeight)
+		bottom = _gameHeight - 1;
+
+	if (top >= _gameHeight || left >= _gameWidth || bottom < 0 || right < 0) {
+		*x1 = -1;
+		*y1 = -1;
+		*x2 = -1;
+		*y2 = -1;
+		return;
+	}
+
+	*x1 = (int)left;
+	*y1 = (int)(_gameHeight - bottom);
+	*x2 = (int)right;
+	*y2 = (int)(_gameHeight - top);
 }
 
 void GfxOpenGLS::startActorDraw(const Actor *actor) {
