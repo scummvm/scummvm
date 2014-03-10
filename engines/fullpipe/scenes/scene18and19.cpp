@@ -48,6 +48,9 @@ struct Swinger {
 	int sfield_24;
 };
 
+
+#define ANGLE(x) ((x) * M_PI / 180)
+
 void scene18_preload() {
     g_fp->_scene3 = 0;
 
@@ -145,7 +148,7 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 	for (int i = 0; i < 8; i++) {
 		swinger = new Swinger;
 
-		swinger->angle = (double)i * M_PI / 4.0;
+		swinger->angle = (double)i * ANGLE(45);
 		swinger->sx = g_vars->scene18_var20 - (int)(cos(swinger->angle) * -575.0);
 		swinger->sy = g_vars->scene18_var04 - (int)(sin(swinger->angle) * -575.0) + 87;
 		swinger->ix = swinger->sx;
@@ -467,11 +470,11 @@ void sceneHandler18and19_drawRiders() {
 
 		double oldangle = swinger->angle;
 
-		swinger->angle += M_PI / 180;
+		swinger->angle += ANGLE(1);
 
-		if (swinger->angle > 2 * M_PI) {
-			swinger->angle -= 2 * M_PI;
-			oldangle -= 2 * M_PI;
+		if (swinger->angle > ANGLE(360)) {
+			swinger->angle -= ANGLE(360);
+			oldangle -= ANGLE(360);
 		}
 
 		int ix = g_vars->scene18_var20 - (int)(cos(swinger->angle) * -575.0);
@@ -480,7 +483,7 @@ void sceneHandler18and19_drawRiders() {
 		if (!g_vars->scene18_var21) {
 			ix = swinger->sx;
 			iy = swinger->sy;
-			swinger->angle = (double)i * M_PI / 4;
+			swinger->angle = (double)i * ANGLE(45);
 		}
 
 		if (swinger->ani->_movement)
@@ -512,27 +515,27 @@ void sceneHandler18and19_drawRiders() {
 		}
 
 		if (g_vars->scene18_var22) {
-			if ((swinger->sflags & 2) && swinger->angle >= 2.792526803190933 && oldangle < 2.792526803190933) { // 8 pi / 9
+			if ((swinger->sflags & 2) && swinger->angle >= ANGLE(160) && oldangle < ANGLE(160)) {
 				swinger->sflags = 8;
 				swinger->ani->changeStatics2(ST_KSL_BOY);
 				swinger->ani->startAnim(MV_KSL_JUMPBOY, 0, -1);
 				g_vars->scene18_var32 = i;
-			} else if ((swinger->sflags & 4) && swinger->angle >= 2.82743338823082 && oldangle < 2.82743338823082) { // 9 pi / 10
+			} else if ((swinger->sflags & 4) && swinger->angle >= ANGLE(162) && oldangle < ANGLE(162)) {
 				swinger->sflags = 16;
 				swinger->ani->changeStatics2(ST_KSL_GIRL);
 				swinger->ani->startAnim(MV_KSL_JUMPGIRL, 0, -1);
 				g_vars->scene18_var32 = i;
 			} else if (g_vars->scene18_var23) {
-				if (g_vars->scene18_var24 > 0 && (swinger->sflags & 1) && swinger->angle >= 3.228859116189517 && oldangle < 3.228859116189517) { // 37 pi / 36
+				if (g_vars->scene18_var24 > 0 && (swinger->sflags & 1) && swinger->angle >= ANGLE(185) && oldangle < ANGLE(185)) {
 					g_vars->scene18_var33 = i;
 					sceneHandler18and19_boyJumpTo();
 				}
-			} else if (g_vars->scene18_var25 > 0 && (swinger->sflags & 1) && swinger->angle >= 3.263765701229403 && oldangle < 3.263765701229403) { // 187 pi / 180
+			} else if (g_vars->scene18_var25 > 0 && (swinger->sflags & 1) && swinger->angle >= ANGLE(187) && oldangle < ANGLE(187)) {
 				g_vars->scene18_var33 = i;
 				sceneHandler18and19_girlJumpTo();
 			}
 
-			if (swinger->angle >= 3.490658503988667 && oldangle < 3.490658503988667) { // 10 pi / 9
+			if (swinger->angle >= ANGLE(200) && oldangle < ANGLE(200)) {
 				if (g_vars->scene18_var26)
 					g_vars->scene18_var24++;
 
@@ -540,7 +543,7 @@ void sceneHandler18and19_drawRiders() {
 			}
 		}
 
-		if (g_vars->scene18_var28 && (swinger->sflags & 1) && swinger->angle >= 1.448623279155297 && oldangle < 1.448623279155297) { // 83 pi / 180
+		if (g_vars->scene18_var28 && (swinger->sflags & 1) && swinger->angle >= ANGLE(83) && oldangle < ANGLE(83)) {
 			g_vars->scene18_var27 = i;
 			sceneHandler18and19_manStandArmchair();
 		}
@@ -549,18 +552,18 @@ void sceneHandler18and19_drawRiders() {
 			continue;
 
 		if (i == g_vars->scene18_var27) {
-			if (swinger->angle >= 2.967059728390367 && oldangle < 2.967059728390367) { // 17 pi / 18
+			if (swinger->angle >= ANGLE(170) && oldangle < ANGLE(170)) {
 				g_fp->_gameLoader->preloadScene(SC_18, TrubaRight);
-			} else if (swinger->angle >= 0.4363323129985833 && oldangle < 0.4363323129985833) { // 5 pi / 36
+			} else if (swinger->angle >= ANGLE(25) && oldangle < ANGLE(25)) {
 				g_fp->_gameLoader->preloadScene(SC_19, TrubaRight);
-			} else if (swinger->angle >= 4.1887902047864 && oldangle < 4.1887902047864) { // 4 pi / 3
+			} else if (swinger->angle >= ANGLE(270) && oldangle < ANGLE(270)) {
 				g_fp->_sceneRect.translate(1200, 0);
 			}
 		}
 
 		if (g_vars->scene18_var13 > 0) {
 			if (swinger->sflags & 0x20) {
-				double newa = (double)g_vars->scene18_var14 * 0.01745329251994333;// pi / 180
+				double newa = (double)g_vars->scene18_var14 * ANGLE(1);
 
 				if (newa <= swinger->angle && oldangle < newa) {
 					swinger->ani->changeStatics2(ST_KSL_MAN);
