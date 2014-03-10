@@ -22,7 +22,28 @@
 
 #include "illusions/resourcesystem.h"
 
+#include "common/algorithm.h"
+
 namespace Illusions {
+
+// Resource
+
+void Resource::loadData() {
+	Common::File fd;
+	if (!fd.open(_filename))
+		error("Resource::loadData() Could not open %s for reading", _filename.c_str());
+	_dataSize = fd.size();
+	_data = (byte*)malloc(_dataSize);
+	fd.read(_data, _dataSize);
+}
+
+void Resource::unloadData() {
+	delete _data;
+	_data = 0;
+	_dataSize = 0;
+}
+
+// ResourceSystem
 
 ResourceSystem::ResourceSystem() {
 }
@@ -41,7 +62,7 @@ void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
 	BaseResourceLoader *resourceLoader = getResourceLoader(resId);
 
 	Resource *resource = new Resource();
-	resource->_loaded = 0;
+	resource->_loaded = false;
 	resource->_resId = resId;
 	resource->_tag = tag;
 	resource->_threadId = threadId;
@@ -49,24 +70,13 @@ void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
 
 	resourceLoader->buildFilename(resource);
 
-	if (resourceLoader->isFlag(kRlfLoadFile)) {
-		// TODO Move to Resource class?
-		Common::File fd;
-		if (!fd.open(resource->filename))
-			error("ResourceSystem::loadResource() Could not open %s for reading", resource->filename.c_str());
-		resource->_dataSize = fd.size();
-		resource->_data = (byte*)malloc(resource->_dataSize);
-		fd.read(resource->_data, resource->_dataSize);
-	}
+	if (resourceLoader->isFlag(kRlfLoadFile))
+		resource->loadData();
 	
 	resourceLoader->load(resource);
 	
-	if (resourceLoader->isFlag(kRlfFreeDataAfterUse)) {
-		// TODO Move to Resource class?
-		delete resource->_data;
-		resource->_data = 0;
-		resource->_dataSize = 0;
-	}
+	if (resourceLoader->isFlag(kRlfFreeDataAfterUse))
+		resource->unloadData();
 	
 	resource->_loaded = true;
 
@@ -75,11 +85,38 @@ void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
 
 }
 
+void ResourceSystem::unloadResourceById(uint32 resId) {
+	Resource *resource = getResource(resId);
+	if (resource) 
+		unloadResource(resource);
+}
+
+void ResourceSystem::unloadResourcesByTag(uint32 tag) {
+	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceEqualByTag(tag));
+	while (it != _resources.end()) {
+		unloadResource(*it);
+		it = Common::find_if(it, _resources.end(), ResourceEqualByTag(tag));
+	}
+}
+
 BaseResourceLoader *ResourceSystem::getResourceLoader(uint32 resId) {
 	ResourceLoadersMapIterator it = _resourceLoaders.find(ResourceTypeId(resId));
 	if (it != _resourceLoaders.end())
 		return (*it)._value;
 	error("ResourceSystem::getResourceLoader() Could not find resource loader for resource id %08X", resId);
+}
+
+Resource *ResourceSystem::getResource(uint32 resId) {
+	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceEqualById(resId));
+	return it != _resources.end() ? *it : 0;
+}
+
+void ResourceSystem::unloadResource(Resource *resource) {
+	resource->_resourceLoader->unload(resource);
+	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceEqualByValue(resource));
+	if (it != _resources.end())
+		_resources.remove_at(it - _resources.begin());
+	delete resource;
 }
 
 } // End of namespace Illusions
