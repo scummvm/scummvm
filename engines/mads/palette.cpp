@@ -78,7 +78,7 @@ void PaletteUsage::prioritize(Common::Array<RGB6> &palette) {
 }
 
 int PaletteUsage::process(Common::Array<RGB6> &palette, int v) {
-	byte *palette1 = nullptr, *palette2 = nullptr;
+	byte *pal1 = nullptr, *pal2 = nullptr;
 	int palLow;
 	int palHigh = (v & 0x800) ? 0x100 : 0xC;
 	int palIdx;
@@ -117,8 +117,8 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, int v) {
 
 	int freeIndex;
 	int palCount = getGamePalFreeIndex(&freeIndex);
-	byte *pal1 = new byte[PALETTE_COUNT];
-	byte *pal2 = new byte[PALETTE_COUNT];
+	pal1 = new byte[PALETTE_COUNT];
+	pal2 = new byte[PALETTE_COUNT];
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
 		pal2[palIndex] = palIndex;
@@ -180,10 +180,52 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, int v) {
 			int var36 = (palette[palIndex]._flags & 0x80) ? 0 : 2;
 			
 			for (int idx = palLow; idx < palIdx; ++idx) {
-				// TODO
+				uint32 v = _vm->_palette->_gamePalette[idx];
+				if ((v & var3A) && !(v & var36)) {
+					int var10;
+
+					if (var2 > 1) {
+						var10 = rgbFactor(&_vm->_palette->_mainPalette[idx * 3], palette[palIndex]);
+					}
+					else if (_vm->_palette->_mainPalette[idx * 3] != palette[palIndex].r ||
+							_vm->_palette->_mainPalette[idx * 3 + 1] != palette[palIndex].g ||
+							_vm->_palette->_mainPalette[idx * 3 + 2] != palette[palIndex].b) {
+						var10 = 1;
+					} else {
+						var10 = 0;
+					}
+
+					if (var2 > var10) {
+						var48 = true;
+						var2 = idx;
+						var2 = var10;
+					}
+				}
 			}
 		}
-		//TODO
+
+		if (!var48 && (!(v & 0x1000) || (!(palette[palIndex]._flags & 0x60) && !(v & 0x2000)))) {
+			for (int idx = freeIndex; idx < palIdx && !var48; ++idx) {
+				if (!_vm->_palette->_gamePalette[idx]) {
+					--palCount;
+					++freeIndex;
+					var48 = true;
+					var4 = idx;
+
+					RGB6 &pSrc = palette[palIndex];
+					byte *pDest = &_vm->_palette->_mainPalette[idx * 3];
+					pDest[0] = pSrc.r;
+					pDest[1] = pSrc.g;
+					pDest[2] = pSrc.b;
+				}
+			}
+		}
+		
+		assert(var48);
+		int var52 = (varA && palette[palIndex]._u2) ? 2 : 0;
+
+		_vm->_palette->_gamePalette[var4] |= var52 | rgbMask;
+		palette[palIndex]._palIndex = var4;
 	}
 
 	_vm->_palette->_rgbList[rgbIndex] = 0xffff;
@@ -266,8 +308,7 @@ int PaletteUsage::getGamePalFreeIndex(int *palIndex) {
 	int count = 0;
 
 	for (int i = 0; i < PALETTE_COUNT; ++i) {
-		RGB4 &r = _vm->_palette->_gamePalette[i];
-		if (!(r.r | r.g | r.b | r.u)) {
+		if (!_vm->_palette->_gamePalette[i]) {
 			++count;
 			if (*palIndex < 0)
 				*palIndex = i;
@@ -275,6 +316,15 @@ int PaletteUsage::getGamePalFreeIndex(int *palIndex) {
 	}
 
 	return count;
+}
+
+int PaletteUsage::rgbFactor(byte *palEntry, RGB6 &pal6) {
+	int total = 0;
+	total += (palEntry[0] - pal6.r) * (palEntry[0] - pal6.r);
+	total += (palEntry[1] - pal6.g) * (palEntry[1] - pal6.g);
+	total += (palEntry[2] - pal6.b) * (palEntry[2] - pal6.b);
+
+	return total;
 }
 
 /*------------------------------------------------------------------------*/
@@ -474,16 +524,14 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 
 	// Init low range to common RGB values
 	if (lowRange) {
-		_gamePalette[0].r = 1;
-		_gamePalette[0].b = 0;
+		_gamePalette[0] = 1;
 
 		Common::fill(&_gamePalette[1], &_gamePalette[lowRange - 1], _gamePalette[0]);
 	}
 
 	// Init high range to common RGB values
 	if (highRange) {
-		_gamePalette[255].r = 1;
-		_gamePalette[255].b = 0;
+		_gamePalette[255] = 1;
 
 		Common::fill(&_gamePalette[255 - highRange], &_gamePalette[254], _gamePalette[255]);
 	}
@@ -496,7 +544,7 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 
 void Palette::initGamePalette() {
 	RGB4 rgb;
-	rgb.r = 1;
+	uint32 palMask = 1;
 
 	if (_vm->_game->_player._spritesLoaded && _vm->_game->_player._numSprites) {
 
@@ -508,19 +556,12 @@ void Palette::initGamePalette() {
 			if (asset->_field6)
 				mask <<= asset->_field6;
 			
-			rgb.r = mask & 0xff;
-			rgb.g = (mask >> 8) & 0xff;
-			rgb.b = (mask >> 16) & 0xff;
-			rgb.u = (mask >> 24) & 0xff;
+			palMask = mask;
 		}
 	}
 
-	for (int idx = 0; idx < PALETTE_COUNT; ++idx) {
-		_gamePalette[idx].r &= rgb.r;
-		_gamePalette[idx].g &= rgb.g;
-		_gamePalette[idx].b &= rgb.b;
-		_gamePalette[idx].u &= rgb.u;
-	}
+	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
+		_gamePalette[idx] = palMask;
 
 	_v1 = 0;
 	_rgbList.reset();

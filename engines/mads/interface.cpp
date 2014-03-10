@@ -49,14 +49,14 @@ void InterfaceSurface::load(const Common::String &resName) {
 	// Load in the palette
 	Common::SeekableReadStream *palStream = madsPack.getItemStream(0);
 
-	RGB4 *gamePalP = &_vm->_palette->_gamePalette[0];
+	uint32 *gamePalP = &_vm->_palette->_gamePalette[0];
 	byte *palP = &_vm->_palette->_mainPalette[0];
 
 	for (int i = 0; i < 16; ++i, gamePalP++, palP += 3) {
 		palP[0] = palStream->readByte();
 		palP[1] = palStream->readByte();
 		palP[2] = palStream->readByte();
-		gamePalP->r |= 1;
+		*gamePalP |= 1;
 		palStream->skip(3);
 	}
 	delete palStream;

@@ -62,6 +62,8 @@ private:
 	void prioritizeFromList(int lst[3]);
 
 	int getGamePalFreeIndex(int *palIndex);
+
+	int rgbFactor(byte *palEntry, RGB6 &pal6);
 public:
 	/**
 	 * Constructor
@@ -128,7 +130,7 @@ protected:
 public:
 	byte _mainPalette[PALETTE_SIZE];
 	byte _savedPalette[PALETTE_SIZE];
-	RGB4 _gamePalette[PALETTE_COUNT];
+	uint32 _gamePalette[PALETTE_COUNT];
 	PaletteUsage _paletteUsage;
 	RGBList _rgbList;
 	int _v1;
