@@ -95,7 +95,8 @@ void EMIMeshComponent::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const 
 	if (_parent && _parent->isVisible())
 		return;
 
-	_obj->getBoundingBox(x1, y1, x2, y2);
+	if (_obj)
+		_obj->getBoundingBox(x1, y1, x2, y2);
 }
 
 } // end of namespace Grim
