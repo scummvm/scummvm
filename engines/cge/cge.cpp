@@ -98,7 +98,7 @@ void CGEEngine::initSceneValues() {
 }
 
 void CGEEngine::init() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::setup()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::init()");
 
 	// Initialize fields
 	_lastFrame = 0;
