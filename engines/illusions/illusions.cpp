@@ -21,6 +21,7 @@
  */
 
 #include "illusions/illusions.h"
+#include "illusions/resourcesystem.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
