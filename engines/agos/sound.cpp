@@ -121,8 +121,14 @@ Common::SeekableReadStream *BaseSound::getSoundStream(uint sound) const {
 	int i = 1;
 	while (_offsets[sound + i] == _offsets[sound])
 		i++;
+	uint end;
+	if (_offsets[sound + i] > _offsets[sound]) {
+		end = _offsets[sound + i];
+	} else {
+		end = file->size();
+	}
 
-	return new Common::SeekableSubReadStream(file, _offsets[sound], _offsets[sound + i], DisposeAfterUse::YES);
+	return new Common::SeekableSubReadStream(file, _offsets[sound], end, DisposeAfterUse::YES);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -442,12 +448,16 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 		if (file.open("voices.idx")) {
 			int end = file.size();
 			_filenums = (uint16 *)malloc((end / 6 + 1) * 2);
-			_offsets = (uint32 *)malloc((end / 6 + 1) * 4);
+			_offsets = (uint32 *)malloc((end / 6 + 1 + 1) * 4);
 
 			for (int i = 1; i <= end / 6; i++) {
 				_filenums[i] = file.readUint16BE();
 				_offsets[i] = file.readUint32BE();
 			}
+			// We need to add a terminator entry otherwise we get an out of
+			// bounds read when the offset table is accessed in
+			// BaseSound::getSoundStream.
+			_offsets[end / 6 + 1] = 0;
 
 			_hasVoiceFile = true;
 			return;
