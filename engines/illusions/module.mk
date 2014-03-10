@@ -1,6 +1,7 @@
 MODULE := engines/illusions
 
 MODULE_OBJS := \
+	backgroundresource.o \
 	illusions.o \
 	detection.o \
 	resourcesystem.o

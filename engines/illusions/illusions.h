@@ -43,6 +43,8 @@ namespace Illusions {
 
 #define ILLUSIONS_SAVEGAME_VERSION 0
 
+class ResourceSystem;
+
 class IllusionsEngine : public Engine {
 protected:
 	Common::Error run();
@@ -56,6 +58,7 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 public:	
 	Common::RandomSource *_random;
+	ResourceSystem *_resSys;
 
 	void updateEvents();
 

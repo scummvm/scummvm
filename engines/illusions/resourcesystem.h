@@ -45,9 +45,14 @@ struct Resource {
 	byte *_data;
 	uint32 _dataSize;
 	BaseResourceLoader *_resourceLoader;
-	Common::String filename; // TODO Check if this is needed
+	Common::String _filename; // TODO Check if this is needed
 	Resource() : _loaded(false), _resId(0), _tag(0), _threadId(0), _data(0), _dataSize(0),
 	_resourceLoader(0) {}
+	~Resource() {
+		unloadData();
+	}
+	void loadData();
+	void unloadData();
 };
 
 struct ResourceLoaderInfo {
@@ -81,18 +86,48 @@ public:
 	
 	// TODO Handle threadId in caller as well as pausing of timer
 	void loadResource(uint32 resId, uint32 tag, uint32 threadId);
+	void unloadResourceById(uint32 resId);
+	void unloadResourcesByTag(uint32 tag);
 
 protected:
 	typedef Common::HashMap<uint32, BaseResourceLoader*> ResourceLoadersMap;
 	typedef ResourceLoadersMap::iterator ResourceLoadersMapIterator;
 	ResourceLoadersMap _resourceLoaders;
-
-	Common::Array<Resource*> _resources;
-	
 	BaseResourceLoader *getResourceLoader(uint32 resId);
+
+	typedef Common::Array<Resource*> ResourcesArray;
+	typedef ResourcesArray::iterator ResourcesArrayIterator;
+	ResourcesArray _resources;
+
+	struct ResourceEqualById : public Common::UnaryFunction<const Resource*, bool> {
+		uint32 _resId;
+		ResourceEqualById(uint32 resId) : _resId(resId) {}
+		bool operator()(const Resource *resource) const {
+			return resource->_resId == _resId;
+		}
+	};
+
+	struct ResourceEqualByValue : public Common::UnaryFunction<const Resource*, bool> {
+		const Resource *_resource;
+		ResourceEqualByValue(const Resource *resource) : _resource(resource) {}
+		bool operator()(const Resource *resource) const {
+			return resource == _resource;
+		}
+	};
+
+	struct ResourceEqualByTag : public Common::UnaryFunction<const Resource*, bool> {
+		uint32 _tag;
+		ResourceEqualByTag(uint32 tag) : _tag(tag) {}
+		bool operator()(const Resource *resource) const {
+			return resource->_tag == _tag;
+		}
+	};
+
+	Resource *getResource(uint32 resId);
+	void unloadResource(Resource *resource);
 	
 };
 
 } // End of namespace Illusions
 
-#endif // ILLUSIONS_ILLUSIONS_H
+#endif // ILLUSIONS_RESOURCESYSTEM_H

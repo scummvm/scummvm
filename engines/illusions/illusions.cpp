@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/resourcesystem.h"
+#include "illusions/backgroundresource.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
@@ -55,12 +56,29 @@ IllusionsEngine::~IllusionsEngine() {
 
 Common::Error IllusionsEngine::run() {
 
+	// Init search paths
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "resrem");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "savegame");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "voice");
+
 	Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, true, &pixelFormat16);
+	
+	_resSys = new ResourceSystem();
+	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
+	
+	_resSys->loadResource(0x00110002, 0, 0);
 
 	while (!shouldQuit()) {
 		updateEvents();
 	}
+	
+	delete _resSys;
 	
 	return Common::kNoError;
 }
