@@ -452,7 +452,10 @@ void sceneHandler18and19_boyJumpTo() {
 }
 
 void sceneHandler18and19_girlJumpTo() {
-	warning("STUB: sceneHandler18and19_girlJumpTo()");
+	g_vars->scene18_girl->stopAnim_maybe();
+	g_vars->scene18_girl->show1(g_vars->scene18_var05, g_vars->scene18_var06, MV_GRL18_JUMPTO, 0);
+	g_vars->scene18_girl->_priority = 50;
+	g_vars->scene18_girl->startAnim(MV_GRL18_JUMPTO, 0, -1);
 }
 
 void sceneHandler18and19_manStandArmchair() {
