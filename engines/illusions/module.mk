@@ -2,9 +2,11 @@ MODULE := engines/illusions
 
 MODULE_OBJS := \
 	backgroundresource.o \
+	camera.o \
 	detection.o \
 	graphics.o \
 	illusions.o \
+	input.o \
 	resourcesystem.o
 
 # This module can be built as a plugin
