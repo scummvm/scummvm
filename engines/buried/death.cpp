@@ -29,6 +29,8 @@
 #include "buried/death.h"
 #include "buried/frame_window.h"
 #include "buried/graphics.h"
+#include "buried/invdata.h"
+#include "buried/navdata.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
 
@@ -60,7 +62,8 @@ enum {
 	if (_globalFlags.evcapBaseID[i] == flag) \
 		supportingEvidence++
 
-DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags globalFlags) : Window(vm, parent), _deathSceneIndex(deathSceneIndex), _globalFlags(globalFlags) {
+DeathWindow::DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags globalFlags, Common::Array<int> itemArray)
+		: Window(vm, parent), _deathSceneIndex(deathSceneIndex), _globalFlags(globalFlags), _itemArray(itemArray) {
 	_curButton = 0;
 	_deathFrameIndex = -1;
 	_lightOn = false;
@@ -370,7 +373,77 @@ void DeathWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	case BUTTON_RESTORE_GAME:
 		if (_restoreGame.contains(point)) {
 			if (_walkthroughMode) {
-				// TODO: Do fake continue
+				Location startingLocation;
+
+				switch (_deathSceneIndex) {
+				case 0:
+					startingLocation = Location(1, 2, 1, 2, 1, 0);
+					break;
+				case 1:
+					startingLocation = Location(1, 3, 2, 0, 0, 0);
+					break;
+				case 3:
+				case 4:
+					startingLocation = Location(1, 4, 7, 0, 2, 0);
+					_itemArray.push_back(kItemGrapplingHook);
+					break;
+				case 5:
+					startingLocation = Location(1, 8, 6, 3, 1, 0);
+					break;
+				case 10:
+					startingLocation = Location(2, 1, 4, 2, 1, 0);
+					break;
+				case 11:
+					startingLocation = Location(2, 1, 7, 3, 1, 0);
+					_itemArray.push_back(kItemCeramicBowl);
+					break;
+				case 12:
+					startingLocation = Location(2, 6, 3, 2, 0, 0);
+					_itemArray.push_back(kItemPreservedHeart);
+					break;
+				case 14:
+					startingLocation = Location(2, 4, 2, 0, 1, 0);
+					break;
+				case 15:
+					startingLocation = Location(2, 4, 5, 2, 1, 0);
+					break;
+				case 20:
+					startingLocation = Location(3, 2, 6, 0, 0, 0);
+					_globalFlags.alRestoreSkipAgent3Initial = 1;
+					break;
+				case 30:
+					startingLocation = Location(5, 1, 2, 0, 1, 0);
+					break;
+				case 31:
+					startingLocation = Location(5, 5, 10, 3, 0, 0);
+					break;
+				case 50:
+					startingLocation = Location(7, 1, 0, 2, 1, 0);
+					break;
+				case 51:
+					startingLocation = Location(7, 1, 6, 0, 1, 1);
+					break;
+				case 52:
+					startingLocation = Location(7, 1, 6, 0, 1, 0);
+					break;
+				case 53:
+					startingLocation = Location(7, 1, 4, 2, 1, 0);
+					break;
+				case 54:
+					startingLocation = Location(7, 1, 3, 3, 1, 1);
+					break;
+				case 55:
+					startingLocation = Location(7, 1, 6, 0, 1, 2);
+					break;
+				case 61:
+					startingLocation = Location(7, 1, 2, 0, 1, 0);
+					break;
+				}
+
+				if (startingLocation.timeZone >= 0) {
+					((FrameWindow *)_vm->_mainWindow)->loadFromState(startingLocation, _globalFlags, _itemArray);
+					return;
+				}
 			} else {
 				// Show restore game window
 				FrameWindow *frameWindow = (FrameWindow *)_parent;

@@ -771,4 +771,9 @@ bool InventoryWindow::destroyInfoWindow() {
 	return true;
 }
 
+void InventoryWindow::setItemArray(const Common::Array<int> &array) {
+	_itemArray = array;
+	Common::sort(_itemArray.begin(), _itemArray.end());
+}
+
 } // End of namespace Buried
