@@ -27,6 +27,7 @@
 #include "illusions/graphics.h"
 #include "illusions/input.h"
 #include "illusions/updatefunctions.h"
+#include "illusions/spritedrawqueue.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
@@ -146,6 +147,21 @@ Graphics::Surface *IllusionsEngine::allocSurface(int16 width, int16 height) {
 
 Graphics::Surface *IllusionsEngine::allocSurface(SurfInfo &surfInfo) {
 	return allocSurface(surfInfo._dimensions._width, surfInfo._dimensions._height);
+}
+
+bool IllusionsEngine::isDisplayOn() {
+	// TODO Move this outside into a screen class
+	return true;
+}
+
+uint16 IllusionsEngine::getColorKey2() {
+	// TODO Move this outside into a screen class
+	return 0;
+}
+
+Graphics::Surface *IllusionsEngine::getBackSurface() {
+	// TODO Move this outside into a screen class
+	return 0;
 }
 
 } // End of namespace Illusions
