@@ -77,14 +77,13 @@ void PaletteUsage::prioritize(Common::Array<RGB6> &palette) {
 	prioritizeFromList(lst);
 }
 
-int PaletteUsage::process(Common::Array<RGB6> &palette, int v) {
+int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	byte *pal1 = nullptr, *pal2 = nullptr;
 	int palLow;
-	int palHigh = (v & 0x800) ? 0x100 : 0xC;
+	int palHigh = (flags & 0x800) ? 0x100 : 0xFC;
 	int palIdx;
-	assert(v >= 0);
 
-	if (v & 0x4000) {
+	if (flags & 0x4000) {
 		palLow = 0;
 		palIdx = palHigh;
 	} else {
@@ -98,7 +97,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, int v) {
 
 	int rgbIndex = _vm->_palette->_rgbList.scan();
 	uint32 rgbMask = 1 << rgbIndex;
-	int varA = v & 0x8000;
+	int varA = flags & 0x8000;
 	bool hasUsage = !_vm->_palette->_paletteUsage.empty();
 	bool flag1 = false;
 
@@ -127,14 +126,14 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, int v) {
 		if (!(palette[palIndex]._flags & 0x80)) {
 			pal1[palIndex] = 0x40;
 		}
-		if (!(palette[palIndex]._flags & 0x60)) {
+		if (palette[palIndex]._flags & 0x60) {
 			pal1[palIndex] |= 0x20;
 		}
 	}
 
 	_vm->_palette->processLists(palette.size(), pal1, pal2);
 	
-	int var3A = (v & 0x4000) ? 0xffff : 0xfffe;
+	int var3A = (flags & 0x4000) ? 0xffff : 0xfffe;
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
 		bool var48 = false;
@@ -174,8 +173,8 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, int v) {
 
 		if (!var48 && !varA) {
 			int var2 = !(palette[palIndex]._flags & 0x20) && (
-				((v & 0x2000) && !(palette[palIndex]._flags & 0x40)) ||
-				((v & 0x1000) && (palCount > 0))
+				((flags & 0x2000) && !(palette[palIndex]._flags & 0x40)) ||
+				((flags & 0x1000) && (palCount > 0))
 				) ? 1 : 0x7fff;
 			int var36 = (palette[palIndex]._flags & 0x80) ? 0 : 2;
 			
@@ -204,7 +203,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, int v) {
 			}
 		}
 
-		if (!var48 && (!(v & 0x1000) || (!(palette[palIndex]._flags & 0x60) && !(v & 0x2000)))) {
+		if (!var48 && (!(flags & 0x1000) || (!(palette[palIndex]._flags & 0x60) && !(flags & 0x2000)))) {
 			for (int idx = freeIndex; idx < palIdx && !var48; ++idx) {
 				if (!_vm->_palette->_gamePalette[idx]) {
 					--palCount;
@@ -477,35 +476,18 @@ void Palette::processLists(int count, byte *pal1, byte *pal2) {
 }
 
 
-byte *Palette::decodePalette(Common::SeekableReadStream *palStream, int *numColors) {
-	*numColors = palStream->readUint16LE();
-	assert(*numColors <= 252);
+void Palette::decodePalette(Common::SeekableReadStream *palStream, uint flags) {
+	int numColors = palStream->readUint16LE();
+	assert(numColors <= 252);
 
-	byte *palData = new byte[*numColors * 3];
-	Common::fill(&palData[0], &palData[*numColors * 3], 0);
-
-	for (int i = 0; i < *numColors; ++i) {
-		byte r = palStream->readByte();
-		byte g = palStream->readByte();
-		byte b = palStream->readByte();
-		palData[i * 3] = VGA_COLOR_TRANS(r);
-		palData[i * 3 + 1] = VGA_COLOR_TRANS(g);
-		palData[i * 3 + 2] = VGA_COLOR_TRANS(b);
-
-		// The next 3 bytes are unused
-		palStream->skip(3);
-	}
-
-	return palData;
-}
-
-int Palette::loadPalette(Common::SeekableReadStream *palStream, int indexStart) {
-	int colorCount;
-	byte *palData = decodePalette(palStream, &colorCount);
-	_vm->_palette->setPalette(palData, indexStart, colorCount);
-
-	delete palData;
-	return colorCount;
+	// Load in the palette
+	Common::Array<RGB6> palette;
+	palette.resize(numColors);
+	for (int i = 0; i < numColors; ++i)
+		palette[i].load(palStream);
+	
+	// Process the palette data
+	_paletteUsage.process(palette, flags);
 }
 
 void Palette::setSystemPalette() {
@@ -524,9 +506,7 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 
 	// Init low range to common RGB values
 	if (lowRange) {
-		_gamePalette[0] = 1;
-
-		Common::fill(&_gamePalette[1], &_gamePalette[lowRange - 1], _gamePalette[0]);
+		Common::fill(&_gamePalette[0], &_gamePalette[lowRange], 1);
 	}
 
 	// Init high range to common RGB values
@@ -537,6 +517,8 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 	}
 
 	_rgbList.clear();
+	_rgbList[0] = _rgbList[1] = 0xffff;
+
 	_v1 = 0;
 	_lowRange = lowRange;
 	_highRange = highRange;

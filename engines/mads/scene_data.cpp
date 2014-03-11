@@ -500,7 +500,8 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 			_vm->_palette->_paletteUsage.prioritize(artHeader._palette);
 		}
 
-		_usageIndex = _vm->_palette->_paletteUsage.process(artHeader._palette, 0xF800);
+		_usageIndex = _vm->_palette->_paletteUsage.process(artHeader._palette, 
+			(flags & 0xF800) | 0x8000);
 		if (_usageIndex > 0) {
 			_vm->_palette->_paletteUsage.transform(artHeader._palette);
 

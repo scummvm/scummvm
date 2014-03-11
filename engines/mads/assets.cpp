@@ -74,13 +74,8 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 
 	// Get the palette data
 	spriteStream = sprite.getItemStream(2);
-	int numColors = 0;
-	byte *palData = _vm->_palette->decodePalette(spriteStream, &numColors);
-	Common::copy(palData, &palData[numColors], &_palette[0]);
-	if (numColors < 256)
-		Common::fill((byte *)&_palette[numColors], (byte *)&_palette[256], 0);
-	_colorCount = numColors;
-	delete[] palData;
+	_vm->_palette->decodePalette(spriteStream, flags);
+
 	delete spriteStream;
 
 	spriteStream = sprite.getItemStream(1);
@@ -133,7 +128,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 
 			fab.decompress(srcData, srcSize, destData, frameSizes[curFrame]);
 
-			// Load the frame
+			// Load the frames
 			Common::MemoryReadStream *rs = new Common::MemoryReadStream(destData, frameSizes[curFrame]);
 			_frames[curFrame]._frame = new MSprite(rs, 
 				Common::Point(_frames[curFrame]._bounds.left, _frames[curFrame]._bounds.top),

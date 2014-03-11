@@ -91,7 +91,7 @@ public:
 	 */
 	void prioritize(Common::Array<RGB6> &palette);
 
-	int process(Common::Array<RGB6> &palette, int v);
+	int process(Common::Array<RGB6> &palette, uint flags);
 
 	void transform(Common::Array<RGB6> &palette);
 };
@@ -183,14 +183,9 @@ public:
 	uint8 palIndexFromRgb(byte r, byte g, byte b, byte *paletteData = nullptr);
 
 	/**
-	 * Decode a palette and return it, without affecting the Palette itself
+	 * Decodes a palette and loads it into the main palette
 	 */
-	byte *decodePalette(Common::SeekableReadStream *palStream, int *numColors);
-
-	/**
-	 * Loads a palette from a stream
-	 */
-	int loadPalette(Common::SeekableReadStream *palStream, int indexStart = 0);
+	void decodePalette(Common::SeekableReadStream *palStream, uint flags);
 
 	/**
 	 * Sets a small set of system/core colors needed by the game
