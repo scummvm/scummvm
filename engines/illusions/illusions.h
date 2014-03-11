@@ -49,6 +49,7 @@ class ResourceSystem;
 struct SurfInfo;
 
 class BackgroundItem;
+class BackgroundItems;
 class BackgroundResource;
 
 class IllusionsEngine : public Engine {
@@ -69,8 +70,7 @@ public:
 	
 	void updateEvents();
 
-	Common::List<BackgroundItem*> _backgroundItems;
-	BackgroundItem *allocBackgroundItem();
+	BackgroundItems *_backgroundItems;
 
 	// Screen functions	
 	Graphics::Surface *allocSurface(int16 width, int16 height);

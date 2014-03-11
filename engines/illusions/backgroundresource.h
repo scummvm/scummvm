@@ -29,6 +29,7 @@
 
 #include "common/array.h"
 #include "common/file.h"
+#include "common/list.h"
 #include "common/memstream.h"
 #include "common/rect.h"
 #include "common/substream.h"
@@ -88,7 +89,10 @@ public:
 	BackgroundItem(IllusionsEngine *vm);
 	~BackgroundItem();
 	void initSurface();
+	void freeSurface();
 	void drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
+	void pause();
+	void unpause();
 public:
 	IllusionsEngine *_vm;
 	uint32 _tag;
@@ -98,6 +102,23 @@ public:
 	Graphics::Surface *_surfaces[kMaxBackgroundItemSurfaces];
 	// TODO SavedCamera savedCamera;
 	// TODO? byte *savedPalette;
+};
+
+class BackgroundItems {
+public:
+	BackgroundItems(IllusionsEngine *vm);
+	~BackgroundItems();
+	BackgroundItem *allocBackgroundItem();
+	void pauseByTag(uint32 tag);
+	void unpauseByTag(uint32 tag);
+	BackgroundItem *findActiveBackground();
+	BackgroundResource *getActiveBgResource();
+	BackgroundItem *debugFirst();
+protected:
+	typedef Common::List<BackgroundItem*> Items;
+	typedef Items::iterator ItemsIterator;
+	IllusionsEngine *_vm;
+	Items _items;
 };
 
 } // End of namespace Illusions

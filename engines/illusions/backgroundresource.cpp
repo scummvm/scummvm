@@ -35,7 +35,7 @@ void BackgroundResourceLoader::load(Resource *resource) {
 	BackgroundResource *backgroundResource = new BackgroundResource();
 	backgroundResource->load(resource->_data, resource->_dataSize);
 
-	BackgroundItem *backgroundItem = _vm->allocBackgroundItem();
+	BackgroundItem *backgroundItem = _vm->_backgroundItems->allocBackgroundItem();
 	backgroundItem->_bgRes = backgroundResource;
 	backgroundItem->_tag = resource->_tag;
 	
@@ -61,60 +61,6 @@ void BackgroundResourceLoader::buildFilename(Resource *resource) {
 bool BackgroundResourceLoader::isFlag(int flag) {
 	return
 		flag == kRlfLoadFile;
-}
-
-// BackgroundItem
-
-BackgroundItem::BackgroundItem(IllusionsEngine *vm) : _vm(vm), _tag(0), _pauseCtr(0), _bgRes(0) {
-}
-
-void BackgroundItem::initSurface() {
-
-	for (uint i = 0; i < kMaxBackgroundItemSurfaces; ++i)
-		_surfaces[i] = 0;
-
-	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i) {
-		BgInfo *bgInfo = &_bgRes->_bgInfos[i];
-		_panPoints[i] = bgInfo->_panPoint;
-		_surfaces[i] = _vm->allocSurface(bgInfo->_surfInfo);
-		drawTiles(_surfaces[i], bgInfo->_tileMap, bgInfo->_tilePixels);
-	}
-
-}
-
-void BackgroundItem::drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
-	const int kTileWidth = 32;
-	const int kTileHeight = 8;
-	const int kTileSize = kTileWidth * kTileHeight * 2;
-	uint tileMapIndex = 0;
-	for (int tileY = 0; tileY < tileMap._height; ++tileY) {
-		int tileDestY = tileY * kTileHeight;
-		int tileDestH = MIN(kTileHeight, surface->h - tileDestY);
-		for (int tileX = 0; tileX < tileMap._width; ++tileX) {
-			int tileDestX = tileX * kTileWidth;
-			int tileDestW = MIN(kTileWidth, surface->w - tileDestX);
-			uint16 tileIndex = READ_LE_UINT16(tileMap._map + 2 * tileMapIndex);
-			++tileMapIndex;
-			byte *src = tilePixels + (tileIndex - 1) * kTileSize;
-			byte *dst = (byte*)surface->getBasePtr(tileDestX, tileDestY);
-			for (int h = 0; h < tileDestH; ++h) {
-				for (int w = 0; w < tileDestW; ++w) {
-					uint16 pixel = READ_LE_UINT16(src + w * 2);
-					WRITE_LE_UINT16(dst + w * 2, pixel);
-				}
-				dst += surface->pitch;
-				src += kTileWidth * 2;
-			}
-		}
-	}
-
-	/*	
-	Common::DumpFile d;
-	d.open("dump.000");
-	d.write(surface->getPixels(), surface->h * surface->pitch);
-	d.close();
-	*/
-
 }
 
 // TileMap
@@ -179,6 +125,144 @@ int BackgroundResource::findMasterBgIndex() {
 	while (!_bgInfos[index - 1]._flags & 1)
 		++index;
 	return index;
+}
+
+// BackgroundItem
+
+BackgroundItem::BackgroundItem(IllusionsEngine *vm) : _vm(vm), _tag(0), _pauseCtr(0), _bgRes(0) {
+}
+
+void BackgroundItem::initSurface() {
+	for (uint i = 0; i < kMaxBackgroundItemSurfaces; ++i)
+		_surfaces[i] = 0;
+	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i) {
+		BgInfo *bgInfo = &_bgRes->_bgInfos[i];
+		_panPoints[i] = bgInfo->_panPoint;
+		_surfaces[i] = _vm->allocSurface(bgInfo->_surfInfo);
+		drawTiles(_surfaces[i], bgInfo->_tileMap, bgInfo->_tilePixels);
+	}
+}
+
+void BackgroundItem::freeSurface() {
+	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i) {
+		_surfaces[i]->free();
+		delete _surfaces[i];
+		_surfaces[i] = 0;
+	}
+}
+
+void BackgroundItem::drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
+	const int kTileWidth = 32;
+	const int kTileHeight = 8;
+	const int kTileSize = kTileWidth * kTileHeight * 2;
+	uint tileMapIndex = 0;
+	for (int tileY = 0; tileY < tileMap._height; ++tileY) {
+		int tileDestY = tileY * kTileHeight;
+		int tileDestH = MIN(kTileHeight, surface->h - tileDestY);
+		for (int tileX = 0; tileX < tileMap._width; ++tileX) {
+			int tileDestX = tileX * kTileWidth;
+			int tileDestW = MIN(kTileWidth, surface->w - tileDestX);
+			uint16 tileIndex = READ_LE_UINT16(tileMap._map + 2 * tileMapIndex);
+			++tileMapIndex;
+			byte *src = tilePixels + (tileIndex - 1) * kTileSize;
+			byte *dst = (byte*)surface->getBasePtr(tileDestX, tileDestY);
+			for (int h = 0; h < tileDestH; ++h) {
+				for (int w = 0; w < tileDestW; ++w) {
+					uint16 pixel = READ_LE_UINT16(src + w * 2);
+					WRITE_LE_UINT16(dst + w * 2, pixel);
+				}
+				dst += surface->pitch;
+				src += kTileWidth * 2;
+			}
+		}
+	}
+}
+
+void BackgroundItem::pause() {
+	// TODO
+	++_pauseCtr;
+	if (_pauseCtr <= 1) {
+    	/* TODO
+		for (uint i = 0; i < _bgRes->_item48sCount; ++i)
+			krndictRemoveID(_bgRes->_item48s[i].id);
+		*/
+		// TODO _vm->setDefPointDimensions1();
+		// TODO memcpy(&_savedCamera, &_vm->camera, sizeof(backgroundItem->savedCamera));
+		/* Unused
+		_savedPalette = malloc(1024);
+		savePalette(_savedPalette);
+		*/
+		freeSurface();
+	}
+}
+
+void BackgroundItem::unpause() {
+	// TODO
+	--_pauseCtr;
+	if (_pauseCtr <= 0) {
+    	/* TODO
+		for (uint i = 0; i < _bgRes->_item48sCount; ++i)
+			krndictAddID(_bgRes->_item48s[i].id, _bgRes->_item48s[i]);
+		*/
+		initSurface();
+		/* Unused
+		restorePalette(_savedPalette, 1, 256);
+		free(_savedPalette);
+		_savedPalette = 0;
+		*/
+		// TODO _vm->_screen->_fadeClear();
+		// TODO memcpy(&_vm->camera, &_savedCamera, sizeof(SavedCamera));
+		/* TODO
+		currTime = krnxxxGetCurrentTime();
+		_vm->_camera.panStartTime = currTime;
+		_vm->backgroundItem_refreshPan();
+		*/
+	}
+}
+
+// BackgroundItems
+
+BackgroundItems::BackgroundItems(IllusionsEngine *vm)
+	: _vm(vm) {
+}
+
+BackgroundItems::~BackgroundItems() {
+}
+
+BackgroundItem *BackgroundItems::allocBackgroundItem() {
+	BackgroundItem *backgroundItem = new BackgroundItem(_vm);
+	_items.push_back(backgroundItem);
+	return backgroundItem;
+}
+
+void BackgroundItems::pauseByTag(uint32 tag) {
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+		if ((*it)->_tag == tag)
+			(*it)->pause();
+}
+
+void BackgroundItems::unpauseByTag(uint32 tag) {
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+		if ((*it)->_tag == tag)
+			(*it)->unpause();
+}
+
+BackgroundItem *BackgroundItems::findActiveBackground() {
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+		if ((*it)->_pauseCtr == 0)
+			return (*it);
+	return 0;
+}
+
+BackgroundResource *BackgroundItems::getActiveBgResource() {
+	BackgroundItem *background = findActiveBackground();
+	if (background)
+		return background->_bgRes;
+	return 0;
+}
+
+BackgroundItem *BackgroundItems::debugFirst() {
+	return *(_items.begin());
 }
 
 } // End of namespace Illusions
