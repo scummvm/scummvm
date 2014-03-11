@@ -45,8 +45,7 @@ public:
 	bool showClosingScreen();
 	bool showFeaturesScreen();
 	bool startNewGame(bool walkthrough = false, bool introMovie = false);
-	// TODO: startNewGame with continue data
-	bool showDeathScene(int deathSceneIndex, GlobalFlags globalFlags);
+	bool showDeathScene(int deathSceneIndex, GlobalFlags globalFlags, Common::Array<int> itemArray);
 	bool showCompletionScene(GlobalFlags globalFlags);
 	bool showCredits();
 	bool showOverview();
@@ -70,7 +69,7 @@ public:
 
 	bool isGameInProgress() const { return _gameInProgress; }
 	Window *getMainChildWindow() const { return _mainChildWindow; }
-	void loadFromState(const Location &location, const GlobalFlags &flags, const Common::Array<int> &inventoryItems);
+	void loadFromState(const Location &location, GlobalFlags flags, Common::Array<int> inventoryItems);
 
 private:
 	Window *_mainChildWindow;

@@ -195,11 +195,11 @@ bool SceneViewWindow::startNewGame(const Location &startingLocation) {
 }
 
 bool SceneViewWindow::showDeathScene(int deathSceneIndex) {
-	return ((FrameWindow *)(_parent->getParent()))->showDeathScene(deathSceneIndex, _globalFlags); // TODO: Inventory
+	return ((FrameWindow *)(_parent->getParent()))->showDeathScene(deathSceneIndex, _globalFlags, ((GameUIWindow *)_parent)->_inventoryWindow->getItemArray());
 }
 
 bool SceneViewWindow::showCompletionScene() {
-	return ((FrameWindow *)(_parent->getParent()))->showCompletionScene(_globalFlags); // TODO: Inventory
+	return ((FrameWindow *)(_parent->getParent()))->showCompletionScene(_globalFlags);
 }
 
 bool SceneViewWindow::getSceneStaticData(const Location &location, LocationStaticData &sceneStaticData) {

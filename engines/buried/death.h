@@ -40,7 +40,7 @@ class AVIFrames;
 
 class DeathWindow : public Window {
 public:
-	DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags globalFlags);
+	DeathWindow(BuriedEngine *vm, Window *parent, int deathSceneIndex, GlobalFlags globalFlags, Common::Array<int> itemArray);
 	~DeathWindow();
 
 	void onPaint();
@@ -59,6 +59,7 @@ private:
 	AVIFrames *_deathSceneFrames;
 	int _deathSceneIndex;
 	GlobalFlags _globalFlags;
+	Common::Array<int> _itemArray;
 	int32 _deathFrameIndex;
 	bool _lightOn;
 	Graphics::Font *_textFontA;
