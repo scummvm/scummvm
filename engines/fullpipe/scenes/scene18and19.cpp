@@ -559,7 +559,7 @@ void sceneHandler18and19_drawRiders() {
 	if (g_vars->scene18_var21 >= 359)
 		g_vars->scene18_var21 = 0;
 
-	for (int i = 0; i < g_vars->scene18_var07.size(); i++) {
+	for (uint i = 0; i < g_vars->scene18_var07.size(); i++) {
 		Swinger *swinger = g_vars->scene18_var07[i];
 
 		double oldangle = swinger->angle;
