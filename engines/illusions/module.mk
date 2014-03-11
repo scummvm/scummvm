@@ -1,6 +1,7 @@
 MODULE := engines/illusions
 
 MODULE_OBJS := \
+	actor.o \
 	backgroundresource.o \
 	camera.o \
 	detection.o \

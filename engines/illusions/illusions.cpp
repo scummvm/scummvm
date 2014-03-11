@@ -29,6 +29,7 @@
 #include "illusions/updatefunctions.h"
 #include "illusions/spritedrawqueue.h"
 #include "illusions/spritedecompressqueue.h"
+#include "illusions/actor.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
