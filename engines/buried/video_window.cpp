@@ -185,7 +185,7 @@ void VideoWindow::onPaint() {
 		Common::Rect absoluteRect = getAbsoluteRect();
 
 		if (_srcRect.isEmpty() && _dstRect.isEmpty())
-			_vm->_gfx->blit(_lastFrame, absoluteRect.left, absoluteRect.top);
+			_vm->_gfx->blit(_lastFrame, absoluteRect.left, absoluteRect.top, absoluteRect.width(), absoluteRect.height());
 		else
 			_vm->_gfx->crossBlit(_vm->_gfx->getScreen(), absoluteRect.left + _dstRect.left, absoluteRect.top + _dstRect.top, _dstRect.width(), _dstRect.height(), _lastFrame, _srcRect.left, _srcRect.top);
 	}
