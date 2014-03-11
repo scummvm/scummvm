@@ -71,9 +71,13 @@ public:
 
 	Common::List<BackgroundItem*> _backgroundItems;
 	BackgroundItem *allocBackgroundItem();
-	
+
+	// Screen functions	
 	Graphics::Surface *allocSurface(int16 width, int16 height);
 	Graphics::Surface *allocSurface(SurfInfo &surfInfo);
+	bool isDisplayOn();
+	uint16 getColorKey2();
+	Graphics::Surface *getBackSurface();
 
 #if 0
 

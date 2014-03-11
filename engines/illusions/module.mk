@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	illusions.o \
 	input.o \
 	resourcesystem.o \
+	spritedrawqueue.o \
 	updatefunctions.o
 
 # This module can be built as a plugin
