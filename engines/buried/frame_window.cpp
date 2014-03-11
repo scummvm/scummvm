@@ -263,14 +263,14 @@ bool FrameWindow::startNewGame(bool walkthrough, bool introMovie) {
 	return true;
 }
 
-bool FrameWindow::showDeathScene(int deathSceneIndex, GlobalFlags globalFlags) {
+bool FrameWindow::showDeathScene(int deathSceneIndex, GlobalFlags globalFlags, Common::Array<int> itemArray) {
 	_gameInProgress = false;
 	_atMainMenu = false;
 
 	_vm->removeMouseMessages(this);
 
 	delete _mainChildWindow;
-	_mainChildWindow = new DeathWindow(_vm, this, deathSceneIndex, globalFlags);
+	_mainChildWindow = new DeathWindow(_vm, this, deathSceneIndex, globalFlags, itemArray);
 	_mainChildWindow->showWindow(kWindowShow);
 	_mainChildWindow->invalidateWindow(false);
 
@@ -383,7 +383,7 @@ void FrameWindow::setTransitionSpeed(int newSpeed) {
 	ConfMan.setInt(_vm->isDemo() ? "TransitionSpeed" : _vm->getString(IDS_INI_KEY_TRANS_SPEED), newSpeed);
 }
 
-void FrameWindow::loadFromState(const Location &location, const GlobalFlags &flags, const Common::Array<int> &inventoryItems) {
+void FrameWindow::loadFromState(const Location &location, GlobalFlags flags, Common::Array<int> inventoryItems) {
 	if (!_gameInProgress) {
 		// Make the game in progress
 		_atMainMenu = false;
