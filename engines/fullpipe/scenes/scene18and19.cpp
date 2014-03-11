@@ -625,7 +625,26 @@ void sceneHandler18and19_drawRiders() {
 }
 
 void sceneHandler18and19_animateRiders() {
-	warning("STUB: sceneHandler18and19_animateRiders()");
+	for (uint i = 0; i < g_vars->scene18_var07.size(); i++) {
+		Swinger *swinger = g_vars->scene18_var07[i];
+
+		if (!swinger->ani->_movement) {
+			int mv = 0;
+
+			if (swinger->sflags & 2)
+				mv = MV_KSL_SWINGBOY;
+			else if (swinger->sflags & 4)
+				mv = MV_KSL_SWINGGIRL;
+			else if (swinger->sflags & 0x20)
+				mv = MV_KSL_SWINGMAN;
+
+			if (mv)
+				swinger->ani->startAnim(mv, 0, -1);
+
+			if (swinger->ani->_movement)
+				swinger->ani->_movement->_counter = 0;
+		}
+	}
 }
 
 int sceneHandler18(ExCommand *cmd) {
