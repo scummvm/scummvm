@@ -78,10 +78,11 @@ Common::Error IllusionsEngine::run() {
 	
 	_resSys = new ResourceSystem();
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
+	_backgroundItems = new BackgroundItems(this);
 	
 	_resSys->loadResource(0x0011000B, 0, 0);
 
-	BackgroundItem *backgroundItem = *(_backgroundItems.begin());
+	BackgroundItem *backgroundItem = _backgroundItems->debugFirst();
 	_system->copyRectToScreen(backgroundItem->_surfaces[0]->getPixels(), backgroundItem->_surfaces[0]->pitch,
 		0, 0, 640, 480);
 	_system->updateScreen();
@@ -90,6 +91,7 @@ Common::Error IllusionsEngine::run() {
 		updateEvents();
 	}
 	
+	delete _backgroundItems;
 	delete _resSys;
 	
 	return Common::kNoError;
@@ -131,12 +133,6 @@ void IllusionsEngine::updateEvents() {
 			break;
 		}
 	}
-}
-
-BackgroundItem *IllusionsEngine::allocBackgroundItem() {
-	BackgroundItem *backgroundItem = new BackgroundItem(this);
-	_backgroundItems.push_back(backgroundItem);
-	return backgroundItem;
 }
 
 Graphics::Surface *IllusionsEngine::allocSurface(int16 width, int16 height) {
