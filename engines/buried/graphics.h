@@ -95,6 +95,7 @@ public:
 	bool needsErase() const { return _needsErase; }
 
 	void blit(const Graphics::Surface *surface, int x, int y);
+	void blit(const Graphics::Surface *surface, int x, int y, int width, int height);
 	void blit(const Graphics::Surface *surface, const Common::Rect &srcRect, const Common::Rect &dstRect);
 	void fillRect(const Common::Rect &rect, uint32 color);
 	void opaqueTransparentBlit(Graphics::Surface *dst, int xDst, int yDst, int w, int h, const Graphics::Surface *src, int xSrc, int ySrc, int opacityValue, byte r, byte g, byte b);

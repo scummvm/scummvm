@@ -241,6 +241,8 @@ Common::Rect Window::makeAbsoluteRect(const Common::Rect &rect) const {
 	Common::Rect parentRect = _parent->getAbsoluteRect();
 	Common::Rect absoluteRect = rect;
 	absoluteRect.translate(parentRect.left, parentRect.top);
+	absoluteRect.right = MIN(parentRect.right, absoluteRect.right);
+	absoluteRect.bottom = MIN(parentRect.bottom, absoluteRect.bottom);
 	return absoluteRect;
 }
 
