@@ -26,6 +26,7 @@
 #include "illusions/camera.h"
 #include "illusions/graphics.h"
 #include "illusions/input.h"
+#include "illusions/updatefunctions.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"

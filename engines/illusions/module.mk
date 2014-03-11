@@ -7,7 +7,8 @@ MODULE_OBJS := \
 	graphics.o \
 	illusions.o \
 	input.o \
-	resourcesystem.o
+	resourcesystem.o \
+	updatefunctions.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ILLUSIONS), DYNAMIC_PLUGIN)
