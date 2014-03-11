@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	illusions.o \
 	input.o \
 	resourcesystem.o \
+	spritedecompressqueue.o \
 	spritedrawqueue.o \
 	updatefunctions.o
 
