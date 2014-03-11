@@ -86,7 +86,7 @@ class ResourceManager {
 	uint16 catRead(byte *buf, uint16 length);
 	Common::File *_catFile;
 	Common::File *_datFile;
-	uint16  XCrypt(byte *buf, uint16 length);
+	void XCrypt(byte *buf, uint16 length);
 public:
 
 	ResourceManager();

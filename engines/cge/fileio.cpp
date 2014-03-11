@@ -93,13 +93,11 @@ ResourceManager::~ResourceManager() {
 		delete _buff[i]._page;
 }
 
-uint16 ResourceManager::XCrypt(byte *buf, uint16 length) {
+void ResourceManager::XCrypt(byte *buf, uint16 length) {
 	byte *b = buf;
 
 	for (uint16 i = 0; i < length; i++)
 		*b++ ^= kCryptSeed;
-
-	return kCryptSeed;
 }
 
 bool ResourceManager::seek(int32 offs, int whence) {
