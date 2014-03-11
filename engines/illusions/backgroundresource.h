@@ -93,6 +93,7 @@ public:
 	void drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
 	void pause();
 	void unpause();
+	void refreshPan(WidthHeight &dimensions);
 public:
 	IllusionsEngine *_vm;
 	uint32 _tag;
@@ -113,6 +114,8 @@ public:
 	void unpauseByTag(uint32 tag);
 	BackgroundItem *findActiveBackground();
 	BackgroundResource *getActiveBgResource();
+	WidthHeight getMasterBgDimensions();
+	void refreshPan();
 	BackgroundItem *debugFirst();
 protected:
 	typedef Common::List<BackgroundItem*> Items;

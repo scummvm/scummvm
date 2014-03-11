@@ -79,6 +79,7 @@ Common::Error IllusionsEngine::run() {
 	_resSys = new ResourceSystem();
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
 	_backgroundItems = new BackgroundItems(this);
+	_camera = new Camera(this);
 	
 	_resSys->loadResource(0x0011000B, 0, 0);
 
@@ -91,6 +92,7 @@ Common::Error IllusionsEngine::run() {
 		updateEvents();
 	}
 	
+	delete _camera;
 	delete _backgroundItems;
 	delete _resSys;
 	

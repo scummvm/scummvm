@@ -32,7 +32,7 @@ namespace Illusions {
 struct CameraState {
 	int _cameraMode;
 	//field_2 dw
-	int16 _paused;
+	bool _paused;
 	int16 _panSpeed;
 	int _someX, _someY;
 	Common::Point _currPan;
@@ -55,13 +55,26 @@ struct CameraState {
 
 class Camera {
 public:
-	Camera();
+	Camera(IllusionsEngine *vm);
 	void clearStack();
 	void set(Common::Point &panPoint, WidthHeight &dimensions);
+	void pause();
+	void unpause();
+	void update(uint32 currTime);
+	void setBounds(Common::Point &minPt, Common::Point &maxPt);
+	void setBoundsToDimensions(WidthHeight &dimensions);
 	Common::Point getCurrentPan();
+	Common::Point getScreenOffset();
 protected:
+	IllusionsEngine *_vm;
 	CameraState _activeState;
 	Common::FixedStack<CameraState, 8> _stack;
+	void updateMode1(uint32 currTime);
+	void updateMode2(uint32 currTime);
+	void updateMode3(uint32 currTime);
+	bool updatePan(uint32 currTime);
+	bool isPanFinished();
+	Common::Point getPtOffset(Common::Point pt);
 };
 
 } // End of namespace Illusions
