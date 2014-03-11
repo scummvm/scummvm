@@ -700,6 +700,10 @@ void Script::newRoom(const Common::Array<int> &params) {
 		return;
 	}
 
+	if(_vm->_game->isPositionLoaded() == true) {
+		_vm->_game->setPositionLoaded(false);
+	}
+
 	int room = params[0] - 1;
 	int gate = params[1] - 1;
 
