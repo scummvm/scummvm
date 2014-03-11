@@ -1218,7 +1218,7 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 	}
 
 	// Save point of player's last target.
-	if(_loopStatus != kStatusInventory) {
+	if (_loopStatus != kStatusInventory) {
 		_lastTarget = target;
 	}
 

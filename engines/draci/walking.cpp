@@ -452,6 +452,8 @@ void WalkingState::callback() {
 	const GPL2Program &originalCallback = *_callback;
 	_callback = NULL;
 	_vm->_script->runWrapper(originalCallback, _callbackOffset, true, false);
+	_callbackLast = NULL;
+	_callbackOffset = NULL;
 }
 
 void WalkingState::callbackLast() {
