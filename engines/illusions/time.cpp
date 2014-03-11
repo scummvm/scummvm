@@ -20,32 +20,14 @@
  *
  */
 
-#ifndef ILLUSIONS_GRAPHICS_H
-#define ILLUSIONS_GRAPHICS_H
-
-#include "common/rect.h"
-#include "common/stream.h"
+#include "illusions/time.h"
+#include "common/system.h"
 
 namespace Illusions {
 
-struct WidthHeight {
-	int16 _width, _height;
-	void load(Common::SeekableReadStream &stream);
-};
-
-struct SurfInfo {
-	uint32 _pixelSize;
-	WidthHeight _dimensions;
-	void load(Common::SeekableReadStream &stream);
-};
-
-struct WRect {
-	Common::Point _topLeft;
-	Common::Point _bottomRight;
-};
-
-void loadPoint(Common::SeekableReadStream &stream, Common::Point &pt);
+uint32 getCurrentTime() {
+	// TODO, move to own file with other time related code
+	return g_system->getMillis();
+}
 
 } // End of namespace Illusions
-
-#endif // ILLUSIONS_GRAPHICS_H

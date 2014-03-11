@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	resourcesystem.o \
 	spritedecompressqueue.o \
 	spritedrawqueue.o \
+	time.o \
 	updatefunctions.o
 
 # This module can be built as a plugin

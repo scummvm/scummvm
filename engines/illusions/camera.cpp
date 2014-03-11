@@ -21,11 +21,65 @@
  */
 
 #include "illusions/camera.h"
+#include "illusions/time.h"
 
 namespace Illusions {
 
+Camera::Camera() {
+	_activeState._cameraMode = 6;
+	_activeState._paused = 0;
+	_activeState._panStartTime = getCurrentTime();
+	_activeState._panSpeed = 1;
+	_activeState._bounds._topLeft.x = 320;
+	_activeState._bounds._topLeft.y = 240;
+	_activeState._bounds._bottomRight.x = 320;
+	_activeState._bounds._bottomRight.y = 240;
+	_activeState._currPan.x = 320;
+	_activeState._currPan.y = 240;
+	_activeState._panXShl = 320 << 16;
+	_activeState._panYShl = 240 << 16;
+	_activeState._panTargetPoint.x = 320;
+	_activeState._panTargetPoint.y = 240;
+	_activeState._panToPositionPtr = 0;
+	_activeState._panNotifyId = 0;
+	_activeState._trackingLimits.x = 0;
+	_activeState._trackingLimits.y = 0;
+	_activeState._pt.x = 320;
+	_activeState._pt.y = 240;
+	_activeState._pointFlags = 0;
+}
+
+void Camera::clearStack() {
+	_stack.clear();
+}
+
+void Camera::set(Common::Point &panPoint, WidthHeight &dimensions) {
+	_activeState._cameraMode = 6;
+	_activeState._paused = 0;
+	_activeState._panStartTime = getCurrentTime();
+	_activeState._panSpeed = 1;
+	_activeState._bounds._topLeft.x = 320;
+	_activeState._bounds._topLeft.y = 240;
+	_activeState._bounds._bottomRight.x = MAX(0, dimensions._width - 640) + 320;
+	_activeState._bounds._bottomRight.y = MAX(0, dimensions._height - 480) + 240;
+	_activeState._panTargetPoint = panPoint;
+	// TODO camera_clipPanTargetPoint();
+	_activeState._currPan = _activeState._panTargetPoint;
+	_activeState._panXShl = _activeState._currPan.x << 16;
+	_activeState._panYShl = _activeState._currPan.y << 16;
+	// TODO largeObj_backgroundItem_refreshPan();
+	_activeState._panToPositionPtr = 0;
+	_activeState._panObjectId = 0;
+	_activeState._panNotifyId = 0;
+	_activeState._trackingLimits.x = 0;
+	_activeState._trackingLimits.y = 0;
+	_activeState._pointFlags = 0;
+	_activeState._pt.x = 320;
+	_activeState._pt.y = 240;
+}
+
 Common::Point Camera::getCurrentPan() {
-	return _currPan;
+	return _activeState._currPan;
 }
 
 } // End of namespace Illusions

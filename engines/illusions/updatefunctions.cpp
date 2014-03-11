@@ -21,15 +21,11 @@
  */
 
 #include "illusions/updatefunctions.h"
+#include "illusions/time.h"
 #include "common/algorithm.h"
 #include "common/system.h"
 
 namespace Illusions {
-
-uint32 getCurrentTime() {
-	// TODO, move to own file with other time related code
-	return g_system->getMillis();
-}
 
 // UpdateFunctions
 
