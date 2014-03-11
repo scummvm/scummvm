@@ -23,15 +23,45 @@
 #ifndef ILLUSIONS_CAMERA_H
 #define ILLUSIONS_CAMERA_H
 
+#include "illusions/graphics.h"
 #include "common/rect.h"
+#include "common/stack.h"
 
 namespace Illusions {
 
+struct CameraState {
+	int _cameraMode;
+	//field_2 dw
+	int16 _paused;
+	int16 _panSpeed;
+	int _someX, _someY;
+	Common::Point _currPan;
+	int _panXShl, _panYShl;
+	WRect _bounds;
+	uint32 _panNotifyId;
+	uint32 _time28;
+	uint32 _panStartTime;
+	uint32 _pauseStartTime;
+	uint32 _time2E;
+	Common::Point _currPan2;
+	Common::Point _panTargetPoint;
+	Common::Point _trackingLimits;
+	Common::Point _pt;
+	uint32 _panObjectId;
+	Common::Point *_panToPositionPtr;
+	uint _pointFlags;
+	//field_4A dw
+};
+
 class Camera {
 public:
+	Camera();
+	void clearStack();
+	void set(Common::Point &panPoint, WidthHeight &dimensions);
 	Common::Point getCurrentPan();
 protected:
-	Common::Point _currPan;
+	CameraState _activeState;
+	Common::FixedStack<CameraState, 8> _stack;
 };
 
 } // End of namespace Illusions
