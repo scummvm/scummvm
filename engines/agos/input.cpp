@@ -450,7 +450,7 @@ void AGOSEngine_Feeble::handleMouseWheelDown() {
 
 void AGOSEngine_Simon1::handleMouseWheelUp() {
 	HitArea *ha = findBox(206);
-	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+	if (ha != NULL && (ha->flags & kBFBoxInUse) && !(ha->flags & kBFBoxDead)) {
 			if (_saveLoadRowCurPos != 1) {
 				if (_saveLoadRowCurPos < 7)
 					_saveLoadRowCurPos = 1;
@@ -467,7 +467,7 @@ void AGOSEngine_Simon1::handleMouseWheelUp() {
 
 void AGOSEngine_Simon1::handleMouseWheelDown() {
 	HitArea *ha = findBox(207);
-	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+	if (ha != NULL && (ha->flags & kBFBoxInUse) && !(ha->flags & kBFBoxDead)) {
 			if (_saveDialogFlag) {
 				_saveLoadRowCurPos += 1;
 				if (_saveLoadRowCurPos >= _numSaveGameRows)
