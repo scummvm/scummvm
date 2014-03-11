@@ -51,6 +51,7 @@ struct SurfInfo;
 class BackgroundItem;
 class BackgroundItems;
 class BackgroundResource;
+class Camera;
 
 class IllusionsEngine : public Engine {
 protected:
@@ -71,6 +72,7 @@ public:
 	void updateEvents();
 
 	BackgroundItems *_backgroundItems;
+	Camera *_camera;
 
 	// Screen functions	
 	Graphics::Surface *allocSurface(int16 width, int16 height);

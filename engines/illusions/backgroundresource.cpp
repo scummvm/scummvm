@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/backgroundresource.h"
+#include "illusions/camera.h"
 #include "common/str.h"
 
 namespace Illusions {
@@ -215,8 +216,27 @@ void BackgroundItem::unpause() {
 		/* TODO
 		currTime = krnxxxGetCurrentTime();
 		_vm->_camera.panStartTime = currTime;
-		_vm->backgroundItem_refreshPan();
 		*/
+		_vm->_backgroundItems->refreshPan();
+	}
+}
+
+void BackgroundItem::refreshPan(WidthHeight &dimensions) {
+	Common::Point screenOffs = _vm->_camera->getScreenOffset();
+	int x = dimensions._width - 640;
+	int y = dimensions._height - 480;
+	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i) {
+		const BgInfo &bgInfo = _bgRes->_bgInfos[i];
+		if (bgInfo._flags & 1) {
+			_panPoints[i] = screenOffs;
+		} else {
+			Common::Point newOffs(0, 0);
+			if (x > 0 && bgInfo._surfInfo._dimensions._width - 640 > 0)
+				newOffs.x = screenOffs.x * (bgInfo._surfInfo._dimensions._width - 640) / x;
+			if (y > 0 && bgInfo._surfInfo._dimensions._height - 480 > 0)
+				newOffs.y = screenOffs.y * (bgInfo._surfInfo._dimensions._height - 480) / y;
+			_panPoints[i] = newOffs;
+		}
 	}
 }
 
@@ -259,6 +279,20 @@ BackgroundResource *BackgroundItems::getActiveBgResource() {
 	if (background)
 		return background->_bgRes;
 	return 0;
+}
+
+WidthHeight BackgroundItems::getMasterBgDimensions() {
+	BackgroundItem *backgroundItem = findActiveBackground();
+	int16 index = backgroundItem->_bgRes->findMasterBgIndex();
+	return backgroundItem->_bgRes->_bgInfos[index - 1]._surfInfo._dimensions;
+}
+
+void BackgroundItems::refreshPan() {
+	BackgroundItem *backgroundItem = findActiveBackground();
+	if (backgroundItem) {
+		WidthHeight dimensions = getMasterBgDimensions();
+		backgroundItem->refreshPan(dimensions);
+	}
 }
 
 BackgroundItem *BackgroundItems::debugFirst() {
