@@ -432,10 +432,10 @@ void GfxOpenGLS::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int 
 	Math::Matrix4 modelMatrix = _currentActor->getFinalMatrix();
 	Math::Matrix4 mvpMatrix = _mvpMatrix * modelMatrix;
 
-	GLdouble top = 1000;
-	GLdouble right = -1000;
-	GLdouble left = 1000;
-	GLdouble bottom = -1000;
+	double top = 1000;
+	double right = -1000;
+	double left = 1000;
+	double bottom = -1000;
 
 	for (uint i = 0; i < model->_numFaces; i++) {
 		int *indices = (int *)model->_faces[i]._indexes;
@@ -448,8 +448,8 @@ void GfxOpenGLS::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int 
 			v = mvpMatrix * v;
 			v /= v.w();
 
-			GLdouble winX = (1 + v.x()) / 2.0f * _gameWidth;
-			GLdouble winY = (1 + v.y()) / 2.0f * _gameHeight;
+			double winX = (1 + v.x()) / 2.0f * _gameWidth;
+			double winY = (1 + v.y()) / 2.0f * _gameHeight;
 
 			if (winX > right)
 				right = winX;
