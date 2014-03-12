@@ -92,10 +92,37 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
+	if (_vm->_voy->_computerTextId >= 0) {
+		DebugPrintf("Hotspot Computer Screen %d - %d,%d->%d,%d\n",
+			_vm->_voy->_computerTextId,
+			_vm->_voy->_computerScreenRect.left,
+			_vm->_voy->_computerScreenRect.top,
+			_vm->_voy->_computerScreenRect.right,
+			_vm->_voy->_computerScreenRect.bottom);
+	}
+
+#if 0
+	// Room hotspots
+	BoltEntry &boltEntry = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 4);
+	if (boltEntry._rectResource) {
+		Common::Array<RectEntry> &hotspots = boltEntry._rectResource->_entries;
+		for (uint hotspotIdx = 0; hotspotIdx < hotspots.size(); ++hotspotIdx) {
+			Common::String pos = Common::String::format("(%d,%d->%d,%d)",
+				hotspots[hotspotIdx].left, hotspots[hotspotIdx].top,
+				hotspots[hotspotIdx].right, hotspots[hotspotIdx].bottom);
+			int arrIndex = hotspots[hotspotIdx]._arrIndex;
+			if (_vm->_voy->_roomHotspotsEnabled[arrIndex - 1]) {
+				DebugPrintf("Hotspot Room %d - %s - Enabled\n", arrIndex, pos);
+			} else {
+				DebugPrintf("Hotspot Room - %s - Disabled\n", pos);
+			}
+		}
+	}
+#endif
+
+	// Outside view hotspots
 	BoltEntry &boltEntry = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1);
-	if (!boltEntry._rectResource) {
-		DebugPrintf("No hotspots available\n");
-	} else {
+	if (boltEntry._rectResource) {
 		Common::Array<RectEntry> &hotspots = boltEntry._rectResource->_entries;
 
 		for (uint hotspotIdx = 0; hotspotIdx < hotspots.size(); ++hotspotIdx) {
@@ -130,7 +157,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 		}
 	}
 
-	DebugPrintf("\n");
+	DebugPrintf("\nEnd of list\n");
 	return true;
 }
 
