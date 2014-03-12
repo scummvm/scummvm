@@ -388,7 +388,18 @@ int scene19_updateCursor() {
 }
 
 void sceneHandler18_clickBoard() {
-	warning("STUB: sceneHandler18_clickBoard()");
+	if (ABS(967 - g_fp->_aniMan->_ox) > 1 || ABS(379 - g_fp->_aniMan->_oy) > 1 || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 967, 379, 1, ST_MAN_RIGHT);
+		ExCommand *ex = new ExCommand(0, 17, MSG_SC18_MANREADY, 0, 0, 0, 1, 0, 0, 0);
+
+		ex->_excFlags = 2;
+
+		mq->addExCommandToEnd(ex);
+
+		postExCommand(g_fp->_aniMan->_id, 2, 967, 379, 0, -1);
+	} else {
+		g_vars->scene18_var28 = 1;
+	}
 }
 
 void sceneHandler18and19_showManJump() {
