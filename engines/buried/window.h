@@ -119,8 +119,6 @@ private:
 
 	typedef Common::List<Window *> WindowList;
 	WindowList _children, _topMostChildren;
-
-	bool handleSetCursorMessage(uint message);
 };
 
 // A subset of the special insert after Window handles
