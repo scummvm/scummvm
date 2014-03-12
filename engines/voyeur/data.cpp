@@ -49,7 +49,7 @@ SVoy::SVoy(VoyeurEngine *vm):_vm(vm) {
 	_audioVisualStartTime = 0;
 	_audioVisualDuration = 0;
 	_boltGroupId2 = 0;
-	_computerTextId = 0;
+	_computerTextId = -1;
 	_computerTimeMin = _computerTimeMax = 0;
 	_eventCount = 0;
 	_fadingStep1 = 0;
