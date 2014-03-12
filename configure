@@ -850,7 +850,9 @@ Fine tuning of the installation directories:
 
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
-                          special targets: android for Android
+                          special targets: android-arm for Android ARM
+                                           android-mips for Android MIPS
+                                           android-x86 for Android x86
                                            tizen for Samsung Tizen
                                            caanoo for Caanoo
                                            dingux for Dingux
@@ -1271,10 +1273,20 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
-android | android-v7a | ouya)
+android | android-arm | android-v7a | android-arm-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
+	;;
+android-mips)
+	_host_os=android
+	_host_cpu=mipsel
+	_host_alias=mipsel-linux-android
+	;;
+android-x86)
+	_host_os=android
+	_host_cpu=i686
+	_host_alias=i686-linux-android
 	;;
 arm-riscos)
 	_host_os=riscos
@@ -2042,18 +2054,34 @@ case $_host_os in
 		;;
 	android)
 		case $_host in
-			android)
+			android | android-arm)
 				CXXFLAGS="$CXXFLAGS -march=armv5te"
 				CXXFLAGS="$CXXFLAGS -mtune=xscale"
 				CXXFLAGS="$CXXFLAGS -msoft-float"
 				ABI="armeabi"
+				ANDROID_PLATFORM=4
 				;;
-			android-v7a)
+			android-v7a | android-arm-v7a)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
 				ABI="armeabi-v7a"
+				ANDROID_PLATFORM=4
+				;;
+			android-mips)
+				CXXFLAGS="$CXXFLAGS -march=mips32"
+				CXXFLAGS="$CXXFLAGS -mtune=mips32"
+				ABI="mips"
+				# Platform version 9 is needed as earlier versions of platform do not support this arch.
+				ANDROID_PLATFORM=9
+				;;
+			android-x86)
+				CXXFLAGS="$CXXFLAGS -march=i686"
+				CXXFLAGS="$CXXFLAGS -mtune=i686"
+				ABI="x86"
+				# Platform version 9 is needed as earlier versions of platform do not support this arch.
+				ANDROID_PLATFORM=9
 				;;
 			ouya)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
@@ -2061,9 +2089,15 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=neon"
 				ABI="armeabi-v7a"
+				ANDROID_PLATFORM=4
 				;;
 		esac
-		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
+
+		# Setup platform version and arch
+		ABI_SHORT=`echo $ABI | cut -c1-3`
+		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ABI_SHORT"
+		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ABI_SHORT"
+
 		CXXFLAGS="$CXXFLAGS -fpic"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections"
 		CXXFLAGS="$CXXFLAGS -funwind-tables"
@@ -2076,16 +2110,23 @@ case $_host_os in
 		fi
 		CXXFLAGS="$CXXFLAGS -finline-limit=300"
 		_optimization_level=-Os
-		CXXFLAGS="$CXXFLAGS -mthumb-interwork"
-		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__"
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5T__"
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5E__"
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5TE__"
-		# supress 'mangling of 'va_list' has changed in GCC 4.4'
+
+		if test "$_host" = android -o "$_host" = android-arm; then
+			CXXFLAGS="$CXXFLAGS -mthumb-interwork"
+			# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
+			CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__"
+			CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5T__"
+			CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5E__"
+			CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5TE__"
+		fi
+
+		# surpress 'mangling of 'va_list' has changed in GCC 4.4' warning
 		CXXFLAGS="$CXXFLAGS -Wno-psabi"
-		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
-		LDFLAGS="$LDFLAGS -mthumb-interwork"
+
+		if test "$_host" = android -o "$_host" = android-arm; then
+			LDFLAGS="$LDFLAGS -mthumb-interwork"
+		fi
+
 		LDFLAGS="$LDFLAGS -L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
 		LIBS="$LIBS -lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
@@ -2352,7 +2393,7 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
-		android | android-v7a | ouya)
+		android | android-arm | android-v7a | android-arm-v7a | android-mips | android-x86 | ouya)
 			# we link a .so as default
 			LDFLAGS="$LDFLAGS -shared"
 			LDFLAGS="$LDFLAGS -Wl,-Bsymbolic,--no-undefined"
