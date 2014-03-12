@@ -85,7 +85,7 @@ void SoundManager::startQueuedCommands() {
 	_newSoundsPaused = false;
 
 	while (!_queuedCommands.empty()) {
-		int commandId = _queuedCommands.front();
+		int commandId = _queuedCommands.pop();
 		command(commandId);
 	}
 }
