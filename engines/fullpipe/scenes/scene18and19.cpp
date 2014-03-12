@@ -408,7 +408,43 @@ void sceneHandler18and19_showManJump() {
 }
 
 void sceneHandler18_showManJumpTo() {
-	warning("STUB: sceneHandler18_showManJumpTo()");
+	int x, y;
+
+	if (g_vars->scene18_var07[g_vars->scene18_var31]->ani->_movement) {
+		x = g_vars->scene18_var07[g_vars->scene18_var31]->ani->_movement->_ox;
+		y = g_vars->scene18_var07[g_vars->scene18_var31]->ani->_movement->_oy;
+	} else {
+		x = g_vars->scene18_var07[g_vars->scene18_var31]->ani->_ox;
+		y = g_vars->scene18_var07[g_vars->scene18_var31]->ani->_oy;
+	}
+
+	g_fp->_aniMan->show1(x + 62, y + 5, MV_MAN18_JUMPTOTRUBA, 0);
+	g_fp->_aniMan->_priority = 35;
+
+	int mqid = 0;
+
+	if (g_vars->scene18_var13 == 1) {
+		mqid = QU_SC19_MANJUMP1;
+	} else if (g_vars->scene18_var13 == 2) {
+		mqid = QU_SC19_MANJUMP2;
+	} else if (g_vars->scene18_var13 == 3) {
+		mqid = QU_SC19_MANJUMP3;
+	}
+
+	if (mqid) {
+		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(mqid), 0, 0);
+
+		g_fp->_aniMan2 = g_fp->_aniMan;
+		g_vars->scene18_var15 = 0;
+
+		mq->setFlags(mq->getFlags() | 1);
+		mq->chain(0);
+	}
+
+	g_vars->scene18_var07[g_vars->scene18_var31]->sflags = 1;
+
+	g_vars->scene18_var07[g_vars->scene18_var31]->ani->changeStatics2(ST_KSL_NORM);
+	g_vars->scene18_var07[g_vars->scene18_var31]->ani->_priority = 30;
 }
 
 void sceneHandler18and19_showGirlJumpTo() {
