@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	backgroundresource.o \
 	camera.o \
 	detection.o \
+	fixedpoint.o \
 	graphics.o \
 	illusions.o \
 	input.o \

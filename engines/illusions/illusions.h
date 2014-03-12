@@ -80,6 +80,8 @@ public:
 	bool isDisplayOn();
 	uint16 getColorKey2();
 	Graphics::Surface *getBackSurface();
+	
+	Common::Point *getObjectActorPositionPtr(uint32 objectId);
 
 #if 0
 

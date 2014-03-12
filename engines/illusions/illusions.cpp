@@ -164,4 +164,9 @@ Graphics::Surface *IllusionsEngine::getBackSurface() {
 	return 0;
 }
 
+Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {
+	// TODO Dummy, to be replaced later
+	return 0;
+}
+
 } // End of namespace Illusions

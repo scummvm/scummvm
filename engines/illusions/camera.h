@@ -46,11 +46,19 @@ struct CameraState {
 	Common::Point _currPan2;
 	Common::Point _panTargetPoint;
 	Common::Point _trackingLimits;
-	Common::Point _pt;
+	Common::Point _centerPt;
 	uint32 _panObjectId;
 	Common::Point *_panToPositionPtr;
 	uint _pointFlags;
 	//field_4A dw
+};
+
+struct CameraModeStackItem {
+	int _cameraMode;
+	uint32 _panObjectId;
+	int16 _panSpeed;
+	Common::Point _panTargetPoint;
+	uint32 _panNotifyId;
 };
 
 class Camera {
@@ -58,8 +66,16 @@ public:
 	Camera(IllusionsEngine *vm);
 	void clearStack();
 	void set(Common::Point &panPoint, WidthHeight &dimensions);
+	void panCenterObject(uint32 objectId, int16 panSpeed);
+	void panTrackObject(uint32 objectId);
+	void panToPoint(Common::Point pt, int16 panSpeed, uint32 panNotifyId);
+	void panEdgeFollow(uint32 objectId, int16 panSpeed);
+	void stopPan();
 	void pause();
 	void unpause();
+	void pushCameraMode();
+	void popCameraMode();
+	void clearCameraModeStack();
 	void update(uint32 currTime);
 	void setBounds(Common::Point &minPt, Common::Point &maxPt);
 	void setBoundsToDimensions(WidthHeight &dimensions);
@@ -68,13 +84,16 @@ public:
 protected:
 	IllusionsEngine *_vm;
 	CameraState _activeState;
-	Common::FixedStack<CameraState, 8> _stack;
+	Common::FixedStack<CameraModeStackItem, 8> _stack;
 	void updateMode1(uint32 currTime);
 	void updateMode2(uint32 currTime);
 	void updateMode3(uint32 currTime);
 	bool updatePan(uint32 currTime);
 	bool isPanFinished();
 	Common::Point getPtOffset(Common::Point pt);
+	void recalcPan(uint32 currTime);
+	bool calcPointFlags(Common::Point &pt, WRect &rect, uint &outFlags);
+	void clipPanTargetPoint();
 };
 
 } // End of namespace Illusions
