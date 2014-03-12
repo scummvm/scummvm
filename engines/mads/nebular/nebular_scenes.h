@@ -26,7 +26,9 @@
 #include "common/scummsys.h"
 #include "mads/game.h"
 #include "mads/scene.h"
+#include "mads/nebular/game_nebular.h"
 #include "mads/nebular/globals_nebular.h"
+
 
 namespace MADS {
 
@@ -95,6 +97,7 @@ public:
 class NebularScene : public SceneLogic {
 protected:
 	Globals &_globals;
+	GameNebular &_game;
 
 	/**
 	 * Forms an animation resoucre name

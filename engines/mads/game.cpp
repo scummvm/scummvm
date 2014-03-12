@@ -59,6 +59,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_abortTimersMode = ABORTMODE_0;
 	_abortTimersMode2 = ABORTMODE_0;
 	_ticksExpiry = 0;
+	_exitFlag = 0;
 }
 
 Game::~Game() {

@@ -129,6 +129,7 @@ public:
 	Common::String _aaName;
 	uint32 _ticksExpiry;
 	int _objectHiliteVocabIdx;
+	int _exitFlag;
 public:
 	virtual ~Game();
 

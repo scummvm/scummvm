@@ -68,6 +68,10 @@ public:
 	 * Destructor
 	 */
 	virtual ~Dialog();
+
+	static void show(int msgId) {
+		warning("TODO: Dialog::show");
+	}
 };
 
 enum {

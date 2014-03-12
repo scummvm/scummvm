@@ -35,9 +35,9 @@ void Scene8xx::setup1() {
 	if ((_globals[178] && !_globals[179]) ||
 			_scene->_nextSceneId == 804 || _scene->_nextSceneId == 805 ||
 			_scene->_nextSceneId == 808 || _scene->_nextSceneId == 810) {
-		_vm->_game->_player._spritesPrefix = "";
+		_game._player._spritesPrefix = "";
 	} else {
-		_vm->_game->_player._spritesPrefix = _globals[0] == SEX_FEMALE ? "ROX" : "RXM";
+		_game._player._spritesPrefix = _globals[0] == SEX_FEMALE ? "ROX" : "RXM";
 	}
 
 	_vm->_palette->setEntry(16, 0x0A, 0x3F, 0x3F);
@@ -45,7 +45,7 @@ void Scene8xx::setup1() {
 }
 
 void Scene8xx::setup2() {
-	_vm->_game->_aaName = Resources::formatAAName(5);
+	_game._aaName = Resources::formatAAName(5);
 }
 
 void Scene8xx::enter1() {
@@ -99,7 +99,7 @@ void Scene804::enter() {
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 4));
 	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('f', 1));
 
-	_vm->_game->loadQuoteSet(791, 0);
+	_game.loadQuoteSet(791, 0);
 
 	if (_globals[165]) {
 		if (_globals[164]) {
@@ -113,7 +113,7 @@ void Scene804::enter() {
 			_globals._spriteIndexes[21] = _scene->_sequences.startReverseCycle(
 				_globals._spriteIndexes[6], false, 4, 0, 0, 0);
 			_scene->_sequences.addTimer(160, 70);
-			_vm->_game->_player._stepEnabled = false;
+			_game._player._stepEnabled = false;
 		}
 	}
 	else {
@@ -144,6 +144,155 @@ void Scene804::enter() {
 }
 
 void Scene804::step() {
+	if (_globals._chairHotspotIndex) {
+		if (_scene->_activeAnimation->getCurrentFrame() == 36 && !_globals._v3) {
+			_scene->_sequences.remove(_globals._spriteIndexes[15]);
+			_globals._v3 = -1;
+		}
+		if (_scene->_activeAnimation->getCurrentFrame() == 39) {
+			_globals._v2 = 0;
+			if (_globals._v1 == 3)
+				_scene->_sequences.addTimer(130, 120);
+		}
+
+		if (!_globals._v2) {
+			++_globals._v1;
+			_globals._v2 = -1;
+
+			if (_globals._v1 >= 4) {
+				_globals._chairHotspotIndex = 0;
+				_globals._v1 = 0;
+				_game._player._stepEnabled = true;
+			} else {
+				_globals._v5 = 34;
+			}
+		}
+	} else {
+		if (_globals._v3 && _globals._v2 && _scene->_activeAnimation->getCurrentFrame() == 39) {
+			_globals._spriteIndexes[15] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[0], false, 1);
+			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[15],
+				Common::Point(133, 139));
+			_scene->_sequences.setDepth(_globals._spriteIndexes[15], 8);
+			_globals._v3 = 0;
+		}
+
+		if (_globals._v2 && _scene->_activeAnimation->getCurrentFrame() == 42) {
+			_globals._v5 = 0;
+			_globals._v2 = 0;
+		}
+
+		if (_game._abortTimers == 70)
+			_globals._v5 = 42;
+		if (_scene->_activeAnimation->getCurrentFrame() == 65)
+			_scene->_sequences.remove(_globals._spriteIndexes[21]);
+
+		switch (_game._storyMode)  {
+		case STORYMODE_NAUGHTY:
+			if (_scene->_activeAnimation->getCurrentFrame() == 81) {
+				_globals._v5 = 80;
+			} else {
+				_globals[165] = 0;
+				_globals[167] = -1;
+				assert(!_globals[5]);
+				_game._exitFlag = 4;
+				_vm->quitGame();
+			}
+			break;
+
+		case STORYMODE_NICE:
+			if (_scene->_activeAnimation->getCurrentFrame() == 68) {
+				_globals._v5 = 66;
+			} else {
+				_globals[165] = 0;
+				_globals[167] = -1;
+				assert(!_globals[5]);
+				_game._exitFlag = 4;
+				_vm->quitGame();
+			}
+			break;
+		}
+
+		if (_scene->_activeAnimation->getCurrentFrame() == 34) {
+			_globals._v5 = 36;
+			_scene->_sequences.remove(_globals._spriteIndexes[15]);
+		}
+		if (_scene->_activeAnimation->getCurrentFrame() == 37) {
+			_globals._v5 = 36;
+			if (!_globals._v4)
+				_scene->_sequences.addTimer(60, 80);
+		}
+
+		if (_game._abortTimers == 80)
+			_scene->_nextSceneId = 803;
+
+		if (_scene->_activeAnimation->getCurrentFrame() == 7 && !_globals[164]) {
+			_globals._spriteIndexes[18] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+			_scene->_sequences.addTimer(20, 110);
+			_globals[164] = -1;
+		}
+
+		if (_scene->_activeAnimation->getCurrentFrame() == 10) {
+			_globals._v5 = 0;
+			_game._player._stepEnabled = true;
+			_game._objects.setRoom(OBJ_POLYCEMENT, 1);
+		}
+
+		switch (_scene->_activeAnimation->getCurrentFrame()) {
+		case 1:
+			_globals[29] = _vm->getRandomNumber(29) + 1;
+			switch (_globals[29]) {
+			case 1:
+				_globals._v5 = 25;
+				break;
+			case 2:
+				_globals._v5 = 27;
+				break;
+			case 3:
+				_globals._v5 = 9;
+				break;
+			default:
+				_globals._v5 = 0;
+				break;
+			}
+			break;
+
+		case 26:
+		case 28:
+		case 31:
+			_globals._v5 = 0;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (_game._abortTimers == 120)
+		Dialog::show(0x13a26);
+	if (_game._abortTimers == 110)
+		Dialog::show(0x13a2a);
+
+	if (_globals._v6) {
+		_globals._v5 = 32;
+		_globals._v6 = 0;
+	}
+	if (_globals._v5 >= 0 && (_scene->_activeAnimation->getCurrentFrame() != _globals._v5)) {
+		_scene->_activeAnimation->setCurrentFrame(_globals._v5);
+		_globals._v5 = -1;
+	}
+
+	if (_game._abortTimers == 90)
+		_scene->_nextSceneId = 803;
+
+	if (_scene->_activeAnimation->getCurrentFrame() == 7 &&!_globals._v8) {
+		_vm->_sound->command(21);
+		_globals._v8 = -1;
+	}
+	if (_scene->_activeAnimation->getCurrentFrame() == 80 && !_globals._v7) {
+		_vm->_sound->command(22);
+		_globals._v7 = -1;
+	}
 }
 
 void Scene804::preActions() {
