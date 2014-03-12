@@ -44,6 +44,10 @@ struct WRect {
 	Common::Point _bottomRight;
 };
 
+struct RGB {
+	byte r, g, b;
+};
+
 void loadPoint(Common::SeekableReadStream &stream, Common::Point &pt);
 
 } // End of namespace Illusions
