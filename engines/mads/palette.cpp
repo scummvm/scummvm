@@ -553,8 +553,10 @@ void Palette::initRange(byte *palette) {
 	int var6 = 0;
 	int vdx = 0;
 	int vbx = 0;
+	byte *destP = palette;
+
 	do {
-		int vdi = (vdx == 1) ? 0 : 0x2A;
+		int vdi = (vdx == 1) ? 0x3F : 0x2A;
 		int var8 = 0;
 		int varE = vbx;
 		int var10 = vdx;
@@ -565,11 +567,10 @@ void Palette::initRange(byte *palette) {
 				int var4 = vdx;
 				do {
 					int var2 = var6 + vcx;
-					byte *destP = &palette[var2 * 3];
 					
-					destP[0] = (var8) ? vdi & 0xFF : vbx & 0XFF;
-					destP[1] = (var4) ? vdi & 0xFF : vbx & 0XFF;
-					destP[2] = (vcx) ? vdi & 0xFF : vbx & 0XFF;					
+					*destP++ = (var8) ? vdi & 0xFF : vbx & 0XFF;
+					*destP++ = (var4) ? vdi & 0xFF : vbx & 0XFF;
+					*destP++ = (vcx) ? vdi & 0xFF : vbx & 0XFF;
 				} while (++vcx < 2);
 
 				var6 += 2;
