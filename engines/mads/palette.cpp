@@ -28,10 +28,12 @@
 
 namespace MADS {
 
+#define VGA_COLOR_TRANS(x) (((((int)(x)) + 1) << 2) - 1)
+
 void RGB6::load(Common::SeekableReadStream *f) {
-	r = f->readByte();
-	g = f->readByte();
-	b = f->readByte();
+	r = VGA_COLOR_TRANS(f->readByte());
+	g = VGA_COLOR_TRANS(f->readByte());
+	b = VGA_COLOR_TRANS(f->readByte());
 	_palIndex = f->readByte();
 	_u2 = f->readByte();
 	_flags = f->readByte();
@@ -347,8 +349,6 @@ int RGBList::scan() {
 
 /*------------------------------------------------------------------------*/
 
-#define VGA_COLOR_TRANS(x) (x == 0x3f ? 255 : x << 2)
-
 Palette::Palette(MADSEngine *vm) : _vm(vm), _paletteUsage(vm) {
 	reset();
 
@@ -566,9 +566,9 @@ void Palette::initVGAPalette(byte *palette) {
 				int vcx = 0;
 				int var4 = vdx;
 				do {
-					*destP++ = (var8) ? vdi & 0xFF : vbx & 0XFF;
-					*destP++ = (var4) ? vdi & 0xFF : vbx & 0XFF;
-					*destP++ = (vcx) ? vdi & 0xFF : vbx & 0XFF;
+					*destP++ = VGA_COLOR_TRANS((var8) ? vdi & 0xFF : vbx & 0XFF);
+					*destP++ = VGA_COLOR_TRANS((var4) ? vdi & 0xFF : vbx & 0XFF);
+					*destP++ = VGA_COLOR_TRANS((vcx) ? vdi & 0xFF : vbx & 0XFF);
 				} while (++vcx < 2);
 
 				var6 += 2;
