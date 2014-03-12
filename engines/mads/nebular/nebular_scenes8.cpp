@@ -88,7 +88,7 @@ void Scene804::enter() {
 	_globals._v8 = 0;
 	if (_globals[5]) {
 		// Copy protection failed
-		_globals[165] = 0xFFFF;
+		_globals[165] = -1;
 		_globals[164] = 0;
 	}
 

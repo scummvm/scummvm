@@ -36,7 +36,6 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_vm = vm;
 	_cursorSprites = nullptr;
 	_frameCounter = 0;
-	_frameNumber = 0;
 	_priorFrameTime = 0;
 	_keyPressed = false;
 	_mouseClicked = false;
@@ -166,8 +165,8 @@ void EventsManager::delay(int cycles) {
 }
 
 void EventsManager::waitForNextFrame() {
-	uint32 frameNum = getFrameCounter();
-	while (!_vm->shouldQuit() && !_vm->_game->_abortTimers && frameNum == _frameNumber)
+	uint32 frameCtr = getFrameCounter();
+	while (!_vm->shouldQuit() && frameCtr == _frameCounter)
 		delay(1);
 }
 

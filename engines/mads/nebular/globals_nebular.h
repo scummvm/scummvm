@@ -33,7 +33,7 @@ namespace Nebular {
 
 class Globals {
 private:
-	Common::Array<uint16> _flags;
+	Common::Array<int16> _flags;
 public:
 	Common::Array<int> _spriteIndexes;
 
@@ -55,7 +55,7 @@ public:
 	/**
 	 * Square brackets operator for accessing flags
 	 */
-	uint16 &operator[](int idx) { return _flags[idx]; }
+	int16 &operator[](int idx) { return _flags[idx]; }
 };
 
 } // End of namespace Nebular

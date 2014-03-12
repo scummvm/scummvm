@@ -41,7 +41,7 @@ GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
 
 int GameNebular::checkCopyProtection() {
 	// DEBUG: Flag copy protection failure
-	_globals[5] = 0xFFFF;
+	_globals[5] = -1;
 	
 	if (!ConfMan.getBool("copy_protection"))
 		return true;
@@ -60,13 +60,13 @@ void GameNebular::initialiseGlobals() {
 	// Set specific values needed by the game
 	_globals[4] = 8;
 	_globals[33] = 1;
-	_globals[10] = 0xFFFF;
-	_globals[13] = 0xFFFF;
-	_globals[15] = 0xFFFF;
-	_globals[19] = 0xFFFF;
-	_globals[20] = 0xFFFF;
-	_globals[21] = 0xFFFF;
-	_globals[95] = 0xFFFF;
+	_globals[10] = -1;
+	_globals[13] = -1;
+	_globals[15] = -1;
+	_globals[19] = -1;
+	_globals[20] = -1;
+	_globals[21] = -1;
+	_globals[95] = -1;
 
 	_objects.setData(3, 17, nullptr);
 
@@ -101,8 +101,8 @@ void GameNebular::initialiseGlobals() {
 	}
 
 	_globals[120] = 501;
-	_globals[121] = 0xFFFF;
-	_globals[55] = 0xFFFF;
+	_globals[121] = -1;
+	_globals[55] = -1;
 	_globals[119] = 1;
 	_globals[134] = 4;
 
@@ -133,7 +133,7 @@ void GameNebular::initialiseGlobals() {
 	case DIFFICULTY_MEDIUM:
 		_globals[35] = 0;
 		_objects.setRoom(8, 1);
-		_globals[137] = 0xFFFF;
+		_globals[137] = -1;
 		_globals[136] = 6;
 		break;
 	case DIFFICULTY_EASY:

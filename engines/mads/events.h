@@ -38,7 +38,6 @@ class EventsManager {
 private:
 	MADSEngine *_vm;
 	uint32 _frameCounter;
-	uint32 _frameNumber;
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
 	Common::Point _currentPos;
