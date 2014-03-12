@@ -30,6 +30,7 @@
 #include "illusions/spritedrawqueue.h"
 #include "illusions/spritedecompressqueue.h"
 #include "illusions/actor.h"
+#include "illusions/actorresource.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
@@ -77,16 +78,23 @@ Common::Error IllusionsEngine::run() {
 	initGraphics(640, 480, true, &pixelFormat16);
 	
 	_resSys = new ResourceSystem();
+	_resSys->addResourceLoader(0x00060000, new ActorResourceLoader(this));
+	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
+
+    _actorItems = new ActorItems(this);
 	_backgroundItems = new BackgroundItems(this);
 	_camera = new Camera(this);
 	
-	_resSys->loadResource(0x0011000B, 0, 0);
+	_resSys->loadResource(0x00100006, 0, 0);
 
+	/*
+	_resSys->loadResource(0x0011000B, 0, 0);
 	BackgroundItem *backgroundItem = _backgroundItems->debugFirst();
 	_system->copyRectToScreen(backgroundItem->_surfaces[0]->getPixels(), backgroundItem->_surfaces[0]->pitch,
 		0, 0, 640, 480);
 	_system->updateScreen();
+	*/
 
 	while (!shouldQuit()) {
 		updateEvents();
@@ -94,6 +102,7 @@ Common::Error IllusionsEngine::run() {
 	
 	delete _camera;
 	delete _backgroundItems;
+	delete _actorItems;
 	delete _resSys;
 	
 	return Common::kNoError;

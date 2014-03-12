@@ -48,6 +48,8 @@ class ResourceSystem;
 
 struct SurfInfo;
 
+class ActorItem;
+class ActorItems;
 class BackgroundItem;
 class BackgroundItems;
 class BackgroundResource;
@@ -71,6 +73,7 @@ public:
 	
 	void updateEvents();
 
+    ActorItems *_actorItems;
 	BackgroundItems *_backgroundItems;
 	Camera *_camera;
 
