@@ -49,7 +49,7 @@ void InterfaceSurface::load(const Common::String &resName) {
 	// Load in the palette
 	Common::SeekableReadStream *palStream = madsPack.getItemStream(0);
 
-	uint32 *gamePalP = &_vm->_palette->_gamePalette[0];
+	uint32 *gamePalP = &_vm->_palette->_palFlags[0];
 	byte *palP = &_vm->_palette->_mainPalette[0];
 
 	for (int i = 0; i < 16; ++i, gamePalP++, palP += 3) {

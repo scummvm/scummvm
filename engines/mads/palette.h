@@ -130,7 +130,7 @@ protected:
 public:
 	byte _mainPalette[PALETTE_SIZE];
 	byte _savedPalette[PALETTE_SIZE];
-	uint32 _gamePalette[PALETTE_COUNT];
+	uint32 _palFlags[PALETTE_COUNT];
 	PaletteUsage _paletteUsage;
 	RGBList _rgbList;
 	int _v1;
@@ -205,9 +205,9 @@ public:
 	void resetGamePalette(int v1, int v2);
 
 	/**
-	 * Initialises game palette
+	 * Initialises the main palette
 	 */
-	void initGamePalette();
+	void initPalette();
 
 	/**
 	 * Set the first four palette entries with preset values

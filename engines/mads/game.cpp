@@ -166,7 +166,7 @@ void Game::sectionLoop() {
 			_vm->_palette->resetGamePalette(18, 10);
 			_scene._spriteSlots.reset();
 		} else {
-			_vm->_palette->initGamePalette();
+			_vm->_palette->initPalette();
 		}
 
 		_vm->_palette->_paletteUsage.load(3, 0xF0, 0xF1, 0xF2);

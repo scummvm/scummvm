@@ -179,7 +179,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 			int var36 = (palette[palIndex]._flags & 0x80) ? 0 : 2;
 			
 			for (int idx = palLow; idx < palIdx; ++idx) {
-				uint32 v = _vm->_palette->_gamePalette[idx];
+				uint32 v = _vm->_palette->_palFlags[idx];
 				if ((v & var3A) && !(v & var36)) {
 					int var10;
 
@@ -205,7 +205,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 		if (!var48 && (!(flags & 0x1000) || (!(palette[palIndex]._flags & 0x60) && !(flags & 0x2000)))) {
 			for (int idx = freeIndex; idx < palIdx && !var48; ++idx) {
-				if (!_vm->_palette->_gamePalette[idx]) {
+				if (!_vm->_palette->_palFlags[idx]) {
 					--palCount;
 					++freeIndex;
 					var48 = true;
@@ -223,7 +223,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		assert(var48);
 		int var52 = (varA && palette[palIndex]._u2) ? 2 : 0;
 
-		_vm->_palette->_gamePalette[var4] |= var52 | rgbMask;
+		_vm->_palette->_palFlags[var4] |= var52 | rgbMask;
 		palette[palIndex]._palIndex = var4;
 	}
 
@@ -307,7 +307,7 @@ int PaletteUsage::getGamePalFreeIndex(int *palIndex) {
 	int count = 0;
 
 	for (int i = 0; i < PALETTE_COUNT; ++i) {
-		if (!_vm->_palette->_gamePalette[i]) {
+		if (!_vm->_palette->_palFlags[i]) {
 			++count;
 			if (*palIndex < 0)
 				*palIndex = i;
@@ -501,19 +501,19 @@ void Palette::setSystemPalette() {
 }
 
 void Palette::resetGamePalette(int lowRange, int highRange) {
-	Common::fill((byte *)&_gamePalette[0], (byte *)&_gamePalette[PALETTE_COUNT], 0);
+	Common::fill((byte *)&_palFlags[0], (byte *)&_palFlags[PALETTE_COUNT], 0);
 	initVGAPalette(_mainPalette);
 
 	// Init low range to common RGB values
 	if (lowRange) {
-		Common::fill(&_gamePalette[0], &_gamePalette[lowRange], 1);
+		Common::fill(&_palFlags[0], &_palFlags[lowRange], 1);
 	}
 
 	// Init high range to common RGB values
 	if (highRange) {
-		_gamePalette[255] = 1;
+		_palFlags[255] = 1;
 
-		Common::fill(&_gamePalette[255 - highRange], &_gamePalette[254], _gamePalette[255]);
+		Common::fill(&_palFlags[255 - highRange], &_palFlags[254], _palFlags[255]);
 	}
 
 	_rgbList.clear();
@@ -524,7 +524,7 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 	_highRange = highRange;
 }
 
-void Palette::initGamePalette() {
+void Palette::initPalette() {
 	RGB4 rgb;
 	uint32 palMask = 1;
 
@@ -543,7 +543,7 @@ void Palette::initGamePalette() {
 	}
 
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
-		_gamePalette[idx] = palMask;
+		_palFlags[idx] = palMask;
 
 	_v1 = 0;
 	_rgbList.reset();
@@ -566,8 +566,6 @@ void Palette::initVGAPalette(byte *palette) {
 				int vcx = 0;
 				int var4 = vdx;
 				do {
-					int var2 = var6 + vcx;
-					
 					*destP++ = (var8) ? vdi & 0xFF : vbx & 0XFF;
 					*destP++ = (var4) ? vdi & 0xFF : vbx & 0XFF;
 					*destP++ = (vcx) ? vdi & 0xFF : vbx & 0XFF;
