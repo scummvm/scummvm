@@ -138,7 +138,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
 		bool var48 = false;
 		int var4 = 0xffff;
-		int v1 = pal1[palIndex];
+		int v1 = pal2[palIndex];
 
 		if (palette[v1]._flags & 8) {
 			var48 = true;
@@ -196,7 +196,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 					if (var2 > var10) {
 						var48 = true;
-						var2 = idx;
+						var4 = idx;
 						var2 = var10;
 					}
 				}
@@ -502,7 +502,7 @@ void Palette::setSystemPalette() {
 
 void Palette::resetGamePalette(int lowRange, int highRange) {
 	Common::fill((byte *)&_gamePalette[0], (byte *)&_gamePalette[PALETTE_COUNT], 0);
-	initRange(_mainPalette);
+	initVGAPalette(_mainPalette);
 
 	// Init low range to common RGB values
 	if (lowRange) {
@@ -549,7 +549,7 @@ void Palette::initGamePalette() {
 	_rgbList.reset();
 }
 
-void Palette::initRange(byte *palette) {
+void Palette::initVGAPalette(byte *palette) {
 	int var6 = 0;
 	int vdx = 0;
 	int vbx = 0;

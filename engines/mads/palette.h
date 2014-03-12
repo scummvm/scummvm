@@ -120,9 +120,9 @@ public:
 class Palette {
 private:
 	/**
-	 * Initialises a stanadrd range of colours for the given palette
+	 * Initialises a stanadrd VGA palette
 	 */
-	void initRange(byte *palette);
+	void initVGAPalette(byte *palette);
 protected:
 	MADSEngine *_vm;
 
