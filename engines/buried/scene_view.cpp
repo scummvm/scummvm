@@ -658,8 +658,12 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 	((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(true);
 
 	// Hardcoded demo ambient
-	if (_vm->isDemo() && newSceneStaticData.location.environment != oldLocation.environment)
-		_vm->_sound->setAmbientSound("CASTLE/CGBSSNG.WAV");
+	if (_vm->isDemo() && newSceneStaticData.location.environment != oldLocation.environment) {
+		if (_currentScene->_staticData.location.environment == 5)
+			_vm->_sound->setAmbientSound("CASTLE/CGBSSNG.WAV");
+		else
+			_vm->_sound->setAmbientSound("CASTLE/CGMBSNG.WAV");
+	}
 
 	return true;
 }
