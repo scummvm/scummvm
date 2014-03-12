@@ -105,7 +105,7 @@ void Window::sendMessage(Message *message) {
 		onRButtonDown(((RButtonDownMessage *)message)->getPoint(), ((RButtonDownMessage *)message)->getFlags());
 		break;
 	case kMessageTypeSetCursor:
-		handleSetCursorMessage(((SetCursorMessage *)message)->getMessage());
+		onSetCursor(((SetCursorMessage *)message)->getMessage());
 		break;
 	case kMessageTypeEnable:
 		onEnable(((EnableMessage *)message)->getEnable());
@@ -276,15 +276,6 @@ Window *Window::childWindowAtPoint(const Common::Point &point) {
 	return this;
 }
 
-bool Window::handleSetCursorMessage(uint message) {
-	// SetCursor messages need special handling
-	// The parent has a chance to set a cursor first
-	if (_parent && _parent->handleSetCursorMessage(message))
-		return true;
-
-	return onSetCursor(message);
-}
-
 Window *Window::setCapture() {
 	Window *oldCapturedWindow = _vm->_captureWindow;
 	_vm->_captureWindow = this;
@@ -306,7 +297,11 @@ Common::Point Window::convertPointToWindow(const Common::Point &point, Window *d
 }
 
 bool Window::onSetCursor(uint message) {
-	// Default to the arrow
+	// The default implementation is to try the parent first
+	if (_parent && _parent->onSetCursor(message))
+		return true;
+
+	// Then otherwise default to the arrow
 	_vm->_gfx->setCursor(kCursorArrow);
 	return false;
 }
