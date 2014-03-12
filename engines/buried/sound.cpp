@@ -211,6 +211,10 @@ bool SoundManager::adjustAmbientSoundVolume(byte newVolumeLevel, bool fade, byte
 	return true;
 }
 
+bool SoundManager::isAmbientSoundPlaying() {
+	return _soundData[kAmbientIndexBase + _lastAmbient]->_handle != 0;
+}
+
 bool SoundManager::setSecondaryAmbientSound(const Common::String &fileName, bool fade, byte finalVolumeLevel) {
 	if (fileName.empty())
 		return false;

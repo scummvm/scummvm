@@ -50,6 +50,7 @@ public:
 	bool setAmbientSound(const Common::String &fileName = "", bool fade = false, byte finalVolumeLevel = 64);
 	bool adjustAmbientSoundVolume(byte newVolumeLevel, bool fade, byte steps, uint32 fadeLength);
 	uint32 getAmbientPosition();
+	bool isAmbientSoundPlaying();
 
 	bool setSecondaryAmbientSound(const Common::String &fileName = "", bool fade = false, byte finalVolumeLevel = 64);
 	bool adjustSecondaryAmbientSoundVolume(byte newVolumeLevel, bool fade, byte steps, uint32 fadeLength);

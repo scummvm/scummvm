@@ -174,7 +174,6 @@ private:
 	bool _useSprite;
 	bool _cycleEnabled;
 	uint _timer;
-	uint _soundTimer;
 
 	bool _infoWindowDisplayed;
 	bool _bioChipWindowDisplayed;
@@ -190,6 +189,11 @@ private:
 
 	bool _useWaitCursor;
 	int _oldCursorForWait;
+
+	// Special sound handling for the demo
+	uint _demoSoundTimer;
+	int _demoSoundEffectHandle;
+	void startDemoAmbientSound();
 
 	bool initializeTimeZoneAndEnvironment(Window *viewWindow, int timeZone, int environment);
 	SceneBase *constructSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);

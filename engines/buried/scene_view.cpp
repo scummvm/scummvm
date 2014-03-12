@@ -55,7 +55,6 @@ SceneViewWindow::SceneViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	_infoWindowDisplayed = false;
 	_bioChipWindowDisplayed = false;
 	_burnedLetterDisplayed = false;
-	_soundTimer = 0;
 	_asyncMovie = 0;
 	_asyncMovieStartFrame = 0;
 	_loopAsyncMovie = false;
@@ -63,6 +62,7 @@ SceneViewWindow::SceneViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	_useWaitCursor = false;
 	_cycleEnabled = ((FrameWindow *)(_parent->getParent()))->isFrameCyclingDefault();
 	_disableArthur = false;
+	_demoSoundEffectHandle = -1;
 
 	_preBuffer = new Graphics::Surface();
 	_preBuffer->create(DIB_FRAME_WIDTH, DIB_FRAME_HEIGHT, g_system->getScreenFormat());
@@ -70,6 +70,7 @@ SceneViewWindow::SceneViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	_rect = Common::Rect(64, 128, 496, 317);
 
 	_timer = setTimer(100);
+	_demoSoundTimer = _vm->isDemo() ? setTimer(10) : 0;
 	_curCursor = kCursorArrow;
 	_stillFrames = new AVIFrames();
 	_cycleFrames = new AVIFrames();
@@ -119,7 +120,7 @@ bool SceneViewWindow::startNewGame(bool walkthrough) {
 
 	if (_vm->isDemo()) {
 		displayLiveText("To return to the main menu, click the 'Menu' button on the Interface Biochip Display to the right, then click Quit.");
-		_vm->_sound->setAmbientSound("CASTLE/CGMBSNG.WAV");
+		startDemoAmbientSound();
 
 		// This is unlabeled in the original source, but it looks like a hidden feature
 		// to access a bonus puzzle in the demo. (Complete with a typo, but who's counting?)
@@ -658,12 +659,8 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 	((GameUIWindow *)_parent)->_navArrowWindow->enableWindow(true);
 
 	// Hardcoded demo ambient
-	if (_vm->isDemo() && newSceneStaticData.location.environment != oldLocation.environment) {
-		if (_currentScene->_staticData.location.environment == 5)
-			_vm->_sound->setAmbientSound("CASTLE/CGBSSNG.WAV");
-		else
-			_vm->_sound->setAmbientSound("CASTLE/CGMBSNG.WAV");
-	}
+	if (_vm->isDemo() && newSceneStaticData.location.environment != oldLocation.environment)
+		startDemoAmbientSound();
 
 	return true;
 }
@@ -952,7 +949,36 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 			}
 			return true;
 		} else {
-			return walkTransition(_currentScene->_staticData.location, destinationData, navFrame);
+			// The demo has a hardcoded door open sound
+			// This, and the code below the walkTransition call, are glue around the
+			// demo's sound implementation. The demo is based on an alpha which uses
+			// waveOut to play sounds, as opposed to the final which uses WAIL.
+			if (_vm->isDemo() && destinationData.destinationScene.depth == 1) {
+				// Stop the current ambient sound
+				// onTimer() will restart it
+				_vm->_sound->setAmbientSound();
+
+				if (_currentScene->_staticData.location.environment == 4)
+					_demoSoundEffectHandle = _vm->_sound->playSoundEffect("CASTLE/CGMBDO.WAV");
+				else
+					_demoSoundEffectHandle = _vm->_sound->playSoundEffect("CASTLE/CGBSDO.WAV");
+			}
+		
+			bool retVal = walkTransition(_currentScene->_staticData.location, destinationData, navFrame);
+
+			// And also a door close sound
+			if (_vm->isDemo() && destinationData.destinationScene.environment != _currentScene->_staticData.location.environment) {
+				// Stop the current ambient sound
+				// onTimer() will restart it
+				_vm->_sound->setAmbientSound();
+
+				if (_currentScene->_staticData.location.environment == 4)
+					_demoSoundEffectHandle = _vm->_sound->playSoundEffect("CASTLE/CGBSDC.WAV");
+				else
+					_demoSoundEffectHandle = _vm->_sound->playSoundEffect("CASTLE/CGMBDC.WAV");
+			}
+
+			return retVal;
 		}
 		break;
 	case TRANSITION_VIDEO:
@@ -2488,6 +2514,18 @@ void SceneViewWindow::onPaint() {
 }
 
 void SceneViewWindow::onTimer(uint timer) {
+	// Check first to see if this is the demo's sound timer
+	if (timer == _demoSoundTimer) {
+		// If no sound is playing, restart the ambient
+		if (!_vm->_sound->isAmbientSoundPlaying() && !_vm->_sound->isSoundEffectPlaying(_demoSoundEffectHandle)) {
+			// Reset the sound effect handle
+			_demoSoundEffectHandle = -1;
+			startDemoAmbientSound();
+		}
+
+		return;
+	}
+
 	SoundManager *sound = _vm->_sound; // Take a copy in case we die while in the timer
 	sound->timerCallback();
 
@@ -2648,6 +2686,15 @@ Common::Array<AIComment> SceneViewWindow::getAICommentDatabase(int timeZone, int
 
 	delete stream;
 	return comments;
+}
+
+void SceneViewWindow::startDemoAmbientSound() {
+	assert(_currentScene);
+
+	if (_currentScene->_staticData.location.environment == 5)
+		_vm->_sound->setAmbientSound("CASTLE/CGBSSNG.WAV", false, 127);
+	else
+		_vm->_sound->setAmbientSound("CASTLE/CGMBSNG.WAV", false, 127);
 }
 
 } // End of namespace Buried
