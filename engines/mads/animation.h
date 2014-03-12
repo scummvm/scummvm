@@ -72,7 +72,7 @@ public:
 	int _msgIndex;
 	int _numTicks;
 	Common::Point _posAdjust;
-	Common::Point _scrollPos;
+	int _field8;
 
 	/**
 	* Loads data for the record

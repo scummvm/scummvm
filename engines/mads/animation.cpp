@@ -127,8 +127,7 @@ void AnimMiscEntry::load(Common::SeekableReadStream *f) {
 	_numTicks = f->readUint16LE();
 	_posAdjust.x = f->readSint16LE();
 	_posAdjust.y = f->readSint16LE();
-	_scrollPos.x = f->readSint16LE();
-	_scrollPos.y = f->readSint16LE();
+	_field8 = f->readUint16LE();
 }
 
 /*------------------------------------------------------------------------*/
