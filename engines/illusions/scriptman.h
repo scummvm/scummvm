@@ -31,6 +31,7 @@
 namespace Illusions {
 
 class IllusionsEngine;
+class ScriptOpcodes;
 
 struct ActiveScene {
 	uint32 _sceneId;
@@ -70,17 +71,34 @@ public:
 	ScriptMan(IllusionsEngine *vm);
 	~ScriptMan();
 	void setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId);
+	void startScriptThread(uint32 threadId, uint32 callingThreadId,
+		uint32 value8, uint32 valueC, uint32 value10);
+	void startAnonScriptThread(int32 threadId, uint32 callingThreadId,
+		uint32 value8, uint32 valueC, uint32 value10);
+	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
+		uint32 value8, uint32 valueC, uint32 value10);
 public:
 
 	IllusionsEngine *_vm;
+	ScriptResource *_scriptResource;
+
 	ActiveScenes _activeScenes;
 	ScriptStack _stack;
 	
+	int _pauseCtr;
+	
 	uint32 _theSceneId;
 	uint32 _theThreadId;
+	bool _doScriptThreadInit;
+	uint32 _nextTempThreadId;
 	
+	ThreadList *_threads;
+	ScriptOpcodes *_scriptOpcodes;
 	
-	
+	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
+		byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10);
+	uint32 newTempThreadId();
+
 };
 
 } // End of namespace Illusions

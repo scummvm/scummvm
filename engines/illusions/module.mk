@@ -12,7 +12,9 @@ MODULE_OBJS := \
 	input.o \
 	resourcesystem.o \
 	scriptman.o \
+	scriptopcodes.o \
 	scriptresource.o \
+	scriptthread.o \
 	spritedecompressqueue.o \
 	spritedrawqueue.o \
 	thread.o \

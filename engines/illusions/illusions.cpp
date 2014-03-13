@@ -85,35 +85,51 @@ Common::Error IllusionsEngine::run() {
 	_resSys->addResourceLoader(0x000D0000, new ScriptResourceLoader(this));
 	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
+	
+	_scriptMan = new ScriptMan(this);
 
-    _actorItems = new ActorItems(this);
+	_actorItems = new ActorItems(this);
 	_backgroundItems = new BackgroundItems(this);
 	_camera = new Camera(this);
 	
-	/*
+#if 0
 	// ActorResource test
 	_resSys->loadResource(0x00100006, 0, 0);
-	*/
+#endif
 
-	/*
+#if 0
 	// BackgroundResource test
 	_resSys->loadResource(0x0011000B, 0, 0);
 	BackgroundItem *backgroundItem = _backgroundItems->debugFirst();
 	_system->copyRectToScreen(backgroundItem->_surfaces[0]->getPixels(), backgroundItem->_surfaces[0]->pitch,
 		0, 0, 640, 480);
 	_system->updateScreen();
-	*/
+#endif
 	
+#if 1
 	// ScriptResource test
 	_resSys->loadResource(0x000D0001, 0, 0);
+	
+	_scriptMan->startScriptThread(0x00020004, 0, 0, 0, 0);
 
 	while (!shouldQuit()) {
 		updateEvents();
+		_scriptMan->_threads->updateThreads();
 	}
+	
+	
+#endif
+
+#if 0
+	while (!shouldQuit()) {
+		updateEvents();
+	}
+#endif
 	
 	delete _camera;
 	delete _backgroundItems;
 	delete _actorItems;
+	delete _scriptMan;
 	delete _resSys;
 	
 	return Common::kNoError;

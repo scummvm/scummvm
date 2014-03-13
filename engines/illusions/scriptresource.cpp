@@ -22,20 +22,19 @@
 
 #include "illusions/illusions.h"
 #include "illusions/scriptresource.h"
+#include "illusions/scriptman.h"
 
 namespace Illusions {
 
 // ScriptResourceLoader
 
 void ScriptResourceLoader::load(Resource *resource) {
-	debug("ScriptResourceLoader::load() Loading script %08X from %s...", resource->_resId, resource->_filename.c_str());
+	debug(2, "ScriptResourceLoader::load() Loading script %08X from %s...", resource->_resId, resource->_filename.c_str());
 
 	ScriptResource *scriptResource = new ScriptResource();
 	scriptResource->load(resource->_data, resource->_dataSize);
 	
-	
-	
-	_vm->_scriptResource = scriptResource;
+	_vm->_scriptMan->_scriptResource = scriptResource;
 	
 }
 
@@ -77,11 +76,11 @@ void BlockCounters::clear() {
 }
 
 byte BlockCounters::get(uint index) {
-	return _blockCounters[index] & 0x3F;
+	return _blockCounters[index - 1] & 0x3F;
 }
 
 void BlockCounters::set(uint index, byte value) {
-	_blockCounters[index] = (get(index) ^ value) & 0x3F;
+	_blockCounters[index - 1] = (get(index - 1) ^ value) & 0x3F;
 }
 
 // TriggerCause
@@ -91,7 +90,7 @@ void TriggerCause::load(Common::SeekableReadStream &stream) {
 	_objectId2 = stream.readUint32LE();
 	_codeOffs = stream.readUint32LE();
 	
-	debug("TriggerCause::load() _verbId: %08X; _objectId2: %08X; _codeOffs: %08X",
+	debug(2, "TriggerCause::load() _verbId: %08X; _objectId2: %08X; _codeOffs: %08X",
 		_verbId, _objectId2, _codeOffs);
 }
 
@@ -109,7 +108,7 @@ void TriggerObject::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_objectId = stream.readUint32LE();
 	_causesCount = stream.readUint16LE();
 	stream.skip(2); // Skip padding
-	debug("TriggerObject::load() _objectId: %08X; _causesCount: %d",
+	debug(2, "TriggerObject::load() _objectId: %08X; _causesCount: %d",
 		_objectId, _causesCount);
 	_causes = new TriggerCause[_causesCount];
 	for (uint i = 0; i < _causesCount; ++i)
@@ -144,7 +143,7 @@ void ProgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	stream.skip(128);
 	_triggerObjectsCount = stream.readUint16LE();
 	stream.skip(2); // Skip padding
-	debug("\nProgInfo::load() _id: %d; _unk: %d; _name: [%s]",
+	debug(2, "\nProgInfo::load() _id: %d; _unk: %d; _name: [%s]",
 		_id, _unk, debugW2I(_name));
 	uint32 triggerObjectsListOffs = stream.readUint32LE();
 	if (_triggerObjectsCount > 0) {
@@ -177,7 +176,7 @@ void ScriptResource::load(byte *data, uint32 dataSize) {
 	stream.skip(4); // Skip unused
 	uint propertiesCount = stream.readUint16LE();
 	uint blockCountersCount = stream.readUint16LE();
-	uint codeCount = stream.readUint16LE();
+	_codeCount = stream.readUint16LE();
 	_progInfosCount = stream.readUint16LE();
 	uint32 propertiesOffs = stream.readUint32LE();
 	uint32 blockCountersOffs = stream.readUint32LE();
@@ -189,9 +188,9 @@ void ScriptResource::load(byte *data, uint32 dataSize) {
 	// Init blockcounters
 	_blockCounters.init(blockCountersCount, data + blockCountersOffs);
 	
-	_codeOffsets = new uint32[codeCount];
+	_codeOffsets = new uint32[_codeCount];
 	stream.seek(codeTblOffs);
-	for (uint i = 0; i < codeCount; ++i)
+	for (uint i = 0; i < _codeCount; ++i)
 		_codeOffsets[i] = stream.readUint32LE();
 
 	_progInfos = new ProgInfo[_progInfosCount];
@@ -202,15 +201,15 @@ void ScriptResource::load(byte *data, uint32 dataSize) {
 		_progInfos[i].load(data, stream);
 	}
 
-	debug("ScriptResource::load() propertiesCount: %d; blockCountersCount: %d; codeCount: %d; _progInfosCount: %d",
-		propertiesCount, blockCountersCount, codeCount, _progInfosCount);
-	debug("ScriptResource::load() propertiesOffs: %08X; blockCountersOffs: %08X; codeTblOffs: %08X",
+	debug(2, "ScriptResource::load() propertiesCount: %d; blockCountersCount: %d; _codeCount: %d; _progInfosCount: %d",
+		propertiesCount, blockCountersCount, _codeCount, _progInfosCount);
+	debug(2, "ScriptResource::load() propertiesOffs: %08X; blockCountersOffs: %08X; codeTblOffs: %08X",
 		propertiesOffs, blockCountersOffs, codeTblOffs);
 
 }
 
 byte *ScriptResource::getThreadCode(uint32 threadId) {
-	return _data + _codeOffsets[threadId & 0xFFFF];
+	return _data + _codeOffsets[(threadId & 0xFFFF) - 1];
 }
 
 } // End of namespace Illusions
