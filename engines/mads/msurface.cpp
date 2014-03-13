@@ -497,12 +497,14 @@ MSurface *MSurface::flipHorizontal() const {
 /*------------------------------------------------------------------------*/
 
 int DepthSurface::getDepth(const Common::Point &pt) {
-
 	if (_vm->_game->_scene._sceneInfo->_depthStyle == 2) {
 		int bits = (3 - (pt.x % 4)) * 2;
 		byte v = *getBasePtr(pt.x >> 2, pt.y);
 		return v >> bits;
 	} else {
+		if (pt.x < 0 || pt.y < 0 || pt.x >= this->w || pt.y >= this->h)
+			return 8;
+
 		return *getBasePtr(pt.x, pt.y) & 0xF;
 	}
 }
