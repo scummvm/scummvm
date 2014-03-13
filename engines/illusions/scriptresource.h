@@ -54,6 +54,9 @@ class BlockCounters {
 public:
 	BlockCounters();
 	void init(uint count, byte *blockCounters);
+	void clear();
+	byte get(uint index);
+	void set(uint index, byte value);
 public:
 	uint _count;
 	byte *_blockCounters;
@@ -95,7 +98,10 @@ public:
 	ScriptResource();
 	~ScriptResource();
 	void load(byte *data, uint32 dataSize);
+	byte *getThreadCode(uint32 threadId);
 public:
+	byte *_data;
+	uint32 _dataSize;
 	Properties _properties;
 	BlockCounters _blockCounters;
 	uint32 *_codeOffsets;
