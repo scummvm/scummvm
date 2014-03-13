@@ -253,7 +253,12 @@ protected:
 	/**
 	 * Loads the given surface with depth information of a given scene
 	 */
-	virtual void loadCodes(MSurface &depthSurface);
+	virtual void loadCodes(MSurface &depthSurface) = 0;
+
+	/**
+	* Loads the given surface with depth information of a given scene
+	*/
+	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) = 0;
 public:
 	int _sceneId;
 	int _artFileNum;

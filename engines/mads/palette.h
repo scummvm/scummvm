@@ -100,7 +100,7 @@ public:
 
 class RGBList {
 private:
-	uint16 _data[32];
+	int16 _data[32];
 public:
 	RGBList() { clear(); }
 
@@ -113,7 +113,7 @@ public:
 	 */
 	int scan();
 
-	uint16 &operator[](int idx) { return _data[idx]; }
+	int16 &operator[](int idx) { return _data[idx]; }
 };
 
 #define PALETTE_COUNT 256

@@ -229,7 +229,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		palette[palIndex]._palIndex = var4;
 	}
 
-	_vm->_palette->_rgbList[rgbIndex] = 0xffff;
+	_vm->_palette->_rgbList[rgbIndex] = -1;
 
 	delete[] pal1;
 	delete[] pal2;
@@ -541,7 +541,7 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 	}
 
 	_rgbList.clear();
-	_rgbList[0] = _rgbList[1] = 0xffff;
+	_rgbList[0] = _rgbList[1] = -1;
 
 	_v1 = 0;
 	_lowRange = lowRange;

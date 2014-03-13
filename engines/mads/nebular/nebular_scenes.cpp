@@ -68,6 +68,13 @@ void SceneInfoNebular::loadCodes(MSurface &depthSurface) {
 	MadsPack codesPack(&f);
 	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
 
+	loadCodes(depthSurface, stream);
+
+	delete stream;
+	f.close();
+}
+
+void SceneInfoNebular::loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) {
 	byte *destP = depthSurface.getData();
 	byte *endP = depthSurface.getBasePtr(0, depthSurface.h);
 
@@ -85,8 +92,6 @@ void SceneInfoNebular::loadCodes(MSurface &depthSurface) {
 
 	if (destP < endP)
 		Common::fill(destP, endP, 0);
-	delete stream;
-	f.close();
 }
 
 } // End of namespace Nebular

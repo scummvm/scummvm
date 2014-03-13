@@ -383,7 +383,7 @@ SceneInfo *SceneInfo::init(MADSEngine *vm) {
 	if (vm->getGameID() == GType_RexNebular) {
 		return new Nebular::SceneInfoNebular(vm);
 	} else {
-		return new SceneInfo(vm);
+		error("Unknown game");
 	}
 }
 
@@ -453,9 +453,7 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 		if (i < spriteInfoCount)
 			spriteInfo.push_back(info);
 	}
-
 	delete infoStream;
-	infoFile.close();
 
 	int width = _width;
 	int height = _height;
@@ -471,7 +469,11 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 	}
 
 	// Load the depth surface with the scene codes
-	loadCodes(depthSurface);
+	Common::SeekableReadStream *depthStream = infoPack.getItemStream(1);
+	loadCodes(depthSurface, depthStream);
+	delete depthStream;
+
+	infoFile.close();
 
 	// Get the ART resource
 	if (sceneFlag) {
@@ -552,35 +554,6 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 		warning("TODO: sub_201C8 SPRITE_SET.field_6");
 		delete spriteSets[i];
 	}
-}
-
-void SceneInfo::loadCodes(MSurface &depthSurface) {
-	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ".DAT"));
-	MadsPack codesPack(&f);
-	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
-
-	uint16 width = _width;
-	uint16 height = _height;
-	byte *walkMap = new byte[stream->size()];
-
-	depthSurface.setSize(width, height);
-	stream->read(walkMap, f.size());
-	delete stream;
-	f.close();
-
-	byte *ptr = (byte *)depthSurface.getPixels();
-
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			int ofs = x + (y * width);
-			if ((walkMap[ofs / 8] << (ofs % 8)) & 0x80)
-				*ptr++ = 1;		// walkable
-			else
-				*ptr++ = 0;
-		}
-	}
-
-	delete[] walkMap;
 }
 
 /*------------------------------------------------------------------------*/

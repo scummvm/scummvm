@@ -115,6 +115,8 @@ class SceneInfoNebular : public SceneInfo {
 protected:
 	virtual void loadCodes(MSurface &depthSurface);
 
+	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream);
+
 	/**
 	* Constructor
 	*/
