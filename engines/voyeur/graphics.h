@@ -66,7 +66,7 @@ public:
 	PictureResource *_backgroundPage;
 	int _SVGAMode;
 	ViewPortListResource *_viewPortListPtr;
-	ViewPortResource **_vPort;
+	ViewPortResource *_vPort;
 	bool _saveBack;
 	Common::Rect *_clipPtr;
 	uint _planeSelect;

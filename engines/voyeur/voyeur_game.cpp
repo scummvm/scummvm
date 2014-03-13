@@ -232,7 +232,7 @@ void VoyeurEngine::closeStamp() {
 }
 
 void VoyeurEngine::doTailTitle() {
-	(*_graphicsManager->_vPort)->setupViewPort(NULL);
+	_graphicsManager->_vPort->setupViewPort(NULL);
 	_graphicsManager->screenReset();
 	
 	if (_bVoy->getBoltGroup(0x600)) {
@@ -250,7 +250,7 @@ void VoyeurEngine::doTailTitle() {
 				PictureResource *pic = _bVoy->boltEntry(0x602)._picResource;
 				CMapResource *pal = _bVoy->boltEntry(0x603)._cMapResource;
 
-				(*_graphicsManager->_vPort)->setupViewPort(pic);
+				_graphicsManager->_vPort->setupViewPort(pic);
 				pal->startFade();
 				flipPageAndWaitForFade();
 				_eventsManager->delayClick(300);
@@ -258,7 +258,7 @@ void VoyeurEngine::doTailTitle() {
 				pic = _bVoy->boltEntry(0x604)._picResource;
 				pal = _bVoy->boltEntry(0x605)._cMapResource;
 
-				(*_graphicsManager->_vPort)->setupViewPort(pic);
+				_graphicsManager->_vPort->setupViewPort(pic);
 				pal->startFade();
 				flipPageAndWaitForFade();
 				_eventsManager->delayClick(120);
@@ -283,7 +283,7 @@ void VoyeurEngine::doClosingCredits() {
 	const char *msg = (const char *)_bVoy->memberAddr(0x404);
 	const byte *creditList = (const byte *)_bVoy->memberAddr(0x405);
 
-	(*_graphicsManager->_vPort)->setupViewPort(NULL);
+	_graphicsManager->_vPort->setupViewPort(NULL);
 	_graphicsManager->setColor(1, 180, 180, 180);
 	_graphicsManager->setColor(2, 200, 200, 200);
 	_eventsManager->_intPtr._hasPalette = true;
@@ -302,7 +302,7 @@ void VoyeurEngine::doClosingCredits() {
 		int flags = READ_LE_UINT16(entry + 4);
 
 		if (flags & 0x10)
-			(*_graphicsManager->_vPort)->fillPic(0);
+			_graphicsManager->_vPort->fillPic(0);
 
 		if (flags & 1) {
 			fi._foreColor = 1;
@@ -312,7 +312,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
 
-			(*_graphicsManager->_vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 		}
 		
@@ -324,7 +324,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
 
-			(*_graphicsManager->_vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 		}
 
@@ -336,7 +336,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(38, READ_LE_UINT16(entry));
 
-			(*_graphicsManager->_vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 
 			fi._foreColor = 2;
@@ -345,7 +345,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(198, READ_LE_UINT16(entry));
 
-			(*_graphicsManager->_vPort)->drawText(msg);			
+			_graphicsManager->_vPort->drawText(msg);			
 			msg += strlen(msg) + 1;
 		}
 
@@ -357,7 +357,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
 
-			(*_graphicsManager->_vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 
 			fi._foreColor = 2;
@@ -367,7 +367,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry) + 13);
 
-			(*_graphicsManager->_vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 		}
 
@@ -390,8 +390,8 @@ void VoyeurEngine::doPiracy() {
 	_graphicsManager->setColor(1, 0, 0, 0);
 	_graphicsManager->setColor(2, 255, 255, 255);
 	_eventsManager->_intPtr._hasPalette = true;
-	(*_graphicsManager->_vPort)->setupViewPort(NULL);
-	(*_graphicsManager->_vPort)->fillPic(1);
+	_graphicsManager->_vPort->setupViewPort(NULL);
+	_graphicsManager->_vPort->fillPic(1);
 
 	FontInfoResource &fi = *_graphicsManager->_fontPtr;
 	fi._curFont = _bVoy->boltEntry(0x101)._fontResource;
@@ -407,7 +407,7 @@ void VoyeurEngine::doPiracy() {
 	int yp, idx;
 	for (idx = 0, yp = 33; idx < 10; ++idx) {
 		fi._pos = Common::Point(0, yp);
-		(*_graphicsManager->_vPort)->drawText(PIRACY_MESSAGE[idx]);
+		_graphicsManager->_vPort->drawText(PIRACY_MESSAGE[idx]);
 
 		yp += fi._curFont->_fontHeight + 4;
 	}
@@ -442,7 +442,7 @@ void VoyeurEngine::reviewTape() {
 
 		_graphicsManager->_backColors = _bVoy->boltEntry(0x902)._cMapResource;
 		_graphicsManager->_backgroundPage = _bVoy->boltEntry(0x901)._picResource;
-		(*_graphicsManager->_vPort)->setupViewPort(_graphicsManager->_backgroundPage);
+		_graphicsManager->_vPort->setupViewPort(_graphicsManager->_backgroundPage);
 		_graphicsManager->_backColors->startFade();
 
 		flipPageAndWaitForFade();
@@ -504,15 +504,15 @@ void VoyeurEngine::reviewTape() {
 					yp += 15;
 				}
 
-				(*_graphicsManager->_vPort)->addSaveRect(
-					(*_graphicsManager->_vPort)->_lastPage, tempRect);
+				_graphicsManager->_vPort->addSaveRect(
+					_graphicsManager->_vPort->_lastPage, tempRect);
 				flipPageAndWait();
 
-				(*_graphicsManager->_vPort)->addSaveRect(
-					(*_graphicsManager->_vPort)->_lastPage, tempRect);
+				_graphicsManager->_vPort->addSaveRect(
+					_graphicsManager->_vPort->_lastPage, tempRect);
 			}
 
-			_graphicsManager->sDrawPic(cursor, *_graphicsManager->_vPort,
+			_graphicsManager->sDrawPic(cursor, _graphicsManager->_vPort,
 				_eventsManager->getMousePos());
 			flipPageAndWait();
 
@@ -566,12 +566,12 @@ void VoyeurEngine::reviewTape() {
 						yp += 15;
 					}
 
-					(*_graphicsManager->_vPort)->addSaveRect(
-						(*_graphicsManager->_vPort)->_lastPage, tempRect);
+					_graphicsManager->_vPort->addSaveRect(
+						_graphicsManager->_vPort->_lastPage, tempRect);
 					flipPageAndWait();
 
-					(*_graphicsManager->_vPort)->addSaveRect(
-						(*_graphicsManager->_vPort)->_lastPage, tempRect);
+					_graphicsManager->_vPort->addSaveRect(
+						_graphicsManager->_vPort->_lastPage, tempRect);
 					flipPageAndWait();
 
 					_eventsManager->getMouseInfo();
@@ -651,7 +651,7 @@ void VoyeurEngine::reviewTape() {
 		newY = _eventsManager->getMousePos().y;
 		_voy->_fadingType = 0;
 		_voy->_viewBounds = nullptr;
-		(*_graphicsManager->_vPort)->setupViewPort(NULL);
+		_graphicsManager->_vPort->setupViewPort(NULL);
 			
 		if (_currentVocId != -1) {
 			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
@@ -679,7 +679,7 @@ void VoyeurEngine::reviewTape() {
 			_graphicsManager->_backColors = _bVoy->boltEntry(0x7F01 +
 				BLIND_TABLE[_audioVideoId])._cMapResource;
 
-			(*_graphicsManager->_vPort)->setupViewPort(_graphicsManager->_backgroundPage);
+			_graphicsManager->_vPort->setupViewPort(_graphicsManager->_backgroundPage);
 			_graphicsManager->_backColors->startFade();
 			flipPageAndWaitForFade();
 
@@ -728,7 +728,7 @@ void VoyeurEngine::reviewTape() {
 
 	_graphicsManager->_fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
 
-	(*_graphicsManager->_vPort)->fillPic(0);
+	_graphicsManager->_vPort->fillPic(0);
 	flipPageAndWait();
 	_bVoy->freeBoltGroup(0x900);
 }
@@ -789,8 +789,8 @@ void VoyeurEngine::doTapePlaying() {
 	PictureResource *pic = _bVoy->boltEntry(0xA02)._picResource;
 	VInitCycleResource *cycle = _bVoy->boltEntry(0xA05)._vInitCycleResource;
 
-	(*_graphicsManager->_vPort)->setupViewPort(_graphicsManager->_backgroundPage);
-	_graphicsManager->sDrawPic(pic, *_graphicsManager->_vPort, Common::Point(57, 30));
+	_graphicsManager->_vPort->setupViewPort(_graphicsManager->_backgroundPage);
+	_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(57, 30));
 	_graphicsManager->_backColors->startFade();
 	flipPageAndWaitForFade();
 
@@ -933,7 +933,7 @@ int VoyeurEngine::getChooseButton()  {
 		+ 6)._rectResource->_entries;
 	int selectedIndex = -1;
 
-	(*_graphicsManager->_vPort)->setupViewPort(_graphicsManager->_backgroundPage);
+	_graphicsManager->_vPort->setupViewPort(_graphicsManager->_backgroundPage);
 	_graphicsManager->_backColors->_steps = 0;
 	_graphicsManager->_backColors->startFade();
 	flipPageAndWait();
@@ -956,7 +956,7 @@ int VoyeurEngine::getChooseButton()  {
 						selectedIndex = idx;
 						if (selectedIndex != prevIndex) {
 							PictureResource *btnPic = _bVoy->boltEntry(_playStampGroupId + 8 + idx)._picResource;
-							_graphicsManager->sDrawPic(btnPic, *_graphicsManager->_vPort,
+							_graphicsManager->sDrawPic(btnPic, _graphicsManager->_vPort,
 								Common::Point(106, 200));
 
 							cursorPic = _bVoy->boltEntry(_playStampGroupId + 4)._picResource;
@@ -968,11 +968,11 @@ int VoyeurEngine::getChooseButton()  {
 			if (selectedIndex == -1) {
 				cursorPic = _bVoy->boltEntry(_playStampGroupId + 2)._picResource;
 				PictureResource *btnPic = _bVoy->boltEntry(_playStampGroupId + 12)._picResource;
-				_graphicsManager->sDrawPic(btnPic, *_graphicsManager->_vPort,
+				_graphicsManager->sDrawPic(btnPic, _graphicsManager->_vPort,
 					Common::Point(106, 200));
 			}
 
-			_graphicsManager->sDrawPic(cursorPic, *_graphicsManager->_vPort,
+			_graphicsManager->sDrawPic(cursorPic, _graphicsManager->_vPort,
 				Common::Point(pt.x + 13, pt.y - 12));
 
 			flipPageAndWait();
@@ -985,7 +985,7 @@ int VoyeurEngine::getChooseButton()  {
 void VoyeurEngine::makeViewFinder() {
 	_graphicsManager->_backgroundPage = _bVoy->boltEntry(0x103)._picResource;
 	_graphicsManager->sDrawPic(_graphicsManager->_backgroundPage, 
-		*_graphicsManager->_vPort, Common::Point(0, 0));
+		_graphicsManager->_vPort, Common::Point(0, 0));
 	CMapResource *pal = _bVoy->boltEntry(0x104)._cMapResource;
 
 	int palOffset = 0;
@@ -1017,7 +1017,7 @@ void VoyeurEngine::makeViewFinder() {
 		break;
 	}
 
-	(*_graphicsManager->_vPort)->drawIfaceTime();
+	_graphicsManager->_vPort->drawIfaceTime();
 	doTimeBar();
 	pal->startFade();
 
@@ -1080,7 +1080,7 @@ void VoyeurEngine::initIFace() {
 
 void VoyeurEngine::doScroll(const Common::Point &pt) {
 	Common::Rect clipRect(72, 47, 72 + 240, 47 + 148);
-	(*_graphicsManager->_vPort)->setupViewPort(NULL, &clipRect);
+	_graphicsManager->_vPort->setupViewPort(NULL, &clipRect);
 
 	int base = 0;
 	switch (_voy->_transitionId) {
@@ -1104,18 +1104,18 @@ void VoyeurEngine::doScroll(const Common::Point &pt) {
 
 	if (base) {
 		PictureResource *pic = _bVoy->boltEntry(base + 3)._picResource;
- 		_graphicsManager->sDrawPic(pic, *_graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 104));
+ 		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 104));
 		pic = _bVoy->boltEntry(base + 4)._picResource;
-		_graphicsManager->sDrawPic(pic, *_graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 44));
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 44));
 		pic = _bVoy->boltEntry(base + 5)._picResource;
-		_graphicsManager->sDrawPic(pic, *_graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 16));
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 16));
 		pic = _bVoy->boltEntry(base + 6)._picResource;
-		_graphicsManager->sDrawPic(pic, *_graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 76));
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 76));
 		pic = _bVoy->boltEntry(base + 7)._picResource;
-		_graphicsManager->sDrawPic(pic, *_graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 136));
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 136));
 	}
 
-	(*_graphicsManager->_vPort)->setupViewPort(NULL);
+	_graphicsManager->_vPort->setupViewPort(NULL);
 }
 
 void VoyeurEngine::checkTransition() {
@@ -1182,7 +1182,7 @@ int VoyeurEngine::doComputerText(int maxLen) {
 		font._justifyWidth = 384;
 		font._justifyHeight = 100;
 		font._pos = Common::Point(128, 100);
-		(*_graphicsManager->_vPort)->drawText(END_OF_MESSAGE);
+		_graphicsManager->_vPort->drawText(END_OF_MESSAGE);
 	} else if (_voy->_RTVNum < _voy->_computerTimeMin && maxLen == 9999) {
 		if (_currentVocId != -1)
 			_soundManager->startVOCPlay(_currentVocId);
@@ -1190,7 +1190,7 @@ int VoyeurEngine::doComputerText(int maxLen) {
 		font._justifyWidth = 384;
 		font._justifyHeight = 100;
 		font._pos = Common::Point(120, 100);
-		(*_graphicsManager->_vPort)->drawText(START_OF_MESSAGE);
+		_graphicsManager->_vPort->drawText(START_OF_MESSAGE);
 	} else {
 		char *msg = (char *)_bVoy->memberAddr(0x4900 + _voy->_computerTextId);
 		font._pos = Common::Point(96, 60);
@@ -1210,12 +1210,12 @@ int VoyeurEngine::doComputerText(int maxLen) {
 					_eventsManager->delay(90);
 					_graphicsManager->_drawPtr->_pos = Common::Point(96, 54);
 					_graphicsManager->_drawPtr->_penColor = 254;
-					(*_graphicsManager->_vPort)->sFillBox(196, 124);
+					_graphicsManager->_vPort->sFillBox(196, 124);
 					_graphicsManager->_fontPtr->_justify = ALIGN_LEFT;
 					_graphicsManager->_fontPtr->_justifyWidth = 384;
 					_graphicsManager->_fontPtr->_justifyHeight = 100;
 					_graphicsManager->_fontPtr->_pos = Common::Point(128, 100);
-					(*_graphicsManager->_vPort)->drawText(END_OF_MESSAGE);
+					_graphicsManager->_vPort->drawText(END_OF_MESSAGE);
 				}
 				break;
 			}
@@ -1227,7 +1227,7 @@ int VoyeurEngine::doComputerText(int maxLen) {
 					_eventsManager->delay(90);
 					_graphicsManager->_drawPtr->_pos = Common::Point(96, 54);
 					_graphicsManager->_drawPtr->_penColor = 255;
-					(*_graphicsManager->_vPort)->sFillBox(196, 124);
+					_graphicsManager->_vPort->sFillBox(196, 124);
 					yp = 60;
 				}
 
@@ -1238,7 +1238,7 @@ int VoyeurEngine::doComputerText(int maxLen) {
 				_graphicsManager->_fontPtr->_justify = ALIGN_LEFT;
 				_graphicsManager->_fontPtr->_justifyWidth = 0;
 				_graphicsManager->_fontPtr->_justifyHeight = 0;
-				(*_graphicsManager->_vPort)->drawText(Common::String(c));
+				_graphicsManager->_vPort->drawText(Common::String(c));
 				_eventsManager->delay(4);
 			}
 
@@ -1265,7 +1265,7 @@ void VoyeurEngine::getComputerBrush() {
 	int xp = (384 - pic->_bounds.width()) / 2;
 	int yp = (240 - pic->_bounds.height()) / 2 - 4;
 
-	(*_graphicsManager->_vPort)->drawPicPerm(pic, Common::Point(xp, yp));
+	_graphicsManager->_vPort->drawPicPerm(pic, Common::Point(xp, yp));
 
 	CMapResource *pal = _bVoy->boltEntry(0x490F)._cMapResource;
 	pal->startFade();
@@ -1285,14 +1285,14 @@ void VoyeurEngine::doTimeBar() {
 		_graphicsManager->_drawPtr->_penColor = 134;
 		_graphicsManager->_drawPtr->_pos = Common::Point(39, 92);
 
-		(*_graphicsManager->_vPort)->sFillBox(6, fullHeight - 92);
+		_graphicsManager->_vPort->sFillBox(6, fullHeight - 92);
 		if (height > 0) {
 			_graphicsManager->setColor(215, 238, 238, 238);
 			_eventsManager->_intPtr._hasPalette = true;
 
 			_graphicsManager->_drawPtr->_penColor = 215;
 			_graphicsManager->_drawPtr->_pos = Common::Point(39, fullHeight);
-			(*_graphicsManager->_vPort)->sFillBox(6, height);
+			_graphicsManager->_vPort->sFillBox(6, height);
 		}
 	}
 }
@@ -1345,7 +1345,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 
 	_bVoy->getBoltGroup(_voy->_boltGroupId2);
 	PictureResource *pic = _bVoy->boltEntry(_voy->_boltGroupId2 + evidId * 2)._picResource;
-	_graphicsManager->sDrawPic(pic, *_graphicsManager->_vPort, Common::Point(
+	_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(
 		(384 - pic->_bounds.width()) / 2, (240 - pic->_bounds.height()) / 2));
 	_bVoy->freeBoltMember(_voy->_boltGroupId2 + evidId * 2);
 
@@ -1396,7 +1396,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 			continue;
 		
 		pic = _voy->_evPicPtrs[arrIndex];
-		_graphicsManager->sDrawPic(pic, *_graphicsManager->_vPort,
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort,
 			Common::Point((384 - pic->_bounds.width()) / 2,
 			(240 - pic->_bounds.height()) / 2));
 		_voy->_evCmPtrs[arrIndex]->startFade();

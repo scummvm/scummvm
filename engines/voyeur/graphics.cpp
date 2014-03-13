@@ -991,8 +991,8 @@ void GraphicsManager::screenReset() {
 	resetPalette();
 
 	_backgroundPage = NULL;
-	(*_vPort)->setupViewPort(NULL);
-	fillPic(*_vPort, 0);	
+	_vPort->setupViewPort(NULL);
+	fillPic(_vPort, 0);	
 
 	_vm->flipPageAndWait();
 }
