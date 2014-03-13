@@ -24,6 +24,7 @@
 #define ILLUSIONS_SCRIPTMAN_H
 
 #include "illusions/scriptresource.h"
+#include "illusions/thread.h"
 #include "common/algorithm.h"
 #include "common/stack.h"
 
@@ -77,6 +78,8 @@ public:
 	
 	uint32 _theSceneId;
 	uint32 _theThreadId;
+	
+	
 	
 };
 
