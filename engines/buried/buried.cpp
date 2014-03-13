@@ -280,7 +280,7 @@ void BuriedEngine::postMessageToWindow(Window *dest, Message *message) {
 }
 
 void BuriedEngine::sendAllMessages() {
-	while (!_messageQueue.empty()) {
+	while (!shouldQuit() && !_messageQueue.empty()) {
 		MessageInfo msg = _messageQueue.front();
 		_messageQueue.pop_front();
 
