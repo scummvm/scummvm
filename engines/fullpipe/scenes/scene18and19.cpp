@@ -91,19 +91,19 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 		g_vars->scene19_var05 = (entranceId == PIC_SC19_RTRUBA3);
 	}
 
-	for (uint i = 0; i < g_vars->scene18_var07.size(); i++) {
-		if (!g_vars->scene18_var15 && (g_vars->scene18_var07[i]->sflags & 0x20)) {
+	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
+		if (!g_vars->scene18_var15 && (g_vars->scene18_swingers[i]->sflags & 0x20)) {
 			Scene *oldsc = g_fp->_currentScene;
 
-			g_vars->scene18_var07[i]->sflags = 1;
+			g_vars->scene18_swingers[i]->sflags = 1;
 
 			g_fp->_currentScene = sc;
-			g_vars->scene18_var07[i]->ani->changeStatics2(ST_KSL_NORM);
-			g_vars->scene18_var07[i]->ani->_priority = 30;
+			g_vars->scene18_swingers[i]->ani->changeStatics2(ST_KSL_NORM);
+			g_vars->scene18_swingers[i]->ani->_priority = 30;
 			g_fp->_currentScene = oldsc;
 		}
 
-		sc->deleteStaticANIObject(g_vars->scene18_var07[i]->ani);
+		sc->deleteStaticANIObject(g_vars->scene18_swingers[i]->ani);
 	}
 
 	if (g_vars->scene18_whirlgig->_movement) {
@@ -140,7 +140,7 @@ void scene19_preload() {
 void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 	Swinger *swinger;
 
-	g_vars->scene18_var07.clear();
+	g_vars->scene18_swingers.clear();
 
 	Scene *oldsc = g_fp->_currentScene;
 	g_fp->_currentScene = sc;
@@ -185,7 +185,7 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 
 		ani->_movement->setDynamicPhaseIndex(g_fp->_rnd->getRandomNumber(17));
 
-		g_vars->scene18_var07.push_back(swinger);
+		g_vars->scene18_swingers.push_back(swinger);
 	}
 
 	g_fp->_currentScene = oldsc;
@@ -217,22 +217,22 @@ void scene18_initScene1(Scene *sc) {
 	g_vars->scene18_var05 += newx;
 	g_vars->scene18_var06 += newy;
 
-	for (uint i = 0; i < g_vars->scene18_var07.size(); i++) {
-		g_vars->scene18_var07[i]->ani->getPicAniInfo(&info);
-		sc->addStaticANIObject(g_vars->scene18_var07[i]->ani, 1);
-		g_vars->scene18_var07[i]->ani->setPicAniInfo(&info);
+	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
+		g_vars->scene18_swingers[i]->ani->getPicAniInfo(&info);
+		sc->addStaticANIObject(g_vars->scene18_swingers[i]->ani, 1);
+		g_vars->scene18_swingers[i]->ani->setPicAniInfo(&info);
 
-		g_vars->scene18_var07[i]->sx += newx;
-		g_vars->scene18_var07[i]->sy += newy;
-		g_vars->scene18_var07[i]->ix += newx;
-		g_vars->scene18_var07[i]->iy += newy;
+		g_vars->scene18_swingers[i]->sx += newx;
+		g_vars->scene18_swingers[i]->sy += newy;
+		g_vars->scene18_swingers[i]->ix += newx;
+		g_vars->scene18_swingers[i]->iy += newy;
 
 		GameObject *go;
 
-		if (g_vars->scene18_var07[i]->ani->_movement)
-			go = g_vars->scene18_var07[i]->ani->_movement;
+		if (g_vars->scene18_swingers[i]->ani->_movement)
+			go = g_vars->scene18_swingers[i]->ani->_movement;
 		else
-			go = g_vars->scene18_var07[i]->ani;
+			go = g_vars->scene18_swingers[i]->ani;
 
 		go->setOXY(newx + go->_ox, newy + go->_oy);
 	}
@@ -296,17 +296,13 @@ void scene18_initScene1(Scene *sc) {
 		if (sc->_sceneId == SC_19)
 			g_fp->_aniMan2 = 0;
 		else
-			g_fp->_aniMan2 = g_vars->scene18_var07[g_vars->scene18_var27]->ani;
+			g_fp->_aniMan2 = g_vars->scene18_swingers[g_vars->scene18_var27]->ani;
 	} else {
 		g_fp->_aniMan2 = g_fp->_aniMan;
 	}
 }
 
 void scene18_initScene2(Scene *sc) {
-	g_vars->scene18_var16 = 200;
-	g_vars->scene18_var17 = 200;
-	g_vars->scene18_var18 = 300;
-	g_vars->scene18_var19 = 300;
 	g_vars->scene18_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1);
 	g_vars->scene18_var20 = 1032;
 	g_vars->scene18_var04 = -318;
@@ -406,27 +402,27 @@ void sceneHandler18and19_showManJump() {
 	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
 	g_fp->_aniMan->_flags &= 0xFFFB;
 	g_fp->_aniMan->_flags &= 0xFEFF;
-	g_vars->scene18_var07[g_vars->scene18_var27]->sflags = 0x20;
+	g_vars->scene18_swingers[g_vars->scene18_var27]->sflags = 0x20;
 
-	g_vars->scene18_var07[g_vars->scene18_var27]->ani->changeStatics2(ST_KSL_JUMPMAN);
-	g_vars->scene18_var07[g_vars->scene18_var27]->ani->startAnim(MV_KSL_INMAN, 0, -1);
-	g_vars->scene18_var07[g_vars->scene18_var27]->ani->_priority = 20;
+	g_vars->scene18_swingers[g_vars->scene18_var27]->ani->changeStatics2(ST_KSL_JUMPMAN);
+	g_vars->scene18_swingers[g_vars->scene18_var27]->ani->startAnim(MV_KSL_INMAN, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_var27]->ani->_priority = 20;
 
 	g_vars->scene18_var28 = 0;
 	g_vars->scene18_var15 = 1;
 
-	g_fp->_aniMan2 = g_vars->scene18_var07[g_vars->scene18_var27]->ani;
+	g_fp->_aniMan2 = g_vars->scene18_swingers[g_vars->scene18_var27]->ani;
 }
 
 void sceneHandler18_showManJumpTo() {
 	int x, y;
 
-	if (g_vars->scene18_var07[g_vars->scene18_var31]->ani->_movement) {
-		x = g_vars->scene18_var07[g_vars->scene18_var31]->ani->_movement->_ox;
-		y = g_vars->scene18_var07[g_vars->scene18_var31]->ani->_movement->_oy;
+	if (g_vars->scene18_swingers[g_vars->scene18_var31]->ani->_movement) {
+		x = g_vars->scene18_swingers[g_vars->scene18_var31]->ani->_movement->_ox;
+		y = g_vars->scene18_swingers[g_vars->scene18_var31]->ani->_movement->_oy;
 	} else {
-		x = g_vars->scene18_var07[g_vars->scene18_var31]->ani->_ox;
-		y = g_vars->scene18_var07[g_vars->scene18_var31]->ani->_oy;
+		x = g_vars->scene18_swingers[g_vars->scene18_var31]->ani->_ox;
+		y = g_vars->scene18_swingers[g_vars->scene18_var31]->ani->_oy;
 	}
 
 	g_fp->_aniMan->show1(x + 62, y + 5, MV_MAN18_JUMPTOTRUBA, 0);
@@ -452,27 +448,27 @@ void sceneHandler18_showManJumpTo() {
 		mq->chain(0);
 	}
 
-	g_vars->scene18_var07[g_vars->scene18_var31]->sflags = 1;
+	g_vars->scene18_swingers[g_vars->scene18_var31]->sflags = 1;
 
-	g_vars->scene18_var07[g_vars->scene18_var31]->ani->changeStatics2(ST_KSL_NORM);
-	g_vars->scene18_var07[g_vars->scene18_var31]->ani->_priority = 30;
+	g_vars->scene18_swingers[g_vars->scene18_var31]->ani->changeStatics2(ST_KSL_NORM);
+	g_vars->scene18_swingers[g_vars->scene18_var31]->ani->_priority = 30;
 }
 
 void sceneHandler18and19_showGirlJumpTo() {
 	g_vars->scene18_girl->stopAnim_maybe();
 	g_vars->scene18_girl->hide();
 
-	g_vars->scene18_var07[g_vars->scene18_var33]->sflags = 4;
+	g_vars->scene18_swingers[g_vars->scene18_var33]->sflags = 4;
 
-	g_vars->scene18_var07[g_vars->scene18_var33]->ani->changeStatics2(ST_KSL_JUMPGIRL);
-	g_vars->scene18_var07[g_vars->scene18_var33]->ani->startAnim(MV_KSL_INGIRL, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_var33]->ani->changeStatics2(ST_KSL_JUMPGIRL);
+	g_vars->scene18_swingers[g_vars->scene18_var33]->ani->startAnim(MV_KSL_INGIRL, 0, -1);
 
 	g_vars->scene18_var23--;
 	g_vars->scene18_var25--;
 }
 
 void sceneHandler18and19_showGirlJump() {
-	StaticANIObject *ani = g_vars->scene18_var07[g_vars->scene18_var32]->ani;
+	StaticANIObject *ani = g_vars->scene18_swingers[g_vars->scene18_var32]->ani;
 	int x, y;
 
 	if (ani->_movement) {
@@ -487,10 +483,10 @@ void sceneHandler18and19_showGirlJump() {
 	g_vars->scene18_girl->_priority = 50;
 	g_vars->scene18_girl->startAnim(MV_GRL18_JUMPFROM, 0, -1);
 
-	g_vars->scene18_var07[g_vars->scene18_var32]->sflags = 1;
+	g_vars->scene18_swingers[g_vars->scene18_var32]->sflags = 1;
 
-	g_vars->scene18_var07[g_vars->scene18_var32]->ani->changeStatics2(ST_KSL_REACT);
-	g_vars->scene18_var07[g_vars->scene18_var32]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_var32]->ani->changeStatics2(ST_KSL_REACT);
+	g_vars->scene18_swingers[g_vars->scene18_var32]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
 
 	g_vars->scene18_var23 = 1;
 	g_vars->scene18_var25++;
@@ -500,16 +496,16 @@ void sceneHandler18and19_showBoyJumpTo() {
 	g_vars->scene18_boy->stopAnim_maybe();
 	g_vars->scene18_boy->hide();
 
-	g_vars->scene18_var07[g_vars->scene18_var33]->sflags = 2;
-	g_vars->scene18_var07[g_vars->scene18_var33]->ani->changeStatics2(ST_KSL_JUMPBOY);
-	g_vars->scene18_var07[g_vars->scene18_var33]->ani->startAnim(MV_KSL_INBOY, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_var33]->sflags = 2;
+	g_vars->scene18_swingers[g_vars->scene18_var33]->ani->changeStatics2(ST_KSL_JUMPBOY);
+	g_vars->scene18_swingers[g_vars->scene18_var33]->ani->startAnim(MV_KSL_INBOY, 0, -1);
 
 	g_vars->scene18_var23--;
 	g_vars->scene18_var24--;
 }
 
 void sceneHandler18and19_showBoyJump() {
-	StaticANIObject *ani = g_vars->scene18_var07[g_vars->scene18_var32]->ani;
+	StaticANIObject *ani = g_vars->scene18_swingers[g_vars->scene18_var32]->ani;
 	int x, y;
 
 	if (ani->_movement) {
@@ -524,10 +520,10 @@ void sceneHandler18and19_showBoyJump() {
 	g_vars->scene18_boy->_priority = 50;
 	g_vars->scene18_boy->startAnim(MV_BOY18_JUMPFROM, 0, -1);
 
-	g_vars->scene18_var07[g_vars->scene18_var32]->sflags = 1;
+	g_vars->scene18_swingers[g_vars->scene18_var32]->sflags = 1;
 
-	g_vars->scene18_var07[g_vars->scene18_var32]->ani->changeStatics2(ST_KSL_REACT);
-	g_vars->scene18_var07[g_vars->scene18_var32]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_var32]->ani->changeStatics2(ST_KSL_REACT);
+	g_vars->scene18_swingers[g_vars->scene18_var32]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
 
 	g_vars->scene18_var26 = 1;
 }
@@ -559,8 +555,8 @@ void sceneHandler18and19_drawRiders() {
 	if (g_vars->scene18_var21 >= 359)
 		g_vars->scene18_var21 = 0;
 
-	for (uint i = 0; i < g_vars->scene18_var07.size(); i++) {
-		Swinger *swinger = g_vars->scene18_var07[i];
+	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
+		Swinger *swinger = g_vars->scene18_swingers[i];
 
 		double oldangle = swinger->angle;
 
@@ -672,8 +668,8 @@ void sceneHandler18and19_drawRiders() {
 }
 
 void sceneHandler18and19_animateRiders() {
-	for (uint i = 0; i < g_vars->scene18_var07.size(); i++) {
-		Swinger *swinger = g_vars->scene18_var07[i];
+	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
+		Swinger *swinger = g_vars->scene18_swingers[i];
 
 		if (!swinger->ani->_movement) {
 			int mv = 0;
@@ -777,11 +773,11 @@ int sceneHandler18(ExCommand *cmd) {
 
 			g_vars->scene18_var11 = g_fp->_aniMan2->_oy;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene18_var16)
-				g_fp->_currentScene->_x = x - g_vars->scene18_var18 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene18_var16)
-				g_fp->_currentScene->_x = x + g_vars->scene18_var18 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
 		if (g_vars->scene18_var28 && g_fp->_aniMan->_movement)
@@ -903,11 +899,11 @@ int sceneHandler19(ExCommand *cmd) {
 
 			g_vars->scene18_var11 = g_fp->_aniMan2->_oy;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene18_var16)
-				g_fp->_currentScene->_x = x - g_vars->scene18_var18 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 200)
+				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene18_var16)
-				g_fp->_currentScene->_x = x + g_vars->scene18_var18 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 200)
+				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
 		if (g_vars->scene18_var08) {

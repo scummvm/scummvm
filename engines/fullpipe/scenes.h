@@ -474,12 +474,8 @@ public:
 	int scene17_sceneEdgeX;
 
 	int scene18_var01;
-	int scene18_var16;
-	int scene18_var17;
-	int scene18_var18;
-	int scene18_var19;
 	StaticANIObject *scene18_whirlgig;
-	Common::Array<Swinger *> scene18_var07;
+	Common::Array<Swinger *> scene18_swingers;
 	int scene18_var20;
 	int scene18_var04;
 	int scene18_var08;

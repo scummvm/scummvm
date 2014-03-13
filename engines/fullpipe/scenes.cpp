@@ -271,10 +271,6 @@ Vars::Vars() {
 	scene17_sceneEdgeX = 0;
 
 	scene18_var01 = 0;
-	scene18_var16 = 200;
-	scene18_var17 = 200;
-	scene18_var18 = 300;
-	scene18_var19 = 300;
 	scene18_whirlgig = 0;
 	scene18_var20 = 1032;
 	scene18_var04 = -318;
