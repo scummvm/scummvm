@@ -279,7 +279,8 @@ void SVoy::reviewComputerEvent(int eventIndex) {
 }
 
 bool SVoy::checkForKey() {
-	_vm->_controlPtr->_state->_victimEvidenceIndex = 0;
+	StateResource *state = _vm->_controlPtr->_state;
+	state->_victimEvidenceIndex = 0;
 	if (_vm->_voy->_victimMurdered)
 		return false;
 
@@ -288,25 +289,25 @@ bool SVoy::checkForKey() {
 
 		switch (e._type) {
 		case EVTYPE_VIDEO:
-			switch (_vm->_controlPtr->_state->_victimIndex) {
+			switch (state->_victimIndex) {
 			case 1:
 				if (e._audioVideoId == 33 && e._computerOn < 2 && e._computerOff >= 38)
-					_vm->_controlPtr->_state->_victimEvidenceIndex = 1;
+					state->_victimEvidenceIndex = 1;
 				break;
 
 			case 2:
 				if (e._audioVideoId == 47 && e._computerOn < 2 && e._computerOff >= 9)
-					_vm->_controlPtr->_state->_victimEvidenceIndex = 2;
+					state->_victimEvidenceIndex = 2;
 				break;
 
 			case 3:
 				if (e._audioVideoId == 46 && e._computerOn < 2 && e._computerOff > 2)
-					_vm->_controlPtr->_state->_victimEvidenceIndex = 3;
+					state->_victimEvidenceIndex = 3;
 				break;
 
 			case 4:
 				if (e._audioVideoId == 40 && e._computerOn < 2 && e._computerOff > 6)
-					_vm->_controlPtr->_state->_victimEvidenceIndex = 4;
+					state->_victimEvidenceIndex = 4;
 				break;
 			
 			default:
@@ -315,17 +316,17 @@ bool SVoy::checkForKey() {
 			break;
 
 		case EVTYPE_AUDIO:
-			switch (_vm->_controlPtr->_state->_victimIndex) {
+			switch (state->_victimIndex) {
 			case 1:
 				if (e._audioVideoId == 8 && e._computerOn < 2 && e._computerOff > 26)
-					_vm->_controlPtr->_state->_victimEvidenceIndex = 1;
+					state->_victimEvidenceIndex = 1;
 				break;
 	
 			case 3:
 				if (e._audioVideoId == 20 && e._computerOn < 2 && e._computerOff > 28)
-					_vm->_controlPtr->_state->_victimEvidenceIndex = 3;
+					state->_victimEvidenceIndex = 3;
 				if (e._audioVideoId == 35 && e._computerOn < 2 && e._computerOff > 18)
-					_vm->_controlPtr->_state->_victimEvidenceIndex = 3;
+					state->_victimEvidenceIndex = 3;
 				break;
 
 			default:
@@ -334,10 +335,10 @@ bool SVoy::checkForKey() {
 			break;
 
 		case EVTYPE_EVID:
-			switch (_vm->_controlPtr->_state->_victimIndex) {
+			switch (state->_victimIndex) {
 			case 4:
 				if (e._audioVideoId == 0x2400 && e._computerOn == 0x4f00 && e._computerOff == 17)
-					_vm->_controlPtr->_state->_victimEvidenceIndex = 4;
+					state->_victimEvidenceIndex = 4;
 
 			default:
 				break;
@@ -345,10 +346,10 @@ bool SVoy::checkForKey() {
 			break;
 
 		case EVTYPE_COMPUTER:
-			switch (_vm->_controlPtr->_state->_victimIndex) {
+			switch (state->_victimIndex) {
 			case 2:
 				if (e._computerOn == 13 && e._computerOff > 76)
-					_vm->_controlPtr->_state->_victimEvidenceIndex = 2;
+					state->_victimEvidenceIndex = 2;
 				break;
 
 			default:
@@ -360,7 +361,7 @@ bool SVoy::checkForKey() {
 			break;
 		}
 
-		if (_vm->_controlPtr->_state->_victimEvidenceIndex == _vm->_controlPtr->_state->_victimIndex)
+		if (state->_victimEvidenceIndex == state->_victimIndex)
 			return true;
 	}
 
