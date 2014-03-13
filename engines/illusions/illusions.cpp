@@ -32,6 +32,7 @@
 #include "illusions/actor.h"
 #include "illusions/actorresource.h"
 #include "illusions/thread.h"
+#include "illusions/scriptresource.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
@@ -80,6 +81,7 @@ Common::Error IllusionsEngine::run() {
 	
 	_resSys = new ResourceSystem();
 	_resSys->addResourceLoader(0x00060000, new ActorResourceLoader(this));
+	_resSys->addResourceLoader(0x000D0000, new ScriptResourceLoader(this));
 	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
 
@@ -87,15 +89,22 @@ Common::Error IllusionsEngine::run() {
 	_backgroundItems = new BackgroundItems(this);
 	_camera = new Camera(this);
 	
+	/*
+	// ActorResource test
 	_resSys->loadResource(0x00100006, 0, 0);
+	*/
 
 	/*
+	// BackgroundResource test
 	_resSys->loadResource(0x0011000B, 0, 0);
 	BackgroundItem *backgroundItem = _backgroundItems->debugFirst();
 	_system->copyRectToScreen(backgroundItem->_surfaces[0]->getPixels(), backgroundItem->_surfaces[0]->pitch,
 		0, 0, 640, 480);
 	_system->updateScreen();
 	*/
+	
+	// ScriptResource test
+	_resSys->loadResource(0x000D0001, 0, 0);
 
 	while (!shouldQuit()) {
 		updateEvents();
