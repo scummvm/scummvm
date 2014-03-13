@@ -31,6 +31,7 @@
 #include "illusions/spritedecompressqueue.h"
 #include "illusions/actor.h"
 #include "illusions/actorresource.h"
+#include "illusions/thread.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"

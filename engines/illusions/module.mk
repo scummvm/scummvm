@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	resourcesystem.o \
 	spritedecompressqueue.o \
 	spritedrawqueue.o \
+	thread.o \
 	time.o \
 	updatefunctions.o
 
