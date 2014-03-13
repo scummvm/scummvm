@@ -106,8 +106,7 @@ void Scene804::enter() {
 			_globals._spriteIndexes[19] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[4], 0, 1);
 			_scene->_sequences.addTimer(60, 100);
-		}
-		else {
+		} else {
 			_globals._spriteIndexes[20] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[5], false, 1);
 			_globals._spriteIndexes[21] = _scene->_sequences.startReverseCycle(
@@ -115,8 +114,7 @@ void Scene804::enter() {
 			_scene->_sequences.addTimer(160, 70);
 			_game._player._stepEnabled = false;
 		}
-	}
-	else {
+	} else {
 		if (_globals[167] == 0) {
 			_globals._spriteIndexes[22] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[7], false, 1);

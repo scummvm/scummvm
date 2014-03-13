@@ -78,6 +78,7 @@ private:
 public:
 	SpriteSetCharInfo *_charInfo;
 	int _usageIndex;
+	Common::Point _pos;
 public:
 	/**
 	 * Constructor

@@ -230,10 +230,10 @@ void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds,
 	byte *destPtr = (byte *)pixels + (destY * getWidth()) + destX;
 
 	for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
-		if (transparentColor == -1)
+		if (transparentColor == -1) {
 			// No transparency, so copy line over
 			Common::copy(srcPtr, srcPtr + copyRect.width(), destPtr);
-		else {
+		} else {
 			// Copy each byte one at a time checking for the transparency color
 			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr)
 				if (srcPtr[xCtr] != transparentColor) destPtr[xCtr] = srcPtr[xCtr];
@@ -311,8 +311,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		distCtr += scale;
 		if (distCtr < 100) {
 			lineDist[distIndex] = false;
-		}
-		else {
+		} else {
 			lineDist[distIndex] = true;
 			distCtr -= 100;
 
@@ -425,8 +424,7 @@ void MSurface::scrollX(int xAmount) {
 			Common::copy(srcP + xSize, srcP + this->w, srcP);
 			// Move buffered area to the end of the line
 			Common::copy(&buffer[0], &buffer[xSize], srcP + this->w - xSize);
-		}
-		else {
+		} else {
 			// Copy area to be overwritten
 			Common::copy_backward(srcP + this->w - xSize, srcP + this->w, &buffer[80]);
 			// Shift the remainder of the line over the given area
@@ -459,8 +457,7 @@ void MSurface::scrollY(int yAmount) {
 			pixelsP + (pitch * this->h));
 		// Transfer the buffered lines top the top of the screen
 		Common::copy(tempData, tempData + blockSize, pixelsP);
-	}
-	else {
+	} else {
 		// Buffer the lines to be overwritten
 		Common::copy(pixelsP, pixelsP + (pitch * ySize), tempData);
 		// Vertically shift all the lines

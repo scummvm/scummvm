@@ -170,7 +170,9 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_interfaceY = MADS_SCENE_HEIGHT;
 	_spritesCount = _sprites.size();
 
-	warning("TODO: sub_1EA80 / showMouse");
+	_interface.setup(_screenObjects._v832EC);
+
+	warning("TODO: showMouse");
 
 	warning("TODO: inventory_anim_allocate");
 }

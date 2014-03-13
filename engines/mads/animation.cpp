@@ -347,7 +347,7 @@ void Animation::loadFrame(int frameNumber) {
 	}
 
 	if (drawFrame(spriteSet, pt, frameNumber))
-		error("proc1 failure");
+		error("drawFrame failure");
 }
 
 bool Animation::drawFrame(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber) {
@@ -373,8 +373,7 @@ void Animation::loadInterface(InterfaceSurface &interfaceSurface, MSurface &dept
 
 		if (palAnimData)
 			palAnimData->clear();
-	}
-	else {
+	} else {
 		// Original has useless code here
 	}
 }

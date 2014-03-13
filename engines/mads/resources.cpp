@@ -308,8 +308,7 @@ Common::String Resources::formatName(int prefix, char asciiCh, int id, EXTTYPE e
 	Common::String result;
 	if (prefix <= 0) {
 		result = "*";
-	}
-	else {
+	} else {
 		result = Common::String::format("%s%.3d",
 			(prefix < 100) ? "*SC" : "*RM", prefix);
 	}

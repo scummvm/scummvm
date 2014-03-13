@@ -199,8 +199,7 @@ void DirtyArea::setSpriteSlot(const SpriteSlot *spriteSlot) {
 		if (spriteSlot->_scale == -1) {
 			width = frame->w;
 			height = frame->h;
-		}
-		else {
+		} else {
 			width = frame->w * spriteSlot->_scale / 100;
 			height = frame->h * spriteSlot->_scale / 100;
 

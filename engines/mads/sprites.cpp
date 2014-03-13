@@ -235,31 +235,33 @@ void SpriteSlots::drawBackground() {
 	Scene &scene = _vm->_game->_scene;
 
 	// Initial draw loop for any active sprites in the background
-	for (uint i = 0; i < scene._spriteSlots.size(); ++i) {
-		if (scene._spriteSlots[i]._spriteType >= ST_NONE) {
-			scene._dirtyAreas[i]._active = false;
-		}
-		else {
-			scene._dirtyAreas[i]._active = true;
-			scene._dirtyAreas[i].setSpriteSlot(&scene._spriteSlots[i]);
+	for (uint i = 0; i < size(); ++i) {
+		SpriteSlot &spriteSlot = (*this)[i];
+		DirtyArea &dirtyArea = scene._dirtyAreas[i];
 
-			SpriteAsset *asset = scene._sprites[scene._spriteSlots[i]._spritesIndex];
-			MSprite *frame = asset->getFrame(scene._spriteSlots[i]._frameNumber);
+		if (spriteSlot._spriteType >= ST_NONE) {
+			dirtyArea._active = false;
+		} else {
+			dirtyArea._active = true;
+			dirtyArea.setSpriteSlot(&spriteSlot);
 
-			if (scene._spriteSlots[i]._spriteType == ST_BACKGROUND) {
-				Common::Point pt = scene._spriteSlots[i]._position;
-				if (scene._spriteSlots[i]._scale != -1) {
+			SpriteAsset *asset = scene._sprites[spriteSlot._spritesIndex];
+			MSprite *frame = asset->getFrame(spriteSlot._frameNumber);
+
+			if (spriteSlot._spriteType == ST_BACKGROUND) {
+				Common::Point pt = spriteSlot._position;
+				if (spriteSlot._scale != -1) {
 					// Adjust the drawing position
 					pt.x -= frame->w / 2;
 					pt.y -= frame->h / 2;
 				}
 
-				if (scene._spriteSlots[i]._depth <= 1) {
-					asset->draw(&scene._backgroundSurface, scene._spriteSlots[i]._frameNumber, pt);
+				if (spriteSlot._depth <= 1) {
+					asset->draw(&scene._backgroundSurface, spriteSlot._frameNumber, pt);
 				}
 				else if (scene._depthStyle == 0) {
-					asset->depthDraw(&scene._backgroundSurface, &scene._depthSurface, scene._spriteSlots[i]._frameNumber,
-						pt, scene._spriteSlots[i]._depth);
+					asset->depthDraw(&scene._backgroundSurface, &scene._depthSurface, spriteSlot._frameNumber,
+						pt, spriteSlot._depth);
 				} else {
 					error("Unsupported depth style");
 				}
@@ -267,18 +269,20 @@ void SpriteSlots::drawBackground() {
 		}
 	}
 
-	// Mark any remaning dirty areas as inactive
-	for (uint i = scene._spriteSlots.size(); i < 50; ++i)
+	// Mark any remaning sprite slot dirty areas as inactive
+	for (uint i = size(); i < SPRITE_SLOTS_MAX_SIZE; ++i)
 		scene._dirtyAreas[i]._active = false;
 
 	// Flag any active text display
-	for (uint i = 50; i < scene._textDisplay.size(); ++i) {
-		TextDisplay &textDisplay = scene._textDisplay[i - 50];
-		if (scene._textDisplay[i]._expire >= 0 || !textDisplay._active) {
-			scene._dirtyAreas[i]._active = false;
+	for (uint i = 0; i < scene._textDisplay.size(); ++i) {
+		TextDisplay &textDisplay = scene._textDisplay[i];
+		DirtyArea &dirtyArea = scene._dirtyAreas[i + SPRITE_SLOTS_MAX_SIZE];
+
+		if (textDisplay._expire >= 0 || !textDisplay._active) {
+			dirtyArea._active = false;
 		} else {
-			scene._dirtyAreas[i]._active = true;
-			scene._dirtyAreas[i].setTextDisplay(&textDisplay);
+			dirtyArea._active = true;
+			dirtyArea.setTextDisplay(&textDisplay);
 		}
 	}
 }
@@ -289,8 +293,9 @@ void SpriteSlots::drawForeground(MSurface *s) {
 
 	// Get a list of sprite object depths for active objects
 	for (uint i = 0; i < size(); ++i) {
-		if ((*this)[i]._spriteType >= ST_NONE) {
-			DepthEntry rec(16 - (*this)[i]._depth, i);
+		SpriteSlot &spriteSlot = (*this)[i];
+		if (spriteSlot._spriteType >= ST_NONE) {
+			DepthEntry rec(16 - spriteSlot._depth, i);
 			depthList.push_back(rec);
 		}
 	}

@@ -184,7 +184,7 @@ void SequenceList::setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot) {
 	if (!timerEntry._nonFixed) {
 		spriteSlot._position = timerEntry._msgPos;
 	} else {
-		spriteSlot._position = spriteSet.getFrame(timerEntry._frameIndex - 1)->_pos;
+		spriteSlot._position = spriteSet._pos;
 	}
 }
 
@@ -243,15 +243,13 @@ bool SequenceList::loadSprites(int seqIndex) {
 				if (seqEntry._animType == ANIMTYPE_CYCLED) {
 					//  back to the starting frame (cyclic)
 					seqEntry._frameIndex = seqEntry._frameStart;
-				}
-				else {
+				} else {
 					// Switch into reverse mode
 					seqEntry._frameIndex = seqEntry._numSprites - 1;
 					seqEntry._frameInc = -1;
 				}
 			}
-		}
-		else {
+		} else {
 			// Currently in reverse mode and moved past starting frame
 			result = true;
 
@@ -260,8 +258,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 				// Switch back to forward direction again
 				seqEntry._frameIndex = seqEntry._frameStart + 1;
 				seqEntry._frameInc = 1;
-			}
-			else {
+			} else {
 				// Otherwise reset back to last sprite for further reverse animating
 				seqEntry._frameIndex = seqEntry._numSprites;
 			}
@@ -271,8 +268,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 			if (--seqEntry._triggerCountdown == 0)
 				seqEntry._doneFlag = true;
 		}
-	}
-	else {
+	} else {
 		// Out of sprite display slots, so mark entry as done
 		seqEntry._doneFlag = true;
 	}
@@ -402,8 +398,9 @@ void SequenceList::setMsgPosition(int seqIndex, const Common::Point &pt) {
 int SequenceList::addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
 	Scene &scene = _vm->_game->_scene;
 	MSprite *spriteFrame = scene._sprites[srcSpriteIdx]->getFrame(0);
-	int depth = scene._depthSurface.getDepth(Common::Point(spriteFrame->_pos.x + 
-		(spriteFrame->w / 2), spriteFrame->_pos.y + (spriteFrame->h / 2)));
+	int depth = scene._depthSurface.getDepth(Common::Point(
+		spriteFrame->_offset.x + (spriteFrame->w / 2), 
+		spriteFrame->_offset.y + (spriteFrame->h / 2)));
 
 	return add(srcSpriteIdx, flipped, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0,
 		true, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
@@ -422,7 +419,7 @@ int SequenceList::startReverseCycle(int srcSpriteIndex, bool flipped, int numTic
 	SpriteAsset *sprites = _vm->_game->_scene._sprites[srcSpriteIndex];
 	MSprite *frame = sprites->getFrame(0);
 	int depth = _vm->_game->_scene._depthSurface.getDepth(Common::Point(
-		frame->_pos.x + frame->w / 2, frame->_pos.y + frame->h / 2));
+		frame->_offset.x + frame->w / 2, frame->_offset.y + frame->h / 2));
 
 	return add(srcSpriteIndex, flipped, 1, triggerCountdown, timeoutTicks, extraTicks,
 		numTicks, 0, 0, true, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);

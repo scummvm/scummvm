@@ -52,8 +52,7 @@ typedef struct {
 	uint8	depth;		// depth code for source (0 if no depth processing)
 } DrawRequestX;
 
-typedef struct
-{
+typedef struct {
 	uint32 Pack;
 	uint32 Stream;
 	long   hot_x;
@@ -111,7 +110,6 @@ public:
 		int widthVal, int heightVal, bool decodeRle = true, uint8 encodingVal = 0);
 	virtual ~MSprite();
 
-	Common::Point _pos;
 	Common::Point _offset;
 	uint8 _encoding;
 
