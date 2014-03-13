@@ -36,16 +36,23 @@ enum ThreadType {
 	kTTSpecialThread = 5
 };
 
+enum ThreadStatus {
+	kTSTerminate     = 1,
+	kTSYield         = 2,
+	kTSSuspend       = 3,
+	kTSRun           = 4
+};
+
 class Thread {
 public:
-	Thread(IllusionsEngine *vm);
+	Thread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags);
 	virtual ~Thread();
-	virtual int onUpdate() = 0;
-	virtual void onSuspend() = 0;
-	virtual void onNotify() = 0;
-	virtual void onPause() = 0;
-	virtual void onResume() = 0;
-	virtual void onTerminated() = 0;
+	virtual int onUpdate();
+	virtual void onSuspend();
+	virtual void onNotify();
+	virtual void onPause();
+	virtual void onResume();
+	virtual void onTerminated();
 	void pause();
 	void resume();
 	void suspend();

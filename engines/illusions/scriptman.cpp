@@ -22,10 +22,16 @@
 
 #include "illusions/illusions.h"
 #include "illusions/scriptman.h"
+#include "illusions/scriptthread.h"
+#include "illusions/scriptopcodes.h"
 
 namespace Illusions {
 
 // ActiveScenes
+
+ActiveScenes::ActiveScenes() {
+	clear();
+}
 
 void ActiveScenes::clear() {
 	_stack.clear();
@@ -112,15 +118,67 @@ int16 ScriptStack::peek() {
 // ScriptMan
 
 ScriptMan::ScriptMan(IllusionsEngine *vm)
-	: _vm(vm) {
+	: _vm(vm), _pauseCtr(0), _doScriptThreadInit(false) {
+	_threads = new ThreadList(vm);
+	_scriptOpcodes = new ScriptOpcodes(vm);
 }
 
 ScriptMan::~ScriptMan() {
+	delete _threads;
+	delete _scriptOpcodes;
 }
 
 void ScriptMan::setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId) {
 	_theSceneId = theSceneId;
 	_theThreadId = theThreadId;
+}
+
+void ScriptMan::startScriptThread(uint32 threadId, uint32 callingThreadId,
+	uint32 value8, uint32 valueC, uint32 value10) {
+	debug("Starting script thread %08X", threadId);
+	byte *scriptCodeIp = _scriptResource->getThreadCode(threadId);
+	newScriptThread(threadId, callingThreadId, 0, scriptCodeIp, value8, valueC, value10);
+}
+
+void ScriptMan::startAnonScriptThread(int32 threadId, uint32 callingThreadId,
+	uint32 value8, uint32 valueC, uint32 value10) {
+	debug("Starting anonymous script thread %08X", threadId);
+	uint32 tempThreadId = newTempThreadId();
+	byte *scriptCodeIp = _scriptResource->getThreadCode(threadId);
+	scriptCodeIp = _scriptResource->getThreadCode(threadId);
+	newScriptThread(tempThreadId, callingThreadId, 0, scriptCodeIp, value8, valueC, value10);
+}
+
+uint32 ScriptMan::startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
+	uint32 value8, uint32 valueC, uint32 value10) {
+	debug("Starting temp script thread");
+	uint32 tempThreadId = newTempThreadId();
+	newScriptThread(tempThreadId, callingThreadId, 0, scriptCodeIp, value8, valueC, value10);
+	return tempThreadId;
+}
+
+void ScriptMan::newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
+	byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10) {
+	ScriptThread *scriptThread = new ScriptThread(_vm, threadId, callingThreadId,
+		notifyFlags, scriptCodeIp, value8, valueC, value10);
+	_threads->startThread(scriptThread);
+	if (_pauseCtr > 0)
+		scriptThread->pause();
+	if (_doScriptThreadInit) {
+		int updateResult = 4;
+		while (scriptThread->_pauseCtr <= 0 && updateResult != 1 && updateResult != 2)
+			updateResult = scriptThread->update();
+	}
+}
+
+uint32 ScriptMan::newTempThreadId() {
+	uint32 threadId = _nextTempThreadId + 2 * _scriptResource->_codeCount;
+	if (threadId > 65535) {
+		_nextTempThreadId = 0;
+		threadId = 2 * _scriptResource->_codeCount;
+	}
+	++_nextTempThreadId;
+	return 0x00020000 | threadId;
 }
 
 } // End of namespace Illusions

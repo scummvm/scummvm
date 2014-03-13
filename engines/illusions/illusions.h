@@ -55,6 +55,7 @@ class BackgroundItems;
 class BackgroundResource;
 class Camera;
 class ScriptResource;
+class ScriptMan;
 
 class IllusionsEngine : public Engine {
 protected:
@@ -74,11 +75,10 @@ public:
 	
 	void updateEvents();
 
-    ActorItems *_actorItems;
+	ScriptMan *_scriptMan;
+	ActorItems *_actorItems;
 	BackgroundItems *_backgroundItems;
 	Camera *_camera;
-	
-	ScriptResource *_scriptResource;
 
 	// Screen functions	
 	Graphics::Surface *allocSurface(int16 width, int16 height);

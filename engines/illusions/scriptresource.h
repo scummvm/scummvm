@@ -104,6 +104,7 @@ public:
 	uint32 _dataSize;
 	Properties _properties;
 	BlockCounters _blockCounters;
+	uint _codeCount;
 	uint32 *_codeOffsets;
 	uint _progInfosCount;
 	ProgInfo *_progInfos;

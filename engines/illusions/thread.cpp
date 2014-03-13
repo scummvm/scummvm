@@ -27,8 +27,31 @@ namespace Illusions {
 
 // Thread
 
-Thread::Thread(IllusionsEngine *vm)
-	: _vm(vm), _pauseCtr(0), _terminated(false) {
+Thread::Thread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags)
+	: _vm(vm), _threadId(threadId), _callingThreadId(callingThreadId), _notifyFlags(notifyFlags),
+	_pauseCtr(0), _terminated(false) {
+}
+
+Thread::~Thread() {
+}
+
+int Thread::onUpdate() {
+	return kTSTerminate;
+}
+
+void Thread::onSuspend() {
+}
+
+void Thread::onNotify() {
+}
+
+void Thread::onPause() {
+}
+
+void Thread::onResume() {
+}
+
+void Thread::onTerminated() {
 }
 
 void Thread::pause() {
@@ -65,15 +88,15 @@ void Thread::notify() {
 
 int Thread::update() {
 	// NOTE Deletion of terminated threads handled in caller
-	int result = 2;
+	int status = kTSYield;
 	if (!_terminated && _pauseCtr <= 0) {
-		result = onUpdate();
-		if (result == 1)
+		status = onUpdate();
+		if (status == kTSTerminate)
 			terminate();
-		else if (result == 3)
+		else if (status == kTSSuspend)
 			suspend();
 	}
-	return result;
+	return status;
 }
 
 void Thread::terminate() {
@@ -111,9 +134,9 @@ void ThreadList::updateThreads() {
 				it = _threads.erase(it);
 				delete thread;
 			} else {
-				int updateResult = 4;
-				while (!thread->_terminated && updateResult != 1 && updateResult != 2)
-					updateResult = thread->update();
+				int status = kTSRun;
+				while (!thread->_terminated && status != kTSTerminate && status != kTSYield)
+					status = thread->update();
 				++it;
 			}
 		}
