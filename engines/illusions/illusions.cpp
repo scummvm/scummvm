@@ -33,6 +33,7 @@
 #include "illusions/actorresource.h"
 #include "illusions/thread.h"
 #include "illusions/scriptresource.h"
+#include "illusions/scriptman.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"

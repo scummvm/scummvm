@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	illusions.o \
 	input.o \
 	resourcesystem.o \
+	scriptman.o \
 	scriptresource.o \
 	spritedecompressqueue.o \
 	spritedrawqueue.o \

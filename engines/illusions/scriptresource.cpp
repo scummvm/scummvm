@@ -71,6 +71,18 @@ void BlockCounters::init(uint count, byte *blockCounters) {
 	_blockCounters = blockCounters;
 }
 
+void BlockCounters::clear() {
+	for (uint i = 0; i < _count; ++i)
+		_blockCounters[i] = 0;
+}
+
+byte BlockCounters::get(uint index) {
+	return _blockCounters[index] & 0x3F;
+}
+
+void BlockCounters::set(uint index, byte value) {
+	_blockCounters[index] = (get(index) ^ value) & 0x3F;
+}
 
 // TriggerCause
 
@@ -159,6 +171,9 @@ ScriptResource::~ScriptResource() {
 void ScriptResource::load(byte *data, uint32 dataSize) {
 	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
 	
+	_data = data;
+	_dataSize = dataSize;
+	
 	stream.skip(4); // Skip unused
 	uint propertiesCount = stream.readUint16LE();
 	uint blockCountersCount = stream.readUint16LE();
@@ -192,6 +207,10 @@ void ScriptResource::load(byte *data, uint32 dataSize) {
 	debug("ScriptResource::load() propertiesOffs: %08X; blockCountersOffs: %08X; codeTblOffs: %08X",
 		propertiesOffs, blockCountersOffs, codeTblOffs);
 
+}
+
+byte *ScriptResource::getThreadCode(uint32 threadId) {
+	return _data + _codeOffsets[threadId & 0xFFFF];
 }
 
 } // End of namespace Illusions
