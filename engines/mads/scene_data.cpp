@@ -522,7 +522,7 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 	artFile.close();
 
 	Common::Array<SpriteAsset *> spriteSets;
-	Common::Array<int> indexList;
+	Common::Array<int> usageList;
 
 	if (flags & 1) {
 		for (uint i = 0; i < setNames.size(); ++i) {
@@ -533,11 +533,11 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 
 			SpriteAsset *sprites = new SpriteAsset(_vm, setResName, flags);
 			spriteSets.push_back(sprites);
-			indexList.push_back(-1); // TODO:: sprites->_field6
+			usageList.push_back(sprites->_usageIndex); 
 		}
 	}
 
-	warning("TODO: sub_201E4(indexList, namesCount, &pal data2");
+	_vm->_palette->_paletteUsage.updateUsage(usageList, _usageIndex);
 
 	for (uint i = 0; i < spriteInfo.size(); ++i) {
 		SpriteInfo &si = spriteInfo[i];

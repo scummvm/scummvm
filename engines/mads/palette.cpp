@@ -304,6 +304,30 @@ void PaletteUsage::transform(Common::Array<RGB6> &palette) {
 	}
 }
 
+void PaletteUsage::updateUsage(Common::Array<int> &usageList, int sceneUsageIndex) {
+	uint32 mask1 = 0xFFFFFFFF;
+	uint32 mask2 = 0;
+
+	for (uint idx = 0; idx < usageList.size(); ++idx) {
+		uint32 bitMask = 1 << usageList[idx];
+		mask1 ^= bitMask;
+		mask2 |= bitMask;
+		_vm->_palette->_rgbList[usageList[idx]] = 0;
+	}
+
+	uint32 mask3 = 1 << sceneUsageIndex;
+
+	for (uint idx = 0; idx < PALETTE_COUNT; ++idx) {
+		uint32 mask = mask2 & _vm->_palette->_palFlags[idx];
+		if (mask) {
+			_vm->_palette->_palFlags[idx] = (_vm->_palette->_palFlags[idx] &
+				mask1) | mask3;
+		}
+	}
+
+	_vm->_palette->_rgbList[sceneUsageIndex] = -1;
+}
+
 int PaletteUsage::getGamePalFreeIndex(int *palIndex) {
 	*palIndex = -1;
 	int count = 0;

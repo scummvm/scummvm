@@ -94,6 +94,8 @@ public:
 	int process(Common::Array<RGB6> &palette, uint flags);
 
 	void transform(Common::Array<RGB6> &palette);
+
+	void updateUsage(Common::Array<int> &usageList, int sceneUsageIndex);
 };
 
 class RGBList {
