@@ -184,7 +184,8 @@ void SequenceList::setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot) {
 	if (!timerEntry._nonFixed) {
 		spriteSlot._position = timerEntry._msgPos;
 	} else {
-		spriteSlot._position = spriteSet._pos;
+		MSprite *sprite = spriteSet.getFrame(spriteSlot._frameNumber);
+		spriteSlot._position = sprite->_offset;
 	}
 }
 
