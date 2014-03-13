@@ -29,6 +29,13 @@ namespace Illusions {
 
 class IllusionsEngine;
 
+enum ThreadType {
+	kTTScriptThread  = 1,
+	kTTTimerThread   = 2,
+	kTTTalkThread    = 3,
+	kTTSpecialThread = 5
+};
+
 class Thread {
 public:
 	Thread(IllusionsEngine *vm);
@@ -63,6 +70,18 @@ public:
 	ThreadList(IllusionsEngine *vm);
 	void startThread(Thread *thread);
 	void updateThreads();
+	Thread *findThread(uint32 threadId);
+	void suspendId(uint32 threadId);
+	void notifyId(uint32 threadId);
+	void notifyTimerThreads(uint32 callingThreadId);
+	void suspendTimerThreads(uint32 callingThreadId);
+	void terminateThreads(uint32 threadId);
+	void terminateThreadsByTag(uint32 tag, uint32 threadId);
+	void suspendThreadsByTag(uint32 tag, uint32 threadId);
+	void notifyThreadsByTag(uint32 tag, uint32 threadId);
+	void pauseThreads(uint32 threadId);
+	void resumeThreads(uint32 threadId);
+	void killThread(uint32 threadId);
 protected:
 	typedef Common::List<Thread*> List;
 	typedef List::iterator Iterator;

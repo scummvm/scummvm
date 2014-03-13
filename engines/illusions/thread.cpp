@@ -64,13 +64,10 @@ void Thread::notify() {
 }
 
 int Thread::update() {
-	// NOTE Deletion of removed threads handled in caller
+	// NOTE Deletion of terminated threads handled in caller
 	int result = 2;
-	if (!_terminated) {
-		if (_pauseCtr > 0)
-			result = 2;
-		else
-			result = onUpdate();
+	if (!_terminated && _pauseCtr <= 0) {
+		result = onUpdate();
 		if (result == 1)
 			terminate();
 		else if (result == 3)
@@ -114,11 +111,9 @@ void ThreadList::updateThreads() {
 				it = _threads.erase(it);
 				delete thread;
 			} else {
-				while (!thread->_terminated) {
-					int updateResult = thread->update();
-					if (updateResult == 1 || updateResult == 2)
-						break;
-				}
+				int updateResult = 4;
+				while (!thread->_terminated && updateResult != 1 && updateResult != 2)
+					updateResult = thread->update();
 				++it;
 			}
 		}
@@ -129,6 +124,115 @@ void ThreadList::updateThreads() {
 		*/
 			break;		
 	}
+}
+
+Thread *ThreadList::findThread(uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it)
+		if ((*it)->_threadId == threadId && !(*it)->_terminated)
+			return (*it);
+	return 0;
+}
+
+void ThreadList::suspendId(uint32 threadId) {
+	Thread *thread = findThread(threadId);
+	if (thread)
+		thread->suspend();
+}
+
+void ThreadList::notifyId(uint32 threadId) {
+	Thread *thread = findThread(threadId);
+	if (thread)
+		thread->notify();
+}
+
+void ThreadList::notifyTimerThreads(uint32 callingThreadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_type == kTTTimerThread && thread->_callingThreadId == callingThreadId)
+			thread->notify();
+	}
+}
+
+void ThreadList::suspendTimerThreads(uint32 callingThreadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_type == kTTTimerThread && thread->_callingThreadId == callingThreadId)
+			thread->suspend();
+	}
+}
+
+void ThreadList::terminateThreads(uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_threadId != threadId)
+			thread->terminate();
+	}
+}
+
+void ThreadList::terminateThreadsByTag(uint32 tag, uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_tag == tag && thread->_threadId != threadId)
+			thread->terminate();
+	}
+}
+
+void ThreadList::suspendThreadsByTag(uint32 tag, uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_tag == tag && thread->_threadId != threadId)
+			thread->suspend();
+	}
+}
+
+void ThreadList::notifyThreadsByTag(uint32 tag, uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_tag == tag && thread->_threadId != threadId)
+			thread->notify();
+	}
+}
+
+void ThreadList::pauseThreads(uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_threadId != threadId)
+			thread->pause();
+	}
+}
+
+void ThreadList::resumeThreads(uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_threadId != threadId)
+			thread->resume();
+	}
+}
+
+void ThreadList::killThread(uint32 threadId) {
+
+	if (!threadId)
+		return;
+	
+	Thread *thread = findThread(threadId);
+	if (!thread)
+		return;
+		
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *childThread = *it;
+		if (childThread->_callingThreadId == threadId)
+			killThread(childThread->_threadId);
+	}
+	
+	if (thread->_type == kTTTalkThread) {
+		thread->_callingThreadId = 0;
+		// TODO script_TalkThreads_sub_417F60(thread->_threadId, 0);
+		// TODO script_TalkThreads_sub_417FA0(thread->_threadId, 0);
+	} else {
+		// TODO artmgrThreadIsDead(thread->threadId);
+		thread->terminate();
+	}
+
 }
 
 } // End of namespace Illusions
