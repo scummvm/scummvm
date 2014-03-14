@@ -140,6 +140,11 @@ void ScreenObjects::proc1() {
 
 MADSEngine *DirtyArea::_vm = nullptr;
 
+DirtyArea::DirtyArea() {
+	_active = false;
+	_textActive = false;
+}
+
 void DirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) {
 	if (_bounds.left % 2) {
 		--_bounds.left;

@@ -124,7 +124,7 @@ public:
 	bool _textActive;
 	bool _active;
 
-	DirtyArea() { _active = false; }
+	DirtyArea();
 
 	void setArea(int width, int height, int maxWidth, int maxHeight);
 

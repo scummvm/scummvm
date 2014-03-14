@@ -182,8 +182,8 @@ public:
 	 */
 	void update();
 
-	virtual void setCurrentFrame(int frameNumber);
-	virtual int getCurrentFrame() const { return _currentFrame; }
+	void setCurrentFrame(int frameNumber);
+	int getCurrentFrame() const { return _currentFrame; }
 
 	bool freeFlag() const { return _freeFlag; }
 	bool getAnimMode() const { return _header._animMode; }

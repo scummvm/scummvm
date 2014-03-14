@@ -207,6 +207,16 @@ public:
 	SpriteSets(MADSEngine *vm) : _vm(vm) {}
 
 	/**
+	 * Destructor
+	 */
+	~SpriteSets();
+
+	/**
+	 * Clears the current list, freeing any laoded assets
+	 */
+	void clear();
+
+	/**
 	* Add a sprite asset to the list
 	*/
 	int add(SpriteAsset *asset, int idx = 0);

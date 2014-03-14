@@ -145,8 +145,6 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 
 Animation::~Animation() {
 	delete _font;
-	for (uint i = 0; i < _spriteSets.size(); ++i)
-		delete _spriteSets[i];
 }
 
 void Animation::free() {

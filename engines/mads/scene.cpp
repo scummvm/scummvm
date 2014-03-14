@@ -41,7 +41,8 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_animFlag = false;
 	_animVal1 = 0;
 	_depthStyle = 0;
-	_v1A = _v1C = 0;
+	_v1A = 0;
+	_v1C = 0;
 	_roomChanged = false;
 	_reloadSceneFlag = false;
 	_destFacing = 0;

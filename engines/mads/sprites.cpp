@@ -362,6 +362,10 @@ void SpriteSlots::cleanUp() {
 
 /*------------------------------------------------------------------------*/
 
+SpriteSets::~SpriteSets() {
+	clear();
+}
+
 int SpriteSets::add(SpriteAsset *asset, int idx) {
 	if (!idx)
 		idx = size();
@@ -376,6 +380,13 @@ int SpriteSets::add(SpriteAsset *asset, int idx) {
 
 int SpriteSets::addSprites(const Common::String &resName, int flags) {
 	return add(new SpriteAsset(_vm, resName, flags));
+}
+
+void SpriteSets::clear() {
+	for (uint i = 0; i < size(); ++i)
+		delete (*this)[i];
+
+	Common::Array<SpriteAsset *>::clear();
 }
 
 /*------------------------------------------------------------------------*/

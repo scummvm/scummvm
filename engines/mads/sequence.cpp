@@ -41,11 +41,15 @@ namespace MADS {
 		_dynamicHotspotIndex = -1;
 		_triggerCountdown = 0;
 		_doneFlag = 0;
-		_entries._count = 0;
 		_abortMode = ABORTMODE_0;
 		_numTicks = 0;
 		_extraTicks = 0;
 		_timeout = 0;
+
+		_entries._count = 0;
+		Common::fill(&_entries._mode[0], &_entries._mode[TIMER_ENTRY_SUBSET_MAX], SM_0);
+		Common::fill(&_entries._frameIndex[0], &_entries._frameIndex[TIMER_ENTRY_SUBSET_MAX], 0);
+		Common::fill(&_entries._abortVal[0], &_entries._abortVal[TIMER_ENTRY_SUBSET_MAX], 0);
 	}
 
 	/*------------------------------------------------------------------------*/
