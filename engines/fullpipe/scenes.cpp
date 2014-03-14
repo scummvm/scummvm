@@ -276,21 +276,21 @@ Vars::Vars() {
 	scene18_var04 = -318;
 	scene18_var08 = 0;
 	scene18_var09 = 0;
-	scene18_var03 = false;
+	scene18_girlIsSwinging = false;
 	scene18_var21 = 0;
 	scene18_var11 = 0;
 	scene18_var12 = 0;
-	scene18_var22 = 1;
+	scene18_wheelIsTurning = true;
 	scene18_var23 = -1;
 	scene18_var24 = 0;
 	scene18_var25 = 0;
 	scene18_var26 = 1;
 	scene18_var27 = -1;
 	scene18_var33 = 0;
-	scene18_var13 = -1;
+	scene18_jumpDistance = -1;
 	scene18_var14 = -1;
 	scene18_var28 = 0;
-	scene18_var15 = 0;
+	scene18_enteredTrubaRight = false;
 	scene18_var31 = 0;
 	scene18_var32 = 0;
 	scene18_boy = 0;
@@ -301,11 +301,7 @@ Vars::Vars() {
 	scene18_var05 = 283;
 	scene18_var06 = -350;
 
-	scene19_var01 = 0;
-	scene19_var02 = 0;
-	scene19_var03 = 0;
-	scene19_var04 = 0;
-	scene19_var05 = false;
+	scene19_enteredTruba3 = false;
 
 	scene20_fliesCountdown = 0;
 	scene20_grandma = 0;

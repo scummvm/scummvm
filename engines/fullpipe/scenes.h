@@ -480,11 +480,11 @@ public:
 	int scene18_var04;
 	int scene18_var08;
 	int scene18_var09;
-	bool scene18_var03;
+	bool scene18_girlIsSwinging;
 	int scene18_var21;
 	int scene18_var11;
 	int scene18_var12;
-	int scene18_var22;
+	bool scene18_wheelIsTurning;
 	int scene18_var23;
 	int scene18_var24;
 	int scene18_var25;
@@ -493,10 +493,10 @@ public:
 	int scene18_var31;
 	int scene18_var32;
 	int scene18_var33;
-	int scene18_var13;
+	int scene18_jumpDistance;
 	int scene18_var14;
 	int scene18_var28;
-	int scene18_var15;
+	bool scene18_enteredTrubaRight;
 	StaticANIObject *scene18_boy;
 	StaticANIObject *scene18_girl;
 	StaticANIObject *scene18_domino;
@@ -505,11 +505,7 @@ public:
 	int scene18_var05;
 	int scene18_var06;
 
-	int scene19_var01;
-	int scene19_var02;
-	int scene19_var03;
-	int scene19_var04;
-	bool scene19_var05;
+	bool scene19_enteredTruba3;
 
 	int scene20_fliesCountdown;
 	StaticANIObject *scene20_grandma;

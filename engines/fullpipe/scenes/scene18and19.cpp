@@ -85,14 +85,14 @@ void scene19_setSugarState(Scene *sc) {
 
 void scene19_setMovements(Scene *sc, int entranceId) {
 	if (entranceId == TrubaRight) {
-		g_vars->scene18_var15 = 1;
+		g_vars->scene18_enteredTrubaRight = true;
 	} else {
-		g_vars->scene18_var15 = 0;
-		g_vars->scene19_var05 = (entranceId == PIC_SC19_RTRUBA3);
+		g_vars->scene18_enteredTrubaRight = false;
+		g_vars->scene19_enteredTruba3 = (entranceId == PIC_SC19_RTRUBA3);
 	}
 
 	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
-		if (!g_vars->scene18_var15 && (g_vars->scene18_swingers[i]->sflags & 0x20)) {
+		if (!g_vars->scene18_enteredTrubaRight && (g_vars->scene18_swingers[i]->sflags & 0x20)) {
 			Scene *oldsc = g_fp->_currentScene;
 
 			g_vars->scene18_swingers[i]->sflags = 1;
@@ -165,7 +165,7 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 			sc->addStaticANIObject(newani, 1);
 		} else {
 			swinger->ani = ani;
-			swinger->sflags = g_vars->scene18_var03 != 0 ? 4 : 1;
+			swinger->sflags = g_vars->scene18_girlIsSwinging ? 4 : 1;
 		}
 
 		ani->_statics = ani->getStaticsById(ST_KSL_NORM);
@@ -197,7 +197,7 @@ void scene18_initScene1(Scene *sc) {
 	int oldx = g_vars->scene18_var20;
 	int oldy = g_vars->scene18_var04;
 
-	g_vars->scene18_var03 = (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
+	g_vars->scene18_girlIsSwinging = (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
 	if (sc->_sceneId == SC_18) {
 		g_vars->scene18_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1);
@@ -289,10 +289,10 @@ void scene18_initScene1(Scene *sc) {
 	g_vars->scene18_girl->setOXY(newx + x, newy + y);
 
 	g_vars->scene18_var12 = 0;
-	g_vars->scene18_var13 = -1;
+	g_vars->scene18_jumpDistance = -1;
 	g_vars->scene18_var14 = -1;
 
-	if (g_vars->scene18_var15) {
+	if (g_vars->scene18_enteredTrubaRight) {
 		if (sc->_sceneId == SC_19)
 			g_fp->_aniMan2 = 0;
 		else
@@ -311,7 +311,7 @@ void scene18_initScene2(Scene *sc) {
 
 	armchair->loadMovementsPixelData();
 
-	g_vars->scene18_var03 = (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
+	g_vars->scene18_girlIsSwinging = (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
 	if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
 		g_vars->scene18_var08 = 1;
@@ -325,16 +325,16 @@ void scene18_initScene2(Scene *sc) {
 
 	g_vars->scene18_var21 = 0;
 	g_vars->scene18_var12 = 0;
-	g_vars->scene18_var22 = 1;
+	g_vars->scene18_wheelIsTurning = true;
 	g_vars->scene18_var23 = -1;
 	g_vars->scene18_var24 = 0;
 	g_vars->scene18_var25 = 0;
 	g_vars->scene18_var26 = 1;
 	g_vars->scene18_var27 = -1;
-	g_vars->scene18_var13 = -1;
+	g_vars->scene18_jumpDistance = -1;
 	g_vars->scene18_var14 = -1;
 	g_vars->scene18_var28 = 0;
-	g_vars->scene18_var15 = 0;
+	g_vars->scene18_enteredTrubaRight = 0;
 	g_vars->scene18_boy = sc->getStaticANIObject1ById(ANI_BOY18, -1);
 	g_vars->scene18_girl = sc->getStaticANIObject1ById(ANI_GIRL18, -1);
 	g_vars->scene18_domino = sc->getStaticANIObject1ById(ANI_DOMINO_18, -1);
@@ -348,14 +348,10 @@ void scene18_initScene2(Scene *sc) {
 
 void scene19_initScene2() {
 	g_fp->_aniMan2 = 0;
-	g_vars->scene19_var01 = 200;
-	g_vars->scene19_var02 = 200;
-	g_vars->scene19_var03 = 300;
-	g_vars->scene19_var04 = 300;
 }
 
 int scene18_updateCursor() {
-	if (g_vars->scene18_var15) {
+	if (g_vars->scene18_enteredTrubaRight) {
 		g_fp->_cursorId = PIC_CSR_DEFAULT;
 	} else {
 		g_fp->updateCursorCommon();
@@ -378,7 +374,7 @@ int scene19_updateCursor() {
 	g_fp->updateCursorCommon();
 
 	if (g_fp->_objectIdAtCursor == PIC_SC19_RTRUBA31)
-		g_fp->_cursorId = g_vars->scene19_var05 != 0 ? PIC_CSR_GOR : PIC_CSR_DEFAULT;
+		g_fp->_cursorId = g_vars->scene19_enteredTruba3 ? PIC_CSR_GOR : PIC_CSR_DEFAULT;
 
 	return g_fp->_cursorId;
 }
@@ -409,7 +405,7 @@ void sceneHandler18and19_showManJump() {
 	g_vars->scene18_swingers[g_vars->scene18_var27]->ani->_priority = 20;
 
 	g_vars->scene18_var28 = 0;
-	g_vars->scene18_var15 = 1;
+	g_vars->scene18_enteredTrubaRight = true;
 
 	g_fp->_aniMan2 = g_vars->scene18_swingers[g_vars->scene18_var27]->ani;
 }
@@ -430,11 +426,11 @@ void sceneHandler18_showManJumpTo() {
 
 	int mqid = 0;
 
-	if (g_vars->scene18_var13 == 1) {
+	if (g_vars->scene18_jumpDistance == 1) {
 		mqid = QU_SC19_MANJUMP1;
-	} else if (g_vars->scene18_var13 == 2) {
+	} else if (g_vars->scene18_jumpDistance == 2) {
 		mqid = QU_SC19_MANJUMP2;
-	} else if (g_vars->scene18_var13 == 3) {
+	} else if (g_vars->scene18_jumpDistance == 3) {
 		mqid = QU_SC19_MANJUMP3;
 	}
 
@@ -442,7 +438,7 @@ void sceneHandler18_showManJumpTo() {
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(mqid), 0, 0);
 
 		g_fp->_aniMan2 = g_fp->_aniMan;
-		g_vars->scene18_var15 = 0;
+		g_vars->scene18_enteredTrubaRight = false;
 
 		mq->setFlags(mq->getFlags() | 1);
 		mq->chain(0);
@@ -604,7 +600,7 @@ void sceneHandler18and19_drawRiders() {
 				swinger->ani->_movement->_counter = 0;
 		}
 
-		if (g_vars->scene18_var22) {
+		if (g_vars->scene18_wheelIsTurning) {
 			if ((swinger->sflags & 2) && swinger->angle >= ANGLE(160) && oldangle < ANGLE(160)) {
 				swinger->sflags = 8;
 				swinger->ani->changeStatics2(ST_KSL_BOY);
@@ -638,7 +634,7 @@ void sceneHandler18and19_drawRiders() {
 			sceneHandler18and19_manStandArmchair();
 		}
 
-		if (!g_vars->scene18_var15)
+		if (!g_vars->scene18_enteredTrubaRight)
 			continue;
 
 		if (i == g_vars->scene18_var27) {
@@ -651,7 +647,7 @@ void sceneHandler18and19_drawRiders() {
 			}
 		}
 
-		if (g_vars->scene18_var13 > 0) {
+		if (g_vars->scene18_jumpDistance > 0) {
 			if (swinger->sflags & 0x20) {
 				double newa = (double)g_vars->scene18_var14 * ANGLE(1);
 
@@ -733,7 +729,7 @@ int sceneHandler18(ExCommand *cmd) {
 
 	case 29:
 		{
-			if (g_vars->scene18_var15) {
+			if (g_vars->scene18_enteredTrubaRight) {
 				cmd->_messageKind = 0;
 				break;
 			}
@@ -850,28 +846,28 @@ int sceneHandler19(ExCommand *cmd) {
 		break;
 
 	case 29:
-		if (g_vars->scene18_var15) {
+		if (g_vars->scene18_enteredTrubaRight) {
 			switch (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY)) {
 			case PIC_SC19_RTRUBA1:
-				g_vars->scene18_var13 = 1;
+				g_vars->scene18_jumpDistance = 1;
 				g_vars->scene18_var14 = 331;
 				cmd->_messageKind = 0;
 				break;
 
 			case PIC_SC19_RTRUBA2:
-				g_vars->scene18_var13 = 2;
+				g_vars->scene18_jumpDistance = 2;
 				g_vars->scene18_var14 = 350;
 				cmd->_messageKind = 0;
 				break;
 
 			case PIC_SC19_RTRUBA3:
-				g_vars->scene18_var13 = 3;
+				g_vars->scene18_jumpDistance = 3;
 				g_vars->scene18_var14 = 9;
 				cmd->_messageKind = 0;
 				break;
 
 			default:
-				g_vars->scene18_var13 = -1;
+				g_vars->scene18_jumpDistance = -1;
 				g_vars->scene18_var14 = -1;
 				cmd->_messageKind = 0;
 				break;
@@ -879,7 +875,7 @@ int sceneHandler19(ExCommand *cmd) {
 			break;
 		}
 
-		if (g_vars->scene19_var05) {
+		if (g_vars->scene19_enteredTruba3) {
 			if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC19_RTRUBA3) {
 				if (g_fp->_aniMan->isIdle()) {
 					if (!(g_fp->_aniMan->_flags & 0x100)) {
