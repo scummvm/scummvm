@@ -26,7 +26,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 #include "mads/mads.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"

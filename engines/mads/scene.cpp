@@ -438,7 +438,7 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
 	// Copy dirty areas to the main display surface
-	_dirtyAreas.copy(&_vm->_screen, &_backgroundSurface, _posAdjust);
+	_dirtyAreas.copy(&_backgroundSurface, &_vm->_screen, _posAdjust);
 
 	// Handle dirty areas for foreground objects
 	_spriteSlots.setDirtyAreas();
@@ -463,7 +463,7 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 		_vm->_sound->startQueuedCommands();
 	} else {
 		// Copy dirty areas to the screen
-		_dirtyAreas.copy(&_vm->_screen, &_backgroundSurface, _vm->_screen._offset);
+		_dirtyAreas.copyToScreen(_vm->_screen._offset);
 	}
 
 	warning("TODO: sub_115A2");

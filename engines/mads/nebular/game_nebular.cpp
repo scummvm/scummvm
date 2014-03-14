@@ -24,7 +24,7 @@
 #include "common/config-manager.h"
 #include "mads/mads.h"
 #include "mads/game.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/dialogs_nebular.h"

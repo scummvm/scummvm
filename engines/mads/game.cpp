@@ -25,7 +25,7 @@
 #include "mads/game.h"
 #include "mads/game_data.h"
 #include "mads/events.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/nebular/game_nebular.h"

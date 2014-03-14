@@ -151,7 +151,21 @@ public:
 
 	bool intersects(int idx1, int idx2);
 	void mergeAreas(int idx1, int idx2);
-	void copy(MSurface *dest, MSurface *src, const Common::Point &posAdjust);
+
+	/**
+	 * Copy the data specified by the dirty rect list between surfaces
+	 * @param srcSurface	Source surface
+	 * @param destSurface	Dest surface
+	 * @param posAdjust		Position adjustment
+	 */
+	void copy(MSurface *srcSurface, MSurface *destSurface, const Common::Point &posAdjust);
+
+	/**
+	 * Use the lsit of dirty areas to copy areas of the screen surface to
+	 * the physical screen
+	 * @param posAdjust		Position adjustment	 */
+	void copyToScreen(const Common::Point &posAdjust);
+
 	void reset();
 };
 

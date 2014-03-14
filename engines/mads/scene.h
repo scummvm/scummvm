@@ -27,7 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "mads/assets.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/hotspots.h"
 #include "mads/messages.h"
 #include "mads/msurface.h"

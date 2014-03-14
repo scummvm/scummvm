@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	font.o \
 	game.o \
 	game_data.o \
-	graphics.o \
 	hotspots.o \
 	interface.o \
 	mads.o \
@@ -29,6 +28,7 @@ MODULE_OBJS := \
 	resources.o \
 	scene.o \
 	scene_data.o \
+	screen.o \
 	sequence.o \
 	sound.o \
 	sprites.o \

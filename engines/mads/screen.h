@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MADS_GRAPHICS_H
-#define MADS_GRAPHICS_H
+#ifndef MADS_SCREEN_H
+#define MADS_SCREEN_H
 
 #include "common/scummsys.h"
 #include "common/array.h"
@@ -58,13 +58,12 @@ private:
 	void fadeIn();
 public:
 	Common::Point _offset;
-	byte *_pixels;
-	int _pitch;
+	byte *_dataP;
 public:
 	/**
 	 * Constructor
 	 */
-	ScreenSurface() {}
+	ScreenSurface();
 
 	/**
 	 * Initialise the surface
@@ -72,6 +71,20 @@ public:
 	void init();
 
 	void setPointer(MSurface *s);
+
+	/**
+	 * Copys an area of the screen surface to a given destination position on
+	 * the ScummVM physical screen buffer
+	 * @param destPos	Destination position
+	 * @param bounds	Area of screen surface to copy
+	 */
+	void copyRectToScreen(const Common::Point &destPos, const Common::Rect &bounds);
+
+	/**
+	 * Copys an area of the screen surface to the ScmmVM physical screen buffer
+	 * @param bounds	Area of screen surface to copy
+	 */
+	void copyRectToScreen(const Common::Rect &bounds);
 
 	/**
 	 * Updates the screen with the contents of the surface
@@ -83,4 +96,4 @@ public:
 
 } // End of namespace MADS
 
-#endif /* MADS_GRAPHICS_H */
+#endif /* MADS_SCREEN_H */

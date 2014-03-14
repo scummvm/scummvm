@@ -35,7 +35,7 @@
 #include "mads/events.h"
 #include "mads/font.h"
 #include "mads/game.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"

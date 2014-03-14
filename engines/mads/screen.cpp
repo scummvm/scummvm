@@ -23,17 +23,32 @@
 #include "common/scummsys.h"
 #include "mads/mads.h"
 #include "mads/game.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/palette.h"
 
 namespace MADS {
+
+ScreenSurface::ScreenSurface() {
+	_dataP = nullptr;
+}
 
 void ScreenSurface::init() {
 	setSize(g_system->getWidth(), g_system->getHeight());
 }
 
+void ScreenSurface::copyRectToScreen(const Common::Point &destPos,
+		const Common::Rect &bounds) {
+	byte *buf = getBasePtr(destPos.x, destPos.y);
+	g_system->copyRectToScreen(buf, this->pitch, bounds.left, bounds.top,
+		bounds.width(), bounds.height());
+}
+
+void ScreenSurface::copyRectToScreen(const Common::Rect &bounds) {
+	copyRectToScreen(Common::Point(bounds.left, bounds.top), bounds);
+}
+
+
 void ScreenSurface::updateScreen() {
-	g_system->copyRectToScreen((const byte *)pixels, pitch, 0, 0, w, h);
 	g_system->updateScreen();
 }
 
@@ -75,8 +90,7 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 }
 
 void ScreenSurface::setPointer(MSurface *s) {
-	_pixels = s->getData();
-	_pitch = s->w;
+	_dataP = s->getData();
 }
 
 void ScreenSurface::fadeOut() {
@@ -86,6 +100,7 @@ void ScreenSurface::fadeOut() {
 void ScreenSurface::fadeIn() {
 	warning("TODO: Proper fade in");
 	_vm->_palette->setFullPalette(_vm->_palette->_mainPalette);
+	_vm->_screen.copyRectToScreen(Common::Rect(0, 0, 320, 200));
 }
 
 } // End of namespace MADS

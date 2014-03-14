@@ -23,7 +23,7 @@
 #include "common/scummsys.h"
 #include "mads/mads.h"
 #include "mads/font.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/messages.h"
 #include "mads/scene_data.h"
 

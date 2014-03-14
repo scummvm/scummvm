@@ -24,7 +24,7 @@
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "mads/mads.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/sprites.h"
 

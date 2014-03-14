@@ -24,7 +24,7 @@
 #include "mads/scene_data.h"
 #include "mads/mads.h"
 #include "mads/compression.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/resources.h"
 #include "mads/nebular/nebular_scenes.h"
 
@@ -276,7 +276,20 @@ void DirtyAreas::mergeAreas(int idx1, int idx2) {
 	da1._textActive = true;
 }
 
-void DirtyAreas::copy(MSurface *dest, MSurface *src, const Common::Point &posAdjust) {
+void DirtyAreas::copy(MSurface *srcSurface, MSurface *destSurface, const Common::Point &posAdjust) {
+	for (uint i = 0; i < size(); ++i) {
+		const Common::Rect &srcBounds = (*this)[i]._bounds;
+
+		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
+			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
+
+		if ((*this)[i]._active && bounds.isValidRect()) {
+			srcSurface->copyTo(destSurface, bounds, Common::Point(bounds.left, bounds.top));
+		}
+	}
+}
+
+void DirtyAreas::copyToScreen(const Common::Point &posAdjust) {
 	for (uint i = 0; i < size(); ++i) {
 		const Common::Rect &srcBounds = (*this)[i]._bounds;
 
@@ -284,8 +297,7 @@ void DirtyAreas::copy(MSurface *dest, MSurface *src, const Common::Point &posAdj
 			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
 
 		if ((*this)[i]._active && (*this)[i]._bounds.isValidRect()) {
-			src->copyTo(dest, bounds, Common::Point((*this)[i]._bounds.left,
-				(*this)[i]._bounds.top));
+			_vm->_screen.copyRectToScreen(bounds);
 		}
 	}
 }

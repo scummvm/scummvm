@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/graphics.h"
+#include "mads/screen.h"
 #include "mads/user_interface.h"
 #include "mads/msurface.h"
 
