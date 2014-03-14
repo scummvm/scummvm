@@ -271,7 +271,7 @@ bool VoyeurEngine::doLock() {
 
 		_graphicsManager->_fontPtr->_curFont = _bVoy->boltEntry(0x708)._fontResource;
 		_graphicsManager->_fontPtr->_fontSaveBack = 0;
-		_graphicsManager->_fontPtr->_fontFlags = 0;
+		_graphicsManager->_fontPtr->_fontFlags = DISPFLAG_NONE;
 
 		Common::String dateString = "ScummVM";
  		Common::String displayString = Common::String::format("Last Play %s", dateString.c_str());

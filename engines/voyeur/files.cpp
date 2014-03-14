@@ -738,12 +738,12 @@ RectResource::RectResource(int x1, int y1, int x2, int y2) {
 
 DisplayResource::DisplayResource() {
 	_vm = NULL;
-	_flags = 0;
+	_flags = DISPFLAG_NONE;
 }
 
 DisplayResource::DisplayResource(VoyeurEngine *vm) {
 	_vm = vm;
-	_flags = 0;
+	_flags = DISPFLAG_NONE;
 }
 
 void DisplayResource::sFillBox(int width, int height) {
@@ -752,7 +752,7 @@ void DisplayResource::sFillBox(int width, int height) {
 	_vm->_graphicsManager->_saveBack = false;
 
 	PictureResource pr;
-	pr._flags = 1;
+	pr._flags = DISPFLAG_1;
 	pr._select = 0xff;
 	pr._pick = 0;
 	pr._onOff = _vm->_graphicsManager->_drawPtr->_penColor;
@@ -846,7 +846,7 @@ int DisplayResource::drawText(const Common::String &msg) {
 			break;
 		}
 
-		if (!(fontInfo._fontFlags & 3)) {
+		if (!(fontInfo._fontFlags & (DISPFLAG_1 | DISPFLAG_2))) {
 			viewPort->_fontRect.left = xp;
 			viewPort->_fontRect.top = yp;
 			viewPort->_fontRect.setWidth(msgWidth);
@@ -861,7 +861,7 @@ int DisplayResource::drawText(const Common::String &msg) {
 		pos.x = xp;
 		pos.y = yp;
 
-		if (fontInfo._fontFlags & 4) {
+		if (fontInfo._fontFlags & DISPFLAG_4) {
 			if (fontInfo._shadow.x <= 0) {
 				viewPort->_fontRect.left += fontInfo._shadow.x;
 				viewPort->_fontRect.right -= fontInfo._shadow.x * 2;
@@ -942,7 +942,7 @@ int DisplayResource::drawText(const Common::String &msg) {
 		if (i != 0) {
 			fontChar._pick = 0;
 			fontChar._onOff = fontInfo._shadowColor;
-		} else if (fontData._fontDepth == 1 || (fontInfo._fontFlags & 0x10)) {
+		} else if (fontData._fontDepth == 1 || (fontInfo._fontFlags & DISPFLAG_10)) {
 			fontChar._pick = 0;
 			fontChar._onOff = fontInfo._foreColor;
 		} else {
@@ -1120,7 +1120,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 }
 
 PictureResource::PictureResource(Graphics::Surface *surface) {
-	_flags = 0;
+	_flags = DISPFLAG_NONE;
 	_select = 0;
 	_pick = 0;
 	_onOff = 0;
@@ -1134,7 +1134,7 @@ PictureResource::PictureResource(Graphics::Surface *surface) {
 }
 
 PictureResource::PictureResource() {
-	_flags = 0;
+	_flags = DISPFLAG_NONE;
 	_select = 0;
 	_pick = 0;
 	_onOff = 0;
@@ -1468,11 +1468,11 @@ FontInfoResource::FontInfoResource(BoltFilesState &state, const byte *src) {
 
 FontInfoResource::FontInfoResource() {
 	_curFont = NULL;
-	_picFlags = 3;
+	_picFlags = DISPFLAG_1 | DISPFLAG_2;
 	_picSelect = 0xff;
 	_picPick = 0xff;
 	_picOnOff = 0;
-	_fontFlags = 0;
+	_fontFlags = DISPFLAG_NONE;
 	_justify = ALIGN_LEFT;
 	_fontSaveBack = 0;
 	_justifyWidth = 1;

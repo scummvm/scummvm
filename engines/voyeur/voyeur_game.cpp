@@ -292,7 +292,7 @@ void VoyeurEngine::doClosingCredits() {
 	_graphicsManager->_fontPtr->_foreColor = 2;
 	_graphicsManager->_fontPtr->_backColor = 2;
 	_graphicsManager->_fontPtr->_fontSaveBack = false;
-	_graphicsManager->_fontPtr->_fontFlags = 0;
+	_graphicsManager->_fontPtr->_fontFlags = DISPFLAG_NONE;
 
 	_soundManager->startVOCPlay(152);
 	FontInfoResource &fi = *_graphicsManager->_fontPtr;
@@ -398,7 +398,7 @@ void VoyeurEngine::doPiracy() {
 	fi._foreColor = 2;
 	fi._backColor = 2;
 	fi._fontSaveBack = false;
-	fi._fontFlags = 0;
+	fi._fontFlags = DISPFLAG_NONE;
 	fi._justify = ALIGN_CENTER;
 	fi._justifyWidth = 384;
 	fi._justifyHeight = 230;
@@ -460,7 +460,7 @@ void VoyeurEngine::reviewTape() {
 		_eventsManager->_intPtr._hasPalette = true;
 		_graphicsManager->_fontPtr->_curFont = _bVoy->boltEntry(0x909)._fontResource;
 		_graphicsManager->_fontPtr->_fontSaveBack = false;
-		_graphicsManager->_fontPtr->_fontFlags = 0;
+		_graphicsManager->_fontPtr->_fontFlags = DISPFLAG_NONE;
 
 		_eventsManager->getMouseInfo();
 		if (newX == -1) {
@@ -489,7 +489,7 @@ void VoyeurEngine::reviewTape() {
 				int yp = 45;
 				int eventNum = eventStart;
 				for (int lineNum = 0; lineNum < 8 && eventNum < _voy->_eventCount; ++lineNum, ++eventNum) {
-					_graphicsManager->_fontPtr->_picFlags = 0;
+					_graphicsManager->_fontPtr->_picFlags = DISPFLAG_NONE;
 					_graphicsManager->_fontPtr->_picSelect = 0xff;
 					_graphicsManager->_fontPtr->_picPick = 7;
 					_graphicsManager->_fontPtr->_picOnOff = (lineNum == eventLine) ? 8 : 0;
@@ -551,7 +551,7 @@ void VoyeurEngine::reviewTape() {
 					int yp = 45;
 					int eventNum = eventStart;
 					for (int idx = 0; idx < 8 && eventNum < _voy->_eventCount; ++idx, ++eventNum) {
-						_graphicsManager->_fontPtr->_picFlags = 0;
+						_graphicsManager->_fontPtr->_picFlags = DISPFLAG_NONE;
 						_graphicsManager->_fontPtr->_picSelect = 0xff;
 						_graphicsManager->_fontPtr->_picPick = 7;
 						_graphicsManager->_fontPtr->_picOnOff = (idx == eventLine) ? 8 : 0;
@@ -1171,7 +1171,7 @@ int VoyeurEngine::doComputerText(int maxLen) {
 	font._curFont = _bVoy->boltEntry(0x4910)._fontResource;
 	font._foreColor = 129;
 	font._fontSaveBack = false;
-	font._fontFlags = 0;
+	font._fontFlags = DISPFLAG_NONE;
 	if (_voy->_vocSecondsOffset > 60)
 		_voy->_vocSecondsOffset = 0;
 
