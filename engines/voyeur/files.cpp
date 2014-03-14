@@ -470,7 +470,7 @@ void BVoyBoltFile::initViewPort() {
 	_state._curMemberPtr->_viewPortResource = viewPort = new ViewPortResource(_state, src);
 
 	// This is done post-constructor, since viewports can be self referential, so
-	// we ned the _viewPortResource field to have been set before resolving the pointer
+	// we need the _viewPortResource field to have been set before resolving the pointer
 	viewPort->_parent = getBoltEntryFromLong(READ_LE_UINT32(src + 2))._viewPortResource;
 }
 
@@ -683,8 +683,7 @@ void BoltEntry::load() {
  */
 bool BoltEntry::hasResource() const {
 	return _rectResource ||  _picResource || _viewPortResource || _viewPortListResource
-		|| _fontResource || _fontInfoResource || _cMapResource 
-		|| _vInitCycleResource 
+		|| _fontResource || _fontInfoResource || _cMapResource || _vInitCycleResource 
 		|| _ptrResource || _controlResource || _stateResource || _threadResource;
 }
 
