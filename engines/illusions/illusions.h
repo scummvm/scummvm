@@ -50,10 +50,13 @@ struct SurfInfo;
 
 class ActorItem;
 class ActorItems;
+class ActorType;
 class BackgroundItem;
 class BackgroundItems;
 class BackgroundResource;
 class Camera;
+class Control;
+class Input;
 class ScriptResource;
 class ScriptMan;
 
@@ -75,6 +78,7 @@ public:
 	
 	void updateEvents();
 
+	Input *_input;
 	ScriptMan *_scriptMan;
 	ActorItems *_actorItems;
 	BackgroundItems *_backgroundItems;
@@ -88,6 +92,8 @@ public:
 	Graphics::Surface *getBackSurface();
 	
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
+	Control *findControl(uint32 objectId);
+	ActorType *findActorType(uint32 actorTypeId);
 
 #if 0
 

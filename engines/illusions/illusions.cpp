@@ -85,9 +85,9 @@ Common::Error IllusionsEngine::run() {
 	_resSys->addResourceLoader(0x000D0000, new ScriptResourceLoader(this));
 	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
-	
-	_scriptMan = new ScriptMan(this);
 
+	_input = new Input();	
+	_scriptMan = new ScriptMan(this);
 	_actorItems = new ActorItems(this);
 	_backgroundItems = new BackgroundItems(this);
 	_camera = new Camera(this);
@@ -130,6 +130,7 @@ Common::Error IllusionsEngine::run() {
 	delete _backgroundItems;
 	delete _actorItems;
 	delete _scriptMan;
+	delete _input;
 	delete _resSys;
 	
 	return Common::kNoError;
@@ -201,6 +202,16 @@ Graphics::Surface *IllusionsEngine::getBackSurface() {
 }
 
 Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {
+	// TODO Dummy, to be replaced later
+	return 0;
+}
+
+Control *IllusionsEngine::findControl(uint32 objectId) {
+	// TODO Dummy, to be replaced later
+	return 0;
+}
+
+ActorType *IllusionsEngine::findActorType(uint32 actorTypeId) {
 	// TODO Dummy, to be replaced later
 	return 0;
 }
