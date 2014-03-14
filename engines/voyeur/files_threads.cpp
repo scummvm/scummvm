@@ -1307,12 +1307,13 @@ int ThreadResource::doInterface() {
 	if (_vm->_voy->_RTVNum >= _vm->_voy->_RTVLimit || _vm->_voy->_RTVNum < 0)
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit - 1;
 
-	if (_vm->_voy->_transitionId < 15 && _vm->_debugger->_isTimeActive &&
-			(_vm->_voy->_RTVLimit - 3) < _vm->_voy->_RTVNum) {
+	if (_vm->_voy->_transitionId < 15 && _vm->_debugger->_isTimeActive
+		&& (_vm->_voy->_RTVLimit - 3) < _vm->_voy->_RTVNum) {
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit;
 		_vm->makeViewFinder();
 
 		_vm->initIFace();
+		_vm->_eventsManager->hideCursor();
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit - 4;
 		_vm->_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
@@ -1324,6 +1325,8 @@ int ThreadResource::doInterface() {
 		_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 		chooseSTAMPButton(20);
 		parsePlayCommands();
+
+		_vm->_eventsManager->showCursor();
 	}
 
 	_vm->checkTransition();
