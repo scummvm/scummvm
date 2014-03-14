@@ -93,6 +93,7 @@ private:
 
 	Audio::AudioStream *_stream;
 	Audio::SoundHandle _handle;
+	Audio::Timestamp _length;
 
 	Audio::RewindableAudioStream *makeAudioStream(const Common::String &name) const;
 	void updateFading();

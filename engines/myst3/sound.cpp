@@ -407,10 +407,18 @@ void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenua
 	_headingAngle = attenuation;
 
 	// Open the file to a stream
-	_stream = Audio::makeLoopingAudioStream(makeAudioStream(_name), loop ? 0 : 1);
+	Audio::RewindableAudioStream *plainStream = makeAudioStream(_name);
 
-	if (!_stream)
+	if (!plainStream)
 		return;
+
+	// Get the sound's length
+	Audio::SeekableAudioStream *seekableStream = dynamic_cast<Audio::SeekableAudioStream *>(plainStream);
+	if (seekableStream) {
+		_length = seekableStream->getLength();
+	}
+
+	_stream = Audio::makeLoopingAudioStream(plainStream, loop ? 0 : 1);
 
 	// Play the sound
 	g_system->getMixer()->playStream(mixerSoundType(), &_handle, _stream);
@@ -513,6 +521,7 @@ void SoundChannel::stop() {
 	_hasFadeArray = false;
 
 	_stream = 0;
+	_length = Audio::Timestamp();
 }
 
 void SoundChannel::setVolume3D(uint32 volume, uint16 heading, uint16 attenuation) {
@@ -611,8 +620,13 @@ void SoundChannel::updateFading() {
 }
 
 uint32 SoundChannel::playedFrames() {
-	// TODO: Handle looping
 	Audio::Timestamp elapsed = g_system->getMixer()->getElapsedTime(_handle);
+
+	// Don't count completed loops in
+	while (elapsed > _length) {
+		elapsed = elapsed - _length;
+	}
+
 	return elapsed.msecs() * 30 / 1000;
 }
 
