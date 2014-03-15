@@ -246,11 +246,12 @@ void SpriteSlots::drawBackground() {
 			dirtyArea._active = true;
 			dirtyArea.setSpriteSlot(&spriteSlot);
 
-			SpriteAsset *asset = scene._sprites[spriteSlot._spritesIndex];
-			MSprite *frame = asset->getFrame(spriteSlot._frameNumber);
-
 			if (spriteSlot._spriteType == ST_BACKGROUND) {
 				// Background object, so need to draw it
+				assert(spriteSlot._frameNumber > 0);
+				SpriteAsset *asset = scene._sprites[spriteSlot._spritesIndex];
+				MSprite *frame = asset->getFrame(spriteSlot._frameNumber - 1);
+
 				Common::Point pt = spriteSlot._position;
 				if (spriteSlot._scale != -1) {
 					// Adjust the drawing position
@@ -315,6 +316,8 @@ void SpriteSlots::drawForeground(MSurface *s) {
 		// Get the sprite frame
 		int frameNumber = slot._frameNumber & 0x7fff;
 		bool flipped = (slot._frameNumber & 0x8000) != 0;
+
+		assert(frameNumber > 0);
 		MSprite *sprite = spriteSet.getFrame(frameNumber - 1);
 
 		MSurface *spr = sprite;

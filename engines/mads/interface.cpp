@@ -53,9 +53,9 @@ void InterfaceSurface::load(const Common::String &resName) {
 	byte *palP = &_vm->_palette->_mainPalette[0];
 
 	for (int i = 0; i < 16; ++i, gamePalP++, palP += 3) {
-		palP[0] = palStream->readByte();
-		palP[1] = palStream->readByte();
-		palP[2] = palStream->readByte();
+		palP[0] = VGA_COLOR_TRANS(palStream->readByte());
+		palP[1] = VGA_COLOR_TRANS(palStream->readByte());
+		palP[2] = VGA_COLOR_TRANS(palStream->readByte());
 		*gamePalP |= 1;
 		palStream->skip(3);
 	}
