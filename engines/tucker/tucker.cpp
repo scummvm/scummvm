@@ -1842,8 +1842,8 @@ void TuckerEngine::redrawPanelItems() {
 			--_redrawPanelItemsCounter;
 		}
 
-		const uint8 *src = 0;
-		uint8 *dst = 0;
+		const uint8 *src = nullptr;
+		uint8 *dst = nullptr;
 		int sz = 0;
 
 		switch (_panelState) {
@@ -1945,7 +1945,7 @@ void TuckerEngine::drawPausedInfoBar() {
 }
 
 const uint8 *TuckerEngine::getStringBuf(int type) const {
-	const uint8 *p = 0;
+	const uint8 *p = nullptr;
 	switch (type) {
 	case 0:
 		p = _data5Buf;
@@ -3103,7 +3103,7 @@ int TuckerEngine::readTableInstructionParam(int len) {
 		++_tableInstructionsPtr;
 		--len;
 	}
-	char *end = 0;
+	char *end = nullptr;
 	const int param = strtol((const char *)_tableInstructionsPtr, &end, 10);
 	if (end != (const char *)_tableInstructionsPtr + len) {
 		warning("Unexpected instruction parameter length %d (%d)", (int)(end - (const char *)_tableInstructionsPtr), len);

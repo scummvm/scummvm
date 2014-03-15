@@ -736,7 +736,7 @@ void AnimationSequencePlayer::unloadAnimation() {
 }
 
 uint8 *AnimationSequencePlayer::loadPicture(const char *fileName) {
-	uint8 *p = 0;
+	uint8 *p = nullptr;
 	Common::File f;
 	if (f.open(fileName)) {
 		const int sz = f.size();

@@ -127,7 +127,7 @@ public:
 	}
 
 	bool findNextToken(DataToken t) {
-		const char *token = 0;
+		const char *token = nullptr;
 		switch (t) {
 		case kDataTokenDw:
 			token = "dw";
@@ -924,7 +924,7 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 		return;
 	}
 	if (!stream) {
-		const char *fmt = 0;
+		const char *fmt = nullptr;
 		switch (type) {
 		case Audio::Mixer::kSFXSoundType:
 			fmt = "fx/fx%d.wav";
