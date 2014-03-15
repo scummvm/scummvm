@@ -34,20 +34,32 @@ MADSEngine *MSurface::_vm = nullptr;
 
 MSurface::MSurface() {
 	pixels = nullptr;
+	_freeFlag = false;
 }
 
 MSurface::MSurface(int width, int height) { 
 	pixels = nullptr;
+	_freeFlag = false;
 	setSize(width, height); 
 }
 
 MSurface::~MSurface() {
-	Graphics::Surface::free();
+	if (_freeFlag)
+		Graphics::Surface::free();
 }
 
 void MSurface::setSize(int width, int height) {
-	Graphics::Surface::free();
+	if (_freeFlag)
+		Graphics::Surface::free();
 	Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	_freeFlag = true;
+}
+
+void MSurface::setPixels(byte *pData, int horizSize, int vertSize) {
+	_freeFlag = false;
+	pixels = pData;
+	w = horizSize;
+	h = vertSize;
 }
 
 int MSurface::scaleValue(int value, int scale, int err) {

@@ -50,6 +50,8 @@ struct SpriteInfo {
  * MADS graphics surface
  */
 class MSurface : public Graphics::Surface {
+private:
+	bool _freeFlag;
 protected:
 	static MADSEngine *_vm;
 public:
@@ -82,6 +84,12 @@ public:
 	 * Reinitialises a surface to have a given set of dimensions
 	 */
 	void setSize(int width, int height);
+
+	/**
+	 * Sets the pixels the surface is associated with
+	 * @remarks		The surface will not free the data block
+	 */
+	void setPixels(byte *pData, int horizSize, int vertSize);
 
 	/**
 	 * Draws an arbitrary line on the screen using a specified color

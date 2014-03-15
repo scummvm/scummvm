@@ -39,7 +39,6 @@
 #include "mads/msurface.h"
 #include "mads/resources.h"
 #include "mads/sound.h"
-#include "mads/user_interface.h"
 
 /**
  * This is the namespace of the MADS engine.

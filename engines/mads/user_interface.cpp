@@ -39,6 +39,9 @@ void SceneNode::load(Common::SeekableReadStream *f) {
 UserInterface::UserInterface(MADSEngine *vm) : _vm(vm) {
 	_category = CAT_NONE;
 	_screenObjectsCount = 0;
+
+	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
+	setPixels(pData, MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
 }
 
 void UserInterface::load(const Common::String &resName) {
@@ -61,7 +64,6 @@ void UserInterface::load(const Common::String &resName) {
 	delete palStream;
 
 	// set the size for the interface
-	setSize(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
 	Common::SeekableReadStream *pixelsStream = madsPack.getItemStream(1);
 	pixelsStream->read(getData(), MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
 	delete pixelsStream;
@@ -84,7 +86,6 @@ void UserInterface::setup(int id) {
 			resName += "A";
 
 		resName += ".INT";
-		free();
 		load(resName);
 	}
 	scene._screenObjects._v832EC = id;
