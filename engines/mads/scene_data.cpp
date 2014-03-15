@@ -535,6 +535,11 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 	stream = artResource.getItemStream(1);
 	stream->read(bgSurface.getPixels(), bgSurface.w * bgSurface.h);
 
+	if (!(flags & 1)) {
+		// Translate the background to use the correct palette indexes
+		bgSurface.translate(artHeader._palette);
+	}
+
 	// Close the ART file
 	delete stream;
 	artFile.close();
