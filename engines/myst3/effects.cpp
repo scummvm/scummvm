@@ -23,6 +23,7 @@
 #include "engines/myst3/effects.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
+#include "engines/myst3/sound.h"
 
 namespace Myst3 {
 
@@ -285,6 +286,92 @@ void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics
 	}
 }
 
+MagnetEffect::MagnetEffect(Myst3Engine *vm) :
+		Effect(vm),
+		_lastSoundId(0),
+		_lastTime(0),
+		_position(0),
+		_shakeStrength(nullptr) {
+}
+
+MagnetEffect::~MagnetEffect() {
+
+}
+
+MagnetEffect *MagnetEffect::create(Myst3Engine *vm, uint32 id) {
+	MagnetEffect *s = new MagnetEffect(vm);
+
+	if (!s->loadMasks(id, DirectorySubEntry::kMagneticEffectMask)) {
+		delete s;
+		return 0;
+	}
+
+	return s;
+}
+
+bool MagnetEffect::update() {
+	int32 soundId = _vm->_state->getMagnetEffectSound();
+	if (!soundId) {
+		// The effect is no loguer active
+		_lastSoundId = 0;
+		_vm->_state->setMagnetEffectUnk3(0);
+
+		if (_shakeStrength) {
+			delete _shakeStrength;
+			_shakeStrength = nullptr;
+		}
+
+		return false;
+	}
+
+	if (soundId != _lastSoundId) {
+		// The sound changed since last update
+		_lastSoundId = soundId;
+
+		const DirectorySubEntry *desc = _vm->getFileDescription(0, _vm->_state->getMagnetEffectNode(), 0, DirectorySubEntry::kRawData);
+		if (!desc)
+			error("Magnet effect support file %d does not exist", _vm->_state->getMagnetEffectNode());
+
+		if (_shakeStrength) {
+			delete _shakeStrength;
+		}
+
+		_shakeStrength = desc->getData();
+	}
+
+	int32 soundPosition = _vm->_sound->playedFrames(soundId);
+	if (_shakeStrength && soundPosition >= 0) {
+		// Update the shake amplitude according to the position in the playing sound.
+		// This has no in-game effect (same as original) due to var 122 being 0.
+		_shakeStrength->seek(soundPosition, SEEK_SET);
+		_vm->_state->setMagnetEffectUnk3(_shakeStrength->readByte());
+
+		// Update the position in the effect cycle
+		uint32 time = g_system->getMillis();
+		if (_lastTime) {
+			_position += (float)_vm->_state->getMagnetEffectSpeed() * (time - _lastTime) / 1000 / 10;
+
+			while (_position > 1.0) {
+				_position -= 1.0;
+			}
+		}
+		_lastTime = time;
+	} else {
+		_vm->_state->setMagnetEffectUnk3(0);
+	}
+
+	return true;
+}
+
+void MagnetEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surface *dst) {
+	Graphics::Surface *mask = _facesMasks.getVal(face);
+
+	if (!mask)
+		error("No mask for face %d", face);
+
+	//TODO
+}
+
 ShakeEffect::ShakeEffect(Myst3Engine *vm) :
 		Effect(vm),
 		_lastFrame(0),
@@ -307,7 +394,7 @@ ShakeEffect *ShakeEffect::create(Myst3Engine *vm) {
 
 bool ShakeEffect::update() {
 	// Check if the effect is active
-	uint32 ampl = _vm->_state->getShakeEffectAmpl();
+	int32 ampl = _vm->_state->getShakeEffectAmpl();
 	if (ampl == 0) {
 		return false;
 	}

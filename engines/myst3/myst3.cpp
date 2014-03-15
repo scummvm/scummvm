@@ -1052,7 +1052,7 @@ const DirectorySubEntry *Myst3Engine::getFileDescription(const char* room, uint3
 }
 
 Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
-	const DirectorySubEntry *desc = getFileDescription("GLOB", id, 0, DirectorySubEntry::kCursor);
+	const DirectorySubEntry *desc = getFileDescription("GLOB", id, 0, DirectorySubEntry::kRawData);
 
 	if (!desc)
 		error("Texture %d does not exist", id);

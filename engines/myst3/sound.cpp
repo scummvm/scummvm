@@ -242,7 +242,7 @@ void Sound::computeVolumeBalance(int32 volume, int32 heading, uint attenuation, 
 	}
 }
 
-uint32 Sound::playedFrames(uint32 id) {
+int32 Sound::playedFrames(uint32 id) {
 	bool soundPlaying;
 	SoundChannel *channel = getChannelForSound(id, kAny, &soundPlaying);
 

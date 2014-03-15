@@ -55,7 +55,7 @@ class DirectorySubEntry {
 			kMagneticEffectMask = 3,
 			kSpotItem = 5,
 			kFrame = 6,
-			kCursor = 7,
+			kRawData = 7,
 			kMovie = 8,
 			kStillMovie = 10,
 			kText = 11,

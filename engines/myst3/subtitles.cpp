@@ -90,7 +90,7 @@ void Subtitles::loadFontSettings(int32 id) {
 
 	_fontFace = fontText->getTextData(0);
 
-	const DirectorySubEntry *fontCharset = _vm->getFileDescription("CHAR", id, 0, DirectorySubEntry::kCursor);
+	const DirectorySubEntry *fontCharset = _vm->getFileDescription("CHAR", id, 0, DirectorySubEntry::kRawData);
 
 	if (!fontCharset)
 		error("Unable to load font charset");

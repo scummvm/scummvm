@@ -86,6 +86,24 @@ private:
 	bool isRunning();
 };
 
+class MagnetEffect : public Effect {
+public:
+	static MagnetEffect *create(Myst3Engine *vm, uint32 id);
+	virtual ~MagnetEffect();
+
+	bool update();
+	void applyForFace(uint face, Graphics::Surface *src, Graphics::Surface *dst);
+
+protected:
+	MagnetEffect(Myst3Engine *vm);
+
+	int32 _lastSoundId;
+	Common::MemoryReadStream *_shakeStrength;
+
+	uint32 _lastTime;
+	float _position;
+};
+
 class ShakeEffect : public Effect {
 public:
 	static ShakeEffect *create(Myst3Engine *vm);
