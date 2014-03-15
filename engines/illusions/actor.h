@@ -23,6 +23,7 @@
 #ifndef ILLUSIONS_ACTOR_H
 #define ILLUSIONS_ACTOR_H
 
+#include "illusions/actorresource.h"
 #include "illusions/graphics.h"
 #include "common/algorithm.h"
 #include "graphics/surface.h"
@@ -77,6 +78,7 @@ public:
 	int16 _newFrameIndex;
 	SurfInfo _surfInfo;
 	Graphics::Surface *_surface;
+	Frame *_frames;
 	
 	Common::Point _position;
 	uint _facing;
@@ -121,6 +123,7 @@ public:
 	uint32 getSubActorParent();
 	void getCollisionRectAccurate(Common::Rect &collisionRect);
 	void setActorUsePan(int usePan);
+	void setActorFrameIndex(int16 frameIndex);
 public:
 	IllusionsEngine *_vm;
 	uint _flags;

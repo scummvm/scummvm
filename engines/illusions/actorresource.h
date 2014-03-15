@@ -46,8 +46,7 @@ protected:
 struct Frame {
 	//field_0 dd
 	// TODO config dd
-	uint32 _pixelSize;
-	WidthHeight _dimensions;
+	SurfInfo _surfInfo;
 	byte *_compressedPixels;
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 };

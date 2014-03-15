@@ -34,13 +34,11 @@ float fixedToFloat(FP16 value) {
 }
 
 FP16 fixedMul(FP16 a, FP16 b) {
-	// CHECKME Not sure if this correct
-	return (a * b) >> 16;
+	return ((float)a * b) / 65536.0;
 }
 
 FP16 fixedDiv(FP16 a, FP16 b) {
-	// CHECKME Not sure if this correct
-	return (a << 16) / b;
+	return ((float)a / b) * 65536.0;
 }
 
 int fixedTrunc(FP16 value) {

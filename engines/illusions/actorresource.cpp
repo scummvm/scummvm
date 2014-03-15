@@ -77,13 +77,12 @@ bool ActorResourceLoader::isFlag(int flag) {
 void Frame::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	stream.readUint32LE(); //field_0 dd
 	stream.readUint32LE(); // TODO config dd
-	_pixelSize = stream.readUint32LE();
-	_dimensions.load(stream);
+	_surfInfo.load(stream);
 	uint32 compressedPixelsOffs = stream.readUint32LE();
 	_compressedPixels = dataStart + compressedPixelsOffs;
 	
-	debug("Frame::load() _pixelSize: %d; compressedPixelsOffs: %08X",
-		_pixelSize, compressedPixelsOffs);
+	debug("Frame::load() compressedPixelsOffs: %08X",
+		compressedPixelsOffs);
 }
 
 void Sequence::load(byte *dataStart, Common::SeekableReadStream &stream) {

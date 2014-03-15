@@ -46,8 +46,8 @@ void BackgroundResourceLoader::load(Resource *resource) {
 	// TODO Insert IDs from item48s
 
 	// TODO camera_fadeClear();
-	// TODO bgInfo = &bgResourceb->bgInfos[(unsigned __int16)BgResource_findMasterBgIndex(bgResourceb)];
-	// TODO camera_set(bgInfo[-1].panPoint, bgInfo[-1].surfInfo.dimensions);
+	int index = backgroundItem->_bgRes->findMasterBgIndex();
+	_vm->_camera->set(backgroundItem->_bgRes->_bgInfos[index - 1]._panPoint, backgroundItem->_bgRes->_bgInfos[index - 1]._surfInfo._dimensions);
 	
 	// NOTE Skipped palette loading (not used in BBDOU)
 }

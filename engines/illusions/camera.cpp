@@ -121,7 +121,7 @@ void Camera::panToPoint(Common::Point pt, int16 panSpeed, uint32 panNotifyId) {
 		_activeState._panNotifyId = 0;
 	}
 
-	_activeState._panTargetPoint = Camera::getPtOffset(pt);
+	_activeState._panTargetPoint = getPtOffset(pt);
 	clipPanTargetPoint();
 	
 	if (panSpeed) {
@@ -136,7 +136,7 @@ void Camera::panToPoint(Common::Point pt, int16 panSpeed, uint32 panNotifyId) {
 		recalcPan(_activeState._panStartTime);
 	} else {
 		_activeState._currPan = _activeState._panTargetPoint;
-		// TODO stopPan();
+		stopPan();
 		if (panNotifyId) {
 			// TODO scrmgrNotifyID(panNotifyId);
 		}
@@ -193,13 +193,13 @@ void Camera::pushCameraMode() {
 	item._panTargetPoint.x = 0;
 	item._panTargetPoint.y = 0;
 	switch (_activeState._cameraMode) {
-	case 4:
-		item._cameraMode = 3;
-		item._panObjectId = _activeState._panObjectId;
-		break;
 	case 1:
 	case 2:
 	case 3:
+		item._panObjectId = _activeState._panObjectId;
+		break;
+	case 4:
+		item._cameraMode = 3;
 		item._panObjectId = _activeState._panObjectId;
 		break;
 	case 5:
@@ -247,6 +247,8 @@ void Camera::update(uint32 currTime) {
 
 	if (_activeState._paused)
 		return;
+
+	//debug("_activeState._cameraMode = %d", _activeState._cameraMode);
 
 	switch (_activeState._cameraMode) {
 	case 1:
@@ -402,14 +404,23 @@ void Camera::updateMode3(uint32 currTime) {
 
 bool Camera::updatePan(uint32 currTime) {
 	if (currTime - _activeState._time28 >= _activeState._time2E) {
+debug("#1 updatePan");
 		_activeState._panXShl = _activeState._panTargetPoint.x << 16;
 		_activeState._panYShl = _activeState._panTargetPoint.y << 16;
 	} else {
+debug("#2 updatePan");
+debug("_activeState._someX = %d", _activeState._someX);
+debug("1) _activeState._panXShl = %08X", _activeState._panXShl);
+debug("currTime - _activeState._panStartTime = %d", currTime - _activeState._panStartTime);
 		_activeState._panXShl += fixedMul(_activeState._someX, (currTime - _activeState._panStartTime) << 16);
 		_activeState._panYShl += fixedMul(_activeState._someY, (currTime - _activeState._panStartTime) << 16);
+debug("2) _activeState._panXShl = %08X", _activeState._panXShl);
 	}
 	_activeState._panStartTime = currTime;
 	Common::Point newPan(_activeState._panXShl >> 16, _activeState._panYShl >> 16);
+	
+	debug("newPan = %d, %d", newPan.x, newPan.y);
+	
 	if (_activeState._currPan.x != newPan.x || _activeState._currPan.y != newPan.y) {
 		_activeState._currPan = newPan;
 		return true;
@@ -439,13 +450,24 @@ void Camera::recalcPan(uint32 currTime) {
 		FP16 x2 = _activeState._panTargetPoint.x << 16;
 		FP16 y2 = _activeState._panTargetPoint.y << 16;
 		FP16 distance = fixedDistance(x1, y1, x2, y2);
+		
+		debug("(%08X, %08X), (%08X, %08X) %08X", x1, y1, x2, y2, distance);
+		
 		_activeState._time2E = 60 * fixedTrunc(distance) / _activeState._panSpeed;
+		
+		debug("_activeState._time2E = %d", _activeState._time2E);
+		
 	}
 
 	if (_activeState._time2E != 0) {
+debug("#1 recalcPan");
+debug("_activeState._panTargetPoint.x = %d; _activeState._currPan2.x = %d", _activeState._panTargetPoint.x, _activeState._currPan2.x);
+debug("_activeState._panTargetPoint.x - _activeState._currPan2.x = %d", _activeState._panTargetPoint.x - _activeState._currPan2.x);
+debug("_activeState._time2E = %d", _activeState._time2E);
 		_activeState._someX = fixedDiv((_activeState._panTargetPoint.x - _activeState._currPan2.x) << 16, _activeState._time2E << 16);
 		_activeState._someY = fixedDiv((_activeState._panTargetPoint.y - _activeState._currPan2.y) << 16, _activeState._time2E << 16);
 	} else {
+debug("#2 recalcPan");	
 		_activeState._someX = (_activeState._panTargetPoint.x - _activeState._currPan2.x) << 16;
 		_activeState._someY = (_activeState._panTargetPoint.y - _activeState._currPan2.y) << 16;
 	}
@@ -472,10 +494,19 @@ bool Camera::calcPointFlags(Common::Point &pt, WRect &rect, uint &outFlags) {
 }
 
 void Camera::clipPanTargetPoint() {
+
+	debug("clip in (%d, %d)", _activeState._panTargetPoint.x, _activeState._panTargetPoint.y);
+
 	_activeState._panTargetPoint.x = CLIP(_activeState._panTargetPoint.x,
 		_activeState._bounds._topLeft.x, _activeState._bounds._bottomRight.x);
 	_activeState._panTargetPoint.y = CLIP(_activeState._panTargetPoint.y,
 		_activeState._bounds._topLeft.y, _activeState._bounds._bottomRight.y);
+		
+	debug("clip rect (%d, %d, %d, %d)", _activeState._bounds._topLeft.x, _activeState._bounds._topLeft.y,
+		_activeState._bounds._bottomRight.x, _activeState._bounds._bottomRight.y);		
+
+	debug("clip out (%d, %d)", _activeState._panTargetPoint.x, _activeState._panTargetPoint.y);
+
 }
 
 } // End of namespace Illusions
