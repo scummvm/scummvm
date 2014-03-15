@@ -100,7 +100,6 @@ public:
 	Resources *_resources;
 	ScreenSurface _screen;
 	SoundManager *_sound;
-	UserInterface *_userInterface;
 	bool _easyMouse;
 	bool _invObjectStill;
 	bool _textWindowStill;

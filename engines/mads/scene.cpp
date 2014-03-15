@@ -29,9 +29,9 @@
 namespace MADS {
 
 Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
-		_dirtyAreas(_vm),  _dynamicHotspots(vm), _interface(vm), 
-		_kernelMessages(vm), _screenObjects(vm), _sequences(vm), 
-		_sprites(vm), _spriteSlots(vm), _textDisplay(vm) {
+		_dirtyAreas(_vm),  _dynamicHotspots(vm), _kernelMessages(vm), 
+		_screenObjects(vm), _sequences(vm), _sprites(vm), _spriteSlots(vm), 
+		_textDisplay(vm), _userInterface(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
@@ -159,8 +159,8 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 		flags |= 0x200;
 
 	_animationData = Animation::init(_vm, this);
-	MSurface surface;
-	_animationData->load(surface, _interface, prefix, flags, nullptr, nullptr);
+	UserInterface surface(_vm);
+	_animationData->load(surface, _userInterface, prefix, flags, nullptr, nullptr);
 	
 	_vm->_palette->_paletteUsage.load(0);
 
@@ -171,7 +171,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_interfaceY = MADS_SCENE_HEIGHT;
 	_spritesCount = _sprites.size();
 
-	_interface.setup(_screenObjects._v832EC);
+	_userInterface.setup(_screenObjects._v832EC);
 
 	warning("TODO: showMouse");
 
@@ -341,7 +341,7 @@ void Scene::doFrame() {
 			CursorType cursorId = CURSOR_ARROW;
 			if (_action._v83338 == 1 && !_screenObjects._v7FECA &&
 					_screenObjects._category == CAT_HOTSPOT) {
-				int idx = _screenObjects._selectedObject - _interface._screenObjectsCount;
+				int idx = _screenObjects._selectedObject - _userInterface._screenObjectsCount;
 				if (idx >= (int)_hotspots.size()) {
 					idx -= _hotspots.size();
 					_vm->_events->_newCursorId = _dynamicHotspots[idx]._cursor;
@@ -392,7 +392,7 @@ void Scene::doFrame() {
 
 			// Write any text needed by the interface
 			if (_vm->_game->_abortTimers2)
-				_interface.writeText();
+				_userInterface.writeText();
 
 			// Draw any elements
 			drawElements((ScreenTransition)_vm->_game->_abortTimers2, _vm->_game->_abortTimers2);
@@ -454,7 +454,7 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 
 	//
 	_vm->_screen.setPointer(&_vm->_screen);
-	_interface.setBounds(Common::Rect(_vm->_screen._offset.x, _vm->_screen._offset.y,
+	_userInterface.setBounds(Common::Rect(_vm->_screen._offset.x, _vm->_screen._offset.y,
 		_vm->_screen._offset.x + _vm->_screen.w, _vm->_screen._offset.y + _vm->_screen.h));
 
 	if (transitionType) {
@@ -500,11 +500,11 @@ void Scene::checkKeyboard() {
 
 void Scene::loadAnimation(const Common::String &resName, int abortTimers) {
 	assert(_activeAnimation == nullptr);
-	MSurface sceneSurface;
-	InterfaceSurface interfaceSurface(_vm);
+	MSurface depthSurface;
+	UserInterface interfaceSurface(_vm);
 
 	_activeAnimation = Animation::init(_vm, this);
-	_activeAnimation->load(sceneSurface, interfaceSurface, resName, 
+	_activeAnimation->load(interfaceSurface, depthSurface, resName, 
 		_vm->_game->_v2 ? 1 : 0, nullptr, nullptr);
 	_activeAnimation->startAnimation(abortTimers);
 }

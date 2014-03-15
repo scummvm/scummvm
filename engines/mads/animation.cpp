@@ -172,9 +172,9 @@ void Animation::free() {
 	delete this;
 }
 
-void Animation::load(MSurface &depthSurface, InterfaceSurface &interfaceSurface,
-	const Common::String &resName, int flags, Common::Array<RGB4> *palAnimData,
-	SceneInfo *sceneInfo) {
+void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
+		const Common::String &resName, int flags, Common::Array<RGB4> *palAnimData,
+		SceneInfo *sceneInfo) {
 	Common::String resourceName = resName;
 	if (!resourceName.contains("."))
 		resourceName += ".AA";
@@ -352,7 +352,7 @@ bool Animation::drawFrame(SpriteAsset &spriteSet, const Common::Point &pt, int f
 	return 0;
 }
 
-void Animation::loadInterface(InterfaceSurface &interfaceSurface, MSurface &depthSurface,
+void Animation::loadInterface(UserInterface &interfaceSurface, MSurface &depthSurface,
 		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo) {
 	_scene->_depthStyle = 0;
 	if (header._animMode <= 2) {
@@ -363,8 +363,7 @@ void Animation::loadInterface(InterfaceSurface &interfaceSurface, MSurface &dept
 			for (uint i = 0; i < sceneInfo->_palAnimData.size(); ++i)
 				palAnimData->push_back(sceneInfo->_palAnimData[i]);
 		}
-	}
-	else if (header._animMode == 4) {
+	} else if (header._animMode == 4) {
 		// Load a scene interface
 		Common::String resourceName = "*" + header._interfaceFile;
 		interfaceSurface.load(resourceName);

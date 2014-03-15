@@ -24,21 +24,44 @@
 #define MADS_USER_INTERFACE_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "mads/msurface.h"
 
 namespace MADS {
 
-class MADSEngine;
-
-class UserInterface {
+class UserInterface : public MSurface {
 private:
 	MADSEngine *_vm;
-	MSurface *_surface;
 
+	void loadElements();
+public:
+	ScrCategory _category;
+	int _screenObjectsCount;
+	Common::Rect _bounds;
+	Common::Rect *_rectP;
+	MSurface _surface;
+public:
+	/**
+	* Constructor
+	*/
 	UserInterface(MADSEngine *vm);
-public:
-	static UserInterface *init(MADSEngine *vm);
-public:
-	~UserInterface();
+
+	/**
+	* Loads an interface from a specified resource
+	*/
+	void load(const Common::String &resName);
+
+	/**
+	* Set up the interface
+	*/
+	void setup(int id);
+
+	void elementHighlighted();
+
+	void writeText();
+
+	void setBounds(const Common::Rect &r);
 };
 
 } // End of namespace MADS

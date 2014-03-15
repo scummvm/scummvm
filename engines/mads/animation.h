@@ -29,7 +29,7 @@
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
 #include "mads/font.h"
-#include "mads/interface.h"
+#include "mads/user_interface.h"
 
 namespace MADS {
 
@@ -144,7 +144,7 @@ private:
 	/**
 	 * Load the user interface display for an animation
 	 */
-	void loadInterface(InterfaceSurface &interfaceSurface, MSurface &depthSurface,
+	void loadInterface(UserInterface &interfaceSurface, MSurface &depthSurface,
 		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
 
 	/**
@@ -169,7 +169,7 @@ public:
 	/**
 	 * Loads animation data
 	 */
-	void load(MSurface &depthSurface, InterfaceSurface &interfaceSurface, const Common::String &resName,
+	void load(UserInterface &interfaceSurface, MSurface &depthSurface, const Common::String &resName,
 		int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
 
 	/**

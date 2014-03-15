@@ -117,7 +117,7 @@ void Scene103::enter() {
 		_globals._spriteIndexes[17], SM_FRAME_INDEX, 2, 72);
 	_globals._spriteIndexes[19] = _scene->_sequences.addSubEntry(
 		_globals._spriteIndexes[17], SM_FRAME_INDEX, 2, 72);
-	int idx = _scene->_sequences.addSubEntry(_globals._spriteIndexes[17],
+	_scene->_sequences.addSubEntry(_globals._spriteIndexes[17], 
 		SM_FRAME_INDEX, 2, 73);
 
 	_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(

@@ -35,6 +35,7 @@
 #include "mads/animation.h"
 #include "mads/sequence.h"
 #include "mads/sprites.h"
+#include "mads/user_interface.h"
 
 namespace MADS {
 
@@ -101,7 +102,7 @@ public:
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
 	DepthSurface _depthSurface;
-	InterfaceSurface _interface;
+	UserInterface _userInterface;
 	bool _animFlag;
 	int _animVal1;
 	int _animCount;

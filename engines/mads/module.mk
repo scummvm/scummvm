@@ -20,7 +20,6 @@ MODULE_OBJS := \
 	game.o \
 	game_data.o \
 	hotspots.o \
-	interface.o \
 	inventory.o \
 	mads.o \
 	messages.o \

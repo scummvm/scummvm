@@ -52,7 +52,6 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_palette = nullptr;
 	_resources = nullptr;
 	_sound = nullptr;
-	_userInterface = nullptr;
 }
 
 MADSEngine::~MADSEngine() {
@@ -64,7 +63,6 @@ MADSEngine::~MADSEngine() {
 	delete _palette;
 	delete _resources;
 	delete _sound;
-	delete _userInterface;
 }
 
 void MADSEngine::initialise() {
@@ -85,7 +83,6 @@ void MADSEngine::initialise() {
 	_font = new Font(this);
 	_screen.init();
 	_sound = new SoundManager(this, _mixer);
-	_userInterface = UserInterface::init(this);
 	_game = Game::init(this);
 
 	_screen.empty();

@@ -77,34 +77,34 @@ void ScreenObjects::check(bool scanFlag) {
 		}
 
 		// Handling for easy mouse
-		ScrCategory category = scene._interface._category;
+		ScrCategory category = scene._userInterface._category;
 		if (_vm->_easyMouse && !_vm->_events->_vD4 && category != _category
-				&& scene._interface._category != CAT_NONE) {
+				&& scene._userInterface._category != CAT_NONE) {
 			_released = true;
 			if (category >= CAT_ACTION && category <= CAT_6) {
-				scene._interface.elementHighlighted();
+				scene._userInterface.elementHighlighted();
 			} 
 		}
 
 		_released = _vm->_events->_mouseReleased;
 		if (_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_vD4))
-			scene._interface._category = _category;
+			scene._userInterface._category = _category;
 
 		if (!_vm->_events->_mouseButtons || _vm->_easyMouse) {
 			if (category >= CAT_ACTION && category <= CAT_6) {
-				scene._interface.elementHighlighted();
+				scene._userInterface.elementHighlighted();
 			}
 		}
 
 		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && scene._action._v83338 > 1
-				&& scene._interface._category == CAT_INV_LIST) ||
-				(_vm->_easyMouse && scene._interface._category == CAT_HOTSPOT)) {
+				&& scene._userInterface._category == CAT_INV_LIST) ||
+				(_vm->_easyMouse && scene._userInterface._category == CAT_HOTSPOT)) {
 			scene._action.checkActionAtMousePos();
 		}
 			
 		if (_vm->_events->_mouseReleased) {
 			scene.leftClick();
-			scene._interface._category = CAT_NONE;
+			scene._userInterface._category = CAT_NONE;
 		}
 
 		if (_vm->_events->_mouseButtons || _vm->_easyMouse || _yp)

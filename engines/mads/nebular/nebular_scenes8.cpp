@@ -138,7 +138,7 @@ void Scene804::enter() {
 	Scene8xx::enter1();
 
 	if (_globals[165] && !_globals[164]) {
-		_scene->_interface.setup(2);
+		_scene->_userInterface.setup(2);
 		_vm->_sound->command(19);
 	}
 }
