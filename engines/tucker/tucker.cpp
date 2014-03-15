@@ -855,35 +855,37 @@ void TuckerEngine::updateCharPosition() {
 	}
 	int actionKey = _currentActionObj2Num * 1000000 + _currentInfoString2SourceType * 100000 + _currentActionVerb * 10000 + _currentInfoString1SourceType * 1000 + _currentActionObj1Num;
 	debug(3, "updateCharPosition() actionKey %d",  actionKey);
-	int skip = 0;
-	Action *action = 0;
-	for (int i = 0; i < _actionsCount && skip == 0; ++i) {
+	bool skip = false;
+	Action *action = nullptr;
+	for (int i = 0; i < _actionsCount && !skip; ++i) {
 		action = &_actionsTable[i];
 		if (action->_key == actionKey) {
-			skip = 1;
+			skip = true;
 			if (action->_testFlag1Num != 0) {
 				if (action->_testFlag1Num < 500) {
+					if (action->_testFlag1Num >= 300)
+						error("updateCharPosition() - Unexpected value for _testFlag1Num : %d", action->_testFlag1Num);
 					if (_flagsTable[action->_testFlag1Num] != action->_testFlag1Value) {
-						skip = 0;
+						skip = false;
 					}
 				} else if (_inventoryItemsState[action->_testFlag1Num - 500] != action->_testFlag1Value) {
-					skip = 0;
+					skip = false;
 				}
 				debug(3, "updateCharPosition() flag1 %d value %d", action->_testFlag1Num, action->_testFlag1Value);
 			}
 			if (action->_testFlag2Num != 0) {
 				if (action->_testFlag2Num < 500) {
 					if (_flagsTable[action->_testFlag2Num] != action->_testFlag2Value) {
-						skip = 0;
+						skip = false;
 					}
 				} else if (_inventoryItemsState[action->_testFlag2Num - 500] != action->_testFlag2Value) {
-					skip = 0;
+					skip = false;
 				}
 				debug(3, "updateCharPosition() flag2 %d value %d", action->_testFlag2Num, action->_testFlag2Value);
 			}
 		}
 	}
-	if (skip == 0) {
+	if (!skip) {
 		playSpeechForAction(_currentActionVerb);
 		_currentActionVerb = 0;
 		return;
