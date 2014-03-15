@@ -95,6 +95,47 @@ void BgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		_flags, _priorityBase, tileMapOffs, tilePixelsOffs);
 }
 
+// PriorityLayer
+
+void PriorityLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
+	_width = stream.readUint16LE();
+	_height = stream.readUint16LE();
+	uint32 mapOffs = stream.readUint32LE();
+	uint32 valuesOffs = stream.readUint32LE();
+	_map = dataStart + mapOffs;
+	_mapWidth = READ_LE_UINT16(_map + 0);
+	_mapHeight = READ_LE_UINT16(_map + 2);
+	_map += 8;
+	_values = dataStart + valuesOffs;
+	
+	debug("PriorityLayer::load() _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X; _mapWidth: %d; _mapHeight: %d",
+		_width, _height, mapOffs, valuesOffs, _mapWidth, _mapHeight);
+}
+
+int PriorityLayer::getPriority(Common::Point pos) {
+	pos.x = CLIP<int16>(pos.x, 0, _width - 1);
+	pos.y = CLIP<int16>(pos.y, 0, _height - 1);
+	const int16 tx = pos.x / 32, sx = pos.x % 32;
+	const int16 ty = pos.y / 8, sy = pos.y % 8;
+	uint16 mapIndex = READ_LE_UINT16(_map + 2 * (tx + ty * _mapWidth)) - 1;
+	return _values[mapIndex * 32 * 8 + sx + sy * 32];
+}
+
+void ScaleLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
+	_height = stream.readUint16LE();
+	stream.skip(2);
+	uint32 valuesOffs = stream.readUint32LE();
+	_values = dataStart + valuesOffs;
+	
+	debug("ScaleLayer::load() _height: %d; valuesOffs: %08X",
+		_height, valuesOffs);
+}
+
+int ScaleLayer::getScale(Common::Point pos) {
+	pos.y = CLIP<int16>(pos.y, 0, _height - 1);
+	return _values[pos.y];
+}
+
 // BackgroundResource
 
 BackgroundResource::BackgroundResource() {
@@ -117,6 +158,18 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	for (uint i = 0; i < _bgInfosCount; ++i) {
 		stream.seek(bgInfosOffs + i * 0x1C);
 		_bgInfos[i].load(data, stream);
+	}
+
+	// Load scale layers
+	stream.seek(0x10);
+	_scaleLayersCount = stream.readUint16LE();
+	_scaleLayers = new ScaleLayer[_scaleLayersCount];
+	stream.seek(0x2C);
+	uint32 scaleLayersOffs = stream.readUint32LE();
+	debug("_scaleLayersCount: %d", _scaleLayersCount);
+	for (uint i = 0; i < _scaleLayersCount; ++i) {
+		stream.seek(scaleLayersOffs + i * 8);
+		_scaleLayers[i].load(data, stream);
 	}
 
 }
@@ -183,7 +236,7 @@ void BackgroundItem::pause() {
 	// TODO
 	++_pauseCtr;
 	if (_pauseCtr <= 1) {
-    	/* TODO
+		/* TODO
 		for (uint i = 0; i < _bgRes->_item48sCount; ++i)
 			krndictRemoveID(_bgRes->_item48s[i].id);
 		*/
@@ -201,7 +254,7 @@ void BackgroundItem::unpause() {
 	// TODO
 	--_pauseCtr;
 	if (_pauseCtr <= 0) {
-    	/* TODO
+		/* TODO
 		for (uint i = 0; i < _bgRes->_item48sCount; ++i)
 			krndictAddID(_bgRes->_item48s[i].id, _bgRes->_item48s[i]);
 		*/

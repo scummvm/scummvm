@@ -69,6 +69,37 @@ struct BgInfo {
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 };
 
+class PriorityLayer {
+public:
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+	int getPriority(Common::Point pos);
+protected:
+	int16 _width, _height;
+	int16 _mapWidth, _mapHeight;
+	byte *_map, *_values;
+};
+
+class ScaleLayer {
+public:
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+	int getScale(Common::Point pos);
+protected:
+	int16 _height;
+	byte *_values;
+};
+
+#if 0
+BgResource_PathWalkRects struc ; (sizeof=0x8)
+count           dd ?
+rects           dd ?
+BgResource_PathWalkRects ends
+
+BgResource_PathWalkPoints struc ; (sizeof=0x8)
+count           dd ?
+points          dd ?
+BgResource_PathWalkPoints ends
+#endif
+
 class BackgroundResource {
 public:
 	BackgroundResource();
@@ -79,6 +110,12 @@ public:
 
 	uint _bgInfosCount;
 	BgInfo *_bgInfos;
+	
+	uint _priorityLayersCount;
+	PriorityLayer *_priorityLayers;
+
+	uint _scaleLayersCount;
+	ScaleLayer *_scaleLayers;
 
 };
 

@@ -97,16 +97,18 @@ Common::Error IllusionsEngine::run() {
 	_resSys->loadResource(0x00100006, 0, 0);
 #endif
 
-#if 0
+#if 1
 	// BackgroundResource test
-	_resSys->loadResource(0x0011000B, 0, 0);
+	_resSys->loadResource(0x0011001C, 0, 0);
 	BackgroundItem *backgroundItem = _backgroundItems->debugFirst();
-	_system->copyRectToScreen(backgroundItem->_surfaces[0]->getPixels(), backgroundItem->_surfaces[0]->pitch,
-		0, 0, 640, 480);
+	_system->copyRectToScreen((byte*)backgroundItem->_surfaces[0]->getBasePtr(0, 0), backgroundItem->_surfaces[0]->pitch, 0, 0, 640, 480);
 	_system->updateScreen();
+	while (!shouldQuit()) {
+		updateEvents();
+	}
 #endif
 	
-#if 1
+#if 0
 	// ScriptResource test
 	_resSys->loadResource(0x000D0001, 0, 0);
 	
@@ -120,12 +122,6 @@ Common::Error IllusionsEngine::run() {
 	
 #endif
 
-#if 0
-	while (!shouldQuit()) {
-		updateEvents();
-	}
-#endif
-	
 	delete _camera;
 	delete _backgroundItems;
 	delete _actorItems;
