@@ -70,15 +70,15 @@ MSprite::MSprite(Common::SeekableReadStream *source, const Common::Point &offset
 MSprite::~MSprite() {
 }
 
-// TODO: The sprite outlines (pixel value 0xFD) are not shown
 void MSprite::loadSprite(Common::SeekableReadStream *source) {
 	byte *outp, *lineStart;
 	bool newLine = false;
 
 	outp = getData();
 	lineStart = getData();
+	Common::fill(outp, outp + this->w * this->h, getTransparencyIndex());
 
-	while (1) {
+	for (;;) {
 		byte cmd1, cmd2, count, pixel;
 
 		if (newLine) {
@@ -101,7 +101,7 @@ void MSprite::loadSprite(Common::SeekableReadStream *source) {
 				} else {
 					pixel = source->readByte();
 					while (count--)
-						*outp++ = (pixel == 0xFD) ? 0 : pixel;
+						*outp++ = (pixel == 0xFD) ? getTransparencyIndex() : pixel;
 				}
 			}
 		} else {
@@ -113,9 +113,9 @@ void MSprite::loadSprite(Common::SeekableReadStream *source) {
 					count = source->readByte();
 					pixel = source->readByte();
 					while (count--)
-						*outp++ = (pixel == 0xFD) ? 0 : pixel;
+						*outp++ = (pixel == 0xFD) ? getTransparencyIndex() : pixel;
 				} else {
-					*outp++ = (cmd2 == 0xFD) ? 0 : cmd2;
+					*outp++ = (cmd2 == 0xFD) ? getTransparencyIndex() : cmd2;
 				}
 			}
 		}
