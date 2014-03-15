@@ -1,31 +1,20 @@
-static const char *const k1IntroStringsDOSOldFloppyRussian[81] = {
+static const char *const k1IntroStringsDOSOldFloppyRussian[51] = {
 	"This is a text test - 1",
 	"This is a text test - 2",
 	"\x08""p""\x18\x14""e""\x1F"", Ka""\x1B\x1B""a""\x1A""...",
-	"..",
 	"...""\x08""o""\x14""e""\x1B\x18\x1F""e""\x1B""{ Kopo""\x1B""e""\x14""c""\x1A""o""\x19"" Ma""\x15\x18\x18""!",
-	"ystics!",
 	"\x12"" ""\x1D""e ""\x18""c""\x1E""y""\x15""a""\x1B"" ""\x1F""e""\x13""~?",
-	"",
 	"Ma""\x1B\x1A""o""\x1B\x1C""!",
 	"\x12"" ""\x14""\\epa y""\x17\x1D""a""\x1B"" o ""\x1F\x14""oe""\x1C"" ""\x1E""o""\x13""e""\x15""e...",
-	".",
 	"... ""\x18"" o""\x7F\x18\x16""a""\x1B"" ""\x1F""e""\x13""~ y""\x14\x18\x16""e""\x1F""{.",
-	"e now.",
 	"K \\e""\x1C""y c""\x1E""e]""\x18\x1F""{?",
-	"?",
 	"\x12"" ""\x17\x16""ec{ ""\x02""oc""\x1E""o""\x16\x18\x1D""!",
 	"T""\x14""oe ""\x1E""po""\x1A\x1B""~""\x1F\x18""e ""\x1C""e""\x1D""~ ""\x1D""e y""\x16""ep""\x7F\x18\x1F"".",
-	"ght.",
 	"Ta""\x1A"" y""\x13""e""\x19"" ""\x1C""e""\x1D""~!",
-	"!",
 	"\t ""\x1C""e""\x1D""~ oc""\x1F""a""\x1B""ac{ e^e ""\x1C""a""\x15\x18""~",
 	"He co""\x1C\x1D""e""\x14""a""\x19""c~...",
-	"u, have no doubt...",
 	"...""\x1F""e""\x1E""ep{ ""\x1F""` ""\x1A""a""\x1C""e""\x1D""{...",
-	"",
 	"...""\x1D""o ~ oc""\x1F""a""\x14\x18\x1B"" ""\x15\x1B""a""\x17""a.",
-	"s.",
 	"\x12"" ""\x1D""e ""\x13""y""\x16""y ""\x1E\x1B""a""\x1A""a""\x1F""{ o K""\x18""pa""\x1D\x16\x18\x18""...",
 	"...""\x1D""o ""\x17""a""\x1E""pe""\x1F\x18\x1F""{ ""\x1F""e""\x13""e ""\x1D""e ""\x1C""o""\x15""y.",
 	"Malcolm the Jester has broken free!",
@@ -33,52 +22,33 @@ static const char *const k1IntroStringsDOSOldFloppyRussian[81] = {
 	"...source of all magic in Kyrandia!",
 	"",
 	"Ka""\x1A"" ""\x1F""` ""\x1E""oc""\x1C""e""\x1B""!",
-	"ip ME!",
 	"Ho ""\x1D\x18""\\e""\x15""o, y ""\x1C""e""\x1D""~ ec""\x1F""{ ""\x1A""oe-\\""\x1F""o...",
-	"..",
 	"Bo""\x1F"" ""\x1A""o""\x1C""e""\x16\x18""~!",
-	"x!",
 	"Ho ~ \\ec""\x1F\x1D""o ""\x1E""pe""\x16""y""\x1E""pe""\x7F\x16""a}.",
-	"ing.",
 	"He ""\x1E""p`""\x15""a""\x19"" ""\x1D""a ""\x10""TO ""\x16""epe""\x14""o!",
 	"He ""\x14\x17\x13\x18""pa""\x19""c~ ""\x1D""a ""\x10""TO ""\x16""epe""\x14""o ""\x13""e""\x1B""o\\""\x1A""a!",
-	"rrel!",
 	"\x02""AB!",
 	"Ta""\x1A"" c""\x1C""e]""\x1D""ee...",
-	"t way...",
 	"...He ""\x1F""a""\x1A"" ""\x1B\x18""?",
 	"Xa xa xa...",
 	"Pa""\x17\x14""e ""\x1E""a""\x1B""{[` ""\x1D""e ""\x1E""pe""\x1A""pac""\x1D""`",
 	"Ka""\x1A"" ""\x17\x16""opo""\x14""o o""\x7F\x18\x1F""{!",
-	"ive!",
 	"\x01""p|""\x1D\x16""o""\x1D""!",
 	"\x03""e""\x16""! M` c""\x16""e""\x1B""a""\x1B\x18"" |""\x1F""o!",
-	"t!",
 	"He""\x1F""! T` c""\x16""e""\x1B""a""\x1B""!",
 	"\tpa Kopo""\x1B""} ""\x01""p|""\x1D\x16""o""\x1D""y!",
-	"n!",
 	"\tpa Kopo""\x1B""e""\x14""c""\x1A""o""\x19"" Ma""\x15\x18\x18""!",
-	"tics!",
 	"Te""\x1E""ep{ ""\x1C""o""\x7F\x1D""o ""\x17""a""\x1D""~""\x1F""{c~ K""\x18""pa""\x1D\x16\x18""e""\x19"" ""\x14\x1C""ec""\x1F""e!",
-	"!",
 	"O""\x1F\x1B\x18""\\""\x1D""o!",
-	"!",
 	"\x06"" ""\x1C""o""\x19"" ""\x1E""ep""\x14""`""\x19"" Kopo""\x1B""e""\x14""c""\x1A\x18\x19"" \t""\x1A""a""\x17""...",
-	"",
 	"\x12"" o""\x13""_~""\x14\x1B""~} ca""\x1D\x16""a""\x1B\x18\x18"" o@""\x18""[""\x18""a""\x1B""{""\x1D""o""\x19"" o""\x13""y""\x14""{} K""\x18""pa""\x1D\x16\x18\x18""!",
-	"ia!",
 	"O""\x1F\x1B\x18""\\""\x1D""o, ""\x01""p|""\x1D\x16""o""\x1D""!",
-	"!",
 	"\x05""e""\x1C\x1B""~ ""\x13""o""\x1B""{]e ""\x1D""e c""\x1F""pa""\x16""ae""\x1F""...",
 	"\x06"" c ""\x1F\x14""o""\x18""x ""\x16""py""\x17""e""\x19"" c""\x1D""~""\x1F""o ""\x17""a""\x1A\x1B""~""\x1F\x18""e!",
-	"ed!",
 	"\x03""opo""\x15""a~ ""\x01""p""\x18\x1D"".",
 	"Ma""\x1B\x1A""o""\x1B\x1C"" oc""\x14""o""\x13""o""\x16\x18\x1B""c~!",
-	"ee!",
 	"C""\x1A""opo o""\x1D"" ""\x1E""p""\x18\x16""e""\x1F"" ""\x17""a ""\x1C\x1D""o""\x19"".",
-	"",
 	"\x08""o""\x1C""o""\x15\x18"" ""\x01""p|""\x1D\x16""o""\x1D""y...",
-	"...",
 	""
 };
 
@@ -246,15 +216,11 @@ static const char *const k1PoisonGoneStringDOSOldFloppyRussian[2] = {
 
 static const StringListProvider k1PoisonGoneStringDOSOldFloppyRussianProvider = { ARRAYSIZE(k1PoisonGoneStringDOSOldFloppyRussian), k1PoisonGoneStringDOSOldFloppyRussian };
 
-static const char *const k1ThePoisonStringsDOSOldFloppyRussian[8] = {
+static const char *const k1ThePoisonStringsDOSOldFloppyRussian[4] = {
 	"O""\x1F""pa""\x14""a...",
-	"...",
 	"He ""\x1C""o""\x15""y ""\x16""`]a""\x1F""{...",
-	"",
 	"M""\x1D""e ""\x1D""exopo]o...",
-	"good...",
-	"\x10\x1F""a ""\x17\x1C""e~...",
-	"ust\r~""\x16""o""\x14\x18\x1F""a!"
+	"\x10\x1F""a ""\x17\x1C""e~\r~""\x16""o""\x14\x18\x1F""a!"
 };
 
 static const StringListProvider k1ThePoisonStringsDOSOldFloppyRussianProvider = { ARRAYSIZE(k1ThePoisonStringsDOSOldFloppyRussian), k1ThePoisonStringsDOSOldFloppyRussian };
@@ -266,10 +232,9 @@ static const char *const k1FluteStringsDOSOldFloppyRussian[2] = {
 
 static const StringListProvider k1FluteStringsDOSOldFloppyRussianProvider = { ARRAYSIZE(k1FluteStringsDOSOldFloppyRussian), k1FluteStringsDOSOldFloppyRussian };
 
-static const char *const k1WispJewelStringsDOSOldFloppyRussian[4] = {
+static const char *const k1WispJewelStringsDOSOldFloppyRussian[3] = {
 	"I'm not really feeling up to it right now.",
 	"Ha""\x14""ep""\x1D""oe ~ ""\x16""o""\x1B\x7F""e""\x1D"" ""\x1E""o""\x1B""o""\x7F\x18\x1F""{ ",
-	"y ",
 	",c""\x1D""a\\a""\x1B""a"
 };
 
@@ -287,16 +252,11 @@ static const char *const k1FlaskFullStringDOSOldFloppyRussian[1] = {
 
 static const StringListProvider k1FlaskFullStringDOSOldFloppyRussianProvider = { ARRAYSIZE(k1FlaskFullStringDOSOldFloppyRussian), k1FlaskFullStringDOSOldFloppyRussian };
 
-static const char *const k1FullFlaskStringDOSOldFloppyRussian[9] = {
-	"\n""\x1B""~""\x7F\x1A""a ""\x1F""e""\x1E""ep{ ""\x1E""o""\x1B\x1D""a ",
-	"ed\rc""\x14""e""\x7F""e""\x19"", c""\x14""ep""\x1A""a}^e""\x19"" ""\x14""o""\x16""o""\x19"".",
-	"r.",
-	"\n""\x1B""~""\x7F\x1A""a ""\x1F""e""\x1E""ep{ ""\x1E""o""\x1B\x1D""a ",
-	"ed\rco""\x1B""e""\x1D""o""\x19"" ""\x14""o""\x16""o""\x19"".",
-	".",
-	"\n""\x1B""~""\x7F\x1A""a ""\x1F""e""\x1E""ep{ ""\x1E""o""\x1B\x1D""a ",
-	"ed\r""\x1C\x18\x1D""epa""\x1B""{""\x1D""o""\x19"" ""\x14""o""\x16""o""\x19"".",
-	""
+static const char *const k1FullFlaskStringDOSOldFloppyRussian[4] = {
+	"\n""\x1B""~""\x7F\x1A""a ""\x1F""e""\x1E""ep{ ""\x1E""o""\x1B\x1D""a\red\rc""\x14""e""\x7F""e""\x19"", c""\x14""ep""\x1A""a }^e""\x19"" ""\x14""o""\x16""o""\x19"".",
+	"\n""\x1B""~""\x7F\x1A""a ""\x1F""e""\x1E""ep{ ""\x1E""o""\x1B\x1D""a\red\rco""\x1B""e""\x1D""o""\x19"" ""\x14""o""\x16""o""\x19"".",
+	"\n""\x1B""~""\x7F\x1A""a ""\x1F""e""\x1E""ep{ ""\x1E""o""\x1B\x1D""a\red\r""\x1C\x18\x1D""epa""\x1B""{""\x1D""o""\x19"" ""\x14""o""\x16""o""\x19"".",
+	" o""\x1B""]. ""\x14""o""\x16""o""\x19""."
 };
 
 static const StringListProvider k1FullFlaskStringDOSOldFloppyRussianProvider = { ARRAYSIZE(k1FullFlaskStringDOSOldFloppyRussian), k1FullFlaskStringDOSOldFloppyRussian };
@@ -313,31 +273,21 @@ static const char *const k1VeryCleverStringDOSOldFloppyRussian[1] = {
 
 static const StringListProvider k1VeryCleverStringDOSOldFloppyRussianProvider = { ARRAYSIZE(k1VeryCleverStringDOSOldFloppyRussian), k1VeryCleverStringDOSOldFloppyRussian };
 
-static const char *const k1GUIStringsDOSOldFloppyRussian[39] = {
+static const char *const k1GUIStringsDOSOldFloppyRussian[28] = {
 	"\x07""e""\x15""e""\x1D\x16""a K""\x18""pa""\x1D\x16\x18\x18",
-	"andia",
 	"\x05""a""\x15""py""\x17\x18\x1F""{",
-	"e",
 	"Coxpa""\x1D\x18\x1F""{ ""\x18\x15""py",
 	"\t""\x1E""pa""\x14\x1B""e""\x1D\x18""e",
-	"ls",
 	"\x05""a""\x1A""o""\x1D""\\""\x18\x1F""{",
-	"ng",
 	"\x08""po""\x16""o""\x1B\x7F\x18\x1F""{",
-	"",
 	"\t""\x1E""pa""\x14\x1B""e""\x1D\x18""e",
-	"ls",
 	"Ka""\x1A""y} ""\x18\x15""py B` xo""\x1F\x18\x1F""e ""\x17""a""\x15""py""\x17\x18\x1F""{?",
-	"oad?",
 	"B`""\x13""ep""\x18\x1F""e ""\x1E""o""\x17\x18""[""\x18""} coxpa""\x1D""e""\x1D\x18""~:",
-	"",
 	"<    ""\x08""\tCTO   >",
 	"O""\x1F\x1C""e""\x1D""a",
 	"B""\x14""e""\x16\x18\x1F""e o""\x1E\x18""ca""\x1D\x18""e coxpa""\x1D""~e""\x1C""o""\x19"" ""\x18\x15""p`:",
-	"ame:",
 	"Save",
 	"C""\x1E\x18"" c""\x1E""o""\x1A""o""\x19\x1D""o, ""\x01""p|""\x1D\x16""o""\x1D"".",
-	"",
 	"B` y""\x14""epe""\x1D""`, \\""\x1F""o xo""\x1F\x18\x1F""e ""\x17""a""\x1A""o""\x1D""\\""\x18\x1F""{ ""\x18\x15""py?",
 	"XXX",
 	"XXX",
@@ -352,7 +302,6 @@ static const char *const k1GUIStringsDOSOldFloppyRussian[39] = {
 	"Te""\x1A""c""\x1F""      ",
 	"My""\x17""`""\x1A""a   ",
 	"\x05\x14""y""\x1A\x18""      ",
-	""
 };
 
 static const StringListProvider k1GUIStringsDOSOldFloppyRussianProvider = { ARRAYSIZE(k1GUIStringsDOSOldFloppyRussian), k1GUIStringsDOSOldFloppyRussian };
