@@ -121,6 +121,11 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(99, WaterEffectMaxStep, false)
 	VAR(100, WaterEffectAmplOffset, false)
 
+	VAR(101, LavaEffectActive, true)
+	VAR(102, LavaEffectSpeed, true)
+	VAR(103, LavaEffectAmpl, true)
+	VAR(104, LavaEffectStepSize, true)
+
 	VAR(105, MagnetEffectActive, true)
 	VAR(106, MagnetEffectSpeed, true)
 	VAR(107, MagnetEffectUnk1, true)

@@ -101,6 +101,11 @@ public:
 	DECLARE_VAR(99, WaterEffectMaxStep)
 	DECLARE_VAR(100, WaterEffectAmplOffset)
 
+	DECLARE_VAR(101, LavaEffectActive)
+	DECLARE_VAR(102, LavaEffectSpeed)
+	DECLARE_VAR(103, LavaEffectAmpl)
+	DECLARE_VAR(104, LavaEffectStepSize)
+
 	DECLARE_VAR(105, MagnetEffectActive)
 	DECLARE_VAR(106, MagnetEffectSpeed)
 	DECLARE_VAR(107, MagnetEffectUnk1)
