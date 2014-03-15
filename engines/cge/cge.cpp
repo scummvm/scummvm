@@ -50,13 +50,6 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	DebugMan.addDebugChannel(kCGEDebugFile, "file", "CGE IO debug channel");
 	DebugMan.addDebugChannel(kCGEDebugEngine, "engine", "CGE Engine debug channel");
 
-	_startupMode = 1;
-	_oldLev      = 0;
-	_pocPtr      = 0;
-	_quitFlag = false;
-	_showBoundariesFl = false;
-	_startGameSlot = -1;
-	_recentStep = -2;
 	_bitmapPalette = nullptr;
 	_pocLight = nullptr;
 	_keyboard = nullptr;
@@ -83,21 +76,7 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_miniShp = nullptr;
 	_miniShpList = nullptr;
 	_console = nullptr;
-
-	_lastFrame = 0;
-	_lastTick  = 0;
-	_music     = true;
-	_maxScene  = 0;
-	_dark      = false;
-	_game      = false;
-	_endGame   = false;
-	_now       = 1;
-	_lev       = -1;
-	_mode      = 0;
-	_soundOk   = 1;
-	_sprTv     = nullptr;
-	_gameCase2Cpt = 0;
-	_offUseCount  = 0;
+	_sprTv = nullptr;
 	_sprK1 = nullptr;
 	_sprK2 = nullptr;
 	_sprK3 = nullptr;
@@ -105,13 +84,33 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_vga = nullptr;
 	_sys = nullptr;
 
-	for (int i = 0; i < kPocketNX; i++)
-		_pocref[i] = -1;
-	_volume[0] = 0;
-	_volume[1] = 0;
-
+	_quitFlag = false;
+	_showBoundariesFl = false;
+	_music = true;
+	_dark = false;
+	_game = false;
+	_endGame = false;
 	for (int i = 0; i < 4; i++)
 		_flag[i] = false;
+
+	_startupMode = 1;
+	_oldLev = 0;
+	_pocPtr = 0;
+	_startGameSlot = -1;
+	_recentStep = -2;
+	_lastFrame = 0;
+	_lastTick = 0;
+	_maxScene = 0;
+	_now = 1;
+	_lev = -1;
+	_mode = 0;
+	_soundOk = 1;
+	_gameCase2Cpt = 0;
+	_offUseCount  = 0;
+	_volume[0] = 0;
+	_volume[1] = 0;
+	for (int i = 0; i < kPocketNX; i++)
+		_pocref[i] = -1;
 
 	initSceneValues();
 }
