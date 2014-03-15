@@ -86,6 +86,9 @@ bool ThreadResource::loadAStack(int stackId) {
 }
 
 void ThreadResource::unloadAStack(int stackId) {
+	if (stackId < 0)
+		return;
+
 	if ((_vm->_stampFlags & 1) && _useCount[stackId]) {
 		if (--_useCount[stackId] == 0) {
 			_vm->_stampLibPtr->freeBoltMember(_vm->_controlPtr->_memberIds[stackId]);
