@@ -22,7 +22,6 @@
 
 #include "illusions/illusions.h"
 #include "illusions/actor.h"
-#include "illusions/actorresource.h"
 #include "illusions/camera.h"
 #include "illusions/input.h"
 
@@ -335,6 +334,18 @@ void Control::setActorUsePan(int usePan) {
 		_flags &= ~8;
 	else
 		_flags |= 8;
+}
+
+void Control::setActorFrameIndex(int16 frameIndex) {
+	if (frameIndex) {
+		_actor->_frameIndex = frameIndex;
+		const Frame &frame = _actor->_frames[frameIndex - 1];
+		_actor->_surfInfo = frame._surfInfo;
+		// TODO memcpy(&control->unkPt, (const void *)frame->config, 0x4Cu);
+		_actor->_flags |= 0x2000;
+		_actor->_flags |= 0x4000;
+		_actor->_newFrameIndex = 0;
+	}
 }
 
 } // End of namespace Illusions

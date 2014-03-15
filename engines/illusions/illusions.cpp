@@ -34,6 +34,7 @@
 #include "illusions/thread.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
+#include "illusions/time.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
@@ -99,11 +100,20 @@ Common::Error IllusionsEngine::run() {
 
 #if 1
 	// BackgroundResource test
-	_resSys->loadResource(0x0011001C, 0, 0);
+	_resSys->loadResource(0x00110007, 0, 0);
 	BackgroundItem *backgroundItem = _backgroundItems->debugFirst();
 	_system->copyRectToScreen((byte*)backgroundItem->_surfaces[0]->getBasePtr(0, 0), backgroundItem->_surfaces[0]->pitch, 0, 0, 640, 480);
 	_system->updateScreen();
+	_camera->panToPoint(Common::Point(800, 0), 500, 0);
 	while (!shouldQuit()) {
+		//debug("panPoints[0] = %d, %d", backgroundItem->_panPoints[0].x, backgroundItem->_panPoints[0].y);
+		uint32 t = getCurrentTime();
+		//debug("t = %d", t);
+		_camera->update(t);
+		_system->delayMillis(10);
+		_system->copyRectToScreen((byte*)backgroundItem->_surfaces[0]->getBasePtr(backgroundItem->_panPoints[0].x, 0),
+			backgroundItem->_surfaces[0]->pitch, 0, 0, 640, 480);
+		_system->updateScreen();
 		updateEvents();
 	}
 #endif

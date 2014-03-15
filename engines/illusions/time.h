@@ -28,6 +28,7 @@
 namespace Illusions {
 
 uint32 getCurrentTime();
+bool isTimerExpired(uint32 startTime, uint32 endTime);
 
 } // End of namespace Illusions
 

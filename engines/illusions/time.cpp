@@ -26,8 +26,14 @@
 namespace Illusions {
 
 uint32 getCurrentTime() {
-	// TODO, move to own file with other time related code
-	return g_system->getMillis();
+	return g_system->getMillis() / 60;
+}
+
+bool isTimerExpired(uint32 startTime, uint32 endTime) {
+	uint32 currTime = getCurrentTime();
+	return !(
+		(startTime > endTime && (currTime <= endTime || currTime >= startTime)) ||
+		(startTime < endTime && currTime <= endTime && currTime >= startTime));
 }
 
 } // End of namespace Illusions
