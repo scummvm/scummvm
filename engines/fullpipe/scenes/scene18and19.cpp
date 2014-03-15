@@ -169,19 +169,17 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 		}
 
 		ani->_statics = ani->getStaticsById(ST_KSL_NORM);
-		ani->_movement = 0;
+		//ani->_movement = 0;
 		ani->setOXY(swinger->sx, swinger->sy);
 		ani->_priority = 30;
 		ani->_flags |= 4;
 
-		if (swinger->sflags & 2) {
+		if (swinger->sflags & 2)
 			ani->startAnim(MV_KSL_SWINGBOY, 0, -1);
-		} else {
-			if (swinger->sflags & 4)
-				ani->startAnim(MV_KSL_SWINGGIRL, 0, -1);
-			else
-				ani->startAnim(MV_KSL_SWING, 0, -1);
-		}
+		else if (swinger->sflags & 4)
+			ani->startAnim(MV_KSL_SWINGGIRL, 0, -1);
+		else
+			ani->startAnim(MV_KSL_SWING, 0, -1);
 
 		ani->_movement->setDynamicPhaseIndex(g_fp->_rnd->getRandomNumber(17));
 
@@ -237,7 +235,7 @@ void scene18_initScene1(Scene *sc) {
 		go->setOXY(newx + go->_ox, newy + go->_oy);
 	}
 
-	if (g_vars->scene18_var08 && g_vars->scene18_var09 != -1) {
+	if (g_vars->scene18_bridgeIsConvoluted && g_vars->scene18_var09 != -1) {
 		g_vars->scene18_whirlgig->startAnim(sc->_sceneId != SC_18 ? MV_WHR19_SPIN : MV_WHR18_SPIN, 0, -1);
 		g_vars->scene18_whirlgig->_movement->setDynamicPhaseIndex(g_vars->scene18_var09);
 	}
@@ -245,12 +243,12 @@ void scene18_initScene1(Scene *sc) {
 	int sndid;
 
 	if (sc->_sceneId == SC_19) {
-		if (g_vars->scene18_var08)
+		if (g_vars->scene18_bridgeIsConvoluted)
 			sndid = SND_19_015;
 		else
 			sndid = SND_19_016;
 	} else {
-		if (g_vars->scene18_var08)
+		if (g_vars->scene18_bridgeIsConvoluted)
 			sndid = SND_18_006;
 		else
 			sndid = SND_18_010;
@@ -288,7 +286,7 @@ void scene18_initScene1(Scene *sc) {
 
 	g_vars->scene18_girl->setOXY(newx + x, newy + y);
 
-	g_vars->scene18_var12 = 0;
+	g_vars->scene18_var12 = false;
 	g_vars->scene18_jumpDistance = -1;
 	g_vars->scene18_var14 = -1;
 
@@ -314,22 +312,22 @@ void scene18_initScene2(Scene *sc) {
 	g_vars->scene18_girlIsSwinging = (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
 	if (g_fp->getObjectState(sO_Bridge) == g_fp->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
-		g_vars->scene18_var08 = 1;
+		g_vars->scene18_bridgeIsConvoluted = true;
 		g_fp->playSound(SND_18_006, 1);
 	} else {
-		g_vars->scene18_var08 = 0;
+		g_vars->scene18_bridgeIsConvoluted = false;
 		g_fp->playSound(SND_18_010, 1);
 	}
 
 	scene18_setupSwingers(armchair, sc);
 
 	g_vars->scene18_var21 = 0;
-	g_vars->scene18_var12 = 0;
+	g_vars->scene18_var12 = false;
 	g_vars->scene18_wheelIsTurning = true;
 	g_vars->scene18_var23 = -1;
 	g_vars->scene18_var24 = 0;
 	g_vars->scene18_var25 = 0;
-	g_vars->scene18_var26 = 1;
+	g_vars->scene18_var26 = true;
 	g_vars->scene18_var27 = -1;
 	g_vars->scene18_jumpDistance = -1;
 	g_vars->scene18_var14 = -1;
@@ -521,7 +519,7 @@ void sceneHandler18and19_showBoyJump() {
 	g_vars->scene18_swingers[g_vars->scene18_var32]->ani->changeStatics2(ST_KSL_REACT);
 	g_vars->scene18_swingers[g_vars->scene18_var32]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
 
-	g_vars->scene18_var26 = 1;
+	g_vars->scene18_var26 = true;
 }
 
 void sceneHandler18and19_boyJumpTo() {
@@ -625,7 +623,7 @@ void sceneHandler18and19_drawRiders() {
 				if (g_vars->scene18_var26)
 					g_vars->scene18_var24++;
 
-				g_vars->scene18_var26 = 0;
+				g_vars->scene18_var26 = false;
 			}
 		}
 
@@ -779,11 +777,11 @@ int sceneHandler18(ExCommand *cmd) {
 		if (g_vars->scene18_var28 && g_fp->_aniMan->_movement)
 			g_vars->scene18_var28 = 0;
 
-		if (g_vars->scene18_var08) {
+		if (g_vars->scene18_bridgeIsConvoluted) {
 			if (!g_vars->scene18_var12)
 				sceneHandler18and19_drawRiders();
 
-			g_vars->scene18_var12 = g_vars->scene18_var12 == 0;
+			g_vars->scene18_var12 = !g_vars->scene18_var12;
 
 			if (!g_vars->scene18_whirlgig->_movement) {
 				g_vars->scene18_whirlgig->startAnim(MV_WHR18_SPIN, 0, -1);
@@ -902,7 +900,7 @@ int sceneHandler19(ExCommand *cmd) {
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
 		}
 
-		if (g_vars->scene18_var08) {
+		if (g_vars->scene18_bridgeIsConvoluted) {
 			if (!g_vars->scene18_var12)
 				sceneHandler18and19_drawRiders();
 
