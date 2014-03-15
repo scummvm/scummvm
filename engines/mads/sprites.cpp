@@ -55,13 +55,12 @@ typedef Common::List<DepthEntry> DepthList;
 /*------------------------------------------------------------------------*/
 
 MSprite::MSprite(): MSurface() {
-	_encoding = 0;
 }
 
 MSprite::MSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette,
 		const Common::Rect &bounds): 
 		MSurface(bounds.width(), bounds.height()), 
-		_encoding(0), _offset(Common::Point(bounds.left, bounds.top)) {
+		_offset(Common::Point(bounds.left, bounds.top)) {
 	// Load the sprite data
 	loadSprite(source, palette);
 }

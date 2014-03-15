@@ -111,7 +111,6 @@ public:
 	virtual ~MSprite();
 
 	Common::Point _offset;
-	uint8 _encoding;
 
 	byte getTransparencyIndex() const;
 };
