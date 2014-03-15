@@ -386,9 +386,9 @@ void Palette::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void Palette::setEntry(byte palIndex, byte r, byte g, byte b) {
-	_mainPalette[palIndex * 3] = r;
-	_mainPalette[palIndex * 3 + 1] = g;
-	_mainPalette[palIndex * 3 + 2] = b;
+	_mainPalette[palIndex * 3] = VGA_COLOR_TRANS(r);
+	_mainPalette[palIndex * 3 + 1] = VGA_COLOR_TRANS(g);
+	_mainPalette[palIndex * 3 + 2] = VGA_COLOR_TRANS(b);
 
 	setPalette((const byte *)&_mainPalette[palIndex * 3], palIndex, 1);
 }

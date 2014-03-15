@@ -31,7 +31,9 @@
 namespace MADS {
 
 void VisitedScenes::add(int sceneId) {
-	if (!exists(sceneId))
+	_sceneRevisited = exists(sceneId);
+
+	if (!_sceneRevisited)
 		push_back(sceneId);
 }
 
@@ -42,64 +44,6 @@ bool VisitedScenes::exists(int sceneId) {
 	}
 
 	return false;
-}
-
-void InventoryObject::load(Common::SeekableReadStream &f) {
-	_descId = f.readUint16LE();
-	_roomNumber = f.readUint16LE();
-	_article = f.readByte();
-	_vocabCount = f.readByte();
-	
-	for (int i = 0; i < 3; ++i) {
-		_vocabList[i]._actionFlags1 = f.readByte();
-		_vocabList[i]._actionFlags2 = f.readByte();
-		_vocabList[i]._vocabId = f.readUint16LE();
-	}
-
-	f.skip(4);	// field12
-	f.read(&_mutilateString[0], 10);
-	f.skip(16);
-}
-
-/*------------------------------------------------------------------------*/
-
-void InventoryObjects::load() {
-	File f("*OBJECTS.DAT");
-
-	// Get the total numer of inventory objects
-	int count = f.readUint16LE();
-	reserve(count);
-
-	// Read in each object
-	for (int i = 0; i < count; ++i) {
-		InventoryObject obj;
-		obj.load(f);
-		push_back(obj);
-
-		// If it's for the player's inventory, add the index to the inventory list
-		if (obj._roomNumber == PLAYER_INVENTORY) {
-			_inventoryList.push_back(i);
-			assert(_inventoryList.size() <= 32);
-		}
-	}
-}
-
-void InventoryObjects::setData(int objIndex, int id, const byte *p) {
-	// TODO: This whole method seems weird. Check it out more thoroughly once
-	// more of the engine is implemented
-	for (int i = 0; i < (int)size(); ++i) {
-		InventoryObject &obj = (*this)[i];
-		if (obj._vocabList[0]._actionFlags1 <= i)
-			break;
-
-		if (obj._mutilateString[6 + i] == id) {
-			(*this)[objIndex]._objFolder = p;
-		}
-	}
-}
-
-void InventoryObjects::setRoom(int objectId, int roomNumber) {
-	warning("TODO: setObjectRoom");
 }
 
 } // End of namespace MADS

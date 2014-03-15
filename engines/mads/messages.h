@@ -88,6 +88,7 @@ public:
 	void update();
 	void processText(int msgIndex);
 	void delay(uint32 priorFrameTime, uint32 currentTime);
+	void setQuoted(int msgIndex, int numTicks, bool quoted);
 };
 
 class TextDisplay {

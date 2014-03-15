@@ -34,8 +34,8 @@ Globals::Globals() {
 	_spriteIndexes.resize(30);
 
 	// Initialise game flags
-	_chairHotspotIndex = 0;
-	_v1 = 0;
+	_v0 = 0;
+	_frameTime = 0;
 	_v2 = 0;
 	_v3 = 0;
 	_v4 = 0;

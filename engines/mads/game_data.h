@@ -34,6 +34,11 @@ class Game;
 class VisitedScenes: public Common::Array<int> {
 public:
 	/**
+	 * Stores true when a previously visited scene is revisited
+	 */
+	bool _sceneRevisited;
+
+	/**
 	 * Returns true if a given Scene Id exists in the listed of previously visited scenes.
 	 */
 	bool exists(int sceneId);
@@ -42,53 +47,6 @@ public:
 	 * Adds a scene Id to the list of previously visited scenes, if it doesn't already exist
 	 */
 	void add(int sceneId);
-};
-
-class InventoryObject {
-public:
-	int _descId;
-	int _roomNumber;
-	int _article;
-	int _vocabCount;
-	struct {
-		int _actionFlags1;
-		int _actionFlags2;
-		int _vocabId;
-	} _vocabList[3];
-	char _mutilateString[10];	// ???
-	const byte *_objFolder;		// ???
-
-	/**
-	 * Loads the data for a given object
-	 */
-	void load(Common::SeekableReadStream &f);
-};
-
-class InventoryObjects: public Common::Array<InventoryObject> {
-private:
-	MADSEngine *_vm;
-public:
-	Common::Array<int> _inventoryList;
-
-	/** 
-	 * Constructor
-	 */
-	InventoryObjects(MADSEngine *vm): _vm(vm) {}
-
-	/**
-	 * Loads the game's object list
-	 */
-	void load();
-
-	/**
-	 * Set the associated data? pointer with an inventory object
-	 */
-	void setData(int objIndex, int id, const byte *p);
-
-	/**
-	 * Sets the room number
-	 */
-	void setRoom(int objectId, int roomNumber);
 };
 
 class SectionHandler {

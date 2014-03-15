@@ -20,64 +20,68 @@
  *
  */
 
-#ifndef MADS_NEBULAR_SCENES1_H
-#define MADS_NEBULAR_SCENES1_H
+#ifndef MADS_INVENTORY_H
+#define MADS_INVENTORY_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/scene.h"
-#include "mads/nebular/nebular_scenes.h"
+#include "common/array.h"
 
 namespace MADS {
 
-namespace Nebular {
+class MADSEngine;
 
-class Scene1xx : protected NebularScene {
-protected:
+class InventoryObject {
+public:
+	int _descId;
+	int _roomNumber;
+	int _article;
+	int _vocabCount;
+	struct {
+		int _actionFlags1;
+		int _actionFlags2;
+		int _vocabId;
+	} _vocabList[3];
+	char _mutilateString[10];	// ???
+	const byte *_objFolder;		// ???
+
 	/**
-	 * Plays an appropriate sound when entering a scene
+	 * Loads the data for a given object
 	 */
-	void sceneEntrySound();
-public:
-	Scene1xx(MADSEngine *vm) : NebularScene(vm) {}
+	void load(Common::SeekableReadStream &f);
 };
 
-class Scene101: public Scene1xx {
+class InventoryObjects: public Common::Array<InventoryObject> {
+private:
+	MADSEngine *_vm;
 public:
-	Scene101(MADSEngine *vm) : Scene1xx(vm) {}
+	Common::Array<int> _inventoryList;
 
-	virtual void setup();
+	/** 
+	 * Constructor
+	 */
+	InventoryObjects(MADSEngine *vm): _vm(vm) {}
 
-	virtual void enter();
+	/**
+	 * Loads the game's object list
+	 */
+	void load();
 
-	virtual void step();
+	/**
+	 * Set the associated data? pointer with an inventory object
+	 */
+	void setData(int objIndex, int id, const byte *p);
 
-	virtual void preActions();
+	/**
+	 * Sets the room number
+	 */
+	void setRoom(int objectId, int roomNumber);
 
-	virtual void actions();
-
-	virtual void postActions();
+	/**
+	 * Returns true if a given object is in the player's current scene
+	 */
+	bool isInRoom(int objectId) const;
 };
-
-class Scene103 : public Scene1xx {
-public:
-	Scene103(MADSEngine *vm) : Scene1xx(vm) {}
-
-	virtual void setup();
-
-	virtual void enter();
-
-	virtual void step();
-
-	virtual void preActions();
-
-	virtual void actions();
-
-	virtual void postActions();
-};
-
-} // End of namespace Nebular
 
 } // End of namespace MADS
 
-#endif /* MADS_NEBULAR_SCENES1_H */
+#endif /* MADS_INVENTORY_H */

@@ -139,4 +139,10 @@ void DynamicHotspots::refresh() {
 	}
 }
 
+/*------------------------------------------------------------------------*/
+
+void Hotspots::activate(int hotspotId, bool active) {
+	warning("TODO: Hotspots::activate");
+}
+
 } // End of namespace MADS

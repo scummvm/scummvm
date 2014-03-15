@@ -412,6 +412,21 @@ int SequenceList::addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, i
 		true, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
 }
 
+int SequenceList::addReverseSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks,
+		int triggerCountdown, int timeoutTicks, int extraTicks) {
+	Scene &scene = _vm->_game->_scene;
+
+	SpriteAsset *asset = scene._sprites[srcSpriteIdx];
+	MSprite *spriteFrame = asset->getFrame(0);
+	int depth = scene._depthSurface.getDepth(Common::Point(
+		spriteFrame->_offset.x + (spriteFrame->w / 2),
+		spriteFrame->_offset.y + (spriteFrame->h / 2)));
+
+	return add(srcSpriteIdx, flipped, asset->getCount(), triggerCountdown, timeoutTicks, extraTicks, 
+		numTicks, 0, 0, true, 100, depth - 1, -1, ANIMTYPE_CYCLED, 0, 0);
+}
+
+
 int SequenceList::startCycle(int srcSpriteIndex, bool flipped, int cycleIndex) {
 	int result = addSpriteCycle(srcSpriteIndex, flipped, INDEFINITE_TIMEOUT, 0, 0, 0);
 	if (result >= 0)

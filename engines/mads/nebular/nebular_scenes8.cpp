@@ -80,11 +80,13 @@ void Scene804::setup() {
 }
 
 void Scene804::enter() {
-	_globals._chairHotspotIndex = 0;
-	_globals._v1 = _globals._v2 = 0;
-	_globals._v3 = _globals._v4 = 0;
+	_globals._frameTime = 0;
+	_globals._v2 = 0;
+	_globals._v3 = 0;
+	_globals._v4 = 0;
 	_globals._v5 = -1;
-	_globals._v6 = _globals._v7 = 0;
+	_globals._v6 = 0;
+	_globals._v7 = 0;
 	_globals._v8 = 0;
 	if (_globals[5]) {
 		// Copy protection failed
@@ -92,43 +94,43 @@ void Scene804::enter() {
 		_globals[164] = 0;
 	}
 
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 1));
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 2));
-	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('x', 3));
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 4));
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 3));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('x', 4));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('f', 1));
 
 	_game.loadQuoteSet(791, 0);
 
 	if (_globals[165]) {
 		if (_globals[164]) {
-			_globals._spriteIndexes[19] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[4], 0, 1);
+			_globals._spriteIndexes[20] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[5], 0, 1);
 			_scene->_sequences.addTimer(60, 100);
 		} else {
-			_globals._spriteIndexes[20] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[5], false, 1);
-			_globals._spriteIndexes[21] = _scene->_sequences.startReverseCycle(
-				_globals._spriteIndexes[6], false, 4, 0, 0, 0);
+			_globals._spriteIndexes[21] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[6], false, 1);
+			_globals._spriteIndexes[22] = _scene->_sequences.startReverseCycle(
+				_globals._spriteIndexes[7], false, 4, 0, 0, 0);
 			_scene->_sequences.addTimer(160, 70);
 			_game._player._stepEnabled = false;
 		}
 	} else {
 		if (_globals[167] == 0) {
-			_globals._spriteIndexes[22] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[7], false, 1);
+			_globals._spriteIndexes[23] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[8], false, 1);
 		}
 
 		if (_globals[164] == 0) {
-			_globals._spriteIndexes[22] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[18], false, 1);
+			_globals._spriteIndexes[23] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[19], false, 1);
 		}
 
-		_globals._spriteIndexes[0] = _scene->_sequences.startCycle(
-			_globals._spriteIndexes[0], false, 1);
-		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[15], Common::Point(133, 139));
-		_scene->_sequences.setDepth(_globals._spriteIndexes[15], 8);
+		_globals._spriteIndexes[1] = _scene->_sequences.startCycle(
+			_globals._spriteIndexes[1], false, 1);
+		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[16], Common::Point(133, 139));
+		_scene->_sequences.setDepth(_globals._spriteIndexes[16], 8);
 	}
 
 	_scene->loadAnimation(Resources::formatName(804, 'r', 1, EXT_AA, ""));
@@ -142,24 +144,23 @@ void Scene804::enter() {
 }
 
 void Scene804::step() {
-	if (_globals._chairHotspotIndex) {
+	if (_globals._frameTime) {
 		if (_scene->_activeAnimation->getCurrentFrame() == 36 && !_globals._v3) {
-			_scene->_sequences.remove(_globals._spriteIndexes[15]);
+			_scene->_sequences.remove(_globals._spriteIndexes[16]);
 			_globals._v3 = -1;
 		}
 		if (_scene->_activeAnimation->getCurrentFrame() == 39) {
 			_globals._v2 = 0;
-			if (_globals._v1 == 3)
+			if ((_globals._frameTime / 256) == 3)
 				_scene->_sequences.addTimer(130, 120);
 		}
 
 		if (!_globals._v2) {
-			++_globals._v1;
+			_globals._frameTime += 0x100;
 			_globals._v2 = -1;
 
-			if (_globals._v1 >= 4) {
-				_globals._chairHotspotIndex = 0;
-				_globals._v1 = 0;
+			if ((_globals._frameTime / 256) >= 4) {
+				_globals._frameTime = 0;
 				_game._player._stepEnabled = true;
 			} else {
 				_globals._v5 = 34;
@@ -167,11 +168,11 @@ void Scene804::step() {
 		}
 	} else {
 		if (_globals._v3 && _globals._v2 && _scene->_activeAnimation->getCurrentFrame() == 39) {
-			_globals._spriteIndexes[15] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[0], false, 1);
-			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[15],
+			_globals._spriteIndexes[16] = _scene->_sequences.startCycle(
+				_globals._spriteIndexes[1], false, 1);
+			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[16],
 				Common::Point(133, 139));
-			_scene->_sequences.setDepth(_globals._spriteIndexes[15], 8);
+			_scene->_sequences.setDepth(_globals._spriteIndexes[16], 8);
 			_globals._v3 = 0;
 		}
 
@@ -183,7 +184,7 @@ void Scene804::step() {
 		if (_game._abortTimers == 70)
 			_globals._v5 = 42;
 		if (_scene->_activeAnimation->getCurrentFrame() == 65)
-			_scene->_sequences.remove(_globals._spriteIndexes[21]);
+			_scene->_sequences.remove(_globals._spriteIndexes[22]);
 
 		switch (_game._storyMode)  {
 		case STORYMODE_NAUGHTY:
@@ -213,7 +214,7 @@ void Scene804::step() {
 
 		if (_scene->_activeAnimation->getCurrentFrame() == 34) {
 			_globals._v5 = 36;
-			_scene->_sequences.remove(_globals._spriteIndexes[15]);
+			_scene->_sequences.remove(_globals._spriteIndexes[16]);
 		}
 		if (_scene->_activeAnimation->getCurrentFrame() == 37) {
 			_globals._v5 = 36;
@@ -225,7 +226,7 @@ void Scene804::step() {
 			_scene->_nextSceneId = 803;
 
 		if (_scene->_activeAnimation->getCurrentFrame() == 7 && !_globals[164]) {
-			_globals._spriteIndexes[18] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+			_globals._spriteIndexes[19] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_scene->_sequences.addTimer(20, 110);
 			_globals[164] = -1;
 		}

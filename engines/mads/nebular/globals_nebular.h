@@ -37,8 +37,8 @@ private:
 public:
 	Common::Array<int> _spriteIndexes;
 
-	int _chairHotspotIndex;
-	int _v1;
+	int _v0;
+	uint32 _frameTime;
 	int _v2;
 	int _v3;
 	int _v4;

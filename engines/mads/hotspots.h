@@ -82,6 +82,10 @@ public:
 	Hotspot(Common::SeekableReadStream &f);
 };
 
+class Hotspots : public Common::Array<Hotspot> {
+public:
+	void activate(int hotspotId, bool active);
+};
 
 } // End of namespace MADS
 

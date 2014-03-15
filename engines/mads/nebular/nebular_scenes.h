@@ -35,7 +35,7 @@ namespace MADS {
 namespace Nebular {
 
 enum {
-	SEX_MALE = 0, SEX_FEMALE = 2
+	SEX_MALE = 0, SEX_UNKNOWN = 1, SEX_FEMALE = 2
 };
 
 enum Noun {
@@ -103,6 +103,21 @@ protected:
 	 * Forms an animation resoucre name
 	 */
 	Common::String formAnimName(char sepChar, int suffixNum);
+
+	/**
+	 *Sets the AA file to use for the scene
+	 */
+	void setAAName();
+
+	/**
+	 * Updates the prefix used for getting player sprites for the scene
+	 */
+	void setPlayerSpritesPrefix();
+
+	/**
+	 * Plays appropriate sound for entering varous rooms
+	 */
+	void lowRoomsEntrySound();
 public:
 	/**
 	 * Constructor

@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	nebular/globals_nebular.o \
 	nebular/sound_nebular.o \
 	nebular/nebular_scenes.o \
+	nebular/nebular_scenes1.o \
 	nebular/nebular_scenes8.o \
 	action.o \
 	animation.o \
@@ -20,6 +21,7 @@ MODULE_OBJS := \
 	game_data.o \
 	hotspots.o \
 	interface.o \
+	inventory.o \
 	mads.o \
 	messages.o \
 	msurface.o \

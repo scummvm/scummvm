@@ -27,6 +27,7 @@
 #include "common/str-array.h"
 #include "mads/scene.h"
 #include "mads/game_data.h"
+#include "mads/inventory.h"
 #include "mads/player.h"
 
 namespace MADS {
@@ -64,9 +65,7 @@ protected:
 	int _saveSlot;
 	int _statusFlag;
 	SectionHandler *_sectionHandler;
-	VisitedScenes _visitedScenes;
 	Common::StringArray _quotes;
-	int _v3;
 	int _v5;
 	int _v6;
 	bool _updateSceneFlag;
@@ -117,9 +116,11 @@ public:
 	int _priorSectionNumber;
 	int _currentSectionNumber;
 	InventoryObjects _objects;
+	VisitedScenes _visitedScenes;
 	Scene _scene;
 	int _v1;
 	int _v2;
+	int _v3;
 	int _v4;
 	int _abortTimers;
 	int _abortTimers2;

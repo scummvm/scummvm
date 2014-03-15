@@ -61,6 +61,40 @@ Common::String NebularScene::formAnimName(char sepChar, int suffixNum) {
 		EXT_NONE, "");
 }
 
+void NebularScene::setPlayerSpritesPrefix() {
+	_vm->_sound->command(5);
+	Common::String oldName = _game._player._spritesPrefix;
+	if (_scene->_nextSceneId <= 103 || _scene->_nextSceneId == 111) {
+		if (_globals[0] == SEX_FEMALE) {
+			_game._player._spritesPrefix = "ROX";
+		} else {
+			_game._player._spritesPrefix = "RXM";
+			_globals[0] = SEX_MALE;
+		}
+	} else if (_scene->_nextSceneId <= 110) {
+		_game._player._spritesPrefix = "RXSW";
+		_globals[0] = SEX_UNKNOWN;
+	} else if (_scene->_nextSceneId == 112) {
+		_game._player._spritesPrefix = "";
+	}
+
+	if (oldName == _game._player._spritesPrefix)
+		_game._player._spritesChanged = true;
+	if (_scene->_nextSceneId == 105 || (_scene->_nextSceneId == 109 && _globals[15])) {
+		_game._player._spritesChanged = true;
+		_game._v3 = 0;
+	}
+
+	_game._player._unk3 = 0;
+	_vm->_palette->setEntry(16, 10, 63, 63);
+	_vm->_palette->setEntry(17, 10, 45, 45);
+}
+
+void NebularScene::setAAName() {
+	int idx = (_scene->_nextSceneId > 103 && _scene->_nextSceneId < 112) ? 1 : 0;
+	_game._aaName = Resources::formatAAName(idx);
+}
+
 /*------------------------------------------------------------------------*/
 
 void SceneInfoNebular::loadCodes(MSurface &depthSurface) {

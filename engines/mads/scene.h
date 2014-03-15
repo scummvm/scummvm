@@ -93,7 +93,7 @@ public:
 	KernelMessages _kernelMessages;
 	Common::String _talkFont;
 	int _textSpacing;
-	Common::Array<Hotspot> _hotspots;
+	Hotspots _hotspots;
 	ScreenObjects _screenObjects;
 	ImageInterEntries _imageInterEntries;
 	DirtyAreas _dirtyAreas;

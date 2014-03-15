@@ -283,6 +283,29 @@ void KernelMessages::delay(uint32 priorFrameTime, uint32 currentTime) {
 	}
 }
 
+void KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
+	if (msgIndex >= 0) {
+		KernelMessage &msg = _entries[msgIndex];
+
+		msg._flags |= KMSG_SCROLL;
+		if (quoted)
+			msg._flags |= KMSG_QUOTED;
+
+		msg._msgOffset = 0;
+		msg._numTicks = numTicks;
+		msg._frameTimer2 = _vm->_game->_scene._frameStartTime;
+		msg._asciiChar = msg._msg[0];
+		msg._asciiChar2 = msg._msg[1];
+
+		if (msg._flags & KMSG_PLAYER_TIMEOUT) {
+			msg._frameTimer2 = _vm->_game->_player._priorTimer +
+				_vm->_game->_player._ticksAmount;
+		}
+
+		msg._frameTimer = msg._frameTimer2;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 TextDisplay::TextDisplay() {

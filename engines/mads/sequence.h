@@ -93,6 +93,7 @@ public:
 	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks,
 		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
 		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
+	
 	int addTimer(int time, int abortVal);
 	void remove(int seqIndex);
 	void setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot);
@@ -103,7 +104,11 @@ public:
 	void scan();
 	void setDepth(int seqIndex, int depth);
 	void setMsgPosition(int seqIndex, const Common::Point &pt);
-	int addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
+	int addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, 
+		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
+	int addReverseSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks,
+		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
+
 	int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
 	int startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks, int triggerCountdown, 
 		int timeoutTicks, int extraTicks);
