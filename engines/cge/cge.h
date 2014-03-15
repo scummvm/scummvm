@@ -107,7 +107,6 @@ struct SavegameHeader {
 	Graphics::Surface *thumbnail;
 	int saveYear, saveMonth, saveDay;
 	int saveHour, saveMinutes;
-	int totalFrames;
 };
 
 extern const char *savegameStr;

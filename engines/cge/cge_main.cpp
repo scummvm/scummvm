@@ -195,7 +195,6 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadgame(%d, header, %s)", slotNumber, tiny ? "true" : "false");
 
 	Common::MemoryReadStream *readStream;
-	SavegameHeader saveHeader;
 
 	if (slotNumber == -1) {
 		// Loading the data for the initial game state
@@ -231,6 +230,8 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 			return false;
 	} else {
 		// Found header
+		SavegameHeader saveHeader;
+
 		if (!readSavegameHeader(readStream, saveHeader)) {
 			delete readStream;
 			return false;
@@ -424,7 +425,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 }
 
 bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
-	header.thumbnail = NULL;
+	header.thumbnail = nullptr;
 
 	// Get the savegame version
 	header.version = in->readByte();
