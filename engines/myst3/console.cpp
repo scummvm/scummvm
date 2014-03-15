@@ -367,7 +367,7 @@ bool Console::Cmd_DumpMasks(int argc, const char **argv) {
 		if (water)
 			DebugPrintf("Face %d: water OK\n", i);
 
-		bool effect2 = dumpFaceMask(nodeId, i, DirectorySubEntry::kEffect2Mask);
+		bool effect2 = dumpFaceMask(nodeId, i, DirectorySubEntry::kLavaEffectMask);
 		if (effect2)
 			DebugPrintf("Face %d: effect 2 OK\n", i);
 

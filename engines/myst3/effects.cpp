@@ -286,6 +286,98 @@ void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics
 	}
 }
 
+LavaEffect::LavaEffect(Myst3Engine *vm) :
+		Effect(vm),
+		_lastUpdate(0),
+		_step(0) {
+}
+
+LavaEffect::~LavaEffect() {
+
+}
+
+LavaEffect *LavaEffect::create(Myst3Engine *vm, uint32 id) {
+	LavaEffect *s = new LavaEffect(vm);
+
+	if (!s->loadMasks(id, DirectorySubEntry::kLavaEffectMask)) {
+		delete s;
+		return 0;
+	}
+
+	return s;
+}
+
+bool LavaEffect::update() {
+	if (!_vm->_state->getLavaEffectActive()) {
+		return false;
+	}
+
+	if (g_system->getMillis() - _lastUpdate >= 1000 / (uint32)_vm->_state->getLavaEffectSpeed()) {
+		_lastUpdate = g_system->getMillis();
+
+		_step += _vm->_state->getLavaEffectStepSize();
+
+		doStep(_step, _vm->_state->getLavaEffectAmpl() / 10);
+
+		if (_step > 256)
+			_step -= 256;
+
+		return true;
+	}
+
+	return false;
+}
+
+void LavaEffect::doStep(int32 position, float ampl) {
+	for (uint i = 0; i < 256; i++) {
+		_displacement[i] = (sin((i + position) * 2 * M_PI / 256.0) + 1.0) * ampl;
+	}
+}
+
+void LavaEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surface *dst) {
+	if (!_vm->_state->getLavaEffectActive()) {
+		return;
+	}
+
+	Graphics::Surface *mask = _facesMasks.getVal(face);
+
+	if (!mask)
+		error("No mask for face %d", face);
+
+	uint32 *dstPtr = (uint32 *)dst->getPixels();
+	byte *maskPtr = (byte *)mask->getPixels();
+
+	for (uint y = 0; y < dst->h; y++) {
+		for (uint x = 0; x < dst->w; x++) {
+			uint8 maskValue = *maskPtr;
+
+			if (maskValue != 0) {
+				int32 xOffset= _displacement[(maskValue + y) % 256];
+				int32 yOffset = _displacement[maskValue % 256];
+				int32 maxOffset = (maskValue >> 6) & 0x3;
+
+				if (yOffset > maxOffset)
+					yOffset = maxOffset;
+				if (xOffset > maxOffset) {
+					xOffset = maxOffset;
+				}
+
+//				uint32 srcValue1 = *(uint32 *) src->getBasePtr(x + xOffset, y + yOffset);
+//				uint32 srcValue2 = *(uint32 *) src->getBasePtr(x, y);
+//
+//				*dstPtr = 0xFF000000 | ((0x007F7F7F & (srcValue1 >> 1)) + (0x007F7F7F & (srcValue2 >> 1)));
+
+				// TODO: The original does "blending" as above, but strangely
+				// this looks more like the original rendering
+				*dstPtr = *(uint32 *) src->getBasePtr(x + xOffset, y + yOffset);
+			}
+
+			maskPtr++;
+			dstPtr++;
+		}
+	}
+}
+
 MagnetEffect::MagnetEffect(Myst3Engine *vm) :
 		Effect(vm),
 		_lastSoundId(0),

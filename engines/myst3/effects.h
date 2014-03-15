@@ -86,6 +86,25 @@ private:
 	bool isRunning();
 };
 
+class LavaEffect : public Effect {
+public:
+	static LavaEffect *create(Myst3Engine *vm, uint32 id);
+	virtual ~LavaEffect();
+
+	bool update();
+	void applyForFace(uint face, Graphics::Surface *src, Graphics::Surface *dst);
+
+protected:
+	LavaEffect(Myst3Engine *vm);
+
+	void doStep(int32 position, float ampl);
+
+	uint32 _lastUpdate;
+	int32 _step;
+
+	int32 _displacement[256];
+};
+
 class MagnetEffect : public Effect {
 public:
 	static MagnetEffect *create(Myst3Engine *vm, uint32 id);

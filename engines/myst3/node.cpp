@@ -89,6 +89,12 @@ Node::Node(Myst3Engine *vm, uint16 id) :
 		_effects.push_back(effect);
 		_vm->_state->setMagnetEffectActive(true);
 	}
+
+	effect = LavaEffect::create(vm, id);
+	if (effect) {
+		_effects.push_back(effect);
+		_vm->_state->setLavaEffectActive(true);
+	}
 }
 
 Node::~Node() {
@@ -103,6 +109,7 @@ Node::~Node() {
 	_effects.clear();
 	_vm->_state->setWaterEffectActive(false);
 	_vm->_state->setMagnetEffectActive(false);
+	_vm->_state->setLavaEffectActive(false);
 
 	for (int i = 0; i < 6; i++) {
 		delete _faces[i];

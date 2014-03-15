@@ -51,7 +51,7 @@ class DirectorySubEntry {
 		enum ResourceType {
 			kCubeFace = 0,
 			kWaterEffectMask = 1,
-			kEffect2Mask = 2,
+			kLavaEffectMask = 2,
 			kMagneticEffectMask = 3,
 			kSpotItem = 5,
 			kFrame = 6,
