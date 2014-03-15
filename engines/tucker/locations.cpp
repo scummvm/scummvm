@@ -1589,7 +1589,7 @@ void TuckerEngine::updateSprite_locationNum24_3(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum24() {
-	_characterPrevBackFrontFacing = 0;
+	_characterPrevBackFrontFacing = false;
 	if (_flagsTable[112] == 0) {
 		_yPosCurrent = 132;
 		_xPosCurrent = 112;
@@ -1640,7 +1640,7 @@ void TuckerEngine::updateSprite_locationNum26_1(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum26() {
-	_characterPrevBackFrontFacing = 1;
+	_characterPrevBackFrontFacing = true;
 	_spritesTable[1]._gfxBackgroundOffset = _flagsTable[125];
 	_spritesTable[0]._gfxBackgroundOffset = _flagsTable[125];
 	if (_flagsTable[125] > 0 && _flagsTable[125] < 300) {
@@ -1688,7 +1688,7 @@ void TuckerEngine::updateSprite_locationNum27(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum27() {
-	_characterPrevBackFrontFacing = 0;
+	_characterPrevBackFrontFacing = false;
 }
 
 void TuckerEngine::execData3PostUpdate_locationNum27() {
@@ -3132,8 +3132,8 @@ void TuckerEngine::updateSprite_locationNum74(int i) {
 	static const uint8 stateTable[] = { 1, 3, 5, 5, 10, 16, 16 };
 	int num = _flagsTable[236] - 74;
 	if (stateTable[num] + i == 21) {
-		if (_updateLocationFlag == 0) {
-			_updateLocationFlag = 1;
+		if (!_updateLocationFlag) {
+			_updateLocationFlag = true;
 		} else {
 			_spritesTable[i]._animationFrame = _spritesTable[i]._firstFrame - 1;
 			_spritesTable[i]._updateDelay = 5;

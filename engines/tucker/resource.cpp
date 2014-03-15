@@ -1031,7 +1031,7 @@ void TuckerEngine::loadActionsTable() {
 		_panelState = 0;
 		setCursorType(0);
 		_csDataHandled = false;
-		_actionVerbLocked = 0;
+		_actionVerbLocked = false;
 		_mouseClick = 1;
 	}
 }

@@ -377,7 +377,7 @@ protected:
 	void setActionState();
 	void playSpeechForAction(int i);
 	void drawSpeechText(int xStart, int y, const uint8 *dataPtr, int num, int color);
-	int splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int &lineCharsCount, int &lineWidth);
+	bool splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int &lineCharsCount, int &lineWidth);
 	void drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int x, int y, uint8 color);
 	void redrawScreen(int offset);
 	void redrawScreenRect(const Common::Rect &clip, const Common::Rect &dirty);
@@ -742,7 +742,7 @@ protected:
 	int _actionObj1Type, _actionObj2Type;
 	int _actionObj1Num, _actionObj2Num;
 	bool _actionRequiresTwoObjects;
-	int _actionVerbLocked;
+	bool _actionVerbLocked;
 	int _actionPosX;
 	int _actionPosY;
 	bool _selectedObjectLocationMask;
@@ -780,7 +780,7 @@ protected:
 	const uint8 *_tableInstructionsPtr;
 	int _tableInstructionObj1Table[6];
 	int _tableInstructionObj2Table[6];
-	int _tableInstructionFlag;
+	bool _tableInstructionFlag;
 	int _tableInstructionItemNum1, _tableInstructionItemNum2;
 	int _instructionsActionsTable[6];
 	bool _validInstructionId;
@@ -810,12 +810,12 @@ protected:
 	int _characterAnimationIndex;
 	int _characterFacingDirection;
 	int _characterPrevFacingDirection;
-	int _characterBackFrontFacing;
-	int _characterPrevBackFrontFacing;
+	bool _characterBackFrontFacing;
+	bool _characterPrevBackFrontFacing;
 	int _characterAnimationNum;
 	int _noCharacterAnimationChange;
 	int _characterSpriteAnimationFrameCounter;
-	int _locationMaskIgnore;
+	bool _locationMaskIgnore;
 	int _locationMaskType;
 	int _locationMaskCounter;
 	int _handleMapCounter;
@@ -824,7 +824,7 @@ protected:
 	bool _updateSpriteFlag1;
 	bool _updateSpriteFlag2;
 
-	int _mirroredDrawing;
+	bool _mirroredDrawing;
 	uint8 *_loadLocBufPtr;
 	uint8 *_backgroundSpriteDataPtr;
 	int _locationHeight;
@@ -848,7 +848,7 @@ protected:
 	int _updateLocation14ObjNum[10];
 	int _updateLocation14Delay[10];
 	int _updateLocationCounter2;
-	int _updateLocationFlag;
+	bool _updateLocationFlag;
 	int _updateLocation70StringLen;
 	uint8 _updateLocation70String[20];
 

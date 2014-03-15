@@ -227,7 +227,7 @@ void TuckerEngine::resetVariables() {
 	_actionObj1Type = _actionObj2Type = 0;
 	_actionObj1Num = _actionObj2Num = 0;
 	_actionRequiresTwoObjects = false;
-	_actionVerbLocked = 0;
+	_actionVerbLocked = false;
 	_actionPosX = 0;
 	_actionPosY = 0;
 	_selectedObjectLocationMask = false;
@@ -253,7 +253,7 @@ void TuckerEngine::resetVariables() {
 	_tableInstructionsPtr = nullptr;
 	memset(_tableInstructionObj1Table, 0, sizeof(_tableInstructionObj1Table));
 	memset(_tableInstructionObj2Table, 0, sizeof(_tableInstructionObj2Table));
-	_tableInstructionFlag = 0;
+	_tableInstructionFlag = false;
 	_tableInstructionItemNum1 = _tableInstructionItemNum2 = 0;
 	memset(_instructionsActionsTable, 0, sizeof(_instructionsActionsTable));
 	_validInstructionId = false;
@@ -282,11 +282,11 @@ void TuckerEngine::resetVariables() {
 	_currentSpriteAnimationFrame2 = 0;
 	_characterAnimationIndex = -1;
 	_characterFacingDirection = _characterPrevFacingDirection = 0;
-	_characterBackFrontFacing = _characterPrevBackFrontFacing = 0;
+	_characterBackFrontFacing = _characterPrevBackFrontFacing = false;
 	_characterAnimationNum = 0;
 	_noCharacterAnimationChange = 0;
 	_characterSpriteAnimationFrameCounter = 0;
-	_locationMaskIgnore = 0;
+	_locationMaskIgnore = false;
 	_locationMaskType = 0;
 	_locationMaskCounter = 0;
 	_handleMapCounter = 0;
@@ -295,7 +295,7 @@ void TuckerEngine::resetVariables() {
 	_updateSpriteFlag1 = false;
 	_updateSpriteFlag2 = false;
 
-	_mirroredDrawing = 0;
+	_mirroredDrawing = false;
 	_loadLocBufPtr = nullptr;
 	_backgroundSpriteDataPtr = nullptr;
 	_locationHeight = 0;
@@ -322,7 +322,7 @@ void TuckerEngine::resetVariables() {
 	memset(_updateLocation14ObjNum, 0, sizeof(_updateLocation14ObjNum));
 	memset(_updateLocation14Delay, 0, sizeof(_updateLocation14Delay));
 	_updateLocationCounter2 = 0;
-	_updateLocationFlag = 0;
+	_updateLocationFlag = false;
 	_updateLocation70StringLen = 0;
 	memset(_updateLocation70String, 0, sizeof(_updateLocation70String));
 }
@@ -692,8 +692,8 @@ void TuckerEngine::setupNewLocation() {
 	_mainLoopCounter2 = 0;
 	_mainLoopCounter1 = 0;
 	_characterFacingDirection = 0;
-	_actionVerbLocked = 0;
-	_locationMaskIgnore = 0;
+	_actionVerbLocked = false;
+	_locationMaskIgnore = false;
 	_backgroundSprOffset = 0;
 	if (_backgroundSpriteCurrentAnimation > 0 && _backgroundSpriteCurrentFrame > 0) {
 		_backgroundSpriteCurrentAnimation = -1;
@@ -895,13 +895,13 @@ void TuckerEngine::updateCharPosition() {
 		if (action->_speech < 100) {
 			_spriteAnimationFrameIndex = _spriteAnimationsTable[action->_speech]._firstFrameIndex;
 			_currentSpriteAnimationLength = _spriteAnimationsTable[action->_speech]._numParts;
-			_mirroredDrawing = action->_flipX;
+			_mirroredDrawing = (action->_flipX != 0);
 			_characterFacingDirection = 5;
 			_mainLoopCounter2 = 0;
 		} else {
 			_backgroundSpriteCurrentAnimation = action->_speech - 100;
 			_backgroundSpriteCurrentFrame = 0;
-			_mirroredDrawing = 0;
+			_mirroredDrawing = false;
 		}
 	}
 	_pendingActionDelay = action->_delay;
@@ -998,13 +998,13 @@ void TuckerEngine::updateCursor() {
 				_actionVerb = 0;
 			}
 			_updateCursorFlag = true;
-			_actionVerbLocked = 1;
+			_actionVerbLocked = true;
 			_actionRequiresTwoObjects = false;
 		}
 	} else {
 		_updateCursorFlag = false;
 	}
-	if (_actionVerbLocked == 0) {
+	if (!_actionVerbLocked) {
 		setActionVerbUnderCursor();
 		if (_actionVerb == 0 && _locationNum == 63) {
 			_actionVerb = 8;
@@ -1032,7 +1032,7 @@ void TuckerEngine::updateCursor() {
 		_selectedObjectNum = 0;
 		_selectedObjectType = 0;
 	}
-	if (_actionVerbLocked == 0 && _selectedObjectType == 2 && _selectedObjectNum != 21) {
+	if (!_actionVerbLocked && _selectedObjectType == 2 && _selectedObjectNum != 21) {
 		_actionVerb = 2;
 	}
 	if (!_actionRequiresTwoObjects) {
@@ -1060,7 +1060,7 @@ void TuckerEngine::updateCursor() {
 		if (_mousePosY >= 150 && _mousePosX < 212) {
 			if (_mousePosX < 200) {
 				setActionVerbUnderCursor();
-				_actionVerbLocked = 1;
+				_actionVerbLocked = true;
 				_actionRequiresTwoObjects = false;
 			} else if (_mousePosY < 175) {
 				moveDownInventoryObjects();
@@ -1071,13 +1071,13 @@ void TuckerEngine::updateCursor() {
 			if (_selectedObjectType == 3) {
 				setActionForInventoryObject();
 			} else if (_actionVerb != 0) {
-				_actionVerbLocked = 0;
+				_actionVerbLocked = false;
 				setActionState();
 			} else if (_actionObj1Num == 261 || (_actionObj1Num == 205 && _flagsTable[143] == 0)) {
-				_actionVerbLocked = 0;
+				_actionVerbLocked = false;
 				setActionState();
 			} else {
-				_actionVerbLocked = 0;
+				_actionVerbLocked = false;
 				_actionRequiresTwoObjects = false;
 				_currentActionVerb = 0;
 				setSelectedObjectKey();
@@ -1143,14 +1143,14 @@ void TuckerEngine::updateCharactersPath() {
 		if (testLocationMask(_xPosCurrent - 1, _yPosCurrent)) {
 			--_xPosCurrent;
 			_characterFacingDirection = 3;
-			_characterBackFrontFacing = 0;
+			_characterBackFrontFacing = false;
 			flag = true;
 		}
 	} else if (_xPosCurrent < _selectedObject._xPos) {
 		if (testLocationMask(_xPosCurrent + 1, _yPosCurrent)) {
 			++_xPosCurrent;
 			_characterFacingDirection = 1;
-			_characterBackFrontFacing = 1;
+			_characterBackFrontFacing = true;
 			flag = true;
 		}
 	}
@@ -1168,7 +1168,7 @@ void TuckerEngine::updateCharactersPath() {
 		}
 	}
 	if (_locationNum == 25) {
-		if ((_backgroundSpriteCurrentAnimation != 3 || _characterBackFrontFacing != 0) && (_backgroundSpriteCurrentAnimation != 6 || _characterBackFrontFacing != 1)) {
+		if ((_backgroundSpriteCurrentAnimation != 3 || _characterBackFrontFacing) && (_backgroundSpriteCurrentAnimation != 6 || !_characterBackFrontFacing)) {
 			_xPosCurrent = xPos;
 			_yPosCurrent = yPos;
 			return;
@@ -1182,7 +1182,7 @@ void TuckerEngine::updateCharactersPath() {
 	}
 	_locationMaskCounter = 1;
 	_panelLockedFlag = false;
-	_locationMaskIgnore = 0;
+	_locationMaskIgnore = false;
 	if (_characterPrevFacingDirection <= 0 || _characterPrevFacingDirection >= 5) {
 		return;
 	}
@@ -1427,7 +1427,7 @@ void TuckerEngine::redrawPanelOverBackground() {
 
 void TuckerEngine::drawConversationTexts() {
 	int y = 141;
-	int flag = 0;
+	bool flag = false;
 	for (int i = 0; i <  _conversationOptionsCount; ++i) {
 		int color = 108;
 		if ((_mousePosY > y && _mousePosY < y + 11) || _nextTableToLoadIndex == i) {
@@ -1436,11 +1436,11 @@ void TuckerEngine::drawConversationTexts() {
 		drawSpeechText(0, y, _characterSpeechDataPtr, _instructionsActionsTable[i], color);
 		if (_mousePosY > y && _mousePosY < _conversationOptionLinesCount * 10 + y + 1) {
 			_nextTableToLoadIndex = i;
-			flag = 1;
+			flag = true;
 		}
 		y += _conversationOptionLinesCount * 10;
 	}
-	if (flag == 0) {
+	if (!flag) {
 		_nextTableToLoadIndex = -1;
 	}
 }
@@ -1757,25 +1757,25 @@ void TuckerEngine::drawCurrentSprite() {
 	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
 	int yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr->_yOffset;
 	int xPos = _xPosCurrent;
-	if (_mirroredDrawing == 0) {
+	if (!_mirroredDrawing) {
 		xPos += chr->_xOffset - 14;
 	} else {
 		xPos -= chr->_xSize + chr->_xOffset - 14;
 	}
 	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->_sourceOffset, chr->_xSize, chr->_ySize,
-		chr->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
+		chr->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, color248Only);
 	addDirtyRect(xPos, yPos, chr->_xSize, chr->_ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
 		yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->_yOffset;
 		xPos = _xPosCurrent;
-		if (_mirroredDrawing == 0) {
+		if (!_mirroredDrawing) {
 			xPos += chr2->_xOffset - 14;
 		} else {
 			xPos -= chr2->_xSize + chr2->_xOffset - 14;
 		}
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->_sourceOffset, chr2->_xSize, chr2->_ySize,
-			chr2->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0, color248Only);
+			chr2->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, color248Only);
 		addDirtyRect(xPos, yPos, chr2->_xSize, chr2->_ySize);
 	}
 }
@@ -2112,7 +2112,7 @@ void TuckerEngine::updateCharacterAnimation() {
 		}
 	} else if (_locationNum == 25) {
 		if (_backgroundSpriteCurrentFrame == 0) {
-			if (_characterBackFrontFacing == 0) {
+			if (!_characterBackFrontFacing) {
 				if (_characterBackFrontFacing != _characterPrevBackFrontFacing) {
 					_backgroundSpriteCurrentAnimation = 10;
 				} else if (_panelLockedFlag) {
@@ -2162,7 +2162,7 @@ void TuckerEngine::updateCharacterAnimation() {
 	}
 	int num = 0;
 	if (frame == 999 || (_characterFacingDirection != _characterPrevFacingDirection && _characterFacingDirection < 5)) {
-		_mirroredDrawing = 0;
+		_mirroredDrawing = false;
 		if (_characterFacingDirection == 6) {
 			if (_csDataHandled) {
 				switch (_selectedCharacterDirection) {
@@ -2177,7 +2177,7 @@ void TuckerEngine::updateCharacterAnimation() {
 					break;
 				default:
 					num = 16;
-					_mirroredDrawing = 1;
+					_mirroredDrawing = true;
 					break;
 				}
 			} else {
@@ -2189,7 +2189,7 @@ void TuckerEngine::updateCharacterAnimation() {
 		}
 		if (_characterFacingDirection == 0) {
 			if (_csDataHandled) {
-				_mirroredDrawing = 0;
+				_mirroredDrawing = false;
 				switch (_selectedCharacterDirection) {
 				case 1:
 					num = 3;
@@ -2199,7 +2199,7 @@ void TuckerEngine::updateCharacterAnimation() {
 					break;
 				case 3:
 					num = 1;
-					_mirroredDrawing = 1;
+					_mirroredDrawing = true;
 					break;
 				default:
 					num = 5;
@@ -2225,7 +2225,7 @@ void TuckerEngine::updateCharacterAnimation() {
 				break;
 			case 3:
 				num = 0;
-				_mirroredDrawing = 1;
+				_mirroredDrawing = true;
 				break;
 			case 4:
 				num = 2;
@@ -2320,7 +2320,7 @@ void TuckerEngine::handleMap() {
 						_changeBackgroundSprite = false;
 					}
 					_backgroundSpriteCurrentFrame = 0;
-					_mirroredDrawing = 0;
+					_mirroredDrawing = false;
 					if (_locationNum == 25) {
 						_backgroundSpriteDataPtr = _sprA02Table[_backgroundSpriteCurrentAnimation];
 						_backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
@@ -2919,8 +2919,8 @@ void TuckerEngine::updateItemsGfxColors(int color1, int color128) {
 }
 
 bool TuckerEngine::testLocationMask(int x, int y) {
-	if (_locationMaskType > 0 || _locationMaskIgnore > 0) {
-		return 1;
+	if (_locationMaskType > 0 || _locationMaskIgnore) {
+		return true;
 	}
 	if (_locationNum == 26 || _locationNum == 32) {
 		y -= 3;
@@ -3168,7 +3168,7 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_buw:
 		_selectedObject._xPos = readTableInstructionParam(3);
 		_selectedObject._yPos = readTableInstructionParam(3);
-		_locationMaskIgnore = 1;
+		_locationMaskIgnore = true;
 		_panelLockedFlag = true;
 		return 0;
 	case kCode_bux:
@@ -3194,7 +3194,7 @@ int TuckerEngine::executeTableInstruction() {
 		startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, kMaxSoundVolume);
 		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 		_actionTextColor = 181 + index;
-		if (_tableInstructionFlag == 0) {
+		if (!_tableInstructionFlag) {
 			_actionPosX = _tableInstructionItemNum1;
 			_actionPosY = _tableInstructionItemNum2;
 		} else {
@@ -3291,12 +3291,12 @@ int TuckerEngine::executeTableInstruction() {
 		_csDataLoaded = false;
 		return 3;
 	case kCode_ssp:
-		_tableInstructionFlag = 0;
+		_tableInstructionFlag = false;
 		_tableInstructionItemNum1 = readTableInstructionParam(3);
 		_tableInstructionItemNum2 = readTableInstructionParam(3);
 		return 0;
 	case kCode_s0p:
-		_tableInstructionFlag = 1;
+		_tableInstructionFlag = true;
 		_tableInstructionObj1Table[index] = readTableInstructionParam(3);
 		_tableInstructionObj2Table[index] = readTableInstructionParam(3);
 		return 0;
@@ -3555,7 +3555,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 			_selectedObjectType = 0;
 			_selectedObjectNum = 0;
 			_actionVerb = 0;
-			_actionVerbLocked = 0;
+			_actionVerbLocked = false;
 			_forceRedrawPanelItems = true;
 			_panelState = 2;
 			setCursorType(1);
@@ -3580,7 +3580,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 				_actionVerb = 0;
 				_selectedObjectType = 0;
 				_selectedObjectNum = 0;
-				_actionVerbLocked = 0;
+				_actionVerbLocked = false;
 			}
 		}
 		break;
@@ -3649,14 +3649,14 @@ int TuckerEngine::setLocationAnimationUnderCursor() {
 void TuckerEngine::setActionForInventoryObject() {
 	if (_actionVerb == 0 || _actionVerb == 2 || _actionVerb == 6 || _actionVerb == 7) {
 		playSpeechForAction(_actionVerb);
-		_actionVerbLocked = 0;
+		_actionVerbLocked = false;
 		_actionRequiresTwoObjects = false;
 		return;
 	}
 	if (_actionVerb == 3 || _actionVerb == 4) {
 		if (!(_partNum == 2 && _selectedObjectNum == 19) && !(_partNum == 3 && _selectedObjectNum == 42)) {
 			playSpeechForAction(_actionVerb);
-			_actionVerbLocked = 0;
+			_actionVerbLocked = false;
 			_actionRequiresTwoObjects = false;
 			return;
 		}
@@ -3685,7 +3685,7 @@ void TuckerEngine::setActionForInventoryObject() {
 		_actionCharacterNum = 99;
 		setCursorType(2);
 		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-		_actionVerbLocked = 0;
+		_actionVerbLocked = false;
 		_actionRequiresTwoObjects = false;
 		return;
 	}
@@ -3693,7 +3693,7 @@ void TuckerEngine::setActionForInventoryObject() {
 	if ((_partNum == 3 && (_actionObj1Num == 6 || _actionObj1Num == 3 || _actionObj1Num == 17 || _actionObj1Num == 33)) ||
 		(_partNum == 2 && _actionObj1Num == 19) ||
 		(_partNum == 3 && (_actionObj1Num == 42 && _selectedObjectNum == 18)) ) {
-		_actionVerbLocked = 0;
+		_actionVerbLocked = false;
 		_actionRequiresTwoObjects = false;
 		_locationMaskCounter = 1;
 		setActionState();
@@ -3702,7 +3702,7 @@ void TuckerEngine::setActionForInventoryObject() {
 	if (!_actionRequiresTwoObjects) {
 		_actionRequiresTwoObjects = true;
 	} else {
-		_actionVerbLocked = 0;
+		_actionVerbLocked = false;
 		_actionRequiresTwoObjects = false;
 		_locationMaskCounter = 1;
 		setActionState();
@@ -3762,12 +3762,12 @@ void TuckerEngine::drawSpeechText(int xStart, int y, const uint8 *dataPtr, int n
 		}
 	}
 	int count = 0;
-	int flag = 0;
+	bool flag = false;
 	struct {
 		int w, count, offset;
 	} lines[5];
 	lines[0].offset = getPositionForLine(num, dataPtr);
-	while (flag == 0 && count < 4) {
+	while (!flag && count < 4) {
 		int lineCharsCount, lineWidth;
 		flag = splitSpeechTextLines(dataPtr, lines[count].offset, x, lineCharsCount, lineWidth);
 		lines[count].w = lineWidth;
@@ -3796,7 +3796,7 @@ void TuckerEngine::drawSpeechText(int xStart, int y, const uint8 *dataPtr, int n
 	}
 }
 
-int TuckerEngine::splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int &lineCharsCount, int &lineWidth) {
+bool TuckerEngine::splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int &lineCharsCount, int &lineWidth) {
 	int count = 0;
 	int w = 0;
 	lineCharsCount = 0;
@@ -3810,11 +3810,11 @@ int TuckerEngine::splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int
 		++count;
 		++pos;
 	}
-	int ret = 0;
+	bool ret = false;
 	if (x + 1 > w) {
 		lineCharsCount = count;
 		lineWidth = w;
-		ret = 1;
+		ret = true;
 	}
 	return ret;
 }
