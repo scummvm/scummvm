@@ -819,9 +819,9 @@ void TuckerEngine::loadSprA02_01() {
 void TuckerEngine::unloadSprA02_01() {
 	for (int i = 1; i < kSprA02TableSize; ++i) {
 		free(_sprA02Table[i]);
-		_sprA02Table[i] = 0;
+		_sprA02Table[i] = nullptr;
 	}
-	_sprA02Table[0] = 0;
+	_sprA02Table[0] = nullptr;
 }
 
 void TuckerEngine::loadSprC02_01() {
@@ -843,9 +843,9 @@ void TuckerEngine::loadSprC02_01() {
 void TuckerEngine::unloadSprC02_01() {
 	for (int i = 1; i < kSprC02TableSize; ++i) {
 		free(_sprC02Table[i]);
-		_sprC02Table[i] = 0;
+		_sprC02Table[i] = nullptr;
 	}
-	_sprC02Table[0] = 0;
+	_sprC02Table[0] = nullptr;
 }
 
 void TuckerEngine::loadFx() {

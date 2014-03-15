@@ -86,17 +86,17 @@ void TuckerEngine::allocateBuffers() {
 	_charsetGfxBuf = (uint8 *)calloc(1, 22400);
 	_cursorGfxBuf = (uint8 *)calloc(1, 256 * 7);
 	_infoBarBuf = (uint8 *)calloc(1, 1000);
-	_charNameBuf = 0;
-	_bgTextBuf = 0;
-	_objTxtBuf = 0;
+	_charNameBuf = nullptr;
+	_bgTextBuf = nullptr;
+	_objTxtBuf = nullptr;
 	_panelObjectsGfxBuf = (uint8 *)calloc(1, 20000);
-	_data5Buf = 0;
+	_data5Buf = nullptr;
 	_data3GfxBuf = (uint8 *)calloc(1, 250000);
 	_quadBackgroundGfxBuf = (uint8 *)calloc(1, 320 * 140 * 4);
 	_locationBackgroundMaskBuf = (uint8 *)calloc(1, 640 * 140);
-	_csDataBuf = 0;
+	_csDataBuf = nullptr;
 	_spritesGfxBuf = (uint8 *)calloc(1, 160000);
-	_ptTextBuf = 0;
+	_ptTextBuf = nullptr;
 	memset(_charWidthTable, 0, sizeof(_charWidthTable));
 }
 
@@ -226,7 +226,7 @@ void TuckerEngine::resetVariables() {
 	_selectedCharacterNum = 0;
 	_actionObj1Type = _actionObj2Type = 0;
 	_actionObj1Num = _actionObj2Num = 0;
-	_actionRequiresTwoObjects = 0;
+	_actionRequiresTwoObjects = false;
 	_actionVerbLocked = 0;
 	_actionPosX = 0;
 	_actionPosY = 0;
@@ -250,7 +250,7 @@ void TuckerEngine::resetVariables() {
 	_nextTableToLoadIndex = 0;
 	memset(_nextTableToLoadTable, 0, sizeof(_nextTableToLoadTable));
 	_soundInstructionIndex = 0;
-	_tableInstructionsPtr = 0;
+	_tableInstructionsPtr = nullptr;
 	memset(_tableInstructionObj1Table, 0, sizeof(_tableInstructionObj1Table));
 	memset(_tableInstructionObj2Table, 0, sizeof(_tableInstructionObj2Table));
 	_tableInstructionFlag = 0;
@@ -269,7 +269,7 @@ void TuckerEngine::resetVariables() {
 	_skipCurrentCharacterDraw = false;
 	_yPosCurrent = 131;
 	_xPosCurrent = 160;
-	_characterSpeechDataPtr = 0;
+	_characterSpeechDataPtr = nullptr;
 	_ptTextOffset = 0;
 	memset(_characterAnimationsTable, 0, sizeof(_characterAnimationsTable));
 	memset(_characterStateTable, 0, sizeof(_characterStateTable));
@@ -296,12 +296,12 @@ void TuckerEngine::resetVariables() {
 	_updateSpriteFlag2 = false;
 
 	_mirroredDrawing = 0;
-	_loadLocBufPtr = 0;
-	_backgroundSpriteDataPtr = 0;
+	_loadLocBufPtr = nullptr;
+	_backgroundSpriteDataPtr = nullptr;
 	_locationHeight = 0;
 	_scrollOffset = 0;
 	_currentGfxBackgroundCounter = 0;
-	_currentGfxBackground = 0;
+	_currentGfxBackground = nullptr;
 	_fadePaletteCounter = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
 	_fullRedraw = false;

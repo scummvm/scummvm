@@ -487,11 +487,11 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	memset(_animationPalette, 0, sizeof(_animationPalette));
 	_soundSeqDataCount = 0;
 	_soundSeqDataIndex = 0;
-	_soundSeqData = 0;
+	_soundSeqData = nullptr;
 	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
 	_updateScreenWidth = 0;
 	_updateScreenPicture = false;
-	_picBufPtr = _pic2BufPtr = 0;
+	_picBufPtr = _pic2BufPtr = nullptr;
 
 	_changeToNextSequence = false;
 	_updateFunc = nullptr;
@@ -731,9 +731,8 @@ void AnimationSequencePlayer::fadeOutPalette() {
 void AnimationSequencePlayer::unloadAnimation() {
 	_mixer->stopAll();
 	free(_picBufPtr);
-	_picBufPtr = 0;
 	free(_pic2BufPtr);
-	_pic2BufPtr = 0;
+	_picBufPtr = _pic2BufPtr = nullptr;
 }
 
 uint8 *AnimationSequencePlayer::loadPicture(const char *fileName) {
