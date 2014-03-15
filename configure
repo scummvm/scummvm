@@ -2060,6 +2060,7 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -msoft-float"
 				ABI="armeabi"
 				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM_ARCH="arm"
 				;;
 			android-v7a | android-arm-v7a)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
@@ -2068,6 +2069,7 @@ case $_host_os in
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
 				ABI="armeabi-v7a"
 				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM_ARCH="arm"
 				;;
 			android-mips)
 				CXXFLAGS="$CXXFLAGS -march=mips32"
@@ -2075,6 +2077,7 @@ case $_host_os in
 				ABI="mips"
 				# Platform version 9 is needed as earlier versions of platform do not support this arch.
 				ANDROID_PLATFORM=9
+				ANDROID_PLATFORM_ARCH="mips"
 				;;
 			android-x86)
 				CXXFLAGS="$CXXFLAGS -march=i686"
@@ -2082,6 +2085,7 @@ case $_host_os in
 				ABI="x86"
 				# Platform version 9 is needed as earlier versions of platform do not support this arch.
 				ANDROID_PLATFORM=9
+				ANDROID_PLATFORM_ARCH="x86"
 				;;
 			ouya)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
@@ -2090,13 +2094,13 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -mfpu=neon"
 				ABI="armeabi-v7a"
 				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM_ARCH="arm"
 				;;
 		esac
 
 		# Setup platform version and arch
-		ABI_SHORT=`echo $ABI | cut -c1-3`
-		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ABI_SHORT"
-		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ABI_SHORT"
+		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
+		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
 
 		CXXFLAGS="$CXXFLAGS -fpic"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections"
