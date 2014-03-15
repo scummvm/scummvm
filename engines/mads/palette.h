@@ -32,8 +32,7 @@ class MADSEngine;
 
 #define PALETTE_USAGE_COUNT 4
 
-//#define VGA_COLOR_TRANS(x) (((((int)(x)) + 1) << 2) - 1)
-#define VGA_COLOR_TRANS(x) (x)
+#define VGA_COLOR_TRANS(x) (((((int)(x)) + 1) << 2) - 1)
 
 struct RGB4 {
 	byte r;
@@ -186,11 +185,6 @@ public:
 	 * specified RGB pair
 	 */
 	uint8 palIndexFromRgb(byte r, byte g, byte b, byte *paletteData = nullptr);
-
-	/**
-	 * Decodes a palette and loads it into the main palette
-	 */
-	void decodePalette(Common::SeekableReadStream *palStream, uint flags);
 
 	/**
 	 * Sets a small set of system/core colors needed by the game

@@ -58,25 +58,27 @@ MSprite::MSprite(): MSurface() {
 	_encoding = 0;
 }
 
-MSprite::MSprite(Common::SeekableReadStream *source, const Common::Point &offset, 
-		int widthVal, int heightVal, bool decodeRle, uint8 encodingVal)
-		: MSurface(widthVal, heightVal), 
-		_encoding(encodingVal), _offset(offset) {
-
+MSprite::MSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette,
+		const Common::Rect &bounds): 
+		MSurface(bounds.width(), bounds.height()), 
+		_encoding(0), _offset(Common::Point(bounds.left, bounds.top)) {
 	// Load the sprite data
-	loadSprite(source);
+	loadSprite(source, palette);
 }
 
 MSprite::~MSprite() {
 }
 
-void MSprite::loadSprite(Common::SeekableReadStream *source) {
+void MSprite::loadSprite(Common::SeekableReadStream *source,
+		const Common::Array<RGB6> &palette) {
 	byte *outp, *lineStart;
 	bool newLine = false;
 
 	outp = getData();
 	lineStart = getData();
-	Common::fill(outp, outp + this->w * this->h, getTransparencyIndex());
+	int spriteSize = this->w * this->h;
+	byte transIndex = getTransparencyIndex();
+	Common::fill(outp, outp + spriteSize, transIndex);
 
 	for (;;) {
 		byte cmd1, cmd2, count, pixel;
@@ -119,6 +121,13 @@ void MSprite::loadSprite(Common::SeekableReadStream *source) {
 				}
 			}
 		}
+	}
+
+	// Do a final iteration over the sprite to convert it's pixels to
+	// the final positions in the main palette
+	for (outp = getData(); spriteSize > 0; --spriteSize, ++outp) {
+		if (*outp != transIndex)
+			*outp = palette[*outp]._palIndex;
 	}
 }
 

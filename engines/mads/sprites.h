@@ -103,11 +103,11 @@ struct SpriteFrameHeader {
 
 class MSprite: public MSurface {
 private:
-	void loadSprite(Common::SeekableReadStream *source);
+	void loadSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette);
 public:
 	MSprite();
-	MSprite(Common::SeekableReadStream *source, const Common::Point &offset, 
-		int widthVal, int heightVal, bool decodeRle = true, uint8 encodingVal = 0);
+	MSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette,
+		const Common::Rect &bounds);
 	virtual ~MSprite();
 
 	Common::Point _offset;

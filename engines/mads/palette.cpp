@@ -497,21 +497,6 @@ void Palette::processLists(int count, byte *pal1, byte *pal2) {
 	} while (continueFlag);
 }
 
-
-void Palette::decodePalette(Common::SeekableReadStream *palStream, uint flags) {
-	int numColors = palStream->readUint16LE();
-	assert(numColors <= 252);
-
-	// Load in the palette
-	Common::Array<RGB6> palette;
-	palette.resize(numColors);
-	for (int i = 0; i < numColors; ++i)
-		palette[i].load(palStream);
-	
-	// Process the palette data
-	_paletteUsage.process(palette, flags);
-}
-
 void Palette::setSystemPalette() {
 	byte palData[4 * 3];
 	palData[0 * 3] = palData[0 * 3 + 1] = palData[0 * 3 + 2] = 0;

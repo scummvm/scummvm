@@ -73,10 +73,20 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 	delete spriteStream;
 
 	// Get the palette data
-	spriteStream = sprite.getItemStream(2);
-	_vm->_palette->decodePalette(spriteStream, flags);
+	Common::SeekableReadStream *palStream = sprite.getItemStream(2);
+	Common::Array<RGB6> palette;
 
-	delete spriteStream;
+	int numColors = palStream->readUint16LE();
+	assert(numColors <= 252);
+
+	// Load in the palette
+	palette.resize(numColors);
+	for (int i = 0; i < numColors; ++i)
+		palette[i].load(palStream);
+
+	// Process the palette data
+	_vm->_palette->_paletteUsage.process(palette, flags);
+	delete palStream;
 
 	spriteStream = sprite.getItemStream(1);
 	Common::SeekableReadStream *spriteDataStream = sprite.getItemStream(3);
@@ -103,9 +113,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 		if (_mode == 0) {
 			// Create a frame and decompress the raw pixel data
 			uint32 currPos = (uint32)spriteDataStream->pos();
-			frame._frame = new MSprite(spriteDataStream, 
-				Common::Point(frame._bounds.left, frame._bounds.top),
-				frame._bounds.width(), frame._bounds.height(), false);
+			frame._frame = new MSprite(spriteDataStream, palette, frame._bounds);
 			assert((uint32)spriteDataStream->pos() == (currPos + frameSize));
 		}
 
@@ -130,9 +138,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 
 			// Load the frames
 			Common::MemoryReadStream *rs = new Common::MemoryReadStream(destData, frameSizes[curFrame]);
-			_frames[curFrame]._frame = new MSprite(rs, 
-				Common::Point(_frames[curFrame]._bounds.left, _frames[curFrame]._bounds.top),
-				_frames[curFrame]._bounds.width(), _frames[curFrame]._bounds.height(), false);
+			_frames[curFrame]._frame = new MSprite(rs, palette, _frames[curFrame]._bounds);
 			delete rs;
 
 			delete[] srcData;
