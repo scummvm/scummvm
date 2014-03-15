@@ -291,6 +291,7 @@ MagnetEffect::MagnetEffect(Myst3Engine *vm) :
 		_lastSoundId(0),
 		_lastTime(0),
 		_position(0),
+		_lastAmpl(0),
 		_shakeStrength(nullptr) {
 }
 
@@ -346,6 +347,18 @@ bool MagnetEffect::update() {
 		_shakeStrength->seek(soundPosition, SEEK_SET);
 		_vm->_state->setMagnetEffectUnk3(_shakeStrength->readByte());
 
+		// Update the vertical displacements
+		float ampl = (_vm->_state->getMagnetEffectUnk1() + _vm->_state->getMagnetEffectUnk3())
+				/ (float)_vm->_state->getMagnetEffectUnk2();
+
+		if (ampl != _lastAmpl) {
+			for (uint i = 0; i < 256; i++) {
+				_verticalDisplacement[i] = sin(i * 2 * M_PI / 255.0) * ampl;
+			}
+
+			_lastAmpl = ampl;
+		}
+
 		// Update the position in the effect cycle
 		uint32 time = g_system->getMillis();
 		if (_lastTime) {
@@ -369,7 +382,30 @@ void MagnetEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Sur
 	if (!mask)
 		error("No mask for face %d", face);
 
-	//TODO
+	apply(src, dst, mask, _position * 256.0);
+}
+
+void MagnetEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics::Surface *mask, int32 position) {
+	uint32 *dstPtr = (uint32 *)dst->getPixels();
+	byte *maskPtr = (byte *)mask->getPixels();
+
+	for (uint y = 0; y < dst->h; y++) {
+		for (uint x = 0; x < dst->w; x++) {
+			uint8 maskValue = *maskPtr;
+
+			if (maskValue != 0) {
+				uint32 displacement = _verticalDisplacement[(maskValue + position) % 256];
+
+				uint32 srcValue1 = *(uint32 *) src->getBasePtr(x, y + displacement);
+				uint32 srcValue2 = *(uint32 *) src->getBasePtr(x, y);
+
+				*dstPtr = 0xFF000000 | ((0x007F7F7F & (srcValue1 >> 1)) + (0x007F7F7F & (srcValue2 >> 1)));
+			}
+
+			maskPtr++;
+			dstPtr++;
+		}
+	}
 }
 
 ShakeEffect::ShakeEffect(Myst3Engine *vm) :

@@ -97,11 +97,15 @@ public:
 protected:
 	MagnetEffect(Myst3Engine *vm);
 
+	void apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics::Surface *mask, int32 position);
+
 	int32 _lastSoundId;
 	Common::MemoryReadStream *_shakeStrength;
 
 	uint32 _lastTime;
 	float _position;
+	float _lastAmpl;
+	int32 _verticalDisplacement[256];
 };
 
 class ShakeEffect : public Effect {
