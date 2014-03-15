@@ -29,7 +29,7 @@ namespace Voyeur {
 
 #define BOLT_GROUP_SIZE 16
 
-BoltFilesState::BoltFilesState() {
+BoltFilesState::BoltFilesState(VoyeurEngine *vm) : _vm(vm) {
 	_curLibPtr = NULL;
 	_curGroupPtr = NULL;
 	_curMemberPtr = NULL;
@@ -174,20 +174,24 @@ void BoltFilesState::nextBlock() {
 
 FilesManager::FilesManager(VoyeurEngine *vm) {
 	_curLibPtr = nullptr;
-	_boltFilesState._vm = vm;
+	_boltFilesState = new BoltFilesState(vm);
+}
+
+FilesManager::~FilesManager() {
+	delete _boltFilesState;
 }
 
 bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFile) {
 	if (boltFile != NULL) {
-		_boltFilesState._curLibPtr = boltFile;
+		_boltFilesState->_curLibPtr = boltFile;
 		return true;
 	}
 
 	// Create the bolt file interface object and load the index
 	if (filename == "bvoy.blt")
-		boltFile = _boltFilesState._curLibPtr = new BVoyBoltFile(_boltFilesState);
+		boltFile = _boltFilesState->_curLibPtr = new BVoyBoltFile(*_boltFilesState);
 	else if (filename == "stampblt.blt")
-		boltFile = _boltFilesState._curLibPtr = new StampBoltFile(_boltFilesState);
+		boltFile = _boltFilesState->_curLibPtr = new StampBoltFile(*_boltFilesState);
 	else
 		error("Unknown bolt file specified");
 
