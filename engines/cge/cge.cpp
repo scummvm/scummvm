@@ -104,7 +104,6 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_now = 1;
 	_lev = -1;
 	_mode = 0;
-	_soundOk = 1;
 	_gameCase2Cpt = 0;
 	_offUseCount  = 0;
 	_volume[0] = 0;

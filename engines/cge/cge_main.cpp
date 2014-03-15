@@ -397,7 +397,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 		}
 	} else {
 		// Loading game
-		if (_soundOk == 1 && _mode == 0) {
+		if (_mode == 0) {
 			// Skip Digital and Midi volumes, useless under ScummVM
 			sndSetVolume();
 		}
@@ -1483,25 +1483,6 @@ bool CGEEngine::showTitle(const char *name) {
 	selectPocket(-1);
 	_vga->sunrise(_vga->_sysPal);
 
-	if (_mode < 2 && !_soundOk) {
-		_vga->copyPage(1, 2);
-		_vga->copyPage(0, 1);
-		_vga->_showQ->append(_mouse);
-		_mouse->on();
-		for (; !_commandHandler->idle() || Vmenu::_addr;) {
-			mainLoop();
-			if (_quitFlag)
-				return false;
-		}
-
-		_mouse->off();
-		_vga->_showQ->clear();
-		_vga->copyPage(0, 2);
-		_soundOk = 2;
-		if (_music)
-			_midiPlayer->loadMidi(0);
-	}
-
 	if (_mode < 2) {
 		// At this point the game originally set the protection variables
 		// used by the copy protection check
@@ -1540,7 +1521,7 @@ void CGEEngine::cge_main() {
 	if (_horzLine)
 		_horzLine->_flags._hide = true;
 
-	if (_music && _soundOk)
+	if (_music)
 		_midiPlayer->loadMidi(0);
 
 	if (_startGameSlot != -1) {
