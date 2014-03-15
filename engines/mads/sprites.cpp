@@ -240,6 +240,7 @@ void SpriteSlots::drawBackground() {
 		DirtyArea &dirtyArea = scene._dirtyAreas[i];
 
 		if (spriteSlot._spriteType >= ST_NONE) {
+			// Foreground sprite, so we can ignore it
 			dirtyArea._active = false;
 		} else {
 			dirtyArea._active = true;
@@ -249,6 +250,7 @@ void SpriteSlots::drawBackground() {
 			MSprite *frame = asset->getFrame(spriteSlot._frameNumber);
 
 			if (spriteSlot._spriteType == ST_BACKGROUND) {
+				// Background object, so need to draw it
 				Common::Point pt = spriteSlot._position;
 				if (spriteSlot._scale != -1) {
 					// Adjust the drawing position
@@ -258,8 +260,7 @@ void SpriteSlots::drawBackground() {
 
 				if (spriteSlot._depth <= 1) {
 					asset->draw(&scene._backgroundSurface, spriteSlot._frameNumber, pt);
-				}
-				else if (scene._depthStyle == 0) {
+				} else if (scene._depthStyle == 0) {
 					asset->depthDraw(&scene._backgroundSurface, &scene._depthSurface, spriteSlot._frameNumber,
 						pt, spriteSlot._depth);
 				} else {
@@ -355,7 +356,7 @@ void SpriteSlots::drawForeground(MSurface *s) {
 
 void SpriteSlots::cleanUp() {
 	for (int i = (int)size() - 1; i >= 0; --i) {
-		if ((*this)[i]._spriteType >= ST_NONE)
+		if ((*this)[i]._spriteType < ST_NONE)
 			remove_at(i);
 	}
 }
