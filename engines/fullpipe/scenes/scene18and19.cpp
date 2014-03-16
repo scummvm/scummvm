@@ -286,9 +286,9 @@ void scene18_initScene1(Scene *sc) {
 
 	g_vars->scene18_girl->setOXY(newx + x, newy + y);
 
-	g_vars->scene18_var12 = false;
+	g_vars->scene18_wheelFlipper = false;
 	g_vars->scene18_jumpDistance = -1;
-	g_vars->scene18_var14 = -1;
+	g_vars->scene18_jumpAngle = -1;
 
 	if (g_vars->scene18_enteredTrubaRight) {
 		if (sc->_sceneId == SC_19)
@@ -322,15 +322,15 @@ void scene18_initScene2(Scene *sc) {
 	scene18_setupSwingers(armchair, sc);
 
 	g_vars->scene18_rotationCounter = 0;
-	g_vars->scene18_var12 = false;
+	g_vars->scene18_wheelFlipper = false;
 	g_vars->scene18_wheelIsTurning = true;
-	g_vars->scene18_var23 = -1;
-	g_vars->scene18_var24 = 0;
-	g_vars->scene18_var25 = 0;
-	g_vars->scene18_var26 = true;
+	g_vars->scene18_kidIsOnWheel = -1;
+	g_vars->scene18_boyIsOnWheel = 0;
+	g_vars->scene18_girlIsOnWheel = 0;
+	g_vars->scene18_boyJumpedOff = true;
 	g_vars->scene18_manWheelPosTo = -1;
 	g_vars->scene18_jumpDistance = -1;
-	g_vars->scene18_var14 = -1;
+	g_vars->scene18_jumpAngle = -1;
 	g_vars->scene18_manIsReady = false;
 	g_vars->scene18_enteredTrubaRight = 0;
 	g_vars->scene18_boy = sc->getStaticANIObject1ById(ANI_BOY18, -1);
@@ -457,8 +457,8 @@ void sceneHandler18and19_showGirlJumpTo() {
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->changeStatics2(ST_KSL_JUMPGIRL);
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->startAnim(MV_KSL_INGIRL, 0, -1);
 
-	g_vars->scene18_var23--;
-	g_vars->scene18_var25--;
+	g_vars->scene18_kidIsOnWheel--;
+	g_vars->scene18_girlIsOnWheel--;
 }
 
 void sceneHandler18and19_showGirlJump() {
@@ -482,8 +482,8 @@ void sceneHandler18and19_showGirlJump() {
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->changeStatics2(ST_KSL_REACT);
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
 
-	g_vars->scene18_var23 = 1;
-	g_vars->scene18_var25++;
+	g_vars->scene18_kidIsOnWheel = 1;
+	g_vars->scene18_girlIsOnWheel++;
 }
 
 void sceneHandler18and19_showBoyJumpTo() {
@@ -494,8 +494,8 @@ void sceneHandler18and19_showBoyJumpTo() {
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->changeStatics2(ST_KSL_JUMPBOY);
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->startAnim(MV_KSL_INBOY, 0, -1);
 
-	g_vars->scene18_var23--;
-	g_vars->scene18_var24--;
+	g_vars->scene18_kidIsOnWheel--;
+	g_vars->scene18_boyIsOnWheel--;
 }
 
 void sceneHandler18and19_showBoyJump() {
@@ -519,7 +519,7 @@ void sceneHandler18and19_showBoyJump() {
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->changeStatics2(ST_KSL_REACT);
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
 
-	g_vars->scene18_var26 = true;
+	g_vars->scene18_boyJumpedOff = true;
 }
 
 void sceneHandler18and19_boyJumpTo() {
@@ -609,21 +609,21 @@ void sceneHandler18and19_drawRiders() {
 				swinger->ani->changeStatics2(ST_KSL_GIRL);
 				swinger->ani->startAnim(MV_KSL_JUMPGIRL, 0, -1);
 				g_vars->scene18_kidWheelPos = i;
-			} else if (g_vars->scene18_var23) {
-				if (g_vars->scene18_var24 > 0 && (swinger->sflags & 1) && swinger->angle >= ANGLE(185) && oldangle < ANGLE(185)) {
+			} else if (g_vars->scene18_kidIsOnWheel) {
+				if (g_vars->scene18_boyIsOnWheel > 0 && (swinger->sflags & 1) && swinger->angle >= ANGLE(185) && oldangle < ANGLE(185)) {
 					g_vars->scene18_kidWheelPosTo = i;
 					sceneHandler18and19_boyJumpTo();
 				}
-			} else if (g_vars->scene18_var25 > 0 && (swinger->sflags & 1) && swinger->angle >= ANGLE(187) && oldangle < ANGLE(187)) {
+			} else if (g_vars->scene18_girlIsOnWheel > 0 && (swinger->sflags & 1) && swinger->angle >= ANGLE(187) && oldangle < ANGLE(187)) {
 				g_vars->scene18_kidWheelPosTo = i;
 				sceneHandler18and19_girlJumpTo();
 			}
 
 			if (swinger->angle >= ANGLE(200) && oldangle < ANGLE(200)) {
-				if (g_vars->scene18_var26)
-					g_vars->scene18_var24++;
+				if (g_vars->scene18_boyJumpedOff)
+					g_vars->scene18_boyIsOnWheel++;
 
-				g_vars->scene18_var26 = false;
+				g_vars->scene18_boyJumpedOff = false;
 			}
 		}
 
@@ -647,7 +647,7 @@ void sceneHandler18and19_drawRiders() {
 
 		if (g_vars->scene18_jumpDistance > 0) {
 			if (swinger->sflags & 0x20) {
-				double newa = (double)g_vars->scene18_var14 * ANGLE(1);
+				double newa = (double)g_vars->scene18_jumpAngle * ANGLE(1);
 
 				if (newa <= swinger->angle && oldangle < newa) {
 					swinger->ani->changeStatics2(ST_KSL_MAN);
@@ -778,10 +778,10 @@ int sceneHandler18(ExCommand *cmd) {
 			g_vars->scene18_manIsReady = false;
 
 		if (g_vars->scene18_bridgeIsConvoluted) {
-			if (!g_vars->scene18_var12)
+			if (!g_vars->scene18_wheelFlipper)
 				sceneHandler18and19_drawRiders();
 
-			g_vars->scene18_var12 = !g_vars->scene18_var12;
+			g_vars->scene18_wheelFlipper = !g_vars->scene18_wheelFlipper;
 
 			if (!g_vars->scene18_whirlgig->_movement) {
 				g_vars->scene18_whirlgig->startAnim(MV_WHR18_SPIN, 0, -1);
@@ -805,8 +805,8 @@ void sceneHandler19_updateNumRides() {
 	if (numRides > 1) {
 		g_fp->setObjectState(sO_Girl, g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
-		g_vars->scene18_var23 = 1;
-		g_vars->scene18_var25++;
+		g_vars->scene18_kidIsOnWheel = 1;
+		g_vars->scene18_girlIsOnWheel++;
 
 		numRides = 0;
 	}
@@ -848,25 +848,25 @@ int sceneHandler19(ExCommand *cmd) {
 			switch (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY)) {
 			case PIC_SC19_RTRUBA1:
 				g_vars->scene18_jumpDistance = 1;
-				g_vars->scene18_var14 = 331;
+				g_vars->scene18_jumpAngle = 331;
 				cmd->_messageKind = 0;
 				break;
 
 			case PIC_SC19_RTRUBA2:
 				g_vars->scene18_jumpDistance = 2;
-				g_vars->scene18_var14 = 350;
+				g_vars->scene18_jumpAngle = 350;
 				cmd->_messageKind = 0;
 				break;
 
 			case PIC_SC19_RTRUBA3:
 				g_vars->scene18_jumpDistance = 3;
-				g_vars->scene18_var14 = 9;
+				g_vars->scene18_jumpAngle = 9;
 				cmd->_messageKind = 0;
 				break;
 
 			default:
 				g_vars->scene18_jumpDistance = -1;
-				g_vars->scene18_var14 = -1;
+				g_vars->scene18_jumpAngle = -1;
 				cmd->_messageKind = 0;
 				break;
 			}
@@ -901,10 +901,10 @@ int sceneHandler19(ExCommand *cmd) {
 		}
 
 		if (g_vars->scene18_bridgeIsConvoluted) {
-			if (!g_vars->scene18_var12)
+			if (!g_vars->scene18_wheelFlipper)
 				sceneHandler18and19_drawRiders();
 
-			g_vars->scene18_var12 = !g_vars->scene18_var12;
+			g_vars->scene18_wheelFlipper = !g_vars->scene18_wheelFlipper;
 
 			if (!g_vars->scene18_whirlgig->_movement) {
 				g_vars->scene18_whirlgig->startAnim(MV_WHR19_SPIN, 0, -1);
