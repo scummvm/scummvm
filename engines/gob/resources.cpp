@@ -209,6 +209,7 @@ void Resources::unload(bool del) {
 	_totResourceTable = 0;
 	_extResourceTable = 0;
 	_totTextTable = 0;
+	_totResStart = 0;
 	_totData = 0;
 	_totSize = 0;
 	_imData = 0;
@@ -232,6 +233,8 @@ bool Resources::loadTOTResourceTable() {
 	Common::SeekableReadStream *stream = totFile.getStream();
 	if (!stream)
 		return false;
+
+	_totResStart = totProps.scriptEnd;
 
 	if ((totProps.resourcesOffset == 0xFFFFFFFF) ||
 	    (totProps.resourcesOffset == 0))
@@ -271,7 +274,6 @@ bool Resources::loadTOTResourceTable() {
 			item.type = kResourceTOT;
 	}
 
-	_totResStart = totProps.scriptEnd;
 	_totSize = stream->size() - _totResStart;
 
 	if (_totSize <= 0)
