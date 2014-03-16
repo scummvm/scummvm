@@ -1348,7 +1348,7 @@ const char *germanTextStrings[NUM_TEXT_ENTRIES] = {
 	"Abbrechen", "Schneller Text\x8b",
 	"Langsamer Text\x8b", "Sound an", "Sound aus", "(nichts)", " nach ", " an ", " f\x8cr ",
 	"und dann", "Schlu\x92", "Sicher (j/n)?",
-	"Du tr\x8dgst", "niets", "und du hast ", "silberm\x8cnzen", "silberm\x8cnzen"
+	"Du tr\x8dgst ", "nichts.", "und du hast ", "silberm\x8cnzen", "silberm\x8cnzen",
 	"keinen ", "keine ", "kein ", "der ", "die ", "das ", "den ", "einen ", "eine ",  "ein "
 };
 
@@ -1359,7 +1359,7 @@ const char *spanishTextStrings[NUM_TEXT_ENTRIES] = {
 	"Cr\x7f" "ditos", "Reiniciar", "Salvar juego", "Recuperar jue", "Abandonar", "Texto r\x98pido\x8b",
 	"Texto lento \x8b", "Sonido activado   ", "Sonido desactivado ", "(nada)", " con ", " a ", " con ",
 	"y luego", "eso es todo", "\x94" "Est\x98s seguro? (S/N)",
-	"Llevas ", "nada", "y tienes ", "moneda", "monedas"
+	"Llevas ", "nada", "y tienes ", "moneda", "monedas",
 	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ", NULL, NULL
 };
 
