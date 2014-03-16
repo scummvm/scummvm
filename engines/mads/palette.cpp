@@ -237,7 +237,8 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 
 int PaletteUsage::rgbMerge(RGB6 &palEntry) {
-	return palEntry.r * 38 + palEntry.g * 76 + palEntry.b * 14;
+	return ((palEntry.r + 1) / 4 - 1) * 38 + ((palEntry.g + 1) / 4 - 1) * 76 + 
+		((palEntry.b + 1) / 4 - 1) * 14;
 }
 
 void PaletteUsage::prioritizeFromList(int lst[3]) {

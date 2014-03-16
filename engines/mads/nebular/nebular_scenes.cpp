@@ -28,6 +28,7 @@
 #include "mads/scene.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/nebular/nebular_scenes1.h"
 #include "mads/nebular/nebular_scenes8.h"
 
 namespace MADS {
@@ -43,10 +44,18 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	scene.addActiveVocab(NOUN_SPLASH);
 	scene.addActiveVocab(NOUN_ALCOHOL);
 
-	// TODO: Implement all the game scenes
-	assert(scene._nextSceneId == 804);
+	switch (scene._nextSceneId) {
+	// Scene group #1
+	case 103:
+		return new Scene103(vm);
 
-	return new Scene804(vm);
+	// Scene group #8
+	case 804:
+		return new Scene804(vm);
+
+	default:
+		error("Invalid scene %d called", scene._nextSceneId);
+	}
 }
 
 /*------------------------------------------------------------------------*/

@@ -32,7 +32,7 @@ namespace MADS {
 
 namespace Nebular {
 
-class Scene1xx : protected NebularScene {
+class Scene1xx : public NebularScene {
 protected:
 	/**
 	 * Plays an appropriate sound when entering a scene

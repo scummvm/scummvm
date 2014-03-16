@@ -82,6 +82,7 @@ void Game::run() {
 		_statusFlag = 0;
 		break;
 	default:
+		_scene._nextSceneId = 103;
 		break;
 	}
 

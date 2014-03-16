@@ -40,20 +40,21 @@ GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
 }
 
 int GameNebular::checkCopyProtection() {
+	/*
 	// DEBUG: Flag copy protection failure
 	_globals[5] = -1;
 	
 	if (!ConfMan.getBool("copy_protection"))
 		return true;
 
-	/* DEBUG: Disabled for now
+	* DEBUG: Disabled for now
 	CopyProtectionDialog *dlg = new CopyProtectionDialog(_vm, false);
 	dlg->show();
 	delete dlg;
 	*/
 
 	// DEBUG: Return that copy protection failed
-	return 1;
+	return 0;
 }
 
 void GameNebular::initialiseGlobals() {
