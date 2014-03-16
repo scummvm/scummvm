@@ -39,6 +39,7 @@ enum {
 };
 
 enum Noun {
+	NOUN_D              = 0xD,
 	NOUN_BLOWGUN		= 0x29,
 	NOUN_BURGER			= 0x35,
 	NOUN_CHAIR			= 0x47,
@@ -76,6 +77,7 @@ enum Noun {
 	NOUN_SIT_IN			= 0x13F,
 	NOUN_SMELL			= 0x147,
 	NOUN_STUFFED_FISH	= 0x157,
+	NOUN_15F            = 0x15F,
 	NOUN_VIEW_SCREEN	= 0x180,
 	NOUN_CAPTIVE_CREATURE	= 0x1C3,
 	NOUN_NATIVE_WOMAN	= 0x1DC,
@@ -83,7 +85,8 @@ enum Noun {
 	NOUN_DOLLOP			= 0x3AC,
 	NOUN_DROP			= 0x3AD,
 	NOUN_DASH			= 0x3AE,
-	NOUN_SPLASH			= 0x3AF
+	NOUN_SPLASH			= 0x3AF,
+	NOUN_487            = 0x487
 };
 
 class SceneFactory {

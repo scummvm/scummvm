@@ -69,6 +69,13 @@ void Scene2xx::setPlayerSpritesPrefix() {
 }
 
 void Scene201::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	Scene &scene = _vm->_game->_scene;
+	scene.addActiveVocab(NOUN_15F);
+	scene.addActiveVocab(NOUN_487);
+	scene.addActiveVocab(NOUN_D);
 }
 
 void Scene201::enter() {
@@ -77,13 +84,7 @@ void Scene201::enter() {
 void Scene201::step() {
 }
 
-void Scene201::preActions() {
-}
-
 void Scene201::actions() {
-}
-
-void Scene201::postActions() {
 }
 
 } // End of namespace Nebular

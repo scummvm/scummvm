@@ -53,9 +53,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions();
 	virtual void actions();
-	virtual void postActions();
 };
 
 } // End of namespace Nebular
