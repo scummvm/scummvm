@@ -73,6 +73,15 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_graphicsManager = new GraphicsManager(this);
 	_soundManager = new SoundManager(_mixer);
 	_voy = new SVoy(this);
+
+	_stampLibPtr = nullptr;
+	_controlGroupPtr = nullptr;
+	_stampData = nullptr;
+	_stackGroupPtr = nullptr;
+	_glGoState = -1;
+	_glGoStack = -1;
+	_resolvePtr = nullptr;
+	_mainThread = nullptr;
 }
 
 VoyeurEngine::~VoyeurEngine() {
