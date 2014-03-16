@@ -79,8 +79,11 @@ void PaletteUsage::prioritize(Common::Array<RGB6> &palette) {
 	Common::sort(_data.begin(), _data.end(), sortHelper);
 }
 
+static bool rangeSorter(const PaletteUsage::UsageRange &ur1, const PaletteUsage::UsageRange &ur2) {
+	return ur1._v2 < ur2._v2;
+}
+
 int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
-	byte *pal1 = nullptr, *pal2 = nullptr;
 	int palLow;
 	int palHigh = (flags & 0x800) ? 0x100 : 0xFC;
 	int palIdx;
@@ -118,29 +121,30 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 	int freeIndex;
 	int palCount = getGamePalFreeIndex(&freeIndex);
-	pal1 = new byte[PALETTE_COUNT];
-	pal2 = new byte[PALETTE_COUNT];
+	Common::Array<UsageRange> palRange;
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
-		pal2[palIndex] = palIndex;
-		pal1[palIndex] = 0;
+		byte pal2 = palIndex;
+		byte pal1 = 0;
 
 		if (!(palette[palIndex]._flags & 0x80)) {
-			pal1[palIndex] = 0x40;
+			pal1 = 0x40;
 		}
 		if (palette[palIndex]._flags & 0x60) {
-			pal1[palIndex] |= 0x20;
+			pal1 |= 0x20;
 		}
+
+		palRange.push_back(UsageRange(pal1, pal2));
 	}
 
-	_vm->_palette->processLists(palette.size(), pal1, pal2);
+	Common::sort(palRange.begin(), palRange.end(), rangeSorter);
 	
 	int var3A = (flags & 0x4000) ? 0xffff : 0xfffe;
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
 		bool var48 = false;
 		int var4 = 0xffff;
-		int v1 = pal2[palIndex];
+		int v1 = palRange[palIndex]._v2;
 
 		if (palette[v1]._flags & 8) {
 			var48 = true;
@@ -230,9 +234,6 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	}
 
 	_vm->_palette->_rgbList[rgbIndex] = -1;
-
-	delete[] pal1;
-	delete[] pal2;
 
 	return rgbIndex;
 }
@@ -403,48 +404,6 @@ void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, in
 			pDest += 3;
 		} while (--numLeft > 0);
 	}
-}
-
-void Palette::processLists(int count, byte *pal1, byte *pal2) {
-	bool continueFlag;
-	int endIndex = count - 1;
-
-	do {
-		continueFlag = false;
-
-		for (int palIndex = 0; palIndex < endIndex && !continueFlag; ++palIndex) {
-			byte *palP = &pal1[palIndex];
-			byte *pal2P = &pal2[palIndex];
-
-			if (palP[1] < palP[0]) {
-				int v1 = palP[0];
-				int v2 = pal2P[0];
-
-				int size = count - palIndex - 1;
-				if (size > 0) {
-					Common::copy(palP + 1, palP + size + 1, palP);
-					Common::copy(pal2P + 1, pal2P + size + 1, pal2P);
-				}
-
-				int idx;
-				for (idx = 0; idx < endIndex && !continueFlag; ++idx) {
-					if (pal1[idx] > v1)
-						continueFlag = true;
-				}
-				continueFlag = true;
-
-				int size2 = count - idx - 1;
-				if (size2 > 0) {
-					Common::copy(palP + idx, palP + idx + size2 + 1, palP);
-					Common::copy(pal2P + idx, pal2P + idx + size2 + 1, pal2P);
-				}
-
-				pal1[idx] = v1;
-				pal2[idx] = v2;
-			}
-		}
-
-	} while (continueFlag);
 }
 
 void Palette::setSystemPalette() {

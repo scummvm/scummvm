@@ -62,6 +62,11 @@ public:
 
 		UsageEntry(int palIndex) { _palIndex = palIndex; }
 	};
+	struct UsageRange {
+		byte _v1, _v2;
+
+		UsageRange(byte v1, byte v2) { _v1 = v1; _v2 = v2; }
+	};
 private:
 	MADSEngine *_vm;
 	Common::Array<UsageEntry> _data;
@@ -200,8 +205,6 @@ public:
 	 * Update a range of an arbitrary palette
 	 */
 	static void setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2);
-
-	static void processLists(int count, byte *pal1, byte *pal2);
 
 	/**
 	 * Resets the game palette
