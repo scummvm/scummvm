@@ -104,10 +104,12 @@ bool Player::loadSprites(const Common::String &prefix) {
 				_highSprites = true;
 
 			_spriteSetsPresent[fileIndex] = true;
-			int setIndex = _vm->_game->_scene._sprites.addSprites(setName, 4);
-			if (setIndex >= 0) {
+
+			int setIndex = -1;
+			if (Common::File::exists(setName)) {
+				setIndex = _vm->_game->_scene._sprites.addSprites(setName, 4);
 				++_numSprites;
-			}  else if (fileIndex >= 5) {
+			}  else if (fileIndex < 5) {
 				_highSprites = 0;
 				return true;
 			} else {
