@@ -44,6 +44,10 @@ protected:
 	 */
 	void setAAName();
 
+	/**
+	 * Updates the prefix used for getting player sprites for the scene
+	 */
+	void setPlayerSpritesPrefix();
 public:
 	Scene1xx(MADSEngine *vm) : NebularScene(vm) {}
 };

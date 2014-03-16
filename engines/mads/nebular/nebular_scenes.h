@@ -105,11 +105,6 @@ protected:
 	Common::String formAnimName(char sepChar, int suffixNum);
 
 	/**
-	 * Updates the prefix used for getting player sprites for the scene
-	 */
-	void setPlayerSpritesPrefix();
-
-	/**
 	 * Plays appropriate sound for entering varous rooms
 	 */
 	void lowRoomsEntrySound();
