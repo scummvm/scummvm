@@ -99,11 +99,6 @@ void NebularScene::setPlayerSpritesPrefix() {
 	_vm->_palette->setEntry(17, 10, 45, 45);
 }
 
-void NebularScene::setAAName() {
-	int idx = (_scene->_nextSceneId > 103 && _scene->_nextSceneId < 112) ? 1 : 0;
-	_game._aaName = Resources::formatAAName(idx);
-}
-
 /*------------------------------------------------------------------------*/
 
 void SceneInfoNebular::loadCodes(MSurface &depthSurface) {

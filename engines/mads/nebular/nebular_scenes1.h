@@ -38,6 +38,12 @@ protected:
 	 * Plays an appropriate sound when entering a scene
 	 */
 	void sceneEntrySound();
+
+	/**
+	 *Sets the AA file to use for the scene
+	 */
+	void setAAName();
+
 public:
 	Scene1xx(MADSEngine *vm) : NebularScene(vm) {}
 };
@@ -47,15 +53,10 @@ public:
 	Scene101(MADSEngine *vm) : Scene1xx(vm) {}
 
 	virtual void setup();
-
 	virtual void enter();
-
 	virtual void step();
-
 	virtual void preActions();
-
 	virtual void actions();
-
 	virtual void postActions();
 };
 
@@ -64,15 +65,10 @@ public:
 	Scene103(MADSEngine *vm) : Scene1xx(vm) {}
 
 	virtual void setup();
-
 	virtual void enter();
-
 	virtual void step();
-
 	virtual void preActions();
-
 	virtual void actions();
-
 	virtual void postActions();
 };
 

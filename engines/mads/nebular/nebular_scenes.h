@@ -105,11 +105,6 @@ protected:
 	Common::String formAnimName(char sepChar, int suffixNum);
 
 	/**
-	 *Sets the AA file to use for the scene
-	 */
-	void setAAName();
-
-	/**
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
 	void setPlayerSpritesPrefix();

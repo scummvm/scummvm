@@ -30,6 +30,12 @@ namespace MADS {
 
 namespace Nebular {
 
+void Scene1xx::setAAName() {
+	int idx = (_scene->_nextSceneId > 103 && _scene->_nextSceneId < 112) ? 1 : 0;
+	_game._aaName = Resources::formatAAName(idx);
+}
+
+
 void Scene1xx::sceneEntrySound() {
 	if (_vm->_musicFlag) {
 		switch (_scene->_nextSceneId) {
