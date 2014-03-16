@@ -1161,6 +1161,7 @@ PictureResource::PictureResource(int flags, int select, int pick, int onOff,
 	_imgData = imgData;
 	_planeSize = planeSize;
 	_freeImgData = DisposeAfterUse::NO;
+	_keyColor = 0;
 }
 
 PictureResource::~PictureResource() {
