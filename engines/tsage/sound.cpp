@@ -724,7 +724,7 @@ void SoundManager::sfRethinkSoundDrivers() {
 								ve._type0._sound = NULL;
 								ve._type0._channelNum = 0;
 								ve._type0._priority = 0;
-								ve._type0._fieldA = 0;
+								ve._type0._fieldA = false;
 
 								vs->_entries.push_back(ve);
 							}
@@ -781,11 +781,11 @@ void SoundManager::sfRethinkVoiceTypes() {
 				vse._type0._sound = NULL;
 				vse._type0._channelNum = 0;
 				vse._type0._priority = 0;
-				vse._type0._fieldA = 0;
+				vse._type0._fieldA = false;
 				vse._type0._sound2 = NULL;
 				vse._type0._channelNum2 = 0;
 				vse._type0._priority2 = 0;
-				vse._type0._field12 = 0;
+				vse._type0._field12 = false;
 			}
 		} else {
 			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
@@ -935,7 +935,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 						vtStruct->_entries[entryIndex]._type0._sound2 = sound;
 						vtStruct->_entries[entryIndex]._type0._channelNum2 = foundIndex;
 						vtStruct->_entries[entryIndex]._type0._priority2 = foundPriority;
-						vtStruct->_entries[entryIndex]._type0._field12 = 0;
+						vtStruct->_entries[entryIndex]._type0._field12 = false;
 						continue;
 					}
 
@@ -956,7 +956,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 						vtStruct->_entries[entryIndex]._type0._sound2 = sound;
 						vtStruct->_entries[entryIndex]._type0._channelNum2 = foundIndex;
 						vtStruct->_entries[entryIndex]._type0._priority2 = foundPriority;
-						vtStruct->_entries[entryIndex]._type0._field12 = 0;
+						vtStruct->_entries[entryIndex]._type0._field12 = false;
 						continue;
 					}
 
@@ -981,7 +981,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 						vtStruct->_entries[entryIndex]._type0._sound2 = sound;
 						vtStruct->_entries[entryIndex]._type0._channelNum2 = foundIndex;
 						vtStruct->_entries[entryIndex]._type0._priority2 = foundPriority;
-						vtStruct->_entries[entryIndex]._type0._field12 = 0;
+						vtStruct->_entries[entryIndex]._type0._field12 = false;
 						continue;
 					}
 
@@ -1020,7 +1020,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 							vtStruct->_entries[entryIndex]._type0._sound2 = sound;
 							vtStruct->_entries[entryIndex]._type0._channelNum2 = foundIndex;
 							vtStruct->_entries[entryIndex]._type0._priority2 = foundPriority;
-							vtStruct->_entries[entryIndex]._type0._field12 = 1;
+							vtStruct->_entries[entryIndex]._type0._field12 = true;
 							continue;
 						}
 
@@ -1060,7 +1060,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 						vteSrc._sound2 = sound;
 						vteSrc._channelNum2 = foundIndex;
 						vteSrc._priority2 = foundPriority;
-						vteSrc._field12 = 1;
+						vteSrc._field12 = true;
 						continue;
 					}
 
@@ -1084,7 +1084,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 					vteSrc._sound2 = sound;
 					vteSrc._channelNum2 = foundIndex;
 					vteSrc._priority2 = foundPriority;
-					vteSrc._field12 = 1;
+					vteSrc._field12 = true;
 					continue;
 				}
 			}
@@ -1115,7 +1115,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 						++total;
 
 					vse._priority = vse._priority2;
-					vse._fieldA = 1;
+					vse._fieldA = true;
 					vse._sound2 = NULL;
 
 					if ((total) && vse._sound) {
@@ -1135,7 +1135,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 					vse._sound = NULL;
 					vse._channelNum = 0;
 					vse._priority = 0;
-					vse._fieldA = 0;
+					vse._fieldA = false;
 				}
 			}
 
@@ -1154,7 +1154,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 						vs->_entries[entryIndex]._type0._sound = sound;
 						vs->_entries[entryIndex]._type0._channelNum = channelNum;
 						vs->_entries[entryIndex]._type0._priority = vse._priority2;
-						vs->_entries[entryIndex]._type0._fieldA = 0;
+						vs->_entries[entryIndex]._type0._fieldA = false;
 						vse._sound2 = NULL;
 						break;
 					}
@@ -1185,7 +1185,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 				vseFound._sound = vse._sound2;
 				vseFound._channelNum = vse._channelNum2;
 				vseFound._priority = vse._priority2;
-				vseFound._fieldA = 0;
+				vseFound._fieldA = false;
 
 				SoundDriver *driver = vs->_entries[foundIndex]._driver;
 				assert(driver);

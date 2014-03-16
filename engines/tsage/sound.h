@@ -118,11 +118,11 @@ struct VoiceStructEntryType0 {
 	Sound *_sound;
 	int _channelNum;
 	int _priority;
-	int _fieldA;
+	bool _fieldA;
 	Sound *_sound2;
 	int _channelNum2;
 	int _priority2;
-	int _field12;
+	bool _field12;
 	Sound *_sound3;
 	int _channelNum3;
 	int _priority3;
