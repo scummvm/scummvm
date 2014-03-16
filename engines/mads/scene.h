@@ -127,6 +127,7 @@ public:
 	int _destFacing;
 	Common::Point _posAdjust;
 	uint32 _frameStartTime;
+	Layer _layer;
 
 	/**
 	 * Constructor

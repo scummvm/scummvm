@@ -129,7 +129,8 @@ void DynamicHotspots::refresh() {
 			switch (_vm->_game->_scene._screenObjects._v832EC) {
 			case 0:
 			case 2:
-				_vm->_game->_scene._screenObjects.add(dh._bounds, CAT_12, dh._descId);
+				_vm->_game->_scene._screenObjects.add(dh._bounds, _vm->_game->_scene._layer,
+					CAT_12, dh._descId);
 				_vm->_game->_scene._screenObjects._v8333C = true;
 				break;
 			default:

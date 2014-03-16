@@ -265,6 +265,10 @@ void Game::initSection(int sectionNumber) {
 
 	_vm->_palette->resetGamePalette(18, 10);
 	_vm->_palette->setLowRange();
+
+	if (_scene._layer == LAYER_GUI)
+		_vm->_palette->setPalette(_vm->_palette->_mainPalette, 0, 4);
+
 	_vm->_events->loadCursors("*CURSOR.SS");
 	
 	assert(_vm->_events->_cursorSprites);

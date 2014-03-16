@@ -102,7 +102,7 @@ public:
 	/**
 	 * Add a new item to the list
 	 */
-	void add(const Common::Rect &bounds, ScrCategory category, int descId);
+	void add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId);
 
 	/**
 	 */

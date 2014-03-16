@@ -53,7 +53,7 @@ private:
 	/**
 	 * Reposition a bounding rectangle to physical co-ordinates
 	 */
-	void extendRect(Common::Rect &bounds);
+	void moveRect(Common::Rect &bounds);
 public:
 	ScrCategory _category;
 	int _screenObjectsCount;

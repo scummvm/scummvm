@@ -51,6 +51,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_activeAnimation = nullptr;
 	_textSpacing = -1;
 	_frameStartTime = 0;
+	_layer = LAYER_GUI;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));

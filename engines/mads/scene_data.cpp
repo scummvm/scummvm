@@ -51,14 +51,14 @@ ScreenObjects::ScreenObjects(MADSEngine *vm): _vm(vm) {
 	_released = false;
 }
 
-void ScreenObjects::add(const Common::Rect &bounds, ScrCategory category, int descId) {
+void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId) {
 	assert(size() < 100);
 
 	ScreenObject so;
 	so._bounds = bounds;
 	so._category = category;
 	so._descId = descId;
-	so._layer = 0x1413;
+	so._layer = layer;
 
 	push_back(so);
 }
@@ -119,7 +119,7 @@ void ScreenObjects::check(bool scanFlag) {
 	scene._action.refresh();
 
 	// Loop through image inter list
-	warning("TODO: iimageInterList loop");
+	warning("TODO: imageInterList loop");
 }
 
 int ScreenObjects::scanBackwards(const Common::Point &pt, int layer) {

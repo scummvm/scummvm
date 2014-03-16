@@ -130,9 +130,56 @@ void UserInterface::loadElements() {
 	scene._screenObjects.clear();
 
 	if (!scene._screenObjects._v832EC) {
+		// Set up screen objects for the inventory scroller
 		for (int idx = 1; idx <= 3; ++idx) {
 			getBounds(CAT_INV_SCROLLER, idx, bounds);
-			// TODO
+			moveRect(bounds);
+
+			scene._screenObjects.add(bounds, LAYER_GUI, CAT_INV_SCROLLER, idx);
+		}
+
+		// Set up actions
+		for (int idx = 0; idx < 10; ++idx) {
+			getBounds(CAT_ACTION, idx, bounds);
+			moveRect(bounds);
+
+			scene._screenObjects.add(bounds, LAYER_GUI, CAT_ACTION, idx);
+		}
+
+		// Set up inventory list
+		for (int idx = 0; idx < 5; ++idx) {
+			getBounds(CAT_INV_LIST, idx, bounds);
+			moveRect(bounds);
+
+			scene._screenObjects.add(bounds, LAYER_GUI, CAT_INV_LIST, idx);
+		}
+
+		// Set up the inventory vocab list
+		for (int idx = 0; idx < 5; ++idx) {
+			getBounds(CAT_INV_VOCAB, idx, bounds);
+			moveRect(bounds);
+
+			scene._screenObjects.add(bounds, LAYER_GUI, CAT_INV_VOCAB, idx);
+		}
+
+		// Set up the inventory item picture
+		scene._screenObjects.add(Common::Rect(160, 159, 231, 194), LAYER_GUI,
+			CAT_INV_ANIM, 0);
+	}
+
+	if (!scene._screenObjects._v832EC || scene._screenObjects._v832EC == 2) {
+		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
+			Hotspot &hs = scene._hotspots[hotspotIdx];
+			scene._screenObjects.add(hs._bounds, LAYER_GUI, CAT_HOTSPOT, hotspotIdx);
+		}
+	}
+
+	if (scene._screenObjects._v832EC == 1) {
+		for (int idx = 0; idx < 5; ++idx) {
+			getBounds(CAT_6, idx, bounds);
+			moveRect(bounds);
+
+			scene._screenObjects.add(bounds, LAYER_GUI, CAT_6, idx);
 		}
 	}
 }
@@ -222,8 +269,8 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 	return true;
 }
 
-void UserInterface::extendRect(Common::Rect &bounds) {
-	
+void UserInterface::moveRect(Common::Rect &bounds) {
+	bounds.translate(0, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
 }
 
 } // End of namespace MADS
