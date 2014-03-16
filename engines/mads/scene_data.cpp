@@ -45,7 +45,6 @@ ScreenObjects::ScreenObjects(MADSEngine *vm): _vm(vm) {
 	_v7FECA = 0;
 	_v7FED6 = 0;
 	_v8332A = 0;
-	_selectedObject = 0;
 	_category = CAT_NONE;
 	_objectIndex = 0;
 	_released = false;
@@ -70,10 +69,10 @@ void ScreenObjects::check(bool scanFlag) {
 		_v7FECA = false;
 
 	if ((_vm->_events->_vD6 || _v8332A || _yp || _v8333C) && scanFlag) {
-		_selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
-		if (_selectedObject > 0) {
-			_category = (ScrCategory)((*this)[_selectedObject - 1]._category & 7);
-			_objectIndex = (*this)[_selectedObject - 1]._descId;
+		scene._userInterface._selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
+		if (scene._userInterface._selectedObject > 0) {
+			_category = (ScrCategory)((*this)[scene._userInterface._selectedObject - 1]._category & 7);
+			_objectIndex = (*this)[scene._userInterface._selectedObject - 1]._descId;
 		}
 
 		// Handling for easy mouse

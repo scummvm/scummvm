@@ -41,6 +41,7 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm) {
 	_screenObjectsCount = 0;
 	_inventoryTopIndex = 0;
 	_objectY = 0;
+	_selectedObject = -1;
 
 	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCENE_HEIGHT);
 	setPixels(pData, MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
@@ -106,7 +107,7 @@ void UserInterface::setup(int id) {
 		scene._imageInterEntries.call(0, 0);
 
 	scene._action.clear();
-	writeText();
+	drawTextElements();
 	loadElements();
 	scene._dynamicHotspots.refresh();
 }
@@ -115,10 +116,38 @@ void UserInterface::elementHighlighted() {
 	warning("TODO: UserInterface::elementHighlighted");
 }
 
-void UserInterface::writeText() {
-	warning("TODO: UserInterface::writeText");
+void UserInterface::drawTextElements() {
+	Scene &scene = _vm->_game->_scene;
+	if (scene._screenObjects._v832EC) {
+		drawTalkList();
+	} else {
+		// Draw the actions
+		drawActions();
+		drawInventoryList();
+		drawItemVocabList();
+	}
 }
 
+void UserInterface::drawActions() {
+	for (int idx = 0; idx < 10; ++idx) {
+		drawVocab(CAT_ACTION, idx);
+	}
+}
+
+void UserInterface::drawInventoryList() {
+	int endIndex = MIN((int)_vm->_game->_objects._inventoryList.size(), _inventoryTopIndex + 5);
+	for (int idx = _inventoryTopIndex; idx < endIndex; ++idx) {
+		drawVocab(CAT_INV_LIST, idx);
+	}
+}
+
+void UserInterface::drawItemVocabList() {
+
+}
+
+void UserInterface::drawVocab(ScrCategory category, int id) {
+
+}
 
 void UserInterface::setBounds(const Common::Rect &r) {
 	_bounds = r;
@@ -272,5 +301,10 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 void UserInterface::moveRect(Common::Rect &bounds) {
 	bounds.translate(0, MADS_SCENE_HEIGHT);
 }
+
+void UserInterface::drawTalkList() {
+	warning("TODO: drawTalkList");
+}
+
 
 } // End of namespace MADS

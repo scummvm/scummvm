@@ -393,7 +393,7 @@ void Scene::doFrame() {
 
 			// Write any text needed by the interface
 			if (_vm->_game->_abortTimers2)
-				_userInterface.writeText();
+				_userInterface.drawTextElements();
 
 			// Draw any elements
 			drawElements((ScreenTransition)_vm->_game->_abortTimers2, _vm->_game->_abortTimers2);

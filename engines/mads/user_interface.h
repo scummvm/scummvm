@@ -54,6 +54,31 @@ private:
 	 * Reposition a bounding rectangle to physical co-ordinates
 	 */
 	void moveRect(Common::Rect &bounds);
+
+	/**
+	 * Draw options during a conversation.
+	 */
+	void drawTalkList();
+
+	/**
+	 * Draw the action list
+	 */
+	void drawActions();
+
+	/**
+	 * Draw the inventory list
+	 */
+	void drawInventoryList();
+
+	/**
+	 * Draw the inventory item vocab list
+	 */
+	void drawItemVocabList();
+
+	/**
+	 * Draw a vocab text entry
+	 */
+	void drawVocab(ScrCategory category, int id);
 public:
 	ScrCategory _category;
 	int _screenObjectsCount;
@@ -62,6 +87,7 @@ public:
 	MSurface _surface;
 	int _inventoryTopIndex;
 	int _objectY;
+	int _selectedObject;
 public:
 	/**
 	* Constructor
@@ -80,7 +106,7 @@ public:
 
 	void elementHighlighted();
 
-	void writeText();
+	void drawTextElements();
 
 	void setBounds(const Common::Rect &r);
 };
