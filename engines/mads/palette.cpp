@@ -49,7 +49,7 @@ void PaletteUsage::load(int count, ...) {
 
 	_data.clear();
 	for (int i = 0; i < count; ++i)
-		_data.push_back(va_arg(va, int));
+		_data.push_back(UsageEntry(va_arg(va, int)));
 
 	va_end(va);
 }
@@ -61,20 +61,22 @@ void PaletteUsage::getKeyEntries(Common::Array<RGB6> &palette) {
 	 for (uint i = 0; i < palette.size(); ++i) {
 		 byte *uPtr = &palette[i]._flags;
 		 if ((*uPtr & 0x10) && _data.size() < 3) {
-			 _data.push_back(i);
+			 _data.push_back(UsageEntry(i));
 		 }
 	 }
 }
 
-void PaletteUsage::prioritize(Common::Array<RGB6> &palette) {
-	int lst[3];
+static bool sortHelper(const PaletteUsage::UsageEntry &ue1, const PaletteUsage::UsageEntry &ue2) {
+	return ue1._sortValue < ue2._sortValue;
+}
 
+void PaletteUsage::prioritize(Common::Array<RGB6> &palette) {
 	for (uint i = 0; i < _data.size(); ++i) {
-		RGB6 &palEntry = palette[_data[i]];
-		lst[i] = rgbMerge(palEntry);
+		RGB6 &palEntry = palette[_data[i]._palIndex];
+		_data[i]._sortValue = rgbMerge(palEntry);
 	}
 	
-	prioritizeFromList(lst);
+	Common::sort(_data.begin(), _data.end(), sortHelper);
 }
 
 int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
@@ -147,17 +149,17 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 		if (hasUsage && palette[v1]._flags & 0x10) {
 			for (uint usageIndex = 0; usageIndex < _data.size() && !var48; ++usageIndex) {
-				if (_data[usageIndex] == palIndex) {
+				if (_data[usageIndex]._palIndex == palIndex) {
 					var48 = true;
 					int dataIndex = MIN(usageIndex, _data.size() - 1);
-					var4 = _data[dataIndex];
+					var4 = _data[dataIndex]._palIndex;
 				}
 			}
 		}
 
 		if (flag1 && palette[palIndex]._flags & 0x10) {
 			for (uint usageIndex = 0; usageIndex < _data.size() && !var48; ++usageIndex) {
-				if (_data[usageIndex] == palIndex) {
+				if (_data[usageIndex]._palIndex == palIndex) {
 					var48 = true;
 					var4 = 0xF0 + usageIndex;
 
@@ -241,63 +243,10 @@ int PaletteUsage::rgbMerge(RGB6 &palEntry) {
 		((palEntry.b + 1) / 4 - 1) * 14;
 }
 
-void PaletteUsage::prioritizeFromList(int lst[3]) {
-	int idx1 = _data.size() - 1;
-	bool continueFlag;
-	int count2;
-
-	do {
-		continueFlag = false;
-		count2 = 0;
-
-		if (idx1 > 0) {
-			int numEntries = _data.size() - 1;
-			int usageIndex = 0, lstIndex = 0;
-
-			do {
-				if (lst[lstIndex] < lst[lstIndex + 1]) {
-					int lstVal = lst[lstIndex];
-					int usageVal = _data[usageIndex];
-
-					if (numEntries > 0) {
-						Common::copy(&lst[lstIndex + 1], &lst[lstIndex + numEntries], &lst[lstIndex]);
-						_data.remove_at(usageIndex);
-						_data.push_back(0);
-					}
-					
-					int newIdx = 0;
-					if (idx1 > 0 && !continueFlag) {
-						for (newIdx = 0; newIdx <= idx1; ++newIdx) {
-							if (lst[newIdx] > lstVal)
-								break;
-						}
-					}
-
-					continueFlag = true;
-					int idxDiff = _data.size() - newIdx - 1;
-					if (idxDiff > 0) {
-						Common::copy_backward(&lst[0], &lst[2], &lst[1]);
-						_data.remove_at(2);
-						_data.insert_at(0, 0);
-					}
-
-					lst[newIdx] = lstVal;
-					_data[newIdx] = usageVal;
-				}
-
-				++usageIndex;
-				--numEntries;
-				++lstIndex;
-				++count2;
-			} while (count2 > idx1 && !continueFlag);
-		}
-	} while (continueFlag);
-}
-
 void PaletteUsage::transform(Common::Array<RGB6> &palette) {
 	if (!empty()) {
 		for (uint i = 0; i < _data.size(); ++i) {
-			int palIndex = _data[i];
+			int palIndex = _data[i]._palIndex;
 			_data[i] = palette[palIndex]._palIndex;
 		}
 	}

@@ -55,13 +55,18 @@ struct RGB6 {
 };
 
 class PaletteUsage {
+public:
+	struct UsageEntry {
+		uint16 _palIndex;
+		int _sortValue;
+
+		UsageEntry(int palIndex) { _palIndex = palIndex; }
+	};
 private:
 	MADSEngine *_vm;
-	Common::Array<uint16> _data;
+	Common::Array<UsageEntry> _data;
 
 	int rgbMerge(RGB6 &palEntry);
-
-	void prioritizeFromList(int lst[3]);
 
 	int getGamePalFreeIndex(int *palIndex);
 
@@ -79,7 +84,7 @@ public:
 	 */
 	bool empty() const { return _data.size() == 0;  }
 
-	uint16 &operator[](int index) { return _data[index]; }
+	uint16 &operator[](int index) { return _data[index]._palIndex; }
 
 	/**
 	 * Gets key entries from the passed palette
