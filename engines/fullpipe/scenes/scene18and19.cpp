@@ -635,7 +635,7 @@ void sceneHandler18and19_drawRiders() {
 		if (!g_vars->scene18_enteredTrubaRight)
 			continue;
 
-		if (i == g_vars->scene18_var27) {
+		if ((int)i == g_vars->scene18_var27) {
 			if (swinger->angle >= ANGLE(170) && oldangle < ANGLE(170)) {
 				g_fp->_gameLoader->preloadScene(SC_18, TrubaRight);
 			} else if (swinger->angle >= ANGLE(25) && oldangle < ANGLE(25)) {
