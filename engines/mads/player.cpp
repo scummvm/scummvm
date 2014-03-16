@@ -362,8 +362,8 @@ void Player::setDest(const Common::Point &pt, int facing) {
 void Player::nextFrame() {
 	Scene &scene = _vm->_game->_scene;
 
-	_priorTimer += _ticksAmount;
-	if (scene._frameStartTime >= _priorTimer) {
+	uint32 newTime = _priorTimer + _ticksAmount;
+	if (scene._frameStartTime >= newTime) {
 		_priorTimer = scene._frameStartTime;
 		if (_moving) {
 			move();

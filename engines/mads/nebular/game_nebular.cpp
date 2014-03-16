@@ -54,7 +54,7 @@ int GameNebular::checkCopyProtection() {
 	*/
 
 	// DEBUG: Return that copy protection failed
-	return 0;
+	return -2;
 }
 
 void GameNebular::initialiseGlobals() {
