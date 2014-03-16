@@ -58,7 +58,7 @@ void Scene2xx::setPlayerSpritesPrefix() {
 	else
 		_game._player._unk4 = -1;
 
-	if (oldName == _game._player._spritesPrefix)
+	if (oldName != _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
 	
 	if ((_scene->_nextSceneId == 203 || _scene->_nextSceneId == 204) && _globals[34])
@@ -67,6 +67,8 @@ void Scene2xx::setPlayerSpritesPrefix() {
 	_vm->_palette->setEntry(16, 10, 63, 63);
 	_vm->_palette->setEntry(17, 10, 45, 45);
 }
+
+/*------------------------------------------------------------------------*/
 
 void Scene201::setup() {
 	setPlayerSpritesPrefix();
