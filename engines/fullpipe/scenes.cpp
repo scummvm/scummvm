@@ -270,15 +270,15 @@ Vars::Vars() {
 	scene17_handPhase = false;
 	scene17_sceneEdgeX = 0;
 
-	scene18_var01 = 0;
+	scene18_inScene18p1 = false;
 	scene18_whirlgig = 0;
 	scene18_var20 = 1032;
 	scene18_var04 = -318;
 	scene18_bridgeIsConvoluted = false;
-	scene18_var09 = 0;
+	scene18_whirlgigMovMum = 0;
 	scene18_girlIsSwinging = false;
-	scene18_var21 = 0;
-	scene18_var11 = 0;
+	scene18_rotationCounter = 0;
+	scene18_manY = 0;
 	scene18_var12 = false;
 	scene18_wheelIsTurning = true;
 	scene18_var23 = -1;
@@ -796,7 +796,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->preloadMovements(sceneVar);
 		g_fp->stopAllSounds();
 
-		if (g_vars->scene18_var01)
+		if (g_vars->scene18_inScene18p1)
 			scene18_initScene1(scene);
 		else
 			scene18_initScene2(scene);
@@ -812,10 +812,12 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		if (!g_fp->_scene3) {
 			g_fp->_scene3 = accessScene(SC_18);
 			g_fp->_gameLoader->loadScene(SC_18);
+
 			scene18_initScene2(g_fp->_scene3);
 			scene18_preload();
 			scene19_setMovements(g_fp->_scene3, entrance->_field_4);
-			g_vars->scene18_var01 = 1;
+
+			g_vars->scene18_inScene18p1 = true;
 		}
 
 		scene19_preload();
@@ -823,7 +825,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->preloadMovements(sceneVar);
 		g_fp->stopAllSounds();
 
-		if (g_vars->scene18_var01)
+		if (g_vars->scene18_inScene18p1)
 			scene18_initScene1(scene);
 		else
 			scene19_initScene2();

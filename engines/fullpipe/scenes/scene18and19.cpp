@@ -107,7 +107,7 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 	}
 
 	if (g_vars->scene18_whirlgig->_movement) {
-		g_vars->scene18_var09 = g_vars->scene18_whirlgig->_movement->_currDynamicPhaseIndex + 1;
+		g_vars->scene18_whirlgigMovMum = g_vars->scene18_whirlgig->_movement->_currDynamicPhaseIndex + 1;
 
 		int mx;
 
@@ -116,10 +116,10 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 		else
 			mx = g_vars->scene18_whirlgig->_movement->_dynamicPhases.size();
 
-		if (g_vars->scene18_var09 > mx - 1)
-			g_vars->scene18_var09 = -1;
+		if (g_vars->scene18_whirlgigMovMum > mx - 1)
+			g_vars->scene18_whirlgigMovMum = -1;
 	} else {
-		g_vars->scene18_var09 = 0;
+		g_vars->scene18_whirlgigMovMum = 0;
 	}
 
 	sc->deleteStaticANIObject(g_vars->scene18_boy);
@@ -235,9 +235,9 @@ void scene18_initScene1(Scene *sc) {
 		go->setOXY(newx + go->_ox, newy + go->_oy);
 	}
 
-	if (g_vars->scene18_bridgeIsConvoluted && g_vars->scene18_var09 != -1) {
+	if (g_vars->scene18_bridgeIsConvoluted && g_vars->scene18_whirlgigMovMum != -1) {
 		g_vars->scene18_whirlgig->startAnim(sc->_sceneId != SC_18 ? MV_WHR19_SPIN : MV_WHR18_SPIN, 0, -1);
-		g_vars->scene18_whirlgig->_movement->setDynamicPhaseIndex(g_vars->scene18_var09);
+		g_vars->scene18_whirlgig->_movement->setDynamicPhaseIndex(g_vars->scene18_whirlgigMovMum);
 	}
 
 	int sndid;
@@ -321,7 +321,7 @@ void scene18_initScene2(Scene *sc) {
 
 	scene18_setupSwingers(armchair, sc);
 
-	g_vars->scene18_var21 = 0;
+	g_vars->scene18_rotationCounter = 0;
 	g_vars->scene18_var12 = false;
 	g_vars->scene18_wheelIsTurning = true;
 	g_vars->scene18_var23 = -1;
@@ -356,7 +356,7 @@ int scene18_updateCursor() {
 
 		if (g_fp->_cursorId == PIC_CSR_ITN) {
 			if (g_fp->_objectIdAtCursor == PIC_SC18_LADDER1) {
-				g_fp->_cursorId = (g_vars->scene18_var11 <= 250) ? PIC_CSR_GOD : PIC_CSR_GOU;
+				g_fp->_cursorId = (g_vars->scene18_manY <= 250) ? PIC_CSR_GOD : PIC_CSR_GOU;
 			} else if (g_fp->_objectIdAtCursor == PIC_SC18_LADDER2 || g_fp->_objectIdAtCursor == PIC_SC18_LADDER3) {
 				g_fp->_cursorId = PIC_CSR_GOU;
 			}
@@ -544,10 +544,10 @@ void sceneHandler18and19_manStandArmchair() {
 }
 
 void sceneHandler18and19_drawRiders() {
-	g_vars->scene18_var21++;
+	g_vars->scene18_rotationCounter++;
 
-	if (g_vars->scene18_var21 >= 359)
-		g_vars->scene18_var21 = 0;
+	if (g_vars->scene18_rotationCounter >= 359)
+		g_vars->scene18_rotationCounter = 0;
 
 	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
 		Swinger *swinger = g_vars->scene18_swingers[i];
@@ -564,7 +564,7 @@ void sceneHandler18and19_drawRiders() {
 		int ix = g_vars->scene18_var20 - (int)(cos(swinger->angle) * -575.0);
 		int iy = g_vars->scene18_var04 - (int)(sin(swinger->angle) * -575.0) + 87;
 
-		if (!g_vars->scene18_var21) {
+		if (!g_vars->scene18_rotationCounter) {
 			ix = swinger->sx;
 			iy = swinger->sy;
 			swinger->angle = (double)i * ANGLE(45);
@@ -765,7 +765,7 @@ int sceneHandler18(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			g_vars->scene18_var11 = g_fp->_aniMan2->_oy;
+			g_vars->scene18_manY = g_fp->_aniMan2->_oy;
 
 			if (x < g_fp->_sceneRect.left + 200)
 				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;
@@ -891,7 +891,7 @@ int sceneHandler19(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			g_vars->scene18_var11 = g_fp->_aniMan2->_oy;
+			g_vars->scene18_manY = g_fp->_aniMan2->_oy;
 
 			if (x < g_fp->_sceneRect.left + 200)
 				g_fp->_currentScene->_x = x - 300 - g_fp->_sceneRect.left;

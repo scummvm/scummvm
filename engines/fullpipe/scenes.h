@@ -473,16 +473,16 @@ public:
 	bool scene17_handPhase;
 	int scene17_sceneEdgeX;
 
-	int scene18_var01;
+	bool scene18_inScene18p1;
 	StaticANIObject *scene18_whirlgig;
 	Common::Array<Swinger *> scene18_swingers;
 	int scene18_var20;
 	int scene18_var04;
 	bool scene18_bridgeIsConvoluted;
-	int scene18_var09;
+	int scene18_whirlgigMovMum;
 	bool scene18_girlIsSwinging;
-	int scene18_var21;
-	int scene18_var11;
+	int scene18_rotationCounter;
+	int scene18_manY;
 	bool scene18_var12;
 	bool scene18_wheelIsTurning;
 	int scene18_var23;
