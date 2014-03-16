@@ -60,6 +60,12 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_abortTimersMode2 = ABORTMODE_0;
 	_ticksExpiry = 0;
 	_exitFlag = 0;
+
+	// Load the inventory object list
+	_objects.load();
+
+	// Load the quotes
+	loadQuotes();
 }
 
 Game::~Game() {
@@ -285,20 +291,18 @@ void Game::loadQuotes() {
 	File f("*QUOTES.DAT");
 	int curPos = 0;
 
-	char buffer[128];
-	strcpy(buffer, "");
-
+	Common::String msg;
 	while (true) {
 		uint8 b = f.readByte();
-		if (f.eos()) break;
 
-		buffer[curPos++] = b;
-		if (buffer[curPos - 1] == '\0') {
+		msg += b;
+		if (f.eos() || b == '\0') {
 			// end of string, add it to the strings list
-			_quotes.push_back(buffer);
-			curPos = 0;
-			strcpy(buffer, "");
+			_quotes.push_back(msg);
+			msg = "";
 		}
+
+		if (f.eos()) break;
 	}
 
 	f.close();

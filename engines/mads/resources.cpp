@@ -313,7 +313,9 @@ Common::String Resources::formatName(int prefix, char asciiCh, int id, EXTTYPE e
 			(prefix < 100) ? "*SC" : "*RM", prefix);
 	}
 
-	result += Common::String::format("%c%d", asciiCh, id);
+	result += Common::String::format("%c", asciiCh);
+	if (id >= 0)
+		result += Common::String::format("%d", id);
 	if (!suffix.empty())
 		result += suffix;
 
