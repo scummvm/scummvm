@@ -1118,7 +1118,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 					vse._fieldA = 1;
 					vse._sound2 = NULL;
 
-					if (total) {
+					if ((total) && vse._sound) {
 						driver->proc24(vse._channelNum, idx, vse._sound, 123, 0);
 						driver->proc24(vse._channelNum, idx, vse._sound, 1, vse._sound->_chModulation[vse._channelNum]);
 						driver->proc24(vse._channelNum, idx, vse._sound, 7,
