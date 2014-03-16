@@ -48,7 +48,7 @@ byte loadCtFW(const char *ctName) {
 	}
 
 	if (currentCtName != ctName)
-		strcpy(currentCtName, ctName);
+		Common::strlcpy(currentCtName, ctName, sizeof(currentCtName));
 
 	ptr = dataPtr = readBundleFile(foundFileIdx);
 
@@ -75,7 +75,7 @@ byte loadCtOS(const char *ctName) {
 	}
 
 	if (currentCtName != ctName)
-		strcpy(currentCtName, ctName);
+		Common::strlcpy(currentCtName, ctName, sizeof(currentCtName));
 
 	ptr = dataPtr = readBundleFile(foundFileIdx);
 

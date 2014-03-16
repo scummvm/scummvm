@@ -813,7 +813,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 			if (dot) {
 				*dot = '\0';
 			}
-			strcat(instrument, _driver->getInstrumentExtension());
+			Common::strlcat(instrument, _driver->getInstrumentExtension(), sizeof(instrument));
 			uint32 instrumentSize;
 			_instrumentsData[i] = readBundleSoundFile(instrument, &instrumentSize);
 			if (!_instrumentsData[i]) {
