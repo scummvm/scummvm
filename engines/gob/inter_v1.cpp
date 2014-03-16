@@ -1125,7 +1125,7 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_draw->_vgaPalette[i].blue  = _vm->_game->_script->readByte();
 		}
 
-		memcpy(_vm->_draw->_vgaSmallPalette, _vm->_draw->_vgaPalette, 16 * 3);
+		memcpy(_vm->_draw->_vgaPalette, _vm->_draw->_vgaPalette, 16 * 3);
 		break;
 
 	case 53:
@@ -1183,7 +1183,7 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
 			return;
 		}
-		_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaSmallPalette;
+		_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
 	}
 }
@@ -2489,21 +2489,21 @@ void Inter_v1::animPalette() {
 	_vm->_video->waitRetrace();
 
 	if (_animPalDir[0] == -1) {
-		col = _vm->_draw->_vgaSmallPalette[_animPalLowIndex[0]];
+		col = _vm->_draw->_vgaPalette[_animPalLowIndex[0]];
 
 		for (i = _animPalLowIndex[0]; i < _animPalHighIndex[0]; i++)
-			_vm->_draw->_vgaSmallPalette[i] = _vm->_draw->_vgaSmallPalette[i + 1];
+			_vm->_draw->_vgaPalette[i] = _vm->_draw->_vgaPalette[i + 1];
 
-		_vm->_draw->_vgaSmallPalette[_animPalHighIndex[0]] = col;
+		_vm->_draw->_vgaPalette[_animPalHighIndex[0]] = col;
 	} else {
-		col = _vm->_draw->_vgaSmallPalette[_animPalHighIndex[0]];
+		col = _vm->_draw->_vgaPalette[_animPalHighIndex[0]];
 		for (i = _animPalHighIndex[0]; i > _animPalLowIndex[0]; i--)
-			_vm->_draw->_vgaSmallPalette[i] = _vm->_draw->_vgaSmallPalette[i - 1];
+			_vm->_draw->_vgaPalette[i] = _vm->_draw->_vgaPalette[i - 1];
 
-		_vm->_draw->_vgaSmallPalette[_animPalLowIndex[0]] = col;
+		_vm->_draw->_vgaPalette[_animPalLowIndex[0]] = col;
 	}
 
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaSmallPalette;
+	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 

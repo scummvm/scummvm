@@ -88,11 +88,6 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 		_vgaPalette[i].blue = 0;
 		_vgaPalette[i].green = 0;
 	}
-	for (int i = 0; i < 16; i++) {
-		_vgaSmallPalette[i].red = 0;
-		_vgaSmallPalette[i].blue = 0;
-		_vgaSmallPalette[i].green = 0;
-	}
 
 	_showCursor = 0;
 	_cursorIndex = 0;

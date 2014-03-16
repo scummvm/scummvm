@@ -389,8 +389,7 @@ void Diving::initScreen() {
 	_vm->_util->setFrameRate(15);
 
 	// Set palette
-	memcpy(_vm->_draw->_vgaPalette     , kPalette, sizeof(kPalette));
-	memcpy(_vm->_draw->_vgaSmallPalette, kPalette, sizeof(kPalette));
+	memcpy(_vm->_draw->_vgaPalette, kPalette, sizeof(kPalette));
 
 	// Draw background decal
 	_vm->_draw->_backSurface->clear();

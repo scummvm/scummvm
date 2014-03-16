@@ -115,7 +115,6 @@ public:
 	int16 _unusedPalette1[18];
 	int16 _unusedPalette2[16];
 	Video::Color _vgaPalette[256];
-	Video::Color _vgaSmallPalette[16];
 
 	// 0 (00b): No cursor
 	// 1 (01b): Cursor would be on _backSurface

@@ -840,8 +840,7 @@ void Penetration::setPalette() {
 	_vm->_palAnim->fade(0, 0, 0);
 
 	// Set palette
-	memcpy(_vm->_draw->_vgaPalette     , kPalettes[_floor], 3 * kPaletteSize);
-	memcpy(_vm->_draw->_vgaSmallPalette, kPalettes[_floor], 3 * kPaletteSize);
+	memcpy(_vm->_draw->_vgaPalette, kPalettes[_floor], 3 * kPaletteSize);
 
 	_needFadeIn = true;
 }
