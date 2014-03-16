@@ -489,13 +489,13 @@ public:
 	int scene18_var24;
 	int scene18_var25;
 	bool scene18_var26;
-	int scene18_var27;
-	int scene18_var31;
-	int scene18_var32;
-	int scene18_var33;
+	int scene18_manWheelPos;
+	int scene18_manWheelPosTo;
+	int scene18_kidWheelPos;
+	int scene18_kidWheelPosTo;
 	int scene18_jumpDistance;
 	int scene18_var14;
-	int scene18_var28;
+	bool scene18_manIsReady;
 	bool scene18_enteredTrubaRight;
 	StaticANIObject *scene18_boy;
 	StaticANIObject *scene18_girl;
