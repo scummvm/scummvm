@@ -20,74 +20,45 @@
  *
  */
 
-#ifndef MADS_PLAYER_H
-#define MADS_PLAYER_H
+#ifndef MADS_NEBULAR_SCENES2_H
+#define MADS_NEBULAR_SCENES2_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
+#include "mads/game.h"
+#include "mads/scene.h"
+#include "mads/nebular/nebular_scenes.h"
 
 namespace MADS {
 
-class MADSEngine;
-class Action;
+namespace Nebular {
 
-class Player {
-private:
-	MADSEngine *_vm;
-	MADSAction *_action;
+class Scene2xx : public NebularScene {
+protected:
+	/**
+	 * Plays an appropriate sound when entering a scene
+	 */
+	void setAAName();
 
-	void reset();
-
-	void resetActionList();
-
-	void move();
-
-	void postUpdate();
+	/**
+	 * Updates the prefix used for getting player sprites for the scene
+	 */
+	void setPlayerSpritesPrefix();
 public:
-	int _direction;
-	int _newDirection;
-	int _destFacing;
-	bool _spritesLoaded;
-	int _spritesStart;
-	int _numSprites;
-	bool _stepEnabled;
-	bool _spritesChanged;
-	bool _visible;
-	bool _visible3;
-	Common::Point _playerPos;
-	Common::Point _destPos;
-	bool _moving;
-	int _v844C0, _v844BE;
-	int _next;
-	int _routeCount;
-	int _special;
-	int _ticksAmount;
-	uint32 _priorTimer;
-	int _unk3, _unk4;
-	bool _forceRefresh;
-	Common::String _spritesPrefix;
-public:
-	Player(MADSEngine *vm);
-
-	void loadSprites(const Common::String &prefix);
-
-	void turnToDestFacing();
-
-	void moveComplete();
-
-	void setupFrame();
-
-	void updateFrame();
-
-	void update();
-
-	void idle();
-
-	void setDest(const Common::Point &pt, int facing);
-
-	void nextFrame();
+	Scene2xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
+class Scene201: public Scene2xx {
+public:
+	Scene201(MADSEngine *vm) : Scene2xx(vm) {}
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions();
+};
+
+} // End of namespace Nebular
 } // End of namespace MADS
 
-#endif /* MADS_PLAYER_H */
+#endif /* MADS_NEBULAR_SCENES2_H */
