@@ -521,4 +521,18 @@ int DepthSurface::getDepth(const Common::Point &pt) {
 	}
 }
 
+int DepthSurface::getDepthHighBit(const Common::Point &pt) {
+	if (_vm->_game->_scene._sceneInfo->_depthStyle == 2) {
+		int bits = (3 - (pt.x % 4)) * 2;
+		byte v = *getBasePtr(pt.x >> 2, pt.y);
+		return (v >> bits) & 2;
+	} else {
+		if (pt.x < 0 || pt.y < 0 || pt.x >= this->w || pt.y >= this->h)
+			return 0;
+
+		return *getBasePtr(pt.x, pt.y) & 0x80;
+	}
+}
+
+
 } // End of namespace MADS

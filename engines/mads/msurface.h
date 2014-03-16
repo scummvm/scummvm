@@ -223,6 +223,10 @@ public:
 	 * Returns the depth at a given position
 	 */
 	int getDepth(const Common::Point &pt);
+
+	/**
+	 */
+	int getDepthHighBit(const Common::Point &pt);
 };
 
 } // End of namespace MADS

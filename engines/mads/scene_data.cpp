@@ -394,6 +394,87 @@ void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 	_scale = f->readByte();
 }
 
+void SceneInfo::setRouteNode(int nodeIndex, const Common::Point &pt, MSurface &depthSurface) {
+	int flags, hypotenuse;
+
+	_nodes[nodeIndex]._walkPos = pt;
+
+	// Recalculate inter-node lengths
+	for (uint idx = 0; idx < _nodes.size(); ++idx) {
+		int entry;
+		if (idx == (uint)nodeIndex) {
+			entry = 0x3FFF;
+		}
+		else {
+			// Process the node
+			flags = getRouteFlags(pt, _nodes[idx]._walkPos, depthSurface);
+
+			int xDiff = ABS(_nodes[idx]._walkPos.x - pt.x);
+			int yDiff = ABS(_nodes[idx]._walkPos.y - pt.y);
+			hypotenuse = sqrt((double)(xDiff * xDiff + yDiff * yDiff));
+
+			if (hypotenuse >= 0x3FFF)
+				// Shouldn't ever be this large
+				hypotenuse = 0x3FFF;
+
+			entry = hypotenuse | flags;
+			_nodes[idx]._indexes[nodeIndex] = entry;
+			_nodes[nodeIndex]._indexes[idx] = entry;
+		}
+	}
+}
+
+int SceneInfo::getRouteFlags(const Common::Point &src, const Common::Point &dest, 
+		MSurface &depthSurface) {
+	int result = 0x8000;
+	bool flag = false;
+
+	int xDiff = ABS(dest.x - src.x);
+	int yDiff = ABS(dest.y - src.y);
+	int xDirection = dest.x >= src.x ? 1 : -1;
+	int yDirection = dest.y >= src.y ? depthSurface.w : -depthSurface.w;
+	int majorDiff = 0;
+	if (dest.x < src.x)
+		majorDiff = MAX(xDiff, yDiff);
+	++xDiff;
+	++yDiff;
+
+	byte *srcP = depthSurface.getBasePtr(src.x, src.y);
+
+	int totalCtr = majorDiff;
+	for (int xCtr = 0; xCtr < xDiff; ++xCtr, srcP += xDirection) {
+		totalCtr += yDiff;
+
+		if ((*srcP & 0x80) == 0)
+			flag = false;
+		else if (!flag) {
+			flag = true;
+			result -= 0x4000;
+			if (result == 0)
+				break;
+		}
+
+		while (totalCtr >= xDiff) {
+			totalCtr -= xDiff;
+
+			if ((*srcP & 0x80) == 0)
+				flag = false;
+			else if (!flag) {
+				flag = true;
+				result -= 0x4000;
+				if (result == 0)
+					break;
+			}
+
+			srcP += yDirection;
+		}
+		if (result == 0)
+			break;
+	}
+
+	return result;
+}
+
 /*------------------------------------------------------------------------*/
 
 SceneInfo *SceneInfo::init(MADSEngine *vm) {

@@ -31,10 +31,32 @@ namespace MADS {
 class MADSEngine;
 class Action;
 
+#define PLAYER_SPRITES_FILE_COUNT 8
+
 class Player {
+private:
+	static const int _directionListIndexes[32];
 private:
 	MADSEngine *_vm;
 	MADSAction *_action;
+	bool _highSprites;
+	bool _spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT];
+	int _currentDepth;
+	int _currentScale;
+	int _frameOffset;
+	int _frameNum;
+	int _yScale;
+	int _frameCount;
+	int _frameListIndex;
+	int _actionIndex;
+	bool _v844BC;
+	int _v8452E;
+	int _v8452C;
+	int _v84530;
+	int _routeLength;
+	int _actionList[12];
+	int _actionList2[12];
+	int _hypotenuse;
 
 	void reset();
 
@@ -43,33 +65,78 @@ private:
 	void move();
 
 	void postUpdate();
+
+	/**
+	 * Get the sprite slot index for the player
+	 */
+	int getSpriteSlot();
+
+	/**
+	 * Get the scale for the player at the given Y position
+	 */
+	int getScale(int yp);
+
+	void setTicksAmount();
+
+	void setupRoute();
+
+	void setupRoute(bool bitFlag);
+
+	void setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int routeLength);
+
+	/**
+	* Scans along an edge connecting two points within the depths/walk surface, and returns the information of the first
+	* pixel high nibble encountered with a non-zero value
+	*/
+	int scanPath(MSurface &depthSurface, const Common::Point &srcPos, const Common::Point &destPos);
+
+	/**
+	* Starts a player moving to a given destination
+	*/
+	void startMovement();
+
+	void dirChanged();
 public:
 	int _direction;
 	int _newDirection;
+	int _xDirection, _yDirection;
 	int _destFacing;
 	bool _spritesLoaded;
 	int _spritesStart;
+	int _spritesIdx;
 	int _numSprites;
 	bool _stepEnabled;
 	bool _spritesChanged;
 	bool _visible;
+	bool _priorVisible;
 	bool _visible3;
 	Common::Point _playerPos;
 	Common::Point _destPos;
+	Common::Point _posChange;
+	Common::Point _posDiff;
 	bool _moving;
-	int _v844C0, _v844BE;
+	int _newSceneId, _v844BE;
 	int _next;
-	int _routeCount;
 	int _special;
 	int _ticksAmount;
 	uint32 _priorTimer;
-	int _unk3, _unk4;
+	int _unk1;
+	int _unk2;
+	int _unk3;
+	bool _unk4;
 	bool _forceRefresh;
 	Common::String _spritesPrefix;
+	int _routeCount;
+	int _routeOffset;
+	int _tempRoute[MAX_ROUTE_NODES];
+	int _routeIndexes[MAX_ROUTE_NODES];
 public:
 	Player(MADSEngine *vm);
 
-	void loadSprites(const Common::String &prefix);
+	/**
+	 * Load sprites for the player
+	 */
+	bool loadSprites(const Common::String &prefix);
 
 	void turnToDestFacing();
 

@@ -179,11 +179,18 @@ void Game::sectionLoop() {
 
 		_vm->_palette->_paletteUsage.load(3, 0xF0, 0xF1, 0xF2);
 		
+		if (!_player._spritesLoaded && _v3) {
+			if (_player.loadSprites(""))
+				_vm->quitGame();
+			_playerSpritesFlag = true;
+		}
+
 		_scene.loadScene(_scene._nextSceneId, _aaName, 0);
 		_vm->_sound->pauseNewCommands();
 
 		if (!_player._spritesLoaded) {
-			_player.loadSprites("");
+			if (_player.loadSprites(""))
+				_vm->quitGame();
 			_playerSpritesFlag = false;
 		}
 

@@ -251,6 +251,9 @@ class SceneInfo {
 
 		void load(Common::SeekableReadStream *f);
 	};
+
+
+	int getRouteFlags(const Common::Point &src, const Common::Point &dest, MSurface &depthSurface);
 protected:
 	MADSEngine *_vm;
 
@@ -301,6 +304,11 @@ public:
 	 */
 	void load(int sceneId, int flags, const Common::String &resName, int v3, 
 		MSurface &depthSurface, MSurface &bgSurface);
+
+	/**
+	 * Set up a route node
+	 */
+	void setRouteNode(int nodeIndex, const Common::Point &pt, MSurface &depthSurface);
 };
 
 } // End of namespace MADS

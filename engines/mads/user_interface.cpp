@@ -42,7 +42,7 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm) {
 	_inventoryTopIndex = 0;
 	_objectY = 0;
 
-	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
+	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCENE_HEIGHT);
 	setPixels(pData, MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
 }
 
@@ -270,7 +270,7 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 }
 
 void UserInterface::moveRect(Common::Rect &bounds) {
-	bounds.translate(0, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
+	bounds.translate(0, MADS_SCENE_HEIGHT);
 }
 
 } // End of namespace MADS
