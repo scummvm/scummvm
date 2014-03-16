@@ -33,6 +33,7 @@
 #include "mads/events.h"
 #include "mads/game_data.h"
 #include "mads/messages.h"
+#include "mads/user_interface.h"
 
 namespace MADS {
 
@@ -49,12 +50,6 @@ class SpriteSlot;
 #define SPRITE_SLOTS_MAX_SIZE 50
 #define TEXT_DISPLAY_MAX_SIZE 40
 #define DIRTY_AREAS_SIZE (SPRITE_SLOTS_MAX_SIZE + TEXT_DISPLAY_MAX_SIZE)
-
-enum ScrCategory {
-	CAT_NONE = 0, CAT_ACTION = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB = 3,
-	CAT_HOTSPOT = 4, CAT_INV_ANIM = 5, CAT_6 = 6, CAT_INV_SCROLLER = 7,
-	CAT_12 = 12
-};
 
 enum Layer {
 	LAYER_GUI = 19

@@ -39,6 +39,8 @@ void SceneNode::load(Common::SeekableReadStream *f) {
 UserInterface::UserInterface(MADSEngine *vm) : _vm(vm) {
 	_category = CAT_NONE;
 	_screenObjectsCount = 0;
+	_inventoryTopIndex = 0;
+	_objectY = 0;
 
 	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCREEN_HEIGHT - MADS_INTERFACE_HEIGHT);
 	setPixels(pData, MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
@@ -123,7 +125,105 @@ void UserInterface::setBounds(const Common::Rect &r) {
 }
 
 void UserInterface::loadElements() {
-	warning("TODO: UserInterface::loadElements");
+	Scene &scene = _vm->_game->_scene;
+	Common::Rect bounds;
+	scene._screenObjects.clear();
+
+	if (!scene._screenObjects._v832EC) {
+		for (int idx = 1; idx <= 3; ++idx) {
+			getBounds(CAT_INV_SCROLLER, idx, bounds);
+			// TODO
+		}
+	}
+}
+
+bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds) {
+	Common::Rect result;
+	int heightMultiplier, widthMultiplier;
+	int leftStart, yOffset, widthAmt;
+
+	switch (category) {
+	case CAT_ACTION:
+		heightMultiplier = v / 5;
+		widthMultiplier = v / 5;
+		leftStart = 2;
+		yOffset = 3;
+		widthAmt = 32;
+		break;
+
+	case CAT_INV_LIST:
+		if (v < _inventoryTopIndex || v > (_inventoryTopIndex + 5))
+			return false;
+
+		heightMultiplier = v - _inventoryTopIndex;
+		widthMultiplier = 0;
+		leftStart = 90;
+		yOffset = 3;
+		widthAmt = 69;
+		break;
+
+	case CAT_6:
+		heightMultiplier = v;
+		widthMultiplier = 0;
+		leftStart = 2;
+		yOffset = 3;
+		widthAmt = 310;
+		break;
+
+	case CAT_INV_SCROLLER:
+		heightMultiplier = 0;
+		widthMultiplier = 73;
+		yOffset = 0;
+		widthAmt = 9;
+		leftStart = (v != 73) ? 73 : 75;
+		break;
+
+	default:
+		heightMultiplier = v;
+		widthMultiplier = 0;
+		leftStart = 240;
+		yOffset = 3;
+		widthAmt = 80;
+		break;
+	}
+
+	result.left = (widthMultiplier > 0) ? widthMultiplier * widthAmt + leftStart : leftStart;
+	result.setWidth(widthAmt);
+	result.top = heightMultiplier * 3 + yOffset;
+	result.setHeight(8);
+
+	if (category == CAT_INV_SCROLLER) {
+		switch (v) {
+		case 1:
+			// Arrow up
+			result.top = 4;
+			result.setHeight(7);
+			break;
+		case 2:
+			// Arrow down
+			result.top = 35;
+			result.setHeight(7);
+			break;
+		case 3:
+			// Scroller
+			result.top = 12;
+			result.setHeight(22);
+			break;
+		case 4:
+			// Thumb
+			result.top = _objectY + 14;
+			result.setHeight(1);
+			break;
+		default:
+			break;
+		}
+	}
+
+	return true;
+}
+
+void UserInterface::extendRect(Common::Rect &bounds) {
+	
 }
 
 } // End of namespace MADS

@@ -30,17 +30,38 @@
 
 namespace MADS {
 
+enum ScrCategory {
+	CAT_NONE = 0, CAT_ACTION = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB = 3,
+	CAT_HOTSPOT = 4, CAT_INV_ANIM = 5, CAT_6 = 6, CAT_INV_SCROLLER = 7,
+	CAT_12 = 12
+};
+
 class UserInterface : public MSurface {
 private:
 	MADSEngine *_vm;
 
+	/**
+	 * Loads the elements of the user interface
+	 */
 	void loadElements();
+
+	/**
+	 * Returns the area within the user interface a given element falls
+	 */
+	bool getBounds(ScrCategory category, int invIndex, Common::Rect &bounds);
+
+	/**
+	 * Reposition a bounding rectangle to physical co-ordinates
+	 */
+	void extendRect(Common::Rect &bounds);
 public:
 	ScrCategory _category;
 	int _screenObjectsCount;
 	Common::Rect _bounds;
 	Common::Rect *_rectP;
 	MSurface _surface;
+	int _inventoryTopIndex;
+	int _objectY;
 public:
 	/**
 	* Constructor
