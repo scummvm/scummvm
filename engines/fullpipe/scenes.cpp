@@ -272,8 +272,8 @@ Vars::Vars() {
 
 	scene18_inScene18p1 = false;
 	scene18_whirlgig = 0;
-	scene18_var20 = 1032;
-	scene18_var04 = -318;
+	scene18_wheelCenterX = 0;
+	scene18_wheelCenterY = 0;
 	scene18_bridgeIsConvoluted = false;
 	scene18_whirlgigMovMum = 0;
 	scene18_girlIsSwinging = false;
@@ -296,10 +296,10 @@ Vars::Vars() {
 	scene18_boy = 0;
 	scene18_girl = 0;
 	scene18_domino = 0;
-	scene18_var29 = 290;
-	scene18_var30 = -363;
-	scene18_var05 = 283;
-	scene18_var06 = -350;
+	scene18_boyJumpX = 290;
+	scene18_boyJumpY = -363;
+	scene18_girlJumpX = 283;
+	scene18_girlJumpY = -350;
 
 	scene19_enteredTruba3 = false;
 

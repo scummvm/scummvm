@@ -476,8 +476,8 @@ public:
 	bool scene18_inScene18p1;
 	StaticANIObject *scene18_whirlgig;
 	Common::Array<Swinger *> scene18_swingers;
-	int scene18_var20;
-	int scene18_var04;
+	int scene18_wheelCenterX;
+	int scene18_wheelCenterY;
 	bool scene18_bridgeIsConvoluted;
 	int scene18_whirlgigMovMum;
 	bool scene18_girlIsSwinging;
@@ -500,10 +500,10 @@ public:
 	StaticANIObject *scene18_boy;
 	StaticANIObject *scene18_girl;
 	StaticANIObject *scene18_domino;
-	int scene18_var29;
-	int scene18_var30;
-	int scene18_var05;
-	int scene18_var06;
+	int scene18_boyJumpX;
+	int scene18_boyJumpY;
+	int scene18_girlJumpX;
+	int scene18_girlJumpY;
 
 	bool scene19_enteredTruba3;
 

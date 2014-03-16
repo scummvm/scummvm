@@ -149,8 +149,8 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 		swinger = new Swinger;
 
 		swinger->angle = (double)i * ANGLE(45);
-		swinger->sx = g_vars->scene18_var20 - (int)(cos(swinger->angle) * -575.0);
-		swinger->sy = g_vars->scene18_var04 - (int)(sin(swinger->angle) * -575.0) + 87;
+		swinger->sx = g_vars->scene18_wheelCenterX - (int)(cos(swinger->angle) * -575.0);
+		swinger->sy = g_vars->scene18_wheelCenterY - (int)(sin(swinger->angle) * -575.0) + 87;
 		swinger->ix = swinger->sx;
 		swinger->iy = swinger->sy;
 
@@ -192,28 +192,28 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 void scene18_initScene1(Scene *sc) {
 	PicAniInfo info;
 
-	int oldx = g_vars->scene18_var20;
-	int oldy = g_vars->scene18_var04;
+	int oldx = g_vars->scene18_wheelCenterX;
+	int oldy = g_vars->scene18_wheelCenterY;
 
 	g_vars->scene18_girlIsSwinging = (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
 	if (sc->_sceneId == SC_18) {
 		g_vars->scene18_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1);
-		g_vars->scene18_var20 = 1032;
-		g_vars->scene18_var04 = -318;
+		g_vars->scene18_wheelCenterX = 1032;
+		g_vars->scene18_wheelCenterY = -318;
 	} else {
 		g_vars->scene18_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLGIG_19, -1);
-		g_vars->scene18_var20 = 1024;
-		g_vars->scene18_var04 = 242;
+		g_vars->scene18_wheelCenterX = 1024;
+		g_vars->scene18_wheelCenterY = 242;
 	}
 
-	int newx = g_vars->scene18_var20 - oldx;
-	int newy = g_vars->scene18_var04 - oldy;
+	int newx = g_vars->scene18_wheelCenterX - oldx;
+	int newy = g_vars->scene18_wheelCenterY - oldy;
 
-	g_vars->scene18_var29 += newx;
-	g_vars->scene18_var30 += newy;
-	g_vars->scene18_var05 += newx;
-	g_vars->scene18_var06 += newy;
+	g_vars->scene18_boyJumpX += newx;
+	g_vars->scene18_boyJumpY += newy;
+	g_vars->scene18_girlJumpX += newx;
+	g_vars->scene18_girlJumpY += newy;
 
 	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
 		g_vars->scene18_swingers[i]->ani->getPicAniInfo(&info);
@@ -302,8 +302,8 @@ void scene18_initScene1(Scene *sc) {
 
 void scene18_initScene2(Scene *sc) {
 	g_vars->scene18_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1);
-	g_vars->scene18_var20 = 1032;
-	g_vars->scene18_var04 = -318;
+	g_vars->scene18_wheelCenterX = 1032;
+	g_vars->scene18_wheelCenterY = -318;
 
 	StaticANIObject *armchair = sc->getStaticANIObject1ById(ANI_KRESLO, -1);
 
@@ -336,10 +336,10 @@ void scene18_initScene2(Scene *sc) {
 	g_vars->scene18_boy = sc->getStaticANIObject1ById(ANI_BOY18, -1);
 	g_vars->scene18_girl = sc->getStaticANIObject1ById(ANI_GIRL18, -1);
 	g_vars->scene18_domino = sc->getStaticANIObject1ById(ANI_DOMINO_18, -1);
-	g_vars->scene18_var29 = 290;
-	g_vars->scene18_var30 = -363;
-	g_vars->scene18_var05 = 283;
-	g_vars->scene18_var06 = -350;
+	g_vars->scene18_boyJumpX = 290;
+	g_vars->scene18_boyJumpY = -363;
+	g_vars->scene18_girlJumpX = 283;
+	g_vars->scene18_girlJumpY = -350;
 
 	g_fp->initArcadeKeys("SC_18");
 }
@@ -524,14 +524,14 @@ void sceneHandler18and19_showBoyJump() {
 
 void sceneHandler18and19_boyJumpTo() {
 	g_vars->scene18_boy->stopAnim_maybe();
-	g_vars->scene18_boy->show1(g_vars->scene18_var29, g_vars->scene18_var30, MV_BOY18_JUMPTO, 0);
+	g_vars->scene18_boy->show1(g_vars->scene18_boyJumpX, g_vars->scene18_boyJumpY, MV_BOY18_JUMPTO, 0);
 	g_vars->scene18_boy->_priority = 50;
 	g_vars->scene18_boy->startAnim(MV_BOY18_JUMPTO, 0, -1);
 }
 
 void sceneHandler18and19_girlJumpTo() {
 	g_vars->scene18_girl->stopAnim_maybe();
-	g_vars->scene18_girl->show1(g_vars->scene18_var05, g_vars->scene18_var06, MV_GRL18_JUMPTO, 0);
+	g_vars->scene18_girl->show1(g_vars->scene18_girlJumpX, g_vars->scene18_girlJumpY, MV_GRL18_JUMPTO, 0);
 	g_vars->scene18_girl->_priority = 50;
 	g_vars->scene18_girl->startAnim(MV_GRL18_JUMPTO, 0, -1);
 }
@@ -561,8 +561,8 @@ void sceneHandler18and19_drawRiders() {
 			oldangle -= ANGLE(360);
 		}
 
-		int ix = g_vars->scene18_var20 - (int)(cos(swinger->angle) * -575.0);
-		int iy = g_vars->scene18_var04 - (int)(sin(swinger->angle) * -575.0) + 87;
+		int ix = g_vars->scene18_wheelCenterX - (int)(cos(swinger->angle) * -575.0);
+		int iy = g_vars->scene18_wheelCenterY - (int)(sin(swinger->angle) * -575.0) + 87;
 
 		if (!g_vars->scene18_rotationCounter) {
 			ix = swinger->sx;
