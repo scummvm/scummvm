@@ -126,7 +126,6 @@ struct VoiceStructEntryType0 {
 	Sound *_sound3;
 	int _channelNum3;
 	int _priority3;
-	int _field1A;
 };
 
 struct VoiceStructEntryType1 {

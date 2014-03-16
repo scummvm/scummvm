@@ -778,7 +778,6 @@ void SoundManager::sfRethinkVoiceTypes() {
 				vte._sound3 = vte._sound;
 				vte._channelNum3 = vte._channelNum;
 				vte._priority3 = vte._priority;
-				vte._field1A = vte._fieldA;
 				vte._sound = NULL;
 				vte._channelNum = 0;
 				vte._priority = 0;
