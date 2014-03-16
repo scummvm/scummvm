@@ -414,14 +414,33 @@ ImageInterEntry::ImageInterEntry() {
 
 /*------------------------------------------------------------------------*/
 
-int ImageInterEntries::add(int field0, int field2) {
+void ImageInterEntries::add(int v1, int v2) {
 	ImageInterEntry ie;
-	ie._field0 = field0;
-	ie._field2 = field2;
+	ie._field0 = -2;
+	ie._field2 = -1;
 
 	push_back(ie);
-	return size() - 1;
 }
+
+void ImageInterEntries::add(int v1, int v2, int v3, int v4) {
+	assert(size() < 50);
+
+	ImageInterEntry ie;
+	ie._field0 = -3;
+	ie._field2 = 201;
+	ie._field6 = v1;
+	ie._field8 = v2;
+	ie._field4 = v3;
+	ie._field3 = v4;
+
+	push_back(ie);
+}
+
+ImageInterEntry &ImageInterEntries::add() {
+	resize(size() + 1);
+	return (*this)[size() - 1];
+}
+
 
 void ImageInterEntries::call(int v1, int v2) {
 	debug("TODO: ImageInterEntries::call");

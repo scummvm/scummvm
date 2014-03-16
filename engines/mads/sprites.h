@@ -240,7 +240,9 @@ public:
 
 class ImageInterEntries: public Common::Array<ImageInterEntry> {
 public:
-	int add(int field0, int field2);
+	void add(int v1, int v2);
+	void add(int v1, int v2, int v3, int v4);
+	ImageInterEntry &add();
 
 	void call(int v1, int v2);
 };
