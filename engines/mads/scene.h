@@ -199,7 +199,7 @@ public:
 	/**
 	 * Returns a vocab entry
 	 */
-	Common::String getVocab(int vocabId) { return _vocabStrings[vocabId]; }
+	Common::String getVocab(int vocabId) { return _vocabStrings[vocabId - 1]; }
 
 	/**
 	 * Clear the data for the scene

@@ -129,8 +129,8 @@ void UserInterface::drawTextElements() {
 	} else {
 		// Draw the actions
 		drawActions();
-//		drawInventoryList();
-//		drawItemVocabList();
+		drawInventoryList();
+		drawItemVocabList();
 	}
 }
 
@@ -183,7 +183,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 			_vm->_font->setColorMode(id == _selectedActionIndex ? 2 : 0);
 		}
 		vocabStr = scene.getVocab(vocabId);
-		vocabStr.toUppercase();
+		vocabStr.setChar(toupper(vocabStr[0]), 0);
 		font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
 		break;
 
@@ -195,7 +195,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 		} else {
 			_vm->_font->setColorMode(id == _selectedInvIndex ? 2 : 0);
 			vocabStr = scene.getVocab(vocabId);
-			vocabStr.toUppercase();
+			vocabStr.setChar(toupper(vocabStr[0]), 0);
 			font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
 			break;
 		}
@@ -235,7 +235,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 		} else {
 			_vm->_font->setColorMode(id == _selectedInvIndex ? 2 : 0);
 			vocabStr = scene.getVocab(vocabId);
-			vocabStr.toUppercase();
+			vocabStr.setChar(toupper(vocabStr[0]), 0);
 			font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
 			break;
 		}
