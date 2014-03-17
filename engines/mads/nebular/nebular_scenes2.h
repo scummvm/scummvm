@@ -43,6 +43,8 @@ protected:
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
 	void setPlayerSpritesPrefix();
+
+	void sceneEntrySound();
 public:
 	Scene2xx(MADSEngine *vm) : NebularScene(vm) {}
 };

@@ -153,6 +153,8 @@ public:
 	void setDest(const Common::Point &pt, int facing);
 
 	void nextFrame();
+
+	void sub7E53C(Common::Point pos, int direction);
 };
 
 } // End of namespace MADS

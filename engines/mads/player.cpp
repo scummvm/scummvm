@@ -737,4 +737,13 @@ void Player::startMovement() {
 	_v8452E = -_v84530;
 }
 
+void Player::sub7E53C(Common::Point pos, int direction) {
+	Scene &scene = _vm->_game->_scene;
+
+	reset();
+	scene._action._startWalkFlag = true;
+	scene._action._walkFlag = true;
+	scene._destPos = pos;
+	scene._destFacing = direction;
+}
 } // End of namespace MADS
