@@ -100,7 +100,7 @@ const Common::List<Common::Rect> *RL2Decoder::getDirtyRects() const {
 	if (_videoTrack)
 		return _videoTrack->getDirtyRects();
 
-	return 0;
+	return nullptr;
 }
 
 void RL2Decoder::clearDirtyRects() {
