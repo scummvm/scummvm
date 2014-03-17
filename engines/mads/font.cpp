@@ -28,7 +28,9 @@
 
 namespace MADS {
 
-MADSEngine *Font::_vm = nullptr;
+MADSEngine *Font::_vm;
+
+Common::HashMap<Common::String, Font *> *Font::_fonts;
 
 uint8 Font::_fontColors[4];
 
@@ -38,24 +40,40 @@ void Font::init(MADSEngine *vm) {
 	_fontColors[1] = 0xF;
 	_fontColors[2] = 7;
 	_fontColors[3] = 8;
+
+	_fonts = new Common::HashMap<Common::String, Font *>();
+}
+
+void Font::deinit() {
+	Common::HashMap<Common::String, Font *>::iterator i;
+	for (i = _fonts->begin(); i != _fonts->end(); ++i)
+		delete (*i)._value;
+
+	delete _fonts;
 }
 
 Font *Font::getFont(const Common::String &fontName) {
-	Font *font = new Font();
-	font->setFont(fontName);
-	return font;
+	if (_fonts->contains(fontName)) {
+		return _fonts->getVal(fontName);
+	} else {
+		Font *font = new Font(fontName);
+		_fonts->setVal(fontName, font);
+		return font;
+	}
 }
 
 Font::Font() {
-	_sysFont = true;
+	setFont(FONT_INTERFACE);
+}
+
+Font::Font(const Common::String &filename) {
+	setFont(filename);
 }
 
 Font::~Font() {
-	if (!_sysFont) {
-		delete[] _charWidths;
-		delete[] _charOffs;
-		delete[] _charData;
-	}
+	delete[] _charWidths;
+	delete[] _charOffs;
+	delete[] _charData;
 }
 
 void Font::setFont(const Common::String &filename) {
@@ -63,7 +81,6 @@ void Font::setFont(const Common::String &filename) {
 		// Already using specified font, so don't bother reloading
 		return;
 
-	_sysFont = false;
 	_filename = filename;
 
 	MadsPack fontData(filename, _vm);
@@ -93,13 +110,6 @@ void Font::setFont(const Common::String &filename) {
 	fontFile->read(_charData, fontSize);
 
 	delete fontFile;
-}
-
-void Font::setColor(uint8 color) {
-	if (_sysFont)
-		_fontColors[1] = color;
-	else 
-		_fontColors[3] = color;		
 }
 
 void Font::setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4) {

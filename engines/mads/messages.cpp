@@ -40,7 +40,6 @@ KernelMessages::KernelMessages(MADSEngine *vm): _vm(vm) {
 }
 
 KernelMessages::~KernelMessages() {
-	delete _talkFont;
 }
 
 void KernelMessages::clear() {

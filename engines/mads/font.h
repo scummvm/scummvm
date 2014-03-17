@@ -24,8 +24,9 @@
 #define MADS_FONT_H
 
 #include "common/scummsys.h"
-#include "common/util.h"
+#include "common/hashmap.h"
 #include "common/endian.h"
+#include "common/util.h"
 #include "mads/msurface.h"
 
 namespace MADS {
@@ -44,6 +45,7 @@ class Font {
 private:
 	static uint8 _fontColors[4];
 	static MADSEngine *_vm;
+	static Common::HashMap<Common::String, Font *> *_fonts;
 public:
 	/**
 	 * Initialise the font system
@@ -51,24 +53,29 @@ public:
 	static void init(MADSEngine *vm);
 
 	/**
+	 * Free up the resources used by the font
+	 */
+	static void deinit();
+
+	/**
 	* Returns a new Font instance using the specified font name
 	*/
 	static Font *getFont(const Common::String &fontName);
-protected:
+private:
 	uint8 _maxWidth, _maxHeight;
 	uint8 *_charWidths;
 	uint16 *_charOffs;
 	uint8 *_charData;
-	bool _sysFont;
 	Common::String _filename;
 
 	int getBpp(int charWidth);
-public:
-	Font();
-	virtual ~Font();
 
 	void setFont(const Common::String &filename);
-	void setColor(uint8 color);
+public:
+	Font();
+	Font(const Common::String &filename);
+	virtual ~Font();
+
 	void setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4);
 	void setColorMode(int mode);
 

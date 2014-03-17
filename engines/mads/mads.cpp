@@ -59,6 +59,7 @@ MADSEngine::~MADSEngine() {
 	delete _dialogs;
 	delete _events;
 	delete _font;
+	Font::deinit();
 	delete _game;
 	delete _palette;
 	delete _resources;

@@ -106,7 +106,6 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	_fontName = fontName;
 	_position = pos;
 	
-	_vm->_font->setFont(FONT_INTERFACE);
 	_vm->_font->setColors(TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK);
 
 	_innerWidth = (_vm->_font->maxWidth() + 1) * maxChars;
