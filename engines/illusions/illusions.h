@@ -57,6 +57,7 @@ class BackgroundResource;
 class Camera;
 class Control;
 class Input;
+class Screen;
 class ScriptResource;
 class ScriptMan;
 
@@ -78,19 +79,13 @@ public:
 	
 	void updateEvents();
 
+	Screen *_screen;
 	Input *_input;
 	ScriptMan *_scriptMan;
 	ActorItems *_actorItems;
 	BackgroundItems *_backgroundItems;
 	Camera *_camera;
 
-	// Screen functions	
-	Graphics::Surface *allocSurface(int16 width, int16 height);
-	Graphics::Surface *allocSurface(SurfInfo &surfInfo);
-	bool isDisplayOn();
-	uint16 getColorKey2();
-	Graphics::Surface *getBackSurface();
-	
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
 	Control *findControl(uint32 objectId);
 	ActorType *findActorType(uint32 actorTypeId);

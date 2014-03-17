@@ -24,6 +24,7 @@
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/input.h"
+#include "illusions/screen.h"
 
 namespace Illusions {
 
@@ -60,7 +61,7 @@ void Actor::unpause() {
 }
 
 void Actor::createSurface(SurfInfo &surfInfo) {
-	_surface = _vm->allocSurface(surfInfo);
+	_surface = _vm->_screen->allocSurface(surfInfo);
 	if (_frameIndex) {
 		if (_surfaceTextFlag) {
 			/* TODO
@@ -347,5 +348,8 @@ void Control::setActorFrameIndex(int16 frameIndex) {
 		_actor->_newFrameIndex = 0;
 	}
 }
+
+// Controls
+
 
 } // End of namespace Illusions

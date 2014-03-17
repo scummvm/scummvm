@@ -31,6 +31,8 @@
 
 namespace Illusions {
 
+class Screen;
+
 struct SpriteDrawQueueItem {
 	byte *_drawFlags;
 	int16 _kind;
@@ -46,9 +48,10 @@ struct SpriteDrawQueueItem {
 
 class SpriteDrawQueue {
 public:
-	SpriteDrawQueue(IllusionsEngine *vm);
+	SpriteDrawQueue(Screen *screen);
 	~SpriteDrawQueue();
 	bool draw(SpriteDrawQueueItem *item);
+	void drawAll();
 	void insertSprite(byte *drawFlags, Graphics::Surface *surface, WidthHeight &dimensions,
 		Common::Point &drawPosition, Common::Point &controlPosition, int priority, int16 scale, uint16 flags);
 	void insertSurface(Graphics::Surface *surface, WidthHeight &dimensions,
@@ -67,16 +70,10 @@ protected:
 		}
 	};
 
-	IllusionsEngine *_vm;
-	Graphics::Surface *_backSurface;
+	Screen *_screen;
 	SpriteDrawQueueList _queue;	
 	void insert(SpriteDrawQueueItem *item, int priority);
 	bool calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcRect, Common::Rect &dstRect);
-	// TODO Possibly move these into a Screen class
-	void drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey);
-	void drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect);
-	void drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey);
-	void drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect);
 };
 
 } // End of namespace Illusions
