@@ -729,6 +729,7 @@ int sceneHandler18(ExCommand *cmd) {
 		{
 			if (g_vars->scene18_enteredTrubaRight) {
 				cmd->_messageKind = 0;
+
 				break;
 			}
 
@@ -743,6 +744,7 @@ int sceneHandler18(ExCommand *cmd) {
 					if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene18_domino->_id) {
 						handleObjectInteraction(g_fp->_aniMan, g_vars->scene18_domino, cmd->_keyCode);
 						cmd->_messageKind = 0;
+
 						break;
 					}
 				}
@@ -786,6 +788,7 @@ int sceneHandler18(ExCommand *cmd) {
 			if (!g_vars->scene18_whirlgig->_movement) {
 				g_vars->scene18_whirlgig->startAnim(MV_WHR18_SPIN, 0, -1);
 				g_fp->_behaviorManager->updateBehaviors();
+
 				break;
 			}
 		} else {
@@ -793,6 +796,7 @@ int sceneHandler18(ExCommand *cmd) {
 		}
 
 		g_fp->_behaviorManager->updateBehaviors();
+
 		break;
 	}
 
@@ -910,6 +914,7 @@ int sceneHandler19(ExCommand *cmd) {
 				g_vars->scene18_whirlgig->startAnim(MV_WHR19_SPIN, 0, -1);
 
 				g_fp->_behaviorManager->updateBehaviors();
+
 				break;
 			}
 		} else {
@@ -917,6 +922,7 @@ int sceneHandler19(ExCommand *cmd) {
 		}
 
 		g_fp->_behaviorManager->updateBehaviors();
+
 		break;
 	}
 
