@@ -28,14 +28,26 @@
 
 namespace MADS {
 
-Font::Font(MADSEngine *vm) : _vm(vm) {
+MADSEngine *Font::_vm = nullptr;
+
+uint8 Font::_fontColors[4];
+
+void Font::init(MADSEngine *vm) {
+	_vm = vm;
+	_fontColors[0] = 0xFF;
+	_fontColors[1] = 0xF;
+	_fontColors[2] = 7;
+	_fontColors[3] = 8;
+}
+
+Font *Font::getFont(const Common::String &fontName) {
+	Font *font = new Font();
+	font->setFont(fontName);
+	return font;
+}
+
+Font::Font() {
 	_sysFont = true;
-	/*
-	_fontColors[0] = _vm->_palette->BLACK;
-	_fontColors[1] = _vm->_palette->WHITE;
-	_fontColors[2] = _vm->_palette->BLACK;
-	_fontColors[3] = _vm->_palette->DARK_GRAY;
-	*/
 }
 
 Font::~Font() {
@@ -96,18 +108,28 @@ void Font::setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4) {
 	_fontColors[2] = v3;
 }
 
-int Font::write(MSurface *surface, const Common::String &msg, const Common::Point &pt, int width, int spaceWidth, uint8 colors[]) {
-
-	/*TODO
-	if (custom_ascii_converter) {			 // if there is a function to convert the extended ASCII characters
-		custom_ascii_converter(out_string);	 // call it with the string
+void Font::setColorMode(int mode) {
+	switch (mode) {
+	case 0:
+		setColors(0xFF, 4, 4, 0);
+		break;
+	case 1:
+		setColors(0xFF, 5, 5, 0);
+		break;
+	case 2:
+		setColors(0xFF, 6, 6, 0);
+		break;
+	default:
+		break;
 	}
-	*/
+}
 
+int Font::writeString(MSurface *surface, const Common::String &msg, const Common::Point &pt,
+		int spaceWidth, int width) {
 	if (width > 0)
-		width = MIN(surface->getWidth(), pt.x + width);
+		width = MIN((int)surface->w, pt.x + width);
 	else
-		width = surface->getWidth();
+		width = surface->w - pt.x;
 
 	int x = pt.x + 1;
 	int y = pt.y + 1;
@@ -154,16 +176,16 @@ int Font::write(MSurface *surface, const Common::String &msg, const Common::Poin
 			for (int i = 0; i < height; i++) {
 				for (int j = 0; j < bpp; j++) {
 					if (*charData & 0xc0)
-						*destPtr = colors[(*charData & 0xc0) >> 6];
+						*destPtr = _fontColors[(*charData & 0xc0) >> 6];
 					destPtr++;
 					if (*charData & 0x30)
-						*destPtr = colors[(*charData & 0x30) >> 4];
+						*destPtr = _fontColors[(*charData & 0x30) >> 4];
 					destPtr++;
 					if (*charData & 0x0C)
-						*destPtr = colors[(*charData & 0x0C) >> 2];
+						*destPtr = _fontColors[(*charData & 0x0C) >> 2];
 					destPtr++;
 					if (*charData & 0x03)
-						*destPtr = colors[*charData & 0x03];
+						*destPtr = _fontColors[*charData & 0x03];
 					destPtr++;
 					charData++;
 				}
@@ -203,12 +225,6 @@ int Font::getBpp(int charWidth) {
 		return 2;
 	else
 		return 1;
-}
-
-Font *Font::getFont(const Common::String &fontName) {
-	Font *font = new Font(_vm);
-	font->setFont(fontName);
-	return font;
 }
 
 } // End of namespace MADS

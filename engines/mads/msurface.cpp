@@ -58,8 +58,9 @@ void MSurface::setSize(int width, int height) {
 void MSurface::setPixels(byte *pData, int horizSize, int vertSize) {
 	_freeFlag = false;
 	pixels = pData;
-	w = horizSize;
+	w = pitch = horizSize;
 	h = vertSize;
+	format.bytesPerPixel = 1;
 }
 
 int MSurface::scaleValue(int value, int scale, int err) {

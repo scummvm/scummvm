@@ -42,11 +42,6 @@ namespace MADS {
 class Scene {
 private:
 	/**
-	 * Free the voculary list buffer
-	 */
-	void freeVocab();
-
-	/**
 	 * Return the index of a given Vocab in the active vocab list
 	 */
 	int activeVocabIndexOf(int vocabId);
@@ -88,7 +83,6 @@ public:
 	SpriteSets _sprites;
 	int _spritesIndex;
 	DynamicHotspots _dynamicHotspots;
-	byte *_vocabBuffer;
 	Common::Array<int> _activeVocabs;
 	SequenceList _sequences;
 	KernelMessages _kernelMessages;
@@ -118,8 +112,6 @@ public:
 	int _scaleRange;
 	int _interfaceY;
 	int _spritesCount;
-	bool _v1A;
-	int _v1C;
 	MADSAction _action;
 	bool _roomChanged;
 	bool _reloadSceneFlag;
@@ -203,6 +195,11 @@ public:
 	 * Load an animation
 	 */
 	void loadAnimation(const Common::String &resName, int abortTimers = 0);
+
+	/**
+	 * Returns a vocab entry
+	 */
+	Common::String getVocab(int vocabId) { return _vocabStrings[vocabId]; }
 
 	/**
 	 * Clear the data for the scene

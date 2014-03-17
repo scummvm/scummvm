@@ -41,38 +41,42 @@ namespace MADS {
 class MADSEngine;
 
 class Font {
-protected:
-	MADSEngine *_vm;
+private:
+	static uint8 _fontColors[4];
+	static MADSEngine *_vm;
+public:
+	/**
+	 * Initialise the font system
+	 */
+	static void init(MADSEngine *vm);
 
+	/**
+	* Returns a new Font instance using the specified font name
+	*/
+	static Font *getFont(const Common::String &fontName);
+protected:
 	uint8 _maxWidth, _maxHeight;
 	uint8 *_charWidths;
 	uint16 *_charOffs;
 	uint8 *_charData;
 	bool _sysFont;
 	Common::String _filename;
-	uint8 _fontColors[4];
 
 	int getBpp(int charWidth);
 public:
-	Font(MADSEngine *vm);
+	Font();
 	virtual ~Font();
 
 	void setFont(const Common::String &filename);
 	void setColor(uint8 color);
 	void setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4);
+	void setColorMode(int mode);
 
 	int maxWidth() const { return _maxWidth; }
 	int getWidth(const Common::String &msg, int spaceWidth = -1);
 	int getHeight() const { return _maxHeight; }
-	int write(MSurface *surface, const Common::String &msg, const Common::Point &pt, int width, int spaceWidth, uint8 colors[]);
-	int writeString(MSurface *surface, const Common::String &msg, const Common::Point &pt, int width = 0, int spaceWidth = -1) {
-		return write(surface, msg, pt, width, spaceWidth, _fontColors);
-	}
-
-	/**
-	 * Returns a new Font instance using the specified font name
-	 */
-	Font *getFont(const Common::String &fontName);
+	int writeString(MSurface *surface, const Common::String &msg, const Common::Point &pt,
+		int spaceWidth = 0, int width = 0);
 };
 
 } // End of namespace MADS

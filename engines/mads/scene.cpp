@@ -35,14 +35,11 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_priorSceneId = 0;
 	_nextSceneId = 0;
 	_currentSceneId = 0;
-	_vocabBuffer = nullptr;
 	_sceneLogic = nullptr;
 	_sceneInfo = nullptr;
 	_animFlag = false;
 	_animVal1 = 0;
 	_depthStyle = 0;
-	_v1A = 0;
-	_v1C = 0;
 	_roomChanged = false;
 	_reloadSceneFlag = false;
 	_destFacing = 0;
@@ -66,19 +63,12 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 }
 
 Scene::~Scene() {
-	delete[] _vocabBuffer;
 	delete _sceneLogic;
 	delete _sceneInfo;
 }
 
 void Scene::clearVocab() {
-	freeVocab();
 	_activeVocabs.clear();
-}
-
-void Scene::freeVocab() {
-	delete[] _vocabBuffer;
-	_vocabBuffer = nullptr;
 }
 
 void Scene::addActiveVocab(int vocabId) {
@@ -222,21 +212,22 @@ void Scene::loadVocab() {
 }
 
 void Scene::loadVocabStrings() {
-	freeVocab();
+	_vocabStrings.clear();
 	File f("*VOCAB.DAT");
+	Common::String msg;
 
-	char *textStrings = new char[f.size()];
-	f.read(textStrings, f.size());
+	for (;;) {
+		char c = (char)f.readByte();
+		if (f.eos()) break;
 
-	for (uint strIndex = 0; strIndex < _activeVocabs.size(); ++strIndex) {
-		const char *s = textStrings;
-		for (int vocabIndex = 0; vocabIndex < _activeVocabs[strIndex]; ++vocabIndex)
-			s += strlen(s) + 1;
-
-		_vocabStrings.push_back(s);
+		if (c == '\0') {
+			_vocabStrings.push_back(msg);
+			msg = "";
+		} else {
+			msg += c;
+		}
 	}
 
-	delete[] textStrings;
 	f.close();
 }
 

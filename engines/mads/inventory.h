@@ -67,6 +67,13 @@ public:
 	void load();
 
 	/**
+	 * Returns the inventory item from the player's inventory
+	 */
+	InventoryObject &getItem(int itemIndex) {
+		return (*this)[_inventoryList[itemIndex]];
+	}
+
+	/**
 	 * Set the associated data? pointer with an inventory object
 	 */
 	void setData(int objIndex, int id, const byte *p);

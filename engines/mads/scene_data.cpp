@@ -41,7 +41,6 @@ ScreenObject::ScreenObject() {
 ScreenObjects::ScreenObjects(MADSEngine *vm): _vm(vm) {
 	_v8333C = false;
 	_v832EC = 0;
-	_yp = 0;
 	_v7FECA = 0;
 	_v7FED6 = 0;
 	_v8332A = 0;
@@ -68,11 +67,11 @@ void ScreenObjects::check(bool scanFlag) {
 	if (!_vm->_events->_mouseButtons || _v832EC)
 		_v7FECA = false;
 
-	if ((_vm->_events->_vD6 || _v8332A || _yp || _v8333C) && scanFlag) {
-		scene._userInterface._selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
-		if (scene._userInterface._selectedObject > 0) {
-			_category = (ScrCategory)((*this)[scene._userInterface._selectedObject - 1]._category & 7);
-			_objectIndex = (*this)[scene._userInterface._selectedObject - 1]._descId;
+	if ((_vm->_events->_vD6 || _v8332A || _vm->_game->_scene._userInterface._scrollerY || _v8333C) && scanFlag) {
+		scene._userInterface._selectedInvIndex = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
+		if (scene._userInterface._selectedInvIndex > 0) {
+			_category = (ScrCategory)((*this)[scene._userInterface._selectedInvIndex - 1]._category & 7);
+			_objectIndex = (*this)[scene._userInterface._selectedInvIndex - 1]._descId;
 		}
 
 		// Handling for easy mouse
@@ -80,7 +79,7 @@ void ScreenObjects::check(bool scanFlag) {
 		if (_vm->_easyMouse && !_vm->_events->_vD4 && category != _category
 				&& scene._userInterface._category != CAT_NONE) {
 			_released = true;
-			if (category >= CAT_ACTION && category <= CAT_6) {
+			if (category >= CAT_ACTION && category <= CAT_TALK_ENTRY) {
 				scene._userInterface.elementHighlighted();
 			} 
 		}
@@ -90,7 +89,7 @@ void ScreenObjects::check(bool scanFlag) {
 			scene._userInterface._category = _category;
 
 		if (!_vm->_events->_mouseButtons || _vm->_easyMouse) {
-			if (category >= CAT_ACTION && category <= CAT_6) {
+			if (category >= CAT_ACTION && category <= CAT_TALK_ENTRY) {
 				scene._userInterface.elementHighlighted();
 			}
 		}
@@ -106,7 +105,7 @@ void ScreenObjects::check(bool scanFlag) {
 			scene._userInterface._category = CAT_NONE;
 		}
 
-		if (_vm->_events->_mouseButtons || _vm->_easyMouse || _yp)
+		if (_vm->_events->_mouseButtons || _vm->_easyMouse || scene._userInterface._scrollerY)
 			proc1();
 
 		if (_vm->_events->_mouseButtons || _vm->_easyMouse)

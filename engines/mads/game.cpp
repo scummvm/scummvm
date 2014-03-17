@@ -165,7 +165,7 @@ void Game::sectionLoop() {
 
 		_scene._screenObjects._v8333C = true;
 		_scene._screenObjects._v832EC = 0;
-		_scene._screenObjects._yp = 0;
+		_scene._userInterface._scrollerY = 0;
 		_v3 = -1;
 
 		_scene._sceneLogic->setup();
@@ -196,9 +196,9 @@ void Game::sectionLoop() {
 		}
 
 		_vm->_events->initVars();
-		_scene._v1A = true;
-		_scene._v1C = -1;
-		_objectHiliteVocabIdx = -1;
+		_scene._userInterface._v1A = -1;
+		_scene._userInterface._v1C = -1;
+		_scene._userInterface._v1E = -1;
 
 		_scene._action.clear();
 		_player.turnToDestFacing();
@@ -297,7 +297,6 @@ void Game::loadResourceSequence(const Common::String prefix, int v) {
 
 void Game::loadQuotes() {
 	File f("*QUOTES.DAT");
-	int curPos = 0;
 
 	Common::String msg;
 	while (true) {

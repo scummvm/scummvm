@@ -391,7 +391,7 @@ void TextDisplayList::draw(MSurface *s) {
 			td._font->setColors(0xFF, td._color1, td._color2, 0);
 			td._font->writeString(s, td._msg,
 				Common::Point(td._bounds.left, td._bounds.top), 
-				td._bounds.width(), td._spacing);
+				td._spacing, td._bounds.width());
 		}
 	}
 }

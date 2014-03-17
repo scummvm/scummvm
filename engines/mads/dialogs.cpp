@@ -270,7 +270,7 @@ void TextDialog::draw() {
 				++yp;
 
 			_vm->_font->writeString(&_vm->_screen, _lines[lineNum], 
-				Common::Point(xp, yp), 0, 1);
+				Common::Point(xp, yp), 1);
 
 			if (_lineXp[lineNum] & 0x80) {
 				// Draw an underline under the text

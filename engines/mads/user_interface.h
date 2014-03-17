@@ -32,7 +32,7 @@ namespace MADS {
 
 enum ScrCategory {
 	CAT_NONE = 0, CAT_ACTION = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB = 3,
-	CAT_HOTSPOT = 4, CAT_INV_ANIM = 5, CAT_6 = 6, CAT_INV_SCROLLER = 7,
+	CAT_HOTSPOT = 4, CAT_INV_ANIM = 5, CAT_TALK_ENTRY = 6, CAT_INV_SCROLLER = 7,
 	CAT_12 = 12
 };
 
@@ -76,9 +76,14 @@ private:
 	void drawItemVocabList();
 
 	/**
-	 * Draw a vocab text entry
+	 * Draw the inventory scroller
 	 */
-	void drawVocab(ScrCategory category, int id);
+	void drawScrolller();
+
+	/**
+	 * Draw a UI textual element
+	 */
+	void writeVocab(ScrCategory category, int id);
 public:
 	ScrCategory _category;
 	int _screenObjectsCount;
@@ -87,7 +92,13 @@ public:
 	MSurface _surface;
 	int _inventoryTopIndex;
 	int _objectY;
-	int _selectedObject;
+	int _selectedInvIndex;
+	int _selectedActionIndex;
+	int _selectedItemVocabIdx;
+	int _scrollerY;
+	int _v1A;
+	int _v1C;
+	int _v1E;
 public:
 	/**
 	* Constructor

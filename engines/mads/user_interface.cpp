@@ -41,7 +41,13 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm) {
 	_screenObjectsCount = 0;
 	_inventoryTopIndex = 0;
 	_objectY = 0;
-	_selectedObject = -1;
+	_selectedInvIndex = -1;
+	_selectedActionIndex = -1;
+	_selectedItemVocabIdx = -1;
+	_scrollerY = 0;
+	_v1A = -1;
+	_v1C = -1;
+	_v1E = -1;
 
 	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCENE_HEIGHT);
 	setPixels(pData, MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
@@ -96,9 +102,9 @@ void UserInterface::setup(int id) {
 	scene._imageInterEntries.clear();
 	scene._imageInterEntries.add(-2, 0xff);
 	_vm->_game->_ticksExpiry = _vm->_events->getFrameCounter();
-	scene._v1A = true;
-	_vm->_game->_objectHiliteVocabIdx = -1;
-	scene._v1C = -1;
+	_v1A = -1;
+	_v1E = -1;
+	_v1C = -1;
 
 	// Make a copy of the surface
 	copyTo(&_surface);
@@ -123,30 +129,118 @@ void UserInterface::drawTextElements() {
 	} else {
 		// Draw the actions
 		drawActions();
-		drawInventoryList();
-		drawItemVocabList();
+//		drawInventoryList();
+//		drawItemVocabList();
 	}
 }
 
 void UserInterface::drawActions() {
 	for (int idx = 0; idx < 10; ++idx) {
-		drawVocab(CAT_ACTION, idx);
+		writeVocab(CAT_ACTION, idx);
 	}
 }
 
 void UserInterface::drawInventoryList() {
 	int endIndex = MIN((int)_vm->_game->_objects._inventoryList.size(), _inventoryTopIndex + 5);
 	for (int idx = _inventoryTopIndex; idx < endIndex; ++idx) {
-		drawVocab(CAT_INV_LIST, idx);
+		writeVocab(CAT_INV_LIST, idx);
 	}
 }
 
 void UserInterface::drawItemVocabList() {
-
+	if (_selectedInvIndex >= 0) {
+		InventoryObject &io = _vm->_game->_objects[
+			_vm->_game->_objects._inventoryList[_selectedInvIndex]];
+		for (int idx = 0; idx < io._vocabCount; ++idx) {
+			writeVocab(CAT_INV_VOCAB, idx);
+		}
+	}
 }
 
-void UserInterface::drawVocab(ScrCategory category, int id) {
+void UserInterface::drawScrolller() {
+	if (_scrollerY > 0)
+		writeVocab(CAT_INV_SCROLLER, _scrollerY);
+	writeVocab(CAT_INV_SCROLLER, 4);
+}
 
+void UserInterface::writeVocab(ScrCategory category, int id) {
+	Common::Rect bounds;
+	if (!getBounds(category, id, bounds))
+		return;
+
+	Scene &scene = _vm->_game->_scene;
+	Font *font = nullptr;
+
+	int vocabId;
+	Common::String vocabStr;
+	switch (category) {
+	case CAT_ACTION:
+		font = _vm->_font->getFont(FONT_INTERFACE);
+		vocabId = scene._verbList[id]._id;
+		if (_v1A) {
+			_vm->_font->setColorMode(1);
+		} else {
+			_vm->_font->setColorMode(id == _selectedActionIndex ? 2 : 0);
+		}
+		vocabStr = scene.getVocab(vocabId);
+		vocabStr.toUppercase();
+		font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
+		break;
+
+	case CAT_INV_LIST:
+		font = _vm->_font->getFont(FONT_INTERFACE);
+		vocabId = _vm->_game->_objects.getItem(id)._descId;
+		if (_v1C == id) {
+			_vm->_font->setColorMode(1);
+		} else {
+			_vm->_font->setColorMode(id == _selectedInvIndex ? 2 : 0);
+			vocabStr = scene.getVocab(vocabId);
+			vocabStr.toUppercase();
+			font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
+			break;
+		}
+		break;
+
+	case CAT_TALK_ENTRY:
+		error("TODO: CAT_TALK_ENTRY");
+
+	case CAT_INV_SCROLLER:
+		font = _vm->_font->getFont(FONT_MISC);
+
+		switch (id) {
+		case 1:
+			vocabStr = "a";
+			break;
+		case 2:
+			vocabStr = "b";
+			break;
+		case 3:
+			vocabStr = "d";
+			break;
+		case 4:
+			vocabStr = "c";
+			break;
+		default:
+			break;
+		}
+
+		font->setColorMode((id == 4) || (_scrollerY == 3) ? 1 : 0);
+		font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
+		break;
+	default:
+		font = _vm->_font->getFont(FONT_INTERFACE);
+		vocabId = _vm->_game->_objects.getItem(_selectedInvIndex)._vocabList[id]._vocabId;
+		if (_v1E == id) {
+			_vm->_font->setColorMode(1);
+		} else {
+			_vm->_font->setColorMode(id == _selectedInvIndex ? 2 : 0);
+			vocabStr = scene.getVocab(vocabId);
+			vocabStr.toUppercase();
+			font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
+			break;
+		}
+		break;
+	}
 }
 
 void UserInterface::setBounds(const Common::Rect &r) {
@@ -204,23 +298,23 @@ void UserInterface::loadElements() {
 	}
 
 	if (scene._screenObjects._v832EC == 1) {
+		// setup areas for talk entries
 		for (int idx = 0; idx < 5; ++idx) {
-			getBounds(CAT_6, idx, bounds);
+			getBounds(CAT_TALK_ENTRY, idx, bounds);
 			moveRect(bounds);
 
-			scene._screenObjects.add(bounds, LAYER_GUI, CAT_6, idx);
+			scene._screenObjects.add(bounds, LAYER_GUI, CAT_TALK_ENTRY, idx);
 		}
 	}
 }
 
 bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds) {
-	Common::Rect result;
 	int heightMultiplier, widthMultiplier;
 	int leftStart, yOffset, widthAmt;
 
 	switch (category) {
 	case CAT_ACTION:
-		heightMultiplier = v / 5;
+		heightMultiplier = v % 5;
 		widthMultiplier = v / 5;
 		leftStart = 2;
 		yOffset = 3;
@@ -238,7 +332,7 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 		widthAmt = 69;
 		break;
 
-	case CAT_6:
+	case CAT_TALK_ENTRY:
 		heightMultiplier = v;
 		widthMultiplier = 0;
 		leftStart = 2;
@@ -263,32 +357,32 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 		break;
 	}
 
-	result.left = (widthMultiplier > 0) ? widthMultiplier * widthAmt + leftStart : leftStart;
-	result.setWidth(widthAmt);
-	result.top = heightMultiplier * 3 + yOffset;
-	result.setHeight(8);
+	bounds.left = (widthMultiplier > 0) ? widthMultiplier * widthAmt + leftStart : leftStart;
+	bounds.setWidth(widthAmt);
+	bounds.top = heightMultiplier * 8 + yOffset;
+	bounds.setHeight(8);
 
 	if (category == CAT_INV_SCROLLER) {
 		switch (v) {
 		case 1:
 			// Arrow up
-			result.top = 4;
-			result.setHeight(7);
+			bounds.top = 4;
+			bounds.setHeight(7);
 			break;
 		case 2:
 			// Arrow down
-			result.top = 35;
-			result.setHeight(7);
+			bounds.top = 35;
+			bounds.setHeight(7);
 			break;
 		case 3:
 			// Scroller
-			result.top = 12;
-			result.setHeight(22);
+			bounds.top = 12;
+			bounds.setHeight(22);
 			break;
 		case 4:
 			// Thumb
-			result.top = _objectY + 14;
-			result.setHeight(1);
+			bounds.top = _objectY + 14;
+			bounds.setHeight(1);
 			break;
 		default:
 			break;

@@ -80,7 +80,8 @@ void MADSEngine::initialise() {
 	_dialogs = Dialogs::init(this);
 	_events = new EventsManager(this);
 	_palette = new Palette(this);
-	_font = new Font(this);
+	Font::init(this);
+	_font = new Font();
 	_screen.init();
 	_sound = new SoundManager(this, _mixer);
 	_game = Game::init(this);

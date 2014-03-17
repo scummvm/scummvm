@@ -87,7 +87,6 @@ public:
 	int _v7FECA;
 	int _v7FED6;
 	int _v8332A;
-	int _yp;
 	int _v8333C;
 	int _selectedObject;
 	ScrCategory _category;
