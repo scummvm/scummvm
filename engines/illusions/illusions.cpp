@@ -27,11 +27,10 @@
 #include "illusions/graphics.h"
 #include "illusions/input.h"
 #include "illusions/updatefunctions.h"
-#include "illusions/spritedrawqueue.h"
-#include "illusions/spritedecompressqueue.h"
 #include "illusions/actor.h"
 #include "illusions/actorresource.h"
 #include "illusions/thread.h"
+#include "illusions/screen.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
 #include "illusions/time.h"
@@ -87,6 +86,7 @@ Common::Error IllusionsEngine::run() {
 	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
 
+    _screen = new Screen(this);
 	_input = new Input();	
 	_scriptMan = new ScriptMan(this);
 	_actorItems = new ActorItems(this);
@@ -137,6 +137,7 @@ Common::Error IllusionsEngine::run() {
 	delete _actorItems;
 	delete _scriptMan;
 	delete _input;
+	delete _screen;
 	delete _resSys;
 	
 	return Common::kNoError;
@@ -178,33 +179,6 @@ void IllusionsEngine::updateEvents() {
 			break;
 		}
 	}
-}
-
-Graphics::Surface *IllusionsEngine::allocSurface(int16 width, int16 height) {
-	// TODO Use screen pixel format?
-	Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(width, height, pixelFormat16);
-	return surface; 
-}
-
-Graphics::Surface *IllusionsEngine::allocSurface(SurfInfo &surfInfo) {
-	return allocSurface(surfInfo._dimensions._width, surfInfo._dimensions._height);
-}
-
-bool IllusionsEngine::isDisplayOn() {
-	// TODO Move this outside into a screen class
-	return true;
-}
-
-uint16 IllusionsEngine::getColorKey2() {
-	// TODO Move this outside into a screen class
-	return 0;
-}
-
-Graphics::Surface *IllusionsEngine::getBackSurface() {
-	// TODO Move this outside into a screen class
-	return 0;
 }
 
 Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {

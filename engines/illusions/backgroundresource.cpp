@@ -23,6 +23,7 @@
 #include "illusions/illusions.h"
 #include "illusions/backgroundresource.h"
 #include "illusions/camera.h"
+#include "illusions/screen.h"
 #include "common/str.h"
 
 namespace Illusions {
@@ -192,7 +193,7 @@ void BackgroundItem::initSurface() {
 	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i) {
 		BgInfo *bgInfo = &_bgRes->_bgInfos[i];
 		_panPoints[i] = bgInfo->_panPoint;
-		_surfaces[i] = _vm->allocSurface(bgInfo->_surfInfo);
+		_surfaces[i] = _vm->_screen->allocSurface(bgInfo->_surfInfo);
 		drawTiles(_surfaces[i], bgInfo->_tileMap, bgInfo->_tilePixels);
 	}
 }

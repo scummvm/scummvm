@@ -26,6 +26,7 @@
 #include "illusions/actorresource.h"
 #include "illusions/graphics.h"
 #include "common/algorithm.h"
+#include "common/list.h"
 #include "graphics/surface.h"
 
 namespace Illusions {
@@ -140,6 +141,14 @@ public:
 	Common::Point _feetPt;
 	Common::Point _position;
 	// TODO 0000001C - 00000054 unknown
+};
+
+class Controls {
+public:
+public:
+	typedef Common::List<Control*> Items;
+	typedef Items::iterator ItemsIterator;
+	Items _controls;
 };
 
 } // End of namespace Illusions

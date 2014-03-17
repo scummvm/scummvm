@@ -21,11 +21,12 @@
  */
 
 #include "illusions/spritedrawqueue.h"
+#include "illusions/screen.h"
 
 namespace Illusions {
 
-SpriteDrawQueue::SpriteDrawQueue(IllusionsEngine *vm)
-	: _vm(vm) {
+SpriteDrawQueue::SpriteDrawQueue(Screen *screen)
+	: _screen(screen) {
 }
 
 SpriteDrawQueue::~SpriteDrawQueue() {
@@ -39,7 +40,7 @@ bool SpriteDrawQueue::draw(SpriteDrawQueueItem *item) {
 		return false;
 	}
 
-	if (!_vm->isDisplayOn()) {
+	if (!_screen->isDisplayOn()) {
 		if (item->_drawFlags)
 			*item->_drawFlags &= ~4;
 		return true;			
@@ -51,24 +52,33 @@ bool SpriteDrawQueue::draw(SpriteDrawQueueItem *item) {
 	if (!calcItemRect(item, srcRect, dstRect))
 		return true;
 
-	_backSurface = _vm->getBackSurface();
-
 	if (item->_scale == 100) {
 		if (item->_flags & 1)
-			drawSurface10(dstRect.left, dstRect.top, item->_surface, srcRect, _vm->getColorKey2());
+			_screen->drawSurface10(dstRect.left, dstRect.top, item->_surface, srcRect, _screen->getColorKey2());
 		else
-			drawSurface11(dstRect.left, dstRect.top, item->_surface, srcRect);
+			_screen->drawSurface11(dstRect.left, dstRect.top, item->_surface, srcRect);
 	} else {
 		if (item->_flags & 1)
-			drawSurface20(dstRect, item->_surface, srcRect, _vm->getColorKey2());
+			_screen->drawSurface20(dstRect, item->_surface, srcRect, _screen->getColorKey2());
 		else
-			drawSurface21(dstRect, item->_surface, srcRect);
+			_screen->drawSurface21(dstRect, item->_surface, srcRect);
 	}
 	
 	if (item->_drawFlags)
 		*item->_drawFlags &= ~4;
 
 	return true;
+}
+
+void SpriteDrawQueue::drawAll() {
+	SpriteDrawQueueListIterator it = _queue.begin();
+	while (it != _queue.end()) {
+		if (draw(*it)) {
+			delete *it;
+			it = _queue.erase(it);
+		} else
+			++it;
+	}
 }
 
 void SpriteDrawQueue::insertSprite(byte *drawFlags, Graphics::Surface *surface, WidthHeight &dimensions,
@@ -175,22 +185,6 @@ bool SpriteDrawQueue::calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcR
 	}
 
 	return true;
-}
-
-void SpriteDrawQueue::drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
-	// TODO
-}
-
-void SpriteDrawQueue::drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {
-	// TODO
-}
-
-void SpriteDrawQueue::drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
-	// TODO
-}
-
-void SpriteDrawQueue::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {
-	// TODO
 }
 
 } // End of namespace Illusions
