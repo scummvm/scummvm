@@ -30,8 +30,8 @@ namespace MADS {
 UISlot::UISlot() {
 	_slotType = ST_NONE;
 	_field2 = 0;
-	_field3 = 0;
-	_field4 = 0;
+	_spritesIndex = 0;
+	_frameNumber = 0;
 	_field6 = 0;
 	_field8 = 0;
 }
@@ -46,7 +46,7 @@ void UISlots::fullRefresh() {
 	push_back(slot);
 }
 
-void UISlots::add(int v1, int v2, int v3, int v4) {
+void UISlots::add(int v1, int v2, int frameNumber, int spritesIndex) {
 	assert(size() < 50);
 
 	UISlot ie;
@@ -54,8 +54,8 @@ void UISlots::add(int v1, int v2, int v3, int v4) {
 	ie._field2 = 201;
 	ie._field6 = v1;
 	ie._field8 = v2;
-	ie._field4 = v3;
-	ie._field3 = v4;
+	ie._frameNumber = frameNumber;
+	ie._spritesIndex = spritesIndex;
 
 	push_back(ie);
 }
@@ -68,6 +68,7 @@ void UISlots::call(int v1, int v2) {
 
 UserInterface::UserInterface(MADSEngine *vm) : _vm(vm) {
 	_invSpritesIndex = -1;
+	_invFrameNumber = 1;
 	_category = CAT_NONE;
 	_screenObjectsCount = 0;
 	_inventoryTopIndex = 0;
@@ -432,7 +433,23 @@ void UserInterface::drawTalkList() {
 }
 
 void UserInterface::loadInventoryAnim(int objectId) {
+	Scene &scene = _vm->_game->_scene;
+	noInventoryAnim();
+	bool flag = true;
 
+	if (_vm->_invObjectsAnimated) {
+		Common::String resName = Common::String::format("*OB%.3dI", objectId);
+		SpriteAsset *asset = new SpriteAsset(_vm, resName, 8);
+		_invSpritesIndex = scene._sprites.add(asset, 1);
+		if (_invSpritesIndex >= 0) {
+			_invFrameNumber = 1;
+			flag = false;
+		}
+	}
+
+	if (flag) {
+		// TODO: Use of inv_object_data?
+	}
 }
 
 void UserInterface::noInventoryAnim() {
@@ -449,9 +466,41 @@ void UserInterface::noInventoryAnim() {
 }
 
 void UserInterface::refresh() {
-	Scene &scene = _vm->_game->_scene;
-	scene._userInterface._uiSlots.clear();
-//	scene._userInterface._uiSlots.new()
+	_uiSlots.clear();
+	_uiSlots.fullRefresh();
+	_uiSlots.call(0, 0);
+
+	drawTextElements();
 }
+
+void UserInterface::inventoryAnim() {
+	Scene &scene = _vm->_game->_scene;
+	if (scene._screenObjects._v832EC == 1 || scene._screenObjects._v832EC == 2
+			|| _invSpritesIndex < 0)
+		return;
+
+	// Move to the next frame number in the sequence, resetting if at the end
+	SpriteAsset *asset = scene._sprites[_invSpritesIndex];
+	if (++_invFrameNumber > asset->getCount())
+		_invFrameNumber = 1;
+
+	// Loop through the slots list for ?? entry
+	for (uint i = 0; i < _uiSlots.size(); ++i) {
+		if (_uiSlots[i]._field2 == 200)
+			_uiSlots[i]._slotType = -5;
+	}
+
+	// Add a new slot entry for the inventory animation
+	UISlot slot;
+	slot._slotType = ST_FOREGROUND;
+	slot._field2 = 200;
+	slot._frameNumber = _invFrameNumber;
+	slot._spritesIndex = _invSpritesIndex;
+	slot._field6 = 160;
+	slot._field8 = 3;
+
+	_uiSlots.push_back(slot);
+}
+
 
 } // End of namespace MADS

@@ -39,7 +39,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	
 	// Initialise fields
 	_easyMouse = true;
-	_invObjectStill = false;
+	_invObjectsAnimated = true;
 	_textWindowStill = false;
 	_screenFade = SCREEN_FADE_SMOOTH;
 	_musicFlag = false;

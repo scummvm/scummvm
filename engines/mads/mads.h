@@ -100,7 +100,7 @@ public:
 	ScreenSurface _screen;
 	SoundManager *_sound;
 	bool _easyMouse;
-	bool _invObjectStill;
+	bool _invObjectsAnimated;
 	bool _textWindowStill;
 	ScreenFade _screenFade;
 	bool _musicFlag;

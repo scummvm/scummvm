@@ -40,8 +40,8 @@ class UISlot {
 public:
 	int _slotType;
 	int _field2;
-	int _field3;
-	int _field4;
+	int _spritesIndex;
+	int _frameNumber;
 	int _field6;
 	int _field8;
 
@@ -50,7 +50,7 @@ public:
 
 class UISlots : public Common::Array<UISlot> {
 public:
-	void add(int v1, int v2, int v3, int v4);
+	void add(int v1, int v2, int frameNumber, int spritesIndex);
 	void fullRefresh();
 
 	void call(int v1, int v2);
@@ -61,6 +61,7 @@ class UserInterface : public MSurface {
 private:
 	MADSEngine *_vm;
 	int _invSpritesIndex;
+	int _invFrameNumber;
 
 	/**
 	 * Loads the elements of the user interface
@@ -108,6 +109,11 @@ private:
 	void writeVocab(ScrCategory category, int id);
 
 	void refresh();
+
+	/**
+	 * Handles queuing a new frame of an inventory animation for drawing
+	 */
+	void inventoryAnim();
 public:
 	ScrCategory _category;
 	int _screenObjectsCount;

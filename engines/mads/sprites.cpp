@@ -379,7 +379,9 @@ SpriteSets::~SpriteSets() {
 }
 
 int SpriteSets::add(SpriteAsset *asset, int idx) {
-	if (!idx)
+	if (idx)
+		idx = idx + 49;
+	else
 		idx = size();
 
 	if (idx >= (int)size())
