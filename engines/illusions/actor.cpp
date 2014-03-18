@@ -23,6 +23,7 @@
 #include "illusions/illusions.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
+#include "illusions/dictionary.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
 #include "illusions/scriptman.h"
@@ -198,7 +199,7 @@ void Control::unpause() {
   
 	if (_actor && !(_actor->_flags & 0x0200)) {
 		SurfInfo surfInfo;
-		ActorType *actorType = _vm->findActorType(_actorTypeId);
+		ActorType *actorType = _vm->_dict->findActorType(_actorTypeId);
 		if (actorType)
 			surfInfo = actorType->_surfInfo;
 		else
@@ -483,7 +484,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, int value2,
 	_actor->_notifyId3C = 0;
 	_actor->_path40 = 0;
 	
-	Sequence *sequence = _vm->findSequence(sequenceId);
+	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
 	
 	_actor->_seqCodeIp = sequence->_sequenceCode;
 	_actor->_frames = _vm->findSequenceFrames(sequence);
@@ -515,7 +516,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	Control *control = newControl();
 	Actor *actor = newActor();
 
-	ActorType *actorType = _vm->findActorType(actorTypeId);
+	ActorType *actorType = _vm->_dict->findActorType(actorTypeId);
 	control->_flags = actorType->_flags;
 	control->_priority = actorType->_priority;
 	control->_objectId = objectId;

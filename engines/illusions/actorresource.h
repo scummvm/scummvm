@@ -95,11 +95,12 @@ public:
 
 class ActorItem {
 public:
-	ActorItem();
+	ActorItem(IllusionsEngine *vm);              
 	~ActorItem();
 	void pause();
 	void unpause();
 public:
+	IllusionsEngine *_vm;
 	uint32 _tag;
 	int _pauseCtr;
 	ActorResource *_actRes;

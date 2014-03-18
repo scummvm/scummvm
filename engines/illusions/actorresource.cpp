@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/actorresource.h"
+#include "illusions/dictionary.h"
 
 namespace Illusions {
 
@@ -41,7 +42,7 @@ void ActorResourceLoader::load(Resource *resource) {
 	
 	for (uint i = 0; i < actorResource->_actorTypes.size(); ++i) {
 		ActorType *actorType = &actorResource->_actorTypes[i];
-		ActorType *actorType2 = 0;// TODO _vm->getActorType(actorType->_actorTypeId);
+		ActorType *actorType2 = _vm->_dict->findActorType(actorType->_actorTypeId);
 		if (actorType2) {
 			actorType->_surfInfo._dimensions._width = MAX(actorType->_surfInfo._dimensions._width,
 				actorType2->_surfInfo._dimensions._width);
@@ -52,12 +53,12 @@ void ActorResourceLoader::load(Resource *resource) {
 			if (actorType->_value1E == 0)
 				actorType->_value1E = actorType2->_value1E;
 		}
-		// TODO _vm->addActorType(actorType->_actorTypeId, actorType);
+		_vm->_dict->addActorType(actorType->_actorTypeId, actorType);
 	}
 
 	for (uint i = 0; i < actorResource->_sequences.size(); ++i) {
 		Sequence *sequence = &actorResource->_sequences[i];
-		// TODO _vm->addSequence(sequence->_sequence, sequence);
+		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
 	}
 	
 }
@@ -187,7 +188,8 @@ bool ActorResource::containsSequence(Sequence *sequence) {
 
 // ActorItem
 
-ActorItem::ActorItem() {
+ActorItem::ActorItem(IllusionsEngine *vm)
+	: _vm(vm) {
 }
 
 ActorItem::~ActorItem() {
@@ -196,28 +198,24 @@ ActorItem::~ActorItem() {
 void ActorItem::pause() {
 	++_pauseCtr;
 	if (_pauseCtr == 1) {
-		/* TODO
 		for (uint i = 0; i < _actRes->_actorTypes.size(); ++i)
-			// TODO _vm->removeActorType(_actRes->_actorTypes[i]._actorTypeId);
-		for (uint i = 0; i < actorResource->_sequences.size(); ++i)
-			// TODO _vm->removeSequence(_actRes->_sequences[i]._sequence);
-		*/
+			_vm->_dict->removeActorType(_actRes->_actorTypes[i]._actorTypeId);
+		for (uint i = 0; i < _actRes->_sequences.size(); ++i)
+			_vm->_dict->removeSequence(_actRes->_sequences[i]._sequenceId);
 	}
 }
 
 void ActorItem::unpause() {
 	--_pauseCtr;
 	if (_pauseCtr == 0) {
-		/* TODO
 		for (uint i = 0; i < _actRes->_actorTypes.size(); ++i) {
 			ActorType *actorType = &_actRes->_actorTypes[i];
-			// TODO _vm->addActorType(actorType->_actorTypeId, actorType);
+			_vm->_dict->addActorType(actorType->_actorTypeId, actorType);
 		}
 		for (uint i = 0; i < _actRes->_sequences.size(); ++i) {
 			Sequence *sequence = &_actRes->_sequences[i];
-			// TODO _vm->addSequence(sequence->_sequence, sequence);
+			_vm->_dict->addSequence(sequence->_sequenceId, sequence);
 		}
-		*/
 	}
 }
 
@@ -231,7 +229,7 @@ ActorItems::~ActorItems() {
 }
 
 ActorItem *ActorItems::allocActorItem() {
-	ActorItem *actorItem = new ActorItem();
+	ActorItem *actorItem = new ActorItem(_vm);
 	_items.push_back(actorItem);
 	return actorItem;
 }

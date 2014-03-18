@@ -56,6 +56,7 @@ class BackgroundItems;
 class BackgroundResource;
 class Camera;
 class Control;
+class Dictionary;
 class Input;
 class Screen;
 class ScriptResource;
@@ -77,6 +78,7 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 public:	
 	Common::RandomSource *_random;
+	Dictionary *_dict;
 	ResourceSystem *_resSys;
 	
 	void updateEvents();
@@ -90,8 +92,6 @@ public:
 
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
 	Control *findControl(uint32 objectId);
-	ActorType *findActorType(uint32 actorTypeId);
-	Sequence *findSequence(uint32 sequenceId);
 	FramesList *findSequenceFrames(Sequence *sequence);
 	
 	void notifyThreadId(uint32 &threadId);

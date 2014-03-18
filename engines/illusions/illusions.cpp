@@ -34,6 +34,7 @@
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
 #include "illusions/time.h"
+#include "illusions/dictionary.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
@@ -80,6 +81,8 @@ Common::Error IllusionsEngine::run() {
 	Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, true, &pixelFormat16);
 	
+	_dict = new Dictionary();
+
 	_resSys = new ResourceSystem();
 	_resSys->addResourceLoader(0x00060000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x000D0000, new ScriptResourceLoader(this));
@@ -139,6 +142,7 @@ Common::Error IllusionsEngine::run() {
 	delete _input;
 	delete _screen;
 	delete _resSys;
+	delete _dict;
 	
 	return Common::kNoError;
 }
@@ -187,16 +191,6 @@ Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {
 }
 
 Control *IllusionsEngine::findControl(uint32 objectId) {
-	// TODO Dummy, to be replaced later
-	return 0;
-}
-
-ActorType *IllusionsEngine::findActorType(uint32 actorTypeId) {
-	// TODO Dummy, to be replaced later
-	return 0;
-}
-
-Sequence *IllusionsEngine::findSequence(uint32 sequenceId) {
 	// TODO Dummy, to be replaced later
 	return 0;
 }
