@@ -136,20 +136,16 @@ Common::Error IllusionsEngine::run() {
 	// Actor/graphics test
 	_resSys->loadResource(0x00110007, 0, 0);
 	_resSys->loadResource(0x00100006, 0, 0);
-	
 	_controls->placeActor(0x00050008, Common::Point(200, 200), 0x00060136, 0x00040001, 0);
-	
 	Control *control = *_controls->_controls.begin();
 	control->setActorFrameIndex(1);
 	control->appearActor();
-
+	//_camera->panToPoint(Common::Point(800, 0), 500, 0);
 	while (!shouldQuit()) {
 		updateGraphics();
 		_screen->updateSprites();
 		_system->updateScreen();
 		updateEvents();
-		
-		//break;
 	}
 #endif
 
@@ -268,8 +264,8 @@ int IllusionsEngine::updateGraphics() {
 		debug("control->_pauseCtr: %d; actor->_flags: %04X", control->_pauseCtr, actor->_flags);
 		
 		if (control->_pauseCtr == 0 && actor && (actor->_flags & 1) && !(actor->_flags & 0x0200)) {
-			// TODO Common::Point drawPosition = control->calcPosition(panPoint);
-			Common::Point drawPosition(200, 200);//DEBUG
+			Common::Point drawPosition = control->calcPosition(panPoint);
+			debug("drawPosition: %d, %d", drawPosition.x, drawPosition.y);
 			if (actor->_flags & 0x2000) {
 				Frame *frame = &(*actor->_frames)[actor->_frameIndex - 1];
 				_screen->_decompressQueue->insert(&actor->_drawFlags, frame->_flags,

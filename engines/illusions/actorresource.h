@@ -45,7 +45,7 @@ protected:
 
 struct Frame {
 	uint16 _flags;
-	// TODO config dd
+	byte *_pointsConfig;
 	SurfInfo _surfInfo;
 	byte *_compressedPixels;
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
@@ -61,7 +61,7 @@ struct Sequence {
 struct ActorType {
 	uint32 _actorTypeId;
 	SurfInfo _surfInfo;
-	// TODO config dd
+	byte *_pointsConfig;
 	// TODO namedPointsCount dw
 	// TODO namedPoints dd
 	RGB _color;

@@ -77,10 +77,11 @@ bool ActorResourceLoader::isFlag(int flag) {
 void Frame::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_flags = stream.readUint16LE();
 	stream.skip(2); // Skip padding
-	stream.readUint32LE(); // TODO config dd
+	uint32 pointsConfigOffs = stream.readUint32LE();
 	_surfInfo.load(stream);
 	uint32 compressedPixelsOffs = stream.readUint32LE();
 	_compressedPixels = dataStart + compressedPixelsOffs;
+	_pointsConfig = dataStart + pointsConfigOffs;
 	
 	debug(5, "Frame::load() compressedPixelsOffs: %08X",
 		compressedPixelsOffs);
@@ -99,7 +100,7 @@ void Sequence::load(byte *dataStart, Common::SeekableReadStream &stream) {
 void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_actorTypeId = stream.readUint32LE();
 	_surfInfo.load(stream);
-	stream.readUint32LE(); // TODO config dd
+	uint32 pointsConfigOffs = stream.readUint32LE();
 	stream.readUint16LE(); // TODO namedPointsCount dw
 	stream.skip(2); // Skip padding
 	stream.readUint32LE(); // TODO namedPoints dd
@@ -116,6 +117,7 @@ void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_priorityLayerIndex = stream.readUint16LE();
 	_regionLayerIndex = stream.readUint16LE();
 	_flags = stream.readUint16LE();
+	_pointsConfig = dataStart + pointsConfigOffs;
 
 	debug(5, "ActorType::load() _actorTypeId: %08X; _color(%d,%d,%d); _scale: %d; _priority: %d; _value1E: %d",
 		_actorTypeId, _color.r, _color.g, _color.b, _scale, _priority, _value1E);
