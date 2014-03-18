@@ -38,7 +38,6 @@ private:
 	static const int _directionListIndexes[32];
 private:
 	MADSEngine *_vm;
-	MADSAction *_action;
 	bool _highSprites;
 	bool _spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT];
 	int _currentDepth;
@@ -97,6 +96,8 @@ private:
 
 	void dirChanged();
 public:
+	MADSAction *_action;
+
 	int _direction;
 	int _newDirection;
 	int _xDirection, _yDirection;

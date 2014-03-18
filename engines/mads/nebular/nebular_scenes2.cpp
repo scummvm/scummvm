@@ -285,6 +285,51 @@ void Scene201::step() {
 }
 
 void Scene201::actions() {
+	MADSAction *action = _game._player._action;
+	if (action->_lookFlag == false) {
+		if (action->isAction(0x18C, 0x83, 0))
+			_scene->_nextSceneId = 202;
+		else if ((action->isAction(0x50, 0x156, 0)) || (action->isAction(0x188, 0x16C, 0)) || (action->isAction(0x188, 0x1B6, 0))) {
+			if (_game._abortTimers != 0) { 
+				if (_game._abortTimers != 1)
+					_scene->_nextSceneId = 213;
+			} else {
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				int sepChar = (_globals[0] == SEX_UNKNOWN) ? 't' : 'u';
+				_scene->loadAnimation(formAnimName(sepChar, 0), 1);
+			}
+		} else if (action->isAction(0x3, 0x1A6, 0)) {
+			Dialog::show(0x4E85);
+		} else if (action->isAction(0x3, 0x129, 0)) {
+			Dialog::show(0x4E86);
+		} else if (action->isAction(0x3, 0x16F, 0)) {
+			Dialog::show(0x4E87);
+		} else if (action->isAction(0x3, 0x142, 0)) {
+			Dialog::show(0x4E88);
+		} else if (action->isAction(0x3, 0x18F, 0)) {
+			Dialog::show(0x4E89);
+		} else if (action->isAction(0x3, 0x1B9, 0)) {
+			Dialog::show(0x4E8A);
+		} else if (action->isAction(0x3, 0x192, 0)) {
+			Dialog::show(0x4E8B);
+		} else if (action->isAction(0x3, 0x1BA, 0)) {
+			Dialog::show(0x4E8C);
+		} else if (action->isAction(0x3, 0x83, 0)) {
+			Dialog::show(0x4E8E);
+		} else if (action->isAction(0x3, 0x1B6, 0)) {
+			if (_globals[37])
+				Dialog::show(0x4E90);
+			else
+				Dialog::show(0x4E8D);
+		} else if (action->isAction(0x3, 0x16C, 0)) {
+			Dialog::show(0x4E91);
+		} else
+			return;
+	} else {
+		Dialog::show(0x4E8F);
+	}
+	action->_inProgress = false;
 }
 
 } // End of namespace Nebular
