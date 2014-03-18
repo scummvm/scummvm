@@ -138,6 +138,7 @@ public:
 	bool isActorVisible();
 	void activateObject();
 	void deactivateObject();
+	void readPointsConfig(byte *pointsConfig);
 	void setActorPosition(Common::Point position);
 	Common::Point getActorPosition();
 	void setActorScale(int scale);
@@ -148,6 +149,7 @@ public:
 	void clearNotifyThreadId2();
 	void setPriority(int16 priority);
 	int getPriority();
+	Common::Point calcPosition(Common::Point posDelta);
 	uint32 getSubActorParent();
 	void getCollisionRectAccurate(Common::Rect &collisionRect);
 	void setActorUsePan(int usePan);
@@ -171,6 +173,7 @@ public:
 	Common::Point _pt;
 	Common::Point _feetPt;
 	Common::Point _position;
+	Common::Point _subobjectsPos[kSubObjectsCount];
 	// TODO 0000001C - 00000054 unknown
 	void startSequenceActorIntern(uint32 sequenceId, int value, int value2, uint32 notifyThreadId);
 };

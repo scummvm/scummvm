@@ -284,6 +284,26 @@ void Control::deactivateObject() {
 		}
 }
 
+void Control::readPointsConfig(byte *pointsConfig) {
+	_unkPt.x = READ_LE_UINT16(pointsConfig + 0);
+	_unkPt.y = READ_LE_UINT16(pointsConfig + 2);
+	pointsConfig += 2;
+	_pt.x = READ_LE_UINT16(pointsConfig + 0);
+	_pt.y = READ_LE_UINT16(pointsConfig + 2);
+	pointsConfig += 2;
+	_feetPt.x = READ_LE_UINT16(pointsConfig + 0);
+	_feetPt.y = READ_LE_UINT16(pointsConfig + 2);
+	pointsConfig += 2;
+	_position.x = READ_LE_UINT16(pointsConfig + 0);
+	_position.y = READ_LE_UINT16(pointsConfig + 2);
+	pointsConfig += 2;
+	for (uint i = 0; i < kSubObjectsCount; ++i) {
+		_subobjectsPos[i].x = READ_LE_UINT16(pointsConfig + 0);
+		_subobjectsPos[i].y = READ_LE_UINT16(pointsConfig + 2);
+		pointsConfig += 2;
+	}
+}
+
 void Control::setActorPosition(Common::Point position) {
 	_actor->_position = position;
 }
@@ -377,6 +397,35 @@ int Control::getPriority() {
 	return p + 50 * ((objectId & 0x3F) + ((10000 * priority + positionY + 5000) << 6));
 }
 
+Common::Point Control::calcPosition(Common::Point posDelta) {
+	Common::Point pos;
+	if (_actor->_parentObjectId) {
+		int16 accuX = 0, accuY = 0;
+		Actor *actor = _actor;
+		while (actor->_parentObjectId) {
+			Control *parentControl = _vm->_dict->getObjectControl(actor->_parentObjectId);
+			accuX += parentControl->_subobjectsPos[actor->_linkIndex - 1].x;
+			accuY += parentControl->_subobjectsPos[actor->_linkIndex - 1].y;
+			actor = parentControl->_actor;
+		}
+		pos = actor->_position;
+		pos.x += accuX * actor->_scale / 100;
+		pos.y += accuY * actor->_scale / 100;
+		_actor->_position = pos;
+		if (!(_actor->_flags & 8)) {
+			pos.x -= posDelta.x;
+			pos.y -= posDelta.y;
+		}
+	} else {
+		pos = _actor->_position;
+		if (!(_actor->_flags & 8)) {
+			pos.x -= posDelta.x;
+			pos.y -= posDelta.y;
+		}
+	}
+	return pos;
+}
+
 uint32 Control::getSubActorParent() {
 	uint32 parentObjectId = _objectId;
 	while (1) {
@@ -400,7 +449,7 @@ void Control::getCollisionRectAccurate(Common::Rect &collisionRect) {
 	}
 
 	if (_actor) {
-		if (_actor->_scale != 100 ) {
+		if (_actor->_scale != 100) {
 			// scaledValue = value * scale div 100
 			collisionRect.left = collisionRect.left * _actor->_scale / 100;
 			collisionRect.top = collisionRect.top * _actor->_scale / 100;
@@ -429,7 +478,7 @@ void Control::setActorFrameIndex(int16 frameIndex) {
 		_actor->_frameIndex = frameIndex;
 		const Frame &frame = (*_actor->_frames)[frameIndex - 1];
 		_actor->_surfInfo = frame._surfInfo;
-		// TODO memcpy(&control->unkPt, (const void *)frame->config, 0x4Cu);
+		readPointsConfig(frame._pointsConfig);
 		_actor->_flags |= 0x2000;
 		_actor->_flags |= 0x4000;
 		_actor->_newFrameIndex = 0;
@@ -535,7 +584,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	control->_flags = actorType->_flags;
 	control->_priority = actorType->_priority;
 	control->_objectId = objectId;
-	// TODO memcpy(&control->unkPt, (const void *)actorType->_config, 0x4Cu);
+	control->readPointsConfig(actorType->_pointsConfig);
 	control->_actorTypeId = actorTypeId;
 	control->_actor = actor;
 	/* TODO
