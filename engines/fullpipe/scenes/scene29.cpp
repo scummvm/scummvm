@@ -56,8 +56,8 @@ int sceneHandler29(ExCommand *cmd) {
 
 	case MSG_SC29_SHOWLASTRED:
 		if (g_vars->scene29_var05.numBalls) {
-			StaticANIObject_show1(g_vars->scene29_var06.field_8->ani, -1, -1, -1, 0);
-			StaticANIObject_startAnim(g_vars->scene29_var06.field_8->ani, MV_SHR_HITASS, 0, -1);
+			g_vars->scene29_var06.field_8->ani->show1(-1, -1, -1, 0);
+			g_vars->scene29_var06.field_8->ani->startAnim(MV_SHR_HITASS, 0, -1);
 		}
 
 		break;
@@ -72,8 +72,8 @@ int sceneHandler29(ExCommand *cmd) {
 
 	case MSG_SC29_SHOWLASTGREEN:
 		if (g_vars->scene29_var05.numBalls) {
-			StaticANIObject_show1(g_vars->scene29_var05.field_8->ani, -1, -1, (Objects)-1, 0);
-			StaticANIObject_startAnim(g_vars->scene29_var05.field_8->ani, MV_SHG_HITASS, 0, -1);
+			g_vars->scene29_var05.field_8->ani->show1(-1, -1, (Objects)-1, 0);
+			g_vars->scene29_var05.field_8->ani->startAnim(MV_SHG_HITASS, 0, -1);
 		}
 
 		break;
@@ -83,6 +83,7 @@ int sceneHandler29(ExCommand *cmd) {
 		g_vars->scene29_var10 = 0;
 		g_vars->scene29_var11 = 0;
 		g_vars->scene29_var12 = 0;
+
 		getCurrSceneSc2MotionController()->setEnabled();
 		getGameLoaderInteractionController()->enableFlag24();
 		break;
@@ -106,23 +107,23 @@ int sceneHandler29(ExCommand *cmd) {
 		break;
 
 	case 29:
-		if (!g_vars->scene29_var09) {
+		if (!g_vars->scene29_var09 || g_vars->scene29_var10) {
 			if (!g_vars->scene29_var10) {
 				v6 = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 				if (v6 && v6 == g_vars->scene29_porter) {
 					sceneHandler29_clickPorter(cmd);
+
 					cmd->_messageKind = 0;
 					break;
 				}
 				break;
 			}
-		LABEL_41:
+
 			sceneHandler29_manJump();
+
 			cmd->_messageKind = 0;
 			break;
 		}
-		if (g_vars->scene29_var10)
-			goto LABEL_41;
 		break;
 
 	case 107:
@@ -141,17 +142,19 @@ int sceneHandler29(ExCommand *cmd) {
 
 			if (v5 < g_sceneRect.left + 100)
 				g_fp->_currentScene->_x = v5 - g_fp->_sceneRect.left - 100;
-		} else if (g_fp->_aniMan2) {
-			v4 = g_fp->_aniMan2->_ox;
-			if (v4 < g_fp->_sceneRect.left + g_vars->scene29_var01)
-				g_currentScene->_x = v4 - g_vars->scene29_var03 - g_fp->_sceneRect.left;
 
-			if (v4 > g_fp->_sceneRect.right - g_vars->scene29_var01)
-				g_currentScene->_x = v4 + g_vars->scene29_var03 - g_fp->_sceneRect.right;
+		} else if (g_fp->_aniMan2) {
+			int x = g_fp->_aniMan2->_ox;
+
+			if (x < g_fp->_sceneRect.left + g_vars->scene29_var01)
+				g_fp->_currentScene->_x = x - g_vars->scene29_var03 - g_fp->_sceneRect.left;
+
+			if (x > g_fp->_sceneRect.right - g_vars->scene29_var01)
+				g_fp->_currentScene->_x = x + g_vars->scene29_var03 - g_fp->_sceneRect.right;
 		}
 
-		g_vars->scene29_var20 = g_aniMan->_ox;
-		g_vars->scene29_var21 = g_aniMan->_oy;
+		g_vars->scene29_var20 = g_fp->_aniMan->_ox;
+		g_vars->scene29_var21 = g_fp->_aniMan->_oy;
 
 		sceneHandler29_sub03();
 
@@ -160,6 +163,7 @@ int sceneHandler29(ExCommand *cmd) {
 
 		if (g_vars->scene29_var09) {
 			sceneHandler29_manFromL();
+
 		} else if (g_vars->scene29_var10 && !g_aniMan->_movement) {
 			sceneHandler29_sub05();
 		}
@@ -175,8 +179,10 @@ int sceneHandler29(ExCommand *cmd) {
 			sceneHandler29_shoot();
 
 		sceneHandler29_animBearded();
-		BehaviorManager_updateBehaviors(&g_fp->_behaviorManager);
+
+		g_fp->_behaviorManager->updateBehaviors();
 		startSceneTrack();
+
 		break;
 	}
 
