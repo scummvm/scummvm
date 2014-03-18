@@ -86,7 +86,7 @@ Common::Error IllusionsEngine::run() {
 	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
 
-    _screen = new Screen(this);
+	_screen = new Screen(this);
 	_input = new Input();	
 	_scriptMan = new ScriptMan(this);
 	_actorItems = new ActorItems(this);
@@ -194,6 +194,46 @@ Control *IllusionsEngine::findControl(uint32 objectId) {
 ActorType *IllusionsEngine::findActorType(uint32 actorTypeId) {
 	// TODO Dummy, to be replaced later
 	return 0;
+}
+
+Sequence *IllusionsEngine::findSequence(uint32 sequenceId) {
+	// TODO Dummy, to be replaced later
+	return 0;
+}
+
+void IllusionsEngine::notifyThreadId(uint32 &threadId) {
+	if (threadId) {
+		uint32 tempThreadId = threadId;
+		threadId = 0;
+		_scriptMan->_threads->notifyId(tempThreadId);
+	}
+}
+
+FramesList *IllusionsEngine::findSequenceFrames(Sequence *sequence) {
+	// TODO Dummy, to be replaced later
+	return 0;
+}
+
+void IllusionsEngine::setCursorControl(Control *control) {
+	// TODO Dummy, to be replaced later
+}
+
+void IllusionsEngine::placeCursor(Control *control, uint32 sequenceId) {
+	// TODO Dummy, to be replaced later
+}
+
+bool IllusionsEngine::showCursor() {
+	// TODO Dummy, to be replaced later
+	// TODO ++cursor._visibleCtr;
+	// TODO if (cursor._visibleCtr > 0)
+	return false;
+}
+
+bool IllusionsEngine::hideCursor() {
+	// TODO Dummy, to be replaced later
+	// TODO --cursor._visibleCtr;
+	// TODO if (cursor.visibleCtr <= 0) 
+	return false;
 }
 
 } // End of namespace Illusions

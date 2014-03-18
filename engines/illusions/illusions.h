@@ -60,6 +60,8 @@ class Input;
 class Screen;
 class ScriptResource;
 class ScriptMan;
+class Sequence;
+class FramesList;
 
 class IllusionsEngine : public Engine {
 protected:
@@ -89,6 +91,15 @@ public:
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
 	Control *findControl(uint32 objectId);
 	ActorType *findActorType(uint32 actorTypeId);
+	Sequence *findSequence(uint32 sequenceId);
+	FramesList *findSequenceFrames(Sequence *sequence);
+	
+	void notifyThreadId(uint32 &threadId);
+	
+	void setCursorControl(Control *control);
+	void placeCursor(Control *control, uint32 sequenceId);
+	bool showCursor();
+	bool hideCursor();
 
 #if 0
 

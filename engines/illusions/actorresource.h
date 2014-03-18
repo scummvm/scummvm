@@ -68,13 +68,16 @@ struct ActorType {
 	byte _scale;
 	byte _priority;
 	int16 _value1E;
-	uint16 _bgItem28sIndex;
-	uint16 _bgItem22sIndex;
-	uint16 _bgItem30sIndex;
-	uint16 _bgItem26sIndex;
-	uint16 _bgItem38sIndex;
+	uint16 _pathWalkPointsIndex;
+	uint16 _scaleLayerIndex;
+	uint16 _pathWalkRectIndex;
+	uint16 _priorityLayerIndex;
+	uint16 _regionLayerIndex;
 	uint16 _flags;
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
+};
+
+class FramesList : public Common::Array<Frame> {
 };
 
 class ActorResource {
@@ -82,11 +85,12 @@ public:
 	ActorResource();
 	~ActorResource();
 	void load(byte *data, uint32 dataSize);
+	bool containsSequence(Sequence *sequence);
 public:
 	uint32 _totalSize;
 	Common::Array<ActorType> _actorTypes;
 	Common::Array<Sequence> _sequences;
-	Common::Array<Frame> _frames;
+	FramesList _frames;
 };
 
 class ActorItem {

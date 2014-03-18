@@ -106,6 +106,8 @@ public:
 	~BackgroundResource();
 	void load(byte *data, uint32 dataSize);
 	int findMasterBgIndex();
+	PriorityLayer *getPriorityLayer(uint index);
+	ScaleLayer *getScaleLayer(uint index);
 public:
 
 	uint _bgInfosCount;

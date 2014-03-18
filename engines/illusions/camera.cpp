@@ -116,10 +116,7 @@ void Camera::panTrackObject(uint32 objectId) {
 
 void Camera::panToPoint(Common::Point pt, int16 panSpeed, uint32 panNotifyId) {
 
-	if (_activeState._panNotifyId) {
-		// TODO scrmgrNotifyID(_activeState._panNotifyId);
-		_activeState._panNotifyId = 0;
-	}
+	_vm->notifyThreadId(_activeState._panNotifyId);
 
 	_activeState._panTargetPoint = getPtOffset(pt);
 	clipPanTargetPoint();
@@ -137,9 +134,7 @@ void Camera::panToPoint(Common::Point pt, int16 panSpeed, uint32 panNotifyId) {
 	} else {
 		_activeState._currPan = _activeState._panTargetPoint;
 		stopPan();
-		if (panNotifyId) {
-			// TODO scrmgrNotifyID(panNotifyId);
-		}
+		_vm->notifyThreadId(_activeState._panNotifyId);
 	}
 }
 
@@ -275,10 +270,7 @@ void Camera::update(uint32 currTime) {
 		if (isPanFinished()) {
 			if (_activeState._cameraMode == 5) {
 				// Notify a thread that the camera panning has finished
-				if (_activeState._panNotifyId) {
-					// TODO scrmgrNotifyID(_activeState._panNotifyId);
-					_activeState._panNotifyId = 0;
-				}
+				_vm->notifyThreadId(_activeState._panNotifyId);
 				_activeState._cameraMode = 6;
 			} else if (_activeState._cameraMode == 4) {
 				_activeState._cameraMode = 3;
@@ -371,8 +363,8 @@ void Camera::updateMode2(uint32 currTime) {
 			recalcPan(currTime);
 		}
 	} else if (_activeState._pointFlags) {
-	    _activeState._pointFlags = 0;
-	    _activeState._panTargetPoint = _activeState._currPan;
+		_activeState._pointFlags = 0;
+		_activeState._panTargetPoint = _activeState._currPan;
   	}
 
 }

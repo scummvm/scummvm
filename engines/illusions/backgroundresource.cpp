@@ -182,6 +182,14 @@ int BackgroundResource::findMasterBgIndex() {
 	return index;
 }
 
+PriorityLayer *BackgroundResource::getPriorityLayer(uint index) {
+	return &_priorityLayers[index];
+}
+
+ScaleLayer *BackgroundResource::getScaleLayer(uint index) {
+	return &_scaleLayers[index];
+}
+
 // BackgroundItem
 
 BackgroundItem::BackgroundItem(IllusionsEngine *vm) : _vm(vm), _tag(0), _pauseCtr(0), _bgRes(0) {

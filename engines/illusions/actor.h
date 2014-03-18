@@ -24,6 +24,7 @@
 #define ILLUSIONS_ACTOR_H
 
 #include "illusions/actorresource.h"
+#include "illusions/backgroundresource.h"
 #include "illusions/graphics.h"
 #include "common/algorithm.h"
 #include "common/list.h"
@@ -79,10 +80,17 @@ public:
 	int16 _newFrameIndex;
 	SurfInfo _surfInfo;
 	Graphics::Surface *_surface;
-	Frame *_frames;
+	
+	FramesList *_frames;
+	
+	ScaleLayer *_scaleLayer;
+	PriorityLayer *_priorityLayer;
 	
 	Common::Point _position;
+	Common::Point _position2;
 	uint _facing;
+	
+	uint32 _fontId;
 	
 	DefaultSequences _defaultSequences;
 
@@ -92,11 +100,22 @@ public:
 	uint32 _subobjects[kSubObjectsCount];
 	
 	uint32 _notifyThreadId1;
+	uint32 _notifyId3C;
 
 	uint32 _notifyThreadId2;
 	int _field30;
 	
 	int _surfaceTextFlag;
+	
+	byte *_seqCodeIp;
+	uint32 _sequenceId;
+	int _seqCodeValue1;
+	int _seqCodeValue2;
+	int _seqCodeValue3;
+	
+	int _pathCtrY;
+	int _path40;
+	
 
 };
 
@@ -125,6 +144,10 @@ public:
 	void getCollisionRectAccurate(Common::Rect &collisionRect);
 	void setActorUsePan(int usePan);
 	void setActorFrameIndex(int16 frameIndex);
+	void stopActor();
+	void startSequenceActor(uint32 sequenceId, int value, uint32 notifyThreadId);
+	void stopSequenceActor();
+	void sequenceActor();
 public:
 	IllusionsEngine *_vm;
 	uint _flags;
@@ -141,14 +164,23 @@ public:
 	Common::Point _feetPt;
 	Common::Point _position;
 	// TODO 0000001C - 00000054 unknown
+	void startSequenceActorIntern(uint32 sequenceId, int value, int value2, uint32 notifyThreadId);
 };
 
 class Controls {
 public:
+	Controls(IllusionsEngine *vm);
+	void placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequenceId, uint32 objectId, uint32 notifyThreadId);
+	void placeSequenceLessActor(uint32 objectId, Common::Point placePt, WidthHeight dimensions, int16 priority);
+	void placeActorLessObject(uint32 objectId, Common::Point feetPt, Common::Point pt, int16 priority, uint flags);	
 public:
 	typedef Common::List<Control*> Items;
 	typedef Items::iterator ItemsIterator;
+	IllusionsEngine *_vm;
 	Items _controls;
+	Actor *newActor();
+	Control *newControl();
+	void destroyControl(Control *control);
 };
 
 } // End of namespace Illusions
