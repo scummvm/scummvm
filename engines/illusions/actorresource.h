@@ -44,7 +44,7 @@ protected:
 };
 
 struct Frame {
-	//field_0 dd
+	uint16 _flags;
 	// TODO config dd
 	SurfInfo _surfInfo;
 	byte *_compressedPixels;
@@ -113,6 +113,7 @@ public:
 	ActorItem *allocActorItem();
 	void pauseByTag(uint32 tag);
 	void unpauseByTag(uint32 tag);
+	FramesList *findSequenceFrames(Sequence *sequence);
 protected:
 	typedef Common::List<ActorItem*> Items;
 	typedef Items::iterator ItemsIterator;

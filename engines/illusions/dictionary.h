@@ -63,9 +63,13 @@ public:
 	void removeSequence(uint32 id);
 	Sequence *findSequence(uint32 id);
 
+    void setObjectControl(uint32 objectId, Control *control);
+    Control *getObjectControl(uint32 objectId);
+
 protected:
 	DictionaryHashMap<ActorType> _actorTypes;
 	DictionaryHashMap<Sequence> _sequences;
+	DictionaryHashMap<Control> _controls;
 };
 
 } // End of namespace Illusions

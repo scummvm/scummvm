@@ -56,6 +56,7 @@ class BackgroundItems;
 class BackgroundResource;
 class Camera;
 class Control;
+class Controls;
 class Dictionary;
 class Input;
 class Screen;
@@ -89,10 +90,9 @@ public:
 	ActorItems *_actorItems;
 	BackgroundItems *_backgroundItems;
 	Camera *_camera;
+	Controls *_controls;
 
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
-	Control *findControl(uint32 objectId);
-	FramesList *findSequenceFrames(Sequence *sequence);
 	
 	void notifyThreadId(uint32 &threadId);
 	
@@ -100,6 +100,7 @@ public:
 	void placeCursor(Control *control, uint32 sequenceId);
 	bool showCursor();
 	bool hideCursor();
+	int updateGraphics();
 
 #if 0
 

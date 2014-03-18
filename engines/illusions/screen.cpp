@@ -31,7 +31,7 @@ namespace Illusions {
 // Screen
 
 Screen::Screen(IllusionsEngine *vm)
-	: _vm(vm) {
+	: _vm(vm), _colorKey2(0) {
 	_displayOn = true;
 	_backSurface = allocSurface(640, 480);
 	_decompressQueue = new SpriteDecompressQueue();
@@ -65,11 +65,6 @@ uint16 Screen::getColorKey2() {
 	return _colorKey2;
 }
 
-Graphics::Surface *Screen::getBackSurface() {
-	// TODO Move this outside into a screen class
-	return 0;
-}
-
 void Screen::updateSprites() {
 	_decompressQueue->decompressAll();
 	// NOTE Skipped doShiftBrightness and related as it seems to be unused
@@ -80,19 +75,33 @@ void Screen::updateSprites() {
 }
 
 void Screen::drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
+	// Unscaled, transparent
 	// TODO
+	debug("Screen::drawSurface10");
 }
 
 void Screen::drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {
-	// TODO
+	// Unscaled, non-transparent
+	debug(1, "Screen::drawSurface11() destX: %d; destY: %d; srcRect: (%d, %d, %d, %d)", destX, destY, srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
+	const int16 w = srcRect.width();
+	const int16 h = srcRect.height();
+	for (int16 yc = 0; yc < h; ++yc) {
+		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcRect.top + yc);
+		byte *dst = (byte*)_backSurface->getBasePtr(destX, destY + yc);
+		memcpy(dst, src, w * 2);
+	}
 }
 
 void Screen::drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
+	// Scaled, transparent
 	// TODO
+	debug("Screen::drawSurface20");
 }
 
 void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {
+	// Scaled, non-transparent
 	// TODO
+	debug("Screen::drawSurface21");
 }
 
 } // End of namespace Illusions

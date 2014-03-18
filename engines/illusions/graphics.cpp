@@ -28,7 +28,7 @@ void WidthHeight::load(Common::SeekableReadStream &stream) {
 	_width = stream.readSint16LE();
 	_height = stream.readSint16LE();
 	
-	debug("WidthHeight::load() _width: %d; _height: %d",
+	debug(5, "WidthHeight::load() _width: %d; _height: %d",
 		_width, _height);
 }
 
@@ -36,7 +36,7 @@ void SurfInfo::load(Common::SeekableReadStream &stream) {
 	_pixelSize = stream.readUint32LE();
 	_dimensions.load(stream);
 	
-	debug("SurfInfo::load() _pixelSize: %d",
+	debug(5, "SurfInfo::load() _pixelSize: %d",
 		_pixelSize);
 }
 
@@ -44,7 +44,7 @@ void loadPoint(Common::SeekableReadStream &stream, Common::Point &pt) {
 	pt.x = stream.readSint16LE();
 	pt.y = stream.readSint16LE();
 	
-	debug("loadPoint() x: %d; y: %d",
+	debug(5, "loadPoint() x: %d; y: %d",
 		pt.x, pt.y);
 }
 

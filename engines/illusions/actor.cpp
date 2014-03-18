@@ -153,6 +153,18 @@ void Actor::destroySurface() {
 	}
 }
 
+void Actor::initSequenceStack() {
+	_seqStackCount = 0;
+}
+
+void Actor::pushSequenceStack(int16 value) {
+	_seqStack[_seqStackCount++] = value;
+}
+
+int16 Actor::popSequenceStack() {
+	return _seqStack[--_seqStackCount];
+}
+
 // Control
 
 Control::Control(IllusionsEngine *vm)
@@ -180,7 +192,7 @@ Control::~Control() {
 
 void Control::pause() {
 
-	// TODO scrmgrSetObjectArtThread(control->objectId, 0);
+	_vm->_dict->setObjectControl(_objectId, 0);
 
 	if (_objectId == 0x40004)
 		_vm->setCursorControl(0);
@@ -192,7 +204,7 @@ void Control::pause() {
 
 void Control::unpause() {
 
-	// TODO scrmgrSetObjectArtThread(control->objectId, control);
+	_vm->_dict->setObjectControl(_objectId, this);
 
 	if (_objectId == 0x40004)
 		_vm->setCursorControl(this);
@@ -227,7 +239,7 @@ void Control::appearActor() {
 			_actor->_flags |= 0x1000;
 		for (uint i = 0; i < kSubObjectsCount; ++i)
 			if (_actor->_subobjects[i]) {
-				Control *subControl = _vm->findControl(_actor->_subobjects[i]);
+				Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 				subControl->appearActor();
 			}
 	}
@@ -244,7 +256,7 @@ void Control::disappearActor() {
 		_actor->_flags |= ~0x1000;
 		for (uint i = 0; i < kSubObjectsCount; ++i)
 			if (_actor->_subobjects[i]) {
-				Control *subControl = _vm->findControl(_actor->_subobjects[i]);
+				Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 				subControl->disappearActor();
 			}
 	}
@@ -258,7 +270,7 @@ void Control::activateObject() {
 	_flags |= 1;
 	for (uint i = 0; i < kSubObjectsCount; ++i)
 		if (_actor->_subobjects[i]) {
-			Control *subControl = _vm->findControl(_actor->_subobjects[i]);
+			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->activateObject();
 		}
 }
@@ -267,7 +279,7 @@ void Control::deactivateObject() {
 	_flags |= ~1;
 	for (uint i = 0; i < kSubObjectsCount; ++i)
 		if (_actor->_subobjects[i]) {
-			Control *subControl = _vm->findControl(_actor->_subobjects[i]);
+			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->deactivateObject();
 		}
 }
@@ -286,7 +298,7 @@ void Control::setActorScale(int scale) {
 	_actor->_scale = scale;
 	for (uint i = 0; i < kSubObjectsCount; ++i)
 		if (_actor->_subobjects[i]) {
-			Control *subControl = _vm->findControl(_actor->_subobjects[i]);
+			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->activateObject();
 		}
 }
@@ -295,7 +307,7 @@ void Control::faceActor(uint facing) {
 	_actor->_facing = facing;
 	for (uint i = 0; i < kSubObjectsCount; ++i)
 		if (_actor->_subobjects[i]) {
-			Control *subControl = _vm->findControl(_actor->_subobjects[i]);
+			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->faceActor(facing);
 		}
 }
@@ -317,7 +329,7 @@ void Control::clearNotifyThreadId1() {
 void Control::clearNotifyThreadId2() {
 	for (uint i = 0; i < kSubObjectsCount; ++i)
 		if (_actor->_subobjects[i]) {
-			Control *subControl = _vm->findControl(_actor->_subobjects[i]);
+			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->_actor->_flags &= ~0x80;
 			subControl->_actor->_field30 = 0;
 			subControl->_actor->_notifyThreadId2 = 0;
@@ -337,7 +349,7 @@ int Control::getPriority() {
 	if (_actor) {
 		if (_actor->_parentObjectId && (_actor->_flags & 0x40)) {
 			uint32 objectId2 = getSubActorParent();
-			Control *control2 = _vm->findControl(objectId2);
+			Control *control2 = _vm->_dict->getObjectControl(objectId2);
 			objectId = control2->_objectId;
 			priority = control2->_priority;
 			positionY = control2->_actor->_position.y;
@@ -368,7 +380,7 @@ int Control::getPriority() {
 uint32 Control::getSubActorParent() {
 	uint32 parentObjectId = _objectId;
 	while (1) {
-		Actor *actor = _vm->findControl(parentObjectId)->_actor;
+		Actor *actor = _vm->_dict->getObjectControl(parentObjectId)->_actor;
 		if (actor->_parentObjectId && (actor->_flags & 0x40))
 			parentObjectId = actor->_parentObjectId;
 		else
@@ -460,7 +472,7 @@ void Control::stopSequenceActor() {
 	}
 	for (uint i = 0; i < kSubObjectsCount; ++i)
 		if (_actor->_subobjects[i]) {
-			Control *subControl = _vm->findControl(_actor->_subobjects[i]);
+			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->stopSequenceActor();
 		}
 }
@@ -485,14 +497,17 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, int value2,
 	_actor->_path40 = 0;
 	
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
+	debug("Control::startSequenceActorIntern() sequence = %p", (void*)sequence);
 	
 	_actor->_seqCodeIp = sequence->_sequenceCode;
-	_actor->_frames = _vm->findSequenceFrames(sequence);
+	_actor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
+	debug("Control::startSequenceActorIntern() _actor->_seqCodeIp = %p", (void*)_actor->_seqCodeIp);
+	debug("Control::startSequenceActorIntern() _actor->_frames = %p", (void*)_actor->_frames);
 	
 	_actor->_seqCodeValue3 = 0;
 	_actor->_seqCodeValue1 = 0;
 	_actor->_seqCodeValue2 = value == 1 ? 350 : 600;
-	// TODO _actor->initSequenceStack();
+	_actor->initSequenceStack();
 	stopSequenceActor();
 	_actor->_linkIndex2 = 0;
 	if (value2) {
@@ -570,7 +585,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	actor->_pathCtrY = 140;
 	
 	_controls.push_back(control);
-	// TODO scrmgrSetObjectArtThread(objectId, controlb);
+	_vm->_dict->setObjectControl(objectId, control);
 
 	if (actorTypeId == 0x50001 && objectId == 0x40004)
 		_vm->placeCursor(control, sequenceId);
@@ -610,7 +625,7 @@ void Controls::placeSequenceLessActor(uint32 objectId, Common::Point placePt, Wi
 	actor->_pathCtrY = 140;
 
 	_controls.push_back(control);
-	// TODO scrmgrSetObjectArtThread(objectId, controlb);
+	_vm->_dict->setObjectControl(objectId, control);
 	control->appearActor();
 }
 
@@ -627,7 +642,7 @@ void Controls::placeActorLessObject(uint32 objectId, Common::Point feetPt, Commo
 	control->_actorTypeId = 0;
 	control->_actor = 0;
 	_controls.push_back(control);
-	// TODO scrmgrSetObjectArtThread(objectId, controlb);
+	_vm->_dict->setObjectControl(objectId, control);
 }
 
 Actor *Controls::newActor() {
@@ -641,11 +656,9 @@ Control *Controls::newControl() {
 void Controls::destroyControl(Control *control) {
 	_controls.remove(control);
 
-	/* TODO
 	if (control->_pauseCtr <= 0)
-		scrmgrSetObjectArtThread(control->objectId, 0);
-	*/
-	
+		_vm->_dict->setObjectControl(control->_objectId, 0);
+
 	if (control->_objectId == 0x40004 && control->_pauseCtr <= 0)
 		_vm->setCursorControl(0);
 	

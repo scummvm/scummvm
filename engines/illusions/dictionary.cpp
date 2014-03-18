@@ -51,4 +51,15 @@ Sequence *Dictionary::findSequence(uint32 id) {
 	return _sequences.find(id);
 }
 
+void Dictionary::setObjectControl(uint32 objectId, Control *control) {
+	if (control)
+		_controls.add(objectId, control);
+	else
+		_controls.remove(objectId);
+}
+
+Control *Dictionary::getObjectControl(uint32 objectId) {
+	return _controls.find(objectId);
+}
+
 } // End of namespace Illusions

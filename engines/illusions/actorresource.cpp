@@ -29,7 +29,6 @@ namespace Illusions {
 // ActorResourceLoader
 
 void ActorResourceLoader::load(Resource *resource) {
-	// TODO
 	debug("ActorResourceLoader::load() Loading actor %08X from %s...", resource->_resId, resource->_filename.c_str());
 
 	ActorResource *actorResource = new ActorResource();
@@ -76,13 +75,14 @@ bool ActorResourceLoader::isFlag(int flag) {
 }
 
 void Frame::load(byte *dataStart, Common::SeekableReadStream &stream) {
-	stream.readUint32LE(); //field_0 dd
+	_flags = stream.readUint16LE();
+	stream.skip(2); // Skip padding
 	stream.readUint32LE(); // TODO config dd
 	_surfInfo.load(stream);
 	uint32 compressedPixelsOffs = stream.readUint32LE();
 	_compressedPixels = dataStart + compressedPixelsOffs;
 	
-	debug("Frame::load() compressedPixelsOffs: %08X",
+	debug(5, "Frame::load() compressedPixelsOffs: %08X",
 		compressedPixelsOffs);
 }
 
@@ -92,7 +92,7 @@ void Sequence::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	uint32 sequenceCodeOffs = stream.readUint32LE();
 	_sequenceCode = dataStart + sequenceCodeOffs;
 	
-	debug("Sequence::load() _sequenceId: %08X; _unk4: %d; sequenceCodeOffs: %08X",
+	debug(5, "Sequence::load() _sequenceId: %08X; _unk4: %d; sequenceCodeOffs: %08X",
 		_sequenceId, _unk4, sequenceCodeOffs);
 }
 
@@ -117,11 +117,11 @@ void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_regionLayerIndex = stream.readUint16LE();
 	_flags = stream.readUint16LE();
 
-	debug("ActorType::load() _actorTypeId: %08X; _color(%d,%d,%d); _scale: %d; _priority: %d; _value1E: %d",
+	debug(5, "ActorType::load() _actorTypeId: %08X; _color(%d,%d,%d); _scale: %d; _priority: %d; _value1E: %d",
 		_actorTypeId, _color.r, _color.g, _color.b, _scale, _priority, _value1E);
-	debug("ActorType::load() _pathWalkPointsIndex: %d; _scaleLayerIndex: %d; _pathWalkRectIndex: %d",
+	debug(5, "ActorType::load() _pathWalkPointsIndex: %d; _scaleLayerIndex: %d; _pathWalkRectIndex: %d",
 		_pathWalkPointsIndex, _scaleLayerIndex, _pathWalkRectIndex);
-	debug("ActorType::load() _priorityLayerIndex: %d; _regionLayerIndex: %d; _flags: %04X",
+	debug(5, "ActorType::load() _priorityLayerIndex: %d; _regionLayerIndex: %d; _flags: %04X",
 		_priorityLayerIndex, _regionLayerIndex,_flags);
 }
 
@@ -244,6 +244,15 @@ void ActorItems::unpauseByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
 			(*it)->pause();
+}
+
+FramesList *ActorItems::findSequenceFrames(Sequence *sequence) {
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
+		ActorItem *actorItem = *it;
+		if (actorItem->_pauseCtr <= 0 && actorItem->_actRes->containsSequence(sequence))
+			return &actorItem->_actRes->_frames;
+	}
+	return 0;
 }
 
 } // End of namespace Illusions

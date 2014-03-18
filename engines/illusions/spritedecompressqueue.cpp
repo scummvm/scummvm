@@ -77,12 +77,13 @@ void SpriteDecompressQueue::decompress(SpriteDecompressQueueItem *item) {
 	}
 	
 	byte *dst = (byte*)dstSurface->getBasePtr(x, y);
-
+	
 	while (processedSize < dstSize) {
 		int16 op = READ_LE_UINT16(src);
 		src += 2;
 		if (op & 0x8000) {
 			int runCount = (op & 0x7FFF) + 1;
+			processedSize += runCount;
 			uint16 runColor = READ_LE_UINT16(src);
 			src += 2;
 			while (runCount--) {
@@ -96,9 +97,9 @@ void SpriteDecompressQueue::decompress(SpriteDecompressQueueItem *item) {
 					dst += 2 * xincr;
 				}
 			}
-			processedSize += runCount;
 		} else {
 			int copyCount = op + 1;
+			processedSize += copyCount;
 			while (copyCount--) {
 				uint16 color = READ_LE_UINT16(src);
 				src += 2;
@@ -112,7 +113,6 @@ void SpriteDecompressQueue::decompress(SpriteDecompressQueueItem *item) {
 					dst += 2 * xincr;
 				}
 			}
-			processedSize += copyCount;
 		}
 	}
 
