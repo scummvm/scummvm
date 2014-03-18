@@ -87,6 +87,11 @@ public:
 	 * Returns true if a given object is in the player's current scene
 	 */
 	bool isInRoom(int objectId) const;
+
+	/**
+	 * Returns true if a given object is in the player's inventory
+	 */
+	bool isInInventory(int objectId) const;
 };
 
 } // End of namespace MADS

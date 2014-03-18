@@ -88,5 +88,8 @@ bool InventoryObjects::isInRoom(int objectId) const {
 	return (*this)[objectId]._roomNumber == _vm->_game->_scene._currentSceneId;
 }
 
+bool InventoryObjects::isInInventory(int objectId) const {
+	return (*this)[objectId]._roomNumber == PLAYER_INVENTORY;
+}
 
 } // End of namespace MADS
