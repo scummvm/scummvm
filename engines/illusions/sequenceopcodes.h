@@ -20,48 +20,34 @@
  *
  */
 
-#ifndef ILLUSIONS_SCRIPTOPCODES_H
-#define ILLUSIONS_SCRIPTOPCODES_H
+#ifndef ILLUSIONS_SEQUENCEOPCODES_H
+#define ILLUSIONS_SEQUENCEOPCODES_H
 
 #include "common/func.h"
 
 namespace Illusions {
 
 class IllusionsEngine;
-class ScriptThread;
+class Control;
+struct OpCall;
 
-struct OpCall {
-	byte _op;
-	byte _opSize;
-	uint32 _threadId;
-	int16 _deltaOfs;
-	byte *_code;
-	int _result;
-	void skip(uint size);
-	byte readByte();
-	int16 readSint16();
-	uint32 readUint32();
-};
+typedef Common::Functor2<Control*, OpCall&, void> SequenceOpcode;
 
-typedef Common::Functor2<ScriptThread*, OpCall&, void> ScriptOpcode;
-
-class ScriptOpcodes {
+class SequenceOpcodes {
 public:
-	ScriptOpcodes(IllusionsEngine *vm);
-	~ScriptOpcodes();
-	void execOpcode(ScriptThread *scriptThread, OpCall &opCall);
+	SequenceOpcodes(IllusionsEngine *vm);
+	~SequenceOpcodes();
+	void execOpcode(Control *control, OpCall &opCall);
 protected:
 	IllusionsEngine *_vm;
-	ScriptOpcode *_opcodes[256];
+	SequenceOpcode *_opcodes[256];
 	void initOpcodes();
 	void freeOpcodes();
 
 	// Opcodes	
-	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
-	void opDebug126(ScriptThread *scriptThread, OpCall &opCall);
 	
 };
 
 } // End of namespace Illusions
 
-#endif // ILLUSIONS_SCRIPTOPCODES_H
+#endif // ILLUSIONS_SEQUENCEOPCODES_H

@@ -27,28 +27,6 @@
 
 namespace Illusions {
 
-// OpCall
-
-void OpCall::skip(uint size) {
-	_scriptCode += size;
-}
-
-byte OpCall::readByte() {
-	return *_scriptCode++;
-}
-
-int16 OpCall::readSint16() {
-	int16 value = READ_LE_UINT16(_scriptCode);
-	_scriptCode += 2;
-	return value;
-}
-
-uint32 OpCall::readUint32() {
-	uint32 value = READ_LE_UINT32(_scriptCode);
-	_scriptCode += 4;
-	return value;
-}
-
 // ScriptThread
 
 ScriptThread::ScriptThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
@@ -65,7 +43,7 @@ int ScriptThread::onUpdate() {
 		opCall._op = _scriptCodeIp[0];
 		opCall._opSize = _scriptCodeIp[1] >> 1;
 		opCall._threadId = _scriptCodeIp[1] & 1 ? _threadId : 0;
-		opCall._scriptCode = _scriptCodeIp + 2;
+		opCall._code = _scriptCodeIp + 2;
 		opCall._deltaOfs = 0;
 		execOpcode(opCall);
 		_scriptCodeIp += opCall._opSize + opCall._deltaOfs;
