@@ -95,13 +95,14 @@ Common::Error IllusionsEngine::run() {
 	_actorItems = new ActorItems(this);
 	_backgroundItems = new BackgroundItems(this);
 	_camera = new Camera(this);
+	_controls = new Controls(this);
 	
 #if 0
 	// ActorResource test
 	_resSys->loadResource(0x00100006, 0, 0);
 #endif
 
-#if 1
+#if 0
 	// BackgroundResource test
 	_resSys->loadResource(0x00110007, 0, 0);
 	BackgroundItem *backgroundItem = _backgroundItems->debugFirst();
@@ -124,17 +125,35 @@ Common::Error IllusionsEngine::run() {
 #if 0
 	// ScriptResource test
 	_resSys->loadResource(0x000D0001, 0, 0);
-	
 	_scriptMan->startScriptThread(0x00020004, 0, 0, 0, 0);
-
 	while (!shouldQuit()) {
 		updateEvents();
 		_scriptMan->_threads->updateThreads();
 	}
-	
-	
 #endif
 
+#if 1
+	// Actor/graphics test
+	_resSys->loadResource(0x00110007, 0, 0);
+	_resSys->loadResource(0x00100006, 0, 0);
+	
+	_controls->placeActor(0x00050008, Common::Point(200, 200), 0x00060136, 0x00040001, 0);
+	
+	Control *control = *_controls->_controls.begin();
+	control->setActorFrameIndex(1);
+	control->appearActor();
+
+	while (!shouldQuit()) {
+		updateGraphics();
+		_screen->updateSprites();
+		_system->updateScreen();
+		updateEvents();
+		
+		//break;
+	}
+#endif
+
+	delete _controls;
 	delete _camera;
 	delete _backgroundItems;
 	delete _actorItems;
@@ -190,22 +209,12 @@ Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {
 	return 0;
 }
 
-Control *IllusionsEngine::findControl(uint32 objectId) {
-	// TODO Dummy, to be replaced later
-	return 0;
-}
-
 void IllusionsEngine::notifyThreadId(uint32 &threadId) {
 	if (threadId) {
 		uint32 tempThreadId = threadId;
 		threadId = 0;
 		_scriptMan->_threads->notifyId(tempThreadId);
 	}
-}
-
-FramesList *IllusionsEngine::findSequenceFrames(Sequence *sequence) {
-	// TODO Dummy, to be replaced later
-	return 0;
 }
 
 void IllusionsEngine::setCursorControl(Control *control) {
@@ -228,6 +237,71 @@ bool IllusionsEngine::hideCursor() {
 	// TODO --cursor._visibleCtr;
 	// TODO if (cursor.visibleCtr <= 0) 
 	return false;
+}
+
+int IllusionsEngine::updateGraphics() {
+	Common::Point panPoint(0, 0);
+
+	uint32 currTime = getCurrentTime();
+    _camera->update(currTime);
+    
+    // TODO Move to BackgroundItems class
+    BackgroundItem *backgroundItem = _backgroundItems->findActiveBackground();
+    if (backgroundItem) {
+    	BackgroundResource *bgRes = backgroundItem->_bgRes;
+    	for (uint i = 0; i < bgRes->_bgInfosCount; ++i) {
+    		BgInfo *bgInfo = &bgRes->_bgInfos[i];
+			// TODO int16 priority = artcntrlGetPriorityFromBase(bgInfos[v7].priorityBase);
+			int16 priority = -1;
+			_screen->_drawQueue->insertSurface(backgroundItem->_surfaces[i],
+				bgInfo->_surfInfo._dimensions, backgroundItem->_panPoints[i], priority);
+			if (bgInfo->_flags & 1)
+				panPoint = backgroundItem->_panPoints[i];
+		}
+	}
+	
+	// TODO Move to Controls class
+	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
+		Control *control = *it;
+		Actor *actor = control->_actor;
+		
+		debug("control->_pauseCtr: %d; actor->_flags: %04X", control->_pauseCtr, actor->_flags);
+		
+		if (control->_pauseCtr == 0 && actor && (actor->_flags & 1) && !(actor->_flags & 0x0200)) {
+			// TODO Common::Point drawPosition = control->calcPosition(panPoint);
+			Common::Point drawPosition(200, 200);//DEBUG
+			if (actor->_flags & 0x2000) {
+				Frame *frame = &(*actor->_frames)[actor->_frameIndex - 1];
+				_screen->_decompressQueue->insert(&actor->_drawFlags, frame->_flags,
+					frame->_surfInfo._pixelSize, frame->_surfInfo._dimensions,
+					frame->_compressedPixels, actor->_surface);
+				actor->_flags &= ~0x2000;
+			}
+			/* Unused
+			if (actor->_flags & 0x4000) {
+				nullsub_1(&actor->drawFlags);
+				actor->flags &= ~0x4000;
+			}
+			*/
+			if (actor->_surfInfo._dimensions._width && actor->_surfInfo._dimensions._height) {
+				// TODO int16 priority = control->getPriority();
+				int16 priority = 2;
+				_screen->_drawQueue->insertSprite(&actor->_drawFlags, actor->_surface,
+					actor->_surfInfo._dimensions, drawPosition, control->_position,
+					priority, actor->_scale, actor->_spriteFlags);
+			}
+		}
+	}
+
+#if 0 // TODO
+	if (_textInfo._surface) {
+		int16 priority = getPriorityFromBase(99);
+		_screen->_drawQueue->insertTextSurface(_textInfo._surface, _textInfo._dimensions,
+			_textInfo._position, priority);
+	}
+#endif
+    
+	return 1;
 }
 
 } // End of namespace Illusions

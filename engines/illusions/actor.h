@@ -69,8 +69,13 @@ public:
 	void unpause();
 	void createSurface(SurfInfo &surfInfo);
 	void destroySurface();
+	void initSequenceStack();
+	void pushSequenceStack(int16 value);
+	int16 popSequenceStack();
 public:
 	IllusionsEngine *_vm;
+	byte _drawFlags;
+	uint _spriteFlags;
 	
 	int _pauseCtr;
 	uint _flags;
@@ -85,6 +90,9 @@ public:
 	
 	ScaleLayer *_scaleLayer;
 	PriorityLayer *_priorityLayer;
+	
+	uint _seqStackCount;
+	int16 _seqStack[5];
 	
 	Common::Point _position;
 	Common::Point _position2;
