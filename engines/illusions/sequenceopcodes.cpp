@@ -21,68 +21,45 @@
  */
 
 #include "illusions/illusions.h"
+#include "illusions/sequenceopcodes.h"
+#include "illusions/actor.h"
+#include "illusions/actorresource.h"
 #include "illusions/scriptopcodes.h"
-#include "illusions/scriptman.h"
-#include "illusions/scriptresource.h"
-#include "illusions/scriptthread.h"
 
 namespace Illusions {
 
-// OpCall
+// SequenceOpcodes
 
-void OpCall::skip(uint size) {
-	_code += size;
-}
-
-byte OpCall::readByte() {
-	return *_code++;
-}
-
-int16 OpCall::readSint16() {
-	int16 value = READ_LE_UINT16(_code);
-	_code += 2;
-	return value;
-}
-
-uint32 OpCall::readUint32() {
-	uint32 value = READ_LE_UINT32(_code);
-	_code += 4;
-	return value;
-}
-
-// ScriptOpcodes
-
-ScriptOpcodes::ScriptOpcodes(IllusionsEngine *vm)
+SequenceOpcodes::SequenceOpcodes(IllusionsEngine *vm)
 	: _vm(vm) {
 	initOpcodes();
 }
 
-ScriptOpcodes::~ScriptOpcodes() {
+SequenceOpcodes::~SequenceOpcodes() {
 	freeOpcodes();
 }
 
-void ScriptOpcodes::execOpcode(ScriptThread *scriptThread, OpCall &opCall) {
+void SequenceOpcodes::execOpcode(Control *control, OpCall &opCall) {
 	if (!_opcodes[opCall._op])
-		error("ScriptOpcodes::execOpcode() Unimplemented opcode %d", opCall._op);
+		error("SequenceOpcodes::execOpcode() Unimplemented opcode %d", opCall._op);
 	debug("execOpcode(%d)", opCall._op);
-	(*_opcodes[opCall._op])(scriptThread, opCall);
+	(*_opcodes[opCall._op])(control, opCall);
 }
 
-typedef Common::Functor2Mem<ScriptThread*, OpCall&, void, ScriptOpcodes> ScriptOpcodeI;
-#define OPCODE(op, func) _opcodes[op] = new ScriptOpcodeI(this, &ScriptOpcodes::func);
+typedef Common::Functor2Mem<ScriptThread*, OpCall&, void, SequenceOpcodes> SequenceOpcodeI;
+#define OPCODE(op, func) _opcodes[op] = new SequenceOpcodeI(this, &SequenceOpcodes::func);
 
-void ScriptOpcodes::initOpcodes() {
+void SequenceOpcodes::initOpcodes() {
 	// First clear everything
 	for (uint i = 0; i < 256; ++i)
 		_opcodes[i] = 0;
 	// Register opcodes
-	OPCODE(42, opIncBlockCounter);
-	OPCODE(126, opDebug126);
+	//OPCODE(42, opIncBlockCounter);
 }
 
 #undef OPCODE
 
-void ScriptOpcodes::freeOpcodes() {
+void SequenceOpcodes::freeOpcodes() {
 	for (uint i = 0; i < 256; ++i)
 		delete _opcodes[i];
 }
@@ -93,16 +70,5 @@ void ScriptOpcodes::freeOpcodes() {
 #define	ARG_SKIP(x) opCall.skip(x); 
 #define ARG_INT16(name) int16 name = opCall.readSint16(); debug("ARG_INT16(" #name " = %d)", name);
 #define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug("ARG_UINT32(" #name " = %d)", name);
-
-void ScriptOpcodes::opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(index)	
-	byte value = _vm->_scriptMan->_scriptResource->_blockCounters.get(index + 1);
-	if (value <= 63)
-		_vm->_scriptMan->_scriptResource->_blockCounters.set(index + 1, value);
-}
-
-void ScriptOpcodes::opDebug126(ScriptThread *scriptThread, OpCall &opCall) {
-	// NOTE Prints some debug text
-}
 
 } // End of namespace Illusions

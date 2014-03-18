@@ -27,6 +27,7 @@
 #include "illusions/input.h"
 #include "illusions/screen.h"
 #include "illusions/scriptman.h"
+#include "illusions/sequenceopcodes.h"
 
 namespace Illusions {
 
@@ -570,10 +571,20 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, int value2,
 	
 }
 
+void Control::execSequenceOpcode(OpCall &opCall) {
+	// TODO Clean this up
+	_vm->_controls->_sequenceOpcodes->execOpcode(this, opCall);
+}
+
 // Controls
 
 Controls::Controls(IllusionsEngine *vm)
 	: _vm(vm) {
+	_sequenceOpcodes = new SequenceOpcodes(_vm);
+}
+
+Controls::~Controls() {
+	delete _sequenceOpcodes;
 }
 
 void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequenceId, uint32 objectId, uint32 notifyThreadId) {

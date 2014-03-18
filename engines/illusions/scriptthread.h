@@ -28,19 +28,7 @@
 namespace Illusions {
 
 class IllusionsEngine;
-
-struct OpCall {
-	byte _op;
-	byte _opSize;
-	uint32 _threadId;
-	int16 _deltaOfs;
-	byte *_scriptCode;
-	int _result;
-	void skip(uint size);
-	byte readByte();
-	int16 readSint16();
-	uint32 readUint32();
-};
+struct OpCall;
 
 class ScriptThread : public Thread {
 public:

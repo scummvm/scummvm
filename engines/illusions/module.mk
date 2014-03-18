@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	scriptopcodes.o \
 	scriptresource.o \
 	scriptthread.o \
+	sequenceopcodes.o \
 	spritedecompressqueue.o \
 	spritedrawqueue.o \
 	thread.o \
