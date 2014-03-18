@@ -25,6 +25,7 @@
 #include "mads/game.h"
 #include "mads/screen.h"
 #include "mads/palette.h"
+#include "mads/user_interface.h"
 
 namespace MADS {
 
@@ -114,6 +115,47 @@ void DirtyArea::setTextDisplay(const TextDisplay *textDisplay) {
 
 	setArea(textDisplay->_bounds.width(), textDisplay->_bounds.height(),
 		MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
+}
+
+void DirtyArea::setUISlot(const UISlot *slot) {
+	int type = slot->_slotType;
+	if (type <= -20)
+		type += 20;
+	if (type >= 64)
+		type &= 0xBF;
+
+	MSurface &intSurface = _vm->_game->_scene._userInterface;
+	switch (type) {
+	case ST_FULL_SCREEN_REFRESH:
+		_bounds.left = 0;
+		_bounds.top = 0;
+		setArea(intSurface.w, intSurface.h, intSurface.w, intSurface.h);
+		break;
+	case ST_MINUS3:
+		_bounds.left = slot->_position.x;
+		_bounds.top = slot->_position.y;
+		// TODO: spritesIndex & frameNumber used as w & h??!
+		error("TODO: Figure out ST_MINUS3. Maybe need a union?");
+		break;
+
+	default: {
+		SpriteAsset *asset = _vm->_game->_scene._sprites[slot->_spritesIndex];
+		MSprite *frame = asset->getFrame(slot->_frameNumber - 1);
+		int w = frame->w;
+		int h = frame->h;
+
+		if (slot->_field2 == 200) {
+			_bounds.left = slot->_position.x;
+			_bounds.top = slot->_position.y;
+		} else {
+			_bounds.left = slot->_position.x + w / 2;
+			_bounds.top = slot->_position.y + h / 2;
+		}
+
+		setArea(w, h, intSurface.w, intSurface.h);
+		break;
+	}
+	}
 }
 
 /*------------------------------------------------------------------------*/

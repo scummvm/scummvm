@@ -32,8 +32,6 @@ UISlot::UISlot() {
 	_field2 = 0;
 	_spritesIndex = 0;
 	_frameNumber = 0;
-	_field6 = 0;
-	_field8 = 0;
 }
 
 /*------------------------------------------------------------------------*/
@@ -46,22 +44,21 @@ void UISlots::fullRefresh() {
 	push_back(slot);
 }
 
-void UISlots::add(int v1, int v2, int frameNumber, int spritesIndex) {
+void UISlots::add(const Common::Point &pt, int frameNumber, int spritesIndex) {
 	assert(size() < 50);
 
 	UISlot ie;
 	ie._slotType = -3;
 	ie._field2 = 201;
-	ie._field6 = v1;
-	ie._field8 = v2;
+	ie._position = pt;
 	ie._frameNumber = frameNumber;
 	ie._spritesIndex = spritesIndex;
 
 	push_back(ie);
 }
 
-void UISlots::call(int v1, int v2) {
-	debug("TODO: UISlots::call");
+void UISlots::draw(int v1, int v2) {
+	
 }
 
 /*------------------------------------------------------------------------*/
@@ -142,7 +139,7 @@ void UserInterface::setup(int id) {
 	copyTo(&_surface);
 
 	if (_vm->_game->_v1 == 5)
-		scene._userInterface._uiSlots.call(0, 0);
+		scene._userInterface._uiSlots.draw(0, 0);
 
 	scene._action.clear();
 	drawTextElements();
@@ -468,7 +465,7 @@ void UserInterface::noInventoryAnim() {
 void UserInterface::refresh() {
 	_uiSlots.clear();
 	_uiSlots.fullRefresh();
-	_uiSlots.call(0, 0);
+	_uiSlots.draw(0, 0);
 
 	drawTextElements();
 }
@@ -496,8 +493,7 @@ void UserInterface::inventoryAnim() {
 	slot._field2 = 200;
 	slot._frameNumber = _invFrameNumber;
 	slot._spritesIndex = _invSpritesIndex;
-	slot._field6 = 160;
-	slot._field8 = 3;
+	slot._position = Common::Point(160, 3);
 
 	_uiSlots.push_back(slot);
 }

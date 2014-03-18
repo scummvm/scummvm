@@ -47,6 +47,7 @@ enum ScreenTransition {
 
 class SpriteSlot;
 class TextDisplay;
+class UISlot;
 
 class DirtyArea {
 private:
@@ -62,12 +63,20 @@ public:
 
 	void setArea(int width, int height, int maxWidth, int maxHeight);
 
+	/**
+	 * Set up a dirty area for a sprite slot
+	 */
 	void setSpriteSlot(const SpriteSlot *spriteSlot);
 
 	/**
 	* Set up a dirty area for a text display
 	*/
 	void setTextDisplay(const TextDisplay *textDisplay);
+
+	/**
+	 * Set up a dirty area for a UI slot
+	 */
+	void setUISlot(const UISlot *slot);
 };
 
 class DirtyAreas : public Common::Array<DirtyArea> {

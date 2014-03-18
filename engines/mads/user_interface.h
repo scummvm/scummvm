@@ -42,18 +42,17 @@ public:
 	int _field2;
 	int _spritesIndex;
 	int _frameNumber;
-	int _field6;
-	int _field8;
+	Common::Point _position;
 
 	UISlot();
 };
 
 class UISlots : public Common::Array<UISlot> {
 public:
-	void add(int v1, int v2, int frameNumber, int spritesIndex);
+	void add(const Common::Point &pt, int frameNumber, int spritesIndex);
 	void fullRefresh();
 
-	void call(int v1, int v2);
+	void draw(int v1, int v2);
 };
 
 
