@@ -29,6 +29,7 @@
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes1.h"
+#include "mads/nebular/nebular_scenes2.h"
 #include "mads/nebular/nebular_scenes8.h"
 
 namespace MADS {
@@ -48,6 +49,10 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	// Scene group #1
 	case 103:
 		return new Scene103(vm);
+
+	// Scene group #2
+	case 201:
+		return new Scene201(vm);
 
 	// Scene group #8
 	case 804:
