@@ -109,19 +109,19 @@ void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_scale = stream.readByte();
 	_priority = stream.readByte();
 	_value1E = stream.readUint16LE();
-	_bgItem28sIndex = stream.readUint16LE();
-	_bgItem22sIndex = stream.readUint16LE();
-	_bgItem30sIndex = stream.readUint16LE();
-	_bgItem26sIndex = stream.readUint16LE();
-	_bgItem38sIndex = stream.readUint16LE();
+	_pathWalkPointsIndex = stream.readUint16LE();
+	_scaleLayerIndex = stream.readUint16LE();
+	_pathWalkRectIndex = stream.readUint16LE();
+	_priorityLayerIndex = stream.readUint16LE();
+	_regionLayerIndex = stream.readUint16LE();
 	_flags = stream.readUint16LE();
-	
+
 	debug("ActorType::load() _actorTypeId: %08X; _color(%d,%d,%d); _scale: %d; _priority: %d; _value1E: %d",
 		_actorTypeId, _color.r, _color.g, _color.b, _scale, _priority, _value1E);
-	debug("ActorType::load() _bgItem28sIndex: %d; _bgItem22sIndex: %d; _bgItem30sIndex: %d",
-		_bgItem28sIndex, _bgItem22sIndex, _bgItem30sIndex);
-	debug("ActorType::load() _bgItem26sIndex: %d; _bgItem38sIndex: %d; _flags: %04X",
-		_bgItem26sIndex, _bgItem38sIndex,_flags);
+	debug("ActorType::load() _pathWalkPointsIndex: %d; _scaleLayerIndex: %d; _pathWalkRectIndex: %d",
+		_pathWalkPointsIndex, _scaleLayerIndex, _pathWalkRectIndex);
+	debug("ActorType::load() _priorityLayerIndex: %d; _regionLayerIndex: %d; _flags: %04X",
+		_priorityLayerIndex, _regionLayerIndex,_flags);
 }
 
 // ActorResource
@@ -176,6 +176,13 @@ void ActorResource::load(byte *data, uint32 dataSize) {
 		_frames.push_back(frame);
 	}
 
+}
+
+bool ActorResource::containsSequence(Sequence *sequence) {
+	for (uint i = 0; i < _sequences.size(); ++i)
+		if (sequence == &_sequences[i])
+			return true;
+	return false;
 }
 
 // ActorItem
