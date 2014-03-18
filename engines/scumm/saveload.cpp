@@ -188,32 +188,31 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 }
 
 bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
-	bool saveFailed;
+	bool saveFailed = false;
 
 	pauseEngine(true);
 
 	Common::WriteStream *out = openSaveFileForWriting(slot, compat, filename);
-	if (!out)
-		return false;
-
-	saveFailed = false;
-	if (!saveState(out))
+	if (!out) {
 		saveFailed = true;
+	} else {
+		if (!saveState(out))
+			saveFailed = true;
 
-	out->finalize();
-	if (out->err())
-		saveFailed = true;
-	delete out;
-
-	if (saveFailed) {
-		debug(1, "State save as '%s' FAILED", filename.c_str());
-		return false;
+		out->finalize();
+		if (out->err())
+			saveFailed = true;
+		delete out;
 	}
-	debug(1, "State saved as '%s'", filename.c_str());
+
+	if (saveFailed)
+		debug(1, "State save as '%s' FAILED", filename.c_str());
+	else
+		debug(1, "State saved as '%s'", filename.c_str());
 
 	pauseEngine(false);
 
-	return true;
+	return !saveFailed;
 }
 
 
