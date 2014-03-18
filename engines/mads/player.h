@@ -152,9 +152,9 @@ public:
 
 	void setDest(const Common::Point &pt, int facing);
 
-	void nextFrame();
+	void startWalking(const Common::Point &pos, int direction);
 
-	void sub7E53C(Common::Point pos, int direction);
+	void nextFrame();
 };
 
 } // End of namespace MADS

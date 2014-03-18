@@ -45,6 +45,64 @@ enum ScreenTransition {
 	kVertTransition7, kCenterVertTransition
 };
 
+class SpriteSlot;
+class TextDisplay;
+
+class DirtyArea {
+private:
+	static MADSEngine *_vm;
+	friend class DirtyAreas;
+public:
+	Common::Rect _bounds;
+	Common::Rect _bounds2;
+	bool _textActive;
+	bool _active;
+
+	DirtyArea();
+
+	void setArea(int width, int height, int maxWidth, int maxHeight);
+
+	void setSpriteSlot(const SpriteSlot *spriteSlot);
+
+	/**
+	* Set up a dirty area for a text display
+	*/
+	void setTextDisplay(const TextDisplay *textDisplay);
+};
+
+class DirtyAreas : public Common::Array<DirtyArea> {
+private:
+	MADSEngine *_vm;
+public:
+	DirtyAreas(MADSEngine *vm);
+
+	/**
+	* Merge together any designated dirty areas that overlap
+	* @param startIndex	1-based starting dirty area starting index
+	* @param count			Number of entries to process
+	*/
+	void merge(int startIndex, int count);
+
+	bool intersects(int idx1, int idx2);
+	void mergeAreas(int idx1, int idx2);
+
+	/**
+	* Copy the data specified by the dirty rect list between surfaces
+	* @param srcSurface	Source surface
+	* @param destSurface	Dest surface
+	* @param posAdjust		Position adjustment
+	*/
+	void copy(MSurface *srcSurface, MSurface *destSurface, const Common::Point &posAdjust);
+
+	/**
+	* Use the lsit of dirty areas to copy areas of the screen surface to
+	* the physical screen
+	* @param posAdjust		Position adjustment	 */
+	void copyToScreen(const Common::Point &posAdjust);
+
+	void reset();
+};
+
 class ScreenSurface : public MSurface {
 private:
 	/**

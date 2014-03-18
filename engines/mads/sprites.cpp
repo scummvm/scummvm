@@ -139,7 +139,7 @@ byte MSprite::getTransparencyIndex() const {
 MADSEngine *SpriteSlot::_vm = nullptr;
 
 SpriteSlot::SpriteSlot() {
-	_spriteType = ST_NONE;
+	_SlotType = ST_NONE;
 	_seqIndex = 0;
 	_spritesIndex = 0;
 	_frameNumber = 0;
@@ -147,8 +147,8 @@ SpriteSlot::SpriteSlot() {
 	_scale = 0;
 }
 
-SpriteSlot::SpriteSlot(SpriteType type, int seqIndex) {
-	_spriteType = type;
+SpriteSlot::SpriteSlot(SlotType type, int seqIndex) {
+	_SlotType = type;
 	_seqIndex = seqIndex;
 	_spritesIndex = 0;
 	_frameNumber = 0;
@@ -208,11 +208,11 @@ void SpriteSlots::setDirtyAreas() {
 	Scene &scene = _vm->_game->_scene;
 
 	for (uint i = 0; i < size(); ++i) {
-		if ((*this)[i]._spriteType >= ST_NONE) {
+		if ((*this)[i]._SlotType >= ST_NONE) {
 			scene._dirtyAreas[i].setSpriteSlot(&(*this)[i]);
 
-			scene._dirtyAreas[i]._textActive = ((*this)[i]._spriteType <= ST_NONE) ? 0 : 1;
-			(*this)[i]._spriteType = ST_NONE;
+			scene._dirtyAreas[i]._textActive = ((*this)[i]._SlotType <= ST_NONE) ? 0 : 1;
+			(*this)[i]._SlotType = ST_NONE;
 		}
 	}
 }
@@ -247,14 +247,14 @@ void SpriteSlots::drawBackground() {
 		SpriteSlot &spriteSlot = (*this)[i];
 		DirtyArea &dirtyArea = scene._dirtyAreas[i];
 
-		if (spriteSlot._spriteType >= ST_NONE) {
+		if (spriteSlot._SlotType >= ST_NONE) {
 			// Foreground sprite, so we can ignore it
 			dirtyArea._active = false;
 		} else {
 			dirtyArea._active = true;
 			dirtyArea.setSpriteSlot(&spriteSlot);
 
-			if (spriteSlot._spriteType == ST_BACKGROUND) {
+			if (spriteSlot._SlotType == ST_BACKGROUND) {
 				// Background object, so need to draw it
 				assert(spriteSlot._frameNumber > 0);
 				SpriteAsset *asset = scene._sprites[spriteSlot._spritesIndex];
@@ -304,7 +304,7 @@ void SpriteSlots::drawForeground(MSurface *s) {
 	// Get a list of sprite object depths for active objects
 	for (uint i = 0; i < size(); ++i) {
 		SpriteSlot &spriteSlot = (*this)[i];
-		if (spriteSlot._spriteType >= ST_NONE) {
+		if (spriteSlot._SlotType >= ST_NONE) {
 			DepthEntry rec(16 - spriteSlot._depth, i);
 			depthList.push_back(rec);
 		}
@@ -367,7 +367,7 @@ void SpriteSlots::drawForeground(MSurface *s) {
 
 void SpriteSlots::cleanUp() {
 	for (int i = (int)size() - 1; i >= 0; --i) {
-		if ((*this)[i]._spriteType < ST_NONE)
+		if ((*this)[i]._SlotType < ST_NONE)
 			remove_at(i);
 	}
 }
@@ -391,6 +391,7 @@ int SpriteSets::add(SpriteAsset *asset, int idx) {
 }
 
 int SpriteSets::addSprites(const Common::String &resName, int flags) {
+	++_assetCount;
 	return add(new SpriteAsset(_vm, resName, flags));
 }
 
@@ -398,52 +399,17 @@ void SpriteSets::clear() {
 	for (uint i = 0; i < size(); ++i)
 		delete (*this)[i];
 
+	_assetCount = 0;
 	Common::Array<SpriteAsset *>::clear();
 }
 
-/*------------------------------------------------------------------------*/
+void SpriteSets::remove(int idx) {
+	if (idx >= 0) {
+		delete (*this)[idx];
+		(*this)[idx] = nullptr;
 
-ImageInterEntry::ImageInterEntry() {
-	_field0 = 0;
-	_field2 = 0;
-	_field3 = 0;
-	_field4 = 0;
-	_field6 = 0;
-	_field8 = 0;
-}
-
-/*------------------------------------------------------------------------*/
-
-void ImageInterEntries::add(int v1, int v2) {
-	ImageInterEntry ie;
-	ie._field0 = -2;
-	ie._field2 = -1;
-
-	push_back(ie);
-}
-
-void ImageInterEntries::add(int v1, int v2, int v3, int v4) {
-	assert(size() < 50);
-
-	ImageInterEntry ie;
-	ie._field0 = -3;
-	ie._field2 = 201;
-	ie._field6 = v1;
-	ie._field8 = v2;
-	ie._field4 = v3;
-	ie._field3 = v4;
-
-	push_back(ie);
-}
-
-ImageInterEntry &ImageInterEntries::add() {
-	resize(size() + 1);
-	return (*this)[size() - 1];
-}
-
-
-void ImageInterEntries::call(int v1, int v2) {
-	debug("TODO: ImageInterEntries::call");
+		--_assetCount;
+	}
 }
 
 } // End of namespace MADS

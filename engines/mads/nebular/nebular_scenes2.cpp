@@ -197,7 +197,7 @@ void Scene201::enter() {
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[21], SM_FRAME_INDEX, 12, 70);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 1);
 		_globals._frameTime = 0;
-		_game._player.sub7E53C(Common::Point(157, 143), 8);
+		_game._player.startWalking(Common::Point(157, 143), 8);
 		_vm->_palette->setEntry(252, 45, 63, 45);
 		_vm->_palette->setEntry(253, 20, 45, 20);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 2, 0, 120, _game.getQuote(90));

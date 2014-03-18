@@ -30,7 +30,7 @@
 
 namespace MADS {
 
-enum SpriteType {
+enum SlotType {
 	ST_NONE = 0, ST_FOREGROUND = 1, ST_BACKGROUND = -4,
 	ST_FULL_SCREEN_REFRESH = -2, ST_EXPIRED = -1
 };
@@ -129,11 +129,11 @@ private:
 	static MADSEngine *_vm;
 	friend class SpriteSlots;
 public:
-	SpriteType _spriteType;
+	SlotType _SlotType;
 	int _seqIndex;
 public:
 	SpriteSlot();
-	SpriteSlot(SpriteType type, int seqIndex);
+	SpriteSlot(SlotType type, int seqIndex);
 
 	void setup(int dirtyAreaIndex);
 	bool operator==(const SpriteSlotSubset &other) const;
@@ -200,10 +200,12 @@ class SpriteSets : public Common::Array<SpriteAsset *> {
 private:
 	MADSEngine *_vm;
 public:
+	int _assetCount;
+
 	/**
 	 * Constructor
 	 */
-	SpriteSets(MADSEngine *vm) : _vm(vm) {}
+	SpriteSets(MADSEngine *vm) : _vm(vm), _assetCount(0) {}
 
 	/**
 	 * Destructor
@@ -224,27 +226,11 @@ public:
 	 * Adds a sprite asset to the list by name
 	 */
 	int addSprites(const Common::String &resName, int flags = 0);
-};
 
-class ImageInterEntry {
-public:
-	int _field0;
-	int _field2;
-	int _field3;
-	int _field4;
-	int _field6;
-	int _field8;
-
-	ImageInterEntry();
-};
-
-class ImageInterEntries: public Common::Array<ImageInterEntry> {
-public:
-	void add(int v1, int v2);
-	void add(int v1, int v2, int v3, int v4);
-	ImageInterEntry &add();
-
-	void call(int v1, int v2);
+	/**
+	 * Remove an asset from the list
+	 */
+	void remove(int idx);
 };
 
 } // End of namespace MADS

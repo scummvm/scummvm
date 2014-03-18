@@ -178,7 +178,7 @@ void SequenceList::setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot) {
 	SequenceEntry &timerEntry = _entries[seqIndex];
 	SpriteAsset &spriteSet = *scene._sprites[timerEntry._spritesIndex];
 
-	spriteSlot._spriteType = spriteSet.isBackground() ? ST_BACKGROUND : ST_FOREGROUND;
+	spriteSlot._SlotType = spriteSet.isBackground() ? ST_BACKGROUND : ST_FOREGROUND;
 	spriteSlot._seqIndex = seqIndex;
 	spriteSlot._spritesIndex = timerEntry._spritesIndex;
 	spriteSlot._frameNumber = (timerEntry._flipped ? 0x8000 : 0) | timerEntry._frameIndex;

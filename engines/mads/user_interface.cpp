@@ -27,16 +27,47 @@
 
 namespace MADS {
 
-void SceneNode::load(Common::SeekableReadStream *f) {
-	_walkPos.x = f->readSint16LE();
-	_walkPos.y = f->readSint16LE();
-	for (int i = 0; i < MAX_ROUTE_NODES; ++i)
-		_indexes[i] = f->readUint16LE();
+UISlot::UISlot() {
+	_slotType = ST_NONE;
+	_field2 = 0;
+	_field3 = 0;
+	_field4 = 0;
+	_field6 = 0;
+	_field8 = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+void UISlots::fullRefresh() {
+	UISlot slot;
+	slot._slotType = ST_FULL_SCREEN_REFRESH;
+	slot._field2 = -1;
+
+	push_back(slot);
+}
+
+void UISlots::add(int v1, int v2, int v3, int v4) {
+	assert(size() < 50);
+
+	UISlot ie;
+	ie._slotType = -3;
+	ie._field2 = 201;
+	ie._field6 = v1;
+	ie._field8 = v2;
+	ie._field4 = v3;
+	ie._field3 = v4;
+
+	push_back(ie);
+}
+
+void UISlots::call(int v1, int v2) {
+	debug("TODO: UISlots::call");
 }
 
 /*------------------------------------------------------------------------*/
 
 UserInterface::UserInterface(MADSEngine *vm) : _vm(vm) {
+	_invSpritesIndex = -1;
 	_category = CAT_NONE;
 	_screenObjectsCount = 0;
 	_inventoryTopIndex = 0;
@@ -99,8 +130,8 @@ void UserInterface::setup(int id) {
 	}
 	scene._screenObjects._v832EC = id;
 
-	scene._imageInterEntries.clear();
-	scene._imageInterEntries.add(-2, 0xff);
+	scene._userInterface._uiSlots.clear();
+	scene._userInterface._uiSlots.fullRefresh();
 	_vm->_game->_ticksExpiry = _vm->_events->getFrameCounter();
 	_v1A = -1;
 	_v1E = -1;
@@ -110,7 +141,7 @@ void UserInterface::setup(int id) {
 	copyTo(&_surface);
 
 	if (_vm->_game->_v1 == 5)
-		scene._imageInterEntries.call(0, 0);
+		scene._userInterface._uiSlots.call(0, 0);
 
 	scene._action.clear();
 	drawTextElements();
@@ -400,5 +431,27 @@ void UserInterface::drawTalkList() {
 	warning("TODO: drawTalkList");
 }
 
+void UserInterface::loadInventoryAnim(int objectId) {
+
+}
+
+void UserInterface::noInventoryAnim() {
+	Scene &scene = _vm->_game->_scene;
+
+	if (_invSpritesIndex >= 0) {
+		scene._sprites.remove(_invSpritesIndex);
+		_vm->_game->_ticksExpiry = _vm->_events->getFrameCounter();
+		_invSpritesIndex = -1;
+	}
+
+	if (!scene._screenObjects._v832EC)
+		refresh();
+}
+
+void UserInterface::refresh() {
+	Scene &scene = _vm->_game->_scene;
+	scene._userInterface._uiSlots.clear();
+//	scene._userInterface._uiSlots.new()
+}
 
 } // End of namespace MADS

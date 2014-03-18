@@ -246,7 +246,7 @@ void Player::update() {
 	if (_forceRefresh || (_visible != _priorVisible)) {
 		int slotIndex = getSpriteSlot();
 		if (slotIndex >= 0)
-			scene._spriteSlots[slotIndex]._spriteType = ST_EXPIRED;
+			scene._spriteSlots[slotIndex]._SlotType = ST_EXPIRED;
 
 		int newDepth = 1;
 		int yp = MAX(_playerPos.y, (int16)(MADS_SCENE_HEIGHT - 1));
@@ -264,7 +264,7 @@ void Player::update() {
 		if (_visible) {
 			// Player sprite needs to be rendered
 			SpriteSlot slot;
-			slot._spriteType = ST_FOREGROUND;
+			slot._SlotType = ST_FOREGROUND;
 			slot._seqIndex = PLAYER_SEQ_INDEX;
 			slot._spritesIndex = _spritesStart + _spritesIdx;
 			slot._frameNumber = _frameOffset + _frameNum;
@@ -285,7 +285,7 @@ void Player::update() {
 
 				if (equal)
 					// Undo the prior expiry of the player sprite
-					s2._spriteType = ST_NONE;
+					s2._SlotType = ST_NONE;
 				else
 					slotIndex = -1;
 			}
@@ -357,6 +357,16 @@ void Player::setDest(const Common::Point &pt, int facing) {
 			srcPos = pt;
 		}
 	}
+}
+
+void Player::startWalking(const Common::Point &pos, int direction) {
+	Scene &scene = _vm->_game->_scene;
+
+	reset();
+	scene._action._startWalkFlag = true;
+	scene._action._walkFlag = true;
+	scene._destPos = pos;
+	scene._destFacing = direction;
 }
 
 void Player::nextFrame() {
@@ -528,7 +538,7 @@ int Player::getSpriteSlot() {
 
 	for (uint idx = 0; idx < spriteSlots.size(); ++idx) {
 		if (spriteSlots[idx]._seqIndex == PLAYER_SEQ_INDEX && 
-				spriteSlots[idx]._spriteType >= ST_NONE)
+				spriteSlots[idx]._SlotType >= ST_NONE)
 			return idx;
 	}
 
@@ -737,13 +747,4 @@ void Player::startMovement() {
 	_v8452E = -_v84530;
 }
 
-void Player::sub7E53C(Common::Point pos, int direction) {
-	Scene &scene = _vm->_game->_scene;
-
-	reset();
-	scene._action._startWalkFlag = true;
-	scene._action._walkFlag = true;
-	scene._destPos = pos;
-	scene._destFacing = direction;
-}
 } // End of namespace MADS

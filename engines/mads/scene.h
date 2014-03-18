@@ -90,7 +90,6 @@ public:
 	int _textSpacing;
 	Hotspots _hotspots;
 	ScreenObjects _screenObjects;
-	ImageInterEntries _imageInterEntries;
 	DirtyAreas _dirtyAreas;
 	int _v1;
 	SceneInfo *_sceneInfo;

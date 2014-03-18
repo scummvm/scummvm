@@ -235,7 +235,12 @@ void Game::sectionLoop() {
 		_player._priorTimer = _scene._frameStartTime + _player._ticksAmount;
 		_player.idle();
 
-		warning("TODO: _selectedObject IF block");
+		if (_scene._userInterface._selectedInvIndex >= 0) {
+			_scene._userInterface.loadInventoryAnim(
+				_objects._inventoryList[_scene._userInterface._selectedInvIndex]);
+		} else {
+			_scene._userInterface.noInventoryAnim();
+		}
 
 		_v1 = 5;
 		_scene._roomChanged = false;

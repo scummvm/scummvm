@@ -36,9 +36,31 @@ enum ScrCategory {
 	CAT_12 = 12
 };
 
+class UISlot {
+public:
+	int _slotType;
+	int _field2;
+	int _field3;
+	int _field4;
+	int _field6;
+	int _field8;
+
+	UISlot();
+};
+
+class UISlots : public Common::Array<UISlot> {
+public:
+	void add(int v1, int v2, int v3, int v4);
+	void fullRefresh();
+
+	void call(int v1, int v2);
+};
+
+
 class UserInterface : public MSurface {
 private:
 	MADSEngine *_vm;
+	int _invSpritesIndex;
 
 	/**
 	 * Loads the elements of the user interface
@@ -84,6 +106,8 @@ private:
 	 * Draw a UI textual element
 	 */
 	void writeVocab(ScrCategory category, int id);
+
+	void refresh();
 public:
 	ScrCategory _category;
 	int _screenObjectsCount;
@@ -99,6 +123,7 @@ public:
 	int _v1A;
 	int _v1C;
 	int _v1E;
+	UISlots _uiSlots;
 public:
 	/**
 	* Constructor
@@ -120,6 +145,10 @@ public:
 	void drawTextElements();
 
 	void setBounds(const Common::Rect &r);
+
+	void loadInventoryAnim(int objectId);
+
+	void noInventoryAnim();
 };
 
 } // End of namespace MADS
