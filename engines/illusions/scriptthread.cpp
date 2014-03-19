@@ -39,14 +39,14 @@ ScriptThread::ScriptThread(IllusionsEngine *vm, uint32 threadId, uint32 callingT
 int ScriptThread::onUpdate() {
 	OpCall opCall;
 	opCall._result = kTSRun;
-	while (!_terminated && opCall._result == 4) {
+	while (!_terminated && opCall._result == kTSRun) {
 		opCall._op = _scriptCodeIp[0];
 		opCall._opSize = _scriptCodeIp[1] >> 1;
 		opCall._threadId = _scriptCodeIp[1] & 1 ? _threadId : 0;
 		opCall._code = _scriptCodeIp + 2;
-		opCall._deltaOfs = 0;
+		opCall._deltaOfs = opCall._opSize;
 		execOpcode(opCall);
-		_scriptCodeIp += opCall._opSize + opCall._deltaOfs;
+		_scriptCodeIp += opCall._deltaOfs;
 	}
 	if (_terminated)
 		opCall._result = kTSTerminate;
@@ -55,22 +55,27 @@ int ScriptThread::onUpdate() {
 
 void ScriptThread::onSuspend() {
 	// TODO
+	debug("ScriptThread::onSuspend()");
 }
 
 void ScriptThread::onNotify() {
 	// TODO
+	debug("ScriptThread::onNotify()");
 }
 
 void ScriptThread::onPause() {
 	// TODO
+	debug("ScriptThread::onPause()");
 }
 
 void ScriptThread::onResume() {
 	// TODO
+	debug("ScriptThread::onResume()");
 }
 
 void ScriptThread::onTerminated() {
 	// TODO
+	debug("ScriptThread::onTerminated()");
 }
 
 void ScriptThread::execOpcode(OpCall &opCall) {

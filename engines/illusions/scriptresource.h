@@ -99,6 +99,7 @@ public:
 	~ScriptResource();
 	void load(byte *data, uint32 dataSize);
 	byte *getThreadCode(uint32 threadId);
+	ProgInfo *getProgInfo(uint32 index);
 public:
 	byte *_data;
 	uint32 _dataSize;

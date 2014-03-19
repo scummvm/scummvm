@@ -212,4 +212,10 @@ byte *ScriptResource::getThreadCode(uint32 threadId) {
 	return _data + _codeOffsets[(threadId & 0xFFFF) - 1];
 }
 
+ProgInfo *ScriptResource::getProgInfo(uint32 index) {
+	if (index > 0 && index <= _progInfosCount)
+		return &_progInfos[index - 1];
+	return 0;
+}
+
 } // End of namespace Illusions

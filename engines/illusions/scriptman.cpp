@@ -157,6 +157,20 @@ uint32 ScriptMan::startTempScriptThread(byte *scriptCodeIp, uint32 callingThread
 	return tempThreadId;
 }
 
+void ScriptMan::setCurrFontId(uint32 fontId) {
+	_fontId = fontId;
+}
+
+bool ScriptMan::enterScene(uint32 sceneId, uint32 threadId) {
+	ProgInfo *progInfo = _scriptResource->getProgInfo(sceneId & 0xFFFF);
+	if (!progInfo) {
+		// TODO dumpActiveScenes(_someSceneId2, threadId);
+		sceneId = _theSceneId;
+	}
+	_activeScenes.push(sceneId);
+	return progInfo != 0;
+}
+
 void ScriptMan::newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 	byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10) {
 	ScriptThread *scriptThread = new ScriptThread(_vm, threadId, callingThreadId,
