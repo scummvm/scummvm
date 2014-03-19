@@ -385,11 +385,11 @@ void Scene202::actions() {
 					}
 				} else if (_game._abortTimers == 2) {
 					if (_game._objects.isInInventory(OBJ_BONE)) {
-						warning("TODO: _game._objects.removeFromInventory(OBJ_BONE, 1);");
-						warning("TODO: _game._objects.addToInventory(OBJ_BONES);");
+						_game._objects.removeFromInventory(OBJ_BONE, 1);
+						_game._objects.addToInventory(OBJ_BONES);
 						warning("TODO: Dialog::showPicture(OBJ_BONES, 0x4EFA, 0);");
 					} else {
-						warning("TODO: _game._objects.addToInventory(OBJ_BONE);");
+						_game._objects.addToInventory(OBJ_BONE);
 						warning("TODO: Dialog::showPicture(OBJ_BONE, 0x4EFA, 0);");
 					}
 					warning("TODO: sub1EB6E(_globals[32];");
