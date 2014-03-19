@@ -201,6 +201,7 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_v1C = -1;
 	_v1E = -1;
 	_dirtyAreas.resize(50);
+	_inventoryChanged = false;
 
 	// Map the user interface to the bottom of the game's screen surface
 	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCENE_HEIGHT);
@@ -624,5 +625,14 @@ void UserInterface::inventoryAnim() {
 	_uiSlots.push_back(slot);
 }
 
+void UserInterface::categoryChanged() {
+	_v1C = -1;
+	_vm->_events->initVars();
+	_category = CAT_NONE;
+}
+
+void UserInterface::selectObject(int invIndex) {
+	warning("TODO: selectObject");
+}
 
 } // End of namespace MADS

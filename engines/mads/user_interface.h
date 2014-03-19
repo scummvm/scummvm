@@ -154,6 +154,7 @@ public:
 	int _v1A;
 	int _v1C;
 	int _v1E;
+	bool _inventoryChanged;
 public:
 	/**
 	* Constructor
@@ -179,6 +180,14 @@ public:
 	void loadInventoryAnim(int objectId);
 
 	void noInventoryAnim();
+
+	void categoryChanged();
+
+	/**
+	 * Select an item from the inventory list
+	 * @param invIndex	Index in the inventory list of the item to select
+	 */
+	void selectObject(int invIndex);
 };
 
 } // End of namespace MADS

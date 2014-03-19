@@ -80,8 +80,16 @@ void InventoryObjects::setData(int objIndex, int id, const byte *p) {
 	}
 }
 
-void InventoryObjects::setRoom(int objectId, int roomNumber) {
-	warning("TODO: setObjectRoom");
+void InventoryObjects::setRoom(int objectId, int sceneNumber) {
+	InventoryObject &obj = (*this)[objectId];
+
+	if (obj._roomNumber == PLAYER_INVENTORY)
+		removeFromInventory(objectId, 1);
+
+	if (sceneNumber == PLAYER_INVENTORY)
+		addToInventory(objectId);
+	else
+		obj._roomNumber = sceneNumber;
 }
 
 bool InventoryObjects::isInRoom(int objectId) const {
@@ -90,6 +98,70 @@ bool InventoryObjects::isInRoom(int objectId) const {
 
 bool InventoryObjects::isInInventory(int objectId) const {
 	return (*this)[objectId]._roomNumber == PLAYER_INVENTORY;
+}
+
+void InventoryObjects::addToInventory(int objectId) {
+	assert(_inventoryList.size() < 32);
+	UserInterface &userInterface = _vm->_game->_scene._userInterface;
+
+	if (!isInInventory(objectId)) {
+		_inventoryList.push_back(objectId);
+		userInterface._selectedInvIndex = _inventoryList.size() - 1;
+		userInterface._inventoryTopIndex = CLIP(userInterface._inventoryTopIndex,
+			0, (int)_inventoryList.size() - 1);
+
+		if ((userInterface._inventoryTopIndex + 5) <= (size() - 1))
+			userInterface._inventoryTopIndex = size() - 5;
+		userInterface._inventoryChanged = true;
+
+		(*this)[objectId]._roomNumber = PLAYER_INVENTORY;
+
+		if (_vm->_game->_v1 == 5 && !_vm->_game->_scene._screenObjects._v832EC) {
+			userInterface.categoryChanged();
+			userInterface.selectObject(userInterface._selectedInvIndex);
+		}
+	}
+}
+
+void InventoryObjects::removeFromInventory(int objectId, int newScene) {
+	Scene &scene = _vm->_game->_scene;
+	UserInterface &userInterface = scene._userInterface;
+
+	// Scan the inventory list for the object
+	int invIndex = -1;
+	for (int idx = 0; idx < (int)_inventoryList.size() && invIndex == -1; ++idx) {
+		if (_inventoryList[idx] == objectId)
+			invIndex = idx;
+	}
+
+	int selectedIndex = userInterface._selectedInvIndex;
+	bool noSelection = selectedIndex < 0;
+
+	if (_vm->_game->_v1 == 5 && !scene._screenObjects._v832EC)
+		userInterface.selectObject(-1);
+
+	// Remove the item from the inventory list
+	_inventoryList.remove_at(invIndex);
+
+	if (invIndex > userInterface._inventoryTopIndex) {
+		userInterface._inventoryTopIndex = MAX(userInterface._inventoryTopIndex, 0);
+	}
+
+	userInterface._inventoryChanged = true;
+	(*this)[objectId]._roomNumber = newScene;
+
+	int newIndex = selectedIndex;
+	if (!noSelection) {
+		if (newIndex >= invIndex)
+			--newIndex;
+		if (newIndex < 0 && size() > 0)
+			newIndex = 0;
+	}
+
+	if (_vm->_game->_v1 == 5 && !scene._screenObjects._v832EC) {
+		userInterface.categoryChanged();
+		userInterface.selectObject(newIndex);
+	}
 }
 
 } // End of namespace MADS
