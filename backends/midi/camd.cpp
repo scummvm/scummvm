@@ -36,6 +36,7 @@
 
 #include <proto/camd.h>
 #include <proto/exec.h>
+#include <proto/dos.h>
 
 /*
  * CAMD sequencer driver
@@ -144,6 +145,7 @@ void MidiDriver_CAMD::sysEx(const byte *msg, uint16 length) {
 
 char *MidiDriver_CAMD::getDevice() {
 	char *retname = NULL;
+	char *_outport = new char[1];
 
 	APTR key = _ICamd->LockCAMD(CD_Linkages);
 	if (key != NULL) {
@@ -155,12 +157,17 @@ char *MidiDriver_CAMD::getDevice() {
 
 			if (strstr(dev, "out") != NULL) {
 				// This is an output device, return this
-				retname = dev;
+				Common::strlcpy(_outport, dev, sizeof(_outport));
+				retname = _outport;
 			} else {
 				// Search the next one
 				cluster = _ICamd->NextCluster(cluster);
 			}
 		}
+
+		// If the user has a preference outport set, use this instead
+		if(IDOS->GetVar("DefMidiOut", _outport, 128, 0))
+			retname = _outport;
 
 		_ICamd->UnlockCAMD(key);
 	}
