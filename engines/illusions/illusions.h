@@ -111,6 +111,8 @@ public:
 	int updateGraphics();
 	int getRandom(int max);
 	int convertPanXCoord(int16 x);
+	Common::Point getNamedPointPosition(uint32 namedPointId);
+	void playVideo(uint32 videoId, uint32 objectId, uint32 value, uint32 threadId);
 
 #if 0
 

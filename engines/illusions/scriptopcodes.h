@@ -56,9 +56,21 @@ protected:
 	void initOpcodes();
 	void freeOpcodes();
 
-	// Opcodes	
+	// Opcodes
+	void opSuspend(ScriptThread *scriptThread, OpCall &opCall);
+	void opYield(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartScriptThread(ScriptThread *scriptThread, OpCall &opCall);
+	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
+	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);	
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
+	void opPlaceActor(ScriptThread *scriptThread, OpCall &opCall);
+	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
+	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opDebug126(ScriptThread *scriptThread, OpCall &opCall);
+	void opPlayVideo(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);
 	
 };
 

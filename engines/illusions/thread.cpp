@@ -91,6 +91,7 @@ int Thread::update() {
 	int status = kTSYield;
 	if (!_terminated && _pauseCtr <= 0) {
 		status = onUpdate();
+		debug("Thread status: %d", status);
 		if (status == kTSTerminate)
 			terminate();
 		else if (status == kTSSuspend)

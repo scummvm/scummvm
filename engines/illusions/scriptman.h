@@ -77,6 +77,8 @@ public:
 		uint32 value8, uint32 valueC, uint32 value10);
 	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10);
+	void setCurrFontId(uint32 fontId);
+	bool enterScene(uint32 sceneId, uint32 threadId);
 public:
 
 	IllusionsEngine *_vm;
@@ -91,6 +93,8 @@ public:
 	uint32 _theThreadId;
 	bool _doScriptThreadInit;
 	uint32 _nextTempThreadId;
+	
+	uint32 _fontId;
 	
 	ThreadList *_threads;
 	ScriptOpcodes *_scriptOpcodes;

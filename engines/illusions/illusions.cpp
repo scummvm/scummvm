@@ -138,19 +138,28 @@ Common::Error IllusionsEngine::run() {
 #endif
 
 #if 1
-	// Actor/graphics test
+	// Actor/graphics/script test
 
 	/* TODO 0x0010000B LinkIndex 0x00060AAB 0x00060556
 	*/	
 	
+	_resSys->loadResource(0x000D0001, 0, 0);
 	_resSys->loadResource(0x0011000B, 0, 0);
 	_resSys->loadResource(0x0010000B, 0, 0);
+
+#if 0
 	_controls->placeActor(0x00050009, Common::Point(0, 0), 0x00060573, 0x00040001, 0);
 	Control *control = *_controls->_controls.begin();
 	control->setActorFrameIndex(1);
 	control->appearActor();
+#endif
+
+	_scriptMan->startScriptThread(0x00020004, 0, 0, 0, 0);
+
 	//_camera->panToPoint(Common::Point(800, 0), 500, 0);
+
 	while (!shouldQuit()) {
+		_scriptMan->_threads->updateThreads();
 		updateActors();
 		updateSequences();
 		updateGraphics();
@@ -356,6 +365,15 @@ int IllusionsEngine::getRandom(int max) {
 int IllusionsEngine::convertPanXCoord(int16 x) {
 	// TODO
 	return 0;
+}
+
+Common::Point IllusionsEngine::getNamedPointPosition(uint32 namedPointId) {
+	// TODO
+	return Common::Point(320, 240);
+}
+
+void IllusionsEngine::playVideo(uint32 videoId, uint32 objectId, uint32 priority, uint32 threadId) {
+	
 }
 
 } // End of namespace Illusions

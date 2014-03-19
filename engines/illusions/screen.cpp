@@ -61,6 +61,11 @@ bool Screen::isDisplayOn() {
 	return _displayOn;
 }
 
+void Screen::setDisplayOn(bool isOn) {
+	_displayOn = isOn;
+	// TODO Clear screen when off
+}
+
 uint16 Screen::getColorKey2() {
 	return _colorKey2;
 }

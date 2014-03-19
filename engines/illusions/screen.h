@@ -38,6 +38,7 @@ public:
 	Graphics::Surface *allocSurface(int16 width, int16 height);
 	Graphics::Surface *allocSurface(SurfInfo &surfInfo);
 	bool isDisplayOn();
+	void setDisplayOn(bool isOn);
 	uint16 getColorKey2();
 	void updateSprites();
 	void drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey);
