@@ -31,6 +31,7 @@
 #include "common/error.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "common/str.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 
@@ -157,7 +158,7 @@ char *MidiDriver_CAMD::getDevice() {
 
 			if (strstr(dev, "out") != NULL) {
 				// This is an output device, return this
-				strcpy(_outport, dev);
+				Common::strlcpy(_outport, dev, sizeof(_outport));
 				retname = _outport;
 			} else {
 				// Search the next one
