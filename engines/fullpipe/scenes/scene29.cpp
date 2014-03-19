@@ -36,6 +36,60 @@
 
 namespace Fullpipe {
 
+void sceneHandler29_winArcade() {
+	warning("STUB: sceneHandler29_winArcade()");
+}
+
+void sceneHandler29_shootGreen() {
+	warning("STUB: sceneHandler29_shootGreen()");
+}
+
+void sceneHandler29_shootRed() {
+	warning("STUB: sceneHandler29_shootRed()");
+}
+
+void sceneHandler29_clickPorter(ExCommand *cmd) {
+	warning("STUB: sceneHandler29_clickPorter()");
+}
+
+void sceneHandler29_manJump() {
+	warning("STUB: sceneHandler29_manJump()");
+}
+
+void sceneHandler29_manBend() {
+	warning("STUB: sceneHandler29_manBend()");
+}
+
+void sceneHandler29_sub03() {
+	warning("STUB: sceneHandler29_sub03()");
+}
+
+void sceneHandler29_manFromL() {
+	warning("STUB: sceneHandler29_manFromL()");
+}
+
+void sceneHandler29_sub05() {
+	warning("STUB: sceneHandler29_sub05()");
+}
+
+void sceneHandler29_shootersEscape() {
+	warning("STUB: sceneHandler29_shootersEscape()");
+}
+
+void sceneHandler29_sub07() {
+	warning("STUB: sceneHandler29_sub07()");
+}
+
+void sceneHandler29_shoot() {
+	warning("STUB: sceneHandler29_shoot()");
+}
+
+void sceneHandler29_animBearded() {
+	warning("STUB: sceneHandler29_animBearded()");
+}
+
+
+
 int sceneHandler29(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
@@ -50,6 +104,7 @@ int sceneHandler29(ExCommand *cmd) {
 			playSound(SND_29_028, 0);
 			break;
         }
+
         playSound(SND_29_029, 0);
 
 		break;
