@@ -228,7 +228,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isKlaymenFloor(false), _isClimbingLadder(false) {
+	: Scene(vm, parentModule), _isKlaymenFloor(false), _isClimbingLadder(false), _asKlaymenPeekHand(nullptr) {
 
 	NRect tempClipRect;
 	Sprite *tempSprite;

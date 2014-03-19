@@ -84,7 +84,7 @@ static const uint32 kScene2725StaticSprites[] = {
 };
 
 Module2700::Module2700(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _soundIndex(0), _radioMusicInitialized(false) {
+	: Module(vm, parentModule), _soundIndex(0), _radioMusicInitialized(false), _musicFileHash(0) {
 
 	_vm->_soundMan->addMusic(0x42212411, 0x04020210);
 	_vm->_soundMan->startMusic(0x04020210, 24, 2);
