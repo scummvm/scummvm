@@ -91,6 +91,11 @@ public:
 	BackgroundItems *_backgroundItems;
 	Camera *_camera;
 	Controls *_controls;
+	
+	int _resGetCtr;
+	uint32 _resGetTime;
+	bool _unpauseControlActorFlag;
+	uint32 _lastUpdateTime;
 
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
 	
@@ -100,7 +105,12 @@ public:
 	void placeCursor(Control *control, uint32 sequenceId);
 	bool showCursor();
 	bool hideCursor();
+	uint32 getElapsedUpdateTime();
+	int updateActors();
+	int updateSequences();
 	int updateGraphics();
+	int getRandom(int max);
+	int convertPanXCoord(int16 x);
 
 #if 0
 

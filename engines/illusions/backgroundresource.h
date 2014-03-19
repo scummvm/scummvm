@@ -90,13 +90,13 @@ protected:
 
 #if 0
 BgResource_PathWalkRects struc ; (sizeof=0x8)
-count           dd ?
-rects           dd ?
+count dd ?
+rects dd ?
 BgResource_PathWalkRects ends
 
 BgResource_PathWalkPoints struc ; (sizeof=0x8)
-count           dd ?
-points          dd ?
+count dd ?
+points dd ?
 BgResource_PathWalkPoints ends
 #endif
 

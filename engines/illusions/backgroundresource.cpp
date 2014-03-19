@@ -173,6 +173,18 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 		_scaleLayers[i].load(data, stream);
 	}
 
+	// Load priority layers
+	stream.seek(0x14);
+	_priorityLayersCount = stream.readUint16LE();
+	_priorityLayers = new PriorityLayer[_priorityLayersCount];
+	stream.seek(0x34);
+	uint32 priorityLayersOffs = stream.readUint32LE();
+	debug("_priorityLayersCount: %d", _priorityLayersCount);
+	for (uint i = 0; i < _priorityLayersCount; ++i) {
+		stream.seek(priorityLayersOffs + i * 12);
+		_priorityLayers[i].load(data, stream);
+	}
+
 }
 
 int BackgroundResource::findMasterBgIndex() {

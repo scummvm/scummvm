@@ -27,6 +27,7 @@
 #include "illusions/backgroundresource.h"
 #include "illusions/graphics.h"
 #include "common/algorithm.h"
+#include "common/func.h"
 #include "common/list.h"
 #include "graphics/surface.h"
 
@@ -64,6 +65,8 @@ protected:
 	Common::Array<DefaultSequence> _items;
 };
 
+typedef Common::Functor2<Control*, uint32, void> ActorControlRoutine;
+
 class Actor {
 public:
 	Actor(IllusionsEngine *vm);
@@ -74,6 +77,8 @@ public:
 	void initSequenceStack();
 	void pushSequenceStack(int16 value);
 	int16 popSequenceStack();
+	void setControlRoutine(ActorControlRoutine *controlRoutine);
+	void runControlRoutine(Control *control, uint32 deltaTime);
 public:
 	IllusionsEngine *_vm;
 	byte _drawFlags;
@@ -116,6 +121,8 @@ public:
 	int _field30;
 	
 	int _surfaceTextFlag;
+	
+	ActorControlRoutine *_controlRoutine;
 	
 	byte *_seqCodeIp;
 	uint32 _sequenceId;
@@ -187,7 +194,8 @@ public:
 	~Controls();
 	void placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequenceId, uint32 objectId, uint32 notifyThreadId);
 	void placeSequenceLessActor(uint32 objectId, Common::Point placePt, WidthHeight dimensions, int16 priority);
-	void placeActorLessObject(uint32 objectId, Common::Point feetPt, Common::Point pt, int16 priority, uint flags);	
+	void placeActorLessObject(uint32 objectId, Common::Point feetPt, Common::Point pt, int16 priority, uint flags);
+	void actorControlRouine(Control *control, uint32 deltaTime);	
 public:
 	typedef Common::List<Control*> Items;
 	typedef Items::iterator ItemsIterator;

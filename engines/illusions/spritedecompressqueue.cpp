@@ -55,11 +55,20 @@ void SpriteDecompressQueue::decompressAll() {
 void SpriteDecompressQueue::decompress(SpriteDecompressQueueItem *item) {
 	byte *src = item->_compressedPixels;
 	Graphics::Surface *dstSurface = item->_surface;
-	int dstSize = item->_dimensions._height * item->_dimensions._width;
+	int dstSize = item->_dimensions._width * item->_dimensions._height;
 	int processedSize = 0;
 	int xincr, x, xstart;
 	int yincr, y;
-
+	
+	// Safeguard
+	if (item->_dimensions._width > item->_surface->w ||
+		item->_dimensions._height > item->_surface->h) {
+		debug("Incorrect frame dimensions (%d, %d <> %d, %d)",
+			item->_dimensions._width, item->_dimensions._height,
+			item->_surface->w, item->_surface->h);
+		return;
+	}
+	
 	if (item->_flags & 1) {
 		x = xstart = item->_dimensions._width - 1;
 		xincr = -1;
