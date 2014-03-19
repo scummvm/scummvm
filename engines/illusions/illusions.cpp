@@ -97,6 +97,11 @@ Common::Error IllusionsEngine::run() {
 	_camera = new Camera(this);
 	_controls = new Controls(this);
 	
+	// TODO Move to own class
+	_resGetCtr = 0;
+	_unpauseControlActorFlag = false;
+	_lastUpdateTime = 0;
+	
 #if 0
 	// ActorResource test
 	_resSys->loadResource(0x00100006, 0, 0);
@@ -134,18 +139,25 @@ Common::Error IllusionsEngine::run() {
 
 #if 1
 	// Actor/graphics test
-	_resSys->loadResource(0x00110007, 0, 0);
-	_resSys->loadResource(0x00100006, 0, 0);
-	_controls->placeActor(0x00050008, Common::Point(200, 200), 0x00060136, 0x00040001, 0);
+
+	/* TODO 0x0010000B LinkIndex 0x00060AAB 0x00060556
+	*/	
+	
+	_resSys->loadResource(0x0011000B, 0, 0);
+	_resSys->loadResource(0x0010000B, 0, 0);
+	_controls->placeActor(0x00050009, Common::Point(0, 0), 0x00060573, 0x00040001, 0);
 	Control *control = *_controls->_controls.begin();
 	control->setActorFrameIndex(1);
 	control->appearActor();
 	//_camera->panToPoint(Common::Point(800, 0), 500, 0);
 	while (!shouldQuit()) {
+		updateActors();
+		updateSequences();
 		updateGraphics();
 		_screen->updateSprites();
 		_system->updateScreen();
 		updateEvents();
+		_system->delayMillis(10);
 	}
 #endif
 
@@ -235,18 +247,58 @@ bool IllusionsEngine::hideCursor() {
 	return false;
 }
 
+uint32 IllusionsEngine::getElapsedUpdateTime() {
+	uint32 result = 0;
+	uint32 currTime = getCurrentTime();
+	if (_resGetCtr <= 0 ) {
+		if (_unpauseControlActorFlag) {
+			_unpauseControlActorFlag = false;
+			result = 0;
+		} else {
+			result = currTime - _lastUpdateTime;
+		}
+		_lastUpdateTime = currTime;
+	} else {
+		result = _resGetTime - _lastUpdateTime;
+		_lastUpdateTime = _resGetTime;
+	}
+	return result;
+}
+
+int IllusionsEngine::updateActors() {
+	// TODO Move to Controls class
+	uint32 deltaTime = getElapsedUpdateTime();
+	//debug("deltaTime: %d", deltaTime);
+	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_pauseCtr == 0 && control->_actor && control->_actor->_controlRoutine)
+			control->_actor->runControlRoutine(control, deltaTime);
+	}
+	return 1;
+}
+
+int IllusionsEngine::updateSequences() {
+	// TODO Move to Controls class
+	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_pauseCtr == 0 && control->_actor && control->_actor->_seqCodeIp)
+			control->sequenceActor();
+	}
+	return 1;
+}
+
 int IllusionsEngine::updateGraphics() {
 	Common::Point panPoint(0, 0);
 
 	uint32 currTime = getCurrentTime();
-    _camera->update(currTime);
-    
-    // TODO Move to BackgroundItems class
-    BackgroundItem *backgroundItem = _backgroundItems->findActiveBackground();
-    if (backgroundItem) {
-    	BackgroundResource *bgRes = backgroundItem->_bgRes;
-    	for (uint i = 0; i < bgRes->_bgInfosCount; ++i) {
-    		BgInfo *bgInfo = &bgRes->_bgInfos[i];
+	_camera->update(currTime);
+
+	// TODO Move to BackgroundItems class
+	BackgroundItem *backgroundItem = _backgroundItems->findActiveBackground();
+	if (backgroundItem) {
+		BackgroundResource *bgRes = backgroundItem->_bgRes;
+		for (uint i = 0; i < bgRes->_bgInfosCount; ++i) {
+			BgInfo *bgInfo = &bgRes->_bgInfos[i];
 			// TODO int16 priority = artcntrlGetPriorityFromBase(bgInfos[v7].priorityBase);
 			int16 priority = -1;
 			_screen->_drawQueue->insertSurface(backgroundItem->_surfaces[i],
@@ -261,11 +313,8 @@ int IllusionsEngine::updateGraphics() {
 		Control *control = *it;
 		Actor *actor = control->_actor;
 		
-		debug("control->_pauseCtr: %d; actor->_flags: %04X", control->_pauseCtr, actor->_flags);
-		
 		if (control->_pauseCtr == 0 && actor && (actor->_flags & 1) && !(actor->_flags & 0x0200)) {
 			Common::Point drawPosition = control->calcPosition(panPoint);
-			debug("drawPosition: %d, %d", drawPosition.x, drawPosition.y);
 			if (actor->_flags & 0x2000) {
 				Frame *frame = &(*actor->_frames)[actor->_frameIndex - 1];
 				_screen->_decompressQueue->insert(&actor->_drawFlags, frame->_flags,
@@ -296,8 +345,17 @@ int IllusionsEngine::updateGraphics() {
 			_textInfo._position, priority);
 	}
 #endif
-    
+
 	return 1;
+}
+
+int IllusionsEngine::getRandom(int max) {
+	return _random->getRandomNumber(max - 1);
+}
+
+int IllusionsEngine::convertPanXCoord(int16 x) {
+	// TODO
+	return 0;
 }
 
 } // End of namespace Illusions

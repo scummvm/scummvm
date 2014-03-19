@@ -27,6 +27,7 @@
 #include "illusions/input.h"
 #include "illusions/screen.h"
 #include "illusions/scriptman.h"
+#include "illusions/scriptopcodes.h"
 #include "illusions/sequenceopcodes.h"
 
 namespace Illusions {
@@ -53,6 +54,8 @@ void DefaultSequences::set(uint32 sequenceId, uint32 newSequenceId) {
 Actor::Actor(IllusionsEngine *vm)
 	: _vm(vm), _pauseCtr(0) {
 	_pauseCtr = 0;
+	_spriteFlags = 0;
+	_drawFlags = 0;
 	_flags = 0;
 	_scale = 100;
 	_frameIndex = 0;
@@ -84,15 +87,16 @@ Actor::Actor(IllusionsEngine *vm)
 	_seqCodeValue1 = 0;
 	_seqCodeValue2 = 600;
 	_seqCodeValue3 = 0;
+	
+	_notifyId3C = 0;
 
 	_pathCtrY = 0;
+	
+	_controlRoutine = 0;
+	setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Controls>(_vm->_controls, &Controls::actorControlRouine));
 
 #if 0 // TODO
 	_field2 = 0;
-	_spriteFlags = 0;
-	_drawFlags = 0;
-	_controlRoutine = Actor_defaultControlRoutine;
-	_notifyId3C = 0;
 	_path40 = 0;
 	_path4C = 0;
 	_pathFlag50 = 0;
@@ -164,6 +168,16 @@ void Actor::pushSequenceStack(int16 value) {
 
 int16 Actor::popSequenceStack() {
 	return _seqStack[--_seqStackCount];
+}
+
+void Actor::setControlRoutine(ActorControlRoutine *controlRoutine) {
+	delete _controlRoutine;
+	_controlRoutine = controlRoutine;
+}
+
+void Actor::runControlRoutine(Control *control, uint32 deltaTime) {
+	if (_controlRoutine)
+		(*_controlRoutine)(control, deltaTime);
 }
 
 // Control
@@ -501,10 +515,8 @@ void Control::stopActor() {
 		_actor->_path40 = 0;
 	}
 	*/
-	
 	_vm->notifyThreadId(_actor->_notifyThreadId1);
 	_vm->notifyThreadId(_actor->_notifyId3C);
-	
 }
 
 void Control::startSequenceActor(uint32 sequenceId, int value, uint32 notifyThreadId) {
@@ -528,7 +540,52 @@ void Control::stopSequenceActor() {
 }
 
 void Control::sequenceActor() {
-	// TODO
+
+	if (_actor->_pauseCtr > 0)
+		return;
+
+	OpCall opCall;
+  	bool sequenceFinished = false;
+
+	opCall._result = 0;
+	_actor->_seqCodeValue3 -= _actor->_seqCodeValue1;
+	
+	while (_actor->_seqCodeValue3 <= 0 && !sequenceFinished) {
+		bool breakInner = false;
+		while (!breakInner) {
+			debug("op: %08X", _actor->_seqCodeIp[0]);
+			opCall._op = _actor->_seqCodeIp[0] & 0x7F;
+			opCall._opSize = _actor->_seqCodeIp[1];
+			opCall._code = _actor->_seqCodeIp + 2;
+			opCall._deltaOfs = opCall._opSize;
+			if (_actor->_seqCodeIp[0] & 0x80)
+				breakInner = true;
+			execSequenceOpcode(opCall);
+			if (opCall._result == 1) {
+				sequenceFinished = true;
+				breakInner = true;
+			} else if (opCall._result == 2) {
+				breakInner = true;
+			}
+			_actor->_seqCodeIp += opCall._deltaOfs;
+		}
+		_actor->_seqCodeValue3 += _actor->_seqCodeValue2;
+	}
+
+	if (_actor->_newFrameIndex != 0) {
+		debug("New frame %d", _actor->_newFrameIndex);
+		setActorFrameIndex(_actor->_newFrameIndex);
+		if (!(_actor->_flags & 1) && (_actor->_flags & 0x1000) && (_objectId != 0x40004)) {
+			appearActor();
+			_actor->_flags &= ~0x1000;
+		}
+	}
+	
+	if (sequenceFinished) {
+		debug("Sequence has finished");
+		_actor->_seqCodeIp = 0;
+	}
+	
 }
 
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, int value2, uint32 notifyThreadId) {
@@ -567,7 +624,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, int value2,
 		_actor->_notifyThreadId2 = notifyThreadId;
 	}
 
-	// TODO sequenceActor();
+	sequenceActor();
 	
 }
 
@@ -672,7 +729,7 @@ void Controls::placeSequenceLessActor(uint32 objectId, Common::Point placePt, Wi
 	control->_position.y = 0;
 	control->_actorTypeId = 0x50004;
 	control->_actor = actor;
-	// TODO actor->setControlRoutine(0);
+	actor->setControlRoutine(0);
 	actor->_surfInfo._pixelSize = dimensions._width * dimensions._height;
 	actor->_surfInfo._dimensions = dimensions;
 	actor->createSurface(actor->_surfInfo);
@@ -741,6 +798,37 @@ void Controls::destroyControl(Control *control) {
 		free(control->_buf);
 	*/
 	delete control;
+}
+
+void Controls::actorControlRouine(Control *control, uint32 deltaTime) {
+	//debug("Controls::actorControlRouine()");
+
+	Actor *actor = control->_actor;
+
+	if (actor->_pauseCtr > 0)
+		return;
+
+	if (false/*actor->_pathNode*/) {
+		// TODO Update pathwalking
+	} else {
+		actor->_seqCodeValue1 = 100 * deltaTime;
+	}
+
+	if (actor->_flags & 4) {
+		int scale = actor->_scaleLayer->getScale(actor->_position);
+		control->setActorScale(scale);
+	}
+
+	if (actor->_flags & 8) {
+		int16 priority = actor->_priorityLayer->getPriority(actor->_position);
+		if (priority)
+			control->setPriority(priority + 1);
+	}
+
+	if (actor->_flags & 0x20) {
+		// TODO Update transition sequence (seems to be unused in BBDOU?)
+	}
+
 }
 
 } // End of namespace Illusions

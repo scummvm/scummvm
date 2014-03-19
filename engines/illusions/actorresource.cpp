@@ -95,6 +95,8 @@ void Sequence::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	
 	debug(5, "Sequence::load() _sequenceId: %08X; _unk4: %d; sequenceCodeOffs: %08X",
 		_sequenceId, _unk4, sequenceCodeOffs);
+
+	debug("_sequenceId: %08X", _sequenceId);
 }
 
 void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
@@ -125,6 +127,9 @@ void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		_pathWalkPointsIndex, _scaleLayerIndex, _pathWalkRectIndex);
 	debug(5, "ActorType::load() _priorityLayerIndex: %d; _regionLayerIndex: %d; _flags: %04X",
 		_priorityLayerIndex, _regionLayerIndex,_flags);
+
+	debug("_actorTypeId: %08X; dimensions: (%d, %d)", _actorTypeId, _surfInfo._dimensions._width, _surfInfo._dimensions._height);
+
 }
 
 // ActorResource
@@ -159,7 +164,7 @@ void ActorResource::load(byte *data, uint32 dataSize) {
 	stream.seek(0x14);
 	uint32 sequencesOffs = stream.readUint32LE();
 	stream.seek(sequencesOffs);
-	_actorTypes.reserve(sequencesCount);
+	_sequences.reserve(sequencesCount);
 	for (uint i = 0; i < sequencesCount; ++i) {
 		Sequence sequence;
 		sequence.load(data, stream);
@@ -172,7 +177,7 @@ void ActorResource::load(byte *data, uint32 dataSize) {
 	stream.seek(0x18);
 	uint32 framesOffs = stream.readUint32LE();
 	stream.seek(framesOffs);
-	_actorTypes.reserve(framesCount);
+	_frames.reserve(framesCount);
 	for (uint i = 0; i < framesCount; ++i) {
 		Frame frame;
 		frame.load(data, stream);

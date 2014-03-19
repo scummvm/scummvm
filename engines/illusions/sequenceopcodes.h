@@ -44,7 +44,25 @@ protected:
 	void initOpcodes();
 	void freeOpcodes();
 
-	// Opcodes	
+	// Opcodes
+	void opSetFrameIndex(Control *control, OpCall &opCall);
+	void opEndSequence(Control *control, OpCall &opCall);
+	void opSetRandomFrameDelay(Control *control, OpCall &opCall);
+	void opSetFrameSpeed(Control *control, OpCall &opCall);	
+	void opJump(Control *control, OpCall &opCall);
+	void opGotoSequence(Control *control, OpCall &opCall);
+	void opBeginLoop(Control *control, OpCall &opCall);
+	void opNextLoop(Control *control, OpCall &opCall);
+	void opJumpIfNotFacing(Control *control, OpCall &opCall);
+	void opNotifyThreadId1(Control *control, OpCall &opCall);
+	void opSetPathCtrY(Control *control, OpCall &opCall);
+	void opSetPathWalkPoints(Control *control, OpCall &opCall);
+	void opSetScaleLayer(Control *control, OpCall &opCall);
+	void opSetPathWalkRects(Control *control, OpCall &opCall);
+	void opSetPriority(Control *control, OpCall &opCall);
+	void opSetPriorityLayer(Control *control, OpCall &opCall);
+	void opPlaySound(Control *control, OpCall &opCall);
+	void opStopSound(Control *control, OpCall &opCall);	
 	
 };
 
