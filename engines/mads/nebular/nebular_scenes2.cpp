@@ -335,6 +335,16 @@ void Scene201::actions() {
 /*------------------------------------------------------------------------*/
 
 void Scene202::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	Scene &scene = _vm->_game->_scene;
+	scene.addActiveVocab(NOUN_C7);
+	scene.addActiveVocab(NOUN_4E);
+	scene.addActiveVocab(NOUN_D);
+	scene.addActiveVocab(NOUN_2C);
+	scene.addActiveVocab(NOUN_140);
+	scene.addActiveVocab(NOUN_1C9);
 }
 
 void Scene202::enter() {
@@ -344,6 +354,41 @@ void Scene202::step() {
 }
 
 void Scene202::preActions() {
+	MADSAction *action = _game._player._action;
+	if (action->_walkFlag)
+		_scene->_kernelMessages.reset();
+
+	if ((_globals._v4 == 0) && (action->isAction(0x4E, 0xC7, 0) || !action->_walkFlag)) {
+		if (_game._abortTimers == 0) {
+			_vm->_sound->command(29);
+			action->_walkFlag = false;
+			_game._player._stepEnabled = false;
+			_scene->_sequences.remove(_globals._spriteIndexes[24]);
+			_globals._spriteIndexes[23] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(_globals._spriteIndexes[23], 1);
+			_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 1);
+		} else if (_game._abortTimers == 1) {
+			warning("TODO: TimerList_getTimeout(-1, _globals._spriteIndexes[23]);");
+			warning("CHECKME: _scene->_dynamicHotspots.remove(_globals._frameTime);");
+			_scene->_dynamicHotspots.remove(_globals._frameTime);
+			_game._player._visible = true;
+			action->_walkFlag = true;
+			_game._player._stepEnabled = true;
+			_globals._v4 = 0;
+		} else {
+			// nothing
+		}		
+	}
+
+	if (action->isAction(0x3, 0x27, 0) && action->_activeAction._indirectObjectId > 0) {
+		if (!action->_walkFlag || (_globals._v4 != 0))
+			action->_startWalkFlag = false;
+		else
+			action->_startWalkFlag = true;
+
+		if (_globals._v4 == 0)
+			_game._player.startWalking(Common::Point(171, 122), 8);
+	}
 }
 
 void Scene202::actions() {
