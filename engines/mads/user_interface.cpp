@@ -57,13 +57,136 @@ void UISlots::add(const Common::Point &pt, int frameNumber, int spritesIndex) {
 	push_back(ie);
 }
 
-void UISlots::draw(int v1, int v2) {
-	
+void UISlots::draw(bool updateFlag, bool delFlag) {
+	Scene &scene = _vm->_game->_scene;
+	UserInterface &userInterface = scene._userInterface;
+	DirtyArea *dirtyAreaPtr = nullptr;
+
+	// Loop through setting up the dirty areas
+	for (uint idx = 0; idx < size(); ++idx) {
+		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
+		UISlot &slot = (*this)[idx];
+
+		if (slot._slotType >= ST_NONE) {
+			dirtyArea._active = false;
+		} else {
+			dirtyArea.setUISlot(&slot);
+			dirtyArea._textActive = true;
+			if (slot._field2 == 200 && slot._slotType == ST_MINUS5) {
+				dirtyArea._active = false;
+				dirtyAreaPtr = &dirtyArea;
+			}
+		}
+	}
+
+	userInterface._dirtyAreas.merge(1, userInterface._uiSlots.size());
+	if (dirtyAreaPtr)
+		dirtyAreaPtr->_active = true;
+
+	// Main draw loop
+	for (uint idx = 0; idx < size(); ++idx) {
+		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
+		UISlot &slot = (*this)[idx];
+
+		if (dirtyArea._active && dirtyArea._bounds.width() > 0
+				&& dirtyArea._bounds.height() > 0 && slot._slotType >= -20) {
+
+			// TODO: Figure out the difference between two copy methods used
+			if (slot._slotType >= ST_EXPIRED) {
+				userInterface._surface.copyTo(&userInterface, dirtyArea._bounds,
+					Common::Point(dirtyArea._bounds.left, dirtyArea._bounds.top));
+			} else {
+				userInterface._surface.copyTo(&userInterface, dirtyArea._bounds,
+					Common::Point(dirtyArea._bounds.left, dirtyArea._bounds.top));
+			}
+		}
+	}
+
+	for (uint idx = 0; idx < size(); ++idx) {
+		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
+		UISlot &slot = (*this)[idx];
+
+		int slotType = slot._slotType;
+		if (slotType >= ST_NONE) {
+			dirtyArea.setUISlot(&slot);
+			if (!updateFlag)
+				slotType &= ~0x40;
+
+			dirtyArea._textActive = slotType > 0;
+			slot._slotType &= 0x40;
+		}
+	}
+
+	userInterface._dirtyAreas.merge(1, userInterface._uiSlots.size());
+
+	for (uint idx = 0; idx < size(); ++idx) {
+		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
+		UISlot &slot = (*this)[idx];
+
+		if (slot._slotType >= ST_NONE && !(slot._slotType & 0x40)) {
+			if (!dirtyArea._active) {
+				error("TODO: Original code here doesn't make sense!");
+			}
+
+			if (dirtyArea._textActive) {
+				SpriteAsset *asset = scene._sprites[slot._spritesIndex];
+				
+				if (slot._field2 == 200) {
+					MSprite *sprite = asset->getFrame(slot._frameNumber & 0x7F);
+					sprite->copyTo(&userInterface, slot._position);
+				} else {
+					MSprite *sprite = asset->getFrame(slot._frameNumber - 1);
+					sprite->copyTo(&userInterface, slot._position);
+				}
+			}
+		}
+	}
+
+	// Mark areas of the screen surface for updating
+	if (updateFlag) {
+		_vm->_screen.setPointer(&userInterface);
+		userInterface.setBounds(Common::Rect(0, scene._interfaceY,
+			MADS_SCREEN_WIDTH - 1, userInterface.h + scene._interfaceY - 1));
+		warning("TODO: sub_111C8 / sub_1146C");
+
+		for (uint idx = 0; idx < size(); ++idx) {
+			DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
+			UISlot &slot = (*this)[idx];
+
+			if (dirtyArea._active && dirtyArea._textActive &&
+				dirtyArea._bounds.width() > 0 && dirtyArea._bounds.height() > 0) {
+				// Flag area of screen as needing update
+				Common::Rect r = dirtyArea._bounds;
+				r.translate(0, scene._interfaceY);
+				_vm->_screen.copyRectToScreen(r);
+			}
+		}
+
+		warning("TODO: sub 115A2 / sub111D3");
+	}
+
+	// Post-processing to remove slots no longer needed
+	for (int idx = (int)size() - 1; idx >= 0; --idx) {
+		UISlot &slot = (*this)[idx];
+
+		if (slot._slotType < ST_NONE) {
+			if (delFlag || updateFlag)
+				remove_at(idx);
+			else if (slot._slotType >= -20)
+				slot._slotType -= 20;
+		} else {
+			if (updateFlag)
+				slot._slotType &= 0xBF;
+			else
+				slot._slotType |= 0x40;
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/
 
-UserInterface::UserInterface(MADSEngine *vm) : _vm(vm) {
+UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm), 
+		_uiSlots(vm) {
 	_invSpritesIndex = -1;
 	_invFrameNumber = 1;
 	_category = CAT_NONE;
@@ -77,7 +200,9 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm) {
 	_v1A = -1;
 	_v1C = -1;
 	_v1E = -1;
+	_dirtyAreas.resize(50);
 
+	// Map the user interface to the bottom of the game's screen surface
 	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCENE_HEIGHT);
 	setPixels(pData, MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
 }
@@ -101,9 +226,10 @@ void UserInterface::load(const Common::String &resName) {
 	}
 	delete palStream;
 
-	// set the size for the interface
+	// Read in the surface data
 	Common::SeekableReadStream *pixelsStream = madsPack.getItemStream(1);
-	pixelsStream->read(getData(), MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
+	_surface.setSize(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
+	pixelsStream->read(_surface.getData(), MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
 	delete pixelsStream;
 }
 
@@ -124,7 +250,9 @@ void UserInterface::setup(int id) {
 			resName += "A";
 
 		resName += ".INT";
+
 		load(resName);
+		_surface.copyTo(this);
 	}
 	scene._screenObjects._v832EC = id;
 
@@ -139,7 +267,7 @@ void UserInterface::setup(int id) {
 	copyTo(&_surface);
 
 	if (_vm->_game->_v1 == 5)
-		scene._userInterface._uiSlots.draw(0, 0);
+		scene._userInterface._uiSlots.draw(false, false);
 
 	scene._action.clear();
 	drawTextElements();
@@ -273,7 +401,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 }
 
 void UserInterface::setBounds(const Common::Rect &r) {
-	_bounds = r;
+	_drawBounds = r;
 }
 
 void UserInterface::loadElements() {
@@ -465,7 +593,7 @@ void UserInterface::noInventoryAnim() {
 void UserInterface::refresh() {
 	_uiSlots.clear();
 	_uiSlots.fullRefresh();
-	_uiSlots.draw(0, 0);
+	_uiSlots.draw(false, false);
 
 	drawTextElements();
 }

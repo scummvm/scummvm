@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "mads/msurface.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
@@ -47,18 +48,42 @@ public:
 	UISlot();
 };
 
+/**
+ * Sprite list for the user interface
+ */
 class UISlots : public Common::Array<UISlot> {
+private:
+	MADSEngine *_vm;
 public:
+	/**
+	 * Constructor
+	 */
+	UISlots(MADSEngine *vm) : _vm(vm) {}
+
+	/**
+	 * Add a sprite to the list
+	 */
 	void add(const Common::Point &pt, int frameNumber, int spritesIndex);
+
+	/**
+	 * Adds a special entry for full refresh of the user interface
+	 */
 	void fullRefresh();
 
-	void draw(int v1, int v2);
+	/**
+	 * Draw all the sprites in the list on the user interface.
+	 * @param updateFlag	Flag drawn areas to be updated on physical screen
+	 * @param delFlag		Controls how used slots are deleted after drawing
+	 */
+	void draw(bool updateFlag, bool delFlag);
 };
 
 
 class UserInterface : public MSurface {
+	friend class UISlots;
 private:
 	MADSEngine *_vm;
+	MSurface _surface;
 	int _invSpritesIndex;
 	int _invFrameNumber;
 
@@ -114,11 +139,12 @@ private:
 	 */
 	void inventoryAnim();
 public:
+	UISlots _uiSlots;
+	DirtyAreas _dirtyAreas;
 	ScrCategory _category;
 	int _screenObjectsCount;
-	Common::Rect _bounds;
+	Common::Rect _drawBounds;
 	Common::Rect *_rectP;
-	MSurface _surface;
 	int _inventoryTopIndex;
 	int _objectY;
 	int _selectedInvIndex;
@@ -128,7 +154,6 @@ public:
 	int _v1A;
 	int _v1C;
 	int _v1E;
-	UISlots _uiSlots;
 public:
 	/**
 	* Constructor

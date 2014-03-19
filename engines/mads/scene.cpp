@@ -379,8 +379,8 @@ void Scene::doFrame() {
 				_kernelMessages.update();
 			}
 
-			_userInterface._uiSlots.draw(_vm->_game->_abortTimers2 == kTransitionFadeIn ? 0xff : 0,
-				_vm->_game->_abortTimers2);
+			_userInterface._uiSlots.draw(_vm->_game->_abortTimers2 == kTransitionFadeIn,
+				_vm->_game->_abortTimers2 != 0);
 
 			// Write any text needed by the interface
 			if (_vm->_game->_abortTimers2)
