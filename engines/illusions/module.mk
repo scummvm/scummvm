@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	spritedrawqueue.o \
 	thread.o \
 	time.o \
+	timerthread.o \
 	updatefunctions.o
 
 # This module can be built as a plugin

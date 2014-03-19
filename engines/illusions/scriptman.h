@@ -77,6 +77,8 @@ public:
 		uint32 value8, uint32 valueC, uint32 value10);
 	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10);
+	uint32 startAbortableTimerThread(uint32 duration, uint32 threadId);
+	uint32 startTimerThread(uint32 duration, uint32 threadId);
 	void setCurrFontId(uint32 fontId);
 	bool enterScene(uint32 sceneId, uint32 threadId);
 public:
@@ -101,6 +103,7 @@ public:
 	
 	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10);
+	uint32 newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable);
 	uint32 newTempThreadId();
 
 };

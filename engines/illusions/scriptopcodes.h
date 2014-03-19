@@ -60,6 +60,7 @@ protected:
 	void opSuspend(ScriptThread *scriptThread, OpCall &opCall);
 	void opYield(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartScriptThread(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);	

@@ -102,12 +102,9 @@ int Thread::update() {
 
 void Thread::terminate() {
 	if (!_terminated) {
-		if (_callingThreadId) {
-			if (!(_notifyFlags & 1)) {
-				// TODO scrmgrNotifyID(_callingThreadId);
-			}
-			_callingThreadId = 0;
-		}
+		if (!(_notifyFlags & 1))
+			_vm->notifyThreadId(_callingThreadId);
+		_callingThreadId = 0;
 		onTerminated();
 		// TODO _vm->removeThread(_threadId, this);
 		_terminated = true;
