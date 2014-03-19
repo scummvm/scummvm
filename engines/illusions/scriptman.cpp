@@ -24,6 +24,7 @@
 #include "illusions/scriptman.h"
 #include "illusions/scriptthread.h"
 #include "illusions/scriptopcodes.h"
+#include "illusions/timerthread.h"
 
 namespace Illusions {
 
@@ -157,6 +158,14 @@ uint32 ScriptMan::startTempScriptThread(byte *scriptCodeIp, uint32 callingThread
 	return tempThreadId;
 }
 
+uint32 ScriptMan::startAbortableTimerThread(uint32 duration, uint32 threadId) {
+	return newTimerThread(duration, threadId, true);
+}
+
+uint32 ScriptMan::startTimerThread(uint32 duration, uint32 threadId) {
+	return newTimerThread(duration, threadId, false);
+}
+
 void ScriptMan::setCurrFontId(uint32 fontId) {
 	_fontId = fontId;
 }
@@ -173,8 +182,8 @@ bool ScriptMan::enterScene(uint32 sceneId, uint32 threadId) {
 
 void ScriptMan::newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 	byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10) {
-	ScriptThread *scriptThread = new ScriptThread(_vm, threadId, callingThreadId,
-		notifyFlags, scriptCodeIp, value8, valueC, value10);
+	ScriptThread *scriptThread = new ScriptThread(_vm, threadId, callingThreadId, notifyFlags,
+		scriptCodeIp, value8, valueC, value10);
 	_threads->startThread(scriptThread);
 	if (_pauseCtr > 0)
 		scriptThread->pause();
@@ -183,6 +192,14 @@ void ScriptMan::newScriptThread(uint32 threadId, uint32 callingThreadId, uint no
 		while (scriptThread->_pauseCtr <= 0 && updateResult != 1 && updateResult != 2)
 			updateResult = scriptThread->update();
 	}
+}
+
+uint32 ScriptMan::newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable) {
+	uint32 tempThreadId = newTempThreadId();
+	TimerThread *timerThread = new TimerThread(_vm, tempThreadId, callingThreadId, 0,
+		duration, isAbortable);
+	_threads->startThread(timerThread);
+	return tempThreadId;
 }
 
 uint32 ScriptMan::newTempThreadId() {

@@ -82,6 +82,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(2, opSuspend);
 	OPCODE(3, opYield);
 	OPCODE(6, opStartScriptThread);
+	OPCODE(9, opStartTimerThread);
 	OPCODE(16, opLoadResource);
 	OPCODE(20, opEnterScene);
 	OPCODE(39, opSetDisplay);
@@ -122,6 +123,18 @@ void ScriptOpcodes::opStartScriptThread(ScriptThread *scriptThread, OpCall &opCa
 	ARG_UINT32(threadId);
 	_vm->_scriptMan->startScriptThread(threadId, opCall._threadId,
 		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
+}
+
+void ScriptOpcodes::opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(isAbortable);
+	ARG_INT16(duration);
+	ARG_INT16(maxDuration);
+	if (maxDuration)
+		duration += _vm->getRandom(maxDuration);
+	if (isAbortable)
+		_vm->_scriptMan->startAbortableTimerThread(duration, opCall._threadId);
+	else
+		_vm->_scriptMan->startTimerThread(duration, opCall._threadId);
 }
 
 void ScriptOpcodes::opLoadResource(ScriptThread *scriptThread, OpCall &opCall) {
