@@ -54,17 +54,6 @@ class InventoryObjects: public Common::Array<InventoryObject> {
 private:
 	MADSEngine *_vm;
 
-	/**
-	* Removes the specified object from the player's inventory
-	*/
-	void addToInventory(int objectId);
-
-	/**
-	 * Removes the specified object to the player's inventory
-	 * @param objectId	Object to remove
-	 * @param newScene	Specifies the new scene to set the item to
-	 */
-	void removeFromInventory(int objectId, int newScene);
 public:
 	Common::Array<int> _inventoryList;
 
@@ -104,6 +93,18 @@ public:
 	 * Returns true if a given object is in the player's inventory
 	 */
 	bool isInInventory(int objectId) const;
+
+	/**
+	* Removes the specified object from the player's inventory
+	*/
+	void addToInventory(int objectId);
+
+	/**
+	 * Removes the specified object to the player's inventory
+	 * @param objectId	Object to remove
+	 * @param newScene	Specifies the new scene to set the item to
+	 */
+	void removeFromInventory(int objectId, int newScene);
 };
 
 } // End of namespace MADS
