@@ -83,7 +83,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 	if (dirtyAreaPtr)
 		dirtyAreaPtr->_active = true;
 
-	// Main draw loop
+	// Copy parts of the user interface background that are going to have sprites drawn
 	for (uint idx = 0; idx < size(); ++idx) {
 		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
 		UISlot &slot = (*this)[idx];
@@ -205,6 +205,8 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	// Map the user interface to the bottom of the game's screen surface
 	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCENE_HEIGHT);
 	setPixels(pData, MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
+
+	_surface.setSize(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
 }
 
 void UserInterface::load(const Common::String &resName) {
@@ -228,7 +230,6 @@ void UserInterface::load(const Common::String &resName) {
 
 	// Read in the surface data
 	Common::SeekableReadStream *pixelsStream = madsPack.getItemStream(1);
-	_surface.setSize(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);
 	pixelsStream->read(_surface.getData(), MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
 	delete pixelsStream;
 }
@@ -262,9 +263,6 @@ void UserInterface::setup(int id) {
 	_v1A = -1;
 	_v1E = -1;
 	_v1C = -1;
-
-	// Make a copy of the surface
-	copyTo(&_surface);
 
 	if (_vm->_game->_v1 == 5)
 		scene._userInterface._uiSlots.draw(false, false);

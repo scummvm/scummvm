@@ -150,8 +150,8 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 		flags |= 0x200;
 
 	_animationData = Animation::init(_vm, this);
-	UserInterface surface(_vm);
-	_animationData->load(surface, _userInterface, prefix, flags, nullptr, nullptr);
+	MSurface depthSurface;
+	_animationData->load(_userInterface, depthSurface, prefix, flags, nullptr, nullptr);
 	
 	_vm->_palette->_paletteUsage.load(0);
 

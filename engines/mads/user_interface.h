@@ -83,7 +83,6 @@ class UserInterface : public MSurface {
 	friend class UISlots;
 private:
 	MADSEngine *_vm;
-	MSurface _surface;
 	int _invSpritesIndex;
 	int _invFrameNumber;
 
@@ -139,6 +138,7 @@ private:
 	 */
 	void inventoryAnim();
 public:
+	MSurface _surface;
 	UISlots _uiSlots;
 	DirtyAreas _dirtyAreas;
 	ScrCategory _category;
