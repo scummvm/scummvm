@@ -68,8 +68,6 @@ void Scene2xx::setPlayerSpritesPrefix() {
 	_vm->_palette->setEntry(17, 10, 45, 45);
 }
 
-/*------------------------------------------------------------------------*/
-
 void Scene2xx::sceneEntrySound() {
 	if (_vm->_musicFlag) {
 		switch (_scene->_nextSceneId) {
@@ -119,6 +117,8 @@ void Scene2xx::sceneEntrySound() {
 	} else
 		_vm->_sound->command(2);
 }
+
+/*------------------------------------------------------------------------*/
 
 void Scene201::setup() {
 	setPlayerSpritesPrefix();
@@ -328,6 +328,243 @@ void Scene201::actions() {
 			return;
 	} else {
 		Dialog::show(0x4E8F);
+	}
+	action->_inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene202::setup() {
+}
+
+void Scene202::enter() {
+}
+
+void Scene202::step() {
+}
+
+void Scene202::preActions() {
+}
+
+void Scene202::actions() {
+	MADSAction *action = _game._player._action;
+	if (action->_lookFlag == false) {
+		if (action->isAction(0x4E, 0xC7, 0)) {
+			action->_inProgress = false;
+			return;
+		} else if (action->isAction(0x18C, 0x83, 0)) {
+			_scene->_nextSceneId = 203;
+		} else if (action->isAction(0x18C, 0x82, 0)) {
+			if (_globals[33] != 2) {
+				if (_scene->_activeAnimation)
+					_globals[33] = 1;
+				else
+					_globals[33] = 0;
+			}
+			_scene->_nextSceneId = 201;
+		} else if (action->isAction(0x4, 0x2C, 0)) {
+			if (action->_actionMode2 == 4) {
+				if (_game._abortTimers == 0) {
+					if (_game._objects.isInInventory(OBJ_BONES)) {
+						Dialog::show(0x4EFB);
+					} else {
+						_game._player._stepEnabled = false;
+						_game._player._visible = false;
+						_globals._spriteIndexes[22] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[6], false, 3, 2, 0, 0);
+						warning("TODO: sub71312");
+						_scene->_sequences.addSubEntry(_globals._spriteIndexes[22], SM_FRAME_INDEX, 6, 1);
+						_scene->_sequences.addSubEntry(_globals._spriteIndexes[22], SM_0, 0, 2);
+					}
+				} else if (_game._abortTimers == 1) {
+					if ((_game._player._playerPos.x == 132) && (_game._player._playerPos.y == 97)) {
+						_scene->_sequences.remove(_globals._spriteIndexes[16]);
+						_globals[32] |= 1;
+					} else {
+						_scene->_sequences.remove(_globals._spriteIndexes[21]);
+						_globals[32] |= 2;
+					}
+				} else if (_game._abortTimers == 2) {
+					if (_game._objects.isInInventory(OBJ_BONE)) {
+						warning("TODO: _game._objects.removeFromInventory(OBJ_BONE, 1);");
+						warning("TODO: _game._objects.addToInventory(OBJ_BONES);");
+						warning("TODO: Dialog::showPicture(OBJ_BONES, 0x4EFA, 0);");
+					} else {
+						warning("TODO: _game._objects.addToInventory(OBJ_BONE);");
+						warning("TODO: Dialog::showPicture(OBJ_BONE, 0x4EFA, 0);");
+					}
+					warning("TODO: sub1EB6E(_globals[32];");
+					_game._player._stepEnabled = true;
+					_game._player._visible = true;
+				} else {
+					action->_inProgress = false;
+					return;
+				}
+			}
+		} else if ((action->isAction(0x50, 0xC7, 0)) && (_globals[31] == 0)) {
+			if (_game._abortTimers == 0) {
+				_vm->_sound->command(29);
+				warning("TODO: word_8425E = _scene->_frameStartTime;");
+				_game._player._visible = false;
+				_game._player._stepEnabled = false;
+
+				int idx = _scene->_dynamicHotspots.add(199, 79, -1, Common::Rect(241, 68, 12, 54));
+				warning("CHECKME: _globals._frameTime = _scene->_dynamicHotspots.setPosition(idx, 246, 124, 8);");
+				_globals._frameTime = _scene->_dynamicHotspots.setPosition(idx, 246, 124, 8);
+				_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
+				_scene->_sequences.setDepth(_globals._spriteIndexes[23], 1);
+				_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 1);
+			} else if (_game._abortTimers == 1) {
+				_globals._spriteIndexes[24] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], true, 1);
+				_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
+				_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
+				warning("TODO: TimerList_getTimeout(_globals._spriteIndexes[23], _globals._spriteIndexes[24]);");
+				_globals._v4 = -1;
+				_game._player._stepEnabled = true;
+				int msgIndex = _scene->_kernelMessages.add(Common::Point(248, 15), 0x1110, 32, 0, 60, _game.getQuote(97));
+				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			} else {
+				action->_inProgress = false;
+				return;
+			}
+		} else if (((action->isAction(0x3, 0x27, 0x82)) || (action->isAction(0x3, 0x27, 0x1B6))) && (_globals[0] == SEX_MALE)) {
+			if (_globals._v4 == 0) {
+				if (_game._abortTimers == 0) {
+					_game._player._stepEnabled = false;
+					_game._player._visible= false;
+					_globals._spriteIndexes[25] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
+					_scene->_sequences.setAnimRange(_globals._spriteIndexes[25], 1, 6);
+					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
+					_scene->_sequences.setDepth(_globals._spriteIndexes[25], 1);
+					warning("TODO: TimerList_getTimeout(-1, _globals._spriteIndexes[25]);");
+					_scene->_sequences.addSubEntry(_globals._spriteIndexes[25], SM_0, 0, 1);
+				} else if (_game._abortTimers == 1) {
+					_globals._spriteIndexes[25] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 6);
+					_scene->_sequences.setDepth(_globals._spriteIndexes[25], 1);
+					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
+					if (_scene->_activeAnimation) {
+						_globals._v5 = -1;
+						_globals[38] = 1;
+					} else {
+						_scene->_sequences.addTimer(120, 2);
+					}
+				} else if (_game._abortTimers == 2) {
+					if (!_scene->_activeAnimation && (_globals._abortVal == 0)) {
+						Dialog::show(0x4EFE);
+					}
+					_scene->_sequences.remove(_globals._spriteIndexes[25]);
+					_globals._spriteIndexes[25] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
+					_scene->_sequences.setDepth(_globals._spriteIndexes[25], 1);
+					_scene->_sequences.setAnimRange(_globals._spriteIndexes[25], 1, 6);
+					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
+					_scene->_sequences.addSubEntry(_globals._spriteIndexes[25], SM_0, 0, 3);
+				} else if (_game._abortTimers == 3) {
+					warning("TODO: TimerList_getTimeout(-1, _globals._spriteIndexes[25]);");
+					_game._player._stepEnabled = true;
+					_game._player._visible = true;
+				} else {
+					action->_inProgress = false;
+					return;
+				}
+			} else {
+				if (_game._abortTimers == 0) {
+					warning("TODO: word_84268 = 1;");
+					_game._player._stepEnabled = false;
+					_scene->_sequences.remove(_globals._spriteIndexes[24]);
+					_globals._spriteIndexes[24] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
+					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
+					_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
+					_scene->_sequences.addSubEntry(_globals._spriteIndexes[24], SM_0, 0, 1);
+				} else if (_game._abortTimers == 1) {
+					_globals._spriteIndexes[25] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], true, -2);
+					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(247, 82));
+					_scene->_sequences.setDepth(_globals._spriteIndexes[25], 1);
+					if (_scene->_activeAnimation) {
+						if (_scene->_activeAnimation->getCurrentFrame() > 200) {
+							_scene->_sequences.addTimer(120, 2);
+						} else {
+							_globals._v5 = -1;
+							_globals[38] = 2;
+							if ((_scene->_activeAnimation->getCurrentFrame() >= 44) && (_scene->_activeAnimation->getCurrentFrame() <= 75)) {
+								_scene->_kernelMessages.reset();
+								int msgIndex = _scene->_kernelMessages.add(Common::Point(248, 15), 0x1110, 32, 0, 60, _game.getQuote(100));
+								_scene->_kernelMessages.setQuoted(msgIndex, 4, false);
+							} else {
+								action->_inProgress = false;
+								return;
+							}
+						}
+					} else {
+						_scene->_sequences.addTimer(120, 2);
+					}
+				} else if (_game._abortTimers == 2) {
+					if (!_scene->_activeAnimation)
+						Dialog::show(0x4EFE);
+					_globals._abortVal = 0;
+					_scene->_sequences.remove(_globals._spriteIndexes[25]);
+					_globals._spriteIndexes[24] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
+					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
+					_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
+					_scene->_sequences.addSubEntry(_globals._spriteIndexes[24], SM_0, 0, 3);
+				} else if (_game._abortTimers == 3) {
+					_globals._spriteIndexes[24] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], true, 1);
+					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
+					_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
+					_game._player._stepEnabled = true;
+				} else {
+					action->_inProgress = false;
+					return;
+				}
+			}
+		} else if (action->isAction(0x188, 0xAA, 0)) {
+			warning("TODO - sub_370C8");
+		} else if (action->isAction(0x3, 0x129, 0)) {
+			Dialog::show(0x4EEA);
+		} else if (action->isAction(0x3, 0x86, 0)) {
+			Dialog::show(0x4EEB);
+		} else if (action->isAction(0x3, 0x19C, 0)) {
+			Dialog::show(0x4EEC);
+		} else if (action->isAction(0x3, 0x82, 0)) {
+			if ((_globals[33] == 0) || (_globals[33] == 2)) {
+				Dialog::show(0x4EED);
+			} else if (_globals[33] == 1) {
+				Dialog::show(0x4EFC);
+			} else {
+				action->_inProgress = false;
+				return;
+			} 
+		} else if (action->isAction(0x3, 0x18E, 0)) {
+			Dialog::show(0x4EEE);
+		} else if (action->isAction(0x3, 0x164, 0)) {
+			Dialog::show(0x4EEF);
+		} else if (action->isAction(0x3, 0x175, 0)) {
+			Dialog::show(0x4EF0);
+		} else if (action->isAction(0x3, 0x174, 0)) {
+			Dialog::show(0x4EF1);
+		} else if (action->isAction(0x3, 0x142, 0)) {
+			Dialog::show(0x4EF2);
+		} else if (action->isAction(0x3, 0xAA, 0)) {
+			if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._direction == 8))
+				Dialog::show(0x4EF4);
+			else
+				Dialog::show(0x4EF3);
+		} else if (action->isAction(0x3, 0x186, 0)) {
+			Dialog::show(0x4EF5);
+		} else if (action->isAction(0x3, 0x1B5, 0)) {
+			Dialog::show(0x4EF6);
+		} else if (action->isAction(0x3, 0x140, 0)) {
+			Dialog::show(0x4EF7);
+		} else if (action->isAction(0x4, 0x140, 0)) {
+			Dialog::show(0x4EF8);
+		} else if (action->isAction(0x3, 0x2D, 0)) {
+			if (action->_actionMode == 4)
+				Dialog::show(0x4EF9);
+			else
+				return;
+		} else {
+			return;			
+		}
+	} else {
+		Dialog::show(0x4EFB);
 	}
 	action->_inProgress = false;
 }
