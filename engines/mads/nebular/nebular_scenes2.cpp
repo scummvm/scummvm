@@ -45,7 +45,7 @@ void Scene2xx::setPlayerSpritesPrefix() {
 		_game._player._spritesPrefix = "";
 		break;
 	default:
-		if (_globals[0] == SEX_MALE) {
+		if (_globals[0] != SEX_MALE) {
 			_game._player._spritesPrefix = "ROX";
 		} else {
 			_game._player._spritesPrefix = "RXM";
@@ -348,6 +348,118 @@ void Scene202::setup() {
 }
 
 void Scene202::enter() {
+	_game._player._visible3 = true;
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0), 0);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1), 0);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 2), 0);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0), 0);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('l', -1), 0);
+	if (_globals[0] != SEX_MALE) {
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*ROXBD_2");
+	} else {
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*RXMBD_2");
+	}
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 0), 0);
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 2), 0);
+
+	_globals._spriteIndexes[18] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
+	_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
+	_scene->_sequences.setMsgPosition(_globals._spriteIndexes[17], Common::Point(149, 113));
+	_scene->_sequences.setDepth(_globals._spriteIndexes[17], 10);
+	int idx = _scene->_dynamicHotspots.add(320, 13, _globals._spriteIndexes[17], Common::Rect(0, 0, 0, 0));
+	_scene->_dynamicHotspots.setPosition(idx, 153, 97, 2);
+
+	if (_globals[32] & 1) {
+		_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[16], Common::Point(130, 108));
+		_scene->_sequences.setDepth(_globals._spriteIndexes[16], 10);
+		idx = _scene->_dynamicHotspots.add(44, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 132, 97, 2);
+	}
+
+	if (_globals[32] & 2) {
+		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 0, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[21], Common::Point(166, 110));
+		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 10);
+		idx = _scene->_dynamicHotspots.add(44, 13, _globals._spriteIndexes[21], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 165, 99, 2);
+	}
+
+	if (_globals[32])
+		warning("TODO: sub1EB6E(_globals[32];");
+
+	if (_scene->_priorSceneId == 201) {
+		_game._player._playerPos = Common::Point(190, 91);
+		_game._player._direction = 2;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(178, 152);
+		_game._player._direction = 8;
+	}
+
+	if (_globals[31]) {
+		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[20], 6);
+		_scene->_hotspots.activate(199, false);
+		idx = _scene->_dynamicHotspots.add(457, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 246, 124, 8);
+	}
+
+	_game.loadQuoteSet(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
+	_globals._v0 = 0;
+
+	if (_scene->_priorSceneId == -1) {
+		if (_globals._v5) {
+			_globals._spriteIndexes[24] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
+			_game._player._visible = false;
+		}
+	} else {
+		_globals._v5 = 0;
+		_globals._v4 = 0;
+	}
+
+	_globals._v7 = _scene->_frameStartTime;
+	warning("dword_8425C = _scene->_frameStartTime;");
+
+	if (_scene->_roomChanged)
+		_game._objects.addToInventory(OBJ_NONE);
+	
+	if (_globals[38]) {
+		_game._player._visible = false;
+		_game._player._stepEnabled = false;
+		if (_globals[38] == 2)
+			_globals._v4 = 1;
+		else
+			_globals._v4 = 0;
+
+		if (_globals[38] < 1)
+			_globals._spriteIndexes[25] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 6);
+		else
+			_globals._spriteIndexes[25] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 8);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[25], 1);
+
+		if (_globals._v4) {
+			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(247, 82));
+			_game._player._playerPos = Common::Point(246, 124);
+			_game._player._direction = 8;
+			_globals[41] = -1;
+		} else {
+			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
+			_game._player._playerPos = Common::Point(171, 122);
+			_game._player._direction = 8;
+		}
+
+		_scene->loadAnimation(formAnimName('M', -1), 71);
+		_scene->_activeAnimation->setCurrentFrame(200);
+	} else {
+		_game._player._visible = false;
+		_scene->_sequences.startCycle(_globals._spriteIndexes[24], true, 1);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
+		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
+		_game._player._playerPos = Common::Point(246, 124);
+		_game._player._direction = 8;
+	}
+	_globals._abortVal = 0;
 }
 
 void Scene202::step() {
