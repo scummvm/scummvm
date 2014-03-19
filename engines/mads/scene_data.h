@@ -51,10 +51,6 @@ class SpriteSlot;
 #define TEXT_DISPLAY_MAX_SIZE 40
 #define DIRTY_AREAS_SIZE (SPRITE_SLOTS_MAX_SIZE + TEXT_DISPLAY_MAX_SIZE)
 
-enum Layer {
-	LAYER_GUI = 19
-};
-
 class VerbInit {
 public:
 	int _id;
@@ -63,49 +59,6 @@ public:
 
 	VerbInit() {}
 	VerbInit(int id, int action1, int action2): _id(id), _action1(action1), _action2(action2) {}
-};
-
-class ScreenObject {
-public:
-	Common::Rect _bounds;
-	ScrCategory _category;
-	int _descId;
-	int _layer;
-
-	ScreenObject();
-};
-
-class ScreenObjects: public Common::Array<ScreenObject> {
-private:
-	MADSEngine *_vm;
-
-	int scanBackwards(const Common::Point &pt, int layer);
-
-	void proc1();
-public:
-	int _v832EC;
-	int _v7FECA;
-	int _v7FED6;
-	int _v8332A;
-	int _v8333C;
-	int _selectedObject;
-	ScrCategory _category;
-	int _objectIndex;
-	bool _released;
-
-	/*
-	 * Constructor
-	 */
-	ScreenObjects(MADSEngine *vm);
-
-	/**
-	 * Add a new item to the list
-	 */
-	void add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId);
-
-	/**
-	 */
-	void check(bool scanFlag);
 };
 
 class SceneLogic {

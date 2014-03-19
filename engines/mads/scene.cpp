@@ -30,7 +30,7 @@ namespace MADS {
 
 Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 		_dirtyAreas(_vm),  _dynamicHotspots(vm), _kernelMessages(vm), 
-		_screenObjects(vm), _sequences(vm), _sprites(vm), _spriteSlots(vm), 
+		_sequences(vm), _sprites(vm), _spriteSlots(vm), 
 		_textDisplay(vm), _userInterface(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
@@ -162,7 +162,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_interfaceY = MADS_SCENE_HEIGHT;
 	_spritesCount = _sprites.size();
 
-	_userInterface.setup(_screenObjects._v832EC);
+	_userInterface.setup(_vm->_game->_screenObjects._v832EC);
 
 	warning("TODO: showMouse");
 
@@ -289,7 +289,7 @@ void Scene::doFrame() {
 		if (_dynamicHotspots._changed)
 			_dynamicHotspots.refresh();
 
-		_screenObjects.check(player._stepEnabled && !_action._startWalkFlag &&
+		_vm->_game->_screenObjects.check(player._stepEnabled && !_action._startWalkFlag &&
 				!_vm->_game->_abortTimers2);
 	}
 
@@ -331,9 +331,9 @@ void Scene::doFrame() {
 
 			// Cursor update code
 			CursorType cursorId = CURSOR_ARROW;
-			if (_action._v83338 == 1 && !_screenObjects._v7FECA &&
-					_screenObjects._category == CAT_HOTSPOT) {
-				int idx = _screenObjects._selectedObject - _userInterface._screenObjectsCount;
+			if (_action._v83338 == 1 && !_vm->_game->_screenObjects._v7FECA &&
+					_vm->_game->_screenObjects._category == CAT_HOTSPOT) {
+				int idx = _vm->_game->_screenObjects._selectedObject - _userInterface._screenObjectsCount;
 				if (idx >= (int)_hotspots.size()) {
 					idx -= _hotspots.size();
 					_vm->_events->_newCursorId = _dynamicHotspots[idx]._cursor;

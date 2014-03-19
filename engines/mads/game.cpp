@@ -40,7 +40,7 @@ Game *Game::init(MADSEngine *vm) {
 }
 
 Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm), 
-		_scene(vm), _player(vm) {
+		_scene(vm), _screenObjects(vm), _player(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
 	_difficultyLevel = DIFFICULTY_HARD;
 	_saveSlot = -1;
@@ -163,8 +163,8 @@ void Game::sectionLoop() {
 		_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
 		_visitedScenes.add(_scene._nextSceneId);
 
-		_scene._screenObjects._v8333C = true;
-		_scene._screenObjects._v832EC = 0;
+		_screenObjects._v8333C = true;
+		_screenObjects._v832EC = 0;
 		_scene._userInterface._scrollerY = 0;
 		_v3 = -1;
 

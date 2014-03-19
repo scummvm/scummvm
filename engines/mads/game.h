@@ -29,6 +29,7 @@
 #include "mads/game_data.h"
 #include "mads/inventory.h"
 #include "mads/player.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
@@ -112,6 +113,7 @@ public:
 	static Game *init(MADSEngine *vm);
 public:
 	Player _player;
+	ScreenObjects _screenObjects;
 	int _sectionNumber;
 	int _priorSectionNumber;
 	int _currentSectionNumber;

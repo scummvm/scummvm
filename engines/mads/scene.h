@@ -89,7 +89,6 @@ public:
 	Common::String _talkFont;
 	int _textSpacing;
 	Hotspots _hotspots;
-	ScreenObjects _screenObjects;
 	DirtyAreas _dirtyAreas;
 	int _v1;
 	SceneInfo *_sceneInfo;

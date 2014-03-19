@@ -151,7 +151,6 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 
 		for (uint idx = 0; idx < size(); ++idx) {
 			DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
-			UISlot &slot = (*this)[idx];
 
 			if (dirtyArea._active && dirtyArea._textActive &&
 				dirtyArea._bounds.width() > 0 && dirtyArea._bounds.height() > 0) {
@@ -238,7 +237,7 @@ void UserInterface::load(const Common::String &resName) {
 void UserInterface::setup(int id) {
 	Scene &scene = _vm->_game->_scene;
 
-	if (scene._screenObjects._v832EC != id) {
+	if (_vm->_game->_screenObjects._v832EC != id) {
 		Common::String resName = _vm->_game->_aaName;
 
 		// Strip off any extension
@@ -256,7 +255,7 @@ void UserInterface::setup(int id) {
 		load(resName);
 		_surface.copyTo(this);
 	}
-	scene._screenObjects._v832EC = id;
+	_vm->_game->_screenObjects._v832EC = id;
 
 	scene._userInterface._uiSlots.clear();
 	scene._userInterface._uiSlots.fullRefresh();
@@ -279,8 +278,7 @@ void UserInterface::elementHighlighted() {
 }
 
 void UserInterface::drawTextElements() {
-	Scene &scene = _vm->_game->_scene;
-	if (scene._screenObjects._v832EC) {
+	if (_vm->_game->_screenObjects._v832EC) {
 		drawTalkList();
 	} else {
 		// Draw the actions
@@ -406,15 +404,15 @@ void UserInterface::setBounds(const Common::Rect &r) {
 void UserInterface::loadElements() {
 	Scene &scene = _vm->_game->_scene;
 	Common::Rect bounds;
-	scene._screenObjects.clear();
+	_vm->_game->_screenObjects.clear();
 
-	if (!scene._screenObjects._v832EC) {
+	if (!_vm->_game->_screenObjects._v832EC) {
 		// Set up screen objects for the inventory scroller
 		for (int idx = 1; idx <= 3; ++idx) {
 			getBounds(CAT_INV_SCROLLER, idx, bounds);
 			moveRect(bounds);
 
-			scene._screenObjects.add(bounds, LAYER_GUI, CAT_INV_SCROLLER, idx);
+			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_SCROLLER, idx);
 		}
 
 		// Set up actions
@@ -422,7 +420,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_ACTION, idx, bounds);
 			moveRect(bounds);
 
-			scene._screenObjects.add(bounds, LAYER_GUI, CAT_ACTION, idx);
+			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_ACTION, idx);
 		}
 
 		// Set up inventory list
@@ -430,7 +428,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_INV_LIST, idx, bounds);
 			moveRect(bounds);
 
-			scene._screenObjects.add(bounds, LAYER_GUI, CAT_INV_LIST, idx);
+			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_LIST, idx);
 		}
 
 		// Set up the inventory vocab list
@@ -438,28 +436,28 @@ void UserInterface::loadElements() {
 			getBounds(CAT_INV_VOCAB, idx, bounds);
 			moveRect(bounds);
 
-			scene._screenObjects.add(bounds, LAYER_GUI, CAT_INV_VOCAB, idx);
+			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_VOCAB, idx);
 		}
 
 		// Set up the inventory item picture
-		scene._screenObjects.add(Common::Rect(160, 159, 231, 194), LAYER_GUI,
+		_vm->_game->_screenObjects.add(Common::Rect(160, 159, 231, 194), LAYER_GUI,
 			CAT_INV_ANIM, 0);
 	}
 
-	if (!scene._screenObjects._v832EC || scene._screenObjects._v832EC == 2) {
+	if (!_vm->_game->_screenObjects._v832EC || _vm->_game->_screenObjects._v832EC == 2) {
 		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
 			Hotspot &hs = scene._hotspots[hotspotIdx];
-			scene._screenObjects.add(hs._bounds, LAYER_GUI, CAT_HOTSPOT, hotspotIdx);
+			_vm->_game->_screenObjects.add(hs._bounds, LAYER_GUI, CAT_HOTSPOT, hotspotIdx);
 		}
 	}
 
-	if (scene._screenObjects._v832EC == 1) {
+	if (_vm->_game->_screenObjects._v832EC == 1) {
 		// setup areas for talk entries
 		for (int idx = 0; idx < 5; ++idx) {
 			getBounds(CAT_TALK_ENTRY, idx, bounds);
 			moveRect(bounds);
 
-			scene._screenObjects.add(bounds, LAYER_GUI, CAT_TALK_ENTRY, idx);
+			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_TALK_ENTRY, idx);
 		}
 	}
 }
@@ -585,7 +583,7 @@ void UserInterface::noInventoryAnim() {
 		_invSpritesIndex = -1;
 	}
 
-	if (!scene._screenObjects._v832EC)
+	if (!_vm->_game->_screenObjects._v832EC)
 		refresh();
 }
 
@@ -599,7 +597,7 @@ void UserInterface::refresh() {
 
 void UserInterface::inventoryAnim() {
 	Scene &scene = _vm->_game->_scene;
-	if (scene._screenObjects._v832EC == 1 || scene._screenObjects._v832EC == 2
+	if (_vm->_game->_screenObjects._v832EC == 1 || _vm->_game->_screenObjects._v832EC == 2
 			|| _invSpritesIndex < 0)
 		return;
 
