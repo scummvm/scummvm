@@ -85,7 +85,12 @@ void EventsManager::resetCursor() {
 }
 
 void EventsManager::changeCursor() {
-	warning("TODO: changeCursor");
+	if (_cursorSprites) {
+		MSprite *cursor = _cursorSprites->getFrame(_cursorId - 1);
+		CursorMan.replaceCursor(cursor->getData(), cursor->w, cursor->h, 0, 0,
+			cursor->getTransparencyIndex());
+		showCursor();
+	}
 }
 
 void EventsManager::freeCursors() {
