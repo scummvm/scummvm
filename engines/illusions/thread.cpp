@@ -256,4 +256,15 @@ void ThreadList::killThread(uint32 threadId) {
 
 }
 
+void ThreadList::setThreadSceneId(uint32 threadId, uint32 sceneId) {
+	Thread *thread = findThread(threadId);
+	if (thread)
+		thread->_tag = sceneId;
+}
+
+uint32 ThreadList::getThreadSceneId(uint32 threadId) {
+	Thread *thread = findThread(threadId);
+	return thread ? thread->_tag : 0;
+}
+
 } // End of namespace Illusions

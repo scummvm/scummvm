@@ -34,6 +34,7 @@ struct OpCall {
 	byte _op;
 	byte _opSize;
 	uint32 _threadId;
+	uint32 _callerThreadId;
 	int16 _deltaOfs;
 	byte *_code;
 	int _result;
@@ -59,19 +60,38 @@ protected:
 	// Opcodes
 	void opSuspend(ScriptThread *scriptThread, OpCall &opCall);
 	void opYield(ScriptThread *scriptThread, OpCall &opCall);
+	void opTerminate(ScriptThread *scriptThread, OpCall &opCall);
+	void opJump(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartScriptThread(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartTempScriptThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetThreadSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);	
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetProperty(ScriptThread *scriptThread, OpCall &opCall);
 	void opPlaceActor(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartSequenceActor(ScriptThread *scriptThread, OpCall &opCall);
+	void opAppearActor(ScriptThread *scriptThread, OpCall &opCall);
+	void opDisappearActor(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetSelectSfx(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetMoveSfx(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetDenySfx(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetAdjustUpSfx(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartMusic(ScriptThread *scriptThread, OpCall &opCall);
 	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
+	void opJumpIf(ScriptThread *scriptThread, OpCall &opCall);
 	void opDebug126(ScriptThread *scriptThread, OpCall &opCall);
 	void opPlayVideo(ScriptThread *scriptThread, OpCall &opCall);
+	void opLoadSpecialCodeModule(ScriptThread *scriptThread, OpCall &opCall);
+	void opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opCall);
+	void opStackPush0(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);
+	void opAddMenuKey(ScriptThread *scriptThread, OpCall &opCall);
 	
 };
 

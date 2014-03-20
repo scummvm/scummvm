@@ -89,6 +89,8 @@ public:
 	void pauseThreads(uint32 threadId);
 	void resumeThreads(uint32 threadId);
 	void killThread(uint32 threadId);
+	void setThreadSceneId(uint32 threadId, uint32 sceneId);
+	uint32 getThreadSceneId(uint32 threadId);
 protected:
 	typedef Common::List<Thread*> List;
 	typedef List::iterator Iterator;

@@ -87,7 +87,7 @@ void Screen::drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface,
 
 void Screen::drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {
 	// Unscaled, non-transparent
-	debug(1, "Screen::drawSurface11() destX: %d; destY: %d; srcRect: (%d, %d, %d, %d)", destX, destY, srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
+	debug("Screen::drawSurface11() destX: %d; destY: %d; srcRect: (%d, %d, %d, %d)", destX, destY, srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
 	const int16 w = srcRect.width();
 	const int16 h = srcRect.height();
 	for (int16 yc = 0; yc < h; ++yc) {

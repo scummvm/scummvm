@@ -73,6 +73,7 @@ Actor::Actor(IllusionsEngine *vm)
 	_position2.y = 0;
 	_facing = 64;
 	_fontId = 0;
+	_actorIndex = 0;
 	_parentObjectId = 0;
 	_linkIndex = 0;
 	_linkIndex2 = 0;
@@ -104,7 +105,6 @@ Actor::Actor(IllusionsEngine *vm)
 	_pathInitialPosFlag = 1;
 	_pathInitialPos.x = 0;
 	_pathInitialPos.y = 0;
-	_actorIndex = 0;
 	_namedPointsCount = 0;
 	_namedPoints = 0;
 	_field164 = 0;
@@ -267,8 +267,8 @@ void Control::disappearActor() {
 			_actor->_flags &= ~1;
 		}
 	} else {
-		_actor->_flags |= ~1;
-		_actor->_flags |= ~0x1000;
+		_actor->_flags &= ~1;
+		_actor->_flags &= ~0x1000;
 		for (uint i = 0; i < kSubObjectsCount; ++i)
 			if (_actor->_subobjects[i]) {
 				Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
@@ -302,20 +302,20 @@ void Control::deactivateObject() {
 void Control::readPointsConfig(byte *pointsConfig) {
 	_unkPt.x = READ_LE_UINT16(pointsConfig + 0);
 	_unkPt.y = READ_LE_UINT16(pointsConfig + 2);
-	pointsConfig += 2;
+	pointsConfig += 4;
 	_pt.x = READ_LE_UINT16(pointsConfig + 0);
 	_pt.y = READ_LE_UINT16(pointsConfig + 2);
-	pointsConfig += 2;
+	pointsConfig += 4;
 	_feetPt.x = READ_LE_UINT16(pointsConfig + 0);
 	_feetPt.y = READ_LE_UINT16(pointsConfig + 2);
-	pointsConfig += 2;
+	pointsConfig += 4;
 	_position.x = READ_LE_UINT16(pointsConfig + 0);
 	_position.y = READ_LE_UINT16(pointsConfig + 2);
-	pointsConfig += 2;
+	pointsConfig += 4;
 	for (uint i = 0; i < kSubObjectsCount; ++i) {
 		_subobjectsPos[i].x = READ_LE_UINT16(pointsConfig + 0);
 		_subobjectsPos[i].y = READ_LE_UINT16(pointsConfig + 2);
-		pointsConfig += 2;
+		pointsConfig += 4;
 	}
 }
 
@@ -553,7 +553,7 @@ void Control::sequenceActor() {
 	while (_actor->_seqCodeValue3 <= 0 && !sequenceFinished) {
 		bool breakInner = false;
 		while (!breakInner) {
-			debug("op: %08X", _actor->_seqCodeIp[0]);
+			debug("SEQ op: %08X", _actor->_seqCodeIp[0]);
 			opCall._op = _actor->_seqCodeIp[0] & 0x7F;
 			opCall._opSize = _actor->_seqCodeIp[1];
 			opCall._code = _actor->_seqCodeIp + 2;
@@ -608,8 +608,6 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, int value2,
 	
 	_actor->_seqCodeIp = sequence->_sequenceCode;
 	_actor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
-	debug("Control::startSequenceActorIntern() _actor->_seqCodeIp = %p", (void*)_actor->_seqCodeIp);
-	debug("Control::startSequenceActorIntern() _actor->_frames = %p", (void*)_actor->_frames);
 	
 	_actor->_seqCodeValue3 = 0;
 	_actor->_seqCodeValue1 = 0;
@@ -801,7 +799,6 @@ void Controls::destroyControl(Control *control) {
 }
 
 void Controls::actorControlRouine(Control *control, uint32 deltaTime) {
-	//debug("Controls::actorControlRouine()");
 
 	Actor *actor = control->_actor;
 

@@ -23,6 +23,7 @@
 #include "illusions/illusions.h"
 #include "illusions/scriptopcodes.h"
 #include "illusions/actor.h"
+#include "illusions/dictionary.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
 #include "illusions/scriptman.h"
@@ -67,7 +68,7 @@ ScriptOpcodes::~ScriptOpcodes() {
 void ScriptOpcodes::execOpcode(ScriptThread *scriptThread, OpCall &opCall) {
 	if (!_opcodes[opCall._op])
 		error("ScriptOpcodes::execOpcode() Unimplemented opcode %d", opCall._op);
-	debug("execOpcode(%d)", opCall._op);
+	debug("\nexecOpcode(%d)", opCall._op);
 	(*_opcodes[opCall._op])(scriptThread, opCall);
 }
 
@@ -81,19 +82,38 @@ void ScriptOpcodes::initOpcodes() {
 	// Register opcodes
 	OPCODE(2, opSuspend);
 	OPCODE(3, opYield);
+	OPCODE(4, opTerminate);
+	OPCODE(5, opJump);
 	OPCODE(6, opStartScriptThread);
+	OPCODE(8, opStartTempScriptThread);
 	OPCODE(9, opStartTimerThread);
+	OPCODE(14, opSetThreadSceneId);
 	OPCODE(16, opLoadResource);
 	OPCODE(20, opEnterScene);
 	OPCODE(39, opSetDisplay);
 	OPCODE(42, opIncBlockCounter);
-	OPCODE(46, opPlaceActor);
+	OPCODE(45, opSetProperty);
+	OPCODE(46, opPlaceActor);	
+	OPCODE(49, opStartSequenceActor);
+	OPCODE(57, opAppearActor);
+	OPCODE(58, opDisappearActor);
+	OPCODE(63, opSetSelectSfx);
+	OPCODE(64, opSetMoveSfx);
+	OPCODE(65, opSetDenySfx);
+	OPCODE(66, opSetAdjustUpSfx);
+	OPCODE(67, opSetAdjustDnSfx);
+	OPCODE(75, opStartMusic);
 	OPCODE(87, opDeactivateButton);
 	OPCODE(88, opActivateButton);
+	OPCODE(103, opJumpIf);
 	OPCODE(126, opDebug126);
 	OPCODE(144, opPlayVideo);
+	OPCODE(148, opLoadSpecialCodeModule);
+	OPCODE(150, opRunSpecialCode);
 	OPCODE(175, opSetSceneIdThreadId);
+	OPCODE(176, opStackPush0);
 	OPCODE(177, opSetFontId);
+	OPCODE(178, opAddMenuKey);
 }
 
 #undef OPCODE
@@ -118,11 +138,26 @@ void ScriptOpcodes::opYield(ScriptThread *scriptThread, OpCall &opCall) {
 	opCall._result = kTSYield;
 }
 
+void ScriptOpcodes::opTerminate(ScriptThread *scriptThread, OpCall &opCall) {
+	opCall._result = kTSTerminate;
+}
+
+void ScriptOpcodes::opJump(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(jumpOffs);
+	opCall._deltaOfs += jumpOffs;
+}
+
 void ScriptOpcodes::opStartScriptThread(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(threadId);
 	_vm->_scriptMan->startScriptThread(threadId, opCall._threadId,
 		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
+}
+
+void ScriptOpcodes::opStartTempScriptThread(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(codeOffs);
+	_vm->_scriptMan->startTempScriptThread(opCall._code + codeOffs,
+		opCall._threadId, scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 }
 
 void ScriptOpcodes::opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall) {
@@ -131,10 +166,19 @@ void ScriptOpcodes::opStartTimerThread(ScriptThread *scriptThread, OpCall &opCal
 	ARG_INT16(maxDuration);
 	if (maxDuration)
 		duration += _vm->getRandom(maxDuration);
+		
+duration = 5;//DEBUG Speeds up things		
+		
 	if (isAbortable)
 		_vm->_scriptMan->startAbortableTimerThread(duration, opCall._threadId);
 	else
 		_vm->_scriptMan->startTimerThread(duration, opCall._threadId);
+}
+
+void ScriptOpcodes::opSetThreadSceneId(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(sceneId);
+	_vm->_scriptMan->_threads->setThreadSceneId(opCall._callerThreadId, sceneId);
 }
 
 void ScriptOpcodes::opLoadResource(ScriptThread *scriptThread, OpCall &opCall) {
@@ -170,6 +214,12 @@ void ScriptOpcodes::opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall
 		_vm->_scriptMan->_scriptResource->_blockCounters.set(index + 1, value);
 }
 
+void ScriptOpcodes::opSetProperty(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(value)	
+	ARG_INT16(propertyId)	
+	// TODO _vm->_scriptMan->_scriptResource->_properties.set(propertyId, value);
+}
+
 void ScriptOpcodes::opPlaceActor(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(objectId);
@@ -178,6 +228,73 @@ void ScriptOpcodes::opPlaceActor(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_UINT32(namedPointId);
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
 	_vm->_controls->placeActor(actorTypeId, pos, sequenceId, objectId, opCall._threadId);
+}
+
+void ScriptOpcodes::opStartSequenceActor(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	ARG_UINT32(sequenceId);
+	// NOTE Skipped checking for stalled sequence, not sure if needed
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	control->startSequenceActor(sequenceId, 2, opCall._threadId);
+}
+
+void ScriptOpcodes::opAppearActor(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	if (!control) {
+		Common::Point pos = _vm->getNamedPointPosition(0x70023);
+        _vm->_controls->placeActor(0x50001, pos, 0x60001, objectId, 0);
+        control = _vm->_dict->getObjectControl(objectId);
+        control->startSequenceActor(0x60001, 2, 0);
+	}
+	control->appearActor();
+}
+
+void ScriptOpcodes::opDisappearActor(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	control->disappearActor();
+}
+
+void ScriptOpcodes::opSetSelectSfx(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(soundEffectId);
+	// TODO _vm->setSelectSfx(soundEffectId);
+}
+
+void ScriptOpcodes::opSetMoveSfx(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(soundEffectId);
+	// TODO _vm->setMoveSfx(soundEffectId);
+}
+
+void ScriptOpcodes::opSetDenySfx(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(soundEffectId);
+	// TODO _vm->setDenySfx(soundEffectId);
+}
+
+void ScriptOpcodes::opSetAdjustUpSfx(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(soundEffectId);
+	// TODO _vm->setAdjustUpSfx(soundEffectId);
+}
+
+void ScriptOpcodes::opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(soundEffectId);
+	// TODO _vm->setAdjustDnSfx(soundEffectId);
+}
+void ScriptOpcodes::opStartMusic(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(volume)
+	ARG_INT16(pan)
+	ARG_UINT32(musicId);
+	ARG_UINT32(type);
+	// TODO _vm->playMusic(musicId, type, volume, pan);
 }
 
 void ScriptOpcodes::opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall) {
@@ -190,8 +307,16 @@ void ScriptOpcodes::opActivateButton(ScriptThread *scriptThread, OpCall &opCall)
 	_vm->_input->activateButton(button);
 }
 
+void ScriptOpcodes::opJumpIf(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(jumpOffs)
+	int16 value = _vm->_scriptMan->_stack.pop();
+	if (!value)
+		opCall._deltaOfs += jumpOffs;
+}
+
 void ScriptOpcodes::opDebug126(ScriptThread *scriptThread, OpCall &opCall) {
 	// NOTE Prints some debug text
+	debug("[DBG] %s", (char*)opCall._code);
 }
 
 void ScriptOpcodes::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall) {
@@ -206,6 +331,24 @@ void ScriptOpcodes::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall) {
 	
 }
 
+void ScriptOpcodes::opLoadSpecialCodeModule(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(specialCodeModuleId);
+	// TODO _vm->loadSpecialCodeModule(specialCodeModuleId);
+}
+
+void ScriptOpcodes::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(specialCodeId);
+	_vm->_scriptMan->_callerThreadId = opCall._callerThreadId;
+	// TODO _vm->runSpecialCode(specialCodeId, opCall._code + 8, opCall._threadId);
+	_vm->_scriptMan->_callerThreadId = 0;
+
+	//DEBUG Resume calling thread, later done by the special code
+	_vm->notifyThreadId(opCall._threadId);
+
+}
+
 void ScriptOpcodes::opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
@@ -213,10 +356,21 @@ void ScriptOpcodes::opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opC
 	_vm->_scriptMan->setSceneIdThreadId(sceneId, threadId);
 }
 
+void ScriptOpcodes::opStackPush0(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->_scriptMan->_stack.push(0);
+}
+
 void ScriptOpcodes::opSetFontId(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(fontId);
 	_vm->_scriptMan->setCurrFontId(fontId);
+}
+
+void ScriptOpcodes::opAddMenuKey(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(key);
+	ARG_UINT32(threadId);
+	// TODO _vm->addMenuKey(key, threadId);
 }
 
 } // End of namespace Illusions
