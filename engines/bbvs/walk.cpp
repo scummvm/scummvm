@@ -44,8 +44,6 @@ static const int8 kWalkAnimTbl[32] = {
 };
 
 void BbvsEngine::startWalkObject(SceneObject *sceneObject) {
-	const int kMaxDistance = 0xFFFFFF;
-
 	if (_buttheadObject != sceneObject && _beavisObject != sceneObject)
 		return;
 	
