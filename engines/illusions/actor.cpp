@@ -23,6 +23,7 @@
 #include "illusions/illusions.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
+#include "illusions/cursor.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
@@ -210,7 +211,7 @@ void Control::pause() {
 	_vm->_dict->setObjectControl(_objectId, 0);
 
 	if (_objectId == 0x40004)
-		_vm->setCursorControl(0);
+		_vm->_cursor->setControl(0);
 
 	if (_actor && !(_actor->_flags & 0x0200))
 		_actor->destroySurface();
@@ -222,7 +223,7 @@ void Control::unpause() {
 	_vm->_dict->setObjectControl(_objectId, this);
 
 	if (_objectId == 0x40004)
-		_vm->setCursorControl(this);
+		_vm->_cursor->setControl(this);
   
 	if (_actor && !(_actor->_flags & 0x0200)) {
 		SurfInfo surfInfo;
@@ -238,15 +239,7 @@ void Control::unpause() {
 
 void Control::appearActor() {
 	if (_objectId == 0x40004) {
-		if (_vm->showCursor()) {
-			_flags |= 1;
-			_actor->_flags |= 1;
-			if (_actor->_frameIndex) {
-				_actor->_flags |= 0x2000;
-				_actor->_flags |= 0x4000;
-			}
-			_vm->_input->discardButtons(0xFFFF);
-		}
+		_vm->_cursor->show();
 	} else {
 		if (_actor->_frameIndex || _actorTypeId == 0x50004)
 			_actor->_flags |= 1;
@@ -262,10 +255,7 @@ void Control::appearActor() {
 
 void Control::disappearActor() {
 	if (_objectId == 0x40004) {
-		if (_vm->hideCursor()) {
-			_flags &= ~1;
-			_actor->_flags &= ~1;
-		}
+		_vm->_cursor->hide();
 	} else {
 		_actor->_flags &= ~1;
 		_actor->_flags &= ~0x1000;
@@ -653,10 +643,8 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	control->readPointsConfig(actorType->_pointsConfig);
 	control->_actorTypeId = actorTypeId;
 	control->_actor = actor;
-	/* TODO
 	if (actorTypeId == 0x50001 && objectId == 0x40004)
-		actor->setControlRoutine(Cursor_controlRoutine);
-	*/
+		actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Cursor>(_vm->_cursor, &Cursor::cursorControlRoutine));
 	if (actorType->_surfInfo._dimensions._width > 0 || actorType->_surfInfo._dimensions._height > 0) {
 		actor->createSurface(actorType->_surfInfo);
 	} else {
@@ -703,7 +691,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	_vm->_dict->setObjectControl(objectId, control);
 
 	if (actorTypeId == 0x50001 && objectId == 0x40004)
-		_vm->placeCursor(control, sequenceId);
+		_vm->_cursor->place(control, sequenceId);
 
 	control->_flags |= 0x01;
 	actor->_flags |= 0x1000;
@@ -760,6 +748,17 @@ void Controls::placeActorLessObject(uint32 objectId, Common::Point feetPt, Commo
 	_vm->_dict->setObjectControl(objectId, control);
 }
 
+void Controls::destroyControlsByTag(uint32 tag) {
+	ItemsIterator it = _controls.begin();
+	while (it != _controls.end()) {
+		if ((*it)->_tag == tag) {
+			destroyControl(*it);
+			it = _controls.erase(it);
+		} else
+			++it;			
+	}
+}
+
 Actor *Controls::newActor() {
 	return new Actor(_vm);
 }
@@ -769,13 +768,12 @@ Control *Controls::newControl() {
 }
 
 void Controls::destroyControl(Control *control) {
-	_controls.remove(control);
 
 	if (control->_pauseCtr <= 0)
 		_vm->_dict->setObjectControl(control->_objectId, 0);
 
 	if (control->_objectId == 0x40004 && control->_pauseCtr <= 0)
-		_vm->setCursorControl(0);
+		_vm->_cursor->setControl(0);
 	
 	if (control->_actor) {
 		/* TODO

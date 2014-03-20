@@ -196,6 +196,7 @@ public:
 	void placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequenceId, uint32 objectId, uint32 notifyThreadId);
 	void placeSequenceLessActor(uint32 objectId, Common::Point placePt, WidthHeight dimensions, int16 priority);
 	void placeActorLessObject(uint32 objectId, Common::Point feetPt, Common::Point pt, int16 priority, uint flags);
+	void destroyControlsByTag(uint32 tag);
 	void actorControlRouine(Control *control, uint32 deltaTime);	
 public:
 	typedef Common::List<Control*> Items;

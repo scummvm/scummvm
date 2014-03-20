@@ -21,6 +21,7 @@
  */
 
 #include "illusions/illusions.h"
+#include "illusions/actor.h"
 #include "illusions/scriptman.h"
 #include "illusions/scriptthread.h"
 #include "illusions/scriptopcodes.h"
@@ -116,6 +117,10 @@ int16 ScriptStack::peek() {
 	return value;
 }
 
+int16 *ScriptStack::topPtr() {
+	return &_stack[_stackPos];
+}
+
 // ScriptMan
 
 ScriptMan::ScriptMan(IllusionsEngine *vm)
@@ -170,6 +175,12 @@ void ScriptMan::setCurrFontId(uint32 fontId) {
 	_fontId = fontId;
 }
 
+void ScriptMan::reset() {
+	// TODO _scriptResource->_blockCounters.clear();
+	// TODO _scriptResource->_properties.clear();
+	// TODO script_sub_417FF0(1, 0);
+}
+
 bool ScriptMan::enterScene(uint32 sceneId, uint32 threadId) {
 	ProgInfo *progInfo = _scriptResource->getProgInfo(sceneId & 0xFFFF);
 	if (!progInfo) {
@@ -178,6 +189,17 @@ bool ScriptMan::enterScene(uint32 sceneId, uint32 threadId) {
 	}
 	_activeScenes.push(sceneId);
 	return progInfo != 0;
+}
+
+void ScriptMan::exitScene(uint32 threadId) {
+	uint32 sceneId = _activeScenes.getCurrentScene();
+	// TODO krnfileDump(sceneId);
+	// TODO UpdateFunctions_disableByTag__TODO_maybe(sceneId);
+	_threads->terminateThreadsByTag(sceneId, threadId);
+	_vm->_controls->destroyControlsByTag(sceneId);
+	// TODO causeFunc_removeBySceneId(sceneId);
+	// TODO _vm->_resSys->unloadResourceByTag(sceneId);
+	_activeScenes.pop();
 }
 
 void ScriptMan::newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,

@@ -25,6 +25,7 @@
 #include "illusions/actorresource.h"
 #include "illusions/backgroundresource.h"
 #include "illusions/camera.h"
+#include "illusions/cursor.h"
 #include "illusions/dictionary.h"
 #include "illusions/fontresource.h"
 #include "illusions/graphics.h"
@@ -102,6 +103,7 @@ Common::Error IllusionsEngine::run() {
 	_backgroundItems = new BackgroundItems(this);
 	_camera = new Camera(this);
 	_controls = new Controls(this);
+	_cursor = new Cursor(this);
 	
 	// TODO Move to own class
 	_resGetCtr = 0;
@@ -176,6 +178,7 @@ Common::Error IllusionsEngine::run() {
 	}
 #endif
 
+	delete _cursor;
 	delete _controls;
 	delete _camera;
 	delete _backgroundItems;
@@ -240,28 +243,6 @@ void IllusionsEngine::notifyThreadId(uint32 &threadId) {
 		threadId = 0;
 		_scriptMan->_threads->notifyId(tempThreadId);
 	}
-}
-
-void IllusionsEngine::setCursorControl(Control *control) {
-	// TODO Dummy, to be replaced later
-}
-
-void IllusionsEngine::placeCursor(Control *control, uint32 sequenceId) {
-	// TODO Dummy, to be replaced later
-}
-
-bool IllusionsEngine::showCursor() {
-	// TODO Dummy, to be replaced later
-	// TODO ++cursor._visibleCtr;
-	// TODO if (cursor._visibleCtr > 0)
-	return false;
-}
-
-bool IllusionsEngine::hideCursor() {
-	// TODO Dummy, to be replaced later
-	// TODO --cursor._visibleCtr;
-	// TODO if (cursor.visibleCtr <= 0) 
-	return false;
 }
 
 uint32 IllusionsEngine::getElapsedUpdateTime() {

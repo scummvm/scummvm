@@ -61,6 +61,7 @@ public:
 	void push(int16 value);
 	int16 pop();
 	int16 peek();
+	int16 *topPtr();
 protected:
 	int _stackPos;
 	int16 _stack[256];
@@ -80,7 +81,9 @@ public:
 	uint32 startAbortableTimerThread(uint32 duration, uint32 threadId);
 	uint32 startTimerThread(uint32 duration, uint32 threadId);
 	void setCurrFontId(uint32 fontId);
+	void reset();
 	bool enterScene(uint32 sceneId, uint32 threadId);
+	void exitScene(uint32 threadId);
 public:
 
 	IllusionsEngine *_vm;
@@ -97,11 +100,13 @@ public:
 	uint32 _nextTempThreadId;
 	
 	uint32 _fontId;
+	uint32 _prevSceneId;
 	
 	ThreadList *_threads;
 	ScriptOpcodes *_scriptOpcodes;
 	
 	uint32 _callerThreadId;
+	int16 _menuChoiceOfs;
 	
 	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10);
