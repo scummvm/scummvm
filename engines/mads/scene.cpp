@@ -425,13 +425,13 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	// Draw any sprites
 	_spriteSlots.drawBackground();
 
-	// Process dirty areas
+	// Set up dirty areas for any text display
 	_textDisplay.setDirtyAreas();
 
 	// Merge any identified dirty areas
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
-	// Copy dirty areas to the main display surface
+	// Copy background for the dirty areas to the screen
 	_dirtyAreas.copy(&_backgroundSurface, &_vm->_screen, _posAdjust);
 
 	// Handle dirty areas for foreground objects
@@ -439,14 +439,13 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	_textDisplay.setDirtyAreas2();
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
-
 	// Draw foreground sprites
 	_spriteSlots.drawForeground(&_vm->_screen);
 
 	// Draw text elements onto the view
 	_textDisplay.draw(&_vm->_screen);
 
-	//
+	// 
 	_vm->_screen.setPointer(&_vm->_screen);
 	_userInterface.setBounds(Common::Rect(_vm->_screen._offset.x, _vm->_screen._offset.y,
 		_vm->_screen._offset.x + _vm->_screen.w, _vm->_screen._offset.y + _vm->_screen.h));

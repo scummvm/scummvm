@@ -34,6 +34,7 @@ MODULE_OBJS := \
 	sequence.o \
 	sound.o \
 	sprites.o \
+	staticres.o \
 	user_interface.o
 
 # This module can be built as a plugin

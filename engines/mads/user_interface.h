@@ -144,6 +144,8 @@ public:
 	int _v1C;
 	int _v1E;
 	bool _inventoryChanged;
+	Common::StringArray _talkStrings;
+	Common::Array<int> _talkIds;
 public:
 	/**
 	* Constructor

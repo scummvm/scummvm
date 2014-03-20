@@ -23,7 +23,9 @@
 #include "common/scummsys.h"
 #include "mads/mads.h"
 #include "mads/action.h"
+#include "mads/inventory.h"
 #include "mads/scene.h"
+#include "mads/staticres.h"
 
 namespace MADS {
 
@@ -58,71 +60,68 @@ void MADSAction::clear() {
 }
 
 void MADSAction::appendVocab(int vocabId, bool capitalise) {
-	/*
-	char *s = _statusText + strlen(_statusText);
-	vocabStr = _madsVm->globals()->getVocab(vocabId);
-	strcpy(s, vocabStr);
+	Common::String vocabStr = _vm->_game->_scene.getVocab(vocabId);
 	if (capitalise)
-		*s = toupper(*s);
+		vocabStr.setChar(toupper(vocabStr[0]), 0);
 
-	strcat(s, " ");
-	*/
+	_statusText += vocabStr;
+	_statusText += " ";
 }
 
 void MADSAction::set() {
-	/*
-	int hotspotCount = _madsVm->scene()->getSceneResources().hotspots->size();
-	bool flag = false; // FIXME: unused
-	strcpy(_statusText, "");
+	Scene &scene = _vm->_game->_scene;
+	UserInterface &userInterface = scene._userInterface;
+	bool flag = false;
+	_statusText = "";
 
-	_currentAction = -1;
-	_action.objectNameId = -1;
-	_action.indirectObjectId = -1;
+	_action._verbId = -1;
+	_action._objectNameId = -1;
+	_action._indirectObjectId = -1;
 
-	if (_actionMode == ACTMODE_TALK) {
+	if (_actionMode == ACTIONMODE_TALK) {
 		// Handle showing the conversation selection. Rex at least doesn't actually seem to use this
 		if (_selectedRow >= 0) {
-			const char *desc = _madsVm->_converse[_selectedRow].desc;
-			if (desc)
-				strcpy(_statusText, desc);
+			Common::String desc = userInterface._talkStrings[userInterface._talkIds[_selectedRow]];
+			if (!desc.empty())
+				_statusText = desc;
 		}
 	} else if (_lookFlag && (_selectedRow == 0)) {
 		// Two 'look' actions in succession, so the action becomes 'Look around'
-		strcpy(_statusText, lookAroundStr);
+		_statusText = kLookAroundStr;
 	} else {
-		if ((_actionMode == ACTMODE_OBJECT) && (_selectedRow >= 0) && (_flags1 == 2) && (_flags2 == 0)) {
+		if ((_actionMode == ACTIONMODE_OBJECT) && (_selectedRow >= 0) && (_flags1 == 2) && (_flags2 == 0)) {
 			// Use/to action
-			int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
-			MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
+			int invIndex = userInterface._selectedInvIndex;
+			InventoryObject &objEntry = _vm->_game->_objects.getItem(invIndex);
 
-			_action.objectNameId = objEntry->_descId;
-			_currentAction = objEntry->_vocabList[_selectedRow].vocabId;
+			_action._objectNameId = objEntry._descId;
+			_action._verbId = objEntry._vocabList[_selectedRow]._vocabId;
 
 			// Set up the status text stirng
-			strcpy(_statusText, useStr);
-			appendVocab(_action.objectNameId);
-			strcpy(_statusText, toStr);
-			appendVocab(_currentAction);
+			_statusText = kUseStr;
+			appendVocab(_action._objectNameId);
+			_statusText += kToStr;
+			appendVocab(_action._verbId);
 		} else {
 			// Handling for if an action has been selected
 			if (_selectedRow >= 0) {
-				if (_actionMode == ACTMODE_VERB) {
+				if (_actionMode == ACTIONMODE_VERB) {
 					// Standard verb action
-					_currentAction = verbList[_selectedRow].verb;
+					_currentAction = scene._verbList[_selectedRow]._id;
 				} else {
 					// Selected action on an inventory object
-					int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
-					MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
+					int invIndex = userInterface._selectedInvIndex;
+					InventoryObject &objEntry = _vm->_game->_objects.getItem(invIndex);
 
-					_currentAction = objEntry->_vocabList[_selectedRow].vocabId;
+					_currentAction = objEntry._vocabList[_selectedRow]._vocabId;
 				}
 
-				appendVocab(_currentAction, true);
+				appendVocab(_action._verbId, true);
 
-				if (_currentAction == kVerbLook) {
+				if (_currentAction == VERB_LOOK) {
 					// Add in the word 'add'
-					strcat(_statusText, atStr);
-					strcat(_statusText, " ");
+					_statusText += kAtStr;
+					_statusText += " ";
 				}
 			}
 
@@ -130,20 +129,20 @@ void MADSAction::set() {
 			if ((_hotspotId >= 0) && (_selectedRow >= 0) && (_articleNumber > 0) && (_flags1 == 2)) {
 				flag = true;
 
-				strcat(_statusText, englishMADSArticleList[_articleNumber]);
-				strcat(_statusText, " ");
+				_statusText += kArticleList[_articleNumber];
+				_statusText += " ";
 			}
 
 			if (_hotspotId >= 0) {
 				if (_selectedRow < 0) {
 					int verbId;
 
-					if (_hotspotId < hotspotCount) {
+					if (_hotspotId < (int)scene._hotspots.size()) {
 						// Get the verb Id from the hotspot
-						verbId = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getVerbID();
+						verbId = scene._hotspots[_hotspotId]._verbId;
 					} else {
 						// Get the verb Id from the scene object
-						verbId = (*_madsVm->scene()->getSceneResources().dynamicHotspots)[_hotspotId - hotspotCount].getVerbID();
+						verbId = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._vocabId;
 					}
 
 					if (verbId > 0) {
@@ -152,23 +151,23 @@ void MADSAction::set() {
 						appendVocab(_currentAction, true);
 					} else {
 						// Default to a standard 'walk to'
-						_currentAction = kVerbWalkTo;
-						strcat(_statusText, walkToStr);
+						_currentAction = VERB_WALKTO;
+						_statusText += kWalkToStr;
 					}
 				}
 
-				if ((_actionMode2 == ACTMODE2_2) || (_actionMode2 == ACTMODE2_5)) {
+				if ((_actionMode2 == ACTIONMODE2_2) || (_actionMode2 == ACTIONMODE2_5)) {
 					// Get name from given inventory object
-					int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_hotspotId);
-					_action.objectNameId = _madsVm->globals()->getObject(objectId)->_descId;
-				} else if (_hotspotId < hotspotCount) {
+					InventoryObject &invObject = _vm->_game->_objects.getItem(_hotspotId);
+					_action._objectNameId = invObject._descId;
+				} else if (_hotspotId < (int)scene._hotspots.size()) {
 					// Get name from scene hotspot
-					_action.objectNameId = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getVocabID();
+					_action._objectNameId = scene._hotspots[_hotspotId]._vocabId;
 				} else {
 					// Get name from temporary scene hotspot
-					_action.objectNameId = (*_madsVm->scene()->getSceneResources().dynamicHotspots)[_hotspotId].getVocabID();
+					_action._objectNameId = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._vocabId;
 				}
-				appendVocab(_action.objectNameId);
+				appendVocab(_action._objectNameId);
 			}
 		}
 
@@ -178,76 +177,74 @@ void MADSAction::set() {
 					int articleNum = 0;
 
 					if ((_v86F42 == 2) || (_v86F42 == 5)) {
-						int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_hotspotId);
-						articleNum = _madsVm->globals()->getObject(objectId)->_article;
-					} else if (_v86F3A < hotspotCount) {
-						articleNum = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getArticle();
+						InventoryObject &invObject = _vm->_game->_objects.getItem(_hotspotId);
+						articleNum = invObject._article;
+					} else if (_v86F3A < (int)scene._hotspots.size()) {
+						articleNum = scene._hotspots[_hotspotId]._articleNumber;
 					} else {
-
+						articleNum = scene._hotspots[_hotspotId - scene._hotspots.size()]._articleNumber;
 					}
-				}
 
-			} else if ((_articleNumber == kVerbLook) || (_vm->getGameType() != GType_RexNebular) ||
-				(strcmp(_madsVm->globals()->getVocab(_action.indirectObjectId), fenceStr) != 0)) {
+					_statusText += kArticleList[articleNum];
+					_statusText += " ";
+				}
+			} else if ((_articleNumber == VERB_LOOK) || (_vm->getGameID() != GType_RexNebular) ||
+				(scene._vocabStrings[_action._indirectObjectId] != kFenceStr)) {
 				// Write out the article
-				strcat(_statusText, englishMADSArticleList[_articleNumber]);
+				_statusText += kArticleList[_articleNumber];
 			} else {
 				// Special case for a 'fence' entry in Rex Nebular
-				strcat(_statusText, overStr);
+				_statusText += kOverStr;
 			}
 
-			strcat(_statusText, " ");
+			_statusText += " ";
 		}
 
 		// Append object description if necessary
 		if (_v86F3A >= 0)
-			appendVocab(_action.indirectObjectId);
+			appendVocab(_action._indirectObjectId);
 
 		// Remove any trailing space character
-		int statusLen = strlen(_statusText);
-		if ((statusLen > 0) && (_statusText[statusLen - 1] == ' '))
-			_statusText[statusLen - 1] = '\0';
+		if (_statusText.hasSuffix(" "))
+			_statusText.deleteLastChar();
 	}
 
 	_textChanged = true;
-	*/
 }
 
 void MADSAction::refresh() {
-	/*
+	Scene &scene = _vm->_game->_scene;
+
 	// Exit immediately if nothing has changed
 	if (!_textChanged)
 		return;
 
 	// Remove any old copy of the status text
 	if (_statusTextIndex >= 0) {
-		_owner._textDisplay.expire(_statusTextIndex);
+		scene._textDisplay.expire(_statusTextIndex);
 		_statusTextIndex = -1;
 	}
 
-	if (_statusText[0] != '\0') {
-		if ((_owner._screenObjects._v832EC == 0) || (_owner._screenObjects._v832EC == 2)) {
-			Font *font = _madsVm->_font->getFont(FONT_MAIN_MADS);
+	if (!_statusText.empty()) {
+		if ((_vm->_game->_screenObjects._v832EC == 0) || (_vm->_game->_screenObjects._v832EC == 2)) {
+			Font *font = _vm->_font->getFont(FONT_MAIN);
 			int textSpacing = -1;
 
 			int strWidth = font->getWidth(_statusText);
-			if (strWidth > 320) {
+			if (strWidth > MADS_SCREEN_WIDTH) {
 				// Too large to fit, so fall back on interface font
-				font = _madsVm->_font->getFont(FONT_INTERFACE_MADS);
+				font = _vm->_font->getFont(FONT_INTERFACE);
 				strWidth = font->getWidth(_statusText, 0);
 				textSpacing = 0;
 			}
 
 			// Add a new text display entry to display the status text at the bottom of the screen area
-			uint colors = (_vm->getGameType() == GType_DragonSphere) ? 0x0300 : 0x0003;
-
-			_statusTextIndex = _owner._textDisplay.add(160 - (strWidth / 2),
-				MADS_SURFACE_HEIGHT + _owner._posAdjust.y - 13, colors, textSpacing, _statusText, font);
+			_statusTextIndex = scene._textDisplay.add(160 - (strWidth / 2),
+				MADS_SCENE_HEIGHT + scene._posAdjust.y - 13, 3, textSpacing, _statusText, font);
 		}
 	}
 
 	_textChanged = false;
-	*/
 }
 
 void MADSAction::startAction() {

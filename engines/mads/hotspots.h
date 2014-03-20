@@ -39,7 +39,7 @@ public:
 	Common::Point _feetPos;
 	int _facing;
 	int _descId;
-	int _field14;
+	int _vocabId;
 	int _articleNumber;
 	CursorType _cursor;
 
@@ -59,7 +59,7 @@ public:
 	DynamicHotspots(MADSEngine *vm);
 
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
-	int add(int descId, int field14, int seqIndex, const Common::Rect &bounds);
+	int add(int descId, int vocabId, int seqIndex, const Common::Rect &bounds);
 	int setPosition(int index, int xp, int yp, int facing);
 	int setCursor(int index, CursorType cursor);
 	void remove(int index);
