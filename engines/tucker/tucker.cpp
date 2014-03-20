@@ -45,6 +45,31 @@ TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 fl
 	_console = new TuckerConsole(this);
 
 	resetVariables();
+
+	_execData3Counter = 0;
+	_currentSaveLoadGameState = 1;
+	_fileLoadSize = 0;
+	_csDataSize = 0;
+
+	_player = nullptr;
+	_loadTempBuf = nullptr;
+	_cursorGfxBuf = nullptr;
+	_charsetGfxBuf = nullptr;
+	_panelGfxBuf = nullptr;
+	_itemsGfxBuf = nullptr;
+	_spritesGfxBuf = nullptr;
+	_locationBackgroundGfxBuf = nullptr;
+	_data5Buf = nullptr;
+	_data3GfxBuf = nullptr;
+	_quadBackgroundGfxBuf = nullptr;
+	_objTxtBuf = nullptr;
+	_panelObjectsGfxBuf = nullptr;
+	_ptTextBuf = nullptr;
+	_infoBarBuf = nullptr;
+	_bgTextBuf = nullptr;
+	_charNameBuf = nullptr;
+	_locationBackgroundMaskBuf = nullptr;
+	_csDataBuf = nullptr;
 }
 
 TuckerEngine::~TuckerEngine() {
