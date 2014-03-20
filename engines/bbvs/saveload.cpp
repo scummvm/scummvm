@@ -212,9 +212,8 @@ bool BbvsEngine::existsSavegame(int num) {
 }
 
 void BbvsEngine::allocSnapshot() {
-	_snapshotSize = 23072;
-	_snapshot = new byte[_snapshotSize];
-	_snapshotStream = new Common::SeekableMemoryWriteStream(_snapshot, _snapshotSize);
+	_snapshot = new byte[kSnapshotSize];
+	_snapshotStream = new Common::SeekableMemoryWriteStream(_snapshot, kSnapshotSize);
 }
 
 void BbvsEngine::freeSnapshot() {

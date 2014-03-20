@@ -91,7 +91,6 @@ BbvsEngine::BbvsEngine(OSystem *syst, const ADGameDescription *gd) :
 	_currWalkDistance = kMaxDistance;
 	_walkReachedDestArea = false;
 	_hasSnapshot = false;
-	_snapshotSize = 0;
 	_snapshot = nullptr;
 	_snapshotStream = nullptr;
 	_isSaveAllowed = false;

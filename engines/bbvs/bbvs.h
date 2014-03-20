@@ -199,6 +199,7 @@ struct WalkArea {
 	bool contains(const Common::Point &pt) const;
 };
 
+const int kSnapshotSize = 23072;
 const int kSceneObjectsCount = 64;
 const int kSceneSoundsCount = 8;
 const int kInventoryItemStatusCount = 50;
@@ -304,7 +305,6 @@ public:
 	bool _walkReachedDestArea;
 	
 	bool _hasSnapshot;
-	uint32 _snapshotSize;
 	byte *_snapshot;
 	Common::SeekableMemoryWriteStream *_snapshotStream;
 	
