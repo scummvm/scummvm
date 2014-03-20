@@ -460,6 +460,9 @@ void UserInterface::loadElements() {
 			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_TALK_ENTRY, idx);
 		}
 	}
+
+	// Store the number of UI elements loaded for easy nuking/refreshing hotspots added later
+	_vm->_game->_screenObjects._uiCount = _vm->_game->_screenObjects.size();
 }
 
 bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds) {

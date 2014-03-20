@@ -49,6 +49,8 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_textSpacing = -1;
 	_frameStartTime = 0;
 	_layer = LAYER_GUI;
+	_lookFlag = false;
+	_highlightedHotspot = 0;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
@@ -461,10 +463,6 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	warning("TODO: sub_115A2");
 	_spriteSlots.cleanUp();
 	_textDisplay.cleanUp();
-}
-
-void Scene::leftClick() {
-	warning("TODO: Scene::leftClick");
 }
 
 void Scene::doPreactions() {

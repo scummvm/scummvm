@@ -122,16 +122,20 @@ void DynamicHotspots::reset() {
 }
 
 void DynamicHotspots::refresh() {
+	// Reset the screen objects back to only contain UI elements
+	ScreenObjects &scrObjects = _vm->_game->_screenObjects;
+	scrObjects.resize(scrObjects._uiCount);
+
+	// Loop through adding hotspots
 	for (uint i = 0; i < _entries.size(); ++i) {
 		DynamicHotspot &dh = (*this)[i];
 
 		if ((*this)[i]._active) {
-			switch (_vm->_game->_screenObjects._v832EC) {
+			switch (scrObjects._v832EC) {
 			case 0:
 			case 2:
-				_vm->_game->_screenObjects.add(dh._bounds, _vm->_game->_scene._layer,
-					CAT_12, dh._descId);
-				_vm->_game->_screenObjects._v8333C = true;
+				scrObjects.add(dh._bounds, _vm->_game->_scene._layer, CAT_12, dh._descId);
+				scrObjects._v8333C = true;
 				break;
 			default:
 				break;

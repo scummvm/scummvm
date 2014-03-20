@@ -150,6 +150,7 @@ public:
 	ScrCategory _category;
 	int _objectIndex;
 	bool _released;
+	int _uiCount;
 
 	/*
 	* Constructor

@@ -118,6 +118,9 @@ public:
 	Common::Point _posAdjust;
 	uint32 _frameStartTime;
 	Layer _layer;
+	bool _lookFlag;
+	int _highlightedHotspot;
+	Common::Point _customDest;
 
 	/**
 	 * Constructor
@@ -183,11 +186,6 @@ public:
 	 * Draw all the elements onto the scene
 	 */
 	void drawElements(ScreenTransition transitionType, bool surfaceFlag);
-
-	/**
-	 * Execute a click within the scene
-	 */
-	void leftClick();
 
 	/**
 	 * Load an animation

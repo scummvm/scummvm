@@ -260,6 +260,7 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_category = CAT_NONE;
 	_objectIndex = 0;
 	_released = false;
+	_uiCount = 0;
 }
 
 void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId) {
@@ -314,7 +315,7 @@ void ScreenObjects::check(bool scanFlag) {
 		}
 
 		if (_vm->_events->_mouseReleased) {
-			scene.leftClick();
+			scene._action.leftClick();
 			scene._userInterface._category = CAT_NONE;
 		}
 
@@ -329,8 +330,25 @@ void ScreenObjects::check(bool scanFlag) {
 
 	scene._action.refresh();
 
-	// Loop through image inter list
-	warning("TODO: imageInterList loop");
+	UserInterface &userInterface = _vm->_game->_scene._userInterface;
+	uint32 currentTicks = _vm->_events->getFrameCounter();
+	if (currentTicks >= _vm->_game->_ticksExpiry) {
+		// Check the user interface slots to see if there's any slots that need to be expired
+		UISlots &uiSlots = userInterface._uiSlots;
+		for (uint idx = 0; idx <  uiSlots.size(); ++idx) {
+			UISlot &slot = uiSlots[idx];
+
+			if (slot._slotType != ST_FULL_SCREEN_REFRESH && slot._slotType > -20
+					&& slot._field2 != 200)
+				slot._slotType = ST_EXPIRED;
+		}
+
+		// Handle animating the selected inventory animation
+		userInterface.inventoryAnim();
+
+		// Set the next frame expiry
+		_vm->_game->_ticksExpiry = currentTicks + 6;
+	}	
 }
 
 int ScreenObjects::scanBackwards(const Common::Point &pt, int layer) {

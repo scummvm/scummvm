@@ -39,8 +39,8 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 
 void MADSAction::clear() {
 	_v83338 = 1;
-	_actionMode = ACTMODE_NONE;
-	_actionMode2 = ACTMODE2_0;
+	_actionMode = ACTIONMODE_NONE;
+	_actionMode2 = ACTIONMODE2_0;
 	_v86F42 = 0;
 	_v86F4E = 0;
 	_articleNumber = 0;
@@ -339,7 +339,273 @@ bool MADSAction::isAction(int verbId, int objectNameId, int indirectObjectId) {
 }
 
 void MADSAction::checkActionAtMousePos() {
-	warning("TODO: checkActionAtMousePos");
+	Scene &scene = _vm->_game->_scene;
+	UserInterface &userInterface = scene._userInterface;
+	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
+
+	if ((userInterface._category == CAT_ACTION || userInterface._category == CAT_INV_VOCAB) &&
+			_v83338 != 1 && scene._highlightedHotspot >= 0) {
+		if (_v86F4E == userInterface._category || _v86F4C != scene._highlightedHotspot ||
+			(_v83338 != 2 && _v83338 != 3))
+			clear();
+		else if (_selectedRow != 0 || userInterface._category != CAT_ACTION)
+			scene._lookFlag = false;
+		else
+			scene._lookFlag = true;
+	}
+
+	if (screenObjects._v7FECA && _vm->_events->_mouseButtons) {
+		switch (userInterface._category) {
+		case CAT_ACTION:
+		case CAT_INV_VOCAB:
+			return;
+
+		case CAT_INV_LIST:
+		case CAT_TALK_ENTRY:
+			if (_v83338 != 3) {
+				if (userInterface._selectedActionIndex >= 0) {
+					_actionMode = ACTIONMODE_VERB;
+					_selectedRow = userInterface._selectedActionIndex;
+					_flags1 = scene._verbList[_selectedRow]._action1;
+					_flags2 = scene._verbList[_selectedRow]._action2;
+					_v83338 = 2;
+				} else if (userInterface._selectedItemVocabIdx >= 0) {
+					_actionMode = ACTIONMODE_OBJECT;
+					_selectedRow = userInterface._selectedItemVocabIdx;
+					int objectId = _vm->_game->_objects._inventoryList[_selectedRow];
+					InventoryObject &invObject = _vm->_game->_objects[objectId];
+
+					_flags1 = invObject._vocabList[_selectedRow - 1]._actionFlags1;
+					_flags2 = invObject._vocabList[_selectedRow - 1]._actionFlags2;
+					_actionMode2 = ACTIONMODE2_2;
+					_hotspotId = userInterface._selectedInvIndex;
+					_articleNumber = _flags2;
+
+					if ((_flags1 == 1 && _flags2 == 0) || (_flags1 == 2 && _flags2 != 0))
+						_v83338 = 4;
+					else
+						_v83338 = 3;
+				}
+			}
+			break;
+		}
+	}
+
+	switch (_v83338) {
+	case 1:
+		_articleNumber = 0;
+		switch (userInterface._category) {
+		case CAT_ACTION:
+			_actionMode = ACTIONMODE_VERB;
+			_selectedRow = scene._highlightedHotspot;
+			if (_selectedRow >= 0) {
+				_flags1 = scene._verbList[_selectedRow]._action1;
+				_flags2 = scene._verbList[_selectedRow]._action2;
+			}
+			break;
+
+		case CAT_INV_VOCAB:
+			_actionMode = ACTIONMODE_OBJECT;
+			_selectedRow = scene._highlightedHotspot;
+			if (_selectedRow < 0) {
+				_hotspotId = -1;
+				_actionMode2 = ACTIONMODE2_0;
+			} else {
+				int objectId = _vm->_game->_objects._inventoryList[_selectedRow];
+				InventoryObject &invObject = _vm->_game->_objects[objectId];
+
+				_flags1 = invObject._vocabList[_selectedRow - 2]._actionFlags1;
+				_flags2 = invObject._vocabList[_selectedRow - 2]._actionFlags2;
+				_hotspotId = userInterface._selectedInvIndex;
+				_actionMode2 = ACTIONMODE2_2;
+
+				if (_flags1 == 2)
+					_articleNumber = _flags2;
+			}
+			break;
+
+		case CAT_HOTSPOT:
+			_selectedRow = -1;
+			_actionMode = ACTIONMODE_NONE;
+			_actionMode2 = ACTIONMODE2_4;
+			_hotspotId = scene._highlightedHotspot;
+			break;
+
+		case CAT_TALK_ENTRY:
+			_actionMode = ACTIONMODE_TALK;
+			_selectedRow = scene._highlightedHotspot;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 2:
+		_articleNumber = 0;
+		switch (userInterface._category) {
+		case CAT_INV_LIST:
+		case CAT_HOTSPOT:
+		case CAT_INV_ANIM:
+			// TODO: We may not need a separate ActionMode2 enum
+			_actionMode2 = (ActionMode2)userInterface._category;
+			_hotspotId = scene._highlightedHotspot;
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case 3:
+		switch (userInterface._category) {
+		case CAT_INV_LIST:
+		case CAT_HOTSPOT:
+		case CAT_INV_ANIM:
+			_v86F42 = userInterface._category;
+			_v86F3A = scene._highlightedHotspot;
+			break;
+		default:
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void MADSAction::leftClick() {
+	Scene &scene = _vm->_game->_scene;
+	UserInterface &userInterface = scene._userInterface;
+	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
+	bool abortFlag = false;
+
+	if ((userInterface._category == CAT_ACTION || userInterface._category == CAT_INV_VOCAB) &&
+			_v83338 != 1 && scene._highlightedHotspot >= 0 && 
+			_v86F4E == userInterface._category && _v86F4C == scene._highlightedHotspot &&
+			(_v83338 == 2 || userInterface._category == CAT_INV_VOCAB)) {
+		abortFlag = true;
+		if (_selectedRow == 0 && userInterface._category == CAT_ACTION) {
+			_selectedAction = CAT_ACTION;
+			scene._lookFlag = true;
+		} else {
+			_selectedAction = CAT_NONE;
+			scene._lookFlag = false;
+			clear();
+		}
+	}
+
+	if (abortFlag || (screenObjects._v7FECA && (userInterface._category == CAT_ACTION ||
+			userInterface._category == CAT_INV_VOCAB)))
+		return;
+
+	switch (_v83338) {
+	case 1:
+		switch (userInterface._category) {
+		case CAT_ACTION:
+			if (_selectedRow >= 0) {
+				if (!_flags1) {
+					_selectedAction = -1;
+				}
+				else {
+					_v86F4C = _selectedRow;
+					_v86F4E = _actionMode;
+					_v83338 = 2;
+				}
+			}
+			break;
+
+		case CAT_INV_LIST:
+			if (scene._highlightedHotspot >= 0) {
+				userInterface.selectObject(scene._highlightedHotspot);
+			}
+			break;
+
+		case CAT_INV_VOCAB:
+			if (_selectedRow >= 0) {
+				if (_flags1 != 1 || _flags2 != 0) {
+					if (_flags1 != 2 || _flags2 == 0) {
+						_v83338 = 3;
+						_articleNumber = _flags2;
+					}
+					else {
+						_articleNumber = _flags2;
+						_selectedAction = -1;
+					}
+				}
+				else {
+					_selectedAction = -1;
+				}
+
+				_v86F4C = _selectedRow;
+				_v86F4E = _actionMode;
+			}
+			break;
+
+		case CAT_HOTSPOT:
+			_v86F4C = -1;
+			_v86F4E = 0;
+
+			if (_vm->_events->currentPos().y < MADS_SCENE_HEIGHT)
+				scene._customDest = _vm->_events->currentPos() + scene._posAdjust;
+			break;
+
+		case CAT_TALK_ENTRY:
+			if (_selectedRow >= 0)
+				_selectedAction = -1;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 2:
+		switch (userInterface._category) {
+		case CAT_INV_LIST:
+		case CAT_HOTSPOT:
+		case CAT_INV_ANIM:
+			if (_hotspotId >= 0) {
+				if (_flags2) {
+					_articleNumber = _flags2;
+					_v83338 = 3;
+				}
+				else {
+					_selectedAction = -1;
+				}
+
+				if (userInterface._category == CAT_HOTSPOT) {
+					scene._customDest = _vm->_events->mousePos() + scene._posAdjust;
+					_v86F4A = true;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case 3:
+		switch (userInterface._category) {
+		case CAT_INV_LIST:
+		case CAT_HOTSPOT:
+		case CAT_INV_ANIM:
+			if (_v86F3A >= 0) {
+				_selectedAction = -1;
+
+				if (userInterface._category == CAT_HOTSPOT) {
+					if (!_v86F4A) {
+						scene._customDest = _vm->_events->mousePos() + scene._posAdjust;
+						_v86F4A = true;
+					}
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	}
 }
 
 } // End of namespace MADS

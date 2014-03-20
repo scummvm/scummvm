@@ -28,8 +28,8 @@
 
 namespace MADS {
 
-enum ActionMode { ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6 };
-enum ActionMode2 { ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5 };
+enum ActionMode { ACTIONMODE_NONE = 0, ACTIONMODE_VERB = 1, ACTIONMODE_OBJECT = 3, ACTIONMODE_TALK = 6 };
+enum ActionMode2 { ACTIONMODE2_0 = 0, ACTIONMODE2_2 = 2, ACTIONMODE2_4 = 4, ACTIONMODE2_5 = 5 };
 enum AbortTimerMode { ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2 };
 
 enum {
@@ -46,6 +46,7 @@ enum {
 	VERB_THROW = 12,
 	VERB_WALKTO = 13
 };
+
 
 class MADSEngine;
 
@@ -110,6 +111,11 @@ public:
 	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
 	
 	void checkActionAtMousePos();
+
+	/**
+	* Execute a click within the scene
+	*/
+	void leftClick();
 };
 
 } // End of namespace MADS

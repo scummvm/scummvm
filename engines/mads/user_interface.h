@@ -126,11 +126,6 @@ private:
 	void writeVocab(ScrCategory category, int id);
 
 	void refresh();
-
-	/**
-	 * Handles queuing a new frame of an inventory animation for drawing
-	 */
-	void inventoryAnim();
 public:
 	MSurface _surface;
 	UISlots _uiSlots;
@@ -171,9 +166,20 @@ public:
 
 	void setBounds(const Common::Rect &r);
 
+	/**
+	 * Loads the animation sprite data for a given inventory object
+	 */
 	void loadInventoryAnim(int objectId);
 
+	/**
+	 * Resets the inventory animation when no inventory item is selected
+	 */
 	void noInventoryAnim();
+
+	/**
+	* Handles queuing a new frame of an inventory animation for drawing
+	*/
+	void inventoryAnim();
 
 	void categoryChanged();
 
