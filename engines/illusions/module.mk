@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	actorresource.o \
 	backgroundresource.o \
 	camera.o \
+	cursor.o \
 	detection.o \
 	dictionary.o \
 	fixedpoint.o \

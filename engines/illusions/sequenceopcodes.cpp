@@ -180,7 +180,6 @@ void SequenceOpcodes::opNextLoop(Control *control, OpCall &opCall) {
 void SequenceOpcodes::opSwitchActorIndex(Control *control, OpCall &opCall) {
 	ARG_INT16(actorIndex);
 	ARG_INT16(jumpOffs);
-	debug("control->_objectId = %08X", control->_objectId);
 	if (control->_actor->_actorIndex != actorIndex)
 		opCall._deltaOfs += jumpOffs;
 }

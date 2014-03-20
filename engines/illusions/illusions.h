@@ -57,6 +57,7 @@ class BackgroundResource;
 class Camera;
 class Control;
 class Controls;
+class Cursor;
 class Dictionary;
 class Input;
 class Screen;
@@ -91,6 +92,7 @@ public:
 	BackgroundItems *_backgroundItems;
 	Camera *_camera;
 	Controls *_controls;
+	Cursor *_cursor;
 	
 	int _resGetCtr;
 	uint32 _resGetTime;
@@ -101,10 +103,6 @@ public:
 	
 	void notifyThreadId(uint32 &threadId);
 	
-	void setCursorControl(Control *control);
-	void placeCursor(Control *control, uint32 sequenceId);
-	bool showCursor();
-	bool hideCursor();
 	uint32 getElapsedUpdateTime();
 	int updateActors();
 	int updateSequences();
