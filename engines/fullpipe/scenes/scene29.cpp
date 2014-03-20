@@ -80,6 +80,20 @@ void sceneHandler29_sub07() {
 	warning("STUB: sceneHandler29_sub07()");
 }
 
+void sceneHandler29_assHitGreen() {
+	if (g_vars->scene29_ass->_statics->_staticsId == ST_ASS_NORM) {
+		g_vars->scene29_ass->changeStatics2(ST_ASS_NORM);
+		g_vars->scene29_ass->startAnim(MV_ASS_HITGREEN, 0, -1);
+	}
+}
+
+void sceneHandler29_assHitRed() {
+	if (g_vars->scene29_ass->_statics->_staticsId == ST_ASS_NORM) {
+		g_vars->scene29_ass->changeStatics2(ST_ASS_NORM);
+		g_vars->scene29_ass->startAnim(MV_ASS_HITRED, 0, -1);
+	}
+}
+
 void sceneHandler29_shoot() {
 	warning("STUB: sceneHandler29_shoot()");
 }
