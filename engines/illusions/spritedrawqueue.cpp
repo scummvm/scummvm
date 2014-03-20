@@ -142,6 +142,9 @@ bool SpriteDrawQueue::calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcR
 	srcRect.top = 0;
 	srcRect.right = item->_dimensions._width;
 	srcRect.bottom = item->_dimensions._height;
+	
+	debug("item->_drawPosition.x: %d; item->_drawPosition.y: %d", item->_drawPosition.x, item->_drawPosition.y);
+	debug("item->_controlPosition.x: %d; item->_controlPosition.y: %d", item->_controlPosition.x, item->_controlPosition.y);
 
 	dstRect.left = item->_drawPosition.x - item->_scale * item->_controlPosition.x / 100;
 	dstRect.top = item->_drawPosition.y - item->_scale * item->_controlPosition.y / 100;

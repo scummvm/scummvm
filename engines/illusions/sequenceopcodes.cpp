@@ -62,7 +62,8 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(9, opGotoSequence);
 	OPCODE(11, opBeginLoop);
 	OPCODE(12, opNextLoop);
-	OPCODE(15, opJumpIfNotFacing);
+	OPCODE(14, opSwitchActorIndex);
+	OPCODE(15, opSwitchFacing);
 	OPCODE(28, opNotifyThreadId1);
 	OPCODE(29, opSetPathCtrY);
 	OPCODE(33, opSetPathWalkPoints);
@@ -176,7 +177,15 @@ void SequenceOpcodes::opNextLoop(Control *control, OpCall &opCall) {
 	}
 }
 
-void SequenceOpcodes::opJumpIfNotFacing(Control *control, OpCall &opCall) {
+void SequenceOpcodes::opSwitchActorIndex(Control *control, OpCall &opCall) {
+	ARG_INT16(actorIndex);
+	ARG_INT16(jumpOffs);
+	debug("control->_objectId = %08X", control->_objectId);
+	if (control->_actor->_actorIndex != actorIndex)
+		opCall._deltaOfs += jumpOffs;
+}
+
+void SequenceOpcodes::opSwitchFacing(Control *control, OpCall &opCall) {
 	ARG_INT16(facing);
 	ARG_INT16(jumpOffs);
 	if (!(control->_actor->_facing & facing))

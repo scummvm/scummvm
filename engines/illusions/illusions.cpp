@@ -21,20 +21,23 @@
  */
 
 #include "illusions/illusions.h"
-#include "illusions/resourcesystem.h"
-#include "illusions/backgroundresource.h"
-#include "illusions/camera.h"
-#include "illusions/graphics.h"
-#include "illusions/input.h"
-#include "illusions/updatefunctions.h"
 #include "illusions/actor.h"
 #include "illusions/actorresource.h"
-#include "illusions/thread.h"
+#include "illusions/backgroundresource.h"
+#include "illusions/camera.h"
+#include "illusions/dictionary.h"
+#include "illusions/fontresource.h"
+#include "illusions/graphics.h"
+#include "illusions/input.h"
+#include "illusions/resourcesystem.h"
 #include "illusions/screen.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
+#include "illusions/soundresource.h"
+#include "illusions/talkresource.h"
+#include "illusions/thread.h"
 #include "illusions/time.h"
-#include "illusions/dictionary.h"
+#include "illusions/updatefunctions.h"
 
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
@@ -85,9 +88,12 @@ Common::Error IllusionsEngine::run() {
 
 	_resSys = new ResourceSystem();
 	_resSys->addResourceLoader(0x00060000, new ActorResourceLoader(this));
+	_resSys->addResourceLoader(0x00080000, new SoundGroupResourceLoader(this));
 	_resSys->addResourceLoader(0x000D0000, new ScriptResourceLoader(this));
+	_resSys->addResourceLoader(0x000F0000, new TalkResourceLoader(this));
 	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
+	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
 
 	_screen = new Screen(this);
 	_input = new Input();	
@@ -179,6 +185,8 @@ Common::Error IllusionsEngine::run() {
 	delete _screen;
 	delete _resSys;
 	delete _dict;
+	
+	debug("Ok");
 	
 	return Common::kNoError;
 }
@@ -369,7 +377,7 @@ int IllusionsEngine::convertPanXCoord(int16 x) {
 
 Common::Point IllusionsEngine::getNamedPointPosition(uint32 namedPointId) {
 	// TODO
-	return Common::Point(320, 240);
+	return Common::Point(0, 0);
 }
 
 void IllusionsEngine::playVideo(uint32 videoId, uint32 objectId, uint32 priority, uint32 threadId) {

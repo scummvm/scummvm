@@ -40,6 +40,7 @@ ScriptThread::ScriptThread(IllusionsEngine *vm, uint32 threadId, uint32 callingT
 int ScriptThread::onUpdate() {
 	OpCall opCall;
 	opCall._result = kTSRun;
+	opCall._callerThreadId = _threadId;
 	while (!_terminated && opCall._result == kTSRun) {
 		opCall._op = _scriptCodeIp[0];
 		opCall._opSize = _scriptCodeIp[1] >> 1;

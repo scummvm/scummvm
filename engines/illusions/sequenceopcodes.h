@@ -53,7 +53,8 @@ protected:
 	void opGotoSequence(Control *control, OpCall &opCall);
 	void opBeginLoop(Control *control, OpCall &opCall);
 	void opNextLoop(Control *control, OpCall &opCall);
-	void opJumpIfNotFacing(Control *control, OpCall &opCall);
+	void opSwitchActorIndex(Control *control, OpCall &opCall);
+	void opSwitchFacing(Control *control, OpCall &opCall);
 	void opNotifyThreadId1(Control *control, OpCall &opCall);
 	void opSetPathCtrY(Control *control, OpCall &opCall);
 	void opSetPathWalkPoints(Control *control, OpCall &opCall);

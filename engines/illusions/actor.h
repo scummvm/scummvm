@@ -106,6 +106,7 @@ public:
 	uint _facing;
 	
 	uint32 _fontId;
+	int16 _actorIndex;
 	
 	DefaultSequences _defaultSequences;
 
