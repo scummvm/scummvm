@@ -21,6 +21,7 @@
  */
 
 #include "illusions/illusions.h"
+#include "illusions/abortablethread.h"
 #include "illusions/actor.h"
 #include "illusions/scriptman.h"
 #include "illusions/scriptthread.h"
@@ -171,6 +172,15 @@ uint32 ScriptMan::startTimerThread(uint32 duration, uint32 threadId) {
 	return newTimerThread(duration, threadId, false);
 }
 
+uint32 ScriptMan::startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2, uint32 callingThreadId) {
+	debug("Starting abortable thread");
+	uint32 tempThreadId = newTempThreadId();
+	uint32 scriptThreadId = startTempScriptThread(scriptCodeIp1, tempThreadId, 0, 0, 0);
+	AbortableThread *abortableThread = new AbortableThread(_vm, tempThreadId, callingThreadId, 0, scriptThreadId, scriptCodeIp2);
+	_threads->startThread(abortableThread);
+	return tempThreadId;
+}
+
 void ScriptMan::setCurrFontId(uint32 fontId) {
 	_fontId = fontId;
 }
@@ -198,7 +208,7 @@ void ScriptMan::exitScene(uint32 threadId) {
 	_threads->terminateThreadsByTag(sceneId, threadId);
 	_vm->_controls->destroyControlsByTag(sceneId);
 	// TODO causeFunc_removeBySceneId(sceneId);
-	// TODO _vm->_resSys->unloadResourceByTag(sceneId);
+	_vm->_resSys->unloadResourcesByTag(sceneId);
 	_activeScenes.pop();
 }
 

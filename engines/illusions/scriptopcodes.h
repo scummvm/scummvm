@@ -54,6 +54,7 @@ public:
 protected:
 	IllusionsEngine *_vm;
 	ScriptOpcode *_opcodes[256];
+	Common::String _opcodeNames[256];
 	void initOpcodes();
 	void freeOpcodes();
 
@@ -66,6 +67,7 @@ protected:
 	void opStartTempScriptThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetThreadSceneId(ScriptThread *scriptThread, OpCall &opCall);
+	void opEndTalkThreads(ScriptThread *scriptThread, OpCall &opCall);
 	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeScene(ScriptThread *scriptThread, OpCall &opCall);
@@ -74,8 +76,10 @@ protected:
 	void opSetProperty(ScriptThread *scriptThread, OpCall &opCall);
 	void opPlaceActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartSequenceActor(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartTalkThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opAppearActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opDisappearActor(ScriptThread *scriptThread, OpCall &opCall);
+	void opActivateObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opDeactivateObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetSelectSfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetMoveSfx(ScriptThread *scriptThread, OpCall &opCall);
@@ -83,6 +87,8 @@ protected:
 	void opSetAdjustUpSfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartMusic(ScriptThread *scriptThread, OpCall &opCall);
+	void opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall);
+	void opIfLte(ScriptThread *scriptThread, OpCall &opCall);
 	void opAddMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
 	void opDisplayMenu(ScriptThread *scriptThread, OpCall &opCall);
 	void opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
@@ -90,13 +96,17 @@ protected:
 	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opJumpIf(ScriptThread *scriptThread, OpCall &opCall);
+	void opBoolNot(ScriptThread *scriptThread, OpCall &opCall);
 	void opGetProperty(ScriptThread *scriptThread, OpCall &opCall);
 	void opCompareBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opDebug126(ScriptThread *scriptThread, OpCall &opCall);
 	void opPlayVideo(ScriptThread *scriptThread, OpCall &opCall);
+	void opStackPop(ScriptThread *scriptThread, OpCall &opCall);
+	void opStackDup(ScriptThread *scriptThread, OpCall &opCall);
 	void opLoadSpecialCodeModule(ScriptThread *scriptThread, OpCall &opCall);
 	void opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetActorUsePan(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartAbortableThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opCall);
 	void opStackPush0(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);

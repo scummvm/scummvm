@@ -48,6 +48,7 @@ public:
 public:
 	IllusionsEngine *_vm;
 	bool _displayOn;
+	uint16 _colorKey1;
 	uint16 _colorKey2;
 	SpriteDecompressQueue *_decompressQueue;
 	SpriteDrawQueue *_drawQueue;

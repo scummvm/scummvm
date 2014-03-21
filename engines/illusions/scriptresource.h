@@ -45,9 +45,12 @@ class Properties {
 public:
 	Properties();
 	void init(uint count, byte *properties);
+	bool get(uint32 propertyId);
+	void set(uint32 propertyId, bool value);
 public:
 	uint _count;
 	byte *_properties;
+	void getProperyPos(uint32 propertyId, uint &index, byte &mask);
 };
 
 class BlockCounters {

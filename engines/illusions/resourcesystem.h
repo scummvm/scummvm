@@ -45,9 +45,10 @@ struct Resource {
 	byte *_data;
 	uint32 _dataSize;
 	BaseResourceLoader *_resourceLoader;
+	void *_refId;
 	Common::String _filename; // TODO Check if this is needed
 	Resource() : _loaded(false), _resId(0), _tag(0), _threadId(0), _data(0), _dataSize(0),
-	_resourceLoader(0) {}
+	_resourceLoader(0), _refId(0) {}
 	~Resource() {
 		unloadData();
 	}

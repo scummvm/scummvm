@@ -42,7 +42,7 @@ SequenceOpcodes::~SequenceOpcodes() {
 void SequenceOpcodes::execOpcode(Control *control, OpCall &opCall) {
 	if (!_opcodes[opCall._op])
 		error("SequenceOpcodes::execOpcode() Unimplemented opcode %d", opCall._op);
-	debug("execOpcode(%d)", opCall._op);
+	debug(1, "execOpcode(%d)", opCall._op);
 	(*_opcodes[opCall._op])(control, opCall);
 }
 
@@ -86,13 +86,13 @@ void SequenceOpcodes::freeOpcodes() {
 
 // Convenience macros
 #define	ARG_SKIP(x) opCall.skip(x); 
-#define ARG_INT16(name) int16 name = opCall.readSint16(); debug("ARG_INT16(" #name " = %d)", name);
-#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug("ARG_UINT32(" #name " = %08X)", name);
+#define ARG_INT16(name) int16 name = opCall.readSint16(); debug(1, "ARG_INT16(" #name " = %d)", name);
+#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(1, "ARG_UINT32(" #name " = %08X)", name);
 
 void SequenceOpcodes::opSetFrameIndex(Control *control, OpCall &opCall) {
 	ARG_INT16(frameIndex);
 	if (control->_actor->_flags & 0x80) {
-		debug("opSetFrameIndex TODO");
+		debug(1, "opSetFrameIndex TODO");
 		/* TODO
 		v9 = actor->field30;
 		if (*(_WORD *)v9) {

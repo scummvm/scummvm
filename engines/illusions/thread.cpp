@@ -91,7 +91,6 @@ int Thread::update() {
 	int status = kTSYield;
 	if (!_terminated && _pauseCtr <= 0) {
 		status = onUpdate();
-		debug("Thread status: %d", status);
 		if (status == kTSTerminate)
 			terminate();
 		else if (status == kTSSuspend)
@@ -227,6 +226,14 @@ void ThreadList::resumeThreads(uint32 threadId) {
 		Thread *thread = *it;
 		if (thread->_threadId != threadId)
 			thread->resume();
+	}
+}
+
+void ThreadList::endTalkThreads() {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_type == kTTTalkThread)
+			thread->terminate();
 	}
 }
 

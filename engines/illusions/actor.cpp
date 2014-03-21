@@ -273,20 +273,24 @@ bool Control::isActorVisible() {
 
 void Control::activateObject() {
 	_flags |= 1;
-	for (uint i = 0; i < kSubObjectsCount; ++i)
-		if (_actor->_subobjects[i]) {
-			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
-			subControl->activateObject();
-		}
+	if (_actor) {
+		for (uint i = 0; i < kSubObjectsCount; ++i)
+			if (_actor->_subobjects[i]) {
+				Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
+				subControl->activateObject();
+			}
+	}
 }
 
 void Control::deactivateObject() {
 	_flags |= ~1;
-	for (uint i = 0; i < kSubObjectsCount; ++i)
-		if (_actor->_subobjects[i]) {
-			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
-			subControl->deactivateObject();
-		}
+	if (_actor) {
+		for (uint i = 0; i < kSubObjectsCount; ++i)
+			if (_actor->_subobjects[i]) {
+				Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
+				subControl->deactivateObject();
+			}
+	}
 }
 
 void Control::readPointsConfig(byte *pointsConfig) {
@@ -543,7 +547,7 @@ void Control::sequenceActor() {
 	while (_actor->_seqCodeValue3 <= 0 && !sequenceFinished) {
 		bool breakInner = false;
 		while (!breakInner) {
-			debug("SEQ op: %08X", _actor->_seqCodeIp[0]);
+			debug(1, "SEQ op: %08X", _actor->_seqCodeIp[0]);
 			opCall._op = _actor->_seqCodeIp[0] & 0x7F;
 			opCall._opSize = _actor->_seqCodeIp[1];
 			opCall._code = _actor->_seqCodeIp + 2;
@@ -563,7 +567,7 @@ void Control::sequenceActor() {
 	}
 
 	if (_actor->_newFrameIndex != 0) {
-		debug("New frame %d", _actor->_newFrameIndex);
+		debug(1, "New frame %d", _actor->_newFrameIndex);
 		setActorFrameIndex(_actor->_newFrameIndex);
 		if (!(_actor->_flags & 1) && (_actor->_flags & 0x1000) && (_objectId != 0x40004)) {
 			appearActor();
@@ -572,7 +576,7 @@ void Control::sequenceActor() {
 	}
 	
 	if (sequenceFinished) {
-		debug("Sequence has finished");
+		debug(1, "Sequence has finished");
 		_actor->_seqCodeIp = 0;
 	}
 	
@@ -594,7 +598,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, int value2,
 	_actor->_path40 = 0;
 	
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
-	debug("Control::startSequenceActorIntern() sequence = %p", (void*)sequence);
+	debug(1, "Control::startSequenceActorIntern() sequence = %p", (void*)sequence);
 	
 	_actor->_seqCodeIp = sequence->_sequenceCode;
 	_actor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
@@ -632,14 +636,25 @@ Controls::~Controls() {
 	delete _sequenceOpcodes;
 }
 
+void Controls::placeBackgroundObject(BackgroundObject *backgroundObject) {
+	Control *control = newControl();
+	control->_objectId = backgroundObject->_objectId;
+	control->_flags = backgroundObject->_flags;
+	control->_priority = backgroundObject->_priority;
+	control->readPointsConfig(backgroundObject->_pointsConfig);
+	control->activateObject();
+	_controls.push_back(control);
+	_vm->_dict->setObjectControl(control->_objectId, control);
+}
+
 void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequenceId, uint32 objectId, uint32 notifyThreadId) {
 	Control *control = newControl();
 	Actor *actor = newActor();
 
 	ActorType *actorType = _vm->_dict->findActorType(actorTypeId);
+	control->_objectId = objectId;
 	control->_flags = actorType->_flags;
 	control->_priority = actorType->_priority;
-	control->_objectId = objectId;
 	control->readPointsConfig(actorType->_pointsConfig);
 	control->_actorTypeId = actorTypeId;
 	control->_actor = actor;

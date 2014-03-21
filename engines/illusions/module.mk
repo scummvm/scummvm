@@ -1,6 +1,7 @@
 MODULE := engines/illusions
 
 MODULE_OBJS := \
+    abortablethread.o \
 	actor.o \
 	actorresource.o \
 	backgroundresource.o \
