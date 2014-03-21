@@ -64,6 +64,7 @@ class Screen;
 class ScriptResource;
 class ScriptMan;
 class Sequence;
+class TalkItems;
 class FramesList;
 
 class IllusionsEngine : public Engine {
@@ -93,6 +94,7 @@ public:
 	Camera *_camera;
 	Controls *_controls;
 	Cursor *_cursor;
+	TalkItems *_talkItems;
 	
 	int _resGetCtr;
 	uint32 _resGetTime;

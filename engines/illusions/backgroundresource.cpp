@@ -62,8 +62,9 @@ void BackgroundResourceLoader::unload(Resource *resource) {
 	// TODO Move to BackgroundItems
 	BackgroundItem *backgroundItem = _vm->_backgroundItems->findBackgroundByResource((BackgroundResource*)resource->_refId);
 	backgroundItem->freeSurface();
-	_vm->_backgroundItems->freeBackgroundItem(backgroundItem);
 	// TODO Remove IDs from item48s
+	delete backgroundItem->_bgRes;
+	_vm->_backgroundItems->freeBackgroundItem(backgroundItem);
 	// TODO _vm->setDefPointDimensions1();
 }
 

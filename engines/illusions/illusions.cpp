@@ -104,6 +104,7 @@ Common::Error IllusionsEngine::run() {
 	_camera = new Camera(this);
 	_controls = new Controls(this);
 	_cursor = new Cursor(this);
+	_talkItems = new TalkItems(this);
 	
 	// TODO Move to own class
 	_resGetCtr = 0;
@@ -181,6 +182,7 @@ Common::Error IllusionsEngine::run() {
 	}
 #endif
 
+	delete _talkItems;
 	delete _cursor;
 	delete _controls;
 	delete _camera;

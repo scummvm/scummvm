@@ -24,6 +24,7 @@
 #include "illusions/dictionary.h"
 #include "illusions/actorresource.h"
 #include "illusions/backgroundresource.h"
+#include "illusions/talkresource.h"
 
 namespace Illusions {
 
@@ -49,6 +50,18 @@ void Dictionary::removeSequence(uint32 id) {
 
 Sequence *Dictionary::findSequence(uint32 id) {
 	return _sequences.find(id);
+}
+
+void Dictionary::addTalkEntry(uint32 id, TalkEntry *talkEntry) {
+	_talkEntries.add(id, talkEntry);
+}
+
+void Dictionary::removeTalkEntry(uint32 id) {
+	_talkEntries.remove(id);
+}
+
+TalkEntry *Dictionary::findTalkEntry(uint32 id) {
+	return _talkEntries.find(id);
 }
 
 void Dictionary::setObjectControl(uint32 objectId, Control *control) {
