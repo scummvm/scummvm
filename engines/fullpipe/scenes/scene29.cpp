@@ -397,10 +397,8 @@ int sceneHandler29(ExCommand *cmd) {
 
 		if (g_vars->scene29_var09) {
 			sceneHandler29_manFromL();
-
-		} else if (g_vars->scene29_var10 && !g_aniMan->_movement) {
+		else if (g_vars->scene29_var10 && !g_aniMan->_movement)
 			sceneHandler29_sub05();
-		}
 
 		if (g_vars->scene29_var11)
 			sceneHandler29_shootersEscape();
