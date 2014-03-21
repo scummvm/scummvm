@@ -156,6 +156,8 @@ public:
 	void startWalking(const Common::Point &pos, int direction);
 
 	void nextFrame();
+
+	void step();
 };
 
 } // End of namespace MADS

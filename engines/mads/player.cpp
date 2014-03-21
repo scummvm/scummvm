@@ -747,4 +747,8 @@ void Player::startMovement() {
 	_v8452E = -_v84530;
 }
 
+void Player::step() {
+	warning("TODO: Player::step");
+}
+
 } // End of namespace MADS

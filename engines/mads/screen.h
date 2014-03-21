@@ -151,6 +151,7 @@ public:
 	int _objectIndex;
 	bool _released;
 	int _uiCount;
+	int _hotspotsIndex;
 
 	/*
 	* Constructor

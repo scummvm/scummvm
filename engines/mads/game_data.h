@@ -59,6 +59,7 @@ public:
 	virtual void preLoadSection() = 0;
 	virtual void sectionPtr2() = 0;
 	virtual void postLoadSection() = 0;
+	virtual void step() {}
 };
 
 } // End of namespace MADS

@@ -337,7 +337,9 @@ void Scene::doFrame() {
 			CursorType cursorId = CURSOR_ARROW;
 			if (_action._v83338 == 1 && !_vm->_game->_screenObjects._v7FECA &&
 					_vm->_game->_screenObjects._category == CAT_HOTSPOT) {
-				int idx = _vm->_game->_screenObjects._selectedObject - _userInterface._screenObjectsCount;
+				int idx = _vm->_game->_screenObjects._selectedObject - _vm->_game->_screenObjects._hotspotsIndex;
+				assert(idx >= 0);
+
 				if (idx >= (int)_hotspots.size()) {
 					idx -= _hotspots.size();
 					_vm->_events->_newCursorId = _dynamicHotspots[idx]._cursor;
@@ -482,7 +484,15 @@ void Scene::checkStartWalk() {
 }
 
 void Scene::doSceneStep() {
-	warning("TODO: Scene::doSceneStep");
+	_vm->_game->_abortTimersMode2 = ABORTMODE_1;
+	_sceneLogic->step();
+	_vm->_game->_sectionHandler->step();
+
+	_vm->_game->_player.step();
+	_vm->_game->_player._unk3 = 0;
+
+	if (_vm->_game->_abortTimersMode == ABORTMODE_1)
+		_vm->_game->_abortTimers = 0;
 }
 
 void Scene::checkKeyboard() {

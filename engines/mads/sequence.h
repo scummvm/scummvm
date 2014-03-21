@@ -36,13 +36,13 @@ enum SequenceSubEntryMode { SM_0 = 0, SM_1 = 1, SM_FRAME_INDEX = 2 };
 
 enum SpriteAnimType { ANIMTYPE_NONE = 0, ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2 };
 
-#define TIMER_ENTRY_SUBSET_MAX 5
+#define SEQUENCE_ENTRY_SUBSET_MAX 5
 
 struct SequenceSubEntries {
 	int _count;
-	SequenceSubEntryMode _mode[TIMER_ENTRY_SUBSET_MAX];
-	int _frameIndex[TIMER_ENTRY_SUBSET_MAX];
-	int8 _abortVal[TIMER_ENTRY_SUBSET_MAX];
+	SequenceSubEntryMode _mode[SEQUENCE_ENTRY_SUBSET_MAX];
+	int _frameIndex[SEQUENCE_ENTRY_SUBSET_MAX];
+	int8 _abortVal[SEQUENCE_ENTRY_SUBSET_MAX];
 };
 
 struct SequenceEntry {

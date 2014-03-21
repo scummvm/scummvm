@@ -53,9 +53,9 @@ SequenceEntry::SequenceEntry() {
 	_timeout = 0;
 
 	_entries._count = 0;
-	Common::fill(&_entries._mode[0], &_entries._mode[TIMER_ENTRY_SUBSET_MAX], SM_0);
-	Common::fill(&_entries._frameIndex[0], &_entries._frameIndex[TIMER_ENTRY_SUBSET_MAX], 0);
-	Common::fill(&_entries._abortVal[0], &_entries._abortVal[TIMER_ENTRY_SUBSET_MAX], 0);
+	Common::fill(&_entries._mode[0], &_entries._mode[SEQUENCE_ENTRY_SUBSET_MAX], SM_0);
+	Common::fill(&_entries._frameIndex[0], &_entries._frameIndex[SEQUENCE_ENTRY_SUBSET_MAX], 0);
+	Common::fill(&_entries._abortVal[0], &_entries._abortVal[SEQUENCE_ENTRY_SUBSET_MAX], 0);
 }
 
 /*------------------------------------------------------------------------*/
@@ -81,7 +81,7 @@ void SequenceList::clear() {
 }
 
 bool SequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal) {
-	if (_entries[index]._entries._count >= TIMER_ENTRY_SUBSET_MAX)
+	if (_entries[index]._entries._count >= SEQUENCE_ENTRY_SUBSET_MAX)
 		return true;
 
 	int subIndex = _entries[index]._entries._count++;
@@ -305,7 +305,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 	}
 
 	if (seqEntry._entries._count > 0) {
-		for (int i = 0; i <= seqEntry._entries._count; ++i) {
+		for (int i = 0; i < seqEntry._entries._count; ++i) {
 			switch (seqEntry._entries._mode[i]) {
 			case SM_0:
 			case SM_1:
@@ -330,6 +330,9 @@ bool SequenceList::loadSprites(int seqIndex) {
 	if (idx >= 0) {
 		_vm->_game->_abortTimers = seqEntry._entries._abortVal[idx];
 		_vm->_game->_abortTimersMode = seqEntry._abortMode;
+
+		if (seqEntry._abortMode == ABORTMODE_1)
+			scene._action._activeAction = seqEntry._actionNouns;
 	}
 
 	return result;

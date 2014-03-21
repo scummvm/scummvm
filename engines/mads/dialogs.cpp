@@ -338,6 +338,7 @@ Dialogs *Dialogs::init(MADSEngine *vm) {
 }
 
 Dialogs::Dialogs(MADSEngine *vm): _vm(vm) {
+	_pendingDialog = DIALOG_NONE;
 }
 
 } // End of namespace MADS

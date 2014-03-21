@@ -189,7 +189,6 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_invSpritesIndex = -1;
 	_invFrameNumber = 1;
 	_category = CAT_NONE;
-	_screenObjectsCount = 0;
 	_inventoryTopIndex = 0;
 	_objectY = 0;
 	_selectedInvIndex = -1;
@@ -445,6 +444,7 @@ void UserInterface::loadElements() {
 	}
 
 	if (!_vm->_game->_screenObjects._v832EC || _vm->_game->_screenObjects._v832EC == 2) {
+		_vm->_game->_screenObjects._hotspotsIndex = _vm->_game->_screenObjects.size();
 		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
 			Hotspot &hs = scene._hotspots[hotspotIdx];
 			_vm->_game->_screenObjects.add(hs._bounds, LAYER_GUI, CAT_HOTSPOT, hotspotIdx);

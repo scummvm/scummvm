@@ -131,7 +131,6 @@ public:
 	UISlots _uiSlots;
 	DirtyAreas _dirtyAreas;
 	ScrCategory _category;
-	int _screenObjectsCount;
 	Common::Rect _drawBounds;
 	Common::Rect *_rectP;
 	int _inventoryTopIndex;

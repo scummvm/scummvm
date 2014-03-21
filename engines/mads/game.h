@@ -65,7 +65,6 @@ protected:
 	Difficulty _difficultyLevel;
 	int _saveSlot;
 	int _statusFlag;
-	SectionHandler *_sectionHandler;
 	Common::StringArray _quotes;
 	int _v5;
 	int _v6;
@@ -118,6 +117,7 @@ public:
 	int _priorSectionNumber;
 	int _currentSectionNumber;
 	InventoryObjects _objects;
+	SectionHandler *_sectionHandler;
 	VisitedScenes _visitedScenes;
 	Scene _scene;
 	int _v1;

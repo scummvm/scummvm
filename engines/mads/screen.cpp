@@ -261,6 +261,8 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_objectIndex = 0;
 	_released = false;
 	_uiCount = 0;
+	_hotspotsIndex = 0;
+	_selectedObject = -1;
 }
 
 void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId) {
@@ -282,10 +284,10 @@ void ScreenObjects::check(bool scanFlag) {
 		_v7FECA = false;
 
 	if ((_vm->_events->_vD6 || _v8332A || _vm->_game->_scene._userInterface._scrollerY || _v8333C) && scanFlag) {
-		scene._userInterface._selectedInvIndex = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
-		if (scene._userInterface._selectedInvIndex > 0) {
-			_category = (ScrCategory)((*this)[scene._userInterface._selectedInvIndex - 1]._category & 7);
-			_objectIndex = (*this)[scene._userInterface._selectedInvIndex - 1]._descId;
+		_selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
+		if (_selectedObject > 0) {
+			_category = (ScrCategory)((*this)[_selectedObject - 1]._category & 7);
+			_objectIndex = (*this)[_selectedObject - 1]._descId;
 		}
 
 		// Handling for easy mouse

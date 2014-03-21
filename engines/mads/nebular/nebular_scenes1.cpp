@@ -147,15 +147,13 @@ void Scene103::enter() {
 	_scene->_sequences.setDepth(_globals._spriteIndexes[16], 0);
 	_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(
 		_globals._spriteIndexes[2], false, 6, 0, 0, 25);	
-	_globals._spriteIndexes[18] = _scene->_sequences.addSubEntry(
-		_globals._spriteIndexes[17], SM_FRAME_INDEX, 2, 72);
-	_globals._spriteIndexes[19] = _scene->_sequences.addSubEntry(
-		_globals._spriteIndexes[17], SM_FRAME_INDEX, 2, 72);
-	_scene->_sequences.addSubEntry(_globals._spriteIndexes[17], 
-		SM_FRAME_INDEX, 2, 73);
-
+	_globals._spriteIndexes[18] = _scene->_sequences.addSpriteCycle(
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[17], 
+		SM_FRAME_INDEX, 2, 72), false, 8);
 	_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(
-		_globals._spriteIndexes[8], false, 8);
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[18],
+		SM_FRAME_INDEX, 2, 73), false, 8);
+
 	_globals._spriteIndexes[22] = _scene->_sequences.addSpriteCycle(
 		_globals._spriteIndexes[7], false, 6);
 	_globals._spriteIndexes[19] = _scene->_sequences.addSpriteCycle(
