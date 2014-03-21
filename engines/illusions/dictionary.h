@@ -28,6 +28,9 @@
 namespace Illusions {
 
 class ActorType;
+class Control;
+class Sequence;
+class TalkEntry;
 
 template<class T>
 class DictionaryHashMap {
@@ -63,12 +66,17 @@ public:
 	void removeSequence(uint32 id);
 	Sequence *findSequence(uint32 id);
 
+    void addTalkEntry(uint32 id, TalkEntry *talkEntry);
+	void removeTalkEntry(uint32 id);
+	TalkEntry *findTalkEntry(uint32 id);
+
     void setObjectControl(uint32 objectId, Control *control);
     Control *getObjectControl(uint32 objectId);
 
 protected:
 	DictionaryHashMap<ActorType> _actorTypes;
 	DictionaryHashMap<Sequence> _sequences;
+	DictionaryHashMap<TalkEntry> _talkEntries;
 	DictionaryHashMap<Control> _controls;
 };
 
