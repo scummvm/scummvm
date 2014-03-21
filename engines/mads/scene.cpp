@@ -288,9 +288,11 @@ void Scene::doFrame() {
 	}
 
 	if (!_vm->_game->_abortTimers && !player._unk3) {
+		// Refresh the dynamic hotspots if they've changed
 		if (_dynamicHotspots._changed)
 			_dynamicHotspots.refresh();
 
+		// Check all on-screen visual objects
 		_vm->_game->_screenObjects.check(player._stepEnabled && !_action._startWalkFlag &&
 				!_vm->_game->_abortTimers2);
 	}

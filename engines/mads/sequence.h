@@ -62,9 +62,15 @@ struct SequenceEntry {
 	int _dynamicHotspotIndex;
 
 	bool _nonFixed;
-	int _field13;
+	uint32 _flags;
 
 	Common::Point _msgPos;
+	int _field18;
+	int _field1A;
+	int _field1C;
+	int _field1E;
+	int _field20;
+	int _field22;
 	int _triggerCountdown;
 	bool _doneFlag;
 	SequenceSubEntries _entries;

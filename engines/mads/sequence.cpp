@@ -28,31 +28,37 @@
 
 namespace MADS {
 
-	SequenceEntry::SequenceEntry() {
-		_spritesIndex = 0;
-		_flipped = 0;
-		_frameIndex = 0;
-		_frameStart = 0;
-		_numSprites = 0;
-		_animType = ANIMTYPE_NONE;
-		_frameInc = 0;
-		_depth = 0;
-		_scale = 0;
-		_dynamicHotspotIndex = -1;
-		_triggerCountdown = 0;
-		_doneFlag = 0;
-		_abortMode = ABORTMODE_0;
-		_numTicks = 0;
-		_extraTicks = 0;
-		_timeout = 0;
+SequenceEntry::SequenceEntry() {
+	_spritesIndex = 0;
+	_flipped = 0;
+	_frameIndex = 0;
+	_frameStart = 0;
+	_numSprites = 0;
+	_animType = ANIMTYPE_NONE;
+	_frameInc = 0;
+	_depth = 0;
+	_scale = 0;
+	_dynamicHotspotIndex = -1;
+	_field18 = 0;
+	_field1A = 0;
+	_field1C = 0;
+	_field1E = 0;
+	_field20 = 0;
+	_field22 = 0;
+	_triggerCountdown = 0;
+	_doneFlag = 0;
+	_abortMode = ABORTMODE_0;
+	_numTicks = 0;
+	_extraTicks = 0;
+	_timeout = 0;
 
-		_entries._count = 0;
-		Common::fill(&_entries._mode[0], &_entries._mode[TIMER_ENTRY_SUBSET_MAX], SM_0);
-		Common::fill(&_entries._frameIndex[0], &_entries._frameIndex[TIMER_ENTRY_SUBSET_MAX], 0);
-		Common::fill(&_entries._abortVal[0], &_entries._abortVal[TIMER_ENTRY_SUBSET_MAX], 0);
-	}
+	_entries._count = 0;
+	Common::fill(&_entries._mode[0], &_entries._mode[TIMER_ENTRY_SUBSET_MAX], SM_0);
+	Common::fill(&_entries._frameIndex[0], &_entries._frameIndex[TIMER_ENTRY_SUBSET_MAX], 0);
+	Common::fill(&_entries._abortVal[0], &_entries._abortVal[TIMER_ENTRY_SUBSET_MAX], 0);
+}
 
-	/*------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
 
 #define SEQUENCE_LIST_SIZE 30
 
@@ -126,7 +132,7 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 
 	_entries[seqIndex]._triggerCountdown = triggerCountdown;
 	_entries[seqIndex]._doneFlag = false;
-	_entries[seqIndex]._field13 = 0;
+	_entries[seqIndex]._flags = 0;
 	_entries[seqIndex]._dynamicHotspotIndex = -1;
 	_entries[seqIndex]._entries._count = 0;
 	_entries[seqIndex]._abortMode = _vm->_game->_abortTimersMode2;
@@ -210,30 +216,49 @@ bool SequenceList::loadSprites(int seqIndex) {
 	if (seqEntry._spritesIndex == -1) {
 		// Doesn't have an associated sprite anymore, so mark as done
 		seqEntry._doneFlag = true;
-	}
-	else if ((slotIndex = scene._spriteSlots.add()) >= 0) {
+	} else if ((slotIndex = scene._spriteSlots.add()) >= 0) {
 		SpriteSlot &spriteSlot = scene._spriteSlots[slotIndex];
 		setSpriteSlot(seqIndex, spriteSlot);
 
-		int x2 = 0, y2 = 0;
-
-		if ((seqEntry._field13 != 0) || (seqEntry._dynamicHotspotIndex >= 0)) {
+		if ((seqEntry._flags != 0) || (seqEntry._dynamicHotspotIndex >= 0)) {
 			SpriteAsset &spriteSet = *scene._sprites[seqEntry._spritesIndex];
 			MSprite *frame = spriteSet.getFrame(seqEntry._frameIndex - 1);
 			int width = frame->getWidth() * seqEntry._scale / 200;
 			int height = frame->getHeight() * seqEntry._scale / 100;
+			Common::Point pt = spriteSlot._position;
 
-			warning("frame size %d x %d", width, height);
+			// ToDO: Find out the proper meanings of the following fields
+			if (seqEntry._flags & 1) {
+				seqEntry._field20 += seqEntry._field18;
+				if (seqEntry._field20 >= 100) {
+					int v = seqEntry._field20 / 100;
+					seqEntry._msgPos.x += v * seqEntry._field1C;
+					seqEntry._field20 -= v * 100;
+				}
 
-			// TODO: Missing stuff here, and I'm not certain about the dynamic hotspot stuff below
+				seqEntry._field22 += seqEntry._field1A;
+				if (seqEntry._field22 >= 100) {
+					int v = seqEntry._field22 / 100;
+					seqEntry._msgPos.y += v * seqEntry._field1E;
+					seqEntry._field22 -= v * 100;
+				}
+			}
+
+			if (seqEntry._flags & 2) {
+				if ((pt.x + width) < 0 || (pt.x + width) >= MADS_SCREEN_WIDTH ||
+						pt.y < 0 || (pt.y + height) >= MADS_SCENE_HEIGHT) {
+					result = true;
+					seqEntry._doneFlag = true;
+				}
+			}
 
 			if (seqEntry._dynamicHotspotIndex >= 0) {
 				DynamicHotspot &dynHotspot = scene._dynamicHotspots[seqEntry._dynamicHotspotIndex];
 
-				dynHotspot._bounds.left = MAX(x2 - width, 0);
-				dynHotspot._bounds.right = MAX(x2 - width, 319) - dynHotspot._bounds.left + 1;
-				dynHotspot._bounds.top = MAX(y2 - height, 0);
-				dynHotspot._bounds.bottom = MIN(y2, 155) - dynHotspot._bounds.top;
+				dynHotspot._bounds.left = MAX(pt.x - width, 0);
+				dynHotspot._bounds.top = MAX(pt.y - height, 0);
+				dynHotspot._bounds.right = dynHotspot._bounds.left + width;
+				dynHotspot._bounds.bottom = dynHotspot._bounds.top + height;
 
 				scene._dynamicHotspots._changed = true;
 			}
