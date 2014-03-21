@@ -3697,7 +3697,7 @@ void TuckerEngine::setActionForInventoryObject() {
 			}
 			_panelLockedFlag = false;
 		}
-		if (handleSpecialObjectSelectionSequence() == 1) {
+		if (handleSpecialObjectSelectionSequence()) {
 			return;
 		}
 		_speechSoundNum = _actionObj1Num + _speechSoundBaseNum;

@@ -578,7 +578,7 @@ protected:
 	void handleMeanwhileSequence();
 	void handleMapSequence();
 	void copyMapRect(int x, int y, int w, int h);
-	int handleSpecialObjectSelectionSequence();
+	bool handleSpecialObjectSelectionSequence();
 
 	uint8 *loadFile(const char *filename, uint8 *p);
 	void loadImage(const char *filename, uint8 *dst, int a);

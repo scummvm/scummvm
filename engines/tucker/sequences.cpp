@@ -419,7 +419,7 @@ void TuckerEngine::copyMapRect(int x, int y, int w, int h) {
 	}
 }
 
-int TuckerEngine::handleSpecialObjectSelectionSequence() {
+bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 	char filename[40];
 	if (_partNum == 1 && _selectedObjectNum == 6) {
 		strcpy(filename, "news1.pcx");
@@ -436,7 +436,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 	} else if (_currentInfoString1SourceType == 1 && _currentActionObj1Num == 91) {
 		strcpy(filename, "memo.pcx");
 	} else {
-		return 0;
+		return false;
 	}
 	while (_fadePaletteCounter > 0) {
 		fadeInPalette();
@@ -479,7 +479,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 		}
 	}
 	loadLoc();
-	return 1;
+	return true;
 }
 
 AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, CompressedSound *sound, int num)
