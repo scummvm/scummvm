@@ -57,7 +57,17 @@ void sceneHandler29_manJump() {
 }
 
 void sceneHandler29_manBend() {
-	warning("STUB: sceneHandler29_manBend()");
+	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id == MV_MAN29_RUN || g_fp->_aniMan->_movement->_id == MV_MAN29_STANDUP) {
+		g_vars->scene29_var12 = 0;
+		g_vars->scene29_var15 = 0;
+		g_vars->scene29_var11 = 1;
+
+		g_fp->_aniMan->changeStatics2(ST_MAN29_RUNR);
+		g_fp->_aniMan->startAnim(MV_MAN29_BEND, 0, -1);
+	}
+
+	g_vars->scene29_var20 = g_fp->_aniMan->_ox;
+	g_vars->scene29_var21 = g_fp->_aniMan->_oy;
 }
 
 void sceneHandler29_sub03() {
