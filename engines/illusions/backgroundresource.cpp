@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/backgroundresource.h"
+#include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/screen.h"
 #include "common/str.h"
@@ -31,19 +32,22 @@ namespace Illusions {
 // BackgroundResourceLoader
 
 void BackgroundResourceLoader::load(Resource *resource) {
-	// TODO
 	debug("BackgroundResourceLoader::load() Loading background %08X from %s...", resource->_resId, resource->_filename.c_str());
 
 	BackgroundResource *backgroundResource = new BackgroundResource();
 	backgroundResource->load(resource->_data, resource->_dataSize);
+	resource->_refId = backgroundResource;
 
+	// TODO Move to BackgroundItems
 	BackgroundItem *backgroundItem = _vm->_backgroundItems->allocBackgroundItem();
 	backgroundItem->_bgRes = backgroundResource;
 	backgroundItem->_tag = resource->_tag;
-	
 	backgroundItem->initSurface();
 	
-	// TODO Insert objects from item44s
+	// TODO Insert background objects
+	for (uint i = 0; i < backgroundResource->_backgroundObjectsCount; ++i)
+		_vm->_controls->placeBackgroundObject(&backgroundResource->_backgroundObjects[i]);
+
 	// TODO Insert IDs from item48s
 
 	// TODO camera_fadeClear();
@@ -54,6 +58,13 @@ void BackgroundResourceLoader::load(Resource *resource) {
 }
 
 void BackgroundResourceLoader::unload(Resource *resource) {
+	debug("BackgroundResourceLoader::unload() Unloading background %08X...", resource->_resId);
+	// TODO Move to BackgroundItems
+	BackgroundItem *backgroundItem = _vm->_backgroundItems->findBackgroundByResource((BackgroundResource*)resource->_refId);
+	backgroundItem->freeSurface();
+	_vm->_backgroundItems->freeBackgroundItem(backgroundItem);
+	// TODO Remove IDs from item48s
+	// TODO _vm->setDefPointDimensions1();
 }
 
 void BackgroundResourceLoader::buildFilename(Resource *resource) {
@@ -137,6 +148,19 @@ int ScaleLayer::getScale(Common::Point pos) {
 	return _values[pos.y];
 }
 
+// BackgroundObject
+
+void BackgroundObject::load(byte *dataStart, Common::SeekableReadStream &stream) {
+	_objectId = stream.readUint32LE();
+	_flags = stream.readUint16LE();
+	_priority = stream.readUint16LE();
+	uint32 pointsConfigOffs = stream.readUint32LE();
+	_pointsConfig = dataStart + pointsConfigOffs;
+	
+	debug("BackgroundObject::load() _objectId: %08X; _flags: %04X; _priority: %d; pointsConfigOffs: %08X",
+		_objectId, _flags, _priority, pointsConfigOffs);
+}
+
 // BackgroundResource
 
 BackgroundResource::BackgroundResource() {
@@ -185,6 +209,18 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 		_priorityLayers[i].load(data, stream);
 	}
 
+	// Load background objects
+	stream.seek(0x1C);
+	_backgroundObjectsCount = stream.readUint16LE();
+	_backgroundObjects = new BackgroundObject[_backgroundObjectsCount];
+	stream.seek(0x44);
+	uint32 backgroundObjectsOffs = stream.readUint32LE();
+	debug("_backgroundObjectsCount: %d", _backgroundObjectsCount);
+	for (uint i = 0; i < _backgroundObjectsCount; ++i) {
+		stream.seek(backgroundObjectsOffs + i * 12);
+		_backgroundObjects[i].load(data, stream);
+	}
+
 }
 
 int BackgroundResource::findMasterBgIndex() {
@@ -205,6 +241,9 @@ ScaleLayer *BackgroundResource::getScaleLayer(uint index) {
 // BackgroundItem
 
 BackgroundItem::BackgroundItem(IllusionsEngine *vm) : _vm(vm), _tag(0), _pauseCtr(0), _bgRes(0) {
+}
+
+BackgroundItem::~BackgroundItem() {
 }
 
 void BackgroundItem::initSurface() {
@@ -329,6 +368,11 @@ BackgroundItem *BackgroundItems::allocBackgroundItem() {
 	return backgroundItem;
 }
 
+void BackgroundItems::freeBackgroundItem(BackgroundItem *backgroundItem) {
+	_items.remove(backgroundItem);
+	delete backgroundItem;
+}
+
 void BackgroundItems::pauseByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
@@ -344,6 +388,13 @@ void BackgroundItems::unpauseByTag(uint32 tag) {
 BackgroundItem *BackgroundItems::findActiveBackground() {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_pauseCtr == 0)
+			return (*it);
+	return 0;
+}
+
+BackgroundItem *BackgroundItems::findBackgroundByResource(BackgroundResource *backgroundResource) {
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+		if ((*it)->_bgRes == backgroundResource)
 			return (*it);
 	return 0;
 }

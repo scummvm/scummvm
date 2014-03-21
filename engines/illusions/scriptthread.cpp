@@ -57,27 +57,27 @@ int ScriptThread::onUpdate() {
 
 void ScriptThread::onSuspend() {
 	// TODO
-	debug("ScriptThread::onSuspend()");
+	debug(1, "ScriptThread::onSuspend()");
 }
 
 void ScriptThread::onNotify() {
 	// TODO
-	debug("ScriptThread::onNotify()");
+	debug(1, "ScriptThread::onNotify()");
 }
 
 void ScriptThread::onPause() {
 	// TODO
-	debug("ScriptThread::onPause()");
+	debug(1, "ScriptThread::onPause()");
 }
 
 void ScriptThread::onResume() {
 	// TODO
-	debug("ScriptThread::onResume()");
+	debug(1, "ScriptThread::onResume()");
 }
 
 void ScriptThread::onTerminated() {
 	// TODO
-	debug("ScriptThread::onTerminated()");
+	debug(1, "ScriptThread::onTerminated()");
 }
 
 void ScriptThread::execOpcode(OpCall &opCall) {

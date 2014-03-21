@@ -80,6 +80,7 @@ public:
 		uint32 value8, uint32 valueC, uint32 value10);
 	uint32 startAbortableTimerThread(uint32 duration, uint32 threadId);
 	uint32 startTimerThread(uint32 duration, uint32 threadId);
+	uint32 startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2, uint32 callingThreadId);
 	void setCurrFontId(uint32 fontId);
 	void reset();
 	bool enterScene(uint32 sceneId, uint32 threadId);

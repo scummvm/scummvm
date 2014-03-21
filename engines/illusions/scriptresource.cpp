@@ -59,6 +59,29 @@ void Properties::init(uint count, byte *properties) {
 	_properties = properties;
 }
 
+bool Properties::get(uint32 propertyId) {
+	uint index;
+	byte mask;
+	getProperyPos(propertyId, index, mask);
+	return (_properties[index] & mask) != 0;
+}
+
+void Properties::set(uint32 propertyId, bool value) {
+	uint index;
+	byte mask;
+	getProperyPos(propertyId, index, mask);
+	if (value)
+		_properties[index] |= mask;
+	else
+		_properties[index] &= ~mask;
+}
+
+void Properties::getProperyPos(uint32 propertyId, uint &index, byte &mask) {
+	propertyId &= 0xFFFF;
+	index = propertyId >> 3;
+	mask = 1 << (propertyId & 7);
+}
+
 // BlockCounters
 
 BlockCounters::BlockCounters()

@@ -30,10 +30,11 @@ namespace Illusions {
 class IllusionsEngine;
 
 enum ThreadType {
-	kTTScriptThread  = 1,
-	kTTTimerThread   = 2,
-	kTTTalkThread    = 3,
-	kTTSpecialThread = 5
+	kTTScriptThread      = 1,
+	kTTTimerThread       = 2,
+	kTTTalkThread        = 3,
+	kTTAbortableThread   = 4,
+	kTTSpecialThread     = 5
 };
 
 enum ThreadStatus {
@@ -88,6 +89,7 @@ public:
 	void notifyThreadsByTag(uint32 tag, uint32 threadId);
 	void pauseThreads(uint32 threadId);
 	void resumeThreads(uint32 threadId);
+	void endTalkThreads();
 	void killThread(uint32 threadId);
 	void setThreadSceneId(uint32 threadId, uint32 sceneId);
 	uint32 getThreadSceneId(uint32 threadId);

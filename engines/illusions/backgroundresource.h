@@ -100,6 +100,14 @@ points dd ?
 BgResource_PathWalkPoints ends
 #endif
 
+struct BackgroundObject {
+	uint32 _objectId;
+	uint16 _flags;
+	int16 _priority;
+	byte *_pointsConfig;
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+};
+
 class BackgroundResource {
 public:
 	BackgroundResource();
@@ -118,6 +126,9 @@ public:
 
 	uint _scaleLayersCount;
 	ScaleLayer *_scaleLayers;
+	
+	uint _backgroundObjectsCount;
+	BackgroundObject *_backgroundObjects;
 
 };
 
@@ -149,14 +160,17 @@ public:
 	BackgroundItems(IllusionsEngine *vm);
 	~BackgroundItems();
 	BackgroundItem *allocBackgroundItem();
+	void freeBackgroundItem(BackgroundItem *backgroundItem);
 	void pauseByTag(uint32 tag);
 	void unpauseByTag(uint32 tag);
 	BackgroundItem *findActiveBackground();
+	BackgroundItem *findBackgroundByResource(BackgroundResource *backgroundResource);
 	BackgroundResource *getActiveBgResource();
 	WidthHeight getMasterBgDimensions();
 	void refreshPan();
 	BackgroundItem *debugFirst();
-protected:
+//protected:
+public:
 	typedef Common::List<BackgroundItem*> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;

@@ -36,6 +36,7 @@ Screen::Screen(IllusionsEngine *vm)
 	_backSurface = allocSurface(640, 480);
 	_decompressQueue = new SpriteDecompressQueue();
 	_drawQueue = new SpriteDrawQueue(this);
+	_colorKey1 = 0xF800 | 0x1F;
 }
 
 Screen::~Screen() {
@@ -80,33 +81,40 @@ void Screen::updateSprites() {
 }
 
 void Screen::drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
-	// Unscaled, transparent
+	// Unscaled
 	// TODO
-	debug("Screen::drawSurface10");
+	//debug("Screen::drawSurface10");
 }
 
 void Screen::drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {
-	// Unscaled, non-transparent
-	debug("Screen::drawSurface11() destX: %d; destY: %d; srcRect: (%d, %d, %d, %d)", destX, destY, srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
+	// Unscaled
+	//debug("Screen::drawSurface11() destX: %d; destY: %d; srcRect: (%d, %d, %d, %d)", destX, destY, srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
 	const int16 w = srcRect.width();
 	const int16 h = srcRect.height();
 	for (int16 yc = 0; yc < h; ++yc) {
 		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcRect.top + yc);
 		byte *dst = (byte*)_backSurface->getBasePtr(destX, destY + yc);
-		memcpy(dst, src, w * 2);
+		//memcpy(dst, src, w * 2);
+		for (int16 xc = 0; xc < w; ++xc) {
+			uint16 pixel = READ_LE_UINT16(src);
+			if (pixel != _colorKey1)
+				WRITE_LE_UINT16(dst, pixel);
+			src += 2;
+			dst += 2;
+		}
 	}
 }
 
 void Screen::drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
-	// Scaled, transparent
+	// Scaled
 	// TODO
-	debug("Screen::drawSurface20");
+	//debug("Screen::drawSurface20");
 }
 
 void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {
-	// Scaled, non-transparent
+	// Scaled
 	// TODO
-	debug("Screen::drawSurface21");
+	//debug("Screen::drawSurface21");
 }
 
 } // End of namespace Illusions

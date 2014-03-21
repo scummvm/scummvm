@@ -152,6 +152,8 @@ Common::Error IllusionsEngine::run() {
 	*/	
 	
 	_resSys->loadResource(0x000D0001, 0, 0);
+
+#if 0	
 	_resSys->loadResource(0x0011000B, 0, 0);
 	_resSys->loadResource(0x0010000B, 0, 0);
 
@@ -160,6 +162,7 @@ Common::Error IllusionsEngine::run() {
 	Control *control = *_controls->_controls.begin();
 	control->setActorFrameIndex(1);
 	control->appearActor();
+#endif
 #endif
 
 	_scriptMan->startScriptThread(0x00020004, 0, 0, 0, 0);
