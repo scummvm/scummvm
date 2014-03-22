@@ -136,10 +136,16 @@ public:
 class ScreenObjects : public Common::Array<ScreenObject> {
 private:
 	MADSEngine *_vm;
+	int _objectY;
+	int _scrollerY;
 
 	int scanBackwards(const Common::Point &pt, int layer);
 
-	void proc1();
+	/**
+	 * Checks for the mouse being on the user interface inventory scroller,
+	 * and update the scroller and selected inventory object as necessary
+	 */
+	void checkScroller();
 public:
 	int _v832EC;
 	int _v7FECA;
@@ -148,10 +154,13 @@ public:
 	int _v8333C;
 	int _selectedObject;
 	ScrCategory _category;
-	int _objectIndex;
+	int _newDescId;
+	int _currentDescId;
 	bool _released;
 	int _uiCount;
 	int _hotspotsIndex;
+	uint32 _milliTime;
+	bool _eventFlag;
 
 	/*
 	* Constructor

@@ -251,17 +251,22 @@ ScreenObject::ScreenObject() {
 /*------------------------------------------------------------------------*/
 
 ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
+	_objectY = -1;
 	_v8333C = false;
 	_v832EC = 0;
 	_v7FECA = 0;
 	_v7FED6 = 0;
 	_v8332A = 0;
 	_category = CAT_NONE;
-	_objectIndex = 0;
+	_newDescId = 0;
+	_newDescId = 0;
 	_released = false;
 	_uiCount = 0;
 	_hotspotsIndex = 0;
 	_selectedObject = -1;
+	_scrollerY = -1;
+	_milliTime = 0;
+	_eventFlag = false;
 }
 
 void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId) {
@@ -282,11 +287,13 @@ void ScreenObjects::check(bool scanFlag) {
 	if (!_vm->_events->_mouseButtons || _v832EC)
 		_v7FECA = false;
 
-	if ((_vm->_events->_vD6 || _v8332A || _vm->_game->_scene._userInterface._scrollerY || _v8333C) && scanFlag) {
+	if ((_vm->_events->_mouseMoved || _vm->_game->_scene._userInterface._scrollerY 
+			|| _v8332A || _v8333C) && scanFlag) {
+		_category = CAT_NONE;
 		_selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
 		if (_selectedObject > 0) {
 			_category = (ScrCategory)((*this)[_selectedObject - 1]._category & 7);
-			_objectIndex = (*this)[_selectedObject - 1]._descId;
+			_newDescId = (*this)[_selectedObject - 1]._descId;
 		}
 
 		// Handling for easy mouse
@@ -297,6 +304,8 @@ void ScreenObjects::check(bool scanFlag) {
 			if (category >= CAT_ACTION && category <= CAT_TALK_ENTRY) {
 				scene._userInterface.elementHighlighted();
 			}
+
+			scene._action.checkActionAtMousePos();
 		}
 
 		_released = _vm->_events->_mouseReleased;
@@ -321,7 +330,7 @@ void ScreenObjects::check(bool scanFlag) {
 		}
 
 		if (_vm->_events->_mouseButtons || _vm->_easyMouse || scene._userInterface._scrollerY)
-			proc1();
+			checkScroller();
 
 		if (_vm->_events->_mouseButtons || _vm->_easyMouse)
 			scene._action.set();
@@ -362,8 +371,81 @@ int ScreenObjects::scanBackwards(const Common::Point &pt, int layer) {
 	return 0;
 }
 
-void ScreenObjects::proc1() {
-	warning("TODO: ScreenObjects::proc1");
+void ScreenObjects::checkScroller() {
+	UserInterface &userInterface = _vm->_game->_scene._userInterface;
+	Common::Array<int> &inventoryList = _vm->_game->_objects._inventoryList;
+
+	if (_v832EC)
+		return;
+
+	userInterface._scrollerY = 0;
+	
+	if ((_category == CAT_INV_SCROLLER || (_scrollerY == 3 && _vm->_events->_vD4))
+			&& (_vm->_events->_vD4 || _vm->_easyMouse)) {
+		if ((_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_vD4))
+				&& _category == CAT_INV_SCROLLER) {
+			_currentDescId = _newDescId;
+		}
+	}
+
+	if (_newDescId == _currentDescId || _scrollerY == 3) {
+		_vm->_game->_scene._userInterface._scrollerY = _currentDescId;
+		uint32 currentMilli = g_system->getMillis();
+		uint32 timeInc = _eventFlag ? 100 : 380;
+		
+		if (_vm->_events->_vD2 || (_milliTime + timeInc) <= currentMilli) {
+			_eventFlag = _vm->_events->_vD2 < 1;
+			_milliTime = currentMilli;
+
+			switch (_currentDescId) {
+			case 1:
+				// Scroll up
+				if (userInterface._inventoryTopIndex > 0 && inventoryList.size() > 0) {
+					--userInterface._inventoryTopIndex;
+					userInterface._inventoryChanged = true;
+				}
+				break;
+
+			case 2:
+				// Scroll down
+				if (userInterface._inventoryTopIndex < (int)inventoryList.size() &&
+						inventoryList.size() > 0) {
+					++userInterface._inventoryTopIndex;
+					userInterface._inventoryChanged = true;
+				}
+				break;
+
+			case 3: {
+				// Inventory slider
+				int newIndex = CLIP((int)_vm->_events->currentPos().y - 170, 0, 17)
+					* inventoryList.size() / 10;
+				if (newIndex >= (int)inventoryList.size())
+					newIndex = inventoryList.size() - 1;
+
+				if (inventoryList.size() > 0) {
+					userInterface._inventoryChanged = newIndex != userInterface._inventoryTopIndex;
+					userInterface._inventoryTopIndex = newIndex;
+				}
+				break;
+			}
+
+			default:
+				break;
+			}
+
+			if (userInterface._inventoryChanged) {
+				int dummy;
+				userInterface.drawInventory(2, 0, &dummy);
+			}
+		}
+	}
+
+	if (userInterface._scrollerY != _scrollerY ||
+			userInterface._objectY != _objectY)
+		userInterface.scrollerChanged();
+
+	_scrollerY = userInterface._scrollerY;
+	_objectY = userInterface._objectY;
 }
 
 /*------------------------------------------------------------------------*/

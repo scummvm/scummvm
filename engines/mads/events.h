@@ -62,7 +62,7 @@ public:
 	int _vCC;
 	int _vD2;
 	int _vD4;
-	int _vD6;
+	bool _mouseMoved;
 	int _vD8;
 public:
 	/**

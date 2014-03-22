@@ -41,9 +41,10 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_mouseClicked = false;
 	_mouseReleased = false;
 	_mouseButtons = 0;
+	_vCC = 0;
 	_vD2 = 0;
 	_vD4 = 0;
-	_vD6 = 0;
+	_mouseMoved = false;
 	_vD8 = 0;
 }
 
@@ -100,6 +101,7 @@ void EventsManager::freeCursors() {
 
 void EventsManager::pollEvents() {
 	checkForNextFrameCounter();
+	_mouseMoved = false;
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -130,9 +132,12 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			_mouseClicked = false;
+			_mouseMoved = true;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
+			_currentPos = event.mouse;
+			_mouseMoved = true;
 			break;
 		default:
  			break;

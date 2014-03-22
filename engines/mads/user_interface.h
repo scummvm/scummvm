@@ -189,6 +189,10 @@ public:
 	 * @param invIndex	Index in the inventory list of the item to select
 	 */
 	void selectObject(int invIndex);
+
+	void drawInventory(int v1, int v2, int *v3);
+
+	void scrollerChanged();
 };
 
 } // End of namespace MADS

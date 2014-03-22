@@ -636,4 +636,12 @@ void UserInterface::selectObject(int invIndex) {
 	warning("TODO: selectObject");
 }
 
+void UserInterface::drawInventory(int v1, int v2, int *v3) {
+	warning("TODO: drawInventory");
+}
+
+void UserInterface::scrollerChanged() {
+	warning("TODO: scrollerChanged");
+}
+
 } // End of namespace MADS
