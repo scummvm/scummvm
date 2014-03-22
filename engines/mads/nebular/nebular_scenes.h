@@ -106,6 +106,7 @@ class NebularScene : public SceneLogic {
 protected:
 	Globals &_globals;
 	GameNebular &_game;
+	MADSAction &_action;
 
 	/**
 	 * Forms an animation resoucre name

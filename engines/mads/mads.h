@@ -116,6 +116,7 @@ public:
 	uint32 getGameFeatures() const;
 
 	int getRandomNumber(int maxNumber);
+	int hypotenuse(int xv, int yv);
 };
 
 } // End of namespace MADS

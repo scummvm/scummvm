@@ -67,7 +67,8 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 
 NebularScene::NebularScene(MADSEngine *vm) : SceneLogic(vm),
 		_globals(static_cast<GameNebular *>(vm->_game)->_globals),
-		_game(*static_cast<GameNebular *>(vm->_game)) {
+		_game(*static_cast<GameNebular *>(vm->_game)),
+		_action(vm->_game->_scene._action) {
 }
 
 Common::String NebularScene::formAnimName(char sepChar, int suffixNum) {

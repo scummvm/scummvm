@@ -150,7 +150,7 @@ void Scene103::enter() {
 		_globals._spriteIndexes[2], false, 6, 0, 0, 25);	
 	_scene->_sequences.addSubEntry(_globals._spriteIndexes[17], SM_FRAME_INDEX, 2, 72);
 	_globals._spriteIndexes[18] = _scene->_sequences.addSpriteCycle(
-		_globals._spriteIndexes[3], _scene, false, 8);
+		_globals._spriteIndexes[3], false, 6, 0, 1, 37);
 	_scene->_sequences.addSubEntry(_globals._spriteIndexes[18], SM_FRAME_INDEX, 2, 73);
 
 	_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(
@@ -212,6 +212,45 @@ void Scene103::enter() {
 }
 
 void Scene103::step() {
+	Common::Point pt;
+	int dist;
+
+	switch (_vm->_game->_abortTimers) {
+	case 70:
+		_vm->_game->_player._stepEnabled = true;
+		break;
+
+	case 72:
+		pt = _vm->_game->_player._playerPos;
+		dist = _vm->hypotenuse(pt.x - 58, pt.y - 93);
+		_vm->_sound->command(27, (dist * -128 / 378) + 127);
+		break;
+
+	case 73:
+		pt = _vm->_game->_player._playerPos;
+		dist = _vm->hypotenuse(pt.x - 266, pt.y - 81);
+		_vm->_sound->command(27, (dist * -127 / 378) + 127);
+		break;
+
+	default:
+		break;
+	}
+	
+	if (_globals._frameTime <= _scene->_frameStartTime) {
+		pt = _vm->_game->_player._playerPos;
+		int dist = _vm->hypotenuse(pt.x - 79, pt.y - 137);
+		_vm->_sound->command(29, (dist * -127 / 378) + 127);
+
+		pt = _vm->_game->_player._playerPos;
+		dist = _vm->hypotenuse(pt.x - 69, pt.y - 80);
+		_vm->_sound->command(30, (dist * -127 / 378) + 127);
+
+		pt = _vm->_game->_player._playerPos;
+		dist = _vm->hypotenuse(pt.x - 266, pt.y - 138);
+		_vm->_sound->command(32, (dist * -127 / 378) + 127);
+
+		_globals._frameTime = _scene->_frameStartTime + _vm->_game->_player._ticksAmount;
+	}
 }
 
 void Scene103::preActions() {
@@ -221,6 +260,17 @@ void Scene103::actions() {
 }
 
 void Scene103::postActions() {
+	if (_action.isAction(27) && !_action.isAction(13)) {
+		Dialog::show(0x2841);
+		_action._inProgress = false;
+	} else {
+		if (_action.isAction(7, 85, 144)) {
+			Common::String msg = _game.getQuote(73);
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110,
+				34, 0, 120, msg);
+			_action._inProgress = false;
+		}
+	}
 }
 
 } // End of namespace Nebular

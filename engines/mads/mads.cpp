@@ -107,4 +107,8 @@ int MADSEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
+int MADSEngine::hypotenuse(int xv, int yv) {
+	return (int)sqrt((double)(xv * xv + yv * yv));
+}
+
 } // End of namespace MADS
