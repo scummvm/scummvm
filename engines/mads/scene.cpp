@@ -48,7 +48,6 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_activeAnimation = nullptr;
 	_textSpacing = -1;
 	_frameStartTime = 0;
-	_v8425C = 0;
 	_layer = LAYER_GUI;
 	_lookFlag = false;
 	_highlightedHotspot = 0;

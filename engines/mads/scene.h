@@ -117,7 +117,6 @@ public:
 	int _destFacing;
 	Common::Point _posAdjust;
 	uint32 _frameStartTime;
-	uint32 _v8425C;
 	Layer _layer;
 	bool _lookFlag;
 	int _highlightedHotspot;

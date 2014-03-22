@@ -44,6 +44,12 @@ Globals::Globals() {
 	_v7 = 0;
 	_v8 = 0;
 	_abortVal = 0;
+	_v8425C = 0;
+	_v84260 = 0;
+	_v84262 = 0;
+	_v84264 = 0;
+	_v84266 = 0;
+	_v84268 = 0;
 }
 
 } // End of namespace Nebular

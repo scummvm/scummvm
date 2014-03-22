@@ -418,7 +418,7 @@ void Scene202::enter() {
 		_globals._v4 = 0;
 	}
 
-	_game._scene._v8425C = _globals._v7 = _scene->_frameStartTime;
+	_globals._v8425C = _globals._v7 = _scene->_frameStartTime;
 
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_NONE);
@@ -483,7 +483,7 @@ void Scene202::step() {
 	if (_game._abortTimers == 71) {
 		_vm->_sound->command(3);
 		_vm->_sound->command(9);
-		_game._scene._v8425C = 900 + _scene->_frameStartTime;
+		_globals._v8425C = 900 + _scene->_frameStartTime;
 		Common::Point msgPos;
 		int msgFlag;
 		if (_globals._v4 == 0) {
@@ -554,7 +554,7 @@ void Scene202::step() {
 		break;
 	}
 	
-	if (!_scene->_activeAnimation && (_globals[33] != 2) && (_globals._v7 <= _scene->_frameStartTime) && (_game._scene._v8425C <= _scene->_frameStartTime)) {
+	if (!_scene->_activeAnimation && (_globals[33] != 2) && (_globals._v7 <= _scene->_frameStartTime) && (_globals._v8425C <= _scene->_frameStartTime)) {
 		int randVal = _vm->getRandomNumber(1, 500);
 		int threshold = 1;
 		if (_globals._v4)
@@ -564,13 +564,13 @@ void Scene202::step() {
 		if (threshold >= randVal) {
 			_vm->_sound->command(17);
 			_scene->loadAnimation(formAnimName('M', -1), 71);
-			warning("TODO: word84266 = -1;");
-			warning("TODO: word84268 = 0;");
+			_globals._v84266 = -1;
+			_globals._v84268 = 0;
 			_globals[37] = true;
 			_globals._v6 = _scene->_frameStartTime;
 			_globals._v8 = 0;
-			warning("TODO: _timerIndex = 0;");
-			warning("TODO: word84264 = 0;");
+			_globals._v84262 = 0;
+			_globals._v84264 = 0;
 			_globals._v7 = _scene->_frameStartTime + 2;
 		}
 	}
@@ -588,8 +588,7 @@ void Scene202::step() {
 			}
 		}
 
-		if (_scene->_activeAnimation->getCurrentFrame() == 160) {
-			warning("TODO: && (word84260 != _scene->_activeAnimation->getCurrentFrame()) {");
+		if ((_scene->_activeAnimation->getCurrentFrame() == 160) && (_globals._v84260 != _scene->_activeAnimation->getCurrentFrame())) {
 			Common::Point msgPos;
 			int msgFlag;
 			if (_globals._v4 == 0) {
@@ -605,15 +604,14 @@ void Scene202::step() {
 	}
 
 	if (_globals._v7 + 7200 <= _scene->_frameStartTime) {
-		warning("TODO: word84268 = -1;");
+		_globals._v84268 = -1;
 	}
 
-	warning("TODO: if (_scene->_activeAnimation->getCurrentFrame() == word84260) {");
-//	if (_scene->_activeAnimation->getCurrentFrame() == word84260) {
-//		return;
-//	}
+	if (_scene->_activeAnimation->getCurrentFrame() == _globals._v84260) {
+		return;
+	}
 	
-	warning("TODO: word84260 = _scene->_activeAnimation->getCurrentFrame();");
+	_globals._v84260 = _scene->_activeAnimation->getCurrentFrame();
 	int randVal = _vm->getRandomNumber(1, 1000);
 	int frameStep = -1;
 	
@@ -636,18 +634,18 @@ void Scene202::step() {
 		frameStep = subStep4(randVal);
 		break;
 	case 59:
-		warning("TODO: _timerIndex = 3;");
-		warning("TODO: ++word84264;");
+		_globals._v84262 = 3;
+		++_globals._v84264;
 		if (randVal <= 800)
 			frameStep = 55;
 		break;
 	case 89:
-		warning("TODO: _timerIndex = 1;");
+		_globals._v84262 = 1;
 		if (randVal <= 700)
 			frameStep = 83;
 		break;
 	case 137:
-		warning("TODO: _timerIndex = 2;");
+		_globals._v84262 = 2;
 		if (randVal <= 700)
 			frameStep = 126;
 		break;
@@ -659,37 +657,32 @@ void Scene202::step() {
 	int nextFrame = 1 + _scene->_activeAnimation->getCurrentFrame() - frameStep;
 	if (nextFrame) {
 		_scene->_activeAnimation->setCurrentFrame(nextFrame);
-		warning("word84260 = nextFrame");
+		_globals._v84260 = nextFrame;
 	}
 }
 
 int Scene202::subStep1(int randVal) {
-	warning("TODO: word84264 = 0;");
+	_globals._v84264 = 0;
 
-	warning("TODO: if ((randVal <= 100) || (word84266 != 0))");
-	if (randVal <= 100)
+	if ((randVal <= 100) || (_globals._v84266 != 0))
 		return 42;
 
-	warning("TODO: if ((randVal <= 200) || (word84268 != 0))");
-	if (randVal <= 200)
+	if ((randVal <= 200) || (_globals._v84268 != 0))
 		return 96;
 
-	warning("TODO: if ((randVal <= 300) && (_timerIndex != 1))");
-	if (randVal <= 300)
+	if ((randVal <= 300) && (_globals._v84262 != 1))
 		return 77;
 
 	return 76;
 }
 
 int Scene202::subStep2(int randVal) {
-	warning("TODO: word84266 = 0;");
+	_globals._v84266 = 0;
 
-	warning("TODO: if ((randVal <= 150) && (word84264 < 5)");
-	if (randVal <= 150)
+	if ((randVal <= 150) && (_globals._v84264 < 5))
 		return 51;
 
-	warning("TODO: if ((randVal <= 300) || word84268)");
-	if (randVal <= 300)
+	if ((randVal <= 300) || _globals._v84268)
 		return 74;
 
 	if (randVal <= 400)
@@ -699,24 +692,20 @@ int Scene202::subStep2(int randVal) {
 }
 
 int Scene202::subStep3(int randVal) {
-	warning("TODO: if ((randVal <= 100) || (word84266 != 0))");
-	if (randVal <= 100)
+	if ((randVal <= 100) || (_globals._v84266 != 0))
 		return 27;
 
-	warning("TODO: if ((randVal <= 200) || (word84268 != 0))");
-	if (randVal <= 200)
+	if ((randVal <= 200) || (_globals._v84268 != 0))
 		return 159;
 
-	warning("TODO: if ((randVal <= 300) && (_timerIndex != 2))");
-	if (randVal <= 300)
+	if ((randVal <= 300) && (_globals._v84262 != 2))
 		return 119;
 
 	return 110;
 }
 
 int Scene202::subStep4(int randVal) {
-	warning("TODO: if ((randVal <= 100) || (word84268 != 0))");
-	if (randVal <= 100)
+	if ((randVal <= 100) || (_globals._v84268 != 0))
 		return 176;
 
 	if (randVal <= 200)
@@ -884,7 +873,7 @@ void Scene202::actions() {
 				}
 			} else {
 				if (_game._abortTimers == 0) {
-					warning("TODO: word_84268 = 1;");
+					_globals._v84268 = 1;
 					_game._player._stepEnabled = false;
 					_scene->_sequences.remove(_globals._spriteIndexes[24]);
 					_globals._spriteIndexes[24] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
