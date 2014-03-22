@@ -462,7 +462,7 @@ void Scene202::enter() {
 }
 
 void Scene202::setRandomKernelMessage() {
-	int vocabId = 92 + _vm->getRandomNumber(4);
+	int vocabId = _vm->getRandomNumber(92, 96);
 	_scene->_kernelMessages.reset();
 	_game._abortTimersMode2 = ABORTMODE_1;
 	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 70, 120, _game.getQuote(vocabId));
@@ -555,7 +555,7 @@ void Scene202::step() {
 	}
 	
 	if (!_scene->_activeAnimation && (_globals[33] != 2) && (_globals._v7 <= _scene->_frameStartTime) && (_game._scene._v8425C <= _scene->_frameStartTime)) {
-		int randVal = _vm->getRandomNumber(499) + 1;
+		int randVal = _vm->getRandomNumber(1, 500);
 		int threshold = 1;
 		if (_globals._v4)
 			threshold = 26;
@@ -614,7 +614,7 @@ void Scene202::step() {
 //	}
 	
 	warning("TODO: word84260 = _scene->_activeAnimation->getCurrentFrame();");
-	int randVal = _vm->getRandomNumber(999) + 1;
+	int randVal = _vm->getRandomNumber(1, 1000);
 	int frameStep = -1;
 	
 	switch (_scene->_activeAnimation->getCurrentFrame()) {

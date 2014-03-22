@@ -90,7 +90,7 @@ bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 
 	// Read in the total number of entries, and randomly pick an entry to use
 	int numEntries = f.readUint16LE();
-	int entryIndex = _vm->getRandomNumber(numEntries - 2) + 1;
+	int entryIndex = _vm->getRandomNumber(1, numEntries);
 
 	// Read in the encrypted entry
 	f.seek(28 * entryIndex + 2);

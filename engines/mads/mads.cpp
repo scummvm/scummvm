@@ -107,6 +107,12 @@ int MADSEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
+int MADSEngine::getRandomNumber(int minNumber, int maxNumber) {
+	int range = maxNumber - minNumber;
+
+	return minNumber + _randomSource.getRandomNumber(range);
+}
+
 int MADSEngine::hypotenuse(int xv, int yv) {
 	return (int)sqrt((double)(xv * xv + yv * yv));
 }

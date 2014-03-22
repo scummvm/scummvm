@@ -239,7 +239,7 @@ void Scene804::step() {
 
 		switch (_scene->_activeAnimation->getCurrentFrame()) {
 		case 1:
-			_globals[29] = _vm->getRandomNumber(29) + 1;
+			_globals[29] = _vm->getRandomNumber(1, 30);
 			switch (_globals[29]) {
 			case 1:
 				_globals._v5 = 25;
