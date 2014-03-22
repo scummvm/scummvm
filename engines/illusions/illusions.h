@@ -113,6 +113,13 @@ public:
 	int convertPanXCoord(int16 x);
 	Common::Point getNamedPointPosition(uint32 namedPointId);
 	void playVideo(uint32 videoId, uint32 objectId, uint32 value, uint32 threadId);
+	
+	bool isSoundActive();
+	bool cueVoice(byte *voiceName);
+	bool isVoiceCued();
+	void startVoice(int volume, int panX);
+	void stopVoice();
+	bool isVoicePlaying();	
 
 #if 0
 

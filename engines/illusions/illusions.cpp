@@ -367,7 +367,35 @@ Common::Point IllusionsEngine::getNamedPointPosition(uint32 namedPointId) {
 }
 
 void IllusionsEngine::playVideo(uint32 videoId, uint32 objectId, uint32 priority, uint32 threadId) {
-	
+	// TODO
+}
+
+bool IllusionsEngine::isSoundActive() {
+	// TODO
+	return false;
+}
+
+bool IllusionsEngine::cueVoice(byte *voiceName) {
+	// TODO
+	return true;
+}
+
+bool IllusionsEngine::isVoiceCued() {
+	// TODO
+	return false;
+}
+
+void IllusionsEngine::startVoice(int volume, int panX) {
+	// TODO
+}
+
+void IllusionsEngine::stopVoice() {
+	// TODO
+}
+
+bool IllusionsEngine::isVoicePlaying() {
+	// TODO
+	return false;
 }
 
 } // End of namespace Illusions

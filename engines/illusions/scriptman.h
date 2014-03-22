@@ -81,7 +81,11 @@ public:
 	uint32 startAbortableTimerThread(uint32 duration, uint32 threadId);
 	uint32 startTimerThread(uint32 duration, uint32 threadId);
 	uint32 startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2, uint32 callingThreadId);
+	uint32 startTalkThread(int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1,
+		uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId);
 	void setCurrFontId(uint32 fontId);
+	bool checkActiveTalkThreads();
+	uint32 clipTextDuration(uint32 duration);
 	void reset();
 	bool enterScene(uint32 sceneId, uint32 threadId);
 	void exitScene(uint32 threadId);
@@ -101,6 +105,9 @@ public:
 	uint32 _nextTempThreadId;
 	
 	uint32 _fontId;
+	int _field8;
+	uint32 _fieldA, _fieldE;
+	
 	uint32 _prevSceneId;
 	
 	ThreadList *_threads;

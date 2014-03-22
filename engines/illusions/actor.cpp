@@ -83,7 +83,7 @@ Actor::Actor(IllusionsEngine *vm)
 	_notifyThreadId1 = 0;
 	_notifyThreadId2 = 0;
 	_surfaceTextFlag = 0;
-	_field30 = 0;
+	_entryTblPtr = 0;
 	_seqCodeIp = 0;
 	_sequenceId = 0;
 	_seqCodeValue1 = 0;
@@ -360,11 +360,11 @@ void Control::clearNotifyThreadId2() {
 		if (_actor->_subobjects[i]) {
 			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->_actor->_flags &= ~0x80;
-			subControl->_actor->_field30 = 0;
+			subControl->_actor->_entryTblPtr = 0;
 			subControl->_actor->_notifyThreadId2 = 0;
 		}
 	_actor->_flags &= ~0x80;
-	_actor->_field30 = 0;
+	_actor->_entryTblPtr = 0;
 	_actor->_notifyThreadId2 = 0;
 }
 
@@ -582,7 +582,7 @@ void Control::sequenceActor() {
 	
 }
 
-void Control::startSequenceActorIntern(uint32 sequenceId, int value, int value2, uint32 notifyThreadId) {
+void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
 
 	stopActor();
 	
@@ -609,9 +609,9 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, int value2,
 	_actor->initSequenceStack();
 	stopSequenceActor();
 	_actor->_linkIndex2 = 0;
-	if (value2) {
+	if (entryTblPtr) {
 		_actor->_flags |= 0x80;
-		_actor->_field30 = value2;
+		_actor->_entryTblPtr = entryTblPtr;
 		_actor->_notifyThreadId1 = 0;
 		_actor->_notifyThreadId2 = notifyThreadId;
 	}

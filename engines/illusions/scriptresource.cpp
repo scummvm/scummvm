@@ -59,6 +59,12 @@ void Properties::init(uint count, byte *properties) {
 	_properties = properties;
 }
 
+void Properties::clear() {
+	uint size = (_count >> 3) + 1;
+	for (uint i = 0; i < size; ++i)
+		_properties[i] = 0;
+}
+
 bool Properties::get(uint32 propertyId) {
 	uint index;
 	byte mask;
@@ -103,7 +109,7 @@ byte BlockCounters::get(uint index) {
 }
 
 void BlockCounters::set(uint index, byte value) {
-	_blockCounters[index - 1] = (get(index - 1) ^ value) & 0x3F;
+	_blockCounters[index - 1] ^= (_blockCounters[index - 1] ^ value) & 0x3F;
 }
 
 // TriggerCause

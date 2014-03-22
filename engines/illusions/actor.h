@@ -119,7 +119,7 @@ public:
 	uint32 _notifyId3C;
 
 	uint32 _notifyThreadId2;
-	int _field30;
+	byte *_entryTblPtr;
 	
 	int _surfaceTextFlag;
 	
@@ -185,7 +185,7 @@ public:
 	Common::Point _position;
 	Common::Point _subobjectsPos[kSubObjectsCount];
 	// TODO 0000001C - 00000054 unknown
-	void startSequenceActorIntern(uint32 sequenceId, int value, int value2, uint32 notifyThreadId);
+	void startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId);
 	void execSequenceOpcode(OpCall &opCall);
 };
 
