@@ -47,8 +47,6 @@ class KernelMessage {
 public:
 	uint8 _flags;
 	int _sequenceIndex;
-	char _asciiChar;
-	char _asciiChar2;
 	int _color1;
 	int _color2;
 	Common::Point _position;

@@ -42,8 +42,6 @@ void SceneNode::load(Common::SeekableReadStream *f) {
 KernelMessage::KernelMessage() {
 	_flags = 0;
 	_sequenceIndex = 0;
-	_asciiChar = '\0';
-	_asciiChar2 = '\0';
 	_color1 = 0;
 	_color2 = 0;
 	_msgOffset = 0;

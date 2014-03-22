@@ -102,8 +102,6 @@ void KernelMessages::scrollMessage(int msgIndex, int numTicks, bool quoted) {
 	_entries[msgIndex]._frameTimer2 = _vm->_game->_priorFrameTimer;
 
 	Common::String msg = _entries[msgIndex]._msg;
-	_entries[msgIndex]._asciiChar = msg[0];
-	_entries[msgIndex]._asciiChar2 = msg[1];
 
 	if (_entries[msgIndex]._flags & KMSG_PLAYER_TIMEOUT)
 		_entries[msgIndex]._frameTimer2 = _vm->_game->_player._ticksAmount + 
@@ -125,8 +123,7 @@ void KernelMessages::remove(int msgIndex) {
 
 	if (rec._flags & KMSG_ACTIVE) {
 		if (rec._flags & KMSG_SCROLL) {
-			rec._msg.setChar(rec._asciiChar, rec._msgOffset);
-			rec._msg.setChar(rec._asciiChar2, rec._msgOffset + 1);
+			// WORKAROUND: Code here no longer needed in ScummVM
 		}
 
 		if (rec._textDisplayIndex >= 0)
@@ -144,11 +141,12 @@ void KernelMessages::reset() {
 }
 
 void KernelMessages::update() {
-	uint32 currentTimer = _vm->_game->_priorFrameTimer;
+	uint32 currentTimer = _vm->_game->_scene._frameStartTime;
 
-	for (uint i = 0; i < _entries.size(); ++i) {
-		if (((_entries[i]._flags & KMSG_ACTIVE) != 0) && 
-				(currentTimer >= _entries[i]._frameTimer))
+	for (uint i = 0; i < _entries.size() && !_vm->_game->_abortTimers; ++i) {
+		KernelMessage &msg = _entries[i];
+
+		if (((msg._flags & KMSG_ACTIVE) != 0) && (currentTimer >= msg._frameTimer))
 			processText(i);
 	}
 }
@@ -222,27 +220,23 @@ void KernelMessages::processText(int msgIndex) {
 	x1 += msg._position.x;
 	y1 += msg._position.y;
 
+	Common::String displayMsg = msg._msg;
+
 	if ((msg._flags & KMSG_SCROLL) && (msg._frameTimer >= currentTimer)) {
-		msg._msg.setChar(msg._asciiChar, msg._msgOffset);
-
 		++msg._msgOffset;
-		msg._msg.setChar(msg._asciiChar2, msg._msgOffset);
-		msg._asciiChar = msg._msg[msg._msgOffset];
-		msg._asciiChar2 = !msg._asciiChar ? '\0' : msg._msg[msg._msgOffset + 1];
 
-		if (!msg._asciiChar) {
+		if (msg._msgOffset >= msg._msg.size()) {
 			// End of message
 			msg._flags &= ~KMSG_SCROLL;
-		} else if (msg._flags & KMSG_QUOTED) {
-			msg._msg.setChar('"', msg._msgOffset);
-			msg._msg.setChar('\0', msg._msgOffset + 1);
+		} else {
+			displayMsg = Common::String(msg._msg.c_str(), msg._msg.c_str() + msg._msgOffset);
 		}
 
 		msg._frameTimer = msg._frameTimer2 = currentTimer + msg._numTicks;
 		flag = true;
 	}
 
-	int strWidth = _talkFont->getWidth(msg._msg, scene._textSpacing);
+	int strWidth = _talkFont->getWidth(displayMsg, scene._textSpacing);
 
 	if (msg._flags & (KMSG_RIGHT_ALIGN | KMSG_CENTER_ALIGN)) {
 		x1 -= (msg._flags & KMSG_CENTER_ALIGN) ? strWidth / 2 : strWidth;
@@ -275,7 +269,7 @@ void KernelMessages::processText(int msgIndex) {
 	if (msg._textDisplayIndex < 0) {
 		// Need to create a new text display entry for this message
 		int idx = scene._textDisplay.add(x1, y1, msg._color1 | (msg._color2 << 8), 
-			scene._textSpacing, msg._msg, _talkFont);
+			scene._textSpacing, displayMsg, _talkFont);
 		if (idx >= 0)
 			msg._textDisplayIndex = idx;
 	}
@@ -298,8 +292,6 @@ void KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
 		msg._msgOffset = 0;
 		msg._numTicks = numTicks;
 		msg._frameTimer2 = _vm->_game->_scene._frameStartTime;
-		msg._asciiChar = msg._msg[0];
-		msg._asciiChar2 = msg._msg[1];
 
 		if (msg._flags & KMSG_PLAYER_TIMEOUT) {
 			msg._frameTimer2 = _vm->_game->_player._priorTimer +
