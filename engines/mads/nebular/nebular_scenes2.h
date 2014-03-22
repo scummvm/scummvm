@@ -61,6 +61,12 @@ public:
 };
 
 class Scene202: public Scene2xx {
+private:
+	int subStep1(int var2);
+	int subStep2(int var2);
+	int subStep3(int var2);
+	int subStep4(int var2);
+
 public:
 	Scene202(MADSEngine *vm) : Scene2xx(vm) {}
 	virtual void setup();
@@ -69,6 +75,8 @@ public:
 	virtual void preActions();
 	virtual void actions();
 	virtual void postActions() {};
+
+	void setRandomKernelMessage();
 };
 } // End of namespace Nebular
 } // End of namespace MADS

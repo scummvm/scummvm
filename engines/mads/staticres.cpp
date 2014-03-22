@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/scummsys.h"
 #include "mads/staticres.h"
 
 namespace MADS {
