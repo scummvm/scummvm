@@ -541,17 +541,41 @@ void ScreenObjects::elementHighlighted() {
 
 	int newIndex = -1;
 	int catIndex = userInterface._categoryIndexes[userInterface._category - 1];
-	int newY = 0;
-	int var1E = 0;
+	int newX = 0, newY = 0;
+	Common::Point currentPos = _vm->_events->currentPos();
 
 	for (int idx = 0; idx < index & newIndex < 0; ++idx) {
-		warning("TODO");
+		int scrObjIndex = (_category == CAT_HOTSPOT) ? catIndex - idx + index - 1 :
+			catIndex + idx;
+		
+		ScreenObject &scrObject = (*this)[scrObjIndex];
+		Common::Rect bounds = scrObject._bounds;
+		newY = MAX((int)bounds.bottom, newY);
+		newX = MAX((int)bounds.left, newX);
+
+		if (currentPos.y > newY && currentPos.y < bounds.bottom) {
+			if (var4) {
+				if (currentPos.x > newX && currentPos.x < bounds.right) {
+					newIndex = scrObjIndex - catIndex;
+					if (_category == CAT_HOTSPOT && newIndex < scene._hotspots.size())
+						newIndex = scene._hotspots.size() - newIndex - 1;
+				}
+			} else if (!varA) {
+				newIndex = idx;
+			} else if (varA <= idx) {
+				if (currentPos.x > bounds.left)
+					newIndex = idx;
+			} else {
+				if (currentPos.x > bounds.right)
+					newIndex = idx;
+			}
+		}
 	}
 
 	if (newIndex == -1 && index > 0 && !var4) {
 		if (_vm->_events->currentPos().y <= newY) {
 			newIndex = 0;
-			if (varA && _vm->_events->currentPos().x >= var1E)
+			if (varA && _vm->_events->currentPos().x >= newX)
 				newIndex = varA;
 		} else {
 			newIndex = index - 1;
