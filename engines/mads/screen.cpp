@@ -91,13 +91,12 @@ void DirtyArea::setSpriteSlot(const SpriteSlot *spriteSlot) {
 		_bounds.top = spriteSlot->_position.y - scene._posAdjust.y;
 
 		SpriteAsset &spriteSet = *scene._sprites[spriteSlot->_spritesIndex];
-		MSprite *frame = spriteSet.getFrame(((spriteSlot->_frameNumber & 0x7fff) - 1) & 0x7f);
+		MSprite *frame = spriteSet.getFrame(ABS(spriteSlot->_frameNumber) - 1);
 
 		if (spriteSlot->_scale == -1) {
 			width = frame->w;
 			height = frame->h;
-		}
-		else {
+		} else {
 			width = frame->w * spriteSlot->_scale / 100;
 			height = frame->h * spriteSlot->_scale / 100;
 
@@ -380,8 +379,10 @@ void ScreenSurface::init() {
 void ScreenSurface::copyRectToScreen(const Common::Point &destPos,
 		const Common::Rect &bounds) {
 	byte *buf = getBasePtr(destPos.x, destPos.y);
-	g_system->copyRectToScreen(buf, this->pitch, bounds.left, bounds.top,
-		bounds.width(), bounds.height());
+
+	if (bounds.width() != 0 && bounds.height() != 0)
+		g_system->copyRectToScreen(buf, this->pitch, bounds.left, bounds.top,
+			bounds.width(), bounds.height());
 }
 
 void ScreenSurface::copyRectToScreen(const Common::Rect &bounds) {

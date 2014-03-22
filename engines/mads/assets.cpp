@@ -78,6 +78,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 
 	int numColors = palStream->readUint16LE();
 	assert(numColors <= 252);
+	_colorCount = numColors;
 
 	// Load in the palette
 	palette.resize(numColors);

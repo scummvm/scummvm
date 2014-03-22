@@ -187,15 +187,14 @@ void SequenceList::setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot) {
 	spriteSlot._SlotType = spriteSet.isBackground() ? ST_BACKGROUND : ST_FOREGROUND;
 	spriteSlot._seqIndex = seqIndex;
 	spriteSlot._spritesIndex = timerEntry._spritesIndex;
-	spriteSlot._frameNumber = (timerEntry._flipped ? 0x8000 : 0) | timerEntry._frameIndex;
+	spriteSlot._frameNumber = timerEntry._flipped ? -timerEntry._frameIndex : timerEntry._frameIndex;
 	spriteSlot._depth = timerEntry._depth;
 	spriteSlot._scale = timerEntry._scale;
 
 	if (!timerEntry._nonFixed) {
 		spriteSlot._position = timerEntry._msgPos;
 	} else {
-		assert(spriteSlot._frameNumber > 0);
-		MSprite *sprite = spriteSet.getFrame(spriteSlot._frameNumber - 1);
+		MSprite *sprite = spriteSet.getFrame(timerEntry._frameIndex - 1);
 		spriteSlot._position = sprite->_offset;
 	}
 }

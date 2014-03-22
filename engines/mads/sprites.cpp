@@ -322,8 +322,8 @@ void SpriteSlots::drawForeground(MSurface *s) {
 		SpriteAsset &spriteSet = *scene._sprites[slot._spritesIndex];
 
 		// Get the sprite frame
-		int frameNumber = slot._frameNumber & 0x7fff;
-		bool flipped = (slot._frameNumber & 0x8000) != 0;
+		int frameNumber = ABS(slot._frameNumber);
+		bool flipped = slot._frameNumber < 0;
 
 		assert(frameNumber > 0);
 		MSprite *sprite = spriteSet.getFrame(frameNumber - 1);

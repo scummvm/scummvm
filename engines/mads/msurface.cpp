@@ -498,7 +498,7 @@ MSurface *MSurface::flipHorizontal() const {
 
 	for (int y = 0; y < this->h; ++y) {
 		const byte *srcP = getBasePtr(this->w - 1, y);
-		byte *destP = dest->getData();
+		byte *destP = dest->getBasePtr(0, y);
 
 		for (int x = 0; x < this->w; ++x)
 			*destP++ = *srcP--;
