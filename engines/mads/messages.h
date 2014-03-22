@@ -51,7 +51,7 @@ public:
 	int _color2;
 	Common::Point _position;
 	int _textDisplayIndex;
-	int _msgOffset;
+	uint32 _msgOffset;
 	int _numTicks;
 	uint32 _frameTimer2;
 	uint32 _frameTimer;
