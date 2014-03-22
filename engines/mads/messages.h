@@ -72,8 +72,6 @@ private:
 	Common::Array<KernelMessage> _entries;
 	Font *_talkFont;
 public:
-	int word_8469E;
-public:
 	KernelMessages(MADSEngine *vm);
 	~KernelMessages();
 

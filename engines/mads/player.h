@@ -40,11 +40,7 @@ private:
 	MADSEngine *_vm;
 	bool _highSprites;
 	bool _spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT];
-	int _currentDepth;
-	int _currentScale;
 	int _frameOffset;
-	int _frameNum;
-	int _yScale;
 	int _frameCount;
 	int _frameListIndex;
 	int _actionIndex;
@@ -111,6 +107,7 @@ public:
 	bool _visible;
 	bool _priorVisible;
 	bool _visible3;
+	int _frameNum;
 	Common::Point _playerPos;
 	Common::Point _destPos;
 	Common::Point _posChange;
@@ -126,6 +123,9 @@ public:
 	int _unk3;
 	bool _unk4;
 	bool _forceRefresh;
+	int _yScale;
+	int _currentDepth;
+	int _currentScale;
 	Common::String _spritesPrefix;
 	int _routeCount;
 	int _routeOffset;

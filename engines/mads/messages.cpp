@@ -36,7 +36,6 @@ KernelMessages::KernelMessages(MADSEngine *vm): _vm(vm) {
 	}
 
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
-	word_8469E = 0;
 }
 
 KernelMessages::~KernelMessages() {
@@ -89,7 +88,8 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 
 int KernelMessages::addQuote(int quoteId, int abortTimers, uint32 timeout) {
 	Common::String quoteStr = _vm->_game->getQuote(quoteId);
-	return add(Common::Point(), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN, abortTimers, timeout, quoteStr);
+	return add(Common::Point(), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN, 
+		abortTimers, timeout, quoteStr);
 }
 
 void KernelMessages::scrollMessage(int msgIndex, int numTicks, bool quoted) {
@@ -203,10 +203,16 @@ void KernelMessages::processText(int msgIndex) {
 		}
 	}
 
+	Player &player = _vm->_game->_player;
 	if (msg._flags & KMSG_PLAYER_TIMEOUT) {
-		if (word_8469E != 0) {
-			warning("TODO: KernelMessages::processText");
-			// TODO: Figure out various flags
+		if (player._visible3) {
+			SpriteAsset &asset = *_vm->_game->_scene._sprites[player._spritesStart + player._spritesIdx];
+			MSprite *frame = asset.getFrame(player._frameNum - 1);
+
+			int yAmount = player._currentScale * player._yScale / 100;
+			x1 = player._playerPos.x;
+			y1 = (frame->h * player._currentScale / -100) + yAmount +
+				player._playerPos.y - 15;
 		} else {
 			x1 = 160;
 			y1 = 78;
@@ -222,11 +228,10 @@ void KernelMessages::processText(int msgIndex) {
 		++msg._msgOffset;
 		msg._msg.setChar(msg._asciiChar2, msg._msgOffset);
 		msg._asciiChar = msg._msg[msg._msgOffset];
-		msg._asciiChar2 = msg._msg[msg._msgOffset + 1];
+		msg._asciiChar2 = !msg._asciiChar ? '\0' : msg._msg[msg._msgOffset + 1];
 
 		if (!msg._asciiChar) {
 			// End of message
-			msg._msg.setChar('\0', msg._msgOffset);
 			msg._flags &= ~KMSG_SCROLL;
 		} else if (msg._flags & KMSG_QUOTED) {
 			msg._msg.setChar('"', msg._msgOffset);
