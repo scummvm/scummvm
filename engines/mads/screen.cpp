@@ -262,7 +262,6 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_newDescId = 0;
 	_released = false;
 	_uiCount = 0;
-	_hotspotsIndex = 0;
 	_selectedObject = -1;
 	_scrollerY = -1;
 	_milliTime = 0;
@@ -302,7 +301,7 @@ void ScreenObjects::check(bool scanFlag) {
 			&& scene._userInterface._category != CAT_NONE) {
 			_released = true;
 			if (category >= CAT_ACTION && category <= CAT_TALK_ENTRY) {
-				scene._userInterface.elementHighlighted();
+				elementHighlighted();
 			}
 
 			scene._action.checkActionAtMousePos();
@@ -314,7 +313,7 @@ void ScreenObjects::check(bool scanFlag) {
 
 		if (!_vm->_events->_mouseButtons || _vm->_easyMouse) {
 			if (category >= CAT_ACTION && category <= CAT_TALK_ENTRY) {
-				scene._userInterface.elementHighlighted();
+				elementHighlighted();
 			}
 		}
 
@@ -446,6 +445,136 @@ void ScreenObjects::checkScroller() {
 
 	_scrollerY = userInterface._scrollerY;
 	_objectY = userInterface._objectY;
+}
+
+void ScreenObjects::elementHighlighted() {
+	Scene &scene = _vm->_game->_scene;
+	UserInterface &userInterface = scene._userInterface;
+	Common::Array<int> &invList = _vm->_game->_objects._inventoryList;
+	MADSAction &action = scene._action;
+	int varA;
+	int topIndex;
+	int *var6;
+	int var4;
+	int index, indexEnd;
+	int var8 = 0;
+	int uiCount;
+
+	switch (userInterface._category) {
+	case CAT_ACTION:
+		index = 10;
+		indexEnd = 9;
+		varA = 5;
+		topIndex = 0;
+		var6 = !_v7FECA ? &userInterface._v1A : &userInterface._selectedActionIndex;
+
+		if (_v7FECA && userInterface._selectedItemVocabIdx >= 0)
+			userInterface.drawInventory(3, -1, &userInterface._selectedItemVocabIdx);
+
+		var4 = _released && !_v7FECA ? 1 : 0;
+		break;
+
+	case CAT_INV_LIST:
+		userInterface.scrollInventory();
+
+		index = MIN((int)invList.size() - userInterface._inventoryTopIndex, 5);
+		indexEnd = invList.size() - 1;
+		varA = 0;
+		topIndex = userInterface._inventoryTopIndex;
+		var6 = &userInterface._v1C;
+		var4 = (!_released || (_vm->_events->_mouseButtons && action._v83338 == 1)) ? 0 : 1;
+		break;
+
+	case CAT_INV_VOCAB:
+		if (userInterface._selectedInvIndex >= 0) {
+			InventoryObject &invObject = _vm->_game->_objects.getItem(
+				userInterface._selectedInvIndex);
+			index = invObject._vocabCount;
+			indexEnd = index - 1;
+		} else {
+			index = 0;
+		}
+
+		varA = 0;
+		topIndex = 0;
+		var6 = _v7FECA ? &userInterface._selectedItemVocabIdx : &userInterface._v1E;
+
+		if (_v7FECA && userInterface._selectedActionIndex >= 0)
+			userInterface.drawInventory(1, -1, &userInterface._selectedActionIndex);
+
+		var4 = _released && !_v7FECA ? 1 : 0;
+		break;
+
+	case CAT_INV_ANIM:
+		index = 1;
+		indexEnd = invList.size() - 1;
+		varA = 0;
+		topIndex = userInterface._selectedInvIndex;
+		var6 = &var8;
+		var4 = -1;
+		break;
+
+	case CAT_TALK_ENTRY:
+		uiCount = size() - _uiCount;
+		index = scene._hotspots.size();
+		indexEnd = index - 1;
+		varA = 0;
+		topIndex = 0;
+		var6 = &var8;
+		var4 = -1;
+		break;
+
+	default:
+		index = 0;
+		for (int idx = 0; idx < 5; ++idx) {
+			if (!userInterface._talkStrings[idx].empty())
+				++index;
+		}
+
+		indexEnd = index - 1;
+		varA = 0;
+		topIndex = 0;
+		var6 = &userInterface._v1A;
+		var4 = -1;
+		break;
+	}
+
+	int newIndex = -1;
+	int catIndex = userInterface._categoryIndexes[userInterface._category - 1];
+	int newY = 0;
+	int var1E = 0;
+
+	for (int idx = 0; idx < index & newIndex < 0; ++idx) {
+		warning("TODO");
+	}
+
+	if (newIndex == -1 && index > 0 && !var4) {
+		if (_vm->_events->currentPos().y <= newY) {
+			newIndex = 0;
+			if (varA && _vm->_events->currentPos().x >= var1E)
+				newIndex = varA;
+		} else {
+			newIndex = index - 1;
+		}
+	}
+
+	if (newIndex >= 0)
+		newIndex = MIN(newIndex + topIndex, indexEnd);
+
+	_vm->_game->_scene._highlightedHotspot = newIndex;
+
+	if (_category == CAT_INV_LIST || _category == CAT_INV_ANIM) {
+		if (action._v83338 == 1 && newIndex >= 0 && _released &&
+				(!_vm->_events->_mouseReleased || !_vm->_easyMouse))
+			newIndex = -1;
+	}
+
+	if (_released && !_vm->_game->_screenObjects._v7FECA &&
+			(_vm->_events->_mouseReleased || !_vm->_easyMouse))
+		newIndex = -1;
+
+	if (_category != CAT_HOTSPOT && _category != CAT_INV_ANIM)
+		userInterface.drawInventory(_category, newIndex, var6);
 }
 
 /*------------------------------------------------------------------------*/

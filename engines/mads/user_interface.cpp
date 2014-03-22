@@ -188,6 +188,8 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 		_uiSlots(vm) {
 	_invSpritesIndex = -1;
 	_invFrameNumber = 1;
+	_scrollMilli = 0;
+	_scrollFlag = false;
 	_category = CAT_NONE;
 	_inventoryTopIndex = 0;
 	_objectY = 0;
@@ -200,6 +202,7 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_v1E = -1;
 	_dirtyAreas.resize(50);
 	_inventoryChanged = false;
+	Common::fill(&_categoryIndexes[0], &_categoryIndexes[7], 0);
 
 	// Map the user interface to the bottom of the game's screen surface
 	byte *pData = _vm->_screen.getBasePtr(0, MADS_SCENE_HEIGHT);
@@ -270,10 +273,6 @@ void UserInterface::setup(int id) {
 	drawTextElements();
 	loadElements();
 	scene._dynamicHotspots.refresh();
-}
-
-void UserInterface::elementHighlighted() {
-	warning("TODO: UserInterface::elementHighlighted");
 }
 
 void UserInterface::drawTextElements() {
@@ -415,6 +414,7 @@ void UserInterface::loadElements() {
 		}
 
 		// Set up actions
+		_categoryIndexes[CAT_ACTION - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int idx = 0; idx < 10; ++idx) {
 			getBounds(CAT_ACTION, idx, bounds);
 			moveRect(bounds);
@@ -423,6 +423,7 @@ void UserInterface::loadElements() {
 		}
 
 		// Set up inventory list
+		_categoryIndexes[CAT_INV_LIST - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int idx = 0; idx < 5; ++idx) {
 			getBounds(CAT_INV_LIST, idx, bounds);
 			moveRect(bounds);
@@ -431,6 +432,7 @@ void UserInterface::loadElements() {
 		}
 
 		// Set up the inventory vocab list
+		_categoryIndexes[CAT_INV_VOCAB - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int idx = 0; idx < 5; ++idx) {
 			getBounds(CAT_INV_VOCAB, idx, bounds);
 			moveRect(bounds);
@@ -439,12 +441,13 @@ void UserInterface::loadElements() {
 		}
 
 		// Set up the inventory item picture
+		_categoryIndexes[CAT_INV_ANIM - 1] = _vm->_game->_screenObjects.size() + 1;
 		_vm->_game->_screenObjects.add(Common::Rect(160, 159, 231, 194), LAYER_GUI,
 			CAT_INV_ANIM, 0);
 	}
 
 	if (!_vm->_game->_screenObjects._v832EC || _vm->_game->_screenObjects._v832EC == 2) {
-		_vm->_game->_screenObjects._hotspotsIndex = _vm->_game->_screenObjects.size();
+		_categoryIndexes[CAT_HOTSPOT - 1] = _vm->_game->_screenObjects.size();
 		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
 			Hotspot &hs = scene._hotspots[hotspotIdx];
 			_vm->_game->_screenObjects.add(hs._bounds, LAYER_GUI, CAT_HOTSPOT, hotspotIdx);
@@ -453,6 +456,7 @@ void UserInterface::loadElements() {
 
 	if (_vm->_game->_screenObjects._v832EC == 1) {
 		// setup areas for talk entries
+		_categoryIndexes[CAT_TALK_ENTRY - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int idx = 0; idx < 5; ++idx) {
 			getBounds(CAT_TALK_ENTRY, idx, bounds);
 			moveRect(bounds);
@@ -642,6 +646,38 @@ void UserInterface::drawInventory(int v1, int v2, int *v3) {
 
 void UserInterface::scrollerChanged() {
 	warning("TODO: scrollerChanged");
+}
+
+void UserInterface::scrollInventory() {
+	Common::Array<int> &invList = _vm->_game->_objects._inventoryList;
+
+	if (_vm->_events->_mouseButtons) {
+		int yp = _vm->_events->currentPos().y;
+		if (yp < MADS_SCENE_HEIGHT || yp == (MADS_SCREEN_HEIGHT - 1)) {
+			uint32 timeDiff = _scrollFlag ? 100 : 380;
+			uint32 currentMilli = g_system->getMillis();
+			_vm->_game->_screenObjects._v8332A = -1;
+
+			if (currentMilli >= (_scrollMilli + timeDiff)) {
+				_scrollMilli = currentMilli;
+				_scrollFlag = true;
+
+				if (yp == (MADS_SCREEN_HEIGHT - 1)) {
+					if (_inventoryTopIndex < (invList.size() - 1)) {
+						++_inventoryTopIndex;
+						_inventoryChanged = true;
+					}
+				} else {
+					if (_inventoryTopIndex > 0) {
+						--_inventoryTopIndex;
+						_inventoryChanged = true;
+					}
+				}
+			}
+		}
+	}
+
+	_vm->_game->_screenObjects._v8332A = 0;
 }
 
 } // End of namespace MADS

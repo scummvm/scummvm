@@ -337,7 +337,8 @@ void Scene::doFrame() {
 			CursorType cursorId = CURSOR_ARROW;
 			if (_action._v83338 == 1 && !_vm->_game->_screenObjects._v7FECA &&
 					_vm->_game->_screenObjects._category == CAT_HOTSPOT) {
-				int idx = _vm->_game->_screenObjects._selectedObject - _vm->_game->_screenObjects._hotspotsIndex;
+				int idx = _vm->_game->_screenObjects._selectedObject - 
+					_userInterface._categoryIndexes[CAT_HOTSPOT - 1];
 				assert(idx >= 0);
 
 				if (idx >= (int)_hotspots.size()) {

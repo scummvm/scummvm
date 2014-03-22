@@ -79,6 +79,8 @@ private:
 	MADSEngine *_vm;
 	int _invSpritesIndex;
 	int _invFrameNumber;
+	uint32 _scrollMilli;
+	bool _scrollFlag;
 
 	/**
 	 * Loads the elements of the user interface
@@ -143,6 +145,7 @@ public:
 	int _v1C;
 	int _v1E;
 	bool _inventoryChanged;
+	int _categoryIndexes[8];
 	Common::StringArray _talkStrings;
 	Common::Array<int> _talkIds;
 public:
@@ -160,8 +163,6 @@ public:
 	* Set up the interface
 	*/
 	void setup(int id);
-
-	void elementHighlighted();
 
 	void drawTextElements();
 
@@ -193,6 +194,8 @@ public:
 	void drawInventory(int v1, int v2, int *v3);
 
 	void scrollerChanged();
+
+	void scrollInventory();
 };
 
 } // End of namespace MADS

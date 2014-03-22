@@ -158,7 +158,6 @@ public:
 	int _currentDescId;
 	bool _released;
 	int _uiCount;
-	int _hotspotsIndex;
 	uint32 _milliTime;
 	bool _eventFlag;
 
@@ -175,6 +174,11 @@ public:
 	/**
 	*/
 	void check(bool scanFlag);
+
+	/**
+	 * Handle element being highlighted on the screen
+	 */
+	void elementHighlighted();
 };
 
 class ScreenSurface : public MSurface {
