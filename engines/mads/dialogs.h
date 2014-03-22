@@ -193,6 +193,7 @@ public:
 	virtual ~Dialogs() {}
 
 	virtual void showDialog() = 0;
+	virtual void showPicture(int objId, int msgId, int arg3) = 0;
 };
 
 } // End of namespace MADS

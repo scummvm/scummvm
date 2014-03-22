@@ -39,6 +39,9 @@ public:
 	virtual void showDialog() {
 		warning("TODO: showDialog");
 	}
+	virtual void showPicture(int objId, int msgId, int arg3) {
+		warning("TODO: showPicture");
+	}
 };
 
 struct HOGANUS {

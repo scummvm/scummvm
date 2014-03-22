@@ -793,10 +793,10 @@ void Scene202::actions() {
 					if (_game._objects.isInInventory(OBJ_BONE)) {
 						_game._objects.removeFromInventory(OBJ_BONE, 1);
 						_game._objects.addToInventory(OBJ_BONES);
-						warning("TODO: Dialog::showPicture(OBJ_BONES, 0x4EFA, 0);");
+						_vm->_dialogs->showPicture(OBJ_BONES, 0x4EFA, 0);
 					} else {
 						_game._objects.addToInventory(OBJ_BONE);
-						warning("TODO: Dialog::showPicture(OBJ_BONE, 0x4EFA, 0);");
+						_vm->_dialogs->showPicture(OBJ_BONE, 0x4EFA, 0);
 					}
 					_scene->changeDepthSurface(_globals[32]);
 					_game._player._stepEnabled = true;
