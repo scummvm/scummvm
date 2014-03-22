@@ -542,8 +542,8 @@ void Scene202::step() {
 		_scene->_hotspots.activate(199, false);
 		int idx = _scene->_dynamicHotspots.add(457, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, 246, 124, 8);
-		warning("TODO: TimerList_getTimeout(_globals._spriteIndexes[26], _globals._spriteIndexes[20]);");
-		warning("TODO: TimerList_getTimeout(-1, _globals._spriteIndexes[26]);");
+		_scene->_sequences.getTimeout(_globals._spriteIndexes[26], _globals._spriteIndexes[20]);
+		_scene->_sequences.getTimeout(-1, _globals._spriteIndexes[26]);
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
 		_globals._v4 = false;
@@ -742,7 +742,7 @@ void Scene202::preActions() {
 			_scene->_sequences.setDepth(_globals._spriteIndexes[23], 1);
 			_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 1);
 		} else if (_game._abortTimers == 1) {
-			warning("TODO: TimerList_getTimeout(-1, _globals._spriteIndexes[23]);");
+			_scene->_sequences.getTimeout(-1, _globals._spriteIndexes[23]);
 			warning("CHECKME: _scene->_dynamicHotspots.remove(_globals._frameTime);");
 			_scene->_dynamicHotspots.remove(_globals._frameTime);
 			_game._player._visible = true;
@@ -836,7 +836,7 @@ void Scene202::actions() {
 				_globals._spriteIndexes[24] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], true, 1);
 				_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
 				_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
-				warning("TODO: TimerList_getTimeout(_globals._spriteIndexes[23], _globals._spriteIndexes[24]);");
+				_scene->_sequences.getTimeout(_globals._spriteIndexes[23], _globals._spriteIndexes[24]);
 				_globals._v4 = -1;
 				_game._player._stepEnabled = true;
 				int msgIndex = _scene->_kernelMessages.add(Common::Point(248, 15), 0x1110, 32, 0, 60, _game.getQuote(97));
@@ -854,7 +854,7 @@ void Scene202::actions() {
 					_scene->_sequences.setAnimRange(_globals._spriteIndexes[25], 1, 6);
 					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
 					_scene->_sequences.setDepth(_globals._spriteIndexes[25], 1);
-					warning("TODO: TimerList_getTimeout(-1, _globals._spriteIndexes[25]);");
+					_scene->_sequences.getTimeout(-1, _globals._spriteIndexes[25]);
 					_scene->_sequences.addSubEntry(_globals._spriteIndexes[25], SM_0, 0, 1);
 				} else if (_game._abortTimers == 1) {
 					_globals._spriteIndexes[25] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 6);
@@ -877,7 +877,7 @@ void Scene202::actions() {
 					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
 					_scene->_sequences.addSubEntry(_globals._spriteIndexes[25], SM_0, 0, 3);
 				} else if (_game._abortTimers == 3) {
-					warning("TODO: TimerList_getTimeout(-1, _globals._spriteIndexes[25]);");
+					_scene->_sequences.getTimeout(-1, _globals._spriteIndexes[25]);
 					_game._player._stepEnabled = true;
 					_game._player._visible = true;
 				} else {

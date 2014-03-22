@@ -473,4 +473,17 @@ int SequenceList::startReverseCycle(int srcSpriteIndex, bool flipped, int numTic
 		numTicks, 0, 0, true, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);
 }
 
+void SequenceList::getTimeout(int spriteIdx, int arg2) {
+	int timeout;
+	if (spriteIdx >= 0)
+		timeout = _vm->_game->_scene._sequences._entries[spriteIdx]._timeout;
+	else
+		timeout = _vm->_game->_player._priorTimer + _vm->_game->_player._ticksAmount;
+
+	if (arg2 >= 0)
+		_vm->_game->_scene._sequences._entries[arg2]._timeout = timeout;
+	else
+		_vm->_game->_player._priorTimer = timeout - _vm->_game->_player._ticksAmount;
+
+}
 } // End of namespace 
