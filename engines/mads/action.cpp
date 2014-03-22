@@ -37,6 +37,7 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	_selectedAction = 0;
 	_inProgress = false;
 	_savedSelectedRow = false;
+	_savedLookFlag = false;
 }
 
 void MADSAction::clear() {

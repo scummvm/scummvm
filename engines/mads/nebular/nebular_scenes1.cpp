@@ -257,6 +257,11 @@ void Scene103::preActions() {
 }
 
 void Scene103::actions() {
+	if (_action._savedLookFlag) {
+		Dialog::show(0x2852);
+	}
+
+	_action._inProgress = false;
 }
 
 void Scene103::postActions() {

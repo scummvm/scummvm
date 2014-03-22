@@ -88,6 +88,7 @@ public:
 	MADSActionSavedFields _savedFields;
 	bool _walkFlag;
 	bool _savedSelectedRow;
+	bool _savedLookFlag;
 
 	// Unknown fields
 	int16 _v86F3A;
