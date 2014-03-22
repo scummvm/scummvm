@@ -387,7 +387,7 @@ void Scene202::enter() {
 	}
 
 	if (_globals[32])
-		warning("TODO: sub1EB6E(_globals[32];");
+		_scene->changeDepthSurface(_globals[32]);
 
 	if (_scene->_priorSceneId == 201) {
 		_game._player._playerPos = Common::Point(190, 91);
@@ -811,7 +811,7 @@ void Scene202::actions() {
 						_game._objects.addToInventory(OBJ_BONE);
 						warning("TODO: Dialog::showPicture(OBJ_BONE, 0x4EFA, 0);");
 					}
-					warning("TODO: sub1EB6E(_globals[32];");
+					_scene->changeDepthSurface(_globals[32]);
 					_game._player._stepEnabled = true;
 					_game._player._visible = true;
 				} else {

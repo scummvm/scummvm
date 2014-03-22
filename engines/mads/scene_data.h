@@ -163,11 +163,6 @@ protected:
 	 * Loads the given surface with depth information of a given scene
 	 */
 	virtual void loadCodes(MSurface &depthSurface) = 0;
-
-	/**
-	* Loads the given surface with depth information of a given scene
-	*/
-	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) = 0;
 public:
 	int _sceneId;
 	int _artFileNum;
@@ -206,6 +201,11 @@ public:
 	 * Set up a route node
 	 */
 	void setRouteNode(int nodeIndex, const Common::Point &pt, MSurface &depthSurface);
+
+	/**
+	* Loads the given surface with depth information of a given scene
+	*/
+	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) = 0;
 };
 
 } // End of namespace MADS

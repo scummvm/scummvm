@@ -201,6 +201,9 @@ public:
 	 * Clear the data for the scene
 	 */
 	void free();
+
+	void changeDepthSurface(int arg1);
+
 };
 
 } // End of namespace MADS

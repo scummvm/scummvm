@@ -514,4 +514,10 @@ void Scene::free() {
 	warning("TODO: Scene::free");
 }
 
+void Scene::changeDepthSurface(int arg1) {
+	_v1 = arg1;
+	_sceneInfo->loadCodes(_depthSurface, nullptr);
+	_spriteSlots.fullRefresh();
+}
+
 } // End of namespace MADS
