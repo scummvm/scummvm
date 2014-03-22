@@ -37,6 +37,8 @@ void initLanguage(Common::Language lang);
 
 int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width, bool recheckValue = false);
 void makeCommandLine();
+void makeFWCommandLine();
+void makeOSCommandLine();
 void makeActionMenu();
 void waitPlayerInput();
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
