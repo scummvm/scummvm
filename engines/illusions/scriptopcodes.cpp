@@ -130,6 +130,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(150, opRunSpecialCode);
 	OPCODE(161, opSetActorUsePan);
 	OPCODE(168, opStartAbortableThread);
+	OPCODE(169, opKillThread);
 	OPCODE(175, opSetSceneIdThreadId);
 	OPCODE(176, opStackPush0);
 	OPCODE(177, opSetFontId);
@@ -278,17 +279,17 @@ void ScriptOpcodes::opStartSequenceActor(ScriptThread *scriptThread, OpCall &opC
 }
 
 void ScriptOpcodes::opStartTalkThread(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(value);	
+	ARG_INT16(duration);	
 	ARG_UINT32(objectId);
 	ARG_UINT32(talkId);
 	ARG_UINT32(sequenceId1);
 	ARG_UINT32(sequenceId2);
-	ARG_UINT32(value2);
+	ARG_UINT32(namedPointId);
 	// NOTE Skipped checking for stalled sequence, not sure if needed
-	// TODO _vm->_scriptMan->startTalkThread(value, objectId, talkId, sequenceId1, sequenceId2, value2, opCall._callerThreadId);
+	_vm->_scriptMan->startTalkThread(duration, objectId, talkId, sequenceId1, sequenceId2, namedPointId, opCall._callerThreadId);
 
 	//DEBUG Resume calling thread, later done after talking is finished
-	_vm->notifyThreadId(opCall._threadId);
+	//_vm->notifyThreadId(opCall._threadId);
 }
 
 void ScriptOpcodes::opAppearActor(ScriptThread *scriptThread, OpCall &opCall) {
@@ -429,7 +430,7 @@ void ScriptOpcodes::opActivateButton(ScriptThread *scriptThread, OpCall &opCall)
 void ScriptOpcodes::opJumpIf(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(jumpOffs)
 	int16 value = _vm->_scriptMan->_stack.pop();
-	if (!value)
+	if (value == 0)
 		opCall._deltaOfs += jumpOffs;
 }
 
@@ -450,10 +451,11 @@ void ScriptOpcodes::opCompareBlockCounter(ScriptThread *scriptThread, OpCall &op
 	ARG_INT16(compareOp);	
 	ARG_INT16(rvalue);
 	int16 lvalue = _vm->_scriptMan->_scriptResource->_blockCounters.get(index);
+	debug("lvalue = %d", lvalue);
 	bool compareResult = false;
 	switch (compareOp) {
 	case 1:
-		compareResult = lvalue == rvalue;
+		compareResult = false;//lvalue == rvalue;
 		break;
 	case 2:
 		compareResult = lvalue != rvalue;
@@ -471,6 +473,7 @@ void ScriptOpcodes::opCompareBlockCounter(ScriptThread *scriptThread, OpCall &op
 		compareResult = lvalue <= rvalue;
 		break;
 	}
+	debug("  compareResult -> %d", compareResult);
 	_vm->_scriptMan->_stack.push(compareResult ? 1 : 0);
 }
 
@@ -529,8 +532,14 @@ void ScriptOpcodes::opStartAbortableThread(ScriptThread *scriptThread, OpCall &o
 	ARG_SKIP(2);
 	ARG_INT16(codeOffs);
 	ARG_INT16(skipOffs);
-	_vm->_scriptMan->startAbortableThread(opCall._code + opCall._opSize + codeOffs,
-		opCall._code + opCall._opSize + skipOffs, opCall._callerThreadId);
+	_vm->_scriptMan->startAbortableThread(opCall._code + codeOffs,
+		opCall._code + skipOffs, opCall._callerThreadId);
+}
+
+void ScriptOpcodes::opKillThread(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(threadId);
+	_vm->_scriptMan->_threads->killThread(threadId);
 }
 
 void ScriptOpcodes::opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opCall) {

@@ -26,6 +26,7 @@
 #include "illusions/scriptman.h"
 #include "illusions/scriptthread.h"
 #include "illusions/scriptopcodes.h"
+#include "illusions/talkthread.h"
 #include "illusions/timerthread.h"
 
 namespace Illusions {
@@ -128,6 +129,9 @@ ScriptMan::ScriptMan(IllusionsEngine *vm)
 	: _vm(vm), _pauseCtr(0), _doScriptThreadInit(false) {
 	_threads = new ThreadList(vm);
 	_scriptOpcodes = new ScriptOpcodes(vm);
+	_field8 = 1;
+	_fieldA = 0;
+	_fieldE = 240;
 }
 
 ScriptMan::~ScriptMan() {
@@ -158,8 +162,8 @@ void ScriptMan::startAnonScriptThread(int32 threadId, uint32 callingThreadId,
 
 uint32 ScriptMan::startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 	uint32 value8, uint32 valueC, uint32 value10) {
-	debug("Starting temp script thread");
 	uint32 tempThreadId = newTempThreadId();
+	debug("Starting temp script thread %08X", tempThreadId);
 	newScriptThread(tempThreadId, callingThreadId, 0, scriptCodeIp, value8, valueC, value10);
 	return tempThreadId;
 }
@@ -173,11 +177,23 @@ uint32 ScriptMan::startTimerThread(uint32 duration, uint32 threadId) {
 }
 
 uint32 ScriptMan::startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2, uint32 callingThreadId) {
-	debug("Starting abortable thread");
 	uint32 tempThreadId = newTempThreadId();
+	debug("Starting abortable thread %08X", tempThreadId);
 	uint32 scriptThreadId = startTempScriptThread(scriptCodeIp1, tempThreadId, 0, 0, 0);
-	AbortableThread *abortableThread = new AbortableThread(_vm, tempThreadId, callingThreadId, 0, scriptThreadId, scriptCodeIp2);
+	AbortableThread *abortableThread = new AbortableThread(_vm, tempThreadId, callingThreadId, 0,
+		scriptThreadId, scriptCodeIp2);
 	_threads->startThread(abortableThread);
+	return tempThreadId;
+}
+
+uint32 ScriptMan::startTalkThread(int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1,
+	uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId) {
+	debug("Starting talk thread");
+	uint32 tempThreadId = newTempThreadId();
+	// TODO endTalkThreadsNoNotify();
+	TalkThread *talkThread = new TalkThread(_vm, tempThreadId, callingThreadId, 0,
+		duration, objectId, talkId, sequenceId1, sequenceId2, namedPointId);
+	_threads->startThread(talkThread);
 	return tempThreadId;
 }
 
@@ -185,9 +201,32 @@ void ScriptMan::setCurrFontId(uint32 fontId) {
 	_fontId = fontId;
 }
 
+bool ScriptMan::checkActiveTalkThreads() {
+	// TODO
+	return false;
+}
+
+uint32 ScriptMan::clipTextDuration(uint32 duration) {
+	switch (_field8) {
+	case 2:
+		if (duration == 0)
+			duration = 240;
+		break;
+	case 3:
+		if (duration < _fieldA)
+			duration = _fieldA;
+		break;
+	case 4:
+		if (duration > _fieldA)
+			duration = _fieldA;
+		break;
+	}
+	return duration;
+}
+
 void ScriptMan::reset() {
-	// TODO _scriptResource->_blockCounters.clear();
-	// TODO _scriptResource->_properties.clear();
+	_scriptResource->_blockCounters.clear();
+	_scriptResource->_properties.clear();
 	// TODO script_sub_417FF0(1, 0);
 }
 

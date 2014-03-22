@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	spritedecompressqueue.o \
 	spritedrawqueue.o \
 	talkresource.o \
+	talkthread.o \
 	thread.o \
 	time.o \
 	timerthread.o \

@@ -101,8 +101,10 @@ int Thread::update() {
 
 void Thread::terminate() {
 	if (!_terminated) {
-		if (!(_notifyFlags & 1))
+		if (!(_notifyFlags & 1)) {
+			debug("Thread::terminate() _callingThreadId: %08X", _callingThreadId);
 			_vm->notifyThreadId(_callingThreadId);
+		}
 		_callingThreadId = 0;
 		onTerminated();
 		// TODO _vm->removeThread(_threadId, this);

@@ -107,6 +107,7 @@ protected:
 	void opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetActorUsePan(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartAbortableThread(ScriptThread *scriptThread, OpCall &opCall);
+	void opKillThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opCall);
 	void opStackPush0(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);

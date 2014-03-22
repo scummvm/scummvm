@@ -45,6 +45,7 @@ class Properties {
 public:
 	Properties();
 	void init(uint count, byte *properties);
+	void clear();
 	bool get(uint32 propertyId);
 	void set(uint32 propertyId, bool value);
 public:
