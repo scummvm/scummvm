@@ -616,127 +616,112 @@ void Scene202::step() {
 //	}
 	
 	warning("TODO: word84260 = _scene->_activeAnimation->getCurrentFrame();");
-	int var2 = _vm->getRandomNumber(999) + 1;
-	int varA = -1;
+	int randVal = _vm->getRandomNumber(999) + 1;
+	int frameStep = -1;
 	
-	if (_scene->_activeAnimation->getCurrentFrame() == 77) {
-		varA = subStep1(var2);
-	} else if (_scene->_activeAnimation->getCurrentFrame() < 77) {
-		if (_scene->_activeAnimation->getCurrentFrame() == 74) {
-			varA = subStep2(var2);
-		} else if (_scene->_activeAnimation->getCurrentFrame() <= 74) {
-			if (_scene->_activeAnimation->getCurrentFrame() == 27) {
-				varA = subStep3(var2);
-			} else if (_scene->_activeAnimation->getCurrentFrame() == 42) {
-				varA = subStep1(var2);
-			} else if (_scene->_activeAnimation->getCurrentFrame() == 51) {
-				varA = subStep2(var2);
-			} else if (_scene->_activeAnimation->getCurrentFrame() == 59) {
-				warning("TODO: _timerIndex = 3;");
-				warning("TODO: ++word84264;");
-				if (var2 <= 800)
-					varA = 55;
-			} else {
-				// Nothing
-				;
-			}
-		} else {
-			// nothing
-			;
-		}
-	} else if (_scene->_activeAnimation->getCurrentFrame() == 119) {
-		varA = subStep3(var2);
-	} else if (_scene->_activeAnimation->getCurrentFrame() > 119) {
-		if (_scene->_activeAnimation->getCurrentFrame() == 137) {
-			warning("TODO: _timerIndex = 2;");
-			if (var2 <= 700)
-				varA = 126;
-		} else if (_scene->_activeAnimation->getCurrentFrame() == 159) {
-			varA = subStep3(var2);
-		} else if (_scene->_activeAnimation->getCurrentFrame() == 176) {
-			varA = subStep4(var2);
-		} else {
-			// Nothing
-			;
-		}
-	} else if (_scene->_activeAnimation->getCurrentFrame() == 89) {
+	switch (_scene->_activeAnimation->getCurrentFrame()) {
+	case 42:
+	case 77:
+	case 96:
+		frameStep = subStep1(randVal);
+		break;
+	case 51:
+	case 74:
+		frameStep = subStep2(randVal);
+		break;
+	case 27:
+	case 119:
+	case 159:
+		frameStep = subStep3(randVal);
+		break;
+	case 176:
+		frameStep = subStep4(randVal);
+		break;
+	case 59:
+		warning("TODO: _timerIndex = 3;");
+		warning("TODO: ++word84264;");
+		if (randVal <= 800)
+			frameStep = 55;
+		break;
+	case 89:
 		warning("TODO: _timerIndex = 1;");
-		if (var2 <= 700)
-			varA = 83;
-	} else if (_scene->_activeAnimation->getCurrentFrame() == 96) {
-		varA = subStep1(var2);
-	} else {
-		// Nothing
-		;
+		if (randVal <= 700)
+			frameStep = 83;
+		break;
+	case 137:
+		warning("TODO: _timerIndex = 2;");
+		if (randVal <= 700)
+			frameStep = 126;
+		break;
 	}
 
-	if (varA < 0)
+	if (frameStep < 0)
 		return;
 
-	int nextFrame = 1 + _scene->_activeAnimation->getCurrentFrame() - varA;
+	int nextFrame = 1 + _scene->_activeAnimation->getCurrentFrame() - frameStep;
 	if (nextFrame) {
 		_scene->_activeAnimation->setCurrentFrame(nextFrame);
 		warning("word84260 = nextFrame");
 	}
 }
 
-int Scene202::subStep1(int var2) {
+int Scene202::subStep1(int randVal) {
 	warning("TODO: word84264 = 0;");
 
-	warning("TODO: if ((var2 <= 100) || (word84266 != 0))");
-	if (var2 <= 100)
+	warning("TODO: if ((randVal <= 100) || (word84266 != 0))");
+	if (randVal <= 100)
 		return 42;
 
-	warning("TODO: if ((var2 <= 200) || (word84268 != 0))");
-	if (var2 <= 200)
+	warning("TODO: if ((randVal <= 200) || (word84268 != 0))");
+	if (randVal <= 200)
 		return 96;
 
-	warning("TODO: if ((var2 <= 300) && (_timerIndex != 1))");
-	if (var2 <= 300)
+	warning("TODO: if ((randVal <= 300) && (_timerIndex != 1))");
+	if (randVal <= 300)
 		return 77;
 
 	return 76;
 }
 
-int Scene202::subStep2(int var2) {
+int Scene202::subStep2(int randVal) {
 	warning("TODO: word84266 = 0;");
 
-	warning("TODO: if ((var2 <= 150) && (word84264 < 5)");
-	if (var2 <= 150)
+	warning("TODO: if ((randVal <= 150) && (word84264 < 5)");
+	if (randVal <= 150)
 		return 51;
 
-	warning("TODO: if ((var2 <= 300) || word84268)");
-	if (var2 <= 300)
+	warning("TODO: if ((randVal <= 300) || word84268)");
+	if (randVal <= 300)
 		return 74;
 
-	if (var2 <= 400)
+	if (randVal <= 400)
 		return 64;
 
 	return 44;
 }
 
-int Scene202::subStep3(int var2) {
-	warning("TODO: if ((var2 <= 100) || (word84266 != 0))");
-	if (var2 <= 100)
+int Scene202::subStep3(int randVal) {
+	warning("TODO: if ((randVal <= 100) || (word84266 != 0))");
+	if (randVal <= 100)
 		return 27;
 
-	warning("TODO: if ((var2 <= 200) || (word84268 != 0))");
-	if (var2 <= 200)
+	warning("TODO: if ((randVal <= 200) || (word84268 != 0))");
+	if (randVal <= 200)
 		return 159;
 
-	warning("TODO: if ((var2 <= 300) && (_timerIndex != 2))");
-	if (var2 <= 300)
+	warning("TODO: if ((randVal <= 300) && (_timerIndex != 2))");
+	if (randVal <= 300)
 		return 119;
 
 	return 110;
 }
 
-int Scene202::subStep4(int var2) {
-	warning("TODO: if ((var2 <= 100) || (word84268 != 0))");
-	if (var2 <= 100)
+int Scene202::subStep4(int randVal) {
+	warning("TODO: if ((randVal <= 100) || (word84268 != 0))");
+	if (randVal <= 100)
 		return 176;
 
-	if (var2 <= 200)
+	if (randVal <= 200)
 		return 19;
 
 	return 166;	

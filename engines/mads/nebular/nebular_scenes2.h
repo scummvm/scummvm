@@ -62,10 +62,10 @@ public:
 
 class Scene202: public Scene2xx {
 private:
-	int subStep1(int var2);
-	int subStep2(int var2);
-	int subStep3(int var2);
-	int subStep4(int var2);
+	int subStep1(int randVal);
+	int subStep2(int randVal);
+	int subStep3(int randVal);
+	int subStep4(int randVal);
 
 public:
 	Scene202(MADSEngine *vm) : Scene2xx(vm) {}
