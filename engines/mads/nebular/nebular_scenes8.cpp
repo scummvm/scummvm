@@ -290,7 +290,7 @@ void Scene804::step() {
 	}
 	if (_scene->_activeAnimation->getCurrentFrame() == 80 && !_globals._v7) {
 		_vm->_sound->command(22);
-		_globals._v7 = -1;
+		_globals._v7 = 0xFFFFFFFF;
 	}
 }
 

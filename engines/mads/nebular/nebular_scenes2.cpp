@@ -418,8 +418,7 @@ void Scene202::enter() {
 		_globals._v4 = 0;
 	}
 
-	_globals._v7 = _scene->_frameStartTime;
-	warning("TODO: dword_8425C = _scene->_frameStartTime;");
+	_game._scene._v8425C = _globals._v7 = _scene->_frameStartTime;
 
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_NONE);
@@ -484,7 +483,7 @@ void Scene202::step() {
 	if (_game._abortTimers == 71) {
 		_vm->_sound->command(3);
 		_vm->_sound->command(9);
-		warning("TODO: dword_8425C = 900 + _scene->_frameStartTime;");
+		_game._scene._v8425C = 900 + _scene->_frameStartTime;
 		Common::Point msgPos;
 		int msgFlag;
 		if (_globals._v4 == 0) {
@@ -555,8 +554,7 @@ void Scene202::step() {
 		break;
 	}
 	
-	if (!_scene->_activeAnimation && (_globals[33] != 2) && (_globals._v7 <= _scene->_frameStartTime)) {
-		warning("TODO: && (dword_8425C <= _scene->_frameStartTime) {");
+	if (!_scene->_activeAnimation && (_globals[33] != 2) && (_globals._v7 <= _scene->_frameStartTime) && (_game._scene._v8425C <= _scene->_frameStartTime)) {
 		int randVal = _vm->getRandomNumber(499) + 1;
 		int threshold = 1;
 		if (_globals._v4)

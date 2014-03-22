@@ -44,7 +44,7 @@ public:
 	int _v4;
 	int _v5;
 	int _v6;
-	int _v7;
+	uint32 _v7;
 	int _v8;
 	int _abortVal;
 public:
