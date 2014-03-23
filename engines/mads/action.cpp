@@ -69,6 +69,15 @@ void MADSAction::appendVocab(int vocabId, bool capitalise) {
 	_statusText += " ";
 }
 
+void MADSAction::checkCustomDest(int v) {
+	Scene &scene = _vm->_game->_scene;
+
+	if (_v86F4A && (v == -3 || _savedFields._selectedRow < 0)) {
+		_startWalkFlag = true;
+		scene._destPos = scene._customDest;
+	}
+}
+
 void MADSAction::set() {
 	Scene &scene = _vm->_game->_scene;
 	UserInterface &userInterface = scene._userInterface;
@@ -249,72 +258,76 @@ void MADSAction::refresh() {
 }
 
 void MADSAction::startAction() {
-	/*
-	_madsVm->_player.moveComplete();
+	Game &game = *_vm->_game;
+	Scene &scene = _vm->_game->_scene;
+	DynamicHotspots &dynHotspots = scene._dynamicHotspots;
+	Hotspots &hotspots = scene._hotspots;
+
+	game._player.moveComplete();
 
 	_inProgress = true;
 	_v8453A = ABORTMODE_0;
-	_savedFields.selectedRow = _selectedRow;
-	_savedFields.articleNumber = _articleNumber;
-	_savedFields.actionMode = _actionMode;
-	_savedFields.actionMode2 = _actionMode2;
-	_savedFields.lookFlag = _lookFlag;
-	int savedHotspotId = _hotspotId;
-	int savedV86F3A = _v86F3A;
-	int savedV86F42 = _v86F42;
+	_savedFields._selectedRow = _selectedRow;
+	_savedFields._hotspotId = _hotspotId;
+	_savedFields._v86F3A = _v86F3A;
+	_savedFields._articleNumber = _articleNumber;
+	_savedFields._actionMode = _actionMode;
+	_savedFields._actionMode2 = _actionMode2;
+	_savedFields._v86F42 = _v86F42;
+	_savedFields._lookFlag = _lookFlag;
+	_activeAction = _action;
 
 	// Copy the action to be active
 	_activeAction = _action;
-	strcpy(_dialogTitle, _statusText);
+	_dialogTitle = _statusText;
 
-	if ((_savedFields.actionMode2 == ACTMODE2_4) && (savedV86F42 == 0))
-		_v8453A = ABORTMODE_1;
+	if ((_actionMode2 == ACTIONMODE2_4) && (_v86F42 == 0))
+		_v8453A = -1;
 
 	_startWalkFlag = false;
 	int hotspotId = -1;
-	HotSpotList &dynHotspots = *_madsVm->scene()->getSceneResources().dynamicHotspots;
-	HotSpotList &hotspots = *_madsVm->scene()->getSceneResources().hotspots;
 
-	if (!_savedFields.lookFlag && (_madsVm->scene()->_screenObjects._v832EC != 1)) {
-		if (_savedFields.actionMode2 == ACTMODE2_4)
-			hotspotId = savedHotspotId;
-		else if (savedV86F42 == 4)
-			hotspotId = savedV86F3A;
+	if (!_savedFields._lookFlag && (_vm->_game->_screenObjects._v832EC != 1)) {
+		if (_savedFields._actionMode2 == ACTIONMODE2_4)
+			hotspotId = _savedFields._hotspotId;
+		else if (_v86F42 == 4)
+			hotspotId = _savedFields._v86F3A;
 
 		if (hotspotId >= hotspots.size()) {
-			HotSpot &hs = dynHotspots[hotspotId - hotspots.size()];
-			if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
-				if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
+			DynamicHotspot &hs = dynHotspots[hotspotId - hotspots.size()];
+			if ((hs._feetPos.x == -1) || (hs._feetPos.x == -3)) {
+				if (_v86F4A && ((hs._feetPos.x == -3) || (_savedFields._selectedRow < 0))) {
 					_startWalkFlag = true;
-					_madsVm->scene()->_destPos = _madsVm->scene()->_customDest;
+
+
+					scene._destPos = scene._customDest;
 				}
-			} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
+			} else if ((hs._feetPos.x >= 0) && ((_savedFields._actionMode == ACTIONMODE_NONE) || 
+					(hs._cursor < 2))) {
 				_startWalkFlag = true;
-				_madsVm->scene()->_destPos.x = hs.getFeetX();
-				_madsVm->scene()->_destPos.y = hs.getFeetY();
+				scene._destPos.x = hs._feetPos.x;
+				scene._destPos.y = hs._feetPos.y;
 			}
-			_madsVm->scene()->_destFacing = hs.getFacing();
+			scene._destFacing = hs._facing;
 			hotspotId = -1;
 		}
 	}
 
 	if (hotspotId >= 0) {
-		HotSpot &hs = hotspots[hotspotId];
-		if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
-			if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
+		Hotspot &hs = hotspots[hotspotId];
+		if ((hs._feetPos.x == -1) || (hs._feetPos.x == -3)) {
+			if (_v86F4A && ((hs._feetPos.x == -3) || (_savedFields._selectedRow < 0))) {
 				_startWalkFlag = true;
-				_madsVm->scene()->_destPos = _madsVm->scene()->_customDest;
+				scene._destPos = scene._customDest;
 			}
-		} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
+		} else if ((hs._feetPos.x >= 0) && ((_savedFields._actionMode == ACTIONMODE_NONE) || (hs._cursor < 2))) {
 			_startWalkFlag = true;
-			_madsVm->scene()->_destPos.x = hs.getFeetX();
-			_madsVm->scene()->_destPos.y = hs.getFeetY();
+			scene._destPos = hs._feetPos;
 		}
-		_madsVm->scene()->_destFacing = hs.getFacing();
+		scene._destFacing = hs._facing;
 	}
 
 	_walkFlag = _startWalkFlag;
-	*/
 }
 
 void MADSAction::checkAction() {

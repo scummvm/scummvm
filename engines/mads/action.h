@@ -56,12 +56,15 @@ struct ActionDetails {
 	int _indirectObjectId;
 };
 
-struct MADSActionSavedFields {
-	int articleNumber;
-	int actionMode;
-	int actionMode2;
-	bool lookFlag;
-	int selectedRow;
+struct ActionSavedFields {
+	int _actionMode;
+	int _selectedRow;
+	int _hotspotId;
+	int _v86F3A;
+	int _actionMode2;
+	int _v86F42;
+	int _articleNumber;
+	int _lookFlag;
 };
 
 class MADSAction {
@@ -69,8 +72,11 @@ private:
 	MADSEngine *_vm;
 	Common::String _statusText;
 	Common::String _dialogTitle;
+	ActionSavedFields _savedFields;
 
 	void appendVocab(int vocabId, bool capitalise = false);
+
+	void checkCustomDest(int v);
 public:
 	ActionDetails _action, _activeAction;
 	int _currentAction;
@@ -85,7 +91,6 @@ public:
 	bool _startWalkFlag;
 	int _statusTextIndex;
 	int _hotspotId;
-	MADSActionSavedFields _savedFields;
 	bool _walkFlag;
 	bool _savedSelectedRow;
 	bool _savedLookFlag;
@@ -98,7 +103,7 @@ public:
 	int16 _v86F4C;
 	int _v83338;
 	bool _inProgress;
-	AbortTimerMode _v8453A;
+	int _v8453A;
 
 public:
 	MADSAction(MADSEngine *vm);
