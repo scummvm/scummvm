@@ -73,7 +73,7 @@ public:
 	bool isClosing() { return _appForm->isClosing(); }
 
 	TizenGraphicsManager *getGraphics() {
-		return (TizenGraphicsManager *)_graphicsManager;
+		return dynamic_cast<TizenGraphicsManager *>(_graphicsManager);
 	}
 
 private:
