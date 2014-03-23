@@ -35,6 +35,12 @@ private:
 	MADSEngine *_vm;
 protected:
 	bool Cmd_Mouse(int argc, const char **argv);
+	bool Cmd_LoadScene(int argc, const char **argv);
+	bool Cmd_ShowHotSpots(int argc, const char **argv);
+	bool Cmd_ListHotSpots(int argc, const char **argv);
+	bool Cmd_PlaySound(int argc, const char **argv);
+	bool Cmd_ShowCodes(int argc, const char **argv);
+	bool Cmd_DumpFile(int argc, const char **argv);
 public:
 	bool _showMousePos;
 public:
