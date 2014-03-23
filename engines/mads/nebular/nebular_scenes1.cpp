@@ -279,7 +279,7 @@ void Scene103::actions() {
 			break;
 		}
 	}
-	else if (_action.isAction(OBJ_REBREATHER, 371, 0) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
+	else if (_action.isAction(VERB_TAKE, 371, 0) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
 		switch (_vm->_game->_abortTimers) {
 		case 0:
 			_scene->changeDepthSurface(1);
@@ -311,7 +311,7 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(OBJ_REBREATHER, 289, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
+	} else if (_action.isAction(VERB_TAKE, 289, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
 		switch (_vm->_game->_abortTimers) {
 		case 0:
 			_scene->changeDepthSurface(1);
@@ -341,9 +341,9 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(OBJ_STUFFED_FISH, 362, 0)) {
+	} else if (_action.isAction(VERB_LOOK, 362, 0)) {
 		Dialog::show(10301);
-	} else if (_action.isAction(OBJ_REBREATHER, 362, 0)) {
+	} else if (_action.isAction(VERB_TAKE, 362, 0)) {
 		if (!_vm->_game->_abortTimers)
 			_vm->_sound->command(31);
 
@@ -368,10 +368,10 @@ void Scene103::actions() {
 				_scene->_hotspots.activate(362, false);
 			}
 		}
-	} else if (_action.isAction(OBJ_STUFFED_FISH, 250, 0)) {
+	} else if (_action.isAction(VERB_LOOK, 250, 0)) {
 		Dialog::show(!_globals[11] ? 10323 : 10303);
 	}
-	else if (_action.isAction(OBJ_PLANT_STALK, 27, 0)) {
+	else if (_action.isAction(VERB_TALKTO, 27, 0)) {
 		switch (_vm->_game->_abortTimers) {
 		case 0: {
 			_game._player._stepEnabled = false;
@@ -400,39 +400,39 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	} else if (!_action.isAction(OBJ_STUFFED_FISH, 27, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 27, 0)) {
 		Dialog::show(10304);
-	} else if (!_action.isAction(OBJ_STUFFED_FISH, 36, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 36, 0)) {
 		Dialog::show(10307);
-	} else if (!_action.isAction(OBJ_STUFFED_FISH, 55, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 55, 0)) {
 		Dialog::show(10308);
-	} else if (!_action.isAction(OBJ_REBREATHER, 315, 0)) {
+	} else if (!_action.isAction(VERB_TAKE, 315, 0)) {
 		Dialog::show(10309);
-	} else if (!_action.isAction(OBJ_REBREATHER, 85, 0)) {
+	} else if (!_action.isAction(VERB_TAKE, 85, 0)) {
 		Dialog::show(10310);
-	} else if (!_action.isAction(OBJ_STUFFED_FISH, 144, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 144, 0)) {
 		Dialog::show(10312);
-	} else if (!_action.isAction(OBJ_BIG_LEAVES, 144, 0)) {
+	} else if (!_action.isAction(VERB_OPEN, 144, 0)) {
 		Dialog::show(10313);
-	} else if (!_action.isAction(OBJ_BONE, 27, 0)) {
+	} else if (!_action.isAction(VERB_CLOSE, 27, 0)) {
 		Dialog::show(10314);
-	} else if (!_action.isAction(OBJ_STUFFED_FISH, 310, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 310, 0)) {
 		Dialog::show(10315);
-	} else if (!_action.isAction(OBJ_STUFFED_FISH, 178, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 178, 0)) {
 		Dialog::show(10316);
-	} else if (!_action.isAction(OBJ_STUFFED_FISH, 283, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 283, 0)) {
 		Dialog::show(10317);
-	} else if (!_action.isAction(OBJ_STUFFED_FISH, 120, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 120, 0)) {
 		Dialog::show(10318);
-	} else if (_action.isAction(OBJ_STUFFED_FISH, 289, 0) &&
+	} else if (_action.isAction(VERB_LOOK, 289, 0) &&
 			_game._objects.isInInventory(OBJ_REBREATHER)) {
 		Dialog::show(10319);
-	} else if (_action.isAction(OBJ_STUFFED_FISH, 371, 0) &&
+	} else if (_action.isAction(VERB_LOOK, 371, 0) &&
 			_game._objects.isInInventory(OBJ_TIMER_MODULE)) {
 		Dialog::show(10320);
-	} else if (!_action.isAction(OBJ_STUFFED_FISH, 137, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 137, 0)) {
 		Dialog::show(10321);
-	} else if (_action.isAction(OBJ_STUFFED_FISH, 409, 0)) {
+	} else if (_action.isAction(VERB_LOOK, 409, 0)) {
 		Dialog::show(_game._objects.isInInventory(OBJ_TIMER_MODULE) ? 10324 : 10325);
 	}
 
