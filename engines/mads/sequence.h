@@ -116,8 +116,8 @@ public:
 		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 
 	int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
-	int startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks, int triggerCountdown, 
-		int timeoutTicks, int extraTicks);
+	int startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks, 
+		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 	void getTimeout(int spriteIdx, int arg2);
 	void setScale(int spriteIdx, int scale);
 };

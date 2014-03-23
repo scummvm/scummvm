@@ -258,7 +258,182 @@ void Scene103::preActions() {
 
 void Scene103::actions() {
 	if (_action._savedLookFlag) {
-		Dialog::show(0x2852);
+		Dialog::show(10322);
+	} else if (_action.isAction(395, 110, 0)) {
+		switch (_vm->_game->_abortTimers) {
+		case 0:
+			_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(
+				_globals._spriteIndexes[6], false, 6, 1);
+			_scene->_sequences.addSubEntry(_globals._spriteIndexes[21], SM_0, 0, 1);
+			_game._player._stepEnabled = false;
+			_vm->_sound->command(20);
+			break;
+
+		case 1:
+			_vm->_sound->command(1);
+			_scene->_nextSceneId = 102;
+			_game._player._stepEnabled = true;
+			break;
+
+		default:
+			break;
+		}
+	}
+	else if (_action.isAction(OBJ_REBREATHER, 371, 0) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
+		switch (_vm->_game->_abortTimers) {
+		case 0:
+			_scene->changeDepthSurface(1);
+			_globals._spriteIndexes[28] = _scene->_sequences.startReverseCycle(
+				_globals._spriteIndexes[13], false, 3, 2);
+			_game.sub71312(_globals._spriteIndexes[28]);
+
+			_scene->_sequences.addSubEntry(_globals._spriteIndexes[28], SM_FRAME_INDEX, 7, 1);
+			_scene->_sequences.addSubEntry(_globals._spriteIndexes[28], SM_0, 0, 2);
+			_vm->_game->_player._visible = false;
+			_vm->_game->_player._stepEnabled = false;
+			break;
+
+		case 1:
+			_scene->_sequences.remove(_globals._spriteIndexes[26]);
+			break;
+
+		case 2:
+			_vm->_sound->command(22);
+			_game._objects.addToInventory(OBJ_TIMER_MODULE);
+			_scene->changeDepthSurface(0);
+			_scene->drawElements(kTransitionNone, false);
+			_scene->_hotspots.activate(371, false);
+			_vm->_game->_player._visible = true;
+			_vm->_game->_player._stepEnabled = true;
+			_vm->_dialogs->showPicture(OBJ_REBREATHER, 804);
+			break;
+
+		default:
+			break;
+		}
+	} else if (_action.isAction(OBJ_REBREATHER, 289, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
+		switch (_vm->_game->_abortTimers) {
+		case 0:
+			_scene->changeDepthSurface(1);
+			_globals._spriteIndexes[27] = _scene->_sequences.startReverseCycle(
+				_globals._spriteIndexes[12], false, 3, 2);
+			_game.sub71312(_globals._spriteIndexes[27]);
+
+			_scene->_sequences.addSubEntry(_globals._spriteIndexes[27], SM_FRAME_INDEX, 6, 1);
+			_scene->_sequences.addSubEntry(_globals._spriteIndexes[27], SM_0, 0, 2);
+			_vm->_game->_player._visible = false;
+			_vm->_game->_player._stepEnabled = false;
+			break;
+
+		case 1:
+			_scene->_sequences.remove(_globals._spriteIndexes[25]);
+			break;
+
+		case 2:
+			_vm->_sound->command(22);
+			_game._objects.addToInventory(OBJ_REBREATHER);
+			_scene->_hotspots.activate(289, false);
+			_vm->_game->_player._visible = true;
+			_vm->_game->_player._stepEnabled = true;
+			_vm->_dialogs->showPicture(OBJ_REBREATHER, 804);
+			break;
+
+		default:
+			break;
+		}
+	} else if (_action.isAction(OBJ_STUFFED_FISH, 362, 0)) {
+		Dialog::show(10301);
+	} else if (_action.isAction(OBJ_REBREATHER, 362, 0)) {
+		if (!_vm->_game->_abortTimers)
+			_vm->_sound->command(31);
+
+		if (_vm->_game->_abortTimers2 < 2) {
+			_globals._spriteIndexes[24] = _scene->_sequences.addSpriteCycle(
+				_globals._spriteIndexes[9], false, 6,
+				_vm->_game->_abortTimers < 1 ? 1 : 0);
+			if (_vm->_game->_abortTimers) {
+				_scene->_sequences.setAnimRange(_globals._spriteIndexes[24], -1, 0);
+				Common::String msg = _game.getQuote(51);
+				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 0, 60, msg);
+				_scene->_sequences.addTimer(120, _vm->_game->_abortTimers);
+			} else {
+				_scene->_sequences.addSubEntry(_globals._spriteIndexes[24],
+					SM_0, 0, 1);
+			}
+
+			_game._player._stepEnabled = _game._abortTimers == 2;
+			_globals[11] = -1;
+			if (_game._abortTimers == 2) {
+				Dialog::show(1030);
+				_scene->_hotspots.activate(362, false);
+			}
+		}
+	} else if (_action.isAction(OBJ_STUFFED_FISH, 250, 0)) {
+		Dialog::show(!_globals[11] ? 10323 : 10303);
+	}
+	else if (_action.isAction(OBJ_PLANT_STALK, 27, 0)) {
+		switch (_vm->_game->_abortTimers) {
+		case 0: {
+			_game._player._stepEnabled = false;
+			Common::String msg = _game.getQuote(71);
+			_scene->_kernelMessages.add(Common::Point(), 0x1110, 18, 1, 120, msg);
+			break;
+		}
+
+		case 1: {
+			Common::String msg = _game.getQuote(72);
+			_scene->_kernelMessages.add(Common::Point(310, 132), 0xFDFC, 16, 2, 120, msg);
+			_globals._v0 = 0;
+			break;
+		}
+			
+		case 2:
+			_scene->_kernelMessages.reset();
+			_scene->_sequences.addTimer(1, 3);
+			break;
+
+		case 3:
+			_game._player._stepEnabled = true;
+			Dialog::show(10306);
+			break;
+
+		default:
+			break;
+		}
+	} else if (!_action.isAction(OBJ_STUFFED_FISH, 27, 0)) {
+		Dialog::show(10304);
+	} else if (!_action.isAction(OBJ_STUFFED_FISH, 36, 0)) {
+		Dialog::show(10307);
+	} else if (!_action.isAction(OBJ_STUFFED_FISH, 55, 0)) {
+		Dialog::show(10308);
+	} else if (!_action.isAction(OBJ_REBREATHER, 315, 0)) {
+		Dialog::show(10309);
+	} else if (!_action.isAction(OBJ_REBREATHER, 85, 0)) {
+		Dialog::show(10310);
+	} else if (!_action.isAction(OBJ_STUFFED_FISH, 144, 0)) {
+		Dialog::show(10312);
+	} else if (!_action.isAction(OBJ_BIG_LEAVES, 144, 0)) {
+		Dialog::show(10313);
+	} else if (!_action.isAction(OBJ_BONE, 27, 0)) {
+		Dialog::show(10314);
+	} else if (!_action.isAction(OBJ_STUFFED_FISH, 310, 0)) {
+		Dialog::show(10315);
+	} else if (!_action.isAction(OBJ_STUFFED_FISH, 178, 0)) {
+		Dialog::show(10316);
+	} else if (!_action.isAction(OBJ_STUFFED_FISH, 283, 0)) {
+		Dialog::show(10317);
+	} else if (!_action.isAction(OBJ_STUFFED_FISH, 120, 0)) {
+		Dialog::show(10318);
+	} else if (_action.isAction(OBJ_STUFFED_FISH, 289, 0) &&
+			_game._objects.isInInventory(OBJ_REBREATHER)) {
+		Dialog::show(10319);
+	} else if (_action.isAction(OBJ_STUFFED_FISH, 371, 0) &&
+			_game._objects.isInInventory(OBJ_TIMER_MODULE)) {
+		Dialog::show(10320);
+	} else if (!_action.isAction(OBJ_STUFFED_FISH, 137, 0)) {
+		Dialog::show(10321);
+	} else if (_action.isAction(OBJ_STUFFED_FISH, 409, 0)) {
+		Dialog::show(_game._objects.isInInventory(OBJ_TIMER_MODULE) ? 10324 : 10325);
 	}
 
 	_action._inProgress = false;
