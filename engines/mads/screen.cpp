@@ -120,8 +120,8 @@ void DirtyArea::setUISlot(const UISlot *slot) {
 	int type = slot->_slotType;
 	if (type <= -20)
 		type += 20;
-	if (type >= 64)
-		type &= 0xBF;
+	if (type >= 0x40)
+		type &= ~0x40;
 
 	MSurface &intSurface = _vm->_game->_scene._userInterface;
 	switch (type) {
@@ -148,7 +148,7 @@ void DirtyArea::setUISlot(const UISlot *slot) {
 			_bounds.top = slot->_position.y;
 		} else {
 			_bounds.left = slot->_position.x + w / 2;
-			_bounds.top = slot->_position.y + h / 2;
+			_bounds.top = slot->_position.y - h + 1;
 		}
 
 		setArea(w, h, intSurface.w, intSurface.h);
@@ -182,7 +182,7 @@ void DirtyAreas::merge(int startIndex, int count) {
 				continue;
 
 			if ((*this)[outerCtr]._textActive && (*this)[innerCtr]._textActive)
-				mergeAreas(outerCtr, innerCtr);
+				mergeAreas(innerCtr, outerCtr);
 		}
 	}
 }

@@ -125,7 +125,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 
 		if (slot._slotType >= ST_NONE && !(slot._slotType & 0x40)) {
 			if (!dirtyArea._active) {
-				error("TODO: Original code here doesn't make sense!");
+				error("Should never reach this point, even in original");
 			}
 
 			if (dirtyArea._textActive) {
@@ -133,10 +133,12 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 				
 				if (slot._field2 == 200) {
 					MSprite *sprite = asset->getFrame(slot._frameNumber & 0x7F);
-					sprite->copyTo(&userInterface, slot._position);
+					sprite->copyTo(&userInterface, slot._position, 
+						sprite->getTransparencyIndex());
 				} else {
 					MSprite *sprite = asset->getFrame(slot._frameNumber - 1);
-					sprite->copyTo(&userInterface, slot._position);
+					sprite->copyTo(&userInterface, slot._position,
+						sprite->getTransparencyIndex());
 				}
 			}
 		}
@@ -175,7 +177,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 				slot._slotType -= 20;
 		} else {
 			if (updateFlag)
-				slot._slotType &= 0xBF;
+				slot._slotType &= ~0x40;
 			else
 				slot._slotType |= 0x40;
 		}
@@ -613,7 +615,7 @@ void UserInterface::inventoryAnim() {
 	if (++_invFrameNumber > asset->getCount())
 		_invFrameNumber = 1;
 
-	// Loop through the slots list for ?? entry
+	// Loop through the slots list for inventory animation entry
 	for (uint i = 0; i < _uiSlots.size(); ++i) {
 		if (_uiSlots[i]._field2 == 200)
 			_uiSlots[i]._slotType = -5;

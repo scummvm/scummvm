@@ -63,6 +63,9 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 
 	// Load the inventory object list
 	_objects.load();
+	if (_objects._inventoryList.size() > 0)
+		// At least one item in default inventory, so select first item for display
+		_scene._userInterface._selectedInvIndex = 0;
 
 	// Load the quotes
 	loadQuotes();
