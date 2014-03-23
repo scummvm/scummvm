@@ -58,31 +58,6 @@ KernelMessage::KernelMessage() {
 
 /*------------------------------------------------------------------------*/
 
-Hotspot::Hotspot() {
-	_facing = 0;
-	_articleNumber = 0;
-	_cursor = CURSOR_NONE;
-	_vocabId = 0;
-	_verbId = 0;
-}
-
-Hotspot::Hotspot(Common::SeekableReadStream &f) {
-	_bounds.left = f.readSint16LE();
-	_bounds.top = f.readSint16LE();
-	_bounds.right = f.readSint16LE();
-	_bounds.bottom = f.readSint16LE();
-	_feetPos.x = f.readSint16LE();
-	_feetPos.y = f.readSint16LE();
-	_facing = f.readByte();
-	_articleNumber = f.readByte();
-	f.skip(1);
-	_cursor = (CursorType)f.readByte();
-	_vocabId = f.readUint16LE();
-	_verbId = f.readUint16LE();
-}
-
-/*------------------------------------------------------------------------*/
-
 void ARTHeader::load(Common::SeekableReadStream *f) {
 	// Read in dimensions of image
 	_width = f->readUint16LE();

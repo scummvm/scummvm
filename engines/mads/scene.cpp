@@ -29,8 +29,8 @@
 namespace MADS {
 
 Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
-		_dirtyAreas(_vm),  _dynamicHotspots(vm), _kernelMessages(vm), 
-		_sequences(vm), _sprites(vm), _spriteSlots(vm), 
+		_dirtyAreas(_vm),  _dynamicHotspots(vm), _hotspots(vm),
+		_kernelMessages(vm), _sequences(vm), _sprites(vm), _spriteSlots(vm), 
 		_textDisplay(vm), _userInterface(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;

@@ -30,7 +30,6 @@ namespace MADS {
 
 class MADSEngine;
 
-
 class DynamicHotspot {
 public:
 	bool _active;
@@ -74,6 +73,7 @@ public:
 	Common::Point _feetPos;
 	int _facing;
 	int _articleNumber;
+	bool _active;
 	CursorType _cursor;
 	int _vocabId;
 	int _verbId;
@@ -83,8 +83,15 @@ public:
 };
 
 class Hotspots : public Common::Array<Hotspot> {
+private:
+	MADSEngine *_vm;
 public:
-	void activate(int hotspotId, bool active);
+	Hotspots(MADSEngine *vm) : _vm(vm) {}
+
+	/**
+	 * Sets the active state of a given hotspot
+	 */
+	void activate(int vocabId, bool active);
 };
 
 } // End of namespace MADS

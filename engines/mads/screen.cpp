@@ -276,6 +276,7 @@ void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory cat
 	so._category = category;
 	so._descId = descId;
 	so._layer = layer;
+	so._active = true;
 
 	push_back(so);
 }
@@ -361,9 +362,10 @@ void ScreenObjects::check(bool scanFlag) {
 }
 
 int ScreenObjects::scanBackwards(const Common::Point &pt, int layer) {
-	for (int i = (int)size() - 1; i >= 0; --i) {
-		if ((*this)[i]._bounds.contains(pt) && ((*this)[i]._layer == layer))
-			return i + 1;
+	for (int i = (int)size(); i >= 1; --i) {
+		ScreenObject &sObj = (*this)[i];
+		if (sObj._active && sObj._bounds.contains(pt) && sObj._layer == layer)
+			return i;
 	}
 
 	// Entry not found
@@ -462,7 +464,7 @@ void ScreenObjects::elementHighlighted() {
 	int uiCount;
 
 	switch (userInterface._category) {
-	case CAT_INV_LIST:
+	case CAT_ACTION:
 		index = 10;
 		indexEnd = 9;
 		varA = 5;
@@ -475,7 +477,7 @@ void ScreenObjects::elementHighlighted() {
 		var4 = _released && !_v7FECA ? 1 : 0;
 		break;
 
-	case CAT_INV_VOCAB:
+	case CAT_INV_LIST:
 		userInterface.scrollInventory();
 
 		index = MIN((int)invList.size() - userInterface._inventoryTopIndex, 5);
@@ -486,7 +488,7 @@ void ScreenObjects::elementHighlighted() {
 		var4 = (!_released || (_vm->_events->_mouseButtons && action._v83338 == 1)) ? 0 : 1;
 		break;
 
-	case CAT_HOTSPOT:
+	case CAT_INV_VOCAB:
 		if (userInterface._selectedInvIndex >= 0) {
 			InventoryObject &invObject = _vm->_game->_objects.getItem(
 				userInterface._selectedInvIndex);
@@ -506,7 +508,7 @@ void ScreenObjects::elementHighlighted() {
 		var4 = _released && !_v7FECA ? 1 : 0;
 		break;
 
-	case CAT_TALK_ENTRY:
+	case CAT_INV_ANIM:
 		index = 1;
 		indexEnd = invList.size() - 1;
 		varA = 0;
@@ -515,17 +517,7 @@ void ScreenObjects::elementHighlighted() {
 		var4 = -1;
 		break;
 
-	case CAT_INV_SCROLLER:
-		uiCount = size() - _uiCount;
-		index = scene._hotspots.size();
-		indexEnd = index - 1;
-		varA = 0;
-		topIndex = 0;
-		var6 = &var8;
-		var4 = -1;
-		break;
-
-	default:
+	case CAT_TALK_ENTRY:
 		index = 0;
 		for (int idx = 0; idx < 5; ++idx) {
 			if (!userInterface._talkStrings[idx].empty())
@@ -538,6 +530,16 @@ void ScreenObjects::elementHighlighted() {
 		var6 = &userInterface._v1A;
 		var4 = -1;
 		break;
+
+	default:
+		uiCount = size() - _uiCount;
+		index = scene._hotspots.size();
+		indexEnd = index - 1;
+		varA = 0;
+		topIndex = 0;
+		var6 = &var8;
+		var4 = -1;
+		break;
 	}
 
 	int newIndex = -1;
@@ -548,15 +550,19 @@ void ScreenObjects::elementHighlighted() {
 	for (int idx = 0; idx < index && newIndex < 0; ++idx) {
 		int scrObjIndex = (_category == CAT_HOTSPOT) ? catIndex - idx + index - 1 :
 			catIndex + idx;
-		
+
 		ScreenObject &scrObject = (*this)[scrObjIndex];
-		Common::Rect bounds = scrObject._bounds;
+		if (!scrObject._active)
+			continue;
+
+		const Common::Rect &bounds = scrObject._bounds;
 		newY = MAX((int)bounds.bottom, newY);
 		newX = MAX((int)bounds.left, newX);
 
-		if (currentPos.y > newY && currentPos.y < bounds.bottom) {
+		if (currentPos.y >= bounds.top && currentPos.y < bounds.bottom) {
 			if (var4) {
-				if (currentPos.x > newX && currentPos.x < bounds.right) {
+				if (currentPos.x >= bounds.left && currentPos.x < bounds.right) {
+					// Cursor is inside hotspot bounds
 					newIndex = scrObjIndex - catIndex;
 					if (_category == CAT_HOTSPOT && newIndex < (int)scene._hotspots.size())
 						newIndex = scene._hotspots.size() - newIndex - 1;
@@ -600,6 +606,14 @@ void ScreenObjects::elementHighlighted() {
 
 	if (_category != CAT_HOTSPOT && _category != CAT_INV_ANIM)
 		userInterface.drawInventory(_category, newIndex, var6);
+}
+
+void ScreenObjects::setActive(ScrCategory category, int descId, bool active) {
+	for (uint idx = 1; idx < size(); ++idx) {
+		ScreenObject &sObj = (*this)[idx];
+		if (sObj._category == category && sObj._descId == descId)
+			sObj._active = active;
+	}
 }
 
 /*------------------------------------------------------------------------*/

@@ -125,6 +125,7 @@ public:
 
 class ScreenObject {
 public:
+	bool _active;
 	Common::Rect _bounds;
 	ScrCategory _category;
 	int _descId;
@@ -179,6 +180,23 @@ public:
 	 * Handle element being highlighted on the screen
 	 */
 	void elementHighlighted();
+
+	/**
+	 * Retrieve a ScreenObject from the list
+	 * @remarks	This array is 1-based indexed by the game
+	 */
+	ScreenObject &operator[](int idx) {
+		assert(idx > 0);
+		return Common::Array<ScreenObject>::operator[](idx - 1);
+	}
+
+	/**
+	 * Sets an item identified by category and Desc Id as active or not
+	 * @param category		Screen category
+	 * @param descId		Description for item
+	 * @param active		Whether to set item as active or not
+	 */
+	void setActive(ScrCategory category, int descId, bool active);
 };
 
 class ScreenSurface : public MSurface {

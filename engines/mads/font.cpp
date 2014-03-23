@@ -136,13 +136,14 @@ void Font::setColorMode(int mode) {
 
 int Font::writeString(MSurface *surface, const Common::String &msg, const Common::Point &pt,
 		int spaceWidth, int width) {
+	int xEnd;
 	if (width > 0)
-		width = MIN((int)surface->w, pt.x + width);
+		xEnd = MIN((int)surface->w, pt.x + width);
 	else
-		width = surface->w - pt.x;
+		xEnd = surface->w - pt.x;
 
-	int x = pt.x + 1;
-	int y = pt.y + 1;
+	int x = pt.x;
+	int y = pt.y;
 	
 	int skipY = 0;
 	if (y < 0) {
@@ -174,7 +175,7 @@ int Font::writeString(MSurface *surface, const Common::String &msg, const Common
 		
 		if (charWidth > 0) {
 
-			if (xPos + charWidth >= width)
+			if (xPos + charWidth > xEnd)
 				return xPos;
 
 			uint8 *charData = &_charData[_charOffs[(byte)theChar]];
@@ -221,8 +222,12 @@ int Font::getWidth(const Common::String &msg, int spaceWidth) {
 	int width = 0;
 	const char *text = msg.c_str();
 
-	while (*text)
-		width += _charWidths[*text++ & 0x7F] + spaceWidth;
+	if (msg.size() > 0) {
+		while (*text)
+			width += _charWidths[*text++ & 0x7F] + spaceWidth;
+		width -= spaceWidth;
+	}
+
 	return width;
 }
 

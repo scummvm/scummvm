@@ -146,8 +146,40 @@ void DynamicHotspots::refresh() {
 
 /*------------------------------------------------------------------------*/
 
-void Hotspots::activate(int hotspotId, bool active) {
-	warning("TODO: Hotspots::activate");
+Hotspot::Hotspot() {
+	_facing = 0;
+	_articleNumber = 0;
+	_cursor = CURSOR_NONE;
+	_vocabId = 0;
+	_verbId = 0;
+	_active = false;
+}
+
+Hotspot::Hotspot(Common::SeekableReadStream &f) {
+	_bounds.left = f.readSint16LE();
+	_bounds.top = f.readSint16LE();
+	_bounds.right = f.readSint16LE();
+	_bounds.bottom = f.readSint16LE();
+	_feetPos.x = f.readSint16LE();
+	_feetPos.y = f.readSint16LE();
+	_facing = f.readByte();
+	_articleNumber = f.readByte();
+	_active = f.readByte() != 0;
+	_cursor = (CursorType)f.readByte();
+	_vocabId = f.readUint16LE();
+	_verbId = f.readUint16LE();
+}
+
+/*------------------------------------------------------------------------*/
+
+void Hotspots::activate(int vocabId, bool active) {
+	for (uint idx = 0; idx < size(); ++idx) {
+		Hotspot &hotspot = (*this)[idx];
+		if (hotspot._vocabId == vocabId) {
+			hotspot._active = active;
+			_vm->_game->_screenObjects.setActive(CAT_HOTSPOT, idx, active);
+		}
+	}
 }
 
 } // End of namespace MADS
