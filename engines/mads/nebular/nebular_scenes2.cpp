@@ -777,7 +777,7 @@ void Scene202::actions() {
 						_game._player._stepEnabled = false;
 						_game._player._visible = false;
 						_globals._spriteIndexes[22] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[6], false, 3, 2, 0, 0);
-						warning("TODO: sub71312");
+						_game.sub71312(_globals._spriteIndexes[22]);
 						_scene->_sequences.addSubEntry(_globals._spriteIndexes[22], SM_FRAME_INDEX, 6, 1);
 						_scene->_sequences.addSubEntry(_globals._spriteIndexes[22], SM_0, 0, 2);
 					}
@@ -809,7 +809,7 @@ void Scene202::actions() {
 		} else if ((action->isAction(0x50, 0xC7, 0)) && (_globals[31] == 0)) {
 			if (_game._abortTimers == 0) {
 				_vm->_sound->command(29);
-				warning("TODO: word_8425E = _scene->_frameStartTime;");
+				_globals._v8425C = _scene->_frameStartTime;
 				_game._player._visible = false;
 				_game._player._stepEnabled = false;
 
