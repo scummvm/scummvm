@@ -473,21 +473,33 @@ int SequenceList::startReverseCycle(int srcSpriteIndex, bool flipped, int numTic
 		numTicks, 0, 0, true, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);
 }
 
-void SequenceList::getTimeout(int spriteIdx, int arg2) {
+void SequenceList::updateTimeout(int spriteIdx, int seqIndex) {
+	Player &player = _vm->_game->_player;
 	int timeout;
+
 	if (spriteIdx >= 0)
 		timeout = _entries[spriteIdx]._timeout;
 	else
-		timeout = _vm->_game->_player._priorTimer + _vm->_game->_player._ticksAmount;
+		timeout = player._priorTimer + player._ticksAmount;
 
-	if (arg2 >= 0)
-		_entries[arg2]._timeout = timeout;
+	if (seqIndex >= 0)
+		_entries[seqIndex]._timeout = timeout;
 	else
-		_vm->_game->_player._priorTimer = timeout - _vm->_game->_player._ticksAmount;
+		player._priorTimer = timeout - player._ticksAmount;
 
 }
 
 void SequenceList::setScale(int spriteIdx, int scale) {
 	_entries[spriteIdx]._scale = scale;
 }
+
+void SequenceList::setMsgLayout(int seqIndex) {
+	Player &player = _vm->_game->_player;
+	int yp = player._playerPos.y + (player._yScale * player._currentScale) / 100;
+	setMsgPosition(seqIndex, Common::Point(player._playerPos.x, yp));
+	setDepth(seqIndex, player._currentDepth);
+	setScale(seqIndex, player._currentScale);
+	updateTimeout(-1, seqIndex);
+}
+
 } // End of namespace 

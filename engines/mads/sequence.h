@@ -118,8 +118,9 @@ public:
 	int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
 	int startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks, 
 		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
-	void getTimeout(int spriteIdx, int arg2);
+	void updateTimeout(int spriteIdx, int seqIndex);
 	void setScale(int spriteIdx, int scale);
+	void setMsgLayout(int seqIndex);
 };
 
 } // End of namespace MADS

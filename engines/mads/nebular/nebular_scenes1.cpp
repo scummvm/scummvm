@@ -285,7 +285,7 @@ void Scene103::actions() {
 			_scene->changeDepthSurface(1);
 			_globals._spriteIndexes[28] = _scene->_sequences.startReverseCycle(
 				_globals._spriteIndexes[13], false, 3, 2);
-			_game.sub71312(_globals._spriteIndexes[28]);
+			_scene->_sequences.setMsgLayout(_globals._spriteIndexes[28]);
 
 			_scene->_sequences.addSubEntry(_globals._spriteIndexes[28], SM_FRAME_INDEX, 7, 1);
 			_scene->_sequences.addSubEntry(_globals._spriteIndexes[28], SM_0, 0, 2);
@@ -317,7 +317,7 @@ void Scene103::actions() {
 			_scene->changeDepthSurface(1);
 			_globals._spriteIndexes[27] = _scene->_sequences.startReverseCycle(
 				_globals._spriteIndexes[12], false, 3, 2);
-			_game.sub71312(_globals._spriteIndexes[27]);
+			_scene->_sequences.setMsgLayout(_globals._spriteIndexes[27]);
 
 			_scene->_sequences.addSubEntry(_globals._spriteIndexes[27], SM_FRAME_INDEX, 6, 1);
 			_scene->_sequences.addSubEntry(_globals._spriteIndexes[27], SM_0, 0, 2);

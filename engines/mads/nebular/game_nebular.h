@@ -65,8 +65,6 @@ protected:
 public:
 	Globals _globals;
 	StoryMode _storyMode;
-
-	void sub71312(int idx);
 };
 
 
