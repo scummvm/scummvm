@@ -60,7 +60,7 @@ const char *vox0004[] = {
 const char *vox0003[] = {
 	"7c88ad7c949a516793b584299f33ed23", //english unpatched
 	"f900cb063fbd0ef2a0516e9a00291d13", //italian unpatched
-	"e13eb421b9490cbaeef66f0cf6156764", //german unpatched
+	"5bda9a36181c1fea368491b842c11efe", //german unpatched
 	"c4aa2c45b24f351e8fce40a141084fb0", //french unpatched
 	"1d4e94e3d3fd803a02c9993412359082" //spanish unpatched
 };
@@ -83,7 +83,7 @@ const char *vox0000[] = {
 	"c7900f32d48d7e265629bd355a21c795", //english pre-patched
 	"67627f2d9314f9c0ae55dd2099fc052f", //english unpatched
 	"c9e1a755f280b3ebff58578c4e5f1e52", //italian unpatched
-	"f1b8c1de4f82099ab080f9cbe2b02da6", //german unpatched
+	"e884221099ba62dacf04a35be8428419", //german unpatched
 	"dbe35af39eec29db21a4c6e1c228cc9d", //french unpatched
 	"076bf048de229ad8cefcb3d7c0bfd134" //spanish unpatched
 };
@@ -97,7 +97,7 @@ const char *movie04[] = {
 const char *movie03[] = {
 	"113a768e7206016df72f9d2f5c1851b7", //english unpatched
 	"0fdb7dda9ebc049eac386d29bface366", //italian unpatched
-	"500bc51ce211d528f6c7170f479c9525", //german unpatched
+	"d2aae2e27616f78016a71818e528acda", //german unpatched
 	"c2ba7adbf09b7a4f69c180f1c74297ee", //french unpatched
 	"fb87d5a9e3a81d3ffd521dee4432c4da" //spanish unpatched
 };
@@ -144,7 +144,7 @@ const char *credits[] = {
 };
 const char *local[] = {
 	"6142624ce13ea3c9079aa80918010c4a", //italian unpatched
-	"7f76c20f1d77db287473ffef10b8b309", //german unpatched
+	"27c961c16f9eaf0260781883150e5611", //german unpatched
 	"c9dd41f66883959de27f80bbe457f30d", //french unpatched
 	"d22648d6787c2f8f0a789ee3ed0c08f7" //spanish unpatched
 };
