@@ -282,6 +282,7 @@ void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory cat
 
 void ScreenObjects::check(bool scanFlag) {
 	Scene &scene = _vm->_game->_scene;
+	UserInterface &userInterface = scene._userInterface;
 
 	if (!_vm->_events->_mouseButtons || _v832EC)
 		_v7FECA = false;
@@ -312,7 +313,7 @@ void ScreenObjects::check(bool scanFlag) {
 			scene._userInterface._category = _category;
 
 		if (!_vm->_events->_mouseButtons || _vm->_easyMouse) {
-			if (category >= CAT_ACTION && category <= CAT_TALK_ENTRY) {
+			if (userInterface._category >= CAT_ACTION && userInterface._category <= CAT_TALK_ENTRY) {
 				elementHighlighted();
 			}
 		}
@@ -339,7 +340,6 @@ void ScreenObjects::check(bool scanFlag) {
 
 	scene._action.refresh();
 
-	UserInterface &userInterface = _vm->_game->_scene._userInterface;
 	uint32 currentTicks = _vm->_events->getFrameCounter();
 	if (currentTicks >= _vm->_game->_ticksExpiry) {
 		// Check the user interface slots to see if there's any slots that need to be expired
@@ -456,12 +456,13 @@ void ScreenObjects::elementHighlighted() {
 	int topIndex;
 	int *var6;
 	int var4;
-	int index, indexEnd;
+	int index;
+	int indexEnd = -1;
 	int var8 = 0;
 	int uiCount;
 
 	switch (userInterface._category) {
-	case CAT_ACTION:
+	case CAT_INV_LIST:
 		index = 10;
 		indexEnd = 9;
 		varA = 5;
@@ -474,7 +475,7 @@ void ScreenObjects::elementHighlighted() {
 		var4 = _released && !_v7FECA ? 1 : 0;
 		break;
 
-	case CAT_INV_LIST:
+	case CAT_INV_VOCAB:
 		userInterface.scrollInventory();
 
 		index = MIN((int)invList.size() - userInterface._inventoryTopIndex, 5);
@@ -485,7 +486,7 @@ void ScreenObjects::elementHighlighted() {
 		var4 = (!_released || (_vm->_events->_mouseButtons && action._v83338 == 1)) ? 0 : 1;
 		break;
 
-	case CAT_INV_VOCAB:
+	case CAT_HOTSPOT:
 		if (userInterface._selectedInvIndex >= 0) {
 			InventoryObject &invObject = _vm->_game->_objects.getItem(
 				userInterface._selectedInvIndex);
@@ -505,7 +506,7 @@ void ScreenObjects::elementHighlighted() {
 		var4 = _released && !_v7FECA ? 1 : 0;
 		break;
 
-	case CAT_INV_ANIM:
+	case CAT_TALK_ENTRY:
 		index = 1;
 		indexEnd = invList.size() - 1;
 		varA = 0;
@@ -514,7 +515,7 @@ void ScreenObjects::elementHighlighted() {
 		var4 = -1;
 		break;
 
-	case CAT_TALK_ENTRY:
+	case CAT_INV_SCROLLER:
 		uiCount = size() - _uiCount;
 		index = scene._hotspots.size();
 		indexEnd = index - 1;
@@ -544,7 +545,7 @@ void ScreenObjects::elementHighlighted() {
 	int newX = 0, newY = 0;
 	Common::Point currentPos = _vm->_events->currentPos();
 
-	for (int idx = 0; idx < index & newIndex < 0; ++idx) {
+	for (int idx = 0; idx < index && newIndex < 0; ++idx) {
 		int scrObjIndex = (_category == CAT_HOTSPOT) ? catIndex - idx + index - 1 :
 			catIndex + idx;
 		
@@ -557,7 +558,7 @@ void ScreenObjects::elementHighlighted() {
 			if (var4) {
 				if (currentPos.x > newX && currentPos.x < bounds.right) {
 					newIndex = scrObjIndex - catIndex;
-					if (_category == CAT_HOTSPOT && newIndex < scene._hotspots.size())
+					if (_category == CAT_HOTSPOT && newIndex < (int)scene._hotspots.size())
 						newIndex = scene._hotspots.size() - newIndex - 1;
 				}
 			} else if (!varA) {
