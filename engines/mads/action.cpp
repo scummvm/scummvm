@@ -36,8 +36,15 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	_statusTextIndex = -1;
 	_selectedAction = 0;
 	_inProgress = false;
-	_savedSelectedRow = false;
-	_savedLookFlag = false;
+
+	_savedFields._actionMode = ABORTMODE_0;
+	_savedFields._actionMode2 = ABORTMODE_0;
+	_savedFields._selectedRow = -1;
+	_savedFields._hotspotId = 0;
+	_savedFields._v86F3A = 0;
+	_savedFields._v86F42 = 0;
+	_savedFields._articleNumber = 0;
+	_savedFields._lookFlag = false;
 }
 
 void MADSAction::clear() {
@@ -293,37 +300,34 @@ void MADSAction::startAction() {
 		else if (_v86F42 == 4)
 			hotspotId = _savedFields._v86F3A;
 
-		if (hotspotId >= hotspots.size()) {
+		if (hotspotId >= (int)hotspots.size()) {
 			DynamicHotspot &hs = dynHotspots[hotspotId - hotspots.size()];
 			if ((hs._feetPos.x == -1) || (hs._feetPos.x == -3)) {
-				if (_v86F4A && ((hs._feetPos.x == -3) || (_savedFields._selectedRow < 0))) {
-					_startWalkFlag = true;
-
-
-					scene._destPos = scene._customDest;
-				}
-			} else if ((hs._feetPos.x >= 0) && ((_savedFields._actionMode == ACTIONMODE_NONE) || 
-					(hs._cursor < 2))) {
+				checkCustomDest(hs._feetPos.x);
+			} else if (hs._feetPos.x == 0) {
+				scene._destFacing = hs._facing;
+			} else if (_savedFields._actionMode == ACTIONMODE_NONE || hs._cursor >= CURSOR_WAIT) {
 				_startWalkFlag = true;
-				scene._destPos.x = hs._feetPos.x;
-				scene._destPos.y = hs._feetPos.y;
+				scene._destPos = hs._feetPos;
 			}
+
 			scene._destFacing = hs._facing;
 			hotspotId = -1;
 		}
 	}
 
-	if (hotspotId >= 0) {
+	if (hotspotId >= 0 && hotspotId < (int)hotspots.size()) {
 		Hotspot &hs = hotspots[hotspotId];
-		if ((hs._feetPos.x == -1) || (hs._feetPos.x == -3)) {
-			if (_v86F4A && ((hs._feetPos.x == -3) || (_savedFields._selectedRow < 0))) {
+
+		if (hs._feetPos.x == -1 || hs._feetPos.x != -3) {
+			checkCustomDest(hs._feetPos.x);
+		} else if (hs._feetPos.x >= 0) {
+			if (_savedFields._actionMode == ACTIONMODE_NONE || hs._cursor < CURSOR_WAIT) {
 				_startWalkFlag = true;
-				scene._destPos = scene._customDest;
+				scene._destPos = hs._feetPos;
 			}
-		} else if ((hs._feetPos.x >= 0) && ((_savedFields._actionMode == ACTIONMODE_NONE) || (hs._cursor < 2))) {
-			_startWalkFlag = true;
-			scene._destPos = hs._feetPos;
 		}
+
 		scene._destFacing = hs._facing;
 	}
 
@@ -331,21 +335,18 @@ void MADSAction::startAction() {
 }
 
 void MADSAction::checkAction() {
-	/*
-	if (isAction(kVerbLookAt) || isAction(kVerbThrow))
+	if (isAction(VERB_LOOK) || isAction(VERB_THROW))
 		_startWalkFlag = 0;
-	*/
 }
 
 bool MADSAction::isAction(int verbId, int objectNameId, int indirectObjectId) {
-	/*
-	if (_activeAction.verbId != verbId)
+	if (_activeAction._verbId != verbId)
 		return false;
-	if ((objectNameId != 0) && (_activeAction.objectNameId != objectNameId))
+	if ((objectNameId != 0) && (_activeAction._objectNameId != objectNameId))
 		return false;
-	if ((indirectObjectId != 0) && (_activeAction.indirectObjectId != indirectObjectId))
+	if ((indirectObjectId != 0) && (_activeAction._indirectObjectId != indirectObjectId))
 		return false;
-	*/
+
 	return true;
 }
 

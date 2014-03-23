@@ -194,6 +194,10 @@ void GameNebular::checkShowDialog() {
 	}
 }
 
+void GameNebular::doObjectAction() {
+	warning("TODO: GameNebular::doObjectAction");
+}
+
 } // End of namespace Nebular
 
 } // End of namespace MADS

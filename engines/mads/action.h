@@ -72,7 +72,6 @@ private:
 	MADSEngine *_vm;
 	Common::String _statusText;
 	Common::String _dialogTitle;
-	ActionSavedFields _savedFields;
 
 	void appendVocab(int vocabId, bool capitalise = false);
 
@@ -92,8 +91,7 @@ public:
 	int _statusTextIndex;
 	int _hotspotId;
 	bool _walkFlag;
-	bool _savedSelectedRow;
-	bool _savedLookFlag;
+	ActionSavedFields _savedFields;
 
 	// Unknown fields
 	int16 _v86F3A;

@@ -61,10 +61,11 @@ protected:
 	virtual void setSectionHandler();
 
 	virtual void checkShowDialog();
-
 public:
 	Globals _globals;
 	StoryMode _storyMode;
+
+	virtual void doObjectAction();
 };
 
 

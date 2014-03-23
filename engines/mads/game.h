@@ -143,6 +143,11 @@ public:
 	uint32 getQuotesSize() { return _quotes.size(); }
 	const Common::String &getQuote(uint32 index) { return _quotes[index - 1]; }
 
+	/**
+	* Standard object handling across the game
+	*/
+	virtual void doObjectAction() = 0;
+
 	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
 	void clearQuotes() {}
 	void loadQuoteRange(int startNum, int endNum) {}

@@ -257,7 +257,7 @@ void Scene103::preActions() {
 }
 
 void Scene103::actions() {
-	if (_action._savedLookFlag) {
+	if (_action._savedFields._lookFlag) {
 		Dialog::show(10322);
 	} else if (_action.isAction(395, 110, 0)) {
 		switch (_vm->_game->_abortTimers) {

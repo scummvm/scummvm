@@ -302,7 +302,7 @@ void Scene::doFrame() {
 		_action.startAction();
 		if (_action._activeAction._verbId == Nebular::NOUN_LOOK_AT) {
 			_action._activeAction._verbId = VERB_LOOK;
-			_action._savedSelectedRow = false;
+			_action._savedFields._selectedRow = false;
 		}
 
 		flag = true;
@@ -470,11 +470,59 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 }
 
 void Scene::doPreactions() {
-	warning("TODO: Scene::doPreactions");
+	if (_vm->_game->_screenObjects._v832EC == 0 || _vm->_game->_screenObjects._v832EC == 2) {
+		_vm->_game->_abortTimersMode2 = ABORTMODE_2;
+		_action.checkAction();
+		_sceneLogic->preActions();
+
+		if (_vm->_game->_abortTimersMode == ABORTMODE_2)
+			_vm->_game->_abortTimers = 0;
+	}
 }
 
 void Scene::doAction() {
-	warning("TODO: Scene::doAction");
+	int flag = 0;
+
+	_vm->_game->_abortTimersMode2 = ABORTMODE_0;
+	if ((_action._inProgress || _vm->_game->_abortTimers) && !_action._v8453A) {
+		_sceneLogic->actions();
+		_action._inProgress = true;
+		flag = -1;
+	}
+
+	if (_vm->_game->_screenObjects._v832EC == 1) {
+		_action._inProgress = false;
+	} else {
+		if ((_action._inProgress || _vm->_game->_abortTimers) ||
+				(!flag && _action._v8453A == flag)) {
+			_vm->_game->_sectionHandler->sectionPtr2();
+			_action._inProgress = true;
+			flag = -1;
+		}
+
+		if ((_action._inProgress || _vm->_game->_abortTimers) && (!flag || _action._v8453A == flag)) {
+			_vm->_game->doObjectAction();
+		}
+
+		if (!_action._savedFields._lookFlag) {
+			if (!_action._inProgress) {
+				_action._v8453A = -1;
+				_sceneLogic->postActions();
+			}
+
+			if (!_action._inProgress) {
+				_action._v8453A = -1;
+				warning("TODO: PtrUnk4");
+			}
+
+			if (_action._inProgress)
+				warning("TODO: sub_1D9DE");
+		}
+	}
+
+	_action._inProgress = false;
+	if (_vm->_game->_abortTimersMode == ABORTMODE_0)
+		_vm->_game->_abortTimers = 0;
 }
 
 void Scene::checkStartWalk() {
