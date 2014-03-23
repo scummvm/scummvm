@@ -194,6 +194,14 @@ void GameNebular::checkShowDialog() {
 	}
 }
 
+void GameNebular::sub71312(int idx) {
+	int yp = _player._playerPos.y + (_player._yScale * _player._currentScale) / 100;
+	_scene._sequences.setMsgPosition(idx, Common::Point(_player._playerPos.x, yp));
+	_scene._sequences.setDepth(idx, _player._currentDepth);
+	_scene._sequences.setScale(idx, _player._currentScale);
+	_scene._sequences.getTimeout(-1, idx);
+}
+
 } // End of namespace Nebular
 
 } // End of namespace MADS
