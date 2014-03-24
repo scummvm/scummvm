@@ -44,6 +44,7 @@ enum Noun {
 	NOUN_2C             = 0x2C,
 	NOUN_BURGER			= 0x35,
 	NOUN_CHAIR			= 0x47,
+	NOUN_49             = 0x49,
 	NOUN_4E             = 0x4E,
 	NOUN_DEAD_FISH		= 0x65,
 	NOUN_DOOR			= 0x6E,
@@ -70,6 +71,7 @@ enum Noun {
 	NOUN_OUTER_HULL		= 0x0F8,
 	NOUN_OUTSIDE		= 0x0F9,
 	NOUN_PEER_THROUGH	= 0x103,
+	NOUN_10D            = 0x10D,
 	NOUN_PLANT_STALK	= 0x10F,
 	NOUN_READ			= 0x11F,
 	NOUN_REFRIDGERATOR	= 0x122,
@@ -109,7 +111,7 @@ protected:
 	MADSAction &_action;
 
 	/**
-	 * Forms an animation resoucre name
+	 * Forms an animation resource name
 	 */
 	Common::String formAnimName(char sepChar, int suffixNum);
 
@@ -122,6 +124,8 @@ public:
 	 * Constructor
 	 */
 	NebularScene(MADSEngine *vm);
+
+	void sub7178C();
 };
 
 class SceneInfoNebular : public SceneInfo {

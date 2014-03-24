@@ -50,6 +50,7 @@ Globals::Globals() {
 	_v84264 = 0;
 	_v84266 = 0;
 	_v84268 = 0;
+	_v84274 = 0;
 }
 
 } // End of namespace Nebular

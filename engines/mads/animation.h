@@ -121,7 +121,6 @@ private:
 	Font *_font;
 
 	int _currentFrame, _oldFrameEntry;
-	bool _resetFlag;
 	bool _freeFlag;
 	bool _skipLoad;
 	int _unkIndex;
@@ -154,8 +153,9 @@ private:
 protected:
 	Animation(MADSEngine *vm, Scene *scene);
 public:
+	bool _resetFlag;
+
 	static Animation *init(MADSEngine *vm, Scene *scene);
-public:
 	/*
 	 * Destructor
 	 */

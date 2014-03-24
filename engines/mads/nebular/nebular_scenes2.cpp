@@ -1087,5 +1087,99 @@ void Scene203::actions() {
 	_action._inProgress = false;
 }
 
+/*****************************************************************************/
+
+void Scene205::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_D);
+	_scene->addActiveVocab(NOUN_49);
+	_scene->addActiveVocab(NOUN_10D);
+}
+
+void Scene205::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0), 0);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1), 0);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2), 0);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', -1), 0);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', -1), 0);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('p', -1), 0);
+	
+	if (_globals[0] == SEX_MALE)
+		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
+
+	_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 0, 3);
+	int idx = _scene->_dynamicHotspots.add(73, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
+	_scene->_dynamicHotspots.setPosition(idx, 162, 120, 9);
+
+	_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
+	idx = _scene->_dynamicHotspots.add(73, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
+	_scene->_dynamicHotspots.setPosition(idx, 162, 120, 9);
+
+	_globals._spriteIndexes[18] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 0, 0, 0);
+	_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
+	_scene->_sequences.setDepth(_globals._spriteIndexes[20], 11);
+
+	if (!_game._visitedScenes._sceneRevisited) {
+		_globals._v2 = _scene->_frameStartTime & 0xFFFF;
+		_globals._v3 = _scene->_frameStartTime >> 16;
+		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
+		idx = _scene->_dynamicHotspots.add(269, 13, _globals._spriteIndexes[21], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 49, 86, 8);
+	}
+
+	if (_game._objects[12]._roomNumber == 0) {
+		_globals._spriteIndexes[19] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 0, 0, 0);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[19], 11);
+	} else {
+		_scene->_hotspots.activate(450, false);
+	}
+
+	_globals._frameTime &= 0xFFFF;
+	_game.loadQuoteSet(0x6B, 0x70, 0x71, 0x72, 0x5A, 0x74, 0x75, 0x76, 0x77, 0x78, 0x73, 0x79, 0x7A, 0x7B, 0x7C,
+		0x7D, 0x7E, 0x7F, 0x80, 0xAC, 0xAD, 0xAE, 0x6C, 0x6D, 0x6E, 0x6F, 0x2, 0);
+	warning("TODO: sub71A50(_globals._v4, 0x5A, 0x78, 0x74, 0x75, 0x76, 0x77, 0);");
+
+	if (!_game._visitedScenes._sceneRevisited)
+		warning("TODO: sub71B18(_globals._v4, 0x5A, 0x74, 0x75, 0x77, 0);");
+
+
+	_vm->_palette->setEntry(250, 63, 50, 20);
+	_vm->_palette->setEntry(251, 50, 40, 15);
+	_vm->_palette->setEntry(252, 63, 63, 40);
+	_vm->_palette->setEntry(253, 50, 50, 30);
+
+	_globals._v0 = _globals._frameTime & 0xFFFF;
+	_globals._frameTime >>= 16;
+
+	if (_globals[0] == SEX_FEMALE)
+		warning("sub71704(0x3, 0xC3, 0x108, 0x63, 0x86, 0xD, 2, 0xFDFC, 0x3C, 0x6C, 0x6C, 0x6D, 0x6D, 0x6E, 0x6E, 0x6F, 0x6C, 0);");
+
+	if (_scene->_priorSceneId != -2)
+		_game._player._playerPos = Common::Point(99, 152);	
+
+	if (_globals[0] != SEX_MALE) {
+		_scene->loadAnimation(formAnimName('a', -1), 0);
+		_scene->_activeAnimation->_resetFlag = false;
+	} else {
+		_globals._frameTime |= 0xFFFF0000;
+		_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
+		_game._player._visible = false;
+		_game._player._stepEnabled = false;
+		_scene->_sequences.setDepth(_globals._spriteIndexes[23], 2);
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_FRAME_INDEX, 6, 73);
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_FRAME_INDEX, 11, 74);
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 0);
+	}
+	_globals._v84274 = -1;
+	sceneEntrySound();
+}
+
+void Scene205::step() {
+}
+
+void Scene205::actions() {
+}
+
 } // End of namespace Nebular
 } // End of namespace MADS
