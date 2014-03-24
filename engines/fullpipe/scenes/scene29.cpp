@@ -71,7 +71,7 @@ void scene29_initScene(Scene *sc) {
 	g_vars->scene29_var08.cPlex = 0;
 
 	ani = sc->getStaticANIObject1ById(ANI_SHELL_GREEN, -1);
-	Ball *b = g_vars->scene29_var05->sub04(g_vars->scene29_var05.field_8, 0);
+	Ball *b = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
 	b->ani = ani;
 
 	if (g_vars->scene29_var05.field_8)
@@ -86,7 +86,7 @@ void scene29_initScene(Scene *sc) {
 
 		sc->addStaticANIObject(newani, 1);
 
-		b = g_vars->scene29_var05->sub04(g_vars->scene29_var05.field_8, 0);
+		b = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
 		b->ani = ani;
 
 		if (g_vars->scene29_var05.field_8)
@@ -115,7 +115,7 @@ void scene29_initScene(Scene *sc) {
 
 	ani = sc->getStaticANIObject1ById(ANI_SHELL_RED, -1);
 
-	b = g_vars->scene29_var06->sub04(g_vars->scene29_var06.field_8, 0);
+	b = g_vars->scene29_var06.sub04(g_vars->scene29_var06.field_8, 0);
 	b->ani = ani;
 
 	if (g_vars->scene29_var06.field_8)
@@ -130,7 +130,7 @@ void scene29_initScene(Scene *sc) {
 
 		sc->addStaticANIObject(newani, 1);
 
-		b = g_vars->scene29_var06->sub04(g_vars->scene29_var06.field_8, 0);
+		b = g_vars->scene29_var06.sub04(g_vars->scene29_var06.field_8, 0);
 		b->ani = ani;
 
 		if (g_vars->scene29_var06.field_8)
@@ -143,7 +143,7 @@ void scene29_initScene(Scene *sc) {
 
 	g_vars->scene29_var19.clear();
 
-	ani = new StaticANIObject(accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
+	ani = new StaticANIObject(g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
 
 	ani->_statics = ani->getStaticsById(ST_BRDCMN_EMPTY);
 
@@ -270,11 +270,11 @@ int sceneHandler29(ExCommand *cmd) {
 
 	case MSG_SC29_LAUGH:
 		if (g_vars->scene29_var18 == ANI_SHELL_GREEN) {
-			playSound(SND_29_028, 0);
+			g_fp->playSound(SND_29_028, 0);
 			break;
 		}
 
-		playSound(SND_29_029, 0);
+		g_fp->playSound(SND_29_029, 0);
 
 		break;
 
@@ -296,7 +296,7 @@ int sceneHandler29(ExCommand *cmd) {
 
 	case MSG_SC29_SHOWLASTGREEN:
 		if (g_vars->scene29_var05.numBalls) {
-			g_vars->scene29_var05.field_8->ani->show1(-1, -1, (Objects)-1, 0);
+			g_vars->scene29_var05.field_8->ani->show1(-1, -1, -1, 0);
 			g_vars->scene29_var05.field_8->ani->startAnim(MV_SHG_HITASS, 0, -1);
 		}
 
@@ -312,13 +312,14 @@ int sceneHandler29(ExCommand *cmd) {
 		getGameLoaderInteractionController()->enableFlag24();
 		break;
 
-	case MSG_SC29_STOPRIDE:
+	case MSG_SC29_DISABLERIDEBACK:
 		g_vars->scene29_var12 = 0;
 		break;
 
-	case MSG_SC29_DISABLERIDEBACK:
+	case MSG_SC29_ENABLERIDEBACK:
 		g_vars->scene29_var12 = 1;
-		// fall through
+		g_vars->scene29_var11 = 0;
+		break;
 
 	case MSG_SC29_DISABLEPORTER:
 		g_vars->scene29_var11 = 0;
@@ -333,8 +334,9 @@ int sceneHandler29(ExCommand *cmd) {
 	case 29:
 		if (!g_vars->scene29_var09 || g_vars->scene29_var10) {
 			if (!g_vars->scene29_var10) {
-				v6 = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
-				if (v6 && v6 == g_vars->scene29_porter) {
+				StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+
+				if (ani && ani == g_vars->scene29_porter) {
 					sceneHandler29_clickPorter(cmd);
 
 					cmd->_messageKind = 0;
@@ -361,7 +363,7 @@ int sceneHandler29(ExCommand *cmd) {
 			if (g_vars->scene29_var20 > g_fp->_sceneRect.right - 500)
 				g_fp->_currentScene->_x = g_fp->_sceneRect.right - g_vars->scene29_var20 - 350;
 
-			if (g_vars->scene29_var20 < g_sceneRect.left + 100)
+			if (g_vars->scene29_var20 < g_fp->_sceneRect.left + 100)
 				g_fp->_currentScene->_x = g_vars->scene29_var20 - g_fp->_sceneRect.left - 100;
 
 		} else if (g_fp->_aniMan2) {
@@ -382,9 +384,9 @@ int sceneHandler29(ExCommand *cmd) {
 		if (!g_vars->scene29_porter->_movement)
 			g_vars->scene29_porter->startAnim(MV_PTR_MOVEFAST, 0, -1);
 
-		if (g_vars->scene29_var09) {
+		if (g_vars->scene29_var09)
 			sceneHandler29_manFromL();
-		else if (g_vars->scene29_var10 && !g_aniMan->_movement)
+		else if (g_vars->scene29_var10 && !g_fp->_aniMan->_movement)
 			sceneHandler29_sub05();
 
 		if (g_vars->scene29_var11)
@@ -400,7 +402,7 @@ int sceneHandler29(ExCommand *cmd) {
 		sceneHandler29_animBearded();
 
 		g_fp->_behaviorManager->updateBehaviors();
-		startSceneTrack();
+		g_fp->startSceneTrack();
 
 		break;
 	}

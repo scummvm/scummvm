@@ -33,6 +33,7 @@ class MctlLadder;
 struct Ring;
 class StaticANIObject;
 struct Swinger;
+struct WalkingBearder;
 
 int defaultUpdateCursor();
 
@@ -584,6 +585,33 @@ public:
 	bool scene28_headDirection;
 	bool scene28_headBeardedFlipper;
 	bool scene28_lift6inside;
+
+	int scene29_var01;
+	int scene29_var02;
+	int scene29_var03;
+	int scene29_var04;
+	StaticANIObject *scene29_porter;
+	StaticANIObject *scene29_shooter1;
+	StaticANIObject *scene29_shooter2;
+	StaticANIObject *scene29_ass;
+	BallChain scene29_var05;
+	BallChain scene29_var06;
+	BallChain scene29_var07;
+	BallChain scene29_var08;
+	int scene29_var09;
+	int scene29_var10;
+	int scene29_var11;
+	int scene29_var12;
+	int scene29_var13;
+	int scene29_var14;
+	int scene29_var15;
+	int scene29_var16;
+	int scene29_var17;
+	int scene29_var18;
+	Common::Array<WalkingBearder *> scene29_var19;
+	int scene29_var20;
+	int scene29_var21;
+	MGM scene29_mgm;
 
 	StaticANIObject *scene30_leg;
 	int scene30_liftFlag;
