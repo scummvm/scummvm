@@ -92,8 +92,11 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(14, opSetThreadSceneId);
 	OPCODE(15, opEndTalkThreads);
 	OPCODE(16, opLoadResource);
+	OPCODE(17, opUnloadResource);
 	OPCODE(20, opEnterScene);
 	OPCODE(25, opChangeScene);
+	OPCODE(30, opEnterCloseUpScene);
+	OPCODE(31, opExitCloseUpScene);
 	OPCODE(39, opSetDisplay);
 	OPCODE(42, opIncBlockCounter);
 	OPCODE(45, opSetProperty);
@@ -109,7 +112,10 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(65, opSetDenySfx);
 	OPCODE(66, opSetAdjustUpSfx);
 	OPCODE(67, opSetAdjustDnSfx);
+	OPCODE(71, opStartSound);
+	OPCODE(74, opStopSound);
 	OPCODE(75, opStartMusic);
+	OPCODE(76, opStopMusic);
 	OPCODE(78, opStackPushRandom);
 	OPCODE(79, opIfLte);
 	OPCODE(80, opAddMenuChoice);
@@ -128,6 +134,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(147, opStackDup);
 	OPCODE(148, opLoadSpecialCodeModule);
 	OPCODE(150, opRunSpecialCode);
+	OPCODE(160, opStopActor);
 	OPCODE(161, opSetActorUsePan);
 	OPCODE(168, opStartAbortableThread);
 	OPCODE(169, opKillThread);
@@ -214,6 +221,13 @@ void ScriptOpcodes::opLoadResource(ScriptThread *scriptThread, OpCall &opCall) {
 	_vm->_resSys->loadResource(resourceId, sceneId, opCall._threadId);
 }
 
+void ScriptOpcodes::opUnloadResource(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(resourceId);
+	// NOTE Skipped checking for stalled resources
+	_vm->_resSys->unloadResourceById(resourceId);
+}
+
 void ScriptOpcodes::opEnterScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
@@ -239,6 +253,21 @@ void ScriptOpcodes::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	// TODO _vm->_gameStates->writeStates(_vm->_scriptMan->_prevSceneId, sceneId, threadId);
 	_vm->_scriptMan->startAnonScriptThread(threadId, 0,
 		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
+}
+
+void ScriptOpcodes::opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(sceneId);
+	// NOTE Skipped checking for stalled resources
+	_vm->_input->discardButtons(0xFFFF);
+	_vm->_scriptMan->enterPause(opCall._callerThreadId);
+	_vm->_scriptMan->enterScene(sceneId, opCall._callerThreadId);
+}
+
+void ScriptOpcodes::opExitCloseUpScene(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->_scriptMan->exitScene(opCall._callerThreadId);
+	_vm->_scriptMan->leavePause(opCall._callerThreadId);
+	opCall._result = kTSYield;
 }
 
 void ScriptOpcodes::opSetDisplay(ScriptThread *scriptThread, OpCall &opCall) {
@@ -275,6 +304,7 @@ void ScriptOpcodes::opStartSequenceActor(ScriptThread *scriptThread, OpCall &opC
 	ARG_UINT32(sequenceId);
 	// NOTE Skipped checking for stalled sequence, not sure if needed
 	Control *control = _vm->_dict->getObjectControl(objectId);
+	debug("control: %p", (void*)control);
 	control->startSequenceActor(sequenceId, 2, opCall._threadId);
 }
 
@@ -356,6 +386,20 @@ void ScriptOpcodes::opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &opCall)
 	ARG_UINT32(soundEffectId);
 	// TODO _vm->setAdjustDnSfx(soundEffectId);
 }
+
+void ScriptOpcodes::opStartSound(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(volume);
+	ARG_INT16(pan);
+	ARG_UINT32(soundEffectId);
+	// TODO _vm->startSound(soundEffectId, volume, pan);
+}
+void ScriptOpcodes::opStopSound(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(soundEffectId);
+	// TODO _vm->stopSound(soundEffectId);
+}
+
 void ScriptOpcodes::opStartMusic(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_INT16(volume);
@@ -363,6 +407,10 @@ void ScriptOpcodes::opStartMusic(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_UINT32(musicId);
 	ARG_UINT32(type);
 	// TODO _vm->playMusic(musicId, type, volume, pan);
+}
+
+void ScriptOpcodes::opStopMusic(ScriptThread *scriptThread, OpCall &opCall) {
+	// TODO _vm->stopMusic();
 }
 
 void ScriptOpcodes::opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall) {
@@ -406,7 +454,6 @@ void ScriptOpcodes::opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCal
 _vm->_scriptMan->_menuChoiceOfs = 88; // DEBUG Chose "Start game"
 
 	opCall._deltaOfs += _vm->_scriptMan->_menuChoiceOfs;
-debug("deltaOfs = %08X", opCall._deltaOfs);	
 }
 
 void ScriptOpcodes::opResetGame(ScriptThread *scriptThread, OpCall &opCall) {
@@ -451,7 +498,6 @@ void ScriptOpcodes::opCompareBlockCounter(ScriptThread *scriptThread, OpCall &op
 	ARG_INT16(compareOp);	
 	ARG_INT16(rvalue);
 	int16 lvalue = _vm->_scriptMan->_scriptResource->_blockCounters.get(index);
-	debug("lvalue = %d", lvalue);
 	bool compareResult = false;
 	switch (compareOp) {
 	case 1:
@@ -473,7 +519,6 @@ void ScriptOpcodes::opCompareBlockCounter(ScriptThread *scriptThread, OpCall &op
 		compareResult = lvalue <= rvalue;
 		break;
 	}
-	debug("  compareResult -> %d", compareResult);
 	_vm->_scriptMan->_stack.push(compareResult ? 1 : 0);
 }
 
@@ -519,6 +564,13 @@ void ScriptOpcodes::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall)
 	//DEBUG Resume calling thread, later done by the special code
 	_vm->notifyThreadId(opCall._callerThreadId);
 
+}
+
+void ScriptOpcodes::opStopActor(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	control->stopActor();
 }
 
 void ScriptOpcodes::opSetActorUsePan(ScriptThread *scriptThread, OpCall &opCall) {

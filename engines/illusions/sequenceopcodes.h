@@ -55,6 +55,7 @@ protected:
 	void opNextLoop(Control *control, OpCall &opCall);
 	void opSwitchActorIndex(Control *control, OpCall &opCall);
 	void opSwitchFacing(Control *control, OpCall &opCall);
+	void opDisappearActor(Control *control, OpCall &opCall);
 	void opNotifyThreadId1(Control *control, OpCall &opCall);
 	void opSetPathCtrY(Control *control, OpCall &opCall);
 	void opSetPathWalkPoints(Control *control, OpCall &opCall);

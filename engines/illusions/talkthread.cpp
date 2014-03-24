@@ -138,7 +138,7 @@ int TalkThread::onUpdate() {
 			refreshText();
 		if (!(_flags & 2)) {
 			Control *control = _vm->_dict->getObjectControl(_objectId);
-			// TODOcontrol->startTalkActor(_sequenceId1, _entryTblPtr, _threadId);
+			control->startTalkActor(_sequenceId1, _entryTblPtr, _threadId);
 		}
 		if (!(_flags & 4)) {
 			int16 panX = 0;

@@ -111,9 +111,11 @@ public:
 	ActorItems(IllusionsEngine *vm);
 	~ActorItems();
 	ActorItem *allocActorItem();
+	void freeActorItem(ActorItem *actorItem);
 	void pauseByTag(uint32 tag);
 	void unpauseByTag(uint32 tag);
 	FramesList *findSequenceFrames(Sequence *sequence);
+	ActorItem *findActorByResource(ActorResource *actorResource);
 protected:
 	typedef Common::List<ActorItem*> Items;
 	typedef Items::iterator ItemsIterator;

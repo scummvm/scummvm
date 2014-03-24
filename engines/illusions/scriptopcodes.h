@@ -69,8 +69,11 @@ protected:
 	void opSetThreadSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opEndTalkThreads(ScriptThread *scriptThread, OpCall &opCall);
 	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
+	void opUnloadResource(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeScene(ScriptThread *scriptThread, OpCall &opCall);
+	void opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
+	void opExitCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);	
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetProperty(ScriptThread *scriptThread, OpCall &opCall);
@@ -86,7 +89,10 @@ protected:
 	void opSetDenySfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetAdjustUpSfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartSound(ScriptThread *scriptThread, OpCall &opCall);
+	void opStopSound(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartMusic(ScriptThread *scriptThread, OpCall &opCall);
+	void opStopMusic(ScriptThread *scriptThread, OpCall &opCall);
 	void opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall);
 	void opIfLte(ScriptThread *scriptThread, OpCall &opCall);
 	void opAddMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
@@ -105,6 +111,7 @@ protected:
 	void opStackDup(ScriptThread *scriptThread, OpCall &opCall);
 	void opLoadSpecialCodeModule(ScriptThread *scriptThread, OpCall &opCall);
 	void opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall);
+	void opStopActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetActorUsePan(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartAbortableThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opKillThread(ScriptThread *scriptThread, OpCall &opCall);

@@ -89,6 +89,8 @@ public:
 	void reset();
 	bool enterScene(uint32 sceneId, uint32 threadId);
 	void exitScene(uint32 threadId);
+	void enterPause(uint32 threadId);
+	void leavePause(uint32 threadId);
 public:
 
 	IllusionsEngine *_vm;
