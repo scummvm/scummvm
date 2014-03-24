@@ -70,6 +70,11 @@ private:
 	void doSceneStep();
 
 	void checkKeyboard();
+
+	/**
+	 * Checks for a highlighted hotspot, and updates the cursor accordingly
+	 */
+	void updateCursor();
 protected:
 	MADSEngine *_vm;
 public:

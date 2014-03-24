@@ -340,33 +340,7 @@ void Scene::doFrame() {
 			player.nextFrame();
 
 			// Cursor update code
-			CursorType cursorId = CURSOR_ARROW;
-			if (_action._v83338 == 1 && !_vm->_game->_screenObjects._v7FECA &&
-					_vm->_game->_screenObjects._category == CAT_HOTSPOT) {
-				int idx = _vm->_game->_screenObjects._selectedObject - 
-					_userInterface._categoryIndexes[CAT_HOTSPOT - 1];
-				assert(idx >= 0);
-
-				if (idx >= (int)_hotspots.size()) {
-					idx -= _hotspots.size();
-					_vm->_events->_newCursorId = _dynamicHotspots[idx]._cursor;
-				} else {
-					_vm->_events->_newCursorId = _hotspots[idx]._cursor;
-				}
-
-				cursorId = _vm->_events->_newCursorId == CURSOR_NONE ? 
-					CURSOR_ARROW : _vm->_events->_newCursorId;
-			}
-
-			if (!player._stepEnabled)
-				cursorId = CURSOR_WAIT;
-			if (cursorId >= _vm->_events->_cursorSprites->getCount())
-				cursorId = (CursorType)_vm->_events->_cursorSprites->getCount();
-			_vm->_events->_newCursorId = cursorId;
-
-			if (cursorId != _vm->_events->_cursorId) {
-				_vm->_events->setCursor(cursorId);
-			}
+			updateCursor();
 
 			if (!_vm->_game->_abortTimers) {
 				// Handle any active sequences
@@ -560,6 +534,39 @@ void Scene::loadAnimation(const Common::String &resName, int abortTimers) {
 	_activeAnimation->load(interfaceSurface, depthSurface, resName, 
 		_vm->_game->_v2 ? 1 : 0, nullptr, nullptr);
 	_activeAnimation->startAnimation(abortTimers);
+}
+
+void Scene::updateCursor() {
+	Player &player = _vm->_game->_player;
+
+	CursorType cursorId = CURSOR_ARROW;
+	if (_action._v83338 == 1 && !_vm->_game->_screenObjects._v7FECA &&
+		_vm->_game->_screenObjects._category == CAT_HOTSPOT) {
+		int idx = _vm->_game->_screenObjects._selectedObject -
+			_userInterface._categoryIndexes[CAT_HOTSPOT - 1];
+		assert(idx >= 0);
+
+		if (idx >= (int)_hotspots.size()) {
+			idx -= _hotspots.size();
+			_vm->_events->_newCursorId = _dynamicHotspots[idx]._cursor;
+		} else {
+			idx = _hotspots.size() - idx - 1;
+			_vm->_events->_newCursorId = _hotspots[idx]._cursor;
+		}
+
+		cursorId = _vm->_events->_newCursorId == CURSOR_NONE ?
+		CURSOR_ARROW : _vm->_events->_newCursorId;
+	}
+
+	if (!player._stepEnabled)
+		cursorId = CURSOR_WAIT;
+	if (cursorId >= _vm->_events->_cursorSprites->getCount())
+		cursorId = (CursorType)_vm->_events->_cursorSprites->getCount();
+	_vm->_events->_newCursorId = cursorId;
+
+	if (cursorId != _vm->_events->_cursorId) {
+		_vm->_events->setCursor(cursorId);
+	}
 }
 
 void Scene::free() {
