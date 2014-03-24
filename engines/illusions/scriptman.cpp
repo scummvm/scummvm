@@ -21,9 +21,10 @@
  */
 
 #include "illusions/illusions.h"
+#include "illusions/scriptman.h"
 #include "illusions/abortablethread.h"
 #include "illusions/actor.h"
-#include "illusions/scriptman.h"
+#include "illusions/camera.h"
 #include "illusions/scriptthread.h"
 #include "illusions/scriptopcodes.h"
 #include "illusions/talkthread.h"
@@ -249,6 +250,26 @@ void ScriptMan::exitScene(uint32 threadId) {
 	// TODO causeFunc_removeBySceneId(sceneId);
 	_vm->_resSys->unloadResourcesByTag(sceneId);
 	_activeScenes.pop();
+}
+
+void ScriptMan::enterPause(uint32 threadId) {
+	uint32 sceneId = _activeScenes.getCurrentScene();
+	_vm->_camera->pushCameraMode();
+	_threads->suspendThreadsByTag(sceneId, threadId);
+	_vm->_controls->pauseControlsByTag(sceneId);
+	_vm->_actorItems->pauseByTag(sceneId);
+	_vm->_backgroundItems->pauseByTag(sceneId);
+	_activeScenes.pauseActiveScene();
+}
+
+void ScriptMan::leavePause(uint32 threadId) {
+	uint32 sceneId = _activeScenes.getCurrentScene();
+	_vm->_backgroundItems->unpauseByTag(sceneId);
+	_vm->_actorItems->unpauseByTag(sceneId);
+	_vm->_controls->unpauseControlsByTag(sceneId);
+	_threads->notifyThreadsByTag(sceneId, threadId);
+	_vm->_camera->popCameraMode();
+	_activeScenes.unpauseActiveScene();
 }
 
 void ScriptMan::newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,

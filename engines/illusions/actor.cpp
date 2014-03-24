@@ -533,6 +533,26 @@ void Control::stopSequenceActor() {
 		}
 }
 
+void Control::startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 threadId) {
+	bool doSeq = true;
+	if (_actor->_linkIndex2) {
+		Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[_actor->_linkIndex2 - 1]);
+		if (subControl->_actor->_flags & 1) {
+			/* TODO
+			if (control->_actor->pathNode) {
+				doSeq = false;
+				subControl->_actor->notifyThreadId2 = threadId;
+				subControl->_actor->entryTblPtr = entryTblPtr;
+				subControl->_actor->flags |= 0x80;
+				script_TalkThreads_sub_417FA0(subControl->_actor->_notifyThreadId2, 0);
+			}
+			*/
+		}
+	}
+	if (doSeq)
+		startSequenceActorIntern(sequenceId, 2, entryTblPtr, threadId);
+}
+
 void Control::sequenceActor() {
 
 	if (_actor->_pauseCtr > 0)
@@ -591,15 +611,14 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	_actor->_flags |= 0x0100;
 
 	sequenceId = _actor->_defaultSequences.use(sequenceId);
-	
+
 	_actor->_sequenceId = sequenceId;
 	_actor->_notifyThreadId1 = notifyThreadId;
 	_actor->_notifyId3C = 0;
 	_actor->_path40 = 0;
 	
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
-	debug(1, "Control::startSequenceActorIntern() sequence = %p", (void*)sequence);
-	
+
 	_actor->_seqCodeIp = sequence->_sequenceCode;
 	_actor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
 	
@@ -774,6 +793,58 @@ void Controls::destroyControlsByTag(uint32 tag) {
 	}
 }
 
+void Controls::pauseControlsByTag(uint32 tag) {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_tag == tag) {
+			++control->_pauseCtr;
+			if (control->_pauseCtr == 1)
+				control->pause();
+		}
+	}
+}
+
+void Controls::unpauseControlsByTag(uint32 tag) {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_tag == tag) {
+			--control->_pauseCtr;
+			if (control->_pauseCtr == 0)
+				control->unpause();
+		}
+	}
+}
+
+void Controls::actorControlRouine(Control *control, uint32 deltaTime) {
+
+	Actor *actor = control->_actor;
+
+	if (actor->_pauseCtr > 0)
+		return;
+
+	if (false/*actor->_pathNode*/) {
+		// TODO Update pathwalking
+	} else {
+		actor->_seqCodeValue1 = 100 * deltaTime;
+	}
+
+	if (actor->_flags & 4) {
+		int scale = actor->_scaleLayer->getScale(actor->_position);
+		control->setActorScale(scale);
+	}
+
+	if (actor->_flags & 8) {
+		int16 priority = actor->_priorityLayer->getPriority(actor->_position);
+		if (priority)
+			control->setPriority(priority + 1);
+	}
+
+	if (actor->_flags & 0x20) {
+		// TODO Update transition sequence (seems to be unused in BBDOU?)
+	}
+
+}
+
 Actor *Controls::newActor() {
 	return new Actor(_vm);
 }
@@ -809,36 +880,6 @@ void Controls::destroyControl(Control *control) {
 		free(control->_buf);
 	*/
 	delete control;
-}
-
-void Controls::actorControlRouine(Control *control, uint32 deltaTime) {
-
-	Actor *actor = control->_actor;
-
-	if (actor->_pauseCtr > 0)
-		return;
-
-	if (false/*actor->_pathNode*/) {
-		// TODO Update pathwalking
-	} else {
-		actor->_seqCodeValue1 = 100 * deltaTime;
-	}
-
-	if (actor->_flags & 4) {
-		int scale = actor->_scaleLayer->getScale(actor->_position);
-		control->setActorScale(scale);
-	}
-
-	if (actor->_flags & 8) {
-		int16 priority = actor->_priorityLayer->getPriority(actor->_position);
-		if (priority)
-			control->setPriority(priority + 1);
-	}
-
-	if (actor->_flags & 0x20) {
-		// TODO Update transition sequence (seems to be unused in BBDOU?)
-	}
-
 }
 
 } // End of namespace Illusions

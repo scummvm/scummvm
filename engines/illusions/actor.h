@@ -167,6 +167,7 @@ public:
 	void stopActor();
 	void startSequenceActor(uint32 sequenceId, int value, uint32 notifyThreadId);
 	void stopSequenceActor();
+	void startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 threadId);
 	void sequenceActor();
 public:
 	IllusionsEngine *_vm;
@@ -198,6 +199,8 @@ public:
 	void placeSequenceLessActor(uint32 objectId, Common::Point placePt, WidthHeight dimensions, int16 priority);
 	void placeActorLessObject(uint32 objectId, Common::Point feetPt, Common::Point pt, int16 priority, uint flags);
 	void destroyControlsByTag(uint32 tag);
+	void pauseControlsByTag(uint32 tag);
+	void unpauseControlsByTag(uint32 tag);
 	void actorControlRouine(Control *control, uint32 deltaTime);	
 public:
 	typedef Common::List<Control*> Items;

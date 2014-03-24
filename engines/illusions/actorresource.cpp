@@ -33,6 +33,7 @@ void ActorResourceLoader::load(Resource *resource) {
 
 	ActorResource *actorResource = new ActorResource();
 	actorResource->load(resource->_data, resource->_dataSize);
+	resource->_refId = actorResource;
 	
 	ActorItem *actorItem = _vm->_actorItems->allocActorItem();
 	actorItem->_tag = resource->_tag;
@@ -63,6 +64,17 @@ void ActorResourceLoader::load(Resource *resource) {
 }
 
 void ActorResourceLoader::unload(Resource *resource) {
+	debug("ActorResourceLoader::unload() Unloading actor %08X...", resource->_resId);
+	// TODO Move to ActorItems
+	ActorItem *actorItem = _vm->_actorItems->findActorByResource((ActorResource*)resource->_refId);
+	if (actorItem->_pauseCtr <= 0) {
+		for (uint i = 0; i < actorItem->_actRes->_actorTypes.size(); ++i)
+			_vm->_dict->removeActorType(actorItem->_actRes->_actorTypes[i]._actorTypeId);
+		for (uint i = 0; i < actorItem->_actRes->_sequences.size(); ++i)
+			_vm->_dict->removeSequence(actorItem->_actRes->_sequences[i]._sequenceId);
+	}
+	_vm->_actorItems->freeActorItem(actorItem);
+	delete actorItem->_actRes;
 }
 
 void ActorResourceLoader::buildFilename(Resource *resource) {
@@ -241,6 +253,11 @@ ActorItem *ActorItems::allocActorItem() {
 	return actorItem;
 }
 
+void ActorItems::freeActorItem(ActorItem *actorItem) {
+	_items.remove(actorItem);
+	delete actorItem;
+}
+
 void ActorItems::pauseByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
@@ -250,7 +267,7 @@ void ActorItems::pauseByTag(uint32 tag) {
 void ActorItems::unpauseByTag(uint32 tag) {
 	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
 		if ((*it)->_tag == tag)
-			(*it)->pause();
+			(*it)->unpause();
 }
 
 FramesList *ActorItems::findSequenceFrames(Sequence *sequence) {
@@ -259,6 +276,13 @@ FramesList *ActorItems::findSequenceFrames(Sequence *sequence) {
 		if (actorItem->_pauseCtr <= 0 && actorItem->_actRes->containsSequence(sequence))
 			return &actorItem->_actRes->_frames;
 	}
+	return 0;
+}
+
+ActorItem *ActorItems::findActorByResource(ActorResource *actorResource) {
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+		if ((*it)->_actRes == actorResource)
+			return (*it);
 	return 0;
 }
 

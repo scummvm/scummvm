@@ -64,6 +64,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(12, opNextLoop);
 	OPCODE(14, opSwitchActorIndex);
 	OPCODE(15, opSwitchFacing);
+	OPCODE(17, opDisappearActor);
 	OPCODE(28, opNotifyThreadId1);
 	OPCODE(29, opSetPathCtrY);
 	OPCODE(33, opSetPathWalkPoints);
@@ -92,26 +93,17 @@ void SequenceOpcodes::freeOpcodes() {
 void SequenceOpcodes::opSetFrameIndex(Control *control, OpCall &opCall) {
 	ARG_INT16(frameIndex);
 	if (control->_actor->_flags & 0x80) {
-		debug(1, "opSetFrameIndex TODO");
-		/* TODO
-		v9 = actor->field30;
-		if (*(_WORD *)v9) {
-			LOWORD(flag) = *(_WORD *)v9;
-			v6 = v6 + flag - 1;
-			actor->field30 = v9 + 2;
+		int16 frameIncr = READ_LE_UINT16(control->_actor->_entryTblPtr);
+		if (frameIncr) {
+			frameIndex += frameIncr - 1;
+			control->_actor->_entryTblPtr += 2;
 		} else {
-			actor->flags &= 0xFF7Fu;
-			v10 = actor->notifyThreadId1;
-			actor->field30 = 0;
-			actor->notifyThreadId2 = 0;
-			if (v10) {
-				actor->notifyThreadId1 = 0;
-				ThreadList_notifyId__(v10);
-			}
-			actorDead = 1;
-			breakInner = 1;
+			control->_actor->_flags &= ~0x80;
+			control->_actor->_entryTblPtr = 0;
+			control->_actor->_notifyThreadId2 = 0;
+			_vm->notifyThreadId(control->_actor->_notifyThreadId1);
+			opCall._result = 1;
 		}
-		*/
 	}
 	control->_actor->_flags &= ~0x0100;
 	if (control->_actor->_flags & 0x8000) {
@@ -189,6 +181,11 @@ void SequenceOpcodes::opSwitchFacing(Control *control, OpCall &opCall) {
 	ARG_INT16(jumpOffs);
 	if (!(control->_actor->_facing & facing))
 		opCall._deltaOfs += jumpOffs;
+}
+
+void SequenceOpcodes::opDisappearActor(Control *control, OpCall &opCall) {
+	control->disappearActor();
+	control->_actor->_newFrameIndex = 0;
 }
 
 void SequenceOpcodes::opNotifyThreadId1(Control *control, OpCall &opCall) {
