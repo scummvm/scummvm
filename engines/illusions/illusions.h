@@ -64,6 +64,7 @@ class Screen;
 class ScriptResource;
 class ScriptMan;
 class Sequence;
+class SpecialCode;
 class TalkItems;
 class FramesList;
 
@@ -95,6 +96,7 @@ public:
 	Controls *_controls;
 	Cursor *_cursor;
 	TalkItems *_talkItems;
+	SpecialCode *_specialCode;
 	
 	int _resGetCtr;
 	uint32 _resGetTime;

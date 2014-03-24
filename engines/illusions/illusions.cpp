@@ -35,6 +35,7 @@
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
 #include "illusions/soundresource.h"
+#include "illusions/specialcode.h"
 #include "illusions/talkresource.h"
 #include "illusions/thread.h"
 #include "illusions/time.h"
@@ -95,6 +96,7 @@ Common::Error IllusionsEngine::run() {
 	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
 	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
+	_resSys->addResourceLoader(0x00170000, new SpecialCodeLoader(this));
 
 	_screen = new Screen(this);
 	_input = new Input();	
