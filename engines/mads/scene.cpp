@@ -272,6 +272,12 @@ void Scene::loop() {
 		// Handle drawing a game frame
 		doFrame();
 
+		// Reset mouse flags
+		_vm->_events->resetMouseFlags();
+
+		// TODO: Verify correctness of frame wait
+		_vm->_events->waitForNextFrame();
+
 		if (_vm->_dialogs->_pendingDialog != DIALOG_NONE && !_vm->_game->_abortTimers
 			&& _vm->_game->_player._stepEnabled)
 			_reloadSceneFlag = true;
@@ -421,9 +427,6 @@ void Scene::doFrame() {
 		_activeAnimation->free();
 		_activeAnimation = nullptr;
 	}
-
-	// TODO: Verify correctness of frame wait
-	_vm->_events->waitForNextFrame();
 }
 
 void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {

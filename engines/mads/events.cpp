@@ -132,6 +132,7 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			_mouseClicked = false;
+			_mouseReleased = true;
 			_mouseMoved = true;
 			return;
 		case Common::EVENT_MOUSEMOVE:
@@ -184,6 +185,11 @@ void EventsManager::initVars() {
 	_mousePos = Common::Point(-1, -1);
 	_vD4 = _vCC;
 	_vD2 = _vD8 = 0;
+}
+
+void EventsManager::resetMouseFlags() {
+	_mouseClicked = false;
+	_mouseReleased = false;
 }
 
 } // End of namespace MADS

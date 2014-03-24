@@ -141,6 +141,8 @@ public:
 	uint32 getFrameCounter() const { return _frameCounter; }
 
 	void initVars();
+
+	void resetMouseFlags();
 };
 
 } // End of namespace MADS
