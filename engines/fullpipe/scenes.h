@@ -164,6 +164,10 @@ void scene28_initScene(Scene *sc);
 int sceneHandler28(ExCommand *ex);
 int scene28_updateCursor();
 
+int scene29_updateCursor();
+void scene29_initScene(Scene *sc);
+int sceneHandler29(ExCommand *cmd);
+
 int scene30_updateCursor();
 void scene30_initScene(Scene *sc, int flag);
 int sceneHandler30(ExCommand *cmd);
