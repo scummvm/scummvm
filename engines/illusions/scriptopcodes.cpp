@@ -551,6 +551,7 @@ void ScriptOpcodes::opStackDup(ScriptThread *scriptThread, OpCall &opCall) {
 void ScriptOpcodes::opLoadSpecialCodeModule(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(specialCodeModuleId);
+	_vm->_resSys->loadResource(specialCodeModuleId, 0, 0);
 	// TODO _vm->loadSpecialCodeModule(specialCodeModuleId);
 }
 

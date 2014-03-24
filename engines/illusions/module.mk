@@ -5,6 +5,8 @@ MODULE_OBJS := \
 	actor.o \
 	actorresource.o \
 	backgroundresource.o \
+	bbdou/bbdou_cursor.o \
+	bbdou/bbdou_specialcode.o \
 	camera.o \
 	cursor.o \
 	detection.o \
@@ -22,6 +24,7 @@ MODULE_OBJS := \
 	scriptthread.o \
 	sequenceopcodes.o \
 	soundresource.o \
+	specialcode.o \
 	spritedecompressqueue.o \
 	spritedrawqueue.o \
 	talkresource.o \
