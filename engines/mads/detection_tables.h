@@ -41,6 +41,24 @@ static const MADSGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// Rex Nebular and the Cosmic Gender Bender DOS English
+		{
+			"nebular",
+			0,
+			{
+				{"section1.hag", 0, "6f725eb38660de8af31ec7cdd628d615", 927222},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GType_RexNebular,
+		0
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
