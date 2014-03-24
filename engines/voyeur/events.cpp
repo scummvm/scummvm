@@ -266,18 +266,18 @@ void EventsManager::pollEvents() {
 			}
 			return;
 		case Common::EVENT_LBUTTONDOWN:
-			_vm->_eventsManager->_newLeftClick = true;
-			_vm->_eventsManager->_newMouseClicked = true;
+			_newLeftClick = true;
+			_newMouseClicked = true;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_vm->_eventsManager->_newRightClick = true;
-			_vm->_eventsManager->_newMouseClicked = true;
+			_newRightClick = true;
+			_newMouseClicked = true;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_vm->_eventsManager->_newMouseClicked = false;
-			_vm->_eventsManager->_newLeftClick = false;
-			_vm->_eventsManager->_newRightClick = false;
+			_newMouseClicked = false;
+			_newLeftClick = false;
+			_newRightClick = false;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -574,13 +574,13 @@ void EventsManager::getMouseInfo() {
 		}
 	}
 
-	_vm->_eventsManager->_mouseClicked = _vm->_eventsManager->_newMouseClicked;
-	_vm->_eventsManager->_leftClick = _vm->_eventsManager->_newLeftClick;
-	_vm->_eventsManager->_rightClick = _vm->_eventsManager->_newRightClick;
+	_mouseClicked = _newMouseClicked;
+	_leftClick = _newLeftClick;
+	_rightClick = _newRightClick;
 
-	_vm->_eventsManager->_newMouseClicked = false;
-	_vm->_eventsManager->_newLeftClick = false;
-	_vm->_eventsManager->_newRightClick = false;
+	_newMouseClicked = false;
+	_newLeftClick = false;
+	_newRightClick = false;
 }
 
 void EventsManager::startCursorBlink() {
