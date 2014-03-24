@@ -36,6 +36,12 @@
 
 namespace Fullpipe {
 
+struct WalkingBearder {
+	StaticANIObject *ani;
+	int wbflag;
+	int wbcounter;
+};
+
 void scene29_initScene(Scene *sc) {
 	g_vars->scene29_var01 = 300;
 	g_vars->scene29_var02 = 200;
@@ -46,26 +52,13 @@ void scene29_initScene(Scene *sc) {
 	g_vars->scene29_shooter2 = sc->getStaticANIObject1ById(ANI_SHOOTER2, -1);
 	g_vars->scene29_ass = sc->getStaticANIObject1ById(ANI_ASS, -1);
 
-	v2 = g_vars->scene29_var05.pHead;
-	if (g_vars->scene29_var05.pHead) {
-		do
-			v2 = v2->p0;
-		while ( v2 );
-	}
-
 	g_vars->scene29_var05.numBalls = 0;
 	g_vars->scene29_var05.pTail = 0;
 	g_vars->scene29_var05.field_8 = 0;
 	g_vars->scene29_var05.pHead = 0;
-	CPlex::FreeDataChain(g_vars->scene29_var05.cPlex);
-	v3 = g_vars->scene29_var08.pHead;
-	g_vars->scene29_var05.cPlex = 0;
 
-	if (g_vars->scene29_var08.pHead) {
-		do
-			v3 = v3->p0;
-		while (v3);
-	}
+	free(g_vars->scene29_var05.cPlex);
+	g_vars->scene29_var05.cPlex = 0;
 
 	StaticANIObject *ani;
 
@@ -73,87 +66,82 @@ void scene29_initScene(Scene *sc) {
 	g_vars->scene29_var08.pTail = 0;
 	g_vars->scene29_var08.field_8 = 0;
 	g_vars->scene29_var08.pHead = 0;
-	CPlex::FreeDataChain(g_vars->scene29_var08.cPlex);
+
+	free(g_vars->scene29_var08.cPlex);
 	g_vars->scene29_var08.cPlex = 0;
 
 	ani = sc->getStaticANIObject1ById(ANI_SHELL_GREEN, -1);
-	v5 = g_vars->scene29_var05->sub04(g_vars->scene29_var05.field_8, 0);
-	v5->ani = ani;
+	Ball *b = g_vars->scene29_var05->sub04(g_vars->scene29_var05.field_8, 0);
+	b->ani = ani;
 
 	if (g_vars->scene29_var05.field_8)
-		g_vars->scene29_var05.field_8->p0 = v5;
+		g_vars->scene29_var05.field_8->p0 = b;
 	else
-		g_vars->scene29_var05.pHead = v5;
-	g_vars->scene29_var05.field_8 = v5;
+		g_vars->scene29_var05.pHead = b;
+
+	g_vars->scene29_var05.field_8 = b;
 
 	for (int i = 0; i < 2; i++) {
-		ani = new StaticANIObject(ani);
+		StaticANIObject *newani = new StaticANIObject(ani);
 
-		sc->addStaticANIObject(ani, 1);
-		v8 = g_vars->scene29_var05->sub04(g_vars->scene29_var05.field_8, 0);
-		v8->ani = ani;
+		sc->addStaticANIObject(newani, 1);
+
+		b = g_vars->scene29_var05->sub04(g_vars->scene29_var05.field_8, 0);
+		b->ani = ani;
 
 		if (g_vars->scene29_var05.field_8)
-			g_vars->scene29_var05.field_8->p0 = v8;
+			g_vars->scene29_var05.field_8->p0 = b;
 		else
-			g_vars->scene29_var05.pHead = v8;
-		g_vars->scene29_var05.field_8 = v8;
-	}
+			g_vars->scene29_var05.pHead = b;
 
-	v9 = g_vars->scene29_var06.pHead;
-	if (g_vars->scene29_var06.pHead) {
-		do
-			v9 = v9->p0;
-		while (v9);
+		g_vars->scene29_var05.field_8 = b;
 	}
 
 	g_vars->scene29_var06.numBalls = 0;
 	g_vars->scene29_var06.pTail = 0;
 	g_vars->scene29_var06.field_8 = 0;
 	g_vars->scene29_var06.pHead = 0;
-	CPlex::FreeDataChain(g_vars->scene29_var06.cPlex);
-	v10 = g_vars->scene29_var07.pHead;
-	g_vars->scene29_var06.cPlex = 0;
 
-	if (g_vars->scene29_var07.pHead) {
-		do
-			v10 = v10->p0;
-		while (v10);
-	}
+	free(g_vars->scene29_var06.cPlex);
+	g_vars->scene29_var06.cPlex = 0;
 
 	g_vars->scene29_var07.numBalls = 0;
 	g_vars->scene29_var07.pTail = 0;
 	g_vars->scene29_var07.field_8 = 0;
 	g_vars->scene29_var07.pHead = 0;
-	CPlex::FreeDataChain(g_vars->scene29_var07.cPlex);
+
+	free(g_vars->scene29_var07.cPlex);
 	g_vars->scene29_var07.cPlex = 0;
 
 	ani = sc->getStaticANIObject1ById(ANI_SHELL_RED, -1);
-	v12 = g_vars->scene29_var06->sub04(g_vars->scene29_var06.field_8, 0);
-	v12->ani = ani;
+
+	b = g_vars->scene29_var06->sub04(g_vars->scene29_var06.field_8, 0);
+	b->ani = ani;
 
 	if (g_vars->scene29_var06.field_8)
-		g_vars->scene29_var06.field_8->p0 = v12;
+		g_vars->scene29_var06.field_8->p0 = b;
 	else
-		g_vars->scene29_var06.pHead = v12;
+		g_vars->scene29_var06.pHead = b;
 
-	g_vars->scene29_var06.field_8 = v12;
+	g_vars->scene29_var06.field_8 = b;
 
 	for (int i = 0; i < 2; i++) {
-		ani = new StaticANIObject(ani);
-		ac->addStaticANIObject(sc, ani, 1);
-		v15 = g_vars->scene29_var06->sub04(g_vars->scene29_var06.field_8, 0);
-		v15->ani = ani;
+		StaticANIObject *newani = new StaticANIObject(ani);
+
+		sc->addStaticANIObject(newani, 1);
+
+		b = g_vars->scene29_var06->sub04(g_vars->scene29_var06.field_8, 0);
+		b->ani = ani;
 
 		if (g_vars->scene29_var06.field_8)
-			g_vars->scene29_var06.field_8->p0 = v15;
+			g_vars->scene29_var06.field_8->p0 = b;
 		else
-			g_vars->scene29_var06.pHead = v15;
+			g_vars->scene29_var06.pHead = b;
 
-		g_vars->scene29_var06.field_8 = v15;
+		g_vars->scene29_var06.field_8 = b;
 	}
 
-	ObArray_SetSize_0x0C((ObArray *)&g_vars->scene29_var19, 0, -1);
+	g_vars->scene29_var19.clear();
 
 	ani = new StaticANIObject(accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
 
@@ -161,12 +149,13 @@ void scene29_initScene(Scene *sc) {
 
 	sc->addStaticANIObject(ani, 1);
 
-	v20 = g_vars->scene29_var19.m_nSize;
-	ObArray_SetSize_0x0C((ObArray *)&g_vars->scene29_var19, g_vars->scene29_var19.m_nSize + 1, -1);
-	v21 = &g_vars->scene29_var19.m_pData[v20];
-	v21->ani = v19;
-	v21->wbflag = 0;
-	v21->wbcounter = 0;
+	WalkingBearder *wb = new WalkingBearder;
+
+	wb->ani = ani;
+	wb->wbflag = 0;
+	wb->wbcounter = 0;
+
+	g_vars->scene29_var19.push_back(wb);
 
 	g_vars->scene29_var09 = 0;
 	g_vars->scene29_var10 = 0;
@@ -369,14 +358,11 @@ int sceneHandler29(ExCommand *cmd) {
 
 	case 33:
 		if (g_vars->scene29_var10) {
-			v5 = g_vars->scene29_var20;
-			if (g_vars->scene29_var20 > g_fp->_sceneRect.right - 500) {
+			if (g_vars->scene29_var20 > g_fp->_sceneRect.right - 500)
 				g_fp->_currentScene->_x = g_fp->_sceneRect.right - g_vars->scene29_var20 - 350;
-				v5 = g_vars->scene29_var20;
-			}
 
-			if (v5 < g_sceneRect.left + 100)
-				g_fp->_currentScene->_x = v5 - g_fp->_sceneRect.left - 100;
+			if (g_vars->scene29_var20 < g_sceneRect.left + 100)
+				g_fp->_currentScene->_x = g_vars->scene29_var20 - g_fp->_sceneRect.left - 100;
 
 		} else if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
