@@ -204,6 +204,7 @@ public:
 
 	void changeDepthSurface(int arg1);
 
+	void resetScene();
 };
 
 } // End of namespace MADS

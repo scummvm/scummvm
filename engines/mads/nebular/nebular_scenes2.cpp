@@ -975,5 +975,117 @@ void Scene202::actions() {
 	action->_inProgress = false;
 }
 
+/*****************************************************************************/
+
+void Scene203::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(477);
+}
+
+void Scene203::enter() {
+	if (_scene->_priorSceneId == 202) {
+		_game._player._playerPos = Common::Point(187, 99);
+		_game._player._direction = 2;
+	} else if (_scene->_priorSceneId == 209) {
+		_game._player._playerPos = Common::Point(308, 117);
+		_game._player._direction = 4;
+	} else if (_scene->_priorSceneId == -2) {
+		_game._player._playerPos = Common::Point(155, 152);
+		_game._player._direction = 8;
+	}
+
+	_globals._v0 = 0;
+	_globals._frameTime = 0;
+
+	if ((_globals[34] == 0) && (_scene->_roomChanged == 0)) {
+		_globals._v0 = -1;
+		_game._player.startWalking(Common::Point(158, 135), 2);
+		int idx = _scene->_dynamicHotspots.add(131, 396, 0, Common::Rect(0, 0, 320, 156));
+		_scene->_dynamicHotspots.setPosition(idx, 155, 152, 2);
+		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
+	}
+
+	if (_globals._v0 == 0) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', -1), 0);
+		if (_vm->getRandomNumber(1, 3) == 2) {
+			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
+			int idx = _scene->_dynamicHotspots.add(477, 209, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots.setPosition(idx, -2, 0, 0);
+			_vm->_sound->command(14);
+		}
+	}
+
+	_game.loadQuoteSet(0x67, 0x68, 0x69, 0x6A, 0x5A, 0);
+
+	if (_globals._v0 != 0) {
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(_vm->getRandomNumber(103, 106)));
+	}
+
+	sceneEntrySound();
+}
+
+void Scene203::step() {
+	if (_globals._v0 == 0)
+		return;
+
+	if ((_game._abortTimers == 0) && (_globals._frameTime != 0))
+		return;
+
+	if ((_game._player._playerPos != Common::Point(158, 136)) || (_game._player._direction != 2))
+		return;
+
+	_globals._frameTime = 0xFFFF;
+
+	if (_game._abortTimers == 0) {
+		_game._player._visible = false;
+		_game._player._stepEnabled = false;
+		_vm->_palette->sub7BBF8();
+		_scene->_kernelMessages.reset();
+		_scene->resetScene();
+		_vm->_events->setCursor2(CURSOR_WAIT);
+		_scene->loadAnimation(Resources::formatName(203, 'a', -1, EXT_AA, ""), 81);
+	} else if (_game._abortTimers == 81) {
+		_scene->_nextSceneId = 208;
+		_scene->_reloadSceneFlag = true;
+	} 
+}
+
+void Scene203::preActions() {
+	if (_globals._v0 && !_action.isAction(0x18C, 0x83, 0)) {
+		_game._player.startWalking(Common::Point(158, 136), 2);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(0xD, 0xF3, 0))
+		_game._player._v844BE = 209;
+}
+
+void Scene203::actions() {
+	if (_action._savedFields._lookFlag) {
+		Dialog::show(0x4F53);
+	} else if (_action.isAction(0x18C, 0x83, 0)) {
+		_scene->_nextSceneId = 208;
+	} else if (_action.isAction(0x18C, 0x82, 0)) {
+		_scene->_nextSceneId = 202;
+	} else if (_action.isAction(0x3, 0x142, 0)) {
+		Dialog::show(0x4F4D);
+	} else if (_action.isAction(0x3, 0x4D, 0)) {
+		Dialog::show(0x4F4E);
+	} else if (_action.isAction(0x3, 0x100, 0)) {
+		Dialog::show(0x4F4F);
+	} else if (_action.isAction(0x3, 0x82, 0)) {
+		Dialog::show(0x4F50);
+	} else if (_action.isAction(0x3, 0x1A6, 0)) {
+		Dialog::show(0x4F51);
+	} else if (_action.isAction(0x3, 0x30, 0)) {
+		Dialog::show(0x4F51);
+	} else
+		return;
+
+	_action._inProgress = false;
+}
+
 } // End of namespace Nebular
 } // End of namespace MADS

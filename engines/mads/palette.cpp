@@ -517,8 +517,19 @@ void Palette::setLowRange() {
 }
 
 void Palette::fadeOut(byte palette[PALETTE_SIZE], int v1, int v2, int v3, int v4, int v5, int v6) {
-
 }
 
+void Palette::sub7BBF8() {
+	if ((_rgbList[31] != 0) && (_v1 == 0))
+		error("Palette - Unexpected values");
+
+	_v1 = -1;
+	_rgbList[31] = -1;
+
+	for (int i = 0; i < 256; i++) {
+		if (_palFlags[i])
+			_palFlags[i] |= 0x80000000;
+	}
+}
 
 } // End of namespace MADS

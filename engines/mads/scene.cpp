@@ -569,4 +569,10 @@ void Scene::changeDepthSurface(int arg1) {
 	_spriteSlots.fullRefresh();
 }
 
+void Scene::resetScene() {
+	_vm->_game->clearQuotes();
+	_spriteSlots.fullRefresh(true);
+	_sequences.clear();
+}
+
 } // End of namespace MADS

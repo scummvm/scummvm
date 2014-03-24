@@ -229,6 +229,8 @@ public:
 	}
 
 	void fadeOut(byte palette[PALETTE_SIZE], int v1, int v2, int v3, int v4, int v5, int v6);
+
+	void sub7BBF8();
 };
 
 } // End of namespace MADS
