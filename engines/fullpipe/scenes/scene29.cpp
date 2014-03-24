@@ -410,4 +410,23 @@ int sceneHandler29(ExCommand *cmd) {
 	return 0;
 }
 
+int scene29_updateCursor() {
+	g_fp->updateCursorCommon();
+
+	if (g_vars->scene29_var10) {
+		if (g_fp->_cursorId != PIC_CSR_DEFAULT_INV && g_fp->_cursorId != PIC_CSR_ITN_INV)
+			g_fp->_cursorId = -1;
+	} else if (g_vars->scene29_var09) {
+		if (g_fp->_cursorId != PIC_CSR_DEFAULT_INV && g_fp->_cursorId != PIC_CSR_ITN_INV)
+			g_fp->_cursorId = PIC_CSR_DEFAULT;
+	} else if (g_fp->_objectIdAtCursor == ANI_PORTER) {
+		if (g_fp->_cursorId == PIC_CSR_DEFAULT)
+			g_fp->_cursorId = PIC_CSR_ITN;
+	} else {
+		if (g_fp->_objectIdAtCursor == PIC_SC29_LTRUBA && g_fp->_cursorId == PIC_CSR_ITN)
+			g_fp->_cursorId = PIC_CSR_GOL;
+	}
+	return g_fp->_cursorId;
+}
+
 } // End of namespace Fullpipe

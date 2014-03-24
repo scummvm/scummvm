@@ -1302,6 +1302,7 @@ namespace Fullpipe {
 #define MV_PTR_MOVEFAST 2102
 #define MV_SHG_HITASS 2151
 #define MV_SHR_HITASS 2152
+#define PIC_SC29_LTRUBA 2081
 #define SND_29_028 4758
 #define SND_29_029 4759
 #define ST_ASS_NORM 2122
