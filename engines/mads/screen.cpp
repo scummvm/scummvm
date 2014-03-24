@@ -293,8 +293,9 @@ void ScreenObjects::check(bool scanFlag) {
 		_category = CAT_NONE;
 		_selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
 		if (_selectedObject > 0) {
-			_category = (ScrCategory)((*this)[_selectedObject - 1]._category & 7);
-			_newDescId = (*this)[_selectedObject - 1]._descId;
+			ScreenObject &scrObject = (*this)[_selectedObject];
+			_category = (ScrCategory)(scrObject._category & 7);
+			_newDescId = scrObject._descId;
 		}
 
 		// Handling for easy mouse
