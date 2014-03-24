@@ -665,7 +665,7 @@ void UserInterface::scrollInventory() {
 				_scrollFlag = true;
 
 				if (yp == (MADS_SCREEN_HEIGHT - 1)) {
-					if (_inventoryTopIndex < (invList.size() - 1)) {
+					if (_inventoryTopIndex < (int)(invList.size() - 1)) {
 						++_inventoryTopIndex;
 						_inventoryChanged = true;
 					}

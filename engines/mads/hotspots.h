@@ -57,7 +57,7 @@ public:
 public:
 	DynamicHotspots(MADSEngine *vm);
 
-	int size() const { return _entries.size(); }
+	Common::Array<MADS::DynamicHotspot>::size_type size() const { return _entries.size(); }
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
 	int add(int descId, int vocabId, int seqIndex, const Common::Rect &bounds);
 	int setPosition(int index, int xp, int yp, int facing);
