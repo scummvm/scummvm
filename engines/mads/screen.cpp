@@ -575,7 +575,7 @@ void ScreenObjects::elementHighlighted() {
 				if (currentPos.x > bounds.left)
 					newIndex = idx;
 			} else {
-				if (currentPos.x > bounds.right)
+				if (currentPos.x < bounds.right)
 					newIndex = idx;
 			}
 		}

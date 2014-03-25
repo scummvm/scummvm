@@ -118,15 +118,15 @@ void Font::setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4) {
 	_fontColors[2] = v3;
 }
 
-void Font::setColorMode(int mode) {
+void Font::setColorMode(SelectionMode mode) {
 	switch (mode) {
-	case 0:
+	case SELMODE_UNSELECTED:
 		setColors(0xFF, 4, 4, 0);
 		break;
-	case 1:
+	case SELMODE_HIGHLIGHTED:
 		setColors(0xFF, 5, 5, 0);
 		break;
-	case 2:
+	case SELMODE_SELECTED:
 		setColors(0xFF, 6, 6, 0);
 		break;
 	default:

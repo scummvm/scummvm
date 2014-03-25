@@ -39,6 +39,10 @@ namespace MADS {
 #define FONT_TELE "*FONTTELE.FF"	// Not in Phantom
 #define FONT_PHAN "*FONTPHAN.FF"	// Phantom only
 
+enum SelectionMode { 
+	SELMODE_UNSELECTED = 0, SELMODE_HIGHLIGHTED = 1, SELMODE_SELECTED = 2 
+};
+
 class MADSEngine;
 
 class Font {
@@ -77,7 +81,7 @@ public:
 	virtual ~Font();
 
 	void setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4);
-	void setColorMode(int mode);
+	void setColorMode(SelectionMode mode);
 
 	int maxWidth() const { return _maxWidth; }
 	int getWidth(const Common::String &msg, int spaceWidth = -1);

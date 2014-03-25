@@ -331,10 +331,10 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 	case CAT_ACTION:
 		font = _vm->_font->getFont(FONT_INTERFACE);
 		vocabId = scene._verbList[id]._id;
-		if (_highlightedActionIndex) {
-			_vm->_font->setColorMode(1);
+		if (id == _highlightedActionIndex) {
+			_vm->_font->setColorMode(SELMODE_HIGHLIGHTED);
 		} else {
-			_vm->_font->setColorMode(id == _selectedActionIndex ? 2 : 0);
+			_vm->_font->setColorMode(id == _selectedActionIndex ? SELMODE_SELECTED : SELMODE_UNSELECTED);
 		}
 		vocabStr = scene.getVocab(vocabId);
 		vocabStr.setChar(toupper(vocabStr[0]), 0);
@@ -344,10 +344,10 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 	case CAT_INV_LIST:
 		font = _vm->_font->getFont(FONT_INTERFACE);
 		vocabId = _vm->_game->_objects.getItem(id)._descId;
-		if (_v1C == id) {
-			_vm->_font->setColorMode(1);
+		if (id == _v1C) {
+			_vm->_font->setColorMode(SELMODE_HIGHLIGHTED);
 		} else {
-			_vm->_font->setColorMode(id == _selectedInvIndex ? 2 : 0);
+			_vm->_font->setColorMode(id == _selectedInvIndex ? SELMODE_SELECTED : SELMODE_UNSELECTED);
 			vocabStr = scene.getVocab(vocabId);
 			vocabStr.setChar(toupper(vocabStr[0]), 0);
 			font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
@@ -378,16 +378,17 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 			break;
 		}
 
-		font->setColorMode((id == 4) || (_scrollerY == 3) ? 1 : 0);
+		font->setColorMode((id == 4) || (_scrollerY == 3) ? SELMODE_HIGHLIGHTED : SELMODE_UNSELECTED);
 		font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
 		break;
 	default:
+		// Item specific verbs
 		font = _vm->_font->getFont(FONT_INTERFACE);
 		vocabId = _vm->_game->_objects.getItem(_selectedInvIndex)._vocabList[id]._vocabId;
-		if (_v1E == id) {
-			_vm->_font->setColorMode(1);
+		if (id == _v1E) {
+			_vm->_font->setColorMode(SELMODE_HIGHLIGHTED);
 		} else {
-			_vm->_font->setColorMode(id == _selectedInvIndex ? 2 : 0);
+			_vm->_font->setColorMode(id == _selectedInvIndex ? SELMODE_SELECTED : SELMODE_UNSELECTED);
 			vocabStr = scene.getVocab(vocabId);
 			vocabStr.setChar(toupper(vocabStr[0]), 0);
 			font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
