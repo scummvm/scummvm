@@ -233,6 +233,16 @@ void sceneHandler29_manFromL() {
 	}
 }
 
+void sceneHandler29_manFromR() {
+	getCurrSceneSc2MotionController()->setEnabled();
+	getGameLoaderInteractionController()->enableFlag24();
+
+	chainQueue(QU_SC29_MANFROM_R, 1);
+
+	g_vars->scene29_var10 = 0;
+	g_vars->scene29_var12 = 0;
+}
+
 void sceneHandler29_sub05() {
 	warning("STUB: sceneHandler29_sub05()");
 }
