@@ -107,10 +107,10 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	bool flag1 = false;
 
 	if (hasUsage) {
-		if (varA || !_vm->_palette->_paletteUsage[0])
+		if (varA || _vm->_palette->_paletteUsage.empty())
 			hasUsage = false;
 
-		if (varA && _vm->_palette->_paletteUsage[0])
+		if (varA && !_vm->_palette->_paletteUsage.empty())
 			flag1 = true;
 	}
 
@@ -178,10 +178,9 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		}
 
 		if (!var48 && !varA) {
-			int var2 = !(palette[palIndex]._flags & 0x20) && (
-				((flags & 0x2000) && !(palette[palIndex]._flags & 0x40)) ||
-				((flags & 0x1000) && (palCount > 0))
-				) ? 1 : 0x7fff;
+			int var2 = (palette[palIndex]._flags & 0x20) ||
+				(((flags & 0x2000) || (palette[palIndex]._flags & 0x4000)) &&
+				((flags & 0x1000) || (palCount == 0))) ? 0x7fff : 1;
 			int var36 = (palette[palIndex]._flags & 0x80) ? 0 : 2;
 			
 			for (int idx = palLow; idx < palIdx; ++idx) {
