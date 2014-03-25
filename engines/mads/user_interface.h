@@ -128,6 +128,8 @@ private:
 	void writeVocab(ScrCategory category, int id);
 
 	void refresh();
+
+	void updateRect(const Common::Rect &bounds);
 public:
 	MSurface _surface;
 	UISlots _uiSlots;
@@ -141,7 +143,7 @@ public:
 	int _selectedActionIndex;
 	int _selectedItemVocabIdx;
 	int _scrollerY;
-	int _v1A;
+	int _highlightedActionIndex;
 	int _v1C;
 	int _v1E;
 	bool _inventoryChanged;
@@ -191,7 +193,7 @@ public:
 	 */
 	void selectObject(int invIndex);
 
-	void drawInventory(int v1, int v2, int *v3);
+	void updateSelection(ScrCategory category, int newIndex, int *idx);
 
 	void scrollerChanged();
 

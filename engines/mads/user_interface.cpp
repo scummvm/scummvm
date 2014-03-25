@@ -199,7 +199,7 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_selectedActionIndex = -1;
 	_selectedItemVocabIdx = -1;
 	_scrollerY = 0;
-	_v1A = -1;
+	_highlightedActionIndex = -1;
 	_v1C = -1;
 	_v1E = -1;
 	_dirtyAreas.resize(50);
@@ -264,7 +264,7 @@ void UserInterface::setup(int id) {
 	scene._userInterface._uiSlots.clear();
 	scene._userInterface._uiSlots.fullRefresh();
 	_vm->_game->_ticksExpiry = _vm->_events->getFrameCounter();
-	_v1A = -1;
+	_highlightedActionIndex = -1;
 	_v1E = -1;
 	_v1C = -1;
 
@@ -331,7 +331,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 	case CAT_ACTION:
 		font = _vm->_font->getFont(FONT_INTERFACE);
 		vocabId = scene._verbList[id]._id;
-		if (_v1A) {
+		if (_highlightedActionIndex) {
 			_vm->_font->setColorMode(1);
 		} else {
 			_vm->_font->setColorMode(id == _selectedActionIndex ? 2 : 0);
@@ -642,8 +642,50 @@ void UserInterface::selectObject(int invIndex) {
 	warning("TODO: selectObject");
 }
 
-void UserInterface::drawInventory(int v1, int v2, int *v3) {
-	warning("TODO: drawInventory");
+void UserInterface::updateSelection(ScrCategory category, int newIndex, int *idx) {
+	Game &game = *_vm->_game;
+	Common::Rect bounds;
+
+	if (category == CAT_INV_LIST && _inventoryChanged) {
+		*idx = newIndex;
+		bounds = Common::Rect(90, 3, 90 + 69, 3 + 40);
+		_uiSlots.add(Common::Point(90, 3), 69, 40);
+		_uiSlots.draw(false, false);
+		drawInventoryList();
+		updateRect(bounds);
+		_inventoryChanged = false;
+
+		if (game._objects._inventoryList.size() > 1) {
+			_objectY = 0;
+		} else {
+			int v = _inventoryTopIndex * 18 / (game._objects._inventoryList.size() - 1);
+			_objectY = MIN(v, 17);
+		}
+	} else {
+		int oldIndex = *idx;
+		*idx = newIndex;
+
+		if (oldIndex >= 0) {
+			Common::Rect bounds;
+			writeVocab(category, oldIndex);
+			
+			if (getBounds(category, oldIndex, bounds))
+				updateRect(bounds);
+		}
+
+		if (newIndex >= 0) {
+			writeVocab(category, newIndex);
+
+			if (getBounds(category, newIndex, bounds))
+				updateRect(bounds);
+		}
+	}
+}
+
+void UserInterface::updateRect(const Common::Rect &bounds) {
+	_vm->_screen.setPointer(&_surface);
+	setBounds(Common::Rect(0, MADS_SCENE_HEIGHT, MADS_SCREEN_WIDTH - 1, MADS_SCREEN_HEIGHT));
+	_vm->_screen.copyRectToScreen(bounds);
 }
 
 void UserInterface::scrollerChanged() {
@@ -665,7 +707,7 @@ void UserInterface::scrollInventory() {
 				_scrollFlag = true;
 
 				if (yp == (MADS_SCREEN_HEIGHT - 1)) {
-					if (_inventoryTopIndex < (int)(invList.size() - 1)) {
+					if (_inventoryTopIndex < ((int)invList.size() - 1)) {
 						++_inventoryTopIndex;
 						_inventoryChanged = true;
 					}

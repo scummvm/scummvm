@@ -199,7 +199,7 @@ void Game::sectionLoop() {
 		}
 
 		_vm->_events->initVars();
-		_scene._userInterface._v1A = -1;
+		_scene._userInterface._highlightedActionIndex = -1;
 		_scene._userInterface._v1C = -1;
 		_scene._userInterface._v1E = -1;
 

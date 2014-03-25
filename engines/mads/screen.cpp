@@ -437,7 +437,7 @@ void ScreenObjects::checkScroller() {
 
 			if (userInterface._inventoryChanged) {
 				int dummy;
-				userInterface.drawInventory(2, 0, &dummy);
+				userInterface.updateSelection(CAT_INV_LIST, 0, &dummy);
 			}
 		}
 	}
@@ -457,7 +457,7 @@ void ScreenObjects::elementHighlighted() {
 	MADSAction &action = scene._action;
 	int varA;
 	int topIndex;
-	int *var6;
+	int *idxP;
 	int var4;
 	int index;
 	int indexEnd = -1;
@@ -470,10 +470,11 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = 9;
 		varA = 5;
 		topIndex = 0;
-		var6 = !_v7FECA ? &userInterface._v1A : &userInterface._selectedActionIndex;
+		idxP = !_v7FECA ? &userInterface._highlightedActionIndex : 
+			&userInterface._selectedActionIndex;
 
 		if (_v7FECA && userInterface._selectedItemVocabIdx >= 0)
-			userInterface.drawInventory(3, -1, &userInterface._selectedItemVocabIdx);
+			userInterface.updateSelection(CAT_INV_VOCAB, -1, &userInterface._selectedItemVocabIdx);
 
 		var4 = _released && !_v7FECA ? 1 : 0;
 		break;
@@ -485,7 +486,7 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = invList.size() - 1;
 		varA = 0;
 		topIndex = userInterface._inventoryTopIndex;
-		var6 = &userInterface._v1C;
+		idxP = &userInterface._v1C;
 		var4 = (!_released || (_vm->_events->_mouseButtons && action._v83338 == 1)) ? 0 : 1;
 		break;
 
@@ -501,10 +502,10 @@ void ScreenObjects::elementHighlighted() {
 
 		varA = 0;
 		topIndex = 0;
-		var6 = _v7FECA ? &userInterface._selectedItemVocabIdx : &userInterface._v1E;
+		idxP = _v7FECA ? &userInterface._selectedItemVocabIdx : &userInterface._v1E;
 
 		if (_v7FECA && userInterface._selectedActionIndex >= 0)
-			userInterface.drawInventory(1, -1, &userInterface._selectedActionIndex);
+			userInterface.updateSelection(CAT_ACTION, -1, &userInterface._selectedActionIndex);
 
 		var4 = _released && !_v7FECA ? 1 : 0;
 		break;
@@ -514,7 +515,7 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = invList.size() - 1;
 		varA = 0;
 		topIndex = userInterface._selectedInvIndex;
-		var6 = &var8;
+		idxP = &var8;
 		var4 = -1;
 		break;
 
@@ -528,7 +529,7 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = index - 1;
 		varA = 0;
 		topIndex = 0;
-		var6 = &userInterface._v1A;
+		idxP = &userInterface._highlightedActionIndex;
 		var4 = -1;
 		break;
 
@@ -538,7 +539,7 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = index - 1;
 		varA = 0;
 		topIndex = 0;
-		var6 = &var8;
+		idxP = &var8;
 		var4 = -1;
 		break;
 	}
@@ -606,7 +607,7 @@ void ScreenObjects::elementHighlighted() {
 		newIndex = -1;
 
 	if (_category != CAT_HOTSPOT && _category != CAT_INV_ANIM)
-		userInterface.drawInventory(_category, newIndex, var6);
+		userInterface.updateSelection(_category, newIndex, idxP);
 }
 
 void ScreenObjects::setActive(ScrCategory category, int descId, bool active) {
