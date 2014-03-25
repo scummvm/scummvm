@@ -1176,9 +1176,134 @@ void Scene205::enter() {
 }
 
 void Scene205::step() {
+	warning("TODO: Scene205::step");
 }
 
 void Scene205::actions() {
+	warning("TODO: Scene205::actions");
+}
+
+/*****************************************************************************/
+
+void Scene207::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x185);
+	_scene->addActiveVocab(NOUN_D);
+	_scene->addActiveVocab(0x14D);
+	_scene->addActiveVocab(NOUN_D);
+}
+
+void Scene207::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', 0), 0);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('h', 1), 0);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', -1), 0);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('e', 0), 0);
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('e', 1), 0);
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('g', 1), 0);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('g', 0), 0);
+	_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 7, 0, 0, 0);
+	_scene->_sequences.setDepth(_globals._spriteIndexes[20], 7);
+
+	int var2;
+	if (!_game._visitedScenes._sceneRevisited) {
+		var2 = 1;
+	} else {
+		var2 = _vm->getRandomNumber(4) + 1;
+	}
+
+	if (var2 > 2)
+		_globals._v0 = 0;
+	else
+		_globals._v0 = 1;
+
+	_globals._v5 = (var2 & 1);
+	
+	if (_globals._v0) {
+		_globals._spriteIndexes[16] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 30, 0, 0, 400);
+		_globals._frameTime = _game._player._priorTimer;
+
+		int idx = _scene->_dynamicHotspots.add(389, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 254, 94, 4);
+	}
+
+	if (_globals._v5) {
+		_globals._spriteIndexes[19] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 1, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._spriteIndexes[19], -1, -1);
+		_globals._v3 = _game._player._priorTimer & 0xFFFF;
+		_globals._v4 = _game._player._priorTimer >> 16;
+		int idx = _scene->_dynamicHotspots.add(333, 13, _globals._spriteIndexes[19], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 59, 132, 2);
+	}
+
+	_globals._v2 = 0;
+	if (_scene->_priorSceneId == 211) {
+		_game._player._playerPos = Common::Point(13, 105);
+		_game._player._direction = 6;
+	} else if (_scene->_priorSceneId == 214) {
+		_game._player._playerPos = Common::Point(164, 117);
+		_game._player._direction = 2;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(305, 131);
+	}
+
+	_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 1, 0, 0);
+	_scene->_sequences.setAnimRange(_globals._spriteIndexes[21], 1, 22);
+	_scene->_sequences.setDepth(_globals._spriteIndexes[21], 6);
+	_scene->_sequences.addSubEntry(_globals._spriteIndexes[21], SM_0, 0, 70);
+}
+
+void Scene207::step() {
+	if (!_globals._v0) {
+		warning("TODO: sub3AD90(...)");
+	}
+
+	if (_globals._v5) {
+		warning("TODO: sub3ADD6(...)");
+	}
+
+	if (_game._abortTimers == 70) {
+		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._spriteIndexes[21], 23, 34);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 6);
+	}
+
+	if (_game._abortTimers == 71)
+		_globals._v2 = 0;
+
+	if (_globals._v2)
+		return;
+
+	if ((_game._player._playerPos.x >= 124) && (_game._player._playerPos.x <= 201)) {
+		_globals._spriteIndexes[22] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 10, 1, 0, 0);
+		_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[22], 6);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[23], 6);
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[22], SM_0, 0, 71);
+		_globals._v2 = -1;
+	}
+}
+
+void Scene207::preActions() {
+	if (_action.isAction(0x1AD, 0x1AE, 0))
+		_game._player._v844BE = 211;
+
+	if (_action.isAction(0x18C, 0x1AB, 0))
+		_game._player._v844BE = 208;
+
+	if ((_action.isAction(0xD, 0)) || (_action.isAction(0x3, 0))) {
+		if (_action.isAction(0x185, 0)) {
+			_globals._frameTime = 0xD8F1;
+			_globals._frameTime |= 0xFFFF0000;
+		} else if (_action.isAction(0x14D, 0)) {
+			_globals._v3 = 0xD8F1;
+			_globals._v4 = -1;
+		}
+	}
+}
+
+void Scene207::actions() {
+
 }
 
 } // End of namespace Nebular
