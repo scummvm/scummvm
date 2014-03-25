@@ -95,7 +95,7 @@ Actor::Actor(IllusionsEngine *vm)
 	_pathCtrY = 0;
 	
 	_controlRoutine = 0;
-	setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Controls>(_vm->_controls, &Controls::actorControlRouine));
+	setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Controls>(_vm->_controls, &Controls::actorControlRoutine));
 
 #if 0 // TODO
 	_field2 = 0;
@@ -283,7 +283,7 @@ void Control::activateObject() {
 }
 
 void Control::deactivateObject() {
-	_flags |= ~1;
+	_flags &= ~1;
 	if (_actor) {
 		for (uint i = 0; i < kSubObjectsCount; ++i)
 			if (_actor->_subobjects[i]) {
@@ -377,11 +377,11 @@ int Control::getPriority() {
 	int16 positionY, priority, priority1;
 	if (_actor) {
 		if (_actor->_parentObjectId && (_actor->_flags & 0x40)) {
-			uint32 objectId2 = getSubActorParent();
-			Control *control2 = _vm->_dict->getObjectControl(objectId2);
-			objectId = control2->_objectId;
-			priority = control2->_priority;
-			positionY = control2->_actor->_position.y;
+			uint32 parentObjectId = getSubActorParent();
+			Control *parentControl = _vm->_dict->getObjectControl(parentObjectId);
+			objectId = parentControl->_objectId;
+			priority = parentControl->_priority;
+			positionY = parentControl->_actor->_position.y;
 			priority1 = _priority;
 		} else {
 			objectId = _objectId;
@@ -473,6 +473,24 @@ void Control::getCollisionRectAccurate(Common::Rect &collisionRect) {
 		collisionRect.translate(screenOffs.x, screenOffs.y);
 	}
 
+}
+
+void Control::getCollisionRect(Common::Rect &collisionRect) {
+	collisionRect = Common::Rect(_unkPt.x, _unkPt.y, _pt.x, _pt.y);
+	if (_actor) {
+		if (_actor->_scale != 100) {
+			// scaledValue = value * scale div 100
+			collisionRect.left = collisionRect.left * _actor->_scale / 100;
+			collisionRect.top = collisionRect.top * _actor->_scale / 100;
+			collisionRect.right = collisionRect.right * _actor->_scale / 100;
+			collisionRect.bottom = collisionRect.bottom * _actor->_scale / 100;
+		}
+		collisionRect.translate(_actor->_position.x, _actor->_position.y);
+	}
+	if (_flags & 8) {
+		Common::Point screenOffs = _vm->_camera->getScreenOffset();
+		collisionRect.translate(screenOffs.x, screenOffs.y);
+	}
 }
 
 void Control::setActorUsePan(int usePan) {
@@ -602,6 +620,14 @@ void Control::sequenceActor() {
 	
 }
 
+void Control::setActorIndexTo1() {
+	_actor->_actorIndex = 1;
+}
+
+void Control::setActorIndexTo2() {
+	_actor->_actorIndex = 2;
+}
+
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
 
 	stopActor();
@@ -618,9 +644,17 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	_actor->_path40 = 0;
 	
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
+	//debug("sequence: %p", (void*)sequence);
 
 	_actor->_seqCodeIp = sequence->_sequenceCode;
 	_actor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
+	
+	/*
+	for (int i = 0; i < 64; ++i) {
+		debugN("%02X ", sequence->_sequenceCode[i]);
+	}
+	debug(".");
+	*/
 	
 	_actor->_seqCodeValue3 = 0;
 	_actor->_seqCodeValue1 = 0;
@@ -815,7 +849,48 @@ void Controls::unpauseControlsByTag(uint32 tag) {
 	}
 }
 
-void Controls::actorControlRouine(Control *control, uint32 deltaTime) {
+bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority) {
+	Control *foundControl = 0;
+	int foundPriority = 0;
+	// TODO minPriority = artcntrlGetPriorityFromBase(minPriority);
+
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *testControl = *it;
+		if (testControl != control && testControl->_pauseCtr == 0 &&
+			(testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
+			(!testControl->_actor || (testControl->_actor->_flags & 1))) {
+			Common::Rect collisionRect;
+			testControl->getCollisionRect(collisionRect);
+			debug("collisionRect(%d, %d, %d, %d)", collisionRect.left, collisionRect.top, collisionRect.right, collisionRect.bottom);
+			debug("pt(%d, %d)", pt.x, pt.y);
+			if (!collisionRect.isEmpty() && collisionRect.contains(pt)) {
+				int testPriority = testControl->getPriority();
+				debug("testPriority: %d; minPriority: %d", testPriority, minPriority);
+				if ((!foundControl || foundPriority < testPriority) &&
+					testPriority >= minPriority) {
+		debug("overlapped() %08X; pauseCtr: %d; flags: %04X",
+			testControl->_objectId, testControl->_pauseCtr, testControl->_flags);
+					foundControl = testControl;
+					foundPriority = testPriority;
+				}
+			}		
+		}
+	}
+
+	debug("OVERLAPPED DONE\n");
+
+	if (foundControl) {
+		if (foundControl->_actor && foundControl->_actor->_parentObjectId && (foundControl->_actor->_flags & 0x40)) {
+			uint32 parentObjectId = foundControl->getSubActorParent();
+			foundControl = _vm->_dict->getObjectControl(parentObjectId);
+		}
+		*outOverlappedControl = foundControl;
+	}
+
+	return foundControl != 0;
+}
+
+void Controls::actorControlRoutine(Control *control, uint32 deltaTime) {
 
 	Actor *actor = control->_actor;
 

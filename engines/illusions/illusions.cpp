@@ -213,23 +213,9 @@ bool IllusionsEngine::hasFeature(EngineFeature f) const {
 
 void IllusionsEngine::updateEvents() {
 	Common::Event event;
-
 	while (_eventMan->pollEvent(event)) {
+		_input->processEvent(event);
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			break;
-		case Common::EVENT_KEYUP:
-			break;
-		case Common::EVENT_MOUSEMOVE:
-  			break;
-		case Common::EVENT_LBUTTONDOWN:
-  			break;
-		case Common::EVENT_LBUTTONUP:
-  			break;
-		case Common::EVENT_RBUTTONDOWN:
-  			break;
-		case Common::EVENT_RBUTTONUP:
-  			break;
 		case Common::EVENT_QUIT:
 			quitGame();
 			break;
@@ -240,7 +226,9 @@ void IllusionsEngine::updateEvents() {
 }
 
 Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {
-	// TODO Dummy, to be replaced later
+	Control *control = _dict->getObjectControl(objectId);
+	if (control && control->_actor)
+		return &control->_actor->_position;
 	return 0;
 }
 
@@ -296,6 +284,7 @@ int IllusionsEngine::updateGraphics() {
 	Common::Point panPoint(0, 0);
 
 	uint32 currTime = getCurrentTime();
+	
 	_camera->update(currTime);
 
 	// TODO Move to BackgroundItems class
@@ -312,7 +301,7 @@ int IllusionsEngine::updateGraphics() {
 				panPoint = backgroundItem->_panPoints[i];
 		}
 	}
-	
+
 	// TODO Move to Controls class
 	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
 		Control *control = *it;
