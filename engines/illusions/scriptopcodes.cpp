@@ -29,6 +29,7 @@
 #include "illusions/scriptman.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptthread.h"
+#include "illusions/specialcode.h"
 
 namespace Illusions {
 
@@ -559,11 +560,11 @@ void ScriptOpcodes::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall)
 	ARG_SKIP(2);
 	ARG_UINT32(specialCodeId);
 	_vm->_scriptMan->_callerThreadId = opCall._callerThreadId;
-	// TODO _vm->runSpecialCode(specialCodeId, opCall._code + 8, opCall._threadId);
+	_vm->_specialCode->run(specialCodeId, opCall);
 	_vm->_scriptMan->_callerThreadId = 0;
 
 	//DEBUG Resume calling thread, later done by the special code
-	_vm->notifyThreadId(opCall._callerThreadId);
+	//_vm->notifyThreadId(opCall._callerThreadId);
 
 }
 

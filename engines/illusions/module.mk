@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	actor.o \
 	actorresource.o \
 	backgroundresource.o \
+	bbdou/bbdou_bubble.o \
 	bbdou/bbdou_cursor.o \
 	bbdou/bbdou_specialcode.o \
 	camera.o \

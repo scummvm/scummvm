@@ -134,7 +134,6 @@ public:
 	int _pathCtrY;
 	int _path40;
 	
-
 };
 
 class Control {
@@ -162,6 +161,7 @@ public:
 	Common::Point calcPosition(Common::Point posDelta);
 	uint32 getSubActorParent();
 	void getCollisionRectAccurate(Common::Rect &collisionRect);
+	void getCollisionRect(Common::Rect &collisionRect);
 	void setActorUsePan(int usePan);
 	void setActorFrameIndex(int16 frameIndex);
 	void stopActor();
@@ -169,6 +169,8 @@ public:
 	void stopSequenceActor();
 	void startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 threadId);
 	void sequenceActor();
+	void setActorIndexTo1();
+	void setActorIndexTo2();
 public:
 	IllusionsEngine *_vm;
 	uint _flags;
@@ -201,7 +203,8 @@ public:
 	void destroyControlsByTag(uint32 tag);
 	void pauseControlsByTag(uint32 tag);
 	void unpauseControlsByTag(uint32 tag);
-	void actorControlRouine(Control *control, uint32 deltaTime);	
+	bool getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority);
+	void actorControlRoutine(Control *control, uint32 deltaTime);	
 public:
 	typedef Common::List<Control*> Items;
 	typedef Items::iterator ItemsIterator;

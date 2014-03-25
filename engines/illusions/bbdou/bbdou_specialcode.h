@@ -24,11 +24,17 @@
 #define ILLUSIONS_BBDOU_BBDOU_SPECIALCODE_H
 
 #include "illusions/specialcode.h"
+#include "common/hashmap.h"
 
 namespace Illusions {
 
 class IllusionsEngine;
+class BbdouBubble;
 class BbdouCursor;
+struct CursorData;
+struct Item10;
+
+typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
 
 class BbdouSpecialCode : public SpecialCode {
 public:
@@ -37,7 +43,34 @@ public:
 	virtual void init();
 	virtual void run(uint32 specialCodeId, OpCall &opCall);
 public:
+	typedef Common::HashMap<uint32, SpecialCodeFunction*> Map;
+	typedef Map::iterator MapIterator;
+	Map _map;
 	BbdouCursor *_cursor;
+	BbdouBubble *_bubble;
+	// Special code interface functions
+	void spcInitCursor(OpCall &opCall);
+	void spcEnableCursor(OpCall &opCall);
+	void spcDisableCursor(OpCall &opCall);
+	void spcAddCursorSequence(OpCall &opCall);
+	void spcInitBubble(OpCall &opCall);
+	void spcSetupBubble(OpCall &opCall);
+	void spcSetObjectInteractMode(OpCall &opCall);
+protected:
+	// Internal functions
+	void playSoundEffect(int soundIndex);
+	void resetItem10(uint32 objectId, Item10 *item10);
+	bool testValueRange(int value);
+	void setCursorControlRoutine(uint32 objectId, int num);
+	Common::Point getBackgroundCursorPos(Common::Point cursorPos);
+	bool runCause(Control *control, CursorData &cursorData,
+		uint32 verbId, uint32 objectId1, uint32 objectId2, int soundIndex);
+	void showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,
+		Item10 *item10, uint32 progResKeywordId);
+	bool findVerbId(Item10 *item10, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId);
+	void cursorInteractControlRoutine(Control *cursorControl, uint32 deltaTime);
+	void cursorControlRoutine2(Control *cursorControl, uint32 deltaTime);
+	bool updateTrackingCursor(Control *cursorControl);
 };
 
 } // End of namespace Illusions
