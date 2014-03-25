@@ -1303,8 +1303,63 @@ void Scene207::preActions() {
 }
 
 void Scene207::actions() {
+	if (_action._savedFields._lookFlag) {
+		Dialog::show(0x50E7);
+	} else {
+		if (_action.isAction(0x18B, 0x70, 0))
+			_scene->_nextSceneId = 214;
+		else {
+			if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
+			    (_game._player._playerPos.y > 111) && (_game._player._playerPos.y < 130)) {
+				if ((_game._player._playerPos.x <= 162) && (_game._player._playerPos.x >= 181) &&
+				    (_game._player._playerPos.y <= 115) && (_game._player._playerPos.y >= 126)) {
+					_globals._spriteIndexes[22] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 10, 2, 0, 0);
+					_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 2, 0, 0);
+					_scene->_sequences.setDepth(_globals._spriteIndexes[22], 6);
+					_scene->_sequences.setDepth(_globals._spriteIndexes[23], 6);
+				}
+			} else if (_globals._v2) {
+				_scene->_sequences.remove(_globals._spriteIndexes[22]);
+				_scene->_sequences.remove(_globals._spriteIndexes[23]);
+				_globals._v2 = 0;
+			}
 
+			if (_action.isAction(3, 0x69, 0)) {
+				Dialog::show(0x50DD);
+			} else if (_action.isAction(3, 0x1AF, 0)) {
+				Dialog::show(0x50DE);
+			} else if (_action.isAction(3, 0x141, 0)) {
+				Dialog::show(0x50DF);
+			} else if (_action.isAction(3, 0x3E, 0)) {
+				Dialog::show(0x50E0);
+			} else if (_action.isAction(3, 0x198, 0)) {
+				Dialog::show(0x50E1);
+			} else if (_action.isAction(3, 0x1AE, 0)) {
+				Dialog::show(0x50E2);
+			} else if (_action.isAction(3, 0xE8, 0)) {
+				Dialog::show(0x50E3);
+			} else if (_action.isAction(3, 0x12, 0)) {
+				Dialog::show(0x50E4);
+			} else if (_action.isAction(3, 0x1AC, 0)) {
+				Dialog::show(0x50E5);
+			} else if (_action.isAction(3, 0x185, 0)) {
+				Dialog::show(0x50E6);
+			} else if (_action.isAction(4, 0x141, 0)) {
+				Dialog::show(0x50E8);
+			} else if (_action.isAction(4, 0x12, 0)) {
+				Dialog::show(0x50E9);
+			} else if (_action.isAction(3, 0x14D, 0)) {
+				Dialog::show(0x50EA);
+			} else if (_action.isAction(4, 0x14D, 0)) {
+				Dialog::show(0x50EB);
+			} else
+				return;
+		}
+	}
+	_action._inProgress = false;
 }
+
+/*****************************************************************************/
 
 } // End of namespace Nebular
 } // End of namespace MADS
