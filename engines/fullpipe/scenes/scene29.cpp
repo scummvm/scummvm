@@ -220,7 +220,17 @@ void sceneHandler29_sub03() {
 }
 
 void sceneHandler29_manFromL() {
-	warning("STUB: sceneHandler29_manFromL()");
+	if (g_vars->scene29_var20 < 497 && !g_vars->scene29_var17) {
+		getCurrSceneSc2MotionController()->setEnabled();
+		getGameLoaderInteractionController()->enableFlag24();
+
+		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+		chainQueue(QU_SC29_MANFROM_L, 1);
+
+		g_vars->scene29_var17 = 1;
+
+		g_fp->_scrollSpeed = g_vars->scene29_var16;
+	}
 }
 
 void sceneHandler29_sub05() {

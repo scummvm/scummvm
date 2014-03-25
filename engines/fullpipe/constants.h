@@ -1303,6 +1303,7 @@ namespace Fullpipe {
 #define MV_SHG_HITASS 2151
 #define MV_SHR_HITASS 2152
 #define PIC_SC29_LTRUBA 2081
+#define QU_SC29_MANFROM_L 2101
 #define SND_29_028 4758
 #define SND_29_029 4759
 #define ST_ASS_NORM 2122
