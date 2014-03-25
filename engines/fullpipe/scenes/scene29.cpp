@@ -270,6 +270,22 @@ void sceneHandler29_manToL() {
 	g_fp->_msgX = -1;
 }
 
+void sceneHandler29_manToR() {
+	getCurrSceneSc2MotionController()->clearEnabled();
+	getGameLoaderInteractionController()->disableFlag24();
+
+	chainQueue(QU_SC29_MANTO_R, 1);
+
+	g_vars->scene29_var09 = 1;
+	g_fp->_msgY = -1;
+	g_fp->_msgX = -1;
+
+	g_vars->scene29_var17 = 0;
+
+	g_vars->scene29_var16 = g_fp->_scrollSpeed;
+	g_fp->_scrollSpeed = 4;
+}
+
 void sceneHandler29_sub05() {
 	warning("STUB: sceneHandler29_sub05()");
 }

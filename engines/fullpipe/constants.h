@@ -1306,6 +1306,7 @@ namespace Fullpipe {
 #define QU_SC29_MANFROM_L 2101
 #define QU_SC29_MANFROM_R 2104
 #define QU_SC29_MANTO_L 2103
+#define QU_SC29_MANTO_R 2100
 #define SND_29_028 4758
 #define SND_29_029 4759
 #define ST_ASS_NORM 2122
