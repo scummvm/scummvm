@@ -1361,5 +1361,186 @@ void Scene207::actions() {
 
 /*****************************************************************************/
 
+void Scene208::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x1A8);
+	_scene->addActiveVocab(0x1A9);
+	_scene->addActiveVocab(0x1AA);
+	_scene->addActiveVocab(NOUN_D);
+}
+
+void Scene208::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), 0);
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 1), 0);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 2), 0);
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMBD_8");
+
+	warning("TODO: sub34648()");
+
+	_globals._v0 = 0;
+	_globals._frameTime = 0;
+	_scene->_kernelMessages._talkFont = _vm->_font->getFont(FONT_INTERFACE);
+	_scene->_textSpacing = 0;
+
+	if (_scene->_priorSceneId == 207) {
+		_game._player._playerPos = Common::Point(8, 122);
+		_game._player._direction = 6;
+	} else if (_scene->_priorSceneId == 203) {
+		_game._player._playerPos = Common::Point(142, 108);
+		_game._player._direction = 2;
+	} else if (_scene->_priorSceneId == 209) {
+		_game._player._playerPos = Common::Point(307, 123);
+		_game._player._direction = 4;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(162, 149);
+		_game._player._direction = 8;
+	}
+
+	_game.loadQuoteSet(0x81, 0x46, 0);
+
+	if ((_scene->_priorSceneId == 207) && (_globals[36] == 1)) {
+		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(129));
+		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+	}
+
+	_vm->_palette->setEntry(16, 0, 0, 63);
+	_vm->_palette->setEntry(17, 0, 0, 45);
+	sceneEntrySound();
+}
+
+void Scene208::step() {
+	if ((_globals._frameTime & 0xFFFF)  && ((_globals._frameTime >> 16) <= _scene->_activeAnimation->getCurrentFrame())) {
+		_globals._frameTime = (_globals._frameTime & 0xFFFF) | (_scene->_activeAnimation->getCurrentFrame() << 16);
+
+		if (_scene->_activeAnimation->getCurrentFrame() == 125)
+			_scene->_sequences.remove(_globals._spriteIndexes[19]);
+	}
+
+	if (_globals._v0 == 0)
+		return;
+
+	if ((_game._player._playerPos != Common::Point(20, 148)) || (_game._player._direction != 6))
+		return;
+
+	if ((_game._abortTimers == 0) && ((_globals._frameTime & 0xFFFF) != 0))
+		return;
+	
+	_globals._frameTime |= 0xFFFF;
+	
+	if (_game._abortTimers == 82) {
+		_game._player._stepEnabled = true;
+		return;
+	}
+	
+	if (_game._abortTimers > 82)
+		return;
+	
+	if (_game._abortTimers & 0xFF) {
+		if ((_game._abortTimers & 0xFF) == 81) {
+			_scene->_sequences.remove(_globals._spriteIndexes[15]);
+			_globals[34] = 1;
+			warning("TODO: sub34648(...)");
+			_scene->_sequences.addTimer(90, 82);
+		}
+	} else {
+		_scene->loadAnimation(formAnimName('A', -1), 81);
+	}
+}
+
+void Scene208::preActions() {
+	if (_action.isAction(3, 0) && _action._walkFlag)
+		_action._startWalkFlag = true;
+
+	if (_action.isAction(0x18C, 0x9B, 0))
+		_game._player._v844BE = 209;
+
+	if (_action.isAction(0x18C, 0xF6, 0))
+		_game._player._v844BE = 207;
+}
+
+void Scene208::actions() {
+	if (_action.isAction(0x18C, 0x19F, 0)) {
+		if (_globals[34])
+			_scene->_nextSceneId = 203;
+		else if (_game._abortTimers == 0) {
+			_game._player._stepEnabled = false;
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, _game.getQuote(70));
+			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+		} else if (_game._abortTimers == 1) {
+			_scene->_nextSceneId = 203;
+		}
+	} else if (_action.isAction(0x18C, 0x83, 0)) {
+		_scene->_nextSceneId = 212;
+	} else if (_action.isAction(0x4, 0x1AA, 0) && (!_globals[35] || _game._abortTimers)) {
+		warning("TODO: sub3B282(1);");
+		if (_game._player._stepEnabled)
+			_vm->_dialogs->showPicture(OBJ_BIG_LEAVES, 0x326, 0);
+	} else if (_action.isAction(0x7, 0x23, 0x19E) && (_globals[35] == 1 || _game._abortTimers)) {
+		warning("TODO: sub3B282(2);");
+	} else if (_action.isAction(0x7, 0x17A, 0x1A9)) {
+		warning("TODO: sub3B282(3);");
+		if (_game._player._stepEnabled) {
+			_game._player._stepEnabled = false;
+			_globals._v0 = true;
+			_game._player.startWalking(Common::Point(20, 148), 6);
+		}
+	} else if (_action.isAction(0x7, 0x35, 0x1A9)) {
+		warning("TODO: sub3B282(4);");
+		if (_game._player._stepEnabled) {
+			Dialog::show(0x514C);
+		}
+	} else if (_action.isAction(0x7, 0x65, 0x1A9)) {
+		warning("TODO: sub3B282(5);");
+		if (_game._player._stepEnabled) {
+			Dialog::show(0x514C);
+		}
+	} else if (_action.isAction(0x3, 0x5D, 0)) {
+		Dialog::show(0x5141);
+	} else if (_action.isAction(0x3, 0xF6, 0)) {
+		Dialog::show(0x5142);
+	} else if (_action.isAction(0x3, 0x16F, 0)) {
+		Dialog::show(0x5143);
+	} else if (_action.isAction(0x3, 0x129, 0)) {
+		Dialog::show(0x5144);
+	} else if (_action.isAction(0x3, 0x1A1, 0)) {
+		Dialog::show(0x5145);
+	} else if (_action.isAction(0x4, 0x1A1, 0)) {
+		Dialog::show(0x5146);
+	} else if (_action.isAction(0x3, 0x9B, 0)) {
+		Dialog::show(0x5147);
+	} else if (_action.isAction(0x3, 0x19E, 0)) {
+		Dialog::show(0x5148);
+	} else if (_action.isAction(0x3, 0x1AA, 0)) {
+		Dialog::show(0x5149);
+	} else if (_action.isAction(0x3, 0x1A9, 0)) {
+		if (_game._difficultyLevel == DIFFICULTY_EASY)
+			Dialog::show(0x514A);
+		else
+			Dialog::show(0x514B);
+	} else if (_action.isAction(0x3, 0x174, 0) || _action.isAction(0x3, 0x175, 0)) {
+		Dialog::show(0x514D);
+	} else if (_action.isAction(0x4, 0x1A9, 0)) {
+		Dialog::show(0x514E);
+	} else if (_action.isAction(0x3, 0x1A8, 0)) {
+		Dialog::show(0x514F);
+	} else if (_action.isAction(0x4, 0x1A8, 0) || _action.isAction(0xA, 0x1A8, 0)) {
+		Dialog::show(0x5150);
+	} else if (_action._savedFields._lookFlag == 0) {
+		return;
+	} else if (_globals[34] == 1) {
+		Dialog::show(0x5153);
+	} else if (_globals[35] == 2) {
+		Dialog::show(0x5152);
+	} else {
+		Dialog::show(0x5151);
+	}
+
+	_action._inProgress = false;
+}
+
+/*****************************************************************************/
+
 } // End of namespace Nebular
 } // End of namespace MADS

@@ -68,8 +68,8 @@ class KernelMessages {
 private:
 	MADSEngine *_vm;
 	Common::Array<KernelMessage> _entries;
-	Font *_talkFont;
 public:
+	Font *_talkFont;
 	KernelMessages(MADSEngine *vm);
 	~KernelMessages();
 

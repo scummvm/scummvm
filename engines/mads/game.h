@@ -62,7 +62,6 @@ private:
 protected:
 	MADSEngine *_vm;
 	MSurface *_surface;
-	Difficulty _difficultyLevel;
 	int _saveSlot;
 	int _statusFlag;
 	Common::StringArray _quotes;
@@ -110,9 +109,11 @@ protected:
 
 public:
 	static Game *init(MADSEngine *vm);
+
 public:
 	Player _player;
 	ScreenObjects _screenObjects;
+	Difficulty _difficultyLevel;
 	int _sectionNumber;
 	int _priorSectionNumber;
 	int _currentSectionNumber;
