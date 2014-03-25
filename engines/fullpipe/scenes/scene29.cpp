@@ -243,6 +243,33 @@ void sceneHandler29_manFromR() {
 	g_vars->scene29_var12 = 0;
 }
 
+int sceneHandler29_updateScreenCallback() {
+	int res;
+
+	res = g_fp->drawArcadeOverlay(g_vars->scene29_var10);
+
+	if (!res)
+		g_fp->_updateScreenCallback = 0;
+
+	return res;
+}
+
+void sceneHandler29_manToL() {
+	getCurrSceneSc2MotionController()->clearEnabled();
+	getGameLoaderInteractionController()->disableFlag24();
+
+	chainQueue(QU_SC29_MANTO_L, 1);
+
+	g_vars->scene29_var10 = 1;
+
+	g_vars->scene29_mgm.addItem(g_fp->_aniMan->_id);
+
+	g_fp->_updateScreenCallback = sceneHandler29_updateScreenCallback;
+
+	g_fp->_msgY = -1;
+	g_fp->_msgX = -1;
+}
+
 void sceneHandler29_sub05() {
 	warning("STUB: sceneHandler29_sub05()");
 }
