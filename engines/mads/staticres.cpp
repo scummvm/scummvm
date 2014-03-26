@@ -46,4 +46,9 @@ const char *const kOverStr = "over";
 const char *const kGameReleaseInfoStr = "ScummVM rev: 8.43 14-Sept-92";
 const char *const kGameReleaseTitleStr = "GAME RELASE VERSION INFO";
 
+const uint32 DEFAULT_VGA_PALETTE[16] = {
+	0x000000, 0x0000a8, 0x00a800, 0x00a8a8, 0xa80000, 0xa800a8, 0xa85400, 0xa8a8a8,
+	0x545454, 0x5454fc, 0x54fc54, 0x54fcfc, 0xfc5454, 0xfc54fc, 0xfcfc54, 0xfcfcfc
+};
+
 } // End of namespace MADS

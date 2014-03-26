@@ -84,10 +84,15 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 	palette.resize(numColors);
 	for (int i = 0; i < numColors; ++i)
 		palette[i].load(palStream);
+	delete palStream;
 
 	// Process the palette data
-	_vm->_palette->_paletteUsage.process(palette, flags);
-	delete palStream;
+	if (flags & 9) {
+		warning("TODO: Unknown palette processing");
+	} else {
+		_usageIndex = _vm->_palette->_paletteUsage.process(palette, flags);
+		assert(_usageIndex >= 0);
+	}
 
 	spriteStream = sprite.getItemStream(1);
 	Common::SeekableReadStream *spriteDataStream = sprite.getItemStream(3);

@@ -32,7 +32,7 @@ class MADSEngine;
 
 #define PALETTE_USAGE_COUNT 4
 
-#define VGA_COLOR_TRANS(x) (((((int)(x)) + 1) << 2) - 1)
+#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 struct RGB4 {
 	byte r;
@@ -134,7 +134,8 @@ public:
 class Palette {
 private:
 	/**
-	 * Initialises a stanadrd VGA palette
+	 * Initialises the first 16 palette indexes with the equivalent
+	 * standard VGA palette
 	 */
 	void initVGAPalette(byte *palette);
 protected:
