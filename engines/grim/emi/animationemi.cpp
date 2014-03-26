@@ -55,10 +55,14 @@ void AnimationEmi::reset() {
 	_time = 0.0f;
 }
 
-void AnimationEmi::animate(const Skeleton *skel, float delta) {
+bool AnimationEmi::animate(const Skeleton *skel, float delta, bool loop) {
 	_time += delta;
 	if (_time > _duration) {
-		reset();
+		if (loop) {
+			reset();
+		} else {
+			return false;
+		}
 	}
 
 	for (int bone = 0; bone < _numBones; ++bone) {
@@ -122,6 +126,8 @@ void AnimationEmi::animate(const Skeleton *skel, float delta) {
 			relFinal.setPosition(vec);
 		}
 	}
+
+	return true;
 }
 
 void Bone::loadBinary(Common::SeekableReadStream *data) {

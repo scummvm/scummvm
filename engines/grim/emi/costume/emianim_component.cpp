@@ -22,6 +22,7 @@
 
 #include "common/foreach.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/emi/costume/emianim_component.h"
 #include "engines/grim/emi/costume/emiskel_component.h"
 #include "engines/grim/resource.h"
@@ -33,7 +34,7 @@
 
 namespace Grim {
 
-EMIAnimComponent::EMIAnimComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(NULL), _parentModel(NULL), _hierShared(false) {
+EMIAnimComponent::EMIAnimComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(NULL), _parentModel(NULL), _hierShared(false), _looping(false), _active(false) {
 }
 
 EMIAnimComponent::~EMIAnimComponent() {
@@ -46,21 +47,36 @@ void EMIAnimComponent::init() {
 }
 
 int EMIAnimComponent::update(uint time) {
-	if (_obj) {
+	if (_obj && _active) {
 		EMISkelComponent *skel = ((EMICostume *) _cost)->_emiSkel;
-		_obj->animate(skel->_obj, time);
+		_active = _obj->animate(skel->_obj, time, _looping);
 	}
 	return 0;
 }
 
 void EMIAnimComponent::setKey(int f) {
-	// Not sure what to do here. We had it so that if f == 1 it would reset the
-	// animation, but that caused issues with idle animations resetting too early.
-	// It seems that f is either 1 or 3, but neither seem to be relivant right now
+	switch (f) {
+	case 1: // Play?
+		// We had it so that if f == 1 it would always reset the animation, but that caused
+		// issues with idle animations resetting too early. We now reset the animation
+		// only if this is not a looping animation. Similar behavior exists in Grim.
+		if (!_looping)
+			_obj->reset();
+		_active = true;
+		break;
+	case 3: // Looping?
+		_looping = true;
+		break;
+	default:
+		Debug::warning(Debug::Costumes, "Unknown key %d for component %s", f, _name.c_str());
+		break;
+	}
 }
 
 void EMIAnimComponent::reset() {
 	_visible = true;
+	_looping = false;
+	_active = false;
 	if (_obj)
 		_obj->reset();
 }
