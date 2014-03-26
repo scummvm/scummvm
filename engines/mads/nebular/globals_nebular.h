@@ -31,6 +31,212 @@ namespace MADS {
 
 namespace Nebular {
 
+enum GlobalId {
+	KSexOfRex				= 0,
+	kOldSexOfRex			= 1,
+	kWalkerTiming           = 2,
+	kWalkerTiming0			= 3,
+
+	kTalkInanimateCount		= 4,
+
+	kCopyProtectFailed		= 5,
+
+	/* Section #1 variables */
+	kNeedToStandUp			= 10,
+
+	kTurkeyExploded			= 11,
+	kMedicineCabinetOpen	= 12,
+	kMedicineCabinetVirgin	= 13,
+	kWatchedViewScreen		= 14,
+
+	kHoovicAlive            = 15,
+	kHoovicSated            = 16,
+	kHoovicFishEaten        = 17,
+
+	kWaterInAPuddle			= 18,
+
+	kFishIn105				= 19,
+	kFishIn107				= 20,
+	kFishIn108				= 21,
+
+
+	/* Section #2 variables */
+	kCurtainOpen            = 30,
+	kLadderBroken           = 31,
+	kBone202Status			= 32,
+
+	kMeteorologistStatus    = 33,
+
+	kRhotundaStatus         = 34,
+	kLeavesStatus           = 35,
+
+	kMonkeyStatus           = 36,
+
+	kMeteorologistEverSeen  = 37,
+	kMeteorologistWatch     = 38,
+
+	kTeleporterCommand      = 39,
+	kTeleporterDestination  = 40,
+	kTeleporterUnderstood   = 41,
+
+	kConv205                = 42,
+	kChickenPpermitted      = 43,
+
+	kTwinklesStatus         = 44,
+	kTwinklesApproached     = 45,
+
+	kConvTwinkles1          = 46,
+	kConvTwinkles2          = 47,
+	kConvTwinkles3          = 48,
+	kConvTwinkles5			= 49,
+	kConvTwinkles6          = 50,
+	kConvTwinkles7          = 51,
+	kConvTwinkles8          = 52,
+
+	kBlowgunStatus          = 53,
+
+
+	/* Section #3 Variables */
+	kAfterHavoc             = 60,
+	kHaveYourStuff          = 61,
+
+	kRightView320			= 62,
+
+	kConvBuddy1				= 63,
+	kConvBuddy2				= 64,
+	kMetBuddyBeast          = 65,
+	kKnowsBuddyBeast        = 66,
+
+	kConvSlache1			= 67,
+	kConvSlache2			= 68,
+	kConvSlache3			= 69,
+
+	kRexHasMetSlache		= 70,
+
+	kConvIntern             = 71,
+	kHasSeenProfPyro		= 72,
+
+	kKickedIn391Grate		= 73,
+
+
+	/* Section #4 Variables */
+	kArmoryDoorOpen			= 80,
+	kStorageDoorOpen		= 81,
+
+	kNextIngredient         = 82,
+
+	kIngredientList         = 83,
+	kIngredientList1		= 84,
+	kIngredientList2		= 85,
+	kIngredientList3		= 86,
+
+	kIngredientQuantity     = 87,
+	kIngredientQuantity1	= 88,
+	kIngredientQuantity2	= 89,
+	kIngredientQuantity3	= 90,
+
+
+	conv_pyro_1             = 91,
+	conv_pyro_2             = 92,
+	conv_pyro_3             = 93,
+	conv_pyro_4             = 94,
+	bad_first_ingredient    = 95,
+
+	kConvBartender1         = 96,
+	kConvBartender2			= 97,
+	kConvBartender3			= 98,
+	kConvBartender4			= 99,
+	kHasPurchased			= 100,
+	kBeenThruHelgaScene		= 101,
+	kHasSaidBinocs			= 102,
+	kHasSaidTimer			= 103,
+	kBottleDisplayed		= 104,
+	kHasBeenScanned			= 105,
+	kSomeoneHasExploded		= 106,
+
+
+	/* Section #5 Variables */
+	kBoatRaised				= 110,
+
+	kCarStatus				= 111,
+
+	kCityFlooded			= 112,
+	kLaserOn				= 113,
+	kLaserHoleIsThere		= 114,
+	kCarIsGone				= 115,
+	kRegisterOpen			= 116,
+	kSafeStatus				= 117,
+	kDogStatus              = 118,
+	kLineStatus             = 119,
+
+	kHoverCarLocation		= 120,
+	kHoverCarDestination	= 121,
+
+
+	/* Section #6 Variables */
+	kConvHermit1			= 130,
+	kconvHermit2			= 131,
+	kHasTalkedToHermit		= 132,
+	kExecuted_1_11			= 133,
+	kHandsetCellStatus		= 134,
+	kBeenInVideoStore		= 135,
+	kDurafailRecharged		= 136,
+	kPenlightCellStatus		= 137,
+	kTimebombStatus			= 138,
+	kCheckDaemonTimebomb	= 140,
+	kResurrectRoom			= 141,
+
+
+	/* Section #6 Time-Bomb Variables */
+	kTimebombClock			= 142,
+	kTimebombClock0			= 143,
+
+	kTimebombTimer			= 144,
+	kTimebombTimer0			= 145,
+
+	kWarnedFloodCity		= 146,
+
+	/* Section #7 Variables */
+	kBottleStatus			= 150,
+	kMonsterAlive			= 151,
+
+	kConvBottleFillNode		= 152,
+	kBoatStatus				= 153,
+
+
+	/* Section #8 Variables */
+	kAntigravClock			= 160,
+	kAntigravClock0			= 161,
+
+	kAntigravTiming			= 162,
+	kAntigravTiming0		= 163,
+
+	kWindowFixed			= 164,
+	kinSpace                = 165,
+	kReturnFromCut			= 166,
+	kBeamIsUp               = 167,
+	kForceBeamDown          = 168,
+	kCameFromCut            = 169,
+	kCutX                   = 170,
+	kCutY                   = 171,
+	kCutFacing				= 172,
+	kDontRepeat             = 173,
+	kHoppyDead              = 174,
+	kHasWatchedAntigrav		= 175,
+	kRemoteSequenceRan		= 176,
+	kRemoteOnGround			= 177,
+	kFromCockpit            = 178,
+	kExitShip               = 179,
+	kBetweenRooms           = 180,
+	kTopButtonPushed		= 181,
+	kTargetModInstalled		= 182,
+	kShieldModInstalled		= 183,
+	kUpBecauseOfRemote		= 184,
+
+	kTeleporterRoom         = 190,
+	kTeleporterCode         = 200
+};
+
 class Globals {
 private:
 	Common::Array<int16> _flags;

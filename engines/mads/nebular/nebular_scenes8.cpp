@@ -194,7 +194,7 @@ void Scene804::step() {
 				_globals[165] = 0;
 				_globals[167] = -1;
 				assert(!_globals[5]);
-				_game._exitFlag = 4;
+				_game._winStatus = 4;
 				_vm->quitGame();
 			}
 			break;
@@ -206,7 +206,7 @@ void Scene804::step() {
 				_globals[165] = 0;
 				_globals[167] = -1;
 				assert(!_globals[5]);
-				_game._exitFlag = 4;
+				_game._winStatus = 4;
 				_vm->quitGame();
 			}
 			break;

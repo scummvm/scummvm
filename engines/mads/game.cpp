@@ -59,7 +59,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_abortTimersMode = ABORTMODE_0;
 	_abortTimersMode2 = ABORTMODE_0;
 	_ticksExpiry = 0;
-	_exitFlag = 0;
+	_winStatus = 0;
 
 	// Load the inventory object list
 	_objects.load();
@@ -82,15 +82,17 @@ void Game::run() {
 	_statusFlag = true;
 	int protectionResult = checkCopyProtection();
 	switch (protectionResult) {
-	case 1:
+	case PROTECTION_FAIL:
 		// Copy protection failed
 		_scene._nextSceneId = 804;
 		_saveSlot = -1;
 		break;
-	case 2:
-		_statusFlag = 0;
+	case PROTECTION_ESCAPE:
+		// User escaped out of copy protection dialog
+		_vm->quitGame();
 		break;
 	default:
+		// Copy protection check succeeded
 		_scene._nextSceneId = 103;
 		_scene._priorSceneId = 102;
 		break;

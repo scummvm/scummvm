@@ -54,7 +54,7 @@ class GameNebular: public Game {
 protected:
 	GameNebular(MADSEngine *vm);
 
-	virtual int checkCopyProtection();
+	virtual ProtectionResult checkCopyProtection();
 
 	virtual void initialiseGlobals();
 

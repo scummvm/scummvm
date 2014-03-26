@@ -39,7 +39,7 @@ GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
 	_storyMode = STORYMODE_NAUGHTY;
 }
 
-int GameNebular::checkCopyProtection() {
+ProtectionResult GameNebular::checkCopyProtection() {
 	/*
 	// DEBUG: Flag copy protection failure
 	_globals[5] = -1;
@@ -54,7 +54,7 @@ int GameNebular::checkCopyProtection() {
 	*/
 
 	// DEBUG: Return that copy protection failed
-	return -2;
+	return PROTECTION_SUCCEED;
 }
 
 void GameNebular::initialiseGlobals() {

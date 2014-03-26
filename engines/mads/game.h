@@ -43,6 +43,10 @@ enum Difficulty {
 	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
 };
 
+enum ProtectionResult {
+	PROTECTION_SUCCEED = 0, PROTECTION_FAIL = 1, PROTECTION_ESCAPE = 2
+};
+
 class Game {
 private:
 	/**
@@ -88,7 +92,7 @@ protected:
 	/**
 	 * Perform any copy protection check
 	 */
-	virtual int checkCopyProtection() = 0;
+	virtual ProtectionResult checkCopyProtection() = 0;
 
 	/**
 	 * Initialises global variables for a new game
@@ -132,12 +136,12 @@ public:
 	uint32 _priorFrameTimer;
 	Common::String _aaName;
 	uint32 _ticksExpiry;
-	int _exitFlag;
+	int _winStatus;
 public:
 	virtual ~Game();
 
 	/**
-	 * Run the game
+	 * Main outer loop for the game
 	 */
 	void run();
 
