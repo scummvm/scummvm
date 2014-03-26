@@ -50,6 +50,7 @@ public:
 };
 
 class Scene201: public Scene2xx {
+	bool _pterodactylFlag;
 public:
 	Scene201(MADSEngine *vm) : Scene2xx(vm) {}
 	virtual void setup();

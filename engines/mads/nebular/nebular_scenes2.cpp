@@ -73,9 +73,9 @@ void Scene2xx::sceneEntrySound() {
 		switch (_scene->_nextSceneId) {
 		case 201:
 			if ((_globals[kTeleporterCommand] == 2) || (_globals[kTeleporterCommand] == 4) || (_globals[kMeteorologistStatus] != 1))
-				_vm->_sound->command(17);
-			else
 				_vm->_sound->command(9);
+			else
+				_vm->_sound->command(17);
 			break;
 		case 202:
 		case 203:
@@ -146,8 +146,6 @@ void Scene201::enter() {
 	int idx = _scene->_dynamicHotspots.add(1159, 209, _globals._spriteIndexes[19], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, 186, 81, FACING_NORTH);
 
-	_globals._v0 = 0;
-
 	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == -1)) {
 		_game._player._playerPos = Common::Point(165, 152);
 	} else {
@@ -155,7 +153,7 @@ void Scene201::enter() {
 		_game._player._facing = FACING_SOUTH;
 	}
 
-	if (_globals[kTeleporterCommand] != 0) {
+	if (_globals[kTeleporterCommand]) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
 		int sepChar = (_globals[kSexOfRex] == SEX_UNKNOWN) ? 't' : 'u';
@@ -166,7 +164,7 @@ void Scene201::enter() {
 		case 1:
 			suffixNum = 3;
 			abortTimers = 76;
-			_globals[kTeleporterUnderstood] = -1;
+			_globals[kTeleporterUnderstood] = true;
 			break;
 		case 2:
 			suffixNum = 1;
@@ -196,28 +194,28 @@ void Scene201::enter() {
 		_scene->_sequences.setAnimRange(_globals._spriteIndexes[21], -1, 12);
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[21], SM_FRAME_INDEX, 12, 70);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 1);
-		_globals._frameTime = 0;
+		_pterodactylFlag = false;
 		_game._player.startWalking(Common::Point(157, 143), FACING_NORTH);
 		_vm->_palette->setEntry(252, 45, 63, 45);
 		_vm->_palette->setEntry(253, 20, 45, 20);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 2, 0, 120, _game.getQuote(90));
 	} else
-		_globals._frameTime = 0xFFFF;
+		_pterodactylFlag = true;
 
-	if (_globals[kTeleporterUnderstood] != 0)
+	if (_globals[kTeleporterUnderstood])
 		_scene->_hotspots.activate(438, false);
 
 	sceneEntrySound();
 }
 
 void Scene201::step() {
-	if ((_globals._frameTime) && (_vm->getRandomNumber(5000) == 9)) {
+	if (_pterodactylFlag && (_vm->getRandomNumber(5000) == 9)) {
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 6, 0);
 		int idx = _scene->_dynamicHotspots.add(351, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, 270, 80, FACING_EAST);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[20], 8);
 		_vm->_sound->command(14);
-		_globals._frameTime = 0;
+		_pterodactylFlag = false;
 	}
 
 	if (_game._abortTimers == 70) {
@@ -290,14 +288,13 @@ void Scene201::actions() {
 		if (action->isAction(0x18C, 0x83, 0))
 			_scene->_nextSceneId = 202;
 		else if ((action->isAction(0x50, 0x156, 0)) || (action->isAction(0x188, 0x16C, 0)) || (action->isAction(0x188, 0x1B6, 0))) {
-			if (_game._abortTimers != 0) { 
-				if (_game._abortTimers != 1)
-					_scene->_nextSceneId = 213;
-			} else {
+			if (_game._abortTimers == 0) { 
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				int sepChar = (_globals[kSexOfRex] == SEX_UNKNOWN) ? 't' : 'u';
 				_scene->loadAnimation(formAnimName(sepChar, 0), 1);
+			} else if (_game._abortTimers == 1) {
+				_scene->_nextSceneId = 213;
 			}
 		} else if (action->isAction(0x3, 0x1A6, 0)) {
 			Dialog::show(0x4E85);
@@ -441,7 +438,7 @@ void Scene202::enter() {
 			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(247, 82));
 			_game._player._playerPos = Common::Point(246, 124);
 			_game._player._facing = FACING_NORTH;
-			_globals[kTeleporterUnderstood] = -1;
+			_globals[kTeleporterUnderstood] = true;
 		} else {
 			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
 			_game._player._playerPos = Common::Point(171, 122);
