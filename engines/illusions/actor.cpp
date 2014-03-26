@@ -861,23 +861,20 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 			(!testControl->_actor || (testControl->_actor->_flags & 1))) {
 			Common::Rect collisionRect;
 			testControl->getCollisionRect(collisionRect);
-			debug("collisionRect(%d, %d, %d, %d)", collisionRect.left, collisionRect.top, collisionRect.right, collisionRect.bottom);
-			debug("pt(%d, %d)", pt.x, pt.y);
+			//debug("collisionRect(%d, %d, %d, %d)", collisionRect.left, collisionRect.top, collisionRect.right, collisionRect.bottom);
+			//debug("pt(%d, %d)", pt.x, pt.y);
 			if (!collisionRect.isEmpty() && collisionRect.contains(pt)) {
 				int testPriority = testControl->getPriority();
-				debug("testPriority: %d; minPriority: %d", testPriority, minPriority);
+				//debug("testPriority: %d; minPriority: %d", testPriority, minPriority);
 				if ((!foundControl || foundPriority < testPriority) &&
 					testPriority >= minPriority) {
-		debug("overlapped() %08X; pauseCtr: %d; flags: %04X",
-			testControl->_objectId, testControl->_pauseCtr, testControl->_flags);
+					//debug("overlapped() %08X; pauseCtr: %d; flags: %04X", testControl->_objectId, testControl->_pauseCtr, testControl->_flags);
 					foundControl = testControl;
 					foundPriority = testPriority;
 				}
 			}		
 		}
 	}
-
-	debug("OVERLAPPED DONE\n");
 
 	if (foundControl) {
 		if (foundControl->_actor && foundControl->_actor->_parentObjectId && (foundControl->_actor->_flags & 0x40)) {

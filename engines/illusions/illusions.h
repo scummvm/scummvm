@@ -112,6 +112,11 @@ public:
 	int updateSequences();
 	int updateGraphics();
 	int getRandom(int max);
+
+	// TODO Move to ScriptMan?
+	bool causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
+	uint32 causeTrigger(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 callingThreadId);
+
 	int convertPanXCoord(int16 x);
 	Common::Point getNamedPointPosition(uint32 namedPointId);
 	void playVideo(uint32 videoId, uint32 objectId, uint32 value, uint32 threadId);
@@ -121,7 +126,9 @@ public:
 	bool isVoiceCued();
 	void startVoice(int volume, int panX);
 	void stopVoice();
-	bool isVoicePlaying();	
+	bool isVoicePlaying();
+	
+	uint32 getCurrentScene();	
 
 #if 0
 

@@ -78,6 +78,7 @@ public:
 	TriggerObject();
 	~TriggerObject();
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
+	bool findTriggerCause(uint32 verbId, uint32 objectId2, uint32 &codeOffs);
 public:
 	uint32 _objectId;
 	uint _causesCount;
@@ -89,12 +90,14 @@ public:
 	ProgInfo();
 	~ProgInfo();
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
+	bool findTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs);
 protected:
 	uint16 _id;
 	uint16 _unk;
 	byte *_name;
 	uint _triggerObjectsCount;
 	TriggerObject *_triggerObjects;
+	TriggerObject *findTriggerObject(uint32 objectId);
 };
 
 class ScriptResource {
@@ -103,6 +106,7 @@ public:
 	~ScriptResource();
 	void load(byte *data, uint32 dataSize);
 	byte *getThreadCode(uint32 threadId);
+	byte *getCode(uint32 codeOffs);
 	ProgInfo *getProgInfo(uint32 index);
 public:
 	byte *_data;

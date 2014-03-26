@@ -169,6 +169,7 @@ Common::Error IllusionsEngine::run() {
 #endif
 
 	_scriptMan->startScriptThread(0x00020004, 0, 0, 0, 0);
+	_scriptMan->_doScriptThreadInit = true;
 
 	//_camera->panToPoint(Common::Point(800, 0), 500, 0);
 
@@ -347,6 +348,26 @@ int IllusionsEngine::getRandom(int max) {
 	return _random->getRandomNumber(max - 1);
 }
 
+bool IllusionsEngine::causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
+	uint32 codeOffs;
+	// TODO Also search for native trigger functions later (findCauseFunc)
+	bool r = _scriptMan->findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs);
+	debug("causeIsDeclared() sceneId: %08X; verbId: %08X; objectId2: %08X; objectId: %08X -> %d",
+		sceneId, verbId, objectId2, objectId, r);
+	return r;
+}
+
+uint32 IllusionsEngine::causeTrigger(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 callingThreadId) {
+	uint32 codeOffs;
+	uint32 causeThreadId = 0;
+	// TODO Also search for native trigger functions later and run it (findCauseFunc)
+	if (_scriptMan->findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs)) {
+		causeThreadId = _scriptMan->startTempScriptThread(_scriptMan->_scriptResource->getCode(codeOffs),
+			callingThreadId, verbId, objectId2, objectId);
+	}
+	return causeThreadId;
+}
+
 int IllusionsEngine::convertPanXCoord(int16 x) {
 	// TODO
 	return 0;
@@ -387,6 +408,10 @@ void IllusionsEngine::stopVoice() {
 bool IllusionsEngine::isVoicePlaying() {
 	// TODO
 	return false;
+}
+
+uint32 IllusionsEngine::getCurrentScene() {
+	return _scriptMan->_activeScenes.getCurrentScene();
 }
 
 } // End of namespace Illusions

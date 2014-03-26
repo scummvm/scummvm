@@ -92,6 +92,7 @@ public:
 	void disable(uint32 objectId);
 	void addCursorSequence(uint32 objectId, uint32 sequenceId);
 	uint32 findCursorSequenceId(uint32 objectId);
+	void setStruct8bsValue(uint32 objectId, int value);
 	int findStruct8bsValue(uint32 objectId);
 	void saveInfo();
 	void restoreInfo();

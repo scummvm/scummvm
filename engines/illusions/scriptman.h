@@ -83,6 +83,7 @@ public:
 	uint32 startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2, uint32 callingThreadId);
 	uint32 startTalkThread(int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1,
 		uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId);
+	bool findTriggerCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs);
 	void setCurrFontId(uint32 fontId);
 	bool checkActiveTalkThreads();
 	uint32 clipTextDuration(uint32 duration);

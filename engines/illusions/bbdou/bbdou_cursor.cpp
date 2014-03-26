@@ -72,7 +72,7 @@ void BbdouCursor::init(uint32 objectId, uint32 progResKeywordId) {
 	_data._item10._objectIds[1] = 0;
 	_data._item10._index = 0;
 	_data._item10._flag56 = 0;
-
+	
 	clearCursorDataField14();
 
 	control->setActorIndexTo1();
@@ -111,8 +111,32 @@ uint32 BbdouCursor::findCursorSequenceId(uint32 objectId) {
 	return 0;
 }
 
+void BbdouCursor::setStruct8bsValue(uint32 objectId, int value) {
+	// TODO Clean this up, preliminary
+	Struct8b *struct8b = 0;
+	for (uint i = 0; i < 512; ++i)
+		if (_cursorStruct8bs[i]._objectId == objectId) {
+			struct8b = &_cursorStruct8bs[i];
+			break;
+		}
+	if (!struct8b) {
+		for (uint i = 0; i < 512; ++i)
+			if (_cursorStruct8bs[i]._objectId == 0) {
+				struct8b = &_cursorStruct8bs[i];
+				break;
+			}
+	}
+	if (value != 11) {
+		struct8b->_objectId = objectId;
+		struct8b->_value = value;
+	} else if (struct8b->_objectId == objectId) {
+		struct8b->_objectId = 0;
+		struct8b->_value = 0;
+	}
+}
+
 int BbdouCursor::findStruct8bsValue(uint32 objectId) {
-	for (uint i = 0; i < kMaxCursorSequences; ++i)
+	for (uint i = 0; i < 512; ++i)
 		if (_cursorStruct8bs[i]._objectId == objectId)
 			return _cursorStruct8bs[i]._value;
 	return 11;
