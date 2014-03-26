@@ -313,7 +313,21 @@ void sceneHandler29_assHitRed() {
 }
 
 void sceneHandler29_shoot() {
-	warning("STUB: sceneHandler29_shoot()");
+	if (g_vars->scene29_var10 && g_vars->scene29_var20 < 1310) {
+		if (g_fp->_rnd->getRandomNumber(1) || g_vars->scene29_shooter1->_movement || g_vars->scene29_shooter1->_statics->_staticsId != ST_STR1_RIGHT) {
+			if (!g_vars->scene29_shooter2->_movement && g_vars->scene29_shooter2->_statics->_staticsId == ST_STR2_RIGHT) {
+				if (g_vars->scene29_shooter2->_flags & 4) {
+					g_vars->scene29_shooter2->startAnim(MV_STR2_SHOOT, 0, -1);
+
+					g_vars->scene29_var13 = 0;
+				}
+			}
+		} else {
+			g_vars->scene29_shooter1->startAnim(MV_STR1_SHOOT, 0, -1);
+
+			g_vars->scene29_var13 = 0;
+		}
+	}
 }
 
 void sceneHandler29_animBearded() {
