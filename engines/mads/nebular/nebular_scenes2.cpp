@@ -45,7 +45,7 @@ void Scene2xx::setPlayerSpritesPrefix() {
 		_game._player._spritesPrefix = "";
 		break;
 	default:
-		if (_globals[0] != SEX_MALE) {
+		if (_globals[kSexOfRex] != SEX_MALE) {
 			_game._player._spritesPrefix = "ROX";
 		} else {
 			_game._player._spritesPrefix = "RXM";
@@ -61,7 +61,7 @@ void Scene2xx::setPlayerSpritesPrefix() {
 	if (oldName != _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
 	
-	if ((_scene->_nextSceneId == 203 || _scene->_nextSceneId == 204) && _globals[34])
+	if ((_scene->_nextSceneId == 203 || _scene->_nextSceneId == 204) && _globals[kRhotundaStatus])
 		_game._v3 = 0;
 
 	_vm->_palette->setEntry(16, 10, 63, 63);
@@ -72,7 +72,7 @@ void Scene2xx::sceneEntrySound() {
 	if (_vm->_musicFlag) {
 		switch (_scene->_nextSceneId) {
 		case 201:
-			if ((_globals[39] == 2) || (_globals[39] == 4) || (_globals[33] != 1))
+			if ((_globals[kTeleporterCommand] == 2) || (_globals[kTeleporterCommand] == 4) || (_globals[kMeteorologistStatus] != 1))
 				_vm->_sound->command(17);
 			else
 				_vm->_sound->command(9);
@@ -96,13 +96,13 @@ void Scene2xx::sceneEntrySound() {
 			_vm->_sound->command(11);
 			break;
 		case 210:
-			if (_globals[44] == 0)
+			if (_globals[kTwinklesStatus] == 0)
 				_vm->_sound->command(15);
 			else
 				_vm->_sound->command(10);
 			break;
 		case 213:
-			if (_globals[38] == 0)
+			if (_globals[kMeteorologistWatch] == 0)
 				_vm->_sound->command(1);
 			else
 				_vm->_sound->command(9);
@@ -155,18 +155,18 @@ void Scene201::enter() {
 		_game._player._direction = FACING_SOUTH;
 	}
 
-	if (_globals[39] != 0) {
+	if (_globals[kTeleporterCommand] != 0) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
-		int sepChar = (_globals[0] == SEX_UNKNOWN) ? 't' : 'u';
+		int sepChar = (_globals[kSexOfRex] == SEX_UNKNOWN) ? 't' : 'u';
 		// Guess values. What is the default value used by the compiler?
 		int suffixNum = -1;
 		int abortTimers = -1; 
-		switch(_globals[39]) {
+		switch(_globals[kTeleporterCommand]) {
 		case 1:
 			suffixNum = 3;
 			abortTimers = 76;
-			_globals[41] = -1;
+			_globals[kTeleporterUnderstood] = -1;
 			break;
 		case 2:
 			suffixNum = 1;
@@ -182,12 +182,12 @@ void Scene201::enter() {
 			abortTimers = 78;
 			break;
 		}
-		_globals[39] = 0;
+		_globals[kTeleporterCommand] = 0;
 		if (suffixNum >= 0)
 			_scene->loadAnimation(formAnimName(sepChar, suffixNum), abortTimers);
 	}
 	
-	if ((_scene->_priorSceneId == 202) && (_globals[33] == 1) && !_scene->_roomChanged) {
+	if ((_scene->_priorSceneId == 202) && (_globals[kMeteorologistStatus] == 1) && !_scene->_roomChanged) {
 		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('a', 0), 0);
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
 		_game.loadQuoteSet(90, 91, 0);
@@ -204,7 +204,7 @@ void Scene201::enter() {
 	} else
 		_globals._frameTime = 0xFFFF;
 
-	if (_globals[41] != 0)
+	if (_globals[kTeleporterUnderstood] != 0)
 		_scene->_hotspots.activate(438, false);
 
 	sceneEntrySound();
@@ -261,7 +261,7 @@ void Scene201::step() {
 	}
 
 	if (_game._abortTimers == 75) {
-		_globals[37] = 0;
+		_globals[kMeteorologistEverSeen] = 0;
 		_scene->_nextSceneId = 202;
 	}
 
@@ -272,8 +272,8 @@ void Scene201::step() {
 	}
 
 	if (_game._abortTimers == 77) {
-		_globals[39] = 1;
-		_scene->_nextSceneId = _globals[40];
+		_globals[kTeleporterCommand] = 1;
+		_scene->_nextSceneId = _globals[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
 	}
 
@@ -296,7 +296,7 @@ void Scene201::actions() {
 			} else {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
-				int sepChar = (_globals[0] == SEX_UNKNOWN) ? 't' : 'u';
+				int sepChar = (_globals[kSexOfRex] == SEX_UNKNOWN) ? 't' : 'u';
 				_scene->loadAnimation(formAnimName(sepChar, 0), 1);
 			}
 		} else if (action->isAction(0x3, 0x1A6, 0)) {
@@ -318,7 +318,7 @@ void Scene201::actions() {
 		} else if (action->isAction(0x3, 0x83, 0)) {
 			Dialog::show(0x4E8E);
 		} else if (action->isAction(0x3, 0x1B6, 0)) {
-			if (_globals[37])
+			if (_globals[kMeteorologistEverSeen])
 				Dialog::show(0x4E90);
 			else
 				Dialog::show(0x4E8D);
@@ -354,7 +354,7 @@ void Scene202::enter() {
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 2), 0);
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0), 0);
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('l', -1), 0);
-	if (_globals[0] != SEX_MALE) {
+	if (_globals[kSexOfRex] != SEX_MALE) {
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*ROXBD_2");
 	} else {
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*RXMBD_2");
@@ -370,7 +370,7 @@ void Scene202::enter() {
 	int idx = _scene->_dynamicHotspots.add(320, 13, _globals._spriteIndexes[17], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, 153, 97, FACING_SOUTH);
 
-	if (_globals[32] & 1) {
+	if (_globals[kBone202Status] & 1) {
 		_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[16], Common::Point(130, 108));
 		_scene->_sequences.setDepth(_globals._spriteIndexes[16], 10);
@@ -378,7 +378,7 @@ void Scene202::enter() {
 		_scene->_dynamicHotspots.setPosition(idx, 132, 97, FACING_SOUTH);
 	}
 
-	if (_globals[32] & 2) {
+	if (_globals[kBone202Status] & 2) {
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 0, 0, 0);
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[21], Common::Point(166, 110));
 		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 10);
@@ -386,8 +386,8 @@ void Scene202::enter() {
 		_scene->_dynamicHotspots.setPosition(idx, 165, 99, FACING_SOUTH);
 	}
 
-	if (_globals[32])
-		_scene->changeDepthSurface(_globals[32]);
+	if (_globals[kBone202Status])
+		_scene->changeDepthSurface(_globals[kBone202Status]);
 
 	if (_scene->_priorSceneId == 201) {
 		_game._player._playerPos = Common::Point(190, 91);
@@ -397,7 +397,7 @@ void Scene202::enter() {
 		_game._player._direction = FACING_NORTH;
 	}
 
-	if (_globals[31]) {
+	if (_globals[kLadderBroken]) {
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[20], 6);
 		_scene->_hotspots.activate(199, false);
@@ -423,15 +423,15 @@ void Scene202::enter() {
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_NONE);
 	
-	if (_globals[38]) {
+	if (_globals[kMeteorologistWatch]) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
-		if (_globals[38] == 2)
+		if (_globals[kMeteorologistWatch] == 2)
 			_globals._v4 = 1;
 		else
 			_globals._v4 = 0;
 
-		if (_globals[38] < 1)
+		if (_globals[kMeteorologistWatch] < 1)
 			_globals._spriteIndexes[25] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 6);
 		else
 			_globals._spriteIndexes[25] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 8);
@@ -441,7 +441,7 @@ void Scene202::enter() {
 			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(247, 82));
 			_game._player._playerPos = Common::Point(246, 124);
 			_game._player._direction = FACING_NORTH;
-			_globals[41] = -1;
+			_globals[kTeleporterUnderstood] = -1;
 		} else {
 			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
 			_game._player._playerPos = Common::Point(171, 122);
@@ -496,7 +496,7 @@ void Scene202::step() {
 		int msgIndex = _scene->_kernelMessages.add(msgPos, 0x1110, msgFlag | 32, 0, 120, _game.getQuote(102));
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 		
-		if (_globals[38] == 1) {
+		if (_globals[kMeteorologistWatch] == 1) {
 			MADSAction *action = _game._player._action;
 			action->_activeAction._verbId = 3;
 			action->_activeAction._objectNameId = 39;
@@ -504,10 +504,10 @@ void Scene202::step() {
 			_game._abortTimersMode2 = ABORTMODE_0;
 			_scene->_sequences.addTimer(120, 2);
 			_globals._abortVal = -1;
-		} else if (_globals[38] == 2) {
+		} else if (_globals[kMeteorologistWatch] == 2) {
 			_scene->_sequences.addTimer(120, 90);
 		}
-		_globals[38] = 0;
+		_globals[kMeteorologistWatch] = 0;
 	}
 
 	switch (_game._abortTimers) {
@@ -536,7 +536,7 @@ void Scene202::step() {
 		}
 		break;
 	case 93: {
-		_globals[31] = -1;
+		_globals[kLadderBroken] = -1;
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
 		_scene->_hotspots.activate(199, false);
 		int idx = _scene->_dynamicHotspots.add(457, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
@@ -554,19 +554,19 @@ void Scene202::step() {
 		break;
 	}
 	
-	if (!_scene->_activeAnimation && (_globals[33] != 2) && (_globals._v7 <= _scene->_frameStartTime) && (_globals._v8425C <= _scene->_frameStartTime)) {
+	if (!_scene->_activeAnimation && (_globals[kMeteorologistStatus] != 2) && (_globals._v7 <= _scene->_frameStartTime) && (_globals._v8425C <= _scene->_frameStartTime)) {
 		int randVal = _vm->getRandomNumber(1, 500);
 		int threshold = 1;
 		if (_globals._v4)
 			threshold = 26;
-		if (!_globals[37])
+		if (!_globals[kMeteorologistEverSeen])
 			threshold = 25;
 		if (threshold >= randVal) {
 			_vm->_sound->command(17);
 			_scene->loadAnimation(formAnimName('M', -1), 71);
 			_globals._v84266 = -1;
 			_globals._v84268 = 0;
-			_globals[37] = true;
+			_globals[kMeteorologistEverSeen] = true;
 			_globals._v6 = _scene->_frameStartTime;
 			_globals._v8 = 0;
 			_globals._v84262 = 0;
@@ -580,7 +580,7 @@ void Scene202::step() {
 
 	if (_globals._v5) {
 		if (_scene->_activeAnimation->getCurrentFrame() >= 200) {
-			if ((_globals[38] == 2) || _globals[31]) {
+			if ((_globals[kMeteorologistWatch] == 2) || _globals[kLadderBroken]) {
 				_scene->_nextSceneId = 213;
 			} else {
 				Dialog::show(0x4EE9);
@@ -761,11 +761,11 @@ void Scene202::actions() {
 		} else if (action->isAction(0x18C, 0x83, 0)) {
 			_scene->_nextSceneId = 203;
 		} else if (action->isAction(0x18C, 0x82, 0)) {
-			if (_globals[33] != 2) {
+			if (_globals[kMeteorologistStatus] != 2) {
 				if (_scene->_activeAnimation)
-					_globals[33] = 1;
+					_globals[kMeteorologistStatus] = 1;
 				else
-					_globals[33] = 0;
+					_globals[kMeteorologistStatus] = 0;
 			}
 			_scene->_nextSceneId = 201;
 		} else if (action->isAction(0x4, 0x2C, 0)) {
@@ -784,10 +784,10 @@ void Scene202::actions() {
 				} else if (_game._abortTimers == 1) {
 					if ((_game._player._playerPos.x == 132) && (_game._player._playerPos.y == 97)) {
 						_scene->_sequences.remove(_globals._spriteIndexes[16]);
-						_globals[32] |= 1;
+						_globals[kBone202Status] |= 1;
 					} else {
 						_scene->_sequences.remove(_globals._spriteIndexes[21]);
-						_globals[32] |= 2;
+						_globals[kBone202Status] |= 2;
 					}
 				} else if (_game._abortTimers == 2) {
 					if (_game._objects.isInInventory(OBJ_BONE)) {
@@ -798,7 +798,7 @@ void Scene202::actions() {
 						_game._objects.addToInventory(OBJ_BONE);
 						_vm->_dialogs->showPicture(OBJ_BONE, 0x4EFA, 0);
 					}
-					_scene->changeDepthSurface(_globals[32]);
+					_scene->changeDepthSurface(_globals[kBone202Status]);
 					_game._player._stepEnabled = true;
 					_game._player._visible = true;
 				} else {
@@ -806,7 +806,7 @@ void Scene202::actions() {
 					return;
 				}
 			}
-		} else if ((action->isAction(0x50, 0xC7, 0)) && (_globals[31] == 0)) {
+		} else if ((action->isAction(0x50, 0xC7, 0)) && (_globals[kLadderBroken] == 0)) {
 			if (_game._abortTimers == 0) {
 				_vm->_sound->command(29);
 				_globals._v8425C = _scene->_frameStartTime;
@@ -832,7 +832,7 @@ void Scene202::actions() {
 				action->_inProgress = false;
 				return;
 			}
-		} else if (((action->isAction(0x3, 0x27, 0x82)) || (action->isAction(0x3, 0x27, 0x1B6))) && (_globals[0] == SEX_MALE)) {
+		} else if (((action->isAction(0x3, 0x27, 0x82)) || (action->isAction(0x3, 0x27, 0x1B6))) && (_globals[kSexOfRex] == SEX_MALE)) {
 			if (_globals._v4 == 0) {
 				if (_game._abortTimers == 0) {
 					_game._player._stepEnabled = false;
@@ -849,7 +849,7 @@ void Scene202::actions() {
 					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
 					if (_scene->_activeAnimation) {
 						_globals._v5 = -1;
-						_globals[38] = 1;
+						_globals[kMeteorologistWatch] = 1;
 					} else {
 						_scene->_sequences.addTimer(120, 2);
 					}
@@ -889,7 +889,7 @@ void Scene202::actions() {
 							_scene->_sequences.addTimer(120, 2);
 						} else {
 							_globals._v5 = -1;
-							_globals[38] = 2;
+							_globals[kMeteorologistWatch] = 2;
 							if ((_scene->_activeAnimation->getCurrentFrame() >= 44) && (_scene->_activeAnimation->getCurrentFrame() <= 75)) {
 								_scene->_kernelMessages.reset();
 								int msgIndex = _scene->_kernelMessages.add(Common::Point(248, 15), 0x1110, 32, 0, 60, _game.getQuote(100));
@@ -930,9 +930,9 @@ void Scene202::actions() {
 		} else if (action->isAction(0x3, 0x19C, 0)) {
 			Dialog::show(0x4EEC);
 		} else if (action->isAction(0x3, 0x82, 0)) {
-			if ((_globals[33] == 0) || (_globals[33] == 2)) {
+			if ((_globals[kMeteorologistStatus] == 0) || (_globals[kMeteorologistStatus] == 2)) {
 				Dialog::show(0x4EED);
-			} else if (_globals[33] == 1) {
+			} else if (_globals[kMeteorologistStatus] == 1) {
 				Dialog::show(0x4EFC);
 			} else {
 				action->_inProgress = false;
@@ -998,7 +998,7 @@ void Scene203::enter() {
 	_globals._v0 = 0;
 	_globals._frameTime = 0;
 
-	if ((_globals[34] == 0) && (_scene->_roomChanged == 0)) {
+	if ((_globals[kRhotundaStatus] == 0) && (_scene->_roomChanged == 0)) {
 		_globals._v0 = -1;
 		_game._player.startWalking(Common::Point(158, 135), FACING_SOUTH);
 		int idx = _scene->_dynamicHotspots.add(131, 396, 0, Common::Rect(0, 0, 320, 156));
@@ -1105,7 +1105,7 @@ void Scene205::enter() {
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', -1), 0);
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('p', -1), 0);
 	
-	if (_globals[0] == SEX_MALE)
+	if (_globals[kSexOfRex] == SEX_MALE)
 		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
 
 	_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 0, 3);
@@ -1152,13 +1152,13 @@ void Scene205::enter() {
 	_globals._v0 = _globals._frameTime & 0xFFFF;
 	_globals._frameTime >>= 16;
 
-	if (_globals[0] == SEX_FEMALE)
+	if (_globals[kSexOfRex] == SEX_FEMALE)
 		warning("sub71704(0x3, 0xC3, 0x108, 0x63, 0x86, 0xD, 2, 0xFDFC, 0x3C, 0x6C, 0x6C, 0x6D, 0x6D, 0x6E, 0x6E, 0x6F, 0x6C, 0);");
 
 	if (_scene->_priorSceneId != -2)
 		_game._player._playerPos = Common::Point(99, 152);	
 
-	if (_globals[0] != SEX_MALE) {
+	if (_globals[kSexOfRex] != SEX_MALE) {
 		_scene->loadAnimation(formAnimName('a', -1), 0);
 		_scene->_activeAnimation->_resetFlag = false;
 	} else {
@@ -1400,7 +1400,7 @@ void Scene208::enter() {
 
 	_game.loadQuoteSet(0x81, 0x46, 0);
 
-	if ((_scene->_priorSceneId == 207) && (_globals[36] == 1)) {
+	if ((_scene->_priorSceneId == 207) && (_globals[kMonkeyStatus] == 1)) {
 		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(129));
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 	}
@@ -1440,7 +1440,7 @@ void Scene208::step() {
 	if (_game._abortTimers & 0xFF) {
 		if ((_game._abortTimers & 0xFF) == 81) {
 			_scene->_sequences.remove(_globals._spriteIndexes[15]);
-			_globals[34] = 1;
+			_globals[kRhotundaStatus] = 1;
 			warning("TODO: sub34648(...)");
 			_scene->_sequences.addTimer(90, 82);
 		}
@@ -1462,7 +1462,7 @@ void Scene208::preActions() {
 
 void Scene208::actions() {
 	if (_action.isAction(0x18C, 0x19F, 0)) {
-		if (_globals[34])
+		if (_globals[kRhotundaStatus])
 			_scene->_nextSceneId = 203;
 		else if (_game._abortTimers == 0) {
 			_game._player._stepEnabled = false;
@@ -1473,11 +1473,11 @@ void Scene208::actions() {
 		}
 	} else if (_action.isAction(0x18C, 0x83, 0)) {
 		_scene->_nextSceneId = 212;
-	} else if (_action.isAction(0x4, 0x1AA, 0) && (!_globals[35] || _game._abortTimers)) {
+	} else if (_action.isAction(0x4, 0x1AA, 0) && (!_globals[kLeavesStatus] || _game._abortTimers)) {
 		warning("TODO: sub3B282(1);");
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->showPicture(OBJ_BIG_LEAVES, 0x326, 0);
-	} else if (_action.isAction(0x7, 0x23, 0x19E) && (_globals[35] == 1 || _game._abortTimers)) {
+	} else if (_action.isAction(0x7, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._abortTimers)) {
 		warning("TODO: sub3B282(2);");
 	} else if (_action.isAction(0x7, 0x17A, 0x1A9)) {
 		warning("TODO: sub3B282(3);");
@@ -1529,9 +1529,9 @@ void Scene208::actions() {
 		Dialog::show(0x5150);
 	} else if (_action._savedFields._lookFlag == 0) {
 		return;
-	} else if (_globals[34] == 1) {
+	} else if (_globals[kRhotundaStatus] == 1) {
 		Dialog::show(0x5153);
-	} else if (_globals[35] == 2) {
+	} else if (_globals[kLeavesStatus] == 2) {
 		Dialog::show(0x5152);
 	} else {
 		Dialog::show(0x5151);
@@ -1541,6 +1541,24 @@ void Scene208::actions() {
 }
 
 /*****************************************************************************/
+
+void Scene209::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x10F);
+}
+
+void Scene209::enter() {
+}
+
+void Scene209::step() {
+}
+
+void Scene209::preActions() {
+}
+
+void Scene209::actions() {
+}
 
 } // End of namespace Nebular
 } // End of namespace MADS

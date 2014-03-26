@@ -32,12 +32,12 @@ namespace Nebular {
 
 void Scene8xx::setup1() {
 	_vm->_sound->command(5);
-	if ((_globals[178] && !_globals[179]) ||
+	if ((_globals[kFromCockpit] && !_globals[kExitShip]) ||
 			_scene->_nextSceneId == 804 || _scene->_nextSceneId == 805 ||
 			_scene->_nextSceneId == 808 || _scene->_nextSceneId == 810) {
 		_game._player._spritesPrefix = "";
 	} else {
-		_game._player._spritesPrefix = _globals[0] == SEX_FEMALE ? "ROX" : "RXM";
+		_game._player._spritesPrefix = _globals[kSexOfRex] == SEX_FEMALE ? "ROX" : "RXM";
 	}
 
 	_vm->_palette->setEntry(16, 0x0A, 0x3F, 0x3F);
@@ -88,10 +88,10 @@ void Scene804::enter() {
 	_globals._v6 = 0;
 	_globals._v7 = 0;
 	_globals._v8 = 0;
-	if (_globals[5]) {
+	if (_globals[kCopyProtectFailed]) {
 		// Copy protection failed
-		_globals[165] = -1;
-		_globals[164] = 0;
+		_globals[kinSpace] = -1;
+		_globals[kWindowFixed] = 0;
 	}
 
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -103,8 +103,8 @@ void Scene804::enter() {
 
 	_game.loadQuoteSet(791, 0);
 
-	if (_globals[165]) {
-		if (_globals[164]) {
+	if (_globals[kinSpace]) {
+		if (_globals[kWindowFixed]) {
 			_globals._spriteIndexes[20] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[5], 0, 1);
 			_scene->_sequences.addTimer(60, 100);
@@ -117,12 +117,12 @@ void Scene804::enter() {
 			_game._player._stepEnabled = false;
 		}
 	} else {
-		if (_globals[167] == 0) {
+		if (_globals[kBeamIsUp] == 0) {
 			_globals._spriteIndexes[23] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[8], false, 1);
 		}
 
-		if (_globals[164] == 0) {
+		if (_globals[kWindowFixed] == 0) {
 			_globals._spriteIndexes[23] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[19], false, 1);
 		}
@@ -137,7 +137,7 @@ void Scene804::enter() {
 
 	Scene8xx::enter1();
 
-	if (_globals[165] && !_globals[164]) {
+	if (_globals[kinSpace] && !_globals[kWindowFixed]) {
 		_scene->_userInterface.setup(2);
 		_vm->_sound->command(19);
 	}
@@ -191,9 +191,9 @@ void Scene804::step() {
 			if (_scene->_activeAnimation->getCurrentFrame() == 81) {
 				_globals._v5 = 80;
 			} else {
-				_globals[165] = 0;
-				_globals[167] = -1;
-				assert(!_globals[5]);
+				_globals[kinSpace] = 0;
+				_globals[kBeamIsUp] = -1;
+				assert(!_globals[kCopyProtectFailed]);
 				_game._winStatus = 4;
 				_vm->quitGame();
 			}
@@ -203,9 +203,9 @@ void Scene804::step() {
 			if (_scene->_activeAnimation->getCurrentFrame() == 68) {
 				_globals._v5 = 66;
 			} else {
-				_globals[165] = 0;
-				_globals[167] = -1;
-				assert(!_globals[5]);
+				_globals[kinSpace] = 0;
+				_globals[kBeamIsUp] = -1;
+				assert(!_globals[kCopyProtectFailed]);
 				_game._winStatus = 4;
 				_vm->quitGame();
 			}
@@ -225,10 +225,10 @@ void Scene804::step() {
 		if (_game._abortTimers == 80)
 			_scene->_nextSceneId = 803;
 
-		if (_scene->_activeAnimation->getCurrentFrame() == 7 && !_globals[164]) {
+		if (_scene->_activeAnimation->getCurrentFrame() == 7 && !_globals[kWindowFixed]) {
 			_globals._spriteIndexes[19] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_scene->_sequences.addTimer(20, 110);
-			_globals[164] = -1;
+			_globals[kWindowFixed] = -1;
 		}
 
 		if (_scene->_activeAnimation->getCurrentFrame() == 10) {
@@ -239,6 +239,7 @@ void Scene804::step() {
 
 		switch (_scene->_activeAnimation->getCurrentFrame()) {
 		case 1:
+			// CHECKME: GlobalID not in enum
 			_globals[29] = _vm->getRandomNumber(1, 30);
 			switch (_globals[29]) {
 			case 1:

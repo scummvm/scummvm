@@ -72,22 +72,22 @@ void Scene1xx::setPlayerSpritesPrefix() {
 	_vm->_sound->command(5);
 	Common::String oldName = _game._player._spritesPrefix;
 	if (_scene->_nextSceneId <= 103 || _scene->_nextSceneId == 111) {
-		if (_globals[0] == SEX_FEMALE) {
+		if (_globals[kSexOfRex] == SEX_FEMALE) {
 			_game._player._spritesPrefix = "ROX";
 		} else {
 			_game._player._spritesPrefix = "RXM";
-			_globals[0] = SEX_MALE;
+			_globals[kSexOfRex] = SEX_MALE;
 		}
 	} else if (_scene->_nextSceneId <= 110) {
 		_game._player._spritesPrefix = "RXSW";
-		_globals[0] = SEX_UNKNOWN;
+		_globals[kSexOfRex] = SEX_UNKNOWN;
 	} else if (_scene->_nextSceneId == 112) {
 		_game._player._spritesPrefix = "";
 	}
 
 	if (oldName == _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
-	if (_scene->_nextSceneId == 105 || (_scene->_nextSceneId == 109 && _globals[15])) {
+	if (_scene->_nextSceneId == 105 || (_scene->_nextSceneId == 109 && _globals[kHoovicAlive])) {
 		_game._player._spritesChanged = true;
 		_game._v3 = 0;
 	}
@@ -176,7 +176,7 @@ void Scene103::enter() {
 			_globals._spriteIndexes[10], false, 6);
 	}
 	
-	if (_globals[11]) {
+	if (_globals[kTurkeyExploded]) {
 		_globals._spriteIndexes[24] = _scene->_sequences.addSpriteCycle(
 			_globals._spriteIndexes[9], false, 6);
 		_scene->_sequences.setAnimRange(_globals._spriteIndexes[24], -2, -2);
@@ -362,14 +362,14 @@ void Scene103::actions() {
 			}
 
 			_game._player._stepEnabled = _game._abortTimers == 2;
-			_globals[11] = -1;
+			_globals[kTurkeyExploded] = -1;
 			if (_game._abortTimers == 2) {
 				Dialog::show(1030);
 				_scene->_hotspots.activate(362, false);
 			}
 		}
 	} else if (_action.isAction(VERB_LOOK, 250, 0)) {
-		Dialog::show(!_globals[11] ? 10323 : 10303);
+		Dialog::show(!_globals[kTurkeyExploded] ? 10323 : 10303);
 	}
 	else if (_action.isAction(VERB_TALKTO, 27, 0)) {
 		switch (_vm->_game->_abortTimers) {
