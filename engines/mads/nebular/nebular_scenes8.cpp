@@ -239,9 +239,8 @@ void Scene804::step() {
 
 		switch (_scene->_activeAnimation->getCurrentFrame()) {
 		case 1:
-			// CHECKME: GlobalID not in enum
-			_globals[29] = _vm->getRandomNumber(1, 30);
-			switch (_globals[29]) {
+			_globals[kRandomNumber] = _vm->getRandomNumber(1, 30);
+			switch (_globals[kRandomNumber]) {
 			case 1:
 				_globals._v5 = 25;
 				break;

@@ -52,6 +52,7 @@ enum GlobalId {
 	kFishIn105				= 19,
 	kFishIn107				= 20,
 	kFishIn108				= 21,
+	kRandomNumber           = 29,
 
 	/* Section #2 variables */
 	kCurtainOpen            = 30,
