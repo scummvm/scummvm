@@ -32,8 +32,6 @@ class MADSEngine;
 
 #define PALETTE_USAGE_COUNT 4
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-
 struct RGB4 {
 	byte r;
 	byte g;

@@ -29,6 +29,8 @@
 
 namespace MADS {
 
+#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+
 void RGB6::load(Common::SeekableReadStream *f) {
 	r = VGA_COLOR_TRANS(f->readByte());
 	g = VGA_COLOR_TRANS(f->readByte());
