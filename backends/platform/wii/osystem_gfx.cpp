@@ -717,8 +717,8 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 			u16 *d = (u16 *) tmp;
 			for (u16 y = 0; y < h; ++y) {
 				for (u16 x = 0; x < w; ++x) {
-					if (*s++ != _mouseKeyColor)
-						*d++ |= 7 << 12;
+					if (*s++ == _mouseKeyColor)
+						*d++ &= ~(7 << 12);
 					else
 						d++;
 				}
