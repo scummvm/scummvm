@@ -66,7 +66,7 @@ void InventoryObjects::load() {
 	}
 }
 
-void InventoryObjects::setData(int objIndex, int id, const byte *p) {
+void InventoryObjects::setQuality(int objIndex, int id, const byte *p) {
 	// TODO: This whole method seems weird. Check it out more thoroughly once
 	// more of the engine is implemented
 	for (int i = 0; i < (int)size(); ++i) {

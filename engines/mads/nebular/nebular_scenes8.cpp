@@ -90,7 +90,7 @@ void Scene804::enter() {
 	_globals._v8 = 0;
 	if (_globals[kCopyProtectFailed]) {
 		// Copy protection failed
-		_globals[kinSpace] = -1;
+		_globals[kInSpace] = true;
 		_globals[kWindowFixed] = 0;
 	}
 
@@ -103,7 +103,7 @@ void Scene804::enter() {
 
 	_game.loadQuoteSet(791, 0);
 
-	if (_globals[kinSpace]) {
+	if (_globals[kInSpace]) {
 		if (_globals[kWindowFixed]) {
 			_globals._spriteIndexes[20] = _scene->_sequences.startCycle(
 				_globals._spriteIndexes[5], 0, 1);
@@ -137,7 +137,7 @@ void Scene804::enter() {
 
 	Scene8xx::enter1();
 
-	if (_globals[kinSpace] && !_globals[kWindowFixed]) {
+	if (_globals[kInSpace] && !_globals[kWindowFixed]) {
 		_scene->_userInterface.setup(2);
 		_vm->_sound->command(19);
 	}
@@ -191,7 +191,7 @@ void Scene804::step() {
 			if (_scene->_activeAnimation->getCurrentFrame() == 81) {
 				_globals._v5 = 80;
 			} else {
-				_globals[kinSpace] = 0;
+				_globals[kInSpace] = 0;
 				_globals[kBeamIsUp] = -1;
 				assert(!_globals[kCopyProtectFailed]);
 				_game._winStatus = 4;
@@ -203,7 +203,7 @@ void Scene804::step() {
 			if (_scene->_activeAnimation->getCurrentFrame() == 68) {
 				_globals._v5 = 66;
 			} else {
-				_globals[kinSpace] = 0;
+				_globals[kInSpace] = 0;
 				_globals[kBeamIsUp] = -1;
 				assert(!_globals[kCopyProtectFailed]);
 				_game._winStatus = 4;

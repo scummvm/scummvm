@@ -323,7 +323,7 @@ void Scene::doFrame() {
 		_frameStartTime = _vm->_events->getFrameCounter();
 
 	if ((_action._inProgress && !player._moving && !_action._startWalkFlag &&
-			player._newDirection == player._direction) ||
+			player._turnToFacing == player._facing) ||
 			(_vm->_game->_abortTimers && _vm->_game->_abortTimersMode == ABORTMODE_0)) {
 		doAction();
 	}

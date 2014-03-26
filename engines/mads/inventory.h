@@ -28,6 +28,10 @@
 
 namespace MADS {
 
+enum {
+	NOWHERE = 1
+};
+
 class MADSEngine;
 
 class InventoryObject {
@@ -75,9 +79,9 @@ public:
 	}
 
 	/**
-	 * Set the associated data? pointer with an inventory object
+	 * Set the associated quality data for an inventory object
 	 */
-	void setData(int objIndex, int id, const byte *p);
+	void setQuality(int objIndex, int id, const byte *p);
 
 	/**
 	 * Sets an item's scene number

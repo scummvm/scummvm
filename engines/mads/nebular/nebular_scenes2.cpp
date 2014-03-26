@@ -152,7 +152,7 @@ void Scene201::enter() {
 		_game._player._playerPos = Common::Point(165, 152);
 	} else {
 		_game._player._playerPos = Common::Point(223, 149);
-		_game._player._direction = FACING_SOUTH;
+		_game._player._facing = FACING_SOUTH;
 	}
 
 	if (_globals[kTeleporterCommand] != 0) {
@@ -391,10 +391,10 @@ void Scene202::enter() {
 
 	if (_scene->_priorSceneId == 201) {
 		_game._player._playerPos = Common::Point(190, 91);
-		_game._player._direction = FACING_SOUTH;
+		_game._player._facing = FACING_SOUTH;
 	} else if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(178, 152);
-		_game._player._direction = FACING_NORTH;
+		_game._player._facing = FACING_NORTH;
 	}
 
 	if (_globals[kLadderBroken]) {
@@ -440,12 +440,12 @@ void Scene202::enter() {
 		if (_globals._v4) {
 			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(247, 82));
 			_game._player._playerPos = Common::Point(246, 124);
-			_game._player._direction = FACING_NORTH;
+			_game._player._facing = FACING_NORTH;
 			_globals[kTeleporterUnderstood] = -1;
 		} else {
 			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
 			_game._player._playerPos = Common::Point(171, 122);
-			_game._player._direction = FACING_NORTH;
+			_game._player._facing = FACING_NORTH;
 		}
 
 		_scene->loadAnimation(formAnimName('M', -1), 71);
@@ -456,7 +456,7 @@ void Scene202::enter() {
 		_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
 		_game._player._playerPos = Common::Point(246, 124);
-		_game._player._direction = FACING_NORTH;
+		_game._player._facing = FACING_NORTH;
 	}
 	_globals._abortVal = 0;
 }
@@ -470,7 +470,7 @@ void Scene202::setRandomKernelMessage() {
 }
 
 void Scene202::step() {
-	if ((_globals._v0 == 0) && (_game._player._playerPos == Common::Point(77, 105)) && (_game._player._direction == 8) && (_vm->getRandomNumber(999) == 0)) {
+	if ((_globals._v0 == 0) && (_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == 8) && (_vm->getRandomNumber(999) == 0)) {
 		_scene->_kernelMessages.reset();
 		_globals._v0 = 0;
 		if (_vm->getRandomNumber(4) == 0)
@@ -949,7 +949,7 @@ void Scene202::actions() {
 		} else if (action->isAction(0x3, 0x142, 0)) {
 			Dialog::show(0x4EF2);
 		} else if (action->isAction(0x3, 0xAA, 0)) {
-			if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._direction == 8))
+			if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == 8))
 				Dialog::show(0x4EF4);
 			else
 				Dialog::show(0x4EF3);
@@ -986,13 +986,13 @@ void Scene203::setup() {
 void Scene203::enter() {
 	if (_scene->_priorSceneId == 202) {
 		_game._player._playerPos = Common::Point(187, 99);
-		_game._player._direction = FACING_SOUTH;
+		_game._player._facing = FACING_SOUTH;
 	} else if (_scene->_priorSceneId == 209) {
 		_game._player._playerPos = Common::Point(308, 117);
-		_game._player._direction = FACING_WEST;
+		_game._player._facing = FACING_WEST;
 	} else if (_scene->_priorSceneId == -2) {
 		_game._player._playerPos = Common::Point(155, 152);
-		_game._player._direction = FACING_NORTH;
+		_game._player._facing = FACING_NORTH;
 	}
 
 	_globals._v0 = 0;
@@ -1032,7 +1032,7 @@ void Scene203::step() {
 	if ((_game._abortTimers == 0) && (_globals._frameTime != 0))
 		return;
 
-	if ((_game._player._playerPos != Common::Point(158, 136)) || (_game._player._direction != 2))
+	if ((_game._player._playerPos != Common::Point(158, 136)) || (_game._player._facing != 2))
 		return;
 
 	_globals._frameTime = 0xFFFF;
@@ -1239,10 +1239,10 @@ void Scene207::enter() {
 	_globals._v2 = 0;
 	if (_scene->_priorSceneId == 211) {
 		_game._player._playerPos = Common::Point(13, 105);
-		_game._player._direction = FACING_EAST;
+		_game._player._facing = FACING_EAST;
 	} else if (_scene->_priorSceneId == 214) {
 		_game._player._playerPos = Common::Point(164, 117);
-		_game._player._direction = FACING_SOUTH;
+		_game._player._facing = FACING_SOUTH;
 	} else if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(305, 131);
 	}
@@ -1386,16 +1386,16 @@ void Scene208::enter() {
 
 	if (_scene->_priorSceneId == 207) {
 		_game._player._playerPos = Common::Point(8, 122);
-		_game._player._direction = FACING_EAST;
+		_game._player._facing = FACING_EAST;
 	} else if (_scene->_priorSceneId == 203) {
 		_game._player._playerPos = Common::Point(142, 108);
-		_game._player._direction = FACING_SOUTH;
+		_game._player._facing = FACING_SOUTH;
 	} else if (_scene->_priorSceneId == 209) {
 		_game._player._playerPos = Common::Point(307, 123);
-		_game._player._direction = FACING_WEST;
+		_game._player._facing = FACING_WEST;
 	} else if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(162, 149);
-		_game._player._direction = FACING_NORTH;
+		_game._player._facing = FACING_NORTH;
 	}
 
 	_game.loadQuoteSet(0x81, 0x46, 0);
@@ -1421,7 +1421,7 @@ void Scene208::step() {
 	if (_globals._v0 == 0)
 		return;
 
-	if ((_game._player._playerPos != Common::Point(20, 148)) || (_game._player._direction != 6))
+	if ((_game._player._playerPos != Common::Point(20, 148)) || (_game._player._facing != 6))
 		return;
 
 	if ((_game._abortTimers == 0) && ((_globals._frameTime & 0xFFFF) != 0))
@@ -1515,7 +1515,7 @@ void Scene208::actions() {
 	} else if (_action.isAction(0x3, 0x1AA, 0)) {
 		Dialog::show(0x5149);
 	} else if (_action.isAction(0x3, 0x1A9, 0)) {
-		if (_game._difficultyLevel == DIFFICULTY_EASY)
+		if (_game._difficulty == DIFFICULTY_IMPOSSIBLE)
 			Dialog::show(0x514A);
 		else
 			Dialog::show(0x514B);

@@ -34,6 +34,8 @@ Globals::Globals() {
 	_spriteIndexes.resize(30);
 
 	// Initialise game flags
+	_timebombClock = 0;
+	_timebombTimer = 0;
 	_v0 = 0;
 	_frameTime = 0;
 	_v2 = 0;
@@ -51,6 +53,11 @@ Globals::Globals() {
 	_v84266 = 0;
 	_v84268 = 0;
 	_v84274 = 0;
+}
+
+void Globals::reset() {
+	for (uint i = 0; i < _flags.size(); ++i)
+		_flags[i] = 0;
 }
 
 } // End of namespace Nebular

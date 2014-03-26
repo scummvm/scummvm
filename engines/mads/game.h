@@ -40,7 +40,7 @@ enum {
 };
 
 enum Difficulty {
-	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
+	DIFFICULTY_HARD = 1, DIFFICULTY_REALLY_HARD = 2, DIFFICULTY_IMPOSSIBLE = 3
 };
 
 enum ProtectionResult {
@@ -117,7 +117,7 @@ public:
 public:
 	Player _player;
 	ScreenObjects _screenObjects;
-	Difficulty _difficultyLevel;
+	Difficulty _difficulty;
 	int _sectionNumber;
 	int _priorSectionNumber;
 	int _currentSectionNumber;

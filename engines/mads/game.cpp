@@ -42,7 +42,7 @@ Game *Game::init(MADSEngine *vm) {
 Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm), 
 		_scene(vm), _screenObjects(vm), _player(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
-	_difficultyLevel = DIFFICULTY_HARD;
+	_difficulty = DIFFICULTY_HARD;
 	_saveSlot = -1;
 	_statusFlag = 0;
 	_sectionHandler = nullptr;
@@ -207,7 +207,7 @@ void Game::sectionLoop() {
 
 		_scene._action.clear();
 		_player.turnToDestFacing();
-		_player._direction = _player._newDirection;
+		_player._facing = _player._turnToFacing;
 		_player.moveComplete();
 
 		switch (_vm->_screenFade) {
@@ -231,8 +231,8 @@ void Game::sectionLoop() {
 
 		// Set player data
 		_player._destPos = _player._playerPos;
-		_player._newDirection = _player._direction;
-		_player._targetFacing = _player._direction;
+		_player._turnToFacing = _player._facing;
+		_player._targetFacing = _player._facing;
 		_player.setupFrame();
 		_player.updateFrame();
 		_player._visible3 = _player._visible;

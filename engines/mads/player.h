@@ -105,8 +105,8 @@ private:
 public:
 	MADSAction *_action;
 
-	Facing _direction;
-	Facing _newDirection;
+	Facing _facing;
+	Facing _turnToFacing;
 	int _xDirection, _yDirection;
 	Facing _targetFacing;
 	bool _spritesLoaded;

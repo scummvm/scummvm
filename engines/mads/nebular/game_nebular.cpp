@@ -58,96 +58,178 @@ ProtectionResult GameNebular::checkCopyProtection() {
 }
 
 void GameNebular::initialiseGlobals() {
-	// Set specific values needed by the game
-	_globals[4] = 8;
-	_globals[33] = 1;
-	_globals[10] = -1;
-	_globals[13] = -1;
-	_globals[15] = -1;
-	_globals[19] = -1;
-	_globals[20] = -1;
-	_globals[21] = -1;
-	_globals[95] = -1;
+	int count, count2;
+	int bad;
 
-	_objects.setData(3, 17, nullptr);
+	_globals.reset();
+	_globals[kTalkInanimateCount] = 8;
 
-	// Put the values 0 through 3 in a random order in global slots 83 to 86
-	for (int i = 0; i < 4;) {
-		int randomVal = _vm->getRandomNumber(3);
-		_globals[83 + i] = randomVal;
+	/* Section #1 variables */
+	_globals[kNeedToStandUp] = true;
+	_globals[kTurkeyExploded] = false;
+	_globals[kMedicineCabinetOpen] = false;
+	_globals[kMedicineCabinetVirgin] = true;
+	_globals[kWatchedViewScreen] = false;
+	_globals[kHoovicAlive] = true;
+	_globals[kWaterInAPuddle] = false;
 
-		bool flag = false;
-		for (int idx2 = 0; idx2 < i; ++idx2) {
-			if (_globals[83 + idx2] == randomVal)
-				flag = true;
-		}
+	_globals[kFishIn105] = true;
+	_globals[kFishIn107] = true;
+	_globals[kFishIn108] = true;
 
-		if (!flag)
-			++i;
+	/* Section #2 variables */
+	_globals[kLadderBroken] = false;
+	_globals[kBone202Status] = 0;
+	_globals[kRhotundaStatus] = RHOTUNDA_HUNGRY;
+	_globals[kMonkeyStatus] = MONKEY_AMBUSH_READY;
+	_globals[kMeteorologistStatus] = METEOROLOGIST_PRESENT;
+	_globals[kMeteorologistEverSeen] = false;
+	_globals[kMeteorologistWatch] = METEOROLOGIST_NORMAL;
+	_globals[kTeleporterCommand] = TELEPORTER_NONE;
+	_globals[kTeleporterUnderstood] = false;
+	_globals[kTwinklesStatus] = TWINKLES_AT_HOME;
+	_globals[kTwinklesApproached] = 0;
+
+	/* Section #3 variables */
+	_globals[kAfterHavoc] = false;
+	_globals[kKickedIn391Grate] = false;
+
+	/* Section #4 variables */
+	_globals[kBadFirstIngredient] = -1;
+	_objects.setQuality(OBJ_CHARGE_CASES, EXPLOSIVES_INSIDE, nullptr);
+	_globals[kHasPurchased] = false;
+	_globals[kBeenThruHelgaScene] = false;
+	_globals[kNextIngredient] = 0;
+	_globals[kHasSaidTimer] = false;
+	_globals[kHasSaidBinocs] = false;
+	_globals[kBottleDisplayed] = false;
+	_globals[kHasBeenScanned] = false;
+	_globals[kSomeoneHasExploded] = false;
+
+	// Generate a random ingredient list
+	for (count = 0; count < 4; ++count) {
+		do {
+			_globals[kIngredientList + count] = _vm->getRandomNumber(3);
+			bad = false;
+			for (count2 = 0; count2 < count; ++count2) {
+				if (_globals[kIngredientList + count] == _globals[kIngredientList + count2]) {
+					bad = true;
+				}
+			}
+		} while (bad);
 	}
 
-	// Put the values 0 through 3 in a random order in global slots 87 to 90
-	for (int i = 0; i < 4;) {
-		int randomVal = _vm->getRandomNumber(3);
-		_globals[87 + i] = randomVal;
-
-		bool flag = false;
-		for (int idx2 = 0; idx2 < i; ++idx2) {
-			if (_globals[87 + idx2] == randomVal)
-				flag = true;
-		}
-
-		if (!flag)
-			++i;
+	// Generate random ingredient quantities
+	for (count = 0; count < 4; ++count) {
+		do {
+			_globals[kIngredientQuantity + count] = _vm->getRandomNumber(3);
+			bad = false;
+			for (count2 = 0; count2 < count; ++count2) {
+				if (_globals[kIngredientQuantity + count] == _globals[kIngredientQuantity + count2]) {
+					bad = true;
+				}
+			}
+		} while (bad);
 	}
 
-	_globals[120] = 501;
-	_globals[121] = -1;
-	_globals[55] = -1;
-	_globals[119] = 1;
-	_globals[134] = 4;
 
-	// Fill out the globals 200 to 209 with unique random values less than 10000
-	for (int i = 0; i < 10; ++i) {
-		int randomVal = _vm->getRandomNumber(9999);
-		_globals[200 + i] = randomVal;
+	/* Section #5 variables */
+	_globals[kHoverCarLocation] = 501;
+	_globals[kHoverCarDestination] = -1;
+	_globals[kCityFlooded] = false;
+	_globals[kBoatRaised] = true;
+	_globals[kLaserHoleIsThere] = false;
+	_globals[kLineStatus] = LINE_NOT_DROPPED;
 
-		bool flag = false;
-		for (int idx2 = 0; idx2 < i; ++idx2) {
-			if (_globals[200 + idx2] == randomVal)
-				flag = true;
-		}
 
-		if (!flag)
-			++i;
+	/* Section #6 variables */
+	_globals[kHasTalkedToHermit] = false;
+	_globals[kHandsetCellStatus] = FIRST_TIME_PHONE_CELLS;
+	_globals[kTimebombStatus] = TIMEBOMB_DEACTIVATED;
+	_globals[kWarnedFloodCity] = false;
+	_globals._timebombClock = 0;
+	_globals._timebombTimer = 0;
+
+
+	/* Section #7 variables */
+	_globals[kBottleStatus] = BOTTLE_EMPTY;
+	_globals[kBoatStatus] = BOAT_UNFLOODED;
+
+
+	/* Section #8 variables */
+	_globals[kWindowFixed] = false;
+	_globals[kInSpace] = false;
+	_globals[kReturnFromCut] = false;
+	_globals[kBeamIsUp] = false;
+	_globals[kForceBeamDown] = false;
+	_globals[kCameFromCut] = false;
+	_globals[kDontRepeat] = false;
+	_globals[kHoppyDead] = false;
+	_globals[kHasWatchedAntigrav] = false;
+	_globals[kRemoteSequenceRan] = false;
+	_globals[kRemoteOnGround] = false;
+	_globals[kFromCockpit] = false;
+	_globals[kExitShip] = false;
+	_globals[kBetweenRooms] = false;
+	_globals[kTopButtonPushed] = false;
+	_globals[kShieldModInstalled] = false;
+	_globals[kTargetModInstalled] = false;
+	_globals[kUpBecauseOfRemote] = false;
+
+
+	/* Set up the game's teleporters */
+	_globals[kTeleporterRoom] = 201;
+	_globals[kTeleporterRoom + 1] = 301;
+	_globals[kTeleporterRoom + 2] = 413;
+	_globals[kTeleporterRoom + 3] = 706;
+	_globals[kTeleporterRoom + 4] = 801;
+	_globals[kTeleporterRoom + 5] = 551;
+	_globals[kTeleporterRoom + 6] = 752;
+	_globals[kTeleporterRoom + 7] = 0;
+	_globals[kTeleporterRoom + 8] = 0;
+	_globals[kTeleporterRoom + 9] = 0;
+
+	for (count = 0; count < TELEPORTER_COUNT; ++count) {
+		do {
+			_globals[kTeleporterCode + count] = _vm->getRandomNumber(9999);
+			bad = false;
+			for (count2 = 0; count2 < count; ++count2) {
+				if (_globals[kTeleporterCode + count] == _globals[kTeleporterCode + count2]) {
+					bad = true;
+				}
+			}
+		} while (bad);
 	}
 
-	// Difficulty level control
-	switch (_difficultyLevel) {
+	// Final setup based on selected difficulty level
+	switch (_difficulty) {
 	case DIFFICULTY_HARD:
-		_globals[35] = 0;
-		_objects.setRoom(9, 1);
-		_objects.setRoom(50, 1);
-		_globals[137] = 5;
-		_globals[136] = 0;
+		_objects.setRoom(OBJ_PLANT_STALK, NOWHERE);
+		_objects.setRoom(OBJ_PENLIGHT, NOWHERE);
+
+		_globals[kLeavesStatus] = LEAVES_ON_TRAP;
 		break;
-	case DIFFICULTY_MEDIUM:
-		_globals[35] = 0;
-		_objects.setRoom(8, 1);
-		_globals[137] = -1;
-		_globals[136] = 6;
+
+	case DIFFICULTY_REALLY_HARD:
+		_objects.setRoom(OBJ_PLANT_STALK, NOWHERE);
+
+		_globals[kLeavesStatus] = LEAVES_ON_GROUND;
+		_globals[kDurafailRecharged] = true;
+		_globals[kPenlightCellStatus] = FIRST_TIME_CHARGED_DURAFAIL;
 		break;
-	case DIFFICULTY_EASY:
-		_globals[35] = 2;
-		_objects.setRoom(8, 1);
-		_objects.setRoom(27, 1);
-		break;
-	default:
+
+	case DIFFICULTY_IMPOSSIBLE:
+		_objects.setRoom(OBJ_BLOWGUN, NOWHERE);
+		_objects.setRoom(OBJ_NOTE, NOWHERE);
+
+		_globals[kLeavesStatus] = LEAVES_ON_GROUND;
+		_globals[kPenlightCellStatus] = FIRST_TIME_UNCHARGED_DURAFAIL;
+		_globals[kDurafailRecharged] = false;
 		break;
 	}
 
-	_player._direction = FACING_NORTH;
-	_player._newDirection = FACING_NORTH;
+	_player._facing = FACING_NORTH;
+	_player._turnToFacing = FACING_NORTH;
 
 	loadResourceSequence("RXM", 1);
 	loadResourceSequence("ROX", 1);

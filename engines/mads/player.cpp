@@ -34,8 +34,8 @@ const int Player::_directionListIndexes[32] = {
 
 Player::Player(MADSEngine *vm): _vm(vm) {
 	_action = nullptr;
-	_direction = FACING_NORTH;
-	_newDirection = FACING_NORTH;
+	_facing = FACING_NORTH;
+	_turnToFacing = FACING_NORTH;
 	_targetFacing = FACING_NORTH;
 	_spritesLoaded = false;
 	_spritesStart = 0;
@@ -73,7 +73,7 @@ void Player::reset() {
 	_action = &_vm->_game->_scene._action;
 	_destPos = _playerPos;
 	_targetFacing = FACING_NONE;
-	_newDirection = _direction;
+	_turnToFacing = _facing;
 	_moving = false;
 	_newSceneId = _v844BE = 0;
 	_next = 0;
@@ -133,42 +133,42 @@ bool Player::loadSprites(const Common::String &prefix) {
 
 void Player::turnToDestFacing() {
 	if (_targetFacing != 5)
-		_newDirection = _targetFacing;
+		_turnToFacing = _targetFacing;
 }
 
 void Player::dirChanged() {
 	int dirIndex = 0, dirIndex2 = 0;
 	int newDir = 0, newDir2 = 0;
 
-	if (_direction != _newDirection) {
+	if (_facing != _turnToFacing) {
 		// Find the index for the given direction in the player direction list
-		int tempDir = _direction;
+		int tempDir = _facing;
 		do {
 			++dirIndex;
 			newDir += tempDir;
 			tempDir = _directionListIndexes[tempDir + 10];
-		} while (tempDir != _newDirection);
+		} while (tempDir != _turnToFacing);
 	}
 
 
-	if (_direction != _newDirection) {
+	if (_facing != _turnToFacing) {
 		// Find the index for the given direction in the player direction list
-		int tempDir = _direction;
+		int tempDir = _facing;
 		do {
 			++dirIndex2;
 			newDir2 += tempDir;
 			tempDir = _directionListIndexes[tempDir + 20];
-		} while (tempDir != _newDirection);
+		} while (tempDir != _turnToFacing);
 	}
 
 	int diff = dirIndex - dirIndex2;
 	if (diff == 0)
 		diff = newDir - newDir2;
 
-	_direction = (diff >= 0) ? (Facing)_directionListIndexes[_direction + 20] : 
-		(Facing)_directionListIndexes[_direction + 10];
+	_facing = (diff >= 0) ? (Facing)_directionListIndexes[_facing + 20] :
+		(Facing)_directionListIndexes[_facing + 10];
 	setupFrame();
-	if ((_direction == _newDirection) && !_moving)
+	if ((_facing == _turnToFacing) && !_moving)
 		updateFrame();
 
 	_priorTimer += 1;
@@ -184,7 +184,7 @@ void Player::setupFrame() {
 
 	resetActionList();
 	_frameOffset = 0;
-	_spritesIdx = _directionListIndexes[_direction];
+	_spritesIdx = _directionListIndexes[_facing];
 	if (!_spriteSetsPresent[_spritesIdx]) {
 		// Direction isn't present, so use alternate direction, with entries flipped
 		_spritesIdx -= 4;
@@ -425,7 +425,7 @@ void Player::move() {
 	if (routeFlag && _moving)
 		startMovement();
 
-	if (_newDirection != _direction)
+	if (_turnToFacing != _facing)
 		dirChanged();
 	else if (!_moving)
 		updateFrame();
@@ -436,7 +436,7 @@ void Player::move() {
 		var1 = MAX(1, 10000 / (v1 * _currentScale * var1));
 	}
 
-	if (!_moving || (_direction != _newDirection))
+	if (!_moving || (_facing != _turnToFacing))
 		return;
 
 	Common::Point newPos = _playerPos;
@@ -490,7 +490,7 @@ void Player::move() {
 void Player::idle() {
 	Scene &scene = _vm->_game->_scene;
 
-	if (_direction != _newDirection) {
+	if (_facing != _turnToFacing) {
 		// The direction has changed, so reset for new direction
 		dirChanged();
 		return;
@@ -717,14 +717,14 @@ void Player::startMovement() {
 
 	switch (majorDir) {
 	case 1:
-		_newDirection = (_yDirection <= 0) ? FACING_NORTH : FACING_SOUTH;
+		_turnToFacing = (_yDirection <= 0) ? FACING_NORTH : FACING_SOUTH;
 		break;
 	case 2: {
-		_newDirection = (Facing)(((_yDirection <= 0) ? 9 : 3) - ((_xDirection <= 0) ? 2 : 0));
+		_turnToFacing = (Facing)(((_yDirection <= 0) ? 9 : 3) - ((_xDirection <= 0) ? 2 : 0));
 		break;
 	}
 	case 3:
-		_newDirection = (_xDirection <= 0) ? FACING_WEST : FACING_EAST;
+		_turnToFacing = (_xDirection <= 0) ? FACING_WEST : FACING_EAST;
 		break;
 	default:
 		break;
