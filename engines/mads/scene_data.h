@@ -32,6 +32,7 @@
 #include "mads/assets.h"
 #include "mads/events.h"
 #include "mads/game_data.h"
+#include "mads/hotspots.h"
 #include "mads/messages.h"
 #include "mads/user_interface.h"
 
@@ -45,7 +46,6 @@ class SpriteSlot;
 #define MADS_SCENE_HEIGHT 156
 
 #define DEPTH_BANDS_SIZE 15
-#define MAX_ROUTE_NODES 22
 
 #define SPRITE_SLOTS_MAX_SIZE 50
 #define TEXT_DISPLAY_MAX_SIZE 40

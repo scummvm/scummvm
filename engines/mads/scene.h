@@ -119,7 +119,7 @@ public:
 	bool _roomChanged;
 	bool _reloadSceneFlag;
 	Common::Point _destPos;
-	int _destFacing;
+	Facing _targetFacing;
 	Common::Point _posAdjust;
 	uint32 _frameStartTime;
 	Layer _layer;

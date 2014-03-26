@@ -146,8 +146,8 @@ void GameNebular::initialiseGlobals() {
 		break;
 	}
 
-	_player._direction = 8;
-	_player._newDirection = 8;
+	_player._direction = FACING_NORTH;
+	_player._newDirection = FACING_NORTH;
 
 	loadResourceSequence("RXM", 1);
 	loadResourceSequence("ROX", 1);

@@ -34,9 +34,9 @@ const int Player::_directionListIndexes[32] = {
 
 Player::Player(MADSEngine *vm): _vm(vm) {
 	_action = nullptr;
-	_direction = 8;
-	_newDirection = 8;
-	_destFacing = 0;
+	_direction = FACING_NORTH;
+	_newDirection = FACING_NORTH;
+	_targetFacing = FACING_NORTH;
 	_spritesLoaded = false;
 	_spritesStart = 0;
 	_spritesIdx = 0;
@@ -72,7 +72,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 void Player::reset() {
 	_action = &_vm->_game->_scene._action;
 	_destPos = _playerPos;
-	_destFacing = 5;
+	_targetFacing = FACING_NONE;
 	_newDirection = _direction;
 	_moving = false;
 	_newSceneId = _v844BE = 0;
@@ -132,8 +132,8 @@ bool Player::loadSprites(const Common::String &prefix) {
 }
 
 void Player::turnToDestFacing() {
-	if (_destFacing != 5)
-		_newDirection = _destFacing;
+	if (_targetFacing != 5)
+		_newDirection = _targetFacing;
 }
 
 void Player::dirChanged() {
@@ -165,7 +165,8 @@ void Player::dirChanged() {
 	if (diff == 0)
 		diff = newDir - newDir2;
 
-	_direction = (diff >= 0) ? _directionListIndexes[_direction + 20] : _directionListIndexes[_direction + 10];
+	_direction = (diff >= 0) ? (Facing)_directionListIndexes[_direction + 20] : 
+		(Facing)_directionListIndexes[_direction + 10];
 	setupFrame();
 	if ((_direction == _newDirection) && !_moving)
 		updateFrame();
@@ -330,13 +331,13 @@ void Player::resetActionList() {
 	_unk3 = 0;
 }
 
-void Player::setDest(const Common::Point &pt, int facing) {
+void Player::setDest(const Common::Point &pt, Facing facing) {
 	Scene &scene = _vm->_game->_scene;
 
 	resetActionList();
 	setTicksAmount();
 	_moving = true;
-	_destFacing = facing;
+	_targetFacing = facing;
 
 	scene._sceneInfo->setRouteNode(scene._sceneInfo->_nodes.size() - 2,
 		_playerPos, scene._depthSurface);
@@ -359,14 +360,14 @@ void Player::setDest(const Common::Point &pt, int facing) {
 	}
 }
 
-void Player::startWalking(const Common::Point &pos, int direction) {
+void Player::startWalking(const Common::Point &pos, Facing direction) {
 	Scene &scene = _vm->_game->_scene;
 
 	reset();
 	scene._action._startWalkFlag = true;
 	scene._action._walkFlag = true;
 	scene._destPos = pos;
-	scene._destFacing = direction;
+	scene._targetFacing = direction;
 }
 
 void Player::nextFrame() {
@@ -716,14 +717,14 @@ void Player::startMovement() {
 
 	switch (majorDir) {
 	case 1:
-		_newDirection = (_yDirection <= 0) ? 8 : 2;
+		_newDirection = (_yDirection <= 0) ? FACING_NORTH : FACING_SOUTH;
 		break;
 	case 2: {
-				_newDirection = ((_yDirection <= 0) ? 9 : 3) - ((_xDirection <= 0) ? 2 : 0);
-				break;
+		_newDirection = (Facing)(((_yDirection <= 0) ? 9 : 3) - ((_xDirection <= 0) ? 2 : 0));
+		break;
 	}
 	case 3:
-		_newDirection = (_xDirection <= 0) ? 4 : 6;
+		_newDirection = (_xDirection <= 0) ? FACING_WEST : FACING_EAST;
 		break;
 	default:
 		break;

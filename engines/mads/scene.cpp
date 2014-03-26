@@ -42,7 +42,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_depthStyle = 0;
 	_roomChanged = false;
 	_reloadSceneFlag = false;
-	_destFacing = 0;
+	_targetFacing = FACING_NONE;
 	_freeAnimationFlag = false;
 	_animationData = nullptr;
 	_activeAnimation = nullptr;
@@ -504,7 +504,7 @@ void Scene::doAction() {
 
 void Scene::checkStartWalk() {
 	if (_action._startWalkFlag && _action._walkFlag) {
-		_vm->_game->_player.setDest(_destPos, _destFacing);
+		_vm->_game->_player.setDest(_destPos, _targetFacing);
 		_action._startWalkFlag = false;
 	}
 }

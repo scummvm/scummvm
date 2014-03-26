@@ -305,13 +305,13 @@ void MADSAction::startAction() {
 			if ((hs._feetPos.x == -1) || (hs._feetPos.x == -3)) {
 				checkCustomDest(hs._feetPos.x);
 			} else if (hs._feetPos.x == 0) {
-				scene._destFacing = hs._facing;
+				scene._targetFacing = hs._facing;
 			} else if (_savedFields._actionMode == ACTIONMODE_NONE || hs._cursor >= CURSOR_WAIT) {
 				_startWalkFlag = true;
 				scene._destPos = hs._feetPos;
 			}
 
-			scene._destFacing = hs._facing;
+			scene._targetFacing = hs._facing;
 			hotspotId = -1;
 		}
 	}
@@ -328,7 +328,7 @@ void MADSAction::startAction() {
 			}
 		}
 
-		scene._destFacing = hs._facing;
+		scene._targetFacing = hs._facing;
 	}
 
 	_walkFlag = _startWalkFlag;

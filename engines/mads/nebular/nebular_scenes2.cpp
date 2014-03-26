@@ -144,7 +144,7 @@ void Scene201::enter() {
 	_scene->_sequences.setMsgPosition(_globals._spriteIndexes[19], Common::Point(185, 46));
 
 	int idx = _scene->_dynamicHotspots.add(1159, 209, _globals._spriteIndexes[19], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, 186, 81, 8);
+	_scene->_dynamicHotspots.setPosition(idx, 186, 81, FACING_NORTH);
 
 	_globals._v0 = 0;
 
@@ -152,7 +152,7 @@ void Scene201::enter() {
 		_game._player._playerPos = Common::Point(165, 152);
 	} else {
 		_game._player._playerPos = Common::Point(223, 149);
-		_game._player._direction = 2;
+		_game._player._direction = FACING_SOUTH;
 	}
 
 	if (_globals[39] != 0) {
@@ -197,7 +197,7 @@ void Scene201::enter() {
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[21], SM_FRAME_INDEX, 12, 70);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 1);
 		_globals._frameTime = 0;
-		_game._player.startWalking(Common::Point(157, 143), 8);
+		_game._player.startWalking(Common::Point(157, 143), FACING_NORTH);
 		_vm->_palette->setEntry(252, 45, 63, 45);
 		_vm->_palette->setEntry(253, 20, 45, 20);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 2, 0, 120, _game.getQuote(90));
@@ -214,7 +214,7 @@ void Scene201::step() {
 	if ((_globals._frameTime) && (_vm->getRandomNumber(5000) == 9)) {
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 6, 0);
 		int idx = _scene->_dynamicHotspots.add(351, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 270, 80, 6);
+		_scene->_dynamicHotspots.setPosition(idx, 270, 80, FACING_EAST);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[20], 8);
 		_vm->_sound->command(14);
 		_globals._frameTime = 0;
@@ -368,14 +368,14 @@ void Scene202::enter() {
 	_scene->_sequences.setMsgPosition(_globals._spriteIndexes[17], Common::Point(149, 113));
 	_scene->_sequences.setDepth(_globals._spriteIndexes[17], 10);
 	int idx = _scene->_dynamicHotspots.add(320, 13, _globals._spriteIndexes[17], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, 153, 97, 2);
+	_scene->_dynamicHotspots.setPosition(idx, 153, 97, FACING_SOUTH);
 
 	if (_globals[32] & 1) {
 		_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[16], Common::Point(130, 108));
 		_scene->_sequences.setDepth(_globals._spriteIndexes[16], 10);
 		idx = _scene->_dynamicHotspots.add(44, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 132, 97, 2);
+		_scene->_dynamicHotspots.setPosition(idx, 132, 97, FACING_SOUTH);
 	}
 
 	if (_globals[32] & 2) {
@@ -383,7 +383,7 @@ void Scene202::enter() {
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[21], Common::Point(166, 110));
 		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 10);
 		idx = _scene->_dynamicHotspots.add(44, 13, _globals._spriteIndexes[21], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 165, 99, 2);
+		_scene->_dynamicHotspots.setPosition(idx, 165, 99, FACING_SOUTH);
 	}
 
 	if (_globals[32])
@@ -391,10 +391,10 @@ void Scene202::enter() {
 
 	if (_scene->_priorSceneId == 201) {
 		_game._player._playerPos = Common::Point(190, 91);
-		_game._player._direction = 2;
+		_game._player._direction = FACING_SOUTH;
 	} else if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(178, 152);
-		_game._player._direction = 8;
+		_game._player._direction = FACING_NORTH;
 	}
 
 	if (_globals[31]) {
@@ -402,7 +402,7 @@ void Scene202::enter() {
 		_scene->_sequences.setDepth(_globals._spriteIndexes[20], 6);
 		_scene->_hotspots.activate(199, false);
 		idx = _scene->_dynamicHotspots.add(457, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 246, 124, 8);
+		_scene->_dynamicHotspots.setPosition(idx, 246, 124, FACING_NORTH);
 	}
 
 	_game.loadQuoteSet(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
@@ -440,12 +440,12 @@ void Scene202::enter() {
 		if (_globals._v4) {
 			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(247, 82));
 			_game._player._playerPos = Common::Point(246, 124);
-			_game._player._direction = 8;
+			_game._player._direction = FACING_NORTH;
 			_globals[41] = -1;
 		} else {
 			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
 			_game._player._playerPos = Common::Point(171, 122);
-			_game._player._direction = 8;
+			_game._player._direction = FACING_NORTH;
 		}
 
 		_scene->loadAnimation(formAnimName('M', -1), 71);
@@ -456,7 +456,7 @@ void Scene202::enter() {
 		_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
 		_game._player._playerPos = Common::Point(246, 124);
-		_game._player._direction = 8;
+		_game._player._direction = FACING_NORTH;
 	}
 	_globals._abortVal = 0;
 }
@@ -540,7 +540,7 @@ void Scene202::step() {
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
 		_scene->_hotspots.activate(199, false);
 		int idx = _scene->_dynamicHotspots.add(457, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 246, 124, 8);
+		_scene->_dynamicHotspots.setPosition(idx, 246, 124, FACING_NORTH);
 		_scene->_sequences.updateTimeout(_globals._spriteIndexes[26], _globals._spriteIndexes[20]);
 		_scene->_sequences.updateTimeout(-1, _globals._spriteIndexes[26]);
 		_game._player._stepEnabled = true;
@@ -748,7 +748,7 @@ void Scene202::preActions() {
 			action->_startWalkFlag = true;
 
 		if (_globals._v4 == 0)
-			_game._player.startWalking(Common::Point(171, 122), 8);
+			_game._player.startWalking(Common::Point(171, 122), FACING_NORTH);
 	}
 }
 
@@ -815,7 +815,7 @@ void Scene202::actions() {
 
 				int idx = _scene->_dynamicHotspots.add(199, 79, -1, Common::Rect(241, 68, 12, 54));
 				warning("CHECKME: _globals._frameTime = _scene->_dynamicHotspots.setPosition(idx, 246, 124, 8);");
-				_globals._frameTime = _scene->_dynamicHotspots.setPosition(idx, 246, 124, 8);
+				_globals._frameTime = _scene->_dynamicHotspots.setPosition(idx, 246, 124, FACING_NORTH);
 				_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._spriteIndexes[23], 1);
 				_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 1);
@@ -986,13 +986,13 @@ void Scene203::setup() {
 void Scene203::enter() {
 	if (_scene->_priorSceneId == 202) {
 		_game._player._playerPos = Common::Point(187, 99);
-		_game._player._direction = 2;
+		_game._player._direction = FACING_SOUTH;
 	} else if (_scene->_priorSceneId == 209) {
 		_game._player._playerPos = Common::Point(308, 117);
-		_game._player._direction = 4;
+		_game._player._direction = FACING_WEST;
 	} else if (_scene->_priorSceneId == -2) {
 		_game._player._playerPos = Common::Point(155, 152);
-		_game._player._direction = 8;
+		_game._player._direction = FACING_NORTH;
 	}
 
 	_globals._v0 = 0;
@@ -1000,9 +1000,9 @@ void Scene203::enter() {
 
 	if ((_globals[34] == 0) && (_scene->_roomChanged == 0)) {
 		_globals._v0 = -1;
-		_game._player.startWalking(Common::Point(158, 135), 2);
+		_game._player.startWalking(Common::Point(158, 135), FACING_SOUTH);
 		int idx = _scene->_dynamicHotspots.add(131, 396, 0, Common::Rect(0, 0, 320, 156));
-		_scene->_dynamicHotspots.setPosition(idx, 155, 152, 2);
+		_scene->_dynamicHotspots.setPosition(idx, 155, 152, FACING_SOUTH);
 		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
 	}
 
@@ -1011,7 +1011,7 @@ void Scene203::enter() {
 		if (_vm->getRandomNumber(1, 3) == 2) {
 			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
 			int idx = _scene->_dynamicHotspots.add(477, 209, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, -2, 0, 0);
+			_scene->_dynamicHotspots.setPosition(idx, -2, 0, FACING_NONE);
 			_vm->_sound->command(14);
 		}
 	}
@@ -1053,7 +1053,7 @@ void Scene203::step() {
 
 void Scene203::preActions() {
 	if (_globals._v0 && !_action.isAction(0x18C, 0x83, 0)) {
-		_game._player.startWalking(Common::Point(158, 136), 2);
+		_game._player.startWalking(Common::Point(158, 136), FACING_SOUTH);
 		_action._inProgress = false;
 		return;
 	}
@@ -1110,11 +1110,11 @@ void Scene205::enter() {
 
 	_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 0, 3);
 	int idx = _scene->_dynamicHotspots.add(73, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, 162, 120, 9);
+	_scene->_dynamicHotspots.setPosition(idx, 162, 120, FACING_NORTHEAST);
 
 	_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
 	idx = _scene->_dynamicHotspots.add(73, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, 162, 120, 9);
+	_scene->_dynamicHotspots.setPosition(idx, 162, 120, FACING_NORTHEAST);
 
 	_globals._spriteIndexes[18] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 0, 0, 0);
 	_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
@@ -1125,7 +1125,7 @@ void Scene205::enter() {
 		_globals._v3 = _scene->_frameStartTime >> 16;
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
 		idx = _scene->_dynamicHotspots.add(269, 13, _globals._spriteIndexes[21], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 49, 86, 8);
+		_scene->_dynamicHotspots.setPosition(idx, 49, 86, FACING_NORTH);
 	}
 
 	if (_game._objects[12]._roomNumber == 0) {
@@ -1224,7 +1224,7 @@ void Scene207::enter() {
 		_globals._frameTime = _game._player._priorTimer;
 
 		int idx = _scene->_dynamicHotspots.add(389, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 254, 94, 4);
+		_scene->_dynamicHotspots.setPosition(idx, 254, 94, FACING_WEST);
 	}
 
 	if (_globals._v5) {
@@ -1233,16 +1233,16 @@ void Scene207::enter() {
 		_globals._v3 = _game._player._priorTimer & 0xFFFF;
 		_globals._v4 = _game._player._priorTimer >> 16;
 		int idx = _scene->_dynamicHotspots.add(333, 13, _globals._spriteIndexes[19], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 59, 132, 2);
+		_scene->_dynamicHotspots.setPosition(idx, 59, 132, FACING_SOUTH);
 	}
 
 	_globals._v2 = 0;
 	if (_scene->_priorSceneId == 211) {
 		_game._player._playerPos = Common::Point(13, 105);
-		_game._player._direction = 6;
+		_game._player._direction = FACING_EAST;
 	} else if (_scene->_priorSceneId == 214) {
 		_game._player._playerPos = Common::Point(164, 117);
-		_game._player._direction = 2;
+		_game._player._direction = FACING_SOUTH;
 	} else if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(305, 131);
 	}
@@ -1386,16 +1386,16 @@ void Scene208::enter() {
 
 	if (_scene->_priorSceneId == 207) {
 		_game._player._playerPos = Common::Point(8, 122);
-		_game._player._direction = 6;
+		_game._player._direction = FACING_EAST;
 	} else if (_scene->_priorSceneId == 203) {
 		_game._player._playerPos = Common::Point(142, 108);
-		_game._player._direction = 2;
+		_game._player._direction = FACING_SOUTH;
 	} else if (_scene->_priorSceneId == 209) {
 		_game._player._playerPos = Common::Point(307, 123);
-		_game._player._direction = 4;
+		_game._player._direction = FACING_WEST;
 	} else if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(162, 149);
-		_game._player._direction = 8;
+		_game._player._direction = FACING_NORTH;
 	}
 
 	_game.loadQuoteSet(0x81, 0x46, 0);
@@ -1484,7 +1484,7 @@ void Scene208::actions() {
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
 			_globals._v0 = true;
-			_game._player.startWalking(Common::Point(20, 148), 6);
+			_game._player.startWalking(Common::Point(20, 148), FACING_EAST);
 		}
 	} else if (_action.isAction(0x7, 0x35, 0x1A9)) {
 		warning("TODO: sub3B282(4);");

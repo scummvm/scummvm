@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "mads/events.h"
+#include "mads/player.h"
 
 namespace MADS {
 
@@ -36,7 +37,7 @@ public:
 	int _seqIndex;
 	Common::Rect _bounds;
 	Common::Point _feetPos;
-	int _facing;
+	Facing _facing;
 	int _descId;
 	int _vocabId;
 	int _articleNumber;
@@ -60,7 +61,7 @@ public:
 	Common::Array<MADS::DynamicHotspot>::size_type size() const { return _entries.size(); }
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
 	int add(int descId, int vocabId, int seqIndex, const Common::Rect &bounds);
-	int setPosition(int index, int xp, int yp, int facing);
+	int setPosition(int index, int xp, int yp, Facing facing);
 	int setCursor(int index, CursorType cursor);
 	void remove(int index);
 	void clear();
@@ -72,7 +73,7 @@ class Hotspot {
 public:
 	Common::Rect _bounds;
 	Common::Point _feetPos;
-	int _facing;
+	Facing _facing;
 	int _articleNumber;
 	bool _active;
 	CursorType _cursor;

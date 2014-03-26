@@ -27,7 +27,7 @@ namespace MADS {
 
 DynamicHotspot::DynamicHotspot() {
 	_seqIndex = 0;
-	_facing = 0;
+	_facing = FACING_NONE;
 	_descId = 0;
 	_vocabId = 0;
 	_articleNumber = 0;
@@ -61,7 +61,7 @@ int DynamicHotspots::add(int descId, int vocabId, int seqIndex, const Common::Re
 	_entries[idx]._bounds = bounds;
 	_entries[idx]._feetPos.x = -3;
 	_entries[idx]._feetPos.y = 0;
-	_entries[idx]._facing = 5;
+	_entries[idx]._facing = FACING_NONE;
 	_entries[idx]._vocabId = vocabId;
 	_entries[idx]._articleNumber = 6;
 	_entries[idx]._cursor = CURSOR_NONE;
@@ -75,7 +75,7 @@ int DynamicHotspots::add(int descId, int vocabId, int seqIndex, const Common::Re
 	return idx;
 }
 
-int DynamicHotspots::setPosition(int index, int xp, int yp, int facing) {
+int DynamicHotspots::setPosition(int index, int xp, int yp, Facing facing) {
 	if (index >= 0) {
 		_entries[index]._feetPos.x = xp;
 		_entries[index]._feetPos.y = yp;
@@ -147,7 +147,7 @@ void DynamicHotspots::refresh() {
 /*------------------------------------------------------------------------*/
 
 Hotspot::Hotspot() {
-	_facing = 0;
+	_facing = FACING_NONE;
 	_articleNumber = 0;
 	_cursor = CURSOR_NONE;
 	_vocabId = 0;
@@ -162,7 +162,7 @@ Hotspot::Hotspot(Common::SeekableReadStream &f) {
 	_bounds.bottom = f.readSint16LE();
 	_feetPos.x = f.readSint16LE();
 	_feetPos.y = f.readSint16LE();
-	_facing = f.readByte();
+	_facing = (Facing)f.readByte();
 	_articleNumber = f.readByte();
 	_active = f.readByte() != 0;
 	_cursor = (CursorType)f.readByte();

@@ -230,7 +230,7 @@ void Game::sectionLoop() {
 		// Set player data
 		_player._destPos = _player._playerPos;
 		_player._newDirection = _player._direction;
-		_player._destFacing = _player._direction;
+		_player._targetFacing = _player._direction;
 		_player.setupFrame();
 		_player.updateFrame();
 		_player._visible3 = _player._visible;

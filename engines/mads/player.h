@@ -29,9 +29,20 @@
 namespace MADS {
 
 class MADSEngine;
-class Action;
+class MADSAction;
 
 #define PLAYER_SPRITES_FILE_COUNT 8
+#define MAX_ROUTE_NODES 22
+
+/**
+ * Player facings
+ */
+enum Facing {
+	FACING_NORTH = 8, FACING_SOUTH = 2, FACING_EAST = 6, FACING_WEST = 4,
+	FACING_NORTHEAST = 9, FACING_SOUTHEAST = 3,
+	FACING_SOUTHWEST = 1, FACING_NORTHWEST = 7,
+	FACING_NONE = 5
+};
 
 class Player {
 private:
@@ -94,10 +105,10 @@ private:
 public:
 	MADSAction *_action;
 
-	int _direction;
-	int _newDirection;
+	Facing _direction;
+	Facing _newDirection;
 	int _xDirection, _yDirection;
-	int _destFacing;
+	Facing _targetFacing;
 	bool _spritesLoaded;
 	int _spritesStart;
 	int _spritesIdx;
@@ -151,9 +162,9 @@ public:
 
 	void idle();
 
-	void setDest(const Common::Point &pt, int facing);
+	void setDest(const Common::Point &pt, Facing facing);
 
-	void startWalking(const Common::Point &pos, int direction);
+	void startWalking(const Common::Point &pos, Facing direction);
 
 	void nextFrame();
 
