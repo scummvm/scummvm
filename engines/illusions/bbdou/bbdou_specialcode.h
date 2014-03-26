@@ -24,6 +24,7 @@
 #define ILLUSIONS_BBDOU_BBDOU_SPECIALCODE_H
 
 #include "illusions/specialcode.h"
+#include "illusions/thread.h"
 #include "common/hashmap.h"
 
 namespace Illusions {
@@ -35,6 +36,24 @@ struct CursorData;
 struct Item10;
 
 typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
+
+class BbdouSpecialCode;
+
+class CauseThread : public Thread {
+public:
+	CauseThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId,
+		BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId,
+		uint32 verbId, uint32 objectId2, uint32 objectId);
+	virtual void onNotify();
+	virtual void onTerminated();
+public:
+	BbdouSpecialCode *_bbdou;
+	uint32 _cursorObjectId;
+	uint32 _sceneId;
+	uint32 _verbId;
+	uint32 _objectId2;
+	uint32 _objectId;
+};
 
 class BbdouSpecialCode : public SpecialCode {
 public:
@@ -63,14 +82,18 @@ protected:
 	bool testValueRange(int value);
 	void setCursorControlRoutine(uint32 objectId, int num);
 	Common::Point getBackgroundCursorPos(Common::Point cursorPos);
-	bool runCause(Control *control, CursorData &cursorData,
-		uint32 verbId, uint32 objectId1, uint32 objectId2, int soundIndex);
 	void showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,
 		Item10 *item10, uint32 progResKeywordId);
 	bool findVerbId(Item10 *item10, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId);
 	void cursorInteractControlRoutine(Control *cursorControl, uint32 deltaTime);
 	void cursorControlRoutine2(Control *cursorControl, uint32 deltaTime);
 	bool updateTrackingCursor(Control *cursorControl);
+	bool testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 overlappedObjectId);
+	bool getCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId,
+		uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId);
+	bool runCause(Control *cursorControl, CursorData &cursorData,
+		uint32 verbId, uint32 objectId2, uint32 objectId, int soundIndex);
+	uint32 startCauseThread(uint32 cursorObjectId, uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
 };
 
 } // End of namespace Illusions

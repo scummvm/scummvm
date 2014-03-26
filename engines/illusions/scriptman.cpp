@@ -198,6 +198,13 @@ uint32 ScriptMan::startTalkThread(int16 duration, uint32 objectId, uint32 talkId
 	return tempThreadId;
 }
 
+bool ScriptMan::findTriggerCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs) {
+	ProgInfo *progInfo = _scriptResource->getProgInfo(sceneId & 0xFFFF);
+	if (progInfo)
+		return progInfo->findTriggerCause(verbId, objectId2, objectId, codeOffs);
+	return false;
+}
+
 void ScriptMan::setCurrFontId(uint32 fontId) {
 	_fontId = fontId;
 }

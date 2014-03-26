@@ -144,6 +144,15 @@ void TriggerObject::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		_causes[i].load(stream);
 }
 
+bool TriggerObject::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 &codeOffs) {
+	for (uint i = 0; i < _causesCount; ++i)
+		if (_causes[i]._verbId == verbId && _causes[i]._objectId2 == objectId2) {
+			codeOffs = _causes[i]._codeOffs;
+			return true;
+		}
+	return false;
+}
+
 // ProgInfo
 
 ProgInfo::ProgInfo()
@@ -184,6 +193,20 @@ void ProgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 			_triggerObjects[i].load(dataStart, stream);
 		}
 	}
+}
+
+bool ProgInfo::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs) {
+	TriggerObject *triggerObject = findTriggerObject(objectId);
+	if (triggerObject)
+		return triggerObject->findTriggerCause(verbId, objectId2, codeOffs);
+	return false;
+}
+
+TriggerObject *ProgInfo::findTriggerObject(uint32 objectId) {
+	for (uint i = 0; i < _triggerObjectsCount; ++i)
+		if (_triggerObjects[i]._objectId == objectId)
+			return &_triggerObjects[i];
+	return 0;
 }
 
 // ScriptResource
@@ -239,6 +262,10 @@ void ScriptResource::load(byte *data, uint32 dataSize) {
 
 byte *ScriptResource::getThreadCode(uint32 threadId) {
 	return _data + _codeOffsets[(threadId & 0xFFFF) - 1];
+}
+
+byte *ScriptResource::getCode(uint32 codeOffs) {
+	return _data + codeOffs;
 }
 
 ProgInfo *ScriptResource::getProgInfo(uint32 index) {
