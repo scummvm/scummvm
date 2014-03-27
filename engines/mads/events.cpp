@@ -177,21 +177,33 @@ void EventsManager::delay(int cycles) {
 }
 
 void EventsManager::waitForNextFrame() {
+	_mouseClicked = false;
+	_mouseReleased = false;
+	_mouseButtons = 0;
+
+	bool mouseClicked = false;
+	bool mouseReleased = false;
+	int mouseButtons = 0;
+
 	uint32 frameCtr = getFrameCounter();
-	while (!_vm->shouldQuit() && frameCtr == _frameCounter)
+	while (!_vm->shouldQuit() && frameCtr == _frameCounter) {
 		delay(1);
+
+		mouseClicked |= _mouseClicked;
+		mouseReleased |= _mouseReleased;
+		mouseButtons |= _mouseButtons;
+	}
+
+	_mouseClicked = mouseClicked;
+	_mouseReleased = mouseReleased;
+	_mouseButtons = mouseButtons;
+	_mouseMoved = _mouseClicked || _mouseReleased;
 }
 
 void EventsManager::initVars() {
 	_mousePos = Common::Point(-1, -1);
 	_vD4 = _vCC;
 	_vD2 = _vD8 = 0;
-}
-
-void EventsManager::resetMouseFlags() {
-	_mouseClicked = false;
-	_mouseReleased = false;
-	_mouseButtons = 0;
 }
 
 } // End of namespace MADS

@@ -272,9 +272,6 @@ void Scene::loop() {
 		// Handle drawing a game frame
 		doFrame();
 
-		// Reset mouse flags
-		_vm->_events->resetMouseFlags();
-
 		// TODO: Verify correctness of frame wait
 		_vm->_events->waitForNextFrame();
 

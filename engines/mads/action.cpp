@@ -557,8 +557,11 @@ void MADSAction::leftClick() {
 			_v86F4C = -1;
 			_v86F4E = 0;
 
-			if (_vm->_events->currentPos().y < MADS_SCENE_HEIGHT)
+			if (_vm->_events->currentPos().y < MADS_SCENE_HEIGHT) {
 				scene._customDest = _vm->_events->currentPos() + scene._posAdjust;
+				_selectedAction = -1;
+				_v86F4A = -1;
+			}
 			break;
 
 		case CAT_TALK_ENTRY:
