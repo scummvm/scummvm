@@ -50,7 +50,9 @@ protected:
 	void opSetRandomFrameDelay(Control *control, OpCall &opCall);
 	void opSetFrameSpeed(Control *control, OpCall &opCall);	
 	void opJump(Control *control, OpCall &opCall);
+	void opJumpRandom(Control *control, OpCall &opCall);
 	void opGotoSequence(Control *control, OpCall &opCall);
+	void opStartForeignSequence(Control *control, OpCall &opCall);
 	void opBeginLoop(Control *control, OpCall &opCall);
 	void opNextLoop(Control *control, OpCall &opCall);
 	void opSwitchActorIndex(Control *control, OpCall &opCall);
@@ -64,7 +66,8 @@ protected:
 	void opSetPriority(Control *control, OpCall &opCall);
 	void opSetPriorityLayer(Control *control, OpCall &opCall);
 	void opPlaySound(Control *control, OpCall &opCall);
-	void opStopSound(Control *control, OpCall &opCall);	
+	void opStopSound(Control *control, OpCall &opCall);
+	void opPlaceSubActor(Control *control, OpCall &opCall);	
 	
 };
 

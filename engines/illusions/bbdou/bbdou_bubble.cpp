@@ -60,8 +60,8 @@ void BbdouBubble::init() {
 		0x00040037, 0x00040038, 0x00040039, 0x0004003A
 	};
 
-	_field1414 = 0x4005B;
-	_field1418 = 0x4005C;
+	_objectId1414 = 0x4005B;
+	_objectId1418 = 0x4005C;
 
 	for (uint i = 0; i < 32; ++i)
 		_objectIds[i] = kObjectIds3[i];
@@ -145,6 +145,42 @@ void BbdouBubble::hide() {
 			subControl->disappearActor();
 		}
 	}
+}
+
+void BbdouBubble::setup(int16 minCount, Common::Point pt1, Common::Point pt2, uint32 progResKeywordId) {
+	for (uint i = 0; i < 32; ++i)
+		_items[i]._enabled = 0;
+	int16 maxCount = 32;
+	for (uint i = 0; i < _item0s.size(); ++i) {
+		Item0 *item0 = &_item0s[i];
+		if (item0->_count < maxCount && item0->_count >= minCount &&
+			(!progResKeywordId || item0->_progResKeywordId == progResKeywordId)) {
+			maxCount = item0->_count;
+			_currItem0 = item0; 
+		}
+	}
+	_pt1 = pt1;
+	_pt2 = pt2;
+	_currItem0->_pt = pt2;
+	_currItem0->_objectId = _objectId1414;
+	if (_prevItem0 && _prevItem0->_objectId == _currItem0->_objectId)
+		_currItem0->_objectId = _objectId1418;
+}
+
+uint32 BbdouBubble::addItem(uint positionIndex, uint32 sequenceId) {
+	for (uint i = 0; i < 32; ++i) {
+		Item141C *item = &_items[i];
+		if (!item->_enabled) {
+			Common::Point itemPos = _vm->getNamedPointPosition(_currItem0->_namedPointIds[positionIndex]);
+			Common::Point basePos = _vm->getNamedPointPosition(_currItem0->_baseNamedPointId);
+			item->_enabled = 1;
+			item->_sequenceId = sequenceId;
+			item->_position.x = itemPos.x + _currItem0->_pt.x - basePos.x;
+			item->_position.y = itemPos.y + _currItem0->_pt.y - basePos.y;
+			return item->_objectId;
+		}
+	}
+	return 0;
 }
 
 } // End of namespace Illusions

@@ -24,6 +24,7 @@
 #include "illusions/sequenceopcodes.h"
 #include "illusions/actor.h"
 #include "illusions/actorresource.h"
+#include "illusions/dictionary.h"
 #include "illusions/scriptopcodes.h"
 
 namespace Illusions {
@@ -59,7 +60,9 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(5, opSetRandomFrameDelay);
 	OPCODE(6, opSetFrameSpeed);
 	OPCODE(7, opJump);
+	OPCODE(8, opJumpRandom);
 	OPCODE(9, opGotoSequence);
+	OPCODE(10, opStartForeignSequence);
 	OPCODE(11, opBeginLoop);
 	OPCODE(12, opNextLoop);
 	OPCODE(14, opSwitchActorIndex);
@@ -74,6 +77,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(40, opSetPriorityLayer);
 	OPCODE(50, opPlaySound);
 	OPCODE(51, opStopSound);
+	OPCODE(53, opPlaceSubActor);
 }
 
 #undef OPCODE
@@ -142,6 +146,13 @@ void SequenceOpcodes::opJump(Control *control, OpCall &opCall) {
 	opCall._deltaOfs += jumpOffs;
 }
 
+void SequenceOpcodes::opJumpRandom(Control *control, OpCall &opCall) {
+	ARG_INT16(count);
+	ARG_SKIP(_vm->getRandom(count) * 2);
+	ARG_INT16(jumpOffs);
+	opCall._deltaOfs += jumpOffs;
+}
+
 void SequenceOpcodes::opGotoSequence(Control *control, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(nextSequenceId);
@@ -153,6 +164,13 @@ void SequenceOpcodes::opGotoSequence(Control *control, OpCall &opCall) {
 		control->startSequenceActor(nextSequenceId, 2, notifyThreadId1);
 	}
 	opCall._deltaOfs = 0;
+}
+
+void SequenceOpcodes::opStartForeignSequence(Control *control, OpCall &opCall) {
+	ARG_INT16(foreignObjectNum);
+	ARG_UINT32(sequenceId);
+	Control *foreignControl = _vm->_dict->getObjectControl(foreignObjectNum | 0x40000);
+	foreignControl->startSequenceActor(sequenceId, 2, 0);
 }
 
 void SequenceOpcodes::opBeginLoop(Control *control, OpCall &opCall) {
@@ -250,6 +268,13 @@ void SequenceOpcodes::opPlaySound(Control *control, OpCall &opCall) {
 void SequenceOpcodes::opStopSound(Control *control, OpCall &opCall) {
 	ARG_UINT32(soundEffectId);
 	// TODO _vm->stopSound(soundEffectId);
+}
+
+void SequenceOpcodes::opPlaceSubActor(Control *control, OpCall &opCall) {
+ 	ARG_INT16(linkIndex);
+ 	ARG_UINT32(actorTypeId);
+ 	ARG_UINT32(sequenceId);
+ 	_vm->_controls->placeSubActor(control->_objectId, linkIndex, actorTypeId, sequenceId);
 }
 
 } // End of namespace Illusions

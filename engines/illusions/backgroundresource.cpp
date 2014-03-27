@@ -86,7 +86,7 @@ void TileMap::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	uint32 mapOffs = stream.pos();
 	_map = dataStart + mapOffs;
 	
-	debug("TileMap::load() _width: %d; _height: %d",
+	debug(0, "TileMap::load() _width: %d; _height: %d",
 		_width, _height);
 }
 
@@ -104,7 +104,7 @@ void BgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_tileMap.load(dataStart, stream);
 	_tilePixels = dataStart + tilePixelsOffs;
 	
-	debug("BgInfo::load() _flags: %08X; _priorityBase: %d; tileMapOffs: %08X; tilePixelsOffs: %08X",
+	debug(0, "BgInfo::load() _flags: %08X; _priorityBase: %d; tileMapOffs: %08X; tilePixelsOffs: %08X",
 		_flags, _priorityBase, tileMapOffs, tilePixelsOffs);
 }
 
@@ -121,7 +121,7 @@ void PriorityLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_map += 8;
 	_values = dataStart + valuesOffs;
 	
-	debug("PriorityLayer::load() _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X; _mapWidth: %d; _mapHeight: %d",
+	debug(0, "PriorityLayer::load() _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X; _mapWidth: %d; _mapHeight: %d",
 		_width, _height, mapOffs, valuesOffs, _mapWidth, _mapHeight);
 }
 
@@ -140,7 +140,7 @@ void ScaleLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	uint32 valuesOffs = stream.readUint32LE();
 	_values = dataStart + valuesOffs;
 	
-	debug("ScaleLayer::load() _height: %d; valuesOffs: %08X",
+	debug(0, "ScaleLayer::load() _height: %d; valuesOffs: %08X",
 		_height, valuesOffs);
 }
 
@@ -158,7 +158,7 @@ void BackgroundObject::load(byte *dataStart, Common::SeekableReadStream &stream)
 	uint32 pointsConfigOffs = stream.readUint32LE();
 	_pointsConfig = dataStart + pointsConfigOffs;
 	
-	debug("BackgroundObject::load() _objectId: %08X; _flags: %04X; _priority: %d; pointsConfigOffs: %08X",
+	debug(0, "BackgroundObject::load() _objectId: %08X; _flags: %04X; _priority: %d; pointsConfigOffs: %08X",
 		_objectId, _flags, _priority, pointsConfigOffs);
 }
 
@@ -192,7 +192,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	_scaleLayers = new ScaleLayer[_scaleLayersCount];
 	stream.seek(0x2C);
 	uint32 scaleLayersOffs = stream.readUint32LE();
-	debug("_scaleLayersCount: %d", _scaleLayersCount);
+	debug(0, "_scaleLayersCount: %d", _scaleLayersCount);
 	for (uint i = 0; i < _scaleLayersCount; ++i) {
 		stream.seek(scaleLayersOffs + i * 8);
 		_scaleLayers[i].load(data, stream);
@@ -204,7 +204,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	_priorityLayers = new PriorityLayer[_priorityLayersCount];
 	stream.seek(0x34);
 	uint32 priorityLayersOffs = stream.readUint32LE();
-	debug("_priorityLayersCount: %d", _priorityLayersCount);
+	debug(0, "_priorityLayersCount: %d", _priorityLayersCount);
 	for (uint i = 0; i < _priorityLayersCount; ++i) {
 		stream.seek(priorityLayersOffs + i * 12);
 		_priorityLayers[i].load(data, stream);
@@ -216,11 +216,19 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	_backgroundObjects = new BackgroundObject[_backgroundObjectsCount];
 	stream.seek(0x44);
 	uint32 backgroundObjectsOffs = stream.readUint32LE();
-	debug("_backgroundObjectsCount: %d", _backgroundObjectsCount);
+	debug(0, "_backgroundObjectsCount: %d", _backgroundObjectsCount);
 	for (uint i = 0; i < _backgroundObjectsCount; ++i) {
 		stream.seek(backgroundObjectsOffs + i * 12);
 		_backgroundObjects[i].load(data, stream);
 	}
+	
+	// Load named points
+	stream.seek(0xC);
+	uint namedPointsCount = stream.readUint16LE();
+	stream.seek(0x24);
+	uint32 namedPointsOffs = stream.readUint32LE();
+	stream.seek(namedPointsOffs);
+	_namedPoints.load(namedPointsCount, stream);
 
 }
 
@@ -237,6 +245,10 @@ PriorityLayer *BackgroundResource::getPriorityLayer(uint index) {
 
 ScaleLayer *BackgroundResource::getScaleLayer(uint index) {
 	return &_scaleLayers[index];
+}
+
+bool BackgroundResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
+	return _namedPoints.findNamedPoint(namedPointId, pt);
 }
 
 // BackgroundItem
@@ -419,6 +431,11 @@ void BackgroundItems::refreshPan() {
 		WidthHeight dimensions = getMasterBgDimensions();
 		backgroundItem->refreshPan(dimensions);
 	}
+}
+
+bool BackgroundItems::findActiveBackgroundNamedPoint(uint32 namedPointId, Common::Point &pt) {
+	BackgroundResource *backgroundResource = getActiveBgResource();
+	return backgroundResource ? backgroundResource->findNamedPoint(namedPointId, pt) : false;
 }
 
 BackgroundItem *BackgroundItems::debugFirst() {

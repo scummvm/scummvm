@@ -20,53 +20,13 @@
  *
  */
 
-#ifndef ILLUSIONS_GRAPHICS_H
-#define ILLUSIONS_GRAPHICS_H
-
-#include "common/array.h"
-#include "common/rect.h"
-#include "common/stream.h"
+#include "illusions/illusions.h"
+#include "illusions/bbdou/bbdou_inventory.h"
+#include "illusions/actor.h"
+#include "illusions/camera.h"
+#include "illusions/dictionary.h"
+#include "illusions/input.h"
 
 namespace Illusions {
 
-struct WidthHeight {
-	int16 _width, _height;
-	void load(Common::SeekableReadStream &stream);
-};
-
-struct SurfInfo {
-	uint32 _pixelSize;
-	WidthHeight _dimensions;
-	void load(Common::SeekableReadStream &stream);
-};
-
-struct WRect {
-	Common::Point _topLeft;
-	Common::Point _bottomRight;
-};
-
-struct RGB {
-	byte r, g, b;
-};
-
-struct NamedPoint {
-	uint32 _namedPointId;
-	Common::Point _pt;
-	void load(Common::SeekableReadStream &stream);
-};
-
-class NamedPoints {
-public:
-	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
-	void load(uint count, Common::SeekableReadStream &stream);
-protected:
-	typedef Common::Array<NamedPoint> Items;
-	typedef Items::iterator ItemsIterator;
-	Items _namedPoints;
-};
-
-void loadPoint(Common::SeekableReadStream &stream, Common::Point &pt);
-
 } // End of namespace Illusions
-
-#endif // ILLUSIONS_GRAPHICS_H

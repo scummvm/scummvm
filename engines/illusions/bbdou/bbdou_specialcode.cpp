@@ -33,6 +33,22 @@
 
 namespace Illusions {
 
+static const Struct10 kStruct10s[] = {
+	{0x1B0000,       0,       0,       0},
+	{0x1B0001, 0x6001A, 0x6001B, 0x6001C},
+	{0x1B0002, 0x6001D, 0x6001E, 0x6001F},
+	{0x1B0003, 0x60020, 0x60021, 0x60022},
+	{0x1B0004, 0x60023, 0x60024, 0x60025},
+	{0x1B0005, 0x60026, 0x60027, 0x60028},
+	{0x1B0006,       0,       0,       0},
+	{0x1B0007,       0,       0,       0},
+	{0x1B0008,       0,       0,       0},
+	{0x1B0009,       0,       0,       0},
+	{0x1B000A,       0,       0,       0},
+	{0x1B000B,       0,       0,       0},
+	{0x1B000C,       0,       0,       0},
+};
+
 CauseThread::CauseThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId,
 	BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId, uint32 verbId,
 	uint32 objectId2, uint32 objectId)
@@ -92,8 +108,8 @@ void BbdouSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
 
 // Convenience macros
 #define	ARG_SKIP(x) opCall.skip(x); 
-#define ARG_INT16(name) int16 name = opCall.readSint16(); debug("ARG_INT16(" #name " = %d)", name);
-#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug("ARG_UINT32(" #name " = %08X)", name);
+#define ARG_INT16(name) int16 name = opCall.readSint16(); debug(1, "ARG_INT16(" #name " = %d)", name);
+#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(1, "ARG_UINT32(" #name " = %08X)", name);
 
 void BbdouSpecialCode::spcInitCursor(OpCall &opCall) {
 	ARG_UINT32(objectId);
@@ -196,7 +212,58 @@ Common::Point BbdouSpecialCode::getBackgroundCursorPos(Common::Point cursorPos) 
 
 void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,
 	Item10 *item10, uint32 progResKeywordId) {
-	// TODO
+	
+	Common::Rect collisionRect;
+	Control *overlappedControl, *control2, *control3;
+	Common::Point pt1(320, 240), pt2, currPan;
+	
+	overlappedControl = _vm->_dict->getObjectControl(overlappedObjectId);
+	overlappedControl->getCollisionRect(collisionRect);
+
+	currPan = _vm->_camera->getCurrentPan();
+	pt2.x = CLIP((collisionRect.right + collisionRect.left) / 2, currPan.x - 274, currPan.x + 274);
+	pt2.y = CLIP(collisionRect.top - (collisionRect.bottom - collisionRect.top) / 8, currPan.y - 204, currPan.y + 204);
+
+	control2 = _vm->_dict->getObjectControl(0x4000F);
+	if (!control2 || (control2->_actor && control2->_actor->_frameIndex == 0))
+		control2 = _vm->_dict->getObjectControl(0x4000E);
+
+	if (control2 && control2->_actor && control2->_actor->_frameIndex) {
+		pt1.x = control2->_actor->_surfInfo._dimensions._width / 2 + pt1.x - control2->_position.x;
+		pt1.y = control2->_actor->_position.y - control2->_position.y;
+		pt1.y = pt1.y >= 500 ? 500 : pt1.y + 32;
+		if (ABS(pt1.x - pt2.x) < ABS(pt1.y - pt2.y) / 2)
+			pt1.y += 80;
+	}
+
+	_bubble->setup(1, pt1, pt2, progResKeywordId);
+
+	item10->_objectIds[0] = _bubble->addItem(0, 0x6005A);
+	item10->_objectIds[1] = _bubble->addItem(0, 0x6005A);
+	item10->_index = 0;
+	
+	int value = _cursor->findStruct8bsValue(overlappedControl->_objectId);
+	if (holdingObjectId) {
+		item10->_verbId = 0x1B0003;
+	} else if (value == 9) {
+		item10->_verbId = 0x1B0005;
+	} else if (value == 8) {
+		item10->_verbId = 0x1B0005;
+	} else {
+		item10->_verbId = 0x1B0002;
+	}
+	
+	uint32 sequenceId = kStruct10s[item10->_verbId & 0xFFFF]._sequenceId2;
+	_bubble->show();
+	
+	control3 = _vm->_dict->getObjectControl(item10->_objectIds[0]);
+	control3->startSequenceActor(sequenceId, 2, 0);
+	control3->appearActor();
+	control3->deactivateObject();
+	
+	item10->_playSound48 = 1;
+	_vm->_input->discardButtons(0xFFFF);
+
 }
 
 bool BbdouSpecialCode::findVerbId(Item10 *item10, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId) {
@@ -255,13 +322,11 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 		}
 		
 		if (foundOverlapped) {
-			debug("overlappedControl: %p", (void*)overlappedControl);
 			if (overlappedControl->_objectId != cursorData._currOverlappedObjectId) {
 				if (cursorData._item10._playSound48)
 					playSoundEffect(4);
 				resetItem10(cursorControl->_objectId, &cursorData._item10);
 				int value = _cursor->findStruct8bsValue(overlappedControl->_objectId);
-				debug("object value: %d", value);
 				if (!testValueRange(value)) {
 					if (cursorData._mode == 3)
 						_cursor->restoreInfo();
@@ -453,8 +518,6 @@ bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
 		success = true;
 	}
 	
-	debug("runCause() success: %d", success);
-	
 	if (!success)
 		return false;
 	
@@ -479,7 +542,7 @@ bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
 
 uint32 BbdouSpecialCode::startCauseThread(uint32 cursorObjectId, uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
 	uint32 tempThreadId = _vm->_scriptMan->newTempThreadId();
-	debug("staring cause thread %08X...", tempThreadId);
+	debug(3, "Starting cause thread %08X...", tempThreadId);
 	CauseThread *causeThread = new CauseThread(_vm, tempThreadId, 0, this,
 		cursorObjectId, sceneId, verbId, objectId2, objectId);
 	_vm->_scriptMan->_threads->startThread(causeThread);

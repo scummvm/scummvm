@@ -39,6 +39,13 @@ typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
 
 class BbdouSpecialCode;
 
+struct Struct10 {
+	uint32 _verbId;
+	uint32 _sequenceId1;
+	uint32 _sequenceId2;
+	uint32 _sequenceId3;
+};
+
 class CauseThread : public Thread {
 public:
 	CauseThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId,

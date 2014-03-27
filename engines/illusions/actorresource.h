@@ -62,8 +62,7 @@ struct ActorType {
 	uint32 _actorTypeId;
 	SurfInfo _surfInfo;
 	byte *_pointsConfig;
-	// TODO namedPointsCount dw
-	// TODO namedPoints dd
+	NamedPoints _namedPoints;
 	RGB _color;
 	byte _scale;
 	byte _priority;
@@ -86,11 +85,13 @@ public:
 	~ActorResource();
 	void load(byte *data, uint32 dataSize);
 	bool containsSequence(Sequence *sequence);
+	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 public:
 	uint32 _totalSize;
 	Common::Array<ActorType> _actorTypes;
 	Common::Array<Sequence> _sequences;
 	FramesList _frames;
+	NamedPoints _namedPoints;
 };
 
 class ActorItem {
@@ -116,6 +117,7 @@ public:
 	void unpauseByTag(uint32 tag);
 	FramesList *findSequenceFrames(Sequence *sequence);
 	ActorItem *findActorByResource(ActorResource *actorResource);
+	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 protected:
 	typedef Common::List<ActorItem*> Items;
 	typedef Items::iterator ItemsIterator;

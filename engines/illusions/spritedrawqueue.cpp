@@ -82,7 +82,7 @@ void SpriteDrawQueue::drawAll() {
 }
 
 void SpriteDrawQueue::insertSprite(byte *drawFlags, Graphics::Surface *surface, WidthHeight &dimensions,
-	Common::Point &drawPosition, Common::Point &controlPosition, int priority, int16 scale, uint16 flags) {
+	Common::Point &drawPosition, Common::Point &controlPosition, uint32 priority, int16 scale, uint16 flags) {
 	SpriteDrawQueueItem *item = new SpriteDrawQueueItem();
 	item->_drawFlags = drawFlags;
 	*item->_drawFlags &= 4;
@@ -98,7 +98,7 @@ void SpriteDrawQueue::insertSprite(byte *drawFlags, Graphics::Surface *surface, 
 }
 
 void SpriteDrawQueue::insertSurface(Graphics::Surface *surface, WidthHeight &dimensions,
-	Common::Point &drawPosition, int priority) {
+	Common::Point &drawPosition, uint32 priority) {
 	SpriteDrawQueueItem *item = new SpriteDrawQueueItem();
 	item->_surface = surface;
 	item->_dimensions = dimensions;
@@ -110,12 +110,12 @@ void SpriteDrawQueue::insertSurface(Graphics::Surface *surface, WidthHeight &dim
 	item->_controlPosition.y = 0;
 	item->_flags = 0;
 	item->_scale = 100;
-	item->_priority = priority << 16;
+	item->_priority = priority;// << 16;
 	insert(item, priority);
 }
 
 void SpriteDrawQueue::insertTextSurface(Graphics::Surface *surface, WidthHeight &dimensions,
-	Common::Point &drawPosition, int priority) {
+	Common::Point &drawPosition, uint32 priority) {
 	SpriteDrawQueueItem *item = new SpriteDrawQueueItem();
 	item->_surface = surface;
 	item->_drawPosition = drawPosition;
@@ -130,7 +130,7 @@ void SpriteDrawQueue::insertTextSurface(Graphics::Surface *surface, WidthHeight 
 	insert(item, priority);
 }
 
-void SpriteDrawQueue::insert(SpriteDrawQueueItem *item, int priority) {
+void SpriteDrawQueue::insert(SpriteDrawQueueItem *item, uint32 priority) {
 	SpriteDrawQueueListIterator insertionPos = Common::find_if(_queue.begin(), _queue.end(),
 		FindInsertionPosition(priority));
 	_queue.insert(insertionPos, item);
@@ -143,9 +143,6 @@ bool SpriteDrawQueue::calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcR
 	srcRect.right = item->_dimensions._width;
 	srcRect.bottom = item->_dimensions._height;
 	
-	//debug("item->_drawPosition.x: %d; item->_drawPosition.y: %d", item->_drawPosition.x, item->_drawPosition.y);
-	//debug("item->_controlPosition.x: %d; item->_controlPosition.y: %d", item->_controlPosition.x, item->_controlPosition.y);
-
 	dstRect.left = item->_drawPosition.x - item->_scale * item->_controlPosition.x / 100;
 	dstRect.top = item->_drawPosition.y - item->_scale * item->_controlPosition.y / 100;
 	dstRect.right = item->_drawPosition.x + item->_scale * (item->_dimensions._width - item->_controlPosition.x) / 100;

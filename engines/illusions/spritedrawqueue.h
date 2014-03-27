@@ -39,7 +39,7 @@ struct SpriteDrawQueueItem {
 	int16 _scale;
 	uint16 _flags;
 	//field_A dw
-	int _priority;
+	uint32 _priority;
 	Graphics::Surface *_surface;
 	WidthHeight _dimensions;
 	Common::Point _drawPosition;
@@ -53,18 +53,18 @@ public:
 	bool draw(SpriteDrawQueueItem *item);
 	void drawAll();
 	void insertSprite(byte *drawFlags, Graphics::Surface *surface, WidthHeight &dimensions,
-		Common::Point &drawPosition, Common::Point &controlPosition, int priority, int16 scale, uint16 flags);
+		Common::Point &drawPosition, Common::Point &controlPosition, uint32 priority, int16 scale, uint16 flags);
 	void insertSurface(Graphics::Surface *surface, WidthHeight &dimensions,
-		Common::Point &drawPosition, int priority);
+		Common::Point &drawPosition, uint32 priority);
 	void insertTextSurface(Graphics::Surface *surface, WidthHeight &dimensions,
-		Common::Point &drawPosition, int priority);
+		Common::Point &drawPosition, uint32 priority);
 protected:
 	typedef Common::List<SpriteDrawQueueItem*> SpriteDrawQueueList;
 	typedef SpriteDrawQueueList::iterator SpriteDrawQueueListIterator;
 
 	struct FindInsertionPosition : public Common::UnaryFunction<const SpriteDrawQueueItem*, bool> {
-		int _priority;
-		FindInsertionPosition(int priority) : _priority(priority) {}
+		uint32 _priority;
+		FindInsertionPosition(uint32 priority) : _priority(priority) {}
 		bool operator()(const SpriteDrawQueueItem *item) const {
 			return item->_priority >= _priority;
 		}
@@ -72,7 +72,7 @@ protected:
 
 	Screen *_screen;
 	SpriteDrawQueueList _queue;	
-	void insert(SpriteDrawQueueItem *item, int priority);
+	void insert(SpriteDrawQueueItem *item, uint32 priority);
 	bool calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcRect, Common::Rect &dstRect);
 };
 

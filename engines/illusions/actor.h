@@ -70,6 +70,7 @@ typedef Common::Functor2<Control*, uint32, void> ActorControlRoutine;
 class Actor {
 public:
 	Actor(IllusionsEngine *vm);
+	~Actor();
 	void pause();
 	void unpause();
 	void createSurface(SurfInfo &surfInfo);
@@ -79,6 +80,7 @@ public:
 	int16 popSequenceStack();
 	void setControlRoutine(ActorControlRoutine *controlRoutine);
 	void runControlRoutine(Control *control, uint32 deltaTime);
+	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 public:
 	IllusionsEngine *_vm;
 	byte _drawFlags;
@@ -94,6 +96,7 @@ public:
 	Graphics::Surface *_surface;
 	
 	FramesList *_frames;
+	NamedPoints *_namedPoints;
 	
 	ScaleLayer *_scaleLayer;
 	PriorityLayer *_priorityLayer;
@@ -157,7 +160,7 @@ public:
 	void clearNotifyThreadId1();
 	void clearNotifyThreadId2();
 	void setPriority(int16 priority);
-	int getPriority();
+	uint32 getPriority();
 	Common::Point calcPosition(Common::Point posDelta);
 	uint32 getSubActorParent();
 	void getCollisionRectAccurate(Common::Rect &collisionRect);
@@ -200,10 +203,12 @@ public:
 	void placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequenceId, uint32 objectId, uint32 notifyThreadId);
 	void placeSequenceLessActor(uint32 objectId, Common::Point placePt, WidthHeight dimensions, int16 priority);
 	void placeActorLessObject(uint32 objectId, Common::Point feetPt, Common::Point pt, int16 priority, uint flags);
+	void placeSubActor(uint32 objectId, int linkIndex, uint32 actorTypeId, uint32 sequenceId);
 	void destroyControlsByTag(uint32 tag);
 	void pauseControlsByTag(uint32 tag);
 	void unpauseControlsByTag(uint32 tag);
 	bool getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority);
+	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 	void actorControlRoutine(Control *control, uint32 deltaTime);	
 public:
 	typedef Common::List<Control*> Items;
@@ -211,8 +216,10 @@ public:
 	IllusionsEngine *_vm;
 	Items _controls;
 	SequenceOpcodes *_sequenceOpcodes;
+	uint32 _nextTempObjectId;
 	Actor *newActor();
 	Control *newControl();
+	uint32 newTempObjectId();
 	void destroyControl(Control *control);
 };
 
