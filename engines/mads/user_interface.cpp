@@ -687,7 +687,10 @@ void UserInterface::updateSelection(ScrCategory category, int newIndex, int *idx
 void UserInterface::updateRect(const Common::Rect &bounds) {
 	_vm->_screen.setPointer(&_surface);
 	setBounds(Common::Rect(0, MADS_SCENE_HEIGHT, MADS_SCREEN_WIDTH - 1, MADS_SCREEN_HEIGHT));
-	_vm->_screen.copyRectToScreen(bounds);
+
+	Common::Rect r = bounds;
+	r.translate(0, MADS_SCENE_HEIGHT);
+	_vm->_screen.copyRectToScreen(r);
 }
 
 void UserInterface::scrollerChanged() {

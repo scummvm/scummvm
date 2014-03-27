@@ -116,6 +116,7 @@ void Font::setColors(uint8 v1, uint8 v2, uint8 v3, uint8 v4) {
 	_fontColors[0] = v1;
 	_fontColors[1] = v2;
 	_fontColors[2] = v3;
+	_fontColors[3] = v4;
 }
 
 void Font::setColorMode(SelectionMode mode) {
