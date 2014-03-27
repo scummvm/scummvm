@@ -183,10 +183,6 @@ void sceneHandler29_shootRed() {
 	warning("STUB: sceneHandler29_shootRed()");
 }
 
-void sceneHandler29_clickPorter(ExCommand *cmd) {
-	warning("STUB: sceneHandler29_clickPorter()");
-}
-
 void sceneHandler29_manJump() {
 	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id == MV_MAN29_RUN || g_fp->_aniMan->_movement->_id == MV_MAN29_STANDUP) {
 		g_vars->scene29_var12 = 0;
@@ -284,6 +280,49 @@ void sceneHandler29_manToR() {
 
 	g_vars->scene29_var16 = g_fp->_scrollSpeed;
 	g_fp->_scrollSpeed = 4;
+}
+
+void sceneHandler29_clickPorter(ExCommand *cmd) {
+	if (!g_fp->_aniMan->isIdle() || g_fp->_aniMan->_flags & 0x100) {
+		cmd->_messageKind = 0;
+
+		return;
+	}
+
+	if (g_vars->scene29_var20 <= g_vars->scene29_porter->_ox) {
+		if (ABS(351 - g_vars->scene29_var20) > 1 || ABS(443 - g_vars->scene29_var21) > 1
+			|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
+			if (g_fp->_msgX != 351 || g_fp->_msgY != 443) {
+				MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 351, 443, 1, ST_MAN_RIGHT);
+
+				if (mq) {
+					mq->addExCommandToEnd(cmd->createClone());
+
+					postExCommand(g_fp->_aniMan->_id, 2, 351, 443, 0, -1);
+				}
+			}
+		} else {
+			sceneHandler29_manToL();
+		}
+	} else {
+		g_vars->scene29_var20 = g_fp->_aniMan->_ox;
+		g_vars->scene29_var21 = g_fp->_aniMan->_oy;
+
+		if (ABS(1582 - g_vars->scene29_var20) > 1 || ABS(445 - g_fp->_aniMan->_oy) > 1
+			|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != (0x4000 | ST_MAN_RIGHT)) {
+			if (g_fp->_msgX != 1582 || g_fp->_msgY != 445) {
+				MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 1582, 445, 1, (0x4000 | ST_MAN_RIGHT));
+
+				if (mq) {
+					mq->addExCommandToEnd(cmd->createClone());
+
+					postExCommand(g_fp->_aniMan->_id, 2, 1582, 445, 0, -1);
+				}
+			}
+		} else {
+			sceneHandler29_manToR();
+		}
+	}
 }
 
 void sceneHandler29_sub05() {
