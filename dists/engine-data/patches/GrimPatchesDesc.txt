@@ -44,7 +44,7 @@ List of fixed bugs in GF scripts:
 	ha.enter() locks the door ha.do_door, which goes to Dom's office if Bruno was
 	reaped but not Meche, but locking the door isn't enough. It must be explicitly
 	closed - calling ha.do_door:close() - otherwise manny will just pass through it.
-	As Manny shows, you can lock an open door, and while it is simbolically compelling,
+	As Manny shows, you can lock an open door, and while it is symbolically compelling,
 	it doesn't close it. :)
 
 	-Fix bug #672 "Meche's line "I'm sorry I let you down Manny" is played as Manny
