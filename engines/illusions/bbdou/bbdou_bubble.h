@@ -61,6 +61,8 @@ public:
 		uint32 namedPointId, int16 count, uint32 *namedPointIds);
 	void show();
 	void hide();
+	void setup(int16 minCount, Common::Point pt1, Common::Point pt2, uint32 progResKeywordId);
+	uint32 addItem(uint positionIndex, uint32 sequenceId);
 protected:
 	IllusionsEngine *_vm;
 	BbdouSpecialCode *_bbdou;
@@ -71,8 +73,8 @@ protected:
 	uint32 _objectIds[32];
 	Common::Point _pt1;
 	Common::Point _pt2;
-	int _field1414;
-	int _field1418;
+	int _objectId1414;
+	int _objectId1418;
 	Item141C _items[32];
 };
 

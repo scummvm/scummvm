@@ -108,16 +108,15 @@ void Sequence::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	debug(5, "Sequence::load() _sequenceId: %08X; _unk4: %d; sequenceCodeOffs: %08X",
 		_sequenceId, _unk4, sequenceCodeOffs);
 
-	debug("_sequenceId: %08X", _sequenceId);
 }
 
 void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_actorTypeId = stream.readUint32LE();
 	_surfInfo.load(stream);
 	uint32 pointsConfigOffs = stream.readUint32LE();
-	stream.readUint16LE(); // TODO namedPointsCount dw
+	uint namedPointsCount = stream.readUint16LE();
 	stream.skip(2); // Skip padding
-	stream.readUint32LE(); // TODO namedPoints dd
+	uint32 namedPointsOffs = stream.readUint32LE();
 	_color.r = stream.readByte();
 	_color.g = stream.readByte();
 	_color.b = stream.readByte();
@@ -132,6 +131,8 @@ void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_regionLayerIndex = stream.readUint16LE();
 	_flags = stream.readUint16LE();
 	_pointsConfig = dataStart + pointsConfigOffs;
+	stream.seek(namedPointsOffs);
+	_namedPoints.load(namedPointsCount, stream);
 
 	debug(5, "ActorType::load() _actorTypeId: %08X; _color(%d,%d,%d); _scale: %d; _priority: %d; _value1E: %d",
 		_actorTypeId, _color.r, _color.g, _color.b, _scale, _priority, _value1E);
@@ -139,8 +140,6 @@ void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		_pathWalkPointsIndex, _scaleLayerIndex, _pathWalkRectIndex);
 	debug(5, "ActorType::load() _priorityLayerIndex: %d; _regionLayerIndex: %d; _flags: %04X",
 		_priorityLayerIndex, _regionLayerIndex,_flags);
-
-	debug("_actorTypeId: %08X; dimensions: (%d, %d)", _actorTypeId, _surfInfo._dimensions._width, _surfInfo._dimensions._height);
 
 }
 
@@ -162,10 +161,10 @@ void ActorResource::load(byte *data, uint32 dataSize) {
 	uint actorTypesCount = stream.readUint16LE();
 	stream.seek(0x10);
 	uint32 actorTypesOffs = stream.readUint32LE();
-	stream.seek(actorTypesOffs);
 	_actorTypes.reserve(actorTypesCount);
 	for (uint i = 0; i < actorTypesCount; ++i) {
 		ActorType actorType;
+		stream.seek(actorTypesOffs + i * 0x2C);
 		actorType.load(data, stream);
 		_actorTypes.push_back(actorType);
 	}
@@ -195,6 +194,12 @@ void ActorResource::load(byte *data, uint32 dataSize) {
 		frame.load(data, stream);
 		_frames.push_back(frame);
 	}
+	
+	// Load named points
+	// The count isn't stored explicitly so calculate it
+	uint namedPointsCount = (actorTypesOffs - 0x20) / 8;
+	stream.seek(0x20);
+	_namedPoints.load(namedPointsCount, stream);
 
 }
 
@@ -203,6 +208,10 @@ bool ActorResource::containsSequence(Sequence *sequence) {
 		if (sequence == &_sequences[i])
 			return true;
 	return false;
+}
+
+bool ActorResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
+	return _namedPoints.findNamedPoint(namedPointId, pt);
 }
 
 // ActorItem
@@ -284,6 +293,15 @@ ActorItem *ActorItems::findActorByResource(ActorResource *actorResource) {
 		if ((*it)->_actRes == actorResource)
 			return (*it);
 	return 0;
+}
+
+bool ActorItems::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
+		ActorItem *actorItem = *it;
+		if (actorItem->_pauseCtr == 0 && actorItem->_actRes->findNamedPoint(namedPointId, pt))
+			return true;
+	}
+	return false;
 }
 
 } // End of namespace Illusions

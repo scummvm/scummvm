@@ -121,6 +121,7 @@ void Input::initKeys() {
 	// NOTE Skipped debugging keys of the original engine, not sure if used
 	addKeyMapping(Common::KEYCODE_INVALID, MOUSE_BUTTON0, 0x01);
 	addKeyMapping(Common::KEYCODE_RETURN, MOUSE_NONE, 0x01);
+	addKeyMapping(Common::KEYCODE_INVALID, MOUSE_BUTTON1, 0x02);
 	addKeyMapping(Common::KEYCODE_TAB, MOUSE_NONE, 0x04);
 	addKeyMapping(Common::KEYCODE_INVALID, MOUSE_BUTTON1, 0x04);
 	addKeyMapping(Common::KEYCODE_ESCAPE, MOUSE_NONE, 0x08);
@@ -153,15 +154,9 @@ void Input::handleKey(Common::KeyCode key, int mouseButton, bool down) {
 		}
 	}
 	uint prevButtonStates = _buttonStates;
-
-	debug("_newKeys = %08X", _newKeys);
-
 	_buttonStates |= _newKeys;
 	_newKeys = 0;
 	_newButtons = ~prevButtonStates & _buttonStates;
-	
-	debug("_buttonStates = %08X", _buttonStates);
-	
 }
 
 void Input::handleMouseButton(int mouseButton, bool down) {

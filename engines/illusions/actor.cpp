@@ -125,6 +125,10 @@ Actor::Actor(IllusionsEngine *vm)
 
 }
 
+Actor::~Actor() {
+	delete _controlRoutine;
+}
+
 void Actor::pause() {
 	++_pauseCtr;
 }
@@ -181,6 +185,15 @@ void Actor::runControlRoutine(Control *control, uint32 deltaTime) {
 		(*_controlRoutine)(control, deltaTime);
 }
 
+bool Actor::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
+	if (_namedPoints->findNamedPoint(namedPointId, pt)) {
+		pt.x += _position.x;
+		pt.y += _position.y;
+		return true;
+	}
+	return false;
+}
+
 // Control
 
 Control::Control(IllusionsEngine *vm)
@@ -199,7 +212,6 @@ Control::Control(IllusionsEngine *vm)
 	_position.y = 0;
 	_actorTypeId = 0;
 	_actor = 0;
-	// TODO _buf = 0;
 	_tag = _vm->_scriptMan->_activeScenes.getCurrentScene();
 }
 
@@ -372,7 +384,7 @@ void Control::setPriority(int16 priority) {
 	_priority = priority;
 }
 
-int Control::getPriority() {
+uint32 Control::getPriority() {
 	uint32 objectId;
 	int16 positionY, priority, priority1;
 	if (_actor) {
@@ -397,13 +409,13 @@ int Control::getPriority() {
 	}
 
 	priority -= 1;
-	int p = 50 * priority1 / 100;
+	uint32 p = 50 * priority1 / 100;
 	if (p)
 		--p;
 
 	positionY = CLIP<int16>(positionY, -5000, 5000);
 
-	return p + 50 * ((objectId & 0x3F) + ((10000 * priority + positionY + 5000) << 6));
+	return p + 50 * ((objectId & 0x3F) + ((10000 * priority + positionY + 5000) << 6));;
 }
 
 Common::Point Control::calcPosition(Common::Point posDelta) {
@@ -644,18 +656,9 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	_actor->_path40 = 0;
 	
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
-	//debug("sequence: %p", (void*)sequence);
 
 	_actor->_seqCodeIp = sequence->_sequenceCode;
 	_actor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
-	
-	/*
-	for (int i = 0; i < 64; ++i) {
-		debugN("%02X ", sequence->_sequenceCode[i]);
-	}
-	debug(".");
-	*/
-	
 	_actor->_seqCodeValue3 = 0;
 	_actor->_seqCodeValue1 = 0;
 	_actor->_seqCodeValue2 = value == 1 ? 350 : 600;
@@ -683,6 +686,7 @@ void Control::execSequenceOpcode(OpCall &opCall) {
 Controls::Controls(IllusionsEngine *vm)
 	: _vm(vm) {
 	_sequenceOpcodes = new SequenceOpcodes(_vm);
+	_nextTempObjectId = 0;
 }
 
 Controls::~Controls() {
@@ -721,11 +725,10 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	actor->_position = placePt;
 	actor->_position2 = placePt;
 	Common::Point currPan = _vm->_camera->getCurrentPan();
-	// TODO if (!artcntrl_calcPointDirection(placePt, panPos, &actor->facing))
-	actor->_facing = 64;
+	if (!_vm->calcPointDirection(placePt, currPan, actor->_facing))
+		actor->_facing = 64;
 	actor->_scale = actorType->_scale;
-	// TODO actor->_namedPointsCount = actorType->_namedPointsCount;
-	// TODO actor->_namedPoints = actorType->_namedPoints;
+	actor->_namedPoints = &actorType->_namedPoints;
 	
 	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
 	if (actorType->_pathWalkPointsIndex) {
@@ -791,8 +794,7 @@ void Controls::placeSequenceLessActor(uint32 objectId, Common::Point placePt, Wi
 	actor->_position2 = placePt;
 	actor->_facing = 64;
 	actor->_scale = 100;
-	// TODO actor->_namedPointsCount = 0;
-	// TODO actor->_namedPoints = 0;
+	actor->_namedPoints = 0;
 	actor->_pathCtrY = 140;
 
 	_controls.push_back(control);
@@ -814,6 +816,17 @@ void Controls::placeActorLessObject(uint32 objectId, Common::Point feetPt, Commo
 	control->_actor = 0;
 	_controls.push_back(control);
 	_vm->_dict->setObjectControl(objectId, control);
+}
+
+void Controls::placeSubActor(uint32 objectId, int linkIndex, uint32 actorTypeId, uint32 sequenceId) {
+	Control *parentControl = _vm->_dict->getObjectControl(objectId);
+	uint32 tempObjectId = newTempObjectId();
+	placeActor(actorTypeId, Common::Point(0, 0), sequenceId, tempObjectId, 0);
+	parentControl->_actor->_subobjects[linkIndex - 1] = tempObjectId;
+	Actor *subActor = _vm->_dict->getObjectControl(tempObjectId)->_actor;
+	subActor->_flags |= 0x40;
+	subActor->_parentObjectId = parentControl->_objectId;
+	subActor->_linkIndex = linkIndex;
 }
 
 void Controls::destroyControlsByTag(uint32 tag) {
@@ -851,8 +864,8 @@ void Controls::unpauseControlsByTag(uint32 tag) {
 
 bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority) {
 	Control *foundControl = 0;
-	int foundPriority = 0;
-	// TODO minPriority = artcntrlGetPriorityFromBase(minPriority);
+	uint32 foundPriority = 0;
+	uint32 minPriorityExt = _vm->getPriorityFromBase(minPriority);
 
 	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
 		Control *testControl = *it;
@@ -861,14 +874,10 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 			(!testControl->_actor || (testControl->_actor->_flags & 1))) {
 			Common::Rect collisionRect;
 			testControl->getCollisionRect(collisionRect);
-			//debug("collisionRect(%d, %d, %d, %d)", collisionRect.left, collisionRect.top, collisionRect.right, collisionRect.bottom);
-			//debug("pt(%d, %d)", pt.x, pt.y);
 			if (!collisionRect.isEmpty() && collisionRect.contains(pt)) {
-				int testPriority = testControl->getPriority();
-				//debug("testPriority: %d; minPriority: %d", testPriority, minPriority);
+				uint32 testPriority = testControl->getPriority();
 				if ((!foundControl || foundPriority < testPriority) &&
-					testPriority >= minPriority) {
-					//debug("overlapped() %08X; pauseCtr: %d; flags: %04X", testControl->_objectId, testControl->_pauseCtr, testControl->_flags);
+					testPriority >= minPriorityExt) {
 					foundControl = testControl;
 					foundPriority = testPriority;
 				}
@@ -885,6 +894,15 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 	}
 
 	return foundControl != 0;
+}
+
+bool Controls::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_pauseCtr == 0 && control->_actor && control->_actor->findNamedPoint(namedPointId, pt))
+			return true;
+	}
+	return false;
 }
 
 void Controls::actorControlRoutine(Control *control, uint32 deltaTime) {
@@ -925,6 +943,17 @@ Control *Controls::newControl() {
 	return new Control(_vm);
 }
 
+uint32 Controls::newTempObjectId() {
+	uint32 nextTempObjectId1 = _nextTempObjectId;
+	uint32 nextTempObjectId2 = _nextTempObjectId + 0x1000;
+	if (nextTempObjectId2 > 0xFFFF) {
+		nextTempObjectId1 = 0;
+		nextTempObjectId2 = 0x1000;
+	}
+	_nextTempObjectId = nextTempObjectId1 + 1;
+	return nextTempObjectId2 | 0x40000;
+}
+
 void Controls::destroyControl(Control *control) {
 
 	if (control->_pauseCtr <= 0)
@@ -947,10 +976,6 @@ void Controls::destroyControl(Control *control) {
 		delete control->_actor;
 		control->_actor = 0;
 	}
-	/* TODO
-	if (control->_buf)
-		free(control->_buf);
-	*/
 	delete control;
 }
 

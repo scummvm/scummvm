@@ -147,14 +147,14 @@ void ScriptMan::setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId) {
 
 void ScriptMan::startScriptThread(uint32 threadId, uint32 callingThreadId,
 	uint32 value8, uint32 valueC, uint32 value10) {
-	debug("Starting script thread %08X", threadId);
+	debug(2, "Starting script thread %08X", threadId);
 	byte *scriptCodeIp = _scriptResource->getThreadCode(threadId);
 	newScriptThread(threadId, callingThreadId, 0, scriptCodeIp, value8, valueC, value10);
 }
 
 void ScriptMan::startAnonScriptThread(int32 threadId, uint32 callingThreadId,
 	uint32 value8, uint32 valueC, uint32 value10) {
-	debug("Starting anonymous script thread %08X", threadId);
+	debug(2, "Starting anonymous script thread %08X", threadId);
 	uint32 tempThreadId = newTempThreadId();
 	byte *scriptCodeIp = _scriptResource->getThreadCode(threadId);
 	scriptCodeIp = _scriptResource->getThreadCode(threadId);
@@ -164,7 +164,7 @@ void ScriptMan::startAnonScriptThread(int32 threadId, uint32 callingThreadId,
 uint32 ScriptMan::startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 	uint32 value8, uint32 valueC, uint32 value10) {
 	uint32 tempThreadId = newTempThreadId();
-	debug("Starting temp script thread %08X", tempThreadId);
+	debug(2, "Starting temp script thread %08X", tempThreadId);
 	newScriptThread(tempThreadId, callingThreadId, 0, scriptCodeIp, value8, valueC, value10);
 	return tempThreadId;
 }
@@ -179,7 +179,7 @@ uint32 ScriptMan::startTimerThread(uint32 duration, uint32 threadId) {
 
 uint32 ScriptMan::startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2, uint32 callingThreadId) {
 	uint32 tempThreadId = newTempThreadId();
-	debug("Starting abortable thread %08X", tempThreadId);
+	debug(2, "Starting abortable thread %08X", tempThreadId);
 	uint32 scriptThreadId = startTempScriptThread(scriptCodeIp1, tempThreadId, 0, 0, 0);
 	AbortableThread *abortableThread = new AbortableThread(_vm, tempThreadId, callingThreadId, 0,
 		scriptThreadId, scriptCodeIp2);
@@ -189,7 +189,7 @@ uint32 ScriptMan::startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2,
 
 uint32 ScriptMan::startTalkThread(int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1,
 	uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId) {
-	debug("Starting talk thread");
+	debug(2, "Starting talk thread");
 	uint32 tempThreadId = newTempThreadId();
 	// TODO endTalkThreadsNoNotify();
 	TalkThread *talkThread = new TalkThread(_vm, tempThreadId, callingThreadId, 0,

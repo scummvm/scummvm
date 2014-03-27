@@ -73,7 +73,7 @@ void Cursor::show() {
 
 void Cursor::hide() {
 	--_visibleCtr;
-	if (_visibleCtr < 0) {
+	if (_visibleCtr <= 0) {
 		_control->_flags &= ~1;
 		_control->_actor->_flags &= ~1;
 	}

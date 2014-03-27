@@ -119,6 +119,9 @@ public:
 
 	int convertPanXCoord(int16 x);
 	Common::Point getNamedPointPosition(uint32 namedPointId);
+	uint32 getPriorityFromBase(int16 priority);
+	bool calcPointDirection(Common::Point &pos1, Common::Point &pos2, uint &facing);
+
 	void playVideo(uint32 videoId, uint32 objectId, uint32 value, uint32 threadId);
 	
 	bool isSoundActive();

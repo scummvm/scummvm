@@ -24,6 +24,8 @@
 
 namespace Illusions {
 
+// WidthHeight
+
 void WidthHeight::load(Common::SeekableReadStream &stream) {
 	_width = stream.readSint16LE();
 	_height = stream.readSint16LE();
@@ -32,12 +34,42 @@ void WidthHeight::load(Common::SeekableReadStream &stream) {
 		_width, _height);
 }
 
+// SurfInfo
+
 void SurfInfo::load(Common::SeekableReadStream &stream) {
 	_pixelSize = stream.readUint32LE();
 	_dimensions.load(stream);
 	
 	debug(5, "SurfInfo::load() _pixelSize: %d",
 		_pixelSize);
+}
+
+// NamedPoint
+
+void NamedPoint::load(Common::SeekableReadStream &stream) {
+	_namedPointId = stream.readUint32LE();
+	loadPoint(stream, _pt);
+}
+
+// NamedPoints
+
+bool NamedPoints::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
+	for (ItemsIterator it = _namedPoints.begin(); it != _namedPoints.end(); ++it)
+		if ((*it)._namedPointId == namedPointId) {
+			pt = (*it)._pt;
+			return true;
+		}
+	return false;
+}
+
+void NamedPoints::load(uint count, Common::SeekableReadStream &stream) {
+	_namedPoints.reserve(count);
+	for (uint i = 0; i < count; ++i) {
+		NamedPoint namedPoint;
+		namedPoint.load(stream);
+		_namedPoints.push_back(namedPoint);
+		debug(0, "namedPoint(%08X, %d, %d)", namedPoint._namedPointId, namedPoint._pt.x, namedPoint._pt.y);
+	}
 }
 
 void loadPoint(Common::SeekableReadStream &stream, Common::Point &pt) {

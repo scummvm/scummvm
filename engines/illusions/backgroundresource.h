@@ -116,6 +116,7 @@ public:
 	int findMasterBgIndex();
 	PriorityLayer *getPriorityLayer(uint index);
 	ScaleLayer *getScaleLayer(uint index);
+	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 public:
 
 	uint _bgInfosCount;
@@ -129,6 +130,8 @@ public:
 	
 	uint _backgroundObjectsCount;
 	BackgroundObject *_backgroundObjects;
+	
+	NamedPoints _namedPoints;
 
 };
 
@@ -168,6 +171,7 @@ public:
 	BackgroundResource *getActiveBgResource();
 	WidthHeight getMasterBgDimensions();
 	void refreshPan();
+	bool findActiveBackgroundNamedPoint(uint32 namedPointId, Common::Point &pt);
 	BackgroundItem *debugFirst();
 //protected:
 public:
