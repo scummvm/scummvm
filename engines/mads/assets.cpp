@@ -88,7 +88,37 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 
 	// Process the palette data
 	if (flags & 9) {
-		warning("TODO: Unknown palette processing");
+		_usageIndex = 0;
+
+		if (flags & 8) {
+			int newPalCtr = 0;
+
+			for (uint i = 0; i < palette.size(); ++i) {
+				RGB6 &rgb = palette[i];
+
+				// Scan for existing rgb at beginning of the main palette
+				bool found = false;
+				for (int pIndex = 0; pIndex < 4 && !found; ++pIndex) {
+					byte *palP = &_vm->_palette->_mainPalette[pIndex * 3];
+					if (palP[0] == rgb.r && palP[1] == rgb.g && palP[2] == rgb.b) {
+						rgb._palIndex = pIndex;
+						found = true;
+					}
+				}
+
+				if (!found) {
+					// Existing palette entry not found, so need to add it in
+					int palIndex = (0xF7F607 >> (8 * newPalCtr)) & 0xff;
+					byte *palP = &_vm->_palette->_mainPalette[palIndex * 3];
+					palP[0] = rgb.r;
+					palP[1] = rgb.g;
+					palP[2] = rgb.b;
+					rgb._palIndex = palIndex;
+
+					newPalCtr = MIN(newPalCtr + 1, 2);
+				}
+			}
+		}
 	} else {
 		_usageIndex = _vm->_palette->_paletteUsage.process(palette, flags);
 		assert(_usageIndex >= 0);

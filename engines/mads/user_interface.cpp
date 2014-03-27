@@ -196,7 +196,7 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_inventoryTopIndex = 0;
 	_objectY = 0;
 	_selectedInvIndex = -1;
-	_selectedActionIndex = -1;
+	_selectedActionIndex = 0;
 	_selectedItemVocabIdx = -1;
 	_scrollerY = 0;
 	_highlightedActionIndex = -1;
