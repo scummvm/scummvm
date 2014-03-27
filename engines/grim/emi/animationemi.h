@@ -66,7 +66,7 @@ public:
 	AnimationEmi(const Common::String &filename, Common::SeekableReadStream *data) : _name(""), _duration(0.0f), _numBones(0), _bones(NULL), _time(0.0f) { loadAnimation(data); }
 	~AnimationEmi();
 
-	void animate(const Skeleton *skel, float delta);
+	bool animate(const Skeleton *skel, float delta, bool loop);
 	void reset();
 };
 

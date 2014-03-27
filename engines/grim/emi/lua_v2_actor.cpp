@@ -323,13 +323,19 @@ void Lua_V2::StopChore() {
 	lua_Object choreObj = lua_getparam(1);
 	lua_Object timeObj = lua_getparam(2);
 
-	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R') || !lua_isnumber(timeObj))
+	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
 		return;
 
 	int chore = lua_getuserdata(choreObj);
-	float time = lua_getnumber(timeObj);
+
+	if (!lua_isnumber(timeObj)) {
+		float time = lua_getnumber(timeObj);
+		warning("Lua_V2::StopChore: stub, chore: %d time: %f", chore, time);
+	} else {
+		warning("Lua_V2::StopChore: stub, chore: %d", chore);
+	}
+
 	// FIXME: implement missing rest part of code
-	warning("Lua_V2::StopChore: stub, chore: %d time: %f", chore, time);
 	Chore *c = EMIChore::getPool().getObject(chore);
 	if (c) {
 		c->stop();
