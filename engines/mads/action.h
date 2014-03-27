@@ -78,7 +78,6 @@ private:
 	void checkCustomDest(int v);
 public:
 	ActionDetails _action, _activeAction;
-	int _currentAction;
 	int8 _flags1, _flags2;
 	ActionMode _actionMode;
 	ActionMode2 _actionMode2;

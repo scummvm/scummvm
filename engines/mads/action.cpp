@@ -31,7 +31,6 @@ namespace MADS {
 
 MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	clear();
-	_currentAction = VERB_NONE;
 	_startWalkFlag = false;
 	_statusTextIndex = -1;
 	_selectedAction = 0;
@@ -124,18 +123,18 @@ void MADSAction::set() {
 			if (_selectedRow >= 0) {
 				if (_actionMode == ACTIONMODE_VERB) {
 					// Standard verb action
-					_currentAction = scene._verbList[_selectedRow]._id;
+					_action._verbId = scene._verbList[_selectedRow]._id;
 				} else {
 					// Selected action on an inventory object
 					int invIndex = userInterface._selectedInvIndex;
 					InventoryObject &objEntry = _vm->_game->_objects.getItem(invIndex);
 
-					_currentAction = objEntry._vocabList[_selectedRow]._vocabId;
+					_action._verbId = objEntry._vocabList[_selectedRow]._vocabId;
 				}
 
 				appendVocab(_action._verbId, true);
 
-				if (_currentAction == VERB_LOOK) {
+				if (_action._verbId == VERB_LOOK) {
 					// Add in the word 'add'
 					_statusText += kAtStr;
 					_statusText += " ";
@@ -164,11 +163,11 @@ void MADSAction::set() {
 
 					if (verbId > 0) {
 						// Set the specified action
-						_currentAction = verbId;
-						appendVocab(_currentAction, true);
+						_action._verbId = verbId;
+						appendVocab(_action._verbId, true);
 					} else {
 						// Default to a standard 'walk to'
-						_currentAction = VERB_WALKTO;
+						_action._verbId = VERB_WALKTO;
 						_statusText += kWalkToStr;
 					}
 				}

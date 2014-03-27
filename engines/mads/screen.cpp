@@ -300,7 +300,7 @@ void ScreenObjects::check(bool scanFlag) {
 
 		// Handling for easy mouse
 		ScrCategory category = scene._userInterface._category;
-		if (_vm->_easyMouse && !_vm->_events->_vD4 && category != _category
+		if (_vm->_easyMouse && _vm->_events->_mouseButtons && category != _category
 			&& scene._userInterface._category != CAT_NONE) {
 			_released = true;
 			if (category >= CAT_ACTION && category <= CAT_TALK_ENTRY) {
@@ -310,7 +310,7 @@ void ScreenObjects::check(bool scanFlag) {
 			scene._action.checkActionAtMousePos();
 		}
 
-		_released = _vm->_events->_mouseReleased;
+		//_released = _vm->_events->_mouseReleased;
 		if (_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_vD4))
 			scene._userInterface._category = _category;
 
