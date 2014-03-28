@@ -1112,14 +1112,13 @@ void Scene205::enter() {
 	_scene->_sequences.setDepth(_globals._spriteIndexes[20], 11);
 
 	if (!_game._visitedScenes._sceneRevisited) {
-		_globals._v2 = _scene->_frameStartTime & 0xFFFF;
-		_globals._v3 = _scene->_frameStartTime >> 16;
+		_lastFishTime = _scene->_frameStartTime;
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
 		idx = _scene->_dynamicHotspots.add(269, 13, _globals._spriteIndexes[21], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, 49, 86, FACING_NORTH);
 	}
 
-	if (_game._objects[12]._roomNumber == 0) {
+	if (_game._objects[12]._roomNumber == 205) {
 		_globals._spriteIndexes[19] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[19], 11);
 	} else {
@@ -1140,8 +1139,7 @@ void Scene205::enter() {
 	_vm->_palette->setEntry(252, 63, 63, 40);
 	_vm->_palette->setEntry(253, 50, 50, 30);
 
-	_globals._v0 = _globals._frameTime & 0xFFFF;
-	_globals._frameTime >>= 16;
+	_chickenTime = _globals._frameTime;
 
 	if (_globals[kSexOfRex] == SEX_FEMALE)
 		warning("sub71704(0x3, 0xC3, 0x108, 0x63, 0x86, 0xD, 2, 0xFDFC, 0x3C, 0x6C, 0x6C, 0x6D, 0x6D, 0x6E, 0x6E, 0x6F, 0x6C, 0);");
@@ -1162,12 +1160,52 @@ void Scene205::enter() {
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_FRAME_INDEX, 11, 74);
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 0);
 	}
-	_globals._v84274 = -1;
 	sceneEntrySound();
 }
 
 void Scene205::step() {
-	warning("TODO: Scene205::step");
+	if (_globals[kSexOfRex] == SEX_FEMALE) {
+		warning("TODO: sub7178C()");
+
+		if (_globals._frameTime >= _chickenTime) {
+			warning("minVal = 1 + sub7176C();");
+			int minVal = 1;
+
+			warning("TODO: sub717B2(100, minVal);");
+//			if (sub717B2(100, minVal)) {
+				_vm->_sound->command(28);
+//			}
+			_chickenTime = _globals._frameTime + 2;
+		}
+	}
+
+	if (_globals._frameTime - _lastFishTime > 1300) {
+		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 5, 1, 0, 0);
+		int idx = _scene->_dynamicHotspots.add(269, 13, _globals._spriteIndexes[21], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 49, 86, FACING_NORTH);
+		_lastFishTime = _globals._frameTime;
+	}
+
+	if (_game._trigger == 73) {
+		_scene->_kernelMessages.add(Common::Point(160, 68), 0xFBFA, 32, 0, 60, _game.getQuote(112));
+	}
+
+	if (_game._trigger == 74) {
+		_vm->_sound->command(26);
+		_scene->_kernelMessages.add(Common::Point(106, 90), 0x1110, 32, 0, 60, _game.getQuote(113));
+	}
+
+	if (_game._trigger == 71) {
+		_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 0, 0, 0);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[23], 2);
+		_scene->_sequences.setAnimRange(_globals._spriteIndexes[23], -2, -2);
+		_scene->_kernelMessages.reset();
+		_scene->_kernelMessages.add(Common::Point(160, 68), 0xFBFA, 32, 72, 180, _game.getQuote(114));
+	}
+
+	if (_game._trigger == 72) {
+		_scene->_nextSceneId = 211;
+	}
 }
 
 void Scene205::actions() {

@@ -98,8 +98,10 @@ public:
 };
 
 class Scene205: public Scene2xx {
+	uint32 _lastFishTime, _chickenTime;
 public:
-	Scene205(MADSEngine *vm) : Scene2xx(vm) {}
+	Scene205(MADSEngine *vm) : Scene2xx(vm), _lastFishTime(0), _chickenTime(0) {}
+
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
