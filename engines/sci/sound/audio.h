@@ -75,6 +75,8 @@ public:
 	void pauseAudio();
 	void resumeAudio();
 
+	void handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan);
+
 	void setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *segMan);
 	void doSoundSync(reg_t syncObjAddr, SegManager *segMan);
 	void stopSoundSync();

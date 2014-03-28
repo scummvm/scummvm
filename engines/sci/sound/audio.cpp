@@ -61,6 +61,59 @@ void AudioPlayer::stopAllAudio() {
 		audioCdStop();
 }
 
+/**
+ * Handles the sciAudio calls in fanmade games.
+ * sciAudio is an external .NET library for playing MP3 files in fanmade games.
+ * It runs in the background, and obtains sound commands from the
+ * currently running game via text files (called "conductor files").
+ * For further info, check: http://sciprogramming.com/community/index.php?topic=634.0
+ */
+void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan) {
+	// TODO: This is a bare bones implementation. Only the play/playx and stop commands
+	// are handled for now - the other commands haven't been observed in any fanmade game
+	// yet. All the volume related and fading functionality is currently missing.
+
+	Kernel *kernel = g_sci->getKernel();
+
+	reg_t commandReg = readSelector(segMan, sciAudioObject, kernel->findSelector("command"));
+	Common::String command = segMan->getString(commandReg);
+
+	if (command == "play" || command == "playx") {
+		reg_t fileNameReg = readSelector(segMan, sciAudioObject, kernel->findSelector("fileName"));
+		Common::String fileName = segMan->getString(fileNameReg);
+
+		int16 loopCount = (int16)readSelectorValue(segMan, sciAudioObject, kernel->findSelector("loopCount"));
+		// When loopCount is -1, we treat it as infinite looping, else no looping is done.
+		// This is observed by game scripts, which can set loopCount to all sorts of random values.
+		// Adjust loopCount for ScummVM's LoopingAudioStream semantics
+		loopCount = (loopCount == -1) ? 0 : 1;
+
+		// Determine sound type
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType;
+		if (fileName.hasPrefix("music"))
+			soundType = Audio::Mixer::kMusicSoundType;
+		else if (fileName.hasPrefix("speech"))
+			soundType = Audio::Mixer::kSpeechSoundType;
+
+		Common::File *sciAudio = new Common::File();
+		// Replace backwards slashes
+		for (uint i = 0; i < fileName.size(); i++) {
+			if (fileName[i] == '\\')
+				fileName.setChar('/', i);
+		}
+		sciAudio->open("sciAudio/" + fileName);
+		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(sciAudio, DisposeAfterUse::YES);
+
+		// We only support one audio handle
+		_mixer->playStream(soundType, &_audioHandle,
+							Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audioStream, loopCount));
+	} else if (command == "stop") {
+		_mixer->stopHandle(_audioHandle);
+	} else {
+		warning("Unhandled sciAudio command: %s", command.c_str());
+	}
+}
+
 int AudioPlayer::startAudio(uint16 module, uint32 number) {
 	int sampleLen;
 	Audio::AudioStream *audioStream = getAudioStream(number, module, &sampleLen);
