@@ -181,6 +181,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	_bgInfos = new BgInfo[_bgInfosCount];
 	stream.seek(0x20);
 	uint32 bgInfosOffs = stream.readUint32LE();
+	debug("_bgInfosCount: %d", _bgInfosCount);
 	for (uint i = 0; i < _bgInfosCount; ++i) {
 		stream.seek(bgInfosOffs + i * 0x1C);
 		_bgInfos[i].load(data, stream);
@@ -314,7 +315,7 @@ void BackgroundItem::pause() {
 			krndictRemoveID(_bgRes->_item48s[i].id);
 		*/
 		// TODO _vm->setDefPointDimensions1();
-		// TODO memcpy(&_savedCamera, &_vm->camera, sizeof(backgroundItem->savedCamera));
+		_vm->_camera->getActiveState(_savedCameraState);
 		/* Unused
 		_savedPalette = malloc(1024);
 		savePalette(_savedPalette);
@@ -338,11 +339,7 @@ void BackgroundItem::unpause() {
 		_savedPalette = 0;
 		*/
 		// TODO _vm->_screen->_fadeClear();
-		// TODO memcpy(&_vm->camera, &_savedCamera, sizeof(SavedCamera));
-		/* TODO
-		currTime = krnxxxGetCurrentTime();
-		_vm->_camera.panStartTime = currTime;
-		*/
+		_vm->_camera->setActiveState(_savedCameraState);
 		_vm->_backgroundItems->refreshPan();
 	}
 }

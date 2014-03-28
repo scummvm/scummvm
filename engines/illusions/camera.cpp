@@ -243,8 +243,6 @@ void Camera::update(uint32 currTime) {
 	if (_activeState._paused)
 		return;
 
-	//debug("_activeState._cameraMode = %d", _activeState._cameraMode);
-
 	switch (_activeState._cameraMode) {
 	case 1:
 		updateMode1(currTime);
@@ -304,6 +302,33 @@ Common::Point Camera::getScreenOffset() {
 	screenOffs.x -= 320;
 	screenOffs.y -= 240;
 	return screenOffs;
+}
+
+Common::Point Camera::getTrackingLimits() {
+	return _activeState._trackingLimits;
+}
+
+bool Camera::isAtPanLimit(int limitNum) {
+	switch (limitNum) {
+	case 1:
+		return _activeState._currPan.y <= _activeState._bounds._topLeft.y;
+	case 2:
+		return _activeState._currPan.y >= _activeState._bounds._bottomRight.y;
+	case 3:
+		return _activeState._currPan.x <= _activeState._bounds._topLeft.x;
+	case 4:
+		return _activeState._currPan.x >= _activeState._bounds._bottomRight.x;
+	}
+	return false;
+}
+
+void Camera::setActiveState(CameraState &state) {
+	_activeState = state;
+	_activeState._panStartTime = getCurrentTime();
+}
+
+void Camera::getActiveState(CameraState &state) {
+	state = _activeState;
 }
 
 void Camera::updateMode1(uint32 currTime) {

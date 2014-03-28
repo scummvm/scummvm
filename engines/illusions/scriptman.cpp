@@ -210,8 +210,7 @@ void ScriptMan::setCurrFontId(uint32 fontId) {
 }
 
 bool ScriptMan::checkActiveTalkThreads() {
-	// TODO
-	return false;
+	return _threads->isActiveThread(kMsgQueryTalkThreadActive);
 }
 
 uint32 ScriptMan::clipTextDuration(uint32 duration) {

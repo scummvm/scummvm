@@ -47,6 +47,7 @@ protected:
 	// Opcodes
 	void opSetFrameIndex(Control *control, OpCall &opCall);
 	void opEndSequence(Control *control, OpCall &opCall);
+	void opIncFrameDelay(Control *control, OpCall &opCall);
 	void opSetRandomFrameDelay(Control *control, OpCall &opCall);
 	void opSetFrameSpeed(Control *control, OpCall &opCall);	
 	void opJump(Control *control, OpCall &opCall);
@@ -57,6 +58,7 @@ protected:
 	void opNextLoop(Control *control, OpCall &opCall);
 	void opSwitchActorIndex(Control *control, OpCall &opCall);
 	void opSwitchFacing(Control *control, OpCall &opCall);
+	void opAppearActor(Control *control, OpCall &opCall);
 	void opDisappearActor(Control *control, OpCall &opCall);
 	void opNotifyThreadId1(Control *control, OpCall &opCall);
 	void opSetPathCtrY(Control *control, OpCall &opCall);

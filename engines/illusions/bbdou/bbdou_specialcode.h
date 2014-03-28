@@ -32,6 +32,7 @@ namespace Illusions {
 class IllusionsEngine;
 class BbdouBubble;
 class BbdouCursor;
+class BbdouInventory;
 struct CursorData;
 struct Item10;
 
@@ -74,6 +75,7 @@ public:
 	Map _map;
 	BbdouCursor *_cursor;
 	BbdouBubble *_bubble;
+	BbdouInventory *_inventory;
 	// Special code interface functions
 	void spcInitCursor(OpCall &opCall);
 	void spcEnableCursor(OpCall &opCall);
@@ -82,10 +84,18 @@ public:
 	void spcInitBubble(OpCall &opCall);
 	void spcSetupBubble(OpCall &opCall);
 	void spcSetObjectInteractMode(OpCall &opCall);
-protected:
-	// Internal functions
+	void spcRegisterInventoryBag(OpCall &opCall);
+	void spcRegisterInventorySlot(OpCall &opCall);
+	void spcRegisterInventoryItem(OpCall &opCall);
+	void spcOpenInventory(OpCall &opCall);
+	void spcAddInventoryItem(OpCall &opCall);
+	void spcCloseInventory(OpCall &opCall);
+
 	void playSoundEffect(int soundIndex);
 	void resetItem10(uint32 objectId, Item10 *item10);
+
+protected:
+	// Internal functions
 	bool testValueRange(int value);
 	void setCursorControlRoutine(uint32 objectId, int num);
 	Common::Point getBackgroundCursorPos(Common::Point cursorPos);
@@ -94,7 +104,6 @@ protected:
 	bool findVerbId(Item10 *item10, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId);
 	void cursorInteractControlRoutine(Control *cursorControl, uint32 deltaTime);
 	void cursorControlRoutine2(Control *cursorControl, uint32 deltaTime);
-	bool updateTrackingCursor(Control *cursorControl);
 	bool testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 overlappedObjectId);
 	bool getCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId,
 		uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId);

@@ -54,6 +54,15 @@ void Thread::onResume() {
 void Thread::onTerminated() {
 }
 
+void Thread::onKill() {
+	// TODO artmgrThreadIsDead(thread->threadId);
+	terminate();
+}
+
+uint32 Thread::sendMessage(int msgNum, uint32 msgValue) {
+	return 0;
+}
+
 void Thread::pause() {
 	if (!_terminated) {
 		++_pauseCtr;
@@ -252,14 +261,7 @@ void ThreadList::killThread(uint32 threadId) {
 			killThread(childThread->_threadId);
 	}
 	
-	if (thread->_type == kTTTalkThread) {
-		thread->_callingThreadId = 0;
-		// TODO script_TalkThreads_sub_417F60(thread->_threadId, 0);
-		// TODO script_TalkThreads_sub_417FA0(thread->_threadId, 0);
-	} else {
-		// TODO artmgrThreadIsDead(thread->threadId);
-		thread->terminate();
-	}
+	thread->onKill();
 
 }
 
@@ -272,6 +274,14 @@ void ThreadList::setThreadSceneId(uint32 threadId, uint32 sceneId) {
 uint32 ThreadList::getThreadSceneId(uint32 threadId) {
 	Thread *thread = findThread(threadId);
 	return thread ? thread->_tag : 0;
+}
+
+bool ThreadList::isActiveThread(int msgNum) {
+	// Check if at least one thread returns a non-null value for the message
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it)
+		if ((*it)->sendMessage(msgNum, 0) != 0)
+			return true;
+	return false;
 }
 
 } // End of namespace Illusions

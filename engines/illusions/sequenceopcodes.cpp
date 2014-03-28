@@ -57,6 +57,7 @@ void SequenceOpcodes::initOpcodes() {
 	// Register opcodes
 	OPCODE(2, opSetFrameIndex);
 	OPCODE(3, opEndSequence);
+	OPCODE(4, opIncFrameDelay);
 	OPCODE(5, opSetRandomFrameDelay);
 	OPCODE(6, opSetFrameSpeed);
 	OPCODE(7, opJump);
@@ -67,6 +68,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(12, opNextLoop);
 	OPCODE(14, opSwitchActorIndex);
 	OPCODE(15, opSwitchFacing);
+	OPCODE(16, opAppearActor);
 	OPCODE(17, opDisappearActor);
 	OPCODE(28, opNotifyThreadId1);
 	OPCODE(29, opSetPathCtrY);
@@ -130,10 +132,17 @@ void SequenceOpcodes::opEndSequence(Control *control, OpCall &opCall) {
 	opCall._result = 1;
 }
 
+void SequenceOpcodes::opIncFrameDelay(Control *control, OpCall &opCall) {
+	ARG_INT16(frameDelayIncr);
+	control->_actor->_seqCodeValue3 += frameDelayIncr;
+	opCall._result = 2;
+}
+
 void SequenceOpcodes::opSetRandomFrameDelay(Control *control, OpCall &opCall) {
 	ARG_INT16(minFrameDelay);
 	ARG_INT16(maxFrameDelay);
 	control->_actor->_seqCodeValue3 += 0;//DEBUG minFrameDelay + _vm->getRandom(maxFrameDelay);
+	opCall._result = 2;
 }
 
 void SequenceOpcodes::opSetFrameSpeed(Control *control, OpCall &opCall) {
@@ -199,6 +208,10 @@ void SequenceOpcodes::opSwitchFacing(Control *control, OpCall &opCall) {
 	ARG_INT16(jumpOffs);
 	if (!(control->_actor->_facing & facing))
 		opCall._deltaOfs += jumpOffs;
+}
+
+void SequenceOpcodes::opAppearActor(Control *control, OpCall &opCall) {
+	control->appearActor();
 }
 
 void SequenceOpcodes::opDisappearActor(Control *control, OpCall &opCall) {

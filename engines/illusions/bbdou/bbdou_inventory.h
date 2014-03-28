@@ -24,6 +24,7 @@
 #define ILLUSIONS_BBDOU_BBDOU_INVENTORY_H
 
 #include "illusions/specialcode.h"
+#include "common/array.h"
 #include "common/rect.h"
 
 namespace Illusions {
@@ -31,6 +32,68 @@ namespace Illusions {
 class IllusionsEngine;
 class BbdouSpecialCode;
 class Control;
+
+struct InventoryItem {
+	uint32 _objectId;
+	uint32 _sequenceId;
+	bool _assigned;
+	bool _flag;
+	int _timesPresent;
+	int _fieldE;
+	InventoryItem(uint32 objectId, uint32 sequenceId);
+};
+
+struct InventorySlot {
+	uint32 _namedPointId;
+	uint32 _objectId;
+	InventoryItem *_inventoryItem;
+	InventorySlot(uint32 namedPointId);
+};
+
+class InventoryBag {
+public:
+	InventoryBag(IllusionsEngine *vm, uint32 sceneId);
+	void registerInventorySlot(uint32 namedPointId);
+	bool addInventoryItem(InventoryItem *inventoryItem, InventorySlot *inventorySlot);
+	void removeInventoryItem(InventoryItem *inventoryItem);
+	void buildItems();
+protected:
+public:
+	typedef Common::Array<InventorySlot*> InventorySlots;
+	typedef InventorySlots::iterator InventorySlotsIterator;
+	IllusionsEngine *_vm;
+	uint32 _sceneId;
+	InventorySlots _inventorySlots;
+	bool _isActive;
+	int _fieldA;
+};
+
+class BbdouInventory {
+public:
+	BbdouInventory(IllusionsEngine *vm, BbdouSpecialCode *bbdou);
+	void registerInventoryBag(uint32 sceneId);
+	void registerInventoryItem(uint32 objectId, uint32 sequenceId);
+	void registerInventorySlot(uint32 namedPointId);
+	void addInventoryItem(uint32 objectId);
+	void removeInventoryItem(uint32 objectId);
+	void open();
+	void close();
+	InventoryBag *getInventoryBag(uint32 sceneId);
+	InventoryItem *getInventoryItem(uint32 objectId);
+	void refresh();
+	void buildItems(InventoryBag *inventoryBag);
+protected:
+	typedef Common::Array<InventoryItem*> InventoryItems;
+	typedef InventoryItems::iterator InventoryItemsIterator;
+	IllusionsEngine *_vm;
+	BbdouSpecialCode *_bbdou;
+	Common::Array<InventoryBag*> _inventoryBags;
+	InventoryItems _inventoryItems;
+	uint32 _activeBagSceneId;
+	uint32 _activeInventorySceneId;
+	int _index;
+	//field_12 dw
+};
 
 } // End of namespace Illusions
 

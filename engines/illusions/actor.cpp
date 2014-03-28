@@ -433,13 +433,13 @@ Common::Point Control::calcPosition(Common::Point posDelta) {
 		pos.x += accuX * actor->_scale / 100;
 		pos.y += accuY * actor->_scale / 100;
 		_actor->_position = pos;
-		if (!(_actor->_flags & 8)) {
+		if (!(_flags & 8)) {
 			pos.x -= posDelta.x;
 			pos.y -= posDelta.y;
 		}
 	} else {
 		pos = _actor->_position;
-		if (!(_actor->_flags & 8)) {
+		if (!(_flags & 8)) {
 			pos.x -= posDelta.x;
 			pos.y -= posDelta.y;
 		}
@@ -574,7 +574,8 @@ void Control::startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 thread
 				subControl->_actor->notifyThreadId2 = threadId;
 				subControl->_actor->entryTblPtr = entryTblPtr;
 				subControl->_actor->flags |= 0x80;
-				script_TalkThreads_sub_417FA0(subControl->_actor->_notifyThreadId2, 0);
+				Thread *thread = _vm->_threads->findThread(threadId);
+				thread->sendMessage(kMsgClearSequenceId2, 0);
 			}
 			*/
 		}

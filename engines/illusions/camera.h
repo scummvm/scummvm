@@ -81,6 +81,10 @@ public:
 	void setBoundsToDimensions(WidthHeight &dimensions);
 	Common::Point getCurrentPan();
 	Common::Point getScreenOffset();
+	Common::Point getTrackingLimits();
+	bool isAtPanLimit(int limitNum);
+	void setActiveState(CameraState &state);
+	void getActiveState(CameraState &state);
 protected:
 	IllusionsEngine *_vm;
 	CameraState _activeState;

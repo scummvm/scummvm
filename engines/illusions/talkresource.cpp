@@ -29,7 +29,7 @@ namespace Illusions {
 // TalkResourceLoader
 
 void TalkResourceLoader::load(Resource *resource) {
-	debug("TalkResourceLoader::load() Loading font %08X from %s...", resource->_resId, resource->_filename.c_str());
+	debug("TalkResourceLoader::load() Loading text %08X from %s...", resource->_resId, resource->_filename.c_str());
 
 	TalkResource *talkResource = new TalkResource();
 	talkResource->load(resource->_data, resource->_dataSize);

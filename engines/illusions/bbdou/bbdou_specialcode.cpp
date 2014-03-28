@@ -23,6 +23,7 @@
 #include "illusions/illusions.h"
 #include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/bbdou/bbdou_bubble.h"
+#include "illusions/bbdou/bbdou_inventory.h"
 #include "illusions/bbdou/bbdou_cursor.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
@@ -73,9 +74,11 @@ BbdouSpecialCode::BbdouSpecialCode(IllusionsEngine *vm)
 	: SpecialCode(vm) {
 	_bubble = new BbdouBubble(_vm, this);
 	_cursor = new BbdouCursor(_vm, this);
+	_inventory = new BbdouInventory(_vm, this);
 }
 
 BbdouSpecialCode::~BbdouSpecialCode() {
+	delete _inventory;
 	delete _cursor;
 	delete _bubble;
 }
@@ -92,6 +95,12 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x00160013, spcInitBubble);
 	SPECIAL(0x00160014, spcSetupBubble);
 	SPECIAL(0x00160015, spcSetObjectInteractMode);
+	SPECIAL(0x00160019, spcRegisterInventoryBag);
+	SPECIAL(0x0016001A, spcRegisterInventorySlot);
+	SPECIAL(0x0016001B, spcRegisterInventoryItem);
+	SPECIAL(0x0016001C, spcOpenInventory);
+	SPECIAL(0x0016001D, spcAddInventoryItem);
+	SPECIAL(0x00160025, spcCloseInventory);
 }
 
 void BbdouSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
@@ -161,6 +170,36 @@ void BbdouSpecialCode::spcSetObjectInteractMode(OpCall &opCall) {
 	ARG_INT16(value);
 	_cursor->setStruct8bsValue(objectId, value);
 	_vm->notifyThreadId(opCall._callerThreadId);
+}
+
+void BbdouSpecialCode::spcRegisterInventoryBag(OpCall &opCall) {
+	ARG_UINT32(sceneId);
+	_inventory->registerInventoryBag(sceneId);
+}
+
+void BbdouSpecialCode::spcRegisterInventorySlot(OpCall &opCall) {
+	ARG_UINT32(namedPointId);
+	_inventory->registerInventorySlot(namedPointId);
+}
+
+void BbdouSpecialCode::spcRegisterInventoryItem(OpCall &opCall) {
+	ARG_UINT32(objectId);
+	ARG_UINT32(sequenceId);
+	_inventory->registerInventoryItem(objectId, sequenceId);
+}
+
+void BbdouSpecialCode::spcOpenInventory(OpCall &opCall) {
+	_inventory->open();
+}
+
+void BbdouSpecialCode::spcAddInventoryItem(OpCall &opCall) {
+	ARG_UINT32(objectId);
+debug("### spcAddInventoryItem %08X", objectId);
+	_inventory->addInventoryItem(objectId);
+}
+
+void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
+	_inventory->close();
 }
 
 void BbdouSpecialCode::playSoundEffect(int soundIndex) {
@@ -302,7 +341,7 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 			cursorData._idleCtr = 0;
 		}
 
-		if (updateTrackingCursor(cursorControl))
+		if (_cursor->updateTrackingCursor(cursorControl))
 			cursorData._flags |= 1;
 		else
 			cursorData._flags &= ~1;
@@ -430,11 +469,6 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 
 void BbdouSpecialCode::cursorControlRoutine2(Control *cursorControl, uint32 deltaTime) {
 	// TODO
-}
-
-bool BbdouSpecialCode::updateTrackingCursor(Control *cursorControl) {
-	// TODO
-	return false;
 }
 
 bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 overlappedObjectId) {

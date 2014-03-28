@@ -30,6 +30,12 @@ namespace Illusions {
 class IllusionsEngine;
 struct TalkEntry;
 
+enum {
+	kMsgQueryTalkThreadActive    = 0,
+	kMsgClearSequenceId1         = 1,
+	kMsgClearSequenceId2         = 2
+};
+
 class TalkThread : public Thread {
 public:
 	TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
@@ -41,6 +47,8 @@ public:
 	virtual void onPause();
 	virtual void onResume();
 	virtual void onTerminated();
+	virtual void onKill();
+	virtual uint32 sendMessage(int msgNum, uint32 msgValue);
 public:
 	//field0 dw
 	int _status;

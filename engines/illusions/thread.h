@@ -54,6 +54,8 @@ public:
 	virtual void onPause();
 	virtual void onResume();
 	virtual void onTerminated();
+	virtual void onKill();
+	virtual uint32 sendMessage(int msgNum, uint32 msgValue);
 	void pause();
 	void resume();
 	void suspend();
@@ -93,6 +95,7 @@ public:
 	void killThread(uint32 threadId);
 	void setThreadSceneId(uint32 threadId, uint32 sceneId);
 	uint32 getThreadSceneId(uint32 threadId);
+	bool isActiveThread(int msgNum);
 protected:
 	typedef Common::List<Thread*> List;
 	typedef List::iterator Iterator;
