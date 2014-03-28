@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/bbdou/bbdou_cursor.h"
+#include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
@@ -142,6 +143,25 @@ int BbdouCursor::findStruct8bsValue(uint32 objectId) {
 	return 11;
 }
 
+bool BbdouCursor::updateTrackingCursor(Control *control) {
+	uint32 sequenceId;
+	if (getTrackingCursorSequenceId(control, sequenceId)) {
+		if (_data._sequenceId98 != sequenceId) {
+			saveBeforeTrackingCursor(control, sequenceId);
+			show(control);
+			_data._sequenceId98 = sequenceId;
+		}
+		return true;
+	} else {
+		if (_data._sequenceId98) {
+			_data._sequenceId98 = 0;
+			restoreAfterTrackingCursor();
+			show(control);
+		}
+		return false;
+	}
+}
+
 void BbdouCursor::saveInfo() {
 	_data._mode2 = _data._mode;
 	_data._sequenceId2 = _data._sequenceId;
@@ -155,6 +175,24 @@ void BbdouCursor::restoreInfo() {
 	_data._mode2 = 0;
 	_data._holdingObjectId2 = 0;
 	_data._sequenceId2 = 0;
+}
+
+void BbdouCursor::saveBeforeTrackingCursor(Control *control, uint32 sequenceId) {
+	if (_data._currOverlappedObjectId || _data._mode == 3) {
+		if (_data._mode == 3)
+			restoreInfo();
+		control->setActorIndexTo1();
+		if (_data._item10._playSound48)
+			_bbdou->playSoundEffect(4);
+		_bbdou->resetItem10(control->_objectId, &_data._item10);
+	}
+	_data._currOverlappedObjectId = 0;
+	if (_data._mode != 4) {
+		saveInfo();
+		_data._mode = 4;
+		_data._holdingObjectId = 0;
+	}
+	_data._sequenceId = sequenceId;
 }
 
 void BbdouCursor::restoreAfterTrackingCursor() {
@@ -189,6 +227,104 @@ uint32 BbdouCursor::getSequenceId1(int sequenceIndex) {
 	default:
 		return 0;
 	}
+}
+
+uint BbdouCursor::calcTrackingFlags(Common::Point actorPos, Common::Point trackingLimits) {
+	uint trackingFlags = 0;
+	int16 x = actorPos.x - 320;
+	int16 y = actorPos.y - 240;
+	if (x < -trackingLimits.x)
+		trackingFlags = 1;
+	else if (x > trackingLimits.x)
+		trackingFlags = 3;
+	else
+		trackingFlags = 2;
+	if (y < -trackingLimits.y)
+		trackingFlags += 0;
+	else if (y > trackingLimits.y)
+		trackingFlags += 6;
+	else
+		trackingFlags += 3;
+	return trackingFlags;
+}
+
+uint BbdouCursor::calcTrackingCursorIndex(uint trackingFlags) {
+	uint cursorIndex = 0;
+	switch (trackingFlags) {
+	case 1:
+		if (_vm->_camera->isAtPanLimit(1)) {
+			if (!_vm->_camera->isAtPanLimit(3))
+				cursorIndex = 4;
+		} else {
+			if (!_vm->_camera->isAtPanLimit(3))
+				cursorIndex = 1;
+			else
+				cursorIndex = 2;
+		}
+		break;
+	case 2:
+		if (!_vm->_camera->isAtPanLimit(1))
+			cursorIndex = 2;
+		break;
+	case 3:
+		if (_vm->_camera->isAtPanLimit(1)) {
+			if (!_vm->_camera->isAtPanLimit(4))
+				cursorIndex = 6;
+		} else {
+			if (!_vm->_camera->isAtPanLimit(4))
+				cursorIndex = 3;
+			else
+				cursorIndex = 2;
+		}
+		break;
+	case 4:
+		if (!_vm->_camera->isAtPanLimit(3))
+			cursorIndex = 4;
+		break;
+	case 6:
+		if (!_vm->_camera->isAtPanLimit(4))
+			cursorIndex = 6;
+		break;
+	case 7:
+		if (_vm->_camera->isAtPanLimit(2)) {
+			if (!_vm->_camera->isAtPanLimit(3))
+				cursorIndex = 4;
+		} else {
+			if (!_vm->_camera->isAtPanLimit(3))
+				cursorIndex = 8;
+			else
+				cursorIndex = 7;
+		}
+		break;
+	case 8:
+		if (!_vm->_camera->isAtPanLimit(2))
+			cursorIndex = 8;
+		break;
+	case 9:
+		if (_vm->_camera->isAtPanLimit(2)) {
+			if (!_vm->_camera->isAtPanLimit(4))
+				cursorIndex = 6;
+		} else {
+			if (!_vm->_camera->isAtPanLimit(4))
+				cursorIndex = 9;
+			else
+				cursorIndex = 8;
+		}
+		break;
+	}
+	return cursorIndex;
+}
+
+bool BbdouCursor::getTrackingCursorSequenceId(Control *control, uint32 &outSequenceId) {
+	static const uint32 kTrackingCursorSequenceIds[] = {
+		0, 0x000609BF, 0x00060018, 0x000609C0, 0x00060016,
+		0, 0x00060017, 0x000609C1, 0x00060019, 0x000609C2
+	};
+	Common::Point trackingLimits = _vm->_camera->getTrackingLimits();
+	uint trackingFlags = calcTrackingFlags(control->_actor->_position, trackingLimits);
+	uint cursorIndex = calcTrackingCursorIndex(trackingFlags);
+	outSequenceId = kTrackingCursorSequenceIds[cursorIndex];
+	return outSequenceId != 0;
 }
 
 void BbdouCursor::clearCursorDataField14() {

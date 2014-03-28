@@ -72,11 +72,12 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 	_voiceStartTime = getCurrentTime();
 	_voiceEndTime = _voiceStartTime + duration;
 	_entryTblPtr = 0;
-	
-	/* TODO
-	if (callingThreadId)
-		thread->tag = *(_DWORD *)(krndictGetIDValue(callingThreadId) + 20);
-	*/
+
+	if (callingThreadId) {
+		Thread *callingThread = _vm->_scriptMan->_threads->findThread(callingThreadId);
+		if (callingThread)
+			_tag = callingThread->_tag;
+	}
 	
 }
 
@@ -249,6 +250,31 @@ void TalkThread::onResume() {
 }
 
 void TalkThread::onTerminated() {
+}
+
+void TalkThread::onKill() {
+	_callingThreadId = 0;
+	sendMessage(kMsgClearSequenceId1, 0);
+	sendMessage(kMsgClearSequenceId2, 0);
+}
+
+uint32 TalkThread::sendMessage(int msgNum, uint32 msgValue) {
+	// TODO
+	switch (msgNum) {
+	case kMsgQueryTalkThreadActive:
+        if (_status != 1 && _status != 2)
+			return 1;
+		break;
+	case kMsgClearSequenceId1:
+		_sequenceId1 = 0;
+		_flags |= 3;
+		// TODO _field30 = 0;
+		break;
+	case kMsgClearSequenceId2:
+		_sequenceId2 = 0;
+		break;
+	}
+	return 0;
 }
 
 void TalkThread::refreshText() {

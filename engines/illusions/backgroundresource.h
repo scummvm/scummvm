@@ -23,6 +23,7 @@
 #ifndef ILLUSIONS_BACKGROUNDRESOURCE_H
 #define ILLUSIONS_BACKGROUNDRESOURCE_H
 
+#include "illusions/camera.h"
 #include "illusions/graphics.h"
 #include "illusions/resourcesystem.h"
 #include "graphics/surface.h"
@@ -154,7 +155,7 @@ public:
 	BackgroundResource *_bgRes;
 	Common::Point _panPoints[kMaxBackgroundItemSurfaces];
 	Graphics::Surface *_surfaces[kMaxBackgroundItemSurfaces];
-	// TODO SavedCamera savedCamera;
+	CameraState _savedCameraState;
 	// TODO? byte *savedPalette;
 };
 

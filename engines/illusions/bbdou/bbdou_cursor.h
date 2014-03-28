@@ -94,10 +94,15 @@ public:
 	uint32 findCursorSequenceId(uint32 objectId);
 	void setStruct8bsValue(uint32 objectId, int value);
 	int findStruct8bsValue(uint32 objectId);
+	bool updateTrackingCursor(Control *control);
 	void saveInfo();
 	void restoreInfo();
+	void saveBeforeTrackingCursor(Control *control, uint32 sequenceId);
 	void restoreAfterTrackingCursor();
 	uint32 getSequenceId1(int sequenceIndex);
+	uint calcTrackingFlags(Common::Point actorPos, Common::Point trackingLimits);
+	uint calcTrackingCursorIndex(uint trackingFlags);
+	bool getTrackingCursorSequenceId(Control *control, uint32 &outSequenceId);
 public:
 	IllusionsEngine *_vm;
 	BbdouSpecialCode *_bbdou;

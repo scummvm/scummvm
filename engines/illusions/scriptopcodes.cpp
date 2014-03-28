@@ -98,6 +98,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(20, opEnterScene);
 	OPCODE(25, opChangeScene);
 	OPCODE(26, opStartModalScene);
+	OPCODE(27, opExitModalScene);
 	OPCODE(30, opEnterCloseUpScene);
 	OPCODE(31, opExitCloseUpScene);
 	OPCODE(32, opPanCenterObject);
@@ -280,6 +281,14 @@ void ScriptOpcodes::opStartModalScene(ScriptThread *scriptThread, OpCall &opCall
 	_vm->_scriptMan->startScriptThread(threadId, 0,
 		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 	opCall._result = kTSSuspend;
+}
+
+void ScriptOpcodes::opExitModalScene(ScriptThread *scriptThread, OpCall &opCall) {
+	// NOTE Skipped checking for stalled resources
+	_vm->_input->discardButtons(0xFFFF);
+	_vm->_scriptMan->exitScene(opCall._callerThreadId);
+	_vm->_scriptMan->leavePause(opCall._callerThreadId);
+	// TODO _vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
 }
 
 void ScriptOpcodes::opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall) {
@@ -609,7 +618,7 @@ void ScriptOpcodes::opCompareBlockCounter(ScriptThread *scriptThread, OpCall &op
 	bool compareResult = false;
 	switch (compareOp) {
 	case 1:
-		compareResult = false;//lvalue == rvalue;
+		compareResult = lvalue == rvalue;
 		break;
 	case 2:
 		compareResult = lvalue != rvalue;
@@ -660,7 +669,6 @@ void ScriptOpcodes::opLoadSpecialCodeModule(ScriptThread *scriptThread, OpCall &
 	ARG_SKIP(2);
 	ARG_UINT32(specialCodeModuleId);
 	_vm->_resSys->loadResource(specialCodeModuleId, 0, 0);
-	// TODO _vm->loadSpecialCodeModule(specialCodeModuleId);
 }
 
 void ScriptOpcodes::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall) {
@@ -669,10 +677,6 @@ void ScriptOpcodes::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall)
 	_vm->_scriptMan->_callerThreadId = opCall._callerThreadId;
 	_vm->_specialCode->run(specialCodeId, opCall);
 	_vm->_scriptMan->_callerThreadId = 0;
-
-	//DEBUG Resume calling thread, later done by the special code
-	//_vm->notifyThreadId(opCall._callerThreadId);
-
 }
 
 void ScriptOpcodes::opStopActor(ScriptThread *scriptThread, OpCall &opCall) {

@@ -73,6 +73,7 @@ protected:
 	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartModalScene(ScriptThread *scriptThread, OpCall &opCall);
+	void opExitModalScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opExitCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall);

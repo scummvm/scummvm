@@ -310,6 +310,7 @@ uint32 IllusionsEngine::causeTrigger(uint32 sceneId, uint32 verbId, uint32 objec
 	uint32 causeThreadId = 0;
 	// TODO Also search for native trigger functions later and run it (findCauseFunc)
 	if (_scriptMan->findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs)) {
+		debug("Run cause at %08X", codeOffs);
 		causeThreadId = _scriptMan->startTempScriptThread(_scriptMan->_scriptResource->getCode(codeOffs),
 			callingThreadId, verbId, objectId2, objectId);
 	}
