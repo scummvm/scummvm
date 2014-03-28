@@ -330,7 +330,30 @@ void sceneHandler29_sub05() {
 }
 
 void sceneHandler29_shootersEscape() {
-	warning("STUB: sceneHandler29_shootersEscape()");
+	if (g_vars->scene29_var10) {
+		g_vars->scene29_var20 += 2;
+
+		g_fp->_aniMan->setOXY(g_vars->scene29_var20, g_vars->scene29_var21);
+
+		if (g_vars->scene29_var20 > 1310 && !g_vars->scene29_shooter1->_movement && !g_vars->scene29_shooter2->_movement
+			&& g_vars->scene29_shooter1->_statics->_staticsId == ST_STR1_RIGHT) {
+			g_vars->scene29_var13 = 0;
+
+			g_vars->scene29_shooter1->changeStatics2(ST_STR1_STAND);
+			g_vars->scene29_shooter2->changeStatics2(ST_STR2_STAND);
+
+			chainQueue(QU_SC29_ESCAPE, 1);
+
+			g_vars->scene29_ass->queueMessageQueue(0);
+			g_vars->scene29_ass->hide();
+
+			g_fp->setObjectState(sO_LeftPipe_29, g_fp->getObjectEnumState(sO_LeftPipe_29, sO_IsOpened));
+		}
+	} else if (g_vars->scene29_var09) {
+		g_vars->scene29_var20 -= 4;
+
+		g_fp->_aniMan->setOXY(g_vars->scene29_var20, g_vars->scene29_var21);
+	}
 }
 
 void sceneHandler29_sub07() {

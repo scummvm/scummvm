@@ -1305,6 +1305,7 @@ namespace Fullpipe {
 #define MV_STR1_SHOOT 2109
 #define MV_STR2_SHOOT 2112
 #define PIC_SC29_LTRUBA 2081
+#define QU_SC29_ESCAPE 2129
 #define QU_SC29_MANFROM_L 2101
 #define QU_SC29_MANFROM_R 2104
 #define QU_SC29_MANTO_L 2103
@@ -1315,6 +1316,8 @@ namespace Fullpipe {
 #define ST_MAN29_RUNR 2140
 #define ST_STR1_RIGHT 2143
 #define ST_STR2_RIGHT 2144
+#define ST_STR1_STAND 2110
+#define ST_STR2_STAND 2113
 
 // Scene 30
 #define ANI_LEG 2322
