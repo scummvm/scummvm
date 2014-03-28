@@ -51,20 +51,20 @@ private:
 	MADSEngine *_vm;
 	bool _highSprites;
 	bool _spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT];
-	int _frameOffset;
+	bool _mirror;
 	int _frameCount;
 	int _frameListIndex;
-	int _actionIndex;
 	bool _v844BC;
 	int _v8452E;
 	int _v8452C;
 	int _v84530;
 	int _routeLength;
-	int _actionList[12];
-	int _actionList2[12];
+	int _stopWalkerList[12];
+	int _stopWalkerTrigger[12];
+	int _stopWalkerIndex;
 	int _hypotenuse;
 
-	void resetActionList();
+	void clearStopList();
 
 	void move();
 
@@ -80,7 +80,7 @@ private:
 	 */
 	int getScale(int yp);
 
-	void setTicksAmount();
+	void setBaseFrameRate();
 
 	void setupRoute();
 
@@ -117,7 +117,7 @@ public:
 	bool _priorVisible;
 	bool _visible3;
 	bool _walkAnywhere;
-	int _frameNum;
+	int _frameNumber;
 	bool _loadsFirst;
 	bool _loadedFirst;
 	Common::Point _playerPos;
@@ -130,12 +130,12 @@ public:
 	int _special;
 	int _ticksAmount;
 	uint32 _priorTimer;
-	int _unk1;
-	int _unk2;
-	int _unk3;
+	int _velocity;
+	int _upcomingTrigger;
+	int _trigger;
 	bool _unk4;
 	bool _forceRefresh;
-	int _yScale;
+	int _centerOfGravity;
 	int _currentDepth;
 	int _currentScale;
 	Common::String _spritesPrefix;
@@ -167,7 +167,10 @@ public:
 	 */
 	void cancelCommand();
 
-	void setupFrame();
+	/**
+	 * Set up control parameters for the current active series (the
+	 * direction which the player is facing in) */
+	void selectSeries();
 
 	void updateFrame();
 

@@ -290,7 +290,7 @@ void Scene::doFrame() {
 		_action._selectedAction = 0;
 	}
 
-	if (!_vm->_game->_trigger && !player._unk3) {
+	if (!_vm->_game->_trigger && !player._trigger) {
 		// Refresh the dynamic hotspots if they've changed
 		if (_dynamicHotspots._changed)
 			_dynamicHotspots.refresh();
@@ -301,7 +301,7 @@ void Scene::doFrame() {
 	}
 
 	if (_action._selectedAction && player._stepEnabled && !_action._startWalkFlag &&
-			!_vm->_game->_trigger && !player._unk3) {
+			!_vm->_game->_trigger && !player._trigger) {
 		_action.startAction();
 		if (_action._activeAction._verbId == Nebular::NOUN_LOOK_AT) {
 			_action._activeAction._verbId = VERB_LOOK;
@@ -512,7 +512,7 @@ void Scene::doSceneStep() {
 	_vm->_game->_sectionHandler->step();
 
 	_vm->_game->_player.step();
-	_vm->_game->_player._unk3 = 0;
+	_vm->_game->_player._trigger = 0;
 
 	if (_vm->_game->_abortTimersMode == ABORTMODE_1)
 		_vm->_game->_trigger = 0;

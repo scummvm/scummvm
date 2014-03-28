@@ -37,6 +37,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_facing = FACING_NORTH;
 	_turnToFacing = FACING_NORTH;
 	_targetFacing = FACING_NORTH;
+	_mirror = false;
 	_spritesLoaded = false;
 	_spritesStart = 0;
 	_spritesIdx = 0;
@@ -51,24 +52,24 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_special = 0;
 	_ticksAmount = 0;
 	_priorTimer = 0;
-	_unk3 = _unk4 = 0;
+	_trigger = _unk4 = 0;
+	_spritesChanged = false;
 	_forceRefresh = false;
 	_highSprites = false;
 	_currentDepth = 0;
 	_currentScale = 0;
-	_frameOffset = 0;
-	_frameNum = 0;
-	_yScale = 0;
+	_frameNumber = 0;
+	_centerOfGravity = 0;
 	_frameCount = 0;
-	_unk1 = 0;
-	_unk2 = 0;
-	_unk3 = 0;
+	_velocity = 0;
+	_upcomingTrigger = 0;
+	_trigger = 0;
 	_frameListIndex = 0;
-	_actionIndex = 0;
+	_stopWalkerIndex = 0;
 	_hypotenuse = 0;
 	
-	Common::fill(&_actionList[0], &_actionList[12], 0);
-	Common::fill(&_actionList2[0], &_actionList2[12], 0);
+	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
+	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);
 	Common::fill(&_spriteSetsPresent[0], &_spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT], false);
 }
 
@@ -170,7 +171,8 @@ void Player::dirChanged() {
 
 	_facing = (diff >= 0) ? (Facing)_directionListIndexes[_facing + 20] :
 		(Facing)_directionListIndexes[_facing + 10];
-	setupFrame();
+	selectSeries();
+
 	if ((_facing == _turnToFacing) && !_moving)
 		updateFrame();
 
@@ -182,31 +184,33 @@ void Player::cancelCommand() {
 	_action->_inProgress = false;
 }
 
-void Player::setupFrame() {
+void Player::selectSeries() {
 	Scene &scene = _vm->_game->_scene;
 
-	resetActionList();
-	_frameOffset = 0;
+	clearStopList();
+	_mirror = false;
+
 	_spritesIdx = _directionListIndexes[_facing];
 	if (!_spriteSetsPresent[_spritesIdx]) {
 		// Direction isn't present, so use alternate direction, with entries flipped
 		_spritesIdx -= 4;
-		_frameOffset = 0x8000;
+		_mirror = true;
 	}
 
 	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
 	assert(spriteSet._charInfo);
-	_unk1 = MAX(spriteSet._charInfo->_unk1, 100);
-	setTicksAmount();
+	_velocity = MAX(spriteSet._charInfo->_velocity, 100);
+	setBaseFrameRate();
 
 	_frameCount = spriteSet._charInfo->_totalFrames;
 	if (_frameCount == 0)
 		_frameCount = spriteSet.getCount();
 
-	_yScale = spriteSet._charInfo->_yScale;
+	_centerOfGravity = spriteSet._charInfo->_centerOfGravity;
 
-	if ((_frameNum <= 0) || (_frameNum > _frameCount))
-		_frameNum = 1;
+	if ((_frameNumber <= 0) || (_frameNumber > _frameCount))
+		_frameNumber = 1;
+
 	_forceRefresh = true;
 }
 
@@ -216,32 +220,34 @@ void Player::updateFrame() {
 	assert(spriteSet._charInfo);
 
 	if (!spriteSet._charInfo->_numEntries) {
-		_frameNum = 1;
+		_frameNumber = 1;
 	} else {
-		_frameListIndex = _actionList[_actionIndex];
+		_frameListIndex = _stopWalkerList[_stopWalkerIndex];
 
 		if (!_visible) {
-			_unk2 = 0;
+			_upcomingTrigger = 0;
 		}
 		else {
-			_unk2 = _actionList2[_actionIndex];
+			_upcomingTrigger = _stopWalkerTrigger[_stopWalkerIndex];
 
-			if (_actionIndex > 0)
-				--_actionIndex;
+			if (_stopWalkerIndex > 0)
+				--_stopWalkerIndex;
 		}
 
 		// Set the player frame number
 		int frameIndex = ABS(_frameListIndex);
-		_frameNum = (_frameListIndex <= 0) ? spriteSet._charInfo->_frameList[frameIndex] :
+		_frameNumber = (_frameListIndex <= 0) ? spriteSet._charInfo->_frameList[frameIndex] :
 			spriteSet._charInfo->_frameList2[frameIndex];
 
 		// Set next waiting period in ticks
 		if (frameIndex == 0) {
-			setTicksAmount();
+			setBaseFrameRate();
 		} else {
 			_ticksAmount = spriteSet._charInfo->_ticksList[frameIndex];
 		}
 	}
+
+	_forceRefresh = true;
 }
 
 void Player::update() {
@@ -271,9 +277,9 @@ void Player::update() {
 			slot._SlotType = ST_FOREGROUND;
 			slot._seqIndex = PLAYER_SEQ_INDEX;
 			slot._spritesIndex = _spritesStart + _spritesIdx;
-			slot._frameNumber = _frameOffset + _frameNum;
+			slot._frameNumber = _mirror ? -_frameNumber : _frameNumber;
 			slot._position.x = _playerPos.x;
-			slot._position.y = _playerPos.y + (_yScale * newScale) / 100;
+			slot._position.y = _playerPos.y + (_centerOfGravity * newScale) / 100;
 			slot._depth = newDepth;
 			slot._scale = newScale;
 
@@ -304,7 +310,7 @@ void Player::update() {
 			// has moved off-screen
 			if (_newSceneId) {
 				SpriteAsset *asset = scene._sprites[slot._spritesIndex];
-				MSprite *frame = asset->getFrame(_frameNum - 1);
+				MSprite *frame = asset->getFrame(_frameNumber - 1);
 				int xScale = frame->w * newScale / 200;
 				int yScale = frame->h * newScale / 100;
 				int playerX = slot._position.x;
@@ -326,19 +332,19 @@ void Player::update() {
 	_forceRefresh = false;
 }
 
-void Player::resetActionList() {
-	_actionList[0] = 0;
-	_actionList2[0] = 0;
-	_actionIndex = 0;
-	_unk2 = 0;
-	_unk3 = 0;
+void Player::clearStopList() {
+	_stopWalkerList[0] = 0;
+	_stopWalkerTrigger[0] = 0;
+	_stopWalkerIndex = 0;
+	_upcomingTrigger = 0;
+	_trigger = 0;
 }
 
 void Player::setDest(const Common::Point &pt, Facing facing) {
 	Scene &scene = _vm->_game->_scene;
 
-	resetActionList();
-	setTicksAmount();
+	clearStopList();
+	setBaseFrameRate();
 	_moving = true;
 	_targetFacing = facing;
 
@@ -433,10 +439,10 @@ void Player::move() {
 	else if (!_moving)
 		updateFrame();
 
-	int var1 = _unk1;
+	int velocity = _velocity;
 	if (_unk4 && (_hypotenuse > 0)) {
 		int v1 = -(_currentScale - 100) * (_posDiff.x - 1) / _hypotenuse + _currentScale;
-		var1 = MAX(1, 10000 / (v1 * _currentScale * var1));
+		velocity = MAX(1, 10000 / (v1 * _currentScale * velocity));
 	}
 
 	if (!_moving || (_facing != _turnToFacing))
@@ -444,7 +450,7 @@ void Player::move() {
 
 	Common::Point newPos = _playerPos;
 
-	if (_v8452E < var1) {
+	if (_v8452E < velocity) {
 		do {
 			if (_v8452C < _posDiff.x)
 				_v8452C += _posDiff.y;
@@ -470,10 +476,10 @@ void Player::move() {
 
 			_v8452E += _v84530;
 
-		} while ((_v8452E < var1) && !routeFlag && ((_posChange.x > 0) || (_posChange.y > 0) || (_newSceneId != 0)));
+		} while ((_v8452E < velocity) && !routeFlag && ((_posChange.x > 0) || (_posChange.y > 0) || (_newSceneId != 0)));
 	}
 
-	_v8452E -= var1;
+	_v8452E -= velocity;
 
 	if (routeFlag)
 		cancelCommand();
@@ -512,15 +518,15 @@ void Player::idle() {
 		// Reset back to the start of the list
 		_frameListIndex = 0;
 	else {
-		_frameNum += direction;
+		_frameNumber += direction;
 		_forceRefresh = true;
 
-		if (spriteSet._charInfo->_frameList2[frameIndex] < _frameNum) {
-			_unk3 = _unk2;
+		if (spriteSet._charInfo->_frameList2[frameIndex] < _frameNumber) {
+			_trigger = _upcomingTrigger;
 			updateFrame();
 		}
-		if (spriteSet._charInfo->_frameList[frameIndex] < _frameNum) {
-			_unk3 = _unk2;
+		if (spriteSet._charInfo->_frameList[frameIndex] < _frameNumber) {
+			_trigger = _upcomingTrigger;
 			updateFrame();
 		}
 	}
@@ -528,8 +534,8 @@ void Player::idle() {
 
 void Player::postUpdate() {
 	if (_moving) {
-		if (++_frameNum > _frameCount)
-			_frameNum = 1;
+		if (++_frameNumber > _frameCount)
+			_frameNumber = 1;
 		_forceRefresh = true;
 	} else {
 		if (!_forceRefresh)
@@ -559,7 +565,7 @@ int Player::getScale(int yp) {
 	return MIN(scale, 100);
 }
 
-void Player::setTicksAmount() {
+void Player::setBaseFrameRate() {
 	Scene &scene = _vm->_game->_scene;
 
 	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];

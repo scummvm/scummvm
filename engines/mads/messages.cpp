@@ -205,9 +205,9 @@ void KernelMessages::processText(int msgIndex) {
 	if (msg._flags & KMSG_PLAYER_TIMEOUT) {
 		if (player._visible3) {
 			SpriteAsset &asset = *_vm->_game->_scene._sprites[player._spritesStart + player._spritesIdx];
-			MSprite *frame = asset.getFrame(player._frameNum - 1);
+			MSprite *frame = asset.getFrame(player._frameNumber - 1);
 
-			int yAmount = player._currentScale * player._yScale / 100;
+			int yAmount = player._currentScale * player._centerOfGravity / 100;
 			x1 = player._playerPos.x;
 			y1 = (frame->h * player._currentScale / -100) + yAmount +
 				player._playerPos.y - 15;

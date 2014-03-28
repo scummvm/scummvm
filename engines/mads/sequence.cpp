@@ -495,7 +495,7 @@ void SequenceList::setScale(int spriteIdx, int scale) {
 
 void SequenceList::setMsgLayout(int seqIndex) {
 	Player &player = _vm->_game->_player;
-	int yp = player._playerPos.y + (player._yScale * player._currentScale) / 100;
+	int yp = player._playerPos.y + (player._centerOfGravity * player._currentScale) / 100;
 	setMsgPosition(seqIndex, Common::Point(player._playerPos.x, yp));
 	setDepth(seqIndex, player._currentDepth);
 	setScale(seqIndex, player._currentScale);

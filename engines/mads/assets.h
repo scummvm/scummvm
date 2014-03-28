@@ -51,9 +51,9 @@ public:
 	int _frameList2[16];
 	int _frameList[16];
 	int _ticksList[16];
-	int _unk1;
+	int _velocity;
 	int _ticksAmount;
-	int _yScale;
+	int _centerOfGravity;
 };
 
 class SpriteAsset {

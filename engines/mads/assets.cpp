@@ -224,9 +224,9 @@ SpriteSetCharInfo::SpriteSetCharInfo(Common::SeekableReadStream *s) {
 	for (int i = 0; i < 16; ++i)
 		_ticksList[i] = s->readUint16LE();
 
-	_unk1 = s->readUint16LE();
+	_velocity = s->readUint16LE();
 	_ticksAmount = s->readByte();
-	_yScale = s->readByte();
+	_centerOfGravity = s->readByte();
 }
 
 } // End of namespace MADS

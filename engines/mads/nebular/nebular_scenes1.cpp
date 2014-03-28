@@ -92,7 +92,7 @@ void Scene1xx::setPlayerSpritesPrefix() {
 		_game._player._loadsFirst = false;
 	}
 
-	_game._player._unk3 = 0;
+	_game._player._trigger = 0;
 	_vm->_palette->setEntry(16, 10, 63, 63);
 	_vm->_palette->setEntry(17, 10, 45, 45);
 }
