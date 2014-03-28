@@ -101,9 +101,9 @@ public:
 	void hideCursor();
 
 	/**
-	 * Resets the cursor, if necessary
+	 * Shows the wait cursor
 	 */
-	void resetCursor();
+	void waitCursor();
 
 	/**
 	 * Free currently loaded cursors

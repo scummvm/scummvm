@@ -118,7 +118,9 @@ public:
 	bool _visible;
 	bool _priorVisible;
 	bool _visible3;
+	bool _walkAnywhere;
 	int _frameNum;
+	bool _loadsFirst;
 	Common::Point _playerPos;
 	Common::Point _destPos;
 	Common::Point _posChange;

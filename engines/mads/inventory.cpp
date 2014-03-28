@@ -116,7 +116,7 @@ void InventoryObjects::addToInventory(int objectId) {
 
 		(*this)[objectId]._roomNumber = PLAYER_INVENTORY;
 
-		if (_vm->_game->_v1 == 5 && !_vm->_game->_screenObjects._v832EC) {
+		if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE && !_vm->_game->_screenObjects._v832EC) {
 			userInterface.categoryChanged();
 			userInterface.selectObject(userInterface._selectedInvIndex);
 		}
@@ -137,7 +137,7 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 	int selectedIndex = userInterface._selectedInvIndex;
 	bool noSelection = selectedIndex < 0;
 
-	if (_vm->_game->_v1 == 5 && !_vm->_game->_screenObjects._v832EC)
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE && !_vm->_game->_screenObjects._v832EC)
 		userInterface.selectObject(-1);
 
 	// Remove the item from the inventory list
@@ -158,7 +158,7 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 			newIndex = 0;
 	}
 
-	if (_vm->_game->_v1 == 5 && !_vm->_game->_screenObjects._v832EC) {
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE && !_vm->_game->_screenObjects._v832EC) {
 		userInterface.categoryChanged();
 		userInterface.selectObject(newIndex);
 	}

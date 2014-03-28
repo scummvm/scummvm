@@ -269,7 +269,7 @@ void UserInterface::setup(int id) {
 	_v1E = -1;
 	_v1C = -1;
 
-	if (_vm->_game->_v1 == 5)
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE)
 		scene._userInterface._uiSlots.draw(false, false);
 
 	scene._action.clear();

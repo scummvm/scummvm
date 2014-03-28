@@ -62,7 +62,7 @@ void Scene2xx::setPlayerSpritesPrefix() {
 		_game._player._spritesChanged = true;
 	
 	if ((_scene->_nextSceneId == 203 || _scene->_nextSceneId == 204) && _globals[kRhotundaStatus])
-		_game._v3 = 0;
+		_game._player._loadsFirst = false;
 
 	_vm->_palette->setEntry(16, 10, 63, 63);
 	_vm->_palette->setEntry(17, 10, 45, 45);
@@ -277,7 +277,7 @@ void Scene201::step() {
 
 	if (_game._abortTimers == 78) {
 		_vm->_sound->command(40);
-		Dialog::show(0x4E92);
+		_vm->_dialogs->show(0x4E92);
 		_scene->_reloadSceneFlag = true;
 	}
 }
@@ -297,34 +297,34 @@ void Scene201::actions() {
 				_scene->_nextSceneId = 213;
 			}
 		} else if (action->isAction(0x3, 0x1A6, 0)) {
-			Dialog::show(0x4E85);
+			_vm->_dialogs->show(0x4E85);
 		} else if (action->isAction(0x3, 0x129, 0)) {
-			Dialog::show(0x4E86);
+			_vm->_dialogs->show(0x4E86);
 		} else if (action->isAction(0x3, 0x16F, 0)) {
-			Dialog::show(0x4E87);
+			_vm->_dialogs->show(0x4E87);
 		} else if (action->isAction(0x3, 0x142, 0)) {
-			Dialog::show(0x4E88);
+			_vm->_dialogs->show(0x4E88);
 		} else if (action->isAction(0x3, 0x18F, 0)) {
-			Dialog::show(0x4E89);
+			_vm->_dialogs->show(0x4E89);
 		} else if (action->isAction(0x3, 0x1B9, 0)) {
-			Dialog::show(0x4E8A);
+			_vm->_dialogs->show(0x4E8A);
 		} else if (action->isAction(0x3, 0x192, 0)) {
-			Dialog::show(0x4E8B);
+			_vm->_dialogs->show(0x4E8B);
 		} else if (action->isAction(0x3, 0x1BA, 0)) {
-			Dialog::show(0x4E8C);
+			_vm->_dialogs->show(0x4E8C);
 		} else if (action->isAction(0x3, 0x83, 0)) {
-			Dialog::show(0x4E8E);
+			_vm->_dialogs->show(0x4E8E);
 		} else if (action->isAction(0x3, 0x1B6, 0)) {
 			if (_globals[kMeteorologistEverSeen])
-				Dialog::show(0x4E90);
+				_vm->_dialogs->show(0x4E90);
 			else
-				Dialog::show(0x4E8D);
+				_vm->_dialogs->show(0x4E8D);
 		} else if (action->isAction(0x3, 0x16C, 0)) {
-			Dialog::show(0x4E91);
+			_vm->_dialogs->show(0x4E91);
 		} else
 			return;
 	} else {
-		Dialog::show(0x4E8F);
+		_vm->_dialogs->show(0x4E8F);
 	}
 	action->_inProgress = false;
 }
@@ -580,7 +580,7 @@ void Scene202::step() {
 			if ((_globals[kMeteorologistWatch] == 2) || _globals[kLadderBroken]) {
 				_scene->_nextSceneId = 213;
 			} else {
-				Dialog::show(0x4EE9);
+				_vm->_dialogs->show(0x4EE9);
 				_scene->_reloadSceneFlag = true;
 			}
 		}
@@ -767,7 +767,7 @@ void Scene202::actions() {
 			if (action->_actionMode2 == 4) {
 				if (_game._abortTimers == 0) {
 					if (_game._objects.isInInventory(OBJ_BONES)) {
-						Dialog::show(0x4EFB);
+						_vm->_dialogs->show(0x4EFB);
 					} else {
 						_game._player._stepEnabled = false;
 						_game._player._visible = false;
@@ -850,7 +850,7 @@ void Scene202::actions() {
 					}
 				} else if (_game._abortTimers == 2) {
 					if (!_scene->_activeAnimation && (_globals._abortVal == 0)) {
-						Dialog::show(0x4EFE);
+						_vm->_dialogs->show(0x4EFE);
 					}
 					_scene->_sequences.remove(_globals._spriteIndexes[25]);
 					_globals._spriteIndexes[25] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
@@ -899,7 +899,7 @@ void Scene202::actions() {
 					}
 				} else if (_game._abortTimers == 2) {
 					if (!_scene->_activeAnimation)
-						Dialog::show(0x4EFE);
+						_vm->_dialogs->show(0x4EFE);
 					_globals._abortVal = 0;
 					_scene->_sequences.remove(_globals._spriteIndexes[25]);
 					_globals._spriteIndexes[24] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
@@ -919,53 +919,53 @@ void Scene202::actions() {
 		} else if (action->isAction(0x188, 0xAA, 0)) {
 			setRandomKernelMessage();
 		} else if (action->isAction(0x3, 0x129, 0)) {
-			Dialog::show(0x4EEA);
+			_vm->_dialogs->show(0x4EEA);
 		} else if (action->isAction(0x3, 0x86, 0)) {
-			Dialog::show(0x4EEB);
+			_vm->_dialogs->show(0x4EEB);
 		} else if (action->isAction(0x3, 0x19C, 0)) {
-			Dialog::show(0x4EEC);
+			_vm->_dialogs->show(0x4EEC);
 		} else if (action->isAction(0x3, 0x82, 0)) {
 			if ((_globals[kMeteorologistStatus] == 0) || (_globals[kMeteorologistStatus] == 2)) {
-				Dialog::show(0x4EED);
+				_vm->_dialogs->show(0x4EED);
 			} else if (_globals[kMeteorologistStatus] == 1) {
-				Dialog::show(0x4EFC);
+				_vm->_dialogs->show(0x4EFC);
 			} else {
 				action->_inProgress = false;
 				return;
 			} 
 		} else if (action->isAction(0x3, 0x18E, 0)) {
-			Dialog::show(0x4EEE);
+			_vm->_dialogs->show(0x4EEE);
 		} else if (action->isAction(0x3, 0x164, 0)) {
-			Dialog::show(0x4EEF);
+			_vm->_dialogs->show(0x4EEF);
 		} else if (action->isAction(0x3, 0x175, 0)) {
-			Dialog::show(0x4EF0);
+			_vm->_dialogs->show(0x4EF0);
 		} else if (action->isAction(0x3, 0x174, 0)) {
-			Dialog::show(0x4EF1);
+			_vm->_dialogs->show(0x4EF1);
 		} else if (action->isAction(0x3, 0x142, 0)) {
-			Dialog::show(0x4EF2);
+			_vm->_dialogs->show(0x4EF2);
 		} else if (action->isAction(0x3, 0xAA, 0)) {
 			if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == 8))
-				Dialog::show(0x4EF4);
+				_vm->_dialogs->show(0x4EF4);
 			else
-				Dialog::show(0x4EF3);
+				_vm->_dialogs->show(0x4EF3);
 		} else if (action->isAction(0x3, 0x186, 0)) {
-			Dialog::show(0x4EF5);
+			_vm->_dialogs->show(0x4EF5);
 		} else if (action->isAction(0x3, 0x1B5, 0)) {
-			Dialog::show(0x4EF6);
+			_vm->_dialogs->show(0x4EF6);
 		} else if (action->isAction(0x3, 0x140, 0)) {
-			Dialog::show(0x4EF7);
+			_vm->_dialogs->show(0x4EF7);
 		} else if (action->isAction(0x4, 0x140, 0)) {
-			Dialog::show(0x4EF8);
+			_vm->_dialogs->show(0x4EF8);
 		} else if (action->isAction(0x3, 0x2D, 0)) {
 			if (action->_actionMode == 4)
-				Dialog::show(0x4EF9);
+				_vm->_dialogs->show(0x4EF9);
 			else
 				return;
 		} else {
 			return;			
 		}
 	} else {
-		Dialog::show(0x4EFB);
+		_vm->_dialogs->show(0x4EFB);
 	}
 	action->_inProgress = false;
 }
@@ -1059,23 +1059,23 @@ void Scene203::preActions() {
 
 void Scene203::actions() {
 	if (_action._savedFields._lookFlag) {
-		Dialog::show(0x4F53);
+		_vm->_dialogs->show(0x4F53);
 	} else if (_action.isAction(0x18C, 0x83, 0)) {
 		_scene->_nextSceneId = 208;
 	} else if (_action.isAction(0x18C, 0x82, 0)) {
 		_scene->_nextSceneId = 202;
 	} else if (_action.isAction(0x3, 0x142, 0)) {
-		Dialog::show(0x4F4D);
+		_vm->_dialogs->show(0x4F4D);
 	} else if (_action.isAction(0x3, 0x4D, 0)) {
-		Dialog::show(0x4F4E);
+		_vm->_dialogs->show(0x4F4E);
 	} else if (_action.isAction(0x3, 0x100, 0)) {
-		Dialog::show(0x4F4F);
+		_vm->_dialogs->show(0x4F4F);
 	} else if (_action.isAction(0x3, 0x82, 0)) {
-		Dialog::show(0x4F50);
+		_vm->_dialogs->show(0x4F50);
 	} else if (_action.isAction(0x3, 0x1A6, 0)) {
-		Dialog::show(0x4F51);
+		_vm->_dialogs->show(0x4F51);
 	} else if (_action.isAction(0x3, 0x30, 0)) {
-		Dialog::show(0x4F51);
+		_vm->_dialogs->show(0x4F51);
 	} else
 		return;
 
@@ -1299,7 +1299,7 @@ void Scene207::preActions() {
 
 void Scene207::actions() {
 	if (_action._savedFields._lookFlag) {
-		Dialog::show(0x50E7);
+		_vm->_dialogs->show(0x50E7);
 	} else {
 		if (_action.isAction(0x18B, 0x70, 0))
 			_scene->_nextSceneId = 214;
@@ -1320,33 +1320,33 @@ void Scene207::actions() {
 			}
 
 			if (_action.isAction(3, 0x69, 0)) {
-				Dialog::show(0x50DD);
+				_vm->_dialogs->show(0x50DD);
 			} else if (_action.isAction(3, 0x1AF, 0)) {
-				Dialog::show(0x50DE);
+				_vm->_dialogs->show(0x50DE);
 			} else if (_action.isAction(3, 0x141, 0)) {
-				Dialog::show(0x50DF);
+				_vm->_dialogs->show(0x50DF);
 			} else if (_action.isAction(3, 0x3E, 0)) {
-				Dialog::show(0x50E0);
+				_vm->_dialogs->show(0x50E0);
 			} else if (_action.isAction(3, 0x198, 0)) {
-				Dialog::show(0x50E1);
+				_vm->_dialogs->show(0x50E1);
 			} else if (_action.isAction(3, 0x1AE, 0)) {
-				Dialog::show(0x50E2);
+				_vm->_dialogs->show(0x50E2);
 			} else if (_action.isAction(3, 0xE8, 0)) {
-				Dialog::show(0x50E3);
+				_vm->_dialogs->show(0x50E3);
 			} else if (_action.isAction(3, 0x12, 0)) {
-				Dialog::show(0x50E4);
+				_vm->_dialogs->show(0x50E4);
 			} else if (_action.isAction(3, 0x1AC, 0)) {
-				Dialog::show(0x50E5);
+				_vm->_dialogs->show(0x50E5);
 			} else if (_action.isAction(3, 0x185, 0)) {
-				Dialog::show(0x50E6);
+				_vm->_dialogs->show(0x50E6);
 			} else if (_action.isAction(4, 0x141, 0)) {
-				Dialog::show(0x50E8);
+				_vm->_dialogs->show(0x50E8);
 			} else if (_action.isAction(4, 0x12, 0)) {
-				Dialog::show(0x50E9);
+				_vm->_dialogs->show(0x50E9);
 			} else if (_action.isAction(3, 0x14D, 0)) {
-				Dialog::show(0x50EA);
+				_vm->_dialogs->show(0x50EA);
 			} else if (_action.isAction(4, 0x14D, 0)) {
-				Dialog::show(0x50EB);
+				_vm->_dialogs->show(0x50EB);
 			} else
 				return;
 		}
@@ -1484,52 +1484,52 @@ void Scene208::actions() {
 	} else if (_action.isAction(0x7, 0x35, 0x1A9)) {
 		warning("TODO: sub3B282(4);");
 		if (_game._player._stepEnabled) {
-			Dialog::show(0x514C);
+			_vm->_dialogs->show(0x514C);
 		}
 	} else if (_action.isAction(0x7, 0x65, 0x1A9)) {
 		warning("TODO: sub3B282(5);");
 		if (_game._player._stepEnabled) {
-			Dialog::show(0x514C);
+			_vm->_dialogs->show(0x514C);
 		}
 	} else if (_action.isAction(0x3, 0x5D, 0)) {
-		Dialog::show(0x5141);
+		_vm->_dialogs->show(0x5141);
 	} else if (_action.isAction(0x3, 0xF6, 0)) {
-		Dialog::show(0x5142);
+		_vm->_dialogs->show(0x5142);
 	} else if (_action.isAction(0x3, 0x16F, 0)) {
-		Dialog::show(0x5143);
+		_vm->_dialogs->show(0x5143);
 	} else if (_action.isAction(0x3, 0x129, 0)) {
-		Dialog::show(0x5144);
+		_vm->_dialogs->show(0x5144);
 	} else if (_action.isAction(0x3, 0x1A1, 0)) {
-		Dialog::show(0x5145);
+		_vm->_dialogs->show(0x5145);
 	} else if (_action.isAction(0x4, 0x1A1, 0)) {
-		Dialog::show(0x5146);
+		_vm->_dialogs->show(0x5146);
 	} else if (_action.isAction(0x3, 0x9B, 0)) {
-		Dialog::show(0x5147);
+		_vm->_dialogs->show(0x5147);
 	} else if (_action.isAction(0x3, 0x19E, 0)) {
-		Dialog::show(0x5148);
+		_vm->_dialogs->show(0x5148);
 	} else if (_action.isAction(0x3, 0x1AA, 0)) {
-		Dialog::show(0x5149);
+		_vm->_dialogs->show(0x5149);
 	} else if (_action.isAction(0x3, 0x1A9, 0)) {
 		if (_game._difficulty == DIFFICULTY_IMPOSSIBLE)
-			Dialog::show(0x514A);
+			_vm->_dialogs->show(0x514A);
 		else
-			Dialog::show(0x514B);
+			_vm->_dialogs->show(0x514B);
 	} else if (_action.isAction(0x3, 0x174, 0) || _action.isAction(0x3, 0x175, 0)) {
-		Dialog::show(0x514D);
+		_vm->_dialogs->show(0x514D);
 	} else if (_action.isAction(0x4, 0x1A9, 0)) {
-		Dialog::show(0x514E);
+		_vm->_dialogs->show(0x514E);
 	} else if (_action.isAction(0x3, 0x1A8, 0)) {
-		Dialog::show(0x514F);
+		_vm->_dialogs->show(0x514F);
 	} else if (_action.isAction(0x4, 0x1A8, 0) || _action.isAction(0xA, 0x1A8, 0)) {
-		Dialog::show(0x5150);
+		_vm->_dialogs->show(0x5150);
 	} else if (_action._savedFields._lookFlag == 0) {
 		return;
 	} else if (_globals[kRhotundaStatus] == 1) {
-		Dialog::show(0x5153);
+		_vm->_dialogs->show(0x5153);
 	} else if (_globals[kLeavesStatus] == 2) {
-		Dialog::show(0x5152);
+		_vm->_dialogs->show(0x5152);
 	} else {
-		Dialog::show(0x5151);
+		_vm->_dialogs->show(0x5151);
 	}
 
 	_action._inProgress = false;

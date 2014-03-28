@@ -268,9 +268,9 @@ void Scene804::step() {
 	}
 
 	if (_game._abortTimers == 120)
-		Dialog::show(0x13a26);
+		_vm->_dialogs->show(0x13a26);
 	if (_game._abortTimers == 110)
-		Dialog::show(0x13a2a);
+		_vm->_dialogs->show(0x13a2a);
 
 	if (_globals._v6) {
 		_globals._v5 = 32;

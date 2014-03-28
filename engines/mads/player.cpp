@@ -45,6 +45,8 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_visible = false;
 	_priorVisible = false;
 	_visible3 = false;
+	_loadsFirst = false;
+	_walkAnywhere = false;
 	_special = 0;
 	_ticksAmount = 0;
 	_priorTimer = 0;
@@ -78,8 +80,8 @@ void Player::reset() {
 	_newSceneId = _v844BE = 0;
 	_next = 0;
 	_routeCount = 0;
+	_walkAnywhere = false;
 
-	_vm->_game->_v4 = 0;
 	_action->_startWalkFlag = false;
 	_action->_walkFlag = false;
 }
@@ -311,7 +313,7 @@ void Player::update() {
 						playerY < 0 || (playerY + yScale) >= MADS_SCENE_HEIGHT) {
 					scene._nextSceneId = _newSceneId;
 					_newSceneId = 0;
-					_vm->_game->_v4 = 0;
+					_walkAnywhere = false;
 				}
 			}
 

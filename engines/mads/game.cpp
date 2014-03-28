@@ -49,9 +49,10 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_sectionNumber = 1;
 	_priorSectionNumber = 0;
 	_currentSectionNumber = -1;
-	_v1 = _v2 = 0;
-	_v3 = _v4 = 0;
-	_v5 = _v6 = 0;
+	_kernelMode = KERNEL_GAME_LOAD;
+	_v2 = 0;
+	_quoteEmergency = false;
+	_vocabEmergency = false;
 	_aaName = "*I0.AA";
 	_playerSpritesFlag = false;
 	_priorFrameTimer = 0;
@@ -142,7 +143,7 @@ void Game::gameLoop() {
 		}
 
 		// TODO: Extra reset methods
-		_vm->_events->resetCursor();
+		_vm->_events->waitCursor();
 		_vm->_events->freeCursors();
 		_vm->_sound->closeDriver();
 	}
@@ -152,29 +153,31 @@ void Game::gameLoop() {
 
 void Game::sectionLoop() {
 	while (!_vm->shouldQuit() && _statusFlag && _sectionNumber == _currentSectionNumber) {
-		_v1 = 3;
+		_kernelMode = KERNEL_ROOM_PRELOAD;
 		_player._spritesChanged = true;
-		_v5 = 0;
-		_v6 = 0;
-		_vm->_events->resetCursor();
+		_quoteEmergency = false;
+		_vocabEmergency = false;
+		_vm->_events->waitCursor();
 
 		_scene.clearVocab();
 		_scene._dynamicHotspots.clear();
 		_scene.loadSceneLogic();
 
-		_v4 = 0;
+		_player._walkAnywhere = false;
 		_player._stepEnabled = true;
 		_player._visible = true;
 		_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
 		_visitedScenes.add(_scene._nextSceneId);
 
+		// Reset the user interface
 		_screenObjects._v8333C = true;
 		_screenObjects._v832EC = 0;
 		_scene._userInterface._scrollerY = 0;
-		_v3 = -1;
+		
+		_player._loadsFirst = true;
 
 		_scene._sceneLogic->setup();
-		if (_player._spritesChanged || _v3) {
+		if (_player._spritesChanged || _player._loadsFirst) {
 			if (_player._spritesLoaded)
 				_scene._spriteSlots.releasePlayerSprites();
 			_vm->_palette->resetGamePalette(18, 10);
@@ -185,7 +188,7 @@ void Game::sectionLoop() {
 
 		_vm->_palette->_paletteUsage.load(3, 0xF0, 0xF1, 0xF2);
 		
-		if (!_player._spritesLoaded && _v3) {
+		if (!_player._spritesLoaded && _player._loadsFirst) {
 			if (_player.loadSprites(""))
 				_vm->quitGame();
 			_playerSpritesFlag = true;
@@ -247,10 +250,10 @@ void Game::sectionLoop() {
 			_scene._userInterface.noInventoryAnim();
 		}
 
-		_v1 = 5;
+		_kernelMode = KERNEL_ACTIVE_CODE;
 		_scene._roomChanged = false;
 
-		if ((_v5 || _v6) && !_updateSceneFlag) {
+		if ((_quoteEmergency || _vocabEmergency) && !_updateSceneFlag) {
 			_scene._currentSceneId = _scene._priorSceneId;
 			_updateSceneFlag = true;
 		} else {
@@ -258,8 +261,8 @@ void Game::sectionLoop() {
 			_scene.loop();
 		}
 
-		_vm->_events->resetCursor();
-		_v1 = 3;
+		_vm->_events->waitCursor();
+		_kernelMode = KERNEL_ROOM_PRELOAD;
 
 		delete _scene._animationData;
 		_scene._animationData = nullptr;

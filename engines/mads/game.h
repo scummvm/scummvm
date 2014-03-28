@@ -43,9 +43,15 @@ enum Difficulty {
 	DIFFICULTY_HARD = 1, DIFFICULTY_REALLY_HARD = 2, DIFFICULTY_IMPOSSIBLE = 3
 };
 
+enum KernelMode {
+	KERNEL_GAME_LOAD = 0, KERNEL_SECTION_PRELOAD = 1, KERNEL_SECTION_INIT = 2,
+	KERNEL_ROOM_PRELOAD = 3, KERNEL_ROOM_INIT = 4, KERNEL_ACTIVE_CODE = 5
+};
+
 enum ProtectionResult {
 	PROTECTION_SUCCEED = 0, PROTECTION_FAIL = 1, PROTECTION_ESCAPE = 2
 };
+;
 
 class Game {
 private:
@@ -69,8 +75,8 @@ protected:
 	int _saveSlot;
 	int _statusFlag;
 	Common::StringArray _quotes;
-	int _v5;
-	int _v6;
+	bool _quoteEmergency;
+	bool _vocabEmergency;
 	bool _updateSceneFlag;
 	bool _playerSpritesFlag;
 
@@ -125,10 +131,8 @@ public:
 	SectionHandler *_sectionHandler;
 	VisitedScenes _visitedScenes;
 	Scene _scene;
-	int _v1;
+	KernelMode _kernelMode;
 	int _v2;
-	int _v3;
-	int _v4;
 	int _abortTimers;
 	int _abortTimers2;
 	AbortTimerMode _abortTimersMode;

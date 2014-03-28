@@ -76,7 +76,7 @@ void EventsManager::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
-void EventsManager::resetCursor() {
+void EventsManager::waitCursor() {
 	CursorType cursorId = (CursorType)MIN(_cursorSprites->getCount(), (int)CURSOR_WAIT);
 	_newCursorId = cursorId;
 	if (_cursorId != _newCursorId) {

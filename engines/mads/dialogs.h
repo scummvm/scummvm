@@ -68,10 +68,6 @@ public:
 	 * Destructor
 	 */
 	virtual ~Dialog();
-
-	static void show(int msgId) {
-		warning("TODO: Dialog::show");
-	}
 };
 
 enum {
@@ -194,6 +190,7 @@ public:
 
 	virtual void showDialog() = 0;
 	virtual void showPicture(int objId, int msgId, int arg3 = 0) = 0;
+	void show(int msgId);
 };
 
 } // End of namespace MADS
