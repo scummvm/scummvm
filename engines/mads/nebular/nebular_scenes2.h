@@ -52,7 +52,7 @@ public:
 class Scene201: public Scene2xx {
 	bool _pterodactylFlag;
 public:
-	Scene201(MADSEngine *vm) : Scene2xx(vm) {}
+	Scene201(MADSEngine *vm) : Scene2xx(vm), _pterodactylFlag(false) {}
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -63,13 +63,15 @@ public:
 
 class Scene202: public Scene2xx {
 private:
+	bool _activeMsgFl, _ladderTopFl, _waitingMeteorologistFl;
+
 	int subStep1(int randVal);
 	int subStep2(int randVal);
 	int subStep3(int randVal);
 	int subStep4(int randVal);
 
 public:
-	Scene202(MADSEngine *vm) : Scene2xx(vm) {}
+	Scene202(MADSEngine *vm) : Scene2xx(vm), _activeMsgFl(false), _ladderTopFl(false), _waitingMeteorologistFl(false) {}
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
