@@ -79,6 +79,7 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 	Common::String command = segMan->getString(commandReg);
 
 	if (command == "play" || command == "playx") {
+#ifdef USE_MAD
 		reg_t fileNameReg = readSelector(segMan, sciAudioObject, kernel->findSelector("fileName"));
 		Common::String fileName = segMan->getString(fileNameReg);
 
@@ -102,11 +103,13 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 				fileName.setChar('/', i);
 		}
 		sciAudio->open("sciAudio/" + fileName);
+
 		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(sciAudio, DisposeAfterUse::YES);
 
 		// We only support one audio handle
 		_mixer->playStream(soundType, &_audioHandle,
 							Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audioStream, loopCount));
+#endif
 	} else if (command == "stop") {
 		_mixer->stopHandle(_audioHandle);
 	} else {
