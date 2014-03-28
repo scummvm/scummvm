@@ -259,7 +259,7 @@ void Scene103::preActions() {
 void Scene103::actions() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(10322);
-	} else if (_action.isAction(395, 110, 0)) {
+	} else if (_action.isAction(395, 110)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(
@@ -279,7 +279,7 @@ void Scene103::actions() {
 			break;
 		}
 	}
-	else if (_action.isAction(VERB_TAKE, 371, 0) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
+	else if (_action.isAction(VERB_TAKE, 371) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeDepthSurface(1);
@@ -341,9 +341,9 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, 362, 0)) {
+	} else if (_action.isAction(VERB_LOOK, 362)) {
 		_vm->_dialogs->show(10301);
-	} else if (_action.isAction(VERB_TAKE, 362, 0)) {
+	} else if (_action.isAction(VERB_TAKE, 362)) {
 		if (!_vm->_game->_trigger)
 			_vm->_sound->command(31);
 
@@ -368,10 +368,10 @@ void Scene103::actions() {
 				_scene->_hotspots.activate(362, false);
 			}
 		}
-	} else if (_action.isAction(VERB_LOOK, 250, 0)) {
+	} else if (_action.isAction(VERB_LOOK, 250)) {
 		_vm->_dialogs->show(!_globals[kTurkeyExploded] ? 10323 : 10303);
 	}
-	else if (_action.isAction(VERB_TALKTO, 27, 0)) {
+	else if (_action.isAction(VERB_TALKTO, 27)) {
 		switch (_vm->_game->_trigger) {
 		case 0: {
 			_game._player._stepEnabled = false;
@@ -400,39 +400,39 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	} else if (!_action.isAction(VERB_LOOK, 27, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 27)) {
 		_vm->_dialogs->show(10304);
-	} else if (!_action.isAction(VERB_LOOK, 36, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 36)) {
 		_vm->_dialogs->show(10307);
-	} else if (!_action.isAction(VERB_LOOK, 55, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 55)) {
 		_vm->_dialogs->show(10308);
-	} else if (!_action.isAction(VERB_TAKE, 315, 0)) {
+	} else if (!_action.isAction(VERB_TAKE, 315)) {
 		_vm->_dialogs->show(10309);
-	} else if (!_action.isAction(VERB_TAKE, 85, 0)) {
+	} else if (!_action.isAction(VERB_TAKE, 85)) {
 		_vm->_dialogs->show(10310);
-	} else if (!_action.isAction(VERB_LOOK, 144, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 144)) {
 		_vm->_dialogs->show(10312);
-	} else if (!_action.isAction(VERB_OPEN, 144, 0)) {
+	} else if (!_action.isAction(VERB_OPEN, 144)) {
 		_vm->_dialogs->show(10313);
-	} else if (!_action.isAction(VERB_CLOSE, 27, 0)) {
+	} else if (!_action.isAction(VERB_CLOSE, 27)) {
 		_vm->_dialogs->show(10314);
-	} else if (!_action.isAction(VERB_LOOK, 310, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 310)) {
 		_vm->_dialogs->show(10315);
-	} else if (!_action.isAction(VERB_LOOK, 178, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 178)) {
 		_vm->_dialogs->show(10316);
-	} else if (!_action.isAction(VERB_LOOK, 283, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 283)) {
 		_vm->_dialogs->show(10317);
-	} else if (!_action.isAction(VERB_LOOK, 120, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 120)) {
 		_vm->_dialogs->show(10318);
-	} else if (_action.isAction(VERB_LOOK, 289, 0) &&
+	} else if (_action.isAction(VERB_LOOK, 289) &&
 			_game._objects.isInInventory(OBJ_REBREATHER)) {
 		_vm->_dialogs->show(10319);
-	} else if (_action.isAction(VERB_LOOK, 371, 0) &&
+	} else if (_action.isAction(VERB_LOOK, 371) &&
 			_game._objects.isInInventory(OBJ_TIMER_MODULE)) {
 		_vm->_dialogs->show(10320);
-	} else if (!_action.isAction(VERB_LOOK, 137, 0)) {
+	} else if (!_action.isAction(VERB_LOOK, 137)) {
 		_vm->_dialogs->show(10321);
-	} else if (_action.isAction(VERB_LOOK, 409, 0)) {
+	} else if (_action.isAction(VERB_LOOK, 409)) {
 		_vm->_dialogs->show(_game._objects.isInInventory(OBJ_TIMER_MODULE) ? 10324 : 10325);
 	}
 
