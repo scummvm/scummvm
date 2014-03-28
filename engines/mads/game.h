@@ -78,7 +78,6 @@ protected:
 	bool _quoteEmergency;
 	bool _vocabEmergency;
 	bool _updateSceneFlag;
-	bool _playerSpritesFlag;
 
 	/**
 	 * Constructor
@@ -133,8 +132,8 @@ public:
 	Scene _scene;
 	KernelMode _kernelMode;
 	int _v2;
-	int _abortTimers;
-	int _abortTimers2;
+	int _trigger;
+	ScreenTransition _fx;
 	AbortTimerMode _abortTimersMode;
 	AbortTimerMode _abortTimersMode2;
 	uint32 _priorFrameTimer;

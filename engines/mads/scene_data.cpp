@@ -49,7 +49,7 @@ KernelMessage::KernelMessage() {
 	_frameTimer2 = 0;
 	_frameTimer = 0;
 	_timeout = 0;
-	_abortTimers = 0;
+	_trigger = 0;
 	_abortMode = ABORTMODE_0;
 	_actionDetails._verbId = 0;
 	_actionDetails._objectNameId = 0;

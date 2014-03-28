@@ -143,9 +143,9 @@ public:
 	int _selectedActionIndex;
 	int _selectedItemVocabIdx;
 	int _scrollerY;
+	int _highlightedCommandIndex;
+	int _highlightedItemIndex;
 	int _highlightedActionIndex;
-	int _v1C;
-	int _v1E;
 	bool _inventoryChanged;
 	int _categoryIndexes[8];
 	Common::StringArray _talkStrings;

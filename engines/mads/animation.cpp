@@ -316,7 +316,7 @@ void Animation::startAnimation(int abortTimers) {
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
 	_nextFrameTimer = _vm->_game->_scene._frameStartTime;
-	_abortTimers = abortTimers;
+	_trigger = abortTimers;
 	_abortTimersMode = _vm->_game->_abortTimersMode2;
 	_vm->_game->_scene._action._activeAction = _actionDetails;
 
@@ -530,8 +530,8 @@ void Animation::update() {
 	_currentFrame++;
 	if (_currentFrame >= (int)_miscEntries.size()) {
 		// Animation is complete
-		if (_abortTimers != 0) {
-			_vm->_game->_abortTimers = _abortTimers;
+		if (_trigger != 0) {
+			_vm->_game->_trigger = _trigger;
 			_vm->_game->_abortTimersMode = _abortTimersMode;
 
 			if (_abortTimersMode != ABORTMODE_1) {

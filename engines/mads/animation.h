@@ -128,7 +128,7 @@ private:
 	uint32 _nextFrameTimer;
 	uint32 _nextScrollTimer;
 	int _messageCtr;
-	int _abortTimers;
+	int _trigger;
 	AbortTimerMode _abortTimersMode;
 	ActionDetails _actionDetails;
 

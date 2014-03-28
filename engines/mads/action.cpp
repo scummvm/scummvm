@@ -47,7 +47,7 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 }
 
 void MADSAction::clear() {
-	_v83338 = 1;
+	_interAwaiting = AWAITING_COMMAND;
 	_actionMode = ACTIONMODE_NONE;
 	_actionMode2 = ACTIONMODE2_0;
 	_v86F42 = 0;
@@ -269,7 +269,7 @@ void MADSAction::startAction() {
 	DynamicHotspots &dynHotspots = scene._dynamicHotspots;
 	Hotspots &hotspots = scene._hotspots;
 
-	game._player.moveComplete();
+	game._player.cancelCommand();
 
 	_inProgress = true;
 	_v8453A = ABORTMODE_0;
@@ -354,12 +354,12 @@ void MADSAction::checkActionAtMousePos() {
 	UserInterface &userInterface = scene._userInterface;
 	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
 
-	if ((userInterface._category == CAT_ACTION || userInterface._category == CAT_INV_VOCAB) &&
-			_v83338 != 1 && scene._highlightedHotspot >= 0) {
+	if ((userInterface._category == CAT_COMMAND || userInterface._category == CAT_INV_VOCAB) &&
+			_interAwaiting != 1 && scene._highlightedHotspot >= 0) {
 		if (_v86F4E == userInterface._category || _v86F4C != scene._highlightedHotspot ||
-			(_v83338 != 2 && _v83338 != 3))
+			(_interAwaiting != 2 && _interAwaiting != 3))
 			clear();
-		else if (_selectedRow != 0 || userInterface._category != CAT_ACTION)
+		else if (_selectedRow != 0 || userInterface._category != CAT_COMMAND)
 			scene._lookFlag = false;
 		else
 			scene._lookFlag = true;
@@ -367,19 +367,19 @@ void MADSAction::checkActionAtMousePos() {
 
 	if (screenObjects._v7FECA && _vm->_events->_mouseButtons) {
 		switch (userInterface._category) {
-		case CAT_ACTION:
+		case CAT_COMMAND:
 		case CAT_INV_VOCAB:
 			return;
 
 		case CAT_INV_LIST:
 		case CAT_TALK_ENTRY:
-			if (_v83338 != 3) {
+			if (_interAwaiting != 3) {
 				if (userInterface._selectedActionIndex >= 0) {
 					_actionMode = ACTIONMODE_VERB;
 					_selectedRow = userInterface._selectedActionIndex;
 					_flags1 = scene._verbList[_selectedRow]._action1;
 					_flags2 = scene._verbList[_selectedRow]._action2;
-					_v83338 = 2;
+					_interAwaiting = AWAITING_THIS;
 				} else if (userInterface._selectedItemVocabIdx >= 0) {
 					_actionMode = ACTIONMODE_OBJECT;
 					_selectedRow = userInterface._selectedItemVocabIdx;
@@ -393,20 +393,20 @@ void MADSAction::checkActionAtMousePos() {
 					_articleNumber = _flags2;
 
 					if ((_flags1 == 1 && _flags2 == 0) || (_flags1 == 2 && _flags2 != 0))
-						_v83338 = 4;
+						_interAwaiting = AWAITING_RIGHT_MOUSE;
 					else
-						_v83338 = 3;
+						_interAwaiting = AWAITING_THAT;
 				}
 			}
 			break;
 		}
 	}
 
-	switch (_v83338) {
+	switch (_interAwaiting) {
 	case 1:
 		_articleNumber = 0;
 		switch (userInterface._category) {
-		case CAT_ACTION:
+		case CAT_COMMAND:
 			_actionMode = ACTIONMODE_VERB;
 			_selectedRow = scene._highlightedHotspot;
 			if (_selectedRow >= 0) {
@@ -491,13 +491,13 @@ void MADSAction::leftClick() {
 	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
 	bool abortFlag = false;
 
-	if ((userInterface._category == CAT_ACTION || userInterface._category == CAT_INV_VOCAB) &&
-			_v83338 != 1 && scene._highlightedHotspot >= 0 && 
+	if ((userInterface._category == CAT_COMMAND || userInterface._category == CAT_INV_VOCAB) &&
+			_interAwaiting != 1 && scene._highlightedHotspot >= 0 && 
 			_v86F4E == userInterface._category && _v86F4C == scene._highlightedHotspot &&
-			(_v83338 == 2 || userInterface._category == CAT_INV_VOCAB)) {
+			(_interAwaiting == 2 || userInterface._category == CAT_INV_VOCAB)) {
 		abortFlag = true;
-		if (_selectedRow == 0 && userInterface._category == CAT_ACTION) {
-			_selectedAction = CAT_ACTION;
+		if (_selectedRow == 0 && userInterface._category == CAT_COMMAND) {
+			_selectedAction = CAT_COMMAND;
 			scene._lookFlag = true;
 		} else {
 			_selectedAction = CAT_NONE;
@@ -506,14 +506,14 @@ void MADSAction::leftClick() {
 		}
 	}
 
-	if (abortFlag || (screenObjects._v7FECA && (userInterface._category == CAT_ACTION ||
+	if (abortFlag || (screenObjects._v7FECA && (userInterface._category == CAT_COMMAND ||
 			userInterface._category == CAT_INV_VOCAB)))
 		return;
 
-	switch (_v83338) {
-	case 1:
+	switch (_interAwaiting) {
+	case AWAITING_COMMAND:
 		switch (userInterface._category) {
-		case CAT_ACTION:
+		case CAT_COMMAND:
 			if (_selectedRow >= 0) {
 				if (!_flags1) {
 					_selectedAction = -1;
@@ -521,7 +521,7 @@ void MADSAction::leftClick() {
 				else {
 					_v86F4C = _selectedRow;
 					_v86F4E = _actionMode;
-					_v83338 = 2;
+					_interAwaiting = AWAITING_THIS;
 				}
 			}
 			break;
@@ -536,7 +536,7 @@ void MADSAction::leftClick() {
 			if (_selectedRow >= 0) {
 				if (_flags1 != 1 || _flags2 != 0) {
 					if (_flags1 != 2 || _flags2 == 0) {
-						_v83338 = 3;
+						_interAwaiting = AWAITING_THAT;
 						_articleNumber = _flags2;
 					}
 					else {
@@ -560,7 +560,7 @@ void MADSAction::leftClick() {
 			if (_vm->_events->currentPos().y < MADS_SCENE_HEIGHT) {
 				scene._customDest = _vm->_events->currentPos() + scene._posAdjust;
 				_selectedAction = -1;
-				_v86F4A = -1;
+				_v86F4A = true;
 			}
 			break;
 
@@ -574,7 +574,7 @@ void MADSAction::leftClick() {
 		}
 		break;
 
-	case 2:
+	case AWAITING_THIS:
 		switch (userInterface._category) {
 		case CAT_INV_LIST:
 		case CAT_HOTSPOT:
@@ -582,7 +582,7 @@ void MADSAction::leftClick() {
 			if (_hotspotId >= 0) {
 				if (_flags2) {
 					_articleNumber = _flags2;
-					_v83338 = 3;
+					_interAwaiting = AWAITING_THAT;
 				}
 				else {
 					_selectedAction = -1;
@@ -599,7 +599,7 @@ void MADSAction::leftClick() {
 		}
 		break;
 
-	case 3:
+	case AWAITING_THAT:
 		switch (userInterface._category) {
 		case CAT_INV_LIST:
 		case CAT_HOTSPOT:

@@ -218,7 +218,7 @@ void Scene201::step() {
 		_pterodactylFlag = false;
 	}
 
-	if (_game._abortTimers == 70) {
+	if (_game._trigger == 70) {
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 9, 1, 0, 0);
 		_game._player._visible = false;
 		_scene->_sequences.setAnimRange(_globals._spriteIndexes[21], 12, 16);
@@ -231,24 +231,24 @@ void Scene201::step() {
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[21], SM_0, 0, 73);
 	}
 
-	if (_game._abortTimers == 81) {
+	if (_game._trigger == 81) {
 		_scene->_kernelMessages.reset();
 	}
 
-	if (_game._abortTimers == 71) {
+	if (_game._trigger == 71) {
 		_globals._spriteIndexes[22] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 9, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._spriteIndexes[22], -2, -2);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[22], 1);
 	}
 
-	if (_game._abortTimers == 73) {
+	if (_game._trigger == 73) {
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 9, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._spriteIndexes[21], 17, -2);
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[21], SM_0, 0, 74);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 1);
 	}
 
-	if (_game._abortTimers == 74) {
+	if (_game._trigger == 74) {
 		_vm->_sound->command(40);
 
 		_scene->_kernelMessages.add(Common::Point(125, 56), 0xFDFC, 32, 82, 180, _game.getQuote(91));
@@ -258,24 +258,24 @@ void Scene201::step() {
 		_scene->_sequences.addTimer(180, 75);
 	}
 
-	if (_game._abortTimers == 75) {
+	if (_game._trigger == 75) {
 		_globals[kMeteorologistEverSeen] = 0;
 		_scene->_nextSceneId = 202;
 	}
 
-	if (_game._abortTimers == 76) {
+	if (_game._trigger == 76) {
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
 		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 	}
 
-	if (_game._abortTimers == 77) {
+	if (_game._trigger == 77) {
 		_globals[kTeleporterCommand] = 1;
 		_scene->_nextSceneId = _globals[kTeleporterDestination];
 		_scene->_reloadSceneFlag = true;
 	}
 
-	if (_game._abortTimers == 78) {
+	if (_game._trigger == 78) {
 		_vm->_sound->command(40);
 		_vm->_dialogs->show(0x4E92);
 		_scene->_reloadSceneFlag = true;
@@ -288,12 +288,12 @@ void Scene201::actions() {
 		if (action->isAction(0x18C, 0x83, 0))
 			_scene->_nextSceneId = 202;
 		else if ((action->isAction(0x50, 0x156, 0)) || (action->isAction(0x188, 0x16C, 0)) || (action->isAction(0x188, 0x1B6, 0))) {
-			if (_game._abortTimers == 0) { 
+			if (_game._trigger == 0) { 
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				int sepChar = (_globals[kSexOfRex] == SEX_UNKNOWN) ? 't' : 'u';
 				_scene->loadAnimation(formAnimName(sepChar, 0), 1);
-			} else if (_game._abortTimers == 1) {
+			} else if (_game._trigger == 1) {
 				_scene->_nextSceneId = 213;
 			}
 		} else if (action->isAction(0x3, 0x1A6, 0)) {
@@ -474,10 +474,10 @@ void Scene202::step() {
 			setRandomKernelMessage();
 	}
 
-	if (_game._abortTimers == 70)
+	if (_game._trigger == 70)
 		_activeMsgFl = false;
 
-	if (_game._abortTimers == 71) {
+	if (_game._trigger == 71) {
 		_vm->_sound->command(3);
 		_vm->_sound->command(9);
 		_globals._v8425C = 900 + _scene->_frameStartTime;
@@ -507,7 +507,7 @@ void Scene202::step() {
 		_globals[kMeteorologistWatch] = 0;
 	}
 
-	switch (_game._abortTimers) {
+	switch (_game._trigger) {
 	case 90:
 		_vm->_sound->command(41);
 		_scene->_sequences.remove(_globals._spriteIndexes[25]);
@@ -717,7 +717,7 @@ void Scene202::preActions() {
 		_scene->_kernelMessages.reset();
 
 	if (!_ladderTopFl && (action->isAction(0x4E, 0xC7, 0) || !action->_walkFlag)) {
-		if (_game._abortTimers == 0) {
+		if (_game._trigger == 0) {
 			_vm->_sound->command(29);
 			action->_walkFlag = false;
 			_game._player._stepEnabled = false;
@@ -725,7 +725,7 @@ void Scene202::preActions() {
 			_globals._spriteIndexes[23] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._spriteIndexes[23], 1);
 			_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 1);
-		} else if (_game._abortTimers == 1) {
+		} else if (_game._trigger == 1) {
 			_scene->_sequences.updateTimeout(-1, _globals._spriteIndexes[23]);
 			warning("CHECKME: _scene->_dynamicHotspots.remove(_globals._frameTime);");
 			_scene->_dynamicHotspots.remove(_globals._frameTime);
@@ -765,7 +765,7 @@ void Scene202::actions() {
 			_scene->_nextSceneId = 201;
 		} else if (action->isAction(0x4, 0x2C, 0)) {
 			if (action->_actionMode2 == 4) {
-				if (_game._abortTimers == 0) {
+				if (_game._trigger == 0) {
 					if (_game._objects.isInInventory(OBJ_BONES)) {
 						_vm->_dialogs->show(0x4EFB);
 					} else {
@@ -776,7 +776,7 @@ void Scene202::actions() {
 						_scene->_sequences.addSubEntry(_globals._spriteIndexes[22], SM_FRAME_INDEX, 6, 1);
 						_scene->_sequences.addSubEntry(_globals._spriteIndexes[22], SM_0, 0, 2);
 					}
-				} else if (_game._abortTimers == 1) {
+				} else if (_game._trigger == 1) {
 					if ((_game._player._playerPos.x == 132) && (_game._player._playerPos.y == 97)) {
 						_scene->_sequences.remove(_globals._spriteIndexes[16]);
 						_globals[kBone202Status] |= 1;
@@ -784,7 +784,7 @@ void Scene202::actions() {
 						_scene->_sequences.remove(_globals._spriteIndexes[21]);
 						_globals[kBone202Status] |= 2;
 					}
-				} else if (_game._abortTimers == 2) {
+				} else if (_game._trigger == 2) {
 					if (_game._objects.isInInventory(OBJ_BONE)) {
 						_game._objects.removeFromInventory(OBJ_BONE, 1);
 						_game._objects.addToInventory(OBJ_BONES);
@@ -802,7 +802,7 @@ void Scene202::actions() {
 				}
 			}
 		} else if ((action->isAction(0x50, 0xC7, 0)) && (_globals[kLadderBroken] == 0)) {
-			if (_game._abortTimers == 0) {
+			if (_game._trigger == 0) {
 				_vm->_sound->command(29);
 				_globals._v8425C = _scene->_frameStartTime;
 				_game._player._visible = false;
@@ -814,7 +814,7 @@ void Scene202::actions() {
 				_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._spriteIndexes[23], 1);
 				_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 1);
-			} else if (_game._abortTimers == 1) {
+			} else if (_game._trigger == 1) {
 				_globals._spriteIndexes[24] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], true, 1);
 				_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
 				_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
@@ -829,7 +829,7 @@ void Scene202::actions() {
 			}
 		} else if (((action->isAction(0x3, 0x27, 0x82)) || (action->isAction(0x3, 0x27, 0x1B6))) && (_globals[kSexOfRex] == SEX_MALE)) {
 			if (!_ladderTopFl) {
-				if (_game._abortTimers == 0) {
+				if (_game._trigger == 0) {
 					_game._player._stepEnabled = false;
 					_game._player._visible= false;
 					_globals._spriteIndexes[25] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
@@ -838,7 +838,7 @@ void Scene202::actions() {
 					_scene->_sequences.setDepth(_globals._spriteIndexes[25], 1);
 					_scene->_sequences.updateTimeout(-1, _globals._spriteIndexes[25]);
 					_scene->_sequences.addSubEntry(_globals._spriteIndexes[25], SM_0, 0, 1);
-				} else if (_game._abortTimers == 1) {
+				} else if (_game._trigger == 1) {
 					_globals._spriteIndexes[25] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 6);
 					_scene->_sequences.setDepth(_globals._spriteIndexes[25], 1);
 					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
@@ -848,7 +848,7 @@ void Scene202::actions() {
 					} else {
 						_scene->_sequences.addTimer(120, 2);
 					}
-				} else if (_game._abortTimers == 2) {
+				} else if (_game._trigger == 2) {
 					if (!_scene->_activeAnimation && (_globals._abortVal == 0)) {
 						_vm->_dialogs->show(0x4EFE);
 					}
@@ -858,7 +858,7 @@ void Scene202::actions() {
 					_scene->_sequences.setAnimRange(_globals._spriteIndexes[25], 1, 6);
 					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(172, 123));
 					_scene->_sequences.addSubEntry(_globals._spriteIndexes[25], SM_0, 0, 3);
-				} else if (_game._abortTimers == 3) {
+				} else if (_game._trigger == 3) {
 					_scene->_sequences.updateTimeout(-1, _globals._spriteIndexes[25]);
 					_game._player._stepEnabled = true;
 					_game._player._visible = true;
@@ -867,7 +867,7 @@ void Scene202::actions() {
 					return;
 				}
 			} else {
-				if (_game._abortTimers == 0) {
+				if (_game._trigger == 0) {
 					_globals._v84268 = 1;
 					_game._player._stepEnabled = false;
 					_scene->_sequences.remove(_globals._spriteIndexes[24]);
@@ -875,7 +875,7 @@ void Scene202::actions() {
 					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
 					_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
 					_scene->_sequences.addSubEntry(_globals._spriteIndexes[24], SM_0, 0, 1);
-				} else if (_game._abortTimers == 1) {
+				} else if (_game._trigger == 1) {
 					_globals._spriteIndexes[25] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], true, -2);
 					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[25], Common::Point(247, 82));
 					_scene->_sequences.setDepth(_globals._spriteIndexes[25], 1);
@@ -897,7 +897,7 @@ void Scene202::actions() {
 					} else {
 						_scene->_sequences.addTimer(120, 2);
 					}
-				} else if (_game._abortTimers == 2) {
+				} else if (_game._trigger == 2) {
 					if (!_scene->_activeAnimation)
 						_vm->_dialogs->show(0x4EFE);
 					_globals._abortVal = 0;
@@ -906,7 +906,7 @@ void Scene202::actions() {
 					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
 					_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
 					_scene->_sequences.addSubEntry(_globals._spriteIndexes[24], SM_0, 0, 3);
-				} else if (_game._abortTimers == 3) {
+				} else if (_game._trigger == 3) {
 					_globals._spriteIndexes[24] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], true, 1);
 					_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(247, 82));
 					_scene->_sequences.setDepth(_globals._spriteIndexes[24], 1);
@@ -1024,7 +1024,7 @@ void Scene203::step() {
 	if (_globals._v0 == 0)
 		return;
 
-	if ((_game._abortTimers == 0) && (_globals._frameTime != 0))
+	if ((_game._trigger == 0) && (_globals._frameTime != 0))
 		return;
 
 	if ((_game._player._playerPos != Common::Point(158, 136)) || (_game._player._facing != 2))
@@ -1032,7 +1032,7 @@ void Scene203::step() {
 
 	_globals._frameTime = 0xFFFF;
 
-	if (_game._abortTimers == 0) {
+	if (_game._trigger == 0) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
 		_vm->_palette->sub7BBF8();
@@ -1040,7 +1040,7 @@ void Scene203::step() {
 		_scene->resetScene();
 		_vm->_events->setCursor2(CURSOR_WAIT);
 		_scene->loadAnimation(Resources::formatName(203, 'a', -1, EXT_AA, ""), 81);
-	} else if (_game._abortTimers == 81) {
+	} else if (_game._trigger == 81) {
 		_scene->_nextSceneId = 208;
 		_scene->_reloadSceneFlag = true;
 	} 
@@ -1257,13 +1257,13 @@ void Scene207::step() {
 		warning("TODO: sub3ADD6(...)");
 	}
 
-	if (_game._abortTimers == 70) {
+	if (_game._trigger == 70) {
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._spriteIndexes[21], 23, 34);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 6);
 	}
 
-	if (_game._abortTimers == 71)
+	if (_game._trigger == 71)
 		_globals._v2 = 0;
 
 	if (_globals._v2)
@@ -1419,21 +1419,21 @@ void Scene208::step() {
 	if ((_game._player._playerPos != Common::Point(20, 148)) || (_game._player._facing != 6))
 		return;
 
-	if ((_game._abortTimers == 0) && ((_globals._frameTime & 0xFFFF) != 0))
+	if ((_game._trigger == 0) && ((_globals._frameTime & 0xFFFF) != 0))
 		return;
 	
 	_globals._frameTime |= 0xFFFF;
 	
-	if (_game._abortTimers == 82) {
+	if (_game._trigger == 82) {
 		_game._player._stepEnabled = true;
 		return;
 	}
 	
-	if (_game._abortTimers > 82)
+	if (_game._trigger > 82)
 		return;
 	
-	if (_game._abortTimers & 0xFF) {
-		if ((_game._abortTimers & 0xFF) == 81) {
+	if (_game._trigger & 0xFF) {
+		if ((_game._trigger & 0xFF) == 81) {
 			_scene->_sequences.remove(_globals._spriteIndexes[15]);
 			_globals[kRhotundaStatus] = 1;
 			warning("TODO: sub34648(...)");
@@ -1459,20 +1459,20 @@ void Scene208::actions() {
 	if (_action.isAction(0x18C, 0x19F, 0)) {
 		if (_globals[kRhotundaStatus])
 			_scene->_nextSceneId = 203;
-		else if (_game._abortTimers == 0) {
+		else if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
 			int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, _game.getQuote(70));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-		} else if (_game._abortTimers == 1) {
+		} else if (_game._trigger == 1) {
 			_scene->_nextSceneId = 203;
 		}
 	} else if (_action.isAction(0x18C, 0x83, 0)) {
 		_scene->_nextSceneId = 212;
-	} else if (_action.isAction(0x4, 0x1AA, 0) && (!_globals[kLeavesStatus] || _game._abortTimers)) {
+	} else if (_action.isAction(0x4, 0x1AA, 0) && (!_globals[kLeavesStatus] || _game._trigger)) {
 		warning("TODO: sub3B282(1);");
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->showPicture(OBJ_BIG_LEAVES, 0x326, 0);
-	} else if (_action.isAction(0x7, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._abortTimers)) {
+	} else if (_action.isAction(0x7, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
 		warning("TODO: sub3B282(2);");
 	} else if (_action.isAction(0x7, 0x17A, 0x1A9)) {
 		warning("TODO: sub3B282(3);");

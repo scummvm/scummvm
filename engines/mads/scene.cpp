@@ -275,7 +275,7 @@ void Scene::loop() {
 		// TODO: Verify correctness of frame wait
 		_vm->_events->waitForNextFrame();
 
-		if (_vm->_dialogs->_pendingDialog != DIALOG_NONE && !_vm->_game->_abortTimers
+		if (_vm->_dialogs->_pendingDialog != DIALOG_NONE && !_vm->_game->_trigger
 			&& _vm->_game->_player._stepEnabled)
 			_reloadSceneFlag = true;
 	}
@@ -290,18 +290,18 @@ void Scene::doFrame() {
 		_action._selectedAction = 0;
 	}
 
-	if (!_vm->_game->_abortTimers && !player._unk3) {
+	if (!_vm->_game->_trigger && !player._unk3) {
 		// Refresh the dynamic hotspots if they've changed
 		if (_dynamicHotspots._changed)
 			_dynamicHotspots.refresh();
 
 		// Check all on-screen visual objects
 		_vm->_game->_screenObjects.check(player._stepEnabled && !_action._startWalkFlag &&
-				!_vm->_game->_abortTimers2);
+				!_vm->_game->_fx);
 	}
 
 	if (_action._selectedAction && player._stepEnabled && !_action._startWalkFlag &&
-			!_vm->_game->_abortTimers && !player._unk3) {
+			!_vm->_game->_trigger && !player._unk3) {
 		_action.startAction();
 		if (_action._activeAction._verbId == Nebular::NOUN_LOOK_AT) {
 			_action._activeAction._verbId = VERB_LOOK;
@@ -311,17 +311,17 @@ void Scene::doFrame() {
 		flag = true;
 	}
 
-	if (flag || (_vm->_game->_abortTimers && _vm->_game->_abortTimersMode == ABORTMODE_2)) {
+	if (flag || (_vm->_game->_trigger && _vm->_game->_abortTimersMode == ABORTMODE_2)) {
 		doPreactions();
 	}
 
 	checkStartWalk();
-	if (!_vm->_game->_abortTimers2)
+	if (!_vm->_game->_fx)
 		_frameStartTime = _vm->_events->getFrameCounter();
 
 	if ((_action._inProgress && !player._moving && !_action._startWalkFlag &&
 			player._turnToFacing == player._facing) ||
-			(_vm->_game->_abortTimers && _vm->_game->_abortTimersMode == ABORTMODE_0)) {
+			(_vm->_game->_trigger && _vm->_game->_abortTimersMode == ABORTMODE_0)) {
 		doAction();
 	}
 
@@ -339,7 +339,7 @@ void Scene::doFrame() {
 			// Cursor update code
 			updateCursor();
 
-			if (!_vm->_game->_abortTimers) {
+			if (!_vm->_game->_trigger) {
 				// Handle any active sequences
 				_sequences.tick();
 
@@ -357,24 +357,24 @@ void Scene::doFrame() {
 					0x203, 0, 0, 1, msg);
 			}
 
-			if (!_vm->_game->_abortTimers) {
+			if (!_vm->_game->_trigger) {
 				if (_reloadSceneFlag || _currentSceneId != _nextSceneId)
 					_kernelMessages.reset();
 				_kernelMessages.update();
 			}
 
-			_userInterface._uiSlots.draw(_vm->_game->_abortTimers2 == 0,
-				_vm->_game->_abortTimers2 != 0);
+			_userInterface._uiSlots.draw(_vm->_game->_fx == 0,
+				_vm->_game->_fx != 0);
 
 			// Write any text needed by the interface
-			if (_vm->_game->_abortTimers2)
+			if (_vm->_game->_fx)
 				_userInterface.drawTextElements();
 
 			// Draw any elements
-			drawElements((ScreenTransition)_vm->_game->_abortTimers2, _vm->_game->_abortTimers2);
+			drawElements((ScreenTransition)_vm->_game->_fx, _vm->_game->_fx);
 
 			// Handle message updates
-			if (_vm->_game->_abortTimers2) {
+			if (_vm->_game->_fx) {
 				uint32 priorTime = _vm->_game->_priorFrameTimer;
 				uint32 newTime = _vm->_events->getFrameCounter();
 				_sequences.delay(newTime, priorTime);
@@ -390,9 +390,9 @@ void Scene::doFrame() {
 		}
 	}
 
-	if (_vm->_game->_abortTimers2)
+	if (_vm->_game->_fx)
 		_animFlag = true;
-	_vm->_game->_abortTimers2 = 0;
+	_vm->_game->_fx = kTransitionNone;
 
 	if (_freeAnimationFlag) {
 		_activeAnimation->free();
@@ -450,7 +450,7 @@ void Scene::doPreactions() {
 		_sceneLogic->preActions();
 
 		if (_vm->_game->_abortTimersMode == ABORTMODE_2)
-			_vm->_game->_abortTimers = 0;
+			_vm->_game->_trigger = 0;
 	}
 }
 
@@ -458,7 +458,7 @@ void Scene::doAction() {
 	int flag = 0;
 
 	_vm->_game->_abortTimersMode2 = ABORTMODE_0;
-	if ((_action._inProgress || _vm->_game->_abortTimers) && !_action._v8453A) {
+	if ((_action._inProgress || _vm->_game->_trigger) && !_action._v8453A) {
 		_sceneLogic->actions();
 		_action._inProgress = true;
 		flag = -1;
@@ -467,14 +467,14 @@ void Scene::doAction() {
 	if (_vm->_game->_screenObjects._v832EC == 1) {
 		_action._inProgress = false;
 	} else {
-		if ((_action._inProgress || _vm->_game->_abortTimers) ||
+		if ((_action._inProgress || _vm->_game->_trigger) ||
 				(!flag && _action._v8453A == flag)) {
 			_vm->_game->_sectionHandler->sectionPtr2();
 			_action._inProgress = true;
 			flag = -1;
 		}
 
-		if ((_action._inProgress || _vm->_game->_abortTimers) && (!flag || _action._v8453A == flag)) {
+		if ((_action._inProgress || _vm->_game->_trigger) && (!flag || _action._v8453A == flag)) {
 			_vm->_game->doObjectAction();
 		}
 
@@ -496,7 +496,7 @@ void Scene::doAction() {
 
 	_action._inProgress = false;
 	if (_vm->_game->_abortTimersMode == ABORTMODE_0)
-		_vm->_game->_abortTimers = 0;
+		_vm->_game->_trigger = 0;
 }
 
 void Scene::checkStartWalk() {
@@ -515,7 +515,7 @@ void Scene::doSceneStep() {
 	_vm->_game->_player._unk3 = 0;
 
 	if (_vm->_game->_abortTimersMode == ABORTMODE_1)
-		_vm->_game->_abortTimers = 0;
+		_vm->_game->_trigger = 0;
 }
 
 void Scene::checkKeyboard() {
@@ -537,7 +537,7 @@ void Scene::updateCursor() {
 	Player &player = _vm->_game->_player;
 
 	CursorType cursorId = CURSOR_ARROW;
-	if (_action._v83338 == 1 && !_vm->_game->_screenObjects._v7FECA &&
+	if (_action._interAwaiting == 1 && !_vm->_game->_screenObjects._v7FECA &&
 		_vm->_game->_screenObjects._category == CAT_HOTSPOT) {
 		int idx = _vm->_game->_screenObjects._selectedObject -
 			_userInterface._categoryIndexes[CAT_HOTSPOT - 1];

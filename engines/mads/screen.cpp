@@ -303,7 +303,7 @@ void ScreenObjects::check(bool scanFlag) {
 		if (_vm->_easyMouse && _vm->_events->_mouseButtons && category != _category
 			&& scene._userInterface._category != CAT_NONE) {
 			_released = true;
-			if (category >= CAT_ACTION && category <= CAT_TALK_ENTRY) {
+			if (category >= CAT_COMMAND && category <= CAT_TALK_ENTRY) {
 				elementHighlighted();
 			}
 
@@ -315,12 +315,12 @@ void ScreenObjects::check(bool scanFlag) {
 			scene._userInterface._category = _category;
 
 		if (!_vm->_events->_mouseButtons || _vm->_easyMouse) {
-			if (userInterface._category >= CAT_ACTION && userInterface._category <= CAT_TALK_ENTRY) {
+			if (userInterface._category >= CAT_COMMAND && userInterface._category <= CAT_TALK_ENTRY) {
 				elementHighlighted();
 			}
 		}
 
-		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && scene._action._v83338 > 1
+		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && scene._action._interAwaiting > 1
 			&& scene._userInterface._category == CAT_INV_LIST) ||
 			(_vm->_easyMouse && scene._userInterface._category == CAT_HOTSPOT)) {
 			scene._action.checkActionAtMousePos();
@@ -465,12 +465,12 @@ void ScreenObjects::elementHighlighted() {
 	int uiCount;
 
 	switch (userInterface._category) {
-	case CAT_ACTION:
+	case CAT_COMMAND:
 		index = 10;
 		indexEnd = 9;
 		varA = 5;
 		topIndex = 0;
-		idxP = !_v7FECA ? &userInterface._highlightedActionIndex : 
+		idxP = !_v7FECA ? &userInterface._highlightedCommandIndex : 
 			&userInterface._selectedActionIndex;
 
 		if (_v7FECA && userInterface._selectedItemVocabIdx >= 0)
@@ -486,8 +486,8 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = invList.size() - 1;
 		varA = 0;
 		topIndex = userInterface._inventoryTopIndex;
-		idxP = &userInterface._v1C;
-		var4 = (!_released || (_vm->_events->_mouseButtons && action._v83338 == 1)) ? 0 : 1;
+		idxP = &userInterface._highlightedItemIndex;
+		var4 = (!_released || (_vm->_events->_mouseButtons && action._interAwaiting == 1)) ? 0 : 1;
 		break;
 
 	case CAT_INV_VOCAB:
@@ -502,10 +502,10 @@ void ScreenObjects::elementHighlighted() {
 
 		varA = 0;
 		topIndex = 0;
-		idxP = _v7FECA ? &userInterface._selectedItemVocabIdx : &userInterface._v1E;
+		idxP = _v7FECA ? &userInterface._selectedItemVocabIdx : &userInterface._highlightedActionIndex;
 
 		if (_v7FECA && userInterface._selectedActionIndex >= 0)
-			userInterface.updateSelection(CAT_ACTION, -1, &userInterface._selectedActionIndex);
+			userInterface.updateSelection(CAT_COMMAND, -1, &userInterface._selectedActionIndex);
 
 		var4 = _released && !_v7FECA ? 1 : 0;
 		break;
@@ -529,7 +529,7 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = index - 1;
 		varA = 0;
 		topIndex = 0;
-		idxP = &userInterface._highlightedActionIndex;
+		idxP = &userInterface._highlightedCommandIndex;
 		var4 = -1;
 		break;
 
@@ -597,7 +597,7 @@ void ScreenObjects::elementHighlighted() {
 	_vm->_game->_scene._highlightedHotspot = newIndex;
 
 	if (_category == CAT_INV_LIST || _category == CAT_INV_ANIM) {
-		if (action._v83338 == 1 && newIndex >= 0 && _released &&
+		if (action._interAwaiting == 1 && newIndex >= 0 && _released &&
 				(!_vm->_events->_mouseReleased || !_vm->_easyMouse))
 			newIndex = -1;
 	}

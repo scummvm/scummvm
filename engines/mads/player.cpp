@@ -46,6 +46,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_priorVisible = false;
 	_visible3 = false;
 	_loadsFirst = false;
+	_loadedFirst = false;
 	_walkAnywhere = false;
 	_special = 0;
 	_ticksAmount = 0;
@@ -71,7 +72,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	Common::fill(&_spriteSetsPresent[0], &_spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT], false);
 }
 
-void Player::reset() {
+void Player::cancelWalk() {
 	_action = &_vm->_game->_scene._action;
 	_destPos = _playerPos;
 	_targetFacing = FACING_NONE;
@@ -133,8 +134,8 @@ bool Player::loadSprites(const Common::String &prefix) {
 	}
 }
 
-void Player::turnToDestFacing() {
-	if (_targetFacing != 5)
+void Player::setFinalFacing() {
+	if (_targetFacing != FACING_NONE)
 		_turnToFacing = _targetFacing;
 }
 
@@ -176,8 +177,8 @@ void Player::dirChanged() {
 	_priorTimer += 1;
 }
 
-void Player::moveComplete() {
-	reset();
+void Player::cancelCommand() {
+	cancelWalk();
 	_action->_inProgress = false;
 }
 
@@ -365,7 +366,7 @@ void Player::setDest(const Common::Point &pt, Facing facing) {
 void Player::startWalking(const Common::Point &pos, Facing direction) {
 	Scene &scene = _vm->_game->_scene;
 
-	reset();
+	cancelWalk();
 	scene._action._startWalkFlag = true;
 	scene._action._walkFlag = true;
 	scene._destPos = pos;
@@ -406,7 +407,7 @@ void Player::move() {
 				// End of walking path
 				_routeCount = 0;
 				_moving = false;
-				turnToDestFacing();
+				setFinalFacing();
 				routeFlag = true;
 				idx = _routeCount;
 			}
@@ -475,7 +476,7 @@ void Player::move() {
 	_v8452E -= var1;
 
 	if (routeFlag)
-		moveComplete();
+		cancelCommand();
 	else {
 		if (!_newSceneId) {
 			// If the move is complete, make sure the position is exactly on the given destination

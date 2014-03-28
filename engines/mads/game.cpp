@@ -54,7 +54,6 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_quoteEmergency = false;
 	_vocabEmergency = false;
 	_aaName = "*I0.AA";
-	_playerSpritesFlag = false;
 	_priorFrameTimer = 0;
 	_updateSceneFlag = false;
 	_abortTimersMode = ABORTMODE_0;
@@ -191,7 +190,7 @@ void Game::sectionLoop() {
 		if (!_player._spritesLoaded && _player._loadsFirst) {
 			if (_player.loadSprites(""))
 				_vm->quitGame();
-			_playerSpritesFlag = true;
+			_player._loadedFirst = true;
 		}
 
 		_scene.loadScene(_scene._nextSceneId, _aaName, 0);
@@ -200,33 +199,33 @@ void Game::sectionLoop() {
 		if (!_player._spritesLoaded) {
 			if (_player.loadSprites(""))
 				_vm->quitGame();
-			_playerSpritesFlag = false;
+			_player._loadedFirst = false;
 		}
 
 		_vm->_events->initVars();
+		_scene._userInterface._highlightedCommandIndex = -1;
+		_scene._userInterface._highlightedItemIndex = -1;
 		_scene._userInterface._highlightedActionIndex = -1;
-		_scene._userInterface._v1C = -1;
-		_scene._userInterface._v1E = -1;
 
 		_scene._action.clear();
-		_player.turnToDestFacing();
+		_player.setFinalFacing();
 		_player._facing = _player._turnToFacing;
-		_player.moveComplete();
+		_player.cancelCommand();
+		_kernelMode = KERNEL_ROOM_INIT;
 
 		switch (_vm->_screenFade) {
 		case SCREEN_FADE_SMOOTH:
-			_abortTimers2 = kTransitionFadeOutIn;
+			_fx = kTransitionFadeOutIn;
 			break;
 		case SCREEN_FADE_FAST:
-			_abortTimers2 = kCenterVertTransition;
+			_fx = kCenterVertTransition;
 			break;
 		default:
-			_abortTimers2 = kTransitionNone;
+			_fx = kTransitionNone;
 			break;
 		}
 
-		_abortTimers = 0;
-		_abortTimersMode2 = ABORTMODE_1;
+		_trigger = 0;
 		_priorFrameTimer = _scene._frameStartTime;
 
 		// Call the scene logic for entering the given scene
@@ -271,7 +270,7 @@ void Game::sectionLoop() {
 
 		warning("TODO: sub_1DD8C, sub_1DD7E");
 
-		if (!_playerSpritesFlag) {
+		if (!_player._loadedFirst) {
 			_player._spritesLoaded = false;
 			_player._spritesChanged = true;
 		}

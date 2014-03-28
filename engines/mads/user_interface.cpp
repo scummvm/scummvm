@@ -199,9 +199,9 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_selectedActionIndex = 0;
 	_selectedItemVocabIdx = -1;
 	_scrollerY = 0;
+	_highlightedCommandIndex = -1;
+	_highlightedItemIndex = -1;
 	_highlightedActionIndex = -1;
-	_v1C = -1;
-	_v1E = -1;
 	_dirtyAreas.resize(50);
 	_inventoryChanged = false;
 	Common::fill(&_categoryIndexes[0], &_categoryIndexes[7], 0);
@@ -265,9 +265,9 @@ void UserInterface::setup(int id) {
 	scene._userInterface._uiSlots.clear();
 	scene._userInterface._uiSlots.fullRefresh();
 	_vm->_game->_ticksExpiry = _vm->_events->getFrameCounter();
+	_highlightedCommandIndex = -1;
 	_highlightedActionIndex = -1;
-	_v1E = -1;
-	_v1C = -1;
+	_highlightedItemIndex = -1;
 
 	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE)
 		scene._userInterface._uiSlots.draw(false, false);
@@ -291,7 +291,7 @@ void UserInterface::drawTextElements() {
 
 void UserInterface::drawActions() {
 	for (int idx = 0; idx < 10; ++idx) {
-		writeVocab(CAT_ACTION, idx);
+		writeVocab(CAT_COMMAND, idx);
 	}
 }
 
@@ -329,10 +329,10 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 	int vocabId;
 	Common::String vocabStr;
 	switch (category) {
-	case CAT_ACTION:
+	case CAT_COMMAND:
 		font = _vm->_font->getFont(FONT_INTERFACE);
 		vocabId = scene._verbList[id]._id;
-		if (id == _highlightedActionIndex) {
+		if (id == _highlightedCommandIndex) {
 			_vm->_font->setColorMode(SELMODE_HIGHLIGHTED);
 		} else {
 			_vm->_font->setColorMode(id == _selectedActionIndex ? SELMODE_SELECTED : SELMODE_UNSELECTED);
@@ -345,7 +345,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 	case CAT_INV_LIST:
 		font = _vm->_font->getFont(FONT_INTERFACE);
 		vocabId = _vm->_game->_objects.getItem(id)._descId;
-		if (id == _v1C) {
+		if (id == _highlightedItemIndex) {
 			_vm->_font->setColorMode(SELMODE_HIGHLIGHTED);
 		} else {
 			_vm->_font->setColorMode(id == _selectedInvIndex ? SELMODE_SELECTED : SELMODE_UNSELECTED);
@@ -386,7 +386,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 		// Item specific verbs
 		font = _vm->_font->getFont(FONT_INTERFACE);
 		vocabId = _vm->_game->_objects.getItem(_selectedInvIndex)._vocabList[id]._vocabId;
-		if (id == _v1E) {
+		if (id == _highlightedActionIndex) {
 			_vm->_font->setColorMode(SELMODE_HIGHLIGHTED);
 		} else {
 			_vm->_font->setColorMode(id == _selectedInvIndex ? SELMODE_SELECTED : SELMODE_UNSELECTED);
@@ -418,12 +418,12 @@ void UserInterface::loadElements() {
 		}
 
 		// Set up actions
-		_categoryIndexes[CAT_ACTION - 1] = _vm->_game->_screenObjects.size() + 1;
+		_categoryIndexes[CAT_COMMAND - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int idx = 0; idx < 10; ++idx) {
-			getBounds(CAT_ACTION, idx, bounds);
+			getBounds(CAT_COMMAND, idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_ACTION, idx);
+			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_COMMAND, idx);
 		}
 
 		// Set up inventory list
@@ -478,7 +478,7 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 	int leftStart, yOffset, widthAmt;
 
 	switch (category) {
-	case CAT_ACTION:
+	case CAT_COMMAND:
 		heightMultiplier = v % 5;
 		widthMultiplier = v / 5;
 		leftStart = 2;
@@ -635,7 +635,7 @@ void UserInterface::inventoryAnim() {
 }
 
 void UserInterface::categoryChanged() {
-	_v1C = -1;
+	_highlightedItemIndex = -1;
 	_vm->_events->initVars();
 	_category = CAT_NONE;
 }

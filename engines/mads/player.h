@@ -64,8 +64,6 @@ private:
 	int _actionList2[12];
 	int _hypotenuse;
 
-	void reset();
-
 	void resetActionList();
 
 	void move();
@@ -121,6 +119,7 @@ public:
 	bool _walkAnywhere;
 	int _frameNum;
 	bool _loadsFirst;
+	bool _loadedFirst;
 	Common::Point _playerPos;
 	Common::Point _destPos;
 	Common::Point _posChange;
@@ -152,9 +151,21 @@ public:
 	 */
 	bool loadSprites(const Common::String &prefix);
 
-	void turnToDestFacing();
+	/**
+	 * Called when the player has reached the given destination, start him
+	 * turning to the specified facing
+	 */
+	void setFinalFacing();
 
-	void moveComplete();
+	/**
+	 * Stops the player walking
+	 */
+	void cancelWalk();
+
+	/**
+	 * Cancels any oustanding player action
+	 */
+	void cancelCommand();
 
 	void setupFrame();
 

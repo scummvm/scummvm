@@ -181,7 +181,7 @@ void Scene804::step() {
 			_globals._v2 = 0;
 		}
 
-		if (_game._abortTimers == 70)
+		if (_game._trigger == 70)
 			_globals._v5 = 42;
 		if (_scene->_activeAnimation->getCurrentFrame() == 65)
 			_scene->_sequences.remove(_globals._spriteIndexes[22]);
@@ -222,7 +222,7 @@ void Scene804::step() {
 				_scene->_sequences.addTimer(60, 80);
 		}
 
-		if (_game._abortTimers == 80)
+		if (_game._trigger == 80)
 			_scene->_nextSceneId = 803;
 
 		if (_scene->_activeAnimation->getCurrentFrame() == 7 && !_globals[kWindowFixed]) {
@@ -267,9 +267,9 @@ void Scene804::step() {
 		}
 	}
 
-	if (_game._abortTimers == 120)
+	if (_game._trigger == 120)
 		_vm->_dialogs->show(0x13a26);
-	if (_game._abortTimers == 110)
+	if (_game._trigger == 110)
 		_vm->_dialogs->show(0x13a2a);
 
 	if (_globals._v6) {
@@ -281,7 +281,7 @@ void Scene804::step() {
 		_globals._v5 = -1;
 	}
 
-	if (_game._abortTimers == 90)
+	if (_game._trigger == 90)
 		_scene->_nextSceneId = 803;
 
 	if (_scene->_activeAnimation->getCurrentFrame() == 7 &&!_globals._v8) {

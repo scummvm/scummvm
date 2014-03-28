@@ -327,7 +327,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 	}
 
 	if (idx >= 0) {
-		_vm->_game->_abortTimers = seqEntry._entries._abortVal[idx];
+		_vm->_game->_trigger = seqEntry._entries._abortVal[idx];
 		_vm->_game->_abortTimersMode = seqEntry._abortMode;
 
 		if (seqEntry._abortMode == ABORTMODE_1)
@@ -343,7 +343,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 void SequenceList::tick() {
 	Scene &scene = _vm->_game->_scene;
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
-		if ((_vm->_game->_abortTimers2 == 0) && (_vm->_game->_abortTimers != 0))
+		if ((_vm->_game->_fx == 0) && (_vm->_game->_trigger != 0))
 			break;
 
 		SequenceEntry &seqEntry = _entries[idx];

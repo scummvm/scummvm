@@ -215,7 +215,7 @@ void Scene103::step() {
 	Common::Point pt;
 	int dist;
 
-	switch (_vm->_game->_abortTimers) {
+	switch (_vm->_game->_trigger) {
 	case 70:
 		_vm->_game->_player._stepEnabled = true;
 		break;
@@ -260,7 +260,7 @@ void Scene103::actions() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(10322);
 	} else if (_action.isAction(395, 110, 0)) {
-		switch (_vm->_game->_abortTimers) {
+		switch (_vm->_game->_trigger) {
 		case 0:
 			_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(
 				_globals._spriteIndexes[6], false, 6, 1);
@@ -280,7 +280,7 @@ void Scene103::actions() {
 		}
 	}
 	else if (_action.isAction(VERB_TAKE, 371, 0) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
-		switch (_vm->_game->_abortTimers) {
+		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeDepthSurface(1);
 			_globals._spriteIndexes[28] = _scene->_sequences.startReverseCycle(
@@ -312,7 +312,7 @@ void Scene103::actions() {
 			break;
 		}
 	} else if (_action.isAction(VERB_TAKE, 289, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
-		switch (_vm->_game->_abortTimers) {
+		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeDepthSurface(1);
 			_globals._spriteIndexes[27] = _scene->_sequences.startReverseCycle(
@@ -344,26 +344,26 @@ void Scene103::actions() {
 	} else if (_action.isAction(VERB_LOOK, 362, 0)) {
 		_vm->_dialogs->show(10301);
 	} else if (_action.isAction(VERB_TAKE, 362, 0)) {
-		if (!_vm->_game->_abortTimers)
+		if (!_vm->_game->_trigger)
 			_vm->_sound->command(31);
 
-		if (_vm->_game->_abortTimers2 < 2) {
+		if (_vm->_game->_fx < 2) {
 			_globals._spriteIndexes[24] = _scene->_sequences.addSpriteCycle(
 				_globals._spriteIndexes[9], false, 6,
-				_vm->_game->_abortTimers < 1 ? 1 : 0);
-			if (_vm->_game->_abortTimers) {
+				_vm->_game->_trigger < 1 ? 1 : 0);
+			if (_vm->_game->_trigger) {
 				_scene->_sequences.setAnimRange(_globals._spriteIndexes[24], -1, 0);
 				Common::String msg = _game.getQuote(51);
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 0, 60, msg);
-				_scene->_sequences.addTimer(120, _vm->_game->_abortTimers);
+				_scene->_sequences.addTimer(120, _vm->_game->_trigger);
 			} else {
 				_scene->_sequences.addSubEntry(_globals._spriteIndexes[24],
 					SM_0, 0, 1);
 			}
 
-			_game._player._stepEnabled = _game._abortTimers == 2;
+			_game._player._stepEnabled = _game._trigger == 2;
 			_globals[kTurkeyExploded] = -1;
-			if (_game._abortTimers == 2) {
+			if (_game._trigger == 2) {
 				_vm->_dialogs->show(1030);
 				_scene->_hotspots.activate(362, false);
 			}
@@ -372,7 +372,7 @@ void Scene103::actions() {
 		_vm->_dialogs->show(!_globals[kTurkeyExploded] ? 10323 : 10303);
 	}
 	else if (_action.isAction(VERB_TALKTO, 27, 0)) {
-		switch (_vm->_game->_abortTimers) {
+		switch (_vm->_game->_trigger) {
 		case 0: {
 			_game._player._stepEnabled = false;
 			Common::String msg = _game.getQuote(71);

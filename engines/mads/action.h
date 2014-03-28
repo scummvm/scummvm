@@ -32,6 +32,14 @@ enum ActionMode { ACTIONMODE_NONE = 0, ACTIONMODE_VERB = 1, ACTIONMODE_OBJECT = 
 enum ActionMode2 { ACTIONMODE2_0 = 0, ACTIONMODE2_2 = 2, ACTIONMODE2_4 = 4, ACTIONMODE2_5 = 5 };
 enum AbortTimerMode { ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2 };
 
+enum InterAwaiting {
+	AWAITING_NONE = 0,
+	AWAITING_COMMAND = 1,       // Initial state: waiting for a command verb
+	AWAITING_THIS = 2,			// Waiting for object
+	AWAITING_THAT = 3,			// Waiting for a second object
+	AWAITING_RIGHT_MOUSE = 4	// Waiting for mouse button release
+};
+
 enum {
 	VERB_NONE = 0,
 	VERB_LOOK = 3,
@@ -98,7 +106,7 @@ public:
 	int16 _v86F4E;
 	bool _v86F4A;
 	int16 _v86F4C;
-	int _v83338;
+	InterAwaiting _interAwaiting;
 	bool _inProgress;
 	int _v8453A;
 

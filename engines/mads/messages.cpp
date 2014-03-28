@@ -74,7 +74,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	rec._textDisplayIndex = -1;
 	rec._timeout = timeout;
 	rec._frameTimer = _vm->_game->_priorFrameTimer;
-	rec._abortTimers = abortTimers;
+	rec._trigger = abortTimers;
 	rec._abortMode = _vm->_game->_abortTimersMode2;
 
 	rec._actionDetails = scene._action._activeAction;
@@ -143,7 +143,7 @@ void KernelMessages::reset() {
 void KernelMessages::update() {
 	uint32 currentTimer = _vm->_game->_scene._frameStartTime;
 
-	for (uint i = 0; i < _entries.size() && !_vm->_game->_abortTimers; ++i) {
+	for (uint i = 0; i < _entries.size() && !_vm->_game->_trigger; ++i) {
 		KernelMessage &msg = _entries[i];
 
 		if (((msg._flags & KMSG_ACTIVE) != 0) && (currentTimer >= msg._frameTimer))
@@ -173,10 +173,10 @@ void KernelMessages::processText(int msgIndex) {
 			msg._timeout = 0;
 	}
 
-	if ((msg._timeout <= 0) && (_vm->_game->_abortTimers == 0)) {
+	if ((msg._timeout <= 0) && (_vm->_game->_trigger == 0)) {
 		msg._flags |= KMSG_EXPIRE;
-		if (msg._abortTimers != 0) {
-			_vm->_game->_abortTimers = msg._abortTimers;
+		if (msg._trigger != 0) {
+			_vm->_game->_trigger = msg._trigger;
 			_vm->_game->_abortTimersMode = msg._abortMode;
 
 			if (_vm->_game->_abortTimersMode != ABORTMODE_1) {
