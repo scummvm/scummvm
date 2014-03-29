@@ -235,15 +235,15 @@ void Player::updateFrame() {
 		}
 
 		// Set the player frame number
-		int frameIndex = ABS(_frameListIndex);
-		_frameNumber = (_frameListIndex <= 0) ? spriteSet._charInfo->_frameList[frameIndex] :
-			spriteSet._charInfo->_frameList2[frameIndex];
+		int listIndex = ABS(_frameListIndex);
+		_frameNumber = (_frameListIndex >= 0) ? spriteSet._charInfo->_startFrames[listIndex] :
+			spriteSet._charInfo->_stopFrames[listIndex];
 
 		// Set next waiting period in ticks
-		if (frameIndex == 0) {
+		if (listIndex == 0) {
 			setBaseFrameRate();
 		} else {
-			_ticksAmount = spriteSet._charInfo->_ticksList[frameIndex];
+			_ticksAmount = spriteSet._charInfo->_ticksList[listIndex];
 		}
 	}
 
@@ -521,11 +521,11 @@ void Player::idle() {
 		_frameNumber += direction;
 		_forceRefresh = true;
 
-		if (spriteSet._charInfo->_frameList2[frameIndex] < _frameNumber) {
+		if (spriteSet._charInfo->_stopFrames[frameIndex] < _frameNumber) {
 			_trigger = _upcomingTrigger;
 			updateFrame();
 		}
-		if (spriteSet._charInfo->_frameList[frameIndex] < _frameNumber) {
+		if (spriteSet._charInfo->_startFrames[frameIndex] < _frameNumber) {
 			_trigger = _upcomingTrigger;
 			updateFrame();
 		}

@@ -172,6 +172,9 @@ public:
 	 * direction which the player is facing in) */
 	void selectSeries();
 
+	/*
+	 * Moves to the next frame for the currently active player sprite set
+	 */
 	void updateFrame();
 
 	void update();

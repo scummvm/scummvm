@@ -237,6 +237,7 @@ void Game::sectionLoop() {
 		_player._targetFacing = _player._facing;
 		_player.selectSeries();
 		_player.updateFrame();
+
 		_player._visible3 = _player._visible;
 		_player._special = _scene.getDepthHighBits(_player._playerPos);
 		_player._priorTimer = _scene._frameStartTime - _player._ticksAmount;

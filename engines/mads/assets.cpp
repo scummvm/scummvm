@@ -218,9 +218,9 @@ SpriteSetCharInfo::SpriteSetCharInfo(Common::SeekableReadStream *s) {
 	_numEntries = s->readUint16LE();
 
 	for (int i = 0; i < 16; ++i)
-		_frameList[i] = s->readUint16LE();
+		_startFrames[i] = s->readUint16LE();
 	for (int i = 0; i < 16; ++i)
-		_frameList2[i] = s->readUint16LE();
+		_stopFrames[i] = s->readUint16LE();
 	for (int i = 0; i < 16; ++i)
 		_ticksList[i] = s->readUint16LE();
 

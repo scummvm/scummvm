@@ -48,8 +48,8 @@ public:
 
 	int _totalFrames;
 	int _numEntries;
-	int _frameList2[16];
-	int _frameList[16];
+	int _startFrames[16];
+	int _stopFrames[16];
 	int _ticksList[16];
 	int _velocity;
 	int _ticksAmount;
