@@ -57,7 +57,6 @@ private:
 	int _distAccum;
 	int _pixelAccum;
 	int _deltaDistance;
-	int _routeLength;
 	int _stopWalkerList[12];
 	int _stopWalkerTrigger[12];
 	int _totalDistance;
@@ -88,18 +87,6 @@ private:
 	 * Sets the frame rate for the current sprite set
 	 */
 	void setBaseFrameRate();
-
-	void setupRoute();
-
-	void setupRoute(bool bitFlag);
-
-	void setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int routeLength);
-
-	/**
-	* Scans along an edge connecting two points within the depths/walk surface, and returns the information of the first
-	* pixel high nibble encountered with a non-zero value
-	*/
-	int scanPath(MSurface &depthSurface, const Common::Point &srcPos, const Common::Point &destPos);
 
 	/**
 	* Starts a player moving to a given destination
@@ -151,10 +138,6 @@ public:
 	int _currentDepth;
 	int _currentScale;
 	Common::String _spritesPrefix;
-	int _routeCount;
-	int _routeOffset;
-	int _tempRoute[MAX_ROUTE_NODES];
-	int _routeIndexes[MAX_ROUTE_NODES];
 public:
 	Player(MADSEngine *vm);
 

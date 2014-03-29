@@ -78,14 +78,14 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 }
 
 void Player::cancelWalk() {
-	_action = &_vm->_game->_scene._action;
+	Scene &scene = _vm->_game->_scene;
+	_action = &scene._action;
 	_targetPos = _playerPos;
 	_targetFacing = FACING_NONE;
 	_turnToFacing = _facing;
 	_moving = false;
 	_walkOffScreen = _walkOffScreenSceneId = 0;
-	_next = 0;
-	_routeCount = 0;
+	scene._rails.resetRoute();
 	_walkAnywhere = false;
 
 	_needToWalk = false;
@@ -352,30 +352,12 @@ void Player::startWalking(const Common::Point &pt, Facing facing) {
 	_moving = true;
 	_targetFacing = facing;
 
-	scene._sceneInfo->setRouteNode(scene._sceneInfo->_nodes.size() - 2,
-		_playerPos, scene._depthSurface);
-	scene._sceneInfo->setRouteNode(scene._sceneInfo->_nodes.size() - 1,
-		pt, scene._depthSurface);
-
 	bool v = scene._depthSurface.getDepthHighBit(pt);
-	setupRoute(v);
-	_next = 0;
 
-	if (_routeCount > 0) {
-		Common::Point srcPos = _playerPos;
-		for (int routeCtr = _routeCount - 1; (routeCtr >= 0) && (_next == 0); --routeCtr) {
-			int idx = _routeIndexes[routeCtr];
-			const Common::Point &pt =scene._sceneInfo->_nodes[idx]._walkPos;
-
-			_next = scanPath(scene._depthSurface, srcPos, pt);
-			srcPos = pt;
-		}
-	}
+	scene._rails.setupRoute(v, _playerPos, pt);
 }
 
 void Player::walk(const Common::Point &pos, Facing facing) {
-	Scene &scene = _vm->_game->_scene;
-
 	cancelWalk();
 	_needToWalk = true;
 	_readyToWalk = true;
@@ -402,23 +384,23 @@ void Player::nextFrame() {
 
 void Player::move() {
 	Scene &scene = _vm->_game->_scene;
+	Rails &rails = scene._rails;
 	bool newFacing = false;
 
 	if (_moving) {
-		int idx = _routeCount;
+		bool isRouteEmpty = rails.empty();
 		while (!_walkOffScreen && _playerPos == _targetPos) {
-			if (idx != 0) {
-				--idx;
-				SceneNode &node = scene._sceneInfo->_nodes[_routeIndexes[idx]];
+			if (!isRouteEmpty) {
+				const WalkNode &node = rails.popNode();
+
 				_targetPos = node._walkPos;
 				newFacing = true;
-			} else if (_walkOffScreenSceneId == idx) {
+			} else if (!_walkOffScreenSceneId) {
 				// End of walking path
-				_routeCount = 0;
+				rails.resetRoute();
 				_moving = false;
 				setFinalFacing();
 				newFacing = true;
-				idx = _routeCount;
 			} else {
 				_walkOffScreen = _walkOffScreenSceneId;
 				_walkAnywhere = true;
@@ -430,7 +412,6 @@ void Player::move() {
 			if (!_moving)
 				break;
 		}
-		_routeCount = idx;
 	}
 
 	if (newFacing && _moving)
@@ -577,104 +558,6 @@ void Player::setBaseFrameRate() {
 	_ticksAmount = spriteSet._charInfo->_ticksAmount;
 	if (_ticksAmount == 0)
 		_ticksAmount = 6;
-}
-
-void Player::setupRoute(bool bitFlag) {
-	Scene &scene = _vm->_game->_scene;
-
-	// Reset the flag set of nodes in use
-	SceneNodeList &nodes = scene._sceneInfo->_nodes;
-	for (uint i = 0; i < nodes.size(); ++i)
-		nodes[i]._active = false;
-
-	// Start constructing route node list
-	_routeLength = 0x3FFF;
-	_routeCount = 0;
-
-	setupRouteNode(_tempRoute, nodes.size() - 1, bitFlag ? 0xC000 : 0x8000, 0);
-}
-
-void Player::setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int routeLength) {
-	Scene &scene = _vm->_game->_scene;
-	SceneNodeList &nodes = scene._sceneInfo->_nodes;
-	SceneNode &currentNode = nodes[nodeIndex];
-	currentNode._active = true;
-
-	*routeIndexP++ = nodeIndex;
-
-	int subIndex = nodes.size() - 2;
-	int indexVal = nodes[nodeIndex]._indexes[subIndex];
-	if (indexVal & flags) {
-		routeLength += indexVal & 0x3FFF;
-		if (routeLength < _routeLength) {
-			// Found a new shorter route to destination, so set up the route with the found one
-			Common::copy(_tempRoute, routeIndexP, _routeIndexes);
-			_routeCount = routeIndexP - _tempRoute;
-			_routeLength = indexVal & 0x3FFF;
-		}
-	} else {
-		for (int idx = nodes.size() - 2; idx > 0; --idx) {
-			int nodePos = idx - 1;
-			if (!nodes[nodePos]._active && ((currentNode._indexes[nodePos] & flags) != 0))
-				setupRouteNode(routeIndexP, nodePos, 0x8000, indexVal & 0x3fff);
-		}
-	}
-
-	currentNode._active = false;
-}
-
-int Player::scanPath(MSurface &depthSurface, const Common::Point &srcPos, const Common::Point &destPos) {
-	Scene &scene = _vm->_game->_scene;
-	
-	// For compressed depth surfaces, always return 0
-	if (scene._sceneInfo->_depthStyle != 2)
-		return 0;
-
-	int yDiff = destPos.y - srcPos.y;
-	int yAmount = MADS_SCREEN_WIDTH;
-
-	if (yDiff < 0) {
-		yDiff = -yDiff;
-		yAmount = -yAmount;
-	}
-
-	int xDiff = destPos.x - srcPos.y;
-	int xDirection = 1;
-	int xAmount = 0;
-	if (xDiff < 0) {
-		xDiff = -xDiff;
-		xDirection = -xDirection;
-		xAmount = MIN(yDiff, xDiff);
-	}
-
-	++xDiff;
-	++yDiff;
-
-	const byte *srcP = depthSurface.getBasePtr(srcPos.x, srcPos.y);
-	int index = xAmount;
-
-	// Outer horizontal movement loop
-	for (int yIndex = 0; yIndex < yDiff; ++yIndex) {
-		index += yDiff;
-		int v = (*srcP & 0x7F) >> 4;
-		if (v)
-			return v;
-
-		// Inner loop for handling vertical movement
-		while (index >= xDiff) {
-			index -= xDiff;
-
-			v = (*srcP & 0x7F) >> 4;
-			if (v)
-				return v;
-
-			srcP += yAmount;
-		}
-
-		srcP += xDirection;
-	}
-
-	return 0;
 }
 
 void Player::startMovement() {

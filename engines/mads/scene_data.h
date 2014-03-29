@@ -34,6 +34,7 @@
 #include "mads/game_data.h"
 #include "mads/hotspots.h"
 #include "mads/messages.h"
+#include "mads/rails.h"
 #include "mads/user_interface.h"
 
 namespace MADS {
@@ -116,25 +117,6 @@ struct ARTHeader {
 	void load(Common::SeekableReadStream *f);
 };
 
-class SceneNode {
-public:
-	Common::Point _walkPos;
-	int _indexes[MAX_ROUTE_NODES];
-	bool _active;
-
-	/**
-	 * Constructor
-	 */
-	SceneNode() : _active(false) {}
-
-	/**
-	 * Loads the scene node
-	 */
-	void load(Common::SeekableReadStream *f);
-};
-typedef Common::Array<SceneNode> SceneNodeList;
-
-
 /**
  * Handles general data for a given scene
  */
@@ -179,7 +161,7 @@ public:
 
 	int _usageIndex;
 	Common::Array<RGB4> _palAnimData;
-	SceneNodeList _nodes;
+	WalkNodeList _nodes;
 public:
 	/**
 	 * Destructor
@@ -196,11 +178,6 @@ public:
 	 */
 	void load(int sceneId, int flags, const Common::String &resName, int v3, 
 		MSurface &depthSurface, MSurface &bgSurface);
-
-	/**
-	 * Set up a route node
-	 */
-	void setRouteNode(int nodeIndex, const Common::Point &pt, MSurface &depthSurface);
 
 	/**
 	* Loads the given surface with depth information of a given scene

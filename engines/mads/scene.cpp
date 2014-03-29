@@ -132,13 +132,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	initPaletteAnimation(_sceneInfo->_palAnimData, false);
 
 	// Copy over nodes
-	_nodes.clear();
-	for (uint i = 0; i < _sceneInfo->_nodes.size(); ++i)
-		_nodes.push_back(_sceneInfo->_nodes[i]);
-
-	// Add two more empty nodes for the start and end points of any walk sequence
-	_nodes.push_back(SceneNode());
-	_nodes.push_back(SceneNode());
+	_rails.load(_sceneInfo->_nodes, &_depthSurface, _sceneInfo->_depthStyle);
 
 	// Load hotspots
 	loadHotspots();

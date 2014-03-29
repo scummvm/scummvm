@@ -27,6 +27,7 @@ MODULE_OBJS := \
 	msurface.o \
 	palette.o \
 	player.o \
+	rails.o \
 	resources.o \
 	scene.o \
 	scene_data.o \

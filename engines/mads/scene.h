@@ -33,6 +33,7 @@
 #include "mads/msurface.h"
 #include "mads/scene_data.h"
 #include "mads/animation.h"
+#include "mads/rails.h"
 #include "mads/sequence.h"
 #include "mads/sprites.h"
 #include "mads/user_interface.h"
@@ -92,6 +93,7 @@ public:
 	Common::Array<int> _activeVocabs;
 	SequenceList _sequences;
 	KernelMessages _kernelMessages;
+	Rails _rails;
 	Common::String _talkFont;
 	int _textSpacing;
 	Hotspots _hotspots;
@@ -106,7 +108,6 @@ public:
 	int _animCount;
 	Common::Array<uint32> _animTicksList;
 	Common::Array<RGB4> _animPalData;
-	SceneNodeList _nodes;
 	Common::StringArray _vocabStrings;
 	Animation *_animationData;
 	Animation *_activeAnimation;
