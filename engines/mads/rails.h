@@ -34,7 +34,7 @@ namespace MADS {
 class WalkNode {
 public:
 	Common::Point _walkPos;
-	int _distances[MAX_ROUTE_NODES];
+	uint16 _distances[MAX_ROUTE_NODES];
 	bool _active;
 
 	/**

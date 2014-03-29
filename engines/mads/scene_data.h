@@ -130,9 +130,6 @@ class SceneInfo {
 
 		void load(Common::SeekableReadStream *f);
 	};
-
-
-	int getRouteFlags(const Common::Point &src, const Common::Point &dest, MSurface &depthSurface);
 protected:
 	MADSEngine *_vm;
 

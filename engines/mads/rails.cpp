@@ -114,7 +114,7 @@ void Rails::setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int route
 		for (int idx = _nodes.size() - 2; idx > 0; --idx) {
 			int nodePos = idx - 1;
 			if (!_nodes[nodePos]._active && ((currentNode._distances[nodePos] & flags) != 0))
-				setupRouteNode(routeIndexP, nodePos, 0x8000, distanceVal & 0x3fff);
+				setupRouteNode(routeIndexP, nodePos, 0x8000, routeLength + distanceVal & 0x3fff);
 		}
 	}
 
@@ -209,9 +209,10 @@ void Rails::setNodePosition(int nodeIndex, const Common::Point &pt) {
 				hypotenuse = 0x3FFF;
 
 			entry = hypotenuse | flags;
-			_nodes[idx]._distances[nodeIndex] = entry;
-			_nodes[nodeIndex]._distances[idx] = entry;
 		}
+
+		_nodes[idx]._distances[nodeIndex] = entry;
+		_nodes[nodeIndex]._distances[idx] = entry;
 	}
 }
 
@@ -223,15 +224,15 @@ int Rails::getRouteFlags(const Common::Point &src, const Common::Point &dest) {
 	int yDiff = ABS(dest.y - src.y);
 	int xDirection = dest.x >= src.x ? 1 : -1;
 	int yDirection = dest.y >= src.y ? _depthSurface->w : -_depthSurface->w;
-	int majorDiff = 0;
+	int minorDiff = 0;
 	if (dest.x < src.x)
-		majorDiff = MAX(xDiff, yDiff);
+		minorDiff = MIN(xDiff, yDiff);
 	++xDiff;
 	++yDiff;
 
 	byte *srcP = _depthSurface->getBasePtr(src.x, src.y);
 
-	int totalCtr = majorDiff;
+	int totalCtr = minorDiff;
 	for (int xCtr = 0; xCtr < xDiff; ++xCtr, srcP += xDirection) {
 		totalCtr += yDiff;
 
