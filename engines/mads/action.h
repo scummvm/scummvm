@@ -94,10 +94,8 @@ public:
 	int _selectedRow;
 	bool _textChanged;
 	int _selectedAction;
-	bool _startWalkFlag;
 	int _statusTextIndex;
 	int _hotspotId;
-	bool _walkFlag;
 	ActionSavedFields _savedFields;
 
 	// Unknown fields

@@ -65,8 +65,6 @@ private:
 
 	void doAction();
 
-	void checkStartWalk();
-
 	void doSceneStep();
 
 	void checkKeyboard();
@@ -118,8 +116,6 @@ public:
 	MADSAction _action;
 	bool _roomChanged;
 	bool _reloadSceneFlag;
-	Common::Point _destPos;
-	Facing _targetFacing;
 	Common::Point _posAdjust;
 	uint32 _frameStartTime;
 	Layer _layer;

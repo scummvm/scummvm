@@ -70,7 +70,10 @@ private:
 	 */
 	void move();
 
-	void postUpdate();
+	/**
+	 * Update the player's frame number
+	 */
+	void setFrame();
 
 	/**
 	 * Get the sprite slot index for the player
@@ -82,6 +85,9 @@ private:
 	 */
 	int getScale(int yp);
 
+	/**
+	 * Sets the frame rate for the current sprite set
+	 */
 	void setBaseFrameRate();
 
 	void setupRoute();
@@ -107,6 +113,7 @@ public:
 
 	Facing _facing;
 	Facing _turnToFacing;
+	Facing _prepareWalkFacing;
 	int _xDirection, _yDirection;
 	Facing _targetFacing;
 	bool _spritesLoaded;
@@ -126,6 +133,7 @@ public:
 	Common::Point _targetPos;
 	Common::Point _posChange;
 	Common::Point _posDiff;
+	Common::Point _prepareWalkPos;
 	bool _moving;
 	int _walkOffScreen, _walkOffScreenSceneId;
 	int _next;
@@ -137,6 +145,8 @@ public:
 	int _trigger;
 	bool _scalingVelocity;
 	bool _forceRefresh;
+	bool _needToWalk;
+	bool _readyToWalk;
 	int _centerOfGravity;
 	int _currentDepth;
 	int _currentScale;
@@ -181,11 +191,30 @@ public:
 
 	void update();
 
+	/**
+	 * Handler method for when the player is not moving
+	 */
 	void idle();
 
-	void setDest(const Common::Point &pt, Facing facing);
+	/**
+	 * Starts the player walking towards a given point and direction facing
+	 * @param pos		Destination location
+	 * @param facing	Direction to face once the destination is reached
+	 */
+	void startWalking(const Common::Point &pt, Facing facing);
 
-	void startWalking(const Common::Point &pos, Facing direction);
+	/**
+	 * Used by the game scripst to make the player walk to a given destination.
+	 * The difference from startWalking is that this contains several extra
+	 * layers of checking that startWalking bypasses.
+	 */
+	void walk(const Common::Point &pos, Facing facing);
+
+	/**
+	 * If a new walk sequence is pending, and has been okayed by the preparser,
+	 * start the actual walking
+	 */
+	void newWalk();
 
 	void nextFrame();
 

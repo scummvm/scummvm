@@ -192,7 +192,7 @@ void Scene201::enter() {
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[21], SM_FRAME_INDEX, 12, 70);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 1);
 		_pterodactylFlag = false;
-		_game._player.startWalking(Common::Point(157, 143), FACING_NORTH);
+		_game._player.walk(Common::Point(157, 143), FACING_NORTH);
 		_vm->_palette->setEntry(252, 45, 63, 45);
 		_vm->_palette->setEntry(253, 20, 45, 20);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 2, 0, 120, _game.getQuote(90));
@@ -707,14 +707,16 @@ int Scene202::subStep4(int randVal) {
 }
 
 void Scene202::preActions() {
-	MADSAction *action = _game._player._action;
-	if (action->_walkFlag)
+	Player &player = _vm->_game->_player;
+	MADSAction *action = player._action;
+
+	if (player._readyToWalk)
 		_scene->_kernelMessages.reset();
 
-	if (!_ladderTopFl && (action->isAction(0x4E, 0xC7) || !action->_walkFlag)) {
+	if (!_ladderTopFl && (action->isAction(0x4E, 0xC7) || !player._readyToWalk)) {
 		if (_game._trigger == 0) {
 			_vm->_sound->command(29);
-			action->_walkFlag = false;
+			player._readyToWalk = false;
 			_game._player._stepEnabled = false;
 			_scene->_sequences.remove(_globals._spriteIndexes[24]);
 			_globals._spriteIndexes[23] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
@@ -724,20 +726,20 @@ void Scene202::preActions() {
 			_scene->_sequences.updateTimeout(-1, _globals._spriteIndexes[23]);
 			_scene->_dynamicHotspots.remove(_ladderHotspotId);
 			_game._player._visible = true;
-			action->_walkFlag = true;
+			player._readyToWalk = true;
 			_game._player._stepEnabled = true;
 			_ladderTopFl = false;
 		}		
 	}
 
 	if (action->isAction(0x3, 0x27) && action->_activeAction._indirectObjectId > 0) {
-		if (!action->_walkFlag || _ladderTopFl)
-			action->_startWalkFlag = false;
+		if (!player._readyToWalk || _ladderTopFl)
+			_game._player._needToWalk = false;
 		else
-			action->_startWalkFlag = true;
+			_game._player._needToWalk = true;
 
 		if (!_ladderTopFl)
-			_game._player.startWalking(Common::Point(171, 122), FACING_NORTH);
+			_game._player.walk(Common::Point(171, 122), FACING_NORTH);
 	}
 }
 
@@ -988,7 +990,7 @@ void Scene203::enter() {
 
 	if ((_globals[kRhotundaStatus] == 0) && (_scene->_roomChanged == 0)) {
 		_globals._v0 = -1;
-		_game._player.startWalking(Common::Point(158, 135), FACING_SOUTH);
+		_game._player.walk(Common::Point(158, 135), FACING_SOUTH);
 		int idx = _scene->_dynamicHotspots.add(131, 396, 0, Common::Rect(0, 0, 320, 156));
 		_scene->_dynamicHotspots.setPosition(idx, 155, 152, FACING_SOUTH);
 		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
@@ -1041,7 +1043,7 @@ void Scene203::step() {
 
 void Scene203::preActions() {
 	if (_globals._v0 && !_action.isAction(0x18C, 0x83)) {
-		_game._player.startWalking(Common::Point(158, 136), FACING_SOUTH);
+		_game._player.walk(Common::Point(158, 136), FACING_SOUTH);
 		_action._inProgress = false;
 		return;
 	}
@@ -1476,14 +1478,16 @@ void Scene208::step() {
 }
 
 void Scene208::preActions() {
-	if (_action.isAction(3) && _action._walkFlag)
-		_action._startWalkFlag = true;
+	Player &player = _vm->_game->_player;
+
+	if (_action.isAction(3) && player._readyToWalk)
+		player._needToWalk = true;
 
 	if (_action.isAction(0x18C, 0x9B))
-		_game._player._walkOffScreenSceneId = 209;
+		player._walkOffScreenSceneId = 209;
 
 	if (_action.isAction(0x18C, 0xF6))
-		_game._player._walkOffScreenSceneId = 207;
+		player._walkOffScreenSceneId = 207;
 }
 
 void Scene208::actions() {
@@ -1510,7 +1514,7 @@ void Scene208::actions() {
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
 			_globals._v0 = true;
-			_game._player.startWalking(Common::Point(20, 148), FACING_EAST);
+			_game._player.walk(Common::Point(20, 148), FACING_EAST);
 		}
 	} else if (_action.isAction(0x7, 0x35, 0x1A9)) {
 		warning("TODO: sub3B282(4);");

@@ -31,7 +31,6 @@ namespace MADS {
 
 MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	clear();
-	_startWalkFlag = false;
 	_statusTextIndex = -1;
 	_selectedAction = 0;
 	_inProgress = false;
@@ -63,7 +62,6 @@ void MADSAction::clear() {
 	_action._objectNameId = -1;
 	_action._indirectObjectId = -1;
 	_textChanged = true;
-	_walkFlag = false;
 }
 
 void MADSAction::appendVocab(int vocabId, bool capitalise) {
@@ -77,10 +75,11 @@ void MADSAction::appendVocab(int vocabId, bool capitalise) {
 
 void MADSAction::checkCustomDest(int v) {
 	Scene &scene = _vm->_game->_scene;
+	Player &player = _vm->_game->_player;
 
 	if (_v86F4A && (v == -3 || _savedFields._selectedRow < 0)) {
-		_startWalkFlag = true;
-		scene._destPos = scene._customDest;
+		_vm->_game->_player._needToWalk = true;
+		player._prepareWalkPos = scene._customDest;
 	}
 }
 
@@ -265,11 +264,12 @@ void MADSAction::refresh() {
 
 void MADSAction::startAction() {
 	Game &game = *_vm->_game;
+	Player &player = game._player;
 	Scene &scene = _vm->_game->_scene;
 	DynamicHotspots &dynHotspots = scene._dynamicHotspots;
 	Hotspots &hotspots = scene._hotspots;
 
-	game._player.cancelCommand();
+	player.cancelCommand();
 
 	_inProgress = true;
 	_v8453A = ABORTMODE_0;
@@ -290,7 +290,7 @@ void MADSAction::startAction() {
 	if ((_actionMode2 == ACTIONMODE2_4) && (_v86F42 == 0))
 		_v8453A = -1;
 
-	_startWalkFlag = false;
+	player._needToWalk = false;
 	int hotspotId = -1;
 
 	if (!_savedFields._lookFlag && (_vm->_game->_screenObjects._v832EC != 1)) {
@@ -304,13 +304,13 @@ void MADSAction::startAction() {
 			if ((hs._feetPos.x == -1) || (hs._feetPos.x == -3)) {
 				checkCustomDest(hs._feetPos.x);
 			} else if (hs._feetPos.x == 0) {
-				scene._targetFacing = hs._facing;
+				player._prepareWalkFacing = hs._facing;
 			} else if (_savedFields._actionMode == ACTIONMODE_NONE || hs._cursor >= CURSOR_WAIT) {
-				_startWalkFlag = true;
-				scene._destPos = hs._feetPos;
+				player._needToWalk = true;
+				player._prepareWalkPos = hs._feetPos;
 			}
 
-			scene._targetFacing = hs._facing;
+			player._prepareWalkFacing = hs._facing;
 			hotspotId = -1;
 		}
 	}
@@ -322,20 +322,20 @@ void MADSAction::startAction() {
 			checkCustomDest(hs._feetPos.x);
 		} else if (hs._feetPos.x >= 0) {
 			if (_savedFields._actionMode == ACTIONMODE_NONE || hs._cursor < CURSOR_WAIT) {
-				_startWalkFlag = true;
-				scene._destPos = hs._feetPos;
+				player._needToWalk = true;
+				player._prepareWalkPos = hs._feetPos;
 			}
 		}
 
-		scene._targetFacing = hs._facing;
+		player._prepareWalkFacing = hs._facing;
 	}
 
-	_walkFlag = _startWalkFlag;
+	player._readyToWalk = player._needToWalk;
 }
 
 void MADSAction::checkAction() {
 	if (isAction(VERB_LOOK) || isAction(VERB_THROW))
-		_startWalkFlag = 0;
+		_vm->_game->_player._needToWalk = false;
 }
 
 bool MADSAction::isAction(int verbId, int objectNameId, int indirectObjectId) {

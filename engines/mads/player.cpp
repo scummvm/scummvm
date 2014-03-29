@@ -37,6 +37,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_facing = FACING_NORTH;
 	_turnToFacing = FACING_NORTH;
 	_targetFacing = FACING_NORTH;
+	_prepareWalkFacing = FACING_NONE;
 	_mirror = false;
 	_spritesLoaded = false;
 	_spritesStart = 0;
@@ -45,6 +46,8 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_stepEnabled = false;
 	_visible = false;
 	_priorVisible = false;
+	_needToWalk = false;
+	_readyToWalk = false;
 	_visible3 = false;
 	_loadsFirst = false;
 	_loadedFirst = false;
@@ -85,8 +88,8 @@ void Player::cancelWalk() {
 	_routeCount = 0;
 	_walkAnywhere = false;
 
-	_action->_startWalkFlag = false;
-	_action->_walkFlag = false;
+	_needToWalk = false;
+	_readyToWalk = false;
 }
 
 bool Player::loadSprites(const Common::String &prefix) {
@@ -341,7 +344,7 @@ void Player::clearStopList() {
 	_trigger = 0;
 }
 
-void Player::setDest(const Common::Point &pt, Facing facing) {
+void Player::startWalking(const Common::Point &pt, Facing facing) {
 	Scene &scene = _vm->_game->_scene;
 
 	clearStopList();
@@ -370,14 +373,14 @@ void Player::setDest(const Common::Point &pt, Facing facing) {
 	}
 }
 
-void Player::startWalking(const Common::Point &pos, Facing direction) {
+void Player::walk(const Common::Point &pos, Facing facing) {
 	Scene &scene = _vm->_game->_scene;
 
 	cancelWalk();
-	scene._action._startWalkFlag = true;
-	scene._action._walkFlag = true;
-	scene._destPos = pos;
-	scene._targetFacing = direction;
+	_needToWalk = true;
+	_readyToWalk = true;
+	_prepareWalkPos = pos;
+	_prepareWalkFacing = facing;
 }
 
 void Player::nextFrame() {
@@ -392,7 +395,7 @@ void Player::nextFrame() {
 			idle();
 		}
 
-		postUpdate();
+		setFrame();
 		update();
 	}
 }
@@ -514,10 +517,10 @@ void Player::idle() {
 	int frameIndex = ABS(_frameListIndex);
 	int direction = (_frameListIndex < 0) ? -1 : 1;
 
-	if (frameIndex >= spriteSet._charInfo->_numEntries)
+	if (frameIndex >= spriteSet._charInfo->_numEntries) {
 		// Reset back to the start of the list
 		_frameListIndex = 0;
-	else {
+	}  else {
 		_frameNumber += direction;
 		_forceRefresh = true;
 
@@ -532,7 +535,7 @@ void Player::idle() {
 	}
 }
 
-void Player::postUpdate() {
+void Player::setFrame() {
 	if (_moving) {
 		if (++_frameNumber > _frameCount)
 			_frameNumber = 1;
@@ -755,6 +758,13 @@ void Player::startMovement() {
 
 	_totalDistance /= 100;
 	_distAccum = -_deltaDistance;
+}
+
+void Player::newWalk() {
+	if (_needToWalk && _readyToWalk) {
+		startWalking(_prepareWalkPos, _prepareWalkFacing);
+		_needToWalk = false;
+	}
 }
 
 void Player::step() {

@@ -42,7 +42,6 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_depthStyle = 0;
 	_roomChanged = false;
 	_reloadSceneFlag = false;
-	_targetFacing = FACING_NONE;
 	_freeAnimationFlag = false;
 	_animationData = nullptr;
 	_activeAnimation = nullptr;
@@ -296,11 +295,11 @@ void Scene::doFrame() {
 			_dynamicHotspots.refresh();
 
 		// Check all on-screen visual objects
-		_vm->_game->_screenObjects.check(player._stepEnabled && !_action._startWalkFlag &&
+		_vm->_game->_screenObjects.check(player._stepEnabled && !player._needToWalk &&
 				!_vm->_game->_fx);
 	}
 
-	if (_action._selectedAction && player._stepEnabled && !_action._startWalkFlag &&
+	if (_action._selectedAction && player._stepEnabled && !player._needToWalk &&
 			!_vm->_game->_trigger && !player._trigger) {
 		_action.startAction();
 		if (_action._activeAction._verbId == Nebular::NOUN_LOOK_AT) {
@@ -315,11 +314,11 @@ void Scene::doFrame() {
 		doPreactions();
 	}
 
-	checkStartWalk();
+	player.newWalk();
 	if (!_vm->_game->_fx)
 		_frameStartTime = _vm->_events->getFrameCounter();
 
-	if ((_action._inProgress && !player._moving && !_action._startWalkFlag &&
+	if ((_action._inProgress && !player._moving && !player._needToWalk &&
 			player._turnToFacing == player._facing) ||
 			(_vm->_game->_trigger && _vm->_game->_abortTimersMode == ABORTMODE_0)) {
 		doAction();
@@ -497,13 +496,6 @@ void Scene::doAction() {
 	_action._inProgress = false;
 	if (_vm->_game->_abortTimersMode == ABORTMODE_0)
 		_vm->_game->_trigger = 0;
-}
-
-void Scene::checkStartWalk() {
-	if (_action._startWalkFlag && _action._walkFlag) {
-		_vm->_game->_player.setDest(_destPos, _targetFacing);
-		_action._startWalkFlag = false;
-	}
 }
 
 void Scene::doSceneStep() {
