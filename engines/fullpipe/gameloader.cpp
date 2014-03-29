@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -272,7 +272,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			g_fp->_currSoundList1[0] = g_fp->accessScene(SC_COMMON)->_soundList;
 		}
 
-		g_vars->scene18_var01 = 0;
+		g_vars->scene18_inScene18p1 = false;
 
 		if ((pre.preloadId1 != SC_18 || pre.sceneId != SC_19) && (pre.preloadId1 != SC_19 || (pre.sceneId != SC_18 && pre.sceneId != SC_19))) {
 			if (g_fp->_scene3) {
@@ -282,9 +282,9 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 				g_fp->_scene3 = 0;
 			}
 		} else {
-			scene19_preload(g_fp->accessScene(pre.preloadId1), pre.keyCode);
+			scene19_setMovements(g_fp->accessScene(pre.preloadId1), pre.keyCode);
 
-			g_vars->scene18_var01 = 1;
+			g_vars->scene18_inScene18p1 = true;
 
 			if (pre.preloadId1 == SC_18) {
 				g_fp->_gameLoader->saveScenePicAniInfos(SC_18);

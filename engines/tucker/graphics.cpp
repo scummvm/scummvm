@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -163,13 +163,13 @@ void Graphics::copyRect(uint8 *dst, int dstPitch, uint8 *src, int srcPitch, int 
 }
 
 void Graphics::drawStringChar(uint8 *dst, int xDst, int yDst, int pitch, uint8 chr, uint8 chrColor, const uint8 *src) {
-	if (chr < 32 || chr - 32 >= _charset.xCount * _charset.yCount) {
+	if (chr < 32 || chr - 32 >= _charset._xCount * _charset._yCount) {
 		return;
 	}
-	const int h = MIN(_charset.charH, 200 - yDst);
-	const int w = MIN(_charset.charW, pitch - xDst);
+	const int h = MIN(_charset._charH, 200 - yDst);
+	const int w = MIN(_charset._charW, pitch - xDst);
 	dst += yDst * pitch + xDst;
-	int offset = (chr - 32) * _charset.charH * _charset.charW;
+	int offset = (chr - 32) * _charset._charH * _charset._charW;
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			const int color = src[offset++];
@@ -189,22 +189,22 @@ void Graphics::setCharset(CharsetType type) {
 	_charsetType = type;
 	switch (type) {
 	case kCharsetTypeDefault:
-		_charset.charW = 10;
-		_charset.charH = 10;
-		_charset.xCount = 32;
-		_charset.yCount = 7;
+		_charset._charW = 10;
+		_charset._charH = 10;
+		_charset._xCount = 32;
+		_charset._yCount = 7;
 		break;
 	case kCharsetTypeEng:
-		_charset.charW = 10;
-		_charset.charH = 8;
-		_charset.xCount = 32;
-		_charset.yCount = 3;
+		_charset._charW = 10;
+		_charset._charH = 8;
+		_charset._xCount = 32;
+		_charset._yCount = 3;
 		break;
 	case kCharsetTypeCredits:
-		_charset.charW = 19;
-		_charset.charH = 10;
-		_charset.xCount = 16;
-		_charset.yCount = 7;
+		_charset._charW = 19;
+		_charset._charH = 10;
+		_charset._xCount = 16;
+		_charset._yCount = 7;
 		break;
 	}
 }

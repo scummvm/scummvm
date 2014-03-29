@@ -19,7 +19,7 @@ MODULE_OBJS := \
 	sound.o \
 	staticres.o \
 	sword1.o \
-	text.o 
+	text.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD1), DYNAMIC_PLUGIN)

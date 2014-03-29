@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -802,7 +802,6 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 		}
 	} else {
 		offs = _gameOffsetsPtr[id];
-
 		size = _gameOffsetsPtr[id + 1] - offs;
 		readGameFile(_vgaBufferPointers[11].vgaFile2, offs, size);
 	}
@@ -817,9 +816,9 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 
 	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
 		id == 2 && type == 2) {
-		// WORKAROUND: For the exta long strings in foreign languages
+		// WORKAROUND: For the extra long strings in foreign languages
 		// Allocate more space for text to cope with foreign languages that use
-		// up more space than english. I hope 6400 bytes are enough. This number
+		// up more space than English. I hope 6400 bytes are enough. This number
 		// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
 		extraBuffer += 6400;
 	}
@@ -911,8 +910,16 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 	} else {
 		id = id * 2 + (type - 1);
 		offs = _gameOffsetsPtr[id];
-
 		dstSize = _gameOffsetsPtr[id + 1] - offs;
+
+		if (!dstSize) {
+			if (useError)
+				error("loadVGAVideoFile: Can't load id %d type %d", id, type);
+
+			_block = _blockEnd = NULL;
+			return;
+		}
+
 		dst = allocBlock(dstSize + extraBuffer);
 		readGameFile(dst, offs, dstSize);
 	}

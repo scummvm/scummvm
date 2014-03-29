@@ -265,30 +265,28 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		delete _gameScreen;
 		_gameScreen = nullptr;
 
-		GLenum glIntFormat, glFormat, glType;
 #ifdef USE_RGB_COLOR
-		if (_currentState.gameFormat.bytesPerPixel == 1) {
+		_gameScreen = createTexture(_currentState.gameFormat);
+#else
+		_gameScreen = createTexture(Graphics::PixelFormat::createFormatCLUT8());
 #endif
-			const bool supported = getGLPixelFormat(_defaultFormat, glIntFormat, glFormat, glType);
-			assert(supported);
-			_gameScreen = new TextureCLUT8(glIntFormat, glFormat, glType, _defaultFormat);
-			_gameScreen->setPalette(0, 255, _gamePalette);
-#ifdef USE_RGB_COLOR
-		} else {
-			const bool supported = getGLPixelFormat(_currentState.gameFormat, glIntFormat, glFormat, glType);
-			assert(supported);
-			_gameScreen = new Texture(glIntFormat, glFormat, glType, _currentState.gameFormat);
+		assert(_gameScreen);
+		if (_gameScreen->hasPalette()) {
+			_gameScreen->setPalette(0, 256, _gamePalette);
 		}
-#endif
 
 		_gameScreen->allocate(_currentState.gameWidth, _currentState.gameHeight);
 		_gameScreen->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
 		// We fill the screen to all black or index 0 for CLUT8.
+#ifdef USE_RGB_COLOR
 		if (_currentState.gameFormat.bytesPerPixel == 1) {
 			_gameScreen->fill(0);
 		} else {
 			_gameScreen->fill(_gameScreen->getSurface()->format.RGBToColor(0, 0, 0));
 		}
+#else
+		_gameScreen->fill(0);
+#endif
 	}
 
 	// Update our display area and cursor scaling. This makes sure we pick up
@@ -359,15 +357,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_displayHeight / _gameScreen->getHeight();
 
 	// First step: Draw the (virtual) game screen.
-	glPushMatrix();
-
-	// Adjust game screen shake position
-	GLCALL(glTranslatef(0, shakeOffset, 0));
-
-	// Draw the game screen
-	_gameScreen->draw(_displayX, _displayY, _displayWidth, _displayHeight);
-
-	glPopMatrix();
+	_gameScreen->draw(_displayX, _displayY + shakeOffset, _displayWidth, _displayHeight);
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
@@ -376,18 +366,12 @@ void OpenGLGraphicsManager::updateScreen() {
 
 	// Third step: Draw the cursor if visible.
 	if (_cursorVisible && _cursor) {
-		glPushMatrix();
-
 		// Adjust game screen shake position, but only when the overlay is not
 		// visible.
-		if (!_overlayVisible) {
-			GLCALL(glTranslatef(0, shakeOffset, 0));
-		}
+		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
 
-		_cursor->draw(_cursorX - _cursorHotspotXScaled, _cursorY - _cursorHotspotYScaled,
+		_cursor->draw(_cursorX - _cursorHotspotXScaled, _cursorY - _cursorHotspotYScaled + cursorOffset,
 		              _cursorWidthScaled, _cursorHeightScaled);
-
-		glPopMatrix();
 	}
 
 #ifdef USE_OSD
@@ -566,27 +550,19 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 
 		GLenum glIntFormat, glFormat, glType;
 
-		if (inputFormat.bytesPerPixel == 1) {
-			// In case this is not supported this is a serious programming
-			// error and the assert a bit below will trigger!
-			const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
-			assert(supported);
-			_cursor = new TextureCLUT8(glIntFormat, glFormat, glType, _defaultFormatAlpha);
+		Graphics::PixelFormat textureFormat;
+		if (inputFormat.bytesPerPixel == 1 || (inputFormat.aBits() && getGLPixelFormat(inputFormat, glIntFormat, glFormat, glType))) {
+			// There is two cases when we can use the cursor format directly.
+			// The first is when it's CLUT8, here color key handling can
+			// always be applied because we use the alpha channel of
+			// _defaultFormatAlpha for that.
+			// The other is when the input format has alpha bits and
+			// furthermore is directly supported.
+			textureFormat = inputFormat;
 		} else {
-			// Try to use the format specified as input directly. We can only
-			// do so when it actually has alpha bits.
-			if (inputFormat.aBits() != 0 && getGLPixelFormat(inputFormat, glIntFormat, glFormat, glType)) {
-				_cursor = new Texture(glIntFormat, glFormat, glType, inputFormat);
-			}
-
-			// Otherwise fall back to the default alpha format.
-			if (!_cursor) {
-				const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
-				assert(supported);
-				_cursor = new Texture(glIntFormat, glFormat, glType, _defaultFormatAlpha);
-			}
+			textureFormat = _defaultFormatAlpha;
 		}
-
+		_cursor = createTexture(textureFormat, true);
 		assert(_cursor);
 		_cursor->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
 	}
@@ -778,10 +754,8 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		delete _overlay;
 		_overlay = nullptr;
 
-		GLenum glIntFormat, glFormat, glType;
-		const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
-		assert(supported);
-		_overlay = new Texture(glIntFormat, glFormat, glType, _defaultFormatAlpha);
+		_overlay = createTexture(_defaultFormatAlpha);
+		assert(_overlay);
 		// We always filter the overlay with GL_LINEAR. This assures it's
 		// readable in case it needs to be scaled and does not affect it
 		// otherwise.
@@ -795,10 +769,8 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 		delete _osd;
 		_osd = nullptr;
 
-		GLenum glIntFormat, glFormat, glType;
-		const bool supported = getGLPixelFormat(_defaultFormatAlpha, glIntFormat, glFormat, glType);
-		assert(supported);
-		_osd = new Texture(glIntFormat, glFormat, glType, _defaultFormatAlpha);
+		_osd = createTexture(_defaultFormatAlpha);
+		assert(_osd);
 		// We always filter the osd with GL_LINEAR. This assures it's
 		// readable in case it needs to be scaled and does not affect it
 		// otherwise.
@@ -816,7 +788,7 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	++_screenChangeID;
 }
 
-void OpenGLGraphicsManager::notifyContextChange(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha) {
+void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha) {
 	// Initialize all extensions.
 	initializeGLExtensions();
 
@@ -881,6 +853,26 @@ void OpenGLGraphicsManager::notifyContextChange(const Graphics::PixelFormat &def
 #endif
 }
 
+void OpenGLGraphicsManager::notifyContextDestroy() {
+	if (_gameScreen) {
+		_gameScreen->releaseInternalTexture();
+	}
+
+	if (_overlay) {
+		_overlay->releaseInternalTexture();
+	}
+
+	if (_cursor) {
+		_cursor->releaseInternalTexture();
+	}
+
+#ifdef USE_OSD
+	if (_osd) {
+		_osd->releaseInternalTexture();
+	}
+#endif
+}
+
 void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 	if (_overlayVisible) {
 		// It might be confusing that we actually have to handle something
@@ -909,11 +901,35 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 	}
 }
 
+Texture *OpenGLGraphicsManager::createTexture(const Graphics::PixelFormat &format, bool wantAlpha) {
+	GLenum glIntFormat, glFormat, glType;
+	if (format.bytesPerPixel == 1) {
+		const Graphics::PixelFormat &virtFormat = wantAlpha ? _defaultFormatAlpha : _defaultFormat;
+		const bool supported = getGLPixelFormat(virtFormat, glIntFormat, glFormat, glType);
+		if (!supported) {
+			return nullptr;
+		} else {
+			return new TextureCLUT8(glIntFormat, glFormat, glType, virtFormat);
+		}
+	} else {
+		const bool supported = getGLPixelFormat(format, glIntFormat, glFormat, glType);
+		if (!supported) {
+			return nullptr;
+		} else {
+			return new Texture(glIntFormat, glFormat, glType, format);
+		}
+	}
+}
+
 bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelFormat, GLenum &glIntFormat, GLenum &glFormat, GLenum &glType) const {
+#ifdef SCUMM_LITTLE_ENDIAN
+	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
+#else
 	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
+#endif
 		glIntFormat = GL_RGBA;
 		glFormat = GL_RGBA;
-		glType = GL_UNSIGNED_INT_8_8_8_8;
+		glType = GL_UNSIGNED_BYTE;
 		return true;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) { // RGB565
 		glIntFormat = GL_RGB;
@@ -931,6 +947,13 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glType = GL_UNSIGNED_SHORT_4_4_4_4;
 		return true;
 #ifndef USE_GLES
+#ifdef SCUMM_LITTLE_ENDIAN
+	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
+		glIntFormat = GL_RGBA;
+		glFormat = GL_RGBA;
+		glType = GL_UNSIGNED_INT_8_8_8_8;
+		return true;
+#endif
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) { // RGB555
 		// GL_BGRA does not exist in every GLES implementation so should not be configured if
 		// USE_GLES is set.
@@ -948,11 +971,13 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_BGRA;
 		glType = GL_UNSIGNED_SHORT_4_4_4_4_REV;
 		return true;
+#ifdef SCUMM_BIG_ENDIAN
 	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
 		glIntFormat = GL_RGBA;
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_INT_8_8_8_8_REV;
 		return true;
+#endif
 	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0)) { // BGRA8888
 		glIntFormat = GL_RGBA;
 		glFormat = GL_BGRA;
@@ -1064,14 +1089,14 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 	// In case scaling is actually enabled we will scale the cursor according
 	// to the game screen.
 	if (!_cursorDontScale) {
-		const uint screenScaleFactorX = _displayWidth  * 10000 / _gameScreen->getWidth();
-		const uint screenScaleFactorY = _displayHeight * 10000 / _gameScreen->getHeight();
+		const frac_t screenScaleFactorX = intToFrac(_displayWidth)  / _gameScreen->getWidth();
+		const frac_t screenScaleFactorY = intToFrac(_displayHeight) / _gameScreen->getHeight();
 
-		_cursorHotspotXScaled = (_cursorHotspotXScaled * screenScaleFactorX) / 10000;
-		_cursorWidthScaled    = (_cursorWidthScaled    * screenScaleFactorX) / 10000;
+		_cursorHotspotXScaled = fracToInt(_cursorHotspotXScaled * screenScaleFactorX);
+		_cursorWidthScaled    = fracToInt(_cursorWidthScaled    * screenScaleFactorX);
 
-		_cursorHotspotYScaled = (_cursorHotspotYScaled * screenScaleFactorY) / 10000;
-		_cursorHeightScaled   = (_cursorHeightScaled   * screenScaleFactorY) / 10000;
+		_cursorHotspotYScaled = fracToInt(_cursorHotspotYScaled * screenScaleFactorY);
+		_cursorHeightScaled   = fracToInt(_cursorHeightScaled   * screenScaleFactorY);
 	}
 }
 

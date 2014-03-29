@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -268,7 +268,7 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 	return _renderSurface->format;
 }
 
-void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) { 
+void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, TransformStruct &transform) {
 
 	if (_disableDirtyRects) {
 		RenderTicket *ticket = new RenderTicket(owner, surf, srcRect, dstRect, transform);
@@ -376,7 +376,7 @@ void BaseRenderOSystem::addDirtyRect(const Common::Rect &rect) {
 void BaseRenderOSystem::drawTickets() {
 	RenderQueueIterator it = _renderQueue.begin();
 	// Clean out the old tickets
-	// Note: We draw invalid tickets too, otherwise we wouldn't be honouring
+	// Note: We draw invalid tickets too, otherwise we wouldn't be honoring
 	// the draw request they obviously made BEFORE becoming invalid, either way
 	// we have a copy of their data, so their invalidness won't affect us.
 	while (it != _renderQueue.end()) {
@@ -402,7 +402,7 @@ void BaseRenderOSystem::drawTickets() {
 	it = _renderQueue.begin();
 	_lastFrameIter = _renderQueue.end();
 	// A special case: If the screen has one giant OPAQUE rect to be drawn, then we skip filling
-	// the background colour. Typical use-case: Fullscreen FMVs.
+	// the background color. Typical use-case: Fullscreen FMVs.
 	// Caveat: The FPS-counter will invalidate this.
 	if (it != _lastFrameIter && _renderQueue.front() == _renderQueue.back() && (*it)->_transform._alphaDisable == true) {
 		// If our single opaque rect fills the dirty rect, we can skip filling.

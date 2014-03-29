@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -70,6 +70,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"twc",             "the white chamber"},
 	{"wintermute",      "Wintermute engine game"},
 	{"wtetris",         "Wilma Tetris"},
+	{"zilm",            "Zilm: A Game of Reflex"},
 	{0, 0}
 };
 
@@ -1103,6 +1104,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"wtetris",
 		"",
 		AD_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Zilm: A Game of Reflex 1.0
+	{
+		"Zilm",
+		"1.0",
+		AD_ENTRY1s("data.dcp",  "098dffaf03d8adbb4cb5633e4733e63c", 351726),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -414,6 +414,115 @@ void AGOSEngine::hitarea_stuff_helper_2() {
 	}
 
 	_runScriptReturn1 = false;
+}
+
+#ifdef ENABLE_AGOS2
+void AGOSEngine_Feeble::handleMouseWheelUp() {
+	if (getGameType() == GType_PP || !(getBitFlag(99)))
+		return;
+
+	if (_mouse.x >= 128 && _mouse.x <= 515 && _mouse.y >= 102 && _mouse.y <= 206) {
+		oracleTextDown();
+	} else if (_mouse.x >= 172 && _mouse.x <= 469 && _mouse.y >= 287 && _mouse.y <= 382) {
+		HitArea *ha = findBox(0x7FFB);
+		if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			if (!isSpriteLoaded(21, 9) && !isSpriteLoaded(23, 9))
+				inventoryUp(ha->window);
+		}
+	}
+}
+
+void AGOSEngine_Feeble::handleMouseWheelDown() {
+	if (getGameType() == GType_PP || !(getBitFlag(99)))
+		return;
+
+	if (_mouse.x >= 128 && _mouse.x <= 515 && _mouse.y >= 102 && _mouse.y <= 206) {
+		oracleTextUp();
+	} else if (_mouse.x >= 172 && _mouse.x <= 469 && _mouse.y >= 287 && _mouse.y <= 382) {
+		HitArea *ha = findBox(0x7FFC);
+		if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			if (!isSpriteLoaded(21, 9) && !isSpriteLoaded(23, 9))
+					inventoryDown(ha->window);
+		}
+	}
+}
+#endif
+
+void AGOSEngine_Simon1::handleMouseWheelUp() {
+	HitArea *ha = findBox(206);
+	if (ha != NULL && (ha->flags & kBFBoxInUse) && !(ha->flags & kBFBoxDead)) {
+			if (_saveLoadRowCurPos != 1) {
+				if (_saveLoadRowCurPos < 7)
+					_saveLoadRowCurPos = 1;
+				else
+					_saveLoadRowCurPos -= 1;
+
+				_saveLoadEdit = false;
+				listSaveGames();
+			}
+	} else {	
+		AGOSEngine::handleMouseWheelUp();
+	}
+}
+
+void AGOSEngine_Simon1::handleMouseWheelDown() {
+	HitArea *ha = findBox(207);
+	if (ha != NULL && (ha->flags & kBFBoxInUse) && !(ha->flags & kBFBoxDead)) {
+			if (_saveDialogFlag) {
+				_saveLoadRowCurPos += 1;
+				if (_saveLoadRowCurPos >= _numSaveGameRows)
+					_saveLoadRowCurPos = _numSaveGameRows;
+			
+				_saveLoadEdit = false;
+				listSaveGames();
+			}
+	} else {	
+		AGOSEngine::handleMouseWheelDown();
+	}
+}
+
+void AGOSEngine_Elvira2::handleMouseWheelUp() {
+	HitArea *ha = findBox(224);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			_saveGameNameLen = 0;
+
+			if (_saveLoadRowCurPos < 3)
+				_saveLoadRowCurPos = 1;
+			else
+				_saveLoadRowCurPos -= 3;
+
+			listSaveGames();
+	} else {	
+		AGOSEngine::handleMouseWheelUp();
+	}
+}
+
+void AGOSEngine_Elvira2::handleMouseWheelDown() {
+	HitArea *ha =  findBox(224);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+			_saveGameNameLen = 0;
+			_saveLoadRowCurPos += 3;
+			if (_saveLoadRowCurPos >= _numSaveGameRows)
+				_saveLoadRowCurPos = 1;
+
+			listSaveGames();
+	} else {	
+		AGOSEngine::handleMouseWheelDown();
+	}
+}
+
+void AGOSEngine::handleMouseWheelUp() {
+	HitArea *ha = findBox(0x7FFB);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+		inventoryUp(ha->window);
+	}
+}
+
+void AGOSEngine::handleMouseWheelDown() {
+	HitArea *ha = findBox(0x7FFC);
+	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
+		inventoryDown(ha->window);
+	}
 }
 
 void AGOSEngine::permitInput() {

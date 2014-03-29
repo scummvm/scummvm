@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -26,6 +26,7 @@
 namespace Fullpipe {
 
 class PictureObject;
+class Picture;
 
 class BaseModalObject {
  public:
@@ -153,6 +154,52 @@ public:
 public:
 	ModalMainMenu();
 	virtual ~ModalMainMenu() {}
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool init(int counterdiff) { return true; }
+	virtual void update() {}
+	virtual void saveload() {}
+};
+
+class ModalHelp : public BaseModalObject {
+public:
+	Scene *_mainMenuScene;
+	Picture *_bg;
+	bool _isRunning;
+	Common::Rect _rect;
+	int _hx;
+	int _hy;
+
+public:
+	ModalHelp();
+	virtual ~ModalHelp();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void launch();
+};
+
+class ModalQuery : public BaseModalObject {
+public:
+	ModalQuery();
+	virtual ~ModalQuery() {}
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool init(int counterdiff) { return true; }
+	virtual void update() {}
+	virtual void saveload() {}
+};
+
+class ModalSaveGame : public BaseModalObject {
+public:
+	ModalSaveGame();
+	virtual ~ModalSaveGame() {}
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return false; }

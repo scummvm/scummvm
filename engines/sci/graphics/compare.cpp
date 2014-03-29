@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -241,20 +241,12 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 	}
 }
 
-Common::Rect GfxCompare::getNSRect(reg_t object, bool fixRect) {
+Common::Rect GfxCompare::getNSRect(reg_t object) {
 	Common::Rect nsRect;
 	nsRect.top = readSelectorValue(_segMan, object, SELECTOR(nsTop));
 	nsRect.left = readSelectorValue(_segMan, object, SELECTOR(nsLeft));
 	nsRect.bottom = readSelectorValue(_segMan, object, SELECTOR(nsBottom));
 	nsRect.right = readSelectorValue(_segMan, object, SELECTOR(nsRight));
-
-	if (fixRect) {
-		// nsRect top/left may be negative, adjust accordingly
-		if (nsRect.top < 0)
-			nsRect.top = 0;
-		if (nsRect.left < 0)
-			nsRect.left = 0;
-	}
 
 	return nsRect;
 }

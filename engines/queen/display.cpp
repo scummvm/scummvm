@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,8 +29,9 @@
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/iff.h"
-#include "graphics/decoders/pcx.h"
+
+#include "image/iff.h"
+#include "image/pcx.h"
 
 #include "queen/display.h"
 #include "queen/input.h"
@@ -813,7 +814,7 @@ void Display::fill(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint16 w,
 void Display::decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd) {
 	Common::MemoryReadStream str(src, srcSize);
 
-	::Graphics::PCXDecoder pcx;
+	Image::PCXDecoder pcx;
 	if (!pcx.loadStream(str))
 		error("Error while reading PCX image");
 
@@ -832,7 +833,7 @@ void Display::decodePCX(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dst
 void Display::decodeIFF(const uint8 *src, uint32 srcSize, uint8 *dst, uint16 dstPitch, uint16 *w, uint16 *h, uint8 *pal, uint16 palStart, uint16 palEnd, uint8 colorBase) {
 	Common::MemoryReadStream str(src, srcSize);
 
-	::Graphics::IFFDecoder iff;
+	Image::IFFDecoder iff;
 	if (!iff.loadStream(str))
 		error("Error while reading IFF image");
 

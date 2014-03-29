@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -557,12 +557,20 @@ int16 selectSubObject(int16 x, int16 y, int16 param) {
 		}
 	}
 
+	if (selectedObject >= 20)
+		error("Invalid value for selectedObject: %d", selectedObject);
 	return objListTab[selectedObject];
 }
 
-// TODO: Make separate functions for Future Wars's and Operation Stealth's version of this function, this is getting too messy
-// TODO: Add support for using the different prepositions for different verbs (Doesn't work currently)
 void makeCommandLine() {
+	if (g_cine->getGameType() == Cine::GType_FW)
+		makeFWCommandLine();
+	else
+		makeOSCommandLine();
+}
+
+// TODO: Add support for using the different prepositions for different verbs (Doesn't work currently)
+void makeOSCommandLine() {
 	uint16 x, y;
 
 	commandVar1 = 0;
@@ -578,28 +586,16 @@ void makeCommandLine() {
 		int16 si;
 
 		getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
-
-		if (g_cine->getGameType() == Cine::GType_FW) {
-			si = selectSubObject(x, y + 8, -2);
-		} else {
-			si = selectSubObject(x, y + 8, -subObjectUseTable[playerCommand]);
-		}
+		si = selectSubObject(x, y + 8, -subObjectUseTable[playerCommand]);
 
 		if (si < 0) {
-			if (g_cine->getGameType() == Cine::GType_OS) {
-				canUseOnObject = 0;
-			} else { // Future Wars
-				playerCommand = -1;
-				g_cine->_commandBuffer = "";
-			}
+			canUseOnObject = 0;
 		} else {
-			if (g_cine->getGameType() == Cine::GType_OS) {
-				if (si >= 8000) {
-					si -= 8000;
-					canUseOnObject = canUseOnItemTable[playerCommand];
-				} else {
-					canUseOnObject = 0;
-				}
+			if (si >= 8000) {
+				si -= 8000;
+				canUseOnObject = canUseOnItemTable[playerCommand];
+			} else {
+				canUseOnObject = 0;
 			}
 
 			commandVar3[0] = si;
@@ -607,27 +603,21 @@ void makeCommandLine() {
 			g_cine->_commandBuffer += " ";
 			g_cine->_commandBuffer += g_cine->_objectTable[commandVar3[0]].name;
 			g_cine->_commandBuffer += " ";
-			if (g_cine->getGameType() == Cine::GType_OS) {
-				g_cine->_commandBuffer += commandPrepositionTable[playerCommand];
-			} else { // Future Wars
-				g_cine->_commandBuffer += defaultCommandPreposition;
-			}
+			g_cine->_commandBuffer += commandPrepositionTable[playerCommand];
 		}
 	}
 
-	if (g_cine->getGameType() == Cine::GType_OS || !(playerCommand != -1 && choiceResultTable[playerCommand] == 2)) {
-		if (playerCommand == 2) {
-			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
-			CursorMan.showMouse(false);
-			processInventory(x, y + 8);
-			playerCommand = -1;
-			commandVar1 = 0;
-			g_cine->_commandBuffer = "";
-			CursorMan.showMouse(true);
-		}
+	if (playerCommand == 2) {
+		getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
+		CursorMan.showMouse(false);
+		processInventory(x, y + 8);
+		playerCommand = -1;
+		commandVar1 = 0;
+		g_cine->_commandBuffer = "";
+		CursorMan.showMouse(true);
 	}
 
-	if (g_cine->getGameType() == Cine::GType_OS && playerCommand != 2) {
+	if (playerCommand != 2) {
 		if (playerCommand != -1 && canUseOnObject != 0) { // call use on sub object
 			int16 si;
 
@@ -665,7 +655,55 @@ void makeCommandLine() {
 		}
 	}
 
-	if (g_cine->getGameType() == Cine::GType_OS || !disableSystemMenu) {
+	isDrawCommandEnabled = 1;
+	renderer->setCommand(g_cine->_commandBuffer);
+}
+
+// TODO: Add support for using the different prepositions for different verbs (Doesn't work currently)
+void makeFWCommandLine() {
+	uint16 x, y;
+
+	commandVar1 = 0;
+	commandVar2 = -10;
+
+	if (playerCommand != -1) {
+		g_cine->_commandBuffer = defaultActionCommand[playerCommand];
+	} else {
+		g_cine->_commandBuffer = "";
+	}
+
+	if ((playerCommand != -1) && (choiceResultTable[playerCommand] == 2)) { // need object selection?
+		int16 si;
+
+		getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
+		si = selectSubObject(x, y + 8, -2);
+
+		if (si < 0) {
+			playerCommand = -1;
+			g_cine->_commandBuffer = "";
+		} else {
+			commandVar3[0] = si;
+			commandVar1 = 1;
+			g_cine->_commandBuffer += " ";
+			g_cine->_commandBuffer += g_cine->_objectTable[commandVar3[0]].name;
+			g_cine->_commandBuffer += " ";
+			g_cine->_commandBuffer += defaultCommandPreposition;
+		}
+	}
+
+	if (!(playerCommand != -1 && choiceResultTable[playerCommand] == 2)) {
+		if (playerCommand == 2) {
+			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
+			CursorMan.showMouse(false);
+			processInventory(x, y + 8);
+			playerCommand = -1;
+			commandVar1 = 0;
+			g_cine->_commandBuffer = "";
+			CursorMan.showMouse(true);
+		}
+	}
+
+	if (!disableSystemMenu) {
 		isDrawCommandEnabled = 1;
 		renderer->setCommand(g_cine->_commandBuffer);
 	}

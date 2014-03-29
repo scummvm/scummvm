@@ -8,16 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  *
  */
 
@@ -196,7 +195,7 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 }
 
 ItemID MenuSystem::findItemAt(int x, int y) {
-	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
+	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); ++iter) {
 		if ((*iter).enabled && (*iter).rect.contains(x, y - _top))
 			return (*iter).id;
 	}
@@ -204,7 +203,7 @@ ItemID MenuSystem::findItemAt(int x, int y) {
 }
 
 MenuSystem::Item *MenuSystem::getItem(ItemID id) {
-	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
+	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); ++iter) {
 		if ((*iter).id == id)
 			return &(*iter);
 	}
@@ -225,8 +224,6 @@ void MenuSystem::setItemCaption(Item *item, const char *caption) {
 }
 
 void MenuSystem::initMenu(MenuID menuID) {
-	int newSlotNum;
-
 	_items.clear();
 
 	memcpy(_vm->_screen->_frontScreen, _background->getPixels(), 640 * 400);
@@ -277,7 +274,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 				Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
 				addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 116 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
 			}
-			newSlotNum = loadSavegamesList() + 1;
+			int newSlotNum = loadSavegamesList() + 1;
 			_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %04d", _savegames.size())));
 			setSavegameCaptions(true);
 		} else {
@@ -324,7 +321,7 @@ void MenuSystem::initMenu(MenuID menuID) {
 		break;
 	}
 
-	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
+	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); ++iter) {
 		if ((*iter).enabled)
 			drawItem((*iter).id, false);
 	}
@@ -509,7 +506,7 @@ int MenuSystem::loadSavegamesList() {
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 		if (slotNum > maxSlotNum)

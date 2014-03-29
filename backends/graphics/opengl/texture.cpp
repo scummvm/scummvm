@@ -65,6 +65,9 @@ void Texture::releaseInternalTexture() {
 }
 
 void Texture::recreateInternalTexture() {
+	// Release old texture name in case it exists.
+	releaseInternalTexture();
+
 	// Get a new texture name.
 	GLCALL(glGenTextures(1, &_glTexture));
 
@@ -163,7 +166,7 @@ void Texture::fill(uint32 color) {
 	flagDirty();
 }
 
-void Texture::draw(GLuint x, GLuint y, GLuint w, GLuint h) {
+void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 	// Only do any processing when the Texture is initialized.
 	if (!_textureData.getPixels()) {
 		return;
@@ -187,13 +190,13 @@ void Texture::draw(GLuint x, GLuint y, GLuint w, GLuint h) {
 	GLCALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));
 
 	// Calculate the screen rect where the texture will be drawn.
-	const GLshort vertices[4*2] = {
-		(GLshort)x,       (GLshort)y,
-		(GLshort)(x + w), (GLshort)y,
-		(GLshort)x,       (GLshort)(y + h),
-		(GLshort)(x + w), (GLshort)(y + h)
+	const GLfloat vertices[4*2] = {
+		x,     y,
+		x + w, y,
+		x,     y + h,
+		x + w, y + h
 	};
-	GLCALL(glVertexPointer(2, GL_SHORT, 0, vertices));
+	GLCALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
 
 	// Draw the texture to the screen buffer.
 	GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));

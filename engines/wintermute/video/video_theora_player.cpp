@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -305,7 +305,7 @@ bool VideoTheoraPlayer::update() {
 			if (!_theoraDecoder->endOfVideo() && _theoraDecoder->getTimeToNextFrame() == 0) {
 				const Graphics::Surface *decodedFrame = _theoraDecoder->decodeNextFrame();
 				if (decodedFrame) {
-					if (decodedFrame->format == _surface.format && decodedFrame->w == _surface.w && decodedFrame->h == _surface.h) {
+					if (decodedFrame->format == _surface.format && decodedFrame->pitch == _surface.pitch && decodedFrame->h == _surface.h) {
 						const byte *src = (const byte *)decodedFrame->getBasePtr(0, 0);
 						byte *dst = (byte *)_surface.getBasePtr(0, 0);
 						memcpy(dst, src, _surface.pitch * _surface.h);

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -381,8 +381,8 @@ void Parser::init() {
 void Parser::handleInputText(const Common::Event &event) {
 	byte inChar = event.kbd.ascii;
 	warning("STUB: Parser::handleInputText()");
-//	if (_vm->_menu->_activeMenuItem._activeNow) {
-//		_vm->_menu->parseKey(inChar, _vm->_enhanced->extd);
+//	if (_vm->_dropdown->_activeMenuItem._activeNow) {
+//		_vm->_dropdown->parseKey(inChar, _vm->_enhanced->extd);
 //	} else {
 		if (_inputText.size() < 76) {
 			if ((inChar == '"') || (inChar == '`')) {
@@ -402,7 +402,7 @@ void Parser::handleInputText(const Common::Event &event) {
 }
 
 void Parser::handleBackspace() {
-	if (_vm->_menu->_activeMenuItem._activeNow)
+	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		return;
 
 	if (_inputTextPos > 0) {
@@ -416,7 +416,7 @@ void Parser::handleBackspace() {
 }
 
 void Parser::handleReturn() {
-	if (_vm->_menu->_activeMenuItem._activeNow)
+	if (_vm->_dropdown->_activeMenuItem._activeNow)
 		tryDropdown();
 	else if (!_inputText.empty()) {
 		_inputTextBackup = _inputText;
@@ -468,7 +468,7 @@ void Parser::handleFunctionKey(const Common::Event &event) {
 		break;
 	case Common::KEYCODE_F7:
 		if (event.kbd.flags & Common::KBD_CTRL)
-			_vm->majorRedraw();
+			_vm->_graphics->refreshScreen();
 		else
 			_vm->callVerb(kVerbCodeOpen);
 		break;
@@ -2043,8 +2043,7 @@ void Parser::doThat() {
 		}
 		break;
 	case kVerbCodeHelp:
-		// boot_help();
-		warning("STUB: Parser::doThat() - case kVerbCodehelp");
+		_vm->_help->run();
 		break;
 	case kVerbCodeLarrypass:
 		_vm->_dialogs->displayText("Wrong game!");
@@ -2053,8 +2052,7 @@ void Parser::doThat() {
 		_vm->_dialogs->displayText("Hello, Phaon!");
 		break;
 	case kVerbCodeBoss:
-		// bosskey();
-		warning("STUB: Parser::doThat() - case kVerbCodeboss");
+		bossKey();
 		break;
 	case kVerbCodePee:
 		if (_vm->getFlag('P')) {
@@ -2425,6 +2423,25 @@ void Parser::doThat() {
 		Common::String tmpStr = Common::String::format("%cUnhandled verb: %d", kControlBell, _verb);
 		_vm->_dialogs->displayText(tmpStr);
 	}
+}
+
+void Parser::bossKey() {
+	_vm->_graphics->saveScreen();
+	_vm->_graphics->blackOutScreen();
+	_vm->_graphics->loadMouse(kCurUpArrow);
+	_vm->loadBackground(98);
+	_vm->_graphics->drawNormalText("Graph/Histo/Draw/Sample: \"JANJUN93.GRA\": (W3-AB3)", _vm->_font, 8, 120, 169, kColorDarkgray);
+	_vm->_graphics->drawNormalText("Press any key or click the mouse to return.", _vm->_font, 8, 144, 182, kColorDarkgray);
+	_vm->_graphics->refreshScreen();
+	Common::Event event;
+	_vm->getEvent(event);
+	while ((!_vm->shouldQuit()) && (event.type != Common::EVENT_KEYDOWN) && (event.type != Common::EVENT_LBUTTONDOWN)){
+		_vm->getEvent(event);
+		_vm->_graphics->refreshScreen();
+	}
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+	_vm->loadBackground(_vm->_room);
 }
 
 void Parser::verbOpt(byte verb, Common::String &answer, char &ansKey) {

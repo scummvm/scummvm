@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -50,7 +50,6 @@ void Inter_v3::setupOpcodesDraw() {
 void Inter_v3::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
 
-	OPCODEFUNC(0x1A, o3_getTotTextItemPart);
 	OPCODEFUNC(0x22, o3_speakerOn);
 	OPCODEFUNC(0x23, o3_speakerOff);
 	OPCODEFUNC(0x32, o3_copySprite);
@@ -64,188 +63,6 @@ void Inter_v3::setupOpcodesGob() {
 	OPCODEGOB( 10, o2_playInfogrames);
 
 	OPCODEGOB(100, o3_wobble);
-}
-
-void Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
-	byte *totData;
-	int16 totTextItem;
-	int16 part, curPart = 0;
-	int16 offX = 0, offY = 0;
-	int16 collId = 0, collCmd;
-	uint32 stringStartVar, stringVar;
-	bool end;
-
-	totTextItem = _vm->_game->_script->readInt16();
-	stringStartVar = _vm->_game->_script->readVarIndex();
-	part = _vm->_game->_script->readValExpr();
-
-	stringVar = stringStartVar;
-	if (part == -1) {
-		warning("o3_getTotTextItemPart, part == -1");
-		_vm->_draw->_hotspotText = GET_VARO_STR(stringVar);
-	}
-
-	WRITE_VARO_UINT8(stringVar, 0);
-
-	TextItem *textItem = _vm->_game->_resources->getTextItem(totTextItem);
-	if (!textItem)
-		return;
-
-	totData = textItem->getData();
-
-	// Skip background rectangles
-	while (((int16) READ_LE_UINT16(totData)) != -1)
-		totData += 9;
-	totData += 2;
-
-	while (*totData != 1) {
-		switch (*totData) {
-		case 2:
-		case 5:
-			totData++;
-			offX = READ_LE_UINT16(totData);
-			offY = READ_LE_UINT16(totData + 2);
-			totData += 4;
-			break;
-
-		case 3:
-		case 4:
-			totData += 2;
-			break;
-
-		case 6:
-			totData++;
-
-			collCmd = *totData++;
-			if (collCmd & 0x80) {
-				collId = READ_LE_UINT16(totData);
-				totData += 2;
-			}
-
-			// Skip collision coordinates
-			if (collCmd & 0x40)
-				totData += 8;
-
-			if ((collCmd & 0x8F) && ((-collId - 1) == part)) {
-				int n = 0;
-
-				while (1) {
-					if ((*totData < 1) || (*totData > 7)) {
-						if (*totData >= 32) {
-							WRITE_VARO_UINT8(stringVar++, *totData++);
-							n++;
-						} else
-							totData++;
-						continue;
-					}
-
-					if ((n != 0) || (*totData == 1) ||
-							(*totData == 6) || (*totData == 7)) {
-						WRITE_VARO_UINT8(stringVar, 0);
-						delete textItem;
-						return;
-					}
-
-					switch (*totData) {
-					case 2:
-					case 5:
-						totData += 5;
-						break;
-
-					case 3:
-					case 4:
-						totData += 2;
-						break;
-					}
-				}
-
-			}
-			break;
-
-		case 7:
-		case 8:
-		case 9:
-			totData++;
-			break;
-
-		case 10:
-			if (curPart == part) {
-				WRITE_VARO_UINT8(stringVar++, 0xFF);
-				WRITE_VARO_UINT16(stringVar, offX);
-				WRITE_VARO_UINT16(stringVar + 2, offY);
-				WRITE_VARO_UINT16(stringVar + 4,
-						totData - _vm->_game->_resources->getTexts());
-				WRITE_VARO_UINT8(stringVar + 6, 0);
-				delete textItem;
-				return;
-			}
-
-			end = false;
-			while (!end) {
-				switch (*totData) {
-				case 2:
-				case 5:
-					if (ABS(offY - READ_LE_UINT16(totData + 3)) > 1)
-						end = true;
-					else
-						totData += 5;
-					break;
-
-				case 3:
-					totData += 2;
-					break;
-
-				case 10:
-					totData += totData[1] * 2 + 2;
-					break;
-
-				default:
-					if (*totData < 32)
-						end = true;
-					while (*totData >= 32)
-						totData++;
-					break;
-				}
-			}
-
-			if (part >= 0)
-				curPart++;
-			break;
-
-		default:
-			while (1) {
-
-				while (*totData >= 32)
-					WRITE_VARO_UINT8(stringVar++, *totData++);
-				WRITE_VARO_UINT8(stringVar, 0);
-
-				if (((*totData != 2) && (*totData != 5)) ||
-						(ABS(offY - READ_LE_UINT16(totData + 3)) > 1)) {
-
-					if (curPart == part) {
-						delete textItem;
-						return;
-					}
-
-					stringVar = stringStartVar;
-					WRITE_VARO_UINT8(stringVar, 0);
-
-					while (*totData >= 32)
-						totData++;
-
-					if (part >= 0)
-						curPart++;
-					break;
-
-				} else
-					totData += 5;
-
-			}
-			break;
-		}
-	}
-
-	delete textItem;
 }
 
 void Inter_v3::o3_speakerOn(OpFuncParams &params) {

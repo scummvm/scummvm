@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -70,15 +70,15 @@ public:
 
 private:
 	ZVision *_engine;
-	/** 
-	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and 
-	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a 
+	/**
+	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and
+	 * mutators getStateValue() and setStateValue(). This ensures that Puzzles that reference a
 	 * particular state key are checked after the key is modified.
 	 */
 	StateMap _globalState;
-	/** 
-	 * Holds the flags for the global states. This is used to enable/disable puzzles and/or 
-	 * controls as well as which puzzles should are allowed to be re-executed 
+	/**
+	 * Holds the flags for the global states. This is used to enable/disable puzzles and/or
+	 * controls as well as which puzzles should are allowed to be re-executed
 	 */
 	StateFlagMap _globalStateFlags;
 	/** References _globalState keys to Puzzles */
@@ -153,7 +153,7 @@ public:
 	void deserializeStateTable(Common::SeekableReadStream *stream);
 	void serializeControls(Common::WriteStream *stream);
 	void deserializeControls(Common::SeekableReadStream *stream);
-	
+
 	Location getCurrentLocation() const;
 
 private:
@@ -175,7 +175,7 @@ public:
 private:
 	/**
 	 * Parses the stream into a Puzzle object
-	 * Helper method for parseScrFile. 
+	 * Helper method for parseScrFile.
 	 *
 	 * @param puzzle    The object to store what is parsed
 	 * @param stream    Scr file stream
@@ -184,7 +184,7 @@ private:
 
 	/**
 	 * Parses the stream into a Criteria object
-	 * Helper method for parsePuzzle. 
+	 * Helper method for parsePuzzle.
 	 *
 	 * @param criteria    Pointer to the Criteria object to fill
 	 * @param stream      Scr file stream
@@ -194,7 +194,7 @@ private:
 
 	/**
 	 * Parses the stream into a ResultAction objects
-	 * Helper method for parsePuzzle. 
+	 * Helper method for parsePuzzle.
 	 *
 	 * @param stream        Scr file stream
 	 * @param actionList    The list where the results will be added

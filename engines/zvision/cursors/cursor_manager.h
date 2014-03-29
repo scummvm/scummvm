@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -77,7 +77,7 @@ public:
 	/**
 	 * Parses a cursor name into a cursor file then creates and shows that cursor.
 	 *
-	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[] 
+	 * @param cursorName    The name of a cursor. This *HAS* to correspond to one of the entries in _cursorNames[]
 	 * @param pushed        Should the cursor be pushed (true) or not pushed (false) (Another way to say it: down or up)
 	 */
 	void changeCursor(const Common::String &cursorName, bool pushed);

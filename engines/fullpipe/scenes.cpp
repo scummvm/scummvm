@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,6 +31,7 @@
 #include "fullpipe/behavior.h"
 
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/interaction.h"
 
@@ -155,6 +156,28 @@ Vars::Vars() {
 	scene08_stairsVisible = true;
 	scene08_manOffsetY = 0;
 
+	scene09_flyingBall = 0;
+	scene09_numSwallenBalls = 0;
+	scene09_gulper = 0;
+	scene09_spitter = 0;
+	scene09_grit = 0;
+	scene09_dudeY = 0;
+	scene09_gulperIsPresent = true;
+	scene09_dudeIsOnLadder = false;
+	scene09_interactingHanger = -1;
+	scene09_intHangerPhase = -1;
+	scene09_intHangerMaxPhase = -1000;
+	scene09_numMovingHangers = 0;
+	scene09_clickY = 0;
+	scene09_hangerOffsets[0].x = 0;
+	scene09_hangerOffsets[0].y = -15;
+	scene09_hangerOffsets[1].x = 15;
+	scene09_hangerOffsets[1].y = 0;
+	scene09_hangerOffsets[2].x = 0;
+	scene09_hangerOffsets[2].y = 0;
+	scene09_hangerOffsets[3].x = 0;
+	scene09_hangerOffsets[3].y = 0;
+
 	scene10_gum = 0;
 	scene10_packet = 0;
 	scene10_packet2 = 0;
@@ -247,7 +270,38 @@ Vars::Vars() {
 	scene17_handPhase = false;
 	scene17_sceneEdgeX = 0;
 
-	scene18_var01 = 0;
+	scene18_inScene18p1 = false;
+	scene18_whirlgig = 0;
+	scene18_wheelCenterX = 0;
+	scene18_wheelCenterY = 0;
+	scene18_bridgeIsConvoluted = false;
+	scene18_whirlgigMovMum = 0;
+	scene18_girlIsSwinging = false;
+	scene18_rotationCounter = 0;
+	scene18_manY = 0;
+	scene18_wheelFlipper = false;
+	scene18_wheelIsTurning = true;
+	scene18_kidIsOnWheel = -1;
+	scene18_boyIsOnWheel = 0;
+	scene18_girlIsOnWheel = 0;
+	scene18_boyJumpedOff = true;
+	scene18_jumpDistance = -1;
+	scene18_jumpAngle = -1;
+	scene18_manIsReady = false;
+	scene18_enteredTrubaRight = false;
+	scene18_manWheelPos = 0;
+	scene18_manWheelPosTo = -1;
+	scene18_kidWheelPos = 0;
+	scene18_kidWheelPosTo = 0;
+	scene18_boy = 0;
+	scene18_girl = 0;
+	scene18_domino = 0;
+	scene18_boyJumpX = 290;
+	scene18_boyJumpY = -363;
+	scene18_girlJumpX = 283;
+	scene18_girlJumpY = -350;
+
+	scene19_enteredTruba3 = false;
 
 	scene20_fliesCountdown = 0;
 	scene20_grandma = 0;
@@ -300,6 +354,22 @@ Vars::Vars() {
 	scene26_sock = 0;
 	scene26_activeVent = 0;
 
+	scene27_hitZone = 0;
+	scene27_driver = 0;
+	scene27_maid = 0;
+	scene27_batHandler = 0;
+	scene27_driverHasVent = true;
+	scene27_bat = 0;
+	scene27_dudeIsAiming = false;
+	scene27_maxPhaseReached = false;
+	scene27_wipeIsNeeded = false;
+	scene27_driverPushedButton = false;
+	scene27_numLostBats = 0;
+	scene27_knockCount = 0;
+	scene27_aimStartX = 0;
+	scene27_aimStartY = 0;
+	scene27_launchPhase = 0;
+
 	scene28_fliesArePresent = true;
 	scene28_beardedDirection = true;
 	scene28_darkeningObject = 0;
@@ -307,6 +377,27 @@ Vars::Vars() {
 	scene28_headDirection = false;
 	scene28_headBeardedFlipper = false;
 	scene28_lift6inside = false;
+
+	scene29_var01 = 0;
+	scene29_var02 = 0;
+	scene29_var03 = 0;
+	scene29_var04 = 0;
+	scene29_porter = 0;
+	scene29_shooter1 = 0;
+	scene29_shooter2 = 0;
+	scene29_ass = 0;
+	scene29_var09 = 0;
+	scene29_var10 = 0;
+	scene29_var11 = 0;
+	scene29_var12 = 0;
+	scene29_var13 = 0;
+	scene29_var14 = 75;
+	scene29_var15 = 0;
+	scene29_var16 = 0;
+	scene29_var17 = 0;
+	scene29_var18 = 0;
+	scene29_var20 = 0;
+	scene29_var21 = 0;
 
 	scene30_leg = 0;
 	scene30_liftFlag = 1;
@@ -618,7 +709,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene08_updateCursor;
 		break;
 
-#if 0
 	case SC_9:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_9");
 		scene->preloadMovements(sceneVar);
@@ -629,7 +719,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		insertMessageHandler(sceneHandler09, 2, 2);
 		_updateCursorCallback = scene09_updateCursor;
 		break;
-#endif
 
 	case SC_10:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_10");
@@ -722,16 +811,17 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene17_updateCursor;
 		break;
 
-#if 0
 	case SC_18:
-		sub_40E1B0();
+		scene18_setupEntrance();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_18");
 		scene->preloadMovements(sceneVar);
-		sub_4062D0();
-		if (dword_476C38)
+		g_fp->stopAllSounds();
+
+		if (g_vars->scene18_inScene18p1)
 			scene18_initScene1(scene);
 		else
 			scene18_initScene2(scene);
+
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_18");
 		setSceneMusicParameters(sceneVar);
@@ -740,30 +830,34 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		break;
 
 	case SC_19:
-		if (!g_scene3) {
-			g_scene3 = accessScene(SC_18);
-			getGameLoader()->loadScene(SC_18);
-			scene18_initScene2(g_scene3);
-			sub_40C5F0();
-			scene19_sub_420B10(g_scene3, entrance->field_4);
-			dword_476C38 = 1;
+		if (!g_fp->_scene3) {
+			g_fp->_scene3 = accessScene(SC_18);
+			g_fp->_gameLoader->loadScene(SC_18);
+
+			scene18_initScene2(g_fp->_scene3);
+			scene18_preload();
+			scene19_setMovements(g_fp->_scene3, entrance->_field_4);
+
+			g_vars->scene18_inScene18p1 = true;
 		}
-		sub_40C650();
+
+		scene19_preload();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_19");
 		scene->preloadMovements(sceneVar);
-		sub_4062D0();
-		if (dword_476C38)
+		g_fp->stopAllSounds();
+
+		if (g_vars->scene18_inScene18p1)
 			scene18_initScene1(scene);
 		else
 			scene19_initScene2();
+
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_19");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler19, 2);
-		scene19_sub_4211D0(scene);
+		scene19_setSugarState(scene);
 		_updateCursorCallback = scene19_updateCursor;
 		break;
-#endif
 
 	case SC_20:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_20");
@@ -847,7 +941,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene26_updateCursor;
 		break;
 
-#if 0
 	case SC_27:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_27");
 		scene->preloadMovements(sceneVar);
@@ -858,7 +951,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		addMessageHandler(sceneHandler27, 2);
 		_updateCursorCallback = scene27_updateCursor;
 		break;
-#endif
 
 	case SC_28:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_28");
@@ -871,7 +963,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene28_updateCursor;
 		break;
 
-#if 0
 	case SC_29:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_29");
 		scene->preloadMovements(sceneVar);
@@ -882,7 +973,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		addMessageHandler(sceneHandler29, 2);
 		_updateCursorCallback = scene29_updateCursor;
 		break;
-#endif
 
 	case SC_30:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_30");
@@ -1211,7 +1301,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 		break;
 
 	case SC_23:
-		if (getObjectState("Верхний люк_23") == getObjectEnumState("Верхний люк_23", "Открыт")) {
+		if (getObjectState(sO_UpperHatch_23) == getObjectEnumState(sO_UpperHatch_23, sO_Opened)) {
 			updateMapPiece(PIC_MAP_S23_1, 0);
 			updateMapPiece(PIC_MAP_S23_2, 1);
 			updateMapPiece(PIC_MAP_P07, 1);
@@ -1284,7 +1374,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_31:
 		updateMapPiece(PIC_MAP_S31_2, 1);
 
-		if (getObjectState("Кактус") == getObjectEnumState("Кактус", "Вырос"))
+		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S31_1, 1);
 
 		if (pre->keyCode == TrubaRight)
@@ -1295,7 +1385,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_32:
 		updateMapPiece(PIC_MAP_S32_2, 1);
 
-		if (getObjectState("Кактус") == getObjectEnumState("Кактус", "Вырос"))
+		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S32_1, 1);
 
 		break;
@@ -1354,6 +1444,29 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 		}
 		break;
     }
+}
+
+void BallChain::init(Ball **ball) {
+	*ball = pTail;
+	pTail = (Ball *)ball;
+	numBalls--;
+
+	if (!numBalls) {
+		for (Ball *i = pHead; i; i = i->p0 )
+			;
+		numBalls = 0;
+		pTail = 0;
+		field_8 = 0;
+		pHead = 0;
+		free(cPlex);
+		cPlex = 0;
+	}
+}
+
+Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
+	warning("STUB: BallChain::sub04");
+
+	return pTail;
 }
 
 

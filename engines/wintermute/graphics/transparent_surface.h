@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef GRAPHICS_TRANSPARENTSURFACE_H
@@ -73,17 +74,17 @@ struct TransparentSurface : public Graphics::Surface {
 	    ALPHA_FULL = 2
 	};
 
-	#ifdef SCUMM_LITTLE_ENDIAN
+#ifdef SCUMM_LITTLE_ENDIAN
 	static const int kAIndex = 0;
 	static const int kBIndex = 1;
 	static const int kGIndex = 2;
 	static const int kRIndex = 3;
-	#else
+#else
 	static const int kAIndex = 3;
 	static const int kBIndex = 2;
 	static const int kGIndex = 1;
 	static const int kRIndex = 0;
-	#endif
+#endif
 
 	static const int kBShift = 8;//img->format.bShift;
 	static const int kGShift = 16;//img->format.gShift;
@@ -131,13 +132,13 @@ struct TransparentSurface : public Graphics::Surface {
 	                  int width = -1, int height = -1,
 	                  TSpriteBlendMode blend = BLEND_NORMAL);
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
-	
+
 	/**
 	 * @brief Scale function; this returns a transformed version of this surface after rotation and
 	 * scaling. Please do not use this if angle != 0, use rotoscale.
 	 *
 	 * @param newWidth the resulting width.
-	 * @param newHeight the resulting height. 
+	 * @param newHeight the resulting height.
 	 * @see TransformStruct
 	 */
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
@@ -147,7 +148,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
 	 *
 	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
-	 * 
+	 *
 	 */
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 	AlphaType getAlphaMode() const;

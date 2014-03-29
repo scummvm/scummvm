@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -40,47 +40,47 @@ void TransformStruct::init(Point32 zoom, uint32 angle, Point32 hotspot, bool alp
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, int32 offsetX, int32 offsetY) {
-	init(Point32(zoomX, zoomY), 
-		angle, 
-		Point32(hotspotX, hotspotY), 
-		false, 
-		blendMode, 
-		rgbaMod, 
-		mirrorX, mirrorY, 
+	init(Point32(zoomX, zoomY),
+		angle,
+		Point32(hotspotX, hotspotY),
+		false,
+		blendMode,
+		rgbaMod,
+		mirrorX, mirrorY,
 		Point32(offsetX, offsetY));
 }
 
 TransformStruct::TransformStruct(float zoomX, float zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, int32 offsetX, int32 offsetY) {
-	init(Point32((int32)(zoomX / 100.0 * kDefaultZoomX), 
-		     (int32)(zoomY / 100.0 * kDefaultZoomY)), 
-		angle, 
-		Point32(hotspotX, hotspotY), 
-		false, 
-		blendMode, 
-		rgbaMod, 
-		mirrorX, mirrorY, 
+	init(Point32((int32)(zoomX / 100.0 * kDefaultZoomX),
+		     (int32)(zoomY / 100.0 * kDefaultZoomY)),
+		angle,
+		Point32(hotspotX, hotspotY),
+		false,
+		blendMode,
+		rgbaMod,
+		mirrorX, mirrorY,
 		Point32(offsetX, offsetY));
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY) {
-	init(Point32(zoomX, zoomY), 
-		kDefaultAngle, 
-		Point32(kDefaultHotspotX, kDefaultHotspotY), 
-		false, 
-		blendMode, 
-		rgbaMod, 
-		mirrorX, 
-		mirrorY,  
+	init(Point32(zoomX, zoomY),
+		kDefaultAngle,
+		Point32(kDefaultHotspotX, kDefaultHotspotY),
+		false,
+		blendMode,
+		rgbaMod,
+		mirrorX,
+		mirrorY,
 		Point32(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY) {
-	init(Point32(zoomX, zoomY), 
-		angle, 
-		Point32(hotspotX, hotspotY), 
-		true, 
-		BLEND_NORMAL, 
-		kDefaultRgbaMod, 
+	init(Point32(zoomX, zoomY),
+		angle,
+		Point32(hotspotX, hotspotY),
+		true,
+		BLEND_NORMAL,
+		kDefaultRgbaMod,
 		false, false,
 		Point32(kDefaultOffsetX, kDefaultOffsetY));
 }
@@ -99,13 +99,13 @@ TransformStruct::TransformStruct(int32 numTimesX, int32 numTimesY) {
 }
 
 TransformStruct::TransformStruct() {
-	init(Point32(kDefaultZoomX, kDefaultZoomY), 
-		kDefaultAngle, 
-		Point32(kDefaultHotspotX, kDefaultHotspotY), 
-		true, 
-		BLEND_NORMAL, 
-		kDefaultRgbaMod, 
-		false, false,  
+	init(Point32(kDefaultZoomX, kDefaultZoomY),
+		kDefaultAngle,
+		Point32(kDefaultHotspotX, kDefaultHotspotY),
+		true,
+		BLEND_NORMAL,
+		kDefaultRgbaMod,
+		false, false,
 		Point32(kDefaultOffsetX, kDefaultOffsetY));
 }
 

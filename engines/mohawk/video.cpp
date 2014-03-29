@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -316,7 +316,7 @@ void VideoManager::clearMLST() {
 VideoHandle VideoManager::playMovieRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
-			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping");
+			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s, Volume = %d", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping", _mlstRecords[i].volume);
 			return createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0, _mlstRecords[i].volume);
 		}
 
@@ -326,7 +326,7 @@ VideoHandle VideoManager::playMovieRiven(uint16 id) {
 void VideoManager::playMovieBlockingRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
-			debug(1, "Play tMOV %d (blocking) at (%d, %d)", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top);
+			debug(1, "Play tMOV %d (blocking) at (%d, %d), Volume = %d", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].volume);
 			VideoHandle videoHandle = createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, false);
 			waitUntilMovieEnds(videoHandle);
 			return;
@@ -373,7 +373,7 @@ void VideoManager::disableAllMovies() {
 		_videoStreams[i].enabled = false;
 }
 
-VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop, byte volume) {
+VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop, uint16 volume) {
 	// First, check to see if that video is already playing
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
 		if (_videoStreams[i].id == id)
@@ -383,7 +383,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	Video::QuickTimeDecoder *decoder = new Video::QuickTimeDecoder();
 	decoder->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
 	decoder->loadStream(_vm->getResource(ID_TMOV, id));
-	decoder->setVolume(volume);
+	decoder->setVolume((volume >= 256) ? 255 : volume);
 
 	VideoEntry entry;
 	entry.clear();

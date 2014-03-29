@@ -79,7 +79,7 @@ public:
 
 	void fill(uint32 color);
 
-	void draw(GLuint x, GLuint y, GLuint w, GLuint h);
+	void draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
 
 	void flagDirty() { _allDirty = true; }
 	bool isDirty() const { return _allDirty || !_dirtyArea.isEmpty(); }

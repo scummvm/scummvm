@@ -19,5 +19,5 @@ ifeq ($(ENABLE_MORTEVIELLE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

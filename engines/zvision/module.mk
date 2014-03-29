@@ -1,5 +1,5 @@
 MODULE := engines/zvision
- 
+
 MODULE_OBJS := \
 	animation/rlf_animation.o \
 	archives/zfs_archive.o \
@@ -30,14 +30,14 @@ MODULE_OBJS := \
 	video/video.o \
 	video/zork_avi_decoder.o \
 	zvision.o
-	
+
 MODULE_DIRS += \
 	engines/zvision
- 
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_ZVISION), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
- 
-# Include common rules 
+
+# Include common rules
 include $(srcdir)/rules.mk

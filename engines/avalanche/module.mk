@@ -9,15 +9,18 @@ MODULE_OBJS = \
 	console.o \
 	detection.o \
 	graphics.o \
-	menu.o \
+	dropdown.o \
 	parser.o \
-	pingo.o \
 	dialogs.o \
 	sequence.o \
 	sound.o \
 	timer.o \
 	nim.o \
-	clock.o
+	clock.o \
+	ghostroom.o \
+	help.o \
+	shootemup.o \
+	mainmenu.o
 	
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)

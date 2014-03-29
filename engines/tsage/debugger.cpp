@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -640,58 +640,58 @@ bool Ringworld2Debugger::Cmd_ListObjects(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Available objects for this game are:\n");
-	DebugPrintf("1  - R2_OPTO_DISK\n");
-	DebugPrintf("2  - R2_READER\n");
-	DebugPrintf("3  - R2_NEGATOR_GUN\n");
-	DebugPrintf("4  - R2_STEPPING_DISKS\n");
-	DebugPrintf("5  - R2_ATTRACTOR_UNIT\n");
-	DebugPrintf("6  - R2_SENSOR_PROBE\n");
-	DebugPrintf("7  - R2_SONIC_STUNNER\n");
-	DebugPrintf("8  - R2_CABLE_HARNESS\n");
-	DebugPrintf("9  - R2_COM_SCANNER\n");
-	DebugPrintf("10 - R2_SPENT_POWER_CAPSULE\n");
-	DebugPrintf("11 - R2_CHARGED_POWER_CAPSULE\n");
-	DebugPrintf("12 - R2_AEROSOL\n");
-	DebugPrintf("13 - R2_REMOTE_CONTROL\n");
-	DebugPrintf("14 - R2_OPTICAL_FIBRE\n");
-	DebugPrintf("15 - R2_CLAMP\n");
-	DebugPrintf("16 - R2_ATTRACTOR_CABLE_HARNESS\n");
-	DebugPrintf("17 - R2_FUEL_CELL\n");
-	DebugPrintf("18 - R2_GYROSCOPE\n");
-	DebugPrintf("19 - R2_AIRBAG\n");
-	DebugPrintf("20 - R2_REBREATHER_TANK\n");
-	DebugPrintf("21 - R2_RESERVE_REBREATHER_TANK\n");
-	DebugPrintf("22 - R2_GUIDANCE_MODULE\n");
-	DebugPrintf("23 - R2_THRUSTER_VALVE\n");
-	DebugPrintf("24 - R2_BALLOON_BACKPACK\n");
-	DebugPrintf("25 - R2_RADAR_MECHANISM\n");
-	DebugPrintf("26 - R2_JOYSTICK\n");
-	DebugPrintf("27 - R2_IGNITOR\n");
-	DebugPrintf("28 - R2_DIAGNOSTICS_DISPLAY\n");
-	DebugPrintf("29 - R2_GLASS_DOME\n");
-	DebugPrintf("30 - R2_WICK_LAMP\n");
-	DebugPrintf("31 - R2_SCRITH_KEY\n");
-	DebugPrintf("32 - R2_TANNER_MASK\n");
-	DebugPrintf("33 - R2_PURE_GRAIN_ALCOHOL\n");
-	DebugPrintf("34 - R2_SAPPHIRE_BLUE\n");
-	DebugPrintf("35 - R2_ANCIENT_SCROLLS\n");
-	DebugPrintf("36 - R2_FLUTE\n");
-	DebugPrintf("37 - R2_GUNPOWDER\n");
-	DebugPrintf("38 - R2_NONAME\n");
-	DebugPrintf("39 - R2_COM_SCANNER_2\n");
-	DebugPrintf("40 - R2_SUPERCONDUCTOR_WIRE\n");
-	DebugPrintf("41 - R2_PILLOW\n");
-	DebugPrintf("42 - R2_FOOD_TRAY\n");
-	DebugPrintf("43 - R2_LASER_HACKSAW\n");
-	DebugPrintf("44 - R2_PHOTON_STUNNER\n");
-	DebugPrintf("45 - R2_BATTERY\n");
-	DebugPrintf("46 - R2_SOAKED_FACEMASK\n");
-	DebugPrintf("47 - R2_LIGHT_BULB\n");
-	DebugPrintf("48 - R2_ALCOHOL_LAMP\n");
-	DebugPrintf("49 - R2_ALCOHOL_LAMP_2\n");
-	DebugPrintf("50 - R2_ALCOHOL_LAMP_3\n");
-	DebugPrintf("51 - R2_BROKEN_DISPLAY\n");
-	DebugPrintf("52 - R2_TOOLBOX\n");
+	DebugPrintf("1  - Scene %d - R2_OPTO_DISK\n", BF_INVENTORY.getObjectScene(1));
+	DebugPrintf("2  - Scene %d - R2_READER\n", BF_INVENTORY.getObjectScene(2));
+	DebugPrintf("3  - Scene %d - R2_NEGATOR_GUN\n", BF_INVENTORY.getObjectScene(3));
+	DebugPrintf("4  - Scene %d - R2_STEPPING_DISKS\n", BF_INVENTORY.getObjectScene(4));
+	DebugPrintf("5  - Scene %d - R2_ATTRACTOR_UNIT\n", BF_INVENTORY.getObjectScene(5));
+	DebugPrintf("6  - Scene %d - R2_SENSOR_PROBE\n", BF_INVENTORY.getObjectScene(6));
+	DebugPrintf("7  - Scene %d - R2_SONIC_STUNNER\n", BF_INVENTORY.getObjectScene(7));
+	DebugPrintf("8  - Scene %d - R2_CABLE_HARNESS\n", BF_INVENTORY.getObjectScene(8));
+	DebugPrintf("9  - Scene %d - R2_COM_SCANNER\n", BF_INVENTORY.getObjectScene(9));
+	DebugPrintf("10 - Scene %d - R2_SPENT_POWER_CAPSULE\n", BF_INVENTORY.getObjectScene(10));
+	DebugPrintf("11 - Scene %d - R2_CHARGED_POWER_CAPSULE\n", BF_INVENTORY.getObjectScene(11));
+	DebugPrintf("12 - Scene %d - R2_AEROSOL\n", BF_INVENTORY.getObjectScene(12));
+	DebugPrintf("13 - Scene %d - R2_REMOTE_CONTROL\n", BF_INVENTORY.getObjectScene(13));
+	DebugPrintf("14 - Scene %d - R2_OPTICAL_FIBER\n", BF_INVENTORY.getObjectScene(14));
+	DebugPrintf("15 - Scene %d - R2_CLAMP\n", BF_INVENTORY.getObjectScene(15));
+	DebugPrintf("16 - Scene %d - R2_ATTRACTOR_CABLE_HARNESS\n", BF_INVENTORY.getObjectScene(16));
+	DebugPrintf("17 - Scene %d - R2_FUEL_CELL\n", BF_INVENTORY.getObjectScene(17));
+	DebugPrintf("18 - Scene %d - R2_GYROSCOPE\n", BF_INVENTORY.getObjectScene(18));
+	DebugPrintf("19 - Scene %d - R2_AIRBAG\n", BF_INVENTORY.getObjectScene(19));
+	DebugPrintf("20 - Scene %d - R2_REBREATHER_TANK\n", BF_INVENTORY.getObjectScene(20));
+	DebugPrintf("21 - Scene %d - R2_RESERVE_REBREATHER_TANK\n", BF_INVENTORY.getObjectScene(21));
+	DebugPrintf("22 - Scene %d - R2_GUIDANCE_MODULE\n", BF_INVENTORY.getObjectScene(22));
+	DebugPrintf("23 - Scene %d - R2_THRUSTER_VALVE\n", BF_INVENTORY.getObjectScene(23));
+	DebugPrintf("24 - Scene %d - R2_BALLOON_BACKPACK\n", BF_INVENTORY.getObjectScene(24));
+	DebugPrintf("25 - Scene %d - R2_RADAR_MECHANISM\n", BF_INVENTORY.getObjectScene(25));
+	DebugPrintf("26 - Scene %d - R2_JOYSTICK\n", BF_INVENTORY.getObjectScene(26));
+	DebugPrintf("27 - Scene %d - R2_IGNITOR\n", BF_INVENTORY.getObjectScene(27));
+	DebugPrintf("28 - Scene %d - R2_DIAGNOSTICS_DISPLAY\n", BF_INVENTORY.getObjectScene(28));
+	DebugPrintf("29 - Scene %d - R2_GLASS_DOME\n", BF_INVENTORY.getObjectScene(29));
+	DebugPrintf("30 - Scene %d - R2_WICK_LAMP\n", BF_INVENTORY.getObjectScene(30));
+	DebugPrintf("31 - Scene %d - R2_SCRITH_KEY\n", BF_INVENTORY.getObjectScene(31));
+	DebugPrintf("32 - Scene %d - R2_TANNER_MASK\n", BF_INVENTORY.getObjectScene(32));
+	DebugPrintf("33 - Scene %d - R2_PURE_GRAIN_ALCOHOL\n", BF_INVENTORY.getObjectScene(33));
+	DebugPrintf("34 - Scene %d - R2_SAPPHIRE_BLUE\n", BF_INVENTORY.getObjectScene(34));
+	DebugPrintf("35 - Scene %d - R2_ANCIENT_SCROLLS\n", BF_INVENTORY.getObjectScene(35));
+	DebugPrintf("36 - Scene %d - R2_FLUTE\n", BF_INVENTORY.getObjectScene(36));
+	DebugPrintf("37 - Scene %d - R2_GUNPOWDER\n", BF_INVENTORY.getObjectScene(37));
+	DebugPrintf("38 - Scene %d - R2_NONAME\n", BF_INVENTORY.getObjectScene(38));
+	DebugPrintf("39 - Scene %d - R2_COM_SCANNER_2\n", BF_INVENTORY.getObjectScene(39));
+	DebugPrintf("40 - Scene %d - R2_SUPERCONDUCTOR_WIRE\n", BF_INVENTORY.getObjectScene(40));
+	DebugPrintf("41 - Scene %d - R2_PILLOW\n", BF_INVENTORY.getObjectScene(41));
+	DebugPrintf("42 - Scene %d - R2_FOOD_TRAY\n", BF_INVENTORY.getObjectScene(42));
+	DebugPrintf("43 - Scene %d - R2_LASER_HACKSAW\n", BF_INVENTORY.getObjectScene(43));
+	DebugPrintf("44 - Scene %d - R2_PHOTON_STUNNER\n", BF_INVENTORY.getObjectScene(44));
+	DebugPrintf("45 - Scene %d - R2_BATTERY\n", BF_INVENTORY.getObjectScene(45));
+	DebugPrintf("46 - Scene %d - R2_SOAKED_FACEMASK\n", BF_INVENTORY.getObjectScene(46));
+	DebugPrintf("47 - Scene %d - R2_LIGHT_BULB\n", BF_INVENTORY.getObjectScene(47));
+	DebugPrintf("48 - Scene %d - R2_ALCOHOL_LAMP\n", BF_INVENTORY.getObjectScene(48));
+	DebugPrintf("49 - Scene %d - R2_ALCOHOL_LAMP_2\n", BF_INVENTORY.getObjectScene(49));
+	DebugPrintf("50 - Scene %d - R2_ALCOHOL_LAMP_3\n", BF_INVENTORY.getObjectScene(50));
+	DebugPrintf("51 - Scene %d - R2_BROKEN_DISPLAY\n", BF_INVENTORY.getObjectScene(51));
+	DebugPrintf("52 - Scene %d - R2_TOOLBOX\n", BF_INVENTORY.getObjectScene(52));
 
 	return true;
 }

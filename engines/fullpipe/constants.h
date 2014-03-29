@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -39,12 +39,17 @@ namespace Fullpipe {
 #define MSG_MANSHADOWSOFF 5196
 #define MSG_MANSHADOWSON 5197
 #define MV_FLY_FLY 4917
+#define MV_LFT_CLOSE 1053
+#define MV_LFT_OPEN 1048
 #define MV_MAN_GOLADDER 451
 #define MV_MAN_GOLADDER2 2844
+#define MV_MAN_LIFTDOWN 1052
+#define MV_MAN_LIFTUP 1051
 #define MV_MAN_LOOKUP 4773
 #define rMV_MAN_LOOKUP 4775
 #define MV_MAN_TOLADDER 448
 #define MV_MAN_TOLADDER2 2841
+#define MV_MAN_STARTD 478
 #define MV_MAN_STARTLADDER 452
 #define MV_MAN_STARTLADDER2 2842
 #define MV_MAN_STOPLADDER 454
@@ -83,6 +88,7 @@ namespace Fullpipe {
 #define PIC_CSR_ITN_RED 5329
 #define PIC_CSR_LIFT 5176
 #define PIC_CSR_MAP 5339
+#define PIC_HLP_BGR 3562
 #define PIC_IN1_GAMETITLE 5169
 #define PIC_IN1_PIPETITLE 5167
 #define PIC_INV_MENU 991
@@ -210,9 +216,11 @@ namespace Fullpipe {
 #define SC_INTRO2 3907
 #define SC_INV 858
 #define SC_LDR 635
+#define SC_MAINMENU 4620
 #define SC_MAP 5222
 #define SC_TITLES 5166
 #define SND_CMN_031 3516
+#define SND_CMN_032 3517
 #define SND_CMN_060 4921
 #define SND_CMN_061 4922
 #define SND_CMN_070 5199
@@ -249,6 +257,8 @@ namespace Fullpipe {
 #define ST_LBN_7P 2772
 #define ST_LBN_8P 2775
 #define ST_LBN_9P 2778
+#define ST_LFT_CLOSED 1049
+#define ST_LFT_OPEN_NEW 1071
 #define ST_MAN_EMPTY 476
 #define ST_MAN_GOU 459
 #define ST_MAN_RIGHT 325
@@ -575,6 +585,37 @@ namespace Fullpipe {
 #define ST_MAN8_STAND 774
 #define ST_VMT_MIN 766
 
+// Scene 9
+#define ANI_BALL9 933
+#define ANI_GLOTATEL 924
+#define ANI_GRIT_9 2719
+#define ANI_PLEVATEL 919
+#define ANI_VISUNCHIK 904
+#define MSG_SC9_EATBALL 941
+#define MSG_SC9_FLOWN 943
+#define MSG_SC9_FROMLADDER 4207
+#define MSG_SC9_PLVCLICK 965
+#define MSG_SC9_SETSCROLL 964
+#define MSG_SC9_SHOWBALL 936
+#define MSG_SC9_STARTTIOTIA 4942
+#define MSG_SC9_TOLADDER 4206
+#define MV_BALL9_EXPLODE 939
+#define MV_GLT_FLYAWAY 931
+#define MV_MAN9_SHOOT 922
+#define MV_VSN_CYCLE2 2987
+#define PIC_SC9_LADDER_R 2700
+#define QU_SC9_BALLEXPLODE 938
+#define QU_SC9_EATBALL 942
+#define QU_TTA9_GOL 4937
+#define SND_9_006 3650
+#define SND_9_018 4200
+#define SND_9_019 4201
+#define ST_GLT_SIT 926
+#define ST_GRT9_GRIT 2722
+#define ST_GRT9_NORM 2721
+#define ST_PLV_SIT 921
+#define ST_VSN_NORMAL 906
+
 // Scene 10
 #define ANI_GUM 978
 #define ANI_NADUVATEL 944
@@ -831,10 +872,70 @@ namespace Fullpipe {
 #define ST_SMG_SIT 1399
 
 // Scene 18
+#define ANI_BOY18 1477
+#define ANI_DOMINO_18 3174
+#define ANI_GIRL18 1484
+#define ANI_KRESLO 1459
+#define ANI_WHIRLIGIG_18 829
+#define MSG_SC18_CLICKBOARD 3297
+#define MSG_SC18_MANCLIMBEDDOWN 1540
+#define MSG_SC18_MANCLIMBEDUP 1539
+#define MSG_SC18_MANREADY 1507
+#define MSG_SC18_SHOWBOYJUMP 1495
+#define MSG_SC18_SHOWBOYJUMPTO 1497
+#define MSG_SC18_SHOWGIRLJUMP 1496
+#define MSG_SC18_SHOWGIRLJUMPTO 1499
+#define MSG_SC18_SHOWMANJUMP 1510
+#define MSG_SC18_SHOWMANJUMPTO 1508
+#define MV_BOY18_JUMPFROM 1478
+#define MV_BOY18_JUMPTO 1481
+#define MV_GRL18_JUMPFROM 1485
+#define MV_GRL18_JUMPTO 1488
+#define MV_KSL_CALMDOWN 1476
+#define MV_KSL_INBOY 1491
+#define MV_KSL_INGIRL 1493
+#define MV_KSL_INMAN 1504
+#define MV_KSL_JUMPBOY 1473
+#define MV_KSL_JUMPGIRL 1475
+#define MV_KSL_JUMPMAN 1509
+#define MV_KSL_SWING 1460
+#define MV_KSL_SWINGBOY 1462
+#define MV_KSL_SWINGGIRL 1464
+#define MV_KSL_SWINGMAN 1502
+#define MV_MAN18_JUMPTOTRUBA 1511
+#define MV_MAN18_STANDKRESLO 1500
+#define MV_WHR18_SPIN 1300
+#define PIC_SC18_DOMIN 5184
+#define PIC_SC18_LADDER1 1471
+#define PIC_SC18_LADDER2 1472
+#define PIC_SC18_LADDER3 3299
 #define PIC_SC18_RTRUBA 1520
+#define QU_SC19_MANJUMP1 1516
+#define QU_SC19_MANJUMP2 1517
+#define QU_SC19_MANJUMP3 1518
+#define SND_18_006 3906
+#define SND_18_010 4994
+#define ST_KSL_BOY 1463
+#define ST_KSL_GIRL 1465
+#define ST_KSL_JUMPBOY 1492
+#define ST_KSL_JUMPGIRL 1494
+#define ST_KSL_JUMPMAN 1505
+#define ST_KSL_MAN 1503
+#define ST_KSL_REACT 1474
 
 // Scene 19
+#define ANI_CORDIE 1529
+#define ANI_WHIRLGIG_19 1302
+#define MSG_SC19_UPDATENUMRIDES 5203
+#define MV_WHR19_SPIN 1317
+#define PIC_SC19_RTRUBA1 1513
+#define PIC_SC19_RTRUBA2 1514
 #define PIC_SC19_RTRUBA3 1515
+#define PIC_SC19_RTRUBA31 5320
+#define SND_19_015 3928
+#define SND_19_016 4995
+#define ST_CDI_EMPTY2 1543
+#define ST_KSL_NORM 1461
 
 // Scene 20
 #define ANI_GRANDMA_20 2427
@@ -1073,6 +1174,52 @@ namespace Fullpipe {
 #define ST_VNT26_RIGHT2 3348
 #define ST_VNT26_UP2 1948
 
+// Scene 27
+#define ANI_BITA 2026
+#define ANI_BITAHANDLER 3349
+#define ANI_MAID 2015
+#define ANI_VODILLA 1994
+#define MSG_SC27_CLICKBET 2048
+#define MSG_SC27_HANDLERTOBACK 3372
+#define MSG_SC27_HANDLERTOFRONT 3371
+#define MSG_SC27_SHOWNEXTBET 3369
+#define MSG_SC27_STARTBET 2047
+#define MSG_SC27_STARTWIPE 2057
+#define MSG_SC27_TAKEVENT 4584
+#define MV_BTA_FALL 2049
+#define MV_BTH_1_0 3366
+#define MV_BTH_2_1 3364
+#define MV_BTH_3_2 3362
+#define MV_BTH_4_3 3360
+#define MV_BTH_5_4 3358
+#define MV_MAN27_FLOW 1990
+#define MV_MAN27_THROWBET 1989
+#define PIC_SC27_HITZONE2 4756
+#define QU_DRV_GIVEVENT 2040
+#define QU_DRV_PUSHBUTTON 2056
+#define QU_DRV_PUSHBUTTON_NOVENT 4578
+#define QU_MID_CLEANVENT 4583
+#define QU_MID_SWITCHBACK 2044
+#define QU_SC27_RESTARTBETS 3370
+#define QU_SC27_SHOWBET 3368
+#define SND_27_026 4127
+#define SND_27_027 4128
+#define SND_27_044 4687
+#define ST_BTA_FALL 2054
+#define ST_BTA_HILITE 2052
+#define ST_BTA_NORM 2028
+#define ST_BTH_1 3365
+#define ST_BTH_2 3363
+#define ST_BTH_3 3361
+#define ST_BTH_4 3359
+#define ST_BTH_5 3357
+#define ST_DRV_SITNOVENT 1999
+#define ST_DRV_VENT 1996
+#define ST_MID_BROOM 2022
+#define ST_MID_SPADE 3489
+#define ST_MID_SWAB 2017
+#define ST_MID_SWAB2 2019
+
 // Scene 28
 #define ANI_LIFT 982
 #define ANI_LIFT_28 4238
@@ -1128,6 +1275,49 @@ namespace Fullpipe {
 #define QU_SC28_LIFT6_START2 4295
 #define QU_SC28_WMN_START 3452
 #define ST_MAN28_RIGHT 4249
+
+// Scene 29
+#define ANI_ASS 2120
+#define ANI_PORTER 2082
+#define ANI_SHELL_GREEN 2116
+#define ANI_SHELL_RED 2130
+#define ANI_SHOOTER1 2108
+#define ANI_SHOOTER2 2111
+#define MSG_SC29_DISABLEPORTER 2097
+#define MSG_SC29_DISABLERIDEBACK 2106
+#define MSG_SC29_ENABLEPORTER 2096
+#define MSG_SC29_ENABLERIDEBACK 2105
+#define MSG_SC29_LAUGH 4760
+#define MSG_SC29_SHOOTGREEN 2119
+#define MSG_SC29_SHOOTRED 2137
+#define MSG_SC29_SHOWLASTGREEN 2730
+#define MSG_SC29_SHOWLASTRED 2731
+#define MSG_SC29_STOPRIDE 2107
+#define MV_ASS_HITGREEN 2138
+#define MV_ASS_HITRED 2139
+#define MV_MAN29_BEND 2091
+#define MV_MAN29_JUMP 2090
+#define MV_MAN29_RUN 2095
+#define MV_MAN29_STANDUP 2092
+#define MV_PTR_MOVEFAST 2102
+#define MV_SHG_HITASS 2151
+#define MV_SHR_HITASS 2152
+#define MV_STR1_SHOOT 2109
+#define MV_STR2_SHOOT 2112
+#define PIC_SC29_LTRUBA 2081
+#define QU_SC29_ESCAPE 2129
+#define QU_SC29_MANFROM_L 2101
+#define QU_SC29_MANFROM_R 2104
+#define QU_SC29_MANTO_L 2103
+#define QU_SC29_MANTO_R 2100
+#define SND_29_028 4758
+#define SND_29_029 4759
+#define ST_ASS_NORM 2122
+#define ST_MAN29_RUNR 2140
+#define ST_STR1_RIGHT 2143
+#define ST_STR2_RIGHT 2144
+#define ST_STR1_STAND 2110
+#define ST_STR2_STAND 2113
 
 // Scene 30
 #define ANI_LEG 2322

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -243,7 +243,7 @@ void AGOSEngine_Feeble::setupOpcodes() {
 		/* 164 */
 		OPCODE(oe2_getDollar2),
 		OPCODE(off_isAdjNoun),
-		OPCODE(oe2_b2Set),
+		OPCODE(off_b2Set),
 		OPCODE(oe2_b2Clear),
 		/* 168 */
 		OPCODE(oe2_b2Zero),
@@ -294,6 +294,39 @@ void AGOSEngine_Feeble::setupOpcodes() {
 void AGOSEngine_Feeble::executeOpcode(int opcode) {
 	OpcodeProcFeeble op = _opcodesFeeble[opcode].proc;
 	(this->*op) ();
+}
+
+void AGOSEngine_Feeble::setLoyaltyRating(byte rating) {
+	// WORKAROUND: The 4CD version of The Feeble File is missing the parts
+	// of the script that set the loyalty rating. This approximates the
+	// script from the 2CD version. See bug #6525.
+
+	switch (rating) {
+	case 1:
+		// Kicking vending machine: Possibility of Undesirable Character Flaws
+		writeVariable(120, 1);
+		break;
+	case 2:
+		// Confessing: Confirmed Minor Character Flaws
+		writeVariable(120, 2);
+		break;
+	case 3:
+		// Being sent to Cygnus Alpha: Suspected Subversive Activity
+		writeVariable(120, 3);
+		break;
+	case 4:
+		// Escaping from Cygnus Alpha: Confirmed Subversive Activity
+		writeVariable(120, 4);
+		break;
+	case 5:
+		// Being brought before Filbert: Confirmed Treasonous Activity
+		writeVariable(120, 5);
+		break;
+	case 6:
+		// Arriving at rebel base: Freedom Fighters Operative
+		writeVariable(120, 6);
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------
@@ -467,6 +500,34 @@ void AGOSEngine_Feeble::off_isAdjNoun() {
 		setScriptCondition(false);
 }
 
+void AGOSEngine_Feeble::off_b2Set() {
+	// 166: set bit2
+	uint bit = getVarOrByte();
+	_bitArrayTwo[bit / 16] |= (1 << (bit & 15));
+
+	if (getFeatures() & GF_BROKEN_FF_RATING) {
+		switch (bit) {
+		case 152:
+			setLoyaltyRating(1);
+			break;
+		case 153:
+			setLoyaltyRating(2);
+			break;
+		case 240:
+			setLoyaltyRating(3);
+			break;
+		case 251:
+			setLoyaltyRating(4);
+			break;
+		case 253:
+			setLoyaltyRating(6);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void AGOSEngine_Feeble::off_hyperLinkOn() {
 	// 171: oracle hyperlink on
 	hyperLinkOn(getVarOrWord());
@@ -565,6 +626,12 @@ void AGOSEngine_Feeble::off_loadVideo() {
 
 	assert(_moviePlayer);
 	_moviePlayer->load();
+
+	if (getFeatures() & GF_BROKEN_FF_RATING) {
+		if (strcmp((const char *)filename, "Statue1.smk") == 0) {
+			setLoyaltyRating(5);
+		}
+	}
 }
 
 void AGOSEngine_Feeble::off_playVideo() {

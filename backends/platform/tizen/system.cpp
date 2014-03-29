@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -266,8 +266,8 @@ result TizenSystem::initModules() {
 		return E_OUT_OF_MEMORY;
 	}
 
-	_graphicsManager = (GraphicsManager *)new TizenGraphicsManager(_appForm);
-	if (!_graphicsManager || graphicsManager->Construct() != E_SUCCESS) {
+	_graphicsManager = new TizenGraphicsManager(_appForm);
+	if (!_graphicsManager || getGraphics()->Construct() != E_SUCCESS) {
 		return E_OUT_OF_MEMORY;
 	}
 

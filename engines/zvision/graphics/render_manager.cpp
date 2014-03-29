@@ -1,24 +1,24 @@
 /* ScummVM - Graphic Adventure Engine
-*
-* ScummVM is the legal property of its developers, whose names
-* are too numerous to list here. Please refer to the COPYRIGHT
-* file distributed with this source distribution.
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
-
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-*
-*/
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 
 #include "common/scummsys.h"
 
@@ -32,7 +32,7 @@
 
 #include "engines/util.h"
 
-#include "graphics/decoders/tga.h"
+#include "image/tga.h"
 
 
 namespace ZVision {
@@ -159,7 +159,7 @@ void RenderManager::clearWorkingWindowTo555Color(uint16 color) {
 	}
 }
 
-void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap) {	
+void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 destinationX, int16 destinationY, bool wrap) {
 	int16 subRectX = 0;
 	int16 subRectY = 0;
 
@@ -184,8 +184,8 @@ void RenderManager::renderSubRectToScreen(Graphics::Surface &surface, int16 dest
 	if (wrap) {
 		_backgroundWidth = surface.w;
 		_backgroundHeight = surface.h;
-	
-		if (destinationX > 0) { 
+
+		if (destinationX > 0) {
 			// Move destinationX to 0
 			subRectX = surface.w - destinationX;
 			destinationX = 0;
@@ -238,7 +238,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 
 	uint32 imageWidth;
 	uint32 imageHeight;
-	Graphics::TGADecoder tga;
+	Image::TGADecoder tga;
 	uint16 *buffer;
 	bool isTransposed = _renderTable.getRenderState() == RenderTable::PANORAMA;
 	// All ZVision images are in RGB 555
@@ -373,7 +373,7 @@ Common::Rect RenderManager::renderTextToWorkingWindow(uint32 idNumber, const Com
 	entry.alphaColor = 0;
 	entry.destX = destX;
 	entry.destY = destY;
-	
+
 	// Draw the text to the working window
 	entry.data = font->drawTextToSurface(text, textColor, maxWidth, maxHeight, align, wrap);
 	entry.width = entry.data->w;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -35,36 +35,25 @@ struct reg_t {
 	SegmentId _segment;
 	uint16 _offset;
 
-	inline SegmentId getSegment() const {
-		return _segment;
-	}
-
-	inline void setSegment(SegmentId segment) {
-		_segment = segment;
-	}
-
-	inline uint16 getOffset() const {
-		return _offset;
-	}
-
-	inline void setOffset(uint16 offset) {
-		_offset = offset;
-	}
+	SegmentId getSegment() const;
+	void setSegment(SegmentId segment);
+	uint32 getOffset() const;
+	void setOffset(uint32 offset);
 
 	inline void incOffset(int16 offset) {
 		setOffset(getOffset() + offset);
 	}
 
 	inline bool isNull() const {
-		return (_offset | getSegment()) == 0;
+		return (getOffset() | getSegment()) == 0;
 	}
 
 	inline uint16 toUint16() const {
-		return _offset;
+		return (uint16)getOffset();
 	}
 
 	inline int16 toSint16() const {
-		return (int16)_offset;
+		return (int16)getOffset();
 	}
 
 	bool isNumber() const {

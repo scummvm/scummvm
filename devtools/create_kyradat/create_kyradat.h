@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -23,7 +23,7 @@
 #ifndef CREATE_KYRADAT_CREATE_KYRADAT_H
 #define CREATE_KYRADAT_CREATE_KYRADAT_H
 
-#include "util.h"
+#include "common/scummsys.h"
 
 // This list has to match orderwise (and thus value wise) the static data list of "engines/kyra/resource.h"!
 enum kExtractID {
@@ -227,7 +227,7 @@ enum kExtractID {
 	kEoBBaseCursedString,
 	kEoBBaseEnchantedString,
 	kEoBBaseMagicObjectStrings,
-	kEoBBaseMagicObject5String,
+	kEoBBaseMagicObjectString5,
 	kEoBBasePatternSuffix,
 	kEoBBasePatternGrFix1,
 	kEoBBasePatternGrFix2,
@@ -235,7 +235,7 @@ enum kExtractID {
 	kEoBBaseValidateCursedString,
 	kEoBBaseValidateNoDropString,
 	kEoBBasePotionStrings,
-	kEoBBaseWandString,
+	kEoBBaseWandStrings,
 	kEoBBaseItemMisuseStrings,
 
 	kEoBBaseTakenStrings,
@@ -347,7 +347,7 @@ enum kExtractID {
 
 	kEoBBaseDscItemPosIndex,
 	kEoBBaseDscItemShpX,
-	kEoBBaseDscItemPosUnk,
+	kEoBBaseDscItemScaleIndex,
 	kEoBBaseDscItemTileIndex,
 	kEoBBaseDscItemShapeMap,
 
@@ -493,50 +493,50 @@ enum kExtractID {
 
 	kEoB2IntroStrings,
 	kEoB2IntroCPSFiles,
-	kEob2IntroAnimData00,
-	kEob2IntroAnimData01,
-	kEob2IntroAnimData02,
-	kEob2IntroAnimData03,
-	kEob2IntroAnimData04,
-	kEob2IntroAnimData05,
-	kEob2IntroAnimData06,
-	kEob2IntroAnimData07,
-	kEob2IntroAnimData08,
-	kEob2IntroAnimData09,
-	kEob2IntroAnimData10,
-	kEob2IntroAnimData11,
-	kEob2IntroAnimData12,
-	kEob2IntroAnimData13,
-	kEob2IntroAnimData14,
-	kEob2IntroAnimData15,
-	kEob2IntroAnimData16,
-	kEob2IntroAnimData17,
-	kEob2IntroAnimData18,
-	kEob2IntroAnimData19,
-	kEob2IntroAnimData20,
-	kEob2IntroAnimData21,
-	kEob2IntroAnimData22,
-	kEob2IntroAnimData23,
-	kEob2IntroAnimData24,
-	kEob2IntroAnimData25,
-	kEob2IntroAnimData26,
-	kEob2IntroAnimData27,
-	kEob2IntroAnimData28,
-	kEob2IntroAnimData29,
-	kEob2IntroAnimData30,
-	kEob2IntroAnimData31,
-	kEob2IntroAnimData32,
-	kEob2IntroAnimData33,
-	kEob2IntroAnimData34,
-	kEob2IntroAnimData35,
-	kEob2IntroAnimData36,
-	kEob2IntroAnimData37,
-	kEob2IntroAnimData38,
-	kEob2IntroAnimData39,
-	kEob2IntroAnimData40,
-	kEob2IntroAnimData41,
-	kEob2IntroAnimData42,
-	kEob2IntroAnimData43,
+	kEoB2IntroAnimData00,
+	kEoB2IntroAnimData01,
+	kEoB2IntroAnimData02,
+	kEoB2IntroAnimData03,
+	kEoB2IntroAnimData04,
+	kEoB2IntroAnimData05,
+	kEoB2IntroAnimData06,
+	kEoB2IntroAnimData07,
+	kEoB2IntroAnimData08,
+	kEoB2IntroAnimData09,
+	kEoB2IntroAnimData10,
+	kEoB2IntroAnimData11,
+	kEoB2IntroAnimData12,
+	kEoB2IntroAnimData13,
+	kEoB2IntroAnimData14,
+	kEoB2IntroAnimData15,
+	kEoB2IntroAnimData16,
+	kEoB2IntroAnimData17,
+	kEoB2IntroAnimData18,
+	kEoB2IntroAnimData19,
+	kEoB2IntroAnimData20,
+	kEoB2IntroAnimData21,
+	kEoB2IntroAnimData22,
+	kEoB2IntroAnimData23,
+	kEoB2IntroAnimData24,
+	kEoB2IntroAnimData25,
+	kEoB2IntroAnimData26,
+	kEoB2IntroAnimData27,
+	kEoB2IntroAnimData28,
+	kEoB2IntroAnimData29,
+	kEoB2IntroAnimData30,
+	kEoB2IntroAnimData31,
+	kEoB2IntroAnimData32,
+	kEoB2IntroAnimData33,
+	kEoB2IntroAnimData34,
+	kEoB2IntroAnimData35,
+	kEoB2IntroAnimData36,
+	kEoB2IntroAnimData37,
+	kEoB2IntroAnimData38,
+	kEoB2IntroAnimData39,
+	kEoB2IntroAnimData40,
+	kEoB2IntroAnimData41,
+	kEoB2IntroAnimData42,
+	kEoB2IntroAnimData43,
 	kEoB2IntroShapes00,
 	kEoB2IntroShapes01,
 	kEoB2IntroShapes04,
@@ -545,27 +545,27 @@ enum kExtractID {
 	kEoB2FinaleStrings,
 	kEoB2CreditsData,
 	kEoB2FinaleCPSFiles,
-	kEob2FinaleAnimData00,
-	kEob2FinaleAnimData01,
-	kEob2FinaleAnimData02,
-	kEob2FinaleAnimData03,
-	kEob2FinaleAnimData04,
-	kEob2FinaleAnimData05,
-	kEob2FinaleAnimData06,
-	kEob2FinaleAnimData07,
-	kEob2FinaleAnimData08,
-	kEob2FinaleAnimData09,
-	kEob2FinaleAnimData10,
-	kEob2FinaleAnimData11,
-	kEob2FinaleAnimData12,
-	kEob2FinaleAnimData13,
-	kEob2FinaleAnimData14,
-	kEob2FinaleAnimData15,
-	kEob2FinaleAnimData16,
-	kEob2FinaleAnimData17,
-	kEob2FinaleAnimData18,
-	kEob2FinaleAnimData19,
-	kEob2FinaleAnimData20,
+	kEoB2FinaleAnimData00,
+	kEoB2FinaleAnimData01,
+	kEoB2FinaleAnimData02,
+	kEoB2FinaleAnimData03,
+	kEoB2FinaleAnimData04,
+	kEoB2FinaleAnimData05,
+	kEoB2FinaleAnimData06,
+	kEoB2FinaleAnimData07,
+	kEoB2FinaleAnimData08,
+	kEoB2FinaleAnimData09,
+	kEoB2FinaleAnimData10,
+	kEoB2FinaleAnimData11,
+	kEoB2FinaleAnimData12,
+	kEoB2FinaleAnimData13,
+	kEoB2FinaleAnimData14,
+	kEoB2FinaleAnimData15,
+	kEoB2FinaleAnimData16,
+	kEoB2FinaleAnimData17,
+	kEoB2FinaleAnimData18,
+	kEoB2FinaleAnimData19,
+	kEoB2FinaleAnimData20,
 	kEoB2FinaleShapes00,
 	kEoB2FinaleShapes03,
 	kEoB2FinaleShapes07,
@@ -628,7 +628,7 @@ enum kExtractID {
 	kLoLDscOvlMap,
 	kLoLDscScaleWidthData,
 	kLoLDscScaleHeightData,
-	kLoLDscY,
+	kLoLBaseDscY,
 
 	kLoLDscDoorScale,
 	kLoLDscDoor4,
@@ -668,6 +668,30 @@ enum kExtractID {
 	kMaxResIDs
 };
 
+enum ResTypes {
+	kStringList = 0,
+	kRawData = 1,
+	kRoomList = 2,
+	kShapeList = 3,
+	kAmigaSfxTable = 4,
+
+	k2SeqData = 5,
+	k2SeqItemAnimData = 6,
+	k2ItemAnimDefinition = 7,
+
+	kLoLCharData = 8,
+	kLoLSpellData = 9,
+	kLoLCompassData = 10,
+	kLoLFlightShpData = 11,
+	kLoLButtonData = 12,
+	kRawDataBe16 = 13,
+	kRawDataBe32 = 14,
+
+	kEoB2SequenceData = 15,
+	kEoB2ShapeData = 16,
+	kEoBNpcData = 17
+};
+
 struct ExtractFilename {
 	int id;
 	int type;
@@ -686,21 +710,19 @@ enum kGame {
 	kKyra1 = 0,
 	kKyra2,
 	kKyra3,
-	kLoL,
 	kEoB1,
-	kEoB2
+	kEoB2,
+	kLoL
 };
 
 struct Game {
 	int game;
-	int lang[3];
 	int platform;
 	int special;
-
-	const char *md5[2];
+	int lang;
 };
 
-#define GAME_DUMMY_ENTRY { -1, { -1, -1, -1 }, -1, -1, { 0, 0 } }
+#define GAME_DUMMY_ENTRY { -1, -1, -1, -1 }
 
 extern const Game * const gameDescs[];
 

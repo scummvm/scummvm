@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -2262,15 +2262,6 @@ void ResourceManager::detectSciVersion() {
 	case kResVersionSci1Late:
 		if (_volVersion == kResVersionSci11) {
 			s_sciVersion = SCI_VERSION_1_1;
-			return;
-		}
-		// FIXME: this is really difficult, lsl1 spanish has map/vol sci1late
-		//  and the only current detection difference is movecounttype which
-		//  is increment here, but ignore for all the regular sci1late games
-		//  the problem is, we dont have access to that detection till later
-		//  so maybe (part of?) that detection should get moved in here
-		if (g_sci && (g_sci->getGameId() == GID_LSL1) && (g_sci->getLanguage() == Common::ES_ESP)) {
-			s_sciVersion = SCI_VERSION_1_MIDDLE;
 			return;
 		}
 		s_sciVersion = SCI_VERSION_1_LATE;

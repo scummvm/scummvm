@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -188,32 +188,31 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 }
 
 bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
-	bool saveFailed;
+	bool saveFailed = false;
 
 	pauseEngine(true);
 
 	Common::WriteStream *out = openSaveFileForWriting(slot, compat, filename);
-	if (!out)
-		return false;
-
-	saveFailed = false;
-	if (!saveState(out))
+	if (!out) {
 		saveFailed = true;
+	} else {
+		if (!saveState(out))
+			saveFailed = true;
 
-	out->finalize();
-	if (out->err())
-		saveFailed = true;
-	delete out;
-
-	if (saveFailed) {
-		debug(1, "State save as '%s' FAILED", filename.c_str());
-		return false;
+		out->finalize();
+		if (out->err())
+			saveFailed = true;
+		delete out;
 	}
-	debug(1, "State saved as '%s'", filename.c_str());
+
+	if (saveFailed)
+		debug(1, "State save as '%s' FAILED", filename.c_str());
+	else
+		debug(1, "State saved as '%s'", filename.c_str());
 
 	pauseEngine(false);
 
-	return true;
+	return !saveFailed;
 }
 
 

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -979,6 +979,9 @@ void Bitmap::putDibCB(int32 *palette) {
 
 	byte *srcPtr = &_pixels[pitch * (endy - _y)];
 
+	if (endy - _y < _height)
+		srcPtr = &_pixels[pitch * (_height - 1)];
+
 	int starty = _y;
 	if (starty < 0) {
 		starty = 0;
@@ -992,7 +995,7 @@ void Bitmap::putDibCB(int32 *palette) {
 	}
 
 	if (_flags & 0x1000000) {
-		for (int y = starty; y < endy; srcPtr -= pitch, y++) {
+		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
 			curDestPtr = (uint16 *)g_fp->_backgroundSurface.getBasePtr(startx, y);
 			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, (int32 *)palette, cb05_format);
 		}

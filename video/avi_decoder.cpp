@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,13 +34,7 @@
 #include "audio/decoders/raw.h"
 
 // Video Codecs
-#include "video/codecs/cinepak.h"
-#include "video/codecs/indeo3.h"
-#include "video/codecs/mjpeg.h"
-#include "video/codecs/mpeg.h"
-#include "video/codecs/msvideo1.h"
-#include "video/codecs/msrle.h"
-#include "video/codecs/truemotion1.h"
+#include "image/codecs/codec.h"
 
 namespace Video {
 
@@ -74,21 +68,9 @@ namespace Video {
 #define ID_PRMI MKTAG('P','R','M','I')
 #define ID_STRN MKTAG('s','t','r','n')
 
-// Codec tags
-#define ID_RLE  MKTAG('R','L','E',' ')
-#define ID_CRAM MKTAG('C','R','A','M')
-#define ID_MSVC MKTAG('m','s','v','c')
-#define ID_WHAM MKTAG('W','H','A','M')
-#define ID_CVID MKTAG('c','v','i','d')
-#define ID_IV32 MKTAG('i','v','3','2')
-#define ID_DUCK MKTAG('D','U','C','K')
-#define ID_MPG2 MKTAG('m','p','g','2')
-#define ID_MJPG MKTAG('m','j','p','g')
-
 // Stream Types
 enum {
 	kStreamTypePaletteChange = MKTAG16('p', 'c'),
-	kStreamTypeRawVideo      = MKTAG16('d', 'b'),
 	kStreamTypeAudio         = MKTAG16('w', 'b')
 };
 
@@ -265,9 +247,6 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 		if (bmInfo.clrUsed == 0)
 			bmInfo.clrUsed = 256;
 
-		if (sHeader.streamHandler == 0)
-			sHeader.streamHandler = bmInfo.compression;
-
 		byte *initialPalette = 0;
 
 		if (bmInfo.bitCount == 8) {
@@ -419,10 +398,6 @@ void AVIDecoder::readNextPacket() {
 		if (getStreamType(nextTag) == kStreamTypePaletteChange) {
 			// Palette Change
 			videoTrack->loadPaletteFromChunk(chunk);
-		} else if (getStreamType(nextTag) == kStreamTypeRawVideo) {
-			// TODO: Check if this really is uncompressed. Many videos
-			// falsely put compressed data in here.
-			error("Uncompressed AVI frame found");
 		} else {
 			// Otherwise, assume it's a compressed frame
 			videoTrack->decodeFrame(chunk);
@@ -710,7 +685,7 @@ AVIDecoder::AVIVideoTrack::~AVIVideoTrack() {
 void AVIDecoder::AVIVideoTrack::decodeFrame(Common::SeekableReadStream *stream) {
 	if (stream) {
 		if (_videoCodec)
-			_lastFrame = _videoCodec->decodeImage(stream);
+			_lastFrame = _videoCodec->decodeFrame(*stream);
 	} else {
 		// Empty frame
 		_lastFrame = 0;
@@ -768,33 +743,8 @@ bool AVIDecoder::AVIVideoTrack::rewind() {
 	return true;
 }
 
-Codec *AVIDecoder::AVIVideoTrack::createCodec() {
-	switch (_vidsHeader.streamHandler) {
-	case ID_CRAM:
-	case ID_MSVC:
-	case ID_WHAM:
-		return new MSVideo1Decoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
-	case ID_RLE:
-		return new MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
-	case ID_CVID:
-		return new CinepakDecoder(_bmInfo.bitCount);
-	case ID_IV32:
-		return new Indeo3Decoder(_bmInfo.width, _bmInfo.height);
-#ifdef VIDEO_CODECS_TRUEMOTION1_H
-	case ID_DUCK:
-		return new TrueMotion1Decoder(_bmInfo.width, _bmInfo.height);
-#endif
-#ifdef USE_MPEG2
-	case ID_MPG2:
-		return new MPEGDecoder();
-#endif
-	case ID_MJPG:
-		return new MJPEGDecoder();
-	default:
-		warning("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
-	}
-
-	return 0;
+Image::Codec *AVIDecoder::AVIVideoTrack::createCodec() {
+	return Image::createBitmapCodec(_bmInfo.compression, _bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 }
 
 void AVIDecoder::AVIVideoTrack::forceTrackEnd() {

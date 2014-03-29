@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -254,9 +254,8 @@ void Scheduler::waitForRefresh() {
 void Scheduler::loadAlNewscrIndex(Common::ReadStream &in) {
 	debugC(6, kDebugSchedule, "loadAlNewscrIndex(&in)");
 
-	int numElem;
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
-		numElem = in.readUint16BE();
+		int numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant)
 			_alNewscrIndex = numElem;
 	}
@@ -568,9 +567,9 @@ void Scheduler::loadActListArr(Common::ReadStream &in) {
 
 	Act tmpAct;
 
-	int numElem, numSubElem;
+	int numSubElem;
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
-		numElem = in.readUint16BE();
+		int numElem = in.readUint16BE();
 		if (varnt == _vm->_gameVariant) {
 			_actListArrSize = numElem;
 			_actListArr = (Act **)malloc(sizeof(Act *) * _actListArrSize);
@@ -1214,8 +1213,6 @@ Event *Scheduler::doAction(Event *curEvent) {
 	Act    *action = curEvent->_action;
 	Object *obj1;
 	int     dx, dy;
-	Event  *wrkEvent;                                 // Save ev_p->nextEvent for return
-
 	switch (action->_a0._actType) {
 	case ANULL:                                       // Big NOP from DEL_EVENTS
 		break;
@@ -1444,7 +1441,7 @@ Event *Scheduler::doAction(Event *curEvent) {
 	if (action->_a0._actType == NEW_SCREEN) {         // New_screen() deletes entire list
 		return nullptr;                               // nextEvent = nullptr since list now empty
 	} else {
-		wrkEvent = curEvent->_nextEvent;
+		Event *wrkEvent = curEvent->_nextEvent;
 		delQueue(curEvent);                             // Return event to free list
 		return wrkEvent;                                // Return next event ptr
 	}
@@ -1601,10 +1598,9 @@ void Scheduler_v2d::promptAction(Act *action) {
 	debug(1, "doAction(act3), expecting answer %s", _vm->_file->fetchString(action->_a3._responsePtr[0]));
 
 	bool  found = false;
-	const char *tmpStr;                               // General purpose string ptr
 
 	for (int dx = 0; !found && (action->_a3._responsePtr[dx] != -1); dx++) {
-		tmpStr = _vm->_file->fetchString(action->_a3._responsePtr[dx]);
+		const char *tmpStr = _vm->_file->fetchString(action->_a3._responsePtr[dx]);
 		if (response.contains(tmpStr))
 			found = true;
 	}

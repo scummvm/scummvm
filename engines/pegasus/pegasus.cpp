@@ -431,6 +431,8 @@ void PegasusEngine::removeTimeBase(TimeBase *timeBase) {
 
 bool PegasusEngine::loadFromStream(Common::SeekableReadStream *stream) {
 	// Dispose currently running stuff
+	lowerInventoryDrawerSync();
+	lowerBiochipDrawerSync();
 	useMenu(0);
 	useNeighborhood(0);
 	removeAllItemsFromInventory();
@@ -1458,6 +1460,15 @@ void PegasusEngine::throwAwayEverything() {
 
 	delete g_interface;
 	g_interface = 0;
+}
+
+InputBits PegasusEngine::getInputFilter() {
+	InputBits filter = InputHandler::getInputFilter();
+
+	if (isPaused())
+		return filter & ~JMPPPInput::getItemPanelsInputFilter();
+
+	return filter;
 }
 
 void PegasusEngine::processShell() {

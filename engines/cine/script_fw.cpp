@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1419,19 +1419,19 @@ int FWScript::o1_loadNewPrcName() {
 	switch (param1) {
 	case 0:
 		debugC(5, kCineDebugScript, "Line: %d: loadPrc(\"%s\")", _line, param2);
-		strcpy(newPrcName, param2);
+		Common::strlcpy(newPrcName, param2, sizeof(newPrcName));
 		break;
 	case 1:
 		debugC(5, kCineDebugScript, "Line: %d: loadRel(\"%s\")", _line, param2);
-		strcpy(newRelName, param2);
+		Common::strlcpy(newRelName, param2, sizeof(newRelName));
 		break;
 	case 2:
 		debugC(5, kCineDebugScript, "Line: %d: loadObject(\"%s\")", _line, param2);
-		strcpy(newObjectName, param2);
+		Common::strlcpy(newObjectName, param2, sizeof(newObjectName));
 		break;
 	case 3:
 		debugC(5, kCineDebugScript, "Line: %d: loadMsg(\"%s\")", _line, param2);
-		strcpy(newMsgName, param2);
+		Common::strlcpy(newMsgName, param2, sizeof(newMsgName));
 		break;
 	}
 	return 0;

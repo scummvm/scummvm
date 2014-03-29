@@ -97,9 +97,10 @@ endif
 ifneq ($(BACKEND), iphone)
 # Static libaries, used for the scummvm-static and iphone targets
 OSX_STATIC_LIBS := `$(STATICLIBPATH)/bin/sdl-config --static-libs`
+endif
+
 ifdef USE_FREETYPE2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a
-endif
 endif
 
 ifdef USE_VORBIS
@@ -174,9 +175,8 @@ iphone: $(OBJS)
 	$(CXX) $(LDFLAGS) -o scummvm $(OBJS) \
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework OpenGLES \
-		-framework GraphicsServices -framework CoreFoundation -framework QuartzCore \
-		-framework Foundation -framework AudioToolbox -framework CoreAudio \
-		-lobjc -lz
+		-framework CoreFoundation -framework QuartzCore -framework Foundation \
+		-framework AudioToolbox -framework CoreAudio -lobjc -lz
 
 # Special target to create a snapshot disk image for Mac OS X
 # TODO: Replace AUTHORS by Credits.rtf

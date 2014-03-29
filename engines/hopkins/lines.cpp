@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -548,8 +548,6 @@ int LinesManager::avoidObstacleOnSegment(int lineIdx, int lineDataIdx, int route
 
 bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, int routeIdx) {
 	debugC(5, kDebugPath, "MIRACLE(%d, %d, %d, %d, %d)", fromX, fromY, lineIdx, destLineIdx, routeIdx);
-	int newLinesDataIdx = 0;
-	int newLinesIdx = 0;
 	int lineIdxLeft = 0;
 	int lineDataIdxLeft = 0;
 	int lineIdxRight = 0;
@@ -700,6 +698,8 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 				newDir = DIR_LEFT;
 		}
 
+		int newLinesDataIdx = 0;
+		int newLinesIdx = 0;
 		switch(newDir) {
 		case DIR_UP:
 			newLinesIdx = linesIdxUp;
@@ -1552,7 +1552,6 @@ void LinesManager::useRoute2(int idx, int curRouteIdx) {
 int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int startLineIdx, int endLineIdx, int routeIdx) {
 	debugC(5, kDebugPath, "characterRoute(%d, %d, %d, %d, %d, %d, %d)", fromX, fromY, destX, destY, startLineIdx, endLineIdx, routeIdx);
 	int collDataIdxRoute2 = 0;
-	bool colResult = false;
 
 	int curX = fromX;
 	int curY = fromY;
@@ -1603,7 +1602,6 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	int collLineIdxRoute1 = -1;
 	int collLineIdxRoute2 = -1;
 
-	int distX, distY;
 	int repeatFlag = 0;
 	int collDataIdxRoute0 = 0;
 	int collDataIdxRoute1 = 0;
@@ -1615,8 +1613,8 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			useRoute0(idxRoute0, curRouteIdx);
 			return 1;
 		}
-		distX = abs(curX - destX) + 1;
-		distY = abs(curY - destY) + 1;
+		int distX = abs(curX - destX) + 1;
+		int distY = abs(curY - destY) + 1;
 		int maxDist;
 		if (distX > distY)
 			maxDist = distX;
@@ -1912,7 +1910,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 
 		posXRoute2 = _newPosX;
 		posYRoute2 = _newPosY;
-		colResult = checkCollisionLine(_newPosX, _newPosY, &collDataIdxRoute2, &collLineIdxRoute2, 0, _lastLine);
+		bool colResult = checkCollisionLine(_newPosX, _newPosY, &collDataIdxRoute2, &collLineIdxRoute2, 0, _lastLine);
 		if (colResult && collLineIdxRoute2 <= _lastLine)
 			break;
 	}
@@ -2456,13 +2454,12 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int para
 int LinesManager::testLine(int paramX, int paramY, int *testValue, int *foundLineIdx, int *foundDataIdx) {
 	debugC(5, kDebugPath, "testLine(%d, %d, testValue, foundLineIdx, foundDataIdx)", paramX, paramY);
 	int16 *lineData;
-	int lineDataEndIdx;
 	int collLineIdx;
 	int collDataIdx;
 
 	for (int idx = _lastLine + 1; idx < _linesNumb + 1; idx++) {
 		lineData = _lineItem[idx]._lineData;
-		lineDataEndIdx = _lineItem[idx]._lineDataEndIdx;
+		int lineDataEndIdx = _lineItem[idx]._lineDataEndIdx;
 		if (!lineData)
 			continue;
 

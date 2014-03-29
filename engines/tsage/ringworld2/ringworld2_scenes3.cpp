@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1275,7 +1275,7 @@ void Scene3250::signal() {
 }
 
 void Scene3250::dispatch() {
-	if ((R2_GLOBALS._player._visage == 3250) && (R2_GLOBALS._player._strip == 3) && (R2_GLOBALS._player._effect == 0)) {
+	if ((R2_GLOBALS._player._visage == 3250) && (R2_GLOBALS._player._strip == 3) && (R2_GLOBALS._player._effect == EFFECT_NONE)) {
 		R2_GLOBALS._player._effect = EFFECT_SHADED2;
 		R2_GLOBALS._player._shade = 6;
 	}
@@ -2221,24 +2221,24 @@ void Scene3375::signal() {
 }
 
 void Scene3375::dispatch() {
-	if ((R2_GLOBALS._player._position.y >= 168) && (R2_GLOBALS._player._effect == 1))
+	if ((R2_GLOBALS._player._position.y >= 168) && (R2_GLOBALS._player._effect == EFFECT_SHADED))
 		R2_GLOBALS._player._effect = EFFECT_SHADED2;
-	else if ((R2_GLOBALS._player._position.y < 168) && (R2_GLOBALS._player._effect == 6))
+	else if ((R2_GLOBALS._player._position.y < 168) && (R2_GLOBALS._player._effect == EFFECT_SHADED2))
 		R2_GLOBALS._player._effect = EFFECT_SHADED;
 
-	if ((_companion1._position.y >= 168) && (_companion1._effect == 1))
+	if ((_companion1._position.y >= 168) && (_companion1._effect == EFFECT_SHADED))
 		_companion1._effect = EFFECT_SHADED2;
-	else if ((_companion1._position.y < 168) && (_companion1._effect == 6))
+	else if ((_companion1._position.y < 168) && (_companion1._effect == EFFECT_SHADED2))
 		_companion1._effect = EFFECT_SHADED;
 
-	if ((_companion2._position.y >= 168) && (_companion2._effect == 1))
+	if ((_companion2._position.y >= 168) && (_companion2._effect == EFFECT_SHADED))
 		_companion2._effect = EFFECT_SHADED2;
-	else if ((_companion2._position.y < 168) && (_companion2._effect == 6))
+	else if ((_companion2._position.y < 168) && (_companion2._effect == EFFECT_SHADED2))
 		_companion2._effect = EFFECT_SHADED;
 
-	if ((_webbster._position.y >= 168) && (_webbster._effect == 1))
+	if ((_webbster._position.y >= 168) && (_webbster._effect == EFFECT_SHADED))
 		_webbster._effect = EFFECT_SHADED2;
-	else if ((_webbster._position.y < 168) && (_webbster._effect == 6))
+	else if ((_webbster._position.y < 168) && (_webbster._effect == EFFECT_SHADED2))
 		_webbster._effect = EFFECT_SHADED;
 
 	Scene::dispatch();
@@ -3896,7 +3896,6 @@ void Scene3500::dispatch() {
 	int16 mazePosY = 0;
 	int deltaX = 0;
 	int deltaY = 0;
-	int tmpCellId = 0;
 	int cellId = 0;
 
 	if ((_mazeChangeAmount == 0) && !_postFixupFl) {
@@ -3912,7 +3911,7 @@ void Scene3500::dispatch() {
 		mazePosY = _mazeUI.cellFromY(_mazePosition.y + 46) - 46;
 		deltaX = abs(mazePosX - newMazeX);
 		deltaY = abs(mazePosY - newMazeY);
-		tmpCellId = 0;
+		int tmpCellId = 0;
 
 		switch (_mazeDirection) {
 		case MAZEDIR_NORTH:
@@ -3956,7 +3955,7 @@ void Scene3500::dispatch() {
 					if ( (((cellId == 23) || (cellId == 24) || (cellId == 4)) && (newMazeY <= mazePosY) && (_mazePosition.y>= mazePosY))
 						|| (((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)) && (_mazeChangeAmount >= deltaY) && (_mazeChangeAmount > 3) && (_action1._turningFl != 0)) ) {
 						newMazeY = mazePosY;
-						if ((cellId != 25) && (cellId != 26) && (cellId != 5) && (cellId != 14) && (cellId == 15))
+						if ((cellId != 25) && (cellId != 26) && (cellId != 5) && (cellId != 14) && (cellId != 15))
 							R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_speed = 0;

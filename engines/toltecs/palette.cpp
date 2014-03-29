@@ -8,16 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  *
  */
 
@@ -121,7 +120,7 @@ uint16 Palette::findFragment(int16 id) {
 	debug(0, "Palette::findFragment(%d)", id);
 
 	uint16 result = 0;
-	for (PaletteFragmentArray::iterator iter = _fragments.begin(); iter != _fragments.end(); iter++) {
+	for (PaletteFragmentArray::iterator iter = _fragments.begin(); iter != _fragments.end(); ++iter) {
 		PaletteFragment fragment = *iter;
 		if (fragment.id == id) {
 			result = (fragment.count << 8) | fragment.index;
@@ -194,7 +193,7 @@ void Palette::saveState(Common::WriteStream *out) {
 
 	uint16 fragmentCount = _fragments.size();
 	out->writeUint16LE(fragmentCount);
-	for (PaletteFragmentArray::iterator iter = _fragments.begin(); iter != _fragments.end(); iter++) {
+	for (PaletteFragmentArray::iterator iter = _fragments.begin(); iter != _fragments.end(); ++iter) {
 		PaletteFragment fragment = *iter;
 		out->writeUint16LE(fragment.id);
 		out->writeByte(fragment.index);
