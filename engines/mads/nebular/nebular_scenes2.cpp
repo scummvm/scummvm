@@ -1241,30 +1241,29 @@ void Scene207::enter() {
 	}
 
 	if (var2 > 2)
-		_globals._v0 = 0;
+		_vultureFl = false;
 	else
-		_globals._v0 = 1;
+		_vultureFl = true;
 
-	_globals._v5 = (var2 & 1);
+	_spiderFl = (var2 & 1);
 	
-	if (_globals._v0) {
+	if (_vultureFl) {
 		_globals._spriteIndexes[16] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 30, 0, 0, 400);
-		_globals._frameTime = _game._player._priorTimer;
+		_vultureTime = _game._player._priorTimer;
 
 		int idx = _scene->_dynamicHotspots.add(389, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, 254, 94, FACING_WEST);
 	}
 
-	if (_globals._v5) {
+	if (_spiderFl) {
 		_globals._spriteIndexes[19] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._spriteIndexes[19], -1, -1);
-		_globals._v3 = _game._player._priorTimer & 0xFFFF;
-		_globals._v4 = _game._player._priorTimer >> 16;
-		int idx = _scene->_dynamicHotspots.add(333, 13, _globals._spriteIndexes[19], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 59, 132, FACING_SOUTH);
+		_spiderTime = _game._player._priorTimer;
+		_spiderHotspotId = _scene->_dynamicHotspots.add(333, 13, _globals._spriteIndexes[19], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(_spiderHotspotId, 59, 132, FACING_SOUTH);
 	}
 
-	_globals._v2 = 0;
+	_eyeFl = false;
 	if (_scene->_priorSceneId == 211) {
 		_game._player._playerPos = Common::Point(13, 105);
 		_game._player._facing = FACING_EAST;
@@ -1282,11 +1281,11 @@ void Scene207::enter() {
 }
 
 void Scene207::step() {
-	if (!_globals._v0) {
+	if (!_vultureFl) {
 		warning("TODO: sub3AD90(...)");
 	}
 
-	if (_globals._v5) {
+	if (_spiderFl) {
 		warning("TODO: sub3ADD6(...)");
 	}
 
@@ -1297,9 +1296,9 @@ void Scene207::step() {
 	}
 
 	if (_game._trigger == 71)
-		_globals._v2 = 0;
+		_eyeFl = false;
 
-	if (_globals._v2)
+	if (_eyeFl)
 		return;
 
 	if ((_game._player._playerPos.x >= 124) && (_game._player._playerPos.x <= 201)) {
@@ -1308,7 +1307,7 @@ void Scene207::step() {
 		_scene->_sequences.setDepth(_globals._spriteIndexes[22], 6);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[23], 6);
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[22], SM_0, 0, 71);
-		_globals._v2 = -1;
+		_eyeFl = true;
 	}
 }
 
@@ -1321,11 +1320,9 @@ void Scene207::preActions() {
 
 	if ((_action.isAction(VERB_WALKTO)) || (_action.isAction(VERB_LOOK))) {
 		if (_action.isAction(0x185)) {
-			_globals._frameTime = 0xD8F1;
-			_globals._frameTime |= 0xFFFF0000;
+			_vultureTime = -9999;
 		} else if (_action.isAction(0x14D)) {
-			_globals._v3 = 0xD8F1;
-			_globals._v4 = -1;
+			_spiderTime = -9999;
 		}
 	}
 }
@@ -1333,57 +1330,56 @@ void Scene207::preActions() {
 void Scene207::actions() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(0x50E7);
-	} else {
-		if (_action.isAction(0x18B, 0x70))
-			_scene->_nextSceneId = 214;
-		else {
-			if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
-			    (_game._player._playerPos.y > 111) && (_game._player._playerPos.y < 130)) {
-				if ((_game._player._playerPos.x <= 162) && (_game._player._playerPos.x >= 181) &&
-				    (_game._player._playerPos.y <= 115) && (_game._player._playerPos.y >= 126)) {
-					_globals._spriteIndexes[22] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 10, 2, 0, 0);
-					_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 2, 0, 0);
-					_scene->_sequences.setDepth(_globals._spriteIndexes[22], 6);
-					_scene->_sequences.setDepth(_globals._spriteIndexes[23], 6);
-				}
-			} else if (_globals._v2) {
-				_scene->_sequences.remove(_globals._spriteIndexes[22]);
-				_scene->_sequences.remove(_globals._spriteIndexes[23]);
-				_globals._v2 = 0;
+	} else if (_action.isAction(0x18B, 0x70))
+		_scene->_nextSceneId = 214;
+	else {
+		if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
+		    (_game._player._playerPos.y > 111) && (_game._player._playerPos.y < 130)) {
+			if ((_game._player._playerPos.x <= 162) && (_game._player._playerPos.x >= 181) &&
+			    (_game._player._playerPos.y <= 115) && (_game._player._playerPos.y >= 126)) {
+				_globals._spriteIndexes[22] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 10, 2, 0, 0);
+				_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 2, 0, 0);
+				_scene->_sequences.setDepth(_globals._spriteIndexes[22], 6);
+				_scene->_sequences.setDepth(_globals._spriteIndexes[23], 6);
 			}
-
-			if (_action.isAction(VERB_LOOK, 0x69)) {
-				_vm->_dialogs->show(0x50DD);
-			} else if (_action.isAction(VERB_LOOK, 0x1AF)) {
-				_vm->_dialogs->show(0x50DE);
-			} else if (_action.isAction(VERB_LOOK, 0x141)) {
-				_vm->_dialogs->show(0x50DF);
-			} else if (_action.isAction(VERB_LOOK, 0x3E)) {
-				_vm->_dialogs->show(0x50E0);
-			} else if (_action.isAction(VERB_LOOK, 0x198)) {
-				_vm->_dialogs->show(0x50E1);
-			} else if (_action.isAction(VERB_LOOK, 0x1AE)) {
-				_vm->_dialogs->show(0x50E2);
-			} else if (_action.isAction(VERB_LOOK, 0xE8)) {
-				_vm->_dialogs->show(0x50E3);
-			} else if (_action.isAction(VERB_LOOK, 0x12)) {
-				_vm->_dialogs->show(0x50E4);
-			} else if (_action.isAction(VERB_LOOK, 0x1AC)) {
-				_vm->_dialogs->show(0x50E5);
-			} else if (_action.isAction(VERB_LOOK, 0x185)) {
-				_vm->_dialogs->show(0x50E6);
-			} else if (_action.isAction(VERB_TAKE, 0x141)) {
-				_vm->_dialogs->show(0x50E8);
-			} else if (_action.isAction(VERB_TAKE, 0x12)) {
-				_vm->_dialogs->show(0x50E9);
-			} else if (_action.isAction(VERB_LOOK, 0x14D)) {
-				_vm->_dialogs->show(0x50EA);
-			} else if (_action.isAction(VERB_TAKE, 0x14D)) {
-				_vm->_dialogs->show(0x50EB);
-			} else
-				return;
+		} else if (_eyeFl) {
+			_scene->_sequences.remove(_globals._spriteIndexes[22]);
+			_scene->_sequences.remove(_globals._spriteIndexes[23]);
+			_eyeFl = false;
 		}
+
+		if (_action.isAction(VERB_LOOK, 0x69)) {
+			_vm->_dialogs->show(0x50DD);
+		} else if (_action.isAction(VERB_LOOK, 0x1AF)) {
+			_vm->_dialogs->show(0x50DE);
+		} else if (_action.isAction(VERB_LOOK, 0x141)) {
+			_vm->_dialogs->show(0x50DF);
+		} else if (_action.isAction(VERB_LOOK, 0x3E)) {
+			_vm->_dialogs->show(0x50E0);
+		} else if (_action.isAction(VERB_LOOK, 0x198)) {
+			_vm->_dialogs->show(0x50E1);
+		} else if (_action.isAction(VERB_LOOK, 0x1AE)) {
+			_vm->_dialogs->show(0x50E2);
+		} else if (_action.isAction(VERB_LOOK, 0xE8)) {
+			_vm->_dialogs->show(0x50E3);
+		} else if (_action.isAction(VERB_LOOK, 0x12)) {
+			_vm->_dialogs->show(0x50E4);
+		} else if (_action.isAction(VERB_LOOK, 0x1AC)) {
+			_vm->_dialogs->show(0x50E5);
+		} else if (_action.isAction(VERB_LOOK, 0x185)) {
+			_vm->_dialogs->show(0x50E6);
+		} else if (_action.isAction(VERB_TAKE, 0x141)) {
+			_vm->_dialogs->show(0x50E8);
+		} else if (_action.isAction(VERB_TAKE, 0x12)) {
+			_vm->_dialogs->show(0x50E9);
+		} else if (_action.isAction(VERB_LOOK, 0x14D)) {
+			_vm->_dialogs->show(0x50EA);
+		} else if (_action.isAction(VERB_TAKE, 0x14D)) {
+			_vm->_dialogs->show(0x50EB);
+		} else
+			return;
 	}
+
 	_action._inProgress = false;
 }
 

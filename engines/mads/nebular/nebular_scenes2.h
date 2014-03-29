@@ -113,8 +113,11 @@ public:
 };
 
 class Scene207: public Scene2xx {
+	bool _vultureFl, _spiderFl, _eyeFl;
+	int _spiderHotspotId;
+	int32 _spiderTime, _vultureTime;
 public:
-	Scene207(MADSEngine *vm) : Scene2xx(vm) {}
+	Scene207(MADSEngine *vm) : Scene2xx(vm), _vultureFl(false), _spiderFl(false), _spiderHotspotId(-1), _spiderTime(0), _vultureTime(0) {}
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
