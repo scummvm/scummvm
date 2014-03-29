@@ -35,8 +35,8 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	_selectedAction = 0;
 	_inProgress = false;
 
-	_savedFields._actionMode = ABORTMODE_0;
-	_savedFields._actionMode2 = ABORTMODE_0;
+	_savedFields._actionMode = KERNEL_TRIGGER_PARSER;
+	_savedFields._actionMode2 = KERNEL_TRIGGER_PARSER;
 	_savedFields._selectedRow = -1;
 	_savedFields._hotspotId = 0;
 	_savedFields._v86F3A = 0;
@@ -272,7 +272,7 @@ void MADSAction::startAction() {
 	player.cancelCommand();
 
 	_inProgress = true;
-	_v8453A = ABORTMODE_0;
+	_v8453A = KERNEL_TRIGGER_PARSER;
 	_savedFields._selectedRow = _selectedRow;
 	_savedFields._hotspotId = _hotspotId;
 	_savedFields._v86F3A = _v86F3A;

@@ -207,6 +207,8 @@ enum GlobalId {
 
 /* Enums used for specific individual globals */
 /* Section #1 */
+// Rex's sex/swimming state
+enum { REX_MALE = 0, REX_MALE_SWIMMER = 1, REX_FEMALE = 2 };
 // State of Meteorologist in the outpost
 enum { METEOROLOGIST_ABSENT = 0, METEOROLOGIST_PRESENT = 1, METEOROLOGIST_GONE = 2 };
 

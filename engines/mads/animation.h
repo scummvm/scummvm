@@ -129,7 +129,7 @@ private:
 	uint32 _nextScrollTimer;
 	int _messageCtr;
 	int _trigger;
-	AbortTimerMode _abortTimersMode;
+	TriggerMode _triggerMode;
 	ActionDetails _actionDetails;
 
 	/**

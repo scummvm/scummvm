@@ -458,7 +458,7 @@ void Scene202::enter() {
 void Scene202::setRandomKernelMessage() {
 	int vocabId = _vm->getRandomNumber(92, 96);
 	_scene->_kernelMessages.reset();
-	_game._abortTimersMode2 = ABORTMODE_1;
+	_game._triggerSetupMode = KERNEL_TRIGGER_DAEMON;
 	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 70, 120, _game.getQuote(vocabId));
 	_activeMsgFl = true;
 }
@@ -495,7 +495,7 @@ void Scene202::step() {
 			action->_activeAction._verbId = 3;
 			action->_activeAction._objectNameId = 39;
 			action->_activeAction._indirectObjectId = 438;
-			_game._abortTimersMode2 = ABORTMODE_0;
+			_game._triggerSetupMode = KERNEL_TRIGGER_PARSER;
 			_scene->_sequences.addTimer(120, 2);
 			_globals._abortVal = -1;
 		} else if (_globals[kMeteorologistWatch] == 2) {

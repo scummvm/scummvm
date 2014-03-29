@@ -56,8 +56,8 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_aaName = "*I0.AA";
 	_priorFrameTimer = 0;
 	_updateSceneFlag = false;
-	_abortTimersMode = ABORTMODE_0;
-	_abortTimersMode2 = ABORTMODE_0;
+	_triggerMode = KERNEL_TRIGGER_PARSER;
+	_triggerSetupMode = KERNEL_TRIGGER_PARSER;
 	_ticksExpiry = 0;
 	_winStatus = 0;
 

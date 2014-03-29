@@ -65,6 +65,9 @@ private:
 
 	void doAction();
 
+	/**
+	 * Calls all the necessary step handlers for the current frame
+	 */
 	void doSceneStep();
 
 	void checkKeyboard();

@@ -134,8 +134,8 @@ public:
 	int _v2;
 	int _trigger;
 	ScreenTransition _fx;
-	AbortTimerMode _abortTimersMode;
-	AbortTimerMode _abortTimersMode2;
+	TriggerMode _triggerMode;
+	TriggerMode _triggerSetupMode;
 	uint32 _priorFrameTimer;
 	Common::String _aaName;
 	uint32 _ticksExpiry;
@@ -155,6 +155,11 @@ public:
 	* Standard object handling across the game
 	*/
 	virtual void doObjectAction() = 0;
+
+	/**
+	 * Global game step
+	 */
+	virtual void step() = 0;
 
 	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
 	void clearQuotes() {}

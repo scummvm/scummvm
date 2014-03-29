@@ -767,8 +767,8 @@ void Player::newWalk() {
 	}
 }
 
-void Player::step() {
-	warning("TODO: Player::step");
+void Player::addWalker(int walker, int trigger) {
+	warning("TODO: Player::addWalker");
 }
 
 } // End of namespace MADS

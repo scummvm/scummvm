@@ -310,7 +310,7 @@ void Scene::doFrame() {
 		flag = true;
 	}
 
-	if (flag || (_vm->_game->_trigger && _vm->_game->_abortTimersMode == ABORTMODE_2)) {
+	if (flag || (_vm->_game->_trigger && _vm->_game->_triggerMode == KERNEL_TRIGGER_PREPARE)) {
 		doPreactions();
 	}
 
@@ -320,7 +320,7 @@ void Scene::doFrame() {
 
 	if ((_action._inProgress && !player._moving && !player._needToWalk &&
 			player._turnToFacing == player._facing) ||
-			(_vm->_game->_trigger && _vm->_game->_abortTimersMode == ABORTMODE_0)) {
+			(_vm->_game->_trigger && _vm->_game->_triggerMode == KERNEL_TRIGGER_PARSER)) {
 		doAction();
 	}
 
@@ -444,11 +444,11 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 
 void Scene::doPreactions() {
 	if (_vm->_game->_screenObjects._v832EC == 0 || _vm->_game->_screenObjects._v832EC == 2) {
-		_vm->_game->_abortTimersMode2 = ABORTMODE_2;
+		_vm->_game->_triggerSetupMode = KERNEL_TRIGGER_PREPARE;
 		_action.checkAction();
 		_sceneLogic->preActions();
 
-		if (_vm->_game->_abortTimersMode == ABORTMODE_2)
+		if (_vm->_game->_triggerMode == KERNEL_TRIGGER_PREPARE)
 			_vm->_game->_trigger = 0;
 	}
 }
@@ -456,7 +456,7 @@ void Scene::doPreactions() {
 void Scene::doAction() {
 	int flag = 0;
 
-	_vm->_game->_abortTimersMode2 = ABORTMODE_0;
+	_vm->_game->_triggerSetupMode = KERNEL_TRIGGER_PARSER;
 	if ((_action._inProgress || _vm->_game->_trigger) && !_action._v8453A) {
 		_sceneLogic->actions();
 		_action._inProgress = true;
@@ -494,19 +494,17 @@ void Scene::doAction() {
 	}
 
 	_action._inProgress = false;
-	if (_vm->_game->_abortTimersMode == ABORTMODE_0)
+	if (_vm->_game->_triggerMode == KERNEL_TRIGGER_PARSER)
 		_vm->_game->_trigger = 0;
 }
 
 void Scene::doSceneStep() {
-	_vm->_game->_abortTimersMode2 = ABORTMODE_1;
+	_vm->_game->_triggerSetupMode = KERNEL_TRIGGER_DAEMON;
 	_sceneLogic->step();
 	_vm->_game->_sectionHandler->step();
+	_vm->_game->step();
 
-	_vm->_game->_player.step();
-	_vm->_game->_player._trigger = 0;
-
-	if (_vm->_game->_abortTimersMode == ABORTMODE_1)
+	if (_vm->_game->_triggerMode == KERNEL_TRIGGER_DAEMON)
 		_vm->_game->_trigger = 0;
 }
 

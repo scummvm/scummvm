@@ -30,7 +30,11 @@ namespace MADS {
 
 enum ActionMode { ACTIONMODE_NONE = 0, ACTIONMODE_VERB = 1, ACTIONMODE_OBJECT = 3, ACTIONMODE_TALK = 6 };
 enum ActionMode2 { ACTIONMODE2_0 = 0, ACTIONMODE2_2 = 2, ACTIONMODE2_4 = 4, ACTIONMODE2_5 = 5 };
-enum AbortTimerMode { ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2 };
+enum TriggerMode { 
+	KERNEL_TRIGGER_PARSER = 0,		// Triggers parser
+	KERNEL_TRIGGER_DAEMON = 1,		// Triggers step/daemon code
+	KERNEL_TRIGGER_PREPARE = 2		// Triggers preparser
+};
 
 enum InterAwaiting {
 	AWAITING_NONE = 0,

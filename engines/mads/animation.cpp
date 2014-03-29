@@ -317,7 +317,7 @@ void Animation::startAnimation(int abortTimers) {
 	_oldFrameEntry = 0;
 	_nextFrameTimer = _vm->_game->_scene._frameStartTime;
 	_trigger = abortTimers;
-	_abortTimersMode = _vm->_game->_abortTimersMode2;
+	_triggerMode = _vm->_game->_triggerSetupMode;
 	_vm->_game->_scene._action._activeAction = _actionDetails;
 
 	for (int idx = 0; idx < _header._messagesCount; ++idx) {
@@ -532,9 +532,9 @@ void Animation::update() {
 		// Animation is complete
 		if (_trigger != 0) {
 			_vm->_game->_trigger = _trigger;
-			_vm->_game->_abortTimersMode = _abortTimersMode;
+			_vm->_game->_triggerMode = _triggerMode;
 
-			if (_abortTimersMode != ABORTMODE_1) {
+			if (_triggerMode != KERNEL_TRIGGER_DAEMON) {
 				// Copy the noun list
 				scene._action._action = _actionDetails;
 			}

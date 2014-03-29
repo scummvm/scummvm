@@ -66,6 +66,8 @@ public:
 	StoryMode _storyMode;
 
 	virtual void doObjectAction();
+
+	virtual void step();
 };
 
 

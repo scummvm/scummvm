@@ -57,7 +57,7 @@ public:
 	uint32 _frameTimer;
 	uint32 _timeout;
 	int _trigger;
-	AbortTimerMode _abortMode;
+	TriggerMode _abortMode;
 	ActionDetails _actionDetails;
 	Common::String _msg;
 

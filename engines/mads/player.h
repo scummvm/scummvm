@@ -60,7 +60,6 @@ private:
 	int _routeLength;
 	int _stopWalkerList[12];
 	int _stopWalkerTrigger[12];
-	int _stopWalkerIndex;
 	int _totalDistance;
 
 	void clearStopList();
@@ -147,6 +146,7 @@ public:
 	bool _forceRefresh;
 	bool _needToWalk;
 	bool _readyToWalk;
+	int _stopWalkerIndex;
 	int _centerOfGravity;
 	int _currentDepth;
 	int _currentScale;
@@ -218,7 +218,10 @@ public:
 
 	void nextFrame();
 
-	void step();
+	/**
+	 * Add a walker to the current queue
+	 */
+	void addWalker(int walker, int trigger);
 };
 
 } // End of namespace MADS

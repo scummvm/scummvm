@@ -280,6 +280,71 @@ void GameNebular::doObjectAction() {
 	warning("TODO: GameNebular::doObjectAction");
 }
 
+void GameNebular::step() {
+	if (_player._visible && _player._stepEnabled && !_player._moving &&
+		(_player._facing == _player._turnToFacing)) {
+		if (_scene._frameStartTime >= *((uint32 *)&_globals[kWalkerTiming])) {
+			if (!_player._stopWalkerIndex) {
+				int randomVal = _vm->getRandomNumber(29999);;
+				if (_globals[kSexOfRex] == REX_MALE) {
+					switch (_player._facing) {
+					case FACING_SOUTHWEST:
+					case FACING_SOUTHEAST:
+					case FACING_NORTHWEST:
+					case FACING_NORTHEAST:
+						if (randomVal < 200) {
+							_player.addWalker(-1, 0);
+							_player.addWalker(1, 0);
+						}
+						break;
+
+					case FACING_WEST:
+					case FACING_EAST:
+						if (randomVal < 500) {
+							for (int count = 0; count < 10; ++count) {
+								_player.addWalker(1, 0);
+							}
+						}
+						break;
+
+					case 2:
+						if (randomVal < 500) {
+							for (int count = 0; count < 10; ++count) {
+								_player.addWalker((randomVal < 250) ? 1 : 2, 0);
+							}
+						} else if (randomVal < 750) {
+							for (int count = 0; count < 5; ++count) {
+								_player.addWalker(1, 0);
+							}
+
+							_player.addWalker(0, 0);
+							_player.addWalker(0, 0);
+
+							for (int count = 0; count < 5; ++count) {
+								_player.addWalker(2, 0);
+							}
+						}
+						break;
+					}
+				}
+			}
+
+			*((uint32 *)&_globals[kWalkerTiming]) += 6;
+		}
+	}
+
+	// Below is countdown to set the timebomb off in room 604
+	if (_globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) {
+		int diff = _scene._frameStartTime - *((uint32 *)&_globals[kTimebombClock]);
+		if ((diff >= 0) && (diff <= 60)) {
+			*((uint32 *)&_globals[kTimebombTimer]) += diff;
+		} else {
+			++*((uint32 *)&_globals[kTimebombTimer]);
+		}
+		*((uint32 *)&_globals[kTimebombClock]) = _scene._frameStartTime;
+	}
+}
+
 } // End of namespace Nebular
 
 } // End of namespace MADS

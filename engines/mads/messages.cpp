@@ -75,7 +75,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	rec._timeout = timeout;
 	rec._frameTimer = _vm->_game->_priorFrameTimer;
 	rec._trigger = abortTimers;
-	rec._abortMode = _vm->_game->_abortTimersMode2;
+	rec._abortMode = _vm->_game->_triggerSetupMode;
 
 	rec._actionDetails = scene._action._activeAction;
 
@@ -177,9 +177,9 @@ void KernelMessages::processText(int msgIndex) {
 		msg._flags |= KMSG_EXPIRE;
 		if (msg._trigger != 0) {
 			_vm->_game->_trigger = msg._trigger;
-			_vm->_game->_abortTimersMode = msg._abortMode;
+			_vm->_game->_triggerMode = msg._abortMode;
 
-			if (_vm->_game->_abortTimersMode != ABORTMODE_1) {
+			if (_vm->_game->_triggerMode != KERNEL_TRIGGER_DAEMON) {
 				scene._action._activeAction = msg._actionDetails;
 			}
 		}

@@ -50,7 +50,7 @@ KernelMessage::KernelMessage() {
 	_frameTimer = 0;
 	_timeout = 0;
 	_trigger = 0;
-	_abortMode = ABORTMODE_0;
+	_abortMode = KERNEL_TRIGGER_PARSER;
 	_actionDetails._verbId = 0;
 	_actionDetails._objectNameId = 0;
 	_actionDetails._indirectObjectId = 0;
