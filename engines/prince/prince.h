@@ -31,7 +31,7 @@
 #include "common/rect.h"
 #include "common/events.h"
 
-#include "graphics/decoders/bmp.h"
+#include "image/bmp.h"
 
 #include "gui/debugger.h"
 
@@ -157,7 +157,7 @@ private:
 	uint8 _cursorNr;
 
 	Common::RandomSource *_rnd;
-	Graphics::BitmapDecoder *_roomBmp;
+	Image::BitmapDecoder *_roomBmp;
 	Cursor *_cursor1;
 	Cursor *_cursor2;
 	MhwanhDecoder *_walizkaBmp;

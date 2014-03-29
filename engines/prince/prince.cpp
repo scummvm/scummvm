@@ -181,7 +181,7 @@ void PrinceEngine::init() {
 
 	delete talkTxtStream;
 
-	_roomBmp = new Graphics::BitmapDecoder();
+	_roomBmp = new Image::BitmapDecoder();
 
 	_mainHero = new Hero();
 	_secondHero = new Hero();

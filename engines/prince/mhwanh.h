@@ -23,14 +23,14 @@
 #ifndef PRINCE_MHWANH_H
 #define PRINCE_MHWANH_H
 
-#include "graphics/decoders/image_decoder.h"
-#include "graphics/decoders/bmp.h"
+#include "image/image_decoder.h"
+#include "image/bmp.h"
 #include "graphics/surface.h"
 #include "resource.h"
 
 namespace Prince {
 
-class MhwanhDecoder : public Graphics::ImageDecoder {
+class MhwanhDecoder : public Image::ImageDecoder {
 public:
 	MhwanhDecoder();
 	virtual ~MhwanhDecoder();
@@ -55,7 +55,7 @@ namespace Resource {
 	}
 
 	template <> inline
-	bool loadFromStream<Graphics::BitmapDecoder>(Graphics::BitmapDecoder &image, Common::SeekableReadStream &stream) {
+	bool loadFromStream<Image::BitmapDecoder>(Image::BitmapDecoder &image, Common::SeekableReadStream &stream) {
 		return image.loadStream(stream);
 	}
 }
