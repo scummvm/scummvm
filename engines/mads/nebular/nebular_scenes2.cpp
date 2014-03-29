@@ -1250,9 +1250,8 @@ void Scene207::enter() {
 	if (_vultureFl) {
 		_globals._spriteIndexes[16] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 30, 0, 0, 400);
 		_vultureTime = _game._player._priorTimer;
-
-		int idx = _scene->_dynamicHotspots.add(389, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 254, 94, FACING_WEST);
+		_vultureHotspotId = _scene->_dynamicHotspots.add(389, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(_vultureHotspotId, 254, 94, FACING_WEST);
 	}
 
 	if (_spiderFl) {
@@ -1280,14 +1279,29 @@ void Scene207::enter() {
 	_scene->_sequences.addSubEntry(_globals._spriteIndexes[21], SM_0, 0, 70);
 }
 
-void Scene207::step() {
-	if (!_vultureFl) {
-		warning("TODO: sub3AD90(...)");
-	}
+void Scene207::moveVulture() {
+	_scene->_sequences.remove(_globals._spriteIndexes[16]);
+	_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
+	_vm->_sound->command(43);
+	_vultureFl = false;
+	_vultureTime = _game._player._priorTimer;
+	_scene->_dynamicHotspots.remove(_vultureHotspotId);
+}
 
-	if (_spiderFl) {
-		warning("TODO: sub3ADD6(...)");
-	}
+void Scene207::moveSpider() {
+	_scene->_sequences.remove(_globals._spriteIndexes[19]);
+	_globals._spriteIndexes[19] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
+	_spiderFl = false;
+	_spiderTime = _game._player._priorTimer;
+	_scene->_dynamicHotspots.remove(_spiderHotspotId);
+}
+
+void Scene207::step() {
+	if (!_vultureFl)
+		moveVulture();
+
+	if (_spiderFl)
+		moveSpider();
 
 	if (_game._trigger == 70) {
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
