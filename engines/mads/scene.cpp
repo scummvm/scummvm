@@ -136,6 +136,10 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	for (uint i = 0; i < _sceneInfo->_nodes.size(); ++i)
 		_nodes.push_back(_sceneInfo->_nodes[i]);
 
+	// Add two more empty nodes for the start and end points of any walk sequence
+	_nodes.push_back(SceneNode());
+	_nodes.push_back(SceneNode());
+
 	// Load hotspots
 	loadHotspots();
 

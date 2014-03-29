@@ -768,7 +768,15 @@ void Player::newWalk() {
 }
 
 void Player::addWalker(int walker, int trigger) {
-	warning("TODO: Player::addWalker");
+	Scene &scene = _vm->_game->_scene;
+	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
+	assert(spriteSet._charInfo);
+
+	if (walker < spriteSet._charInfo->_numEntries && _stopWalkerIndex < 11) {
+		++_stopWalkerIndex;
+		_stopWalkerList[_stopWalkerIndex] = walker;
+		_stopWalkerTrigger[_stopWalkerIndex] = trigger;
+	}
 }
 
 } // End of namespace MADS

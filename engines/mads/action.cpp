@@ -78,7 +78,7 @@ void MADSAction::checkCustomDest(int v) {
 	Player &player = _vm->_game->_player;
 
 	if (_v86F4A && (v == -3 || _savedFields._selectedRow < 0)) {
-		_vm->_game->_player._needToWalk = true;
+		player._needToWalk = true;
 		player._prepareWalkPos = scene._customDest;
 	}
 }

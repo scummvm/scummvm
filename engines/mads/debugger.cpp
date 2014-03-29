@@ -125,8 +125,18 @@ bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
 bool Debugger::Cmd_ShowCodes(int argc, const char **argv) {
 	Scene &scene = _vm->_game->_scene;
 
+	// Copy the depth/walk surface to the background and flag for screen refresh
 	scene._depthSurface.copyTo(&scene._backgroundSurface);
 	scene._spriteSlots.fullRefresh();
+
+	// Draw the locations of scene nodes onto the background
+	int color = _vm->getRandomNumber(255);
+	for (int i = 0; i < (int)scene._sceneInfo->_nodes.size(); ++i) {
+		Common::Point &pt = scene._sceneInfo->_nodes[i]._walkPos;
+
+		scene._backgroundSurface.hLine(pt.x - 2, pt.y, pt.x + 2, color);
+		scene._backgroundSurface.vLine(pt.x, pt.y - 2, pt.y + 2, color);
+	}
 
 	return false;
 }
