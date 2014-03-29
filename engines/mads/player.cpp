@@ -52,7 +52,8 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_special = 0;
 	_ticksAmount = 0;
 	_priorTimer = 0;
-	_trigger = _unk4 = 0;
+	_trigger = 0;
+	_scalingVelocity = false;
 	_spritesChanged = false;
 	_forceRefresh = false;
 	_highSprites = false;
@@ -66,7 +67,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_trigger = 0;
 	_frameListIndex = 0;
 	_stopWalkerIndex = 0;
-	_hypotenuse = 0;
+	_totalDistance = 0;
 	
 	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
 	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);
@@ -75,11 +76,11 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 
 void Player::cancelWalk() {
 	_action = &_vm->_game->_scene._action;
-	_destPos = _playerPos;
+	_targetPos = _playerPos;
 	_targetFacing = FACING_NONE;
 	_turnToFacing = _facing;
 	_moving = false;
-	_newSceneId = _v844BE = 0;
+	_walkOffScreen = _walkOffScreenSceneId = 0;
 	_next = 0;
 	_routeCount = 0;
 	_walkAnywhere = false;
@@ -140,7 +141,7 @@ void Player::setFinalFacing() {
 		_turnToFacing = _targetFacing;
 }
 
-void Player::dirChanged() {
+void Player::changeFacing() {
 	int dirIndex = 0, dirIndex2 = 0;
 	int newDir = 0, newDir2 = 0;
 
@@ -308,7 +309,7 @@ void Player::update() {
 
 			// If changing a scene, check to change the scene when the player 
 			// has moved off-screen
-			if (_newSceneId) {
+			if (_walkOffScreen) {
 				SpriteAsset *asset = scene._sprites[slot._spritesIndex];
 				MSprite *frame = asset->getFrame(_frameNumber - 1);
 				int xScale = frame->w * newScale / 200;
@@ -318,8 +319,8 @@ void Player::update() {
 
 				if ((playerX + xScale) < 0 || (playerX + xScale) >= MADS_SCREEN_WIDTH ||
 						playerY < 0 || (playerY + yScale) >= MADS_SCENE_HEIGHT) {
-					scene._nextSceneId = _newSceneId;
-					_newSceneId = 0;
+					scene._nextSceneId = _walkOffScreen;
+					_walkOffScreen = 0;
 					_walkAnywhere = false;
 				}
 			}
@@ -398,31 +399,29 @@ void Player::nextFrame() {
 
 void Player::move() {
 	Scene &scene = _vm->_game->_scene;
-	bool routeFlag = false;
+	bool newFacing = false;
 
 	if (_moving) {
 		int idx = _routeCount;
-		while (!_newSceneId && (_destPos.x == _playerPos.x) && (_destPos.y == _playerPos.y)) {
+		while (!_walkOffScreen && _playerPos == _targetPos) {
 			if (idx != 0) {
 				--idx;
 				SceneNode &node = scene._sceneInfo->_nodes[_routeIndexes[idx]];
-				_destPos = node._walkPos;
-				routeFlag = true;
-			}
-			else if (_v844BE == idx) {
+				_targetPos = node._walkPos;
+				newFacing = true;
+			} else if (_walkOffScreenSceneId == idx) {
 				// End of walking path
 				_routeCount = 0;
 				_moving = false;
 				setFinalFacing();
-				routeFlag = true;
+				newFacing = true;
 				idx = _routeCount;
-			}
-			else {
-				_newSceneId = _v844BE;
-				_v844BC = true;
-				_v844BE = 0;
+			} else {
+				_walkOffScreen = _walkOffScreenSceneId;
+				_walkAnywhere = true;
+				_walkOffScreenSceneId = 0;
 				_stepEnabled = true;
-				routeFlag = false;
+				newFacing = false;
 			}
 
 			if (!_moving)
@@ -431,18 +430,19 @@ void Player::move() {
 		_routeCount = idx;
 	}
 
-	if (routeFlag && _moving)
+	if (newFacing && _moving)
 		startMovement();
 
 	if (_turnToFacing != _facing)
-		dirChanged();
+		changeFacing();
 	else if (!_moving)
 		updateFrame();
 
 	int velocity = _velocity;
-	if (_unk4 && (_hypotenuse > 0)) {
-		int v1 = -(_currentScale - 100) * (_posDiff.x - 1) / _hypotenuse + _currentScale;
-		velocity = MAX(1, 10000 / (v1 * _currentScale * velocity));
+	if (_scalingVelocity && (_totalDistance > 0)) {
+		int angleRange = 100 - _currentScale;
+		int angleScale = angleRange * (_posDiff.x - 1) / _totalDistance + _currentScale;
+		velocity = MAX(1, 10000 / (angleScale * _currentScale * velocity));
 	}
 
 	if (!_moving || (_facing != _turnToFacing))
@@ -450,46 +450,46 @@ void Player::move() {
 
 	Common::Point newPos = _playerPos;
 
-	if (_v8452E < velocity) {
+	if (_distAccum < velocity) {
 		do {
-			if (_v8452C < _posDiff.x)
-				_v8452C += _posDiff.y;
-			if (_v8452C >= _posDiff.x) {
-				if ((_posChange.y > 0) || (_newSceneId != 0))
+			if (_pixelAccum < _posDiff.x)
+				_pixelAccum += _posDiff.y;
+			if (_pixelAccum >= _posDiff.x) {
+				if ((_posChange.y > 0) || (_walkOffScreen != 0))
 					newPos.y += _yDirection;
 				--_posChange.y;
-				_v8452C -= _posDiff.x;
+				_pixelAccum -= _posDiff.x;
 			}
 
-			if (_v8452C < _posDiff.x) {
-				if ((_posChange.x > 0) || (_newSceneId != 0))
+			if (_pixelAccum < _posDiff.x) {
+				if ((_posChange.x > 0) || (_walkOffScreen != 0))
 					newPos.x += _xDirection;
 				--_posChange.x;
 			}
 
-			if ((_v844BC == 0) && (_newSceneId == 0) && (_v844BE == 0)) {
-				routeFlag = scene._depthSurface.getDepthHighBit(newPos);
+			if (!_walkAnywhere && !_walkOffScreen && (_walkOffScreenSceneId == 0)) {
+				newFacing = scene._depthSurface.getDepthHighBit(newPos);
 
 				if (_special == 0)
 					_special = scene.getDepthHighBits(newPos);
 			}
 
-			_v8452E += _v84530;
+			_distAccum += _deltaDistance;
 
-		} while ((_v8452E < velocity) && !routeFlag && ((_posChange.x > 0) || (_posChange.y > 0) || (_newSceneId != 0)));
+		} while ((_distAccum < velocity) && !newFacing && ((_posChange.x > 0) || (_posChange.y > 0) || (_walkOffScreen != 0)));
 	}
 
-	_v8452E -= velocity;
+	_distAccum -= velocity;
 
-	if (routeFlag)
+	if (newFacing) {
 		cancelCommand();
-	else {
-		if (!_newSceneId) {
+	} else {
+		if (!_walkOffScreen) {
 			// If the move is complete, make sure the position is exactly on the given destination
 			if (_posChange.x == 0)
-				newPos.x = _destPos.x;
+				newPos.x = _targetPos.x;
 			if (_posChange.y == 0)
-				newPos.y = _destPos.y;
+				newPos.y = _targetPos.y;
 		}
 
 		_playerPos = newPos;
@@ -501,7 +501,7 @@ void Player::idle() {
 
 	if (_facing != _turnToFacing) {
 		// The direction has changed, so reset for new direction
-		dirChanged();
+		changeFacing();
 		return;
 	}
 
@@ -675,10 +675,10 @@ int Player::scanPath(MSurface &depthSurface, const Common::Point &srcPos, const 
 }
 
 void Player::startMovement() {
-	int xDiff = _destPos.x - _playerPos.x;
-	int yDiff = _destPos.y - _playerPos.y;
+	int xDiff = _targetPos.x - _playerPos.x;
+	int yDiff = _targetPos.y - _playerPos.y;
 	int srcScale = getScale(_playerPos.y);
-	int destScale = getScale(_destPos.y);
+	int destScale = getScale(_targetPos.y);
 
 	// Sets the X direction
 	if (xDiff > 0)
@@ -704,7 +704,7 @@ void Player::startMovement() {
 	int yAmt100 = yDiff * 100;
 	int xAmt33 = xDiff * 33;
 
-	int scaleAmount = (_unk4 ? scaleDiff * 3 : 0) + 100 * yDiff / 100;
+	int scaleAmount = (_scalingVelocity ? scaleDiff * 3 : 0) + 100 * yDiff / 100;
 	int scaleAmount100 = scaleAmount * 100;
 
 	// Figure out direction that will need to be moved in
@@ -739,22 +739,22 @@ void Player::startMovement() {
 		break;
 	}
 
-	_hypotenuse = sqrt((double)(xAmt100 * xAmt100 + yAmt100 * yAmt100));
+	_totalDistance = sqrt((double)(xAmt100 * xAmt100 + yAmt100 * yAmt100));
 	_posDiff.x = xDiff + 1;
 	_posDiff.y = yDiff + 1;
 	_posChange.x = xDiff;
 	_posChange.y = yDiff;
 
 	int majorChange = MAX(xDiff, yDiff);
-	_v84530 = (majorChange == 0) ? 0 : _hypotenuse / majorChange;
+	_deltaDistance = (majorChange == 0) ? 0 : _totalDistance / majorChange;
 
-	if (_playerPos.x > _destPos.x)
-		_v8452C = MAX(_posChange.x, _posChange.y);
+	if (_playerPos.x > _targetPos.x)
+		_pixelAccum = MAX(_posChange.x, _posChange.y);
 	else
-		_v8452C = 0;
+		_pixelAccum = 0;
 
-	_hypotenuse /= 100;
-	_v8452E = -_v84530;
+	_totalDistance /= 100;
+	_distAccum = -_deltaDistance;
 }
 
 void Player::step() {

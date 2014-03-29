@@ -54,18 +54,20 @@ private:
 	bool _mirror;
 	int _frameCount;
 	int _frameListIndex;
-	bool _v844BC;
-	int _v8452E;
-	int _v8452C;
-	int _v84530;
+	int _distAccum;
+	int _pixelAccum;
+	int _deltaDistance;
 	int _routeLength;
 	int _stopWalkerList[12];
 	int _stopWalkerTrigger[12];
 	int _stopWalkerIndex;
-	int _hypotenuse;
+	int _totalDistance;
 
 	void clearStopList();
 
+	/**
+	 * If the player is moving, handles figuring out the correct motion
+	 */
 	void move();
 
 	void postUpdate();
@@ -99,7 +101,7 @@ private:
 	*/
 	void startMovement();
 
-	void dirChanged();
+	void changeFacing();
 public:
 	MADSAction *_action;
 
@@ -121,11 +123,11 @@ public:
 	bool _loadsFirst;
 	bool _loadedFirst;
 	Common::Point _playerPos;
-	Common::Point _destPos;
+	Common::Point _targetPos;
 	Common::Point _posChange;
 	Common::Point _posDiff;
 	bool _moving;
-	int _newSceneId, _v844BE;
+	int _walkOffScreen, _walkOffScreenSceneId;
 	int _next;
 	int _special;
 	int _ticksAmount;
@@ -133,7 +135,7 @@ public:
 	int _velocity;
 	int _upcomingTrigger;
 	int _trigger;
-	bool _unk4;
+	bool _scalingVelocity;
 	bool _forceRefresh;
 	int _centerOfGravity;
 	int _currentDepth;

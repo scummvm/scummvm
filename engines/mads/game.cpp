@@ -232,7 +232,7 @@ void Game::sectionLoop() {
 		_scene._sceneLogic->enter();
 
 		// Set player data
-		_player._destPos = _player._playerPos;
+		_player._targetPos = _player._playerPos;
 		_player._turnToFacing = _player._facing;
 		_player._targetFacing = _player._facing;
 		_player.selectSeries();

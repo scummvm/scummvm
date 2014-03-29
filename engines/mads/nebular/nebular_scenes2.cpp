@@ -53,10 +53,7 @@ void Scene2xx::setPlayerSpritesPrefix() {
 		break;
 	}
 
-	if (_scene->_nextSceneId > 212)
-		_game._player._unk4 = false;
-	else
-		_game._player._unk4 = true;
+	_game._player._scalingVelocity = (_scene->_nextSceneId <= 212);
 
 	if (oldName != _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
@@ -1050,7 +1047,7 @@ void Scene203::preActions() {
 	}
 
 	if (_action.isAction(0xD, 0xF3))
-		_game._player._v844BE = 209;
+		_game._player._walkOffScreenSceneId = 209;
 }
 
 void Scene203::actions() {
@@ -1315,10 +1312,10 @@ void Scene207::step() {
 
 void Scene207::preActions() {
 	if (_action.isAction(0x1AD, 0x1AE))
-		_game._player._v844BE = 211;
+		_game._player._walkOffScreenSceneId = 211;
 
 	if (_action.isAction(0x18C, 0x1AB))
-		_game._player._v844BE = 208;
+		_game._player._walkOffScreenSceneId = 208;
 
 	if ((_action.isAction(0xD)) || (_action.isAction(0x3))) {
 		if (_action.isAction(0x185)) {
@@ -1483,10 +1480,10 @@ void Scene208::preActions() {
 		_action._startWalkFlag = true;
 
 	if (_action.isAction(0x18C, 0x9B))
-		_game._player._v844BE = 209;
+		_game._player._walkOffScreenSceneId = 209;
 
 	if (_action.isAction(0x18C, 0xF6))
-		_game._player._v844BE = 207;
+		_game._player._walkOffScreenSceneId = 207;
 }
 
 void Scene208::actions() {
