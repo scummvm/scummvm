@@ -50,7 +50,9 @@ public:
 };
 
 class Scene201: public Scene2xx {
+private:
 	bool _pterodactylFlag;
+
 public:
 	Scene201(MADSEngine *vm) : Scene2xx(vm), _pterodactylFlag(false) {}
 	virtual void setup();
@@ -89,6 +91,7 @@ public:
 class Scene203: public Scene2xx {
 private:
 	bool _rhotundaEat2Fl, _rhotundaEatFl;
+
 public:
 	Scene203(MADSEngine *vm) : Scene2xx(vm), _rhotundaEat2Fl(false), _rhotundaEatFl(false) {}
 	virtual void setup();
@@ -100,7 +103,9 @@ public:
 };
 
 class Scene205: public Scene2xx {
+private:
 	uint32 _lastFishTime, _chickenTime;
+
 public:
 	Scene205(MADSEngine *vm) : Scene2xx(vm), _lastFishTime(0), _chickenTime(0) {}
 
@@ -113,6 +118,7 @@ public:
 };
 
 class Scene207: public Scene2xx {
+private:
 	bool _vultureFl, _spiderFl, _eyeFl;
 	int _spiderHotspotId, _vultureHotspotId;
 	int32 _spiderTime, _vultureTime;
@@ -131,6 +137,9 @@ public:
 };
 
 class Scene208: public Scene2xx {
+private:
+	void updateTrap();
+
 public:
 	Scene208(MADSEngine *vm) : Scene2xx(vm) {}
 	virtual void setup();

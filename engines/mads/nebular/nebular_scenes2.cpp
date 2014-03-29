@@ -804,8 +804,8 @@ void Scene202::actions() {
 				_game._player._visible = false;
 				_game._player._stepEnabled = false;
 
-				int idx = _scene->_dynamicHotspots.add(199, 79, -1, Common::Rect(241, 68, 12, 54));
-				_ladderHotspotId = _scene->_dynamicHotspots.setPosition(idx, 246, 124, FACING_NORTH);
+				_ladderHotspotId = _scene->_dynamicHotspots.add(199, 79, -1, Common::Rect(241, 68, 12, 54));
+				_scene->_dynamicHotspots.setPosition(_ladderHotspotId, 246, 124, FACING_NORTH);
 				_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._spriteIndexes[23], 1);
 				_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 1);
@@ -1408,6 +1408,36 @@ void Scene208::setup() {
 	_scene->addActiveVocab(NOUN_D);
 }
 
+void Scene208::updateTrap() {
+	if (_globals[kRhotundaStatus] == 1) {
+		_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 24);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[16], 5);
+		int idx = _scene->_dynamicHotspots.add(424, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 100, 146, FACING_NORTH);
+		_scene->_hotspots.activate(414, false);
+		return;
+	}
+
+	switch (_globals[35]) {
+	case 0: {
+		_globals._spriteIndexes[17] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._spriteIndexes[17], 15);
+		int idx = _scene->_dynamicHotspots.add(426, 13, _globals._spriteIndexes[17], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 60, 152, FACING_NORTH);
+		}
+		break;
+	case 2: {
+		_scene->_sequences.setDepth(_globals._spriteIndexes[18], 15);
+		_globals._spriteIndexes[18] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+		_scene->_hotspots.activate(414, false);
+		int idx = _scene->_dynamicHotspots.add(425, 13, _globals._spriteIndexes[17], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, 100, 146, FACING_NORTH);
+		_scene->_dynamicHotspots[idx]._articleNumber = 5;
+		}
+		break;
+	}
+}
+
 void Scene208::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), 0);
@@ -1415,7 +1445,7 @@ void Scene208::enter() {
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 2), 0);
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMBD_8");
 
-	warning("TODO: sub34648()");
+	updateTrap();
 
 	_globals._v0 = 0;
 	_globals._frameTime = 0;
@@ -1479,7 +1509,7 @@ void Scene208::step() {
 		if ((_game._trigger & 0xFF) == 81) {
 			_scene->_sequences.remove(_globals._spriteIndexes[15]);
 			_globals[kRhotundaStatus] = 1;
-			warning("TODO: sub34648(...)");
+			updateTrap();
 			_scene->_sequences.addTimer(90, 82);
 		}
 	} else {
