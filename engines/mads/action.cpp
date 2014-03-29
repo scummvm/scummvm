@@ -58,7 +58,7 @@ void MADSAction::clear() {
 	_hotspotId = -1;
 	_v86F3A = -1;
 	_v86F4C = -1;
-	_action._verbId = -1;
+	_action._verbId = VERB_NONE;
 	_action._objectNameId = -1;
 	_action._indirectObjectId = -1;
 	_textChanged = true;
@@ -89,7 +89,7 @@ void MADSAction::set() {
 	bool flag = false;
 	_statusText = "";
 
-	_action._verbId = -1;
+	_action._verbId = VERB_NONE;
 	_action._objectNameId = -1;
 	_action._indirectObjectId = -1;
 

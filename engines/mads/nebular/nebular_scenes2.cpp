@@ -492,7 +492,7 @@ void Scene202::step() {
 		
 		if (_globals[kMeteorologistWatch] == 1) {
 			MADSAction *action = _game._player._action;
-			action->_activeAction._verbId = 3;
+			action->_activeAction._verbId = VERB_LOOK;
 			action->_activeAction._objectNameId = 39;
 			action->_activeAction._indirectObjectId = 438;
 			_game._triggerSetupMode = KERNEL_TRIGGER_PARSER;
