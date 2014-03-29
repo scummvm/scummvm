@@ -211,6 +211,26 @@ void sceneHandler29_manBend() {
 	g_vars->scene29_var21 = g_fp->_aniMan->_oy;
 }
 
+bool sceneHandler29_sub15(StaticANIObject *ani, int maxx) {
+	if (!g_vars->scene29_var10 || g_vars->scene29_var15)
+		return false;
+
+	if ((ani->_ox >= g_vars->scene29_var20 + 42 || ani->_ox <= g_vars->scene29_var20 + 8)
+		&& (ani->_ox < g_vars->scene29_var20 + 8 || maxx > g_vars->scene29_var20 + 27))
+		return false;
+
+	if (!g_fp->_aniMan->_movement)
+		return true;
+
+	int phase = g_fp->_aniMan->_movement->_currDynamicPhaseIndex;
+
+	if (g_fp->_aniMan->_movement->_id != MV_MAN29_BEND && g_fp->_aniMan->_movement->_id != MV_MAN29_RUN
+		&& (g_fp->_aniMan->_movement->_id != MV_MAN29_JUMP || (phase >= 3 && phase <= 6)))
+		return false;
+	else
+		return true;
+}
+
 void sceneHandler29_sub03() {
 	warning("STUB: sceneHandler29_sub03()");
 }
