@@ -64,7 +64,7 @@ public:
 class Scene202: public Scene2xx {
 private:
 	bool _activeMsgFl, _ladderTopFl, _waitingMeteoFl, _toStationFl, _toTeleportFl;
-	int _ladderHotspotId, _lastRoute, _stationCounter;
+	int _ladderHotspotId, _lastRoute, _stationCounter, _meteoFrame;
 	uint32 _meteoClock1, _meteoClock2, _startTime;
 
 	int subStep1(int randVal);
@@ -75,7 +75,7 @@ private:
 public:
 	Scene202(MADSEngine *vm) : Scene2xx(vm), _activeMsgFl(false), _ladderTopFl(false), _waitingMeteoFl(false),
 		_ladderHotspotId(-1), _meteoClock1(0), _meteoClock2(0), _toStationFl(false), _toTeleportFl(false),
-		_lastRoute(0), _stationCounter(0) {}
+		_lastRoute(0), _stationCounter(0), _meteoFrame(0) {}
 	virtual void setup();
 	virtual void enter();
 	virtual void step();

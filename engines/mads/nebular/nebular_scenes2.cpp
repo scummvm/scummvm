@@ -580,7 +580,7 @@ void Scene202::step() {
 			}
 		}
 
-		if ((_scene->_activeAnimation->getCurrentFrame() == 160) && (_globals._v84260 != _scene->_activeAnimation->getCurrentFrame())) {
+		if ((_scene->_activeAnimation->getCurrentFrame() == 160) && (_meteoFrame != _scene->_activeAnimation->getCurrentFrame())) {
 			Common::Point msgPos;
 			int msgFlag;
 			if (!_ladderTopFl) {
@@ -599,11 +599,11 @@ void Scene202::step() {
 		_toTeleportFl = true;
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == _globals._v84260) {
+	if (_scene->_activeAnimation->getCurrentFrame() == _meteoFrame) {
 		return;
 	}
 	
-	_globals._v84260 = _scene->_activeAnimation->getCurrentFrame();
+	_meteoFrame = _scene->_activeAnimation->getCurrentFrame();
 	int randVal = _vm->getRandomNumber(1, 1000);
 	int frameStep = -1;
 	
@@ -649,7 +649,7 @@ void Scene202::step() {
 	int nextFrame = 1 + _scene->_activeAnimation->getCurrentFrame() - frameStep;
 	if (nextFrame) {
 		_scene->_activeAnimation->setCurrentFrame(nextFrame);
-		_globals._v84260 = nextFrame;
+		_meteoFrame = nextFrame;
 	}
 }
 

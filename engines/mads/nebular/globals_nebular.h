@@ -295,7 +295,7 @@ public:
 	int _v8;
 	int _abortVal;
 	uint32 _v8425C;
-	int _v84260, _v84262, _v84264, _v84266, _v84268;
+	int _v84262, _v84264, _v84266, _v84268;
 public:
 	/**
 	 * Constructor
