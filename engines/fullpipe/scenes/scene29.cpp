@@ -357,7 +357,9 @@ void sceneHandler29_shootersEscape() {
 }
 
 void sceneHandler29_sub07() {
-	warning("STUB: sceneHandler29_sub07()");
+	g_vars->scene29_var20 -= 2;
+  
+	g_fp->_aniMan->setOXY(g_vars->scene29_var20, g_vars->scene29_var21);
 }
 
 void sceneHandler29_assHitGreen() {
