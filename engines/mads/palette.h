@@ -110,7 +110,7 @@ public:
 
 class RGBList {
 private:
-	int16 _data[32];
+	bool _data[32];
 public:
 	RGBList() { clear(); }
 
@@ -123,7 +123,7 @@ public:
 	 */
 	int scan();
 
-	int16 &operator[](int idx) { return _data[idx]; }
+	bool &operator[](int idx) { return _data[idx]; }
 };
 
 #define PALETTE_COUNT 256
@@ -146,7 +146,7 @@ public:
 	uint32 _palFlags[PALETTE_COUNT];
 	PaletteUsage _paletteUsage;
 	RGBList _rgbList;
-	int _v1;
+	bool _lockFl;
 	int _lowRange;
 	int _highRange;
 public:
@@ -229,7 +229,8 @@ public:
 
 	void fadeOut(byte palette[PALETTE_SIZE], int v1, int v2, int v3, int v4, int v5, int v6);
 
-	void sub7BBF8();
+	void lock();
+	void unlock();
 };
 
 } // End of namespace MADS

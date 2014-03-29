@@ -87,8 +87,10 @@ public:
 };
 
 class Scene203: public Scene2xx {
+private:
+	bool _rhotundaEat2Fl, _rhotundaEatFl;
 public:
-	Scene203(MADSEngine *vm) : Scene2xx(vm) {}
+	Scene203(MADSEngine *vm) : Scene2xx(vm), _rhotundaEat2Fl(false), _rhotundaEatFl(false) {}
 	virtual void setup();
 	virtual void enter();
 	virtual void step();

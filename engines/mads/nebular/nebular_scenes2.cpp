@@ -464,7 +464,7 @@ void Scene202::setRandomKernelMessage() {
 }
 
 void Scene202::step() {
-	if (!_activeMsgFl && (_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == 8) && (_vm->getRandomNumber(999) == 0)) {
+	if (!_activeMsgFl && (_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH) && (_vm->getRandomNumber(999) == 0)) {
 		_scene->_kernelMessages.reset();
 		_activeMsgFl = false;
 		if (_vm->getRandomNumber(4) == 0)
@@ -939,7 +939,7 @@ void Scene202::actions() {
 		} else if (action->isAction(VERB_LOOK, 0x142)) {
 			_vm->_dialogs->show(0x4EF2);
 		} else if (action->isAction(VERB_LOOK, 0xAA)) {
-			if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == 8))
+			if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH))
 				_vm->_dialogs->show(0x4EF4);
 			else
 				_vm->_dialogs->show(0x4EF3);
@@ -980,23 +980,23 @@ void Scene203::enter() {
 	} else if (_scene->_priorSceneId == 209) {
 		_game._player._playerPos = Common::Point(308, 117);
 		_game._player._facing = FACING_WEST;
-	} else if (_scene->_priorSceneId == -2) {
+	} else if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(155, 152);
 		_game._player._facing = FACING_NORTH;
 	}
 
-	_globals._v0 = 0;
-	_globals._frameTime = 0;
+	_rhotundaEatFl = false;
+	_rhotundaEat2Fl = false;
 
-	if ((_globals[kRhotundaStatus] == 0) && (_scene->_roomChanged == 0)) {
-		_globals._v0 = -1;
+	if ((_globals[kRhotundaStatus] == 0) && (!_scene->_roomChanged)) {
+		_rhotundaEatFl = true;
 		_game._player.walk(Common::Point(158, 135), FACING_SOUTH);
 		int idx = _scene->_dynamicHotspots.add(131, 396, 0, Common::Rect(0, 0, 320, 156));
 		_scene->_dynamicHotspots.setPosition(idx, 155, 152, FACING_SOUTH);
 		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
 	}
 
-	if (_globals._v0 == 0) {
+	if (!_rhotundaEatFl) {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', -1), 0);
 		if (_vm->getRandomNumber(1, 3) == 2) {
 			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
@@ -1008,7 +1008,7 @@ void Scene203::enter() {
 
 	_game.loadQuoteSet(0x67, 0x68, 0x69, 0x6A, 0x5A, 0);
 
-	if (_globals._v0 != 0) {
+	if (_rhotundaEatFl) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(_vm->getRandomNumber(103, 106)));
 	}
 
@@ -1016,21 +1016,21 @@ void Scene203::enter() {
 }
 
 void Scene203::step() {
-	if (_globals._v0 == 0)
+	if (!_rhotundaEatFl)
 		return;
 
-	if ((_game._trigger == 0) && (_globals._frameTime != 0))
+	if ((_game._trigger == 0) && _rhotundaEat2Fl)
 		return;
 
-	if ((_game._player._playerPos != Common::Point(158, 136)) || (_game._player._facing != 2))
+	if ((_game._player._playerPos != Common::Point(158, 136)) || (_game._player._facing != FACING_SOUTH))
 		return;
 
-	_globals._frameTime = 0xFFFF;
+	_rhotundaEat2Fl = true;
 
 	if (_game._trigger == 0) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
-		_vm->_palette->sub7BBF8();
+		_vm->_palette->lock();
 		_scene->_kernelMessages.reset();
 		_scene->resetScene();
 		_vm->_events->setCursor2(CURSOR_WAIT);
@@ -1042,7 +1042,7 @@ void Scene203::step() {
 }
 
 void Scene203::preActions() {
-	if (_globals._v0 && !_action.isAction(0x18C, 0x83)) {
+	if (_rhotundaEatFl && !_action.isAction(0x18C, 0x83)) {
 		_game._player.walk(Common::Point(158, 136), FACING_SOUTH);
 		_action._inProgress = false;
 		return;
@@ -1449,7 +1449,7 @@ void Scene208::step() {
 	if (_globals._v0 == 0)
 		return;
 
-	if ((_game._player._playerPos != Common::Point(20, 148)) || (_game._player._facing != 6))
+	if ((_game._player._playerPos != Common::Point(20, 148)) || (_game._player._facing != FACING_EAST))
 		return;
 
 	if ((_game._trigger == 0) && ((_globals._frameTime & 0xFFFF) != 0))

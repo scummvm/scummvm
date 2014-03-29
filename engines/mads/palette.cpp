@@ -235,7 +235,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		palette[palIndex]._palIndex = var4;
 	}
 
-	_vm->_palette->_rgbList[rgbIndex] = -1;
+	_vm->_palette->_rgbList[rgbIndex] = true;
 
 	return rgbIndex;
 }
@@ -263,7 +263,7 @@ void PaletteUsage::updateUsage(Common::Array<int> &usageList, int sceneUsageInde
 		uint32 bitMask = 1 << usageList[idx];
 		mask1 ^= bitMask;
 		mask2 |= bitMask;
-		_vm->_palette->_rgbList[usageList[idx]] = 0;
+		_vm->_palette->_rgbList[usageList[idx]] = false;
 	}
 
 	uint32 mask3 = 1 << sceneUsageIndex;
@@ -276,7 +276,7 @@ void PaletteUsage::updateUsage(Common::Array<int> &usageList, int sceneUsageInde
 		}
 	}
 
-	_vm->_palette->_rgbList[sceneUsageIndex] = -1;
+	_vm->_palette->_rgbList[sceneUsageIndex] = true;
 }
 
 int PaletteUsage::getGamePalFreeIndex(int *palIndex) {
@@ -306,11 +306,13 @@ int PaletteUsage::rgbFactor(byte *palEntry, RGB6 &pal6) {
 /*------------------------------------------------------------------------*/
 
 void RGBList::clear() {
-	Common::fill(&_data[0], &_data[32], 0);
+	for (int i = 0; i < 32; i++)
+		_data[i] = false;
 }
 
 void RGBList::reset() {
-	Common::fill(&_data[2], &_data[32], 0);
+	for (int i = 2; i < 32; i++)
+		_data[i] = false;
 }
 
 int RGBList::scan() {
@@ -319,7 +321,7 @@ int RGBList::scan() {
 			return i;
 	}
 
-	error("List was full");
+	error("RGBList was full");
 }
 
 /*------------------------------------------------------------------------*/
@@ -327,7 +329,7 @@ int RGBList::scan() {
 Palette::Palette(MADSEngine *vm) : _vm(vm), _paletteUsage(vm) {
 	reset();
 
-	_v1 = 0;
+	_lockFl = false;
 	_lowRange = 0;
 	_highRange = 0;
 	Common::fill(&_mainPalette[0], &_mainPalette[PALETTE_SIZE], 0);
@@ -435,9 +437,9 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 	}
 
 	_rgbList.clear();
-	_rgbList[0] = _rgbList[1] = -1;
+	_rgbList[0] = _rgbList[1] = true;
 
-	_v1 = 0;
+	_lockFl = false;
 	_lowRange = lowRange;
 	_highRange = highRange;
 }
@@ -463,7 +465,7 @@ void Palette::initPalette() {
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
 		_palFlags[idx] = palMask;
 
-	_v1 = 0;
+	_lockFl = false;
 	_rgbList.reset();
 }
 
@@ -486,12 +488,12 @@ void Palette::setLowRange() {
 void Palette::fadeOut(byte palette[PALETTE_SIZE], int v1, int v2, int v3, int v4, int v5, int v6) {
 }
 
-void Palette::sub7BBF8() {
-	if ((_rgbList[31] != 0) && (_v1 == 0))
-		error("Palette - Unexpected values");
+void Palette::lock() {
+	if (_rgbList[31] && !_lockFl)
+		error("Palette Lock - Unexpected values");
 
-	_v1 = -1;
-	_rgbList[31] = -1;
+	_lockFl = true;
+	_rgbList[31] = true;
 
 	for (int i = 0; i < 256; i++) {
 		if (_palFlags[i])
@@ -499,4 +501,14 @@ void Palette::sub7BBF8() {
 	}
 }
 
+void Palette::unlock() {
+	if (!_lockFl)
+		return;
+
+	for (int i = 0; i < 256; i++)
+		_palFlags[i] &= 0x7FFFFFFF;
+
+	_rgbList[31] = false;
+	_lockFl = false;
+}
 } // End of namespace MADS

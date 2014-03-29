@@ -142,6 +142,7 @@ void Game::gameLoop() {
 		}
 
 		// TODO: Extra reset methods
+		_vm->_palette->unlock();
 		_vm->_events->waitCursor();
 		_vm->_events->freeCursors();
 		_vm->_sound->closeDriver();
