@@ -440,11 +440,11 @@ void Scene103::actions() {
 }
 
 void Scene103::postActions() {
-	if (_action.isAction(27) && !_action.isAction(13)) {
+	if (_action.isAction(27) && !_action.isAction(VERB_WALKTO)) {
 		_vm->_dialogs->show(0x2841);
 		_action._inProgress = false;
 	} else {
-		if (_action.isAction(7, 85, 144)) {
+		if (_action.isAction(VERB_PUT, 85, 144)) {
 			Common::String msg = _game.getQuote(73);
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110,
 				34, 0, 120, msg);

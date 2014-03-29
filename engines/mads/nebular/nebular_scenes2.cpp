@@ -293,30 +293,30 @@ void Scene201::actions() {
 			} else if (_game._trigger == 1) {
 				_scene->_nextSceneId = 213;
 			}
-		} else if (action->isAction(0x3, 0x1A6)) {
+		} else if (action->isAction(VERB_LOOK, 0x1A6)) {
 			_vm->_dialogs->show(0x4E85);
-		} else if (action->isAction(0x3, 0x129)) {
+		} else if (action->isAction(VERB_LOOK, 0x129)) {
 			_vm->_dialogs->show(0x4E86);
-		} else if (action->isAction(0x3, 0x16F)) {
+		} else if (action->isAction(VERB_LOOK, 0x16F)) {
 			_vm->_dialogs->show(0x4E87);
-		} else if (action->isAction(0x3, 0x142)) {
+		} else if (action->isAction(VERB_LOOK, 0x142)) {
 			_vm->_dialogs->show(0x4E88);
-		} else if (action->isAction(0x3, 0x18F)) {
+		} else if (action->isAction(VERB_LOOK, 0x18F)) {
 			_vm->_dialogs->show(0x4E89);
-		} else if (action->isAction(0x3, 0x1B9)) {
+		} else if (action->isAction(VERB_LOOK, 0x1B9)) {
 			_vm->_dialogs->show(0x4E8A);
-		} else if (action->isAction(0x3, 0x192)) {
+		} else if (action->isAction(VERB_LOOK, 0x192)) {
 			_vm->_dialogs->show(0x4E8B);
-		} else if (action->isAction(0x3, 0x1BA)) {
+		} else if (action->isAction(VERB_LOOK, 0x1BA)) {
 			_vm->_dialogs->show(0x4E8C);
-		} else if (action->isAction(0x3, 0x83)) {
+		} else if (action->isAction(VERB_LOOK, 0x83)) {
 			_vm->_dialogs->show(0x4E8E);
-		} else if (action->isAction(0x3, 0x1B6)) {
+		} else if (action->isAction(VERB_LOOK, 0x1B6)) {
 			if (_globals[kMeteorologistEverSeen])
 				_vm->_dialogs->show(0x4E90);
 			else
 				_vm->_dialogs->show(0x4E8D);
-		} else if (action->isAction(0x3, 0x16C)) {
+		} else if (action->isAction(VERB_LOOK, 0x16C)) {
 			_vm->_dialogs->show(0x4E91);
 		} else
 			return;
@@ -732,7 +732,7 @@ void Scene202::preActions() {
 		}		
 	}
 
-	if (action->isAction(0x3, 0x27) && action->_activeAction._indirectObjectId > 0) {
+	if (action->isAction(VERB_LOOK, 0x27) && action->_activeAction._indirectObjectId > 0) {
 		if (!player._readyToWalk || _ladderTopFl)
 			_game._player._needToWalk = false;
 		else
@@ -759,7 +759,7 @@ void Scene202::actions() {
 					_globals[kMeteorologistStatus] = 0;
 			}
 			_scene->_nextSceneId = 201;
-		} else if (action->isAction(0x4, 0x2C)) {
+		} else if (action->isAction(VERB_TAKE, 0x2C)) {
 			if (action->_actionMode2 == 4) {
 				if (_game._trigger == 0) {
 					if (_game._objects.isInInventory(OBJ_BONES)) {
@@ -822,7 +822,7 @@ void Scene202::actions() {
 				action->_inProgress = false;
 				return;
 			}
-		} else if (((action->isAction(0x3, 0x27, 0x82)) || (action->isAction(0x3, 0x27, 0x1B6))) && (_globals[kSexOfRex] == SEX_MALE)) {
+		} else if (((action->isAction(VERB_LOOK, 0x27, 0x82)) || (action->isAction(VERB_LOOK, 0x27, 0x1B6))) && (_globals[kSexOfRex] == SEX_MALE)) {
 			if (!_ladderTopFl) {
 				if (_game._trigger == 0) {
 					_game._player._stepEnabled = false;
@@ -913,13 +913,13 @@ void Scene202::actions() {
 			}
 		} else if (action->isAction(0x188, 0xAA)) {
 			setRandomKernelMessage();
-		} else if (action->isAction(0x3, 0x129)) {
+		} else if (action->isAction(VERB_LOOK, 0x129)) {
 			_vm->_dialogs->show(0x4EEA);
-		} else if (action->isAction(0x3, 0x86)) {
+		} else if (action->isAction(VERB_LOOK, 0x86)) {
 			_vm->_dialogs->show(0x4EEB);
-		} else if (action->isAction(0x3, 0x19C)) {
+		} else if (action->isAction(VERB_LOOK, 0x19C)) {
 			_vm->_dialogs->show(0x4EEC);
-		} else if (action->isAction(0x3, 0x82)) {
+		} else if (action->isAction(VERB_LOOK, 0x82)) {
 			if ((_globals[kMeteorologistStatus] == 0) || (_globals[kMeteorologistStatus] == 2)) {
 				_vm->_dialogs->show(0x4EED);
 			} else if (_globals[kMeteorologistStatus] == 1) {
@@ -928,30 +928,30 @@ void Scene202::actions() {
 				action->_inProgress = false;
 				return;
 			} 
-		} else if (action->isAction(0x3, 0x18E)) {
+		} else if (action->isAction(VERB_LOOK, 0x18E)) {
 			_vm->_dialogs->show(0x4EEE);
-		} else if (action->isAction(0x3, 0x164)) {
+		} else if (action->isAction(VERB_LOOK, 0x164)) {
 			_vm->_dialogs->show(0x4EEF);
-		} else if (action->isAction(0x3, 0x175)) {
+		} else if (action->isAction(VERB_LOOK, 0x175)) {
 			_vm->_dialogs->show(0x4EF0);
-		} else if (action->isAction(0x3, 0x174)) {
+		} else if (action->isAction(VERB_LOOK, 0x174)) {
 			_vm->_dialogs->show(0x4EF1);
-		} else if (action->isAction(0x3, 0x142)) {
+		} else if (action->isAction(VERB_LOOK, 0x142)) {
 			_vm->_dialogs->show(0x4EF2);
-		} else if (action->isAction(0x3, 0xAA)) {
+		} else if (action->isAction(VERB_LOOK, 0xAA)) {
 			if ((_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == 8))
 				_vm->_dialogs->show(0x4EF4);
 			else
 				_vm->_dialogs->show(0x4EF3);
-		} else if (action->isAction(0x3, 0x186)) {
+		} else if (action->isAction(VERB_LOOK, 0x186)) {
 			_vm->_dialogs->show(0x4EF5);
-		} else if (action->isAction(0x3, 0x1B5)) {
+		} else if (action->isAction(VERB_LOOK, 0x1B5)) {
 			_vm->_dialogs->show(0x4EF6);
-		} else if (action->isAction(0x3, 0x140)) {
+		} else if (action->isAction(VERB_LOOK, 0x140)) {
 			_vm->_dialogs->show(0x4EF7);
-		} else if (action->isAction(0x4, 0x140)) {
+		} else if (action->isAction(VERB_TAKE, 0x140)) {
 			_vm->_dialogs->show(0x4EF8);
-		} else if (action->isAction(0x3, 0x2D)) {
+		} else if (action->isAction(VERB_LOOK, 0x2D)) {
 			if (action->_actionMode == 4)
 				_vm->_dialogs->show(0x4EF9);
 			else
@@ -1048,7 +1048,7 @@ void Scene203::preActions() {
 		return;
 	}
 
-	if (_action.isAction(0xD, 0xF3))
+	if (_action.isAction(VERB_WALKTO, 0xF3))
 		_game._player._walkOffScreenSceneId = 209;
 }
 
@@ -1059,17 +1059,17 @@ void Scene203::actions() {
 		_scene->_nextSceneId = 208;
 	} else if (_action.isAction(0x18C, 0x82)) {
 		_scene->_nextSceneId = 202;
-	} else if (_action.isAction(0x3, 0x142)) {
+	} else if (_action.isAction(VERB_LOOK, 0x142)) {
 		_vm->_dialogs->show(0x4F4D);
-	} else if (_action.isAction(0x3, 0x4D)) {
+	} else if (_action.isAction(VERB_LOOK, 0x4D)) {
 		_vm->_dialogs->show(0x4F4E);
-	} else if (_action.isAction(0x3, 0x100)) {
+	} else if (_action.isAction(VERB_LOOK, 0x100)) {
 		_vm->_dialogs->show(0x4F4F);
-	} else if (_action.isAction(0x3, 0x82)) {
+	} else if (_action.isAction(VERB_LOOK, 0x82)) {
 		_vm->_dialogs->show(0x4F50);
-	} else if (_action.isAction(0x3, 0x1A6)) {
+	} else if (_action.isAction(VERB_LOOK, 0x1A6)) {
 		_vm->_dialogs->show(0x4F51);
-	} else if (_action.isAction(0x3, 0x30)) {
+	} else if (_action.isAction(VERB_LOOK, 0x30)) {
 		_vm->_dialogs->show(0x4F51);
 	} else
 		return;
@@ -1319,7 +1319,7 @@ void Scene207::preActions() {
 	if (_action.isAction(0x18C, 0x1AB))
 		_game._player._walkOffScreenSceneId = 208;
 
-	if ((_action.isAction(0xD)) || (_action.isAction(0x3))) {
+	if ((_action.isAction(VERB_WALKTO)) || (_action.isAction(VERB_LOOK))) {
 		if (_action.isAction(0x185)) {
 			_globals._frameTime = 0xD8F1;
 			_globals._frameTime |= 0xFFFF0000;
@@ -1352,33 +1352,33 @@ void Scene207::actions() {
 				_globals._v2 = 0;
 			}
 
-			if (_action.isAction(3, 0x69)) {
+			if (_action.isAction(VERB_LOOK, 0x69)) {
 				_vm->_dialogs->show(0x50DD);
-			} else if (_action.isAction(3, 0x1AF)) {
+			} else if (_action.isAction(VERB_LOOK, 0x1AF)) {
 				_vm->_dialogs->show(0x50DE);
-			} else if (_action.isAction(3, 0x141)) {
+			} else if (_action.isAction(VERB_LOOK, 0x141)) {
 				_vm->_dialogs->show(0x50DF);
-			} else if (_action.isAction(3, 0x3E)) {
+			} else if (_action.isAction(VERB_LOOK, 0x3E)) {
 				_vm->_dialogs->show(0x50E0);
-			} else if (_action.isAction(3, 0x198)) {
+			} else if (_action.isAction(VERB_LOOK, 0x198)) {
 				_vm->_dialogs->show(0x50E1);
-			} else if (_action.isAction(3, 0x1AE)) {
+			} else if (_action.isAction(VERB_LOOK, 0x1AE)) {
 				_vm->_dialogs->show(0x50E2);
-			} else if (_action.isAction(3, 0xE8)) {
+			} else if (_action.isAction(VERB_LOOK, 0xE8)) {
 				_vm->_dialogs->show(0x50E3);
-			} else if (_action.isAction(3, 0x12)) {
+			} else if (_action.isAction(VERB_LOOK, 0x12)) {
 				_vm->_dialogs->show(0x50E4);
-			} else if (_action.isAction(3, 0x1AC)) {
+			} else if (_action.isAction(VERB_LOOK, 0x1AC)) {
 				_vm->_dialogs->show(0x50E5);
-			} else if (_action.isAction(3, 0x185)) {
+			} else if (_action.isAction(VERB_LOOK, 0x185)) {
 				_vm->_dialogs->show(0x50E6);
-			} else if (_action.isAction(4, 0x141)) {
+			} else if (_action.isAction(VERB_TAKE, 0x141)) {
 				_vm->_dialogs->show(0x50E8);
-			} else if (_action.isAction(4, 0x12)) {
+			} else if (_action.isAction(VERB_TAKE, 0x12)) {
 				_vm->_dialogs->show(0x50E9);
-			} else if (_action.isAction(3, 0x14D)) {
+			} else if (_action.isAction(VERB_LOOK, 0x14D)) {
 				_vm->_dialogs->show(0x50EA);
-			} else if (_action.isAction(4, 0x14D)) {
+			} else if (_action.isAction(VERB_TAKE, 0x14D)) {
 				_vm->_dialogs->show(0x50EB);
 			} else
 				return;
@@ -1480,7 +1480,7 @@ void Scene208::step() {
 void Scene208::preActions() {
 	Player &player = _vm->_game->_player;
 
-	if (_action.isAction(3) && player._readyToWalk)
+	if (_action.isAction(VERB_LOOK) && player._readyToWalk)
 		player._needToWalk = true;
 
 	if (_action.isAction(0x18C, 0x9B))
@@ -1503,59 +1503,59 @@ void Scene208::actions() {
 		}
 	} else if (_action.isAction(0x18C, 0x83)) {
 		_scene->_nextSceneId = 212;
-	} else if (_action.isAction(0x4, 0x1AA) && (!_globals[kLeavesStatus] || _game._trigger)) {
+	} else if (_action.isAction(VERB_TAKE, 0x1AA) && (!_globals[kLeavesStatus] || _game._trigger)) {
 		warning("TODO: sub3B282(1);");
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->showPicture(OBJ_BIG_LEAVES, 0x326, 0);
-	} else if (_action.isAction(0x7, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
+	} else if (_action.isAction(VERB_PUT, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
 		warning("TODO: sub3B282(2);");
-	} else if (_action.isAction(0x7, 0x17A, 0x1A9)) {
+	} else if (_action.isAction(VERB_PUT, 0x17A, 0x1A9)) {
 		warning("TODO: sub3B282(3);");
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
 			_globals._v0 = true;
 			_game._player.walk(Common::Point(20, 148), FACING_EAST);
 		}
-	} else if (_action.isAction(0x7, 0x35, 0x1A9)) {
+	} else if (_action.isAction(VERB_PUT, 0x35, 0x1A9)) {
 		warning("TODO: sub3B282(4);");
 		if (_game._player._stepEnabled) {
 			_vm->_dialogs->show(0x514C);
 		}
-	} else if (_action.isAction(0x7, 0x65, 0x1A9)) {
+	} else if (_action.isAction(VERB_PUT, 0x65, 0x1A9)) {
 		warning("TODO: sub3B282(5);");
 		if (_game._player._stepEnabled) {
 			_vm->_dialogs->show(0x514C);
 		}
-	} else if (_action.isAction(0x3, 0x5D)) {
+	} else if (_action.isAction(VERB_LOOK, 0x5D)) {
 		_vm->_dialogs->show(0x5141);
-	} else if (_action.isAction(0x3, 0xF6)) {
+	} else if (_action.isAction(VERB_LOOK, 0xF6)) {
 		_vm->_dialogs->show(0x5142);
-	} else if (_action.isAction(0x3, 0x16F)) {
+	} else if (_action.isAction(VERB_LOOK, 0x16F)) {
 		_vm->_dialogs->show(0x5143);
-	} else if (_action.isAction(0x3, 0x129)) {
+	} else if (_action.isAction(VERB_LOOK, 0x129)) {
 		_vm->_dialogs->show(0x5144);
-	} else if (_action.isAction(0x3, 0x1A1)) {
+	} else if (_action.isAction(VERB_LOOK, 0x1A1)) {
 		_vm->_dialogs->show(0x5145);
-	} else if (_action.isAction(0x4, 0x1A1)) {
+	} else if (_action.isAction(VERB_TAKE, 0x1A1)) {
 		_vm->_dialogs->show(0x5146);
-	} else if (_action.isAction(0x3, 0x9B)) {
+	} else if (_action.isAction(VERB_LOOK, 0x9B)) {
 		_vm->_dialogs->show(0x5147);
-	} else if (_action.isAction(0x3, 0x19E)) {
+	} else if (_action.isAction(VERB_LOOK, 0x19E)) {
 		_vm->_dialogs->show(0x5148);
-	} else if (_action.isAction(0x3, 0x1AA)) {
+	} else if (_action.isAction(VERB_LOOK, 0x1AA)) {
 		_vm->_dialogs->show(0x5149);
-	} else if (_action.isAction(0x3, 0x1A9)) {
+	} else if (_action.isAction(VERB_LOOK, 0x1A9)) {
 		if (_game._difficulty == DIFFICULTY_IMPOSSIBLE)
 			_vm->_dialogs->show(0x514A);
 		else
 			_vm->_dialogs->show(0x514B);
-	} else if (_action.isAction(0x3, 0x174) || _action.isAction(0x3, 0x175)) {
+	} else if (_action.isAction(VERB_LOOK, 0x174) || _action.isAction(VERB_LOOK, 0x175)) {
 		_vm->_dialogs->show(0x514D);
-	} else if (_action.isAction(0x4, 0x1A9)) {
+	} else if (_action.isAction(VERB_TAKE, 0x1A9)) {
 		_vm->_dialogs->show(0x514E);
-	} else if (_action.isAction(0x3, 0x1A8)) {
+	} else if (_action.isAction(VERB_LOOK, 0x1A8)) {
 		_vm->_dialogs->show(0x514F);
-	} else if (_action.isAction(0x4, 0x1A8) || _action.isAction(0xA, 0x1A8)) {
+	} else if (_action.isAction(VERB_TAKE, 0x1A8) || _action.isAction(0xA, 0x1A8)) {
 		_vm->_dialogs->show(0x5150);
 	} else if (_action._savedFields._lookFlag == 0) {
 		return;
