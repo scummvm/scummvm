@@ -1531,21 +1531,22 @@ void Scene208::preActions() {
 }
 
 void Scene208::subAction(int mode) {
-	int nextTrigger;
 
 	switch (_game._trigger) {
-	case 0:
+	case 0: {
 		_game._player._stepEnabled = false;
 		_game._player._visible   = false;
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
 		_scene->_sequences.setMsgLayout(_globals._spriteIndexes[20]);
 
+		int nextTrigger;
 		if ((mode == 1) || (mode == 2))
 			nextTrigger = 1;
 		else
 			nextTrigger = 2;
 
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[20], SM_0, 0, nextTrigger);
+		}
 		break;
 
 	case 1: {
@@ -1601,7 +1602,7 @@ void Scene208::subAction(int mode) {
 		break;
 
 	case 3:
-		_game._player._visible   = true;
+		_game._player._visible = true;
 		_game._player._stepEnabled = true;
 		break;
 	}
