@@ -52,6 +52,8 @@ ProtectionResult GameNebular::checkCopyProtection() {
 	dlg->show();
 	delete dlg;
 	*/
+	// Debug
+	_vm->_dialogs->show(1);
 
 	// DEBUG: Return that copy protection failed
 	return PROTECTION_SUCCEED;

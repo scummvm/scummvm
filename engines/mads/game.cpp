@@ -21,7 +21,9 @@
  */
 
 #include "common/scummsys.h"
+#include "common/memstream.h"
 #include "mads/mads.h"
+#include "mads/compression.h"
 #include "mads/game.h"
 #include "mads/game_data.h"
 #include "mads/events.h"
@@ -327,6 +329,53 @@ void Game::loadQuotes() {
 	}
 
 	f.close();
+}
+
+Common::StringArray Game::getMessage(uint32 id) {
+	File f("*MESSAGES.DAT");
+	int count = f.readUint16LE();
+
+	for (int idx = 0; idx < count; ++idx) {
+		uint32 itemId = f.readUint32LE();
+		uint32 offset = f.readUint32LE();
+		uint16 size = f.readUint16LE();
+
+		if (itemId == id) {
+			// Get the source buffer size
+			uint16 sizeIn;
+			if (idx == (count - 1)) {
+				sizeIn = f.size() - offset;
+			} else {
+				f.skip(4);
+				uint32 nextOffset = f.readUint32LE();
+				sizeIn = nextOffset - offset;
+			}
+
+			// Get the compressed data
+			f.seek(offset);
+			byte *bufferIn = new byte[sizeIn];
+			f.read(bufferIn, sizeIn);
+
+			// Decompress it
+			char *bufferOut = new char[size];
+			FabDecompressor fab;
+			fab.decompress(bufferIn, sizeIn, (byte *)bufferOut, size);
+
+			// Form the output string list
+			Common::StringArray result;
+			const char *p = bufferOut;
+			while (p < (bufferOut + size)) {
+				result.push_back(p);
+				p += strlen(p) + 1;
+			}
+
+			delete[] bufferIn;
+			delete[] bufferOut;
+			return result;
+		}
+	}
+
+	error("Invalid message Id specified");
 }
 
 } // End of namespace MADS

@@ -150,6 +150,7 @@ public:
 
 	uint32 getQuotesSize() { return _quotes.size(); }
 	const Common::String &getQuote(uint32 index) { return _quotes[index - 1]; }
+	Common::StringArray getMessage(uint32 id);
 
 	/**
 	* Standard object handling across the game

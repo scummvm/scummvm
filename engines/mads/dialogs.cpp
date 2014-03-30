@@ -342,7 +342,8 @@ Dialogs::Dialogs(MADSEngine *vm): _vm(vm) {
 }
 
 void Dialogs::show(int msgId) {
-
+	Common::StringArray msg = _vm->_game->getMessage(msgId);
+	warning("%s\n", msg[0].c_str());
 }
 
 } // End of namespace MADS
