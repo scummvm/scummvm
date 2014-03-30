@@ -98,6 +98,17 @@ public:
 	void draw(const Mesh *mesh) const;
 	void changeMaterial(Material *material);
 
+	bool hasTexture() const { return _texVertices != nullptr; }
+
+	const Math::Vector3d &getNormal() const { return _normal; }
+	void setNormal(const Math::Vector3d &normal) { _normal = normal; }
+	const Material *getMaterial() const { return _material; }
+	int getNumVertices() const { return _numVertices; }
+	int getVertex(int i) const { return _vertices[i]; }
+	int getTextureVertex(int i) const { return _texVertices[i]; }
+	int getLight() const { return _light; }
+
+private:
 	Material *_material;
 	int _type, _geo, _light, _tex;
 	float _extraLight;
@@ -105,6 +116,7 @@ public:
 	int *_vertices, *_texVertices;
 	Math::Vector3d _normal;
 
+public:
 	void *_userData;
 };
 

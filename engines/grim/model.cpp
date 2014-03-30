@@ -525,7 +525,7 @@ void Mesh::loadText(TextSplitter *ts, Material *materials[]) {
 		int num;
 		float x, y, z;
 		ts->scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
-		_faces[num]._normal = Math::Vector3d(x, y, z);
+		_faces[num].setNormal(Math::Vector3d(x, y, z));
 	}
 	sortFaces();
 }
@@ -545,7 +545,7 @@ void Mesh::sortFaces() {
 			continue;
 
 		for (int other = cur; other < _numFaces; ++other) {
-			if (_faces[cur]._material == _faces[other]._material && !copied[other]) {
+			if (_faces[cur].getMaterial() == _faces[other].getMaterial() && !copied[other]) {
 				copied[other] = true;
 				newFaces[writeIdx] = _faces[other];
 				newMaterialid[writeIdx] = _materialid[other];

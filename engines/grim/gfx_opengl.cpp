@@ -328,7 +328,7 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 		Math::Vector3d v;
 		float *pVertices;
 
-		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
+		for (int j = 0; j < model->_faces[i].getNumVertices(); j++) {
 			GLdouble modelView[16], projection[16];
 			GLint viewPort[4];
 
@@ -336,7 +336,7 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 			glGetDoublev(GL_PROJECTION_MATRIX, projection);
 			glGetIntegerv(GL_VIEWPORT, viewPort);
 
-			pVertices = model->_vertices + 3 * model->_faces[i]._vertices[j];
+			pVertices = model->_vertices + 3 * model->_faces[i].getVertex(j);
 
 			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
@@ -657,15 +657,15 @@ void GfxOpenGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 	float *textureVerts = mesh->_textureVerts;
 	glAlphaFunc(GL_GREATER, 0.5);
 	glEnable(GL_ALPHA_TEST);
-	glNormal3fv(face->_normal.getData());
+	glNormal3fv(face->getNormal().getData());
 	glBegin(GL_POLYGON);
-	for (int i = 0; i < face->_numVertices; i++) {
-		glNormal3fv(vertNormals + 3 * face->_vertices[i]);
+	for (int i = 0; i < face->getNumVertices(); i++) {
+		glNormal3fv(vertNormals + 3 * face->getVertex(i));
 
-		if (face->_texVertices)
-			glTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
+		if (face->hasTexture())
+			glTexCoord2fv(textureVerts + 2 * face->getTextureVertex(i));
 
-		glVertex3fv(vertices + 3 * face->_vertices[i]);
+		glVertex3fv(vertices + 3 * face->getVertex(i));
 	}
 	glEnd();
 	// Done with transparency-capable objects

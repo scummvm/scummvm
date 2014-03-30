@@ -445,7 +445,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 		Math::Vector3d v;
 		float *pVertices;
 
-		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
+		for (int j = 0; j < model->_faces[i].getNumVertices(); j++) {
 			TGLfloat modelView[16], projection[16];
 			TGLint viewPort[4];
 
@@ -453,7 +453,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 			tglGetFloatv(TGL_PROJECTION_MATRIX, projection);
 			tglGetIntegerv(TGL_VIEWPORT, viewPort);
 
-			pVertices = model->_vertices + 3 * model->_faces[i]._vertices[j];
+			pVertices = model->_vertices + 3 * model->_faces[i].getVertex(j);
 
 			v.set(*(pVertices), *(pVertices + 1), *(pVertices + 2));
 
@@ -782,15 +782,15 @@ void GfxTinyGL::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 	float *vertices = mesh->_vertices;
 	float *vertNormals = mesh->_vertNormals;
 	float *textureVerts = mesh->_textureVerts;
-	tglNormal3fv(const_cast<float *>(face->_normal.getData()));
+	tglNormal3fv(const_cast<float *>(face->getNormal().getData()));
 	tglBegin(TGL_POLYGON);
-	for (int i = 0; i < face->_numVertices; i++) {
-		tglNormal3fv(vertNormals + 3 * face->_vertices[i]);
+	for (int i = 0; i < face->getNumVertices(); i++) {
+		tglNormal3fv(vertNormals + 3 * face->getVertex(i));
 
-		if (face->_texVertices)
-			tglTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
+		if (face->hasTexture())
+			tglTexCoord2fv(textureVerts + 2 * face->getTextureVertex(i));
 
-		tglVertex3fv(vertices + 3 * face->_vertices[i]);
+		tglVertex3fv(vertices + 3 * face->getVertex(i));
 	}
 	tglEnd();
 }

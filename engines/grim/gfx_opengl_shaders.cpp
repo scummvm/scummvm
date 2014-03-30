@@ -735,29 +735,29 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 	actorShader->use();
 	actorShader->setUniform("extraMatrix", _matrixStack.top());
 
-	Material *curMaterial = NULL;
+	const Material *curMaterial = NULL;
 	for (int i = 0; i < mesh->_numFaces;) {
 		const MeshFace *face = &mesh->_faces[i];
-		if (face->_light == 0 && !isShadowModeActive())
+		if (face->getLight() == 0 && !isShadowModeActive())
 			disableLights();
 
-		curMaterial = face->_material;
+		curMaterial = face->getMaterial();
 		curMaterial->select();
 
 		int faces = 0;
 		for (; i < mesh->_numFaces; ++i) {
-			if (mesh->_faces[i]._material != curMaterial)
+			if (mesh->_faces[i].getMaterial() != curMaterial)
 				break;
-			faces += 3 * (mesh->_faces[i]._numVertices - 2);
+			faces += 3 * (mesh->_faces[i].getNumVertices() - 2);
 		}
 
-		bool textured = face->_texVertices && ! _currentShadowArray;
+		bool textured = face->hasTexture() && !_currentShadowArray;
 		actorShader->setUniform("textured", textured ? GL_TRUE : GL_FALSE);
 		actorShader->setUniform("texScale", Math::Vector2d(_selectedTexture->_width, _selectedTexture->_height));
 
 		glDrawArrays(GL_TRIANGLES, *(int *)face->_userData, faces);
 
-		if (face->_light == 0 && !isShadowModeActive())
+		if (face->getLight() == 0 && !isShadowModeActive())
 			enableLights();
 	}
 }
@@ -1673,14 +1673,14 @@ void GfxOpenGLS::createModel(Mesh *mesh) {
 		face->_userData = new uint32;
 		*(uint32 *)face->_userData = meshInfo.size();
 
-		if (face->_numVertices < 3)
+		if (face->getNumVertices() < 3)
 			continue;
 
-#define VERT(j) (&mesh->_vertices[3*face->_vertices[j]])
-#define TEXVERT(j) (face->_texVertices ? &mesh->_textureVerts[2*face->_texVertices[j]] : zero_texVerts)
-#define NORMAL(j) (&mesh->_vertNormals[3*face->_vertices[j]])
+#define VERT(j) (&mesh->_vertices[3 * face->getVertex(j)])
+#define TEXVERT(j) (face->hasTexture() ? &mesh->_textureVerts[2 * face->getTextureVertex(j)] : zero_texVerts)
+#define NORMAL(j) (&mesh->_vertNormals[3 * face->getVertex(j)])
 
-		for (int j = 2; j < face->_numVertices; ++j) {
+		for (int j = 2; j < face->getNumVertices(); ++j) {
 			meshInfo.push_back(GrimVertex(VERT(0), TEXVERT(0), NORMAL(0)));
 			meshInfo.push_back(GrimVertex(VERT(j-1), TEXVERT(j-1), NORMAL(j-1)));
 			meshInfo.push_back(GrimVertex(VERT(j), TEXVERT(j), NORMAL(j)));
