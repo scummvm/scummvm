@@ -310,6 +310,17 @@ MeshFace::~MeshFace() {
 	delete[] _texVertices;
 }
 
+void MeshFace::operator=(const MeshFace &other) {
+	memcpy(this, &other, sizeof(MeshFace));
+	_numVertices = other._numVertices;
+	_vertices = new int[_numVertices];
+	memcpy(_vertices, other._vertices, _numVertices * sizeof(int));
+	if (_texVertices) {
+		_texVertices = new int[_numVertices];
+		memcpy(_texVertices, other._texVertices, _numVertices * sizeof(int));
+	}
+}
+
 int MeshFace::loadBinary(Common::SeekableReadStream *data, Material *materials[]) {
 	char v3[4 * 3], f[4];
 	data->seek(4, SEEK_CUR);
@@ -519,17 +530,6 @@ void Mesh::loadText(TextSplitter *ts, Material *materials[]) {
 	sortFaces();
 }
 
-static void copyMeshFace(MeshFace *to, const MeshFace *from) {
-	memcpy(to, from, sizeof(MeshFace));
-	int verts = from->_numVertices;
-	to->_vertices = new int[verts];
-	memcpy(to->_vertices, from->_vertices, verts * sizeof(int));
-	if (from->_texVertices) {
-		to->_texVertices = new int[verts];
-		memcpy(to->_texVertices, from->_texVertices, verts * sizeof(int));
-	}
-}
-
 void Mesh::sortFaces() {
 	if (_numFaces < 2)
 		return;
@@ -547,7 +547,7 @@ void Mesh::sortFaces() {
 		for (int other = cur; other < _numFaces; ++other) {
 			if (_faces[cur]._material == _faces[other]._material && !copied[other]) {
 				copied[other] = true;
-				copyMeshFace(&newFaces[writeIdx], &_faces[other]);
+				newFaces[writeIdx] = _faces[other];
 				newMaterialid[writeIdx] = _materialid[other];
 				writeIdx++;
 			}
