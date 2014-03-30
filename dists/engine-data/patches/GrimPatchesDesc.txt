@@ -191,6 +191,10 @@ List of fixed bugs in GF scripts:
 	the key '2' which means "play and endpause". This patch adds a 'manny:stop_chore' call after the chore has
 	done.
 
+	Fix Manny's walking backwards animation - ma_back_off.key.patchr
+	The animation has 16 frames, but the 16th frame looks the same at the 15th one so we just say that it only
+	has 15 frames.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
