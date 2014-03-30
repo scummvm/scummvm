@@ -90,10 +90,12 @@ public:
 
 class MeshFace {
 public:
+	MeshFace();
+	~MeshFace();
 	int loadBinary(Common::SeekableReadStream *data, Material *materials[]);
+	int loadText(TextSplitter *ts, Material *materials[], int offset);
 	void draw(const Mesh *mesh) const;
 	void changeMaterial(Material *material);
-	~MeshFace();
 
 	Material *_material;
 	int _type, _geo, _light, _tex;

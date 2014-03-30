@@ -299,6 +299,12 @@ void Model::Geoset::changeMaterials(Material *materials[]) {
 /**
  * @class MeshFace
  */
+MeshFace::MeshFace() :
+		_material(nullptr), _type(0), _geo(0), _light(0), _tex(0),
+		_extraLight(0), _numVertices(0), _vertices(nullptr),
+		_texVertices(nullptr), _userData(nullptr) {
+}
+
 MeshFace::~MeshFace() {
 	delete[] _vertices;
 	delete[] _texVertices;
@@ -323,22 +329,47 @@ int MeshFace::loadBinary(Common::SeekableReadStream *data, Material *materials[]
 	_normal = Math::Vector3d::get_vector3d(v3);
 
 	_vertices = new int[_numVertices];
-	for (int i = 0; i < _numVertices; i++)
+	for (int i = 0; i < _numVertices; i++) {
 		_vertices[i] = data->readUint32LE();
-	if (texPtr == 0)
-		_texVertices = NULL;
-	else {
-		_texVertices = new int[_numVertices];
-		for (int i = 0; i < _numVertices; i++)
-			_texVertices[i] = data->readUint32LE();
 	}
-	if (materialPtr == 0)
-		_material = 0;
-	else {
+
+	if (texPtr != 0) {
+		_texVertices = new int[_numVertices];
+		for (int i = 0; i < _numVertices; i++) {
+			_texVertices[i] = data->readUint32LE();
+		}
+	}
+
+	if (materialPtr != 0) {
 		materialPtr = data->readUint32LE();
 		_material = materials[materialPtr];
 	}
+
 	return materialPtr;
+}
+
+int MeshFace::loadText(TextSplitter *ts, Material *materials[], int offset) {
+	int readlen, materialid;
+
+	if (ts->isEof())
+		error("Expected face data, got EOF");
+
+	ts->scanStringAtOffsetNoNewLine(offset, "%d %x %d %d %d %f %d%n", 7, &materialid, &_type, &_geo, &_light, &_tex, &_extraLight, &_numVertices, &readlen);
+	readlen += offset;
+
+	assert(materialid != -1);
+	_material = materials[materialid];
+	_vertices = new int[_numVertices];
+	_texVertices = new int[_numVertices];
+	for (int i = 0; i < _numVertices; ++i) {
+		int readlen2;
+
+		ts->scanStringAtOffsetNoNewLine(readlen, " %d, %d%n", 2, &_vertices[i], &_texVertices[i], &readlen2);
+		readlen += readlen2;
+	}
+	ts->nextLine();
+
+	return materialid;
 }
 
 void MeshFace::changeMaterial(Material *material) {
@@ -473,34 +504,9 @@ void Mesh::loadText(TextSplitter *ts, Material *materials[]) {
 	_faces = new MeshFace[_numFaces];
 	_materialid = new int[_numFaces];
 	for (int i = 0; i < _numFaces; i++) {
-		int num, materialid, geo, light, tex, verts;
-		unsigned int type;
-		float extralight;
-		int readlen;
-
-		if (ts->isEof())
-			error("Expected face data, got EOF");
-
-		ts->scanStringNoNewLine(" %d: %d %x %d %d %d %f %d%n", 8, &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen);
-
-		assert(materialid != -1);
-		_materialid[num] = materialid;
-		_faces[num]._material = materials[materialid];
-		_faces[num]._type = (int)type;
-		_faces[num]._geo = geo;
-		_faces[num]._light = light;
-		_faces[num]._tex = tex;
-		_faces[num]._extraLight = extralight;
-		_faces[num]._numVertices = verts;
-		_faces[num]._vertices = new int[verts];
-		_faces[num]._texVertices = new int[verts];
-		for (int j = 0; j < verts; j++) {
-			int readlen2;
-
-			ts->scanStringAtOffsetNoNewLine(readlen, " %d, %d%n", 2, &_faces[num]._vertices[j], &_faces[num]._texVertices[j], &readlen2);
-			readlen += readlen2;
-		}
-		ts->nextLine();
+		int num, readlen;
+		ts->scanStringNoNewLine(" %d:%n ", 1, &num, &readlen);
+		_materialid[num] = _faces[num].loadText(ts, materials, readlen);
 	}
 
 	ts->expectString("face normals");
