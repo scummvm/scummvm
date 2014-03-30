@@ -231,6 +231,40 @@ bool sceneHandler29_sub15(StaticANIObject *ani, int maxx) {
 		return true;
 }
 
+bool sceneHandler29_sub16(StaticANIObject *ani, int maxx) {
+	if (!g_vars->scene29_var10 || g_vars->scene29_var15)
+		return false;
+
+	if (ani->_ox >= g_vars->scene29_var20 + 40) {
+		if (maxx > g_vars->scene29_var20 + 27)
+			return false;
+	} else {
+		if (ani->_ox <= g_vars->scene29_var20 + 10) {
+			if (ani->_ox < g_vars->scene29_var20 + 40)
+				return false;
+
+			if (maxx > g_vars->scene29_var20 + 27)
+				return false;
+		}
+	}
+
+	if (!g_fp->_aniMan->_movement)
+		return true;
+
+	if (g_fp->_aniMan->_movement->_id == MV_MAN29_JUMP)
+		return true;
+
+	if (g_fp->_aniMan->_movement->_id == MV_MAN29_RUN)
+		return true;
+
+	if (g_fp->_aniMan->_movement->_id == MV_MAN29_BEND) {
+		if (g_fp->_aniMan->_movement->_currDynamicPhaseIndex < 1 || g_fp->_aniMan->_movement->_currDynamicPhaseIndex > 5)
+			return true;
+	}
+
+	return false;
+}
+
 void sceneHandler29_sub03() {
 	warning("STUB: sceneHandler29_sub03()");
 }
