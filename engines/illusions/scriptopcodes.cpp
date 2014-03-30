@@ -102,7 +102,9 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(30, opEnterCloseUpScene);
 	OPCODE(31, opExitCloseUpScene);
 	OPCODE(32, opPanCenterObject);
+	OPCODE(34, opPanToObject);
 	OPCODE(35, opPanToNamedPoint);
+	OPCODE(36, opPanToPoint);
 	OPCODE(37, opPanStop);
 	OPCODE(39, opSetDisplay);
 	OPCODE(42, opIncBlockCounter);
@@ -137,6 +139,9 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(87, opDeactivateButton);
 	OPCODE(88, opActivateButton);
 	OPCODE(103, opJumpIf);
+	OPCODE(104, opIsPrevSceneId);
+	OPCODE(105, opIsCurrentSceneId);
+	OPCODE(106, opIsActiveSceneId);
 	OPCODE(107, opNot);
 	OPCODE(108, opAnd);
 	OPCODE(109, opOr);
@@ -156,6 +161,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(176, opStackPush0);
 	OPCODE(177, opSetFontId);
 	OPCODE(178, opAddMenuKey);
+	OPCODE(179, opChangeSceneAll);
 }
 
 #undef OPCODE
@@ -248,17 +254,30 @@ void ScriptOpcodes::opEnterScene(ScriptThread *scriptThread, OpCall &opCall) {
 	uint scenesCount = _vm->_scriptMan->_activeScenes.getActiveScenesCount();
 	if (scenesCount > 0) {
 		uint32 currSceneId;
-		_vm->_scriptMan->_activeScenes.getActiveSceneInfo(scenesCount - 1, &currSceneId, 0);
+		_vm->_scriptMan->_activeScenes.getActiveSceneInfo(scenesCount, &currSceneId, 0);
 		// TODO krnfileDump(currSceneId);
 	}
 	if (!_vm->_scriptMan->enterScene(sceneId, opCall._callerThreadId))
 		opCall._result = kTSTerminate;
 }
 
+//DEBUG Scenes
+uint32 dsceneId = 0x00010031, dthreadId = 0x00020036;//MAP
+//uint32 dsceneId = 0x00010028, dthreadId = 0x000202A1;
+//uint32 dsceneId = 0x00010007, dthreadId = 0x0002000C;//Auditorium
+//uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
+
 void ScriptOpcodes::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
+	
+	if (dsceneId) {
+		sceneId = dsceneId;
+		threadId = dthreadId;
+		dsceneId = 0;
+	}
+	
 	// NOTE Skipped checking for stalled resources
 	_vm->_input->discardButtons(0xFFFF);
 	_vm->_scriptMan->_prevSceneId = _vm->getCurrentScene();
@@ -312,11 +331,26 @@ void ScriptOpcodes::opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall
 	_vm->_camera->panCenterObject(objectId, speed);
 }
 
+void ScriptOpcodes::opPanToObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(speed);	
+	ARG_UINT32(objectId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	Common::Point pos = control->getActorPosition();
+	_vm->_camera->panToPoint(pos, speed, opCall._callerThreadId);
+}
+
 void ScriptOpcodes::opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(speed);	
 	ARG_UINT32(namedPointId);
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
 	_vm->_camera->panToPoint(pos, speed, opCall._callerThreadId);
+}
+
+void ScriptOpcodes::opPanToPoint(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(speed);	
+	ARG_INT16(x);	
+	ARG_INT16(y);	
+	_vm->_camera->panToPoint(Common::Point(x, y), speed, opCall._callerThreadId);
 }
 
 void ScriptOpcodes::opPanStop(ScriptThread *scriptThread, OpCall &opCall) {
@@ -586,6 +620,21 @@ void ScriptOpcodes::opJumpIf(ScriptThread *scriptThread, OpCall &opCall) {
 		opCall._deltaOfs += jumpOffs;
 }
 
+void ScriptOpcodes::opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_UINT32(sceneId);
+	_vm->_scriptMan->_stack.push(_vm->_scriptMan->_prevSceneId == sceneId ? 1 : 0);
+}
+
+void ScriptOpcodes::opIsCurrentSceneId(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_UINT32(sceneId);
+	_vm->_scriptMan->_stack.push(_vm->getCurrentScene() == sceneId ? 1 : 0);
+}
+
+void ScriptOpcodes::opIsActiveSceneId(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_UINT32(sceneId);
+	_vm->_scriptMan->_stack.push(_vm->_scriptMan->_activeScenes.isSceneActive(sceneId) ? 1 : 0);
+}
+
 void ScriptOpcodes::opNot(ScriptThread *scriptThread, OpCall &opCall) {
 	int16 value = _vm->_scriptMan->_stack.pop();
 	_vm->_scriptMan->_stack.push(value != 0 ? 0 : 1);
@@ -729,6 +778,20 @@ void ScriptOpcodes::opAddMenuKey(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_UINT32(key);
 	ARG_UINT32(threadId);
 	// TODO _vm->addMenuKey(key, threadId);
+}
+
+void ScriptOpcodes::opChangeSceneAll(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(sceneId);
+	ARG_UINT32(threadId);
+	// NOTE Skipped checking for stalled resources
+	_vm->_input->discardButtons(0xFFFF);
+	_vm->_scriptMan->_prevSceneId = _vm->getCurrentScene();
+	_vm->_scriptMan->dumpActiveScenes(_vm->_scriptMan->_globalSceneId, opCall._callerThreadId);
+	_vm->_scriptMan->enterScene(sceneId, opCall._callerThreadId);
+	// TODO _vm->_gameStates->writeStates(_vm->_scriptMan->_prevSceneId, sceneId, threadId);
+	_vm->_scriptMan->startAnonScriptThread(threadId, 0,
+		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 }
 
 } // End of namespace Illusions

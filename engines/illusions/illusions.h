@@ -59,6 +59,7 @@ class Control;
 class Controls;
 class Cursor;
 class Dictionary;
+class FramesList;
 class Input;
 class Screen;
 class ScriptResource;
@@ -66,7 +67,10 @@ class ScriptMan;
 class Sequence;
 class SpecialCode;
 class TalkItems;
-class FramesList;
+class TriggerFunctions;
+class TriggerFunction;
+
+typedef Common::Functor2<TriggerFunction*, uint32, void> TriggerFunctionCallback;
 
 class IllusionsEngine : public Engine {
 protected:
@@ -97,6 +101,7 @@ public:
 	Cursor *_cursor;
 	TalkItems *_talkItems;
 	SpecialCode *_specialCode;
+	TriggerFunctions *_triggerFunctions;
 	
 	int _resGetCtr;
 	uint32 _resGetTime;
@@ -115,6 +120,7 @@ public:
 
 	// TODO Move to ScriptMan?
 	bool causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
+	void causeDeclare(uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
 	uint32 causeTrigger(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 callingThreadId);
 
 	int convertPanXCoord(int16 x);

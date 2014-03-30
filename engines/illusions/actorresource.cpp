@@ -140,7 +140,7 @@ void ActorType::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		_pathWalkPointsIndex, _scaleLayerIndex, _pathWalkRectIndex);
 	debug(5, "ActorType::load() _priorityLayerIndex: %d; _regionLayerIndex: %d; _flags: %04X",
 		_priorityLayerIndex, _regionLayerIndex,_flags);
-
+		
 }
 
 // ActorResource

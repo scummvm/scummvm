@@ -78,7 +78,7 @@ void TalkEntry::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_tblPtr = dataStart + tblOffs;
 	_voiceName = dataStart + voiceNameOffs;
 	
-	debug("TalkEntry::load() _talkId: %08X; textOffs: %08X; tblOffs: %08X; voiceNameOffs: %08X",
+	debug(0, "TalkEntry::load() _talkId: %08X; textOffs: %08X; tblOffs: %08X; voiceNameOffs: %08X",
 		_talkId, textOffs, tblOffs, voiceNameOffs);
 }
 

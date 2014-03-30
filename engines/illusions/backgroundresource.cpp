@@ -66,6 +66,7 @@ void BackgroundResourceLoader::unload(Resource *resource) {
 	delete backgroundItem->_bgRes;
 	_vm->_backgroundItems->freeBackgroundItem(backgroundItem);
 	// TODO _vm->setDefPointDimensions1();
+	debug("BackgroundResourceLoader::unload() Unloading background %08X OK", resource->_resId);
 }
 
 void BackgroundResourceLoader::buildFilename(Resource *resource) {
@@ -272,11 +273,12 @@ void BackgroundItem::initSurface() {
 }
 
 void BackgroundItem::freeSurface() {
-	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i) {
-		_surfaces[i]->free();
-		delete _surfaces[i];
-		_surfaces[i] = 0;
-	}
+	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i)
+		if (_surfaces[i]) {
+			_surfaces[i]->free();
+			delete _surfaces[i];
+			_surfaces[i] = 0;
+		}
 }
 
 void BackgroundItem::drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {

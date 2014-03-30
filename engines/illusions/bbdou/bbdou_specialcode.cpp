@@ -92,6 +92,8 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x00160008, spcEnableCursor);
 	SPECIAL(0x00160009, spcDisableCursor);
 	SPECIAL(0x0016000A, spcAddCursorSequence);
+	SPECIAL(0x0016000B, spcCursorStartHoldingObjectId);
+	SPECIAL(0x0016000C, spcCursorStopHoldingObjectId);
 	SPECIAL(0x00160013, spcInitBubble);
 	SPECIAL(0x00160014, spcSetupBubble);
 	SPECIAL(0x00160015, spcSetObjectInteractMode);
@@ -100,6 +102,7 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x0016001B, spcRegisterInventoryItem);
 	SPECIAL(0x0016001C, spcOpenInventory);
 	SPECIAL(0x0016001D, spcAddInventoryItem);
+	SPECIAL(0x0016001E, spcRemoveInventoryItem);
 	SPECIAL(0x00160025, spcCloseInventory);
 }
 
@@ -145,6 +148,22 @@ void BbdouSpecialCode::spcAddCursorSequence(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	ARG_UINT32(sequenceId);
 	_cursor->addCursorSequence(objectId, sequenceId);
+	_vm->notifyThreadId(opCall._callerThreadId);
+}
+
+void BbdouSpecialCode::spcCursorStartHoldingObjectId(OpCall &opCall) {
+	ARG_UINT32(objectId);
+	ARG_UINT32(holdingObjectId);
+	ARG_INT16(doPlaySound);
+	startHoldingObjectId(objectId, holdingObjectId, doPlaySound != 0);
+	_vm->notifyThreadId(opCall._callerThreadId);
+}
+
+void BbdouSpecialCode::spcCursorStopHoldingObjectId(OpCall &opCall) {
+	ARG_UINT32(objectId);
+	ARG_INT16(doPlaySound);
+	stopHoldingObjectId(objectId, doPlaySound != 0);
+	_cursor->_data._mode = 1;
 	_vm->notifyThreadId(opCall._callerThreadId);
 }
 
@@ -194,8 +213,12 @@ void BbdouSpecialCode::spcOpenInventory(OpCall &opCall) {
 
 void BbdouSpecialCode::spcAddInventoryItem(OpCall &opCall) {
 	ARG_UINT32(objectId);
-debug("### spcAddInventoryItem %08X", objectId);
 	_inventory->addInventoryItem(objectId);
+}
+
+void BbdouSpecialCode::spcRemoveInventoryItem(OpCall &opCall) {
+	ARG_UINT32(objectId);
+	_inventory->removeInventoryItem(objectId);
 }
 
 void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
@@ -531,7 +554,7 @@ bool BbdouSpecialCode::getCause(uint32 sceneId, uint32 verbId, uint32 objectId2,
 	}
 
 	if (success) {
-		debug("getCause() -> %08X %08X %08X", outVerbId, outObjectId2, outObjectId);
+		//debug("getCause() -> %08X %08X %08X", outVerbId, outObjectId2, outObjectId);
 	}
 
 	return success;
@@ -539,7 +562,7 @@ bool BbdouSpecialCode::getCause(uint32 sceneId, uint32 verbId, uint32 objectId2,
 
 bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
 	uint32 verbId, uint32 objectId2, uint32 objectId, int soundIndex) {
-	debug("runCause(%08X, %08X, %08X)", verbId, objectId2, objectId);
+	//debug("runCause(%08X, %08X, %08X)", verbId, objectId2, objectId);
 	uint32 sceneId = _vm->getCurrentScene();
 	uint32 outVerbId, outObjectId2, outObjectId;
 	bool success = false;
@@ -582,6 +605,37 @@ uint32 BbdouSpecialCode::startCauseThread(uint32 cursorObjectId, uint32 sceneId,
 	_vm->_scriptMan->_threads->startThread(causeThread);
 	causeThread->suspend();
 	return tempThreadId;
+}
+
+void BbdouSpecialCode::startHoldingObjectId(uint32 objectId1, uint32 holdingObjectId, bool doPlaySound) {
+	Control *control = _vm->_dict->getObjectControl(objectId1);
+	if (_cursor->_data._holdingObjectId)
+		_inventory->putBackInventoryItem(_cursor->_data._holdingObjectId, control->_actor->_position);
+	_cursor->_data._holdingObjectId = holdingObjectId;
+	_cursor->_data._sequenceId = _cursor->findCursorSequenceId(holdingObjectId);
+	if (_cursor->_data._visibleCtr > 0)
+		_cursor->show(control);
+	_cursor->_data._mode = 2;
+	_cursor->_data._item10._verbId = 0x1B0003;
+	if (!doPlaySound)
+		playSoundEffect(5);
+	_inventory->removeInventoryItem(holdingObjectId);
+}
+
+void BbdouSpecialCode::stopHoldingObjectId(uint32 objectId1, bool doPlaySound) {
+	Control *control = _vm->_dict->getObjectControl(objectId1);
+	uint32 holdingObjectId = _cursor->_data._holdingObjectId;
+	_cursor->_data._holdingObjectId = 0;
+	_cursor->_data._sequenceId = 0x6000F;
+	if (!doPlaySound && holdingObjectId)
+		playSoundEffect(6);
+	if (_cursor->_data._visibleCtr > 0)
+		_cursor->show(control);
+	_cursor->_data._item10._verbId = 0x1B0001;
+	if (_cursor->_data._mode == 3)
+		holdingObjectId = _cursor->_data._holdingObjectId2;
+	if (holdingObjectId)
+		_inventory->putBackInventoryItem(holdingObjectId, control->_actor->_position);
 }
 
 } // End of namespace Illusions

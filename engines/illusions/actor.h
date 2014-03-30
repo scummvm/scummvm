@@ -174,6 +174,8 @@ public:
 	void sequenceActor();
 	void setActorIndexTo1();
 	void setActorIndexTo2();
+	void startSubSequence(int linkIndex, uint32 sequenceId);
+	void stopSubSequence(int linkIndex);
 public:
 	IllusionsEngine *_vm;
 	uint _flags;

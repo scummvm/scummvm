@@ -81,6 +81,8 @@ public:
 	void spcEnableCursor(OpCall &opCall);
 	void spcDisableCursor(OpCall &opCall);
 	void spcAddCursorSequence(OpCall &opCall);
+	void spcCursorStartHoldingObjectId(OpCall &opCall);
+	void spcCursorStopHoldingObjectId(OpCall &opCall);
 	void spcInitBubble(OpCall &opCall);
 	void spcSetupBubble(OpCall &opCall);
 	void spcSetObjectInteractMode(OpCall &opCall);
@@ -89,10 +91,13 @@ public:
 	void spcRegisterInventoryItem(OpCall &opCall);
 	void spcOpenInventory(OpCall &opCall);
 	void spcAddInventoryItem(OpCall &opCall);
+	void spcRemoveInventoryItem(OpCall &opCall);
 	void spcCloseInventory(OpCall &opCall);
 
 	void playSoundEffect(int soundIndex);
 	void resetItem10(uint32 objectId, Item10 *item10);
+	void startHoldingObjectId(uint32 objectId1, uint32 holdingObjectId, bool doPlaySound);
+	void stopHoldingObjectId(uint32 objectId1, bool doPlaySound);
 
 protected:
 	// Internal functions

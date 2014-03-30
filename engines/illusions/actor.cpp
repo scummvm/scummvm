@@ -30,6 +30,8 @@
 #include "illusions/scriptman.h"
 #include "illusions/scriptopcodes.h"
 #include "illusions/sequenceopcodes.h"
+#include "illusions/talkthread.h"
+#include "illusions/thread.h"
 
 namespace Illusions {
 
@@ -641,6 +643,51 @@ void Control::setActorIndexTo2() {
 	_actor->_actorIndex = 2;
 }
 
+void Control::startSubSequence(int linkIndex, uint32 sequenceId) {
+	Control *linkedControl = _vm->_dict->getObjectControl(_actor->_subobjects[linkIndex - 1]);
+	Actor *linkedActor = linkedControl->_actor;
+	if (!linkedActor->_entryTblPtr)
+		linkedActor->_flags &= ~0x80;
+	linkedActor->_flags &= ~0x400;
+	linkedActor->_flags |= 0x100;
+	linkedActor->_sequenceId = sequenceId;
+	linkedActor->_notifyThreadId1 = 0;
+	linkedActor->_notifyId3C = 0;
+	linkedActor->_path40 = 0;
+
+	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
+	linkedActor->_seqCodeIp = sequence->_sequenceCode;
+	linkedActor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
+	linkedActor->_seqCodeValue3 = 0;
+	linkedActor->_seqCodeValue1 = 0;
+	linkedActor->_seqCodeValue2 = 600;
+	linkedActor->initSequenceStack();
+	linkedControl->sequenceActor();
+	linkedControl->appearActor();
+}
+
+void Control::stopSubSequence(int linkIndex) {
+	Control *linkedControl = _vm->_dict->getObjectControl(_actor->_subobjects[linkIndex - 1]);
+	Actor *linkedActor = linkedControl->_actor;
+	uint32 notifySequenceId2 = _actor->_notifyThreadId2;
+	_actor->_linkIndex2 = linkIndex;
+	if (_actor->_entryTblPtr) {
+		linkedActor->_flags |= 0x80;
+		linkedActor->_entryTblPtr = _actor->_entryTblPtr;
+		linkedActor->_notifyThreadId2 = _actor->_notifyThreadId2;
+		linkedActor->_seqCodeValue1 = _actor->_seqCodeValue1;
+		linkedActor->_seqCodeValue3 = _actor->_seqCodeValue3;
+		_actor->_flags &= ~0x80;
+		_actor->_entryTblPtr = 0;
+		_actor->_notifyThreadId1 = 0;
+		_actor->_notifyThreadId2 = 0;
+	}
+	if (notifySequenceId2) {
+		Thread *talkThread = _vm->_scriptMan->_threads->findThread(notifySequenceId2);
+		talkThread->sendMessage(kMsgClearSequenceId2, 0);
+	}
+}
+
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
 
 	stopActor();
@@ -710,6 +757,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	Actor *actor = newActor();
 
 	ActorType *actorType = _vm->_dict->findActorType(actorTypeId);
+	
 	control->_objectId = objectId;
 	control->_flags = actorType->_flags;
 	control->_priority = actorType->_priority;
@@ -718,11 +766,13 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	control->_actor = actor;
 	if (actorTypeId == 0x50001 && objectId == 0x40004)
 		actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Cursor>(_vm->_cursor, &Cursor::cursorControlRoutine));
+		
 	if (actorType->_surfInfo._dimensions._width > 0 || actorType->_surfInfo._dimensions._height > 0) {
 		actor->createSurface(actorType->_surfInfo);
 	} else {
 		actor->_flags |= 0x0200;
 	}
+
 	actor->_position = placePt;
 	actor->_position2 = placePt;
 	Common::Point currPan = _vm->_camera->getCurrentPan();
