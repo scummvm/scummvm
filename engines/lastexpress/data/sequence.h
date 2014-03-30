@@ -147,7 +147,6 @@ private:
 	uint16 _palSize;
 	uint16 *_palette;
 	Common::Rect _rect;
-	bool _ignoreSubtype;
 };
 
 class Sequence {

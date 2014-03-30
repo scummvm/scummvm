@@ -380,7 +380,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	int size;
 
 	assert(height >= 0);
-	assert(slot >= 0 && slot < 4);
+	assert((int)slot >= 0 && (int)slot < 4);
 
 	if (_game.version >= 7) {
 		if (slot == kMainVirtScreen && (_roomHeight != 0))

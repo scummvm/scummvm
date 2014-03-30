@@ -31,7 +31,6 @@ uint8 selectColor = 3;
 uint8 titleColor = 2;
 uint8 subColor = 5;
 
-int16 lowMemory;
 int16 scroll;
 int16 switchPal;
 char cmdLine[90];

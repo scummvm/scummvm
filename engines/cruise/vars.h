@@ -59,7 +59,6 @@ extern uint8 selectColor;
 extern uint8 titleColor;
 extern uint8 subColor;
 
-extern int16 lowMemory;
 extern int16 scroll;
 extern int16 switchPal;
 extern char cmdLine[90];

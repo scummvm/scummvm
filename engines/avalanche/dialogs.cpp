@@ -363,6 +363,7 @@ void Dialogs::scrollModeMusic() {
 					value = 11;
 					break;
 				default:
+					error("cannot happen");
 					break;
 				}
 
