@@ -92,7 +92,7 @@ class MeshFace {
 public:
 	MeshFace();
 	~MeshFace();
-	void operator=(const MeshFace &other);
+	void stealData(MeshFace &other);
 	int loadBinary(Common::SeekableReadStream *data, Material *materials[]);
 	int loadText(TextSplitter *ts, Material *materials[], int offset);
 	void draw(const Mesh *mesh) const;

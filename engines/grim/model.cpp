@@ -310,15 +310,10 @@ MeshFace::~MeshFace() {
 	delete[] _texVertices;
 }
 
-void MeshFace::operator=(const MeshFace &other) {
-	memcpy(this, &other, sizeof(MeshFace));
-	_numVertices = other._numVertices;
-	_vertices = new int[_numVertices];
-	memcpy(_vertices, other._vertices, _numVertices * sizeof(int));
-	if (_texVertices) {
-		_texVertices = new int[_numVertices];
-		memcpy(_texVertices, other._texVertices, _numVertices * sizeof(int));
-	}
+void MeshFace::stealData(MeshFace &other) {
+	*this = other;
+	other._vertices = nullptr;
+	other._texVertices = nullptr;
 }
 
 int MeshFace::loadBinary(Common::SeekableReadStream *data, Material *materials[]) {
@@ -547,7 +542,7 @@ void Mesh::sortFaces() {
 		for (int other = cur; other < _numFaces; ++other) {
 			if (_faces[cur].getMaterial() == _faces[other].getMaterial() && !copied[other]) {
 				copied[other] = true;
-				newFaces[writeIdx] = _faces[other];
+				newFaces[writeIdx].stealData(_faces[other]);
 				newMaterialid[writeIdx] = _materialid[other];
 				writeIdx++;
 			}
