@@ -1447,8 +1447,8 @@ void Scene208::enter() {
 
 	updateTrap();
 
-	_globals._v0 = 0;
-	_globals._frameTime = 0;
+	_rhotundaTurnFl = false;
+	_boundingFl = false;
 	_scene->_kernelMessages._talkFont = _vm->_font->getFont(FONT_INTERFACE);
 	_scene->_textSpacing = 0;
 
@@ -1479,41 +1479,38 @@ void Scene208::enter() {
 }
 
 void Scene208::step() {
-	if ((_globals._frameTime & 0xFFFF)  && ((_globals._frameTime >> 16) <= _scene->_activeAnimation->getCurrentFrame())) {
-		_globals._frameTime = (_globals._frameTime & 0xFFFF) | (_scene->_activeAnimation->getCurrentFrame() << 16);
+	if (_boundingFl  && (_rhotundaTime <= _scene->_activeAnimation->getCurrentFrame())) {
+		_rhotundaTime = _scene->_activeAnimation->getCurrentFrame();
 
-		if (_scene->_activeAnimation->getCurrentFrame() == 125)
+		if (_rhotundaTime == 125)
 			_scene->_sequences.remove(_globals._spriteIndexes[19]);
 	}
 
-	if (_globals._v0 == 0)
+	if (!_rhotundaTurnFl)
 		return;
 
 	if ((_game._player._playerPos != Common::Point(20, 148)) || (_game._player._facing != FACING_EAST))
 		return;
 
-	if ((_game._trigger == 0) && ((_globals._frameTime & 0xFFFF) != 0))
+	if ((_game._trigger == 0) && _boundingFl)
 		return;
 	
-	_globals._frameTime |= 0xFFFF;
+	_boundingFl = true;
 	
-	if (_game._trigger == 82) {
-		_game._player._stepEnabled = true;
-		return;
-	}
-	
-	if (_game._trigger > 82)
-		return;
-	
-	if (_game._trigger & 0xFF) {
-		if ((_game._trigger & 0xFF) == 81) {
-			_scene->_sequences.remove(_globals._spriteIndexes[15]);
-			_globals[kRhotundaStatus] = 1;
-			updateTrap();
-			_scene->_sequences.addTimer(90, 82);
-		}
-	} else {
+	switch (_game._trigger) {
+	case 0:
 		_scene->loadAnimation(formAnimName('A', -1), 81);
+		_rhotundaTime = 0;
+		break;
+	case 81:
+		_scene->_sequences.remove(_globals._spriteIndexes[15]);
+		_globals[kRhotundaStatus] = 1;
+		updateTrap();
+		_scene->_sequences.addTimer(90, 82);
+		break;
+	case 82:
+		_game._player._stepEnabled = true;
+		break;
 	}
 }
 
@@ -1539,16 +1536,15 @@ void Scene208::subAction(int mode) {
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
 		_scene->_sequences.setMsgLayout(_globals._spriteIndexes[20]);
 
-		int nextTrigger;
+		int abortVal;
 		if ((mode == 1) || (mode == 2))
-			nextTrigger = 1;
+			abortVal = 1;
 		else
-			nextTrigger = 2;
+			abortVal = 2;
 
-		_scene->_sequences.addSubEntry(_globals._spriteIndexes[20], SM_0, 0, nextTrigger);
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[20], SM_0, 0, abortVal);
 		}
 		break;
-
 	case 1: {
 		int oldVal = _globals._spriteIndexes[20];
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 12, 3, 0, 0);
@@ -1559,7 +1555,6 @@ void Scene208::subAction(int mode) {
 		_vm->_sound->command(20);
 		}
 		break;
-
 	case 2: {
 		switch (mode) {
 		case 1:
@@ -1567,25 +1562,21 @@ void Scene208::subAction(int mode) {
 			_scene->_sequences.remove(_globals._spriteIndexes[17]);
 			_globals[kLeavesStatus] = 1;
 			break;
-
 		case 2:
 			_game._objects.setRoom(6, 1);
 			_globals[kLeavesStatus] = 2;
 			updateTrap();
 			break;
-
 		case 3:
 			_scene->_sequences.remove(_globals._spriteIndexes[18]);
 			_globals._spriteIndexes[19] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_game._objects.removeFromInventory(10, 1);
 			_vm->_sound->command(34);
 			break;
-
 		case 4:
 			_game._objects.removeFromInventory(1, 1);
 			_vm->_sound->command(33);
 			break;
-
 		case 5:
 			_game._objects.removeFromInventory(2, 1);
 			_vm->_sound->command(33);
@@ -1600,7 +1591,6 @@ void Scene208::subAction(int mode) {
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[20], SM_0, 0, 3);
 		}
 		break;
-
 	case 3:
 		_game._player._visible = true;
 		_game._player._stepEnabled = true;
@@ -1631,7 +1621,7 @@ void Scene208::actions() {
 		subAction(3);
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
-			_globals._v0 = true;
+			_rhotundaTurnFl = true;
 			_game._player.walk(Common::Point(20, 148), FACING_EAST);
 		}
 	} else if (_action.isAction(VERB_PUT, 0x35, 0x1A9)) {
@@ -1640,7 +1630,7 @@ void Scene208::actions() {
 			_vm->_dialogs->show(0x514C);
 		}
 	} else if (_action.isAction(VERB_PUT, 0x65, 0x1A9)) {
-		warning("TODO: sub3B282(5);");
+		subAction(5);
 		if (_game._player._stepEnabled) {
 			_vm->_dialogs->show(0x514C);
 		}

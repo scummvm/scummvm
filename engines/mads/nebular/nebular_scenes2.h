@@ -138,11 +138,14 @@ public:
 
 class Scene208: public Scene2xx {
 private:
+	bool _rhotundaTurnFl, _boundingFl;
+	int32 _rhotundaTime;
+
 	void updateTrap();
 	void subAction(int mode);
 
 public:
-	Scene208(MADSEngine *vm) : Scene2xx(vm) {}
+	Scene208(MADSEngine *vm) : Scene2xx(vm), _rhotundaTurnFl(false), _boundingFl(false), _rhotundaTime(0) {}
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
