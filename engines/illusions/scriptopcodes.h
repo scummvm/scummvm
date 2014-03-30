@@ -77,7 +77,9 @@ protected:
 	void opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opExitCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall);
+	void opPanToObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
+	void opPanToPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanStop(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);	
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
@@ -112,6 +114,9 @@ protected:
 	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opJumpIf(ScriptThread *scriptThread, OpCall &opCall);
+	void opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall);
+	void opIsCurrentSceneId(ScriptThread *scriptThread, OpCall &opCall);
+	void opIsActiveSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opNot(ScriptThread *scriptThread, OpCall &opCall);
 	void opAnd(ScriptThread *scriptThread, OpCall &opCall);
 	void opOr(ScriptThread *scriptThread, OpCall &opCall);
@@ -131,6 +136,7 @@ protected:
 	void opStackPush0(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);
 	void opAddMenuKey(ScriptThread *scriptThread, OpCall &opCall);
+	void opChangeSceneAll(ScriptThread *scriptThread, OpCall &opCall);
 	
 };
 

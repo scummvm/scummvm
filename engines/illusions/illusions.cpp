@@ -107,6 +107,7 @@ Common::Error IllusionsEngine::run() {
 	_controls = new Controls(this);
 	_cursor = new Cursor(this);
 	_talkItems = new TalkItems(this);
+	_triggerFunctions = new TriggerFunctions();
 	
 	// TODO Move to own class
 	_resGetCtr = 0;
@@ -117,7 +118,9 @@ Common::Error IllusionsEngine::run() {
 	// Actor/graphics/script test
 
 	/* TODO 0x0010000B LinkIndex 0x00060AAB 0x00060556
-	*/	
+	*/
+	
+	_scriptMan->_globalSceneId = 0x00010003;	
 	
 	_resSys->loadResource(0x000D0001, 0, 0);
 
@@ -136,6 +139,7 @@ Common::Error IllusionsEngine::run() {
 	}
 #endif
 
+	delete _triggerFunctions;
 	delete _talkItems;
 	delete _cursor;
 	delete _controls;
@@ -276,7 +280,7 @@ int IllusionsEngine::updateGraphics() {
 				uint32 priority = control->getPriority();
 				_screen->_drawQueue->insertSprite(&actor->_drawFlags, actor->_surface,
 					actor->_surfInfo._dimensions, drawPosition, control->_position,
-					priority, actor->_scale, actor->_spriteFlags);
+					priority, 100/*actor->_scale TODO DEBUG*/, actor->_spriteFlags);
 			}
 		}
 	}
@@ -298,19 +302,26 @@ int IllusionsEngine::getRandom(int max) {
 
 bool IllusionsEngine::causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
 	uint32 codeOffs;
-	// TODO Also search for native trigger functions later (findCauseFunc)
-	bool r = _scriptMan->findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs);
+	bool r =
+		_triggerFunctions->find(sceneId, verbId, objectId2, objectId) ||
+		_scriptMan->findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs);
 	debug(3, "causeIsDeclared() sceneId: %08X; verbId: %08X; objectId2: %08X; objectId: %08X -> %d",
 		sceneId, verbId, objectId2, objectId, r);
 	return r;
 }
 
+void IllusionsEngine::causeDeclare(uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback) {
+	_triggerFunctions->add(getCurrentScene(), verbId, objectId2, objectId, callback);
+}
+
 uint32 IllusionsEngine::causeTrigger(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 callingThreadId) {
 	uint32 codeOffs;
 	uint32 causeThreadId = 0;
-	// TODO Also search for native trigger functions later and run it (findCauseFunc)
-	if (_scriptMan->findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs)) {
-		debug("Run cause at %08X", codeOffs);
+	TriggerFunction *triggerFunction = _triggerFunctions->find(sceneId, verbId, objectId2, objectId);
+	if (triggerFunction) {
+		triggerFunction->run(callingThreadId);
+	} else if (_scriptMan->findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs)) {
+		//debug("Run cause at %08X", codeOffs);
 		causeThreadId = _scriptMan->startTempScriptThread(_scriptMan->_scriptResource->getCode(codeOffs),
 			callingThreadId, verbId, objectId2, objectId);
 	}
@@ -329,7 +340,7 @@ Common::Point IllusionsEngine::getNamedPointPosition(uint32 namedPointId) {
 		_controls->findNamedPoint(namedPointId, pt))
     	return pt;
 	// TODO
-	debug("getNamedPointPosition(%08X) UNKNOWN", namedPointId);
+	//debug("getNamedPointPosition(%08X) UNKNOWN", namedPointId);
 	return Common::Point(0, 0);
 }
 

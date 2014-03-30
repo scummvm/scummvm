@@ -23,6 +23,7 @@
 #ifndef ILLUSIONS_SCRIPTMAN_H
 #define ILLUSIONS_SCRIPTMAN_H
 
+#include "illusions/illusions.h"
 #include "illusions/scriptresource.h"
 #include "illusions/thread.h"
 #include "common/algorithm.h"
@@ -46,12 +47,37 @@ public:
 	void pop();
 	void pauseActiveScene();
 	void unpauseActiveScene();
-	int getActiveScenesCount();
+	uint getActiveScenesCount();
 	void getActiveSceneInfo(uint index, uint32 *sceneId, int *pauseCtr);
 	uint32 getCurrentScene();
 	bool isSceneActive(uint32 sceneId);
 protected:
 	Common::FixedStack<ActiveScene, 16> _stack;
+};
+
+struct TriggerFunction;
+
+struct TriggerFunction {
+	uint32 _sceneId;
+	uint32 _verbId;
+	uint32 _objectId2;
+	uint32 _objectId;
+	TriggerFunctionCallback *_callback;
+	TriggerFunction(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
+	~TriggerFunction();
+	void run(uint32 callingThreadId);
+};
+
+class TriggerFunctions {
+public:
+	void add(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
+	TriggerFunction *find(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
+	void removeBySceneId(uint32 sceneId);
+public:
+	typedef Common::List<TriggerFunction*> Items;
+	typedef Items::iterator ItemsIterator;
+	Items _triggerFunctions;
+	ItemsIterator findInternal(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
 };
 
 class ScriptStack {
@@ -92,6 +118,7 @@ public:
 	void exitScene(uint32 threadId);
 	void enterPause(uint32 threadId);
 	void leavePause(uint32 threadId);
+	void dumpActiveScenes(uint32 sceneId, uint32 threadId);
 public:
 
 	IllusionsEngine *_vm;
@@ -104,6 +131,7 @@ public:
 	
 	uint32 _theSceneId;
 	uint32 _theThreadId;
+	uint32 _globalSceneId;
 	bool _doScriptThreadInit;
 	uint32 _nextTempThreadId;
 	

@@ -70,9 +70,12 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(15, opSwitchFacing);
 	OPCODE(16, opAppearActor);
 	OPCODE(17, opDisappearActor);
+	OPCODE(18, opAppearForeignActor);
+	OPCODE(19, opDisappearForeignActor);
 	OPCODE(28, opNotifyThreadId1);
 	OPCODE(29, opSetPathCtrY);
 	OPCODE(33, opSetPathWalkPoints);
+	OPCODE(35, opSetScale);
 	OPCODE(36, opSetScaleLayer);
 	OPCODE(38, opSetPathWalkRects);
 	OPCODE(39, opSetPriority);
@@ -80,6 +83,8 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(50, opPlaySound);
 	OPCODE(51, opStopSound);
 	OPCODE(53, opPlaceSubActor);
+	OPCODE(54, opStartSubSequence);
+	OPCODE(55, opStopSubSequence);
 }
 
 #undef OPCODE
@@ -219,6 +224,23 @@ void SequenceOpcodes::opDisappearActor(Control *control, OpCall &opCall) {
 	control->_actor->_newFrameIndex = 0;
 }
 
+void SequenceOpcodes::opAppearForeignActor(Control *control, OpCall &opCall) {
+	ARG_INT16(foreignObjectNum);
+	Control *foreignControl = _vm->_dict->getObjectControl(foreignObjectNum | 0x40000);
+	if (!foreignControl) {
+		Common::Point pos = _vm->getNamedPointPosition(0x00070023);
+		_vm->_controls->placeActor(0x00050001, pos, 0x00060001, foreignObjectNum | 0x40000, 0);
+		foreignControl = _vm->_dict->getObjectControl(foreignObjectNum | 0x40000);
+	}
+	foreignControl->appearActor();
+}
+
+void SequenceOpcodes::opDisappearForeignActor(Control *control, OpCall &opCall) {
+	ARG_INT16(foreignObjectNum);
+	Control *foreignControl = _vm->_dict->getObjectControl(foreignObjectNum | 0x40000);
+	foreignControl->disappearActor();
+}
+
 void SequenceOpcodes::opNotifyThreadId1(Control *control, OpCall &opCall) {
 	_vm->notifyThreadId(control->_actor->_notifyThreadId1);
 }
@@ -233,6 +255,12 @@ void SequenceOpcodes::opSetPathWalkPoints(Control *control, OpCall &opCall) {
 	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
 	control->_actor->_flags |= 2;
 	// TODO control->_actor->_pathWalkPoints = bgRes->getPathWalkPoints(pathWalkPointsIndex - 1);
+}
+
+void SequenceOpcodes::opSetScale(Control *control, OpCall &opCall) {
+	ARG_INT16(scale);
+	control->_actor->_flags &= ~4;
+	control->setActorScale(scale);
 }
 
 void SequenceOpcodes::opSetScaleLayer(Control *control, OpCall &opCall) {
@@ -288,6 +316,17 @@ void SequenceOpcodes::opPlaceSubActor(Control *control, OpCall &opCall) {
  	ARG_UINT32(actorTypeId);
  	ARG_UINT32(sequenceId);
  	_vm->_controls->placeSubActor(control->_objectId, linkIndex, actorTypeId, sequenceId);
+}
+
+void SequenceOpcodes::opStartSubSequence(Control *control, OpCall &opCall) {
+ 	ARG_INT16(linkIndex);
+ 	ARG_UINT32(sequenceId);
+	control->startSubSequence(linkIndex, sequenceId);
+}
+
+void SequenceOpcodes::opStopSubSequence(Control *control, OpCall &opCall) {
+ 	ARG_INT16(linkIndex);
+	control->stopSubSequence(linkIndex);
 }
 
 } // End of namespace Illusions

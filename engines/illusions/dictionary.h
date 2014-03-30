@@ -34,25 +34,49 @@ class TalkEntry;
 
 template<class T>
 class DictionaryHashMap {
+protected:
+	typedef Common::List<T*> List;
+	typedef typename List::iterator ListIterator;
+	typedef Common::HashMap<uint32, List*> Map;
+	typedef typename Map::iterator MapIterator;
+	Map _map;
 public:
 
+	~DictionaryHashMap() {
+		for (MapIterator it = _map.begin(); it != _map.end(); ++it)
+			delete it->_value;
+	}
+
 	void add(uint32 id, T *value) {
-		_map[id] = value;
+		MapIterator it = _map.find(id);
+		List *list;
+		if (it != _map.end())
+			list = it->_value;
+		else {
+			 list = new List();
+			 _map[id] = list;
+		}
+		list->push_back(value);
 	}
 
 	void remove(uint32 id) {
-		_map.erase(id);
+		MapIterator it = _map.find(id);
+		List *list;
+		if (it != _map.end()) {
+			list = it->_value;
+			list->pop_back();
+			if (list->empty())
+				_map.erase(id);
+		}
 	}
 
 	T *find(uint32 id) {
-		typename Common::HashMap<uint32, T*>::iterator it = _map.find(id);
+		MapIterator it = _map.find(id);
 		if (it != _map.end())
-			return it->_value;
+			return it->_value->back();
 		return 0;
 	}
 
-protected:
-	Common::HashMap<uint32, T*> _map;
 };
 
 class Dictionary {

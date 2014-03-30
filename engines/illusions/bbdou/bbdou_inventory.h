@@ -32,6 +32,7 @@ namespace Illusions {
 class IllusionsEngine;
 class BbdouSpecialCode;
 class Control;
+class TriggerFunction;
 
 struct InventoryItem {
 	uint32 _objectId;
@@ -57,6 +58,8 @@ public:
 	bool addInventoryItem(InventoryItem *inventoryItem, InventorySlot *inventorySlot);
 	void removeInventoryItem(InventoryItem *inventoryItem);
 	void buildItems();
+	InventorySlot *getInventorySlot(uint32 objectId);
+	InventorySlot *findClosestSlot(Common::Point putPos, int index);
 protected:
 public:
 	typedef Common::Array<InventorySlot*> InventorySlots;
@@ -82,6 +85,9 @@ public:
 	InventoryItem *getInventoryItem(uint32 objectId);
 	void refresh();
 	void buildItems(InventoryBag *inventoryBag);
+	void cause0x1B0001(TriggerFunction *triggerFunction, uint32 callingThreadId);
+	void cause0x1B0002(TriggerFunction *triggerFunction, uint32 callingThreadId);
+	void putBackInventoryItem(uint32 objectId, Common::Point cursorPosition);
 protected:
 	typedef Common::Array<InventoryItem*> InventoryItems;
 	typedef InventoryItems::iterator InventoryItemsIterator;

@@ -60,16 +60,21 @@ protected:
 	void opSwitchFacing(Control *control, OpCall &opCall);
 	void opAppearActor(Control *control, OpCall &opCall);
 	void opDisappearActor(Control *control, OpCall &opCall);
+	void opAppearForeignActor(Control *control, OpCall &opCall);
+	void opDisappearForeignActor(Control *control, OpCall &opCall);
 	void opNotifyThreadId1(Control *control, OpCall &opCall);
 	void opSetPathCtrY(Control *control, OpCall &opCall);
 	void opSetPathWalkPoints(Control *control, OpCall &opCall);
+	void opSetScale(Control *control, OpCall &opCall);
 	void opSetScaleLayer(Control *control, OpCall &opCall);
 	void opSetPathWalkRects(Control *control, OpCall &opCall);
 	void opSetPriority(Control *control, OpCall &opCall);
 	void opSetPriorityLayer(Control *control, OpCall &opCall);
 	void opPlaySound(Control *control, OpCall &opCall);
 	void opStopSound(Control *control, OpCall &opCall);
-	void opPlaceSubActor(Control *control, OpCall &opCall);	
+	void opPlaceSubActor(Control *control, OpCall &opCall);
+	void opStartSubSequence(Control *control, OpCall &opCall);
+	void opStopSubSequence(Control *control, OpCall &opCall);	
 	
 };
 

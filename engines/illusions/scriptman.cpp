@@ -61,15 +61,15 @@ void ActiveScenes::unpauseActiveScene() {
 	--_stack.top()._pauseCtr;
 }
 
-int ActiveScenes::getActiveScenesCount() {
+uint ActiveScenes::getActiveScenesCount() {
 	return _stack.size();
 }
 
 void ActiveScenes::getActiveSceneInfo(uint index, uint32 *sceneId, int *pauseCtr) {
 	if (sceneId)
-		*sceneId = _stack[index]._sceneId;
+		*sceneId = _stack[index - 1]._sceneId;
 	if (pauseCtr)
-		*pauseCtr = _stack[index]._pauseCtr;
+		*pauseCtr = _stack[index - 1]._pauseCtr;
 }
 
 uint32 ActiveScenes::getCurrentScene() {
@@ -83,6 +83,60 @@ bool ActiveScenes::isSceneActive(uint32 sceneId) {
 		if (_stack[i]._sceneId == sceneId && _stack[i]._pauseCtr <= 0)
 			return true;
 	return false;
+}
+
+// TriggerFunction
+
+TriggerFunction::TriggerFunction(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback)
+	: _sceneId(sceneId), _verbId(verbId), _objectId2(objectId2), _objectId(objectId), _callback(callback) {
+}
+
+TriggerFunction::~TriggerFunction() {
+	delete _callback;
+}
+
+void TriggerFunction::run(uint32 callingThreadId) {
+	(*_callback)(this, callingThreadId);
+}
+
+// TriggerFunctions
+
+void TriggerFunctions::add(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback) {
+	ItemsIterator it = findInternal(sceneId, verbId, objectId2, objectId);
+	if (it != _triggerFunctions.end()) {
+		delete *it;
+		_triggerFunctions.erase(it);
+	}
+	_triggerFunctions.push_back(new TriggerFunction(sceneId, verbId, objectId2, objectId, callback));
+}
+
+TriggerFunction *TriggerFunctions::find(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
+	ItemsIterator it = findInternal(sceneId, verbId, objectId2, objectId);
+	if (it != _triggerFunctions.end())
+		return (*it);
+	return 0;
+}
+
+void TriggerFunctions::removeBySceneId(uint32 sceneId) {
+	ItemsIterator it = _triggerFunctions.begin();
+	while (it != _triggerFunctions.end()) {
+		if ((*it)->_sceneId == sceneId) {
+			delete *it;
+			it = _triggerFunctions.erase(it);
+		} else
+			++it;
+	}
+}
+
+TriggerFunctions::ItemsIterator TriggerFunctions::findInternal(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
+	ItemsIterator it = _triggerFunctions.begin();
+	for (; it != _triggerFunctions.end(); ++it) {
+		TriggerFunction *triggerFunction = *it;
+		if (triggerFunction->_sceneId == sceneId && triggerFunction->_verbId == verbId &&
+			triggerFunction->_objectId2 == objectId2 && triggerFunction->_objectId == objectId)
+			break;
+	}
+	return it;		
 }
 
 // ScriptStack
@@ -240,7 +294,7 @@ void ScriptMan::reset() {
 bool ScriptMan::enterScene(uint32 sceneId, uint32 threadId) {
 	ProgInfo *progInfo = _scriptResource->getProgInfo(sceneId & 0xFFFF);
 	if (!progInfo) {
-		// TODO dumpActiveScenes(_someSceneId2, threadId);
+		// TODO dumpActiveScenes(_globalSceneId, threadId);
 		sceneId = _theSceneId;
 	}
 	_activeScenes.push(sceneId);
@@ -253,7 +307,7 @@ void ScriptMan::exitScene(uint32 threadId) {
 	// TODO UpdateFunctions_disableByTag__TODO_maybe(sceneId);
 	_threads->terminateThreadsByTag(sceneId, threadId);
 	_vm->_controls->destroyControlsByTag(sceneId);
-	// TODO causeFunc_removeBySceneId(sceneId);
+	_vm->_triggerFunctions->removeBySceneId(sceneId);
 	_vm->_resSys->unloadResourcesByTag(sceneId);
 	_activeScenes.pop();
 }
@@ -276,6 +330,19 @@ void ScriptMan::leavePause(uint32 threadId) {
 	_threads->notifyThreadsByTag(sceneId, threadId);
 	_vm->_camera->popCameraMode();
 	_activeScenes.unpauseActiveScene();
+}
+
+void ScriptMan::dumpActiveScenes(uint32 sceneId, uint32 threadId) {
+	uint activeScenesCount = _activeScenes.getActiveScenesCount();
+	while (activeScenesCount > 0) {
+		uint32 activeSceneId;
+		_activeScenes.getActiveSceneInfo(activeScenesCount, &activeSceneId, 0);
+		if (activeSceneId == sceneId)
+			break;
+		exitScene(threadId);
+		--activeScenesCount;
+	}
+	_vm->_camera->clearCameraModeStack();
 }
 
 void ScriptMan::newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
