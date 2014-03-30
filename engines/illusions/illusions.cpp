@@ -280,7 +280,7 @@ int IllusionsEngine::updateGraphics() {
 				uint32 priority = control->getPriority();
 				_screen->_drawQueue->insertSprite(&actor->_drawFlags, actor->_surface,
 					actor->_surfInfo._dimensions, drawPosition, control->_position,
-					priority, 100/*actor->_scale TODO DEBUG*/, actor->_spriteFlags);
+					priority, actor->_scale, actor->_spriteFlags);
 			}
 		}
 	}
