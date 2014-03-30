@@ -1530,6 +1530,83 @@ void Scene208::preActions() {
 		player._walkOffScreenSceneId = 207;
 }
 
+void Scene208::subAction(int mode) {
+	int nextTrigger;
+
+	switch (_game._trigger) {
+	case 0:
+		_game._player._stepEnabled = false;
+		_game._player._visible   = false;
+		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
+		_scene->_sequences.setMsgLayout(_globals._spriteIndexes[20]);
+
+		if ((mode == 1) || (mode == 2))
+			nextTrigger = 1;
+		else
+			nextTrigger = 2;
+
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[20], SM_0, 0, nextTrigger);
+		break;
+
+	case 1: {
+		int oldVal = _globals._spriteIndexes[20];
+		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 12, 3, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._spriteIndexes[20], 3, 4);
+		_scene->_sequences.setMsgLayout(_globals._spriteIndexes[20]);
+		_scene->_sequences.updateTimeout(_globals._spriteIndexes[20], oldVal);
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[20], SM_0, 0, 2);
+		_vm->_sound->command(20);
+		}
+		break;
+
+	case 2: {
+		switch (mode) {
+		case 1:
+			_game._objects.addToInventory(6);
+			_scene->_sequences.remove(_globals._spriteIndexes[17]);
+			_globals[kLeavesStatus] = 1;
+			break;
+
+		case 2:
+			_game._objects.setRoom(6, 1);
+			_globals[kLeavesStatus] = 2;
+			updateTrap();
+			break;
+
+		case 3:
+			_scene->_sequences.remove(_globals._spriteIndexes[18]);
+			_globals._spriteIndexes[19] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
+			_game._objects.removeFromInventory(10, 1);
+			_vm->_sound->command(34);
+			break;
+
+		case 4:
+			_game._objects.removeFromInventory(1, 1);
+			_vm->_sound->command(33);
+			break;
+
+		case 5:
+			_game._objects.removeFromInventory(2, 1);
+			_vm->_sound->command(33);
+			break;
+		}
+
+		int oldVal = _globals._spriteIndexes[20];
+		_globals._spriteIndexes[20] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._spriteIndexes[20], 1, 3);
+		_scene->_sequences.setMsgLayout(_globals._spriteIndexes[20]);
+		_scene->_sequences.updateTimeout(_globals._spriteIndexes[20], oldVal);
+		_scene->_sequences.addSubEntry(_globals._spriteIndexes[20], SM_0, 0, 3);
+		}
+		break;
+
+	case 3:
+		_game._player._visible   = true;
+		_game._player._stepEnabled = true;
+		break;
+	}
+}
+
 void Scene208::actions() {
 	if (_action.isAction(0x18C, 0x19F)) {
 		if (_globals[kRhotundaStatus])
@@ -1544,20 +1621,20 @@ void Scene208::actions() {
 	} else if (_action.isAction(0x18C, 0x83)) {
 		_scene->_nextSceneId = 212;
 	} else if (_action.isAction(VERB_TAKE, 0x1AA) && (!_globals[kLeavesStatus] || _game._trigger)) {
-		warning("TODO: sub3B282(1);");
+		subAction(1);
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->showPicture(OBJ_BIG_LEAVES, 0x326, 0);
 	} else if (_action.isAction(VERB_PUT, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
-		warning("TODO: sub3B282(2);");
+		subAction(2);
 	} else if (_action.isAction(VERB_PUT, 0x17A, 0x1A9)) {
-		warning("TODO: sub3B282(3);");
+		subAction(3);
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
 			_globals._v0 = true;
 			_game._player.walk(Common::Point(20, 148), FACING_EAST);
 		}
 	} else if (_action.isAction(VERB_PUT, 0x35, 0x1A9)) {
-		warning("TODO: sub3B282(4);");
+		subAction(4);
 		if (_game._player._stepEnabled) {
 			_vm->_dialogs->show(0x514C);
 		}

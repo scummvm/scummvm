@@ -139,6 +139,7 @@ public:
 class Scene208: public Scene2xx {
 private:
 	void updateTrap();
+	void subAction(int mode);
 
 public:
 	Scene208(MADSEngine *vm) : Scene2xx(vm) {}
