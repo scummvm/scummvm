@@ -111,10 +111,68 @@ void Screen::drawSurface20(Common::Rect &dstRect, Graphics::Surface *surface, Co
 	//debug("Screen::drawSurface20");
 }
 
+static uint16 average(const uint16 a, const uint16 b) {
+	byte r1, g1, b1, r2, g2, b2;
+	g_system->getScreenFormat().colorToRGB(a, r1, g1, b1);
+	g_system->getScreenFormat().colorToRGB(b, r2, g2, b2);
+	return g_system->getScreenFormat().RGBToColor((r1 + r1 + r2) / 3, (g1 + g1 + g2) / 3, (b1 + b1 + b2) / 3);
+}
+
 void Screen::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect) {
 	// Scaled
-	// TODO
-	//debug("Screen::drawSurface21");
+	const int dstWidth = dstRect.width(), dstHeight = dstRect.height();
+	const int srcWidth = srcRect.width(), srcHeight = srcRect.height();
+	const int errYStart = srcHeight / dstHeight;
+	const int errYIncr = srcHeight % dstHeight;
+	const int midY = dstHeight / 2;
+	const int errXStart = srcWidth / dstWidth;
+	const int errXIncr = srcWidth % dstWidth;
+	const int midX = dstWidth / 2;
+	int h = dstHeight, errY = 0, skipY, srcY = srcRect.top;
+	byte *dst = (byte*)_backSurface->getBasePtr(dstRect.left, dstRect.top);
+	skipY = (dstHeight < srcHeight) ? 0 : dstHeight / (2*srcHeight) + 1;
+	h -= skipY;
+	while (h-- > 0) {
+		int w = dstWidth, errX = 0, skipX;
+		skipX = (dstWidth < srcWidth) ? 0 : dstWidth / (2*srcWidth) + 1;
+		w -= skipX;
+		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcY);
+		byte *dstRow = dst; 
+		while (w-- > 0) {
+			uint16 pixel = READ_LE_UINT16(src);
+			if (pixel != _colorKey1) {
+				if (errX >= midX) {
+					uint16 npixel = READ_LE_UINT16(src + 2);
+					if (npixel == _colorKey1)
+						npixel = READ_LE_UINT16(dstRow);
+					pixel = average(pixel, npixel);
+				}
+				WRITE_LE_UINT16(dstRow, pixel);
+			}
+			dstRow += 2;
+			src += 2 * errXStart;
+			errX += errXIncr;
+			if (errX >= dstWidth) {
+				errX -= dstWidth;
+				src += 2;
+			}
+		}
+		while (skipX-- > 0) {
+			uint16 pixel = READ_LE_UINT16(src);
+			if (pixel != _colorKey1)
+				WRITE_LE_UINT16(dstRow, pixel);
+			src += 2;
+			dstRow += 2;
+		}
+		dst += _backSurface->pitch;
+		srcY += errYStart;
+		errY += errYIncr;
+		if (errY >= dstHeight) {
+			errY -= dstHeight;
+			++srcY;
+		}
+	}
+
 }
 
 } // End of namespace Illusions
