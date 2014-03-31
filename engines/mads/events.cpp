@@ -197,7 +197,7 @@ void EventsManager::waitForNextFrame() {
 	_mouseClicked = mouseClicked;
 	_mouseReleased = mouseReleased;
 	_mouseButtons = mouseButtons;
-	_mouseMoved = _mouseClicked || _mouseReleased;
+	_mouseMoved |= _mouseClicked || _mouseReleased;
 }
 
 void EventsManager::initVars() {
