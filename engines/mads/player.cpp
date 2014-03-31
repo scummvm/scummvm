@@ -662,4 +662,19 @@ void Player::addWalker(int walker, int trigger) {
 	}
 }
 
+
+/**
+* Releases any sprites used by the player
+*/
+void Player::releasePlayerSprites() {
+	Scene &scene = _vm->_game->_scene;
+
+	if (_spritesLoaded && _numSprites > 0) {
+		int spriteEnd = _spritesStart + _numSprites - 1;
+		do {
+			scene._sprites.remove(spriteEnd);
+		} while (--spriteEnd >= _spritesStart);
+	}
+}
+
 } // End of namespace MADS

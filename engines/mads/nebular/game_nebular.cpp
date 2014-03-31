@@ -270,7 +270,7 @@ void GameNebular::setSectionHandler() {
 
 void GameNebular::checkShowDialog() {
 	if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globals[5]) {
-		_scene._spriteSlots.releasePlayerSprites();
+		_player.releasePlayerSprites();
 		_vm->_dialogs->showDialog();
 		_vm->_dialogs->_pendingDialog = DIALOG_NONE;
 	}

@@ -555,7 +555,21 @@ void Scene::updateCursor() {
 }
 
 void Scene::free() {
-	warning("TODO: Scene::free");
+	if (_animationData) {
+		delete _animationData;
+		_animationData = nullptr;
+	}
+	if (_activeAnimation) {
+		delete _activeAnimation;
+		_activeAnimation = nullptr;
+	}
+
+	_hotspots.clear();
+	_backgroundSurface.free();
+	_depthSurface.free();
+
+	delete _sceneInfo;
+	_sceneInfo = nullptr;
 }
 
 void Scene::changeDepthSurface(int arg1) {

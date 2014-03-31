@@ -153,11 +153,6 @@ public:
 	void reset(bool flag = true);
 
 	/**
-	* Delete any sprites used by the player
-	*/
-	void releasePlayerSprites();
-
-	/**
 	* Delete a sprite entry
 	* @param index		Specifies the index in the array
 	*/

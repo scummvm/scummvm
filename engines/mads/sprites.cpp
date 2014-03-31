@@ -186,20 +186,6 @@ void SpriteSlots::reset(bool flag) {
 	push_back(SpriteSlot(ST_FULL_SCREEN_REFRESH, -1));
 }
 
-/**
-* Releases any sprites used by the player
-*/
-void SpriteSlots::releasePlayerSprites() {
-	Player &player = _vm->_game->_player;
-
-	if (player._spritesLoaded && player._numSprites > 0) {
-		int spriteEnd = player._spritesStart + player._numSprites - 1;
-		do {
-			deleteEntry(spriteEnd);
-		} while (--spriteEnd >= player._spritesStart);
-	}
-}
-
 void SpriteSlots::deleteEntry(int index) {
 	remove_at(index);
 }

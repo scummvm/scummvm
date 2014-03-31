@@ -143,7 +143,7 @@ void Game::gameLoop() {
 			sectionLoop();
 		}
 
-		// TODO: Extra reset methods
+		_player.releasePlayerSprites();
 		_vm->_palette->unlock();
 		_vm->_events->waitCursor();
 		_vm->_events->freeCursors();
@@ -181,7 +181,7 @@ void Game::sectionLoop() {
 		_scene._sceneLogic->setup();
 		if (_player._spritesChanged || _player._loadsFirst) {
 			if (_player._spritesLoaded)
-				_scene._spriteSlots.releasePlayerSprites();
+				_player.releasePlayerSprites();
 			_vm->_palette->resetGamePalette(18, 10);
 			_scene._spriteSlots.reset();
 		} else {

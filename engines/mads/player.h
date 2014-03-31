@@ -205,6 +205,11 @@ public:
 	 * Add a walker to the current queue
 	 */
 	void addWalker(int walker, int trigger);
+
+	/**
+	* Delete any sprites used by the player
+	*/
+	void releasePlayerSprites();
 };
 
 } // End of namespace MADS
