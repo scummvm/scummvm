@@ -354,7 +354,7 @@ void ScriptMan::newScriptThread(uint32 threadId, uint32 callingThreadId, uint no
 		scriptThread->pause();
 	if (_doScriptThreadInit) {
 		int updateResult = 4;
-		while (scriptThread->_pauseCtr <= 0 && updateResult != 1 && updateResult != 2)
+		while (scriptThread->_pauseCtr <= 0 && updateResult != kTSTerminate && updateResult != kTSYield)
 			updateResult = scriptThread->update();
 	}
 }

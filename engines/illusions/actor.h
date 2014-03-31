@@ -66,6 +66,7 @@ protected:
 };
 
 typedef Common::Functor2<Control*, uint32, void> ActorControlRoutine;
+typedef Common::Array<Common::Point> PointArray;
 
 class Actor {
 public:
@@ -134,8 +135,17 @@ public:
 	int _seqCodeValue2;
 	int _seqCodeValue3;
 	
-	int _pathCtrY;
-	int _path40;
+	int _pathCtrX, _pathCtrY;
+	int _pathAngle;
+	int32 _posXShl, _posYShl;
+	uint _pathPointIndex;
+	uint _pathPointsCount;
+	Common::Point _pathInitialPos;
+	bool _pathInitialPosFlag;
+	bool _pathFlag50;
+	PointArray *_pathNode;
+	uint _pathPoints;
+	uint32 _walkCallerThreadId1;
 	
 };
 
@@ -176,6 +186,10 @@ public:
 	void setActorIndexTo2();
 	void startSubSequence(int linkIndex, uint32 sequenceId);
 	void stopSubSequence(int linkIndex);
+	void startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 callerThreadId1, uint32 callerThreadId2);
+	PointArray *createPath(Common::Point destPt);
+	void updateActorMovement(uint32 deltaTime);
+	void refreshSequenceCode();
 public:
 	IllusionsEngine *_vm;
 	uint _flags;
@@ -211,7 +225,7 @@ public:
 	void unpauseControlsByTag(uint32 tag);
 	bool getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
-	void actorControlRoutine(Control *control, uint32 deltaTime);	
+	void actorControlRoutine(Control *control, uint32 deltaTime);
 public:
 	typedef Common::List<Control*> Items;
 	typedef Items::iterator ItemsIterator;

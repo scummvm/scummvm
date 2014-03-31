@@ -41,20 +41,33 @@ FP16 fixedDiv(FP16 a, FP16 b) {
 	return ((float)a / b) * 65536.0;
 }
 
-int fixedTrunc(FP16 value) {
+int16 fixedTrunc(FP16 value) {
 	// CHECKME Not sure if this correct
-	int result = value >> 16;
+	int16 result = (value >> 16) & 0xFFFF;
 	if ((value & 0xFFFF) >= 0x8000)
 		++result;
 	return result;
 }
 
 FP16 fixedDistance(FP16 x1, FP16 y1, FP16 x2, FP16 y2) {
-	float xd = ABS(fixedToFloat(x1) - fixedToFloat(x2));
-	float yd = ABS(fixedToFloat(y1) - fixedToFloat(y2));
+	float xd = fixedToFloat(x1) - fixedToFloat(x2);
+	float yd = fixedToFloat(y1) - fixedToFloat(y2);
 	if (xd != 0.0 || yd != 0.0)
 		return floatToFixed(sqrt(xd * xd + yd * yd));
 	return 0;
+}
+
+FP16 fixedAtan(FP16 value) {
+	//return floatToFixed(atan2(1.0, fixedToFloat(value)));
+	return floatToFixed(atan(fixedToFloat(value)));
+}
+
+FP16 fixedCos(FP16 value) {
+	return floatToFixed(cos(fixedToFloat(value)));
+}
+
+FP16 fixedSin(FP16 value) {
+	return floatToFixed(sin(fixedToFloat(value)));
 }
 
 } // End of namespace Illusions
