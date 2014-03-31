@@ -109,6 +109,8 @@ protected:
 	virtual void drawWidget();
 
 	virtual Widget *findWidget(int x, int y);
+
+	virtual void adjustTabs(int value);
 };
 
 } // End of namespace GUI

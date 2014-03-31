@@ -226,10 +226,31 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 bool TabWidget::handleKeyDown(Common::KeyState state) {
-	// TODO: maybe there should be a way to switch between tabs
-	// using the keyboard? E.g. Alt-Shift-Left/Right-Arrow or something
-	// like that.
+	if (state.hasFlags(Common::KBD_SHIFT) && state.keycode == Common::KEYCODE_TAB)
+		adjustTabs(-1);
+	else if (state.keycode == Common::KEYCODE_TAB)
+		adjustTabs(1);
+
 	return Widget::handleKeyDown(state);
+}
+
+void TabWidget::adjustTabs(int value) {
+	// determine which tab is next
+	int tabID = _activeTab + value;
+	if (tabID >= (int)_tabs.size())
+		tabID = 0;
+	else if (tabID < 0)
+		tabID = ((int)_tabs.size() - 1);
+
+	// If tabbing moves the last tab out of sight slide tabs over
+	if ((tabID * _tabWidth) > (_w - getAbsX()))
+		_firstVisibleTab++;
+	else if (tabID == 0)
+		_firstVisibleTab = tabID;
+
+	// If a tab was clicked, switch to that pane
+	if (tabID >= 0 && tabID < (int)_tabs.size())
+		setActiveTab(tabID);
 }
 
 void TabWidget::reflowLayout() {
