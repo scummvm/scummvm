@@ -83,7 +83,6 @@ class MADSAction {
 private:
 	MADSEngine *_vm;
 	Common::String _statusText;
-	Common::String _dialogTitle;
 
 	void appendVocab(int vocabId, bool capitalise = false);
 
@@ -101,6 +100,7 @@ public:
 	int _statusTextIndex;
 	int _hotspotId;
 	ActionSavedFields _savedFields;
+	Common::String _sentence;
 
 	// Unknown fields
 	int16 _v86F3A;

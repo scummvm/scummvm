@@ -157,6 +157,10 @@ void TextDialog::underlineLine() {
 	_lineXp[_numLines] |= 0x80;
 }
 
+void TextDialog::downPixelLine() {
+	_lineXp[_numLines] |= 0x40;
+}
+
 void TextDialog::incNumLines() {
 	_lineWidth = 0;
 	_currentX = 0;
@@ -234,6 +238,18 @@ void TextDialog::addInput() {
 	incNumLines();
 }
 
+void TextDialog::addBarLine() {
+	if (_lineWidth > 0 || _currentX > 0)
+		incNumLines();
+
+	_lineXp[_numLines] = 0xFF;
+	incNumLines();
+}
+
+void TextDialog::setLineXp(int xp) {
+	_lineXp[_numLines] = xp;
+}
+
 void TextDialog::draw() {
 	if (!_lineWidth)
 		--_numLines;
@@ -302,6 +318,16 @@ void TextDialog::restorePalette() {
 	_vm->_palette->setPalette(_vm->_palette->_mainPalette, 248, 8);
 }
 
+void TextDialog::show() {
+	draw();
+	_vm->_events->showCursor();
+
+	while (!_vm->shouldQuit() && !_vm->_events->_keyPressed &&
+		!_vm->_events->_mouseClicked) {
+		_vm->_events->delay(1);
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...): 
@@ -318,16 +344,6 @@ MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...):
 	va_end(va);
 }
 
-void MessageDialog::show() {
-	draw();
-	_vm->_events->showCursor();
-
-	while (!_vm->shouldQuit() && !_vm->_events->_keyPressed &&
-			!_vm->_events->_mouseClicked) {
-		_vm->_events->delay(1);
-	}
-}
-
 /*------------------------------------------------------------------------*/
 
 Dialogs *Dialogs::init(MADSEngine *vm) {
@@ -339,11 +355,6 @@ Dialogs *Dialogs::init(MADSEngine *vm) {
 
 Dialogs::Dialogs(MADSEngine *vm): _vm(vm) {
 	_pendingDialog = DIALOG_NONE;
-}
-
-void Dialogs::show(int msgId) {
-	Common::StringArray msg = _vm->_game->getMessage(msgId);
-	warning("%s\n", msg[0].c_str());
 }
 
 } // End of namespace MADS

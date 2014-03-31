@@ -31,10 +31,21 @@ namespace MADS {
 
 namespace Nebular {
 
+enum CapitalizationMode { kUppercase = 0, kLowercase = 1, kUpperAndLower = 2 };
+
 class DialogsNebular: public Dialogs {
 	friend class Dialogs;
-protected:
+private:
+	int _dialogWidth;
+	CapitalizationMode _capitalizationMode;
+
 	DialogsNebular(MADSEngine *vm): Dialogs(vm) {}
+
+	Common::String getVocab(int vocabId);
+
+	bool textNoun(Common::String &dialogText, int nounNum, const Common::String &valStr);
+
+	bool commandCheck(const char *idStr, Common::String &valStr, const Common::String &command);
 public:
 	virtual void showDialog() {
 		warning("TODO: showDialog");
@@ -42,6 +53,7 @@ public:
 	virtual void showPicture(int objId, int msgId, int arg3) {
 		warning("TODO: showPicture");
 	}
+	virtual bool show(int id);
 };
 
 struct HOGANUS {

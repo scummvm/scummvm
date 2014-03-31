@@ -86,16 +86,6 @@ enum {
 class TextDialog: protected Dialog {
 private:
 	/**
-	 * Increments the number of text lines the text dialog uses
-	 */
-	void incNumLines();
-
-	/**
-	 * Flags the previously added line to be underlined
-	 */
-	void underlineLine();
-
-	/**
 	 * Append text to the currently end line.
 	 */
 	void appendLine(const Common::String &line);
@@ -116,21 +106,6 @@ protected:
 	Common::String _lines[TEXT_DIALOG_MAX_LINES];
 	int _lineXp[TEXT_DIALOG_MAX_LINES];
 	byte _savedPalette[8 * 3];
-
-	/**
-	 * Add a new line to the dialog
-	 */
-	void addLine(const Common::String &line, bool underline = false);
-
-	/**
-	 * Adds one or more lines, word wrapping the passed text
-	 */
-	void wordWrap(const Common::String &line);
-
-	/**
-	 * Adds an input area following previously added text
-	 */
-	void addInput();
 public:
 	/**
 	 * Constructor
@@ -156,6 +131,48 @@ public:
 	 * Draw the dialog along with any input box
 	 */
 	void drawWithInput();
+
+	/**
+	* Add a new line to the dialog
+	*/
+	void addLine(const Common::String &line, bool underline = false);
+
+	/**
+	* Adds one or more lines, word wrapping the passed text
+	*/
+	void wordWrap(const Common::String &line);
+
+	/**
+	* Increments the number of text lines the text dialog uses
+	*/
+	void incNumLines();
+
+	/**
+	* Adds an input area following previously added text
+	*/
+	void addInput();
+
+	/**
+	 * Adds a bar line to separate sections of text 
+	 */
+	void addBarLine();
+
+	/**
+	* Flags the previously added line to be underlined
+	*/
+	void underlineLine();
+
+	void downPixelLine();
+
+	/**
+	 * Set the x position for the given line
+	 */
+	void setLineXp(int xp);
+
+	/**
+	* Show the dialog, and wait until a key or mouse press.
+	*/
+	void show();
 };
 
 class MessageDialog: protected TextDialog {
@@ -163,11 +180,6 @@ public:
 	MessageDialog(MADSEngine *vm, int lines, ...);
 
 	virtual ~MessageDialog() {}
-
-	/**
-	 * Show the dialog, and wait until a key or mouse press.
-	 */
-	void show();
 };
 
 enum DialogId {
@@ -185,13 +197,14 @@ public:
 public:
 	Common::Point _defaultPosition;
 	DialogId _pendingDialog;
+	int _indexList[10];
 
 	virtual ~Dialogs() {}
 
 	virtual void showDialog() = 0;
 	virtual void showPicture(int objId, int msgId, int arg3 = 0) = 0;
 
-	void show(int msgId);
+	virtual bool show(int msgId) = 0;
 };
 
 } // End of namespace MADS

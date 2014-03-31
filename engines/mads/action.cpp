@@ -285,7 +285,7 @@ void MADSAction::startAction() {
 
 	// Copy the action to be active
 	_activeAction = _action;
-	_dialogTitle = _statusText;
+	_sentence = _statusText;
 
 	if ((_actionMode2 == ACTIONMODE2_4) && (_v86F42 == 0))
 		_v8453A = -1;

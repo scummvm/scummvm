@@ -22,9 +22,11 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/util.h"
 #include "mads/mads.h"
 #include "mads/screen.h"
 #include "mads/msurface.h"
+#include "mads/staticres.h"
 #include "mads/nebular/dialogs_nebular.h"
 
 namespace MADS {
@@ -109,6 +111,181 @@ bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 	entry._word = Common::String((char *)&entryData[8]);
 
 	f.close();
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+bool DialogsNebular::show(int msgId) {
+	MADSAction &action = _vm->_game->_scene._action;
+	Common::StringArray msg = _vm->_game->getMessage(msgId);
+	Common::String title;
+	Common::String commandText;
+	Common::String valStr;
+	Common::String dialogText;
+	bool result = true;
+	bool centerFlag;
+	bool underlineFlag;
+	bool commandFlag;
+	bool crFlag;
+	TextDialog *dialog = nullptr;
+	_dialogWidth = 17; 
+	_capitalizationMode = kUppercase;
+
+	// Loop through the lines of the returned text
+	for (uint idx = 0; idx < msg.size(); ++idx) {
+		Common::String srcLine = msg[idx];
+
+		const char *srcP = srcLine.c_str();
+		commandFlag = false;
+		underlineFlag = false;
+		centerFlag = false;
+		crFlag = false;
+
+		// Loop through the text of the line
+		while (srcP < srcLine.c_str() + srcLine.size()) {
+			if (*srcP == '[') {
+				// Starting a command
+				commandText = "";
+				commandFlag = true;
+			} else if (*srcP == ']') {
+				// Ending a command
+				if (commandFlag) {
+					if (commandCheck("CENTER", valStr, commandText)) {
+						centerFlag = true;
+					} else if (commandCheck("TITLE", valStr, commandText)) {
+						centerFlag = true;
+						underlineFlag = true;
+						crFlag = true;
+						int v = atoi(valStr.c_str());
+						if (v != 0)
+							_dialogWidth = v;
+					} else if (commandCheck("CR", valStr, commandText)) {
+						if (centerFlag) {
+							crFlag = true;
+						} else {
+							dialog = new TextDialog(_vm, FONT_INTERFACE, _defaultPosition, _dialogWidth);
+							dialog->wordWrap(dialogText);
+							dialog->incNumLines();
+						}
+					} else if (commandCheck("ASK", valStr, commandText)) {
+						dialog->addInput();
+					} else if (commandCheck("VERB", valStr, commandText)) {
+						dialogText += getVocab(action._activeAction._verbId);
+					} else if (commandCheck("INDEX", valStr, commandText)) {
+						int idx = atoi(valStr.c_str());
+						if (_indexList[idx])
+							dialogText += getVocab(_indexList[idx]);
+					} else if (commandCheck("NUMBER", valStr, commandText)) {
+						int idx = atoi(valStr.c_str());
+						dialogText += Common::String::format("%.4d", _indexList[idx]);
+					} else if (commandCheck("NOUN1", valStr, commandText)) {
+						if (!textNoun(dialogText, 1, valStr))
+							dialogText += getVocab(action._activeAction._objectNameId);
+					} else if (commandCheck("NOUN2", valStr, commandText)) {
+						if (!textNoun(dialogText, 2, valStr))
+							dialogText += getVocab(action._activeAction._indirectObjectId);
+					} else if (commandCheck("PREP", valStr, commandText)) {
+						dialogText += kArticleList[action._savedFields._articleNumber];
+					} else if (commandCheck("SENTENCE", valStr, commandText)) {
+						dialogText += action._sentence;
+					} else if (commandCheck("WIDTH", valStr, commandText)) {
+						_dialogWidth = atoi(valStr.c_str());
+					} else if (commandCheck("BAR", valStr, commandText)) {
+						dialog->addBarLine();
+					} else if (commandCheck("UNDER", valStr, commandText)) {
+						underlineFlag = true;
+					} else if (commandCheck("DOWN", valStr, commandText)) {
+						dialog->downPixelLine();
+					} else if (commandCheck("TAB", valStr, commandText)) {
+						int xp = atoi(valStr.c_str());
+						dialog->setLineXp(xp);
+					}
+				}
+
+				commandFlag = false;
+			} else if (commandFlag) {
+				// Add the next character to the command
+				commandText += *srcP;
+			} else {
+				// Add to the text to be displayed in the dialog
+				dialogText += *srcP;
+			}
+
+			++srcP;
+		}
+
+		if (!dialog) {
+			dialog = new TextDialog(_vm, FONT_INTERFACE, _defaultPosition, _dialogWidth);
+		}
+
+		if (centerFlag) {
+			dialog->addLine(dialogText, underlineFlag);
+			if (crFlag)
+				dialog->incNumLines();
+		} else {
+			dialog->wordWrap(dialogText);
+		}
+	}
+
+	if (!centerFlag)
+		dialog->incNumLines();
+	
+	// Show the dialog
+	dialog->show();
+
+	delete dialog;
+	return result;
+}
+
+Common::String DialogsNebular::getVocab(int vocabId) {
+	assert(vocabId > 0);
+
+	Common::String vocab = _vm->_game->_scene.getVocab(vocabId);
+
+	switch (_capitalizationMode) {
+	case kUppercase:
+		vocab.toUppercase();
+		break;
+	case kLowercase:
+		vocab.toLowercase();
+		break;
+	case kUpperAndLower:
+		vocab.toLowercase();
+		vocab.setChar(toupper(vocab[0]), 0);
+	default:
+		break;
+	}
+
+	return vocab;
+}
+
+bool DialogsNebular::textNoun(Common::String &dialogText, int nounNum,
+		const Common::String &valStr) {
+	warning("TODO: textNoun");
+	return false;
+}
+
+bool DialogsNebular::commandCheck(const char *idStr, Common::String &valStr,
+		const Common::String &command) {
+	int idLen = strlen(idStr);
+	
+	valStr = (command.size() <= idLen) ? "" : Common::String(command.c_str() + idLen);
+
+	// Check whether the command starts with the given Id
+	int result = scumm_strnicmp(idStr, command.c_str(), idLen) == 0;
+	if (!result)
+		return false;
+
+	// It does, so set the command case mode
+	if (Common::isUpper(command[0]) && Common::isUpper(command[1])) {
+		_capitalizationMode = kUppercase;
+	} else if (Common::isUpper(command[0])) {
+		_capitalizationMode = kUpperAndLower;
+	} else {
+		_capitalizationMode = kLowercase;
+	}
+
 	return true;
 }
 
