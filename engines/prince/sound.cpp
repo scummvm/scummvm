@@ -158,7 +158,10 @@ void MusicPlayer::killMidi() {
 void MusicPlayer::loadMidi(const char * name) {
 	Common::SeekableReadStream * stream = SearchMan.createReadStreamForMember(name);
 	if (!stream)
+	{
+		debug("Can't load midi stream %s", name);
 		return;
+	}
 
 	// Stop any currently playing MIDI file
 	killMidi();
@@ -168,7 +171,7 @@ void MusicPlayer::loadMidi(const char * name) {
 	_data = (byte *)malloc(_dataSize);
 	stream->read(_data, _dataSize);
 
-    delete stream;
+	delete stream;
 
 	// Start playing the music
 	sndMidiStart();
@@ -216,3 +219,5 @@ void MusicPlayer::sendToChannel(byte channel, uint32 b) {
 }
 
 } // End of namespace CGE
+
+/* vim: set tabstop=4 expandtab!: */

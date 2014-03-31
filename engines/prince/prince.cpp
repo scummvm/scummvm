@@ -138,8 +138,10 @@ void PrinceEngine::init() {
 	if (!sound->open("sound/databank.ptc"))
 		error("Can't open sound/databank.ptc");
 
+	SearchMan.addSubDirectoryMatching(gameDataDir, "all");
+
 	SearchMan.add("all", all);
-	SearchMan.add("data/voices", voices);
+	SearchMan.add("voices", voices);
 	SearchMan.add("sound", sound);
 
 	_graph = new GraphicsMan(this);
