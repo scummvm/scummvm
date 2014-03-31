@@ -150,27 +150,27 @@ void PrinceEngine::init() {
 	_midiPlayer = new MusicPlayer(this);
 	 
 	_font = new Font();
-	Resource::loadResource(_font, "all/font1.raw");
+	Resource::loadResource(_font, "font1.raw");
 
 	_walizkaBmp = new MhwanhDecoder();
-	Resource::loadResource(_walizkaBmp, "all/walizka");
+	Resource::loadResource(_walizkaBmp, "walizka");
 
 	_script = new Script();
-	Resource::loadResource(_script, "all/skrypt.dat");
+	Resource::loadResource(_script, "skrypt.dat");
 
 	_flags = new InterpreterFlags();
 	_interpreter = new Interpreter(this, _script, _flags);
 
 	_variaTxt = new VariaTxt();
-	Resource::loadResource(_variaTxt, "all/variatxt.dat");
+	Resource::loadResource(_variaTxt, "variatxt.dat");
 	
 	_cursor1 = new Cursor();
-	Resource::loadResource(_cursor1, "all/mouse1.cur");
+	Resource::loadResource(_cursor1, "mouse1.cur");
 
 	_cursor2 = new Cursor();
-	Resource::loadResource(_cursor2, "all/mouse2.cur");
+	Resource::loadResource(_cursor2, "mouse2.cur");
 
-	Common::SeekableReadStream *talkTxtStream = SearchMan.createReadStreamForMember("all/talktxt.dat");
+	Common::SeekableReadStream *talkTxtStream = SearchMan.createReadStreamForMember("talktxt.dat");
 	if (!talkTxtStream) {
 		error("Can't load talkTxtStream");
 		return;
