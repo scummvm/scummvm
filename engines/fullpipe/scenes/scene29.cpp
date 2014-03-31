@@ -498,7 +498,91 @@ void sceneHandler29_shoot() {
 }
 
 void sceneHandler29_animBearded() {
-	warning("STUB: sceneHandler29_animBearded()");
+	MessageQueue *mq;
+
+	for (uint i = 0; i < g_vars->scene29_var19.size(); i++) {
+		StaticANIObject *ani = g_vars->scene29_var19[i]->ani;
+
+		if (g_vars->scene29_var19[i]->wbflag) {
+			int x = ani->_ox;
+			int y = ani->_oy;
+
+			if (!ani->_movement && ani->_statics->_staticsId == (ST_BRDCMN_RIGHT | 0x4000)) {
+				x -= 4;
+
+				if (x - g_vars->scene29_var20 < 100 || !g_vars->scene29_var10) {
+					mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC29_BRDOUT1), 0, 1);
+
+					mq->replaceKeyCode(-1, ani->_okeyCode);
+					mq->chain(0);
+
+					g_vars->scene29_var19[i]->wbflag = 0;
+					g_vars->scene29_var19[i]->wbcounter = 0;
+				}
+			}
+
+			if (!ani->_movement && ani->_statics->_staticsId == ST_BRDCMN_GOR)
+				ani->startAnim(MV_BRDCMN_GOR, 0, -1);
+
+			if (ani->_movement) {
+				if (ani->_movement->_id == MV_BRDCMN_GOR) {
+					x -= 4;
+
+					if (g_vars->scene29_var20 - x < 60 || x - g_vars->scene29_var20 < -260 || !g_vars->scene29_var10) {
+						ani->changeStatics2(ST_BRDCMN_RIGHT);
+
+						mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC29_BRDOUT2), 0, 1);
+
+						mq->replaceKeyCode(-1, ani->_okeyCode);
+						mq->chain(0);
+
+						g_vars->scene29_var19[i]->wbflag = 0;
+						g_vars->scene29_var19[i]->wbcounter = 0;
+					}
+				}
+			}
+
+			ani->setOXY(x, y);
+			continue;
+		}
+
+		if (g_vars->scene29_var10 && g_vars->scene29_var19[i]->wbcounter > 30) {
+			int newx;
+
+			if (g_fp->_rnd->getRandomNumber(1))
+				goto dostuff;
+
+			if (g_vars->scene29_var20 <= 700) {
+				g_vars->scene29_var19[i]->wbcounter++;
+				continue;
+			}
+
+			if (g_vars->scene29_var20 >= 1100) {
+			dostuff:
+				if (g_vars->scene29_var20 <= 700 || g_vars->scene29_var20 >= 1350) {
+					g_vars->scene29_var19[i]->wbcounter++;
+					continue;
+				}
+
+				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC29_BRD2), 0, 1);
+
+				newx = g_vars->scene29_var20 - 200;
+			} else {
+				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC29_BRD1), 0, 1);
+
+				newx = g_vars->scene29_var20 + 350;
+			}
+
+			mq->getExCommandByIndex(0)->_x = newx;
+			mq->replaceKeyCode(-1, ani->_okeyCode);
+			mq->chain(0);
+
+			g_vars->scene29_var19[i]->wbflag = 1;
+			g_vars->scene29_var19[i]->wbcounter = 0;
+		}
+
+		g_vars->scene29_var19[i]->wbcounter++;
+	}
 }
 
 

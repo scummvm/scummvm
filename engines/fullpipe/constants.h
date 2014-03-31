@@ -1295,6 +1295,7 @@ namespace Fullpipe {
 #define MSG_SC29_STOPRIDE 2107
 #define MV_ASS_HITGREEN 2138
 #define MV_ASS_HITRED 2139
+#define MV_BRDCMN_GOR 4735
 #define MV_MAN29_BEND 2091
 #define MV_MAN29_HIT 2088
 #define MV_MAN29_JUMP 2090
@@ -1307,6 +1308,10 @@ namespace Fullpipe {
 #define MV_STR1_SHOOT 2109
 #define MV_STR2_SHOOT 2112
 #define PIC_SC29_LTRUBA 2081
+#define QU_SC29_BRD1 4741
+#define QU_SC29_BRD2 4742
+#define QU_SC29_BRDOUT1 4743
+#define QU_SC29_BRDOUT2 4744
 #define QU_SC29_ESCAPE 2129
 #define QU_SC29_MANFROM_L 2101
 #define QU_SC29_MANFROM_R 2104
@@ -1315,6 +1320,8 @@ namespace Fullpipe {
 #define SND_29_028 4758
 #define SND_29_029 4759
 #define ST_ASS_NORM 2122
+#define ST_BRDCMN_GOR 4734
+#define ST_BRDCMN_RIGHT 4732
 #define ST_MAN29_RUNR 2140
 #define ST_MAN29_SITR 2141
 #define ST_STR1_RIGHT 2143
