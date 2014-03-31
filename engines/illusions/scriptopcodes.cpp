@@ -422,10 +422,7 @@ void ScriptOpcodes::opStartMoveActor(ScriptThread *scriptThread, OpCall &opCall)
 	// NOTE Skipped checking for stalled sequence, not sure if needed
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
-	// TODO _control->startMoveActor(sequenceId, pos, opCall._callerThreadId, opCall._threadId);
-
-	//DEBUG Resume calling thread, later done by the walking
-	_vm->notifyThreadId(opCall._threadId);
+	control->startMoveActor(sequenceId, pos, opCall._callerThreadId, opCall._threadId);
 }
 
 void ScriptOpcodes::opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {

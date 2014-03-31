@@ -29,16 +29,15 @@ namespace Illusions {
 
 typedef int32 FP16;
 
-struct FPRect {
-	FP16 x1, y1, x2, y2;
-};
-
 FP16 floatToFixed(float value);
 float fixedToFloat(FP16 value);
 FP16 fixedMul(FP16 a, FP16 b);
 FP16 fixedDiv(FP16 a, FP16 b);
-int fixedTrunc(FP16 value);
+int16 fixedTrunc(FP16 value);
 FP16 fixedDistance(FP16 x1, FP16 y1, FP16 x2, FP16 y2);
+FP16 fixedAtan(FP16 value);
+FP16 fixedCos(FP16 value);
+FP16 fixedSin(FP16 value);
 
 } // End of namespace Illusions
 

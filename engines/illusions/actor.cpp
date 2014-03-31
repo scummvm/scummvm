@@ -25,6 +25,7 @@
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
+#include "illusions/fixedpoint.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
 #include "illusions/scriptman.h"
@@ -94,29 +95,29 @@ Actor::Actor(IllusionsEngine *vm)
 	
 	_notifyId3C = 0;
 
-	_pathCtrY = 0;
-	
 	_controlRoutine = 0;
 	setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Controls>(_vm->_controls, &Controls::actorControlRoutine));
 
-#if 0 // TODO
-	_field2 = 0;
-	_path40 = 0;
-	_path4C = 0;
-	_pathFlag50 = 0;
+	_walkCallerThreadId1 = 0;
+	_pathAngle = 0;
+	_pathFlag50 = false;
 	_pathCtrX = 0;
-	_pathInitialPosFlag = 1;
+	_pathCtrY = 0;
+	_pathInitialPosFlag = true;
 	_pathInitialPos.x = 0;
 	_pathInitialPos.y = 0;
+	_pathPoints = 0;
+	_pathPointIndex = 0;
+	_pathPointsCount = 0;
+	_pathNode = 0;
+
+#if 0 // TODO
+	_field2 = 0;
 	_namedPointsCount = 0;
 	_namedPoints = 0;
 	_field164 = 0;
 	_pathWalkRects = 0;
 	_pathWalkPoints = 0;
-	_pathNode = 0;
-	_pathPoints = 0;
-	_pathPointIndex = 0;
-	_pathPointsCount = 0;
 	_regionLayer = 0;
 	_transitionRegionId = 0;
 	_field18C = 0;
@@ -342,7 +343,7 @@ void Control::setActorScale(int scale) {
 	for (uint i = 0; i < kSubObjectsCount; ++i)
 		if (_actor->_subobjects[i]) {
 			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
-			subControl->activateObject();
+			subControl->setActorScale(scale);
 		}
 }
 
@@ -528,19 +529,17 @@ void Control::setActorFrameIndex(int16 frameIndex) {
 
 void Control::stopActor() {
 	_actor->_seqCodeIp = 0;
-	/* TODO
 	if (_actor->_pathNode) {
 		if (_actor->_flags & 0x0400) {
-			// TODO delete _actor->_pathNode;
+			delete _actor->_pathNode;
 			_actor->_flags &= ~0x0400;
 		}
 		_actor->_pathNode = 0;
 		_actor->_pathPoints = 0;
 		_actor->_pathPointsCount = 0;
 		_actor->_pathPointIndex = 0;
-		_actor->_path40 = 0;
+		_actor->_walkCallerThreadId1 = 0;
 	}
-	*/
 	_vm->notifyThreadId(_actor->_notifyThreadId1);
 	_vm->notifyThreadId(_actor->_notifyId3C);
 }
@@ -570,16 +569,14 @@ void Control::startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 thread
 	if (_actor->_linkIndex2) {
 		Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[_actor->_linkIndex2 - 1]);
 		if (subControl->_actor->_flags & 1) {
-			/* TODO
-			if (control->_actor->pathNode) {
+			if (subControl->_actor->_pathNode) {
 				doSeq = false;
-				subControl->_actor->notifyThreadId2 = threadId;
-				subControl->_actor->entryTblPtr = entryTblPtr;
-				subControl->_actor->flags |= 0x80;
-				Thread *thread = _vm->_threads->findThread(threadId);
+				subControl->_actor->_notifyThreadId2 = threadId;
+				subControl->_actor->_entryTblPtr = entryTblPtr;
+				subControl->_actor->_flags |= 0x80;
+				Thread *thread = _vm->_scriptMan->_threads->findThread(threadId);
 				thread->sendMessage(kMsgClearSequenceId2, 0);
 			}
-			*/
 		}
 	}
 	if (doSeq)
@@ -653,7 +650,7 @@ void Control::startSubSequence(int linkIndex, uint32 sequenceId) {
 	linkedActor->_sequenceId = sequenceId;
 	linkedActor->_notifyThreadId1 = 0;
 	linkedActor->_notifyId3C = 0;
-	linkedActor->_path40 = 0;
+	linkedActor->_walkCallerThreadId1 = 0;
 
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
 	linkedActor->_seqCodeIp = sequence->_sequenceCode;
@@ -688,6 +685,213 @@ void Control::stopSubSequence(int linkIndex) {
 	}
 }
 
+void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 callerThreadId1, uint32 callerThreadId2) {
+	PointArray *pathNode;
+	ActorType *actorType = _vm->_dict->findActorType(_actorTypeId);
+
+	_actor->_pathAngle = 0;
+	_actor->_pathFlag50 = false;
+	_actor->_seqCodeValue3 = 0;
+	_actor->_seqCodeValue1 = 0;
+	// TODO _actor->_field_BC = _actor->_position.x;
+	// TODO _actor->_field_BE = _actor->_position.x;
+	_actor->_pathInitialPosFlag = true;
+	// TODO _actor->_field_C0 = destPt.x;
+	// TODO _actor->_field_C2 = destPt.y;
+
+	/* TODO	
+	uint newFacing;
+	if (calcPointDirection(_actor->_position, destPt, newFacing))
+		faceActor(newFacing);
+	*/
+
+	if (actorType->_value1E)
+		_actor->_pathCtrY = actorType->_value1E;
+	else
+		_actor->_pathCtrY = 140;
+
+	pathNode = createPath(destPt);
+
+	if (pathNode->size() == 1 &&
+		_actor->_position.x == (*pathNode)[0].x &&
+		_actor->_position.y == (*pathNode)[0].y) {
+		delete pathNode;
+		_vm->notifyThreadId(callerThreadId2);
+	} else {
+		_actor->_posXShl = _actor->_position.x << 16;
+		_actor->_posYShl = _actor->_position.y << 16;
+		startSequenceActor(sequenceId, 1, 0);
+		_actor->_pathNode = pathNode;
+		_actor->_pathPointsCount = pathNode->size();
+		_actor->_pathPoints = pathNode->size();
+		_actor->_flags |= 0x0400;
+		_actor->_walkCallerThreadId1 = callerThreadId1;
+		_vm->notifyThreadId(_actor->_notifyId3C);
+		_actor->_notifyId3C = callerThreadId2;
+		_actor->_pathPointIndex = 0;
+		_vm->_input->discardButtons(0x10);
+	}
+
+}
+
+PointArray *Control::createPath(Common::Point destPt) {
+	// TODO Implement actual pathfinding
+	PointArray *pathNode = new PointArray();
+	pathNode->push_back(destPt);
+	return pathNode;
+}
+
+void Control::updateActorMovement(uint32 deltaTime) {
+	// TODO This needs some cleanup
+
+	static const int16 kAngleTbl[] = {60, 0, 120, 0, 60, 0, 120, 0};
+
+	while (1) {
+
+	bool again = false;
+
+	/* TODO
+	if (controla->objectId == GameScript_getField0() && again == const0 && Input_pollButton__(0x10u)) {
+		again = 1;
+		Control_disappearActor__(controla);
+		HIBYTE(_actor->_flags) |= 0x80u;
+		_actor->_seqCodeIp = 0;
+		deltaTime = 2;
+	}
+	*/
+
+	Common::Point prevPt;
+	if (_actor->_pathPointIndex == 0) {
+		if (_actor->_pathInitialPosFlag) {
+			_actor->_pathCtrX = 0;
+			_actor->_pathInitialPos = _actor->_position;
+			_actor->_pathInitialPosFlag = false;
+		}
+		prevPt = _actor->_pathInitialPos;
+	} else {
+		prevPt = (*_actor->_pathNode)[_actor->_pathPointIndex - 1];
+	}
+
+	Common::Point currPt = (*_actor->_pathNode)[_actor->_pathPointIndex];
+
+	int16 deltaX = currPt.x - prevPt.x;
+	int16 deltaY = currPt.y - prevPt.y;
+
+	if (!_actor->_pathFlag50) {
+
+		// TODO Move to own function
+		FP16 angle;
+		if (currPt.x == prevPt.x) {
+			if (prevPt.y >= currPt.y)
+				angle = fixedMul(-0x5A0000, 0x478);
+			else
+				angle = fixedMul(0x5A0000, 0x478);
+		} else {
+			angle = fixedAtan(fixedDiv(deltaY << 16, deltaX << 16));
+		}
+		_actor->_pathAngle = angle;
+
+		// TODO Move to own function
+		int16 v13 = (fixedTrunc(fixedMul(angle, 0x394BB8)) + 360) % 360;
+		if (deltaX >= 0)
+			v13 += 180;
+		v13 = (v13 + 90) % 360;
+		int16 v15 = kAngleTbl[0] / -2;
+		uint newFacing = 1;
+		for (uint i = 0; i < 8; ++i) {
+			v15 += kAngleTbl[i];
+			if (v13 < v15) {
+				newFacing = 1 << i;
+				break;
+			}
+		}
+		if (newFacing != _actor->_facing) {
+			refreshSequenceCode();
+			faceActor(newFacing);
+		}
+
+		_actor->_pathFlag50 = true;
+
+	}
+
+	FP16 deltaX24, deltaY24;
+
+	if (_actor->_flags & 0x0400) {
+
+		FP16 v20 = fixedMul((deltaTime + _actor->_pathCtrX) << 16, _actor->_pathCtrY << 16);
+		FP16 v21 = fixedDiv(v20, 100 << 16);
+		FP16 v22 = fixedMul(v21, _actor->_scale << 16);
+		FP16 v23 = fixedDiv(v22, 100 << 16);
+		_actor->_seqCodeValue1 = 100 * _actor->_pathCtrY * deltaTime / 100;
+		if (v23) {
+			FP16 prevDistance = fixedDistance(prevPt.x << 16, prevPt.y << 16, _actor->_posXShl, _actor->_posYShl);
+			FP16 distance = prevDistance + v23;
+			if (prevPt.x > currPt.x)
+				distance = -distance;
+			deltaX24 = fixedMul(fixedCos(_actor->_pathAngle), distance);
+			deltaY24 = fixedMul(fixedSin(_actor->_pathAngle), distance);
+		} else {
+			deltaX24 = _actor->_posXShl - (prevPt.x << 16);
+			deltaY24 = _actor->_posYShl - (prevPt.y << 16);
+		}
+	} else {
+		if (100 * (int)deltaTime <= _actor->_seqCodeValue2)
+			break;
+		deltaX24 = deltaX << 16;
+		deltaY24 = deltaY << 16;
+	}
+
+	if (ABS(deltaX24) < ABS(deltaX << 16) ||
+		ABS(deltaY24) < ABS(deltaY << 16)) {
+		FP16 newX = (prevPt.x << 16) + deltaX24;
+		FP16 newY = (prevPt.y << 16) + deltaY24;
+		if (newX == _actor->_posXShl &&	newY == _actor->_posYShl) {
+			_actor->_pathCtrX += deltaTime;
+		} else {
+			_actor->_pathCtrX = 0;
+			_actor->_posXShl = newX;
+			_actor->_posYShl = newY;
+			_actor->_position.x = fixedTrunc(_actor->_posXShl);
+			_actor->_position.y = fixedTrunc(_actor->_posYShl);
+		}
+	} else {
+		_actor->_position = currPt;
+		_actor->_posXShl = _actor->_position.x << 16;
+		_actor->_posYShl = _actor->_position.y << 16;
+		--_actor->_pathPointsCount;
+		++_actor->_pathPointIndex;
+		++_actor->_pathPoints;
+		_actor->_pathInitialPosFlag = true;
+		if (_actor->_pathPointsCount == 0) {
+			if (_actor->_flags & 0x0400) {
+				delete _actor->_pathNode;
+				_actor->_flags &= ~0x0400;
+			}
+			_actor->_pathNode = 0;
+			_actor->_pathPoints = 0;
+			_actor->_pathPointsCount = 0;
+			_actor->_pathPointIndex = 0;
+			if (_actor->_notifyId3C) {
+				_vm->notifyThreadId(_actor->_notifyId3C);
+				_actor->_walkCallerThreadId1 = 0;
+			}
+			again = false;
+		}
+		_actor->_pathFlag50 = false;
+	}
+
+	if (!again)
+		break;
+
+	}
+
+}
+
+void Control::refreshSequenceCode() {
+	Sequence *sequence = _vm->_dict->findSequence(_actor->_sequenceId);
+	_actor->_seqCodeIp = sequence->_sequenceCode;
+}
+
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
 
 	stopActor();
@@ -701,7 +905,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	_actor->_sequenceId = sequenceId;
 	_actor->_notifyThreadId1 = notifyThreadId;
 	_actor->_notifyId3C = 0;
-	_actor->_path40 = 0;
+	_actor->_walkCallerThreadId1 = 0;
 	
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
 
@@ -963,8 +1167,8 @@ void Controls::actorControlRoutine(Control *control, uint32 deltaTime) {
 	if (actor->_pauseCtr > 0)
 		return;
 
-	if (false/*actor->_pathNode*/) {
-		// TODO Update pathwalking
+	if (control->_actor->_pathNode) {
+		control->updateActorMovement(deltaTime);
 	} else {
 		actor->_seqCodeValue1 = 100 * deltaTime;
 	}
@@ -1014,10 +1218,8 @@ void Controls::destroyControl(Control *control) {
 		_vm->_cursor->setControl(0);
 	
 	if (control->_actor) {
-		/* TODO
-		if (actor->_pathNode && (actor->_flags & 0x400))
-			delete actor->_pathNode;
-		*/
+		if (control->_actor->_pathNode && (control->_actor->_flags & 0x400))
+			delete control->_actor->_pathNode;
 		if (!(control->_actor->_flags & 0x200))
 			control->_actor->destroySurface();
 		/* TODO
