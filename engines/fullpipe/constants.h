@@ -1304,6 +1304,8 @@ namespace Fullpipe {
 #define MV_MAN29_STANDUP_NORM 2093
 #define MV_PTR_MOVEFAST 2102
 #define MV_SHG_HITASS 2151
+#define MV_SHG_NORM 2117
+#define MV_SHG_NORM 2117
 #define MV_SHR_HITASS 2152
 #define MV_STR1_SHOOT 2109
 #define MV_STR2_SHOOT 2112

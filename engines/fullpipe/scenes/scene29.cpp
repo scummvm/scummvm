@@ -176,7 +176,76 @@ void sceneHandler29_winArcade() {
 }
 
 void sceneHandler29_shootGreen() {
-	warning("STUB: sceneHandler29_shootGreen()");
+	if (g_vars->scene29_var05.numBalls) {
+		int x = g_vars->scene29_shooter1->_ox - 113;
+		int y = g_vars->scene29_shooter1->_oy - 48;
+		StaticANIObject *ani = g_vars->scene29_var05.pHead->ani;
+		Ball *oldhead = g_vars->scene29_var05.pHead;
+		Ball *oldp0 = g_vars->scene29_var05.pHead->p0;
+
+		g_vars->scene29_var05.pHead = g_vars->scene29_var05.pHead->p0;
+
+		if (g_vars->scene29_var05.pHead)
+			oldp0->p1 = 0;
+		else
+			g_vars->scene29_var05.field_8 = 0;
+
+		oldhead->p0 = g_vars->scene29_var05.pTail;
+
+		g_vars->scene29_var05.pTail = oldhead;
+		g_vars->scene29_var05.numBalls--;
+
+		if (!g_vars->scene29_var05.numBalls) {
+			g_vars->scene29_var05.numBalls = 0;
+			g_vars->scene29_var05.pTail = 0;
+			g_vars->scene29_var05.field_8 = 0;
+			g_vars->scene29_var05.pHead = 0;
+
+			free(g_vars->scene29_var05.cPlex);
+			g_vars->scene29_var05.cPlex = 0;
+		}
+
+		ani->show1(x, y, MV_SHG_NORM, 0);
+		ani->_priority = 5;
+
+		Ball *runPtr = g_vars->scene29_var08.pTail;
+		Ball *lastP = g_vars->scene29_var08.field_8;
+
+		if (!g_vars->scene29_var08.pTail) {
+			g_vars->scene29_var08.cPlex = (byte *)calloc(g_vars->scene29_var08.cPlexLen, sizeof(Ball));
+
+			byte *p1 = g_vars->scene29_var08.cPlex + (g_vars->scene29_var08.cPlexLen - 1) * sizeof(Ball);
+
+			if (g_vars->scene29_var08.cPlexLen - 1 < 0) {
+				runPtr = g_vars->scene29_var08.pTail;
+			} else {
+				runPtr = g_vars->scene29_var08.pTail;
+
+				for (int j = 0; j < g_vars->scene29_var08.cPlexLen; j++) {
+					((Ball *)p1)->p1 = runPtr;
+					runPtr = (Ball *)p1;
+
+					p1 -= sizeof(Ball);
+				}
+
+				g_vars->scene29_var08.pTail = runPtr;
+			}
+		}
+		g_vars->scene29_var08.pTail = runPtr->p0;
+		runPtr->p1 = lastP;
+		runPtr->p0 = 0;
+		runPtr->ani = ani;
+
+		g_vars->scene29_var08.numBalls++;
+
+		if (g_vars->scene29_var08.field_8) {
+			g_vars->scene29_var08.field_8->p0 = runPtr;
+			g_vars->scene29_var08.field_8 = runPtr;
+		} else {
+			g_vars->scene29_var08.pHead = runPtr;
+			g_vars->scene29_var08.field_8 = runPtr;
+		}
+	}
 }
 
 void sceneHandler29_shootRed() {
