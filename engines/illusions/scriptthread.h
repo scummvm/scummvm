@@ -35,11 +35,6 @@ public:
 	ScriptThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10);
 	virtual int onUpdate();
-	virtual void onSuspend();
-	virtual void onNotify();
-	virtual void onPause();
-	virtual void onResume();
-	virtual void onTerminated();
 public:
 	int16 _sequenceStalled;
 	byte *_scriptCodeIp;

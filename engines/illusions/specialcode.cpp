@@ -30,14 +30,12 @@ namespace Illusions {
 
 void SpecialCodeLoader::load(Resource *resource) {
 	debug("SpecialCodeLoader::load() Loading special code %08X...", resource->_resId);
-	// TODO
 	_vm->_specialCode = new BbdouSpecialCode(_vm);
 	_vm->_specialCode->init();
 }
 
 void SpecialCodeLoader::unload(Resource *resource) {
 	debug("SpecialCodeLoader::unload() Unloading special code %08X...", resource->_resId);
-	// TODO
 	delete _vm->_specialCode;
 	_vm->_specialCode = 0;
 }

@@ -23,6 +23,7 @@
 #include "illusions/illusions.h"
 #include "illusions/timerthread.h"
 #include "illusions/input.h"
+#include "illusions/scriptman.h"
 #include "illusions/time.h"
 
 namespace Illusions {
@@ -35,7 +36,13 @@ TimerThread::TimerThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThr
 	_type = kTTTimerThread;
 	_startTime = getCurrentTime();
 	_endTime = _startTime + _duration;
-	// TODO _tag = *(_DWORD *)(krndictGetIDValue(callingThreadId) + 20);
+
+	if (callingThreadId) {
+		Thread *callingThread = _vm->_scriptMan->_threads->findThread(callingThreadId);
+		if (callingThread)
+			_tag = callingThread->_tag;
+	}
+
 }
 
 int TimerThread::onUpdate() {

@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/thread.h"
+#include "illusions/actor.h"
 
 namespace Illusions {
 
@@ -55,7 +56,7 @@ void Thread::onTerminated() {
 }
 
 void Thread::onKill() {
-	// TODO artmgrThreadIsDead(thread->threadId);
+	_vm->_controls->threadIsDead(_threadId);
 	terminate();
 }
 
@@ -110,11 +111,11 @@ int Thread::update() {
 
 void Thread::terminate() {
 	if (!_terminated) {
-		if (!(_notifyFlags & 1))
+		if (!(_notifyFlags & 1)) {
 			_vm->notifyThreadId(_callingThreadId);
+		}
 		_callingThreadId = 0;
 		onTerminated();
-		// TODO _vm->removeThread(_threadId, this);
 		_terminated = true;
 	}
 }
@@ -128,7 +129,6 @@ ThreadList::ThreadList(IllusionsEngine *vm)
 void ThreadList::startThread(Thread *thread) {
 	// TODO tag has to be set by the Thread class scrmgrGetCurrentScene();
 	_threads.push_back(thread);
-	// TODO _vm->addThread(thread->_threadId, thread);
 }
 
 void ThreadList::updateThreads() {
@@ -242,6 +242,14 @@ void ThreadList::endTalkThreads() {
 	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
 		Thread *thread = *it;
 		if (thread->_type == kTTTalkThread)
+			thread->terminate();
+	}
+}
+
+void ThreadList::endTalkThreadsNoNotify() {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_type == kTTTalkThread && thread->_callingThreadId == 0)
 			thread->terminate();
 	}
 }

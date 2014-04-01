@@ -245,7 +245,7 @@ uint32 ScriptMan::startTalkThread(int16 duration, uint32 objectId, uint32 talkId
 	uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId) {
 	debug(2, "Starting talk thread");
 	uint32 tempThreadId = newTempThreadId();
-	// TODO endTalkThreadsNoNotify();
+	_threads->endTalkThreadsNoNotify();
 	TalkThread *talkThread = new TalkThread(_vm, tempThreadId, callingThreadId, 0,
 		duration, objectId, talkId, sequenceId1, sequenceId2, namedPointId);
 	_threads->startThread(talkThread);
@@ -353,7 +353,7 @@ void ScriptMan::newScriptThread(uint32 threadId, uint32 callingThreadId, uint no
 	if (_pauseCtr > 0)
 		scriptThread->pause();
 	if (_doScriptThreadInit) {
-		int updateResult = 4;
+		int updateResult = kTSRun;
 		while (scriptThread->_pauseCtr <= 0 && updateResult != kTSTerminate && updateResult != kTSYield)
 			updateResult = scriptThread->update();
 	}

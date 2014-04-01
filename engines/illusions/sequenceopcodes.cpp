@@ -119,7 +119,7 @@ void SequenceOpcodes::opSetFrameIndex(Control *control, OpCall &opCall) {
 	control->_actor->_flags &= ~0x0100;
 	if (control->_actor->_flags & 0x8000) {
 		control->appearActor();
-		control->_actor->_flags &= ~0x800;
+		control->_actor->_flags &= ~0x8000;
 	}
 	control->_actor->_newFrameIndex = frameIndex;
 }
@@ -146,7 +146,7 @@ void SequenceOpcodes::opIncFrameDelay(Control *control, OpCall &opCall) {
 void SequenceOpcodes::opSetRandomFrameDelay(Control *control, OpCall &opCall) {
 	ARG_INT16(minFrameDelay);
 	ARG_INT16(maxFrameDelay);
-	control->_actor->_seqCodeValue3 += 0;//DEBUG minFrameDelay + _vm->getRandom(maxFrameDelay);
+	control->_actor->_seqCodeValue3 += minFrameDelay + _vm->getRandom(maxFrameDelay);
 	opCall._result = 2;
 }
 
@@ -172,7 +172,7 @@ void SequenceOpcodes::opGotoSequence(Control *control, OpCall &opCall) {
 	ARG_UINT32(nextSequenceId);
 	uint32 notifyThreadId1 = control->_actor->_notifyThreadId1;
 	control->clearNotifyThreadId1();
-	if (false/*TODO control->_actor->_pathNode*/) {
+	if (control->_actor->_pathNode) {
 		control->startSequenceActor(nextSequenceId, 1, notifyThreadId1);
 	} else {
 		control->startSequenceActor(nextSequenceId, 2, notifyThreadId1);
