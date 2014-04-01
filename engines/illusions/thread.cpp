@@ -286,9 +286,12 @@ uint32 ThreadList::getThreadSceneId(uint32 threadId) {
 
 bool ThreadList::isActiveThread(int msgNum) {
 	// Check if at least one thread returns a non-null value for the message
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it)
-		if ((*it)->sendMessage(msgNum, 0) != 0)
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (!thread->_terminated && thread->_pauseCtr <= 0 &&
+			thread->sendMessage(msgNum, 0) != 0)
 			return true;
+	}
 	return false;
 }
 

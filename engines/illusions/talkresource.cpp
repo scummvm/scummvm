@@ -35,26 +35,14 @@ void TalkResourceLoader::load(Resource *resource) {
 	talkResource->load(resource->_data, resource->_dataSize);
 	resource->_refId = talkResource;
 
-	_vm->_talkItems->newTalkItem(resource->_resId, talkResource);
-
-	for (uint i = 0; i < talkResource->_talkEntriesCount; ++i) {
-		TalkEntry *talkEntry = &talkResource->_talkEntries[i];
-		_vm->_dict->addTalkEntry(talkEntry->_talkId, talkEntry);
-	}
-	
+	TalkItem *talkItem = _vm->_talkItems->newTalkItem(resource->_resId, resource->_tag, talkResource);
+	talkItem->registerResources();
 }
 
 void TalkResourceLoader::unload(Resource *resource) {
 	TalkItem *talkItem = _vm->_talkItems->findTalkItem(resource->_resId);
-	TalkResource *talkResource = talkItem->_talkRes;
-
-	for (uint i = 0; i < talkResource->_talkEntriesCount; ++i) {
-		TalkEntry *talkEntry = &talkResource->_talkEntries[i];
-		_vm->_dict->removeTalkEntry(talkEntry->_talkId);
-	}
-	
+	talkItem->unregisterResources();
 	_vm->_talkItems->freeTalkItem(talkItem);
-	
 }
 
 void TalkResourceLoader::buildFilename(Resource *resource) {
@@ -109,23 +97,50 @@ void TalkResource::load(byte *data, uint32 dataSize) {
 
 // TalkItem
 
-TalkItem::TalkItem(uint32 talkId, TalkResource *talkResource)
-	: _talkId(talkId), _talkRes(talkResource), _pauseCtr(0) {
+TalkItem::TalkItem(IllusionsEngine *vm, uint32 talkId, uint32 tag, TalkResource *talkResource)
+	: _vm(vm), _talkId(talkId), _tag(tag), _talkRes(talkResource), _pauseCtr(0) {
 }
 
 TalkItem::~TalkItem() {
 }
 
+void TalkItem::registerResources() {
+	for (uint i = 0; i < _talkRes->_talkEntriesCount; ++i) {
+		TalkEntry *talkEntry = &_talkRes->_talkEntries[i];
+		_vm->_dict->addTalkEntry(talkEntry->_talkId, talkEntry);
+	}
+}
+
+void TalkItem::unregisterResources() {
+	for (uint i = 0; i < _talkRes->_talkEntriesCount; ++i) {
+		TalkEntry *talkEntry = &_talkRes->_talkEntries[i];
+		_vm->_dict->removeTalkEntry(talkEntry->_talkId);
+	}
+}
+
+void TalkItem::pause() {
+	++_pauseCtr;
+	if (_pauseCtr == 1)
+		unregisterResources();
+}
+
+void TalkItem::unpause() {
+	--_pauseCtr;
+	if (_pauseCtr == 0)
+		registerResources();
+}
+
 // TalkItems
 
-TalkItems::TalkItems(IllusionsEngine *vm) {
+TalkItems::TalkItems(IllusionsEngine *vm)
+	: _vm(vm) {
 }
 
 TalkItems::~TalkItems() {
 }
 
-TalkItem *TalkItems::newTalkItem(uint32 talkId, TalkResource *talkResource) {
-	TalkItem *talkItem = new TalkItem(talkId, talkResource);
+TalkItem *TalkItems::newTalkItem(uint32 talkId, uint32 tag, TalkResource *talkResource) {
+	TalkItem *talkItem = new TalkItem(_vm, talkId, tag, talkResource);
 	_items.push_back(talkItem);
 	return talkItem;
 }
@@ -140,6 +155,25 @@ TalkItem *TalkItems::findTalkItem(uint32 talkId) {
 		if ((*it)->_talkId == talkId)
 			return (*it);
 	return 0;
+}
+
+TalkItem *TalkItems::findTalkItemByTag(uint32 tag) {
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+		if ((*it)->_tag == tag)
+			return (*it);
+	return 0;
+}
+
+void TalkItems::pauseByTag(uint32 tag) {
+	TalkItem *talkItem = findTalkItemByTag(tag);
+	if (talkItem)
+		talkItem->pause();
+}
+
+void TalkItems::unpauseByTag(uint32 tag) {
+	TalkItem *talkItem = findTalkItemByTag(tag);
+	if (talkItem)
+		talkItem->unpause();
 }
 
 } // End of namespace Illusions
