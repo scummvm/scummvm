@@ -54,6 +54,35 @@ public:
 		DOWN = 4
 	};
 
+	enum MoveSet {
+		Move_SL,
+		Move_SR,
+		Move_SU,
+		Move_SD,
+		Move_ML,
+		Move_MR,
+		Move_MU,
+		Move_MD,
+		Move_TL,
+		Move_TR,
+		Move_TU,
+		Move_TD,
+		Move_MLU,
+		Move_MLD,
+		Move_MLR,
+		Move_MRU,
+		Move_MRD,
+		Move_MRL,
+		Move_MUL,
+		Move_MUR,
+		Move_MUD,
+		Move_MDL,
+		Move_MDR,
+		Move_MDU,
+		Move_BORED1,
+		Move_BORED2
+	};
+
 	Hero();
 
 	bool loadAnimSet(uint32 heroAnimNumber);
@@ -69,6 +98,8 @@ public:
 	State _state;
 	int16 _middleX;
 	int16 _middleY;
+	int16 _moveSetType;
+	int16 _frame;
 
 	// Coords array of coordinates
 	// DirTab array of directions

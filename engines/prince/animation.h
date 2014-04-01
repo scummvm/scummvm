@@ -30,22 +30,29 @@
 
 namespace Prince {
 
-// FIXME: temp hack !!!
-namespace Detail {
-	class Animation;
-}
-
 class Animation {
 public:
-	Animation();
-	~Animation();
     bool loadFromStream(Common::SeekableReadStream &stream);
+    //const Graphics::Surface *getSurface(uint16 frameIndex);
 
-    const Graphics::Surface *getSurface(uint16 frameIndex);
+	Animation();
+	Animation(byte *data, uint32 dataSize);
+	~Animation();
+	int16 getLoopCount() const;
+	int16 getBaseX() const;
+	int16 getBaseY() const;
+	uint getPhaseCount() const;
+	uint getFrameCount() const;
+	int16 getPhaseOffsetX(uint phaseIndex) const;
+	int16 getPhaseOffsetY(uint phaseIndex) const;
+	int16 getPhaseFrameIndex(uint phaseIndex) const;
+	Graphics::Surface *getFrame(uint frameIndex);
 
 private:
 	Common::Array<Graphics::Surface *> _frameList;
-	Detail::Animation *_helper;
+	byte *_data;
+	uint32 _dataSize;
+	byte *getPhaseEntry(uint phaseIndex) const;
 };
 
 }

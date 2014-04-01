@@ -32,11 +32,10 @@ namespace Prince {
 static const uint32 kMoveSetSize = 26;
 
 Hero::Hero() : _number(0), _visible(false), _state(STAY), _middleX(0), _middleY(0)
-    , _boreNum(0), _currHeight(0), _moveDelay(0), _shadMinus(1) {
+    , _boreNum(0), _currHeight(0), _moveDelay(0), _shadMinus(1), _moveSetType(0), _frame(0) {
 } 
 
 bool Hero::loadAnimSet(uint32 animSetNr) {
-	animSetNr = 6;
 	if (animSetNr > sizeof(heroSetTable)) {
 		return false;
 	}
@@ -63,8 +62,9 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 }
 
 const Graphics::Surface * Hero::getSurface() {
-	if (_moveSet[3]) {
-		return _moveSet[3]->getSurface(0);
+	if (_moveSet[_moveSetType]) {
+		int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_frame);
+		return _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
 	}
 	return NULL;
 }

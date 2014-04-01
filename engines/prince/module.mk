@@ -18,7 +18,6 @@ MODULE_OBJS = \
 	decompress.o \
 	hero.o \
 	hero_set.o \
-	detail/animation.o \
 	cursor.o 
 
 # This module can be built as a plugin
