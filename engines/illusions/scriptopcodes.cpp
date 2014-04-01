@@ -31,6 +31,7 @@
 #include "illusions/scriptresource.h"
 #include "illusions/scriptthread.h"
 #include "illusions/specialcode.h"
+#include "illusions/talkresource.h"
 
 namespace Illusions {
 
@@ -296,7 +297,7 @@ void ScriptOpcodes::opStartModalScene(ScriptThread *scriptThread, OpCall &opCall
 	// NOTE Skipped checking for stalled resources
 	_vm->_input->discardButtons(0xFFFF);
 	_vm->_scriptMan->enterPause(opCall._callerThreadId);
-	// TODO _vm->_talkItems->pauseByTag(_vm->getCurrentScene());
+	_vm->_talkItems->pauseByTag(_vm->getCurrentScene());
 	_vm->_scriptMan->enterScene(sceneId, opCall._callerThreadId);
 	_vm->_scriptMan->startScriptThread(threadId, 0,
 		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
@@ -308,7 +309,7 @@ void ScriptOpcodes::opExitModalScene(ScriptThread *scriptThread, OpCall &opCall)
 	_vm->_input->discardButtons(0xFFFF);
 	_vm->_scriptMan->exitScene(opCall._callerThreadId);
 	_vm->_scriptMan->leavePause(opCall._callerThreadId);
-	// TODO _vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
+	_vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
 }
 
 void ScriptOpcodes::opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall) {
