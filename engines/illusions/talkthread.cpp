@@ -262,7 +262,7 @@ uint32 TalkThread::sendMessage(int msgNum, uint32 msgValue) {
 	// TODO
 	switch (msgNum) {
 	case kMsgQueryTalkThreadActive:
-        if (_status != 1 && _status != 2)
+		if (_status != 1 && _status != 2)
 			return 1;
 		break;
 	case kMsgClearSequenceId1:

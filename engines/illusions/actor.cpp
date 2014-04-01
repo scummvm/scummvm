@@ -668,7 +668,6 @@ void Control::stopSubSequence(int linkIndex) {
 	Actor *linkedActor = linkedControl->_actor;
 	uint32 notifyThreadId2 = _actor->_notifyThreadId2;
 	_actor->_linkIndex2 = linkIndex;
-//TODO BUGGY!	
 	if (_actor->_entryTblPtr) {
 		linkedActor->_flags |= 0x80;
 		linkedActor->_entryTblPtr = _actor->_entryTblPtr;

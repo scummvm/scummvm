@@ -263,17 +263,19 @@ void ScriptOpcodes::opEnterScene(ScriptThread *scriptThread, OpCall &opCall) {
 }
 
 //DEBUG Scenes
-//uint32 dsceneId = 0x00010031, dthreadId = 0x00020036;//MAP
+uint32 dsceneId = 0x00010031, dthreadId = 0x00020036;//MAP
 //uint32 dsceneId = 0x00010028, dthreadId = 0x000202A1;
 //uint32 dsceneId = 0x00010007, dthreadId = 0x0002000C;//Auditorium
 //uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
-uint32 dsceneId = 0x00010013, dthreadId = 0x00020018;//
+//uint32 dsceneId = 0x00010013, dthreadId = 0x00020018;//Therapist
+//uint32 dsceneId = 0x00010016, dthreadId = 0x0002001B;//Dorms ext
+//uint32 dsceneId = 0x00010017, dthreadId = 0x0002001C;//Dorms int
 
 void ScriptOpcodes::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
-	
+
 	if (dsceneId) {
 		sceneId = dsceneId;
 		threadId = dthreadId;
@@ -338,21 +340,21 @@ void ScriptOpcodes::opPanToObject(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_UINT32(objectId);
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	Common::Point pos = control->getActorPosition();
-	_vm->_camera->panToPoint(pos, speed, opCall._callerThreadId);
+	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
 }
 
 void ScriptOpcodes::opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(speed);	
 	ARG_UINT32(namedPointId);
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
-	_vm->_camera->panToPoint(pos, speed, opCall._callerThreadId);
+	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
 }
 
 void ScriptOpcodes::opPanToPoint(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(speed);	
 	ARG_INT16(x);	
 	ARG_INT16(y);	
-	_vm->_camera->panToPoint(Common::Point(x, y), speed, opCall._callerThreadId);
+	_vm->_camera->panToPoint(Common::Point(x, y), speed, opCall._threadId);
 }
 
 void ScriptOpcodes::opPanStop(ScriptThread *scriptThread, OpCall &opCall) {
@@ -609,7 +611,7 @@ void ScriptOpcodes::opActivateButton(ScriptThread *scriptThread, OpCall &opCall)
 }
 
 void ScriptOpcodes::opJumpIf(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(jumpOffs)
+	ARG_INT16(jumpOffs);
 	int16 value = _vm->_scriptMan->_stack.pop();
 	if (value == 0)
 		opCall._deltaOfs += jumpOffs;

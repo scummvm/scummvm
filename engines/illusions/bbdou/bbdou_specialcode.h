@@ -92,6 +92,7 @@ public:
 	void spcOpenInventory(OpCall &opCall);
 	void spcAddInventoryItem(OpCall &opCall);
 	void spcRemoveInventoryItem(OpCall &opCall);
+	void spcHasInventoryItem(OpCall &opCall);
 	void spcCloseInventory(OpCall &opCall);
 
 	void playSoundEffect(int soundIndex);

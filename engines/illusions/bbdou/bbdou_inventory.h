@@ -79,6 +79,7 @@ public:
 	void registerInventorySlot(uint32 namedPointId);
 	void addInventoryItem(uint32 objectId);
 	void removeInventoryItem(uint32 objectId);
+	bool hasInventoryItem(uint32 objectId);
 	void open();
 	void close();
 	InventoryBag *getInventoryBag(uint32 sceneId);

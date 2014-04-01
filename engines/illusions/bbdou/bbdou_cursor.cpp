@@ -351,7 +351,7 @@ void BbdouCursor::hide(uint32 objectId) {
 	if (_data._visibleCtr == 0) {
 		Control *control = _vm->_dict->getObjectControl(objectId);
 		control->startSequenceActor(0x60029, 2, 0);
-		// TODO item10_sub_10005040(objectId, &cursorData->item10);
+		_bbdou->resetItem10(objectId, &_data._item10);
 		_vm->_camera->popCameraMode();
 	}
 	_vm->_input->discardButtons(0xFFFF);

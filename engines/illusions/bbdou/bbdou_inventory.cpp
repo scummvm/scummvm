@@ -162,6 +162,14 @@ void BbdouInventory::removeInventoryItem(uint32 objectId) {
 	}
 }
 
+bool BbdouInventory::hasInventoryItem(uint32 objectId) {
+	for (uint i = 0; i < _inventoryItems.size(); ++i)
+		if (_inventoryItems[i]->_objectId == objectId &&
+			_inventoryItems[i]->_assigned)
+			return true;
+	return false;
+}
+
 void BbdouInventory::open() {
 	_activeBagSceneId = 0;
 	InventoryBag *inventoryBag = getInventoryBag(_vm->getCurrentScene());
@@ -203,8 +211,8 @@ void BbdouInventory::close() {
 		Control *control = _vm->_dict->getObjectControl(inventorySlot->_objectId);
 		control->startSequenceActor(0x00060187, 2, 0);
 	}
-    inventoryBag->_isActive = false;
-    _activeInventorySceneId = 0;
+	inventoryBag->_isActive = false;
+	_activeInventorySceneId = 0;
 }
 
 InventoryBag *BbdouInventory::getInventoryBag(uint32 sceneId) {
@@ -245,7 +253,7 @@ void BbdouInventory::buildItems(InventoryBag *inventoryBag) {
 	inventoryBag->buildItems();
 	for (InventoryItemsIterator it = _inventoryItems.begin(); it != _inventoryItems.end(); ++it) {
 		InventoryItem *inventoryItem = *it;
-	    if (inventoryItem->_assigned && !inventoryItem->_flag &&
+		if (inventoryItem->_assigned && !inventoryItem->_flag &&
 			inventoryItem->_timesPresent == 0 &&
 			inventoryItem->_objectId != _bbdou->_cursor->_data._holdingObjectId)
 			inventoryBag->addInventoryItem(inventoryItem, 0);
