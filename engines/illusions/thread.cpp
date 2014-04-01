@@ -111,9 +111,8 @@ int Thread::update() {
 
 void Thread::terminate() {
 	if (!_terminated) {
-		if (!(_notifyFlags & 1)) {
+		if (!(_notifyFlags & 1))
 			_vm->notifyThreadId(_callingThreadId);
-		}
 		_callingThreadId = 0;
 		onTerminated();
 		_terminated = true;
@@ -127,7 +126,7 @@ ThreadList::ThreadList(IllusionsEngine *vm)
 }
 
 void ThreadList::startThread(Thread *thread) {
-	// TODO tag has to be set by the Thread class scrmgrGetCurrentScene();
+	// TODO tag has to be set by the Thread class
 	_threads.push_back(thread);
 }
 

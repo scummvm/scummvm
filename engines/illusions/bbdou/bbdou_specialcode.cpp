@@ -103,6 +103,7 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x0016001C, spcOpenInventory);
 	SPECIAL(0x0016001D, spcAddInventoryItem);
 	SPECIAL(0x0016001E, spcRemoveInventoryItem);
+	SPECIAL(0x0016001F, spcHasInventoryItem);
 	SPECIAL(0x00160025, spcCloseInventory);
 }
 
@@ -219,6 +220,11 @@ void BbdouSpecialCode::spcAddInventoryItem(OpCall &opCall) {
 void BbdouSpecialCode::spcRemoveInventoryItem(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	_inventory->removeInventoryItem(objectId);
+}
+
+void BbdouSpecialCode::spcHasInventoryItem(OpCall &opCall) {
+	ARG_UINT32(objectId);
+	_vm->_scriptMan->_stack.push(_inventory->hasInventoryItem(objectId) ? 1 : 0);
 }
 
 void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
@@ -349,7 +355,7 @@ bool BbdouSpecialCode::findVerbId(Item10 *item10, uint32 currOverlappedObjectId,
 void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint32 deltaTime) {
 	Actor *actor = cursorControl->_actor;
 	CursorData &cursorData = _cursor->_data;
-	
+
 	if (cursorData._visibleCtr > 0) {
 
 		Common::Point cursorPos = _vm->_input->getCursorPosition();
