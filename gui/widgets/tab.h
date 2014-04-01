@@ -38,6 +38,9 @@ class TabWidget : public Widget {
 	typedef Common::Array<Tab> TabList;
 
 protected:
+	const int kMaxTabs = 5;
+	const int kAheadTab = 1;
+
 	int _activeTab;
 	int _firstVisibleTab;
 	TabList _tabs;

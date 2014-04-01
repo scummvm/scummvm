@@ -227,9 +227,9 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 bool TabWidget::handleKeyDown(Common::KeyState state) {
 	if (state.hasFlags(Common::KBD_SHIFT) && state.keycode == Common::KEYCODE_TAB)
-		adjustTabs(-1);
+		adjustTabs(-kAheadTab);
 	else if (state.keycode == Common::KEYCODE_TAB)
-		adjustTabs(1);
+		adjustTabs(kAheadTab);
 
 	return Widget::handleKeyDown(state);
 }
@@ -242,15 +242,15 @@ void TabWidget::adjustTabs(int value) {
 	else if (tabID < 0)
 		tabID = ((int)_tabs.size() - 1);
 
-	// If tabbing moves the last tab out of sight slide tabs over
-	if ((tabID * _tabWidth) > (_w - getAbsX()))
+	// slides _firstVisibleTab forward to the correct tab
+	while (_firstVisibleTab < tabID - kMaxTabs)
 		_firstVisibleTab++;
-	else if (tabID == 0)
-		_firstVisibleTab = tabID;
 
-	// If a tab was clicked, switch to that pane
-	if (tabID >= 0 && tabID < (int)_tabs.size())
-		setActiveTab(tabID);
+	// slide _firstVisibleTab backwards to the correct tab
+	while (tabID < _firstVisibleTab)
+			_firstVisibleTab--;
+
+	setActiveTab(tabID);
 }
 
 void TabWidget::reflowLayout() {
