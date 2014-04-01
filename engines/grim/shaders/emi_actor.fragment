@@ -3,6 +3,7 @@ in vec4 Color;
 
 uniform sampler2D tex;
 uniform bool textured;
+uniform bool swapRandB;
 uniform float alpha;
 
 OUTPUT
@@ -13,7 +14,8 @@ void main()
 	if (textured) {
 		vec4 texColor = texture(tex, Texcoord);
 #ifdef GL_ES
-		texColor.rgba = texColor.bgra;
+		if (swapRandB)
+			texColor.rb = texColor.br;
 #endif 
 		outColor.rgba *= texColor.rgba;
 	}

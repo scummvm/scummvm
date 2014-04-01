@@ -717,6 +717,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 	mud->_shader->use();
 	mud->_shader->setUniform("textured", face->_hasTexture ? GL_TRUE : GL_FALSE);
 	mud->_shader->setUniform("lightsEnabled", _lightsEnabled);
+	mud->_shader->setUniform("swapRandB", _selectedTexture->_colorFormat == BM_BGRA || _selectedTexture->_colorFormat == BM_BGR888);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_indicesEBO);
 
@@ -878,12 +879,17 @@ void GfxOpenGLS::createMaterial(Texture *material, const char *data, const CMap 
 		format = GL_RGBA;
 		internalFormat = GL_RGBA;
 	} else if (material->_colorFormat == BM_BGRA) {
+#ifdef USE_GLES2
+		format = GL_RGBA;
+		internalFormat = GL_RGBA;
+#else
 		format = GL_BGRA;
 		internalFormat = GL_RGBA;
+#endif
 	} else {	// The only other colorFormat we load right now is BGR
 #ifdef USE_GLES2
 		format = GL_RGB;
-		internalFormat = GL_RGBA;
+		internalFormat = GL_RGB;
 #else
 		format = GL_BGR;
 		internalFormat = GL_RGBA;
