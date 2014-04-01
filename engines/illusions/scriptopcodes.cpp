@@ -215,7 +215,7 @@ void ScriptOpcodes::opStartTimerThread(ScriptThread *scriptThread, OpCall &opCal
 	if (maxDuration)
 		duration += _vm->getRandom(maxDuration);
 		
-duration = 5;//DEBUG Speeds up things		
+duration = 1;//DEBUG Speeds up things		
 		
 	if (isAbortable)
 		_vm->_scriptMan->startAbortableTimerThread(duration, opCall._threadId);
@@ -262,10 +262,11 @@ void ScriptOpcodes::opEnterScene(ScriptThread *scriptThread, OpCall &opCall) {
 }
 
 //DEBUG Scenes
-uint32 dsceneId = 0x00010031, dthreadId = 0x00020036;//MAP
+//uint32 dsceneId = 0x00010031, dthreadId = 0x00020036;//MAP
 //uint32 dsceneId = 0x00010028, dthreadId = 0x000202A1;
 //uint32 dsceneId = 0x00010007, dthreadId = 0x0002000C;//Auditorium
 //uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
+uint32 dsceneId = 0x00010013, dthreadId = 0x00020018;//
 
 void ScriptOpcodes::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -442,11 +443,7 @@ void ScriptOpcodes::opStartTalkThread(ScriptThread *scriptThread, OpCall &opCall
 	ARG_UINT32(sequenceId1);
 	ARG_UINT32(sequenceId2);
 	ARG_UINT32(namedPointId);
-	// NOTE Skipped checking for stalled sequence, not sure if needed
-	_vm->_scriptMan->startTalkThread(duration, objectId, talkId, sequenceId1, sequenceId2, namedPointId, opCall._callerThreadId);
-
-	//DEBUG Resume calling thread, later done after talking is finished
-	//_vm->notifyThreadId(opCall._threadId);
+	_vm->_scriptMan->startTalkThread(duration, objectId, talkId, sequenceId1, sequenceId2, namedPointId, opCall._threadId);
 }
 
 void ScriptOpcodes::opAppearActor(ScriptThread *scriptThread, OpCall &opCall) {
@@ -618,16 +615,19 @@ void ScriptOpcodes::opJumpIf(ScriptThread *scriptThread, OpCall &opCall) {
 }
 
 void ScriptOpcodes::opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	_vm->_scriptMan->_stack.push(_vm->_scriptMan->_prevSceneId == sceneId ? 1 : 0);
 }
 
 void ScriptOpcodes::opIsCurrentSceneId(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	_vm->_scriptMan->_stack.push(_vm->getCurrentScene() == sceneId ? 1 : 0);
 }
 
 void ScriptOpcodes::opIsActiveSceneId(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	_vm->_scriptMan->_stack.push(_vm->_scriptMan->_activeScenes.isSceneActive(sceneId) ? 1 : 0);
 }
@@ -698,7 +698,7 @@ void ScriptOpcodes::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall) {
 	// TODO _vm->playVideo(videoId, objectId, value, opCall._threadId);
 	
 	//DEBUG Resume calling thread, later done by the video player
-	_vm->notifyThreadId(opCall._threadId);
+	_vm->notifyThreadId(opCall._callerThreadId);
 	
 }
 

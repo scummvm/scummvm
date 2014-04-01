@@ -55,31 +55,6 @@ int ScriptThread::onUpdate() {
 	return opCall._result;
 }
 
-void ScriptThread::onSuspend() {
-	// TODO
-	debug(1, "ScriptThread::onSuspend()");
-}
-
-void ScriptThread::onNotify() {
-	// TODO
-	debug(1, "ScriptThread::onNotify()");
-}
-
-void ScriptThread::onPause() {
-	// TODO
-	debug(1, "ScriptThread::onPause()");
-}
-
-void ScriptThread::onResume() {
-	// TODO
-	debug(1, "ScriptThread::onResume()");
-}
-
-void ScriptThread::onTerminated() {
-	// TODO
-	debug(1, "ScriptThread::onTerminated()");
-}
-
 void ScriptThread::execOpcode(OpCall &opCall) {
 	// TODO Clean this up
 	_vm->_scriptMan->_scriptOpcodes->execOpcode(this, opCall);

@@ -229,8 +229,9 @@ int IllusionsEngine::updateSequences() {
 	// TODO Move to Controls class
 	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
 		Control *control = *it;
-		if (control->_pauseCtr == 0 && control->_actor && control->_actor->_seqCodeIp)
+		if (control->_pauseCtr == 0 && control->_actor && control->_actor->_seqCodeIp) {
 			control->sequenceActor();
+		}
 	}
 	return 1;
 }

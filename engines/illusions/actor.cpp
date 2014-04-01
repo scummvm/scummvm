@@ -540,8 +540,8 @@ void Control::stopActor() {
 		_actor->_pathPointIndex = 0;
 		_actor->_walkCallerThreadId1 = 0;
 	}
-	_vm->notifyThreadId(_actor->_notifyThreadId1);
 	_vm->notifyThreadId(_actor->_notifyId3C);
+	_vm->notifyThreadId(_actor->_notifyThreadId1);
 }
 
 void Control::startSequenceActor(uint32 sequenceId, int value, uint32 notifyThreadId) {
@@ -569,7 +569,7 @@ void Control::startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 thread
 	if (_actor->_linkIndex2) {
 		Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[_actor->_linkIndex2 - 1]);
 		if (subControl->_actor->_flags & 1) {
-			if (subControl->_actor->_pathNode) {
+			if (_actor->_pathNode) {
 				doSeq = false;
 				subControl->_actor->_notifyThreadId2 = threadId;
 				subControl->_actor->_entryTblPtr = entryTblPtr;
@@ -597,7 +597,7 @@ void Control::sequenceActor() {
 	while (_actor->_seqCodeValue3 <= 0 && !sequenceFinished) {
 		bool breakInner = false;
 		while (!breakInner) {
-			debug(1, "SEQ op: %08X", _actor->_seqCodeIp[0]);
+			debug(1, "SEQ[%08X] op: %08X", _actor->_sequenceId, _actor->_seqCodeIp[0]);
 			opCall._op = _actor->_seqCodeIp[0] & 0x7F;
 			opCall._opSize = _actor->_seqCodeIp[1];
 			opCall._code = _actor->_seqCodeIp + 2;
@@ -666,8 +666,9 @@ void Control::startSubSequence(int linkIndex, uint32 sequenceId) {
 void Control::stopSubSequence(int linkIndex) {
 	Control *linkedControl = _vm->_dict->getObjectControl(_actor->_subobjects[linkIndex - 1]);
 	Actor *linkedActor = linkedControl->_actor;
-	uint32 notifySequenceId2 = _actor->_notifyThreadId2;
+	uint32 notifyThreadId2 = _actor->_notifyThreadId2;
 	_actor->_linkIndex2 = linkIndex;
+//TODO BUGGY!	
 	if (_actor->_entryTblPtr) {
 		linkedActor->_flags |= 0x80;
 		linkedActor->_entryTblPtr = _actor->_entryTblPtr;
@@ -679,13 +680,14 @@ void Control::stopSubSequence(int linkIndex) {
 		_actor->_notifyThreadId1 = 0;
 		_actor->_notifyThreadId2 = 0;
 	}
-	if (notifySequenceId2) {
-		Thread *talkThread = _vm->_scriptMan->_threads->findThread(notifySequenceId2);
+	if (notifyThreadId2) {
+		Thread *talkThread = _vm->_scriptMan->_threads->findThread(notifyThreadId2);
 		talkThread->sendMessage(kMsgClearSequenceId2, 0);
 	}
 }
 
 void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 callerThreadId1, uint32 callerThreadId2) {
+
 	PointArray *pathNode;
 	ActorType *actorType = _vm->_dict->findActorType(_actorTypeId);
 
@@ -895,7 +897,7 @@ void Control::refreshSequenceCode() {
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
 
 	stopActor();
-	
+
 	_actor->_flags &= ~0x80;
 	_actor->_flags &= ~0x0400;
 	_actor->_flags |= 0x0100;
@@ -925,7 +927,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	}
 
 	sequenceActor();
-	
+
 }
 
 void Control::execSequenceOpcode(OpCall &opCall) {
@@ -1092,6 +1094,17 @@ void Controls::destroyControlsByTag(uint32 tag) {
 			it = _controls.erase(it);
 		} else
 			++it;			
+	}
+}
+
+void Controls::threadIsDead(uint32 threadId) {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_actor &&
+			(control->_actor->_notifyThreadId1 == threadId || control->_actor->_notifyId3C == threadId)) {
+			control->_actor->_notifyThreadId1 = 0;
+			control->_actor->_notifyId3C = 0;
+		}
 	}
 }
 
