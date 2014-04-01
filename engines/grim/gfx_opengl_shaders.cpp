@@ -709,9 +709,7 @@ void GfxOpenGLS::translateViewpointFinish() {
 void GfxOpenGLS::updateEMIModel(const EMIModel* model) {
 	const EMIModelUserData *mud = (const EMIModelUserData *)model->_userData;
 	glBindBuffer(GL_ARRAY_BUFFER, mud->_verticesVBO);
-	void * bufData = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-	memcpy(bufData, model->_drawVertices, 3 * sizeof(float) * model->_numVertices);
-	glUnmapBuffer(GL_ARRAY_BUFFER);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, model->_numVertices * 3 * sizeof(float), model->_drawVertices);
 }
 
 void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {

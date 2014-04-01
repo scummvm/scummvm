@@ -37,9 +37,6 @@
 #endif
 #undef GL_GLEXT_PROTOTYPES
 
-#define glMapBuffer glMapBufferOES
-#define glUnmapBuffer glUnmapBufferOES
-#define GL_WRITE_ONLY GL_WRITE_ONLY_OES
 #define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
 
 #ifndef GL_BGRA
