@@ -2058,6 +2058,8 @@ case $_host_os in
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		CXXFLAGS="$CXXFLAGS -Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		;;
 	android)
