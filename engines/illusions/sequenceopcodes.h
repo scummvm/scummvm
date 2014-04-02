@@ -45,6 +45,7 @@ protected:
 	void freeOpcodes();
 
 	// Opcodes
+	void opYield(Control *control, OpCall &opCall);
 	void opSetFrameIndex(Control *control, OpCall &opCall);
 	void opEndSequence(Control *control, OpCall &opCall);
 	void opIncFrameDelay(Control *control, OpCall &opCall);
