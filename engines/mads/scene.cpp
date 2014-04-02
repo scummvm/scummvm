@@ -263,8 +263,6 @@ bool Scene::getDepthHighBits(const Common::Point &pt) {
 }
 
 void Scene::loop() {
-	_nextSceneId = _currentSceneId;
-
 	while (!_vm->shouldQuit() && !_reloadSceneFlag && _nextSceneId == _currentSceneId) {
 		// Handle drawing a game frame
 		doFrame();

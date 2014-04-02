@@ -57,7 +57,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_vocabEmergency = false;
 	_aaName = "*I0.AA";
 	_priorFrameTimer = 0;
-	_updateSceneFlag = false;
+	_anyEmergency = false;
 	_triggerMode = KERNEL_TRIGGER_PARSER;
 	_triggerSetupMode = KERNEL_TRIGGER_PARSER;
 	_ticksExpiry = 0;
@@ -256,11 +256,11 @@ void Game::sectionLoop() {
 		_kernelMode = KERNEL_ACTIVE_CODE;
 		_scene._roomChanged = false;
 
-		if ((_quoteEmergency || _vocabEmergency) && !_updateSceneFlag) {
+		if ((_quoteEmergency || _vocabEmergency) && !_anyEmergency) {
 			_scene._currentSceneId = _scene._priorSceneId;
-			_updateSceneFlag = true;
+			_anyEmergency = true;
 		} else {
-			_updateSceneFlag = false;
+			_anyEmergency = false;
 			_scene.loop();
 		}
 

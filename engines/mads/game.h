@@ -77,7 +77,7 @@ protected:
 	Common::StringArray _quotes;
 	bool _quoteEmergency;
 	bool _vocabEmergency;
-	bool _updateSceneFlag;
+	bool _anyEmergency;
 
 	/**
 	 * Constructor

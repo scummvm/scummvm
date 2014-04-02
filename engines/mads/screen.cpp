@@ -254,7 +254,7 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_objectY = -1;
 	_v8333C = false;
 	_v832EC = 0;
-	_v7FECA = 0;
+	_v7FECA = true;
 	_v7FED6 = 0;
 	_v8332A = 0;
 	_category = CAT_NONE;
