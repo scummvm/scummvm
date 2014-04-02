@@ -56,6 +56,7 @@ void SequenceOpcodes::initOpcodes() {
 	for (uint i = 0; i < 256; ++i)
 		_opcodes[i] = 0;
 	// Register opcodes
+	OPCODE(1, opYield);
 	OPCODE(2, opSetFrameIndex);
 	OPCODE(3, opEndSequence);
 	OPCODE(4, opIncFrameDelay);
@@ -102,6 +103,10 @@ void SequenceOpcodes::freeOpcodes() {
 #define	ARG_SKIP(x) opCall.skip(x); 
 #define ARG_INT16(name) int16 name = opCall.readSint16(); debug(1, "ARG_INT16(" #name " = %d)", name);
 #define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(1, "ARG_UINT32(" #name " = %08X)", name);
+
+void SequenceOpcodes::opYield(Control *control, OpCall &opCall) {
+	opCall._result = 2;
+}
 
 void SequenceOpcodes::opSetFrameIndex(Control *control, OpCall &opCall) {
 	ARG_INT16(frameIndex);

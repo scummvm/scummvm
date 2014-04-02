@@ -700,11 +700,9 @@ void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 cal
 	// TODO _actor->_field_C0 = destPt.x;
 	// TODO _actor->_field_C2 = destPt.y;
 
-	/* TODO	
 	uint newFacing;
-	if (calcPointDirection(_actor->_position, destPt, newFacing))
+	if (_vm->calcPointDirection(_actor->_position, destPt, newFacing))
 		faceActor(newFacing);
-	*/
 
 	if (actorType->_value1E)
 		_actor->_pathCtrY = actorType->_value1E;

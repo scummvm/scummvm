@@ -349,10 +349,36 @@ uint32 IllusionsEngine::getPriorityFromBase(int16 priority) {
 	return 32000000 * priority;
 }
 
-bool IllusionsEngine::calcPointDirection(Common::Point &pos1, Common::Point &pos2, uint &facing) {
-	// TODO
+bool IllusionsEngine::calcPointDirection(Common::Point &srcPt, Common::Point &dstPt, uint &facing) {
 	facing = 0;
-	return false;
+	uint xd = 0, yd = 0;
+	if (srcPt.x < dstPt.x)
+		xd = 0x40;
+	else if (srcPt.x > dstPt.x)
+		xd = 0x04;
+	else
+		xd = 0x00;
+	if (srcPt.y < dstPt.y)
+		yd = 0x01;
+	else if (srcPt.y > dstPt.y)
+		yd = 0x10;
+	else
+		yd = 0x00;
+	if (!xd && !yd)
+		facing = 0;
+	else if (!yd && xd)
+		facing = xd;
+	else if (yd && !xd)
+		facing = yd;
+	else if (xd == 0x04 && yd == 0x01)
+		facing = 0x02;
+	else if (xd == 0x40 && yd == 0x01)
+		facing = 0x80;
+	else if (xd == 0x04 && yd == 0x10)
+		facing = 0x08;
+	else if (xd == 0x40 && yd == 0x10)
+		facing = 0x20;
+	return facing != 0;
 }
 
 void IllusionsEngine::playVideo(uint32 videoId, uint32 objectId, uint32 priority, uint32 threadId) {
