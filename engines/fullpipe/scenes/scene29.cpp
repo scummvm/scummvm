@@ -713,7 +713,19 @@ void sceneHandler29_clickPorter(ExCommand *cmd) {
 }
 
 void sceneHandler29_sub05() {
-	warning("STUB: sceneHandler29_sub05()");
+	if (g_fp->_aniMan->_statics->_staticsId == ST_MAN29_RUNR) {
+		if (g_vars->scene29_var20 > 1436) {
+			sceneHandler29_manFromR();
+		} else {
+			g_vars->scene29_var14 = (1310 - g_vars->scene29_var20) * 5213 / 100000 + 25;
+
+			if (!g_vars->scene29_var15)
+				g_fp->_aniMan->startAnim(MV_MAN29_RUN, 0, -1);
+		}
+	}
+
+	g_vars->scene29_var20 = g_fp->_aniMan->_ox;
+	g_vars->scene29_var21 = g_fp->_aniMan->_oy;
 }
 
 void sceneHandler29_shootersEscape() {
