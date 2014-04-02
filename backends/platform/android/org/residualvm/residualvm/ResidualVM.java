@@ -450,6 +450,6 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 			}
 		}
 
-		System.load("libresidualvm.so");
+		System.loadLibrary("residualvm");
 	}
 }
