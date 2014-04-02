@@ -25,6 +25,7 @@
 #include "illusions/actor.h"
 #include "illusions/actorresource.h"
 #include "illusions/dictionary.h"
+#include "illusions/scriptman.h"
 #include "illusions/scriptopcodes.h"
 
 namespace Illusions {
@@ -82,6 +83,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(40, opSetPriorityLayer);
 	OPCODE(50, opPlaySound);
 	OPCODE(51, opStopSound);
+	OPCODE(52, opStartScriptThread);
 	OPCODE(53, opPlaceSubActor);
 	OPCODE(54, opStartSubSequence);
 	OPCODE(55, opStopSubSequence);
@@ -309,6 +311,12 @@ void SequenceOpcodes::opPlaySound(Control *control, OpCall &opCall) {
 void SequenceOpcodes::opStopSound(Control *control, OpCall &opCall) {
 	ARG_UINT32(soundEffectId);
 	// TODO _vm->stopSound(soundEffectId);
+}
+
+void SequenceOpcodes::opStartScriptThread(Control *control, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(threadId);
+	_vm->_scriptMan->startScriptThread(threadId, 0, 0, 0, 0);
 }
 
 void SequenceOpcodes::opPlaceSubActor(Control *control, OpCall &opCall) {

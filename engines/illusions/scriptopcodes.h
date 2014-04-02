@@ -83,6 +83,7 @@ protected:
 	void opPanStop(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);	
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
+	void opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetProperty(ScriptThread *scriptThread, OpCall &opCall);
 	void opPlaceActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opFaceActor(ScriptThread *scriptThread, OpCall &opCall);
