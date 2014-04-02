@@ -27,6 +27,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
+#include "engines/grim/debug.h"
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
@@ -181,16 +182,16 @@ void EMISound::setMusicState(int stateId) {
 	if (stateId == 0)
 		return;
 	if (_musicTable == NULL) {
-		warning("No music table loaded");
+		Debug::debug(Debug::Sound, "No music table loaded");
 		return;
 	}
 	if (_musicTable[stateId]._id != stateId) {
-		warning("Attempted to play track #%d, not found in music table!", stateId);
+		Debug::debug(Debug::Sound, "Attempted to play track #%d, not found in music table!", stateId);
 		return;
 	}
 	Common::String filename;
 	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		warning("PS2 doesn't have musictable yet %d ignored, just playing 1195.SCX", stateId);
+		Debug::debug(Debug::Sound, "PS2 doesn't have musictable yet %d ignored, just playing 1195.SCX", stateId);
 		// So, we just rig up the menu-song hardcoded for now, as a test of the SCX-code.
 		filename = "1195.SCX";
 	} else {
@@ -199,7 +200,7 @@ void EMISound::setMusicState(int stateId) {
 	_curMusicState = stateId;
 	_music = createEmptyMusicTrack();
 
-	warning("Loading music: %s", filename.c_str());
+	Debug::debug(Debug::Sound, "Loading music: %s", filename.c_str());
 	if (initTrack(filename, _music)) {
 		_music->play();
 	}

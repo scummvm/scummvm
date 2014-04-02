@@ -327,7 +327,7 @@ void Imuse::switchToNextRegion(Track *track) {
 	assert(track);
 
 	if (track->trackId >= MAX_IMUSE_TRACKS) {
-		Debug::debug(Debug::Imuse, "Imuse::switchToNextRegion(): fadeTrack end: soundName:%s", track->soundName);
+		Debug::debug(Debug::Sound, "Imuse::switchToNextRegion(): fadeTrack end: soundName:%s", track->soundName);
 		flushTrack(track);
 		return;
 	}
@@ -335,7 +335,7 @@ void Imuse::switchToNextRegion(Track *track) {
 	int numRegions = _sound->getNumRegions(track->soundDesc);
 
 	if (++track->curRegion == numRegions) {
-		Debug::debug(Debug::Imuse, "Imuse::switchToNextRegion(): end of tracks: soundName:%s", track->soundName);
+		Debug::debug(Debug::Sound, "Imuse::switchToNextRegion(): end of tracks: soundName:%s", track->soundName);
 		flushTrack(track);
 		return;
 	}
@@ -348,7 +348,7 @@ void Imuse::switchToNextRegion(Track *track) {
 	if (jumpId == -1 && track->curHookId != 128)
 		jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, 0);
 	if (jumpId != -1) {
-		Debug::debug(Debug::Imuse, "Imuse::switchToNextRegion(): JUMP: soundName:%s", track->soundName);
+		Debug::debug(Debug::Sound, "Imuse::switchToNextRegion(): JUMP: soundName:%s", track->soundName);
 		int region = _sound->getRegionIdByJumpId(soundDesc, jumpId);
 		assert(region != -1);
 		int sampleHookId = _sound->getJumpHookId(soundDesc, jumpId);
@@ -369,7 +369,7 @@ void Imuse::switchToNextRegion(Track *track) {
 			track->curHookId = 0;
 	}
 
-	Debug::debug(Debug::Imuse, "Imuse::switchToNextRegion(): REGION %d: soundName:%s", (int)track->curRegion, track->soundName);
+	Debug::debug(Debug::Sound, "Imuse::switchToNextRegion(): REGION %d: soundName:%s", (int)track->curRegion, track->soundName);
 	track->dataOffset = _sound->getRegionOffset(soundDesc, track->curRegion);
 	track->regionOffset = 0;
 }

@@ -92,7 +92,7 @@ void Lua_V1::ImSetVoiceEffect() {
 	const char *effectName;
 
 	effectName = luaL_check_string(1);
-	Debug::warning(Debug::Imuse, "ImSetVoiceEffect(%s) Voice effects are not yet supported", effectName);
+	Debug::warning(Debug::Sound, "ImSetVoiceEffect(%s) Voice effects are not yet supported", effectName);
 }
 
 void Lua_V1::ImSetMusicVol() {

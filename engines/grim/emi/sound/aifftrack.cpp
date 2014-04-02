@@ -21,10 +21,10 @@
  */
 
 #include "common/mutex.h"
-#include "common/textconsole.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
+#include "engines/grim/debug.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/emi/sound/aifftrack.h"
 
@@ -43,7 +43,7 @@ AIFFTrack::~AIFFTrack() {
 
 bool AIFFTrack::openSound(const Common::String &soundName, Common::SeekableReadStream *file) {
 	if (!file) {
-		warning("Stream for %s not open", soundName.c_str());
+		Debug::debug(Debug::Sound, "Stream for %s not open", soundName.c_str());
 		return false;
 	}
 	_soundName = soundName;

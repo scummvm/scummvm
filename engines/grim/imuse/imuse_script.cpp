@@ -76,22 +76,22 @@ void Imuse::refreshScripts() {
 }
 
 bool Imuse::startVoice(const char *soundName, int volume, int pan) {
-	Debug::debug(Debug::Imuse, "Imuse::startVoice(): SoundName %s, vol:%d, pan:%d", soundName, volume, pan);
+	Debug::debug(Debug::Sound, "Imuse::startVoice(): SoundName %s, vol:%d, pan:%d", soundName, volume, pan);
 	return startSound(soundName, IMUSE_VOLGRP_VOICE, 0, volume, pan, 127, NULL);
 }
 
 void Imuse::startMusic(const char *soundName, int hookId, int volume, int pan) {
-	Debug::debug(Debug::Imuse, "Imuse::startMusic(): SoundName %s, hookId:%d, vol:%d, pan:%d", soundName, hookId, volume, pan);
+	Debug::debug(Debug::Sound, "Imuse::startMusic(): SoundName %s, hookId:%d, vol:%d, pan:%d", soundName, hookId, volume, pan);
 	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126, NULL);
 }
 
 void Imuse::startMusicWithOtherPos(const char *soundName, int hookId, int volume, int pan, Track *otherTrack) {
-	Debug::debug(Debug::Imuse, "Imuse::startMusicWithOtherPos(): SoundName %s, hookId:%d, vol:%d, pan:%d", soundName, hookId, volume, pan);
+	Debug::debug(Debug::Sound, "Imuse::startMusicWithOtherPos(): SoundName %s, hookId:%d, vol:%d, pan:%d", soundName, hookId, volume, pan);
 	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126, otherTrack);
 }
 
 void Imuse::startSfx(const char *soundName, int priority) {
-	Debug::debug(Debug::Imuse, "Imuse::startSfx(): SoundName %s, priority:%d", soundName, priority);
+	Debug::debug(Debug::Sound, "Imuse::startSfx(): SoundName %s, priority:%d", soundName, priority);
 	startSound(soundName, IMUSE_VOLGRP_SFX, 0, 127, 0, priority, NULL);
 }
 
@@ -102,7 +102,7 @@ int32 Imuse::getPosIn16msTicks(const char *soundName) {
 	getTrack = findTrack(soundName);
 	// Warn the user if the track was not found
 	if (getTrack == NULL) {
-		Debug::warning(Debug::Imuse, "Sound '%s' could not be found to get ticks", soundName);
+		Debug::warning(Debug::Sound, "Sound '%s' could not be found to get ticks", soundName);
 		return false;
 	}
 
@@ -136,7 +136,7 @@ bool Imuse::getSoundStatus(const char *soundName) {
 	if (track == NULL || !g_system->getMixer()->isSoundHandleActive(track->handle)) {
 		// This debug warning should be "light" since this function gets called
 		// on occassion to see if a sound has stopped yet
-		Debug::debug(Debug::Imuse, "Sound '%s' could not be found to get status, assume inactive.", soundName);
+		Debug::debug(Debug::Sound, "Sound '%s' could not be found to get status, assume inactive.", soundName);
 		return false;
 	}
 	return true;
@@ -144,13 +144,13 @@ bool Imuse::getSoundStatus(const char *soundName) {
 
 void Imuse::stopSound(const char *soundName) {
 	Common::StackLock lock(_mutex);
-	Debug::debug(Debug::Imuse, "Imuse::stopSound(): SoundName %s", soundName);
+	Debug::debug(Debug::Sound, "Imuse::stopSound(): SoundName %s", soundName);
 	Track *removeTrack = NULL;
 
 	removeTrack = findTrack(soundName);
 	// Warn the user if the track was not found
 	if (removeTrack == NULL) {
-		Debug::warning(Debug::Imuse, "Sound track '%s' could not be found to stop", soundName);
+		Debug::warning(Debug::Sound, "Sound track '%s' could not be found to stop", soundName);
 		return;
 	}
 	flushTrack(removeTrack);
@@ -158,7 +158,7 @@ void Imuse::stopSound(const char *soundName) {
 
 void Imuse::stopAllSounds() {
 	Common::StackLock lock(_mutex);
-	Debug::debug(Debug::Imuse, "Imuse::stopAllSounds()");
+	Debug::debug(Debug::Sound, "Imuse::stopAllSounds()");
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];

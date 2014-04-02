@@ -105,7 +105,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	for (i = 0; i < MAX_IMUSE_TRACKS; i++) {
 		// Filenames are case insensitive, see findTrack
 		if (!scumm_stricmp(_track[i]->soundName, soundName)) {
-			Debug::debug(Debug::Imuse, "Imuse::startSound(): Track '%s' already playing.", soundName);
+			Debug::debug(Debug::Sound, "Imuse::startSound(): Track '%s' already playing.", soundName);
 			return true;
 		}
 	}

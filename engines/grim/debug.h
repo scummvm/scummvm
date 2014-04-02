@@ -45,7 +45,7 @@ public:
 		Keyframes = 2 << 10,
 		Materials = 2 << 11,
 		Movie = 2 << 12,
-		Imuse = 2 << 13,
+		Sound = 2 << 13,
 		Scripts = 2 << 14,
 		Sets = 2 << 15,
 		TextObjects = 2 << 16,
