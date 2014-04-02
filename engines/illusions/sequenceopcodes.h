@@ -72,6 +72,7 @@ protected:
 	void opSetPriorityLayer(Control *control, OpCall &opCall);
 	void opPlaySound(Control *control, OpCall &opCall);
 	void opStopSound(Control *control, OpCall &opCall);
+	void opStartScriptThread(Control *control, OpCall &opCall);
 	void opPlaceSubActor(Control *control, OpCall &opCall);
 	void opStartSubSequence(Control *control, OpCall &opCall);
 	void opStopSubSequence(Control *control, OpCall &opCall);	

@@ -105,6 +105,8 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x0016001E, spcRemoveInventoryItem);
 	SPECIAL(0x0016001F, spcHasInventoryItem);
 	SPECIAL(0x00160025, spcCloseInventory);
+	SPECIAL(0x00160037, spcIsCursorHoldingObjectId);
+	SPECIAL(0x0016003A, spcSaladCtl);
 }
 
 void BbdouSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
@@ -113,7 +115,7 @@ void BbdouSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
 		(*(*it)._value)(opCall);
 	} else {
 		debug("BbdouSpecialCode::run() Unimplemented special code %08X", specialCodeId);
-		_vm->notifyThreadId(opCall._callerThreadId);
+		_vm->notifyThreadId(opCall._threadId);
 	}
 }
 
@@ -129,19 +131,19 @@ void BbdouSpecialCode::spcInitCursor(OpCall &opCall) {
 	ARG_UINT32(progResKeywordId);
 	_cursor->init(objectId, progResKeywordId);
 	setCursorControlRoutine(objectId, 0);
-	_vm->notifyThreadId(opCall._callerThreadId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcEnableCursor(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	_cursor->enable(objectId);
-	_vm->notifyThreadId(opCall._callerThreadId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcDisableCursor(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	_cursor->disable(objectId);
-	_vm->notifyThreadId(opCall._callerThreadId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcAddCursorSequence(OpCall &opCall) {
@@ -149,7 +151,7 @@ void BbdouSpecialCode::spcAddCursorSequence(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	ARG_UINT32(sequenceId);
 	_cursor->addCursorSequence(objectId, sequenceId);
-	_vm->notifyThreadId(opCall._callerThreadId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcCursorStartHoldingObjectId(OpCall &opCall) {
@@ -157,7 +159,7 @@ void BbdouSpecialCode::spcCursorStartHoldingObjectId(OpCall &opCall) {
 	ARG_UINT32(holdingObjectId);
 	ARG_INT16(doPlaySound);
 	startHoldingObjectId(objectId, holdingObjectId, doPlaySound != 0);
-	_vm->notifyThreadId(opCall._callerThreadId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcCursorStopHoldingObjectId(OpCall &opCall) {
@@ -165,12 +167,12 @@ void BbdouSpecialCode::spcCursorStopHoldingObjectId(OpCall &opCall) {
 	ARG_INT16(doPlaySound);
 	stopHoldingObjectId(objectId, doPlaySound != 0);
 	_cursor->_data._mode = 1;
-	_vm->notifyThreadId(opCall._callerThreadId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcInitBubble(OpCall &opCall) {
 	_bubble->init();
-	_vm->notifyThreadId(opCall._callerThreadId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcSetupBubble(OpCall &opCall) {
@@ -181,7 +183,7 @@ void BbdouSpecialCode::spcSetupBubble(OpCall &opCall) {
 	ARG_INT16(count);
 	_bubble->addItem0(sequenceId1, sequenceId2, progResKeywordId, namedPointId,
 		count, (uint32*)opCall._code);
-	_vm->notifyThreadId(opCall._callerThreadId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcSetObjectInteractMode(OpCall &opCall) {
@@ -189,7 +191,7 @@ void BbdouSpecialCode::spcSetObjectInteractMode(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	ARG_INT16(value);
 	_cursor->setStruct8bsValue(objectId, value);
-	_vm->notifyThreadId(opCall._callerThreadId);
+	_vm->notifyThreadId(opCall._threadId);
 }
 
 void BbdouSpecialCode::spcRegisterInventoryBag(OpCall &opCall) {
@@ -225,10 +227,31 @@ void BbdouSpecialCode::spcRemoveInventoryItem(OpCall &opCall) {
 void BbdouSpecialCode::spcHasInventoryItem(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	_vm->_scriptMan->_stack.push(_inventory->hasInventoryItem(objectId) ? 1 : 0);
+debug("_inventory->hasInventoryItem(%08X) = %d", objectId, _inventory->hasInventoryItem(objectId));	
 }
 
 void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
 	_inventory->close();
+}
+
+void BbdouSpecialCode::spcIsCursorHoldingObjectId(OpCall &opCall) {
+	ARG_UINT32(cursorObjectId);
+	ARG_UINT32(objectId);
+	_vm->_scriptMan->_stack.push(isHoldingObjectId(objectId) ? 1 : 0);
+	_vm->notifyThreadId(opCall._threadId);
+}
+
+void BbdouSpecialCode::spcSaladCtl(OpCall &opCall) {
+	ARG_UINT32(cmd);
+	ARG_UINT32(sequenceId);
+	switch (cmd) {
+	case 1:
+		initSalad();
+		break;
+	case 2:
+		addSalad(sequenceId);
+		break;
+	}
 }
 
 void BbdouSpecialCode::playSoundEffect(int soundIndex) {
@@ -642,6 +665,32 @@ void BbdouSpecialCode::stopHoldingObjectId(uint32 objectId1, bool doPlaySound) {
 		holdingObjectId = _cursor->_data._holdingObjectId2;
 	if (holdingObjectId)
 		_inventory->putBackInventoryItem(holdingObjectId, control->_actor->_position);
+}
+
+bool BbdouSpecialCode::isHoldingObjectId(uint32 objectId) {
+	return _cursor->_data._holdingObjectId == objectId;
+}
+
+void BbdouSpecialCode::initSalad() {
+	for (uint i = 0; i < 12; ++i) {
+		_saladObjectIds[i] = _vm->_controls->newTempObjectId();
+		_vm->_controls->placeActor(0x00050192, Common::Point(0, 0), 0x00060C26, _saladObjectIds[i], 0);
+	}
+	_saladCount = 0;
+}
+
+void BbdouSpecialCode::addSalad(uint32 sequenceId) {
+	if (_saladCount >= 12) {
+		Control *control = _vm->_dict->getObjectControl(_saladObjectIds[_saladCount - 1]);
+		control->unlinkObject();
+	} else {
+		++_saladCount;
+	}
+	Control *control = _vm->_dict->getObjectControl(_saladObjectIds[_saladCount - 1]);
+	control->linkToObject(0x00040309, _saladCount);
+	control->startSequenceActor(sequenceId, 2, 0);
+	control->setPriority(_saladCount + 9);
+	control->deactivateObject();
 }
 
 } // End of namespace Illusions

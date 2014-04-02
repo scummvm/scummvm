@@ -78,7 +78,8 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 		if (callingThread)
 			_tag = callingThread->_tag;
 	}
-	
+
+	//debug("New talk thread: %08X %08X", _threadId, _talkId);
 }
 
 int TalkThread::onUpdate() {
@@ -307,7 +308,7 @@ static char *debugW2I(byte *wstr) {
 int TalkThread::insertText() {
 	int charCount = 100;
 	
-	debug("[%s]", debugW2I(_currEntryText));
+	debug("%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
 	_entryText = 0;
 	
 	// TODO _vm->getDimensions1(&dimensions);

@@ -76,6 +76,11 @@ public:
 	BbdouCursor *_cursor;
 	BbdouBubble *_bubble;
 	BbdouInventory *_inventory;
+
+	// Salad
+	uint _saladCount;
+	uint32 _saladObjectIds[12];
+
 	// Special code interface functions
 	void spcInitCursor(OpCall &opCall);
 	void spcEnableCursor(OpCall &opCall);
@@ -94,11 +99,14 @@ public:
 	void spcRemoveInventoryItem(OpCall &opCall);
 	void spcHasInventoryItem(OpCall &opCall);
 	void spcCloseInventory(OpCall &opCall);
+	void spcIsCursorHoldingObjectId(OpCall &opCall);
+	void spcSaladCtl(OpCall &opCall);
 
 	void playSoundEffect(int soundIndex);
 	void resetItem10(uint32 objectId, Item10 *item10);
 	void startHoldingObjectId(uint32 objectId1, uint32 holdingObjectId, bool doPlaySound);
 	void stopHoldingObjectId(uint32 objectId1, bool doPlaySound);
+	bool isHoldingObjectId(uint32 objectId);
 
 protected:
 	// Internal functions
@@ -116,6 +124,9 @@ protected:
 	bool runCause(Control *cursorControl, CursorData &cursorData,
 		uint32 verbId, uint32 objectId2, uint32 objectId, int soundIndex);
 	uint32 startCauseThread(uint32 cursorObjectId, uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
+	// Salad
+	void initSalad();
+	void addSalad(uint32 sequenceId);
 };
 
 } // End of namespace Illusions

@@ -267,7 +267,7 @@ void ThreadList::killThread(uint32 threadId) {
 		if (childThread->_callingThreadId == threadId)
 			killThread(childThread->_threadId);
 	}
-	
+
 	thread->onKill();
 
 }

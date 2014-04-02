@@ -109,6 +109,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(37, opPanStop);
 	OPCODE(39, opSetDisplay);
 	OPCODE(42, opIncBlockCounter);
+	OPCODE(43, opClearBlockCounter);
 	OPCODE(45, opSetProperty);
 	OPCODE(46, opPlaceActor);
 	OPCODE(47, opFaceActor);
@@ -263,13 +264,17 @@ void ScriptOpcodes::opEnterScene(ScriptThread *scriptThread, OpCall &opCall) {
 }
 
 //DEBUG Scenes
-uint32 dsceneId = 0x00010031, dthreadId = 0x00020036;//MAP
+//uint32 dsceneId = 0x00010031, dthreadId = 0x00020036;//MAP
 //uint32 dsceneId = 0x00010028, dthreadId = 0x000202A1;
 //uint32 dsceneId = 0x00010007, dthreadId = 0x0002000C;//Auditorium
 //uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
 //uint32 dsceneId = 0x00010013, dthreadId = 0x00020018;//Therapist
 //uint32 dsceneId = 0x00010016, dthreadId = 0x0002001B;//Dorms ext
 //uint32 dsceneId = 0x00010017, dthreadId = 0x0002001C;//Dorms int
+//uint32 dsceneId = 0x0001000D, dthreadId = 0x00020012;//Food minigame
+//uint32 dsceneId = 0x00010067, dthreadId = 0x0002022A;
+//uint32 dsceneId = 0x0001000C, dthreadId = 0x00020011;//Cafeteria
+uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
 
 void ScriptOpcodes::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -371,6 +376,11 @@ void ScriptOpcodes::opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall
 	byte value = _vm->_scriptMan->_scriptResource->_blockCounters.get(index) + 1;
 	if (value <= 63)
 		_vm->_scriptMan->_scriptResource->_blockCounters.set(index, value);
+}
+
+void ScriptOpcodes::opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(index);
+	_vm->_scriptMan->_scriptResource->_blockCounters.set(index, 0);
 }
 
 void ScriptOpcodes::opSetProperty(ScriptThread *scriptThread, OpCall &opCall) {
@@ -690,7 +700,7 @@ void ScriptOpcodes::opCompareBlockCounter(ScriptThread *scriptThread, OpCall &op
 
 void ScriptOpcodes::opDebug126(ScriptThread *scriptThread, OpCall &opCall) {
 	// NOTE Prints some debug text
-	debug("[DBG] %s", (char*)opCall._code);
+	debug(1, "[DBG] %s", (char*)opCall._code);
 }
 
 void ScriptOpcodes::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall) {
@@ -747,7 +757,7 @@ void ScriptOpcodes::opStartAbortableThread(ScriptThread *scriptThread, OpCall &o
 	ARG_INT16(codeOffs);
 	ARG_INT16(skipOffs);
 	_vm->_scriptMan->startAbortableThread(opCall._code + codeOffs,
-		opCall._code + skipOffs, opCall._callerThreadId);
+		opCall._code + skipOffs, opCall._threadId);
 }
 
 void ScriptOpcodes::opKillThread(ScriptThread *scriptThread, OpCall &opCall) {
