@@ -1469,5 +1469,9 @@ Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
 	return pTail;
 }
 
+void BallChain::sub05(Ball *ball) {
+	warning("STUB: BallChain::sub05");
+}
+
 
 } // End of namespace Fullpipe

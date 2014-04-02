@@ -452,8 +452,154 @@ void sceneHandler29_manHit() {
 	}
 }
 
+void sceneHandler29_assHitRed() {
+	if (g_vars->scene29_ass->_statics->_staticsId == ST_ASS_NORM) {
+		g_vars->scene29_ass->changeStatics2(ST_ASS_NORM);
+		g_vars->scene29_ass->startAnim(MV_ASS_HITRED, 0, -1);
+	}
+}
+
+void sceneHandler29_assHitGreen() {
+	if (g_vars->scene29_ass->_statics->_staticsId == ST_ASS_NORM) {
+		g_vars->scene29_ass->changeStatics2(ST_ASS_NORM);
+		g_vars->scene29_ass->startAnim(MV_ASS_HITGREEN, 0, -1);
+	}
+}
+
 void sceneHandler29_sub03() {
-	warning("STUB: sceneHandler29_sub03()");
+	Ball *ball = g_vars->scene29_var08.pHead;
+	Ball *newball;
+	int x, y;
+
+	while (ball) {
+		x = ball->ani->_ox - 30;
+		y = ball->ani->_oy;
+
+		if (x >= 186) {
+			if (sceneHandler29_sub16(ball->ani, x)) {
+				newball = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
+				newball->ani = ball->ani;
+
+				if (g_vars->scene29_var05.field_8)
+					g_vars->scene29_var05.field_8->p0 = newball;
+				else
+					g_vars->scene29_var05.pHead = newball;
+
+				g_vars->scene29_var05.field_8 = newball;
+
+				if (ball == g_vars->scene29_var08.pHead)
+					g_vars->scene29_var08.pHead = ball->p0;
+				else
+					ball->p1->p0 = ball->p0;
+
+				if (ball == g_vars->scene29_var08.field_8)
+					g_vars->scene29_var08.field_8 = ball->p1;
+				else
+					ball->p0->p1 = ball->p1;
+
+				g_vars->scene29_var08.init(&ball);
+
+				sceneHandler29_manHit();
+
+				g_fp->playSound(SND_29_014, 0);
+
+				ball->ani->startAnim(MV_SHG_HITMAN, 0, -1);
+
+				g_vars->scene29_var18 = ball->ani->_id;
+			} else {
+				ball->ani->setOXY(x, y);
+			}
+		} else {
+			newball = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
+			newball->ani = ball->ani;
+
+			if (g_vars->scene29_var05.field_8)
+				g_vars->scene29_var05.field_8->p0 = newball;
+			else
+				g_vars->scene29_var05.pHead = newball;
+
+			g_vars->scene29_var05.field_8 = newball;
+
+			ball->ani->hide();
+
+			if (ball == g_vars->scene29_var08.pHead)
+				g_vars->scene29_var08.pHead = ball->p0;
+			else
+				ball->p1->p0 = ball->p0;
+
+			if (ball == g_vars->scene29_var08.field_8)
+				g_vars->scene29_var08.field_8 = ball->p1;
+			else
+				ball->p0->p1 = ball->p1;
+
+			g_vars->scene29_var08.init(&ball);
+
+			sceneHandler29_assHitGreen();
+		}
+
+		ball = ball->p0;
+	}
+
+	ball = g_vars->scene29_var07.pHead;
+
+	while (ball) {
+		x = ball->ani->_ox - 30;
+		y = ball->ani->_oy;
+
+		if (x >= 147) {
+			if (sceneHandler29_sub15(ball->ani, x)) {
+				newball = g_vars->scene29_var06.sub04(g_vars->scene29_var06.field_8, 0);
+				newball->ani = ball->ani;
+
+				if (g_vars->scene29_var06.field_8)
+					g_vars->scene29_var06.field_8->p0 = newball;
+				else
+					g_vars->scene29_var06.pHead = newball;
+
+				g_vars->scene29_var06.field_8 = newball;
+
+				g_vars->scene29_var07.sub05(ball);
+
+				sceneHandler29_manHit();
+
+				g_fp->playSound(SND_29_027, 0);
+
+				ball->ani->startAnim(MV_SHR_HITMAN, 0, -1);
+
+				g_vars->scene29_var18 = ball->ani->_id;
+			} else {
+				ball->ani->setOXY(x, y);
+			}
+		} else {
+			newball = g_vars->scene29_var06.sub04(g_vars->scene29_var06.field_8, 0);
+			newball->ani = ball->ani;
+
+			if (g_vars->scene29_var06.field_8)
+				g_vars->scene29_var06.field_8->p0 = newball;
+			else
+				g_vars->scene29_var06.pHead = newball;
+
+			g_vars->scene29_var06.field_8 = newball;
+
+			ball->ani->hide();
+
+			if (ball == g_vars->scene29_var07.pHead)
+				g_vars->scene29_var07.pHead = ball->p0;
+			else
+				ball->p1->p0 = ball->p0;
+
+			if (ball == g_vars->scene29_var07.field_8)
+				g_vars->scene29_var07.field_8 = ball->p1;
+			else
+				ball->p0->p1 = ball->p1;
+
+			g_vars->scene29_var07.init(&ball);
+
+			sceneHandler29_assHitRed();
+		}
+
+		ball = ball->p0;
+	}
 }
 
 void sceneHandler29_manFromL() {
@@ -601,20 +747,6 @@ void sceneHandler29_sub07() {
 	g_vars->scene29_var20 -= 2;
   
 	g_fp->_aniMan->setOXY(g_vars->scene29_var20, g_vars->scene29_var21);
-}
-
-void sceneHandler29_assHitGreen() {
-	if (g_vars->scene29_ass->_statics->_staticsId == ST_ASS_NORM) {
-		g_vars->scene29_ass->changeStatics2(ST_ASS_NORM);
-		g_vars->scene29_ass->startAnim(MV_ASS_HITGREEN, 0, -1);
-	}
-}
-
-void sceneHandler29_assHitRed() {
-	if (g_vars->scene29_ass->_statics->_staticsId == ST_ASS_NORM) {
-		g_vars->scene29_ass->changeStatics2(ST_ASS_NORM);
-		g_vars->scene29_ass->startAnim(MV_ASS_HITRED, 0, -1);
-	}
 }
 
 void sceneHandler29_shoot() {

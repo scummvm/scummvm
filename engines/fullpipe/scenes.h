@@ -232,6 +232,7 @@ struct BallChain {
 
 	void init(Ball **ball);
 	Ball *sub04(Ball *ballP, Ball *ballN);
+	void sub05(Ball *ball);
 	void reset() { pHead = 0; pTail = 0; field_8 = 0; numBalls = 0; free(cPlex); cPlex = 0; cPlexLen = 0; }
 };
 
