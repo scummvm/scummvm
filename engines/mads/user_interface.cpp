@@ -28,8 +28,8 @@
 namespace MADS {
 
 UISlot::UISlot() {
-	_slotType = ST_NONE;
-	_field2 = 0;
+	_flags = IMG_STATIC;
+	_segmentId = 0;
 	_spritesIndex = 0;
 	_frameNumber = 0;
 }
@@ -38,8 +38,8 @@ UISlot::UISlot() {
 
 void UISlots::fullRefresh() {
 	UISlot slot;
-	slot._slotType = ST_FULL_SCREEN_REFRESH;
-	slot._field2 = -1;
+	slot._flags = IMG_REFRESH;
+	slot._segmentId = -1;
 
 	push_back(slot);
 }
@@ -48,8 +48,8 @@ void UISlots::add(const Common::Point &pt, int frameNumber, int spritesIndex) {
 	assert(size() < 50);
 
 	UISlot ie;
-	ie._slotType = -3;
-	ie._field2 = 201;
+	ie._flags = -3;
+	ie._segmentId = IMG_TEXT_UPDATE;
 	ie._position = pt;
 	ie._frameNumber = frameNumber;
 	ie._spritesIndex = spritesIndex;
@@ -67,12 +67,12 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
 		UISlot &slot = (*this)[idx];
 
-		if (slot._slotType >= ST_NONE) {
+		if (slot._flags >= IMG_STATIC) {
 			dirtyArea._active = false;
 		} else {
 			dirtyArea.setUISlot(&slot);
 			dirtyArea._textActive = true;
-			if (slot._field2 == 200 && slot._slotType == ST_MINUS5) {
+			if (slot._segmentId == IMG_SPINNING_OBJECT && slot._flags == IMG_FULL_UPDATE) {
 				dirtyArea._active = false;
 				dirtyAreaPtr = &dirtyArea;
 			}
@@ -89,10 +89,10 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 		UISlot &slot = (*this)[idx];
 
 		if (dirtyArea._active && dirtyArea._bounds.width() > 0
-				&& dirtyArea._bounds.height() > 0 && slot._slotType >= -20) {
+				&& dirtyArea._bounds.height() > 0 && slot._flags >= -20) {
 
 			// TODO: Figure out the difference between two copy methods used
-			if (slot._slotType >= ST_EXPIRED) {
+			if (slot._flags >= IMG_ERASE) {
 				userInterface._surface.copyTo(&userInterface, dirtyArea._bounds,
 					Common::Point(dirtyArea._bounds.left, dirtyArea._bounds.top));
 			} else {
@@ -106,14 +106,14 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
 		UISlot &slot = (*this)[idx];
 
-		int slotType = slot._slotType;
-		if (slotType >= ST_NONE) {
+		int slotType = slot._flags;
+		if (slotType >= IMG_STATIC) {
 			dirtyArea.setUISlot(&slot);
 			if (!updateFlag)
 				slotType &= ~0x40;
 
 			dirtyArea._textActive = slotType > 0;
-			slot._slotType &= 0x40;
+			slot._flags &= 0x40;
 		}
 	}
 
@@ -123,7 +123,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
 		UISlot &slot = (*this)[idx];
 
-		if (slot._slotType >= ST_NONE && !(slot._slotType & 0x40)) {
+		if (slot._flags >= IMG_STATIC && !(slot._flags & 0x40)) {
 			if (!dirtyArea._active) {
 				error("Should never reach this point, even in original");
 			}
@@ -131,7 +131,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 			if (dirtyArea._textActive) {
 				SpriteAsset *asset = scene._sprites[slot._spritesIndex];
 				
-				if (slot._field2 == 200) {
+				if (slot._segmentId == IMG_SPINNING_OBJECT) {
 					MSprite *sprite = asset->getFrame(slot._frameNumber & 0x7F);
 					sprite->copyTo(&userInterface, slot._position, 
 						sprite->getTransparencyIndex());
@@ -170,16 +170,16 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 	for (int idx = (int)size() - 1; idx >= 0; --idx) {
 		UISlot &slot = (*this)[idx];
 
-		if (slot._slotType < ST_NONE) {
+		if (slot._flags < IMG_STATIC) {
 			if (delFlag || updateFlag)
 				remove_at(idx);
-			else if (slot._slotType >= -20)
-				slot._slotType -= 20;
+			else if (slot._flags >= -20)
+				slot._flags -= 20;
 		} else {
 			if (updateFlag)
-				slot._slotType &= ~0x40;
+				slot._flags &= ~0x40;
 			else
-				slot._slotType |= 0x40;
+				slot._flags |= 0x40;
 		}
 	}
 }
@@ -619,14 +619,14 @@ void UserInterface::inventoryAnim() {
 
 	// Loop through the slots list for inventory animation entry
 	for (uint i = 0; i < _uiSlots.size(); ++i) {
-		if (_uiSlots[i]._field2 == 200)
-			_uiSlots[i]._slotType = -5;
+		if (_uiSlots[i]._segmentId == IMG_SPINNING_OBJECT)
+			_uiSlots[i]._flags = -5;
 	}
 
 	// Add a new slot entry for the inventory animation
 	UISlot slot;
-	slot._slotType = ST_FOREGROUND;
-	slot._field2 = 200;
+	slot._flags = IMG_UPDATE;
+	slot._segmentId = IMG_SPINNING_OBJECT;
 	slot._frameNumber = _invFrameNumber;
 	slot._spritesIndex = _invSpritesIndex;
 	slot._position = Common::Point(160, 3);

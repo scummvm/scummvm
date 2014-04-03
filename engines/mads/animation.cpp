@@ -403,7 +403,7 @@ void Animation::update() {
 
 	for (uint idx = 0; idx < scene._spriteSlots.size(); ++idx) {
 		if (scene._spriteSlots[idx]._seqIndex >= 0x80)
-			scene._spriteSlots[idx]._SlotType = ST_EXPIRED;
+			scene._spriteSlots[idx]._flags = IMG_ERASE;
 	}
 
 	// Validate the current frame
@@ -445,7 +445,7 @@ void Animation::update() {
 	if (paChanged) {
 		newIndex = scene._spriteSlots.add();
 		scene._spriteSlots[newIndex]._seqIndex = -1;
-		scene._spriteSlots[newIndex]._SlotType = ST_FULL_SCREEN_REFRESH;
+		scene._spriteSlots[newIndex]._flags = IMG_REFRESH;
 	}
 
 	// Main frame animation loop - frames get animated by being placed, as necessary, into the
@@ -463,7 +463,7 @@ void Animation::update() {
 					int seqIndex = _frameEntries[_oldFrameEntry]._seqIndex - scene._spriteSlots[index]._seqIndex;
 					if (seqIndex == 0x80) {
 						if (scene._spriteSlots[index] == _frameEntries[_oldFrameEntry]._spriteSlot) {
-							scene._spriteSlots[index]._SlotType = ST_NONE;
+							scene._spriteSlots[index]._flags = IMG_STATIC;
 							spriteSlotIndex = -1;
 						}
 					}
@@ -479,7 +479,7 @@ void Animation::update() {
 
 					SpriteAsset &spriteSet = *scene._sprites[
 						scene._spriteSlots[slotIndex]._spritesIndex];
-					slot._SlotType = spriteSet.isBackground() ? ST_BACKGROUND : ST_FOREGROUND;
+					slot._flags = spriteSet.isBackground() ? IMG_DELTA : IMG_UPDATE;
 				}
 				break;
 			}

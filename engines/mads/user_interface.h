@@ -31,10 +31,12 @@
 
 namespace MADS {
 
+enum { IMG_SPINNING_OBJECT = 200, IMG_TEXT_UPDATE = 201 };
+
 class UISlot {
 public:
-	int _slotType;
-	int _field2;
+	int _flags;
+	int _segmentId;
 	int _spritesIndex;
 	int _frameNumber;
 	Common::Point _position;

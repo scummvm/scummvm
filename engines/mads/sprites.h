@@ -30,9 +30,15 @@
 
 namespace MADS {
 
-enum SlotType {
-	ST_NONE = 0, ST_FOREGROUND = 1, ST_MINUS5 = -5, ST_BACKGROUND = -4, 
-	ST_MINUS3 = -3, ST_FULL_SCREEN_REFRESH = -2, ST_EXPIRED = -1
+enum SpriteFlags {
+	IMG_STATIC = 0,			// Item should remain fixed on the screen
+	IMG_UPDATE = 1,			// Item needs to be redrawn
+	IMG_ERASE = -1,			// Erase image and remove it
+	IMG_REFRESH = -2,		// Full refresh
+	IMG_OVERPRINT = -3,		// Interface overprint
+	IMG_DELTA = -4,			// Delta change
+	IMG_FULL_UPDATE = -5,	// Interface refresh
+	IMG_UPDATE_ONLY = -20	// Update the active screen area only
 };
 
 class MADSEngine;
@@ -129,11 +135,11 @@ private:
 	static MADSEngine *_vm;
 	friend class SpriteSlots;
 public:
-	SlotType _SlotType;
+	SpriteFlags _flags;
 	int _seqIndex;
 public:
 	SpriteSlot();
-	SpriteSlot(SlotType type, int seqIndex);
+	SpriteSlot(SpriteFlags type, int seqIndex);
 
 	void setup(int dirtyAreaIndex);
 	bool operator==(const SpriteSlotSubset &other) const;

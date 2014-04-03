@@ -78,7 +78,7 @@ void DirtyArea::setSpriteSlot(const SpriteSlot *spriteSlot) {
 	int width, height;
 	Scene &scene = _vm->_game->_scene;
 
-	if (spriteSlot->_SlotType == ST_FULL_SCREEN_REFRESH) {
+	if (spriteSlot->_flags == IMG_REFRESH) {
 		// Special entry to refresh the entire screen
 		_bounds.left = 0;
 		_bounds.top = 0;
@@ -117,24 +117,24 @@ void DirtyArea::setTextDisplay(const TextDisplay *textDisplay) {
 }
 
 void DirtyArea::setUISlot(const UISlot *slot) {
-	int type = slot->_slotType;
-	if (type <= -20)
-		type += 20;
+	int type = slot->_flags;
+	if (type <= IMG_UPDATE_ONLY)
+		type += -IMG_UPDATE_ONLY;
 	if (type >= 0x40)
 		type &= ~0x40;
 
 	MSurface &intSurface = _vm->_game->_scene._userInterface;
 	switch (type) {
-	case ST_FULL_SCREEN_REFRESH:
+	case IMG_REFRESH:
 		_bounds.left = 0;
 		_bounds.top = 0;
 		setArea(intSurface.w, intSurface.h, intSurface.w, intSurface.h);
 		break;
-	case ST_MINUS3:
+	case IMG_OVERPRINT:
 		_bounds.left = slot->_position.x;
 		_bounds.top = slot->_position.y;
 		// TODO: spritesIndex & frameNumber used as w & h??!
-		error("TODO: Figure out ST_MINUS3. Maybe need a union?");
+		error("TODO: Figure out IMG_OVERPRINT. Maybe need a union?");
 		break;
 
 	default: {
@@ -143,7 +143,7 @@ void DirtyArea::setUISlot(const UISlot *slot) {
 		int w = frame->w;
 		int h = frame->h;
 
-		if (slot->_field2 == 200) {
+		if (slot->_segmentId == IMG_SPINNING_OBJECT) {
 			_bounds.left = slot->_position.x;
 			_bounds.top = slot->_position.y;
 		} else {
@@ -350,12 +350,11 @@ void ScreenObjects::check(bool scanFlag) {
 		for (uint idx = 0; idx <  uiSlots.size(); ++idx) {
 			UISlot &slot = uiSlots[idx];
 
-			if (slot._slotType != ST_FULL_SCREEN_REFRESH && slot._slotType > -20
-					&& slot._field2 != 200)
-				slot._slotType = ST_EXPIRED;
+			if (slot._flags != IMG_REFRESH && slot._flags > -20
+				&& slot._segmentId != IMG_SPINNING_OBJECT)
+					slot._flags = IMG_ERASE;
 		}
 
-		// TODO: The stuff here could probably be moved to Scene::doFrame
 		// Any background animation
 		scene.backgroundAnimation();
 

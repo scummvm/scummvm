@@ -260,7 +260,7 @@ void Player::update() {
 	if (_forceRefresh || (_visible != _priorVisible)) {
 		int slotIndex = getSpriteSlot();
 		if (slotIndex >= 0)
-			scene._spriteSlots[slotIndex]._SlotType = ST_EXPIRED;
+			scene._spriteSlots[slotIndex]._flags = IMG_ERASE;
 
 		int newDepth = 1;
 		int yp = MAX(_playerPos.y, (int16)(MADS_SCENE_HEIGHT - 1));
@@ -278,7 +278,7 @@ void Player::update() {
 		if (_visible) {
 			// Player sprite needs to be rendered
 			SpriteSlot slot;
-			slot._SlotType = ST_FOREGROUND;
+			slot._flags = IMG_UPDATE;
 			slot._seqIndex = PLAYER_SEQ_INDEX;
 			slot._spritesIndex = _spritesStart + _spritesIdx;
 			slot._frameNumber = _mirror ? -_frameNumber : _frameNumber;
@@ -299,7 +299,7 @@ void Player::update() {
 
 				if (equal)
 					// Undo the prior expiry of the player sprite
-					s2._SlotType = ST_NONE;
+					s2._flags = IMG_STATIC;
 				else
 					slotIndex = -1;
 			}
@@ -532,7 +532,7 @@ int Player::getSpriteSlot() {
 
 	for (uint idx = 0; idx < spriteSlots.size(); ++idx) {
 		if (spriteSlots[idx]._seqIndex == PLAYER_SEQ_INDEX && 
-				spriteSlots[idx]._SlotType >= ST_NONE)
+				spriteSlots[idx]._flags >= IMG_STATIC)
 			return idx;
 	}
 
