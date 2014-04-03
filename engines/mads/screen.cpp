@@ -350,7 +350,7 @@ void ScreenObjects::check(bool scanFlag) {
 		for (uint idx = 0; idx <  uiSlots.size(); ++idx) {
 			UISlot &slot = uiSlots[idx];
 
-			if (slot._flags != IMG_REFRESH && slot._flags > -20
+			if (slot._flags != IMG_REFRESH && slot._flags > IMG_UPDATE_ONLY
 				&& slot._segmentId != IMG_SPINNING_OBJECT)
 					slot._flags = IMG_ERASE;
 		}
@@ -598,7 +598,7 @@ void ScreenObjects::elementHighlighted() {
 	if (newIndex >= 0)
 		newIndex = MIN(newIndex + topIndex, indexEnd);
 
-	_vm->_game->_scene._highlightedHotspot = newIndex;
+	action._pickedWord = newIndex;
 
 	if (_category == CAT_INV_LIST || _category == CAT_INV_ANIM) {
 		if (action._interAwaiting == 1 && newIndex >= 0 && _released &&

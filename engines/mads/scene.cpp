@@ -49,7 +49,6 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_frameStartTime = 0;
 	_layer = LAYER_GUI;
 	_lookFlag = false;
-	_highlightedHotspot = 0;
 
 	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
 	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));

@@ -124,7 +124,6 @@ public:
 	uint32 _frameStartTime;
 	Layer _layer;
 	bool _lookFlag;
-	int _highlightedHotspot;
 	Common::Point _customDest;
 
 	/**

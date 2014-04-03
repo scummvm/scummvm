@@ -178,7 +178,7 @@ public:
 	void check(bool scanFlag);
 
 	/**
-	 * Handle element being highlighted on the screen
+	 * Handle an element being highlighted on the screen, and make it active.
 	 */
 	void elementHighlighted();
 

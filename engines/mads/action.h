@@ -105,12 +105,13 @@ public:
 	// Unknown fields
 	int16 _v86F3A;
 	int16 _v86F42;
-	int16 _v86F4E;
+	int16 _recentCommandSource;
 	bool _v86F4A;
-	int16 _v86F4C;
+	int16 _recentCommand;
 	InterAwaiting _interAwaiting;
 	bool _inProgress;
 	int _v8453A;
+	int _pickedWord;
 
 public:
 	MADSAction(MADSEngine *vm);
@@ -123,6 +124,10 @@ public:
 	void checkAction();
 	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
 	
+	/**
+	 * Check the result of the current action on the sentence
+	 * with the provision that the action is not yet complete.
+	 */
 	void checkActionAtMousePos();
 
 	/**
