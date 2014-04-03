@@ -264,7 +264,7 @@ void UserInterface::setup(int id) {
 
 	scene._userInterface._uiSlots.clear();
 	scene._userInterface._uiSlots.fullRefresh();
-	_vm->_game->_ticksExpiry = _vm->_events->getFrameCounter();
+	_vm->_game->_screenObjects._baseTime = _vm->_events->getFrameCounter();
 	_highlightedCommandIndex = -1;
 	_highlightedActionIndex = -1;
 	_highlightedItemIndex = -1;
@@ -590,7 +590,7 @@ void UserInterface::noInventoryAnim() {
 
 	if (_invSpritesIndex >= 0) {
 		scene._sprites.remove(_invSpritesIndex);
-		_vm->_game->_ticksExpiry = _vm->_events->getFrameCounter();
+		_vm->_game->_screenObjects._baseTime = _vm->_events->getFrameCounter();
 		_invSpritesIndex = -1;
 	}
 

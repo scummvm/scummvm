@@ -60,7 +60,6 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_anyEmergency = false;
 	_triggerMode = KERNEL_TRIGGER_PARSER;
 	_triggerSetupMode = KERNEL_TRIGGER_PARSER;
-	_ticksExpiry = 0;
 	_winStatus = 0;
 
 	// Load the inventory object list

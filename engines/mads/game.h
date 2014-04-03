@@ -138,7 +138,6 @@ public:
 	TriggerMode _triggerSetupMode;
 	uint32 _priorFrameTimer;
 	Common::String _aaName;
-	uint32 _ticksExpiry;
 	int _winStatus;
 public:
 	virtual ~Game();

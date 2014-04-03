@@ -161,6 +161,7 @@ public:
 	int _uiCount;
 	uint32 _milliTime;
 	bool _eventFlag;
+	uint32 _baseTime;
 
 	/*
 	* Constructor

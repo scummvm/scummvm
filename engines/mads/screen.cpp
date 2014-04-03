@@ -266,6 +266,7 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_scrollerY = -1;
 	_milliTime = 0;
 	_eventFlag = false;
+	_baseTime = 0;
 }
 
 void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId) {
@@ -343,7 +344,7 @@ void ScreenObjects::check(bool scanFlag) {
 	scene._action.refresh();
 
 	uint32 currentTicks = _vm->_events->getFrameCounter();
-	if (currentTicks >= _vm->_game->_ticksExpiry) {
+	if (currentTicks >= _baseTime) {
 		// Check the user interface slots to see if there's any slots that need to be expired
 		UISlots &uiSlots = userInterface._uiSlots;
 		for (uint idx = 0; idx <  uiSlots.size(); ++idx) {
@@ -354,12 +355,16 @@ void ScreenObjects::check(bool scanFlag) {
 				slot._slotType = ST_EXPIRED;
 		}
 
+		// TODO: The stuff here could probably be moved to Scene::doFrame
+		// Any background animation
+		scene.backgroundAnimation();
+
 		// Handle animating the selected inventory animation
 		userInterface.inventoryAnim();
 
-		// Set the next frame expiry
-		_vm->_game->_ticksExpiry = currentTicks + 6;
-	}	
+		// Set the base time
+		_baseTime = currentTicks + 6;
+	}
 }
 
 int ScreenObjects::scanBackwards(const Common::Point &pt, int layer) {

@@ -582,4 +582,8 @@ void Scene::resetScene() {
 	_sequences.clear();
 }
 
+void Scene::backgroundAnimation() {
+	warning("TODO: Scene::backgroundAnimation");
+}
+
 } // End of namespace MADS
