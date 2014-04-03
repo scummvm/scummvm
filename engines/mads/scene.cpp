@@ -522,7 +522,7 @@ void Scene::updateCursor() {
 	Player &player = _vm->_game->_player;
 
 	CursorType cursorId = CURSOR_ARROW;
-	if (_action._interAwaiting == 1 && !_vm->_game->_screenObjects._v7FECA &&
+	if (_action._interAwaiting == 1 && !_vm->_events->_anyStroke &&
 		_vm->_game->_screenObjects._category == CAT_HOTSPOT) {
 		int idx = _vm->_game->_screenObjects._selectedObject -
 			_userInterface._categoryIndexes[CAT_HOTSPOT - 1];

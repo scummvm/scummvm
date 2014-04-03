@@ -254,7 +254,6 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_objectY = -1;
 	_v8333C = false;
 	_v832EC = 0;
-	_v7FECA = true;
 	_v7FED6 = 0;
 	_v8332A = 0;
 	_category = CAT_NONE;
@@ -287,7 +286,7 @@ void ScreenObjects::check(bool scanFlag) {
 	UserInterface &userInterface = scene._userInterface;
 
 	if (!_vm->_events->_mouseButtons || _v832EC)
-		_v7FECA = false;
+		_vm->_events->_anyStroke = false;
 
 	if ((_vm->_events->_mouseMoved || _vm->_game->_scene._userInterface._scrollerY 
 			|| _v8332A || _v8333C) && scanFlag) {
@@ -474,13 +473,13 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = 9;
 		varA = 5;
 		topIndex = 0;
-		idxP = !_v7FECA ? &userInterface._highlightedCommandIndex : 
+		idxP = !_vm->_events->_anyStroke ? &userInterface._highlightedCommandIndex : 
 			&userInterface._selectedActionIndex;
 
-		if (_v7FECA && userInterface._selectedItemVocabIdx >= 0)
+		if (_vm->_events->_anyStroke && userInterface._selectedItemVocabIdx >= 0)
 			userInterface.updateSelection(CAT_INV_VOCAB, -1, &userInterface._selectedItemVocabIdx);
 
-		var4 = _released && !_v7FECA ? 1 : 0;
+		var4 = _released && !_vm->_events->_anyStroke ? 1 : 0;
 		break;
 
 	case CAT_INV_LIST:
@@ -506,12 +505,12 @@ void ScreenObjects::elementHighlighted() {
 
 		varA = 0;
 		topIndex = 0;
-		idxP = _v7FECA ? &userInterface._selectedItemVocabIdx : &userInterface._highlightedActionIndex;
+		idxP = _vm->_events->_anyStroke ? &userInterface._selectedItemVocabIdx : &userInterface._highlightedActionIndex;
 
-		if (_v7FECA && userInterface._selectedActionIndex >= 0)
+		if (_vm->_events->_anyStroke && userInterface._selectedActionIndex >= 0)
 			userInterface.updateSelection(CAT_COMMAND, -1, &userInterface._selectedActionIndex);
 
-		var4 = _released && !_v7FECA ? 1 : 0;
+		var4 = _released && !_vm->_events->_anyStroke ? 1 : 0;
 		break;
 
 	case CAT_INV_ANIM:
@@ -606,7 +605,7 @@ void ScreenObjects::elementHighlighted() {
 			newIndex = -1;
 	}
 
-	if (_released && !_vm->_game->_screenObjects._v7FECA &&
+	if (_released && !_vm->_events->_anyStroke &&
 			(_vm->_events->_mouseReleased || !_vm->_easyMouse))
 		newIndex = -1;
 

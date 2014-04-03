@@ -366,7 +366,7 @@ void MADSAction::checkActionAtMousePos() {
 			scene._lookFlag = true;
 	}
 
-	if (screenObjects._v7FECA && _vm->_events->_mouseButtons) {
+	if (_vm->_events->_anyStroke && _vm->_events->_mouseButtons) {
 		switch (userInterface._category) {
 		case CAT_COMMAND:
 		case CAT_INV_VOCAB:
@@ -507,7 +507,7 @@ void MADSAction::leftClick() {
 		}
 	}
 
-	if (abortFlag || (screenObjects._v7FECA && (userInterface._category == CAT_COMMAND ||
+	if (abortFlag || (_vm->_events->_anyStroke && (userInterface._category == CAT_COMMAND ||
 			userInterface._category == CAT_INV_VOCAB)))
 		return;
 

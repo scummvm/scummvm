@@ -149,7 +149,6 @@ private:
 	void checkScroller();
 public:
 	int _v832EC;
-	int _v7FECA;
 	int _v7FED6;
 	int _v8332A;
 	int _v8333C;
