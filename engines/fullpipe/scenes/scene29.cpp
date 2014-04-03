@@ -172,7 +172,94 @@ void scene29_initScene(Scene *sc) {
 }
 
 void sceneHandler29_winArcade() {
-	warning("STUB: sceneHandler29_winArcade()");
+	if (g_vars->scene29_shooter2->_flags & 4) {
+		g_vars->scene29_var13 = 0;
+
+		g_vars->scene29_shooter1->changeStatics2(ST_STR1_STAND);
+		g_vars->scene29_shooter2->changeStatics2(ST_STR2_STAND);
+
+		g_vars->scene29_shooter2->_flags &= 0xFFFB;
+
+		StaticANIObject *ani;
+		Ball *newball, *ball, *oldp0;
+
+		while (g_vars->scene29_var08.numBalls) {
+			ball = g_vars->scene29_var08.pHead;
+			ani = g_vars->scene29_var08.pHead->ani;
+			oldp0 = g_vars->scene29_var08.pHead->p0;
+			g_vars->scene29_var08.pHead = g_vars->scene29_var08.pHead->p0;
+
+			if (g_vars->scene29_var08.pHead)
+				oldp0->p1 = 0;
+			else
+				g_vars->scene29_var08.field_8 = 0;
+
+			ball->p0 = g_vars->scene29_var08.pTail;
+			g_vars->scene29_var08.pTail = ball;
+			g_vars->scene29_var08.numBalls--;
+
+			if (!g_vars->scene29_var08.numBalls)
+				g_vars->scene29_var08.reset();
+
+			ani->hide();
+
+			newball = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
+			newball->ani = ani;
+
+			if (g_vars->scene29_var05.field_8)
+				g_vars->scene29_var05.field_8->p0 = newball;
+			else
+				g_vars->scene29_var05.pHead = newball;
+
+			g_vars->scene29_var05.field_8 = newball;
+		}
+
+		while (g_vars->scene29_var07.numBalls) {
+			ball = g_vars->scene29_var07.pHead;
+			ani = g_vars->scene29_var07.pHead->ani;
+			oldp0 = g_vars->scene29_var07.pHead->p0;
+			g_vars->scene29_var07.pHead = g_vars->scene29_var07.pHead->p0;
+
+			if (g_vars->scene29_var07.pHead)
+				oldp0->p1 = 0;
+			else
+				g_vars->scene29_var07.field_8 = 0;
+
+			ball->p0 = g_vars->scene29_var07.pTail;
+			g_vars->scene29_var07.pTail = ball;
+			g_vars->scene29_var07.numBalls--;
+
+			if (!g_vars->scene29_var07.numBalls) {
+				g_vars->scene29_var07.numBalls = 0;
+				g_vars->scene29_var07.pTail = 0;
+				g_vars->scene29_var07.field_8 = 0;
+				g_vars->scene29_var07.pHead = 0;
+
+				free(g_vars->scene29_var07.cPlex);
+
+				g_vars->scene29_var07.cPlex = 0;
+			}
+
+			ani->hide();
+
+			newball = g_vars->scene29_var06.sub04(g_vars->scene29_var06.field_8, 0);
+			newball->ani = ani;
+
+			if (g_vars->scene29_var06.field_8)
+				g_vars->scene29_var06.field_8->p0 = newball;
+			else
+				g_vars->scene29_var06.pHead = newball;
+
+			g_vars->scene29_var06.field_8 = newball;
+		}
+
+		g_vars->scene29_ass->queueMessageQueue(0);
+		g_vars->scene29_ass->_flags &= 0xFFFB;
+
+		chainQueue(QU_SC29_ESCAPE, 1);
+	}
+
+	g_fp->setObjectState(sO_LeftPipe_29, g_fp->getObjectEnumState(sO_LeftPipe_29, sO_IsOpened));
 }
 
 void sceneHandler29_shootGreen() {
