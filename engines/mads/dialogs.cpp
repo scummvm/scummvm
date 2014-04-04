@@ -43,6 +43,8 @@ void Dialog::save(MSurface *s) {
 	s->copyTo(_savedSurface, 
 		Common::Rect(_position.x, _position.y, _position.x + _width, _position.y + _height),
 		Common::Point());
+
+	_vm->_screen.copyRectToScreen(getBounds());
 }
 
 void Dialog::restore(MSurface *s) {
@@ -50,6 +52,8 @@ void Dialog::restore(MSurface *s) {
 		_savedSurface->copyTo(s, _position);
 		delete _savedSurface;
 		_savedSurface = nullptr;
+
+		_vm->_screen.copyRectToScreen(getBounds());
 	}
 }
 
@@ -76,8 +80,6 @@ void Dialog::draw() {
 	drawContent(Common::Rect(_position.x + 2, _position.y + 2,
 		_position.x + _width - 2, _position.y + _height - 2), 0,
 		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
-
-	_vm->_screen.copyRectToScreen(bounds);
 }
 
 void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte color2) {
@@ -273,7 +275,7 @@ void TextDialog::draw() {
 
 	// Draw the text lines
 	int lineYp = _position.y + 5; 
-	for (int lineNum = 0; lineNum < _numLines; ++lineNum) {
+	for (int lineNum = 0; lineNum <= _numLines; ++lineNum) {
 		if (_lineXp[lineNum] == -1) {
 			// Draw a line across the entire dialog
 			_vm->_screen.hLine(_position.x + 2, 
@@ -326,9 +328,14 @@ void TextDialog::show() {
 	draw();
 	_vm->_events->showCursor();
 
+	// Wait for mouse click
 	do {
 		_vm->_events->waitForNextFrame();
 	} while (!_vm->shouldQuit() && !_vm->_events->_mouseReleased);
+
+	// Allow the mouse release to be gobbled up
+	if (!_vm->shouldQuit())
+		_vm->_events->waitForNextFrame();
 }
 
 /*------------------------------------------------------------------------*/

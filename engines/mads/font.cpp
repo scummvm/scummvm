@@ -141,7 +141,7 @@ int Font::writeString(MSurface *surface, const Common::String &msg, const Common
 	if (width > 0)
 		xEnd = MIN((int)surface->w, pt.x + width);
 	else
-		xEnd = surface->w - pt.x;
+		xEnd = surface->w;
 
 	int x = pt.x;
 	int y = pt.y;

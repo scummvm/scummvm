@@ -125,9 +125,9 @@ bool DialogsNebular::show(int msgId) {
 	Common::String dialogText;
 	bool result = true;
 	bool centerFlag = false;
-	bool underlineFlag;
-	bool commandFlag;
-	bool crFlag;
+	bool underlineFlag = false;
+	bool commandFlag = false;
+	bool crFlag = false;
 	TextDialog *dialog = nullptr;
 	_dialogWidth = 17; 
 	_capitalizationMode = kUppercase;
@@ -136,11 +136,6 @@ bool DialogsNebular::show(int msgId) {
 	for (uint idx = 0; idx < msg.size(); ++idx) {
 		Common::String srcLine = msg[idx];
 		const char *srcP = srcLine.c_str();
-		dialogText = "";
-		commandFlag = false;
-		underlineFlag = false;
-		centerFlag = false;
-		crFlag = false;
 
 		// Loop through the text of the line
 		while (srcP < srcLine.c_str() + srcLine.size()) {
@@ -226,6 +221,13 @@ bool DialogsNebular::show(int msgId) {
 		} else {
 			dialog->wordWrap(dialogText);
 		}
+
+		// Reset line processing flags in preparation for next line
+		dialogText = "";
+		commandFlag = false;
+		underlineFlag = false;
+		centerFlag = false;
+		crFlag = false;
 	}
 
 	if (!centerFlag)
