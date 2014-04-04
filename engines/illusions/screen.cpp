@@ -24,9 +24,115 @@
 #include "illusions/screen.h"
 #include "illusions/graphics.h"
 #include "illusions/spritedrawqueue.h"
-#include "illusions/spritedecompressqueue.h"
 
 namespace Illusions {
+
+// SpriteDecompressQueue
+
+SpriteDecompressQueue::SpriteDecompressQueue() {
+}
+
+SpriteDecompressQueue::~SpriteDecompressQueue() {
+}
+
+void SpriteDecompressQueue::insert(byte *drawFlags, uint32 flags, uint32 field8, WidthHeight &dimensions,
+	byte *compressedPixels, Graphics::Surface *surface) {
+	SpriteDecompressQueueItem *item = new SpriteDecompressQueueItem();
+	item->_drawFlags = drawFlags;
+	*item->_drawFlags &= 1;
+	item->_flags = flags;
+	item->_dimensions = dimensions;
+	item->_compressedPixels = compressedPixels;
+	item->_field8 = field8;
+	item->_surface = surface;
+	_queue.push_back(item);
+}
+
+void SpriteDecompressQueue::decompressAll() {
+	SpriteDecompressQueueListIterator it = _queue.begin();
+	while (it != _queue.end()) {
+		decompress(*it);
+		delete *it;
+		it = _queue.erase(it);
+	}
+}
+
+void SpriteDecompressQueue::decompress(SpriteDecompressQueueItem *item) {
+	byte *src = item->_compressedPixels;
+	Graphics::Surface *dstSurface = item->_surface;
+	int dstSize = item->_dimensions._width * item->_dimensions._height;
+	int processedSize = 0;
+	int xincr, x, xstart;
+	int yincr, y;
+	
+	// Safeguard
+	if (item->_dimensions._width > item->_surface->w ||
+		item->_dimensions._height > item->_surface->h) {
+		debug("Incorrect frame dimensions (%d, %d <> %d, %d)",
+			item->_dimensions._width, item->_dimensions._height,
+			item->_surface->w, item->_surface->h);
+		return;
+	}
+	
+	if (item->_flags & 1) {
+		x = xstart = item->_dimensions._width - 1;
+		xincr = -1;
+	} else {
+		x = xstart = 0;
+		xincr = 1;
+	}
+
+	if (item->_flags & 2) {
+		y = item->_dimensions._height - 1;
+		yincr = -1;
+	} else {
+		y = 0;
+		yincr = 1;
+	}
+	
+	byte *dst = (byte*)dstSurface->getBasePtr(x, y);
+	
+	while (processedSize < dstSize) {
+		int16 op = READ_LE_UINT16(src);
+		src += 2;
+		if (op & 0x8000) {
+			int runCount = (op & 0x7FFF) + 1;
+			processedSize += runCount;
+			uint16 runColor = READ_LE_UINT16(src);
+			src += 2;
+			while (runCount--) {
+				WRITE_LE_UINT16(dst, runColor);
+				x += xincr;
+				if (x >= item->_dimensions._width || x < 0) {
+					x = xstart;
+					y += yincr;
+					dst = (byte*)dstSurface->getBasePtr(x, y);
+				} else {
+					dst += 2 * xincr;
+				}
+			}
+		} else {
+			int copyCount = op + 1;
+			processedSize += copyCount;
+			while (copyCount--) {
+				uint16 color = READ_LE_UINT16(src);
+				src += 2;
+				WRITE_LE_UINT16(dst, color);
+				x += xincr;
+				if (x >= item->_dimensions._width || x < 0) {
+					x = xstart;
+					y += yincr;
+					dst = (byte*)dstSurface->getBasePtr(x, y);
+				} else {
+					dst += 2 * xincr;
+				}
+			}
+		}
+	}
+
+	*item->_drawFlags &= ~1;
+ 
+}
 
 // Screen
 
@@ -92,7 +198,6 @@ void Screen::drawSurface11(int16 destX, int16 destY, Graphics::Surface *surface,
 	for (int16 yc = 0; yc < h; ++yc) {
 		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcRect.top + yc);
 		byte *dst = (byte*)_backSurface->getBasePtr(destX, destY + yc);
-		//memcpy(dst, src, w * 2);
 		for (int16 xc = 0; xc < w; ++xc) {
 			uint16 pixel = READ_LE_UINT16(src);
 			if (pixel != _colorKey1)
