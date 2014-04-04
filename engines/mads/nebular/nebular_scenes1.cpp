@@ -398,29 +398,29 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	} else if (!_action.isAction(VERB_LOOK, 27)) {
+	} else if (_action.isAction(VERB_LOOK, 27)) {
 		_vm->_dialogs->show(10304);
-	} else if (!_action.isAction(VERB_LOOK, 36)) {
+	} else if (_action.isAction(VERB_LOOK, 36)) {
 		_vm->_dialogs->show(10307);
-	} else if (!_action.isAction(VERB_LOOK, 55)) {
+	} else if (_action.isAction(VERB_LOOK, 55)) {
 		_vm->_dialogs->show(10308);
-	} else if (!_action.isAction(VERB_TAKE, 315)) {
+	} else if (_action.isAction(VERB_TAKE, 315)) {
 		_vm->_dialogs->show(10309);
-	} else if (!_action.isAction(VERB_TAKE, 85)) {
+	} else if (_action.isAction(VERB_TAKE, 85)) {
 		_vm->_dialogs->show(10310);
-	} else if (!_action.isAction(VERB_LOOK, 144)) {
+	} else if (_action.isAction(VERB_LOOK, 144)) {
 		_vm->_dialogs->show(10312);
-	} else if (!_action.isAction(VERB_OPEN, 144)) {
+	} else if (_action.isAction(VERB_OPEN, 144)) {
 		_vm->_dialogs->show(10313);
-	} else if (!_action.isAction(VERB_CLOSE, 27)) {
+	} else if (_action.isAction(VERB_CLOSE, 27)) {
 		_vm->_dialogs->show(10314);
-	} else if (!_action.isAction(VERB_LOOK, 310)) {
+	} else if (_action.isAction(VERB_LOOK, 310)) {
 		_vm->_dialogs->show(10315);
-	} else if (!_action.isAction(VERB_LOOK, 178)) {
+	} else if (_action.isAction(VERB_LOOK, 178)) {
 		_vm->_dialogs->show(10316);
-	} else if (!_action.isAction(VERB_LOOK, 283)) {
+	} else if (_action.isAction(VERB_LOOK, 283)) {
 		_vm->_dialogs->show(10317);
-	} else if (!_action.isAction(VERB_LOOK, 120)) {
+	} else if (_action.isAction(VERB_LOOK, 120)) {
 		_vm->_dialogs->show(10318);
 	} else if (_action.isAction(VERB_LOOK, 289) &&
 			_game._objects.isInInventory(OBJ_REBREATHER)) {
@@ -428,7 +428,7 @@ void Scene103::actions() {
 	} else if (_action.isAction(VERB_LOOK, 371) &&
 			_game._objects.isInInventory(OBJ_TIMER_MODULE)) {
 		_vm->_dialogs->show(10320);
-	} else if (!_action.isAction(VERB_LOOK, 137)) {
+	} else if (_action.isAction(VERB_LOOK, 137)) {
 		_vm->_dialogs->show(10321);
 	} else if (_action.isAction(VERB_LOOK, 409)) {
 		_vm->_dialogs->show(_game._objects.isInInventory(OBJ_TIMER_MODULE) ? 10324 : 10325);
