@@ -160,7 +160,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_interfaceY = MADS_SCENE_HEIGHT;
 	_spritesCount = _sprites.size();
 
-	_userInterface.setup(_vm->_game->_screenObjects._v832EC);
+	_userInterface.setup(_vm->_game->_screenObjects._inputMode);
 
 	warning("TODO: showMouse");
 
@@ -299,7 +299,7 @@ void Scene::doFrame() {
 		_action.startAction();
 		if (_action._activeAction._verbId == Nebular::NOUN_LOOK_AT) {
 			_action._activeAction._verbId = VERB_LOOK;
-			_action._savedFields._selectedRow = false;
+			_action._savedFields._command = false;
 		}
 
 		flag = true;
@@ -438,7 +438,8 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 }
 
 void Scene::doPreactions() {
-	if (_vm->_game->_screenObjects._v832EC == 0 || _vm->_game->_screenObjects._v832EC == 2) {
+	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences || 
+			_vm->_game->_screenObjects._inputMode == kInputLimitedSentences) {
 		_vm->_game->_triggerSetupMode = KERNEL_TRIGGER_PREPARE;
 		_action.checkAction();
 		_sceneLogic->preActions();
@@ -449,37 +450,38 @@ void Scene::doPreactions() {
 }
 
 void Scene::doAction() {
-	int flag = 0;
+	bool flag = false;
 
 	_vm->_game->_triggerSetupMode = KERNEL_TRIGGER_PARSER;
-	if ((_action._inProgress || _vm->_game->_trigger) && !_action._v8453A) {
+	if ((_action._inProgress || _vm->_game->_trigger) && !_action._savedFields._commandError) {
 		_sceneLogic->actions();
 		_action._inProgress = true;
-		flag = -1;
+		flag = true;
 	}
 
-	if (_vm->_game->_screenObjects._v832EC == 1) {
+	if (_vm->_game->_screenObjects._inputMode == kInputConversation) {
 		_action._inProgress = false;
 	} else {
 		if ((_action._inProgress || _vm->_game->_trigger) ||
-				(!flag && _action._v8453A == flag)) {
+			(!flag && _action._savedFields._commandError == flag)) {
 			_vm->_game->_sectionHandler->sectionPtr2();
 			_action._inProgress = true;
-			flag = -1;
+			flag = true;
 		}
 
-		if ((_action._inProgress || _vm->_game->_trigger) && (!flag || _action._v8453A == flag)) {
+		if ((_action._inProgress || _vm->_game->_trigger) && 
+				(!flag || _action._savedFields._commandError == flag)) {
 			_vm->_game->doObjectAction();
 		}
 
 		if (!_action._savedFields._lookFlag) {
 			if (!_action._inProgress) {
-				_action._v8453A = -1;
+				_action._savedFields._commandError = true;
 				_sceneLogic->postActions();
 			}
 
 			if (!_action._inProgress) {
-				_action._v8453A = -1;
+				_action._savedFields._commandError = true;
 				warning("TODO: PtrUnk4");
 			}
 

@@ -138,7 +138,7 @@ void Scene804::enter() {
 	Scene8xx::enter1();
 
 	if (_globals[kInSpace] && !_globals[kWindowFixed]) {
-		_scene->_userInterface.setup(2);
+		_scene->_userInterface.setup(kInputLimitedSentences);
 		_vm->_sound->command(19);
 	}
 }

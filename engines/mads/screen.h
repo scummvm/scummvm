@@ -55,6 +55,12 @@ enum ScreenTransition {
 	kVertTransition7, kCenterVertTransition
 };
 
+enum InputMode {
+	kInputBuildingSentences = 0,		// Normal sentence building
+	kInputConversation = 1,			// Conversation mode
+	kInputLimitedSentences = 2		// Use only scene hotspots
+};
+
 class SpriteSlot;
 class TextDisplay;
 class UISlot;
@@ -148,7 +154,7 @@ private:
 	 */
 	void checkScroller();
 public:
-	int _v832EC;
+	InputMode _inputMode;
 	int _v7FED6;
 	int _v8332A;
 	int _v8333C;

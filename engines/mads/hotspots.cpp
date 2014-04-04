@@ -131,9 +131,9 @@ void DynamicHotspots::refresh() {
 		DynamicHotspot &dh = (*this)[i];
 
 		if ((*this)[i]._active) {
-			switch (scrObjects._v832EC) {
-			case 0:
-			case 2:
+			switch (scrObjects._inputMode) {
+			case kInputBuildingSentences:
+			case kInputLimitedSentences:
 				scrObjects.add(dh._bounds, _vm->_game->_scene._layer, CAT_12, dh._descId);
 				scrObjects._v8333C = true;
 				break;

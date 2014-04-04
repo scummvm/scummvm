@@ -253,7 +253,7 @@ ScreenObject::ScreenObject() {
 ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_objectY = -1;
 	_v8333C = false;
-	_v832EC = 0;
+	_inputMode = kInputBuildingSentences;
 	_v7FED6 = 0;
 	_v8332A = 0;
 	_category = CAT_NONE;
@@ -285,7 +285,7 @@ void ScreenObjects::check(bool scanFlag) {
 	Scene &scene = _vm->_game->_scene;
 	UserInterface &userInterface = scene._userInterface;
 
-	if (!_vm->_events->_mouseButtons || _v832EC)
+	if (!_vm->_events->_mouseButtons || _inputMode != kInputBuildingSentences)
 		_vm->_events->_anyStroke = false;
 
 	if ((_vm->_events->_mouseMoved || _vm->_game->_scene._userInterface._scrollerY 
@@ -380,7 +380,7 @@ void ScreenObjects::checkScroller() {
 	UserInterface &userInterface = _vm->_game->_scene._userInterface;
 	Common::Array<int> &inventoryList = _vm->_game->_objects._inventoryList;
 
-	if (_v832EC)
+	if (_inputMode != kInputBuildingSentences)
 		return;
 
 	userInterface._scrollerY = 0;

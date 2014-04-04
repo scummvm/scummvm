@@ -760,7 +760,7 @@ void Scene202::actions() {
 			}
 			_scene->_nextSceneId = 201;
 		} else if (action->isAction(VERB_TAKE, 0x2C)) {
-			if (action->_actionMode2 == 4) {
+			if (action->_mainObjectSource == 4) {
 				if (_game._trigger == 0) {
 					if (_game._objects.isInInventory(OBJ_BONES)) {
 						_vm->_dialogs->show(0x4EFB);
@@ -952,7 +952,7 @@ void Scene202::actions() {
 		} else if (action->isAction(VERB_TAKE, 0x140)) {
 			_vm->_dialogs->show(0x4EF8);
 		} else if (action->isAction(VERB_LOOK, 0x2D)) {
-			if (action->_actionMode == 4)
+			if (action->_commandSource == 4)
 				_vm->_dialogs->show(0x4EF9);
 			else
 				return;

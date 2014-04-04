@@ -239,10 +239,10 @@ void UserInterface::load(const Common::String &resName) {
 	delete pixelsStream;
 }
 
-void UserInterface::setup(int id) {
+void UserInterface::setup(InputMode inputMode) {
 	Scene &scene = _vm->_game->_scene;
 
-	if (_vm->_game->_screenObjects._v832EC != id) {
+	if (_vm->_game->_screenObjects._inputMode != inputMode) {
 		Common::String resName = _vm->_game->_aaName;
 
 		// Strip off any extension
@@ -252,7 +252,7 @@ void UserInterface::setup(int id) {
 		}
 
 		// Add on suffix if necessary
-		if (id)
+		if (inputMode != kInputBuildingSentences)
 			resName += "A";
 
 		resName += ".INT";
@@ -260,7 +260,7 @@ void UserInterface::setup(int id) {
 		load(resName);
 		_surface.copyTo(this);
 	}
-	_vm->_game->_screenObjects._v832EC = id;
+	_vm->_game->_screenObjects._inputMode = inputMode;
 
 	scene._userInterface._uiSlots.clear();
 	scene._userInterface._uiSlots.fullRefresh();
@@ -279,7 +279,7 @@ void UserInterface::setup(int id) {
 }
 
 void UserInterface::drawTextElements() {
-	if (_vm->_game->_screenObjects._v832EC) {
+	if (_vm->_game->_screenObjects._inputMode) {
 		drawTalkList();
 	} else {
 		// Draw the actions
@@ -408,7 +408,7 @@ void UserInterface::loadElements() {
 	Common::Rect bounds;
 	_vm->_game->_screenObjects.clear();
 
-	if (!_vm->_game->_screenObjects._v832EC) {
+	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) {
 		// Set up screen objects for the inventory scroller
 		for (int idx = 1; idx <= 3; ++idx) {
 			getBounds(CAT_INV_SCROLLER, idx, bounds);
@@ -450,7 +450,8 @@ void UserInterface::loadElements() {
 			CAT_INV_ANIM, 0);
 	}
 
-	if (!_vm->_game->_screenObjects._v832EC || _vm->_game->_screenObjects._v832EC == 2) {
+	if (!_vm->_game->_screenObjects._inputMode == kInputBuildingSentences || 
+			_vm->_game->_screenObjects._inputMode == kInputLimitedSentences) {
 		_categoryIndexes[CAT_HOTSPOT - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
 			Hotspot &hs = scene._hotspots[hotspotIdx];
@@ -458,7 +459,7 @@ void UserInterface::loadElements() {
 		}
 	}
 
-	if (_vm->_game->_screenObjects._v832EC == 1) {
+	if (_vm->_game->_screenObjects._inputMode == kInputConversation) {
 		// setup areas for talk entries
 		_categoryIndexes[CAT_TALK_ENTRY - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int idx = 0; idx < 5; ++idx) {
@@ -594,7 +595,7 @@ void UserInterface::noInventoryAnim() {
 		_invSpritesIndex = -1;
 	}
 
-	if (!_vm->_game->_screenObjects._v832EC)
+	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences)
 		refresh();
 }
 
@@ -608,8 +609,9 @@ void UserInterface::refresh() {
 
 void UserInterface::inventoryAnim() {
 	Scene &scene = _vm->_game->_scene;
-	if (_vm->_game->_screenObjects._v832EC == 1 || _vm->_game->_screenObjects._v832EC == 2
-			|| _invSpritesIndex < 0)
+	if (_vm->_game->_screenObjects._inputMode == kInputConversation || 
+			_vm->_game->_screenObjects._inputMode == kInputLimitedSentences ||
+			_invSpritesIndex < 0)
 		return;
 
 	// Move to the next frame number in the sequence, resetting if at the end

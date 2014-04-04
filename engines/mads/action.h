@@ -28,8 +28,9 @@
 
 namespace MADS {
 
-enum ActionMode { ACTIONMODE_NONE = 0, ACTIONMODE_VERB = 1, ACTIONMODE_OBJECT = 3, ACTIONMODE_TALK = 6 };
-enum ActionMode2 { ACTIONMODE2_0 = 0, ACTIONMODE2_2 = 2, ACTIONMODE2_4 = 4, ACTIONMODE2_5 = 5 };
+enum { ACTIONMODE_NONE = 0, ACTIONMODE_VERB = 1, ACTIONMODE_OBJECT = 3, ACTIONMODE_TALK = 6 };
+enum { ACTIONMODE2_0 = 0, ACTIONMODE2_2 = 2, ACTIONMODE2_4 = 4, ACTIONMODE2_5 = 5 };
+
 enum TriggerMode { 
 	KERNEL_TRIGGER_PARSER = 0,		// Triggers parser
 	KERNEL_TRIGGER_DAEMON = 1,		// Triggers step/daemon code
@@ -69,12 +70,13 @@ struct ActionDetails {
 };
 
 struct ActionSavedFields {
-	int _actionMode;
-	int _selectedRow;
-	int _hotspotId;
-	int _v86F3A;
-	int _actionMode2;
-	int _v86F42;
+	bool _commandError;
+	int _commandSource;
+	int _command;
+	int _mainObject;
+	int _secondObject;
+	int _mainObjectSource;
+	int _secondObjectSource;
 	int _articleNumber;
 	int _lookFlag;
 };
@@ -90,8 +92,8 @@ private:
 public:
 	ActionDetails _action, _activeAction;
 	int8 _flags1, _flags2;
-	ActionMode _actionMode;
-	ActionMode2 _actionMode2;
+	int _commandSource;
+	int _mainObjectSource;
 	int _articleNumber;
 	bool _lookFlag;
 	int _selectedRow;
@@ -103,14 +105,13 @@ public:
 	Common::String _sentence;
 
 	// Unknown fields
-	int16 _v86F3A;
-	int16 _v86F42;
+	int16 _secondObject;
+	int16 _secondObjectSource;
 	int16 _recentCommandSource;
 	bool _v86F4A;
 	int16 _recentCommand;
 	InterAwaiting _interAwaiting;
 	bool _inProgress;
-	int _v8453A;
 	int _pickedWord;
 
 public:
@@ -120,7 +121,14 @@ public:
 	void set();
 	const Common::String &statusText() const { return _statusText; }
 	void refresh();
+
+	/**
+	 * Accepts the currently defined sentence from the ScreenObjects parser.
+	 * Copies the data, and checks to see if the action requires the player
+	 * to walk to the given hotspot.
+	 */
 	void startAction();
+
 	void checkAction();
 	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
 	

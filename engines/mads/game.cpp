@@ -172,7 +172,7 @@ void Game::sectionLoop() {
 
 		// Reset the user interface
 		_screenObjects._v8333C = true;
-		_screenObjects._v832EC = 0;
+		_screenObjects._inputMode = kInputBuildingSentences;
 		_scene._userInterface._scrollerY = 0;
 		
 		_player._loadsFirst = true;

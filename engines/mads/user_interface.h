@@ -166,7 +166,7 @@ public:
 	/**
 	* Set up the interface
 	*/
-	void setup(int id);
+	void setup(InputMode inputMode);
 
 	void drawTextElements();
 
