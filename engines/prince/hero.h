@@ -34,6 +34,11 @@ class Animation;
 
 class Hero {
 public:
+	static const uint32 kMoveSetSize = 26;
+	static const int16 kZoomStep = 4;
+	static const int16 kMaxPicWidth = 1280;
+	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
+
 	enum State {
 		STAY = 0,
 		TURN = 1,
@@ -84,22 +89,38 @@ public:
 	};
 
 	Hero();
-
+	~Hero();
+	Common::RandomSource _randomSource;
 	bool loadAnimSet(uint32 heroAnimNumber);
 
 	const Graphics::Surface * getSurface();
 
-	void setPos(int16 x, int16 y) { _middleX = x; _middleX = y; }
+	void setPos(int16 x, int16 y) { _middleX = x; _middleY = y; }
 	void setVisible(bool flag) { _visible = flag; }
+
+	void showHero();
+	void moveHero();
+	void rotateHero();
+	void setScale(int8 zoomBitmapValue);
+	void selectZoom();
+	void countDrawPosition();
+	void showHeroAnimFrame();
+	void specialAnim();
+	void getState();
 
 //private:
 	uint16 _number;
 	uint16 _visible;
-	State _state;
-	int16 _middleX;
-	int16 _middleY;
+	int16 _state;
+	int16 _middleX; // middle of X
+	int16 _middleY; // lower part of hero
+	int16 _drawX;
+	int16 _drawY;
+	int16 _lastDirection;
+	int16 _destDirection;
 	int16 _moveSetType;
-	int16 _frame;
+	int8 _zoomFactor;
+	int16 _scaleValue;
 
 	// Coords array of coordinates
 	// DirTab array of directions
@@ -109,13 +130,13 @@ public:
 	// DestDir 
 	// LeftRight previous left/right direction
 	// UpDown previous up/down direction
-	// Phase animation phase
+	uint _phase; // Phase animation phase
 	// Step x/y step size depends on direction
 	// MaxBoredom stand still timeout
-	// Boredom current boredom time in frames
+	int16 _boredomTime;// Boredom current boredom time in frames
 	uint16 _boreNum; // Bore anim frame
-	// TalkTime time of talk anim
-	// SpecAnim additional anim
+	int16 _talkTime; // TalkTime time of talk anim
+	int32 _specAnim; // SpecAnim additional anim
 
 	uint16 _currHeight; // height of current anim phase
 
@@ -126,6 +147,7 @@ public:
 	// AnimSet number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
 	// TurnAnim ??
+	Animation *_zoomBitmap; // change to sth else, not Animation ??
 	
 	uint32 _moveDelay;
 	uint32 _shadMinus; //??

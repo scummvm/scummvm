@@ -59,6 +59,7 @@
 #include "prince/archive.h"
 #include "prince/hero.h"
 #include "prince/resource.h"
+#include "prince/animation.h"
 
 namespace Prince {
 
@@ -279,6 +280,9 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 		_sceneWidth = _roomBmp->getSurface()->w;
 	}
 
+	_mainHero->_zoomBitmap->clear();
+	Resource::loadResource(_mainHero->_zoomBitmap, "zoom", false);
+
 	_mobList.clear();
 	Resource::loadResource(_mobList, "mob.lst", false);
 
@@ -475,6 +479,54 @@ void PrinceEngine::keyHandler(Common::Event event) {
 	case Common::KEYCODE_ESCAPE:
 		_flags->setFlagValue(Flags::ESCAPED2, 1);
 		break;
+	case Common::KEYCODE_UP:
+		_mainHero->_phase++;
+		debugEngine("%d", _mainHero->_phase);
+		break;
+	case Common::KEYCODE_DOWN:
+		if(_mainHero->_phase > 0) {
+			_mainHero->_phase--;
+		}
+		debugEngine("%d", _mainHero->_phase);
+		break;
+	case Common::KEYCODE_w:
+		_mainHero->_lastDirection = _mainHero->UP;
+		debugEngine("UP");
+		break;
+	case Common::KEYCODE_s:
+		_mainHero->_lastDirection = _mainHero->DOWN;
+		debugEngine("DOWN");
+		break;
+	case Common::KEYCODE_a:
+		_mainHero->_lastDirection = _mainHero->LEFT;
+		debugEngine("LEFT");
+		break;
+	case Common::KEYCODE_f:
+		_mainHero->_lastDirection = _mainHero->RIGHT;
+		debugEngine("RIGHT");
+		break;
+	case Common::KEYCODE_1:
+		if(_mainHero->_state > 0) {
+			_mainHero->_state--;
+		}
+		debugEngine("%d", _mainHero->_state);
+		break;
+	case Common::KEYCODE_2:
+		_mainHero->_state++;
+		debugEngine("%d", _mainHero->_state);
+		break;
+	case Common::KEYCODE_i:
+		_mainHero->_middleY -= 10;
+		break;
+	case Common::KEYCODE_k:
+		_mainHero->_middleY += 10;
+		break;
+	case Common::KEYCODE_j:
+		_mainHero->_middleX -= 10;
+		break;
+	case Common::KEYCODE_l:
+		_mainHero->_middleX += 10;
+		break;
 	}
 }
 
@@ -575,7 +627,8 @@ void PrinceEngine::drawScreen() {
 		const Graphics::Surface *mainHeroSurface = _mainHero->getSurface();
 
 		if (mainHeroSurface) 
-			_graph->drawTransparent(_mainHero->_middleX, _mainHero->_middleY, mainHeroSurface);
+			//_graph->drawTransparent(_mainHero->_middleX, _mainHero->_middleY, mainHeroSurface);
+			_graph->drawTransparent(_mainHero->_drawX, _mainHero->_drawY, mainHeroSurface);
 	}
 
 	playNextFrame();
@@ -627,6 +680,7 @@ void PrinceEngine::mainLoop() {
 			return;
 
 		// TODO: Update all structures, animations, naks, heros etc.
+		_mainHero -> showHero();
 
 		_interpreter->step();
 

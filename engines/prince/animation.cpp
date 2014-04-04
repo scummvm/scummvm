@@ -29,10 +29,10 @@
 namespace Prince {
 
 bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
-	uint32 dataSize = stream.size();
-	_data = (byte*) malloc(dataSize);
+	_dataSize = stream.size();
+	_data = (byte*) malloc(_dataSize);
 
-	if(stream.read(_data, dataSize) != dataSize) {
+	if (stream.read(_data, _dataSize) != _dataSize) {
 		free(_data);
 		return false;
 	}
@@ -49,7 +49,7 @@ const Graphics::Surface * Animation::getSurface(uint16 frameIndex) {
 	return _frameList[frameIndex];	
 }
 */
-Animation::Animation() {
+Animation::Animation(): _data(NULL) {
 
 }
 
@@ -59,6 +59,22 @@ Animation::Animation(byte *data, uint32 dataSize)
 
 Animation::~Animation() {
 	free(_data);
+}
+
+void Animation::clear() {
+	if (_data != NULL) {
+		free(_data);
+	}
+}
+
+// TEMP
+/*
+int8 Animation::getZoom(uint16 offset) const {
+	return *(uint8*)(_data+offset);
+}
+*/
+int16 Animation::getZoom(uint16 offset) const {
+	return READ_LE_UINT16(_data + offset);
 }
 
 int16 Animation::getLoopCount() const {
@@ -91,6 +107,16 @@ int16 Animation::getPhaseOffsetY(uint phaseIndex) const {
 
 int16 Animation::getPhaseFrameIndex(uint phaseIndex) const {
 	return READ_LE_UINT16(getPhaseEntry(phaseIndex) + 4);
+}
+
+int16 Animation::getFrameWidth(uint frameIndex) const {
+	byte *frameData = _data + READ_LE_UINT32(_data + 16 + frameIndex * 4);
+	return READ_LE_UINT16(frameData + 0);
+}
+
+int16 Animation::getFrameHeight(uint frameIndex) const {
+	byte *frameData = _data + READ_LE_UINT32(_data + 16 + frameIndex * 4);
+	return READ_LE_UINT16(frameData + 2);
 }
 
 Graphics::Surface *Animation::getFrame(uint frameIndex) {

@@ -62,6 +62,7 @@ class Cursor;
 class MhwanhDecoder;
 class Font;
 class Hero;
+class Animation;
 
 struct Text {
 	const char *_str;
@@ -174,6 +175,7 @@ private:
 	Common::SeekableReadStream *_voiceStream[MAX_SAMPLES];
 	Audio::SoundHandle _soundHandle[MAX_SAMPLES];
 
+	Animation *_zoom;
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
 	Common::Array<AnimListItem> _animList;

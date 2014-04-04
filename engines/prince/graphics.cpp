@@ -72,9 +72,10 @@ void GraphicsMan::drawTransparent(uint16 posX, uint16 posY, const Graphics::Surf
 {
 	for (uint y = 0; y < s->h; ++y) {
 		for (uint x = 0; x < s->w; ++x) {
-			byte pixel = *((byte*)s->getBasePtr(x,y));
+			byte pixel = *((byte*)s->getBasePtr(x, y));
 			if (pixel != 255) {
-				*((byte*)_frontScreen->getBasePtr(x, y)) = pixel;
+				//*((byte*)_frontScreen->getBasePtr(x, y)) = pixel;
+				*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = pixel;
 			}
 		}
 	}

@@ -181,7 +181,7 @@ void Interpreter::debugInterpreter(const char *s, ...) {
 	str += Common::String::format("op %04d: ", _lastOpcode);
 	//debugC(10, DebugChannel::kScript, "PrinceEngine::Script %s %s", str.c_str(), buf);
 
-	debug("Prince::Script frame %08ld mode %s %s %s", _vm->_frameNr, _mode, str.c_str(), buf);
+	//debug("Prince::Script frame %08ld mode %s %s %s", _vm->_frameNr, _mode, str.c_str(), buf);
 }
 
 void Interpreter::step() {
@@ -631,6 +631,10 @@ void Interpreter::O_SETHERO() {
 	uint16 dir = readScriptFlagValue();
 	debugInterpreter("O_SETHERO hero %d, x %d, y %d, dir %d", hero, x, y, dir);
 	_vm->_mainHero->setPos(x, y);
+	_vm->_mainHero->_lastDirection = dir;
+	_vm->_mainHero->_state = _vm->_mainHero->STAY;
+	_vm->_mainHero->_moveSetType = _vm->_mainHero->_lastDirection - 1; // for countDrawPosition
+	_vm->_mainHero->countDrawPosition(); //setting drawX, drawY
 }
 
 void Interpreter::O_HEROOFF() {

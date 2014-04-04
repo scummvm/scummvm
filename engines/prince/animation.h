@@ -47,6 +47,10 @@ public:
 	int16 getPhaseOffsetY(uint phaseIndex) const;
 	int16 getPhaseFrameIndex(uint phaseIndex) const;
 	Graphics::Surface *getFrame(uint frameIndex);
+	int16 getFrameWidth(uint frameIndex) const;
+	int16 getFrameHeight(uint frameIndex) const;
+	int16 getZoom(uint16 offset) const;
+	void clear();
 
 private:
 	Common::Array<Graphics::Surface *> _frameList;
