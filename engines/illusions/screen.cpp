@@ -47,10 +47,8 @@ Screen::~Screen() {
 }
 
 Graphics::Surface *Screen::allocSurface(int16 width, int16 height) {
-	// TODO Use screen pixel format?
-	Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(width, height, pixelFormat16);
+	surface->create(width, height, _vm->_system->getScreenFormat());
 	return surface; 
 }
 
