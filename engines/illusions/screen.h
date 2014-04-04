@@ -23,8 +23,9 @@
 #ifndef ILLUSIONS_SCREEN_H
 #define ILLUSIONS_SCREEN_H
 
-#include "illusions/spritedrawqueue.h"
+#include "illusions/graphics.h"
 #include "common/list.h"
+#include "common/rect.h"
 #include "graphics/surface.h"
 
 namespace Illusions {
@@ -53,6 +54,46 @@ protected:
 	typedef SpriteDecompressQueueList::iterator SpriteDecompressQueueListIterator;
 	SpriteDecompressQueueList _queue;
 	void decompress(SpriteDecompressQueueItem *item);
+};
+
+struct SpriteDrawQueueItem {
+	byte *_drawFlags;
+	int16 _kind;
+	int16 _scale;
+	uint16 _flags;
+	uint32 _priority;
+	Graphics::Surface *_surface;
+	WidthHeight _dimensions;
+	Common::Point _drawPosition;
+	Common::Point _controlPosition;
+};
+
+class SpriteDrawQueue {
+public:
+	SpriteDrawQueue(Screen *screen);
+	~SpriteDrawQueue();
+	bool draw(SpriteDrawQueueItem *item);
+	void drawAll();
+	void insertSprite(byte *drawFlags, Graphics::Surface *surface, WidthHeight &dimensions,
+		Common::Point &drawPosition, Common::Point &controlPosition, uint32 priority, int16 scale, uint16 flags);
+	void insertSurface(Graphics::Surface *surface, WidthHeight &dimensions,
+		Common::Point &drawPosition, uint32 priority);
+	void insertTextSurface(Graphics::Surface *surface, WidthHeight &dimensions,
+		Common::Point &drawPosition, uint32 priority);
+protected:
+	typedef Common::List<SpriteDrawQueueItem*> SpriteDrawQueueList;
+	typedef SpriteDrawQueueList::iterator SpriteDrawQueueListIterator;
+	struct FindInsertionPosition : public Common::UnaryFunction<const SpriteDrawQueueItem*, bool> {
+		uint32 _priority;
+		FindInsertionPosition(uint32 priority) : _priority(priority) {}
+		bool operator()(const SpriteDrawQueueItem *item) const {
+			return item->_priority >= _priority;
+		}
+	};
+	Screen *_screen;
+	SpriteDrawQueueList _queue;	
+	void insert(SpriteDrawQueueItem *item, uint32 priority);
+	bool calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcRect, Common::Rect &dstRect);
 };
 
 class Screen {
