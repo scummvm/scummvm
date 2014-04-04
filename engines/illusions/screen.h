@@ -24,12 +24,36 @@
 #define ILLUSIONS_SCREEN_H
 
 #include "illusions/spritedrawqueue.h"
-#include "illusions/spritedecompressqueue.h"
+#include "common/list.h"
 #include "graphics/surface.h"
 
 namespace Illusions {
 
 class IllusionsEngine;
+class Screen;
+
+struct SpriteDecompressQueueItem {
+	byte *_drawFlags;
+	uint32 _flags;
+	uint32 _field8;
+	WidthHeight _dimensions;
+	byte *_compressedPixels;
+	Graphics::Surface *_surface;
+};
+
+class SpriteDecompressQueue {
+public:
+	SpriteDecompressQueue();
+	~SpriteDecompressQueue();
+	void insert(byte *drawFlags, uint32 flags, uint32 field8, WidthHeight &dimensions,
+		byte *compressedPixels, Graphics::Surface *surface);
+	void decompressAll();
+protected:
+	typedef Common::List<SpriteDecompressQueueItem*> SpriteDecompressQueueList;
+	typedef SpriteDecompressQueueList::iterator SpriteDecompressQueueListIterator;
+	SpriteDecompressQueueList _queue;
+	void decompress(SpriteDecompressQueueItem *item);
+};
 
 class Screen {
 public:

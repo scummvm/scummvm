@@ -27,7 +27,6 @@ MODULE_OBJS := \
 	sequenceopcodes.o \
 	soundresource.o \
 	specialcode.o \
-	spritedecompressqueue.o \
 	spritedrawqueue.o \
 	talkresource.o \
 	talkthread.o \
