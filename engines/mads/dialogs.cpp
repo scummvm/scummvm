@@ -59,8 +59,8 @@ void Dialog::draw() {
 
 	// Draw the dialog
 	// Fill entire content of dialog
-	_vm->_screen.fillRect(Common::Rect(_position.x, _position.y,
-		_position.x + _width, _position.y + _height), TEXTDIALOG_BACKGROUND);
+	Common::Rect bounds = getBounds();
+	_vm->_screen.fillRect(bounds, TEXTDIALOG_BACKGROUND);
 
 	// Draw the outer edge lines
 	_vm->_screen.hLine(_position.x + 1, _position.y + _height - 2,
@@ -76,6 +76,8 @@ void Dialog::draw() {
 	drawContent(Common::Rect(_position.x + 2, _position.y + 2,
 		_position.x + _width - 2, _position.y + _height - 2), 0,
 		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
+
+	_vm->_screen.copyRectToScreen(bounds);
 }
 
 void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte color2) {
@@ -103,12 +105,12 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 		const Common::Point &pos, int maxChars):
 		Dialog(vm) {
 	_vm = vm;
-	_fontName = fontName;
+	_font = _vm->_font->getFont(fontName);
 	_position = pos;
 	
 	_vm->_font->setColors(TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK);
 
-	_innerWidth = (_vm->_font->maxWidth() + 1) * maxChars;
+	_innerWidth = (_font->maxWidth() + 1) * maxChars;
 	_width = _innerWidth + 10;
 	_lineSize = maxChars * 2;
 	_lineWidth = 0;
@@ -139,7 +141,7 @@ void TextDialog::addLine(const Common::String &line, bool underline) {
 	if (_lineWidth > 0 || _currentX > 0)
 		incNumLines();
 
-	int stringWidth = _vm->_font->getWidth(line, 1);
+	int stringWidth = _font->getWidth(line, 1);
 	if (stringWidth >= _innerWidth || (int)line.size() >= _lineSize) {
 		wordWrap(line);
 	} else {
@@ -211,7 +213,7 @@ void TextDialog::wordWrap(const Common::String &line) {
 				tempLine2 += ' ';
 			tempLine2 += tempLine;
 
-			int lineWidth = _vm->_font->getWidth(tempLine2, 1);
+			int lineWidth = _font->getWidth(tempLine2, 1);
 			if (((_currentX + (int)tempLine2.size()) > _lineSize) ||
 					((_lineWidth + lineWidth) > _innerWidth)) {
 				incNumLines();
@@ -228,7 +230,7 @@ void TextDialog::wordWrap(const Common::String &line) {
 
 void TextDialog::appendLine(const Common::String &line) {
 	_currentX += line.size();
-	_lineWidth += _vm->_font->getWidth(line, 1);
+	_lineWidth += _font->getWidth(line, 1);
 	_lines[_numLines] += line;
 }
 
@@ -255,7 +257,7 @@ void TextDialog::draw() {
 		--_numLines;
 
 	// Figure out the size and position for the dialog
-	_height = (_vm->_font->getHeight() + 1) * (_numLines + 1) + 10;
+	_height = (_font->getHeight() + 1) * (_numLines + 1) + 10;
 	if (_position.x == -1)
 		_position.x = 160 - (_width / 2);
 	if (_position.y == -1)
@@ -275,7 +277,7 @@ void TextDialog::draw() {
 		if (_lineXp[lineNum] == -1) {
 			// Draw a line across the entire dialog
 			_vm->_screen.hLine(_position.x + 2, 
-				lineYp + (_vm->_font->getHeight() + 1)  / 2,
+				lineYp + (_font->getHeight() + 1)  / 2,
 				_position.x + _width - 4, TEXTDIALOG_BLACK);
 		} else {
 			// Draw a text line
@@ -284,24 +286,26 @@ void TextDialog::draw() {
 			if (_lineXp[lineNum] & 0x40)
 				++yp;
 
-			_vm->_font->writeString(&_vm->_screen, _lines[lineNum], 
+			_font->writeString(&_vm->_screen, _lines[lineNum], 
 				Common::Point(xp, yp), 1);
 
 			if (_lineXp[lineNum] & 0x80) {
 				// Draw an underline under the text
-				int lineWidth = _vm->_font->getWidth(_lines[lineNum], 1);
-				_vm->_screen.hLine(xp, yp + _vm->_font->getHeight(), xp + lineWidth,
+				int lineWidth = _font->getWidth(_lines[lineNum], 1);
+				_vm->_screen.hLine(xp, yp + _font->getHeight(), xp + lineWidth,
 					TEXTDIALOG_BLACK);
 			}
 		}
 
-		lineYp += _vm->_font->getHeight() + 1;
+		lineYp += _font->getHeight() + 1;
 	}
+
+	_vm->_screen.copyRectToScreen(getBounds());
 }
 
 void TextDialog::drawWithInput() {
 	//int innerWidth = _innerWidth;
-	//int lineHeight = _vm->_font->getHeight() + 1;
+	//int lineHeight = _font->getHeight() + 1;
 	//int xp = _position.x + 5;
 
 	// Draw the content of the dialog
@@ -322,10 +326,9 @@ void TextDialog::show() {
 	draw();
 	_vm->_events->showCursor();
 
-	while (!_vm->shouldQuit() && !_vm->_events->_keyPressed &&
-		!_vm->_events->_mouseClicked) {
-		_vm->_events->delay(1);
-	}
+	do {
+		_vm->_events->waitForNextFrame();
+	} while (!_vm->shouldQuit() && !_vm->_events->_mouseReleased);
 }
 
 /*------------------------------------------------------------------------*/

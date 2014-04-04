@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
+#include "mads/font.h"
 #include "mads/msurface.h"
 
 namespace MADS {
@@ -68,6 +69,14 @@ public:
 	 * Destructor
 	 */
 	virtual ~Dialog();
+
+	/**
+	 * Return the bounds of the dialog.
+	 */
+	Common::Rect getBounds() const {
+		return Common::Rect(_position.x, _position.y,
+			_position.x + _width, _position.y + _height);
+	}
 };
 
 enum {
@@ -95,7 +104,7 @@ private:
 	 */
 	void restorePalette();
 protected:
-	Common::String _fontName;
+	Font *_font;
 	int _innerWidth;
 	int _lineWidth;
 	int _currentX;

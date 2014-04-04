@@ -135,8 +135,8 @@ bool DialogsNebular::show(int msgId) {
 	// Loop through the lines of the returned text
 	for (uint idx = 0; idx < msg.size(); ++idx) {
 		Common::String srcLine = msg[idx];
-
 		const char *srcP = srcLine.c_str();
+		dialogText = "";
 		commandFlag = false;
 		underlineFlag = false;
 		centerFlag = false;
