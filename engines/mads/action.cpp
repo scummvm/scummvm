@@ -373,8 +373,9 @@ void MADSAction::checkActionAtMousePos() {
 			return;
 
 		case CAT_INV_LIST:
-		case CAT_TALK_ENTRY:
-			if (_interAwaiting != 3) {
+		case CAT_HOTSPOT:
+		case CAT_INV_ANIM:
+			if (_interAwaiting != AWAITING_THAT) {
 				if (userInterface._selectedActionIndex >= 0) {
 					_actionMode = ACTIONMODE_VERB;
 					_selectedRow = userInterface._selectedActionIndex;
@@ -404,7 +405,7 @@ void MADSAction::checkActionAtMousePos() {
 	}
 
 	switch (_interAwaiting) {
-	case 1:
+	case AWAITING_COMMAND:
 		_articleNumber = 0;
 		switch (userInterface._category) {
 		case CAT_COMMAND:
@@ -453,7 +454,7 @@ void MADSAction::checkActionAtMousePos() {
 		}
 		break;
 
-	case 2:
+	case AWAITING_THIS:
 		_articleNumber = 0;
 		switch (userInterface._category) {
 		case CAT_INV_LIST:
@@ -468,7 +469,7 @@ void MADSAction::checkActionAtMousePos() {
 		}
 		break;
 
-	case 3:
+	case AWAITING_THAT:
 		switch (userInterface._category) {
 		case CAT_INV_LIST:
 		case CAT_HOTSPOT:
