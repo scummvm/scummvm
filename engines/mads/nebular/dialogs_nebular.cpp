@@ -124,7 +124,7 @@ bool DialogsNebular::show(int msgId) {
 	Common::String valStr;
 	Common::String dialogText;
 	bool result = true;
-	bool centerFlag;
+	bool centerFlag = false;
 	bool underlineFlag;
 	bool commandFlag;
 	bool crFlag;
@@ -268,7 +268,7 @@ bool DialogsNebular::textNoun(Common::String &dialogText, int nounNum,
 
 bool DialogsNebular::commandCheck(const char *idStr, Common::String &valStr,
 		const Common::String &command) {
-	int idLen = strlen(idStr);
+	uint idLen = strlen(idStr);
 	
 	valStr = (command.size() <= idLen) ? "" : Common::String(command.c_str() + idLen);
 

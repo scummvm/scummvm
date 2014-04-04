@@ -450,7 +450,7 @@ void UserInterface::loadElements() {
 			CAT_INV_ANIM, 0);
 	}
 
-	if (!_vm->_game->_screenObjects._inputMode == kInputBuildingSentences || 
+	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences || 
 			_vm->_game->_screenObjects._inputMode == kInputLimitedSentences) {
 		_categoryIndexes[CAT_HOTSPOT - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
