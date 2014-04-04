@@ -278,8 +278,7 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	}
-	else if (_action.isAction(VERB_TAKE, 371) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
+	} else if (_action.isAction(VERB_TAKE, 371) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeDepthSurface(1);
@@ -370,8 +369,7 @@ void Scene103::actions() {
 		}
 	} else if (_action.isAction(VERB_LOOK, 250)) {
 		_vm->_dialogs->show(!_globals[kTurkeyExploded] ? 10323 : 10303);
-	}
-	else if (_action.isAction(VERB_TALKTO, 27)) {
+	} else if (_action.isAction(VERB_TALKTO, 27)) {
 		switch (_vm->_game->_trigger) {
 		case 0: {
 			_game._player._stepEnabled = false;

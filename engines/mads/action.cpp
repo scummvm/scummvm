@@ -289,7 +289,7 @@ void MADSAction::startAction() {
 	_activeAction = _action;
 	_sentence = _statusText;
 
-	if ((_mainObjectSource == ACTIONMODE2_4) && (_secondObjectSource == 0))
+	if ((_mainObjectSource == ACTIONMODE2_4) && (_secondObjectSource == 4))
 		_savedFields._commandError = true;
 
 	player._needToWalk = false;
