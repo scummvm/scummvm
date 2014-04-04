@@ -43,22 +43,18 @@ struct WalkingBearder {
 };
 
 void scene29_initScene(Scene *sc) {
-	g_vars->scene29_var01 = 300;
-	g_vars->scene29_var02 = 200;
-	g_vars->scene29_var03 = 400;
-	g_vars->scene29_var04 = 300;
 	g_vars->scene29_porter = sc->getStaticANIObject1ById(ANI_PORTER, -1);
 	g_vars->scene29_shooter1 = sc->getStaticANIObject1ById(ANI_SHOOTER1, -1);
 	g_vars->scene29_shooter2 = sc->getStaticANIObject1ById(ANI_SHOOTER2, -1);
 	g_vars->scene29_ass = sc->getStaticANIObject1ById(ANI_ASS, -1);
 
-	g_vars->scene29_var05.numBalls = 0;
-	g_vars->scene29_var05.pTail = 0;
-	g_vars->scene29_var05.field_8 = 0;
-	g_vars->scene29_var05.pHead = 0;
+	g_vars->scene29_balls.numBalls = 0;
+	g_vars->scene29_balls.pTail = 0;
+	g_vars->scene29_balls.field_8 = 0;
+	g_vars->scene29_balls.pHead = 0;
 
-	free(g_vars->scene29_var05.cPlex);
-	g_vars->scene29_var05.cPlex = 0;
+	free(g_vars->scene29_balls.cPlex);
+	g_vars->scene29_balls.cPlex = 0;
 
 	StaticANIObject *ani;
 
@@ -71,30 +67,30 @@ void scene29_initScene(Scene *sc) {
 	g_vars->scene29_var08.cPlex = 0;
 
 	ani = sc->getStaticANIObject1ById(ANI_SHELL_GREEN, -1);
-	Ball *b = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
+	Ball *b = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
 	b->ani = ani;
 
-	if (g_vars->scene29_var05.field_8)
-		g_vars->scene29_var05.field_8->p0 = b;
+	if (g_vars->scene29_balls.field_8)
+		g_vars->scene29_balls.field_8->p0 = b;
 	else
-		g_vars->scene29_var05.pHead = b;
+		g_vars->scene29_balls.pHead = b;
 
-	g_vars->scene29_var05.field_8 = b;
+	g_vars->scene29_balls.field_8 = b;
 
 	for (int i = 0; i < 2; i++) {
 		StaticANIObject *newani = new StaticANIObject(ani);
 
 		sc->addStaticANIObject(newani, 1);
 
-		b = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
+		b = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
 		b->ani = ani;
 
-		if (g_vars->scene29_var05.field_8)
-			g_vars->scene29_var05.field_8->p0 = b;
+		if (g_vars->scene29_balls.field_8)
+			g_vars->scene29_balls.field_8->p0 = b;
 		else
-			g_vars->scene29_var05.pHead = b;
+			g_vars->scene29_balls.pHead = b;
 
-		g_vars->scene29_var05.field_8 = b;
+		g_vars->scene29_balls.field_8 = b;
 	}
 
 	g_vars->scene29_var06.numBalls = 0;
@@ -203,15 +199,15 @@ void sceneHandler29_winArcade() {
 
 			ani->hide();
 
-			newball = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
+			newball = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
 			newball->ani = ani;
 
-			if (g_vars->scene29_var05.field_8)
-				g_vars->scene29_var05.field_8->p0 = newball;
+			if (g_vars->scene29_balls.field_8)
+				g_vars->scene29_balls.field_8->p0 = newball;
 			else
-				g_vars->scene29_var05.pHead = newball;
+				g_vars->scene29_balls.pHead = newball;
 
-			g_vars->scene29_var05.field_8 = newball;
+			g_vars->scene29_balls.field_8 = newball;
 		}
 
 		while (g_vars->scene29_var07.numBalls) {
@@ -263,33 +259,33 @@ void sceneHandler29_winArcade() {
 }
 
 void sceneHandler29_shootGreen() {
-	if (g_vars->scene29_var05.numBalls) {
+	if (g_vars->scene29_balls.numBalls) {
 		int x = g_vars->scene29_shooter1->_ox - 113;
 		int y = g_vars->scene29_shooter1->_oy - 48;
-		StaticANIObject *ani = g_vars->scene29_var05.pHead->ani;
-		Ball *oldhead = g_vars->scene29_var05.pHead;
-		Ball *oldp0 = g_vars->scene29_var05.pHead->p0;
+		StaticANIObject *ani = g_vars->scene29_balls.pHead->ani;
+		Ball *oldhead = g_vars->scene29_balls.pHead;
+		Ball *oldp0 = g_vars->scene29_balls.pHead->p0;
 
-		g_vars->scene29_var05.pHead = g_vars->scene29_var05.pHead->p0;
+		g_vars->scene29_balls.pHead = g_vars->scene29_balls.pHead->p0;
 
-		if (g_vars->scene29_var05.pHead)
+		if (g_vars->scene29_balls.pHead)
 			oldp0->p1 = 0;
 		else
-			g_vars->scene29_var05.field_8 = 0;
+			g_vars->scene29_balls.field_8 = 0;
 
-		oldhead->p0 = g_vars->scene29_var05.pTail;
+		oldhead->p0 = g_vars->scene29_balls.pTail;
 
-		g_vars->scene29_var05.pTail = oldhead;
-		g_vars->scene29_var05.numBalls--;
+		g_vars->scene29_balls.pTail = oldhead;
+		g_vars->scene29_balls.numBalls--;
 
-		if (!g_vars->scene29_var05.numBalls) {
-			g_vars->scene29_var05.numBalls = 0;
-			g_vars->scene29_var05.pTail = 0;
-			g_vars->scene29_var05.field_8 = 0;
-			g_vars->scene29_var05.pHead = 0;
+		if (!g_vars->scene29_balls.numBalls) {
+			g_vars->scene29_balls.numBalls = 0;
+			g_vars->scene29_balls.pTail = 0;
+			g_vars->scene29_balls.field_8 = 0;
+			g_vars->scene29_balls.pHead = 0;
 
-			free(g_vars->scene29_var05.cPlex);
-			g_vars->scene29_var05.cPlex = 0;
+			free(g_vars->scene29_balls.cPlex);
+			g_vars->scene29_balls.cPlex = 0;
 		}
 
 		ani->show1(x, y, MV_SHG_NORM, 0);
@@ -336,33 +332,33 @@ void sceneHandler29_shootGreen() {
 }
 
 void sceneHandler29_shootRed() {
-	if (g_vars->scene29_var05.numBalls) {
+	if (g_vars->scene29_balls.numBalls) {
 		int x = g_vars->scene29_shooter1->_ox - 101;
 		int y = g_vars->scene29_shooter1->_oy - 14;
-		StaticANIObject *ani = g_vars->scene29_var05.pHead->ani;
-		Ball *oldhead = g_vars->scene29_var05.pHead;
-		Ball *oldp0 = g_vars->scene29_var05.pHead->p0;
+		StaticANIObject *ani = g_vars->scene29_balls.pHead->ani;
+		Ball *oldhead = g_vars->scene29_balls.pHead;
+		Ball *oldp0 = g_vars->scene29_balls.pHead->p0;
 
-		g_vars->scene29_var05.pHead = g_vars->scene29_var05.pHead->p0;
+		g_vars->scene29_balls.pHead = g_vars->scene29_balls.pHead->p0;
 
-		if (g_vars->scene29_var05.pHead)
+		if (g_vars->scene29_balls.pHead)
 			oldp0->p1 = 0;
 		else
-			g_vars->scene29_var05.field_8 = 0;
+			g_vars->scene29_balls.field_8 = 0;
 
-		oldhead->p0 = g_vars->scene29_var05.pTail;
+		oldhead->p0 = g_vars->scene29_balls.pTail;
 
-		g_vars->scene29_var05.pTail = oldhead;
-		g_vars->scene29_var05.numBalls--;
+		g_vars->scene29_balls.pTail = oldhead;
+		g_vars->scene29_balls.numBalls--;
 
-		if (!g_vars->scene29_var05.numBalls) {
-			g_vars->scene29_var05.numBalls = 0;
-			g_vars->scene29_var05.pTail = 0;
-			g_vars->scene29_var05.field_8 = 0;
-			g_vars->scene29_var05.pHead = 0;
+		if (!g_vars->scene29_balls.numBalls) {
+			g_vars->scene29_balls.numBalls = 0;
+			g_vars->scene29_balls.pTail = 0;
+			g_vars->scene29_balls.field_8 = 0;
+			g_vars->scene29_balls.pHead = 0;
 
-			free(g_vars->scene29_var05.cPlex);
-			g_vars->scene29_var05.cPlex = 0;
+			free(g_vars->scene29_balls.cPlex);
+			g_vars->scene29_balls.cPlex = 0;
 		}
 
 		ani->show1(x, y, MV_SHR_NORM, 0);
@@ -564,15 +560,15 @@ void sceneHandler29_sub03() {
 
 		if (x >= 186) {
 			if (sceneHandler29_sub16(ball->ani, x)) {
-				newball = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
+				newball = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
 				newball->ani = ball->ani;
 
-				if (g_vars->scene29_var05.field_8)
-					g_vars->scene29_var05.field_8->p0 = newball;
+				if (g_vars->scene29_balls.field_8)
+					g_vars->scene29_balls.field_8->p0 = newball;
 				else
-					g_vars->scene29_var05.pHead = newball;
+					g_vars->scene29_balls.pHead = newball;
 
-				g_vars->scene29_var05.field_8 = newball;
+				g_vars->scene29_balls.field_8 = newball;
 
 				if (ball == g_vars->scene29_var08.pHead)
 					g_vars->scene29_var08.pHead = ball->p0;
@@ -597,15 +593,15 @@ void sceneHandler29_sub03() {
 				ball->ani->setOXY(x, y);
 			}
 		} else {
-			newball = g_vars->scene29_var05.sub04(g_vars->scene29_var05.field_8, 0);
+			newball = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
 			newball->ani = ball->ani;
 
-			if (g_vars->scene29_var05.field_8)
-				g_vars->scene29_var05.field_8->p0 = newball;
+			if (g_vars->scene29_balls.field_8)
+				g_vars->scene29_balls.field_8->p0 = newball;
 			else
-				g_vars->scene29_var05.pHead = newball;
+				g_vars->scene29_balls.pHead = newball;
 
-			g_vars->scene29_var05.field_8 = newball;
+			g_vars->scene29_balls.field_8 = newball;
 
 			ball->ani->hide();
 
@@ -976,7 +972,7 @@ int sceneHandler29(ExCommand *cmd) {
 		break;
 
 	case MSG_SC29_SHOWLASTRED:
-		if (g_vars->scene29_var05.numBalls) {
+		if (g_vars->scene29_balls.numBalls) {
 			g_vars->scene29_var06.field_8->ani->show1(-1, -1, -1, 0);
 			g_vars->scene29_var06.field_8->ani->startAnim(MV_SHR_HITASS, 0, -1);
 		}
@@ -992,9 +988,9 @@ int sceneHandler29(ExCommand *cmd) {
 		break;
 
 	case MSG_SC29_SHOWLASTGREEN:
-		if (g_vars->scene29_var05.numBalls) {
-			g_vars->scene29_var05.field_8->ani->show1(-1, -1, -1, 0);
-			g_vars->scene29_var05.field_8->ani->startAnim(MV_SHG_HITASS, 0, -1);
+		if (g_vars->scene29_balls.numBalls) {
+			g_vars->scene29_balls.field_8->ani->show1(-1, -1, -1, 0);
+			g_vars->scene29_balls.field_8->ani->startAnim(MV_SHG_HITASS, 0, -1);
 		}
 
 		break;
@@ -1066,11 +1062,11 @@ int sceneHandler29(ExCommand *cmd) {
 		} else if (g_fp->_aniMan2) {
 			int x = g_fp->_aniMan2->_ox;
 
-			if (x < g_fp->_sceneRect.left + g_vars->scene29_var01)
-				g_fp->_currentScene->_x = x - g_vars->scene29_var03 - g_fp->_sceneRect.left;
+			if (x < g_fp->_sceneRect.left + 300)
+				g_fp->_currentScene->_x = x - 400 - g_fp->_sceneRect.left;
 
-			if (x > g_fp->_sceneRect.right - g_vars->scene29_var01)
-				g_fp->_currentScene->_x = x + g_vars->scene29_var03 - g_fp->_sceneRect.right;
+			if (x > g_fp->_sceneRect.right - 300)
+				g_fp->_currentScene->_x = x + 400 - g_fp->_sceneRect.right;
 		}
 
 		g_vars->scene29_var20 = g_fp->_aniMan->_ox;

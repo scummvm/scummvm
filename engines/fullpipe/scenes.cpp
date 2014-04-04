@@ -378,10 +378,6 @@ Vars::Vars() {
 	scene28_headBeardedFlipper = false;
 	scene28_lift6inside = false;
 
-	scene29_var01 = 0;
-	scene29_var02 = 0;
-	scene29_var03 = 0;
-	scene29_var04 = 0;
 	scene29_porter = 0;
 	scene29_shooter1 = 0;
 	scene29_shooter2 = 0;
