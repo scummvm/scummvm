@@ -1043,6 +1043,36 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Reversion: The Meeting Version 2.0.2412 (Chinese)
+	{
+		"reversion2",
+		"Version 2.0.2412",
+		{
+			{"data.dcp", 0, "f4ffc4df24b7bebad56a24930f33a2bc", 255766600},
+			{"xlanguage_nz.dcp", 0, "17c79af4928e24484bee77a7e807cc2a", 10737127},
+			{"Linux.dcp", 0, "21858bd77dc86b03f701fd47900e2f51", 984535},
+			AD_LISTEND
+		},
+		Common::ZH_CNA,
+		Common::kPlatformLinux,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Meeting Version 2.0.2412 (English)
+	{
+		"reversion2",
+		"Version 2.0.2412",
+		{
+			{"data.dcp", 0, "f4ffc4df24b7bebad56a24930f33a2bc", 255766600},
+			{"xlanguage_en.dcp", 0, "0598bf752ce93b42bcaf1094df537c7b", 8533057},
+			{"Linux.dcp", 0, "21858bd77dc86b03f701fd47900e2f51", 984535},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformLinux,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Rhiannon: Curse of the four Branches
 	{
 		"rhiannon",
