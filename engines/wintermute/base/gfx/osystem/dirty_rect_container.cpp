@@ -41,14 +41,14 @@ DirtyRectContainer::~DirtyRectContainer() {
 	delete _clipRect;
 }
 
-void DirtyRectContainer::safeEnqueue (Common::Rect *slice, Common::Array<Common::Rect *> *queue) {
-				if (slice->width() != 0 && slice->height() != 0) {
-					assert(slice->isValidRect());
-					queue->push_back(slice);
-					_cleanMe.push_back(slice);
-				} else {
-					delete slice;
-				}
+void DirtyRectContainer::safeEnqueue(Common::Rect *slice, Common::Array<Common::Rect *> *queue) {
+	if (slice->width() != 0 && slice->height() != 0) {
+		assert(slice->isValidRect());
+		queue->push_back(slice);
+		_cleanMe.push_back(slice);
+	} else {
+		delete slice;
+	}
 }
 
 void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Rect &clipRect) {
