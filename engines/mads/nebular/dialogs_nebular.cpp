@@ -234,6 +234,7 @@ bool DialogsNebular::show(int msgId) {
 		dialog->incNumLines();
 	
 	// Show the dialog
+	_vm->_events->setCursor(CURSOR_ARROW);
 	dialog->show();
 
 	delete dialog;
