@@ -155,8 +155,45 @@ public:
 };
 
 class Scene209: public Scene2xx {
+private:
+	bool _dodgeFl, _forceDodgeFl, _shouldDodgeFl;
+	bool _pitchFl;
+	bool _fallFl, _forceFallFl, _shouldFallFl;
+	bool _playingAnimFl, _playingDialogFl;
+	int _pauseMode, _pauseCounterThreshold, _pauseCounter;
+	bool _removeMonkeyFl;
+	int _monkeyPosition;
+	bool _shootReadyFl, _startShootingInTimerFl, _shootMissedLastFl;
+	bool _binocularsDroppedFl;
+	int _dialogAbortVal;
+	int _counter;
+
+	void handlePause();
+	void initPauseCounterThreshold();
+	void handlePeek();
+	void handleVerticalMove();
+	void handleLookStay();
+	void handleLookRight();
+	void handleBlink();
+	void handleGetBinoculars();
+	void handleStandFromPeek();
+	void handleDodge();
+	void handleBinocularBlink();
+	void handleBinocularScan();
+	void handleJumpInTree();
+	void handleTongue();
+	void handleMonkeyFall();
+	void handleJumpAndHide();
+	void handleMonkeyEating();
+	void handleMonkey1();
+	void handleStandBlink();
+	void handleMonkey2();
+
 public:
-	Scene209(MADSEngine *vm) : Scene2xx(vm) {}
+	Scene209(MADSEngine *vm) : Scene2xx(vm), _dodgeFl(false), _forceDodgeFl(false), _pitchFl(false), _fallFl(false), _forceFallFl(false),
+	   _playingAnimFl(false), _shouldFallFl(false), _shouldDodgeFl(false), _monkeyPosition(0), _counter(0), _pauseMode(0),
+	   _binocularsDroppedFl(false), _startShootingInTimerFl(false), _dialogAbortVal(0), _playingDialogFl(false),_shootMissedLastFl(false),
+	   _removeMonkeyFl(false), _shootReadyFl(false), _pauseCounterThreshold(0), _pauseCounter(0) {}
 	virtual void setup();
 	virtual void enter();
 	virtual void step();

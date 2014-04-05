@@ -109,6 +109,8 @@ public:
 	 * @param newScene	Specifies the new scene to set the item to
 	 */
 	void removeFromInventory(int objectId, int newScene);
+
+	int getIdFromDesc(int objectId);
 };
 
 } // End of namespace MADS

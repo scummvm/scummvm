@@ -167,4 +167,9 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 	}
 }
 
+int InventoryObjects::getIdFromDesc(int objectId) {
+	warning("TODO: InventoryObjects::getIdFromDesc()");
+	return objectId;
+}
+
 } // End of namespace MADS
