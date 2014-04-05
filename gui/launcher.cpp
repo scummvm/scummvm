@@ -845,20 +845,46 @@ void LauncherDialog::addGame() {
 
 			// ...so let's determine a list of candidates, games that
 			// could be contained in the specified directory.
-			GameList candidates(EngineMan.detectGames(files));
+			Common::String errors;
+			GameList candidates(EngineMan.detectGames(files, &errors));
 
 			int idx;
 			if (candidates.empty()) {
 				// No game was found in the specified directory
-				MessageDialog alert(_("ScummVM could not find any game in the specified directory!"));
+				Common::String couldNotFindGame = _("ScummVM could not find any game in the specified directory!");
+
+				if (!errors.empty()) {
+					couldNotFindGame += "\n\n";
+					couldNotFindGame += errors;
+				}
+
+				MessageDialog alert(couldNotFindGame);
 				alert.runModal();
 				idx = -1;
 
 				looping = true;
 			} else if (candidates.size() == 1) {
+				// In case we got information about an unknown version display
+				// it to the user, so he can inform us about it.
+				// CHECKME: Could it be possible that we get this warning from
+				// a different engine than that we got the detection entry
+				// from? In that case we probably should not display it...
+				// See also the TODO in EngineManager::detectGames inside
+				// base/plugins.cpp.
+				if (!errors.empty()) {
+					Common::String unknownVersion = _("ScummVM does not know the exact game version in the specified directory!");
+					unknownVersion += "\n\n";
+					unknownVersion += errors;
+
+					MessageDialog alert(unknownVersion);
+					alert.runModal();
+				}
+
 				// Exact match
 				idx = 0;
 			} else {
+				// TODO: Should we display unknown version information here?
+
 				// Display the candidates to the user and let her/him pick one
 				StringArray list;
 				for (idx = 0; idx < (int)candidates.size(); idx++)
