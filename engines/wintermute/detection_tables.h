@@ -38,6 +38,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed8",      "Carol Reed 8 - Amber's Blood"},
 	{"carolreed9",      "Carol Reed 9 - Cold Case Summer"},
 	{"chivalry",        "Chivalry is Not Dead"},
+	{"corrosion",		"Corrosion: Cold Winter Waiting"},
 	{"deadcity",        "Dead City"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"dirtysplit",      "Dirty Split"},
@@ -243,6 +244,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"chivalry",
 		"",
 		AD_ENTRY1s("data.dcp", "ae6d91b9517f4d2851a8ad94c96951c8", 7278302),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_TESTING,
+		GUIO0()
+	},
+	// Corrosion: Cold Winter Waiting
+	{
+		"corrosion",
+		"",
+		AD_ENTRY1s("data.dcp", "ae885b1a8faa0b27f43c0e8f0df02fc9", 525931618),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_TESTING,
