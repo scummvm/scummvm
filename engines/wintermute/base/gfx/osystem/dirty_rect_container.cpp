@@ -749,6 +749,12 @@ int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimize
 
 	if (cleaned) {
 		warning("%d pixels have been cleaned", cleaned);
+		/*
+		 *	This should /never/ be triggered, it means that
+		 *	some pixels were dirtied but somehow got un-dirtied
+		 *	during the process.
+		 */
+
 	}
 
 	if (dirtied) {
