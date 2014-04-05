@@ -70,7 +70,7 @@ void DirtyRectContainer::addDirtyRect(const Common::Rect &rect, const Common::Re
 		// At which point, we bail out.
 		// This is, basically, the 'unrealistic' case, something went wrong.
 		_tempDisableDRects = true;
-		warning ("Too many rects, disabling dirty rects for this frame.");
+		warning("Too many rects, disabling dirty rects for this frame.");
 	} else {
 		Common::Rect *tmp = new Common::Rect(rect);
 		tmp->clip(clipRect);
@@ -106,7 +106,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getFallback() {
 	assert(_tempDisableDRects);
 	assert(_clipRect != nullptr);
 	Common::Array<Common::Rect *> singleret;
-	warning ("Drawing to whole cliprect!");
+	warning("Drawing to whole cliprect!");
 
 	// We return a 1-rect list where the rect is the whole cliprect.
 
@@ -679,7 +679,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	int naivePx = consistencyCheck(ret);
 	// How many pixels we would have drawn if overlaps were not treated
 	int gain = (((filledPixels * 128) / (naivePx)) * 100 ) / 128;
-	warning ("%d/%d/%dpx filled (%d percent), %d/%d rects", filledPixels, naivePx, targetPixels, gain, _rectArray.size(), ret.size());
+	warning("%d/%d/%dpx filled (%d percent), %d/%d rects", filledPixels, naivePx, targetPixels, gain, _rectArray.size(), ret.size());
 #endif
 	return ret;
 }
