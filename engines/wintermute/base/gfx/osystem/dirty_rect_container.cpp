@@ -708,32 +708,32 @@ int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimize
 	for (int x = _clipRect->left; x < _clipRect->right; x++) {
 		for (int y = _clipRect->top; y < _clipRect->bottom; y++) {
 
-			bool is_dirty = false;
+			bool isDirty = false;
 
 			for (uint i = 0; i < _rectArray.size(); i++) {
 				Common::Rect *rect = _rectArray[i];
 				if (rect->width() != 0 && rect->height() != 0) {
 					if(rect->contains(Common::Point(x,y))) {
-						if (is_dirty) {
+						if (isDirty) {
 							duplicatePx++;
 						}
-						is_dirty = true;
+						isDirty = true;
 						totalPx++;
 					}
 				}
 			}
 
-			bool stays_dirty = false;
+			bool staysDirty = false;
 
 			for (uint i = 0; i < optimized.size(); i++) {
 				Common::Rect *rect = optimized[i];
 				if(rect->contains(Common::Point(x,y))) {
-					stays_dirty = true;
+					staysDirty = true;
 				}
 			}
 
 			assert (diff[x][y] == SENTINEL);
-			diff[x][y] = (int)stays_dirty - (int)is_dirty;
+			diff[x][y] = (int)staysDirty - (int)isDirty;
 
 			assert (diff[x][y] >= 0);
 
