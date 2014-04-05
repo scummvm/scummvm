@@ -112,7 +112,7 @@ private:
 	 * Safe enqueue utility.
 	 * Good for leaks, good for readability.
 	 */
-	void safeEnqueue (Common::Rect *slice, Common::Array<Common::Rect *> *queue);
+	void safeEnqueue(Common::Rect *slice, Common::Array<Common::Rect *> *queue);
 	Common::Rect *_clipRect;
 	/**
 	 * True if DR are temporarily disabled.
