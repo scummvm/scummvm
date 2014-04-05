@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -74,7 +74,7 @@ void scene15_initScene(Scene *sc) {
 	
 	g_vars->scene15_plusminus = sc->getStaticANIObject1ById(ANI_PLUSMINUS, -1);
 
-	if (g_fp->getObjectState(sO_Gurad_2) == g_fp->getObjectEnumState(sO_Gurad_2, sO_Off))
+	if (g_fp->getObjectState(sO_Guard_2) == g_fp->getObjectEnumState(sO_Guard_2, sO_Off))
 		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_MINUS);
 	else
 		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_PLUS);
@@ -88,7 +88,7 @@ void scene15_initScene(Scene *sc) {
 	g_fp->_currentScene = oldsc;
 
 	g_fp->lift_setButton(sO_Level5, ST_LBN_5N);
-	g_fp->lift_sub5(sc, QU_SC15_ENTERLIFT, QU_SC15_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC15_ENTERLIFT, QU_SC15_EXITLIFT);
 }
 
 int scene15_updateCursor() {
@@ -144,7 +144,7 @@ int sceneHandler15(ExCommand *cmd) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC15_PULL:
@@ -156,7 +156,7 @@ int sceneHandler15(ExCommand *cmd) {
 		break;
 
 	case 64:
-		g_fp->lift_sub05(cmd);
+		g_fp->lift_hoverButton(cmd);
 		break;
 
 	case 29:
@@ -171,7 +171,7 @@ int sceneHandler15(ExCommand *cmd) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_sub1(ani);
+				g_fp->lift_animateButton(ani);
 
 				cmd->_messageKind = 0;
 			}

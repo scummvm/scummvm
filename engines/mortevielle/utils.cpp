@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -258,7 +258,6 @@ void MortevielleEngine::handleAction() {
 
 	clearVerbBar();
 
-	bool handledOpcodeFl = false;
 	_controlMenu = 0;
 	if (!_keyPressedEsc) {
 		_menu->drawMenu();
@@ -319,6 +318,7 @@ void MortevielleEngine::handleAction() {
 			_menuOpcode = _currMenu;
 			if ((_currMenu == MENU_ACTION) || (_currMenu == MENU_SELF))
 				_menuOpcode = _currAction;
+			bool handledOpcodeFl = false;
 			if (!_anyone) {
 				if ((_heroSearching) || (_obpart)) {
 					if (_mouse->_pos.y < 12)
@@ -466,7 +466,7 @@ int MortevielleEngine::convertBitIndexToCharacterIndex(int bitIndex) {
  */
 void MortevielleEngine::resetPresenceInRooms(int roomId) {
 	if (roomId == DINING_ROOM)
-		_blo = false;
+		_outsideOnlyFl = false;
 
 	if (roomId != GREEN_ROOM) {
 		_roomPresenceLuc = false;
@@ -1080,7 +1080,7 @@ void MortevielleEngine::initGame() {
 	_place = MANOR_FRONT;
 	_currentHourCount = 0;
 	if (!_coreVar._alreadyEnteredManor)
-		_blo = true;
+		_outsideOnlyFl = true;
 	_inGameHourDuration = kTime1;
 	_currentTime = readclock();
 }
@@ -1285,7 +1285,7 @@ void MortevielleEngine::loseGame() {
 	_roomDoorId = OWN_ROOM;
 	_curSearchObjId = 0;
 	_menu->unsetSearchMenu();
-	if (!_blo)
+	if (!_outsideOnlyFl)
 		getPresence(MANOR_FRONT);
 
 	_loseGame = true;
@@ -1393,7 +1393,7 @@ void MortevielleEngine::gotoDiningRoom() {
 		_coreVar._currPlace = OWN_ROOM;
 		prepareDisplayText();
 		resetPresenceInRooms(DINING_ROOM);
-		if (!_blo)
+		if (!_outsideOnlyFl)
 			getPresence(OWN_ROOM);
 		_currBitIndex = 0;
 		_savedBitIndex = 0;
@@ -2210,7 +2210,7 @@ void MortevielleEngine::prepareRoom() {
 	if (_mouse->_pos.y < 12)
 		return;
 
-	if (!_blo) {
+	if (!_outsideOnlyFl) {
 		if ((hour == 12) || ((hour > 18) && (hour < 21)) || ((hour >= 0) && (hour < 7)))
 			_inGameHourDuration = kTime2;
 		else

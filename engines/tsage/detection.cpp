@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -129,10 +129,10 @@ public:
 
 				if (in) {
 					if (TsAGE::Saver::readSavegameHeader(in, header)) {
-						saveList.push_back(SaveStateDescriptor(slot, header.saveName));
+						saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
-						header.thumbnail->free();
-						delete header.thumbnail;
+						header._thumbnail->free();
+						delete header._thumbnail;
 					}
 
 					delete in;
@@ -162,11 +162,11 @@ public:
 			delete f;
 
 			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
-			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-			desc.setSaveTime(header.saveHour, header.saveMinutes);
-			desc.setPlayTime(header.totalFrames * GAME_FRAME_TIME);
+			SaveStateDescriptor desc(slot, header._saveName);
+			desc.setThumbnail(header._thumbnail);
+			desc.setSaveDate(header._saveYear, header._saveMonth, header._saveDay);
+			desc.setSaveTime(header._saveHour, header._saveMinutes);
+			desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
 
 			return desc;
 		}
@@ -176,7 +176,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TSAGE)
-REGISTER_PLUGIN_DYNAMIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
+	REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #endif

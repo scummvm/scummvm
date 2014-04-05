@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1593,12 +1593,12 @@ bool SceneItem::startAction(CursorType action, Event &event) {
 }
 
 void SceneItem::doAction(int action) {
-	const char *msg = NULL;
-
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		Event dummyEvent;
 		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display((CursorType)action, dummyEvent);
 	} else {
+		const char *msg = NULL;
+
 		switch ((int)action) {
 		case CURSOR_LOOK:
 			msg = LOOK_SCENE_HOTSPOT;
@@ -2721,7 +2721,7 @@ GfxSurface SceneObject::getFrame() {
 	_visageImages.setVisage(_visage, _strip);
 	GfxSurface frame = _visageImages.getFrame(_frame);
 
-	// Reset any centroid adjustment flags, in 
+	// Reset any centroid adjustment flags, in
 	frame._flags &= ~(FRAME_FLIP_CENTROID_X | FRAME_FLIP_CENTROID_Y);
 
 	// For later games, check whether the appropriate object flags are set for flipping
@@ -2909,7 +2909,6 @@ void BackgroundSceneObject::copySceneToBackground() {
 void SceneObjectList::draw() {
 	Common::Array<SceneObject *> objList;
 	int paneNum = 0;
-	int xAmount = 0, yAmount = 0;
 
 	if (_objList.size() == 0) {
 		// Alternate draw mode
@@ -2936,6 +2935,7 @@ void SceneObjectList::draw() {
 				g_globals->_scrollFollower->_position.x - g_globals->_sceneManager._scene->_sceneBounds.left,
 				g_globals->_scrollFollower->_position.y - g_globals->_sceneManager._scene->_sceneBounds.top);
 			int loadCount = 0;
+			int xAmount = 0, yAmount = 0;
 
 			if (objPos.x >= scrollerRect.right) {
 				xAmount = 8;

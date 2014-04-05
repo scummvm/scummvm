@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -595,13 +595,17 @@ protected:
 	Common::String _saveLoadFileName;
 	Common::String _saveLoadDescription;
 
-	bool saveState(Common::OutSaveFile *out, bool writeHeader = true);
-	bool saveState(int slot, bool compat);
+	bool saveState(Common::WriteStream *out, bool writeHeader = true);
+	bool saveState(int slot, bool compat, Common::String &fileName);
 	bool loadState(int slot, bool compat);
+	bool loadState(int slot, bool compat, Common::String &fileName);
 	virtual void saveOrLoad(Serializer *s);
 	void saveResource(Serializer *ser, ResType type, ResId idx);
 	void loadResource(Serializer *ser, ResType type, ResId idx);
 	void loadResourceOLD(Serializer *ser, ResType type, ResId idx);	// "Obsolete"
+
+	virtual Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
+	virtual Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
 
 	Common::String makeSavegameName(int slot, bool temporary) const {
 		return makeSavegameName(_targetName, slot, temporary);
@@ -617,6 +621,8 @@ public:
 
 	void requestSave(int slot, const Common::String &name);
 	void requestLoad(int slot);
+
+	Common::String getTargetName() const { return _targetName; }
 
 // thumbnail + info stuff
 public:

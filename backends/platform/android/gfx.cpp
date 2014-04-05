@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -94,6 +94,7 @@ Common::List<Graphics::PixelFormat> OSystem_Android::getSupportedFormats() const
 	Common::List<Graphics::PixelFormat> res;
 	res.push_back(GLES565Texture::pixelFormat());
 	res.push_back(GLES5551Texture::pixelFormat());
+	res.push_back(GLES8888Texture::pixelFormat());
 	res.push_back(GLES4444Texture::pixelFormat());
 	res.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
@@ -147,6 +148,8 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 			*texture = new GLES565Texture();
 		else if (format_new == GLES5551Texture::pixelFormat())
 			*texture = new GLES5551Texture();
+		else if (format_new == GLES8888Texture::pixelFormat())
+			*texture = new GLES8888Texture();
 		else if (format_new == GLES4444Texture::pixelFormat())
 			*texture = new GLES4444Texture();
 		else {
@@ -756,8 +759,8 @@ void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
 		uint16 *d = (uint16 *)tmp;
 		for (uint16 y = 0; y < h; ++y, d += pitch / 2 - w)
 			for (uint16 x = 0; x < w; ++x, d++)
-				if (*s++ != (keycolor & 0xffff))
-					*d |= 1;
+				if (*s++ == (keycolor & 0xffff))
+					*d = 0;
 
 		_mouse_texture->updateBuffer(0, 0, w, h, tmp, pitch);
 

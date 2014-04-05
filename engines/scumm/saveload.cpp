@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -148,7 +148,17 @@ void ScummEngine::requestLoad(int slot) {
 	_saveLoadFlag = 2;		// 2 for load
 }
 
-static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
+Common::SeekableReadStream *ScummEngine::openSaveFileForReading(int slot, bool compat, Common::String &fileName) {
+	fileName = makeSavegameName(slot, compat);
+	return _saveFileMan->openForLoading(fileName);
+}
+
+Common::WriteStream *ScummEngine::openSaveFileForWriting(int slot, bool compat, Common::String &fileName) {
+	fileName = makeSavegameName(slot, compat);
+	return _saveFileMan->openForSaving(fileName);
+}
+
+static bool saveSaveGameHeader(Common::WriteStream *out, SaveGameHeader &hdr) {
 	hdr.type = MKTAG('S','C','V','M');
 	hdr.size = 0;
 	hdr.ver = CURRENT_VER;
@@ -160,7 +170,7 @@ static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
 	return true;
 }
 
-bool ScummEngine::saveState(Common::OutSaveFile *out, bool writeHeader) {
+bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 	SaveGameHeader hdr;
 
 	if (writeHeader) {
@@ -177,40 +187,32 @@ bool ScummEngine::saveState(Common::OutSaveFile *out, bool writeHeader) {
 	return true;
 }
 
-bool ScummEngine::saveState(int slot, bool compat) {
-	bool saveFailed;
-	Common::String filename;
-	Common::OutSaveFile *out;
+bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
+	bool saveFailed = false;
 
 	pauseEngine(true);
 
-	if (_saveLoadSlot == 255) {
-		// Allow custom filenames for save game system in HE Games
-		filename = _saveLoadFileName;
+	Common::WriteStream *out = openSaveFileForWriting(slot, compat, filename);
+	if (!out) {
+		saveFailed = true;
 	} else {
-		filename = makeSavegameName(slot, compat);
+		if (!saveState(out))
+			saveFailed = true;
+
+		out->finalize();
+		if (out->err())
+			saveFailed = true;
+		delete out;
 	}
-	if (!(out = _saveFileMan->openForSaving(filename)))
-		return false;
 
-	saveFailed = false;
-	if (!saveState(out))
-		saveFailed = true;
-
-	out->finalize();
-	if (out->err())
-		saveFailed = true;
-	delete out;
-
-	if (saveFailed) {
+	if (saveFailed)
 		debug(1, "State save as '%s' FAILED", filename.c_str());
-		return false;
-	}
-	debug(1, "State saved as '%s'", filename.c_str());
+	else
+		debug(1, "State saved as '%s'", filename.c_str());
 
 	pauseEngine(false);
 
-	return true;
+	return !saveFailed;
 }
 
 
@@ -307,18 +309,17 @@ static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &h
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {
+	// Wrapper around the other variant
 	Common::String filename;
-	Common::SeekableReadStream *in;
+	return loadState(slot, compat, filename);
+}
+
+bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	SaveGameHeader hdr;
 	int sb, sh;
 
-	if (_saveLoadSlot == 255) {
-		// Allow custom filenames for save game system in HE Games
-		filename = _saveLoadFileName;
-	} else {
-		filename = makeSavegameName(slot, compat);
-	}
-	if (!(in = _saveFileMan->openForLoading(filename)))
+	Common::SeekableReadStream *in = openSaveFileForReading(slot, compat, filename);
+	if (!in)
 		return false;
 
 	if (!loadSaveGameHeader(in, hdr)) {
@@ -1241,7 +1242,9 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			}
 			s->saveUint16(0xFFFF);	// End marker
 		} else {
-			while ((type = (ResType)s->loadUint16()) != 0xFFFF) {
+			uint16 tmp;
+			while ((tmp = s->loadUint16()) != 0xFFFF) {
+				type = (ResType)tmp;
 				while ((idx = s->loadUint16()) != 0xFFFF) {
 					assert(idx < _res->_types[type].size());
 					loadResource(s, type, idx);
@@ -1429,7 +1432,9 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			}
 		s->saveByte(0xFF);
 	} else {
-		while ((type = (ResType)s->loadByte()) != 0xFF) {
+		uint8 tmp;
+		while ((tmp = s->loadByte()) != 0xFF) {
+			type = (ResType)tmp;
 			idx = s->loadUint16();
 			_res->lock(type, idx);
 		}

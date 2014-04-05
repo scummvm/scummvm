@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -142,7 +142,15 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[1].toUint16();
 	reg_t targetObject = argv[2];
 	uint16 illegalBits = argv[3].getOffset();
-	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(targetObject, true);
+	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(targetObject);
+
+	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+	// If top and left are negative, we need to adjust coordinates by the item's x and y
+	if (nsRect.left < 0)
+		nsRect.translate(itemX, 0);
+	if (nsRect.top < 0)
+		nsRect.translate(0, itemY);
 
 	// we assume that x, y are local coordinates
 

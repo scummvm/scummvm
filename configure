@@ -126,7 +126,7 @@ _opengl=auto
 _opengles=auto
 _readline=auto
 _freetype2=auto
-_taskbar=yes
+_taskbar=auto
 _updates=no
 _libunity=auto
 # Default option behavior yes/no
@@ -850,7 +850,9 @@ Fine tuning of the installation directories:
 
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
-                          special targets: android for Android
+                          special targets: android-arm for Android ARM
+                                           android-mips for Android MIPS
+                                           android-x86 for Android x86
                                            tizen for Samsung Tizen
                                            caanoo for Caanoo
                                            dingux for Dingux
@@ -1271,10 +1273,20 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
-android | android-v7a | ouya)
+android | android-arm | android-v7a | android-arm-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
+	;;
+android-mips)
+	_host_os=android
+	_host_cpu=mipsel
+	_host_alias=mipsel-linux-android
+	;;
+android-x86)
+	_host_os=android
+	_host_cpu=i686
+	_host_alias=i686-linux-android
 	;;
 arm-riscos)
 	_host_os=riscos
@@ -1305,7 +1317,7 @@ ds)
 gamecube)
 	_host_os=gamecube
 	_host_cpu=ppc
-	_host_alias=powerpc-gekko
+	_host_alias=powerpc-eabi
 	;;
 gp2x)
 	_host_os=gph-linux
@@ -1428,7 +1440,7 @@ webos)
 wii)
 	_host_os=wii
 	_host_cpu=ppc
-	_host_alias=powerpc-gekko
+	_host_alias=powerpc-eabi
 	;;
 wince)
 	_host_os=wince
@@ -1475,8 +1487,16 @@ caanoo | gp2x | gp2xwiz | openpandora | ps2)
 esac
 
 if test "$_debug_build" != no; then
-	# debug mode not explicitly disabled -> compile with -g
-	CXXFLAGS="$CXXFLAGS -g"
+	# debug mode not explicitly disabled -> compile with debug information
+	case $_host_os in
+	amigaos*)
+		# AmigaOS debugger uses plain stabs, with no gdb extensions.
+		CXXFLAGS="$CXXFLAGS -gstabs"
+	;;
+	*)
+		# Use the system default format for debug info.
+		CXXFLAGS="$CXXFLAGS -g"
+	esac
 fi
 
 if test "$_release_build" = yes; then
@@ -2033,34 +2053,65 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	amigaos*)
-		LDFLAGS="$LDFLAGS -use-dynld"
+		LDFLAGS="$LDFLAGS -use-dynld -Wl,--export-dynamic"
 		LDFLAGS="$LDFLAGS -L/sdk/local/newlib/lib"
 		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		CXXFLAGS="$CXXFLAGS -Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		;;
 	android)
 		case $_host in
-			android)
+			android | android-arm)
 				CXXFLAGS="$CXXFLAGS -march=armv5te"
 				CXXFLAGS="$CXXFLAGS -mtune=xscale"
 				CXXFLAGS="$CXXFLAGS -msoft-float"
+				ABI="armeabi"
+				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM_ARCH="arm"
 				;;
-			android-v7a)
+			android-v7a | android-arm-v7a)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
+				ABI="armeabi-v7a"
+				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM_ARCH="arm"
+				;;
+			android-mips)
+				CXXFLAGS="$CXXFLAGS -march=mips32"
+				CXXFLAGS="$CXXFLAGS -mtune=mips32"
+				ABI="mips"
+				# Platform version 9 is needed as earlier versions of platform do not support this arch.
+				ANDROID_PLATFORM=9
+				ANDROID_PLATFORM_ARCH="mips"
+				;;
+			android-x86)
+				CXXFLAGS="$CXXFLAGS -march=i686"
+				CXXFLAGS="$CXXFLAGS -mtune=i686"
+				ABI="x86"
+				# Platform version 9 is needed as earlier versions of platform do not support this arch.
+				ANDROID_PLATFORM=9
+				ANDROID_PLATFORM_ARCH="x86"
 				;;
 			ouya)
 				CXXFLAGS="$CXXFLAGS -march=armv7-a"
 				CXXFLAGS="$CXXFLAGS -mtune=cortex-a9"
 				CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 				CXXFLAGS="$CXXFLAGS -mfpu=neon"
+				ABI="armeabi-v7a"
+				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM_ARCH="arm"
 				;;
 		esac
-		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
+
+		# Setup platform version and arch
+		CXXFLAGS="$CXXFLAGS --sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
+		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
+
 		CXXFLAGS="$CXXFLAGS -fpic"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections"
 		CXXFLAGS="$CXXFLAGS -funwind-tables"
@@ -2073,16 +2124,25 @@ case $_host_os in
 		fi
 		CXXFLAGS="$CXXFLAGS -finline-limit=300"
 		_optimization_level=-Os
-		CXXFLAGS="$CXXFLAGS -mthumb-interwork"
-		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__"
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5T__"
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5E__"
-		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5TE__"
-		# supress 'mangling of 'va_list' has changed in GCC 4.4'
+
+		if test "$_host" = android -o "$_host" = android-arm; then
+			CXXFLAGS="$CXXFLAGS -mthumb-interwork"
+			# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
+			CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__"
+			CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5T__"
+			CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5E__"
+			CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5TE__"
+		fi
+
+		# surpress 'mangling of 'va_list' has changed in GCC 4.4' warning
 		CXXFLAGS="$CXXFLAGS -Wno-psabi"
-		LDFLAGS="$LDFLAGS --sysroot=$ANDROID_NDK/platforms/android-4/arch-arm"
-		LDFLAGS="$LDFLAGS -mthumb-interwork"
+
+		if test "$_host" = android -o "$_host" = android-arm; then
+			LDFLAGS="$LDFLAGS -mthumb-interwork"
+		fi
+
+		LDFLAGS="$LDFLAGS -L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
+		LIBS="$LIBS -lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
 		;;
@@ -2347,7 +2407,7 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
-		android | android-v7a | ouya)
+		android | android-arm | android-v7a | android-arm-v7a | android-mips | android-x86 | ouya)
 			# we link a .so as default
 			LDFLAGS="$LDFLAGS -shared"
 			LDFLAGS="$LDFLAGS -Wl,-Bsymbolic,--no-undefined"
@@ -2492,6 +2552,7 @@ if test -n "$_host"; then
 			;;
 		iphone)
 			DEFINES="$DEFINES -DIPHONE"
+			ASFLAGS="$ASFLAGS -arch armv6"
 			_backend="iphone"
 			_build_scalers=no
 			_mt32emu=no
@@ -2685,7 +2746,6 @@ if test -n "$_host"; then
 			_backend="tizen"
 			_port_mk="backends/platform/tizen/tizen.mk"
 			_arm_asm=yes
-			_taskbar=no
 			_build_scalers=no
 			_seq_midi=no
 			_mt32emu=no
@@ -2775,8 +2835,8 @@ case $_backend in
 		;;
 	iphone)
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
-		LIBS="$LIBS -framework QuartzCore -framework GraphicsServices -framework CoreFoundation"
-		LIBS="$LIBS -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		LIBS="$LIBS -framework QuartzCore -framework CoreFoundation -framework Foundation"
+		LIBS="$LIBS -framework AudioToolbox -framework CoreAudio"
 		;;
 	linuxmoto)
 		DEFINES="$DEFINES -DLINUXMOTO"
@@ -3726,7 +3786,7 @@ if test "$_libunity" = yes ; then
 	LIBS="$LIBS $LIBUNITY_LIBS"
 	INCLUDES="$INCLUDES $LIBUNITY_CFLAGS"
 fi
-define_in_config_h_if_yes "$_libunity" 'USE_TASKBAR_UNITY'
+define_in_config_h_if_yes "$_libunity" 'USE_UNITY'
 fi
 echo "$_libunity"
 
@@ -3988,24 +4048,31 @@ fi
 # Check whether to build taskbar integration support
 #
 echo_n "Building taskbar integration support... "
-define_in_config_if_yes $_taskbar 'USE_TASKBAR'
-if test "$_taskbar" = yes; then
+if test "$_taskbar" = "no"; then
+	echo "no"
+else
 	case $_host_os in
 	mingw*)
 		LIBS="$LIBS -lole32 -luuid"
 		echo "win32"
+		_taskbar=yes
+		;;
+	darwin*)
+		echo "osx"
+		_taskbar=yes
 		;;
 	*)
 		if test "$_libunity" = yes; then
 			echo "unity"
+			_taskbar=yes
 		else
-			echo "$_taskbar"
+			echo "no"
+			_taskbar=no
 		fi
 		;;
 	esac
-else
-	echo "$_taskbar"
 fi
+define_in_config_if_yes $_taskbar 'USE_TASKBAR'
 
 #
 # Check whether to build Bink video support

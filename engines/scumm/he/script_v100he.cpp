@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1642,7 +1642,7 @@ void ScummEngine_v100he::o100_roomOps() {
 
 		copyScriptString((byte *)buffer, sizeof(buffer));
 
-		_saveLoadFileName = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
+		_saveLoadFileName = (char *)buffer;
 		debug(1, "o100_roomOps: case 137: filename %s", _saveLoadFileName.c_str());
 
 		_saveLoadFlag = pop();
@@ -2263,11 +2263,10 @@ void ScummEngine_v100he::o100_videoOps() {
 			if (_videoParams.flags == 0)
 				_videoParams.flags = 4;
 
-			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename, sizeof(_videoParams.filename));
 			if (_videoParams.flags == 2) {
-				VAR(119) = _moviePlay->load(filename, _videoParams.flags, _videoParams.wizResNum);
+				VAR(119) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags, _videoParams.wizResNum);
 			} else {
-				VAR(119) = _moviePlay->load(filename, _videoParams.flags);
+				VAR(119) = _moviePlay->load(convertFilePath(_videoParams.filename), _videoParams.flags);
 			}
 		} else if (_videoParams.status == 19) {
 			// Stop video

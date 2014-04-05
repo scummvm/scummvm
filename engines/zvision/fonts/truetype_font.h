@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -43,12 +43,12 @@ public:
 	~TruetypeFont();
 
 private:
-	ZVision *_engine;
+//	ZVision *_engine;
 	Graphics::Font *_font;
 	int _lineHeight;
 
-	size_t _maxCharWidth;
-	size_t _maxCharHeight;
+//	size_t _maxCharWidth;
+//	size_t _maxCharHeight;
 
 public:
 	int32 _fontHeight;
@@ -60,10 +60,10 @@ public:
 	 *
 	 * @param filename    The file name of the .ttf file to load
 	 */
-	bool loadFile(const Common::String &filename);	
+	bool loadFile(const Common::String &filename);
 	/**
-	 * Renders the supplied text to a Surface using 0x0 as the 
-	 * background color. 
+	 * Renders the supplied text to a Surface using 0x0 as the
+	 * background color.
 	 *
 	 * @param text         The to render
 	 * @param textColor    The color to render the text with

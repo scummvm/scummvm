@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -91,7 +91,7 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _savefileManager;
 	_savefileManager = 0;
 	if (_graphicsManager) {
-		_graphicsManager->deactivateManager();
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
 	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
@@ -157,6 +157,14 @@ void OSystem_SDL::init() {
 void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
+
+	const int maxNameLen = 20;
+	char sdlDriverName[maxNameLen];
+	sdlDriverName[0] = '\0';
+	SDL_VideoDriverName(sdlDriverName, maxNameLen);
+	// Using printf rather than debug() here as debug()/logging
+	// is not active by this point.
+	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
@@ -240,7 +248,7 @@ void OSystem_SDL::initBackend() {
 	// so the virtual keyboard can be initialized, but we have to add the
 	// graphics manager as an event observer after initializing the event
 	// manager.
-	_graphicsManager->activateManager();
+	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
 }
 
 #if defined(USE_TASKBAR)
@@ -579,14 +587,14 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	// manager, delete and create the new mode graphics manager
 	if (_graphicsMode >= _firstGLMode && mode < _firstGLMode) {
 		debug(1, "switching to plain SDL graphics");
-		_graphicsManager->deactivateManager();
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
 		delete _graphicsManager;
 		_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
 
 		switchedManager = true;
 	} else if (_graphicsMode < _firstGLMode && mode >= _firstGLMode) {
 		debug(1, "switching to OpenGL graphics");
-		_graphicsManager->deactivateManager();
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
 		delete _graphicsManager;
 		_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
 
@@ -596,7 +604,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	_graphicsMode = mode;
 
 	if (switchedManager) {
-		_graphicsManager->activateManager();
+		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
 
 		_graphicsManager->beginGFXTransaction();
 #ifdef USE_RGB_COLOR

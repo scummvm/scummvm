@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/scummsys.h"
@@ -80,15 +81,6 @@ protected:
 	void showLCDMessage(const char *message) {
 		g_system->displayMessageOnOSD(message);
 	}
-	void onDeviceReset() {}
-	void onDeviceReconfig() {}
-	void onNewReverbMode(Bit8u /* mode */) {}
-	void onNewReverbTime(Bit8u /* time */) {}
-	void onNewReverbLevel(Bit8u /* level */) {}
-	void onPartStateChanged(int /* partNum */, bool /* isActive */) {}
-	void onPolyStateChanged(int /* partNum */) {}
-	void onPartialStateChanged(int /* partialNum */, int /* oldPartialPhase */, int /* newPartialPhase */) {}
-	void onProgramChanged(int /* partNum */, char * /* patchName */) {}
 };
 
 }	// end of namespace MT32Emu

@@ -28,7 +28,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/pict.h"
+#include "image/pict.h"
 #include "video/video_decoder.h"
 
 #include "pegasus/pegasus.h"
@@ -101,7 +101,7 @@ void Surface::getImageFromPICTResource(Common::MacResManager *resFork, uint16 id
 }
 
 bool Surface::getImageFromPICTStream(Common::SeekableReadStream *stream) {
-	Graphics::PICTDecoder pict;
+	Image::PICTDecoder pict;
 
 	if (!pict.loadStream(*stream))
 		return false;

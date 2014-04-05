@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -1275,7 +1275,7 @@ void Scene3250::signal() {
 }
 
 void Scene3250::dispatch() {
-	if ((R2_GLOBALS._player._visage == 3250) && (R2_GLOBALS._player._strip == 3) && (R2_GLOBALS._player._effect == 0)) {
+	if ((R2_GLOBALS._player._visage == 3250) && (R2_GLOBALS._player._strip == 3) && (R2_GLOBALS._player._effect == EFFECT_NONE)) {
 		R2_GLOBALS._player._effect = EFFECT_SHADED2;
 		R2_GLOBALS._player._shade = 6;
 	}
@@ -2221,24 +2221,24 @@ void Scene3375::signal() {
 }
 
 void Scene3375::dispatch() {
-	if ((R2_GLOBALS._player._position.y >= 168) && (R2_GLOBALS._player._effect == 1))
+	if ((R2_GLOBALS._player._position.y >= 168) && (R2_GLOBALS._player._effect == EFFECT_SHADED))
 		R2_GLOBALS._player._effect = EFFECT_SHADED2;
-	else if ((R2_GLOBALS._player._position.y < 168) && (R2_GLOBALS._player._effect == 6))
+	else if ((R2_GLOBALS._player._position.y < 168) && (R2_GLOBALS._player._effect == EFFECT_SHADED2))
 		R2_GLOBALS._player._effect = EFFECT_SHADED;
 
-	if ((_companion1._position.y >= 168) && (_companion1._effect == 1))
+	if ((_companion1._position.y >= 168) && (_companion1._effect == EFFECT_SHADED))
 		_companion1._effect = EFFECT_SHADED2;
-	else if ((_companion1._position.y < 168) && (_companion1._effect == 6))
+	else if ((_companion1._position.y < 168) && (_companion1._effect == EFFECT_SHADED2))
 		_companion1._effect = EFFECT_SHADED;
 
-	if ((_companion2._position.y >= 168) && (_companion2._effect == 1))
+	if ((_companion2._position.y >= 168) && (_companion2._effect == EFFECT_SHADED))
 		_companion2._effect = EFFECT_SHADED2;
-	else if ((_companion2._position.y < 168) && (_companion2._effect == 6))
+	else if ((_companion2._position.y < 168) && (_companion2._effect == EFFECT_SHADED2))
 		_companion2._effect = EFFECT_SHADED;
 
-	if ((_webbster._position.y >= 168) && (_webbster._effect == 1))
+	if ((_webbster._position.y >= 168) && (_webbster._effect == EFFECT_SHADED))
 		_webbster._effect = EFFECT_SHADED2;
-	else if ((_webbster._position.y < 168) && (_webbster._effect == 6))
+	else if ((_webbster._position.y < 168) && (_webbster._effect == EFFECT_SHADED2))
 		_webbster._effect = EFFECT_SHADED;
 
 	Scene::dispatch();
@@ -3896,7 +3896,6 @@ void Scene3500::dispatch() {
 	int16 mazePosY = 0;
 	int deltaX = 0;
 	int deltaY = 0;
-	int tmpCellId = 0;
 	int cellId = 0;
 
 	if ((_mazeChangeAmount == 0) && !_postFixupFl) {
@@ -3912,7 +3911,7 @@ void Scene3500::dispatch() {
 		mazePosY = _mazeUI.cellFromY(_mazePosition.y + 46) - 46;
 		deltaX = abs(mazePosX - newMazeX);
 		deltaY = abs(mazePosY - newMazeY);
-		tmpCellId = 0;
+		int tmpCellId = 0;
 
 		switch (_mazeDirection) {
 		case MAZEDIR_NORTH:
@@ -3956,7 +3955,7 @@ void Scene3500::dispatch() {
 					if ( (((cellId == 23) || (cellId == 24) || (cellId == 4)) && (newMazeY <= mazePosY) && (_mazePosition.y>= mazePosY))
 						|| (((cellId == 25) || (cellId == 26) || (cellId == 5) || (cellId == 14) || (cellId == 15)) && (_mazeChangeAmount >= deltaY) && (_mazeChangeAmount > 3) && (_action1._turningFl != 0)) ) {
 						newMazeY = mazePosY;
-						if ((cellId != 25) && (cellId != 26) && (cellId != 5) && (cellId != 14) && (cellId == 15))
+						if ((cellId != 25) && (cellId != 26) && (cellId != 5) && (cellId != 14) && (cellId != 15))
 							R2_GLOBALS._sound2.play(339);
 						_rotation->_idxChange = 0;
 						_speed = 0;
@@ -4469,7 +4468,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_quinn.changeZoom(-1);
 	_quinn._effect = EFFECT_SHADED;
 
-	if (R2_GLOBALS._player._characterIndex != 1)
+	if (R2_GLOBALS._player._characterIndex != R2_QUINN)
 		_quinn.setDetails(9001, 0, -1, -1, 1, (SceneItem *) NULL);
 
 	_seeker.postInit();
@@ -4478,7 +4477,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_seeker.changeZoom(-1);
 	_seeker._effect = EFFECT_SHADED;
 
-	if (R2_GLOBALS._player._characterIndex != 2)
+	if (R2_GLOBALS._player._characterIndex != R2_SEEKER)
 		_seeker.setDetails(9002, 1, -1, -1, 1, (SceneItem *) NULL);
 
 	_miranda.postInit();
@@ -4486,7 +4485,7 @@ void Scene3600::postInit(SceneObjectList *OwnerList) {
 	_miranda.changeZoom(-1);
 	_miranda._effect = EFFECT_SHADED;
 
-	if (R2_GLOBALS._player._characterIndex != 3)
+	if (R2_GLOBALS._player._characterIndex != R2_MIRANDA)
 		_miranda.setDetails(9003, 1, -1, -1, 1, (SceneItem *) NULL);
 
 	R2_GLOBALS._player.postInit();
@@ -5049,6 +5048,7 @@ void Scene3700::signal() {
 
 Scene3800::Scene3800() {
 	_desertDirection = 0;
+	_skylineRect.set(0, 0, 320, 87);
 }
 
 void Scene3800::synchronize(Serializer &s) {
@@ -5221,7 +5221,8 @@ void Scene3800::initExits() {
 }
 
 void Scene3800::enterArea() {
-	R2_GLOBALS._player.disableControl();
+	R2_GLOBALS._player.disableControl(CURSOR_WALK);
+
 	switch (_desertDirection) {
 	case 0:
 		R2_GLOBALS._player.postInit();
@@ -5347,7 +5348,6 @@ void Scene3800::postInit(SceneObjectList *OwnerList) {
 	_westExit.setDetails(Rect(0, 87, 14, 168), EXITCURSOR_W, 3800);
 	_westExit.setDest(Common::Point(7, 145));
 
-	_skylineRect.set(0, 0, 320, 87);
 	_background.setDetails(Rect(0, 0, 320, 200), 3800, 0, 1, 2, 1, (SceneItem *) NULL);
 
 	enterArea();

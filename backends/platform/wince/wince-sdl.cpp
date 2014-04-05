@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -422,7 +422,7 @@ void OSystem_WINCE3::initBackend() {
 	if (_graphicsManager == 0)
 		_graphicsManager = new WINCESdlGraphicsManager(_eventSource);
 
-	((WINCESdlEventSource *)_eventSource)->init((WINCESdlGraphicsManager *)_graphicsManager);
+	((WINCESdlEventSource *)_eventSource)->init(dynamic_cast<WINCESdlGraphicsManager *>(_graphicsManager));
 
 	// Call parent implementation of this method
 	OSystem_SDL::initBackend();
@@ -486,15 +486,16 @@ void OSystem_WINCE3::swap_sound_master() {
 
 	//WINCESdlGraphicsManager _graphicsManager
 
-	if (((WINCESdlGraphicsManager *)_graphicsManager)->_toolbarHandler.activeName() == NAME_MAIN_PANEL)
-		((WINCESdlGraphicsManager *)_graphicsManager)->_toolbarHandler.forceRedraw(); // redraw sound icon
+	WINCESdlGraphicsManager *graphicsManager = dynamic_cast<WINCESdlGraphicsManager *>(_graphicsManager);
+	if (graphicsManager->_toolbarHandler.activeName() == NAME_MAIN_PANEL)
+		graphicsManager->_toolbarHandler.forceRedraw(); // redraw sound icon
 }
 
 
 void OSystem_WINCE3::engineInit() {
 	check_mappings(); // called here to initialize virtual keys handling
 
-	((WINCESdlGraphicsManager *)_graphicsManager)->update_game_settings();
+	dynamic_cast<WINCESdlGraphicsManager *>(_graphicsManager)->update_game_settings();
 	// finalize mixer init
 	_mixerManager->init();
 }

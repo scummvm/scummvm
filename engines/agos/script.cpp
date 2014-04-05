@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -264,7 +264,7 @@ void AGOSEngine::o_add() {
 	uint var = getVarWrapper();
 	writeVariable(var, readVariable(var) + getVarOrWord());
 
-	// WORKAROUND: The converation of the male in Vid-Phone Booth at Dave's Space Bar
+	// WORKAROUND: The conversation of the male in Vid-Phone Booth at Dave's Space Bar
 	// is based on variable 116, but stops due to a missing option (37).
 	if (getGameType() == GType_FF && _currentTable->id == 10538 && readVariable(116) == 37)
 			writeVariable(116, 38);

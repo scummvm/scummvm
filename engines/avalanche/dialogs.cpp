@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -33,6 +33,12 @@
 #include "common/random.h"
 
 namespace Avalanche {
+
+const Dialogs::TuneType Dialogs::kTune = {
+	kPitchHigher, kPitchHigher, kPitchLower, kPitchSame, kPitchHigher, kPitchHigher, kPitchLower, kPitchHigher, kPitchHigher, kPitchHigher,
+	kPitchLower, kPitchHigher, kPitchHigher, kPitchSame, kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchHigher,
+	kPitchHigher, kPitchLower, kPitchLower, kPitchLower, kPitchLower, kPitchSame, kPitchLower, kPitchHigher, kPitchSame, kPitchLower, kPitchHigher
+};
 
 // A quasiped defines how people who aren't sprites talk. For example, quasiped
 // "A" is Dogfood. The rooms aren't stored because I'm leaving that to context.
@@ -87,6 +93,7 @@ void Dialogs::setReadyLight(byte state) {
 	if (_vm->_ledStatus == state)
 		return; // Already like that!
 
+	// TODO: Implement different patterns for green color.
 	Color color = kColorBlack;
 	switch (state) {
 	case 0:
@@ -98,9 +105,7 @@ void Dialogs::setReadyLight(byte state) {
 		color = kColorGreen;
 		break; // Hit a key
 	}
-	warning("STUB: Dialogs::setReadyLight()");
-
-	CursorMan.showMouse(false);
+	
 	_vm->_graphics->drawReadyLight(color);
 	CursorMan.showMouse(true);
 	_vm->_ledStatus = state;
@@ -169,7 +174,8 @@ void Dialogs::scrollModeNormal() {
 				(event.kbd.keycode == Common::KEYCODE_PLUS)))) {
 				escape = true;
 				break;
-			}
+			} else if (event.type == Common::EVENT_KEYDOWN)
+				_vm->errorLed();
 		}
 	}
 
@@ -270,7 +276,7 @@ bool Dialogs::theyMatch(TuneType &played) {
 	byte mistakes = 0;
 
 	for (unsigned int i = 0; i < sizeof(played); i++) {
-		if (played[i] != _vm->kTune[i])
+		if (played[i] != kTune[i])
 			mistakes++;
 	}
 
@@ -357,6 +363,7 @@ void Dialogs::scrollModeMusic() {
 					value = 11;
 					break;
 				default:
+					error("cannot happen");
 					break;
 				}
 
@@ -449,7 +456,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 	mx -= lx;
 	my -= ly + 2;
 
-	bool centre = false;
+	bool center = false;
 
 	byte iconIndent = 0;
 	switch (_useIcon) {
@@ -475,11 +482,11 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 		if (!_scroll[i].empty())
 			switch (_scroll[i][_scroll[i].size() - 1]) {
 			case kControlCenter:
-				centre = true;
+				center = true;
 				_scroll[i].deleteLastChar();
 				break;
 			case kControlLeftJustified:
-				centre = false;
+				center = false;
 				_scroll[i].deleteLastChar();
 				break;
 			case kControlQuestion:
@@ -491,7 +498,7 @@ void Dialogs::drawScroll(DialogFunctionType modeFunc) {
 				break;
 			}
 
-		if (centre)
+		if (center)
 			say(320 - _scroll[i].size() * 4 + iconIndent, my, _scroll[i]);
 		else
 			say(mx + iconIndent, my, _scroll[i]);
@@ -816,6 +823,8 @@ void Dialogs::displayText(Common::String text) {
 			}
 		}
 	}
+
+	setReadyLight(2);
 }
 
 void Dialogs::setTalkPos(int16 x, int16 y) {

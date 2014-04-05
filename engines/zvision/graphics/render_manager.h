@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -89,7 +89,7 @@ private:
 	/** Center of the screen in the y direction */
 	const int _screenCenterY;
 
-	/** 
+	/**
 	 * A Rectangle centered inside the actual window. All in-game coordinates
 	 * are given in this coordinate space. Also, all images are clipped to the
 	 * edges of this Rectangle
@@ -106,7 +106,7 @@ private:
 	/** The height of the current background image */
 	uint16 _backgroundHeight;
 
-	/** 
+	/**
 	 * The "velocity" at which the background image is panning. We actually store the inverse of velocity (ms/pixel instead of pixels/ms)
 	 * because it allows you to accumulate whole pixels 'steps' instead of rounding pixels every frame
 	 */
@@ -224,17 +224,17 @@ public:
 	/**
 	 * Set the background position (_backgroundOffset). If the current RenderState is PANORAMA, the offset
 	 * will be in the horizontal direction. If the current RenderState is TILT, the offset will be in the
-	 * vertical direction. 
+	 * vertical direction.
 	 *
-	 * This method will not render anything on the screen. So if nothing else is called that renders the 
+	 * This method will not render anything on the screen. So if nothing else is called that renders the
 	 * background, the change won't be seen until next frame.
 	 *
 	 * @param offset The amount to offset the background
 	 */
 	void setBackgroundPosition(int offset);
-	
+
 	/**
-	 * Set the background scroll velocity. Negative velocities correspond to left / up scrolling and 
+	 * Set the background scroll velocity. Negative velocities correspond to left / up scrolling and
 	 * positive velocities correspond to right / down scrolling
 	 *
 	 * @param velocity    Velocity
@@ -249,7 +249,7 @@ public:
 	 */
 	const Common::Point screenSpaceToImageSpace(const Common::Point &point);
 	/**
-	 * Converts a point in image coordinate space to ***PRE-WARP*** 
+	 * Converts a point in image coordinate space to ***PRE-WARP***
 	 * working window coordinate space
 	 *
 	 * @param point    Point in image coordinate space
@@ -313,7 +313,7 @@ private:
 	 * Move the background image by an offset. If we are currently in Panorama mode,
 	 * the offset will correspond to a horizontal motion. If we are currently in Tilt mode,
 	 * the offset will correspond to a vertical motion. This function should not be called
-	 * if we are in Flat mode. 
+	 * if we are in Flat mode.
 	 *
 	 * The RenderManager will take care of wrapping the image.
 	 * Ex: If the image has width 1400px, it is legal to offset 1500px.

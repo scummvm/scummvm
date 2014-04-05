@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -64,7 +64,7 @@ void Timer::addTimer(int32 duration, byte action, byte reason) {
  * @remarks	Originally called 'one_tick'
  */
 void Timer::updateTimer() {
-	if (_vm->_menu->isActive())
+	if (_vm->_dropdown->isActive())
 		return;
 
 	for (int i = 0; i < 7; i++) {
@@ -327,12 +327,14 @@ void Timer::hangAround2() {
 	_vm->_animation->_sprites[0]->remove();
 	spr->remove(); // Get rid of Robin Hood and Friar Tuck.
 
-	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround);
-	// Immediately call the following proc (when you have a chance).
+	addTimer(1, kProcAfterTheShootemup, kReasonHangingAround); // Immediately call the following proc (when you have a chance).
 
 	_vm->_tiedUp = false;
 
-	// _vm->_enid->backToBootstrap(1); Call the shoot-'em-up. TODO: Replace it with proper ScummVM-friendly function(s)! Do not remove until then!
+	// We don't need the ShootEmUp during the whole game, it's only playable once.
+	ShootEmUp *shootemup = new ShootEmUp(_vm);
+	shootemup->run();
+	delete shootemup;
 }
 
 void Timer::afterTheShootemup() {
@@ -632,17 +634,39 @@ void Timer::arkataShouts() {
 	addTimer(160, kProcArkataShouts, kReasonArkataShouts);
 }
 
+/**
+ * @remarks Contains the content of the function 'winning_pic', originally located in PINGO.
+ */
 void Timer::winning() {
 	_vm->_dialogs->displayScrollChain('Q', 79);
-	_vm->_pingo->winningPic();
 
-	warning("STUB: Timer::winning()");
-#if 0
-	do {
-		_vm->checkclick();
-	} while (!(_vm->mrelease == 0));
-#endif
-	// TODO: To be implemented with Pingo::winningPic().
+	// This was originally located in winning_pic:
+	CursorMan.showMouse(false);
+	_vm->_graphics->saveScreen();
+	_vm->fadeOut();
+	_vm->_graphics->drawWinningPic();
+	_vm->_graphics->refreshScreen();
+	_vm->fadeIn();
+
+	// Waiting for a keypress or a left mouseclick:
+	Common::Event event;
+	bool escape = false;
+	while (!_vm->shouldQuit() && !escape) {
+		_vm->_graphics->refreshScreen();
+		while (_vm->getEvent(event)) {
+			if ((event.type == Common::EVENT_LBUTTONUP) || (event.type == Common::EVENT_KEYDOWN)) {
+				escape = true;
+				break;
+			}
+		}
+	}
+
+	_vm->fadeOut();
+	_vm->_graphics->restoreScreen();
+	_vm->_graphics->removeBackup();
+	_vm->fadeIn();
+	CursorMan.showMouse(true);
+	// winning_pic's end.
 
 	_vm->callVerb(kVerbCodeScore);
 	_vm->_dialogs->displayText(" T H E    E N D ");

@@ -33,8 +33,9 @@ ifeq "$(HAVE_GCC)" "1"
 	#CXXFLAGS+= -Wmissing-format-attribute
 
 ifneq "$(BACKEND)" "tizen"
-	# Disable RTTI and exceptions. These settings cause tizen apps to crash
-	CXXFLAGS+= -fno-rtti -fno-exceptions
+	# Disable exceptions. This setting causes tizen apps to crash
+	# TODO: Does this still apply after enabling RTTI again?
+	CXXFLAGS+= -fno-exceptions
 endif
 
 ifneq "$(HAVE_CLANG)" "1"

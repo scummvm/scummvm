@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -208,22 +208,31 @@ void MortevielleEngine::fctTake() {
 			if (_currBitIndex > 0)
 				_coreVar._faithScore += 3;
 			if (_obpart) {
-				if (_coreVar._currPlace == PURPLE_ROOM)
+				switch (_coreVar._currPlace) {
+				case PURPLE_ROOM:
 					_coreVar._purpleRoomObjectId = 0;
-				if (_coreVar._currPlace == ATTIC) {
+					break;
+				case ATTIC:
 					if (_coreVar._atticBallHoleObjectId == _caff)
 						_coreVar._atticBallHoleObjectId = 0;
 					if (_coreVar._atticRodHoleObjectId == _caff)
 						_coreVar._atticRodHoleObjectId = 0;
-				}
-				if (_coreVar._currPlace == CELLAR)
+					break;
+				case CELLAR:
 					_coreVar._cellarObjectId = 0;
-				if (_coreVar._currPlace == CRYPT)
+					break;
+				case CRYPT:
 					_coreVar._cryptObjectId = 0;
-				if (_coreVar._currPlace == SECRET_PASSAGE)
+					break;
+				case SECRET_PASSAGE:
 					_coreVar._secretPassageObjectId = 0;
-				if (_coreVar._currPlace == WELL)
+					break;
+				case WELL:
 					_coreVar._wellObjectId = 0;
+					break;
+				default:
+					break;
+				}
 				_menu->unsetSearchMenu();
 				_obpart = false;
 				prepareDisplayText();
@@ -258,38 +267,54 @@ void MortevielleEngine::fctTake() {
 			if (_currBitIndex > 0)
 				_coreVar._faithScore += 3;
 			_crep = 997;
-			if ((_coreVar._currPlace == PURPLE_ROOM) && (_coreVar._purpleRoomObjectId != 0))
-				putInHand(_coreVar._purpleRoomObjectId);
-			if ((_coreVar._currPlace == ATTIC) && (_num == 1) && (_coreVar._atticBallHoleObjectId != 0)) {
-				putInHand(_coreVar._atticBallHoleObjectId);
-				if ((_crep != 997) && (_crep != 139))
-					displayAnimFrame(2, 7);
-			}
-			if ((_coreVar._currPlace == ATTIC) && (_num == 2) && (_coreVar._atticRodHoleObjectId != 0)) {
-				putInHand(_coreVar._atticRodHoleObjectId);
-				if ((_crep != 997) && (_crep != 139))
-					displayAnimFrame(2, 6);
-			}
-			if ((_coreVar._currPlace == CELLAR) && (_coreVar._cellarObjectId != 0)) {
-				putInHand(_coreVar._cellarObjectId);
-				if ((_crep != 997) && (_crep != 139))
-					displayAnimFrame(2, 2);
-			}
-			if ((_coreVar._currPlace == CRYPT) && (_coreVar._cryptObjectId != 0))
-				putInHand(_coreVar._cryptObjectId);
 
-			if ((_coreVar._currPlace == SECRET_PASSAGE) && (_coreVar._secretPassageObjectId != 0)) {
-				putInHand(_coreVar._secretPassageObjectId);
-				if ((_crep != 997) && (_crep != 139)) {
-					_crep = 182;
-					displayAnimFrame(2, 1);
+			switch (_coreVar._currPlace) {
+			case PURPLE_ROOM:
+				if (_coreVar._purpleRoomObjectId != 0)
+					putInHand(_coreVar._purpleRoomObjectId);
+				break;
+			case ATTIC:
+				if ((_num == 1) && (_coreVar._atticBallHoleObjectId != 0)) {
+					putInHand(_coreVar._atticBallHoleObjectId);
+					if ((_crep != 997) && (_crep != 139))
+						displayAnimFrame(2, 7);
+				} else if ((_num == 2) && (_coreVar._atticRodHoleObjectId != 0)) {
+					putInHand(_coreVar._atticRodHoleObjectId);
+					if ((_crep != 997) && (_crep != 139))
+						displayAnimFrame(2, 6);
 				}
+				break;
+			case CELLAR:
+				if (_coreVar._cellarObjectId != 0) {
+					putInHand(_coreVar._cellarObjectId);
+					if ((_crep != 997) && (_crep != 139))
+						displayAnimFrame(2, 2);
+				}
+				break;
+			case CRYPT:
+				if (_coreVar._cryptObjectId != 0)
+					putInHand(_coreVar._cryptObjectId);
+				break;
+			case SECRET_PASSAGE:
+				if (_coreVar._secretPassageObjectId != 0) {
+					putInHand(_coreVar._secretPassageObjectId);
+					if ((_crep != 997) && (_crep != 139)) {
+						_crep = 182;
+						displayAnimFrame(2, 1);
+					}
+				}
+				break;
+			case WELL:
+				if (_coreVar._wellObjectId != 0) {
+					putInHand(_coreVar._wellObjectId);
+					if ((_crep != 997) && (_crep != 139))
+						displayAnimFrame(2, 1);
+				}
+				break;
+			default:
+				break;
 			}
-			if ((_coreVar._currPlace == WELL) && (_coreVar._wellObjectId != 0)) {
-				putInHand(_coreVar._wellObjectId);
-				if ((_crep != 997) && (_crep != 139))
-					displayAnimFrame(2, 1);
-			}
+
 			if ((_crep != 997) && (_crep != 182) && (_crep != 139))
 				_crep = 999;
 		}
@@ -456,13 +481,24 @@ void MortevielleEngine::fctLook() {
 		}
 		return;
 	}
+
 	int cx = _coreVar._currPlace;
-	if (_coreVar._currPlace == CHAPEL)
+	switch (_coreVar._currPlace) {
+	case CHAPEL:
 		cx = 17;
-	if ((_coreVar._currPlace > MANOR_FRONT) && (_coreVar._currPlace < DOOR))
+		break;
+	case MANOR_BACK:
+	case INSIDE_WELL:
+	case WELL:
 		cx -= 4;
-	if (_coreVar._currPlace == ROOM26)
+		break;
+	case ROOM26:
 		cx = 21;
+		break;
+	default:
+		break;
+	}
+
 	_crep = _tabdon[kArega + (cx * 7) + _num - 1];
 	if ((_coreVar._currPlace == ATTIC) && (_num == 8))
 		_crep = 126;
@@ -1178,7 +1214,7 @@ void MortevielleEngine::fctEnter() {
 		_coreVar._availableQuestion[8] = '*';
 	} else {
 		int pres = 0;
-		if (!_blo)
+		if (!_outsideOnlyFl)
 			pres = getPresence(_roomDoorId);
 		if (pres != 0) {
 			if ((_roomDoorId == TOILETS) || (_roomDoorId == BATHROOM))
@@ -1337,7 +1373,7 @@ void MortevielleEngine::fctWait() {
 	do {
 		++_currentHourCount;
 		prepareRoom();
-		if (!_blo)
+		if (!_outsideOnlyFl)
 			getPresence(_coreVar._currPlace);
 		if ((_currBitIndex != 0) && (_savedBitIndex == 0)) {
 			_crep = 998;

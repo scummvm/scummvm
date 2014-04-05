@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -43,6 +43,7 @@ TizenGraphicsManager::~TizenGraphicsManager() {
 	logEntered();
 
 	if (_eglDisplay != EGL_NO_DISPLAY) {
+		notifyContextDestroy();
 		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);
 		if (_eglContext != EGL_NO_CONTEXT) {
 			eglDestroyContext(_eglDisplay, _eglContext);
@@ -58,7 +59,7 @@ result TizenGraphicsManager::Construct() {
 
 	// We default to RGB565 and RGBA5551 which is closest to the actual output
 	// mode we setup.
-	notifyContextChange(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+	notifyContextCreate(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 
 	// Tell our size.
 	int x, y, width, height;

@@ -47,7 +47,7 @@ enum {
 	GFX_NEAREST = 1
 };
 
-class OpenGLGraphicsManager : public GraphicsManager {
+class OpenGLGraphicsManager : virtual public GraphicsManager {
 public:
 	OpenGLGraphicsManager();
 	virtual ~OpenGLGraphicsManager();
@@ -127,14 +127,22 @@ protected:
 
 	/**
 	 * Notify the manager of a OpenGL context change. This should be the first
-	 * thing to call when you create an OpenGL (ES) context!
+	 * thing to call after you created an OpenGL (ES) context!
 	 *
 	 * @param defaultFormat      The new default format for the game screen
 	 *                           (this is used for the CLUT8 game screens).
 	 * @param defaultFromatAlpha The new default format with an alpha channel
 	 *                           (this is used for the overlay and cursor).
 	 */
-	void notifyContextChange(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha);
+	void notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha);
+
+	/**
+	 * Notify the manager that the OpenGL context is about to be destroyed.
+	 * This will free up/reset internal OpenGL related state and *must* be
+	 * called whenever a context might be created again after destroying a
+	 * context.
+	 */
+	void notifyContextDestroy();
 
 	/**
 	 * Adjust the physical mouse coordinates according to the currently visible screen.
@@ -163,6 +171,17 @@ protected:
 	virtual void setInternalMousePosition(int x, int y) = 0;
 
 private:
+	/**
+	 * Create a texture with the specified pixel format.
+	 *
+	 * @param format    The pixel format the Texture object should accept as
+	 *                  input.
+	 * @param wantAlpha For CLUT8 textures this marks whether an alpha
+	 *                  channel should be used.
+	 * @return A pointer to the texture or nullptr on failure.
+	 */
+	Texture *createTexture(const Graphics::PixelFormat &format, bool wantAlpha = false);
+
 	//
 	// Transaction support
 	//
@@ -367,22 +386,22 @@ private:
 	/**
 	 * X coordinate of the cursor in phyiscal coordinates.
 	 */
-	uint _cursorX;
+	int _cursorX;
 
 	/**
 	 * Y coordinate of the cursor in physical coordinates.
 	 */
-	uint _cursorY;
+	int _cursorY;
 
 	/**
 	 * The X offset for the cursor hotspot in unscaled coordinates.
 	 */
-	uint _cursorHotspotX;
+	int _cursorHotspotX;
 
 	/**
 	 * The Y offset for the cursor hotspot in unscaled coordinates.
 	 */
-	uint _cursorHotspotY;
+	int _cursorHotspotY;
 
 	/**
 	 * Recalculate the cursor scaling. Scaling is always done according to
@@ -393,12 +412,12 @@ private:
 	/**
 	 * The X offset for the cursor hotspot in scaled coordinates.
 	 */
-	uint _cursorHotspotXScaled;
+	int _cursorHotspotXScaled;
 
 	/**
 	 * The Y offset for the cursor hotspot in scaled coordinates.
 	 */
-	uint _cursorHotspotYScaled;
+	int _cursorHotspotYScaled;
 
 	/**
 	 * The width of the cursor scaled coordinates.

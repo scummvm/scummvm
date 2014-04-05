@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -152,7 +152,7 @@ void Nim::setup() {
 	_vm->fadeIn();
 	_vm->_graphics->nimLoad();
 
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
+	_vm->_graphics->blackOutScreen();
 	// Upper left rectangle.
 	_vm->_graphics->drawRectangle(Common::Rect(10, 5, 381, 71), kColorRed);
 	_vm->_graphics->drawFilledRectangle(Common::Rect(11, 6, 380, 70), kColorBrown);
@@ -383,8 +383,8 @@ void Nim::takeSome() {
 
 		int x1 = 63 + (_stones[_row] - _number) * 64;
 		int y1 = 38 + 35 * (_row + 1);
-		int x2 = 54 + _stones[_row] * 64;
-		int y2 = 63 + 35 * (_row + 1);
+		int x2 = 55 + _stones[_row] * 64;
+		int y2 = 64 + 35 * (_row + 1);
 		_vm->_graphics->drawRectangle(Common::Rect(x1, y1, x2, y2), kColorBlue); // Draw the selection rectangle.
 		_vm->_graphics->refreshScreen();
 
@@ -396,8 +396,8 @@ void Nim::takeSome() {
 				_vm->_graphics->drawRectangle(Common::Rect(x1, y1, x2, y2), kColorBlack); // Erase the previous selection.
 				x1 = 63 + (_stones[_row] - _number) * 64;
 				y1 = 38 + 35 * (_row + 1);
-				x2 = 54 + _stones[_row] * 64;
-				y2 = 63 + 35 * (_row + 1);
+				x2 = 55 + _stones[_row] * 64;
+				y2 = 64 + 35 * (_row + 1);
 				_vm->_graphics->drawRectangle(Common::Rect(x1, y1, x2, y2), kColorBlue); // Draw the new one.
 				_vm->_graphics->refreshScreen();
 			}

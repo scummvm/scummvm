@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -199,9 +199,9 @@ void Rect::resize(const GfxSurface &surface, int xp, int yp, int percent) {
 
 	this->moveTo(xp, yp);
 
-	int xa = (surface._flags & FRAME_FLIP_CENTROID_X) == 0 ? surface._centroid.x : 
+	int xa = (surface._flags & FRAME_FLIP_CENTROID_X) == 0 ? surface._centroid.x :
 		bounds.width() - (surface._centroid.x + 1);
-	int ya = (surface._flags & FRAME_FLIP_CENTROID_Y) == 0 ? surface._centroid.y : 
+	int ya = (surface._flags & FRAME_FLIP_CENTROID_Y) == 0 ? surface._centroid.y :
 		bounds.height() - (surface._centroid.y + 1);
 
 	int xd = xa * percent / 100;
@@ -1483,7 +1483,6 @@ int GfxFont::getStringFit(const char *&s, int maxWidth) {
 	const char *nextWord = NULL;
 	const char *sStart = s;
 	int numChars = 1;
-	int strWidth = 1;
 	char nextChar;
 
 	for (;;) {
@@ -1497,7 +1496,7 @@ int GfxFont::getStringFit(const char *&s, int maxWidth) {
 			nextWord = s;
 		}
 
-		strWidth = getStringWidth(sStart, numChars);
+		int strWidth = getStringWidth(sStart, numChars);
 		if (strWidth > maxWidth) {
 			if (nextWord) {
 				s = nextWord;

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -195,6 +195,8 @@ bool ModalIntro::init(int counterdiff) {
 }
 
 void ModalIntro::update() {
+	warning("STUB: ModalIntro::update()");
+
 	if (g_fp->_currentScene) {
 		if (_introFlags & 1) {
 			//sceneFade(virt, g_currentScene, 1);
@@ -381,7 +383,7 @@ void ModalMap::initMap() {
 	PictureObject *pic;
 
 	for (int i = 0; i < 200; i++) {
-		if (!g_fp->_mapTable[i] >> 16)
+		if (!(g_fp->_mapTable[i] >> 16))
 			break;
 
 		pic = _mapScene->getPictureObjectById(g_fp->_mapTable[i] >> 16, 0);
@@ -560,12 +562,276 @@ void FullpipeEngine::openMap() {
 	}
 }
 
+ModalFinal::ModalFinal() {
+	_flags = 0;
+	_counter = 255;
+	_sfxVolume = g_fp->_sfxVolume;
+}
+
+ModalFinal::~ModalFinal() {
+	if (g_vars->sceneFinal_var01) {
+		g_fp->_gameLoader->unloadScene(SC_FINAL2);
+		g_fp->_gameLoader->unloadScene(SC_FINAL3);
+		g_fp->_gameLoader->unloadScene(SC_FINAL4);
+
+		g_fp->_currentScene = g_fp->accessScene(SC_FINAL1);
+
+		g_fp->stopAllSounds();
+
+		g_vars->sceneFinal_var01 = 0;
+	}
+
+	g_fp->_sfxVolume = _sfxVolume;
+}
+
+bool ModalFinal::init(int counterdiff) {
+	if (g_vars->sceneFinal_var01) {
+		g_fp->_gameLoader->updateSystems(42);
+
+		return true;
+	}
+
+	if (_counter > 0) {
+		_flags |= 2u;
+
+		g_fp->_gameLoader->updateSystems(42);
+
+		return true;
+	}
+
+	unloadScenes();
+
+	g_fp->_modalObject = new ModalCredits();
+
+	return true;
+}
+
+void ModalFinal::unloadScenes() {
+	g_fp->_gameLoader->unloadScene(SC_FINAL2);
+	g_fp->_gameLoader->unloadScene(SC_FINAL3);
+	g_fp->_gameLoader->unloadScene(SC_FINAL4);
+
+	g_fp->_currentScene = g_fp->accessScene(SC_FINAL1);
+
+	g_fp->stopAllSounds();
+}
+
+bool ModalFinal::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+		g_fp->_modalObject = new ModalMainMenu();
+		g_fp->_modalObject->_parentObj = this;
+
+		return true;
+	}
+
+	return false;
+}
+
+void ModalFinal::update() {
+	if (g_fp->_currentScene) {
+		g_fp->_currentScene->draw();
+
+		if (_flags & 1) {
+			g_fp->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
+
+			_counter += 10;
+
+			if (_counter >= 255) {
+				_counter = 255;
+				_flags &= 0xfe;
+			}
+		} else {
+			if (!(_flags & 2))
+				return;
+
+			g_fp->drawAlphaRectangle(0, 0, 800, 600, 0xff - _counter);
+			_counter -= 10;
+
+			if (_counter <= 0) {
+				_counter = 0;
+				_flags &= 0xFD;
+			}
+		}
+
+		g_fp->_sfxVolume = _counter * (_sfxVolume + 3000) / 255 - 3000;
+
+		g_fp->updateSoundVolume();
+	}
+}
+
+ModalCredits::ModalCredits() {
+	Common::Point point;
+
+	_sceneTitles = g_fp->accessScene(SC_TITLES);
+
+	_creditsPic = _sceneTitles->getPictureObjectById(PIC_TTL_CREDITS, 0);
+	_creditsPic->_flags |= 4;
+
+	_fadeIn = true;
+	_fadeOut = false;
+
+	_creditsPic->getDimensions(&point);
+
+	_countdown = point.y / 2 + 470;
+	_sfxVolume = g_fp->_sfxVolume;
+
+	_currY = 630;
+	_maxY = -1000 - point.y;
+
+	_currX = 400 - point.x / 2;
+
+	_creditsPic->setOXY(_currX, _currY);
+}
+
+ModalCredits::~ModalCredits() {
+	g_fp->_gameLoader->unloadScene(SC_TITLES);
+
+	g_fp->_sfxVolume = _sfxVolume;
+}
+
+bool ModalCredits::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+		_fadeIn = false;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool ModalCredits::init(int counterdiff) {
+	if (_fadeIn || _fadeOut) {
+		_countdown--;
+
+		if (_countdown < 0)
+			_fadeIn = false;
+
+		_creditsPic->setOXY(_currX, _currY);
+
+		if (_currY > _maxY)
+			_currY -= 2;
+	} else {
+		if (_parentObj)
+			return 0;
+
+		ModalMainMenu *menu = new ModalMainMenu;
+
+		g_fp->_modalObject = menu;
+
+		menu->_field_34 = 1;
+	}
+
+	return true;
+}
+
+void ModalCredits::update() {
+	warning("STUB: ModalCredits::update()");
+
+	if (_fadeOut) {
+		if (_fadeIn) {
+			_sceneTitles->draw();
+
+			return;
+		}
+	} else if (_fadeIn) {
+		//sceneFade(virt, this->_sceneTitles, 1); // TODO
+		_fadeOut = 1;
+
+		return;
+	}
+
+	if (_fadeOut) {
+		//sceneFade(virt, this->_sceneTitles, 0); // TODO
+		_fadeOut = 0;
+		return;
+	}
+
+	_sceneTitles->draw();
+}
+
+ModalMainMenu::ModalMainMenu() {
+	warning("STUB: ModalMainMenu::ModalMainMenu()");
+
+	_field_34 = 0;
+}
+
+ModalHelp::ModalHelp() {
+	_mainMenuScene = 0;
+	_bg = 0;
+	_isRunning = false;
+	_rect = g_fp->_sceneRect;
+	_hx = g_fp->_currentScene->_x;
+	_hy = g_fp->_currentScene->_y;
+
+	g_fp->_sceneRect.left = 0;
+	g_fp->_sceneRect.bottom = 600;
+	g_fp->_sceneRect.top = 0;
+	g_fp->_sceneRect.right = 800;
+}
+
+ModalHelp::~ModalHelp() {
+	g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+
+	g_fp->_sceneRect = _rect;
+
+	g_fp->_currentScene->_x = _hx;
+	g_fp->_currentScene->_y = _hy;
+}
+
+bool ModalHelp::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17) {
+		int msg = cmd->_messageNum;
+
+		if (msg == 29 || msg == 36 || msg == 107) {
+			_isRunning = 0;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ModalHelp::init(int counterdiff) {
+	g_fp->setCursor(PIC_CSR_DEFAULT);
+
+	return _isRunning;
+}
+
+void ModalHelp::update() {
+	g_fp->_sceneRect.left = 0;
+	g_fp->_sceneRect.top = 0;
+	g_fp->_sceneRect.right = 800;
+	g_fp->_sceneRect.bottom = 600;
+
+	_bg->draw(0, 0, 0, 0);
+}
+
+void ModalHelp::launch() {
+	_mainMenuScene = g_fp->accessScene(SC_MAINMENU);
+
+	if (_mainMenuScene) {
+		_bg = _mainMenuScene->getPictureObjectById(PIC_HLP_BGR, 0)->_picture;
+		_isRunning = 1;
+	}
+}
+
 void FullpipeEngine::openHelp() {
-	warning("STUB: FullpipeEngine::openHelp()");
+	if (!_modalObject) {
+		ModalHelp *help = new ModalHelp;
+
+		_modalObject = help;
+
+		help->launch();
+	}
 }
 
 void FullpipeEngine::openMainMenu() {
-	warning("STUB: FullpipeEngine::openMainMenu()");
+	ModalMainMenu *menu = new ModalMainMenu;
+
+	menu->_parentObj = g_fp->_modalObject;
+
+	g_fp->_modalObject = menu;
 }
 
 } // End of namespace Fullpipe

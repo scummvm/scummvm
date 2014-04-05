@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -59,7 +59,7 @@ void scene03_initScene(Scene *sc) {
 
 	g_fp->lift_setButton(sO_Level2, ST_LBN_2N);
 
-	g_fp->lift_sub5(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
 }
 
 void scene03_setEaterState() {
@@ -215,7 +215,7 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC3_HIDEDOMINO:
@@ -239,14 +239,14 @@ int sceneHandler03(ExCommand *ex) {
 		break;
 
 	case 64:
-		g_fp->lift_sub05(ex);
+		g_fp->lift_hoverButton(ex);
 		break;
 
 	case 29:
 		{
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_sub1(ani);
+				g_fp->lift_animateButton(ani);
 				ex->_messageKind = 0;
 
 				return 0;

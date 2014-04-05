@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -2041,6 +2041,10 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedX") == 0) {
 		_scrollTimeH = value->getInt();
+		if (_scrollTimeH == 0) {
+			warning("_scrollTimeH can't be 0, resetting to default");
+			_scrollTimeH = 10;
+		}
 		return STATUS_OK;
 	}
 
@@ -2049,6 +2053,10 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "ScrollSpeedY") == 0) {
 		_scrollTimeV = value->getInt();
+		if (_scrollTimeV == 0) {
+			warning("_scrollTimeV can't be 0, resetting to default");
+			_scrollTimeV = 10;
+		}
 		return STATUS_OK;
 	}
 

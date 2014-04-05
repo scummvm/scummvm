@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -38,9 +38,6 @@ class AvalancheEngine;
 static const byte kObjectNum = 18; // always preface with a #
 static const int16 kCarryLimit = 12;  // carry limit
 
-static const int16 kNumlockCode = 32;  // Code for Num Lock
-static const int16 kMouseSize = 134;
-
 struct PedType {
 	int16 _x, _y;
 	Direction _direction;
@@ -59,8 +56,6 @@ struct LineType : public FieldType {
 	Color _color;
 };
 
-typedef int8 TuneType[31];
-
 struct QuasipedType {
 	byte   _whichPed;
 	Color  _textColor;
@@ -68,15 +63,6 @@ struct QuasipedType {
 	Color  _backgroundColor;
 	People _who;
 };
-
-#if 0
-struct Sundry { // Things which must be saved over a backtobootstrap, outside DNA.
-	Common::String _qEnidFilename;
-	bool _qSoundFx;
-	byte _qThinks;
-	bool _qThinkThing;
-};
-#endif
 
 } // End of namespace Avalanche
 

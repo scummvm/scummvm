@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -125,9 +125,8 @@ char *CGEEngine::mergeExt(char *buf, const char *name, const char *ext) {
 }
 
 int CGEEngine::takeEnum(const char **tab, const char *text) {
-	const char **e;
 	if (text) {
-		for (e = tab; *e; e++) {
+		for (const char **e = tab; *e; e++) {
 			if (scumm_stricmp(text, *e) == 0) {
 				return e - tab;
 			}
@@ -196,7 +195,6 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadgame(%d, header, %s)", slotNumber, tiny ? "true" : "false");
 
 	Common::MemoryReadStream *readStream;
-	SavegameHeader saveHeader;
 
 	if (slotNumber == -1) {
 		// Loading the data for the initial game state
@@ -232,6 +230,8 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 			return false;
 	} else {
 		// Found header
+		SavegameHeader saveHeader;
+
 		if (!readSavegameHeader(readStream, saveHeader)) {
 			delete readStream;
 			return false;
@@ -398,7 +398,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 		}
 	} else {
 		// Loading game
-		if (_soundOk == 1 && _mode == 0) {
+		if (_mode == 0) {
 			// Skip Digital and Midi volumes, useless under ScummVM
 			sndSetVolume();
 		}
@@ -425,7 +425,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 }
 
 bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
-	header.thumbnail = NULL;
+	header.thumbnail = nullptr;
 
 	// Get the savegame version
 	header.version = in->readByte();
@@ -539,14 +539,12 @@ void CGEEngine::setMapBrick(int x, int z) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::setMapBrick(%d, %d)", x, z);
 
 	Square *s = new Square(this);
-	if (s) {
-		char n[6];
-		s->gotoxy(x * kMapGridX, kMapTop + z * kMapGridZ);
-		sprintf(n, "%02d:%02d", x, z);
-		_clusterMap[z][x] = 1;
-		s->setName(n);
-		_vga->_showQ->insert(s, _vga->_showQ->first());
-	}
+	char n[6];
+	s->gotoxy(x * kMapGridX, kMapTop + z * kMapGridZ);
+	sprintf(n, "%02d:%02d", x, z);
+	_clusterMap[z][x] = 1;
+	s->setName(n);
+	_vga->_showQ->insert(s, _vga->_showQ->first());
 }
 
 void CGEEngine::keyClick() {
@@ -659,14 +657,15 @@ void CGEEngine::sceneUp() {
 
 	_vga->copyPage(0, 1);
 	selectPocket(-1);
-	if (_hero)
+	if (_hero) {
 		_vga->_showQ->insert(_vga->_showQ->remove(_hero));
 
-	if (_shadow) {
-		_vga->_showQ->remove(_shadow);
-		_shadow->makeXlat(_vga->glass(_vga->_sysPal, 204, 204, 204));
-		_vga->_showQ->insert(_shadow, _hero);
-		_shadow->_z = _hero->_z;
+		if (_shadow) {
+			_vga->_showQ->remove(_shadow);
+			_shadow->makeXlat(_vga->glass(_vga->_sysPal, 204, 204, 204));
+			_vga->_showQ->insert(_shadow, _hero);
+			_shadow->_z = _hero->_z;
+		}
 	}
 	feedSnail(_vga->_showQ->locate(BakRef + 999), kTake);
 	_vga->show();
@@ -1031,7 +1030,6 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 	bool east = false;
 	bool port = false;
 	bool tran = false;
-	int i, lcnt = 0;
 
 	char tmpStr[kLineMax + 1];
 	Common::String line;
@@ -1043,6 +1041,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 			error("Bad SPR [%s]", tmpStr);
 
 		uint16 len;
+		int i, lcnt = 0;
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
 			len = line.size();
 			lcnt++;
@@ -1485,25 +1484,6 @@ bool CGEEngine::showTitle(const char *name) {
 	selectPocket(-1);
 	_vga->sunrise(_vga->_sysPal);
 
-	if (_mode < 2 && !_soundOk) {
-		_vga->copyPage(1, 2);
-		_vga->copyPage(0, 1);
-		_vga->_showQ->append(_mouse);
-		_mouse->on();
-		for (; !_commandHandler->idle() || Vmenu::_addr;) {
-			mainLoop();
-			if (_quitFlag)
-				return false;
-		}
-
-		_mouse->off();
-		_vga->_showQ->clear();
-		_vga->copyPage(0, 2);
-		_soundOk = 2;
-		if (_music)
-			_midiPlayer->loadMidi(0);
-	}
-
 	if (_mode < 2) {
 		// At this point the game originally set the protection variables
 		// used by the copy protection check
@@ -1542,7 +1522,7 @@ void CGEEngine::cge_main() {
 	if (_horzLine)
 		_horzLine->_flags._hide = true;
 
-	if (_music && _soundOk)
+	if (_music)
 		_midiPlayer->loadMidi(0);
 
 	if (_startGameSlot != -1) {

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,9 +21,9 @@
  */
 
 #include "common/substream.h"
-#include "graphics/decoders/bmp.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "image/bmp.h"
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
@@ -107,7 +107,6 @@ void TopMenu::reflowLayout() {
 	x += kButtonWidth + kButtonPad;
 
 	_inventButton->resize(x * scale, y * scale, kButtonWidth * scale, kButtonHeight * scale);
-	x += kButtonWidth + kButtonPad;
 
 	// Set the graphics to the 'on' buttons, except for the variable ones
 	_whatButton->setGfx(_arrayBmp[4 * kMenuWhat + scale - 1]);
@@ -131,7 +130,7 @@ void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 		uint32 filPos = in.pos();
 		Common::SeekableSubReadStream stream(&in, filPos, filPos + bmpSize);
 
-		Graphics::BitmapDecoder bitmapDecoder;
+		Image::BitmapDecoder bitmapDecoder;
 		if (!bitmapDecoder.loadStream(stream))
 			error("TopMenu::loadBmpArr(): Could not load bitmap");
 

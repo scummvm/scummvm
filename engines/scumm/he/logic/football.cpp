@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -449,25 +449,26 @@ int LogicHEfootball2002::initScreenTranslations() {
 
 int LogicHEfootball2002::getPlaybookFiles(int32 *args) {
 	// Get the pattern and then skip over the directory prefix ("*\" or "*:")
-	Common::String pattern = (const char *)_vm->getStringAddress(args[0] & ~0x33539000) + 2;
+	// Also prepend the target name
+	Common::String targetName = _vm->getTargetName();
+	Common::String basePattern = ((const char *)_vm->getStringAddress(args[0] & ~0x33539000) + 2);
+	Common::String pattern = targetName + '-' + basePattern;
 
 	// Prepare a buffer to hold the file names
-	char buffer[1000];
-	buffer[0] = 0;
+	Common::String output;
 
 	// Get the list of file names that match the pattern and iterate over it
 	Common::StringArray fileList = _vm->getSaveFileManager()->listSavefiles(pattern);
 
-	for (uint32 i = 0; i < fileList.size() && strlen(buffer) < 970; i++) {
+	for (uint32 i = 0; i < fileList.size(); i++) {
 		// Isolate the base part of the filename and concatenate it to our buffer
-		Common::String fileName = Common::String(fileList[i].c_str(), fileList[i].size() - (pattern.size() - 1));
-		strcat(buffer, fileName.c_str());
-		strcat(buffer, ">"); // names separated by '>'
+		Common::String fileName(fileList[i].c_str() + targetName.size() + 1, fileList[i].size() - (basePattern.size() - 1) - (targetName.size() + 1));
+		output += fileName + '>'; // names separated by '>'
 	}
 
 	// Now store the result in an array
-	int array = _vm->setupStringArray(strlen(buffer));
-	strcpy((char *)_vm->getStringAddress(array), buffer);
+	int array = _vm->setupStringArray(output.size());
+	strcpy((char *)_vm->getStringAddress(array), output.c_str());
 
 	// And store the array index in variable 108
 	writeScummVar(108, array);

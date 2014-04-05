@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -96,7 +96,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_Pool, getObjectEnumState(sO_Pool, sO_Overfull));
 	setObjectState(sO_Board_25, getObjectEnumState(sO_Board_25, sO_NearDudesStairs));
 	setObjectState(sO_Driver, getObjectEnumState(sO_Driver, sO_WithSteering));
-	setObjectState(sO_Janitress, getObjectEnumState(sO_Janitress, sO_WithMop));
+	setObjectState(sO_Maid, getObjectEnumState(sO_Maid, sO_WithSwab));
 	setObjectState(sO_LeftPipe_29, getObjectEnumState(sO_LeftPipe_29, sO_IsClosed));
 	setObjectState(sO_LeftPipe_30, getObjectEnumState(sO_LeftPipe_30, sO_IsClosed));
 	setObjectState(sO_Leg, getObjectEnumState(sO_Leg, sO_ShowingHeel));
@@ -116,7 +116,7 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_BellyInflater, getObjectEnumState(sO_BellyInflater, sO_WithCork));
 	setObjectState(sO_Jawcrucnher, getObjectEnumState(sO_Jawcrucnher, sO_WithoutCarpet));
 	setObjectState(sO_Guard_1, getObjectEnumState(sO_Guard_1, sO_On));
-	setObjectState(sO_Gurad_2, getObjectEnumState(sO_Gurad_2, sO_On));
+	setObjectState(sO_Guard_2, getObjectEnumState(sO_Guard_2, sO_On));
 	setObjectState(sO_Guard_3, getObjectEnumState(sO_Guard_3, sO_On));
 	setObjectState(sO_Bottle_38, getObjectEnumState(sO_Bottle_38, sO_OnTheTable));
 	setObjectState(sO_Boss, getObjectEnumState(sO_Boss, sO_WithHammer));

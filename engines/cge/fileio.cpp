@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -93,13 +93,11 @@ ResourceManager::~ResourceManager() {
 		delete _buff[i]._page;
 }
 
-uint16 ResourceManager::XCrypt(byte *buf, uint16 length) {
+void ResourceManager::XCrypt(byte *buf, uint16 length) {
 	byte *b = buf;
 
 	for (uint16 i = 0; i < length; i++)
 		*b++ ^= kCryptSeed;
-
-	return kCryptSeed;
 }
 
 bool ResourceManager::seek(int32 offs, int whence) {
@@ -118,7 +116,7 @@ uint16 ResourceManager::read(byte *buf, uint16 length) {
 }
 
 BtPage *ResourceManager::getPage(int level, uint16 pageId) {
-	debugC(1, kCGEDebugFile, "IoHand::getPage(%d, %d)", level, pageId);
+	debugC(1, kCGEDebugFile, "ResourceManager::getPage(%d, %d)", level, pageId);
 
 	if (_buff[level]._pageNo != pageId) {
 		int32 pos = pageId * kBtSize;
@@ -142,7 +140,7 @@ BtPage *ResourceManager::getPage(int level, uint16 pageId) {
 }
 
 BtKeypack *ResourceManager::find(const char *key) {
-	debugC(1, kCGEDebugFile, "IoHand::find(%s)", key);
+	debugC(1, kCGEDebugFile, "ResourceManager::find(%s)", key);
 
 	int lev = 0;
 	uint16 nxt = kBtValRoot;

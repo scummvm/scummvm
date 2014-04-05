@@ -86,13 +86,15 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		Log.d(LOG_TAG, String.format("surfaceChanged: %dx%d (%d)",
 										width, height, format));
 
+		// store values for the native code
+		// make sure to do it before notifying the lock
+		// as it leads to a race condition otherwise
+		setSurface(width, height);
+
 		synchronized(_sem_surface) {
 			_surface_holder = holder;
 			_sem_surface.notifyAll();
 		}
-
-		// store values for the native code
-		setSurface(width, height);
 	}
 
 	// SurfaceHolder callback

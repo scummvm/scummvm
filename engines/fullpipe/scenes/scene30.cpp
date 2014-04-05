@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -73,7 +73,7 @@ void scene30_initScene(Scene *sc, int flag) {
 
 	g_fp->lift_setButton(sO_Level8, ST_LBN_8N);
 
-	g_fp->lift_sub5(sc, QU_SC30_ENTERLIFT, QU_SC30_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC30_ENTERLIFT, QU_SC30_EXITLIFT);
 }
 
 int scene30_updateCursor() {
@@ -103,7 +103,7 @@ int sceneHandler30(ExCommand *cmd) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC30_UPDATEPATH:
@@ -111,7 +111,7 @@ int sceneHandler30(ExCommand *cmd) {
 		break;
 
 	case 64:
-		g_fp->lift_sub05(cmd);
+		g_fp->lift_hoverButton(cmd);
 		break;
 
 	case MSG_LIFT_GO:
@@ -123,7 +123,7 @@ int sceneHandler30(ExCommand *cmd) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
-				g_fp->lift_sub1(ani);
+				g_fp->lift_animateButton(ani);
 
 				cmd->_messageKind = 0;
 			}

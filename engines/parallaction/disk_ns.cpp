@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -26,7 +26,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
-#include "graphics/decoders/iff.h"
+#include "image/iff.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
 
@@ -917,7 +917,7 @@ void AmigaDisk_ns::buildMask(byte* buf) {
 
 void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 	Common::SeekableReadStream *s = openFile(name);
-	Graphics::IFFDecoder decoder;
+	Image::IFFDecoder decoder;
 	decoder.loadStream(*s);
 
 	info.bg.copyFrom(*decoder.getSurface());
@@ -935,7 +935,7 @@ void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 		info.palette.setEntry(i, r, g, b);
 	}
 
-	const Common::Array<Graphics::IFFDecoder::PaletteRange> &paletteRanges = decoder.getPaletteRanges();
+	const Common::Array<Image::IFFDecoder::PaletteRange> &paletteRanges = decoder.getPaletteRanges();
 	for (uint j = 0; j < 6 && j < paletteRanges.size(); j++) {
 		PaletteFxRange range;
 		range._timer = paletteRanges[j].timer;
@@ -959,7 +959,7 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing mask files: not every location has one
 	}
 
-	Graphics::IFFDecoder decoder;
+	Image::IFFDecoder decoder;
 	decoder.setNumRelevantPlanes(2); // use only 2 first bits from each pixel
 	decoder.setPixelPacking(true); // pack 4 2bit pixels into 1 byte
 	decoder.loadStream(*s);
@@ -990,7 +990,7 @@ void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing path files: not every location has one
 	}
 
-	Graphics::IFFDecoder decoder;
+	Image::IFFDecoder decoder;
 	decoder.setNumRelevantPlanes(1); // use only first bit from each pixel
 	decoder.setPixelPacking(true); // pack 8 1bit pixels into 1 byte
 	decoder.loadStream(*s);

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,7 +31,7 @@
 namespace Fullpipe {
 
 Inventory::~Inventory() {
-	warning("STUB: Inventory::~Inventory()");
+	_itemsPool.clear();
 }
 
 bool Inventory::load(MfcArchive &file) {
@@ -90,7 +90,7 @@ Inventory2::Inventory2() {
 }
 
 Inventory2::~Inventory2() {
-	warning("STUB: Inventory2::~Inventory2()");
+	removeMessageHandler(125, -1);
 }
 
 bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially
@@ -123,7 +123,25 @@ void Inventory2::removeItem(int itemId, int count) {
 }
 
 void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority) {
-	warning("STUB: void removeItem2(sc, %d, %d, %d, %d)", itemId, x, y, priority);
+	int idx = getInventoryItemIndexById(itemId);
+
+	if (idx >= 0) {
+		if (_inventoryItems[idx]->itemId >> 16) {
+			removeItem(itemId, 1);
+
+			Scene *sc = g_fp->accessScene(_sceneId);
+
+			if (sc) {
+				StaticANIObject *ani = new StaticANIObject(sc->getStaticANIObject1ById(itemId, -1));
+
+				sceneObj->addStaticANIObject(ani, 1);
+
+				ani->_statics = (Statics *)ani->_staticsList[0];
+				ani->setOXY(x, y);
+				ani->_priority = priority;
+			}
+		}
+	}
 }
 
 int Inventory2::getCountItemsWithId(int itemId) {
@@ -201,7 +219,7 @@ void Inventory2::rebuildItemRects() {
 		InventoryIcon *icn = new InventoryIcon();
 
 		icn->inventoryItemId = _itemsPool[idx]->id;
-		
+
 		icn->pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormal, 0);
 		icn->pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectHover, 0);
 		icn->pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectSelected, 0);
@@ -334,7 +352,7 @@ bool Inventory2::handleLeftClick(ExCommand *cmd) {
 	bool res = false;
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
-		if (cmd->_x >= _inventoryIcons[i]->x1 && cmd->_x <= _inventoryIcons[i]->x2 && 
+		if (cmd->_x >= _inventoryIcons[i]->x1 && cmd->_x <= _inventoryIcons[i]->x2 &&
 			cmd->_y >= _inventoryIcons[i]->y1 && cmd->_y <= _inventoryIcons[i]->y2) {
 			if (getSelectedItemId()) {
 				if (getSelectedItemId() != _inventoryIcons[i]->inventoryItemId)

@@ -5,6 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  New Games:
    - Added support for Return to Ringworld.
    - Added support for The Neverhood.
+   - Added support for Mortville Manor.
 
  General:
    - Updated Munt MT-32 emulation code to version 1.3.0.
@@ -13,8 +14,27 @@ For a more comprehensive changelog of the latest experimental code, see:
      (NOTE: The change to libpng was done in version 1.6.0, but it was not
      added to the NEWS file).
 
+ AGOS:
+   - Added mouse wheel support for inventory and save game lists.
+   - Enabled verb name display in Simon the Sorcerer 2.
+   - Fixed the Feeble Files loyalty rating in the English 4CD version. (This
+     was apparently a bug in the original game. It is currently unknown if
+     other versions still have the same problem.)
+
+ Broken Sword 1:
+   - Added back support for MPEG-2 videos.
+
+ Broken Sword 2:
+   - Added back support for MPEG-2 videos.
+
+ CGE:
+   - Added an option to enable Color Blind mode the ScummVM GUI.
  Gob:
    - Improved video quality in Urban Runner.
+
+ Hopkins:
+   - Added an option to toggle Gore Mode from the ScummVM GUI.
+   - Fixed bug that could cause the music to stop prematurely.
 
  SCI:
    - Added support for the more detailed RAVE lip syncing data in the Windows
@@ -29,11 +49,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved the MIDI parser so that music event processing is done more
      properly.
 
- Broken Sword 1:
-   - Added back support for MPEG-2 videos.
-
- Broken Sword 2:
-   - Added back support for MPEG-2 videos.
+ SCUMM:
+   - Changed the saved game naming scheme of HE games to always contain
+     the target name.
+   - Fixed having multiple coaches in Backyard Football.
 
  Tinsel:
    - Discworld 1 and 2 no longer crash on big-endian systems.

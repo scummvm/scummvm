@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -603,7 +603,7 @@ uint32 Scene1305::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+	: Scene(vm, parentModule), _asKey(nullptr) {
 
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 4);
@@ -683,7 +683,6 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 		clearRectList();
 		sendMessage(_asElevator, NM_KLAYMEN_OPEN_DOOR, 0);
 	}
-
 }
 
 Scene1306::~Scene1306() {
@@ -942,6 +941,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite2 = insertStaticSprite(0x40043120, 995);
 	_sprite3 = insertStaticSprite(0x43003100, 995);
 	_sprite4 = NULL;
+	_sprite5 = nullptr;
 
 	if (which < 0) {
 		// Restoring game

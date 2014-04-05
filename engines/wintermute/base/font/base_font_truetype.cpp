@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -271,11 +271,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	//debugC(kWintermuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
 //	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
-	if (_deletableFont) { // We actually have a TTF
-		surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _gameRef->_renderer->getPixelFormat());
-	} else { // We are using a fallback, they can't do 32bpp
-		surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
-	}
+	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _gameRef->_renderer->getPixelFormat());
 	uint32 useColor = 0xffffffff;
 	Common::Array<WideString>::iterator it;
 	int heightOffset = 0;
@@ -285,7 +281,6 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	}
 
 	BaseSurface *retSurface = _gameRef->_renderer->createSurface();
-	Graphics::Surface *convertedSurface = surface->convertTo(_gameRef->_renderer->getPixelFormat());
 
 	if (_deletableFont) {
 		// Reconstruct the alpha channel of the font.
@@ -295,22 +290,20 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		// to its original alpha value.
 
 		Graphics::PixelFormat format = _gameRef->_renderer->getPixelFormat();
-		uint32 *pixels = (uint32 *)convertedSurface->getPixels();
+		uint32 *pixels = (uint32 *)surface->getPixels();
 
 		// This is a Surface we created ourselves, so no empty space between rows.
 		for (int i = 0; i < surface->w * surface->h; ++i) {
 			uint8 a, r, g, b;
 			format.colorToRGB(*pixels, r, g, b);
 			a = r;
-			*pixels++ = format.ARGBToColor(a, r, g, b); 
+			*pixels++ = format.ARGBToColor(a, r, g, b);
 		}
 	}
 
-	retSurface->putSurface(*convertedSurface, true);
-	convertedSurface->free();
+	retSurface->putSurface(*surface, true);
 	surface->free();
 	delete surface;
-	delete convertedSurface;
 	return retSurface;
 	// TODO: _isUnderline, _isBold, _isItalic, _isStriked
 }
@@ -614,7 +607,7 @@ bool BaseFontTT::initFont() {
 			if (themeArchive->hasFile(fallbackFilename)) {
 				file = nullptr;
 				file = themeArchive->createReadStreamForMember(fallbackFilename);
-				_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
+				_deletableFont = Graphics::loadTTFFont(*file, _fontHeight, 96); // Use the same dpi as WME (96 vs 72).
 				_font = _deletableFont;
 			}
 			// We're not using BaseFileManager, so clean up after ourselves:

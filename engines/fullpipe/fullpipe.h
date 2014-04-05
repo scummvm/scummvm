@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -60,6 +60,7 @@ class GameProject;
 class GameObject;
 class GlobalMessageQueueList;
 struct MessageHandler;
+class MessageQueue;
 struct MovTable;
 class MGM;
 class NGIArchive;
@@ -157,6 +158,7 @@ public:
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
+	void updateSoundVolume();
 
 	int _sfxVolume;
 
@@ -224,6 +226,8 @@ public:
 	int (*_updateScreenCallback)();
 	int (*_updateCursorCallback)();
 
+	void drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha);
+
 	int _cursorId;
 	int _minCursorId;
 	int _maxCursorId;
@@ -266,17 +270,29 @@ public:
 
 	void getAllInventory();
 
+	StaticANIObject *_lastLiftButton;
+	MessageQueue *_liftEnterMQ;
+	MessageQueue *_liftExitMQ;
+	StaticANIObject *_lift;
+	int _liftX;
+	int _liftY;
+
 	int lift_getButtonIdP(int objid);
+	int lift_getButtonIdH(int objid);
+	int lift_getButtonIdN(int objid);
 	void lift_setButton(const char *name, int state);
-	void lift_sub5(Scene *sc, int qu1, int qu2);
+	void lift_init(Scene *sc, int qu1, int qu2);
+	void lift_setButtonStatics(Scene *sc, int buttonId);
 	void lift_exitSeq(ExCommand *ex);
 	void lift_closedoorSeq();
-	void lift_animation3();
+	void lift_clickButton();
+	void lift_walkAndGo();
 	void lift_goAnimation();
-	void lift_sub1(StaticANIObject *ani);
+	void lift_animateButton(StaticANIObject *button);
 	void lift_startExitQueue();
-	void lift_sub05(ExCommand *ex);
+	void lift_hoverButton(ExCommand *ex);
 	bool lift_checkButton(const char *varname);
+	void lift_openLift();
 
 	GameVar *_musicGameVar;
 	Audio::SoundHandle _sceneTrackHandle;

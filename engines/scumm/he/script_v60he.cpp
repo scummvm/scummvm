@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -90,59 +90,214 @@ void ScummEngine_v60he::setupOpcodes() {
 	_opcodes[0xed].setProc(0, 0);
 }
 
-int ScummEngine_v60he::convertFilePath(byte *dst, int dstSize) {
-	debug(1, "convertFilePath: original filePath is %s", dst);
+Common::String ScummEngine_v60he::convertFilePath(const byte *src) {
+	debug(2, "convertFilePath in: '%s'", (const char *)src);
 
-	int len = resStrLen(dst);
+	int srcSize = resStrLen(src);
+	int start = 0;
 
-	// Switch all \ to / for portablity
-	for (int i = 0; i < len; i++)
-		if (dst[i] == '\\')
-			dst[i] = '/';
-
-	if (_game.platform == Common::kPlatformMacintosh) {
-		// Remove : prefix in HE71 games
-		if (dst[0] == ':') {
-			len -= 1;
-			memmove(dst, dst + 1, len);
-			dst[len] = 0;
-		}
-
-		// Switch all : to / for portablity
-		for (int i = 0; i < len; i++) {
-			if (dst[i] == ':')
-				dst[i] = '/';
+	if (srcSize > 2) {
+		if (src[0] == ':') { // Game Data Path (Macintosh)
+			// The default game data path is set to ':' by ScummVM
+			start = 1;
+		} else if (src[0] == '.' && src[1] == '\\') { // Game Data Path (Windows)
+			// The default game data path is set to '.\\' by ScummVM
+			start = 2;
+		} else if (src[0] == '*' && src[1] == '\\') { // Save Game Path (Windows HE72 - HE100)
+			// The default save game path is set to '*\\' by ScummVM
+			start = 2;
+		} else if (src[0] == '*' && src[1] == ':') { // Save Game Path (Macintosh HE72 - HE100)
+			// The default save game path is set to '*:' by ScummVM
+			start = 2;
+		} else if (src[0] == 'c' && src[1] == ':') { // Save Game Path (HE60 - HE71)
+			// The default save path is game path (DOS) or 'c:\\hegames\\' (Windows)
+			for (start = srcSize; start != 0; start--)
+				if (src[start - 1] == '\\')
+					break;
+		} else if (src[0] == 'u' && src[1] == 's') { // Save Game Path (Moonbase Commander)
+			// The default save path is 'user\\'
+			start = 5;
 		}
 	}
 
-	// Strip path
-	int r = 0;
-	if (dst[len - 3] == 's' && dst[len - 2] == 'g') { // Save Game File
-		// Change filename prefix to target name, for save game files.
-		const char c = dst[len - 1];
-		snprintf((char *)dst, dstSize, "%s.sg%c", _targetName.c_str(), c);
-	} else if (dst[0] == '.' && dst[1] == '/') { // Game Data Path
-		// The default game data path is set to './' by ScummVM
-		r = 2;
-	} else if (dst[0] == '*' && dst[1] == '/') { // Save Game Path (Windows HE72 - HE100)
-		// The default save game path is set to '*/' by ScummVM
-		r = 2;
-	} else if (dst[0] == '*' && dst[1] == ':') { // Save Game Path (Macintosh HE72 - HE100)
-		// The default save game path is set to ':/' by ScummVM
-		r = 2;
-	} else if (dst[0] == 'c' && dst[1] == ':') { // Save Game Path (HE60 - HE71)
-		// The default save path is game path (DOS) or 'c:/hegames/' (Windows)
-		for (r = len; r != 0; r--) {
-			if (dst[r - 1] == '/')
-				break;
+	Common::String dst;
+
+	for (int i = start; i < srcSize; i++) {
+		// Convert path separators
+		if (src[i] == '\\' || src[i] == ':')
+			dst += '/';
+		else
+			dst += src[i];
+	}
+
+	// Sanity check
+	if (dst.lastChar() == '/')
+		dst.deleteLastChar();
+
+	debug(2, "convertFilePath out: '%s'", dst.c_str());
+
+	return dst;
+}
+
+Common::String ScummEngine_v60he::convertSavePath(const byte *src) {
+	debug(2, "convertSavePath in: '%s'", (const char *)src);
+
+	Common::String filePath = convertFilePath(src);
+
+	// Strip us down to only the file
+	for (int32 i = filePath.size() - 1; i >= 0; i--) {
+		if (filePath[i] == '/') {
+			filePath = Common::String(filePath.c_str() + i + 1);
+			break;
 		}
-	} else if (dst[0] == 'u' && dst[1] == 's') { // Save Game Path (Moonbase Commander)
+	}
+
+	// Prepend the target name
+	filePath = _targetName + '-' + filePath;
+
+	debug(2, "convertSavePath out: '%s'", filePath.c_str());
+
+	return filePath;
+}
+
+Common::String ScummEngine_v60he::convertSavePathOld(const byte *src) {
+	// This is provided solely for loading older saved games.
+	// No new saves should go through this function.
+
+	int srcSize = resStrLen(src);
+
+	// Old hacky target name insertion
+	// (This breaks the soccer and football games)
+	if (src[srcSize - 3] == 's' && src[srcSize - 2] == 'g')
+		return _targetName + ".sg" + (char)src[srcSize - 1];
+
+	if (src[0] == 'u' && src[1] == 's') {
+		// Save Game Path (Moonbase Commander)
 		// The default save path is 'user/'
-		r = 5;
+		return (const char *)src + 5;
+	} else if (src[0] == '*' && (src[1] == '\\' || src[1] == ':')) {
+		// Save Game Path (HE72 - HE100)
+		// The default save game path is set to '*\\' by ScummVM for Windows
+		// and '*:' for Macintosh
+		return (const char *)src + 2;
+	} else if (src[0] == 'c' && src[1] == ':') {
+		// The default save path is game path (DOS) or 'c:\\hegames\\' (Windows)
+		for (int i = srcSize; i > 0; i--)
+			if (src[i] == '\\')
+				return (const char *)src + i + 1;
 	}
 
-	debug(1, "convertFilePath: converted filePath is %s", dst + r);
-	return r;
+	// Can't reach here
+	return "";
+}
+
+Common::SeekableReadStream *ScummEngine_v60he::openFileForReading(const byte *fileName) {
+	Common::SeekableReadStream *saveFile = openSaveFileForReading(fileName);
+
+	if (saveFile)
+		return saveFile;
+
+	return SearchMan.createReadStreamForMember(convertFilePath(fileName));
+}
+
+Common::SeekableReadStream *ScummEngine_v60he::openSaveFileForReading(const byte *fileName) {
+	Common::SeekableReadStream *file = _saveFileMan->openForLoading(convertSavePath(fileName));
+
+	if (file)
+		return file;
+
+	return _saveFileMan->openForLoading(convertSavePathOld(fileName));
+}
+
+Common::WriteStream *ScummEngine_v60he::openSaveFileForWriting(const byte *fileName) {
+	return _saveFileMan->openForSaving(convertSavePath(fileName));
+}
+
+void ScummEngine_v60he::deleteSaveFile(const byte *fileName) {
+	Common::String convertedName = convertSavePath(fileName);
+
+	if (!_saveFileMan->listSavefiles(convertedName).empty()) {
+		_saveFileMan->removeSavefile(convertedName);
+		return;
+	}
+
+	convertedName = convertSavePathOld(fileName);
+
+	if (!_saveFileMan->listSavefiles(convertedName).empty())
+		_saveFileMan->removeSavefile(convertedName);
+}
+
+void ScummEngine_v60he::renameSaveFile(const byte *from, const byte *to) {
+	Common::String toName = convertSavePath(to);
+
+	if (_saveFileMan->renameSavefile(convertSavePathOld(from), toName))
+		return;
+
+	_saveFileMan->renameSavefile(convertSavePath(from), toName);
+}
+
+Common::WriteStream *ScummEngine_v60he::openSaveFileForAppending(const byte *fileName) {
+	Common::SeekableReadStream *initialFile = openSaveFileForReading(fileName);
+	byte *initialData = 0;
+	uint32 initialDataSize = 0;
+
+	if (initialFile) {
+		initialDataSize = initialFile->size();
+
+		if (initialDataSize > 0) {
+			initialData = new byte[initialDataSize];
+			initialFile->read(initialData, initialDataSize);
+		}
+
+		delete initialFile;
+	}
+
+	Common::WriteStream *output = openSaveFileForWriting(fileName);
+
+	if (!output) {
+		delete[] initialData;
+		return nullptr;
+	}
+
+	if (initialData) {
+		output->write(initialData, initialDataSize);
+		delete[] initialData;
+	}
+
+	return output;
+}
+
+Common::SeekableReadStream *ScummEngine_v60he::openSaveFileForReading(int slot, bool compat, Common::String &fileName) {
+	if (slot == 255) {
+		// HACK: Allow custom filenames for save game system in HE Games
+		fileName = convertSavePath((const byte *)_saveLoadFileName.c_str());
+
+		Common::SeekableReadStream *stream = _saveFileMan->openForLoading(fileName);
+		if (stream)
+			return stream;
+
+		Common::String oldFileName = convertSavePathOld((const byte *)_saveLoadFileName.c_str());
+		stream = _saveFileMan->openForLoading(oldFileName);
+
+		if (stream) {
+			fileName = oldFileName;
+			return stream;
+		}
+
+		return 0;
+	}
+
+	return ScummEngine::openSaveFileForReading(slot, compat, fileName);
+}
+
+Common::WriteStream *ScummEngine_v60he::openSaveFileForWriting(int slot, bool compat, Common::String &fileName) {
+	if (slot == 255) {
+		// HACK: Allow custom filenames for save game system in HE Games
+		fileName = convertSavePath((const byte *)_saveLoadFileName.c_str());
+		return _saveFileMan->openForSaving(fileName);
+	}
+
+	return ScummEngine::openSaveFileForWriting(slot, compat, fileName);
 }
 
 void ScummEngine_v60he::o60_setState() {
@@ -284,7 +439,7 @@ void ScummEngine_v60he::o60_roomOps() {
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 
-		_saveLoadFileName = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
+		_saveLoadFileName = (char *)buffer;
 		debug(1, "o60_roomOps: case 221: filename %s", _saveLoadFileName.c_str());
 
 		_saveLoadFlag = pop();
@@ -692,14 +847,12 @@ void virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int len, uint8 b) {
 void ScummEngine_v60he::o60_openFile() {
 	int mode, len, slot, i;
 	byte buffer[100];
-	const char *filename;
 
 	convertMessageToString(_scriptPointer, buffer, sizeof(buffer));
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
-	debug(1, "Final filename to %s", filename);
+	debug(1, "Trying to open file '%s'", (char *)buffer);
 
 	mode = pop();
 	slot = -1;
@@ -713,14 +866,10 @@ void ScummEngine_v60he::o60_openFile() {
 	if (slot != -1) {
 		switch (mode) {
 		case 1:
-			// TODO / FIXME: Consider using listSavefiles to avoid unneccessary openForLoading calls
-			_hInFileTable[slot] = _saveFileMan->openForLoading(filename);
-			if (_hInFileTable[slot] == 0) {
-				_hInFileTable[slot] = SearchMan.createReadStreamForMember(filename);
-			}
+			_hInFileTable[slot] = openFileForReading(buffer);
 			break;
 		case 2:
-			_hOutFileTable[slot] = _saveFileMan->openForSaving(filename);
+			_hOutFileTable[slot] = openSaveFileForWriting(buffer);
 			break;
 		default:
 			error("o60_openFile(): wrong open file mode %d", mode);
@@ -750,25 +899,19 @@ void ScummEngine_v60he::o60_closeFile() {
 void ScummEngine_v60he::o60_deleteFile() {
 	int len;
 	byte buffer[100];
-	const char *filename;
 
 	convertMessageToString(_scriptPointer, buffer, sizeof(buffer));
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
+	debug(1, "o60_deleteFile (\"%s\")", (char *)buffer);
 
-	debug(1, "o60_deleteFile (\"%s\")", filename);
-
-	if (!_saveFileMan->listSavefiles(filename).empty()) {
-		_saveFileMan->removeSavefile(filename);
-	}
+	deleteSaveFile(buffer);
 }
 
 void ScummEngine_v60he::o60_rename() {
 	int len;
 	byte buffer1[100], buffer2[100];
-	const char *newFilename, *oldFilename;
 
 	convertMessageToString(_scriptPointer, buffer1, sizeof(buffer1));
 	len = resStrLen(_scriptPointer);
@@ -778,12 +921,9 @@ void ScummEngine_v60he::o60_rename() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	oldFilename = (char *)buffer1 + convertFilePath(buffer1, sizeof(buffer1));
-	newFilename = (char *)buffer2 + convertFilePath(buffer2, sizeof(buffer2));
+	debug(1, "o60_rename (\"%s\" to \"%s\")", (char *)buffer1, (char *)buffer2);
 
-	debug(1, "o60_rename (\"%s\" to \"%s\")", oldFilename, newFilename);
-
-	_saveFileMan->renameSavefile(oldFilename, newFilename);
+	renameSaveFile(buffer1, buffer2);
 }
 
 int ScummEngine_v60he::readFileToArray(int slot, int32 size) {

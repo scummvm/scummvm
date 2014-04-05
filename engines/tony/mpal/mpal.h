@@ -8,16 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  *
  */
 /*
@@ -392,7 +391,7 @@ void mpalFree();
  *
  * @param wQueryType		Type of query. The list is in the QueryTypes enum.
  * @returns		4 bytes depending on the type of query
- * @remarks		This is the specialised version of the original single mpalQuery
+ * @remarks		This is the specialized version of the original single mpalQuery
  * method that returns numeric results.
  */
 uint32 mpalQueryDWORD(uint16 wQueryType, ...);
@@ -403,7 +402,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...);
  *
  * @param wQueryType		Type of query. The list is in the QueryTypes enum.
  * @returns		4 bytes depending on the type of query
- * @remarks		This is the specialised version of the original single mpalQuery
+ * @remarks		This is the specialized version of the original single mpalQuery
  * method that returns a pointer or handle.
  */
 MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...);
@@ -414,7 +413,7 @@ MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...);
  *
  * @param wQueryType		Type of query. The list is in the QueryTypes enum.
  * @returns		4 bytes depending on the type of query
- * @remarks		This is the specialised version of the original single mpalQuery
+ * @remarks		This is the specialized version of the original single mpalQuery
  * method that needs to run within a co-routine context.
  */
 void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet);

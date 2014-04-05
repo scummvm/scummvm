@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -37,6 +37,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
+#include "sci/sound/audio.h"
 #include "sci/console.h"
 
 namespace Sci {
@@ -494,6 +495,21 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	Common::String str = s->_segMan->getString(argv[1]);
 	debugC(kDebugLevelFile, "kFileIO(writeString): %d", handle);
 
+	// Handle sciAudio calls in fanmade games here. sciAudio is an
+	// external .NET library for playing MP3 files in fanmade games.
+	// It runs in the background, and obtains sound commands from the
+	// currently running game via text files (called "conductor files").
+	// We skip creating these files, and instead handle the calls
+	// directly. Since the sciAudio calls are only creating text files,
+	// this is probably the most straightforward place to handle them.
+	if (handle == 0xFFFF && str.hasPrefix("(sciAudio")) {
+		Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
+		iter--;	// sciAudio
+		iter--;	// sciAudio child
+		g_sci->_audio->handleFanmadeSciAudio(iter->sendp, s->_segMan);
+		return NULL_REG;
+	}
+
 #ifdef ENABLE_SCI32
 	if (handle == VIRTUALFILE_HANDLE) {
 		s->_virtualIndexFile->write(str.c_str(), str.size());
@@ -743,11 +759,11 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		savegameId = dialog->runModalWithCurrentTarget();
 		game_description = dialog->getResultString();
 		if (game_description.empty()) {
-			// create our own description for the saved game, the user didnt enter it
+			// create our own description for the saved game, the user didn't enter it
 			game_description = dialog->createDefaultSaveDescription(savegameId);
 		}
 		delete dialog;
-		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)
+		g_sci->_soundCmd->pauseAll(false); // unpause music (we can't have it paused during save)
 		if (savegameId < 0)
 			return NULL_REG;
 
@@ -849,8 +865,6 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		}
 		// don't adjust ID of the saved game, it's already correct
 	} else {
-		if (argv[2].isNull())
-			error("kRestoreGame: called with parameter 2 being NULL");
 		if (g_sci->getGameId() == GID_JONES) {
 			// Jones has one save slot only
 			savegameId = 0;
@@ -879,7 +893,6 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		in = saveFileMan->openForLoading(filename);
 		if (in) {
 			// found a savegame file
-
 			gamestate_restore(s, in);
 			delete in;
 

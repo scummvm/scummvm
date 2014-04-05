@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -182,11 +182,13 @@ static void syncFilesDatabase(Common::Serializer &s) {
 		s.syncAsUint16LE(fe.resType);
 		s.syncAsUint16LE(fe.height);
 
-		// TODO: Have a look at the saving/loading of this pointer
+		// Remember whether this file database was open or not.
+		// Upon loading, loadSavegameData uses this information
+		// in order to re-open the file databases accordingly.
 		tmp = (fe.subData.ptr) ? 1 : 0;
 		s.syncAsUint32LE(tmp);
 		if (s.isLoading()) {
-			fe.subData.ptr = (uint8 *)tmp;
+			fe.subData.ptr = tmp ? (uint8 *)1 : 0;
 		}
 
 		s.syncAsSint16LE(fe.subData.index);
@@ -195,11 +197,11 @@ static void syncFilesDatabase(Common::Serializer &s) {
 
 		s.syncAsSint16LE(fe.subData.transparency);
 
-		// TODO: Have a look at the saving/loading of this pointer
+		// Treat fe.subData.ptrMask the same as fe.subData.ptr.
 		tmp = (fe.subData.ptrMask) ? 1 : 0;
 		s.syncAsUint32LE(tmp);
 		if (s.isLoading()) {
-			fe.subData.ptrMask = (uint8 *)tmp;
+			fe.subData.ptrMask = tmp ? (uint8 *)1 : 0;
 		}
 
 		s.syncAsUint16LE(fe.subData.resourceType);
@@ -806,7 +808,6 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName) 
 }
 
 Common::Error loadSavegameData(int saveGameIdx) {
-	int lowMemorySave;
 	Common::String saveName;
 	cellStruct *currentcellHead;
 
@@ -878,20 +879,19 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 	lastAni[0] = 0;
 
-	lowMemorySave = lowMemory;
-
 	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (filesDatabase[i].subData.ptr) {
 			int j;
 			int k;
 
-			for (j = i + 1; j < NUM_FILE_ENTRIES && filesDatabase[j].subData.ptr && !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) && (filesDatabase[j].subData.index == (j - i)); j++)
+			for (j = i + 1; j < NUM_FILE_ENTRIES &&
+			        filesDatabase[j].subData.ptr &&
+			        !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) &&
+			        (filesDatabase[j].subData.index == (j - i));
+			        j++)
 				;
 
 			for (k = i; k < j; k++) {
-				if (filesDatabase[k].subData.ptrMask)
-					lowMemory = 0;
-
 				filesDatabase[k].subData.ptr = NULL;
 				filesDatabase[k].subData.ptrMask = NULL;
 			}
@@ -908,7 +908,6 @@ Common::Error loadSavegameData(int saveGameIdx) {
 			}
 
 			i = j - 1;
-			lowMemory = lowMemorySave;
 		}
 	}
 

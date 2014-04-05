@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -457,8 +457,6 @@ bool RMInventory::rightRelease(const RMPoint &mpos, RMTonyAction &curAction) {
 #define INVSPEED 20
 
 void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpos, bool bCanOpen) {
-	bool bNeedRedraw = false;
-
 	if (_state != CLOSED) {
 		// Clean up the OT list
 		g_system->lockMutex(_csModifyInterface);
@@ -466,6 +464,8 @@ void RMInventory::doFrame(RMGfxTargetBuffer &bigBuf, RMPointer &ptr, RMPoint mpo
 
 		// DoFrame makes all the objects currently in the inventory be displayed
 		// @@@ Maybe we should do all takeable objects? Please does not help
+		bool bNeedRedraw = false;
+
 		for (int i = 0; i < _nInv; i++) {
 			if (_items[_inv[i]]._icon.doFrame(this, false) && (i >= _curPos && i <= _curPos + 7))
 				bNeedRedraw = true;
@@ -698,9 +698,8 @@ int RMInventory::loadState(byte *state) {
 		state += 4;
 	}
 
-	int x;
 	for (int i = 0; i < 256; i++) {
-		x = READ_LE_UINT32(state);
+		int x = READ_LE_UINT32(state);
 		state += 4;
 
 		if (i < _nItems) {

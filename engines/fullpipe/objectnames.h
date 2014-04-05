@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -192,7 +192,7 @@ namespace Fullpipe {
 #define sO_WithPlunger "\xd1 \xe2\xe0\xed\xf2\xf3\xe7\xee\xec"	// "С вантузом"
 #define sO_WithJug "\xd1 \xe3\xee\xf0\xf8\xea\xee\xec"	// "С горшком"
 #define sO_WithGum "\xd1 \xe6\xe2\xe0\xf7\xea\xee\xe9"	// "С жвачкой"
-#define sO_WithShovel "\xd1 \xeb\xee\xef\xe0\xf2\xee\xe9"	// "С лопатой"
+#define sO_WithSpade "\xd1 \xeb\xee\xef\xe0\xf2\xee\xe9"	// "С лопатой"
 #define sO_WithSmall "\xd1 \xec\xe0\xeb\xfb\xec"	// "С малым"
 #define sO_WithHammer "\xd1 \xec\xee\xeb\xee\xf2\xea\xee\xec"	// "С молотком"
 #define sO_WithCoin "\xd1 \xec\xee\xed\xe5\xf2\xee\xe9"	// "С монетой"
@@ -208,16 +208,16 @@ namespace Fullpipe {
 #define sO_IsSitting "\xd1\xe8\xe4\xe8\xf2"	// "Сидит"
 #define sO_IsLaughing "\xd1\xec\xe5\xe5\xf2\xf1\xff"	// "Смеется"
 #define sO_WithAll "\xd1\xee \xe2\xf1\xe5\xec\xe8"	// "Со всеми"
-#define sO_WithMop "\xd1\xee \xf8\xe2\xe0\xe1\xf0\xee\xe9"	// "Со шваброй"
+#define sO_WithSwab "\xd1\xee \xf8\xe2\xe0\xe1\xf0\xee\xe9"	// "Со шваброй"
 #define sO_WithHose "\xd1\xee \xf8\xeb\xe0\xed\xe3\xee\xec"	// "Со шлангом"
-#define sO_WithBrush "\xd1\xee \xf9\xe5\xf2\xea\xee\xe9"	// "Со щеткой"
+#define sO_WithBroom "\xd1\xee \xf9\xe5\xf2\xea\xee\xe9"	// "Со щеткой"
 #define sO_IsSleeping "\xd1\xef\xe8\xf2"	// "Спит"
 #define sO_OnRight "\xd1\xef\xf0\xe0\xe2\xe0"	// "Справа"
 #define sO_IsStandingInBoots "\xd1\xf2\xee\xe8\xf2 \xe2 \xe1\xee\xf2\xe8\xed\xea\xe0\xf5"	// "Стоит в ботинках"
 #define sO_IsStandingInCorner "\xd1\xf2\xee\xe8\xf2 \xe2 \xf3\xe3\xeb\xf3"	// "Стоит в углу"
 #define sO_Guardian "\xd1\xf2\xee\xf0\xee\xe6"	// "Сторож"
 #define sO_Guard_1 "\xd1\xf2\xf0\xe0\xe6 1"	// "Страж 1"
-#define sO_Gurad_2 "\xd1\xf2\xf0\xe0\xe6 2"	// "Страж 2"
+#define sO_Guard_2 "\xd1\xf2\xf0\xe0\xe6 2"	// "Страж 2"
 #define sO_Guard_3 "\xd1\xf2\xf0\xe0\xe6 3"	// "Страж 3"
 #define sO_Stool_34 "\xd2\xe0\xe1\xf3\xf0\xe5\xf2_34"	// "Табурет_34"
 #define sO_Pipe_9 "\xd2\xf0\xf3\xe1\xe0_9"	// "Труба_9"
@@ -229,7 +229,7 @@ namespace Fullpipe {
 #define sO_NearPipeWithStool "\xd3 \xf2\xf0\xf3\xe1\xfb \xf1 \xf2\xe0\xe1\xf3\xf0\xe5\xf2\xea\xee\xe9"	// "У трубы с табуреткой"
 #define sO_NearPipe "\xd3 \xf2\xf0\xf3\xe1\xfb"	// "У трубы"
 #define sO_Janitors "\xd3\xe1\xee\xf0\xf9\xe8\xea\xe8"	// "Уборщики"
-#define sO_Janitress "\xd3\xe1\xee\xf0\xf9\xe8\xf6\xe0"	// "Уборщица"
+#define sO_Maid "\xd3\xe1\xee\xf0\xf9\xe8\xf6\xe0"	// "Уборщица"
 #define sO_IsGone "\xd3\xe5\xf5\xe0\xeb\xe0"	// "Уехала"
 #define sO_FallenTwice "\xd3\xef\xe0\xeb \xe4\xe2\xe0"	// "Упал два"
 #define sO_FallenOnce "\xd3\xef\xe0\xeb \xf0\xe0\xe7"	// "Упал раз"

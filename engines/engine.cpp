@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
@@ -152,6 +153,10 @@ Engine::~Engine() {
 	// Remove our cursors again to prevent memory leaks
 	CursorMan.popCursor();
 	CursorMan.popCursorPalette();
+}
+
+void Engine::initializePath(const Common::FSNode &gamePath) {
+	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 4);
 }
 
 void initCommonGFX(bool defaultTo1XScaler) {

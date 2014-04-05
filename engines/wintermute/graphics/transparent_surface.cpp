@@ -84,20 +84,23 @@ void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *o
 	if (ina == 0) {
 		return;
 	} else {
-		if (*cb != 255)
+		if (*cb != 255) {
 			*outb = MIN(*outb + ((inb * (*cb) * ina) >> 16), 255);
-		else
+		} else {
 			*outb = MIN(*outb + (inb * ina >> 8), 255);
+		}
 
-		if (*cg != 255)
+		if (*cg != 255) {
 			*outg = MIN(*outg + ((ing * (*cg) * ina) >> 16), 255);
-		else
+		} else {
 			*outg = MIN(*outg + (ing * ina >> 8), 255);
+		}
 
-		if (*cr != 255)
+		if (*cr != 255) {
 			*outr = MIN(*outr + ((inr * (*cr) * ina) >> 16), 255);
-		else
+		} else {
 			*outr = MIN(*outr + (inr * ina >> 8), 255);
+		}
 	}
 }
 
@@ -120,20 +123,23 @@ void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte
 	if (ina == 0) {
 		return;
 	} else {
-		if (*cb != 255)
+		if (*cb != 255) {
 			*outb = MAX(*outb - ((inb * (*cb)  * (*outb) * ina) >> 24), 0);
-		else
+		} else {
 			*outb = MAX(*outb - (inb * (*outb) * ina >> 16), 0);
+		}
 
-		if (*cg != 255)
+		if (*cg != 255) {
 			*outg = MAX(*outg - ((ing * (*cg)  * (*outg) * ina) >> 24), 0);
-		else
+		} else {
 			*outg = MAX(*outg - (ing * (*outg) * ina >> 16), 0);
+		}
 
-		if (*cr != 255)
-			*outr = MAX(*outr - ((inr * (*cr) *  (*outr) * ina) >> 24), 0);
-		else
+		if (*cr != 255) {
+			*outr = MAX(*outr - ((inr * (*cr) * (*outr) * ina) >> 24), 0);
+		} else {
 			*outr = MAX(*outr - (inr * (*outr) * ina >> 16), 0);
+		}
 	}
 }
 
@@ -152,20 +158,23 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 	if (ina == 0) {
 		return;
 	} else if (ina == 255) {
-		if (*cb != 255)
+		if (*cb != 255) {
 			*outb = (inb * (*cb)) >> 8;
-		else
+		} else {
 			*outb = inb;
+		}
 
-		if (*cr != 255)
+		if (*cr != 255) {
 			*outr = (inr * (*cr)) >> 8;
-		else
+		} else {
 			*outr = inr;
+		}
 
-		if (*cg != 255)
+		if (*cg != 255) {
 			*outg = (ing * (*cg)) >> 8;
-		else
+		} else {
 			*outg = ing;
+		}
 
 		*outa = ina;
 
@@ -178,26 +187,29 @@ void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *out
 		*outr = (*outr * (255 - ina) >> 8);
 		*outg = (*outg * (255 - ina) >> 8);
 
-		if (*cb == 0)
+		if (*cb == 0) {
 			*outb = *outb;
-		else if (*cb != 255)
+		} else if (*cb != 255) {
 			*outb = *outb + (inb * ina * (*cb) >> 16);
-		else
+		} else {
 			*outb = *outb + (inb * ina >> 8);
+		}
 
-		if (*cr == 0)
+		if (*cr == 0) {
 			*outr = *outr;
-		else if (*cr != 255)
+		} else if (*cr != 255) {
 			*outr = *outr + (inr * ina * (*cr) >> 16);
-		else
+		} else {
 			*outr = *outr + (inr * ina >> 8);
+		}
 
-		if (*cg == 0)
+		if (*cg == 0) {
 			*outg = *outg;
-		else if (*cg != 255)
+		} else if (*cg != 255) {
 			*outg = *outg + (ing * ina * (*cg) >> 16);
-		else
+		} else {
 			*outg = *outg + (ing * ina >> 8);
+		}
 
 		return;
 	}
@@ -356,7 +368,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
  * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
  */
 
-template<class Blender> 
+template<class Blender>
 void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
 	Blender b;
 	byte *in;
@@ -375,10 +387,10 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 				byte *outb = &out[TransparentSurface::kBIndex];
 
 				b.blendPixel(in[TransparentSurface::kAIndex],
-					in[TransparentSurface::kRIndex],
-					in[TransparentSurface::kGIndex],
-					in[TransparentSurface::kBIndex],
-					outa, outr, outg, outb);
+							 in[TransparentSurface::kRIndex],
+							 in[TransparentSurface::kGIndex],
+							 in[TransparentSurface::kBIndex],
+							 outa, outr, outg, outb);
 
 				in += inStep;
 				out += 4;
@@ -404,10 +416,10 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 				byte *outb = &out[TransparentSurface::kBIndex];
 
 				b.blendPixel(in[TransparentSurface::kAIndex],
-					in[TransparentSurface::kRIndex],
-					in[TransparentSurface::kGIndex],
-					in[TransparentSurface::kBIndex],
-					outa, outr, outg, outb, &ca, &cr, &cg, &cb);
+							 in[TransparentSurface::kRIndex],
+							 in[TransparentSurface::kGIndex],
+							 in[TransparentSurface::kBIndex],
+							 outa, outr, outg, outb, &ca, &cr, &cg, &cb);
 				in += inStep;
 				out += 4;
 			}
@@ -427,8 +439,9 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	// Check if we need to draw anything at all
 	int ca = (color >> 24) & 0xff;
 
-	if (ca == 0)
+	if (ca == 0) {
 		return retSize;
+	}
 
 	// Create an encapsulating surface for the data
 	TransparentSurface srcImage(*this, false);
@@ -456,17 +469,19 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		srcImage.h = pPartRect->height();
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
-		      pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
+			  pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
 	} else {
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
-		      srcImage.w, srcImage.h, color, width, height);
+			  srcImage.w, srcImage.h, color, width, height);
 	}
 
-	if (width == -1)
+	if (width == -1) {
 		width = srcImage.w;
-	if (height == -1)
+	}
+	if (height == -1) {
 		height = srcImage.h;
+	}
 
 #ifdef SCALING_TESTING
 	// Hardcode scaling to 66% to test scaling
@@ -516,12 +531,12 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 			yp = img->h - 1;
 		}
 
-		byte *ino= (byte *)img->getBasePtr(xp, yp);
+		byte *ino = (byte *)img->getBasePtr(xp, yp);
 		byte *outo = (byte *)target.getBasePtr(posX, posY);
 
-		if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
+		if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
 			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
-		} else if (color == 0xFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
+		} else if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_BINARY) {
 			doBlitBinaryFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
@@ -649,8 +664,9 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 
 	target->create((uint16)dstW, (uint16)dstH, this->format);
 
-	if (transform._zoom.x == 0 || transform._zoom.y == 0)
+	if (transform._zoom.x == 0 || transform._zoom.y == 0) {
 		return target;
+	}
 
 	uint32 invAngle = 360 - (transform._angle % 360);
 	float invCos = cos(invAngle * M_PI / 180.0);
@@ -684,8 +700,12 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 		for (int x = 0; x < dstW; x++) {
 			int dx = (sdx >> 16);
 			int dy = (sdy >> 16);
-			if (flipx) dx = sw - dx;
-			if (flipy) dy = sh - dy;
+			if (flipx) {
+				dx = sw - dx;
+			}
+			if (flipy) {
+				dy = sh - dy;
+			}
 
 #ifdef ENABLE_BILINEAR
 			if ((dx > -1) && (dy > -1) && (dx < sw) && (dy < sh)) {
@@ -694,7 +714,7 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 				c00 = *sp;
 				sp += 1;
 				c01 = *sp;
-				sp += (this->pitch/4);
+				sp += (this->pitch / 4);
 				c11 = *sp;
 				sp -= 1;
 				c10 = *sp;
@@ -764,12 +784,12 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
 
 
-	int *sax = new int[dstW+1];
-	int *say = new int[dstH+1];
+	int *sax = new int[dstW + 1];
+	int *say = new int[dstH + 1];
 	assert(sax && say);
 
 	/*
-	* Precalculate row increments 
+	* Precalculate row increments
 	*/
 	int spixelw = (srcW - 1);
 	int spixelh = (srcH - 1);
@@ -789,8 +809,8 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 		csx += sx;
 
 		/* Guard from overflows */
-		if (csx > ssx) { 
-			csx = ssx; 
+		if (csx > ssx) {
+			csx = ssx;
 		}
 	}
 
@@ -808,14 +828,16 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 		}
 	}
 
-	const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0,0);
-	tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0,0);
+	const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0, 0);
+	tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0, 0);
 	int spixelgap = srcW;
 
-	if (flipx)
+	if (flipx) {
 		sp += spixelw;
-	if (flipy)
+	}
+	if (flipy) {
 		sp += spixelgap * spixelh;
+	}
 
 	csay = say;
 	for (int y = 0; y < dstH; y++) {
@@ -835,10 +857,11 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 			c01 = sp;
 			c10 = sp;
 			if (cy < spixelh) {
-				if (flipy)
+				if (flipy) {
 					c10 -= spixelgap;
-				else
+				} else {
 					c10 += spixelgap;
+				}
 			}
 			c11 = c10;
 			if (cx < spixelw) {
@@ -874,10 +897,11 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 			int *salastx = csax;
 			csax++;
 			int sstepx = (*csax >> 16) - (*salastx >> 16);
-			if (flipx)
+			if (flipx) {
 				sp -= sstepx;
-			else
+			} else {
 				sp += sstepx;
+			}
 
 			/*
 			* Advance destination pointer x
@@ -891,10 +915,11 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 		csay++;
 		int sstepy = (*csay >> 16) - (*salasty >> 16);
 		sstepy *= spixelgap;
-		if (flipy)
+		if (flipy) {
 			sp = csp - sstepy;
-		else
+		} else {
 			sp = csp + sstepy;
+		}
 	}
 
 	delete[] sax;
@@ -903,14 +928,16 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 #else
 
 	int *scaleCacheX = new int[dstW];
-	for (int x = 0; x < dstW; x++)
+	for (int x = 0; x < dstW; x++) {
 		scaleCacheX[x] = (x * srcW) / dstW;
+	}
 
 	for (int y = 0; y < dstH; y++) {
 		uint32 *destP = (uint32 *)target->getBasePtr(0, y);
 		const uint32 *srcP = (const uint32 *)getBasePtr(0, (y * srcH) / dstH);
-		for (int x = 0; x < dstW; x++)
+		for (int x = 0; x < dstW; x++) {
 			*destP++ = srcP[scaleCacheX[x]];
+		}
 	}
 	delete[] scaleCacheX;
 

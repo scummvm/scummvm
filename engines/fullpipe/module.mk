@@ -33,6 +33,7 @@ MODULE_OBJS = \
 	scenes/scene06.o \
 	scenes/scene07.o \
 	scenes/scene08.o \
+	scenes/scene09.o \
 	scenes/scene10.o \
 	scenes/scene11.o \
 	scenes/scene12.o \
@@ -49,7 +50,9 @@ MODULE_OBJS = \
 	scenes/scene24.o \
 	scenes/scene25.o \
 	scenes/scene26.o \
+	scenes/scene27.o \
 	scenes/scene28.o \
+	scenes/scene29.o \
 	scenes/scene30.o \
 	scenes/scene31.o \
 	scenes/scene32.o \
@@ -57,6 +60,9 @@ MODULE_OBJS = \
 	scenes/scene34.o \
 	scenes/scene35.o \
 	scenes/scene36.o \
+	scenes/scene37.o \
+	scenes/scene38.o \
+	scenes/sceneFinal.o \
 	scenes/sceneDbg.o
 
 # This module can be built as a plugin

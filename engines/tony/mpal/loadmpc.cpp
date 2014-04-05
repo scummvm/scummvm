@@ -8,16 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
  *
  */
 /*
@@ -139,8 +138,6 @@ static void FreeScript(LpMpalScript lpmsScript) {
  * @returns		Pointer to the buffer after the item, or NULL on failure.
  */
 static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
-	byte *lpLock;
-
 	lpmdDialog->_nObj = READ_LE_UINT32(lpBuf);
 	lpBuf += 4;
 
@@ -156,7 +153,7 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 		lpmdDialog->_periodNums[i] = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
 		lpmdDialog->_periods[i] = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, *lpBuf + 1);
-		lpLock = (byte *)globalLock(lpmdDialog->_periods[i]);
+		byte *lpLock = (byte *)globalLock(lpmdDialog->_periods[i]);
 		Common::copy(lpBuf + 1, lpBuf + 1 + *lpBuf, lpLock);
 		globalUnlock(lpmdDialog->_periods[i]);
 		lpBuf += (*lpBuf) + 1;

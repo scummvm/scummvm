@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -72,16 +72,16 @@ Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 fill)
 	                                                // + room for wash table
 	assert(v != NULL);
 
-	*(uint16 *) v = TO_LE_16(kBmpCPY | dsiz);                 // data chunk hader
+	WRITE_LE_UINT16(v, (kBmpCPY | dsiz));                 // data chunk hader
 	memset(v + 2, fill, dsiz);                      // data bytes
-	*(uint16 *)(v + lsiz - 2) = TO_LE_16(kBmpSKP | ((kScrWidth / 4) - dsiz));  // gap
+	WRITE_LE_UINT16(v + lsiz - 2, (kBmpSKP | ((kScrWidth / 4) - dsiz)));  // gap
 
 	// Replicate lines
 	byte *destP;
 	for (destP = v + lsiz; destP < (v + psiz); destP += lsiz)
 		Common::copy(v, v + lsiz, destP);
 
-	*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI);            // plane trailer uint16
+	WRITE_LE_UINT16(v + psiz - 2, kBmpEOI);            // plane trailer uint16
 
 	// Replicate planes
 	for (destP = v + psiz; destP < (v + 4 * psiz); destP += psiz)
@@ -293,6 +293,7 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 		switch (t) {
 		case kBmpEOI:
 			r--;
+			// No break on purpose
 		case kBmpSKP:
 			w = 0;
 			break;

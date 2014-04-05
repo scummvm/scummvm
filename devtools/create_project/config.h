@@ -33,6 +33,6 @@
 #define DISABLE_EDIT_AND_CONTINUE "tinsel,tony,scummvm"     // Comma separated list of projects that need Edit&Continue to be disabled for co-routine support (the main project is automatically added)
 
 //#define ADDITIONAL_LIBRARY ""            // Add a single library to the list of externally linked libraries
-#define NEEDS_RTTI 0                     // Enable RTTI globally
+#define NEEDS_RTTI 1                     // Enable RTTI globally
 
 #endif // TOOLS_CREATE_PROJECT_CONFIG_H

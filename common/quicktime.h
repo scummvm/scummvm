@@ -108,9 +108,12 @@ protected:
 	class SampleDesc {
 	public:
 		SampleDesc(Track *parentTrack, uint32 codecTag);
-		virtual ~SampleDesc() {}
+		virtual ~SampleDesc();
 
 		uint32 getCodecTag() const { return _codecTag; }
+
+		SeekableReadStream *_extraData;
+		byte _objectTypeMP4;
 
 	protected:
 		Track *_parentTrack;
@@ -150,16 +153,12 @@ protected:
 		uint32 editCount;
 		EditListEntry *editList;
 
-		SeekableReadStream *extraData;
-
 		uint32 frameCount;
 		uint32 duration;
 		uint32 mediaDuration;
 		uint32 startTime;
 		Rational scaleFactorX;
 		Rational scaleFactorY;
-
-		byte objectTypeMP4;
 	};
 
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;

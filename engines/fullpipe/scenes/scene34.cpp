@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -92,7 +92,7 @@ void scene34_initScene(Scene *sc) {
 	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_34"));
 
 	g_fp->lift_setButton(sO_Level7, ST_LBN_7N);
-	g_fp->lift_sub5(sc, QU_SC34_ENTERLIFT, QU_SC34_EXITLIFT);
+	g_fp->lift_init(sc, QU_SC34_ENTERLIFT, QU_SC34_EXITLIFT);
 
 	g_fp->initArcadeKeys("SC_34");
 }
@@ -216,7 +216,7 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 		int qId = 0;
 
 		if (ox == 887) {
-			if (oy != 370) 
+			if (oy != 370)
 				return;
 
 			qId = QU_SC34_FROMSTOOL;
@@ -317,7 +317,7 @@ int sceneHandler34(ExCommand *cmd) {
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
-		g_fp->lift_animation3();
+		g_fp->lift_clickButton();
 		break;
 
 	case MSG_SC34_FROMCACTUS:
@@ -392,7 +392,7 @@ int sceneHandler34(ExCommand *cmd) {
 		break;
 
 	case 64:
-		g_fp->lift_sub05(cmd);
+		g_fp->lift_hoverButton(cmd);
 		break;
 
 	case MSG_LIFT_GO:
@@ -426,7 +426,7 @@ int sceneHandler34(ExCommand *cmd) {
 				}
 
 				if (ani->_id == ANI_LIFTBUTTON) {
-					g_fp->lift_sub1(ani);
+					g_fp->lift_animateButton(ani);
 
 					cmd->_messageKind = 0;
 

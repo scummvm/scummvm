@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -122,7 +122,6 @@ const int kMaxPatt = 20;
 
 const int kResolutionScaler = 2;
 /*
-9   "A glance at the forbidden$",
 18  "It's already open$",
 26  "A photograph$"
 */
@@ -133,11 +132,6 @@ enum Places {
 	LANDING = 15,     CRYPT = 16,       SECRET_PASSAGE = 17, ROOM18 = 18,      MOUNTAIN = 19,
 	CHAPEL = 20,      MANOR_FRONT = 21, MANOR_BACK = 22,     INSIDE_WELL = 23, WELL = 24,
 	DOOR = 25,        ROOM26 = 26,      COAT_ARMS = 27
-};
-
-struct Pattern {
-	byte _tay, _tax;
-	byte _des[kMaxPatt + 1][kMaxPatt + 1];
 };
 
 struct SaveStruct {
@@ -408,7 +402,7 @@ public:
 	int  _charAnswerMax[9];
 	byte _tabdon[4001];
 	bool _soundOff;
-	bool _blo;
+	bool _outsideOnlyFl;
 	bool _destinationOk;
 	bool _largestClearScreen;
 	float _addFix;

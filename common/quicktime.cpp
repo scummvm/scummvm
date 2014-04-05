@@ -368,9 +368,6 @@ int QuickTimeParser::readMVHD(Atom atom) {
 int QuickTimeParser::readTRAK(Atom atom) {
 	Track *track = new Track();
 
-	if (!track)
-		return -1;
-
 	track->codecType = CODEC_TYPE_MOV_OTHER;
 	track->startTime = 0; // XXX: check
 	_tracks.push_back(track);
@@ -532,7 +529,7 @@ int QuickTimeParser::readSTSD(Atom atom) {
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
 	uint32 entryCount = _fd->readUint32BE();
-	track->sampleDescs.resize(entryCount);
+	track->sampleDescs.reserve(entryCount);
 
 	for (uint32 i = 0; i < entryCount; i++) { // Parsing Sample description table
 		Atom a = { 0, 0, 0 };
@@ -544,7 +541,7 @@ int QuickTimeParser::readSTSD(Atom atom) {
 		_fd->readUint16BE(); // reserved
 		_fd->readUint16BE(); // index
 
-		track->sampleDescs[i] = readSampleDesc(track, format, size - 16);
+		track->sampleDescs.push_back(readSampleDesc(track, format, size - 16));
 
 		debug(0, "size=%d 4CC= %s codec_type=%d", size, tag2str(format), track->codecType);
 
@@ -695,8 +692,14 @@ int QuickTimeParser::readWAVE(Atom atom) {
 	if (atom.size > (1 << 30))
 		return -1;
 
-	if (track->sampleDescs[0]->getCodecTag() == MKTAG('Q', 'D', 'M', '2')) // Read extra data for QDM2
-		track->extraData = _fd->readStream(atom.size);
+	// We should only get here within an stsd atom
+	if (track->sampleDescs.empty())
+		return -1;
+
+	SampleDesc *sampleDesc = track->sampleDescs.back();
+
+	if (sampleDesc->getCodecTag() == MKTAG('Q', 'D', 'M', '2')) // Read extra data for QDM2
+		sampleDesc->_extraData = _fd->readStream(atom.size);
 	else if (atom.size > 8)
 		return readDefault(atom);
 	else
@@ -738,6 +741,12 @@ int QuickTimeParser::readESDS(Atom atom) {
 
 	Track *track = _tracks.back();
 
+	// We should only get here within an stsd atom
+	if (track->sampleDescs.empty())
+		return -1;
+
+	SampleDesc *sampleDesc = track->sampleDescs.back();
+
 	_fd->readUint32BE(); // version + flags
 
 	byte tag;
@@ -753,7 +762,7 @@ int QuickTimeParser::readESDS(Atom atom) {
 	if (tag != kMP4DecConfigDescTag)
 		return 0;
 
-	track->objectTypeMP4 = _fd->readByte();
+	sampleDesc->_objectTypeMP4 = _fd->readByte();
 	_fd->readByte();                      // stream type
 	_fd->readUint16BE(); _fd->readByte(); // buffer size
 	_fd->readUint32BE();                  // max bitrate
@@ -764,9 +773,9 @@ int QuickTimeParser::readESDS(Atom atom) {
 	if (tag != kMP4DecSpecificDescTag)
 		return 0;
 
-	track->extraData = _fd->readStream(length);
+	sampleDesc->_extraData = _fd->readStream(length);
 
-	debug(0, "MPEG-4 object type = %02x", track->objectTypeMP4);
+	debug(0, "MPEG-4 object type = %02x", sampleDesc->_objectTypeMP4);
 	return 0;
 }
 
@@ -776,8 +785,14 @@ int QuickTimeParser::readSMI(Atom atom) {
 
 	Track *track = _tracks.back();
 
+	// We should only get here within an stsd atom
+	if (track->sampleDescs.empty())
+		return -1;
+
+	SampleDesc *sampleDesc = track->sampleDescs.back();
+
 	// This atom just contains SVQ3 extra data
-	track->extraData = _fd->readStream(atom.size);
+	sampleDesc->_extraData = _fd->readStream(atom.size);
 
 	return 0;
 }
@@ -797,6 +812,12 @@ void QuickTimeParser::close() {
 QuickTimeParser::SampleDesc::SampleDesc(Track *parentTrack, uint32 codecTag) {
 	_parentTrack = parentTrack;
 	_codecTag = codecTag;
+	_extraData = 0;
+	_objectTypeMP4 = 0;
+}
+
+QuickTimeParser::SampleDesc::~SampleDesc() {
+	delete _extraData;
 }
 
 QuickTimeParser::Track::Track() {
@@ -817,11 +838,9 @@ QuickTimeParser::Track::Track() {
 	codecType = CODEC_TYPE_MOV_OTHER;
 	editCount = 0;
 	editList = 0;
-	extraData = 0;
 	frameCount = 0;
 	duration = 0;
 	startTime = 0;
-	objectTypeMP4 = 0;
 	mediaDuration = 0;
 }
 
@@ -832,7 +851,6 @@ QuickTimeParser::Track::~Track() {
 	delete[] sampleSizes;
 	delete[] keyframes;
 	delete[] editList;
-	delete extraData;
 
 	for (uint32 i = 0; i < sampleDescs.size(); i++)
 		delete sampleDescs[i];
