@@ -514,7 +514,7 @@ GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &game
 	return result;
 }
 
-GameList EngineManager::detectGames(const Common::FSList &fslist) const {
+GameList EngineManager::detectGames(const Common::FSList &fslist, Common::String *error) const {
 	GameList candidates;
 	EnginePlugin::List plugins;
 	EnginePlugin::List::const_iterator iter;
@@ -524,7 +524,14 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 		// Iterate over all known games and for each check if it might be
 		// the game in the presented directory.
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-			candidates.push_back((**iter)->detectGames(fslist));
+			Common::String unknownVersion;
+			candidates.push_back((**iter)->detectGames(fslist, &unknownVersion));
+
+			// TODO: Should we really just concatenate all the error messages
+			// about unknown versions from all engines?
+			if (error && !unknownVersion.empty()) {
+				*error += unknownVersion;
+			}
 		}
 	} while (PluginManager::instance().loadNextPlugin());
 	return candidates;

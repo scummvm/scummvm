@@ -914,7 +914,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;
+	virtual GameList detectGames(const Common::FSList &fslist, Common::String *error) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
@@ -977,7 +977,7 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 	return res;
 }
 
-GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
+GameList ScummMetaEngine::detectGames(const Common::FSList &fslist, Common::String *error) const {
 	GameList detectedGames;
 	Common::List<DetectorResult> results;
 

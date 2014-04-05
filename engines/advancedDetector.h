@@ -261,7 +261,7 @@ public:
 
 	virtual GameDescriptor findGame(const char *gameid) const;
 
-	virtual GameList detectGames(const Common::FSList &fslist) const;
+	virtual GameList detectGames(const Common::FSList &fslist, Common::String *error) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
@@ -294,9 +294,10 @@ protected:
 	 * @param language	restrict results to specified language
 	 * @param platform	restrict results to specified platform
 	 * @param extra		restrict results to specified extra string (only if kADFlagUseExtraAsHint is set)
+	 * @param error		optional error string about unknown version(s)
 	 * @return	list of ADGameDescription pointers corresponding to matched games
 	 */
-	ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
+	ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, Common::String *unknownVersion) const;
 
 	/**
 	 * Iterates over all ADFileBasedFallback records inside fileBasedFallback.
@@ -315,8 +316,9 @@ protected:
 	/**
 	 * Log and print a report that we found an unknown game variant, together with the file
 	 * names, sizes and MD5 sums.
+	 * @return Information about unknown version.
 	 */
-	void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const;
+	Common::String reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const;
 
 	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;
