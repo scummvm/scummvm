@@ -303,26 +303,24 @@ bool SequenceList::loadSprites(int seqIndex) {
 		seqEntry._doneFlag = true;
 	}
 
-	if (seqEntry._entries._count > 0) {
-		for (int i = 0; i < seqEntry._entries._count; ++i) {
-			switch (seqEntry._entries._mode[i]) {
-			case SM_0:
-			case SM_1:
-				if (((seqEntry._entries._mode[i] == SM_0) && seqEntry._doneFlag) ||
-					((seqEntry._entries._mode[i] == SM_1) && result))
-					idx = i;
-				break;
+	for (int i = 0; i < seqEntry._entries._count; ++i) {
+		switch (seqEntry._entries._mode[i]) {
+		case SM_0:
+		case SM_1:
+			if (((seqEntry._entries._mode[i] == SM_0) && seqEntry._doneFlag) ||
+				((seqEntry._entries._mode[i] == SM_1) && result))
+				idx = i;
+			break;
 
-			case SM_FRAME_INDEX: {
-				int v = seqEntry._entries._frameIndex[i];
-				if ((v == seqEntry._frameIndex) || (v == 0))
-					idx = i;
-				break;
-			}
+		case SM_FRAME_INDEX: {
+			int v = seqEntry._entries._frameIndex[i];
+			if ((v == seqEntry._frameIndex) || (v == 0))
+				idx = i;
+			break;
+		}
 
-			default:
-				break;
-			}
+		default:
+			break;
 		}
 	}
 
