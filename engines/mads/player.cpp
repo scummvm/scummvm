@@ -388,8 +388,8 @@ void Player::move() {
 	bool newFacing = false;
 
 	if (_moving) {
-		bool isRouteEmpty = rails.empty();
 		while (!_walkOffScreen && _playerPos == _targetPos) {
+			bool isRouteEmpty = rails.empty();
 			if (!isRouteEmpty) {
 				const WalkNode &node = rails.popNode();
 
