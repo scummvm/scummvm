@@ -187,8 +187,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 
 		bool discard = false;
 
-		assert (candidate->width() != 0 || candidate->height() != 0);
-		assert (candidate->isValidRect());
+		assert(candidate->width() != 0 || candidate->height() != 0);
+		assert(candidate->isValidRect());
 
 		for (uint i = 0; i < ret.size() && !discard; i++) {
 
@@ -483,13 +483,13 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				 *      X X X
 				 *
 				 */
-				assert (
+				assert(
 						!(intersecting.left == candidate->left &&
 						 intersecting.right == candidate->right &&
 						 intersecting.top == candidate->top &&
 						 intersecting.bottom == candidate->bottom)
 				);
-				assert ((intersecting.width() != 0) && (intersecting.height() != 0));
+				assert((intersecting.width() != 0) && (intersecting.height() != 0));
 
 				Common::Rect *nSlice = new Common::Rect(*candidate);
 				Common::Rect *swSlice = new Common::Rect(*candidate);
@@ -501,10 +501,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				swSlice->right = intersecting.left;
 				swSlice->top = intersecting.top;
 
-				assert (intersecting.findIntersectingRect(*swSlice).width() == 0 ||
+				assert(intersecting.findIntersectingRect(*swSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*swSlice).height() == 0);
 
-				assert (intersecting.findIntersectingRect(*nSlice).width() == 0 ||
+				assert(intersecting.findIntersectingRect(*nSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*nSlice).height() == 0);
 
 
@@ -526,13 +526,13 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				 *  X X X
 				 *
 				 */
-				assert (
+				assert(
 						!(intersecting.left == candidate->left &&
 						 intersecting.right == candidate->right &&
 						 intersecting.top == candidate->top &&
 						 intersecting.bottom == candidate->bottom)
 				);
-				assert ((intersecting.width() != 0) && (intersecting.height() != 0));
+				assert((intersecting.width() != 0) && (intersecting.height() != 0));
 
 				Common::Rect *nSlice = new Common::Rect(*candidate);
 				Common::Rect *seSlice = new Common::Rect(*candidate);
@@ -544,10 +544,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				seSlice->left = intersecting.right;
 				seSlice->top = intersecting.top;
 
-				assert (intersecting.findIntersectingRect(*seSlice).width() == 0 ||
+				assert(intersecting.findIntersectingRect(*seSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*seSlice).height() == 0);
 
-				assert (intersecting.findIntersectingRect(*nSlice).width() == 0 ||
+				assert(intersecting.findIntersectingRect(*nSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*nSlice).height() == 0);
 
 				safeEnqueue(seSlice, &queue);
@@ -569,13 +569,13 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				 *      C C C
 				 *
 				 */
-				assert (
+				assert(
 						!(intersecting.left == candidate->left &&
 						 intersecting.right == candidate->right &&
 						 intersecting.top == candidate->top &&
 						 intersecting.bottom == candidate->bottom)
 				);
-				assert ((intersecting.width() != 0) && (intersecting.height() != 0));
+				assert((intersecting.width() != 0) && (intersecting.height() != 0));
 
 				Common::Rect *sSlice = new Common::Rect(*candidate);
 				Common::Rect *neSlice = new Common::Rect(*candidate);
@@ -587,10 +587,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				neSlice->left = intersecting.right;
 				neSlice->bottom = intersecting.bottom;
 
-				assert (intersecting.findIntersectingRect(*neSlice).width() == 0 ||
+				assert(intersecting.findIntersectingRect(*neSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*neSlice).height() == 0);
 
-				assert (intersecting.findIntersectingRect(*sSlice).width() == 0 ||
+				assert(intersecting.findIntersectingRect(*sSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*sSlice).height() == 0);
 
 				safeEnqueue(neSlice, &queue);
@@ -611,13 +611,13 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				 *  C C C
 				 *
 				 */
-				assert (
+				assert(
 						!(intersecting.left == candidate->left &&
 						 intersecting.right == candidate->right &&
 						 intersecting.top == candidate->top &&
 						 intersecting.bottom == candidate->bottom)
 				);
-				assert ((intersecting.width() != 0) && (intersecting.height() != 0));
+				assert((intersecting.width() != 0) && (intersecting.height() != 0));
 
 				Common::Rect *sSlice = new Common::Rect(*candidate);
 				Common::Rect *nwSlice = new Common::Rect(*candidate);
@@ -629,10 +629,10 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 				nwSlice->right = intersecting.left;
 				nwSlice->bottom = intersecting.bottom;
 
-				assert (intersecting.findIntersectingRect(*nwSlice).width() == 0 ||
+				assert(intersecting.findIntersectingRect(*nwSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*nwSlice).height() == 0);
 
-				assert (intersecting.findIntersectingRect(*sSlice).width() == 0 ||
+				assert(intersecting.findIntersectingRect(*sSlice).width() == 0 ||
 						intersecting.findIntersectingRect(*sSlice).height() == 0);
 
 				safeEnqueue(nwSlice, &queue);
@@ -674,8 +674,8 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 	} // End while loop
 
 #if CONSISTENCY_CHECK
-	assert (_tempDisableDRects == false);
-	assert (_clipRect != nullptr);
+	assert(_tempDisableDRects == false);
+	assert(_clipRect != nullptr);
 	int naivePx = consistencyCheck(ret);
 	// How many pixels we would have drawn if overlaps were not treated
 	int gain = (((filledPixels * 128) / (naivePx)) * 100 ) / 128;
@@ -688,7 +688,7 @@ Common::Array<Common::Rect *> DirtyRectContainer::getOptimized() {
 #define SENTINEL -255
 int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimized) {
 
-	assert (_clipRect != nullptr);
+	assert(_clipRect != nullptr);
 
 	Common::Array<Common::Array<int> > diff;
 
@@ -732,10 +732,10 @@ int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimize
 				}
 			}
 
-			assert (diff[x][y] == SENTINEL);
+			assert(diff[x][y] == SENTINEL);
 			diff[x][y] = (int)staysDirty - (int)isDirty;
 
-			assert (diff[x][y] >= 0);
+			assert(diff[x][y] >= 0);
 
 			if (diff[x][y] == 1)
 				dirtied++;
@@ -745,7 +745,7 @@ int DirtyRectContainer::consistencyCheck(Common::Array<Common::Rect *> &optimize
 		}
 	}
 
-	assert (cleaned == 0);
+	assert(cleaned == 0);
 
 	if (cleaned) {
 		warning("%d pixels have been cleaned", cleaned);
