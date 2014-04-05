@@ -25,7 +25,7 @@
 #include "common/fs.h"
 #include "common/stream.h"
 #include "common/archive.h"
-#include "graphics/decoders/tga.h"
+#include "image/tga.h"
 
 #include "backends/platform/android/events.h"
 #include "backends/platform/android/texture.h"
@@ -114,7 +114,7 @@ static Common::KeyCode determineKey(int dX, int dY, Common::KeyCode def = Common
 static GLES8888Texture *loadBuiltinTexture(const char *filename) {
 	Common::ArchiveMemberPtr member = SearchMan.getMember(filename);
 	Common::SeekableReadStream *str = member->createReadStream();
-	Graphics::TGADecoder dec;
+	Image::TGADecoder dec;
 	dec.loadStream(*str);
 	const void *pixels = dec.getSurface()->getPixels();
 
