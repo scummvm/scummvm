@@ -2148,7 +2148,7 @@ Math::Vector3d Actor::getWorldPos() const {
 
 Math::Quaternion Actor::getRotationQuat() const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		Math::Quaternion ret = Math::Quaternion::fromEuler(-_yaw, _pitch, _roll);
+		Math::Quaternion ret = Math::Quaternion::fromEuler(_yaw, _pitch, _roll);
 		if (_inOverworld)
 			ret = Math::Quaternion::fromEuler(-_yaw, -_pitch, -_roll);
 
@@ -2200,14 +2200,33 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 
 	Common::String jointStr = joint ? joint : "";
 
-	setPos(other->getWorldPos() - getWorldPos());
-	EMICostume *cost = static_cast<EMICostume *>(other->getCurrentCostume());
 	// If 'other' has a skeleton, check if it has the joint.
 	// Some models (pile o' boulders) don't have a skeleton,
 	// so we don't make the check in that case.
+	EMICostume *cost = static_cast<EMICostume *>(other->getCurrentCostume());
 	if (cost && cost->_emiSkel && cost->_emiSkel->_obj)
 		assert(cost->_emiSkel->_obj->hasJoint(jointStr));
 
+	// Find the new position coordinates
+	// FIXME: Check this when attaching to joints
+	Math::Vector3d actor = other->getWorldPos();
+	Math::Vector3d attachedTo = getWorldPos();
+
+	// Find the magnitude
+	Math::Vector3d diff = actor - attachedTo;
+	Math::Vector4d diff4(diff.x(), diff.y(), diff.z(), 1.0);
+
+	// Get the rotation matrix
+	Math::Quaternion q = other->getRotationQuat();
+	Math::Matrix4 actorRotMat = q.toMatrix();
+	actorRotMat.transpose();
+
+	// Apply the matrix to get our new coordinates
+	Math::Vector4d new_pos4 = actorRotMat * diff4;
+	Math::Vector3d new_pos(new_pos4.x(), new_pos4.y(), new_pos4.z());
+	setPos(-new_pos);
+
+	// Save the attachement info
 	_attachedActor = other->getId();
 	_attachedJoint = jointStr;
 }
