@@ -2066,7 +2066,8 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -mfpu=vfp"
 				LDFLAGS="$LDFLAGS -Wl,--fix-cortex-a8"
 				ABI="armeabi-v7a"
-				ANDROID_PLATFORM=4
+				# Platform version 9 is used by ResidualVM
+				ANDROID_PLATFORM=9
 				ANDROID_PLATFORM_ARCH="arm"
 				;;
 			android-mips)
