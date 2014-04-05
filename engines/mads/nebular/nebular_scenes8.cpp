@@ -105,30 +105,22 @@ void Scene804::enter() {
 
 	if (_globals[kInSpace]) {
 		if (_globals[kWindowFixed]) {
-			_globals._spriteIndexes[20] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[5], 0, 1);
+			_globals._spriteIndexes[20] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], 0, 1);
 			_scene->_sequences.addTimer(60, 100);
 		} else {
-			_globals._spriteIndexes[21] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[6], false, 1);
-			_globals._spriteIndexes[22] = _scene->_sequences.startReverseCycle(
-				_globals._spriteIndexes[7], false, 4, 0, 0, 0);
+			_globals._spriteIndexes[21] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
+			_globals._spriteIndexes[22] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[7], false, 4, 0, 0, 0);
 			_scene->_sequences.addTimer(160, 70);
 			_game._player._stepEnabled = false;
 		}
 	} else {
-		if (_globals[kBeamIsUp] == 0) {
-			_globals._spriteIndexes[23] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[8], false, 1);
-		}
+		if (_globals[kBeamIsUp] == 0)
+			_globals._spriteIndexes[23] = _scene->_sequences.startCycle(_globals._spriteIndexes[8], false, 1);
 
-		if (_globals[kWindowFixed] == 0) {
-			_globals._spriteIndexes[23] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[19], false, 1);
-		}
+		if (_globals[kWindowFixed] == 0)
+			_globals._spriteIndexes[23] = _scene->_sequences.startCycle(_globals._spriteIndexes[19], false, 1);
 
-		_globals._spriteIndexes[1] = _scene->_sequences.startCycle(
-			_globals._spriteIndexes[1], false, 1);
+		_globals._spriteIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[16], Common::Point(133, 139));
 		_scene->_sequences.setDepth(_globals._spriteIndexes[16], 8);
 	}
@@ -168,10 +160,8 @@ void Scene804::step() {
 		}
 	} else {
 		if (_globals._v3 && _globals._v2 && _scene->_activeAnimation->getCurrentFrame() == 39) {
-			_globals._spriteIndexes[16] = _scene->_sequences.startCycle(
-				_globals._spriteIndexes[1], false, 1);
-			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[16],
-				Common::Point(133, 139));
+			_globals._spriteIndexes[16] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[16], Common::Point(133, 139));
 			_scene->_sequences.setDepth(_globals._spriteIndexes[16], 8);
 			_globals._v3 = 0;
 		}
@@ -183,6 +173,7 @@ void Scene804::step() {
 
 		if (_game._trigger == 70)
 			_globals._v5 = 42;
+
 		if (_scene->_activeAnimation->getCurrentFrame() == 65)
 			_scene->_sequences.remove(_globals._spriteIndexes[22]);
 
