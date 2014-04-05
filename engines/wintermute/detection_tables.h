@@ -439,7 +439,21 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	// Ghosts in the Sheet
+	// Ghost in the Sheet
+	{
+		"ghostsheet",
+		"",
+		{
+			{"english.dcp", 0, "e6d0aad2c89996bcabe416105a3d6d3a", 12221017},
+			{"data.dcp", 0, "b2f8b05328e4881e15e98e845b63f451", 168003},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Ghost in the Sheet (Demo)
 	{
 		"ghostsheet",
 		"Demo",
