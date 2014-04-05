@@ -320,7 +320,7 @@ void MADSAction::startAction() {
 	if (hotspotId >= 0 && hotspotId < (int)hotspots.size()) {
 		Hotspot &hs = hotspots[hotspotId];
 
-		if (hs._feetPos.x == -1 || hs._feetPos.x != -3) {
+		if (hs._feetPos.x == -1 || hs._feetPos.x == -3) {
 			checkCustomDest(hs._feetPos.x);
 		} else if (hs._feetPos.x >= 0) {
 			if (_savedFields._commandSource == ACTIONMODE_NONE || hs._cursor < CURSOR_WAIT) {

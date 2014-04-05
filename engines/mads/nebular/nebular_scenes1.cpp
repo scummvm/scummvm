@@ -432,6 +432,8 @@ void Scene103::actions() {
 		_vm->_dialogs->show(10321);
 	} else if (_action.isAction(VERB_LOOK, 409)) {
 		_vm->_dialogs->show(_game._objects.isInInventory(OBJ_TIMER_MODULE) ? 10324 : 10325);
+	} else {
+		return;
 	}
 
 	_action._inProgress = false;

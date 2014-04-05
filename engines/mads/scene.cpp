@@ -313,9 +313,10 @@ void Scene::doFrame() {
 	if (!_vm->_game->_fx)
 		_frameStartTime = _vm->_events->getFrameCounter();
 
-	if ((_action._inProgress && !player._moving && !player._needToWalk &&
-			player._turnToFacing == player._facing) ||
-			(_vm->_game->_trigger && _vm->_game->_triggerMode == KERNEL_TRIGGER_PARSER)) {
+	// Handle parser actions as well as game triggers
+	if ((_action._inProgress && !player._moving && !player._needToWalk && 
+			(player._facing == player._turnToFacing) && !_vm->_game->_trigger) ||
+			(_vm->_game->_trigger && (_vm->_game->_triggerMode == KERNEL_TRIGGER_PARSER))) {
 		doAction();
 	}
 

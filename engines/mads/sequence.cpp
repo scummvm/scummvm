@@ -47,7 +47,7 @@ SequenceEntry::SequenceEntry() {
 	_field22 = 0;
 	_triggerCountdown = 0;
 	_doneFlag = 0;
-	_abortMode = KERNEL_TRIGGER_PARSER;
+	_triggerMode = KERNEL_TRIGGER_DAEMON;
 	_numTicks = 0;
 	_extraTicks = 0;
 	_timeout = 0;
@@ -135,7 +135,7 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 	_entries[seqIndex]._flags = 0;
 	_entries[seqIndex]._dynamicHotspotIndex = -1;
 	_entries[seqIndex]._entries._count = 0;
-	_entries[seqIndex]._abortMode = _vm->_game->_triggerSetupMode;
+	_entries[seqIndex]._triggerMode = _vm->_game->_triggerSetupMode;
 
 	_entries[seqIndex]._actionNouns = _vm->_game->_scene._action._activeAction;
 
@@ -160,7 +160,7 @@ int SequenceList::addTimer(int time, int abortVal) {
 	se._triggerCountdown = true;
 	se._doneFlag = false;
 	se._entries._count = 0;
-	se._abortMode = _vm->_game->_triggerSetupMode;
+	se._triggerMode = _vm->_game->_triggerSetupMode;
 	se._actionNouns = _vm->_game->_scene._action._activeAction;
 	addSubEntry(seqIndex, SM_0, 0, abortVal);
 
@@ -328,9 +328,9 @@ bool SequenceList::loadSprites(int seqIndex) {
 
 	if (idx >= 0) {
 		_vm->_game->_trigger = seqEntry._entries._abortVal[idx];
-		_vm->_game->_triggerMode = seqEntry._abortMode;
+		_vm->_game->_triggerMode = seqEntry._triggerMode;
 
-		if (seqEntry._abortMode == KERNEL_TRIGGER_DAEMON)
+		if (seqEntry._triggerMode == KERNEL_TRIGGER_DAEMON)
 			scene._action._activeAction = seqEntry._actionNouns;
 	}
 

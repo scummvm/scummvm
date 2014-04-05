@@ -130,20 +130,20 @@ void EventsManager::pollEvents() {
 			_mouseClicked = true;
 			_mouseButtons = 1;
 			_mouseMoved = true;
-			_anyStroke = true;
+			//_anyStroke = true;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			_mouseClicked = false;
 			_mouseReleased = true;
 			_mouseMoved = true;
-			_anyStroke = true;
+			//_anyStroke = true;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
 			_currentPos = event.mouse;
 			_mouseMoved = true;
-			_anyStroke = true;
+			//_anyStroke = true;
 			break;
 		default:
  			break;

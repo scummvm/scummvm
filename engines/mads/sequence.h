@@ -74,7 +74,7 @@ struct SequenceEntry {
 	int _triggerCountdown;
 	bool _doneFlag;
 	SequenceSubEntries _entries;
-	TriggerMode _abortMode;
+	TriggerMode _triggerMode;
 
 	ActionDetails _actionNouns;
 	int _numTicks;
