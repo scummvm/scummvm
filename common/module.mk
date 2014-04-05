@@ -3,8 +3,9 @@ MODULE := common
 MODULE_OBJS := \
 	archive.o \
 	config-manager.o \
+	coroutines.o \
+	dcl.o \
 	debug.o \
-	streamdebug.o \
 	error.o \
 	EventDispatcher.o \
 	EventMapper.o \
@@ -12,31 +13,37 @@ MODULE_OBJS := \
 	fs.o \
 	gui_options.o \
 	hashmap.o \
+	iff_container.o \
 	ini-file.o \
+	installshield_cab.o \
 	language.o \
+	localization.o \
 	macresman.o \
 	memorypool.o \
 	md5.o \
 	mutex.o \
 	platform.o \
+	quicktime.o \
 	random.o \
 	rational.o \
 	rendermode.o \
 	str.o \
 	stream.o \
+	streamdebug.o \
 	system.o \
 	textconsole.o \
 	tokenizer.o \
 	translation.o \
-	ustr.o \
+	unarj.o \
 	unzip.o \
+	ustr.o \
 	util.o \
 	winexe.o \
+	winexe_ne.o \
 	winexe_pe.o \
 	xmlparser.o \
 	zlib.o
 
-ifdef USE_BINK
 MODULE_OBJS += \
 	cosinetables.o \
 	dct.o \
@@ -44,7 +51,6 @@ MODULE_OBJS += \
 	huffman.o \
 	rdft.o \
 	sinetables.o
-endif
 
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \

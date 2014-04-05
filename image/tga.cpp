@@ -17,20 +17,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 /* Based on code from xoreos https://github.com/DrMcCoy/xoreos/
  * relicensed under GPLv2+ with permission from DrMcCoy and clone2727
  */
 
+#include "image/tga.h"
+
 #include "common/util.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/error.h"
 
-#include "graphics/decoders/tga.h"
-
-namespace Graphics {
+namespace Image {
 
 TGADecoder::TGADecoder() {
 	_colorMapSize = 0;
@@ -138,29 +139,29 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 	//int interleave = (imgDesc & 0xC);
 	if (imageType == TYPE_CMAP || imageType == TYPE_RLE_CMAP) {
 		if (pixelDepth == 8) {
-			_format = PixelFormat::createFormatCLUT8();
+			_format = Graphics::PixelFormat::createFormatCLUT8();
 		} else {
 			warning("Unsupported index-depth: %d", pixelDepth);
 			return false;
 		}
 	} else if (imageType == TYPE_TRUECOLOR || imageType == TYPE_RLE_TRUECOLOR) {
 		if (pixelDepth == 24) {
-			_format = PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+			_format = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
 		} else if (pixelDepth == 32) {
 			// HACK: According to the spec, attributeBits should determine the amount
 			// of alpha-bits, however, as the game files that use this decoder seems
 			// to ignore that fact, we force the amount to 8 for 32bpp files for now.
-			_format = PixelFormat(4, 8, 8, 8, /* attributeBits */ 8, 16, 8, 0, 24);
+			_format = Graphics::PixelFormat(4, 8, 8, 8, /* attributeBits */ 8, 16, 8, 0, 24);
 		} else if (pixelDepth == 16 && imageType == TYPE_TRUECOLOR) {
 			// 16bpp TGA is ARGB1555
-			_format = PixelFormat(2, 5, 5, 5, attributeBits, 10, 5, 0, 15);
+			_format = Graphics::PixelFormat(2, 5, 5, 5, attributeBits, 10, 5, 0, 15);
 		} else {
 			warning("Unsupported pixel depth: %d, %d", imageType, pixelDepth);
 			return false;
 		}
 	} else if (imageType == TYPE_BW || TYPE_RLE_BW) {
 		if (pixelDepth == 8) {
-			_format = PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
+			_format = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
 		} else {
 			warning("Unsupported pixel depth: %d, %d", imageType, pixelDepth);
 			return false;
@@ -186,7 +187,7 @@ bool TGADecoder::readColorMap(Common::SeekableReadStream &tga, byte imageType, b
 		byte r, g, b;
 		if (_colorMapEntryLength == 32) {
 			byte a;
-			PixelFormat format(4, 8, 8, 8, 0, 16, 8, 0, 24);
+			Graphics::PixelFormat format(4, 8, 8, 8, 0, 16, 8, 0, 24);
 			uint32 color = tga.readUint32LE();
 			format.colorToARGB(color, a, r, g, b);
 		} else if (_colorMapEntryLength == 24) {
@@ -195,7 +196,7 @@ bool TGADecoder::readColorMap(Common::SeekableReadStream &tga, byte imageType, b
 			b = tga.readByte();
 		} else if (_colorMapEntryLength == 16) {
 			byte a;
-			PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 15);
+			Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 15);
 			uint16 color = tga.readUint16LE();
 			format.colorToARGB(color, a, r, g, b);
 		} else {
@@ -426,4 +427,4 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 	return true;
 }
 
-} // End of namespace Graphics
+} // End of namespace Image

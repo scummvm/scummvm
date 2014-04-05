@@ -34,7 +34,8 @@
 #include "graphics/VectorRenderer.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/ttf.h"
-#include "graphics/decoders/bmp.h"
+
+#include "image/bmp.h"
 
 #include "gui/widget.h"
 #include "gui/ThemeEngine.h"
@@ -638,7 +639,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 		return true;
 
 	// If not, try to load the bitmap via the BitmapDecoder class.
-	Graphics::BitmapDecoder bitmapDecoder;
+	Image::BitmapDecoder bitmapDecoder;
 	const Graphics::Surface *srcSurface = 0;
 	Common::ArchiveMemberList members;
 	_themeFiles.listMatchingMembers(members, filename);

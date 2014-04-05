@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 // Disable symbol overrides so that we can use system headers.
@@ -30,11 +31,13 @@
 #include "common/error.h"
 #include "common/endian.h"
 #include "common/util.h"
+#include "common/str.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 
 #include <proto/camd.h>
 #include <proto/exec.h>
+#include <proto/dos.h>
 
 /*
  * CAMD sequencer driver
@@ -55,6 +58,7 @@ private:
 	struct Library *_CamdBase;
 	struct CamdIFace *_ICamd;
 	struct MidiLink *_midi_link;
+	char _outport[128];
 
 	char *getDevice();
 	void closeAll();
@@ -154,12 +158,17 @@ char *MidiDriver_CAMD::getDevice() {
 
 			if (strstr(dev, "out") != NULL) {
 				// This is an output device, return this
-				retname = dev;
+				Common::strlcpy(_outport, dev, sizeof(_outport));
+				retname = _outport;
 			} else {
 				// Search the next one
 				cluster = _ICamd->NextCluster(cluster);
 			}
 		}
+
+		// If the user has a preference outport set, use this instead
+		if(IDOS->GetVar("DefMidiOut", _outport, 128, 0))
+			retname = _outport;
 
 		_ICamd->UnlockCAMD(key);
 	}

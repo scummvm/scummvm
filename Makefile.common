@@ -26,6 +26,7 @@ MODULES += \
 	engines \
 	video \
 	graphics \
+	image \
 	audio \
 	math \
 	common \

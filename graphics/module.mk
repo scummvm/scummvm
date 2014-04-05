@@ -10,16 +10,17 @@ MODULE_OBJS := \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
 	fonts/ttf.o \
+	fonts/winfont.o \
+	maccursor.o \
 	primitives.o \
+	sjis.o \
 	surface.o \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
+	wincursor.o \
 	yuv_to_rgb.o \
 	yuva_to_rgba.o \
-	decoders/bmp.o \
-	decoders/jpeg.o \
-	decoders/tga.o \
 	pixelbuffer.o \
 	opengles2/shader.o \
 	opengles2/framebuffer.o \
@@ -47,6 +48,37 @@ MODULE_OBJS := \
 	tinygl/zmath.o \
 	tinygl/ztriangle.o \
 	tinygl/ztriangle_shadow.o
+
+ifdef USE_SCALERS
+MODULE_OBJS += \
+	scaler/2xsai.o \
+	scaler/aspect.o \
+	scaler/downscaler.o \
+	scaler/scale2x.o \
+	scaler/scale3x.o \
+	scaler/scalebit.o
+
+ifdef USE_ARM_SCALER_ASM
+MODULE_OBJS += \
+	scaler/downscalerARM.o \
+	scaler/scale2xARM.o \
+	scaler/Normal2xARM.o
+endif
+
+ifdef USE_HQ_SCALERS
+MODULE_OBJS += \
+	scaler/hq2x.o \
+	scaler/hq3x.o
+
+ifdef USE_NASM
+MODULE_OBJS += \
+	scaler/hq2x_i386.o \
+	scaler/hq3x_i386.o
+endif
+
+endif
+
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk

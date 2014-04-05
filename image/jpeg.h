@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -26,21 +26,24 @@
  *  - groovie
  *  - mohawk
  *  - wintermute
+ *
+ * Used by PICT/QuickTime.
  */
 
-#ifndef GRAPHICS_JPEG_H
-#define GRAPHICS_JPEG_H
+#ifndef IMAGE_JPEG_H
+#define IMAGE_JPEG_H
 
 #include "graphics/surface.h"
-#include "graphics/decoders/image_decoder.h"
+#include "image/image_decoder.h"
+#include "image/codecs/codec.h"
 
 namespace Common {
 class SeekableReadStream;
 }
 
-namespace Graphics {
+namespace Image {
 
-class JPEGDecoder : public ImageDecoder {
+class JPEGDecoder : public ImageDecoder, public Codec {
 public:
 	JPEGDecoder();
 	~JPEGDecoder();
@@ -48,7 +51,11 @@ public:
 	// ImageDecoder API
 	virtual void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &str);
-	virtual const Surface *getSurface() const;
+	virtual const Graphics::Surface *getSurface() const;
+
+	// Codec API
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
+	Graphics::PixelFormat getPixelFormat() const;
 
 	// Special API for JPEG
 	enum ColorSpace {
@@ -90,6 +97,6 @@ private:
 	ColorSpace _colorSpace;
 };
 
-} // End of Graphics namespace
+} // End of namespace Image
 
-#endif // GRAPHICS_JPEG_H
+#endif

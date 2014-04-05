@@ -17,50 +17,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
+
+#ifndef COMMON_LOCALIZATION_H
+#define COMMON_LOCALIZATION_H
+
+#include "common/language.h"
+#include "common/keyboard.h"
+
+namespace Common {
 
 /**
- * @file
- * Image decoder used in engines:
- *  - hugo
- *  - mohawk
- *  - wintermute
+ * Get localized equivalents for Y/N buttons of the specified language. In
+ * case there is no specialized keys for the given language it will fall back
+ * to the English keys.
+ *
+ * @param id Language id
+ * @param keyYes Key code for yes
+ * @param keyYes Key code for no
  */
+void getLanguageYesNo(Language id, KeyCode &keyYes, KeyCode &keyNo);
 
-#ifndef GRAPHICS_DECODERS_BMP_H
-#define GRAPHICS_DECODERS_BMP_H
+/**
+ * Get localized equivalents for Y/N buttons of the current translation
+ * language of the ScummVM GUI.
+ *
+ * @param keyYes Key code for yes
+ * @param keyYes Key code for no
+ */
+void getLanguageYesNo(KeyCode &keyYes, KeyCode &keyNo);
 
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "graphics/decoders/image_decoder.h"
-
-namespace Common{
-class SeekableReadStream;
-}
-
-namespace Graphics {
-
-struct PixelFormat;
-struct Surface;
-
-class BitmapDecoder : public ImageDecoder {
-public:
-	BitmapDecoder();
-	virtual ~BitmapDecoder();
-
-	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
-
-private:
-	Surface *_surface;
-	byte *_palette;
-	uint16 _paletteColorCount;
-};
-
-} // End of namespace Graphics
+} // End of namespace Common
 
 #endif

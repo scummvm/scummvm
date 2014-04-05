@@ -5,16 +5,23 @@ MODULE_OBJS := \
 	fmopl.o \
 	mididrv.o \
 	midiparser.o \
+	midiparser_qt.o \
 	mixer.o \
 	mpu401.o \
 	musicplugin.o \
 	null.o \
 	timestamp.o \
+	decoders/aac.o \
 	decoders/adpcm.o \
 	decoders/aiff.o \
 	decoders/flac.o \
+	decoders/iff_sound.o \
+	decoders/mac_snd.o \
 	decoders/mp3.o \
+	decoders/qdm2.o \
+	decoders/quicktime.o \
 	decoders/raw.o \
+	decoders/voc.o \
 	decoders/vorbis.o \
 	decoders/wave.o \
 	decoders/xa.o \
@@ -24,7 +31,7 @@ MODULE_OBJS := \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
 	softsynth/fluidsynth.o \
-	softsynth/mt32.o 
+	softsynth/mt32.o
 
 ifndef USE_ARM_SOUND_ASM
 MODULE_OBJS += \

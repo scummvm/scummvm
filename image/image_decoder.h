@@ -17,26 +17,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
-#ifndef GRAPHICS_DECODERS_IMAGEDECODER_H
-#define GRAPHICS_DECODERS_IMAGEDECODER_H
+#ifndef IMAGE_IMAGEDECODER_H
+#define IMAGE_IMAGEDECODER_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
 
-namespace Common{
+namespace Common {
 class SeekableReadStream;
 }
 
 namespace Graphics {
-
-struct PixelFormat;
 struct Surface;
+}
+
+namespace Image {
 
 /**
  * A representation of an image decoder that maintains ownership of the surface
  * and palette it decodes to.
+ *
+ * This is designed for still frames only.
  */
 class ImageDecoder {
 public:
@@ -72,7 +76,7 @@ public:
 	 *
 	 * @return the decoded surface, or 0 if no surface is present
 	 */
-	virtual const Surface *getSurface() const = 0;
+	virtual const Graphics::Surface *getSurface() const = 0;
 
 	/**
 	 * Get the decoded palette
@@ -99,6 +103,6 @@ public:
 	virtual uint16 getPaletteColorCount() const { return 0; }
 };
 
-} // End of namespace Graphics
+} // End of namespace Image
 
 #endif

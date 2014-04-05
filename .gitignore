@@ -117,6 +117,9 @@ ipch/
 LLVM32/
 LLVM64/
 
+#Ignore gettext generated files
+/messages.mo
+
 #Ignore Qt Creator project files
 ResidualVM.config
 ResidualVM.creator
