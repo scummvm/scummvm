@@ -78,10 +78,15 @@ int MeshComponent::update(uint /*time*/) {
 
 void MeshComponent::saveState(SaveGame *state) {
 	state->writeBool(_node->_meshVisible);
+	state->writeVector3d(_matrix.getPosition());
 }
 
 void MeshComponent::restoreState(SaveGame *state) {
 	_node->_meshVisible = state->readBool();
+	if (state->saveMinorVersion() >= 14) {
+		_matrix.setPosition(state->readVector3d());
+		_node->setMatrix(_matrix);
+	}
 }
 
 } // end of namespace Grim
