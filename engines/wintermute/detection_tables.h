@@ -59,6 +59,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"projectdoom",     "Project: Doom"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
+	{"rhiannon",		"Rhiannon: Curse of the four Branches"},
 	{"rosemary",        "Rosemary"},
 	{"securanote",      "Securanote"},
 	{"shaban",          "Shaban"},
@@ -1038,6 +1039,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("data.dcp", "f7938cbfdc48f07934550245a3286921", 255672016),
 		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Rhiannon: Curse of the four Branches
+	{
+		"rhiannon",
+		"",
+		AD_ENTRY1s("data.dcp", "870f348900b735f1cc79c0608ce32b0e", 1046169851),
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
