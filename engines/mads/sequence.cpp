@@ -330,7 +330,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 		_vm->_game->_trigger = seqEntry._entries._abortVal[idx];
 		_vm->_game->_triggerMode = seqEntry._triggerMode;
 
-		if (seqEntry._triggerMode == KERNEL_TRIGGER_DAEMON)
+		if (seqEntry._triggerMode != KERNEL_TRIGGER_DAEMON)
 			scene._action._activeAction = seqEntry._actionNouns;
 	}
 
