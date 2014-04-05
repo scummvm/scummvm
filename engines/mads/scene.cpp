@@ -474,12 +474,12 @@ void Scene::doAction() {
 		}
 
 		if (!_action._savedFields._lookFlag) {
-			if (!_action._inProgress) {
+			if (_action._inProgress) {
 				_action._savedFields._commandError = true;
 				_sceneLogic->postActions();
 			}
 
-			if (!_action._inProgress) {
+			if (_action._inProgress) {
 				_action._savedFields._commandError = true;
 				warning("TODO: PtrUnk4");
 			}

@@ -343,6 +343,7 @@ void Scene103::actions() {
 	} else if (_action.isAction(VERB_LOOK, 362)) {
 		_vm->_dialogs->show(10301);
 	} else if (_action.isAction(VERB_TAKE, 362)) {
+		// Take Turkey
 		if (!_vm->_game->_trigger)
 			_vm->_sound->command(31);
 
@@ -356,8 +357,7 @@ void Scene103::actions() {
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 0, 60, msg);
 				_scene->_sequences.addTimer(120, _vm->_game->_trigger);
 			} else {
-				_scene->_sequences.addSubEntry(_globals._spriteIndexes[24],
-					SM_0, 0, 1);
+				_scene->_sequences.addSubEntry(_globals._spriteIndexes[24], SM_0, 0, 1);
 			}
 
 			_game._player._stepEnabled = _game._trigger == 2;
