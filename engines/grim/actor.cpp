@@ -2209,8 +2209,8 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 
 	// Find the new position coordinates
 	// FIXME: Check this when attaching to joints
-	Math::Vector3d actor = other->getWorldPos();
-	Math::Vector3d attachedTo = getWorldPos();
+	Math::Vector3d actor = getWorldPos();
+	Math::Vector3d attachedTo = other->getWorldPos();
 
 	// Find the magnitude
 	Math::Vector3d diff = actor - attachedTo;
@@ -2224,7 +2224,7 @@ void Actor::attachToActor(Actor *other, const char *joint) {
 	// Apply the matrix to get our new coordinates
 	Math::Vector4d new_pos4 = actorRotMat * diff4;
 	Math::Vector3d new_pos(new_pos4.x(), new_pos4.y(), new_pos4.z());
-	setPos(-new_pos);
+	setPos(new_pos);
 
 	// Save the attachement info
 	_attachedActor = other->getId();
