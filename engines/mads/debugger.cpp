@@ -37,6 +37,7 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("play_sound", WRAP_METHOD(Debugger, Cmd_PlaySound));
 	DCmd_Register("show_codes", WRAP_METHOD(Debugger, Cmd_ShowCodes));
 	DCmd_Register("dump_file", WRAP_METHOD(Debugger, Cmd_DumpFile));
+	DCmd_Register("show_quote", WRAP_METHOD(Debugger, Cmd_ShowQuote));
 }
 
 static int strToInt(const char *s) {
@@ -165,6 +166,15 @@ bool Debugger::Cmd_DumpFile(int argc, const char **argv) {
 		}
 	}
 	
+	return true;
+}
+
+bool Debugger::Cmd_ShowQuote(int argc, const char **argv) {
+	if (argc != 2)
+		DebugPrintf("Usage: %s <quote number>\n", argv[0]);
+	else
+		DebugPrintf("%s", _vm->_game->getQuote(strToInt(argv[1])).c_str());
+
 	return true;
 }
 

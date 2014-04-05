@@ -41,6 +41,7 @@ protected:
 	bool Cmd_PlaySound(int argc, const char **argv);
 	bool Cmd_ShowCodes(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
+	bool Cmd_ShowQuote(int argc, const char **argv);
 public:
 	bool _showMousePos;
 public:
