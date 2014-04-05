@@ -455,8 +455,7 @@ void Scene::doAction() {
 	_vm->_game->_triggerSetupMode = KERNEL_TRIGGER_PARSER;
 	if ((_action._inProgress || _vm->_game->_trigger) && !_action._savedFields._commandError) {
 		_sceneLogic->actions();
-		_action._inProgress = true;
-		flag = true;
+		flag = !_action._inProgress;
 	}
 
 	if (_vm->_game->_screenObjects._inputMode == kInputConversation) {
@@ -465,8 +464,7 @@ void Scene::doAction() {
 		if ((_action._inProgress || _vm->_game->_trigger) ||
 			(!flag && _action._savedFields._commandError == flag)) {
 			_vm->_game->_sectionHandler->sectionPtr2();
-			_action._inProgress = true;
-			flag = true;
+			flag = !_action._inProgress;
 		}
 
 		if ((_action._inProgress || _vm->_game->_trigger) && 
