@@ -66,7 +66,7 @@ public:
 	PictureResource *_backgroundPage;
 	int _SVGAMode;
 	ViewPortListResource *_viewPortListPtr;
-	ViewPortResource **_vPort;
+	ViewPortResource *_vPort;
 	bool _saveBack;
 	Common::Rect *_clipPtr;
 	uint _planeSelect;
@@ -80,9 +80,9 @@ private:
 	void restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
 		PictureResource *srcPic, PictureResource *destPic);
 public:
-	GraphicsManager();
+	GraphicsManager(VoyeurEngine *vm);
 	~GraphicsManager();
-	void setVm(VoyeurEngine *vm) { _vm = vm; }
+
 	void sInitGraphics();
 
 	void setupMCGASaveRect(ViewPortResource *viewPort);
@@ -91,7 +91,7 @@ public:
 	void addRectNoSaveBack(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);
 
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &initialOffset);
-	void fillPic(DisplayResource *display, byte onOff = 0);
+	void fillPic(DisplayResource *display, byte onOff);
 	void sDisplayPic(PictureResource *pic);
 	void drawANumber(DisplayResource *display, int num, const Common::Point &pt);
 	void flipPage();

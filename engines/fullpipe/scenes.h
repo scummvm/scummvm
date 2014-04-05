@@ -32,6 +32,8 @@ class MGM;
 class MctlLadder;
 struct Ring;
 class StaticANIObject;
+struct Swinger;
+struct WalkingBearder;
 
 int defaultUpdateCursor();
 
@@ -109,7 +111,19 @@ int sceneHandler17(ExCommand *cmd);
 int scene17_updateCursor();
 
 void scene18_preload();
-void scene19_preload(Scene *sc, int key);
+void scene18_setupEntrance();
+void scene18_initScene1(Scene *sc);
+void scene18_initScene2(Scene *sc);
+int sceneHandler18(ExCommand *cmd);
+int scene18_updateCursor();
+
+void scene19_preload();
+void scene19_setMovements(Scene *sc, int entranceId);
+void scene19_initScene2();
+void scene19_setMovements(Scene *sc, int key);
+int sceneHandler19(ExCommand *cmd);
+int scene19_updateCursor();
+void scene19_setSugarState(Scene *sc);
 
 void scene20_initScene(Scene *sc);
 int sceneHandler20(ExCommand *ex);
@@ -149,6 +163,10 @@ int scene27_updateCursor();
 void scene28_initScene(Scene *sc);
 int sceneHandler28(ExCommand *ex);
 int scene28_updateCursor();
+
+int scene29_updateCursor();
+void scene29_initScene(Scene *sc);
+int sceneHandler29(ExCommand *cmd);
 
 int scene30_updateCursor();
 void scene30_initScene(Scene *sc, int flag);
@@ -214,6 +232,7 @@ struct BallChain {
 
 	void init(Ball **ball);
 	Ball *sub04(Ball *ballP, Ball *ballN);
+	void sub05(Ball *ball);
 	void reset() { pHead = 0; pTail = 0; field_8 = 0; numBalls = 0; free(cPlex); cPlex = 0; cPlexLen = 0; }
 };
 
@@ -348,26 +367,23 @@ public:
 	bool scene08_stairsVisible;
 	int scene08_manOffsetY;
 
-	int scene09_var02;
+	int scene09_dudeY;
 	StaticANIObject *scene09_flyingBall;
-	int scene09_var05;
-	StaticANIObject *scene09_glotatel;
+	int scene09_numSwallenBalls;
+	StaticANIObject *scene09_gulper;
 	StaticANIObject *scene09_spitter;
 	StaticANIObject *scene09_grit;
-	int scene09_var08;
-	int scene09_var09;
-	int scene09_var10;
-	int scene09_var11;
-	int scene09_var12;
+	bool scene09_gulperIsPresent;
+	bool scene09_dudeIsOnLadder;
+	int scene09_interactingHanger;
+	int scene09_intHangerPhase;
+	int scene09_intHangerMaxPhase;
 	BallChain scene09_balls;
 	Common::Array<Hanger *> scene09_hangers;
-	BallChain scene09_var07;
+	BallChain scene09_flyingBalls;
 	int scene09_numMovingHangers;
-	int scene09_var13;
-	int scene09_var15;
-	int scene09_var17;
-	int scene09_var19;
-	Common::Point scene09_var18;
+	int scene09_clickY;
+	Common::Point scene09_hangerOffsets[4];
 
 	StaticANIObject *scene10_gum;
 	StaticANIObject *scene10_packet;
@@ -463,7 +479,39 @@ public:
 	bool scene17_handPhase;
 	int scene17_sceneEdgeX;
 
-	int scene18_var01;
+	bool scene18_inScene18p1;
+	StaticANIObject *scene18_whirlgig;
+	Common::Array<Swinger *> scene18_swingers;
+	int scene18_wheelCenterX;
+	int scene18_wheelCenterY;
+	bool scene18_bridgeIsConvoluted;
+	int scene18_whirlgigMovMum;
+	bool scene18_girlIsSwinging;
+	int scene18_rotationCounter;
+	int scene18_manY;
+	bool scene18_wheelFlipper;
+	bool scene18_wheelIsTurning;
+	int scene18_kidIsOnWheel;
+	int scene18_boyIsOnWheel;
+	int scene18_girlIsOnWheel;
+	bool scene18_boyJumpedOff;
+	int scene18_manWheelPos;
+	int scene18_manWheelPosTo;
+	int scene18_kidWheelPos;
+	int scene18_kidWheelPosTo;
+	int scene18_jumpDistance;
+	int scene18_jumpAngle;
+	bool scene18_manIsReady;
+	bool scene18_enteredTrubaRight;
+	StaticANIObject *scene18_boy;
+	StaticANIObject *scene18_girl;
+	StaticANIObject *scene18_domino;
+	int scene18_boyJumpX;
+	int scene18_boyJumpY;
+	int scene18_girlJumpX;
+	int scene18_girlJumpY;
+
+	bool scene19_enteredTruba3;
 
 	int scene20_fliesCountdown;
 	StaticANIObject *scene20_grandma;
@@ -542,6 +590,29 @@ public:
 	bool scene28_headDirection;
 	bool scene28_headBeardedFlipper;
 	bool scene28_lift6inside;
+
+	StaticANIObject *scene29_porter;
+	StaticANIObject *scene29_shooter1;
+	StaticANIObject *scene29_shooter2;
+	StaticANIObject *scene29_ass;
+	BallChain scene29_balls;
+	BallChain scene29_redBalls;
+	BallChain scene29_var07;
+	BallChain scene29_greenBalls;
+	int scene29_var09;
+	int scene29_var10;
+	int scene29_var11;
+	int scene29_var12;
+	int scene29_var13;
+	int scene29_var14;
+	int scene29_var15;
+	int scene29_var16;
+	int scene29_var17;
+	int scene29_var18;
+	Common::Array<WalkingBearder *> scene29_var19;
+	int scene29_var20;
+	int scene29_var21;
+	MGM scene29_mgm;
 
 	StaticANIObject *scene30_leg;
 	int scene30_liftFlag;

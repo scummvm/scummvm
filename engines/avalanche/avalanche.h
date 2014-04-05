@@ -37,7 +37,7 @@
 #include "avalanche/sequence.h"
 #include "avalanche/timer.h"
 #include "avalanche/animation.h"
-#include "avalanche/menu.h"
+#include "avalanche/dropdown.h"
 #include "avalanche/closing.h"
 #include "avalanche/sound.h"
 #include "avalanche/nim.h"
@@ -45,6 +45,7 @@
 #include "avalanche/ghostroom.h"
 #include "avalanche/help.h"
 #include "avalanche/shootemup.h"
+#include "avalanche/mainmenu.h"
 
 #include "common/serializer.h"
 
@@ -84,13 +85,12 @@ public:
 	Sequence *_sequence;
 	Timer *_timer;
 	Animation *_animation;
-	Menu *_menu;
+	DropDownMenu *_dropdown;
 	Closing *_closing;
 	SoundHandler *_sound;
 	Nim *_nim;
 	GhostRoom *_ghostroom;
 	Help *_help;
-	ShootEmUp *_shootemup;
 
 	OSystem *_system;
 
@@ -236,6 +236,7 @@ public:
 	bool _isLoaded; // Is it a loaded gamestate?
 
 	void callVerb(VerbCode id);
+	void loadBackground(byte num);
 	void loadRoom(byte num);
 	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!
 	void incScore(byte num); // Add on no. of points
@@ -248,9 +249,9 @@ public:
 	void gameOver();
 	uint16 bearing(byte whichPed); // Returns the bearing from ped 'whichped' to Avvy, in degrees.
 
-	// There are two kinds of redraw: Major and Minor. Minor is what happens when you load a game, etc. Major redraws EVERYTHING.
+	// There are two kinds of redraw: Major and Minor. Minor is what happens when you load a game, etc.
+	// Major was replaced with GraphicManager::refreshScreen(), it redraws EVERYTHING.
 	void minorRedraw();
-	void majorRedraw();
 
 	void spriteRun();
 

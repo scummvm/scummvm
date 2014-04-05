@@ -44,9 +44,11 @@ namespace Graphics {
 struct PixelFormat;
 }
 
-namespace Video {
-
+namespace Image {
 class Codec;
+}
+
+namespace Video {
 
 /**
  * Decoder for QuickTime videos.
@@ -95,7 +97,7 @@ private:
 		char _codecName[32];
 		uint16 _colorTableId;
 		byte *_palette;
-		Codec *_videoCodec;
+		Image::Codec *_videoCodec;
 	};
 
 	// The AudioTrackHandler is currently just a wrapper around some

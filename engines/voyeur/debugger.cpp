@@ -27,7 +27,7 @@
 
 namespace Voyeur {
 
-Debugger::Debugger() : GUI::Debugger() {
+Debugger::Debugger(VoyeurEngine *vm) : GUI::Debugger(), _vm(vm) {
 	// Register methods
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("exit", WRAP_METHOD(Debugger, Cmd_Exit));
@@ -53,7 +53,7 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 			dtString += " " + timeString;
 
 		DebugPrintf("Time period = %d, date/time is: %s, time is %s\n", 
-			_vm->_voy._transitionId, dtString.c_str(), _isTimeActive ? "on" : "off");
+			_vm->_voy->_transitionId, dtString.c_str(), _isTimeActive ? "on" : "off");
 		DebugPrintf("Format: %s [on | off | 1..17 | val <amount>]\n\n", argv[0]);
 	} else {
 		if (!strcmp(argv[1], "on")) {
@@ -64,14 +64,14 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 			DebugPrintf("Time is now off\n\n");
 		} else if (!strcmp(argv[1], "val")) {
 			if (argc < 3) {
-				DebugPrintf("Time expired is currently %d.\n", _vm->_voy._RTVNum);
+				DebugPrintf("Time expired is currently %d.\n", _vm->_voy->_RTVNum);
 			} else {
-				_vm->_voy._RTVNum = atoi(argv[2]);
-				DebugPrintf("Time expired is now %d.\n", _vm->_voy._RTVNum);
+				_vm->_voy->_RTVNum = atoi(argv[2]);
+				DebugPrintf("Time expired is now %d.\n", _vm->_voy->_RTVNum);
 			}
 		} else {
 			int timeId = atoi(argv[1]);
-			if (timeId >= 1 && timeId <= 17) {
+			if (timeId >= 1 && timeId < 17) {
 				int stateId = TIME_STATES[timeId - 1];
 				if (!stateId) {
 					DebugPrintf("Given time period is not used in-game\n");
@@ -92,10 +92,37 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
+	if (_vm->_voy->_computerTextId >= 0) {
+		DebugPrintf("Hotspot Computer Screen %d - %d,%d->%d,%d\n",
+			_vm->_voy->_computerTextId,
+			_vm->_voy->_computerScreenRect.left,
+			_vm->_voy->_computerScreenRect.top,
+			_vm->_voy->_computerScreenRect.right,
+			_vm->_voy->_computerScreenRect.bottom);
+	}
+
+#if 0
+	// Room hotspots
+	BoltEntry &boltEntry = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 4);
+	if (boltEntry._rectResource) {
+		Common::Array<RectEntry> &hotspots = boltEntry._rectResource->_entries;
+		for (uint hotspotIdx = 0; hotspotIdx < hotspots.size(); ++hotspotIdx) {
+			Common::String pos = Common::String::format("(%d,%d->%d,%d)",
+				hotspots[hotspotIdx].left, hotspots[hotspotIdx].top,
+				hotspots[hotspotIdx].right, hotspots[hotspotIdx].bottom);
+			int arrIndex = hotspots[hotspotIdx]._arrIndex;
+			if (_vm->_voy->_roomHotspotsEnabled[arrIndex - 1]) {
+				DebugPrintf("Hotspot Room %d - %s - Enabled\n", arrIndex, pos);
+			} else {
+				DebugPrintf("Hotspot Room - %s - Disabled\n", pos);
+			}
+		}
+	}
+#endif
+
+	// Outside view hotspots
 	BoltEntry &boltEntry = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1);
-	if (!boltEntry._rectResource) {
-		DebugPrintf("No hotspots available\n");
-	} else {
+	if (boltEntry._rectResource) {
 		Common::Array<RectEntry> &hotspots = boltEntry._rectResource->_entries;
 
 		for (uint hotspotIdx = 0; hotspotIdx < hotspots.size(); ++hotspotIdx) {
@@ -104,33 +131,33 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 				hotspots[hotspotIdx].right, hotspots[hotspotIdx].bottom);
 
 			for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
-				if (_vm->_voy._audioHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
+				if (_vm->_voy->_audioHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
 					DebugPrintf("Hotspot %d %s Audio slot %d, time: %d to %d\n", 
 						hotspotIdx, pos.c_str(), arrIndex,
-						_vm->_voy._audioHotspotTimes._min[arrIndex][hotspotIdx],
-						_vm->_voy._audioHotspotTimes._max[arrIndex][hotspotIdx]);
+						_vm->_voy->_audioHotspotTimes._min[arrIndex][hotspotIdx],
+						_vm->_voy->_audioHotspotTimes._max[arrIndex][hotspotIdx]);
 				}
 
-				if (_vm->_voy._evidenceHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
+				if (_vm->_voy->_evidenceHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
 					DebugPrintf("Hotspot %d %s Evidence slot %d, time: %d to %d\n", 
 						hotspotIdx, pos.c_str(), arrIndex,
-						_vm->_voy._evidenceHotspotTimes._min[arrIndex][hotspotIdx],
-						_vm->_voy._evidenceHotspotTimes._max[arrIndex][hotspotIdx]);
+						_vm->_voy->_evidenceHotspotTimes._min[arrIndex][hotspotIdx],
+						_vm->_voy->_evidenceHotspotTimes._max[arrIndex][hotspotIdx]);
 				}
 			}
 
 			for (int arrIndex = 0; arrIndex < 8; ++arrIndex) {
-				if (_vm->_voy._videoHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
+				if (_vm->_voy->_videoHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
 					DebugPrintf("Hotspot %d %s Video slot %d, time: %d to %d\n", 
 						hotspotIdx, pos.c_str(), arrIndex,
-						_vm->_voy._videoHotspotTimes._min[arrIndex][hotspotIdx],
-						_vm->_voy._videoHotspotTimes._max[arrIndex][hotspotIdx]);
+						_vm->_voy->_videoHotspotTimes._min[arrIndex][hotspotIdx],
+						_vm->_voy->_videoHotspotTimes._max[arrIndex][hotspotIdx]);
 				}
 			}
 		}
 	}
 
-	DebugPrintf("\n");
+	DebugPrintf("\nEnd of list\n");
 	return true;
 }
 

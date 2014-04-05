@@ -47,7 +47,7 @@ void loadPart(const char *partName) {
 	g_cine->_partFileHandle.readUint16BE(); // entry size
 
 	if (currentPartName != partName)
-		strcpy(currentPartName, partName);
+		Common::strlcpy(currentPartName, partName, sizeof(currentPartName));
 
 	for (uint16 i = 0; i < g_cine->_partBuffer.size(); i++) {
 		g_cine->_partFileHandle.read(g_cine->_partBuffer[i].partName, 14);

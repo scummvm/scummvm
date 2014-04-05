@@ -52,7 +52,6 @@ IntData::IntData() {
 	_hasPalette = false;
 	_flashTimer = 0;
 	_flashStep = 0;
-	field26 = 0;
 	_skipFading = false;
 	_palStartIndex = 0;
 	_palEndIndex = 0;
@@ -61,8 +60,8 @@ IntData::IntData() {
 
 /*------------------------------------------------------------------------*/
 
-EventsManager::EventsManager(): _intPtr(_gameData),
-		_fadeIntNode(0, 0, 3), _cycleIntNode(0, 0, 3) {
+EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
+		_fadeIntNode(0, 0, 3), _cycleIntNode(0, 0, 3), _vm(vm) {
 	_cycleStatus = 0;
 	_fadeStatus = 0;
 	_priorFrameTime = g_system->getMillis();
@@ -80,10 +79,12 @@ EventsManager::EventsManager(): _intPtr(_gameData),
 	_newLeftClick = _newRightClick = false;;
 
 	_videoDead = 0;
-}
 
-void EventsManager::resetMouse() {
-	// No implementation
+	_fadeFirstCol = _fadeLastCol = 0;
+	_fadeCount = 1;
+
+	for (int i = 0; i < 4; i++)
+		_cycleNext[i] = nullptr;
 }
 
 void EventsManager::startMainClockInt() {
@@ -94,34 +95,34 @@ void EventsManager::startMainClockInt() {
 }
 
 void EventsManager::mainVoyeurIntFunc() {
-	if (!(_vm->_voy._eventFlags & EVTFLAG_TIME_DISABLED)) {
-		++_vm->_voy._switchBGNum;
+	if (!(_vm->_voy->_eventFlags & EVTFLAG_TIME_DISABLED)) {
+		++_vm->_voy->_switchBGNum;
 
-		if (_vm->_debugger._isTimeActive) {
+		if (_vm->_debugger->_isTimeActive) {
 			// Increase camera discharge
-			++_vm->_voy._RTVNum;
+			++_vm->_voy->_RTVNum;
 
 			// If the murder threshold has been set, and is passed, then flag the victim
 			// as murdered, which prevents sending the tape from succeeding
-			if (_vm->_voy._RTVNum >= _vm->_voy._murderThreshold)
-				_vm->_voy._victimMurdered = true;
+			if (_vm->_voy->_RTVNum >= _vm->_voy->_murderThreshold)
+				_vm->_voy->_victimMurdered = true;
 		}
 	}
 }
 
 void EventsManager::sWaitFlip() {
-	Common::Array<ViewPortResource *> &viewPorts = _vm->_graphicsManager._viewPortListPtr->_entries;
+	Common::Array<ViewPortResource *> &viewPorts = _vm->_graphicsManager->_viewPortListPtr->_entries;
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
 		ViewPortResource &viewPort = *viewPorts[idx];
 
-		if (_vm->_graphicsManager._saveBack && (viewPort._flags & DISPFLAG_40)) {
-			Common::Rect *clipPtr = _vm->_graphicsManager._clipPtr;
-			_vm->_graphicsManager._clipPtr = &viewPort._clipRect;
+		if (_vm->_graphicsManager->_saveBack && (viewPort._flags & DISPFLAG_40)) {
+			Common::Rect *clipPtr = _vm->_graphicsManager->_clipPtr;
+			_vm->_graphicsManager->_clipPtr = &viewPort._clipRect;
 
 			if (viewPort._restoreFn)
-				(_vm->_graphicsManager.*viewPort._restoreFn)(&viewPort);
+				(_vm->_graphicsManager->*viewPort._restoreFn)(&viewPort);
 
-			_vm->_graphicsManager._clipPtr = clipPtr;
+			_vm->_graphicsManager->_clipPtr = clipPtr;
 			viewPort._rectListCount[viewPort._pageIndex] = 0;
 			viewPort._rectListPtr[viewPort._pageIndex]->clear();
 			viewPort._flags &= ~DISPFLAG_40;
@@ -150,19 +151,19 @@ void EventsManager::checkForNextFrameCounter() {
 			mainVoyeurIntFunc();
 
 		// Give time to the debugger
-		_vm->_debugger.onFrame();
+		_vm->_debugger->onFrame();
 
 		// If mouse position display is on, display the position
-		if (_vm->_debugger._showMousePosition)
+		if (_vm->_debugger->_showMousePosition)
 			showMousePosition();
 
 		// Display the frame
-		g_system->copyRectToScreen((byte *)_vm->_graphicsManager._screenSurface.getPixels(), 
+		g_system->copyRectToScreen((byte *)_vm->_graphicsManager->_screenSurface.getPixels(), 
 			SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		g_system->updateScreen();
 
 		// Signal the ScummVM debugger
-		_vm->_debugger.onFrame();
+		_vm->_debugger->onFrame();
 	}
 }
 
@@ -177,22 +178,18 @@ void EventsManager::showMousePosition() {
 		mousePos += Common::String::format(" - (%d,%d)", pt.x, pt.y);
 	}
 
-	_vm->_graphicsManager._screenSurface.fillRect(
+	_vm->_graphicsManager->_screenSurface.fillRect(
 		Common::Rect(0, 0, 110, font.getFontHeight()), 0);
-	font.drawString(&_vm->_graphicsManager._screenSurface, mousePos,
+	font.drawString(&_vm->_graphicsManager->_screenSurface, mousePos,
 		0, 0, 110, 63);
 }
 
 void EventsManager::voyeurTimer() {
 	_gameData._flashTimer += _gameData._flashStep;
 
-	if (--_gameData.field26 <= 0) {
-		if (_gameData._flipWait) {
-			_gameData._flipWait = false;
-			_gameData._skipFading = false;
-		}
-
-		_gameData.field26 >>= 8;
+	if (_gameData._flipWait) {
+		_gameData._flipWait = false;
+		_gameData._skipFading = false;
 	}
 
 	videoTimer();
@@ -245,7 +242,7 @@ void EventsManager::delayClick(int cycles) {
 		g_system->delayMillis(10);
 		getMouseInfo();
 	} while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd 
-			&& !_vm->_eventsManager._mouseClicked);
+			&& !_vm->_eventsManager->_mouseClicked);
 }
 
 void EventsManager::pollEvents() {
@@ -264,23 +261,23 @@ void EventsManager::pollEvents() {
 			// Check for debugger
 			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
 				// Attach to the debugger
-				_vm->_debugger.attach();
-				_vm->_debugger.onFrame();
+				_vm->_debugger->attach();
+				_vm->_debugger->onFrame();
 			}
 			return;
 		case Common::EVENT_LBUTTONDOWN:
-			_vm->_eventsManager._newLeftClick = true;
-			_vm->_eventsManager._newMouseClicked = true;
+			_newLeftClick = true;
+			_newMouseClicked = true;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_vm->_eventsManager._newRightClick = true;
-			_vm->_eventsManager._newMouseClicked = true;
+			_newRightClick = true;
+			_newMouseClicked = true;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_vm->_eventsManager._newMouseClicked = false;
-			_vm->_eventsManager._newLeftClick = false;
-			_vm->_eventsManager._newRightClick = false;
+			_newMouseClicked = false;
+			_newLeftClick = false;
+			_newRightClick = false;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -302,11 +299,11 @@ void EventsManager::startFade(CMapResource *cMap) {
 
 	if (cMap->_steps > 0) {
 		_fadeStatus = cMap->_fadeStatus | 1;
-		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
+		byte *vgaP = &_vm->_graphicsManager->_VGAColors[_fadeFirstCol * 3];
 		int mapIndex = 0;
 
 		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx, vgaP += 3) {
-			ViewPortPalEntry &palEntry = _vm->_graphicsManager._viewPortListPtr->_palette[idx];
+			ViewPortPalEntry &palEntry = _vm->_graphicsManager->_viewPortListPtr->_palette[idx];
 			palEntry._rEntry = vgaP[0] << 8;
 			int rDiff = (cMap->_entries[mapIndex * 3] << 8) - palEntry._rEntry;
 			palEntry._rChange = rDiff / cMap->_steps;
@@ -328,7 +325,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 			_intPtr._skipFading = true;
 		_fadeIntNode._flags &= ~1;
 	} else {
-		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
+		byte *vgaP = &_vm->_graphicsManager->_VGAColors[_fadeFirstCol * 3];
 		int mapIndex = 0;
 
 		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx, vgaP += 3) {
@@ -373,10 +370,9 @@ void EventsManager::vDoFadeInt() {
 		return;
 	}
 
-
 	for (int i = _fadeFirstCol; i <= _fadeLastCol; ++i) {
-		ViewPortPalEntry &palEntry = _vm->_graphicsManager._viewPortListPtr->_palette[i];
-		byte *vgaP = &_vm->_graphicsManager._VGAColors[palEntry._palIndex * 3];
+		ViewPortPalEntry &palEntry = _vm->_graphicsManager->_viewPortListPtr->_palette[i];
+		byte *vgaP = &_vm->_graphicsManager->_VGAColors[palEntry._palIndex * 3];
 
 		palEntry._rEntry += palEntry._rChange;
 		palEntry._gEntry += palEntry._gChange;
@@ -399,7 +395,7 @@ void EventsManager::vDoCycleInt() {
 	for (int idx = 3; idx >= 0; --idx) {
 		if (_cyclePtr->_type[idx] && --_cycleTime[idx] <= 0) {
 			byte *pSrc = _cycleNext[idx];
-			byte *pPal = _vm->_graphicsManager._VGAColors;
+			byte *pPal = _vm->_graphicsManager->_VGAColors;
 
 			if (_cyclePtr->_type[idx] != 1) {
 				// New palette data being specified - loop to set entries
@@ -478,30 +474,30 @@ void EventsManager::vDoCycleInt() {
 
 
 void EventsManager::fadeIntFunc() {
-	switch (_vm->_voy._fadingType) {
+	switch (_vm->_voy->_fadingType) {
 	case 1:
-		if (_vm->_voy._fadingAmount1 < 63)
-			_vm->_voy._fadingAmount1 += _vm->_voy._fadingStep1;
-		if (_vm->_voy._fadingAmount2 < 63)
-			_vm->_voy._fadingAmount2 += _vm->_voy._fadingStep2;
-		if (_vm->_voy._fadingAmount1 > 63)
-			_vm->_voy._fadingAmount1 = 63;
-		if (_vm->_voy._fadingAmount2 > 63)
-			_vm->_voy._fadingAmount2 = 63;
-		if ((_vm->_voy._fadingAmount1 == 63) && (_vm->_voy._fadingAmount2 == 63))
-			_vm->_voy._fadingType = 0;
+		if (_vm->_voy->_fadingAmount1 < 63)
+			_vm->_voy->_fadingAmount1 += _vm->_voy->_fadingStep1;
+		if (_vm->_voy->_fadingAmount2 < 63)
+			_vm->_voy->_fadingAmount2 += _vm->_voy->_fadingStep2;
+		if (_vm->_voy->_fadingAmount1 > 63)
+			_vm->_voy->_fadingAmount1 = 63;
+		if (_vm->_voy->_fadingAmount2 > 63)
+			_vm->_voy->_fadingAmount2 = 63;
+		if ((_vm->_voy->_fadingAmount1 == 63) && (_vm->_voy->_fadingAmount2 == 63))
+			_vm->_voy->_fadingType = 0;
 		break;
 	case 2:
-		if (_vm->_voy._fadingAmount1 > 0)
-			_vm->_voy._fadingAmount1 -= _vm->_voy._fadingStep1;
-		if (_vm->_voy._fadingAmount2 > 0)
-			_vm->_voy._fadingAmount2 -= _vm->_voy._fadingStep2;
-		if (_vm->_voy._fadingAmount1 < 0)
-			_vm->_voy._fadingAmount1 = 0;
-		if (_vm->_voy._fadingAmount2 < 0)
-			_vm->_voy._fadingAmount2 = 0;
-		if ((_vm->_voy._fadingAmount1 == 0) && (_vm->_voy._fadingAmount2 == 0))
-			_vm->_voy._fadingType = 0;
+		if (_vm->_voy->_fadingAmount1 > 0)
+			_vm->_voy->_fadingAmount1 -= _vm->_voy->_fadingStep1;
+		if (_vm->_voy->_fadingAmount2 > 0)
+			_vm->_voy->_fadingAmount2 -= _vm->_voy->_fadingStep2;
+		if (_vm->_voy->_fadingAmount1 < 0)
+			_vm->_voy->_fadingAmount1 = 0;
+		if (_vm->_voy->_fadingAmount2 < 0)
+			_vm->_voy->_fadingAmount2 = 0;
+		if ((_vm->_voy->_fadingAmount1 == 0) && (_vm->_voy->_fadingAmount2 == 0))
+			_vm->_voy->_fadingType = 0;
 		break;
 	default:
 		break;
@@ -525,26 +521,26 @@ void EventsManager::setCursor(PictureResource *pic) {
 	cursor._bounds = pic->_bounds;
 	cursor._flags = DISPFLAG_CURSOR;
 
-	_vm->_graphicsManager.sDrawPic(pic, &cursor, Common::Point());
+	_vm->_graphicsManager->sDrawPic(pic, &cursor, Common::Point());
 }
 
-void EventsManager::setCursor(byte *cursorData, int width, int height) {
-	CursorMan.replaceCursor(cursorData, width, height, width / 2, height / 2, 0);
+void EventsManager::setCursor(byte *cursorData, int width, int height, int keyColor) {
+	CursorMan.replaceCursor(cursorData, width, height, width / 2, height / 2, keyColor);
 }
 
 void EventsManager::setCursorColor(int idx, int mode) {
 	switch (mode) {
 	case 0:
-		_vm->_graphicsManager.setColor(idx, 90, 90, 232);
+		_vm->_graphicsManager->setColor(idx, 90, 90, 232);
 		break;
 	case 1:
-		_vm->_graphicsManager.setColor(idx, 232, 90, 90);
+		_vm->_graphicsManager->setColor(idx, 232, 90, 90);
 		break;
 	case 2:
-		_vm->_graphicsManager.setColor(idx, 90, 232, 90);
+		_vm->_graphicsManager->setColor(idx, 90, 232, 90);
 		break;
 	case 3:
-		_vm->_graphicsManager.setColor(idx, 90, 232, 232);
+		_vm->_graphicsManager->setColor(idx, 90, 232, 232);
 		break;
 	default:
 		break;
@@ -562,38 +558,38 @@ void EventsManager::hideCursor() {
 void EventsManager::getMouseInfo() {
 	pollEvents();
 
-	if (_vm->_voy._eventFlags & EVTFLAG_RECORDING) {
+	if (_vm->_voy->_eventFlags & EVTFLAG_RECORDING) {
 		if ((_gameCounter - _recordBlinkCounter) > 8) {
 			_recordBlinkCounter = _gameCounter;
 
 			if (_cursorBlinked) {
 				_cursorBlinked = false;
-				_vm->_graphicsManager.setOneColor(128, 220, 20, 20);
-				_vm->_graphicsManager.setColor(128, 220, 20, 20);
+				_vm->_graphicsManager->setOneColor(128, 220, 20, 20);
+				_vm->_graphicsManager->setColor(128, 220, 20, 20);
 			} else {
 				_cursorBlinked = true;
-				_vm->_graphicsManager.setOneColor(128, 220, 220, 220);
-				_vm->_graphicsManager.setColor(128, 220, 220, 220);
+				_vm->_graphicsManager->setOneColor(128, 220, 220, 220);
+				_vm->_graphicsManager->setColor(128, 220, 220, 220);
 			}
 		}
 	}
 
-	_vm->_eventsManager._mouseClicked = _vm->_eventsManager._newMouseClicked;
-	_vm->_eventsManager._leftClick = _vm->_eventsManager._newLeftClick;
-	_vm->_eventsManager._rightClick = _vm->_eventsManager._newRightClick;
+	_mouseClicked = _newMouseClicked;
+	_leftClick = _newLeftClick;
+	_rightClick = _newRightClick;
 
-	_vm->_eventsManager._newMouseClicked = false;
-	_vm->_eventsManager._newLeftClick = false;
-	_vm->_eventsManager._newRightClick = false;
+	_newMouseClicked = false;
+	_newLeftClick = false;
+	_newRightClick = false;
 }
 
 void EventsManager::startCursorBlink() {
-	if (_vm->_voy._eventFlags & EVTFLAG_RECORDING) {
-		_vm->_graphicsManager.setOneColor(128, 55, 5, 5);
-		_vm->_graphicsManager.setColor(128, 220, 20, 20);
+	if (_vm->_voy->_eventFlags & EVTFLAG_RECORDING) {
+		_vm->_graphicsManager->setOneColor(128, 55, 5, 5);
+		_vm->_graphicsManager->setColor(128, 220, 20, 20);
 		_intPtr._hasPalette = true;
 
-		_vm->_graphicsManager.drawDot();
+		_vm->_graphicsManager->drawDot();
 		//copySection();
 	}
 }
@@ -608,8 +604,8 @@ void EventsManager::stopEvidDim() {
 }
 
 Common::String EventsManager::getEvidString(int eventIndex) {
-	assert(eventIndex <= _vm->_voy._eventCount);
-	VoyeurEvent &e = _vm->_voy._events[eventIndex];
+	assert(eventIndex <= _vm->_voy->_eventCount);
+	VoyeurEvent &e = _vm->_voy->_events[eventIndex];
 	return Common::String::format("%03d %.2d:%.2d %s %s", eventIndex + 1,
 		e._hour, e._minute, e._isAM ? AM : PM, EVENT_TYPE_STRINGS[e._type - 1]);
 }

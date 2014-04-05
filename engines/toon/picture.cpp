@@ -268,15 +268,14 @@ void Picture::floodFillNotWalkableOnMask(int16 x, int16 y) {
 	// Stack-based floodFill algorithm based on
 	// http://student.kuleuven.be/~m0216922/CG/files/floodfill.cpp
 	Common::Stack<Common::Point> stack;
-	bool spanLeft, spanRight;
 	stack.push(Common::Point(x, y));
 	while (!stack.empty()) {
 		Common::Point pt = stack.pop();
 		while (_data[pt.x + pt.y * _width] & 0x1F && pt.y >= 0)
 			pt.y--;
 		pt.y++;
-		spanLeft = false;
-		spanRight = false;
+		bool spanLeft = false;
+		bool spanRight = false;
 		while (_data[pt.x + pt.y * _width] & 0x1F && pt.y < _height) {
 			_data[pt.x + pt.y * _width] &= 0xE0;
 			if (!spanLeft && pt.x > 0 && _data[pt.x - 1 + pt.y * _width] & 0x1F) {

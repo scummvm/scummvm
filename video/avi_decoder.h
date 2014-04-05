@@ -43,9 +43,11 @@ namespace Graphics {
 struct PixelFormat;
 }
 
-namespace Video {
-
+namespace Image {
 class Codec;
+}
+
+namespace Video {
 
 /**
  * Decoder for AVI videos.
@@ -197,9 +199,9 @@ protected:
 		mutable bool _dirtyPalette;
 		int _frameCount, _curFrame;
 
-		Codec *_videoCodec;
+		Image::Codec *_videoCodec;
 		const Graphics::Surface *_lastFrame;
-		Codec *createCodec();
+		Image::Codec *createCodec();
 	};
 
 	class AVIAudioTrack : public AudioTrack {

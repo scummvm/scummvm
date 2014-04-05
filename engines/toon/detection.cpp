@@ -179,10 +179,9 @@ SaveStateList ToonMetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	int slotNum = 0;
 	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(filename->c_str() + filename->size() - 3);
+		int slotNum = atoi(filename->c_str() + filename->size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 99) {
 			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);

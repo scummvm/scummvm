@@ -3483,6 +3483,9 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 
 				if (R2_GLOBALS.getFlag(55)) {
 					if (R2_GLOBALS.getFlag(57)) {
+						// Little hack to get the correct sentence order
+						R2_GLOBALS._stripManager_lookupList[8] = 2;
+
 						R2_GLOBALS.clearFlag(60);
 						R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 						_sceneMode = 16;

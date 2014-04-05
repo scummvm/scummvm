@@ -31,10 +31,13 @@
 
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
-#include "graphics/decoders/image_decoder.h"
 #include "common/endian.h"
 #include "common/str.h"
 #include "common/stream.h"
+
+namespace Image {
+class ImageDecoder;
+}
 
 namespace Wintermute {
 class BaseSurface;
@@ -60,7 +63,7 @@ public:
 	void copyFrom(const Graphics::Surface *surface);
 private:
 	Common::String _filename;
-	Graphics::ImageDecoder *_decoder;
+	Image::ImageDecoder *_decoder;
 	const Graphics::Surface *_surface;
 	Graphics::Surface *_deletableSurface;
 	const byte *_palette;

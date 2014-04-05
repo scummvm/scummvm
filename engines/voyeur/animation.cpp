@@ -38,6 +38,9 @@ RL2Decoder::RL2Decoder(Audio::Mixer::SoundType soundType) : _soundType(soundType
 	_paletteStart = 0;
 	_fileStream = nullptr;
 	_soundFrameNumber = -1;
+
+	_audioTrack = nullptr;
+	_videoTrack = nullptr;
 }
 
 RL2Decoder::~RL2Decoder() {
@@ -47,10 +50,10 @@ RL2Decoder::~RL2Decoder() {
 bool RL2Decoder::loadVideo(int videoId) {
 	Common::String filename = Common::String::format("%s.rl2", 
 		::Voyeur::SZ_FILENAMES[videoId * 2]);
-	return loadFile(filename);
+	return loadRL2File(filename, false);
 }
 
-bool RL2Decoder::loadFile(const Common::String &file, bool palFlag) {
+bool RL2Decoder::loadRL2File(const Common::String &file, bool palFlag) {
 	bool result = VideoDecoder::loadFile(file);
 	_paletteStart = palFlag ? 0 : 128;
 	return result;
@@ -97,7 +100,7 @@ const Common::List<Common::Rect> *RL2Decoder::getDirtyRects() const {
 	if (_videoTrack)
 		return _videoTrack->getDirtyRects();
 
-	return 0;
+	return nullptr;
 }
 
 void RL2Decoder::clearDirtyRects() {
@@ -112,7 +115,7 @@ void RL2Decoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 
 void RL2Decoder::readNextPacket() {
 	int frameNumber = getCurFrame();
-	RL2AudioTrack *audioTrack = getAudioTrack();
+	RL2AudioTrack *audioTrack = getRL2AudioTrack();
 
 	// Handle queueing sound data
 	if (_soundFrameNumber == -1)
@@ -150,6 +153,19 @@ RL2Decoder::SoundFrame::SoundFrame(int offset, int size) {
 RL2Decoder::RL2FileHeader::RL2FileHeader() {
 	_frameOffsets = nullptr;
 	_frameSoundSizes = nullptr;
+
+	_channels = 0;
+	_colorCount = 0;
+	_numFrames = 0;
+	_rate = 0;
+	_soundRate = 0;
+	_videoBase = 0;
+	_backSize = 0;
+	_signature = MKTAG('N', 'O', 'N', 'E');
+	_form = 0;
+	_dataSize = 0;
+	_method = 0;
+	_defSoundSize = 0;
 }
 
 RL2Decoder::RL2FileHeader::~RL2FileHeader() {
@@ -208,16 +224,16 @@ Common::Rational RL2Decoder::RL2FileHeader::getFrameRate() const {
 /*------------------------------------------------------------------------*/
 
 RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack, 
-		Common::SeekableReadStream *stream): 
-		_header(header), _audioTrack(audioTrack), _fileStream(stream) {
+		Common::SeekableReadStream *stream): _header(header), _fileStream(stream) {
+
+	_frameOffsets = nullptr;
 
 	// Set up surfaces
 	_surface = new Graphics::Surface();
 	_surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_backSurface = nullptr;
 
 	_hasBackFrame = header._backSize != 0;
-
-	_backSurface = NULL;
 	if (_hasBackFrame)
 		initBackSurface();
 
@@ -448,13 +464,13 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 	int paletteStart = getPaletteStart();
 	int paletteCount = getPaletteCount();
 
-	PictureResource videoFrame(getVideoTrack()->getBackSurface());
+	PictureResource videoFrame(getRL2VideoTrack()->getBackSurface());
 	int picCtr = 0;
-	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager._mouseClicked) {
+	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager->_mouseClicked) {
 		if (hasDirtyPalette()) {
 			const byte *palette = getPalette();
 
-			vm->_graphicsManager.setPalette128(palette, paletteStart, paletteCount);
+			vm->_graphicsManager->setPalette128(palette, paletteStart, paletteCount);
 		}
 		
 		if (needsUpdate()) {
@@ -466,7 +482,7 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 					Common::Point pt(READ_LE_UINT16(imgPos + 4 * picCtr) - 32, 
 						READ_LE_UINT16(imgPos + 4 * picCtr + 2) - 20);
 
-					vm->_graphicsManager.sDrawPic(newPic, &videoFrame, pt);
+					vm->_graphicsManager->sDrawPic(newPic, &videoFrame, pt);
 					++picCtr;
 				}
 			}
@@ -474,10 +490,10 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 			// Decode the next frame and display
 			const Graphics::Surface *frame = decodeNextFrame();
 			Common::copy((const byte *)frame->getPixels(), (const byte *)frame->getPixels() + 320 * 200,
-				(byte *)vm->_graphicsManager._screenSurface.getPixels());
+				(byte *)vm->_graphicsManager->_screenSurface.getPixels());
 		}
 		
-		vm->_eventsManager.getMouseInfo();
+		vm->_eventsManager->getMouseInfo();
 		g_system->delayMillis(10);
 	}
 }

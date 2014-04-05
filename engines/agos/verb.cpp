@@ -216,7 +216,14 @@ void AGOSEngine_Simon2::clearName() {
 		return;
 	}
 
-	AGOSEngine_Simon1::clearName();
+	if (_currentVerbBox == _lastVerbOn)
+		return;
+
+	resetNameWindow();
+	_lastVerbOn = _currentVerbBox;
+
+	if (_currentVerbBox != NULL && !(_currentVerbBox->flags & kBFBoxDead))
+		printVerbOf(_currentVerbBox->id);
 }
 
 void AGOSEngine_Simon1::clearName() {
@@ -242,12 +249,18 @@ void AGOSEngine::clearName() {
 	resetNameWindow();
 }
 
+static const byte convertVerbID[9] = {
+	0, 1, 5, 11, 8, 7, 10, 3, 2
+};
+
 void AGOSEngine::printVerbOf(uint hitarea_id) {
 	const char *txt;
 	const char * const *verb_names;
 	const char * const *verb_prep_names;
 
 	hitarea_id -= 101;
+	if (getGameType() == GType_SIMON2)
+		hitarea_id = convertVerbID[hitarea_id];
 
 	if (_showPreposition) {
 		switch (_language) {

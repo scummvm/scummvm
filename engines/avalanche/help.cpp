@@ -66,8 +66,8 @@ void Help::switchPage(byte which) {
 
 	Common::String title = getLine(file);
 
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlue);
-	_vm->_graphics->drawFilledRectangle(Common::Rect(8, 40, 449, 199), kColorWhite);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlue);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(8, 40, 450, 200), kColorWhite);
 
 	byte index = file.readByte();
 	_vm->_graphics->helpDrawButton(-177, index);
@@ -76,8 +76,8 @@ void Help::switchPage(byte which) {
 	_vm->_graphics->drawNormalText(title, _vm->_font, 8, 629 - 8 * title.size(), 26, kColorBlack);
 	_vm->_graphics->drawNormalText(title, _vm->_font, 8, 630 - 8 * title.size(), 25, kColorCyan);
 
-	_vm->_graphics->drawBigText("help!", _vm->_font, 8, 549, 1, kColorBlack);
-	_vm->_graphics->drawBigText("help!", _vm->_font, 8, 550, 0, kColorCyan);
+	_vm->_graphics->helpDrawBigText("help!", 549, 1, kColorBlack);
+	_vm->_graphics->helpDrawBigText("help!", 550, 0, kColorCyan);
 
 	byte y = 0;
 	do {
@@ -141,8 +141,8 @@ void Help::switchPage(byte which) {
 			break;
 		}
 
-		_vm->_graphics->drawBigText(text, _vm->_font, 8, 589 - (text.size() * 8), 18 + (y + 1) * 27, kColorBlack);
-		_vm->_graphics->drawBigText(text, _vm->_font, 8, 590 - (text.size() * 8), 17 + (y + 1) * 27, kColorCyan);
+		_vm->_graphics->helpDrawBigText(text, 589 - (text.size() * 8), 18 + (y + 1) * 27, kColorBlack);
+		_vm->_graphics->helpDrawBigText(text, 590 - (text.size() * 8), 17 + (y + 1) * 27, kColorCyan);
 
 		y++;
 		_buttonNum++;
@@ -190,7 +190,7 @@ bool Help::handleMouse(const Common::Event &event) {
 
 		Color highlightColor = kColorLightblue;
 		// If we clicked on a button or we are holding down the button, we have to highlight it with cyan:
-		if (((highlightIs != 177) && ((event.type == Common::EVENT_LBUTTONDOWN)) || _holdLeft)) {
+		if (((highlightIs != 177) && (event.type == Common::EVENT_LBUTTONDOWN)) || _holdLeft) {
 			_holdLeft = true;
 			highlightColor = kColorLightcyan;
 		}
@@ -199,8 +199,8 @@ bool Help::handleMouse(const Common::Event &event) {
 		if (_highlightWas != highlightIs) 
 			_vm->_graphics->helpDrawHighlight(_highlightWas, kColorBlue);
 			
-		// Highligt the current one with the proper color:
-		if (_buttons[highlightIs]._trigger != Common::KEYCODE_INVALID) {
+		// Highlight the current one with the proper color:
+		if ((highlightIs != 177) && (_buttons[highlightIs]._trigger != Common::KEYCODE_INVALID)) {
 			_highlightWas = highlightIs;
 			_vm->_graphics->helpDrawHighlight(highlightIs, highlightColor);
 		}

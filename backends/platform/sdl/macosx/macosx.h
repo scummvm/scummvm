@@ -35,6 +35,7 @@ public:
 
 	virtual Common::String getSystemLanguage() const;
 
+	virtual void init();
 	virtual void initBackend();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual void setupIcon();

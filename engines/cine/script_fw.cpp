@@ -1419,19 +1419,19 @@ int FWScript::o1_loadNewPrcName() {
 	switch (param1) {
 	case 0:
 		debugC(5, kCineDebugScript, "Line: %d: loadPrc(\"%s\")", _line, param2);
-		strcpy(newPrcName, param2);
+		Common::strlcpy(newPrcName, param2, sizeof(newPrcName));
 		break;
 	case 1:
 		debugC(5, kCineDebugScript, "Line: %d: loadRel(\"%s\")", _line, param2);
-		strcpy(newRelName, param2);
+		Common::strlcpy(newRelName, param2, sizeof(newRelName));
 		break;
 	case 2:
 		debugC(5, kCineDebugScript, "Line: %d: loadObject(\"%s\")", _line, param2);
-		strcpy(newObjectName, param2);
+		Common::strlcpy(newObjectName, param2, sizeof(newObjectName));
 		break;
 	case 3:
 		debugC(5, kCineDebugScript, "Line: %d: loadMsg(\"%s\")", _line, param2);
-		strcpy(newMsgName, param2);
+		Common::strlcpy(newMsgName, param2, sizeof(newMsgName));
 		break;
 	}
 	return 0;

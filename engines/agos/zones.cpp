@@ -76,7 +76,7 @@ void AGOSEngine::loadZone(uint16 zoneNum, bool useError) {
 			return;
 	}
 
-	// Loading order is important due to resource managment
+	// Loading order is important due to resource management
 
 	if (getPlatform() == Common::kPlatformAmiga && getGameType() == GType_WW &&
 		zoneTable[zoneNum] == 3) {

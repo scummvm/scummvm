@@ -658,6 +658,9 @@ void CGEEngine::selectPocket(int n) {
 void CGEEngine::pocFul() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::pocFul()");
 
+	if (!_hero)
+		error("pocFul - Unexpected null _hero");
+
 	_hero->park();
 	_commandHandler->addCommand(kCmdWait, -1, -1, _hero);
 	_commandHandler->addCommand(kCmdSeq, -1, kSeqPocketFull, _hero);

@@ -9,7 +9,7 @@ MODULE_OBJS = \
 	console.o \
 	detection.o \
 	graphics.o \
-	menu.o \
+	dropdown.o \
 	parser.o \
 	dialogs.o \
 	sequence.o \
@@ -19,7 +19,8 @@ MODULE_OBJS = \
 	clock.o \
 	ghostroom.o \
 	help.o \
-	shootemup.o
+	shootemup.o \
+	mainmenu.o
 	
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)

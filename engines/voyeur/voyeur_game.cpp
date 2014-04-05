@@ -28,7 +28,7 @@ namespace Voyeur {
 
 void VoyeurEngine::playStamp() {
 	_stampLibPtr = NULL;
-	_filesManager.openBoltLib("stampblt.blt", _stampLibPtr);
+	_filesManager->openBoltLib("stampblt.blt", _stampLibPtr);
 
 	_stampLibPtr->getBoltGroup(0);
 	_controlPtr->_state = _stampLibPtr->boltEntry(_controlPtr->_stateId >> 16)._stateResource;
@@ -41,46 +41,46 @@ void VoyeurEngine::playStamp() {
 	_mainThread = threadsList->_entries[0]->_threadResource;
 	_mainThread->initThreadStruct(0, 0);
 
-	_voy._isAM = false;
+	_voy->_isAM = false;
 	_gameHour = 9;
 	_gameMinute = 0;
-	_voy._abortInterface = true;
+	_voy->_abortInterface = true;
 
 	int buttonId;
 	bool breakFlag = false;
 	while (!breakFlag && !shouldQuit()) {
 		_voyeurArea = AREA_NONE;
-		_eventsManager.getMouseInfo();
+		_eventsManager->getMouseInfo();
 		_playStampGroupId = _currentVocId = -1;
 		_audioVideoId = -1;
 
 		_mainThread->parsePlayCommands();
 
-		bool flag = breakFlag = (_voy._eventFlags & EVTFLAG_2) != 0;
+		bool flag = breakFlag = (_voy->_eventFlags & EVTFLAG_2) != 0;
 		 
-		switch (_voy._playStampMode) {
+		switch (_voy->_playStampMode) {
 		case 5:
 			buttonId = _mainThread->doInterface();
 			
 			if (buttonId == -2) {
 				switch (_mainThread->doApt()) {
 				case 0:
-					_voy._aptLoadMode = 140;
+					_voy->_aptLoadMode = 140;
 					break;
 				case 1:
-					_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
-					_voy._abortInterface = true;
+					_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
+					_voy->_abortInterface = true;
 					_mainThread->chooseSTAMPButton(22);
-					_voy._aptLoadMode = 143;
+					_voy->_aptLoadMode = 143;
 					break;
 				case 2:
-					_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
+					_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 					reviewTape();
-					_voy._abortInterface = true;
-					_voy._aptLoadMode = 142;
+					_voy->_abortInterface = true;
+					_voy->_aptLoadMode = 142;
 					break;
 				case 3:
-					_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
+					_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 					_mainThread->chooseSTAMPButton(21);
 					break;
 				case 4:
@@ -88,9 +88,9 @@ void VoyeurEngine::playStamp() {
 					break;
 				case 5:
 					doGossip();
-					_voy._abortInterface = true;
-					_voy._aptLoadMode = 141;
-					_voy._eventFlags &= ~EVTFLAG_100;
+					_voy->_abortInterface = true;
+					_voy->_aptLoadMode = 141;
+					_voy->_eventFlags &= ~EVTFLAG_100;
 					break;
 				default:
 					break;
@@ -108,7 +108,7 @@ void VoyeurEngine::playStamp() {
 			break;
 
 		case 16:
-			_voy._transitionId = 17;
+			_voy->_transitionId = 17;
 			buttonId = _mainThread->doApt();
 			
 			switch (buttonId) {
@@ -118,7 +118,7 @@ void VoyeurEngine::playStamp() {
 				break;
 			case 2:
 				reviewTape();
-				_voy._abortInterface = true;
+				_voy->_abortInterface = true;
 				break;
 			case 4:
 				flag = true;
@@ -132,13 +132,13 @@ void VoyeurEngine::playStamp() {
 		case 17:
 			// Called the police, showing the tape
 			doTapePlaying();
-			if (!checkForMurder() && _voy._transitionId <= 15)
+			if (!checkForMurder() && _voy->_transitionId <= 15)
 				checkForIncriminate();
 
-			if (_voy._videoEventId != -1) {
+			if (_voy->_videoEventId != -1) {
 				// Show the found video that is of interest to the police
-				playAVideoEvent(_voy._videoEventId);
-				_voy._eventFlags &= ~EVTFLAG_RECORDING;
+				playAVideoEvent(_voy->_videoEventId);
+				_voy->_eventFlags &= ~EVTFLAG_RECORDING;
 			}
 
 			// Handle response
@@ -149,26 +149,26 @@ void VoyeurEngine::playStamp() {
 		case 130: {
 			// user selected to send the tape
 			if (_bVoy->getBoltGroup(_playStampGroupId)) {
-				_graphicsManager._backgroundPage = _bVoy->boltEntry(_playStampGroupId)._picResource;
-				_graphicsManager._backColors = _bVoy->boltEntry(_playStampGroupId + 1)._cMapResource;
+				_graphicsManager->_backgroundPage = _bVoy->boltEntry(_playStampGroupId)._picResource;
+				_graphicsManager->_backColors = _bVoy->boltEntry(_playStampGroupId + 1)._cMapResource;
 
 				buttonId = getChooseButton();
-				if (_eventsManager._rightClick)
+				if (_eventsManager->_rightClick)
 					// Aborted out of selecting a recipient
 					buttonId = 4;
 
 				_bVoy->freeBoltGroup(_playStampGroupId);
-				_graphicsManager.screenReset();
+				_graphicsManager->screenReset();
 				_playStampGroupId = -1;
 				flag = true;
 
 				if (buttonId != 4) {
-					_voy._playStampMode = 131;
-					_voy.checkForKey();
+					_voy->_playStampMode = 131;
+					_voy->checkForKey();
 					_mainThread->chooseSTAMPButton(buttonId);
 				} else {
 					_mainThread->chooseSTAMPButton(buttonId);
-					_voy._abortInterface = true;
+					_voy->_abortInterface = true;
 				}
 			}
 			break;
@@ -181,15 +181,15 @@ void VoyeurEngine::playStamp() {
 		do {
 			if (flag) {
 				if (_currentVocId != -1) {
-					_soundManager.stopVOCPlay();
+					_soundManager->stopVOCPlay();
 					_currentVocId = -1;
 				}
 
 				_audioVideoId = -1;
 
-				if (_voy._boltGroupId2 != -1) {
-					_bVoy->freeBoltGroup(_voy._boltGroupId2);
-					_voy._boltGroupId2 = -1;
+				if (_voy->_boltGroupId2 != -1) {
+					_bVoy->freeBoltGroup(_voy->_boltGroupId2);
+					_voy->_boltGroupId2 = -1;
 				}
 
 				if (_playStampGroupId != -1) {
@@ -201,7 +201,7 @@ void VoyeurEngine::playStamp() {
 				flag = false;
 
 			} else if (_mainThread->_stateFlags & 2) {
-				_eventsManager.getMouseInfo();
+				_eventsManager->getMouseInfo();
 				_mainThread->chooseSTAMPButton(0);
 				flag = true;
 			} else {
@@ -211,7 +211,7 @@ void VoyeurEngine::playStamp() {
 		} while (flag);
 	}
 
-	_voy._viewBounds = nullptr;
+	_voy->_viewBounds = nullptr;
 	closeStamp();
 	_stampLibPtr->freeBoltGroup(0);
 	delete _stampLibPtr;
@@ -232,38 +232,38 @@ void VoyeurEngine::closeStamp() {
 }
 
 void VoyeurEngine::doTailTitle() {
-	(*_graphicsManager._vPort)->setupViewPort(NULL);
-	_graphicsManager.screenReset();
+	_graphicsManager->_vPort->setupViewPort(NULL);
+	_graphicsManager->screenReset();
 	
 	if (_bVoy->getBoltGroup(0x600)) {
 		RL2Decoder decoder;
-		decoder.loadFile("a1100200.rl2");
+		decoder.loadRL2File("a1100200.rl2", false);
 		decoder.start();
 		decoder.play(this);
 		
-		if (!shouldQuit() && !_eventsManager._mouseClicked) {
+		if (!shouldQuit() && !_eventsManager->_mouseClicked) {
 			doClosingCredits();
 
-			if (!shouldQuit() && !_eventsManager._mouseClicked) {
-				_graphicsManager.screenReset();
+			if (!shouldQuit() && !_eventsManager->_mouseClicked) {
+				_graphicsManager->screenReset();
 				
 				PictureResource *pic = _bVoy->boltEntry(0x602)._picResource;
 				CMapResource *pal = _bVoy->boltEntry(0x603)._cMapResource;
 
-				(*_graphicsManager._vPort)->setupViewPort(pic);
+				_graphicsManager->_vPort->setupViewPort(pic);
 				pal->startFade();
 				flipPageAndWaitForFade();
-				_eventsManager.delayClick(300);
+				_eventsManager->delayClick(300);
 
 				pic = _bVoy->boltEntry(0x604)._picResource;
 				pal = _bVoy->boltEntry(0x605)._cMapResource;
 
-				(*_graphicsManager._vPort)->setupViewPort(pic);
+				_graphicsManager->_vPort->setupViewPort(pic);
 				pal->startFade();
 				flipPageAndWaitForFade();
-				_eventsManager.delayClick(120);
+				_eventsManager->delayClick(120);
 
-				_soundManager.stopVOCPlay();
+				_soundManager->stopVOCPlay();
 			}
 		}
 
@@ -283,26 +283,26 @@ void VoyeurEngine::doClosingCredits() {
 	const char *msg = (const char *)_bVoy->memberAddr(0x404);
 	const byte *creditList = (const byte *)_bVoy->memberAddr(0x405);
 
-	(*_graphicsManager._vPort)->setupViewPort(NULL);
-	_graphicsManager.setColor(1, 180, 180, 180);
-	_graphicsManager.setColor(2, 200, 200, 200);
-	_eventsManager._intPtr._hasPalette = true;
+	_graphicsManager->_vPort->setupViewPort(NULL);
+	_graphicsManager->setColor(1, 180, 180, 180);
+	_graphicsManager->setColor(2, 200, 200, 200);
+	_eventsManager->_intPtr._hasPalette = true;
 
-	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x402)._fontResource;
-	_graphicsManager._fontPtr->_foreColor = 2;
-	_graphicsManager._fontPtr->_backColor = 2;
-	_graphicsManager._fontPtr->_fontSaveBack = false;
-	_graphicsManager._fontPtr->_fontFlags = 0;
+	_graphicsManager->_fontPtr->_curFont = _bVoy->boltEntry(0x402)._fontResource;
+	_graphicsManager->_fontPtr->_foreColor = 2;
+	_graphicsManager->_fontPtr->_backColor = 2;
+	_graphicsManager->_fontPtr->_fontSaveBack = false;
+	_graphicsManager->_fontPtr->_fontFlags = DISPFLAG_NONE;
 
-	_soundManager.startVOCPlay(152);
-	FontInfoResource &fi = *_graphicsManager._fontPtr;
+	_soundManager->startVOCPlay(152);
+	FontInfoResource &fi = *_graphicsManager->_fontPtr;
 
 	for (int idx = 0; idx < 78; ++idx) {
 		const byte *entry = creditList + idx * 6;
 		int flags = READ_LE_UINT16(entry + 4);
 
 		if (flags & 0x10)
-			(*_graphicsManager._vPort)->fillPic();
+			_graphicsManager->_vPort->fillPic(0);
 
 		if (flags & 1) {
 			fi._foreColor = 1;
@@ -312,7 +312,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
 
-			(*_graphicsManager._vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 		}
 		
@@ -324,7 +324,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
 
-			(*_graphicsManager._vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 		}
 
@@ -336,7 +336,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(38, READ_LE_UINT16(entry));
 
-			(*_graphicsManager._vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 
 			fi._foreColor = 2;
@@ -345,7 +345,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(198, READ_LE_UINT16(entry));
 
-			(*_graphicsManager._vPort)->drawText(msg);			
+			_graphicsManager->_vPort->drawText(msg);			
 			msg += strlen(msg) + 1;
 		}
 
@@ -357,7 +357,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry));
 
-			(*_graphicsManager._vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 
 			fi._foreColor = 2;
@@ -367,38 +367,38 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(0, READ_LE_UINT16(entry) + 13);
 
-			(*_graphicsManager._vPort)->drawText(msg);
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 		}
 
 		if (flags & 0x20) {
 			flipPageAndWait();
-			_eventsManager.delayClick(READ_LE_UINT16(entry + 2) * 60);
+			_eventsManager->delayClick(READ_LE_UINT16(entry + 2) * 60);
 		}
 
-		if (shouldQuit() || _eventsManager._mouseClicked)
+		if (shouldQuit() || _eventsManager->_mouseClicked)
 			break;
 	}
 
-	_soundManager.stopVOCPlay();
-	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
+	_soundManager->stopVOCPlay();
+	_graphicsManager->_fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
 	_bVoy->freeBoltGroup(0x400);
 }
 
 void VoyeurEngine::doPiracy() {
-	_graphicsManager.screenReset();
-	_graphicsManager.setColor(1, 0, 0, 0);
-	_graphicsManager.setColor(2, 255, 255, 255);
-	_eventsManager._intPtr._hasPalette = true;
-	(*_graphicsManager._vPort)->setupViewPort(NULL);
-	(*_graphicsManager._vPort)->fillPic(1);
+	_graphicsManager->screenReset();
+	_graphicsManager->setColor(1, 0, 0, 0);
+	_graphicsManager->setColor(2, 255, 255, 255);
+	_eventsManager->_intPtr._hasPalette = true;
+	_graphicsManager->_vPort->setupViewPort(NULL);
+	_graphicsManager->_vPort->fillPic(1);
 
-	FontInfoResource &fi = *_graphicsManager._fontPtr;
+	FontInfoResource &fi = *_graphicsManager->_fontPtr;
 	fi._curFont = _bVoy->boltEntry(0x101)._fontResource;
 	fi._foreColor = 2;
 	fi._backColor = 2;
 	fi._fontSaveBack = false;
-	fi._fontFlags = 0;
+	fi._fontFlags = DISPFLAG_NONE;
 	fi._justify = ALIGN_CENTER;
 	fi._justifyWidth = 384;
 	fi._justifyHeight = 230;
@@ -407,14 +407,14 @@ void VoyeurEngine::doPiracy() {
 	int yp, idx;
 	for (idx = 0, yp = 33; idx < 10; ++idx) {
 		fi._pos = Common::Point(0, yp);
-		(*_graphicsManager._vPort)->drawText(PIRACY_MESSAGE[idx]);
+		_graphicsManager->_vPort->drawText(PIRACY_MESSAGE[idx]);
 
 		yp += fi._curFont->_fontHeight + 4;
 	}
 
 	flipPageAndWait();
-	_eventsManager.getMouseInfo();
-	_eventsManager.delayClick(720);
+	_eventsManager->getMouseInfo();
+	_eventsManager->delayClick(720);
 }
 
 void VoyeurEngine::reviewTape() {
@@ -425,102 +425,101 @@ void VoyeurEngine::reviewTape() {
 	Common::Rect tempRect(58, 30, 58 + 223, 30 + 124);
 	Common::Point pt;
 	int foundIndex;
-	int eventNum;
 
 	_bVoy->getBoltGroup(0x900);
 	PictureResource *cursor = _bVoy->boltEntry(0x903)._picResource;
 
-	if ((_voy._eventCount - 8) != 0)
-		eventStart = MAX(_voy._eventCount - 8, 0);
+	if ((_voy->_eventCount - 8) != 0)
+		eventStart = MAX(_voy->_eventCount - 8, 0);
 
-	if ((eventStart + _voy._eventCount) <= 7)
-		eventLine = eventStart + _voy._eventCount - 1;
+	if ((eventStart + _voy->_eventCount) <= 7)
+		eventLine = eventStart + _voy->_eventCount - 1;
 
 	bool breakFlag = false;
 	while (!shouldQuit() && !breakFlag) {
-		_voy._viewBounds = _bVoy->boltEntry(0x907)._rectResource;
+		_voy->_viewBounds = _bVoy->boltEntry(0x907)._rectResource;
 		Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(0x906)._rectResource->_entries;
 
-		_graphicsManager._backColors = _bVoy->boltEntry(0x902)._cMapResource;
-		_graphicsManager._backgroundPage = _bVoy->boltEntry(0x901)._picResource;
-		(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
-		_graphicsManager._backColors->startFade();
+		_graphicsManager->_backColors = _bVoy->boltEntry(0x902)._cMapResource;
+		_graphicsManager->_backgroundPage = _bVoy->boltEntry(0x901)._picResource;
+		_graphicsManager->_vPort->setupViewPort(_graphicsManager->_backgroundPage);
+		_graphicsManager->_backColors->startFade();
 
 		flipPageAndWaitForFade();
 
-		_graphicsManager.setColor(1, 32, 32, 32);
-		_graphicsManager.setColor(2, 96, 96, 96);
-		_graphicsManager.setColor(3, 160, 160, 160);
-		_graphicsManager.setColor(4, 224, 224, 224);
-		_graphicsManager.setColor(9, 24, 64, 24);
-		_graphicsManager.setColor(10, 64, 132, 64);
-		_graphicsManager.setColor(11, 100, 192, 100);
-		_graphicsManager.setColor(12, 120, 248, 120);
-		_eventsManager.setCursorColor(128, 1);
+		_graphicsManager->setColor(1, 32, 32, 32);
+		_graphicsManager->setColor(2, 96, 96, 96);
+		_graphicsManager->setColor(3, 160, 160, 160);
+		_graphicsManager->setColor(4, 224, 224, 224);
+		_graphicsManager->setColor(9, 24, 64, 24);
+		_graphicsManager->setColor(10, 64, 132, 64);
+		_graphicsManager->setColor(11, 100, 192, 100);
+		_graphicsManager->setColor(12, 120, 248, 120);
+		_eventsManager->setCursorColor(128, 1);
 
-		_eventsManager._intPtr._hasPalette = true;
-		_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x909)._fontResource;
-		_graphicsManager._fontPtr->_fontSaveBack = false;
-		_graphicsManager._fontPtr->_fontFlags = 0;
+		_eventsManager->_intPtr._hasPalette = true;
+		_graphicsManager->_fontPtr->_curFont = _bVoy->boltEntry(0x909)._fontResource;
+		_graphicsManager->_fontPtr->_fontSaveBack = false;
+		_graphicsManager->_fontPtr->_fontFlags = DISPFLAG_NONE;
 
-		_eventsManager.getMouseInfo();
+		_eventsManager->getMouseInfo();
 		if (newX == -1) {
-			_eventsManager.setMousePos(Common::Point(hotspots[1].left + 12, hotspots[1].top + 6));
+			_eventsManager->setMousePos(Common::Point(hotspots[1].left + 12, hotspots[1].top + 6));
 		} else {
-			_eventsManager.setMousePos(Common::Point(newX, newY));
+			_eventsManager->setMousePos(Common::Point(newX, newY));
 		}
 
 		_currentVocId = 151;
-		_voy._vocSecondsOffset = 0;
+		_voy->_vocSecondsOffset = 0;
 		bool needRedraw = true;
 		do {
-			if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
-				_voy._musicStartTime = _voy._RTVNum;
-				_soundManager.startVOCPlay(_currentVocId);
+			if (_currentVocId != -1 && !_soundManager->getVOCStatus()) {
+				_voy->_musicStartTime = _voy->_RTVNum;
+				_soundManager->startVOCPlay(_currentVocId);
 			}
 
 			if (needRedraw) {
 				needRedraw = false;
 				flipPageAndWait();
 
-				_graphicsManager._drawPtr->_penColor = 0;
-				_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
-				_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
+				_graphicsManager->_drawPtr->_penColor = 0;
+				_graphicsManager->_drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
+				_graphicsManager->_backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
 				int yp = 45;
 				int eventNum = eventStart;
-				for (int lineNum = 0; lineNum < 8 && eventNum < _voy._eventCount; ++lineNum, ++eventNum) {
-					_graphicsManager._fontPtr->_picFlags = 0;
-					_graphicsManager._fontPtr->_picSelect = 0xff;
-					_graphicsManager._fontPtr->_picPick = 7;
-					_graphicsManager._fontPtr->_picOnOff = (lineNum == eventLine) ? 8 : 0;
-					_graphicsManager._fontPtr->_pos = Common::Point(68, yp);
-					_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
-					_graphicsManager._fontPtr->_justifyWidth = 0;
-					_graphicsManager._fontPtr->_justifyHeight = 0;
+				for (int lineNum = 0; lineNum < 8 && eventNum < _voy->_eventCount; ++lineNum, ++eventNum) {
+					_graphicsManager->_fontPtr->_picFlags = DISPFLAG_NONE;
+					_graphicsManager->_fontPtr->_picSelect = 0xff;
+					_graphicsManager->_fontPtr->_picPick = 7;
+					_graphicsManager->_fontPtr->_picOnOff = (lineNum == eventLine) ? 8 : 0;
+					_graphicsManager->_fontPtr->_pos = Common::Point(68, yp);
+					_graphicsManager->_fontPtr->_justify = ALIGN_LEFT;
+					_graphicsManager->_fontPtr->_justifyWidth = 0;
+					_graphicsManager->_fontPtr->_justifyHeight = 0;
 
-					Common::String msg = _eventsManager.getEvidString(eventNum);
-					_graphicsManager._backgroundPage->drawText(msg);
+					Common::String msg = _eventsManager->getEvidString(eventNum);
+					_graphicsManager->_backgroundPage->drawText(msg);
 					
 					yp += 15;
 				}
 
-				(*_graphicsManager._vPort)->addSaveRect(
-					(*_graphicsManager._vPort)->_lastPage, tempRect);
+				_graphicsManager->_vPort->addSaveRect(
+					_graphicsManager->_vPort->_lastPage, tempRect);
 				flipPageAndWait();
 
-				(*_graphicsManager._vPort)->addSaveRect(
-					(*_graphicsManager._vPort)->_lastPage, tempRect);
+				_graphicsManager->_vPort->addSaveRect(
+					_graphicsManager->_vPort->_lastPage, tempRect);
 			}
 
-			_graphicsManager.sDrawPic(cursor, *_graphicsManager._vPort,
-				_eventsManager.getMousePos());
+			_graphicsManager->sDrawPic(cursor, _graphicsManager->_vPort,
+				_eventsManager->getMousePos());
 			flipPageAndWait();
 
-			_eventsManager.getMouseInfo();
+			_eventsManager->getMouseInfo();
 			foundIndex = -1;
 
-			Common::Point tempPos = _eventsManager.getMousePos() + Common::Point(14, 7);
+			Common::Point tempPos = _eventsManager->getMousePos() + Common::Point(14, 7);
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {
 				if (hotspots[idx].contains(tempPos)) {
 					// Found hotspot area
@@ -529,68 +528,68 @@ void VoyeurEngine::reviewTape() {
 				}
 			}
 			
-			pt = _eventsManager.getMousePos();
+			pt = _eventsManager->getMousePos();
 			if (tempPos.x >= 68 && tempPos.x <= 277 && tempPos.y >= 31 && tempPos.y <= 154) {
 				tempPos.y -= 2;
 				foundIndex = (tempPos.y - 31) / 15;
-				if ((tempPos.y - 31) % 15 >= 12 || (eventStart + foundIndex) >= _voy._eventCount) {
-					_eventsManager.setCursorColor(128, 0);
+				if ((tempPos.y - 31) % 15 >= 12 || (eventStart + foundIndex) >= _voy->_eventCount) {
+					_eventsManager->setCursorColor(128, 0);
 					foundIndex = 999;
-				} else if (!_eventsManager._leftClick) {
-					_eventsManager.setCursorColor(128, 2);
+				} else if (!_eventsManager->_leftClick) {
+					_eventsManager->setCursorColor(128, 2);
 					foundIndex = -1;
 				} else {
-					_eventsManager.setCursorColor(128, 2);
+					_eventsManager->setCursorColor(128, 2);
 					eventLine =  foundIndex;
 
 					flipPageAndWait();
 
-					_graphicsManager._drawPtr->_penColor = 0;
-					_graphicsManager._drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);				
-					_graphicsManager._backgroundPage->sFillBox(tempRect.width(), tempRect.height());
+					_graphicsManager->_drawPtr->_penColor = 0;
+					_graphicsManager->_drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);				
+					_graphicsManager->_backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
 					int yp = 45;
-					eventNum = eventStart;
-					for (int idx = 0; idx < 8 && eventNum < _voy._eventCount; ++idx, ++eventNum) {
-						_graphicsManager._fontPtr->_picFlags = 0;
-						_graphicsManager._fontPtr->_picSelect = 0xff;
-						_graphicsManager._fontPtr->_picPick = 7;
-						_graphicsManager._fontPtr->_picOnOff = (idx == eventLine) ? 8 : 0;
-						_graphicsManager._fontPtr->_pos = Common::Point(68, yp);
-						_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
-						_graphicsManager._fontPtr->_justifyWidth = 0;
-						_graphicsManager._fontPtr->_justifyHeight = 0;
+					int eventNum = eventStart;
+					for (int idx = 0; idx < 8 && eventNum < _voy->_eventCount; ++idx, ++eventNum) {
+						_graphicsManager->_fontPtr->_picFlags = DISPFLAG_NONE;
+						_graphicsManager->_fontPtr->_picSelect = 0xff;
+						_graphicsManager->_fontPtr->_picPick = 7;
+						_graphicsManager->_fontPtr->_picOnOff = (idx == eventLine) ? 8 : 0;
+						_graphicsManager->_fontPtr->_pos = Common::Point(68, yp);
+						_graphicsManager->_fontPtr->_justify = ALIGN_LEFT;
+						_graphicsManager->_fontPtr->_justifyWidth = 0;
+						_graphicsManager->_fontPtr->_justifyHeight = 0;
 
-						Common::String msg = _eventsManager.getEvidString(eventNum);
-						_graphicsManager._backgroundPage->drawText(msg);
+						Common::String msg = _eventsManager->getEvidString(eventNum);
+						_graphicsManager->_backgroundPage->drawText(msg);
 
 						yp += 15;
 					}
 
-					(*_graphicsManager._vPort)->addSaveRect(
-						(*_graphicsManager._vPort)->_lastPage, tempRect);
+					_graphicsManager->_vPort->addSaveRect(
+						_graphicsManager->_vPort->_lastPage, tempRect);
 					flipPageAndWait();
 
-					(*_graphicsManager._vPort)->addSaveRect(
-						(*_graphicsManager._vPort)->_lastPage, tempRect);
+					_graphicsManager->_vPort->addSaveRect(
+						_graphicsManager->_vPort->_lastPage, tempRect);
 					flipPageAndWait();
 
-					_eventsManager.getMouseInfo();
+					_eventsManager->getMouseInfo();
 					foundIndex = -1;
 				}
-			} else if ((_voy._eventFlags & EVTFLAG_40) && _voy._viewBounds->left == pt.x &&
-					_voy._viewBounds->bottom == pt.y) {
+			} else if ((_voy->_eventFlags & EVTFLAG_40) && _voy->_viewBounds->left == pt.x &&
+					_voy->_viewBounds->bottom == pt.y) {
 				foundIndex = 999;
-			} else if ((_voy._eventFlags & EVTFLAG_40) && _voy._viewBounds->left == pt.x &&
-					_voy._viewBounds->top == pt.y) {
+			} else if ((_voy->_eventFlags & EVTFLAG_40) && _voy->_viewBounds->left == pt.x &&
+					_voy->_viewBounds->top == pt.y) {
 				foundIndex = 998;
 			} else {
-				_eventsManager.setCursorColor(128, (foundIndex == -1) ? 0 : 1);
+				_eventsManager->setCursorColor(128, (foundIndex == -1) ? 0 : 1);
 			}
 
-			_eventsManager._intPtr._hasPalette = true;
+			_eventsManager->_intPtr._hasPalette = true;
 
-			if (_eventsManager._mouseClicked) {
+			if (_eventsManager->_mouseClicked) {
 				switch (foundIndex) {
 				case 2:
 					if (eventStart > 0) {
@@ -611,7 +610,7 @@ void VoyeurEngine::reviewTape() {
 					break;
 
 				case 4:
-					if ((_voy._eventCount - 8) > eventStart) {
+					if ((_voy->_eventCount - 8) > eventStart) {
 						++eventStart;
 						needRedraw = true;
 					}
@@ -619,10 +618,10 @@ void VoyeurEngine::reviewTape() {
 					break;
 
 				case 5:
-					if (_voy._eventCount >= 8 && (_voy._eventCount - 8) != eventStart) {
+					if (_voy->_eventCount >= 8 && (_voy->_eventCount - 8) != eventStart) {
 						eventStart += 8;
-						if ((_voy._eventCount - 8) < eventStart)
-							eventStart = _voy._eventCount - 8;
+						if ((_voy->_eventCount - 8) < eventStart)
+							eventStart = _voy->_eventCount - 8;
 						needRedraw = true;
 					}
 					foundIndex = -1;
@@ -632,31 +631,31 @@ void VoyeurEngine::reviewTape() {
 					break;
 				}
 
-				while (eventLine > 0 && (eventLine + eventStart) >= _voy._eventCount)
+				while (eventLine > 0 && (eventLine + eventStart) >= _voy->_eventCount)
 					--eventLine;
 			}
 
-			pt = _eventsManager.getMousePos();
-			if (_eventsManager._mouseClicked && _voy._viewBounds->left == pt.x &&
-					(_voy._eventFlags & EVTFLAG_40) && _eventsManager._rightClick) {
+			pt = _eventsManager->getMousePos();
+			if (_eventsManager->_mouseClicked && _voy->_viewBounds->left == pt.x &&
+					(_voy->_eventFlags & EVTFLAG_40) && _eventsManager->_rightClick) {
 				_controlPtr->_state->_victimIndex = (pt.y / 60) + 1;
 				foundIndex = -1;
-				_eventsManager._rightClick = 0;
+				_eventsManager->_rightClick = 0;
 			}
 			
-			if (_eventsManager._rightClick)
+			if (_eventsManager->_rightClick)
 				foundIndex = 0;
 
-		} while (!shouldQuit() && (!_eventsManager._mouseClicked || foundIndex == -1));
+		} while (!shouldQuit() && (!_eventsManager->_mouseClicked || foundIndex == -1));
 
-		newY = _eventsManager.getMousePos().y;
-		_voy._fadingType = 0;
-		_voy._viewBounds = nullptr;
-		(*_graphicsManager._vPort)->setupViewPort(NULL);
+		newY = _eventsManager->getMousePos().y;
+		_voy->_fadingType = 0;
+		_voy->_viewBounds = nullptr;
+		_graphicsManager->_vPort->setupViewPort(NULL);
 			
 		if (_currentVocId != -1) {
-			_voy._vocSecondsOffset = _voy._RTVNum - _voy._musicStartTime;
-			_soundManager.stopVOCPlay();
+			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
+			_soundManager->stopVOCPlay();
 		}
 
 		// Break out if the exit button was pressed
@@ -664,7 +663,7 @@ void VoyeurEngine::reviewTape() {
 			break;
 
 		int eventIndex = eventStart + eventLine;
-		VoyeurEvent &e = _voy._events[eventIndex];
+		VoyeurEvent &e = _voy->_events[eventIndex];
 		switch (e._type) {
 		case EVTYPE_VIDEO:
 			playAVideoEvent(eventIndex);
@@ -672,53 +671,53 @@ void VoyeurEngine::reviewTape() {
 
 		case EVTYPE_AUDIO: {
 			_audioVideoId = e._audioVideoId;
-			_voy._vocSecondsOffset = e._computerOn;
+			_voy->_vocSecondsOffset = e._computerOn;
 
 			_bVoy->getBoltGroup(0x7F00);
-			_graphicsManager._backgroundPage = _bVoy->boltEntry(0x7F00 +
+			_graphicsManager->_backgroundPage = _bVoy->boltEntry(0x7F00 +
 				BLIND_TABLE[_audioVideoId])._picResource;
-			_graphicsManager._backColors = _bVoy->boltEntry(0x7F01 +
+			_graphicsManager->_backColors = _bVoy->boltEntry(0x7F01 +
 				BLIND_TABLE[_audioVideoId])._cMapResource;
 
-			(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
-			_graphicsManager._backColors->startFade();
+			_graphicsManager->_vPort->setupViewPort(_graphicsManager->_backgroundPage);
+			_graphicsManager->_backColors->startFade();
 			flipPageAndWaitForFade();
 
-			_eventsManager._intPtr._flashStep = 1;
-			_eventsManager._intPtr._flashTimer = 0;
-			_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
+			_eventsManager->_intPtr._flashStep = 1;
+			_eventsManager->_intPtr._flashTimer = 0;
+			_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
 			// Play suond for the given duration
-			_soundManager.setVOCOffset(_voy._vocSecondsOffset);
-			_soundManager.startVOCPlay(_audioVideoId + 159);
+			_soundManager->setVOCOffset(_voy->_vocSecondsOffset);
+			_soundManager->startVOCPlay(_audioVideoId + 159);
 			uint32 secondsDuration = e._computerOff;
 
-			_eventsManager.getMouseInfo();
-			while (!_eventsManager._mouseClicked && _soundManager.getVOCStatus() && 
-					_soundManager.getVOCFrame() < secondsDuration) {
-				_eventsManager.getMouseInfo();
-				_eventsManager.delay(10);
+			_eventsManager->getMouseInfo();
+			while (!_eventsManager->_mouseClicked && _soundManager->getVOCStatus() && 
+					_soundManager->getVOCFrame() < secondsDuration) {
+				_eventsManager->getMouseInfo();
+				_eventsManager->delay(10);
 			}
 
-			_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
-			_soundManager.stopVOCPlay();
+			_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
+			_soundManager->stopVOCPlay();
 			_bVoy->freeBoltGroup(0x7F00);
 			break;
 		}
 
 		case EVTYPE_EVID:
-			_voy.reviewAnEvidEvent(eventIndex);
+			_voy->reviewAnEvidEvent(eventIndex);
 			
-			_voy._vocSecondsOffset = _voy._RTVNum - _voy._musicStartTime;
-			_soundManager.stopVOCPlay();
+			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
+			_soundManager->stopVOCPlay();
 			_bVoy->getBoltGroup(0x900);
 			break;
 
 		case EVTYPE_COMPUTER:
-			_voy.reviewComputerEvent(eventIndex);
+			_voy->reviewComputerEvent(eventIndex);
 			
-			_voy._vocSecondsOffset = _voy._RTVNum - _voy._musicStartTime;
-			_soundManager.stopVOCPlay();
+			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
+			_soundManager->stopVOCPlay();
 			_bVoy->getBoltGroup(0x900);
 			break;
 
@@ -727,23 +726,23 @@ void VoyeurEngine::reviewTape() {
 		}
 	}
 
-	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
+	_graphicsManager->_fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
 
-	(*_graphicsManager._vPort)->fillPic(0);
+	_graphicsManager->_vPort->fillPic(0);
 	flipPageAndWait();
 	_bVoy->freeBoltGroup(0x900);
 }
 
 void VoyeurEngine::doGossip() {
-	_graphicsManager.resetPalette();
-	_graphicsManager.screenReset();
+	_graphicsManager->resetPalette();
+	_graphicsManager->screenReset();
 
 	if (!_bVoy->getBoltGroup(0x300))
 		return;
 
 	// Load the gossip animation
 	RL2Decoder decoder;
-	decoder.loadFile("a2050100.rl2", false);
+	decoder.loadRL2File("a2050100.rl2", false);
 	decoder.start();
 
 	// Get the resource data for the first gossip video
@@ -752,9 +751,9 @@ void VoyeurEngine::doGossip() {
 	pal->startFade();
 
 	// Transfer initial background to video decoder
-	PictureResource videoFrame(decoder.getVideoTrack()->getBackSurface());
+	PictureResource videoFrame(decoder.getRL2VideoTrack()->getBackSurface());
 	bgPic->_bounds.moveTo(0, 0);
-	_graphicsManager.sDrawPic(bgPic, &videoFrame, Common::Point(0, 0));
+	_graphicsManager->sDrawPic(bgPic, &videoFrame, Common::Point(0, 0));
 
 	byte *frameNumsP = _bVoy->memberAddr(0x309);
 	byte *posP = _bVoy->boltEntry(0x30A)._data;
@@ -764,45 +763,45 @@ void VoyeurEngine::doGossip() {
 	decoder.close();
 
 	// Reset the palette and clear the screen
-	_graphicsManager.resetPalette();
-	_graphicsManager.screenReset();
+	_graphicsManager->resetPalette();
+	_graphicsManager->screenReset();
 
 	// Play interview video
 	RL2Decoder decoder2;
-	decoder2.loadFile("a2110100.rl2", true);
+	decoder2.loadRL2File("a2110100.rl2", true);
 	decoder2.start();
 
-	_eventsManager.getMouseInfo();
+	_eventsManager->getMouseInfo();
 	decoder2.play(this);
 	decoder2.close();
 
 	_bVoy->freeBoltGroup(0x300);
-	_graphicsManager.screenReset();
+	_graphicsManager->screenReset();
 }
 
 void VoyeurEngine::doTapePlaying() {
 	if (!_bVoy->getBoltGroup(0xA00))
 		return;
 
-	_eventsManager.getMouseInfo();
-	_graphicsManager._backColors = _bVoy->boltEntry(0xA01)._cMapResource;
-	_graphicsManager._backgroundPage = _bVoy->boltEntry(0xA00)._picResource;
+	_eventsManager->getMouseInfo();
+	_graphicsManager->_backColors = _bVoy->boltEntry(0xA01)._cMapResource;
+	_graphicsManager->_backgroundPage = _bVoy->boltEntry(0xA00)._picResource;
 	PictureResource *pic = _bVoy->boltEntry(0xA02)._picResource;
 	VInitCycleResource *cycle = _bVoy->boltEntry(0xA05)._vInitCycleResource;
 
-	(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
-	_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(57, 30));
-	_graphicsManager._backColors->startFade();
+	_graphicsManager->_vPort->setupViewPort(_graphicsManager->_backgroundPage);
+	_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(57, 30));
+	_graphicsManager->_backColors->startFade();
 	flipPageAndWaitForFade();
 
 	cycle->vStartCycle();
 
-	_soundManager.startVOCPlay("vcr.voc");
-	while (!shouldQuit() && !_eventsManager._mouseClicked && _soundManager.getVOCStatus()) {
-		_eventsManager.delayClick(2);
+	_soundManager->startVOCPlay("vcr.voc");
+	while (!shouldQuit() && !_eventsManager->_mouseClicked && _soundManager->getVOCStatus()) {
+		_eventsManager->delayClick(2);
 	}
 
-	_soundManager.stopVOCPlay();
+	_soundManager->stopVOCPlay();
 	cycle->vStopCycle();
 	_bVoy->freeBoltGroup(0xA00);
 }
@@ -810,8 +809,8 @@ void VoyeurEngine::doTapePlaying() {
 bool VoyeurEngine::checkForMurder() {
 	int oldMurderIndex = _controlPtr->_state->_victimMurderIndex;
 
-	for (int idx = 0; idx < _voy._eventCount; ++idx) {
-		VoyeurEvent &evt = _voy._events[idx];
+	for (int idx = 0; idx < _voy->_eventCount; ++idx) {
+		VoyeurEvent &evt = _voy->_events[idx];
 
 		if (evt._type == EVTYPE_VIDEO) {
 			switch (_controlPtr->_state->_victimIndex) {
@@ -849,81 +848,81 @@ bool VoyeurEngine::checkForMurder() {
 		}
 
 		if (_controlPtr->_state->_victimMurderIndex == _controlPtr->_state->_victimIndex) {
-			_voy._videoEventId = idx;
+			_voy->_videoEventId = idx;
 			return true;
 		}
 	}
 
 	_controlPtr->_state->_victimMurderIndex = oldMurderIndex;
-	_voy._videoEventId = -1;
+	_voy->_videoEventId = -1;
 	return false;
 }
 
 bool VoyeurEngine::checkForIncriminate() {
-	_voy._incriminatedVictimNumber = 0;
+	_voy->_incriminatedVictimNumber = 0;
 
-	for (int idx = 0; idx < _voy._eventCount; ++idx) {
-		VoyeurEvent &evt = _voy._events[idx];
+	for (int idx = 0; idx < _voy->_eventCount; ++idx) {
+		VoyeurEvent &evt = _voy->_events[idx];
 		
 		if (evt._type == EVTYPE_VIDEO) {
 			if (evt._audioVideoId == 44 && evt._computerOn <= 40 &&
 					(evt._computerOff + evt._computerOn) >= 70) {
-				_voy._incriminatedVictimNumber = 1;
+				_voy->_incriminatedVictimNumber = 1;
 			}
 
 			if (evt._audioVideoId == 44 && evt._computerOn <= 79 &&
 					(evt._computerOff + evt._computerOn) >= 129) {
-				_voy._incriminatedVictimNumber = 1;
+				_voy->_incriminatedVictimNumber = 1;
 			}
 
 			if (evt._audioVideoId == 20 && evt._computerOn <= 28 &&
 					(evt._computerOff + evt._computerOn) >= 45) {
-				_voy._incriminatedVictimNumber = 2;
+				_voy->_incriminatedVictimNumber = 2;
 			}
 
 			if (evt._audioVideoId == 35 && evt._computerOn <= 17 &&
 					(evt._computerOff + evt._computerOn) >= 36) {
-				_voy._incriminatedVictimNumber = 3;
+				_voy->_incriminatedVictimNumber = 3;
 			}
 
 			if (evt._audioVideoId == 30 && evt._computerOn <= 80 &&
 					(evt._computerOff + evt._computerOn) >= 139) {
-				_voy._incriminatedVictimNumber = 4;
+				_voy->_incriminatedVictimNumber = 4;
 			}
 		}
 
-		if (_voy._incriminatedVictimNumber) {
+		if (_voy->_incriminatedVictimNumber) {
 			_controlPtr->_state->_victimMurderIndex = 88;
-			_voy._videoEventId = idx;
+			_voy->_videoEventId = idx;
 			return true;
 		}
 	}
 
-	_voy._videoEventId = -1;
+	_voy->_videoEventId = -1;
 	return false;
 }
 
 void VoyeurEngine::playAVideoEvent(int eventIndex) {
-	VoyeurEvent &evt = _voy._events[eventIndex];
+	VoyeurEvent &evt = _voy->_events[eventIndex];
 	_audioVideoId = evt._audioVideoId;
-	_voy._vocSecondsOffset = evt._computerOn;
-	_eventsManager._videoDead = evt._dead;
-	_voy._eventFlags &= ~EVTFLAG_TIME_DISABLED;
+	_voy->_vocSecondsOffset = evt._computerOn;
+	_eventsManager->_videoDead = evt._dead;
+	_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 	
 	playAVideoDuration(_audioVideoId, evt._computerOff);
 
-	_voy._eventFlags |= EVTFLAG_TIME_DISABLED;
-	if (_eventsManager._videoDead != -1) {
+	_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
+	if (_eventsManager->_videoDead != -1) {
 		_bVoy->freeBoltGroup(0xE00);
-		_eventsManager._videoDead = -1;
+		_eventsManager->_videoDead = -1;
 		flipPageAndWait();
-		_eventsManager._videoDead = -1;
+		_eventsManager->_videoDead = -1;
 	}
 
 	_audioVideoId = -1;
-	if (_eventsManager._videoDead != -1) {
+	if (_eventsManager->_videoDead != -1) {
 		_bVoy->freeBoltGroup(0xE00);
-		_eventsManager._videoDead = -1;
+		_eventsManager->_videoDead = -1;
 		flipPageAndWait();
 	}
 }
@@ -934,30 +933,30 @@ int VoyeurEngine::getChooseButton()  {
 		+ 6)._rectResource->_entries;
 	int selectedIndex = -1;
 
-	(*_graphicsManager._vPort)->setupViewPort(_graphicsManager._backgroundPage);
-	_graphicsManager._backColors->_steps = 0;
-	_graphicsManager._backColors->startFade();
+	_graphicsManager->_vPort->setupViewPort(_graphicsManager->_backgroundPage);
+	_graphicsManager->_backColors->_steps = 0;
+	_graphicsManager->_backColors->startFade();
 	flipPageAndWait();
 
-	_voy._viewBounds = _bVoy->boltEntry(_playStampGroupId + 7)._rectResource;
+	_voy->_viewBounds = _bVoy->boltEntry(_playStampGroupId + 7)._rectResource;
 	PictureResource *cursorPic = _bVoy->boltEntry(_playStampGroupId + 2)._picResource;
 
 	do {
 		do {
-			if (_currentVocId != -1 && !_soundManager.getVOCStatus())
-				_soundManager.startVOCPlay(_currentVocId);
+			if (_currentVocId != -1 && !_soundManager->getVOCStatus())
+				_soundManager->startVOCPlay(_currentVocId);
 
-			_eventsManager.getMouseInfo();
+			_eventsManager->getMouseInfo();
 			selectedIndex = -1;
-			Common::Point pt = _eventsManager.getMousePos();
+			Common::Point pt = _eventsManager->getMousePos();
 			
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {
 				if (hotspots[idx].contains(pt)) {
-					if (!_voy._victimMurdered || ((int)idx + 1) != _controlPtr->_state->_victimIndex) {
+					if (!_voy->_victimMurdered || ((int)idx + 1) != _controlPtr->_state->_victimIndex) {
 						selectedIndex = idx;
 						if (selectedIndex != prevIndex) {
 							PictureResource *btnPic = _bVoy->boltEntry(_playStampGroupId + 8 + idx)._picResource;
-							_graphicsManager.sDrawPic(btnPic, *_graphicsManager._vPort,
+							_graphicsManager->sDrawPic(btnPic, _graphicsManager->_vPort,
 								Common::Point(106, 200));
 
 							cursorPic = _bVoy->boltEntry(_playStampGroupId + 4)._picResource;
@@ -969,28 +968,28 @@ int VoyeurEngine::getChooseButton()  {
 			if (selectedIndex == -1) {
 				cursorPic = _bVoy->boltEntry(_playStampGroupId + 2)._picResource;
 				PictureResource *btnPic = _bVoy->boltEntry(_playStampGroupId + 12)._picResource;
-				_graphicsManager.sDrawPic(btnPic, *_graphicsManager._vPort,
+				_graphicsManager->sDrawPic(btnPic, _graphicsManager->_vPort,
 					Common::Point(106, 200));
 			}
 
-			_graphicsManager.sDrawPic(cursorPic, *_graphicsManager._vPort,
+			_graphicsManager->sDrawPic(cursorPic, _graphicsManager->_vPort,
 				Common::Point(pt.x + 13, pt.y - 12));
 
 			flipPageAndWait();
-		} while (!shouldQuit() && !_eventsManager._mouseClicked);
-	} while (!shouldQuit() && selectedIndex == -1 && !_eventsManager._rightClick);
+		} while (!shouldQuit() && !_eventsManager->_mouseClicked);
+	} while (!shouldQuit() && selectedIndex == -1 && !_eventsManager->_rightClick);
 
 	return selectedIndex;
 }
 
 void VoyeurEngine::makeViewFinder() {
-	_graphicsManager._backgroundPage = _bVoy->boltEntry(0x103)._picResource;
-	_graphicsManager.sDrawPic(_graphicsManager._backgroundPage, 
-		*_graphicsManager._vPort, Common::Point(0, 0));
+	_graphicsManager->_backgroundPage = _bVoy->boltEntry(0x103)._picResource;
+	_graphicsManager->sDrawPic(_graphicsManager->_backgroundPage, 
+		_graphicsManager->_vPort, Common::Point(0, 0));
 	CMapResource *pal = _bVoy->boltEntry(0x104)._cMapResource;
 
 	int palOffset = 0;
-	switch (_voy._transitionId) {
+	switch (_voy->_transitionId) {
 	case 1:
 	case 2:
 	case 5:
@@ -1018,27 +1017,27 @@ void VoyeurEngine::makeViewFinder() {
 		break;
 	}
 
-	(*_graphicsManager._vPort)->drawIfaceTime();
+	_graphicsManager->_vPort->drawIfaceTime();
 	doTimeBar();
 	pal->startFade();
 
 	flipPageAndWaitForFade();
 
-	_graphicsManager.setColor(241, 105, 105, 105);
-	_graphicsManager.setColor(242, 105, 105, 105);
-	_graphicsManager.setColor(243, 105, 105, 105);
-	_graphicsManager.setColor(palOffset + 241, 219, 235, 235);
+	_graphicsManager->setColor(241, 105, 105, 105);
+	_graphicsManager->setColor(242, 105, 105, 105);
+	_graphicsManager->setColor(243, 105, 105, 105);
+	_graphicsManager->setColor(palOffset + 241, 219, 235, 235);
 
-	_eventsManager._intPtr._hasPalette = true;
+	_eventsManager->_intPtr._hasPalette = true;
 }
 
 void VoyeurEngine::makeViewFinderP() {
-	_graphicsManager.screenReset();
+	_graphicsManager->screenReset();
 }
 
 void VoyeurEngine::initIFace() {
 	int playStamp1 = _playStampGroupId;
-	switch (_voy._transitionId) {
+	switch (_voy->_transitionId) {
 	case 0:
 		break;
 	case 1:
@@ -1058,7 +1057,7 @@ void VoyeurEngine::initIFace() {
 		break;
 	}
 	if (playStamp1 != -1)
-		_bVoy->freeBoltGroup(playStamp1, true);
+		_bVoy->freeBoltGroup(playStamp1);
 
 	_bVoy->getBoltGroup(_playStampGroupId);
 	CMapResource *pal = _bVoy->boltEntry(_playStampGroupId + 2)._cMapResource;
@@ -1069,10 +1068,10 @@ void VoyeurEngine::initIFace() {
 		(MANSION_MAX_Y - MANSION_VIEW_HEIGHT) / 2);
 	doScroll(_mansionViewPos);
 	
-	_voy._viewBounds = _bVoy->boltEntry(_playStampGroupId)._rectResource;
+	_voy->_viewBounds = _bVoy->boltEntry(_playStampGroupId)._rectResource;
 
 	// Show the cursor using ScummVM functionality
-	_eventsManager.showCursor();
+	_eventsManager->showCursor();
 
 	// Note: the original did two loops to preload members here, which is
 	// redundant for ScummVM, since computers are faster these days, and
@@ -1081,10 +1080,10 @@ void VoyeurEngine::initIFace() {
 
 void VoyeurEngine::doScroll(const Common::Point &pt) {
 	Common::Rect clipRect(72, 47, 72 + 240, 47 + 148);
-	(*_graphicsManager._vPort)->setupViewPort(NULL, &clipRect);
+	_graphicsManager->_vPort->setupViewPort(NULL, &clipRect);
 
 	int base = 0;
-	switch (_voy._transitionId) {
+	switch (_voy->_transitionId) {
 	case 0:
 		break;
 	case 1:
@@ -1105,45 +1104,45 @@ void VoyeurEngine::doScroll(const Common::Point &pt) {
 
 	if (base) {
 		PictureResource *pic = _bVoy->boltEntry(base + 3)._picResource;
- 		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 104));
+ 		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 104));
 		pic = _bVoy->boltEntry(base + 4)._picResource;
-		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 44));
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y - 44));
 		pic = _bVoy->boltEntry(base + 5)._picResource;
-		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 16));
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 16));
 		pic = _bVoy->boltEntry(base + 6)._picResource;
-		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 76));
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 76));
 		pic = _bVoy->boltEntry(base + 7)._picResource;
-		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 136));
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(784 - pt.x - 712, 150 - pt.y + 136));
 	}
 
-	(*_graphicsManager._vPort)->setupViewPort(NULL);
+	_graphicsManager->_vPort->setupViewPort(NULL);
 }
 
 void VoyeurEngine::checkTransition() {
 	Common::String time, day;
 
-	if (_voy._transitionId != _checkTransitionId) {
+	if (_voy->_transitionId != _checkTransitionId) {
 		// Get the day
 		day = getDayName();
 
 		// Only proceed if a valid day string was returned
 		if (!day.empty()) {
-			_graphicsManager.fadeDownICF(6);
+			_graphicsManager->fadeDownICF(6);
 
 			// Get the time of day string
 			time = getTimeOfDay();
 
 			// Show a transition card with the day and time, and wait
 			doTransitionCard(day, time);
-			_eventsManager.delayClick(180);
+			_eventsManager->delayClick(180);
 		}
 
-		_checkTransitionId = _voy._transitionId;
+		_checkTransitionId = _voy->_transitionId;
 	}
 }
 
 Common::String VoyeurEngine::getDayName() {
-	switch (_voy._transitionId) {
+	switch (_voy->_transitionId) {
 	case 0:
 		return "";
 	case 1:
@@ -1159,64 +1158,64 @@ Common::String VoyeurEngine::getDayName() {
 }
 
 Common::String VoyeurEngine::getTimeOfDay() {
-	if (_voy._transitionId == 17)
+	if (_voy->_transitionId == 17)
 		return "";
 
-	return Common::String::format("%d:%02d%s", _gameHour, _gameMinute, _voy._isAM ? AM : PM);
+	return Common::String::format("%d:%02d%s", _gameHour, _gameMinute, _voy->_isAM ? AM : PM);
 }
 
 int VoyeurEngine::doComputerText(int maxLen) {
-	FontInfoResource &font = *_graphicsManager._fontPtr;
+	FontInfoResource &font = *_graphicsManager->_fontPtr;
 	int totalChars = 0;
 
 	font._curFont = _bVoy->boltEntry(0x4910)._fontResource;
 	font._foreColor = 129;
 	font._fontSaveBack = false;
-	font._fontFlags = 0;
-	if (_voy._vocSecondsOffset > 60)
-		_voy._vocSecondsOffset = 0;
+	font._fontFlags = DISPFLAG_NONE;
+	if (_voy->_vocSecondsOffset > 60)
+		_voy->_vocSecondsOffset = 0;
 
-	if (_voy._RTVNum > _voy._computerTimeMax && maxLen == 9999) {
+	if (_voy->_RTVNum > _voy->_computerTimeMax && maxLen == 9999) {
 		if (_currentVocId != -1)
-			_soundManager.startVOCPlay(_currentVocId);
+			_soundManager->startVOCPlay(_currentVocId);
 		font._justify = ALIGN_LEFT;
 		font._justifyWidth = 384;
 		font._justifyHeight = 100;
 		font._pos = Common::Point(128, 100);
-		(*_graphicsManager._vPort)->drawText(END_OF_MESSAGE);
-	} else if (_voy._RTVNum < _voy._computerTimeMin && maxLen == 9999) {
+		_graphicsManager->_vPort->drawText(END_OF_MESSAGE);
+	} else if (_voy->_RTVNum < _voy->_computerTimeMin && maxLen == 9999) {
 		if (_currentVocId != -1)
-			_soundManager.startVOCPlay(_currentVocId);
+			_soundManager->startVOCPlay(_currentVocId);
 		font._justify = ALIGN_LEFT;
 		font._justifyWidth = 384;
 		font._justifyHeight = 100;
 		font._pos = Common::Point(120, 100);
-		(*_graphicsManager._vPort)->drawText(START_OF_MESSAGE);
+		_graphicsManager->_vPort->drawText(START_OF_MESSAGE);
 	} else {
-		char *msg = (char *)_bVoy->memberAddr(0x4900 + _voy._computerTextId);
+		char *msg = (char *)_bVoy->memberAddr(0x4900 + _voy->_computerTextId);
 		font._pos = Common::Point(96, 60);
 
 		bool showEnd = true;
 		int yp = 60;
 		do {
-			if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
-				if (_voy._vocSecondsOffset > 60)
-					_voy._vocSecondsOffset = 0;
-				_soundManager.startVOCPlay(_currentVocId);
+			if (_currentVocId != -1 && !_soundManager->getVOCStatus()) {
+				if (_voy->_vocSecondsOffset > 60)
+					_voy->_vocSecondsOffset = 0;
+				_soundManager->startVOCPlay(_currentVocId);
 			}
 
 			char c = *msg++;
 			if (c == '\0') {
 				if (showEnd) {
-					_eventsManager.delay(90);
-					_graphicsManager._drawPtr->_pos = Common::Point(96, 54);
-					_graphicsManager._drawPtr->_penColor = 254;
-					(*_graphicsManager._vPort)->sFillBox(196, 124);
-					_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
-					_graphicsManager._fontPtr->_justifyWidth = 384;
-					_graphicsManager._fontPtr->_justifyHeight = 100;
-					_graphicsManager._fontPtr->_pos = Common::Point(128, 100);
-					(*_graphicsManager._vPort)->drawText(END_OF_MESSAGE);
+					_eventsManager->delay(90);
+					_graphicsManager->_drawPtr->_pos = Common::Point(96, 54);
+					_graphicsManager->_drawPtr->_penColor = 254;
+					_graphicsManager->_vPort->sFillBox(196, 124);
+					_graphicsManager->_fontPtr->_justify = ALIGN_LEFT;
+					_graphicsManager->_fontPtr->_justifyWidth = 384;
+					_graphicsManager->_fontPtr->_justifyHeight = 100;
+					_graphicsManager->_fontPtr->_pos = Common::Point(128, 100);
+					_graphicsManager->_vPort->drawText(END_OF_MESSAGE);
 				}
 				break;
 			}
@@ -1225,186 +1224,187 @@ int VoyeurEngine::doComputerText(int maxLen) {
 				if (c == '^') {
 					yp += 10;
 				} else {
-					_eventsManager.delay(90);
-					_graphicsManager._drawPtr->_pos = Common::Point(96, 54);
-					_graphicsManager._drawPtr->_penColor = 255;
-					(*_graphicsManager._vPort)->sFillBox(196, 124);
+					_eventsManager->delay(90);
+					_graphicsManager->_drawPtr->_pos = Common::Point(96, 54);
+					_graphicsManager->_drawPtr->_penColor = 255;
+					_graphicsManager->_vPort->sFillBox(196, 124);
 					yp = 60;
 				}
 
-				_graphicsManager._fontPtr->_pos = Common::Point(96, yp);
+				_graphicsManager->_fontPtr->_pos = Common::Point(96, yp);
 			} else if (c == '_') {
 				showEnd = false;
 			} else {
-				_graphicsManager._fontPtr->_justify = ALIGN_LEFT;
-				_graphicsManager._fontPtr->_justifyWidth = 0;
-				_graphicsManager._fontPtr->_justifyHeight = 0;
-				(*_graphicsManager._vPort)->drawText(Common::String(c));
-				_eventsManager.delay(4);
+				_graphicsManager->_fontPtr->_justify = ALIGN_LEFT;
+				_graphicsManager->_fontPtr->_justifyWidth = 0;
+				_graphicsManager->_fontPtr->_justifyHeight = 0;
+				_graphicsManager->_vPort->drawText(Common::String(c));
+				_eventsManager->delay(4);
 			}
 
 			flipPageAndWait();
-			_eventsManager.getMouseInfo();
+			_eventsManager->getMouseInfo();
 			++totalChars;
 
-		} while (!shouldQuit() && !_eventsManager._mouseClicked && totalChars < maxLen);
+		} while (!shouldQuit() && !_eventsManager->_mouseClicked && totalChars < maxLen);
 
-		_voy._computerTimeMax = 0;
+		_voy->_computerTimeMax = 0;
 	}
 
 	flipPageAndWait();
 
-	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
+	_graphicsManager->_fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
 	return totalChars;
 }
 
 void VoyeurEngine::getComputerBrush() {
-	if (_bVoy->getBoltGroup(0x4900)) {
-		PictureResource *pic = _bVoy->boltEntry(0x490E)._picResource;
-		int xp = (384 - pic->_bounds.width()) / 2;
-		int yp = (240 - pic->_bounds.height()) / 2 - 4;
+	if (!_bVoy->getBoltGroup(0x4900))
+		return;
 
-		(*_graphicsManager._vPort)->drawPicPerm(pic, Common::Point(xp, yp));
+	PictureResource *pic = _bVoy->boltEntry(0x490E)._picResource;
+	int xp = (384 - pic->_bounds.width()) / 2;
+	int yp = (240 - pic->_bounds.height()) / 2 - 4;
 
-		CMapResource *pal = _bVoy->boltEntry(0x490F)._cMapResource;
-		pal->startFade();
-	}
+	_graphicsManager->_vPort->drawPicPerm(pic, Common::Point(xp, yp));
+
+	CMapResource *pal = _bVoy->boltEntry(0x490F)._cMapResource;
+	pal->startFade();
 }
 
 void VoyeurEngine::doTimeBar() {
 	flashTimeBar();
 
-	if (_voy._RTVLimit > 0) {
-		if (_voy._RTVNum > _voy._RTVLimit || _voy._RTVNum < 0)
-			_voy._RTVNum = _voy._RTVLimit - 1;
+	if (_voy->_RTVLimit > 0) {
+		if (_voy->_RTVNum > _voy->_RTVLimit || _voy->_RTVNum < 0)
+			_voy->_RTVNum = _voy->_RTVLimit - 1;
 		
-		_timeBarVal = _voy._RTVNum;
-		int height = ((_voy._RTVLimit - _voy._RTVNum) * 59) / _voy._RTVLimit;
+		_timeBarVal = _voy->_RTVNum;
+		int height = ((_voy->_RTVLimit - _voy->_RTVNum) * 59) / _voy->_RTVLimit;
 		int fullHeight = MAX(151 - height, 93);
 
-		_graphicsManager._drawPtr->_penColor = 134;
-		_graphicsManager._drawPtr->_pos = Common::Point(39, 92);
+		_graphicsManager->_drawPtr->_penColor = 134;
+		_graphicsManager->_drawPtr->_pos = Common::Point(39, 92);
 
-		(*_graphicsManager._vPort)->sFillBox(6, fullHeight - 92);
+		_graphicsManager->_vPort->sFillBox(6, fullHeight - 92);
 		if (height > 0) {
-			_graphicsManager.setColor(215, 238, 238, 238);
-			_eventsManager._intPtr._hasPalette = true;
+			_graphicsManager->setColor(215, 238, 238, 238);
+			_eventsManager->_intPtr._hasPalette = true;
 
-			_graphicsManager._drawPtr->_penColor = 215;
-			_graphicsManager._drawPtr->_pos = Common::Point(39, fullHeight);
-			(*_graphicsManager._vPort)->sFillBox(6, height);
+			_graphicsManager->_drawPtr->_penColor = 215;
+			_graphicsManager->_drawPtr->_pos = Common::Point(39, fullHeight);
+			_graphicsManager->_vPort->sFillBox(6, height);
 		}
 	}
 }
 
 void VoyeurEngine::flashTimeBar() {
-	if (_voy._RTVNum >= 0 && (_voy._RTVLimit - _voy._RTVNum) < 11 &&
-		(_eventsManager._intPtr._flashTimer >= (_flashTimeVal + 15) ||
-		_eventsManager._intPtr._flashTimer < _flashTimeVal)) {
+	if (_voy->_RTVNum >= 0 && (_voy->_RTVLimit - _voy->_RTVNum) < 11 &&
+		(_eventsManager->_intPtr._flashTimer >= (_flashTimeVal + 15) ||
+		_eventsManager->_intPtr._flashTimer < _flashTimeVal)) {
 		// Within camera low power range
-		_flashTimeVal = _eventsManager._intPtr._flashTimer;
+		_flashTimeVal = _eventsManager->_intPtr._flashTimer;
 
 		if (_flashTimeFlag)
-			_graphicsManager.setColor(240, 220, 20, 20);
+			_graphicsManager->setColor(240, 220, 20, 20);
 		else
-			_graphicsManager.setColor(240, 220, 220, 220);
+			_graphicsManager->setColor(240, 220, 220, 220);
 		
-		_eventsManager._intPtr._hasPalette = true;
+		_eventsManager->_intPtr._hasPalette = true;
 		_flashTimeFlag = !_flashTimeFlag;
 	}
 }
 
 void VoyeurEngine::checkPhoneCall() {
-	if ((_voy._RTVLimit - _voy._RTVNum) >= 36 && _voy._totalPhoneCalls < 5 && 
+	if ((_voy->_RTVLimit - _voy->_RTVNum) >= 36 && _voy->_totalPhoneCalls < 5 && 
 			_currentVocId <= 151 && _currentVocId > 146) {
-		if ((_voy._switchBGNum < _checkPhoneVal || _checkPhoneVal > 180) &&
-				!_soundManager.getVOCStatus()) {
+		if ((_voy->_switchBGNum < _checkPhoneVal || _checkPhoneVal > 180) &&
+				!_soundManager->getVOCStatus()) {
 			int soundIndex;
 			do {
 				soundIndex = getRandomNumber(4);
-			} while (_voy._phoneCallsReceived[soundIndex]);
+			} while (_voy->_phoneCallsReceived[soundIndex]);
 			_currentVocId = 154 + soundIndex;
 
-			_soundManager.stopVOCPlay();
-			_soundManager.startVOCPlay(_currentVocId);
-			_checkPhoneVal = _voy._switchBGNum;
-			++_voy._phoneCallsReceived[soundIndex];
-			++_voy._totalPhoneCalls;
+			_soundManager->stopVOCPlay();
+			_soundManager->startVOCPlay(_currentVocId);
+			_checkPhoneVal = _voy->_switchBGNum;
+			_voy->_phoneCallsReceived[soundIndex] = true;
+			++_voy->_totalPhoneCalls;
 		}
 	}
 }
 
 void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
-	_eventsManager.getMouseInfo();
+	_eventsManager->getMouseInfo();
 	flipPageAndWait();
 
 	if (_currentVocId != -1) {
-		_voy._vocSecondsOffset = _voy._RTVNum - _voy._musicStartTime;
-		_soundManager.stopVOCPlay();
+		_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
+		_soundManager->stopVOCPlay();
 	}
 
-	_bVoy->getBoltGroup(_voy._boltGroupId2);
-	PictureResource *pic = _bVoy->boltEntry(_voy._boltGroupId2 + evidId * 2)._picResource;
-	_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort, Common::Point(
+	_bVoy->getBoltGroup(_voy->_boltGroupId2);
+	PictureResource *pic = _bVoy->boltEntry(_voy->_boltGroupId2 + evidId * 2)._picResource;
+	_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort, Common::Point(
 		(384 - pic->_bounds.width()) / 2, (240 - pic->_bounds.height()) / 2));
-	_bVoy->freeBoltMember(_voy._boltGroupId2 + evidId * 2);
+	_bVoy->freeBoltMember(_voy->_boltGroupId2 + evidId * 2);
 
-	CMapResource *pal = _bVoy->boltEntry(_voy._boltGroupId2 + evidId * 2 + 1)._cMapResource;
+	CMapResource *pal = _bVoy->boltEntry(_voy->_boltGroupId2 + evidId * 2 + 1)._cMapResource;
 	pal->startFade();
 
-	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
-		_eventsManager.delay(1);
-	_bVoy->freeBoltMember(_voy._boltGroupId2 + evidId * 2 + 1);
+	while (!shouldQuit() && (_eventsManager->_fadeStatus & 1))
+		_eventsManager->delay(1);
+	_bVoy->freeBoltMember(_voy->_boltGroupId2 + evidId * 2 + 1);
 
 	Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(_playStampGroupId + 4)._rectResource->_entries;
 	int count = hotspots[evidId]._count;
 
 	if (count > 0) {
 		for (int idx = 1; idx <= count; ++idx) {
-			_voy._evPicPtrs[idx - 1] = _bVoy->boltEntry(_voy._boltGroupId2 + 
+			_voy->_evPicPtrs[idx - 1] = _bVoy->boltEntry(_voy->_boltGroupId2 + 
 				(evidId + idx) * 2)._picResource;
-			_voy._evCmPtrs[idx - 1] = _bVoy->boltEntry(_voy._boltGroupId2 + 
+			_voy->_evCmPtrs[idx - 1] = _bVoy->boltEntry(_voy->_boltGroupId2 + 
 				(evidId + idx) * 2 + 1)._cMapResource;
 		}
 	}
 
 	flipPageAndWait();
-	_eventsManager.stopEvidDim();
+	_eventsManager->stopEvidDim();
 
 	if (eventId == 999)
-		_voy.addEvidEventStart(evidId);
+		_voy->addEvidEventStart(evidId);
 
-	_eventsManager.getMouseInfo();
+	_eventsManager->getMouseInfo();
 
 	int arrIndex = 0;
 	int evidIdx = evidId;
 
-	while (!shouldQuit() && !_eventsManager._rightClick) {
+	while (!shouldQuit() && !_eventsManager->_rightClick) {
 		_voyeurArea = AREA_EVIDENCE;
 
-		if (_currentVocId != -1 && !_soundManager.getVOCStatus()) {
-			if (_voy._vocSecondsOffset > 60)
-				_voy._vocSecondsOffset = 0;
+		if (_currentVocId != -1 && !_soundManager->getVOCStatus()) {
+			if (_voy->_vocSecondsOffset > 60)
+				_voy->_vocSecondsOffset = 0;
 
-			_soundManager.startVOCPlay(_currentVocId);
+			_soundManager->startVOCPlay(_currentVocId);
 		}
 
-		_eventsManager.delayClick(600);
-		if (_eventsManager._rightClick)
+		_eventsManager->delayClick(600);
+		if (_eventsManager->_rightClick)
 			break;
 		if (count == 0 || evidIdx >= eventId)
 			continue;
 		
-		PictureResource *pic = _voy._evPicPtrs[arrIndex];
-		_graphicsManager.sDrawPic(pic, *_graphicsManager._vPort,
+		pic = _voy->_evPicPtrs[arrIndex];
+		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort,
 			Common::Point((384 - pic->_bounds.width()) / 2,
 			(240 - pic->_bounds.height()) / 2));
-		_voy._evCmPtrs[arrIndex]->startFade();
-		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
-			_eventsManager.delay(1);
+		_voy->_evCmPtrs[arrIndex]->startFade();
+		while (!shouldQuit() && (_eventsManager->_fadeStatus & 1))
+			_eventsManager->delay(1);
 
 		flipPageAndWait();
-		_eventsManager.delay(6);
+		_eventsManager->delay(6);
 
 		++evidIdx;
 		++arrIndex;
@@ -1412,11 +1412,11 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 	}
 
 	if (eventId == 999)
-		_voy.addEvidEventEnd(evidIdx);
+		_voy->addEvidEventEnd(evidIdx);
 
 	for (int idx = 1; idx <= hotspots[evidId]._count; ++idx) {
-		_bVoy->freeBoltMember(_voy._boltGroupId2 + (evidId + idx) * 2);
-		_bVoy->freeBoltMember(_voy._boltGroupId2 + (evidId + idx) * 2 + 1);
+		_bVoy->freeBoltMember(_voy->_boltGroupId2 + (evidId + idx) * 2);
+		_bVoy->freeBoltMember(_voy->_boltGroupId2 + (evidId + idx) * 2 + 1);
 	}
 }
 

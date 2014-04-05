@@ -1518,13 +1518,12 @@ void mpalFree() {
  *
  * @param wQueryType		Type of query. The list is in the QueryTypes enum.
  * @returns		4 bytes depending on the type of query
- * @remarks		This is the specialised version of the original single mpalQuery
+ * @remarks		This is the specialized version of the original single mpalQuery
  * method that returns numeric results.
  */
 uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 	Common::String buf;
 	uint32 dwRet = 0;
-	char *n;
 
 	va_list v;
 	va_start(v, wQueryType);
@@ -1625,7 +1624,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
 		 */
 		lockVar();
 		int x = GETARG(uint32);
-		n = GETARG(char *);
+		char *n = GETARG(char *);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
 			n[0]='\0';
@@ -1715,11 +1714,10 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...) {
  *
  * @param wQueryType		Type of query. The list is in the QueryTypes enum.
  * @returns		4 bytes depending on the type of query
- * @remarks		This is the specialised version of the original single mpalQuery
+ * @remarks		This is the specialized version of the original single mpalQuery
  * method that returns a pointer or handle.
  */
 MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...) {
-	char *n;
 	Common::String buf;
 	va_list v;
 	va_start(v, wQueryType);
@@ -1797,12 +1795,9 @@ MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...) {
 		error("mpalQuery(MPQ_ITEM_IS_ACTIVE, uint32 nItem) used incorrect variant");
 
 	} else if (wQueryType == MPQ_ITEM_NAME) {
-		/*
-		 *  uint32 mpalQuery(MPQ_ITEM_NAME, uint32 nItem, char *lpszName);
-		 */
 		lockVar();
 		int x = GETARG(uint32);
-		n = GETARG(char *);
+		char *n = GETARG(char *);
 		buf = Common::String::format("Status.%u", x);
 		if (varGetValue(buf.c_str()) <= 0)
 			n[0] = '\0';
@@ -1872,7 +1867,7 @@ MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...) {
  *
  * @param wQueryType		Type of query. The list is in the QueryTypes enum.
  * @returns		4 bytes depending on the type of query
- * @remarks		This is the specialised version of the original single mpalQuery
+ * @remarks		This is the specialized version of the original single mpalQuery
  * method that needs to run within a co-routine context.
  */
 void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet) {

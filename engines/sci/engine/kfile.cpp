@@ -37,6 +37,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
+#include "sci/sound/audio.h"
 #include "sci/console.h"
 
 namespace Sci {
@@ -493,6 +494,21 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[0].toUint16();
 	Common::String str = s->_segMan->getString(argv[1]);
 	debugC(kDebugLevelFile, "kFileIO(writeString): %d", handle);
+
+	// Handle sciAudio calls in fanmade games here. sciAudio is an
+	// external .NET library for playing MP3 files in fanmade games.
+	// It runs in the background, and obtains sound commands from the
+	// currently running game via text files (called "conductor files").
+	// We skip creating these files, and instead handle the calls
+	// directly. Since the sciAudio calls are only creating text files,
+	// this is probably the most straightforward place to handle them.
+	if (handle == 0xFFFF && str.hasPrefix("(sciAudio")) {
+		Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
+		iter--;	// sciAudio
+		iter--;	// sciAudio child
+		g_sci->_audio->handleFanmadeSciAudio(iter->sendp, s->_segMan);
+		return NULL_REG;
+	}
 
 #ifdef ENABLE_SCI32
 	if (handle == VIRTUALFILE_HANDLE) {

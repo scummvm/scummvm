@@ -29,6 +29,7 @@
 	@ dstPtr. srcPitch and dstPitch identify how to reach subsequent
 	@ lines. redblueMask and round allow for one routine to do both
 	@ 565 and 555 formats.
+	.align 2
 DownscaleAllByHalfARM:
 	@ r0 = srcPtr
 	@ r1 = srcPitch

@@ -50,12 +50,68 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	DebugMan.addDebugChannel(kCGEDebugFile, "file", "CGE IO debug channel");
 	DebugMan.addDebugChannel(kCGEDebugEngine, "engine", "CGE Engine debug channel");
 
-	_startupMode = 1;
-	_oldLev      = 0;
-	_pocPtr      = 0;
-	_bitmapPalette = NULL;
+	_bitmapPalette = nullptr;
+	_pocLight = nullptr;
+	_keyboard = nullptr;
+	_mouse = nullptr;
+	_sprite = nullptr;
+	_miniScene = nullptr;
+	_shadow = nullptr;
+	_horzLine = nullptr;
+	_infoLine = nullptr;
+	_debugLine = nullptr;
+	_sceneLight = nullptr;
+	_commandHandler = nullptr;
+	_commandHandlerTurbo = nullptr;
+	_eventManager = nullptr;
+	_fx = nullptr;
+	_sound = nullptr;
+	_resman = nullptr;
+	for (int i = 0; i < 8; i++)
+		_pocket[i] = nullptr;
+	_hero = nullptr;
+	_text = nullptr;
+	_talk = nullptr;
+	_midiPlayer = nullptr;
+	_miniShp = nullptr;
+	_miniShpList = nullptr;
+	_console = nullptr;
+	_sprTv = nullptr;
+	_sprK1 = nullptr;
+	_sprK2 = nullptr;
+	_sprK3 = nullptr;
+	_font = nullptr;
+	_vga = nullptr;
+	_sys = nullptr;
+
 	_quitFlag = false;
 	_showBoundariesFl = false;
+	_music = true;
+	_dark = false;
+	_game = false;
+	_endGame = false;
+	for (int i = 0; i < 4; i++)
+		_flag[i] = false;
+
+	_startupMode = 1;
+	_oldLev = 0;
+	_pocPtr = 0;
+	_startGameSlot = -1;
+	_recentStep = -2;
+	_lastFrame = 0;
+	_lastTick = 0;
+	_maxScene = 0;
+	_now = 1;
+	_lev = -1;
+	_mode = 0;
+	_gameCase2Cpt = 0;
+	_offUseCount  = 0;
+	_volume[0] = 0;
+	_volume[1] = 0;
+	for (int i = 0; i < kPocketNX; i++)
+		_pocref[i] = -1;
+
+	initSceneValues();
 }
 
 void CGEEngine::initSceneValues() {
@@ -71,17 +127,16 @@ void CGEEngine::initSceneValues() {
 }
 
 void CGEEngine::init() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::setup()");
+	debugC(1, kCGEDebugEngine, "CGEEngine::init()");
 
 	// Initialize fields
-	_lastFrame = 0;
-	_lastTick = 0;
-	_hero = NULL;
-	_shadow = NULL;
-	_miniScene = NULL;
-	_miniShp = NULL;
-	_miniShpList = NULL;
-	_sprite = NULL;
+	_hero = nullptr;
+	_shadow = nullptr;
+	_miniScene = nullptr;
+	_miniShp = nullptr;
+	_miniShpList = nullptr;
+	_sprite = nullptr;
+
 	_resman = new ResourceManager();
 
 	// Create debugger console
@@ -90,12 +145,12 @@ void CGEEngine::init() {
 	// Initialize engine objects
 	_font = new Font(this, "CGE");
 	_text = new Text(this, "CGE");
-	_talk = NULL;
+	_talk = nullptr;
 	_vga = new Vga(this);
 	_sys = new System(this);
 	_pocLight = new PocLight(this);
 	for (int i = 0; i < kPocketNX; i++)
-		_pocket[i] = NULL;
+		_pocket[i] = nullptr;
 	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, kInfoW);
 	_sceneLight = new SceneLight(this);
@@ -110,30 +165,6 @@ void CGEEngine::init() {
 	_sound = new Sound(this);
 
 	_offUseCount = atoi(_text->getText(kOffUseCount));
-	_music = true;
-
-	for (int i = 0; i < kPocketNX; i++)
-		_pocref[i] = -1;
-	_volume[0] = 0;
-	_volume[1] = 0;
-
-	initSceneValues();
-
-	_maxScene   =  0;
-	_dark       = false;
-	_game       = false;
-	_endGame    = false;
-	_now        =  1;
-	_lev        = -1;
-	_recentStep = -2;
-
-	for (int i = 0; i < 4; i++)
-		_flag[i] = false;
-
-	_mode = 0;
-	_soundOk = 1;
-	_sprTv = NULL;
-	_gameCase2Cpt = 0;
 
 	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }

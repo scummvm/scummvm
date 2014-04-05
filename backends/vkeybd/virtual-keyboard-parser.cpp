@@ -34,7 +34,7 @@
 #include "common/tokenizer.h"
 #include "common/stream.h"
 
-#include "graphics/decoders/bmp.h"
+#include "image/bmp.h"
 
 namespace Common {
 
@@ -267,7 +267,7 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 	const Graphics::PixelFormat format = g_system->getOverlayFormat();
 
 	{
-		Graphics::BitmapDecoder bmp;
+		Image::BitmapDecoder bmp;
 		if (!bmp.loadStream(*file))
 			return parserError("Error loading bitmap '" + _mode->bitmapName + "'");
 

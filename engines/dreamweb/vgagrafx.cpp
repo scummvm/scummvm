@@ -23,7 +23,7 @@
 #include "dreamweb/dreamweb.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/pcx.h"
+#include "image/pcx.h"
 
 namespace DreamWeb {
 
@@ -161,7 +161,7 @@ void DreamWebEngine::showPCX(const Common::String &suffix) {
 		return;
 	}
 
-	Graphics::PCXDecoder pcx;
+	Image::PCXDecoder pcx;
 	if (!pcx.loadStream(pcxFile)) {
 		warning("showpcx: Could not process '%s'", name.c_str());
 		return;

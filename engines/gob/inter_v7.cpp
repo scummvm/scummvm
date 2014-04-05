@@ -27,7 +27,8 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
-#include "graphics/decoders/iff.h"
+
+#include "image/iff.h"
 
 #include "gob/gob.h"
 #include "gob/global.h"
@@ -547,7 +548,7 @@ void Inter_v7::o7_loadIFFPalette() {
 		return;
 	}
 
-	Graphics::IFFDecoder decoder;
+	Image::IFFDecoder decoder;
 	decoder.loadStream(*iffFile);
 	if (!decoder.getPalette() || decoder.getPaletteColorCount() != 256) {
 		warning("o7_loadIFFPalette(): Failed reading palette from IFF \"%s\"", file.c_str());

@@ -278,11 +278,15 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		_gameScreen->allocate(_currentState.gameWidth, _currentState.gameHeight);
 		_gameScreen->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
 		// We fill the screen to all black or index 0 for CLUT8.
+#ifdef USE_RGB_COLOR
 		if (_currentState.gameFormat.bytesPerPixel == 1) {
 			_gameScreen->fill(0);
 		} else {
 			_gameScreen->fill(_gameScreen->getSurface()->format.RGBToColor(0, 0, 0));
 		}
+#else
+		_gameScreen->fill(0);
+#endif
 	}
 
 	// Update our display area and cursor scaling. This makes sure we pick up

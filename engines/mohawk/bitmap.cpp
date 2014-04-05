@@ -29,7 +29,7 @@
 #include "common/substream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/decoders/bmp.h"
+#include "image/bmp.h"
 
 namespace Mohawk {
 
@@ -635,7 +635,7 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	Common::SeekableReadStream *bmpStream = decompressLZ(stream, uncompressedSize);
 	delete stream;
 
-	Graphics::BitmapDecoder bitmapDecoder;
+	Image::BitmapDecoder bitmapDecoder;
 	if (!bitmapDecoder.loadStream(*bmpStream))
 		error("Could not decode Myst bitmap");
 

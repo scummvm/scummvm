@@ -74,17 +74,17 @@ struct TransparentSurface : public Graphics::Surface {
 	    ALPHA_FULL = 2
 	};
 
-	#ifdef SCUMM_LITTLE_ENDIAN
+#ifdef SCUMM_LITTLE_ENDIAN
 	static const int kAIndex = 0;
 	static const int kBIndex = 1;
 	static const int kGIndex = 2;
 	static const int kRIndex = 3;
-	#else
+#else
 	static const int kAIndex = 3;
 	static const int kBIndex = 2;
 	static const int kGIndex = 1;
 	static const int kRIndex = 0;
-	#endif
+#endif
 
 	static const int kBShift = 8;//img->format.bShift;
 	static const int kGShift = 16;//img->format.gShift;

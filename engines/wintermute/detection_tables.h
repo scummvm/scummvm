@@ -70,6 +70,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"twc",             "the white chamber"},
 	{"wintermute",      "Wintermute engine game"},
 	{"wtetris",         "Wilma Tetris"},
+	{"zilm",            "Zilm: A Game of Reflex"},
 	{0, 0}
 };
 
@@ -1103,6 +1104,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"wtetris",
 		"",
 		AD_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Zilm: A Game of Reflex 1.0
+	{
+		"Zilm",
+		"1.0",
+		AD_ENTRY1s("data.dcp",  "098dffaf03d8adbb4cb5633e4733e63c", 351726),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,

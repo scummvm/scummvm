@@ -38,7 +38,7 @@ DrawInfo::DrawInfo(int penColor, const Common::Point &pos) {
 
 /*------------------------------------------------------------------------*/
 
-GraphicsManager::GraphicsManager(): _defaultDrawInfo(1, Common::Point()), _drawPtr(&_defaultDrawInfo) {
+GraphicsManager::GraphicsManager(VoyeurEngine *vm) : _defaultDrawInfo(1, Common::Point()), _drawPtr(&_defaultDrawInfo), _vm(vm) {
 	_SVGAMode = 0;
 	_planeSelect = 0;
 	_saveBack = true;
@@ -48,7 +48,8 @@ GraphicsManager::GraphicsManager(): _defaultDrawInfo(1, Common::Point()), _drawP
 	_vPort = NULL;
 	_fontPtr = NULL;
 	Common::fill(&_VGAColors[0], &_VGAColors[PALETTE_SIZE], 0);
-	_fontChar = new PictureResource(0, 0xff, 0xff, 0, Common::Rect(), 0, NULL, 0);
+	_fontChar = new PictureResource(DISPFLAG_NONE, 0xff, 0xff, 0, Common::Rect(), 0, NULL, 0);
+	_backColors = nullptr;
 }
 
 void GraphicsManager::sInitGraphics() {
@@ -64,7 +65,7 @@ GraphicsManager::~GraphicsManager() {
 
 void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 	if (viewPort->_activePage) {
-		viewPort->_activePage->_flags |= 1;
+		viewPort->_activePage->_flags |= DISPFLAG_1;
 		Common::Rect *clipRect = _clipPtr;
 		_clipPtr = &viewPort->_clipRect;
 
@@ -111,7 +112,6 @@ void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, int idx, con
 
 void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 		const Common::Point &initialOffset) {
-	int imageDataShift = 0;
 	int width1, width2;
 	int widthDiff, widthDiff2;
 	int height1;
@@ -138,10 +138,15 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	if (srcDisplay->_flags & DISPFLAG_VIEWPORT) {
 		// A viewport was passed, not a picture
 		srcPic = ((ViewPortResource *)srcDisplay)->_currentPic;
+	} else {
+		srcPic = (PictureResource *)srcDisplay;
+	}
+
+	if (destDisplay->_flags & DISPFLAG_VIEWPORT) {
+		// A viewport was passed, not a picture
 		destViewPort = (ViewPortResource *)destDisplay;
 		destPic = destViewPort->_currentPic;
 	} else {
-		srcPic = (PictureResource *)srcDisplay;
 		destPic = (PictureResource *)destDisplay;
 	}
 
@@ -214,7 +219,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	widthDiff2 = destPic->_bounds.width() - width2;
 
 	if (destViewPort) {
-		if (!_saveBack || ((srcPic->_flags & DISPFLAG_800) != 0)) {
+		if (!_saveBack || (srcPic->_flags & DISPFLAG_800)) {
 			backBounds.left = destPic->_bounds.left + offset.x;
 			backBounds.top = destPic->_bounds.top + offset.y;
 			backBounds.setWidth(width2);
@@ -242,6 +247,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	}
 
 	if (srcFlags & DISPFLAG_1000) {
+		int imageDataShift = 0;
 		srcImgData = srcPic->_imgData + (imageDataShift << 14);
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
 			if (imageDataShift < 4)
@@ -289,7 +295,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 							srcP = (byte *)_screenSurface.getPixels() + srcOffset;
 
 							for (int yp = 0; yp < height1; ++yp) {
-								for (int xp = 0; xp < width2; ++width2, ++srcP, ++destP) {
+								for (int xp = 0; xp < width2; ++xp, ++srcP, ++destP) {
 									pixel = *srcP;
 									if (pixel)
 										*destP = pixel;
@@ -464,16 +470,16 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 						} else {
 							// loc_26543
 							for (int yp = 0; yp < height1; ++yp) {
-								int runLength = 0;
-								for (int xp = 0; xp < width2; ++xp, --runLength) {
-									if (runLength <= 0) {
+								int runLen = 0;
+								for (int xp = 0; xp < width2; ++xp, --runLen) {
+									if (runLen <= 0) {
 										// Start of run length, so get pixel and repeat length
 										pixel = *srcP++;
 										if (pixel & 0x80) {
 											pixel &= 0x7f;
-											runLength = *srcP++;
-											if (runLength == 0)
-												runLength = width2;
+											runLen = *srcP++;
+											if (runLen == 0)
+												runLen = width2;
 										}
 									}
 
@@ -542,12 +548,12 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 		} else {
 			// loc_26673
-			int pick = srcPic->_pick;
-			int onOff = srcPic->_onOff;
+			byte pick = srcPic->_pick;
+			byte onOff = srcPic->_onOff;
 
 			if (!(srcFlags & PICFLAG_PIC_OFFSET)) {
 				srcP = srcImgData += srcOffset;
-				int pixel = 0;
+				pixel = 0;
 
 				if (destFlags & PICFLAG_PIC_OFFSET) {
 					destP = destImgData + screenOffset;
@@ -564,15 +570,15 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 								height1 = tmpHeight + height1;
 
 								for (int yp = 0; yp < height1; ++yp) {
-									int runLength = 0;
-									for (int xp = 0; xp < width2; ++xp, --runLength) {
-										if (runLength <= 0) {
+									int runLen = 0;
+									for (int xp = 0; xp < width2; ++xp, --runLen) {
+										if (runLen <= 0) {
 											pixel = *srcP++;
 											if (pixel & 0x80) {
 												pixel &= 0x7F;
-												runLength = *srcP++;
-												if (!runLength)
-													runLength = width2;
+												runLen = *srcP++;
+												if (!runLen)
+													runLen = width2;
 											}
 										}
 
@@ -591,7 +597,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 								destP = (byte *)_screenSurface.getPixels() + screenOffset;
 
 								for (int yp = 0; yp < height1; ++yp) {
-									for (int xp = 0; xp < width2; ++xp, ++destP) {
+									for (int xi = 0; xi < width2; ++xi, ++destP) {
 										byteVal2 = 0;
 										for (int xp = 0; xp < width2; ++xp, ++destP, --byteVal2) {
 											if (!byteVal2) {
@@ -839,7 +845,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	}
 
 	if (cursorData) {
-		_vm->_eventsManager.setCursor(cursorData, width2, height1);
+		_vm->_eventsManager->setCursor(cursorData, width2, height1, srcPic->_keyColor);
 		delete[] cursorData;
 	}
 }
@@ -858,7 +864,7 @@ void GraphicsManager::fillPic(DisplayResource *display, byte onOff) {
 	}
 
 	PictureResource picResource;
-	picResource._flags = 0;
+	picResource._flags = DISPFLAG_NONE;
 	picResource._select = 0xff;
 	picResource._pick = 0;
 	picResource._onOff = onOff;
@@ -871,7 +877,7 @@ void GraphicsManager::fillPic(DisplayResource *display, byte onOff) {
  * Queues the given picture for display
  */
 void GraphicsManager::sDisplayPic(PictureResource *pic) {
-	_vm->_eventsManager._intPtr._flipWait = true;
+	_vm->_eventsManager->_intPtr._flipWait = true;
 }
 
 void GraphicsManager::flipPage() {
@@ -934,7 +940,7 @@ void GraphicsManager::clearPalette() {
 
 void GraphicsManager::setPalette(const byte *palette, int start, int count) {
 	g_system->getPaletteManager()->setPalette(palette, start, count);
-	_vm->_eventsManager._gameData._hasPalette = false;
+	_vm->_eventsManager->_gameData._hasPalette = false;
 }
 
 void GraphicsManager::setPalette128(const byte *palette, int start, int count) {
@@ -949,7 +955,7 @@ void GraphicsManager::resetPalette() {
 	for (int i = 0; i < 256; ++i)
 		setColor(i, 0, 0, 0);
 
-	_vm->_eventsManager._intPtr._hasPalette = true;
+	_vm->_eventsManager->_intPtr._hasPalette = true;
 }
 
 void GraphicsManager::setColor(int idx, byte r, byte g, byte b) {
@@ -958,8 +964,8 @@ void GraphicsManager::setColor(int idx, byte r, byte g, byte b) {
 	vgaP[1] = g;
 	vgaP[2] = b;
 
-	_vm->_eventsManager._intPtr._palStartIndex = MIN(_vm->_eventsManager._intPtr._palStartIndex, idx);
-	_vm->_eventsManager._intPtr._palEndIndex = MAX(_vm->_eventsManager._intPtr._palEndIndex, idx);
+	_vm->_eventsManager->_intPtr._palStartIndex = MIN(_vm->_eventsManager->_intPtr._palStartIndex, idx);
+	_vm->_eventsManager->_intPtr._palEndIndex = MAX(_vm->_eventsManager->_intPtr._palEndIndex, idx);
 }
 
 void GraphicsManager::setOneColor(int idx, byte r, byte g, byte b) {
@@ -978,60 +984,60 @@ void GraphicsManager::setColors(int start, int count, const byte *pal) {
 		}
 	}
 
-	_vm->_eventsManager._intPtr._hasPalette = true;
+	_vm->_eventsManager->_intPtr._hasPalette = true;
 }
 
 void GraphicsManager::screenReset() {
 	resetPalette();
 
 	_backgroundPage = NULL;
-	(*_vPort)->setupViewPort(NULL);
-	fillPic(*_vPort, 0);	
+	_vPort->setupViewPort(NULL);
+	fillPic(_vPort, 0);	
 
 	_vm->flipPageAndWait();
 }
 
 void GraphicsManager::fadeDownICF1(int steps) {
 	if (steps > 0) {
-		int stepAmount = _vm->_voy._fadingAmount2 / steps;
+		int stepAmount = _vm->_voy->_fadingAmount2 / steps;
 
 		for (int idx = 0; idx < steps; ++idx) {
-			_vm->_voy._fadingAmount2 -= stepAmount;
-			_vm->_eventsManager.delay(1);
+			_vm->_voy->_fadingAmount2 -= stepAmount;
+			_vm->_eventsManager->delay(1);
 		}
 	}
 
-	_vm->_voy._fadingAmount2 = 0;
+	_vm->_voy->_fadingAmount2 = 0;
 }
 
 void GraphicsManager::fadeUpICF1(int steps) {
 	if (steps > 0) {
-		int stepAmount = (63 - _vm->_voy._fadingAmount2) / steps;
+		int stepAmount = (63 - _vm->_voy->_fadingAmount2) / steps;
 
 		for (int idx = 0; idx < steps; ++idx) {
-			_vm->_voy._fadingAmount2 += stepAmount;
-			_vm->_eventsManager.delay(1);
+			_vm->_voy->_fadingAmount2 += stepAmount;
+			_vm->_eventsManager->delay(1);
 		}
 	}
 
-	_vm->_voy._fadingAmount2 = 63;
+	_vm->_voy->_fadingAmount2 = 63;
 }
 
 void GraphicsManager::fadeDownICF(int steps) {
 	if (steps > 0) {
-		_vm->_eventsManager.hideCursor();
-		int stepAmount1 = _vm->_voy._fadingAmount1 / steps;
-		int stepAmount2 = _vm->_voy._fadingAmount2 / steps;
+		_vm->_eventsManager->hideCursor();
+		int stepAmount1 = _vm->_voy->_fadingAmount1 / steps;
+		int stepAmount2 = _vm->_voy->_fadingAmount2 / steps;
 
 		for (int idx = 0; idx < steps; ++idx) {
-			_vm->_voy._fadingAmount1 -= stepAmount1;
-			_vm->_voy._fadingAmount2 -= stepAmount2;
-			_vm->_eventsManager.delay(1);
+			_vm->_voy->_fadingAmount1 -= stepAmount1;
+			_vm->_voy->_fadingAmount2 -= stepAmount2;
+			_vm->_eventsManager->delay(1);
 		}
 	}
 
-	_vm->_voy._fadingAmount1 = 0;
-	_vm->_voy._fadingAmount2 = 0;
+	_vm->_voy->_fadingAmount1 = 0;
+	_vm->_voy->_fadingAmount2 = 0;
 }
 
 void GraphicsManager::drawDot() {

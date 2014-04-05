@@ -353,9 +353,9 @@ void GraphicManager::drawNormalText(const Common::String text, FontType font, by
 }
 
 /**
- * Used in Help. Draws text double the size of the normal.
+ * Draws text double the size of the normal.
  */
-void GraphicManager::drawBigText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];
@@ -365,7 +365,7 @@ void GraphicManager::drawBigText(const Common::String text, FontType font, byte 
 					pixelBit = (pixel >> (bit / 2)) & 1;
 				for (int k = 0; k < 2; k++)
 					if (pixelBit)
-						*(byte *)_surface.getBasePtr(x + i * 16 + 16 - bit, y + j * 2 + k) = color;
+						*(byte *)surface.getBasePtr(x + i * 16 + 16 - bit, y + j * 2 + k) = color;
 			}
 		}
 	}
@@ -479,15 +479,15 @@ void GraphicManager::drawDebugLines() {
 }
 
 void GraphicManager::drawRectangle(Common::Rect rect, Color color) {
-	_surface.frameRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), color);
+	_surface.frameRect(rect, color);
 }
 
 void GraphicManager::drawFilledRectangle(Common::Rect rect, Color color) {
-	_surface.fillRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), color);
+	_surface.fillRect(rect, color);
 }
 
 void GraphicManager::blackOutScreen() {
-	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 639, 199), kColorBlack);
+	_vm->_graphics->drawFilledRectangle(Common::Rect(0, 0, 640, 200), kColorBlack);
 }
 
 void GraphicManager::nimLoad() {
@@ -691,7 +691,11 @@ void GraphicManager::helpDrawHighlight(byte which, Color color) {
 		return;
 
 	which &= 31;
-	drawRectangle(Common::Rect(466, 38 + which * 27, 555, 62 + which * 27), color);
+	drawRectangle(Common::Rect(466, 38 + which * 27, 556, 63 + which * 27), color);
+}
+
+void GraphicManager::helpDrawBigText(const Common::String text, int16 x, int16 y, Color color) {
+	drawBigText(_surface, text, _vm->_font, 8, x, y, color);
 }
 
 /**
@@ -777,6 +781,100 @@ void GraphicManager::seuDrawCameo(int destX, int destY, byte w1, byte w2) {
 
 	// Then we draw the desired sprite:
 	drawPicture(_surface, _seuPictures[w1], destX, destY);
+}
+
+uint16 GraphicManager::seuGetPicWidth(int which) {
+	return _seuPictures[which].w;
+}
+
+uint16 GraphicManager::seuGetPicHeight(int which) {
+	return _seuPictures[which].h;
+}
+
+void GraphicManager::menuRefreshScreen() {
+	g_system->copyRectToScreen(_menu.getPixels(), _menu.pitch, 0, 0, kScreenWidth, kMenuScreenHeight);
+	g_system->updateScreen();
+}
+
+void GraphicManager::menuInitialize() {
+	initGraphics(kScreenWidth, kMenuScreenHeight, true);
+	_menu.create(kScreenWidth, kMenuScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+}
+
+void GraphicManager::menuFree() {
+	_menu.free();
+}
+
+void GraphicManager::menuRestoreScreen() {
+	initGraphics(kScreenWidth, 2 * kScreenHeight, true);
+}
+
+void GraphicManager::menuLoadPictures() {
+	_menu.fillRect(Common::Rect(0, 0, kScreenWidth, kMenuScreenHeight), kColorBlack);
+
+	Common::File file;
+
+	if (!file.open("menu.avd"))
+		error("AVALANCHE: MainMenu: File not found: menu.avd");
+
+	int height = 33;
+	int width = 9 * 8;
+	
+	for (int plane = 0; plane < 4; plane++) {
+		// The icons themselves:
+		int n = 0;
+		for (uint16 y = 70; y < 70 + height * 6; y++) {
+			for (uint16 x = 48; x < 48 + width; x += 8) {
+				if (n < 1773) { // Magic value deciphered from the original code.
+					byte pixel = file.readByte();
+					n++;
+					for (int i = 0; i < 8; i++) {
+						byte pixelBit = (pixel >> i) & 1;
+						*(byte *)_menu.getBasePtr(x + 7 - i, y) += (pixelBit << plane);
+					}
+				}
+			}
+		}
+		// The right borders of the menuboxes:
+		for (int a = 0; a < 33; a++) {
+			byte pixel = file.readByte();
+			for (int b = 0; b < 6; b++) {
+				for (int i = 0; i < 8; i++) {
+					byte pixelBit = (pixel >> i) & 1;
+					*(byte *)_menu.getBasePtr(584 + 7 - i, 70 + b * 33 + a) += (pixelBit << plane);
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < 6; i++) {
+		_menu.fillRect(Common::Rect(114, 73 + i * 33, 584, 100 + i * 33), kColorLightgray);
+		_menu.fillRect(Common::Rect(114, 70 + i * 33, 584, 73 + i * 33), kColorWhite);
+		_menu.fillRect(Common::Rect(114, 100 + i * 33, 584, 103 + i * 33), kColorDarkgray);
+	}
+	
+	file.close();
+
+	// The title on the top of the screen:
+	if (!file.open("mainmenu.avd"))
+		error("AVALANCHE: MainMenu: File not found: mainmenu.avd");
+
+	Graphics::Surface title = loadPictureRaw(file, 640, 59);
+	drawPicture(_menu, title, 0, 0);
+	title.free();
+
+	file.close();
+}
+
+void GraphicManager::menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, Color color) {
+	drawBigText(_menu, text, font, 14, x, y, color);
+}
+
+void GraphicManager::menuDrawIndicator(int x) { // TODO: Implement striped pattern for the indicator.
+	if (x > 0)
+		_menu.fillRect(Common::Rect(x - 1, 330, x, 337), kColorBlack);
+	_menu.fillRect(Common::Rect(x, 330, x + 1, 337), kColorWhite);
+	menuRefreshScreen();
 }
 
 /**
@@ -984,7 +1082,27 @@ void GraphicManager::drawCursor(byte pos) {
 }
 
 void GraphicManager::drawReadyLight(Color color) {
-	_surface.fillRect(Common::Rect(419, 195, 438, 197), color);
+	_surface.fillRect(Common::Rect(419, 195, 439, 198), color);
+	_scrolls.fillRect(Common::Rect(419, 195, 439, 198), color);
+}
+
+void GraphicManager::drawSoundLight(bool state) {
+	Color color = kColorBlack;
+	if (state)
+		color = kColorCyan;
+	else
+		color = kColorBlack;
+	_surface.fillRect(Common::Rect(419, 175, 439, 178), color);
+}
+
+void GraphicManager::drawErrorLight(bool state) {
+	Color color = kColorBlack;
+	if (state)
+		color = kColorRed;
+	else
+		color = kColorBlack;
+	_surface.fillRect(Common::Rect(419, 184, 439, 187), color);
+	refreshScreen();
 }
 
 /**

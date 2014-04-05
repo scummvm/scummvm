@@ -62,9 +62,9 @@ int16 findPaletteFromName(const char *fileName) {
 	uint16 position = 0;
 	uint16 i;
 
-	strcpy(buffer, fileName);
+	Common::strlcpy(buffer, fileName, sizeof(buffer));
 
-	while (position < strlen(fileName)) {
+	while (position < strlen(buffer)) {
 		if (buffer[position] > 'a' && buffer[position] < 'z') {
 			buffer[position] += 'A' - 'a';
 		}

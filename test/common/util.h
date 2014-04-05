@@ -115,7 +115,7 @@ class UtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(Common::isAlnum('Z'), 1);
 		TS_ASSERT_EQUALS(Common::isAlnum('1'), 1);
 		TS_ASSERT_EQUALS(Common::isAlnum('0'), 1);
-		TS_ASSERT_EQUALS(Common::isAlnum('§'), 0);
+		TS_ASSERT_EQUALS(Common::isAlnum('\xA7'), 0);
 		TS_ASSERT_EQUALS(Common::isAlnum('$'), 0);
 		TS_ASSERT_EQUALS(Common::isAlnum(' '), 0);
 		TS_ASSERT_EQUALS(Common::isAlnum('\n'), 0);
@@ -136,7 +136,7 @@ class UtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(Common::isAlpha('Z'), 1);
 		TS_ASSERT_EQUALS(Common::isAlpha('1'), 0);
 		TS_ASSERT_EQUALS(Common::isAlpha('0'), 0);
-		TS_ASSERT_EQUALS(Common::isAlpha('§'), 0);
+		TS_ASSERT_EQUALS(Common::isAlpha('\xA7'), 0);
 		TS_ASSERT_EQUALS(Common::isAlpha('$'), 0);
 		TS_ASSERT_EQUALS(Common::isAlpha(' '), 0);
 		TS_ASSERT_EQUALS(Common::isAlpha('\n'), 0);
@@ -157,7 +157,7 @@ class UtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(Common::isDigit('Z'), 0);
 		TS_ASSERT_EQUALS(Common::isDigit('1'), 1);
 		TS_ASSERT_EQUALS(Common::isDigit('0'), 1);
-		TS_ASSERT_EQUALS(Common::isDigit('§'), 0);
+		TS_ASSERT_EQUALS(Common::isDigit('\xA7'), 0);
 		TS_ASSERT_EQUALS(Common::isDigit('$'), 0);
 		TS_ASSERT_EQUALS(Common::isDigit(' '), 0);
 		TS_ASSERT_EQUALS(Common::isDigit('\n'), 0);
@@ -178,7 +178,7 @@ class UtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(Common::isLower('Z'), 0);
 		TS_ASSERT_EQUALS(Common::isLower('1'), 0);
 		TS_ASSERT_EQUALS(Common::isLower('0'), 0);
-		TS_ASSERT_EQUALS(Common::isLower('§'), 0);
+		TS_ASSERT_EQUALS(Common::isLower('\xA7'), 0);
 		TS_ASSERT_EQUALS(Common::isLower('$'), 0);
 		TS_ASSERT_EQUALS(Common::isLower(' '), 0);
 		TS_ASSERT_EQUALS(Common::isLower('\n'), 0);
@@ -200,7 +200,7 @@ class UtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(Common::isUpper('Z'), 1);
 		TS_ASSERT_EQUALS(Common::isUpper('1'), 0);
 		TS_ASSERT_EQUALS(Common::isUpper('0'), 0);
-		TS_ASSERT_EQUALS(Common::isUpper('§'), 0);
+		TS_ASSERT_EQUALS(Common::isUpper('\xA7'), 0);
 		TS_ASSERT_EQUALS(Common::isUpper('$'), 0);
 		TS_ASSERT_EQUALS(Common::isUpper(' '), 0);
 		TS_ASSERT_EQUALS(Common::isUpper('\n'), 0);

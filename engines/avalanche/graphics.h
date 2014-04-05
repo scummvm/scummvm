@@ -59,8 +59,6 @@ public:
 	void loadDigits();
 	void loadMouse(byte which);
 
-	// We have to handle the drawing of rectangles a little bit differently to mimic Pascal's bar() and rectangle() methods properly.
-	// Now it is possible to use the original coordinates everywhere.
 	void drawRectangle(Common::Rect rect, Color color);
 	void drawFilledRectangle(Common::Rect rect, Color color);
 	void blackOutScreen();
@@ -70,7 +68,6 @@ public:
 	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawTriangle(Common::Point *p, Color color);
 	void drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawBigText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
 	void drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawDigit(int index, int x, int y);
 	void drawDirection(int index, int x, int y);
@@ -109,6 +106,7 @@ public:
 	// Help's function:
 	void helpDrawButton(int y, byte which);
 	void helpDrawHighlight(byte which, Color color);
+	void helpDrawBigText(const Common::String text, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
 
 	// Shoot em' up's functions:
 	void seuDrawTitle();
@@ -116,6 +114,19 @@ public:
 	void seuFree();
 	void seuDrawPicture(int x, int y, byte which);
 	void seuDrawCameo(int destX, int destY, byte w1, byte w2);
+	uint16 seuGetPicWidth(int which);
+	uint16 seuGetPicHeight(int which);
+
+	// Main Menu's functions:
+	// The main menu uses a different screen height (350) from the game itself (200 * 2)
+	// so it needs it's own graphic functions on that matter.
+	void menuRefreshScreen();
+	void menuInitialize();
+	void menuFree();
+	void menuRestoreScreen();
+	void menuLoadPictures();
+	void menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, Color color);
+	void menuDrawIndicator(int x);
 
 	void clearAlso();
 	void clearTextBar();
@@ -131,6 +142,8 @@ public:
 	void drawToolbar();
 	void drawCursor(byte pos);
 	void drawReadyLight(Color color);
+	void drawSoundLight(bool state);
+	void drawErrorLight(bool state);
 	void drawSign(Common::String name, int16 xl, int16 yl, int16 y);
 	void drawIcon(int16 x, int16 y, byte which);
 	void drawScreenLine(int16 x, int16 y, int16 x2, int16 y2, Color color);
@@ -155,6 +168,7 @@ private:
 	static const byte kEgaPaletteIndex[16];
 	static const byte kBackgroundHeight = 8 * 12080 / kScreenWidth; // With 640 width it's 151.
 	// The 8 = number of bits in a byte, and 12080 comes from Lucerna::load().
+	static const uint16 kMenuScreenHeight = 350;
 
 	Graphics::Surface _background;
 	Graphics::Surface _backup;
@@ -164,6 +178,7 @@ private:
 	Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
 	Graphics::Surface _scrolls;
 	Graphics::Surface _surface;
+	Graphics::Surface _menu;
 
 	// For the mini-game "Nim".
 	Graphics::Surface _nimStone;
@@ -184,6 +199,7 @@ private:
 	Graphics::Surface loadPictureSign(Common::File &file, uint16 width, uint16 height); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
 
 	void drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color); // Very similar to drawText. TODO: Try to unify the two.
 	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
 
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.

@@ -32,7 +32,7 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
-#include "graphics/decoders/pict.h"
+#include "image/pict.h"
 
 namespace Sci {
 
@@ -201,12 +201,12 @@ void GfxMacIconBar::setInventoryIcon(int16 icon) {
 }
 
 Graphics::Surface *GfxMacIconBar::loadPict(ResourceId id) {
-	Graphics::PICTDecoder pictDecoder;
 	Resource *res = g_sci->getResMan()->findResource(id, false);
 
 	if (!res || res->size == 0)
 		return 0;
 
+	Image::PICTDecoder pictDecoder;
 	Common::MemoryReadStream stream(res->data, res->size);
 	if (!pictDecoder.loadStream(stream))
 		return 0;

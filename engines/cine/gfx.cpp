@@ -730,7 +730,7 @@ void FWRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 
 	assert(_background);
 
-	strcpy(_bgName, name);
+	Common::strlcpy(_bgName, name, sizeof(_bgName));
 
 	// Load the 16 color palette
 	_backupPal.load(bg, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
@@ -1403,7 +1403,7 @@ void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 
 	assert(_bgTable[idx].bg);
 
-	strcpy(_bgTable[idx].name, name);
+	Common::strlcpy(_bgTable[idx].name, name, sizeof(_bgTable[idx].name));
 
 	// Load the 16 color palette
 	_bgTable[idx].pal.load(bg, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
@@ -1441,7 +1441,7 @@ void OSRenderer::loadBg256(const byte *bg, const char *name, unsigned int idx) {
 
 	assert(_bgTable[idx].bg);
 
-	strcpy(_bgTable[idx].name, name);
+	Common::strlcpy(_bgTable[idx].name, name, sizeof(_bgTable[idx].name));
 	_bgTable[idx].pal.load(bg, kHighPalNumBytes, kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
 	memcpy(_bgTable[idx].bg, bg + kHighPalNumBytes, _screenSize);
 }

@@ -69,9 +69,9 @@ private:
 		bool isValid() const;
 
 	private:
-		uint32 _form;
-		uint32 _dataSize;
-		int _method;
+		uint32 _form;      // Unused variable
+		uint32 _dataSize;  // Unused variable
+		int _method;       // Unused variable
 		int _defSoundSize;
 	};
 
@@ -130,7 +130,6 @@ private:
 	private:
 		Common::SeekableReadStream *_fileStream;
 		const RL2FileHeader &_header;
-		RL2AudioTrack *_audioTrack;
 		Graphics::Surface *_surface;
 		Graphics::Surface *_backSurface;
 		bool _hasBackFrame;
@@ -175,7 +174,7 @@ public:
 	virtual void close();
 
 	bool loadStream(Common::SeekableReadStream *stream);
-	bool loadFile(const Common::String &file, bool palFlag = false);
+	bool loadRL2File(const Common::String &file, bool palFlag);
 	bool loadVideo(int videoId);
 	int getPaletteCount() const { return _header._colorCount; }
 
@@ -187,8 +186,8 @@ public:
 	 * @param imgPos		Position to draw image data
 	 */
 	void play(VoyeurEngine *vm, int resourceOffset = 0, byte *frames = NULL, byte *imgPos = NULL);
-	RL2VideoTrack *getVideoTrack() { return _videoTrack; }
-	RL2AudioTrack *getAudioTrack() { return _audioTrack; }
+	RL2VideoTrack *getRL2VideoTrack() { return _videoTrack; }
+	RL2AudioTrack *getRL2AudioTrack() { return _audioTrack; }
 };
 
 } // End of namespace Voyeur

@@ -157,23 +157,26 @@ Vars::Vars() {
 	scene08_manOffsetY = 0;
 
 	scene09_flyingBall = 0;
-	scene09_var05 = 0;
-	scene09_glotatel = 0;
+	scene09_numSwallenBalls = 0;
+	scene09_gulper = 0;
 	scene09_spitter = 0;
 	scene09_grit = 0;
-	scene09_var02 = 0;
-	scene09_var08 = 1;
-	scene09_var09 = 0;
-	scene09_var10 = -1;
-	scene09_var11 = -1;
-	scene09_var12 = -1000;
+	scene09_dudeY = 0;
+	scene09_gulperIsPresent = true;
+	scene09_dudeIsOnLadder = false;
+	scene09_interactingHanger = -1;
+	scene09_intHangerPhase = -1;
+	scene09_intHangerMaxPhase = -1000;
 	scene09_numMovingHangers = 0;
-	scene09_var13 = 0;
-	scene09_var15 = 0;
-	scene09_var17 = 0;
-	scene09_var19 = 0;
-	scene09_var18.x = 0;
-	scene09_var18.y = -15;
+	scene09_clickY = 0;
+	scene09_hangerOffsets[0].x = 0;
+	scene09_hangerOffsets[0].y = -15;
+	scene09_hangerOffsets[1].x = 15;
+	scene09_hangerOffsets[1].y = 0;
+	scene09_hangerOffsets[2].x = 0;
+	scene09_hangerOffsets[2].y = 0;
+	scene09_hangerOffsets[3].x = 0;
+	scene09_hangerOffsets[3].y = 0;
 
 	scene10_gum = 0;
 	scene10_packet = 0;
@@ -267,7 +270,38 @@ Vars::Vars() {
 	scene17_handPhase = false;
 	scene17_sceneEdgeX = 0;
 
-	scene18_var01 = 0;
+	scene18_inScene18p1 = false;
+	scene18_whirlgig = 0;
+	scene18_wheelCenterX = 0;
+	scene18_wheelCenterY = 0;
+	scene18_bridgeIsConvoluted = false;
+	scene18_whirlgigMovMum = 0;
+	scene18_girlIsSwinging = false;
+	scene18_rotationCounter = 0;
+	scene18_manY = 0;
+	scene18_wheelFlipper = false;
+	scene18_wheelIsTurning = true;
+	scene18_kidIsOnWheel = -1;
+	scene18_boyIsOnWheel = 0;
+	scene18_girlIsOnWheel = 0;
+	scene18_boyJumpedOff = true;
+	scene18_jumpDistance = -1;
+	scene18_jumpAngle = -1;
+	scene18_manIsReady = false;
+	scene18_enteredTrubaRight = false;
+	scene18_manWheelPos = 0;
+	scene18_manWheelPosTo = -1;
+	scene18_kidWheelPos = 0;
+	scene18_kidWheelPosTo = 0;
+	scene18_boy = 0;
+	scene18_girl = 0;
+	scene18_domino = 0;
+	scene18_boyJumpX = 290;
+	scene18_boyJumpY = -363;
+	scene18_girlJumpX = 283;
+	scene18_girlJumpY = -350;
+
+	scene19_enteredTruba3 = false;
 
 	scene20_fliesCountdown = 0;
 	scene20_grandma = 0;
@@ -343,6 +377,23 @@ Vars::Vars() {
 	scene28_headDirection = false;
 	scene28_headBeardedFlipper = false;
 	scene28_lift6inside = false;
+
+	scene29_porter = 0;
+	scene29_shooter1 = 0;
+	scene29_shooter2 = 0;
+	scene29_ass = 0;
+	scene29_var09 = 0;
+	scene29_var10 = 0;
+	scene29_var11 = 0;
+	scene29_var12 = 0;
+	scene29_var13 = 0;
+	scene29_var14 = 75;
+	scene29_var15 = 0;
+	scene29_var16 = 0;
+	scene29_var17 = 0;
+	scene29_var18 = 0;
+	scene29_var20 = 0;
+	scene29_var21 = 0;
 
 	scene30_leg = 0;
 	scene30_liftFlag = 1;
@@ -756,16 +807,17 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene17_updateCursor;
 		break;
 
-#if 0
 	case SC_18:
-		sub_40E1B0();
+		scene18_setupEntrance();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_18");
 		scene->preloadMovements(sceneVar);
-		sub_4062D0();
-		if (dword_476C38)
+		g_fp->stopAllSounds();
+
+		if (g_vars->scene18_inScene18p1)
 			scene18_initScene1(scene);
 		else
 			scene18_initScene2(scene);
+
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_18");
 		setSceneMusicParameters(sceneVar);
@@ -774,30 +826,34 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		break;
 
 	case SC_19:
-		if (!g_scene3) {
-			g_scene3 = accessScene(SC_18);
-			getGameLoader()->loadScene(SC_18);
-			scene18_initScene2(g_scene3);
-			sub_40C5F0();
-			scene19_sub_420B10(g_scene3, entrance->field_4);
-			dword_476C38 = 1;
+		if (!g_fp->_scene3) {
+			g_fp->_scene3 = accessScene(SC_18);
+			g_fp->_gameLoader->loadScene(SC_18);
+
+			scene18_initScene2(g_fp->_scene3);
+			scene18_preload();
+			scene19_setMovements(g_fp->_scene3, entrance->_field_4);
+
+			g_vars->scene18_inScene18p1 = true;
 		}
-		sub_40C650();
+
+		scene19_preload();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_19");
 		scene->preloadMovements(sceneVar);
-		sub_4062D0();
-		if (dword_476C38)
+		g_fp->stopAllSounds();
+
+		if (g_vars->scene18_inScene18p1)
 			scene18_initScene1(scene);
 		else
 			scene19_initScene2();
+
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_19");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler19, 2);
-		scene19_sub_4211D0(scene);
+		scene19_setSugarState(scene);
 		_updateCursorCallback = scene19_updateCursor;
 		break;
-#endif
 
 	case SC_20:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_20");
@@ -903,7 +959,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		_updateCursorCallback = scene28_updateCursor;
 		break;
 
-#if 0
 	case SC_29:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_29");
 		scene->preloadMovements(sceneVar);
@@ -914,7 +969,6 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		addMessageHandler(sceneHandler29, 2);
 		_updateCursorCallback = scene29_updateCursor;
 		break;
-#endif
 
 	case SC_30:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_30");
@@ -1409,6 +1463,10 @@ Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
 	warning("STUB: BallChain::sub04");
 
 	return pTail;
+}
+
+void BallChain::sub05(Ball *ball) {
+	warning("STUB: BallChain::sub05");
 }
 
 

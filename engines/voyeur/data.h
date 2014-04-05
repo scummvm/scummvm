@@ -31,8 +31,13 @@ namespace Voyeur {
 
 #define TOTAL_EVENTS 1000
 
-enum VoyeurEventType { EVTYPE_VIDEO = 1, EVTYPE_AUDIO = 2, EVTYPE_EVID = 3,
-	EVTYPE_COMPUTER = 4 };
+enum VoyeurEventType {
+	EVTYPE_NONE = 0,
+	EVTYPE_VIDEO = 1,
+	EVTYPE_AUDIO = 2,
+	EVTYPE_EVID = 3,
+	EVTYPE_COMPUTER = 4
+};
 
 enum EventFlag { EVTFLAG_TIME_DISABLED = 1, EVTFLAG_2 = 2, EVTFLAG_8 = 8, EVTFLAG_RECORDING = 0x10,
 	EVTFLAG_40 = 0x40, EVTFLAG_VICTIM_PRESET = 0x80, EVTFLAG_100 = 0x100 };
@@ -143,14 +148,13 @@ public:
 	HotspotTimes<3> _evidenceHotspotTimes;
 	HotspotTimes<8> _videoHotspotTimes;
 
-	Common::Rect _rect4E4;
+	Common::Rect _computerScreenRect;
 	RectResource *_viewBounds;
 	PictureResource *_evPicPtrs[6];
 	CMapResource *_evCmPtrs[6];
 	VoyeurEvent _events[TOTAL_EVENTS];
 
-	SVoy();
-	void setVm(VoyeurEngine *vm);
+	SVoy(VoyeurEngine *vm);
 
 	/**
 	 * Synchronize the data

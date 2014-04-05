@@ -28,8 +28,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
-#include "graphics/decoders/jpeg.h"
-#include "graphics/decoders/pict.h"
+#include "image/pict.h"
 
 namespace Mohawk {
 
@@ -94,7 +93,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 	MohawkSurface *mhkSurface = 0;
 
 	if (isPict) {
-		Graphics::PICTDecoder pict;
+		Image::PICTDecoder pict;
 
 		if (!pict.loadStream(*dataStream))
 			error("Could not decode Myst ME PICT");

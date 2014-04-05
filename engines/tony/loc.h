@@ -395,7 +395,7 @@ private:
 private:
 	int inWhichBox(const RMPoint &pt);
 
-	short findPath(short source, short destination);
+	bool findPath(short source, short destination);
 	RMPoint searching(char UP, char DOWN, char RIGHT, char LEFT, RMPoint point);
 	RMPoint nearestPoint(const RMPoint &punto);
 
