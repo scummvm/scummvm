@@ -286,7 +286,7 @@ void ScreenObjects::check(bool scanFlag) {
 	UserInterface &userInterface = scene._userInterface;
 
 	if (!_vm->_events->_mouseButtons || _inputMode != kInputBuildingSentences)
-		_vm->_events->_anyStroke = false;
+		_vm->_events->_rightMousePressed = false;
 
 	if ((_vm->_events->_mouseMoved || _vm->_game->_scene._userInterface._scrollerY 
 			|| _v8332A || _v8333C) && scanFlag) {
@@ -473,13 +473,13 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = 9;
 		varA = 5;
 		topIndex = 0;
-		idxP = !_vm->_events->_anyStroke ? &userInterface._highlightedCommandIndex : 
+		idxP = !_vm->_events->_rightMousePressed ? &userInterface._highlightedCommandIndex : 
 			&userInterface._selectedActionIndex;
 
-		if (_vm->_events->_anyStroke && userInterface._selectedItemVocabIdx >= 0)
+		if (_vm->_events->_rightMousePressed && userInterface._selectedItemVocabIdx >= 0)
 			userInterface.updateSelection(CAT_INV_VOCAB, -1, &userInterface._selectedItemVocabIdx);
 
-		var4 = _released && !_vm->_events->_anyStroke ? 1 : 0;
+		var4 = _released && !_vm->_events->_rightMousePressed ? 1 : 0;
 		break;
 
 	case CAT_INV_LIST:
@@ -505,12 +505,12 @@ void ScreenObjects::elementHighlighted() {
 
 		varA = 0;
 		topIndex = 0;
-		idxP = _vm->_events->_anyStroke ? &userInterface._selectedItemVocabIdx : &userInterface._highlightedActionIndex;
+		idxP = _vm->_events->_rightMousePressed ? &userInterface._selectedItemVocabIdx : &userInterface._highlightedActionIndex;
 
-		if (_vm->_events->_anyStroke && userInterface._selectedActionIndex >= 0)
+		if (_vm->_events->_rightMousePressed && userInterface._selectedActionIndex >= 0)
 			userInterface.updateSelection(CAT_COMMAND, -1, &userInterface._selectedActionIndex);
 
-		var4 = _released && !_vm->_events->_anyStroke ? 1 : 0;
+		var4 = _released && !_vm->_events->_rightMousePressed ? 1 : 0;
 		break;
 
 	case CAT_INV_ANIM:
@@ -605,7 +605,7 @@ void ScreenObjects::elementHighlighted() {
 			newIndex = -1;
 	}
 
-	if (_released && !_vm->_events->_anyStroke &&
+	if (_released && !_vm->_events->_rightMousePressed &&
 			(_vm->_events->_mouseReleased || !_vm->_easyMouse))
 		newIndex = -1;
 

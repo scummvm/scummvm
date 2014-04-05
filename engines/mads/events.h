@@ -58,7 +58,7 @@ public:
 	bool _mouseClicked;
 	bool _mouseReleased;
 	byte _mouseButtons;
-	bool _anyStroke;
+	bool _rightMousePressed;
 	bool _keyPressed;
 	int _vCC;
 	int _vD2;
