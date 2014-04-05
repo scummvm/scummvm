@@ -332,26 +332,30 @@ void Scene103::actions() {
 		if (!_vm->_game->_trigger)
 			_vm->_sound->command(31);
 
-		if (_vm->_game->_fx < 2) {
+		if (_vm->_game->_trigger < 2) {
 			_globals._spriteIndexes[24] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, _vm->_game->_trigger < 1 ? 1 : 0);
 			if (_vm->_game->_trigger) {
+				// Lock the turkey into a permanent "exploded" frame
+				_scene->_sequences.setAnimRange(_globals._spriteIndexes[24], -1, -1);
+
 				// Rex says "Gads.."
-				_scene->_sequences.setAnimRange(_globals._spriteIndexes[24], -1, 0);
 				Common::String msg = _game.getQuote(51);
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 0, 60, msg);
 				_scene->_sequences.addTimer(120, _vm->_game->_trigger + 1);
 			} else {
-				// Start initial explosion
+				// Initial turky explosion
 				_scene->_sequences.addSubEntry(_globals._spriteIndexes[24], SM_0, 0, 1);
 			}
+		}
 
-			_game._player._stepEnabled = _game._trigger == 2;
-			_globals[kTurkeyExploded] = -1;
-			if (_game._trigger == 2) {
-				// Show exposition dialog
-				_vm->_dialogs->show(10302);
-				_scene->_hotspots.activate(362, false);
-			}
+		// Re-enable player if sequence is ended, and set global flag
+		_game._player._stepEnabled = _game._trigger == 2;
+		_globals[kTurkeyExploded] = -1;
+
+		if (_game._trigger == 2) {
+			// Show exposition dialog at end of sequence
+			_vm->_dialogs->show(10302);
+			_scene->_hotspots.activate(362, false);
 		}
 	} else if (_action.isAction(VERB_LOOK, 250)) {
 		_vm->_dialogs->show(!_globals[kTurkeyExploded] ? 10323 : 10303);
