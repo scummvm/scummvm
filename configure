@@ -2057,7 +2057,8 @@ case $_host_os in
 				CXXFLAGS="$CXXFLAGS -mtune=xscale"
 				CXXFLAGS="$CXXFLAGS -msoft-float"
 				ABI="armeabi"
-				ANDROID_PLATFORM=4
+				# Platform version 9 is used by ResidualVM
+				ANDROID_PLATFORM=9
 				ANDROID_PLATFORM_ARCH="arm"
 				;;
 			android-v7a | android-arm-v7a)
