@@ -379,7 +379,7 @@ void GameNebular::doObjectAction() {
 			((id = _objects.getIdFromDesc(action._activeAction._objectNameId)) != 0 ||
 			(action._activeAction._indirectObjectId > 0 &&
 			(id = _objects.getIdFromDesc(action._activeAction._indirectObjectId))))) {
-		if (id == 21) {
+		if (id == OBJ_REPAIR_LIST) {
 			dialogs._indexList[0] = _globals[kTeleporterCode + 7];
 			dialogs._indexList[1] = _globals[kTeleporterCode + 8];
 			dialogs._indexList[2] = _globals[kTeleporterCode + 6];
@@ -392,7 +392,25 @@ void GameNebular::doObjectAction() {
 
 			dialogs.showPicture(id, 402);
 		} else {
-			error("TODO: Implement. See loc_29B48");
+			int messageId = 800 + id;
+			if (id == OBJ_CHARGE_CASES) {
+				error("TODO: object_get_folder - loc_29B48");
+				messageId = 860;
+			}
+			
+			if (id == OBJ_TAPE_PLAYER && _objects[OBJ_AUDIO_TAPE]._roomNumber == OBJ_TAPE_PLAYER)
+				messageId = 867;
+
+			if (id == 32 && _objects[OBJ_FISHING_LINE]._roomNumber == 3)
+				messageId = 862;
+
+			if (id == OBJ_BOTTLE && _globals[kBottleStatus] != 0)
+				messageId = 862 + _globals[kBottleStatus];
+
+			if (id == OBJ_PHONE_HANDSET && _globals[kHandsetCellStatus])
+				messageId = 861;
+
+			dialogs.showPicture(id, messageId);
 		}
 	} else if (action.isAction(VERB_PUT, NOUN_BURGER, NOUN_DEAD_FISH)) {
 		if (_objects.isInInventory(OBJ_BURGER) || _objects.isInInventory(OBJ_DEAD_FISH)) {

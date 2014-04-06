@@ -167,9 +167,14 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 	}
 }
 
-int InventoryObjects::getIdFromDesc(int objectId) {
-	warning("TODO: InventoryObjects::getIdFromDesc()");
-	return objectId;
+int InventoryObjects::getIdFromDesc(int descId) {
+	for (int i = 0; i < (int)size(); ++i) {
+		InventoryObject &obj = (*this)[i];
+		if (obj._descId == descId)
+			return i;
+	}
+
+	return -1;
 }
 
 } // End of namespace MADS
