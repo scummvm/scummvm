@@ -263,7 +263,7 @@ void Player::update() {
 			scene._spriteSlots[slotIndex]._flags = IMG_ERASE;
 
 		int newDepth = 1;
-		int yp = MAX(_playerPos.y, (int16)(MADS_SCENE_HEIGHT - 1));
+		int yp = MIN(_playerPos.y, (int16)(MADS_SCENE_HEIGHT - 1));
 		
 		for (int idx = 1; idx < 15; ++idx) {
 			if (scene._sceneInfo->_depthList[newDepth] >= yp)
