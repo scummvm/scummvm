@@ -137,11 +137,6 @@ protected:
 	 * Constructor
 	 */
 	SceneInfo(MADSEngine *vm) : _vm(vm) {}
-	
-	/**
-	 * Loads the given surface with depth information of a given scene
-	 */
-	virtual void loadCodes(MSurface &depthSurface) = 0;
 public:
 	int _sceneId;
 	int _artFileNum;
@@ -173,11 +168,20 @@ public:
 	/**
 	 loads the data
 	 */
-	void load(int sceneId, int flags, const Common::String &resName, int v3, 
+	void load(int sceneId, int variant, const Common::String &resName, int flags, 
 		MSurface &depthSurface, MSurface &bgSurface);
 
 	/**
 	* Loads the given surface with depth information of a given scene
+	* @param depthSurface	Depth/walk surface
+	* @param variant		Variant number to load
+	*/
+	virtual void loadCodes(MSurface &depthSurface, int variant) = 0;
+
+	/**
+	* Loads the given surface with depth information of a given scene
+	* @param depthSurface	Depth/walk surface
+	* @param stream			Stream to load the data from
 	*/
 	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) = 0;
 };

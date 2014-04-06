@@ -98,7 +98,7 @@ SceneInfo *SceneInfo::init(MADSEngine *vm) {
 	}
 }
 
-void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
+void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		int flags, MSurface &depthSurface, MSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
 	
@@ -180,7 +180,7 @@ void SceneInfo::load(int sceneId, int v1, const Common::String &resName,
 	}
 
 	// Load the depth surface with the scene codes
-	Common::SeekableReadStream *depthStream = infoPack.getItemStream(1);
+	Common::SeekableReadStream *depthStream = infoPack.getItemStream(variant + 1);
 	loadCodes(depthSurface, depthStream);
 	delete depthStream;
 

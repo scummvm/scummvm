@@ -381,7 +381,7 @@ void Scene202::enter() {
 	}
 
 	if (_globals[kBone202Status])
-		_scene->changeDepthSurface(_globals[kBone202Status]);
+		_scene->changeVariant(_globals[kBone202Status]);
 
 	if (_scene->_priorSceneId == 201) {
 		_game._player._playerPos = Common::Point(190, 91);
@@ -789,7 +789,7 @@ void Scene202::actions() {
 						_game._objects.addToInventory(OBJ_BONE);
 						_vm->_dialogs->showPicture(OBJ_BONE, 0x4EFA, 0);
 					}
-					_scene->changeDepthSurface(_globals[kBone202Status]);
+					_scene->changeVariant(_globals[kBone202Status]);
 					_game._player._stepEnabled = true;
 					_game._player._visible = true;
 				} else {

@@ -90,10 +90,10 @@ Common::String NebularScene::formAnimName(char sepChar, int suffixNum) {
 
 /*------------------------------------------------------------------------*/
 
-void SceneInfoNebular::loadCodes(MSurface &depthSurface) {
+void SceneInfoNebular::loadCodes(MSurface &depthSurface, int variant) {
 	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ".DAT"));
 	MadsPack codesPack(&f);
-	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
+	Common::SeekableReadStream *stream = codesPack.getItemStream(variant + 1);
 
 	loadCodes(depthSurface, stream);
 

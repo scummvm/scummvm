@@ -266,7 +266,7 @@ void Scene103::actions() {
 	} else if (_action.isAction(VERB_TAKE, 371) && _game._objects.isInRoom(OBJ_TIMER_MODULE)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
-			_scene->changeDepthSurface(1);
+			_scene->changeVariant(1);
 			_globals._spriteIndexes[28] = _scene->_sequences.startReverseCycle(
 				_globals._spriteIndexes[13], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._spriteIndexes[28]);
@@ -284,7 +284,7 @@ void Scene103::actions() {
 		case 2:
 			_vm->_sound->command(22);
 			_game._objects.addToInventory(OBJ_TIMER_MODULE);
-			_scene->changeDepthSurface(0);
+			_scene->changeVariant(0);
 			_scene->drawElements(kTransitionNone, false);
 			_scene->_hotspots.activate(371, false);
 			_vm->_game->_player._visible = true;
@@ -298,7 +298,7 @@ void Scene103::actions() {
 	} else if (_action.isAction(VERB_TAKE, 289, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
-			_scene->changeDepthSurface(1);
+			_scene->changeVariant(1);
 			_globals._spriteIndexes[27] = _scene->_sequences.startReverseCycle(
 				_globals._spriteIndexes[12], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._spriteIndexes[27]);

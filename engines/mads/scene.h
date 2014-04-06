@@ -98,7 +98,7 @@ public:
 	int _textSpacing;
 	Hotspots _hotspots;
 	DirtyAreas _dirtyAreas;
-	int _v1;
+	int _variant;
 	SceneInfo *_sceneInfo;
 	MSurface _backgroundSurface;
 	DepthSurface _depthSurface;
@@ -206,7 +206,10 @@ public:
 	 */
 	void free();
 
-	void changeDepthSurface(int arg1);
+	/**
+	 * Set the walk surface for a scene to a different variant
+	 */
+	void changeVariant(int variant);
 
 	void resetScene();
 

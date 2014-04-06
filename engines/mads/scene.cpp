@@ -114,7 +114,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_priorSceneId = _currentSceneId;
 	_currentSceneId = sceneId;
 
-	_v1 = 0;
+	_variant = 0;
 	if (palFlag)
 		_vm->_palette->resetGamePalette(18, 10);
 
@@ -124,7 +124,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 
 	// TODO: palletteUsage reset?  setPalette(_nullPalette);
 	_sceneInfo = SceneInfo::init(_vm);
-	_sceneInfo->load(_currentSceneId, _v1, Common::String(), _vm->_game->_v2 ? 17 : 16,
+	_sceneInfo->load(_currentSceneId, _variant, Common::String(), _vm->_game->_v2 ? 17 : 16,
 		_depthSurface, _backgroundSurface);
 
 	// Initialise palette animation for the scene
@@ -570,9 +570,9 @@ void Scene::free() {
 	_sceneInfo = nullptr;
 }
 
-void Scene::changeDepthSurface(int arg1) {
-	_v1 = arg1;
-	_sceneInfo->loadCodes(_depthSurface, nullptr);
+void Scene::changeVariant(int variant) {
+	_variant = variant;
+	_sceneInfo->loadCodes(_depthSurface, variant);
 	_spriteSlots.fullRefresh();
 }
 
