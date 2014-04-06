@@ -419,8 +419,132 @@ void GameNebular::doObjectAction() {
 		error("TODO: loc_29DBA");
 	} else if (action.isAction(25, 106)) {
 		dialogs.show(470);
+	} else if ((action.isAction(25, 371, 43) || action.isAction(7, 371, 43) || action.isAction(25, 371, 42)
+			|| action.isAction(VERB_PUT, 371, 42)) && _objects.isInInventory(OBJ_TIMER_MODULE) && (
+			_objects.isInInventory(OBJ_BOMBS) || _objects.isInInventory(OBJ_BOMB))) {
+		if (_objects.isInInventory(OBJ_BOMBS)) {
+			_objects.setRoom(OBJ_BOMBS, PLAYER_INVENTORY);
+			_objects.addToInventory(OBJ_BOMB);
+		} else {
+			_objects.setRoom(OBJ_BOMB, PLAYER_INVENTORY);
+		}
+
+		_objects.setRoom(OBJ_TIMER_MODULE, PLAYER_INVENTORY);
+		_objects.addToInventory(OBJ_TIMEBOMB);
+		dialogs.showPicture(OBJ_TIMEBOMB, 404);
+	} else if (action.isAction(140, 271)) {
+		dialogs.show(410);
+	} else if (action.isAction(119, 46)) {
+		_globals[kBottleStatus] = 0;
+		dialogs.show(432);
+	} else if (action.isAction(108, 136)) {
+		if (_objects[OBJ_FISHING_LINE]._roomNumber == 3) {
+			_objects.addToInventory(OBJ_FISHING_LINE);
+			dialogs.showPicture(OBJ_FISHING_LINE, 409);
+		} else {
+			dialogs.show(428);
+		}
+	} else if (action.isAction(108, 262)) {
+		switch (_globals[kPenlightCellStatus]) {
+		case 1:
+		case 2:
+			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
+			dialogs.showPicture(OBJ_DURAFAIL_CELLS, 412);
+			break;
+		case 3:
+			_objects.addToInventory(OBJ_PHONE_CELLS);
+			dialogs.showPicture(OBJ_DURAFAIL_CELLS, 413);
+			break;
+		case 5:
+			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
+			dialogs.showPicture(OBJ_DURAFAIL_CELLS, 411);
+			break;
+		case 6:
+			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
+			dialogs.showPicture(OBJ_DURAFAIL_CELLS, 429);
+			break;
+		default:
+			dialogs.show(478);
+			break;
+		}
+	} else if (action.isAction(108, 264)) {
+		switch (_globals[kHandsetCellStatus]) {
+		case 1:
+			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
+			dialogs.showPicture(OBJ_DURAFAIL_CELLS,
+				_difficulty != 1 || _globals[kDurafailRecharged] ? 415 : 414);
+			break;
+		case 2:
+			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
+			if (_difficulty == 1) {
+				dialogs.showPicture(OBJ_DURAFAIL_CELLS, 416);
+			} else {
+				_globals[kHandsetCellStatus] = 0;
+			}
+			break;
+		case 3:
+			_objects.addToInventory(OBJ_PHONE_CELLS);
+			dialogs.showPicture(OBJ_PHONE_CELLS, 418);
+			break;
+		case 4:
+			_objects.addToInventory(OBJ_PHONE_CELLS);
+			dialogs.showPicture(OBJ_PHONE_CELLS, 417);
+			break;
+		default:
+			dialogs.show(478);
+			break;
+		}
+	} else if (action.isAction(VERB_PUT, 263, 262)) {
+		if (_globals[kPenlightCellStatus] == 0) {
+			_globals[kPenlightCellStatus] = 3;
+			_objects.setRoom(OBJ_PHONE_CELLS, PLAYER_INVENTORY);
+			dialogs.show(419);
+		} else {
+			dialogs.show(420);
+		}
+	} else if (action.isAction(VERB_PUT, 263, 264)) {
+		if (_globals[kHandsetCellStatus] == 0) {
+			_globals[kHandsetCellStatus] = 3;
+			_objects.setRoom(OBJ_PHONE_CELLS, PLAYER_INVENTORY);
+			dialogs.show(421);
+		}
+		else {
+			dialogs.show(422);
+		}
+	} else if (action.isAction(VERB_PUT, 115, 262)) {
+		if (_globals[kPenlightCellStatus]) {
+			dialogs.show(424);
+		} else {
+			_objects.setRoom(OBJ_DURAFAIL_CELLS, PLAYER_INVENTORY);
+			_globals[kPenlightCellStatus] = _difficulty != 1 || _globals[kDurafailRecharged] ? 1 : 2;
+			dialogs.show(423);
+		}
+	} else if (action.isAction(VERB_PUT, 115, 264)) {
+		if (_globals[kHandsetCellStatus]) {
+			dialogs.show(424);
+		} else {
+			_objects.setRoom(OBJ_DURAFAIL_CELLS, PLAYER_INVENTORY);
+			_globals[kDurafailRecharged] = _difficulty != 1 || _globals[kHandsetCellStatus] ? 1 : 2;
+			dialogs.show(425);
+		}
+	} else if (action.isAction(306, 369)) {
+		dialogs.show(427);
+	} else if (action.isAction(VERB_PUT, 42, 73) || action.isAction(VERB_PUT, 43, 73)) {
+		_objects.setRoom(OBJ_CHICKEN, PLAYER_INVENTORY);
+		if (_objects.isInInventory(OBJ_BOMBS)) {
+			_objects.setRoom(OBJ_BOMBS, PLAYER_INVENTORY);
+			_objects.addToInventory(OBJ_BOMB);
+		} else {
+			_objects.setRoom(OBJ_BOMB, PLAYER_INVENTORY);
+		}
+
+		_objects.addToInventory(OBJ_CHICKEN_BOMB);
+		dialogs.showPicture(OBJ_CHICKEN_BOMB, 430);
+	} else {
+		return;
 	}
-		
+
+	action._inProgress = false;
 }
 
 void GameNebular::step() {
