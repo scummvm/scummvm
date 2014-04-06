@@ -60,6 +60,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
 	{"rhiannon",		"Rhiannon: Curse of the four Branches"},
+	{"ritter",			"1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
 	{"rosemary",        "Rosemary"},
 	{"securanote",      "Securanote"},
 	{"shaban",          "Shaban"},
@@ -1079,6 +1080,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("data.dcp", "870f348900b735f1cc79c0608ce32b0e", 1046169851),
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde
+	{
+		"ritter",
+		"",
+		AD_ENTRY1s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278),
+		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
