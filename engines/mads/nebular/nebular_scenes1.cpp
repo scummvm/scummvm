@@ -289,7 +289,7 @@ void Scene103::actions() {
 			_scene->_hotspots.activate(371, false);
 			_vm->_game->_player._visible = true;
 			_vm->_game->_player._stepEnabled = true;
-			_vm->_dialogs->showPicture(OBJ_REBREATHER, 804);
+			_vm->_dialogs->showPicture(OBJ_REBREATHER, 805);
 			break;
 
 		default:
