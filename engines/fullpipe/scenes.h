@@ -597,10 +597,10 @@ public:
 	StaticANIObject *scene29_ass;
 	BallChain scene29_balls;
 	BallChain scene29_redBalls;
-	BallChain scene29_var07;
+	BallChain scene29_flyingRedBalls;
 	BallChain scene29_greenBalls;
-	int scene29_var09;
-	int scene29_var10;
+	bool scene29_manIsRiding;
+	bool scene29_var10;
 	int scene29_var11;
 	int scene29_var12;
 	int scene29_var13;

@@ -382,8 +382,8 @@ Vars::Vars() {
 	scene29_shooter1 = 0;
 	scene29_shooter2 = 0;
 	scene29_ass = 0;
-	scene29_var09 = 0;
-	scene29_var10 = 0;
+	scene29_manIsRiding = false;
+	scene29_var10 = false;
 	scene29_var11 = 0;
 	scene29_var12 = 0;
 	scene29_var13 = 0;
