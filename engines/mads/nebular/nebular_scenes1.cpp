@@ -155,14 +155,14 @@ void Scene103::enter() {
 	_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6);
 
 	if (_game._objects.isInRoom(OBJ_TIMER_MODULE))
-		_vm->_game->_scene._hotspots.activate(371, false);
-	else
 		_globals._spriteIndexes[26] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 6);
+	else
+		_vm->_game->_scene._hotspots.activate(371, false);
 
 	if (_game._objects.isInRoom(OBJ_REBREATHER))
-		_vm->_game->_scene._hotspots.activate(289, false);
-	else
 		_globals._spriteIndexes[25] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 6);
+	else
+		_vm->_game->_scene._hotspots.activate(289, false);
 	
 	if (_globals[kTurkeyExploded]) {
 		_globals._spriteIndexes[24] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6);
