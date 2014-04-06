@@ -53,7 +53,7 @@ void MADSAction::clear() {
 	_recentCommandSource = 0;
 	_articleNumber = 0;
 	_lookFlag = false;
-	_v86F4A = 0;
+	_pointEstablished = 0;
 	_selectedRow = -1;
 	_hotspotId = -1;
 	_secondObject = -1;
@@ -74,11 +74,11 @@ void MADSAction::appendVocab(int vocabId, bool capitalise) {
 	_statusText += " ";
 }
 
-void MADSAction::checkCustomDest(int v) {
+void MADSAction::startWalkingDirectly(int walkType) {
 	Scene &scene = _vm->_game->_scene;
 	Player &player = _vm->_game->_player;
 
-	if (_v86F4A && (v == -3 || _savedFields._command < 0)) {
+	if (_pointEstablished && (walkType == -3 || _savedFields._command < 0)) {
 		player._needToWalk = true;
 		player._prepareWalkPos = scene._customDest;
 	}
@@ -304,7 +304,7 @@ void MADSAction::startAction() {
 		if (hotspotId >= (int)hotspots.size()) {
 			DynamicHotspot &hs = dynHotspots[hotspotId - hotspots.size()];
 			if ((hs._feetPos.x == -1) || (hs._feetPos.x == -3)) {
-				checkCustomDest(hs._feetPos.x);
+				startWalkingDirectly(hs._feetPos.x);
 			} else if (hs._feetPos.x == 0) {
 				player._prepareWalkFacing = hs._facing;
 			} else if (_savedFields._commandSource == ACTIONMODE_NONE || hs._cursor >= CURSOR_WAIT) {
@@ -321,7 +321,7 @@ void MADSAction::startAction() {
 		Hotspot &hs = hotspots[hotspotId];
 
 		if (hs._feetPos.x == -1 || hs._feetPos.x == -3) {
-			checkCustomDest(hs._feetPos.x);
+			startWalkingDirectly(hs._feetPos.x);
 		} else if (hs._feetPos.x >= 0) {
 			if (_savedFields._commandSource == ACTIONMODE_NONE || hs._cursor < CURSOR_WAIT) {
 				player._needToWalk = true;
@@ -561,7 +561,7 @@ void MADSAction::leftClick() {
 			if (_vm->_events->currentPos().y < MADS_SCENE_HEIGHT) {
 				scene._customDest = _vm->_events->currentPos() + scene._posAdjust;
 				_selectedAction = -1;
-				_v86F4A = true;
+				_pointEstablished = true;
 			}
 			break;
 
@@ -591,7 +591,7 @@ void MADSAction::leftClick() {
 
 				if (userInterface._category == CAT_HOTSPOT) {
 					scene._customDest = _vm->_events->mousePos() + scene._posAdjust;
-					_v86F4A = true;
+					_pointEstablished = true;
 				}
 			}
 			break;
@@ -609,9 +609,9 @@ void MADSAction::leftClick() {
 				_selectedAction = -1;
 
 				if (userInterface._category == CAT_HOTSPOT) {
-					if (!_v86F4A) {
+					if (!_pointEstablished) {
 						scene._customDest = _vm->_events->mousePos() + scene._posAdjust;
-						_v86F4A = true;
+						_pointEstablished = true;
 					}
 				}
 			}

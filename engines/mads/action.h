@@ -88,7 +88,7 @@ private:
 
 	void appendVocab(int vocabId, bool capitalise = false);
 
-	void checkCustomDest(int v);
+	void startWalkingDirectly(int v);
 public:
 	ActionDetails _action, _activeAction;
 	int8 _flags1, _flags2;
@@ -108,7 +108,7 @@ public:
 	int16 _secondObject;
 	int16 _secondObjectSource;
 	int16 _recentCommandSource;
-	bool _v86F4A;
+	bool _pointEstablished;
 	int16 _recentCommand;
 	InterAwaiting _interAwaiting;
 	bool _inProgress;
