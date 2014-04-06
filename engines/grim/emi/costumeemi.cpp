@@ -125,6 +125,9 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 	for (int i = 0; i < _numComponents; ++i) {
 		_components[i] = components[i];
 	}
+
+	// The wearChore is active by default
+	_isWearChoreActive = true;
 }
 
 void EMICostume::playChore(int num) {
@@ -196,7 +199,7 @@ void EMICostume::draw() {
 		}
 	}
 
-	if (_wearChore && !drewMesh) {
+	if (_wearChore && !drewMesh && _isWearChoreActive) {
 		_wearChore->getMesh()->draw();
 	}
 }
@@ -289,6 +292,10 @@ void EMICostume::setWearChore(EMIChore *chore) {
 		}
 		_emiSkel = chore->getSkeleton();
 	}
+}
+
+void EMICostume::setWearChoreActive(bool isActive) {
+	_isWearChoreActive = isActive;
 }
 
 } // end of namespace Grim

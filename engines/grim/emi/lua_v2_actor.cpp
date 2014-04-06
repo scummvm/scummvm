@@ -705,6 +705,8 @@ void Lua_V2::PlayActorChore() {
 
 	EMIChore *chore = (EMIChore *)costume->getChore(choreName);
 	if (0 == strncmp("wear_", choreName, 5)) {
+		EMICostume *emiCostume = static_cast<EMICostume *>(costume);
+		emiCostume->setWearChoreActive(true);
 		actor->setLastWearChore(costume->getChoreId(choreName), costume);
 	}
 
@@ -734,6 +736,11 @@ void Lua_V2::StopActorChores() {
 		return;
 
 	actor->stopAllChores(ignoreLoopingChores);
+
+	// Reset the wearChore as well
+	EMICostume *cost = static_cast<EMICostume *>(actor->getCurrentCostume());
+	if (cost != NULL)
+		cost->setWearChoreActive(false);
 }
 
 void Lua_V2::SetActorLighting() {
