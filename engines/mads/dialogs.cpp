@@ -232,7 +232,7 @@ void TextDialog::wordWrap(const Common::String &line) {
 
 void TextDialog::appendLine(const Common::String &line) {
 	_currentX += line.size();
-	_lineWidth += _font->getWidth(line, 1);
+	_lineWidth += _font->getWidth(line, 1) + 1;
 	_lines[_numLines] += line;
 }
 
