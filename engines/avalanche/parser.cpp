@@ -2021,8 +2021,7 @@ void Parser::doThat() {
 				break;
 			case 55:
 				if (_vm->_room == kRoomArgentPub)
-					// play_nim();
-					warning("STUB: Parser::doThat() - case kVerbCodeplay - play_nim()");
+					_vm->_nim->playNim();
 				else
 					_vm->_dialogs->displayText(kWhat);
 				break;
