@@ -88,7 +88,7 @@ private:
 
 	void appendVocab(int vocabId, bool capitalise = false);
 
-	void startWalkingDirectly(int v);
+	void startWalkingDirectly(int walkType);
 public:
 	ActionDetails _action, _activeAction;
 	int8 _flags1, _flags2;

@@ -252,7 +252,7 @@ ScreenObject::ScreenObject() {
 
 ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_objectY = -1;
-	_v8333C = false;
+	_forceRescan = false;
 	_inputMode = kInputBuildingSentences;
 	_v7FED6 = 0;
 	_v8332A = 0;
@@ -289,7 +289,7 @@ void ScreenObjects::check(bool scanFlag) {
 		_vm->_events->_rightMousePressed = false;
 
 	if ((_vm->_events->_mouseMoved || _vm->_game->_scene._userInterface._scrollerY 
-			|| _v8332A || _v8333C) && scanFlag) {
+			|| _v8332A || _forceRescan) && scanFlag) {
 		_category = CAT_NONE;
 		_selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
 		if (_selectedObject > 0) {
@@ -320,7 +320,7 @@ void ScreenObjects::check(bool scanFlag) {
 			}
 		}
 
-		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && scene._action._interAwaiting > 1
+		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && scene._action._interAwaiting > AWAITING_COMMAND
 			&& scene._userInterface._category == CAT_INV_LIST) ||
 			(_vm->_easyMouse && scene._userInterface._category == CAT_HOTSPOT)) {
 			scene._action.checkActionAtMousePos();
@@ -337,7 +337,7 @@ void ScreenObjects::check(bool scanFlag) {
 		if (_vm->_events->_mouseButtons || _vm->_easyMouse)
 			scene._action.set();
 
-		_v8333C = 0;
+		_forceRescan = 0;
 	}
 
 	scene._action.refresh();

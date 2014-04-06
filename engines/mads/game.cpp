@@ -171,7 +171,7 @@ void Game::sectionLoop() {
 		_visitedScenes.add(_scene._nextSceneId);
 
 		// Reset the user interface
-		_screenObjects._v8333C = true;
+		_screenObjects._forceRescan = true;
 		_screenObjects._inputMode = kInputBuildingSentences;
 		_scene._userInterface._scrollerY = 0;
 		

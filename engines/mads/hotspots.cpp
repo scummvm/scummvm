@@ -135,7 +135,7 @@ void DynamicHotspots::refresh() {
 			case kInputBuildingSentences:
 			case kInputLimitedSentences:
 				scrObjects.add(dh._bounds, _vm->_game->_scene._layer, CAT_12, dh._descId);
-				scrObjects._v8333C = true;
+				scrObjects._forceRescan = true;
 				break;
 			default:
 				break;

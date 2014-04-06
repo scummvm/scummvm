@@ -157,7 +157,7 @@ public:
 	InputMode _inputMode;
 	int _v7FED6;
 	int _v8332A;
-	int _v8333C;
+	int _forceRescan;
 	int _selectedObject;
 	ScrCategory _category;
 	int _newDescId;
