@@ -202,6 +202,8 @@ void AvalancheEngine::setup() {
 
 	_graphics->drawSoundLight(_sound->_soundFl);
 
+	drawToolbar();
+
 	int16 loadSlot = ConfMan.instance().getInt("save_slot");
 	if (loadSlot >= 0) {
 		_thinks = 2; // You always have money.
@@ -217,8 +219,6 @@ void AvalancheEngine::setup() {
 			return;
 		
 		newGame();
-
-		drawToolbar();
 
 		thinkAbout(kObjectMoney, kThing);
 
