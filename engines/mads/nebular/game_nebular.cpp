@@ -29,6 +29,7 @@
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/dialogs_nebular.h"
 #include "mads/nebular/globals_nebular.h"
+#include "mads/nebular/nebular_scenes.h"
 
 namespace MADS {
 
@@ -277,7 +278,149 @@ void GameNebular::checkShowDialog() {
 }
 
 void GameNebular::doObjectAction() {
-	warning("TODO: GameNebular::doObjectAction");
+	Scene &scene = _scene;
+	MADSAction &action = _scene._action;
+	Dialogs &dialogs = *_vm->_dialogs;
+	int id;
+
+	if (action.isAction(NOUN_SMELL) && scene._currentSceneId > 103 && scene._currentSceneId < 111) {
+		dialogs.show(440);
+	} else if (action.isAction(NOUN_EAT) && scene._currentSceneId > 103 && scene._currentSceneId < 111) {
+		dialogs.show(441);
+	} else if (action.isAction(NOUN_SMELL, NOUN_BURGER)) {
+		dialogs.show(442);
+	} else if (action.isAction(NOUN_EAT, NOUN_BURGER)) {
+		dialogs.show(443);
+	} else if (action.isAction(NOUN_SMELL, NOUN_STUFFED_FISH)) {
+		dialogs.show(444);
+	} else if (action.isAction(NOUN_EAT, NOUN_STUFFED_FISH)) {
+		dialogs.show(445);
+	} else if (action.isAction(401, 289)) {
+		dialogs.show(scene._currentSceneId > 103 && scene._currentSceneId < 111 ? 447 : 446);
+	} else if (action.isAction(306, 371)) {
+		dialogs.show(448);
+	} else if (action.isAction(951, 35)) {
+		dialogs.show(449);
+	} else if (action.isAction(203, 276)) {
+		dialogs.show(450);
+	} else if (action.isAction(NOUN_EAT, 378)) {
+		_objects.setRoom(OBJ_TWINKIFRUIT, PLAYER_INVENTORY);
+		dialogs.show(451);
+	} else if (action.isAction(153, 378)) {
+		_objects.setRoom(OBJ_TWINKIFRUIT, PLAYER_INVENTORY);
+		dialogs.show(452);
+	} else if (action.isAction(152)) {
+		dialogs.show(453);
+	} else if (action.isAction(1187, OBJ_PHONE_CELLS)) {
+		dialogs.show(454);
+	} else if (action.isAction(1188, 92)) {
+		dialogs.show(455);
+	} else if (action.isAction(140, 72)) {
+		dialogs.show(456);
+	} else if (action.isAction(1189, OBJ_VASE)) {
+		dialogs.show(457);
+	} else if (action.isAction(306, 369)) {
+		dialogs.show(458);
+	} else if (action.isAction(1192, 774)) {
+		dialogs.show(459);
+	} else if (action.isAction(1191, 359)) {
+		dialogs.show(460);
+	} else if (action.isAction(1190)) {
+		dialogs.show(461);
+	} else if (action.isAction(934, 277)) {
+		dialogs.show(462);
+	} else if (action.isAction(329, 277)) {
+		dialogs.show(465);
+	} else if (action.isAction(368, 135)) {
+		dialogs.show(463);
+	} else if (action.isAction(25, 135)) {
+		dialogs.show(463);
+	} else if (action.isAction(379)) {
+		dialogs.show(464);
+	} else if (action.isAction(869)) {
+		dialogs.show(466);
+	} 	else if (action.isAction(530, 288)) {
+		dialogs.show(467);
+	} else if (action.isAction(NOUN_EAT, 74)) {
+		dialogs.show(469);
+	} else if (action.isAction(50, 381)) {
+		dialogs.show(471);
+	} else if (action.isAction(307, 950)) {
+		dialogs.show(472);
+	} else if (action.isAction(NOUN_READ, NOUN_LOG)) {
+		dialogs.show(473);
+	} else if (action.isAction(1189, 43)) {
+		dialogs.show(474);
+	} else if (action.isAction(114, 726)) {
+		dialogs.show(475);
+	} else if (action.isAction(114, 727)) {
+		dialogs.show(476);
+	} else if (action.isAction(114, 937)) {
+		dialogs.show(477);
+	} else if (action.isAction(VERB_PUT, 276, NOUN_PLANT_STALK) && _objects.isInRoom(OBJ_POISON_DARTS)
+			&& _objects.isInRoom(OBJ_PLANT_STALK)) {
+		_objects.addToInventory(OBJ_BLOWGUN);
+		_objects.setRoom(OBJ_PLANT_STALK, PLAYER_INVENTORY);
+		_globals[kBlowgunStatus] = 0;
+		dialogs.showPicture(OBJ_BLOWGUN, 809);
+	} else if (action.isAction(VERB_PUT, 276, NOUN_BLOWGUN) && _objects.isInInventory(OBJ_POISON_DARTS)
+			&& _objects.isInInventory(OBJ_BLOWGUN)) {
+		dialogs.show(433);
+	} else if (action.isAction(1161) && action.isAction(1195) && action.isAction(1197)) {
+		dialogs.show(434);
+	} else if (action.isAction(1196)) {
+		dialogs.show(479);
+	} else if ((action.isAction(287) || action.isAction(NOUN_LOOK_AT) || action.isAction(VERB_LOOK)) &&
+			action.isAction(936) && _objects.isInInventory(OBJ_NOTE)) {
+		_objects.setRoom(OBJ_NOTE, PLAYER_INVENTORY);
+		_objects.addToInventory(OBJ_COMBINATION);
+		dialogs.showPicture(OBJ_COMBINATION, 851);
+	} else if ((action.isAction(VERB_LOOK) || action.isAction(NOUN_READ)) &&
+			((id = _objects.getIdFromDesc(action._activeAction._objectNameId)) != 0 ||
+			(action._activeAction._indirectObjectId > 0 &&
+			(id = _objects.getIdFromDesc(action._activeAction._indirectObjectId))))) {
+		if (id == 21) {
+			dialogs._indexList[0] = _globals[kTeleporterCode + 7];
+			dialogs._indexList[1] = _globals[kTeleporterCode + 8];
+			dialogs._indexList[2] = _globals[kTeleporterCode + 6];
+			dialogs._indexList[3] = _globals[kTeleporterCode + 9];
+			dialogs._indexList[4] = _globals[kTeleporterCode + 0];
+			dialogs._indexList[5] = _globals[kTeleporterCode + 1];
+			dialogs._indexList[6] = _globals[kTeleporterCode + 4];
+			dialogs._indexList[7] = _globals[kTeleporterCode + 5];
+			dialogs._indexList[8] = _globals[kTeleporterCode + 2];
+
+			dialogs.showPicture(id, 402);
+		} else {
+			error("TODO: Implement. See loc_29B48");
+		}
+	} else if (action.isAction(VERB_PUT, NOUN_BURGER, NOUN_DEAD_FISH)) {
+		if (_objects.isInInventory(OBJ_BURGER) || _objects.isInInventory(OBJ_DEAD_FISH)) {
+			_objects.removeFromInventory(OBJ_DEAD_FISH, PLAYER_INVENTORY);
+			_objects.removeFromInventory(OBJ_BURGER, PLAYER_INVENTORY);
+			_objects.addToInventory(OBJ_STUFFED_FISH);
+			dialogs.showPicture(OBJ_STUFFED_FISH, 803);
+		}
+	} else if (action.isAction(VERB_PUT, 26, 357) && _objects.isInInventory(OBJ_AUDIO_TAPE) &&
+			_objects.isInInventory(OBJ_TAPE_PLAYER)) {
+		_objects.setRoom(OBJ_AUDIO_TAPE, 25);
+	} else if (action.isAction(118, 357) && _objects.isInInventory(OBJ_TAPE_PLAYER)) {
+		if (_objects[OBJ_AUDIO_TAPE]._roomNumber == 25) {
+			_objects.addToInventory(OBJ_AUDIO_TAPE);
+		} else {
+			dialogs.show(407);
+		}
+	} else if (action.isAction(108, 357)) {
+		dialogs.show(408);
+	} else if (action.isAction(14, 291)) {
+		dialogs.show(_globals[kTopButtonPushed] ? 502 : 501);
+	} else if ((action.isAction(25, 106, 72) || action.isAction(VERB_PUT, 106, 72)) &&
+			_objects.isInInventory(OBJ_DETONATORS) && _objects.isInInventory(OBJ_CHARGE_CASES)) {
+		error("TODO: loc_29DBA");
+	} else if (action.isAction(25, 106)) {
+		dialogs.show(470);
+	}
+		
 }
 
 void GameNebular::step() {
