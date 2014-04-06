@@ -51,6 +51,7 @@ public:
 		warning("TODO: showDialog");
 	}
 	virtual void showPicture(int objId, int msgId, int arg3) {
+		show(msgId);
 		warning("TODO: showPicture");
 	}
 	virtual bool show(int id);
