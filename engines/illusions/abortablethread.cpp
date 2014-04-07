@@ -35,7 +35,7 @@ AbortableThread::AbortableThread(IllusionsEngine *vm, uint32 threadId, uint32 ca
 	: Thread(vm, threadId, callingThreadId, notifyFlags), _scriptThreadId(scriptThreadId), 
 	_scriptCodeIp(scriptCodeIp), _status(1) {
 	_type = kTTAbortableThread;
-	_tag = _vm->_scriptMan->_activeScenes.getCurrentScene();
+	_tag = _vm->getCurrentScene();
 	_vm->_input->discardButtons(8);
 }
 
@@ -43,9 +43,9 @@ int AbortableThread::onUpdate() {
 	if (_status != 1 || _pauseCtr < 0)
 		return kTSTerminate;
 	if (_vm->_input->pollButton(8)) {
-		_vm->_scriptMan->_threads->killThread(_scriptThreadId);
+		_vm->_threads->killThread(_scriptThreadId);
 		++_pauseCtr;
-		_vm->_scriptMan->startTempScriptThread(_scriptCodeIp, _threadId, 0, 0, 0);
+		_vm->startTempScriptThread(_scriptCodeIp, _threadId, 0, 0, 0);
 		_status = 2;
 		return kTSSuspend;
 	}

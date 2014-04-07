@@ -29,7 +29,7 @@
 
 namespace Illusions {
 
-class IllusionsEngine;
+class IllusionsEngine_BBDOU;
 class BbdouBubble;
 class BbdouCursor;
 class BbdouInventory;
@@ -49,7 +49,7 @@ struct Struct10 {
 
 class CauseThread : public Thread {
 public:
-	CauseThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId,
+	CauseThread(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 callingThreadId,
 		BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId,
 		uint32 verbId, uint32 objectId2, uint32 objectId);
 	virtual void onNotify();
@@ -65,13 +65,14 @@ public:
 
 class BbdouSpecialCode : public SpecialCode {
 public:
-	BbdouSpecialCode(IllusionsEngine *vm);
+	BbdouSpecialCode(IllusionsEngine_BBDOU *vm);
 	virtual ~BbdouSpecialCode();
 	virtual void init();
 	virtual void run(uint32 specialCodeId, OpCall &opCall);
 public:
 	typedef Common::HashMap<uint32, SpecialCodeFunction*> Map;
 	typedef Map::iterator MapIterator;
+	IllusionsEngine_BBDOU *_vm;
 	Map _map;
 	BbdouCursor *_cursor;
 	BbdouBubble *_bubble;

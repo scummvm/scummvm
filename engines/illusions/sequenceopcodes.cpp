@@ -99,11 +99,6 @@ void SequenceOpcodes::freeOpcodes() {
 
 // Opcodes
 
-// Convenience macros
-#define	ARG_SKIP(x) opCall.skip(x); 
-#define ARG_INT16(name) int16 name = opCall.readSint16(); debug(1, "ARG_INT16(" #name " = %d)", name);
-#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(1, "ARG_UINT32(" #name " = %08X)", name);
-
 void SequenceOpcodes::opYield(Control *control, OpCall &opCall) {
 	opCall._result = 2;
 }
@@ -138,7 +133,7 @@ void SequenceOpcodes::opEndSequence(Control *control, OpCall &opCall) {
 		control->_actor->_frames = 0;
 		control->_actor->_frameIndex = 0;
 		control->_actor->_newFrameIndex = 0;
-		// TODO _vm->_resSys->unloadResourceById(control->_actor->_sequenceId);
+		_vm->_resSys->unloadResourceById(control->_actor->_sequenceId);
 	}
 	_vm->notifyThreadId(control->_actor->_notifyThreadId1);
 	opCall._result = 1;
@@ -321,7 +316,7 @@ void SequenceOpcodes::opStopSound(Control *control, OpCall &opCall) {
 void SequenceOpcodes::opStartScriptThread(Control *control, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(threadId);
-	_vm->_scriptMan->startScriptThread(threadId, 0, 0, 0, 0);
+	_vm->startScriptThreadSimple(threadId, 0);
 }
 
 void SequenceOpcodes::opPlaceSubActor(Control *control, OpCall &opCall) {

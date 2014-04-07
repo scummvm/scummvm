@@ -28,7 +28,7 @@
 
 namespace Illusions {
 
-class IllusionsEngine;
+class IllusionsEngine_BBDOU;
 class BbdouSpecialCode;
 class Control;
 
@@ -54,7 +54,7 @@ struct Item141C {
 
 class BbdouBubble {
 public:
-	BbdouBubble(IllusionsEngine *vm, BbdouSpecialCode *bbdou);
+	BbdouBubble(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou);
 	~BbdouBubble();
 	void init();
 	void addItem0(uint32 sequenceId1, uint32 sequenceId2, uint32 progResKeywordId,
@@ -64,7 +64,7 @@ public:
 	void setup(int16 minCount, Common::Point pt1, Common::Point pt2, uint32 progResKeywordId);
 	uint32 addItem(uint positionIndex, uint32 sequenceId);
 protected:
-	IllusionsEngine *_vm;
+	IllusionsEngine_BBDOU *_vm;
 	BbdouSpecialCode *_bbdou;
 	Common::Array<Item0> _item0s;
 	Item0 *_currItem0;

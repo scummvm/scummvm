@@ -1,7 +1,7 @@
 MODULE := engines/illusions
 
 MODULE_OBJS := \
-    abortablethread.o \
+	abortablethread.o \
 	actor.o \
 	actorresource.o \
 	backgroundresource.o \
@@ -17,11 +17,13 @@ MODULE_OBJS := \
 	fontresource.o \
 	graphics.o \
 	illusions.o \
+	illusions_bbdou.o \
 	input.o \
 	resourcesystem.o \
 	screen.o \
 	scriptman.o \
 	scriptopcodes.o \
+	scriptopcodes_bbdou.o \
 	scriptresource.o \
 	scriptthread.o \
 	sequenceopcodes.o \

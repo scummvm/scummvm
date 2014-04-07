@@ -29,7 +29,7 @@
 
 namespace Illusions {
 
-class IllusionsEngine;
+class IllusionsEngine_BBDOU;
 class BbdouSpecialCode;
 class Control;
 class TriggerFunction;
@@ -53,7 +53,7 @@ struct InventorySlot {
 
 class InventoryBag {
 public:
-	InventoryBag(IllusionsEngine *vm, uint32 sceneId);
+	InventoryBag(IllusionsEngine_BBDOU *vm, uint32 sceneId);
 	void registerInventorySlot(uint32 namedPointId);
 	bool addInventoryItem(InventoryItem *inventoryItem, InventorySlot *inventorySlot);
 	void removeInventoryItem(InventoryItem *inventoryItem);
@@ -64,7 +64,7 @@ protected:
 public:
 	typedef Common::Array<InventorySlot*> InventorySlots;
 	typedef InventorySlots::iterator InventorySlotsIterator;
-	IllusionsEngine *_vm;
+	IllusionsEngine_BBDOU *_vm;
 	uint32 _sceneId;
 	InventorySlots _inventorySlots;
 	bool _isActive;
@@ -73,7 +73,7 @@ public:
 
 class BbdouInventory {
 public:
-	BbdouInventory(IllusionsEngine *vm, BbdouSpecialCode *bbdou);
+	BbdouInventory(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou);
 	void registerInventoryBag(uint32 sceneId);
 	void registerInventoryItem(uint32 objectId, uint32 sequenceId);
 	void registerInventorySlot(uint32 namedPointId);
@@ -92,7 +92,7 @@ public:
 protected:
 	typedef Common::Array<InventoryItem*> InventoryItems;
 	typedef InventoryItems::iterator InventoryItemsIterator;
-	IllusionsEngine *_vm;
+	IllusionsEngine_BBDOU *_vm;
 	BbdouSpecialCode *_bbdou;
 	Common::Array<InventoryBag*> _inventoryBags;
 	InventoryItems _inventoryItems;

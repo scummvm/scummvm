@@ -27,7 +27,7 @@
 
 namespace Illusions {
 
-class IllusionsEngine;
+class IllusionsEngine_BBDOU;
 class BbdouSpecialCode;
 class Control;
 struct Item10;
@@ -85,7 +85,7 @@ const uint kMaxCursorSequences = 100;
 
 class BbdouCursor {
 public:
-	BbdouCursor(IllusionsEngine *vm, BbdouSpecialCode *bbdou);
+	BbdouCursor(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou);
 	~BbdouCursor();
 	void init(uint32 objectId, uint32 progResKeywordId);
 	void enable(uint32 objectId);
@@ -104,7 +104,7 @@ public:
 	uint calcTrackingCursorIndex(uint trackingFlags);
 	bool getTrackingCursorSequenceId(Control *control, uint32 &outSequenceId);
 public:
-	IllusionsEngine *_vm;
+	IllusionsEngine_BBDOU *_vm;
 	BbdouSpecialCode *_bbdou;
 	Control *_control;
 	CursorData _data;

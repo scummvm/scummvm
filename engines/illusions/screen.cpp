@@ -161,17 +161,7 @@ bool SpriteDrawQueue::draw(SpriteDrawQueueItem *item) {
 	if (!calcItemRect(item, srcRect, dstRect))
 		return true;
 
-	if (item->_scale == 100) {
-		if (item->_flags & 1)
-			_screen->drawSurface10(dstRect.left, dstRect.top, item->_surface, srcRect, _screen->getColorKey2());
-		else
-			_screen->drawSurface11(dstRect.left, dstRect.top, item->_surface, srcRect);
-	} else {
-		if (item->_flags & 1)
-			_screen->drawSurface20(dstRect, item->_surface, srcRect, _screen->getColorKey2());
-		else
-			_screen->drawSurface21(dstRect, item->_surface, srcRect);
-	}
+	_screen->drawSurface(dstRect, item->_surface, srcRect, item->_scale, item->_flags);
 	
 	if (item->_drawFlags)
 		*item->_drawFlags &= ~4;
@@ -344,6 +334,20 @@ void Screen::updateSprites() {
 	if (!_displayOn) // TODO Check if a video is playing then don't do it
 		_backSurface->fillRect(Common::Rect(_backSurface->w, _backSurface->h), 0);
 	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
+}
+
+void Screen::drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) {
+	if (scale == 100) {
+		if (flags & 1)
+			drawSurface10(dstRect.left, dstRect.top, surface, srcRect, _colorKey2);
+		else
+			drawSurface11(dstRect.left, dstRect.top, surface, srcRect);
+	} else {
+		if (flags & 1)
+			drawSurface20(dstRect, surface, srcRect, _colorKey2);
+		else
+			drawSurface21(dstRect, surface, srcRect);
+	}
 }
 
 void Screen::drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey) {
