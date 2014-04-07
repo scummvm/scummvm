@@ -34,7 +34,7 @@ ScriptThread::ScriptThread(IllusionsEngine *vm, uint32 threadId, uint32 callingT
 	: Thread(vm, threadId, callingThreadId, notifyFlags), _scriptCodeIp(scriptCodeIp), _value8(value8),
 	_valueC(valueC), _value10(value10), _sequenceStalled(0) {
 	_type = kTTScriptThread;
-	_tag = _vm->_scriptMan->_activeScenes.getCurrentScene();
+	_tag = _vm->getCurrentScene();
 }
 
 int ScriptThread::onUpdate() {
@@ -56,8 +56,7 @@ int ScriptThread::onUpdate() {
 }
 
 void ScriptThread::execOpcode(OpCall &opCall) {
-	// TODO Clean this up
-	_vm->_scriptMan->_scriptOpcodes->execOpcode(this, opCall);
+	_vm->_scriptOpcodes->execOpcode(this, opCall);
 }
 
 } // End of namespace Illusions

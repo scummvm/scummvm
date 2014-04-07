@@ -34,7 +34,7 @@ void ScriptResourceLoader::load(Resource *resource) {
 	ScriptResource *scriptResource = new ScriptResource();
 	scriptResource->load(resource->_data, resource->_dataSize);
 	
-	_vm->_scriptMan->_scriptResource = scriptResource;
+	_vm->_scriptResource = scriptResource;
 	
 }
 

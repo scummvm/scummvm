@@ -215,7 +215,7 @@ Control::Control(IllusionsEngine *vm)
 	_position.y = 0;
 	_actorTypeId = 0;
 	_actor = 0;
-	_tag = _vm->_scriptMan->_activeScenes.getCurrentScene();
+	_tag = _vm->getCurrentScene();
 }
 
 Control::~Control() {
@@ -574,7 +574,7 @@ void Control::startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 thread
 				subControl->_actor->_notifyThreadId2 = threadId;
 				subControl->_actor->_entryTblPtr = entryTblPtr;
 				subControl->_actor->_flags |= 0x80;
-				Thread *thread = _vm->_scriptMan->_threads->findThread(threadId);
+				Thread *thread = _vm->_threads->findThread(threadId);
 				thread->sendMessage(kMsgClearSequenceId2, 0);
 			}
 		}
@@ -680,7 +680,7 @@ void Control::stopSubSequence(int linkIndex) {
 		_actor->_notifyThreadId2 = 0;
 	}
 	if (notifyThreadId2) {
-		Thread *talkThread = _vm->_scriptMan->_threads->findThread(notifyThreadId2);
+		Thread *talkThread = _vm->_threads->findThread(notifyThreadId2);
 		talkThread->sendMessage(kMsgClearSequenceId2, 0);
 	}
 }

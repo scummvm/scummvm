@@ -20,7 +20,7 @@
  *
  */
 
-#include "illusions/illusions.h"
+#include "illusions/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_inventory.h"
 #include "illusions/bbdou/bbdou_cursor.h"
 #include "illusions/bbdou/bbdou_specialcode.h"
@@ -49,7 +49,7 @@ InventorySlot::InventorySlot(uint32 namedPointId)
 
 // InventoryBag
 
-InventoryBag::InventoryBag(IllusionsEngine *vm, uint32 sceneId)
+InventoryBag::InventoryBag(IllusionsEngine_BBDOU *vm, uint32 sceneId)
 	: _vm(vm), _sceneId(sceneId), _isActive(false), _fieldA(0) {
 }
 
@@ -116,7 +116,7 @@ InventorySlot *InventoryBag::findClosestSlot(Common::Point putPos, int index) {
 
 // BbdouInventory
 
-BbdouInventory::BbdouInventory(IllusionsEngine *vm, BbdouSpecialCode *bbdou)
+BbdouInventory::BbdouInventory(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou)
 	: _vm(vm), _bbdou(bbdou) {
 }
 

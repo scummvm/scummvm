@@ -52,16 +52,16 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 
 	if (duration)
 		_status = 1;
-	else if (_vm->_scriptMan->checkActiveTalkThreads())
+	else if (_vm->checkActiveTalkThreads())
 		_status = 2;
 	else
 		_status = 3;
 	
 	_flags = 0x0E;
 	
-	_durationMult = _vm->_scriptMan->clipTextDuration(_vm->_scriptMan->_fieldE);
+	_durationMult = _vm->clipTextDuration(_vm->_fieldE);
 	_textDuration = _durationMult;
-	_defDurationMult = _vm->_scriptMan->clipTextDuration(240);
+	_defDurationMult = _vm->clipTextDuration(240);
 	_textStartTime = 0;
 	_textEndTime = 0;
 	_textDurationElapsed = 0;
@@ -74,7 +74,7 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 	_entryTblPtr = 0;
 
 	if (callingThreadId) {
-		Thread *callingThread = _vm->_scriptMan->_threads->findThread(callingThreadId);
+		Thread *callingThread = _vm->_threads->findThread(callingThreadId);
 		if (callingThread)
 			_tag = callingThread->_tag;
 	}
@@ -90,7 +90,7 @@ int TalkThread::onUpdate() {
 
 	case 1:
 		if (isTimerExpired(_voiceStartTime, _voiceEndTime)) {
-			if (_vm->_scriptMan->checkActiveTalkThreads())
+			if (_vm->checkActiveTalkThreads())
 				_status = 2;
 			else
 				_status = 3;
@@ -98,7 +98,7 @@ int TalkThread::onUpdate() {
 		return kTSYield;
 
 	case 2:
-		if (_vm->_scriptMan->checkActiveTalkThreads())
+		if (_vm->checkActiveTalkThreads())
 			return kTSYield;
 		_status = 3;
 		// Fallthrough to status 3
@@ -312,7 +312,7 @@ int TalkThread::insertText() {
 	_entryText = 0;
 	
 	// TODO _vm->getDimensions1(&dimensions);
-	// TODO _vm->insertText(_currEntryText, _vm->_scriptMan->currFontId, dimensions, 0, 2, 0, 0, 0, 0, 0, 0, &outTextPtr);
+	// TODO _vm->insertText(_currEntryText, _vm->_currFontId, dimensions, 0, 2, 0, 0, 0, 0, 0, 0, &outTextPtr);
 	// TODO _vm->charCount = (char *)outTextPtr - (char *)text;
 	// TODO _entryText = outTextPtr;
 	// TODO _vm->getPoint1(&pt);

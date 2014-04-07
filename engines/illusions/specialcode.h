@@ -44,12 +44,9 @@ protected:
 
 class SpecialCode {
 public:
-	SpecialCode(IllusionsEngine *vm) : _vm(vm) {}
 	virtual ~SpecialCode() {}
 	virtual void init() = 0;
 	virtual void run(uint32 specialCodeId, OpCall &opCall) = 0;
-protected:
-	IllusionsEngine *_vm;
 };
 
 } // End of namespace Illusions

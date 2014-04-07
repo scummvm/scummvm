@@ -49,97 +49,20 @@ typedef Common::Functor2<ScriptThread*, OpCall&, void> ScriptOpcode;
 class ScriptOpcodes {
 public:
 	ScriptOpcodes(IllusionsEngine *vm);
-	~ScriptOpcodes();
+	virtual ~ScriptOpcodes();
 	void execOpcode(ScriptThread *scriptThread, OpCall &opCall);
 protected:
 	IllusionsEngine *_vm;
 	ScriptOpcode *_opcodes[256];
 	Common::String _opcodeNames[256];
-	void initOpcodes();
-	void freeOpcodes();
-
-	// Opcodes
-	void opSuspend(ScriptThread *scriptThread, OpCall &opCall);
-	void opYield(ScriptThread *scriptThread, OpCall &opCall);
-	void opTerminate(ScriptThread *scriptThread, OpCall &opCall);
-	void opJump(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartScriptThread(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartTempScriptThread(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetThreadSceneId(ScriptThread *scriptThread, OpCall &opCall);
-	void opEndTalkThreads(ScriptThread *scriptThread, OpCall &opCall);
-	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
-	void opUnloadResource(ScriptThread *scriptThread, OpCall &opCall);
-	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
-	void opChangeScene(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartModalScene(ScriptThread *scriptThread, OpCall &opCall);
-	void opExitModalScene(ScriptThread *scriptThread, OpCall &opCall);
-	void opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
-	void opExitCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
-	void opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall);
-	void opPanToObject(ScriptThread *scriptThread, OpCall &opCall);
-	void opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
-	void opPanToPoint(ScriptThread *scriptThread, OpCall &opCall);
-	void opPanStop(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);	
-	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
-	void opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetProperty(ScriptThread *scriptThread, OpCall &opCall);
-	void opPlaceActor(ScriptThread *scriptThread, OpCall &opCall);
-	void opFaceActor(ScriptThread *scriptThread, OpCall &opCall);
-	void opFaceActorToObject(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartSequenceActor(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartMoveActor(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartTalkThread(ScriptThread *scriptThread, OpCall &opCall);
-	void opAppearActor(ScriptThread *scriptThread, OpCall &opCall);
-	void opDisappearActor(ScriptThread *scriptThread, OpCall &opCall);
-	void opActivateObject(ScriptThread *scriptThread, OpCall &opCall);
-	void opDeactivateObject(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetDefaultSequence(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetSelectSfx(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetMoveSfx(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetDenySfx(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetAdjustUpSfx(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartSound(ScriptThread *scriptThread, OpCall &opCall);
-	void opStopSound(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartMusic(ScriptThread *scriptThread, OpCall &opCall);
-	void opStopMusic(ScriptThread *scriptThread, OpCall &opCall);
-	void opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall);
-	void opIfLte(ScriptThread *scriptThread, OpCall &opCall);
-	void opAddMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
-	void opDisplayMenu(ScriptThread *scriptThread, OpCall &opCall);
-	void opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
-	void opResetGame(ScriptThread *scriptThread, OpCall &opCall);
-	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
-	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
-	void opJumpIf(ScriptThread *scriptThread, OpCall &opCall);
-	void opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall);
-	void opIsCurrentSceneId(ScriptThread *scriptThread, OpCall &opCall);
-	void opIsActiveSceneId(ScriptThread *scriptThread, OpCall &opCall);
-	void opNot(ScriptThread *scriptThread, OpCall &opCall);
-	void opAnd(ScriptThread *scriptThread, OpCall &opCall);
-	void opOr(ScriptThread *scriptThread, OpCall &opCall);
-	void opGetProperty(ScriptThread *scriptThread, OpCall &opCall);
-	void opCompareBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
-	void opDebug126(ScriptThread *scriptThread, OpCall &opCall);
-	void opPlayVideo(ScriptThread *scriptThread, OpCall &opCall);
-	void opStackPop(ScriptThread *scriptThread, OpCall &opCall);
-	void opStackDup(ScriptThread *scriptThread, OpCall &opCall);
-	void opLoadSpecialCodeModule(ScriptThread *scriptThread, OpCall &opCall);
-	void opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall);
-	void opStopActor(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetActorUsePan(ScriptThread *scriptThread, OpCall &opCall);
-	void opStartAbortableThread(ScriptThread *scriptThread, OpCall &opCall);
-	void opKillThread(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opCall);
-	void opStackPush0(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);
-	void opAddMenuKey(ScriptThread *scriptThread, OpCall &opCall);
-	void opChangeSceneAll(ScriptThread *scriptThread, OpCall &opCall);
-	
+	virtual void initOpcodes() {}
+	virtual void freeOpcodes() {}
 };
+
+// Convenience macros
+#define	ARG_SKIP(x) opCall.skip(x); 
+#define ARG_INT16(name) int16 name = opCall.readSint16(); debug(0, "ARG_INT16(" #name " = %d)", name);
+#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(0, "ARG_UINT32(" #name " = %08X)", name);
 
 } // End of namespace Illusions
 

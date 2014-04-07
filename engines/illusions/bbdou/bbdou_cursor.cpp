@@ -20,7 +20,7 @@
  *
  */
 
-#include "illusions/illusions.h"
+#include "illusions/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_cursor.h"
 #include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/actor.h"
@@ -33,7 +33,7 @@ namespace Illusions {
 // NOTE It's assumed there's only one game cursor object
 // The original stores the _data inside the actor, here it's inside the Cursor class.
 
-BbdouCursor::BbdouCursor(IllusionsEngine *vm, BbdouSpecialCode *bbdou)
+BbdouCursor::BbdouCursor(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou)
 	: _vm(vm), _bbdou(bbdou) {
 }
 

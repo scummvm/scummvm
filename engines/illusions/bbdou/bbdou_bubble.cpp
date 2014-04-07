@@ -20,7 +20,7 @@
  *
  */
 
-#include "illusions/illusions.h"
+#include "illusions/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_bubble.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
@@ -29,7 +29,7 @@
 
 namespace Illusions {
 
-BbdouBubble::BbdouBubble(IllusionsEngine *vm, BbdouSpecialCode *bbdou)
+BbdouBubble::BbdouBubble(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou)
 	: _vm(vm), _bbdou(bbdou) {
 }
 

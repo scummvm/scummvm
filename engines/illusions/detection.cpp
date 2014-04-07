@@ -21,6 +21,7 @@
  */
 
 #include "illusions/illusions.h"
+#include "illusions/illusions_bbdou.h"
 
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
@@ -37,18 +38,26 @@ static const PlainGameDescriptor illusionsGames[] = {
 
 namespace Illusions {
 
-static const ADGameDescription gameDescriptions[] = {
+struct IllusionsGameDescription {
+	ADGameDescription desc;
+	int gameId;
+};
+
+static const IllusionsGameDescription gameDescriptions[] = {
 	{
-		"bbdou",
-		0,
-		AD_ENTRY1s("000D0001.scr", "d0c846d5dccc5607a482c7dcbdf06973", 601980),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO0()
+		{
+			"bbdou",
+			0,
+			AD_ENTRY1s("000D0001.scr", "d0c846d5dccc5607a482c7dcbdf06973", 601980),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameIdBBDOU
 	},
 
-	AD_TABLE_END_MARKER
+	{AD_TABLE_END_MARKER, 0}
 };
 
 } // End of namespace Illusions
@@ -60,7 +69,7 @@ static const char * const directoryGlobs[] = {
 
 class IllusionsMetaEngine : public AdvancedMetaEngine {
 public:
-	IllusionsMetaEngine() : AdvancedMetaEngine(Illusions::gameDescriptions, sizeof(ADGameDescription), illusionsGames) {
+	IllusionsMetaEngine() : AdvancedMetaEngine(Illusions::gameDescriptions, sizeof(Illusions::IllusionsGameDescription), illusionsGames) {
 		_singleid = "illusions";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -88,13 +97,13 @@ bool IllusionsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		false;
 		/*
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate);
-	    */
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate);
+		*/
 }
 
 #if 0
@@ -159,8 +168,16 @@ SaveStateDescriptor IllusionsMetaEngine::querySaveMetaInfos(const char *target, 
 #endif
 
 bool IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Illusions::IllusionsEngine(syst, desc);
+	const Illusions::IllusionsGameDescription *gd = (const Illusions::IllusionsGameDescription *)desc;
+	if (gd) {
+		switch (gd->gameId) {
+		case Illusions::kGameIdBBDOU:
+			*engine = new Illusions::IllusionsEngine_BBDOU(syst, desc);
+			break;
+		default:
+			error("Unknown game id");
+			break;
+		}
 	}
 	return desc != 0;
 }

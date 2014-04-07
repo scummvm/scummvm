@@ -38,7 +38,7 @@ TimerThread::TimerThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThr
 	_endTime = _startTime + _duration;
 
 	if (callingThreadId) {
-		Thread *callingThread = _vm->_scriptMan->_threads->findThread(callingThreadId);
+		Thread *callingThread = _vm->_threads->findThread(callingThreadId);
 		if (callingThread)
 			_tag = callingThread->_tag;
 	}

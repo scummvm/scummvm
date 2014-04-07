@@ -41,6 +41,8 @@
 #include "illusions/time.h"
 #include "illusions/updatefunctions.h"
 
+#include "illusions/talkthread.h"
+
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -71,102 +73,6 @@ IllusionsEngine::~IllusionsEngine() {
 
 }
 
-Common::Error IllusionsEngine::run() {
-
-	// Init search paths
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "resrem");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "savegame");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "voice");
-
-	Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(640, 480, true, &pixelFormat16);
-	
-	_dict = new Dictionary();
-
-	_resSys = new ResourceSystem();
-	_resSys->addResourceLoader(0x00060000, new ActorResourceLoader(this));
-	_resSys->addResourceLoader(0x00080000, new SoundGroupResourceLoader(this));
-	_resSys->addResourceLoader(0x000D0000, new ScriptResourceLoader(this));
-	_resSys->addResourceLoader(0x000F0000, new TalkResourceLoader(this));
-	_resSys->addResourceLoader(0x00100000, new ActorResourceLoader(this));
-	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
-	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
-	_resSys->addResourceLoader(0x00170000, new SpecialCodeLoader(this));
-
-	_screen = new Screen(this);
-	_input = new Input();	
-	_scriptMan = new ScriptMan(this);
-	_actorItems = new ActorItems(this);
-	_backgroundItems = new BackgroundItems(this);
-	_camera = new Camera(this);
-	_controls = new Controls(this);
-	_cursor = new Cursor(this);
-	_talkItems = new TalkItems(this);
-	_triggerFunctions = new TriggerFunctions();
-	
-	// TODO Move to own class
-	_resGetCtr = 0;
-	_unpauseControlActorFlag = false;
-	_lastUpdateTime = 0;
-	
-#if 1
-	// Actor/graphics/script test
-
-	/* TODO 0x0010000B LinkIndex 0x00060AAB 0x00060556
-	*/
-	
-	_scriptMan->_globalSceneId = 0x00010003;	
-	
-	_resSys->loadResource(0x000D0001, 0, 0);
-
-	_scriptMan->startScriptThread(0x00020004, 0, 0, 0, 0);
-	_scriptMan->_doScriptThreadInit = true;
-
-	while (!shouldQuit()) {
-		_scriptMan->_threads->updateThreads();
-		updateActors();
-		updateSequences();
-		updateGraphics();
-		_screen->updateSprites();
-		_system->updateScreen();
-		updateEvents();
-		_system->delayMillis(10);
-	}
-#endif
-
-	delete _triggerFunctions;
-	delete _talkItems;
-	delete _cursor;
-	delete _controls;
-	delete _camera;
-	delete _backgroundItems;
-	delete _actorItems;
-	delete _scriptMan;
-	delete _input;
-	delete _screen;
-	delete _resSys;
-	delete _dict;
-	
-	debug("Ok");
-	
-	return Common::kNoError;
-}
-
-bool IllusionsEngine::hasFeature(EngineFeature f) const {
-	return
-		false;
-		/*
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
-		*/
-}
-
 void IllusionsEngine::updateEvents() {
 	Common::Event event;
 	while (_eventMan->pollEvent(event)) {
@@ -182,18 +88,10 @@ void IllusionsEngine::updateEvents() {
 }
 
 Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {
-	Control *control = _dict->getObjectControl(objectId);
+	Control *control = getObjectControl(objectId);
 	if (control && control->_actor)
 		return &control->_actor->_position;
 	return 0;
-}
-
-void IllusionsEngine::notifyThreadId(uint32 &threadId) {
-	if (threadId) {
-		uint32 tempThreadId = threadId;
-		threadId = 0;
-		_scriptMan->_threads->notifyId(tempThreadId);
-	}
 }
 
 uint32 IllusionsEngine::getElapsedUpdateTime() {
@@ -301,52 +199,9 @@ int IllusionsEngine::getRandom(int max) {
 	return _random->getRandomNumber(max - 1);
 }
 
-bool IllusionsEngine::causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
-	uint32 codeOffs;
-	bool r =
-		_triggerFunctions->find(sceneId, verbId, objectId2, objectId) ||
-		_scriptMan->findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs);
-	debug(3, "causeIsDeclared() sceneId: %08X; verbId: %08X; objectId2: %08X; objectId: %08X -> %d",
-		sceneId, verbId, objectId2, objectId, r);
-	return r;
-}
-
-void IllusionsEngine::causeDeclare(uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback) {
-	_triggerFunctions->add(getCurrentScene(), verbId, objectId2, objectId, callback);
-}
-
-uint32 IllusionsEngine::causeTrigger(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 callingThreadId) {
-	uint32 codeOffs;
-	uint32 causeThreadId = 0;
-	TriggerFunction *triggerFunction = _triggerFunctions->find(sceneId, verbId, objectId2, objectId);
-	if (triggerFunction) {
-		triggerFunction->run(callingThreadId);
-	} else if (_scriptMan->findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs)) {
-		//debug("Run cause at %08X", codeOffs);
-		causeThreadId = _scriptMan->startTempScriptThread(_scriptMan->_scriptResource->getCode(codeOffs),
-			callingThreadId, verbId, objectId2, objectId);
-	}
-	return causeThreadId;
-}
-
 int IllusionsEngine::convertPanXCoord(int16 x) {
 	// TODO
 	return 0;
-}
-
-Common::Point IllusionsEngine::getNamedPointPosition(uint32 namedPointId) {
-	Common::Point pt;
-	if (_backgroundItems->findActiveBackgroundNamedPoint(namedPointId, pt) ||
-		_actorItems->findNamedPoint(namedPointId, pt) ||
-		_controls->findNamedPoint(namedPointId, pt))
-    	return pt;
-	// TODO
-	//debug("getNamedPointPosition(%08X) UNKNOWN", namedPointId);
-	return Common::Point(0, 0);
-}
-
-uint32 IllusionsEngine::getPriorityFromBase(int16 priority) {
-	return 32000000 * priority;
 }
 
 bool IllusionsEngine::calcPointDirection(Common::Point &srcPt, Common::Point &dstPt, uint &facing) {
@@ -413,8 +268,30 @@ bool IllusionsEngine::isVoicePlaying() {
 	return false;
 }
 
-uint32 IllusionsEngine::getCurrentScene() {
-	return _scriptMan->_activeScenes.getCurrentScene();
+void IllusionsEngine::setCurrFontId(uint32 fontId) {
+	_fontId = fontId;
+}
+
+bool IllusionsEngine::checkActiveTalkThreads() {
+	return _threads->isActiveThread(kMsgQueryTalkThreadActive);
+}
+
+uint32 IllusionsEngine::clipTextDuration(uint32 duration) {
+	switch (_field8) {
+	case 2:
+		if (duration == 0)
+			duration = 240;
+		break;
+	case 3:
+		if (duration < _fieldA)
+			duration = _fieldA;
+		break;
+	case 4:
+		if (duration > _fieldA)
+			duration = _fieldA;
+		break;
+	}
+	return duration;
 }
 
 } // End of namespace Illusions

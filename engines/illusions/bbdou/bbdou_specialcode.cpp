@@ -20,7 +20,7 @@
  *
  */
 
-#include "illusions/illusions.h"
+#include "illusions/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/bbdou/bbdou_bubble.h"
 #include "illusions/bbdou/bbdou_inventory.h"
@@ -50,7 +50,7 @@ static const Struct10 kStruct10s[] = {
 	{0x1B000C,       0,       0,       0},
 };
 
-CauseThread::CauseThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId,
+CauseThread::CauseThread(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 callingThreadId,
 	BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId, uint32 verbId,
 	uint32 objectId2, uint32 objectId)
 	: Thread(vm, threadId, callingThreadId, 0), _bbdou(bbdou), _cursorObjectId(cursorObjectId),
@@ -70,8 +70,8 @@ void CauseThread::onTerminated() {
 
 // BbdouSpecialCode
 
-BbdouSpecialCode::BbdouSpecialCode(IllusionsEngine *vm)
-	: SpecialCode(vm) {
+BbdouSpecialCode::BbdouSpecialCode(IllusionsEngine_BBDOU *vm)
+	: _vm(vm) {
 	_bubble = new BbdouBubble(_vm, this);
 	_cursor = new BbdouCursor(_vm, this);
 	_inventory = new BbdouInventory(_vm, this);
@@ -120,11 +120,6 @@ void BbdouSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
 }
 
 // Special codes
-
-// Convenience macros
-#define	ARG_SKIP(x) opCall.skip(x); 
-#define ARG_INT16(name) int16 name = opCall.readSint16(); debug(1, "ARG_INT16(" #name " = %d)", name);
-#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(1, "ARG_UINT32(" #name " = %08X)", name);
 
 void BbdouSpecialCode::spcInitCursor(OpCall &opCall) {
 	ARG_UINT32(objectId);
@@ -226,7 +221,7 @@ void BbdouSpecialCode::spcRemoveInventoryItem(OpCall &opCall) {
 
 void BbdouSpecialCode::spcHasInventoryItem(OpCall &opCall) {
 	ARG_UINT32(objectId);
-	_vm->_scriptMan->_stack.push(_inventory->hasInventoryItem(objectId) ? 1 : 0);
+	_vm->_stack->push(_inventory->hasInventoryItem(objectId) ? 1 : 0);
 debug("_inventory->hasInventoryItem(%08X) = %d", objectId, _inventory->hasInventoryItem(objectId));	
 }
 
@@ -237,7 +232,7 @@ void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
 void BbdouSpecialCode::spcIsCursorHoldingObjectId(OpCall &opCall) {
 	ARG_UINT32(cursorObjectId);
 	ARG_UINT32(objectId);
-	_vm->_scriptMan->_stack.push(isHoldingObjectId(objectId) ? 1 : 0);
+	_vm->_stack->push(isHoldingObjectId(objectId) ? 1 : 0);
 	_vm->notifyThreadId(opCall._threadId);
 }
 
@@ -613,7 +608,7 @@ bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
 	uint32 threadId = startCauseThread(cursorControl->_objectId, _vm->getCurrentScene(), outVerbId, outObjectId2, outObjectId);
 
 	if (cursorData._field90) {
-		_vm->_scriptMan->_threads->killThread(cursorData._causeThreadId2);
+		_vm->_threads->killThread(cursorData._causeThreadId2);
 		cursorData._field90 = 0;
 	}
 
@@ -627,11 +622,11 @@ bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
 }
 
 uint32 BbdouSpecialCode::startCauseThread(uint32 cursorObjectId, uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
-	uint32 tempThreadId = _vm->_scriptMan->newTempThreadId();
+	uint32 tempThreadId = _vm->newTempThreadId();
 	debug(3, "Starting cause thread %08X...", tempThreadId);
 	CauseThread *causeThread = new CauseThread(_vm, tempThreadId, 0, this,
 		cursorObjectId, sceneId, verbId, objectId2, objectId);
-	_vm->_scriptMan->_threads->startThread(causeThread);
+	_vm->_threads->startThread(causeThread);
 	causeThread->suspend();
 	return tempThreadId;
 }
