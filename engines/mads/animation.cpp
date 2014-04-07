@@ -144,7 +144,15 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 }
 
 Animation::~Animation() {
-	delete _font;
+	Scene &scene = _vm->_game->_scene;
+
+	if (_header._manualFlag)
+		scene._sprites.remove(_spriteListIndexes[_header._spritesIndex]);
+
+	for (uint idx = 0; idx < _header._spriteSetsCount; ++idx) {
+		if (!_header._manualFlag || _header._spritesIndex != idx)
+			scene._sprites.remove(_spriteListIndexes[idx]);
+	}
 }
 
 void Animation::free() {
