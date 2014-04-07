@@ -384,10 +384,10 @@ Vars::Vars() {
 	scene29_ass = 0;
 	scene29_manIsRiding = false;
 	scene29_var10 = false;
-	scene29_var11 = 0;
-	scene29_var12 = 0;
+	scene29_reachedFarRight = false;
+	scene29_rideBackEnabled = false;
 	scene29_var13 = 0;
-	scene29_var14 = 75;
+	scene29_shootDistance = 75;
 	scene29_var15 = 0;
 	scene29_var16 = 0;
 	scene29_var17 = 0;

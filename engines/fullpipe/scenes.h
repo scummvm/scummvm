@@ -601,10 +601,10 @@ public:
 	BallChain scene29_greenBalls;
 	bool scene29_manIsRiding;
 	bool scene29_var10;
-	int scene29_var11;
-	int scene29_var12;
+	bool scene29_reachedFarRight;
+	bool scene29_rideBackEnabled;
 	int scene29_var13;
-	int scene29_var14;
+	int scene29_shootDistance;
 	int scene29_var15;
 	int scene29_var16;
 	int scene29_var17;

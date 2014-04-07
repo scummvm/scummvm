@@ -155,10 +155,10 @@ void scene29_initScene(Scene *sc) {
 
 	g_vars->scene29_manIsRiding = false;
 	g_vars->scene29_var10 = false;
-	g_vars->scene29_var11 = 0;
-	g_vars->scene29_var12 = 0;
+	g_vars->scene29_reachedFarRight = false;
+	g_vars->scene29_rideBackEnabled = false;
 	g_vars->scene29_var13 = 0;
-	g_vars->scene29_var14 = 75;
+	g_vars->scene29_shootDistance = 75;
 	g_vars->scene29_var15 = 0;
 	g_vars->scene29_var16 = 0;
 	g_vars->scene29_var17 = 0;
@@ -406,9 +406,9 @@ void sceneHandler29_shootRed() {
 
 void sceneHandler29_manJump() {
 	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id == MV_MAN29_RUN || g_fp->_aniMan->_movement->_id == MV_MAN29_STANDUP) {
-		g_vars->scene29_var12 = 0;
+		g_vars->scene29_rideBackEnabled = false;
 		g_vars->scene29_var15 = 0;
-		g_vars->scene29_var11 = 1;
+		g_vars->scene29_reachedFarRight = true;
 
 		g_fp->_aniMan->changeStatics2(ST_MAN29_RUNR);
 		g_fp->_aniMan->startAnim(MV_MAN29_JUMP, 0, -1);
@@ -420,9 +420,9 @@ void sceneHandler29_manJump() {
 
 void sceneHandler29_manBend() {
 	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id == MV_MAN29_RUN || g_fp->_aniMan->_movement->_id == MV_MAN29_STANDUP) {
-		g_vars->scene29_var12 = 0;
+		g_vars->scene29_rideBackEnabled = false;
 		g_vars->scene29_var15 = 0;
-		g_vars->scene29_var11 = 1;
+		g_vars->scene29_reachedFarRight = true;
 
 		g_fp->_aniMan->changeStatics2(ST_MAN29_RUNR);
 		g_fp->_aniMan->startAnim(MV_MAN29_BEND, 0, -1);
@@ -519,8 +519,8 @@ void sceneHandler29_manHit() {
 
 			g_vars->scene29_manIsRiding = false;
 			g_vars->scene29_var10 = false;
-			g_vars->scene29_var11 = 0;
-			g_vars->scene29_var12 = 0;
+			g_vars->scene29_reachedFarRight = false;
+			g_vars->scene29_rideBackEnabled = false;
 		} else {
 			ex = new ExCommand(ANI_MAN, 1, MV_MAN29_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
@@ -706,7 +706,7 @@ void sceneHandler29_manFromR() {
 	chainQueue(QU_SC29_MANFROM_R, 1);
 
 	g_vars->scene29_var10 = false;
-	g_vars->scene29_var12 = 0;
+	g_vars->scene29_rideBackEnabled = false;
 }
 
 int sceneHandler29_updateScreenCallback() {
@@ -800,7 +800,7 @@ void sceneHandler29_sub05() {
 		if (g_vars->scene29_var20 > 1436) {
 			sceneHandler29_manFromR();
 		} else {
-			g_vars->scene29_var14 = (1310 - g_vars->scene29_var20) * 5213 / 100000 + 25;
+			g_vars->scene29_shootDistance = (1310 - g_vars->scene29_var20) * 5213 / 100000 + 25;
 
 			if (!g_vars->scene29_var15)
 				g_fp->_aniMan->startAnim(MV_MAN29_RUN, 0, -1);
@@ -838,7 +838,7 @@ void sceneHandler29_shootersEscape() {
 	}
 }
 
-void sceneHandler29_sub07() {
+void sceneHandler29_manRideBack() {
 	g_vars->scene29_var20 -= 2;
   
 	g_fp->_aniMan->setOXY(g_vars->scene29_var20, g_vars->scene29_var21);
@@ -998,29 +998,29 @@ int sceneHandler29(ExCommand *cmd) {
 	case MSG_SC29_STOPRIDE:
 		g_vars->scene29_manIsRiding = false;
 		g_vars->scene29_var10 = false;
-		g_vars->scene29_var11 = 0;
-		g_vars->scene29_var12 = 0;
+		g_vars->scene29_reachedFarRight = false;
+		g_vars->scene29_rideBackEnabled = false;
 
 		getCurrSceneSc2MotionController()->setEnabled();
 		getGameLoaderInteractionController()->enableFlag24();
 		break;
 
 	case MSG_SC29_DISABLERIDEBACK:
-		g_vars->scene29_var12 = 0;
+		g_vars->scene29_rideBackEnabled = false;
 		break;
 
 	case MSG_SC29_ENABLERIDEBACK:
-		g_vars->scene29_var12 = 1;
-		g_vars->scene29_var11 = 0;
+		g_vars->scene29_rideBackEnabled = true;
+		g_vars->scene29_reachedFarRight = false;
 		break;
 
 	case MSG_SC29_DISABLEPORTER:
-		g_vars->scene29_var11 = 0;
+		g_vars->scene29_reachedFarRight = false;
 		break;
 
 	case MSG_SC29_ENABLEPORTER:
-		g_vars->scene29_var11 = 1;
-		g_vars->scene29_var12 = 0;
+		g_vars->scene29_reachedFarRight = true;
+		g_vars->scene29_rideBackEnabled = false;
 		g_vars->scene29_var15 = 0;
 		break;
 
@@ -1082,14 +1082,14 @@ int sceneHandler29(ExCommand *cmd) {
 		else if (g_vars->scene29_var10 && !g_fp->_aniMan->_movement)
 			sceneHandler29_sub05();
 
-		if (g_vars->scene29_var11)
+		if (g_vars->scene29_reachedFarRight)
 			sceneHandler29_shootersEscape();
-		else if (g_vars->scene29_var12)
-			sceneHandler29_sub07();
+		else if (g_vars->scene29_rideBackEnabled)
+			sceneHandler29_manRideBack();
 
 		g_vars->scene29_var13++;
 
-		if (g_vars->scene29_var13 > g_vars->scene29_var14)
+		if (g_vars->scene29_var13 > g_vars->scene29_shootDistance)
 			sceneHandler29_shoot();
 
 		sceneHandler29_animBearded();
