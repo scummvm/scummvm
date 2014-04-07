@@ -149,7 +149,6 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 		_vm->_screen.setPointer(&userInterface);
 		userInterface.setBounds(Common::Rect(0, scene._interfaceY,
 			MADS_SCREEN_WIDTH - 1, userInterface.h + scene._interfaceY - 1));
-		warning("TODO: sub_111C8 / sub_1146C");
 
 		for (uint idx = 0; idx < size(); ++idx) {
 			DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
@@ -162,8 +161,6 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 				_vm->_screen.copyRectToScreen(r);
 			}
 		}
-
-		warning("TODO: sub 115A2 / sub111D3");
 	}
 
 	// Post-processing to remove slots no longer needed

@@ -358,8 +358,7 @@ void Scene::doFrame() {
 				_kernelMessages.update();
 			}
 
-			_userInterface._uiSlots.draw(_vm->_game->_fx == 0,
-				_vm->_game->_fx != 0);
+			_userInterface._uiSlots.draw(!_vm->_game->_fx, _vm->_game->_fx);
 
 			// Write any text needed by the interface
 			if (_vm->_game->_fx)
@@ -395,7 +394,7 @@ void Scene::doFrame() {
 	}
 }
 
-void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
+void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	// Draw any sprites
 	_spriteSlots.drawBackground();
 
@@ -433,7 +432,6 @@ void Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 		_dirtyAreas.copyToScreen(_vm->_screen._offset);
 	}
 
-	warning("TODO: sub_115A2");
 	_spriteSlots.cleanUp();
 	_textDisplay.cleanUp();
 }
