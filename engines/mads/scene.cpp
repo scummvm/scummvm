@@ -379,8 +379,8 @@ void Scene::doFrame() {
 				// Mouse position display isn't persistent, so remove it
 				_kernelMessages.remove(mouseTextIndex);
 
-
-			warning("TODO: sub_1DA3E");
+			// Original had a debugger check/call here to allow pausing after
+			// drawing each frame. Not implemented under ScummVM
 		}
 	}
 
