@@ -183,6 +183,7 @@ void TabWidget::setActiveTab(int tabID) {
 		}
 		_activeTab = tabID;
 		_firstWidget = _tabs[tabID].firstWidget;
+
 		_boss->draw();
 	}
 }
@@ -227,28 +228,29 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 bool TabWidget::handleKeyDown(Common::KeyState state) {
 	if (state.hasFlags(Common::KBD_SHIFT) && state.keycode == Common::KEYCODE_TAB)
-		adjustTabs(-kAheadTab);
+		adjustTabs(kTabBackwards);
 	else if (state.keycode == Common::KEYCODE_TAB)
-		adjustTabs(kAheadTab);
+		adjustTabs(kTabForwards);
 
 	return Widget::handleKeyDown(state);
 }
 
 void TabWidget::adjustTabs(int value) {
-	// determine which tab is next
+	// Determine which tab is next
 	int tabID = _activeTab + value;
 	if (tabID >= (int)_tabs.size())
 		tabID = 0;
 	else if (tabID < 0)
 		tabID = ((int)_tabs.size() - 1);
 
-	// slides _firstVisibleTab forward to the correct tab
-	while (_firstVisibleTab < tabID - kMaxTabs)
+	// Slides _firstVisibleTab forward to the correct tab
+	int maxTabsOnScreen = (_w / _tabWidth);
+	if (tabID >= maxTabsOnScreen && (_firstVisibleTab + maxTabsOnScreen) < (int)_tabs.size())
 		_firstVisibleTab++;
 
-	// slide _firstVisibleTab backwards to the correct tab
+	// Slides _firstVisibleTab backwards to the correct tab
 	while (tabID < _firstVisibleTab)
-			_firstVisibleTab--;
+		_firstVisibleTab--;
 
 	setActiveTab(tabID);
 }
