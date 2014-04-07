@@ -51,7 +51,7 @@ void AAHeader::load(Common::SeekableReadStream *f) {
 	buffer[FILENAME_SIZE - 1] = '\0';
 	_interfaceFile = Common::String(buffer);
 
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < _spriteSetsCount; ++i) {
 		f->read(buffer, FILENAME_SIZE);
 		buffer[FILENAME_SIZE - 1] = '\0';
 		_spriteSetNames.push_back(Common::String(buffer));
