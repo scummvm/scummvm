@@ -568,10 +568,10 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	// J.U.L.I.A. (English, steam version)
+	// J.U.L.I.A. (English, Bundle in a box-version)
 	{
 		"julia",
-		"Steam version",
+		"Version 1.2",
 		AD_ENTRY1s("data.dcp", "fe90023ccc22f35185b40b910e0d03a2", 10101373),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
