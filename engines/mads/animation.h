@@ -173,6 +173,11 @@ public:
 		int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
 
 	/**
+	 * Preload animation data for the scene
+	 */
+	void preLoad(const Common::String &resName, int level);
+
+	/**
 	 * Setups up a loaded animation for playback
 	 */
 	void startAnimation(int abortTimers);

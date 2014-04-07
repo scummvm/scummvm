@@ -307,6 +307,11 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	f.close();
 }
 
+void Animation::preLoad(const Common::String &resName, int level) {
+	// No implementation in ScummVM, since access is fast enough that data
+	// doesn't need to be preloaded
+}
+
 void Animation::startAnimation(int abortTimers) {
 	_messageCtr = 0;
 	_skipLoad = true;
