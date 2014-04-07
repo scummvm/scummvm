@@ -675,6 +675,9 @@ void Player::releasePlayerSprites() {
 			scene._sprites.remove(spriteEnd);
 		} while (--spriteEnd >= _spritesStart);
 	}
+
+	_spritesLoaded = false;
+	_spritesChanged = true;
 }
 
 } // End of namespace MADS

@@ -372,14 +372,18 @@ int SpriteSets::add(SpriteAsset *asset, int idx) {
 
 	if (idx >= (int)size())
 		resize(idx + 1);
-	delete (*this)[idx];
-	(*this)[idx] = asset;
 
+	if ((*this)[idx]) {
+		delete (*this)[idx];
+	} else {
+		++_assetCount;
+	}
+
+	(*this)[idx] = asset;
 	return idx;
 }
 
 int SpriteSets::addSprites(const Common::String &resName, int flags) {
-	++_assetCount;
 	return add(new SpriteAsset(_vm, resName, flags));
 }
 
@@ -394,7 +398,14 @@ void SpriteSets::clear() {
 void SpriteSets::remove(int idx) {
 	if (idx >= 0) {
 		delete (*this)[idx];
-		(*this)[idx] = nullptr;
+
+		if (idx < ((int)size() - 1))
+			(*this)[idx] = nullptr;
+		else {
+			do {
+				remove_at(size() - 1);
+			} while (size() > 0 && (*this)[size() - 1] == nullptr);
+		}
 
 		--_assetCount;
 	}

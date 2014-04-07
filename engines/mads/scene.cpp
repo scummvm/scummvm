@@ -389,7 +389,7 @@ void Scene::doFrame() {
 		_animFlag = true;
 	_vm->_game->_fx = kTransitionNone;
 
-	if (_freeAnimationFlag) {
+	if (_freeAnimationFlag && _activeAnimation) {
 		_activeAnimation->free();
 		_activeAnimation = nullptr;
 	}
@@ -568,6 +568,11 @@ void Scene::free() {
 
 	delete _sceneInfo;
 	_sceneInfo = nullptr;
+}
+
+void Scene::removeSprites() {
+	for (int idx = _sprites.size() - 1; idx >= _spritesCount; --idx)
+		_sprites.remove(idx);
 }
 
 void Scene::changeVariant(int variant) {

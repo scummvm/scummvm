@@ -143,6 +143,8 @@ void Game::gameLoop() {
 		}
 
 		_player.releasePlayerSprites();
+		assert(_scene._sprites.size() == 0);
+
 		_vm->_palette->unlock();
 		_vm->_events->waitCursor();
 		_vm->_events->freeCursors();
@@ -271,7 +273,8 @@ void Game::sectionLoop() {
 
 		_scene._reloadSceneFlag = false;
 
-		warning("TODO: sub_1DD8C, sub_1DD7E");
+		_scene._userInterface.noInventoryAnim();
+		_scene.removeSprites();
 
 		if (!_player._loadedFirst) {
 			_player._spritesLoaded = false;
