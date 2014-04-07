@@ -603,11 +603,11 @@ public:
 	bool scene29_var10;
 	bool scene29_reachedFarRight;
 	bool scene29_rideBackEnabled;
-	int scene29_var13;
+	int scene29_shootCountdown;
 	int scene29_shootDistance;
-	int scene29_var15;
-	int scene29_var16;
-	int scene29_var17;
+	int scene29_manIsHit;
+	int scene29_scrollSpeed;
+	bool scene29_scrollingDisabled;
 	int scene29_var18;
 	Common::Array<WalkingBearder *> scene29_var19;
 	int scene29_var20;

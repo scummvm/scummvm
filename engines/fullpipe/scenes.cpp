@@ -386,11 +386,11 @@ Vars::Vars() {
 	scene29_var10 = false;
 	scene29_reachedFarRight = false;
 	scene29_rideBackEnabled = false;
-	scene29_var13 = 0;
+	scene29_shootCountdown = 0;
 	scene29_shootDistance = 75;
-	scene29_var15 = 0;
-	scene29_var16 = 0;
-	scene29_var17 = 0;
+	scene29_manIsHit = 0;
+	scene29_scrollSpeed = 0;
+	scene29_scrollingDisabled = 0;
 	scene29_var18 = 0;
 	scene29_var20 = 0;
 	scene29_var21 = 0;

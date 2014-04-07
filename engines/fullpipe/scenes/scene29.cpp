@@ -157,11 +157,11 @@ void scene29_initScene(Scene *sc) {
 	g_vars->scene29_var10 = false;
 	g_vars->scene29_reachedFarRight = false;
 	g_vars->scene29_rideBackEnabled = false;
-	g_vars->scene29_var13 = 0;
+	g_vars->scene29_shootCountdown = 0;
 	g_vars->scene29_shootDistance = 75;
-	g_vars->scene29_var15 = 0;
-	g_vars->scene29_var16 = 0;
-	g_vars->scene29_var17 = 0;
+	g_vars->scene29_manIsHit = false;
+	g_vars->scene29_scrollSpeed = 0;
+	g_vars->scene29_scrollingDisabled = false;
 	g_vars->scene29_var18 = 0;
 
 	g_fp->setArcadeOverlay(PIC_CSR_ARCADE8);
@@ -169,7 +169,7 @@ void scene29_initScene(Scene *sc) {
 
 void sceneHandler29_winArcade() {
 	if (g_vars->scene29_shooter2->_flags & 4) {
-		g_vars->scene29_var13 = 0;
+		g_vars->scene29_shootCountdown = 0;
 
 		g_vars->scene29_shooter1->changeStatics2(ST_STR1_STAND);
 		g_vars->scene29_shooter2->changeStatics2(ST_STR2_STAND);
@@ -407,7 +407,7 @@ void sceneHandler29_shootRed() {
 void sceneHandler29_manJump() {
 	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id == MV_MAN29_RUN || g_fp->_aniMan->_movement->_id == MV_MAN29_STANDUP) {
 		g_vars->scene29_rideBackEnabled = false;
-		g_vars->scene29_var15 = 0;
+		g_vars->scene29_manIsHit = false;
 		g_vars->scene29_reachedFarRight = true;
 
 		g_fp->_aniMan->changeStatics2(ST_MAN29_RUNR);
@@ -421,7 +421,7 @@ void sceneHandler29_manJump() {
 void sceneHandler29_manBend() {
 	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id == MV_MAN29_RUN || g_fp->_aniMan->_movement->_id == MV_MAN29_STANDUP) {
 		g_vars->scene29_rideBackEnabled = false;
-		g_vars->scene29_var15 = 0;
+		g_vars->scene29_manIsHit = false;
 		g_vars->scene29_reachedFarRight = true;
 
 		g_fp->_aniMan->changeStatics2(ST_MAN29_RUNR);
@@ -433,7 +433,7 @@ void sceneHandler29_manBend() {
 }
 
 bool sceneHandler29_sub15(StaticANIObject *ani, int maxx) {
-	if (!g_vars->scene29_var10 || g_vars->scene29_var15)
+	if (!g_vars->scene29_var10 || g_vars->scene29_manIsHit)
 		return false;
 
 	if ((ani->_ox >= g_vars->scene29_var20 + 42 || ani->_ox <= g_vars->scene29_var20 + 8)
@@ -453,7 +453,7 @@ bool sceneHandler29_sub15(StaticANIObject *ani, int maxx) {
 }
 
 bool sceneHandler29_sub16(StaticANIObject *ani, int maxx) {
-	if (!g_vars->scene29_var10 || g_vars->scene29_var15)
+	if (!g_vars->scene29_var10 || g_vars->scene29_manIsHit)
 		return false;
 
 	if (ani->_ox >= g_vars->scene29_var20 + 40) {
@@ -489,7 +489,7 @@ bool sceneHandler29_sub16(StaticANIObject *ani, int maxx) {
 void sceneHandler29_manHit() {
 	MGMInfo mgminfo;
 
-	g_vars->scene29_var15 = 1;
+	g_vars->scene29_manIsHit = true;
 
 	g_fp->_aniMan->changeStatics2(ST_MAN29_RUNR);
 	g_fp->_aniMan->setOXY(g_vars->scene29_var20, g_vars->scene29_var21);
@@ -686,16 +686,16 @@ void sceneHandler29_sub03() {
 }
 
 void sceneHandler29_manFromL() {
-	if (g_vars->scene29_var20 < 497 && !g_vars->scene29_var17) {
+	if (g_vars->scene29_var20 < 497 && !g_vars->scene29_scrollingDisabled) {
 		getCurrSceneSc2MotionController()->setEnabled();
 		getGameLoaderInteractionController()->enableFlag24();
 
 		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 		chainQueue(QU_SC29_MANFROM_L, 1);
 
-		g_vars->scene29_var17 = 1;
+		g_vars->scene29_scrollingDisabled = true;
 
-		g_fp->_scrollSpeed = g_vars->scene29_var16;
+		g_fp->_scrollSpeed = g_vars->scene29_scrollSpeed;
 	}
 }
 
@@ -746,9 +746,9 @@ void sceneHandler29_manToR() {
 	g_fp->_msgY = -1;
 	g_fp->_msgX = -1;
 
-	g_vars->scene29_var17 = 0;
+	g_vars->scene29_scrollingDisabled = false;
 
-	g_vars->scene29_var16 = g_fp->_scrollSpeed;
+	g_vars->scene29_scrollSpeed = g_fp->_scrollSpeed;
 	g_fp->_scrollSpeed = 4;
 }
 
@@ -802,7 +802,7 @@ void sceneHandler29_sub05() {
 		} else {
 			g_vars->scene29_shootDistance = (1310 - g_vars->scene29_var20) * 5213 / 100000 + 25;
 
-			if (!g_vars->scene29_var15)
+			if (!g_vars->scene29_manIsHit)
 				g_fp->_aniMan->startAnim(MV_MAN29_RUN, 0, -1);
 		}
 	}
@@ -819,7 +819,7 @@ void sceneHandler29_shootersEscape() {
 
 		if (g_vars->scene29_var20 > 1310 && !g_vars->scene29_shooter1->_movement && !g_vars->scene29_shooter2->_movement
 			&& g_vars->scene29_shooter1->_statics->_staticsId == ST_STR1_RIGHT) {
-			g_vars->scene29_var13 = 0;
+			g_vars->scene29_shootCountdown = 0;
 
 			g_vars->scene29_shooter1->changeStatics2(ST_STR1_STAND);
 			g_vars->scene29_shooter2->changeStatics2(ST_STR2_STAND);
@@ -851,13 +851,13 @@ void sceneHandler29_shoot() {
 				if (g_vars->scene29_shooter2->_flags & 4) {
 					g_vars->scene29_shooter2->startAnim(MV_STR2_SHOOT, 0, -1);
 
-					g_vars->scene29_var13 = 0;
+					g_vars->scene29_shootCountdown = 0;
 				}
 			}
 		} else {
 			g_vars->scene29_shooter1->startAnim(MV_STR1_SHOOT, 0, -1);
 
-			g_vars->scene29_var13 = 0;
+			g_vars->scene29_shootCountdown = 0;
 		}
 	}
 }
@@ -1021,7 +1021,7 @@ int sceneHandler29(ExCommand *cmd) {
 	case MSG_SC29_ENABLEPORTER:
 		g_vars->scene29_reachedFarRight = true;
 		g_vars->scene29_rideBackEnabled = false;
-		g_vars->scene29_var15 = 0;
+		g_vars->scene29_manIsHit = false;
 		break;
 
 	case 29:
@@ -1087,9 +1087,9 @@ int sceneHandler29(ExCommand *cmd) {
 		else if (g_vars->scene29_rideBackEnabled)
 			sceneHandler29_manRideBack();
 
-		g_vars->scene29_var13++;
+		g_vars->scene29_shootCountdown++;
 
-		if (g_vars->scene29_var13 > g_vars->scene29_shootDistance)
+		if (g_vars->scene29_shootCountdown > g_vars->scene29_shootDistance)
 			sceneHandler29_shoot();
 
 		sceneHandler29_animBearded();
