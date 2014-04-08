@@ -75,10 +75,9 @@ int DynamicHotspots::add(int descId, int vocabId, int seqIndex, const Common::Re
 	return idx;
 }
 
-int DynamicHotspots::setPosition(int index, int xp, int yp, Facing facing) {
+int DynamicHotspots::setPosition(int index, const Common::Point &pos, Facing facing) {
 	if (index >= 0) {
-		_entries[index]._feetPos.x = xp;
-		_entries[index]._feetPos.y = yp;
+		_entries[index]._feetPos = pos;
 		_entries[index]._facing = facing;
 	}
 

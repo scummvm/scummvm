@@ -141,7 +141,7 @@ void Scene201::enter() {
 	_scene->_sequences.setMsgPosition(_globals._spriteIndexes[19], Common::Point(185, 46));
 
 	int idx = _scene->_dynamicHotspots.add(1159, 209, _globals._spriteIndexes[19], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, 186, 81, FACING_NORTH);
+	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
 
 	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == -1)) {
 		_game._player._playerPos = Common::Point(165, 152);
@@ -209,7 +209,7 @@ void Scene201::step() {
 	if (_pterodactylFlag && (_vm->getRandomNumber(5000) == 9)) {
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 6, 0);
 		int idx = _scene->_dynamicHotspots.add(351, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 270, 80, FACING_EAST);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(270, 80), FACING_EAST);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[20], 8);
 		_vm->_sound->command(14);
 		_pterodactylFlag = false;
@@ -361,14 +361,14 @@ void Scene202::enter() {
 	_scene->_sequences.setMsgPosition(_globals._spriteIndexes[17], Common::Point(149, 113));
 	_scene->_sequences.setDepth(_globals._spriteIndexes[17], 10);
 	int idx = _scene->_dynamicHotspots.add(320, 13, _globals._spriteIndexes[17], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, 153, 97, FACING_SOUTH);
+	_scene->_dynamicHotspots.setPosition(idx, Common::Point(153, 97), FACING_SOUTH);
 
 	if (!(_globals[kBone202Status] & 1)) {
 		_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[16], Common::Point(130, 108));
 		_scene->_sequences.setDepth(_globals._spriteIndexes[16], 10);
 		idx = _scene->_dynamicHotspots.add(44, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 132, 97, FACING_SOUTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(132, 97), FACING_SOUTH);
 	}
 
 	if (!(_globals[kBone202Status] & 2)) {
@@ -376,7 +376,7 @@ void Scene202::enter() {
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[21], Common::Point(166, 110));
 		_scene->_sequences.setDepth(_globals._spriteIndexes[21], 10);
 		idx = _scene->_dynamicHotspots.add(44, 13, _globals._spriteIndexes[21], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 165, 99, FACING_SOUTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(165, 99), FACING_SOUTH);
 	}
 
 	if (_globals[kBone202Status])
@@ -395,7 +395,7 @@ void Scene202::enter() {
 		_scene->_sequences.setDepth(_globals._spriteIndexes[20], 6);
 		_scene->_hotspots.activate(199, false);
 		idx = _scene->_dynamicHotspots.add(457, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 246, 124, FACING_NORTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
 	}
 
 	_game.loadQuoteSet(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
@@ -532,7 +532,7 @@ void Scene202::step() {
 		_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
 		_scene->_hotspots.activate(199, false);
 		int idx = _scene->_dynamicHotspots.add(457, 13, _globals._spriteIndexes[20], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 246, 124, FACING_NORTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
 		_scene->_sequences.updateTimeout(_globals._spriteIndexes[26], _globals._spriteIndexes[20]);
 		_scene->_sequences.updateTimeout(-1, _globals._spriteIndexes[26]);
 		_game._player._stepEnabled = true;
@@ -806,7 +806,7 @@ void Scene202::actions() {
 				_game._player._stepEnabled = false;
 
 				_ladderHotspotId = _scene->_dynamicHotspots.add(199, 79, -1, Common::Rect(241, 68, 12, 54));
-				_scene->_dynamicHotspots.setPosition(_ladderHotspotId, 246, 124, FACING_NORTH);
+				_scene->_dynamicHotspots.setPosition(_ladderHotspotId, Common::Point(246, 124), FACING_NORTH);
 				_globals._spriteIndexes[23] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._spriteIndexes[23], 1);
 				_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 1);
@@ -1006,7 +1006,7 @@ void Scene203::enter() {
 		_rhotundaEatFl = true;
 		_game._player.walk(Common::Point(158, 135), FACING_SOUTH);
 		int idx = _scene->_dynamicHotspots.add(131, 396, 0, Common::Rect(0, 0, 320, 156));
-		_scene->_dynamicHotspots.setPosition(idx, 155, 152, FACING_SOUTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(155, 152), FACING_SOUTH);
 		_scene->_dynamicHotspots.setCursor(idx, CURSOR_GO_DOWN);
 	}
 
@@ -1015,7 +1015,7 @@ void Scene203::enter() {
 		if (_vm->getRandomNumber(1, 3) == 2) {
 			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
 			int idx = _scene->_dynamicHotspots.add(477, 209, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(idx, -2, 0, FACING_NONE);
+			_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 			_vm->_sound->command(14);
 		}
 	}
@@ -1114,11 +1114,11 @@ void Scene205::enter() {
 
 	_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 0, 3);
 	int idx = _scene->_dynamicHotspots.add(73, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, 162, 120, FACING_NORTHEAST);
+	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
 
 	_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
 	idx = _scene->_dynamicHotspots.add(73, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-	_scene->_dynamicHotspots.setPosition(idx, 162, 120, FACING_NORTHEAST);
+	_scene->_dynamicHotspots.setPosition(idx, Common::Point(162, 120), FACING_NORTHEAST);
 
 	_globals._spriteIndexes[18] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 0, 0, 0);
 	_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
@@ -1128,7 +1128,7 @@ void Scene205::enter() {
 		_lastFishTime = _scene->_frameStartTime;
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
 		idx = _scene->_dynamicHotspots.add(269, 13, _globals._spriteIndexes[21], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 49, 86, FACING_NORTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
 	}
 
 	if (_game._objects[12]._roomNumber == 205) {
@@ -1195,7 +1195,7 @@ void Scene205::step() {
 	if (_globals._frameTime - _lastFishTime > 1300) {
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 5, 1, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(269, 13, _globals._spriteIndexes[21], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 49, 86, FACING_NORTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
 		_lastFishTime = _globals._frameTime;
 	}
 
@@ -1265,7 +1265,7 @@ void Scene207::enter() {
 		_globals._spriteIndexes[16] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 30, 0, 0, 400);
 		_vultureTime = _game._player._priorTimer;
 		_vultureHotspotId = _scene->_dynamicHotspots.add(389, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_vultureHotspotId, 254, 94, FACING_WEST);
+		_scene->_dynamicHotspots.setPosition(_vultureHotspotId, Common::Point(254, 94), FACING_WEST);
 	}
 
 	if (_spiderFl) {
@@ -1273,7 +1273,7 @@ void Scene207::enter() {
 		_scene->_sequences.setAnimRange(_globals._spriteIndexes[19], -1, -1);
 		_spiderTime = _game._player._priorTimer;
 		_spiderHotspotId = _scene->_dynamicHotspots.add(333, 13, _globals._spriteIndexes[19], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_spiderHotspotId, 59, 132, FACING_SOUTH);
+		_scene->_dynamicHotspots.setPosition(_spiderHotspotId, Common::Point(59, 132), FACING_SOUTH);
 	}
 
 	_eyeFl = false;
@@ -1427,7 +1427,7 @@ void Scene208::updateTrap() {
 		_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 24);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[16], 5);
 		int idx = _scene->_dynamicHotspots.add(424, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 100, 146, FACING_NORTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
 		_scene->_hotspots.activate(414, false);
 		return;
 	}
@@ -1437,7 +1437,7 @@ void Scene208::updateTrap() {
 		_globals._spriteIndexes[17] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[17], 15);
 		int idx = _scene->_dynamicHotspots.add(426, 13, _globals._spriteIndexes[17], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 60, 152, FACING_NORTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(60, 152), FACING_NORTH);
 		}
 		break;
 	case 2: {
@@ -1445,7 +1445,7 @@ void Scene208::updateTrap() {
 		_globals._spriteIndexes[18] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_hotspots.activate(414, false);
 		int idx = _scene->_dynamicHotspots.add(425, 13, _globals._spriteIndexes[17], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 100, 146, FACING_NORTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
 		_scene->_dynamicHotspots[idx]._articleNumber = 5;
 		}
 		break;
@@ -2357,7 +2357,8 @@ void Scene209::handleMonkeyFall() {
 		_scene->_sequences.updateTimeout(_globals._spriteIndexes[23], oldIdx);
 		_scene->_sequences.setAnimRange(_globals._spriteIndexes[23], 43, 72);
 		_scene->_sequences.addSubEntry(_globals._spriteIndexes[23], SM_0, 0, 222);
-		_scene->_dynamicHotspots.setPosition(_scene->_dynamicHotspots.add(39, 13, _globals._spriteIndexes[24], Common::Rect(0, 0, 0, 0)), 200, 133, FACING_NORTH);
+		int idx = _scene->_dynamicHotspots.add(39, 13, _globals._spriteIndexes[24], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(200, 133), FACING_NORTH);
 		}
 		break;
 
@@ -2533,7 +2534,7 @@ void Scene209::enter() {
 	if (_game._objects.isInRoom(OBJ_PLANT_STALK)) {
 		_globals._spriteIndexes[16] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		int idx = _scene->_dynamicHotspots.add(271, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 263, 129, FACING_SOUTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(263, 129), FACING_SOUTH);
 		_scene->_sequences.setDepth(_globals._spriteIndexes[16], 13);
 	}
 
@@ -2550,7 +2551,7 @@ void Scene209::enter() {
 		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[24], Common::Point(201, 131));
 		_scene->_sequences.setDepth(_globals._spriteIndexes[24], 8);
 		int idx = _scene->_dynamicHotspots.add(39, 13, _globals._spriteIndexes[24], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, 200, 133, FACING_NORTH);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(200, 133), FACING_NORTH);
 	}
 
 	if (_scene->_roomChanged) {
@@ -3829,7 +3830,7 @@ void Scene210::enter() {
 		_scene->_sequences.setDepth(_globals._spriteIndexes[8], 5);
 	} else {
 		int idx = _scene->_dynamicHotspots.add(112, 395, -1, Common::Rect(163, 87, 19, 36)); 
-		_doorway = _scene->_dynamicHotspots.setPosition(idx, 168, 127, FACING_NORTH);
+		_doorway = _scene->_dynamicHotspots.setPosition(idx, Common::Point(168, 127), FACING_NORTH);
 		_scene->_dynamicHotspots.setCursor(_doorway, CURSOR_GO_UP);
 	}
 
@@ -4205,7 +4206,7 @@ void Scene210::actions() {
 			_game._player._stepEnabled = true;
 			_globals[kCurtainOpen] = true;
 			_doorway = _scene->_dynamicHotspots.add(112, 395, -1, Common::Rect(163, 87, 19, 36));
-			_scene->_dynamicHotspots.setPosition(_doorway, 168, 127, FACING_NORTH);
+			_scene->_dynamicHotspots.setPosition(_doorway, Common::Point(168, 127), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(_doorway, CURSOR_GO_UP);
 			break;
 		}
