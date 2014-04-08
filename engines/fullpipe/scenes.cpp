@@ -391,9 +391,9 @@ Vars::Vars() {
 	scene29_manIsHit = 0;
 	scene29_scrollSpeed = 0;
 	scene29_scrollingDisabled = 0;
-	scene29_var18 = 0;
-	scene29_var20 = 0;
-	scene29_var21 = 0;
+	scene29_hitBall = 0;
+	scene29_manX = 0;
+	scene29_manY = 0;
 
 	scene30_leg = 0;
 	scene30_liftFlag = 1;
