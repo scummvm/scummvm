@@ -600,7 +600,7 @@ public:
 	BallChain scene29_flyingRedBalls;
 	BallChain scene29_greenBalls;
 	bool scene29_manIsRiding;
-	bool scene29_var10;
+	bool scene29_arcadeIsOn;
 	bool scene29_reachedFarRight;
 	bool scene29_rideBackEnabled;
 	int scene29_shootCountdown;

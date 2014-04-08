@@ -383,7 +383,7 @@ Vars::Vars() {
 	scene29_shooter2 = 0;
 	scene29_ass = 0;
 	scene29_manIsRiding = false;
-	scene29_var10 = false;
+	scene29_arcadeIsOn = false;
 	scene29_reachedFarRight = false;
 	scene29_rideBackEnabled = false;
 	scene29_shootCountdown = 0;
