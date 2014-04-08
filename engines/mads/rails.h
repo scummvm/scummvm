@@ -121,6 +121,7 @@ public:
 	const WalkNode &popNode();
 
 	void resetNext() { _next = 0; }
+	int  getNext() { return _next; }
 };
 
 } // End of namespace MADS

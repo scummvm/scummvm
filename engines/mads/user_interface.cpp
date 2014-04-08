@@ -579,6 +579,10 @@ void UserInterface::drawTalkList() {
 	warning("TODO: drawTalkList");
 }
 
+void UserInterface::emptyTalkList() {
+	warning("TODO: emptyTalkList");
+}
+
 void UserInterface::loadInventoryAnim(int objectId) {
 	Scene &scene = _vm->_game->_scene;
 	noInventoryAnim();

@@ -202,6 +202,40 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene210: public Scene2xx {
+private:
+	int _curDialogNode;
+	int _nextHandsPlace;
+	int _twinkleAnimationType;
+	int _twinklesCurrentFrame;
+	bool _shouldTalk, _shouldFaceRex, _shouldMoveHead;
+	bool _stopWalking;
+	bool _twinklesTalking;
+	bool _twinklesTalk2;
+	int _doorway;
+	Common::String _subQuote2;
+
+	void handleDialogs();
+	void handleSubDialog1();
+	void handleSubDialog2();
+	void handleSubDialog3();
+	void handleSubDialog5();
+	void handleSubDialog6();
+	void handleSubDialog7();
+	void handleSubDialog8();
+	void setDialogNode(int node);
+	void handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay);
+	void initNode(int node);
+	void restoreDialogNode(int node, int msgId, int posY);
+public:
+	Scene210(MADSEngine *vm) : Scene2xx(vm) {}
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
 } // End of namespace Nebular
 } // End of namespace MADS
 

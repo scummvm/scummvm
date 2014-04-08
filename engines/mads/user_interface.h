@@ -214,6 +214,8 @@ public:
 	void scrollerChanged();
 
 	void scrollInventory();
+
+	void emptyTalkList();
 };
 
 } // End of namespace MADS
