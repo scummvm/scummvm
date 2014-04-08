@@ -101,6 +101,13 @@ points dd ?
 BgResource_PathWalkPoints ends
 #endif
 
+struct Palette {
+	uint16 _count;
+	uint16 _unk;
+	byte *_palette;
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+};
+
 struct BackgroundObject {
 	uint32 _objectId;
 	uint16 _flags;
@@ -120,6 +127,8 @@ public:
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 public:
 
+	uint _paletteIndex;
+
 	uint _bgInfosCount;
 	BgInfo *_bgInfos;
 	
@@ -133,6 +142,9 @@ public:
 	BackgroundObject *_backgroundObjects;
 	
 	NamedPoints _namedPoints;
+	
+	uint _palettesCount;
+	Palette *_palettes;
 
 };
 
@@ -156,7 +168,9 @@ public:
 	Common::Point _panPoints[kMaxBackgroundItemSurfaces];
 	Graphics::Surface *_surfaces[kMaxBackgroundItemSurfaces];
 	CameraState _savedCameraState;
-	// TODO? byte *savedPalette;
+	byte *_savedPalette;
+	void drawTiles8(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
+	void drawTiles16(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
 };
 
 class BackgroundItems {
@@ -173,7 +187,6 @@ public:
 	WidthHeight getMasterBgDimensions();
 	void refreshPan();
 	bool findActiveBackgroundNamedPoint(uint32 namedPointId, Common::Point &pt);
-	BackgroundItem *debugFirst();
 //protected:
 public:
 	typedef Common::List<BackgroundItem*> Items;

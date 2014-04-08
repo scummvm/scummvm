@@ -21,6 +21,7 @@
  */
 
 #include "illusions/resourcesystem.h"
+#include "illusions/illusions.h"
 
 #include "common/algorithm.h"
 #include "common/debug.h"
@@ -38,6 +39,7 @@ void Resource::loadData() {
 	_dataSize = fd.size();
 	_data = (byte*)malloc(_dataSize);
 	fd.read(_data, _dataSize);
+	debug("Resource::loadData() OK");
 }
 
 void Resource::unloadData() {
@@ -50,7 +52,8 @@ void Resource::unloadData() {
 
 // ResourceSystem
 
-ResourceSystem::ResourceSystem() {
+ResourceSystem::ResourceSystem(IllusionsEngine *vm)
+	: _vm(vm) {
 }
 
 ResourceSystem::~ResourceSystem() {
@@ -64,6 +67,7 @@ void ResourceSystem::addResourceLoader(uint32 resTypeId, BaseResourceLoader *res
 }
 
 void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
+	debug("ResourceSystem::loadResource(%08X, %08X, %08X)", resId, tag, threadId);
 	BaseResourceLoader *resourceLoader = getResourceLoader(resId);
 
 	Resource *resource = new Resource();
@@ -72,6 +76,7 @@ void ResourceSystem::loadResource(uint32 resId, uint32 tag, uint32 threadId) {
 	resource->_tag = tag;
 	resource->_threadId = threadId;
 	resource->_resourceLoader = resourceLoader;
+	resource->_gameId = _vm->getGameId();
 
 	resourceLoader->buildFilename(resource);
 
@@ -108,6 +113,14 @@ void ResourceSystem::unloadResourcesByTag(uint32 tag) {
 	}
 }
 
+void ResourceSystem::unloadSceneResources(uint32 sceneId1, uint32 sceneId2) {
+	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceNotEqualByScenes(sceneId1, sceneId2));
+	while (it != _resources.end()) {
+		unloadResource(*it);
+		it = Common::find_if(it, _resources.end(), ResourceNotEqualByScenes(sceneId1, sceneId2));
+	}
+}
+
 BaseResourceLoader *ResourceSystem::getResourceLoader(uint32 resId) {
 	ResourceLoadersMapIterator it = _resourceLoaders.find(ResourceTypeId(resId));
 	if (it != _resourceLoaders.end())
@@ -121,6 +134,7 @@ Resource *ResourceSystem::getResource(uint32 resId) {
 }
 
 void ResourceSystem::unloadResource(Resource *resource) {
+	debug("Unloading %08X... (tag: %08X)", resource->_resId, resource->_tag);
 	resource->_resourceLoader->unload(resource);
 	ResourcesArrayIterator it = Common::find_if(_resources.begin(), _resources.end(), ResourceEqualByValue(resource));
 	if (it != _resources.end())

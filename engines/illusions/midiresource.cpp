@@ -20,31 +20,29 @@
  *
  */
 
-#ifndef ILLUSIONS_SCRIPTTHREAD_H
-#define ILLUSIONS_SCRIPTTHREAD_H
-
-#include "illusions/thread.h"
+#include "illusions/illusions.h"
+#include "illusions/midiresource.h"
 
 namespace Illusions {
 
-class IllusionsEngine;
-struct OpCall;
+// MidiGroupResourceLoader
 
-class ScriptThread : public Thread {
-public:
-	ScriptThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-		byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10);
-	virtual int onUpdate();
-public:
-	int16 _sequenceStalled;
-	byte *_scriptCodeIp;
-	uint32 _value8;
-	uint32 _valueC;
-	uint32 _value10;
-	void loadOpcode(OpCall &opCall);
-	void execOpcode(OpCall &opCall);
-};
+void MidiGroupResourceLoader::load(Resource *resource) {
+	debug("MidiGroupResourceLoader::load() Loading midi group %08X...", resource->_resId);
+
+    // TODO
+	
+}
+
+void MidiGroupResourceLoader::unload(Resource *resource) {
+}
+
+void MidiGroupResourceLoader::buildFilename(Resource *resource) {
+	resource->_filename = Common::String::format("%08X.fnt", resource->_resId);
+}
+
+bool MidiGroupResourceLoader::isFlag(int flag) {
+	return false;
+}
 
 } // End of namespace Illusions
-
-#endif // ILLUSIONS_SCRIPTTHREAD_H

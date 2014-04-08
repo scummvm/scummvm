@@ -220,8 +220,12 @@ public:
 	void placeSequenceLessActor(uint32 objectId, Common::Point placePt, WidthHeight dimensions, int16 priority);
 	void placeActorLessObject(uint32 objectId, Common::Point feetPt, Common::Point pt, int16 priority, uint flags);
 	void placeSubActor(uint32 objectId, int linkIndex, uint32 actorTypeId, uint32 sequenceId);
+	void destroyControls();
+	void destroyActiveControls();
 	void destroyControlsByTag(uint32 tag);
 	void threadIsDead(uint32 threadId);
+	void pauseControls();
+	void unpauseControls();
 	void pauseControlsByTag(uint32 tag);
 	void unpauseControlsByTag(uint32 tag);
 	bool getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority);

@@ -32,7 +32,7 @@ void ActorResourceLoader::load(Resource *resource) {
 	debug("ActorResourceLoader::load() Loading actor %08X from %s...", resource->_resId, resource->_filename.c_str());
 
 	ActorResource *actorResource = new ActorResource();
-	actorResource->load(resource->_data, resource->_dataSize);
+	actorResource->load(resource);
 	resource->_refId = actorResource;
 	
 	ActorItem *actorItem = _vm->_actorItems->allocActorItem();
@@ -151,7 +151,10 @@ ActorResource::ActorResource() {
 ActorResource::~ActorResource() {
 }
 
-void ActorResource::load(byte *data, uint32 dataSize) {
+void ActorResource::load(Resource *resource) {
+	byte *data = resource->_data;
+	uint32 dataSize = resource->_dataSize;
+	
 	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
 
 	_totalSize = stream.readUint32LE();
@@ -196,10 +199,14 @@ void ActorResource::load(byte *data, uint32 dataSize) {
 	}
 	
 	// Load named points
-	// The count isn't stored explicitly so calculate it
-	uint namedPointsCount = (actorTypesOffs - 0x20) / 8;
-	stream.seek(0x20);
-	_namedPoints.load(namedPointsCount, stream);
+	if (resource->_gameId == kGameIdBBDOU) {
+		// The count isn't stored explicitly so calculate it
+		uint namedPointsCount = (actorTypesOffs - 0x20) / 8;
+		stream.seek(0x20);
+		_namedPoints.load(namedPointsCount, stream);
+	}
+	
+	debug("ActorResource(%08X) framesCount: %d", resource->_resId, framesCount);
 
 }
 

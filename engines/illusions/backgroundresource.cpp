@@ -53,8 +53,12 @@ void BackgroundResourceLoader::load(Resource *resource) {
 	// TODO camera_fadeClear();
 	int index = backgroundItem->_bgRes->findMasterBgIndex();
 	_vm->_camera->set(backgroundItem->_bgRes->_bgInfos[index - 1]._panPoint, backgroundItem->_bgRes->_bgInfos[index - 1]._surfInfo._dimensions);
+
+	if (backgroundItem->_bgRes->_palettesCount > 0) {
+		Palette *palette = &backgroundItem->_bgRes->_palettes[backgroundItem->_bgRes->_paletteIndex - 1];
+		_vm->_screen->setPalette(palette->_palette, 1, palette->_count);
+	}
 	
-	// NOTE Skipped palette loading (not used in BBDOU)
 }
 
 void BackgroundResourceLoader::unload(Resource *resource) {
@@ -150,6 +154,15 @@ int ScaleLayer::getScale(Common::Point pos) {
 	return _values[pos.y];
 }
 
+// Palette
+
+void Palette::load(byte *dataStart, Common::SeekableReadStream &stream) {
+	_count = stream.readUint16LE();
+	_unk = stream.readUint16LE();
+	uint32 paletteOffs = stream.readUint32LE();
+	_palette = dataStart + paletteOffs;
+}
+
 // BackgroundObject
 
 void BackgroundObject::load(byte *dataStart, Common::SeekableReadStream &stream) {
@@ -176,13 +189,15 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
 	// TODO A lot
 	
+	stream.seek(8);
+	_paletteIndex = stream.readUint16LE();
+	
 	// Load background pixels
 	stream.seek(0x0A);
 	_bgInfosCount = stream.readUint16LE();
 	_bgInfos = new BgInfo[_bgInfosCount];
 	stream.seek(0x20);
 	uint32 bgInfosOffs = stream.readUint32LE();
-	debug("_bgInfosCount: %d", _bgInfosCount);
 	for (uint i = 0; i < _bgInfosCount; ++i) {
 		stream.seek(bgInfosOffs + i * 0x1C);
 		_bgInfos[i].load(data, stream);
@@ -232,6 +247,18 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	stream.seek(namedPointsOffs);
 	_namedPoints.load(namedPointsCount, stream);
 
+	// Load palettes
+	stream.seek(0x18);
+	_palettesCount = stream.readUint16LE();
+	_palettes = new Palette[_palettesCount];
+	stream.seek(0x3C);
+	uint32 palettesOffs = stream.readUint32LE();
+	debug(0, "_palettesCount: %d", _palettesCount);
+	for (uint i = 0; i < _palettesCount; ++i) {
+		stream.seek(palettesOffs + i * 8);
+		_palettes[i].load(data, stream);
+	}
+
 }
 
 int BackgroundResource::findMasterBgIndex() {
@@ -255,7 +282,7 @@ bool BackgroundResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) 
 
 // BackgroundItem
 
-BackgroundItem::BackgroundItem(IllusionsEngine *vm) : _vm(vm), _tag(0), _pauseCtr(0), _bgRes(0) {
+BackgroundItem::BackgroundItem(IllusionsEngine *vm) : _vm(vm), _tag(0), _pauseCtr(0), _bgRes(0), _savedPalette(0) {
 }
 
 BackgroundItem::~BackgroundItem() {
@@ -282,6 +309,41 @@ void BackgroundItem::freeSurface() {
 }
 
 void BackgroundItem::drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
+	switch (_vm->getGameId()) {
+	case kGameIdDuckman:
+		drawTiles8(surface, tileMap, tilePixels);
+		break;
+	case kGameIdBBDOU:
+		drawTiles16(surface, tileMap, tilePixels);
+		break;
+	}
+}
+
+void BackgroundItem::drawTiles8(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
+	const int kTileWidth = 32;
+	const int kTileHeight = 8;
+	const int kTileSize = kTileWidth * kTileHeight;
+	uint tileMapIndex = 0;
+	for (int tileY = 0; tileY < tileMap._height; ++tileY) {
+		int tileDestY = tileY * kTileHeight;
+		int tileDestH = MIN(kTileHeight, surface->h - tileDestY);
+		for (int tileX = 0; tileX < tileMap._width; ++tileX) {
+			int tileDestX = tileX * kTileWidth;
+			int tileDestW = MIN(kTileWidth, surface->w - tileDestX);
+			uint16 tileIndex = READ_LE_UINT16(tileMap._map + 2 * tileMapIndex);
+			++tileMapIndex;
+			byte *src = tilePixels + (tileIndex - 1) * kTileSize;
+			byte *dst = (byte*)surface->getBasePtr(tileDestX, tileDestY);
+			for (int h = 0; h < tileDestH; ++h) {
+				memcpy(dst, src, tileDestW);
+				dst += surface->pitch;
+				src += kTileWidth;
+			}
+		}
+	}
+}
+
+void BackgroundItem::drawTiles16(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
 	const int kTileWidth = 32;
 	const int kTileHeight = 8;
 	const int kTileSize = kTileWidth * kTileHeight * 2;
@@ -318,10 +380,8 @@ void BackgroundItem::pause() {
 		*/
 		// TODO _vm->setDefPointDimensions1();
 		_vm->_camera->getActiveState(_savedCameraState);
-		/* Unused
-		_savedPalette = malloc(1024);
-		savePalette(_savedPalette);
-		*/
+		_savedPalette = new byte[1024];
+		_vm->_screen->getPalette(_savedPalette);
 		freeSurface();
 	}
 }
@@ -335,11 +395,9 @@ void BackgroundItem::unpause() {
 			krndictAddID(_bgRes->_item48s[i].id, _bgRes->_item48s[i]);
 		*/
 		initSurface();
-		/* Unused
-		restorePalette(_savedPalette, 1, 256);
-		free(_savedPalette);
+		_vm->_screen->setPalette(_savedPalette, 1, 256);
+		delete[] _savedPalette;
 		_savedPalette = 0;
-		*/
 		// TODO _vm->_screen->_fadeClear();
 		_vm->_camera->setActiveState(_savedCameraState);
 		_vm->_backgroundItems->refreshPan();
@@ -435,10 +493,6 @@ void BackgroundItems::refreshPan() {
 bool BackgroundItems::findActiveBackgroundNamedPoint(uint32 namedPointId, Common::Point &pt) {
 	BackgroundResource *backgroundResource = getActiveBgResource();
 	return backgroundResource ? backgroundResource->findNamedPoint(namedPointId, pt) : false;
-}
-
-BackgroundItem *BackgroundItems::debugFirst() {
-	return *(_items.begin());
 }
 
 } // End of namespace Illusions

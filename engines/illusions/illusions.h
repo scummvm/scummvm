@@ -35,6 +35,7 @@
 #include "common/system.h"
 #include "common/winexe.h"
 #include "common/winexe_pe.h"
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 
@@ -74,15 +75,21 @@ enum {
 	kGameIdDuckman = 2
 };
 
+struct IllusionsGameDescription {
+	ADGameDescription desc;
+	int gameId;
+};
+
 class IllusionsEngine : public Engine {
 public:
-	IllusionsEngine(OSystem *syst, const ADGameDescription *gd);
+	IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd);
 	~IllusionsEngine();
 	const Common::String getTargetName() { return _targetName; }
 private:
-	const ADGameDescription *_gameDescription;
+	const IllusionsGameDescription *_gameDescription;
 	Graphics::PixelFormat _pixelFormat;
-public:	
+public:
+	
 	Common::RandomSource *_random;
 	Dictionary *_dict;
 	ResourceSystem *_resSys;
@@ -99,7 +106,6 @@ public:
 	ScriptOpcodes *_scriptOpcodes;
 	SpecialCode *_specialCode;
 	ThreadList *_threads;
-	Cursor *_cursor;
 	
 	ScriptResource *_scriptResource;
 	
@@ -113,6 +119,10 @@ public:
 	uint32 _fieldA, _fieldE;
 
 	int16 _menuChoiceOfs;
+
+	int getGameId() const {
+		return _gameDescription->gameId;
+	}
 
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
 	uint32 getElapsedUpdateTime();
@@ -133,7 +143,7 @@ public:
 	void setCurrFontId(uint32 fontId);
 	bool checkActiveTalkThreads();
 	uint32 clipTextDuration(uint32 duration);
-	
+
 	virtual void loadSpecialCode(uint32 resId) = 0;
 	virtual void unloadSpecialCode(uint32 resId) = 0;
 	virtual void notifyThreadId(uint32 &threadId) = 0;
@@ -142,6 +152,13 @@ public:
 	virtual uint32 getPriorityFromBase(int16 priority) = 0;
 	virtual uint32 getPrevScene() = 0;	
 	virtual uint32 getCurrentScene() = 0;
+
+	virtual bool isCursorObject(uint32 actorTypeId, uint32 objectId) = 0;
+	virtual void setCursorControlRoutine(Control *control) = 0;
+	virtual void placeCursorControl(Control *control, uint32 sequenceId) = 0;
+	virtual void setCursorControl(Control *control) = 0;
+	virtual void showCursor() = 0;
+	virtual void hideCursor() = 0;
 
 	virtual void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId) = 0;
 	virtual uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,

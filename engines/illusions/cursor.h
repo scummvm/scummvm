@@ -37,7 +37,8 @@ public:
 	void show();
 	void hide();
 	void cursorControlRoutine(Control *control, uint32 deltaTime);
-protected:
+//protected:
+public:
 	IllusionsEngine *_vm;
 	Control *_control;
 	uint32 _sequenceId;
