@@ -134,15 +134,17 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 	userInterface._dirtyAreas.merge(1, userInterface._uiSlots.size());
 
 	for (uint idx = 0; idx < size(); ++idx) {
-		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
+		DirtyArea *dirtyArea = &userInterface._dirtyAreas[idx];
 		UISlot &slot = (*this)[idx];
 
 		if (slot._flags >= IMG_STATIC && !(slot._flags & 0x40)) {
-			if (!dirtyArea._active) {
-				error("Should never reach this point, even in original");
+			if (!dirtyArea->_active) {
+				do {
+					dirtyArea = dirtyArea->_mergedArea;
+				} while (!dirtyArea->_active);
 			}
 
-			if (dirtyArea._textActive) {
+			if (dirtyArea->_textActive) {
 				SpriteAsset *asset = scene._sprites[slot._spritesIndex];
 				
 				if (slot._segmentId == IMG_SPINNING_OBJECT) {
@@ -655,7 +657,7 @@ void UserInterface::doBackgroundAnimation() {
 	_noSegmentsActive = !_someSegmentsActive;
 	_someSegmentsActive = false;
 
-	for (int idx = 0; idx < uiEntries.size(); ++idx) {
+	for (int idx = 0; idx < (int)uiEntries.size(); ++idx) {
 		AnimUIEntry &uiEntry = uiEntries[idx];
 
 		if (uiEntry._counter < 0) {
@@ -699,7 +701,7 @@ void UserInterface::doBackgroundAnimation() {
 		}
 	}
 
-	for (int idx = 0; idx < uiEntries.size(); ++idx) {
+	for (uint idx = 0; idx < uiEntries.size(); ++idx) {
 		int imgScan = uiEntries[idx]._counter;
 		if (imgScan >= 0) {
 			_uiSlots.add(frameEntries[imgScan]);

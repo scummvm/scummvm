@@ -34,6 +34,7 @@ MADSEngine *DirtyArea::_vm = nullptr;
 DirtyArea::DirtyArea() {
 	_active = false;
 	_textActive = false;
+	_mergedArea = nullptr;
 }
 
 void DirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) {
@@ -206,6 +207,7 @@ void DirtyAreas::mergeAreas(int idx1, int idx2) {
 	da1._bounds2.bottom = da1._bounds.top + (da1._bounds.height() + 1) / 2 - 1;
 
 	da2._active = false;
+	da2._mergedArea = &da1;
 	da1._textActive = true;
 }
 

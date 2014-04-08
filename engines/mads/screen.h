@@ -74,6 +74,7 @@ public:
 	Common::Rect _bounds2;
 	bool _textActive;
 	bool _active;
+	DirtyArea *_mergedArea;
 
 	DirtyArea();
 
