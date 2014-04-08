@@ -52,7 +52,6 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_priorSectionNumber = 0;
 	_currentSectionNumber = -1;
 	_kernelMode = KERNEL_GAME_LOAD;
-	_v2 = 0;
 	_quoteEmergency = false;
 	_vocabEmergency = false;
 	_aaName = "*I0.AA";

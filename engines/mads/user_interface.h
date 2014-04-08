@@ -33,6 +33,8 @@ namespace MADS {
 
 enum { IMG_SPINNING_OBJECT = 200, IMG_TEXT_UPDATE = 201 };
 
+class AnimFrameEntry;
+
 class UISlot {
 public:
 	int _flags;
@@ -62,6 +64,11 @@ public:
 	void add(const Common::Point &pt, int frameNumber, int spritesIndex);
 
 	/**
+	 * Loads the data from an aimation frame entry
+	 */
+	void add(const AnimFrameEntry &frameEntry);
+
+	/**
 	 * Adds a special entry for full refresh of the user interface
 	 */
 	void fullRefresh();
@@ -83,6 +90,8 @@ private:
 	int _invFrameNumber;
 	uint32 _scrollMilli;
 	bool _scrollFlag;
+	int _noSegmentsActive;
+	int _someSegmentsActive;
 
 	/**
 	 * Loads the elements of the user interface
@@ -181,6 +190,11 @@ public:
 	 * Resets the inventory animation when no inventory item is selected
 	 */
 	void noInventoryAnim();
+
+	/**
+	 * Handles any animation that occurs in the background of the user interface
+	 */
+	void doBackgroundAnimation();
 
 	/**
 	* Handles queuing a new frame of an inventory animation for drawing

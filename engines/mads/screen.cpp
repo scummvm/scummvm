@@ -354,10 +354,10 @@ void ScreenObjects::check(bool scanFlag) {
 					slot._flags = IMG_ERASE;
 		}
 
-		// Any background animation
-		scene.backgroundAnimation();
+		// Any background animation in the user interface
+		userInterface.doBackgroundAnimation();
 
-		// Handle animating the selected inventory animation
+		// Handle animating the selected inventory item
 		userInterface.inventoryAnim();
 
 		// Set the base time

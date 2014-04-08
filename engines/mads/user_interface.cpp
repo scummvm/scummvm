@@ -48,7 +48,7 @@ void UISlots::add(const Common::Point &pt, int frameNumber, int spritesIndex) {
 	assert(size() < 50);
 
 	UISlot ie;
-	ie._flags = -3;
+	ie._flags = IMG_OVERPRINT;
 	ie._segmentId = IMG_TEXT_UPDATE;
 	ie._position = pt;
 	ie._frameNumber = frameNumber;
@@ -56,6 +56,20 @@ void UISlots::add(const Common::Point &pt, int frameNumber, int spritesIndex) {
 
 	push_back(ie);
 }
+
+void UISlots::add(const AnimFrameEntry &frameEntry) {
+	assert(size() < 50);
+
+	UISlot ie;
+	ie._flags = IMG_UPDATE;
+	ie._segmentId = frameEntry._seqIndex;
+	ie._spritesIndex = frameEntry._spriteSlot._spritesIndex;
+	ie._frameNumber = frameEntry._frameNumber;
+	ie._position = frameEntry._spriteSlot._position;
+
+	push_back(ie);
+}
+
 
 void UISlots::draw(bool updateFlag, bool delFlag) {
 	Scene &scene = _vm->_game->_scene;
@@ -631,6 +645,66 @@ void UserInterface::inventoryAnim() {
 	slot._position = Common::Point(160, 3);
 
 	_uiSlots.push_back(slot);
+}
+
+void UserInterface::doBackgroundAnimation() {
+	Scene &scene = _vm->_game->_scene;
+	Common::Array<AnimUIEntry> &uiEntries = scene._animationData->_uiEntries;
+	Common::Array<AnimFrameEntry> &frameEntries = scene._animationData->_frameEntries;
+
+	_noSegmentsActive = !_someSegmentsActive;
+	_someSegmentsActive = false;
+
+	for (int idx = 0; idx < uiEntries.size(); ++idx) {
+		AnimUIEntry &uiEntry = uiEntries[idx];
+
+		if (uiEntry._counter < 0) {
+			if (uiEntry._counter == -1) {
+				int probabilityRandom = _vm->getRandomNumber(1, 30000);
+				int probability = uiEntry._probability;
+				if (uiEntry._probability > 30000) {
+					if (_noSegmentsActive) {
+						probability -= 30000;
+					} else {
+						probability = -1;
+					}
+				}
+				if (probabilityRandom <= probability) {
+					uiEntry._counter = uiEntry._firstImage;
+					_someSegmentsActive = true;
+				}
+			} else {
+				uiEntry._counter = uiEntry._firstImage;
+				_someSegmentsActive = true;
+			}
+		} else {
+			for (int idx2 = 0; idx2 < ANIM_SPAWN_COUNT; idx2++) {
+				if (uiEntry._spawnFrame[idx2] == (uiEntry._counter - uiEntry._firstImage)) {
+					int tempIndex = uiEntry._spawn[idx2];
+					if (idx >= tempIndex) {
+						uiEntries[tempIndex]._counter = uiEntries[tempIndex]._firstImage;
+					} else {
+						uiEntries[tempIndex]._counter = -2;
+					}
+					_someSegmentsActive = true;
+				}
+			}
+
+			++uiEntry._counter;
+			if (uiEntry._counter > uiEntry._lastImage) {
+				uiEntry._counter = -1;
+			} else {
+				_someSegmentsActive = true;
+			}
+		}
+	}
+
+	for (int idx = 0; idx < uiEntries.size(); ++idx) {
+		int imgScan = uiEntries[idx]._counter;
+		if (imgScan >= 0) {
+			_uiSlots.add(frameEntries[imgScan]);
+		}
+	}
 }
 
 void UserInterface::categoryChanged() {

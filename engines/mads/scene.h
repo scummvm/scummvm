@@ -213,8 +213,6 @@ public:
 
 	void resetScene();
 
-	void backgroundAnimation();
-
 	/**
 	* Removes all the scene specific sprites fromt the sprites list, 
 	* leaving any player sprites list in place at the start of the list.

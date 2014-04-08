@@ -131,7 +131,6 @@ public:
 	VisitedScenes _visitedScenes;
 	Scene _scene;
 	KernelMode _kernelMode;
-	int _v2;
 	int _trigger;
 	ScreenTransition _fx;
 	TriggerMode _triggerMode;

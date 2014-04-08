@@ -52,6 +52,11 @@ class SpriteSlot;
 #define TEXT_DISPLAY_MAX_SIZE 40
 #define DIRTY_AREAS_SIZE (SPRITE_SLOTS_MAX_SIZE + TEXT_DISPLAY_MAX_SIZE)
 
+enum { 
+	SCENEFLAG_DITHER		= 0x01,     // Dither to 16 colors
+	SCENEFLAG_LOAD_SHADOW	= 0x10		// Load hard shadows
+};
+
 class VerbInit {
 public:
 	int _id;

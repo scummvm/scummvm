@@ -33,7 +33,12 @@
 
 namespace MADS {
 
-enum AnimFlag { ANIM_CUSTOM_FONT = 0x20 };
+enum AnimFlag { 
+	ANIMFLAG_DITHER				= 0x0001,	// Dither to 16 colors
+	ANIMFLAG_CUSTOM_FONT		= 0x0020,	// Load ccustom font 
+	ANIMFLAG_LOAD_BACKGROUND	= 0x0100,	// Load background
+	ANIMFLAG_LOAD_BACKGROUND_ONLY = 0x0200	// Load background only
+};
 
 class MADSEngine;
 class Scene;
@@ -63,7 +68,7 @@ public:
 	/**
 	 * Loads data for the record
 	 */
-	void load(Common::SeekableReadStream *f);
+	void load(Common::SeekableReadStream *f, bool uiFlag);
 };
 
 class AnimMiscEntry {
@@ -77,6 +82,26 @@ public:
 	/**
 	* Loads data for the record
 	*/
+	void load(Common::SeekableReadStream *f);
+};
+
+#define ANIM_SPAWN_COUNT 2
+
+class AnimUIEntry {
+public:
+	int _probability;
+	int _imageCount;
+	int _firstImage;
+	int _lastImage;
+	int _counter;
+	int _spawn[ANIM_SPAWN_COUNT];
+	int _spawnFrame[ANIM_SPAWN_COUNT];
+	int _sound;
+	int _soundFrame;
+
+	/**
+	 * Loads the data for the record
+	 */
 	void load(Common::SeekableReadStream *f);
 };
 
@@ -115,7 +140,6 @@ private:
 
 	Common::Array<int> _spriteListIndexes;
 	Common::Array<AnimMessage> _messages;
-	Common::Array<AnimFrameEntry> _frameEntries;
 	Common::Array<AnimMiscEntry> _miscEntries;
 	Common::Array<SpriteAsset *> _spriteSets;
 	Font *_font;
@@ -153,6 +177,8 @@ private:
 protected:
 	Animation(MADSEngine *vm, Scene *scene);
 public:
+	Common::Array<AnimFrameEntry> _frameEntries;
+	Common::Array<AnimUIEntry> _uiEntries;
 	bool _resetFlag;
 
 	static Animation *init(MADSEngine *vm, Scene *scene);

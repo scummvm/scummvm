@@ -32,6 +32,19 @@ class MADSEngine;
 
 #define PALETTE_USAGE_COUNT 4
 
+/**
+ * Palette mapping options
+ */
+enum {
+	PALFLAG_BACKGROUND		= 0x8000,  // Loading initial background       
+	PALFLAG_RESERVED		= 0x4000,  // Enable mapping reserved colors 
+	PALFLAG_ANY_TO_CLOSEST	= 0x2000,  // Any color can map to closest     
+	PALFLAG_ALL_TO_CLOSEST	= 0x1000,  // Any colors that can map must map 
+	PALFLAG_TOP_COLORS		= 0x0800,  // Allow mapping to high four colors 
+	PALFLAG_DEFINE_RESERVED	= 0x0400,  // Define initial reserved color    
+	PALFLAG_MASK			= 0xfc00   // Mask for all the palette flags   
+};
+
 struct RGB4 {
 	byte r;
 	byte g;

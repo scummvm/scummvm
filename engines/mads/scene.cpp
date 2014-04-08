@@ -123,8 +123,12 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_kernelMessages.clear();
 
 	// TODO: palletteUsage reset?  setPalette(_nullPalette);
+	int flags = SCENEFLAG_LOAD_SHADOW;
+	if (_vm->_dithering)
+		flags |= SCENEFLAG_DITHER;
+
 	_sceneInfo = SceneInfo::init(_vm);
-	_sceneInfo->load(_currentSceneId, _variant, Common::String(), _vm->_game->_v2 ? 17 : 16,
+	_sceneInfo->load(_currentSceneId, _variant, Common::String(), flags,
 		_depthSurface, _backgroundSurface);
 
 	// Initialise palette animation for the scene
@@ -143,10 +147,12 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_vm->_palette->_paletteUsage.load(1, 0xF);
 
 	// Load interface
-	int flags = _vm->_game->_v2 ? 0x4101 : 0x4100;
-	if (!_vm->_textWindowStill)
-		flags |= 0x200;
-
+	flags = PALFLAG_RESERVED | ANIMFLAG_LOAD_BACKGROUND;
+	if (_vm->_dithering)
+		flags |= ANIMFLAG_DITHER;
+	if (_vm->_textWindowStill)
+		flags |= ANIMFLAG_LOAD_BACKGROUND_ONLY;
+		
 	_animationData = Animation::init(_vm, this);
 	MSurface depthSurface;
 	_animationData->load(_userInterface, depthSurface, prefix, flags, nullptr, nullptr);
@@ -513,7 +519,7 @@ void Scene::loadAnimation(const Common::String &resName, int abortTimers) {
 
 	_activeAnimation = Animation::init(_vm, this);
 	_activeAnimation->load(interfaceSurface, depthSurface, resName, 
-		_vm->_game->_v2 ? 1 : 0, nullptr, nullptr);
+		_vm->_dithering ? ANIMFLAG_DITHER : 0, nullptr, nullptr);
 	_activeAnimation->startAnimation(abortTimers);
 }
 
@@ -583,10 +589,6 @@ void Scene::resetScene() {
 	_vm->_game->clearQuotes();
 	_spriteSlots.fullRefresh(true);
 	_sequences.clear();
-}
-
-void Scene::backgroundAnimation() {
-	warning("TODO: Scene::backgroundAnimation");
 }
 
 } // End of namespace MADS

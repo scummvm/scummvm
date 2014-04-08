@@ -108,15 +108,24 @@ void AnimMessage::load(Common::SeekableReadStream *f) {
 	f->skip(2);
 }
 
-void AnimFrameEntry::load(Common::SeekableReadStream *f) {
-	_frameNumber = f->readUint16LE();
-	_seqIndex = f->readByte();
-	_spriteSlot._spritesIndex = f->readByte();
-	_spriteSlot._frameNumber = f->readUint16LE();
-	_spriteSlot._position.x = f->readSint16LE();
-	_spriteSlot._position.y = f->readSint16LE();
-	_spriteSlot._depth = f->readSByte();
-	_spriteSlot._scale = (int8)f->readByte();
+void AnimFrameEntry::load(Common::SeekableReadStream *f, bool uiFlag) {
+	if (uiFlag) {
+		f->skip(2);
+		_seqIndex = f->readByte();
+		_spriteSlot._spritesIndex = f->readByte();
+		_spriteSlot._frameNumber = f->readUint16LE();
+		_spriteSlot._position.x = f->readSint16LE();
+		_spriteSlot._position.y = f->readSint16LE();
+	} else {
+		_frameNumber = f->readUint16LE();
+		_seqIndex = f->readByte();
+		_spriteSlot._spritesIndex = f->readByte();
+		_spriteSlot._frameNumber = f->readUint16LE();
+		_spriteSlot._position.x = f->readSint16LE();
+		_spriteSlot._position.y = f->readSint16LE();
+		_spriteSlot._depth = f->readSByte();
+		_spriteSlot._scale = (int8)f->readByte();
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -128,6 +137,22 @@ void AnimMiscEntry::load(Common::SeekableReadStream *f) {
 	_posAdjust.x = f->readSint16LE();
 	_posAdjust.y = f->readSint16LE();
 	_field8 = f->readUint16LE();
+}
+
+/*------------------------------------------------------------------------*/
+
+void AnimUIEntry::load(Common::SeekableReadStream *f) {
+	_probability = f->readUint16LE();
+	_imageCount = f->readUint16LE();
+	_firstImage = f->readUint16LE();
+	_lastImage = f->readUint16LE();
+	_counter = f->readSint16LE();
+	for (int i = 0; i < ANIM_SPAWN_COUNT; ++i)
+		_spawn[i] = f->readByte();
+	for (int i = 0; i < ANIM_SPAWN_COUNT; ++i)
+		_spawnFrame[i] = f->readUint16LE();
+	_sound = f->readUint16LE() & 0xFF;
+	_soundFrame = f->readUint16LE();
 }
 
 /*------------------------------------------------------------------------*/
@@ -149,7 +174,7 @@ Animation::~Animation() {
 	if (_header._manualFlag)
 		scene._sprites.remove(_spriteListIndexes[_header._spritesIndex]);
 
-	for (uint idx = 0; idx < _header._spriteSetsCount; ++idx) {
+	for (int idx = 0; idx < _header._spriteSetsCount; ++idx) {
 		if (!_header._manualFlag || _header._spritesIndex != idx)
 			scene._sprites.remove(_spriteListIndexes[idx]);
 	}
@@ -195,12 +220,12 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	delete stream;
 
 	if (_header._animMode == 4)
-		flags |= 0x4000;
+		flags |= PALFLAG_RESERVED;
 
-	if (flags & 0x100) {
+	if (flags & ANIMFLAG_LOAD_BACKGROUND) {
 		loadInterface(interfaceSurface, depthSurface, _header, flags, palAnimData, sceneInfo);
 	}
-	if (flags & 0x200) {
+	if (flags & ANIMFLAG_LOAD_BACKGROUND_ONLY) {
 		// No data
 		_header._messagesCount = 0;
 		_header._frameEntriesCount = 0;
@@ -234,7 +259,7 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 
 		for (int i = 0; i < _header._frameEntriesCount; i++) {
 			AnimFrameEntry rec;
-			rec.load(frameStream);
+			rec.load(frameStream, flags & ANIMFLAG_LOAD_BACKGROUND);
 			_frameEntries.push_back(rec);
 		}
 
@@ -242,14 +267,23 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	}
 	
 	_miscEntries.clear();
+	_uiEntries.clear();
 	if (_header._miscEntriesCount > 0) {
 		// Chunk 4: Misc Data
 		Common::SeekableReadStream *miscStream = madsPack.getItemStream(streamIndex++);
 
-		for (int i = 0; i < _header._miscEntriesCount; ++i) {
-			AnimMiscEntry rec;
-			rec.load(miscStream);
-			_miscEntries.push_back(rec);
+		if (flags & ANIMFLAG_LOAD_BACKGROUND) {
+			for (int i = 0; i < _header._miscEntriesCount; ++i) {
+				AnimUIEntry rec;
+				rec.load(miscStream);
+				_uiEntries.push_back(rec);
+			}
+		} else {
+			for (int i = 0; i < _header._miscEntriesCount; ++i) {
+				AnimMiscEntry rec;
+				rec.load(miscStream);
+				_miscEntries.push_back(rec);
+			}
 		}
 
 		delete miscStream;
@@ -257,7 +291,7 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	
 	// If the animation specifies a font, then load it for access
 	delete _font;
-	if (_header._flags & ANIM_CUSTOM_FONT) {
+	if (_header._flags & ANIMFLAG_CUSTOM_FONT) {
 		Common::String fontName = "*" + _header._fontResource;
 		_font = _vm->_font->getFont(fontName.c_str());
 	} else {
