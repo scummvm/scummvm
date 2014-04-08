@@ -79,15 +79,4 @@ void Cursor::hide() {
 	}
 }
 
-void Cursor::cursorControlRoutine(Control *control, uint32 deltaTime) {
-	_control->_actor->_seqCodeValue1 = 100 * deltaTime;
-	if (_control->_actor->_flags & 1) {
-		if (_status == 2) {
-			// Unused nullsub_1(control);
-		} else if (_status == 3) {
-			// TODO _vm->_shellMgr->handleMouse(_control);
-		}
-	}
-}
-
 } // End of namespace Illusions

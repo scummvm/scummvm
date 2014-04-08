@@ -42,17 +42,32 @@ int ScriptThread::onUpdate() {
 	opCall._result = kTSRun;
 	opCall._callerThreadId = _threadId;
 	while (!_terminated && opCall._result == kTSRun) {
-		opCall._op = _scriptCodeIp[0];
-		opCall._opSize = _scriptCodeIp[1] >> 1;
-		opCall._threadId = _scriptCodeIp[1] & 1 ? _threadId : 0;
-		opCall._code = _scriptCodeIp + 2;
-		opCall._deltaOfs = opCall._opSize;
+		loadOpcode(opCall);
 		execOpcode(opCall);
 		_scriptCodeIp += opCall._deltaOfs;
 	}
 	if (_terminated)
 		opCall._result = kTSTerminate;
 	return opCall._result;
+}
+
+void ScriptThread::loadOpcode(OpCall &opCall) {
+#if 0
+	for (uint i = 0; i < 16; ++i)
+		debugN("%02X ", _scriptCodeIp[i]);
+	debug(".");
+#endif
+	if (_vm->getGameId() == kGameIdDuckman) {
+		opCall._op = _scriptCodeIp[0] & 0x7F;
+		opCall._opSize = _scriptCodeIp[1];
+		opCall._threadId = _scriptCodeIp[0] & 0x80 ? _threadId : 0;
+	} else {
+		opCall._op = _scriptCodeIp[0];
+		opCall._opSize = _scriptCodeIp[1] >> 1;
+		opCall._threadId = _scriptCodeIp[1] & 1 ? _threadId : 0;
+	}
+	opCall._code = _scriptCodeIp + 2;
+	opCall._deltaOfs = opCall._opSize;
 }
 
 void ScriptThread::execOpcode(OpCall &opCall) {

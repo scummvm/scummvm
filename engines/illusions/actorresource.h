@@ -83,7 +83,7 @@ class ActorResource {
 public:
 	ActorResource();
 	~ActorResource();
-	void load(byte *data, uint32 dataSize);
+	void load(Resource *resource);
 	bool containsSequence(Sequence *sequence);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 public:

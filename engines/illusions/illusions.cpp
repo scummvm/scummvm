@@ -58,7 +58,7 @@
 
 namespace Illusions {
 
-IllusionsEngine::IllusionsEngine(OSystem *syst, const ADGameDescription *gd) :
+IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd) :
 	Engine(syst), _gameDescription(gd) {
 	
 	_random = new Common::RandomSource("illusions");

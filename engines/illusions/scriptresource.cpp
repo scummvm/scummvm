@@ -32,13 +32,14 @@ void ScriptResourceLoader::load(Resource *resource) {
 	debug(2, "ScriptResourceLoader::load() Loading script %08X from %s...", resource->_resId, resource->_filename.c_str());
 
 	ScriptResource *scriptResource = new ScriptResource();
-	scriptResource->load(resource->_data, resource->_dataSize);
+	scriptResource->load(resource);
 	
 	_vm->_scriptResource = scriptResource;
 	
 }
 
 void ScriptResourceLoader::unload(Resource *resource) {
+	delete _vm->_scriptResource;
 }
 
 void ScriptResourceLoader::buildFilename(Resource *resource) {
@@ -153,14 +154,21 @@ bool TriggerObject::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 &co
 	return false;
 }
 
+void TriggerObject::fixupProgInfosDuckman() {
+	for (uint i = 0; i < _causesCount; ++i)
+		_causes[i]._verbId &= 0xFFFF;
+}
+
 // ProgInfo
 
 ProgInfo::ProgInfo()
-	: _triggerObjectsCount(0), _triggerObjects(0) {
+	: _triggerObjectsCount(0), _triggerObjects(0),
+	_resourcesCount(0), _resources(0) {
 }
 
 ProgInfo::~ProgInfo() {
 	delete[] _triggerObjects;
+	delete[] _resources;
 }
 
 char *debugW2I(byte *wstr) {
@@ -180,10 +188,15 @@ void ProgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_name = dataStart + stream.pos();
 	stream.skip(128);
 	_triggerObjectsCount = stream.readUint16LE();
-	stream.skip(2); // Skip padding
+	_resourcesCount = stream.readUint16LE();
 	debug(2, "\nProgInfo::load() _id: %d; _unk: %d; _name: [%s]",
 		_id, _unk, debugW2I(_name));
 	uint32 triggerObjectsListOffs = stream.readUint32LE();
+	if (_resourcesCount > 0) {
+		_resources = new uint32[_resourcesCount];
+		for (uint i = 0; i < _resourcesCount; ++i)
+			_resources[i] = stream.readUint32LE();
+	}
 	if (_triggerObjectsCount > 0) {
 		_triggerObjects = new TriggerObject[_triggerObjectsCount];
 		for (uint i = 0; i < _triggerObjectsCount; ++i) {
@@ -202,6 +215,11 @@ bool ProgInfo::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId
 	return false;
 }
 
+void ProgInfo::getResources(uint &resourcesCount, uint32 *&resources) {
+	resourcesCount = _resourcesCount;
+	resources = _resources;
+}
+
 TriggerObject *ProgInfo::findTriggerObject(uint32 objectId) {
 	for (uint i = 0; i < _triggerObjectsCount; ++i)
 		if (_triggerObjects[i]._objectId == objectId)
@@ -209,36 +227,67 @@ TriggerObject *ProgInfo::findTriggerObject(uint32 objectId) {
 	return 0;
 }
 
+void ProgInfo::fixupProgInfosDuckman() {
+	for (uint i = 0; i < _triggerObjectsCount; ++i)
+		_triggerObjects[i].fixupProgInfosDuckman();
+}
+
 // ScriptResource
 
 ScriptResource::ScriptResource()
-	: _codeOffsets(0) {
+	: _codeOffsets(0), _objectMap(0) {
 }
 
 ScriptResource::~ScriptResource() {
 	delete[] _codeOffsets;
+	delete[] _objectMap;
 }
 
-void ScriptResource::load(byte *data, uint32 dataSize) {
-	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
+void ScriptResource::load(Resource *resource) {
+	_data = resource->_data;
+	_dataSize = resource->_dataSize;
+
+	Common::MemoryReadStream stream(_data, _dataSize, DisposeAfterUse::NO);
 	
-	_data = data;
-	_dataSize = dataSize;
+	uint32 objectMapOffs, progInfosOffs;
+	_objectMapCount = 0;
+	
+	if (resource->_gameId == kGameIdBBDOU) {
+		progInfosOffs = 0x18;
+	} else if (resource->_gameId == kGameIdDuckman) {
+		for (uint i = 0; i < 27; ++i)
+			_soundIds[i] = stream.readUint32LE();
+		progInfosOffs = 0x8C;
+	}
 	
 	stream.skip(4); // Skip unused
+
+	// Read item counts
 	uint propertiesCount = stream.readUint16LE();
 	uint blockCountersCount = stream.readUint16LE();
+	if (resource->_gameId == kGameIdDuckman)
+		_objectMapCount = stream.readUint16LE();
 	_codeCount = stream.readUint16LE();
 	_progInfosCount = stream.readUint16LE();
+	if (resource->_gameId == kGameIdDuckman)
+		stream.readUint16LE();//Unused?
+
+	// Read item offsets
 	uint32 propertiesOffs = stream.readUint32LE();
 	uint32 blockCountersOffs = stream.readUint32LE();
+	if (resource->_gameId == kGameIdDuckman)
+		objectMapOffs = stream.readUint32LE();
 	uint32 codeTblOffs = stream.readUint32LE();
 	
+	debug(2, "ScriptResource::load() propertiesCount: %d; blockCountersCount: %d; _codeCount: %d; _progInfosCount: %d; _objectMapCount: %d",
+		propertiesCount, blockCountersCount, _codeCount, _progInfosCount, _objectMapCount);
+	debug(2, "ScriptResource::load() propertiesOffs: %08X; blockCountersOffs: %08X; codeTblOffs: %08X; objectMapOffs: %08X",
+		propertiesOffs, blockCountersOffs, codeTblOffs, objectMapOffs);
 	// Init properties
-	_properties.init(propertiesCount, data + propertiesOffs);
+	_properties.init(propertiesCount, _data + propertiesOffs);
 	
 	// Init blockcounters
-	_blockCounters.init(blockCountersCount, data + blockCountersOffs);
+	_blockCounters.init(blockCountersCount, _data + blockCountersOffs);
 	
 	_codeOffsets = new uint32[_codeCount];
 	stream.seek(codeTblOffs);
@@ -247,16 +296,23 @@ void ScriptResource::load(byte *data, uint32 dataSize) {
 
 	_progInfos = new ProgInfo[_progInfosCount];
 	for (uint i = 0; i < _progInfosCount; ++i) {
-		stream.seek(0x18 + i * 4);
+		stream.seek(progInfosOffs + i * 4);
 		uint32 progInfoOffs = stream.readUint32LE();
 		stream.seek(progInfoOffs);
-		_progInfos[i].load(data, stream);
+		_progInfos[i].load(_data, stream);
 	}
-
-	debug(2, "ScriptResource::load() propertiesCount: %d; blockCountersCount: %d; _codeCount: %d; _progInfosCount: %d",
-		propertiesCount, blockCountersCount, _codeCount, _progInfosCount);
-	debug(2, "ScriptResource::load() propertiesOffs: %08X; blockCountersOffs: %08X; codeTblOffs: %08X",
-		propertiesOffs, blockCountersOffs, codeTblOffs);
+	
+	if (_objectMapCount > 0) {
+		_objectMap = new uint32[_objectMapCount];
+		stream.seek(objectMapOffs);
+		for (uint i = 0; i < _objectMapCount; ++i) {
+			_objectMap[i] = stream.readUint32LE();
+			stream.skip(4);
+		}
+	}
+	
+	if (resource->_gameId == kGameIdDuckman)
+		fixupProgInfosDuckman();
 
 }
 
@@ -272,6 +328,15 @@ ProgInfo *ScriptResource::getProgInfo(uint32 index) {
 	if (index > 0 && index <= _progInfosCount)
 		return &_progInfos[index - 1];
 	return 0;
+}
+
+uint32 ScriptResource::getObjectActorTypeId(uint32 objectId) {
+	return _objectMap[(objectId & 0xFFFF) - 1];
+}
+
+void ScriptResource::fixupProgInfosDuckman() {
+	for (uint i = 0; i < _progInfosCount; ++i)
+		_progInfos[i].fixupProgInfosDuckman();
 }
 
 } // End of namespace Illusions

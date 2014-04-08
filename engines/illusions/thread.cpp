@@ -197,6 +197,14 @@ void ThreadList::terminateThreads(uint32 threadId) {
 	}
 }
 
+void ThreadList::terminateActiveThreads(uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_pauseCtr <= 0 && thread->_threadId != threadId)
+			thread->terminate();
+	}
+}
+
 void ThreadList::terminateThreadsByTag(uint32 tag, uint32 threadId) {
 	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
 		Thread *thread = *it;
@@ -213,6 +221,14 @@ void ThreadList::suspendThreadsByTag(uint32 tag, uint32 threadId) {
 	}
 }
 
+void ThreadList::notifyThreads(uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_threadId != threadId)
+			thread->notify();
+	}
+}
+
 void ThreadList::notifyThreadsByTag(uint32 tag, uint32 threadId) {
 	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
 		Thread *thread = *it;
@@ -226,6 +242,14 @@ void ThreadList::pauseThreads(uint32 threadId) {
 		Thread *thread = *it;
 		if (thread->_threadId != threadId)
 			thread->pause();
+	}
+}
+
+void ThreadList::suspendThreads(uint32 threadId) {
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
+		Thread *thread = *it;
+		if (thread->_threadId != threadId)
+			thread->suspend();
 	}
 }
 

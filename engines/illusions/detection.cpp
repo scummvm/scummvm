@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/illusions_bbdou.h"
+#include "illusions/illusions_duckman.h"
 
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
@@ -33,15 +34,11 @@
 static const PlainGameDescriptor illusionsGames[] = {
 	{ "illusions", "Illusions engine game" },
 	{ "bbdou", "Beavis and Butthead Do U" },
+	{ "duckman", "Duckman" },
 	{ 0, 0 }
 };
 
 namespace Illusions {
-
-struct IllusionsGameDescription {
-	ADGameDescription desc;
-	int gameId;
-};
 
 static const IllusionsGameDescription gameDescriptions[] = {
 	{
@@ -55,6 +52,19 @@ static const IllusionsGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		kGameIdBBDOU
+	},
+
+	{
+		{
+			"duckman",
+			0,
+			AD_ENTRY1s("duckman.gam", "172c0514f3793041718159cf9cf9935f", 29560832),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameIdDuckman
 	},
 
 	{AD_TABLE_END_MARKER, 0}
@@ -172,7 +182,10 @@ bool IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 	if (gd) {
 		switch (gd->gameId) {
 		case Illusions::kGameIdBBDOU:
-			*engine = new Illusions::IllusionsEngine_BBDOU(syst, desc);
+			*engine = new Illusions::IllusionsEngine_BBDOU(syst, gd);
+			break;
+		case Illusions::kGameIdDuckman:
+			*engine = new Illusions::IllusionsEngine_Duckman(syst, gd);
 			break;
 		default:
 			error("Unknown game id");

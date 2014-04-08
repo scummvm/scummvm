@@ -226,7 +226,7 @@ void Control::pause() {
 	_vm->_dict->setObjectControl(_objectId, 0);
 
 	if (_objectId == 0x40004)
-		_vm->_cursor->setControl(0);
+		_vm->setCursorControl(0);
 
 	if (_actor && !(_actor->_flags & 0x0200))
 		_actor->destroySurface();
@@ -238,7 +238,7 @@ void Control::unpause() {
 	_vm->_dict->setObjectControl(_objectId, this);
 
 	if (_objectId == 0x40004)
-		_vm->_cursor->setControl(this);
+		_vm->setCursorControl(this);
   
 	if (_actor && !(_actor->_flags & 0x0200)) {
 		SurfInfo surfInfo;
@@ -254,7 +254,7 @@ void Control::unpause() {
 
 void Control::appearActor() {
 	if (_objectId == 0x40004) {
-		_vm->_cursor->show();
+		_vm->showCursor();
 	} else {
 		if (_actor->_frameIndex || _actorTypeId == 0x50004)
 			_actor->_flags |= 1;
@@ -270,7 +270,7 @@ void Control::appearActor() {
 
 void Control::disappearActor() {
 	if (_objectId == 0x40004) {
-		_vm->_cursor->hide();
+		_vm->hideCursor();
 	} else {
 		_actor->_flags &= ~1;
 		_actor->_flags &= ~0x1000;
@@ -540,8 +540,10 @@ void Control::stopActor() {
 		_actor->_pathPointIndex = 0;
 		_actor->_walkCallerThreadId1 = 0;
 	}
-	_vm->notifyThreadId(_actor->_notifyId3C);
-	_vm->notifyThreadId(_actor->_notifyThreadId1);
+	if (_vm->getGameId() == kGameIdBBDOU) {
+		_vm->notifyThreadId(_actor->_notifyId3C);
+		_vm->notifyThreadId(_actor->_notifyThreadId1);
+	}
 }
 
 void Control::startSequenceActor(uint32 sequenceId, int value, uint32 notifyThreadId) {
@@ -623,6 +625,7 @@ void Control::sequenceActor() {
 			appearActor();
 			_actor->_flags &= ~0x1000;
 		}
+		debug(1, "New frame OK");
 	}
 	
 	if (sequenceFinished) {
@@ -905,22 +908,43 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	_actor->_notifyThreadId1 = notifyThreadId;
 	_actor->_notifyId3C = 0;
 	_actor->_walkCallerThreadId1 = 0;
+	_actor->_entryTblPtr = 0;
 	
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
 
+	if (!sequence && _vm->getGameId() == kGameIdDuckman) {
+		debug("Load external sequence...");
+		_vm->_resSys->loadResource(0x00060000 | (sequenceId & 0xFFFF), _vm->getCurrentScene(), 0);
+		sequence = _vm->_dict->findSequence(sequenceId);
+		_actor->_flags |= 0x800;
+	}
+
 	_actor->_seqCodeIp = sequence->_sequenceCode;
 	_actor->_frames = _vm->_actorItems->findSequenceFrames(sequence);
+	
 	_actor->_seqCodeValue3 = 0;
 	_actor->_seqCodeValue1 = 0;
-	_actor->_seqCodeValue2 = value == 1 ? 350 : 600;
+
+    if (_vm->getGameId() == kGameIdBBDOU) {
+		_actor->_seqCodeValue2 = value == 1 ? 350 : 600;
+	} else if (_vm->getGameId() == kGameIdDuckman) {
+		_actor->_seqCodeValue2 = value == 1 ? 350 : 750;
+	}
+
 	_actor->initSequenceStack();
-	stopSequenceActor();
+	
+	if (_vm->getGameId() == kGameIdBBDOU)
+		stopSequenceActor();
+	
 	_actor->_linkIndex2 = 0;
+	
 	if (entryTblPtr) {
 		_actor->_flags |= 0x80;
 		_actor->_entryTblPtr = entryTblPtr;
-		_actor->_notifyThreadId1 = 0;
-		_actor->_notifyThreadId2 = notifyThreadId;
+		if (_vm->getGameId() == kGameIdBBDOU) {
+			_actor->_notifyThreadId1 = 0;
+			_actor->_notifyThreadId2 = notifyThreadId;
+		}
 	}
 
 	sequenceActor();
@@ -958,7 +982,6 @@ void Controls::placeBackgroundObject(BackgroundObject *backgroundObject) {
 void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequenceId, uint32 objectId, uint32 notifyThreadId) {
 	Control *control = newControl();
 	Actor *actor = newActor();
-
 	ActorType *actorType = _vm->_dict->findActorType(actorTypeId);
 	
 	control->_objectId = objectId;
@@ -967,8 +990,9 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	control->readPointsConfig(actorType->_pointsConfig);
 	control->_actorTypeId = actorTypeId;
 	control->_actor = actor;
-	if (actorTypeId == 0x50001 && objectId == 0x40004)
-		actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Cursor>(_vm->_cursor, &Cursor::cursorControlRoutine));
+
+	if (_vm->isCursorObject(actorTypeId, objectId))
+		_vm->setCursorControlRoutine(control);
 		
 	if (actorType->_surfInfo._dimensions._width > 0 || actorType->_surfInfo._dimensions._height > 0) {
 		actor->createSurface(actorType->_surfInfo);
@@ -1015,12 +1039,11 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	_controls.push_back(control);
 	_vm->_dict->setObjectControl(objectId, control);
 
-	if (actorTypeId == 0x50001 && objectId == 0x40004)
-		_vm->_cursor->place(control, sequenceId);
+	if (_vm->isCursorObject(actorTypeId, objectId))
+		_vm->placeCursorControl(control, sequenceId);
 
 	control->_flags |= 0x01;
 	actor->_flags |= 0x1000;
-
 	control->startSequenceActor(sequenceId, 2, notifyThreadId);
 }
 
@@ -1083,6 +1106,25 @@ void Controls::placeSubActor(uint32 objectId, int linkIndex, uint32 actorTypeId,
 	subActor->_linkIndex = linkIndex;
 }
 
+void Controls::destroyControls() {
+	ItemsIterator it = _controls.begin();
+	while (it != _controls.end()) {
+		destroyControl(*it);
+		it = _controls.erase(it);
+	}
+}
+
+void Controls::destroyActiveControls() {
+	ItemsIterator it = _controls.begin();
+	while (it != _controls.end()) {
+		if ((*it)->_pauseCtr <= 0) {
+			destroyControl(*it);
+			it = _controls.erase(it);
+		} else
+			++it;			
+	}
+}
+
 void Controls::destroyControlsByTag(uint32 tag) {
 	ItemsIterator it = _controls.begin();
 	while (it != _controls.end()) {
@@ -1102,6 +1144,24 @@ void Controls::threadIsDead(uint32 threadId) {
 			control->_actor->_notifyThreadId1 = 0;
 			control->_actor->_notifyId3C = 0;
 		}
+	}
+}
+
+void Controls::pauseControls() {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		++control->_pauseCtr;
+		if (control->_pauseCtr == 1)
+			control->pause();
+	}
+}
+
+void Controls::unpauseControls() {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		--control->_pauseCtr;
+		if (control->_pauseCtr == 0)
+			control->unpause();
 	}
 }
 
@@ -1225,7 +1285,7 @@ void Controls::destroyControl(Control *control) {
 		_vm->_dict->setObjectControl(control->_objectId, 0);
 
 	if (control->_objectId == 0x40004 && control->_pauseCtr <= 0)
-		_vm->_cursor->setControl(0);
+		_vm->setCursorControl(0);
 	
 	if (control->_actor) {
 		if (control->_actor->_pathNode && (control->_actor->_flags & 0x400))
