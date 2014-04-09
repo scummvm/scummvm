@@ -121,10 +121,9 @@ void Scene201::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	Scene &scene = _vm->_game->_scene;
-	scene.addActiveVocab(NOUN_15F);
-	scene.addActiveVocab(NOUN_487);
-	scene.addActiveVocab(NOUN_D);
+	_scene->addActiveVocab(NOUN_15F);
+	_scene->addActiveVocab(NOUN_487);
+	_scene->addActiveVocab(NOUN_D);
 }
 
 void Scene201::enter() {
@@ -331,13 +330,12 @@ void Scene202::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	Scene &scene = _vm->_game->_scene;
-	scene.addActiveVocab(NOUN_C7);
-	scene.addActiveVocab(NOUN_4E);
-	scene.addActiveVocab(NOUN_D);
-	scene.addActiveVocab(NOUN_2C);
-	scene.addActiveVocab(NOUN_140);
-	scene.addActiveVocab(NOUN_1C9);
+	_scene->addActiveVocab(NOUN_C7);
+	_scene->addActiveVocab(NOUN_4E);
+	_scene->addActiveVocab(NOUN_D);
+	_scene->addActiveVocab(NOUN_2C);
+	_scene->addActiveVocab(NOUN_140);
+	_scene->addActiveVocab(NOUN_1C9);
 }
 
 void Scene202::enter() {
@@ -1181,11 +1179,7 @@ void Scene205::step() {
 		warning("TODO: sub7178C()");
 
 		if (_globals._frameTime >= _chickenTime) {
-			warning("minVal = 1 + sub7176C();");
-			int minVal = 1;
-
-			warning("TODO: sub717B2(100, minVal);");
-//			if (sub717B2(100, minVal)) {
+			warning("TODO: if (sub717B2(100, 1 + sub7176C()))");
 				_vm->_sound->command(28);
 //			}
 			_chickenTime = _globals._frameTime + 2;
@@ -2808,7 +2802,7 @@ void Scene209::step() {
 		switch (_game._trigger) {
 		case 228:
 			_game._player._visible = false;
-			_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle (_globals._spriteIndexes[2], false, 8, 1, 0, 0);
+			_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._spriteIndexes[17], 1, 7);
 			_scene->_sequences.setMsgPosition(_globals._spriteIndexes[17], Common::Point(116, 131));
 			_scene->_sequences.setDepth(_globals._spriteIndexes[17], 4);
@@ -4220,7 +4214,7 @@ void Scene210::actions() {
 			_scene->_sequences.remove(_globals._spriteIndexes[8]);
 			_game._player._stepEnabled = false;
 			_game._player._facing = FACING_NORTH;
-			_globals._spriteIndexes[8] = _scene->_sequences.addSpriteCycle (_globals._spriteIndexes[1], false, 12, 0, 0, 1);
+			_globals._spriteIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 12, 0, 0, 1);
 			_scene->_sequences.setDepth(_globals._spriteIndexes[8], 5);
 			_scene->_sequences.addSubEntry(_globals._spriteIndexes[8], SM_0, 0, 1);
 			_game._player._stepEnabled = false;
@@ -4331,6 +4325,272 @@ void Scene210::actions() {
 		return;
 	}
 }
+
+/*------------------------------------------------------------------------*/
+
+void Scene211::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(0x144);
+}
+
+void Scene211::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC002Z2", false);
+	_wakeFl = false;
+
+	if (_scene->_priorSceneId == 210)
+		_game._player._playerPos = Common::Point(25, 148);
+	else if (_scene->_priorSceneId == 205) {
+		_game._player._playerPos = Common::Point(49, 133);
+		_game._player._facing = FACING_WEST;
+		_wakeFl = true;
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_scene->loadAnimation(formAnimName('A', -1), 100);
+		_scene->_activeAnimation->setCurrentFrame(169);
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(310, 31);
+		_game._player._facing = FACING_SOUTHWEST;
+	}
+
+	if (_vm->getRandomNumber(1, 8) == 1) {
+		_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._spriteIndexes[17], Common::Point(202, 126));
+		_scene->_sequences.setDepth(_globals._spriteIndexes[17], 8);
+		_scene->_sequences.sub70C52(_globals._spriteIndexes[17], SM_FRAME_INDEX, -200, 0);
+		_scene->_dynamicHotspots.add(324, 13, _globals._spriteIndexes[17], Common::Rect(1, 1, 41, 10));
+	}
+
+	if (_scene->_roomChanged)
+		_game._objects.addToInventory(OBJ_BINOCULARS);
+
+	_vm->_palette->setEntry(252, 63, 44, 30);
+	_vm->_palette->setEntry(253, 63, 20, 22);
+	_game.loadQuoteSet(0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 1, 0);
+
+	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
+		warning("sub71704(0x2, 0x0, 0x36, 0x0, 0x1E, 0xD, 2, 0xFDFC, 0x3C, 0x97, 0x98, 0x99, 0x9A, 0);");
+
+	_monkeyTime = _globals._frameTime;
+	_scrollY = 30;
+
+	_ambushFl = false;
+	_monkeyFrame = 0;
+
+	sceneEntrySound();
+}
+
+void Scene211::step() {
+	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
+		warning("TODO: sub7178C()");
+
+		if (!_ambushFl && !_wakeFl && (_globals._frameTime >= _monkeyTime)) {
+			warning("if (sub717B2(80, 1 + sub7176C())) {");
+				_vm->_sound->command(18);
+			// }
+			_monkeyTime = _globals._frameTime + 2;
+		}
+
+		if ((_game._player._playerPos == Common::Point(52, 132)) && (_game._player._facing == FACING_WEST) && !_game._player._moving && 
+			(_game._trigger || !_ambushFl)) {
+			switch (_game._trigger) {
+			case 0:
+				if (_game._objects.isInInventory(OBJ_BINOCULARS)) {
+					_ambushFl = true;
+					_monkeyFrame = 0;
+					_game._player._stepEnabled = false;
+					_game._player._visible = false;
+					_scene->_kernelMessages.reset();
+					_scene->loadAnimation(formAnimName('A', -1), 90);
+					_vm->_sound->command(19);
+					int count = (int)_game._objects._inventoryList.size();
+					for (int idx = 0; idx < count; idx++) {
+						if ((_game._objects._inventoryList[idx] == OBJ_BINOCULARS) && (_scene->_userInterface._selectedInvIndex != idx))
+							_scene->_userInterface.selectObject(idx);
+					}
+				}
+				break;
+
+			case 90:
+				_vm->_sound->command(10);
+				_game._player._stepEnabled = true;
+				_game._player._visible = true;
+				_game._player._playerPos = Common::Point(49, 133);
+				_ambushFl = false;
+				_globals[kMonkeyStatus] = MONKEY_HAS_BINOCULARS;
+				break;
+			}
+		}
+	}
+
+	if (_ambushFl && (_scene->_activeAnimation->getCurrentFrame() > _monkeyFrame)) {
+		_monkeyFrame = _scene->_activeAnimation->getCurrentFrame();
+		switch (_monkeyFrame) {
+		case 2: {
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(12, 4), 0xFDFC, 0, 0, 60, _game.getQuote(157));
+			_scene->_kernelMessages.setQuoted(msgIndex, 2, true);
+			}
+			break;
+
+		case 12: {
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(35, 20), 0xFDFC, 0, 0, 60, _game.getQuote(155));
+			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			}
+			break;
+
+		case 42: {
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(60, 45), 0xFDFC, 0, 0, 60, _game.getQuote(156));
+			_scene->_kernelMessages.setQuoted(msgIndex, 6, true);
+			}
+			break;
+
+		case 73:
+			_scene->_kernelMessages.add(Common::Point(102, 95), 0xFDFC, 32, 0, 75, _game.getQuote(157));
+			break;
+
+		case 90: {
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(102, 95), 0xFDFC, 32, 0, 60, _game.getQuote(158));
+			_scene->_kernelMessages.setQuoted(msgIndex, 6, true);
+			}
+			break;
+
+		case 97:
+			_scene->_userInterface.selectObject(-1);
+			_game._objects.removeFromInventory(OBJ_BINOCULARS, 1);
+			break;
+
+		case 177: {
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(161));
+			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			_scrollY += 14;
+			}
+			break;
+
+		case 181: {
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(162));
+			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			_scrollY += 14;
+			}
+			break;
+
+		case 188: {
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(163));
+			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			_scrollY += 14;
+			}
+			break;
+
+		case 200: {
+			int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(164));
+			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+			_scrollY += 14;
+			}
+			break;
+		}
+	}
+
+	if (_wakeFl) {
+		if (_game._trigger == 100) {
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			_wakeFl = false;
+		}
+
+		if (_scene->_activeAnimation->getCurrentFrame() > _monkeyFrame) {
+			_monkeyFrame = _scene->_activeAnimation->getCurrentFrame();
+			switch (_scene->_activeAnimation->getCurrentFrame()) {
+			case 177: {
+				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(165));
+				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+				_scrollY += 14;
+				}
+				break;
+
+			case 181: {
+				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(166));
+				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+				_scrollY += 14;
+				}
+				break;
+
+			case 188: {
+				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(167));
+				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+				_scrollY += 14;
+				}
+				break;
+
+			case 200: {
+				int msgIndex = _scene->_kernelMessages.add(Common::Point(63, _scrollY), 0x1110, 0, 0, 180, _game.getQuote(168));
+				_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+				_scrollY += 14;
+				}
+				break;
+			}
+		}
+	}
+}
+
+void Scene211::preActions() {
+	if (_action.isAction(0x1AD, 0x1B2) && _game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
+	&& (_scene->_customDest.x <= 52) && (_scene->_customDest.y >= 132))
+		_game._player.walk(Common::Point(52, 132), FACING_WEST);
+
+	if (_action.isAction(0x1AD, 0x1AE))  {
+		if (_game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) )  {
+			_game._player.walk(Common::Point(52, 132), FACING_WEST);
+		} else {
+			_game._player._walkOffScreenSceneId = 210;
+		}
+	}
+
+	if (_action.isAction(0x1AD, 0x1B1))
+		_game._player._walkOffScreenSceneId = 207;
+}
+
+void Scene211::actions() {
+	if (_action._lookFlag && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))  {
+		_vm->_dialogs->show(0x5277);
+	} else if (_action.isAction(VERB_LOOK, 0x27, 0x100)) {
+		_vm->_dialogs->show(0x527C);
+	} else if (_action.isAction(VERB_LOOK, 0x3A)) {
+		_vm->_dialogs->show(0x526D);
+	} else if (_action.isAction(VERB_LOOK, 0x1B2)) {
+		_vm->_dialogs->show(0x526E);
+	} else if (_action.isAction(VERB_LOOK, 0x100)) {
+		if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)  {
+			if (_game._storyMode == STORYMODE_NAUGHTY)
+				_vm->_dialogs->show(0x526F);
+			else
+				_vm->_dialogs->show(0x5270);
+		} else {
+			_vm->_dialogs->show(0x5271);
+		}
+	} else if (_action.isAction(VERB_LOOK, 0x1B3)) {
+		if (_game._storyMode == STORYMODE_NAUGHTY)
+			_vm->_dialogs->show(0x5272);
+		else
+			_vm->_dialogs->show(0x5273);
+	} else if (_action.isAction(VERB_LOOK, 0xB8)) {
+		_vm->_dialogs->show(0x5274);
+	} else if (_action.isAction(VERB_LOOK, 0x1B1)) {
+		_vm->_dialogs->show(0x5275);
+	} else if (_action.isAction(VERB_LOOK, 0x1AE)) {
+		_vm->_dialogs->show(0x5276);
+	} else if (_action.isAction(VERB_LOOK, 0x144)) {
+		_vm->_dialogs->show(0x5279);
+	} else if (_action.isAction(VERB_TAKE, 0x144)) {
+		_vm->_dialogs->show(0x527A);
+	} else if (_action.isAction(VERB_LOOK, 0x129)) {
+		_vm->_dialogs->show(0x527B);
+	} else 
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
 
 } // End of namespace Nebular
 } // End of namespace MADS

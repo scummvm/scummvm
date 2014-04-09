@@ -228,7 +228,9 @@ private:
 	void initNode(int node);
 	void restoreDialogNode(int node, int msgId, int posY);
 public:
-	Scene210(MADSEngine *vm) : Scene2xx(vm) {}
+	Scene210(MADSEngine *vm) : Scene2xx(vm), _curDialogNode(-1), _nextHandsPlace(0), _twinkleAnimationType(0), _twinklesCurrentFrame(0),
+		_shouldTalk(false), _shouldFaceRex(false), _shouldMoveHead(false), _stopWalking(false), _twinklesTalking(false),
+		_twinklesTalk2(false), _doorway(0), _subQuote2("") {}
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -236,6 +238,23 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
+class Scene211: public Scene2xx {
+private:
+	bool _ambushFl, _wakeFl;
+	int _monkeyFrame, _scrollY;
+	uint32 _monkeyTime;
+
+public:
+	Scene211(MADSEngine *vm) : Scene2xx(vm) {}
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 
