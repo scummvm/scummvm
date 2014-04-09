@@ -246,7 +246,7 @@ private:
 	uint32 _monkeyTime;
 
 public:
-	Scene211(MADSEngine *vm) : Scene2xx(vm) {}
+	Scene211(MADSEngine *vm) : Scene2xx(vm), _ambushFl(false), _wakeFl(false), _monkeyFrame(0), _scrollY(0), _monkeyTime(0) {}
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
