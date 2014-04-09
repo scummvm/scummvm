@@ -131,11 +131,13 @@ void DirtyArea::setUISlot(const UISlot *slot) {
 		_bounds.top = 0;
 		setArea(intSurface.w, intSurface.h, intSurface.w, intSurface.h);
 		break;
+
 	case IMG_OVERPRINT:
 		_bounds.left = slot->_position.x;
 		_bounds.top = slot->_position.y;
-		// TODO: spritesIndex & frameNumber used as w & h??!
-		error("TODO: Figure out IMG_OVERPRINT. Maybe need a union?");
+		_bounds.setWidth(slot->_width);
+		_bounds.setHeight(slot->_height);
+		setArea(slot->_width, slot->_height, intSurface.w, intSurface.h);
 		break;
 
 	default: {
@@ -491,7 +493,7 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = invList.size() - 1;
 		varA = 0;
 		topIndex = userInterface._inventoryTopIndex;
-		idxP = &userInterface._highlightedItemIndex;
+		idxP = &userInterface._highlightedInvIndex;
 		var4 = (!_released || (_vm->_events->_mouseButtons && action._interAwaiting == 1)) ? 0 : 1;
 		break;
 
@@ -507,7 +509,7 @@ void ScreenObjects::elementHighlighted() {
 
 		varA = 0;
 		topIndex = 0;
-		idxP = _vm->_events->_rightMousePressed ? &userInterface._selectedItemVocabIdx : &userInterface._highlightedActionIndex;
+		idxP = _vm->_events->_rightMousePressed ? &userInterface._selectedItemVocabIdx : &userInterface._highlightedItemVocabIndex;
 
 		if (_vm->_events->_rightMousePressed && userInterface._selectedActionIndex >= 0)
 			userInterface.updateSelection(CAT_COMMAND, -1, &userInterface._selectedActionIndex);

@@ -208,8 +208,8 @@ void Game::sectionLoop() {
 
 		_vm->_events->initVars();
 		_scene._userInterface._highlightedCommandIndex = -1;
-		_scene._userInterface._highlightedItemIndex = -1;
-		_scene._userInterface._highlightedActionIndex = -1;
+		_scene._userInterface._highlightedInvIndex = -1;
+		_scene._userInterface._highlightedItemVocabIndex = -1;
 
 		_scene._action.clear();
 		_player.setFinalFacing();

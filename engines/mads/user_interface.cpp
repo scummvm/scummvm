@@ -32,6 +32,7 @@ UISlot::UISlot() {
 	_segmentId = 0;
 	_spritesIndex = 0;
 	_frameNumber = 0;
+	_width = _height = 0;
 }
 
 /*------------------------------------------------------------------------*/
@@ -44,15 +45,15 @@ void UISlots::fullRefresh() {
 	push_back(slot);
 }
 
-void UISlots::add(const Common::Point &pt, int frameNumber, int spritesIndex) {
+void UISlots::add(const Common::Rect &bounds) {
 	assert(size() < 50);
 
 	UISlot ie;
 	ie._flags = IMG_OVERPRINT;
 	ie._segmentId = IMG_TEXT_UPDATE;
-	ie._position = pt;
-	ie._frameNumber = frameNumber;
-	ie._spritesIndex = spritesIndex;
+	ie._position = Common::Point(bounds.left, bounds.top);
+	ie._width = bounds.width();
+	ie._height = bounds.height();
 
 	push_back(ie);
 }
@@ -213,8 +214,8 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_selectedItemVocabIdx = -1;
 	_scrollerY = 0;
 	_highlightedCommandIndex = -1;
-	_highlightedItemIndex = -1;
-	_highlightedActionIndex = -1;
+	_highlightedInvIndex = -1;
+	_highlightedItemVocabIndex = -1;
 	_dirtyAreas.resize(50);
 	_inventoryChanged = false;
 	Common::fill(&_categoryIndexes[0], &_categoryIndexes[7], 0);
@@ -279,8 +280,8 @@ void UserInterface::setup(InputMode inputMode) {
 	scene._userInterface._uiSlots.fullRefresh();
 	_vm->_game->_screenObjects._baseTime = _vm->_events->getFrameCounter();
 	_highlightedCommandIndex = -1;
-	_highlightedActionIndex = -1;
-	_highlightedItemIndex = -1;
+	_highlightedItemVocabIndex = -1;
+	_highlightedInvIndex = -1;
 
 	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE)
 		scene._userInterface._uiSlots.draw(false, false);
@@ -358,7 +359,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 	case CAT_INV_LIST:
 		font = _vm->_font->getFont(FONT_INTERFACE);
 		vocabId = _vm->_game->_objects.getItem(id)._descId;
-		if (id == _highlightedItemIndex) {
+		if (id == _highlightedInvIndex) {
 			_vm->_font->setColorMode(SELMODE_HIGHLIGHTED);
 		} else {
 			_vm->_font->setColorMode(id == _selectedInvIndex ? SELMODE_SELECTED : SELMODE_UNSELECTED);
@@ -399,7 +400,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 		// Item specific verbs
 		font = _vm->_font->getFont(FONT_INTERFACE);
 		vocabId = _vm->_game->_objects.getItem(_selectedInvIndex)._vocabList[id]._vocabId;
-		if (id == _highlightedActionIndex) {
+		if (id == _highlightedItemVocabIndex) {
 			_vm->_font->setColorMode(SELMODE_HIGHLIGHTED);
 		} else {
 			_vm->_font->setColorMode(id == _selectedInvIndex ? SELMODE_SELECTED : SELMODE_UNSELECTED);
@@ -714,13 +715,40 @@ void UserInterface::doBackgroundAnimation() {
 }
 
 void UserInterface::categoryChanged() {
-	_highlightedItemIndex = -1;
+	_highlightedInvIndex = -1;
 	_vm->_events->initVars();
 	_category = CAT_NONE;
 }
 
 void UserInterface::selectObject(int invIndex) {
-	warning("TODO: selectObject");
+	if (_selectedInvIndex != invIndex || _inventoryChanged) {
+		int oldVocabCount = _selectedInvIndex < 0 ? 0 : _vm->_game->_objects.getItem(_selectedInvIndex)._vocabCount;
+		int newVocabCount = invIndex < 0 ? 0 : _vm->_game->_objects.getItem(invIndex)._vocabCount;
+		int maxVocab = MAX(oldVocabCount, newVocabCount);
+
+		updateSelection(CAT_INV_LIST, invIndex, &_selectedInvIndex);
+		_highlightedItemVocabIndex = -1;
+		_selectedItemVocabIdx = -1;
+
+		if (maxVocab) {
+			assert(_uiSlots.size() < 50);
+			int vocabHeight = maxVocab * 8;
+			
+			Common::Rect bounds(240, 3, 240 + 80, 3 + vocabHeight);
+			_uiSlots.add(bounds);
+			_uiSlots.draw(false, false);
+			drawItemVocabList();
+			updateRect(bounds);
+		}
+	}
+
+	if (invIndex == -1) {
+		noInventoryAnim();
+	} else {
+		loadInventoryAnim(_vm->_game->_objects._inventoryList[invIndex]);
+		_vm->_palette->setPalette(_vm->_palette->_mainPalette, 7, 1);
+		_vm->_palette->setPalette(_vm->_palette->_mainPalette, 246, 2);
+	}
 }
 
 void UserInterface::updateSelection(ScrCategory category, int newIndex, int *idx) {
@@ -730,7 +758,7 @@ void UserInterface::updateSelection(ScrCategory category, int newIndex, int *idx
 	if (category == CAT_INV_LIST && _inventoryChanged) {
 		*idx = newIndex;
 		bounds = Common::Rect(90, 3, 90 + 69, 3 + 40);
-		_uiSlots.add(Common::Point(90, 3), 69, 40);
+		_uiSlots.add(bounds);
 		_uiSlots.draw(false, false);
 		drawInventoryList();
 		updateRect(bounds);

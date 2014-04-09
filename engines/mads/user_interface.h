@@ -42,6 +42,10 @@ public:
 	int _spritesIndex;
 	int _frameNumber;
 	Common::Point _position;
+	
+	// Only used for IMG_OVERPRINT
+	int _width;
+	int _height;
 
 	UISlot();
 };
@@ -59,9 +63,9 @@ public:
 	UISlots(MADSEngine *vm) : _vm(vm) {}
 
 	/**
-	 * Add a sprite to the list
+	 * Add an overprint (text) entry to the list
 	 */
-	void add(const Common::Point &pt, int frameNumber, int spritesIndex);
+	void add(const Common::Rect &bounds);
 
 	/**
 	 * Loads the data from an aimation frame entry
@@ -155,8 +159,8 @@ public:
 	int _selectedItemVocabIdx;
 	int _scrollerY;
 	int _highlightedCommandIndex;
-	int _highlightedItemIndex;
-	int _highlightedActionIndex;
+	int _highlightedInvIndex;
+	int _highlightedItemVocabIndex;
 	bool _inventoryChanged;
 	int _categoryIndexes[8];
 	Common::StringArray _talkStrings;
