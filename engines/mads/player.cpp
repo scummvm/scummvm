@@ -426,27 +426,29 @@ void Player::move() {
 	if (_scalingVelocity && (_totalDistance > 0)) {
 		int angleRange = 100 - _currentScale;
 		int angleScale = angleRange * (_posDiff.x - 1) / _totalDistance + _currentScale;
-		velocity = MAX(1, 10000 / (angleScale * _currentScale * velocity));
+		velocity = MAX(1L, (angleScale * _currentScale * velocity) / 10000L);
 	}
 
 	if (!_moving || (_facing != _turnToFacing))
 		return;
 
 	Common::Point newPos = _playerPos;
+	newFacing = false;
+	_special = 0;
 
 	if (_distAccum < velocity) {
 		do {
 			if (_pixelAccum < _posDiff.x)
 				_pixelAccum += _posDiff.y;
 			if (_pixelAccum >= _posDiff.x) {
-				if ((_posChange.y > 0) || (_walkOffScreen != 0))
+				if ((_posChange.y > 0) || _walkOffScreen)
 					newPos.y += _yDirection;
 				--_posChange.y;
 				_pixelAccum -= _posDiff.x;
 			}
 
 			if (_pixelAccum < _posDiff.x) {
-				if ((_posChange.x > 0) || (_walkOffScreen != 0))
+				if ((_posChange.x > 0) || _walkOffScreen)
 					newPos.x += _xDirection;
 				--_posChange.x;
 			}
