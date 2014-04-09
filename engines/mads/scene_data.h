@@ -60,11 +60,12 @@ enum {
 class VerbInit {
 public:
 	int _id;
-	int _action1;
-	int _action2;
+	VerbType _verbType;
+	PrepType _prepType;
 
 	VerbInit() {}
-	VerbInit(int id, int action1, int action2): _id(id), _action1(action1), _action2(action2) {}
+	VerbInit(int id, VerbType verbType, PrepType prepType): _id(id), 
+		_verbType(verbType), _prepType(prepType) {}
 };
 
 class SceneLogic {

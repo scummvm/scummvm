@@ -41,8 +41,8 @@ public:
 	int _article;
 	int _vocabCount;
 	struct {
-		int _actionFlags1;
-		int _actionFlags2;
+		VerbType _verbType;
+		PrepType _prepType;
 		int _vocabId;
 	} _vocabList[3];
 	char _mutilateString[10];	// ???

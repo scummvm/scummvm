@@ -105,7 +105,8 @@ void MADSAction::set() {
 		// Two 'look' actions in succession, so the action becomes 'Look around'
 		_statusText = kLookAroundStr;
 	} else {
-		if ((_commandSource == ACTIONMODE_OBJECT) && (_selectedRow >= 0) && (_flags1 == 2) && (_flags2 == 0)) {
+		if ((_commandSource == ACTIONMODE_OBJECT) && (_selectedRow >= 0) 
+				&& (_verbType == VERB_THAT) && (_prepType == PREP_NONE)) {
 			// Use/to action
 			int invIndex = userInterface._selectedInvIndex;
 			InventoryObject &objEntry = _vm->_game->_objects.getItem(invIndex);
@@ -142,7 +143,7 @@ void MADSAction::set() {
 			}
 
 			// Handling for if a hotspot has been selected/highlighted
-			if ((_hotspotId >= 0) && (_selectedRow >= 0) && (_articleNumber > 0) && (_flags1 == 2)) {
+			if ((_hotspotId >= 0) && (_selectedRow >= 0) && (_articleNumber > 0) && (_verbType == VERB_THAT)) {
 				flag = true;
 
 				_statusText += kArticleList[_articleNumber];
@@ -379,8 +380,8 @@ void MADSAction::checkActionAtMousePos() {
 				if (userInterface._selectedActionIndex >= 0) {
 					_commandSource = ACTIONMODE_VERB;
 					_selectedRow = userInterface._selectedActionIndex;
-					_flags1 = scene._verbList[_selectedRow]._action1;
-					_flags2 = scene._verbList[_selectedRow]._action2;
+					_verbType = scene._verbList[_selectedRow]._verbType;
+					_prepType = scene._verbList[_selectedRow]._prepType;
 					_interAwaiting = AWAITING_THIS;
 				} else if (userInterface._selectedItemVocabIdx >= 0) {
 					_commandSource = ACTIONMODE_OBJECT;
@@ -388,13 +389,14 @@ void MADSAction::checkActionAtMousePos() {
 					int objectId = _vm->_game->_objects._inventoryList[_selectedRow];
 					InventoryObject &invObject = _vm->_game->_objects[objectId];
 
-					_flags1 = invObject._vocabList[_selectedRow - 1]._actionFlags1;
-					_flags2 = invObject._vocabList[_selectedRow - 1]._actionFlags2;
+					_verbType = invObject._vocabList[_selectedRow - 1]._verbType;
+					_prepType = invObject._vocabList[_selectedRow - 1]._prepType;
 					_mainObjectSource = ACTIONMODE2_2;
 					_hotspotId = userInterface._selectedInvIndex;
-					_articleNumber = _flags2;
+					_articleNumber = _prepType;
 
-					if ((_flags1 == 1 && _flags2 == 0) || (_flags1 == 2 && _flags2 != 0))
+					if ((_verbType == VERB_THIS && _prepType == PREP_NONE) || 
+							(_verbType == VERB_THAT && _prepType != PREP_NONE))
 						_interAwaiting = AWAITING_RIGHT_MOUSE;
 					else
 						_interAwaiting = AWAITING_THAT;
@@ -412,8 +414,8 @@ void MADSAction::checkActionAtMousePos() {
 			_commandSource = ACTIONMODE_VERB;
 			_selectedRow = _pickedWord;
 			if (_selectedRow >= 0) {
-				_flags1 = scene._verbList[_selectedRow]._action1;
-				_flags2 = scene._verbList[_selectedRow]._action2;
+				_verbType = scene._verbList[_selectedRow]._verbType;
+				_prepType = scene._verbList[_selectedRow]._prepType;
 			}
 			break;
 
@@ -427,13 +429,13 @@ void MADSAction::checkActionAtMousePos() {
 				int objectId = _vm->_game->_objects._inventoryList[_selectedRow];
 				InventoryObject &invObject = _vm->_game->_objects[objectId];
 
-				_flags1 = invObject._vocabList[_selectedRow - 2]._actionFlags1;
-				_flags2 = invObject._vocabList[_selectedRow - 2]._actionFlags2;
+				_verbType = invObject._vocabList[_selectedRow - 2]._verbType;
+				_prepType = invObject._vocabList[_selectedRow - 2]._prepType;
 				_hotspotId = userInterface._selectedInvIndex;
 				_mainObjectSource = ACTIONMODE2_2;
 
-				if (_flags1 == 2)
-					_articleNumber = _flags2;
+				if (_verbType == VERB_THAT)
+					_articleNumber = _prepType;
 			}
 			break;
 
@@ -516,7 +518,7 @@ void MADSAction::leftClick() {
 		switch (userInterface._category) {
 		case CAT_COMMAND:
 			if (_selectedRow >= 0) {
-				if (!_flags1) {
+				if (_verbType == VERB_ONLY) {
 					_selectedAction = -1;
 				}
 				else {
@@ -535,17 +537,15 @@ void MADSAction::leftClick() {
 
 		case CAT_INV_VOCAB:
 			if (_selectedRow >= 0) {
-				if (_flags1 != 1 || _flags2 != 0) {
-					if (_flags1 != 2 || _flags2 == 0) {
+				if (_verbType != VERB_THIS || _prepType != PREP_NONE) {
+					if (_verbType != VERB_THAT || _prepType == PREP_NONE) {
 						_interAwaiting = AWAITING_THAT;
-						_articleNumber = _flags2;
-					}
-					else {
-						_articleNumber = _flags2;
+						_articleNumber = _prepType;
+					} else {
+						_articleNumber = _prepType;
 						_selectedAction = -1;
 					}
-				}
-				else {
+				} else {
 					_selectedAction = -1;
 				}
 
@@ -581,8 +581,8 @@ void MADSAction::leftClick() {
 		case CAT_HOTSPOT:
 		case CAT_INV_ANIM:
 			if (_hotspotId >= 0) {
-				if (_flags2) {
-					_articleNumber = _flags2;
+				if (_prepType) {
+					_articleNumber = _prepType;
 					_interAwaiting = AWAITING_THAT;
 				}
 				else {

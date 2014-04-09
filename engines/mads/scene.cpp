@@ -50,16 +50,16 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_layer = LAYER_GUI;
 	_lookFlag = false;
 
-	_verbList.push_back(VerbInit(VERB_LOOK, 2, 0));
-	_verbList.push_back(VerbInit(VERB_TAKE, 2, 0));
-	_verbList.push_back(VerbInit(VERB_PUSH, 2, 0));
-	_verbList.push_back(VerbInit(VERB_OPEN, 2, 0));
-	_verbList.push_back(VerbInit(VERB_PUT, 1, -1));
-	_verbList.push_back(VerbInit(VERB_TALKTO, 2, 0));
-	_verbList.push_back(VerbInit(VERB_GIVE, 1, 2));
-	_verbList.push_back(VerbInit(VERB_PULL, 2, 0));
-	_verbList.push_back(VerbInit(VERB_CLOSE, 2, 0));
-	_verbList.push_back(VerbInit(VERB_THROW, 1, 2));
+	_verbList.push_back(VerbInit(VERB_LOOK, VERB_THAT, PREP_NONE));
+	_verbList.push_back(VerbInit(VERB_TAKE, VERB_THAT, PREP_NONE));
+	_verbList.push_back(VerbInit(VERB_PUSH, VERB_THAT, PREP_NONE));
+	_verbList.push_back(VerbInit(VERB_OPEN, VERB_THAT, PREP_NONE));
+	_verbList.push_back(VerbInit(VERB_PUT, VERB_THIS, PREP_RELATIONAL));
+	_verbList.push_back(VerbInit(VERB_TALKTO, VERB_THAT, PREP_NONE));
+	_verbList.push_back(VerbInit(VERB_GIVE, VERB_THIS, PREP_TO));
+	_verbList.push_back(VerbInit(VERB_PULL, VERB_THAT, PREP_NONE));
+	_verbList.push_back(VerbInit(VERB_CLOSE, VERB_THAT, PREP_NONE));
+	_verbList.push_back(VerbInit(VERB_THROW, VERB_THIS, PREP_TO));
 }
 
 Scene::~Scene() {

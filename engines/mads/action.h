@@ -60,6 +60,12 @@ enum {
 	VERB_WALKTO = 13
 };
 
+enum VerbType { VERB_ONLY, VERB_THIS, VERB_THAT };
+
+enum PrepType {
+	PREP_NONE, PREP_WITH, PREP_TO, PREP_AT, PREP_FROM, PREP_ON, PREP_IN, 
+	PREP_UNDER, PREP_BEHIND, PREP_RELATIONAL = -1
+};
 
 class MADSEngine;
 
@@ -91,7 +97,8 @@ private:
 	void startWalkingDirectly(int walkType);
 public:
 	ActionDetails _action, _activeAction;
-	int8 _flags1, _flags2;
+	VerbType _verbType;
+	PrepType _prepType;
 	int _commandSource;
 	int _mainObjectSource;
 	int _articleNumber;

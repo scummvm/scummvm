@@ -33,8 +33,8 @@ void InventoryObject::load(Common::SeekableReadStream &f) {
 	_vocabCount = f.readByte();
 	
 	for (int i = 0; i < 3; ++i) {
-		_vocabList[i]._actionFlags1 = f.readByte();
-		_vocabList[i]._actionFlags2 = f.readByte();
+		_vocabList[i]._verbType = (VerbType)f.readByte();
+		_vocabList[i]._prepType = (PrepType)f.readByte();
 		_vocabList[i]._vocabId = f.readUint16LE();
 	}
 
@@ -71,7 +71,7 @@ void InventoryObjects::setQuality(int objIndex, int id, const byte *p) {
 	// more of the engine is implemented
 	for (int i = 0; i < (int)size(); ++i) {
 		InventoryObject &obj = (*this)[i];
-		if (obj._vocabList[0]._actionFlags1 <= i)
+		if (obj._vocabList[0]._verbType <= i)
 			break;
 
 		if (obj._mutilateString[6 + i] == id) {
