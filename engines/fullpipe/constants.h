@@ -266,6 +266,19 @@ namespace Fullpipe {
 #define TrubaLeft 474
 #define TrubaUp 680
 
+// Main Menu
+#define PIC_MNU_AUTHORS_L 4624
+#define PIC_MNU_CONTINUE_L 4626
+#define PIC_MNU_DEBUG_L 4632
+#define PIC_MNU_EXIT_L 4622
+#define PIC_MNU_LOAD_L 4628
+#define PIC_MNU_MUSICSLIDER_D 4914
+#define PIC_MNU_MUSICSLIDER_L 4915
+#define PIC_MNU_RESTART_L 5299
+#define PIC_MNU_SAVE_L 4630
+#define PIC_MNU_SLIDER_D 4913
+#define PIC_MNU_SLIDER_L 4912
+
 // Intro
 #define ANI_IN1MAN 5110
 #define MSG_INTR_ENDINTRO 5139

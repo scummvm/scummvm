@@ -125,6 +125,7 @@ public:
 	bool _flgGameIsRunning;
 	bool _inputArFlag;
 	bool _recordEvents;
+	bool _mainMenu_debugEnabled;
 
 	Common::Rect _sceneRect;
 	int _sceneWidth;

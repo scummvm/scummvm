@@ -95,6 +95,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_gamePaused = false;
 	_inputArFlag = false;
 	_recordEvents = false;
+	_mainMenu_debugEnabled = false;
 
 	_flgGameIsRunning = true;
 

@@ -147,9 +147,26 @@ class ModalCredits : public BaseModalObject {
 	virtual void saveload() {}
 };
 
+struct MenuArea {
+	int picIdL;
+	PictureObject *picObjD;
+	PictureObject *picObjL;
+};
+
 class ModalMainMenu : public BaseModalObject {
 public:
-	int _field_34;
+	Scene *_scene;
+	int _mfield_C;
+	Common::Array<MenuArea *> _areas;
+	int _menuSliderIdx;
+	int _musicSliderIdx;
+	int _mfield_2C;
+	int _mfield_30;
+	int _mfield_34;
+	Common::Rect _screct;
+	int _bgX;
+	int _bgY;
+	int _mfield_50;
 
 public:
 	ModalMainMenu();
@@ -160,6 +177,11 @@ public:
 	virtual bool init(int counterdiff) { return true; }
 	virtual void update() {}
 	virtual void saveload() {}
+
+private:
+	bool isSaveAllowed();
+	void enableDebugMenuButton();
+	void setSliderPos();
 };
 
 class ModalHelp : public BaseModalObject {
