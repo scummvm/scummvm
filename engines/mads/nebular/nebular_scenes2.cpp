@@ -4592,5 +4592,66 @@ void Scene211::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene212::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(0x19D);
+}
+
+void Scene212::enter() {
+	// CHECKME: Some useless variables have been remove here
+
+	if (_scene->_priorSceneId == 208) {
+		_game._player._playerPos = Common::Point(195, 85);
+		_game._player._facing = FACING_SOUTH;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(67, 117);
+		_game._player._facing = FACING_NORTHEAST;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene212::step() {
+// CHECKME: Could we move the dino?
+}
+
+void Scene212::preActions() {
+	if (_action.isAction(0x18B, 0x41))
+		_game._player._walkOffScreenSceneId = 111;
+}
+
+void Scene212::actions() {
+	if (_action._lookFlag)
+		_vm->_dialogs->show(0x52D9);
+	else if (_action.isAction(0x18C) && (_action.isAction(0x82) || _action.isAction(0xE8)))
+		_scene->_nextSceneId = 208;
+	else if (_action.isAction(0x18C, 0x3F))
+		_scene->_nextSceneId = 111;
+	else if (_action.isAction(VERB_LOOK, 0x19C))
+		_vm->_dialogs->show(0x52D1);
+	else if (_action.isAction(VERB_LOOK, 0x129))
+		_vm->_dialogs->show(0x52D2);
+	else if (_action.isAction(VERB_LOOK, 0x41))
+		_vm->_dialogs->show(0x52D3);
+	else if (_action.isAction(VERB_LOOK, 0x142))
+		_vm->_dialogs->show(0x52D4);
+	else if (_action.isAction(VERB_LOOK, 0x82))
+		_vm->_dialogs->show(0x52D5);
+	else if (_action.isAction(VERB_LOOK, 0x175))
+		_vm->_dialogs->show(0x52D6);
+	else if (_action.isAction(VERB_LOOK, 0x110))
+		_vm->_dialogs->show(0x52D7);
+	else if (_action.isAction(VERB_LOOK, 0xE8))
+		_vm->_dialogs->show(0x52D8);
+	else 
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
