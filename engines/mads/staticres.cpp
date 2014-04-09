@@ -35,7 +35,6 @@ const char *const kCheatingEnabledDesc[3] = {
 	nullptr
 };
 
-const char *const kAtStr = "at";
 const char *const kLookAroundStr = "Look around";
 const char *const kToStr = "to ";
 const char *const kUseStr = "Use ";

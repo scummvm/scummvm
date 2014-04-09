@@ -28,9 +28,6 @@
 
 namespace MADS {
 
-enum { ACTIONMODE_NONE = 0, ACTIONMODE_VERB = 1, ACTIONMODE_OBJECT = 3, ACTIONMODE_TALK = 6 };
-enum { ACTIONMODE2_0 = 0, ACTIONMODE2_2 = 2, ACTIONMODE2_4 = 4, ACTIONMODE2_5 = 5 };
-
 enum TriggerMode { 
 	KERNEL_TRIGGER_PARSER = 0,		// Triggers parser
 	KERNEL_TRIGGER_DAEMON = 1,		// Triggers step/daemon code
@@ -67,6 +64,12 @@ enum PrepType {
 	PREP_UNDER, PREP_BEHIND, PREP_RELATIONAL = -1
 };
 
+enum ScrCategory {
+	CAT_NONE = 0, CAT_COMMAND = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB = 3,
+	CAT_HOTSPOT = 4, CAT_INV_ANIM = 5, CAT_TALK_ENTRY = 6, CAT_INV_SCROLLER = 7,
+	CAT_12 = 12
+};
+
 class MADSEngine;
 
 struct ActionDetails {
@@ -97,10 +100,6 @@ private:
 	void startWalkingDirectly(int walkType);
 public:
 	ActionDetails _action, _activeAction;
-	VerbType _verbType;
-	PrepType _prepType;
-	int _commandSource;
-	int _mainObjectSource;
 	int _articleNumber;
 	bool _lookFlag;
 	int _selectedRow;
@@ -111,10 +110,13 @@ public:
 	ActionSavedFields _savedFields;
 	Common::String _sentence;
 
-	// Unknown fields
+	VerbType _verbType;
+	PrepType _prepType;
+	ScrCategory _commandSource;
+	ScrCategory _mainObjectSource;
 	int16 _secondObject;
-	int16 _secondObjectSource;
-	int16 _recentCommandSource;
+	ScrCategory _secondObjectSource;
+	ScrCategory _recentCommandSource;
 	bool _pointEstablished;
 	int16 _recentCommand;
 	InterAwaiting _interAwaiting;

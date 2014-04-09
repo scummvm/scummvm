@@ -29,7 +29,6 @@ extern const char *const kArticleList[9];
 
 extern const char *const kCheatingEnabledDesc[3];
 
-extern const char *const kAtStr;
 extern const char *const kLookAroundStr;
 extern const char *const kToStr;
 extern const char *const kUseStr;

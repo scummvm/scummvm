@@ -47,10 +47,10 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 
 void MADSAction::clear() {
 	_interAwaiting = AWAITING_COMMAND;
-	_commandSource = ACTIONMODE_NONE;
-	_mainObjectSource = ACTIONMODE2_0;
-	_secondObjectSource = 0;
-	_recentCommandSource = 0;
+	_commandSource = CAT_NONE;
+	_mainObjectSource = CAT_NONE;
+	_secondObjectSource = CAT_NONE;
+	_recentCommandSource = CAT_NONE;
 	_articleNumber = 0;
 	_lookFlag = false;
 	_pointEstablished = 0;
@@ -94,7 +94,7 @@ void MADSAction::set() {
 	_action._objectNameId = -1;
 	_action._indirectObjectId = -1;
 
-	if (_commandSource == ACTIONMODE_TALK) {
+	if (_commandSource == CAT_TALK_ENTRY) {
 		// Handle showing the conversation selection. Rex at least doesn't actually seem to use this
 		if (_selectedRow >= 0) {
 			Common::String desc = userInterface._talkStrings[userInterface._talkIds[_selectedRow]];
@@ -105,7 +105,7 @@ void MADSAction::set() {
 		// Two 'look' actions in succession, so the action becomes 'Look around'
 		_statusText = kLookAroundStr;
 	} else {
-		if ((_commandSource == ACTIONMODE_OBJECT) && (_selectedRow >= 0) 
+		if ((_commandSource == CAT_INV_VOCAB) && (_selectedRow >= 0) 
 				&& (_verbType == VERB_THAT) && (_prepType == PREP_NONE)) {
 			// Use/to action
 			int invIndex = userInterface._selectedInvIndex;
@@ -122,7 +122,7 @@ void MADSAction::set() {
 		} else {
 			// Handling for if an action has been selected
 			if (_selectedRow >= 0) {
-				if (_commandSource == ACTIONMODE_VERB) {
+				if (_commandSource == CAT_COMMAND) {
 					// Standard verb action
 					_action._verbId = scene._verbList[_selectedRow]._id;
 				} else {
@@ -137,7 +137,7 @@ void MADSAction::set() {
 
 				if (_action._verbId == VERB_LOOK) {
 					// Add in the word 'add'
-					_statusText += kAtStr;
+					_statusText += kArticleList[PREP_AT];
 					_statusText += " ";
 				}
 			}
@@ -173,7 +173,7 @@ void MADSAction::set() {
 					}
 				}
 
-				if ((_mainObjectSource == ACTIONMODE2_2) || (_mainObjectSource == ACTIONMODE2_5)) {
+				if ((_mainObjectSource == CAT_INV_LIST) || (_mainObjectSource == CAT_INV_ANIM)) {
 					// Get name from given inventory object
 					InventoryObject &invObject = _vm->_game->_objects.getItem(_hotspotId);
 					_action._objectNameId = invObject._descId;
@@ -290,14 +290,14 @@ void MADSAction::startAction() {
 	_activeAction = _action;
 	_sentence = _statusText;
 
-	if ((_mainObjectSource == ACTIONMODE2_4) && (_secondObjectSource == 4))
+	if ((_mainObjectSource == CAT_HOTSPOT) && (_secondObjectSource == 4))
 		_savedFields._commandError = true;
 
 	player._needToWalk = false;
 	int hotspotId = -1;
 
 	if (!_savedFields._lookFlag && (_vm->_game->_screenObjects._inputMode != kInputConversation)) {
-		if (_savedFields._mainObjectSource == ACTIONMODE2_4)
+		if (_savedFields._mainObjectSource == CAT_HOTSPOT)
 			hotspotId = _savedFields._mainObject;
 		else if (_secondObjectSource == 4)
 			hotspotId = _savedFields._secondObject;
@@ -308,7 +308,7 @@ void MADSAction::startAction() {
 				startWalkingDirectly(hs._feetPos.x);
 			} else if (hs._feetPos.x == 0) {
 				player._prepareWalkFacing = hs._facing;
-			} else if (_savedFields._commandSource == ACTIONMODE_NONE || hs._cursor >= CURSOR_WAIT) {
+			} else if (_savedFields._commandSource == CAT_NONE || hs._cursor >= CURSOR_WAIT) {
 				player._needToWalk = true;
 				player._prepareWalkPos = hs._feetPos;
 			}
@@ -324,7 +324,7 @@ void MADSAction::startAction() {
 		if (hs._feetPos.x == -1 || hs._feetPos.x == -3) {
 			startWalkingDirectly(hs._feetPos.x);
 		} else if (hs._feetPos.x >= 0) {
-			if (_savedFields._commandSource == ACTIONMODE_NONE || hs._cursor < CURSOR_WAIT) {
+			if (_savedFields._commandSource == CAT_NONE || hs._cursor < CURSOR_WAIT) {
 				player._needToWalk = true;
 				player._prepareWalkPos = hs._feetPos;
 			}
@@ -378,20 +378,20 @@ void MADSAction::checkActionAtMousePos() {
 		case CAT_INV_ANIM:
 			if (_interAwaiting != AWAITING_THAT) {
 				if (userInterface._selectedActionIndex >= 0) {
-					_commandSource = ACTIONMODE_VERB;
+					_commandSource = CAT_COMMAND;
 					_selectedRow = userInterface._selectedActionIndex;
 					_verbType = scene._verbList[_selectedRow]._verbType;
 					_prepType = scene._verbList[_selectedRow]._prepType;
 					_interAwaiting = AWAITING_THIS;
 				} else if (userInterface._selectedItemVocabIdx >= 0) {
-					_commandSource = ACTIONMODE_OBJECT;
+					_commandSource = CAT_INV_VOCAB;
 					_selectedRow = userInterface._selectedItemVocabIdx;
 					int objectId = _vm->_game->_objects._inventoryList[_selectedRow];
 					InventoryObject &invObject = _vm->_game->_objects[objectId];
 
 					_verbType = invObject._vocabList[_selectedRow - 1]._verbType;
 					_prepType = invObject._vocabList[_selectedRow - 1]._prepType;
-					_mainObjectSource = ACTIONMODE2_2;
+					_mainObjectSource = CAT_INV_LIST;
 					_hotspotId = userInterface._selectedInvIndex;
 					_articleNumber = _prepType;
 
@@ -411,7 +411,7 @@ void MADSAction::checkActionAtMousePos() {
 		_articleNumber = 0;
 		switch (userInterface._category) {
 		case CAT_COMMAND:
-			_commandSource = ACTIONMODE_VERB;
+			_commandSource = CAT_COMMAND;
 			_selectedRow = _pickedWord;
 			if (_selectedRow >= 0) {
 				_verbType = scene._verbList[_selectedRow]._verbType;
@@ -420,11 +420,11 @@ void MADSAction::checkActionAtMousePos() {
 			break;
 
 		case CAT_INV_VOCAB:
-			_commandSource = ACTIONMODE_OBJECT;
+			_commandSource = CAT_INV_VOCAB;
 			_selectedRow = _pickedWord;
 			if (_selectedRow < 0) {
 				_hotspotId = -1;
-				_mainObjectSource = ACTIONMODE2_0;
+				_mainObjectSource = CAT_NONE;
 			} else {
 				int objectId = _vm->_game->_objects._inventoryList[_selectedRow];
 				InventoryObject &invObject = _vm->_game->_objects[objectId];
@@ -432,7 +432,7 @@ void MADSAction::checkActionAtMousePos() {
 				_verbType = invObject._vocabList[_selectedRow - 2]._verbType;
 				_prepType = invObject._vocabList[_selectedRow - 2]._prepType;
 				_hotspotId = userInterface._selectedInvIndex;
-				_mainObjectSource = ACTIONMODE2_2;
+				_mainObjectSource = CAT_INV_LIST;
 
 				if (_verbType == VERB_THAT)
 					_articleNumber = _prepType;
@@ -441,13 +441,13 @@ void MADSAction::checkActionAtMousePos() {
 
 		case CAT_HOTSPOT:
 			_selectedRow = -1;
-			_commandSource = ACTIONMODE_NONE;
-			_mainObjectSource = ACTIONMODE2_4;
+			_commandSource = CAT_NONE;
+			_mainObjectSource = CAT_HOTSPOT;
 			_hotspotId = _pickedWord;
 			break;
 
 		case CAT_TALK_ENTRY:
-			_commandSource = ACTIONMODE_TALK;
+			_commandSource = CAT_TALK_ENTRY;
 			_selectedRow = _pickedWord;
 			break;
 
@@ -556,7 +556,7 @@ void MADSAction::leftClick() {
 
 		case CAT_HOTSPOT:
 			_recentCommand = -1;
-			_recentCommandSource = 0;
+			_recentCommandSource = CAT_NONE;
 
 			if (_vm->_events->currentPos().y < MADS_SCENE_HEIGHT) {
 				scene._customDest = _vm->_events->currentPos() + scene._posAdjust;
