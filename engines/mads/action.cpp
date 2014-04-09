@@ -426,11 +426,9 @@ void MADSAction::checkActionAtMousePos() {
 				_hotspotId = -1;
 				_mainObjectSource = CAT_NONE;
 			} else {
-				int objectId = _vm->_game->_objects._inventoryList[_selectedRow];
-				InventoryObject &invObject = _vm->_game->_objects[objectId];
-
-				_verbType = invObject._vocabList[_selectedRow - 2]._verbType;
-				_prepType = invObject._vocabList[_selectedRow - 2]._prepType;
+				InventoryObject &invObject = _vm->_game->_objects.getItem(userInterface._selectedInvIndex);
+				_verbType = invObject._vocabList[_selectedRow + 1]._verbType;
+				_prepType = invObject._vocabList[_selectedRow + 1]._prepType;
 				_hotspotId = userInterface._selectedInvIndex;
 				_mainObjectSource = CAT_INV_LIST;
 
