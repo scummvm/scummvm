@@ -168,7 +168,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 
 	_userInterface.setup(_vm->_game->_screenObjects._inputMode);
 
-	warning("TODO: showMouse");
+	_vm->_events->showCursor();
 
 	warning("TODO: inventory_anim_allocate");
 }

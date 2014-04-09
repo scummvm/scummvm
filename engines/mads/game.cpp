@@ -309,10 +309,6 @@ void Game::initSection(int sectionNumber) {
 		CURSOR_ARROW : CURSOR_WAIT);
 }
 
-void Game::loadResourceSequence(const Common::String prefix, int v) {
-	warning("TODO: loadResourceSequence");
-}
-
 void Game::loadQuotes() {
 	File f("*QUOTES.DAT");
 

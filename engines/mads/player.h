@@ -210,6 +210,10 @@ public:
 	* Delete any sprites used by the player
 	*/
 	void releasePlayerSprites();
+
+	static void preloadSequences(const Common::String &prefix, int level) {
+		// No implementation in ScummVM
+	}
 };
 
 } // End of namespace MADS

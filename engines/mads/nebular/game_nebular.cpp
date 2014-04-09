@@ -232,8 +232,8 @@ void GameNebular::initialiseGlobals() {
 	_player._facing = FACING_NORTH;
 	_player._turnToFacing = FACING_NORTH;
 
-	loadResourceSequence("RXM", 1);
-	loadResourceSequence("ROX", 1);
+	Player::preloadSequences("RXM", 1);
+	Player::preloadSequences("ROX", 1);
 }
 
 void GameNebular::setSectionHandler() {

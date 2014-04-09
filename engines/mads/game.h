@@ -90,8 +90,6 @@ protected:
 	 */
 	void initSection(int sectionNumber);
 
-	void loadResourceSequence(const Common::String prefix, int v);
-
 	//@{
 	/** @name Virtual Method list */
 
