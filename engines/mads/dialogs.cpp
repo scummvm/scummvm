@@ -331,11 +331,13 @@ void TextDialog::show() {
 	// Wait for mouse click
 	do {
 		_vm->_events->waitForNextFrame();
-	} while (!_vm->shouldQuit() && !_vm->_events->_mouseReleased);
+	} while (!_vm->shouldQuit() && !_vm->_events->isKeyPressed() && !_vm->_events->_mouseReleased);
 
-	// Allow the mouse release to be gobbled up
-	if (!_vm->shouldQuit())
+	// Allow the mouse release or keypress to be gobbled up
+	if (!_vm->shouldQuit()) {
 		_vm->_events->waitForNextFrame();
+		_vm->_events->_pendingKeys.clear();
+	}
 }
 
 /*------------------------------------------------------------------------*/

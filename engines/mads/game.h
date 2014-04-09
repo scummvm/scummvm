@@ -78,6 +78,7 @@ protected:
 	bool _quoteEmergency;
 	bool _vocabEmergency;
 	bool _anyEmergency;
+	int _widepipeCtr;
 
 	/**
 	 * Constructor
@@ -166,6 +167,11 @@ public:
 	void loadQuoteRange(int startNum, int endNum) {}
 	void loadQuoteSet(...) {}
 	void loadQuote(int quoteNum) {}
+
+	/**
+	* Handle a keyboard event
+	*/
+	void handleKeypress(const Common::Event &event);
 };
 
 } // End of namespace MADS

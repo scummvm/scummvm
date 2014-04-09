@@ -78,11 +78,12 @@ bool CopyProtectionDialog::show() {
 	_vm->_events->showCursor();
 
 	// TODO: Replace with text input
-	while (!_vm->shouldQuit() && !_vm->_events->_keyPressed &&
+	while (!_vm->shouldQuit() && !_vm->_events->isKeyPressed() &&
 			!_vm->_events->_mouseClicked) {
 		_vm->_events->delay(1);
 	}
 
+	_vm->_events->_pendingKeys.clear();
 	return true;
 }
 

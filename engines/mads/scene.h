@@ -71,6 +71,9 @@ private:
 	 */
 	void doSceneStep();
 
+	/**
+	 * Checks whether there's a pending keypress, and if so handles it.
+	 */
 	void checkKeyboard();
 
 	/**

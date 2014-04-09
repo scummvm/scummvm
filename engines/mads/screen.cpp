@@ -313,7 +313,7 @@ void ScreenObjects::check(bool scanFlag) {
 		}
 
 		//_released = _vm->_events->_mouseReleased;
-		if (_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_vD4))
+		if (_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))
 			scene._userInterface._category = _category;
 
 		if (!_vm->_events->_mouseButtons || _vm->_easyMouse) {
@@ -387,9 +387,9 @@ void ScreenObjects::checkScroller() {
 
 	userInterface._scrollerY = 0;
 	
-	if ((_category == CAT_INV_SCROLLER || (_scrollerY == 3 && _vm->_events->_vD4))
-			&& (_vm->_events->_vD4 || _vm->_easyMouse)) {
-		if ((_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_vD4))
+	if ((_category == CAT_INV_SCROLLER || (_scrollerY == 3 && _vm->_events->_mouseStatusCopy))
+			&& (_vm->_events->_mouseStatusCopy || _vm->_easyMouse)) {
+		if ((_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))
 				&& _category == CAT_INV_SCROLLER) {
 			_currentDescId = _newDescId;
 		}

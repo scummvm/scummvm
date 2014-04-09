@@ -509,7 +509,17 @@ void Scene::doSceneStep() {
 }
 
 void Scene::checkKeyboard() {
-	warning("TODO: Scene::checkKeyboard");
+	if (_vm->_events->isKeyPressed()) {
+		Common::Event evt = _vm->_events->_pendingKeys.pop();
+		_vm->_game->handleKeypress(evt);
+	}
+
+	if ((_vm->_events->_mouseStatus & 3) == 3 && _vm->_game->_player._stepEnabled) {
+		_reloadSceneFlag = true;
+		_vm->_dialogs->_pendingDialog = DIALOG_GAME_MENU;
+		_action.clear();
+		_action._selectedAction = 0;
+	}
 }
 
 void Scene::loadAnimation(const Common::String &resName, int abortTimers) {

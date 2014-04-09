@@ -60,6 +60,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_triggerMode = KERNEL_TRIGGER_PARSER;
 	_triggerSetupMode = KERNEL_TRIGGER_DAEMON;
 	_winStatus = 0;
+	_widepipeCtr = 0;
 
 	// Load the inventory object list
 	_objects.load();
@@ -377,6 +378,28 @@ Common::StringArray Game::getMessage(uint32 id) {
 	}
 
 	error("Invalid message Id specified");
+}
+
+static const char *const DEBUG_STRING = "WIDEPIPE";
+
+void Game::handleKeypress(const Common::Event &event) {
+	if (event.kbd.flags & Common::KBD_CTRL) {
+		if (_widepipeCtr == 8) {
+			// Implement original game cheating keys here someday
+		} else {
+			if (event.kbd.keycode == (Common::KEYCODE_a +
+					(DEBUG_STRING[_widepipeCtr] - 'a'))) {
+				if (++_widepipeCtr == 8) {
+					MessageDialog *dlg = new MessageDialog(_vm, 2,
+						"CHEATING ENABLED", "(for your convenience).");
+					dlg->show();
+					delete dlg;
+				}
+			}
+		}
+	}
+
+	warning("TODO: handleKeypress - %d", (int)event.kbd.keycode);
 }
 
 } // End of namespace MADS

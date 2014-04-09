@@ -24,6 +24,8 @@
 #define MADS_EVENTS_H
 
 #include "common/scummsys.h"
+#include "common/events.h"
+#include "common/stack.h"
 #include "mads/assets.h"
 #include "mads/sprites.h"
 
@@ -59,12 +61,12 @@ public:
 	bool _mouseReleased;
 	byte _mouseButtons;
 	bool _rightMousePressed;
-	bool _keyPressed;
-	int _vCC;
+	int _mouseStatus;
 	int _vD2;
-	int _vD4;
+	int _mouseStatusCopy;
 	bool _mouseMoved;
 	int _vD8;
+	Common::Stack<Common::Event> _pendingKeys;
 public:
 	/**
 	 * Constructor
@@ -142,6 +144,11 @@ public:
 	uint32 getFrameCounter() const { return _frameCounter; }
 
 	void initVars();
+
+	/**
+	 * Returns true if there's any pending keys to be processed 
+	 */
+	bool isKeyPressed() const { return !_pendingKeys.empty(); }
 };
 
 } // End of namespace MADS

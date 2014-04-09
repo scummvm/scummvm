@@ -37,13 +37,12 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_cursorSprites = nullptr;
 	_frameCounter = 10;
 	_priorFrameTime = 0;
-	_keyPressed = false;
 	_mouseClicked = false;
 	_mouseReleased = false;
 	_mouseButtons = 0;
-	_vCC = 0;
+	_mouseStatus = 0;
 	_vD2 = 0;
-	_vD4 = 0;
+	_mouseStatusCopy = 0;
 	_mouseMoved = false;
 	_vD8 = 0;
 	_rightMousePressed = false;
@@ -119,18 +118,22 @@ void EventsManager::pollEvents() {
 				_vm->_debugger->attach();
 				_vm->_debugger->onFrame();
 			} else {
-				_keyPressed = true;
+				_pendingKeys.push(event);
 			}
 			return;
 		case Common::EVENT_KEYUP:
-			_keyPressed = false;
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseClicked = true;
 			_mouseButtons = 1;
-			_rightMousePressed = event.type == Common::EVENT_RBUTTONDOWN;
 			_mouseMoved = true;
+			if (event.type == Common::EVENT_RBUTTONDOWN) {
+				_rightMousePressed = true;
+				_mouseStatus |= 2;
+			} else {
+				_mouseStatus |= 1;
+			}
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
@@ -138,6 +141,11 @@ void EventsManager::pollEvents() {
 			_mouseReleased = true;
 			_mouseMoved = true;
 			_rightMousePressed = false;
+			if (event.type == Common::EVENT_RBUTTONUP) {
+				_mouseStatus &= ~2;
+			} else {
+				_mouseStatus &= ~1;
+			}
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -205,7 +213,7 @@ void EventsManager::waitForNextFrame() {
 
 void EventsManager::initVars() {
 	_mousePos = Common::Point(-1, -1);
-	_vD4 = _vCC;
+	_mouseStatusCopy = _mouseStatus;
 	_vD2 = _vD8 = 0;
 }
 

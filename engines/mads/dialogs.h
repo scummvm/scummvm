@@ -184,7 +184,7 @@ public:
 	void show();
 };
 
-class MessageDialog: protected TextDialog {
+class MessageDialog: public TextDialog {
 public:
 	MessageDialog(MADSEngine *vm, int lines, ...);
 
