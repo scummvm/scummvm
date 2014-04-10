@@ -753,7 +753,7 @@ ModalMainMenu::ModalMainMenu() {
 	_areas.clear();
 
 	_lastArea = 0;
-	_mfield_C = 0;
+	_hoverAreaId = 0;
 	_mfield_34 = 0;
 	_scene = g_fp->accessScene(SC_MAINMENU);
 	_debugKeyCount = 0;
@@ -850,13 +850,70 @@ void ModalMainMenu::update() {
 	_scene->draw();
 }
 
+bool ModalMainMenu::handleMessage(ExCommand *message) {
+	if (message->_messageKind != 17)
+		return false;
+
+	Common::Point point;
+
+	if (message->_messageNum == 29) {
+		point.x = message->_x;
+		point.y = message->_y;
+
+		int numarea = checkHover(point);
+
+		if (numarea >= 0) {
+			if (numarea == _menuSliderIdx) {
+				_lastArea = _areas[_menuSliderIdx];
+				_sliderOffset = _lastArea->picObjL->_ox - point.x;
+
+				return false;
+			}
+
+			if (numarea == _musicSliderIdx) {
+				_lastArea = _areas[_musicSliderIdx];
+				_sliderOffset = _lastArea->picObjL->_ox - point.x;
+
+				return false;
+			}
+
+			_hoverAreaId = _areas[numarea]->picIdL;
+		}
+
+		return false;
+	}
+
+	if (message->_messageNum == 30) {
+		if (_lastArea)
+			_lastArea = 0;
+
+		return false;
+	}
+
+	if (message->_messageNum != 36)
+		return false;
+
+	if (message->_keyCode == 27)
+		_hoverAreaId = PIC_MNU_CONTINUE_L;
+	else
+		enableDebugMenu(message->_keyCode);
+
+	return false;
+}
+
+int ModalMainMenu::checkHover(Common::Point &point) {
+	warning("STUB: ModalMainMenu::checkHover()");
+
+	return 0;
+}
+
 bool ModalMainMenu::isSaveAllowed() {
 	warning("STUB: ModalMainMenu::isSaveAllowed()");
 
 	return true;
 }
 
-void ModalMainMenu::enableDebugMenu(int objId, char c) {
+void ModalMainMenu::enableDebugMenu(char c) {
 	const char deb[] = "DEBUGER";
 
 	if (c == deb[_debugKeyCount]) {

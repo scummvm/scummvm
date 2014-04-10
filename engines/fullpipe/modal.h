@@ -156,7 +156,7 @@ struct MenuArea {
 class ModalMainMenu : public BaseModalObject {
 public:
 	Scene *_scene;
-	int _mfield_C;
+	int _hoverAreaId;
 	Common::Array<MenuArea *> _areas;
 	int _menuSliderIdx;
 	int _musicSliderIdx;
@@ -173,7 +173,7 @@ public:
 	virtual ~ModalMainMenu() {}
 
 	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff) { return true; }
 	virtual void update();
 	virtual void saveload() {}
@@ -182,8 +182,8 @@ private:
 	bool isSaveAllowed();
 	void enableDebugMenuButton();
 	void setSliderPos();
-	void enableDebugMenu(int objId, char c);
-
+	void enableDebugMenu(char c);
+	int checkHover(Common::Point &point);
 };
 
 class ModalHelp : public BaseModalObject {
