@@ -780,7 +780,7 @@ ModalMainMenu::ModalMainMenu() {
 	area = new MenuArea();
 	area->picIdL = PIC_MNU_EXIT_L;
 	area->picObjD = 0;
-	area->picObjL = _scene->getPictureObjectById(PIC_MNU_EXIT_L, 0);
+	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 	_areas.push_back(area);
 
@@ -845,6 +845,10 @@ ModalMainMenu::ModalMainMenu() {
 	setSliderPos();
 }
 
+void ModalMainMenu::update() {
+	_scene->draw();
+}
+
 bool ModalMainMenu::isSaveAllowed() {
 	warning("STUB: ModalMainMenu::isSaveAllowed()");
 
@@ -852,7 +856,18 @@ bool ModalMainMenu::isSaveAllowed() {
 }
 
 void ModalMainMenu::enableDebugMenuButton() {
-	warning("STUB: ModalMainMenu::enableDebugMenuButton()");
+	MenuArea *area;
+
+	for (uint i = 0; i < _areas.size(); i++)
+		if (_areas[i]->picIdL == PIC_MNU_DEBUG_L)
+			return;
+
+	area = new MenuArea();
+	area->picIdL = PIC_MNU_DEBUG_L;
+	area->picObjD = 0;
+	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
+	area->picObjL->_flags &= 0xFFFB;
+	_areas.push_back(area);
 }
 
 void ModalMainMenu::setSliderPos() {
