@@ -296,7 +296,7 @@ void GameNebular::doObjectAction() {
 	} else if (action.isAction(NOUN_EAT, NOUN_STUFFED_FISH)) {
 		dialogs.show(445);
 	} else if (action.isAction(401, 289)) {
-		dialogs.show(scene._currentSceneId > 103 && scene._currentSceneId < 111 ? 447 : 446);
+		dialogs.show(scene._currentSceneId > 103 && scene._currentSceneId < 111 ? 446 : 447);
 	} else if (action.isAction(306, 371)) {
 		dialogs.show(448);
 	} else if (action.isAction(951, 35)) {
