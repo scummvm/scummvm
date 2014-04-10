@@ -53,8 +53,32 @@ public:
 };
 
 class Scene101: public Scene1xx {
+private:
+	bool _sittingFl;
+	bool _panelOpened;
+
+	int _messageNum;
+	int _posY;
+	int _shieldSpriteIdx;
+	int _chairHotspotId;
+	int _oldSpecial;
+
+	void sayDang();
 public:
-	Scene101(MADSEngine *vm) : Scene1xx(vm) {}
+	Scene101(MADSEngine *vm) : Scene1xx(vm), _sittingFl(false), _panelOpened(false), _messageNum(0), 
+		_posY(0), _shieldSpriteIdx(0), _chairHotspotId(0), _oldSpecial(0) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
+class Scene102 : public Scene1xx {
+public:
+	Scene102(MADSEngine *vm) : Scene1xx(vm) {}
 
 	virtual void setup();
 	virtual void enter();
