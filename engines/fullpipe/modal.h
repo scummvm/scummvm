@@ -160,13 +160,13 @@ public:
 	Common::Array<MenuArea *> _areas;
 	int _menuSliderIdx;
 	int _musicSliderIdx;
-	int _mfield_2C;
-	int _mfield_30;
+	MenuArea *_lastArea;
+	int _sliderOffset;
 	int _mfield_34;
 	Common::Rect _screct;
 	int _bgX;
 	int _bgY;
-	int _mfield_50;
+	int _debugKeyCount;
 
 public:
 	ModalMainMenu();
@@ -182,6 +182,8 @@ private:
 	bool isSaveAllowed();
 	void enableDebugMenuButton();
 	void setSliderPos();
+	void enableDebugMenu(int objId, char c);
+
 };
 
 class ModalHelp : public BaseModalObject {

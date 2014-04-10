@@ -752,11 +752,12 @@ void ModalCredits::update() {
 ModalMainMenu::ModalMainMenu() {
 	_areas.clear();
 
-	_mfield_2C = 0;
+	_lastArea = 0;
 	_mfield_C = 0;
 	_mfield_34 = 0;
 	_scene = g_fp->accessScene(SC_MAINMENU);
-	_mfield_50 = 0;
+	_debugKeyCount = 0;
+	_sliderOffset = 0;
 	_screct.left = g_fp->_sceneRect.left;
 	_screct.top = g_fp->_sceneRect.top;
 	_screct.right = g_fp->_sceneRect.right;
@@ -853,6 +854,21 @@ bool ModalMainMenu::isSaveAllowed() {
 	warning("STUB: ModalMainMenu::isSaveAllowed()");
 
 	return true;
+}
+
+void ModalMainMenu::enableDebugMenu(int objId, char c) {
+	const char deb[] = "DEBUGER";
+
+	if (c == deb[_debugKeyCount]) {
+		_debugKeyCount++;
+
+		if (deb[_debugKeyCount] )
+			return;
+
+		enableDebugMenuButton();
+	}
+
+	_debugKeyCount = 0;
 }
 
 void ModalMainMenu::enableDebugMenuButton() {
