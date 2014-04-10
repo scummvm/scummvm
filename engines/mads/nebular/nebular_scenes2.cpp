@@ -127,10 +127,10 @@ void Scene201::setup() {
 }
 
 void Scene201::enter() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0), 0);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1), 0);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', -1), 0);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', -1), 0);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', -1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', -1));
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*SC002Z1");
 	_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 1, 0);
 	_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 50);
@@ -182,8 +182,8 @@ void Scene201::enter() {
 	}
 
 	if ((_scene->_priorSceneId == 202) && (_globals[kMeteorologistStatus] == 1) && !_scene->_roomChanged) {
-		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('a', 0), 0);
-		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
+		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('a', 0));
+		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('a', 1));
 		_game.loadQuoteSet(90, 91, 0);
 		_game._player._stepEnabled = false;
 		_globals._spriteIndexes[21] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
@@ -340,19 +340,19 @@ void Scene202::setup() {
 
 void Scene202::enter() {
 	_game._player._visible3 = true;
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0), 0);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1), 0);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 2), 0);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0), 0);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('l', -1), 0);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('l', -1));
 	if (_globals[kSexOfRex] != SEX_MALE) {
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*ROXBD_2");
 	} else {
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites("*RXMBD_2");
 	}
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 0), 0);
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
-	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 2), 0);
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('a', 1));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('a', 2));
 
 	_globals._spriteIndexes[18] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
 	_globals._spriteIndexes[17] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
@@ -1009,7 +1009,7 @@ void Scene203::enter() {
 	}
 
 	if (!_rhotundaEatFl) {
-		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', -1), 0);
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', -1));
 		if (_vm->getRandomNumber(1, 3) == 2) {
 			_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 9, 1, 0, 0);
 			int idx = _scene->_dynamicHotspots.add(477, 209, _globals._spriteIndexes[15], Common::Rect(0, 0, 0, 0));
@@ -1100,15 +1100,15 @@ void Scene205::setup() {
 }
 
 void Scene205::enter() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0), 0);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1), 0);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2), 0);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', -1), 0);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', -1), 0);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('p', -1), 0);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', -1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', -1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('p', -1));
 
 	if (_globals[kSexOfRex] == SEX_MALE)
-		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
+		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 1));
 
 	_globals._spriteIndexes[16] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 10, 0, 0, 3);
 	int idx = _scene->_dynamicHotspots.add(73, 13, _globals._spriteIndexes[16], Common::Rect(0, 0, 0, 0));
@@ -1231,13 +1231,13 @@ void Scene207::setup() {
 }
 
 void Scene207::enter() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', 0), 0);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('h', 1), 0);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', -1), 0);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('e', 0), 0);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('e', 1), 0);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('g', 1), 0);
-	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('g', 0), 0);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('h', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('c', -1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('e', 0));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('e', 1));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('g', 1));
+	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('g', 0));
 	_globals._spriteIndexes[20] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 7, 0, 0, 0);
 	_scene->_sequences.setDepth(_globals._spriteIndexes[20], 7);
 
@@ -1447,10 +1447,10 @@ void Scene208::updateTrap() {
 }
 
 void Scene208::enter() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0), 0);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 1), 0);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 2), 0);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 2));
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMBD_8");
 
 	updateTrap();
@@ -2309,7 +2309,7 @@ void Scene209::handleMonkeyFall() {
 		_scene->_sprites.remove(_globals._spriteIndexes[5]);
 		_scene->_sprites.remove(_globals._spriteIndexes[4]);
 
-		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('m', 4), 0);
+		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('m', 4));
 		_scene->_kernelMessages.add(Common::Point(180, 26), 0xFDFC, 0, 0, 90, _game.getQuote(151));
 		_scene->_sequences.addTimer(40, 100);
 		_scene->_hotspots.activate(227, false);
@@ -2509,15 +2509,15 @@ void Scene209::handleDodge() {
 }
 
 void Scene209::enter() {
-	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('a', 1), 0);
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', -1), 0);
-	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0), 0);
-	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('b', 1), 0);
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', 0), 0);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('m', 1), 0);
-	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('m', 3), 0);
-	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('m', 6), 0);
-	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('m', 8), 0);
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('a', 1));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', -1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('b', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('m', 1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('m', 3));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('m', 6));
+	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('m', 8));
 
 	_game.loadQuoteSet(0x82, 0x83, 0x84, 0x9C, 0x97, 0x95, 0x99, 0x9E, 0x98, 0x9B, 0xA0, 0x96, 0x9F,
 		0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x91, 0x92, 0x93, 0x94, 0x89, 0x85, 0x8A, 0x86, 0x87, 0x88, 0);
@@ -3119,7 +3119,7 @@ void Scene209::actions() {
 	if (_action.isAction(VERB_TAKE, NOUN_PLANT_STALK) && (_game._trigger || _game._objects.isInRoom(OBJ_PLANT_STALK))) {
 		switch (_game._trigger) {
 		case 0:
-			_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMBD_2", 0);
+			_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMBD_2");
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._spriteIndexes[26] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[11], false, 3, 2, 0, 0);
@@ -3151,7 +3151,7 @@ void Scene209::actions() {
 	if (_action.isAction(VERB_TAKE, 0x27) && (_game._trigger || _game._objects.isInRoom(OBJ_BINOCULARS))) {
 		switch (_game._trigger) {
 		case 0:
-			_globals._spriteIndexes[10] = _scene->_sprites.addSprites("*RXMBD_8", false);
+			_globals._spriteIndexes[10] = _scene->_sprites.addSprites("*RXMBD_8");
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._spriteIndexes[25] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[10], false, 3, 2, 0, 0);
@@ -3713,7 +3713,7 @@ void Scene210::setDialogNode(int node) {
 			_scene->_activeAnimation = nullptr;
 			_scene->resetScene();
 
-			_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1), 0);
+			_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 			_game.loadQuoteSet(0xE6, 0xE9, 0xEA, 0xE7, 0xE8, 0);
 			_scene->loadAnimation(formAnimName('B', -1), 4);
 			break;
@@ -3805,7 +3805,7 @@ void Scene210::restoreDialogNode(int node, int msgId, int posY) {
 }
 
 void Scene210::enter() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1), 0);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 
 	if (!_game._visitedScenes._sceneRevisited)
 		_globals[kCurtainOpen] = 0;
@@ -4336,7 +4336,7 @@ void Scene211::setup() {
 }
 
 void Scene211::enter() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC002Z2", false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC002Z2");
 	_wakeFl = false;
 
 	if (_scene->_priorSceneId == 210)
