@@ -330,7 +330,35 @@ bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
 }
 
 void StaticANIObject::startMQIfIdle(int qId, int flag) {
-	warning("STUB: StaticANIObject::startMQIfIdle()");
+	MessageQueue *msg = g_fp->_currentScene->getMessageQueueById(qId);
+
+	if (msg && isIdle() && !(_flags & 0x100)) {
+		MessageQueue *mq = new MessageQueue(msg, 0, 0);
+
+		mq->setFlags(mq->getFlags() | flag);
+
+		ExCommand *ex = mq->getExCommandByIndex(0);
+
+		if (ex) {
+			while (ex->_messageKind != 1 || ex->_parentId != _id) {
+				ex->_parId = 0;
+				ex->_excFlags |= 2;
+				ex->handleMessage();
+
+				mq->deleteExCommandByIndex(0, 0);
+
+				ex = mq->getExCommandByIndex(0);
+
+				if (!ex)
+					return;
+			}
+
+			if (ex) {
+				startAnim(ex->_messageNum, mq->_id, -1);
+				mq->deleteExCommandByIndex(0, 1);
+			}
+		}
+	}
 }
 
 bool StaticANIObject::isIdle() {
