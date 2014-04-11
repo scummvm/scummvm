@@ -90,7 +90,8 @@ private:
 	void addRandomMessage();
 
 public:
-	Scene102(MADSEngine *vm) : Scene1xx(vm) {}
+	Scene102(MADSEngine *vm) : Scene1xx(vm), _fridgeOpenedFl(false), _fridgeOpenedDescr(false), _fridgeFirstOpenFl(false),
+		_chairDescrFl(false), _drawerDescrFl(false), _activeMsgFl(false), _fridgeCommentCount(0) {}
 
 	virtual void setup();
 	virtual void enter();
@@ -107,7 +108,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions();
+	virtual void preActions() {};
 	virtual void actions();
 	virtual void postActions();
 };

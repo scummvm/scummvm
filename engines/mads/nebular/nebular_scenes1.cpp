@@ -1313,9 +1313,6 @@ void Scene103::step() {
 	}
 }
 
-void Scene103::preActions() {
-}
-
 void Scene103::actions() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(10322);
