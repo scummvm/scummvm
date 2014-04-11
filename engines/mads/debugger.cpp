@@ -38,6 +38,7 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("show_codes", WRAP_METHOD(Debugger, Cmd_ShowCodes));
 	DCmd_Register("dump_file", WRAP_METHOD(Debugger, Cmd_DumpFile));
 	DCmd_Register("show_quote", WRAP_METHOD(Debugger, Cmd_ShowQuote));
+	DCmd_Register("item", WRAP_METHOD(Debugger, Cmd_Item));
 }
 
 static int strToInt(const char *s) {
@@ -176,6 +177,23 @@ bool Debugger::Cmd_ShowQuote(int argc, const char **argv) {
 		DebugPrintf("%s", _vm->_game->getQuote(strToInt(argv[1])).c_str());
 
 	return true;
+}
+
+bool Debugger::Cmd_Item(int argc, const char **argv) {
+	InventoryObjects &objects = _vm->_game->_objects;
+
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <item number>\n", argv[0]);
+		return true;
+	} else {
+		int objectId = strToInt(argv[1]);
+
+		if (!objects.isInInventory(objectId))
+			objects.addToInventory(objectId);
+
+		DebugPrintf("Item added.\n");
+		return false;
+	}
 }
 
 } // End of namespace MADS
