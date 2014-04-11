@@ -337,7 +337,7 @@ void Scene101::actions() {
 			switch (_game._trigger) {
 			case 0:
 				_scene->_sequences.remove(_globals._spriteIndexes[27]);
-				_globals._spriteIndexes[26] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 0, 0, 1);
+				_globals._spriteIndexes[26] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 1);
 				_scene->_sequences.setAnimRange(_globals._spriteIndexes[26], 1, 17);
 				_scene->_sequences.addSubEntry(_globals._spriteIndexes[26], SM_FRAME_INDEX, 10, 1);
 				_scene->_sequences.addSubEntry(_globals._spriteIndexes[26], SM_0, 0, 2);

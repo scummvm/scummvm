@@ -55,7 +55,7 @@ SequenceEntry::SequenceEntry() {
 	_entries._count = 0;
 	Common::fill(&_entries._mode[0], &_entries._mode[SEQUENCE_ENTRY_SUBSET_MAX], SM_0);
 	Common::fill(&_entries._frameIndex[0], &_entries._frameIndex[SEQUENCE_ENTRY_SUBSET_MAX], 0);
-	Common::fill(&_entries._abortVal[0], &_entries._abortVal[SEQUENCE_ENTRY_SUBSET_MAX], 0);
+	Common::fill(&_entries._trigger[0], &_entries._trigger[SEQUENCE_ENTRY_SUBSET_MAX], 0);
 }
 
 /*------------------------------------------------------------------------*/
@@ -80,14 +80,14 @@ void SequenceList::clear() {
 	}
 }
 
-bool SequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal) {
+bool SequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int trigger) {
 	if (_entries[index]._entries._count >= SEQUENCE_ENTRY_SUBSET_MAX)
 		return true;
 
 	int subIndex = _entries[index]._entries._count++;
 	_entries[index]._entries._mode[subIndex] = mode;
 	_entries[index]._entries._frameIndex[subIndex] = frameIndex;
-	_entries[index]._entries._abortVal[subIndex] = abortVal;
+	_entries[index]._entries._trigger[subIndex] = trigger;
 
 	return false;
 }
@@ -325,7 +325,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 	}
 
 	if (idx >= 0) {
-		_vm->_game->_trigger = seqEntry._entries._abortVal[idx];
+		_vm->_game->_trigger = seqEntry._entries._trigger[idx];
 		_vm->_game->_triggerMode = seqEntry._triggerMode;
 
 		if (seqEntry._triggerMode != KERNEL_TRIGGER_DAEMON)

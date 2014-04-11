@@ -42,7 +42,7 @@ struct SequenceSubEntries {
 	int _count;
 	SequenceSubEntryMode _mode[SEQUENCE_ENTRY_SUBSET_MAX];
 	int _frameIndex[SEQUENCE_ENTRY_SUBSET_MAX];
-	int8 _abortVal[SEQUENCE_ENTRY_SUBSET_MAX];
+	int8 _trigger[SEQUENCE_ENTRY_SUBSET_MAX];
 };
 
 struct SequenceEntry {
@@ -95,7 +95,7 @@ public:
 
 	SequenceEntry &operator[](int index) { return _entries[index]; }
 	void clear();
-	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
+	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int trigger);
 	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks,
 		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
 		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
