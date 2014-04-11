@@ -77,6 +77,18 @@ public:
 };
 
 class Scene102 : public Scene1xx {
+private:
+	bool _fridgeOpenedFl;
+	bool _fridgeOpenedDescr;
+	bool _fridgeFirstOpenFl;
+	bool _chairDescrFl;
+	bool _drawerDescrFl;
+	bool _activeMsgFl;
+
+	int _fridgeCommentCount;
+
+	void addRandomMessage();
+
 public:
 	Scene102(MADSEngine *vm) : Scene1xx(vm) {}
 
