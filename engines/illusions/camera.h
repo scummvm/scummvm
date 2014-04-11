@@ -77,7 +77,7 @@ public:
 	void popCameraMode();
 	void clearCameraModeStack();
 	void update(uint32 currTime);
-	void setBounds(Common::Point &minPt, Common::Point &maxPt);
+	void setBounds(Common::Point minPt, Common::Point maxPt);
 	void setBoundsToDimensions(WidthHeight &dimensions);
 	Common::Point getCurrentPan();
 	Common::Point getScreenOffset();

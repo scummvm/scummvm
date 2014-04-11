@@ -108,6 +108,8 @@ public:
 	void causeDeclare(uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
 	uint32 causeTrigger(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 callingThreadId);
 
+    void setDefaultTextCoords();
+
 	void loadSpecialCode(uint32 resId);
 	void unloadSpecialCode(uint32 resId);
 	void notifyThreadId(uint32 &threadId);

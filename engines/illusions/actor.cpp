@@ -253,32 +253,49 @@ void Control::unpause() {
 }
 
 void Control::appearActor() {
-	if (_objectId == 0x40004) {
-		_vm->showCursor();
-	} else {
-		if (_actor->_frameIndex || _actorTypeId == 0x50004)
-			_actor->_flags |= 1;
-		else
-			_actor->_flags |= 0x1000;
-		for (uint i = 0; i < kSubObjectsCount; ++i)
-			if (_actor->_subobjects[i]) {
-				Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
-				subControl->appearActor();
+	if (_vm->getGameId() == kGameIdDuckman) {
+		_flags |= 1;
+		_actor->_flags |= 1;
+		if (_objectId == 0x40004) {
+			if (_actor->_frameIndex) {
+				_actor->_flags |= 0x2000;
+				_actor->_flags |= 0x4000;
 			}
+			_vm->_input->discardButtons(0xFFFF);
+		}
+	} else {
+		if (_objectId == 0x40004) {
+			_vm->showCursor();
+		} else {
+			if (_actor->_frameIndex || _actorTypeId == 0x50004)
+				_actor->_flags |= 1;
+			else
+				_actor->_flags |= 0x1000;
+			for (uint i = 0; i < kSubObjectsCount; ++i)
+				if (_actor->_subobjects[i]) {
+					Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
+					subControl->appearActor();
+				}
+		}
 	}
 }
 
 void Control::disappearActor() {
-	if (_objectId == 0x40004) {
-		_vm->hideCursor();
-	} else {
+	if (_vm->getGameId() == kGameIdDuckman) {
+		_flags &= ~1;
 		_actor->_flags &= ~1;
-		_actor->_flags &= ~0x1000;
-		for (uint i = 0; i < kSubObjectsCount; ++i)
-			if (_actor->_subobjects[i]) {
-				Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
-				subControl->disappearActor();
-			}
+	} else {
+		if (_objectId == 0x40004) {
+			_vm->hideCursor();
+		} else {
+			_actor->_flags &= ~1;
+			_actor->_flags &= ~0x1000;
+			for (uint i = 0; i < kSubObjectsCount; ++i)
+				if (_actor->_subobjects[i]) {
+					Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
+					subControl->disappearActor();
+				}
+		}
 	}
 }
 
@@ -925,7 +942,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	_actor->_seqCodeValue3 = 0;
 	_actor->_seqCodeValue1 = 0;
 
-    if (_vm->getGameId() == kGameIdBBDOU) {
+	if (_vm->getGameId() == kGameIdBBDOU) {
 		_actor->_seqCodeValue2 = value == 1 ? 350 : 600;
 	} else if (_vm->getGameId() == kGameIdDuckman) {
 		_actor->_seqCodeValue2 = value == 1 ? 350 : 750;

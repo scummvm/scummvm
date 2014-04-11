@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	bbdou/bbdou_inventory.o \
 	bbdou/bbdou_specialcode.o \
 	camera.o \
+	causethread_duckman.o \
 	cursor.o \
 	detection.o \
 	dictionary.o \
@@ -23,6 +24,7 @@ MODULE_OBJS := \
 	midiresource.o \
 	resourcesystem.o \
 	screen.o \
+	screentext.o \
 	scriptman.o \
 	scriptopcodes.o \
 	scriptopcodes_bbdou.o \
@@ -35,6 +37,7 @@ MODULE_OBJS := \
 	talkresource.o \
 	talkthread.o \
 	talkthread_duckman.o \
+	textdrawer.o \
 	thread.o \
 	time.o \
 	timerthread.o \

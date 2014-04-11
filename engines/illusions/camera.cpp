@@ -279,7 +279,7 @@ void Camera::update(uint32 currTime) {
 
 }
 
-void Camera::setBounds(Common::Point &minPt, Common::Point &maxPt) {
+void Camera::setBounds(Common::Point minPt, Common::Point maxPt) {
 	_activeState._bounds._topLeft = minPt;
 	_activeState._bounds._bottomRight = maxPt;
 }

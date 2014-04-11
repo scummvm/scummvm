@@ -69,7 +69,7 @@ void BackgroundResourceLoader::unload(Resource *resource) {
 	// TODO Remove IDs from item48s
 	delete backgroundItem->_bgRes;
 	_vm->_backgroundItems->freeBackgroundItem(backgroundItem);
-	// TODO _vm->setDefPointDimensions1();
+	_vm->setDefaultTextCoords();
 	debug("BackgroundResourceLoader::unload() Unloading background %08X OK", resource->_resId);
 }
 
@@ -378,7 +378,7 @@ void BackgroundItem::pause() {
 		for (uint i = 0; i < _bgRes->_item48sCount; ++i)
 			krndictRemoveID(_bgRes->_item48s[i].id);
 		*/
-		// TODO _vm->setDefPointDimensions1();
+		_vm->setDefaultTextCoords();
 		_vm->_camera->getActiveState(_savedCameraState);
 		_savedPalette = new byte[1024];
 		_vm->_screen->getPalette(_savedPalette);

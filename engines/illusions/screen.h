@@ -31,7 +31,7 @@
 namespace Illusions {
 
 class IllusionsEngine;
-class Screen;
+class FontResource;
 
 struct SpriteDecompressQueueItem {
 	byte *_drawFlags;
@@ -112,8 +112,11 @@ public:
 	void decompressSprite(SpriteDecompressQueueItem *item);
 	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
 	void setPalette(byte *colors, uint start, uint count);
+	void setPaletteEntry(int16 index, byte r, byte g, byte b);
 	void getPalette(byte *colors);
 	void updatePalette();
+	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
+	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
 	int16 getScreenWidth() const { return _backSurface->w; }
 	int16 getScreenHeight() const { return _backSurface->h; }
 public:

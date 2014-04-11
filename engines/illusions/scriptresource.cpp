@@ -33,7 +33,7 @@ void ScriptResourceLoader::load(Resource *resource) {
 
 	ScriptResource *scriptResource = new ScriptResource();
 	scriptResource->load(resource);
-	
+
 	_vm->_scriptResource = scriptResource;
 	
 }
@@ -310,6 +310,9 @@ void ScriptResource::load(Resource *resource) {
 			stream.skip(4);
 		}
 	}
+	
+	stream.seek(0x6C);
+	_field6C = stream.readUint32LE();
 	
 	if (resource->_gameId == kGameIdDuckman)
 		fixupProgInfosDuckman();

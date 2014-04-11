@@ -114,6 +114,7 @@ public:
 	byte *getCode(uint32 codeOffs);
 	ProgInfo *getProgInfo(uint32 index);
 	uint32 getObjectActorTypeId(uint32 objectId);
+	uint32 getField6C() const { return _field6C; }
 public:
 	byte *_data;
 	uint32 _dataSize;
@@ -127,6 +128,7 @@ public:
 	uint32 _soundIds[27];
 	uint _objectMapCount;
 	uint32 *_objectMap;
+	uint32 _field6C;
 	void fixupProgInfosDuckman();
 };
 

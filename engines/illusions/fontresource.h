@@ -42,6 +42,43 @@ protected:
 	IllusionsEngine *_vm;
 };
 
+// TODO
+
+struct CharInfo {
+	int16 _width;
+	int16 _field_2;
+	byte *_pixels;
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+};
+
+struct CharRange {
+	uint16 _firstChar;
+	uint16 _lastChar;
+	CharInfo *_charInfos;
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+	CharInfo *getCharInfo(uint16 c);
+	bool containsChar(uint16 c);
+};
+
+class FontResource {
+public:
+	FontResource();
+	~FontResource();
+	void load(Resource *resource);
+	CharInfo *getCharInfo(uint16 c);
+	int16 getColorIndex() const { return _colorIndex; }
+public:
+	uint32 _totalSize;
+	int16 _charHeight;
+	int16 _field_6;
+	int16 _colorIndex;
+	int16 _lineIncr;
+	int16 _widthC;
+	uint _charRangesCount;
+	CharRange *_charRanges;
+	CharRange *getCharRange(uint16 c);
+};
+
 } // End of namespace Illusions
 
 #endif // ILLUSIONS_FONTRESOURCE_H

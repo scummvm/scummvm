@@ -228,8 +228,9 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	
 	_globalSceneId = 0x00010003;	
 	
+    setDefaultTextCoords();
+	
 	_resSys->loadResource(0x000D0001, 0, 0);
-
 	startScriptThread(0x00020004, 0, 0, 0, 0);
 	_doScriptThreadInit = true;
 
@@ -299,6 +300,15 @@ uint32 IllusionsEngine_BBDOU::causeTrigger(uint32 sceneId, uint32 verbId, uint32
 			callingThreadId, verbId, objectId2, objectId);
 	}
 	return causeThreadId;
+}
+
+void IllusionsEngine_BBDOU::setDefaultTextCoords() {
+	WidthHeight dimensions;
+	dimensions._width = 480;
+	dimensions._height = 48;
+	Common::Point pt(320, 448);
+	setDefaultTextDimensions(dimensions);
+	setDefaultTextPosition(pt);
 }
 
 void IllusionsEngine_BBDOU::loadSpecialCode(uint32 resId) {

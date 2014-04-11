@@ -63,14 +63,25 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(7, opStartTimerThread);
 	OPCODE(9, opNotifyThread);
 	OPCODE(10, opSuspendThread);
+	OPCODE(16, opLoadResource);
+	OPCODE(17, opUnloadResource);
 	OPCODE(18, opEnterScene18);
 	OPCODE(20, opChangeScene);
+	OPCODE(22, opStartModalScene);
+	OPCODE(23, opExitModalScene);
 	OPCODE(24, opEnterScene24);
 	OPCODE(25, opLeaveScene24);
+	OPCODE(34, opPanToObject);
 	OPCODE(38, opStartFade);
 	OPCODE(39, opSetDisplay);
+	OPCODE(40, opSetCameraBounds);
+	OPCODE(48, opSetProperty);
 	OPCODE(49, opPlaceActor);
+	OPCODE(50, opFaceActor);
+	OPCODE(51, opFaceActorToObject);
 	OPCODE(52, opStartSequenceActor);
+	OPCODE(54, opStartMoveActor);
+	OPCODE(55, opStartMoveActorToObject);
 	OPCODE(56, opStartTalkThread);
 	OPCODE(57, opAppearActor);
 	OPCODE(58, opDisappearActor);
@@ -102,22 +113,14 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(8, opStartTempScriptThread);
 	OPCODE(14, opSetThreadSceneId);
 	OPCODE(15, opEndTalkThreads);
-	OPCODE(17, opUnloadResource);
 	OPCODE(20, opEnterScene);
-	OPCODE(26, opStartModalScene);
-	OPCODE(27, opExitModalScene);
 	OPCODE(30, opEnterCloseUpScene);
 	OPCODE(31, opExitCloseUpScene);
 	OPCODE(32, opPanCenterObject);
-	OPCODE(34, opPanToObject);
 	OPCODE(35, opPanToNamedPoint);
 	OPCODE(36, opPanToPoint);
 	OPCODE(37, opPanStop);
 	OPCODE(43, opClearBlockCounter);
-	OPCODE(45, opSetProperty);
-	OPCODE(47, opFaceActor);
-	OPCODE(48, opFaceActorToObject);	
-	OPCODE(51, opStartMoveActor);
 	OPCODE(53, opSetActorToNamedPoint);
 	OPCODE(63, opSetSelectSfx);
 	OPCODE(64, opSetMoveSfx);
@@ -206,13 +209,32 @@ void ScriptOpcodes_Duckman::opSuspendThread(ScriptThread *scriptThread, OpCall &
 	_vm->_threads->suspendTimerThreads(threadId);
 }
 
+void ScriptOpcodes_Duckman::opLoadResource(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(resourceId);
+	// NOTE Skipped checking for stalled resources
+	uint32 sceneId = _vm->getCurrentScene();
+	_vm->_resSys->loadResource(resourceId, sceneId, opCall._threadId);
+	_vm->notifyThreadId(opCall._threadId);
+}
+
+void ScriptOpcodes_Duckman::opUnloadResource(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(resourceId);
+	// NOTE Skipped checking for stalled resources
+	_vm->_resSys->unloadResourceById(resourceId);
+}
+
 void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	_vm->enterScene(sceneId, 0);
 }
 
-static uint dsceneId = 0x00010008, dthreadId = 0x00020029;
+//static uint dsceneId = 0, dthreadId = 0;
+static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
+//static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
+//static uint dsceneId = 0x00010039, dthreadId = 0x00020089;//Map
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -234,6 +256,30 @@ void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &op
 	}
 }
 
+void ScriptOpcodes_Duckman::opStartModalScene(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(sceneId);
+	ARG_UINT32(threadId);
+	_vm->_input->discardButtons(0xFFFF);
+	_vm->enterPause(_vm->getCurrentScene(), opCall._callerThreadId);
+	_vm->_talkItems->pauseByTag(_vm->getCurrentScene());
+	_vm->enterScene(sceneId, threadId);
+	opCall._result = kTSSuspend;
+}
+
+void ScriptOpcodes_Duckman::opExitModalScene(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->_input->discardButtons(0xFFFF);
+	if (_vm->_scriptResource->_properties.get(0x000E0027)) {
+		// TODO _vm->startScriptThread2(0x10002, 0x20001, 0);
+		opCall._result = kTSTerminate;
+	} else {
+          _vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
+          _vm->exitScene();
+          _vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
+          _vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
+	}
+}
+
 void ScriptOpcodes_Duckman::opEnterScene24(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
@@ -247,6 +293,14 @@ void ScriptOpcodes_Duckman::opLeaveScene24(ScriptThread *scriptThread, OpCall &o
 	_vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
 	_vm->exitScene();
 	_vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
+}
+
+void ScriptOpcodes_Duckman::opPanToObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(speed);
+	ARG_UINT32(objectId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	Common::Point pos = control->getActorPosition();
+	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opStartFade(ScriptThread *scriptThread, OpCall &opCall) {
@@ -266,6 +320,20 @@ void ScriptOpcodes_Duckman::opSetDisplay(ScriptThread *scriptThread, OpCall &opC
 	_vm->_screen->setDisplayOn(flag != 0);
 }
 
+void ScriptOpcodes_Duckman::opSetCameraBounds(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(x1);
+	ARG_INT16(y1);
+	ARG_INT16(x2);
+	ARG_INT16(y2);
+	_vm->_camera->setBounds(Common::Point(x1, y1), Common::Point(x2, y2));
+}
+
+void ScriptOpcodes_Duckman::opSetProperty(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(value);
+	ARG_UINT32(propertyId);
+	_vm->_scriptResource->_properties.set(propertyId, value != 0);
+}
+
 void ScriptOpcodes_Duckman::opPlaceActor(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(objectId);
@@ -276,6 +344,26 @@ void ScriptOpcodes_Duckman::opPlaceActor(ScriptThread *scriptThread, OpCall &opC
 	_vm->_controls->placeActor(actorTypeId, pos, sequenceId, objectId, opCall._threadId);
 }
 
+void ScriptOpcodes_Duckman::opFaceActor(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(facing);
+	ARG_UINT32(objectId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	control->faceActor(facing);
+}
+
+void ScriptOpcodes_Duckman::opFaceActorToObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId1);
+	ARG_UINT32(objectId2);
+	Control *control1 = _vm->_dict->getObjectControl(objectId1);
+	Control *control2 = _vm->_dict->getObjectControl(objectId2);
+	Common::Point pos1 = control1->getActorPosition();
+	Common::Point pos2 = control2->getActorPosition();
+	uint facing;
+	if (_vm->calcPointDirection(pos1, pos2, facing))
+		control1->faceActor(facing);
+}
+
 void ScriptOpcodes_Duckman::opStartSequenceActor(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(objectId);
@@ -283,6 +371,37 @@ void ScriptOpcodes_Duckman::opStartSequenceActor(ScriptThread *scriptThread, OpC
 	// NOTE Skipped checking for stalled sequence, not sure if needed
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	control->startSequenceActor(sequenceId, 2, opCall._threadId);
+}
+
+void ScriptOpcodes_Duckman::opStartMoveActor(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	ARG_UINT32(sequenceId);
+	ARG_UINT32(namedPointId);
+	// NOTE Skipped checking for stalled sequence, not sure if needed
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
+	control->startMoveActor(sequenceId, pos, opCall._callerThreadId, opCall._threadId);
+}
+
+void ScriptOpcodes_Duckman::opStartMoveActorToObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId1);
+	ARG_UINT32(objectId2);
+	ARG_UINT32(sequenceId);
+	Control *control1 = _vm->_dict->getObjectControl(objectId1);
+	Common::Point pos;
+	if (objectId2 == 0x40003) {
+		pos = _vm->_cursor._position;
+	} else {
+		Control *control2 = _vm->_dict->getObjectControl(objectId2);
+		pos = control2->_feetPt;
+		if (control2->_actor) {
+			pos.x += control2->_actor->_position.x;
+			pos.y += control2->_actor->_position.y;
+		}
+	}
+	control1->startMoveActor(sequenceId, pos, opCall._callerThreadId, opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opStartTalkThread(ScriptThread *scriptThread, OpCall &opCall) {
@@ -351,7 +470,7 @@ void ScriptOpcodes_Duckman::opPlayVideo(ScriptThread *scriptThread, OpCall &opCa
 void ScriptOpcodes_Duckman::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(specialCodeId);
-//TODO	_vm->_specialCode->run(specialCodeId, opCall);
+	_vm->runSpecialCode(specialCodeId, opCall);
 	//DEBUG Resume calling thread, later done by the special code
 	_vm->notifyThreadId(opCall._threadId);
 }
@@ -514,21 +633,6 @@ void ScriptOpcodes_Duckman::opEndTalkThreads(ScriptThread *scriptThread, OpCall 
 	_vm->_threads->endTalkThreads();
 }
 
-void ScriptOpcodes_Duckman::opLoadResource(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_SKIP(2);
-	ARG_UINT32(resourceId);
-	// NOTE Skipped checking for stalled resources
-	uint32 sceneId = _vm->getCurrentScene();
-	_vm->_resSys->loadResource(resourceId, sceneId, opCall._threadId);
-}
-
-void ScriptOpcodes_Duckman::opUnloadResource(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_SKIP(2);
-	ARG_UINT32(resourceId);
-	// NOTE Skipped checking for stalled resources
-	_vm->_resSys->unloadResourceById(resourceId);
-}
-
 void ScriptOpcodes_Duckman::opEnterScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
@@ -540,28 +644,6 @@ void ScriptOpcodes_Duckman::opEnterScene(ScriptThread *scriptThread, OpCall &opC
 	}
 	if (!_vm->enterScene(sceneId, opCall._callerThreadId))
 		opCall._result = kTSTerminate;
-}
-
-void ScriptOpcodes_Duckman::opStartModalScene(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_SKIP(2);
-	ARG_UINT32(sceneId);
-	ARG_UINT32(threadId);
-	// NOTE Skipped checking for stalled resources
-	_vm->_input->discardButtons(0xFFFF);
-	_vm->enterPause(opCall._callerThreadId);
-	_vm->_talkItems->pauseByTag(_vm->getCurrentScene());
-	_vm->enterScene(sceneId, opCall._callerThreadId);
-	_vm->startScriptThread(threadId, 0,
-		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
-	opCall._result = kTSSuspend;
-}
-
-void ScriptOpcodes_Duckman::opExitModalScene(ScriptThread *scriptThread, OpCall &opCall) {
-	// NOTE Skipped checking for stalled resources
-	_vm->_input->discardButtons(0xFFFF);
-	_vm->exitScene(opCall._callerThreadId);
-	_vm->leavePause(opCall._callerThreadId);
-	_vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
 }
 
 void ScriptOpcodes_Duckman::opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall) {
@@ -585,14 +667,6 @@ void ScriptOpcodes_Duckman::opPanCenterObject(ScriptThread *scriptThread, OpCall
 	_vm->_camera->panCenterObject(objectId, speed);
 }
 
-void ScriptOpcodes_Duckman::opPanToObject(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(speed);	
-	ARG_UINT32(objectId);
-	Control *control = _vm->_dict->getObjectControl(objectId);
-	Common::Point pos = control->getActorPosition();
-	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
-}
-
 void ScriptOpcodes_Duckman::opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(speed);	
 	ARG_UINT32(namedPointId);
@@ -614,43 +688,6 @@ void ScriptOpcodes_Duckman::opPanStop(ScriptThread *scriptThread, OpCall &opCall
 void ScriptOpcodes_Duckman::opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(index);
 	_vm->_scriptResource->_blockCounters.set(index, 0);
-}
-
-void ScriptOpcodes_Duckman::opSetProperty(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(value);	
-	ARG_UINT32(propertyId);	
-	_vm->_scriptResource->_properties.set(propertyId, value != 0);
-}
-
-void ScriptOpcodes_Duckman::opFaceActor(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(facing);
-	ARG_UINT32(objectId);
-	Control *control = _vm->_dict->getObjectControl(objectId);
-	control->faceActor(facing);
-}
-
-void ScriptOpcodes_Duckman::opFaceActorToObject(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_SKIP(2);
-	ARG_UINT32(objectId1);
-	ARG_UINT32(objectId2);
-	Control *control1 = _vm->_dict->getObjectControl(objectId1);
-	Control *control2 = _vm->_dict->getObjectControl(objectId2);
-	Common::Point pos1 = control1->getActorPosition();
-	Common::Point pos2 = control2->getActorPosition();
-	uint facing;
-	if (_vm->calcPointDirection(pos1, pos2, facing))
-		control1->faceActor(facing);
-}
-
-void ScriptOpcodes_Duckman::opStartMoveActor(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_SKIP(2);
-	ARG_UINT32(objectId);
-	ARG_UINT32(sequenceId);
-	ARG_UINT32(namedPointId);
-	// NOTE Skipped checking for stalled sequence, not sure if needed
-	Control *control = _vm->_dict->getObjectControl(objectId);
-	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
-	control->startMoveActor(sequenceId, pos, opCall._callerThreadId, opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {

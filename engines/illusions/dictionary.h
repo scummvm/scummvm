@@ -29,6 +29,7 @@ namespace Illusions {
 
 class ActorType;
 class Control;
+class FontResource;
 class Sequence;
 class TalkEntry;
 
@@ -86,6 +87,10 @@ public:
 	void removeActorType(uint32 id);
 	ActorType *findActorType(uint32 id);
 
+    void addFont(uint32 id, FontResource *fontResource);
+	void removeFont(uint32 id);
+	FontResource *findFont(uint32 id);
+
     void addSequence(uint32 id, Sequence *sequence);
 	void removeSequence(uint32 id);
 	Sequence *findSequence(uint32 id);
@@ -99,9 +104,10 @@ public:
 
 protected:
 	DictionaryHashMap<ActorType> _actorTypes;
+	DictionaryHashMap<Control> _controls;
+	DictionaryHashMap<FontResource> _fontResources;
 	DictionaryHashMap<Sequence> _sequences;
 	DictionaryHashMap<TalkEntry> _talkEntries;
-	DictionaryHashMap<Control> _controls;
 };
 
 } // End of namespace Illusions

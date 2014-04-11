@@ -23,6 +23,7 @@
 #ifndef ILLUSIONS_ILLUSIONS_H
 #define ILLUSIONS_ILLUSIONS_H
 
+#include "illusions/graphics.h"
 #include "audio/mixer.h"
 #include "audio/decoders/aiff.h"
 #include "common/array.h"
@@ -63,6 +64,7 @@ class Dictionary;
 class FramesList;
 class Input;
 class Screen;
+class ScreenText;
 class ScriptOpcodes;
 class ScriptResource;
 class Sequence;
@@ -97,6 +99,7 @@ public:
 	void updateEvents();
 
 	Screen *_screen;
+	ScreenText *_screenText;
 	Input *_input;
 	ActorItems *_actorItems;
 	BackgroundItems *_backgroundItems;
@@ -117,6 +120,9 @@ public:
 	uint32 _fontId;
 	int _field8;
 	uint32 _fieldA, _fieldE;
+
+	WidthHeight _defaultTextDimensions;
+	Common::Point _defaultTextPosition;
 
 	int16 _menuChoiceOfs;
 
@@ -143,7 +149,12 @@ public:
 	void setCurrFontId(uint32 fontId);
 	bool checkActiveTalkThreads();
 	uint32 clipTextDuration(uint32 duration);
+	void getDefaultTextDimensions(WidthHeight &dimensions);
+	void setDefaultTextDimensions(WidthHeight &dimensions);
+	void getDefaultTextPosition(Common::Point &position);
+	void setDefaultTextPosition(Common::Point &position);
 
+	virtual void setDefaultTextCoords() = 0;
 	virtual void loadSpecialCode(uint32 resId) = 0;
 	virtual void unloadSpecialCode(uint32 resId) = 0;
 	virtual void notifyThreadId(uint32 &threadId) = 0;
@@ -152,14 +163,12 @@ public:
 	virtual uint32 getPriorityFromBase(int16 priority) = 0;
 	virtual uint32 getPrevScene() = 0;	
 	virtual uint32 getCurrentScene() = 0;
-
 	virtual bool isCursorObject(uint32 actorTypeId, uint32 objectId) = 0;
 	virtual void setCursorControlRoutine(Control *control) = 0;
 	virtual void placeCursorControl(Control *control, uint32 sequenceId) = 0;
 	virtual void setCursorControl(Control *control) = 0;
 	virtual void showCursor() = 0;
 	virtual void hideCursor() = 0;
-
 	virtual void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId) = 0;
 	virtual uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10) = 0;
