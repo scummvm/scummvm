@@ -522,7 +522,7 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 
 	case CAT_INV_SCROLLER:
 		heightMultiplier = 0;
-		widthMultiplier = 73;
+		widthMultiplier = 0;
 		yOffset = 0;
 		widthAmt = 9;
 		leftStart = (v != 73) ? 73 : 75;
