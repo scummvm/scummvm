@@ -67,6 +67,8 @@ public:
 
 	virtual void doObjectAction();
 
+	virtual void unhandledAction();
+
 	virtual void step();
 };
 

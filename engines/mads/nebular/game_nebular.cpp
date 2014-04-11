@@ -376,7 +376,7 @@ void GameNebular::doObjectAction() {
 		_objects.addToInventory(OBJ_COMBINATION);
 		dialogs.showPicture(OBJ_COMBINATION, 851);
 	} else if ((action.isAction(VERB_LOOK) || action.isAction(NOUN_READ)) &&
-			((id = _objects.getIdFromDesc(action._activeAction._objectNameId)) != 0 ||
+			((id = _objects.getIdFromDesc(action._activeAction._objectNameId)) > 0 ||
 			(action._activeAction._indirectObjectId > 0 &&
 			(id = _objects.getIdFromDesc(action._activeAction._indirectObjectId))))) {
 		if (id == OBJ_REPAIR_LIST) {
@@ -563,6 +563,10 @@ void GameNebular::doObjectAction() {
 	}
 
 	action._inProgress = false;
+}
+
+void GameNebular::unhandledAction() {
+	warning("TODO: unhandledAction");
 }
 
 void GameNebular::step() {

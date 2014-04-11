@@ -156,6 +156,11 @@ public:
 	virtual void doObjectAction() = 0;
 
 	/**
+	 * Fallback handler for any action that isn't explicitly handled
+	 */
+	virtual void unhandledAction() = 0;
+
+	/**
 	 * Global game step
 	 */
 	virtual void step() = 0;
