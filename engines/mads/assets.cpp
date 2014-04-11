@@ -32,7 +32,7 @@ namespace MADS {
 SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int flags) :
 	_vm(vm) {
 	Common::String resName = resourceName;
-	if (!resName.hasSuffix(".SS"))
+	if (!resName.hasSuffix(".SS") && !resName.hasSuffix(".ss"))
 		resName += ".SS";
 
 	File file(resName);
