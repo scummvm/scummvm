@@ -195,6 +195,10 @@ List of fixed bugs in GF scripts:
 	The animation has 16 frames, but the 16th frame looks the same at the 15th one so we just say that it only
 	has 15 frames.
 
+	Fix #861 "GRIM: Year 4 - Character stuck on Aztec Temple" - tg.lua.patchr
+	If the user hits the override key while manny is talking about the note, the override is never disabled, so
+	we add the disable call.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
