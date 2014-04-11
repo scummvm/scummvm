@@ -566,7 +566,115 @@ void GameNebular::doObjectAction() {
 }
 
 void GameNebular::unhandledAction() {
-	warning("TODO: unhandledAction");
+	int random = _vm->getRandomNumber(1, 1000);
+	MADSAction &action = _scene._action;
+
+	if (action.isAction(VERB_THROW, NOUN_BOMB) || action.isAction(VERB_THROW, NOUN_BOMBS)
+	|| action.isAction(VERB_THROW, NOUN_TIMEBOMB) || action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB))
+		_vm->_dialogs->show(0x2A);
+	else if (action.isAction(0x6C))
+		_vm->_dialogs->show(0x1B3);
+	else if ((action.isAction(NOUN_EAT, NOUN_DEAD_FISH) || action.isAction(NOUN_EAT, NOUN_STUFFED_FISH)) && _vm->_game->_objects.isInInventory(_vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId)))
+		_vm->_dialogs->show(0xC);
+	else if ((action.isAction(NOUN_SMELL, NOUN_DEAD_FISH) || action.isAction(NOUN_SMELL, NOUN_STUFFED_FISH)) && _vm->_game->_objects.isInInventory(_vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId)))
+		_vm->_dialogs->show(0xD);
+	else if (action.isAction(NOUN_EAT, NOUN_CHICKEN) && _vm->_game->_objects.isInInventory(OBJ_CHICKEN))
+		_vm->_dialogs->show(0x390);
+	else if ((action.isAction(NOUN_SHOOT) || action.isAction(NOUN_HOSE_DOWN)) && action.isAction(NOUN_BLOWGUN)) {
+		if ((_scene._currentSceneId >= 104) && (_scene._currentSceneId <= 111))
+			_vm->_dialogs->show(0x26);
+		else if (action.isAction(0x10D))
+			_vm->_dialogs->show(0x29);
+		else if (action.isAction(NOUN_CHICKEN) || action.isAction(0x185) || action.isAction(0x14D)
+				|| action.isAction(0x1DD) || action.isAction(0x15F) || action.isAction(NOUN_CAPTIVE_CREATURE)) {
+			_vm->_dialogs->show(0x28);
+		} else
+			_vm->_dialogs->show(0x27);
+	} else if (action.isAction(VERB_TALKTO)) {
+		_globals[kTalkInanimateCount] = (_globals[kTalkInanimateCount] + 1) % 16;
+		if (!_globals[kTalkInanimateCount]) {
+			_vm->_dialogs->show(0x2);
+		} else {
+			Common::String tmpMsg = "\"Greetings, ";
+			tmpMsg += _vm->_game->_scene.getVocab(action._activeAction._objectNameId);
+			tmpMsg += "!\"";
+			_scene._kernelMessages.reset();
+			_scene._kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, tmpMsg);
+		}
+	} else if (action.isAction(VERB_GIVE, NOUN_DOOR, 0x46) || action.isAction(VERB_CLOSE, NOUN_CHAIR))
+		_vm->_dialogs->show(0x3);
+	else if (action.isAction(VERB_THROW)) {
+		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
+		if (objId < 0)
+			_vm->_dialogs->show(0x4);
+		else if (_vm->_game->_objects[objId]._roomNumber != 2)
+			_vm->_dialogs->show(0x5);
+		else
+			_vm->_dialogs->show(0x6);
+	} else if (action.isAction(VERB_LOOK)) {
+		if (action.isAction(0x27) && (action._activeAction._indirectObjectId > 0))
+			_vm->_dialogs->show(0xA);
+		else if (random < 600)
+			_vm->_dialogs->show(0x7);
+		else
+			_vm->_dialogs->show(0x15);
+	} else if (action.isAction(VERB_TAKE)) {
+		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
+		if (_vm->_game->_objects.isInInventory(objId))
+			_vm->_dialogs->show(0x10);
+		else if (random <= 333)
+			_vm->_dialogs->show(0x8);
+		else if (random <= 666)
+			_vm->_dialogs->show(0x16);
+		else
+			_vm->_dialogs->show(0x17);
+	} else if (action.isAction(VERB_CLOSE)) {
+		if (random <= 333)
+			_vm->_dialogs->show(0x9);
+		else
+			_vm->_dialogs->show(0x21);
+	} else if (action.isAction(VERB_OPEN)) {
+		if (random <= 500)
+			_vm->_dialogs->show(0x1E);
+		else if (random <= 750)
+			_vm->_dialogs->show(0x1F);
+		else
+			_vm->_dialogs->show(0x20);
+	} else if (action.isAction(VERB_PULL))
+		_vm->_dialogs->show(0x12);
+	else if (action.isAction(VERB_PUSH)) {
+		if (random < 750)
+			_vm->_dialogs->show(0x13);
+		else
+			_vm->_dialogs->show(0x14);
+	} else if (action.isAction(VERB_PUT)) {
+		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
+		if (_vm->_game->_objects.isInInventory(objId))
+			_vm->_dialogs->show(0x19);
+		else
+			_vm->_dialogs->show(0x18);
+	} else if (action.isAction(VERB_GIVE)) {
+		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
+		if (!_vm->_game->_objects.isInInventory(objId))
+			_vm->_dialogs->show(0x1A);
+		else if (random <= 500)
+			_vm->_dialogs->show(0x1C);
+		else
+			_vm->_dialogs->show(0x1D);
+	} else if (!action.isAction(VERB_WALKTO) && !action.isAction(0x187) && !action.isAction(0x18C) && !action.isAction(0x1AD)
+			&& !action.isAction(0x15C) && !action.isAction(0x159) && !action.isAction(0x15A) && !action.isAction(0x15B)
+			&& !action.isAction(0x15E)) {
+		if (random <= 100)
+			_vm->_dialogs->show(0x24);
+		else if (random <= 200)
+			_vm->_dialogs->show(0x1);
+		else if (random <= 475)
+			_vm->_dialogs->show(0x22);
+		else if (random <= 750)
+			_vm->_dialogs->show(0x23);
+		else
+			_vm->_dialogs->show(0x25);
+	}
 }
 
 void GameNebular::step() {

@@ -1095,7 +1095,7 @@ void Scene205::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_D);
-	_scene->addActiveVocab(NOUN_49);
+	_scene->addActiveVocab(NOUN_CHICKEN);
 	_scene->addActiveVocab(NOUN_10D);
 }
 
