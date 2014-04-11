@@ -566,7 +566,7 @@ void GameNebular::doObjectAction() {
 }
 
 void GameNebular::unhandledAction() {
-	int random = _vm->getRandomNumber(1, 1000);
+	int randVal = _vm->getRandomNumber(1, 1000);
 	MADSAction &action = _scene._action;
 
 	if (action.isAction(VERB_THROW, NOUN_BOMB) || action.isAction(VERB_THROW, NOUN_BOMBS)
@@ -614,7 +614,7 @@ void GameNebular::unhandledAction() {
 	} else if (action.isAction(VERB_LOOK)) {
 		if (action.isAction(0x27) && (action._activeAction._indirectObjectId > 0))
 			_vm->_dialogs->show(0xA);
-		else if (random < 600)
+		else if (randVal < 600)
 			_vm->_dialogs->show(0x7);
 		else
 			_vm->_dialogs->show(0x15);
@@ -622,28 +622,28 @@ void GameNebular::unhandledAction() {
 		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
 		if (_vm->_game->_objects.isInInventory(objId))
 			_vm->_dialogs->show(0x10);
-		else if (random <= 333)
+		else if (randVal <= 333)
 			_vm->_dialogs->show(0x8);
-		else if (random <= 666)
+		else if (randVal <= 666)
 			_vm->_dialogs->show(0x16);
 		else
 			_vm->_dialogs->show(0x17);
 	} else if (action.isAction(VERB_CLOSE)) {
-		if (random <= 333)
+		if (randVal <= 333)
 			_vm->_dialogs->show(0x9);
 		else
 			_vm->_dialogs->show(0x21);
 	} else if (action.isAction(VERB_OPEN)) {
-		if (random <= 500)
+		if (randVal <= 500)
 			_vm->_dialogs->show(0x1E);
-		else if (random <= 750)
+		else if (randVal <= 750)
 			_vm->_dialogs->show(0x1F);
 		else
 			_vm->_dialogs->show(0x20);
 	} else if (action.isAction(VERB_PULL))
 		_vm->_dialogs->show(0x12);
 	else if (action.isAction(VERB_PUSH)) {
-		if (random < 750)
+		if (randVal < 750)
 			_vm->_dialogs->show(0x13);
 		else
 			_vm->_dialogs->show(0x14);
@@ -657,20 +657,20 @@ void GameNebular::unhandledAction() {
 		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
 		if (!_vm->_game->_objects.isInInventory(objId))
 			_vm->_dialogs->show(0x1A);
-		else if (random <= 500)
+		else if (randVal <= 500)
 			_vm->_dialogs->show(0x1C);
 		else
 			_vm->_dialogs->show(0x1D);
 	} else if (!action.isAction(VERB_WALKTO) && !action.isAction(0x187) && !action.isAction(0x18C) && !action.isAction(0x1AD)
 			&& !action.isAction(0x15C) && !action.isAction(0x159) && !action.isAction(0x15A) && !action.isAction(0x15B)
 			&& !action.isAction(0x15E)) {
-		if (random <= 100)
+		if (randVal <= 100)
 			_vm->_dialogs->show(0x24);
-		else if (random <= 200)
+		else if (randVal <= 200)
 			_vm->_dialogs->show(0x1);
-		else if (random <= 475)
+		else if (randVal <= 475)
 			_vm->_dialogs->show(0x22);
-		else if (random <= 750)
+		else if (randVal <= 750)
 			_vm->_dialogs->show(0x23);
 		else
 			_vm->_dialogs->show(0x25);
