@@ -33,6 +33,7 @@
 #include "illusions/midiresource.h"
 #include "illusions/resourcesystem.h"
 #include "illusions/screen.h"
+#include "illusions/screentext.h"
 #include "illusions/scriptopcodes_duckman.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
@@ -40,11 +41,13 @@
 #include "illusions/specialcode.h"
 //TODO#include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/talkresource.h"
+#include "illusions/textdrawer.h"
 #include "illusions/thread.h"
 #include "illusions/time.h"
 #include "illusions/updatefunctions.h"
 
 #include "illusions/abortablethread.h"
+#include "illusions/causethread_duckman.h"
 #include "illusions/scriptthread.h"
 #include "illusions/talkthread_duckman.h"
 #include "illusions/timerthread.h"
@@ -93,6 +96,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
 
 	_screen = new Screen(this, 320, 200, 8);
+	_screenText = new ScreenText(this);
 	_input = new Input();	
 	_actorItems = new ActorItems(this);
 	_backgroundItems = new BackgroundItems(this);
@@ -115,11 +119,18 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_fieldA = 0;
 	_fieldE = 240;
 	
-	_globalSceneId = 0x00010003;	
-	
-	_resSys->loadResource(0x000D0001, 0x00010001, 0);
+	_globalSceneId = 0x00010003;
 
+    initSpecialCode();
+    setDefaultTextCoords();
+	initCursor();
     initActiveScenes();
+
+	_resSys->loadResource(0x120001, 0x00010001, 0);
+	_resSys->loadResource(0x120002, 0x00010001, 0);
+	_resSys->loadResource(0x120003, 0x00010001, 0);
+
+	_resSys->loadResource(0x000D0001, 0x00010001, 0);
 	startScriptThread(0x00020004, 0);
 	_doScriptThreadInit = true;
 
@@ -145,6 +156,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	delete _backgroundItems;
 	delete _actorItems;
 	delete _input;
+	delete _screenText;
 	delete _screen;
 	delete _resSys;
 	delete _dict;
@@ -162,6 +174,15 @@ bool IllusionsEngine_Duckman::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 		*/
+}
+
+void IllusionsEngine_Duckman::setDefaultTextCoords() {
+	WidthHeight dimensions;
+	dimensions._width = 300;
+	dimensions._height = 32;
+	Common::Point pt(160, 176);
+	setDefaultTextDimensions(dimensions);
+	setDefaultTextPosition(pt);
 }
 
 void IllusionsEngine_Duckman::loadSpecialCode(uint32 resId) {
@@ -229,13 +250,40 @@ void IllusionsEngine_Duckman::setCursorControlRoutine(Control *control) {
 }
 
 void IllusionsEngine_Duckman::placeCursorControl(Control *control, uint32 sequenceId) {
+	_cursor._gameState = 2;
+	_cursor._control = control;
+	_cursor._actorIndex = 1;
+	_cursor._savedActorIndex = 1;
+	_cursor._currOverlappedControl = 0;
+	_cursor._sequenceId1 = sequenceId;
+	_cursor._field14[0] = true;
+	_cursor._field14[1] = true;
+	_cursor._field14[2] = false;
+	_cursor._field14[3] = false;
+	_cursor._field14[4] = false;
+	_cursor._field14[5] = false;
+	_cursor._field14[9] = false;
+	_cursor._field14[10] = false;
+	_cursor._field14[11] = false;
+	_cursor._field14[12] = false;
+	_cursor._field14[6] = _cursor._sequenceId2 != 0 && _cursor._objectId != 0;
+	_cursor._field14[7] = false;
+	_cursor._field14[8] = false;
+	_cursor._op113_choiceOfsPtr = 0;
+	_cursor._notifyThreadId30 = 0;
+	_cursor._op113_objectNumCtr = 0;
+	_cursor._overlappedObjectNum = 0;
+	_cursor._field40 = 0;
+	control->_flags |= 8;
+	setCursorActorIndex(_cursor._actorIndex, 1, 0);
+	// TODO Input_setMousePos(cursorControl->actor->position);
 	// TODO
-	control->_actor->_actorIndex = 2;
+	//control->_actor->_actorIndex = 2;
 	// TODO _cursor->place(control, sequenceId);
 }
 
 void IllusionsEngine_Duckman::setCursorControl(Control *control) {
-	// TODO
+	_cursor._control = control;
 }
 
 void IllusionsEngine_Duckman::showCursor() {
@@ -246,9 +294,108 @@ void IllusionsEngine_Duckman::hideCursor() {
 	// TODO
 }
 
+void IllusionsEngine_Duckman::initCursor() {
+	_cursor._gameState = 1;
+	_cursor._control = 0;
+	_cursor._position.x = 160;
+	_cursor._position.y = 100;
+	_cursor._objectId = 0;
+	_cursor._actorIndex = 1;
+	_cursor._savedActorIndex = 1;
+	_cursor._currOverlappedControl = 0;
+	_cursor._sequenceId1 = 0;
+	_cursor._sequenceId2 = 0;
+	_cursor._field14[0] = true;
+	_cursor._field14[1] = true;
+	_cursor._field14[2] = false;
+	_cursor._field14[3] = false;
+	_cursor._field14[4] = false;
+	_cursor._field14[5] = false;
+	_cursor._field14[6] = false;
+	_cursor._field14[7] = false;
+	_cursor._field14[8] = false;
+	_cursor._field14[9] = false;
+	_cursor._field14[10] = false;
+	_cursor._field14[11] = false;
+	_cursor._field14[12] = false;
+	_cursor._op113_choiceOfsPtr = 0;
+	_cursor._notifyThreadId30 = 0;
+	_cursor._op113_objectNumCtr = 0;
+	_cursor._overlappedObjectNum = 0;
+	_cursor._field40 = 0;
+}
+
+void IllusionsEngine_Duckman::setCursorActorIndex(int actorIndex, int a, int b) {
+	static int kCursorMap[13][2][2] = {
+		{{ 1,  2}, { 0,  0}},
+		{{ 3,  4}, { 0,  0}},
+		{{ 5,  6}, {13, 14}},
+		{{ 7,  8}, { 0,  0}},
+		{{ 9, 10}, { 0,  0}},
+		{{11, 12}, { 0,  0}},
+		{{ 1,  2}, { 0,  0}},
+		{{ 0,  0}, { 0,  0}},
+		{{ 0,  0}, { 0,  0}},
+		{{15, 16}, { 0,  0}},
+		{{17, 18}, { 0,  0}},
+		{{19, 20}, { 0,  0}},
+		{{21, 22}, { 0,  0}}
+	};
+	_cursor._control->_actor->_actorIndex = kCursorMap[actorIndex - 1][b][a - 1];
+	debug("_cursor._control->_actor->_actorIndex: %d", _cursor._control->_actor->_actorIndex);
+}
+
+void IllusionsEngine_Duckman::enableCursorVerb(int verbNum) {
+	if (verbNum != 7 || _cursor._sequenceId2)
+		_cursor._field14[verbNum - 1] = true;
+}
+
+void IllusionsEngine_Duckman::disableCursorVerb(int verbNum) {
+	_cursor._field14[verbNum - 1] = false;
+	if (_cursor._actorIndex == verbNum) {
+		_cursor._actorIndex = getCursorActorIndex();
+		setCursorActorIndex(_cursor._actorIndex, 1, 0);
+		startCursorSequence();
+		_cursor._currOverlappedControl = 0;
+	}
+}
+
+void IllusionsEngine_Duckman::setCursorHandMode(int mode) {
+	if (mode == 1) {
+		enableCursorVerb(4);
+		disableCursorVerb(1);
+		disableCursorVerb(2);
+		disableCursorVerb(7);
+		_cursor._actorIndex = 4;
+	} else {
+		enableCursorVerb(1);
+		enableCursorVerb(2);
+		enableCursorVerb(7);
+		disableCursorVerb(4);
+		_cursor._actorIndex = 1;
+	}
+	_cursor._control->startSequenceActor(_cursor._sequenceId1, 2, 0);
+	if (_cursor._currOverlappedControl)
+		setCursorActorIndex(_cursor._actorIndex, 2, 0);
+	else
+		setCursorActorIndex(_cursor._actorIndex, 1, 0);
+}
+
 void IllusionsEngine_Duckman::cursorControlRoutine(Control *control, uint32 deltaTime) {
 	control->_actor->_seqCodeValue1 = 100 * deltaTime;
-	// TODO
+	if (control->_actor->_flags & 1) {
+		switch (_cursor._gameState) {
+		case 2:
+			updateGameState2();
+			break;
+		case 3:
+			// TODO updateGameState3(cursorControl);
+			break;
+		case 4:
+			// TODO ShellMgr_update(cursorControl);
+			break;
+		}
+	}
 }
 
 void IllusionsEngine_Duckman::startScriptThreadSimple(uint32 threadId, uint32 callingThreadId) {
@@ -435,6 +582,227 @@ void IllusionsEngine_Duckman::reset() {
 
 uint32 IllusionsEngine_Duckman::getObjectActorTypeId(uint32 objectId) {
 	return _scriptResource->getObjectActorTypeId(objectId);
+}
+
+Common::Point IllusionsEngine_Duckman::convertMousePos(Common::Point mousePos) {
+	Common::Point screenOffsPt = _camera->getScreenOffset();
+	mousePos.x += screenOffsPt.x;
+	mousePos.y += screenOffsPt.y;
+	return mousePos;
+}
+
+void IllusionsEngine_Duckman::startCursorSequence() {
+	// NOTE Calls to startCursorSequence were put after calls to setCursorActorIndex
+	// to make the cursor switch more immediate. In the original these calls are swapped.
+	if (_cursor._actorIndex == 7)
+		_cursor._control->startSequenceActor(_cursor._sequenceId2, 2, 0);
+	else
+		_cursor._control->startSequenceActor(_cursor._sequenceId1, 2, 0);
+}
+
+int IllusionsEngine_Duckman::getCursorActorIndex() {
+	int result = _cursor._actorIndex;
+	do {
+		++result;
+		if (result > 13)
+			result = 1;
+	} while (!_cursor._field14[result - 1]);
+	return result;
+}
+
+void IllusionsEngine_Duckman::updateGameState2() {
+	Common::Point cursorPos = _input->getCursorPosition();
+	Common::Point convMousePos = convertMousePos(cursorPos);
+	int trackCursorIndex = -1;
+	bool foundOverlapped;
+	Control *overlappedControl;
+
+	_cursor._control->_actor->_position = cursorPos;
+
+	foundOverlapped = _controls->getOverlappedObject(_cursor._control, convMousePos, &overlappedControl, 0);
+
+	if (cursorPos.y < 8 && !_camera->isAtPanLimit(1)) {
+		trackCursorIndex = 10;
+	} else if (cursorPos.y >= 192 && !_camera->isAtPanLimit(2)) {
+		trackCursorIndex = 11;
+	} else if (cursorPos.x < 8 && !_camera->isAtPanLimit(3)) {
+		trackCursorIndex = 12;
+	} else if (cursorPos.x >= 312 && !_camera->isAtPanLimit(4)) {
+		trackCursorIndex = 13;
+	} else if (_cursor._actorIndex == 10 || _cursor._actorIndex == 11 || _cursor._actorIndex == 12 || _cursor._actorIndex == 13) {
+		_cursor._actorIndex = _cursor._savedActorIndex;
+		if (_cursor._currOverlappedControl)
+			setCursorActorIndex(_cursor._actorIndex, 2, 0);
+		else
+			setCursorActorIndex(_cursor._actorIndex, 1, 0);
+		startCursorSequence();
+	}
+
+	if (trackCursorIndex >= 0) {
+		if (_cursor._actorIndex != 10 && _cursor._actorIndex != 11 && _cursor._actorIndex != 12 && _cursor._actorIndex != 13 && _cursor._actorIndex != 3)
+			_cursor._savedActorIndex = _cursor._actorIndex;
+		if (_cursor._actorIndex != trackCursorIndex) {
+			_cursor._actorIndex = trackCursorIndex;
+			setCursorActorIndex(_cursor._actorIndex, 1, 0);
+			startCursorSequence();
+		}
+		_cursor._currOverlappedControl = 0;
+		foundOverlapped = false;
+	}
+
+	if (foundOverlapped) {
+		if (_cursor._currOverlappedControl != overlappedControl) {
+			int cursorValue2 = 0;
+			if (overlappedControl->_flags & 2) {
+				if (_cursor._actorIndex != 3) {
+					_cursor._savedActorIndex = _cursor._actorIndex;
+					_cursor._actorIndex = 3;
+				}
+				if (overlappedControl->_flags & 0x40)
+					cursorValue2 = 1;
+			} else if (_cursor._actorIndex == 3) {
+				_cursor._actorIndex = _cursor._savedActorIndex;
+			}
+			setCursorActorIndex(_cursor._actorIndex, 2, cursorValue2);
+			startCursorSequence();
+			_cursor._currOverlappedControl = overlappedControl;
+		}
+	} else if (_cursor._currOverlappedControl) {
+		if (_cursor._actorIndex == 3)
+			_cursor._actorIndex = _cursor._savedActorIndex;
+		setCursorActorIndex(_cursor._actorIndex, 1, 0);
+		startCursorSequence();
+		_cursor._currOverlappedControl = 0;
+	}
+
+	if (_input->pollButton(1)) {
+		if (_cursor._currOverlappedControl) {
+			runTriggerCause(_cursor._actorIndex, _cursor._objectId, _cursor._currOverlappedControl->_objectId);
+		} else {
+			_cursor._position = convertMousePos(_cursor._control->_actor->_position);
+			// TODO clipMousePos(&_cursor._position);
+			if (_cursor._actorIndex == 10 || _cursor._actorIndex == 11 || _cursor._actorIndex == 12 || _cursor._actorIndex == 13)
+				runTriggerCause(1, _cursor._objectId, 0x40003);
+			else
+				runTriggerCause(_cursor._actorIndex, _cursor._objectId, 0x40003);
+		}
+	} else if (_input->pollButton(2)) {
+		if (_cursor._actorIndex != 3 && _cursor._actorIndex != 10 && _cursor._actorIndex != 11 && _cursor._actorIndex != 12 && _cursor._actorIndex != 13) {
+			int newActorIndex = getCursorActorIndex();
+			debug("newActorIndex = %d", newActorIndex);
+			if (newActorIndex != _cursor._actorIndex) {
+				_cursor._actorIndex = newActorIndex;
+				if (_cursor._currOverlappedControl)
+					setCursorActorIndex(_cursor._actorIndex, 2, 0);
+				else
+					setCursorActorIndex(_cursor._actorIndex, 1, 0);
+				startCursorSequence();
+			}
+		}
+	} else if (_input->pollButton(8)) {
+		if (_cursor._field14[0] == 1) {
+			runTriggerCause(1, 0, _scriptResource->getField6C());
+		} else if (_cursor._field14[1] == 1) {
+			runTriggerCause(2, 0, _scriptResource->getField6C());
+		}
+	}
+
+}
+
+void IllusionsEngine_Duckman::playSoundEffect(int index) {
+	// TODO
+}
+
+bool IllusionsEngine_Duckman::getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId) {
+	ProgInfo *progInfo = _scriptResource->getProgInfo(getCurrentScene() & 0xFFFF);
+	bool found =
+		progInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) ||
+		progInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
+	if (!found) {
+		progInfo = _scriptResource->getProgInfo(3);
+		found =
+			progInfo->findTriggerCause(verbId, objectId2, objectId, outThreadId) ||
+			progInfo->findTriggerCause(verbId, objectId2, 0x40001, outThreadId);
+	}
+	return found;
+}
+
+uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId) {
+	// TODO
+	debug("runTriggerCause(%08X, %08X, %08X)", verbId, objectId2, objectId);
+	uint32 triggerThreadId;
+
+	if (!getTriggerCause(verbId, objectId2, objectId, triggerThreadId))
+		return 0;
+
+	bool flag = false;
+	if (_scriptResource->_properties.get(0x000E003C)) {
+		if (verbId == 7 && objectId == 0x40003 ) {
+			playSoundEffect(7);
+			flag = true;
+		} else if (objectId == 0x40003 ) {
+			playSoundEffect(14);
+			flag = true;
+		} else if (verbId == 3 ) {
+			playSoundEffect(16);
+			flag = true;
+		} else if (verbId == 2 ) {
+			flag = true;
+		}
+	}
+
+	if (!flag) {
+		if (objectId == 0x40003) {
+			playSoundEffect(14);
+		} else if ((verbId == 1 || verbId == 2) && _scriptResource->getField6C() == objectId) {
+			playSoundEffect(15);
+		} else if (verbId == 7 && _scriptResource->getField6C() == objectId) {
+			playSoundEffect(15);
+		} else if (verbId == 1) {
+			playSoundEffect(1);
+		} else if (verbId == 2) {
+			playSoundEffect(2);
+		} else if (verbId == 3) {
+			playSoundEffect(3);
+		} else if (verbId == 4 || verbId == 7) {
+			playSoundEffect(4);
+		} else if (verbId == 9) {
+			playSoundEffect(5);
+		}
+	}
+
+	uint32 tempThreadId = newTempThreadId();
+	debug(2, "Starting cause thread %08X", tempThreadId);
+	CauseThread_Duckman *causeThread = new CauseThread_Duckman(this, tempThreadId, 0, 0,
+		triggerThreadId);
+	_threads->startThread(causeThread);
+
+	return tempThreadId;
+}
+
+// Special code
+
+typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeFunctionDM;
+#define SPECIAL(id, func) _specialCodeMap[id] = new SpecialCodeFunctionDM(this, &IllusionsEngine_Duckman::func);
+
+void IllusionsEngine_Duckman::initSpecialCode() {
+	SPECIAL(0x00160002, spcSetCursorHandMode);
+}
+
+void IllusionsEngine_Duckman::runSpecialCode(uint32 specialCodeId, OpCall &opCall) {
+	SpecialCodeMapIterator it = _specialCodeMap.find(specialCodeId);
+	if (it != _specialCodeMap.end()) {
+		(*(*it)._value)(opCall);
+	} else {
+		debug("IllusionsEngine_Duckman::runSpecialCode() Unimplemented special code %08X", specialCodeId);
+		notifyThreadId(opCall._threadId);
+	}
+}
+
+void IllusionsEngine_Duckman::spcSetCursorHandMode(OpCall &opCall) {
+	ARG_BYTE(mode);
+	setCursorHandMode(mode);
+	notifyThreadId(opCall._threadId);
 }
 
 } // End of namespace Illusions

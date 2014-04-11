@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/screen.h"
+#include "illusions/fontresource.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 
@@ -315,6 +316,14 @@ void Screen::setPalette(byte *colors, uint start, uint count) {
 	_needRefreshPalette = true;
 }
 
+void Screen::setPaletteEntry(int16 index, byte r, byte g, byte b) {
+	byte colors[4];
+	colors[0] = r;
+	colors[1] = g;
+	colors[2] = b;
+	setPalette(colors, index, 1);
+}
+
 void Screen::getPalette(byte *colors) {
 	byte *srcPal = _mainPalette;
 	for (uint i = 0; i < 256; ++i) {
@@ -331,6 +340,26 @@ void Screen::updatePalette() {
 		setSystemPalette(_mainPalette);
 		_needRefreshPalette = false;
 	}
+}
+
+void Screen::drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
+	for (uint i = 0; i < count; ++i)
+		x += font->_widthC + drawChar(font, surface, x, y, *text++);
+}
+
+int16 Screen::drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
+	const CharInfo *charInfo = font->getCharInfo(c);
+	const int16 charWidth = charInfo->_width;
+	byte *dst = (byte*)surface->getBasePtr(x, y);
+	byte *pixels = charInfo->_pixels;
+	for (int16 yc = 0; yc < font->_charHeight; ++yc) {
+		for (int16 xc = 0; xc < charWidth; ++xc)
+			if (pixels[xc])
+				dst[xc] = pixels[xc];
+		dst += surface->pitch;
+		pixels += charWidth;
+	}
+	return charWidth;
 }
 
 void Screen::setSystemPalette(byte *palette) {

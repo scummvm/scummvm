@@ -32,6 +32,31 @@ namespace Illusions {
 class Dictionary;
 class ScriptStack;
 
+struct Cursor_Duckman {
+	int _gameState;
+	Control *_control;
+	Common::Point _position;
+	uint32 _objectId;
+	int _actorIndex;
+	int _savedActorIndex;
+	bool _field14[14];
+	Control *_currOverlappedControl;
+	uint32 _sequenceId1;
+	uint32 _sequenceId2;
+	uint32 _notifyThreadId30;
+	int16 *_op113_choiceOfsPtr;
+	int _op113_objectNumCtr;
+	uint _overlappedObjectNum;
+	uint32 _field3C;
+	uint32 _field40;
+};
+
+struct OpCall;
+
+typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
+typedef Common::HashMap<uint32, SpecialCodeFunction*> SpecialCodeMap;
+typedef SpecialCodeMap::iterator SpecialCodeMapIterator;
+
 class IllusionsEngine_Duckman : public IllusionsEngine {
 public:
 	IllusionsEngine_Duckman(OSystem *syst, const IllusionsGameDescription *gd);
@@ -55,6 +80,12 @@ public:
 	uint _activeScenesCount;
 	uint32 _activeScenes[6];
 
+	Cursor_Duckman _cursor;
+
+    SpecialCodeMap _specialCodeMap;
+
+	void setDefaultTextCoords();
+
 	void loadSpecialCode(uint32 resId);
 	void unloadSpecialCode(uint32 resId);
 	void notifyThreadId(uint32 &threadId);
@@ -70,6 +101,11 @@ public:
 	void setCursorControl(Control *control);
 	void showCursor();
 	void hideCursor();
+	void initCursor();
+	void setCursorActorIndex(int actorIndex, int a, int b);
+	void enableCursorVerb(int verbNum);
+	void disableCursorVerb(int verbNum);
+	void setCursorHandMode(int mode);
 	void cursorControlRoutine(Control *control, uint32 deltaTime);
 
 	void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId);
@@ -104,6 +140,19 @@ public:
 	
 	uint32 getObjectActorTypeId(uint32 objectId);
 	
+	Common::Point convertMousePos(Common::Point mousePos);
+	void startCursorSequence();
+	int getCursorActorIndex();
+	void updateGameState2();
+	void playSoundEffect(int index);
+	bool getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId);
+	uint32 runTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId);
+
+	// Special code
+	void initSpecialCode();
+	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
+	void spcSetCursorHandMode(OpCall &opCall);
+
 };
 
 } // End of namespace Illusions

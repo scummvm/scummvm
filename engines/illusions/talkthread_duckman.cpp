@@ -25,6 +25,7 @@
 #include "illusions/actor.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
+#include "illusions/screentext.h"
 #include "illusions/scriptman.h"
 #include "illusions/talkresource.h"
 #include "illusions/time.h"
@@ -109,7 +110,7 @@ int TalkThread_Duckman::onUpdate() {
 		_status = 4;
 		// Fallthrough to status 4
 		
-	case 4: 
+	case 4:
 		if (!(_flags & 8) ) {
 			uint32 actorTypeId = _vm->getObjectActorTypeId(_objectId);
 			// TODO getActorTypeColor(actorTypeId, &_colorR, &_colorG, &_colorB);
@@ -141,7 +142,7 @@ int TalkThread_Duckman::onUpdate() {
 		if (!(_flags & 4) && !_vm->isVoicePlaying())
 			_flags |= 4;
 		if (!(_flags & 8) && isTimerExpired(_textStartTime, _textEndTime)) {
-			// TODO _vm->removeText();
+			_vm->_screenText->removeText();
 			if (_entryText && *_entryText) {
 				refreshText();
 				_vm->_input->discardButtons(0x20);
@@ -159,7 +160,7 @@ int TalkThread_Duckman::onUpdate() {
 		}
 		if (_objectId && _vm->_input->pollButton(0x20)) {
 			if (!(_flags & 8)) {
-				// TODO largeObj_removeText();
+				_vm->_screenText->removeText();
 				if (_entryText && *_entryText)
 					refreshText();
 				else
@@ -178,13 +179,7 @@ int TalkThread_Duckman::onUpdate() {
 				}
 			}
 		}
-		/*
-		debug("8: %d", (_flags & 8) != 0);
-		debug("4: %d", (_flags & 4) != 0);
-		debug("2: %d", (_flags & 2) != 0);
-		*/
 		if ((_flags & 8) && (_flags & 2) && (_flags & 4)) {
-debug("TALK DONE");		
 			_vm->_input->discardButtons(0x20);
 			return kTSTerminate;
 		}
@@ -226,7 +221,7 @@ void TalkThread_Duckman::onTerminated() {
 		if (!(_flags & 4))
 			_vm->stopVoice();
 		if (!(_flags & 8)) {
-			// TODO largeObj_removeText();
+			_vm->_screenText->removeText();
 		}
 		if (!(_flags & 2)) {
 			Control *control = _vm->_dict->getObjectControl(_objectId);
@@ -291,16 +286,17 @@ static char *debugW2I(byte *wstr) {
 }
 
 int TalkThread_Duckman::insertText() {
-	int charCount = 100;
 	debug("%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
-	_entryText = 0;
-	// TODO _vm->getDimensions1(&dimensions);
-	// TODO _vm->insertText(_currEntryText, 0x00120001, dimensions, 0, 2, 0, 0, _colorR, _colorG, _colorB, 0, &outTextPtr);
-	// TODO _vm->charCount = (char *)outTextPtr - (char *)text;
-	// TODO _entryText = outTextPtr;
-	// TODO _vm->getPoint1(&pt);
-	// TODO _vm->updateTextInfoPosition(pt);
-	return charCount >> 1;
+	WidthHeight dimensions;
+	_vm->getDefaultTextDimensions(dimensions);
+	uint16 *outTextPtr;
+	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions, Common::Point(0, 0), 2, 0, 0, _colorR, _colorG, _colorB, outTextPtr);
+	_entryText = (byte*)outTextPtr;
+	Common::Point pt;
+	_vm->getDefaultTextPosition(pt);
+	_vm->_screenText->updateTextInfoPosition(pt);
+	int charCount = (_entryText - _currEntryText) / 2;
+	return charCount;
 }
 
 TalkEntry *TalkThread_Duckman::getTalkResourceEntry(uint32 talkId) {

@@ -24,6 +24,7 @@
 #include "illusions/dictionary.h"
 #include "illusions/actorresource.h"
 #include "illusions/backgroundresource.h"
+#include "illusions/fontresource.h"
 #include "illusions/talkresource.h"
 
 namespace Illusions {
@@ -38,6 +39,18 @@ void Dictionary::removeActorType(uint32 id) {
 
 ActorType *Dictionary::findActorType(uint32 id) {
 	return _actorTypes.find(id);
+}
+
+void Dictionary::addFont(uint32 id, FontResource *fontResource) {
+	_fontResources.add(id, fontResource);
+}
+
+void Dictionary::removeFont(uint32 id) {
+	_fontResources.remove(id);
+}
+
+FontResource *Dictionary::findFont(uint32 id) {
+	return _fontResources.find(id);
 }
 
 void Dictionary::addSequence(uint32 id, Sequence *sequence) {

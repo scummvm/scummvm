@@ -61,6 +61,7 @@ protected:
 
 // Convenience macros
 #define	ARG_SKIP(x) opCall.skip(x); 
+#define ARG_BYTE(name) byte name = opCall.readByte(); debug(0, "ARG_BYTE(" #name " = %d)", name);
 #define ARG_INT16(name) int16 name = opCall.readSint16(); debug(0, "ARG_INT16(" #name " = %d)", name);
 #define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(0, "ARG_UINT32(" #name " = %08X)", name);
 

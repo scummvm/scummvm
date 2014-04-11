@@ -34,7 +34,8 @@ enum ThreadType {
 	kTTTimerThread       = 2,
 	kTTTalkThread        = 3,
 	kTTAbortableThread   = 4,
-	kTTSpecialThread     = 5
+	kTTSpecialThread     = 5,
+	kTTCauseThread       = 6
 };
 
 enum ThreadStatus {
