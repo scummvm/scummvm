@@ -284,6 +284,7 @@ private:
 	Common::Array<int16> _flags;
 public:
 	Common::Array<int> _spriteIndexes;
+	Common::Array<int> _sequenceIndexes;
 	
 	int _timebombClock, _timebombTimer;
 	int _v0;

@@ -29,11 +29,12 @@ namespace MADS {
 namespace Nebular {
 
 Globals::Globals() {
-	// Initialise lists
+	// Initialize lists
 	_flags.resize(210);
 	_spriteIndexes.resize(30);
+	_sequenceIndexes.resize(30);
 
-	// Initialise game flags
+	// Initialize game flags
 	_timebombClock = 0;
 	_timebombTimer = 0;
 	_v0 = 0;

@@ -1514,6 +1514,199 @@ void Scene103::postActions() {
 	}
 }
 
-} // End of namespace Nebular
+/*------------------------------------------------------------------------*/
 
+void Scene104::setup() {
+	// Preloading has been skipped
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene104::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', -1), false);
+	_globals._sequenceIndexes[1]  = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 1);
+
+	if (_scene->_priorSceneId == 105)
+		_game._player._playerPos = Common::Point(302, 107);
+	else if (_scene->_priorSceneId != -2)
+		_game._player._playerPos = Common::Point(160, 134);
+
+	_loseFl = false;
+	_game.loadQuoteSet(0x35, 0x34, 0);
+	_kargShootingFl = false;
+
+	if (_vm->getRandomNumber(1, 3) == 1) {
+		_scene->loadAnimation(Resources::formatName(104, 'B', -1, EXT_AA, ""), 0);
+		_kargShootingFl = true;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene104::step() {
+	if ((_game._player._playerPos == Common::Point(189, 70)) && (_game._trigger || !_loseFl)) {
+		if (_game._player._facing == FACING_SOUTHWEST || _game._player._facing == FACING_SOUTHEAST)
+			_game._player._facing = FACING_SOUTH;
+
+		if (_game._player._facing == FACING_NORTHWEST || _game._player._facing == FACING_NORTHEAST)
+			_game._player._facing = FACING_NORTH;
+
+		bool mirrorFl = false;
+		if (_game._player._facing == FACING_WEST) {
+			_game._player._facing = FACING_EAST;
+			mirrorFl = true;
+		}
+
+		_loseFl = true;
+
+		switch (_game._player._facing) {
+		case FACING_EAST:
+			switch (_game._trigger) {
+			case 0:
+				_scene->_kernelMessages.reset();
+				_scene->_activeAnimation->free();
+				_scene->resetScene();
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+				warning("TODO: sub7C8DE()");
+				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], mirrorFl, 7, 1, 0, 0);
+				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(198, 143));
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SM_0, 0, 1);
+				break;
+
+			case 1:
+				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], mirrorFl, 7, 0, 0, 0);
+				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(198, 143));
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -2, -2);
+				_scene->_sequences.addTimer(90, 2);
+				break;
+
+			case 2:
+				_vm->_dialogs->show(0x28A6);
+				_scene->_reloadSceneFlag = true;
+				break;
+			}
+			break;
+
+		case FACING_SOUTH:
+			switch (_game._trigger) {
+			case 0:
+				_scene->_kernelMessages.reset();
+				_scene->_activeAnimation->free();
+				_scene->resetScene();
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
+				warning("TODO: sub7C8DE()");
+				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
+				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 14);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_0, 0, 1);
+				break;
+
+			case 1:
+				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 5, 1, 0, 0);
+				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 15, 32);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_0, 0, 2);
+				break;
+
+			case 2:
+				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 3, 0, 0, 0);
+				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -2, -2);
+				_scene->_sequences.addTimer(90, 3);
+				break;
+
+			case 3:
+				_vm->_dialogs->show(0x28A6);
+				_scene->_reloadSceneFlag = true;
+				break;
+			}
+			break;
+
+		case FACING_NORTH:
+			switch (_game._trigger) {
+			case 0:
+				_scene->_kernelMessages.reset();
+				_scene->_activeAnimation->free();
+				_scene->resetScene();
+				_game._player._stepEnabled = false;
+				_game._player._visible   = false;
+				_globals._spriteIndexes[4]  = _scene->_sprites.addSprites(formAnimName('a', 2), false);
+				warning("TODO: sub7C8DE()");
+				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 8, 1, 0, 0);
+				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(198, 143));
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SM_0, 0, 1);
+				if (_game._storyMode >= STORYMODE_NICE)
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SM_FRAME_INDEX, 15, 2);
+				break;
+
+			case 1:
+				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 8, 0, 0, 0);
+				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(198, 143));
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -2, -2);
+				_scene->_sequences.addTimer(90, 2);
+				break;
+
+			case 2:
+				_vm->_dialogs->show(0x28A6);
+				_scene->_reloadSceneFlag = true;
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+
+		if (!_game._trigger)
+			_vm->_sound->command(34);
+	}
+
+	if (_game._player._moving && (_scene->_rails.getNext() > 0)) {
+		_game._player.cancelCommand();
+		_game._player.startWalking(Common::Point(189, 70), FACING_NONE);
+		_scene->_rails.resetNext();
+	}
+
+	if ((_game._player._special > 0) && _game._player._stepEnabled)
+		_game._player._stepEnabled = false;
+
+	if (_kargShootingFl && (_scene->_activeAnimation->getCurrentFrame() >= 19)) {
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
+		_kargShootingFl = false;
+	}
+}
+
+void Scene104::preActions() {
+	if (_action.isAction(0x15D, 0x74))
+		_game._player._walkOffScreenSceneId = 105;
+
+	if (_action.isAction(0x15D, 0x75))
+		_game._player._walkOffScreenSceneId = 106;
+}
+
+void Scene104::actions() {
+	if (_action._lookFlag)
+		_vm->_dialogs->show(0x28A5);
+	else if (_action.isAction(VERB_LOOK, 0x5E))
+		_vm->_dialogs->show(0x28A4);
+	else if (_action.isAction(VERB_LOOK, 0x158))
+		_vm->_dialogs->show(0x28A3);
+	else if (_action.isAction(VERB_LOOK, 0x4D))
+		_vm->_dialogs->show(0x28A1);
+	else if (_action.isAction(VERB_LOOK, 0xF0))
+		_vm->_dialogs->show(0x28A2);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+} // End of namespace Nebular
 } // End of namespace MADS

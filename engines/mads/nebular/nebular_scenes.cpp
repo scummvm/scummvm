@@ -53,6 +53,8 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 		return new Scene102(vm);
 	case 103:
 		return new Scene103(vm);
+	case 104:
+		return new Scene104(vm);
 
 	// Scene group #2
 	case 201:

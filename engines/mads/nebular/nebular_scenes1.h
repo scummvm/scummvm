@@ -113,8 +113,23 @@ public:
 	virtual void postActions();
 };
 
-} // End of namespace Nebular
+class Scene104 : public Scene1xx {
+private:
+	bool _kargShootingFl;
+	bool _loseFl;
 
+public:
+	Scene104(MADSEngine *vm) : Scene1xx(vm), _kargShootingFl(false), _loseFl(false) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
+} // End of namespace Nebular
 } // End of namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES1_H */
