@@ -175,7 +175,7 @@ void Game::sectionLoop() {
 		// Reset the user interface
 		_screenObjects._forceRescan = true;
 		_screenObjects._inputMode = kInputBuildingSentences;
-		_scene._userInterface._scrollerY = 0;
+		_scene._userInterface._scrollbarActive = SCROLLBAR_NONE;
 		
 		_player._loadsFirst = true;
 

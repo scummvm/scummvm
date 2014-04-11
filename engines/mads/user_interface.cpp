@@ -208,11 +208,15 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_scrollFlag = false;
 	_category = CAT_NONE;
 	_inventoryTopIndex = 0;
-	_objectY = 0;
 	_selectedInvIndex = -1;
 	_selectedActionIndex = 0;
 	_selectedItemVocabIdx = -1;
-	_scrollerY = 0;
+	_scrollbarActive = SCROLLBAR_NONE;
+	_scrollbarOldActive = SCROLLBAR_NONE;
+	_scrollbarStrokeType = SCROLLBAR_NONE;
+	_scrollbarQuickly = false;
+	_scrollbarMilliTime = 0;
+	_scrollbarElevator = _scrollbarOldElevator = 0;
 	_highlightedCommandIndex = -1;
 	_highlightedInvIndex = -1;
 	_highlightedItemVocabIndex = -1;
@@ -327,9 +331,93 @@ void UserInterface::drawItemVocabList() {
 }
 
 void UserInterface::drawScrolller() {
-	if (_scrollerY > 0)
-		writeVocab(CAT_INV_SCROLLER, _scrollerY);
+	if (_scrollbarActive)
+		writeVocab(CAT_INV_SCROLLER, _scrollbarActive);
 	writeVocab(CAT_INV_SCROLLER, 4);
+}
+
+void UserInterface::updateInventoryScroller() {
+	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
+	Common::Array<int> &inventoryList = _vm->_game->_objects._inventoryList;
+
+	if (screenObjects._inputMode != kInputBuildingSentences)
+		return;
+
+	_scrollbarActive = SCROLLBAR_NONE;
+
+	if ((
+		(screenObjects._category == CAT_INV_SCROLLER) ||
+		(screenObjects._category != CAT_INV_SCROLLER && _scrollbarOldActive == SCROLLBAR_ELEVATOR)
+	) && (_vm->_events->_mouseStatusCopy || _vm->_easyMouse)) {
+		if ((_vm->_events->_mouseClicked || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy)) 
+				&& (screenObjects._category == CAT_INV_SCROLLER))
+			_scrollbarStrokeType = (ScrollbarActive)screenObjects._spotId;
+
+		if (screenObjects._spotId == _scrollbarStrokeType || _scrollbarOldActive == SCROLLBAR_ELEVATOR) {
+			_scrollbarActive = _scrollbarStrokeType;
+			uint32 currentMilli = g_system->getMillis();
+			uint32 timeInc = _scrollbarQuickly ? 100 : 380;
+
+			if (_vm->_events->_mouseClicked || (_vm->_events->_mouseStatusCopy && (_scrollbarMilliTime + timeInc) <= currentMilli)) {
+				_scrollbarQuickly = _vm->_events->_vD2 < 1;
+				_scrollbarMilliTime = currentMilli;
+
+				switch (_scrollbarStrokeType) {
+				case 1:
+					// Scroll up
+					if (_inventoryTopIndex > 0 && inventoryList.size() > 0) {
+						--_inventoryTopIndex;
+						_inventoryChanged = true;
+					}
+					break;
+
+				case 2:
+					// Scroll down
+					if (_inventoryTopIndex < ((int)inventoryList.size() - 1) && inventoryList.size() > 1) {
+						++_inventoryTopIndex;
+						_inventoryChanged = true;
+					}
+					break;
+
+				case 3: {
+					// Inventory slider
+					int newIndex = CLIP((int)_vm->_events->currentPos().y - 170, 0, 17)
+						* inventoryList.size() / 10;
+					if (newIndex >= (int)inventoryList.size())
+						newIndex = inventoryList.size() - 1;
+
+					if (inventoryList.size() > 0) {
+						_inventoryChanged = newIndex != _inventoryTopIndex;
+						_inventoryTopIndex = newIndex;
+					}
+					break;
+				}
+
+				default:
+					break;
+				}
+
+				if (_inventoryChanged) {
+					int dummy;
+					updateSelection(CAT_INV_LIST, 0, &dummy);
+				}
+			}
+		}
+	}
+
+	if (_scrollbarActive != _scrollbarOldActive || _scrollbarElevator != _scrollbarOldElevator)
+		scrollbarChanged();
+
+	_scrollbarOldActive = _scrollbarActive;
+	_scrollbarOldElevator = _scrollbarElevator;
+}
+
+void UserInterface::scrollbarChanged() {
+	Common::Rect r(73, 4, 73 + 9, 4 + 38);
+	_uiSlots.add(r);
+	_uiSlots.draw(false, false);
+	drawScrolller();
+	updateRect(r);
 }
 
 void UserInterface::writeVocab(ScrCategory category, int id) {
@@ -393,7 +481,8 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 			break;
 		}
 
-		font->setColorMode((id == 4) || (_scrollerY == 3) ? SELMODE_HIGHLIGHTED : SELMODE_UNSELECTED);
+		font->setColorMode((id == 4) || (_scrollbarActive == SCROLLBAR_ELEVATOR) ? 
+			SELMODE_HIGHLIGHTED : SELMODE_UNSELECTED);
 		font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
 		break;
 	default:
@@ -561,7 +650,7 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 			break;
 		case 4:
 			// Thumb
-			bounds.top = _objectY + 14;
+			bounds.top = _scrollbarElevator + 14;
 			bounds.setHeight(1);
 			break;
 		default:
@@ -753,6 +842,7 @@ void UserInterface::selectObject(int invIndex) {
 
 void UserInterface::updateSelection(ScrCategory category, int newIndex, int *idx) {
 	Game &game = *_vm->_game;
+	Common::Array<int> &invList = game._objects._inventoryList;
 	Common::Rect bounds;
 
 	if (category == CAT_INV_LIST && _inventoryChanged) {
@@ -764,11 +854,11 @@ void UserInterface::updateSelection(ScrCategory category, int newIndex, int *idx
 		updateRect(bounds);
 		_inventoryChanged = false;
 
-		if (game._objects._inventoryList.size() > 1) {
-			_objectY = 0;
+		if (invList.size() < 2) {
+			_scrollbarElevator = 0;
 		} else {
-			int v = _inventoryTopIndex * 18 / (game._objects._inventoryList.size() - 1);
-			_objectY = MIN(v, 17);
+			int v = _inventoryTopIndex * 18 / (invList.size() - 1);
+			_scrollbarElevator = MIN(v, 17);
 		}
 	} else {
 		int oldIndex = *idx;

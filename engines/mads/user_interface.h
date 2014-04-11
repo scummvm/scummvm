@@ -33,6 +33,14 @@ namespace MADS {
 
 enum { IMG_SPINNING_OBJECT = 200, IMG_TEXT_UPDATE = 201 };
 
+enum ScrollbarActive {
+	SCROLLBAR_NONE = 0,		// No state
+	SCROLLBAR_UP = 1,		// Up butotn
+	SCROLLBAR_DOWN = 2,		// Down button
+	SCROLLBAR_ELEVATOR = 3,	// Elevator bar
+	SCROLLBAR_THUMB = 4		// Scrollbar thumb
+};
+
 class AnimFrameEntry;
 
 class UISlot {
@@ -96,6 +104,7 @@ private:
 	bool _scrollFlag;
 	int _noSegmentsActive;
 	int _someSegmentsActive;
+	ScrollbarActive _scrollbarStrokeType;
 
 	/**
 	 * Loads the elements of the user interface
@@ -138,6 +147,11 @@ private:
 	void drawScrolller();
 
 	/**
+	 * Called when the inventory scrollbar has changed
+	 */
+	void scrollbarChanged();
+
+	/**
 	 * Draw a UI textual element
 	 */
 	void writeVocab(ScrCategory category, int id);
@@ -153,11 +167,10 @@ public:
 	Common::Rect _drawBounds;
 	Common::Rect *_rectP;
 	int _inventoryTopIndex;
-	int _objectY;
 	int _selectedInvIndex;
 	int _selectedActionIndex;
 	int _selectedItemVocabIdx;
-	int _scrollerY;
+	ScrollbarActive _scrollbarActive, _scrollbarOldActive;
 	int _highlightedCommandIndex;
 	int _highlightedInvIndex;
 	int _highlightedItemVocabIndex;
@@ -165,6 +178,9 @@ public:
 	int _categoryIndexes[8];
 	Common::StringArray _talkStrings;
 	Common::Array<int> _talkIds;
+	bool _scrollbarQuickly;
+	uint32 _scrollbarMilliTime;
+	int _scrollbarElevator, _scrollbarOldElevator;
 public:
 	/**
 	* Constructor
@@ -218,6 +234,12 @@ public:
 	void scrollerChanged();
 
 	void scrollInventory();
+
+	/**
+	* Checks for the mouse being on the user interface inventory scroller,
+	* and update the scroller highlight and selected inventory object as necessary
+	*/
+	void updateInventoryScroller();
 
 	void emptyTalkList();
 };
