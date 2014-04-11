@@ -489,7 +489,7 @@ void Scene::doAction() {
 			}
 
 			if (_action._inProgress)
-				warning("TODO: sub_1D9DE");
+				_vm->_game->unhandledAction();
 		}
 	}
 
