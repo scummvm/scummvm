@@ -219,7 +219,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 
 			for (uint i = 0; i < _palAnimData.size(); ++i) {
 				byte g = _palAnimData[i].g;
-				_palAnimData[g].b = artHeader._palAnimData[g].u;
+				_palAnimData[i].b = artHeader._palette[g]._palIndex;
 			}
 		}
 	}

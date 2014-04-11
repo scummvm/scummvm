@@ -250,7 +250,7 @@ void PaletteUsage::transform(Common::Array<RGB6> &palette) {
 	if (!empty()) {
 		for (uint i = 0; i < _data.size(); ++i) {
 			int palIndex = _data[i]._palIndex;
-			_data[i] = palette[palIndex]._palIndex;
+			_data[i]._palIndex = palette[palIndex]._palIndex;
 		}
 	}
 }
