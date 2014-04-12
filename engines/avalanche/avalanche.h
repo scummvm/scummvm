@@ -210,7 +210,7 @@ public:
 	bool _letMeOut;
 	byte _thinks;
 	bool _thinkThing;
-	bool _seeScroll; // TODO: maybe this means we're interacting with the toolbar / a scroll?
+	bool _animationsEnabled; // If set to TRUE, it stops the animation system working. This prevents display of the new sprites before the new picture is loaded or during the display of a scroll. Original name: seescroll.
 	char _objectList[10];
 	// Called .free() for them in ~Gyro().
 

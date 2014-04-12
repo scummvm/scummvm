@@ -1205,8 +1205,9 @@ void Animation::drawSprites() {
  * @remarks	Originally called 'trippancy_link'
  */
 void Animation::animLink() {
-	if (_vm->_dropdown->isActive() || _vm->_seeScroll)
+	if (_vm->_dropdown->isActive() || !_vm->_animationsEnabled)
 		return;
+
 	for (int16 i = 0; i < kSpriteNumbMax; i++) {
 		AnimationType *curSpr = _sprites[i];
 		if (curSpr->_quick && curSpr->_visible)

@@ -464,7 +464,7 @@ void AvalancheEngine::findPeople(byte room) {
 void AvalancheEngine::exitRoom(byte x) {
 	_sound->stopSound();
 	_background->release();
-	_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
+	_animationsEnabled = false;
 
 	switch (x) {
 	case kRoomSpludwicks:
@@ -487,7 +487,7 @@ void AvalancheEngine::exitRoom(byte x) {
 	}
 
 	_interrogation = 0; // Leaving the room cancels all the questions automatically.
-	_seeScroll = false; // Now it can work again!
+	_animationsEnabled = true;
 
 	_lastRoom = _room;
 	if (_room != kRoomMap)
@@ -538,7 +538,7 @@ void AvalancheEngine::putGeidaAt(byte whichPed, byte ped) {
 }
 
 void AvalancheEngine::enterRoom(Room roomId, byte ped) {
-	_seeScroll = true;  // This stops the trippancy system working over the length of this procedure.
+	_animationsEnabled = false;
 
 	findPeople(roomId);
 	_room = roomId;
@@ -922,7 +922,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		break;
 	}
 
-	_seeScroll = false; // Now it can work again!
+	_animationsEnabled = true;
 }
 
 void AvalancheEngine::thinkAbout(byte object, bool type) {
@@ -1442,7 +1442,7 @@ void AvalancheEngine::newGame() {
 	_thinkThing = true;
 	_thinks = 2;
 	refreshObjectList();
-	_seeScroll = false;
+	_animationsEnabled = true;
 
 	avvy->appear(300, 117, kDirRight); // Needed to initialize Avalot.
 	//for (gd = 0; gd <= 30; gd++) for (gm = 0; gm <= 1; gm++) also[gd][gm] = nil;

@@ -157,7 +157,7 @@ void Dialogs::scrollModeNormal() {
 	Common::String e = "(c) 1994";
 
 	setReadyLight(3);
-	_vm->_seeScroll = true;
+	_vm->_animationsEnabled = false;
 	_vm->_graphics->loadMouse(kCurFletch);
 
 	_vm->_graphics->saveScreen();
@@ -216,7 +216,7 @@ void Dialogs::scrollModeNormal() {
 #endif
 
 	setReadyLight(0);
-	_vm->_seeScroll = false;
+	_vm->_animationsEnabled = true;
 	_vm->_holdLeftMouse = false; // Used in Lucerna::checkclick().
 
 	warning("STUB: Scrolls::scrollModeNormal()");
@@ -290,7 +290,7 @@ bool Dialogs::theyMatch(TuneType &played) {
  */
 void Dialogs::scrollModeMusic() {
 	setReadyLight(3);
-	_vm->_seeScroll = true;
+	_vm->_animationsEnabled = false;
 	CursorMan.showMouse(false);
 	_vm->_graphics->loadMouse(kCurFletch);
 
@@ -299,7 +299,7 @@ void Dialogs::scrollModeMusic() {
 		played[i] = kPitchInvalid;
 	int8 lastOne = -1, thisOne = -1; // Invalid values.
 
-	_vm->_seeScroll = true;
+	_vm->_animationsEnabled = false;
 
 	_vm->_graphics->saveScreen();
 	_vm->_graphics->showScroll();
@@ -393,7 +393,7 @@ void Dialogs::scrollModeMusic() {
 	_vm->_graphics->restoreScreen();
 	_vm->_graphics->removeBackup();
 
-	_vm->_seeScroll = false;
+	_vm->_animationsEnabled = true;
 	CursorMan.showMouse(true);
 }
 
