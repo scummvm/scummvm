@@ -134,7 +134,7 @@ private:
 	bool _explosionFl;
 
 public:
-	Scene105(MADSEngine *vm) : Scene1xx(vm) {}
+	Scene105(MADSEngine *vm) : Scene1xx(vm), _explosionFl(false) {}
 
 	virtual void setup();
 	virtual void enter();
