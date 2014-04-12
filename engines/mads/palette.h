@@ -72,6 +72,7 @@ public:
 		int _sortValue;
 
 		UsageEntry(int palIndex) { _palIndex = palIndex; _sortValue = -1; }
+		UsageEntry() { _palIndex = 0; _sortValue = 0; }
 	};
 	struct UsageRange {
 		byte _v1, _v2;

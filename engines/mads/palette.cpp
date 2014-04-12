@@ -84,6 +84,10 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	int palHigh = (flags & 0x800) ? 0x100 : 0xFC;
 	int palIdx;
 
+	PaletteUsage tempUsage(_vm);
+	Common::Array<UsageEntry> tempUsageData;
+	tempUsage.load(&tempUsageData);
+
 	if (flags & 0x4000) {
 		palLow = 0;
 		palIdx = palHigh;
@@ -111,12 +115,12 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	}
 
 	if (hasUsage) {
-		getKeyEntries(palette);
-		prioritize(palette);
+		tempUsage.getKeyEntries(palette);
+		tempUsage.prioritize(palette);
 	}
 
 	int freeIndex;
-	int palCount = getGamePalFreeIndex(&freeIndex);
+	int palCount = tempUsage.getGamePalFreeIndex(&freeIndex);
 	Common::Array<UsageRange> palRange;
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
@@ -148,8 +152,8 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		}
 
 		if (hasUsage && palette[v1]._flags & 0x10) {
-			for (uint usageIndex = 0; usageIndex < _data->size() && !var48; ++usageIndex) {
-				if ((*_data)[usageIndex]._palIndex == palIndex) {
+			for (uint usageIndex = 0; usageIndex < tempUsage._data->size() && !var48; ++usageIndex) {
+				if ((*tempUsage._data)[usageIndex]._palIndex == palIndex) {
 					var48 = true;
 					int dataIndex = MIN(usageIndex, _data->size() - 1);
 					var4 = (*_data)[dataIndex]._palIndex;
