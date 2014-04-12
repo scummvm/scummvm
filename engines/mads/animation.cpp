@@ -403,6 +403,7 @@ void Animation::loadInterface(UserInterface &interfaceSurface, MSurface &depthSu
 		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo) {
 	_scene->_depthStyle = 0;
 	if (header._animMode <= 2) {
+		_vm->_palette->_paletteUsage.setEmpty();
 		sceneInfo->load(header._roomNumber, flags, header._interfaceFile, 0, depthSurface, interfaceSurface);
 		_scene->_depthStyle = sceneInfo->_depthStyle == 2 ? 1 : 0;
 		if (palAnimData) {

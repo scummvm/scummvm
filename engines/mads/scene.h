@@ -128,6 +128,8 @@ public:
 	Layer _layer;
 	bool _lookFlag;
 	Common::Point _customDest;
+	Common::Array<PaletteUsage::UsageEntry> _paletteUsageF;
+	Common::Array<PaletteUsage::UsageEntry> _scenePaletteUsage;
 
 	/**
 	 * Constructor

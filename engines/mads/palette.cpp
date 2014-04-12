@@ -44,27 +44,20 @@ void RGB6::load(Common::SeekableReadStream *f) {
 
 PaletteUsage::PaletteUsage(MADSEngine *vm) {
 	_vm = vm;
+	_data = nullptr;
 }
 
-void PaletteUsage::load(int count, ...) {
-	va_list va;
-	va_start(va, count);
-
-	_data.clear();
-	for (int i = 0; i < count; ++i)
-		_data.push_back(UsageEntry(va_arg(va, int)));
-
-	va_end(va);
+void PaletteUsage::load(Common::Array<UsageEntry> *data) {
+	_data = data;
 }
-
 
 void PaletteUsage::getKeyEntries(Common::Array<RGB6> &palette) {
-	_data.clear();
+	_data->clear();
 
 	 for (uint i = 0; i < palette.size(); ++i) {
 		 byte *uPtr = &palette[i]._flags;
-		 if ((*uPtr & 0x10) && _data.size() < 3) {
-			 _data.push_back(UsageEntry(i));
+		 if ((*uPtr & 0x10) && _data->size() < 3) {
+			 _data->push_back(UsageEntry(i));
 		 }
 	 }
 }
@@ -74,12 +67,12 @@ static bool sortHelper(const PaletteUsage::UsageEntry &ue1, const PaletteUsage::
 }
 
 void PaletteUsage::prioritize(Common::Array<RGB6> &palette) {
-	for (uint i = 0; i < _data.size(); ++i) {
-		RGB6 &palEntry = palette[_data[i]._palIndex];
-		_data[i]._sortValue = rgbMerge(palEntry);
+	for (uint i = 0; i < _data->size(); ++i) {
+		RGB6 &palEntry = palette[(*_data)[i]._palIndex];
+		(*_data)[i]._sortValue = rgbMerge(palEntry);
 	}
 	
-	Common::sort(_data.begin(), _data.end(), sortHelper);
+	Common::sort(_data->begin(), _data->end(), sortHelper);
 }
 
 static bool rangeSorter(const PaletteUsage::UsageRange &ur1, const PaletteUsage::UsageRange &ur2) {
@@ -105,15 +98,15 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 	int rgbIndex = _vm->_palette->_rgbList.scan();
 	uint32 rgbMask = 1 << rgbIndex;
-	int varA = flags & 0x8000;
-	bool hasUsage = !_vm->_palette->_paletteUsage.empty();
+	bool noUsageFlag = flags & 0x8000;
+	bool hasUsage = _data != nullptr;
 	bool flag1 = false;
 
 	if (hasUsage) {
-		if (varA || _vm->_palette->_paletteUsage.empty())
+		if (noUsageFlag || _data->size() == 0)
 			hasUsage = false;
 
-		if (varA && !_vm->_palette->_paletteUsage.empty())
+		if (noUsageFlag && _data->size() > 0)
 			flag1 = true;
 	}
 
@@ -155,18 +148,18 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		}
 
 		if (hasUsage && palette[v1]._flags & 0x10) {
-			for (uint usageIndex = 0; usageIndex < _data.size() && !var48; ++usageIndex) {
-				if (_data[usageIndex]._palIndex == palIndex) {
+			for (uint usageIndex = 0; usageIndex < _data->size() && !var48; ++usageIndex) {
+				if ((*_data)[usageIndex]._palIndex == palIndex) {
 					var48 = true;
-					int dataIndex = MIN(usageIndex, _data.size() - 1);
-					var4 = _data[dataIndex]._palIndex;
+					int dataIndex = MIN(usageIndex, _data->size() - 1);
+					var4 = (*_data)[dataIndex]._palIndex;
 				}
 			}
 		}
 
 		if (flag1 && palette[palIndex]._flags & 0x10) {
-			for (uint usageIndex = 0; usageIndex < _data.size() && !var48; ++usageIndex) {
-				if (_data[usageIndex]._palIndex == palIndex) {
+			for (uint usageIndex = 0; usageIndex < _data->size() && !var48; ++usageIndex) {
+				if ((*_data)[usageIndex]._palIndex == palIndex) {
 					var48 = true;
 					var4 = 0xF0 + usageIndex;
 
@@ -180,7 +173,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 			}
 		}
 
-		if (!var48 && !varA) {
+		if (!var48 && !noUsageFlag) {
 			int var2 = (palette[palIndex]._flags & 0x20) ||
 				(((flags & 0x2000) || (palette[palIndex]._flags & 0x4000)) &&
 				((flags & 0x1000) || (palCount == 0))) ? 0x7fff : 1;
@@ -229,7 +222,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		}
 		
 		assert(var48);
-		int var52 = (varA && palette[palIndex]._u2) ? 2 : 0;
+		int var52 = (noUsageFlag && palette[palIndex]._u2) ? 2 : 0;
 
 		_vm->_palette->_palFlags[var4] |= var52 | rgbMask;
 		palette[palIndex]._palIndex = var4;
@@ -248,9 +241,9 @@ int PaletteUsage::rgbMerge(RGB6 &palEntry) {
 
 void PaletteUsage::transform(Common::Array<RGB6> &palette) {
 	if (!empty()) {
-		for (uint i = 0; i < _data.size(); ++i) {
-			int palIndex = _data[i]._palIndex;
-			_data[i]._palIndex = palette[palIndex]._palIndex;
+		for (uint i = 0; i < _data->size(); ++i) {
+			int palIndex = (*_data)[i]._palIndex;
+			(*_data)[i]._palIndex = palette[palIndex]._palIndex;
 		}
 	}
 }
@@ -433,7 +426,7 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 	if (highRange) {
 		_palFlags[255] = 1;
 
-		Common::fill(&_palFlags[255 - highRange], &_palFlags[254], _palFlags[255]);
+		Common::fill(&_palFlags[256 - highRange], &_palFlags[254], _palFlags[255]);
 	}
 
 	_rgbList.clear();

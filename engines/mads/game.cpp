@@ -189,7 +189,12 @@ void Game::sectionLoop() {
 			_vm->_palette->initPalette();
 		}
 
-		_vm->_palette->_paletteUsage.load(3, 0xF0, 0xF1, 0xF2);
+		// Set up scene palette usage
+		_scene._scenePaletteUsage.clear();
+		_scene._scenePaletteUsage.push_back(PaletteUsage::UsageEntry(0xF0));
+		_scene._scenePaletteUsage.push_back(PaletteUsage::UsageEntry(0xF1));
+		_scene._scenePaletteUsage.push_back(PaletteUsage::UsageEntry(0xF2));
+		_vm->_palette->_paletteUsage.load(&_scene._scenePaletteUsage);
 		
 		if (!_player._spritesLoaded && _player._loadsFirst) {
 			if (_player.loadSprites(""))

@@ -71,7 +71,7 @@ public:
 		uint16 _palIndex;
 		int _sortValue;
 
-		UsageEntry(int palIndex) { _palIndex = palIndex; }
+		UsageEntry(int palIndex) { _palIndex = palIndex; _sortValue = -1; }
 	};
 	struct UsageRange {
 		byte _v1, _v2;
@@ -80,27 +80,34 @@ public:
 	};
 private:
 	MADSEngine *_vm;
-	Common::Array<UsageEntry> _data;
+	Common::Array<UsageEntry> *_data;
 
 	int rgbMerge(RGB6 &palEntry);
 
 	int getGamePalFreeIndex(int *palIndex);
 
 	int rgbFactor(byte *palEntry, RGB6 &pal6);
+
+	Common::Array<UsageEntry> _nullUsage;
 public:
 	/**
 	 * Constructor
 	 */
 	PaletteUsage(MADSEngine *vm);
 
-	void load(int count, ...);
+	void load(Common::Array<UsageEntry> *data);
 
 	/**
 	 * Returns whether the usage list is empty
 	 */
-	bool empty() const { return _data.size() == 0;  }
+	bool empty() const { return _data == nullptr; }
 
-	uint16 &operator[](int index) { return _data[index]._palIndex; }
+	uint16 &operator[](int index) { return (*_data)[index]._palIndex; }
+
+	/**
+	 * Assigns the class to an empty usage array
+	 */
+	void setEmpty() { _data = &_nullUsage; }
 
 	/**
 	 * Gets key entries from the passed palette

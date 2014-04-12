@@ -50,6 +50,8 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_layer = LAYER_GUI;
 	_lookFlag = false;
 
+	_paletteUsageF.push_back(PaletteUsage::UsageEntry(0xF));
+
 	_verbList.push_back(VerbInit(VERB_LOOK, VERB_THAT, PREP_NONE));
 	_verbList.push_back(VerbInit(VERB_TAKE, VERB_THAT, PREP_NONE));
 	_verbList.push_back(VerbInit(VERB_PUSH, VERB_THAT, PREP_NONE));
@@ -121,8 +123,8 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_spriteSlots.reset(false);
 	_sequences.clear();
 	_kernelMessages.clear();
+	_vm->_palette->_paletteUsage.load(&_scenePaletteUsage);
 
-	// TODO: palletteUsage reset?  setPalette(_nullPalette);
 	int flags = SCENEFLAG_LOAD_SHADOW;
 	if (_vm->_dithering)
 		flags |= SCENEFLAG_DITHER;
@@ -144,7 +146,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	loadVocab();
 
 	// Load palette usage
-	_vm->_palette->_paletteUsage.load(1, 0xF);
+	_vm->_palette->_paletteUsage.load(&_paletteUsageF);
 
 	// Load interface
 	flags = PALFLAG_RESERVED | ANIMFLAG_LOAD_BACKGROUND;
@@ -157,7 +159,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	MSurface depthSurface;
 	_animationData->load(_userInterface, depthSurface, prefix, flags, nullptr, nullptr);
 	
-	_vm->_palette->_paletteUsage.load(0);
+	_vm->_palette->_paletteUsage.load(&_scenePaletteUsage);
 
 	_bandsRange = _sceneInfo->_yBandsEnd - _sceneInfo->_yBandsStart;
 	_scaleRange = _sceneInfo->_maxScale - _sceneInfo->_minScale;
@@ -576,6 +578,7 @@ void Scene::free() {
 		_activeAnimation = nullptr;
 	}
 
+	_vm->_palette->_paletteUsage.load(nullptr);
 	_hotspots.clear();
 	_backgroundSurface.free();
 	_depthSurface.free();
