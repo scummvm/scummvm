@@ -336,7 +336,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 }
 
-bool AvalancheEngine::canSaveGameStateCurrently() { // TODO: Refine these!!!
+bool AvalancheEngine::canSaveGameStateCurrently() {
 	return (_animationsEnabled && _alive);
 }
 
@@ -381,7 +381,7 @@ Common::String AvalancheEngine::getSaveFileName(const int slot) {
 	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
-bool AvalancheEngine::canLoadGameStateCurrently() { // TODO: Refine these!!!
+bool AvalancheEngine::canLoadGameStateCurrently() {
 	return (_animationsEnabled);
 }
 

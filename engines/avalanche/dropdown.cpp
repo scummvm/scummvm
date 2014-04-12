@@ -678,7 +678,7 @@ void DropDownMenu::setup() {
 	_menuBar.draw();
 }
 
-void DropDownMenu::update() { // TODO: Optimize it ASAP!!! It really needs it...
+void DropDownMenu::update() {
 	_vm->_graphics->saveScreen();
 
 	Common::Point cursorPos = _vm->getMousePos();
