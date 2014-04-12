@@ -326,7 +326,7 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	for (int idx = 0; idx < _header._spriteSetsCount; ++idx)
 		usageList.push_back(_spriteSets[idx]->_usageIndex);
 
-	if (usageList.size() > 0 > 0)
+	if (usageList.size() > 0)
 		_vm->_palette->_paletteUsage.updateUsage(usageList, _header._messagesCount);
 
 	if (_header._animMode == 4) {
