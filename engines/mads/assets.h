@@ -89,6 +89,11 @@ public:
 	 */
 	SpriteAsset(MADSEngine *vm, Common::SeekableReadStream *stream, int flags);
 
+	/**
+	 * Destructor
+	 */
+	~SpriteAsset();
+
 	int getCount() { return _frameCount; }
 	int getFrameRate() const { return _frameRate; }
 	int getPixelSpeed() const { return _pixelSpeed; }

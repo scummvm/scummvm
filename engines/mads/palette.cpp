@@ -276,6 +276,21 @@ void PaletteUsage::updateUsage(Common::Array<int> &usageList, int sceneUsageInde
 	_vm->_palette->_rgbList[sceneUsageIndex] = true;
 }
 
+void PaletteUsage::resetPalFlags(int idx) {
+	if (idx >= 0 && idx < 32) {
+		uint32 rgbMask = ~(1 << idx);
+
+		uint32 *flagP = _vm->_palette->_palFlags;
+		for (int i = 0; i < 256; ++i, ++flagP) {
+			*flagP &= rgbMask;
+			if (*flagP == 2)
+				*flagP = 0;
+		}
+
+		_vm->_palette->_rgbList[idx] = 0;
+	}
+}
+
 int PaletteUsage::getGamePalFreeIndex(int *palIndex) {
 	*palIndex = -1;
 	int count = 0;
@@ -330,6 +345,7 @@ Palette::Palette(MADSEngine *vm) : _vm(vm), _paletteUsage(vm) {
 	_lowRange = 0;
 	_highRange = 0;
 	Common::fill(&_mainPalette[0], &_mainPalette[PALETTE_SIZE], 0);
+	Common::fill(&_palFlags[0], &_palFlags[PALETTE_COUNT], 0);
 }
 
 void Palette::setPalette(const byte *colors, uint start, uint num) {
@@ -423,7 +439,7 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 
 	// Init low range to common RGB values
 	if (lowRange) {
-		Common::fill(&_palFlags[0], &_palFlags[lowRange], 1);
+		Common::fill(&_palFlags[0], &_palFlags[lowRange - 1], 1);
 	}
 
 	// Init high range to common RGB values

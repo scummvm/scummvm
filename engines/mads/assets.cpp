@@ -46,6 +46,11 @@ SpriteAsset::SpriteAsset(MADSEngine *vm, Common::SeekableReadStream *stream, int
 	load(stream, flags);
 }
 
+SpriteAsset::~SpriteAsset() {
+	if (_usageIndex)
+		_vm->_palette->_paletteUsage.resetPalFlags(_usageIndex);
+}
+
 void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 	int curFrame = 0;
 	uint32 frameOffset = 0;

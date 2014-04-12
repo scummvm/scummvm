@@ -322,7 +322,12 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 		_spriteListIndexes[_header._spritesIndex] = _scene->_sprites.add(sprites);
 	}
 
-	// TODO: List var_420/var_422 population that seems to overwrite other structures?
+	Common::Array<int> usageList;
+	for (int idx = 0; idx < _header._spriteSetsCount; ++idx)
+		usageList.push_back(_spriteSets[idx]->_usageIndex);
+
+	if (usageList.size() > 0 > 0)
+		_vm->_palette->_paletteUsage.updateUsage(usageList, _header._messagesCount);
 
 	if (_header._animMode == 4) {
 		// Remaps the sprite list indexes for frames to the loaded sprite list indexes
