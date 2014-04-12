@@ -373,7 +373,7 @@ void SequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
 	SequenceEntry &seqEntry = _entries[seqIndex];
 	SpriteAsset &spriteSet = *scene._sprites[seqEntry._spritesIndex];
 	int numSprites = spriteSet.getCount();
-	int tempStart = startVal, tempEnd = endVal;
+	int tempStart, tempEnd;
 
 	switch (startVal) {
 	case -2:
@@ -381,6 +381,9 @@ void SequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
 		break;
 	case -1:
 		tempStart = 1;
+		break;
+	default:
+		tempStart = startVal;
 		break;
 	}
 
@@ -393,14 +396,14 @@ void SequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
 		tempEnd = 1;
 		break;
 	default:
-		tempEnd = numSprites;
+		tempEnd = endVal;
 		break;
 	}
 
 	seqEntry._frameStart = tempStart;
 	seqEntry._numSprites = tempEnd;
 
-	seqEntry._frameIndex = (seqEntry._frameInc < 0) ? tempStart : tempEnd;
+	seqEntry._frameIndex = (seqEntry._frameInc >= 0) ? tempStart : tempEnd;
 }
 
 void SequenceList::scan() {
