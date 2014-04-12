@@ -356,7 +356,7 @@ void Scene101::actions() {
 				_game._player._stepEnabled = true;
 				_sittingFl = true;
 				_scene->_hotspots.activate(71, false);
-				_chairHotspotId = _scene->_dynamicHotspots.add(71, 0x13F, -1, Common::Rect(159, 84, 33, 36));
+				_chairHotspotId = _scene->_dynamicHotspots.add(71, 0x13F, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
 				if (!_action.isAction(VERB_LOOK, 0x180)) {
 					_action._inProgress = false;
 					return;
