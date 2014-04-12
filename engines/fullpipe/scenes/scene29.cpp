@@ -641,7 +641,7 @@ void sceneHandler29_ballHitCheck() {
 
 				g_vars->scene29_redBalls.field_8 = newball;
 
-				g_vars->scene29_flyingRedBalls.sub05(ball);
+				g_vars->scene29_flyingRedBalls.removeBall(ball);
 
 				sceneHandler29_manHit();
 

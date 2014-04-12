@@ -1465,8 +1465,30 @@ Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
 	return pTail;
 }
 
-void BallChain::sub05(Ball *ball) {
-	warning("STUB: BallChain::sub05");
+void BallChain::removeBall(Ball *ball) {
+	if (ball == pHead)
+		pHead = ball->p0;
+	else
+		ball->p1->p0 = ball->p0;
+
+	if (ball == field_8)
+		field_8 = ball->p1;
+	else
+		ball->p0->p1 = ball->p1;
+
+	ball->p0 = pTail;
+	pTail = ball;
+
+	numBalls--;
+
+	if (!numBalls) {
+		numBalls = 0;
+		pTail = 0;
+		field_8 = 0;
+		pHead = 0;
+		free(cPlex);
+		cPlex = 0;
+	}
 }
 
 
