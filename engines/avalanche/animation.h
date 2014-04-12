@@ -102,9 +102,8 @@ public:
 		kProcBackAndForth,
 		kProcFaceAvvy,
 		kProcArrow,
-		kProcSpludwick, // Unused
 		kProcGrabAvvy,
-		kProcGeida // Spludwick uses it as well for homing! TODO: Unify it with kProcSpludwick.
+		kProcFollowAvvy
 	};
 
 	AnimationType *_sprites[kSpriteNumbMax];
@@ -167,7 +166,7 @@ private:
 	// Movements for Homing NPCs: Spludwick and Geida.
 	void spin(Direction dir, byte &tripnum);
 	void takeAStep(byte &tripnum);
-	void geidaProcs(byte tripnum);
+	void follow(byte tripnum);
 
 	void drawSprites();
 };

@@ -534,7 +534,7 @@ void AvalancheEngine::putGeidaAt(byte whichPed, byte ped) {
 	spr1->init(5, false); // load Geida
 	_animation->appearPed(1, whichPed);
 	spr1->_callEachStepFl = true;
-	spr1->_eachStepProc = Animation::kProcGeida;
+	spr1->_eachStepProc = Animation::kProcFollowAvvy;
 }
 
 void AvalancheEngine::enterRoom(Room roomId, byte ped) {
@@ -619,7 +619,7 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 			}
 
 			spr1->_callEachStepFl = true;
-			spr1->_eachStepProc = Animation::kProcGeida;
+			spr1->_eachStepProc = Animation::kProcFollowAvvy;
 		} else
 			_whereIs[kPeopleSpludwick - 150] = kRoomNowhere;
 		break;
