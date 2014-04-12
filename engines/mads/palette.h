@@ -254,6 +254,8 @@ public:
 
 	void lock();
 	void unlock();
+
+	void refreshHighColors();
 };
 
 } // End of namespace MADS

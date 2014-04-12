@@ -524,4 +524,13 @@ void Palette::unlock() {
 	_rgbList[31] = false;
 	_lockFl = false;
 }
+
+void Palette::refreshHighColors() {
+	int val = 18;
+	if (_vm->_game->_scene._animFlag)
+		val += _vm->_game->_scene._animCount;
+
+	setPalette(_mainPalette, val, 256 - val);
+}
+
 } // End of namespace MADS
