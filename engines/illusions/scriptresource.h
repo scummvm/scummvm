@@ -61,6 +61,8 @@ public:
 	void clear();
 	byte get(uint index);
 	void set(uint index, byte value);
+	byte getC0(uint index);
+	void setC0(uint index, byte value);
 public:
 	uint _count;
 	byte *_blockCounters;
@@ -114,7 +116,7 @@ public:
 	byte *getCode(uint32 codeOffs);
 	ProgInfo *getProgInfo(uint32 index);
 	uint32 getObjectActorTypeId(uint32 objectId);
-	uint32 getField6C() const { return _field6C; }
+	uint32 getMainActorObjectId() const { return _mainActorObjectId; }
 public:
 	byte *_data;
 	uint32 _dataSize;
@@ -128,7 +130,7 @@ public:
 	uint32 _soundIds[27];
 	uint _objectMapCount;
 	uint32 *_objectMap;
-	uint32 _field6C;
+	uint32 _mainActorObjectId;
 	void fixupProgInfosDuckman();
 };
 

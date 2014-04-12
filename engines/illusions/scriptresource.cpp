@@ -113,6 +113,17 @@ void BlockCounters::set(uint index, byte value) {
 	_blockCounters[index - 1] ^= (_blockCounters[index - 1] ^ value) & 0x3F;
 }
 
+byte BlockCounters::getC0(uint index) {
+	return _blockCounters[index - 1] & 0xC0;
+}
+
+void BlockCounters::setC0(uint index, byte value) {
+	byte oldValue = _blockCounters[index - 1] & 0x3F;
+	if (value & 0x80)
+		value = value & 0xBF;
+	_blockCounters[index - 1] = oldValue | (value & 0xC0);
+}
+
 // TriggerCause
 
 void TriggerCause::load(Common::SeekableReadStream &stream) {
@@ -146,11 +157,20 @@ void TriggerObject::load(byte *dataStart, Common::SeekableReadStream &stream) {
 }
 
 bool TriggerObject::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 &codeOffs) {
-	for (uint i = 0; i < _causesCount; ++i)
-		if (_causes[i]._verbId == verbId && _causes[i]._objectId2 == objectId2) {
-			codeOffs = _causes[i]._codeOffs;
-			return true;
-		}
+	if ((verbId & 0xFFFF0000) == 0) {
+		for (uint i = 0; i < _causesCount; ++i)
+			if ((verbId == 7 && ((_causes[i]._verbId == 7 && _causes[i]._objectId2 == objectId2) || _causes[i]._verbId == 8)) ||
+				verbId == _causes[i]._verbId) {
+				codeOffs = _causes[i]._codeOffs;
+				return true;
+			}
+	} else {
+		for (uint i = 0; i < _causesCount; ++i)
+			if (_causes[i]._verbId == verbId && _causes[i]._objectId2 == objectId2) {
+				codeOffs = _causes[i]._codeOffs;
+				return true;
+			}
+	}
 	return false;
 }
 
@@ -311,8 +331,13 @@ void ScriptResource::load(Resource *resource) {
 		}
 	}
 	
-	stream.seek(0x6C);
-	_field6C = stream.readUint32LE();
+	if (resource->_gameId == kGameIdDuckman) {
+		stream.seek(0x6C);
+		_mainActorObjectId = stream.readUint32LE();
+	} else if (resource->_gameId == kGameIdBBDOU) {
+		stream.seek(0);
+		_mainActorObjectId = stream.readUint32LE();
+	}
 	
 	if (resource->_gameId == kGameIdDuckman)
 		fixupProgInfosDuckman();

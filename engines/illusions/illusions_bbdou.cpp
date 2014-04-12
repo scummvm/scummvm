@@ -32,6 +32,7 @@
 #include "illusions/input.h"
 #include "illusions/resourcesystem.h"
 #include "illusions/screen.h"
+#include "illusions/screentext.h"
 #include "illusions/scriptopcodes_bbdou.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
@@ -201,6 +202,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_resSys->addResourceLoader(0x00170000, new SpecialCodeLoader(this));
 
 	_screen = new Screen(this, 640, 480, 16);
+	_screenText = new ScreenText(this);
 	_input = new Input();	
 	_scriptMan = new ScriptMan(this);
 	_actorItems = new ActorItems(this);
@@ -221,7 +223,6 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_lastUpdateTime = 0;
 
 	_pauseCtr = 0;
-	_doScriptThreadInit = false;
 	_field8 = 1;
 	_fieldA = 0;
 	_fieldE = 240;
@@ -231,6 +232,8 @@ Common::Error IllusionsEngine_BBDOU::run() {
     setDefaultTextCoords();
 	
 	_resSys->loadResource(0x000D0001, 0, 0);
+
+	_doScriptThreadInit = false;
 	startScriptThread(0x00020004, 0, 0, 0, 0);
 	_doScriptThreadInit = true;
 
@@ -258,6 +261,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _actorItems;
 	delete _scriptMan;
 	delete _input;
+	delete _screenText;
 	delete _screen;
 	delete _resSys;
 	delete _dict;
@@ -327,6 +331,15 @@ void IllusionsEngine_BBDOU::notifyThreadId(uint32 &threadId) {
 		threadId = 0;
 		_threads->notifyId(tempThreadId);
 	}
+}
+
+bool IllusionsEngine_BBDOU::testMainActorFastWalk(Control *control) {
+	return false;
+}
+
+bool IllusionsEngine_BBDOU::testMainActorCollision(Control *control) {
+	// Not used in BBDOU
+	return false;
 }
 
 Control *IllusionsEngine_BBDOU::getObjectControl(uint32 objectId) {

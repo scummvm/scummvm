@@ -71,7 +71,9 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(23, opExitModalScene);
 	OPCODE(24, opEnterScene24);
 	OPCODE(25, opLeaveScene24);
+	OPCODE(33, opPanTrackObject);
 	OPCODE(34, opPanToObject);
+	OPCODE(36, opPanToPoint);
 	OPCODE(38, opStartFade);
 	OPCODE(39, opSetDisplay);
 	OPCODE(40, opSetCameraBounds);
@@ -80,6 +82,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(50, opFaceActor);
 	OPCODE(51, opFaceActorToObject);
 	OPCODE(52, opStartSequenceActor);
+	OPCODE(53, opStartSequenceActorAtPosition);
 	OPCODE(54, opStartMoveActor);
 	OPCODE(55, opStartMoveActorToObject);
 	OPCODE(56, opStartTalkThread);
@@ -88,6 +91,8 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(59, opActivateObject);
 	OPCODE(60, opDeactivateObject);
 	OPCODE(61, opSetDefaultSequence);
+	OPCODE(64, opStopCursorHoldingObject);
+	OPCODE(65, opStartCursorHoldingObject);
 	OPCODE(66, opPlayVideo);
 	OPCODE(69, opRunSpecialCode);
 	OPCODE(72, opStartSound);
@@ -101,13 +106,23 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(87, opDeactivateButton);
 	OPCODE(88, opActivateButton);
 	OPCODE(96, opIncBlockCounter);
+	OPCODE(97, opClearBlockCounter);
 	OPCODE(104, opJumpIf);
+	OPCODE(105, opIsPrevSceneId);
 	OPCODE(106, opNot);
 	OPCODE(107, opAnd);
 	OPCODE(108, opOr);
 	OPCODE(109, opGetProperty);
 	OPCODE(110, opCompareBlockCounter);
+	OPCODE(112, opAddDialogItem);
+	OPCODE(113, opStartDialog);
+	OPCODE(114, opJumpToDialogChoice);
+	OPCODE(115, opSetBlockCounter115);
+	OPCODE(116, opSetBlockCounter116);
+	OPCODE(117, opSetBlockCounter117);
+	OPCODE(118, opSetBlockCounter118);
 	OPCODE(126, opDebug126);
+	OPCODE(127, opDebug127);
 #if 0		
 	// Register opcodes
 	OPCODE(8, opStartTempScriptThread);
@@ -118,9 +133,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(31, opExitCloseUpScene);
 	OPCODE(32, opPanCenterObject);
 	OPCODE(35, opPanToNamedPoint);
-	OPCODE(36, opPanToPoint);
 	OPCODE(37, opPanStop);
-	OPCODE(43, opClearBlockCounter);
 	OPCODE(53, opSetActorToNamedPoint);
 	OPCODE(63, opSetSelectSfx);
 	OPCODE(64, opSetMoveSfx);
@@ -129,7 +142,6 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(67, opSetAdjustDnSfx);
 	OPCODE(78, opStackPushRandom);
 	OPCODE(79, opIfLte);
-	OPCODE(104, opIsPrevSceneId);
 	OPCODE(105, opIsCurrentSceneId);
 	OPCODE(106, opIsActiveSceneId);
 	OPCODE(146, opStackPop);
@@ -232,15 +244,22 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 }
 
 //static uint dsceneId = 0, dthreadId = 0;
-static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
+//static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
 //static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089;//Map
+//static uint dsceneId = 0x00010033, dthreadId = 0x000201A4;//Chinese
+//static uint dsceneId = 0x00010020, dthreadId = 0x00020112;//Xmas
+//static uint dsceneId = 0x00010039, dthreadId = 0x00020089;//Pizza
+//static uint dsceneId = 0x0001002D, dthreadId = 0x00020141;
+static uint dsceneId = 0x0001004B, dthreadId = 0x0002029B;
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
 	_vm->_input->discardButtons(0xFFFF);
+	
+	debug("changeScene(%08X, %08X)", sceneId, threadId);
 	
 	//DEBUG
 	if (dsceneId) {
@@ -273,10 +292,10 @@ void ScriptOpcodes_Duckman::opExitModalScene(ScriptThread *scriptThread, OpCall 
 		// TODO _vm->startScriptThread2(0x10002, 0x20001, 0);
 		opCall._result = kTSTerminate;
 	} else {
-          _vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
-          _vm->exitScene();
-          _vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
-          _vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
+		_vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
+		_vm->exitScene();
+		_vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
+		_vm->_talkItems->unpauseByTag(_vm->getCurrentScene());
 	}
 }
 
@@ -295,12 +314,25 @@ void ScriptOpcodes_Duckman::opLeaveScene24(ScriptThread *scriptThread, OpCall &o
 	_vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
 }
 
+void ScriptOpcodes_Duckman::opPanTrackObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	_vm->_camera->panTrackObject(objectId);
+}
+
 void ScriptOpcodes_Duckman::opPanToObject(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(speed);
 	ARG_UINT32(objectId);
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	Common::Point pos = control->getActorPosition();
 	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
+}
+
+void ScriptOpcodes_Duckman::opPanToPoint(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(speed);
+	ARG_INT16(x);
+	ARG_INT16(y);
+	_vm->_camera->panToPoint(Common::Point(x, y), speed, opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opStartFade(ScriptThread *scriptThread, OpCall &opCall) {
@@ -321,6 +353,7 @@ void ScriptOpcodes_Duckman::opSetDisplay(ScriptThread *scriptThread, OpCall &opC
 }
 
 void ScriptOpcodes_Duckman::opSetCameraBounds(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
 	ARG_INT16(x1);
 	ARG_INT16(y1);
 	ARG_INT16(x2);
@@ -353,8 +386,8 @@ void ScriptOpcodes_Duckman::opFaceActor(ScriptThread *scriptThread, OpCall &opCa
 
 void ScriptOpcodes_Duckman::opFaceActorToObject(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
-	ARG_UINT32(objectId1);
 	ARG_UINT32(objectId2);
+	ARG_UINT32(objectId1);
 	Control *control1 = _vm->_dict->getObjectControl(objectId1);
 	Control *control2 = _vm->_dict->getObjectControl(objectId2);
 	Common::Point pos1 = control1->getActorPosition();
@@ -370,6 +403,17 @@ void ScriptOpcodes_Duckman::opStartSequenceActor(ScriptThread *scriptThread, OpC
 	ARG_UINT32(sequenceId);
 	// NOTE Skipped checking for stalled sequence, not sure if needed
 	Control *control = _vm->_dict->getObjectControl(objectId);
+	control->startSequenceActor(sequenceId, 2, opCall._threadId);
+}
+
+void ScriptOpcodes_Duckman::opStartSequenceActorAtPosition(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(objectId);
+	ARG_UINT32(sequenceId);
+	ARG_UINT32(namedPointId);
+	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	control->setActorPosition(pos);
 	control->startSequenceActor(sequenceId, 2, opCall._threadId);
 }
 
@@ -454,6 +498,22 @@ void ScriptOpcodes_Duckman::opSetDefaultSequence(ScriptThread *scriptThread, OpC
 	ARG_UINT32(sequenceId);
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	control->_actor->_defaultSequences.set(sequenceId, defaultSequenceId);
+}
+
+void ScriptOpcodes_Duckman::opStopCursorHoldingObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(flags);
+	_vm->stopCursorHoldingObject();
+	if (!(flags & 1))
+		_vm->playSoundEffect(7);
+}
+
+void ScriptOpcodes_Duckman::opStartCursorHoldingObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(flags);
+	ARG_UINT32(objectId);
+	ARG_UINT32(sequenceId);
+	_vm->startCursorHoldingObject(objectId, sequenceId);
+	if (!(flags & 1))
+		_vm->playSoundEffect(6);
 }
 
 void ScriptOpcodes_Duckman::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall) {
@@ -550,11 +610,22 @@ void ScriptOpcodes_Duckman::opIncBlockCounter(ScriptThread *scriptThread, OpCall
 		_vm->_scriptResource->_blockCounters.set(index, value);
 }
 
+void ScriptOpcodes_Duckman::opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(index);
+	_vm->_scriptResource->_blockCounters.set(index, 0);
+}
+
 void ScriptOpcodes_Duckman::opJumpIf(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(jumpOffs);
 	int16 value = _vm->_stack->pop();
 	if (value == 0)
 		opCall._deltaOfs += jumpOffs;
+}
+
+void ScriptOpcodes_Duckman::opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(sceneId);
+	_vm->_stack->push(_vm->_prevSceneId == sceneId ? 1 : 0);
 }
 
 void ScriptOpcodes_Duckman::opNot(ScriptThread *scriptThread, OpCall &opCall) {
@@ -610,9 +681,56 @@ void ScriptOpcodes_Duckman::opCompareBlockCounter(ScriptThread *scriptThread, Op
 	_vm->_stack->push(compareResult ? 1 : 0);
 }
 
+void ScriptOpcodes_Duckman::opAddDialogItem(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(index);
+	ARG_INT16(choiceJumpOffs);
+	ARG_UINT32(sequenceId);
+	if (index && (_vm->_scriptResource->_blockCounters.getC0(index) & 0x40))
+		_vm->addDialogItem(choiceJumpOffs, sequenceId);
+}
+
+void ScriptOpcodes_Duckman::opStartDialog(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(actorTypeId);
+	_vm->startDialog(&_vm->_menuChoiceOfs, actorTypeId, opCall._callerThreadId);
+}
+
+void ScriptOpcodes_Duckman::opJumpToDialogChoice(ScriptThread *scriptThread, OpCall &opCall) {
+	opCall._deltaOfs += _vm->_menuChoiceOfs;
+}
+
+void ScriptOpcodes_Duckman::opSetBlockCounter115(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(index);
+	if (_vm->_scriptResource->_blockCounters.getC0(index) & 0x80)
+		_vm->_scriptResource->_blockCounters.set(index, 0);
+	_vm->_scriptResource->_blockCounters.setC0(index, 0x40);
+}
+
+void ScriptOpcodes_Duckman::opSetBlockCounter116(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(index);
+	if (!(_vm->_scriptResource->_blockCounters.getC0(index) & 0x80))
+		_vm->_scriptResource->_blockCounters.setC0(index, 0x40);
+}
+
+void ScriptOpcodes_Duckman::opSetBlockCounter117(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(index);
+	_vm->_scriptResource->_blockCounters.setC0(index, 0);
+}
+
+void ScriptOpcodes_Duckman::opSetBlockCounter118(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(index);
+	_vm->_scriptResource->_blockCounters.setC0(index, 0x40);
+}
+
 void ScriptOpcodes_Duckman::opDebug126(ScriptThread *scriptThread, OpCall &opCall) {
 	// NOTE Prints some debug text
-	debug(1, "[DBG] %s", (char*)opCall._code);
+	debug(1, "[DBG126] %s", (char*)opCall._code);
+}
+
+void ScriptOpcodes_Duckman::opDebug127(ScriptThread *scriptThread, OpCall &opCall) {
+	// NOTE Prints some debug text
+	debug(1, "[DBG127] %s", (char*)opCall._code);
 }
 
 #if 0
@@ -674,20 +792,8 @@ void ScriptOpcodes_Duckman::opPanToNamedPoint(ScriptThread *scriptThread, OpCall
 	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
 }
 
-void ScriptOpcodes_Duckman::opPanToPoint(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(speed);	
-	ARG_INT16(x);	
-	ARG_INT16(y);	
-	_vm->_camera->panToPoint(Common::Point(x, y), speed, opCall._threadId);
-}
-
 void ScriptOpcodes_Duckman::opPanStop(ScriptThread *scriptThread, OpCall &opCall) {
 	_vm->_camera->stopPan();
-}
-
-void ScriptOpcodes_Duckman::opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(index);
-	_vm->_scriptResource->_blockCounters.set(index, 0);
 }
 
 void ScriptOpcodes_Duckman::opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {
@@ -742,12 +848,6 @@ void ScriptOpcodes_Duckman::opIfLte(ScriptThread *scriptThread, OpCall &opCall) 
 	int16 lvalue = _vm->_stack->pop();
 	if (!(lvalue <= rvalue))
 		opCall._deltaOfs += elseJumpOffs;
-}
-
-void ScriptOpcodes_Duckman::opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_SKIP(2);
-	ARG_UINT32(sceneId);
-	_vm->_stack->push(_vm->_prevSceneId == sceneId ? 1 : 0);
 }
 
 void ScriptOpcodes_Duckman::opIsCurrentSceneId(ScriptThread *scriptThread, OpCall &opCall) {

@@ -240,10 +240,9 @@ void TalkThread_Duckman::onKill() {
 }
 
 uint32 TalkThread_Duckman::sendMessage(int msgNum, uint32 msgValue) {
-	// TODO
 	switch (msgNum) {
 	case kMsgQueryTalkThreadActive:
-		if (_status != 1 && _status != 2)
+		if (_status != 1)
 			return 1;
 		break;
 	case kMsgClearSequenceId1:
