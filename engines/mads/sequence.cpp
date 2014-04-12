@@ -149,7 +149,7 @@ int SequenceList::addTimer(int time, int abortVal) {
 		if (!_entries[seqIndex]._active)
 			break;
 	}
-	assert(seqIndex < (int)_entries.size());
+	assert(seqIndex < _entries.size());
 
 	SequenceEntry &se = _entries[seqIndex];
 	se._active = true;

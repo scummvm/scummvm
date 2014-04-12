@@ -114,7 +114,7 @@ void Rails::setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int route
 		for (int idx = _nodes.size() - 2; idx > 0; --idx) {
 			int nodePos = idx - 1;
 			if (!_nodes[nodePos]._active && ((currentNode._distances[nodePos] & flags) != 0))
-				setupRouteNode(routeIndexP, nodePos, 0x8000, routeLength + distanceVal & 0x3fff);
+				setupRouteNode(routeIndexP, nodePos, 0x8000, routeLength + (distanceVal & 0x3fff));
 		}
 	}
 

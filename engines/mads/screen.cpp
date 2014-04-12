@@ -389,7 +389,7 @@ void ScreenObjects::elementHighlighted() {
 	int index;
 	int indexEnd = -1;
 	int var8 = 0;
-	int uiCount;
+	//int uiCount;
 
 	switch (userInterface._category) {
 	case CAT_COMMAND:
@@ -461,7 +461,7 @@ void ScreenObjects::elementHighlighted() {
 		break;
 
 	default:
-		uiCount = size() - _uiCount;
+		//uiCount = size() - _uiCount;
 		index = scene._hotspots.size();
 		indexEnd = index - 1;
 		varA = 0;

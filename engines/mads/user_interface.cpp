@@ -865,7 +865,6 @@ void UserInterface::updateSelection(ScrCategory category, int newIndex, int *idx
 		*idx = newIndex;
 
 		if (oldIndex >= 0) {
-			Common::Rect bounds;
 			writeVocab(category, oldIndex);
 			
 			if (getBounds(category, oldIndex, bounds))

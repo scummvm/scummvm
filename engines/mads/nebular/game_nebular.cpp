@@ -704,7 +704,7 @@ void GameNebular::step() {
 						}
 						break;
 
-					case 2:
+					case FACING_SOUTH:
 						if (randomVal < 500) {
 							for (int count = 0; count < 10; ++count) {
 								_player.addWalker((randomVal < 250) ? 1 : 2, 0);
@@ -721,6 +721,9 @@ void GameNebular::step() {
 								_player.addWalker(2, 0);
 							}
 						}
+						break;
+
+					default:
 						break;
 					}
 				}

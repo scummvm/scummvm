@@ -403,6 +403,9 @@ void MADSAction::checkActionAtMousePos() {
 				}
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -617,6 +620,9 @@ void MADSAction::leftClick() {
 		default:
 			break;
 		}
+		break;
+
+	default:
 		break;
 	}
 }

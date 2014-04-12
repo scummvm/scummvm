@@ -315,8 +315,8 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	}
 
 	if (_header._manualFlag) {
-		Common::String resName = "*" + _header._spriteSetNames[_header._spritesIndex];
-		SpriteAsset *sprites = new SpriteAsset(_vm, resName, flags);
+		Common::String assetResName = "*" + _header._spriteSetNames[_header._spritesIndex];
+		SpriteAsset *sprites = new SpriteAsset(_vm, assetResName, flags);
 		_spriteSets[_header._spritesIndex] = sprites;
 
 		_spriteListIndexes[_header._spritesIndex] = _scene->_sprites.add(sprites);

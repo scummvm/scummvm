@@ -169,12 +169,12 @@ bool DialogsNebular::show(int msgId) {
 					} else if (commandCheck("VERB", valStr, commandText)) {
 						dialogText += getVocab(action._activeAction._verbId);
 					} else if (commandCheck("INDEX", valStr, commandText)) {
-						int idx = atoi(valStr.c_str());
-						if (_indexList[idx])
-							dialogText += getVocab(_indexList[idx]);
+						int idxLocal = atoi(valStr.c_str());
+						if (_indexList[idxLocal])
+							dialogText += getVocab(_indexList[idxLocal]);
 					} else if (commandCheck("NUMBER", valStr, commandText)) {
-						int idx = atoi(valStr.c_str());
-						dialogText += Common::String::format("%.4d", _indexList[idx]);
+						int idxLocal = atoi(valStr.c_str());
+						dialogText += Common::String::format("%.4d", _indexList[idxLocal]);
 					} else if (commandCheck("NOUN1", valStr, commandText)) {
 						if (!textNoun(dialogText, 1, valStr))
 							dialogText += getVocab(action._activeAction._objectNameId);

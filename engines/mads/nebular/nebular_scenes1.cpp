@@ -1298,7 +1298,7 @@ void Scene103::step() {
 	
 	if (_globals._frameTime <= _scene->_frameStartTime) {
 		pt = _vm->_game->_player._playerPos;
-		int dist = _vm->hypotenuse(pt.x - 79, pt.y - 137);
+		dist = _vm->hypotenuse(pt.x - 79, pt.y - 137);
 		_vm->_sound->command(29, (dist * -127 / 378) + 127);
 
 		pt = _vm->_game->_player._playerPos;

@@ -59,7 +59,7 @@ static const MADSGameDescription gameDescriptions[] = {
 		0
 	},
 
-	{ AD_TABLE_END_MARKER }
+	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
 } // End of namespace MADS

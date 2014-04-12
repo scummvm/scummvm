@@ -51,7 +51,6 @@ enum KernelMode {
 enum ProtectionResult {
 	PROTECTION_SUCCEED = 0, PROTECTION_FAIL = 1, PROTECTION_ESCAPE = 2
 };
-;
 
 class Game {
 private:
