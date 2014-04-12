@@ -97,8 +97,7 @@ public:
 	void drawWinningPic();
 
 	// Ghostroom's functions:
-	void ghostDrawGhost(byte ghostArr[2][66][26], uint16 destX, int16 destY);
-	void ghostDrawGlerk(byte glerkArr[4][35][9], uint16 destX, uint16 destY); // Very similar to ghostDrawGhost(), but not enough to unify the two.
+	void ghostDrawMonster(byte ***picture, uint16 destX, int16 destY, MonsterType type);
 	Graphics::Surface ghostLoadPicture(Common::File &file, Common::Point &coord);
 	void ghostDrawPicture(const Graphics::Surface &picture, uint16 destX, uint16 destY);
 	void ghostDrawBackgroundItems(Common::File &file);

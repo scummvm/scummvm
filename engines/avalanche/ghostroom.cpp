@@ -70,6 +70,28 @@ GhostRoom::~GhostRoom() {
 		for (int j = 0; j < 6; j++)
 			_greldet[j][i].free();
 	}
+
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 2; j++) {
+			for (int y = 0; y < 66; y++) {
+				delete[] _ghost[i][j][y];
+			}
+			delete[] _ghost[i][j];
+		}
+		delete[] _ghost[i];
+	}
+	delete[] _ghost;
+
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 4; j++) {
+			for (int y = 0; y < 35; y++) {
+				delete[] _glerk[i][j][y];
+			}
+			delete[] _glerk[i][j];
+		}
+		delete[] _glerk[i];
+	}
+	delete[] _glerk;
 }
 
 void GhostRoom::wait(uint16 howLong) {
@@ -141,9 +163,13 @@ void GhostRoom::loadPictures() {
 	file.seek(44);
 
 	// Initializing ghost's array.
+	_ghost = new byte***[5];
 	for (int i = 0; i < 5; i++) {
+		_ghost[i] = new byte**[2];
 		for (int j = 0; j < 2; j++) {
+			_ghost[i][j] = new byte*[66];
 			for (int y = 0; y < 66; y++) {
+				_ghost[i][j][y] = new byte[26];
 				for (int x = 0; x < 26; x++)
 					_ghost[i][j][y][x] = 0;
 			}
@@ -171,11 +197,14 @@ void GhostRoom::loadPictures() {
 	for (int i = 0; i < 3; i++)
 		_bat[i] = _vm->_graphics->ghostLoadPicture(file, dummyCoord);
 
-
 	// Initializing glerk's array.
+	_glerk = new byte***[6];
 	for (int i = 0; i < 6; i++) {
+		_glerk[i] = new byte**[4];
 		for (int j = 0; j < 4; j++) {
+			_glerk[i][j] = new byte*[35];
 			for (int y = 0; y < 35; y++) {
+				_glerk[i][j][y] = new byte[9];
 				for (int x = 0; x < 9; x++)
 					_glerk[i][j][y][x] = 0;
 			}
@@ -245,7 +274,7 @@ void GhostRoom::run() {
 			if (_glerkStage > 25)
 				break;
 
-			_vm->_graphics->ghostDrawGlerk(_glerk[kGlerkFade[_glerkStage]], 456, 14);
+			_vm->_graphics->ghostDrawMonster(_glerk[kGlerkFade[_glerkStage]], 456, 14, kMonsterTypeGlerk);
 			_glerkStage++;
 		}
 
@@ -263,7 +292,7 @@ void GhostRoom::run() {
 
 	// Here comes the descending ghost:
 	for (int y = -64; y <= 103; y++) {
-		_vm->_graphics->ghostDrawGhost(_ghost[1 + (abs(y / 7) % 2) * 3], 0, y);
+		_vm->_graphics->ghostDrawMonster(_ghost[1 + (abs(y / 7) % 2) * 3], 0, y, kMonsterTypeGhost);
 		if (y > 0)
 			_vm->_graphics->drawFilledRectangle(Common::Rect(0, y - 1, 26 * 8 + 1, y + 1), kColorBlack);
 		_vm->_graphics->refreshScreen();
@@ -277,7 +306,7 @@ void GhostRoom::run() {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 5; j++) {
 			_vm->_graphics->drawFilledRectangle(Common::Rect(0, 96, 26 * 8, 170), kColorBlack);
-			_vm->_graphics->ghostDrawGhost(_ghost[kWaveOrder[j]], 0, 96 + kAdjustment[j]);
+			_vm->_graphics->ghostDrawMonster(_ghost[kWaveOrder[j]], 0, 96 + kAdjustment[j], kMonsterTypeGhost);
 
 			_aarghCount++;
 
