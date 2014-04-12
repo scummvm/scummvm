@@ -71,27 +71,29 @@ GhostRoom::~GhostRoom() {
 			_greldet[j][i].free();
 	}
 
-	for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 2; j++) {
-			for (int y = 0; y < 66; y++) {
-				delete[] _ghost[i][j][y];
+	if (_wasLoaded) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 2; j++) {
+				for (int y = 0; y < 66; y++) {
+					delete[] _ghost[i][j][y];
+				}
+				delete[] _ghost[i][j];
 			}
-			delete[] _ghost[i][j];
+			delete[] _ghost[i];
 		}
-		delete[] _ghost[i];
-	}
-	delete[] _ghost;
+		delete[] _ghost;
 
-	for (int i = 0; i < 6; i++) {
-		for (int j = 0; j < 4; j++) {
-			for (int y = 0; y < 35; y++) {
-				delete[] _glerk[i][j][y];
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 4; j++) {
+				for (int y = 0; y < 35; y++) {
+					delete[] _glerk[i][j][y];
+				}
+				delete[] _glerk[i][j];
 			}
-			delete[] _glerk[i][j];
+			delete[] _glerk[i];
 		}
-		delete[] _glerk[i];
+		delete[] _glerk;
 	}
-	delete[] _glerk;
 }
 
 void GhostRoom::wait(uint16 howLong) {
