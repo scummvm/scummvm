@@ -62,7 +62,7 @@ void CharInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_field_2 = stream.readUint16LE();
 	uint32 pixelsOffs = stream.readUint32LE();
 	_pixels = dataStart + pixelsOffs;
-	debug("CharInfo::load() _width: %d; _field_2: %d; pixelsOffs: %08X",
+	debug(2, "CharInfo::load() _width: %d; _field_2: %d; pixelsOffs: %08X",
 		_width, _field_2, pixelsOffs);
 }
 
@@ -78,7 +78,7 @@ void CharRange::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		stream.seek(charInfosOffs + i * 8);
 		_charInfos[i].load(dataStart, stream);
 	}
-	debug("CharRange::load() _firstChar: %d; _lastChar: %d; charInfosOffs: %08X",
+	debug(2, "CharRange::load() _firstChar: %d; _lastChar: %d; charInfosOffs: %08X",
 		_firstChar, _lastChar, charInfosOffs);
 }
 
@@ -116,7 +116,7 @@ void FontResource::load(Resource *resource) {
 		stream.seek(charRangesOffs + i * 8);
 		_charRanges[i].load(data, stream);
 	}
-	debug("FontResource::load() _charHeight: %d; _field_6: %d; _colorIndex: %d; _lineIncr: %d; _widthC: %d; _charRangesCount: %d",
+	debug(2, "FontResource::load() _charHeight: %d; _field_6: %d; _colorIndex: %d; _lineIncr: %d; _widthC: %d; _charRangesCount: %d",
 		_charHeight, _field_6, _colorIndex, _lineIncr, _widthC, _charRangesCount);
 }
 

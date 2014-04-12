@@ -58,7 +58,9 @@ protected:
 	void opExitModalScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene24(ScriptThread *scriptThread, OpCall &opCall);
 	void opLeaveScene24(ScriptThread *scriptThread, OpCall &opCall);
+	void opPanTrackObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToObject(ScriptThread *scriptThread, OpCall &opCall);
+	void opPanToPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartFade(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetCameraBounds(ScriptThread *scriptThread, OpCall &opCall);
@@ -67,6 +69,7 @@ protected:
 	void opFaceActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opFaceActorToObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartSequenceActor(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartSequenceActorAtPosition(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartMoveActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartMoveActorToObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartTalkThread(ScriptThread *scriptThread, OpCall &opCall);
@@ -75,6 +78,8 @@ protected:
 	void opActivateObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opDeactivateObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDefaultSequence(ScriptThread *scriptThread, OpCall &opCall);
+	void opStopCursorHoldingObject(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartCursorHoldingObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPlayVideo(ScriptThread *scriptThread, OpCall &opCall);
 	void opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartSound(ScriptThread *scriptThread, OpCall &opCall);
@@ -88,13 +93,23 @@ protected:
 	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
+	void opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opJumpIf(ScriptThread *scriptThread, OpCall &opCall);
+	void opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opNot(ScriptThread *scriptThread, OpCall &opCall);
 	void opAnd(ScriptThread *scriptThread, OpCall &opCall);
 	void opOr(ScriptThread *scriptThread, OpCall &opCall);
 	void opGetProperty(ScriptThread *scriptThread, OpCall &opCall);
 	void opCompareBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
+	void opAddDialogItem(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartDialog(ScriptThread *scriptThread, OpCall &opCall);
+	void opJumpToDialogChoice(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetBlockCounter115(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetBlockCounter116(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetBlockCounter117(ScriptThread *scriptThread, OpCall &opCall);
+	void opSetBlockCounter118(ScriptThread *scriptThread, OpCall &opCall);
 	void opDebug126(ScriptThread *scriptThread, OpCall &opCall);
+	void opDebug127(ScriptThread *scriptThread, OpCall &opCall);
 	
 #if 0	
 	void opStartTempScriptThread(ScriptThread *scriptThread, OpCall &opCall);
@@ -105,9 +120,7 @@ protected:
 	void opExitCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
-	void opPanToPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanStop(ScriptThread *scriptThread, OpCall &opCall);
-	void opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetSelectSfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetMoveSfx(ScriptThread *scriptThread, OpCall &opCall);
@@ -116,7 +129,6 @@ protected:
 	void opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall);
 	void opIfLte(ScriptThread *scriptThread, OpCall &opCall);
-	void opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opIsCurrentSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opIsActiveSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opStackPop(ScriptThread *scriptThread, OpCall &opCall);

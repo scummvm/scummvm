@@ -93,7 +93,7 @@ bool SpriteDrawQueue::draw(SpriteDrawQueueItem *item) {
 		return true;
 
 	_screen->drawSurface(dstRect, item->_surface, srcRect, item->_scale, item->_flags);
-	
+
 	if (item->_drawFlags)
 		*item->_drawFlags &= ~4;
 
@@ -441,14 +441,11 @@ void Screen::decompressSprite8(SpriteDecompressQueueItem *item) {
 }
 
 void Screen::drawSurface8(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) {
-	drawSurface81(dstRect.left, dstRect.top, surface, srcRect);
-	/*
 	if (scale == 100) {
 		drawSurface81(dstRect.left, dstRect.top, surface, srcRect);
 	} else {
 		drawSurface82(dstRect, surface, srcRect);
 	}
-	*/
 }
 
 void Screen::drawSurface81(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect) {

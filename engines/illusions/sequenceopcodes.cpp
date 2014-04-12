@@ -75,9 +75,11 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(18, opAppearForeignActor);
 	OPCODE(19, opDisappearForeignActor);
 	OPCODE(21, opMoveDelta);
+	OPCODE(25, opFaceActor);
 	OPCODE(28, opNotifyThreadId1);
 	OPCODE(29, opSetPathCtrY);
 	OPCODE(33, opSetPathWalkPoints);
+	OPCODE(34, opDisableAutoScale);
 	OPCODE(35, opSetScale);
 	OPCODE(36, opSetScaleLayer);
 	OPCODE(37, opDeactivatePathWalkRects);
@@ -253,6 +255,11 @@ void SequenceOpcodes::opMoveDelta(Control *control, OpCall &opCall) {
 	control->_actor->_position.y += deltaY;
 }
 
+void SequenceOpcodes::opFaceActor(Control *control, OpCall &opCall) {
+	ARG_INT16(facing);
+	control->_actor->_facing = facing;
+}
+
 void SequenceOpcodes::opNotifyThreadId1(Control *control, OpCall &opCall) {
 	_vm->notifyThreadId(control->_actor->_notifyThreadId1);
 }
@@ -267,6 +274,11 @@ void SequenceOpcodes::opSetPathWalkPoints(Control *control, OpCall &opCall) {
 	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
 	control->_actor->_flags |= 2;
 	// TODO control->_actor->_pathWalkPoints = bgRes->getPathWalkPoints(pathWalkPointsIndex - 1);
+}
+
+void SequenceOpcodes::opDisableAutoScale(Control *control, OpCall &opCall) {
+	// Keep current scale but don't autoscale
+	control->_actor->_flags &= ~4;
 }
 
 void SequenceOpcodes::opSetScale(Control *control, OpCall &opCall) {

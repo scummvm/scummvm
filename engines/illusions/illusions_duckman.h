@@ -45,10 +45,15 @@ struct Cursor_Duckman {
 	uint32 _sequenceId2;
 	uint32 _notifyThreadId30;
 	int16 *_op113_choiceOfsPtr;
-	int _op113_objectNumCtr;
-	uint _overlappedObjectNum;
+	int _dialogItemsCount;
+	uint32 _overlappedObjectId;
 	uint32 _field3C;
 	uint32 _field40;
+};
+
+struct DialogItem {
+	int16 _choiceJumpOffs;
+	uint32 _sequenceId;
 };
 
 struct OpCall;
@@ -81,14 +86,17 @@ public:
 	uint32 _activeScenes[6];
 
 	Cursor_Duckman _cursor;
+	Common::Array<DialogItem> _dialogItems;
 
-    SpecialCodeMap _specialCodeMap;
+	SpecialCodeMap _specialCodeMap;
 
 	void setDefaultTextCoords();
 
 	void loadSpecialCode(uint32 resId);
 	void unloadSpecialCode(uint32 resId);
 	void notifyThreadId(uint32 &threadId);
+	bool testMainActorFastWalk(Control *control);
+	bool testMainActorCollision(Control *control);
 	Control *getObjectControl(uint32 objectId);
 	Common::Point getNamedPointPosition(uint32 namedPointId);
 	uint32 getPriorityFromBase(int16 priority);
@@ -106,6 +114,8 @@ public:
 	void enableCursorVerb(int verbNum);
 	void disableCursorVerb(int verbNum);
 	void setCursorHandMode(int mode);
+	void startCursorHoldingObject(uint32 objectId, uint32 sequenceId);
+	void stopCursorHoldingObject();
 	void cursorControlRoutine(Control *control, uint32 deltaTime);
 
 	void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId);
@@ -122,9 +132,9 @@ public:
 	uint32 newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable);
 	uint32 newTempThreadId();
 
-    void initActiveScenes();
+	void initActiveScenes();
 	void pushActiveScene(uint32 sceneId);
-    void popActiveScene();
+	void popActiveScene();
 	bool loadScene(uint32 sceneId);
 	bool enterScene(uint32 sceneId, uint32 threadId);
 	void exitScene();
@@ -147,6 +157,10 @@ public:
 	void playSoundEffect(int index);
 	bool getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId);
 	uint32 runTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId);
+
+	void addDialogItem(int16 choiceJumpOffs, uint32 sequenceId);
+	void startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, uint32 callerThreadId);
+	void updateDialogState();
 
 	// Special code
 	void initSpecialCode();

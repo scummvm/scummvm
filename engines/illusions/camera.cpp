@@ -30,26 +30,27 @@ namespace Illusions {
 
 Camera::Camera(IllusionsEngine *vm)
 	: _vm(vm) {
+	init();
 	_activeState._cameraMode = 6;
 	_activeState._paused = false;
 	_activeState._panStartTime = getCurrentTime();
 	_activeState._panSpeed = 1;
-	_activeState._bounds._topLeft.x = 320;
-	_activeState._bounds._topLeft.y = 240;
-	_activeState._bounds._bottomRight.x = 320;
-	_activeState._bounds._bottomRight.y = 240;
-	_activeState._currPan.x = 320;
-	_activeState._currPan.y = 240;
-	_activeState._panXShl = 320 << 16;
-	_activeState._panYShl = 240 << 16;
-	_activeState._panTargetPoint.x = 320;
+	_activeState._bounds._topLeft.x = _screenMidX;
+	_activeState._bounds._topLeft.y = _screenMidY;
+	_activeState._bounds._bottomRight.x = _screenMidX;
+	_activeState._bounds._bottomRight.y = _screenMidY;
+	_activeState._currPan.x = _screenMidX;
+	_activeState._currPan.y = _screenMidY;
+	_activeState._panXShl = _screenMidX << 16;
+	_activeState._panYShl = _screenMidY << 16;
+	_activeState._panTargetPoint.x = _screenMidX;
 	_activeState._panTargetPoint.y = 240;
 	_activeState._panToPositionPtr = 0;
 	_activeState._panNotifyId = 0;
 	_activeState._trackingLimits.x = 0;
 	_activeState._trackingLimits.y = 0;
-	_activeState._centerPt.x = 320;
-	_activeState._centerPt.y = 240;
+	_activeState._centerPt.x = _screenMidX;
+	_activeState._centerPt.y = _screenMidY;
 	_activeState._pointFlags = 0;
 }
 
@@ -62,10 +63,10 @@ void Camera::set(Common::Point &panPoint, WidthHeight &dimensions) {
 	_activeState._paused = false;
 	_activeState._panStartTime = getCurrentTime();
 	_activeState._panSpeed = 1;
-	_activeState._bounds._topLeft.x = 320;
-	_activeState._bounds._topLeft.y = 240;
-	_activeState._bounds._bottomRight.x = MAX(0, dimensions._width - 640) + 320;
-	_activeState._bounds._bottomRight.y = MAX(0, dimensions._height - 480) + 240;
+	_activeState._bounds._topLeft.x = _screenMidX;
+	_activeState._bounds._topLeft.y = _screenMidY;
+	_activeState._bounds._bottomRight.x = MAX(0, dimensions._width - _screenWidth) + _screenMidX;
+	_activeState._bounds._bottomRight.y = MAX(0, dimensions._height - _screenHeight) + _screenMidY;
 	_activeState._panTargetPoint = panPoint;
 	clipPanTargetPoint();
 	_activeState._currPan = _activeState._panTargetPoint;
@@ -78,21 +79,26 @@ void Camera::set(Common::Point &panPoint, WidthHeight &dimensions) {
 	_activeState._trackingLimits.x = 0;
 	_activeState._trackingLimits.y = 0;
 	_activeState._pointFlags = 0;
-	_activeState._centerPt.x = 320;
-	_activeState._centerPt.y = 240;
+	_activeState._centerPt.x = _screenMidX;
+	_activeState._centerPt.y = _screenMidY;
 }
 
 void Camera::panCenterObject(uint32 objectId, int16 panSpeed) {
 	Common::Point *actorPosition = _vm->getObjectActorPositionPtr(objectId);
-	_activeState._cameraMode = 1;
+	if (_vm->getGameId() == kGameIdDuckman && objectId == 0x40004) {
+		_activeState._cameraMode = 2;
+		_activeState._trackingLimits.x = 156;
+		_activeState._trackingLimits.y = 96;
+	} else if (_vm->getGameId() == kGameIdBBDOU) {
+		_activeState._cameraMode = 1;
+		_activeState._trackingLimits = _centerObjectTrackingLimits;
+	}
 	_activeState._panSpeed = panSpeed;
-	_activeState._trackingLimits.x = 8;
-	_activeState._trackingLimits.y = 8;
 	_activeState._pointFlags = 0;
-	_activeState._panToPositionPtr = actorPosition;
 	_activeState._panObjectId = objectId;
-	_activeState._panTargetPoint = *actorPosition;
 	_activeState._panNotifyId = 0;
+	_activeState._panToPositionPtr = actorPosition;
+	_activeState._panTargetPoint = *actorPosition;
 	clipPanTargetPoint();
 	_activeState._panStartTime = getCurrentTime();
 	recalcPan(_activeState._panStartTime);
@@ -102,10 +108,9 @@ void Camera::panTrackObject(uint32 objectId) {
 	Common::Point *actorPosition = _vm->getObjectActorPositionPtr(objectId);
 	_activeState._cameraMode = 3;
 	_activeState._panObjectId = objectId;
-	_activeState._trackingLimits.x = 160;
-	_activeState._trackingLimits.y = 120;
+	_activeState._trackingLimits = _trackObjectTrackingLimits;
+	_activeState._panSpeed = _trackObjectTrackingLimitsPanSpeed;
 	_activeState._pointFlags = 0;
-	_activeState._panSpeed = 710;
 	_activeState._panToPositionPtr = actorPosition;
 	_activeState._panNotifyId = 0;
 	_activeState._panTargetPoint = *actorPosition;
@@ -286,10 +291,10 @@ void Camera::setBounds(Common::Point minPt, Common::Point maxPt) {
 
 void Camera::setBoundsToDimensions(WidthHeight &dimensions) {
 	// NOTE For the caller dimensions = artdispGetMasterBGDimensions();
-	_activeState._bounds._topLeft.x = 320;
-	_activeState._bounds._topLeft.y = 240;
-	_activeState._bounds._bottomRight.x = MAX(0, dimensions._width - 640) + 320;
-	_activeState._bounds._bottomRight.y = MAX(0, dimensions._height - 480) + 240;
+	_activeState._bounds._topLeft.x = _screenMidX;
+	_activeState._bounds._topLeft.y = _screenMidY;
+	_activeState._bounds._bottomRight.x = MAX(0, dimensions._width - _screenWidth) + _screenMidX;
+	_activeState._bounds._bottomRight.y = MAX(0, dimensions._height - _screenHeight) + _screenMidY;
 	clipPanTargetPoint();
 }
 
@@ -299,8 +304,8 @@ Common::Point Camera::getCurrentPan() {
 
 Common::Point Camera::getScreenOffset() {
 	Common::Point screenOffs = getCurrentPan();
-	screenOffs.x -= 320;
-	screenOffs.y -= 240;
+	screenOffs.x -= _screenMidX;
+	screenOffs.y -= _screenMidY;
 	return screenOffs;
 }
 
@@ -331,10 +336,29 @@ void Camera::getActiveState(CameraState &state) {
 	state = _activeState;
 }
 
+void Camera::refreshPan(BackgroundItem *backgroundItem, WidthHeight &dimensions) {
+	Common::Point screenOffs = getScreenOffset();
+	int x = dimensions._width - _screenWidth;
+	int y = dimensions._height - _screenHeight;
+	for (uint i = 0; i < backgroundItem->_bgRes->_bgInfosCount; ++i) {
+		const BgInfo &bgInfo = backgroundItem->_bgRes->_bgInfos[i];
+		if (bgInfo._flags & 1) {
+			backgroundItem->_panPoints[i] = screenOffs;
+		} else {
+			Common::Point newOffs(0, 0);
+			if (x > 0 && bgInfo._surfInfo._dimensions._width - _screenWidth > 0)
+				newOffs.x = screenOffs.x * (bgInfo._surfInfo._dimensions._width - _screenWidth) / x;
+			if (y > 0 && bgInfo._surfInfo._dimensions._height - _screenHeight > 0)
+				newOffs.y = screenOffs.y * (bgInfo._surfInfo._dimensions._height - _screenHeight) / y;
+			backgroundItem->_panPoints[i] = newOffs;
+		}
+	}
+}
+
 void Camera::updateMode1(uint32 currTime) {
 	Common::Point ptOffs = getPtOffset(*_activeState._panToPositionPtr);
-	int deltaX = ptOffs.x - _activeState._currPan.x + 320 - _activeState._centerPt.x;
-	int deltaY = ptOffs.y - _activeState._currPan.y + 240 - _activeState._centerPt.y;
+	int deltaX = ptOffs.x - _activeState._currPan.x + _screenMidX - _activeState._centerPt.x;
+	int deltaY = ptOffs.y - _activeState._currPan.y + _screenMidY - _activeState._centerPt.y;
 	int deltaXAbs = ABS(deltaX);
 	int deltaYAbs = ABS(deltaY);
 
@@ -359,14 +383,15 @@ void Camera::updateMode1(uint32 currTime) {
 }
 
 void Camera::updateMode2(uint32 currTime) {
+	// TOOD CHECKME Bigger differences in Duckman
 	Common::Point panToPosition = *_activeState._panToPositionPtr;
 	uint pointFlags = 0;
 	WRect rect;
 
-	rect._topLeft.x = 320 - _activeState._trackingLimits.x;
-	rect._topLeft.y = 240 - _activeState._trackingLimits.y;
-	rect._bottomRight.x = 320 + _activeState._trackingLimits.x;
-	rect._bottomRight.y = 240 + _activeState._trackingLimits.y;
+	rect._topLeft.x = _screenMidX - _activeState._trackingLimits.x;
+	rect._topLeft.y = _screenMidY - _activeState._trackingLimits.y;
+	rect._bottomRight.x = _screenMidX + _activeState._trackingLimits.x;
+	rect._bottomRight.y = _screenMidY + _activeState._trackingLimits.y;
 
 	if (calcPointFlags(panToPosition, rect, pointFlags)) {
 		if (pointFlags != _activeState._pointFlags) {
@@ -441,8 +466,8 @@ bool Camera::isPanFinished() {
 }
 
 Common::Point Camera::getPtOffset(Common::Point pt) {
-	pt.x = pt.x - _activeState._centerPt.x + 320;
-	pt.y = pt.y - _activeState._centerPt.y + 240;
+	pt.x = pt.x - _activeState._centerPt.x + _screenMidX;
+	pt.y = pt.y - _activeState._centerPt.y + _screenMidY;
 	return pt;
 }
 
@@ -495,6 +520,41 @@ void Camera::clipPanTargetPoint() {
 		_activeState._bounds._topLeft.x, _activeState._bounds._bottomRight.x);
 	_activeState._panTargetPoint.y = CLIP(_activeState._panTargetPoint.y,
 		_activeState._bounds._topLeft.y, _activeState._bounds._bottomRight.y);
+}
+
+void Camera::init() {
+	switch (_vm->getGameId()) {
+	case kGameIdDuckman:
+		initDuckman();
+		break;
+	case kGameIdBBDOU:
+		initBBDOU();
+		break;
+	}
+}
+
+void Camera::initDuckman() {
+	_centerObjectTrackingLimits.x = 4;
+	_centerObjectTrackingLimits.y = 4;
+	_screenWidth = 320;
+	_screenHeight = 200;
+	_screenMidX = 160;
+	_screenMidY = 100;
+	_trackObjectTrackingLimits.x = 80;
+	_trackObjectTrackingLimits.y = 50;
+	_trackObjectTrackingLimitsPanSpeed = 353;
+}
+
+void Camera::initBBDOU() {
+	_centerObjectTrackingLimits.x = 8;
+	_centerObjectTrackingLimits.y = 8;
+	_screenWidth = 640;
+	_screenHeight = 480;
+	_screenMidX = 320;
+	_screenMidY = 240;
+	_trackObjectTrackingLimits.x = 160;
+	_trackObjectTrackingLimits.y = 120;
+	_trackObjectTrackingLimitsPanSpeed = 710;
 }
 
 } // End of namespace Illusions

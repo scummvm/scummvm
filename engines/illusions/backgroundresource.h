@@ -159,7 +159,6 @@ public:
 	void drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);
 	void pause();
 	void unpause();
-	void refreshPan(WidthHeight &dimensions);
 public:
 	IllusionsEngine *_vm;
 	uint32 _tag;

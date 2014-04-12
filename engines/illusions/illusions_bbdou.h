@@ -113,6 +113,8 @@ public:
 	void loadSpecialCode(uint32 resId);
 	void unloadSpecialCode(uint32 resId);
 	void notifyThreadId(uint32 &threadId);
+	bool testMainActorFastWalk(Control *control);
+	bool testMainActorCollision(Control *control);
 	Control *getObjectControl(uint32 objectId);
 	Common::Point getNamedPointPosition(uint32 namedPointId);
 	uint32 getPriorityFromBase(int16 priority);

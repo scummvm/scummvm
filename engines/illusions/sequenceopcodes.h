@@ -64,9 +64,11 @@ protected:
 	void opAppearForeignActor(Control *control, OpCall &opCall);
 	void opDisappearForeignActor(Control *control, OpCall &opCall);
 	void opMoveDelta(Control *control, OpCall &opCall);
+	void opFaceActor(Control *control, OpCall &opCall);
 	void opNotifyThreadId1(Control *control, OpCall &opCall);
 	void opSetPathCtrY(Control *control, OpCall &opCall);
 	void opSetPathWalkPoints(Control *control, OpCall &opCall);
+	void opDisableAutoScale(Control *control, OpCall &opCall);
 	void opSetScale(Control *control, OpCall &opCall);
 	void opSetScaleLayer(Control *control, OpCall &opCall);
 	void opDeactivatePathWalkRects(Control *control, OpCall &opCall);

@@ -29,6 +29,8 @@
 
 namespace Illusions {
 
+class BackgroundItem;
+
 struct CameraState {
 	int _cameraMode;
 	//field_2 dw
@@ -85,10 +87,18 @@ public:
 	bool isAtPanLimit(int limitNum);
 	void setActiveState(CameraState &state);
 	void getActiveState(CameraState &state);
+	void refreshPan(BackgroundItem *backgroundItem, WidthHeight &dimensions);
 protected:
 	IllusionsEngine *_vm;
 	CameraState _activeState;
 	Common::FixedStack<CameraModeStackItem, 8> _stack;
+
+	int16 _screenWidth, _screenHeight;
+	int16 _screenMidX, _screenMidY;
+	Common::Point _centerObjectTrackingLimits;
+	Common::Point _trackObjectTrackingLimits;
+	int16 _trackObjectTrackingLimitsPanSpeed;
+
 	void updateMode1(uint32 currTime);
 	void updateMode2(uint32 currTime);
 	void updateMode3(uint32 currTime);
@@ -98,6 +108,9 @@ protected:
 	void recalcPan(uint32 currTime);
 	bool calcPointFlags(Common::Point &pt, WRect &rect, uint &outFlags);
 	void clipPanTargetPoint();
+	void init();
+	void initDuckman();
+	void initBBDOU();
 };
 
 } // End of namespace Illusions

@@ -158,6 +158,8 @@ public:
 	virtual void loadSpecialCode(uint32 resId) = 0;
 	virtual void unloadSpecialCode(uint32 resId) = 0;
 	virtual void notifyThreadId(uint32 &threadId) = 0;
+	virtual bool testMainActorFastWalk(Control *control) = 0;
+	virtual bool testMainActorCollision(Control *control) = 0;
 	virtual Control *getObjectControl(uint32 objectId) = 0;
 	virtual Common::Point getNamedPointPosition(uint32 namedPointId) = 0;
 	virtual uint32 getPriorityFromBase(int16 priority) = 0;

@@ -119,6 +119,7 @@ Common::Point Input::getCursorDelta() {
 
 void Input::initKeys() {
 	// NOTE Skipped debugging keys of the original engine, not sure if used
+	// TODO Move this to the engine class and tidy up methods (one for mouse buttons, one for keys)
 	addKeyMapping(Common::KEYCODE_INVALID, MOUSE_BUTTON0, 0x01);
 	addKeyMapping(Common::KEYCODE_RETURN, MOUSE_NONE, 0x01);
 	addKeyMapping(Common::KEYCODE_INVALID, MOUSE_BUTTON1, 0x02);

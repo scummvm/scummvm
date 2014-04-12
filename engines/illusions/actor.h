@@ -146,7 +146,10 @@ public:
 	PointArray *_pathNode;
 	uint _pathPoints;
 	uint32 _walkCallerThreadId1;
-	
+
+	RGB _color;
+	int16 _choiceJumpOffs;
+
 };
 
 class Control {
@@ -182,6 +185,7 @@ public:
 	void stopSequenceActor();
 	void startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 threadId);
 	void sequenceActor();
+	void setActorIndex(int actorIndex);
 	void setActorIndexTo1();
 	void setActorIndexTo2();
 	void startSubSequence(int linkIndex, uint32 sequenceId);
@@ -220,17 +224,22 @@ public:
 	void placeSequenceLessActor(uint32 objectId, Common::Point placePt, WidthHeight dimensions, int16 priority);
 	void placeActorLessObject(uint32 objectId, Common::Point feetPt, Common::Point pt, int16 priority, uint flags);
 	void placeSubActor(uint32 objectId, int linkIndex, uint32 actorTypeId, uint32 sequenceId);
+	void placeDialogItem(uint16 objectNum, uint32 actorTypeId, uint32 sequenceId, Common::Point placePt, int16 choiceJumpOffs);
 	void destroyControls();
 	void destroyActiveControls();
 	void destroyControlsByTag(uint32 tag);
+	void destroyDialogItems();
 	void threadIsDead(uint32 threadId);
 	void pauseControls();
 	void unpauseControls();
 	void pauseControlsByTag(uint32 tag);
 	void unpauseControlsByTag(uint32 tag);
 	bool getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority);
+	bool getDialogItemAtPos(Control *control, Common::Point pt, Control **outOverlappedControl);
+	void destroyControl(Control *control);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 	void actorControlRoutine(Control *control, uint32 deltaTime);
+	void dialogItemControlRoutine(Control *control, uint32 deltaTime);
 public:
 	typedef Common::List<Control*> Items;
 	typedef Items::iterator ItemsIterator;
@@ -241,7 +250,7 @@ public:
 	Actor *newActor();
 	Control *newControl();
 	uint32 newTempObjectId();
-	void destroyControl(Control *control);
+	void destroyControlInternal(Control *control);
 };
 
 } // End of namespace Illusions

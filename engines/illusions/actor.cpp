@@ -616,7 +616,7 @@ void Control::sequenceActor() {
 	while (_actor->_seqCodeValue3 <= 0 && !sequenceFinished) {
 		bool breakInner = false;
 		while (!breakInner) {
-			debug(1, "SEQ[%08X] op: %08X", _actor->_sequenceId, _actor->_seqCodeIp[0]);
+			debug(1, "[%08X] SEQ[%08X] op: %08X", _objectId, _actor->_sequenceId, _actor->_seqCodeIp[0]);
 			opCall._op = _actor->_seqCodeIp[0] & 0x7F;
 			opCall._opSize = _actor->_seqCodeIp[1];
 			opCall._code = _actor->_seqCodeIp + 2;
@@ -650,6 +650,10 @@ void Control::sequenceActor() {
 		_actor->_seqCodeIp = 0;
 	}
 	
+}
+
+void Control::setActorIndex(int actorIndex) {
+	_actor->_actorIndex = actorIndex;
 }
 
 void Control::setActorIndexTo1() {
@@ -762,12 +766,23 @@ PointArray *Control::createPath(Common::Point destPt) {
 
 void Control::updateActorMovement(uint32 deltaTime) {
 	// TODO This needs some cleanup
+	// TODO Move while loop to caller
 
 	static const int16 kAngleTbl[] = {60, 0, 120, 0, 60, 0, 120, 0};
+	bool again = false;
 
 	while (1) {
 
-	bool again = false;
+	if (!again && _vm->testMainActorFastWalk(this)) {
+		again = true;
+		disappearActor();
+		_actor->_flags |= 0x8000;
+		_actor->_seqCodeIp = 0;
+		deltaTime = 2;
+	}
+
+	if (_vm->testMainActorCollision(this))
+		break;
 
 	/* TODO
 	if (controla->objectId == GameScript_getField0() && again == const0 && Input_pollButton__(0x10u)) {
@@ -912,7 +927,6 @@ void Control::refreshSequenceCode() {
 }
 
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
-
 	stopActor();
 
 	_actor->_flags &= ~0x80;
@@ -964,7 +978,8 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 		}
 	}
 
-	sequenceActor();
+	if (_vm->getGameId() == kGameIdBBDOU)
+		sequenceActor();
 
 }
 
@@ -1123,10 +1138,33 @@ void Controls::placeSubActor(uint32 objectId, int linkIndex, uint32 actorTypeId,
 	subActor->_linkIndex = linkIndex;
 }
 
+void Controls::placeDialogItem(uint16 objectNum, uint32 actorTypeId, uint32 sequenceId, Common::Point placePt, int16 choiceJumpOffs) {
+	Control *control = newControl();
+	Actor *actor = newActor();
+	ActorType *actorType = _vm->_dict->findActorType(actorTypeId);
+	control->_flags = 0xC;
+	control->_priority = actorType->_priority;
+	control->_objectId = objectNum | 0x40000;
+	control->readPointsConfig(actorType->_pointsConfig);
+	control->_actorTypeId = actorTypeId;
+	control->_actor = actor;
+	actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Controls>(this, &Controls::dialogItemControlRoutine));
+	actor->_choiceJumpOffs = choiceJumpOffs;
+	actor->createSurface(actorType->_surfInfo);
+	actor->_position = placePt;
+	actor->_position2 = placePt;
+	actor->_scale = actorType->_scale;
+	actor->_color = actorType->_color;
+	_controls.push_back(control);
+	control->appearActor();
+	control->startSequenceActor(sequenceId, 2, 0);
+	control->setActorIndex(1);
+}
+
 void Controls::destroyControls() {
 	ItemsIterator it = _controls.begin();
 	while (it != _controls.end()) {
-		destroyControl(*it);
+		destroyControlInternal(*it);
 		it = _controls.erase(it);
 	}
 }
@@ -1135,7 +1173,7 @@ void Controls::destroyActiveControls() {
 	ItemsIterator it = _controls.begin();
 	while (it != _controls.end()) {
 		if ((*it)->_pauseCtr <= 0) {
-			destroyControl(*it);
+			destroyControlInternal(*it);
 			it = _controls.erase(it);
 		} else
 			++it;			
@@ -1146,10 +1184,21 @@ void Controls::destroyControlsByTag(uint32 tag) {
 	ItemsIterator it = _controls.begin();
 	while (it != _controls.end()) {
 		if ((*it)->_tag == tag) {
-			destroyControl(*it);
+			destroyControlInternal(*it);
 			it = _controls.erase(it);
 		} else
 			++it;			
+	}
+}
+
+void Controls::destroyDialogItems() {
+	ItemsIterator it = _controls.begin();
+	while (it != _controls.end()) {
+		if (((*it)->_pauseCtr == 0) && ((*it)->_flags & 4)) {
+			destroyControlInternal(*it);
+			it = _controls.erase(it);
+		} else
+			++it;
 	}
 }
 
@@ -1238,6 +1287,28 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 	return foundControl != 0;
 }
 
+bool Controls::getDialogItemAtPos(Control *control, Common::Point pt, Control **outOverlappedControl) {
+	Control *foundControl = 0;
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *testControl = *it;
+		if (testControl != control && testControl->_pauseCtr == 0 &&
+			(testControl->_flags & 1) && (testControl->_flags & 4)) {
+			Common::Rect collisionRect;
+			testControl->getCollisionRect(collisionRect);
+			if (!collisionRect.isEmpty() && collisionRect.contains(pt) &&
+				(!foundControl || foundControl->_priority < testControl->_priority))
+				foundControl = testControl;
+		}
+	}
+	*outOverlappedControl = foundControl;
+	return foundControl != 0;
+}
+
+void Controls::destroyControl(Control *control) {
+	_controls.remove(control);
+	destroyControlInternal(control);
+}
+
 bool Controls::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
 	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
 		Control *control = *it;
@@ -1277,6 +1348,12 @@ void Controls::actorControlRoutine(Control *control, uint32 deltaTime) {
 
 }
 
+void Controls::dialogItemControlRoutine(Control *control, uint32 deltaTime) {
+	Actor *actor = control->_actor;
+	if (actor->_pauseCtr <= 0)
+		actor->_seqCodeValue1 = 100 * deltaTime;
+}
+
 Actor *Controls::newActor() {
 	return new Actor(_vm);
 }
@@ -1296,14 +1373,14 @@ uint32 Controls::newTempObjectId() {
 	return nextTempObjectId2 | 0x40000;
 }
 
-void Controls::destroyControl(Control *control) {
+void Controls::destroyControlInternal(Control *control) {
 
-	if (control->_pauseCtr <= 0)
+	if (!(control->_flags & 4) && control->_pauseCtr <= 0)
 		_vm->_dict->setObjectControl(control->_objectId, 0);
 
-	if (control->_objectId == 0x40004 && control->_pauseCtr <= 0)
+	if (!(control->_flags & 4) && control->_objectId == 0x40004 && control->_pauseCtr <= 0)
 		_vm->setCursorControl(0);
-	
+
 	if (control->_actor) {
 		if (control->_actor->_pathNode && (control->_actor->_flags & 0x400))
 			delete control->_actor->_pathNode;
@@ -1316,6 +1393,7 @@ void Controls::destroyControl(Control *control) {
 		delete control->_actor;
 		control->_actor = 0;
 	}
+
 	delete control;
 }
 
