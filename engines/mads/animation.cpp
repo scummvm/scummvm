@@ -365,6 +365,9 @@ void Animation::startAnimation(int abortTimers) {
 		loadFrame(1);
 	}
 
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE)
+		_vm->_palette->refreshHighColors();
+
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
 	_nextFrameTimer = _vm->_game->_scene._frameStartTime;
