@@ -249,8 +249,6 @@ void AvalancheEngine::runAvalot() {
 			_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
 	};
 
-	warning("STUB: run()");
-
 	_closing->exitGame();
 }
 
@@ -987,11 +985,10 @@ void AvalancheEngine::incScore(byte num) {
 
 		if (_soundFx) {
 			for (int j = 1; j <= 97; j++)
-				// Length os 2 is a guess, the original doesn't have a delay specified
+				// Length of 2 is a guess, the original doesn't have a delay specified
 				_sound->playNote(177 + _dnascore * 3, 2);
 		}
 	}
-	warning("STUB: points()");
 
 	drawScore();
 }

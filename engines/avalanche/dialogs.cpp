@@ -218,8 +218,6 @@ void Dialogs::scrollModeNormal() {
 	setReadyLight(0);
 	_vm->_animationsEnabled = true;
 	_vm->_holdLeftMouse = false; // Used in Lucerna::checkclick().
-
-	warning("STUB: Scrolls::scrollModeNormal()");
 }
 
 /**
@@ -646,9 +644,6 @@ void Dialogs::solidify(byte n) {
  * 'calldriver' and 'display' by using Common::String instead of a private buffer.
  */
 void Dialogs::displayText(Common::String text) {
-//	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
-	warning("STUB: Scrolls::calldrivers()");
-
 	_vm->_sound->stopSound();
 
 	setReadyLight(0);
