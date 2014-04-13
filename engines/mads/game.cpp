@@ -238,6 +238,7 @@ void Game::sectionLoop() {
 		_priorFrameTimer = _scene._frameStartTime;
 
 		// Call the scene logic for entering the given scene
+		_triggerSetupMode = KERNEL_TRIGGER_DAEMON;
 		_scene._sceneLogic->enter();
 
 		// Set player data
