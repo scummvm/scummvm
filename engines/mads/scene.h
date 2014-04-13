@@ -106,7 +106,7 @@ public:
 	MSurface _backgroundSurface;
 	DepthSurface _depthSurface;
 	UserInterface _userInterface;
-	bool _animFlag;
+	bool _cyclingActive;
 	int _animVal1;
 	int _animCount;
 	Common::Array<uint32> _animTicksList;

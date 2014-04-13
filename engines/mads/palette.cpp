@@ -527,7 +527,7 @@ void Palette::unlock() {
 
 void Palette::refreshHighColors() {
 	int val = 18;
-	if (_vm->_game->_scene._animFlag)
+	if (_vm->_game->_scene._cyclingActive)
 		val += _vm->_game->_scene._animCount;
 
 	setPalette(_mainPalette, val, 256 - val);

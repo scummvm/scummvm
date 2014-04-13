@@ -37,7 +37,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_currentSceneId = 0;
 	_sceneLogic = nullptr;
 	_sceneInfo = nullptr;
-	_animFlag = false;
+	_cyclingActive = false;
 	_animVal1 = 0;
 	_depthStyle = 0;
 	_roomChanged = false;
@@ -257,7 +257,7 @@ void Scene::initPaletteAnimation(Common::Array<RGB4> &animData, bool animFlag) {
 		_animCount += _animPalData[i].r;
 
 	_animVal1 = (_animCount > 16) ? 3 : 0;
-	_animFlag = animFlag;
+	_cyclingActive = animFlag;
 }
 
 bool Scene::getDepthHighBits(const Common::Point &pt) {
@@ -393,7 +393,7 @@ void Scene::doFrame() {
 	}
 
 	if (_vm->_game->_fx)
-		_animFlag = true;
+		_cyclingActive = true;
 	_vm->_game->_fx = kTransitionNone;
 
 	if (_freeAnimationFlag && _activeAnimation) {
@@ -403,7 +403,7 @@ void Scene::doFrame() {
 }
 
 void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
-	// Draw any sprites
+	// Draw any sprite backgrounds
 	_spriteSlots.drawBackground();
 
 	// Set up dirty areas for any text display
@@ -420,8 +420,8 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	_textDisplay.setDirtyAreas2();
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
-	// Draw foreground sprites
-	_spriteSlots.drawForeground(&_vm->_screen);
+	// Draw sprites that have changed
+	_spriteSlots.drawSprites(&_vm->_screen);
 
 	// Draw text elements onto the view
 	_textDisplay.draw(&_vm->_screen);

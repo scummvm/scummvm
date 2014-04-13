@@ -283,7 +283,7 @@ void SpriteSlots::drawBackground() {
 	}
 }
 
-void SpriteSlots::drawForeground(MSurface *s) {
+void SpriteSlots::drawSprites(MSurface *s) {
 	DepthList depthList;
 	Scene &scene = _vm->_game->_scene;
 

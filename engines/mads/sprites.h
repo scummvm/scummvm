@@ -192,7 +192,7 @@ public:
 	/**
 	* Draw any sprites into the foreground of the scene
 	*/
-	void drawForeground(MSurface *s);
+	void drawSprites(MSurface *s);
 
 	void cleanUp();
 };
