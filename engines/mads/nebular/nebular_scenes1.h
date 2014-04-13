@@ -144,6 +144,25 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene106 : public Scene1xx {
+private:
+	bool _backToShipFl;
+	bool _shadowFl;
+	bool _firstEmergingFl;
+
+	int _msgPosY;
+
+public:
+	Scene106(MADSEngine *vm) : Scene1xx(vm), _backToShipFl(false), _shadowFl(false), _firstEmergingFl(false), _msgPosY(0) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 

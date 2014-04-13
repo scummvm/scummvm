@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -1338,10 +1338,8 @@ void Scene103::actions() {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeVariant(1);
-			_globals._sequenceIndexes[13] = _scene->_sequences.startReverseCycle(
-				_globals._spriteIndexes[13], false, 3, 2);
+			_globals._sequenceIndexes[13] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[13], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[13]);
-
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SM_FRAME_INDEX, 7, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SM_0, 0, 2);
 			_vm->_game->_player._visible = false;
@@ -1370,10 +1368,8 @@ void Scene103::actions() {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeVariant(1);
-			_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(
-				_globals._spriteIndexes[12], false, 3, 2);
+			_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
-
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SM_FRAME_INDEX, 6, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SM_0, 0, 2);
 			_vm->_game->_player._visible = false;
@@ -1523,8 +1519,8 @@ void Scene104::setup() {
 }
 
 void Scene104::enter() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', -1), false);
-	_globals._sequenceIndexes[1]  = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 1);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', -1));
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 1);
 
 	if (_scene->_priorSceneId == 105)
 		_game._player._playerPos = Common::Point(302, 107);
@@ -1568,7 +1564,7 @@ void Scene104::step() {
 				_scene->resetScene();
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
-				_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0), false);
+				_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
 				_vm->_palette->refreshHighColors();
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], mirrorFl, 7, 1, 0, 0);
 				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(198, 143));
@@ -1598,7 +1594,7 @@ void Scene104::step() {
 				_scene->resetScene();
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
-				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1), false);
+				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1));
 				_vm->_palette->refreshHighColors();
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
@@ -1636,8 +1632,8 @@ void Scene104::step() {
 				_scene->_activeAnimation->free();
 				_scene->resetScene();
 				_game._player._stepEnabled = false;
-				_game._player._visible   = false;
-				_globals._spriteIndexes[4]  = _scene->_sprites.addSprites(formAnimName('a', 2), false);
+				_game._player._visible = false;
+				_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2));
 				_vm->_palette->refreshHighColors();
 				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 8, 1, 0, 0);
 				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(198, 143));
@@ -1717,8 +1713,8 @@ void Scene105::setup() {
 }
 
 void Scene105::enter() {
-	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('m', 1), false);
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 4), false);
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('m', 1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 4));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 0);
 
 	if (_globals[kFishIn105]) {
@@ -1748,11 +1744,11 @@ void Scene105::step() {
 			_scene->_kernelMessages.reset();
 			_scene->resetScene();
 			_game._player._stepEnabled = false;
-			_game._player._visible   = false;
+			_game._player._visible = false;
 
-			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', 0), false);
-			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', 2), false);
-			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', 3), false);
+			_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', 0));
+			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', 2));
+			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', 3));
 			_vm->_sound->command(33);
 			_scene->clearSequenceList();
 			_vm->_palette->refreshHighColors();
@@ -1848,6 +1844,213 @@ void Scene105::actions() {
 		_vm->_dialogs->show(0x290E); 
 	else if (_action.isAction(VERB_LOOK, 0x129))
 		_vm->_dialogs->show(0x290F); 
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene106::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	if ((_scene->_priorSceneId == 102) && !_game._objects.isInInventory(OBJ_REBREATHER) && !_scene->_roomChanged)
+		_game._player._spritesPrefix = "";
+
+	_vm->_dialogs->_defaultPosition.y = 100;
+}
+
+void Scene106::enter() {
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('H', -1));
+
+	if (_game._objects.isInInventory(OBJ_REBREATHER) || (_scene->_priorSceneId != 102) || _scene->_roomChanged) {
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('A', 0));
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('A', 1));
+	}
+
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('G', -1));
+	_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 21, 0, 0, 0);
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('I', -1));
+	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 32, 47);
+
+	if (_scene->_priorSceneId == 102) {
+		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 1, 4, 0);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SM_0, 0, 70);
+		_game._player._visible = false;
+		_game._player._stepEnabled = false;
+		_game._player._facing = FACING_EAST;
+		_game._player._playerPos = Common::Point(106, 69);
+	} else if (_scene->_priorSceneId != -2) {
+		if (_scene->_priorSceneId == 107) {
+			_game._player._playerPos = Common::Point(319, 84);
+			_game._player._facing = _game._player._prepareWalkFacing = FACING_WEST;
+		} else {
+			_game._player._playerPos = Common::Point(319, 44);
+			_game._player._facing = _game._player._prepareWalkFacing = FACING_SOUTHWEST;
+			_scene->_sprites[_game._player._spritesStart + 3]->_charInfo->_velocity = 24;
+		}
+
+		_game._player._prepareWalkPos = Common::Point(246, 69);
+		_game._player._needToWalk = true;
+		_game._player._readyToWalk = true;
+	}
+
+	if (_scene->_priorSceneId != 102) {
+		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -2, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+	}
+
+	_backToShipFl = false;
+	_shadowFl = false;
+	_firstEmergingFl = false;
+
+	_game.loadQuoteSet(0x31, 0x32, 0x34, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0);
+	sceneEntrySound();
+}
+
+void Scene106::step() {
+	if (_game._trigger == 70) {
+		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], -2, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
+
+		if (!_game._objects.isInInventory(OBJ_REBREATHER) && !_scene->_roomChanged) {
+			_scene->loadAnimation(Resources::formatName(106, 'A', -1, EXT_AA, ""), 75);
+		} else {
+			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 4, 1, 0, 0);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SM_FRAME_INDEX, 28, 71);
+		}
+	}
+
+	if (_game._trigger == 71) {
+		_game._player._prepareWalkPos = Common::Point(246, 69);
+		_game._player._prepareWalkFacing = FACING_EAST;
+		_game._player._needToWalk = true;
+		_game._player._readyToWalk = true;
+		_game._player._visible = true;
+
+		if (_game._visitedScenes._sceneRevisited) {
+			_game._player._stepEnabled = true;
+		} else {
+			_game._player._prepareWalkFacing = FACING_SOUTHWEST;
+			_firstEmergingFl = true;
+			_scene->loadAnimation(Resources::formatName(106, 'B', -1, EXT_AA, ""), 80);
+		}
+	}
+
+	if (_firstEmergingFl && (_scene->_activeAnimation->getCurrentFrame() >= 19)) {
+		_firstEmergingFl = false;
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
+	}
+
+	if ((_game._trigger >= 80) && (_game._trigger <= 87)) {
+		int tmpVal = _game._trigger - 80;
+		int msgId = -1;
+		switch (tmpVal) {
+		case 0:
+			_msgPosY = 26;
+			msgId = 49;
+			break;
+
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			msgId = 76 + tmpVal;
+			break;
+
+		case 6:
+			msgId = 50;
+			break;
+
+		default:
+			msgId = -1;
+			_game._player._stepEnabled = true;
+			break;
+		}
+
+		if (msgId >= 0) {
+			int nextAbortVal = _game._trigger + 1;
+			_scene->_kernelMessages.add(Common::Point(15, _msgPosY), 0x1110, 0, 0, 360, _game.getQuote(msgId));
+			_scene->_sequences.addTimer(150, nextAbortVal);
+			_msgPosY += 14;
+		}
+	}
+
+	if (_backToShipFl) {
+		if (!_shadowFl) {
+			if (_game._player._playerPos.x < 204) {
+				_shadowFl = true;
+				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 4, 1, 0, 0);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_0, 0, 72);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_FRAME_INDEX, 44, 73);
+			}
+		} else if (_game._trigger == 73)
+				_game._player._visible = false;
+		else if (_game._trigger == 72)
+				_scene->_sequences.addTimer(24, 74);
+		else if (_game._trigger == 74)
+				_scene->_nextSceneId = 102;
+	}
+
+	if (_game._trigger == 75) {
+		_game._visitedScenes.pop_back();
+		_scene->_nextSceneId = 102;
+	}
+}
+
+void Scene106::preActions() {
+	if (_action.isAction(0x15D, 0x12E) || _action.isAction(0x15D, 0x130)) {
+		_game._player._stepEnabled = false;
+		_scene->_sprites[_game._player._spritesStart + 1]->_charInfo->_velocity = 24;
+		_game._player._walkOffScreenSceneId = 104;
+	}
+
+	if (_action.isAction(0x15D, 0xF3))
+		_game._player._walkOffScreenSceneId = 107;
+}
+
+void Scene106::actions() {
+	if (_action._lookFlag)
+		_vm->_dialogs->show(0x2976);
+	else if (_action.isAction(0x15C, 0xD9)) {
+		_game._player._stepEnabled = false;
+		_game._player._prepareWalkPos = Common::Point(95, 72);
+		_game._player._prepareWalkFacing = FACING_WEST;
+		_game._player._needToWalk = true;
+		_game._player._readyToWalk = true;
+		_game._player._frameNumber = 9;
+		_backToShipFl = true;
+	} else if (_action.isAction(VERB_LOOK, 0x13) || _action.isAction(0xD1, 0x13))
+		_vm->_dialogs->show(0x2969);
+	else if (_action.isAction(VERB_TAKE, 0x13))
+		_vm->_dialogs->show(0x296A);
+	else if (_action.isAction(VERB_LOOK, 0x12F) || _action.isAction(VERB_LOOK, 0x130))
+		_vm->_dialogs->show(0x296B);
+	else if (_action.isAction(VERB_TAKE, 0x12F) || _action.isAction(VERB_TAKE, 0x130))
+		_vm->_dialogs->show(0x296C);
+	else if (_action.isAction(VERB_LOOK, 0xF3))
+		_vm->_dialogs->show(0x296D);
+	else if (_action.isAction(VERB_LOOK, 0x109) || _action.isAction(0xD1, 0x109))
+		_vm->_dialogs->show(0x296E);
+	else if (_action.isAction(0x109) && (_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)))
+		_vm->_dialogs->show(0x296F);
+	else if (_action.isAction(VERB_LOOK, 0x139) || _action.isAction(0xD1, 0x139))
+		_vm->_dialogs->show(0x2970);
+	else if (_action.isAction(VERB_LOOK, 0xD9))
+		_vm->_dialogs->show(0x2971);
+	else if (_action.isAction(VERB_OPEN, 0xD9))
+		_vm->_dialogs->show(0x2972);
+	else if (_action.isAction(VERB_CLOSE, 0xD9))
+		_vm->_dialogs->show(0x2973);
+	else if (_action.isAction(VERB_LOOK, 0x12E))
+		_vm->_dialogs->show(0x2974);
+	else if (_action.isAction(VERB_LOOK, 0xF0))
+		_vm->_dialogs->show(0x2975);
 	else
 		return;
 
