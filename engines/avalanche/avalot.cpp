@@ -955,7 +955,7 @@ void AvalancheEngine::drawToolbar() {
 }
 
 void AvalancheEngine::drawScore() {
-	uint16 score = _dnascore;
+	uint16 score = _score;
 	int8 numbers[3] = {0, 0, 0};
 	for (int i = 0; i < 2; i++) {
 		byte divisor = 1;
@@ -981,12 +981,12 @@ void AvalancheEngine::drawScore() {
 
 void AvalancheEngine::incScore(byte num) {
 	for (int i = 1; i <= num; i++) {
-		_dnascore++;
+		_score++;
 
 		if (_soundFx) {
 			for (int j = 1; j <= 97; j++)
 				// Length of 2 is a guess, the original doesn't have a delay specified
-				_sound->playNote(177 + _dnascore * 3, 2);
+				_sound->playNote(177 + _score * 3, 2);
 		}
 	}
 
@@ -1333,7 +1333,7 @@ void AvalancheEngine::resetVariables() {
 	for (int i = 0; i < kObjectNum; i++)
 		_objects[i] = false;
 
-	_dnascore = 0;
+	_score = 0;
 	_money = 0;
 	_room = kRoomNowhere;
 	_saveNum = 0;

@@ -46,6 +46,7 @@
 #include "avalanche/help.h"
 #include "avalanche/shootemup.h"
 #include "avalanche/mainmenu.h"
+#include "avalanche/highscore.h"
 
 #include "common/serializer.h"
 
@@ -91,6 +92,7 @@ public:
 	Nim *_nim;
 	GhostRoom *_ghostroom;
 	Help *_help;
+	HighScore *_highscore;
 
 	OSystem *_system;
 
@@ -150,7 +152,7 @@ public:
 	// Former DNA structure
 	byte _carryNum; // How many objects you're carrying...
 	bool _objects[kObjectNum]; // ...and which ones they are.
-	int16 _dnascore; // your score, of course
+	int16 _score; // your score, of course
 	int32 _money; // your current amount of dosh
 	Room _room; // your current room
 	bool _wonNim; // Have you *won* Nim? (That's harder.)

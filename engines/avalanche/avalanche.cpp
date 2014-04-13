@@ -57,6 +57,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_nim = nullptr;
 	_ghostroom = nullptr;
 	_help = nullptr;
+	_highscore = nullptr;
 
 	_platform = gd->desc.platform;
 	initVariables();
@@ -81,6 +82,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _nim;
 	delete _ghostroom;
 	delete _help;
+	delete _highscore;
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -165,6 +167,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_nim = new Nim(this);
 	_ghostroom = new GhostRoom(this);
 	_help = new Help(this);
+	_highscore = new HighScore(this);
 
 	_graphics->init();
 	_dialogs->init();
@@ -200,7 +203,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 	sz.syncAsByte(_carryNum);
 	for (int i = 0; i < kObjectNum; i++)
 		sz.syncAsByte(_objects[i]);
-	sz.syncAsSint16LE(_dnascore);
+	sz.syncAsSint16LE(_score);
 	sz.syncAsSint32LE(_money);
 	sz.syncAsByte(_room);
 	if (sz.isSaving())

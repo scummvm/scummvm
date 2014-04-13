@@ -72,13 +72,11 @@ public:
 	byte _wearing; // what you're wearing
 
 	Parser(AvalancheEngine *vm);
-
 	void init();
 	void parse();
 	void doThat();
 	void verbOpt(byte verb, Common::String &answer, char &ansKey);
 	void drink();
-
 	void handleInputText(const Common::Event &event);
 	void handleBackspace();
 	void handleReturn();
@@ -89,7 +87,7 @@ public:
 	void tryDropdown();
 	int16 getPos(const Common::String &crit, const Common::String &src);
 	void doVerb(VerbCode id);
-
+	Common::String rank();
 	void resetVariables();
 	void synchronize(Common::Serializer &sz);
 
@@ -112,10 +110,7 @@ private:
 
 	byte wordNum(Common::String word);
 	void replace(Common::String oldChars, byte newChar);
-
-	Common::String rank();
 	Common::String totalTime();
-
 	void clearWords();
 	void cheatParse(Common::String codes);
 	void stripPunctuation(Common::String &word);
