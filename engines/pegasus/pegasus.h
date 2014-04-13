@@ -257,6 +257,7 @@ private:
 	bool _saveAllowed, _loadAllowed; // It's so nice that this was in the original code already :P
 	Common::Error showLoadDialog();
 	Common::Error showSaveDialog();
+	void showSaveFailedDialog(const Common::Error &status);
 	bool _saveRequested, _loadRequested;
 
 	// Misc.
