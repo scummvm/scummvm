@@ -106,7 +106,16 @@ bool StepArray::gotoNextPoint() {
 }
 
 void StepArray::insertPoints(Common::Point **points, int pointsCount) {
-	warning("STUB: StepArray::insertPoints()");
+	if (_currPointIndex + pointsCount >= _pointsCount)
+		realloc(_points, sizeof(Common::Point *) * (_currPointIndex + pointsCount));
+
+	_maxPointIndex = _currPointIndex + pointsCount;
+
+	for (int i = 0; i < pointsCount; i++) {
+		_points[_currPointIndex + i] = new Common::Point;
+
+		*_points[_currPointIndex + i] = *points[i];
+	}
 }
 
 StaticANIObject::StaticANIObject() {
