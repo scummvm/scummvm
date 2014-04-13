@@ -235,6 +235,10 @@ void MidiPlayer::startTrack(int track) {
 		_music.parser = parser; // That plugs the power cord into the wall
 	} else if (_music.parser) {
 		if (!_music.parser->setTrack(track)) {
+			// The Roland MT32 music in Simon the Sorcerer 2
+			// is missing the extra tracks in many scenes,
+			// like the introduction sequence.
+			stop();
 			return;
 		}
 		_currentTrack = (byte)track;
