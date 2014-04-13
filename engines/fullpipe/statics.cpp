@@ -105,6 +105,10 @@ bool StepArray::gotoNextPoint() {
 	}
 }
 
+void StepArray::insertPoints(Common::Point **points, int pointsCount) {
+	warning("STUB: StepArray::insertPoints()");
+}
+
 StaticANIObject::StaticANIObject() {
 	_shadowsOn = 1;
 	_field_30 = 0;
@@ -1137,7 +1141,85 @@ void StaticANIObject::playIdle() {
 }
 
 void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, int y, Common::Point **points, int pointsCount, int someDynamicPhaseIndex) {
-	warning("STUB: StaticANIObject::startAnimSteps()");
+	Movement *mov = 0;
+
+	if (!(_flags & 0x80)) {
+		if (!_messageQueueId)
+			for (uint i = 0; i < _movements.size(); i++) {
+				if (((Movement *)_movements[i])->_id == movementId) {
+					mov = (Movement *)_movements[i];
+					break;
+				}
+			}
+	}
+
+	if (!mov) {
+		updateGlobalMessageQueue(messageQueueId, _id);
+
+		return;
+	}
+
+
+	if (_movement || !_statics)
+		return;
+
+	Common::Point point;
+
+	_statics->getSomeXY(point);
+
+	int newx = _ox - point.x;
+	int newy = _oy - point.y;
+
+	_movement = mov;
+
+	if (_flags & 0x40)
+		_movement->gotoLastFrame();
+	else
+		_movement->gotoFirstFrame();
+
+	_stepArray.clear();
+	_stepArray.insertPoints(points, pointsCount);
+
+	if (!(_flags & 0x40)) {
+		if (!_movement->_currDynamicPhaseIndex) {
+			_stepArray.getCurrPoint(&point);
+			newx += point.x + _movement->_mx;
+			newy += point.y + _movement->_my;
+			_stepArray.gotoNextPoint();
+
+			ExCommand *ex = _movement->_currDynamicPhase->getExCommand();
+
+			if (ex) {
+				if (ex->_messageKind == 35) {
+					ExCommand *newEx = ex->createClone();
+
+					newEx->_excFlags |= 2u;
+					newEx->sendMessage();
+				}
+			}
+		}
+	}
+
+	_movement->getCurrDynamicPhaseXY(point);
+	setOXY(point.x + newx, point.y + newy);
+
+	if ((_movement->_staticsObj2->_staticsId >> 8) & 0x40)
+		_flags |= 8;
+	else
+		_flags &= 0xFFF7;
+
+	_flags |= 1;
+	_messageQueueId = messageQueueId;
+	_movement->_currDynamicPhase->_countdown = _movement->_currDynamicPhase->_initialCountdown;
+	_movement->_counter = 0;
+	_counter = _initialCounter;
+	_someDynamicPhaseIndex = someDynamicPhaseIndex;
+
+	ExCommand *ex = new ExCommand(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
+
+	ex->_keyCode = _okeyCode;
+	ex->_excFlags = 2;
+	ex->postMessage();
 }
 
 bool StaticANIObject::startAnimEx(int movid, int parId, int flag1, int flag2) {

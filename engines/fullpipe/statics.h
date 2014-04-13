@@ -47,6 +47,7 @@ class StepArray : public CObject {
 	Common::Point *getCurrPoint(Common::Point *point);
 	Common::Point *getPoint(Common::Point *point, int index, int offset);
 	bool gotoNextPoint();
+	void insertPoints(Common::Point **points, int pointsCount);
 };
 
 class StaticPhase : public Picture {
