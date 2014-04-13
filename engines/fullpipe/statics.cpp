@@ -1088,7 +1088,47 @@ void StaticANIObject::show1(int x, int y, int movId, int mqId) {
 }
 
 void StaticANIObject::show2(int x, int y, int movementId, int mqId) {
-	warning("STUB: StaticANIObject::show2(%d, %d, %d, %d)", x, y, movementId, mqId);
+	if (movementId == -1) {
+		_flags |= 4u;
+		return;
+	}
+
+	if (!_messageQueueId) {
+		_messageQueueId = mqId;
+
+		Movement *mov = getMovementById(movementId);
+
+		if (mov) {
+			_statics = mov->_staticsObj1;
+			_movement = mov;
+			mov->gotoLastFrame();
+			mov->setOXY(x, y);
+			mov->gotoFirstFrame();
+
+			Common::Point point;
+
+			mov->getCurrDynamicPhaseXY(point);
+			_statics->_x = mov->_ox - point.x - mov->_mx;
+			_statics->_y = mov->_oy - point.y - mov->_my;
+
+			_statics->getSomeXY(point);
+			_flags |= 4;
+			_ox = _statics->_x + point.x;
+			_oy = _statics->_y + point.y;
+
+			if (mov->_currMovement) {
+				_flags |= 8;
+			} else {
+				if (_flags & 8)
+					_flags ^= 8;
+			}
+
+			if (_flags & 1)
+				_flags ^= 1;
+
+			_flags |= 0x20;
+		}
+	}
 }
 
 void StaticANIObject::playIdle() {
