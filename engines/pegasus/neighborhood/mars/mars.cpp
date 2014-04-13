@@ -535,6 +535,10 @@ void Mars::doorOpened() {
 }
 
 void Mars::setUpReactorEnergyDrain() {
+	// If there's no energy monitor, there's nothing to do
+	if (!g_energyMonitor)
+		return;
+
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kMars51, kEast):
 		if (GameState.isCurrentDoorOpen()) {
