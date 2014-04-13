@@ -2059,5 +2059,117 @@ void Scene106::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene107::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(0xDA);
+}
+
+void Scene107::enter() {
+	for (int i = 0; i < 3; i++)
+		_globals._spriteIndexes[i + 1] = _scene->_sprites.addSprites(formAnimName('G', i));
+
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(Resources::formatName(105, 'f', 4, EXT_SS, ""));
+
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 7);
+	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 17, 0, 0, 13);
+	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 19, 0, 0, 9);
+
+	for (int i = 1; i < 4; i++)
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[i], 0);
+
+	if (_globals[kFishIn107]) {
+		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(68, 151));
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
+		int idx = _scene->_dynamicHotspots.add(101, 348, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(78, 135), FACING_SOUTHWEST);
+	}
+
+	if (_scene->_priorSceneId == 105)
+		_game._player._playerPos = Common::Point(132, 47);
+	else if (_scene->_priorSceneId == 106)
+		_game._player._playerPos = Common::Point(20, 91);
+	else if (_scene->_priorSceneId != -2)
+		_game._player._playerPos = Common::Point(223, 151);
+
+	if (((_scene->_priorSceneId == 105) || (_scene->_priorSceneId == 106)) && (_vm->getRandomNumber(1, 3) == 1)) {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(Resources::formatName(105, 'R', 1, EXT_SS, ""));
+		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], true, 4, 0, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[0], Common::Point(270, 150));
+		_scene->_sequences.sub70C52(_globals._sequenceIndexes[0], SM_FRAME_INDEX, -200, 0);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
+		_scene->_dynamicHotspots.add(218, 348, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+	}
+
+	_game.loadQuoteSet(0x4A, 0x4B, 0x4C, 0x35, 0x34, 0);
+	_shootingFl = false;
+
+	if (_vm->getRandomNumber(1, 3) == 1) {
+		_scene->loadAnimation(Resources::formatName(107, 'B', -1, EXT_AA, ""), 0);
+		_shootingFl = true;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene107::step() {
+	if (_shootingFl && (_scene->_activeAnimation->getCurrentFrame() >= 19)) {
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(52));
+		_shootingFl = false;
+	}
+}
+
+void Scene107::preActions() {
+	if (_action.isAction(0x15D, 0xF6))
+		_game._player._walkOffScreenSceneId = 106;
+
+	if (_action.isAction(0x15D, 0xF5))
+		_game._player._walkOffScreenSceneId = 108;
+}
+
+void Scene107::actions() {
+	if (_action._lookFlag)
+		_vm->_dialogs->show(0x29D4);
+	else if (_action.isAction(VERB_TAKE, 0x65) && _globals[kFishIn107]) {
+		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
+			int randVal = _vm->getRandomNumber(74, 76);
+			_scene->_kernelMessages.reset();
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(randVal));
+		} else {
+			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+			_game._objects.addToInventory(OBJ_DEAD_FISH);
+			_globals[kFishIn107] = false;
+			_vm->_dialogs->showPicture(OBJ_DEAD_FISH, 0x322);
+		}
+	} else if (_action.isAction(0x15D, 0xEE))
+		_scene->_nextSceneId = 105;
+	else if (_action.isAction(VERB_LOOK, 0xEE))
+		_vm->_dialogs->show(0x29CD);
+	else if (_action.isAction(VERB_LOOK, 0x65) && (_action._mainObjectSource == 4))
+		_vm->_dialogs->show(0x29CE);
+	else if (_action.isAction(VERB_LOOK, 0x38))
+		_vm->_dialogs->show(0x29CF);
+	else if (_action.isAction(VERB_LOOK, 0x128))
+		_vm->_dialogs->show(0x29D0);
+	else if (_action.isAction(VERB_LOOK, 0x12F))
+		_vm->_dialogs->show(0x29D1);
+	else if (_action.isAction(VERB_LOOK, 0xF5))
+		_vm->_dialogs->show(0x29D2);
+	else if (_action.isAction(VERB_LOOK, 0x4D))
+		_vm->_dialogs->show(0x29D3);
+	else if (_action.isAction(VERB_LOOK, 0xDA))
+		_vm->_dialogs->show(0x29D5);
+	else if (_action.isAction(VERB_TAKE, 0xDA))
+		_vm->_dialogs->show(0x29D6);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
