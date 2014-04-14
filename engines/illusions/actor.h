@@ -101,6 +101,7 @@ public:
 	
 	ScaleLayer *_scaleLayer;
 	PriorityLayer *_priorityLayer;
+	RegionLayer *_regionLayer;
 	
 	uint _seqStackCount;
 	int16 _seqStack[5];
@@ -108,6 +109,7 @@ public:
 	Common::Point _position;
 	Common::Point _position2;
 	uint _facing;
+	int _regionIndex;
 	
 	uint32 _fontId;
 	int16 _actorIndex;
@@ -129,10 +131,10 @@ public:
 	
 	ActorControlRoutine *_controlRoutine;
 	
-	byte *_seqCodeIp;
 	uint32 _sequenceId;
-	int _seqCodeValue1;
 	int _seqCodeValue2;
+	byte *_seqCodeIp;
+	int _seqCodeValue1;
 	int _seqCodeValue3;
 	
 	int _pathCtrX, _pathCtrY;

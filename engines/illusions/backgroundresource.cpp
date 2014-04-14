@@ -23,7 +23,9 @@
 #include "illusions/illusions.h"
 #include "illusions/backgroundresource.h"
 #include "illusions/actor.h"
+#include "illusions/actorresource.h"
 #include "illusions/camera.h"
+#include "illusions/dictionary.h"
 #include "illusions/screen.h"
 #include "common/str.h"
 
@@ -44,11 +46,15 @@ void BackgroundResourceLoader::load(Resource *resource) {
 	backgroundItem->_tag = resource->_tag;
 	backgroundItem->initSurface();
 	
-	// TODO Insert background objects
+	// Insert background objects
 	for (uint i = 0; i < backgroundResource->_backgroundObjectsCount; ++i)
 		_vm->_controls->placeBackgroundObject(&backgroundResource->_backgroundObjects[i]);
 
-	// TODO Insert IDs from item48s
+	// Insert region sequences
+	for (uint i = 0; i < backgroundResource->_regionSequencesCount; ++i) {
+		Sequence *sequence = &backgroundResource->_regionSequences[i];
+		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
+	}
 
 	// TODO camera_fadeClear();
 	int index = backgroundItem->_bgRes->findMasterBgIndex();
@@ -66,7 +72,10 @@ void BackgroundResourceLoader::unload(Resource *resource) {
 	// TODO Move to BackgroundItems
 	BackgroundItem *backgroundItem = _vm->_backgroundItems->findBackgroundByResource((BackgroundResource*)resource->_refId);
 	backgroundItem->freeSurface();
-	// TODO Remove IDs from item48s
+	for (uint i = 0; i < backgroundItem->_bgRes->_regionSequencesCount; ++i) {
+		Sequence *sequence = &backgroundItem->_bgRes->_regionSequences[i];
+		_vm->_dict->removeSequence(sequence->_sequenceId);
+	}
 	delete backgroundItem->_bgRes;
 	_vm->_backgroundItems->freeBackgroundItem(backgroundItem);
 	_vm->setDefaultTextCoords();
@@ -154,6 +163,39 @@ int ScaleLayer::getScale(Common::Point pos) {
 	return _values[pos.y];
 }
 
+// RegionLayer
+
+void RegionLayer::load(byte *dataStart, Common::SeekableReadStream &stream) {
+	_unk = stream.readUint32LE();
+	uint32 regionSequenceIdsOffs = stream.readUint32LE();
+	_width = stream.readUint16LE();
+	_height = stream.readUint16LE();
+	uint32 mapOffs = stream.readUint32LE();
+	uint32 valuesOffs = stream.readUint32LE();
+	_regionSequenceIds = dataStart + regionSequenceIdsOffs;
+	_map = dataStart + mapOffs;
+	_values = dataStart + valuesOffs;
+	_mapWidth = READ_LE_UINT16(_map + 0);
+	_mapHeight = READ_LE_UINT16(_map + 2);
+	_map += 8;
+
+	debug("RegionLayer::load() %d; regionSequenceIdsOffs: %08X; _width: %d; _height: %d; mapOffs: %08X; valuesOffs: %08X",
+		_unk, regionSequenceIdsOffs, _width, _height, mapOffs, valuesOffs);
+}
+
+int RegionLayer::getRegionIndex(Common::Point pos) {
+	pos.x = CLIP<int16>(pos.x, 0, _width - 1);
+	pos.y = CLIP<int16>(pos.y, 0, _height - 1);
+	const int16 tx = pos.x / 32, sx = pos.x % 32;
+	const int16 ty = pos.y / 8, sy = pos.y % 8;
+	uint16 mapIndex = READ_LE_UINT16(_map + 2 * (tx + ty * _mapWidth)) - 1;
+	return _values[mapIndex * 32 * 8 + sx + sy * 32];
+}
+
+uint32 RegionLayer::getRegionSequenceId(int regionIndex) {
+	return READ_LE_UINT32(_regionSequenceIds + 4 * regionIndex);
+}
+
 // Palette
 
 void Palette::load(byte *dataStart, Common::SeekableReadStream &stream) {
@@ -227,6 +269,28 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 		_priorityLayers[i].load(data, stream);
 	}
 
+	// Load region layers
+	stream.seek(0x16);
+	_regionLayersCount = stream.readUint16LE();
+	_regionLayers = new RegionLayer[_regionLayersCount];
+	stream.seek(0x38);
+	uint32 regionLayersOffs = stream.readUint32LE();
+	debug("_regionLayersCount: %d", _regionLayersCount);
+	for (uint i = 0; i < _regionLayersCount; ++i) {
+		stream.seek(regionLayersOffs + i * 20);
+		_regionLayers[i].load(data, stream);
+	}
+
+	// Load region sequences
+	stream.seek(0x1E);
+	_regionSequencesCount = stream.readUint16LE();
+	_regionSequences = new Sequence[_regionSequencesCount];
+	stream.seek(0x48);
+	uint32 regionSequencesOffs = stream.readUint32LE();
+	stream.seek(regionSequencesOffs);
+	for (uint i = 0; i < _regionSequencesCount; ++i)
+		_regionSequences[i].load(data, stream);
+
 	// Load background objects
 	stream.seek(0x1C);
 	_backgroundObjectsCount = stream.readUint16LE();
@@ -274,6 +338,10 @@ PriorityLayer *BackgroundResource::getPriorityLayer(uint index) {
 
 ScaleLayer *BackgroundResource::getScaleLayer(uint index) {
 	return &_scaleLayers[index];
+}
+
+RegionLayer *BackgroundResource::getRegionLayer(uint index) {
+	return &_regionLayers[index];
 }
 
 bool BackgroundResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
@@ -374,10 +442,10 @@ void BackgroundItem::pause() {
 	// TODO
 	++_pauseCtr;
 	if (_pauseCtr <= 1) {
-		/* TODO
-		for (uint i = 0; i < _bgRes->_item48sCount; ++i)
-			krndictRemoveID(_bgRes->_item48s[i].id);
-		*/
+		for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
+			Sequence *sequence = &_bgRes->_regionSequences[i];
+			_vm->_dict->removeSequence(sequence->_sequenceId);
+		}
 		_vm->setDefaultTextCoords();
 		_vm->_camera->getActiveState(_savedCameraState);
 		_savedPalette = new byte[1024];
@@ -390,10 +458,10 @@ void BackgroundItem::unpause() {
 	// TODO
 	--_pauseCtr;
 	if (_pauseCtr <= 0) {
-		/* TODO
-		for (uint i = 0; i < _bgRes->_item48sCount; ++i)
-			krndictAddID(_bgRes->_item48s[i].id, _bgRes->_item48s[i]);
-		*/
+		for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
+			Sequence *sequence = &_bgRes->_regionSequences[i];
+			_vm->_dict->addSequence(sequence->_sequenceId, sequence);
+		}
 		initSurface();
 		_vm->_screen->setPalette(_savedPalette, 1, 256);
 		delete[] _savedPalette;

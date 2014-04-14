@@ -332,7 +332,7 @@ void SequenceOpcodes::opSetRegionLayer(Control *control, OpCall &opCall) {
 	ARG_INT16(regionLayerIndex);
 	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
 	control->_actor->_flags |= 0x20;
-//TODO	control->_actor->_regionLayer = bgRes->getRegionLayer(regionLayerIndex - 1);
+	control->_actor->_regionLayer = bgRes->getRegionLayer(regionLayerIndex - 1);
 }
 
 void SequenceOpcodes::opPlaySound(Control *control, OpCall &opCall) {

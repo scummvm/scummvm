@@ -242,7 +242,7 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 	_vm->enterScene(sceneId, 0);
 }
 
-static uint dsceneId = 0, dthreadId = 0;
+//static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
 //static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089;//Map
@@ -252,6 +252,7 @@ static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x0001002D, dthreadId = 0x00020141;
 //static uint dsceneId = 0x0001004B, dthreadId = 0x0002029B;
 //static uint dsceneId = 0x00010021, dthreadId = 0x00020113;
+static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);

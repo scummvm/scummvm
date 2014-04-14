@@ -71,11 +71,13 @@ Actor::Actor(IllusionsEngine *vm)
 	_frames = 0;
 	_scaleLayer = 0;
 	_priorityLayer = 0;
+	_regionLayer = 0;
 	_position.x = 0;
 	_position.y = 0;
 	_position2.x = 0;
 	_position2.y = 0;
 	_facing = 64;
+	_regionIndex = 0;
 	_fontId = 0;
 	_actorIndex = 0;
 	_parentObjectId = 0;
@@ -1069,7 +1071,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	}
 	
 	if (actorType->_regionLayerIndex) {
-		// TODO actor->_regionLayer = bgRes->getPriorityLayer(actorType->_regionLayerIndex - 1);
+		actor->_regionLayer = bgRes->getRegionLayer(actorType->_regionLayerIndex - 1);
 		actor->_flags |= 0x20;
 	}
 	
@@ -1355,7 +1357,28 @@ void Controls::actorControlRoutine(Control *control, uint32 deltaTime) {
 	}
 
 	if (actor->_flags & 0x20) {
-		// TODO Update transition sequence (seems to be unused in BBDOU?)
+		// Update transition sequence
+		int regionIndex = actor->_regionLayer->getRegionIndex(actor->_position);
+		if (actor->_regionIndex != regionIndex) {
+			if (regionIndex) {
+				uint32 savedSequenceId = actor->_sequenceId;
+				byte *savedSeqCodeIp = actor->_seqCodeIp;
+				int savedSeqCodeValue1 = actor->_seqCodeValue1;
+				int savedSeqCodeValue3 = actor->_seqCodeValue3;
+				uint32 regionSequenceId = actor->_regionLayer->getRegionSequenceId(regionIndex);
+				debug("Running transition sequence %08X", regionSequenceId);
+				Sequence *sequence = _vm->_dict->findSequence(regionSequenceId);
+				actor->_sequenceId = regionSequenceId;
+				actor->_seqCodeIp = sequence->_sequenceCode;
+				actor->_seqCodeValue3 = 0;
+				control->sequenceActor();
+				actor->_sequenceId = savedSequenceId;
+				actor->_seqCodeIp = savedSeqCodeIp;
+				actor->_seqCodeValue3 = savedSeqCodeValue3;
+				actor->_seqCodeValue1 = savedSeqCodeValue1;
+			}
+			actor->_regionIndex = regionIndex;
+		}
 	}
 
 }
