@@ -631,10 +631,10 @@ void Scene102::enter() {
 	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMRC_8");
 	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('x', 0));
 
-	_globals._spriteIndexes[15+1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 0);
-	_globals._spriteIndexes[15+2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 170, 0, 1, 6);
-	_globals._spriteIndexes[15+3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 11, 0, 2, 3);
-	_globals._spriteIndexes[15+4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 0, 1, 0);
+	_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 0);
+	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 170, 0, 1, 6);
+	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 11, 0, 2, 3);
+	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 0, 1, 0);
 	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 3, 0, 0, 5);
 
 	if (!_game._objects.isInRoom(OBJ_BINOCULARS))
@@ -1128,7 +1128,7 @@ void Scene102::actions() {
 
 		case 1:
 			_game._objects.addToInventory(OBJ_BINOCULARS);
-			_scene->_sequences.remove(_globals._spriteIndexes[15+9]);
+			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
 			_scene->_hotspots.activate(0x27, false);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
@@ -1819,7 +1819,7 @@ void Scene105::actions() {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(randVal));
 		} else {
-			_scene->_sequences.remove (_globals._sequenceIndexes[4]);
+			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_game._objects.addToInventory(OBJ_DEAD_FISH);
 			_globals[kFishIn105] = false;
 			_vm->_dialogs->showPicture(OBJ_DEAD_FISH, 0x322, 0);
@@ -2256,6 +2256,407 @@ void Scene108::actions() {
 
 	_action._inProgress = false;
 }
+
+/*------------------------------------------------------------------------*/
+Scene109::Scene109(MADSEngine *vm) : Scene1xx(vm) {
+	_rexThrowingObject = false;
+	_hoovicDifficultFl = false;
+	_beforeEatingRex = false;
+	_eatingRex = false;
+	_hungryFl = false;
+	_eatingFirstFish = false;
+
+	_throwingObjectId = -1;
+	_hoovicTrigger = 0;
+}
+
+void Scene109::setup() {
+	_scene->addActiveVocab(0x66);
+	_scene->addActiveVocab(0xE5);
+
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene109::enter() {
+	_globals[kFishIn105] = true;
+
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*RXSWRC_6");
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('O', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('O', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('O', 0));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('H', 4));
+
+	_rexThrowingObject = false;
+	_throwingObjectId = 0;
+	_beforeEatingRex = false;
+	_eatingRex = false;
+	_hungryFl = false;
+
+	if (_scene->_priorSceneId == 110) {
+		_game._player._playerPos = Common::Point(248, 38);
+		_globals[kHoovicSated] = 2;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(20, 68);
+		_game._player._facing = FACING_EAST;
+	}
+
+	if (!_globals[kHoovicAlive]) {
+		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
+
+		int idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(256, 57, 267, 87));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
+		idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(242, 79, 265, 90));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
+		idx = _scene->_dynamicHotspots.add(229, 348, -1, Common::Rect(231, 88, 253, 94));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
+	}
+
+	if (!_globals[kHoovicAlive] || _globals[kHoovicSated])
+		_scene->changeVariant(1);
+
+	if (_game._objects.isInRoom(OBJ_BURGER)) {
+		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -2, -2);
+		int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
+	} else if (_scene->_roomChanged)
+		_game._objects.addToInventory(OBJ_BURGER);
+
+	if (_scene->_roomChanged) {
+		_game._objects.addToInventory(OBJ_DEAD_FISH);
+		_game._objects.addToInventory(OBJ_STUFFED_FISH);
+	}
+
+	_vm->_palette->setEntry(252, 50, 50, 63);
+	_vm->_palette->setEntry(253, 30, 30, 50);
+
+	_game.loadQuoteSet(0x53, 0x52, 0x54, 0x55, 0x56, 0x57, 0x58, 0);
+	_eatingFirstFish = (!_game._visitedScenes._sceneRevisited) && (_scene->_priorSceneId < 110);
+
+	if (_eatingFirstFish) {
+		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(Resources::formatName(105, 'F', 1, EXT_SS, ""));
+		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('H', 1));
+
+		_globals._sequenceIndexes[10] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[10], true, 4, 0, 0, 0);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 5);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[10], Common::Point(126, 39));
+		_scene->_sequences.sub70C52(_globals._sequenceIndexes[10], 0, 200, 0);
+		_scene->_sequences.setScale(_globals._sequenceIndexes[10], 80);
+		_game._player._stepEnabled = false;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene109::step() {
+	if (_beforeEatingRex) {
+		if (!_eatingRex) {
+			if (_game._player._playerPos.x > 205) {
+				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SM_FRAME_INDEX, 6, 70);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SM_0, 0, 71);
+
+				_eatingRex = true;
+				_vm->_sound->command(34);
+			}
+		} else {
+			switch (_game._trigger) {
+			case 70:
+				_game._player._visible = false;
+				break;
+
+			case 71:
+				_scene->_reloadSceneFlag = true;
+				break;
+			}
+		}
+	}
+
+	if (_hungryFl && (_game._player._playerPos == Common::Point(160, 32)) && (_game._player._facing == FACING_EAST)) {
+		_game._player.walk(Common::Point(226, 24), FACING_EAST);
+		_game._player._stepEnabled = false;
+		_hungryFl = false;
+		_beforeEatingRex = true;
+		_scene->_sprites.remove(_globals._spriteIndexes[6]);
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('H', 0));
+		_vm->_palette->refreshHighColors();
+	}
+
+	if (_game._player._moving && (_scene->_rails.getNext() > 0) && _globals[kHoovicAlive] && !_globals[kHoovicSated] && !_hungryFl && !_beforeEatingRex) {
+		_game._player.cancelCommand();
+		_game._player.startWalking(Common::Point(160, 32), FACING_EAST);
+		_scene->_rails.resetNext();
+		_hungryFl = true;
+	}
+
+	if (_eatingFirstFish && (_scene->_sequences[_globals._sequenceIndexes[10]]._msgPos.x >= 178)) {
+		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 4, 1, 0, 0);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 4);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SM_FRAME_INDEX, 29, 72);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SM_0, 29, 73);
+		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[10], _globals._sequenceIndexes[9]);
+		_eatingFirstFish = false;
+		_game._player._stepEnabled = true;
+		_vm->_sound->command(34);
+	}
+
+	if (_game._trigger == 72)
+		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
+
+	if (_game._trigger == 73) {
+		_scene->_sequences.remove(_globals._sequenceIndexes[9]);
+		_scene->_sprites.remove(_globals._spriteIndexes[9]);
+		_scene->_sprites.remove(_globals._spriteIndexes[10]);
+
+		_scene->_spriteSlots.clear();
+		_scene->_spriteSlots.fullRefresh();
+
+		int randVal = _vm->getRandomNumber(85, 88);
+		int idx = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(randVal));
+		_scene->_kernelMessages.setQuoted(idx, 4, true);
+		_scene->_kernelMessages._entries[idx]._frameTimer = _scene->_frameStartTime + 4;
+	}
+}
+
+void Scene109::preActions() {
+	if (_action.isAction(0x15E, 0xFC))
+		_game._player._walkOffScreenSceneId = 108;
+
+	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT))
+	&& (_action.isAction(0x146) || _action.isAction(0x178))
+	&& (_action.isAction(0x65) || _action.isAction(0x157) || _action.isAction(0x35))) {
+		int idx = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
+		if ((idx >= 0) && _game._objects.isInInventory(idx)) {
+			_game._player._prepareWalkPos = Common::Point(106, 38);
+			_game._player._prepareWalkFacing = FACING_EAST;
+			_game._player._needToWalk = true;
+			_game._player._readyToWalk = true;
+		}
+	}
+
+	if ((_action.isAction(0x15A, 0x178) || _action.isAction(0x15C, 0x146))
+	&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isAction(0x178)))
+		_game._player._walkOffScreenSceneId = 110;
+
+	_hungryFl = false;
+}
+
+void Scene109::actions() {
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(0x2AA0);
+		_action._inProgress = false;
+		return;
+	}
+
+	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE)) && ((_action.isAction(0x146) || _action.isAction(0x178)))) {
+		if (_action.isAction(0x65) || _action.isAction(0x157) || _action.isAction(0x35)) {
+			_throwingObjectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
+			if (_throwingObjectId >= 0) {
+				if ((_game._objects.isInInventory(_throwingObjectId) && _globals[kHoovicAlive]) || _rexThrowingObject) {
+					switch (_game._trigger) {
+					case 0:
+						_rexThrowingObject = true;
+						_hoovicDifficultFl = false;
+						_game._objects.setRoom(_throwingObjectId, NOWHERE);
+						_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 4, 1, 0, 0);
+						_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[0]);
+						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SM_0, 0, 1);
+						_game._player._visible = false;
+						_game._player._stepEnabled = false;
+
+						switch (_throwingObjectId) {
+						case OBJ_DEAD_FISH:
+						case OBJ_STUFFED_FISH:
+							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('H', 1));
+							break;
+
+						case OBJ_BURGER:
+							_hoovicDifficultFl = (_game._difficulty == DIFFICULTY_IMPOSSIBLE);
+							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('H', (_hoovicDifficultFl ? 3 : 1)));
+							break;
+						}
+
+						_vm->_palette->refreshHighColors();
+						break;
+
+					case 1:
+						_game._player._visible = true;
+						_hoovicTrigger = 4;
+						switch (_throwingObjectId) {
+						case OBJ_BURGER:
+							_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, (_hoovicDifficultFl ? 4 : 6), 1, 0, 0);
+							_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_FRAME_INDEX, 2, 2);
+							if (_hoovicDifficultFl) {
+								_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 30);
+								_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_0, 0, 5);
+							} else {
+								_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
+								_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_0, 0, 8);
+								_hoovicTrigger = 3;
+							}
+							break;
+						case OBJ_DEAD_FISH:
+							_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 4, 1, 0, 0);
+							_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SM_FRAME_INDEX, 2, 2);
+							break;
+						case OBJ_STUFFED_FISH:
+							_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 4, 1, 0, 0);
+							_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SM_FRAME_INDEX, 2, 2);
+							_hoovicTrigger = 3;
+							break;
+						}
+						break;
+
+					case 2:
+						if (_hoovicDifficultFl)
+							_globals._sequenceIndexes[8] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[8], false, 4, 2, 0, 0);
+						else
+							_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 4, 1, 0, 0);
+
+						_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 4);
+						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SM_0, 0, _hoovicTrigger);
+						_vm->_sound->command(34);
+						break;
+
+					case 3:
+						_scene->loadAnimation(Resources::formatName(109, 'H', 2, EXT_AA, ""), 4);
+						_vm->_sound->command(35);
+						_globals[kHoovicAlive] = false;
+						break;
+
+					case 4:
+						if (!_globals[kHoovicAlive]) {
+							_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
+							_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
+							_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
+							int idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(256, 57, 12, 31));
+							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
+							idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(242, 79, 24, 12));
+							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
+							idx = _scene->_dynamicHotspots.add(229, 348, -1, Common::Rect(231, 88, 23, 7));
+							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
+							_scene->changeVariant(1);
+						} else {
+							if (_throwingObjectId == OBJ_DEAD_FISH) {
+								++_globals[kHoovicFishEaten];
+								int threshold;
+								switch (_game._difficulty) {
+								case DIFFICULTY_HARD:
+									threshold = 1;
+									break;
+								case DIFFICULTY_REALLY_HARD:
+									threshold = 3;
+									break;
+								default:
+									threshold = 50;
+									break;
+								}
+								
+								if (_globals[kHoovicFishEaten] >= threshold) {
+									int randVal = _vm->getRandomNumber(83, 84);
+									_scene->_kernelMessages.add(Common::Point(230, 24), 0xFDFC, 0, 0, 120, _game.getQuote(randVal));
+									_globals[kHoovicFishEaten] = 0;
+									_globals[kHoovicSated] = 1;
+									_scene->changeVariant(1);
+								}
+							}
+						}
+						_scene->_activeAnimation->free();
+						_scene->_sequences.remove(_globals._sequenceIndexes[8]);
+						_scene->_sprites.remove(_globals._spriteIndexes[8]);
+						_scene->_spriteSlots.clear();
+						_scene->_spriteSlots.fullRefresh();
+						_scene->_sequences.scan();
+						if (_game._player._visible) {
+							_game._player._spritesChanged = true;
+							_game._player.update();
+						}
+
+						_game._player._stepEnabled = true;
+						_rexThrowingObject = false;
+						break;
+
+					case 5: {
+						_game._objects.setRoom(OBJ_BURGER, _scene->_currentSceneId);
+						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 0);
+						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 30, 30);
+						int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
+						_scene->_sequences.addTimer(65, 6);
+						}
+						break;
+
+					case 6: {
+						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
+						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 31, 46);
+						int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
+						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_0, 0, 7);
+						}
+						break;
+
+					case 7: {
+						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+						_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
+						int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
+						_vm->_dialogs->show(0x2AA3);
+						}
+						break;
+
+					case 8:
+						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 7, 1, 0, 0);
+						_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, 16);
+						break;
+					}
+					_action._inProgress = false;
+					return;
+				} else if (_game._objects.isInInventory(_throwingObjectId)) {
+					// Nothing.
+				}
+			}
+		}
+	}
+
+	if (_action.isAction(VERB_TAKE, 0x35) && _game._objects.isInRoom(OBJ_BURGER)) {
+		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+		_game._objects.addToInventory(OBJ_BURGER);
+	} else if (_action.isAction(VERB_LOOK, 0xF0))
+		_vm->_dialogs->show(0x2A95); 
+	else if (_action.isAction(VERB_LOOK, 0x5A))
+		_vm->_dialogs->show(0x2A96); 
+	else if ((_action.isAction(VERB_TAKE) || _action.isAction(VERB_PULL)) && _action.isAction(0x5A))
+		_vm->_dialogs->show(0x2A97); 
+	else if (_action.isAction(VERB_LOOK, 0x129))
+		_vm->_dialogs->show(0x2A98); 
+	else if (_action.isAction(VERB_TAKE, 0x129))
+		_vm->_dialogs->show(0x2A99); 
+	else if (_action.isAction(VERB_LOOK, 0x45))
+		_vm->_dialogs->show(0x2A9A); 
+	else if (_action.isAction(VERB_LOOK, 0x178)) {
+		if (_globals[kHoovicAlive])
+			_vm->_dialogs->show(0x2A9B); 
+		else
+			_vm->_dialogs->show(0x2AA1);
+	} else if (_action.isAction(VERB_LOOK, 0x146))
+		_vm->_dialogs->show(0x2A9C); 
+	else if (_action.isAction(VERB_LOOK, 0xFC))
+		_vm->_dialogs->show(0x2A9F); 
+	else if (_action.isAction(VERB_PUT, 0x146))
+		_vm->_dialogs->show(0x2A9E); 
+	else if (_action.isAction(VERB_LOOK, 0x66))
+		_vm->_dialogs->show(0x2AA2);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
 
 /*------------------------------------------------------------------------*/
 

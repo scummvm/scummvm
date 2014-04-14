@@ -190,6 +190,28 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene109 : public Scene1xx {
+private:
+	bool _rexThrowingObject;
+	bool _hoovicDifficultFl;
+	bool _beforeEatingRex;
+	bool _eatingRex;
+	bool _hungryFl;
+	bool _eatingFirstFish;
+
+	int _throwingObjectId;
+	int _hoovicTrigger;
+
+public:
+	Scene109(MADSEngine *vm);
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
 } // End of namespace Nebular
 } // End of namespace MADS
 
