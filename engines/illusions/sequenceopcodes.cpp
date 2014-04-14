@@ -25,6 +25,7 @@
 #include "illusions/actor.h"
 #include "illusions/actorresource.h"
 #include "illusions/dictionary.h"
+#include "illusions/screen.h"
 #include "illusions/scriptman.h"
 #include "illusions/scriptopcodes.h"
 
@@ -88,6 +89,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(40, opSetPriorityLayer);
 	OPCODE(41, opDisableAutoRegionLayer);
 	OPCODE(42, opSetRegionLayer);
+	OPCODE(49, opShiftPalette);
 	OPCODE(50, opPlaySound);
 	OPCODE(51, opStopSound);
 	OPCODE(52, opStartScriptThread);
@@ -333,6 +335,12 @@ void SequenceOpcodes::opSetRegionLayer(Control *control, OpCall &opCall) {
 	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
 	control->_actor->_flags |= 0x20;
 	control->_actor->_regionLayer = bgRes->getRegionLayer(regionLayerIndex - 1);
+}
+
+void SequenceOpcodes::opShiftPalette(Control *control, OpCall &opCall) {
+	ARG_INT16(fromIndex);
+	ARG_INT16(toIndex);
+	_vm->_screen->shiftPalette(fromIndex, toIndex);
 }
 
 void SequenceOpcodes::opPlaySound(Control *control, OpCall &opCall) {

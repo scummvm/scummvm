@@ -114,6 +114,7 @@ public:
 	void setPalette(byte *colors, uint start, uint count);
 	void setPaletteEntry(int16 index, byte r, byte g, byte b);
 	void getPalette(byte *colors);
+	void shiftPalette(int16 fromIndex, int16 toIndex);
 	void updatePalette();
 	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
 	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
@@ -130,8 +131,10 @@ public:
 	
 	bool _needRefreshPalette;
 	byte _mainPalette[768];
+	byte _colorTransTbl[256];
 	
 	void setSystemPalette(byte *palette);
+	void buildColorTransTbl();
 
 	void decompressSprite8(SpriteDecompressQueueItem *item);
 	void drawSurface8(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);

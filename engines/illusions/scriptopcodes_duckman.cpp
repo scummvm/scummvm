@@ -71,6 +71,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(23, opExitModalScene);
 	OPCODE(24, opEnterScene24);
 	OPCODE(25, opLeaveScene24);
+	OPCODE(32, opPanCenterObject);
 	OPCODE(33, opPanTrackObject);
 	OPCODE(34, opPanToObject);
 	OPCODE(36, opPanToPoint);
@@ -133,7 +134,6 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(20, opEnterScene);
 	OPCODE(30, opEnterCloseUpScene);
 	OPCODE(31, opExitCloseUpScene);
-	OPCODE(32, opPanCenterObject);
 	OPCODE(35, opPanToNamedPoint);
 	OPCODE(53, opSetActorToNamedPoint);
 	OPCODE(63, opSetSelectSfx);
@@ -252,7 +252,8 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 //static uint dsceneId = 0x0001002D, dthreadId = 0x00020141;
 //static uint dsceneId = 0x0001004B, dthreadId = 0x0002029B;
 //static uint dsceneId = 0x00010021, dthreadId = 0x00020113;
-static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;
+//static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
+static uint dsceneId = 0x0001000E, dthreadId = 0x0002007C;
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -313,6 +314,12 @@ void ScriptOpcodes_Duckman::opLeaveScene24(ScriptThread *scriptThread, OpCall &o
 	_vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
 	_vm->exitScene();
 	_vm->leavePause(_vm->getCurrentScene(), opCall._callerThreadId);
+}
+
+void ScriptOpcodes_Duckman::opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(speed);
+	ARG_UINT32(objectId);
+	_vm->_camera->panCenterObject(objectId, speed);
 }
 
 void ScriptOpcodes_Duckman::opPanTrackObject(ScriptThread *scriptThread, OpCall &opCall) {
@@ -785,12 +792,6 @@ void ScriptOpcodes_Duckman::opExitCloseUpScene(ScriptThread *scriptThread, OpCal
 	_vm->exitScene(opCall._callerThreadId);
 	_vm->leavePause(opCall._callerThreadId);
 	opCall._result = kTSYield;
-}
-
-void ScriptOpcodes_Duckman::opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(speed);	
-	ARG_UINT32(objectId);
-	_vm->_camera->panCenterObject(objectId, speed);
 }
 
 void ScriptOpcodes_Duckman::opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {

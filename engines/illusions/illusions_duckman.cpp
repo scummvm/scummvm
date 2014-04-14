@@ -232,7 +232,7 @@ Common::Point IllusionsEngine_Duckman::getNamedPointPosition(uint32 namedPointId
 		}
 	} else {
 		// TODO
-		//debug("getNamedPointPosition(%08X) UNKNOWN", namedPointId);
+		debug("getNamedPointPosition(%08X) UNKNOWN", namedPointId);
 		return Common::Point(0, 0);
 	}
 }
