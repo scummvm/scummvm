@@ -63,6 +63,7 @@ protected:
 	void opDisappearActor(Control *control, OpCall &opCall);
 	void opAppearForeignActor(Control *control, OpCall &opCall);
 	void opDisappearForeignActor(Control *control, OpCall &opCall);
+	void opSetNamedPointPosition(Control *control, OpCall &opCall);
 	void opMoveDelta(Control *control, OpCall &opCall);
 	void opFaceActor(Control *control, OpCall &opCall);
 	void opNotifyThreadId1(Control *control, OpCall &opCall);
