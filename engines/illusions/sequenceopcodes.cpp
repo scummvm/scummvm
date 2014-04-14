@@ -86,6 +86,8 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(38, opSetPathWalkRects);
 	OPCODE(39, opSetPriority);
 	OPCODE(40, opSetPriorityLayer);
+	OPCODE(41, opDisableAutoRegionLayer);
+	OPCODE(42, opSetRegionLayer);
 	OPCODE(50, opPlaySound);
 	OPCODE(51, opStopSound);
 	OPCODE(52, opStartScriptThread);
@@ -320,6 +322,17 @@ void SequenceOpcodes::opSetPriorityLayer(Control *control, OpCall &opCall) {
 	control->_actor->_priorityLayer = bgRes->getPriorityLayer(priorityLayerIndex - 1);
 	int priority = control->_actor->_priorityLayer->getPriority(control->_actor->_position);
 	control->setPriority(priority);
+}
+
+void SequenceOpcodes::opDisableAutoRegionLayer(Control *control, OpCall &opCall) {
+	control->_actor->_flags &= ~0x20;
+}
+
+void SequenceOpcodes::opSetRegionLayer(Control *control, OpCall &opCall) {
+	ARG_INT16(regionLayerIndex);
+	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
+	control->_actor->_flags |= 0x20;
+//TODO	control->_actor->_regionLayer = bgRes->getRegionLayer(regionLayerIndex - 1);
 }
 
 void SequenceOpcodes::opPlaySound(Control *control, OpCall &opCall) {

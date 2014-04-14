@@ -74,6 +74,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(33, opPanTrackObject);
 	OPCODE(34, opPanToObject);
 	OPCODE(36, opPanToPoint);
+	OPCODE(37, opPanStop);
 	OPCODE(38, opStartFade);
 	OPCODE(39, opSetDisplay);
 	OPCODE(40, opSetCameraBounds);
@@ -99,6 +100,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(75, opStopSound);
 	OPCODE(76, opStartMidiMusic);
 	OPCODE(77, opStopMidiMusic);
+	OPCODE(78, opFadeMidiMusic);
 	OPCODE(80, opAddMenuChoice);
 	OPCODE(81, opDisplayMenu);
 	OPCODE(82, opSwitchMenuChoice);
@@ -133,7 +135,6 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(31, opExitCloseUpScene);
 	OPCODE(32, opPanCenterObject);
 	OPCODE(35, opPanToNamedPoint);
-	OPCODE(37, opPanStop);
 	OPCODE(53, opSetActorToNamedPoint);
 	OPCODE(63, opSetSelectSfx);
 	OPCODE(64, opSetMoveSfx);
@@ -224,7 +225,6 @@ void ScriptOpcodes_Duckman::opSuspendThread(ScriptThread *scriptThread, OpCall &
 void ScriptOpcodes_Duckman::opLoadResource(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(resourceId);
-	// NOTE Skipped checking for stalled resources
 	uint32 sceneId = _vm->getCurrentScene();
 	_vm->_resSys->loadResource(resourceId, sceneId, opCall._threadId);
 	_vm->notifyThreadId(opCall._threadId);
@@ -233,7 +233,6 @@ void ScriptOpcodes_Duckman::opLoadResource(ScriptThread *scriptThread, OpCall &o
 void ScriptOpcodes_Duckman::opUnloadResource(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(resourceId);
-	// NOTE Skipped checking for stalled resources
 	_vm->_resSys->unloadResourceById(resourceId);
 }
 
@@ -243,7 +242,7 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 	_vm->enterScene(sceneId, 0);
 }
 
-//static uint dsceneId = 0, dthreadId = 0;
+static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
 //static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089;//Map
@@ -251,7 +250,8 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 //static uint dsceneId = 0x00010020, dthreadId = 0x00020112;//Xmas
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089;//Pizza
 //static uint dsceneId = 0x0001002D, dthreadId = 0x00020141;
-static uint dsceneId = 0x0001004B, dthreadId = 0x0002029B;
+//static uint dsceneId = 0x0001004B, dthreadId = 0x0002029B;
+//static uint dsceneId = 0x00010021, dthreadId = 0x00020113;
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -335,6 +335,10 @@ void ScriptOpcodes_Duckman::opPanToPoint(ScriptThread *scriptThread, OpCall &opC
 	_vm->_camera->panToPoint(Common::Point(x, y), speed, opCall._threadId);
 }
 
+void ScriptOpcodes_Duckman::opPanStop(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->_camera->stopPan();
+}
+
 void ScriptOpcodes_Duckman::opStartFade(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(arg1);
 	ARG_INT16(arg2);
@@ -401,7 +405,6 @@ void ScriptOpcodes_Duckman::opStartSequenceActor(ScriptThread *scriptThread, OpC
 	ARG_SKIP(2);
 	ARG_UINT32(objectId);
 	ARG_UINT32(sequenceId);
-	// NOTE Skipped checking for stalled sequence, not sure if needed
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	control->startSequenceActor(sequenceId, 2, opCall._threadId);
 }
@@ -422,7 +425,6 @@ void ScriptOpcodes_Duckman::opStartMoveActor(ScriptThread *scriptThread, OpCall 
 	ARG_UINT32(objectId);
 	ARG_UINT32(sequenceId);
 	ARG_UINT32(namedPointId);
-	// NOTE Skipped checking for stalled sequence, not sure if needed
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
 	control->startMoveActor(sequenceId, pos, opCall._callerThreadId, opCall._threadId);
@@ -555,6 +557,12 @@ void ScriptOpcodes_Duckman::opStartMidiMusic(ScriptThread *scriptThread, OpCall 
 
 void ScriptOpcodes_Duckman::opStopMidiMusic(ScriptThread *scriptThread, OpCall &opCall) {
 	// TODO _vm->stopMidiMusic();
+}
+
+void ScriptOpcodes_Duckman::opFadeMidiMusic(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(duration);
+	ARG_INT16(finalVolume);
+	// TODO _vm->fadeMidiMusic(2, finalVolume, duration, opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opAddMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {
@@ -767,7 +775,6 @@ void ScriptOpcodes_Duckman::opEnterScene(ScriptThread *scriptThread, OpCall &opC
 void ScriptOpcodes_Duckman::opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
-	// NOTE Skipped checking for stalled resources
 	_vm->_input->discardButtons(0xFFFF);
 	_vm->enterPause(opCall._callerThreadId);
 	_vm->enterScene(sceneId, opCall._callerThreadId);
@@ -790,10 +797,6 @@ void ScriptOpcodes_Duckman::opPanToNamedPoint(ScriptThread *scriptThread, OpCall
 	ARG_UINT32(namedPointId);
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
 	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
-}
-
-void ScriptOpcodes_Duckman::opPanStop(ScriptThread *scriptThread, OpCall &opCall) {
-	_vm->_camera->stopPan();
 }
 
 void ScriptOpcodes_Duckman::opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {
@@ -933,7 +936,6 @@ void ScriptOpcodes_Duckman::opChangeSceneAll(ScriptThread *scriptThread, OpCall 
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
-	// NOTE Skipped checking for stalled resources
 	_vm->_input->discardButtons(0xFFFF);
 	_vm->_prevSceneId = _vm->getCurrentScene();
 	_vm->dumpActiveScenes(_vm->_globalSceneId, opCall._callerThreadId);

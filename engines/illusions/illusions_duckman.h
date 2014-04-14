@@ -56,6 +56,21 @@ struct DialogItem {
 	uint32 _sequenceId;
 };
 
+struct DMInventorySlot {
+	Common::Point _position;
+	uint32 _objectId;
+	DMInventorySlot() : _objectId(0) {}
+	DMInventorySlot(int16 x, int16 y) : _objectId(0), _position(x, y) {}
+};
+
+struct DMInventoryItem {
+	uint32 _objectId;
+	uint32 _propertyId;
+	DMInventoryItem() : _objectId(0) {}
+	DMInventoryItem(uint32 objectId, uint32 propertyId)
+		: _objectId(objectId), _propertyId(propertyId) {}
+};
+
 struct OpCall;
 
 typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
@@ -86,7 +101,12 @@ public:
 	uint32 _activeScenes[6];
 
 	Cursor_Duckman _cursor;
+
 	Common::Array<DialogItem> _dialogItems;
+
+	int _savedInventoryActorIndex;
+	Common::Array<DMInventorySlot> _inventorySlots;
+	Common::Array<DMInventoryItem> _inventoyItems;
 
 	SpecialCodeMap _specialCodeMap;
 
@@ -114,6 +134,7 @@ public:
 	void enableCursorVerb(int verbNum);
 	void disableCursorVerb(int verbNum);
 	void setCursorHandMode(int mode);
+	void setCursorInventoryMode(int mode, int value);
 	void startCursorHoldingObject(uint32 objectId, uint32 sequenceId);
 	void stopCursorHoldingObject();
 	void cursorControlRoutine(Control *control, uint32 deltaTime);
@@ -162,10 +183,19 @@ public:
 	void startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, uint32 callerThreadId);
 	void updateDialogState();
 
+	void initInventory();
+	void openInventory();
+	DMInventorySlot *findInventorySlot(uint32 objectId);
+	DMInventoryItem *findInventoryItem(uint32 objectId);
+	void addInventoryItem(uint32 objectId);
+
 	// Special code
 	void initSpecialCode();
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
 	void spcSetCursorHandMode(OpCall &opCall);
+	void spcOpenInventory(OpCall &opCall);
+	void spcSetCursorInventoryMode(OpCall &opCall);
+	void spcUpdateObject272Sequence(OpCall &opCall);
 
 };
 

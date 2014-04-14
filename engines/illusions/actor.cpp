@@ -638,7 +638,8 @@ void Control::sequenceActor() {
 	if (_actor->_newFrameIndex != 0) {
 		debug(1, "New frame %d", _actor->_newFrameIndex);
 		setActorFrameIndex(_actor->_newFrameIndex);
-		if (!(_actor->_flags & 1) && (_actor->_flags & 0x1000) && (_objectId != 0x40004)) {
+		if (_vm->getGameId() == kGameIdBBDOU &&
+			!(_actor->_flags & 1) && (_actor->_flags & 0x1000) && (_objectId != 0x40004)) {
 			appearActor();
 			_actor->_flags &= ~0x1000;
 		}
@@ -752,7 +753,13 @@ void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 cal
 		_vm->notifyThreadId(_actor->_notifyId3C);
 		_actor->_notifyId3C = callerThreadId2;
 		_actor->_pathPointIndex = 0;
-		_vm->_input->discardButtons(0x10);
+
+		if (_vm->getGameId() == kGameIdBBDOU) {
+			_vm->_input->discardButtons(0x10);
+		} else if (_vm->getGameId() == kGameIdDuckman) {
+			_vm->_input->discardButtons(0x20);
+		}
+
 	}
 
 }
@@ -1071,11 +1078,16 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	_controls.push_back(control);
 	_vm->_dict->setObjectControl(objectId, control);
 
+    if (_vm->getGameId() == kGameIdDuckman) {
+		control->appearActor();
+    } else if (_vm->getGameId() == kGameIdBBDOU) {
+		control->_flags |= 0x01;
+		actor->_flags |= 0x1000;
+    }
+
 	if (_vm->isCursorObject(actorTypeId, objectId))
 		_vm->placeCursorControl(control, sequenceId);
 
-	control->_flags |= 0x01;
-	actor->_flags |= 0x1000;
 	control->startSequenceActor(sequenceId, 2, notifyThreadId);
 }
 
