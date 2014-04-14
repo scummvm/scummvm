@@ -2643,6 +2643,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 				GameState.setMarsReadyForShuttleTransport(false);
 				GameState.setMarsFinishedCanyonChase(false);
 				GameState.setMarsThreadedMaze(false);
+				GameState.setMarsSawRobotLeave(false);
 				break;
 			case kPlayerOnWayToWSC:
 				_vm->jumpToNewEnvironment(kWSCID, kWSC01, kWest);
