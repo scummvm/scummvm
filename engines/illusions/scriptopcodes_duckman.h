@@ -61,6 +61,7 @@ protected:
 	void opPanTrackObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToPoint(ScriptThread *scriptThread, OpCall &opCall);
+	void opPanStop(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartFade(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetCameraBounds(ScriptThread *scriptThread, OpCall &opCall);
@@ -86,6 +87,7 @@ protected:
 	void opStopSound(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartMidiMusic(ScriptThread *scriptThread, OpCall &opCall);
 	void opStopMidiMusic(ScriptThread *scriptThread, OpCall &opCall);
+	void opFadeMidiMusic(ScriptThread *scriptThread, OpCall &opCall);
 	void opAddMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
 	void opDisplayMenu(ScriptThread *scriptThread, OpCall &opCall);
 	void opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
@@ -120,7 +122,6 @@ protected:
 	void opExitCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
-	void opPanStop(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetSelectSfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetMoveSfx(ScriptThread *scriptThread, OpCall &opCall);

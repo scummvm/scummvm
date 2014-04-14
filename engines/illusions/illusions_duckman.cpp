@@ -121,6 +121,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	
 	_globalSceneId = 0x00010003;
 
+	initInventory();
 	initSpecialCode();
 	setDefaultTextCoords();
 	initCursor();
@@ -391,6 +392,39 @@ void IllusionsEngine_Duckman::setCursorHandMode(int mode) {
 		setCursorActorIndex(_cursor._actorIndex, 1, 0);
 }
 
+void IllusionsEngine_Duckman::setCursorInventoryMode(int mode, int value) {
+	_cursor._control = _cursor._control;
+	if (mode == 1) {
+		_savedInventoryActorIndex = _cursor._actorIndex;
+		if (_cursor._actorIndex == 3 || _cursor._actorIndex == 10 || _cursor._actorIndex == 11 || _cursor._actorIndex == 12 || _cursor._actorIndex == 13) {
+			_cursor._savedActorIndex = _cursor._savedActorIndex;
+			if (_cursor._savedActorIndex == 1 || _cursor._savedActorIndex == 2 || _cursor._savedActorIndex == 7)
+				_savedInventoryActorIndex = _cursor._savedActorIndex;
+			else
+				_savedInventoryActorIndex = 0;
+		}
+		if (value == 1 && _cursor._objectId && _savedInventoryActorIndex != 7) {
+			_cursor._actorIndex = 7;
+			stopCursorHoldingObject();
+			_cursor._actorIndex = _savedInventoryActorIndex;
+		}
+	} else if (mode == 2) {
+		if (_savedInventoryActorIndex)
+			_cursor._actorIndex = _savedInventoryActorIndex;
+		else
+			_cursor._actorIndex = 1;
+		if (_cursor._actorIndex == 7)
+			_cursor._control->startSequenceActor(_cursor._sequenceId2, 2, 0);
+		else
+			_cursor._control->startSequenceActor(_cursor._sequenceId1, 2, 0);
+		if (_cursor._currOverlappedControl)
+			setCursorActorIndex(_cursor._actorIndex, 2, 0);
+		else
+			setCursorActorIndex(_cursor._actorIndex, 1, 0);
+		_savedInventoryActorIndex = 0;
+	}
+}
+
 void IllusionsEngine_Duckman::startCursorHoldingObject(uint32 objectId, uint32 sequenceId) {
 	_cursor._objectId = objectId;
 	_cursor._sequenceId2 = sequenceId;
@@ -427,7 +461,7 @@ void IllusionsEngine_Duckman::cursorControlRoutine(Control *control, uint32 delt
 			updateDialogState();
 			break;
 		case 4:
-			// TODO ShellMgr_update(cursorControl);
+			// TODO ShellMgr_update(_cursor._control);
 			break;
 		}
 	}
@@ -924,6 +958,100 @@ void IllusionsEngine_Duckman::updateDialogState() {
 
 }
 
+void IllusionsEngine_Duckman::initInventory() {
+	_inventorySlots.push_back(DMInventorySlot( 64,  52));
+	_inventorySlots.push_back(DMInventorySlot(112,  52));
+	_inventorySlots.push_back(DMInventorySlot(160,  52));
+	_inventorySlots.push_back(DMInventorySlot(208,  52));
+	_inventorySlots.push_back(DMInventorySlot(255,  52));
+	_inventorySlots.push_back(DMInventorySlot( 64,  84));
+	_inventorySlots.push_back(DMInventorySlot(112,  84));
+	_inventorySlots.push_back(DMInventorySlot(160,  84));
+	_inventorySlots.push_back(DMInventorySlot(208,  84));
+	_inventorySlots.push_back(DMInventorySlot(255,  84));
+	_inventorySlots.push_back(DMInventorySlot( 64, 116));
+	_inventorySlots.push_back(DMInventorySlot(112, 116));
+	_inventorySlots.push_back(DMInventorySlot(160, 116));
+	_inventorySlots.push_back(DMInventorySlot(208, 116));
+	_inventorySlots.push_back(DMInventorySlot(255, 116));
+	_inventorySlots.push_back(DMInventorySlot( 64, 148));
+	_inventorySlots.push_back(DMInventorySlot(112, 148));
+	_inventorySlots.push_back(DMInventorySlot(160, 148));
+	_inventorySlots.push_back(DMInventorySlot(208, 148));
+	_inventorySlots.push_back(DMInventorySlot(255, 148));
+	_inventoyItems.push_back(DMInventoryItem(0x40011, 0xE005B));
+	_inventoyItems.push_back(DMInventoryItem(0x40099, 0xE001B));
+	_inventoyItems.push_back(DMInventoryItem(0x4000F, 0xE000C));
+	_inventoyItems.push_back(DMInventoryItem(0x40042, 0xE0012));
+	_inventoyItems.push_back(DMInventoryItem(0x40044, 0xE000F));
+	_inventoyItems.push_back(DMInventoryItem(0x40029, 0xE000D));
+	_inventoyItems.push_back(DMInventoryItem(0x400A7, 0xE005D));
+	_inventoyItems.push_back(DMInventoryItem(0x40096, 0xE001C));
+	_inventoyItems.push_back(DMInventoryItem(0x40077, 0xE0010));
+	_inventoyItems.push_back(DMInventoryItem(0x4008A, 0xE0033));
+	_inventoyItems.push_back(DMInventoryItem(0x4004B, 0xE0045));
+	_inventoyItems.push_back(DMInventoryItem(0x40054, 0xE0021));
+	_inventoyItems.push_back(DMInventoryItem(0x400C6, 0xE005A));
+	_inventoyItems.push_back(DMInventoryItem(0x4000B, 0xE005E));
+	_inventoyItems.push_back(DMInventoryItem(0x4005F, 0xE0016));
+	_inventoyItems.push_back(DMInventoryItem(0x40072, 0xE0017));
+	_inventoyItems.push_back(DMInventoryItem(0x400AA, 0xE005F));
+	_inventoyItems.push_back(DMInventoryItem(0x400B8, 0xE0050));
+	_inventoyItems.push_back(DMInventoryItem(0x4001F, 0xE001A));
+	_inventoyItems.push_back(DMInventoryItem(0x40095, 0xE0060));
+	_inventoyItems.push_back(DMInventoryItem(0x40041, 0xE0053));
+	_savedInventoryActorIndex = 0;
+}
+
+void IllusionsEngine_Duckman::openInventory() {
+
+	for (uint i = 0; i < _inventorySlots.size(); ++i) {
+		DMInventorySlot *inventorySlot = &_inventorySlots[i];
+		if (inventorySlot->_objectId) {
+			DMInventoryItem *inventoryItem = findInventoryItem(inventorySlot->_objectId);
+			if (!_scriptResource->_properties.get(inventoryItem->_propertyId))
+				inventorySlot->_objectId = 0;
+		}
+	}
+
+	for (uint i = 0; i < _inventoyItems.size(); ++i) {
+		DMInventoryItem *inventoryItem = &_inventoyItems[i];
+		if (_scriptResource->_properties.get(inventoryItem->_propertyId)) {
+			DMInventorySlot *inventorySlot = findInventorySlot(inventoryItem->_objectId);
+			if (inventorySlot) {
+				Control *control = getObjectControl(inventoryItem->_objectId);
+				control->setActorPosition(inventorySlot->_position);
+				control->appearActor();
+			} else {
+				addInventoryItem(inventoryItem->_objectId);
+			}
+		}
+	}
+
+}
+
+void IllusionsEngine_Duckman::addInventoryItem(uint32 objectId) {
+	DMInventorySlot *DMInventorySlot = findInventorySlot(0);
+	DMInventorySlot->_objectId = objectId;
+	Control *control = getObjectControl(objectId);
+	control->setActorPosition(DMInventorySlot->_position);
+	control->appearActor();
+}
+
+DMInventorySlot *IllusionsEngine_Duckman::findInventorySlot(uint32 objectId) {
+	for (uint i = 0; i < _inventorySlots.size(); ++i)
+		if (_inventorySlots[i]._objectId == objectId)
+			return &_inventorySlots[i];
+	return 0;
+}
+
+DMInventoryItem *IllusionsEngine_Duckman::findInventoryItem(uint32 objectId) {
+	for (uint i = 0; i < _inventoyItems.size(); ++i)
+		if (_inventoyItems[i]._objectId == objectId)
+			return &_inventoyItems[i];
+	return 0;
+}
+
 // Special code
 
 typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeFunctionDM;
@@ -931,6 +1059,9 @@ typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeF
 
 void IllusionsEngine_Duckman::initSpecialCode() {
 	SPECIAL(0x00160002, spcSetCursorHandMode);
+	SPECIAL(0x00160005, spcOpenInventory);
+	SPECIAL(0x00160014, spcUpdateObject272Sequence);
+	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
 }
 
 void IllusionsEngine_Duckman::runSpecialCode(uint32 specialCodeId, OpCall &opCall) {
@@ -947,6 +1078,60 @@ void IllusionsEngine_Duckman::spcSetCursorHandMode(OpCall &opCall) {
 	ARG_BYTE(mode);
 	setCursorHandMode(mode);
 	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcOpenInventory(OpCall &opCall) {
+	openInventory();
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcSetCursorInventoryMode(OpCall &opCall) {
+	ARG_BYTE(mode);
+	ARG_BYTE(value);
+	setCursorInventoryMode(mode, value);
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcUpdateObject272Sequence(OpCall &opCall) {
+	byte flags = 0;
+	uint32 sequenceId;
+	if (_scriptResource->_properties.get(0x000E0085))
+		flags |= 1;
+	if (_scriptResource->_properties.get(0x000E0083))
+		flags |= 2;
+	if (_scriptResource->_properties.get(0x000E0084))
+		flags |= 4;
+	switch (flags) {
+	case 0:
+		sequenceId = 0x603C1;
+		break;
+	case 1:
+		sequenceId = 0x603BF;
+		break;
+	case 2:
+		sequenceId = 0x603C2;
+		break;
+	case 3:
+		sequenceId = 0x603C0;
+		break;
+	case 4:
+		sequenceId = 0x603C3;
+		break;
+	case 5:
+		sequenceId = 0x603C5;
+		break;
+	case 6:
+		sequenceId = 0x603C4;
+		break;
+	case 7:
+		sequenceId = 0x603C6;
+		break;
+	default:
+		sequenceId = 0x603C1;
+		break;
+	}
+	Control *control = getObjectControl(0x40110);
+	control->startSequenceActor(sequenceId, 2, opCall._threadId);
 }
 
 } // End of namespace Illusions

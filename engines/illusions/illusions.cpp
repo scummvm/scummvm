@@ -177,6 +177,8 @@ int IllusionsEngine::updateGraphics() {
 			*/
 			if (actor->_surfInfo._dimensions._width && actor->_surfInfo._dimensions._height) {
 				uint32 priority = control->getPriority();
+//if (control->_objectId == 0x0004001B) continue;
+//debug("objectId: %08X; priority: %d (%d)", control->_objectId, priority, control->_priority);				
 				_screen->_drawQueue->insertSprite(&actor->_drawFlags, actor->_surface,
 					actor->_surfInfo._dimensions, drawPosition, control->_position,
 					priority, actor->_scale, actor->_spriteFlags);
