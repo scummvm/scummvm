@@ -90,7 +90,16 @@ Background::Background() {
 }
 
 Background::~Background() {
-	warning("STUB: Background::~Background()");
+	_picObjList.clear();
+
+	for (int i = 0; i < _bigPictureArray1Count; i++) {
+		for (int j = 0; j < _bigPictureArray2Count; j++)
+			delete _bigPictureArray[i][j];
+
+		free(_bigPictureArray[i]);
+	}
+
+	free(_bigPictureArray);
 }
 
 bool Background::load(MfcArchive &file) {
