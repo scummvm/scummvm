@@ -39,6 +39,7 @@
 namespace Illusions {
 
 class IllusionsEngine;
+struct Sequence;
 
 class BackgroundResourceLoader : public BaseResourceLoader {
 public:
@@ -89,6 +90,20 @@ protected:
 	byte *_values;
 };
 
+class RegionLayer {
+public:
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+	int getRegionIndex(Common::Point pos);
+	uint32 getRegionSequenceId(int regionIndex);
+protected:
+	uint32 _unk;
+	byte *_regionSequenceIds;
+	int16 _width, _height;
+	int16 _mapWidth, _mapHeight;
+	byte *_map, *_values;
+};
+
+
 #if 0
 BgResource_PathWalkRects struc ; (sizeof=0x8)
 count dd ?
@@ -124,6 +139,7 @@ public:
 	int findMasterBgIndex();
 	PriorityLayer *getPriorityLayer(uint index);
 	ScaleLayer *getScaleLayer(uint index);
+	RegionLayer *getRegionLayer(uint index);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 public:
 
@@ -137,7 +153,13 @@ public:
 
 	uint _scaleLayersCount;
 	ScaleLayer *_scaleLayers;
-	
+
+	uint _regionLayersCount;
+	RegionLayer *_regionLayers;
+
+	uint _regionSequencesCount;
+	Sequence *_regionSequences;
+
 	uint _backgroundObjectsCount;
 	BackgroundObject *_backgroundObjects;
 	
