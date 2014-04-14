@@ -194,6 +194,7 @@ public:
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
 	void spcSetCursorHandMode(OpCall &opCall);
 	void spcOpenInventory(OpCall &opCall);
+	void spcCenterNewspaper(OpCall &opCall);
 	void spcSetCursorInventoryMode(OpCall &opCall);
 	void spcUpdateObject272Sequence(OpCall &opCall);
 

@@ -1060,6 +1060,7 @@ typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeF
 void IllusionsEngine_Duckman::initSpecialCode() {
 	SPECIAL(0x00160002, spcSetCursorHandMode);
 	SPECIAL(0x00160005, spcOpenInventory);
+	SPECIAL(0x00160010, spcCenterNewspaper);
 	SPECIAL(0x00160014, spcUpdateObject272Sequence);
 	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
 }
@@ -1082,6 +1083,14 @@ void IllusionsEngine_Duckman::spcSetCursorHandMode(OpCall &opCall) {
 
 void IllusionsEngine_Duckman::spcOpenInventory(OpCall &opCall) {
 	openInventory();
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcCenterNewspaper(OpCall &opCall) {
+	Control *control = getObjectControl(0x40017);
+	control->_flags |= 8;
+	control->_actor->_position.x = 160;
+	control->_actor->_position.y = 100;
 	notifyThreadId(opCall._threadId);
 }
 

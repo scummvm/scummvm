@@ -75,6 +75,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(17, opDisappearActor);
 	OPCODE(18, opAppearForeignActor);
 	OPCODE(19, opDisappearForeignActor);
+	OPCODE(20, opSetNamedPointPosition);
 	OPCODE(21, opMoveDelta);
 	OPCODE(25, opFaceActor);
 	OPCODE(28, opNotifyThreadId1);
@@ -249,6 +250,12 @@ void SequenceOpcodes::opDisappearForeignActor(Control *control, OpCall &opCall) 
 	ARG_INT16(foreignObjectNum);
 	Control *foreignControl = _vm->_dict->getObjectControl(foreignObjectNum | 0x40000);
 	foreignControl->disappearActor();
+}
+
+void SequenceOpcodes::opSetNamedPointPosition(Control *control, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_UINT32(namedPointId);
+	control->_actor->_position = _vm->getNamedPointPosition(namedPointId);
 }
 
 void SequenceOpcodes::opMoveDelta(Control *control, OpCall &opCall) {
