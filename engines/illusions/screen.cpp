@@ -312,7 +312,7 @@ void Screen::setPalette(byte *colors, uint start, uint count) {
 		*dstPal++ = *colors++;
 		++colors;
 	}
-	// TODO Build colorTransTbl
+	buildColorTransTbl();
 	_needRefreshPalette = true;
 }
 
@@ -334,11 +334,71 @@ void Screen::getPalette(byte *colors) {
 	}
 }
 
+void Screen::shiftPalette(int16 fromIndex, int16 toIndex) {
+	//debug("shiftPalette(%d, %d)", fromIndex, toIndex);
+	byte r, g, b;
+	if (toIndex > fromIndex) {
+		r = _mainPalette[3 * toIndex + 0];
+		g = _mainPalette[3 * toIndex + 1];
+		b = _mainPalette[3 * toIndex + 2];
+		for (int16 i = toIndex; i > fromIndex; --i) {
+			byte *dst = &_mainPalette[3 * i];
+			byte *src = &_mainPalette[3 * (i - 1)];
+			dst[0] = src[0];
+			dst[1] = src[1];
+			dst[2] = src[2];
+		}
+		_mainPalette[3 * fromIndex + 0] = r;
+		_mainPalette[3 * fromIndex + 1] = g;
+		_mainPalette[3 * fromIndex + 2] = b;
+	} else {
+		r = _mainPalette[3 * toIndex + 0];
+		g = _mainPalette[3 * toIndex + 1];
+		b = _mainPalette[3 * toIndex + 2];
+		for (int16 i = toIndex + 1; i < fromIndex; +i) {
+			byte *dst = &_mainPalette[3 * i];
+			byte *src = &_mainPalette[3 * (i + 1)];
+			dst[0] = src[0];
+			dst[1] = src[1];
+			dst[2] = src[2];
+		}
+		_mainPalette[3 * fromIndex + 0] = r;
+		_mainPalette[3 * fromIndex + 1] = g;
+		_mainPalette[3 * fromIndex + 2] = b;
+	}
+	// TODO Refresh colorTransTbl
+	_needRefreshPalette = true;
+}
+
 void Screen::updatePalette() {
 	if (_needRefreshPalette) {
 		// TODO Update fader palette
 		setSystemPalette(_mainPalette);
 		_needRefreshPalette = false;
+	}
+}
+
+void Screen::buildColorTransTbl() {
+	const int cr = _mainPalette[3 * 1 + 0];
+	const int cg = _mainPalette[3 * 1 + 1];
+	const int cb = _mainPalette[3 * 1 + 2];
+	for (int index1 = 0; index1 < 256; ++index1) {
+		const int dr = (cr + _mainPalette[3 * index1 + 0]) / 2;
+		const int dg = (cg + _mainPalette[3 * index1 + 1]) / 2;
+		const int db = (cb + _mainPalette[3 * index1 + 2]) / 2;
+		int minDistance = 766;
+		int minIndex2 = 2;
+		for (int index2 = 2; index2 < 256; ++index2) {
+			int distance =
+				ABS(dr - _mainPalette[3 * index2 + 0]) +
+				ABS(dg - _mainPalette[3 * index2 + 1]) +
+				ABS(db - _mainPalette[3 * index2 + 2]);
+			if (distance < minDistance) {
+				minDistance = distance;
+				minIndex2 = index2;
+			}
+		}
+		_colorTransTbl[index1] = minIndex2;
 	}
 }
 
@@ -456,9 +516,13 @@ void Screen::drawSurface81(int16 destX, int16 destY, Graphics::Surface *surface,
 		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcRect.top + yc);
 		byte *dst = (byte*)_backSurface->getBasePtr(destX, destY + yc);
 		for (int16 xc = 0; xc < w; ++xc) {
-			byte pixel = *src++;
-			if (pixel != 0)
-				*dst = pixel;
+			const byte pixel = *src++;
+			if (pixel != 0) {
+				if (pixel == 1)
+					*dst = _colorTransTbl[*dst];
+				else
+					*dst = pixel;
+			}
 			++dst;				
 		}
 	}
@@ -485,9 +549,12 @@ void Screen::drawSurface82(Common::Rect &dstRect, Graphics::Surface *surface, Co
 		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcY);
 		byte *dstRow = dst; 
 		while (w-- > 0) {
-			byte pixel = *src;
+			const byte pixel = *src;
 			if (pixel != 0) {
-				*dstRow = pixel;
+				if (pixel == 1)
+					*dstRow = _colorTransTbl[*dstRow];
+				else
+					*dstRow = pixel;
 			}
 			++dstRow;
 			src += errXStart;
@@ -498,9 +565,13 @@ void Screen::drawSurface82(Common::Rect &dstRect, Graphics::Surface *surface, Co
 			}
 		}
 		while (skipX-- > 0) {
-			byte pixel = *src;
-			if (pixel != 0)
-				*dstRow = pixel;
+			const byte pixel = *src;
+			if (pixel != 0) {
+				if (pixel == 1)
+					*dstRow = _colorTransTbl[*dstRow];
+				else
+					*dstRow = pixel;
+			}
 			++src;
 			++dstRow;
 		}

@@ -58,6 +58,7 @@ protected:
 	void opExitModalScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterScene24(ScriptThread *scriptThread, OpCall &opCall);
 	void opLeaveScene24(ScriptThread *scriptThread, OpCall &opCall);
+	void opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanTrackObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToPoint(ScriptThread *scriptThread, OpCall &opCall);
@@ -120,7 +121,6 @@ protected:
 	void opEnterScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opEnterCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
 	void opExitCloseUpScene(ScriptThread *scriptThread, OpCall &opCall);
-	void opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetSelectSfx(ScriptThread *scriptThread, OpCall &opCall);

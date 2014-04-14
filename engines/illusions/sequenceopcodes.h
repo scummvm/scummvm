@@ -77,6 +77,7 @@ protected:
 	void opSetPriorityLayer(Control *control, OpCall &opCall);
 	void opDisableAutoRegionLayer(Control *control, OpCall &opCall);
 	void opSetRegionLayer(Control *control, OpCall &opCall);
+	void opShiftPalette(Control *control, OpCall &opCall);
 	void opPlaySound(Control *control, OpCall &opCall);
 	void opStopSound(Control *control, OpCall &opCall);
 	void opStartScriptThread(Control *control, OpCall &opCall);
