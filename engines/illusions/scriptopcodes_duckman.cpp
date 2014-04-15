@@ -244,7 +244,7 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 
 //static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
-//static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
+static uint dsceneId = 0x00010012, dthreadId = 0x0002009D;//Paramount
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089;//Map
 //static uint dsceneId = 0x00010033, dthreadId = 0x000201A4;//Chinese
 //static uint dsceneId = 0x00010020, dthreadId = 0x00020112;//Xmas
@@ -253,7 +253,7 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 //static uint dsceneId = 0x0001004B, dthreadId = 0x0002029B;
 //static uint dsceneId = 0x00010021, dthreadId = 0x00020113;
 //static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
-static uint dsceneId = 0x0001000E, dthreadId = 0x0002007C;
+//static uint dsceneId = 0x0001000E, dthreadId = 0x0002007C;
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -547,8 +547,6 @@ void ScriptOpcodes_Duckman::opRunSpecialCode(ScriptThread *scriptThread, OpCall 
 	ARG_SKIP(2);
 	ARG_UINT32(specialCodeId);
 	_vm->runSpecialCode(specialCodeId, opCall);
-	//DEBUG Resume calling thread, later done by the special code
-	_vm->notifyThreadId(opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opStartSound(ScriptThread *scriptThread, OpCall &opCall) {

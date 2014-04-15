@@ -68,6 +68,7 @@ class Screen;
 class ScreenText;
 class ScriptOpcodes;
 class ScriptResource;
+class ScriptStack;
 class Sequence;
 class SpecialCode;
 class TalkItems;
@@ -113,9 +114,14 @@ public:
 	SpecialCode *_specialCode;
 	ThreadList *_threads;
 	
+	uint32 _nextTempThreadId;
+	bool _doScriptThreadInit;
+	ScriptStack *_stack;
 	ScriptResource *_scriptResource;
 
 	Fader *_fader;
+
+	int _pauseCtr;
 
 	int _resGetCtr;
 	uint32 _resGetTime;

@@ -49,12 +49,10 @@ void UpdateFunctions::add(int priority, uint32 tag, UpdateFunctionCallback *call
 }
 
 void UpdateFunctions::update() {
-
 	// Avoid running updates multiple times in the current time slice
 	while (_lastTimerUpdateTime == getCurrentTime())
 		g_system->delayMillis(10); // CHECKME Timer resolution
 	_lastTimerUpdateTime = getCurrentTime();
-
 	UpdateFunctionListIterator it = _updateFunctions.begin();
 	while (it != _updateFunctions.end()) {
 		int r = (*it)->run();
@@ -70,7 +68,6 @@ void UpdateFunctions::update() {
 			break;
 		}
 	}
-
 }
 
 void UpdateFunctions::terminateByScene(uint32 sceneId) {

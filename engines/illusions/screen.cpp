@@ -178,15 +178,12 @@ bool SpriteDrawQueue::calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcR
 	dstRect.right = item->_drawPosition.x + item->_scale * (item->_dimensions._width - item->_controlPosition.x) / 100;
 	dstRect.bottom = item->_drawPosition.y + item->_scale * (item->_dimensions._height - item->_controlPosition.y) / 100;
 	
-	/* CHECKME This seems to be unused basically and only called from debug code
-		Left here just in case...
-	if (gfx_seemsAlways0) {
-		dstRect.left += screenOffsetPt.x;
-		dstRect.right = screenOffsetPt.x + dstRect.right;
-		dstRect.top = screenOffsetPt.y + dstRect.top;
-		dstRect.bottom = screenOffsetPt.y + dstRect.bottom;
+	if (_screen->_isScreenOffsetActive) {
+		dstRect.left += _screen->_screenOffsetPt.x;
+		dstRect.right += _screen->_screenOffsetPt.x;
+		dstRect.top += _screen->_screenOffsetPt.y;
+		dstRect.bottom += _screen->_screenOffsetPt.y;
 	}
-	*/
 
 	// Check if the sprite is on-screen
 	if (dstRect.left >= _screen->getScreenWidth() || dstRect.right <= 0 || dstRect.top >= _screen->getScreenHeight() || dstRect.bottom <= 0)
@@ -238,6 +235,7 @@ Screen::Screen(IllusionsEngine *vm, int16 width, int16 height, int bpp)
 	memset(_mainPalette, 0, sizeof(_mainPalette));
 
 	_isFaderActive = false;
+	_isScreenOffsetActive = false;
 
 }
 
@@ -267,6 +265,15 @@ void Screen::setDisplayOn(bool isOn) {
 	// TODO Clear screen when off
 }
 
+void Screen::setScreenOffset(Common::Point offsPt) {
+	if (offsPt.x != 0 || offsPt.y != 0) {
+		_isScreenOffsetActive = true;
+		_screenOffsetPt = offsPt;
+	} else {
+		_isScreenOffsetActive = false;
+	}
+}
+
 uint16 Screen::getColorKey2() {
 	return _colorKey2;
 }
@@ -275,9 +282,31 @@ void Screen::updateSprites() {
 	_decompressQueue->decompressAll();
 	// NOTE Skipped doShiftBrightness and related as it seems to be unused
 	_drawQueue->drawAll();
+	if (_isScreenOffsetActive)
+		clearScreenOffsetAreas();
 	if (!_displayOn) // TODO Check if a video is playing then don't do it
 		_backSurface->fillRect(Common::Rect(_backSurface->w, _backSurface->h), 0);
 	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
+}
+
+void Screen::clearScreenOffsetAreas() {
+	int16 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	if (_screenOffsetPt.x < 0) {
+		x1 = _backSurface->w + _screenOffsetPt.x;
+		x2 = _backSurface->w;
+	} else if (_screenOffsetPt.x > 0) {
+		x1 = 0;
+		x2 = _screenOffsetPt.x;
+	}
+	if (_screenOffsetPt.y < 0) {
+		y1 = _backSurface->h + _screenOffsetPt.y;
+		y2 = _backSurface->h;
+	} else if (_screenOffsetPt.y > 0) {
+		y1 = 0;
+		y2 = _screenOffsetPt.y;
+	}
+	_backSurface->fillRect(Common::Rect(0, y1, _backSurface->w, y2), 0);
+	_backSurface->fillRect(Common::Rect(x1, 0, x2, _backSurface->h), 0);
 }
 
 void Screen::decompressSprite(SpriteDecompressQueueItem *item) {
@@ -337,7 +366,6 @@ void Screen::getPalette(byte *colors) {
 }
 
 void Screen::shiftPalette(int16 fromIndex, int16 toIndex) {
-	//debug("shiftPalette(%d, %d)", fromIndex, toIndex);
 	byte r, g, b;
 	if (toIndex > fromIndex) {
 		r = _mainPalette[3 * toIndex + 0];

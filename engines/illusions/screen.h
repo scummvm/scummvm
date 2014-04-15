@@ -121,8 +121,10 @@ public:
 	Graphics::Surface *allocSurface(SurfInfo &surfInfo);
 	bool isDisplayOn();
 	void setDisplayOn(bool isOn);
+	void setScreenOffset(Common::Point offsPt);
 	uint16 getColorKey2();
 	void updateSprites();
+	void clearScreenOffsetAreas();
 	void decompressSprite(SpriteDecompressQueueItem *item);
 	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
 	void setPalette(byte *colors, uint start, uint count);
@@ -152,6 +154,9 @@ public:
 	bool _isFaderActive;
 	byte _faderPalette[768];
 	int _newFaderValue, _firstFaderIndex, _lastFaderIndex;
+
+	bool _isScreenOffsetActive;
+	Common::Point _screenOffsetPt;
 
 	void setSystemPalette(byte *palette);
 	void buildColorTransTbl();
