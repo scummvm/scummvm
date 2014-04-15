@@ -4653,5 +4653,211 @@ void Scene212::actions() {
 
 /*------------------------------------------------------------------------*/
 
+
+/*------------------------------------------------------------------------*/
+
+void Scene214::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x1C3);
+	_scene->addActiveVocab(0xD);
+}
+
+void Scene214::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('e', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('t', -1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXMRD_7");
+
+	_devilTime = _game._player._priorTimer;
+	_devilRunningFl = false;
+
+	if (_game._objects.isInRoom(OBJ_POISON_DARTS)) {
+		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(103, 86));
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 11);
+	} else {
+		_scene->_hotspots.activate(0x114, false);
+	}
+
+	if (_game._objects.isInRoom(OBJ_BLOWGUN)) {
+		_globals._sequenceIndexes[2]  = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(90, 87));
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
+	} else {
+		_scene->_hotspots.activate(0x29, false);
+	}
+
+	if (_scene->_priorSceneId != -2)
+		_game._player._playerPos = Common::Point(191, 152);
+
+	sceneEntrySound();
+}
+
+void Scene214::step() {
+	if ((_game._player._priorTimer - _devilTime > 800) && !_devilRunningFl) {
+		_devilRunningFl = true;
+		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 6, 0);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
+		_scene->_dynamicHotspots.add(451, 13, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_0, 0, 71);
+	}
+
+	if (_devilRunningFl) {
+		switch (_game._trigger) {
+		case 71: {
+			int oldIdx = _globals._sequenceIndexes[3];
+			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 5, 0, 0);
+			_scene->_sequences.updateTimeout(oldIdx, _globals._sequenceIndexes[3]);
+			_scene->_dynamicHotspots.add(451, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, 8);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_0, 0, 72);
+			}
+			break;
+
+		case 72: {
+			int oldIdx = _globals._sequenceIndexes[3];
+			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
+			_scene->_sequences.updateTimeout(oldIdx, _globals._sequenceIndexes[3]);
+			_scene->_dynamicHotspots.add(451, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 9, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
+			_devilTime = _game._player._priorTimer;
+			_devilRunningFl = false; 
+			}
+			break;
+		}
+	}
+}
+
+void Scene214::actions() {
+	if (_action._lookFlag)
+		_vm->_dialogs->show(0x53B3);
+	else if (_action.isAction(0x18A, 0xAA))
+		_scene->_nextSceneId = 207;
+	else if (_action.isAction(VERB_TAKE, 0x114) && (_game._trigger || _game._objects.isInRoom(OBJ_POISON_DARTS))) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible   = false;
+			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], true, 6, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SM_0, 0, 1);
+			break;
+
+		case 1:
+			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], true, 6, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SM_0, 0, 2);
+			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+			_game._objects.addToInventory(OBJ_POISON_DARTS);
+			_scene->_hotspots.activate(0x114, false);
+			break;
+
+		case 2:
+			_game._player._visible = true;
+			_scene->_sequences.addTimer(48, 3);
+			break;
+
+		case 3:
+			_game._player._stepEnabled = true;
+			_vm->_dialogs->showPicture(OBJ_POISON_DARTS, 0x53A5);
+			break;
+		}
+	} else if (_action.isAction(VERB_TAKE, 0x29) && (_game._trigger || _game._objects.isInRoom(OBJ_BLOWGUN))) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SM_0, 0, 1);
+			break;
+
+		case 1:
+			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SM_0, 0, 2);
+			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+			_game._objects.addToInventory(OBJ_BLOWGUN);
+			_scene->_hotspots.activate(0x29, false);
+			break;
+
+		case 2:
+			_game._player._visible = true;
+			_scene->_sequences.addTimer(48, 3);
+			break;
+
+		case 3:
+			_game._player._stepEnabled = true;
+			_vm->_dialogs->showPicture(OBJ_BLOWGUN, 0x329);
+			break;
+		}
+	} else if (_action.isAction(VERB_LOOK, 0x197))
+		_vm->_dialogs->show(0x5399);
+	else if (_action.isAction(VERB_LOOK, 0x7E))
+		_vm->_dialogs->show(0x539A);
+	else if (_action.isAction(VERB_LOOK, 0x1C3))
+		_vm->_dialogs->show(0x539B);
+	else if (_action.isAction(VERB_LOOK, 0x21))
+		_vm->_dialogs->show(0x539C);
+	else if (_action.isAction(VERB_LOOK, 0x1BB))
+		_vm->_dialogs->show(0x539D);
+	else if (_action.isAction(VERB_LOOK, 0x1BE)) {
+		if (_game._storyMode == STORYMODE_NAUGHTY) {
+			_vm->_dialogs->show(0x539E);
+		} else {
+			_vm->_dialogs->show(0x539F);
+		}
+	} else if (_action.isAction(VERB_LOOK, 0x1BC))
+		_vm->_dialogs->show(0x53A0);
+	else if (_action.isAction(VERB_TAKE, 0x1BE) || _action.isAction(VERB_TAKE, 0x1BC))
+		_vm->_dialogs->show(0x53A1);
+	else if (_action.isAction(VERB_LOOK, 0x13D))
+		_vm->_dialogs->show(0x53A2);
+	else if (_action.isAction(VERB_TAKE, 0x13D) || _action.isAction(VERB_TAKE, 0x48A))
+		_vm->_dialogs->show(0x53A3);
+	else if (_action.isAction(VERB_LOOK, 0x48A))
+		_vm->_dialogs->show(0x53B4);
+	else if (_action.isAction(VERB_LOOK, 0x114) && (_action._savedFields._mainObjectSource == 4))
+		_vm->_dialogs->show(0x53A4);
+	else if (_action.isAction(VERB_OPEN, 0x7E))
+		_vm->_dialogs->show(0x53A6);
+	else if (_action.isAction(VERB_TALKTO, 0x1C3))
+		_vm->_dialogs->show(0x53A7);
+	else if (_action.isAction(VERB_GIVE, 0x17A, 0x1C3))
+		_vm->_dialogs->show(0x53A8);
+	else if (_action.isAction(0x13A, 0x29, 0x1C3) || _action.isAction(0xA6, 0x29, 0x1C3))
+		_vm->_dialogs->show(0x53A9);
+	else if (_action.isAction(VERB_LOOK, 0x473))
+		_vm->_dialogs->show(0x53AA);
+	else if (_action.isAction(VERB_TAKE, 0x473))
+		_vm->_dialogs->show(0x53AB);
+	else if (_action.isAction(VERB_TAKE, 0x21))
+		_vm->_dialogs->show(0x53AC);
+	else if (_action.isAction(VERB_LOOK, 0x8A))
+		_vm->_dialogs->show(0x53AD);
+	else if (_action.isAction(VERB_LOOK, 0x29))
+		_vm->_dialogs->show(0x53AE);
+	else if (_action.isAction(VERB_LOOK, 0x160)) {
+		if (_game._objects.isInRoom(OBJ_POISON_DARTS) && _game._objects.isInRoom(OBJ_BLOWGUN)) {
+			_vm->_dialogs->show(0x53AF);
+		} else if (_game._objects.isInRoom(OBJ_POISON_DARTS) && !_game._objects.isInRoom(OBJ_BLOWGUN)) {
+			_vm->_dialogs->show(0x53B0);
+		} else if (!_game._objects.isInRoom(OBJ_POISON_DARTS)  && _game._objects.isInRoom(OBJ_BLOWGUN)) {
+			_vm->_dialogs->show(0x53B1);
+		} else {
+			_vm->_dialogs->show(0x53B2);
+		} 
+	} else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
