@@ -215,7 +215,7 @@ public:
 
 class Scene110 : public Scene1xx {
 private:
-	int crabs_here;       /* Flag if crabs are here */
+	bool _crabsFl;
 
 public:
 	Scene110(MADSEngine *vm) : Scene1xx(vm) {}

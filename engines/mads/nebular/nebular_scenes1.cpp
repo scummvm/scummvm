@@ -2673,7 +2673,7 @@ void Scene110::enter() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('X', 2));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('X', 3));
 
-	crabs_here = false;
+	_crabsFl = false;
 
 	if (_scene->_priorSceneId == 109) {
 		_game._player._playerPos = Common::Point(59, 71);
@@ -2683,7 +2683,7 @@ void Scene110::enter() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 
-		crabs_here = true;
+		_crabsFl = true;
 
 		int idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
@@ -2719,8 +2719,8 @@ void Scene110::preActions() {
 	if (_action.isAction(0x15B, 0x41))
 		_game._player._walkOffScreenSceneId = 109;
 
-	if (crabs_here) {
-		crabs_here = false;
+	if (_crabsFl) {
+		_crabsFl = false;
 
 		_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
