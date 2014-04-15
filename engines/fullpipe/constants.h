@@ -267,6 +267,7 @@ namespace Fullpipe {
 #define TrubaUp 680
 
 // Main Menu
+#define PIC_MEX_BGR 5300
 #define PIC_MNU_AUTHORS_L 4624
 #define PIC_MNU_CONTINUE_L 4626
 #define PIC_MNU_DEBUG_L 4632

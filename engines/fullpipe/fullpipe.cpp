@@ -191,6 +191,10 @@ void FullpipeEngine::initialize() {
 	_mgm = new MGM;
 }
 
+void FullpipeEngine::restartGame() {
+	warning("STUB: FullpipeEngine::restartGame()");
+}
+
 Common::Error FullpipeEngine::run() {
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	// Initialize backend

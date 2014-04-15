@@ -901,6 +901,136 @@ bool ModalMainMenu::handleMessage(ExCommand *message) {
 	return false;
 }
 
+bool ModalMainMenu::init(int counterdiff) {
+	switch (_hoverAreaId) {
+	case PIC_MNU_RESTART_L:
+		g_fp->restartGame();
+
+		if (this == g_fp->_modalObject)
+			return false;
+
+		delete this;
+		break;
+
+	case PIC_MNU_EXIT_L:
+		{
+			ModalQuery *mq = new ModalQuery();
+
+			g_fp->_modalObject = mq;
+
+			mq->_parentObj = this;
+			mq->create(_scene, PIC_MEX_BGR);
+
+			_hoverAreaId = 0;
+
+			return true;
+		}
+
+	case PIC_MNU_DEBUG_L:
+		g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+		g_fp->_sceneRect = _screct;
+
+		if (!g_fp->_currentScene)
+			error("ModalMainMenu::init: Bad state");
+
+		g_fp->_currentScene->_x = _bgX;
+		g_fp->_currentScene->_y = _bgY;
+
+		g_fp->_gameLoader->preloadScene(g_fp->_currentScene->_sceneId, SC_DBGMENU);
+
+		return false;
+
+	case PIC_MNU_CONTINUE_L:
+		if (!_mfield_34) {
+			g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+			g_fp->_sceneRect = _screct;
+
+			if (g_fp->_currentScene) {
+				g_fp->_currentScene->_x = _bgX;
+				g_fp->_currentScene->_y = _bgY;
+			}
+
+			return false;
+		}
+
+		g_fp->restartGame();
+
+		if (this == g_fp->_modalObject)
+			return false;
+
+		delete this;
+		break;
+
+	case PIC_MNU_AUTHORS_L:
+		g_fp->_modalObject = new ModalCredits();
+		g_fp->_modalObject->_parentObj = this;
+
+		_hoverAreaId = 0;
+
+		return true;
+
+	case PIC_MNU_SAVE_L:
+	case PIC_MNU_LOAD_L:
+		{
+			ModalSaveGame *sg = new ModalSaveGame();
+
+			g_fp->_modalObject = sg;
+			g_fp->_modalObject->_parentObj = _parentObj;
+
+			int mode = 0;
+			if (_hoverAreaId == PIC_MNU_SAVE_L)
+				mode = 1;
+
+			sg->setup(g_fp->accessScene(SC_MAINMENU), mode);
+			sg->setScene(g_fp->accessScene(SC_MAINMENU));
+
+			sg->_rect = _screct;
+			sg->_oldBgX = _bgX;
+			sg->_oldBgY = _bgY;
+
+			delete this;
+		}
+
+		break;
+
+	default:
+		if (_lastArea) {
+			updateSliderPos();
+		} else {
+			g_fp->_cursorId = PIC_CSR_DEFAULT;
+
+			int idx = checkHover(g_fp->_mouseScreenPos);
+
+			if (idx < 0)
+				goto LABEL_40;
+
+			g_fp->_cursorId = PIC_CSR_DEFAULT;
+
+			if (idx != this->_menuSliderIdx && idx != this->_musicSliderIdx )
+				goto LABEL_40;
+		}
+
+		g_fp->_cursorId = PIC_CSR_LIFT;
+
+	LABEL_40:
+		g_fp->setCursor(g_fp->_cursorId);
+
+		updateVolume();
+
+		return true;
+	}
+
+	return true;
+}
+
+void ModalMainMenu::updateVolume() {
+	warning("STUB: ModalMainMenu::updateVolume()");
+}
+
+void ModalMainMenu::updateSliderPos() {
+	warning("STUB: ModalMainMenu::updateSliderPos()");
+}
+
 int ModalMainMenu::checkHover(Common::Point &point) {
 	warning("STUB: ModalMainMenu::checkHover()");
 
@@ -1006,6 +1136,18 @@ void ModalHelp::launch() {
 		_bg = _mainMenuScene->getPictureObjectById(PIC_HLP_BGR, 0)->_picture;
 		_isRunning = 1;
 	}
+}
+
+void ModalQuery::create(Scene *sc, int picId) {
+	warning("STUB: ModalQuery::create()");
+}
+
+void ModalSaveGame::setScene(Scene *sc) {
+	warning("STUB: ModalSaveGame::setScene()");
+}
+
+void ModalSaveGame::setup(Scene *sc, int mode) {
+	warning("STUB: ModalSaveGame::setup()");
 }
 
 void FullpipeEngine::openHelp() {

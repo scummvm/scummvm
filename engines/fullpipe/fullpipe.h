@@ -91,6 +91,7 @@ public:
 	GUI::Debugger *getDebugger() { return _console; }
 
 	void initialize();
+	void restartGame();
 
 	void setMusicAllowed(int val) { _musicAllowed = val; }
 

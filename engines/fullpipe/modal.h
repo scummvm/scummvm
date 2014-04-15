@@ -174,7 +174,7 @@ public:
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff) { return true; }
+	virtual bool init(int counterdiff);
 	virtual void update();
 	virtual void saveload() {}
 
@@ -184,6 +184,8 @@ private:
 	void setSliderPos();
 	void enableDebugMenu(char c);
 	int checkHover(Common::Point &point);
+	void updateVolume();
+	void updateSliderPos();
 };
 
 class ModalHelp : public BaseModalObject {
@@ -210,7 +212,7 @@ public:
 
 class ModalQuery : public BaseModalObject {
 public:
-	ModalQuery();
+	ModalQuery() {}
 	virtual ~ModalQuery() {}
 
 	virtual bool pollEvent() { return true; }
@@ -218,11 +220,13 @@ public:
 	virtual bool init(int counterdiff) { return true; }
 	virtual void update() {}
 	virtual void saveload() {}
+
+	void create(Scene *sc, int picId);
 };
 
 class ModalSaveGame : public BaseModalObject {
 public:
-	ModalSaveGame();
+	ModalSaveGame() {}
 	virtual ~ModalSaveGame() {}
 
 	virtual bool pollEvent() { return true; }
@@ -230,6 +234,13 @@ public:
 	virtual bool init(int counterdiff) { return true; }
 	virtual void update() {}
 	virtual void saveload() {}
+
+	void setScene(Scene *sc);
+	void setup(Scene *sc, int mode);
+
+	Common::Rect _rect;
+	int _oldBgX;
+	int _oldBgY;
 };
 
 
