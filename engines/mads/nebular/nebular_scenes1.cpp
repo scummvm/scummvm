@@ -177,7 +177,7 @@ void Scene101::enter() {
 		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 17);
 		_scene->_hotspots.activate(0x47, false);
-		_chairHotspotId = _scene->_dynamicHotspots.add(0x47, 0x13F, -1, Common::Rect(159, 84, 33, 36));
+		_chairHotspotId = _scene->_dynamicHotspots.add(0x47, 0x13F, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
 		if (_scene->_priorSceneId == 112)
 			sayDang();
 	} else {
@@ -2533,11 +2533,11 @@ void Scene109::actions() {
 							_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
 							_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
 							_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], -2, -2);
-							int idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(256, 57, 12, 31));
+							int idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(256, 57, 256 + 12, 57 + 31));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-							idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(242, 79, 24, 12));
+							idx = _scene->_dynamicHotspots.add(102, 348, -1, Common::Rect(242, 79, 242 + 24, 79 + 12));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
-							idx = _scene->_dynamicHotspots.add(229, 348, -1, Common::Rect(231, 88, 23, 7));
+							idx = _scene->_dynamicHotspots.add(229, 348, -1, Common::Rect(231, 88, 231 + 23, 88 + 7));
 							_scene->_dynamicHotspots.setPosition(idx, Common::Point(241, 91), FACING_NORTHEAST);
 							_scene->changeVariant(1);
 						} else {
