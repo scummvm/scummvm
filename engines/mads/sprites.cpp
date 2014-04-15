@@ -212,8 +212,9 @@ void SpriteSlots::fullRefresh(bool clearAll) {
 
 void SpriteSlots::deleteTimer(int seqIndex) {
 	for (uint idx = 0; idx < size(); ++idx) {
-		if ((*this)[idx]._seqIndex == seqIndex) {
-			remove_at(idx);
+		SpriteSlot &slot = (*this)[idx];
+		if (slot._seqIndex == seqIndex) {
+			slot._flags = IMG_ERASE;
 			return;
 		}
 	}
