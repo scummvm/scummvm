@@ -88,6 +88,10 @@ void IllusionsEngine::updateEvents() {
 	}
 }
 
+void IllusionsEngine::runUpdateFunctions() {
+	_updateFunctions->update();
+}
+
 Common::Point *IllusionsEngine::getObjectActorPositionPtr(uint32 objectId) {
 	Control *control = getObjectControl(objectId);
 	if (control && control->_actor)
@@ -113,7 +117,7 @@ uint32 IllusionsEngine::getElapsedUpdateTime() {
 	return result;
 }
 
-int IllusionsEngine::updateActors() {
+int IllusionsEngine::updateActors(uint flags) {
 	// TODO Move to Controls class
 	uint32 deltaTime = getElapsedUpdateTime();
 	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
@@ -124,7 +128,7 @@ int IllusionsEngine::updateActors() {
 	return 1;
 }
 
-int IllusionsEngine::updateSequences() {
+int IllusionsEngine::updateSequences(uint flags) {
 	// TODO Move to Controls class
 	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
 		Control *control = *it;
@@ -135,7 +139,7 @@ int IllusionsEngine::updateSequences() {
 	return 1;
 }
 
-int IllusionsEngine::updateGraphics() {
+int IllusionsEngine::updateGraphics(uint flags) {
 	Common::Point panPoint(0, 0);
 
 	uint32 currTime = getCurrentTime();
@@ -191,6 +195,12 @@ int IllusionsEngine::updateGraphics() {
 			_screenText->_position, priority);
 	}
 
+	return 1;
+}
+
+int IllusionsEngine::updateSprites(uint flags) {
+	_screen->updateSprites();
+	_screen->updatePalette();
 	return 1;
 }
 

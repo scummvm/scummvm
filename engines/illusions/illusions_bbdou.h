@@ -104,6 +104,9 @@ public:
 
 	uint32 _nextTempThreadId;
 
+	void initUpdateFunctions();
+	int updateScript(uint flags);
+
 	bool causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
 	void causeDeclare(uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
 	uint32 causeTrigger(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 callingThreadId);

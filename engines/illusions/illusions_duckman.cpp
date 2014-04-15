@@ -104,8 +104,11 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_controls = new Controls(this);
 	_talkItems = new TalkItems(this);
 	_threads = new ThreadList(this);
+	_updateFunctions = new UpdateFunctions();
 
 	_fader = new Fader();
+
+	initUpdateFunctions();
 
 	_scriptOpcodes = new ScriptOpcodes_Duckman(this);
 	_stack = new ScriptStack();
@@ -138,12 +141,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_doScriptThreadInit = true;
 
 	while (!shouldQuit()) {
-		_threads->updateThreads();
-		updateActors();
-		updateSequences();
-		updateGraphics();
-		_screen->updateSprites();
-		_screen->updatePalette();
+		runUpdateFunctions();
 		_system->updateScreen();
 		updateEvents();
 		_system->delayMillis(10);
@@ -154,6 +152,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	delete _fader;
 
+	delete _updateFunctions;
 	delete _threads;
 	delete _talkItems;
 	delete _controls;
@@ -181,6 +180,25 @@ bool IllusionsEngine_Duckman::hasFeature(EngineFeature f) const {
 		*/
 }
 
+#define UPDATEFUNCTION(priority, tag, callback) \
+	_updateFunctions->add(priority, tag, new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman> \
+		(this, &IllusionsEngine_Duckman::callback));
+
+void IllusionsEngine_Duckman::initUpdateFunctions() {
+	UPDATEFUNCTION(30, 0, updateScript);
+	UPDATEFUNCTION(50, 0, updateActors);
+	UPDATEFUNCTION(60, 0, updateSequences);
+	UPDATEFUNCTION(70, 0, updateGraphics);
+	UPDATEFUNCTION(90, 0, updateSprites);
+}
+
+#undef UPDATEFUNCTION
+
+int IllusionsEngine_Duckman::updateScript(uint flags) {
+	// TODO Some more stuff
+	_threads->updateThreads();
+	return 1;
+}
 
 void IllusionsEngine_Duckman::startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId) {
 	_fader->_active = true;
