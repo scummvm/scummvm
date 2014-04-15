@@ -585,8 +585,7 @@ void MADSAction::leftClick() {
 				if (_prepType) {
 					_articleNumber = _prepType;
 					_interAwaiting = AWAITING_THAT;
-				}
-				else {
+				} else {
 					_selectedAction = -1;
 				}
 

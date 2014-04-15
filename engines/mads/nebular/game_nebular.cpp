@@ -362,7 +362,7 @@ void GameNebular::doObjectAction() {
 		_objects.addToInventory(OBJ_BLOWGUN);
 		_objects.setRoom(OBJ_PLANT_STALK, PLAYER_INVENTORY);
 		_globals[kBlowgunStatus] = 0;
-		dialogs.showPicture(OBJ_BLOWGUN, 809);
+		dialogs.showItem(OBJ_BLOWGUN, 809);
 	} else if (action.isAction(VERB_PUT, 276, NOUN_BLOWGUN) && _objects.isInInventory(OBJ_POISON_DARTS)
 			&& _objects.isInInventory(OBJ_BLOWGUN)) {
 		dialogs.show(433);
@@ -374,7 +374,7 @@ void GameNebular::doObjectAction() {
 			action.isAction(936) && _objects.isInInventory(OBJ_NOTE)) {
 		_objects.setRoom(OBJ_NOTE, PLAYER_INVENTORY);
 		_objects.addToInventory(OBJ_COMBINATION);
-		dialogs.showPicture(OBJ_COMBINATION, 851);
+		dialogs.showItem(OBJ_COMBINATION, 851);
 	} else if ((action.isAction(VERB_LOOK) || action.isAction(NOUN_READ)) &&
 			((id = _objects.getIdFromDesc(action._activeAction._objectNameId)) > 0 ||
 			(action._activeAction._indirectObjectId > 0 &&
@@ -390,7 +390,7 @@ void GameNebular::doObjectAction() {
 			dialogs._indexList[7] = _globals[kTeleporterCode + 5];
 			dialogs._indexList[8] = _globals[kTeleporterCode + 2];
 
-			dialogs.showPicture(id, 402);
+			dialogs.showItem(id, 402);
 		} else {
 			int messageId = 800 + id;
 			if (id == OBJ_CHARGE_CASES) {
@@ -410,14 +410,14 @@ void GameNebular::doObjectAction() {
 			if (id == OBJ_PHONE_HANDSET && _globals[kHandsetCellStatus])
 				messageId = 861;
 
-			dialogs.showPicture(id, messageId);
+			dialogs.showItem(id, messageId);
 		}
 	} else if (action.isAction(VERB_PUT, NOUN_BURGER, NOUN_DEAD_FISH)) {
 		if (_objects.isInInventory(OBJ_BURGER) || _objects.isInInventory(OBJ_DEAD_FISH)) {
 			_objects.removeFromInventory(OBJ_DEAD_FISH, PLAYER_INVENTORY);
 			_objects.removeFromInventory(OBJ_BURGER, PLAYER_INVENTORY);
 			_objects.addToInventory(OBJ_STUFFED_FISH);
-			dialogs.showPicture(OBJ_STUFFED_FISH, 803);
+			dialogs.showItem(OBJ_STUFFED_FISH, 803);
 		}
 	} else if (action.isAction(VERB_PUT, 26, 357) && _objects.isInInventory(OBJ_AUDIO_TAPE) &&
 			_objects.isInInventory(OBJ_TAPE_PLAYER)) {
@@ -449,7 +449,7 @@ void GameNebular::doObjectAction() {
 
 		_objects.setRoom(OBJ_TIMER_MODULE, PLAYER_INVENTORY);
 		_objects.addToInventory(OBJ_TIMEBOMB);
-		dialogs.showPicture(OBJ_TIMEBOMB, 404);
+		dialogs.showItem(OBJ_TIMEBOMB, 404);
 	} else if (action.isAction(140, 271)) {
 		dialogs.show(410);
 	} else if (action.isAction(119, 46)) {
@@ -458,7 +458,7 @@ void GameNebular::doObjectAction() {
 	} else if (action.isAction(108, 136)) {
 		if (_objects[OBJ_FISHING_LINE]._roomNumber == 3) {
 			_objects.addToInventory(OBJ_FISHING_LINE);
-			dialogs.showPicture(OBJ_FISHING_LINE, 409);
+			dialogs.showItem(OBJ_FISHING_LINE, 409);
 		} else {
 			dialogs.show(428);
 		}
@@ -467,19 +467,19 @@ void GameNebular::doObjectAction() {
 		case 1:
 		case 2:
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
-			dialogs.showPicture(OBJ_DURAFAIL_CELLS, 412);
+			dialogs.showItem(OBJ_DURAFAIL_CELLS, 412);
 			break;
 		case 3:
 			_objects.addToInventory(OBJ_PHONE_CELLS);
-			dialogs.showPicture(OBJ_DURAFAIL_CELLS, 413);
+			dialogs.showItem(OBJ_DURAFAIL_CELLS, 413);
 			break;
 		case 5:
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
-			dialogs.showPicture(OBJ_DURAFAIL_CELLS, 411);
+			dialogs.showItem(OBJ_DURAFAIL_CELLS, 411);
 			break;
 		case 6:
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
-			dialogs.showPicture(OBJ_DURAFAIL_CELLS, 429);
+			dialogs.showItem(OBJ_DURAFAIL_CELLS, 429);
 			break;
 		default:
 			dialogs.show(478);
@@ -489,24 +489,24 @@ void GameNebular::doObjectAction() {
 		switch (_globals[kHandsetCellStatus]) {
 		case 1:
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
-			dialogs.showPicture(OBJ_DURAFAIL_CELLS,
+			dialogs.showItem(OBJ_DURAFAIL_CELLS,
 				_difficulty != 1 || _globals[kDurafailRecharged] ? 415 : 414);
 			break;
 		case 2:
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
 			if (_difficulty == 1) {
-				dialogs.showPicture(OBJ_DURAFAIL_CELLS, 416);
+				dialogs.showItem(OBJ_DURAFAIL_CELLS, 416);
 			} else {
 				_globals[kHandsetCellStatus] = 0;
 			}
 			break;
 		case 3:
 			_objects.addToInventory(OBJ_PHONE_CELLS);
-			dialogs.showPicture(OBJ_PHONE_CELLS, 418);
+			dialogs.showItem(OBJ_PHONE_CELLS, 418);
 			break;
 		case 4:
 			_objects.addToInventory(OBJ_PHONE_CELLS);
-			dialogs.showPicture(OBJ_PHONE_CELLS, 417);
+			dialogs.showItem(OBJ_PHONE_CELLS, 417);
 			break;
 		default:
 			dialogs.show(478);
@@ -525,8 +525,7 @@ void GameNebular::doObjectAction() {
 			_globals[kHandsetCellStatus] = 3;
 			_objects.setRoom(OBJ_PHONE_CELLS, PLAYER_INVENTORY);
 			dialogs.show(421);
-		}
-		else {
+		} else {
 			dialogs.show(422);
 		}
 	} else if (action.isAction(VERB_PUT, 115, 262)) {
@@ -557,7 +556,7 @@ void GameNebular::doObjectAction() {
 		}
 
 		_objects.addToInventory(OBJ_CHICKEN_BOMB);
-		dialogs.showPicture(OBJ_CHICKEN_BOMB, 430);
+		dialogs.showItem(OBJ_CHICKEN_BOMB, 430);
 	} else {
 		return;
 	}

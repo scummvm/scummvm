@@ -230,8 +230,7 @@ void Player::updateFrame() {
 
 		if (!_visible) {
 			_upcomingTrigger = 0;
-		}
-		else {
+		} else {
 			_upcomingTrigger = _stopWalkerTrigger[_stopWalkerIndex];
 
 			if (_stopWalkerIndex > 0)
@@ -597,11 +596,11 @@ void Player::startMovement() {
 
 	// Figure out direction that will need to be moved in
 	int majorDir;
-	if (xDiff == 0)
+	if (xDiff == 0) {
 		majorDir = 1;
-	else if (yDiff == 0)
+	} else if (yDiff == 0) {
 		majorDir = 3;
-	else {
+	} else {
 		if ((scaleAmount < xDiff) && ((xAmt33 / scaleAmount) >= 141))
 			majorDir = 3;
 		else if (yDiff <= xDiff)

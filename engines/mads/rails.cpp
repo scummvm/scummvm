@@ -195,8 +195,7 @@ void Rails::setNodePosition(int nodeIndex, const Common::Point &pt) {
 		int entry;
 		if (idx == (uint)nodeIndex) {
 			entry = 0x3FFF;
-		}
-		else {
+		} else {
 			// Process the node
 			flags = getRouteFlags(pt, _nodes[idx]._walkPos);
 

@@ -242,6 +242,33 @@ bool DialogsNebular::show(int msgId) {
 	return result;
 }
 
+void DialogsNebular::showItem(int objectId, int messageId, int arg) {
+	show(messageId);
+#if 0
+	Scene &scene = _vm->_game->_scene;
+	byte highPalette[8 * 3];
+	Common::copy(&_vm->_palette->_mainPalette[0x2E8], &_vm->_palette->_mainPalette[PALETTE_SIZE],
+		&highPalette[0]);
+	byte *depthP = scene._depthSurface.getData();
+	byte greyScale[3];
+	greyScale[0] = greyScale[1] = greyScale[2] = 0xFFFF;
+	Common::String setName = Common::String::format("*OBJ%.3d.SS", objectId);
+
+	// Turn off cycling if active
+	bool cyclingActive = scene._cyclingActive;
+	scene._cyclingActive = false;
+
+	// Make a copy of the current screen surface
+	byte *savedSurface = new byte[MADS_SCREEN_WIDTH * MADS_SCREEN_HEIGHT];
+	Common::copy(_vm->_screen.getData(), _vm->_screen.getData() +
+		MADS_SCREEN_WIDTH * MADS_SCREEN_HEIGHT, savedSurface);
+	
+
+
+	delete[] savedSurface;
+#endif
+}
+
 Common::String DialogsNebular::getVocab(int vocabId) {
 	assert(vocabId > 0);
 

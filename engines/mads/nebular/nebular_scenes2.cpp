@@ -781,10 +781,10 @@ void Scene202::actions() {
 					if (_game._objects.isInInventory(OBJ_BONE)) {
 						_game._objects.removeFromInventory(OBJ_BONE, 1);
 						_game._objects.addToInventory(OBJ_BONES);
-						_vm->_dialogs->showPicture(OBJ_BONES, 0x4EFA, 0);
+						_vm->_dialogs->showItem(OBJ_BONES, 0x4EFA, 0);
 					} else {
 						_game._objects.addToInventory(OBJ_BONE);
-						_vm->_dialogs->showPicture(OBJ_BONE, 0x4EFA, 0);
+						_vm->_dialogs->showItem(OBJ_BONE, 0x4EFA, 0);
 					}
 					_scene->changeVariant(_globals[kBone202Status]);
 					_game._player._stepEnabled = true;
@@ -1352,9 +1352,9 @@ void Scene207::preActions() {
 void Scene207::actions() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(0x50E7);
-	} else if (_action.isAction(0x18B, 0x70))
+	} else if (_action.isAction(0x18B, 0x70)) {
 		_scene->_nextSceneId = 214;
-	else {
+	} else {
 		if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
 		    (_game._player._playerPos.y > 111) && (_game._player._playerPos.y < 130)) {
 			if ((_game._player._playerPos.x <= 162) && (_game._player._playerPos.x >= 181) &&
@@ -1622,7 +1622,7 @@ void Scene208::actions() {
 	} else if (_action.isAction(VERB_TAKE, 0x1AA) && (!_globals[kLeavesStatus] || _game._trigger)) {
 		subAction(1);
 		if (_game._player._stepEnabled)
-			_vm->_dialogs->showPicture(OBJ_BIG_LEAVES, 0x326, 0);
+			_vm->_dialogs->showItem(OBJ_BIG_LEAVES, 0x326, 0);
 	} else if (_action.isAction(VERB_PUT, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
 		subAction(2);
 	} else if (_action.isAction(VERB_PUT, 0x17A, 0x1A9)) {
@@ -1820,9 +1820,9 @@ void Scene209::handleLookStay() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 6);
 
-		if (!_dodgeFl)
+		if (!_dodgeFl) {
 			_scene->_sequences.addTimer(90, 149);
-		else {
+		} else {
 			_scene->_sequences.addTimer(1, 149);
 			_shouldDodgeFl = true;
 		}
@@ -3137,7 +3137,7 @@ void Scene209::actions() {
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 			_scene->_sequences.addTimer(4, 3);
-			_vm->_dialogs->showPicture(OBJ_PLANT_STALK, 0x328);
+			_vm->_dialogs->showItem(OBJ_PLANT_STALK, 0x328);
 			break;
 
 		case 3:
@@ -3173,7 +3173,7 @@ void Scene209::actions() {
 			break;
 
 		case 3:
-			_vm->_dialogs->showPicture (OBJ_BINOCULARS, 0x51AF);
+			_vm->_dialogs->showItem (OBJ_BINOCULARS, 0x51AF);
 			_scene->_sprites.remove(_globals._spriteIndexes[10]);
 			break;
 		}
@@ -4763,7 +4763,7 @@ void Scene214::actions() {
 
 		case 3:
 			_game._player._stepEnabled = true;
-			_vm->_dialogs->showPicture(OBJ_POISON_DARTS, 0x53A5);
+			_vm->_dialogs->showItem(OBJ_POISON_DARTS, 0x53A5);
 			break;
 		}
 	} else if (_action.isAction(VERB_TAKE, 0x29) && (_game._trigger || _game._objects.isInRoom(OBJ_BLOWGUN))) {
@@ -4792,7 +4792,7 @@ void Scene214::actions() {
 
 		case 3:
 			_game._player._stepEnabled = true;
-			_vm->_dialogs->showPicture(OBJ_BLOWGUN, 0x329);
+			_vm->_dialogs->showItem(OBJ_BLOWGUN, 0x329);
 			break;
 		}
 	} else if (_action.isAction(VERB_LOOK, 0x197))

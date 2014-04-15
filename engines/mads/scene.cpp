@@ -426,11 +426,6 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	// Draw text elements onto the view
 	_textDisplay.draw(&_vm->_screen);
 
-	// 
-	_vm->_screen.setPointer(&_vm->_screen);
-	_userInterface.setBounds(Common::Rect(_vm->_screen._offset.x, _vm->_screen._offset.y,
-		_vm->_screen._offset.x + _vm->_screen.w, _vm->_screen._offset.y + _vm->_screen.h));
-
 	if (transitionType) {
 		// Fading in the screen
 		_vm->_screen.transition(transitionType, surfaceFlag);

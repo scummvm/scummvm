@@ -396,12 +396,12 @@ void Scene101::actions() {
 	}
 
 	if ((_action.isAction(VERB_TAKE, 0x137) || _action.isAction(VERB_PULL, 0x137)) && _game._objects.isInRoom(0x18)) {
-		_game._objects.addToInventory(0x18);
+		_game._objects.addToInventory(OBJ_SHIELD_MODULATOR);
 		_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 		_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[14], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], -2, -2);
 		_scene->_hotspots.activate(0x137, false);
-		_vm->_dialogs->showPicture(0x18, 0x2788);
+		_vm->_dialogs->showItem(OBJ_SHIELD_MODULATOR, 10120);
 		_vm->_sound->command(22);
 		_action._inProgress = false;
 		return;
@@ -1133,7 +1133,7 @@ void Scene102::actions() {
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 			_vm->_sound->command(22);
-			_vm->_dialogs->showPicture(OBJ_BINOCULARS, 0x27D9);
+			_vm->_dialogs->showItem(OBJ_BINOCULARS, 10201);
 			break;
 		}
 		_action._inProgress = false;
@@ -1142,7 +1142,7 @@ void Scene102::actions() {
 
 	if (_action.isAction(VERB_TAKE, 0x35) && _game._objects.isInRoom(OBJ_BURGER)) {
 		if (_game._trigger == 0) {
-			_vm->_dialogs->showPicture(OBJ_BURGER, 0x27FB);
+			_vm->_dialogs->showItem(OBJ_BURGER, 10235);
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 			_game._objects.addToInventory(OBJ_BURGER);
 			_scene->_hotspots.activate(0x35, false);
@@ -1358,7 +1358,7 @@ void Scene103::actions() {
 			_scene->_hotspots.activate(371, false);
 			_vm->_game->_player._visible = true;
 			_vm->_game->_player._stepEnabled = true;
-			_vm->_dialogs->showPicture(OBJ_REBREATHER, 805);
+			_vm->_dialogs->showItem(OBJ_REBREATHER, 805);
 			break;
 
 		default:
@@ -1386,7 +1386,7 @@ void Scene103::actions() {
 			_scene->_hotspots.activate(289, false);
 			_vm->_game->_player._visible = true;
 			_vm->_game->_player._stepEnabled = true;
-			_vm->_dialogs->showPicture(OBJ_REBREATHER, 804);
+			_vm->_dialogs->showItem(OBJ_REBREATHER, 804);
 			break;
 
 		default:
@@ -1822,7 +1822,7 @@ void Scene105::actions() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_game._objects.addToInventory(OBJ_DEAD_FISH);
 			_globals[kFishIn105] = false;
-			_vm->_dialogs->showPicture(OBJ_DEAD_FISH, 0x322, 0);
+			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802, 0);
 		}
 	} else if (_action.isAction(VERB_LOOK, 0x195))
 		_vm->_dialogs->show(0x2905); 
@@ -2141,7 +2141,7 @@ void Scene107::actions() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_game._objects.addToInventory(OBJ_DEAD_FISH);
 			_globals[kFishIn107] = false;
-			_vm->_dialogs->showPicture(OBJ_DEAD_FISH, 0x322);
+			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802);
 		}
 	} else if (_action.isAction(0x15D, 0xEE))
 		_scene->_nextSceneId = 105;
@@ -2227,7 +2227,7 @@ void Scene108::actions() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_game._objects.addToInventory(OBJ_DEAD_FISH);
 			_globals[kFishIn108] = false;
-			_vm->_dialogs->showPicture(OBJ_DEAD_FISH, 0x2A38); 
+			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 10808); 
 		}
 	} else if (_action.isAction(0x15D, 0xF4))
 		_scene->_nextSceneId = 107;

@@ -164,7 +164,6 @@ public:
 	UISlots _uiSlots;
 	DirtyAreas _dirtyAreas;
 	ScrCategory _category;
-	Common::Rect _drawBounds;
 	Common::Rect *_rectP;
 	int _inventoryTopIndex;
 	int _selectedInvIndex;
@@ -198,8 +197,6 @@ public:
 	void setup(InputMode inputMode);
 
 	void drawTextElements();
-
-	void setBounds(const Common::Rect &r);
 
 	/**
 	 * Loads the animation sprite data for a given inventory object

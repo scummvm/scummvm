@@ -205,7 +205,6 @@ private:
 	void fadeIn();
 public:
 	Common::Point _offset;
-	byte *_dataP;
 public:
 	/**
 	 * Constructor
@@ -216,8 +215,6 @@ public:
 	 * Initialise the surface
 	 */
 	void init();
-
-	void setPointer(MSurface *s);
 
 	/**
 	 * Copys an area of the screen surface to a given destination position on

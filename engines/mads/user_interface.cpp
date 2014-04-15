@@ -163,10 +163,6 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 
 	// Mark areas of the screen surface for updating
 	if (updateFlag) {
-		_vm->_screen.setPointer(&userInterface);
-		userInterface.setBounds(Common::Rect(0, scene._interfaceY,
-			MADS_SCREEN_WIDTH - 1, userInterface.h + scene._interfaceY - 1));
-
 		for (uint idx = 0; idx < size(); ++idx) {
 			DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
 
@@ -500,10 +496,6 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 		}
 		break;
 	}
-}
-
-void UserInterface::setBounds(const Common::Rect &r) {
-	_drawBounds = r;
 }
 
 void UserInterface::loadElements() {
@@ -881,9 +873,6 @@ void UserInterface::updateSelection(ScrCategory category, int newIndex, int *idx
 }
 
 void UserInterface::updateRect(const Common::Rect &bounds) {
-	_vm->_screen.setPointer(&_surface);
-	setBounds(Common::Rect(0, MADS_SCENE_HEIGHT, MADS_SCREEN_WIDTH - 1, MADS_SCREEN_HEIGHT));
-
 	Common::Rect r = bounds;
 	r.translate(0, MADS_SCENE_HEIGHT);
 	_vm->_screen.copyRectToScreen(r);

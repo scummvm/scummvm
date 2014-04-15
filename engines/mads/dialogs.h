@@ -211,7 +211,7 @@ public:
 	virtual ~Dialogs() {}
 
 	virtual void showDialog() = 0;
-	virtual void showPicture(int objId, int msgId, int arg3 = 0) = 0;
+	virtual void showItem(int objectId, int messageId, int arg = 0) = 0;
 
 	virtual bool show(int msgId) = 0;
 };

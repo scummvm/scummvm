@@ -50,10 +50,9 @@ public:
 	virtual void showDialog() {
 		warning("TODO: showDialog");
 	}
-	virtual void showPicture(int objId, int msgId, int arg3) {
-		show(msgId);
-		warning("TODO: showPicture");
-	}
+
+	virtual void showItem(int objectId, int msgId, int arg);
+
 	virtual bool show(int id);
 };
 

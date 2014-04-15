@@ -85,8 +85,7 @@ void DirtyArea::setSpriteSlot(const SpriteSlot *spriteSlot) {
 		_bounds.top = 0;
 		width = MADS_SCREEN_WIDTH;
 		height = MADS_SCENE_HEIGHT;
-	}
-	else {
+	} else {
 		// Standard sprite slots
 		_bounds.left = spriteSlot->_position.x - scene._posAdjust.x;
 		_bounds.top = spriteSlot->_position.y - scene._posAdjust.y;
@@ -548,7 +547,6 @@ void ScreenObjects::setActive(ScrCategory category, int descId, bool active) {
 /*------------------------------------------------------------------------*/
 
 ScreenSurface::ScreenSurface() {
-	_dataP = nullptr;
 }
 
 void ScreenSurface::init() {
@@ -608,10 +606,6 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 		// Quick transitions
 		break;
 	}
-}
-
-void ScreenSurface::setPointer(MSurface *s) {
-	_dataP = s->getData();
 }
 
 void ScreenSurface::fadeOut() {
