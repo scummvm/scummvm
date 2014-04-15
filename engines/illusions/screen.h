@@ -97,6 +97,20 @@ protected:
 	bool calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcRect, Common::Rect &dstRect);
 };
 
+struct Fader {
+	bool _active;
+	int _currValue;
+	bool _paused;
+	int _minValue;
+	int _maxValue;
+	int _firstIndex;
+	int _lastIndex;
+	uint32 _startTime;
+	int _duration;
+	uint32 _notifyThreadId;
+	Fader() : _active(false), _paused(false) {}
+};
+
 // TODO Split into two classes (8bit and 16bit)?
 
 class Screen {
@@ -116,6 +130,8 @@ public:
 	void getPalette(byte *colors);
 	void shiftPalette(int16 fromIndex, int16 toIndex);
 	void updatePalette();
+	void updateFaderPalette();
+	void setFader(int newValue, int firstIndex, int lastIndex);
 	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
 	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
 	int16 getScreenWidth() const { return _backSurface->w; }
@@ -133,6 +149,10 @@ public:
 	byte _mainPalette[768];
 	byte _colorTransTbl[256];
 	
+	bool _isFaderActive;
+	byte _faderPalette[768];
+	int _newFaderValue, _firstFaderIndex, _lastFaderIndex;
+
 	void setSystemPalette(byte *palette);
 	void buildColorTransTbl();
 

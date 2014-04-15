@@ -214,6 +214,8 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_triggerFunctions = new TriggerFunctions();
 	_threads = new ThreadList(this);
 
+	_fader = 0;
+
 	_scriptOpcodes = new ScriptOpcodes_BBDOU(this);
 	_stack = new ScriptStack();
 	
@@ -229,7 +231,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	
 	_globalSceneId = 0x00010003;	
 	
-    setDefaultTextCoords();
+	setDefaultTextCoords();
 	
 	_resSys->loadResource(0x000D0001, 0, 0);
 

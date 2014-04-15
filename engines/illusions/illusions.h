@@ -61,6 +61,7 @@ class Control;
 class Controls;
 class Cursor;
 class Dictionary;
+struct Fader;
 class FramesList;
 class Input;
 class Screen;
@@ -111,7 +112,9 @@ public:
 	ThreadList *_threads;
 	
 	ScriptResource *_scriptResource;
-	
+
+	Fader *_fader;
+
 	int _resGetCtr;
 	uint32 _resGetTime;
 	bool _unpauseControlActorFlag;
@@ -145,6 +148,8 @@ public:
 	void startVoice(int volume, int panX);
 	void stopVoice();
 	bool isVoicePlaying();
+
+	void updateFader();
 
 	void setCurrFontId(uint32 fontId);
 	bool checkActiveTalkThreads();

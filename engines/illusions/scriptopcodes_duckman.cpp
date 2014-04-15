@@ -74,6 +74,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(32, opPanCenterObject);
 	OPCODE(33, opPanTrackObject);
 	OPCODE(34, opPanToObject);
+	OPCODE(35, opPanToNamedPoint);
 	OPCODE(36, opPanToPoint);
 	OPCODE(37, opPanStop);
 	OPCODE(38, opStartFade);
@@ -134,7 +135,6 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	OPCODE(20, opEnterScene);
 	OPCODE(30, opEnterCloseUpScene);
 	OPCODE(31, opExitCloseUpScene);
-	OPCODE(35, opPanToNamedPoint);
 	OPCODE(53, opSetActorToNamedPoint);
 	OPCODE(63, opSetSelectSfx);
 	OPCODE(64, opSetMoveSfx);
@@ -336,6 +336,13 @@ void ScriptOpcodes_Duckman::opPanToObject(ScriptThread *scriptThread, OpCall &op
 	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
 }
 
+void ScriptOpcodes_Duckman::opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(speed);
+	ARG_UINT32(namedPointId);
+	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
+	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
+}
+
 void ScriptOpcodes_Duckman::opPanToPoint(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(speed);
 	ARG_INT16(x);
@@ -348,15 +355,14 @@ void ScriptOpcodes_Duckman::opPanStop(ScriptThread *scriptThread, OpCall &opCall
 }
 
 void ScriptOpcodes_Duckman::opStartFade(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(arg1);
-	ARG_INT16(arg2);
-	ARG_INT16(arg3);
-	ARG_INT16(arg4);
-	ARG_INT16(arg5);
-	// TODO
-
+	ARG_INT16(duration);
+	ARG_INT16(minValue);
+	ARG_INT16(maxValue);
+	ARG_INT16(firstIndex);
+	ARG_INT16(lastIndex);
+	_vm->startFader(duration, minValue, maxValue, firstIndex, lastIndex, opCall._threadId);
 	//DEBUG Resume calling thread, later done when the fading is finished
-	_vm->notifyThreadId(opCall._threadId);
+	//_vm->notifyThreadId(opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opSetDisplay(ScriptThread *scriptThread, OpCall &opCall) {
@@ -792,13 +798,6 @@ void ScriptOpcodes_Duckman::opExitCloseUpScene(ScriptThread *scriptThread, OpCal
 	_vm->exitScene(opCall._callerThreadId);
 	_vm->leavePause(opCall._callerThreadId);
 	opCall._result = kTSYield;
-}
-
-void ScriptOpcodes_Duckman::opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(speed);	
-	ARG_UINT32(namedPointId);
-	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
-	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opSetActorToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {

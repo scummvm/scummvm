@@ -109,6 +109,8 @@ public:
 	Common::Array<DMInventoryItem> _inventoyItems;
 
 	SpecialCodeMap _specialCodeMap;
+	
+	void startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId);
 
 	void setDefaultTextCoords();
 
@@ -185,15 +187,20 @@ public:
 
 	void initInventory();
 	void openInventory();
+	void addInventoryItem(uint32 objectId);
+	void clearInventorySlot(uint32 objectId);
+	void putBackInventoryItem();
 	DMInventorySlot *findInventorySlot(uint32 objectId);
 	DMInventoryItem *findInventoryItem(uint32 objectId);
-	void addInventoryItem(uint32 objectId);
+	DMInventorySlot *findClosestInventorySlot(Common::Point pos);
 
 	// Special code
 	void initSpecialCode();
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
 	void spcSetCursorHandMode(OpCall &opCall);
 	void spcOpenInventory(OpCall &opCall);
+	void spcPutBackInventoryItem(OpCall &opCall);
+	void spcClearInventorySlot(OpCall &opCall);
 	void spcCenterNewspaper(OpCall &opCall);
 	void spcSetCursorInventoryMode(OpCall &opCall);
 	void spcUpdateObject272Sequence(OpCall &opCall);
