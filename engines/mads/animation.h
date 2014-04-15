@@ -213,6 +213,7 @@ public:
 	 */
 	void update();
 
+	void setNextFrameTimer(int frameNumber);
 	void setCurrentFrame(int frameNumber);
 	int getCurrentFrame() const { return _currentFrame; }
 

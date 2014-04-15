@@ -609,4 +609,8 @@ void Animation::setCurrentFrame(int frameNumber) {
 	_nextScrollTimer = _nextFrameTimer = _vm->_game->_scene._frameStartTime;
 }
 
+void Animation::setNextFrameTimer(int frameNumber) {
+	_nextFrameTimer = frameNumber;
+}
+
 } // End of namespace MADS

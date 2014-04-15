@@ -2660,5 +2660,128 @@ void Scene109::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene110::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(0x5B);
+}
+
+void Scene110::enter() {
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('X', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('X', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('X', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('X', 3));
+
+	crabs_here = false;
+
+	if (_scene->_priorSceneId == 109) {
+		_game._player._playerPos = Common::Point(59, 71);
+
+		_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+
+		crabs_here = true;
+
+		int idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(194, 23);
+		_game._player._facing = FACING_SOUTH;
+		_game._player._visible = false;
+		_game._player._stepEnabled = false;
+		_scene->loadAnimation(Resources::formatName(110, 'T', 1,EXT_AA, ""), 70);
+	}
+
+	sceneEntrySound();
+	_game.loadQuoteSet(0x59, 0);
+
+	if (!_game._visitedScenes._sceneRevisited && (_scene->_priorSceneId == 109))
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(109));
+}
+
+void Scene110::step() {
+	if (_game._trigger == 70) {
+		_game._player._visible = true;
+		_game._player._stepEnabled = true;
+	}
+}
+
+void Scene110::preActions() {
+	if (_action.isAction(0x15B, 0x41))
+		_game._player._walkOffScreenSceneId = 109;
+
+	if (crabs_here) {
+		crabs_here = false;
+
+		_scene->_sequences.remove(_globals._sequenceIndexes[0]);
+		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+
+		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 16, 1, 0, 0);
+		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 16, 1, 0, 0);
+		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 16, 1, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 16, 1, 0, 0);
+
+		int idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+		idx = _scene->_dynamicHotspots.add(91, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-1, 0), FACING_NONE);
+	}
+}
+
+void Scene110::actions() {
+	if (_action.isAction(0x15B, 0x178)) {
+		switch (_game._trigger) {
+		case 0:
+			_scene->loadAnimation(Resources::formatName(110, 'T', 0, EXT_AA, ""), 1);
+			_scene->_activeAnimation->setNextFrameTimer(_game._player._ticksAmount + _game._player._priorTimer);
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			break;
+		case 1:
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			_scene->_nextSceneId = 111;
+			break;
+		}
+	} else if ((_action._lookFlag) || _action.isAction(VERB_LOOK, 0x3F))
+		_vm->_dialogs->show(0x2AF9);
+	else if (_action.isAction(VERB_LOOK, 0x40) || _action.isAction(0xD1, 0x40))
+		_vm->_dialogs->show(0x2AFA); 
+	else if (_action.isAction(VERB_LOOK, 0x129))
+		_vm->_dialogs->show(0x2AFB); 
+	else if (_action.isAction(VERB_TAKE, 0x129))
+		_vm->_dialogs->show(0x2AFC); 
+	else if (_action.isAction(VERB_LOOK, 0x178))
+		_vm->_dialogs->show(0x2AFD); 
+	else if (_action.isAction(VERB_LOOK, 0x41))
+		_vm->_dialogs->show(0x2AFE); 
+	else if (_action.isAction(VERB_LOOK, 0x8F))
+		_vm->_dialogs->show(0x2AFF); 
+	else if (_action.isAction(VERB_TAKE, 0x8F))
+		_vm->_dialogs->show(0x2B00); 
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
