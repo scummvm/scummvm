@@ -218,7 +218,25 @@ private:
 	bool _crabsFl;
 
 public:
-	Scene110(MADSEngine *vm) : Scene1xx(vm) {}
+	Scene110(MADSEngine *vm) : Scene1xx(vm), _crabsFl(false) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
+class Scene111 : public Scene1xx {
+private:
+	bool _stampedFl;
+	bool _launch1Fl;
+	bool _launched2Fl;
+	bool _rexDivingFl;
+
+public:
+	Scene111(MADSEngine *vm) : Scene1xx(vm), _stampedFl(false), _launch1Fl(false), _launched2Fl(false), _rexDivingFl(false) {}
 
 	virtual void setup();
 	virtual void enter();
