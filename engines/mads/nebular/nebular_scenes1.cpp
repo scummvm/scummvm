@@ -2822,7 +2822,7 @@ void Scene111::enter() {
 
 	if ((_scene->_priorSceneId < 201) && (_scene->_priorSceneId != -2)) {
 		_game._player._stepEnabled = false;
-		_game._player._visible   = false;
+		_game._player._visible = false;
 		_scene->loadAnimation(Resources::formatName(111, 'A', 0, EXT_AA, ""), 70);
 		_game._player._playerPos = Common::Point(234, 116);
 		_game._player._facing = FACING_EAST;
@@ -2895,9 +2895,9 @@ void Scene111::actions() {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(111, 'A', 1, EXT_AA, ""), 1);
-			_rexDivingFl        = true;
+			_rexDivingFl = true;
 			_game._player._stepEnabled = false;
-			_game._player._visible   = false;
+			_game._player._visible = false;
 			break;
 
 		case 1:
@@ -2920,6 +2920,55 @@ void Scene111::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene112::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene112::enter() {
+	sceneEntrySound();
+
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('X', 0));
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('X', 1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('X', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('X', 5));
+
+	_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 10, 0, 17, 20);
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 4, 0, 0, 0);
+	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 3, 0);
+
+	_game._player._stepEnabled = false;
+	_game._player._visible = false;
+
+	_scene->_userInterface.emptyTalkList();
+	_scene->_userInterface.setup(kInputConversation);
+
+	_scene->loadAnimation(Resources::formatName(112, 'X', -1, EXT_AA, ""), 70);
+}
+
+void Scene112::step() {
+	if ((_scene->_activeAnimation != nullptr) && (_game._storyMode == STORYMODE_NICE)) {
+		if (_scene->_activeAnimation->getCurrentFrame() >= 54) {
+			_scene->_activeAnimation->free();
+			_game._trigger = 70;
+		}
+	}
+
+	if (_game._trigger == 70) {
+		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 7, 3, 0, 11);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 1);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SM_0, 0, 71);
+	}
+
+	if (_game._trigger == 71) {
+		_scene->_nextSceneId = 101;
+		_game._player._stepEnabled = true;
+		_game._player._visible = true;
+	}
 }
 
 /*------------------------------------------------------------------------*/
