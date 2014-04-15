@@ -109,6 +109,9 @@ public:
 	Common::Array<DMInventoryItem> _inventoyItems;
 
 	SpecialCodeMap _specialCodeMap;
+
+	void initUpdateFunctions();
+	int updateScript(uint flags);
 	
 	void startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId);
 

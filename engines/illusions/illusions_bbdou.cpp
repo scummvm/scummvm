@@ -64,6 +64,8 @@
 
 namespace Illusions {
 
+//typedef Common::Functor2Mem<ScriptThread*, OpCall&, void, ScriptOpcodes_BBDOU> UpdateFunctionI;
+
 // TriggerFunction
 
 TriggerFunction::TriggerFunction(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback)
@@ -213,6 +215,9 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_talkItems = new TalkItems(this);
 	_triggerFunctions = new TriggerFunctions();
 	_threads = new ThreadList(this);
+	_updateFunctions = new UpdateFunctions();
+
+	initUpdateFunctions();
 
 	_fader = 0;
 
@@ -240,11 +245,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_doScriptThreadInit = true;
 
 	while (!shouldQuit()) {
-		_threads->updateThreads();
-		updateActors();
-		updateSequences();
-		updateGraphics();
-		_screen->updateSprites();
+		runUpdateFunctions();
 		_system->updateScreen();
 		updateEvents();
 		_system->delayMillis(10);
@@ -253,6 +254,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _stack;
 	delete _scriptOpcodes;
 
+	delete _updateFunctions;
 	delete _threads;
 	delete _triggerFunctions;
 	delete _talkItems;
@@ -281,6 +283,25 @@ bool IllusionsEngine_BBDOU::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 		*/
+}
+
+#define UPDATEFUNCTION(priority, tag, callback) \
+	_updateFunctions->add(priority, tag, new Common::Functor1Mem<uint, int, IllusionsEngine_BBDOU> \
+		(this, &IllusionsEngine_BBDOU::callback));
+
+void IllusionsEngine_BBDOU::initUpdateFunctions() {
+	UPDATEFUNCTION(30, 0, updateScript);
+	UPDATEFUNCTION(50, 0, updateActors);
+	UPDATEFUNCTION(60, 0, updateSequences);
+	UPDATEFUNCTION(70, 0, updateGraphics);
+	UPDATEFUNCTION(90, 0, updateSprites);
+}
+
+#undef UPDATEFUNCTION
+
+int IllusionsEngine_BBDOU::updateScript(uint flags) {
+	_threads->updateThreads();
+	return 1;
 }
 
 bool IllusionsEngine_BBDOU::causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {

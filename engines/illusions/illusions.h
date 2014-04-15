@@ -72,6 +72,7 @@ class Sequence;
 class SpecialCode;
 class TalkItems;
 class ThreadList;
+class UpdateFunctions;
 
 enum {
 	kGameIdBBDOU   = 1,
@@ -96,6 +97,7 @@ public:
 	Common::RandomSource *_random;
 	Dictionary *_dict;
 	ResourceSystem *_resSys;
+	UpdateFunctions *_updateFunctions;
 	
 	void updateEvents();
 
@@ -133,11 +135,14 @@ public:
 		return _gameDescription->gameId;
 	}
 
-	Common::Point *getObjectActorPositionPtr(uint32 objectId);
+	void runUpdateFunctions();
+	int updateActors(uint flags);
+	int updateSequences(uint flags);
+	int updateGraphics(uint flags);
+	int updateSprites(uint flags);
+
 	uint32 getElapsedUpdateTime();
-	int updateActors();
-	int updateSequences();
-	int updateGraphics();
+	Common::Point *getObjectActorPositionPtr(uint32 objectId);
 	int getRandom(int max);
 	int convertPanXCoord(int16 x);
 	bool calcPointDirection(Common::Point &srcPt, Common::Point &dstPt, uint &facing);

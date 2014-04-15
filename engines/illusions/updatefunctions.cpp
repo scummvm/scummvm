@@ -73,4 +73,11 @@ void UpdateFunctions::update() {
 
 }
 
+void UpdateFunctions::terminateByScene(uint32 sceneId) {
+	UpdateFunctionListIterator it = _updateFunctions.begin();
+	while (it != _updateFunctions.end())
+		if ((*it)->_tag == sceneId)
+			(*it)->terminate();
+}
+
 } // End of namespace Illusions

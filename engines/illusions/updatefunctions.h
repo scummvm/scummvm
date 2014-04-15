@@ -33,16 +33,18 @@ enum {
 	kUFTerminate    = 2   // Terminate update function
 };
 
-typedef Common::Functor0<int> UpdateFunctionCallback;
+typedef Common::Functor1<uint, int> UpdateFunctionCallback;
 
 class UpdateFunction {
 public:
 	int _priority;
 	uint32 _tag;
+	uint _flags;
 	UpdateFunctionCallback *_callback;
-	UpdateFunction() : _priority(0), _tag(0), _callback(0) {}
+	UpdateFunction() : _priority(0), _tag(0), _flags(0), _callback(0) {}
 	~UpdateFunction() { delete _callback; }
-	int run() { return (*_callback)(); }
+	void terminate() { _flags |= 1; }
+	int run() { return (*_callback)(_flags); }
 };
 
 class UpdateFunctions {
@@ -51,6 +53,7 @@ public:
 	~UpdateFunctions();
 	void add(int priority, uint32 tag, UpdateFunctionCallback *callback);
 	void update();
+	void terminateByScene(uint32 sceneId);
 protected:
 	typedef Common::List<UpdateFunction*> UpdateFunctionList;
 	typedef UpdateFunctionList::iterator UpdateFunctionListIterator;
