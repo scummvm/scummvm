@@ -141,6 +141,7 @@ int IllusionsEngine::updateGraphics() {
 	uint32 currTime = getCurrentTime();
 	
 	_camera->update(currTime);
+	updateFader();
 
 	// TODO Move to BackgroundItems class
 	BackgroundItem *backgroundItem = _backgroundItems->findActiveBackground();
@@ -177,8 +178,6 @@ int IllusionsEngine::updateGraphics() {
 			*/
 			if (actor->_surfInfo._dimensions._width && actor->_surfInfo._dimensions._height) {
 				uint32 priority = control->getPriority();
-//if (control->_objectId == 0x0004001B) continue;
-//debug("objectId: %08X; priority: %d (%d)", control->_objectId, priority, control->_priority);				
 				_screen->_drawQueue->insertSprite(&actor->_drawFlags, actor->_surface,
 					actor->_surfInfo._dimensions, drawPosition, control->_position,
 					priority, actor->_scale, actor->_spriteFlags);
@@ -266,6 +265,29 @@ void IllusionsEngine::stopVoice() {
 bool IllusionsEngine::isVoicePlaying() {
 	// TODO
 	return false;
+}
+
+void IllusionsEngine::updateFader() {
+	if (_fader && !_fader->_paused && _fader->_active) {
+		int32 currTime = getCurrentTime();
+		int32 currDuration = currTime - _fader->_startTime;
+		if (currDuration) {
+			int newValue;
+			if (currDuration >= _fader->_duration) {
+				newValue = _fader->_maxValue;
+			} else {
+				newValue = (currDuration * (_fader->_maxValue - _fader->_minValue) / _fader->_duration) + _fader->_minValue;
+			}
+			if (_fader->_currValue != newValue) {
+				_fader->_currValue = newValue;
+				_screen->setFader(newValue, _fader->_firstIndex, _fader->_lastIndex);
+			}
+			if (_fader->_currValue == _fader->_maxValue) {
+				_fader->_active = false;
+				notifyThreadId(_fader->_notifyThreadId);
+			}
+		}
+	}
 }
 
 void IllusionsEngine::setCurrFontId(uint32 fontId) {

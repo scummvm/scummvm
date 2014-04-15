@@ -237,6 +237,8 @@ Screen::Screen(IllusionsEngine *vm, int16 width, int16 height, int bpp)
 	_needRefreshPalette = false;
 	memset(_mainPalette, 0, sizeof(_mainPalette));
 
+	_isFaderActive = false;
+
 }
 
 Screen::~Screen() {
@@ -372,9 +374,49 @@ void Screen::shiftPalette(int16 fromIndex, int16 toIndex) {
 
 void Screen::updatePalette() {
 	if (_needRefreshPalette) {
-		// TODO Update fader palette
-		setSystemPalette(_mainPalette);
+		if (_isFaderActive) {
+			updateFaderPalette();
+			setSystemPalette(_faderPalette);
+		} else {
+			setSystemPalette(_mainPalette);
+		}
 		_needRefreshPalette = false;
+	}
+}
+
+void Screen::updateFaderPalette() {
+	if (_newFaderValue >= 255) {
+		_newFaderValue -= 256;
+		for (int i = _firstFaderIndex; i <= _lastFaderIndex; ++i) {
+			byte r = _mainPalette[i * 3 + 0];
+			byte g = _mainPalette[i * 3 + 1];
+			byte b = _mainPalette[i * 3 + 2];
+			_faderPalette[i * 3 + 0] = r - (((_newFaderValue * (255 - r)) >> 8) & 0xFF);
+			_faderPalette[i * 3 + 1] = g - (((_newFaderValue * (255 - g)) >> 8) & 0xFF);
+			_faderPalette[i * 3 + 2] = b - (((_newFaderValue * (255 - b)) >> 8) & 0xFF);
+		}
+	} else {
+		for (int i = _firstFaderIndex; i <= _lastFaderIndex; ++i) {
+			byte r = _mainPalette[i * 3 + 0];
+			byte g = _mainPalette[i * 3 + 1];
+			byte b = _mainPalette[i * 3 + 2];
+			_faderPalette[i * 3 + 0] = _newFaderValue * r / 255;
+			_faderPalette[i * 3 + 1] = _newFaderValue * g / 255;
+			_faderPalette[i * 3 + 2] = _newFaderValue * b / 255;
+		}
+	}
+}
+
+void Screen::setFader(int newValue, int firstIndex, int lastIndex) {
+	if (newValue == 255) {
+		_isFaderActive = false;
+		_needRefreshPalette = true;
+	} else {
+		_isFaderActive = true;
+		_needRefreshPalette = true;
+		_newFaderValue = newValue;
+		_firstFaderIndex = firstIndex - 1;
+		_lastFaderIndex = lastIndex;
 	}
 }
 

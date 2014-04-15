@@ -105,6 +105,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_talkItems = new TalkItems(this);
 	_threads = new ThreadList(this);
 
+	_fader = new Fader();
+
 	_scriptOpcodes = new ScriptOpcodes_Duckman(this);
 	_stack = new ScriptStack();
 	
@@ -150,6 +152,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 	delete _stack;
 	delete _scriptOpcodes;
 
+	delete _fader;
+
 	delete _threads;
 	delete _talkItems;
 	delete _controls;
@@ -175,6 +179,19 @@ bool IllusionsEngine_Duckman::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 		*/
+}
+
+
+void IllusionsEngine_Duckman::startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId) {
+	_fader->_active = true;
+	_fader->_currValue = minValue;
+	_fader->_minValue = minValue;
+	_fader->_maxValue = maxValue;
+	_fader->_firstIndex = firstIndex;
+	_fader->_lastIndex = lastIndex;
+	_fader->_startTime = getCurrentTime();
+	_fader->_duration = duration;
+	_fader->_notifyThreadId = threadId;
 }
 
 void IllusionsEngine_Duckman::setDefaultTextCoords() {
@@ -1038,6 +1055,34 @@ void IllusionsEngine_Duckman::addInventoryItem(uint32 objectId) {
 	control->appearActor();
 }
 
+void IllusionsEngine_Duckman::clearInventorySlot(uint32 objectId) {
+	for (uint i = 0; i < _inventorySlots.size(); ++i)
+		if (_inventorySlots[i]._objectId == objectId)
+			_inventorySlots[i]._objectId = 0;
+}
+
+void IllusionsEngine_Duckman::putBackInventoryItem() {
+	Common::Point mousePos = _input->getCursorPosition();
+	if (_cursor._objectId) {
+		DMInventorySlot *inventorySlot = findInventorySlot(_cursor._objectId);
+		if (inventorySlot)
+			inventorySlot->_objectId = 0;
+		inventorySlot = findClosestInventorySlot(mousePos);
+		inventorySlot->_objectId = _cursor._objectId;
+		Control *control = getObjectControl(_cursor._objectId);
+		control->setActorPosition(inventorySlot->_position);
+		control->appearActor();
+		_cursor._actorIndex = 7;
+		stopCursorHoldingObject();
+		_cursor._actorIndex = 2;
+		_cursor._control->startSequenceActor(_cursor._sequenceId1, 2, 0);
+		if (_cursor._currOverlappedControl)
+			setCursorActorIndex(_cursor._actorIndex, 2, 0);
+		else
+			setCursorActorIndex(_cursor._actorIndex, 1, 0);
+	}
+}
+
 DMInventorySlot *IllusionsEngine_Duckman::findInventorySlot(uint32 objectId) {
 	for (uint i = 0; i < _inventorySlots.size(); ++i)
 		if (_inventorySlots[i]._objectId == objectId)
@@ -1052,6 +1097,24 @@ DMInventoryItem *IllusionsEngine_Duckman::findInventoryItem(uint32 objectId) {
 	return 0;
 }
 
+DMInventorySlot *IllusionsEngine_Duckman::findClosestInventorySlot(Common::Point pos) {
+	int minDistance = 0xFFFFFF;
+	DMInventorySlot *minInventorySlot = 0;
+	for (uint i = 0; i < _inventorySlots.size(); ++i) {
+		DMInventorySlot *inventorySlot = &_inventorySlots[i];
+		if (inventorySlot->_objectId == 0) {
+			int16 deltaX = ABS(inventorySlot->_position.x - pos.x);
+			int16 deltaY = ABS(inventorySlot->_position.y - pos.y);
+			int distance = deltaX * deltaX + deltaY * deltaY;
+			if (inventorySlot->_objectId == 0 && distance < minDistance) {
+				minDistance = distance;
+				minInventorySlot = inventorySlot;
+			}
+		}
+	}
+	return minInventorySlot;
+}
+
 // Special code
 
 typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeFunctionDM;
@@ -1060,6 +1123,8 @@ typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeF
 void IllusionsEngine_Duckman::initSpecialCode() {
 	SPECIAL(0x00160002, spcSetCursorHandMode);
 	SPECIAL(0x00160005, spcOpenInventory);
+	SPECIAL(0x00160007, spcPutBackInventoryItem);
+	SPECIAL(0x00160008, spcClearInventorySlot);
 	SPECIAL(0x00160010, spcCenterNewspaper);
 	SPECIAL(0x00160014, spcUpdateObject272Sequence);
 	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
@@ -1083,6 +1148,17 @@ void IllusionsEngine_Duckman::spcSetCursorHandMode(OpCall &opCall) {
 
 void IllusionsEngine_Duckman::spcOpenInventory(OpCall &opCall) {
 	openInventory();
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcPutBackInventoryItem(OpCall &opCall) {
+	putBackInventoryItem();
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcClearInventorySlot(OpCall &opCall) {
+	ARG_UINT32(objectId);
+	clearInventorySlot(objectId);
 	notifyThreadId(opCall._threadId);
 }
 
