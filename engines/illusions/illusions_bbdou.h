@@ -98,12 +98,6 @@ public:
 	uint32 _theThreadId;
 	uint32 _globalSceneId;
 
-	int _pauseCtr;
-	ScriptStack *_stack;
-	bool _doScriptThreadInit;
-
-	uint32 _nextTempThreadId;
-
 	void initUpdateFunctions();
 	int updateScript(uint flags);
 

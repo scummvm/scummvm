@@ -71,6 +71,26 @@ struct DMInventoryItem {
 		: _objectId(objectId), _propertyId(propertyId) {}
 };
 
+struct ScreenShakerPoint {
+	int16 x, y;
+};
+
+struct ScreenShakeEffect {
+	uint32 _duration;
+	uint _pointsCount;
+	const ScreenShakerPoint *_points;
+};
+
+struct ScreenShaker {
+	uint _pointsIndex;
+	uint _pointsCount;
+	bool _finished;
+	uint32 _duration;
+	uint32 _nextTime;
+	uint32 _notifyThreadId;
+	const ScreenShakerPoint *_points;
+};
+
 struct OpCall;
 
 typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
@@ -91,12 +111,6 @@ public:
 	uint32 _theThreadId;
 	uint32 _globalSceneId;
 
-	int _pauseCtr;
-	ScriptStack *_stack;
-	bool _doScriptThreadInit;
-
-	uint32 _nextTempThreadId;
-	
 	uint _activeScenesCount;
 	uint32 _activeScenes[6];
 
@@ -108,11 +122,16 @@ public:
 	Common::Array<DMInventorySlot> _inventorySlots;
 	Common::Array<DMInventoryItem> _inventoyItems;
 
+	ScreenShaker *_screenShaker;
+
 	SpecialCodeMap _specialCodeMap;
 
 	void initUpdateFunctions();
 	int updateScript(uint flags);
-	
+
+	void startScreenShaker(uint pointsCount, uint32 duration, const ScreenShakerPoint *points, uint32 threadId);
+	int updateScreenShaker(uint flags);
+
 	void startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId);
 
 	void setDefaultTextCoords();
@@ -200,6 +219,7 @@ public:
 	// Special code
 	void initSpecialCode();
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
+	void spcStartScreenShaker(OpCall &opCall);
 	void spcSetCursorHandMode(OpCall &opCall);
 	void spcOpenInventory(OpCall &opCall);
 	void spcPutBackInventoryItem(OpCall &opCall);

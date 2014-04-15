@@ -200,6 +200,56 @@ int IllusionsEngine_Duckman::updateScript(uint flags) {
 	return 1;
 }
 
+void IllusionsEngine_Duckman::startScreenShaker(uint pointsCount, uint32 duration, const ScreenShakerPoint *points, uint32 threadId) {
+	_screenShaker = new ScreenShaker();
+	_screenShaker->_pointsIndex = 0;
+	_screenShaker->_pointsCount = pointsCount;
+	_screenShaker->_finished = false;
+	_screenShaker->_duration = duration;
+	_screenShaker->_nextTime = duration + getCurrentTime();
+	_screenShaker->_points = points;
+	_screenShaker->_notifyThreadId = threadId;
+	_updateFunctions->add(71, getCurrentScene(), new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman>
+		(this, &IllusionsEngine_Duckman::updateScreenShaker));
+}
+
+int IllusionsEngine_Duckman::updateScreenShaker(uint flags) {
+	if (_pauseCtr > 0 || getCurrentScene() == 0x10038) {
+		_screenShaker->_nextTime = getCurrentTime();
+		return 1;
+	}
+
+	if (flags & 1)
+		_screenShaker->_finished = true;
+
+	if (!_screenShaker->_finished) {
+		if (getCurrentTime() >= _screenShaker->_nextTime) {
+			++_screenShaker->_pointsIndex;
+			if (_screenShaker->_pointsIndex <= _screenShaker->_pointsCount) {
+				ScreenShakerPoint shakePt = _screenShaker->_points[_screenShaker->_pointsIndex - 1];
+				if (shakePt.x == (int16)0x8000) {
+					// Loop
+					_screenShaker->_pointsIndex = 1;
+					shakePt = _screenShaker->_points[_screenShaker->_pointsIndex - 1];
+				}
+				_screenShaker->_nextTime = getCurrentTime() + _screenShaker->_duration;
+				_screen->setScreenOffset(Common::Point(shakePt.x, shakePt.y));
+			} else
+				_screenShaker->_finished = true;
+		}
+	}
+
+    if (_screenShaker->_finished) {
+		notifyThreadId(_screenShaker->_notifyThreadId);
+		delete _screenShaker;
+		_screenShaker = 0;
+		_screen->setScreenOffset(Common::Point(0, 0));
+		return 2;
+	}
+
+	return 1;
+}
+
 void IllusionsEngine_Duckman::startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId) {
 	_fader->_active = true;
 	_fader->_currValue = minValue;
@@ -553,13 +603,6 @@ void IllusionsEngine_Duckman::newScriptThread(uint32 threadId, uint32 callingThr
 	ScriptThread *scriptThread = new ScriptThread(this, threadId, callingThreadId, notifyFlags,
 		scriptCodeIp, 0, 0, 0);
 	_threads->startThread(scriptThread);
-	if (_pauseCtr > 0)
-		scriptThread->pause();
-	if (_doScriptThreadInit) {
-		int updateResult = kTSRun;
-		while (scriptThread->_pauseCtr <= 0 && updateResult != kTSTerminate && updateResult != kTSYield)
-			updateResult = scriptThread->update();
-	}
 }
 
 uint32 IllusionsEngine_Duckman::newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable) {
@@ -980,7 +1023,6 @@ void IllusionsEngine_Duckman::updateDialogState() {
 			_controls->destroyDialogItems();
 			Control *control = _dict->getObjectControl(0x40148);
 			_controls->destroyControl(control);
-			debug("_cursor._notifyThreadId30: %08X", _cursor._notifyThreadId30);
 			notifyThreadId(_cursor._notifyThreadId30);
 			_cursor._notifyThreadId30 = 0;
 			_cursor._gameState = 2;
@@ -1139,6 +1181,7 @@ typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeF
 #define SPECIAL(id, func) _specialCodeMap[id] = new SpecialCodeFunctionDM(this, &IllusionsEngine_Duckman::func);
 
 void IllusionsEngine_Duckman::initSpecialCode() {
+	SPECIAL(0x00160001, spcStartScreenShaker);
 	SPECIAL(0x00160002, spcSetCursorHandMode);
 	SPECIAL(0x00160005, spcOpenInventory);
 	SPECIAL(0x00160007, spcPutBackInventoryItem);
@@ -1148,6 +1191,8 @@ void IllusionsEngine_Duckman::initSpecialCode() {
 	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
 }
 
+#undef SPECIAL
+
 void IllusionsEngine_Duckman::runSpecialCode(uint32 specialCodeId, OpCall &opCall) {
 	SpecialCodeMapIterator it = _specialCodeMap.find(specialCodeId);
 	if (it != _specialCodeMap.end()) {
@@ -1156,6 +1201,26 @@ void IllusionsEngine_Duckman::runSpecialCode(uint32 specialCodeId, OpCall &opCal
 		debug("IllusionsEngine_Duckman::runSpecialCode() Unimplemented special code %08X", specialCodeId);
 		notifyThreadId(opCall._threadId);
 	}
+}
+
+static const ScreenShakerPoint kShakerPoints0[] = {
+	{0, -2}, {0, -4}, {0, -3}, {0, -1}, {0, 1}
+};
+
+static const ScreenShakeEffect kShakerEffect0 = {
+	6, 5, kShakerPoints0
+};
+
+static const ScreenShakeEffect *kShakerEffects = {
+	&kShakerEffect0
+};
+
+void IllusionsEngine_Duckman::spcStartScreenShaker(OpCall &opCall) {
+	// TODO Add more effects
+	ARG_BYTE(effect);
+	debug("### effect: %d", effect);
+	const ScreenShakeEffect *shakerEffect = &kShakerEffects[effect];
+	startScreenShaker(shakerEffect->_pointsCount, shakerEffect->_duration, shakerEffect->_points, opCall._threadId);
 }
 
 void IllusionsEngine_Duckman::spcSetCursorHandMode(OpCall &opCall) {
