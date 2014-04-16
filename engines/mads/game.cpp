@@ -274,8 +274,8 @@ void Game::sectionLoop() {
 		_vm->_events->waitCursor();
 		_kernelMode = KERNEL_ROOM_PRELOAD;
 
-		delete _scene._animationData;
-		_scene._animationData = nullptr;
+		delete _scene._activeAnimation;
+		_scene._activeAnimation = nullptr;
 
 		_scene._reloadSceneFlag = false;
 

@@ -201,6 +201,10 @@ void Player::selectSeries() {
 		_mirror = true;
 	}
 
+	// If the user isn't to be present (such as for a cutscene), exit immediately
+	if ((_spritesStart + _spritesIdx) < 0)
+		return;
+
 	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
 	assert(spriteSet._charInfo);
 	_velocity = MAX(spriteSet._charInfo->_velocity, 100);
@@ -219,6 +223,9 @@ void Player::selectSeries() {
 }
 
 void Player::updateFrame() {
+	if ((_spritesStart + _spritesIdx) < 0)
+		return;
+
 	Scene &scene = _vm->_game->_scene;
 	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
 	assert(spriteSet._charInfo);
@@ -489,6 +496,9 @@ void Player::idle() {
 		changeFacing();
 		return;
 	}
+
+	if ((_spritesStart + _spritesIdx) < 0)
+		return;
 
 	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
 	assert(spriteSet._charInfo);
