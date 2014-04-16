@@ -32,7 +32,11 @@ namespace MADS {
 
 class SpriteSlot;
 
-enum SequenceSubEntryMode { SM_0 = 0, SM_1 = 1, SM_FRAME_INDEX = 2 };
+enum SequenceTrigger { 
+	SEQUENCE_TRIGGER_EXPIRE = 0,	// Trigger when the sequence finishes 
+	SEQUENCE_TRIGGER_LOOP = 1,		// Trigger when the sequence loops
+	SEQUENCE_TRIGGER_SPRITE = 2		// Trigger when sequence reaches specific sprite
+};
 
 enum SpriteAnimType { ANIMTYPE_NONE = 0, ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2 };
 
@@ -40,7 +44,7 @@ enum SpriteAnimType { ANIMTYPE_NONE = 0, ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBL
 
 struct SequenceSubEntries {
 	int _count;
-	SequenceSubEntryMode _mode[SEQUENCE_ENTRY_SUBSET_MAX];
+	SequenceTrigger _mode[SEQUENCE_ENTRY_SUBSET_MAX];
 	int _frameIndex[SEQUENCE_ENTRY_SUBSET_MAX];
 	int8 _trigger[SEQUENCE_ENTRY_SUBSET_MAX];
 };
@@ -95,7 +99,7 @@ public:
 
 	SequenceEntry &operator[](int index) { return _entries[index]; }
 	void clear();
-	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int trigger);
+	bool addSubEntry(int index, SequenceTrigger mode, int frameIndex, int trigger);
 	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks,
 		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
 		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);

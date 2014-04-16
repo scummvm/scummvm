@@ -53,7 +53,7 @@ SequenceEntry::SequenceEntry() {
 	_timeout = 0;
 
 	_entries._count = 0;
-	Common::fill(&_entries._mode[0], &_entries._mode[SEQUENCE_ENTRY_SUBSET_MAX], SM_0);
+	Common::fill(&_entries._mode[0], &_entries._mode[SEQUENCE_ENTRY_SUBSET_MAX], KERNEL_TRIGGER_EXPIRE);
 	Common::fill(&_entries._frameIndex[0], &_entries._frameIndex[SEQUENCE_ENTRY_SUBSET_MAX], 0);
 	Common::fill(&_entries._trigger[0], &_entries._trigger[SEQUENCE_ENTRY_SUBSET_MAX], 0);
 }
@@ -80,7 +80,7 @@ void SequenceList::clear() {
 	}
 }
 
-bool SequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int trigger) {
+bool SequenceList::addSubEntry(int index, SequenceTrigger mode, int frameIndex, int trigger) {
 	if (_entries[index]._entries._count >= SEQUENCE_ENTRY_SUBSET_MAX)
 		return true;
 
@@ -162,7 +162,7 @@ int SequenceList::addTimer(int time, int abortVal) {
 	se._entries._count = 0;
 	se._triggerMode = _vm->_game->_triggerSetupMode;
 	se._actionNouns = _vm->_game->_scene._action._activeAction;
-	addSubEntry(seqIndex, SM_0, 0, abortVal);
+	addSubEntry(seqIndex, KERNEL_TRIGGER_EXPIRE, 0, abortVal);
 
 	return seqIndex;
 }
@@ -305,14 +305,14 @@ bool SequenceList::loadSprites(int seqIndex) {
 
 	for (int i = 0; i < seqEntry._entries._count; ++i) {
 		switch (seqEntry._entries._mode[i]) {
-		case SM_0:
-		case SM_1:
-			if (((seqEntry._entries._mode[i] == SM_0) && seqEntry._doneFlag) ||
-				((seqEntry._entries._mode[i] == SM_1) && result))
+		case KERNEL_TRIGGER_EXPIRE:
+		case KERNEL_TRIGGER_LOOP:
+			if (((seqEntry._entries._mode[i] == KERNEL_TRIGGER_EXPIRE) && seqEntry._doneFlag) ||
+				((seqEntry._entries._mode[i] == KERNEL_TRIGGER_LOOP) && result))
 				idx = i;
 			break;
 
-		case SM_FRAME_INDEX: {
+		case KERNEL_TRIGGER_SPRITE: {
 			int v = seqEntry._entries._frameIndex[i];
 			if ((v == seqEntry._frameIndex) || (v == 0))
 				idx = i;
