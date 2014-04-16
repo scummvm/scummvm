@@ -25,6 +25,7 @@
 
 #include "illusions/camera.h"
 #include "illusions/graphics.h"
+#include "illusions/pathfinder.h"
 #include "illusions/resourcesystem.h"
 #include "graphics/surface.h"
 
@@ -103,19 +104,6 @@ protected:
 	byte *_map, *_values;
 };
 
-
-#if 0
-BgResource_PathWalkRects struc ; (sizeof=0x8)
-count dd ?
-rects dd ?
-BgResource_PathWalkRects ends
-
-BgResource_PathWalkPoints struc ; (sizeof=0x8)
-count dd ?
-points dd ?
-BgResource_PathWalkPoints ends
-#endif
-
 struct Palette {
 	uint16 _count;
 	uint16 _unk;
@@ -131,6 +119,20 @@ struct BackgroundObject {
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 };
 
+struct PathWalkPoints {
+	PointArray *_points;
+	PathWalkPoints() : _points(0) {}
+	~PathWalkPoints() { delete _points; }
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+};
+
+struct PathWalkRects {
+	PathLines *_rects;
+	PathWalkRects() : _rects(0) {}
+	~PathWalkRects() { delete _rects; }
+	void load(byte *dataStart, Common::SeekableReadStream &stream);
+};
+
 class BackgroundResource {
 public:
 	BackgroundResource();
@@ -140,6 +142,8 @@ public:
 	PriorityLayer *getPriorityLayer(uint index);
 	ScaleLayer *getScaleLayer(uint index);
 	RegionLayer *getRegionLayer(uint index);
+	PathWalkPoints *getPathWalkPoints(uint index);
+	PathWalkRects *getPathWalkRects(uint index);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 public:
 
@@ -162,7 +166,13 @@ public:
 
 	uint _backgroundObjectsCount;
 	BackgroundObject *_backgroundObjects;
-	
+
+	uint _pathWalkPointsCount;
+	PathWalkPoints *_pathWalkPoints;
+
+	uint _pathWalkRectsCount;
+	PathWalkRects *_pathWalkRects;
+
 	NamedPoints _namedPoints;
 	
 	uint _palettesCount;

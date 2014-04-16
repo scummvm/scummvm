@@ -277,6 +277,14 @@ void ThreadList::endTalkThreadsNoNotify() {
 	}
 }
 
+void ThreadList::terminateThreadChain(uint32 threadId) {
+	while (threadId) {
+		Thread *thread = findThread(threadId);
+		thread->terminate();
+		threadId = thread->_callingThreadId;
+	}
+}
+
 void ThreadList::killThread(uint32 threadId) {
 
 	if (!threadId)

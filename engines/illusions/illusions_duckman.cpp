@@ -118,6 +118,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_unpauseControlActorFlag = false;
 	_lastUpdateTime = 0;
 
+	_currWalkOverlappedControl = 0;
+
 	_pauseCtr = 0;
 	_doScriptThreadInit = false;
 	_field8 = 1;
@@ -239,7 +241,7 @@ int IllusionsEngine_Duckman::updateScreenShaker(uint flags) {
 		}
 	}
 
-    if (_screenShaker->_finished) {
+	if (_screenShaker->_finished) {
 		notifyThreadId(_screenShaker->_notifyThreadId);
 		delete _screenShaker;
 		_screenShaker = 0;
@@ -296,8 +298,29 @@ bool IllusionsEngine_Duckman::testMainActorFastWalk(Control *control) {
 }
 
 bool IllusionsEngine_Duckman::testMainActorCollision(Control *control) {
-	// TODO
-	return false;
+	bool result = false;
+	Control *overlappedControl;
+	if (_controls->getOverlappedWalkObject(control, control->_actor->_position, &overlappedControl)) {
+		if (_currWalkOverlappedControl != overlappedControl) {
+			_currWalkOverlappedControl = overlappedControl;
+			if (runTriggerCause(9, 0, overlappedControl->_objectId)) {
+				delete control->_actor->_pathNode;
+				control->_actor->_flags &= ~0x0400;
+				control->_actor->_pathNode = 0;
+				control->_actor->_pathPoints = 0;
+				control->_actor->_pathPointsCount = 0;
+				_threads->terminateThreadChain(control->_actor->_walkCallerThreadId1);
+				if (control->_actor->_notifyId3C) {
+					notifyThreadId(control->_actor->_notifyId3C);
+					control->_actor->_walkCallerThreadId1 = 0;
+				}
+				result = true;
+			}
+		}
+	} else {
+		_currWalkOverlappedControl = 0;
+	}
+	return result;
 }
 
 Control *IllusionsEngine_Duckman::getObjectControl(uint32 objectId) {

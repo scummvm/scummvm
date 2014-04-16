@@ -218,6 +218,41 @@ void BackgroundObject::load(byte *dataStart, Common::SeekableReadStream &stream)
 		_objectId, _flags, _priority, pointsConfigOffs);
 }
 
+// PathWalkPoints
+
+void PathWalkPoints::load(byte *dataStart, Common::SeekableReadStream &stream) {
+	_points = new PointArray();
+	uint count = stream.readUint32LE();
+	uint32 pointsOffs = stream.readUint32LE();
+	_points->reserve(count);
+	stream.seek(pointsOffs);
+	for (uint i = 0; i < count; ++i) {
+		Common::Point pt;
+		loadPoint(stream, pt);
+		_points->push_back(pt);
+	}
+	debug(0, "PathWalkPoints::load() count: %d; pointsOffs: %08X",
+		count, pointsOffs);
+}
+
+// PathWalkRects
+
+void PathWalkRects::load(byte *dataStart, Common::SeekableReadStream &stream) {
+	_rects = new PathLines();
+	uint count = stream.readUint32LE();
+	uint32 rectsOffs = stream.readUint32LE();
+	_rects->reserve(count);
+	stream.seek(rectsOffs);
+	for (uint i = 0; i < count; ++i) {
+		PathLine rect;
+		loadPoint(stream, rect.p0);
+		loadPoint(stream, rect.p1);
+		_rects->push_back(rect);
+	}
+	debug(0, "PathWalkRects::load() count: %d; rectsOffs: %08X",
+		count, rectsOffs);
+}
+
 // BackgroundResource
 
 BackgroundResource::BackgroundResource() {
@@ -303,6 +338,30 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 		_backgroundObjects[i].load(data, stream);
 	}
 	
+	// Load path walk points
+	stream.seek(0x0E);
+	_pathWalkPointsCount = stream.readUint16LE();
+	debug("_pathWalkPointsCount: %d", _pathWalkPointsCount);
+	_pathWalkPoints = new PathWalkPoints[_pathWalkPointsCount];
+	stream.seek(0x28);
+	uint32 pathWalkPointsOffs = stream.readUint32LE();
+	for (uint i = 0; i < _pathWalkPointsCount; ++i) {
+		stream.seek(pathWalkPointsOffs + i * 8);
+		_pathWalkPoints[i].load(data, stream);
+	}
+
+	// Load path walk rects
+	stream.seek(0x12);
+	_pathWalkRectsCount = stream.readUint16LE();
+	debug("_pathWalkRectsCount: %d", _pathWalkRectsCount);
+	_pathWalkRects = new PathWalkRects[_pathWalkRectsCount];
+	stream.seek(0x30);
+	uint32 pathWalkRectsOffs = stream.readUint32LE();
+	for (uint i = 0; i < _pathWalkRectsCount; ++i) {
+		stream.seek(pathWalkRectsOffs + i * 8);
+		_pathWalkRects[i].load(data, stream);
+	}
+
 	// Load named points
 	stream.seek(0xC);
 	uint namedPointsCount = stream.readUint16LE();
@@ -342,6 +401,14 @@ ScaleLayer *BackgroundResource::getScaleLayer(uint index) {
 
 RegionLayer *BackgroundResource::getRegionLayer(uint index) {
 	return &_regionLayers[index];
+}
+
+PathWalkPoints *BackgroundResource::getPathWalkPoints(uint index) {
+	return &_pathWalkPoints[index];
+}
+
+PathWalkRects *BackgroundResource::getPathWalkRects(uint index) {
+	return &_pathWalkRects[index];
 }
 
 bool BackgroundResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) {

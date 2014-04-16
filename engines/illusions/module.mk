@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	illusions_duckman.o \
 	input.o \
 	midiresource.o \
+	pathfinder.o \
 	resourcesystem.o \
 	screen.o \
 	screentext.o \

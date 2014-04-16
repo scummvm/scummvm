@@ -115,6 +115,7 @@ public:
 	uint32 _activeScenes[6];
 
 	Cursor_Duckman _cursor;
+	Control *_currWalkOverlappedControl;
 
 	Common::Array<DialogItem> _dialogItems;
 

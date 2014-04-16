@@ -72,6 +72,8 @@ Actor::Actor(IllusionsEngine *vm)
 	_scaleLayer = 0;
 	_priorityLayer = 0;
 	_regionLayer = 0;
+	_pathWalkPoints = 0;
+	_pathWalkRects = 0;
 	_position.x = 0;
 	_position.y = 0;
 	_position2.x = 0;
@@ -115,13 +117,7 @@ Actor::Actor(IllusionsEngine *vm)
 
 #if 0 // TODO
 	_field2 = 0;
-	_namedPointsCount = 0;
-	_namedPoints = 0;
 	_field164 = 0;
-	_pathWalkRects = 0;
-	_pathWalkPoints = 0;
-	_regionLayer = 0;
-	_transitionRegionId = 0;
 	_field18C = 0;
 	_field190 = 0;
 	_field192 = 0;
@@ -768,9 +764,15 @@ void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 cal
 
 PointArray *Control::createPath(Common::Point destPt) {
 	// TODO Implement actual pathfinding
-	PointArray *pathNode = new PointArray();
-	pathNode->push_back(destPt);
-	return pathNode;
+	PointArray *walkPoints = (_actor->_flags & 2) ? _actor->_pathWalkPoints->_points : 0;
+	PathLines *walkRects = (_actor->_flags & 0x10) ? _actor->_pathWalkRects->_rects : 0;
+	PathFinder pathFinder;
+	WidthHeight bgDimensions = _vm->_backgroundItems->getMasterBgDimensions();
+	PointArray *path = pathFinder.findPath(_actor->_position, destPt, walkPoints, walkRects, bgDimensions);
+	for (uint i = 0; i < path->size(); ++i) {
+		debug("Path(%d) (%d, %d)", i, (*path)[i].x, (*path)[i].y);
+	}
+	return path;
 }
 
 void Control::updateActorMovement(uint32 deltaTime) {
@@ -792,16 +794,6 @@ void Control::updateActorMovement(uint32 deltaTime) {
 
 	if (_vm->testMainActorCollision(this))
 		break;
-
-	/* TODO
-	if (controla->objectId == GameScript_getField0() && again == const0 && Input_pollButton__(0x10u)) {
-		again = 1;
-		Control_disappearActor__(controla);
-		HIBYTE(_actor->_flags) |= 0x80u;
-		_actor->_seqCodeIp = 0;
-		deltaTime = 2;
-	}
-	*/
 
 	Common::Point prevPt;
 	if (_actor->_pathPointIndex == 0) {
@@ -1051,7 +1043,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	
 	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
 	if (actorType->_pathWalkPointsIndex) {
-		// TODO actor->_pathWalkPoints = bgRes->getPathWalkPoints(actorType->_pathWalkPointsIndex - 1);
+		actor->_pathWalkPoints = bgRes->getPathWalkPoints(actorType->_pathWalkPointsIndex - 1);
 		actor->_flags |= 0x02;
 	}
 
@@ -1061,7 +1053,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	}
 
 	if (actorType->_pathWalkRectIndex) {
-		// TODO actor->_pathWalkRects = bgRes->getPathWalkRects(actorType->_pathWalkRectIndex - 1);
+		actor->_pathWalkRects = bgRes->getPathWalkRects(actorType->_pathWalkRectIndex - 1);
 		actor->_flags |= 0x10;
 	}
 	
@@ -1080,12 +1072,12 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	_controls.push_back(control);
 	_vm->_dict->setObjectControl(objectId, control);
 
-    if (_vm->getGameId() == kGameIdDuckman) {
+	if (_vm->getGameId() == kGameIdDuckman) {
 		control->appearActor();
-    } else if (_vm->getGameId() == kGameIdBBDOU) {
+	} else if (_vm->getGameId() == kGameIdBBDOU) {
 		control->_flags |= 0x01;
 		actor->_flags |= 0x1000;
-    }
+	}
 
 	if (_vm->isCursorObject(actorTypeId, objectId))
 		_vm->placeCursorControl(control, sequenceId);
@@ -1315,6 +1307,24 @@ bool Controls::getDialogItemAtPos(Control *control, Common::Point pt, Control **
 		}
 	}
 	*outOverlappedControl = foundControl;
+	return foundControl != 0;
+}
+
+bool Controls::getOverlappedWalkObject(Control *control, Common::Point pt, Control **outOverlappedControl) {
+	Control *foundControl = 0;
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *testControl = *it;
+		if (testControl != control && testControl->_pauseCtr == 0 &&
+			(testControl->_flags & 1)) {
+			Common::Rect collisionRect;
+			testControl->getCollisionRect(collisionRect);
+			if (!collisionRect.isEmpty() && collisionRect.contains(pt) &&
+				(!foundControl || foundControl->_priority < testControl->_priority))
+				foundControl = testControl;
+		}
+	}
+	if (foundControl)
+		*outOverlappedControl = foundControl;
 	return foundControl != 0;
 }
 

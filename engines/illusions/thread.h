@@ -97,6 +97,7 @@ public:
 	void resumeThreads(uint32 threadId);
 	void endTalkThreads();
 	void endTalkThreadsNoNotify();
+	void terminateThreadChain(uint32 threadId);
 	void killThread(uint32 threadId);
 	void setThreadSceneId(uint32 threadId, uint32 sceneId);
 	uint32 getThreadSceneId(uint32 threadId);

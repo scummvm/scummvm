@@ -26,6 +26,7 @@
 #include "illusions/actorresource.h"
 #include "illusions/backgroundresource.h"
 #include "illusions/graphics.h"
+#include "illusions/pathfinder.h"
 #include "common/algorithm.h"
 #include "common/func.h"
 #include "common/list.h"
@@ -66,7 +67,6 @@ protected:
 };
 
 typedef Common::Functor2<Control*, uint32, void> ActorControlRoutine;
-typedef Common::Array<Common::Point> PointArray;
 
 class Actor {
 public:
@@ -102,6 +102,8 @@ public:
 	ScaleLayer *_scaleLayer;
 	PriorityLayer *_priorityLayer;
 	RegionLayer *_regionLayer;
+	PathWalkPoints *_pathWalkPoints;
+	PathWalkRects *_pathWalkRects;
 	
 	uint _seqStackCount;
 	int16 _seqStack[5];
@@ -238,6 +240,7 @@ public:
 	void unpauseControlsByTag(uint32 tag);
 	bool getOverlappedObject(Control *control, Common::Point pt, Control **outOverlappedControl, int minPriority);
 	bool getDialogItemAtPos(Control *control, Common::Point pt, Control **outOverlappedControl);
+	bool getOverlappedWalkObject(Control *control, Common::Point pt, Control **outOverlappedControl);
 	void destroyControl(Control *control);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 	void actorControlRoutine(Control *control, uint32 deltaTime);
