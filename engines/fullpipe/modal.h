@@ -186,6 +186,7 @@ private:
 	int checkHover(Common::Point &point);
 	void updateVolume();
 	void updateSliderPos();
+	bool isOverArea(PictureObject *obj, Common::Point *point);
 };
 
 class ModalHelp : public BaseModalObject {

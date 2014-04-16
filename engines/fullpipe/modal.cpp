@@ -1037,6 +1037,22 @@ int ModalMainMenu::checkHover(Common::Point &point) {
 	return 0;
 }
 
+bool ModalMainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
+	Common::Point p;
+
+	obj->getDimensions(&p);
+
+	int left = point->x - 8;
+	int right = point->x + 12;
+	int down = point->y - 11;
+	int up = point->y + 9;
+
+	if (left >= obj->_ox && right < obj->_ox + p.x && down >= obj->_oy && up < obj->_oy + p.y)
+		return true;
+
+	return false;
+}
+
 bool ModalMainMenu::isSaveAllowed() {
 	warning("STUB: ModalMainMenu::isSaveAllowed()");
 
