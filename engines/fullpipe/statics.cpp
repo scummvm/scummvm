@@ -107,7 +107,7 @@ bool StepArray::gotoNextPoint() {
 
 void StepArray::insertPoints(Common::Point **points, int pointsCount) {
 	if (_currPointIndex + pointsCount >= _pointsCount)
-		realloc(_points, sizeof(Common::Point *) * (_currPointIndex + pointsCount));
+		_points = (Common::Point **)realloc(_points, sizeof(Common::Point *) * (_currPointIndex + pointsCount));
 
 	_maxPointIndex = _currPointIndex + pointsCount;
 
