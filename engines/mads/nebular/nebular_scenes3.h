@@ -66,7 +66,7 @@ private:
 	int _oldFrame;
 
 public:
-	Scene302(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene302(MADSEngine *vm) : Scene3xx(vm), _oldFrame(0) {}
 
 	virtual void setup();
 	virtual void enter();
@@ -75,6 +75,34 @@ public:
 	virtual void actions() {};
 	virtual void postActions() {};
 };
+
+class Scene303: public Scene3xx {
+public:
+	Scene303(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions() {};
+	virtual void postActions() {};
+};
+
+class Scene304: public Scene3xx {
+private:
+	int _explosionSpriteId;
+
+public:
+	Scene304(MADSEngine *vm) : Scene3xx(vm), _explosionSpriteId(-1) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions() {};
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 
