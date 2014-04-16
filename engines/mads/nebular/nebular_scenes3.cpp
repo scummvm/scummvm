@@ -156,6 +156,44 @@ void Scene301::step() {
 }
 
 /*------------------------------------------------------------------------*/
-	
+
+void Scene302::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene302::enter() {
+	_game._player._stepEnabled = false;
+	_game._player._visible  = false;
+
+	_scene->loadAnimation(formAnimName('a',-1), 71);
+	sceneEntrySound();
+}
+
+void Scene302::step() {
+	if (_game._trigger == 71)
+		_scene->_nextSceneId = 303;
+
+	if ((_scene->_activeAnimation != nullptr) && (_scene->_activeAnimation->getCurrentFrame() != _oldFrame)) {
+		_oldFrame = _scene->_activeAnimation->getCurrentFrame();
+		if (_oldFrame == 147) {
+			_game._objects.setRoom(OBJ_POISON_DARTS, 1);
+			_game._objects.setRoom(OBJ_BLOWGUN, 1);
+			_game._objects.setRoom(OBJ_REBREATHER, 1);
+			_game._objects.setRoom(OBJ_STUFFED_FISH, 1);
+			_game._objects.setRoom(OBJ_DEAD_FISH, 1);
+			_game._objects.setRoom(OBJ_BURGER, 1);
+
+			int count = (int)_game._objects._inventoryList.size();
+			for (int idx = 0; idx < count; idx++) {
+				if (_game._objects.isInInventory(idx))
+					_game._objects.setRoom(idx, 50);
+			}
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
