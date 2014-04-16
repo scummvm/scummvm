@@ -49,6 +49,17 @@ public:
 	Scene3xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
+class Scene301: public Scene3xx {
+public:
+	Scene301(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions() {};
+	virtual void postActions() {};
+};
 } // End of namespace Nebular
 } // End of namespace MADS
 

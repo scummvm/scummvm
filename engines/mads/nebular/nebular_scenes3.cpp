@@ -59,8 +59,8 @@ void Scene3xx::setPlayerSpritesPrefix() {
 	if (oldName != _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
 
-  _vm->_palette->setEntry(16, 10, 63, 63);
-  _vm->_palette->setEntry(17, 10, 45, 45);
+	_vm->_palette->setEntry(16, 10, 63, 63);
+	_vm->_palette->setEntry(17, 10, 45, 45);
 }
 
 void Scene3xx::sceneEntrySound() {
@@ -80,28 +80,28 @@ void Scene3xx::sceneEntrySound() {
 		_vm->_sound->command(11);
 		break;
 
-    case 311:
+	case 311:
 		if (_scene->_priorSceneId == 304)
 			_vm->_sound->command(11);
 		else
 			_vm->_sound->command(10);
 		break;
 
-    case 313:
-    case 316:
-    case 320:
-    case 322:
-    case 357:
-    case 358:
-    case 359:
-    case 360:
-    case 361:
-    case 387:
-    case 388:
-    case 389:
-    case 390:
-    case 391:
-    case 399:
+	case 313:
+	case 316:
+	case 320:
+	case 322:
+	case 357:
+	case 358:
+	case 359:
+	case 360:
+	case 361:
+	case 387:
+	case 388:
+	case 389:
+	case 390:
+	case 391:
+	case 399:
 		_vm->_sound->command(10);
 		break;
 
@@ -131,5 +131,31 @@ void Scene3xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene301::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene301::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
+
+	_globals[kMeteorologistStatus] = METEOROLOGIST_GONE;
+	_globals[kTeleporterCommand] = TELEPORTER_NONE;
+
+	_game._player._stepEnabled = false;
+	_game._player._visible = false;
+	_scene->loadAnimation(formAnimName('a', -1), 60);
+
+	sceneEntrySound();
+}
+
+void Scene301::step() {
+	if (_game._trigger == 60)
+		_scene->_nextSceneId = 302;
+}
+
+/*------------------------------------------------------------------------*/
+	
 } // End of namespace Nebular
 } // End of namespace MADS
