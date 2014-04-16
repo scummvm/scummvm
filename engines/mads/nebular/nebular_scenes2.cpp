@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -4537,12 +4537,11 @@ void Scene211::preActions() {
 	&& (_scene->_customDest.x <= 52) && (_scene->_customDest.y >= 132))
 		_game._player.walk(Common::Point(52, 132), FACING_WEST);
 
-	if (_action.isAction(0x1AD, 0x1AE))  {
-		if (_game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) )  {
+	if (_action.isAction(0x1AD, 0x1AE)) {
+		if (_game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 			_game._player.walk(Common::Point(52, 132), FACING_WEST);
-		} else {
+		else
 			_game._player._walkOffScreenSceneId = 210;
-		}
 	}
 
 	if (_action.isAction(0x1AD, 0x1B1))
@@ -4550,16 +4549,16 @@ void Scene211::preActions() {
 }
 
 void Scene211::actions() {
-	if (_action._lookFlag && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))  {
+	if (_action._lookFlag && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 		_vm->_dialogs->show(0x5277);
-	} else if (_action.isAction(VERB_LOOK, 0x27, 0x100)) {
+	else if (_action.isAction(VERB_LOOK, 0x27, 0x100))
 		_vm->_dialogs->show(0x527C);
-	} else if (_action.isAction(VERB_LOOK, 0x3A)) {
+	else if (_action.isAction(VERB_LOOK, 0x3A))
 		_vm->_dialogs->show(0x526D);
-	} else if (_action.isAction(VERB_LOOK, 0x1B2)) {
+	else if (_action.isAction(VERB_LOOK, 0x1B2))
 		_vm->_dialogs->show(0x526E);
-	} else if (_action.isAction(VERB_LOOK, 0x100)) {
-		if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)  {
+	else if (_action.isAction(VERB_LOOK, 0x100)) {
+		if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 			if (_game._storyMode == STORYMODE_NAUGHTY)
 				_vm->_dialogs->show(0x526F);
 			else
@@ -4572,19 +4571,19 @@ void Scene211::actions() {
 			_vm->_dialogs->show(0x5272);
 		else
 			_vm->_dialogs->show(0x5273);
-	} else if (_action.isAction(VERB_LOOK, 0xB8)) {
+	} else if (_action.isAction(VERB_LOOK, 0xB8))
 		_vm->_dialogs->show(0x5274);
-	} else if (_action.isAction(VERB_LOOK, 0x1B1)) {
+	else if (_action.isAction(VERB_LOOK, 0x1B1))
 		_vm->_dialogs->show(0x5275);
-	} else if (_action.isAction(VERB_LOOK, 0x1AE)) {
+	else if (_action.isAction(VERB_LOOK, 0x1AE))
 		_vm->_dialogs->show(0x5276);
-	} else if (_action.isAction(VERB_LOOK, 0x144)) {
+	else if (_action.isAction(VERB_LOOK, 0x144))
 		_vm->_dialogs->show(0x5279);
-	} else if (_action.isAction(VERB_TAKE, 0x144)) {
+	else if (_action.isAction(VERB_TAKE, 0x144))
 		_vm->_dialogs->show(0x527A);
-	} else if (_action.isAction(VERB_LOOK, 0x129)) {
+	else if (_action.isAction(VERB_LOOK, 0x129))
 		_vm->_dialogs->show(0x527B);
-	} else 
+	else 
 		return;
 
 	_action._inProgress = false;
@@ -4681,7 +4680,7 @@ void Scene214::enter() {
 	}
 
 	if (_game._objects.isInRoom(OBJ_BLOWGUN)) {
-		_globals._sequenceIndexes[2]  = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
+		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(90, 87));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
 	} else {
@@ -4741,7 +4740,7 @@ void Scene214::actions() {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
-			_game._player._visible   = false;
+			_game._player._visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], true, 6, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -4846,7 +4845,7 @@ void Scene214::actions() {
 			_vm->_dialogs->show(0x53AF);
 		} else if (_game._objects.isInRoom(OBJ_POISON_DARTS) && !_game._objects.isInRoom(OBJ_BLOWGUN)) {
 			_vm->_dialogs->show(0x53B0);
-		} else if (!_game._objects.isInRoom(OBJ_POISON_DARTS)  && _game._objects.isInRoom(OBJ_BLOWGUN)) {
+		} else if (!_game._objects.isInRoom(OBJ_POISON_DARTS) && _game._objects.isInRoom(OBJ_BLOWGUN)) {
 			_vm->_dialogs->show(0x53B1);
 		} else {
 			_vm->_dialogs->show(0x53B2);
@@ -4868,7 +4867,7 @@ void Scene215::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0));
 
-	_globals._sequenceIndexes[1]   = _scene->_sequences.addSpriteCycle (_globals._spriteIndexes[1], false, 7, 0, 0, 0);
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle (_globals._spriteIndexes[1], false, 7, 0, 0, 0);
 	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(235, 83));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
 
@@ -4936,7 +4935,7 @@ void Scene215::actions() {
 				break;
 
 			case 2:
-				_game._player._visible   = true;
+				_game._player._visible = true;
 				_game._player._stepEnabled = true;
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
 				break;
@@ -4976,6 +4975,29 @@ void Scene215::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene216::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene216::enter() {
+	_game._player._stepEnabled = false;
+	_game._player._visible = false;
+
+	_scene->_userInterface.emptyTalkList();
+	_scene->_userInterface.setup(kInputConversation);
+	_scene->loadAnimation(formAnimName('A', -1), 60);
+
+	sceneEntrySound();
+}
+
+void Scene216::step() {
+	if (_game._trigger == 60)
+		_scene->_nextSceneId = 215;
 }
 
 /*------------------------------------------------------------------------*/
