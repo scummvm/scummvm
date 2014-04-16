@@ -101,7 +101,7 @@ public:
 	void clear();
 	bool addSubEntry(int index, SequenceTrigger mode, int frameIndex, int trigger);
 	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks,
-		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
+		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, int scale, int depth,
 		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
 	
 	int addTimer(int time, int abortVal);

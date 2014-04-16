@@ -179,7 +179,7 @@ void KernelMessages::processText(int msgIndex) {
 			_vm->_game->_trigger = msg._trigger;
 			_vm->_game->_triggerMode = msg._abortMode;
 
-			if (_vm->_game->_triggerMode != KERNEL_TRIGGER_DAEMON) {
+			if (_vm->_game->_triggerMode != SEQUENCE_TRIGGER_DAEMON) {
 				scene._action._activeAction = msg._actionDetails;
 			}
 		}

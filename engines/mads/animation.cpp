@@ -590,7 +590,7 @@ void Animation::update() {
 			_vm->_game->_trigger = _trigger;
 			_vm->_game->_triggerMode = _triggerMode;
 
-			if (_triggerMode != KERNEL_TRIGGER_DAEMON) {
+			if (_triggerMode != SEQUENCE_TRIGGER_DAEMON) {
 				// Copy the noun list
 				scene._action._action = _actionDetails;
 			}

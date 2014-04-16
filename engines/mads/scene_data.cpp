@@ -41,7 +41,7 @@ KernelMessage::KernelMessage() {
 	_frameTimer = 0;
 	_timeout = 0;
 	_trigger = 0;
-	_abortMode = KERNEL_TRIGGER_PARSER;
+	_abortMode = SEQUENCE_TRIGGER_PARSER;
 	_actionDetails._verbId = VERB_NONE;
 	_actionDetails._objectNameId = 0;
 	_actionDetails._indirectObjectId = 0;

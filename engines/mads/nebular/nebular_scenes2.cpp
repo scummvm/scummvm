@@ -455,7 +455,7 @@ void Scene202::enter() {
 void Scene202::setRandomKernelMessage() {
 	int vocabId = _vm->getRandomNumber(92, 96);
 	_scene->_kernelMessages.reset();
-	_game._triggerSetupMode = KERNEL_TRIGGER_DAEMON;
+	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 70, 120, _game.getQuote(vocabId));
 	_activeMsgFl = true;
 }
@@ -491,7 +491,7 @@ void Scene202::step() {
 			_action._activeAction._verbId = VERB_LOOK;
 			_action._activeAction._objectNameId = 39;
 			_action._activeAction._indirectObjectId = 438;
-			_game._triggerSetupMode = KERNEL_TRIGGER_PARSER;
+			_game._triggerSetupMode = SEQUENCE_TRIGGER_PARSER;
 			_scene->_sequences.addTimer(120, 2);
 			_globals._abortVal = -1;
 		} else if (_globals[kMeteorologistWatch] == 2) {
@@ -3087,7 +3087,7 @@ void Scene209::actions() {
 		if ((_action.isAction(NOUN_SHOOT) || _action.isAction(NOUN_HOSE_DOWN)) && _action.isAction(NOUN_MONKEY)
 			&& _action.isAction(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			if (_action.isAction(NOUN_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
-				_game._triggerSetupMode = KERNEL_TRIGGER_DAEMON;
+				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 231);
 				_startShootingInTimerFl = true;
 				_game._player._stepEnabled = false;
@@ -3097,7 +3097,7 @@ void Scene209::actions() {
 			} 
 			
 			if (_action.isAction(NOUN_HOSE_DOWN, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
-				_game._triggerSetupMode = KERNEL_TRIGGER_DAEMON;
+				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 228);
 				_game._player._stepEnabled = false;
 				_fallFl = true;

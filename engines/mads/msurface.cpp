@@ -516,7 +516,7 @@ int DepthSurface::getDepth(const Common::Point &pt) {
 		return v >> bits;
 	} else {
 		if (pt.x < 0 || pt.y < 0 || pt.x >= this->w || pt.y >= this->h)
-			return 8;
+			return 0;
 
 		return *getBasePtr(pt.x, pt.y) & 0xF;
 	}

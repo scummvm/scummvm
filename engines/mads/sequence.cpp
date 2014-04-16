@@ -47,13 +47,13 @@ SequenceEntry::SequenceEntry() {
 	_field22 = 0;
 	_triggerCountdown = 0;
 	_doneFlag = 0;
-	_triggerMode = KERNEL_TRIGGER_DAEMON;
+	_triggerMode = SEQUENCE_TRIGGER_DAEMON;
 	_numTicks = 0;
 	_extraTicks = 0;
 	_timeout = 0;
 
 	_entries._count = 0;
-	Common::fill(&_entries._mode[0], &_entries._mode[SEQUENCE_ENTRY_SUBSET_MAX], KERNEL_TRIGGER_EXPIRE);
+	Common::fill(&_entries._mode[0], &_entries._mode[SEQUENCE_ENTRY_SUBSET_MAX], SEQUENCE_TRIGGER_EXPIRE);
 	Common::fill(&_entries._frameIndex[0], &_entries._frameIndex[SEQUENCE_ENTRY_SUBSET_MAX], 0);
 	Common::fill(&_entries._trigger[0], &_entries._trigger[SEQUENCE_ENTRY_SUBSET_MAX], 0);
 }
@@ -93,7 +93,7 @@ bool SequenceList::addSubEntry(int index, SequenceTrigger mode, int frameIndex, 
 }
 
 int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks,
-	int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites,
+	int msgX, int msgY, bool nonFixed, int scale, int depth, int frameInc, SpriteAnimType animType, int numSprites,
 	int frameStart) {
 	Scene &scene = _vm->_game->_scene;
 
@@ -162,7 +162,7 @@ int SequenceList::addTimer(int time, int abortVal) {
 	se._entries._count = 0;
 	se._triggerMode = _vm->_game->_triggerSetupMode;
 	se._actionNouns = _vm->_game->_scene._action._activeAction;
-	addSubEntry(seqIndex, KERNEL_TRIGGER_EXPIRE, 0, abortVal);
+	addSubEntry(seqIndex, SEQUENCE_TRIGGER_EXPIRE, 0, abortVal);
 
 	return seqIndex;
 }
@@ -305,14 +305,14 @@ bool SequenceList::loadSprites(int seqIndex) {
 
 	for (int i = 0; i < seqEntry._entries._count; ++i) {
 		switch (seqEntry._entries._mode[i]) {
-		case KERNEL_TRIGGER_EXPIRE:
-		case KERNEL_TRIGGER_LOOP:
-			if (((seqEntry._entries._mode[i] == KERNEL_TRIGGER_EXPIRE) && seqEntry._doneFlag) ||
-				((seqEntry._entries._mode[i] == KERNEL_TRIGGER_LOOP) && result))
+		case SEQUENCE_TRIGGER_EXPIRE:
+		case SEQUENCE_TRIGGER_LOOP:
+			if (((seqEntry._entries._mode[i] == SEQUENCE_TRIGGER_EXPIRE) && seqEntry._doneFlag) ||
+				((seqEntry._entries._mode[i] == SEQUENCE_TRIGGER_LOOP) && result))
 				idx = i;
 			break;
 
-		case KERNEL_TRIGGER_SPRITE: {
+		case SEQUENCE_TRIGGER_SPRITE: {
 			int v = seqEntry._entries._frameIndex[i];
 			if ((v == seqEntry._frameIndex) || (v == 0))
 				idx = i;
@@ -328,7 +328,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 		_vm->_game->_trigger = seqEntry._entries._trigger[idx];
 		_vm->_game->_triggerMode = seqEntry._triggerMode;
 
-		if (seqEntry._triggerMode != KERNEL_TRIGGER_DAEMON)
+		if (seqEntry._triggerMode != SEQUENCE_TRIGGER_DAEMON)
 			scene._action._activeAction = seqEntry._actionNouns;
 	}
 

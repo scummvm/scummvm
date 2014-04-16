@@ -313,7 +313,7 @@ void Scene::doFrame() {
 		flag = true;
 	}
 
-	if (flag || (_vm->_game->_trigger && _vm->_game->_triggerMode == KERNEL_TRIGGER_PREPARE)) {
+	if (flag || (_vm->_game->_trigger && _vm->_game->_triggerMode == SEQUENCE_TRIGGER_PREPARE)) {
 		doPreactions();
 	}
 
@@ -324,7 +324,7 @@ void Scene::doFrame() {
 	// Handle parser actions as well as game triggers
 	if ((_action._inProgress && !player._moving && !player._needToWalk && 
 			(player._facing == player._turnToFacing) && !_vm->_game->_trigger) ||
-			(_vm->_game->_trigger && (_vm->_game->_triggerMode == KERNEL_TRIGGER_PARSER))) {
+			(_vm->_game->_trigger && (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_PARSER))) {
 		doAction();
 	}
 
@@ -442,11 +442,11 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 void Scene::doPreactions() {
 	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences || 
 			_vm->_game->_screenObjects._inputMode == kInputLimitedSentences) {
-		_vm->_game->_triggerSetupMode = KERNEL_TRIGGER_PREPARE;
+		_vm->_game->_triggerSetupMode = SEQUENCE_TRIGGER_PREPARE;
 		_action.checkAction();
 		_sceneLogic->preActions();
 
-		if (_vm->_game->_triggerMode == KERNEL_TRIGGER_PREPARE)
+		if (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_PREPARE)
 			_vm->_game->_trigger = 0;
 	}
 }
@@ -454,7 +454,7 @@ void Scene::doPreactions() {
 void Scene::doAction() {
 	bool flag = false;
 
-	_vm->_game->_triggerSetupMode = KERNEL_TRIGGER_PARSER;
+	_vm->_game->_triggerSetupMode = SEQUENCE_TRIGGER_PARSER;
 	if ((_action._inProgress || _vm->_game->_trigger) && !_action._savedFields._commandError) {
 		_sceneLogic->actions();
 		flag = !_action._inProgress;
@@ -491,17 +491,17 @@ void Scene::doAction() {
 	}
 
 	_action._inProgress = false;
-	if (_vm->_game->_triggerMode == KERNEL_TRIGGER_PARSER)
+	if (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_PARSER)
 		_vm->_game->_trigger = 0;
 }
 
 void Scene::doSceneStep() {
-	_vm->_game->_triggerSetupMode = KERNEL_TRIGGER_DAEMON;
+	_vm->_game->_triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 	_sceneLogic->step();
 	_vm->_game->_sectionHandler->step();
 	_vm->_game->step();
 
-	if (_vm->_game->_triggerMode == KERNEL_TRIGGER_DAEMON)
+	if (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_DAEMON)
 		_vm->_game->_trigger = 0;
 }
 

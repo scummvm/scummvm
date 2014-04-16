@@ -106,7 +106,7 @@ void Scene101::setup() {
 }
 
 void Scene101::sayDang() {
-	_game._triggerSetupMode = KERNEL_TRIGGER_DAEMON;
+	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 	_game._player._stepEnabled = false;
 
 	switch (_game._trigger) {
@@ -608,7 +608,7 @@ void Scene102::setup() {
 
 void Scene102::addRandomMessage() {
 	_scene->_kernelMessages.reset();
-	_game._triggerSetupMode = KERNEL_TRIGGER_DAEMON;
+	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 	int quoteId = _vm->getRandomNumber(65, 69);
 	_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 73, 120, _game.getQuote(quoteId));
 	_activeMsgFl = true;
@@ -838,7 +838,7 @@ void Scene102::actions() {
 		Common::String curQuote = _game.getQuote(quoteId);
 		int width = _vm->_font->getWidth(curQuote, -1);
 		_scene->_kernelMessages.reset();
-		_game._triggerSetupMode = KERNEL_TRIGGER_DAEMON;
+		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_kernelMessages.add(Common::Point(210, 60), 0x1110, 0, 73, 120, curQuote);
 		_scene->_kernelMessages.add(Common::Point(214 + width, 60), 0x1110, 0, 73, 120, _game.getQuote(64));
 		_activeMsgFl = true;

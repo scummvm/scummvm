@@ -57,8 +57,8 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_aaName = "*I0.AA";
 	_priorFrameTimer = 0;
 	_anyEmergency = false;
-	_triggerMode = KERNEL_TRIGGER_PARSER;
-	_triggerSetupMode = KERNEL_TRIGGER_DAEMON;
+	_triggerMode = SEQUENCE_TRIGGER_PARSER;
+	_triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 	_winStatus = 0;
 	_widepipeCtr = 0;
 
@@ -238,7 +238,7 @@ void Game::sectionLoop() {
 		_priorFrameTimer = _scene._frameStartTime;
 
 		// Call the scene logic for entering the given scene
-		_triggerSetupMode = KERNEL_TRIGGER_DAEMON;
+		_triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene._sceneLogic->enter();
 
 		// Set player data

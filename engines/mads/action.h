@@ -29,9 +29,9 @@
 namespace MADS {
 
 enum TriggerMode { 
-	KERNEL_TRIGGER_PARSER = 0,		// Triggers parser
-	KERNEL_TRIGGER_DAEMON = 1,		// Triggers step/daemon code
-	KERNEL_TRIGGER_PREPARE = 2		// Triggers preparser
+	SEQUENCE_TRIGGER_PARSER = 0,		// Triggers parser
+	SEQUENCE_TRIGGER_DAEMON = 1,		// Triggers step/daemon code
+	SEQUENCE_TRIGGER_PREPARE = 2		// Triggers preparser
 };
 
 enum InterAwaiting {
