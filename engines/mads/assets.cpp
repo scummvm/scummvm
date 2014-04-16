@@ -203,16 +203,12 @@ MSprite *SpriteAsset::getFrame(int frameIndex) {
 
 void SpriteAsset::drawScaled(int frameNumber, MSurface &depthSurface, MSurface &destSurface,
 		int scale, int depth, const Common::Point &pos) {
-	warning("TODO: SpriteAsset::drawScaled");
-}
-
-void SpriteAsset::draw(MSurface *surface, int frameNumber, const Common::Point &pt) {
-	error("TODO: draw");
+	error("TODO: SpriteAsset::drawScaled - map to frame methods");
 }
 
 void SpriteAsset::depthDraw(MSurface *surface, MSurface *depthSurface, int frameNumber,
 		const Common::Point &pt, int depth) {
-	error("TODO: depthDraw");
+	error("TODO: map depthDraw to frame draw methods");
 }
 
 /*------------------------------------------------------------------------*/

@@ -254,8 +254,9 @@ void SpriteSlots::drawBackground() {
 					pt.y -= frame->h / 2;
 				}
 
+
 				if (spriteSlot._depth <= 1) {
-					asset->draw(&scene._backgroundSurface, spriteSlot._frameNumber, pt);
+					frame->copyTo(&scene._backgroundSurface, frame->getTransparencyIndex());
 				} else if (scene._depthStyle == 0) {
 					asset->depthDraw(&scene._backgroundSurface, &scene._depthSurface, spriteSlot._frameNumber,
 						pt, spriteSlot._depth);

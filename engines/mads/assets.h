@@ -108,7 +108,6 @@ public:
 
 	void drawScaled(int frameNumber, MSurface &depthSurface, MSurface &destSurface,
 		int scale, int depth, const Common::Point &pos);
-	void draw(MSurface *surface, int frameNumber, const Common::Point &pt);
 	void depthDraw(MSurface *surface, MSurface *depthSurface, int frameNumber, 
 		const Common::Point &pt, int depth);
 };
