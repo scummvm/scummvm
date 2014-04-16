@@ -563,7 +563,7 @@ void Scene::updateCursor() {
 	}
 }
 
-void Scene::free() {
+void Scene::freeCurrentScene() {
 	if (_animationData) {
 		delete _animationData;
 		_animationData = nullptr;

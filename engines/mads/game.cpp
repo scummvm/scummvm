@@ -288,10 +288,8 @@ void Game::sectionLoop() {
 		}
 
 		// Clear the scene
-		_scene.free();
+		_scene.freeCurrentScene();
 		_sectionNumber = _scene._nextSceneId / 100;
-
-		// TODO: sub_1DD46(3)
 
 		// Check whether to show a dialog
 		checkShowDialog();

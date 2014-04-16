@@ -135,7 +135,7 @@ bool Player::loadSprites(const Common::String &prefix) {
 	} else {
 		Common::fill(&_spriteSetsPresent[0], &_spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT], false);
 		_highSprites = false;
-		return true;
+		return false;
 	}
 }
 

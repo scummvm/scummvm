@@ -207,9 +207,9 @@ public:
 	Common::String getVocab(int vocabId) { return _vocabStrings[vocabId - 1]; }
 
 	/**
-	 * Clear the data for the scene
+	 * Clear the data for the currently loaded scene
 	 */
-	void free();
+	void freeCurrentScene();
 
 	/**
 	 * Set the walk surface for a scene to a different variant
