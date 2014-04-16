@@ -284,7 +284,7 @@ void SequenceOpcodes::opSetPathWalkPoints(Control *control, OpCall &opCall) {
 	ARG_INT16(pathWalkPointsIndex);
 	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
 	control->_actor->_flags |= 2;
-	// TODO control->_actor->_pathWalkPoints = bgRes->getPathWalkPoints(pathWalkPointsIndex - 1);
+	control->_actor->_pathWalkPoints = bgRes->getPathWalkPoints(pathWalkPointsIndex - 1);
 }
 
 void SequenceOpcodes::opDisableAutoScale(Control *control, OpCall &opCall) {
@@ -315,7 +315,7 @@ void SequenceOpcodes::opSetPathWalkRects(Control *control, OpCall &opCall) {
 	ARG_INT16(pathWalkRectsIndex);
 	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
 	control->_actor->_flags |= 0x0010;
-	// TODO control->_actor->_pathWalkRects = bgRes->getPathWalkRects(pathWalkRectsIndex - 1);
+	control->_actor->_pathWalkRects = bgRes->getPathWalkRects(pathWalkRectsIndex - 1);
 }
 
 void SequenceOpcodes::opSetPriority(Control *control, OpCall &opCall) {
