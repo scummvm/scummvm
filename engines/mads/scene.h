@@ -91,7 +91,6 @@ public:
 	TextDisplayList _textDisplay;
 	SpriteSlots _spriteSlots;
 	SpriteSets _sprites;
-	int _spritesIndex;
 	DynamicHotspots _dynamicHotspots;
 	Common::Array<int> _activeVocabs;
 	SequenceList _sequences;

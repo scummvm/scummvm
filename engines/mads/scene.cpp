@@ -398,6 +398,7 @@ void Scene::doFrame() {
 
 	if (_freeAnimationFlag && _activeAnimation) {
 		_activeAnimation->free();
+		_freeAnimationFlag = false;
 		_activeAnimation = nullptr;
 	}
 }
