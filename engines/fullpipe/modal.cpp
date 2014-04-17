@@ -838,7 +838,7 @@ ModalMainMenu::ModalMainMenu() {
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 	_areas.push_back(area);
-	_musicSliderIdx = _areas.size();
+	_musicSliderIdx = _areas.size() - 1;
 
 	if (g_fp->_mainMenu_debugEnabled)
 		enableDebugMenuButton();
@@ -1032,9 +1032,29 @@ void ModalMainMenu::updateSliderPos() {
 }
 
 int ModalMainMenu::checkHover(Common::Point &point) {
-	warning("STUB: ModalMainMenu::checkHover()");
+	for (uint i = 0; i < _areas.size(); i++) {
+		if (_areas[i]->picObjL->isPixelHitAtPos(point.x, point.y)) {
+			_areas[i]->picObjL->_flags |= 4;
 
-	return 0;
+			return i;
+		} else {
+			_areas[i]->picObjL->_flags &= 0xFFFB;
+		}
+	}
+
+	if (isOverArea(_areas[_menuSliderIdx]->picObjL, &point)) {
+		_areas[_menuSliderIdx]->picObjL->_flags |= 4;
+
+		return _menuSliderIdx;
+	}
+
+	if (isOverArea(_areas[_musicSliderIdx]->picObjL, &point)) {
+		_areas[_musicSliderIdx]->picObjL->_flags |= 4;
+
+		return _musicSliderIdx;
+	}
+
+	return -1;
 }
 
 bool ModalMainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
