@@ -63,6 +63,7 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(6, opStartScriptThread);
 	OPCODE(8, opStartTempScriptThread);
 	OPCODE(9, opStartTimerThread);
+	OPCODE(12, opNotifyThreadId);
 	OPCODE(14, opSetThreadSceneId);
 	OPCODE(15, opEndTalkThreads);
 	OPCODE(16, opLoadResource);
@@ -191,6 +192,12 @@ duration = 1;//DEBUG Speeds up things
 		_vm->startTimerThread(duration, opCall._threadId);
 }
 
+void ScriptOpcodes_BBDOU::opNotifyThreadId(ScriptThread *scriptThread, OpCall &opCall) {
+	Thread *thread = _vm->_threads->findThread(opCall._callerThreadId);
+	if (!(thread->_notifyFlags & 1))
+		_vm->notifyThreadId(thread->_callingThreadId);
+}
+
 void ScriptOpcodes_BBDOU::opSetThreadSceneId(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
@@ -240,7 +247,8 @@ void ScriptOpcodes_BBDOU::opEnterScene(ScriptThread *scriptThread, OpCall &opCal
 //uint32 dsceneId = 0x0001000D, dthreadId = 0x00020012;//Food minigame
 //uint32 dsceneId = 0x00010067, dthreadId = 0x0002022A;
 //uint32 dsceneId = 0x0001000C, dthreadId = 0x00020011;//Cafeteria
-uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
+//uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
+uint32 dsceneId = 0x0001001A, dthreadId = 0x0002001F;
 
 void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);

@@ -68,6 +68,41 @@ void CauseThread::onTerminated() {
 	_bbdou->_cursor->enable(_cursorObjectId);
 }
 
+// RadarMicrophoneThread
+RadarMicrophoneThread::RadarMicrophoneThread(IllusionsEngine_BBDOU *vm, uint32 threadId,
+	uint32 callingThreadId, uint32 cursorObjectId)
+	: Thread(vm, threadId, callingThreadId, 0), _cursorObjectId(cursorObjectId), _zonesCount(0) {
+	_tag = _vm->getCurrentScene();
+}
+
+int RadarMicrophoneThread::onUpdate() {
+	Control *control = _vm->getObjectControl(_cursorObjectId);
+	int16 cursorX = control->getActorPosition().x;
+	if (_currZoneIndex == 0 ||
+		cursorX >= _zones[_currZoneIndex - 1]._x ||
+		(_currZoneIndex >= 2 && cursorX < _zones[_currZoneIndex - 2]._x)) {//CHECKME
+		for (uint i = 0; i < _zonesCount; ++i) {
+			if (cursorX < _zones[i]._x) {
+				_currZoneIndex = i + 1;
+				_vm->startScriptThreadSimple(_zones[i]._threadId, 0);
+				break;
+			}
+		}
+	}
+	return kTSYield;
+}
+
+void RadarMicrophoneThread::addZone(uint32 threadId) {
+	_zones[_zonesCount++]._threadId = threadId;
+}
+
+void RadarMicrophoneThread::initZones() {
+	for (uint i = 0; i < _zonesCount; ++i)
+		_zones[i]._x = (i + 1) * 640 / _zonesCount;
+	_zones[_zonesCount]._x = 640;
+	_currZoneIndex = 0;
+}
+
 // BbdouSpecialCode
 
 BbdouSpecialCode::BbdouSpecialCode(IllusionsEngine_BBDOU *vm)
@@ -105,7 +140,9 @@ void BbdouSpecialCode::init() {
 	SPECIAL(0x0016001E, spcRemoveInventoryItem);
 	SPECIAL(0x0016001F, spcHasInventoryItem);
 	SPECIAL(0x00160025, spcCloseInventory);
+	SPECIAL(0x00160032, spcSetCursorField90);
 	SPECIAL(0x00160037, spcIsCursorHoldingObjectId);
+	SPECIAL(0x00160038, spcInitRadarMicrophone);
 	SPECIAL(0x0016003A, spcSaladCtl);
 }
 
@@ -229,11 +266,32 @@ void BbdouSpecialCode::spcCloseInventory(OpCall &opCall) {
 	_inventory->close();
 }
 
+void BbdouSpecialCode::spcSetCursorField90(OpCall &opCall) {
+	ARG_SKIP(4); // objectId unused
+	_cursor->_data._field90 = 1;
+	_vm->notifyThreadId(opCall._threadId);
+}
+
 void BbdouSpecialCode::spcIsCursorHoldingObjectId(OpCall &opCall) {
 	ARG_UINT32(cursorObjectId);
 	ARG_UINT32(objectId);
 	_vm->_stack->push(isHoldingObjectId(objectId) ? 1 : 0);
 	_vm->notifyThreadId(opCall._threadId);
+}
+
+void BbdouSpecialCode::spcInitRadarMicrophone(OpCall &opCall) {
+	ARG_UINT32(cursorObjectId);
+	uint32 tempThreadId = _vm->newTempThreadId();
+	RadarMicrophoneThread *radarMicrophoneThread = new RadarMicrophoneThread(_vm,
+		tempThreadId, opCall._callerThreadId, cursorObjectId);
+	for (uint i = 0; i < 7; ++i) {
+		ARG_UINT32(zoneThreadId);
+		if (zoneThreadId == 0)
+			break;
+		radarMicrophoneThread->addZone(zoneThreadId);
+	}
+	radarMicrophoneThread->initZones();
+	_vm->_threads->startThread(radarMicrophoneThread);
 }
 
 void BbdouSpecialCode::spcSaladCtl(OpCall &opCall) {
@@ -280,7 +338,7 @@ bool BbdouSpecialCode::testValueRange(int value) {
 }
 
 void BbdouSpecialCode::setCursorControlRoutine(uint32 objectId, int num) {
-	Control *control = _vm->_dict->getObjectControl(objectId);
+	Control *control = _vm->getObjectControl(objectId);
 	if (num == 0)
 		control->_actor->setControlRoutine(
 			new Common::Functor2Mem<Control*, uint32, void, BbdouSpecialCode>(this, &BbdouSpecialCode::cursorInteractControlRoutine));

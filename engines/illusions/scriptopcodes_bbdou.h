@@ -48,6 +48,7 @@ protected:
 	void opStartScriptThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartTempScriptThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartTimerThread(ScriptThread *scriptThread, OpCall &opCall);
+	void opNotifyThreadId(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetThreadSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opEndTalkThreads(ScriptThread *scriptThread, OpCall &opCall);
 	void opLoadResource(ScriptThread *scriptThread, OpCall &opCall);
