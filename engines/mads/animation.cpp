@@ -188,7 +188,8 @@ void Animation::free() {
 	// Remove any kernel messages in use by the animation
 	for (uint i = 0; i < _messages.size(); ++i) {
 		int msgIndex = _messages[i]._kernelMsgIndex;
-		scene._kernelMessages.remove(msgIndex);
+		if (msgIndex >= 0)
+			scene._kernelMessages.remove(msgIndex);
 	}
 
 	_resetFlag = false;
