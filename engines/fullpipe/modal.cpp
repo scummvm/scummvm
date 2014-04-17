@@ -838,7 +838,7 @@ ModalMainMenu::ModalMainMenu() {
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 	_areas.push_back(area);
-	_musicSliderIdx = _areas.size();
+	_musicSliderIdx = _areas.size() - 1;
 
 	if (g_fp->_mainMenu_debugEnabled)
 		enableDebugMenuButton();
