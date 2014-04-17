@@ -63,6 +63,25 @@ public:
 	uint32 _objectId;
 };
 
+struct RadarMicrophoneZone {
+	int16 _x;
+	uint32 _threadId;
+};
+
+class RadarMicrophoneThread : public Thread {
+public:
+	RadarMicrophoneThread(IllusionsEngine_BBDOU *vm, uint32 threadId,
+		uint32 callingThreadId, uint32 cursorObjectId);
+	virtual int onUpdate();
+	void addZone(uint32 threadId);
+	void initZones();
+public:
+	uint32 _cursorObjectId;
+	uint _zonesCount;
+	uint _currZoneIndex;
+	RadarMicrophoneZone _zones[8];
+};
+
 class BbdouSpecialCode : public SpecialCode {
 public:
 	BbdouSpecialCode(IllusionsEngine_BBDOU *vm);
@@ -100,7 +119,9 @@ public:
 	void spcRemoveInventoryItem(OpCall &opCall);
 	void spcHasInventoryItem(OpCall &opCall);
 	void spcCloseInventory(OpCall &opCall);
+	void spcSetCursorField90(OpCall &opCall);
 	void spcIsCursorHoldingObjectId(OpCall &opCall);
+	void spcInitRadarMicrophone(OpCall &opCall);
 	void spcSaladCtl(OpCall &opCall);
 
 	void playSoundEffect(int soundIndex);

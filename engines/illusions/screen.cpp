@@ -336,15 +336,17 @@ void Screen::drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Comm
 }
 
 void Screen::setPalette(byte *colors, uint start, uint count) {
-	byte *dstPal = &_mainPalette[3 * (start - 1)];
-	for (uint i = 0; i < count; ++i) {
-		*dstPal++ = *colors++;
-		*dstPal++ = *colors++;
-		*dstPal++ = *colors++;
-		++colors;
+	if (_backSurface->format.bytesPerPixel == 1) {
+		byte *dstPal = &_mainPalette[3 * (start - 1)];
+		for (uint i = 0; i < count; ++i) {
+			*dstPal++ = *colors++;
+			*dstPal++ = *colors++;
+			*dstPal++ = *colors++;
+			++colors;
+		}
+		buildColorTransTbl();
+		_needRefreshPalette = true;
 	}
-	buildColorTransTbl();
-	_needRefreshPalette = true;
 }
 
 void Screen::setPaletteEntry(int16 index, byte r, byte g, byte b) {
