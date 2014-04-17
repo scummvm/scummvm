@@ -1682,6 +1682,9 @@ void PegasusEngine::startNewGame() {
 	removeAllItemsFromInventory();
 	removeAllItemsFromBiochips();
 
+	// Properly reset all items to their original state
+	g_allItems.resetAllItems();
+
 	BiochipItem *biochip = (BiochipItem *)_allItems.findItemByID(kAIBiochip);
 	addItemToBiochips(biochip);
 

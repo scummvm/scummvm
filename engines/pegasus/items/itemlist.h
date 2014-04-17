@@ -48,6 +48,7 @@ public:
 	virtual void readFromStream(Common::ReadStream *stream);
 
 	Item *findItemByID(const ItemID id);
+	void resetAllItems();
 };
 
 typedef ItemList::iterator ItemIterator;
