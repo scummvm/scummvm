@@ -51,23 +51,13 @@ void AAHeader::load(Common::SeekableReadStream *f) {
 	buffer[FILENAME_SIZE - 1] = '\0';
 	_interfaceFile = Common::String(buffer);
 
-	for (int i = 0; i < _spriteSetsCount; ++i) {
+	for (int i = 0; i < 50; ++i) {
 		f->read(buffer, FILENAME_SIZE);
 		buffer[FILENAME_SIZE - 1] = '\0';
-		_spriteSetNames.push_back(Common::String(buffer));
+		if (i < _spriteSetsCount)
+			_spriteSetNames.push_back(Common::String(buffer));
 	}
 
-	f->skip(81);
-	f->read(buffer, FILENAME_SIZE);
-	buffer[FILENAME_SIZE - 1] = '\0';
-	_lbmFilename = Common::String(buffer);
-
-	f->skip(365);
-	f->read(buffer, FILENAME_SIZE);
-	buffer[FILENAME_SIZE - 1] = '\0';
-	_spritesFilename = Common::String(buffer);
-
-	f->skip(48);
 	f->read(buffer, FILENAME_SIZE);
 	buffer[FILENAME_SIZE - 1] = '\0';
 	_soundName = Common::String(buffer);
