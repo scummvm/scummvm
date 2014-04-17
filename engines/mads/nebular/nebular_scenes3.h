@@ -32,6 +32,14 @@ namespace MADS {
 
 namespace Nebular {
 
+typedef struct {
+	bool _flag;
+	int _vertical;
+	int _horizontal;
+	int _seqId[40];
+	uint32 _timer;
+} ForceField;
+
 class Scene3xx : public NebularScene {
 protected:
 	/**
@@ -45,6 +53,11 @@ protected:
 	void setPlayerSpritesPrefix();
 
 	void sceneEntrySound();
+
+	void initForceField(ForceField *force, bool flag);
+	void handleForceField(ForceField *force, int *sprites);
+	int computeScale(int low, int high, int id);
+
 public:
 	Scene3xx(MADSEngine *vm) : NebularScene(vm) {}
 };
@@ -100,6 +113,45 @@ public:
 	virtual void step();
 	virtual void preActions() {};
 	virtual void actions() {};
+	virtual void postActions() {};
+};
+
+class Scene307: public Scene3xx {
+private:
+	ForceField _forceField;
+
+	bool _afterPeeingFl;
+	bool _duringPeeingFl;
+	bool _grateOpenedFl;
+	bool _activePrisonerFl;
+
+	int _animationMode;
+	int  _prisonerMessageId;
+	int _fieldCollisionCounter;
+
+	uint32 _lastFrameTime;
+	uint32 _guardTime;
+	uint32 _prisonerTimer;
+
+	Common::String _subQuote2;
+
+	//	dialog1, dialog2;
+
+	void handleDialog();
+	void handleRexDialog(int quote);
+	void handlePrisonerDialog();
+	void handlePrisonerEncounter();
+	void setDialogNode(int node);
+	void handlePrisonerSpeech(int firstQuoteId, int number, long time);
+
+public:
+	Scene307(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
 	virtual void postActions() {};
 };
 
