@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	scriptresource.o \
 	scriptthread.o \
 	sequenceopcodes.o \
+	sound.o \
 	soundresource.o \
 	specialcode.o \
 	talkresource.o \

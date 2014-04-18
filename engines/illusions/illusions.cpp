@@ -35,6 +35,7 @@
 #include "illusions/screentext.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
+#include "illusions/sound.h"
 #include "illusions/soundresource.h"
 #include "illusions/specialcode.h"
 #include "illusions/talkresource.h"
@@ -201,6 +202,11 @@ int IllusionsEngine::updateGraphics(uint flags) {
 int IllusionsEngine::updateSprites(uint flags) {
 	_screen->updateSprites();
 	_screen->updatePalette();
+	return 1;
+}
+
+int IllusionsEngine::updateSoundMan(uint flags) {
+	_soundMan->update();
 	return 1;
 }
 

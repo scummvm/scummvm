@@ -30,6 +30,7 @@
 #include "illusions/scriptman.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptthread.h"
+#include "illusions/sound.h"
 #include "illusions/specialcode.h"
 #include "illusions/talkresource.h"
 
@@ -526,11 +527,11 @@ void ScriptOpcodes_BBDOU::opStartMusic(ScriptThread *scriptThread, OpCall &opCal
 	ARG_INT16(pan);
 	ARG_UINT32(musicId);
 	ARG_UINT32(type);
-	// TODO _vm->playMusic(musicId, type, volume, pan);
+	_vm->_soundMan->playMusic(musicId, type, volume, pan, opCall._threadId);
 }
 
 void ScriptOpcodes_BBDOU::opStopMusic(ScriptThread *scriptThread, OpCall &opCall) {
-	// TODO _vm->stopMusic();
+	_vm->_soundMan->stopMusic();
 }
 
 void ScriptOpcodes_BBDOU::opStackPushRandom(ScriptThread *scriptThread, OpCall &opCall) {

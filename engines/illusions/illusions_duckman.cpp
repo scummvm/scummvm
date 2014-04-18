@@ -37,6 +37,7 @@
 #include "illusions/scriptopcodes_duckman.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
+#include "illusions/sound.h"
 #include "illusions/soundresource.h"
 #include "illusions/specialcode.h"
 //TODO#include "illusions/bbdou/bbdou_specialcode.h"
@@ -105,6 +106,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_talkItems = new TalkItems(this);
 	_threads = new ThreadList(this);
 	_updateFunctions = new UpdateFunctions();
+	_soundMan = new SoundMan(this);
 
 	_fader = new Fader();
 
@@ -142,6 +144,15 @@ Common::Error IllusionsEngine_Duckman::run() {
 	startScriptThread(0x00020004, 0);
 	_doScriptThreadInit = true;
 
+	//DEBUG
+	_scriptResource->_properties.set(0x000E003A, true);
+	_scriptResource->_properties.set(0x000E0020, true);
+	_scriptResource->_properties.set(0x000E003A, true);
+	_scriptResource->_properties.set(0x000E003B, true);
+	_scriptResource->_properties.set(0x000E0009, true);
+	_scriptResource->_properties.set(0x000E003D, true);
+	_scriptResource->_properties.set(0x000E0024, true);
+
 	while (!shouldQuit()) {
 		runUpdateFunctions();
 		_system->updateScreen();
@@ -154,6 +165,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	delete _fader;
 
+    delete _soundMan;
 	delete _updateFunctions;
 	delete _threads;
 	delete _talkItems;
@@ -192,6 +204,7 @@ void IllusionsEngine_Duckman::initUpdateFunctions() {
 	UPDATEFUNCTION(60, 0, updateSequences);
 	UPDATEFUNCTION(70, 0, updateGraphics);
 	UPDATEFUNCTION(90, 0, updateSprites);
+	UPDATEFUNCTION(120, 0, updateSoundMan);
 }
 
 #undef UPDATEFUNCTION
@@ -1206,6 +1219,8 @@ typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeF
 void IllusionsEngine_Duckman::initSpecialCode() {
 	SPECIAL(0x00160001, spcStartScreenShaker);
 	SPECIAL(0x00160002, spcSetCursorHandMode);
+	SPECIAL(0x00160003, spcResetChinesePuzzle);
+	SPECIAL(0x00160004, spcAddChinesePuzzleAnswer);
 	SPECIAL(0x00160005, spcOpenInventory);
 	SPECIAL(0x00160007, spcPutBackInventoryItem);
 	SPECIAL(0x00160008, spcClearInventorySlot);
@@ -1226,6 +1241,8 @@ void IllusionsEngine_Duckman::runSpecialCode(uint32 specialCodeId, OpCall &opCal
 	}
 }
 
+// TODO Move to separate file
+
 static const ScreenShakerPoint kShakerPoints0[] = {
 	{0, -2}, {0, -4}, {0, -3}, {0, -1}, {0, 1}
 };
@@ -1234,21 +1251,92 @@ static const ScreenShakeEffect kShakerEffect0 = {
 	6, 5, kShakerPoints0
 };
 
-static const ScreenShakeEffect *kShakerEffects = {
-	&kShakerEffect0
+static const ScreenShakerPoint kShakerPoints1[] = {
+	{-4, -5}, {4,  5}, {-3, -4}, {3, 4}, {-2, -3}, {2, 3}, {-1, -2}, 
+	{ 1,  2}, {0, -1} 
+};
+
+static const ScreenShakeEffect kShakerEffect1 = {
+	9, 2, kShakerPoints1
+};
+
+static const ScreenShakerPoint kShakerPoints2[] = {
+	{0, -3}, {0,  3}, {0, -2}, {0, 2}, {0, -2}, {0, 2}, {0, -1},
+	{0,  1}, {0, -1},
+};
+
+static const ScreenShakeEffect kShakerEffect2 = {
+	9, 2, kShakerPoints2
+};
+
+static const ScreenShakerPoint kShakerPoints3[] = {
+	{0, 1}, {0, -1}, {0, -2}, {0, 0}, {(int16)32768, 0}
+};
+
+static const ScreenShakeEffect kShakerEffect3 = {
+	5, 2, kShakerPoints3
+};
+
+static const ScreenShakerPoint kShakerPoints4[] = {
+	{0, 4}, {0, -1}, {0, 3}, {0, -2}, {0, 1}, {0, -1}, {0, 1}, {0, -1}
+};
+
+static const ScreenShakeEffect kShakerEffect4 = {
+	8, 5, kShakerPoints4
+};
+
+static const ScreenShakerPoint kShakerPoints5[] = {
+	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
+	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
+	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
+	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}
+};
+
+static const ScreenShakeEffect kShakerEffect5 = {
+	31, 2, kShakerPoints5
+};
+
+static const ScreenShakeEffect *kShakerEffects[] = {
+	&kShakerEffect0,
+	&kShakerEffect1,
+	&kShakerEffect2,
+	&kShakerEffect3,
+	&kShakerEffect4,
+	&kShakerEffect5
 };
 
 void IllusionsEngine_Duckman::spcStartScreenShaker(OpCall &opCall) {
-	// TODO Add more effects
 	ARG_BYTE(effect);
 	debug("### effect: %d", effect);
-	const ScreenShakeEffect *shakerEffect = &kShakerEffects[effect];
+	const ScreenShakeEffect *shakerEffect = kShakerEffects[effect];
 	startScreenShaker(shakerEffect->_pointsCount, shakerEffect->_duration, shakerEffect->_points, opCall._threadId);
 }
 
 void IllusionsEngine_Duckman::spcSetCursorHandMode(OpCall &opCall) {
 	ARG_BYTE(mode);
 	setCursorHandMode(mode);
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcResetChinesePuzzle(OpCall &opCall) {
+	_scriptResource->_properties.set(0x000E0018, false);
+	_scriptResource->_properties.set(0x000E0019, false);
+	_chinesePuzzleIndex = 0;
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcAddChinesePuzzleAnswer(OpCall &opCall) {
+	ARG_BYTE(answer);
+	_chinesePuzzleAnswers[_chinesePuzzleIndex++] = answer;
+	if (_chinesePuzzleIndex == 3) {
+		_scriptResource->_properties.set(0x000E0018, true);
+		if ((_chinesePuzzleAnswers[0] == 7 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 5) ||
+			(_chinesePuzzleAnswers[0] == 5 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 7))
+			_scriptResource->_properties.set(0x000E0019, true);
+		else if ((_chinesePuzzleAnswers[0] == 7 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 1) ||
+			(_chinesePuzzleAnswers[0] == 1 && _chinesePuzzleAnswers[1] == 2 && _chinesePuzzleAnswers[2] == 7))
+			_scriptResource->_properties.set(0x000E00A0, true);
+	}
 	notifyThreadId(opCall._threadId);
 }
 

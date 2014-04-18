@@ -75,10 +75,11 @@ public:
 	uint32 _voiceDuration;
 	uint32 _voiceDurationElapsed;
 	int *_pauseCtrPtr;
-	byte _colorR, _colorG, _colorB;
+	RGB _color;
 	void refreshText();
 	int insertText();
 	TalkEntry *getTalkResourceEntry(uint32 talkId);
+	void getActorTypeColor(uint32 actorTypeId, RGB &color);
 };
 
 } // End of namespace Illusions
