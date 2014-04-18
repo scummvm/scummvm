@@ -49,6 +49,11 @@ SpriteAsset::SpriteAsset(MADSEngine *vm, Common::SeekableReadStream *stream, int
 SpriteAsset::~SpriteAsset() {
 	if (_usageIndex)
 		_vm->_palette->_paletteUsage.resetPalFlags(_usageIndex);
+
+	for (uint i = 0; i < _frames.size(); ++i)
+		delete _frames[i]._frame;
+
+	delete _charInfo;
 }
 
 void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
