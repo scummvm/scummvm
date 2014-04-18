@@ -136,15 +136,13 @@ class Animation {
 private:
 	MADSEngine *_vm;
 	Scene *_scene;
-	AAHeader _header;
 
-	Common::Array<int> _spriteListIndexes;
 	Common::Array<AnimMessage> _messages;
 	Common::Array<AnimMiscEntry> _miscEntries;
 	Common::Array<SpriteAsset *> _spriteSets;
 	Font *_font;
 
-	int _currentFrame, _oldFrameEntry;
+	int _currentFrame;
 	bool _freeFlag;
 	bool _skipLoad;
 	int _unkIndex;
@@ -177,9 +175,12 @@ private:
 protected:
 	Animation(MADSEngine *vm, Scene *scene);
 public:
+	AAHeader _header;
+	Common::Array<int> _spriteListIndexes;
 	Common::Array<AnimFrameEntry> _frameEntries;
 	Common::Array<AnimUIEntry> _uiEntries;
 	bool _resetFlag;
+	int _oldFrameEntry;
 
 	static Animation *init(MADSEngine *vm, Scene *scene);
 	/*
