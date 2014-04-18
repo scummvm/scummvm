@@ -26,6 +26,7 @@
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
 #include "illusions/scriptman.h"
+#include "illusions/sound.h"
 #include "illusions/talkresource.h"
 #include "illusions/time.h"
 
@@ -118,7 +119,7 @@ int TalkThread::onUpdate() {
 			_flags |= 1;
 		}
 		if (_vm->isSoundActive()) {
-			if (!_vm->cueVoice(talkEntry->_voiceName) && !_durationMult)
+			if (!_vm->_soundMan->cueVoice((char*)talkEntry->_voiceName) && !_durationMult)
 				_durationMult = _defDurationMult;
 		} else {
 			_flags |= 4;
@@ -131,7 +132,7 @@ int TalkThread::onUpdate() {
 		// Fallthrough to status 4
 
 	case 4:
-		if (!(_flags & 4) && !_vm->isVoiceCued())
+		if (!(_flags & 4) && !_vm->_soundMan->isVoiceCued())
 			return kTSYield;
 		_status = 5;
 		// Fallthrough to status 5
@@ -149,14 +150,14 @@ int TalkThread::onUpdate() {
 				// TODO pt.x = (unsigned int)artcntrlGetNamedPointPosition((Point)_namedPointId);
 				// TODO panX = convertPanXCoord(pt.x);
 			}
-			_vm->startVoice(255, panX);
+			_vm->_soundMan->startVoice(255, panX);
 		}
 		_vm->_input->discardButtons(0x10);
 		_status = 6;
 		return kTSYield;
 
 	case 6:
-		if (!(_flags & 4) && !_vm->isVoicePlaying())
+		if (!(_flags & 4) && !_vm->_soundMan->isVoicePlaying())
 			_flags |= 4;
 		if (!(_flags & 8) && isTimerExpired(_textStartTime, _textEndTime)) {
 			// TODO _vm->removeText();
@@ -188,7 +189,7 @@ int TalkThread::onUpdate() {
 			}
 			if (_flags & 8) {
 				if (!(_flags & 4)) {
-					_vm->stopVoice();
+					_vm->_soundMan->stopVoice();
 					_flags |= 4;
 				}
 				if (!(_flags & 2)) {
@@ -228,7 +229,7 @@ int TalkThread::onUpdate() {
 			_flags |= 8;
 		}
 		if (!(_flags & 4)) {
-			_vm->stopVoice();
+			_vm->_soundMan->stopVoice();
 			_flags |= 4;
 		}
 		return kTSTerminate;

@@ -47,17 +47,46 @@ protected:
 	uint _flags;
 };
 
+class VoicePlayer {
+public:
+	VoicePlayer(Audio::Mixer *mixer);
+	~VoicePlayer();
+	bool cue(const char *voiceName);
+	void stopCueing();
+	void start(int16 volume, int16 pan);
+	void stop();
+	bool isPlaying();
+	bool isEnabled();
+	bool isCued();
+protected:
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
+	Common::String _voiceName;
+	uint _voiceStatus;
+};
+
 class SoundMan {
 public:
 	SoundMan(IllusionsEngine *vm);
 	~SoundMan();
 	void update();
+
 	void playMusic(uint32 musicId, int16 type, int16 volume, int16 pan, uint32 notifyThreadId);
 	void stopMusic();
+
+	bool cueVoice(const char *voiceName);
+	void stopCueingVoice();
+	void startVoice(int16 volume, int16 pan);
+	void stopVoice();
+	bool isVoicePlaying();
+	bool isVoiceEnabled();
+	bool isVoiceCued();
+
 protected:
 	IllusionsEngine *_vm;
 	uint32 _musicNotifyThreadId;
 	MusicPlayer *_musicPlayer;
+	VoicePlayer *_voicePlayer;
 };
 
 } // End of namespace Illusions

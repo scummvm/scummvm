@@ -33,6 +33,7 @@ MusicPlayer::MusicPlayer(Audio::Mixer *mixer)
 }
 
 MusicPlayer::~MusicPlayer() {
+	stop();
 }
 
 void MusicPlayer::play(uint32 musicId, bool looping, int16 volume, int16 pan) {
@@ -40,7 +41,6 @@ void MusicPlayer::play(uint32 musicId, bool looping, int16 volume, int16 pan) {
 	if (_flags & 1) {
 		stop();
 		_musicId = musicId;
-		Common::String filename = Common::String::format("%08x.wav", _musicId);
 		_flags |= 2;
 		_flags &= ~4;
 		if (looping) {
@@ -48,6 +48,7 @@ void MusicPlayer::play(uint32 musicId, bool looping, int16 volume, int16 pan) {
 		} else {
 			_flags &= ~8;
 		}
+		Common::String filename = Common::String::format("%08x.wav", _musicId);
 		Common::File *fd = new Common::File();
 		fd->open(filename);
 		Audio::AudioStream *audioStream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(fd, DisposeAfterUse::YES), looping ? 0 : 1);
@@ -71,15 +72,71 @@ bool MusicPlayer::isPlaying() {
 	return (_flags & 1) && (_flags & 2) && _mixer->isSoundHandleActive(_soundHandle);
 }
 
+// VoicePlayer
+
+VoicePlayer::VoicePlayer(Audio::Mixer *mixer)
+	: _mixer(mixer) {
+}
+
+VoicePlayer::~VoicePlayer() {
+	stop();
+}
+
+bool VoicePlayer::cue(const char *voiceName) {
+debug("VoicePlayer::cue(%s)", voiceName);
+	_voiceName = voiceName;
+	_voiceStatus = 2;
+	if (!isEnabled()) {
+		_voiceStatus = 3;
+		return false;
+	}
+	return true;
+}
+
+void VoicePlayer::stopCueing() {
+	_voiceStatus = 3;
+}
+
+void VoicePlayer::start(int16 volume, int16 pan) {
+	Common::String filename = Common::String::format("%s.wav", _voiceName.c_str());
+	Common::File *fd = new Common::File();
+	fd->open(filename);
+	Audio::AudioStream *audioStream = Audio::makeWAVStream(fd, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, audioStream, -1, volume, pan);
+	_voiceStatus = 4;
+}
+
+void VoicePlayer::stop() {
+	if (_mixer->isSoundHandleActive(_soundHandle))
+		_mixer->stopHandle(_soundHandle);
+	_voiceStatus = 1;
+	_voiceName.clear();
+}
+
+bool VoicePlayer::isPlaying() {
+	return _mixer->isSoundHandleActive(_soundHandle);
+}
+
+bool VoicePlayer::isEnabled() {
+	// TODO
+	return true;
+}
+
+bool VoicePlayer::isCued() {
+	return _voiceStatus == 2;
+}
+
 // SoundMan
 
 SoundMan::SoundMan(IllusionsEngine *vm)
 	: _vm(vm), _musicNotifyThreadId(0) {
 	_musicPlayer = new MusicPlayer(_vm->_mixer);
+	_voicePlayer = new VoicePlayer(_vm->_mixer);
 }
 
 SoundMan::~SoundMan() {
 	delete _musicPlayer;
+	delete _voicePlayer;
 }
 
 void SoundMan::update() {
@@ -96,6 +153,34 @@ void SoundMan::playMusic(uint32 musicId, int16 type, int16 volume, int16 pan, ui
 
 void SoundMan::stopMusic() {
 	_musicPlayer->stop();
+}
+
+bool SoundMan::cueVoice(const char *voiceName) {
+	return _voicePlayer->cue(voiceName);
+}
+
+void SoundMan::stopCueingVoice() {
+	_voicePlayer->stopCueing();
+}
+
+void SoundMan::startVoice(int16 volume, int16 pan) {
+	_voicePlayer->start(volume, pan);
+}
+
+void SoundMan::stopVoice() {
+	_voicePlayer->stop();
+}
+
+bool SoundMan::isVoicePlaying() {
+	return _voicePlayer->isPlaying();
+}
+
+bool SoundMan::isVoiceEnabled() {
+	return _voicePlayer->isEnabled();
+}
+
+bool SoundMan::isVoiceCued() {
+	return _voicePlayer->isCued();
 }
 
 } // End of namespace Illusions
