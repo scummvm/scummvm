@@ -503,4 +503,9 @@ void SequenceList::setMsgLayout(int seqIndex) {
 	updateTimeout(-1, seqIndex);
 }
 
+void SequenceList::setDone(int seqIndex) {
+	_entries[seqIndex]._doneFlag = true;
+	_entries[seqIndex]._timeout = _vm->_game->_player._priorTimer;
+}
+
 } // End of namespace 
