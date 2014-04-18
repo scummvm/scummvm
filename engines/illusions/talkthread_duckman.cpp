@@ -27,6 +27,7 @@
 #include "illusions/input.h"
 #include "illusions/screentext.h"
 #include "illusions/scriptman.h"
+#include "illusions/sound.h"
 #include "illusions/talkresource.h"
 #include "illusions/time.h"
 
@@ -79,24 +80,23 @@ int TalkThread_Duckman::onUpdate() {
 	case 2:
 		talkEntry = getTalkResourceEntry(_talkId);
 		_flags = 0;
-		_entryText = talkEntry->_text;
 		_currEntryText = 0;
+		_entryText = talkEntry->_text;
 		_entryTblPtr = talkEntry->_tblPtr;
-		_flags = 0;
 		if (_sequenceId1) {
-			_pauseCtr = 0;
 			_pauseCtrPtr = &_pauseCtr;
+			_pauseCtr = 0;
 		} else {
 			_pauseCtrPtr = 0;
 			_flags |= 2;
 			_flags |= 1;
 		}
 		if (_vm->isSoundActive()) {
-			if (!_vm->cueVoice(talkEntry->_voiceName) && !_durationMult)
+			if (!_vm->_soundMan->cueVoice((char*)talkEntry->_voiceName) && !_durationMult)
 				_durationMult = _defDurationMult;
 		} else {
 			_flags |= 4;
-			if (!_durationMult)
+			if (_durationMult == 0)
 				_durationMult = _defDurationMult;
 		}
 		if (_objectId == 0 || _durationMult == 0)
@@ -105,7 +105,7 @@ int TalkThread_Duckman::onUpdate() {
 		// Fallthrough to status 3 
 
 	case 3:
-		if (!(_flags & 4) && !_vm->isVoiceCued())
+		if (!(_flags & 4) && !_vm->_soundMan->isVoiceCued())
 			return kTSYield;
 		_status = 4;
 		// Fallthrough to status 4
@@ -132,14 +132,14 @@ int TalkThread_Duckman::onUpdate() {
 				panX = control->getActorPosition().x;
 				panX = _vm->convertPanXCoord(panX);
 			}
-			_vm->startVoice(255, panX);
+			_vm->_soundMan->startVoice(255, panX);
 		}
 		_vm->_input->discardButtons(0x20);
 		_status = 5;
 		return kTSYield;
 
 	case 5:
-		if (!(_flags & 4) && !_vm->isVoicePlaying())
+		if (!(_flags & 4) && !_vm->_soundMan->isVoicePlaying())
 			_flags |= 4;
 		if (!(_flags & 8) && isTimerExpired(_textStartTime, _textEndTime)) {
 			_vm->_screenText->removeText();
@@ -168,7 +168,7 @@ int TalkThread_Duckman::onUpdate() {
 			}
 			if (_flags & 8) {
 				if (!(_flags & 4)) {
-					_vm->stopVoice();
+					_vm->_soundMan->stopVoice();
 					_flags |= 4;
 				}
 				if (!(_flags & 2)) {
@@ -219,7 +219,7 @@ void TalkThread_Duckman::onResume() {
 void TalkThread_Duckman::onTerminated() {
 	if (_status == 5) {
 		if (!(_flags & 4))
-			_vm->stopVoice();
+			_vm->_soundMan->stopVoice();
 		if (!(_flags & 8)) {
 			_vm->_screenText->removeText();
 		}
