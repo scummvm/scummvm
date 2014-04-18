@@ -150,6 +150,9 @@ void HagArchive::loadIndex() {
 	Common::File hagFile;
 
 	for (int sectionIndex = -1; sectionIndex < 10; ++sectionIndex) {
+		if (sectionIndex == 0)
+			continue;
+
 		Common::String filename = (sectionIndex == -1) ? "GLOBAL.HAG" :
 			Common::String::format("SECTION%d.HAG", sectionIndex);
 		if (!hagFile.open(filename))
