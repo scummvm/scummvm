@@ -354,12 +354,12 @@ void UserInterface::updateInventoryScroller() {
 			uint32 currentMilli = g_system->getMillis();
 			uint32 timeInc = _scrollbarQuickly ? 100 : 380;
 
-			if (_vm->_events->_mouseClicked || (_vm->_events->_mouseStatusCopy && (_scrollbarMilliTime + timeInc) <= currentMilli)) {
+			if (_vm->_events->_mouseStatus && (_scrollbarMilliTime + timeInc) <= currentMilli) {
 				_scrollbarQuickly = _vm->_events->_vD2 < 1;
 				_scrollbarMilliTime = currentMilli;
 
 				switch (_scrollbarStrokeType) {
-				case 1:
+				case SCROLLBAR_UP:
 					// Scroll up
 					if (_inventoryTopIndex > 0 && inventoryList.size() > 0) {
 						--_inventoryTopIndex;
@@ -367,7 +367,7 @@ void UserInterface::updateInventoryScroller() {
 					}
 					break;
 
-				case 2:
+				case SCROLLBAR_DOWN:
 					// Scroll down
 					if (_inventoryTopIndex < ((int)inventoryList.size() - 1) && inventoryList.size() > 1) {
 						++_inventoryTopIndex;
@@ -375,7 +375,7 @@ void UserInterface::updateInventoryScroller() {
 					}
 					break;
 
-				case 3: {
+				case SCROLLBAR_ELEVATOR: {
 					// Inventory slider
 					int newIndex = CLIP((int)_vm->_events->currentPos().y - 170, 0, 17)
 						* inventoryList.size() / 10;
@@ -447,11 +447,11 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 			_vm->_font->setColorMode(SELMODE_HIGHLIGHTED);
 		} else {
 			_vm->_font->setColorMode(id == _selectedInvIndex ? SELMODE_SELECTED : SELMODE_UNSELECTED);
-			vocabStr = scene.getVocab(vocabId);
-			vocabStr.setChar(toupper(vocabStr[0]), 0);
-			font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
-			break;
 		}
+
+		vocabStr = scene.getVocab(vocabId);
+		vocabStr.setChar(toupper(vocabStr[0]), 0);
+		font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
 		break;
 
 	case CAT_TALK_ENTRY:
@@ -583,7 +583,7 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 		break;
 
 	case CAT_INV_LIST:
-		if (v < _inventoryTopIndex || v > (_inventoryTopIndex + 5))
+		if (v < _inventoryTopIndex || v >= (_inventoryTopIndex + 5))
 			return false;
 
 		heightMultiplier = v - _inventoryTopIndex;
@@ -625,22 +625,22 @@ bool UserInterface::getBounds(ScrCategory category, int v, Common::Rect &bounds)
 
 	if (category == CAT_INV_SCROLLER) {
 		switch (v) {
-		case 1:
+		case SCROLLBAR_UP:
 			// Arrow up
 			bounds.top = 4;
 			bounds.setHeight(7);
 			break;
-		case 2:
+		case SCROLLBAR_DOWN:
 			// Arrow down
 			bounds.top = 35;
 			bounds.setHeight(7);
 			break;
-		case 3:
+		case SCROLLBAR_ELEVATOR:
 			// Scroller
 			bounds.top = 12;
 			bounds.setHeight(22);
 			break;
-		case 4:
+		case SCROLLBAR_THUMB:
 			// Thumb
 			bounds.top = _scrollbarElevator + 14;
 			bounds.setHeight(1);
