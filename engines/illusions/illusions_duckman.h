@@ -125,6 +125,9 @@ public:
 
 	ScreenShaker *_screenShaker;
 
+	uint _chinesePuzzleIndex;
+	byte _chinesePuzzleAnswers[3];
+
 	SpecialCodeMap _specialCodeMap;
 
 	void initUpdateFunctions();
@@ -146,7 +149,7 @@ public:
 	Common::Point getNamedPointPosition(uint32 namedPointId);
 	uint32 getPriorityFromBase(int16 priority);
 	uint32 getCurrentScene();
-	uint32 getPrevScene();	
+	uint32 getPrevScene();
 
 	bool isCursorObject(uint32 actorTypeId, uint32 objectId);
 	void setCursorControlRoutine(Control *control);
@@ -222,6 +225,8 @@ public:
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
 	void spcStartScreenShaker(OpCall &opCall);
 	void spcSetCursorHandMode(OpCall &opCall);
+	void spcResetChinesePuzzle(OpCall &opCall);
+	void spcAddChinesePuzzleAnswer(OpCall &opCall);
 	void spcOpenInventory(OpCall &opCall);
 	void spcPutBackInventoryItem(OpCall &opCall);
 	void spcClearInventorySlot(OpCall &opCall);

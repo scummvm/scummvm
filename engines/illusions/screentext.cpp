@@ -110,7 +110,8 @@ bool ScreenText::insertText(uint16 *text, uint32 fontId, WidthHeight dimensions,
 	bool done = refreshScreenText(font, screenText->_info._dimensions, screenText->_info._offsPt,
 		text, screenText->_info._flags, screenText->_info._color2, screenText->_info._color1,
 		outTextPtr);
-	//_vm->_screen->setPaletteEntry(font->getColorIndex(), screenText->_info._colorR, screenText->_info._colorG, screenText->_info._colorB);
+	debug("font->getColorIndex(): %d", font->getColorIndex());
+	_vm->_screen->setPaletteEntry(font->getColorIndex(), screenText->_info._colorR, screenText->_info._colorG, screenText->_info._colorB);
 
 	uint16 *textPart = screenText->_text;
 	while (text != outTextPtr)

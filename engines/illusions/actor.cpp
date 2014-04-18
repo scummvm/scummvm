@@ -770,7 +770,7 @@ PointArray *Control::createPath(Common::Point destPt) {
 	WidthHeight bgDimensions = _vm->_backgroundItems->getMasterBgDimensions();
 	PointArray *path = pathFinder.findPath(_actor->_position, destPt, walkPoints, walkRects, bgDimensions);
 	for (uint i = 0; i < path->size(); ++i) {
-		debug("Path(%d) (%d, %d)", i, (*path)[i].x, (*path)[i].y);
+		debug(0, "Path(%d) (%d, %d)", i, (*path)[i].x, (*path)[i].y);
 	}
 	return path;
 }

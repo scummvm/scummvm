@@ -36,6 +36,7 @@
 #include "illusions/scriptopcodes_bbdou.h"
 #include "illusions/scriptresource.h"
 #include "illusions/scriptman.h"
+#include "illusions/sound.h"
 #include "illusions/soundresource.h"
 #include "illusions/specialcode.h"
 #include "illusions/bbdou/bbdou_specialcode.h"
@@ -216,6 +217,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_triggerFunctions = new TriggerFunctions();
 	_threads = new ThreadList(this);
 	_updateFunctions = new UpdateFunctions();
+	_soundMan = new SoundMan(this);
 
 	initUpdateFunctions();
 
@@ -254,6 +256,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _stack;
 	delete _scriptOpcodes;
 
+    delete _soundMan;
 	delete _updateFunctions;
 	delete _threads;
 	delete _triggerFunctions;
@@ -295,6 +298,7 @@ void IllusionsEngine_BBDOU::initUpdateFunctions() {
 	UPDATEFUNCTION(60, 0, updateSequences);
 	UPDATEFUNCTION(70, 0, updateGraphics);
 	UPDATEFUNCTION(90, 0, updateSprites);
+	UPDATEFUNCTION(120, 0, updateSoundMan);
 }
 
 #undef UPDATEFUNCTION
@@ -376,7 +380,15 @@ Common::Point IllusionsEngine_BBDOU::getNamedPointPosition(uint32 namedPointId) 
 		_controls->findNamedPoint(namedPointId, pt))
 		return pt;
 	// TODO
-	//debug("getNamedPointPosition(%08X) UNKNOWN", namedPointId);
+	switch (namedPointId) {
+	case 0x70001:
+		return Common::Point(0, 0);
+	case 0x70002:
+		return Common::Point(640, 0);
+	case 0x70023:
+		return Common::Point(320, 240);
+	}
+	debug("getNamedPointPosition(%08X) UNKNOWN", namedPointId);
 	return Common::Point(0, 0);
 }
 

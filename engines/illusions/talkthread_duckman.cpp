@@ -113,7 +113,7 @@ int TalkThread_Duckman::onUpdate() {
 	case 4:
 		if (!(_flags & 8) ) {
 			uint32 actorTypeId = _vm->getObjectActorTypeId(_objectId);
-			// TODO getActorTypeColor(actorTypeId, &_colorR, &_colorG, &_colorB);
+			getActorTypeColor(actorTypeId, _color);
 			refreshText();
 		}
 		if (!(_flags & 2)) {
@@ -289,7 +289,8 @@ int TalkThread_Duckman::insertText() {
 	WidthHeight dimensions;
 	_vm->getDefaultTextDimensions(dimensions);
 	uint16 *outTextPtr;
-	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions, Common::Point(0, 0), 2, 0, 0, _colorR, _colorG, _colorB, outTextPtr);
+	_vm->_screenText->insertText((uint16*)_currEntryText, 0x120001, dimensions,
+		Common::Point(0, 0), 2, 0, 0, _color.r, _color.r, _color.r, outTextPtr);
 	_entryText = (byte*)outTextPtr;
 	Common::Point pt;
 	_vm->getDefaultTextPosition(pt);
@@ -301,6 +302,11 @@ int TalkThread_Duckman::insertText() {
 TalkEntry *TalkThread_Duckman::getTalkResourceEntry(uint32 talkId) {
 	TalkEntry *talkEntry = _vm->_dict->findTalkEntry(talkId);
 	return talkEntry;
+}
+
+void TalkThread_Duckman::getActorTypeColor(uint32 actorTypeId, RGB &color) {
+	ActorType *actorType = _vm->_dict->findActorType(actorTypeId);
+	color = actorType->_color;
 }
 
 } // End of namespace Illusions

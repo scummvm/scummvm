@@ -70,6 +70,7 @@ class ScriptOpcodes;
 class ScriptResource;
 class ScriptStack;
 class Sequence;
+class SoundMan;
 class SpecialCode;
 class TalkItems;
 class ThreadList;
@@ -113,6 +114,7 @@ public:
 	ScriptOpcodes *_scriptOpcodes;
 	SpecialCode *_specialCode;
 	ThreadList *_threads;
+	SoundMan *_soundMan;
 	
 	uint32 _nextTempThreadId;
 	bool _doScriptThreadInit;
@@ -146,6 +148,7 @@ public:
 	int updateSequences(uint flags);
 	int updateGraphics(uint flags);
 	int updateSprites(uint flags);
+	int updateSoundMan(uint flags);
 
 	uint32 getElapsedUpdateTime();
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
