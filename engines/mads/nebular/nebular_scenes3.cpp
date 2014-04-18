@@ -1432,5 +1432,39 @@ void Scene309::step() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene310::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene310::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC003x0");
+	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*SC003x1");
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*SC003x2");
+
+	initForceField(&_forceField, true);
+
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
+	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(127, 78));
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
+
+	_game._player._visible = false;
+	_game._player._stepEnabled = false;
+	_scene->loadAnimation(formAnimName('a', -1), 70);
+
+	sceneEntrySound();
+}
+
+void Scene310::step() {
+	handleForceField(&_forceField, &_globals._spriteIndexes[0]);
+
+	if (_game._trigger == 70)
+		_scene->_nextSceneId = 309;
+}
+
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
