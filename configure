@@ -967,6 +967,7 @@ Optional Libraries:
 
   --with-freetype2-prefix=DIR Prefix where the freetype-config script is
                            installed (optional)
+  --disable-freetype2     disable freetype2 TTF library usage [autodetect]
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
