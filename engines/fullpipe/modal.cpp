@@ -1144,7 +1144,31 @@ void ModalMainMenu::enableDebugMenuButton() {
 }
 
 void ModalMainMenu::setSliderPos() {
-	warning("STUB: ModalMainMenu::setSliderPos()");
+	int x = 173 * (g_fp->_sfxVolume + 3000) / 3000 + 65;
+	PictureObject *obj = _areas[_menuSliderIdx]->picObjD;
+
+	if (x >= 65) {
+		if (x > 238)
+			x = 238;
+	} else {
+		x = 65;
+	}
+
+	obj->setOXY(x, obj->_oy);
+	_areas[_menuSliderIdx]->picObjL->setOXY(x, obj->_oy);
+
+	x = 173 * g_fp->_musicVolume / 255 + 65;
+	obj = _areas[_musicSliderIdx]->picObjD;
+
+	if (x >= 65) {
+		if (x > 238)
+			x = 238;
+	} else {
+		x = 65;
+	}
+
+	obj->setOXY(x, obj->_oy);
+	_areas[_musicSliderIdx]->picObjL->setOXY(x, obj->_oy);
 }
 
 ModalHelp::ModalHelp() {

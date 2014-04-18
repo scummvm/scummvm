@@ -71,6 +71,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_flgSoundList = true;
 
 	_sfxVolume = 0;
+	_musicVolume = 0;
 
 	_inputController = 0;
 	_inputDisabled = false;
