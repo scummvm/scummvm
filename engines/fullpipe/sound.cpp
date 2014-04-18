@@ -203,4 +203,8 @@ void FullpipeEngine::updateSoundVolume() {
 	debug(3, "STUB FullpipeEngine::updateSoundVolume()");
 }
 
+void FullpipeEngine::setMusicVolume(int vol) {
+	debug(3, "STUB FullpipeEngine::setMusicVolume()");
+}
+
 } // End of namespace Fullpipe

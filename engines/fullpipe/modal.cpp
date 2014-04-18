@@ -1028,7 +1028,41 @@ void ModalMainMenu::updateVolume() {
 }
 
 void ModalMainMenu::updateSliderPos() {
-	warning("STUB: ModalMainMenu::updateSliderPos()");
+	if (_lastArea->picIdL == PIC_MNU_SLIDER_L) {
+		int x = g_fp->_mouseScreenPos.x + _sliderOffset;
+
+		if (x >= 65) {
+			if (x > 238)
+				x = 238;
+		} else {
+			x = 65;
+		}
+
+		_lastArea->picObjD->setOXY(x, _lastArea->picObjD->_oy);
+		_lastArea->picObjL->setOXY(x, _lastArea->picObjD->_oy);
+
+		int vol = 1000 * (3 * x - 195);
+		g_fp->_sfxVolume = vol / 173 - 3000;
+
+		if (!(vol / 173))
+			g_fp->_sfxVolume = -10000;
+
+		g_fp->updateSoundVolume();
+	} else if (_lastArea->picIdL == PIC_MNU_MUSICSLIDER_L) {
+		int x = g_fp->_mouseScreenPos.x + _sliderOffset;
+
+		if (x >= 65) {
+			if (x > 238)
+				x = 238;
+		} else {
+			x = 65;
+		}
+
+		_lastArea->picObjD->setOXY(x, _lastArea->picObjD->_oy);
+		_lastArea->picObjL->setOXY(x, _lastArea->picObjD->_oy);
+
+		g_fp->setMusicVolume(255 * (x - 65) / 173);
+	}
 }
 
 int ModalMainMenu::checkHover(Common::Point &point) {

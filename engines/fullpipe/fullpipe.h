@@ -161,6 +161,7 @@ public:
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
 	void updateSoundVolume();
+	void setMusicVolume(int vol);
 
 	int _sfxVolume;
 
