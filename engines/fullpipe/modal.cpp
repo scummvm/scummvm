@@ -1025,7 +1025,16 @@ bool ModalMainMenu::init(int counterdiff) {
 }
 
 void ModalMainMenu::updateVolume() {
-	warning("STUB: ModalMainMenu::updateVolume()");
+	if (g_fp->_soundEnabled ) {
+		for (int s = 0; s < g_fp->_currSoundListCount; s++)
+			for (int i = 0; i < g_fp->_currSoundList1[s]->getCount(); i++) {
+				updateSoundVolume(g_fp->_currSoundList1[s]->getSoundByIndex(i));
+			}
+	}
+}
+
+void ModalMainMenu::updateSoundVolume(Sound *snd) {
+	warning("STUB: ModalMainMenu::updateSoundVolume()");
 }
 
 void ModalMainMenu::updateSliderPos() {
