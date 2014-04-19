@@ -46,12 +46,12 @@ enum {
 };
 
 struct RGB4 {
-	byte r;
+	byte _colorCount;
 	byte g;
-	byte b;
+	byte _firstColorIndex;
 	byte u;
 
-	RGB4() { r = g = b = u = 0; }
+	RGB4() { _colorCount = g = _firstColorIndex = u = 0; }
 };
 
 struct RGB6 {

@@ -121,6 +121,8 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 		return new Scene310(vm);
 	case 311:
 		return new Scene311(vm);
+	case 313:
+		return new Scene313(vm);
 
 	// Scene group #8
 	case 804:

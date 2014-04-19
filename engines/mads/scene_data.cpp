@@ -67,9 +67,9 @@ void ARTHeader::load(Common::SeekableReadStream *f) {
 	palCount = f->readUint16LE();
 	for (int i = 0; i < palCount; ++i) {
 		RGB4 rgb;
-		rgb.r = f->readByte();
+		rgb._colorCount = f->readByte();
 		rgb.g = f->readByte();
-		rgb.b = f->readByte();
+		rgb._firstColorIndex = f->readByte();
 		rgb.u = f->readByte();
 
 		_palAnimData.push_back(rgb);
@@ -219,7 +219,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 
 			for (uint i = 0; i < _palAnimData.size(); ++i) {
 				byte g = _palAnimData[i].g;
-				_palAnimData[i].b = artHeader._palette[g]._palIndex;
+				_palAnimData[i]._firstColorIndex = artHeader._palette[g]._palIndex;
 			}
 		}
 	}

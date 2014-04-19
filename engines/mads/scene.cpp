@@ -254,7 +254,7 @@ void Scene::initPaletteAnimation(Common::Array<RGB4> &animData, bool animFlag) {
 	// Calculate total
 	_animCount = 0;
 	for (uint i = 0; i < _animPalData.size(); ++i)
-		_animCount += _animPalData[i].r;
+		_animCount += _animPalData[i]._colorCount;
 
 	_animVal1 = (_animCount > 16) ? 3 : 0;
 	_cyclingActive = animFlag;

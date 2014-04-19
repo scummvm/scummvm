@@ -1754,5 +1754,80 @@ void Scene311::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene313::setup() {
+	setPlayerSpritesPrefix();
+	_game._player._spritesPrefix = "RM313A";
+	setAAName();
+}
+
+void Scene313::enter() {
+	_scene->_userInterface.setup(kInputLimitedSentences);
+	gender_timer = 0;
+	gender_threshold = _vm->getRandomNumber(3, 9) * 600;
+
+	if ((_scene->_priorSceneId == 366) || (_scene->_priorSceneId == 316)) {
+		_game._player._playerPos = Common::Point(30, 80);
+		_game._player._facing = FACING_NORTH;
+	} else if ((_scene->_priorSceneId == 311) || (_scene->_priorSceneId == 361) || (_scene->_priorSceneId == 391)) {
+		_game._player._playerPos = Common::Point(90, 70);
+		_game._player._facing = FACING_EAST;
+	} else if (_scene->_priorSceneId == 390) {
+		_game._player._playerPos = Common::Point(126, 70);
+		_game._player._facing = FACING_EAST;
+	} else if ((_scene->_priorSceneId == 389) || (_scene->_priorSceneId == 399)) {
+		_game._player._playerPos = Common::Point(163, 70);
+		_game._player._facing = FACING_WEST;
+	} else if (_scene->_priorSceneId == 388) {
+		_game._player._playerPos = Common::Point(199, 70);
+		_game._player._facing = FACING_WEST;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(234, 70);
+		_game._player._facing = FACING_WEST;
+	}
+
+	if (_globals[kAfterHavoc]) {
+		for (uint16 i = 0; i < _scene->_animPalData.size(); i++) {
+			int palIdx = _scene->_animPalData[i]._firstColorIndex;
+			int size = _scene->_animPalData[i]._colorCount * 3;
+			memset(&_vm->_palette->_savedPalette[palIdx], 0, size);
+			memset(&_vm->_palette->_mainPalette[palIdx], 0, size);
+		}
+	}
+
+	sceneEntrySound();
+}
+
+void Scene313::actions() {
+	if (_action.isAction(0x2FB, 0x2FC))
+		_scene->_nextSceneId = 387;
+	else if (_action.isAction(0x2FB, 0x2FD))
+		_scene->_nextSceneId = 388;
+	else if (_action.isAction(0x2FB, 0x2FE)) {
+		if (_globals[kAfterHavoc])
+			_scene->_nextSceneId = 399;
+		else
+			_scene->_nextSceneId = 389;
+	} else if (_action.isAction(0x2FB, 0x2FF))
+		_scene->_nextSceneId = 390;
+	else if (_action.isAction(0x2FB, 0x2EF)) {
+		if (_globals[kSexOfRex] == REX_FEMALE) {
+			_globals[kSexOfRex] = REX_MALE;
+			_vm->_dialogs->show(0x7A45);
+		}
+		_scene->_nextSceneId = 391;
+	} else if (_action.isAction(0x2FB, 0x300)) {
+		if (_globals[kSexOfRex] == REX_FEMALE) {
+			_globals[kSexOfRex] = REX_MALE;
+			_vm->_dialogs->show(0x7A45);
+		}
+		_scene->_nextSceneId = 366;
+	} else if (!_action.isAction(0x301, 0x2D4))
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
