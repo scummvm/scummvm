@@ -176,7 +176,7 @@ const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
 			uint16 newWidth = _fileStream->readUint16LE();
 			uint16 newHeight = _fileStream->readUint16LE();
 
-			if ((newWidth != 0) && (newHeight != 0)) {
+			if ((newWidth != 0) || (newHeight != 0)) {
 				if (newWidth == 0)
 					newWidth = _surface->w;
 				if (newHeight == 0)
