@@ -42,10 +42,8 @@ public:
 	void draw();
 
 private:
-	bool _hierShared;
 	bool _looping;
 	bool _active;
-	Component *_parentModel;
 	AnimationEmi *_obj;
 };
 

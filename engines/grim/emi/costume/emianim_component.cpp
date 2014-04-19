@@ -34,7 +34,7 @@
 
 namespace Grim {
 
-EMIAnimComponent::EMIAnimComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(NULL), _parentModel(NULL), _hierShared(false), _looping(false), _active(false) {
+EMIAnimComponent::EMIAnimComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(NULL), _looping(false), _active(false) {
 }
 
 EMIAnimComponent::~EMIAnimComponent() {
