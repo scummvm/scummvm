@@ -10,15 +10,11 @@ ResidualVM
     Grim Team:
        James Brown                  - Core developer (retired)
        Giulio Camuffo               - Core developer
-       Dries Harnie                 - EMI support, various code fixes and
-                                      improvements
+       Dries Harnie                 - EMI, Android, OpenGL ES developer
        Pawel Kolodziejski           - Core developer (suspended)
-       Christian Krause             - EMI support, Various engine fixes and
-                                      improvements
-       Einar Johan T. Somaen        - EMI support, various code fixes and
-                                      improvements
-       Joel Teichroeb               - EMI support, various engine fixes and
-                                      improvements
+       Christian Krause             - EMI developer
+       Einar Johan T. Somaen        - Grim, EMI developer
+       Joel Teichroeb               - EMI, Android developer
 
     Myst 3 Team:
        Bastien Bouclet              - Core developer
@@ -49,27 +45,32 @@ ResidualVM
                                       EMI support
        Erich Hoover                 - x86-64 fixes, various code fixes and
                                       improvements
-       Max Horn                     - Minor code fixes
+       Max Horn                     - Few code fixes
        Travis Howell                - Various code fixes, Windows port
+       Joseph Jezak                 - Few fixes to engine
        Guillem Jover                - Few code improvements
        Filippos Karapetis           - Compilation fixes
        Ingo van Lil                 - Various fixes and improvements for EMI
+       Vincent Pelletier            - Various engine improvements and code
+                                      fixes
        Joost Peters                 - Various code fixes
        George Macon                 - Few fixes
        Josh Matthews                - Few fixes to engine
+       Gregory Montoir              - Few fixes to engine
        Matthieu Milan               - Various engine improvements
        Christian Neumair            - Various optimisation patches
-       Vincent Pelletier            - Various engine improvements and code
-                                      fixes
-       Daniel Schepler              - Initial engine codebase, LUA support
+       Daniel Schepler              - Initial grim engine contributor, LUA
+                                      support
        Dmitry Smirnov               - Minor spelling corrections
        Yaron Tausky                 - Fixes to subtitles
        Julien Templier              - create_project tool
        Pino Toscano                 - Debian GNU/Linux package files
        Lionel Ulmer                 - OpenGL optimisations
        Joni Vahamaki                - A lot of engine improvements and fixes
+       cmayer0087                   - Various engine code fixes
        JenniBee                     - Compilation fixes
        karjonas                     - Various engine code fixes
+       sietschie                    - Few fixes to engine
 
     Myst 3:
        Matthew Hoops                - Various engine improvements and code
