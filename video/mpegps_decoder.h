@@ -140,7 +140,6 @@ private:
 		byte _buffer[BUFFER_SIZE];
 		mpeg2dec_t *_mpegDecoder;
 		const mpeg2_info_t *_mpegInfo;
-		bool _hasData;
 #endif
 	};
 
