@@ -1560,7 +1560,7 @@ void Scene104::step() {
 			switch (_game._trigger) {
 			case 0:
 				_scene->_kernelMessages.reset();
-				_scene->_activeAnimation->free();
+				_scene->freeAnimation();
 				_scene->resetScene();
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
@@ -1590,7 +1590,7 @@ void Scene104::step() {
 			switch (_game._trigger) {
 			case 0:
 				_scene->_kernelMessages.reset();
-				_scene->_activeAnimation->free();
+				_scene->freeAnimation();
 				_scene->resetScene();
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
@@ -1629,7 +1629,7 @@ void Scene104::step() {
 			switch (_game._trigger) {
 			case 0:
 				_scene->_kernelMessages.reset();
-				_scene->_activeAnimation->free();
+				_scene->freeAnimation();
 				_scene->resetScene();
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
@@ -2565,7 +2565,7 @@ void Scene109::actions() {
 								}
 							}
 						}
-						_scene->_activeAnimation->free();
+						_scene->freeAnimation();
 						_scene->_sequences.remove(_globals._sequenceIndexes[8]);
 						_scene->_sprites.remove(_globals._spriteIndexes[8]);
 						_scene->_spriteSlots.clear();
@@ -2953,7 +2953,7 @@ void Scene112::enter() {
 void Scene112::step() {
 	if ((_scene->_activeAnimation != nullptr) && (_game._storyMode == STORYMODE_NICE)) {
 		if (_scene->_activeAnimation->getCurrentFrame() >= 54) {
-			_scene->_activeAnimation->free();
+			_scene->freeAnimation();
 			_game._trigger = 70;
 		}
 	}

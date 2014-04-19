@@ -137,7 +137,6 @@ private:
 	MADSEngine *_vm;
 	Scene *_scene;
 
-	Common::Array<AnimMessage> _messages;
 	Common::Array<AnimMiscEntry> _miscEntries;
 	Common::Array<SpriteAsset *> _spriteSets;
 	Font *_font;
@@ -179,6 +178,7 @@ public:
 	Common::Array<int> _spriteListIndexes;
 	Common::Array<AnimFrameEntry> _frameEntries;
 	Common::Array<AnimUIEntry> _uiEntries;
+	Common::Array<AnimMessage> _messages;
 	bool _resetFlag;
 	int _oldFrameEntry;
 
@@ -187,11 +187,6 @@ public:
 	 * Destructor
 	 */
 	~Animation();
-
-	/**
-	 * Releases scene resources used by the animation, and then deletes it
-	 */
-	void free();
 
 	/**
 	 * Loads animation data

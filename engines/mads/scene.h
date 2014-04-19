@@ -222,6 +222,11 @@ public:
 	* leaving any player sprites list in place at the start of the list.
 	*/
 	void removeSprites();
+
+	/**
+	 * Frees any currently active animation for the scene
+	 */
+	void freeAnimation();
 };
 
 } // End of namespace MADS

@@ -3709,7 +3709,7 @@ void Scene210::setDialogNode(int node) {
 			_game._player._visible = false;
 			_vm->_palette->lock();
 			_scene->_kernelMessages.reset();
-			_scene->_activeAnimation->free();
+			_scene->freeAnimation();
 			_scene->_activeAnimation = nullptr;
 			_scene->resetScene();
 

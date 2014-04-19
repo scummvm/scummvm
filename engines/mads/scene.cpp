@@ -396,11 +396,8 @@ void Scene::doFrame() {
 		_cyclingActive = true;
 	_vm->_game->_fx = kTransitionNone;
 
-	if (_freeAnimationFlag && _activeAnimation) {
-		_activeAnimation->free();
-		_freeAnimationFlag = false;
-		_activeAnimation = nullptr;
-	}
+	if (_freeAnimationFlag)
+		freeAnimation();
 }
 
 void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
@@ -599,5 +596,36 @@ void Scene::resetScene() {
 	_spriteSlots.fullRefresh(true);
 	_sequences.clear();
 }
+
+void Scene::freeAnimation() {
+	if (_activeAnimation) {
+		Player &player = _vm->_game->_player;
+
+		if (!_freeAnimationFlag) {
+			_spriteSlots.fullRefresh(true);
+			_sequences.scan();
+		}
+
+		// Refresh the player
+		if (player._visible) {
+			player._forceRefresh = true;
+			player.update();
+		}
+
+		// Remove any kernel messages in use by the animation
+		for (uint i = 0; i < _activeAnimation->_messages.size(); ++i) {
+			int msgIndex = _activeAnimation->_messages[i]._kernelMsgIndex;
+			if (msgIndex >= 0)
+				_kernelMessages.remove(msgIndex);
+		}
+
+		// Delete the animation
+		delete _activeAnimation;
+		_activeAnimation = nullptr;
+	}
+
+	_freeAnimationFlag = false;
+}
+
 
 } // End of namespace MADS

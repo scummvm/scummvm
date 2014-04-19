@@ -170,32 +170,6 @@ Animation::~Animation() {
 	}
 }
 
-void Animation::free() {
-	Scene &scene = _vm->_game->_scene;
-	Player &player = _vm->_game->_player;
-
-	if (!scene._freeAnimationFlag) {
-		scene._spriteSlots.fullRefresh(true);
-		scene._sequences.scan();
-	}
-
-	// Refresh the player
-	if (player._visible) {
-		player._forceRefresh = true;
-		player.update();
-	}
-
-	// Remove any kernel messages in use by the animation
-	for (uint i = 0; i < _messages.size(); ++i) {
-		int msgIndex = _messages[i]._kernelMsgIndex;
-		if (msgIndex >= 0)
-			scene._kernelMessages.remove(msgIndex);
-	}
-
-	_resetFlag = false;
-	delete this;
-}
-
 void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 		const Common::String &resName, int flags, Common::Array<RGB4> *palAnimData,
 		SceneInfo *sceneInfo) {
