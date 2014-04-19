@@ -119,6 +119,10 @@ void Sound::setPanAndVolumeByStaticAni() {
 	debug(3, "STUB Sound::setPanAndVolumeByStaticAni()");
 }
 
+void Sound::setPanAndVolume(int vol, int pan) {
+	warning("STUB: Sound::setPanAndVolume");
+}
+
 void FullpipeEngine::setSceneMusicParameters(GameVar *var) {
 	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
 	// TODO: Finish this (MINDELAY, MAXDELAY, LOCAL, SEQUENCE, STARTDELAY etc)

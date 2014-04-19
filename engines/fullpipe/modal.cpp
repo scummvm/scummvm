@@ -1034,6 +1034,76 @@ void ModalMainMenu::updateVolume() {
 }
 
 void ModalMainMenu::updateSoundVolume(Sound *snd) {
+	if (!snd->_objectId)
+		return;
+
+	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(snd->_objectId, -1);
+	if (!ani)
+		return;
+
+	int a, b;
+
+	if (ani->_ox >= _screct.left) {
+		int par, pan;
+
+		if (ani->_ox <= _screct.right) {
+			int dx;
+
+			if (ani->_oy <= _screct.bottom) {
+				if (ani->_oy >= _screct.top) {
+					snd->setPanAndVolume(g_fp->_sfxVolume, 0);
+
+					return;
+				}
+				dx = _screct.top - ani->_oy;
+			} else {
+				dx = ani->_oy - _screct.bottom;
+			}
+
+		    par = 0;
+
+			if (dx > 800) {
+				snd->setPanAndVolume(-3500, 0);
+				return;
+			}
+
+			pan = -3500;
+			a = g_fp->_sfxVolume - (-3500);
+			b = 800 - dx;
+		} else {
+			int dx = ani->_ox - _screct.right;
+
+			if (dx > 800) {
+				snd->setPanAndVolume(-3500, 0);
+				return;
+			}
+
+			pan = -3500;
+			par = dx * (-3500) / -800;
+			a = g_fp->_sfxVolume - (-3500);
+			b = 800 - dx;
+		}
+
+		int32 pp = b * a; //(0x51EB851F * b * a) >> 32) >> 8; // TODO FIXME
+
+		snd->setPanAndVolume(pan + (pp >> 31) + pp, par);
+
+		return;
+	}
+
+	int dx = _screct.left - ani->_ox;
+	if (dx <= 800) {
+		int32 s = 0x51EB851F * (800 - dx) * (g_fp->_sfxVolume - (-3500)); // TODO FIXME
+		int32 p = -3500 + (s >> 31) + (s >> 8);
+
+		if (p > g_fp->_sfxVolume)
+			p = g_fp->_sfxVolume;
+
+		snd->setPanAndVolume(p, dx * (-3500) / 800);
+	} else {
+		snd->setPanAndVolume(-3500, 0);
+	}
+
 	warning("STUB: ModalMainMenu::updateSoundVolume()");
 }
 
