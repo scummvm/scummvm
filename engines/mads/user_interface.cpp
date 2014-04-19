@@ -98,7 +98,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 	if (dirtyAreaPtr)
 		dirtyAreaPtr->_active = true;
 
-	// Copy parts of the user interface background that are going to have sprites drawn
+	// Copy parts of the user interface background that need to be erased
 	for (uint idx = 0; idx < size(); ++idx) {
 		DirtyArea &dirtyArea = userInterface._dirtyAreas[idx];
 		UISlot &slot = (*this)[idx];
@@ -106,11 +106,13 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 		if (dirtyArea._active && dirtyArea._bounds.width() > 0
 				&& dirtyArea._bounds.height() > 0 && slot._flags >= -20) {
 
-			// TODO: Figure out the difference between two copy methods used
 			if (slot._flags >= IMG_ERASE) {
+				// Merge area
+				error("TODO: Create a sprite merge method");
 				userInterface._surface.copyTo(&userInterface, dirtyArea._bounds,
 					Common::Point(dirtyArea._bounds.left, dirtyArea._bounds.top));
 			} else {
+				// Copy area
 				userInterface._surface.copyTo(&userInterface, dirtyArea._bounds,
 					Common::Point(dirtyArea._bounds.left, dirtyArea._bounds.top));
 			}
@@ -183,7 +185,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 		if (slot._flags < IMG_STATIC) {
 			if (delFlag || updateFlag)
 				remove_at(idx);
-			else if (slot._flags >= -20)
+			else if (slot._flags > -20)
 				slot._flags -= 20;
 		} else {
 			if (updateFlag)
@@ -721,7 +723,7 @@ void UserInterface::inventoryAnim() {
 	// Loop through the slots list for inventory animation entry
 	for (uint i = 0; i < _uiSlots.size(); ++i) {
 		if (_uiSlots[i]._segmentId == IMG_SPINNING_OBJECT)
-			_uiSlots[i]._flags = -5;
+			_uiSlots[i]._flags = IMG_UPDATE_ONLY;
 	}
 
 	// Add a new slot entry for the inventory animation

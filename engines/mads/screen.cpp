@@ -54,8 +54,6 @@ void DirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) {
 		right = maxWidth;
 
 	_bounds.right = right;
-	_bounds2.left = _bounds.width() / 2;
-	_bounds2.right = _bounds.left + (_bounds.width() + 1) / 2 - 1;
 
 	if (_bounds.top < 0)
 		_bounds.top = 0;
@@ -68,9 +66,6 @@ void DirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) {
 		bottom = maxHeight;
 
 	_bounds.bottom = bottom;
-	_bounds2.top = _bounds.height() / 2;
-	_bounds2.bottom = _bounds.top + (_bounds.height() + 1) / 2 - 1;
-
 	_active = true;
 }
 
@@ -193,7 +188,7 @@ void DirtyAreas::merge(int startIndex, int count) {
 * Returns true if two dirty areas intersect
 */
 bool DirtyAreas::intersects(int idx1, int idx2) {
-	return (*this)[idx1]._bounds2.intersects((*this)[idx2]._bounds2);
+	return (*this)[idx1]._bounds.intersects((*this)[idx2]._bounds);
 }
 
 void DirtyAreas::mergeAreas(int idx1, int idx2) {
@@ -201,11 +196,6 @@ void DirtyAreas::mergeAreas(int idx1, int idx2) {
 	DirtyArea &da2 = (*this)[idx2];
 
 	da1._bounds.extend(da2._bounds);
-
-	da1._bounds2.left = da1._bounds.width() / 2;
-	da1._bounds2.right = da1._bounds.left + (da1._bounds.width() + 1) / 2 - 1;
-	da1._bounds2.top = da1._bounds.height() / 2;
-	da1._bounds2.bottom = da1._bounds.top + (da1._bounds.height() + 1) / 2 - 1;
 
 	da2._active = false;
 	da2._mergedArea = &da1;
