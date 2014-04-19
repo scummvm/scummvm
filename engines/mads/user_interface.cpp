@@ -108,8 +108,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 
 			if (slot._flags >= IMG_ERASE) {
 				// Merge area
-				error("TODO: Create a sprite merge method");
-				userInterface._surface.copyTo(&userInterface, dirtyArea._bounds,
+				userInterface.mergeFrom(&userInterface._surface, dirtyArea._bounds,
 					Common::Point(dirtyArea._bounds.left, dirtyArea._bounds.top));
 			} else {
 				// Copy area
