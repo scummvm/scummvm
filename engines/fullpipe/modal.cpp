@@ -27,6 +27,7 @@
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/gameloader.h"
+#include "fullpipe/statics.h"
 
 #include "fullpipe/constants.h"
 
@@ -1108,7 +1109,16 @@ bool ModalMainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
 }
 
 bool ModalMainMenu::isSaveAllowed() {
-	warning("STUB: ModalMainMenu::isSaveAllowed()");
+	if (!g_fp->_isSaveAllowed)
+		return false;
+
+	if (g_fp->_aniMan->_flags & 0x100)
+		return false;
+
+	for (Common::Array<MessageQueue *>::iterator s = g_fp->_globalMessageQueueList->begin(); s != g_fp->_globalMessageQueueList->end(); ++s) {
+		if (!(*s)->_isFinished && ((*s)->getFlags() & 1))
+			return false;
+	}
 
 	return true;
 }
