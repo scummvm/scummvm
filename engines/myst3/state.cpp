@@ -292,7 +292,7 @@ void GameState::syncFloat(Common::Serializer &s, float &val,
 	static const float precision = 10000.0;
 
 	if (s.isLoading()) {
-		int32 saved;
+		int32 saved = 0;
 		s.syncAsSint32LE(saved, minVersion, maxVersion);
 		val = saved / precision;
 	} else {
