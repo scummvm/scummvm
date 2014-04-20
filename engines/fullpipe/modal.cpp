@@ -1411,6 +1411,40 @@ bool ModalQuery::handleMessage(ExCommand *cmd) {
 	return false;
 }
 
+bool ModalQuery::init(int counterdiff) {
+	if (_okBtn->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+		_okBtn->_flags |= 4;
+	else
+		_okBtn->_flags &= 0xFFFB;
+
+	if (_cancelBtn->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+		_cancelBtn->_flags |= 4;
+	else
+		_cancelBtn->_flags &= 0xFFFB;
+
+	if (_queryResult == -1) {
+		return true;
+	} else {
+		if (_bg->_id == PIC_MEX_BGR) {
+			_cancelBtn->_flags &= 0xFFFB;
+			_okBtn->_flags &= 0xFFFB;
+
+			if (_queryResult == 1) {
+				warning("STUB: ModalQuery::init()");
+				//sceneFade(g_vrtDrawHandle, (Scene *)this->_picObjList, 0);
+
+				//if (inputArFlag) {
+				//	g_needRestart = 1;
+				//	return 0;
+				//}
+				//SendMessageA(hwndCallback, WM_DESTROY, 0, 0);
+			}
+		}
+	}
+
+	return false;
+}
+
 void ModalSaveGame::setScene(Scene *sc) {
 	warning("STUB: ModalSaveGame::setScene()");
 }
