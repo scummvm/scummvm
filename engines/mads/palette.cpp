@@ -120,7 +120,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	}
 
 	int freeIndex;
-	int palCount = tempUsage.getGamePalFreeIndex(&freeIndex);
+	int palCount = getGamePalFreeIndex(&freeIndex);
 	Common::Array<UsageRange> palRange;
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
@@ -437,16 +437,14 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 	Common::fill((byte *)&_palFlags[0], (byte *)&_palFlags[PALETTE_COUNT], 0);
 	initVGAPalette(_mainPalette);
 
-	// Init low range to common RGB values
+	// Reserve the start of the palette for things like on-screen text
 	if (lowRange) {
-		Common::fill(&_palFlags[0], &_palFlags[lowRange - 1], 1);
+		Common::fill(&_palFlags[0], &_palFlags[lowRange], 1);
 	}
 
-	// Init high range to common RGB values
+	// Reserve the high end of the palette for dialog display
 	if (highRange) {
-		_palFlags[255] = 1;
-
-		Common::fill(&_palFlags[256 - highRange], &_palFlags[254], _palFlags[255]);
+		Common::fill(&_palFlags[256 - highRange], &_palFlags[256], 1);
 	}
 
 	_rgbList.clear();
