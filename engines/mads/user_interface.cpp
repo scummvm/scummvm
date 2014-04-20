@@ -65,7 +65,7 @@ void UISlots::add(const AnimFrameEntry &frameEntry) {
 	ie._flags = IMG_UPDATE;
 	ie._segmentId = frameEntry._seqIndex;
 	ie._spritesIndex = frameEntry._spriteSlot._spritesIndex;
-	ie._frameNumber = frameEntry._frameNumber;
+	ie._frameNumber = frameEntry._spriteSlot._frameNumber;
 	ie._position = frameEntry._spriteSlot._position;
 
 	push_back(ie);
@@ -148,15 +148,25 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 
 			if (dirtyArea->_textActive) {
 				SpriteAsset *asset = scene._sprites[slot._spritesIndex];
-				
+			
+				// Get the frame details
+				int frameNumber = ABS(slot._frameNumber);
+				bool flipped = slot._frameNumber < 0;
+
 				if (slot._segmentId == IMG_SPINNING_OBJECT) {
-					MSprite *sprite = asset->getFrame(slot._frameNumber & 0x7F);
+					MSprite *sprite = asset->getFrame(frameNumber);
 					sprite->copyTo(&userInterface, slot._position, 
 						sprite->getTransparencyIndex());
 				} else {
-					MSprite *sprite = asset->getFrame(slot._frameNumber - 1);
-					sprite->copyTo(&userInterface, slot._position,
-						sprite->getTransparencyIndex());
+					MSprite *sprite = asset->getFrame(frameNumber - 1);
+
+					if (flipped) {
+						MSurface *spr = sprite->flipHorizontal();
+						spr->copyTo(&userInterface, slot._position, sprite->getTransparencyIndex());
+						delete spr;
+					} else {
+						sprite->copyTo(&userInterface, slot._position, sprite->getTransparencyIndex());
+					}
 				}
 			}
 		}
@@ -251,7 +261,7 @@ void UserInterface::load(const Common::String &resName) {
 	// Read in the surface data
 	Common::SeekableReadStream *pixelsStream = madsPack.getItemStream(1);
 	pixelsStream->read(_surface.getData(), MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
-	delete pixelsStream;
+	delete pixelsStream; 
 }
 
 void UserInterface::setup(InputMode inputMode) {

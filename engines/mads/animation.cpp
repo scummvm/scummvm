@@ -101,16 +101,19 @@ void AnimMessage::load(Common::SeekableReadStream *f) {
 void AnimFrameEntry::load(Common::SeekableReadStream *f, bool uiFlag) {
 	if (uiFlag) {
 		f->skip(2);
+		_frameNumber = -1;		// Unused
 		_seqIndex = f->readByte();
 		_spriteSlot._spritesIndex = f->readByte();
-		_spriteSlot._frameNumber = f->readUint16LE();
+		_spriteSlot._frameNumber = (int8)f->readByte();
+		f->skip(1);
 		_spriteSlot._position.x = f->readSint16LE();
 		_spriteSlot._position.y = f->readSint16LE();
 	} else {
 		_frameNumber = f->readUint16LE();
 		_seqIndex = f->readByte();
 		_spriteSlot._spritesIndex = f->readByte();
-		_spriteSlot._frameNumber = f->readUint16LE();
+		uint frame = f->readUint16LE();
+		_spriteSlot._frameNumber = (frame < 0x80) ? frame : -(frame & 0x7f);
 		_spriteSlot._position.x = f->readSint16LE();
 		_spriteSlot._position.y = f->readSint16LE();
 		_spriteSlot._depth = f->readSByte();
