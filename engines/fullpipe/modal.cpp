@@ -920,7 +920,7 @@ bool ModalMainMenu::init(int counterdiff) {
 			g_fp->_modalObject = mq;
 
 			mq->_parentObj = this;
-			mq->create(_scene, &_scene->_picObjList, PIC_MEX_BGR);
+			mq->create(_scene, (PictureObject *)_scene->_picObjList[0], PIC_MEX_BGR);
 
 			_hoverAreaId = 0;
 
@@ -1335,7 +1335,7 @@ ModalQuery::~ModalQuery() {
 	_okBtn->_flags &= 0xFFFB;
 }
 
-bool ModalQuery::create(Scene *sc, PtrList *picObjList, int id) {
+bool ModalQuery::create(Scene *sc, PictureObject *picObjList, int id) {
 	if (id == PIC_MEX_BGR) {
 		_bg = sc->getPictureObjectById(PIC_MEX_BGR, 0);
 
@@ -1375,6 +1375,19 @@ bool ModalQuery::create(Scene *sc, PtrList *picObjList, int id) {
 	_picObjList = picObjList;
 
 	return true;
+}
+
+void ModalQuery::update() {
+	if (_picObjList)
+		_picObjList->draw();
+
+	_bg->draw();
+
+	if (_okBtn->_flags & 4)
+		_okBtn->draw();
+
+	if (_cancelBtn->_flags & 4)
+		_cancelBtn->draw();
 }
 
 void ModalSaveGame::setScene(Scene *sc) {

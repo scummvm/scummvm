@@ -221,15 +221,15 @@ public:
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return false; }
 	virtual bool init(int counterdiff) { return true; }
-	virtual void update() {}
+	virtual void update();
 	virtual void saveload() {}
 
-	bool create(Scene *sc, PtrList *picObjList, int picId);
+	bool create(Scene *sc, PictureObject *picObjList, int picId);
 	int getQueryResult() { return _queryResult; }
 
 
 private:
-	PtrList *_picObjList;
+	PictureObject *_picObjList;
 	PictureObject *_bg;
 	PictureObject *_okBtn;
 	PictureObject *_cancelBtn;
