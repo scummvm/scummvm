@@ -42,11 +42,11 @@
 #include "base/main.h"
 #include "graphics/surface.h"
 #include "graphics/opengles2/shader.h"
+#include "graphics/opengles2/extensions.h"
 
 #include "common/rect.h"
 #include "common/array.h"
 #include "common/util.h"
-#include "common/tokenizer.h"
 
 #include "backends/platform/android/texture.h"
 #include "backends/platform/android/android.h"
@@ -83,18 +83,7 @@ const GLfloat vertices[] = {
 };
 
 void GLESBaseTexture::initGL() {
-	const char *ext_string =
-		reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
-
-	LOGI("Extensions: %s", ext_string);
-
-	Common::StringTokenizer tokenizer(ext_string, " ");
-	while (!tokenizer.empty()) {
-		Common::String token = tokenizer.nextToken();
-
-		if (token == "GL_ARB_texture_non_power_of_two")
-			npot_supported = true;
-	}
+	npot_supported = Graphics::isExtensionSupported("GL_ARB_texture_non_power_of_two");
 
 	const char* attributes[] = { "position", "texcoord", NULL };
 	g_box_shader = Graphics::Shader::fromStrings("control", Graphics::BuiltinShaders::controlVertex, Graphics::BuiltinShaders::controlFragment, attributes);

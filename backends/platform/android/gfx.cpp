@@ -40,6 +40,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "common/endian.h"
+#include "common/tokenizer.h"
 #include "graphics/conversion.h"
 #include "graphics/opengles2/shader.h"
 #include "graphics/opengles2/extensions.h"
@@ -179,6 +180,28 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 }
 #endif
 
+static void logExtensions() {
+	const char *ext_string =
+		reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+
+	LOGI("Extensions:");
+
+	Common::String exts;
+	Common::StringTokenizer tokenizer(ext_string, " ");
+	while (!tokenizer.empty()) {
+		Common::String token = tokenizer.nextToken();
+
+		exts += token + " ";
+		if (exts.size() > 100) {
+			LOGI("\t%s", exts.c_str());
+			exts = "";
+		}
+	}
+
+	if (exts.size() > 0)
+		LOGI("\t%s", exts.c_str());
+}
+
 void OSystem_Android::initSurface() {
 	LOGD("initializing surface");
 
@@ -194,6 +217,7 @@ void OSystem_Android::initSurface() {
 
 	// Initialize OpenGLES context.
 	Graphics::initExtensions();
+	logExtensions();
 	GLESTexture::initGL();
 
 	if (_game_texture)
