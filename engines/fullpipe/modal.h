@@ -215,7 +215,7 @@ public:
 
 class ModalQuery : public BaseModalObject {
 public:
-	ModalQuery() {}
+	ModalQuery();
 	virtual ~ModalQuery() {}
 
 	virtual bool pollEvent() { return true; }
@@ -225,6 +225,14 @@ public:
 	virtual void saveload() {}
 
 	void create(Scene *sc, int picId);
+
+private:
+	int _field_8;
+	int _bg;
+	int _okBtn;
+	int _cancelBtn;
+	int _queryResult;
+
 };
 
 class ModalSaveGame : public BaseModalObject {

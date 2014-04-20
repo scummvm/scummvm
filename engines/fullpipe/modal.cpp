@@ -1321,6 +1321,14 @@ void ModalHelp::launch() {
 	}
 }
 
+ModalQuery::ModalQuery() {
+	_field_8 = 0;
+	_bg = 0;
+	_okBtn = 0;
+	_cancelBtn = 0;
+	_queryResult = -1;
+}
+
 void ModalQuery::create(Scene *sc, int picId) {
 	warning("STUB: ModalQuery::create()");
 }
