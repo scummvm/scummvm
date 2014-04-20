@@ -3689,7 +3689,7 @@ void Scene210::setDialogNode(int node) {
 			_shouldTalk = true;
 			_game._player._stepEnabled = false;
 			if (_twinklesTalking) {
-				_scene->_userInterface.emptyTalkList();
+				_scene->_userInterface.emptyConversationList();
 				_scene->_userInterface.setup(kInputConversation);
 				handleTwinklesSpeech(0xE4, -1, 0);
 				_scene->_sequences.addTimer(180, 2);
@@ -3805,6 +3805,8 @@ void Scene210::restoreDialogNode(int node, int msgId, int posY) {
 }
 
 void Scene210::enter() {
+	UserInterface &userInterface = _vm->_game->_scene._userInterface;
+
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 
 	if (!_game._visitedScenes._sceneRevisited)
@@ -3832,7 +3834,8 @@ void Scene210::enter() {
 		0xB9, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE, 0xBF, 0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA,
 		0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC,
 		0xDD, 0xDE, 0xDF, 0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0);
-	warning("TODO: sub71A50(&dialog1, 0x2E, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0);");
+	
+	userInterface.initConversation(&_conv1, 0x2E, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0);
 
 	if (!_game._visitedScenes._sceneRevisited) {
 		warning("TODO: sub71B18(0x2E, 0xB4, 0xB5, 0xB6, 0xB8, 0);");
@@ -3841,12 +3844,13 @@ void Scene210::enter() {
 		warning("TODO: \tsub71B9E(&dialog1, 0xB7, -1);");
 	}
 
-	warning("TODO: sub71A50(&dialog2, 0x2F, 0xBC, 0xBB, 0xBD, _game._visitedScenes._sceneRevisited ? 0, -1);");
-	warning("TODO: sub71A50(&dialog3, 0x30, 0xC3, 0xC2, 0xC1, 0xC4, _game._visitedScenes._sceneRevisited ? 0, -1);");
-	warning("TODO: sub71A50(&dialog5, 0x31, 0xCD, 0xCC, 0xCE, 0xCF, _game._visitedScenes._sceneRevisited ? 0, -1);");
-	warning("TODO: sub71A50(&dialog6, 0x32, 0xD3, 0xD4, 0xD5, _game._visitedScenes._sceneRevisited ? 0, -1);");
-	warning("TODO: sub71A50(&dialog7, 0x33, 0xD8, 0xDA, 0xD9, 0xDB, 0xDC, _game._visitedScenes._sceneRevisited ? 0, -1);");
-	warning("TODO: sub71A50(&dialog8, 0x34, 0xDF, 0xE0, 0xE1, 0xE2, 0xE3, _game._visitedScenes._sceneRevisited ? 0, -1);");
+	bool sceneRevisited = _game._visitedScenes._sceneRevisited;
+	userInterface.initConversation(&_conv2, 0x2F, 0xBC, 0xBB, 0xBD, (int)!sceneRevisited);
+	userInterface.initConversation(&_conv3, 0x30, 0xC3, 0xC2, 0xC1, 0xC4, (int)!sceneRevisited);
+	userInterface.initConversation(&_conv5, 0x31, 0xCD, 0xCC, 0xCE, 0xCF, (int)!sceneRevisited);
+	userInterface.initConversation(&_conv6, 0x32, 0xD3, 0xD4, 0xD5, (int)!sceneRevisited);
+	userInterface.initConversation(&_conv7, 0x33, 0xD8, 0xDA, 0xD9, 0xDB, 0xDC, (int)!sceneRevisited);
+	userInterface.initConversation(&_conv8, 0x34, 0xDF, 0xE0, 0xE1, 0xE2, 0xE3, (int)!sceneRevisited);
 
 	_twinkleAnimationType = 0;
 	_twinklesCurrentFrame = 0;
@@ -4087,19 +4091,13 @@ void Scene210::preActions() {
 }
 
 void Scene210::actions() {
+	UserInterface &userInterface = _vm->_game->_scene._userInterface;
+
 	if (_action.isAction(VERB_LOOK, 0x27, 0x1C0)) {
 		_vm->_dialogs->show(0x5219);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_game._screenObjects._inputMode == 1) {
+	} else if (_game._screenObjects._inputMode == 1) {
 		handleDialogs();
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_TALKTO, 0x1DC) || 
+	} else if (_action.isAction(VERB_TALKTO, 0x1DC) || 
 		((_game._player._playerPos == Common::Point(214, 150)) && (_game._player._facing == FACING_NORTHWEST) && (_twinkleAnimationType == 1) && _stopWalking)) {
 		switch (_game._trigger) {
 		case 0: {
@@ -4146,15 +4144,11 @@ void Scene210::actions() {
 			if (_globals[kTwinklesApproached] < 2)
 				_globals[kTwinklesApproached]++;
 
-			warning("TODO: talk_init(&dialog1);");
+			userInterface.startConversation(&_conv1);
 			_curDialogNode = 1;
 			break;
 		}
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_GIVE, 0x1DC) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	} else if (_action.isAction(VERB_GIVE, 0x1DC) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		switch (_game._trigger) {
 		case 0: {
 			int quote = _vm->getRandomNumber(172, 174);
@@ -4170,23 +4164,11 @@ void Scene210::actions() {
 			_shouldMoveHead = false;
 			break;
 		}
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(0x1AD, 0x1BF) || _action.isAction(0x18C, 0x1C0)) {
+	} else if (_action.isAction(0x1AD, 0x1BF) || _action.isAction(0x18C, 0x1C0)) {
 		_scene->_nextSceneId = 205;
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(0x18B, 0x70)) {
+	} else if (_action.isAction(0x18B, 0x70)) {
 		_scene->_nextSceneId = 215;
-		_action._inProgress = false;
-		return;
-	}
-
-	if ((_action.isAction(VERB_PULL, 0x5F) || _action.isAction(VERB_OPEN, 0x5F)) && !_globals[kCurtainOpen]) {
+	} else if ((_action.isAction(VERB_PULL, 0x5F) || _action.isAction(VERB_OPEN, 0x5F)) && !_globals[kCurtainOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -4204,11 +4186,7 @@ void Scene210::actions() {
 			_scene->_dynamicHotspots.setCursor(_doorway, CURSOR_GO_UP);
 			break;
 		}
-		_action._inProgress = false;
-		return;
-	}
-
-	if ((_action.isAction(VERB_PULL, 0x5F) || _action.isAction(VERB_CLOSE, 0x5F)) && _globals[kCurtainOpen]) {
+	} else if ((_action.isAction(VERB_PULL, 0x5F) || _action.isAction(VERB_CLOSE, 0x5F)) && _globals[kCurtainOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -4230,11 +4208,7 @@ void Scene210::actions() {
 			_globals[kCurtainOpen] = false;
 			break;
 		}
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0xAA)) {
+	} else if (_action.isAction(VERB_LOOK, 0xAA)) {
 		if (_globals[kTwinklesStatus] == TWINKLES_GONE) {
 			if (_game._storyMode == STORYMODE_NAUGHTY)
 				_vm->_dialogs->show(0x520B);
@@ -4243,87 +4217,38 @@ void Scene210::actions() {
 		} else {
 			_vm->_dialogs->show(0x5209);
 		}
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x31)) {
+	} else if (_action.isAction(VERB_LOOK, 0x31)) {
 		_vm->_dialogs->show(0x520C);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0xA7)) {
+	} else if (_action.isAction(VERB_LOOK, 0xA7)) {
 		_vm->_dialogs->show(0x520D);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_TAKE, 0xA7) || _action.isAction(VERB_TAKE, 0x31)) {
+	} else if (_action.isAction(VERB_TAKE, 0xA7) || _action.isAction(VERB_TAKE, 0x31)) {
 		_vm->_dialogs->show(0x520E);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x1C5)) {
+	} else if (_action.isAction(VERB_LOOK, 0x1C5)) {
 		_vm->_dialogs->show(0x520F);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x3A)) {
+	} else if (_action.isAction(VERB_LOOK, 0x3A)) {
 		_vm->_dialogs->show(0x5210);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x1B0)) {
+	} else if (_action.isAction(VERB_LOOK, 0x1B0)) {
 		_vm->_dialogs->show(0x5211);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x1DC)) {
+	} else if (_action.isAction(VERB_LOOK, 0x1DC)) {
 		_vm->_dialogs->show(0x5212);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(0x13A, 0x1DC) || _action.isAction(0xA6, 0x1DC)) {
+	} else if (_action.isAction(0x13A, 0x1DC) || _action.isAction(0xA6, 0x1DC)) {
 		_vm->_dialogs->show(0x5213);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x1BF)) {
+	} else if (_action.isAction(VERB_LOOK, 0x1BF)) {
 		_vm->_dialogs->show(0x5214);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x5F)) {
+	} else if (_action.isAction(VERB_LOOK, 0x5F)) {
 		_vm->_dialogs->show(0x5215);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x53)) {
+	} else if (_action.isAction(VERB_LOOK, 0x53)) {
 		_vm->_dialogs->show(0x5216);
-		_action._inProgress = false;
-		return;
-	}
-
-	if (_action.isAction(VERB_TAKE, 0x53)) {
+	} else if (_action.isAction(VERB_TAKE, 0x53)) {
 		_vm->_dialogs->show(0x5217);
-		_action._inProgress = false;
+	} else if (_action.isAction(VERB_LOOK, 0x1C0)) {
+		_vm->_dialogs->show(0x5218);
+	} else {
+		// Not handled
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x1C0)) {
-		_vm->_dialogs->show(0x5218);
-		_action._inProgress = false;
-		return;
-	}
+	_action._inProgress = false;
 }
 
 /*------------------------------------------------------------------------*/
@@ -4988,7 +4913,7 @@ void Scene216::enter() {
 	_game._player._stepEnabled = false;
 	_game._player._visible = false;
 
-	_scene->_userInterface.emptyTalkList();
+	_scene->_userInterface.emptyConversationList();
 	_scene->_userInterface.setup(kInputConversation);
 	_scene->loadAnimation(formAnimName('A', -1), 60);
 

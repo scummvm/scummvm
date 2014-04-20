@@ -2944,7 +2944,7 @@ void Scene112::enter() {
 	_game._player._stepEnabled = false;
 	_game._player._visible = false;
 
-	_scene->_userInterface.emptyTalkList();
+	_scene->_userInterface.emptyConversationList();
 	_scene->_userInterface.setup(kInputConversation);
 
 	_scene->loadAnimation(Resources::formatName(112, 'X', -1, EXT_AA, ""), 70);

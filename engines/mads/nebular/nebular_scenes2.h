@@ -214,6 +214,8 @@ private:
 	bool _twinklesTalk2;
 	int _doorway;
 	Common::String _subQuote2;
+	Conversation _conv1, _conv2, _conv3;
+	Conversation _conv5, _conv6, _conv7, _conv8;
 
 	void handleDialogs();
 	void handleSubDialog1();

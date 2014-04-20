@@ -93,6 +93,10 @@ public:
 	void draw(bool updateFlag, bool delFlag);
 };
 
+class Conversation {
+public:
+
+};
 
 class UserInterface : public MSurface {
 	friend class UISlots;
@@ -238,7 +242,30 @@ public:
 	*/
 	void updateInventoryScroller();
 
-	void emptyTalkList();
+	/**
+	 * Set up a conversation sequence
+	 */
+	void initConversation(Conversation *conversatin, int globalId, int quoteId, ...);
+
+	/**
+	 * Activates the passed set of quotes in the given conversation node
+	 */
+	void setConversation(Conversation *conversation, int quoteId, ...);
+
+	/** 
+	 * Activates or deactivates the specified quote in the given conversation node
+	 */
+	void writeConversation(Conversation *conversation, int quoteId, int flag);
+
+	/**
+	 * Start an interactive conversation
+	 */
+	void startConversation(Conversation *conversation);
+
+	/**
+	 * Empties the current conversation talk list
+	 */
+	void emptyConversationList();
 };
 
 } // End of namespace MADS

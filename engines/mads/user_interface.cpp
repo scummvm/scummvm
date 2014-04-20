@@ -672,8 +672,24 @@ void UserInterface::drawTalkList() {
 	warning("TODO: drawTalkList");
 }
 
-void UserInterface::emptyTalkList() {
-	warning("TODO: emptyTalkList");
+void UserInterface::initConversation(Conversation *conversatin, int globalId, int quoteId, ...) {
+
+}
+
+void UserInterface::setConversation(Conversation *conversation, int quoteId, ...) {
+
+}
+
+void UserInterface::writeConversation(Conversation *conversation, int quoteId, int flag) {
+
+}
+
+void UserInterface::emptyConversationList() {
+	_talkStrings.clear();
+}
+
+void UserInterface::startConversation(Conversation *conversation) {
+
 }
 
 void UserInterface::loadInventoryAnim(int objectId) {
