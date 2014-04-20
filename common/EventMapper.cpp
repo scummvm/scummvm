@@ -31,11 +31,24 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	List<Event> events;
 	Event mappedEvent;
 #ifdef ENABLE_VKEYBD
+	// Trigger virtual keyboard on long press of more than 1 second
+	// of middle mouse button.
+	const uint32 vkeybdTime = 1000;
+
+	static bool vkeybd = false;
+	static uint32 vkeybdThen = 0;
+
+	if (ev.type == EVENT_MBUTTONDOWN) {
+		vkeybdThen = g_system->getMillis();
+	}
+
 	if (ev.type == EVENT_MBUTTONUP) {
-		mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
+		if ((g_system->getMillis() - vkeybdThen) >= vkeybdTime) {
+			mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
 		
-		// Avoid blocking event from engine.
-		addDelayedEvent(100, ev);
+			// Avoid blocking event from engine.
+			addDelayedEvent(100, ev);
+		}
 	}
 #endif
 
