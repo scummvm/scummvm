@@ -219,11 +219,6 @@ public:
 };
 
 class Scene313: public Scene3xx {
-private:
-	uint32 gender_clock;
-	uint32 gender_timer;
-	uint32 gender_threshold;
-
 public:
 	Scene313(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -231,6 +226,18 @@ public:
 	virtual void enter();
 	virtual void step() {};
 	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
+class Scene316: public Scene3xx {
+public:
+	Scene316(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
 	virtual void actions();
 	virtual void postActions() {};
 };

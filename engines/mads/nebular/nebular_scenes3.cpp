@@ -1762,8 +1762,6 @@ void Scene313::setup() {
 
 void Scene313::enter() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
-	gender_timer = 0;
-	gender_threshold = _vm->getRandomNumber(3, 9) * 600;
 
 	if ((_scene->_priorSceneId == 366) || (_scene->_priorSceneId == 316)) {
 		_game._player._playerPos = Common::Point(30, 80);
