@@ -81,7 +81,7 @@ void Rails::setupRoute(bool bitFlag, const Common::Point &srcPos, const Common::
 	_next = 0;
 	if (_routeIndexes.size() > 0) {
 		Common::Point currPos = srcPos;
-		for (int routeCtr = size() - 1; (routeCtr >= 0) && (_next == 0); --routeCtr) {
+		for (int routeCtr = size() - 1; (routeCtr >= 0) && !_next; --routeCtr) {
 			int idx = _routeIndexes[routeCtr];
 			const Common::Point &pt = _nodes[idx]._walkPos;
 
@@ -124,7 +124,7 @@ void Rails::setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int route
 
 int Rails::scanPath(const Common::Point &srcPos, const Common::Point &destPos) {
 	// For compressed depth surfaces, always return 0
-	if (_depthStyle != 2)
+	if (_depthStyle == 2)
 		return 0;
 
 	int yDiff = destPos.y - srcPos.y;
@@ -135,7 +135,7 @@ int Rails::scanPath(const Common::Point &srcPos, const Common::Point &destPos) {
 		yAmount = -yAmount;
 	}
 
-	int xDiff = destPos.x - srcPos.y;
+	int xDiff = destPos.x - srcPos.x;
 	int xDirection = 1;
 	int xAmount = 0;
 	if (xDiff < 0) {
@@ -150,8 +150,8 @@ int Rails::scanPath(const Common::Point &srcPos, const Common::Point &destPos) {
 	const byte *srcP = _depthSurface->getBasePtr(srcPos.x, srcPos.y);
 	int index = xAmount;
 
-	// Outer horizontal movement loop
-	for (int yIndex = 0; yIndex < yDiff; ++yIndex) {
+	// Outer loop
+	for (int xCtr = 0; xCtr < xDiff; ++xCtr, srcP += xDirection) {
 		index += yDiff;
 		int v = (*srcP & 0x7F) >> 4;
 		if (v)
@@ -167,8 +167,6 @@ int Rails::scanPath(const Common::Point &srcPos, const Common::Point &destPos) {
 
 			srcP += yAmount;
 		}
-
-		srcP += xDirection;
 	}
 
 	return 0;
