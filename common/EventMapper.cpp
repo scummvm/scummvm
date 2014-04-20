@@ -30,6 +30,15 @@ namespace Common {
 List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	List<Event> events;
 	Event mappedEvent;
+#ifdef ENABLE_VKEYBD
+	if (ev.type == EVENT_MBUTTONUP) {
+		mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
+		
+		// Avoid blocking event from engine.
+		addDelayedEvent(100, ev);
+	}
+#endif
+
 	if (ev.type == EVENT_KEYDOWN) {
 		if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F5) {
 			mappedEvent.type = EVENT_MAINMENU;
