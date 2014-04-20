@@ -1692,7 +1692,9 @@ void FullTSA::initializeTBPMonitor(const int newMode, const ExtraID highlightExt
 		releaseSprites();
 	}
 
-	_interruptionFilter = kFilterAllInput;
+	// Only allow input if we're not in the middle of series of queue requests.
+	if (actionQueueEmpty())
+		_interruptionFilter = kFilterAllInput;
 }
 
 void FullTSA::startUpComparisonMonitor() {
