@@ -40,6 +40,7 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_cyclingActive = false;
 	_cyclingThreshold = 0;
 	_cyclingDelay = 0;
+	_totalCycleColors = 0;
 	_depthStyle = 0;
 	_roomChanged = false;
 	_reloadSceneFlag = false;
@@ -50,6 +51,11 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_frameStartTime = 0;
 	_layer = LAYER_GUI;
 	_lookFlag = false;
+	_bandsRange = 0;
+	_scaleRange = 0;
+	_interfaceY = 0;
+	_spritesCount = 0;
+	_variant = 0;
 
 	_paletteUsageF.push_back(PaletteUsage::UsageEntry(0xF));
 
