@@ -231,6 +231,10 @@ public:
 };
 
 class Scene316: public Scene3xx {
+private:
+	void handleRexInGrate();
+	void handleRoxInGrate();
+
 public:
 	Scene316(MADSEngine *vm) : Scene3xx(vm) {}
 
