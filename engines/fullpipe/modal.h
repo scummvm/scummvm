@@ -219,7 +219,7 @@ public:
 	virtual ~ModalQuery();
 
 	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff) { return true; }
 	virtual void update();
 	virtual void saveload() {}

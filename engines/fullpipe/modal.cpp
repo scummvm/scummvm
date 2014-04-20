@@ -1390,6 +1390,27 @@ void ModalQuery::update() {
 		_cancelBtn->draw();
 }
 
+bool ModalQuery::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind == 17) {
+		if (cmd->_messageNum == 29) {
+			if (_okBtn->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y)) {
+				_queryResult = 1;
+
+				return false;
+			}
+
+			if (_cancelBtn->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+				_queryResult = 0;
+		} else if (cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+			_queryResult = 0;
+
+			return false;
+		}
+	}
+
+	return false;
+}
+
 void ModalSaveGame::setScene(Scene *sc) {
 	warning("STUB: ModalSaveGame::setScene()");
 }
