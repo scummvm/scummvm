@@ -304,8 +304,9 @@ void Scene::animatePalette() {
 			}
 
 			if (changesFlag) {
-				_vm->_palette->setPalette(_vm->_palette->_cyclingPalette,
-					_paletteCycles[0]._firstColorIndex, _totalCycleColors);
+				int firstColor = _paletteCycles[0]._firstColorIndex;
+				byte *pSrc = &_vm->_palette->_cyclingPalette[firstColor * 3];
+				_vm->_palette->setPalette(pSrc, firstColor, _totalCycleColors);
 			}
 
 			_cyclingDelay = 0;
