@@ -114,7 +114,7 @@ protected:
 	int _askLineNum;
 	Common::String _lines[TEXT_DIALOG_MAX_LINES];
 	int _lineXp[TEXT_DIALOG_MAX_LINES];
-	byte _savedPalette[8 * 3];
+	byte _cyclingPalette[8 * 3];
 public:
 	/**
 	 * Constructor

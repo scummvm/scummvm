@@ -165,7 +165,7 @@ private:
 	 * Load the user interface display for an animation
 	 */
 	void loadInterface(UserInterface &interfaceSurface, MSurface &depthSurface,
-		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
+		AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo);
 
 	/**
 	 * Returns true if there is a scroll required
@@ -192,7 +192,7 @@ public:
 	 * Loads animation data
 	 */
 	void load(UserInterface &interfaceSurface, MSurface &depthSurface, const Common::String &resName,
-		int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo);
+		int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo);
 
 	/**
 	 * Preload animation data for the scene

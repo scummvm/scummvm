@@ -55,7 +55,7 @@ private:
 	/*
 	 * Initialises the data for palette animation within the scene
 	 */
-	void initPaletteAnimation(Common::Array<RGB4> &animData, bool animFlag);
+	void initPaletteAnimation(Common::Array<PaletteCycle> &palCycles, bool animFlag);
 
 	/**
 	 * Handles a single frame within the game scene
@@ -106,10 +106,11 @@ public:
 	DepthSurface _depthSurface;
 	UserInterface _userInterface;
 	bool _cyclingActive;
-	int _animVal1;
-	int _animCount;
-	Common::Array<uint32> _animTicksList;
-	Common::Array<RGB4> _animPalData;
+	int _cyclingThreshold;
+	int _cyclingDelay;
+	int _totalCycleColors;
+	Common::Array<uint32> _cycleTicks;
+	Common::Array<PaletteCycle> _paletteCycles;
 	Common::StringArray _vocabStrings;
 	Animation *_animationData;
 	Animation *_activeAnimation;
@@ -194,6 +195,11 @@ public:
 	 * Draw all the elements onto the scene
 	 */
 	void drawElements(ScreenTransition transitionType, bool surfaceFlag);
+
+	/**
+	* Handles cycling palette colors for the scene
+	*/
+	void animatePalette();
 
 	/**
 	 * Load an animation

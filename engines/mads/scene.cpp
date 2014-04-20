@@ -38,7 +38,8 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 	_sceneLogic = nullptr;
 	_sceneInfo = nullptr;
 	_cyclingActive = false;
-	_animVal1 = 0;
+	_cyclingThreshold = 0;
+	_cyclingDelay = 0;
 	_depthStyle = 0;
 	_roomChanged = false;
 	_reloadSceneFlag = false;
@@ -134,7 +135,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 		_depthSurface, _backgroundSurface);
 
 	// Initialise palette animation for the scene
-	initPaletteAnimation(_sceneInfo->_palAnimData, false);
+	initPaletteAnimation(_sceneInfo->_paletteCycles, false);
 
 	// Copy over nodes
 	_rails.load(_sceneInfo->_nodes, &_depthSurface, _sceneInfo->_depthStyle);
@@ -237,27 +238,73 @@ void Scene::loadVocabStrings() {
 	f.close();
 }
 
-void Scene::initPaletteAnimation(Common::Array<RGB4> &animData, bool animFlag) {
+void Scene::initPaletteAnimation(Common::Array<PaletteCycle> &palCycles, bool animFlag) {
 	// Initialise the animation palette and ticks list
-	_animTicksList.clear();
-	_animPalData.clear();
+	_cycleTicks.clear();
+	_paletteCycles.clear();
 
-	for (uint i = 0; i < animData.size(); ++i) {
-		_animTicksList.push_back(_vm->_events->getFrameCounter());
-		_animPalData.push_back(animData[i]);
+	for (uint i = 0; i < palCycles.size(); ++i) {
+		_cycleTicks.push_back(_vm->_events->getFrameCounter());
+		_paletteCycles.push_back(palCycles[i]);
 	}
 
 	// Save the initial starting palette
 	Common::copy(&_vm->_palette->_mainPalette[0], &_vm->_palette->_mainPalette[PALETTE_SIZE],
-		&_vm->_palette->_savedPalette[0]);
+		&_vm->_palette->_cyclingPalette[0]);
 
 	// Calculate total
-	_animCount = 0;
-	for (uint i = 0; i < _animPalData.size(); ++i)
-		_animCount += _animPalData[i]._colorCount;
+	_totalCycleColors = 0;
+	for (uint i = 0; i < _paletteCycles.size(); ++i)
+		_totalCycleColors += _paletteCycles[i]._colorCount;
 
-	_animVal1 = (_animCount > 16) ? 3 : 0;
+	_cyclingThreshold = (_totalCycleColors > 16) ? 3 : 0;
 	_cyclingActive = animFlag;
+}
+
+void Scene::animatePalette() {
+	byte rgb[3];
+
+	if (_cyclingActive) {
+		Scene::_cyclingDelay++;
+		if (_cyclingDelay >= _cyclingThreshold) {
+			uint32 frameCounter = _vm->_events->getFrameCounter();
+			bool changesFlag = false;
+			for (int idx = 0; idx < _paletteCycles.size(); idx++) {
+				if (frameCounter >= (_cycleTicks[idx] + _paletteCycles[idx]._ticks)) {
+					_cycleTicks[idx] = frameCounter;
+					int count = _paletteCycles[idx]._colorCount;
+					int first = _paletteCycles[idx]._firstColorIndex;
+					int listIndex = _paletteCycles[idx]._firstListColor;
+					changesFlag = true;
+
+					if (count > 1) {
+						// Make a copy of the last color
+						byte *pSrc = &_vm->_palette->_cyclingPalette[first * 3];
+						byte *pEnd = pSrc + count * 3;
+						Common::copy(pEnd - 3, pEnd, &rgb[0]);
+
+						// Shift the cycle palette forward one entry
+						Common::copy_backward(pSrc, pEnd - 3, pEnd);
+
+						// Move the saved color to the start of the cycle
+						Common::copy(&rgb[0], &rgb[3], pSrc);
+
+						if (++listIndex >= count)
+							listIndex = 0;
+					}
+
+					_paletteCycles[idx]._firstListColor = listIndex;
+				}
+			}
+
+			if (changesFlag) {
+				_vm->_palette->setPalette(_vm->_palette->_cyclingPalette,
+					_paletteCycles[0]._firstColorIndex, _totalCycleColors);
+			}
+
+			_cyclingDelay = 0;
+		}
+	}
 }
 
 bool Scene::getDepthHighBits(const Common::Point &pt) {
@@ -626,6 +673,5 @@ void Scene::freeAnimation() {
 
 	_freeAnimationFlag = false;
 }
-
 
 } // End of namespace MADS

@@ -118,7 +118,7 @@ struct ARTHeader {
 	int _width;
 	int _height;
 	Common::Array<RGB6> _palette;
-	Common::Array<RGB4> _palAnimData;
+	Common::Array<PaletteCycle> _paletteCycles;
 
 	void load(Common::SeekableReadStream *f);
 };
@@ -158,7 +158,7 @@ public:
 	int _field4A;
 
 	int _usageIndex;
-	Common::Array<RGB4> _palAnimData;
+	Common::Array<PaletteCycle> _paletteCycles;
 	WalkNodeList _nodes;
 public:
 	/**

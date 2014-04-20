@@ -458,7 +458,6 @@ void Palette::resetGamePalette(int lowRange, int highRange) {
 }
 
 void Palette::initPalette() {
-	RGB4 rgb;
 	uint32 palMask = 1;
 
 	if (_vm->_game->_player._spritesLoaded && _vm->_game->_player._numSprites) {
@@ -528,7 +527,7 @@ void Palette::unlock() {
 void Palette::refreshHighColors() {
 	int val = 18;
 	if (_vm->_game->_scene._cyclingActive)
-		val += _vm->_game->_scene._animCount;
+		val += _vm->_game->_scene._totalCycleColors;
 
 	setPalette(_mainPalette, val, 256 - val);
 }

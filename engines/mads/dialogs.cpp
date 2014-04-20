@@ -125,7 +125,7 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	// Save the high end of the palette, and set up the entries for dialog display
 	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3], 
 		&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3 + 8 * 3], 
-		&_savedPalette[0]);
+		&_cyclingPalette[0]);
 	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_CONTENT1, 2, 0x90, 0x80);
 	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_EDGE, 2, 0x9C, 0x70);
 	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FC, 2, 0x90, 0x80);
@@ -319,7 +319,7 @@ void TextDialog::drawWithInput() {
 }
 
 void TextDialog::restorePalette() {
-	Common::copy(&_savedPalette[0], &_savedPalette[8 * 3],
+	Common::copy(&_cyclingPalette[0], &_cyclingPalette[8 * 3],
 		&_vm->_palette->_mainPalette[248 * 3]);
 	_vm->_palette->setPalette(_vm->_palette->_mainPalette, 248, 8);
 }

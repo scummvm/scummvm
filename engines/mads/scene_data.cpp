@@ -63,16 +63,16 @@ void ARTHeader::load(Common::SeekableReadStream *f) {
 	}
 	f->skip(6 * (256 - palCount));
 
-	// Read unknown???
-	palCount = f->readUint16LE();
-	for (int i = 0; i < palCount; ++i) {
-		RGB4 rgb;
-		rgb._colorCount = f->readByte();
-		rgb.g = f->readByte();
-		rgb._firstColorIndex = f->readByte();
-		rgb.u = f->readByte();
+	// Read palette animations
+	int cycleCount = f->readUint16LE();
+	for (int i = 0; i < cycleCount; ++i) {
+		PaletteCycle cycle;
+		cycle._colorCount = f->readByte();
+		cycle._firstListColor = f->readByte();
+		cycle._firstColorIndex = f->readByte();
+		cycle._ticks = f->readByte();
 
-		_palAnimData.push_back(rgb);
+		_paletteCycles.push_back(cycle);
 	}
 }
 
@@ -202,9 +202,9 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	artHeader.load(stream);
 	delete stream;
 
-	// Copy out the palette data
-	for (uint i = 0; i < artHeader._palAnimData.size(); ++i)
-		_palAnimData.push_back(artHeader._palAnimData[i]);
+	// Copy out the palette animation data
+	for (uint i = 0; i < artHeader._paletteCycles.size(); ++i)
+		_paletteCycles.push_back(artHeader._paletteCycles[i]);
 
 	if (!(flags & 1)) {
 		if (!_vm->_palette->_paletteUsage.empty()) {
@@ -217,9 +217,9 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		if (_usageIndex > 0) {
 			_vm->_palette->_paletteUsage.transform(artHeader._palette);
 
-			for (uint i = 0; i < _palAnimData.size(); ++i) {
-				byte g = _palAnimData[i].g;
-				_palAnimData[i]._firstColorIndex = artHeader._palette[g]._palIndex;
+			for (uint i = 0; i < _paletteCycles.size(); ++i) {
+				byte listColor = _paletteCycles[i]._firstListColor;
+				_paletteCycles[i]._firstColorIndex = artHeader._palette[listColor]._palIndex;
 			}
 		}
 	}

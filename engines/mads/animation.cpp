@@ -112,8 +112,7 @@ void AnimFrameEntry::load(Common::SeekableReadStream *f, bool uiFlag) {
 		_frameNumber = f->readUint16LE();
 		_seqIndex = f->readByte();
 		_spriteSlot._spritesIndex = f->readByte();
-		uint frame = f->readUint16LE();
-		_spriteSlot._frameNumber = (frame < 0x80) ? frame : -(frame & 0x7f);
+		_spriteSlot._frameNumber = f->readSint16LE();
 		_spriteSlot._position.x = f->readSint16LE();
 		_spriteSlot._position.y = f->readSint16LE();
 		_spriteSlot._depth = f->readSByte();
@@ -174,7 +173,7 @@ Animation::~Animation() {
 }
 
 void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
-		const Common::String &resName, int flags, Common::Array<RGB4> *palAnimData,
+		const Common::String &resName, int flags, Common::Array<PaletteCycle> *palCycles,
 		SceneInfo *sceneInfo) {
 	Common::String resourceName = resName;
 	if (!resourceName.contains("."))
@@ -191,7 +190,7 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 		flags |= PALFLAG_RESERVED;
 
 	if (flags & ANIMFLAG_LOAD_BACKGROUND) {
-		loadInterface(interfaceSurface, depthSurface, _header, flags, palAnimData, sceneInfo);
+		loadInterface(interfaceSurface, depthSurface, _header, flags, palCycles, sceneInfo);
 	}
 	if (flags & ANIMFLAG_LOAD_BACKGROUND_ONLY) {
 		// No data
@@ -376,24 +375,24 @@ bool Animation::drawFrame(SpriteAsset &spriteSet, const Common::Point &pt, int f
 }
 
 void Animation::loadInterface(UserInterface &interfaceSurface, MSurface &depthSurface,
-		AAHeader &header, int flags, Common::Array<RGB4> *palAnimData, SceneInfo *sceneInfo) {
+		AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo) {
 	_scene->_depthStyle = 0;
 	if (header._animMode <= 2) {
 		_vm->_palette->_paletteUsage.setEmpty();
 		sceneInfo->load(header._roomNumber, flags, header._interfaceFile, 0, depthSurface, interfaceSurface);
 		_scene->_depthStyle = sceneInfo->_depthStyle == 2 ? 1 : 0;
-		if (palAnimData) {
-			palAnimData->clear();
-			for (uint i = 0; i < sceneInfo->_palAnimData.size(); ++i)
-				palAnimData->push_back(sceneInfo->_palAnimData[i]);
+		if (palCycles) {
+			palCycles->clear();
+			for (uint i = 0; i < sceneInfo->_paletteCycles.size(); ++i)
+				palCycles->push_back(sceneInfo->_paletteCycles[i]);
 		}
 	} else if (header._animMode == 4) {
 		// Load a scene interface
 		Common::String resourceName = "*" + header._interfaceFile;
 		interfaceSurface.load(resourceName);
 
-		if (palAnimData)
-			palAnimData->clear();
+		if (palCycles)
+			palCycles->clear();
 	} else {
 		// Original has useless code here
 	}

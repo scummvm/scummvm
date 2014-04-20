@@ -1786,10 +1786,10 @@ void Scene313::enter() {
 	}
 
 	if (_globals[kAfterHavoc]) {
-		for (uint16 i = 0; i < _scene->_animPalData.size(); i++) {
-			int palIdx = _scene->_animPalData[i]._firstColorIndex;
-			int size = _scene->_animPalData[i]._colorCount * 3;
-			memset(&_vm->_palette->_savedPalette[palIdx], 0, size);
+		for (uint16 i = 0; i < _scene->_paletteCycles.size(); i++) {
+			int palIdx = _scene->_paletteCycles[i]._firstColorIndex;
+			int size = _scene->_paletteCycles[i]._colorCount * 3;
+			memset(&_vm->_palette->_cyclingPalette[palIdx], 0, size);
 			memset(&_vm->_palette->_mainPalette[palIdx], 0, size);
 		}
 	}

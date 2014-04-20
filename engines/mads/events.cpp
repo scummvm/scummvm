@@ -26,6 +26,7 @@
 #include "engines/util.h"
 #include "mads/mads.h"
 #include "mads/events.h"
+#include "mads/scene.h"
 
 #define GAME_FRAME_RATE 50
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE) 
@@ -164,6 +165,9 @@ void EventsManager::checkForNextFrameCounter() {
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
 		++_frameCounter;
 		_priorFrameTime = milli;
+
+		// Do any palette cycling
+		_vm->_game->_scene.animatePalette();
 
 		// Give time to the debugger
 		_vm->_debugger->onFrame();

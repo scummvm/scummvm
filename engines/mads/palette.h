@@ -45,13 +45,13 @@ enum {
 	PALFLAG_MASK			= 0xfc00   // Mask for all the palette flags   
 };
 
-struct RGB4 {
+struct PaletteCycle {
 	byte _colorCount;
-	byte g;
+	byte _firstListColor;
 	byte _firstColorIndex;
-	byte u;
+	byte _ticks;
 
-	RGB4() { _colorCount = g = _firstColorIndex = u = 0; }
+	PaletteCycle() { _colorCount = _firstListColor = _firstColorIndex = _ticks = 0; }
 };
 
 struct RGB6 {
@@ -165,7 +165,7 @@ protected:
 	void reset();
 public:
 	byte _mainPalette[PALETTE_SIZE];
-	byte _savedPalette[PALETTE_SIZE];
+	byte _cyclingPalette[PALETTE_SIZE];
 	uint32 _palFlags[PALETTE_COUNT];
 	PaletteUsage _paletteUsage;
 	RGBList _rgbList;
