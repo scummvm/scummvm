@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	yuv_to_rgb.o \
 	yuva_to_rgba.o \
 	pixelbuffer.o \
+	opengles2/extensions.o \
 	opengles2/shader.o \
 	opengles2/framebuffer.o \
 	opengles2/box_shaders.o \

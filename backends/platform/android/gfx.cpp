@@ -42,6 +42,7 @@
 #include "common/endian.h"
 #include "graphics/conversion.h"
 #include "graphics/opengles2/shader.h"
+#include "graphics/opengles2/extensions.h"
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni.h"
@@ -192,6 +193,7 @@ void OSystem_Android::initSurface() {
 	JNI::initSurface();
 
 	// Initialize OpenGLES context.
+	Graphics::initExtensions();
 	GLESTexture::initGL();
 
 	if (_game_texture)
