@@ -216,7 +216,7 @@ public:
 class ModalQuery : public BaseModalObject {
 public:
 	ModalQuery();
-	virtual ~ModalQuery() {}
+	virtual ~ModalQuery();
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return false; }
@@ -225,6 +225,8 @@ public:
 	virtual void saveload() {}
 
 	bool create(Scene *sc, PtrList *picObjList, int picId);
+	int getQueryResult() { return _queryResult; }
+
 
 private:
 	PtrList *_picObjList;

@@ -1329,6 +1329,12 @@ ModalQuery::ModalQuery() {
 	_queryResult = -1;
 }
 
+ModalQuery::~ModalQuery() {
+	_bg->_flags &= 0xFFFB;
+	_cancelBtn->_flags &= 0xFFFB;
+	_okBtn->_flags &= 0xFFFB;
+}
+
 bool ModalQuery::create(Scene *sc, PtrList *picObjList, int id) {
 	if (id == PIC_MEX_BGR) {
 		_bg = sc->getPictureObjectById(PIC_MEX_BGR, 0);
