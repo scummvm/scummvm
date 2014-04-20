@@ -267,7 +267,6 @@ namespace Fullpipe {
 #define TrubaUp 680
 
 // Main Menu
-#define PIC_MEX_BGR 5300
 #define PIC_MNU_AUTHORS_L 4624
 #define PIC_MNU_CONTINUE_L 4626
 #define PIC_MNU_DEBUG_L 4632
@@ -279,6 +278,14 @@ namespace Fullpipe {
 #define PIC_MNU_SAVE_L 4630
 #define PIC_MNU_SLIDER_D 4913
 #define PIC_MNU_SLIDER_L 4912
+
+// Query dialog
+#define PIC_MEX_BGR 5300
+#define PIC_MEX_CANCEL 5302
+#define PIC_MEX_OK 5301
+#define PIC_MOV_BGR 5343
+#define PIC_MOV_CANCEL 5345
+#define PIC_MOV_OK 5344
 
 // Intro
 #define ANI_IN1MAN 5110

@@ -224,13 +224,13 @@ public:
 	virtual void update() {}
 	virtual void saveload() {}
 
-	void create(Scene *sc, int picId);
+	bool create(Scene *sc, PtrList *picObjList, int picId);
 
 private:
-	int _field_8;
-	int _bg;
-	int _okBtn;
-	int _cancelBtn;
+	PtrList *_picObjList;
+	PictureObject *_bg;
+	PictureObject *_okBtn;
+	PictureObject *_cancelBtn;
 	int _queryResult;
 
 };

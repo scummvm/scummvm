@@ -21,13 +21,13 @@
  */
 
 #include "fullpipe/fullpipe.h"
-#include "fullpipe/modal.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/constants.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/modal.h"
 
 #include "fullpipe/constants.h"
 
@@ -920,7 +920,7 @@ bool ModalMainMenu::init(int counterdiff) {
 			g_fp->_modalObject = mq;
 
 			mq->_parentObj = this;
-			mq->create(_scene, PIC_MEX_BGR);
+			mq->create(_scene, &_scene->_picObjList, PIC_MEX_BGR);
 
 			_hoverAreaId = 0;
 
@@ -1322,15 +1322,53 @@ void ModalHelp::launch() {
 }
 
 ModalQuery::ModalQuery() {
-	_field_8 = 0;
+	_picObjList = 0;
 	_bg = 0;
 	_okBtn = 0;
 	_cancelBtn = 0;
 	_queryResult = -1;
 }
 
-void ModalQuery::create(Scene *sc, int picId) {
-	warning("STUB: ModalQuery::create()");
+bool ModalQuery::create(Scene *sc, PtrList *picObjList, int id) {
+	if (id == PIC_MEX_BGR) {
+		_bg = sc->getPictureObjectById(PIC_MEX_BGR, 0);
+
+		if (!_bg)
+			return false;
+
+		_okBtn = sc->getPictureObjectById(PIC_MEX_OK, 0);
+
+		if (!_okBtn)
+			return false;
+
+		_cancelBtn = sc->getPictureObjectById(PIC_MEX_CANCEL, 0);
+
+		if (!_cancelBtn)
+			return 0;
+	} else {
+		if (id != PIC_MOV_BGR)
+			return false;
+
+		_bg = sc->getPictureObjectById(PIC_MOV_BGR, 0);
+
+		if (!_bg)
+			return false;
+
+		_okBtn = sc->getPictureObjectById(PIC_MOV_OK, 0);
+
+		if (!_okBtn)
+			return false;
+
+		_cancelBtn = sc->getPictureObjectById(PIC_MOV_CANCEL, 0);
+
+		if (!_cancelBtn)
+			return false;
+	}
+
+	_queryResult = -1;
+	_picObjList = picObjList;
+
+	return true;
 }
 
 void ModalSaveGame::setScene(Scene *sc) {
