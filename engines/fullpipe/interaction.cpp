@@ -429,7 +429,14 @@ Interaction::Interaction() {
 }
 
 Interaction::~Interaction() {
-	warning("STUB: Interaction::~Interaction()");
+	if (_messageQueue) {
+		while (_messageQueue->getExCommandByIndex(0))
+			_messageQueue->deleteExCommandByIndex(0, 1);
+    }
+
+	delete _messageQueue;
+
+	free(_actionName);
 }
 
 bool Interaction::load(MfcArchive &file) {

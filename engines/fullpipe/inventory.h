@@ -129,6 +129,8 @@ class Inventory2 : public Inventory {
 	bool unselectItem(bool flag);
 
 	void draw();
+
+	void clear();
 };
 
 } // End of namespace Fullpipe
