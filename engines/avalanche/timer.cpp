@@ -347,9 +347,7 @@ void Timer::afterTheShootemup() {
 	_vm->refreshObjectList();
 
 	byte gain = (_shootEmUpScore + 5) / 10; // Rounding up.
-
-	_vm->_dialogs->displayText(kControlItalic + Common::String("Your score was ") + Common::String::format("%d", _shootEmUpScore) + '.' + kControlNewLine + kControlNewLine + "You gain (" +
-		Common::String::format("%d", _shootEmUpScore) + " " + 0xF6 + " 10) = " + Common::String::format("%d", gain) + " points.");
+	_vm->_dialogs->displayText(Common::String::format("%cYour score was %d.%c%cYou gain (%d \xf6 10) = %d points.", kControlItalic, _shootEmUpScore, kControlNewLine, kControlNewLine, _shootEmUpScore, gain));
 
 	if (gain > 20) {
 		_vm->_dialogs->displayText("But we won't let you have more than 20 points!");
