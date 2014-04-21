@@ -229,6 +229,17 @@ public:
 	void drawTextElements();
 
 	/**
+	* Merges a sub-section of another surface into the user interface without
+	* destroying any on-screen text
+	* @param src			Source surface
+	* @param srcBounds		Area to copy/merge from
+	* @param destPos		Destination position to draw in current surface
+	* @param transparencyIndex	Transparency color
+	*/
+	void mergeFrom(MSurface *src, const Common::Rect &srcBounds, const Common::Point &destPos,
+		int transparencyIndex = -1);
+
+	/**
 	 * Loads the animation sprite data for a given inventory object
 	 */
 	void loadInventoryAnim(int objectId);

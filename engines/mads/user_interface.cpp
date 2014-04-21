@@ -162,10 +162,12 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 
 					if (flipped) {
 						MSurface *spr = sprite->flipHorizontal();
-						spr->copyTo(&userInterface, slot._position, sprite->getTransparencyIndex());
+						userInterface.mergeFrom(spr, spr->getBounds(), slot._position,
+							sprite->getTransparencyIndex());
 						delete spr;
 					} else {
-						sprite->copyTo(&userInterface, slot._position, sprite->getTransparencyIndex());
+						userInterface.mergeFrom(sprite, sprite->getBounds(), slot._position,
+							sprite->getTransparencyIndex());
 					}
 				}
 			}
@@ -404,6 +406,49 @@ void UserInterface::drawTextElements() {
 		drawActions();
 		drawInventoryList();
 		drawItemVocabList();
+	}
+}
+
+void UserInterface::mergeFrom(MSurface *src, const Common::Rect &srcBounds,
+	const Common::Point &destPos, int transparencyIndex) {
+	// Validation of the rectangle and position	
+	int destX = destPos.x, destY = destPos.y;
+	if ((destX >= w) || (destY >= h))
+		return;
+
+	Common::Rect copyRect = srcBounds;
+	if (destX < 0) {
+		copyRect.left += -destX;
+		destX = 0;
+	} else if (destX + copyRect.width() > w) {
+		copyRect.right -= destX + copyRect.width() - w;
+	}
+	if (destY < 0) {
+		copyRect.top += -destY;
+		destY = 0;
+	} else if (destY + copyRect.height() > h) {
+		copyRect.bottom -= destY + copyRect.height() - h;
+	}
+
+	if (!copyRect.isValidRect())
+		return;
+
+	// Copy the specified area
+
+	byte *data = src->getData();
+	byte *srcPtr = data + (src->getWidth() * copyRect.top + copyRect.left);
+	byte *destPtr = (byte *)this->pixels + (destY * getWidth()) + destX;
+
+	for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
+		// Process each line of the area
+		for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
+			// Check for the range used for on-screen text, which should be kept intact
+			if ((destPtr[xCtr] >= 8 && destPtr[xCtr] <= 15) && (int)srcPtr[xCtr] != transparencyIndex)
+				destPtr[xCtr] = srcPtr[xCtr];
+		}
+
+		srcPtr += src->getWidth();
+		destPtr += getWidth();
 	}
 }
 

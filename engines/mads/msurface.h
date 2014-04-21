@@ -188,14 +188,6 @@ public:
 	}
 
 	/**
-	* Merges a sub-section of another surface into the current one.
-	* @param src			Source surface
-	* @param srcBounds		Area to copy/merge from
-	* @param destPos		Destination position to draw in current surface
-	*/
-	void mergeFrom(MSurface *src, const Common::Rect &srcBounds, const Common::Point &destPos);
-
-	/**
 	 * Scroll the screen horizontally by a given amount
 	 * @param xAmount	Horizontal amount
 	 */
