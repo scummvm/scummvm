@@ -226,9 +226,13 @@ void Conversation::setup(int globalId, ...) {
 	}
 	va_end(va);
 
-	assert(_vm->getGameID() == GType_RexNebular);
-	Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
-	game->_globals[globalId] = -1;
+	if (quoteId < 0) {
+		// For an ending value of -1, also initial the bitflags for the global
+		// associated with the conversation entry, which enables all the quote Ids
+		assert(_vm->getGameID() == GType_RexNebular);
+		Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
+		game->_globals[globalId] = (int16)0xffff;
+	}
 
 	_globalId = globalId;
 }

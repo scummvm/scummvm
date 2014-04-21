@@ -217,17 +217,17 @@ private:
 	Conversation _conv1, _conv2, _conv3;
 	Conversation _conv5, _conv6, _conv7, _conv8;
 
-	void handleDialogs();
-	void handleSubDialog1();
-	void handleSubDialog2();
-	void handleSubDialog3();
-	void handleSubDialog5();
-	void handleSubDialog6();
-	void handleSubDialog7();
-	void handleSubDialog8();
+	void handleConversations();
+	void handleConversation1();
+	void handleConversation2();
+	void handleConversation3();
+	void handleConversation5();
+	void handleConversation6();
+	void handleConversation7();
+	void handleConversation8();
 	void setDialogNode(int node);
 	void handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay);
-	void initNode(int node);
+	void newNode(int node);
 	void restoreDialogNode(int node, int msgId, int posY);
 public:
 	Scene210(MADSEngine *vm) : Scene2xx(vm), _curDialogNode(-1), _nextHandsPlace(0), _twinkleAnimationType(0), _twinklesCurrentFrame(0),

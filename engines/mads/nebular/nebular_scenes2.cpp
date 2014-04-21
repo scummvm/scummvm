@@ -3287,7 +3287,7 @@ void Scene210::setup() {
 	_scene->addActiveVocab(0x18B);
 }
 
-void Scene210::handleDialogs() {
+void Scene210::handleConversations() {
 	if (_game._trigger == 0) {
 		_scene->_kernelMessages.reset();
 		_game._player._stepEnabled = false;
@@ -3298,7 +3298,7 @@ void Scene210::handleDialogs() {
 			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, subQuote1);
 			_scene->_sequences.addTimer(60, 50);
 		} else {
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 12, curQuote);
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, curQuote);
 		}
 	} else if (_game._trigger == 50) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 240, _subQuote2);
@@ -3309,37 +3309,37 @@ void Scene210::handleDialogs() {
 
 		switch (_curDialogNode) {
 		case 1:
-			handleSubDialog1();
+			handleConversation1();
 			break;
 
 		case 2:
-			handleSubDialog2();
+			handleConversation2();
 			break;
 
 		case 3:
-			handleSubDialog3();
+			handleConversation3();
 			break;
 
 		case 5:
-			handleSubDialog5();
+			handleConversation5();
 			break;
 
 		case 6:
-			handleSubDialog6();
+			handleConversation6();
 			break;
 
 		case 7:
-			handleSubDialog7();
+			handleConversation7();
 			break;
 
 		case 8:
-			handleSubDialog8();
+			handleConversation8();
 			break;
 		}
 	}
 }
 
-void Scene210::handleSubDialog1() {
+void Scene210::handleConversation1() {
 	switch (_action._activeAction._verbId) {
 	case 180:
 		setDialogNode(2);
@@ -3363,7 +3363,7 @@ void Scene210::handleSubDialog1() {
 	}
 }
 
-void Scene210::handleSubDialog2() {
+void Scene210::handleConversation2() {
 	switch (_action._activeAction._verbId) {
 	case 187:
 		setDialogNode(3);
@@ -3379,7 +3379,7 @@ void Scene210::handleSubDialog2() {
 	}
 }
 
-void Scene210::handleSubDialog3() {
+void Scene210::handleConversation3() {
 	switch (_action._activeAction._verbId) {
 	case 193:
 		setDialogNode(6);
@@ -3399,7 +3399,7 @@ void Scene210::handleSubDialog3() {
 	}
 }
 
-void Scene210::handleSubDialog5() {
+void Scene210::handleConversation5() {
 	switch (_action._activeAction._verbId) {
 	case 204:
 		setDialogNode(6);
@@ -3416,7 +3416,7 @@ void Scene210::handleSubDialog5() {
 	}
 }
 
-void Scene210::handleSubDialog6() {
+void Scene210::handleConversation6() {
 	switch (_action._activeAction._verbId) {
 	case 211:
 		setDialogNode(7);
@@ -3432,7 +3432,7 @@ void Scene210::handleSubDialog6() {
 	}
 }
 
-void Scene210::handleSubDialog7() {
+void Scene210::handleConversation7() {
 	switch (_action._activeAction._verbId) {
 	case 216:
 	case 217:
@@ -3450,7 +3450,7 @@ void Scene210::handleSubDialog7() {
 	}
 }
 
-void Scene210::handleSubDialog8() {
+void Scene210::handleConversation8() {
 	switch (_action._activeAction._verbId) {
 	case 223:
 	case 224:
@@ -3502,7 +3502,7 @@ void Scene210::setDialogNode(int node) {
 			_nextHandsPlace = 0;
 			_shouldTalk = false;
 			_game._player._stepEnabled = true;
-			initNode(2);
+			newNode(2);
 			break;
 		}
 		break;
@@ -3533,7 +3533,7 @@ void Scene210::setDialogNode(int node) {
 		default:
 			_shouldTalk = false;
 			_game._player._stepEnabled = true;
-			initNode(3);
+			newNode(3);
 			break;
 		}
 		break;
@@ -3588,7 +3588,7 @@ void Scene210::setDialogNode(int node) {
 			_nextHandsPlace = 2;
 			_shouldTalk = false;
 			_game._player._stepEnabled = true;
-			initNode(5);
+			newNode(5);
 			break;
 		}
 		break;
@@ -3622,7 +3622,7 @@ void Scene210::setDialogNode(int node) {
 			_nextHandsPlace = 0;
 			_shouldTalk = false;
 			_game._player._stepEnabled = true;
-			initNode(6);
+			newNode(6);
 			break;
 		}
 		break;
@@ -3649,7 +3649,7 @@ void Scene210::setDialogNode(int node) {
 		default:
 			_shouldTalk = false;
 			_game._player._stepEnabled = true;
-			initNode(7);
+			newNode(7);
 			break;
 		}
 		break;
@@ -3676,7 +3676,7 @@ void Scene210::setDialogNode(int node) {
 		default:
 			_shouldTalk = false;
 			_game._player._stepEnabled = true;
-			initNode(8);
+			newNode(8);
 			break;
 		}
 		break;
@@ -3758,36 +3758,39 @@ void Scene210::handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay) {
 	_scene->_kernelMessages.add(Common::Point(10, 70 + (shiftX * 14)), 0xFDFC, 0, 0, (delay == 0) ? 9999999 : delay, _game.getQuote(quoteId));
 }
 
-void Scene210::initNode(int node) {
+void Scene210::newNode(int node) {
 	_curDialogNode = node;
 
 	switch (_curDialogNode) {
 	case 1:
-		warning("TODO: talk_init(&dialog1);");
+		_conv1.start();
 		break;
 
 	case 2:
-		warning("TODO: talk_init(&dialog2);");
+		_conv2.start();
 		break;
 
 	case 3:
-		warning("TODO: talk_init(&dialog3);");
+		_conv3.start();
 		break;
 
 	case 5:
-		warning("TODO: talk_init(&dialog5);");
+		_conv5.start();
 		break;
 
 	case 6:
-		warning("TODO: talk_init(&dialog6);");
+		_conv6.start();
 		break;
 
 	case 7:
-		warning("TODO: talk_init(&dialog7);");
+		_conv7.start();
 		break;
 
 	case 8:
-		warning("TODO: talk_init(&dialog8);");
+		_conv8.start();
+		break;
+
+	default:
 		break;
 	}
 }
@@ -3801,12 +3804,10 @@ void Scene210::restoreDialogNode(int node, int msgId, int posY) {
 		curQuoteId++;
 	}
 
-	initNode(node);
+	newNode(node);
 }
 
 void Scene210::enter() {
-	UserInterface &userInterface = _vm->_game->_scene._userInterface;
-
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 
 	if (!_game._visitedScenes._sceneRevisited)
@@ -3841,16 +3842,16 @@ void Scene210::enter() {
 		_conv1.set(0x2E, 0xB4, 0xB5, 0xB6, 0xB8, 0);
 
 		if (_game._widepipeCtr >= 2)
-			_conv1.write(0xB7, -1);
+			_conv1.write(0xB7, true);
 	}
 
 	bool sceneRevisited = _game._visitedScenes._sceneRevisited;
-	_conv2.setup(0x2F, 0xBC, 0xBB, 0xBD, (int)!sceneRevisited);
-	_conv3.setup(0x30, 0xC3, 0xC2, 0xC1, 0xC4, (int)!sceneRevisited);
-	_conv5.setup(0x31, 0xCD, 0xCC, 0xCE, 0xCF, (int)!sceneRevisited);
-	_conv6.setup(0x32, 0xD3, 0xD4, 0xD5, (int)!sceneRevisited);
-	_conv7.setup(0x33, 0xD8, 0xDA, 0xD9, 0xDB, 0xDC, (int)!sceneRevisited);
-	_conv8.setup(0x34, 0xDF, 0xE0, 0xE1, 0xE2, 0xE3, (int)!sceneRevisited);
+	_conv2.setup(0x2F, 0xBC, 0xBB, 0xBD, sceneRevisited ? 0 : -1);
+	_conv3.setup(0x30, 0xC3, 0xC2, 0xC1, 0xC4, sceneRevisited ? 0 : -1);
+	_conv5.setup(0x31, 0xCD, 0xCC, 0xCE, 0xCF, sceneRevisited ? 0 : -1);
+	_conv6.setup(0x32, 0xD3, 0xD4, 0xD5, sceneRevisited ? 0 : -1);
+	_conv7.setup(0x33, 0xD8, 0xDA, 0xD9, 0xDB, 0xDC, sceneRevisited ? 0 : -1);
+	_conv8.setup(0x34, 0xDF, 0xE0, 0xE1, 0xE2, 0xE3, sceneRevisited ? 0 : -1);
 
 	_twinkleAnimationType = 0;
 	_twinklesCurrentFrame = 0;
@@ -4091,12 +4092,10 @@ void Scene210::preActions() {
 }
 
 void Scene210::actions() {
-	UserInterface &userInterface = _vm->_game->_scene._userInterface;
-
 	if (_action.isAction(VERB_LOOK, 0x27, 0x1C0)) {
 		_vm->_dialogs->show(0x5219);
 	} else if (_game._screenObjects._inputMode == 1) {
-		handleDialogs();
+		handleConversations();
 	} else if (_action.isAction(VERB_TALKTO, 0x1DC) || 
 		((_game._player._playerPos == Common::Point(214, 150)) && (_game._player._facing == FACING_NORTHWEST) && (_twinkleAnimationType == 1) && _stopWalking)) {
 		switch (_game._trigger) {
