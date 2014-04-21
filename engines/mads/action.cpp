@@ -97,7 +97,8 @@ void MADSAction::set() {
 	if (_commandSource == CAT_TALK_ENTRY) {
 		// Handle showing the conversation selection. Rex at least doesn't actually seem to use this
 		if (_selectedRow >= 0) {
-			Common::String desc = userInterface._talkStrings[userInterface._talkIds[_selectedRow]];
+			_action._verbId = userInterface._talkIds[_selectedRow];
+			Common::String desc = userInterface._talkStrings[_selectedRow];
 			if (!desc.empty())
 				_statusText = desc;
 		}

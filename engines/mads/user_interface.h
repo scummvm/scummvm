@@ -42,6 +42,7 @@ enum ScrollbarActive {
 };
 
 class AnimFrameEntry;
+class MADSEngine;
 
 class UISlot {
 public:
@@ -94,8 +95,33 @@ public:
 };
 
 class Conversation {
+private:
+	static MADSEngine *_vm;
 public:
+	static void init(MADSEngine *vm);
+public:
+	int _globalId;
+	Common::Array<int> _quotes;
 
+	/**
+	* Set up a conversation sequence
+	*/
+	void setup(int globalId, ...);
+
+	/**
+	* Activates the passed set of quotes in the given conversation node
+	*/
+	void set(int quoteId, ...);
+
+	/**
+	* Activates or deactivates the specified quote in the given conversation node
+	*/
+	void write(int quoteId, bool flag);
+
+	/**
+	 * Starts the conversation
+	 */
+	void start();
 };
 
 class UserInterface : public MSurface {
@@ -128,7 +154,7 @@ private:
 	/**
 	 * Draw options during a conversation.
 	 */
-	void drawTalkList();
+	void drawConversationList();
 
 	/**
 	 * Draw the action list
@@ -243,29 +269,14 @@ public:
 	void updateInventoryScroller();
 
 	/**
-	 * Set up a conversation sequence
-	 */
-	void initConversation(Conversation *conversatin, int globalId, int quoteId, ...);
-
-	/**
-	 * Activates the passed set of quotes in the given conversation node
-	 */
-	void setConversation(Conversation *conversation, int quoteId, ...);
-
-	/** 
-	 * Activates or deactivates the specified quote in the given conversation node
-	 */
-	void writeConversation(Conversation *conversation, int quoteId, int flag);
-
-	/**
-	 * Start an interactive conversation
-	 */
-	void startConversation(Conversation *conversation);
-
-	/**
 	 * Empties the current conversation talk list
 	 */
 	void emptyConversationList();
+
+	/**
+	 * Add a msesage to the list of conversation items to select from
+	 */
+	void addConversationMessage(int vocabId, const Common::String &msg);
 };
 
 } // End of namespace MADS

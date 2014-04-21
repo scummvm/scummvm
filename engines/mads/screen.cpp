@@ -436,12 +436,7 @@ void ScreenObjects::elementHighlighted() {
 		break;
 
 	case CAT_TALK_ENTRY:
-		index = 0;
-		for (int idx = 0; idx < 5; ++idx) {
-			if (!userInterface._talkStrings[idx].empty())
-				++index;
-		}
-
+		index = userInterface._talkStrings.size();
 		indexEnd = index - 1;
 		varA = 0;
 		topIndex = 0;

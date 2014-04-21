@@ -78,6 +78,7 @@ void MADSEngine::initialise() {
 	MSprite::setVm(this);
 
 	Resources::init(this);
+	Conversation::init(this);
 	_debugger = new Debugger(this);
 	_dialogs = Dialogs::init(this);
 	_events = new EventsManager(this);

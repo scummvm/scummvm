@@ -24,6 +24,7 @@
 #include "mads/mads.h"
 #include "mads/compression.h"
 #include "mads/user_interface.h"
+#include "mads/nebular/game_nebular.h"
 
 namespace MADS {
 
@@ -70,7 +71,6 @@ void UISlots::add(const AnimFrameEntry &frameEntry) {
 
 	push_back(ie);
 }
-
 
 void UISlots::draw(bool updateFlag, bool delFlag) {
 	Scene &scene = _vm->_game->_scene;
@@ -207,6 +207,95 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 
 /*------------------------------------------------------------------------*/
 
+MADSEngine *Conversation::_vm;
+
+void Conversation::init(MADSEngine *vm) {
+	_vm = vm;
+}
+
+void Conversation::setup(int globalId, ...) {
+	va_list va;
+	va_start(va, globalId);
+
+	// Load the list of conversation quotes
+	_quotes.clear();
+	int quoteId = va_arg(va, int);
+	while (quoteId > 0) {
+		_quotes.push_back(quoteId);
+		quoteId = va_arg(va, int);
+	}
+	va_end(va);
+
+	assert(_vm->getGameID() == GType_RexNebular);
+	Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
+	game->_globals[globalId] = -1;
+
+	_globalId = globalId;
+}
+
+void Conversation::set(int quoteId, ...) {
+	assert(_vm->getGameID() == GType_RexNebular);
+	Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
+	game->_globals[_globalId] = 0;
+
+	va_list va;
+	va_start(va, quoteId);
+
+	// Loop through handling each quote
+	while (quoteId > 0) {
+		for (uint idx = 0; idx < _quotes.size(); ++idx) {
+			if (_quotes[idx] == quoteId) {
+				// Found index, so set that bit in the global keeping track of conversation state
+				game->_globals[_globalId] |= 1 << idx;
+				break;
+			}
+		}
+
+		quoteId = va_arg(va, int);
+	}
+	va_end(va);
+}
+
+void Conversation::write(int quoteId, bool flag) {
+	assert(_vm->getGameID() == GType_RexNebular);
+	Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
+
+	for (uint idx = 0; idx < _quotes.size(); ++idx) {
+		if (_quotes[idx] == quoteId) {
+			// Found index, so set or clear the flag
+			if (flag) {
+				// Set bit
+				game->_globals[_globalId] |= 1 << idx;
+			} else {
+				// Clear bit
+				game->_globals[_globalId] &= ~(1 << idx);
+			}
+			return;
+		}
+	}
+}
+
+void Conversation::start() {
+	assert(_vm->getGameID() == GType_RexNebular);
+	Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
+	UserInterface &userInterface = game->_scene._userInterface;
+	userInterface.emptyConversationList();
+
+	// Loop through each of the quotes loaded into the conversation
+	for (uint idx = 0; idx < _quotes.size(); ++idx) {
+		// Check whether the given quote is enabled or not
+		if (game->_globals[_globalId] & (1 << idx)) {
+			// Quote enabled, so add it to the list of talk selections
+			Common::String msg = game->getQuote(_quotes[idx]);
+			userInterface.addConversationMessage(_quotes[idx], msg);
+		}
+	}
+
+	userInterface.setup(kInputConversation);
+}
+
+/*------------------------------------------------------------------------*/
+
 UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm), 
 		_uiSlots(vm) {
 	_invSpritesIndex = -1;
@@ -305,7 +394,7 @@ void UserInterface::setup(InputMode inputMode) {
 
 void UserInterface::drawTextElements() {
 	if (_vm->_game->_screenObjects._inputMode) {
-		drawTalkList();
+		drawConversationList();
 	} else {
 		// Draw the actions
 		drawActions();
@@ -466,7 +555,10 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 		break;
 
 	case CAT_TALK_ENTRY:
-		error("TODO: CAT_TALK_ENTRY");
+		font = _vm->_font->getFont(FONT_INTERFACE);
+		font->setColorMode(id == _highlightedCommandIndex ? SELMODE_HIGHLIGHTED : SELMODE_UNSELECTED);
+		font->writeString(this, _talkStrings[id], Common::Point(bounds.left, bounds.top));
+		break;
 
 	case CAT_INV_SCROLLER:
 		font = _vm->_font->getFont(FONT_MISC);
@@ -668,28 +760,22 @@ void UserInterface::moveRect(Common::Rect &bounds) {
 	bounds.translate(0, MADS_SCENE_HEIGHT);
 }
 
-void UserInterface::drawTalkList() {
-	warning("TODO: drawTalkList");
-}
-
-void UserInterface::initConversation(Conversation *conversatin, int globalId, int quoteId, ...) {
-
-}
-
-void UserInterface::setConversation(Conversation *conversation, int quoteId, ...) {
-
-}
-
-void UserInterface::writeConversation(Conversation *conversation, int quoteId, int flag) {
-
+void UserInterface::drawConversationList() {
+	for (uint idx = 0; idx < _talkStrings.size(); ++idx) {
+		writeVocab(CAT_TALK_ENTRY, idx);
+	}
 }
 
 void UserInterface::emptyConversationList() {
 	_talkStrings.clear();
+	_talkIds.clear();
 }
 
-void UserInterface::startConversation(Conversation *conversation) {
+void UserInterface::addConversationMessage(int vocabId, const Common::String &msg) {
+	assert(_talkStrings.size() < 5);
 
+	_talkStrings.push_back(msg);
+	_talkIds.push_back(vocabId);
 }
 
 void UserInterface::loadInventoryAnim(int objectId) {

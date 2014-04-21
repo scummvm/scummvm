@@ -77,7 +77,6 @@ protected:
 	bool _quoteEmergency;
 	bool _vocabEmergency;
 	bool _anyEmergency;
-	int _widepipeCtr;
 
 	/**
 	 * Constructor
@@ -136,6 +135,7 @@ public:
 	uint32 _priorFrameTimer;
 	Common::String _aaName;
 	int _winStatus;
+	int _widepipeCtr;
 public:
 	virtual ~Game();
 
