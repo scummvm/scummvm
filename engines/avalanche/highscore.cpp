@@ -42,7 +42,7 @@ void HighScore::displayHighScores() {
 
 void HighScore::saveHighScores() {
 	int firstSmaller = 0;
-	while ((_data[firstSmaller]._score >= _vm->_score) && (firstSmaller < 12)) 
+	while ((firstSmaller < 12) && (_data[firstSmaller]._score >= _vm->_score))
 		firstSmaller++;
 
 	if (firstSmaller < 12) {
