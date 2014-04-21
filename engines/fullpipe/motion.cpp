@@ -159,10 +159,72 @@ void MctlCompound::freeItems() {
 		_motionControllers[i]->_motionControllerObj->freeItems();
 }
 
-MessageQueue *MctlCompound::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	warning("STUB: MctlCompound::method34()");
+MessageQueue *MctlCompound::method34(StaticANIObject *ani, int sourceX, int sourceY, int fuzzyMatch, int staticsId) {
+	int idx = -1;
+	int sourceIdx = -1;
 
-	return 0;
+	if (!ani)
+		return 0;
+
+	for (uint i = 0; i < _motionControllers.size(); i++) {
+		if (_motionControllers[i]->_movGraphReactObj) {
+			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(ani->_ox, ani->_oy)) {
+				idx = i;
+				break;
+			}
+		}
+	}
+
+	for (uint i = 0; i < _motionControllers.size(); i++) {
+		if (_motionControllers[i]->_movGraphReactObj) {
+			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(sourceX, sourceY)) {
+				sourceIdx = i;
+				break;
+			}
+		}
+	}
+
+	if (idx == -1)
+		return 0;
+
+	if (sourceIdx == -1)
+		return 0;
+
+	if (idx == sourceIdx)
+		return _motionControllers[idx]->_motionControllerObj->method34(ani, sourceX, sourceY, fuzzyMatch, staticsId);
+
+	MctlConnectionPoint *cp = findClosestConnectionPoint(ani->_ox, ani->_oy, idx, sourceX, sourceY, sourceIdx, &sourceIdx);
+
+	if (!cp)
+		return 0;
+
+	MessageQueue *mq = _motionControllers[idx]->_motionControllerObj->doWalkTo(ani, cp->_connectionX, cp->_connectionY, 1, cp->_field_14);
+
+	if (!mq)
+		return 0;
+
+	for (uint i = 0; i < cp->_messageQueueObj->getCount(); i++) {
+		ExCommand *ex = new ExCommand(cp->_messageQueueObj->getExCommandByIndex(i));
+
+		ex->_excFlags |= 2;
+
+		mq->addExCommandToEnd(ex);
+	}
+
+	ExCommand *ex = new ExCommand(ani->_id, 51, 0, sourceX, sourceY, 0, 1, 0, 0, 0);
+
+	ex->_excFlags |= 2;
+	ex->_field_20 = fuzzyMatch;
+	ex->_keyCode = ani->_okeyCode;
+
+	mq->addExCommandToEnd(ex);
+
+	if (!mq->chain(ani)) {
+		delete mq;
+		return 0;
+	}
+
+	return mq;
 }
 
 MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
