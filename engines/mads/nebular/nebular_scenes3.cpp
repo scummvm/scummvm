@@ -516,13 +516,13 @@ void Scene307::setDialogNode(int node) {
 	case 1:
 		_globals[kMetBuddyBeast] = true;
 		handlePrisonerSpeech(0x10F, 2, 9999999);
-		warning("TODO: talk_init(&dialog1);");
+		dialog1.start();
 		break;
 
 	case 2:
 		_globals[kMetBuddyBeast] = true;
 		handlePrisonerSpeech(0x111, 2, 9999999);
-		warning("TODO: talk_init(&dialog1);");
+		dialog1.start();
 		break;
 
 	case 4:
@@ -533,7 +533,7 @@ void Scene307::setDialogNode(int node) {
 	case 5:
 		_globals[kKnowsBuddyBeast] = true;
 		handlePrisonerSpeech(0x117, 2, 9999999);
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.start();
 		break;
 
 	case 6:
@@ -544,57 +544,57 @@ void Scene307::setDialogNode(int node) {
 	case 7:
 		_globals[kKnowsBuddyBeast] = true;
 		handlePrisonerSpeech(0x124, 10, 9999999);
-		warning("TODO: sub71B9E(&dialog2, 0x11A, false);");
-		warning("TODO: sub71B9E(&dialog2, 0x11B, true);");
-		warning("TODO: sub71B9E(&dialog2, 0x120, true);");
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.write(0x11A, false);
+		dialog2.write(0x11B, true);
+		dialog2.write(0x120, true);
+		dialog2.start();
 		break;
 
 	case 8:
 		handlePrisonerSpeech(0x12E, 6, 9999999);
-		warning("TODO: sub71B9E(&dialog2, 0x11A, false);");
-		warning("TODO: sub71B9E(&dialog2, 0x11B, false);");
-		warning("TODO: sub71B9E(&dialog2, 0x11C, true);");
-		warning("TODO: sub71B9E(&dialog2, 0x11D, true);");
-		warning("TODO: sub71B9E(&dialog2, 0x11F, true);");
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.write(0x11A, false);
+		dialog2.write(0x11B, false);
+		dialog2.write(0x11C, true);
+		dialog2.write(0x11D, true);
+		dialog2.write(0x11F, true);
+		dialog2.start();
 		break;
 
 	case 9:
 		handlePrisonerSpeech(0x134, 4, 9999999);
-		warning("TODO: sub71B9E(&dialog2, 0x11D, false);");
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.write(0x11D, false);
+		dialog2.start();
 		break;
 
 	case 10:
 		handlePrisonerSpeech(0x138, 6, 9999999);
-		warning("TODO: sub71B9E(&dialog2, 0x11E, false);");
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.write(0x11E, false);
+		dialog2.start();
 		break;
 
 	case 11:
 		handlePrisonerSpeech(0x13E, 6, 9999999);
-		warning("TODO: sub71B9E(&dialog2, 0x11F, false);");
-		warning("TODO: sub71B9E(&dialog2, 0x121, true);");
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.write(0x11F, false);
+		dialog2.write(0x121, true);
+		dialog2.start();
 		break;
 
 	case 12:
 		handlePrisonerSpeech(0x144, 4, 9999999);
-		warning("TODO: sub71B9E(&dialog2, 0x11C, false);");
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.write(0x11C, false);
+		dialog2.start();
 		break;
 
 	case 13:
 		handlePrisonerSpeech(0x148, 7, 9999999);
-		warning("TODO: sub71B9E(&dialog2, 0x120, false);");
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.write(0x120, false);
+		dialog2.start();
 		break;
 
 	case 14:
 		handlePrisonerSpeech(0x14F, 3, 9999999);
-		warning("TODO: sub71B9E(&dialog2, 0x121, false);");
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.write(0x121, false);
+		dialog2.start();
 		break;
 
 	case 15:
@@ -605,7 +605,7 @@ void Scene307::setDialogNode(int node) {
 	case 16:
 		_globals[kKnowsBuddyBeast] = true;
 		handlePrisonerSpeech(0x10C, 1, 9999999);
-		warning("TODO: talk_init(&dialog2);");
+		dialog2.start();
 		break;
 
 	default:
@@ -694,13 +694,13 @@ void Scene307::enter() {
 		0x142, 0x143, 0x144, 0x145, 0x146, 0x147, 0x148, 0x149, 0x14A, 0x14B, 0x14C, 0x14D, 0x14E, 0x14F,
 		0x150, 0x151, 0x152, 0x153, 0);
 
-	warning("TODO: sub71A50(&dialog1, 0x3F, 0x113, 0x114, 0x115, -1);");
-	warning("TODO: sub71A50(&dialog2, 0x40, 0x11A, 0x11B, 0x11C, 0x11D, 0x11E, 0x11F, 0x120, 0x121, 0x122, 0);");
+	dialog1.setup(0x3F, 0x113, 0x114, 0x115, -1);
+	dialog2.setup(0x40, 0x11A, 0x11B, 0x11C, 0x11D, 0x11E, 0x11F, 0x120, 0x121, 0x122, 0);
 
 	if (!_game._visitedScenes._sceneRevisited)
-		warning("TODO: sub71B18(&dialog2, 0x11A, 0x122, 0);");
+		dialog2.set(0x11A, 0x122, 0);
 	else if (_scene->_priorSceneId == 318)
-		warning("TODO: sub71B9E(&dialog2, 0x11E, -1);");
+		dialog2.write(0x11E, true);
 
 
 	if (_scene->_priorSceneId == -2) {
@@ -2306,41 +2306,41 @@ void Scene318::handleDialog() {
 		_game._player._stepEnabled = true;
 	} else {
 		if (_action._activeAction._verbId < 0x19C)
-			warning("TODO: sub71B9E(&dialog1, _action._activeAction._verbId, false);");
+			dialog1.write(_action._activeAction._verbId, false);
 
 		switch (_action._activeAction._verbId) {
 		case 0x191:
 			handleInternDialog(0x19E, 2, 9999999);
-			warning("TODO: sub71B9E(&dialog1, 0x192, true);");
+			dialog1.write(0x192, true);
 			break;
 
 		case 0x192:
 			handleInternDialog(0x1A0, 5, 9999999);
-			warning("TODO: sub71B9E(&dialog1, 0x193, true);");
+			dialog1.write(0x193, true);
 			break;
 
 		case 0x193:
 			handleInternDialog(0x1A5, 4, 9999999);
-			warning("TODO: sub71B9E(&dialog1, 0x194, true);");
+			dialog1.write(0x194, true);
 			break;
 
 		case 0x194:
 			handleInternDialog(0x1A9, 6, 9999999);
-			warning("TODO: sub71B9E(&dialog1, 0x195, true);");
-			warning("TODO: sub71B9E(&dialog1, 0x196, true);");
-			warning("TODO: sub71B9E(&dialog1, 0x19D, false);");
+			dialog1.write(0x195, true);
+			dialog1.write(0x196, true);
+			dialog1.write(0x19D, false);
 			break;
 
 		case 0x195:
 			handleInternDialog(0x1AF, 7, 9999999);
 			warning("TODO: if (!sub71C16(&_dialog1, 0x196))");
-			warning("TODO: \tsub71B9E(&dialog1, 0x197, true);");
+				dialog1.write(0x197, true);
 			break;
 
 		case 0x196:
 			handleInternDialog(0x1B6, 5, 9999999);
 			warning("TODO: if (!sub71C16(&_dialog1, 0x195))");
-			warning("TODO: \tsub71B9E(&dialog1, 0x197, true);");
+				dialog1.write(0x197, true);
 			break;
 
 		case 0x197:
@@ -2349,7 +2349,7 @@ void Scene318::handleDialog() {
 
 		case 0x198:
 			handleInternDialog(0x1C0, 5, 9999999);
-			warning("TODO: sub71B9E(&dialog1, 0x19A, true);");
+			dialog1.write(0x19A, true);
 			break;
 
 		case 0x199:
@@ -2358,7 +2358,7 @@ void Scene318::handleDialog() {
 
 		case 0x19A:
 			handleInternDialog(0x1C8, 5, 9999999);
-			warning("TODO: sub71B9E(&dialog1, 0x19B, true);");
+			dialog1.write(0x19B, true);
 			break;
 
 		case 0x19B:
@@ -2384,7 +2384,7 @@ void Scene318::handleDialog() {
 		}
 
 		if (_action._activeAction._verbId < 0x19C) {
-			warning("TODO: talk_init(&dialog1);");
+			dialog1.start();
 			_game._player._stepEnabled = true;
 		}
 
@@ -2459,12 +2459,12 @@ void Scene318::enter() {
 	else if (_scene->_priorSceneId != -2)
 		_game._player._playerPos = Common::Point(214, 152);
 
-	warning("TODO: sub71A50(&dialog1, 0x47, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196, 0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19D, 0);");
+	dialog1.setup(0x47, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196, 0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19D, 0);
 
 	if (!_game._visitedScenes._sceneRevisited) {
-		warning("TODO: sub71B18(&dialog1, 0x191, 0x198, 0x199, 0x19C, 0);");
-		warning("TODO: if (Debugger_widepipe_ctr >= 2)");
-		warning("TODO: \tsub71B9E(&dialog1, 0x19D, -1);");
+		dialog1.set(0x191, 0x198, 0x199, 0x19C, 0);
+		if (_game._widepipeCtr >= 2)
+			dialog1.write(0x19D, true);
 	}
 
 	if (_scene->_priorSceneId == 307) {
@@ -2509,7 +2509,7 @@ void Scene318::enter() {
 			}
 
 			if (_dialogFl) {
-				warning("TODO: talk_init(&dialog1);");
+				dialog1.start();
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 8);
 			} else
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
@@ -2704,7 +2704,7 @@ void Scene318::actions() {
 		case 1:
 			_game._player._stepEnabled = true;
 			handleInternDialog(0x18F, 1, 9999999);
-			warning("TODO: talk_init(&dialog1);");
+			dialog1.start();
 			break;
 
 		case 2: {

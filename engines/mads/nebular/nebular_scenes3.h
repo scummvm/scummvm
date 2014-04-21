@@ -135,7 +135,7 @@ private:
 
 	Common::String _subQuote2;
 
-	//	dialog1, dialog2;
+	Conversation dialog1, dialog2;
 
 	void handleDialog();
 	void handleRexDialog(int quote);
@@ -265,7 +265,7 @@ private:
 
 	Common::String _subQuote2;
 
-	// dialog1
+	Conversation dialog1;
 
 	void handleDialog();
 	void handleRexDialogs(int quote);
