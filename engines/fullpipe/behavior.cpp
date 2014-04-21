@@ -83,7 +83,7 @@ void BehaviorManager::updateBehaviors() {
 	if (!_isActive)
 		return;
 
-	debug(0, "BehaviorManager::updateBehaviors()");
+	debug(4, "BehaviorManager::updateBehaviors()");
 	for (uint i = 0; i < _behaviors.size(); i++) {
 		BehaviorInfo *beh = _behaviors[i];
 
@@ -122,7 +122,7 @@ void BehaviorManager::updateBehaviors() {
 }
 
 void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *entry) {
-	debug(0, "BehaviorManager::updateBehavior() %d", entry->_itemsCount);
+	debug(4, "BehaviorManager::updateBehavior() %d", entry->_itemsCount);
 	for (int i = 0; i < entry->_itemsCount; i++) {
 		BehaviorEntryInfo *bhi = entry->_items[i];
 		if (!(bhi->_flags & 1)) {
@@ -144,7 +144,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *
 }
 
 void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, BehaviorEntry *bhe) {
-	debug(0, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic((byte *)ani->_objectName));
+	debug(4, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic((byte *)ani->_objectName));
 
 	MessageQueue *mq = 0;
 
@@ -236,7 +236,7 @@ void BehaviorInfo::clear() {
 }
 
 void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
-	debug(0, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
+	debug(4, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
 
 	clear();
 	_itemsCount = 1;
@@ -260,7 +260,7 @@ void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 }
 
 void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani) {
-	debug(0, "BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
+	debug(4, "BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
 
 	clear();
 
