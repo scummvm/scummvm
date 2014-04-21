@@ -168,7 +168,9 @@ PictureObject::PictureObject() {
 }
 
 PictureObject::~PictureObject() {
-	warning("STUB: PictureObject::~PictureObject()");
+	delete _picture;
+	_pictureObject2List->clear();
+	delete _pictureObject2List;
 }
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {

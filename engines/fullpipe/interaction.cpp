@@ -56,7 +56,9 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 }
 
 InteractionController::~InteractionController() {
-	warning("STUB: InteractionController::~InteractionController()");
+	_interactions.clear();
+
+	removeMessageHandler(124, -1);
 }
 
 bool InteractionController::load(MfcArchive &file) {
