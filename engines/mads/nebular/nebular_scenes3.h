@@ -142,7 +142,7 @@ private:
 	void handlePrisonerDialog();
 	void handlePrisonerEncounter();
 	void setDialogNode(int node);
-	void handlePrisonerSpeech(int firstQuoteId, int number, long time);
+	void handlePrisonerSpeech(int firstQuoteId, int number, long timeout);
 
 public:
 	Scene307(MADSEngine *vm) : Scene3xx(vm) {}
@@ -245,6 +245,43 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
+class Scene318: public Scene3xx {
+private:
+	uint32 _dropTimer;
+
+	int _lastFrame;
+	int _animMode;
+	int _internCounter;
+	int _counter;
+
+	bool _dialogFl;
+	bool _internTalkingFl;
+	bool _internWalkingFl;
+	bool _internVisibleFl;
+	bool _explosionFl;
+
+	uint32 _lastFrameCounter;
+
+	Common::String _subQuote2;
+
+	// dialog1
+
+	void handleDialog();
+	void handleRexDialogs(int quote);
+	void handleInternDialog(int quoteId, int quoteNum, uint32 timeout);
+
+public:
+	Scene318(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 

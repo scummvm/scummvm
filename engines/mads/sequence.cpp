@@ -142,7 +142,7 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 	return seqIndex;
 }
 
-int SequenceList::addTimer(int time, int abortVal) {
+int SequenceList::addTimer(int timeout, int abortVal) {
 	Scene &scene = _vm->_game->_scene;
 	uint seqIndex;
 	for (seqIndex = 0; seqIndex < _entries.size(); ++seqIndex) {
@@ -154,9 +154,9 @@ int SequenceList::addTimer(int time, int abortVal) {
 	SequenceEntry &se = _entries[seqIndex];
 	se._active = true;
 	se._spritesIndex = -1;
-	se._numTicks = time;
+	se._numTicks = timeout;
 	se._extraTicks = 0;
-	se._timeout = scene._frameStartTime + time;
+	se._timeout = scene._frameStartTime + timeout;
 	se._triggerCountdown = true;
 	se._doneFlag = false;
 	se._entries._count = 0;
