@@ -105,7 +105,7 @@ float Line2d::getYatX(float x) const {
 	return -(_a * x + _c) / _b;
 }
 
-Common::Debug &operator<<(Common::Debug dbg, const Math::Line2d &line) {
+Common::Debug &operator<<(Common::Debug &dbg, const Math::Line2d &line) {
 	if (fabsf(line._a) < 0.0001f) {
 		dbg.nospace() << "Line2d: <y = " << (-line._a / line._b) << " * x + " << -line._c / line._b << ">";
 	} else {
