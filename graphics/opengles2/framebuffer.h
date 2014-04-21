@@ -39,7 +39,7 @@ public:
 
 private:
 	GLuint _colorTexture;
-	GLuint _depthRenderBuffer;
+	GLuint _renderBuffers[2];
 	GLuint _frameBuffer;
 	uint _width, _height;
 };

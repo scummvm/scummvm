@@ -25,21 +25,44 @@
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengles2/framebuffer.h"
+#include "graphics/opengles2/extensions.h"
+
+#ifdef USE_GLES2
+#define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
+#endif
 
 namespace Graphics {
 
+static bool usePackedBuffer() {
+#ifdef USE_GLES2
+	return Graphics::isExtensionSupported("GL_OES_packed_depth_stencil");
+#endif
+	return true;
+}
+
 FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height) : _colorTexture(texture_name), _width(width), _height(height) {
 	glGenFramebuffers(1, &_frameBuffer);
-	glGenRenderbuffers(1, &_depthRenderBuffer);
-
-	glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, texture_width, texture_height);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glGenRenderbuffers(2, &_renderBuffers[0]);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_name, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
+
+if (usePackedBuffer()) {
+	glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, texture_width, texture_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+} else {
+	glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, texture_width, texture_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[1]);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, texture_width, texture_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[1]);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	GLenum status=glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -51,7 +74,7 @@ FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height, uint text
 }
 
 FrameBuffer::~FrameBuffer() {
-	glDeleteRenderbuffers(1, &_depthRenderBuffer);
+	glDeleteRenderbuffers(2, &_renderBuffers[0]);
 	glDeleteFramebuffers(1, &_frameBuffer);
 }
 

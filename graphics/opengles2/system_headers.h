@@ -37,8 +37,6 @@
 #endif
 #undef GL_GLEXT_PROTOTYPES
 
-#define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
-
 #ifndef GL_BGRA
 #	define GL_BGRA GL_BGRA_EXT
 #endif
