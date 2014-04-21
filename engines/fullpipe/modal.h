@@ -239,7 +239,7 @@ private:
 
 class ModalSaveGame : public BaseModalObject {
 public:
-	ModalSaveGame() {}
+	ModalSaveGame();
 	virtual ~ModalSaveGame() {}
 
 	virtual bool pollEvent() { return true; }

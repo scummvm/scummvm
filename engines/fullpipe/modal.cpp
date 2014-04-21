@@ -1445,6 +1445,13 @@ bool ModalQuery::init(int counterdiff) {
 	return false;
 }
 
+ModalSaveGame::ModalSaveGame() {
+	warning("STUB: ModalSaveGame::ModalSaveGame()");
+
+	_oldBgX = 0;
+	_oldBgY = 0;
+}
+
 void ModalSaveGame::setScene(Scene *sc) {
 	warning("STUB: ModalSaveGame::setScene()");
 }
