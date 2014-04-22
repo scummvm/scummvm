@@ -258,6 +258,18 @@ void Conversation::set(int quoteId, ...) {
 	va_end(va);
 }
 
+bool Conversation::read(int quoteId) {
+	uint16 flags = _vm->_game->globals()[_globalId];
+
+	for (uint idx = 0; idx < _quotes.size(); ++idx) {
+		if (_quotes[idx] == quoteId) {
+			return flags & (1 << idx);
+		}
+	}
+
+	return false;
+}
+
 void Conversation::write(int quoteId, bool flag) {
 	for (uint idx = 0; idx < _quotes.size(); ++idx) {
 		if (_quotes[idx] == quoteId) {

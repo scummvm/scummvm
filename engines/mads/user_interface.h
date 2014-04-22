@@ -104,18 +104,23 @@ public:
 	Common::Array<int> _quotes;
 
 	/**
-	* Set up a conversation sequence
-	*/
+	 * Set up a conversation sequence
+	 */
 	void setup(int globalId, ...);
 
 	/**
-	* Activates the passed set of quotes in the given conversation node
-	*/
+	 * Activates the passed set of quotes in the given conversation node
+	 */
 	void set(int quoteId, ...);
 
 	/**
-	* Activates or deactivates the specified quote in the given conversation node
-	*/
+	 * Returns true whether the given quote is enabled in the conversation
+	 */
+	bool read(int quoteId);
+
+	/**
+	 * Activates or deactivates the specified quote in the given conversation node
+	 */
 	void write(int quoteId, bool flag);
 
 	/**

@@ -821,9 +821,10 @@ void Scene307::step() {
 				if (_prisonerMessageId > 0x10A)
 					_prisonerMessageId = 0x104;
 			} else if (_globals[kKnowsBuddyBeast] && (_vm->getRandomNumber(1, 3) == 1)) {
-				warning("TODO: if (_globals[kKnowsBuddyBeast] && (sub71C16(&dialog2, 0) > 1) && (_vm->getRandomNumber(1, 3) == 1)) {");
-				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(267));
-				_scene->_kernelMessages.setQuoted(idx, 4, true);
+				if (_globals[kKnowsBuddyBeast] && (dialog2.read(0) > 1) && (_vm->getRandomNumber(1, 3) == 1)) {
+					int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(267));
+					_scene->_kernelMessages.setQuoted(idx, 4, true);
+				}
 			}
 			_prisonerTimer = 0;
 		}
@@ -2333,13 +2334,13 @@ void Scene318::handleDialog() {
 
 		case 0x195:
 			handleInternDialog(0x1AF, 7, 9999999);
-			warning("TODO: if (!sub71C16(&_dialog1, 0x196))");
+			if (!dialog1.read(0x196))
 				dialog1.write(0x197, true);
 			break;
 
 		case 0x196:
 			handleInternDialog(0x1B6, 5, 9999999);
-			warning("TODO: if (!sub71C16(&_dialog1, 0x195))");
+			if (!dialog1.read(0x195))
 				dialog1.write(0x197, true);
 			break;
 
@@ -2376,10 +2377,10 @@ void Scene318::handleDialog() {
 
 			_dialogFl = false;
 			handleInternDialog(0x1D0, 1, 120);
-			warning("TODO: if ((sub71C16(&_dialog1, 0) == 1) || (_action._activeAction._verbId == 0x19D)) {");
-			_explosionFl = true;
-			_internCounter = 3420;
-			//			}
+			if (dialog1.read(0) || (_action._activeAction._verbId == 0x19D)) {
+				_explosionFl = true;
+				_internCounter = 3420;
+			}
 			break;
 		}
 
