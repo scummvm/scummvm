@@ -1108,6 +1108,15 @@ void Debugger::postEnter() {
 	_mouse->resetCursor();
 }
 
+static bool isNumeric(const char *arg) {
+	const char *str = arg;
+	bool retVal = true;
+	while (retVal && (*str != '\0')) {
+		retVal = Common::isDigit(*str++);
+	}
+	return retVal;
+}
+
 bool Debugger::Cmd_ShowGrid(int argc, const char **argv) {
 	_showGrid = !_showGrid;
 	DebugPrintf("Show grid: %s\n", _showGrid ? "On" : "Off");
@@ -1299,22 +1308,20 @@ bool Debugger::Cmd_ScriptVar(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Section(int argc, const char **argv) {
-	if (argc < 2) {
-		DebugPrintf("Example: %s 4\n", argv[0]);
-		return true;
-	}
+	if (argc == 2 && isNumeric(argv[1])) {
+		const int baseId[] = { START_ONE, START_S6, START_29, START_SC31, START_SC66, START_SC90, START_SC81 };
+		int section = atoi(argv[1]);
 
-	const int baseId[] = { START_ONE, START_S6, START_29, START_SC31, START_SC66, START_SC90, START_SC81 };
-	int section = atoi(argv[1]);
-
-	if (section >= 0 && section <= 6) {
-		_logic->fnEnterSection(section == 6 ? 4 : section, 0, 0);
-		_logic->fnAssignBase(ID_FOSTER, baseId[section], 0);
-		_skyCompact->fetchCpt(ID_FOSTER)->megaSet = 0;
+		if (section >= 0 && section <= 6) {
+			_logic->fnEnterSection(section == 6 ? 4 : section, 0, 0);
+			_logic->fnAssignBase(ID_FOSTER, baseId[section], 0);
+			_skyCompact->fetchCpt(ID_FOSTER)->megaSet = 0;
+		} else {
+			DebugPrintf("Section %d is out of range (range: %d - %d)\n", section, 0, 6);
+		}
 	} else {
-		DebugPrintf("Unknown section '%s'\n", argv[1]);
+		DebugPrintf("Example: %s 4\n", argv[0]);
 	}
-
 	return true;
 }
 
