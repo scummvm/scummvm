@@ -347,6 +347,7 @@ public:
 	double calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
 	void calcNodeDistancesAndAngles();
 	MovGraphNode *calcOffset(int ox, int oy);
+	int getItemIndexByStaticAni(StaticANIObject *ani);
 };
 
 class Movement;

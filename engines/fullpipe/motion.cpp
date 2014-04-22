@@ -660,6 +660,14 @@ void MovGraph::calcNodeDistancesAndAngles() {
 	}
 }
 
+int MovGraph::getItemIndexByStaticAni(StaticANIObject *ani) {
+	for (uint i = 0; i < _items.size(); i++)
+		if (_items[i]->ani == ani)
+			return i;
+
+	return -1;
+}
+
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 	for (uint i = 0; i < _items2.size(); i++)
 		if (_items2[i]->_objectId == objectId)
