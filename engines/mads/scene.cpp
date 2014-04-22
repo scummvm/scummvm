@@ -275,7 +275,7 @@ void Scene::animatePalette() {
 		if (_cyclingDelay >= _cyclingThreshold) {
 			uint32 frameCounter = _vm->_events->getFrameCounter();
 			bool changesFlag = false;
-			for (int idx = 0; idx < _paletteCycles.size(); idx++) {
+			for (uint16 idx = 0; idx < _paletteCycles.size(); idx++) {
 				if (frameCounter >= (_cycleTicks[idx] + _paletteCycles[idx]._ticks)) {
 					_cycleTicks[idx] = frameCounter;
 					int count = _paletteCycles[idx]._colorCount;
