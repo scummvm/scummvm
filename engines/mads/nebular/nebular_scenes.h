@@ -111,7 +111,7 @@ public:
  */
 class NebularScene : public SceneLogic {
 protected:
-	Globals &_globals;
+	NebularGlobals &_globals;
 	GameNebular &_game;
 	MADSAction &_action;
 

@@ -21,38 +21,14 @@
  */
 
 #include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "mads/nebular/globals_nebular.h"
+#include "mads/globals.h"
 
 namespace MADS {
 
-namespace Nebular {
-
-NebularGlobals::NebularGlobals(): Globals() {
-	// Initialize lists
-	_flags.resize(210);
-	_spriteIndexes.resize(30);
-	_sequenceIndexes.resize(30);
-
-	// Initialize game flags
-	_timebombClock = 0;
-	_timebombTimer = 0;
-	_v0 = 0;
-	_frameTime = 0;
-	_v2 = 0;
-	_v3 = 0;
-	_v4 = 0;
-	_v5 = 0;
-	_v6 = 0;
-	_v7 = 0;
-	_v8 = 0;
-	_abortVal = 0;
-	_v84262 = 0;
-	_v84264 = 0;
-	_v84266 = 0;
-	_v84268 = 0;
+void Globals::reset() {
+	for (uint i = 0; i < _flags.size(); ++i)
+		_flags[i] = 0;
 }
 
-} // End of namespace Nebular
 
 } // End of namespace MADS

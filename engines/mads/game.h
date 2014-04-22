@@ -27,6 +27,7 @@
 #include "common/str-array.h"
 #include "mads/scene.h"
 #include "mads/game_data.h"
+#include "mads/globals.h"
 #include "mads/inventory.h"
 #include "mads/player.h"
 #include "mads/screen.h"
@@ -148,6 +149,11 @@ public:
 	const Common::String &getQuote(uint32 index) { return _quotes[index - 1]; }
 	void splitQuote(Common::String quote, Common::String part1, Common::String part2) {warning("TODO: splitQuote()");}
 	Common::StringArray getMessage(uint32 id);
+
+	/**
+	 * Returns the globals for the game
+	 */
+	virtual Globals &globals() = 0;
 
 	/**
 	* Standard object handling across the game

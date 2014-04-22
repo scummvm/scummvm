@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
+#include "mads/globals.h"
 #include "mads/nebular/globals_nebular.h"
 
 namespace MADS {
@@ -62,8 +63,10 @@ protected:
 
 	virtual void checkShowDialog();
 public:
-	Globals _globals;
+	NebularGlobals _globals;
 	StoryMode _storyMode;
+
+	virtual Globals &globals() { return _globals; }
 
 	virtual void doObjectAction();
 

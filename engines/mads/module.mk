@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	font.o \
 	game.o \
 	game_data.o \
+	globals.o \
 	hotspots.o \
 	inventory.o \
 	mads.o \

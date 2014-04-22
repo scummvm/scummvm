@@ -20,39 +20,31 @@
  *
  */
 
+#ifndef MADS_GLOBALS_H
+#define MADS_GLOBALS_H
+
 #include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "mads/nebular/globals_nebular.h"
+#include "common/array.h"
 
 namespace MADS {
 
-namespace Nebular {
+class Globals {
+protected:
+	Common::Array<int16> _flags;
+public:
+	Globals() {}
 
-NebularGlobals::NebularGlobals(): Globals() {
-	// Initialize lists
-	_flags.resize(210);
-	_spriteIndexes.resize(30);
-	_sequenceIndexes.resize(30);
+	/**
+	* Square brackets operator for accessing flags
+	*/
+	int16 &operator[](int idx) { return _flags[idx]; }
 
-	// Initialize game flags
-	_timebombClock = 0;
-	_timebombTimer = 0;
-	_v0 = 0;
-	_frameTime = 0;
-	_v2 = 0;
-	_v3 = 0;
-	_v4 = 0;
-	_v5 = 0;
-	_v6 = 0;
-	_v7 = 0;
-	_v8 = 0;
-	_abortVal = 0;
-	_v84262 = 0;
-	_v84264 = 0;
-	_v84266 = 0;
-	_v84268 = 0;
-}
-
-} // End of namespace Nebular
+	/*
+	 * Resets all the globals to empty
+	 */
+	void reset();
+};
 
 } // End of namespace MADS
+
+#endif /* MADS_GLOBALS_H */

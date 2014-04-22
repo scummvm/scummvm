@@ -279,9 +279,7 @@ enum {
 #define TELEPORTER_WORK_COUNT 6  // Total number that actually work
 
 
-class Globals {
-private:
-	Common::Array<int16> _flags;
+class NebularGlobals: public Globals {
 public:
 	Common::Array<int> _spriteIndexes;
 	Common::Array<int> _sequenceIndexes;
@@ -302,17 +300,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Globals();
-
-	/**
-	 * Square brackets operator for accessing flags
-	 */
-	int16 &operator[](int idx) { return _flags[idx]; }
-
-	/*
-	 * Resets all the globals to empty
-	 */
-	void reset();
+	NebularGlobals();
 };
 
 } // End of namespace Nebular

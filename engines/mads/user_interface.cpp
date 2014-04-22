@@ -231,18 +231,14 @@ void Conversation::setup(int globalId, ...) {
 	if (quoteId < 0) {
 		// For an ending value of -1, also initial the bitflags for the global
 		// associated with the conversation entry, which enables all the quote Ids
-		assert(_vm->getGameID() == GType_RexNebular);
-		Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
-		game->_globals[globalId] = (int16)0xffff;
+		_vm->_game->globals()[globalId] = (int16)0xffff;
 	}
 
 	_globalId = globalId;
 }
 
 void Conversation::set(int quoteId, ...) {
-	assert(_vm->getGameID() == GType_RexNebular);
-	Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
-	game->_globals[_globalId] = 0;
+	_vm->_game->globals()[_globalId] = 0;
 
 	va_list va;
 	va_start(va, quoteId);
@@ -252,7 +248,7 @@ void Conversation::set(int quoteId, ...) {
 		for (uint idx = 0; idx < _quotes.size(); ++idx) {
 			if (_quotes[idx] == quoteId) {
 				// Found index, so set that bit in the global keeping track of conversation state
-				game->_globals[_globalId] |= 1 << idx;
+				_vm->_game->globals()[_globalId] |= 1 << idx;
 				break;
 			}
 		}
@@ -263,18 +259,15 @@ void Conversation::set(int quoteId, ...) {
 }
 
 void Conversation::write(int quoteId, bool flag) {
-	assert(_vm->getGameID() == GType_RexNebular);
-	Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
-
 	for (uint idx = 0; idx < _quotes.size(); ++idx) {
 		if (_quotes[idx] == quoteId) {
 			// Found index, so set or clear the flag
 			if (flag) {
 				// Set bit
-				game->_globals[_globalId] |= 1 << idx;
+				_vm->_game->globals()[_globalId] |= 1 << idx;
 			} else {
 				// Clear bit
-				game->_globals[_globalId] &= ~(1 << idx);
+				_vm->_game->globals()[_globalId] &= ~(1 << idx);
 			}
 			return;
 		}
@@ -282,17 +275,15 @@ void Conversation::write(int quoteId, bool flag) {
 }
 
 void Conversation::start() {
-	assert(_vm->getGameID() == GType_RexNebular);
-	Nebular::GameNebular *game = (Nebular::GameNebular *)_vm->_game;
-	UserInterface &userInterface = game->_scene._userInterface;
+	UserInterface &userInterface = _vm->_game->_scene._userInterface;
 	userInterface.emptyConversationList();
 
 	// Loop through each of the quotes loaded into the conversation
 	for (uint idx = 0; idx < _quotes.size(); ++idx) {
 		// Check whether the given quote is enabled or not
-		if (game->_globals[_globalId] & (1 << idx)) {
+		if (_vm->_game->globals()[_globalId] & (1 << idx)) {
 			// Quote enabled, so add it to the list of talk selections
-			Common::String msg = game->getQuote(_quotes[idx]);
+			Common::String msg = _vm->_game->getQuote(_quotes[idx]);
 			userInterface.addConversationMessage(_quotes[idx], msg);
 		}
 	}
