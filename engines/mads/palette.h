@@ -250,7 +250,7 @@ public:
 		warning("TODO: Palette::close");
 	}
 
-	void fadeOut(byte palette[PALETTE_SIZE], int v1, int v2, int v3, int v4, int v5, int v6);
+	void fadeOut(byte palette[PALETTE_SIZE], int start, int count, int v1, int v2, int v3, int v4, int v5, int v6);
 
 	void lock();
 	void unlock();

@@ -282,6 +282,34 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene319: public Scene3xx {
+private:
+	Conversation _dialog1, _dialog2, _dialog3;
+
+	int _animMode, _animFrame;
+	int _nextAction1, _nextAction2;
+	int _slacheMode;
+	int _slacheTopic;
+	int _slachePosY;
+
+	bool _slacheTalkingFl;
+	bool _slacheReady;
+	bool _slacheInitFl;
+
+	Common::String _subQuote2;
+
+	void handleRexDialogues(int quote);
+	void handleSlacheDialogs(int quoteId, int counter, uint32 timer);
+public:
+	Scene319(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
 } // End of namespace Nebular
 } // End of namespace MADS
 
