@@ -24,6 +24,7 @@
 #define MADS_ACTION_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/str.h"
 
 namespace MADS {
@@ -76,6 +77,8 @@ struct ActionDetails {
 	int _verbId;
 	int _objectNameId;
 	int _indirectObjectId;
+
+	void synchronize(Common::Serializer &s);
 };
 
 struct ActionSavedFields {

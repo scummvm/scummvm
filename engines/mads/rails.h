@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "common/stack.h"
 #include "mads/msurface.h"
 
@@ -60,7 +61,6 @@ private:
 	int _depthStyle;
 	int _routeLength;
 	int _next;
-	int _routeOffset;
 	int _tempRoute[MAX_ROUTE_NODES];
 	Common::Stack<int> _routeIndexes;
 private:
@@ -122,6 +122,11 @@ public:
 
 	void resetNext() { _next = 0; }
 	int  getNext() { return _next; }
+
+	/**
+	 * Synchronize the data for the route
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace MADS

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/serializer.h"
 
 namespace MADS {
 
@@ -110,7 +111,7 @@ public:
 	bool _spritesChanged;
 	bool _visible;
 	bool _priorVisible;
-	bool _visible3;
+	bool _beenVisible;
 	bool _walkAnywhere;
 	int _frameNumber;
 	bool _loadsFirst;
@@ -122,7 +123,6 @@ public:
 	Common::Point _prepareWalkPos;
 	bool _moving;
 	int _walkOffScreen, _walkOffScreenSceneId;
-	int _next;
 	int _special;
 	int _ticksAmount;
 	uint32 _priorTimer;
@@ -210,6 +210,11 @@ public:
 	* Delete any sprites used by the player
 	*/
 	void releasePlayerSprites();
+
+	/**
+	 * Serialize the data of the player
+	 */
+	void synchronize(Common::Serializer &s);
 
 	static void preloadSequences(const Common::String &prefix, int level) {
 		// No implementation in ScummVM

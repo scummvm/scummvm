@@ -203,7 +203,7 @@ void KernelMessages::processText(int msgIndex) {
 
 	Player &player = _vm->_game->_player;
 	if (msg._flags & KMSG_PLAYER_TIMEOUT) {
-		if (player._visible3) {
+		if (player._beenVisible) {
 			SpriteAsset &asset = *_vm->_game->_scene._sprites[player._spritesStart + player._spritesIdx];
 			MSprite *frame = asset.getFrame(player._frameNumber - 1);
 

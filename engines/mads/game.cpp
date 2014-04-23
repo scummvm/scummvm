@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "common/memstream.h"
+#include "common/serializer.h"
 #include "mads/mads.h"
 #include "mads/compression.h"
 #include "mads/game.h"
@@ -45,7 +46,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 		_scene(vm), _screenObjects(vm), _player(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
 	_difficulty = DIFFICULTY_HARD;
-	_saveSlot = -1;
+	_serializer = nullptr;
 	_statusFlag = 0;
 	_sectionHandler = nullptr;
 	_sectionNumber = 1;
@@ -86,7 +87,6 @@ void Game::run() {
 	case PROTECTION_FAIL:
 		// Copy protection failed
 		_scene._nextSceneId = 804;
-		_saveSlot = -1;
 		break;
 	case PROTECTION_ESCAPE:
 		// User escaped out of copy protection dialog
@@ -102,7 +102,7 @@ void Game::run() {
 	// Get the initial starting time for the first scene
 	_scene._frameStartTime = _vm->_events->getFrameCounter();
 
-	if (_saveSlot == -1 && protectionResult != -1 && protectionResult != -2) {
+	if (_serializer == nullptr && protectionResult != -1 && protectionResult != -2) {
 		initSection(_sectionNumber);
 		_statusFlag = true;
 
@@ -118,11 +118,6 @@ void Game::run() {
 
 	if (protectionResult != 1 && protectionResult != 2) {
 		initialiseGlobals();
-
-		if (_saveSlot != -1) {
-			warning("TODO: loadGame(\"REX.SAV\", 210)");
-			_statusFlag = false;
-		}
 	}
 
 	if (_statusFlag)
@@ -131,6 +126,9 @@ void Game::run() {
 
 void Game::gameLoop() {
 	while (!_vm->shouldQuit() && _statusFlag) {
+		if (_serializer)
+			synchronize(*_serializer, true);
+
 		setSectionHandler();
 		_sectionHandler->preLoadSection();
 		initSection(_sectionNumber);
@@ -248,7 +246,7 @@ void Game::sectionLoop() {
 		_player.selectSeries();
 		_player.updateFrame();
 
-		_player._visible3 = _player._visible;
+		_player._beenVisible = _player._visible;
 		_player._special = _scene.getDepthHighBits(_player._playerPos);
 		_player._priorTimer = _scene._frameStartTime - _player._ticksAmount;
 		_player.idle();
@@ -400,6 +398,24 @@ void Game::handleKeypress(const Common::Event &event) {
 	}
 
 	warning("TODO: handleKeypress - %d", (int)event.kbd.keycode);
+}
+
+void Game::synchronize(Common::Serializer &s, bool phase1) {
+	if (phase1) {
+		s.syncAsUint16LE(_scene._nextSceneId);
+		s.syncAsUint16LE(_scene._priorSceneId);
+
+		if (s.isLoading()) {
+			_sectionNumber = _scene._nextSceneId / 100;
+			_currentSectionNumber = _sectionNumber;
+		}
+	} else {
+		s.syncAsByte(_difficulty);
+		
+		_scene.synchronize(s);
+		_objects.synchronize(s);
+		_player.synchronize(s);
+	}
 }
 
 } // End of namespace MADS

@@ -263,5 +263,22 @@ int Rails::getRouteFlags(const Common::Point &src, const Common::Point &dest) {
 	return result;
 }
 
+void Rails::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_routeLength);
+	s.syncAsSint16LE(_next);
+	
+	int count = _routeIndexes.size();
+	if (s.isSaving()) {
+		for (int i = 0; i < count; ++i)
+			s.syncAsUint16LE(_routeIndexes[i]);
+	} else {
+		_routeIndexes.clear();
+		for (int i = 0; i < count; ++i) {
+			int v = 0;
+			s.syncAsUint16LE(v);
+			_routeIndexes.push(v);
+		}
+	}
+}
 
 } // End of namespace MADS

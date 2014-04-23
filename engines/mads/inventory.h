@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/serializer.h"
 
 namespace MADS {
 
@@ -49,9 +50,9 @@ public:
 	const byte *_objFolder;		// ???
 
 	/**
-	 * Loads the data for a given object
+	 * Synchronizes the data for a given object
 	 */
-	void load(Common::SeekableReadStream &f);
+	void synchronize(Common::Serializer &s);
 };
 
 class InventoryObjects: public Common::Array<InventoryObject> {
@@ -70,6 +71,11 @@ public:
 	 * Loads the game's object list
 	 */
 	void load();
+
+	/**
+	* Synchronize the objects list in a savegame
+	*/
+	void synchronize(Common::Serializer &s);
 
 	/**
 	 * Returns the inventory item from the player's inventory

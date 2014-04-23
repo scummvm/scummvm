@@ -339,7 +339,7 @@ void Scene202::setup() {
 }
 
 void Scene202::enter() {
-	_game._player._visible3 = true;
+	_game._player._beenVisible = true;
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1));
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 2));

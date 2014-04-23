@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str-array.h"
+#include "common/serializer.h"
 #include "mads/scene.h"
 #include "mads/game_data.h"
 #include "mads/globals.h"
@@ -72,12 +73,12 @@ private:
 protected:
 	MADSEngine *_vm;
 	MSurface *_surface;
-	int _saveSlot;
 	int _statusFlag;
 	Common::StringArray _quotes;
 	bool _quoteEmergency;
 	bool _vocabEmergency;
 	bool _anyEmergency;
+	Common::Serializer *_serializer;
 
 	/**
 	 * Constructor
@@ -169,6 +170,13 @@ public:
 	 * Global game step
 	 */
 	virtual void step() = 0;
+
+	/**
+	 * Synchronise the game data
+	 * @param s			Serializer
+	 * @param phase1	If true, it's synchronising the basic scene information
+	 */
+	virtual void synchronize(Common::Serializer &s, bool phase1);
 
 	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
 	void clearQuotes() {}

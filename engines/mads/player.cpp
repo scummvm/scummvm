@@ -48,7 +48,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_priorVisible = false;
 	_needToWalk = false;
 	_readyToWalk = false;
-	_visible3 = false;
+	_beenVisible = false;
 	_loadsFirst = false;
 	_loadedFirst = false;
 	_walkAnywhere = false;
@@ -337,7 +337,7 @@ void Player::update() {
 		}
 	}
 
-	_visible3 = _visible;
+	_beenVisible |= _visible;
 	_priorVisible = _visible;
 	_forceRefresh = false;
 }
@@ -689,6 +689,74 @@ void Player::releasePlayerSprites() {
 
 	_spritesLoaded = false;
 	_spritesChanged = true;
+}
+
+void Player::synchronize(Common::Serializer &s) {
+	s.syncAsByte(_visible);
+	s.syncAsByte(_priorVisible);
+	s.syncAsByte(_beenVisible);
+	s.syncAsByte(_moving);
+	s.syncAsByte(_stepEnabled);
+	s.syncAsSint16LE(_playerPos.x);
+	s.syncAsSint16LE(_playerPos.y);
+	s.syncAsSint16LE(_targetPos.x);
+	s.syncAsSint16LE(_targetPos.y);
+	s.syncAsSint16LE(_posChange.x);
+	s.syncAsSint16LE(_posChange.y);
+	s.syncAsSint16LE(_posDiff.x);
+	s.syncAsSint16LE(_posDiff.y);
+	s.syncAsSint16LE(_xDirection);
+	s.syncAsSint16LE(_yDirection);
+	s.syncAsUint16LE(_facing);
+	s.syncAsUint16LE(_targetFacing);
+	s.syncAsByte(_spritesChanged);
+	s.syncAsByte(_walkAnywhere);
+	s.syncAsByte(_walkOffScreen);
+	s.syncAsSint16LE(_ticksAmount);
+	s.syncAsSint16LE(_centerOfGravity);
+	s.syncAsUint16LE(_walkOffScreenSceneId);
+	s.syncAsByte(_needToWalk);
+	s.syncAsByte(_readyToWalk);
+	s.syncAsUint16LE(_prepareWalkFacing);
+	s.syncAsSint16LE(_prepareWalkPos.x);
+	s.syncAsSint16LE(_prepareWalkPos.y);
+
+	s.syncAsByte(_mirror);
+	s.syncAsUint16LE(_frameCount);
+	s.syncAsSint16LE(_frameListIndex);
+	s.syncAsSint16LE(_distAccum);
+	s.syncAsSint16LE(_pixelAccum);
+	s.syncAsSint16LE(_deltaDistance);
+	
+	for (int i = 0; i < 12; ++i) {
+		s.syncAsSint16LE(_stopWalkerList[i]);
+		s.syncAsSint16LE(_stopWalkerTrigger[i]);
+	}
+	s.syncAsSint16LE(_stopWalkerIndex);
+	s.syncAsSint16LE(_totalDistance);
+	s.syncAsSint16LE(_frameNumber);
+	s.syncAsSint16LE(_special);
+	s.syncAsSint16LE(_velocity);
+	s.syncAsSint16LE(_scalingVelocity);
+	s.syncAsSint16LE(_upcomingTrigger);
+	s.syncAsSint16LE(_trigger);
+	s.syncAsSint16LE(_currentDepth);
+	s.syncAsSint16LE(_currentScale);
+
+	int count;
+	char ch;
+	if (s.isSaving()) {
+		count = _spritesPrefix.size();
+		s.syncAsUint16LE(count);
+		s.syncBytes((byte *)_spritesPrefix.c_str(), count);
+	} else {
+		s.syncAsSint16LE(count);
+		_spritesPrefix.clear();
+		for (int i = 0; i < count; ++i) {
+			s.syncAsByte(ch);
+			_spritesPrefix += ch;
+		}			
+	}
 }
 
 } // End of namespace MADS

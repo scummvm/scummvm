@@ -233,6 +233,11 @@ public:
 	 * Frees any currently active animation for the scene
 	 */
 	void freeAnimation();
+
+	/**
+	* Synchronise the game
+	*/
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace MADS

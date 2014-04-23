@@ -26,42 +26,57 @@
 
 namespace MADS {
 
-void InventoryObject::load(Common::SeekableReadStream &f) {
-	_descId = f.readUint16LE();
-	_roomNumber = f.readUint16LE();
-	_article = f.readByte();
-	_vocabCount = f.readByte();
+void InventoryObject::synchronize(Common::Serializer &s) {
+	s.syncAsUint16LE(_descId);
+	s.syncAsUint16LE(_roomNumber);
+	s.syncAsByte(_article);
+	s.syncAsByte(_vocabCount);
 	
 	for (int i = 0; i < 3; ++i) {
-		_vocabList[i]._verbType = (VerbType)f.readByte();
-		_vocabList[i]._prepType = (PrepType)f.readByte();
-		_vocabList[i]._vocabId = f.readUint16LE();
+		s.syncAsByte(_vocabList[i]._verbType);
+		s.syncAsByte(_vocabList[i]._prepType);
+		s.syncAsUint16LE( _vocabList[i]._vocabId);
 	}
 
-	f.skip(4);	// field12
-	f.read(&_mutilateString[0], 10);
-	f.skip(16);
+	s.skip(4);	// field12
+	s.syncBytes((byte *)&_mutilateString[0], 10);
+	s.skip(16);
 }
 
 /*------------------------------------------------------------------------*/
 
 void InventoryObjects::load() {
 	File f("*OBJECTS.DAT");
+	Common::Serializer s(&f, nullptr);
 
-	// Get the total numer of inventory objects
-	int count = f.readUint16LE();
-	reserve(count);
+	// Load the objects data
+	synchronize(s);
+}
 
-	// Read in each object
-	for (int i = 0; i < count; ++i) {
-		InventoryObject obj;
-		obj.load(f);
-		push_back(obj);
+void InventoryObjects::synchronize(Common::Serializer &s) {
+	int count = size();
+	s.syncAsUint16LE(count);
 
-		// If it's for the player's inventory, add the index to the inventory list
-		if (obj._roomNumber == PLAYER_INVENTORY) {
-			_inventoryList.push_back(i);
-			assert(_inventoryList.size() <= 32);
+	if (s.isSaving()) {
+		// Store the data for each object in the inventory lsit
+		for (int idx = 0; idx < count; ++idx)
+			(*this)[idx].synchronize(s);
+	} else {
+		clear();
+		_inventoryList.clear();
+		reserve(count);
+
+		// Read in each object
+		for (int i = 0; i < count; ++i) {
+			InventoryObject obj;
+			obj.synchronize(s);
+			push_back(obj);
+
+			// If it's for the player's inventory, add the index to the inventory list
+			if (obj._roomNumber == PLAYER_INVENTORY) {
+				_inventoryList.push_back(i);
+				assert(_inventoryList.size() <= 32);
+			}
 		}
 	}
 }

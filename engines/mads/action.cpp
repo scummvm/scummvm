@@ -29,6 +29,14 @@
 
 namespace MADS {
 
+void ActionDetails::synchronize(Common::Serializer &s) {
+	s.syncAsUint16LE(_verbId);
+	s.syncAsUint16LE(_objectNameId);
+	s.syncAsUint16LE(_indirectObjectId);
+}
+
+/*------------------------------------------------------------------------*/
+
 MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	clear();
 	_statusTextIndex = -1;
