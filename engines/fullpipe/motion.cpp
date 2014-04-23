@@ -2182,6 +2182,113 @@ void MGM::clearMovements2(int idx) {
 }
 
 int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
+#if 0
+	MGMItem *item = _items[idx];
+	int subIdx = st1idx + st2idx * item->staticsListCount;
+
+	if (st1idx == st2idx) {
+		memset(&item->subItems[subIdx], 0, sizeof(item->subItems[subIdx]));
+		return 0;
+	}
+
+	if (item->subItems[subIdx])
+		return item->subItems[subIdx]->field_8;
+
+	for (int i = 0; i < item->movementListCount; i++) {
+		mov = item->movements1[i];
+
+		if (mov->_staticsObj1 == item->statics[st1idx]) {
+			v16 = (int)(&item->movements2->go.CObject.vmt + i);
+			if (!*(_DWORD *)v16 && (!flop || mov->_field_50)) {
+				*(_DWORD *)v16 = 1;
+				v39 = MGM_getStaticsIndex(this, idx, *(Statics **)(*(&item->movements1->go.CObject.vmt + i) + offsetof(Movement, _staticsObj2)));
+				v43 = recalcOffsets(idx, v39, st2idx, flip, flop);
+				v17 = (Movement *)*(&item->movements1->go.CObject.vmt + i);
+				v45 = v17;
+				v18 = v17->_currMovement;
+				v41 = v18 ? v18->_dynamicPhases.m_nCount : v17->_dynamicPhases.m_nCount;
+				v19 = item->subItems;
+				v20 = v41 + *(&v19[v39].field_C + 6 * st2idx * _items[idx].staticsListCount);
+				v42 = v41 + *(&v19[v39].field_C + 6 * st2idx * _items[idx].staticsListCount);
+
+				if (v43 >= 0) {
+					if (!v19[subIdx].movement)
+						goto LABEL_22;
+
+					v21 = v19[subIdx].field_8;
+
+					if (v21 > v43 + 1) {
+						v20 = v42;
+					LABEL_22:
+						v19[subIdx].movement = v45;
+						item->subItems[subIdx].staticsIndex = v39;
+						item->subItems[subIdx].field_8 = v43 + 1;
+						item->subItems[subIdx].field_C = v20;
+						v22 = Movement_calcSomeXY(*((Movement **)&item->movements1->go.CObject.vmt + i), &flag, 0);
+						v23 = item->subItems;
+						v24 = v22->x + *(&v23[v39].x + 6 * st2idx * _items[idx].staticsListCount);
+						v25 = v22->y + *(&v23[v39].y + 6 * st2idx * _items[idx].staticsListCount);
+						v26 = v24;
+					upd_xy_loop_1_next:
+						v23[subIdx].x = v26;
+						v23[subIdx].y = v25;
+						continue;
+					}
+
+					if (v21 == v43 + 1) {
+						v20 = v42;
+
+						if (v19[subIdx].field_C > v42)
+							goto LABEL_22;
+					}
+				}
+			}
+		} else if (flip) {
+			if (mov->_staticsObj2 == item->statics[st1idx]) {
+				v27 = item->movements2;
+				v28 = *(&v27->go.CObject.vmt + i);
+				v29 = (int)(&v27->go.CObject.vmt + i);
+
+				if (!v28 && (!flop || mov->_field_50)) {
+					*(_DWORD *)v29 = 1;
+					v30 = MGM_getStaticsIndex(this, idx, *(Statics **)(*(&item->movements1->go.CObject.vmt + i) + offsetof(Movement, _staticsObj1)));
+					v40 = v30;
+					v31 = recalcOffsets(idx, v30, st2idx, flip, flop);
+
+					if (v31 >= 0) {
+						v32 = (int)&item->subItems[subIdx];
+
+						if (!*(_DWORD *)v32 || *(_DWORD *)(v32 + offsetof(MGMSubItem, field_8)) > v31 + 1) {
+							*(_DWORD *)v32 = *(&item->movements1->go.CObject.vmt + i);
+							item->subItems[subIdx].staticsIndex = v40;
+							item->subItems[subIdx].field_8 = v31 + 1;
+							v33 = (Movement *)*(&item->movements1->go.CObject.vmt + i);
+							v34 = v33->_currMovement;
+
+							if (v34)
+								v44 = v34->_dynamicPhases.m_nCount;
+							else
+								v44 = v33->_dynamicPhases.m_nCount;
+
+							item->subItems[subIdx].field_C = v44 + *(&item->subItems[v40].field_C + 6 * st2idx * _items[idx].staticsListCount);
+							v35 = Movement_calcSomeXY(*((Movement **)&item->movements1->go.CObject.vmt + i), (POINT *)&point, 0);
+							v23 = item->subItems;
+							v36 = *(&v23[v40].x + 6 * st2idx * _items[idx].staticsListCount) - v35->x;
+							v25 = *(&v23[v40].y + 6 * st2idx * _items[idx].staticsListCount) - v35->y;
+							v26 = v36;
+							goto upd_xy_loop_1_next;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (item->subItems[subIdx]->movement)
+		return item->subItems[subIdx]->field_8;
+
+	return -1;
+#endif
 	warning("STUB: MGM::recalcOffsets()");
 
 	return 0;
