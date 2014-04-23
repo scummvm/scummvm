@@ -2918,8 +2918,8 @@ void Scene319::enter() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
 
-	_globals._sequenceIndexes[0] = _scene->_sequences.startCycle (_globals._spriteIndexes[0], false, 1);
-	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle (_globals._spriteIndexes[1], false, 1);
+	_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
+	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 
 	_dialog1.setup(0x43, 0x165, 0x166, 0x167, 0x168, 0x169, 0x16A, 0);
 	_dialog2.setup(0x44, 0x171, 0x172, 0x173, 0x174, 0x175, 0x176, 0);
@@ -3165,7 +3165,7 @@ void Scene319::step() {
 		for (int i = 0; i <= 1; i++) {
 			int oldIdx = _globals._sequenceIndexes[i];
 			_scene->_sequences.remove(_globals._sequenceIndexes[i]);
-			_globals._sequenceIndexes[i] = _scene->_sequences.startCycle (_globals._spriteIndexes[i], false, 1);
+			_globals._sequenceIndexes[i] = _scene->_sequences.startCycle(_globals._spriteIndexes[i], false, 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[i], oldIdx);
 		}
 		break;
@@ -3298,7 +3298,7 @@ void Scene319::actions() {
 				} else {
 					Conversation *curDialog;
 					int nextDocQuote;
-					if ((_action._activeAction._verbId == 0x168) || (_action._activeAction._verbId == 0x169)  || (_action._activeAction._verbId == 0x167)) {
+					if ((_action._activeAction._verbId == 0x168) || (_action._activeAction._verbId == 0x169) || (_action._activeAction._verbId == 0x167)) {
 						curDialog = &_dialog1;
 						nextDocQuote = 0x163;
 					} else if ((_action._activeAction._verbId == 0x174) || (_action._activeAction._verbId == 0x175) || (_action._activeAction._verbId == 0x173)) {
@@ -3325,6 +3325,314 @@ void Scene319::actions() {
 			}
 		}
 	}
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene320::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene320::setRightView(int view) {
+	if (_rightItemId < 8) _scene->_sequences.remove(_globals._sequenceIndexes[10]);
+
+	int spriteNum;
+	switch (view) {
+	case 0:
+		spriteNum = 16;
+		break;
+
+	case 1:
+		spriteNum = 14;
+		break;
+
+	case 2:
+		spriteNum = 17;
+		break;
+
+	case 3:
+		spriteNum = 15;
+		break;
+
+	default:
+		spriteNum = view + 6;
+		break;
+	}
+
+	if (view != 8) {
+		_globals._sequenceIndexes[10] = _scene->_sequences.startCycle(_globals._spriteIndexes[spriteNum], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 0);
+	}
+
+	_globals[kRightView320] = _rightItemId = view;
+}
+
+void Scene320::setLeftView(int view) {
+	if (_leftItemId < 10)
+		_scene->_sequences.remove(_globals._sequenceIndexes[0]);
+
+	if (view != 10) {
+		_globals._sequenceIndexes[0] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[view], false, 6, 0, 0, 18);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 0);
+		if (!_blinkFl)
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 2, 2);
+	}
+
+	_leftItemId = view;
+}
+
+void Scene320::handleButtons() {
+	switch(_action._activeAction._objectNameId) {
+	case 0x2DD:
+		_buttonId = 5;
+		break;
+
+	case 0x2DE:
+		_buttonId = 4;
+		break;
+
+	case 0x2E0:
+		_buttonId = 6;
+		break;
+
+	case 0x2E1:
+		_buttonId = 7;
+		break;
+
+	case 0x2E2:
+		_buttonId = 8;
+		break;
+
+	case 0x2E3:
+		_buttonId = 9;
+		break;
+
+	case 0x2E4:
+		_buttonId = 10;
+		break;
+
+	case 0x2E5:
+		_buttonId = 11;
+		break;
+
+	case 0x2E6:
+		_buttonId = 12;
+		break;
+
+	case 0x2E7:
+		_buttonId = 13;
+		break;
+
+	case 0x2E8:
+		_buttonId = 0;
+		break;
+
+	case 0x2E9:
+		_buttonId = 1;
+		break;
+
+	case 0x2EA:
+		_buttonId = 2;
+		break;
+
+	case 0x2EB:
+		_buttonId = 3;
+		break;
+
+	default:
+		break;
+	}
+
+	if (_buttonId <= 3) {
+		_posX = (8 * _buttonId) - 2;
+		_flippedFl = true;
+	} else if (_buttonId <= 5) {
+		_posX = (13 * _buttonId) - 14;
+		_flippedFl = true;
+	} else {
+		_posX = (8 * _buttonId) + 98;
+		_flippedFl = false;
+	}
+}
+
+void Scene320::enter() {
+	_blinkFl = true;
+	_rightItemId = 8;
+	_leftItemId = 10;
+	_lastFrame = 0;
+
+	for (int i = 0; i < 10; i++)
+		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(formAnimName('M', i));
+
+	for (int i = 0; i < 8; i++)
+		_globals._spriteIndexes[10 + i] = _scene->_sprites.addSprites(formAnimName('N', i));
+
+	_globals._spriteIndexes[18] = _scene->_sprites.addSprites("*REXHAND");
+	_game._player._visible = false;
+
+	setRightView(_globals[kRightView320]);
+	setLeftView(0);
+
+	_vm->_palette->setEntry(252, 63, 30, 20);
+	_vm->_palette->setEntry(253, 45, 15, 10);
+
+	sceneEntrySound();
+}
+
+void Scene320::step() {
+	if (_scene->_activeAnimation != nullptr) {
+		if (_lastFrame != _scene->_activeAnimation->getCurrentFrame()) {
+			_lastFrame = _scene->_activeAnimation->getCurrentFrame();
+			switch (_lastFrame) {
+			case 95:
+				_blinkFl = true;
+				setLeftView(9);
+				_vm->_sound->command(41);
+				break;
+
+			case 139:
+				_blinkFl = false;
+				setLeftView(9);
+				break;
+
+			case 191:
+				_scene->_kernelMessages.add(Common::Point(1, 1), 0xFDFC, 0, 0, 60, _game.getQuote(0xFE));
+				break;
+
+			case 417:
+			case 457:
+				warning("TODO: shake_countdown = 40;");
+				_vm->_sound->command(59);
+				break;
+
+			case 430:
+				_blinkFl = true;
+				setLeftView(4);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	if (_game._trigger == 70) {
+		_globals[kAfterHavoc] = true;
+		_globals[kTeleporterRoom + 1] = 351;
+		_scene->_nextSceneId = 361;
+	}
+}
+
+void Scene320::actions() {
+	if (_action._lookFlag)
+		_vm->_dialogs->show(0x7D0B);
+	else if ((_action.isAction(0x11A) || _action.isAction(VERB_PUSH)) &&
+		(_action.isAction(0x2E8) || _action.isAction(0x2E9) || _action.isAction(0x2EA) || _action.isAction(0x2EB) ||
+		 _action.isAction(0x2DE) || _action.isAction(0x2DD) || _action.isAction(0x2E0) || _action.isAction(0x2E1) ||
+		 _action.isAction(0x2E2) || _action.isAction(0x2E3) || _action.isAction(0x2E4) || _action.isAction(0x2E5) ||
+		 _action.isAction(0x2E6) || _action.isAction(0x2E7)
+		)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			handleButtons();
+			_globals._sequenceIndexes[18] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[18], _flippedFl, 4, 2, 0, 0);
+			_scene->_sequences.setScale(_globals._sequenceIndexes[18], 60);
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[18], Common::Point(_posX, 170));
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[18], 0);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[18], SEQUENCE_TRIGGER_LOOP, 0, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[18], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			break;
+
+		case 1:
+			if (_buttonId >= 6) {
+				_vm->_sound->command(60);
+				setRightView(_buttonId - 6);
+			}
+			if (_buttonId == 4) {
+				_vm->_sound->command(38);
+				if (_leftItemId == 3)
+					setLeftView(0);
+				else
+					setLeftView(3);
+			}
+			if (_buttonId == 5) {
+				_vm->_sound->command(38);
+				if (_leftItemId == 1)
+					setLeftView(2);
+				else
+					setLeftView(1);
+			}
+			if (_buttonId <= 3) {
+				_vm->_sound->command(60);
+				setLeftView(_buttonId + 5);
+			}
+			break;
+
+		case 2:
+			_game._player._stepEnabled = true;
+			if (_buttonId == 5) {
+				if (_leftItemId == 2) {
+					_game._player._stepEnabled = false;
+					setRightView(8);
+					setLeftView(10);
+					_scene->_kernelMessages.reset();
+					_scene->resetScene();
+					_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', 2));
+					_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('m', 4));
+					_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('m', 9));
+					_blinkFl = false;
+					setLeftView(2);
+					_game.loadQuoteSet(0xFE, 0);
+					_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+					_scene->loadAnimation(formAnimName('a', -1), 70);
+					_vm->_sound->command(17);
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+	} else if (_action.isAction(0x1CD, 0x2EF))
+		_scene->_nextSceneId = 311;
+	else if (_action.isAction(VERB_LOOK, 0x2DC))
+		_vm->_dialogs->show(0x7D01);
+	else if (_action.isAction(VERB_LOOK, 0x2DB))
+		_vm->_dialogs->show(0x7D02);
+	else if (_action.isAction(VERB_LOOK, 0x1E4))
+		_vm->_dialogs->show(0x7D03);
+	else if (_action.isAction(VERB_LOOK, 0x2EF))
+		_vm->_dialogs->show(0x7D04);
+	else if (_action.isAction(VERB_LOOK, 0x2ED))
+		_vm->_dialogs->show(0x7D05);
+	else if (_action.isAction(VERB_LOOK, 0x2EE))
+		_vm->_dialogs->show(0x7D06);
+	else if (_action.isAction(VERB_LOOK, 0x2F1))
+		_vm->_dialogs->show(0x7D06);
+	else if (_action.isAction(VERB_LOOK, 0x2F3))
+		_vm->_dialogs->show(0x7D08);
+	else if (_action.isAction(VERB_LOOK, 0x2F0))
+		_vm->_dialogs->show(0x7D09);
+	else if (_action.isAction(VERB_LOOK, 0x2F2))
+		_vm->_dialogs->show(0x7D0A);
+	else if (_action.isAction(VERB_TAKE, 0x2ED))
+		_vm->_dialogs->show(0x7D0C);
+	else if (_action.isAction(VERB_TAKE, 0x2F2))
+		_vm->_dialogs->show(0x7D0D);
+	else if (_action.isAction(VERB_TAKE, 0x2EE) || _action.isAction(0x75, 0x2EE))
+		_vm->_dialogs->show(0x7D0E);
+	else if (_action.isAction(VERB_TAKE, 0x2F3))
+		_vm->_dialogs->show(0x7D0F);
+	else if (_action.isAction(VERB_TAKE, 0x2F1))
+		_vm->_dialogs->show(0x7D10);
+	else if (_action.isAction(VERB_TAKE, 0x2F0))
+		_vm->_dialogs->show(0x7D11);
+	else
+		return;
 
 	_action._inProgress = false;
 }

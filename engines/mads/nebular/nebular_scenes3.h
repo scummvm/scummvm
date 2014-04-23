@@ -310,6 +310,33 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
+class Scene320: public Scene3xx {
+private:
+	void setRightView(int view);
+	void setLeftView(int view);
+	void handleButtons();
+
+	bool _blinkFl;
+	bool _flippedFl;
+
+	int _buttonId;
+	int _lastFrame;
+	int _leftItemId;
+	int _posX;
+	int _rightItemId;
+
+public:
+	Scene320(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 
