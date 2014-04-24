@@ -24,6 +24,7 @@
 #define MADS_NEBULAR_SCENES1_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "mads/game.h"
 #include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
@@ -73,7 +74,8 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
+	virtual void postActions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene102 : public Scene1xx {
@@ -99,6 +101,7 @@ public:
 	virtual void preActions();
 	virtual void actions();
 	virtual void postActions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene103 : public Scene1xx {
@@ -111,9 +114,9 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
 	virtual void postActions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene104 : public Scene1xx {
@@ -129,7 +132,7 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene105 : public Scene1xx {

@@ -96,12 +96,12 @@ public:
 	/**
 	 * Called one per frame
 	 */
-	virtual void step() = 0;
+	virtual void step() {}
 
 	/**
 	 * Called before an action is started
 	 */
-	virtual void preActions() = 0;
+	virtual void preActions() {}
 
 	/**
 	 * Handles scene actions
@@ -111,7 +111,12 @@ public:
 	/**
 	 * Post-action handling
 	 */
-	virtual void postActions() = 0;
+	virtual void postActions() {}
+
+	/**
+	 * Synchronize any local data for the scene
+	 */
+	virtual void synchronize(Common::Serializer &s) {}
 };
 
 struct ARTHeader {

@@ -598,6 +598,19 @@ void Scene101::actions() {
 	}
 }
 
+void Scene101::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+	s.syncAsByte(_sittingFl);
+	s.syncAsByte(_panelOpened);
+
+	s.syncAsSint16LE(_messageNum);
+	s.syncAsSint16LE(_posY);
+	s.syncAsSint16LE(_shieldSpriteIdx);
+	s.syncAsSint16LE(_chairHotspotId);
+	s.syncAsSint16LE(_oldSpecial);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene102::setup() {
@@ -1191,6 +1204,19 @@ void Scene102::postActions() {
 	}
 }
 
+void Scene102::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+	s.syncAsByte(_fridgeOpenedFl);
+	s.syncAsByte(_fridgeOpenedDescr);
+	s.syncAsByte(_fridgeFirstOpenFl);
+	s.syncAsByte(_chairDescrFl);
+	s.syncAsByte(_drawerDescrFl);
+	s.syncAsByte(_activeMsgFl);
+
+	s.syncAsSint16LE(_fridgeCommentCount);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene103::setup() {
@@ -1510,6 +1536,12 @@ void Scene103::postActions() {
 	}
 }
 
+void Scene103::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_sayHiToBinky);
+	s.syncAsUint32LE(_updateClock);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene104::setup() {
@@ -1702,6 +1734,13 @@ void Scene104::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene104::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+	s.syncAsByte(_kargShootingFl);
+	s.syncAsByte(_loseFl);
 }
 
 /*------------------------------------------------------------------------*/
