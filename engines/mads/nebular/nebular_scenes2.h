@@ -68,6 +68,7 @@ private:
 	bool _activeMsgFl, _ladderTopFl, _waitingMeteoFl, _toStationFl, _toTeleportFl;
 	int _ladderHotspotId, _lastRoute, _stationCounter, _meteoFrame;
 	uint32 _meteoClock1, _meteoClock2, _startTime;
+	int _meteorologistSpecial;
 
 	int subStep1(int randVal);
 	int subStep2(int randVal);
@@ -105,7 +106,7 @@ public:
 class Scene205: public Scene2xx {
 private:
 	uint32 _lastFishTime, _chickenTime;
-
+	bool _beingKicked;
 public:
 	Scene205(MADSEngine *vm) : Scene2xx(vm), _lastFishTime(0), _chickenTime(0) {}
 

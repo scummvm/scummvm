@@ -409,6 +409,9 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 			_sectionNumber = _scene._nextSceneId / 100;
 			_currentSectionNumber = _sectionNumber;
 			_scene._frameStartTime = _vm->_events->getFrameCounter();
+
+			_player._spritesLoaded = false;
+			_player._spritesChanged = true;
 		}
 	} else {
 		s.syncAsByte(_difficulty);

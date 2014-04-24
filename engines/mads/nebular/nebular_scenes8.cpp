@@ -80,14 +80,17 @@ void Scene804::setup() {
 }
 
 void Scene804::enter() {
-	_globals._frameTime = 0;
-	_globals._v2 = 0;
-	_globals._v3 = 0;
-	_globals._v4 = 0;
-	_globals._v5 = -1;
-	_globals._v6 = 0;
-	_globals._v7 = 0;
-	_globals._v8 = 0;
+	_messWithThrottle = false;
+	_throttleCounter = 0;
+	_movingThrottle = false;
+	_throttleGone = false;
+	_dontPullThrottleAgain = false;
+	_resetFrame = -1;
+	_pullThrottleReally = false;
+	_alreadyOrgan = false;
+	_alreadyPop = false;
+
+
 	if (_globals[kCopyProtectFailed]) {
 		// Copy protection failed
 		_globals[kInSpace] = true;
@@ -136,152 +139,170 @@ void Scene804::enter() {
 }
 
 void Scene804::step() {
-	if (_globals._frameTime) {
-		if (_scene->_activeAnimation->getCurrentFrame() == 36 && !_globals._v3) {
-			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_globals._v3 = -1;
-		}
-		if (_scene->_activeAnimation->getCurrentFrame() == 39) {
-			_globals._v2 = 0;
-			if ((_globals._frameTime / 256) == 3)
-				_scene->_sequences.addTimer(130, 120);
-		}
+	if (!_messWithThrottle) {
 
-		if (!_globals._v2) {
-			_globals._frameTime += 0x100;
-			_globals._v2 = -1;
-
-			if ((_globals._frameTime / 256) >= 4) {
-				_globals._frameTime = 0;
-				_game._player._stepEnabled = true;
-			} else {
-				_globals._v5 = 34;
-			}
-		}
-	} else {
-		if (_globals._v3 && _globals._v2 && _scene->_activeAnimation->getCurrentFrame() == 39) {
-			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+		if ((_throttleGone) && (_movingThrottle) && (_scene->_activeAnimation->getCurrentFrame() == 39)) {
+			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle
+				(_globals._spriteIndexes[1], false, 1);
 			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(133, 139));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
-			_globals._v3 = 0;
+			_throttleGone = false;
 		}
 
-		if (_globals._v2 && _scene->_activeAnimation->getCurrentFrame() == 42) {
-			_globals._v5 = 0;
-			_globals._v2 = 0;
+		if ((_movingThrottle) && (_scene->_activeAnimation->getCurrentFrame() == 42)) {
+			_resetFrame = 0;
+			_movingThrottle = false;
 		}
 
-		if (_game._trigger == 70)
-			_globals._v5 = 42;
+		if (_game._trigger == 70) {
+			_resetFrame = 42;
+		}
 
-		if (_scene->_activeAnimation->getCurrentFrame() == 65)
+		if (_scene->_activeAnimation->getCurrentFrame() == 65) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[7]);
+		}
 
-		switch (_game._storyMode)  {
+		switch (_game._storyMode) {
 		case STORYMODE_NAUGHTY:
 			if (_scene->_activeAnimation->getCurrentFrame() == 81) {
-				_globals._v5 = 80;
-			} else {
-				_globals[kInSpace] = 0;
-				_globals[kBeamIsUp] = -1;
+				_resetFrame = 80; 
+				_globals[kInSpace] = false;
+				_globals[kBeamIsUp] = true;
+
 				assert(!_globals[kCopyProtectFailed]);
 				_game._winStatus = 4;
 				_vm->quitGame();
 			}
 			break;
 
-		case STORYMODE_NICE:
+		case STORYMODE_NICE:			 
 			if (_scene->_activeAnimation->getCurrentFrame() == 68) {
-				_globals._v5 = 66;
-			} else {
-				_globals[kInSpace] = 0;
-				_globals[kBeamIsUp] = -1;
+				_resetFrame = 66;
+				_globals[kInSpace] = false;
+				_globals[kBeamIsUp] = true;
+
 				assert(!_globals[kCopyProtectFailed]);
 				_game._winStatus = 4;
 				_vm->quitGame();
 			}
-			break;
 		}
 
 		if (_scene->_activeAnimation->getCurrentFrame() == 34) {
-			_globals._v5 = 36;
+			_resetFrame = 36;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		}
+
 		if (_scene->_activeAnimation->getCurrentFrame() == 37) {
-			_globals._v5 = 36;
-			if (!_globals._v4)
+			_resetFrame = 36;
+			if (!_dontPullThrottleAgain) {
+				_dontPullThrottleAgain = true;
 				_scene->_sequences.addTimer(60, 80);
+			}
 		}
 
-		if (_game._trigger == 80)
+		if (_game._trigger == 80) {
 			_scene->_nextSceneId = 803;
+		}
 
-		if (_scene->_activeAnimation->getCurrentFrame() == 7 && !_globals[kWindowFixed]) {
+		if ((_scene->_activeAnimation->getCurrentFrame() == 7) && (!_globals[kWindowFixed])) {
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_scene->_sequences.addTimer(20, 110);
-			_globals[kWindowFixed] = -1;
+			_globals[kWindowFixed] = true;
 		}
 
 		if (_scene->_activeAnimation->getCurrentFrame() == 10) {
-			_globals._v5 = 0;
+			_resetFrame = 0;
 			_game._player._stepEnabled = true;
-			_game._objects.setRoom(OBJ_POLYCEMENT, 1);
+			_game._objects.setRoom(OBJ_POLYCEMENT, NOWHERE);
+		}
+
+		if (_scene->_activeAnimation->getCurrentFrame() == 1) {
+			int randomVal = _vm->getRandomNumber(29) + 1;
+			switch (randomVal) {
+			case 1:
+				_resetFrame = 25;
+				break;
+			case 2:
+				_resetFrame = 27;
+				break;
+			case 3:
+				_resetFrame = 29;
+				break;
+			default:
+				_resetFrame = 0;
+				break;
+			}
 		}
 
 		switch (_scene->_activeAnimation->getCurrentFrame()) {
-		case 1:
-			_globals[kRandomNumber] = _vm->getRandomNumber(1, 30);
-			switch (_globals[kRandomNumber]) {
-			case 1:
-				_globals._v5 = 25;
-				break;
-			case 2:
-				_globals._v5 = 27;
-				break;
-			case 3:
-				_globals._v5 = 9;
-				break;
-			default:
-				_globals._v5 = 0;
-				break;
-			}
-			break;
-
 		case 26:
 		case 28:
 		case 31:
-			_globals._v5 = 0;
+			_resetFrame = 0; 
 			break;
+		}
+	} else {   
+		if ((_scene->_activeAnimation->getCurrentFrame() == 36) && (!_throttleGone)) {
+			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+			_throttleGone = true;
+		}
 
-		default:
-			break;
+		if (_scene->_activeAnimation->getCurrentFrame() == 39) {
+			_movingThrottle = false;
+			switch (_throttleCounter) {
+			case 1:
+				break;
+			case 3:
+				_scene->_sequences.addTimer(130, 120);
+				break;
+			}
+		}
+
+		if (!_movingThrottle) {
+			++_throttleCounter;
+			_movingThrottle = true;
+			if (_throttleCounter < 4) {
+				_resetFrame = 34;
+			} else {
+				_messWithThrottle = false;
+				_throttleCounter = 0;
+				_game._player._stepEnabled = true;
+			}
 		}
 	}
 
-	if (_game._trigger == 120)
-		_vm->_dialogs->show(0x13a26);
-	if (_game._trigger == 110)
-		_vm->_dialogs->show(0x13a2a);
-
-	if (_globals._v6) {
-		_globals._v5 = 32;
-		_globals._v6 = 0;
-	}
-	if (_globals._v5 >= 0 && (_scene->_activeAnimation->getCurrentFrame() != _globals._v5)) {
-		_scene->_activeAnimation->setCurrentFrame(_globals._v5);
-		_globals._v5 = -1;
+	if (_game._trigger == 120) {
+		_vm->_dialogs->show(80422);
 	}
 
-	if (_game._trigger == 90)
+	if (_game._trigger == 110) {
+		_vm->_dialogs->show(80426);
+	}
+
+	if (_pullThrottleReally) {
+		_resetFrame = 32;
+		_pullThrottleReally = false;
+	}
+
+	if (_resetFrame >= 0) {
+		if (_resetFrame != _scene->_activeAnimation->getCurrentFrame()) {
+			_scene->_activeAnimation->setCurrentFrame(_resetFrame);
+			_resetFrame = -1;
+		}
+	}
+
+	if (_game._trigger == 90) {
 		_scene->_nextSceneId = 803;
-
-	if (_scene->_activeAnimation->getCurrentFrame() == 7 &&!_globals._v8) {
-		_vm->_sound->command(21);
-		_globals._v8 = -1;
 	}
-	if (_scene->_activeAnimation->getCurrentFrame() == 80 && !_globals._v7) {
+
+	if ((_scene->_activeAnimation->getCurrentFrame() == 72) && !_alreadyPop)  {
+		_vm->_sound->command(21);
+		_alreadyPop = true;
+	}
+
+	if ((_scene->_activeAnimation->getCurrentFrame() == 80) && !_alreadyOrgan) {
 		_vm->_sound->command(22);
-		_globals._v7 = 0xFFFFFFFF;
+		_alreadyOrgan = true;
 	}
 }
 

@@ -53,6 +53,16 @@ public:
 };
 
 class Scene804: public Scene8xx {
+private:
+	bool _messWithThrottle;
+	uint32 _throttleCounter = 0;
+	bool _movingThrottle;
+	bool _throttleGone;
+	bool _dontPullThrottleAgain;
+	int _resetFrame;
+	bool _pullThrottleReally;
+	bool _alreadyOrgan;
+	bool _alreadyPop;
 public:
 	Scene804(MADSEngine *vm) : Scene8xx(vm) {}
 

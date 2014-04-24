@@ -1267,8 +1267,8 @@ void Scene103::enter() {
 
 	_vm->_palette->setEntry(252, 63, 63, 10);
 	_vm->_palette->setEntry(253, 45, 45, 10);
-	_globals._v0 = 0;
-	_globals._frameTime = _scene->_frameStartTime;
+	_sayHiToBinky = false;
+	_updateClock = _scene->_frameStartTime;
 }
 
 void Scene103::step() {
@@ -1296,7 +1296,7 @@ void Scene103::step() {
 		break;
 	}
 	
-	if (_globals._frameTime <= _scene->_frameStartTime) {
+	if (_scene->_frameStartTime >= _updateClock) {
 		pt = _vm->_game->_player._playerPos;
 		dist = _vm->hypotenuse(pt.x - 79, pt.y - 137);
 		_vm->_sound->command(29, (dist * -127 / 378) + 127);
@@ -1309,7 +1309,7 @@ void Scene103::step() {
 		dist = _vm->hypotenuse(pt.x - 266, pt.y - 138);
 		_vm->_sound->command(32, (dist * -127 / 378) + 127);
 
-		_globals._frameTime = _scene->_frameStartTime + _vm->_game->_player._ticksAmount;
+		_updateClock = _scene->_frameStartTime + _vm->_game->_player._ticksAmount;
 	}
 }
 
@@ -1438,7 +1438,7 @@ void Scene103::actions() {
 		case 1: {
 			Common::String msg = _game.getQuote(72);
 			_scene->_kernelMessages.add(Common::Point(310, 132), 0xFDFC, 16, 2, 120, msg);
-			_globals._v0 = 0;
+			_sayHiToBinky = false;
 			break;
 		}
 			

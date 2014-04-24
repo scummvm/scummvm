@@ -285,6 +285,7 @@ public:
 	Common::Array<int> _sequenceIndexes;
 	
 	int _timebombClock, _timebombTimer;
+	/*
 	int _v0;
 	uint32 _frameTime;
 	int _v2;
@@ -296,6 +297,7 @@ public:
 	int _v8;
 	int _abortVal;
 	int _v84262, _v84264, _v84266, _v84268;
+	*/
 public:
 	/**
 	 * Constructor

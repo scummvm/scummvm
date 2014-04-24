@@ -2536,7 +2536,7 @@ void Scene318::enter() {
 	_vm->_palette->setEntry(252, 63, 63, 10);
 	_vm->_palette->setEntry(253, 45, 45, 05);
 
-	_dropTimer = _globals._frameTime;
+	_dropTimer = _vm->_game->_scene._frameStartTime;
 	sceneEntrySound();
 
 	if (_dialogFl)
@@ -2662,11 +2662,11 @@ void Scene318::step() {
 		}
 	}
 
-	if ((_globals._frameTime - _dropTimer) > 600) {
+	if ((_vm->_game->_scene._frameStartTime - _dropTimer) > 600) {
 		_vm->_sound->command(51);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-		_dropTimer = _globals._frameTime;
+		_dropTimer = _vm->_game->_scene._frameStartTime;
 	}
 }
 

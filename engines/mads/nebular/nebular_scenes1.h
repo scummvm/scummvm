@@ -102,6 +102,9 @@ public:
 };
 
 class Scene103 : public Scene1xx {
+private:
+	bool _sayHiToBinky;
+	uint32 _updateClock;
 public:
 	Scene103(MADSEngine *vm) : Scene1xx(vm) {}
 

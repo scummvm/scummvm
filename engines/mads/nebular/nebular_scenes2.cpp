@@ -449,7 +449,8 @@ void Scene202::enter() {
 		_game._player._playerPos = Common::Point(246, 124);
 		_game._player._facing = FACING_NORTH;
 	}
-	_globals._abortVal = 0;
+
+	_meteorologistSpecial = 0;
 }
 
 void Scene202::setRandomKernelMessage() {
@@ -493,7 +494,7 @@ void Scene202::step() {
 			_action._activeAction._indirectObjectId = 438;
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_PARSER;
 			_scene->_sequences.addTimer(120, 2);
-			_globals._abortVal = -1;
+			_meteorologistSpecial = -1;
 		} else if (_globals[kMeteorologistWatch] == 2) {
 			_scene->_sequences.addTimer(120, 90);
 		}
@@ -849,7 +850,7 @@ void Scene202::actions() {
 					}
 					break;
 				case 2:
-					if (!_scene->_activeAnimation && (_globals._abortVal == 0)) {
+					if (!_scene->_activeAnimation && !_meteorologistSpecial) {
 						_vm->_dialogs->show(0x4EFE);
 					}
 					_scene->_sequences.remove(_globals._sequenceIndexes[10]);
@@ -905,7 +906,7 @@ void Scene202::actions() {
 				case 2:
 					if (!_scene->_activeAnimation)
 						_vm->_dialogs->show(0x4EFE);
-					_globals._abortVal = 0;
+					_meteorologistSpecial = 0;
 					_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 					_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
 					_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[9], Common::Point(247, 82));
@@ -1136,7 +1137,7 @@ void Scene205::enter() {
 		_scene->_hotspots.activate(450, false);
 	}
 
-	_globals._frameTime &= 0xFFFF;
+	_beingKicked = false;
 	_game.loadQuoteSet(0x6B, 0x70, 0x71, 0x72, 0x5A, 0x74, 0x75, 0x76, 0x77, 0x78, 0x73, 0x79, 0x7A, 0x7B, 0x7C,
 		0x7D, 0x7E, 0x7F, 0x80, 0xAC, 0xAD, 0xAE, 0x6C, 0x6D, 0x6E, 0x6F, 0x2, 0);
 	warning("TODO: sub71A50(&dialog1, 0x5A, 0x78, 0x74, 0x75, 0x76, 0x77, 0);");
@@ -1150,7 +1151,7 @@ void Scene205::enter() {
 	_vm->_palette->setEntry(252, 63, 63, 40);
 	_vm->_palette->setEntry(253, 50, 50, 30);
 
-	_chickenTime = _globals._frameTime;
+	_chickenTime = _vm->_game->_scene._frameStartTime;
 
 	if (_globals[kSexOfRex] == SEX_FEMALE)
 		warning("sub71704(0x3, 0xC3, 0x108, 0x63, 0x86, 0xD, 2, 0xFDFC, 0x3C, 0x6C, 0x6C, 0x6D, 0x6D, 0x6E, 0x6E, 0x6F, 0x6C, 0);");
@@ -1162,7 +1163,7 @@ void Scene205::enter() {
 		_scene->loadAnimation(formAnimName('a', -1), 0);
 		_scene->_activeAnimation->_resetFlag = false;
 	} else {
-		_globals._frameTime |= 0xFFFF0000;
+		_beingKicked = true;
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
@@ -1178,19 +1179,21 @@ void Scene205::step() {
 	if (_globals[kSexOfRex] == SEX_FEMALE) {
 		warning("TODO: sub7178C()");
 
-		if (_globals._frameTime >= _chickenTime) {
+		if (_vm->_game->_scene._frameStartTime >= _chickenTime) {
 			warning("TODO: if (sub717B2(100, 1 + sub7176C()))");
 				_vm->_sound->command(28);
 //			}
-			_chickenTime = _globals._frameTime + 2;
+				_chickenTime = _vm->_game->_scene._frameStartTime + 2;
 		}
 	}
 
-	if (_globals._frameTime - _lastFishTime > 1300) {
-		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 5, 1, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(269, 13, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+	if (_vm->_game->_scene._frameStartTime - _lastFishTime > 1300) {
+		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(
+			_globals._spriteIndexes[6], false, 5, 1, 0, 0);
+		int idx = _scene->_dynamicHotspots.add(269, 13, _globals._sequenceIndexes[6], 
+			Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
-		_lastFishTime = _globals._frameTime;
+		_lastFishTime = _vm->_game->_scene._frameStartTime;
 	}
 
 	if (_game._trigger == 73) {
@@ -4296,7 +4299,7 @@ void Scene211::enter() {
 	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
 		warning("sub71704(0x2, 0x0, 0x36, 0x0, 0x1E, 0xD, 2, 0xFDFC, 0x3C, 0x97, 0x98, 0x99, 0x9A, 0);");
 
-	_monkeyTime = _globals._frameTime;
+	_monkeyTime = _vm->_game->_scene._frameStartTime;
 	_scrollY = 30;
 
 	_ambushFl = false;
@@ -4309,11 +4312,11 @@ void Scene211::step() {
 	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 		warning("TODO: sub7178C()");
 
-		if (!_ambushFl && !_wakeFl && (_globals._frameTime >= _monkeyTime)) {
+		if (!_ambushFl && !_wakeFl && (_vm->_game->_scene._frameStartTime >= _monkeyTime)) {
 			warning("if (sub717B2(80, 1 + sub7176C())) {");
 				_vm->_sound->command(18);
 			// }
-			_monkeyTime = _globals._frameTime + 2;
+			_monkeyTime = _vm->_game->_scene._frameStartTime + 2;
 		}
 
 		if ((_game._player._playerPos == Common::Point(52, 132)) && (_game._player._facing == FACING_WEST) && !_game._player._moving && 

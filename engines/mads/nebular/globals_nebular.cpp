@@ -37,20 +37,6 @@ NebularGlobals::NebularGlobals(): Globals() {
 	// Initialize game flags
 	_timebombClock = 0;
 	_timebombTimer = 0;
-	_v0 = 0;
-	_frameTime = 0;
-	_v2 = 0;
-	_v3 = 0;
-	_v4 = 0;
-	_v5 = 0;
-	_v6 = 0;
-	_v7 = 0;
-	_v8 = 0;
-	_abortVal = 0;
-	_v84262 = 0;
-	_v84264 = 0;
-	_v84266 = 0;
-	_v84268 = 0;
 }
 
 } // End of namespace Nebular
