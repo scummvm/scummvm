@@ -2200,43 +2200,31 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 		mov = item->movements1[i];
 
 		if (mov->_staticsObj1 == item->statics[st1idx]) {
-			v16 = (int)(&item->movements2->go.CObject.vmt + i);
-			if (!*(_DWORD *)v16 && (!flop || mov->_field_50)) {
-				*(_DWORD *)v16 = 1;
-				v39 = getStaticsIndex(idx, item->movements1[i]->_staticsObj2);
-				v43 = recalcOffsets(idx, v39, st2idx, flip, flop);
+			if (!item->movements2[i] && (!flop || mov->_field_50)) {
+				item->movements2[i] = 1;
 
-				v41 = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+				int stidx = getStaticsIndex(idx, item->movements1[i]->_staticsObj2);
+				int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
 
-				v20 = v41 + *(&item->subItems[v39].field_C + 6 * st2idx * _items[idx].staticsListCount);
+				int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
-				if (v43 >= 0) {
-					if (!item->subItems[subIdx].movement)
-						goto LABEL_22;
+				v20 = sz + *(&item->subItems[stidx].field_C + 6 * st2idx * _items[idx].staticsListCount);
 
-					v21 = item->subItems[subIdx].field_8;
-
-					if (v21 > v43 + 1) {
-					LABEL_22:
+				if (recalc >= 0) {
+					if (!item->subItems[subIdx].movement || item->subItems[subIdx].field_8 > recalc + 1 ||
+						(item->subItems[subIdx].field_8 == recalc + 1 && item->subItems[subIdx].field_C > v20) {
 						item->subItems[subIdx].movement = mov;
-						item->subItems[subIdx].staticsIndex = v39;
-						item->subItems[subIdx].field_8 = v43 + 1;
+						item->subItems[subIdx].staticsIndex = stidx;
+						item->subItems[subIdx].field_8 = recalc + 1;
 						item->subItems[subIdx].field_C = v20;
 
 						mov->calcSomeXY(&point, 0);
 
-						v25 = point.x + *(&item->subItems[v39].x + 6 * st2idx * _items[idx].staticsListCount);
-						v26 = point.y + *(&item->subItems[v39].y + 6 * st2idx * _items[idx].staticsListCount);
+						v25 = point.x + *(&item->subItems[stidx]->x + 6 * st2idx * _items[idx]->staticsListCount);
+						v26 = point.y + *(&item->subItems[stidx]->y + 6 * st2idx * _items[idx]->staticsListCount);
 
-						item->subItems[subIdx].x = v25;
-						item->subItems[subIdx].y = v26;
-
-						continue;
-					}
-
-					if (v21 == v43 + 1) {
-						if (item->subItems[subIdx].field_C > v20)
-							goto LABEL_22;
+						item->subItems[subIdx]->x = v25;
+						item->subItems[subIdx]->y = v26;
 					}
 				}
 			}
@@ -2245,26 +2233,23 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 				if (!item->movements2[i] && (!flop || mov->_field_50)) {
 					item->movements2[i] = 1;
 
-					v30 = getStaticsIndex(idx, mov->_staticsObj1);
-					v31 = recalcOffsets(idx, v30, st2idx, flip, flop);
+					int stidx = getStaticsIndex(idx, mov->_staticsObj1);
+					int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
 
-					if (v31 >= 0) {
-						if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > v31 + 1) {
+					if (recalc >= 0) {
+						if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > recalc + 1) {
 							item->subItems[subIdx]->movement = mov;
-							item->subItems[subIdx].staticsIndex = v30;
-							item->subItems[subIdx].field_8 = v31 + 1;
+							item->subItems[subIdx].staticsIndex = stidx;
+							item->subItems[subIdx].field_8 = recalc + 1;
 
-							if (mov->_currMovement)
-								v44 = mov->_currMovement->_dynamicPhases.size();
-							else
-								v44 = mov->_dynamicPhases.size();
+							int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
-							item->subItems[subIdx].field_C = v44 + *(&item->subItems[v30].field_C + 6 * st2idx * _items[idx].staticsListCount);
+							item->subItems[subIdx].field_C = sz + *(&item->subItems[stidx].field_C + 6 * st2idx * _items[idx].staticsListCount);
 
 							mov->calcSomeXY(&point, 0);
 
-							v25 = *(&item->subItems[v30].x + 6 * st2idx * _items[idx].staticsListCount) - point.x;
-							v26 = *(&item->subItems[v30].y + 6 * st2idx * _items[idx].staticsListCount) - point.y;
+							v25 = *(&item->subItems[stidx].x + 6 * st2idx * _items[idx].staticsListCount) - point.x;
+							v26 = *(&item->subItems[stidx].y + 6 * st2idx * _items[idx].staticsListCount) - point.y;
 
 							item->subItems[subIdx].x = v25;
 							item->subItems[subIdx].y = v26;
