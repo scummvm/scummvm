@@ -114,9 +114,10 @@ public:
 	void set(int quoteId, ...);
 
 	/**
-	 * Returns true whether the given quote is enabled in the conversation
+	 * Returns the bit for a given quote to indicate whether it's active or not or,
+	 * if 0 is passed, returns the number of currently active quotes
 	 */
-	bool read(int quoteId);
+	int read(int quoteId);
 
 	/**
 	 * Activates or deactivates the specified quote in the given conversation node

@@ -258,16 +258,20 @@ void Conversation::set(int quoteId, ...) {
 	va_end(va);
 }
 
-bool Conversation::read(int quoteId) {
+int Conversation::read(int quoteId) {
 	uint16 flags = _vm->_game->globals()[_globalId];
+	int count = 0;
 
 	for (uint idx = 0; idx < _quotes.size(); ++idx) {
-		if (_quotes[idx] == quoteId) {
+		if (flags & (1 << idx))
+			++count;
+
+		if (_quotes[idx] == quoteId)
 			return flags & (1 << idx);
-		}
 	}
 
-	return false;
+	// Could not find it, simply return number of active quotes
+	return count;
 }
 
 void Conversation::write(int quoteId, bool flag) {
