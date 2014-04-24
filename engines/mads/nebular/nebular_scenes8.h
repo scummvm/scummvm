@@ -55,7 +55,7 @@ public:
 class Scene804: public Scene8xx {
 private:
 	bool _messWithThrottle;
-	uint32 _throttleCounter = 0;
+	uint32 _throttleCounter;
 	bool _movingThrottle;
 	bool _throttleGone;
 	bool _dontPullThrottleAgain;
@@ -64,7 +64,7 @@ private:
 	bool _alreadyOrgan;
 	bool _alreadyPop;
 public:
-	Scene804(MADSEngine *vm) : Scene8xx(vm) {}
+	Scene804(MADSEngine *vm) : Scene8xx(vm), _throttleCounter(0) {}
 
 	virtual void setup();
 
