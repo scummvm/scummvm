@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 #include "mads/mads.h"
+#include "mads/game.h"
 #include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
@@ -117,6 +118,16 @@ int MADSEngine::getRandomNumber(int minNumber, int maxNumber) {
 
 int MADSEngine::hypotenuse(int xv, int yv) {
 	return (int)sqrt((double)(xv * xv + yv * yv));
+}
+
+bool MADSEngine::canLoadGameStateCurrently() {
+	return !_game->_winStatus && !_game->globals()[5]
+		&& _dialogs->_pendingDialog == DIALOG_NONE;
+}
+
+bool MADSEngine::canSaveGameStateCurrently() {
+	return !_game->_winStatus && !_game->globals()[5]
+		&& _dialogs->_pendingDialog == DIALOG_NONE;
 }
 
 } // End of namespace MADS

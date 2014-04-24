@@ -119,6 +119,16 @@ public:
 	int getRandomNumber(int maxNumber);
 	int getRandomNumber(int minNumber, int maxNumber);
 	int hypotenuse(int xv, int yv);
+
+	/**
+	* Returns true if it is currently okay to restore a game
+	*/
+	bool canLoadGameStateCurrently();
+
+	/**
+	* Returns true if it is currently okay to save the game
+	*/
+	bool canSaveGameStateCurrently();
 };
 
 } // End of namespace MADS
