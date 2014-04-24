@@ -3639,5 +3639,42 @@ void Scene320::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene321::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene321::enter() {
+	_game._player._visible = false;
+	_game._player._stepEnabled = false;
+
+	_scene->_userInterface.emptyConversationList();
+	_scene->_userInterface.setup(kInputConversation);
+
+	int suffixNum;
+	if (_globals[kSexOfRex] == REX_FEMALE) {
+		_globals[kSexOfRex] = REX_MALE;
+		suffixNum = 1;
+	} else {
+		_globals[kSexOfRex] = REX_FEMALE;
+		suffixNum = _game._visitedScenes._sceneRevisited ? 2 : 0;
+	}
+
+	_scene->loadAnimation(formAnimName('g', suffixNum), 60);
+	sceneEntrySound();
+}
+
+void Scene321::step() {
+	if (_scene->_activeAnimation != nullptr) {
+		if ((_scene->_activeAnimation->getCurrentFrame() >= 260) && (_globals[kSexOfRex] == REX_MALE) && (_game._storyMode >= STORYMODE_NICE))
+			_scene->_nextSceneId = 316;
+	}
+
+	if (_game._trigger == 60)
+		_scene->_nextSceneId = 316;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
