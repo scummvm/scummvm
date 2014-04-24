@@ -820,11 +820,9 @@ void Scene307::step() {
 				_prisonerMessageId++;
 				if (_prisonerMessageId > 0x10A)
 					_prisonerMessageId = 0x104;
-			} else if (_globals[kKnowsBuddyBeast] && (_vm->getRandomNumber(1, 3) == 1)) {
-				if (_globals[kKnowsBuddyBeast] && (dialog2.read(0)) && (_vm->getRandomNumber(1, 3) == 1)) {
-					int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(267));
-					_scene->_kernelMessages.setQuoted(idx, 4, true);
-				}
+			} else if (_globals[kKnowsBuddyBeast] && (dialog2.read(0) > 1) && (_vm->getRandomNumber(1, 3) == 1)) {
+				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(267));
+				_scene->_kernelMessages.setQuoted(idx, 4, true);
 			}
 			_prisonerTimer = 0;
 		}
