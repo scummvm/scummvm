@@ -408,6 +408,7 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 		if (s.isLoading()) {
 			_sectionNumber = _scene._nextSceneId / 100;
 			_currentSectionNumber = _sectionNumber;
+			_scene._frameStartTime = _vm->_events->getFrameCounter();
 		}
 	} else {
 		s.syncAsByte(_difficulty);

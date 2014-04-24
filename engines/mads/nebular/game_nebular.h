@@ -73,6 +73,8 @@ public:
 	virtual void unhandledAction();
 
 	virtual void step();
+
+	virtual void synchronize(Common::Serializer &s, bool phase1);
 };
 
 

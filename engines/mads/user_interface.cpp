@@ -1079,4 +1079,12 @@ void UserInterface::scrollInventory() {
 	_vm->_game->_screenObjects._v8332A = 0;
 }
 
+void UserInterface::synchronize(Common::Serializer &s) {
+	InventoryObjects &invObjects = _vm->_game->_objects;
+
+	if (s.isLoading()) {
+		_selectedInvIndex = invObjects._inventoryList.empty() ? -1 : 0;
+	}
+}
+
 } // End of namespace MADS

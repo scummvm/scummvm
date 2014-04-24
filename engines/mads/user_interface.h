@@ -293,6 +293,11 @@ public:
 	 * Add a msesage to the list of conversation items to select from
 	 */
 	void addConversationMessage(int vocabId, const Common::String &msg);
+
+	/**
+	 * Synchronize the data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace MADS

@@ -684,6 +684,7 @@ void Scene::freeAnimation() {
 void Scene::synchronize(Common::Serializer &s) {
 	_action._activeAction.synchronize(s);
 	_rails.synchronize(s);
+	_userInterface.synchronize(s);
 }
 
 } // End of namespace MADS

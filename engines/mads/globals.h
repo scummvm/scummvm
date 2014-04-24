@@ -25,24 +25,30 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/serializer.h"
 
 namespace MADS {
 
 class Globals {
 protected:
-	Common::Array<int16> _flags;
+	Common::Array<int16> _data;
 public:
 	Globals() {}
 
 	/**
 	* Square brackets operator for accessing flags
 	*/
-	int16 &operator[](int idx) { return _flags[idx]; }
+	int16 &operator[](int idx) { return _data[idx]; }
 
 	/*
 	 * Resets all the globals to empty
 	 */
 	void reset();
+
+	/**
+	 * Synchronize the globals data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace MADS
