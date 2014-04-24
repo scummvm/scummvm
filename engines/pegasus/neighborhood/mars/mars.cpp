@@ -2480,6 +2480,7 @@ void Mars::doCanyonChase() {
 	_shuttleEnergyMeter.initShuttleEnergyMeter();
 	_shuttleEnergyMeter.powerUpMeter();
 	while (_shuttleEnergyMeter.isFading()) {
+		InputDevice.pumpEvents();
 		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		g_system->updateScreen();
@@ -2816,6 +2817,7 @@ void Mars::marsTimerExpired(MarsTimerEvent &event) {
 		GameState.setScoringEnteredLaunchTube();
 
 		while (_canyonChaseMovie.isRunning()) {
+			InputDevice.pumpEvents();
 			_vm->checkCallBacks();
 			_vm->refreshDisplay();
 			_vm->_system->delayMillis(10);
@@ -2949,6 +2951,7 @@ void Mars::marsTimerExpired(MarsTimerEvent &event) {
 		showBigExplosion(r, kShuttleAlienShipOrder);
 
 		while (_explosions.isRunning()) {
+			InputDevice.pumpEvents();
 			_vm->checkCallBacks();
 			_vm->refreshDisplay();
 			g_system->delayMillis(10);
@@ -3142,6 +3145,7 @@ void Mars::spaceChaseClick(const Input &input, const HotSpotID id) {
 				_shuttleEnergyMeter.drainForTractorBeam();
 
 				while (_shuttleEnergyMeter.isFading()) {
+					InputDevice.pumpEvents();
 					_vm->checkCallBacks();
 					_vm->refreshDisplay();
 					_vm->_system->delayMillis(10);
@@ -3176,6 +3180,7 @@ void Mars::spaceChaseClick(const Input &input, const HotSpotID id) {
 
 					// wait here until any junk clears...
 					while (_junk.junkFlying()) {
+						InputDevice.pumpEvents();
 						_vm->checkCallBacks();
 						_vm->refreshDisplay();
 						_vm->_system->delayMillis(10);

@@ -470,6 +470,7 @@ void Neighborhood::requestSpotSound(const TimeValue in, const TimeValue out, con
 void Neighborhood::playSpotSoundSync(const TimeValue in, const TimeValue out) {
 	// Let the action queue play out first...
 	while (!actionQueueEmpty()) {
+		InputDevice.pumpEvents();
 		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->checkNotifications();
@@ -480,6 +481,7 @@ void Neighborhood::playSpotSoundSync(const TimeValue in, const TimeValue out) {
 	_spotSounds.playSoundSegment(in, out);
 
 	while (_spotSounds.isPlaying()) {
+		InputDevice.pumpEvents();
 		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->_system->delayMillis(10);
@@ -1105,6 +1107,7 @@ void Neighborhood::startTurnPush(const TurnDirection turnDirection, const TimeVa
 	_turnPush.continueFader();
 
 	do {
+		InputDevice.pumpEvents();
 		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->_system->delayMillis(10);
@@ -1616,6 +1619,7 @@ void Neighborhood::playMovieSegment(Movie *movie, TimeValue startTime, TimeValue
 	movie->start();
 
 	while (movie->isRunning()) {
+		InputDevice.pumpEvents();
 		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->_system->delayMillis(10);

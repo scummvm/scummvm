@@ -836,6 +836,7 @@ void PegasusEngine::delayShell(TimeValue time, TimeScale scale) {
 	uint32 timeInMillis = time * 1000 / scale;
 
 	while (g_system->getMillis() < startTime + timeInMillis) {
+		InputDevice.pumpEvents();
 		checkCallBacks();
 		_gfx->updateDisplay();
 	}
@@ -2175,6 +2176,7 @@ void PegasusEngine::autoDragItemIntoRoom(Item *item, Sprite *draggingSprite) {
 	_autoDragger.autoDrag(draggingSprite, start, stop, time, kDefaultTimeScale);
 
 	while (_autoDragger.isDragging()) {
+		InputDevice.pumpEvents();
 		checkCallBacks();
 		refreshDisplay();
 		_system->delayMillis(10);
@@ -2208,6 +2210,7 @@ void PegasusEngine::autoDragItemIntoInventory(Item *, Sprite *draggingSprite) {
 	_autoDragger.autoDrag(draggingSprite, start, stop, time, kDefaultTimeScale);
 
 	while (_autoDragger.isDragging()) {
+		InputDevice.pumpEvents();
 		checkCallBacks();
 		refreshDisplay();
 		_system->delayMillis(10);
@@ -2284,10 +2287,7 @@ void PegasusEngine::doSubChase() {
 				drawScaledFrame(frame, 0, 0);
 		}
 
-		Common::Event event;
-		while (_eventMan->pollEvent(event))
-			;
-
+		InputDevice.pumpEvents();
 		_system->delayMillis(10);
 	}
 
