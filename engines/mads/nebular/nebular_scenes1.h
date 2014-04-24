@@ -74,7 +74,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions();
 	virtual void synchronize(Common::Serializer &s);
 };
 
