@@ -138,7 +138,7 @@ struct MGMItem {
 	Common::Array<MGMSubItem *> subItems;
 	Common::Array<Statics *> statics;
 	Common::Array<Movement *> movements1;
-	Common::Array<Movement *> movements2;
+	Common::Array<int> movements2;
 
 	MGMItem();
 };

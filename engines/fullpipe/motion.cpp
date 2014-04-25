@@ -2182,9 +2182,8 @@ void MGM::clearMovements2(int idx) {
 }
 
 int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
-#if 0
 	MGMItem *item = _items[idx];
-	int subIdx = st1idx + st2idx * item->staticsListCount;
+	int subIdx = st1idx + st2idx * item->statics.size();
 
 	if (st1idx == st2idx) {
 		memset(&item->subItems[subIdx], 0, sizeof(item->subItems[subIdx]));
@@ -2196,8 +2195,8 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 
 	Common::Point point;
 
-	for (int i = 0; i < item->movementListCount; i++) {
-		mov = item->movements1[i];
+	for (int i = 0; i < item->movements1.size(); i++) {
+		Movement *mov = item->movements1[i];
 
 		if (mov->_staticsObj1 == item->statics[st1idx]) {
 			if (!item->movements2[i] && (!flop || mov->_field_50)) {
@@ -2205,22 +2204,21 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 
 				int stidx = getStaticsIndex(idx, item->movements1[i]->_staticsObj2);
 				int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
+				int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+				int newsz = sz + item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->field_C;
 
 				if (recalc >= 0) {
-					if (!item->subItems[subIdx].movement || item->subItems[subIdx].field_8 > recalc + 1 ||
-						(item->subItems[subIdx].field_8 == recalc + 1 && item->subItems[subIdx].field_C > v20) {
-						item->subItems[subIdx].movement = mov;
-						item->subItems[subIdx].staticsIndex = stidx;
-						item->subItems[subIdx].field_8 = recalc + 1;
+					if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > recalc + 1 ||
+						(item->subItems[subIdx]->field_8 == recalc + 1 && item->subItems[subIdx]->field_C > newsz)) {
+						item->subItems[subIdx]->movement = mov;
+						item->subItems[subIdx]->staticsIndex = stidx;
+						item->subItems[subIdx]->field_8 = recalc + 1;
+						item->subItems[subIdx]->field_C = newsz;
 
-						int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+						mov->calcSomeXY(point, 0);
 
-						item->subItems[subIdx].field_C = sz + item->subItems[stidx + 6 * st2idx * _items[idx].staticsListCount]->field_C;
-
-						mov->calcSomeXY(&point, 0);
-
-						item->subItems[subIdx].x = item->subItems[stidx + 6 * st2idx * _items[idx].staticsListCount]->x + point.x;
-						item->subItems[subIdx].y = item->subItems[stidx + 6 * st2idx * _items[idx].staticsListCount]->y + point.y;
+						item->subItems[subIdx]->x = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->x + point.x;
+						item->subItems[subIdx]->y = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->y + point.y;
 					}
 				}
 			}
@@ -2235,17 +2233,17 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 					if (recalc >= 0) {
 						if (!item->subItems[subIdx]->movement || item->subItems[subIdx]->field_8 > recalc + 1) {
 							item->subItems[subIdx]->movement = mov;
-							item->subItems[subIdx].staticsIndex = stidx;
-							item->subItems[subIdx].field_8 = recalc + 1;
+							item->subItems[subIdx]->staticsIndex = stidx;
+							item->subItems[subIdx]->field_8 = recalc + 1;
 
 							int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
-							item->subItems[subIdx].field_C = sz + item->subItems[stidx + 6 * st2idx * _items[idx].staticsListCount]->field_C;
+							item->subItems[subIdx]->field_C = sz + item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->field_C;
 
-							mov->calcSomeXY(&point, 0);
+							mov->calcSomeXY(point, 0);
 
-							item->subItems[subIdx].x = item->subItems[stidx + 6 * st2idx * _items[idx].staticsListCount]->x - point.x;
-							item->subItems[subIdx].y = item->subItems[stidx + 6 * st2idx * _items[idx].staticsListCount]->y - point.y;
+							item->subItems[subIdx]->x = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->x - point.x;
+							item->subItems[subIdx]->y = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->y - point.y;
 						}
 					}
 				}
@@ -2257,10 +2255,6 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 		return item->subItems[subIdx]->field_8;
 
 	return -1;
-#endif
-	warning("STUB: MGM::recalcOffsets()");
-
-	return 0;
 }
 
 Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *mult, int *len, int flag) {
