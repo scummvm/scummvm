@@ -28,6 +28,7 @@
 #include "illusions/screen.h"
 #include "illusions/scriptman.h"
 #include "illusions/scriptopcodes.h"
+#include "illusions/sound.h"
 
 namespace Illusions {
 
@@ -90,6 +91,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(40, opSetPriorityLayer);
 	OPCODE(41, opDisableAutoRegionLayer);
 	OPCODE(42, opSetRegionLayer);
+	OPCODE(48, opSetPalette);
 	OPCODE(49, opShiftPalette);
 	OPCODE(50, opPlaySound);
 	OPCODE(51, opStopSound);
@@ -344,6 +346,14 @@ void SequenceOpcodes::opSetRegionLayer(Control *control, OpCall &opCall) {
 	control->_actor->_regionLayer = bgRes->getRegionLayer(regionLayerIndex - 1);
 }
 
+void SequenceOpcodes::opSetPalette(Control *control, OpCall &opCall) {
+	ARG_INT16(paletteIndex);
+	ARG_BYTE(fromIndex);
+	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
+	Palette *palette = bgRes->getPalette(paletteIndex - 1);
+	_vm->_screen->setPalette(palette->_palette, fromIndex, palette->_count);
+}
+
 void SequenceOpcodes::opShiftPalette(Control *control, OpCall &opCall) {
 	ARG_INT16(fromIndex);
 	ARG_INT16(toIndex);
@@ -359,12 +369,12 @@ void SequenceOpcodes::opPlaySound(Control *control, OpCall &opCall) {
 		volume = 255;
 	if (!(flags & 2))
 		pan = _vm->convertPanXCoord(control->_actor->_position.x);
-	// TODO _vm->startSound(soundEffectId, volume, pan);
+	_vm->_soundMan->playSound(soundEffectId, volume, pan);
 }
 
 void SequenceOpcodes::opStopSound(Control *control, OpCall &opCall) {
 	ARG_UINT32(soundEffectId);
-	// TODO _vm->stopSound(soundEffectId);
+	_vm->_soundMan->stopSound(soundEffectId);
 }
 
 void SequenceOpcodes::opStartScriptThread(Control *control, OpCall &opCall) {

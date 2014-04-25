@@ -61,7 +61,7 @@ void BackgroundResourceLoader::load(Resource *resource) {
 	_vm->_camera->set(backgroundItem->_bgRes->_bgInfos[index - 1]._panPoint, backgroundItem->_bgRes->_bgInfos[index - 1]._surfInfo._dimensions);
 
 	if (backgroundItem->_bgRes->_palettesCount > 0) {
-		Palette *palette = &backgroundItem->_bgRes->_palettes[backgroundItem->_bgRes->_paletteIndex - 1];
+		Palette *palette = backgroundItem->_bgRes->getPalette(backgroundItem->_bgRes->_paletteIndex - 1);
 		_vm->_screen->setPalette(palette->_palette, 1, palette->_count);
 	}
 	
@@ -298,7 +298,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	_priorityLayers = new PriorityLayer[_priorityLayersCount];
 	stream.seek(0x34);
 	uint32 priorityLayersOffs = stream.readUint32LE();
-	debug(0, "_priorityLayersCount: %d", _priorityLayersCount);
+	debug("_priorityLayersCount: %d", _priorityLayersCount);
 	for (uint i = 0; i < _priorityLayersCount; ++i) {
 		stream.seek(priorityLayersOffs + i * 12);
 		_priorityLayers[i].load(data, stream);
@@ -409,6 +409,10 @@ PathWalkPoints *BackgroundResource::getPathWalkPoints(uint index) {
 
 PathWalkRects *BackgroundResource::getPathWalkRects(uint index) {
 	return &_pathWalkRects[index];
+}
+
+Palette *BackgroundResource::getPalette(uint index) {
+	return &_palettes[index];
 }
 
 bool BackgroundResource::findNamedPoint(uint32 namedPointId, Common::Point &pt) {

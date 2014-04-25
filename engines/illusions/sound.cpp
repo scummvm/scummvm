@@ -27,8 +27,8 @@ namespace Illusions {
 
 // MusicPlayer
 
-MusicPlayer::MusicPlayer(Audio::Mixer *mixer)
-	: _mixer(mixer), _musicId(0), _flags(0) {
+MusicPlayer::MusicPlayer()
+	: _musicId(0), _flags(0) {
 	_flags = 1; // TODO?
 }
 
@@ -52,15 +52,15 @@ void MusicPlayer::play(uint32 musicId, bool looping, int16 volume, int16 pan) {
 		Common::File *fd = new Common::File();
 		fd->open(filename);
 		Audio::AudioStream *audioStream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(fd, DisposeAfterUse::YES), looping ? 0 : 1);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream, -1, volume, pan);
+		g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream, -1, volume, pan);
 	}
 }
 
 void MusicPlayer::stop() {
 	debug("MusicPlayer::stop()");
 	if ((_flags & 1) && (_flags & 2)) {
-		if (_mixer->isSoundHandleActive(_soundHandle))
-			_mixer->stopHandle(_soundHandle);
+		if (g_system->getMixer()->isSoundHandleActive(_soundHandle))
+			g_system->getMixer()->stopHandle(_soundHandle);
 		_flags &= ~2;
 		_flags &= ~4;
 		_flags &= ~8;
@@ -69,13 +69,12 @@ void MusicPlayer::stop() {
 }
 
 bool MusicPlayer::isPlaying() {
-	return (_flags & 1) && (_flags & 2) && _mixer->isSoundHandleActive(_soundHandle);
+	return (_flags & 1) && (_flags & 2) && g_system->getMixer()->isSoundHandleActive(_soundHandle);
 }
 
 // VoicePlayer
 
-VoicePlayer::VoicePlayer(Audio::Mixer *mixer)
-	: _mixer(mixer) {
+VoicePlayer::VoicePlayer() {
 }
 
 VoicePlayer::~VoicePlayer() {
@@ -102,19 +101,19 @@ void VoicePlayer::start(int16 volume, int16 pan) {
 	Common::File *fd = new Common::File();
 	fd->open(filename);
 	Audio::AudioStream *audioStream = Audio::makeWAVStream(fd, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, audioStream, -1, volume, pan);
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, audioStream, -1, volume, pan);
 	_voiceStatus = 4;
 }
 
 void VoicePlayer::stop() {
-	if (_mixer->isSoundHandleActive(_soundHandle))
-		_mixer->stopHandle(_soundHandle);
+	if (g_system->getMixer()->isSoundHandleActive(_soundHandle))
+		g_system->getMixer()->stopHandle(_soundHandle);
 	_voiceStatus = 1;
 	_voiceName.clear();
 }
 
 bool VoicePlayer::isPlaying() {
-	return _mixer->isSoundHandleActive(_soundHandle);
+	return g_system->getMixer()->isSoundHandleActive(_soundHandle);
 }
 
 bool VoicePlayer::isEnabled() {
@@ -126,17 +125,62 @@ bool VoicePlayer::isCued() {
 	return _voiceStatus == 2;
 }
 
+// Sound
+
+Sound::Sound(uint32 soundEffectId, uint32 soundGroupId, bool looping)
+	: _stream(0), _soundEffectId(soundEffectId), _soundGroupId(soundGroupId), _looping(looping) {
+	load();
+}
+
+Sound::~Sound() {
+	unload();
+}
+
+void Sound::load() {
+	Common::String filename = Common::String::format("%08x/%08x.wav", _soundGroupId, _soundEffectId);
+	Common::File *fd = new Common::File();
+	if (!fd->open(filename)) {
+		delete fd;
+		error("SoundMan::loadSound() Could not load %s", filename.c_str());
+	}
+	_stream = Audio::makeWAVStream(fd, DisposeAfterUse::YES);
+}
+
+void Sound::unload() {
+	stop();
+	delete _stream;
+	_stream = 0;
+}
+
+void Sound::play(int16 volume, int16 pan) {
+	stop();
+	_stream->rewind();
+	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(_stream, _looping ? 0 : 1, DisposeAfterUse::NO);
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream,
+		-1, volume, pan, DisposeAfterUse::YES);
+}
+
+void Sound::stop() {
+	if (g_system->getMixer()->isSoundHandleActive(_soundHandle))
+		g_system->getMixer()->stopHandle(_soundHandle);
+}
+
+bool Sound::isPlaying() {
+	return g_system->getMixer()->isSoundHandleActive(_soundHandle);
+}
+
 // SoundMan
 
 SoundMan::SoundMan(IllusionsEngine *vm)
 	: _vm(vm), _musicNotifyThreadId(0) {
-	_musicPlayer = new MusicPlayer(_vm->_mixer);
-	_voicePlayer = new VoicePlayer(_vm->_mixer);
+	_musicPlayer = new MusicPlayer();
+	_voicePlayer = new VoicePlayer();
 }
 
 SoundMan::~SoundMan() {
 	delete _musicPlayer;
 	delete _voicePlayer;
+	unloadSounds(0);
 }
 
 void SoundMan::update() {
@@ -181,6 +225,40 @@ bool SoundMan::isVoiceEnabled() {
 
 bool SoundMan::isVoiceCued() {
 	return _voicePlayer->isCued();
+}
+
+void SoundMan::loadSound(uint32 soundEffectId, uint32 soundGroupId, bool looping) {
+	Sound *soundEffect = new Sound(soundEffectId, soundGroupId, looping);
+	_sounds.push_front(soundEffect);
+}
+
+void SoundMan::playSound(uint32 soundEffectId, int16 volume, int16 pan) {
+	Sound *soundEffect = getSound(soundEffectId);
+	soundEffect->play(volume, pan);
+}
+
+void SoundMan::stopSound(uint32 soundEffectId) {
+	Sound *soundEffect = getSound(soundEffectId);
+	soundEffect->stop();
+}
+
+void SoundMan::unloadSounds(uint32 soundGroupId) {
+	SoundListIterator it = _sounds.begin();
+	while (it != _sounds.end()) {
+		Sound *soundEffect = *it;
+		if (soundGroupId == 0 || soundEffect->_soundGroupId == soundGroupId) {
+			delete soundEffect;
+			it = _sounds.erase(it);
+		} else
+			++it;
+	}
+}
+
+Sound *SoundMan::getSound(uint32 soundEffectId) {
+	for (SoundListIterator it = _sounds.begin(); it != _sounds.end(); ++it)
+		if ((*it)->_soundEffectId == soundEffectId)
+			return *it;
+	return 0;
 }
 
 } // End of namespace Illusions

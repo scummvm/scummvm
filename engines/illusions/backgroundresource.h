@@ -144,6 +144,7 @@ public:
 	RegionLayer *getRegionLayer(uint index);
 	PathWalkPoints *getPathWalkPoints(uint index);
 	PathWalkRects *getPathWalkRects(uint index);
+	Palette *getPalette(uint index);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 public:
 

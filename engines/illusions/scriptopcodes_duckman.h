@@ -42,6 +42,7 @@ protected:
 
 	// Opcodes
 	
+	void opNop(ScriptThread *scriptThread, OpCall &opCall);
 	void opSuspend(ScriptThread *scriptThread, OpCall &opCall);
 	void opYield(ScriptThread *scriptThread, OpCall &opCall);
 	void opTerminate(ScriptThread *scriptThread, OpCall &opCall);
