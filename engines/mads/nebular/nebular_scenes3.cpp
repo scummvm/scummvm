@@ -3764,22 +3764,13 @@ void Scene351::step() {
 }
 
 void Scene351::actions() {
-	if (_action._lookFlag) {
+	if (_action._lookFlag)
 		_vm->_dialogs->show(0x8931);
-		goto handled;
-	}
-
-	if (_action.isAction(0x2F9, 0x16C)) {
+	else if (_action.isAction(0x2F9, 0x16C))
 		_scene->_nextSceneId = 322;
-		goto handled;
-	}
-
-	if (_action.isAction(0x1AD, 0x2B3)) {
+	else if (_action.isAction(0x1AD, 0x2B3))
 		_scene->_nextSceneId = 352;
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_TAKE, 0x5C)) {
+	else if (_action.isAction(VERB_TAKE, 0x5C)) {
 		if (_game._trigger || !_game._objects.isInInventory(0xF)) {
 			switch (_game._trigger) {
 			case 0:
@@ -3811,77 +3802,35 @@ void Scene351::actions() {
 				break;
 			}
 		}
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x180)) {
+	} else if (_action.isAction(VERB_LOOK, 0x180))
 		_vm->_dialogs->show(0x8926);
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x23A)) {
+	else if (_action.isAction(VERB_LOOK, 0x23A))
 		_vm->_dialogs->show(0x8927);
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x1E6)) {
+	else if (_action.isAction(VERB_LOOK, 0x1E6))
 		_vm->_dialogs->show(0x8928);
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x239)) {
+	else if (_action.isAction(VERB_LOOK, 0x239)) {
 		if (_game._objects[0xF]._roomNumber == 351)
 			_vm->_dialogs->show(0x892A);
 		else
 			_vm->_dialogs->show(0x8929);
-
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x2C7)) {
+	} else if (_action.isAction(VERB_LOOK, 0x2C7))
 		_vm->_dialogs->show(0x892B);
-		goto handled;
-	} 
-
-	if (_action.isAction(VERB_LOOK, 0x1E4)) {
+	else if (_action.isAction(VERB_LOOK, 0x1E4))
 		_vm->_dialogs->show(0x892C);
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0xD7)) {
+	else if (_action.isAction(VERB_LOOK, 0xD7))
 		_vm->_dialogs->show(0x892D);
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x16C)) {
+	else if (_action.isAction(VERB_LOOK, 0x16C))
 		_vm->_dialogs->show(0x892E);
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x59)) {
+	else if (_action.isAction(VERB_LOOK, 0x59))
 		_vm->_dialogs->show(0x892F);
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x2B3)) {
+	else if (_action.isAction(VERB_LOOK, 0x2B3))
 		_vm->_dialogs->show(0x8930);
-		goto handled;
-	}
-
-	if (_action.isAction(VERB_LOOK, 0x1EB)) {
+	else if (_action.isAction(VERB_LOOK, 0x1EB))
 		_vm->_dialogs->show(0x8932);
-		goto handled;
-	} 
+	else
+		return;
 
-
-
-	goto done;
-
-handled:
 	_action._inProgress = false;
-
-done:
-	;
 }
 
 /*------------------------------------------------------------------------*/
