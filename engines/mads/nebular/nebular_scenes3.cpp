@@ -3674,5 +3674,217 @@ void Scene321::step() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene351::setup() {
+	if (_scene->_currentSceneId == 391)
+		_globals[kSexOfRex] = REX_MALE;
+
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0xD);
+}
+
+void Scene351::enter() {
+	_globals[kAfterHavoc] = -1;
+	_globals[kTeleporterRoom + 1] = 351;
+
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*ROXRC_7");
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXRD_7");
+
+	if (_game._objects.isInRoom(0xF)) {
+		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 4);
+	} else
+		_scene->_hotspots.activate(0x5C, false);
+
+	if (_scene->_priorSceneId == 352)
+		_game._player._playerPos = Common::Point(148, 152);
+	else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(207, 81);
+		_game._player._facing = FACING_NORTH;
+	} 
+
+	if (_globals[kTeleporterCommand]) {
+		_game._player._visible = false;
+		_game._player._stepEnabled = false;
+
+		char sepChar = 'a';
+		if (_globals[kSexOfRex] != REX_MALE)
+			sepChar = 'b';
+
+		int suffixNum = -1;
+		int trigger = 0;
+
+		switch (_globals[kTeleporterCommand]) {
+		case 1:
+			suffixNum = 0;
+			trigger = 60;
+			_globals[kTeleporterCommand] = true;
+			break;
+
+		case 2:
+			suffixNum = 1;
+			trigger = 61;
+			break;
+
+		case 3:
+		case 4:
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			_game._player._turnToFacing = FACING_SOUTH;
+			suffixNum = -1;
+			break;
+
+		default:
+			break;
+		}
+
+		_globals[kTeleporterCommand] = 0;
+
+		if (suffixNum >= 0)
+			_scene->loadAnimation(formAnimName(sepChar, suffixNum), trigger);
+	}
+
+	sceneEntrySound();
+}
+
+void Scene351::step() {
+	if (_game._trigger == 60) {
+		_game._player._stepEnabled = true;
+		_game._player._visible = true;
+		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+		_game._player._turnToFacing = FACING_SOUTH;
+	}
+
+	if (_game._trigger == 61) {
+		_globals[kTeleporterCommand] = 1;
+		_scene->_nextSceneId = _globals[kTeleporterDestination];
+		_scene->_reloadSceneFlag = true;
+	}
+}
+
+void Scene351::actions() {
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(0x8931);
+		goto handled;
+	}
+
+	if (_action.isAction(0x2F9, 0x16C)) {
+		_scene->_nextSceneId = 322;
+		goto handled;
+	}
+
+	if (_action.isAction(0x1AD, 0x2B3)) {
+		_scene->_nextSceneId = 352;
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_TAKE, 0x5C)) {
+		if (_game._trigger || !_game._objects.isInInventory(0xF)) {
+			switch (_game._trigger) {
+			case 0:
+				_game._player._stepEnabled = false;
+				_game._player._visible = false; 
+				if (_globals[kSexOfRex] == REX_FEMALE) {
+					_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 5, 2, 0, 0);
+					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				} else {
+					_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
+					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				} 
+				break;
+
+			case 1:
+				_scene->_hotspots.activate(0x5C, false);
+				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_game._objects.addToInventory(0xF);
+				break;
+
+			case 2:
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				_vm->_dialogs->showItem(0xF, 0x32F);
+				break;
+			}
+		}
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x180)) {
+		_vm->_dialogs->show(0x8926);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x23A)) {
+		_vm->_dialogs->show(0x8927);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x1E6)) {
+		_vm->_dialogs->show(0x8928);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x239)) {
+		if (_game._objects[0xF]._roomNumber == 351)
+			_vm->_dialogs->show(0x892A);
+		else
+			_vm->_dialogs->show(0x8929);
+
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x2C7)) {
+		_vm->_dialogs->show(0x892B);
+		goto handled;
+	} 
+
+	if (_action.isAction(VERB_LOOK, 0x1E4)) {
+		_vm->_dialogs->show(0x892C);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0xD7)) {
+		_vm->_dialogs->show(0x892D);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x16C)) {
+		_vm->_dialogs->show(0x892E);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x59)) {
+		_vm->_dialogs->show(0x892F);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x2B3)) {
+		_vm->_dialogs->show(0x8930);
+		goto handled;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x1EB)) {
+		_vm->_dialogs->show(0x8932);
+		goto handled;
+	} 
+
+
+
+	goto done;
+
+handled:
+	_action._inProgress = false;
+
+done:
+	;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
