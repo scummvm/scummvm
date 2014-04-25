@@ -276,7 +276,8 @@ const char *emiPS2_artLuc[] = {
 	"7add9758294c2118621e900940e66838", // english
 };
 const char *emiPS2_artMel[] = {
-	"514f1a684022831c178a18d13a16b6ad", // english
+	"514f1a684022831c178a18d13a16b6ad", // english PAL?
+	"c4f51395440049942fae39bf6155e82c", // english NTSC
 };
 const char *emiPS2_artMon[] = {
 	"db945bd9d5fa990447bbabf6a1e00e5b", // english
