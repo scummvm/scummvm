@@ -26,7 +26,7 @@
 namespace CGE2 {
 
 static const PlainGameDescriptor CGE2Games[] = {
-	{ "sfinx2", "Sfinx" }, // TODO: Remove Sfinx from CGE1 completely, so the two gameIDs won't collide.
+	{ "sfinx", "Sfinx" },
 	{ 0, 0 }
 };
 
