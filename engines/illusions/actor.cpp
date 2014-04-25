@@ -433,7 +433,19 @@ uint32 Control::getPriority() {
 
 	positionY = CLIP<int16>(positionY, -5000, 5000);
 
-	return p + 50 * ((objectId & 0x3F) + ((10000 * priority + positionY + 5000) << 6));;
+	return p + 50 * ((objectId & 0x3F) + ((10000 * priority + positionY + 5000) << 6));
+}
+
+uint32 Control::getOverlapPriority() {
+	if (_vm->getGameId() == kGameIdBBDOU)
+		return getPriority();
+	return _priority;
+}
+
+uint32 Control::getDrawPriority() {
+	if (_vm->getGameId() == kGameIdBBDOU)
+		return getPriority();
+	return (_actor->_position.y + 32768) | (_priority << 16);
 }
 
 Common::Point Control::calcPosition(Common::Point posDelta) {
@@ -1008,7 +1020,7 @@ void Controls::placeBackgroundObject(BackgroundObject *backgroundObject) {
 	control->_priority = backgroundObject->_priority;
 	control->readPointsConfig(backgroundObject->_pointsConfig);
 	control->activateObject();
-	_controls.push_back(control);
+	_controls.push_front(control);
 	_vm->_dict->setObjectControl(control->_objectId, control);
 }
 
@@ -1069,7 +1081,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	
 	actor->_pathCtrY = 140;
 	
-	_controls.push_back(control);
+	_controls.push_front(control);
 	_vm->_dict->setObjectControl(objectId, control);
 
 	if (_vm->getGameId() == kGameIdDuckman) {
@@ -1112,7 +1124,7 @@ void Controls::placeSequenceLessActor(uint32 objectId, Common::Point placePt, Wi
 	actor->_namedPoints = 0;
 	actor->_pathCtrY = 140;
 
-	_controls.push_back(control);
+	_controls.push_front(control);
 	_vm->_dict->setObjectControl(objectId, control);
 	control->appearActor();
 }
@@ -1129,7 +1141,7 @@ void Controls::placeActorLessObject(uint32 objectId, Common::Point feetPt, Commo
 	control->_position.y = 0;
 	control->_actorTypeId = 0;
 	control->_actor = 0;
-	_controls.push_back(control);
+	_controls.push_front(control);
 	_vm->_dict->setObjectControl(objectId, control);
 }
 
@@ -1161,7 +1173,7 @@ void Controls::placeDialogItem(uint16 objectNum, uint32 actorTypeId, uint32 sequ
 	actor->_position2 = placePt;
 	actor->_scale = actorType->_scale;
 	actor->_color = actorType->_color;
-	_controls.push_back(control);
+	_controls.push_front(control);
 	control->appearActor();
 	control->startSequenceActor(sequenceId, 2, 0);
 	control->setActorIndex(1);
@@ -1272,7 +1284,7 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 			Common::Rect collisionRect;
 			testControl->getCollisionRect(collisionRect);
 			if (!collisionRect.isEmpty() && collisionRect.contains(pt)) {
-				uint32 testPriority = testControl->getPriority();
+				uint32 testPriority = testControl->getOverlapPriority();
 				if ((!foundControl || foundPriority < testPriority) &&
 					testPriority >= minPriorityExt) {
 					foundControl = testControl;

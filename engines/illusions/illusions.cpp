@@ -182,7 +182,7 @@ int IllusionsEngine::updateGraphics(uint flags) {
 			}
 			*/
 			if (actor->_surfInfo._dimensions._width && actor->_surfInfo._dimensions._height) {
-				uint32 priority = control->getPriority();
+				uint32 priority = control->getDrawPriority();
 				_screen->_drawQueue->insertSprite(&actor->_drawFlags, actor->_surface,
 					actor->_surfInfo._dimensions, drawPosition, control->_position,
 					priority, actor->_scale, actor->_spriteFlags);
@@ -191,7 +191,8 @@ int IllusionsEngine::updateGraphics(uint flags) {
 	}
 
 	if (_screenText->_surface) {
-		int16 priority = getPriorityFromBase(99);
+		// TODO Make nicer
+		uint32 priority = getGameId() == kGameIdDuckman ? getPriorityFromBase(19) : getPriorityFromBase(99);
 		_screen->_drawQueue->insertTextSurface(_screenText->_surface, _screenText->_dimensions,
 			_screenText->_position, priority);
 	}

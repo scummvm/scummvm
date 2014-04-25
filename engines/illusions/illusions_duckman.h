@@ -91,6 +91,16 @@ struct ScreenShaker {
 	const ScreenShakerPoint *_points;
 };
 
+struct PropertyTimer {
+	uint32 _propertyId;
+	uint32 _startTime;
+	uint32 _duration;
+	uint32 _endTime;
+	PropertyTimer() : _propertyId(0) {}
+};
+
+const uint kPropertyTimersCount = 6;
+
 struct OpCall;
 
 typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
@@ -124,6 +134,10 @@ public:
 	Common::Array<DMInventoryItem> _inventoyItems;
 
 	ScreenShaker *_screenShaker;
+
+	PropertyTimer _propertyTimers[kPropertyTimersCount];
+	bool _propertyTimersActive;
+	bool _propertyTimersPaused;
 
 	uint _chinesePuzzleIndex;
 	byte _chinesePuzzleAnswers[3];
@@ -220,6 +234,12 @@ public:
 	DMInventoryItem *findInventoryItem(uint32 objectId);
 	DMInventorySlot *findClosestInventorySlot(Common::Point pos);
 
+	void addPropertyTimer(uint32 propertyId);
+	void setPropertyTimer(uint32 propertyId, uint32 duration);
+	void removePropertyTimer(uint32 propertyId);
+	bool findPropertyTimer(uint32 propertyId, PropertyTimer *&propertyTimer);
+	int updatePropertyTimers(uint flags);
+
 	// Special code
 	void initSpecialCode();
 	void runSpecialCode(uint32 specialCodeId, OpCall &opCall);
@@ -230,6 +250,9 @@ public:
 	void spcOpenInventory(OpCall &opCall);
 	void spcPutBackInventoryItem(OpCall &opCall);
 	void spcClearInventorySlot(OpCall &opCall);
+	void spcAddPropertyTimer(OpCall &opCall);
+	void spcSetPropertyTimer(OpCall &opCall);
+	void spcRemovePropertyTimer(OpCall &opCall);
 	void spcCenterNewspaper(OpCall &opCall);
 	void spcSetCursorInventoryMode(OpCall &opCall);
 	void spcUpdateObject272Sequence(OpCall &opCall);

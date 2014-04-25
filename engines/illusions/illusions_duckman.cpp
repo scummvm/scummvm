@@ -79,7 +79,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	// Init search paths
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx", 0, 2);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "voice");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "x");// DEBUG until gam reader is done
@@ -128,6 +128,9 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_fieldA = 0;
 	_fieldE = 240;
 	
+	_propertyTimersActive = false;
+	_propertyTimersPaused = false;
+
 	_globalSceneId = 0x00010003;
 
 	initInventory();
@@ -144,6 +147,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	startScriptThread(0x00020004, 0);
 	_doScriptThreadInit = true;
 
+#if 0
 	//DEBUG
 	_scriptResource->_properties.set(0x000E003A, true);
 	_scriptResource->_properties.set(0x000E0020, true);
@@ -152,6 +156,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_scriptResource->_properties.set(0x000E0009, true);
 	_scriptResource->_properties.set(0x000E003D, true);
 	_scriptResource->_properties.set(0x000E0024, true);
+#endif
 
 	while (!shouldQuit()) {
 		runUpdateFunctions();
@@ -165,7 +170,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	delete _fader;
 
-    delete _soundMan;
+	delete _soundMan;
 	delete _updateFunctions;
 	delete _threads;
 	delete _talkItems;
@@ -359,7 +364,7 @@ Common::Point IllusionsEngine_Duckman::getNamedPointPosition(uint32 namedPointId
 }
 
 uint32 IllusionsEngine_Duckman::getPriorityFromBase(int16 priority) {
-	return 32000000 * priority;
+	return priority << 16;
 }
 
 uint32 IllusionsEngine_Duckman::getCurrentScene() {
@@ -954,7 +959,7 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 	}
 
 	uint32 tempThreadId = newTempThreadId();
-	debug(2, "Starting cause thread %08X", tempThreadId);
+	debug("Starting cause thread %08X with triggerThreadId %08X", tempThreadId, triggerThreadId);
 	CauseThread_Duckman *causeThread = new CauseThread_Duckman(this, tempThreadId, 0, 0,
 		triggerThreadId);
 	_threads->startThread(causeThread);
@@ -1211,6 +1216,93 @@ DMInventorySlot *IllusionsEngine_Duckman::findClosestInventorySlot(Common::Point
 	return minInventorySlot;
 }
 
+void IllusionsEngine_Duckman::addPropertyTimer(uint32 propertyId) {
+	PropertyTimer *propertyTimer;
+	if (findPropertyTimer(propertyId, propertyTimer) || findPropertyTimer(0, propertyTimer)) {
+		propertyTimer->_propertyId = propertyId;
+		propertyTimer->_startTime = 0;
+		propertyTimer->_duration = 0;
+		propertyTimer->_endTime = 0;
+	}
+}
+
+void IllusionsEngine_Duckman::setPropertyTimer(uint32 propertyId, uint32 duration) {
+	PropertyTimer *propertyTimer;
+	if (findPropertyTimer(propertyId, propertyTimer)) {
+		propertyTimer->_startTime = getCurrentTime();
+		propertyTimer->_duration = duration;
+		propertyTimer->_endTime = duration + propertyTimer->_startTime;
+	}
+	_scriptResource->_properties.set(propertyId, false);
+	if (!_propertyTimersActive) {
+		_updateFunctions->add(29, getCurrentScene(), new Common::Functor1Mem<uint, int, IllusionsEngine_Duckman>
+			(this, &IllusionsEngine_Duckman::updatePropertyTimers));
+		_propertyTimersActive = true;
+	}
+}
+
+void IllusionsEngine_Duckman::removePropertyTimer(uint32 propertyId) {
+	PropertyTimer *propertyTimer;
+	if (findPropertyTimer(propertyId, propertyTimer))
+		propertyTimer->_propertyId = 0;
+	_scriptResource->_properties.set(propertyId, true);
+}
+
+bool IllusionsEngine_Duckman::findPropertyTimer(uint32 propertyId, PropertyTimer *&propertyTimer) {
+	for (uint i = 0; i < kPropertyTimersCount; ++i)
+		if (_propertyTimers[i]._propertyId == propertyId) {
+			propertyTimer = &_propertyTimers[i];
+			return true;
+		}
+	return false;
+}
+
+int IllusionsEngine_Duckman::updatePropertyTimers(uint flags) {
+	int result = 1;
+	uint32 currTime = getCurrentTime();
+	if (_pauseCtr <= 0) {
+		if (_propertyTimersPaused) {
+			for (uint i = 0; i < kPropertyTimersCount; ++i) {
+				PropertyTimer &propertyTimer = _propertyTimers[i];
+				propertyTimer._startTime = currTime;
+				propertyTimer._endTime = currTime + propertyTimer._duration;
+			}
+			_propertyTimersPaused = false;
+		}
+		if (flags & 1) {
+			_propertyTimersActive = false;
+			_propertyTimersPaused = false;
+			result = 2;
+		} else {
+			bool timersActive = false;
+			for (uint i = 0; i < kPropertyTimersCount; ++i) {
+				PropertyTimer &propertyTimer = _propertyTimers[i];
+				if (propertyTimer._propertyId) {
+					timersActive = true;
+					if (!_scriptResource->_properties.get(propertyTimer._propertyId) &&
+						isTimerExpired(propertyTimer._startTime, propertyTimer._endTime))
+						_scriptResource->_properties.set(propertyTimer._propertyId, true);
+				}
+			}
+			if (!timersActive) {
+				_propertyTimersActive = false;
+				_propertyTimersPaused = false;
+				result = 2;
+			}
+		}
+	} else {
+		if (!_propertyTimersPaused) {
+			for (uint i = 0; i < kPropertyTimersCount; ++i) {
+				PropertyTimer &propertyTimer = _propertyTimers[i];
+				propertyTimer._duration -= getDurationElapsed(propertyTimer._startTime, propertyTimer._endTime);
+			}
+			_propertyTimersPaused = true;
+		}
+		result = 1;
+	}
+	return result;
+}
+
 // Special code
 
 typedef Common::Functor1Mem<OpCall&, void, IllusionsEngine_Duckman> SpecialCodeFunctionDM;
@@ -1224,6 +1316,9 @@ void IllusionsEngine_Duckman::initSpecialCode() {
 	SPECIAL(0x00160005, spcOpenInventory);
 	SPECIAL(0x00160007, spcPutBackInventoryItem);
 	SPECIAL(0x00160008, spcClearInventorySlot);
+	SPECIAL(0x0016000A, spcAddPropertyTimer);
+	SPECIAL(0x0016000B, spcSetPropertyTimer);
+	SPECIAL(0x0016000C, spcRemovePropertyTimer);
 	SPECIAL(0x00160010, spcCenterNewspaper);
 	SPECIAL(0x00160014, spcUpdateObject272Sequence);
 	SPECIAL(0x0016001C, spcSetCursorInventoryMode);
@@ -1307,7 +1402,6 @@ static const ScreenShakeEffect *kShakerEffects[] = {
 
 void IllusionsEngine_Duckman::spcStartScreenShaker(OpCall &opCall) {
 	ARG_BYTE(effect);
-	debug("### effect: %d", effect);
 	const ScreenShakeEffect *shakerEffect = kShakerEffects[effect];
 	startScreenShaker(shakerEffect->_pointsCount, shakerEffect->_duration, shakerEffect->_points, opCall._threadId);
 }
@@ -1353,6 +1447,25 @@ void IllusionsEngine_Duckman::spcPutBackInventoryItem(OpCall &opCall) {
 void IllusionsEngine_Duckman::spcClearInventorySlot(OpCall &opCall) {
 	ARG_UINT32(objectId);
 	clearInventorySlot(objectId);
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcAddPropertyTimer(OpCall &opCall) {
+	ARG_UINT32(propertyId);
+	addPropertyTimer(propertyId);
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcSetPropertyTimer(OpCall &opCall) {
+	ARG_INT16(propertyNum);
+	ARG_INT16(duration);
+	setPropertyTimer(propertyNum | 0xE0000, duration);
+	notifyThreadId(opCall._threadId);
+}
+
+void IllusionsEngine_Duckman::spcRemovePropertyTimer(OpCall &opCall) {
+	ARG_UINT32(propertyId);
+	removePropertyTimer(propertyId);
 	notifyThreadId(opCall._threadId);
 }
 

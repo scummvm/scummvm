@@ -42,6 +42,25 @@ protected:
 	IllusionsEngine *_vm;
 };
 
+struct SoundEffect {
+	uint32 _soundEffectId;
+	bool _looping;
+	int16 _field6;
+	int16 _volume;
+	int16 _frequency;
+	void load(Common::SeekableReadStream &stream);
+};
+
+class SoundGroupResource {
+public:
+	SoundGroupResource();
+	~SoundGroupResource();
+	void load(byte *data, uint32 dataSize);
+public:
+	uint _soundEffectsCount;
+	SoundEffect *_soundEffects;
+};
+
 } // End of namespace Illusions
 
 #endif // ILLUSIONS_SOUNDRESOURCE_H

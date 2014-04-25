@@ -158,12 +158,13 @@ void TriggerObject::load(byte *dataStart, Common::SeekableReadStream &stream) {
 
 bool TriggerObject::findTriggerCause(uint32 verbId, uint32 objectId2, uint32 &codeOffs) {
 	if ((verbId & 0xFFFF0000) == 0) {
-		for (uint i = 0; i < _causesCount; ++i)
+		for (uint i = 0; i < _causesCount; ++i) {
 			if ((verbId == 7 && ((_causes[i]._verbId == 7 && _causes[i]._objectId2 == objectId2) || _causes[i]._verbId == 8)) ||
-				verbId == _causes[i]._verbId) {
+				(verbId != 7 && verbId == _causes[i]._verbId)) {
 				codeOffs = _causes[i]._codeOffs;
 				return true;
 			}
+		}
 	} else {
 		for (uint i = 0; i < _causesCount; ++i)
 			if (_causes[i]._verbId == verbId && _causes[i]._objectId2 == objectId2) {

@@ -35,13 +35,12 @@ class IllusionsEngine;
 
 class MusicPlayer {
 public:
-	MusicPlayer(Audio::Mixer *mixer);
+	MusicPlayer();
 	~MusicPlayer();
 	void play(uint32 musicId, bool looping, int16 volume, int16 pan);
 	void stop();
 	bool isPlaying();
 protected:
-	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	uint32 _musicId;
 	uint _flags;
@@ -49,7 +48,7 @@ protected:
 
 class VoicePlayer {
 public:
-	VoicePlayer(Audio::Mixer *mixer);
+	VoicePlayer();
 	~VoicePlayer();
 	bool cue(const char *voiceName);
 	void stopCueing();
@@ -59,10 +58,27 @@ public:
 	bool isEnabled();
 	bool isCued();
 protected:
-	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	Common::String _voiceName;
 	uint _voiceStatus;
+};
+
+class Sound {
+public:
+	Sound(uint32 soundEffectId, uint32 soundGroupId, bool looping);
+	~Sound();
+	void load();
+	void unload();
+	void play(int16 volume, int16 pan);
+	void stop();
+	bool isPlaying();
+public:
+	uint32 _soundEffectId;
+	uint32 _soundGroupId;
+protected:
+	Audio::RewindableAudioStream *_stream;
+	Audio::SoundHandle _soundHandle;
+	bool _looping;
 };
 
 class SoundMan {
@@ -82,11 +98,20 @@ public:
 	bool isVoiceEnabled();
 	bool isVoiceCued();
 
+	void loadSound(uint32 soundEffectId, uint32 soundGroupId, bool looping);
+	void playSound(uint32 soundEffectId, int16 volume, int16 pan);
+	void stopSound(uint32 soundEffectId);
+	void unloadSounds(uint32 soundGroupId);
+
 protected:
+	typedef Common::List<Sound*> SoundList;
+	typedef SoundList::iterator SoundListIterator;
 	IllusionsEngine *_vm;
 	uint32 _musicNotifyThreadId;
 	MusicPlayer *_musicPlayer;
 	VoicePlayer *_voicePlayer;
+	SoundList _sounds;
+	Sound *getSound(uint32 soundEffectId);
 };
 
 } // End of namespace Illusions

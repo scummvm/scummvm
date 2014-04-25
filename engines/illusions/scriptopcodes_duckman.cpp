@@ -55,6 +55,7 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 	// First clear everything
 	for (uint i = 0; i < 256; ++i)
 		_opcodes[i] = 0;
+	OPCODE(1, opNop);
 	OPCODE(2, opSuspend);
 	OPCODE(3, opYield);
 	OPCODE(4, opTerminate);
@@ -169,6 +170,9 @@ void ScriptOpcodes_Duckman::freeOpcodes() {
 
 // Opcodes
 
+void ScriptOpcodes_Duckman::opNop(ScriptThread *scriptThread, OpCall &opCall) {
+}
+
 void ScriptOpcodes_Duckman::opSuspend(ScriptThread *scriptThread, OpCall &opCall) {
 	opCall._result = kTSSuspend;
 }
@@ -242,7 +246,7 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 	_vm->enterScene(sceneId, 0);
 }
 
-//static uint dsceneId = 0, dthreadId = 0;
+static uint dsceneId = 0, dthreadId = 0;
 //static uint dsceneId = 0x00010008, dthreadId = 0x00020029;//Beginning in Jac
 //static uint dsceneId = 0x0001000A, dthreadId = 0x00020043;//Home front
 //static uint dsceneId = 0x0001000E, dthreadId = 0x0002007C;
@@ -251,13 +255,13 @@ void ScriptOpcodes_Duckman::opEnterScene18(ScriptThread *scriptThread, OpCall &o
 //static uint dsceneId = 0x00010021, dthreadId = 0x00020113;
 //static uint dsceneId = 0x00010022, dthreadId = 0x00020114;
 //static uint dsceneId = 0x0001002D, dthreadId = 0x00020141;
-static uint dsceneId = 0x00010033, dthreadId = 0x000201A4;//Chinese
+//static uint dsceneId = 0x00010033, dthreadId = 0x000201A4;//Chinese
 //static uint dsceneId = 0x00010036, dthreadId = 0x000201B5;
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089;//Map
 //static uint dsceneId = 0x0001003D, dthreadId = 0x000201E0;
 //static uint dsceneId = 0x0001004B, dthreadId = 0x0002029B;
 //static uint dsceneId = 0x0001005B, dthreadId = 0x00020341;
-
+//static uint dsceneId = 0x00010010, dthreadId = 0x0002008A;
 
 void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);

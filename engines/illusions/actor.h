@@ -177,6 +177,8 @@ public:
 	void clearNotifyThreadId1();
 	void clearNotifyThreadId2();
 	void setPriority(int16 priority);
+	uint32 getOverlapPriority();
+	uint32 getDrawPriority();
 	uint32 getPriority();
 	Common::Point calcPosition(Common::Point posDelta);
 	uint32 getSubActorParent();
