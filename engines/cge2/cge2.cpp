@@ -20,6 +20,11 @@
  *
  */
 
+/*
+ * This code is based on original Sfinx source code
+ * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
+ */
+
 #include "cge2/cge2.h"
 
 namespace CGE2 {

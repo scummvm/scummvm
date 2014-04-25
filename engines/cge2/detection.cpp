@@ -20,6 +20,11 @@
 *
 */
 
+/*
+ * This code is based on original Sfinx source code
+ * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
+ */
+
 #include "cge2/cge2.h"
 #include "engines/advancedDetector.h"
 
@@ -55,7 +60,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Sfinx (c) 1997 L.K. Avalon";
+		return "Sfinx (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;

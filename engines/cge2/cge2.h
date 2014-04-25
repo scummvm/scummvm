@@ -20,6 +20,11 @@
  *
  */
 
+/*
+ * This code is based on original Sfinx source code
+ * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
+ */
+
 #ifndef CGE2_H
 #define CGE2_H
 
