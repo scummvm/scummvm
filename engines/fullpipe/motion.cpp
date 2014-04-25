@@ -1824,6 +1824,12 @@ void MGM::clear() {
 	_items.clear();
 }
 
+MessageQueue *MGM::genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr) {
+	warning("STUB: MGM::genMQ()");
+
+	return 0;
+}
+
 MGMItem::MGMItem() {
 	objId = 0;
 }

@@ -277,8 +277,11 @@ void StaticANIObject::deleteFromGlobalMessageQueue() {
 	}
 }
 
-void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
-	if (isIdle() && !(_flags & 0x80)) {
+bool StaticANIObject::queueMessageQueue(MessageQueue *mq) {
+	if (_flags & 0x80)
+		return false;
+
+	if (isIdle()) {
 		deleteFromGlobalMessageQueue();
 		_messageQueueId = 0;
 		_messageNum = 0;
@@ -296,6 +299,8 @@ void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
 			_messageQueueId = 0;
 		}
 	}
+
+	return true;
 }
 
 void StaticANIObject::restartMessageQueue(MessageQueue *mq) {
@@ -1019,9 +1024,26 @@ void StaticANIObject::adjustSomeXY() {
 }
 
 MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
-	warning("STUB: StaticANIObject::changeStatics1(%d)", msgNum);
+	g_fp->_mgm->addItem(_id);
 
-	return 0;
+	MessageQueue *mq = g_fp->_mgm->genMQ(this, msgNum, 0, 0, 0);
+
+	if (!mq)
+		return 0;
+
+	if (mq->getCount() <= 0) {
+		g_fp->_globalMessageQueueList->addMessageQueue(mq);
+
+		if (_flags & 1)
+			_messageQueueId = mq->_id;
+	} else {
+		if (!queueMessageQueue(mq))
+			return 0;
+
+		g_fp->_globalMessageQueueList->addMessageQueue(mq);
+	}
+
+	return mq;
 }
 
 void StaticANIObject::changeStatics2(int objId) {

@@ -217,7 +217,7 @@ public:
 	void setAlpha(int alpha);
 
 	void deleteFromGlobalMessageQueue();
-	void queueMessageQueue(MessageQueue *msg);
+	bool queueMessageQueue(MessageQueue *msg);
 	void restartMessageQueue(MessageQueue *msg);
 	MessageQueue *getMessageQueue();
 	bool trySetMessageQueue(int msgNum, int qId);
