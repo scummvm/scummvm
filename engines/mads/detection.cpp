@@ -31,6 +31,7 @@
 #include "common/system.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
+#include "mads/game.h"
 
 #define MAX_SAVES 99
 
@@ -124,6 +125,7 @@ SaveStateList MADSMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = Common::String::format("%s.0??", target);
+	MADS::MADSSavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
@@ -137,6 +139,11 @@ SaveStateList MADSMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
+				MADS::Game::readSavegameHeader(in, header);
+				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+
+				header._thumbnail->free();
+				delete header._thumbnail;
 				delete in;
 			}
 		}

@@ -129,6 +129,12 @@ public:
 	* Returns true if it is currently okay to save the game
 	*/
 	bool canSaveGameStateCurrently();
+
+	/**
+	* Support method that generates a savegame name
+	* @param slot		Slot number
+	*/
+	Common::String generateSaveName(int slot);
 };
 
 } // End of namespace MADS

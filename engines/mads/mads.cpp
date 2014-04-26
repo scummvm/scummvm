@@ -130,4 +130,12 @@ bool MADSEngine::canSaveGameStateCurrently() {
 		&& _dialogs->_pendingDialog == DIALOG_NONE;
 }
 
+/**
+* Support method that generates a savegame name
+* @param slot		Slot number
+*/
+Common::String MADSEngine::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
+
 } // End of namespace MADS

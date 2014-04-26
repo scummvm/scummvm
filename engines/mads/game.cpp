@@ -21,8 +21,12 @@
  */
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 #include "common/memstream.h"
 #include "common/serializer.h"
+#include "graphics/palette.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "mads/mads.h"
 #include "mads/compression.h"
 #include "mads/game.h"
@@ -46,6 +50,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 		_scene(vm), _screenObjects(vm), _player(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
 	_difficulty = DIFFICULTY_HARD;
+	_loadGameSlot = -1;
 	_serializer = nullptr;
 	_statusFlag = 0;
 	_sectionHandler = nullptr;
@@ -81,22 +86,33 @@ Game::~Game() {
 void Game::run() {
 	initialiseGlobals();
 
+	// If requested, load a savegame instead of showing the intro
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 999)
+			_loadGameSlot = saveSlot;
+	}
+
 	_statusFlag = true;
-	int protectionResult = checkCopyProtection();
-	switch (protectionResult) {
-	case PROTECTION_FAIL:
-		// Copy protection failed
-		_scene._nextSceneId = 804;
-		break;
-	case PROTECTION_ESCAPE:
-		// User escaped out of copy protection dialog
-		_vm->quitGame();
-		break;
-	default:
-		// Copy protection check succeeded
-		_scene._nextSceneId = 103;
-		_scene._priorSceneId = 102;
-		break;
+	int protectionResult = -1;
+	
+	if (_loadGameSlot == -1) {
+		protectionResult = checkCopyProtection();
+		switch (protectionResult) {
+		case PROTECTION_FAIL:
+			// Copy protection failed
+			_scene._nextSceneId = 804;
+			break;
+		case PROTECTION_ESCAPE:
+			// User escaped out of copy protection dialog
+			_vm->quitGame();
+			break;
+		default:
+			// Copy protection check succeeded
+			_scene._nextSceneId = 103;
+			_scene._priorSceneId = 102;
+			break;
+		}
 	}
 
 	// Get the initial starting time for the first scene
@@ -420,6 +436,82 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 		_objects.synchronize(s);
 		_player.synchronize(s);
 	}
+}
+
+void Game::loadGame(int slotNumber) {
+
+}
+
+void Game::saveGame(int slotNumber, const Common::String &saveName) {
+
+}
+
+const char *const SAVEGAME_STR = "MADS";
+#define SAVEGAME_STR_SIZE 4
+
+bool Game::readSavegameHeader(Common::InSaveFile *in, MADSSavegameHeader &header) {
+	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
+	header._thumbnail = NULL;
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
+	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
+		return false;
+
+	header._version = in->readByte();
+	if (header._version > MADS_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header._saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
+
+	// Get the thumbnail
+	header._thumbnail = Graphics::loadThumbnail(*in);
+	if (!header._thumbnail)
+		return false;
+
+	// Read in save date/time
+	header._year = in->readSint16LE();
+	header._month = in->readSint16LE();
+	header._day = in->readSint16LE();
+	header._hour = in->readSint16LE();
+	header._minute = in->readSint16LE();
+	header._totalFrames = in->readUint32LE();
+
+	return true;
+}
+
+void Game::writeSavegameHeader(Common::OutSaveFile *out, MADSSavegameHeader &header) {
+	// Write out a savegame header
+	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+
+	out->writeByte(MADS_SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->write(header._saveName.c_str(), header._saveName.size() + 1);
+
+	// Get the active palette
+	uint8 thumbPalette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(thumbPalette, 0, 256);
+
+	// Create a thumbnail and save it
+	Graphics::Surface *thumb = new Graphics::Surface();
+	::createThumbnail(thumb, _vm->_screen.getData(), MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
+	Graphics::saveThumbnail(*out, *thumb);
+	thumb->free();
+	delete thumb;
+
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+	out->writeUint32LE(_vm->_events->getFrameCounter());
 }
 
 } // End of namespace MADS

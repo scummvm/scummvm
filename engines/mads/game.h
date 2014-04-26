@@ -24,6 +24,7 @@
 #define MADS_GAME_H
 
 #include "common/scummsys.h"
+#include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/serializer.h"
 #include "mads/scene.h"
@@ -54,6 +55,17 @@ enum ProtectionResult {
 	PROTECTION_SUCCEED = 0, PROTECTION_FAIL = 1, PROTECTION_ESCAPE = 2
 };
 
+#define MADS_SAVEGAME_VERSION 1
+
+struct MADSSavegameHeader {
+	uint8 _version;
+	Common::String _saveName;
+	Graphics::Surface *_thumbnail;
+	int _year, _month, _day;
+	int _hour, _minute;
+	int _totalFrames;
+};
+
 class Game {
 private:
 	/**
@@ -78,6 +90,8 @@ protected:
 	bool _quoteEmergency;
 	bool _vocabEmergency;
 	bool _anyEmergency;
+	int _loadGameSlot;
+	Common::String _saveName;
 	Common::Serializer *_serializer;
 
 	/**
@@ -188,6 +202,28 @@ public:
 	* Handle a keyboard event
 	*/
 	void handleKeypress(const Common::Event &event);
+
+	/**
+	 * Starts a savegame loading.
+	 * @remarks	Due to the way the engine is implemented, loading is done in two
+	 * parts, the second part after the specific scene has been loaded
+	 */
+	void loadGame(int slotNumber);
+
+	/**
+	 * Save the current game
+	 */
+	void saveGame(int slotNumber, const Common::String &saveName);
+
+	/**
+	 * Write out a savegame header
+	 */
+	void writeSavegameHeader(Common::OutSaveFile *out, MADSSavegameHeader &header);
+
+	/**
+	 * Read in a savegame header
+	 */
+	static bool readSavegameHeader(Common::InSaveFile *in, MADSSavegameHeader &header);
 };
 
 } // End of namespace MADS
