@@ -26,6 +26,7 @@
 #include "fullpipe/scene.h"
 #include "fullpipe/sound.h"
 #include "fullpipe/ngiarchive.h"
+#include "fullpipe/messages.h"
 #include "common/memstream.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
@@ -80,6 +81,7 @@ Sound::Sound() {
 	_objectId = 0;
 	memset(_directSoundBuffers, 0, sizeof(_directSoundBuffers));
 	_description = 0;
+	_volume = 100;
 }
 
 Sound::~Sound() {
@@ -121,6 +123,24 @@ void Sound::setPanAndVolumeByStaticAni() {
 
 void Sound::setPanAndVolume(int vol, int pan) {
 	warning("STUB: Sound::setPanAndVolume");
+}
+
+void Sound::play(int flag) {
+	warning("STUB: Sound::play()");
+}
+
+void Sound::freeSound() {
+	warning("STUB: Sound::freeSound()");
+}
+
+int Sound::getVolume() {
+	warning("STUB: Sound::getVolume()");
+
+	return _volume;
+}
+
+void Sound::stop() {
+	warning("STUB: Sound::stop()");
 }
 
 void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
@@ -350,7 +370,33 @@ void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed
 }
 
 void global_messageHandler_handleSound(ExCommand *cmd) {
-	debug(0, "STUB: global_messageHandler_handleSound()");
+	if (!g_fp->_soundEnabled)
+		return;
+
+	Sound *snd = 0;
+
+	for (int i = 0; i < g_fp->_currSoundListCount; i++)
+		snd = g_fp->_currSoundList1[i]->getSoundByIndex(i);
+
+	if (!snd)
+		return;
+
+	if (cmd->_field_14 & 1) {
+		if (!g_fp->_flgSoundList && (cmd->_field_14 & 4))
+			snd->freeSound();
+
+		snd->updateVolume();
+
+		if (snd->_objectId && g_fp->_currentScene->getStaticANIObject1ById(snd->_objectId, -1))
+			snd->setPanAndVolumeByStaticAni();
+		else
+			snd->setPanAndVolume(g_fp->_sfxVolume, 0);
+
+		if (snd->getVolume() > -3500)
+			snd->play(cmd->_keyCode);
+	} else if (cmd->_field_14 & 2) {
+		snd->stop();
+	}
 }
 
 void FullpipeEngine::stopSoundStream2() {
