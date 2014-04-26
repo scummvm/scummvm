@@ -136,7 +136,8 @@ void Sound::setPanAndVolumeByStaticAni() {
 }
 
 void Sound::setPanAndVolume(int vol, int pan) {
-	warning("STUB: Sound::setPanAndVolume");
+	g_fp->_mixer->setChannelVolume(_handle, vol / 39); // 0..10000
+	g_fp->_mixer->setChannelBalance(_handle, pan / 78); // -10000..10000
 }
 
 void Sound::play(int flag) {
