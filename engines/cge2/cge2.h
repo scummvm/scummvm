@@ -30,6 +30,7 @@
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
+#include "cge2/fileio.h"
 
 namespace CGE2 {
 
@@ -45,6 +46,10 @@ public:
 	virtual Common::Error run();
 
 	const ADGameDescription *_gameDescription;
+
+	ResourceManager *_resman;
+private:
+	void init();
 };
 
 } // End of namespace CGE2

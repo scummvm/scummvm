@@ -31,9 +31,14 @@ namespace CGE2 {
 
 CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription) {
+	_resman = nullptr;
 }
 
 CGE2Engine::~CGE2Engine() {
+}
+
+void CGE2Engine::init() {
+	_resman = new ResourceManager();
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
@@ -58,6 +63,7 @@ Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
 }
 
 Common::Error CGE2Engine::run() {
+	init();
 	warning("STUB: CGE2Engine::run()");
 	return Common::kNoError;
 }

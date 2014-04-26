@@ -2,7 +2,8 @@ MODULE := engines/cge2
 
 MODULE_OBJS = \
 	cge2.o \
-	detection.o
+	detection.o \
+	fileio.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CGE2), DYNAMIC_PLUGIN)
