@@ -43,6 +43,8 @@ namespace Fullpipe {
 #define MV_LFT_OPEN 1048
 #define MV_MAN_GOLADDER 451
 #define MV_MAN_GOLADDER2 2844
+#define MV_MAN_HMRKICK 1028
+#define MV_MAN_HMRKICK_COINLESS 1445
 #define MV_MAN_LIFTDOWN 1052
 #define MV_MAN_LIFTUP 1051
 #define MV_MAN_LOOKUP 4773
@@ -219,8 +221,11 @@ namespace Fullpipe {
 #define SC_MAINMENU 4620
 #define SC_MAP 5222
 #define SC_TITLES 5166
+#define SND_CMN_015 3139
 #define SND_CMN_031 3516
 #define SND_CMN_032 3517
+#define SND_CMN_054 4762
+#define SND_CMN_055 4763
 #define SND_CMN_060 4921
 #define SND_CMN_061 4922
 #define SND_CMN_070 5199

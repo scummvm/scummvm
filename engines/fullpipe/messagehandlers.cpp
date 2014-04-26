@@ -38,7 +38,30 @@ void global_messageHandler_KickStucco() {
 }
 
 void global_messageHandler_KickMetal() {
-	warning("STUB: global_messageHandler_KickMetal()");
+	Movement *mov = g_fp->_aniMan->getMovementById(MV_MAN_HMRKICK);
+
+	int end = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+
+	for (int i = 0; i < end; i++) {
+		ExCommand *ex = mov->getDynamicPhaseByIndex(i)->_exCommand;
+
+		if (ex)
+			if (ex->_messageKind == 35)
+				if (ex->_messageNum == SND_CMN_054 || ex->_messageNum == SND_CMN_055)
+					ex->_messageNum = SND_CMN_015;
+	}
+
+	mov = g_fp->_aniMan->getMovementById(MV_MAN_HMRKICK_COINLESS);
+	end = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+
+	for (int i = 0; i < end; i++) {
+		ExCommand *ex = mov->getDynamicPhaseByIndex(i)->_exCommand;
+
+		if (ex)
+			if (ex->_messageKind == 35)
+				if (ex->_messageNum == SND_CMN_054 || ex->_messageNum == SND_CMN_055)
+					ex->_messageNum = SND_CMN_015;
+	}
 }
 
 int global_messageHandler1(ExCommand *cmd) {
