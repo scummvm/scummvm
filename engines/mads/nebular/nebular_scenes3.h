@@ -360,6 +360,33 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
+class Scene352: public Scene3xx {
+private:
+	bool _vaultOpenFl;
+	bool _mustPutArmDownFl;
+	bool _leaveRoomFl;
+
+	int _tapePlayerHotspotIdx;
+	int _hotspot1Idx;
+	int _hotspot2Idx;
+	int _lampHostpotIdx;
+	int _commonSequenceIdx;
+	int _commonSpriteIndex;
+
+	void putArmDown(bool corridorExit, bool doorwayExit);
+
+public:
+	Scene352(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step() {};
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 
