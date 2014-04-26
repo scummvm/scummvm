@@ -208,7 +208,10 @@ void FullpipeEngine::stopAllSoundInstances(int id) {
 }
 
 void FullpipeEngine::updateSoundVolume() {
-	debug(3, "STUB FullpipeEngine::updateSoundVolume()");
+	for (int i = 0; i < _currSoundListCount; i++)
+		for (int j = 0; i < _currSoundList1[i]->getCount(); j++) {
+			g_fp->_currSoundList1[i]->getSoundByIndex(j)->setPanAndVolume(g_fp->_sfxVolume, 0);
+		}
 }
 
 void FullpipeEngine::setMusicVolume(int vol) {
