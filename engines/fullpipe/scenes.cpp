@@ -1106,10 +1106,6 @@ int defaultUpdateCursor() {
 	return g_fp->_cursorId;
 }
 
-void FullpipeEngine::processArcade(ExCommand *ex) {
-	warning("STUB: FullpipeEngine::processArcade()");
-}
-
 void FullpipeEngine::updateMapPiece(int mapId, int update) {
 	for (int i = 0; i < 200; i++) {
 		int hiWord = (_mapTable[i] >> 16) & 0xffff;
