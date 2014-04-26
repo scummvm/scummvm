@@ -4374,5 +4374,52 @@ void Scene352::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene353::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene353::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(303, 'B', 0, EXT_SS, ""));
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 0, 5, 0);
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1); 
+
+	if (_scene->_priorSceneId == 352)
+		_game._player._playerPos = Common::Point(144, 95);
+	else
+		_game._player._playerPos = Common::Point(139, 155);
+
+	sceneEntrySound();
+}
+
+void Scene353::actions() {
+	if (_action._lookFlag)
+		_vm->_dialogs->show(0x89F3);
+	else if (_action.isAction(0x18B, 0x70))
+		_scene->_nextSceneId = 352;
+	else if (_action.isAction(0x1AD, 0x2B3))
+		_scene->_nextSceneId = 354;
+	else if (_action.isAction(VERB_LOOK, 0x23D))
+		_vm->_dialogs->show(0x89EE);
+	else if (_action.isAction(VERB_LOOK, 0x1FA) || _action.isAction(VERB_LOOK, 0x10C))
+		_vm->_dialogs->show(0x89EF);
+	else if (_action.isAction(VERB_LOOK, 0x23C))
+		_vm->_dialogs->show(0x89F0);
+	else if (_action.isAction(VERB_LOOK, 0x70))
+		_vm->_dialogs->show(0x89F1);
+	else if (_action.isAction(VERB_LOOK, 0x2B3))
+		_vm->_dialogs->show(0x89F2);
+	else if (_action.isAction(VERB_LOOK, 0x89))
+		_vm->_dialogs->show(0x89F4);
+	else if (_action.isAction(VERB_LOOK, 0x46))
+		_vm->_dialogs->show(0x89F5);
+	else if (_action.isAction(VERB_LOOK, 0x18D))
+		_vm->_dialogs->show(0x89F6);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
 } // End of namespace Nebular
 } // End of namespace MADS
