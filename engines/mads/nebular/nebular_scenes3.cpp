@@ -4421,5 +4421,74 @@ void Scene353::actions() {
 	_action._inProgress = false;
 }
 
+/*------------------------------------------------------------------------*/
+
+void Scene354::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene354::enter() {
+	_globals[kAfterHavoc] = true;
+	_globals[kTeleporterRoom + 1] = 351;
+
+	if (_scene->_priorSceneId == 361)
+		_game._player._playerPos = Common::Point(231, 110);
+	else if (_scene->_priorSceneId == 401) {
+		_game._player._playerPos = Common::Point(106, 152);
+		_game._player._facing = FACING_NORTH;
+	} else if (_scene->_priorSceneId == 316)
+		_game._player._playerPos = Common::Point(71, 107);
+	else if (_scene->_priorSceneId != -2)
+		_game._player._playerPos = Common::Point(167, 57);
+
+	sceneEntrySound();
+}
+
+void Scene354::preActions() {
+	if (_action.isAction(0x1AD, 0x2B3))
+		_game._player._walkOffScreenSceneId = 401;
+}
+
+void Scene354::actions() {
+	if (_action._lookFlag)
+		_vm->_dialogs->show(0x8A56);
+	else if (_action.isAction(0x1AD, 0x2B4)) {
+		_game._player.startWalking(Common::Point(208, 0), FACING_NORTHEAST);
+		_game._player._walkOffScreenSceneId = 353;
+	} else if (_action.isAction(0x1AD, 0x2B9))
+		_scene->_nextSceneId = 361;
+	else if (_action.isAction(0x1AD, 0x2BA))
+		_scene->_nextSceneId = 316;
+	else if (_action.isAction(0x1AD, 0x2B3))
+		_scene->_nextSceneId = 401;
+	else if (_action.isAction(VERB_LOOK, 0x2C6))
+		_vm->_dialogs->show(0x8A52);
+	else if (_action.isAction(VERB_LOOK, 0x1FD))
+		_vm->_dialogs->show(0x8A53);
+	else if (_action.isAction(VERB_LOOK, 0x2D0))
+		_vm->_dialogs->show(0x8A54);
+	else if (_action.isAction(VERB_LOOK, 0x206))
+		_vm->_dialogs->show(0x8A55);
+	else if (_action.isAction(VERB_LOOK, 0x2B4))
+		_vm->_dialogs->show(0x8A57);
+	else if (_action.isAction(VERB_LOOK, 0x2B3))
+		_vm->_dialogs->show(0x8A58);
+	else if (_action.isAction(VERB_LOOK, 0x2B9))
+		_vm->_dialogs->show(0x8A59);
+	else if (_action.isAction(VERB_LOOK, 0x2BA))
+		_vm->_dialogs->show(0x8A5A);
+	else if (_action.isAction(VERB_LOOK, 0x218))
+		_vm->_dialogs->show(0x8A5B);
+	else if (_action.isAction(VERB_LOOK, 0x239))
+		_vm->_dialogs->show(0x8A5C);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
