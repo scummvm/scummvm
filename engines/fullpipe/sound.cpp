@@ -154,9 +154,31 @@ void FullpipeEngine::startSceneTrack() {
 }
 
 int FullpipeEngine::getSceneTrack() {
-	warning("STUB: FullpipeEngine::getSceneTrack()");
+	int res;
 
-	return -1;
+	if (_sceneTrackHasSequence) {
+		int num = _musicGameVar->getSubVarAsInt("TRACKS");
+
+		if (_trackName[num + 1] == 's') { // 'silence'
+			res = -1;
+		} else {
+			res = _trackName[num + 1] - '0';
+
+			if (res < 0 || res >= _numSceneTracks)
+				res = 0;
+		}
+
+		int track = num + 1;
+
+		if (!_trackName[num + 2])
+			track = 0;
+
+		_musicGameVar->setSubVarAsInt("TRACKS", track);
+	} else {
+		res = _numSceneTracks * (_updateTicks % 10) / 10;
+	}
+
+	return res;
 }
 
 void FullpipeEngine::startSoundStream1(char *trackName) {
