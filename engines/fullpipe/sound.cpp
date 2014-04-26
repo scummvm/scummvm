@@ -140,7 +140,9 @@ void Sound::play(int flag) {
 }
 
 void Sound::freeSound() {
-	warning("STUB: Sound::freeSound()");
+	stop();
+
+	free(_soundData);
 }
 
 int Sound::getVolume() {
@@ -150,7 +152,7 @@ int Sound::getVolume() {
 }
 
 void Sound::stop() {
-	warning("STUB: Sound::stop()");
+	g_fp->_mixer->stopHandle(_handle);
 }
 
 void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
