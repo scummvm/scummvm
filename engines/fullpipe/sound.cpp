@@ -148,9 +148,7 @@ void Sound::freeSound() {
 }
 
 int Sound::getVolume() {
-	warning("STUB: Sound::getVolume()");
-
-	return _volume;
+	return g_fp->_mixer->getChannelVolume(_handle) * 39;  // 0..10000
 }
 
 void Sound::stop() {
