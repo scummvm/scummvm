@@ -123,11 +123,62 @@ void Sound::setPanAndVolume(int vol, int pan) {
 	warning("STUB: Sound::setPanAndVolume");
 }
 
-void FullpipeEngine::setSceneMusicParameters(GameVar *var) {
+void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
-	// TODO: Finish this (MINDELAY, MAXDELAY, LOCAL, SEQUENCE, STARTDELAY etc)
-	stopAllSoundStreams();
+#if 0
+	stopSoundStream2();
+
+	if (soundStream3)
+		FSOUND_Stream_Stop(soundStream4);
+#endif
+
+	if (_musicLocal)
+		stopAllSoundStreams();
+
+	GameVar *var = gvar->getSubVarByName("MUSIC");
+
+	memset(_sceneTracks, 0, sizeof(_sceneTracks));
+
+	_numSceneTracks = 0;
+	_sceneTrackHasSequence = false;
+
+	if (!var)
+		return;
+
 	_musicGameVar = var;
+
+	GameVar *tr = var->getSubVarByName("TRACKS");
+	if (tr) {
+		GameVar *sub = tr->_subVars;
+
+		while (sub) {
+			if (_musicAllowed & sub->_value.intValue) {
+				strcpy(_sceneTracks[_numSceneTracks], sub->_varName);
+
+				_numSceneTracks++;
+			}
+
+			sub = sub->_nextVarObj;
+		}
+	}
+
+	_musicMinDelay = var->getSubVarAsInt("MINDELAY");
+	_musicMaxDelay = var->getSubVarAsInt("MAXDELAY");
+	_musicLocal = var->getSubVarAsInt("LOCAL");
+
+	GameVar *seq = var->getSubVarByName("SEQUENCE");
+
+	if (seq) {
+		_sceneTrackHasSequence = true;
+
+		strcpy(_trackName, seq->_value.stringValue);
+	}
+
+	if (_musicLocal)
+		stopAllSoundStreams();
+
+	if (!_sceneTrackIsPlaying || _musicLocal)
+		_trackStartDelay = var->getSubVarAsInt("STARTDELAY");
 }
 
 void FullpipeEngine::startSceneTrack() {
@@ -182,6 +233,8 @@ int FullpipeEngine::getSceneTrack() {
 }
 
 void FullpipeEngine::startSoundStream1(char *trackName) {
+	warning("STUB: FullpipeEngine::startSoundStream1(%s)", trackName);
+
 	stopAllSoundStreams();
 
 #ifdef USE_VORBIS
