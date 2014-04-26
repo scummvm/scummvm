@@ -158,7 +158,11 @@ void FullpipeEngine::stopAllSounds() {
 }
 
 void FullpipeEngine::toggleMute() {
-	warning("STUB: FullpipeEngine::toggleMute()");
+	if (g_fp->_soundEnabled) {
+		g_fp->_sfxVolume = g_fp->_sfxVolume != -10000 ? -10000 : 0;
+
+		updateSoundVolume();
+	}
 }
 
 void FullpipeEngine::playSound(int id, int flag) {
