@@ -131,23 +131,23 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *var) {
 }
 
 void FullpipeEngine::startSceneTrack() {
-	if (!g_fp->_sceneTrackIsPlaying && g_fp->_numSceneTracks > 0) {
-		if (g_fp->_trackStartDelay > 0) {
-			g_fp->_trackStartDelay--;
+	if (!_sceneTrackIsPlaying && _numSceneTracks > 0) {
+		if (_trackStartDelay > 0) {
+			_trackStartDelay--;
 		} else {
 			int trackNum = getSceneTrack();
 
 			if (trackNum == -1) {
-				strcpy(g_fp->_sceneTracksCurrentTrack, "silence");
+				strcpy(_sceneTracksCurrentTrack, "silence");
 
-				g_fp->_trackStartDelay = 2880;
-				g_fp->_sceneTrackIsPlaying = 0;
+				_trackStartDelay = 2880;
+				_sceneTrackIsPlaying = 0;
 			} else {
-				strcpy(g_fp->_sceneTracksCurrentTrack, g_fp->_sceneTracks[trackNum]);
+				strcpy(_sceneTracksCurrentTrack, _sceneTracks[trackNum]);
 
-				startSoundStream1(g_fp->_sceneTracksCurrentTrack);
+				startSoundStream1(_sceneTracksCurrentTrack);
 
-				g_fp->_sceneTrackIsPlaying = 1;
+				_sceneTrackIsPlaying = true;
 			}
 		}
 	}
@@ -185,7 +185,7 @@ void FullpipeEngine::startSoundStream1(char *trackName) {
 	stopAllSoundStreams();
 
 #ifdef USE_VORBIS
-	if (g_fp->_mixer->isSoundHandleActive(_sceneTrackHandle))
+	if (_mixer->isSoundHandleActive(_sceneTrackHandle))
 		return;
 
 	Common::File *track = new Common::File();
@@ -195,26 +195,27 @@ void FullpipeEngine::startSoundStream1(char *trackName) {
 		return;
 	}
 	Audio::RewindableAudioStream *ogg = Audio::makeVorbisStream(track, DisposeAfterUse::YES);
-	g_fp->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_sceneTrackHandle, ogg);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_sceneTrackHandle, ogg);
 #endif
 }
 
 void FullpipeEngine::stopAllSounds() {
 	// TODO: Differences from stopAllSoundStreams()
-	g_fp->_mixer->stopAll();
+	_mixer->stopAll();
 }
 
 void FullpipeEngine::toggleMute() {
-	if (g_fp->_soundEnabled) {
-		g_fp->_sfxVolume = g_fp->_sfxVolume != -10000 ? -10000 : 0;
+	if (_soundEnabled) {
+		_sfxVolume = _sfxVolume != -10000 ? -10000 : 0;
 
 		updateSoundVolume();
 	}
 }
 
 void FullpipeEngine::playSound(int id, int flag) {
-	SoundList *soundList = g_fp->_currentScene->_soundList;
+	SoundList *soundList = _currentScene->_soundList;
 	Sound *sound = soundList->getSoundById(id);
+
 	if (!sound) {
 		warning("playSound: Can't find sound with ID %d", id);
 		return;
@@ -224,7 +225,7 @@ void FullpipeEngine::playSound(int id, int flag) {
 	Audio::RewindableAudioStream *wav = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
 	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(wav, (flag == 1) ? 0 : 1);
 	Audio::SoundHandle handle = sound->getHandle();
-	g_fp->_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, audioStream);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, audioStream);
 }
 
 void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
@@ -236,54 +237,55 @@ void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed
 		FSOUND_Stream_Stop(soundStream4);
 #endif
 
-	if (g_fp->_musicLocal)
+	if (_musicLocal)
 		stopAllSoundStreams();
 
 	GameVar *var = sceneVar->getSubVarByName(name);
 
-	memset(g_fp->_sceneTracks, 0, sizeof(g_fp->_sceneTracks));
+	memset(_sceneTracks, 0, sizeof(_sceneTracks));
 
-	g_fp->_numSceneTracks = 0;
-	g_fp->_sceneTrackHasSequence = false;
+	_numSceneTracks = 0;
+	_sceneTrackHasSequence = false;
 
 	if (!var)
 		return;
 
-	g_fp->_musicGameVar = var;
+	_musicGameVar = var;
 
 	GameVar *tr = var->getSubVarByName("TRACKS");
 	if (tr) {
 		GameVar *sub = tr->_subVars;
 
 		while (sub) {
-			if (g_fp->_musicAllowed & sub->_value.intValue) {
-				strcpy(g_fp->_sceneTracks[g_fp->_numSceneTracks], sub->_varName);
+			if (_musicAllowed & sub->_value.intValue) {
+				strcpy(_sceneTracks[_numSceneTracks], sub->_varName);
 
-				g_fp->_numSceneTracks++;
+				_numSceneTracks++;
 			}
 
 			sub = sub->_nextVarObj;
 		}
 	}
 
-	g_fp->_musicMinDelay = var->getSubVarAsInt("MINDELAY");
-	g_fp->_musicMaxDelay = var->getSubVarAsInt("MAXDELAY");
-	g_fp->_musicLocal = var->getSubVarAsInt("LOCAL");
+	_musicMinDelay = var->getSubVarAsInt("MINDELAY");
+	_musicMaxDelay = var->getSubVarAsInt("MAXDELAY");
+	_musicLocal = var->getSubVarAsInt("LOCAL");
 
 	GameVar *seq = var->getSubVarByName("SEQUENCE");
-	if (seq) {
-		g_fp->_sceneTrackHasSequence = true;
 
-		strcpy(g_fp->_trackName, seq->_value.stringValue);
+	if (seq) {
+		_sceneTrackHasSequence = true;
+
+		strcpy(_trackName, seq->_value.stringValue);
 	}
 
 	if (delayed) {
-		if (g_fp->_sceneTrackIsPlaying && g_fp->_numSceneTracks == 1) {
-			if (strcmp(g_fp->_sceneTracksCurrentTrack, g_fp->_sceneTracks[0]))
+		if (_sceneTrackIsPlaying && _numSceneTracks == 1) {
+			if (strcmp(_sceneTracksCurrentTrack, _sceneTracks[0]))
 				stopAllSoundStreams();
 		}
 
-		g_fp->_trackStartDelay = var->getSubVarAsInt("STARTDELAY");
+		_trackStartDelay = var->getSubVarAsInt("STARTDELAY");
 	}
 }
 
@@ -297,15 +299,17 @@ void FullpipeEngine::stopSoundStream2() {
 
 void FullpipeEngine::stopAllSoundStreams() {
 	// TODO: Differences from stopAllSounds()
-	g_fp->_mixer->stopAll();
+	_mixer->stopAll();
 }
 
 void FullpipeEngine::stopAllSoundInstances(int id) {
-	SoundList *soundList = g_fp->_currentScene->_soundList;
+	SoundList *soundList = _currentScene->_soundList;
+
 	for (int i = 0; i < soundList->getCount(); i++) {
 		Sound *sound = soundList->getSoundByIndex(i);
+
 		if (sound->getId() == id) {
-			g_fp->_mixer->stopHandle(sound->getHandle());
+			_mixer->stopHandle(sound->getHandle());
 		}
 	}
 }
@@ -313,7 +317,7 @@ void FullpipeEngine::stopAllSoundInstances(int id) {
 void FullpipeEngine::updateSoundVolume() {
 	for (int i = 0; i < _currSoundListCount; i++)
 		for (int j = 0; i < _currSoundList1[i]->getCount(); j++) {
-			g_fp->_currSoundList1[i]->getSoundByIndex(j)->setPanAndVolume(g_fp->_sfxVolume, 0);
+			_currSoundList1[i]->getSoundByIndex(j)->setPanAndVolume(_sfxVolume, 0);
 		}
 }
 
