@@ -126,7 +126,17 @@ void Sound::setPanAndVolume(int vol, int pan) {
 }
 
 void Sound::play(int flag) {
-	warning("STUB: Sound::play()");
+	Audio::SoundHandle handle = getHandle();
+
+	if (g_fp->_mixer->isSoundHandleActive(handle))
+		return;
+
+	byte *soundData = loadData();
+	Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(soundData, getDataSize());
+	Audio::RewindableAudioStream *wav = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
+	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(wav, (flag == 1) ? 0 : 1);
+
+	g_fp->_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, audioStream);
 }
 
 void Sound::freeSound() {
@@ -300,12 +310,7 @@ void FullpipeEngine::playSound(int id, int flag) {
 		return;
 	}
 
-	byte *soundData = sound->loadData();
-	Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(soundData, sound->getDataSize());
-	Audio::RewindableAudioStream *wav = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
-	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(wav, (flag == 1) ? 0 : 1);
-	Audio::SoundHandle handle = sound->getHandle();
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, audioStream);
+	sound->play(flag);
 }
 
 void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
