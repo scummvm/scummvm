@@ -85,7 +85,9 @@ Sound::Sound() {
 }
 
 Sound::~Sound() {
-	warning("STUB: Sound::~Sound()");
+	freeSound();
+
+	free(_description);
 }
 
 bool Sound::load(MfcArchive &file, NGIArchive *archive) {
