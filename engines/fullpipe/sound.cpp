@@ -266,13 +266,20 @@ void FullpipeEngine::toggleMute() {
 }
 
 void FullpipeEngine::playSound(int id, int flag) {
-	SoundList *soundList = _currentScene->_soundList;
-	Sound *sound = soundList->getSoundById(id);
+	Sound *sound = 0;
+
+	for (int i = 0; i < _currSoundListCount; i++) {
+		sound = _currSoundList1[i]->getSoundById(id);
+
+		if (sound)
+			break;
+	}
 
 	if (!sound) {
 		warning("playSound: Can't find sound with ID %d", id);
 		return;
 	}
+
 	byte *soundData = sound->loadData();
 	Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(soundData, sound->getDataSize());
 	Audio::RewindableAudioStream *wav = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
