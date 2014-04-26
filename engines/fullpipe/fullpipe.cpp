@@ -104,6 +104,18 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_musicAllowed = -1;
 	_musicGameVar = 0;
+	_musicMinDelay = 0;
+	_musicMaxDelay = 0;
+	_musicLocal = 0;
+	_trackStartDelay = 0;
+
+	memset(_sceneTracks, 0, sizeof(_sceneTracks));
+	memset(_trackName, 0, sizeof(_trackName));
+	memset(_sceneTracksCurrentTrack, 0, sizeof(_sceneTracksCurrentTrack));
+
+	_numSceneTracks = 0;
+	_sceneTrackHasSequence = false;
+	_sceneTrackIsPlaying = false;
 
 	_aniMan = 0;
 	_aniMan2 = 0;

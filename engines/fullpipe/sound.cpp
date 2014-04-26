@@ -182,6 +182,62 @@ void FullpipeEngine::playSound(int id, int flag) {
 
 void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
 	warning("STUB: FullpipeEngine::playTrack(var, %s, %d)", name, delayed);
+#if 0
+	stopSoundStream2();
+
+	if (soundStream3)
+		FSOUND_Stream_Stop(soundStream4);
+#endif
+
+	if (g_fp->_musicLocal)
+		stopAllSoundStreams();
+
+	GameVar *var = sceneVar->getSubVarByName(name);
+
+	memset(g_fp->_sceneTracks, 0, sizeof(g_fp->_sceneTracks));
+
+	g_fp->_numSceneTracks = 0;
+	g_fp->_sceneTrackHasSequence = false;
+
+	if (!var)
+		return;
+
+	g_fp->_musicGameVar = var;
+
+	GameVar *tr = var->getSubVarByName("TRACKS");
+	if (tr) {
+		GameVar *sub = tr->_subVars;
+
+		while (sub) {
+			if (g_fp->_musicAllowed & sub->_value.intValue) {
+				strcpy(g_fp->_sceneTracks[g_fp->_numSceneTracks], sub->_varName);
+
+				g_fp->_numSceneTracks++;
+			}
+
+			sub = sub->_nextVarObj;
+		}
+	}
+
+	g_fp->_musicMinDelay = var->getSubVarAsInt("MINDELAY");
+	g_fp->_musicMaxDelay = var->getSubVarAsInt("MAXDELAY");
+	g_fp->_musicLocal = var->getSubVarAsInt("LOCAL");
+
+	GameVar *seq = var->getSubVarByName("SEQUENCE");
+	if (seq) {
+		g_fp->_sceneTrackHasSequence = true;
+
+		strcpy(g_fp->_trackName, seq->_value.stringValue);
+	}
+
+	if (delayed) {
+		if (g_fp->_sceneTrackIsPlaying && g_fp->_numSceneTracks == 1) {
+			if (strcmp(g_fp->_sceneTracksCurrentTrack, g_fp->_sceneTracks[0]))
+				stopAllSoundStreams();
+		}
+
+		g_fp->_trackStartDelay = var->getSubVarAsInt("STARTDELAY");
+	}
 }
 
 void global_messageHandler_handleSound(ExCommand *cmd) {
