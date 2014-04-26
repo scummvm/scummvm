@@ -2169,10 +2169,22 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	return mq;
 }
 
-int MGM::countPhases(int idx, int subIdx, int subOffset, int flag) {
-	warning("STUB: MGM::countPhases");
+int MGM::countPhases(int idx, int subIdx, int endIdx, int flag) {
+	int res = 0;
 
-	return 0;
+	if (endIdx < 0)
+		return 0;
+
+	while (subIdx != endIdx) {
+		if (subIdx < 0)
+			break;
+
+		res += _items[idx]->subItems[subIdx + endIdx * _items[idx]->statics.size()]->movement->countPhasesWithFlag(-1, flag);
+
+		subIdx = _items[idx]->subItems[subIdx + 6 * endIdx * _items[idx]->statics.size()]->staticsIndex;
+	}
+
+	return res;
 }
 void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
 	if (getItemIndexById(ani->_id) == -1)
