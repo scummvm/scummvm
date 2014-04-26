@@ -2359,6 +2359,26 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	return -1;
 }
 
+int MGM::refreshOffsets(int objectId, int idx1, int idx2) {
+	int idx = getItemIndexById(objectId);
+
+	if (idx != -1) {
+		int from = getStaticsIndexById(idx, idx1);
+		int to = getStaticsIndexById(idx, idx2);
+
+		MGMSubItem *sub = _items[idx]->subItems[from + to * _items[idx]->statics.size()];
+
+		if (sub->movement) {
+			idx = sub->field_8;
+		} else {
+			clearMovements2(idx);
+			idx = recalcOffsets(idx, from, to, 0, 1);
+		}
+	}
+
+	return idx;
+}
+
 Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *mult, int *len, int flag) {
 	Common::Point point;
 

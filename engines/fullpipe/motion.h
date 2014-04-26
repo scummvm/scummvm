@@ -180,6 +180,7 @@ public:
 	ExCommand2 *buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len);
 	MessageQueue *genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);
 	int countPhases(int idx, int subIdx, int subOffset, int flag);
+	int refreshOffsets(int objectId, int idx1, int idx2);
 };
 
 struct MctlLadderMovementVars {
