@@ -699,6 +699,10 @@ void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
 	push_back(msg);
 }
 
+void clearGlobalMessageQueueList() {
+	g_fp->_globalMessageQueueList->clear();
+}
+
 void clearGlobalMessageQueueList1() {
 	clearMessages();
 
