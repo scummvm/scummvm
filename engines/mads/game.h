@@ -92,7 +92,7 @@ protected:
 	bool _anyEmergency;
 	int _loadGameSlot;
 	Common::String _saveName;
-	Common::Serializer *_serializer;
+	Common::InSaveFile *_saveFile;
 
 	/**
 	 * Constructor

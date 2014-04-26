@@ -51,7 +51,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_sectionNumber = _priorSectionNumber = 0;
 	_difficulty = DIFFICULTY_HARD;
 	_loadGameSlot = -1;
-	_serializer = nullptr;
+	_saveFile = nullptr;
 	_statusFlag = 0;
 	_sectionHandler = nullptr;
 	_sectionNumber = 1;
@@ -79,6 +79,7 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 }
 
 Game::~Game() {
+	delete _saveFile;
 	delete _surface;
 	delete _sectionHandler;
 }
@@ -118,7 +119,7 @@ void Game::run() {
 	// Get the initial starting time for the first scene
 	_scene._frameStartTime = _vm->_events->getFrameCounter();
 
-	if (_serializer == nullptr && protectionResult != -1 && protectionResult != -2) {
+	if (_saveFile == nullptr && protectionResult != -1 && protectionResult != -2) {
 		initSection(_sectionNumber);
 		_statusFlag = true;
 
@@ -142,8 +143,10 @@ void Game::run() {
 
 void Game::gameLoop() {
 	while (!_vm->shouldQuit() && _statusFlag) {
-		if (_serializer)
-			synchronize(*_serializer, true);
+		if (_loadGameSlot != -1) {
+			loadGame(_loadGameSlot);
+			_loadGameSlot = -1;
+		}
 
 		setSectionHandler();
 		_sectionHandler->preLoadSection();
@@ -254,6 +257,13 @@ void Game::sectionLoop() {
 		// Call the scene logic for entering the given scene
 		_triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene._sceneLogic->enter();
+
+		// If in the middle of restoring a game, handle the rest of the loading
+		if (_saveFile != nullptr) {
+			Common::Serializer s(_saveFile, nullptr);
+			synchronize(s, false);
+			delete _saveFile;
+		}
 
 		// Set player data
 		_player._targetPos = _player._playerPos;
@@ -420,6 +430,7 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 	if (phase1) {
 		s.syncAsUint16LE(_scene._nextSceneId);
 		s.syncAsUint16LE(_scene._priorSceneId);
+		_visitedScenes.synchronize(s);
 
 		if (s.isLoading()) {
 			_sectionNumber = _scene._nextSceneId / 100;
@@ -439,11 +450,39 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 }
 
 void Game::loadGame(int slotNumber) {
+	_saveFile = g_system->getSavefileManager()->openForLoading(
+		_vm->generateSaveName(slotNumber));
+	
+	Common::Serializer s(_saveFile, nullptr);
+	
+	// Load the savaegame header
+	MADSSavegameHeader header;
+	if (!readSavegameHeader(_saveFile, header))
+		error("Invalid savegame");
 
+	if (header._thumbnail) {
+		header._thumbnail->free();
+		delete header._thumbnail;
+	}
+
+	// Load the initial data such as what scene needs to be loaded up
+	synchronize(s, true);
 }
 
 void Game::saveGame(int slotNumber, const Common::String &saveName) {
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
+		_vm->generateSaveName(slotNumber));
 
+	MADSSavegameHeader header;
+	header._saveName = saveName;
+	writeSavegameHeader(out, header);
+
+	Common::Serializer s(nullptr, out);
+	synchronize(s, true);
+	synchronize(s, false);
+
+	out->finalize();
+	delete out;
 }
 
 const char *const SAVEGAME_STR = "MADS";

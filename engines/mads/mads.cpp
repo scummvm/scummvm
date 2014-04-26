@@ -138,4 +138,14 @@ Common::String MADSEngine::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
+Common::Error MADSEngine::loadGameState(int slot) {
+	_game->loadGame(slot);
+	return Common::kNoError;
+}
+
+Common::Error MADSEngine::saveGameState(int slot, const Common::String &desc) {
+	_game->saveGame(slot, desc);
+	return Common::kNoError;
+}
+
 } // End of namespace MADS

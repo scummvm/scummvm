@@ -135,6 +135,16 @@ public:
 	* @param slot		Slot number
 	*/
 	Common::String generateSaveName(int slot);
+
+	/**
+	 * Handles loading a game via the GMM 
+	 */
+	virtual Common::Error loadGameState(int slot);
+
+	/**
+	 * Handles saving the game via the GMM
+	 */
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 };
 
 } // End of namespace MADS

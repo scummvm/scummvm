@@ -47,6 +47,11 @@ public:
 	 * Adds a scene Id to the list of previously visited scenes, if it doesn't already exist
 	 */
 	void add(int sceneId);
+
+	/**
+	 * Synchronizes the list
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 class SectionHandler {
