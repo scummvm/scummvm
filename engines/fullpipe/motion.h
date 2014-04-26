@@ -179,6 +179,7 @@ public:
 	Common::Point *calcLength(Common::Point *point, Movement *mov, int x, int y, int *mult, int *len, int flag);
 	ExCommand2 *buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len);
 	MessageQueue *genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);
+	int countPhases(int idx, int subIdx, int subOffset, int flag);
 };
 
 struct MctlLadderMovementVars {
