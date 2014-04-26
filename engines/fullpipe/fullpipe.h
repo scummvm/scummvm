@@ -166,7 +166,9 @@ public:
 	void toggleMute();
 	void playSound(int id, int flag);
 	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
+	int getSceneTrack();
 	void startSceneTrack();
+	void startSoundStream1(char *trackName);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);

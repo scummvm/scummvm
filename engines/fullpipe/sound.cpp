@@ -131,16 +131,41 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *var) {
 }
 
 void FullpipeEngine::startSceneTrack() {
-	// TODO: Finish this
+	if (!g_fp->_sceneTrackIsPlaying && g_fp->_numSceneTracks > 0) {
+		if (g_fp->_trackStartDelay > 0) {
+			g_fp->_trackStartDelay--;
+		} else {
+			int trackNum = getSceneTrack();
+
+			if (trackNum == -1) {
+				strcpy(g_fp->_sceneTracksCurrentTrack, "silence");
+
+				g_fp->_trackStartDelay = 2880;
+				g_fp->_sceneTrackIsPlaying = 0;
+			} else {
+				strcpy(g_fp->_sceneTracksCurrentTrack, g_fp->_sceneTracks[trackNum]);
+
+				startSoundStream1(g_fp->_sceneTracksCurrentTrack);
+
+				g_fp->_sceneTrackIsPlaying = 1;
+			}
+		}
+	}
+}
+
+int FullpipeEngine::getSceneTrack() {
+	warning("STUB: FullpipeEngine::getSceneTrack()");
+
+	return -1;
+}
+
+void FullpipeEngine::startSoundStream1(char *trackName) {
+	stopAllSoundStreams();
+
 #ifdef USE_VORBIS
 	if (g_fp->_mixer->isSoundHandleActive(_sceneTrackHandle))
 		return;
 
-	GameVar *musicTrackVar = _musicGameVar->getSubVarByName("MUSIC")->getSubVarByName("TRACKS")->_subVars;
-	if (!musicTrackVar)
-		return;
-
-	char *trackName = musicTrackVar->_varName;
 	Common::File *track = new Common::File();
 	if (!track->open(trackName)) {
 		warning("Could not open %s", trackName);
