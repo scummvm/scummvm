@@ -74,6 +74,18 @@ bool SoundList::loadFile(const char *fname, char *libname) {
 	return load(archive, libname);
 }
 
+Sound *SoundList::getSoundItemById(int id) {
+	if (_soundItemsCount == 0) {
+		return _soundItems[0]->getId() != id ? 0 : _soundItems[0];
+	}
+
+	for (int i = 0; i < _soundItemsCount; i++) {
+		if (_soundItems[i]->getId() == id)
+			return _soundItems[i];
+	}
+	return NULL;
+}
+
 Sound::Sound() {
 	_id = 0;
 	_directSoundBuffer = 0;
@@ -301,7 +313,7 @@ void FullpipeEngine::playSound(int id, int flag) {
 	Sound *sound = 0;
 
 	for (int i = 0; i < _currSoundListCount; i++) {
-		sound = _currSoundList1[i]->getSoundById(id);
+		sound = _currSoundList1[i]->getSoundItemById(id);
 
 		if (sound)
 			break;
@@ -383,7 +395,7 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 	Sound *snd = 0;
 
 	for (int i = 0; i < g_fp->_currSoundListCount; i++)
-		snd = g_fp->_currSoundList1[i]->getSoundByIndex(i);
+		snd = g_fp->_currSoundList1[i]->getSoundItemById(cmd->_messageNum);
 
 	if (!snd)
 		return;

@@ -69,13 +69,7 @@ class SoundList : public CObject {
 
 	int getCount() { return _soundItemsCount; }
 	Sound *getSoundByIndex(int idx) { return _soundItems[idx]; }
-	Sound *getSoundById(int id) {
-		for (int i = 0; i < _soundItemsCount; i++) {
-			if (_soundItems[i]->getId() == id)
-				return _soundItems[i];
-		}
-		return NULL;
-	}
+	Sound *getSoundItemById(int id);
 };
 
 } // End of namespace Fullpipe
