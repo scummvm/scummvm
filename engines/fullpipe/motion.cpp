@@ -1825,9 +1825,86 @@ void MGM::clear() {
 }
 
 MessageQueue *MGM::genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr) {
-	warning("STUB: MGM::genMQ()");
+	int idx = getItemIndexById(ani->_id);
 
-	return 0;
+	if (idx == -1)
+		return 0;
+
+	int stid = staticsId;
+
+	if (!staticsId) {
+		if (ani->_movement) {
+			stid = ani->_movement->_staticsObj2->_staticsId;
+		} else {
+			if (!ani->_statics)
+				return 0;
+
+			stid = ani->_statics->_staticsId;
+		}
+	}
+
+	if (stid == staticsIndex)
+		return new MessageQueue(g_fp->_globalMessageQueueList->compact());
+
+	int startidx = getStaticsIndexById(idx, stid);
+	int endidx = getStaticsIndexById(idx, staticsIndex);
+	int subidx = startidx + endidx * _items[idx]->statics.size();
+
+	if (!_items[idx]->subItems[subidx]->movement) {
+		clearMovements2(idx);
+		recalcOffsets(idx, startidx, endidx, 0, 1);
+	}
+
+	if (!_items[idx]->subItems[subidx]->movement)
+		return 0;
+
+    MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	Common::Point point;
+	ExCommand *ex;
+
+	int i = 0;
+	do {
+		subidx = startidx + endidx * _items[idx]->statics.size();
+
+		_items[idx]->subItems[subidx]->movement->calcSomeXY(point, 0);
+
+		if (pointArr) {
+			int sz;
+
+			if (_items[idx]->subItems[subidx]->movement->_currMovement)
+				sz = _items[idx]->subItems[subidx]->movement->_currMovement->_dynamicPhases.size();
+			else
+				sz = _items[idx]->subItems[subidx]->movement->_dynamicPhases.size();
+
+			ex = new ExCommand2(20, ani->_id, &pointArr[i], sz);
+
+			ex->_messageNum = _items[idx]->subItems[subidx]->movement->_id;
+		} else {
+			ex = new ExCommand(ani->_id, 1, _items[idx]->subItems[subidx]->movement->_id, 0, 0, 0, 1, 0, 0, 0);
+		}
+
+		ex->_keyCode = ani->_okeyCode;
+		ex->_field_3C = 1;
+		ex->_field_24 = 1;
+
+		mq->addExCommandToEnd(ex);
+
+		if (resStatId)
+			*resStatId = _items[idx]->subItems[subidx]->movement->_id;
+
+		startidx = _items[idx]->subItems[subidx]->staticsIndex;
+
+		int step;
+
+		if (_items[idx]->subItems[subidx]->movement->_currMovement)
+			step = _items[idx]->subItems[subidx]->movement->_currMovement->_dynamicPhases.size();
+		else
+			step = _items[idx]->subItems[subidx]->movement->_dynamicPhases.size();
+
+		i++;
+	} while (startidx != endidx);
+
+	return mq;
 }
 
 MGMItem::MGMItem() {
