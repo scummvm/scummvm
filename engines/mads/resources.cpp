@@ -60,7 +60,7 @@ private:
 	/**
 	 * Load the index of all the game's HAG files
 	 */
-	void loadIndex();
+	void loadIndex(MADSEngine *vm);
 
 	/**
 	 * Given a resource name, opens up the correct HAG file and returns whether
@@ -78,7 +78,7 @@ private:
 	 */
 	ResourceType getResourceType(const Common::String &resourceName) const;
 public:
-	HagArchive();
+	HagArchive(MADSEngine *vm);
 	virtual ~HagArchive();
 
 	// Archive implementation
@@ -90,8 +90,8 @@ public:
 
 const char *const MADSCONCAT_STRING = "MADSCONCAT";
 
-HagArchive::HagArchive() {
-	loadIndex();
+HagArchive::HagArchive(MADSEngine *vm) {
+	loadIndex(vm);
 }
 
 HagArchive::~HagArchive() {
@@ -146,12 +146,24 @@ Common::SeekableReadStream *HagArchive::createReadStreamForMember(const Common::
 	return nullptr;
 }
 
-void HagArchive::loadIndex() {
+void HagArchive::loadIndex(MADSEngine *vm) {
 	Common::File hagFile;
 
 	for (int sectionIndex = -1; sectionIndex < 10; ++sectionIndex) {
 		if (sectionIndex == 0)
 			continue;
+
+		// Dragonsphere does not have some sections - skip them
+		if (vm->getGameID() == GType_Dragonsphere)  {
+			if (sectionIndex == 7 || sectionIndex == 8)
+				continue;
+		}
+
+		// Phantom does not have some sections - skip them
+		if (vm->getGameID() == GType_Phantom)  {
+			if (sectionIndex == 6 || sectionIndex == 7 || sectionIndex == 8)
+				continue;
+		}
 
 		Common::String filename = (sectionIndex == -1) ? "GLOBAL.HAG" :
 			Common::String::format("SECTION%d.HAG", sectionIndex);
@@ -275,7 +287,7 @@ ResourceType HagArchive::getResourceType(const Common::String &resourceName) con
 /*------------------------------------------------------------------------*/
 
 void Resources::init(MADSEngine *vm) {
-	SearchMan.add("HAG", new HagArchive());
+	SearchMan.add("HAG", new HagArchive(vm));
 }
 
 Common::String Resources::formatName(RESPREFIX resType, int id, const Common::String &ext) {
