@@ -320,6 +320,246 @@ bool DialogsNebular::commandCheck(const char *idStr, Common::String &valStr,
 	return true;
 }
 
+void DialogsNebular::showDialog() {
+	switch (_pendingDialog) {
+	case DIALOG_GAME_MENU:
+		//GameMenuDialog::show();
+		break;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+ScreenDialog::DialogLine::DialogLine() {
+	_state = 0;
+	_textDisplayIndex = -1;
+	_font = nullptr;
+	_widthAdjust = 0;
+}
+
+ScreenDialog::DialogLine::DialogLine(const Common::String &s) {
+	_state = 0;
+	_textDisplayIndex = -1;
+	_font = nullptr;
+	_widthAdjust = -1;
+	_msg = s;
+}
+
+/*------------------------------------------------------------------------*/
+
+ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm), 
+		_savedSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT) {
+	Game &game = *_vm->_game;
+	Scene &scene = game._scene;
+
+	_v1 = 0;
+	_selectedLine = 0;
+	_dirFlag = false;
+	_textLineCount = 0;
+
+	game.loadQuoteSet(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+		17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+		34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 0);
+	game._kernelMode = KERNEL_ROOM_PRELOAD;
+	_vm->_events->waitCursor();
+	scene.clearVocab();
+	scene._dynamicHotspots.clear();
+	_vm->_dialogs->_defaultPosition = Common::Point(-1, -1);
+
+	bool palFlag = false;
+	int nextSceneId = scene._nextSceneId;
+	int currentSceneId = scene._currentSceneId;
+	int priorSceneId = scene._priorSceneId;
+
+	if (_vm->_dialogs->_pendingDialog == DIALOG_DIFFICULTY) {
+		palFlag = true;
+	} else {
+		_vm->_palette->initPalette();
+	}
+	scene.loadScene(_screenId, game._aaName, palFlag);
+
+	scene._priorSceneId = priorSceneId;
+	scene._currentSceneId = currentSceneId;
+	scene._nextSceneId = nextSceneId;
+	_vm->_screen._offset.y = 22;
+	_vm->_sound->pauseNewCommands();
+	_vm->_events->initVars();
+	game._kernelMode = KERNEL_ROOM_INIT;
+
+	SpriteAsset *menuSprites = new SpriteAsset(_vm, "*MENU", 0);
+	_menuSpritesIndex = scene._sprites.add(menuSprites);
+
+	byte pal[768];
+	if (_vm->_screenFade) {
+		Common::fill(&pal[0], &pal[PALETTE_SIZE], 0);
+		_vm->_palette->setFullPalette(pal);
+	} else {
+		_vm->_palette->getFullPalette(pal);
+		_vm->_palette->fadeOut(pal, 0, PALETTE_COUNT, 16, 1, 1, 0, 0, 0);
+	}
+
+	_vm->_screen.copyTo(&_savedSurface);
+	/*
+	_vm->_screen.hLine(0, 0, MADS_SCREEN_WIDTH, 2);
+	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y,
+		MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 1));
+	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y + 157,
+		MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 157));
+	*/
+
+	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? 
+		kCenterVertTransition : kTransitionFadeIn;
+	game._trigger = 0;
+	_vm->_events->setCursor(CURSOR_ARROW);
+
+	_vm->_palette->setEntry(10, 0, 63, 0);
+	_vm->_palette->setEntry(11, 0, 45, 0);
+	_vm->_palette->setEntry(12, 63, 63, 0);
+	_vm->_palette->setEntry(13, 45, 45, 0);
+	_vm->_palette->setEntry(14, 63, 63, 63);
+	_vm->_palette->setEntry(15, 45, 45, 45);
+}
+
+void ScreenDialog::clearLines() {
+	Scene &scene = _vm->_game->_scene;
+	_lines.clear();
+	scene._spriteSlots.fullRefresh(true);
+}
+
+void ScreenDialog::addQuote(int id1, int id2, DialogTextAlign align,
+		const Common::Point &pt, Font *font) {
+	Common::String msg = _vm->_game->getQuote(id1);
+
+	if (id2 > 0) {
+		msg += " ";
+		msg += _vm->_game->getQuote(id2);
+	}
+
+	addLine(msg, align, pt, font);
+}
+
+void ScreenDialog::addLine(const Common::String &msg, DialogTextAlign align,
+		const Common::Point &pt, Font *font) {
+	Scene &scene = _vm->_game->_scene;
+	DialogLine *line;
+
+	if (_lineIndex < (int)_lines.size()) {
+		if (_lines.size() >= 20)
+			goto finish;
+
+		_lines.push_back(msg);
+		line = &_lines[_lines.size() - 1];
+	} else {
+		line = &_lines[_lineIndex];
+		if (msg.compareToIgnoreCase(msg))
+			goto finish;
+
+		if (line->_textDisplayIndex >= 0) {
+			TextDisplay &textDisplay = scene._textDisplay[line->_textDisplayIndex];
+			if (textDisplay._active) {
+				textDisplay._expire = -1;
+				if (_textLineCount < 20) {
+					textDisplay._msg = msg;
+					++_textLineCount;
+				}
+			}
+		}
+	}
+
+	line->_font = font;
+	line->_state = 0;
+	line->_pos = pt;
+	line->_widthAdjust = -1;
+	line->_textDisplayIndex = -1;
+
+	int xOffset;
+	switch (align) {
+	case ALIGN_CENTER:
+		xOffset = (MADS_SCREEN_WIDTH / 2) - font->getWidth(msg, -1) / 2;
+		line->_pos.x += xOffset;
+		break;
+
+	case ALIGN_AT_CENTER: {
+		const char *msgP = msg.c_str();
+		const char *ch = strchr(msgP, '@');
+		if (ch) {
+			xOffset = (MADS_SCREEN_WIDTH / 2) - font->getWidth(
+				Common::String(msgP, ch), line->_widthAdjust);
+			line->_pos.x += xOffset;
+		}
+		break;
+	}
+
+	case ALIGN_RIGHT:
+		xOffset = font->getWidth(msg, -1);
+		line->_pos.x -= xOffset;
+		break;
+
+	default:
+		break;
+	}
+
+finish:
+	++_lineIndex;
+}
+
+
+void ScreenDialog::initVars() {
+	_v1 = -1;
+	_selectedLine = -1;
+	_lineIndex = 0;
+	_enterFlag = false;
+	_textLineCount = 0;
+}
+
+void ScreenDialog::chooseBackground() {
+	switch (_vm->_game->_currentSectionNumber) {
+	case 1:
+	case 2:
+		_screenId = 921;
+		break;
+	case 3:
+	case 4:
+		_screenId = 922;
+		break;
+	case 5:
+	case 6:
+	case 7:
+		_screenId = 923;
+		break;
+	case 8:
+		_screenId = 924;
+		break;
+	default:
+		_screenId = 920;
+		break;
+	}
+}
+
+void ScreenDialog::setFrame(int frameNumber, int depth) {
+	Scene &scene = _vm->_game->_scene;
+	SpriteSlot &spriteSlot = scene._spriteSlots[scene._spriteSlots.add()];
+	spriteSlot._flags = IMG_UPDATE;
+	spriteSlot._seqIndex = 1;
+	spriteSlot._spritesIndex = _menuSpritesIndex;
+	spriteSlot._frameNumber = frameNumber;
+
+}
+
+/*------------------------------------------------------------------------*/
+
+GameMenuDialog::GameMenuDialog(MADSEngine *vm) : ScreenDialog(vm) {
+	clearLines();
+	setFrame(1, 2);
+}
+
+void GameMenuDialog::addLines() {
+	initVars();
+	Font *font = _vm->_font->getFont(FONT_CONVERSATION);
+	int top = 78 - (font->getHeight() + 2) * 12;
+	addQuote(10, 0, ALIGN_CENTER, Common::Point(0, top),  font);
+	// TODO
+}
 
 } // End of namespace Nebular
 

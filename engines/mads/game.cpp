@@ -423,6 +423,20 @@ void Game::handleKeypress(const Common::Event &event) {
 		}
 	}
 
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_F1:
+		_vm->_dialogs->_pendingDialog = DIALOG_GAME_MENU;
+		break;
+	case Common::KEYCODE_F5:
+		_vm->_dialogs->_pendingDialog = DIALOG_SAVE;
+		break;
+	case Common::KEYCODE_F7:
+		_vm->_dialogs->_pendingDialog = DIALOG_RESTORE;
+		break;
+	default:
+		break;
+	}
+
 	warning("TODO: handleKeypress - %d", (int)event.kbd.keycode);
 }
 

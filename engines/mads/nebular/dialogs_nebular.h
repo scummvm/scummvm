@@ -47,9 +47,7 @@ private:
 
 	bool commandCheck(const char *idStr, Common::String &valStr, const Common::String &command);
 public:
-	virtual void showDialog() {
-		warning("TODO: showDialog");
-	}
+	virtual void showDialog();
 
 	virtual void showItem(int objectId, int msgId, int arg);
 
@@ -82,6 +80,80 @@ public:
 	 * Show the dialog
 	 */
 	bool show();
+};
+
+enum DialogTextAlign { ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
+
+class ScreenDialog {
+	struct DialogLine {
+		int _state;
+		Common::Point _pos;
+		int _textDisplayIndex;
+		Common::String _msg;
+		Font *_font;
+		int _widthAdjust;
+
+		DialogLine();
+		DialogLine(const Common::String &s);
+	};
+protected:
+	MADSEngine *_vm;
+	MSurface _savedSurface;
+	Common::Array<DialogLine> _lines;
+	int _v1;
+	int _selectedLine;
+	bool _dirFlag;
+	int _screenId;
+	int _menuSpritesIndex;
+	int _lineIndex;
+	bool _enterFlag;
+	int _textLineCount;
+
+	/**
+	 * Reset the lines list for the dialog
+	 */
+	void clearLines();
+
+	/**
+	 * Add a quote to the lines list
+	 */
+	void addQuote(int id1, int id2, DialogTextAlign align, const Common::Point &pt, Font *font);
+
+	/**
+	 * Adds a line to the lines list
+	 */
+	void addLine(const Common::String &msg, DialogTextAlign align, const Common::Point &pt, Font *font);
+
+	/**
+	 * Initializes variables
+	 */
+	void initVars();
+
+	/**
+	 * Sets the display for the screen background behind the dialog
+	 */
+	void setFrame(int frameNumber, int depth);
+
+	/**
+	 * Choose the background to display for the dialog
+	 */
+	void chooseBackground();
+public:
+	/**
+	 * Constructor
+	 */
+	ScreenDialog(MADSEngine *vm);
+};
+
+class GameMenuDialog : public ScreenDialog {
+private:
+	/**
+	 * Add the lines for the Game Menu dialog
+	 */
+	void addLines();
+public:
+	GameMenuDialog(MADSEngine *vm);
+
 };
 
 } // End of namespace Nebular
