@@ -1467,6 +1467,10 @@ ModalSaveGame::~ModalSaveGame() {
 
 	_arrayD.clear();
 	_arrayL.clear();
+
+	for (uint i = 0; i < _filenames.size(); i++)
+		free(_filenames[i]);
+
 	_filenames.clear();
 }
 
@@ -1477,6 +1481,14 @@ void ModalSaveGame::setScene(Scene *sc) {
 void ModalSaveGame::setup(Scene *sc, int mode) {
 	warning("STUB: ModalSaveGame::setup()");
 }
+
+char *ModalSaveGame::getSaveName() {
+	if (_queryRes < 0)
+		return 0;
+
+	return _filenames[_queryRes];
+}
+
 
 void FullpipeEngine::openHelp() {
 	if (!_modalObject) {

@@ -251,6 +251,7 @@ public:
 	void setScene(Scene *sc);
 	void setup(Scene *sc, int mode);
 
+	char *getSaveName();
 
 	Common::Rect _rect;
 	int _oldBgX;
