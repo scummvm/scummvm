@@ -35,13 +35,23 @@
 #include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/resources.h"
+#include "mads/dragonsphere/game_dragonsphere.h"
 #include "mads/nebular/game_nebular.h"
+#include "mads/phantom/game_phantom.h"
 
 namespace MADS {
 
 Game *Game::init(MADSEngine *vm) {
-	if (vm->getGameID() == GType_RexNebular)
+	switch (vm->getGameID()) {
+	case GType_RexNebular:
 		return new Nebular::GameNebular(vm);
+	case GType_Dragonsphere:
+		return new Dragonsphere::GameDragonsphere(vm);
+	case GType_Phantom:
+		return new Phantom::GamePhantom(vm);
+	default:
+		error("Game: Unknown game");
+	}
 
 	return nullptr;
 }

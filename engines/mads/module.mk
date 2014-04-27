@@ -1,6 +1,10 @@
 MODULE := engines/mads
 
 MODULE_OBJS := \
+	dragonsphere/game_dragonsphere.o \
+	dragonsphere/dragonsphere_scenes.o \
+	phantom/game_phantom.o \
+	phantom/phantom_scenes.o \
 	nebular/dialogs_nebular.o \
 	nebular/game_nebular.o \
 	nebular/globals_nebular.o \
