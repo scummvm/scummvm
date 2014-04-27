@@ -1475,7 +1475,13 @@ ModalSaveGame::~ModalSaveGame() {
 }
 
 void ModalSaveGame::setScene(Scene *sc) {
-	warning("STUB: ModalSaveGame::setScene()");
+	_queryRes = -1;
+	_menuScene = sc;
+}
+
+void ModalSaveGame::processKey(int key) {
+	if (key == 27)
+		_queryRes = 0;
 }
 
 void ModalSaveGame::setup(Scene *sc, int mode) {

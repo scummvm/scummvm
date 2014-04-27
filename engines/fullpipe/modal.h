@@ -250,6 +250,7 @@ public:
 
 	void setScene(Scene *sc);
 	void setup(Scene *sc, int mode);
+	void processKey(int key);
 
 	char *getSaveName();
 
