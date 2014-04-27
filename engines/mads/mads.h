@@ -63,8 +63,7 @@ enum MADSDebugChannels {
 enum {
 	GType_RexNebular = 0,
 	GType_Dragonsphere = 1,
-	GType_Phantom = 2,
-	GType_Riddle = 3
+	GType_Phantom = 2
 };
 
 enum ScreenFade {
