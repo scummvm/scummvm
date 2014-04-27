@@ -1269,7 +1269,7 @@ other games.
     Alt-Enter              - Toggles full screen/windowed
     Alt-s                  - Make a screenshot (SDL backend only)
     Ctrl-F7                - Open virtual keyboard (if enabled)
-    F8                     - Open key remapper dialog (if enabled)
+    Ctrl-F8                - Open key remapper dialog (if enabled)
 
   SCUMM:
     Ctrl 0-9 and Alt 0-9   - Load and save game state
