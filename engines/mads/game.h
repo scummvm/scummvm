@@ -27,6 +27,7 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/serializer.h"
+#include "mads/audio.h"
 #include "mads/scene.h"
 #include "mads/game_data.h"
 #include "mads/globals.h"

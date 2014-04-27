@@ -35,6 +35,7 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("show_hotspots", WRAP_METHOD(Debugger, Cmd_ShowHotSpots));
 	DCmd_Register("list_hotspots", WRAP_METHOD(Debugger, Cmd_ListHotSpots));
 	DCmd_Register("play_sound", WRAP_METHOD(Debugger, Cmd_PlaySound));
+	DCmd_Register("play_audio", WRAP_METHOD(Debugger, Cmd_PlayAudio));
 	DCmd_Register("show_codes", WRAP_METHOD(Debugger, Cmd_ShowCodes));
 	DCmd_Register("dump_file", WRAP_METHOD(Debugger, Cmd_DumpFile));
 	DCmd_Register("show_quote", WRAP_METHOD(Debugger, Cmd_ShowQuote));
@@ -123,6 +124,24 @@ bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
 	}
 
 	return false;
+}
+
+bool Debugger::Cmd_PlayAudio(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Usage: %s <sound index> <sound group>\n", argv[0]);
+		DebugPrintf("If the sound group isn't defined, the default one will be used\n");
+	} else {
+		int index = strToInt(argv[1]);
+		Common::String soundGroup = (argc >= 3) ? argv[2] : "";
+		if (argc >= 3)
+			_vm->_audio->setSoundGroup(argv[2]);
+		else
+			_vm->_audio->setDefaultSoundGroup();
+
+		_vm->_audio->playSound(index);
+	}
+
+	return true;
 }
 
 bool Debugger::Cmd_ShowCodes(int argc, const char **argv) {

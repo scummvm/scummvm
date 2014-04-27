@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,37 +20,45 @@
  *
  */
 
-#ifndef MADS_DEBUGGER_H
-#define MADS_DEBUGGER_H
+#ifndef MADS_AUDIO_H
+#define MADS_AUDIO_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "mads/resources.h"
+
+#include "common/array.h"
+#include "audio/mixer.h"
 
 namespace MADS {
 
-class MADSEngine;
+struct DSREntry {
+	int16 frequency;
+	int channels;
+	int32 compSize;
+	int32 uncompSize;
+	int32 offset;
+};
 
-class Debugger : public GUI::Debugger {
-private:
-	MADSEngine *_vm;
-protected:
-	bool Cmd_Mouse(int argc, const char **argv);
-	bool Cmd_LoadScene(int argc, const char **argv);
-	bool Cmd_ShowHotSpots(int argc, const char **argv);
-	bool Cmd_ListHotSpots(int argc, const char **argv);
-	bool Cmd_PlaySound(int argc, const char **argv);
-	bool Cmd_PlayAudio(int argc, const char **argv);
-	bool Cmd_ShowCodes(int argc, const char **argv);
-	bool Cmd_DumpFile(int argc, const char **argv);
-	bool Cmd_ShowQuote(int argc, const char **argv);
-	bool Cmd_Item(int argc, const char **argv);
+class AudioPlayer {
 public:
-	bool _showMousePos;
-public:
-	Debugger(MADSEngine *vm);
-	virtual ~Debugger() {}
+	AudioPlayer(Audio::Mixer *mixer, uint32 gameID);
+	~AudioPlayer();
+
+	void setSoundGroup(const Common::String &filename);
+	void setDefaultSoundGroup();
+	void playSound(int soundIndex, bool loop = false);
+	void setVolume(int volume);
+	bool isPlaying() const;
+
+ private:
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _handle;
+	uint32 _gameID;
+
+	File _dsrFile;
+	Common::String _filename;
+	Common::Array<DSREntry> _dsrEntries;
 };
 
 } // End of namespace MADS
 
-#endif	/* MADS_DEBUGGER_H */
+#endif

@@ -88,6 +88,7 @@ void MADSEngine::initialise() {
 	_font = new Font();
 	_screen.init();
 	_sound = new SoundManager(this, _mixer);
+	_audio = new AudioPlayer(_mixer, getGameID());
 	_game = Game::init(this);
 
 	_screen.empty();

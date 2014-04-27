@@ -98,6 +98,7 @@ public:
 	Resources *_resources;
 	ScreenSurface _screen;
 	SoundManager *_sound;
+	AudioPlayer *_audio;
 	bool _easyMouse;
 	bool _invObjectsAnimated;
 	bool _textWindowStill;

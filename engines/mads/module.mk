@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	action.o \
 	animation.o \
 	assets.o \
+	audio.o \
 	compression.o \
 	debugger.o \
 	detection.o \
