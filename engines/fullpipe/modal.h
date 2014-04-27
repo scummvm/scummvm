@@ -251,9 +251,26 @@ public:
 	void setScene(Scene *sc);
 	void setup(Scene *sc, int mode);
 
+
 	Common::Rect _rect;
 	int _oldBgX;
 	int _oldBgY;
+	PictureObject *_bgr;
+	PictureObject *_okD;
+	PictureObject *_okL;
+	PictureObject *_cancelD;
+	PictureObject *_cancelL;
+	PictureObject *_emptyD;
+	PictureObject *_emptyL;
+	PictureObject *_fullD;
+	PictureObject *_fullL;
+	Scene *_menuScene;
+	int _mode;
+	ModalQuery *_queryDlg;
+	Common::Array <char *> _filenames;
+	Common::Array <PictureObject *> _arrayL;
+	Common::Array <PictureObject *> _arrayD;
+	int _queryRes;
 };
 
 
