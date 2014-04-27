@@ -69,6 +69,7 @@ bool Debugger::Cmd_Mouse(int argc, const char **argv) {
 
 bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 	if (argc != 2) {
+		DebugPrintf("Current scene is: %d\n", _vm->_game->_scene._currentSceneId);
 		DebugPrintf("Usage: %s <scene number>\n", argv[0]);
 		return true;
 	} else {
