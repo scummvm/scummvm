@@ -24,7 +24,9 @@
 #include "mads/scene.h"
 #include "mads/compression.h"
 #include "mads/mads.h"
+#include "mads/dragonsphere/dragonsphere_scenes.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/phantom/phantom_scenes.h"
 
 namespace MADS {
 
@@ -113,8 +115,14 @@ void Scene::loadSceneLogic() {
 	case GType_RexNebular:
 		_sceneLogic = Nebular::SceneFactory::createScene(_vm);
 		break;
+	case GType_Dragonsphere:
+		_sceneLogic = Dragonsphere::SceneFactory::createScene(_vm);
+		break;
+	case GType_Phantom:
+		_sceneLogic = Phantom::SceneFactory::createScene(_vm);
+		break;
 	default:
-		error("Unknown game");
+		error("Scene logic: Unknown game");
 	}
 }
 
@@ -185,6 +193,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 void Scene::loadHotspots() {
 	File f(Resources::formatName(RESPREFIX_RM, _currentSceneId, ".HH"));
 	MadsPack madsPack(&f);
+	bool isV2 = (_vm->getGameID() != GType_RexNebular);
 
 	Common::SeekableReadStream *stream = madsPack.getItemStream(0);
 	int count = stream->readUint16LE();
@@ -193,7 +202,7 @@ void Scene::loadHotspots() {
 	stream = madsPack.getItemStream(1);
 	_hotspots.clear();
 	for (int i = 0; i < count; ++i)
-		_hotspots.push_back(Hotspot(*stream));
+		_hotspots.push_back(Hotspot(*stream, isV2));
 
 	delete stream;
 	f.close();
@@ -466,6 +475,19 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 
 	// Copy background for the dirty areas to the screen
 	_dirtyAreas.copy(&_backgroundSurface, &_vm->_screen, _posAdjust);
+
+	// TODO: Remove this HACK when sprites are implemented for V2 games
+	if (_vm->getGameID() != GType_RexNebular) {
+		if (transitionType) {
+			// Fading in the screen
+			_vm->_screen.transition(transitionType, surfaceFlag);
+			_vm->_sound->startQueuedCommands();
+		} else {
+			// Copy dirty areas to the screen
+			_dirtyAreas.copyToScreen(_vm->_screen._offset);
+		}
+		return;
+	}
 
 	// Handle dirty areas for foreground objects
 	_spriteSlots.setDirtyAreas();
