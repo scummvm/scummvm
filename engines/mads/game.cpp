@@ -110,8 +110,8 @@ void Game::run() {
 			break;
 		default:
 			// Copy protection check succeeded
-			_scene._nextSceneId = 103;
-			_scene._priorSceneId = 102;
+			_scene._nextSceneId = 101;
+			_scene._priorSceneId = -1;
 			break;
 		}
 	}
