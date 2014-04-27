@@ -68,7 +68,9 @@ Common::Platform MADSEngine::getPlatform() const {
 
 static const PlainGameDescriptor MADSGames[] = {
 	{"MADS", "MADS"},
+	{"dragonsphere", "Dragonsphere"},
 	{"nebular", "Rex Nebular and the Cosmic Gender Bender"},
+	{"phantom", "Return of the Phantom"},
 	{0, 0}
 };
 

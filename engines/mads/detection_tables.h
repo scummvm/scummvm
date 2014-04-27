@@ -23,8 +23,10 @@
 namespace MADS {
 
 static const MADSGameDescription gameDescriptions[] = {
+#if 0
 	{
-		// Rex Nebular and the Cosmic Gender Bender DOS English
+		// Rex Nebular and the Cosmic Gender Bender DOS English (compressed)
+		// Removed for now, until the original floppy compression is supported
 		{
 			"nebular",
 			0,
@@ -40,6 +42,7 @@ static const MADSGameDescription gameDescriptions[] = {
 		GType_RexNebular,
 		0
 	},
+#endif
 
 	{
 		// Rex Nebular and the Cosmic Gender Bender DOS English
@@ -56,6 +59,42 @@ static const MADSGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 		GType_RexNebular,
+		0
+	},
+
+	{
+		// Return of the Phantom DOS English
+		{
+			"phantom",
+			0,
+			{
+				{"section1.hag", 0, "76e2d47a7aebafe48edc9884b3d91782", 1130939},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GType_Phantom,
+		0
+	},
+
+	{
+		// Dragonsphere DOS English
+		{
+			"dragonsphere",
+			0,
+			{
+				{"section1.hag", 0, "2770e441d296be5e806194693eebd95a", 2061199},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GType_Dragonsphere,
 		0
 	},
 
