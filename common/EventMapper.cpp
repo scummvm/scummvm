@@ -57,10 +57,10 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 			mappedEvent.type = EVENT_MAINMENU;
 		}
 #ifdef ENABLE_VKEYBD
-		else if (ev.kbd.keycode == KEYCODE_F7 && ev.kbd.hasFlags(0)) {
+		else if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F7) {
 			mappedEvent.type = EVENT_VIRTUAL_KEYBOARD;
 			
-			// Avoid blocking F7 events from engine.
+			// Avoid blocking CTRL-F7 events from engine.
 			addDelayedEvent(100, ev);
 		}
 #endif

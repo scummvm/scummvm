@@ -1268,7 +1268,7 @@ other games.
                              instead, or a multiple thereof
     Alt-Enter              - Toggles full screen/windowed
     Alt-s                  - Make a screenshot (SDL backend only)
-    F7                     - Open virtual keyboard (if enabled)
+    Ctrl-F7                - Open virtual keyboard (if enabled)
     F8                     - Open key remapper dialog (if enabled)
 
   SCUMM:
