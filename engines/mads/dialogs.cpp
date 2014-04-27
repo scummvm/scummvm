@@ -362,7 +362,10 @@ Dialogs *Dialogs::init(MADSEngine *vm) {
 	if (vm->getGameID() == GType_RexNebular)
 		return new Nebular::DialogsNebular(vm);
 
-	error("Unknown game");
+	// Throw a warning for now, since the associated Dialogs class isn't implemented yet
+	warning("Dialogs: Unknown game");
+	// HACK: Reuse the implemented Nebular dialogs for now, to avoid crashing later on
+	return new Nebular::DialogsNebular(vm);
 }
 
 Dialogs::Dialogs(MADSEngine *vm): _vm(vm) {
