@@ -81,7 +81,7 @@ public:
 	int _verbId;
 
 	Hotspot();
-	Hotspot(Common::SeekableReadStream &f);
+	Hotspot(Common::SeekableReadStream &f, bool isV2);
 };
 
 class Hotspots : public Common::Array<Hotspot> {

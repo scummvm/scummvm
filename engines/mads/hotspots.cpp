@@ -153,7 +153,7 @@ Hotspot::Hotspot() {
 	_active = false;
 }
 
-Hotspot::Hotspot(Common::SeekableReadStream &f) {
+Hotspot::Hotspot(Common::SeekableReadStream &f, bool isV2) {
 	_bounds.left = f.readSint16LE();
 	_bounds.top = f.readSint16LE();
 	_bounds.right = f.readSint16LE();
@@ -166,6 +166,11 @@ Hotspot::Hotspot(Common::SeekableReadStream &f) {
 	_cursor = (CursorType)f.readByte();
 	_vocabId = f.readUint16LE();
 	_verbId = f.readUint16LE();
+	if (isV2) {
+		// This looks to be some sort of bitmask. Perhaps it signifies
+		// the valid verbs for this hotspot
+		f.skip(2);		// unknown
+	}
 }
 
 /*------------------------------------------------------------------------*/
