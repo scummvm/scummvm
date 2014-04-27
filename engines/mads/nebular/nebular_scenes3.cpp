@@ -4746,5 +4746,59 @@ void Scene359::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene360::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene360::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
+	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(127, 78));
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
+
+	if (_scene->_priorSceneId == 359)
+		_game._player._playerPos = Common::Point(304, 143);
+	else if (_scene->_priorSceneId != -2)
+		_game._player._playerPos = Common::Point(13, 141);
+
+	sceneEntrySound();
+}
+
+void Scene360::preActions() {
+	if (_action.isAction(0x1AD, 0x2B9))
+		_game._player._walkOffScreenSceneId = 359;
+
+	if (_action.isAction(0x1AD, 0x2BA))
+		_game._player._walkOffScreenSceneId = 361;
+}
+
+void Scene360::actions() {
+	if (_action._lookFlag)
+		_vm->_dialogs->show(0x8CAF);
+	else if (_action.isAction(VERB_LOOK, 0x2BA))
+		_vm->_dialogs->show(0x8CAA);
+	else if (_action.isAction(VERB_LOOK, 0x2B9))
+		_vm->_dialogs->show(0x8CAB);
+	else if (_action.isAction(VERB_LOOK, 0x1CB))
+		_vm->_dialogs->show(0x8CAC);
+	else if (_action.isAction(VERB_LOOK, 0x216))
+		_vm->_dialogs->show(0x8CAD);
+	else if (_action.isAction(VERB_LOOK, 0x21B))
+		_vm->_dialogs->show(0x8CAE);
+	else if (_action.isAction(VERB_LOOK, 0x11))
+		_vm->_dialogs->show(0x8CB0);
+	else if (_action.isAction(VERB_LOOK, 0x204))
+		_vm->_dialogs->show(0x8CB1);
+	else if (_action.isAction(VERB_LOOK, 0x18D))
+		_vm->_dialogs->show(0x8CB2);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
