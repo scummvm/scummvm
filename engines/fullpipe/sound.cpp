@@ -429,14 +429,11 @@ void FullpipeEngine::stopAllSoundStreams() {
 }
 
 void FullpipeEngine::stopAllSoundInstances(int id) {
-	SoundList *soundList = _currentScene->_soundList;
+	for (int i = 0; i < _currSoundListCount; i++) {
+		Sound *sound = _currSoundList1[i]->getSoundItemById(id);
 
-	for (int i = 0; i < soundList->getCount(); i++) {
-		Sound *sound = soundList->getSoundByIndex(i);
-
-		if (sound->getId() == id) {
-			_mixer->stopHandle(sound->getHandle());
-		}
+		if (sound)
+			sound->stop();
 	}
 }
 
