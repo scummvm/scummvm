@@ -1369,6 +1369,31 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	return true;
 }
 
+Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
+	if (_movement) {
+		Common::Point point;
+
+		_movement->calcSomeXY(point, 0);
+
+		p->x = point.x;
+		p->y = point.y;
+
+		int idx = _stepArray.getCurrPointIndex() - _movement->_currDynamicPhaseIndex - 1;
+
+		if (idx >= 0) {
+			_stepArray.getPoint(&point, idx, _movement->_currDynamicPhaseIndex + 2);
+
+			p->x += point.x;
+			p->y += point.y;
+		}
+	} else {
+		p->x = 0;
+		p->y = 0;
+	}
+
+	return p;
+}
+
 Statics::Statics() {
 	_staticsId = 0;
 	_picture = 0;

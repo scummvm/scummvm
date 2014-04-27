@@ -246,6 +246,7 @@ public:
 	void draw2();
 
 	MovTable *countMovements();
+	Common::Point *calcStepLen(Common::Point *p);
 	void setSpeed(int speed);
 
 	void updateStepPos();
