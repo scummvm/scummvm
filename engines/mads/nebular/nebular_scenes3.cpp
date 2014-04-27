@@ -3702,7 +3702,7 @@ void Scene351::enter() {
 	else if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(207, 81);
 		_game._player._facing = FACING_NORTH;
-	} 
+	}
 
 	if (_globals[kTeleporterCommand]) {
 		_game._player._visible = false;
@@ -3775,7 +3775,7 @@ void Scene351::actions() {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
-				_game._player._visible = false; 
+				_game._player._visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE) {
 					_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 5, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -3786,7 +3786,7 @@ void Scene351::actions() {
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-				} 
+				}
 				break;
 
 			case 1:
@@ -3858,12 +3858,12 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 5, 2); 
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 5, 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		} else {
 			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 5, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 6, 2); 
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 6, 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		}
 		break;
@@ -3872,7 +3872,7 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
 		int idx = _scene->_dynamicHotspots.add(0x3B6, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
-		_scene->changeVariant(0); 
+		_scene->changeVariant(0);
 		}
 		break;
 
@@ -3883,12 +3883,12 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 		_game._player._visible = true;
 		if (corridorExit)
 			_scene->_sequences.addTimer(48, 6);
-		else if (doorwayExit) 
+		else if (doorwayExit)
 			_scene->_sequences.addTimer(48, 4);
 		else {
 			_mustPutArmDownFl = false;
 			_game._player._stepEnabled = true;
-		} 
+		}
 		break;
 
 	case 4:
@@ -3903,7 +3903,7 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 		if (_leaveRoomFl)
 			_scene->_nextSceneId = 351;
 
-		break; 
+		break;
 
 	case 6:
 		_game._player.walk(Common::Point(171, 152), FACING_SOUTH);
@@ -3917,7 +3917,7 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 		if (_leaveRoomFl)
 			_scene->_nextSceneId = 353;
 
-		break; 
+		break;
 
 	default:
 		break;
@@ -4024,9 +4024,9 @@ void Scene352::preActions() {
 
 	if (_action.isAction(VERB_PUT, 0x3B6, 0x1F3)) {
 		if (_globals[kSexOfRex] == REX_MALE)
-			_game._player.walk(Common::Point(269, 111), FACING_NORTHEAST); 
+			_game._player.walk(Common::Point(269, 111), FACING_NORTHEAST);
 		else
-			_game._player.walk(Common::Point(271, 111), FACING_NORTHEAST); 
+			_game._player.walk(Common::Point(271, 111), FACING_NORTHEAST);
 	}
 
 	if (_action.isAction(0x18B, 0x70) || _action.isAction(0x1AD, 0x2B3) || _action.isAction(VERB_PUT, 0x3B6, 0x89)) {
@@ -4042,8 +4042,8 @@ void Scene352::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, 0x1F8)) { 
-		if (!_vaultOpenFl) { 
+	if (_action.isAction(VERB_OPEN, 0x1F8)) {
+		if (!_vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
@@ -4061,9 +4061,9 @@ void Scene352::actions() {
 			case 1: {
 				_vm->_sound->command(21);
 				_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], FACING_NORTH); 
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], FACING_NORTH);
 				int oldIdx = _commonSequenceIdx;
-				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2); 
+				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2);
 				_scene->_sequences.updateTimeout(_commonSequenceIdx, oldIdx);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				}
@@ -4110,10 +4110,10 @@ void Scene352::actions() {
 
 	if (_action.isAction(0x1AD, 0x2B3) || _action.isAction(0x18B, 0x70) || _action.isAction(VERB_PUT, 0x3B6, 0x89)) {
 		if (_mustPutArmDownFl)
-			putArmDown(exit_corridor, exit_doorway); 
+			putArmDown(exit_corridor, exit_doorway);
 		else if (exit_corridor)
 			_scene->_nextSceneId = 353;
-		else 
+		else
 			_scene->_nextSceneId = 351;
 
 		_action._inProgress = false;
@@ -4125,7 +4125,7 @@ void Scene352::actions() {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
-				_game._player._visible = false; 
+				_game._player._visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE) {
 					_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
@@ -4136,13 +4136,13 @@ void Scene352::actions() {
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-				} 
+				}
 				break;
 
 			case 1:
 				_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 				_game._objects.addToInventory(0x2F);
-				_scene->changeVariant(1); 
+				_scene->changeVariant(1);
 				break;
 
 			case 2:
@@ -4157,7 +4157,7 @@ void Scene352::actions() {
 	}
 
 	if (_action.isAction(VERB_PUT, 0x3B6, 0x1F3)) {
-		if (!_vaultOpenFl) { 
+		if (!_vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
@@ -4175,9 +4175,9 @@ void Scene352::actions() {
 			case 1: {
 				_vm->_sound->command(21);
 				_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
-				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 8); 
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 8);
 				int oldIdx = _commonSequenceIdx;
-				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2); 
+				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2);
 				_scene->_sequences.updateTimeout(_commonSequenceIdx, oldIdx);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				}
@@ -4222,7 +4222,7 @@ void Scene352::actions() {
 					_globals._sequenceIndexes[1] = _commonSequenceIdx;
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x102));
 				} else {
-					_globals._sequenceIndexes[13] = _commonSequenceIdx; 
+					_globals._sequenceIndexes[13] = _commonSequenceIdx;
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x103));
 				}
 
@@ -4239,7 +4239,7 @@ void Scene352::actions() {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
-			_game._player._visible = false; 
+			_game._player._visible = false;
 			if (_globals[kSexOfRex] == REX_MALE) {
 				_globals._sequenceIndexes[14] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[14], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[14], 1, 2);
@@ -4252,7 +4252,7 @@ void Scene352::actions() {
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[15]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[15], SEQUENCE_TRIGGER_SPRITE, 2, 1);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[15], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-			} 
+			}
 			break;
 
 		case 1:
@@ -4265,8 +4265,8 @@ void Scene352::actions() {
 			}
 
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, -2); 
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 15); 
+			_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, -2);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 15);
 			break;
 
 		case 2:
@@ -4286,7 +4286,7 @@ void Scene352::actions() {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
-			_game._player._visible = false; 
+			_game._player._visible = false;
 			if (_globals[kSexOfRex] == REX_MALE) {
 				_globals._sequenceIndexes[6] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[6], true, 6, 2, 0, 0);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
@@ -4297,7 +4297,7 @@ void Scene352::actions() {
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[7]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-			} 
+			}
 			break;
 
 		case 1:
@@ -4306,7 +4306,7 @@ void Scene352::actions() {
 			break;
 
 		case 2:
-			_game._objects.addToInventory(OBJ_TAPE_PLAYER); 
+			_game._objects.addToInventory(OBJ_TAPE_PLAYER);
 			if (_globals[kSexOfRex] == REX_MALE)
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[6]);
 			else
@@ -4382,7 +4382,7 @@ void Scene353::setup() {
 void Scene353::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(303, 'B', 0, EXT_SS, ""));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 0, 5, 0);
-	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1); 
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 
 	if (_scene->_priorSceneId == 352)
 		_game._player._playerPos = Common::Point(144, 95);
@@ -4503,7 +4503,7 @@ void Scene357::enter() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
 
 	if (_scene->_priorSceneId == 318)
-		_game._player._playerPos = Common::Point(298, 142); 
+		_game._player._playerPos = Common::Point(298, 142);
 	else if (_scene->_priorSceneId == 313)
 		_game._player._playerPos = Common::Point(127, 101);
 	else if (_scene->_priorSceneId != -2)
@@ -4566,7 +4566,7 @@ void Scene358::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(127, 78));
-	_scene->_sequences.setDepth (_globals._sequenceIndexes[1], 15);
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
 
 	if (_scene->_priorSceneId == 357)
 		_game._player._playerPos = Common::Point(305, 142);
@@ -4601,6 +4601,143 @@ void Scene358::actions() {
 		_vm->_dialogs->show(0x8BE8);
 	else if (_action.isAction(VERB_LOOK, 0x11))
 		_vm->_dialogs->show(0x8BE9);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene359::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0xD);
+}
+
+void Scene359::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', -1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
+
+	if (_globals[kSexOfRex] == REX_MALE)
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMBD_2", false);
+	else
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*ROXBD_2", false);
+
+	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
+	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(127, 78));
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
+
+	if (_game._objects.isInRoom(OBJ_SECURITY_CARD)) {
+		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
+		_cardHotspotId = _scene->_dynamicHotspots.add(0x131, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(_cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
+	}
+
+	if (_scene->_priorSceneId == 358)
+		_game._player._playerPos = Common::Point(301, 141);
+	else if (_scene->_priorSceneId != -2)
+		_game._player._playerPos = Common::Point(15, 148);
+
+	sceneEntrySound();
+}
+
+void Scene359::preActions() {
+	if (_action.isAction(0x1AD, 0x2B9))
+		_game._player._walkOffScreenSceneId = 358;
+
+	if (_action.isAction(0x1AD, 0x2BA))
+		_game._player._walkOffScreenSceneId = 360;
+}
+
+void Scene359::actions() {
+	if (_action._lookFlag) {
+		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+			_vm->_dialogs->show(0x8C4A);
+		else
+			_vm->_dialogs->show(0x8C4B);
+	} else if (_action.isAction(VERB_TAKE, 0x131)) {
+		if (_game._trigger || !_game._objects.isInInventory(OBJ_SECURITY_CARD)) {
+			switch (_game._trigger) {
+			case 0:
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_vm->_dialogs->show(0x8C50);
+				if (_globals[kSexOfRex] == REX_MALE) {
+					_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 4, 2, 0, 0);
+					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				} else {
+					_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], true, 7, 2, 0, 0);
+					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
+					_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(106, 110));
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				}
+				break;
+
+			case 1:
+				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_scene->_dynamicHotspots.remove(_cardHotspotId);
+				_vm->_sound->command(57);
+				_game._objects.addToInventory(OBJ_SECURITY_CARD);
+				_vm->_dialogs->showItem(OBJ_SECURITY_CARD, 0x330);
+				_scene->changeVariant(1);
+				break;
+
+			case 2:
+				if (_globals[kSexOfRex] == REX_MALE)
+					_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+				else
+					_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[4]);
+
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else if (_action.isAction(VERB_LOOK, 0x23E))
+		_vm->_dialogs->show(0x8C46);
+	else if (_action.isAction(VERB_LOOK, 0x1CB))
+		_vm->_dialogs->show(0x8C47);
+	else if (_action.isAction(VERB_LOOK, 0x216))
+		_vm->_dialogs->show(0x8C48);
+	else if (_action.isAction(VERB_LOOK, 0x21B))
+		_vm->_dialogs->show(0x8C49);
+	else if (_action.isAction(VERB_LOOK, 0x2B9))
+		_vm->_dialogs->show(0x8C4C);
+	else if (_action.isAction(VERB_LOOK, 0x2BA))
+		_vm->_dialogs->show(0x8C4D);
+	else if (_action.isAction(VERB_LOOK, 0x215))
+		_vm->_dialogs->show(0x8C4E);
+	else if (_action.isAction(VERB_TAKE, 0x215))
+		_vm->_dialogs->show(0x8C4F);
+	else if (_action.isAction(VERB_LOOK, 0x131) && (_action._mainObjectSource == 4))
+		_vm->_dialogs->show(0x8C51);
+	else if (_action.isAction(VERB_LOOK, 0x2D2)) {
+		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+			_vm->_dialogs->show(0x8C52);
+		else
+			_vm->_dialogs->show(0x8C53);
+	} else if (_action.isAction(VERB_LOOK, 0x23F))
+		_vm->_dialogs->show(0x8C54);
+	else if (_action.isAction(VERB_TAKE, 0x23F))
+		_vm->_dialogs->show(0x8C55);
+	else if (_action.isAction(VERB_LOOK, 0x23A))
+		_vm->_dialogs->show(0x8C56);
+	else if (_action.isAction(VERB_LOOK, 0x204))
+		_vm->_dialogs->show(0x8C57);
+	else if (_action.isAction(VERB_LOOK, 0x89)) {
+		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+			_vm->_dialogs->show(0x8C58);
+		else
+			_vm->_dialogs->show(0x8C59);
+	} else if (_action.isAction(VERB_OPEN, 0x11) || _action.isAction(VERB_LOOK, 0x11))
+		_vm->_dialogs->show(0x8CB0);
 	else
 		return;
 
