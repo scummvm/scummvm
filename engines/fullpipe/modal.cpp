@@ -1462,6 +1462,14 @@ ModalSaveGame::ModalSaveGame() {
 	_mode = 1;
 }
 
+ModalSaveGame::~ModalSaveGame() {
+	g_fp->_sceneRect = _rect;
+
+	_arrayD.clear();
+	_arrayL.clear();
+	_filenames.clear();
+}
+
 void ModalSaveGame::setScene(Scene *sc) {
 	warning("STUB: ModalSaveGame::setScene()");
 }

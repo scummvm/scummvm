@@ -240,7 +240,7 @@ private:
 class ModalSaveGame : public BaseModalObject {
 public:
 	ModalSaveGame();
-	virtual ~ModalSaveGame() {}
+	virtual ~ModalSaveGame();
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return false; }
