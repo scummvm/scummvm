@@ -73,7 +73,10 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 	// VirtualKeyboard - Camera key
 	else if (ev.key.keysym.sym == SDLK_PAUSE) {
-		ev.key.keysym.sym = SDLK_F7;
+#ifdef ENABLE_VKEYBD
+                event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+                return true;
+#endif
 	}
 	// Enter - mod+fire key
 	else if (ev.key.keysym.sym == SDLK_b) {
@@ -117,7 +120,10 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 	// VirtualKeyboard - Right Soft key
 	else if (ev.key.keysym.sym == SDLK_F11) {
-		ev.key.keysym.sym = SDLK_F7;
+#ifdef ENABLE_VKEYBD
+                event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+                return true;
+#endif
 	}
 #endif
 
