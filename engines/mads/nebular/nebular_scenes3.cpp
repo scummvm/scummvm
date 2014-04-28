@@ -5365,12 +5365,9 @@ void Scene389::actions() {
 		}
 	} else if (_action.isAction(0xD3, 0x2D3)) {
 		if (_globals[kAfterHavoc]) {
-			if (_game._difficulty != DIFFICULTY_HARD) {
-				if (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359)
-					_vm->_dialogs->show(0x97FF);
-				else
-					_vm->_dialogs->show(0x9800);
-			} else
+			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+				_vm->_dialogs->show(0x97FF);
+			else
 				_vm->_dialogs->show(0x9800);
 		} else
 			_vm->_dialogs->show(0x97FE);
@@ -5445,6 +5442,41 @@ void Scene391::actions() {
 			_vm->_dialogs->show(0x98C7);
 		else
 			_vm->_dialogs->show(0x98C6);
+	} else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene399::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene399::enter() {
+	_scene->_userInterface.setup(kInputLimitedSentences);
+	_game._player._visible = false;
+	sceneEntrySound();
+}
+
+void Scene399::actions() {
+	if (_action.isAction(0x2D5, 0x2D4))
+		_scene->_nextSceneId = 313;
+	else if (_action.isAction(0xD3, 0x2D3)) {
+		if (_globals[kAfterHavoc]) {
+			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
+				_vm->_dialogs->show(0x97FF);
+			else
+				_vm->_dialogs->show(0x9800);
+		} else
+			_vm->_dialogs->show(0x97FE);
+	} else if (_action.isAction(VERB_OPEN, 0x2D3)) {
+		if (_globals[kAfterHavoc])
+			_vm->_dialogs->show(0x9802);
+		else
+			_vm->_dialogs->show(0x9801);
 	} else
 		return;
 
