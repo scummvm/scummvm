@@ -83,6 +83,7 @@ const Graphics::Surface * Hero::getSurface() {
 		int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
 		Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
 		//return _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
+
 		return heroFrame;
 	}
 	return NULL;
@@ -176,46 +177,90 @@ void Hero::countDrawPosition() {
 	int16 tempMiddleY;
 	int16 baseX = _moveSet[_moveSetType]->getBaseX();
 	int16 baseY = _moveSet[_moveSetType]->getBaseY();
+	// any chance?
 	if(baseX == 320) {
 		tempMiddleY = _middleY - (baseY - 240);
+	} else {
+		tempMiddleY = _middleY;
 	}
 	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
 	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
 	int scaledX = getScaledValue(frameXSize); // ebx
 	int scaledY = getScaledValue(frameYSize); // edx
-	int tempHeroHeight = scaledY;
+	int tempHeroHeight = scaledY; // not used? global?
 	
 	int width = scaledX / 2;
 	tempMiddleX = _middleX - width; //eax
 	int z = _middleY; //ebp
 	int y = _middleY - scaledY; //ecx
-	
 	//TODO
 	checkNak();
+
 	//zoomSprite(tempMiddleY);
 	// zoomSprite:
-	if(_zoomFactor == 0) {
+	int sprModulo;
+	if(_zoomFactor != 0) {
 		//notfullSize
-		int sprFullHeight = _moveSet[_moveSetType]->getFrameHeight(_phase); // edx
-		int sprModulo = tempMiddleY; // ebp ???
-		int sprSkipX = 0;
-		int sprSkipY = 0;
+		int sprFullHeight = frameXSize;
+		sprModulo = tempMiddleY; // ebp ???
+		//int sprSkipX = 0;
+		//int sprSkipY = 0;
 		int sprWidth = scaledX;
-		int sprHeight = scaledY;
+		int sprHeight = scaledY; // after resize
+		int allocMemSize = sprWidth*sprHeight;
+		sprFullHeight--;
+		int imulEDX = sprFullHeight*sprModulo; // edx
+		int sprZoomX;
+		int sprZoomY = _scaleValue;
+		int loop_lin;
 
+		for(int i = 0; i < sprHeight; i++) {
+			// linear_loop:
+			while(1) {
+				sprZoomY -= 100;
+				if(sprZoomY >= 0 || _scaleValue == 10000) {
+					// all_r_y
+					// push esi
+					loop_lin = sprWidth;
+					// mov ah, -1
+					sprZoomX = _scaleValue;
+					break; // to loop_lin
+				} else {
+					sprZoomY += _scaleValue;
+					// add esi, sprModulo /?
+				}
+			}
+			// end of linear_loop
+			// loop_lin:
+			for(int i = 0; i < loop_lin; i++) {
+				// mov al, b[esi]
+				// inc esi
+				sprZoomX -= 100;
+				if(sprZoomX >= 0) {
+					//its_all_r
+					// without ZOOMFIX
+					//mov [edi], al
+					// inc edi
+				} else {
+					sprZoomX += _scaleValue;
+				}
+			}
+			//pop esi
+			//add esi, sprModulo
+			debug("loop_lin: %d", loop_lin);
+		}
+		debug("scaledX: %d", scaledX);
+		debug("scaledY: %d", scaledY);
+		_drawX = _middleX - frameXSize/2;
+		_drawY = _middleY - frameYSize;
 	} else {
 		//fullSize
-		int sprWidth = frameXSize;
-		int temp = sprWidth / 2;
-		int lowerYPosition = y + 1;
+		sprModulo = 0; //?
+		_drawX = _middleX - frameXSize / 2;
+		_drawY = tempMiddleY + 1 - frameYSize;
 	}
 
-	debug("scaledX: %d", scaledX);
-	debug("scaledY: %d", scaledY);
-	_drawX = _middleX - frameXSize/2;
-	_drawY = _middleY - frameYSize;
-
-	
+	// ShowSprite
 }
 /*
 AnimHeader	struc		;struktura naglowka pliku z animacja
@@ -243,11 +288,13 @@ void Hero::showHeroAnimFrame() {
 
 void Hero::setScale(int8 zoomBitmapValue) {
 	if (zoomBitmapValue == 0) {
-		_zoomFactor = 1;
+		_zoomFactor = 0;
+		_scaleValue = 10000;
 	} else {
 		_zoomFactor = zoomBitmapValue;
+		_scaleValue = 10000 / _zoomFactor;
 	}
-	_scaleValue = 10000 / _zoomFactor;
+	debug("_zoomFactor: %d", _zoomFactor);
 	debug("_scaleValue: %d", _scaleValue);
 }
 
