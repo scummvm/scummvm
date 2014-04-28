@@ -36,6 +36,7 @@
 #include "graphics/fonts/ttf.h"
 
 #include "image/bmp.h"
+#include "image/png.h"
 
 #include "gui/widget.h"
 #include "gui/ThemeEngine.h"
@@ -706,24 +707,51 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 	if (surf)
 		return true;
 
-	// If not, try to load the bitmap via the BitmapDecoder class.
-	Image::BitmapDecoder bitmapDecoder;
 	const Graphics::Surface *srcSurface = 0;
-	Common::ArchiveMemberList members;
-	_themeFiles.listMatchingMembers(members, filename);
-	for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
-		Common::SeekableReadStream *stream = (*i)->createReadStream();
-		if (stream) {
-			bitmapDecoder.loadStream(*stream);
-			srcSurface = bitmapDecoder.getSurface();
-			delete stream;
-			if (srcSurface)
-				break;
-		}
-	}
 
-	if (srcSurface && srcSurface->format.bytesPerPixel != 1)
-		surf = srcSurface->convertTo(_overlayFormat);
+	if (filename.hasSuffix(".png")) {
+		// Maybe it is PNG?
+#ifdef USE_PNG
+		Image::PNGDecoder decoder;
+		Common::ArchiveMemberList members;
+		_themeFiles.listMatchingMembers(members, filename);
+		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+			Common::SeekableReadStream *stream = (*i)->createReadStream();
+			if (stream) {
+				if (!decoder.loadStream(*stream))
+					error("Error decoding PNG");
+
+				srcSurface = decoder.getSurface();
+				delete stream;
+				if (srcSurface)
+					break;
+			}
+		}
+
+		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
+			surf = srcSurface->convertTo(_overlayFormat);
+#else
+		error("No PNG support compiled in");
+#endif
+	} else {
+		// If not, try to load the bitmap via the BitmapDecoder class.
+		Image::BitmapDecoder bitmapDecoder;
+		Common::ArchiveMemberList members;
+		_themeFiles.listMatchingMembers(members, filename);
+		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+			Common::SeekableReadStream *stream = (*i)->createReadStream();
+			if (stream) {
+				bitmapDecoder.loadStream(*stream);
+				srcSurface = bitmapDecoder.getSurface();
+				delete stream;
+				if (srcSurface)
+					break;
+			}
+		}
+
+		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
+			surf = srcSurface->convertTo(_overlayFormat);
+	}
 
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_bitmaps[filename] = surf;
