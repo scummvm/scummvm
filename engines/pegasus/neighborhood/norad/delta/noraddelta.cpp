@@ -514,6 +514,17 @@ void NoradDelta::openDoor() {
 	}
 }
 
+void NoradDelta::cantMoveThatWay(CanOpenDoorReason reason) {
+	// WORKAROUND: The door outside the launch console room isn't treated as a door,
+	// so play the correct sound.
+	if (reason == kCantMoveBlocked && GameState.getCurrentRoomAndView() == MakeRoomView(kNorad67, kNorth)) {
+		cantOpenDoor(kCantOpenLocked);
+		return;
+	}
+
+	Neighborhood::cantMoveThatWay(reason);
+}
+
 void NoradDelta::activateHotspots() {
 	Norad::activateHotspots();
 

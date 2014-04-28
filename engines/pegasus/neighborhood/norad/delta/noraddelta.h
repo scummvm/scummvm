@@ -92,6 +92,7 @@ protected:
 	void arriveAtNorad79West();
 	TimeValue getViewTime(const RoomID, const DirectionConstant);
 	void openDoor();
+	void cantMoveThatWay(CanMoveForwardReason);
 	void activateHotspots();
 	void clickInHotspot(const Input &, const Hotspot *);
 	void receiveNotification(Notification *, const NotificationFlags);
