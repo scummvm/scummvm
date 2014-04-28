@@ -34,12 +34,12 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_resman = nullptr;
 }
 
-CGE2Engine::~CGE2Engine() {
-	delete _resman;
-}
-
 void CGE2Engine::init() {
 	_resman = new ResourceManager();
+}
+
+void CGE2Engine::deinit() {
+	delete _resman;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
@@ -66,6 +66,7 @@ Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
 Common::Error CGE2Engine::run() {
 	init();
 	warning("STUB: CGE2Engine::run()");
+	deinit();
 	return Common::kNoError;
 }
 

@@ -37,7 +37,6 @@ namespace CGE2 {
 class CGE2Engine : public Engine {
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
-	~CGE2Engine();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
@@ -50,6 +49,7 @@ public:
 	ResourceManager *_resman;
 private:
 	void init();
+	void deinit();
 };
 
 } // End of namespace CGE2
