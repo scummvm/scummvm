@@ -69,8 +69,8 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 
 const Graphics::Surface * Hero::getSurface() {
 	if (_moveSet[_moveSetType]) {
-		//debug("BaseX: %d", _moveSet[_moveSetType]->getBaseX());
-		//debug("BaseY: %d", _moveSet[_moveSetType]->getBaseY());
+		debug("BaseX: %d", _moveSet[_moveSetType]->getBaseX());
+		debug("BaseY: %d", _moveSet[_moveSetType]->getBaseY());
 		//debug("FrameCount: %d", _moveSet[_moveSetType]->getFrameCount());
 		//debug("LoopCount: %d", _moveSet[_moveSetType]->getLoopCount());
 		//debug("PhaseCount: %d", _moveSet[_moveSetType]->getPhaseCount());
@@ -81,7 +81,9 @@ const Graphics::Surface * Hero::getSurface() {
 		//debug("FrameSizeY(%d) %d", _frame, _moveSet[_moveSetType]->getFrameHeight(_frame));
 		//getState();
 		int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
-		return _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
+		Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
+		//return _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
+		return heroFrame;
 	}
 	return NULL;
 }
@@ -122,14 +124,110 @@ void Hero::getState() {
 	}
 }
 
+int Hero::getScaledValue(int size) {
+	int newSize = 0;
+	int16 initScaleValue = _scaleValue;
+	if(_scaleValue != 10000) {
+		for(int i = 0; i < size; i++) {
+			initScaleValue -= 100;
+			if(initScaleValue >= 0) {
+				newSize++;
+			} else {
+				initScaleValue += _scaleValue;
+			}
+		}
+		return newSize;
+	} else {
+		return size;
+	}
+}
+
+void Hero::checkNak() {
+
+}
+
+void Hero::zoomSprite(int16 tempMiddleY) {
+	if(_zoomFactor == 0) {
+		//notfullSize
+		int sprWidth = _moveSet[_moveSetType]->getFrameWidth(_phase);
+		int temp = sprWidth / 2;
+		int sprFullHeight = _moveSet[_moveSetType]->getFrameHeight(_phase); // edx
+		int sprModulo = tempMiddleY; // ebp ???
+		int sprSkipX = 0;
+		int sprSkipY = 0;
+
+	} else {
+		//fullSize
+
+	}
+}
+
 //TODO
+/*
 void Hero::countDrawPosition() {
 	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
 	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
 	_drawX = _middleX - frameXSize/2;
 	_drawY = _middleY - frameYSize;
 }
+*/
+void Hero::countDrawPosition() {
+	int16 tempMiddleX;
+	int16 tempMiddleY;
+	int16 baseX = _moveSet[_moveSetType]->getBaseX();
+	int16 baseY = _moveSet[_moveSetType]->getBaseY();
+	if(baseX == 320) {
+		tempMiddleY = _middleY - (baseY - 240);
+	}
+	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
+	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
+	int scaledX = getScaledValue(frameXSize); // ebx
+	int scaledY = getScaledValue(frameYSize); // edx
+	int tempHeroHeight = scaledY;
+	
+	int width = scaledX / 2;
+	tempMiddleX = _middleX - width; //eax
+	int z = _middleY; //ebp
+	int y = _middleY - scaledY; //ecx
+	
+	//TODO
+	checkNak();
+	//zoomSprite(tempMiddleY);
+	// zoomSprite:
+	if(_zoomFactor == 0) {
+		//notfullSize
+		int sprFullHeight = _moveSet[_moveSetType]->getFrameHeight(_phase); // edx
+		int sprModulo = tempMiddleY; // ebp ???
+		int sprSkipX = 0;
+		int sprSkipY = 0;
+		int sprWidth = scaledX;
+		int sprHeight = scaledY;
 
+	} else {
+		//fullSize
+		int sprWidth = frameXSize;
+		int temp = sprWidth / 2;
+		int lowerYPosition = y + 1;
+	}
+
+	debug("scaledX: %d", scaledX);
+	debug("scaledY: %d", scaledY);
+	_drawX = _middleX - frameXSize/2;
+	_drawY = _middleY - frameYSize;
+
+	
+}
+/*
+AnimHeader	struc		;struktura naglowka pliku z animacja
+AH_ID		dw	0	;ID = "AN"
+AH_Loop		dw	0	;numer fazy do petli
+AH_Fazy		dw	0	;ilosc faz animacji
+AH_Ramki	dw	0	;ilosc ramek grafiki
+AH_X		dw	0	;poczatkowa wsp¢lrzedna X
+AH_Y		dw	0	;poczatkowa wsp¢lrzedna Y
+AH_Tablica	dd	0	;offset tablicy faz
+AH_RamkiAddr	dd	0	;poczatek tablicy z offsetami ramek
+*/
 void Hero::showHeroAnimFrame() {
 	if (_phase < _moveSet[_moveSetType]->getFrameCount() - 1) {
 		_phase++;

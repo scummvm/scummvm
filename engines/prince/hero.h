@@ -102,8 +102,11 @@ public:
 	void moveHero();
 	void rotateHero();
 	void setScale(int8 zoomBitmapValue);
+	int getScaledValue(int size);
 	void selectZoom();
 	void countDrawPosition();
+	void checkNak();
+	void zoomSprite(int16 tempMiddleY);
 	void showHeroAnimFrame();
 	void specialAnim();
 	void getState();

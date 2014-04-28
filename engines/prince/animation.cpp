@@ -77,24 +77,33 @@ int16 Animation::getZoom(uint16 offset) const {
 	return READ_LE_UINT16(_data + offset);
 }
 
+// AH_Loop
 int16 Animation::getLoopCount() const {
 	return READ_LE_UINT16(_data + 2);
 }
 
-int16 Animation::getBaseX() const {
-	return READ_LE_UINT16(_data + 8);
-}
-
-int16 Animation::getBaseY() const {
-	return READ_LE_UINT16(_data + 10);
-}
-
+// AH_Fazy
 uint Animation::getPhaseCount() const {
 	return READ_LE_UINT16(_data + 4);
 }
 
+// AH_Ramki
 uint Animation::getFrameCount() const {
 	return READ_LE_UINT16(_data + 6);
+}
+
+// AH_X
+int16 Animation::getBaseX() const {
+	return READ_LE_UINT16(_data + 8);
+}
+
+// AH_Y
+int16 Animation::getBaseY() const {
+	return READ_LE_UINT16(_data + 10);
+}
+
+byte *Animation::getPhaseEntry(uint phaseIndex) const {
+	return _data + READ_LE_UINT32(_data + 12) + phaseIndex * 8;
 }
 
 int16 Animation::getPhaseOffsetX(uint phaseIndex) const {
@@ -145,11 +154,6 @@ Graphics::Surface *Animation::getFrame(uint frameIndex) {
 	}
 	return surf;
 }
-
-byte *Animation::getPhaseEntry(uint phaseIndex) const {
-	return _data + READ_LE_UINT32(_data + 12) + phaseIndex * 8;
-}
-
 }
 
 /* vim: set tabstop=4 noexpandtab: */
