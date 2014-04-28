@@ -654,7 +654,7 @@ void Scene102::enter() {
 	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 0, 1, 0);
 	_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 3, 0, 0, 5);
 
-	if (!_game._objects.isInRoom(OBJ_BINOCULARS))
+	if (_game._objects.isInRoom(OBJ_BINOCULARS))
 		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 24, 0, 0, 24);
 	else
 		_scene->_hotspots.activate(0x27, false);
@@ -798,7 +798,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(0x122) && !_fridgeOpenedFl) {
+	if (_action._activeAction._objectNameId == 0x122 && !_fridgeOpenedFl) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 6, 1, 0, 0);
@@ -970,7 +970,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if ((_action.isAction(0xC7) || _action.isAction(0xA3)) && (_action.isAction(VERB_LOOK) || _action.isAction(0x50) || _action.isAction(0x4F))) {
+	if ((_action._activeAction._objectNameId == 0xC7 || _action._activeAction._objectNameId == 0xA3) && (_action.isAction(VERB_LOOK) || _action.isAction(0x50) || _action.isAction(0x4F))) {
 		if (_game._objects.isInInventory(OBJ_REBREATHER)) {
 			if (!_action.isAction(0x50) && !_action.isAction(0x4F)) {
 				_vm->_dialogs->show(0x27F7);
@@ -984,7 +984,7 @@ void Scene102::actions() {
 		}
 	}
 
-	if ( (_action.isAction(0xC7) || _action.isAction(0xA3)) && (_action.isAction(0x50) || _action.isAction(0x4F)) ) {
+	if ((_action._activeAction._objectNameId == 0xC7 || _action._activeAction._objectNameId == 0xA3) && (_action.isAction(0x50) || _action.isAction(0x4F)) ) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(formAnimName('A', -1), 1);
