@@ -338,7 +338,14 @@ void TizenAppForm::showKeypad() {
 	// display the soft keyboard
 	if (_state == kActiveState) {
 		_buttonState = kLeftButton;
-		pushKey(Common::KEYCODE_F7);
+		
+		Common::Event e;
+		e.type = Common::EVENT_VIRTUAL_KEYBOARD;
+		if (_eventQueueLock) {
+			_eventQueueLock->Acquire();
+			_eventQueue.push(e);
+			_eventQueueLock->Release();
+		}
 	}
 }
 
