@@ -59,7 +59,7 @@ int verifyDriveReady(void) {
 			return -1; // drive still not ready
 		}
 	}
-    if (mediaType == DISC_NONE)
+	if (mediaType == DISC_NONE)
 		return -1;
 	return 0;
 }
@@ -72,14 +72,14 @@ int cacheEnterDir(ISODirectoryRecord *dir) {
 	cachedDirOfs = 0;
 	cacheName = cachedDir + strlen(cachedDir);
 	memcpy(cacheName, dir->name, dir->len_fi);
-    cacheName[dir->len_fi] = '/';
+	cacheName[dir->len_fi] = '/';
 	cacheName[dir->len_fi + 1] = '\0';
 	return cdReadSectors(cachedDirLba, 1, cacheBuf, &rmode);
 }
 
 int initRootCache(void) {
 	CdRMode rmode = { 16, 0, CdSect2048, 0 };
-	ISODirectoryRecord *root = (ISODirectoryRecord*)cacheBuf;
+	ISODirectoryRecord *root = (ISODirectoryRecord *)cacheBuf;
 
 	if (cdReadSectors(fsRootLba, 1, cacheBuf, &rmode) == 0) {
 		cachedDir[0] = '\0';
@@ -104,10 +104,10 @@ ISODirectoryRecord *findEntryInCache(const char *name, int nameLen) {
 		if (i != cachedDirOfs) {
 			if (cdReadSectors(cachedDirLba + i, 1, cacheBuf, &rmode) < 0)
 				return NULL;
-            cachedDirOfs = i;
+			cachedDirOfs = i;
 		}
 
-		while (entry->len_dr && ((uint8*)entry < cacheBuf + SECTOR_SIZE)) {
+		while (entry->len_dr && ((uint8 *)entry < cacheBuf + SECTOR_SIZE)) {
 			if ((entry->len_fi > 2) && (entry->name[entry->len_fi - 2] == ';') && (entry->name[entry->len_fi - 1] == '1')) {
 				if ((nameLen == entry->len_fi - 2) && (strnicmp(name, entry->name, entry->len_fi - 2) == 0))
 					return entry;
@@ -115,10 +115,10 @@ ISODirectoryRecord *findEntryInCache(const char *name, int nameLen) {
 				if ((nameLen == entry->len_fi) && (strnicmp(name, entry->name, entry->len_fi) == 0))
 					return entry;
 			}
-			entry = (ISODirectoryRecord *)( (uint8*)entry + entry->len_dr );
+			entry = (ISODirectoryRecord *)( (uint8 *)entry + entry->len_dr );
 		}
 	}
-    return NULL;
+	return NULL;
 }
 
 ISODirectoryRecord *findPath(const char *path) {
@@ -225,12 +225,12 @@ int initDisc(void) {
 					case 1:
 						discType = DISC_MODE1;
 						printf("Disc: Mode1\n");
-						pvd = (ISOPvd*)(cacheBuf + 4);
+						pvd = (ISOPvd *)(cacheBuf + 4);
 						break;
 					case 2:
 						discType = DISC_MODE2;
 						printf("Disc: Mode2\n");
-						pvd = (ISOPvd*)(cacheBuf + 12);
+						pvd = (ISOPvd *)(cacheBuf + 12);
 						break;
 					default:
 						DBG_PRINTF("Unknown Sector Type %02X\n", cacheBuf[3]);
@@ -257,7 +257,7 @@ int initDisc(void) {
 
 				mediaType = discType;
 				DBG_PRINTF("Root directory in sector %d\n", fsRootLba);
-                return initRootCache();
+				return initRootCache();
 			}
 		}
 	}
@@ -290,46 +290,46 @@ int cd_init(iop_device_t *dev) {
 }
 
 iop_device_ops_t FS_ops = {
-    (void *) cd_init,
-    (void *) cd_dummy,
-    (void *) cd_dummy,
-    (void *) cd_open,
-    (void *) cd_close,
-    (void *) cd_read,
-    (void *) cd_dummy,
-    (void *) cd_lseek,
-    (void *) cd_dummy,
-    (void *) cd_dummy,
-    (void *) cd_dummy,
-    (void *) cd_dummy,
-    (void *) cd_dopen,
-    (void *) cd_dclose,
-    (void *) cd_dread,
-    (void *) cd_dummy,
-    (void *) cd_dummy,
+	(void *) cd_init,
+	(void *) cd_dummy,
+	(void *) cd_dummy,
+	(void *) cd_open,
+	(void *) cd_close,
+	(void *) cd_read,
+	(void *) cd_dummy,
+	(void *) cd_lseek,
+	(void *) cd_dummy,
+	(void *) cd_dummy,
+	(void *) cd_dummy,
+	(void *) cd_dummy,
+	(void *) cd_dopen,
+	(void *) cd_dclose,
+	(void *) cd_dread,
+	(void *) cd_dummy,
+	(void *) cd_dummy,
 };
 
 #define FS_NAME "cdfs"
 #define FS_DESC "CD-ROM"
 
 iop_device_t fsdriver = {
-    FS_NAME,
-    IOP_DT_FS | IOP_DT_FSEXT,
-    1,
-    FS_DESC,
-    &FS_ops
+	FS_NAME,
+	IOP_DT_FS | IOP_DT_FSEXT,
+	1,
+	FS_DESC,
+	&FS_ops
 };
 
 int _start(void) {
-    printf("CoDyVDfs v0.01\n");
+	printf("CoDyVDfs v0.01\n");
 
 	CdInit(1);
-    DelDrv(FS_NAME);
-    AddDrv(&fsdriver);
+	DelDrv(FS_NAME);
+	AddDrv(&fsdriver);
 
 	initRpc();
 	initFio();
-    return(0);
+	return(0);
 }
 
 int strnicmp(const char *s1, const char *s2, int n) {

@@ -19,35 +19,35 @@ int cdvdInitialised = 0;
 
 void cdvdExit(void)
 {
-    cdvdInitialised = 0;
+	cdvdInitialised = 0;
 }
 
 
 int cdvdInit(int mode)
 {
 	int i=0,len=0,ret=0;
-    u8  *pkt;
+	u8 *pkt;
 
-    cdvdCd.server = NULL;
+	cdvdCd.server = NULL;
 
-    do {
-        if ((ret = SifBindRpc(&cdvdCd, CDVD_INIT_BIND_RPC, 0)) < 0) {
-            return -1;
-        }
-        if (!cdvdCd.server) {
-            nopdelay();
-        }
-    }
+	do {
+		if ((ret = SifBindRpc(&cdvdCd, (signed)CDVD_INIT_BIND_RPC, 0)) < 0) {
+			return -1;
+		}
+		if (!cdvdCd.server) {
+			nopdelay();
+		}
+	}
 	while(!cdvdCd.server);
 
-    pkt = sendBuffer;
-    PUSHDATA( int, pkt, mode, i);
-    pkt += i; len += i;
+	pkt = (unsigned char *)sendBuffer;
+	PUSHDATA(int, pkt, mode, i);
+	pkt += i; len += i;
 
 	if ((ret = SifCallRpc(&cdvdCd, 0, 0, sendBuffer, len, NULL, 0, 0, 0)) < 0)
-        return -1;
+		return -1;
 
-    cdvdInitialised = 1;
+	cdvdInitialised = 1;
 
-    return 0;
+	return 0;
 }

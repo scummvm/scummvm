@@ -217,6 +217,11 @@ void MainMenuDialog::reflowLayout() {
 void MainMenuDialog::save() {
 	int slot = _saveDialog->runModalWithCurrentTarget();
 
+	#if defined(__PLAYSTATION2__) && defined(DYNAMIC_MODULES)
+	char pokeme[32];
+	snprintf(pokeme,32,"hack");
+	#endif
+
 	if (slot >= 0) {
 		Common::String result(_saveDialog->getResultString());
 		if (result.empty()) {

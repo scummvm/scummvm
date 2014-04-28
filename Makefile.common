@@ -62,6 +62,7 @@ endif
 ifneq ($(findstring $(MAKEFLAGS),s),s)
 ifneq ($(VERBOSE_BUILD),1)
 ifneq ($(VERBOSE_BUILD),yes)
+QUIET_CC      = @echo '   ' C '      ' $@;
 QUIET_CXX     = @echo '   ' C++ '    ' $@;
 QUIET_AS      = @echo '   ' AS '     ' $@;
 QUIET_NASM    = @echo '   ' NASM '   ' $@;
@@ -95,6 +96,9 @@ ifdef CXX_UPDATE_DEP_FLAG
 
 # Build rule for C++ files. Makes use of CXX_UPDATE_DEP_FLAG for advanced
 # dependency tracking.
+%.o: %.c
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CC)$(CC) $(CXX_UPDATE_DEP_FLAG) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 %.o: %.cpp
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
 	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
