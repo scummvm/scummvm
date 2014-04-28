@@ -35,6 +35,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 CGE2Engine::~CGE2Engine() {
+	delete _resman;
 }
 
 void CGE2Engine::init() {
