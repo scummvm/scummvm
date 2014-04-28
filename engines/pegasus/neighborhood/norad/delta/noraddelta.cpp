@@ -863,6 +863,13 @@ void NoradDelta::doSolve() {
 	}
 }
 
+void NoradDelta::setSoundFXLevel(const uint16 level) {
+	Neighborhood::setSoundFXLevel(level);
+
+	if (GameState.getCurrentRoomAndView() == MakeRoomView(kNorad54North, kNorth))
+		_loop2Fader.setMasterVolume(level);
+}
+
 Common::String NoradDelta::getSoundSpotsName() {
 	return "Sounds/Norad/Norad Delta Spots";
 }

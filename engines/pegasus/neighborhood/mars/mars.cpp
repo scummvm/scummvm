@@ -2402,6 +2402,8 @@ void Mars::doCanyonChase() {
 	if (!video->loadFile("Images/Mars/M44ESA.movie"))
 		error("Could not load interface->shuttle transition video");
 
+	video->setVolume(MIN<uint>(_vm->getSoundFXLevel(), 0xFF));
+
 	video->start();
 
 	while (!_vm->shouldQuit() && !video->endOfVideo()) {
@@ -2612,6 +2614,7 @@ void Mars::startUpFromFinishedSpaceChase() {
 			kShuttleJunkTop, false);
 
 	initOneMovie(&_explosions, "Images/Mars/Explosions.movie", kShuttleWeaponFrontOrder, 0, 0, false);
+	_explosions.setVolume(_vm->getSoundFXLevel());
 	_explosionCallBack.initCallBack(&_explosions, kCallBackAtExtremes);
 
 	_energyBeam.initShuttleWeapon();
@@ -2650,6 +2653,7 @@ void Mars::startUpFromFinishedSpaceChase() {
 
 	initOneMovie(&_canyonChaseMovie, "Images/Mars/M98EAS.movie", kShuttleTractorBeamMovieOrder,
 			kShuttleWindowLeft, kShuttleWindowTop, true);
+	_canyonChaseMovie.setVolume(_vm->getSoundFXLevel());
 	_canyonChaseMovie.setTime(_canyonChaseMovie.getDuration());
 	_canyonChaseMovie.redrawMovieWorld();
 }
@@ -2725,6 +2729,7 @@ void Mars::startUpFromSpaceChase() {
 			kShuttleJunkTop, false);
 
 	initOneMovie(&_explosions, "Images/Mars/Explosions.movie", kShuttleWeaponFrontOrder, 0, 0, false);
+	_explosions.setVolume(_vm->getSoundFXLevel());
 	_explosionCallBack.initCallBack(&_explosions, kCallBackAtExtremes);
 
 	_energyBeam.initShuttleWeapon();
@@ -2788,6 +2793,10 @@ void Mars::startUpFromSpaceChase() {
 void Mars::setSoundFXLevel(const uint16 level) {
 	Neighborhood::setSoundFXLevel(level);
 
+	if (GameState.getCurrentRoomAndView() == MakeRoomView(kMars48, kEast) &&
+			!GameState.getMarsAvoidedReactorRobot())
+		_loop2Fader.setMasterVolume(level);
+
 	if (_canyonChaseMovie.isMovieValid())
 		_canyonChaseMovie.setVolume(level);
 
@@ -2842,6 +2851,7 @@ void Mars::marsTimerExpired(MarsTimerEvent &event) {
 		initOneMovie(&_junk, "Images/Mars/Junk.movie", kShuttleJunkOrder, kShuttleJunkLeft, kShuttleJunkTop, false);
 
 		initOneMovie(&_explosions, "Images/Mars/Explosions.movie", kShuttleWeaponFrontOrder, 0, 0, false);
+		_explosions.setVolume(_vm->getSoundFXLevel());
 		_explosionCallBack.initCallBack(&_explosions, kCallBackAtExtremes);
 
 		_energyBeam.initShuttleWeapon();
@@ -3175,6 +3185,7 @@ void Mars::spaceChaseClick(const Input &input, const HotSpotID id) {
 					// Shameless reuse of a variable :P
 					initOneMovie(&_canyonChaseMovie, "Images/Mars/M98EAS.movie", kShuttleTractorBeamMovieOrder,
 							kShuttleWindowLeft, kShuttleWindowTop, true);
+					_canyonChaseMovie.setVolume(_vm->getSoundFXLevel());
 					_canyonChaseMovie.redrawMovieWorld();
 					playMovieSegment(&_canyonChaseMovie, 0, _canyonChaseMovie.getDuration());
 

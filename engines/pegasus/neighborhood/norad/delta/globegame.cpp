@@ -453,8 +453,13 @@ GlobeGame::GlobeGame(Neighborhood *handler) : GameInteraction(kNoradGlobeGameInt
 	_neighborhoodNotification = handler->getNeighborhoodNotification();
 }
 
+void GlobeGame::setSoundFXLevel(const uint16 fxLevel) {
+	_monitorMovie.setVolume(fxLevel);
+}
+
 void GlobeGame::openInteraction() {
 	_monitorMovie.initFromMovieFile("Images/Norad Delta/N79 Left Monitor");
+	_monitorMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 	_monitorMovie.moveElementTo(kGlobeMonitorLeft, kGlobeMonitorTop);
 	_monitorMovie.setDisplayOrder(kGlobeMonitorLayer);
 	_monitorMovie.startDisplaying();

@@ -68,6 +68,8 @@ public:
 	bool canSolve();
 	void doSolve();
 
+	void setSoundFXLevel(const uint16);
+
 	void doorOpened();
 
 protected:

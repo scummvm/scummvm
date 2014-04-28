@@ -196,6 +196,8 @@ void Caldoria::start() {
 		if (!pullbackMovie->loadFile("Images/Caldoria/Pullback.movie"))
 			error("Could not load pullback movie");
 
+		pullbackMovie->setVolume(MIN<uint>(_vm->getSoundFXLevel(), 0xFF));
+
 		// Draw the first frame so we can fade to it
 		const Graphics::Surface *frame = pullbackMovie->decodeNextFrame();
 		assert(frame);
