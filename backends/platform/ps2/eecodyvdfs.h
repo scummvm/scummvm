@@ -40,7 +40,7 @@ struct CdClock {
 #ifdef __cplusplus
 extern "C" {
 #endif
-    int initCdvdFs(void);
+	int initCdvdFs(void);
 	void readRTC(struct CdClock *dest);
 	int driveStop(void);
 	int driveStandby(void);

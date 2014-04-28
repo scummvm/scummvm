@@ -25,6 +25,7 @@
 
 #include "sysdefs.h"
 #include "backends/base-backend.h"
+#include "common/config-manager.h"
 
 #include "backends/platform/ps2/DmaPipe.h"
 #include "graphics/surface.h"
@@ -33,7 +34,9 @@
 enum TVMode {
 	TV_DONT_CARE = 0,
 	TV_PAL,
-	TV_NTSC
+	TV_NTSC,
+	TV_HDTV, /* internal */
+	TV_VESA  /* internal */
 };
 
 enum GsInterlace {
@@ -44,14 +47,14 @@ enum GsInterlace {
 
 class Gs2dScreen {
 public:
-	Gs2dScreen(uint16 width, uint16 height, TVMode tvMode);
+	Gs2dScreen(uint16 width, uint16 height);
 	~Gs2dScreen(void);
 	void newScreenSize(uint16 width, uint16 height);
-	uint8 tvMode(void);
+	// uint8 tvMode(void);
 	uint16 getWidth(void);
 	uint16 getHeight(void);
 
-	void copyPrintfOverlay(const uint8* buf);
+	void copyPrintfOverlay(const uint8 *buf);
 	void clearPrintfOverlay(void);
 
 	Graphics::Surface *lockScreen();
@@ -77,7 +80,7 @@ public:
 	void setMouseXy(int16 x, int16 y);
 	void setShakePos(int shake);
 
-	void animThread(void);
+	void playAnim(void);
 	void wantAnim(bool runIt);
 
 	void quit(void);
@@ -87,8 +90,10 @@ private:
 	void createAnimTextures(void);
 
 	DmaPipe *_dmaPipe;
+	uint8 _gfxMode;
 	uint8 _tvMode;
 	uint16 _tvWidth, _tvHeight;
+	uint16 _tvPitch;
 	GsVertex _blitCoords[2];
 	TexVertex _texCoords[2];
 
@@ -100,18 +105,18 @@ private:
 	Graphics::Surface _framebuffer;
 
 	/* TODO : check if we do need this */
-    struct VideoState {
-        bool setup;
+	struct VideoState {
+		bool setup;
 
-        bool fullscreen;
-        bool aspectRatio;
+		bool fullscreen;
+		bool aspectRatio;
 
-        int mode;
-        int scaleFactor;
+		int mode;
+		int scaleFactor;
 
-        int screenWidth, screenHeight;
-        int overlayWidth, overlayHeight;
-    };
+		int screenWidth, screenHeight;
+		int overlayWidth, overlayHeight;
+	};
 
 	VideoState _videoMode;
 	/* */
