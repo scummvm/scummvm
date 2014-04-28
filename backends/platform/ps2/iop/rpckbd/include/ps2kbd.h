@@ -87,8 +87,8 @@ typedef struct _kbd_keymap
 #define KBD_RPC_SETSPECIALMAP   7 /* Sets the special key mapping */
 #define KBD_RPC_FLUSHBUFFER     9 /* Flush the internal buffer, probably best after a keymap change */
 #define KBD_RPC_RESETKEYMAP    10 /* Reset keymaps to default states */
-#define KBD_RPC_READKEY		   11
-#define KBD_RPC_READRAW		   12
+#define KBD_RPC_READKEY        11
+#define KBD_RPC_READRAW        12
 
 /* Note on keymaps. In normal keymap a 0 would indicate no key */
 /* Key maps are represented by 3 256*8bit tables. First table maps USB key to a char when not shifted */

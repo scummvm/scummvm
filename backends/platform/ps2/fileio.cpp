@@ -20,8 +20,9 @@
  *
  */
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+// Disable symbol overrides so that we can use "FILE"
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "backends/platform/ps2/fileio.h"
 
@@ -52,7 +53,7 @@ Ps2File::Ps2File() {
 	_eof = false;
 	_err = false;
 
-	_cacheBuf = (uint8*)memalign(64, CACHE_SIZE * 2);
+	_cacheBuf = (uint8 *)memalign(64, CACHE_SIZE * 2);
 
 	_cacheOpRunning = 0;
 	_filePos = _physFilePos = _cachePos = 0;
@@ -78,12 +79,12 @@ Ps2File::~Ps2File() {
 			fio.seek(_fd, 0, SEEK_SET);
 			fio.write(_fd, _cacheBuf, _filePos);
 			w = fio.sync(_fd);
-			printf("flushed wbuf: %x of %x\n", w, _filePos);
+			dbg_printf("flushed wbuf: %x of %x\n", w, _filePos);
 		}
 
 		fio.close(_fd);
 		uint32 r = fio.sync(_fd);
-		printf("close [%d] - sync'd = %d\n", _fd, r);
+		dbg_printf("close [%d] - sync'd = %d\n", _fd, r);
 	}
 
 	free(_cacheBuf);
@@ -97,7 +98,7 @@ bool Ps2File::open(const char *name, int mode) {
 #if 1
 	_fd = fio.open(name, mode);
 
-	printf("open %s [%d]\n", name, _fd);
+	dbg_printf("open %s [%d]\n", name, _fd);
 
 	if (_fd >= 0) {
 		_mode = mode;
@@ -110,9 +111,9 @@ bool Ps2File::open(const char *name, int mode) {
 		else
 			_fileSize = 0;
 
-		printf("  _mode = %x\n", _mode);
-		printf("  _fileSize = %d\n", _fileSize);
-		// printf("  _filePos = %d\n", _filePos);
+		dbg_printf("  _mode = %x\n", _mode);
+		dbg_printf("  _fileSize = %d\n", _fileSize);
+		// dbg_printf("  _filePos = %d\n", _filePos);
 
 		return true;
 	}
@@ -130,7 +131,7 @@ bool Ps2File::open(const char *name, int mode) {
 		if (_fileSize && mode != O_RDONLY) {
 			fio.read(_fd, _cacheBuf, _fileSize);
 			r = fio.sync(_fd);
-			printf(" sz=%d, read=%d\n", _fileSize, r);
+			dbg_printf(" sz=%d, read=%d\n", _fileSize, r);
 			assert(r == _fileSize);
 		}
 
@@ -141,7 +142,7 @@ bool Ps2File::open(const char *name, int mode) {
 
 	_fd = fio.open(name, mode);
 
-	printf("open %s [%d]\n", name, _fd);
+	dbg_printf("open %s [%d]\n", name, _fd);
 
 	if (_fd >= 0) {
 		_mode = mode;
@@ -160,16 +161,16 @@ bool Ps2File::open(const char *name, int mode) {
 			if (mode != O_RDONLY) {
 				fio.read(_fd, _cacheBuf, _fileSize);
 				r = fio.sync(_fd);
-				printf(" sz=%d, read=%d\n", _fileSize, r);
+				dbg_printf(" sz=%d, read=%d\n", _fileSize, r);
 				assert(r == _fileSize);
 				// _fileSize = fio.seek(_fd, 0, SEEK_END);
 			}
 			#endif
 		}
 
-		printf("  _mode = %x\n", _mode);
-		printf("  _fileSize = %d\n", _fileSize);
-		printf("  _filePos = %d\n", _filePos);
+		dbg_printf("  _mode = %x\n", _mode);
+		dbg_printf("  _fileSize = %d\n", _fileSize);
+		dbg_printf("  _filePos = %d\n", _filePos);
 
 		return true;
 	} else
@@ -208,7 +209,7 @@ bool Ps2File::eof() {
 #ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
 
-	// printf(" EOF [%d] : %d of %d  -> %d\n", _fd, _filePos, _fileSize, res);
+	// dbg_printf(" EOF [%d] : %d of %d  -> %d\n", _fd, _filePos, _fileSize, res);
 #endif
 	return res;
 }
@@ -255,8 +256,8 @@ int Ps2File::seek(int32 offset, int origin) {
 		_eof = true;
 	}
 
-	// printf("seek [%d]  %d  %d\n", _fd, offset, origin);
-	// printf("  res = %d\n", res);
+	// dbg_printf("seek [%d]  %d  %d\n", _fd, offset, origin);
+	// dbg_printf("  res = %d\n", res);
 
 #ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
@@ -338,8 +339,8 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 #endif
 
 #ifdef __PS2_FILE_DEBUG__
-	printf("read (1) : _filePos = %d\n", _filePos);
-	printf("read (1) : _cachePos = %d\n", _cachePos);
+	dbg_printf("read (1) : _filePos = %d\n", _filePos);
+	dbg_printf("read (1) : _cachePos = %d\n", _cachePos);
 #endif
 
 	if (len == 0) {
@@ -362,7 +363,7 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 		_eof = true;
 	}
 
-	uint8 *destBuf = (uint8*)dest;
+	uint8 *destBuf = (uint8 *)dest;
 	if ((_filePos < _cachePos) || (_filePos + len > _cachePos + _bytesInCache))
 		cacheReadSync(); // we have to read from CD, sync cache.
 
@@ -409,11 +410,14 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 				break; // EOF
 		}
 	}
+#ifndef ENABLE_PROFILING
+	// doesn't play nice with -pg
 	cacheReadAhead();
+#endif
 #ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
 #endif
-	return destBuf - (uint8*)dest;
+	return destBuf - (uint8 *)dest;
 }
 
 uint32 Ps2File::write(const void *src, uint32 len) {
@@ -473,7 +477,7 @@ uint32 PS2FileStream::write(const void *ptr, uint32 len) {
 }
 
 bool PS2FileStream::flush() {
-	// printf("flush not implemented\n");
+	// dbg_printf("flush not implemented\n");
 	return true;
 }
 
@@ -481,7 +485,7 @@ bool PS2FileStream::err() const {
 	bool errVal = _handle->getErr();
 
 	if (errVal) {
-		printf("ferror -> %d\n", errVal);
+		dbg_printf("ferror -> %d\n", errVal);
 	}
 
 	return errVal;
@@ -501,7 +505,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 	Ps2File *file = new Ps2File();
 	int _mode = O_RDONLY;
 
-	printf("fopen(%s, %s)\n", fname, mode);
+	dbg_printf("fopen(%s, %s)\n", fname, mode);
 
 	if (mode[0] == 'r' && mode [1] == 'w')
 		_mode = O_RDWR;
@@ -518,7 +522,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 }
 
 int ps2_fclose(FILE *stream) {
-	Ps2File *file = (Ps2File*)stream;
+	Ps2File *file = (Ps2File *)stream;
 
 	delete file;
 
@@ -528,10 +532,10 @@ int ps2_fclose(FILE *stream) {
 
 size_t ps2_fread(void *buf, size_t r, size_t n, FILE *stream) {
 	assert(r != 0);
-	return ((Ps2File*)stream)->read(buf, r * n) / r;
+	return ((Ps2File *)stream)->read(buf, r * n) / r;
 }
 
 size_t ps2_fwrite(const void *buf, size_t r, size_t n, FILE *stream) {
 	assert(r != 0);
-	return ((Ps2File*)stream)->write(buf, r * n) / r;
+	return ((Ps2File *)stream)->write(buf, r * n) / r;
 }
