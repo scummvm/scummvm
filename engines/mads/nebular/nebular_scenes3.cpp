@@ -5387,5 +5387,33 @@ void Scene389::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene390::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene390::enter() {
+	_scene->_userInterface.setup(kInputLimitedSentences);
+	_game._player._visible = false;
+
+	sceneEntrySound();
+}
+
+void Scene390::actions() {
+	if (_action.isAction(0x2D5, 0x2D4))
+		_scene->_nextSceneId = 313;
+	else if (_action.isAction(0xD3, 0x2D3))
+		_vm->_dialogs->show(0x9862);
+	else if (_action.isAction(VERB_OPEN, 0x2D3))
+		_vm->_dialogs->show(0x9863);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
