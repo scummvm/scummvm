@@ -907,7 +907,7 @@ void Caldoria::arriveAtCaldoria49() {
 		setCurrentAlternate(kAltCaldoriaNormal);
 
 	// Need to force the loop to play.
-	if (GameState.getCurrentDirection() == kNorth) {
+	if (GameState.getCurrentDirection() == kNorth && !GameState.getCaldoriaSinclairShot()) {
 		GameState.setCaldoriaFuseTimeLimit(kSinclairShootsTimeLimit);
 		startExtraSequence(kCa49NorthVoiceAnalysis, kExtraCompletedFlag, kFilterNoInput);
 	}
