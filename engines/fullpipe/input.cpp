@@ -316,7 +316,7 @@ void FullpipeEngine::processArcade(ExCommand *cmd) {
 				break;
 		}
 
-		if (idx >= _arcadeKeys.size())
+		if (idx >= (int)_arcadeKeys.size())
 			return;
 	}
 
