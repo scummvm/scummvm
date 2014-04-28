@@ -891,9 +891,6 @@ void Game::putItem(GameItem *item, int position) {
 void Game::inventoryInit() {
 	// Pause all "background" animations
 	_vm->_anims->pauseAnimations();
-	if (_walkingState.isActive()) {
-		walkHero(_hero.x, _hero.y, kDirectionLast);
-	}
 
 	// Draw the inventory and the current items
 	inventoryDraw();
@@ -903,6 +900,13 @@ void Game::inventoryInit() {
 
 	// Set the appropriate loop status
 	setLoopStatus(kStatusInventory);
+
+	if (_walkingState.isActive()) {
+		_walkingState.stopWalking();
+		walkHero(_hero.x, _hero.y, kDirectionLast);
+	} else {
+		_lastTarget = _hero;
+	}
 
 	// Don't return from the inventory mode immediately if the mouse is out.
 	_mouseChangeTick = kMouseDoNotSwitch;
@@ -921,6 +925,10 @@ void Game::inventoryDone() {
 			_inventory[i]->_anim->stop();
 		}
 	}
+
+	// Start moving to last target
+	walkHero(_lastTarget.x, _lastTarget.y, kDirectionLast);
+	_walkingState.callbackLast();
 
 	// Reset item under cursor
 	_itemUnderCursor = NULL;
@@ -1208,6 +1216,12 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 		debug(1, "Unreachable point [%d,%d]", target.x, target.y);
 		return;
 	}
+
+	// Save point of player's last target.
+	if (_loopStatus != kStatusInventory) {
+		_lastTarget = target;
+	}
+
 	_walkingMap.obliquePath(shortestPath, &obliquePath);
 	debugC(2, kDraciWalkingDebugLevel, "Walking path lengths: shortest=%d oblique=%d", shortestPath.size(), obliquePath.size());
 	if (_vm->_showWalkingMap) {

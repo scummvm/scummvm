@@ -356,6 +356,7 @@ private:
 
 	Common::Point _hero;
 	Common::Point _heroLoading;
+	Common::Point _lastTarget;
 
 	int *_variables;
 	Person *_persons;
