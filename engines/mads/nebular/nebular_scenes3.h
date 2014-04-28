@@ -462,6 +462,22 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene361: public Scene3xx {
+private:
+	void handleRexAction();
+	void handleRoxAction();
+
+public:
+	Scene361(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene366: public Scene3xx {
 public:
 	Scene366(MADSEngine *vm) : Scene3xx(vm) {}
@@ -473,6 +489,7 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
 
 } // End of namespace Nebular
 } // End of namespace MADS
