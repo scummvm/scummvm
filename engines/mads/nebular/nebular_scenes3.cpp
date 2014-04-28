@@ -5412,6 +5412,44 @@ void Scene390::actions() {
 	_action._inProgress = false;
 }
 
+/*------------------------------------------------------------------------*/
+
+void Scene391::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene391::enter() {
+	_scene->_userInterface.setup(kInputLimitedSentences);
+	_game._player._visible = false;
+	sceneEntrySound();
+}
+
+void Scene391::actions() {
+	if (_action.isAction(0x2D5, 0x2D4))
+		_scene->_nextSceneId = 313;
+	else if (_action.isAction(VERB_OPEN, 0x2D3)) {
+		if (_globals[kKickedIn391Grate])
+			_vm->_dialogs->show(0x98C9);
+		else {
+			_vm->_dialogs->show(0x98C8);
+			_globals[kKickedIn391Grate] = true;
+		}
+
+		if (_globals[kAfterHavoc])
+			_scene->_nextSceneId = 361;
+		else
+			_scene->_nextSceneId = 311;
+	} else if (_action.isAction(0xD3, 0x2D3)) {
+		if (_globals[kAfterHavoc])
+			_vm->_dialogs->show(0x98C7);
+		else
+			_vm->_dialogs->show(0x98C6);
+	} else
+		return;
+
+	_action._inProgress = false;
+}
 
 /*------------------------------------------------------------------------*/
 
