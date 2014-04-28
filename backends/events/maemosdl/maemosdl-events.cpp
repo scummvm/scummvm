@@ -86,12 +86,11 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F6) {
 				if (!model.hasHwKeyboard) {
-					event.type = Common::EVENT_KEYDOWN;
-					event.kbd.keycode = Common::KEYCODE_F7;
-					event.kbd.ascii = Common::ASCII_F7;
-					event.kbd.flags = 0;
-					debug(9, "remapping to F7 down (virtual keyboard)");
+#ifdef ENABLE_VKEYBD
+					event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+					debug(9, "remapping to virtual keyboard trigger");
 					return true;
+#endif
 				} else {
 					// handled in keyup
 				}
@@ -102,12 +101,11 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F8) {
 				if (ev.key.keysym.mod & KMOD_CTRL) {
-					event.type = Common::EVENT_KEYDOWN;
-					event.kbd.keycode = Common::KEYCODE_F7;
-					event.kbd.ascii = Common::ASCII_F7;
-					event.kbd.flags = 0;
-					debug(9, "remapping to F7 down (virtual keyboard)");
+#ifdef ENABLE_VKEYBD
+					event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+					debug(9, "remapping to virtual keyboard trigger");
 					return true;
+#endif
 				} else {
 					// handled in keyup
 					return true;
@@ -125,12 +123,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F6) {
 				if (!model.hasHwKeyboard) {
-					event.type = Common::EVENT_KEYUP;
-					event.kbd.keycode = Common::KEYCODE_F7;
-					event.kbd.ascii = Common::ASCII_F7;
-					event.kbd.flags = 0;
-					debug(9, "remapping to F7 down (virtual keyboard)");
-					return true;
+					// handled in keydown
 				} else {
 					bool currentState = ((OSystem_SDL *)g_system)->getGraphicsManager()->getFeatureState(OSystem::kFeatureFullscreenMode);
 					g_system->beginGFXTransaction();
@@ -146,12 +139,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F8) {
 				if (ev.key.keysym.mod & KMOD_CTRL) {
-					event.type = Common::EVENT_KEYUP;
-					event.kbd.keycode = Common::KEYCODE_F7;
-					event.kbd.ascii = Common::ASCII_F7;
-					event.kbd.flags = 0;
-					debug(9, "remapping to F7 up (virtual keyboard)");
-					return true;
+					// handled in key down
 				} else {
 					toggleClickMode();
 					debug(9, "remapping to click toggle");
