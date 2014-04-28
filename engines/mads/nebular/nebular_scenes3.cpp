@@ -5244,5 +5244,68 @@ void Scene387::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene388::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene388::enter() {
+	_scene->_userInterface.setup(kInputLimitedSentences);
+
+	if (_globals[kAfterHavoc])
+		_scene->_hotspots.activate(0x303, false);
+	else {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', 0));
+		_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
+	}
+
+	_game._player._visible = false;
+	_vm->_palette->setEntry(252, 63, 30, 20);
+	_vm->_palette->setEntry(253, 45, 15, 12);
+	_game.loadQuoteSet(0x154, 0x155, 0x156, 0x157, 0x158, 0);
+
+	sceneEntrySound();
+}
+
+void Scene388::actions() {
+	if (_action.isAction(0x2D5, 0x2D4))
+		_scene->_nextSceneId = 313;
+	else if (_action.isAction(VERB_TALKTO, 0x303)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_scene->_kernelMessages.reset();
+			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, _game.getQuote(0x154));
+			break;
+
+		case 1:
+			_scene->_kernelMessages.add(Common::Point(82, 38), 0xFDFC, 0, 0, 300, _game.getQuote(0x156));
+			_scene->_kernelMessages.add(Common::Point(82, 52), 0xFDFC, 0, 0, 300, _game.getQuote(0x157));
+			_scene->_kernelMessages.add(Common::Point(82, 66), 0xFDFC, 0, 2, 300, _game.getQuote(0x158));
+			break;
+
+		case 2:
+			_game._player._stepEnabled = true;
+			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 0, 120, _game.getQuote(0x155));
+			break;
+
+		default:
+			break;
+		}
+	} else if (_action.isAction(0xD3, 0x2D3)) {
+		if (_globals[kAfterHavoc])
+			_vm->_dialogs->show(0x979B);
+		else
+			_vm->_dialogs->show(0x979A);
+	} else if (_action.isAction(VERB_OPEN, 0x2D3))
+		_vm->_dialogs->show(0x979C);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
