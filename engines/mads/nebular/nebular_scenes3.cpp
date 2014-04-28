@@ -5307,5 +5307,85 @@ void Scene388::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene389::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene389::enter() {
+	_scene->_userInterface.setup(kInputLimitedSentences);
+	_monsterTime = 0;
+	_circularQuoteId = 0x159;
+
+	if (_globals[kAfterHavoc])
+		_scene->_hotspots.activate(0x304, false);
+	else {
+		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', -1));
+		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
+		warning("TODO: sub71704(1, 88, 177, 19, 17, 0xD, 2, 0xFDFC, 0x3C, 0xF7, 0xF8, 0xF9, 0);");
+	}
+
+	_vm->_palette->setEntry(252, 63, 37, 26);
+	_vm->_palette->setEntry(253, 45, 24, 17);
+	_game._player._visible = false;
+	_game.loadQuoteSet(0xF7, 0xF8, 0xF9, 0x159, 0x15A, 0x15B, 0);
+
+	sceneEntrySound();
+}
+
+void Scene389::step() {
+	warning("TODO: sub7178C()");
+
+	if (_scene->_frameStartTime >= _monsterTime) {
+		warning("sub717B2(20, (sub7176C() << 2) + 1);");
+		_monsterTime = _scene->_frameStartTime + 2;
+	}
+}
+
+void Scene389::actions() {
+	if (_action.isAction(0x2D5, 0x2D4))
+		_scene->_nextSceneId = 313;
+	else if (_action.isAction(VERB_TALKTO, 0x304)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, _game.getQuote(_circularQuoteId));
+			_circularQuoteId++;
+			if (_circularQuoteId > 0x15B)
+				_circularQuoteId = 0x159;
+
+			break;
+
+		case 1:
+			_game._player._stepEnabled = true;
+			break;
+
+		default:
+			break;
+		}
+	} else if (_action.isAction(0xD3, 0x2D3)) {
+		if (_globals[kAfterHavoc]) {
+			if (_game._difficulty != DIFFICULTY_HARD) {
+				if (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359)
+					_vm->_dialogs->show(0x97FF);
+				else
+					_vm->_dialogs->show(0x9800);
+			} else
+				_vm->_dialogs->show(0x9800);
+		} else
+			_vm->_dialogs->show(0x97FE);
+	} else if (_action.isAction(VERB_OPEN, 0x2D3)) {
+		if (_globals[kAfterHavoc])
+			_vm->_dialogs->show(0x9802);
+		else
+			_vm->_dialogs->show(0x9801);
+	} else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
