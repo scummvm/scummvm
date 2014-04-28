@@ -1894,14 +1894,14 @@ MessageQueue *MGM::genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, 
 
 		startidx = _items[idx]->subItems[subidx]->staticsIndex;
 
-		int step;
+		uint step;
 
 		if (_items[idx]->subItems[subidx]->movement->_currMovement)
 			step = _items[idx]->subItems[subidx]->movement->_currMovement->_dynamicPhases.size();
 		else
 			step = _items[idx]->subItems[subidx]->movement->_dynamicPhases.size();
 
-		i++;
+		i += step;
 	} while (startidx != endidx);
 
 	return mq;
@@ -2297,7 +2297,7 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 
 	Common::Point point;
 
-	for (int i = 0; i < item->movements1.size(); i++) {
+	for (uint i = 0; i < item->movements1.size(); i++) {
 		Movement *mov = item->movements1[i];
 
 		if (mov->_staticsObj1 == item->statics[st1idx]) {
