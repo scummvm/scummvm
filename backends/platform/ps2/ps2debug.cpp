@@ -22,10 +22,10 @@
 
 #include "ps2debug.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <sio.h>
 
 void sioprintf(const char *zFormat, ...) {
+	#if 0 // doesn't seem to work with ps2link...
 	va_list ap;
 	char resStr[2048];
 
@@ -43,4 +43,5 @@ void sioprintf(const char *zFormat, ...) {
 			sio_putc(*pos);
 		pos++;
 	}
+	#endif
 }

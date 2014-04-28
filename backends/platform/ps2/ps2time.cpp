@@ -30,9 +30,9 @@
 
 #define FROM_BCD(a) ((a >> 4) * 10 + (a & 0xF))
 
-static int	  g_timeSecs;
-static int	  g_day, g_month, g_year;
-static int	  g_lastTimeCheck;
+static int g_timeSecs;
+static int g_day, g_month, g_year;
+static int g_lastTimeCheck;
 extern volatile uint32 msecCount;
 
 void buildNewDate(int dayDiff) {

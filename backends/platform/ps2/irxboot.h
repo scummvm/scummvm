@@ -25,6 +25,16 @@
 
 #include "common/scummsys.h"
 
+enum IrxType {
+	IRX_CORE = 0,
+	IRX_CDROM,
+	IRX_USB,
+	IRX_INPUT,
+	IRX_HDD,
+	IRX_NET,
+	IRX_MAX
+};
+
 enum IrxFlags {
 	BIOS = 0,
 	SYSTEM = 1,
@@ -40,6 +50,7 @@ enum IrxFlags {
 
 enum IrxPurpose {
 	NOTHING,
+	CD_DRIVER,
 	HDD_DRIVER,
 	USB_DRIVER,
 	MOUSE_DRIVER,
@@ -81,6 +92,6 @@ struct IrxReference {
 	int errorCode;
 };
 
-int loadIrxModules(int device, const char *irxPath, IrxReference **modules);
+int loadIrxModules(int device, const char *irxPath, IrxReference **modules, IrxType type);
 
 #endif // __IRXBOOT_H__
