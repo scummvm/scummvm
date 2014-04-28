@@ -1484,6 +1484,47 @@ void ModalSaveGame::processKey(int key) {
 		_queryRes = 0;
 }
 
+bool ModalSaveGame::init(int counterdiff) {
+	if (_queryDlg) {
+		if (!_queryDlg->init(counterdiff)) {
+			if (!_queryDlg->getQueryResult())
+				_queryRes = -1;
+
+			delete _queryDlg;
+			_queryDlg = 0;
+		}
+
+		return true;
+	}
+
+	if (_queryRes == -1)
+		return true;
+
+	g_fp->_sceneRect = _rect;
+
+	if (g_fp->_currentScene) {
+		g_fp->_currentScene->_x = _oldBgX;
+		g_fp->_currentScene->_y = _oldBgY;
+	}
+
+	if (!_queryRes) {
+		ModalMainMenu *m = new ModalMainMenu;
+
+		g_fp->_modalObject = m;
+
+		m->_parentObj = _parentObj;
+		m->_screct = _rect;
+		m->_bgX = _oldBgX;
+		m->_bgY = _oldBgY;
+
+		delete this;
+
+		return true;
+	}
+
+	return false;
+}
+
 void ModalSaveGame::setup(Scene *sc, int mode) {
 	warning("STUB: ModalSaveGame::setup()");
 }

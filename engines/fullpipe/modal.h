@@ -244,7 +244,7 @@ public:
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return false; }
-	virtual bool init(int counterdiff) { return true; }
+	virtual bool init(int counterdiff);
 	virtual void update() {}
 	virtual void saveload() {}
 
