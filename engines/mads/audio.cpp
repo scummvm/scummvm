@@ -92,7 +92,7 @@ void AudioPlayer::playSound(int soundIndex, bool loop) {
 		return;
 	}
 
-	if (soundIndex < 0 || soundIndex > _dsrEntries.size() - 1) {
+	if (soundIndex < 0 || soundIndex > (int)_dsrEntries.size() - 1) {
 		warning("Invalid sound index: %i (max %i), not playing sound", soundIndex, _dsrEntries.size() - 1);
 		return;
 	}

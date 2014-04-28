@@ -47,7 +47,7 @@ bool VisitedScenes::exists(int sceneId) {
 }
 
 void VisitedScenes::synchronize(Common::Serializer &s) {
-	int count = size();
+	uint count = size();
 	int v = 0;
 	s.syncAsUint16LE(count);
 
