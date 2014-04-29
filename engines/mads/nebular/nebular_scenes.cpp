@@ -166,9 +166,141 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 399:
 		return new Scene399(vm);
 
+	// Scene group #4
+	case 401:
+		// TODO
+	case 402:
+		// TODO
+	case 403:
+		// TODO
+	case 405:
+		// TODO
+	case 406:
+		// TODO
+	case 407:
+		// TODO
+	case 408:
+		// TODO
+	case 409:
+		// TODO
+	case 410:
+		// TODO
+	case 411:
+		// TODO
+	case 413:
+		// TODO
+		// Fall-through for unimplemented scenes in group #4
+		error("Invalid scene %d called", scene._nextSceneId);
+
+	// Scene group #5
+	case 501:
+		// TODO
+	case 502:
+		// TODO
+	case 503:
+		// TODO
+	case 504:
+		// TODO
+	case 505:
+		// TODO
+	case 506:
+		// TODO
+	case 507:
+		// TODO
+	case 508:
+		// TODO
+	case 511:
+		// TODO
+	case 512:
+		// TODO
+	case 513:
+		// TODO
+	case 515:
+		// TODO
+	case 551:
+		// TODO
+		// Fall-through for unimplemented scenes in group #5
+		error("Invalid scene %d called", scene._nextSceneId);
+
+	// Scene group #6
+	case 601:
+		// TODO
+	case 602:
+		// TODO
+	case 603:
+		// TODO
+	case 604:
+		// TODO
+	case 605:
+		// TODO
+	case 607:
+		// TODO
+	case 608:
+		// TODO
+	case 609:
+		// TODO
+	case 610:
+		// TODO
+	case 611:
+		// TODO
+	case 612:
+		// TODO
+	case 620:
+		// TODO
+		// Fall-through for unimplemented scenes in group #6
+		error("Invalid scene %d called", scene._nextSceneId);
+
+	// Scene group #7
+	case 701:
+		// TODO
+	case 702:
+		// TODO
+	case 703:
+		// TODO
+	case 704:
+		// TODO
+	case 705:
+		// TODO
+	case 706:
+		// TODO
+	case 707:
+		// TODO
+	case 708:
+		// TODO
+	case 710:
+		// TODO
+	case 711:
+		// TODO
+	case 751:
+		// TODO
+	case 752:
+		// TODO
+		// Fall-through for unimplemented scenes in group #7
+		error("Invalid scene %d called", scene._nextSceneId);
+
 	// Scene group #8
+	case 801:
+		// TODO
+	case 802:
+		// TODO
+	case 803:
+		// TODO
+		// Fall-through for unimplemented scenes in group #8
+		error("Invalid scene %d called", scene._nextSceneId);
 	case 804:
 		return new Scene804(vm);
+	case 805:
+		// TODO
+	case 806:
+		// TODO
+	case 807:
+		// TODO
+	case 808:
+		// TODO
+	case 810:
+		// TODO
+		// Fall-through for unimplemented scenes in group #8
+		error("Invalid scene %d called", scene._nextSceneId);
 
 	default:
 		error("Invalid scene %d called", scene._nextSceneId);
