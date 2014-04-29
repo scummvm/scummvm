@@ -104,6 +104,11 @@ public:
 	void hideCursor();
 
 	/**
+	 * Returns if the mouse cursor is visible
+	 */
+	bool isCursorVisible();
+
+	/**
 	 * Shows the wait cursor
 	 */
 	void waitCursor();

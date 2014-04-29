@@ -77,6 +77,10 @@ void EventsManager::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
+bool EventsManager::isCursorVisible() {
+	return CursorMan.isVisible();
+}
+
 void EventsManager::waitCursor() {
 	CursorType cursorId = (CursorType)MIN(_cursorSprites->getCount(), (int)CURSOR_WAIT);
 	_newCursorId = cursorId;
