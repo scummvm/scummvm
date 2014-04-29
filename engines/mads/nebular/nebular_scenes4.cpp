@@ -93,5 +93,135 @@ void Scene4xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene401::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene401::enter() {
+	if (_scene->_priorSceneId != -2)
+		_northFl = false;
+
+	_timer = 0;
+
+	if (_scene->_priorSceneId == 402) {
+		_game._player._playerPos = Common::Point(203, 115);
+		_game._player._facing = FACING_WEST;
+	} else if (_scene->_priorSceneId == 354) {
+		_game._player._playerPos = Common::Point(149, 90);
+		_game._player._facing = FACING_SOUTH;
+		_northFl = true;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(142, 131);
+		_game._player._facing = FACING_NORTH;
+	}
+
+	_game.loadQuoteSet(0x1D4, 0);
+	sceneEntrySound();
+}
+
+void Scene401::step() {
+	if (_game._trigger == 70) {
+		_scene->_nextSceneId = 354;
+		_scene->_reloadSceneFlag = true;
+	}
+
+	if (_game._trigger == 80) {
+		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+		_game._player._stepEnabled = true;
+		_game._player._visible = true;
+		_northFl  = false;
+		_game._player.walk(Common::Point(149, 110), FACING_SOUTH);
+	}
+
+	if (_scene->_frameStartTime >= _timer) {
+		int dist = 64 - ((_vm->hypotenuse(_game._player._playerPos.x - 219, _game._player._playerPos.y - 115) * 64) / 120);
+		
+		if (dist > 64)
+			dist = 64;
+		else if (dist < 1)
+			dist = 1;
+
+		_vm->_sound->command(12, dist);
+		_timer = _scene->_frameStartTime + _game._player._ticksAmount;
+	}
+
+}
+
+void Scene401::preActions() {
+	if (_action.isAction(0x1AD, 0x2B4)) {
+		_game._player.walk(Common::Point(149, 89), FACING_NORTH); 
+		_northFl = false;
+	}           
+
+	if (_action.isAction(0x1AD, 0x2B3) && !_northFl)
+		_game._player._walkOffScreenSceneId = 405;
+
+	if (_action.isAction(VERB_TAKE))
+		_game._player._needToWalk = false;
+
+	if (_game._player._needToWalk && _northFl) {
+		if (_globals[kSexOfRex] == REX_MALE)
+			_destPos = Common::Point(148, 94);
+		else
+			_destPos = Common::Point(149, 99);
+
+		_game._player.walk(_destPos, FACING_SOUTH); 
+	}
+}
+
+void Scene401::actions() {
+	if ((_game._player._playerPos == _destPos) && _northFl) {
+		if (_globals[kSexOfRex] == REX_MALE) {
+			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;  
+			_vm->_sound->command(21);
+			_scene->loadAnimation(formAnimName('s', 1), 70);
+			_globals[kHasBeenScanned] = true;
+			_vm->_sound->command(22);
+			int idx = _scene->_kernelMessages.add(Common::Point(153, 46), 0x1110, 32, 0, 60, _game.getQuote(0x1D4));
+			_scene->_kernelMessages.setQuoted(idx, 4, true);
+		}
+
+		if (_globals[kSexOfRex] == REX_FEMALE) {
+			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;  
+			_vm->_sound->command(21);
+			_scene->loadAnimation(formAnimName('s', 2), 80);
+			_vm->_sound->command(23);
+			_globals[kHasBeenScanned] = true;
+		}
+	}
+
+	if (_action.isAction(0x242, 0x241)) {
+		if (!_northFl)
+			_scene->_nextSceneId = 402;
+	} else if (_action.isAction(0x1AD, 0x2B4))
+		_scene->_nextSceneId = 354;
+	else if (_action.isAction(VERB_LOOK, 0x1F3)) {
+		if (_globals[kHasBeenScanned])
+			_vm->_dialogs->show(40111);
+		else
+			_vm->_dialogs->show(40110);
+	} else if (_action.isAction(VERB_LOOK, 0x241))
+		_vm->_dialogs->show(40112);
+	else if (_action.isAction(VERB_LOOK, 0x244))
+		_vm->_dialogs->show(40113);
+	else if (_action.isAction(VERB_LOOK, 0x2B3))
+		_vm->_dialogs->show(40114);
+	else if (_action.isAction(VERB_LOOK, 0x2B4))
+		_vm->_dialogs->show(40115);
+	else if (_action._lookFlag)
+		_vm->_dialogs->show(40116);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
