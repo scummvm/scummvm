@@ -234,6 +234,12 @@ void Scene3xx::handleForceField(ForceField *force, int *sprites) {
 
 /*------------------------------------------------------------------------*/
 
+void Scene300s::preActions() {
+	_game._player._needToWalk = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 void Scene301::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -5200,17 +5206,18 @@ void Scene366::actions() {
 		_scene->_nextSceneId = 302;
 	else if (_action.isAction(VERB_OPEN, 0x2D3)) {
 		if (_game._visitedScenes.exists(316))
-			_vm->_dialogs->show(0x8F04);	// 366, 12
+			_vm->_dialogs->show(36612);
 		else
-			_vm->_dialogs->show(0x8F05);	// 366, 13
+			_vm->_dialogs->show(36613);
 		_scene->_nextSceneId = 316;
 	} else if (_action.isAction(0xD3, 0x2D3)) {
 		if (_game._visitedScenes.exists(321))
-			_vm->_dialogs->show(0x8F03);	// 366, 11
+			_vm->_dialogs->show(36611);
 		else
-			_vm->_dialogs->show(0x8F02);	// 366, 10
-	} else
+			_vm->_dialogs->show(36610);
+	} else {
 		return;
+	}
 
 	_action._inProgress = false;
 }

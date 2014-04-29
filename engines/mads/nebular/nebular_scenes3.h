@@ -60,6 +60,15 @@ protected:
 
 public:
 	Scene3xx(MADSEngine *vm) : NebularScene(vm) {}
+
+	virtual void actions() {}
+};
+
+class Scene300s : public Scene3xx {
+public:
+	Scene300s(MADSEngine *vm) : Scene3xx(vm) {}
+
+	virtual void preActions();
 };
 
 class Scene301: public Scene3xx {
@@ -69,9 +78,6 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
-	virtual void actions() {};
-	virtual void postActions() {};
 };
 
 class Scene302: public Scene3xx {
@@ -84,9 +90,6 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
-	virtual void actions() {};
-	virtual void postActions() {};
 };
 
 class Scene303: public Scene3xx {
@@ -96,9 +99,6 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
-	virtual void actions() {};
-	virtual void postActions() {};
 };
 
 class Scene304: public Scene3xx {
@@ -111,9 +111,6 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
-	virtual void actions() {};
-	virtual void postActions() {};
 };
 
 class Scene307: public Scene3xx {
@@ -150,9 +147,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene308: public Scene3xx {
@@ -165,9 +160,6 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
-	virtual void actions() {};
-	virtual void postActions() {};
 };
 
 class Scene309: public Scene3xx {
@@ -183,9 +175,6 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
-	virtual void actions() {};
-	virtual void postActions() {};
 };
 
 class Scene310: public Scene3xx {
@@ -198,9 +187,6 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
-	virtual void actions() {};
-	virtual void postActions() {};
 };
 
 class Scene311: public Scene3xx {
@@ -213,9 +199,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene313: public Scene3xx {
@@ -224,10 +208,7 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene316: public Scene3xx {
@@ -243,7 +224,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene318: public Scene3xx {
@@ -279,7 +259,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene319: public Scene3xx {
@@ -306,12 +285,10 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
-class Scene320: public Scene3xx {
+class Scene320: public Scene300s {
 private:
 	void setRightView(int view);
 	void setLeftView(int view);
@@ -327,14 +304,12 @@ private:
 	int _rightItemId;
 
 public:
-	Scene320(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene320(MADSEngine *vm) : Scene300s(vm) {}
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene321: public Scene3xx {
@@ -344,9 +319,6 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
-	virtual void actions() {};
-	virtual void postActions() {};
 };
 
 class Scene351: public Scene3xx {
@@ -356,9 +328,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene352: public Scene3xx {
@@ -381,10 +351,8 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene353: public Scene3xx {
@@ -393,10 +361,7 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene354: public Scene3xx {
@@ -405,10 +370,8 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene357: public Scene3xx {
@@ -417,10 +380,8 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene358: public Scene3xx {
@@ -429,10 +390,8 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene359: public Scene3xx {
@@ -444,10 +403,8 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene360: public Scene3xx {
@@ -456,10 +413,8 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene361: public Scene3xx {
@@ -475,98 +430,79 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
-class Scene366: public Scene3xx {
+class Scene366: public Scene300s {
 public:
-	Scene366(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene366(MADSEngine *vm) : Scene300s(vm) {}
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {}
 	virtual void actions();
-	virtual void postActions() {};
 };
 
-class Scene387: public Scene3xx {
+class Scene387: public Scene300s {
 public:
-	Scene387(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene387(MADSEngine *vm) : Scene300s(vm) {}
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {}
 	virtual void actions();
-	virtual void postActions() {};
 };
 
-class Scene388: public Scene3xx {
+class Scene388: public Scene300s {
 public:
-	Scene388(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene388(MADSEngine *vm) : Scene300s(vm) {}
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {}
 	virtual void actions();
-	virtual void postActions() {};
 };
 
-class Scene389: public Scene3xx {
+class Scene389: public Scene300s {
 private:
 	uint32 _monsterTime;
 
 	int _circularQuoteId;
 
 public:
-	Scene389(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene389(MADSEngine *vm) : Scene300s(vm) {}
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {}
 	virtual void actions();
-	virtual void postActions() {};
 };
 
-class Scene390: public Scene3xx {
+class Scene390: public Scene300s {
 public:
-	Scene390(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene390(MADSEngine *vm) : Scene300s(vm) {}
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {}
 	virtual void actions();
-	virtual void postActions() {};
 };
 
-class Scene391: public Scene3xx {
+class Scene391: public Scene300s {
 public:
-	Scene391(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene391(MADSEngine *vm) : Scene300s(vm) {}
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {}
 	virtual void actions();
-	virtual void postActions() {};
 };
 
-class Scene399: public Scene3xx {
+class Scene399: public Scene300s {
 public:
-	Scene399(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene399(MADSEngine *vm) : Scene300s(vm) {}
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {}
 	virtual void actions();
-	virtual void postActions() {};
 };
+
 } // End of namespace Nebular
+
 } // End of namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES3_H */
