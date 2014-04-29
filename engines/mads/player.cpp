@@ -202,7 +202,9 @@ void Player::selectSeries() {
 	}
 
 	// If the user isn't to be present (such as for a cutscene), exit immediately
-	if ((_spritesStart + _spritesIdx) < 0)
+	// WORKAROUND: Original didn't do a secondary check for the sprite set being
+	// present, but it's needed to prevent invalid reads during cutscenes
+	if ((_spritesStart + _spritesIdx) < 0 || !_spriteSetsPresent[_spritesIdx])
 		return;
 
 	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
@@ -223,7 +225,8 @@ void Player::selectSeries() {
 }
 
 void Player::updateFrame() {
-	if ((_spritesStart + _spritesIdx) < 0)
+	// WORKAROUND: Prevent character info being referenced when not present
+	if ((_spritesStart + _spritesIdx) < 0 || !_spriteSetsPresent[_spritesStart + _spritesIdx])
 		return;
 
 	Scene &scene = _vm->_game->_scene;
@@ -497,7 +500,7 @@ void Player::idle() {
 		return;
 	}
 
-	if ((_spritesStart + _spritesIdx) < 0)
+	if ((_spritesStart + _spritesIdx) < 0 || !_spriteSetsPresent[_spritesStart + _spritesIdx])
 		return;
 
 	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
