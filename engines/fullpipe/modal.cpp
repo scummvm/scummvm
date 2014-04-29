@@ -1584,17 +1584,17 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 
 	int x = _bgr->_ox + _bgr->getDimensions(&point)->x / 2;
 	int y = _bgr->_oy + 90;
-	bool flag = false;
 	int w;
 	FileInfo *fileinfo;
 
 	for (int i = 0; i < 7; i++) {
 		fileinfo = new FileInfo;
+		memset(fileinfo, 0, sizeof(FileInfo));
 
 		snprintf(fileinfo->filename, 160, "save%02d.sav", i);
 
-		if (!getFileInfo(fileinfo->filename, fileinfo) || flag) {
-			flag = true;
+		if (!getFileInfo(fileinfo->filename, fileinfo)) {
+			fileinfo->empty = true;
 			w = _emptyD->getDimensions(&point)->x;
 		} else {
 			w = 0;

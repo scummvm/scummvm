@@ -31,7 +31,7 @@ class Sound;
 
 struct FileInfo {
 	char filename[260];
-	int fi_104;
+	bool empty;
 	int day;
 	int month;
 	int year;
