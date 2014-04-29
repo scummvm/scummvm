@@ -151,12 +151,24 @@ public:
 	int _currSoundListCount;
 	bool _soundEnabled;
 	bool _flgSoundList;
+	char _sceneTracks[10][260];
+	int _numSceneTracks;
+	bool _sceneTrackHasSequence;
+	int _musicMinDelay;
+	int _musicMaxDelay;
+	int _musicLocal;
+	char _trackName[2600];
+	int _trackStartDelay;
+	char _sceneTracksCurrentTrack[260];
+	bool _sceneTrackIsPlaying;
 
 	void stopAllSounds();
 	void toggleMute();
 	void playSound(int id, int flag);
 	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
+	int getSceneTrack();
 	void startSceneTrack();
+	void startSoundStream1(char *trackName);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
@@ -300,6 +312,7 @@ public:
 
 	GameVar *_musicGameVar;
 	Audio::SoundHandle _sceneTrackHandle;
+
 public:
 
 	bool _isSaveAllowed;

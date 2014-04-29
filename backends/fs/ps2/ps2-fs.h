@@ -70,12 +70,12 @@ public:
 	virtual Common::String getPath() const { return _path; }
 
 	virtual bool exists() const {
-		// printf("%s : is %d\n", _path.c_str(), _isHere);
+		// dbg_printf("%s : is %d\n", _path.c_str(), _isHere);
 		return _isHere;
 	}
 
 	virtual bool isDirectory() const {
-		// printf("%s : dir %d\n", _path.c_str(), _isDirectory);
+		// dbg_printf("%s : dir %d\n", _path.c_str(), _isDirectory);
 		return _isDirectory;
 	}
 

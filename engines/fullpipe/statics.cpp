@@ -277,8 +277,11 @@ void StaticANIObject::deleteFromGlobalMessageQueue() {
 	}
 }
 
-void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
-	if (isIdle() && !(_flags & 0x80)) {
+bool StaticANIObject::queueMessageQueue(MessageQueue *mq) {
+	if (_flags & 0x80)
+		return false;
+
+	if (isIdle()) {
 		deleteFromGlobalMessageQueue();
 		_messageQueueId = 0;
 		_messageNum = 0;
@@ -296,6 +299,8 @@ void StaticANIObject::queueMessageQueue(MessageQueue *mq) {
 			_messageQueueId = 0;
 		}
 	}
+
+	return true;
 }
 
 void StaticANIObject::restartMessageQueue(MessageQueue *mq) {
@@ -1019,9 +1024,26 @@ void StaticANIObject::adjustSomeXY() {
 }
 
 MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
-	warning("STUB: StaticANIObject::changeStatics1(%d)", msgNum);
+	g_fp->_mgm->addItem(_id);
 
-	return 0;
+	MessageQueue *mq = g_fp->_mgm->genMQ(this, msgNum, 0, 0, 0);
+
+	if (!mq)
+		return 0;
+
+	if (mq->getCount() <= 0) {
+		g_fp->_globalMessageQueueList->addMessageQueue(mq);
+
+		if (_flags & 1)
+			_messageQueueId = mq->_id;
+	} else {
+		if (!queueMessageQueue(mq))
+			return 0;
+
+		g_fp->_globalMessageQueueList->addMessageQueue(mq);
+	}
+
+	return mq;
 }
 
 void StaticANIObject::changeStatics2(int objId) {
@@ -1345,6 +1367,31 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	newex->postMessage();
 
 	return true;
+}
+
+Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
+	if (_movement) {
+		Common::Point point;
+
+		_movement->calcSomeXY(point, 0);
+
+		p->x = point.x;
+		p->y = point.y;
+
+		int idx = _stepArray.getCurrPointIndex() - _movement->_currDynamicPhaseIndex - 1;
+
+		if (idx >= 0) {
+			_stepArray.getPoint(&point, idx, _movement->_currDynamicPhaseIndex + 2);
+
+			p->x += point.x;
+			p->y += point.y;
+		}
+	} else {
+		p->x = 0;
+		p->y = 0;
+	}
+
+	return p;
 }
 
 Statics::Statics() {

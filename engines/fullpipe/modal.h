@@ -29,6 +29,19 @@ class PictureObject;
 class Picture;
 class Sound;
 
+struct FileInfo {
+	char filename[260];
+	bool empty;
+	int day;
+	int month;
+	int year;
+	int time;
+	int fx1;
+	int fx2;
+	int fy1;
+	int fy2;
+};
+
 class BaseModalObject {
  public:
 
@@ -240,20 +253,40 @@ private:
 class ModalSaveGame : public BaseModalObject {
 public:
 	ModalSaveGame();
-	virtual ~ModalSaveGame() {}
+	virtual ~ModalSaveGame();
 
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message) { return false; }
-	virtual bool init(int counterdiff) { return true; }
+	virtual bool init(int counterdiff);
 	virtual void update() {}
 	virtual void saveload() {}
 
 	void setScene(Scene *sc);
 	void setup(Scene *sc, int mode);
+	void processKey(int key);
+
+	char *getSaveName();
+	bool getFileInfo(char *filename, FileInfo *fileinfo);
 
 	Common::Rect _rect;
 	int _oldBgX;
 	int _oldBgY;
+	PictureObject *_bgr;
+	PictureObject *_okD;
+	PictureObject *_okL;
+	PictureObject *_cancelD;
+	PictureObject *_cancelL;
+	PictureObject *_emptyD;
+	PictureObject *_emptyL;
+	PictureObject *_fullD;
+	PictureObject *_fullL;
+	Scene *_menuScene;
+	int _mode;
+	ModalQuery *_queryDlg;
+	Common::Array <FileInfo *> _files;
+	Common::Array <PictureObject *> _arrayL;
+	Common::Array <PictureObject *> _arrayD;
+	int _queryRes;
 };
 
 

@@ -275,6 +275,8 @@ void FullpipeEngine::updateCursorCommon() {
 }
 
 void FullpipeEngine::initArcadeKeys(const char *varname) {
+	_arcadeKeys.clear();
+
 	GameVar *var = getGameLoaderGameVar()->getSubVarByName(varname)->getSubVarByName("KEYPOS");
 
 	if (!var)
@@ -292,6 +294,37 @@ void FullpipeEngine::initArcadeKeys(const char *varname) {
 
 		_arcadeKeys.push_back(point);
 	}
+}
+
+void FullpipeEngine::processArcade(ExCommand *cmd) {
+	if (!g_fp->_aniMan2)
+		return;
+
+	int idx;
+
+	if (cmd->_sceneClickX <= g_fp->_aniMan2->_ox) {
+		for (idx = (int)_arcadeKeys.size() - 1; idx >= 0; idx--) {
+			if (_arcadeKeys[idx]->x < g_fp->_aniMan2->_ox)
+				break;
+		}
+
+		if (idx < 0)
+			return;
+	} else {
+		for (idx = 0; idx < (int)_arcadeKeys.size(); idx++) {
+			if (_arcadeKeys[idx]->x > g_fp->_aniMan2->_ox)
+				break;
+		}
+
+		if (idx >= (int)_arcadeKeys.size())
+			return;
+	}
+
+	cmd->_sceneClickX = _arcadeKeys[idx]->x;
+	cmd->_sceneClickY = _arcadeKeys[idx]->y;
+
+	cmd->_x = cmd->_sceneClickX - g_fp->_sceneRect.left;
+	cmd->_y = cmd->_sceneClickY - g_fp->_sceneRect.top;
 }
 
 void FullpipeEngine::setArcadeOverlay(int picId) {

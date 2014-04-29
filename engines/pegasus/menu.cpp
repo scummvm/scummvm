@@ -227,6 +227,7 @@ MainMenu::MainMenu() : GameMenu(kMainMenuID), _menuBackground(0), _overviewButto
 
 	_menuLoop.attachFader(&_menuFader);
 	_menuLoop.initFromAIFFFile("Sounds/Main Menu.aiff");
+	_menuFader.setMasterVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
 
 	updateDisplay();
 }
@@ -736,6 +737,7 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 		_largeSelect.startDisplaying();
 	} else {
 		_triumphSound.initFromQuickTime("Sounds/Caldoria/Galactic Triumph");
+		_triumphSound.setVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
 		_triumphSound.playSound();
 	}
 

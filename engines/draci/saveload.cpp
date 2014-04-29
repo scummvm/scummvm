@@ -45,7 +45,8 @@ bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header) {
 		return false;
 
 	header.version = in->readByte();
-	if (header.version != DRACI_SAVEGAME_VERSION)
+	// Version 1 is compatible with Version 2
+	if (header.version > DRACI_SAVEGAME_VERSION)
 		return false;
 
 	// Read in the string
@@ -106,7 +107,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 	} else {
 		// Create the remainder of the savegame
 		Common::Serializer s(NULL, f);
-		vm._game->DoSync(s);
+		vm._game->DoSync(s, header.version);
 
 		f->finalize();
 		delete f;
@@ -140,7 +141,7 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 
 	// Synchronise the remaining data of the savegame
 	Common::Serializer s(f, NULL);
-	vm->_game->DoSync(s);
+	vm->_game->DoSync(s, header.version);
 	delete f;
 
 	// Post-processing

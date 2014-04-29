@@ -250,7 +250,18 @@ void Dialog::handleKeyDown(Common::KeyState state) {
 		close();
 	}
 
-	// TODO: tab/shift-tab should focus the next/previous focusable widget
+	if (state.keycode == Common::KEYCODE_TAB) {
+		// TODO: Maybe add Tab behaviours for all widgets too.
+		// searches through widgets on screen for tab widget
+		Widget *w = _firstWidget;
+		while (w) {
+			if (w->_type == kTabWidget)
+				if (w->handleKeyDown(state))
+					return;
+
+			w = w->_next;
+		}
+	}
 }
 
 void Dialog::handleKeyUp(Common::KeyState state) {

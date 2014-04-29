@@ -98,6 +98,8 @@ public:
 	GlobeGame(Neighborhood *);
 	virtual ~GlobeGame() {}
 
+	void setSoundFXLevel(const uint16);
+
 	void handleInput(const Input &, const Hotspot *);
 	void clickInHotspot(const Input &, const Hotspot *);
 	void activateHotspots();

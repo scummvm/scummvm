@@ -193,6 +193,7 @@ void clearMessageHandlers();
 void processMessages();
 void updateGlobalMessageQueue(int id, int objid);
 void clearMessages();
+void clearGlobalMessageQueueList();
 void clearGlobalMessageQueueList1();
 
 bool chainQueue(int queueId, int flags);

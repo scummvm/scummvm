@@ -110,6 +110,8 @@ public:
 		_lastAnimPhase = 0;
 		_turningFinished = 0;
 		_callbackOffset = 0;
+		_callbackOffsetLast = 0;
+		_callbackLast = 0;
 
 		stopWalking();
 	}
@@ -124,6 +126,7 @@ public:
 
 	void setCallback(const GPL2Program *program, uint16 offset);
 	void callback();
+	void callbackLast();
 
 	bool isActive() const { return _path.size() > 0; }
 
@@ -157,7 +160,9 @@ private:
 	bool _turningFinished;
 
 	const GPL2Program *_callback;
+	const GPL2Program *_callbackLast;
 	uint16 _callbackOffset;
+	uint16 _callbackOffsetLast;
 
 	// Initiates turning of the dragon into the direction for the next
 	// segment / after walking.  Returns false when there is nothing left

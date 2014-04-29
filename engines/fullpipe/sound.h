@@ -32,6 +32,7 @@ class Sound : public MemoryObject {
 	int _directSoundBuffers[7];
 	byte *_soundData;
 	Audio::SoundHandle _handle;
+	int _volume;
 
 public:
 	int16 _objectId;
@@ -45,6 +46,11 @@ public:
 	void updateVolume();
 	int getId() const { return _id; }
 	Audio::SoundHandle getHandle() const { return _handle; }
+
+	void play(int flag);
+	void freeSound();
+	int getVolume();
+	void stop();
 
 	void setPanAndVolumeByStaticAni();
 	void setPanAndVolume(int vol, int pan);
@@ -63,13 +69,7 @@ class SoundList : public CObject {
 
 	int getCount() { return _soundItemsCount; }
 	Sound *getSoundByIndex(int idx) { return _soundItems[idx]; }
-	Sound *getSoundById(int id) {
-		for (int i = 0; i < _soundItemsCount; i++) {
-			if (_soundItems[i]->getId() == id)
-				return _soundItems[i];
-		}
-		return NULL;
-	}
+	Sound *getSoundItemById(int id);
 };
 
 } // End of namespace Fullpipe

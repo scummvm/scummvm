@@ -196,6 +196,8 @@ void Caldoria::start() {
 		if (!pullbackMovie->loadFile("Images/Caldoria/Pullback.movie"))
 			error("Could not load pullback movie");
 
+		pullbackMovie->setVolume(MIN<uint>(_vm->getSoundFXLevel(), 0xFF));
+
 		// Draw the first frame so we can fade to it
 		const Graphics::Surface *frame = pullbackMovie->decodeNextFrame();
 		assert(frame);
@@ -907,7 +909,7 @@ void Caldoria::arriveAtCaldoria49() {
 		setCurrentAlternate(kAltCaldoriaNormal);
 
 	// Need to force the loop to play.
-	if (GameState.getCurrentDirection() == kNorth) {
+	if (GameState.getCurrentDirection() == kNorth && !GameState.getCaldoriaSinclairShot()) {
 		GameState.setCaldoriaFuseTimeLimit(kSinclairShootsTimeLimit);
 		startExtraSequence(kCa49NorthVoiceAnalysis, kExtraCompletedFlag, kFilterNoInput);
 	}
