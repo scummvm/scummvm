@@ -34,10 +34,17 @@
 #include "graphics/surface.h"
 #include "common/list.h"
 #include "engines/wintermute/graphics/transform_struct.h"
+#define NO_DEBUG_RECTS 0
+#define DEBUG_RECTS_OUTLINE 1
+#define DEBUG_RECTS_BLACKOUT 2
+#define DEBUG_RECTS NO_DEBUG_RECTS
+
 
 namespace Wintermute {
 class BaseSurfaceOSystem;
 class RenderTicket;
+class DirtyRectContainer;
+
 /**
  * A 2D-renderer implementation for WME.
  * This renderer makes use of a "ticket"-system, where all draw-calls
@@ -126,7 +133,9 @@ private:
 	void drawFromSurface(RenderTicket *ticket);
 	// Dirty-rects:
 	void drawFromSurface(RenderTicket *ticket, Common::Rect *dstRect, Common::Rect *clipRect);
-	Common::Rect *_dirtyRect;
+
+	DirtyRectContainer *_dirtyRects;
+
 	Common::List<RenderTicket *> _renderQueue;
 
 	bool _needsFlip;
@@ -146,6 +155,13 @@ private:
 	uint32 _clearColor;
 
 	bool _skipThisFrame;
+
+#ifdef DEBUG_RECTS 
+	int _debugColor; 
+	Common::Array<Common::Rect> _oldOptimized;
+#endif
+
+
 	int _lastScreenChangeID; // previous value of OSystem::getScreenChangeID()
 };
 
