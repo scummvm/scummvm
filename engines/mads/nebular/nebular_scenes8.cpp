@@ -306,15 +306,6 @@ void Scene804::step() {
 	}
 }
 
-void Scene804::preActions() {
-}
-
-void Scene804::actions() {
-}
-
-void Scene804::postActions() {
-}
-
 } // End of namespace Nebular
 
 } // End of namespace MADS

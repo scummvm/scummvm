@@ -67,16 +67,9 @@ public:
 	Scene804(MADSEngine *vm) : Scene8xx(vm), _throttleCounter(0) {}
 
 	virtual void setup();
-
 	virtual void enter();
-
 	virtual void step();
-
-	virtual void preActions();
-
-	virtual void actions();
-
-	virtual void postActions();
+	virtual void actions() {};
 };
 
 } // End of namespace Nebular
