@@ -29,6 +29,19 @@ class PictureObject;
 class Picture;
 class Sound;
 
+struct FileInfo {
+	char filename[260];
+	int fi_104;
+	int day;
+	int month;
+	int year;
+	int time;
+	int fx1;
+	int fx2;
+	int fy1;
+	int fy2;
+};
+
 class BaseModalObject {
  public:
 
@@ -253,6 +266,7 @@ public:
 	void processKey(int key);
 
 	char *getSaveName();
+	bool getFileInfo(char *filename, FileInfo *fileinfo);
 
 	Common::Rect _rect;
 	int _oldBgX;
@@ -269,7 +283,7 @@ public:
 	Scene *_menuScene;
 	int _mode;
 	ModalQuery *_queryDlg;
-	Common::Array <char *> _filenames;
+	Common::Array <FileInfo *> _files;
 	Common::Array <PictureObject *> _arrayL;
 	Common::Array <PictureObject *> _arrayD;
 	int _queryRes;

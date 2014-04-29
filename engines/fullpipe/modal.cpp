@@ -1468,10 +1468,10 @@ ModalSaveGame::~ModalSaveGame() {
 	_arrayD.clear();
 	_arrayL.clear();
 
-	for (uint i = 0; i < _filenames.size(); i++)
-		free(_filenames[i]);
+	for (uint i = 0; i < _files.size(); i++)
+		free(_files[i]);
 
-	_filenames.clear();
+	_files.clear();
 }
 
 void ModalSaveGame::setScene(Scene *sc) {
@@ -1526,16 +1526,108 @@ bool ModalSaveGame::init(int counterdiff) {
 }
 
 void ModalSaveGame::setup(Scene *sc, int mode) {
-	warning("STUB: ModalSaveGame::setup()");
+	_files.clear();
+	_arrayL.clear();
+	_arrayD.clear();
+	_mode = mode;
+
+	if (mode) {
+		_bgr = sc->getPictureObjectById(PIC_MSV_BGR, 0);
+		_cancelD = sc->getPictureObjectById(PIC_MSV_CANCEL_D, 0);
+		_cancelL = sc->getPictureObjectById(PIC_MSV_CANCEL_L, 0);
+		_okD = sc->getPictureObjectById(PIC_MSV_OK_D, 0);
+		_okL = sc->getPictureObjectById(PIC_MSV_OK_L, 0);
+		_emptyD = sc->getPictureObjectById(PIC_MSV_EMPTY_D, 0);
+		_emptyL = sc->getPictureObjectById(PIC_MSV_EMPTY_L, 0);
+	} else {
+		_bgr = sc->getPictureObjectById(PIC_MLD_BGR, 0);
+		_cancelD = sc->getPictureObjectById(PIC_MLD_CANCEL_D, 0);
+		_cancelL = sc->getPictureObjectById(PIC_MLD_CANCEL_L, 0);
+		_okD = sc->getPictureObjectById(PIC_MLD_OK_D, 0);
+		_okL = sc->getPictureObjectById(PIC_MLD_OK_L, 0);
+		_emptyD = sc->getPictureObjectById(PIC_MSV_EMPTY_D, 0);
+		_emptyL = sc->getPictureObjectById(PIC_MSV_EMPTY_D, 0);
+	}
+
+	_fullD = sc->getPictureObjectById(PIC_MSV_FULL_D, 0);
+	_fullL = sc->getPictureObjectById(PIC_MSV_FULL_L, 0);
+	_queryRes = -1;
+
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_0_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_0_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_1_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_1_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_2_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_2_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_3_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_3_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_4_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_4_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_5_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_5_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_6_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_6_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_7_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_7_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_8_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_8_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_9_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_9_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_DOTS_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_DOTS_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_DOT_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_DOT_L, 0));
+	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_SPACE_D, 0));
+	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_SPACE_L, 0));
+
+	Common::Point point;
+
+	int x = _bgr->_ox + _bgr->getDimensions(&point)->x / 2;
+	int y = _bgr->_oy + 90;
+	bool flag = false;
+	int w;
+	FileInfo *fileinfo;
+
+	for (int i = 0; i < 7; i++) {
+		fileinfo = new FileInfo;
+
+		snprintf(fileinfo->filename, 160, "save%02d.sav", i);
+
+		if (!getFileInfo(fileinfo->filename, fileinfo) || flag) {
+			flag = true;
+			w = _emptyD->getDimensions(&point)->x;
+		} else {
+			w = 0;
+
+			for (int j = 0; j < 16; j++) {
+				_arrayL[j]->getDimensions(&point);
+				w += point.x + 2;
+			}
+		}
+
+		fileinfo->fx1 = x - w / 2;
+		fileinfo->fx2 = x + w / 2;
+		fileinfo->fy1 = y;
+		fileinfo->fy2 = y + _emptyD->getDimensions(&point)->y;
+
+		_files.push_back(fileinfo);
+
+		y = fileinfo->fy2 + 3;
+	}
 }
 
 char *ModalSaveGame::getSaveName() {
 	if (_queryRes < 0)
 		return 0;
 
-	return _filenames[_queryRes];
+	return _files[_queryRes]->filename;
 }
 
+bool ModalSaveGame::getFileInfo(char *filename, FileInfo *fileinfo) {
+	warning("STUB: ModalSaveGame::getFileInfo()");
+
+	return false;
+}
 
 void FullpipeEngine::openHelp() {
 	if (!_modalObject) {
