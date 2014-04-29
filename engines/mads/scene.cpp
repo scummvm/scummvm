@@ -184,7 +184,8 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_spritesCount = _sprites.size();
 
 	_userInterface.setup(_vm->_game->_screenObjects._inputMode);
-
+	
+	_vm->_game->_screenObjects._category = CAT_NONE;
 	_vm->_events->showCursor();
 
 	warning("TODO: inventory_anim_allocate");
@@ -608,7 +609,7 @@ void Scene::updateCursor() {
 	Player &player = _vm->_game->_player;
 
 	CursorType cursorId = CURSOR_ARROW;
-	if (_action._interAwaiting == 1 && !_vm->_events->_rightMousePressed &&
+	if (_action._interAwaiting == AWAITING_COMMAND && !_vm->_events->_rightMousePressed &&
 		_vm->_game->_screenObjects._category == CAT_HOTSPOT) {
 		int idx = _vm->_game->_screenObjects._selectedObject -
 			_userInterface._categoryIndexes[CAT_HOTSPOT - 1];
