@@ -25,21 +25,34 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
+#include "engines/util.h"
+
 #include "cge2/cge2.h"
+#include "cge2/bitmap.h"
+#include "cge2/vga13h.h"
 
 namespace CGE2 {
 
 CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription) {
 	_resman = nullptr;
+	_vga = nullptr;
+	_sprite = nullptr;
+	
+	_quitFlag = false;
+	_bitmapPalette = nullptr;
+	_mode = 0;
 }
 
 void CGE2Engine::init() {
 	_resman = new ResourceManager();
+	_vga = new Vga(this);
 }
 
 void CGE2Engine::deinit() {
 	delete _resman;
+	delete _vga;
+	delete _sprite;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
@@ -64,10 +77,41 @@ Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
 }
 
 Common::Error CGE2Engine::run() {
+	initGraphics(kScrWidth, kScrHeight, false);
+
 	init();
 	warning("STUB: CGE2Engine::run()");
+	showTitle("WELCOME");
 	deinit();
 	return Common::kNoError;
+}
+
+bool CGE2Engine::showTitle(const char *name) {
+	if (_quitFlag)
+		return false;
+
+	_bitmapPalette = _vga->_sysPal;
+	BitmapPtr *LB = new BitmapPtr[2];
+	LB[0] = new Bitmap(this, name);
+	LB[1] = NULL;
+	_bitmapPalette = NULL;
+
+	Sprite D(this, LB);
+	D._flags._kill = true;
+	D._flags._bDel = true;
+	D.center();
+	D.show(2);
+
+	_vga->sunset();
+	_vga->copyPage(1, 2);
+	_vga->copyPage(0, 1);
+	_vga->sunrise(_vga->_sysPal);
+
+	_vga->update();
+	
+	warning("STUB: CGE2Engine::showTitle()");
+
+	return true;
 }
 
 } // End of namespace CGE2

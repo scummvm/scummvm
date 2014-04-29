@@ -25,51 +25,19 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef CGE2_H
-#define CGE2_H
+#ifndef CGE2_GENERAL_H
+#define CGE2_GENERAL_H
 
-#include "engines/engine.h"
-#include "engines/advancedDetector.h"
-#include "common/system.h"
-#include "cge2/fileio.h"
-#include "cge2/general.h"
+#include "common/file.h"
 
 namespace CGE2 {
 
-class Vga;
-class Sprite;
-
-#define kScrWidth      320
-#define kScrHeight     240
-#define kMaxFile       128
-#define kPathMax       128
-
-class CGE2Engine : public Engine {
-public:
-	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual Common::Error run();
-
-	bool showTitle(const char *name);
-
-	const ADGameDescription *_gameDescription;
-
-	bool _quitFlag;
-	Dac *_bitmapPalette;
-	int _mode;
-
-	ResourceManager *_resman;
-	Vga *_vga;
-	Sprite *_sprite;
-private:
-	void init();
-	void deinit();
+struct Dac {
+	uint8 _r;
+	uint8 _g;
+	uint8 _b;
 };
 
 } // End of namespace CGE2
 
-#endif // CGE2_H
+#endif // CGE2_GENERAL_H

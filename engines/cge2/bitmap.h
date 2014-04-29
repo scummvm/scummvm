@@ -25,51 +25,63 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef CGE2_H
-#define CGE2_H
+#ifndef CGE2_BITMAP_H
+#define CGE2_BITMAP_H
 
-#include "engines/engine.h"
-#include "engines/advancedDetector.h"
-#include "common/system.h"
-#include "cge2/fileio.h"
-#include "cge2/general.h"
+#include "cge/general.h"
+#include "common/file.h"
 
 namespace CGE2 {
 
-class Vga;
-class Sprite;
+class CGE2Engine;
+class EncryptedStream;
 
-#define kScrWidth      320
-#define kScrHeight     240
-#define kMaxFile       128
-#define kPathMax       128
-
-class CGE2Engine : public Engine {
-public:
-	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
-	virtual bool hasFeature(EngineFeature f) const;
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual Common::Error run();
-
-	bool showTitle(const char *name);
-
-	const ADGameDescription *_gameDescription;
-
-	bool _quitFlag;
-	Dac *_bitmapPalette;
-	int _mode;
-
-	ResourceManager *_resman;
-	Vga *_vga;
-	Sprite *_sprite;
-private:
-	void init();
-	void deinit();
+#define kMaxPath  128
+enum {
+	kBmpEOI = 0x0000,
+	kBmpSKP = 0x4000,
+	kBmpREP = 0x8000,
+	kBmpCPY = 0xC000
 };
+
+#include "common/pack-start.h"
+
+struct HideDesc {
+	uint16 _skip;
+	uint16 _hide;
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"
+
+class Bitmap {
+	CGE2Engine *_vm;
+	char *forceExt(char *buf, const char *name, const char *ext);
+	bool loadVBM(EncryptedStream *f);
+public:
+	uint16 _w;
+	uint16 _h;
+	uint8 *_m;
+	uint8 *_v;
+	int32 _map;
+	HideDesc *_b;
+
+	Bitmap(CGE2Engine *vm, const char *fname);
+	Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map);
+	Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill);
+	Bitmap(CGE2Engine *vm, const Bitmap &bmp);
+	~Bitmap();
+
+	Bitmap *code();
+	Bitmap &operator=(const Bitmap &bmp);
+	void hide(int16 x, int16 y);
+	void show(int16 x, int16 y);
+	void xShow(int16 x, int16 y);
+	bool solidAt(int16 x, int16 y);
+};
+
+
+typedef Bitmap *BitmapPtr;
 
 } // End of namespace CGE2
 
-#endif // CGE2_H
+#endif // CGE2_BITMAP_H
