@@ -106,7 +106,7 @@ public:
 	void selectZoom();
 	void countDrawPosition();
 	void checkNak();
-	void zoomSprite(int16 tempMiddleY);
+	Graphics::Surface *zoomSprite(Graphics::Surface *heroFrame);
 	void showHeroAnimFrame();
 	void specialAnim();
 	void getState();

@@ -83,8 +83,8 @@ const Graphics::Surface * Hero::getSurface() {
 		int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
 		Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
 		//return _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
-
-		return heroFrame;
+		//return heroFrame;
+		return zoomSprite(heroFrame);
 	}
 	return NULL;
 }
@@ -128,7 +128,7 @@ void Hero::getState() {
 int Hero::getScaledValue(int size) {
 	int newSize = 0;
 	int16 initScaleValue = _scaleValue;
-	if(_scaleValue != 10000) {
+	if (_scaleValue != 10000) {
 		for(int i = 0; i < size; i++) {
 			initScaleValue -= 100;
 			if(initScaleValue >= 0) {
@@ -147,38 +147,13 @@ void Hero::checkNak() {
 
 }
 
-void Hero::zoomSprite(int16 tempMiddleY) {
-	if(_zoomFactor == 0) {
-		//notfullSize
-		int sprWidth = _moveSet[_moveSetType]->getFrameWidth(_phase);
-		int temp = sprWidth / 2;
-		int sprFullHeight = _moveSet[_moveSetType]->getFrameHeight(_phase); // edx
-		int sprModulo = tempMiddleY; // ebp ???
-		int sprSkipX = 0;
-		int sprSkipY = 0;
-
-	} else {
-		//fullSize
-
-	}
-}
-
-//TODO
-/*
-void Hero::countDrawPosition() {
-	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
-	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
-	_drawX = _middleX - frameXSize/2;
-	_drawY = _middleY - frameYSize;
-}
-*/
-void Hero::countDrawPosition() {
+Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 	int16 tempMiddleX;
 	int16 tempMiddleY;
 	int16 baseX = _moveSet[_moveSetType]->getBaseX();
 	int16 baseY = _moveSet[_moveSetType]->getBaseY();
 	// any chance?
-	if(baseX == 320) {
+	if (baseX == 320) {
 		tempMiddleY = _middleY - (baseY - 240);
 	} else {
 		tempMiddleY = _middleY;
@@ -187,38 +162,46 @@ void Hero::countDrawPosition() {
 	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
 	int scaledX = getScaledValue(frameXSize); // ebx
 	int scaledY = getScaledValue(frameYSize); // edx
-	int tempHeroHeight = scaledY; // not used? global?
-	
-	int width = scaledX / 2;
-	tempMiddleX = _middleX - width; //eax
-	int z = _middleY; //ebp
-	int y = _middleY - scaledY; //ecx
-	//TODO
-	checkNak();
-
-	//zoomSprite(tempMiddleY);
-	// zoomSprite:
 	int sprModulo;
-	if(_zoomFactor != 0) {
+
+	Graphics::Surface *surf = new Graphics::Surface();
+	surf->create(scaledX, scaledY, Graphics::PixelFormat::createFormatCLUT8());
+	
+	if (_zoomFactor != 0) {
 		//notfullSize
-		int sprFullHeight = frameXSize;
-		sprModulo = tempMiddleY; // ebp ???
+		//int sprFullHeight = frameXSize;
+		sprModulo = frameXSize;
 		//int sprSkipX = 0;
 		//int sprSkipY = 0;
 		int sprWidth = scaledX;
 		int sprHeight = scaledY; // after resize
-		int allocMemSize = sprWidth*sprHeight;
-		sprFullHeight--;
-		int imulEDX = sprFullHeight*sprModulo; // edx
+		//int allocMemSize = sprWidth*sprHeight;
+		//sprFullHeight--;
+		//int imulEDX = sprFullHeight*sprModulo; // hop do ostatniej linii
 		int sprZoomX;
 		int sprZoomY = _scaleValue;
 		int loop_lin;
+
+		/*
+		for (uint y = 0; y < heroFrame->h; ++y) {
+			for (uint x = 0; x < heroFrame->w; ++x) {
+				byte pixel = *((byte*)heroFrame->getBasePtr(x, y));
+				*((byte*)surf->getBasePtr(x, y)) = pixel;
+			}
+		}
+		*/
+
+		uint x1 = 0;
+		uint y1 = 0;
+
+		uint x2 = 0;
+		uint y2 = 0;
 
 		for(int i = 0; i < sprHeight; i++) {
 			// linear_loop:
 			while(1) {
 				sprZoomY -= 100;
-				if(sprZoomY >= 0 || _scaleValue == 10000) {
+				if (sprZoomY >= 0 || _scaleValue == 10000) {
 					// all_r_y
 					// push esi
 					loop_lin = sprWidth;
@@ -228,10 +211,15 @@ void Hero::countDrawPosition() {
 				} else {
 					sprZoomY += _scaleValue;
 					// add esi, sprModulo /?
+					//heroFrame += sprModulo;
+					x1 = 0;
+					y1++;
 				}
 			}
 			// end of linear_loop
 			// loop_lin:
+			debug("loop_lin: %d", loop_lin);
+
 			for(int i = 0; i < loop_lin; i++) {
 				// mov al, b[esi]
 				// inc esi
@@ -240,39 +228,77 @@ void Hero::countDrawPosition() {
 					//its_all_r
 					// without ZOOMFIX
 					//mov [edi], al
+					//memcpy(surf->getBasePtr(0, i), frameData + 4 + width * i, width);
+					memcpy(surf->getBasePtr(x2, y2), heroFrame->getBasePtr(x1, y1), 1);
 					// inc edi
+					//surf++;
+					x2++;
+					if(x2 > scaledX) {
+						x2 = 0;
+						y2++;
+					}
+
 				} else {
 					sprZoomX += _scaleValue;
 				}
+				//heroFrame++;
+				x1++;
+				if(x1 > frameXSize) {
+					x1 = 0;
+					y1++;
+				}
+
 			}
 			//pop esi
 			//add esi, sprModulo
-			debug("loop_lin: %d", loop_lin);
+			//heroFrame += (sprModulo - loop_lin);
+			x2 = 0;
+			y2++;
+			x1 = 0;
+			y1++;
 		}
+		return surf;
+	}
+	return heroFrame;
+}
+
+void Hero::countDrawPosition() {
+	//int16 tempMiddleX;
+	int16 tempMiddleY;
+	int16 baseX = _moveSet[_moveSetType]->getBaseX();
+	int16 baseY = _moveSet[_moveSetType]->getBaseY();
+	// any chance?
+	if (baseX == 320) {
+		tempMiddleY = _middleY - (baseY - 240);
+	} else {
+		tempMiddleY = _middleY;
+	}
+	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
+	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
+	int scaledX = getScaledValue(frameXSize);
+	int scaledY = getScaledValue(frameYSize);
+	
+	//TODO
+	//int tempHeroHeight = scaledY; // not used? global?
+	//int width = scaledX / 2;
+	//tempMiddleX = _middleX - width; //eax
+	//int z = _middleY; //ebp
+	//int y = _middleY - scaledY; //ecx
+	//checkNak();
+
+	if (_zoomFactor != 0) {
+		//notfullSize
 		debug("scaledX: %d", scaledX);
 		debug("scaledY: %d", scaledY);
-		_drawX = _middleX - frameXSize/2;
-		_drawY = _middleY - frameYSize;
+		_drawX = _middleX - scaledX/2;
+		_drawY = tempMiddleY + 1 - scaledY;
 	} else {
 		//fullSize
-		sprModulo = 0; //?
 		_drawX = _middleX - frameXSize / 2;
 		_drawY = tempMiddleY + 1 - frameYSize;
 	}
-
-	// ShowSprite
 }
-/*
-AnimHeader	struc		;struktura naglowka pliku z animacja
-AH_ID		dw	0	;ID = "AN"
-AH_Loop		dw	0	;numer fazy do petli
-AH_Fazy		dw	0	;ilosc faz animacji
-AH_Ramki	dw	0	;ilosc ramek grafiki
-AH_X		dw	0	;poczatkowa wsp¢lrzedna X
-AH_Y		dw	0	;poczatkowa wsp¢lrzedna Y
-AH_Tablica	dd	0	;offset tablicy faz
-AH_RamkiAddr	dd	0	;poczatek tablicy z offsetami ramek
-*/
+
 void Hero::showHeroAnimFrame() {
 	if (_phase < _moveSet[_moveSetType]->getFrameCount() - 1) {
 		_phase++;
