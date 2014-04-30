@@ -39,7 +39,7 @@ public:
 	Common::Point _feetPos;
 	Facing _facing;
 	int _descId;
-	int _vocabId;
+	int _verbId;
 	int _articleNumber;
 	CursorType _cursor;
 
@@ -60,7 +60,7 @@ public:
 
 	Common::Array<MADS::DynamicHotspot>::size_type size() const { return _entries.size(); }
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
-	int add(int descId, int vocabId, int seqIndex, const Common::Rect &bounds);
+	int add(int descId, int verbId, int seqIndex, const Common::Rect &bounds);
 	int setPosition(int index, const Common::Point &pos, Facing facing);
 	int setCursor(int index, CursorType cursor);
 	void remove(int index);

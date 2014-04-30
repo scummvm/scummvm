@@ -168,7 +168,7 @@ void MADSAction::set() {
 						verbId = scene._hotspots[_hotspotId]._verbId;
 					} else {
 						// Get the verb Id from the scene object
-						verbId = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._vocabId;
+						verbId = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._verbId;
 					}
 
 					if (verbId > 0) {
@@ -191,7 +191,7 @@ void MADSAction::set() {
 					_action._objectNameId = scene._hotspots[_hotspotId]._vocabId;
 				} else {
 					// Get name from temporary scene hotspot
-					_action._objectNameId = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._vocabId;
+					_action._objectNameId = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._descId;
 				}
 				appendVocab(_action._objectNameId);
 			}

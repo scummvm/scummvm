@@ -29,7 +29,7 @@ DynamicHotspot::DynamicHotspot() {
 	_seqIndex = 0;
 	_facing = FACING_NONE;
 	_descId = 0;
-	_vocabId = 0;
+	_verbId = 0;
 	_articleNumber = 0;
 	_cursor = CURSOR_NONE;
 }
@@ -47,7 +47,7 @@ DynamicHotspots::DynamicHotspots(MADSEngine *vm) : _vm(vm) {
 	_count = 0;
 }
 
-int DynamicHotspots::add(int descId, int vocabId, int seqIndex, const Common::Rect &bounds) {
+int DynamicHotspots::add(int descId, int verbId, int seqIndex, const Common::Rect &bounds) {
 	// Find a free slot
 	uint idx = 0;
 	while ((idx < _entries.size()) && _entries[idx]._active)
@@ -61,7 +61,7 @@ int DynamicHotspots::add(int descId, int vocabId, int seqIndex, const Common::Re
 	_entries[idx]._bounds = bounds;
 	_entries[idx]._feetPos = Common::Point(-3, 0);
 	_entries[idx]._facing = FACING_NONE;
-	_entries[idx]._vocabId = vocabId;
+	_entries[idx]._verbId = verbId;
 	_entries[idx]._articleNumber = 6;
 	_entries[idx]._cursor = CURSOR_NONE;
 
