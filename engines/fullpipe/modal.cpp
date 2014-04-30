@@ -1629,6 +1629,18 @@ bool ModalSaveGame::getFileInfo(char *filename, FileInfo *fileinfo) {
 	return false;
 }
 
+bool ModalSaveGame::handleMessage(ExCommand *cmd) {
+	if (_queryDlg)
+		return _queryDlg->handleMessage(cmd);
+
+	if (cmd->_messageNum == 29)
+		processMouse(cmd->_x, cmd->_y);
+	else if (cmd->_messageNum == 36)
+		processKey(cmd->_keyCode);
+
+	return false;
+}
+
 void ModalSaveGame::processMouse(int x, int y) {
 	for (uint i = 0; i < _files.size(); i++) {
 		if (x >= _files[i]->fx1 && x <= _files[i]->fx2 && y >= _files[i]->fy1 && y <= _files[i]->fy2) {
