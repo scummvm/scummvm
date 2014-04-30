@@ -1629,6 +1629,27 @@ bool ModalSaveGame::getFileInfo(char *filename, FileInfo *fileinfo) {
 	return false;
 }
 
+void ModalSaveGame::processMouse(int x, int y) {
+	for (uint i = 0; i < _files.size(); i++) {
+		if (x >= _files[i]->fx1 && x <= _files[i]->fx2 && y >= _files[i]->fy1 && y <= _files[i]->fy2) {
+			_queryRes = i + 1;
+
+			if (_mode) {
+				if (!_files[i]->empty) {
+					_queryDlg = new ModalQuery;
+
+					_queryDlg->create(_menuScene, 0, PIC_MOV_BGR);
+				}
+			}
+
+			return;
+		}
+	}
+
+	if (_cancelL->isPixelHitAtPos(x, y))
+		_queryRes = 0;
+}
+
 void FullpipeEngine::openHelp() {
 	if (!_modalObject) {
 		ModalHelp *help = new ModalHelp;

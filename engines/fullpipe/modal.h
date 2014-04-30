@@ -261,6 +261,8 @@ public:
 	virtual void update() {}
 	virtual void saveload() {}
 
+	void processMouse(int x, int y);
+
 	void setScene(Scene *sc);
 	void setup(Scene *sc, int mode);
 	void processKey(int key);
