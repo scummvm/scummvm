@@ -108,11 +108,11 @@ void InventoryObjects::setRoom(int objectId, int sceneNumber) {
 }
 
 bool InventoryObjects::isInRoom(int objectId) const {
-	return (*this)[objectId]._roomNumber == _vm->_game->_scene._currentSceneId;
+	return objectId >= 0 && (*this)[objectId]._roomNumber == _vm->_game->_scene._currentSceneId;
 }
 
 bool InventoryObjects::isInInventory(int objectId) const {
-	return (*this)[objectId]._roomNumber == PLAYER_INVENTORY;
+	return objectId >= 0 && (*this)[objectId]._roomNumber == PLAYER_INVENTORY;
 }
 
 void InventoryObjects::addToInventory(int objectId) {
