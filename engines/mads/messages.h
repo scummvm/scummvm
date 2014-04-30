@@ -55,7 +55,7 @@ public:
 	int _numTicks;
 	uint32 _frameTimer2;
 	uint32 _frameTimer;
-	uint32 _timeout;
+	int32 _timeout;
 	int _trigger;
 	TriggerMode _abortMode;
 	ActionDetails _actionDetails;
