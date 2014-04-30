@@ -619,7 +619,7 @@ void GameNebular::unhandledAction() {
 			_vm->_dialogs->show(0x15);
 	} else if (action.isAction(VERB_TAKE)) {
 		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
-		if (_vm->_game->_objects.isInInventory(objId))
+		if (objId >= 0 && _vm->_game->_objects.isInInventory(objId))
 			_vm->_dialogs->show(0x10);
 		else if (randVal <= 333)
 			_vm->_dialogs->show(0x8);
