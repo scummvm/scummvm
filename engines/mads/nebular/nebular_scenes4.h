@@ -67,6 +67,67 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene402: public Scene4xx {
+private:
+	bool _lightOn;
+	bool _blowingSmoke;
+	bool _leftWomanMoving;
+	bool _rightWomanMoving;
+	bool _firstTalkToGirlInChair;
+	bool _waitingGinnyMove;
+	bool _ginnyLooking;
+	bool _bigBeatFl;
+	bool _roxOnStool;
+	bool _bartenderSteady;
+	bool _bartenderHandsHips;
+	bool _bartenderLooksLeft;
+	bool _bartenderReady;
+	bool _bartenderTalking;
+	bool _bartenderCalled;
+	bool _conversationFl;
+	bool _activeTeleporter;
+	bool _activeArrows;
+	bool _activeArrow1;
+	bool _activeArrow2;
+	bool _activeArrow3;
+	bool _cutSceneReady;
+	bool _cutSceneNeeded;
+	bool _helgaReady;
+	bool _refuseAlienLiquor;
+
+	int _drinkTimer;
+	int _beatCounter;
+	int _bartenderMode;
+	int _bartenderDialogNode;
+	int _bartenderCurrentQuestion;
+	int _helgaTalkMode;
+	int _roxMode;
+	int _rexMode;
+	int _talkTimer;
+
+	Conversation _dialog1;
+	Conversation _dialog2;
+	Conversation _dialog3;
+	Conversation _dialog4;
+ 
+	void setDialogNode(int node);
+	void handleConversation1();
+	void handleConversation2();
+	void handleConversation3();
+	void handleConversation4();
+	void handleDialogs();
+	
+public:
+	Scene402(MADSEngine *vm) : Scene4xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 

@@ -141,7 +141,6 @@ private:
 	Common::Array<SpriteAsset *> _spriteSets;
 	Font *_font;
 
-	int _currentFrame;
 	bool _freeFlag;
 	bool _skipLoad;
 	int _unkIndex;
@@ -180,6 +179,7 @@ public:
 	Common::Array<AnimUIEntry> _uiEntries;
 	Common::Array<AnimMessage> _messages;
 	bool _resetFlag;
+	int _currentFrame;
 	int _oldFrameEntry;
 
 	static Animation *init(MADSEngine *vm, Scene *scene);
