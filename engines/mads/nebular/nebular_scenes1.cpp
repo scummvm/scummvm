@@ -977,7 +977,7 @@ void Scene102::actions() {
 				_action._inProgress = false;
 				return;
 			}
-		} else if (_action.isAction(VERB_LOOK) || (_game._difficulty == DIFFICULTY_IMPOSSIBLE)) {
+		} else if (_action.isAction(VERB_LOOK) || (_game._difficulty != DIFFICULTY_IMPOSSIBLE)) {
 			_vm->_dialogs->show(0x27EE);
 			_action._inProgress = false;
 			return;
