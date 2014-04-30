@@ -258,7 +258,7 @@ public:
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff);
-	virtual void update() {}
+	virtual void update();
 	virtual void saveload() {}
 
 	void processMouse(int x, int y);
