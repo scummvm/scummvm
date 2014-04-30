@@ -36,6 +36,7 @@ Hero::Hero() : _number(0), _visible(false), _state(MOVE), _middleX(0), _middleY(
 	, _specAnim(0), _drawX(0), _drawY(0), _randomSource("prince"), _zoomFactor(0), _scaleValue(0)
 {
 	_zoomBitmap = new Animation();
+	_shadowBitmap = new Animation();
 }
 
 Hero::~Hero() {
@@ -82,8 +83,6 @@ const Graphics::Surface * Hero::getSurface() {
 		//getState();
 		int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
 		Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
-		//return _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
-		//return heroFrame;
 		return zoomSprite(heroFrame);
 	}
 	return NULL;
@@ -148,7 +147,6 @@ void Hero::checkNak() {
 }
 
 Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
-	int16 tempMiddleX;
 	int16 tempMiddleY;
 	int16 baseX = _moveSet[_moveSetType]->getBaseX();
 	int16 baseY = _moveSet[_moveSetType]->getBaseY();
@@ -160,110 +158,58 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 	}
 	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
 	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
-	int scaledX = getScaledValue(frameXSize); // ebx
-	int scaledY = getScaledValue(frameYSize); // edx
-	int sprModulo;
+	int scaledXSize = getScaledValue(frameXSize);
+	int scaledYSize = getScaledValue(frameYSize);
 
-	Graphics::Surface *surf = new Graphics::Surface();
-	surf->create(scaledX, scaledY, Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface *zoomedFrame = new Graphics::Surface();
+	zoomedFrame->create(scaledXSize, scaledYSize, Graphics::PixelFormat::createFormatCLUT8());
 	
 	if (_zoomFactor != 0) {
-		//notfullSize
-		//int sprFullHeight = frameXSize;
-		sprModulo = frameXSize;
-		//int sprSkipX = 0;
-		//int sprSkipY = 0;
-		int sprWidth = scaledX;
-		int sprHeight = scaledY; // after resize
-		//int allocMemSize = sprWidth*sprHeight;
-		//sprFullHeight--;
-		//int imulEDX = sprFullHeight*sprModulo; // hop do ostatniej linii
 		int sprZoomX;
 		int sprZoomY = _scaleValue;
-		int loop_lin;
+		uint xSource = 0;
+		uint ySource = 0;
+		uint xDest = 0;
+		uint yDest = 0;
 
-		/*
-		for (uint y = 0; y < heroFrame->h; ++y) {
-			for (uint x = 0; x < heroFrame->w; ++x) {
-				byte pixel = *((byte*)heroFrame->getBasePtr(x, y));
-				*((byte*)surf->getBasePtr(x, y)) = pixel;
-			}
-		}
-		*/
-
-		uint x1 = 0;
-		uint y1 = 0;
-
-		uint x2 = 0;
-		uint y2 = 0;
-
-		for(int i = 0; i < sprHeight; i++) {
+		for (int i = 0; i < scaledYSize; i++) {
 			// linear_loop:
 			while(1) {
 				sprZoomY -= 100;
 				if (sprZoomY >= 0 || _scaleValue == 10000) {
 					// all_r_y
-					// push esi
-					loop_lin = sprWidth;
-					// mov ah, -1
 					sprZoomX = _scaleValue;
 					break; // to loop_lin
 				} else {
 					sprZoomY += _scaleValue;
-					// add esi, sprModulo /?
-					//heroFrame += sprModulo;
-					x1 = 0;
-					y1++;
+					xSource = 0;
+					ySource++;
 				}
 			}
-			// end of linear_loop
 			// loop_lin:
-			debug("loop_lin: %d", loop_lin);
-
-			for(int i = 0; i < loop_lin; i++) {
-				// mov al, b[esi]
-				// inc esi
+			for (int i = 0; i < scaledXSize; i++) {
 				sprZoomX -= 100;
-				if(sprZoomX >= 0) {
-					//its_all_r
-					// without ZOOMFIX
-					//mov [edi], al
-					//memcpy(surf->getBasePtr(0, i), frameData + 4 + width * i, width);
-					memcpy(surf->getBasePtr(x2, y2), heroFrame->getBasePtr(x1, y1), 1);
-					// inc edi
-					//surf++;
-					x2++;
-					if(x2 > scaledX) {
-						x2 = 0;
-						y2++;
-					}
-
+				if (sprZoomX >= 0) {
+					// its_all_r
+					memcpy(zoomedFrame->getBasePtr(xDest, yDest), heroFrame->getBasePtr(xSource, ySource), 1);
+					xDest++;
 				} else {
 					sprZoomX += _scaleValue;
+					i--;
 				}
-				//heroFrame++;
-				x1++;
-				if(x1 > frameXSize) {
-					x1 = 0;
-					y1++;
-				}
-
+				xSource++;
 			}
-			//pop esi
-			//add esi, sprModulo
-			//heroFrame += (sprModulo - loop_lin);
-			x2 = 0;
-			y2++;
-			x1 = 0;
-			y1++;
+			xDest = 0;
+			yDest++;
+			xSource = 0;
+			ySource++;
 		}
-		return surf;
+		return zoomedFrame;
 	}
 	return heroFrame;
 }
 
 void Hero::countDrawPosition() {
-	//int16 tempMiddleX;
 	int16 tempMiddleY;
 	int16 baseX = _moveSet[_moveSetType]->getBaseX();
 	int16 baseY = _moveSet[_moveSetType]->getBaseY();

@@ -151,6 +151,7 @@ public:
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
 	// TurnAnim ??
 	Animation *_zoomBitmap; // change to sth else, not Animation ??
+	Animation *_shadowBitmap;
 	
 	uint32 _moveDelay;
 	uint32 _shadMinus; //??

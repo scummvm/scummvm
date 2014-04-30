@@ -283,6 +283,11 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->_zoomBitmap->clear();
 	Resource::loadResource(_mainHero->_zoomBitmap, "zoom", false);
 
+	_mainHero->_shadowBitmap->clear();
+	if(Resource::loadResource(_mainHero->_shadowBitmap, "shadow", false) == false) {
+		Resource::loadResource(_mainHero->_shadowBitmap, "shadow2", false);
+	}
+
 	_mobList.clear();
 	Resource::loadResource(_mobList, "mob.lst", false);
 
