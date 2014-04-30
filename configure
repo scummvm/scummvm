@@ -2710,7 +2710,10 @@ if test -n "$_host"; then
 			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
 			# libtremor, while our code later on expects it to be called libvorbisidec.
 			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
-			_tremor=yes
+			# Disable this for older SDK as this breaks the build otherwise...
+			if test -z "$PS2SDK_OLD"; then
+				_tremor=yes
+			fi
 			_mad=yes
 			_zlib=yes
 			# HACK to fix compilation of C source files for now.
