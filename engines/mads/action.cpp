@@ -151,7 +151,7 @@ void MADSAction::set() {
 				}
 			}
 
-			// Handling for if a hotspot has been selected/highlighted
+			// Add in any necessary article if necessary
 			if ((_hotspotId >= 0) && (_selectedRow >= 0) && (_articleNumber > 0) && (_verbType == VERB_THAT)) {
 				flag = true;
 
@@ -159,6 +159,7 @@ void MADSAction::set() {
 				_statusText += " ";
 			}
 
+			// Handling for hotspot
 			if (_hotspotId >= 0) {
 				if (_selectedRow < 0) {
 					int verbId;
@@ -197,8 +198,19 @@ void MADSAction::set() {
 			}
 		}
 
+		if (_secondObject >= 0) {
+			if (_secondObjectSource == CAT_INV_LIST || _secondObjectSource == CAT_INV_ANIM) {
+				InventoryObject &invObject = _vm->_game->_objects.getItem(_hotspotId);
+				_action._indirectObjectId = invObject._descId;
+			} else if (_secondObject < (int)scene._hotspots.size()) {
+				_action._indirectObjectId = scene._hotspots[_hotspotId]._vocabId;
+			} else {
+				_action._indirectObjectId = scene._hotspots[_hotspotId - scene._hotspots.size()]._vocabId;
+			}
+		}
+
 		if ((_hotspotId >= 0) && (_articleNumber > 0) && !flag) {
-			if (_articleNumber == -1) {
+			if (_articleNumber == 0xff) {
 				if (_secondObject >= 0) {
 					int articleNum = 0;
 
@@ -212,7 +224,6 @@ void MADSAction::set() {
 					}
 
 					_statusText += kArticleList[articleNum];
-					_statusText += " ";
 				}
 			} else if ((_articleNumber == VERB_LOOK) || (_vm->getGameID() != GType_RexNebular) ||
 				(scene._vocabStrings[_action._indirectObjectId] != kFenceStr)) {
@@ -472,7 +483,6 @@ void MADSAction::checkActionAtMousePos() {
 		case CAT_INV_LIST:
 		case CAT_HOTSPOT:
 		case CAT_INV_ANIM:
-			// TODO: We may not need a separate ActionMode2 enum
 			_mainObjectSource = userInterface._category;
 			_hotspotId = _pickedWord;
 			break;
