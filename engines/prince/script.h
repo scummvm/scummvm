@@ -42,7 +42,6 @@ namespace Detail {
 	template <> inline uint8 LittleEndianReader<uint8>(void *data) { return *(uint8*)(data); }
 	template <> inline uint16 LittleEndianReader<uint16>(void *data) { return READ_LE_UINT16(data); }
 	template <> inline uint32 LittleEndianReader<uint32>(void *data) { return READ_LE_UINT32(data); }
-	template <> inline int8 LittleEndianReader<int8>(void *data) { return *(int8*)(data); }
 }
 
 class Room {
@@ -79,6 +78,29 @@ public:
 	Script();
 	~Script();
 
+	struct ScriptInfo {
+		int rooms;
+		int startGame;
+		int restoreGame;
+		int stdExamine;
+		int stdPickup;
+		int stdUse;
+		int stdOpen;
+		int stdClose;
+		int stdTalk;
+		int stdGive;
+		int usdCode;
+		int invObjExam;
+		int invObjUse;
+		int invObjUU;
+		int stdUseItem;
+		int lightSources;
+		int specRout;
+		int invObjGive;
+		int stdGiveItem;
+		int goTester;
+	};
+
 	bool loadFromStream(Common::SeekableReadStream &stream);
 
 	template <typename T>
@@ -87,9 +109,8 @@ public:
 		return Detail::LittleEndianReader<T>(&_data[address]);
 	}
 
-	// Some magic numbers for now, data stored in header
-	uint32 getRoomTableOffset() { return read<uint32>(0); }
-	uint32 getStartGameOffset() { return read<uint32>(4); }
+	//uint32 getRoomTableOffset();
+	uint32 getStartGameOffset();
 	int16 getLightX(int locationNr);
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
@@ -102,6 +123,7 @@ private:
 	uint8 *_data;
 	uint32 _dataSize;
 	Common::Array<Room> _roomList;
+	ScriptInfo _scriptInfo;
 };
 
 class InterpreterFlags {

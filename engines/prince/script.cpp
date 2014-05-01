@@ -134,30 +134,44 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	stream.read(_data, _dataSize);
 
 	Common::MemoryReadStream scriptDataStream(_data, _dataSize);
-	scriptDataStream.seek(getRoomTableOffset()+64);
-	debug("room table offset %d", scriptDataStream.pos());
-	Room room;
-	room.loadFromStream(scriptDataStream);
+	_scriptInfo.rooms = scriptDataStream.readSint32LE();
+	_scriptInfo.startGame = scriptDataStream.readSint32LE();
+	_scriptInfo.restoreGame = scriptDataStream.readSint32LE();
+	_scriptInfo.stdExamine = scriptDataStream.readSint32LE();
+	_scriptInfo.stdPickup = scriptDataStream.readSint32LE();
+	_scriptInfo.stdUse = scriptDataStream.readSint32LE();
+	_scriptInfo.stdOpen = scriptDataStream.readSint32LE();
+	_scriptInfo.stdClose = scriptDataStream.readSint32LE();
+	_scriptInfo.stdTalk = scriptDataStream.readSint32LE();
+	_scriptInfo.stdGive = scriptDataStream.readSint32LE();
+	_scriptInfo.usdCode = scriptDataStream.readSint32LE();
+	_scriptInfo.invObjExam = scriptDataStream.readSint32LE();
+	_scriptInfo.invObjUse = scriptDataStream.readSint32LE();
+	_scriptInfo.invObjUU = scriptDataStream.readSint32LE();
+	_scriptInfo.stdUseItem = scriptDataStream.readSint32LE();
+	_scriptInfo.lightSources = scriptDataStream.readSint32LE();
+	_scriptInfo.specRout = scriptDataStream.readSint32LE();
+	_scriptInfo.invObjGive = scriptDataStream.readSint32LE();
+	_scriptInfo.stdGiveItem = scriptDataStream.readSint32LE();
+	_scriptInfo.goTester = scriptDataStream.readSint32LE();
 	
 	return true;
 }
 
 int16 Script::getLightX(int locationNr) {
-	Common::MemoryReadStream readS(_data, _dataSize);
-	readS.seek(4*15 + locationNr*8);
-	return readS.readSint16LE();
+	return (int)READ_UINT16(&_data[_scriptInfo.lightSources + locationNr * 8]);
 }
 
 int16 Script::getLightY(int locationNr) {
-	Common::MemoryReadStream readS(_data, _dataSize);
-	readS.seek(4*15 + locationNr*8 + 2);
-	return readS.readSint16LE();
+	return (int)READ_UINT16(&_data[_scriptInfo.lightSources + locationNr * 8 + 2]);
 }
 
 int32 Script::getShadowScale(int locationNr) {
-	Common::MemoryReadStream readS(_data, _dataSize);
-	readS.seek(4*15 + locationNr*8 + 4);
-	return readS.readSint32LE();
+	return (int)READ_UINT16(&_data[_scriptInfo.lightSources + locationNr * 8 + 4]);
+}
+
+uint32 Script::getStartGameOffset() {
+	return _scriptInfo.startGame;
 }
 
 InterpreterFlags::InterpreterFlags() {
