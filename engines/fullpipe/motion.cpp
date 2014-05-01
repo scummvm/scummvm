@@ -2542,7 +2542,10 @@ MovGraphLink::MovGraphLink() {
 }
 
 MovGraphLink::~MovGraphLink() {
-	warning("STUB: MovGraphLink::~MovGraphLink()");
+	delete _movGraphReact;
+
+	_dwordArray1.clear();
+	_dwordArray2.clear();
 }
 
 
