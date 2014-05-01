@@ -59,7 +59,7 @@ Game *Game::init(MADSEngine *vm) {
 Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm), 
 		_scene(vm), _screenObjects(vm), _player(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
-	_difficulty = DIFFICULTY_HARD;
+	_difficulty = DIFFICULTY_IMPOSSIBLE;
 	_loadGameSlot = -1;
 	_saveFile = nullptr;
 	_statusFlag = 0;
