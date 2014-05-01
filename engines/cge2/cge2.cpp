@@ -30,6 +30,7 @@
 #include "cge2/cge2.h"
 #include "cge2/bitmap.h"
 #include "cge2/vga13h.h"
+#include "cge2/sound.h"
 
 namespace CGE2 {
 
@@ -38,21 +39,31 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_resman = nullptr;
 	_vga = nullptr;
 	_sprite = nullptr;
+	_midiPlayer = nullptr;
+	_fx = nullptr;
+	_sound = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
 	_mode = 0;
+	_music = true;
 }
 
 void CGE2Engine::init() {
 	_resman = new ResourceManager();
 	_vga = new Vga(this);
+	_fx = new Fx(this, 16);
+	_sound = new Sound(this);
+	_midiPlayer = new MusicPlayer(this);
 }
 
 void CGE2Engine::deinit() {
 	delete _resman;
 	delete _vga;
 	delete _sprite;
+	delete _fx;
+	delete _sound;
+	delete _midiPlayer;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
@@ -77,11 +88,18 @@ Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
 }
 
 Common::Error CGE2Engine::run() {
+	warning("STUB: CGE2Engine::run()");
+
 	initGraphics(kScrWidth, kScrHeight, false);
 
 	init();
-	warning("STUB: CGE2Engine::run()");
+	
 	showTitle("WELCOME");
+
+	// Temporary code to test the midi player.
+	_midiPlayer->loadMidi(1);
+	g_system->delayMillis(100000);
+	
 	deinit();
 	return Common::kNoError;
 }

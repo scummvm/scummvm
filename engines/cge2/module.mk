@@ -5,7 +5,8 @@ MODULE_OBJS = \
 	detection.o \
 	fileio.o \
 	vga13h.o \
-	bitmap.o
+	bitmap.o \
+	sound.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CGE2), DYNAMIC_PLUGIN)

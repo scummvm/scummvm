@@ -38,6 +38,9 @@ namespace CGE2 {
 
 class Vga;
 class Sprite;
+class MusicPlayer;
+class Fx;
+class Sound;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -61,10 +64,14 @@ public:
 	bool _quitFlag;
 	Dac *_bitmapPalette;
 	int _mode;
+	bool _music;
 
 	ResourceManager *_resman;
 	Vga *_vga;
 	Sprite *_sprite;
+	MusicPlayer *_midiPlayer;
+	Fx *_fx;
+	Sound *_sound;
 private:
 	void init();
 	void deinit();
