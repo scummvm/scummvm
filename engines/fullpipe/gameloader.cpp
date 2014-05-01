@@ -501,6 +501,14 @@ void GameLoader::updateSystems(int counterdiff) {
 	}
 }
 
+void GameLoader::readSavegame(const char *fname) {
+	warning("STUB: readSavegame(%s)", fname);
+}
+
+void GameLoader::writeSavegame(Scene *sc, const char *fname) {
+	warning("STUB: writeSavegame(sc, %s)", fname);
+}
+
 Sc2::Sc2() {
 	_sceneId = 0;
 	_field_2 = 0;

@@ -1460,6 +1460,8 @@ ModalSaveGame::ModalSaveGame() {
 	_rect = g_fp->_sceneRect;
 	_queryDlg = 0;
 	_mode = 1;
+
+	_objtype = kObjTypeModalSaveGame;
 }
 
 ModalSaveGame::~ModalSaveGame() {
@@ -1716,6 +1718,38 @@ void ModalSaveGame::processMouse(int x, int y) {
 
 	if (_cancelL->isPixelHitAtPos(x, y))
 		_queryRes = 0;
+}
+
+void ModalSaveGame::saveload() {
+	if (_objtype != kObjTypeModalSaveGame)
+		return;
+
+	if (_mode) {
+		if (getSaveName()) {
+			bool allowed = true;
+
+			for (Common::Array<MessageQueue *>::iterator s = g_fp->_globalMessageQueueList->begin(); s != g_fp->_globalMessageQueueList->end(); ++s) {
+				if (!(*s)->_isFinished && ((*s)->getFlags() & 1))
+					allowed = false;
+			}
+
+			if (g_fp->_isSaveAllowed && allowed)
+				g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, getSaveName());
+		}
+	} else {
+		if (getSaveName()) {
+			if (_parentObj) {
+				delete _parentObj;
+
+				_parentObj = 0;
+			}
+
+			g_fp->stopAllSoundStreams();
+			g_fp->stopSoundStream2();
+
+			g_fp->_gameLoader->readSavegame(getSaveName());
+		}
+	}
 }
 
 void FullpipeEngine::openHelp() {

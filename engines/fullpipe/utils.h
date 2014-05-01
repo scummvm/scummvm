@@ -68,6 +68,7 @@ enum ObjType {
 	kObjTypeDefault,
 	kObjTypeExCommand,
 	kObjTypeExCommand2,
+	kObjTypeModalSaveGame,
 	kObjTypeMovGraph,
 	kObjTypeMovGraphLink,
 	kObjTypeMovGraphNode,

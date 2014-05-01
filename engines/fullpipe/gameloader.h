@@ -89,6 +89,9 @@ class GameLoader : public CObject {
 	void applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount);
 	void saveScenePicAniInfos(int sceneId);
 
+	void readSavegame(const char *fname);
+	void writeSavegame(Scene *sc, const char *fname);
+
 	GameProject *_gameProject;
 	InteractionController *_interactionController;
 	InputController *_inputController;

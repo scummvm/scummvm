@@ -46,9 +46,10 @@ class BaseModalObject {
  public:
 
 	BaseModalObject *_parentObj;
+	ObjType _objtype;
 
  public:
- 	BaseModalObject() : _parentObj(0) {}
+	BaseModalObject() : _parentObj(0) { _objtype = kObjTypeDefault; }
 	virtual ~BaseModalObject() {}
 
 
@@ -259,7 +260,7 @@ public:
 	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff);
 	virtual void update();
-	virtual void saveload() {}
+	virtual void saveload();
 
 	void processMouse(int x, int y);
 
