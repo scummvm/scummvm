@@ -200,12 +200,12 @@ void MADSAction::set() {
 
 		if (_secondObject >= 0) {
 			if (_secondObjectSource == CAT_INV_LIST || _secondObjectSource == CAT_INV_ANIM) {
-				InventoryObject &invObject = _vm->_game->_objects.getItem(_hotspotId);
+				InventoryObject &invObject = _vm->_game->_objects.getItem(_secondObject);
 				_action._indirectObjectId = invObject._descId;
 			} else if (_secondObject < (int)scene._hotspots.size()) {
-				_action._indirectObjectId = scene._hotspots[_hotspotId]._vocabId;
+				_action._indirectObjectId = scene._hotspots[_secondObject]._vocabId;
 			} else {
-				_action._indirectObjectId = scene._hotspots[_hotspotId - scene._hotspots.size()]._vocabId;
+				_action._indirectObjectId = scene._hotspots[_secondObject - scene._hotspots.size()]._vocabId;
 			}
 		}
 
