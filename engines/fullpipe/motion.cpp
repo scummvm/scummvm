@@ -435,7 +435,20 @@ MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, in
 }
 
 void MctlCompound::replaceNodeX(int from, int to) {
-	warning("STUB: MctlCompound::replaceNodeX()");
+	for (uint i = 0; i < _motionControllers.size(); i++) {
+		if (_motionControllers[i]->_motionControllerObj->_objtype == kObjTypeMovGraph) {
+			MovGraph *gr = (MovGraph *)_motionControllers[i]->_motionControllerObj;
+
+			for (ObList::iterator n = gr->_nodes.begin(); n != gr->_nodes.end(); ++n) {
+				MovGraphNode *node = (MovGraphNode *)*n;
+
+				if (node->_x == from)
+					node->_x = to;
+			}
+
+			gr->calcNodeDistancesAndAngles();
+		}
+	}
 }
 
 MctlConnectionPoint::MctlConnectionPoint() {
