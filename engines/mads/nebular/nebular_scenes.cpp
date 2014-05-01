@@ -172,10 +172,8 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 		return new Scene401(vm);
 	case 402:
 		return new Scene402(vm);
-	case 403:
-		// TODO
 	case 405:
-		// TODO
+		return new Scene405(vm);
 	case 406:
 		// TODO
 	case 407:

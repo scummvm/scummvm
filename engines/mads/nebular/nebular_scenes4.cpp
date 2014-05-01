@@ -130,7 +130,7 @@ void Scene401::step() {
 		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
-		_northFl  = false;
+		_northFl = false;
 		_game._player.walk(Common::Point(149, 110), FACING_SOUTH);
 	}
 
@@ -2004,7 +2004,7 @@ void Scene402::actions() {
 	else if (_action.isAction(0x242, 0x2B3))
 		_scene->_nextSceneId = 401;
 	else if (_action.isAction(0x2B5, 0x248))
-		;  // just... nothing
+		; // just... nothing
 	else if (_action.isAction(VERB_TALKTO, 0x3AA)) {
 		switch (_game._trigger) {
 		case 0: {
@@ -2302,6 +2302,173 @@ void Scene402::actions() {
 }
 
 /*------------------------------------------------------------------------*/
+
+void Scene405::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene405::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*ROXCL_8");
+
+	if (_scene->_priorSceneId == 401) {
+		_game._player._playerPos = Common::Point(23, 123);
+		_game._player._facing = FACING_EAST;
+	} else if (_scene->_priorSceneId == 406) {
+		_game._player._playerPos = Common::Point(300, 128);
+		_game._player._facing = FACING_WEST;
+	} else if (_scene->_priorSceneId == 408) {
+		_game._player._playerPos = Common::Point(154, 109);
+		_game._player._facing = FACING_SOUTH;
+	} else if (_scene->_priorSceneId == 413) {
+		_game._player._playerPos = Common::Point(284, 109);
+		_game._player._facing = FACING_SOUTH;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(23, 123);
+		_game._player._facing = FACING_EAST;
+	}
+
+	if (_globals[kArmoryDoorOpen])
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
+	else
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+
+	if (_scene->_roomChanged) {
+		_globals[kArmoryDoorOpen] = false;
+		_game._objects.addToInventory(OBJ_SECURITY_CARD);
+	}
+
+	_game.loadQuoteSet(0x24F, 0);
+	sceneEntrySound();
+}
+
+void Scene405::step() {
+	if (_game._trigger == 80) {
+		_scene->_sequences.addTimer (20, 81);
+		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
+		_game._player._visible = true;
+	}
+
+	if (_game._trigger == 81) {
+		_game._player._stepEnabled = true;
+		_vm->_dialogs->show(40525);
+	}
+
+	if (_game._trigger == 70) {
+		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount ;
+		_game._player._visible = true;
+		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		_vm->_sound->command(19);
+	}
+
+	if (_game._trigger == 71) {
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+		_globals[kArmoryDoorOpen] = false;
+		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+		_game._player._stepEnabled = true;
+	}
+
+	if (_game._trigger == 75) {
+		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount ;
+		_game._player._visible = true;
+		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle (_globals._spriteIndexes[1], false, 6, 1, 0, 0);
+		_globals[kArmoryDoorOpen] = true;
+		_game._player._stepEnabled = true;
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle (_globals._spriteIndexes[2],
+			false, 1);
+		_vm->_sound->command(19);
+	}
+}
+
+void Scene405::preActions() {
+	if (_action.isAction(VERB_TAKE))
+		_game._player._needToWalk = false;
+
+	if (_action.isAction(0x1AD, 0x2BA))
+		_game._player._walkOffScreenSceneId = 401;
+
+	if (_action.isAction(0x1AD, 0x2B9))
+		_game._player._walkOffScreenSceneId = 406;
+
+	if (_action.isAction(VERB_CLOSE, 0x259) && _globals[kArmoryDoorOpen])
+		_game._player.walk(Common::Point(212, 113), FACING_NORTH);
+}
+
+void Scene405::actions() {
+	if (_action.isAction(0x18B, 0x6E))
+		_scene->_nextSceneId = 413;
+	else if (_action.isAction(0x18B, 0x259) && _globals[kArmoryDoorOpen])
+		_scene->_nextSceneId = 408;
+	else if (_action.isAction(0x18B, 0x259) && !_globals[kArmoryDoorOpen])
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(0x24F));
+	else if (_action.isAction(VERB_PUT, 0x131, 0x251) && !_globals[kArmoryDoorOpen]) {
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 7, 2, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
+		Common::Point msgPos = Common::Point(_game._player._playerPos.x, _game._player._playerPos.y + 1);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], msgPos);
+		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
+	} else if ((_action.isAction(VERB_PUT, 0x131, 0x251) || _action.isAction(VERB_CLOSE, 0x259)) && _globals[kArmoryDoorOpen]) {
+		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 7, 2, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], _game._player._playerPos);
+		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
+	} else if (_action.isAction(VERB_PUT, 0x251)) {
+		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 7, 2, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], _game._player._playerPos);
+		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
+	} else if (_action.isAction(VERB_LOOK, 0x31A))
+		_vm->_dialogs->show(40510);
+	else if (_action.isAction(VERB_TAKE, 0x31A))
+		_vm->_dialogs->show(40511);
+	else if (_action.isAction(VERB_LOOK, 0x254))
+		_vm->_dialogs->show(40512);
+	else if (_action.isAction(VERB_LOOK, 0x258) || _action.isAction(VERB_LOOK, 0x252))
+		_vm->_dialogs->show(40513);
+	else if (_action.isAction(VERB_LOOK, 0xCD))
+		_vm->_dialogs->show(40514);
+	else if (_action.isAction(VERB_LOOK, 0x251))
+		_vm->_dialogs->show(40515);
+	else if (_action.isAction(VERB_LOOK, 0x2B9))
+		_vm->_dialogs->show(40516);
+	else if (_action.isAction(VERB_LOOK, 0x2BA))
+		_vm->_dialogs->show(40517);
+	else if (_action.isAction(VERB_LOOK, 0xE2))
+		_vm->_dialogs->show(40518);
+	else if (_action.isAction(VERB_LOOK, 0x204) || _action._lookFlag)
+		_vm->_dialogs->show(40519);
+	else if (_action.isAction(VERB_LOOK, 0x259)) {
+		if (_globals[kArmoryDoorOpen])
+			_vm->_dialogs->show(40521);
+		else
+			_vm->_dialogs->show(40520);
+	} else if (_action.isAction(VERB_LOOK, 0x6E))
+		_vm->_dialogs->show(40522);
+	else if (_action.isAction(VERB_LOOK, 0x250))
+		_vm->_dialogs->show(40523);
+	else if (_action.isAction(VERB_LOOK, 0x257))
+		_vm->_dialogs->show(40524);
+	else
+		return;
+
+	_action._inProgress = false;
+}
 
 } // End of namespace Nebular
 } // End of namespace MADS
