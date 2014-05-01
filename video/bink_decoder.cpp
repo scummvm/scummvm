@@ -344,6 +344,11 @@ bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 	// Adjust the video track to use for seeking
 	findNextVideoTrack();
 
+	if (frame == keyFrame) {
+		// We're already good, no need to go further
+		return true;
+	}
+
 	while (getCurFrame() < (int32)frame - 1)
 		decodeNextFrame();
 
