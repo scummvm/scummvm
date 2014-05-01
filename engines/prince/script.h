@@ -90,9 +90,9 @@ public:
 	// Some magic numbers for now, data stored in header
 	uint32 getRoomTableOffset() { return read<uint32>(0); }
 	uint32 getStartGameOffset() { return read<uint32>(4); }
-	int8 getLightX(int locationNr) { return read<int8>(4*15 + locationNr*8); }
-	int8 getLightY(int locationNr) { return read<int8>(4*15 + locationNr*8 + 2); }
-	uint16 getShadowScale(int locationNr) { return read<uint16>(4*15 + locationNr*8 + 4); }
+	int16 getLightX(int locationNr);
+	int16 getLightY(int locationNr);
+	int32 getShadowScale(int locationNr);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);

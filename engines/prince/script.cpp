@@ -132,7 +132,7 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 		return false;
 
 	stream.read(_data, _dataSize);
-	
+
 	Common::MemoryReadStream scriptDataStream(_data, _dataSize);
 	scriptDataStream.seek(getRoomTableOffset()+64);
 	debug("room table offset %d", scriptDataStream.pos());
@@ -140,6 +140,24 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	room.loadFromStream(scriptDataStream);
 	
 	return true;
+}
+
+int16 Script::getLightX(int locationNr) {
+	Common::MemoryReadStream readS(_data, _dataSize);
+	readS.seek(4*15 + locationNr*8);
+	return readS.readSint16LE();
+}
+
+int16 Script::getLightY(int locationNr) {
+	Common::MemoryReadStream readS(_data, _dataSize);
+	readS.seek(4*15 + locationNr*8 + 2);
+	return readS.readSint16LE();
+}
+
+int32 Script::getShadowScale(int locationNr) {
+	Common::MemoryReadStream readS(_data, _dataSize);
+	readS.seek(4*15 + locationNr*8 + 4);
+	return readS.readSint32LE();
 }
 
 InterpreterFlags::InterpreterFlags() {
