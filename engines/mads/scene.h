@@ -204,7 +204,7 @@ public:
 	/**
 	 * Load an animation
 	 */
-	void loadAnimation(const Common::String &resName, int abortTimers = 0);
+	void loadAnimation(const Common::String &resName, int trigger = 0);
 
 	/**
 	 * Returns a vocab entry

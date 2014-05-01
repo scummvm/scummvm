@@ -318,7 +318,7 @@ void Animation::preLoad(const Common::String &resName, int level) {
 	// doesn't need to be preloaded
 }
 
-void Animation::startAnimation(int abortTimers) {
+void Animation::startAnimation(int endTrigger) {
 	_messageCtr = 0;
 	_skipLoad = true;
 
@@ -338,9 +338,9 @@ void Animation::startAnimation(int abortTimers) {
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
 	_nextFrameTimer = _vm->_game->_scene._frameStartTime;
-	_trigger = abortTimers;
+	_trigger = endTrigger;
 	_triggerMode = _vm->_game->_triggerSetupMode;
-	_vm->_game->_scene._action._activeAction = _actionDetails;
+	_actionDetails = _vm->_game->_scene._action._activeAction;
 
 	for (int idx = 0; idx < _header._messagesCount; ++idx) {
 		_messages[idx]._kernelMsgIndex = -1;
@@ -559,7 +559,7 @@ void Animation::update() {
 
 			if (_triggerMode != SEQUENCE_TRIGGER_DAEMON) {
 				// Copy the noun list
-				scene._action._action = _actionDetails;
+				scene._action._activeAction = _actionDetails;
 			}
 		}
 	}

@@ -594,7 +594,7 @@ void Scene::checkKeyboard() {
 	}
 }
 
-void Scene::loadAnimation(const Common::String &resName, int abortTimers) {
+void Scene::loadAnimation(const Common::String &resName, int trigger) {
 	assert(_activeAnimation == nullptr);
 	MSurface depthSurface;
 	UserInterface interfaceSurface(_vm);
@@ -602,7 +602,7 @@ void Scene::loadAnimation(const Common::String &resName, int abortTimers) {
 	_activeAnimation = Animation::init(_vm, this);
 	_activeAnimation->load(interfaceSurface, depthSurface, resName, 
 		_vm->_dithering ? ANIMFLAG_DITHER : 0, nullptr, nullptr);
-	_activeAnimation->startAnimation(abortTimers);
+	_activeAnimation->startAnimation(trigger);
 }
 
 void Scene::updateCursor() {

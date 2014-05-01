@@ -202,7 +202,7 @@ public:
 	/**
 	 * Setups up a loaded animation for playback
 	 */
-	void startAnimation(int abortTimers);
+	void startAnimation(int endTrigger);
 
 	/**
 	 * Update the animation
