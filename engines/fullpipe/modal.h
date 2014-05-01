@@ -32,10 +32,7 @@ class Sound;
 struct FileInfo {
 	char filename[260];
 	bool empty;
-	int day;
-	int month;
-	int year;
-	int time;
+	char date[16];
 	int fx1;
 	int fx2;
 	int fy1;
@@ -269,7 +266,7 @@ public:
 	void processKey(int key);
 
 	char *getSaveName();
-	bool getFileInfo(char *filename, FileInfo *fileinfo);
+	bool getFileInfo(int slot, FileInfo *fileinfo);
 
 	Common::Rect _rect;
 	int _oldBgX;

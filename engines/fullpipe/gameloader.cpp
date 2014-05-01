@@ -21,6 +21,7 @@
  */
 
 #include "fullpipe/fullpipe.h"
+#include "graphics/thumbnail.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/scene.h"
@@ -597,6 +598,38 @@ bool PreloadItems::load(MfcArchive &file) {
 
 		push_back(t);
 	}
+
+	return true;
+}
+
+const char *getSavegameFile(int saveGameIdx) {
+	static char buffer[20];
+	sprintf(buffer, "fullpipe.s%02d", saveGameIdx);
+	return buffer;
+}
+
+bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
+	char saveIdentBuffer[6];
+	header.thumbnail = NULL;
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, 6);
+	if (strcmp(saveIdentBuffer, "SVMCR"))
+		return false;
+
+	header.version = in->readByte();
+	if (header.version != FULLPIPE_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header.saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+
+	// Get the thumbnail
+	header.thumbnail = Graphics::loadThumbnail(*in);
+	if (!header.thumbnail)
+		return false;
 
 	return true;
 }

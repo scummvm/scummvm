@@ -34,6 +34,8 @@
 #include "graphics/palette.h"
 #include "video/avi_decoder.h"
 
+#include "engines/savestate.h"
+
 namespace Fullpipe {
 
 ModalIntro::ModalIntro() {
@@ -1593,9 +1595,9 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 		fileinfo = new FileInfo;
 		memset(fileinfo, 0, sizeof(FileInfo));
 
-		snprintf(fileinfo->filename, 160, "save%02d.sav", i);
+		strncpy(fileinfo->filename, getSavegameFile(i), 160);
 
-		if (!getFileInfo(fileinfo->filename, fileinfo)) {
+		if (!getFileInfo(i, fileinfo)) {
 			fileinfo->empty = true;
 			w = _emptyD->getDimensions(&point)->x;
 		} else {
@@ -1625,10 +1627,52 @@ char *ModalSaveGame::getSaveName() {
 	return _files[_queryRes]->filename;
 }
 
-bool ModalSaveGame::getFileInfo(char *filename, FileInfo *fileinfo) {
-	warning("STUB: ModalSaveGame::getFileInfo()");
+bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
+		Fullpipe::getSavegameFile(slot));
 
-	return false;
+	if (!f)
+		return false;
+
+	Fullpipe::FullpipeSavegameHeader header;
+	Fullpipe::readSavegameHeader(f, header);
+	delete f;
+
+	// Create the return descriptor
+	SaveStateDescriptor desc(slot, header.saveName);
+	char res[17];
+
+	snprintf(res, 17, "%s  %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
+
+	for (int i = 0; i < 16; i++) {
+		switch(res[i]) {
+		case '.':
+			fileinfo->date[i] = 11;
+			break;
+		case ' ':
+			fileinfo->date[i] = 12;
+			break;
+		case ':':
+			fileinfo->date[i] = 10;
+			break;
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			fileinfo->date[i] = res[i] - '0';
+			break;
+		default:
+			error("Incorrect date format: %s", res);
+		}
+	}
+
+	return true;
 }
 
 void ModalSaveGame::update() {
@@ -1659,10 +1703,10 @@ void ModalSaveGame::update() {
 				int x = _files[i]->fx1;
 
 				for (int j = 0; j < 16; j++) {
-					_arrayL[j + _files[i]->day]->setOXY(x + 1, _files[i]->fy1);
-					_arrayL[j + _files[i]->day]->draw();
+					_arrayL[_files[i]->date[j]]->setOXY(x + 1, _files[i]->fy1);
+					_arrayL[_files[i]->date[j]]->draw();
 
-					x += _arrayL[j + _files[i]->day]->getDimensions(&point)->x + 2;
+					x += _arrayL[_files[i]->date[j]]->getDimensions(&point)->x + 2;
 				}
 			}
 		} else {
@@ -1673,10 +1717,10 @@ void ModalSaveGame::update() {
 				int x = _files[i]->fx1;
 
 				for (int j = 0; j < 16; j++) {
-					_arrayD[j + _files[i]->day]->setOXY(x + 1, _files[i]->fy1);
-					_arrayD[j + _files[i]->day]->draw();
+					_arrayD[_files[i]->date[j]]->setOXY(x + 1, _files[i]->fy1);
+					_arrayD[_files[i]->date[j]]->draw();
 
-					x += _arrayD[j + _files[i]->day]->getDimensions(&point)->x + 2;
+					x += _arrayD[_files[i]->date[j]]->getDimensions(&point)->x + 2;
 				}
 			}
 		}
