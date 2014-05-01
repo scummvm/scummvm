@@ -2677,5 +2677,113 @@ void Scene406::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene407::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene407::enter() {
+	if (_scene->_priorSceneId != -2)
+		_fromNorth = false;
+
+	if (_scene->_priorSceneId == 318) {
+		_game._player._playerPos = Common::Point(172, 92);
+		_game._player._facing = FACING_SOUTH;
+		_fromNorth = true;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(172, 132);
+		_game._player._facing = FACING_NORTH;
+	}
+
+	_game.loadQuoteSet(0x250, 0);
+	sceneEntrySound();
+}
+
+void Scene407::step() {
+	if (_game._trigger == 70) {
+		_scene->_nextSceneId = 318;
+		_scene->_reloadSceneFlag = true;
+	}
+
+	if (_game._trigger == 80) {
+		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+		_game._player._stepEnabled = true;
+		_game._player._visible = true;
+		_fromNorth = false;
+		_game._player.walk(Common::Point(173, 104), FACING_SOUTH);
+	}
+}
+
+void Scene407::preActions() {
+	if (_action.isAction(VERB_TAKE))
+		_game._player._needToWalk = false;
+
+	if (_action.isAction(VERB_LOOK, 0x6E))
+		_game._player._needToWalk = true;
+
+	if (_action.isAction(0x1AD, 0x2B4)) {
+		_game._player.walk(Common::Point(172, 91), FACING_NORTH);
+		_fromNorth = false;
+	}
+
+	if (_game._player._needToWalk && _fromNorth) {
+		if (_globals[kSexOfRex] == REX_MALE)
+			destPos = Common::Point(171, 95);
+		else
+			destPos = Common::Point(173, 96);
+
+		_game._player.walk(destPos, FACING_SOUTH);
+	}
+}
+
+void Scene407::actions() {
+	if ((_game._player._playerPos == destPos) && _fromNorth) {
+		if (_globals[kSexOfRex] == REX_MALE) {
+			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_vm->_sound->command(21);
+			_scene->loadAnimation(formAnimName('s', 1), 70);
+			_globals[kHasBeenScanned] = true;
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(60));
+			_vm->_sound->command(22);
+		}
+
+		if (_globals[kSexOfRex] == REX_FEMALE) {
+			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_vm->_sound->command(21);
+			_scene->loadAnimation(formAnimName('s', 2), 80);
+			_vm->_sound->command(23);
+			_globals[kHasBeenScanned] = true;
+		}
+	}
+
+	if (_action.isAction(0x1AD, 0x2B3) && !_fromNorth)
+		_scene->_nextSceneId = 406;
+	else if (_action.isAction(0x1AD, 0x2B4))
+		_scene->_nextSceneId = 318;
+	else if (_action.isAction(VERB_LOOK, 0x1F3)) {
+		if (_globals[kHasBeenScanned])
+			_vm->_dialogs->show(40711);
+		else
+			_vm->_dialogs->show(40710);
+	} else if (_action.isAction(VERB_LOOK, 0x6E))
+		_vm->_dialogs->show(40712);
+	else if (_action.isAction(VERB_LOOK, 0x2B3))
+		_vm->_dialogs->show(40713);
+	else if (_action.isAction(VERB_LOOK, 0x2B4))
+		_vm->_dialogs->show(40714);
+	else if (_action._lookFlag)
+		_vm->_dialogs->show(40715);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
