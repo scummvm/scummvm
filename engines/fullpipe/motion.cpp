@@ -125,9 +125,10 @@ void MctlCompound::addObject(StaticANIObject *obj) {
 }
 
 int MctlCompound::removeObject(StaticANIObject *obj) {
-	warning("STUB: MctlCompound::removeObject()");
+	for (uint i = 0; i < _motionControllers.size(); i++)
+		_motionControllers[i]->_motionControllerObj->removeObject(obj);
 
-	return 0;
+	return 1;
 }
 
 void MctlCompound::initMovGraph2() {
