@@ -2785,5 +2785,159 @@ void Scene407::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene408::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x167);
+	_scene->addActiveVocab(0xD);
+}
+
+void Scene408::enter() {
+	_game._player._playerPos = Common::Point(137, 150);
+	_game._player._facing = FACING_NORTH;
+
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*ROXRC_7");
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', -1));
+
+	if (_game._objects.isInRoom(OBJ_TARGET_MODULE)) {
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+		int idx = _scene->_dynamicHotspots.add(0x167, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(283, 128), FACING_NORTHEAST);
+	}
+	sceneEntrySound();
+}
+
+void Scene408::preActions() {
+	if ((_action.isAction(VERB_TAKE) && !_action.isAction(0x167)) || _action.isAction(VERB_PULL, 0x47B) || _action.isAction(VERB_OPEN, 0x265))
+		_game._player._needToWalk = false;
+
+	if ((_action.isAction(VERB_LOOK, 0x167) && _game._objects.isInRoom(0x17)) || _action.isAction(VERB_LOOK, 0x263))
+		_game._player._needToWalk = true;
+}
+
+void Scene408::actions() {
+	if (_action.isAction(0x242, 0x2B3)) {
+		_scene->_nextSceneId = 405;
+		_vm->_sound->command(58);
+	} else if (_action.isAction(VERB_TAKE, 0x167) && (_game._objects.isInRoom(OBJ_TARGET_MODULE) || _game._trigger)) {
+		switch (_game._trigger) {
+		case (0):
+			_vm->_sound->command(57);
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], true, 7, 2, 0, 0);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 2);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[1]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			break;
+
+		case 1:
+			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+			_game._objects.addToInventory(OBJ_TARGET_MODULE);
+			_vm->_dialogs->showItem(OBJ_TARGET_MODULE, 40847);
+			break;
+
+		case 2:
+			_game._player._priorTimer = _game._player._ticksAmount + _scene->_frameStartTime;
+			_game._player._visible = true;
+			_scene->_sequences.addTimer(20, 3);
+			break;
+
+		case 3:
+			_game._player._stepEnabled = true;
+			break;
+
+		default:
+			break;
+		}
+	} else if (_action.isAction(VERB_LOOK, 0x2BC))
+		_vm->_dialogs->show(40810);
+	else if (_action.isAction(VERB_TAKE, 0x2BC) || _action.isAction(VERB_TAKE, 0x261) || _action.isAction(VERB_TAKE, 0x25F))
+		_vm->_dialogs->show(40811);
+	else if (_action.isAction(VERB_LOOK, 0x2BE))
+		_vm->_dialogs->show(40812);
+	else if (_action.isAction(VERB_TAKE, 0x2BE))
+		_vm->_dialogs->show(40813);
+	else if (_action.isAction(VERB_LOOK, 0x2C2))
+		_vm->_dialogs->show(40814);
+	else if (_action.isAction(VERB_TAKE, 0x2C2))
+		_vm->_dialogs->show(40815);
+	else if (_action.isAction(VERB_TAKE, 0x47B) || _action.isAction(VERB_PULL, 0x47B))
+		_vm->_dialogs->show(40816);
+	else if (_action.isAction(VERB_LOOK, 0x26D))
+		_vm->_dialogs->show(40817);
+	else if (_action.isAction(VERB_TAKE, 0x26D))
+		_vm->_dialogs->show(40818);
+	else if (_action.isAction(VERB_LOOK, 0x2BB))
+		_vm->_dialogs->show(40819);
+	else if (_action.isAction(VERB_TAKE, 0x2BB))
+		_vm->_dialogs->show(40820);
+	else if (_action.isAction(VERB_LOOK, 0x269))
+		_vm->_dialogs->show(40821);
+	else if (_action.isAction(VERB_TAKE, 0x269))
+		_vm->_dialogs->show(40822);
+	else if (_action.isAction(VERB_LOOK, 0x263)) {
+		if (_game._objects.isInRoom(OBJ_TARGET_MODULE))
+			_vm->_dialogs->show(40823);
+		else
+			_vm->_dialogs->show(40824);
+	} else if (_action.isAction(VERB_TAKE, 0x263))
+		_vm->_dialogs->show(40825);
+	else if (_action.isAction(VERB_LOOK, 0x2BF))
+		_vm->_dialogs->show(40826);
+	else if (_action.isAction(VERB_TAKE, 0x2BF))
+		_vm->_dialogs->show(40827);
+	else if (_action.isAction(VERB_LOOK, 0x7B))
+		_vm->_dialogs->show(40828);
+	else if (_action.isAction(VERB_OPEN, 0x7B) || _action.isAction(VERB_PULL, 0x7B))
+		_vm->_dialogs->show(40829);
+	else if (_action.isAction(VERB_LOOK, 0x26B))
+		_vm->_dialogs->show(40830);
+	else if (_action.isAction(VERB_TAKE, 0x26B))
+		_vm->_dialogs->show(40831);
+	else if (_action.isAction(VERB_LOOK, 0x2C1))
+		_vm->_dialogs->show(40832);
+	else if (_action.isAction(VERB_TAKE, 0x2C1))
+		_vm->_dialogs->show(40833);
+	else if (_action.isAction(VERB_LOOK, 0x2BD))
+		_vm->_dialogs->show(40834);
+	else if (_action.isAction(VERB_TAKE, 0x2BD))
+		_vm->_dialogs->show(40835);
+	else if (_action.isAction(VERB_LOOK, 0x261))
+		_vm->_dialogs->show(40836);
+	else if (_action.isAction(VERB_LOOK, 0x25F))
+		_vm->_dialogs->show(40837);
+	else if (_action.isAction(VERB_LOOK, 0x2C0))
+		_vm->_dialogs->show(40838);
+	else if (_action.isAction(VERB_LOOK, 0x47C))
+		_vm->_dialogs->show(40839);
+	else if (_action.isAction(VERB_TAKE, 0x47C))
+		_vm->_dialogs->show(40840);
+	else if (_action.isAction(VERB_LOOK, 0x265))
+		_vm->_dialogs->show(40841);
+	else if (_action.isAction(VERB_TAKE, 0x265))
+		_vm->_dialogs->show(40842);
+	else if (_action.isAction(VERB_OPEN, 0x265))
+		_vm->_dialogs->show(40843);
+	else if (_action.isAction(VERB_LOOK, 0x2B3))
+		_vm->_dialogs->show(40844);
+	else if (_action._lookFlag)
+		_vm->_dialogs->show(40845);
+	else if (_action.isAction(VERB_LOOK, 0x167) && _game._objects.isInRoom(OBJ_TARGET_MODULE))
+		_vm->_dialogs->show(40846);
+	else if (_action.isAction(VERB_LOOK, 0x26C))
+		_vm->_dialogs->show(40848);
+	else if (_action.isAction(VERB_OPEN, 0x263))
+		_vm->_dialogs->show(40849);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
