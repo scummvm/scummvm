@@ -132,7 +132,7 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 		return false;
 
 	stream.read(_data, _dataSize);
-
+	
 	Common::MemoryReadStream scriptDataStream(_data, _dataSize);
 	scriptDataStream.seek(getRoomTableOffset()+64);
 	debug("room table offset %d", scriptDataStream.pos());

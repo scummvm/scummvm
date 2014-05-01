@@ -34,6 +34,7 @@ Hero::Hero() : _number(0), _visible(false), _state(MOVE), _middleX(0), _middleY(
 	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(1), _moveSetType(0)
 	, _lastDirection(DOWN), _destDirection(DOWN), _talkTime(0), _boredomTime(0), _phase(0)
 	, _specAnim(0), _drawX(0), _drawY(0), _randomSource("prince"), _zoomFactor(0), _scaleValue(0)
+	, _shadZoomFactor(0), _shadScaleValue(0)
 {
 	_zoomBitmap = new Animation();
 	_shadowBitmap = new Animation();
@@ -275,6 +276,19 @@ void Hero::selectZoom() {
 	debug("offset: %d", _middleY / 4 * kZoomBitmapWidth + _middleX / 4);
 	debug("zoomBitmapValue: %d", _zoomFactor);
 	setScale(zoomBitmapValue);
+}
+
+void Hero::setShadowScale(int32 shadowScale) {
+	shadowScale = 100 - shadowScale;
+	if (shadowScale == 0) {
+		_shadZoomFactor = 0;
+		_shadScaleValue = 10000;
+	} else {
+		_shadZoomFactor = shadowScale;
+		_shadScaleValue = 10000 / _shadZoomFactor;
+	}
+	debug("_shadZoomFactor: %d", _shadZoomFactor);
+	debug("_shadScaleValue: %d", _shadScaleValue);
 }
 
 void Hero::specialAnim() {

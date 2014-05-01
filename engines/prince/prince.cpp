@@ -288,6 +288,12 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 		Resource::loadResource(_mainHero->_shadowBitmap, "shadow2", false);
 	}
 
+	_mainHero->_lightX = _script->getLightX(_locationNr);
+	_mainHero->_lightY = _script->getLightY(_locationNr);
+	debug("lightX: %d", _mainHero->_lightX);
+	debug("lightY: %d", _mainHero->_lightX);
+	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
+
 	_mobList.clear();
 	Resource::loadResource(_mobList, "mob.lst", false);
 

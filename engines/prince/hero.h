@@ -108,6 +108,7 @@ public:
 	void checkNak();
 	Graphics::Surface *zoomSprite(Graphics::Surface *heroFrame);
 	void showHeroAnimFrame();
+	void setShadowScale(int32 shadowScale);
 	void specialAnim();
 	void getState();
 
@@ -124,6 +125,11 @@ public:
 	int16 _moveSetType;
 	int8 _zoomFactor;
 	int16 _scaleValue;
+	int16 _lightX; // for hero's shadow
+	int16 _lightY;
+	int32 _shadZoomFactor;
+	int32 _shadScaleValue;
+
 
 	// Coords array of coordinates
 	// DirTab array of directions

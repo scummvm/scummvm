@@ -42,6 +42,7 @@ namespace Detail {
 	template <> inline uint8 LittleEndianReader<uint8>(void *data) { return *(uint8*)(data); }
 	template <> inline uint16 LittleEndianReader<uint16>(void *data) { return READ_LE_UINT16(data); }
 	template <> inline uint32 LittleEndianReader<uint32>(void *data) { return READ_LE_UINT32(data); }
+	template <> inline int8 LittleEndianReader<int8>(void *data) { return *(int8*)(data); }
 }
 
 class Room {
@@ -89,6 +90,9 @@ public:
 	// Some magic numbers for now, data stored in header
 	uint32 getRoomTableOffset() { return read<uint32>(0); }
 	uint32 getStartGameOffset() { return read<uint32>(4); }
+	int8 getLightX(int locationNr) { return read<int8>(4*15 + locationNr*8); }
+	int8 getLightY(int locationNr) { return read<int8>(4*15 + locationNr*8 + 2); }
+	uint16 getShadowScale(int locationNr) { return read<uint16>(4*15 + locationNr*8 + 4); }
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);
