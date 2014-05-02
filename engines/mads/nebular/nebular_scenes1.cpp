@@ -1601,7 +1601,7 @@ void Scene104::step() {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
-				_vm->_palette->refreshHighColors();
+				_vm->_palette->refreshSceneColors();
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], mirrorFl, 7, 1, 0, 0);
 				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(198, 143));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
@@ -1631,7 +1631,7 @@ void Scene104::step() {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1));
-				_vm->_palette->refreshHighColors();
+				_vm->_palette->refreshSceneColors();
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(198, 143));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
@@ -1670,7 +1670,7 @@ void Scene104::step() {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2));
-				_vm->_palette->refreshHighColors();
+				_vm->_palette->refreshSceneColors();
 				_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 8, 1, 0, 0);
 				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(198, 143));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
@@ -1794,7 +1794,7 @@ void Scene105::step() {
 			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('m', 3));
 			_vm->_sound->command(33);
 			_scene->clearSequenceList();
-			_vm->_palette->refreshHighColors();
+			_vm->_palette->refreshSceneColors();
 
 			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 8);
@@ -2426,7 +2426,7 @@ void Scene109::step() {
 		_beforeEatingRex = true;
 		_scene->_sprites.remove(_globals._spriteIndexes[6]);
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('H', 0));
-		_vm->_palette->refreshHighColors();
+		_vm->_palette->refreshSceneColors();
 	}
 
 	if (_game._player._moving && (_scene->_rails.getNext() > 0) && _globals[kHoovicAlive] && !_globals[kHoovicSated] && !_hungryFl && !_beforeEatingRex) {
@@ -2523,7 +2523,7 @@ void Scene109::actions() {
 							break;
 						}
 
-						_vm->_palette->refreshHighColors();
+						_vm->_palette->refreshSceneColors();
 						break;
 
 					case 1:

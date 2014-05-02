@@ -523,12 +523,12 @@ void Palette::unlock() {
 	_lockFl = false;
 }
 
-void Palette::refreshHighColors() {
+void Palette::refreshSceneColors() {
 	int val = 18;
 	if (_vm->_game->_scene._cyclingActive)
 		val += _vm->_game->_scene._totalCycleColors;
 
-	setPalette(_mainPalette, val, 256 - val);
+	setPalette(_mainPalette + (val * 3), val, 256 - val);
 }
 
 } // End of namespace MADS

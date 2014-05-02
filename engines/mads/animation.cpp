@@ -333,7 +333,7 @@ void Animation::startAnimation(int endTrigger) {
 	}
 
 	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE)
-		_vm->_palette->refreshHighColors();
+		_vm->_palette->refreshSceneColors();
 
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
