@@ -141,7 +141,17 @@ StaticANIObject::StaticANIObject() {
 }
 
 StaticANIObject::~StaticANIObject() {
-	warning("STUB: StaticANIObject::~StaticANIObject()");
+	for (uint i = 0; i < _staticsList.size(); i++)
+		delete _staticsList[i];
+
+	_staticsList.clear();
+
+	for (uint i = 0; i < _movements.size(); i++)
+		delete _movements[i];
+
+	_movements.clear();
+
+	g_fp->_mgm->clear();
 }
 
 StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
