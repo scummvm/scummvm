@@ -1440,6 +1440,19 @@ bool Statics::load(MfcArchive &file) {
 	return true;
 }
 
+void Statics::init() {
+	Picture::init();
+
+	if (_staticsId & 0x4000) {
+		Bitmap *bmp = _bitmap->reverseImage();
+
+		freePixelData();
+
+		_bitmap = bmp;
+		_data = bmp->_pixels;
+	}
+}
+
 Common::Point *Statics::getSomeXY(Common::Point &p) {
 	p.x = _someX;
 	p.y = _someY;

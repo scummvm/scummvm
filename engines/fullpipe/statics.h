@@ -98,6 +98,7 @@ class Statics : public DynamicPhase {
 	virtual ~Statics();
 
 	virtual bool load(MfcArchive &file);
+	virtual void init();
 	Statics *getStaticsById(int itemId);
 
 	Common::Point *getSomeXY(Common::Point &p);

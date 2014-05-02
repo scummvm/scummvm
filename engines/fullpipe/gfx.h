@@ -92,7 +92,7 @@ class Picture : public MemoryObject {
 
 	virtual bool load(MfcArchive &file);
 	void setAOIDs();
-	void init();
+	virtual void init();
 	void getDibInfo();
 	Bitmap *getPixelData();
 	virtual void draw(int x, int y, int style, int angle);
