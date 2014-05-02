@@ -466,8 +466,11 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 		_screenObjects.synchronize(s);
 
 		if (s.isLoading()) {
+			_scene._userInterface._selectedInvIndex = -1;
+			_currentSectionNumber = -2;
+			_scene._currentSceneId = -2;
 			_sectionNumber = _scene._nextSceneId / 100;
-			_currentSectionNumber = _sectionNumber;
+			_scene._frameStartTime = _vm->_events->getFrameCounter();
 		}
 	} else {
 		// Load scene specific data for the loaded scene
