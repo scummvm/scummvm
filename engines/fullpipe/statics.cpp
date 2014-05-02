@@ -1493,7 +1493,20 @@ Movement::Movement() {
 }
 
 Movement::~Movement() {
-	warning("STUB: Movement::~Movement()");
+	for (uint i = 0; i < _dynamicPhases.size(); i++)
+		delete _framePosOffsets[i];
+
+	if (!_currMovement ) {
+		if (_updateFlag1)
+			_dynamicPhases.remove_at(0);
+
+		for (uint i = 0; i < _dynamicPhases.size(); i++)
+			delete (DynamicPhase *)_dynamicPhases[i];
+
+		_dynamicPhases.clear();
+	}
+
+	free(_framePosOffsets);
 }
 
 Movement::Movement(Movement *src, StaticANIObject *ani) {
