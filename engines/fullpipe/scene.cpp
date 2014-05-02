@@ -355,7 +355,8 @@ void Scene::setPictureObjectsFlag4() {
 }
 
 void Scene::stopAllSounds() {
-	warning("STUB: Scene:stopAllSounds()");
+	for (uint i = 0; i < _soundList->getCount(); i++)
+		_soundList->getSoundByIndex(i)->stop();
 }
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
