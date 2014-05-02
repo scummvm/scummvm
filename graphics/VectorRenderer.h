@@ -28,6 +28,7 @@
 #include "common/str.h"
 
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 #include "gui/ThemeEngine.h"
 
@@ -81,6 +82,7 @@ struct DrawStep {
 
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
 	Graphics::Surface *blitSrc;
+	Graphics::TransparentSurface *blitAlphaSrc;
 };
 
 VectorRenderer *createRenderer(int mode);
@@ -420,7 +422,13 @@ public:
 	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		blitAlphaBitmapClip(step.blitSrc, Common::Rect(x, y, x + w, y + h), clip);
+		blitKeyBitmapClip(step.blitSrc, Common::Rect(x, y, x + w, y + h), clip);
+	}
+
+	void drawCallback_ALPHABITMAP(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
+		uint16 x, y, w, h;
+		stepGetPositions(step, area, x, y, w, h);
+		blitAlphaBitmap(step.blitAlphaSrc, Common::Rect(x, y, x + w, y + h)); //TODO
 	}
 
 	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
@@ -482,8 +490,10 @@ public:
 	virtual void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
 	virtual void blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
 
-	virtual void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
-	virtual void blitAlphaBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
+	virtual void blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
+	virtual void blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
+
+	virtual void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r) = 0;
 
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing

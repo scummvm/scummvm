@@ -25,6 +25,7 @@
 #include "common/frac.h"
 
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 #include "graphics/colormasks.h"
 
 #include "gui/ThemeEngine.h"
@@ -848,8 +849,8 @@ blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const
 }
 
 template<typename PixelType>
-void VectorRendererSpec<PixelType>::
-blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
+void VectorRendererSpec<PixelType>:: 
+blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 	int16 x = r.left;
 	int16 y = r.top;
 
@@ -885,7 +886,7 @@ blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitAlphaBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) {
+blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) {
 	if (clipping.isEmpty() || clipping.contains(r)) {
 		blitAlphaBitmap(source, r);
 		return;
@@ -940,6 +941,12 @@ blitAlphaBitmapClip(const Graphics::Surface *source, const Common::Rect &r, cons
 		dst_ptr = dst_ptr - usedW + dst_pitch;
 		src_ptr = src_ptr - usedW + src_pitch;
 	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r) {
+	source->blit(*_activeSurface, r.left, r.top);
 }
 
 template<typename PixelType>

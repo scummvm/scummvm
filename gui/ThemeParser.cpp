@@ -241,6 +241,18 @@ bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
 	return true;
 }
 
+bool ThemeParser::parserCallback_alphabitmap(ParserNode *node) {
+	if (resolutionCheck(node->values["resolution"]) == false) {
+		node->ignore = true;
+		return true;
+	}
+
+	if (!_theme->addAlphaBitmap(node->values["filename"]))
+		return parserError("Error loading Bitmap file '" + node->values["filename"] + "'");
+
+	return true;
+}
+
 bool ThemeParser::parserCallback_text(ParserNode *node) {
 	Graphics::TextAlign alignH;
 	GUI::ThemeEngine::TextAlignVertical alignV;
@@ -323,6 +335,8 @@ static Graphics::DrawingFunctionCallback getDrawingFunctionCallback(const Common
 		return &Graphics::VectorRenderer::drawCallback_BITMAP;
 	if (name == "cross")
 		return &Graphics::VectorRenderer::drawCallback_CROSS;
+	if (name == "alphabitmap")
+		return &Graphics::VectorRenderer::drawCallback_ALPHABITMAP;
 
 	return 0;
 }
@@ -445,6 +459,16 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			drawstep->blitSrc = _theme->getBitmap(stepNode->values["file"]);
 
 			if (!drawstep->blitSrc)
+				return parserError("The given filename hasn't been loaded into the GUI.");
+		}
+
+		if (functionName == "alphabitmap") {
+			if (!stepNode->values.contains("file"))
+				return parserError("Need to specify a filename for AlphaBitmap blitting.");
+
+			drawstep->blitAlphaSrc = _theme->getAlphaBitmap(stepNode->values["file"]);
+
+			if (!drawstep->blitAlphaSrc)
 				return parserError("The given filename hasn't been loaded into the GUI.");
 		}
 

@@ -32,6 +32,7 @@
 #include "common/rect.h"
 
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
 
@@ -140,6 +141,7 @@ enum TextColor {
 class ThemeEngine {
 protected:
 	typedef Common::HashMap<Common::String, Graphics::Surface *> ImagesMap;
+	typedef Common::HashMap<Common::String, Graphics::TransparentSurface *> AImagesMap;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
@@ -483,6 +485,14 @@ public:
 	bool addBitmap(const Common::String &filename);
 
 	/**
+	 * Interface for the ThemeParser class: Loads a bitmap with transparency file to use on the GUI.
+	 * The filename is also used as its identifier.
+	 *
+	 * @param filename Name of the bitmap file.
+	 */
+	bool addAlphaBitmap(const Common::String &filename);
+
+	/**
 	 * Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the
 	 * new Font API is in place. FIXME: Is that so ???
 	 */
@@ -524,6 +534,10 @@ public:
 
 	Graphics::Surface *getBitmap(const Common::String &name) {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
+	}
+
+	Graphics::TransparentSurface *getAlphaBitmap(const Common::String &name) {
+		return _abitmaps.contains(name) ? _abitmaps[name] : 0;
 	}
 
 	const Graphics::Surface *getImageSurface(const Common::String &name) const {
@@ -688,6 +702,7 @@ protected:
 	TextColorData *_textColors[kTextColorMAX];
 
 	ImagesMap _bitmaps;
+	AImagesMap _abitmaps;
 	Graphics::PixelFormat _overlayFormat;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _cursorFormat;
