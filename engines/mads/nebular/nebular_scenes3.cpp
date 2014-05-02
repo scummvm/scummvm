@@ -220,7 +220,7 @@ void Scene3xx::handleForceField(ForceField *force, int *sprites) {
 			force->_seqId[id] = _scene->_sequences.addSpriteCycle(sprites[spriteId], mirror, 2, 0, 0, 0);
 			_scene->_sequences.setDepth(force->_seqId[id], 8);
 			_scene->_sequences.setMsgPosition(force->_seqId[id], Common::Point(posX, posY));
-			_scene->_sequences.sub70C52(force->_seqId[id], 2, speedX, speedY);
+			_scene->_sequences.setMotion(force->_seqId[id], 2, speedX, speedY);
 			_scene->_sequences.addSubEntry(force->_seqId[id], SEQUENCE_TRIGGER_EXPIRE, 0, 150 + id);
 			if (spriteId == 2)
 				force->_horizontal++;

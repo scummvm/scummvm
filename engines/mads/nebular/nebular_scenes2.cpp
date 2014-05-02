@@ -4285,7 +4285,7 @@ void Scene211::enter() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(202, 126));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
-		_scene->_sequences.sub70C52(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
+		_scene->_sequences.setMotion(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, -200, 0);
 		_scene->_dynamicHotspots.add(324, 13, _globals._sequenceIndexes[2], Common::Rect(1, 1, 1 + 41, 1 + 10));
 	}
 

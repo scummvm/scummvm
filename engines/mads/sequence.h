@@ -126,7 +126,7 @@ public:
 	void setScale(int spriteIdx, int scale);
 	void setMsgLayout(int seqIndex);
 	void setDone(int seqIndex);
-	void sub70C52(int seqIndex, int flags, int deltaX, int deltaY) { warning("TODO: sub70C52()"); }
+	void setMotion(int seqIndex, int flags, int deltaX, int deltaY) { warning("TODO: setMotion()"); }
 };
 
 } // End of namespace MADS

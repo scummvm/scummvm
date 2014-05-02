@@ -2141,7 +2141,7 @@ void Scene107::enter() {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(Resources::formatName(105, 'R', 1, EXT_SS, ""));
 		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], true, 4, 0, 0, 0);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[0], Common::Point(270, 150));
-		_scene->_sequences.sub70C52(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
+		_scene->_sequences.setMotion(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_SPRITE, -200, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 2);
 		_scene->_dynamicHotspots.add(218, 348, _globals._sequenceIndexes[0], Common::Rect(0, 0, 0, 0));
 	}
@@ -2386,7 +2386,7 @@ void Scene109::enter() {
 		_globals._sequenceIndexes[10] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[10], true, 4, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 5);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[10], Common::Point(126, 39));
-		_scene->_sequences.sub70C52(_globals._sequenceIndexes[10], 0, 200, 0);
+		_scene->_sequences.setMotion(_globals._sequenceIndexes[10], 0, 200, 0);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[10], 80);
 		_game._player._stepEnabled = false;
 	}
