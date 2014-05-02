@@ -34,7 +34,7 @@ class Scene : public Background {
 	Common::Array<StaticANIObject *> _staticANIObjectList1;
 	Common::Array<StaticANIObject *> _staticANIObjectList2;
 	Common::Array<MessageQueue *> _messageQueueList;
-	PtrList _faObjectList;
+	// PtrList _faObjectList; // not used
 	Shadows *_shadows;
 	SoundList *_soundList;
 	int16 _sceneId;
