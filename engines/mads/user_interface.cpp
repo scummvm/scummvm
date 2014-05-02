@@ -1092,6 +1092,9 @@ void UserInterface::synchronize(Common::Serializer &s) {
 	if (s.isLoading()) {
 		_selectedInvIndex = invObjects._inventoryList.empty() ? -1 : 0;
 	}
+
+	for (int i = 0; i < 8; ++i)
+		s.syncAsSint16LE(_categoryIndexes[i]);
 }
 
 } // End of namespace MADS

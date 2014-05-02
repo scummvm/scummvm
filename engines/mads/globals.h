@@ -48,7 +48,7 @@ public:
 	/**
 	 * Synchronize the globals data
 	 */
-	void synchronize(Common::Serializer &s);
+	virtual void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace MADS

@@ -38,6 +38,7 @@ namespace Nebular {
 GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
+	_difficulty = DIFFICULTY_IMPOSSIBLE;
 }
 
 ProtectionResult GameNebular::checkCopyProtection() {
@@ -749,6 +750,8 @@ void GameNebular::synchronize(Common::Serializer &s, bool phase1) {
 
 	if (!phase1) {
 		_globals.synchronize(s);
+		s.syncAsByte(_storyMode);
+		s.syncAsByte(_difficulty);
 	}
 }
 

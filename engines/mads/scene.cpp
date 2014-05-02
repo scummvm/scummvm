@@ -705,10 +705,14 @@ void Scene::freeAnimation() {
 }
 
 void Scene::synchronize(Common::Serializer &s) {
-	_action._activeAction.synchronize(s);
+	_action.synchronize(s);
 	_rails.synchronize(s);
 	_userInterface.synchronize(s);
-	_sceneLogic->synchronize(s);
+	s.syncAsByte(_reloadSceneFlag);
+	s.syncAsByte(_roomChanged);
+	s.syncAsUint16LE(_nextSceneId);
+	s.syncAsUint16LE(_priorSceneId);
+	_dynamicHotspots.synchronize(s);
 }
 
 } // End of namespace MADS

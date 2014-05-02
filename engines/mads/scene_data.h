@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/serializer.h"
 #include "common/str.h"
 #include "common/str-array.h"
 #include "common/rect.h"

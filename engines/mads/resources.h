@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/file.h"
+#include "common/serializer.h"
 #include "common/str.h"
 
 namespace MADS {
@@ -74,6 +75,19 @@ public:
 	 */
 	void openFile(const Common::String &filename);
 };
+
+class SynchronizedList : public Common::Array<int> {
+public:
+	/**
+	 * Synchronize the list
+	 */
+	void synchronize(Common::Serializer &s);
+};
+
+/**
+* Synchronize string support method
+*/
+void synchronizeString(Common::Serializer &s, Common::String &str);
 
 } // End of namespace MADS
 

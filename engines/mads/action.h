@@ -78,6 +78,9 @@ struct ActionDetails {
 	int _objectNameId;
 	int _indirectObjectId;
 
+	/**
+	 * Synchronize the action details
+	 */
 	void synchronize(Common::Serializer &s);
 };
 
@@ -91,6 +94,11 @@ struct ActionSavedFields {
 	int _secondObjectSource;
 	int _articleNumber;
 	int _lookFlag;
+
+	/**
+	* Synchronize the saved action details
+	*/
+	void synchronize(Common::Serializer &s);
 };
 
 class MADSAction {
@@ -117,11 +125,11 @@ public:
 	PrepType _prepType;
 	ScrCategory _commandSource;
 	ScrCategory _mainObjectSource;
-	int16 _secondObject;
+	int _secondObject;
 	ScrCategory _secondObjectSource;
 	ScrCategory _recentCommandSource;
 	bool _pointEstablished;
-	int16 _recentCommand;
+	int  _recentCommand;
 	InterAwaiting _interAwaiting;
 	bool _inProgress;
 	int _pickedWord;
@@ -154,6 +162,11 @@ public:
 	* Execute a click within the scene
 	*/
 	void leftClick();
+
+	/**
+	* Synchronize the saved action details
+	*/
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace MADS

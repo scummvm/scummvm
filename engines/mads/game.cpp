@@ -59,8 +59,8 @@ Game *Game::init(MADSEngine *vm) {
 Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm), 
 		_scene(vm), _screenObjects(vm), _player(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
-	_difficulty = DIFFICULTY_IMPOSSIBLE;
 	_loadGameSlot = -1;
+	_lastSave = -1;
 	_saveFile = nullptr;
 	_statusFlag = 0;
 	_sectionHandler = nullptr;
@@ -452,24 +452,26 @@ void Game::handleKeypress(const Common::Event &event) {
 
 void Game::synchronize(Common::Serializer &s, bool phase1) {
 	if (phase1) {
-		s.syncAsUint16LE(_scene._nextSceneId);
-		s.syncAsUint16LE(_scene._priorSceneId);
+		s.syncAsSint16LE(_fx);
+		s.syncAsSint16LE(_trigger);
+		s.syncAsUint16LE(_triggerSetupMode);
+		s.syncAsUint16LE(_triggerMode);
+		synchronizeString(s, _aaName);
+		s.syncAsSint16LE(_lastSave);
+
+		_scene.synchronize(s);
+		_objects.synchronize(s);
 		_visitedScenes.synchronize(s);
+		_player.synchronize(s);
+		_screenObjects.synchronize(s);
 
 		if (s.isLoading()) {
 			_sectionNumber = _scene._nextSceneId / 100;
 			_currentSectionNumber = _sectionNumber;
-			_scene._frameStartTime = _vm->_events->getFrameCounter();
-
-			_player._spritesLoaded = false;
-			_player._spritesChanged = true;
 		}
 	} else {
-		s.syncAsByte(_difficulty);
-		
-		_scene.synchronize(s);
-		_objects.synchronize(s);
-		_player.synchronize(s);
+		// Load scene specific data for the loaded scene
+		_scene._sceneLogic->synchronize(s);
 	}
 }
 

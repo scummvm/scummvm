@@ -39,6 +39,16 @@ NebularGlobals::NebularGlobals(): Globals() {
 	_timebombTimer = 0;
 }
 
+void NebularGlobals::synchronize(Common::Serializer &s) {
+	Globals::synchronize(s);
+
+	s.syncAsUint32BE(_timebombClock);
+	s.syncAsUint32LE(_timebombTimer);
+	_spriteIndexes.synchronize(s);
+	_sequenceIndexes.synchronize(s);
+}
+
+
 } // End of namespace Nebular
 
 } // End of namespace MADS

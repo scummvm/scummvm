@@ -24,6 +24,7 @@
 #include "mads/mads.h"
 #include "mads/action.h"
 #include "mads/inventory.h"
+#include "mads/resources.h"
 #include "mads/scene.h"
 #include "mads/staticres.h"
 
@@ -33,6 +34,18 @@ void ActionDetails::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_verbId);
 	s.syncAsUint16LE(_objectNameId);
 	s.syncAsUint16LE(_indirectObjectId);
+}
+
+void ActionSavedFields::synchronize(Common::Serializer &s) {
+	s.syncAsByte(_commandError);
+	s.syncAsSint16LE(_commandSource);
+	s.syncAsSint16LE(_command);
+	s.syncAsSint16LE(_mainObject);
+	s.syncAsSint16LE(_secondObject);
+	s.syncAsSint16LE(_mainObjectSource);
+	s.syncAsSint16LE(_secondObjectSource);
+	s.syncAsSint16LE(_articleNumber);
+	s.syncAsSint16LE(_lookFlag);
 }
 
 /*------------------------------------------------------------------------*/
@@ -643,6 +656,33 @@ void MADSAction::leftClick() {
 	default:
 		break;
 	}
+}
+
+void MADSAction::synchronize(Common::Serializer &s) {
+	_action.synchronize(s);
+	_activeAction.synchronize(s);
+	s.syncAsSint16LE(_articleNumber);
+	s.syncAsByte(_lookFlag);
+	s.syncAsByte(_textChanged);
+	s.syncAsSint16LE(_selectedRow);
+	s.syncAsSint16LE(_selectedAction);
+	s.syncAsSint16LE(_statusTextIndex);
+	s.syncAsSint16LE(_hotspotId);
+	_savedFields.synchronize(s);
+	synchronizeString(s, _sentence);
+
+	s.syncAsSint16LE(_verbType);
+	s.syncAsSint16LE(_prepType);
+	s.syncAsSint16LE(_commandSource);
+	s.syncAsSint16LE(_mainObjectSource);
+	s.syncAsSint16LE(_secondObject);
+	s.syncAsSint16LE(_secondObjectSource);
+	s.syncAsSint16LE(_recentCommandSource);
+	s.syncAsSint16LE(_recentCommand);
+	s.syncAsSint16LE(_interAwaiting);
+	s.syncAsSint16LE(_pickedWord);
+	s.syncAsByte(_pointEstablished);
+	s.syncAsByte(_inProgress);
 }
 
 } // End of namespace MADS

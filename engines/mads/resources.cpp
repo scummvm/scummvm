@@ -384,4 +384,45 @@ void File::openFile(const Common::String &filename) {
 		error("Could not open file - %s", filename.c_str());
 }
 
+/*------------------------------------------------------------------------*/
+
+void SynchronizedList::synchronize(Common::Serializer &s) {
+	int v;
+	int count = size();
+	s.syncAsUint16LE(count);
+
+	if (s.isSaving()) {
+		for (int idx = 0; idx < count; ++idx) {
+			v = (*this)[idx];
+			s.syncAsSint32LE(v);
+		}
+	} else {
+		clear();
+		reserve(count);
+		for (int idx = 0; idx < count; ++idx) {
+			s.syncAsSint32LE(v);
+			push_back(v);
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+void synchronizeString(Common::Serializer &s, Common::String &str) {
+	int len = str.size();
+	char c;
+	s.syncAsUint16LE(len);
+
+	if (s.isSaving()) {
+		s.syncBytes((byte *)str.c_str(), len);
+	} else {
+		str.clear();
+		for (int i = 0; i < len; ++i) {
+			s.syncAsByte(c);
+			str += c;
+		}
+	}
+}
+
+
 } // End of namespace MADS

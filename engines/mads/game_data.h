@@ -25,13 +25,14 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "mads/resources.h"
 
 namespace MADS {
 
 class MADSEngine;
 class Game;
 
-class VisitedScenes: public Common::Array<int> {
+class VisitedScenes: public SynchronizedList {
 public:
 	/**
 	 * Stores true when a previously visited scene is revisited

@@ -43,7 +43,15 @@ public:
 	int _articleNumber;
 	CursorType _cursor;
 
+	/**
+	 * Constructor
+	 */
 	DynamicHotspot();
+
+	/**
+	 * Synchronize the data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 #define DYNAMIC_HOTSPOTS_SIZE 8
@@ -67,6 +75,11 @@ public:
 	void clear();
 	void reset();
 	void refresh();
+
+	/**
+	* Synchronize the data
+	*/
+	void synchronize(Common::Serializer &s);
 };
 
 class Hotspot {

@@ -189,6 +189,11 @@ public:
 	 * @param active		Whether to set item as active or not
 	 */
 	void setActive(ScrCategory category, int descId, bool active);
+
+	/**
+	 * Synchronize the data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 class ScreenSurface : public MSurface {

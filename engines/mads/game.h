@@ -43,10 +43,6 @@ enum {
 	PLAYER_INVENTORY = 2
 };
 
-enum Difficulty {
-	DIFFICULTY_HARD = 1, DIFFICULTY_REALLY_HARD = 2, DIFFICULTY_IMPOSSIBLE = 3
-};
-
 enum KernelMode {
 	KERNEL_GAME_LOAD = 0, KERNEL_SECTION_PRELOAD = 1, KERNEL_SECTION_INIT = 2,
 	KERNEL_ROOM_PRELOAD = 3, KERNEL_ROOM_INIT = 4, KERNEL_ACTIVE_CODE = 5
@@ -92,6 +88,7 @@ protected:
 	bool _vocabEmergency;
 	bool _anyEmergency;
 	int _loadGameSlot;
+	int _lastSave;
 	Common::String _saveName;
 	Common::InSaveFile *_saveFile;
 
@@ -136,7 +133,6 @@ public:
 public:
 	Player _player;
 	ScreenObjects _screenObjects;
-	Difficulty _difficulty;
 	int _sectionNumber;
 	int _priorSectionNumber;
 	int _currentSectionNumber;

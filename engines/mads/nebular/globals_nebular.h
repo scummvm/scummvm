@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "mads/game.h"
+#include "mads/resources.h"
 
 namespace MADS {
 
@@ -281,28 +282,20 @@ enum {
 
 class NebularGlobals: public Globals {
 public:
-	Common::Array<int> _spriteIndexes;
-	Common::Array<int> _sequenceIndexes;
+	SynchronizedList _spriteIndexes;
+	SynchronizedList _sequenceIndexes;
 	
 	int _timebombClock, _timebombTimer;
-	/*
-	int _v0;
-	uint32 _frameTime;
-	int _v2;
-	int _v3;
-	int _v4;
-	int _v5;
-	int _v6;
-	uint32 _v7;
-	int _v8;
-	int _abortVal;
-	int _v84262, _v84264, _v84266, _v84268;
-	*/
 public:
 	/**
 	 * Constructor
 	 */
 	NebularGlobals();
+
+	/**
+	* Synchronize the globals data
+	*/
+	virtual void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Nebular

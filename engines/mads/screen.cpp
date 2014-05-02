@@ -529,6 +529,11 @@ void ScreenObjects::setActive(ScrCategory category, int descId, bool active) {
 	}
 }
 
+void ScreenObjects::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_selectedObject);
+	s.syncAsSint16LE(_category);
+}
+
 /*------------------------------------------------------------------------*/
 
 ScreenSurface::ScreenSurface() {

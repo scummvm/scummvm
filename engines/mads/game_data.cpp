@@ -47,22 +47,8 @@ bool VisitedScenes::exists(int sceneId) {
 }
 
 void VisitedScenes::synchronize(Common::Serializer &s) {
-	uint count = size();
-	int v = 0;
-	s.syncAsUint16LE(count);
-
-	if (s.isSaving()) {
-		for (uint i = 0; i < size(); ++i) {
-			v = (*this)[i];
-			s.syncAsSint16LE(v);
-		}
-	} else {
-		clear();
-		for (uint i = 0; i < count; ++i) {
-			s.syncAsSint16LE(v);
-			push_back(v);
-		}
-	}
+	SynchronizedList:synchronize(s);
+	s.syncAsByte(_sceneRevisited);
 }
 
 } // End of namespace MADS

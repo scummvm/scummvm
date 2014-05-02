@@ -34,6 +34,10 @@ DynamicHotspot::DynamicHotspot() {
 	_cursor = CURSOR_NONE;
 }
 
+void DynamicHotspot::synchronize(Common::Serializer &s) {
+
+}
+
 /*------------------------------------------------------------------------*/
 
 DynamicHotspots::DynamicHotspots(MADSEngine *vm) : _vm(vm) {
@@ -139,6 +143,20 @@ void DynamicHotspots::refresh() {
 				break;
 			}
 		}
+	}
+}
+
+void DynamicHotspots::synchronize(Common::Serializer &s) {
+	int count = _entries.size();
+	s.syncAsSint16LE(count);
+
+	if (s.isSaving()) {
+		for (int i = 0; i < count; ++i)
+			_entries[i].synchronize(s);
+	} else {
+		DynamicHotspot rec;
+		rec.synchronize(s);
+		_entries.push_back(rec);
 	}
 }
 

@@ -34,6 +34,10 @@ namespace Nebular {
 
 enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
 
+enum Difficulty {
+	DIFFICULTY_HARD = 1, DIFFICULTY_REALLY_HARD = 2, DIFFICULTY_IMPOSSIBLE = 3
+};
+
 enum InventoryObject { OBJ_NONE = -1, OBJ_BINOCULARS = 0,
 	OBJ_BURGER = 1, OBJ_DEAD_FISH = 2, OBJ_STUFFED_FISH = 3, OBJ_REBREATHER = 4,
 	OBJ_TIMER_MODULE = 5, OBJ_BIG_LEAVES = 6, OBJ_POISON_DARTS = 7, OBJ_PLANT_STALK = 8,
@@ -65,6 +69,7 @@ protected:
 public:
 	NebularGlobals _globals;
 	StoryMode _storyMode;
+	Difficulty _difficulty;
 
 	virtual Globals &globals() { return _globals; }
 
