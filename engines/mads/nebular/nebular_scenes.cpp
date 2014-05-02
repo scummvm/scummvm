@@ -180,13 +180,14 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 		return new Scene407(vm);
 	case 408:
 		return new Scene408(vm);
-	case 409:
-		// TODO
 	case 410:
 		return new Scene410(vm);
 	case 411:
-		// TODO
+		return new Scene411(vm);
 	case 413:
+		// TODO
+
+	case 409:
 		// TODO
 		// Fall-through for unimplemented scenes in group #4
 		error("Invalid scene %d called", scene._nextSceneId);

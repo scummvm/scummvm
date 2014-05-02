@@ -194,6 +194,42 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
+class Scene411: public Scene4xx {
+private:
+	int _curAnimationFrame;
+	int _newIngredient;
+	int _newQuantity;
+	int _resetFrame;
+	int _badThreshold;
+
+	bool _killRox;
+	bool _makeMushroomCloud;
+
+	Conversation _dialog1;
+	Conversation _dialog2;
+	Conversation _dialog3;
+	Conversation _dialog4;
+
+	void giveToRex(int object);
+	void handleDialog();
+	void handleKettleAction();
+
+	int computeQuoteAndQuantity();
+
+	bool addQuantity();
+	bool addIngredient();
+
+public:
+	Scene411(MADSEngine *vm) : Scene4xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
 } // End of namespace Nebular
 } // End of namespace MADS
 
