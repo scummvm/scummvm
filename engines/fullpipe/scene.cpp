@@ -133,7 +133,27 @@ Scene::Scene() {
 }
 
 Scene::~Scene() {
-	warning("STUB: Scene::~Scene()");
+	delete _soundList;
+	delete _shadows;
+	delete _palette;
+
+	// _faObjlist is not used
+
+	for (int i = 0; i < _messageQueueList.size(); i++)
+		delete (MessageQueue *)_messageQueueList[i];
+
+	_messageQueueList.clear();
+
+	for (int i = 0; i < _staticANIObjectList1.size(); i++)
+		delete (StaticANIObject *)_staticANIObjectList1[i];
+
+	_staticANIObjectList1.clear();
+
+	delete _libHandle;
+
+	// delete _field_BC;
+
+	free(_sceneName);
 }
 
 bool Scene::load(MfcArchive &file) {
