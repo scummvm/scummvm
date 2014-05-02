@@ -216,8 +216,8 @@ void Node::update() {
 		// Alloc the target surface if necessary
 		if (!face->_finalBitmap) {
 			face->_finalBitmap = new Graphics::Surface();
-			face->_finalBitmap->copyFrom(*face->_bitmap);
 		}
+		face->_finalBitmap->copyFrom(*face->_bitmap);
 
 		if (effectsForFace == 1) {
 			_effects[0]->applyForFace(faceId, face->_bitmap, face->_finalBitmap);
