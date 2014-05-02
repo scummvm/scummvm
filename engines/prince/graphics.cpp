@@ -35,8 +35,8 @@ GraphicsMan::GraphicsMan(PrinceEngine *vm)
 	initGraphics(640, 480, true);
 	_frontScreen = new Graphics::Surface();
 	_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
-	_shadowTable70 = new byte[256 * 3];
-	_shadowTable50 = new byte[256 * 3];
+	_shadowTable70 = new byte[256];
+	_shadowTable50 = new byte[256];
 }
 
 GraphicsMan::~GraphicsMan() {
@@ -89,15 +89,57 @@ void GraphicsMan::drawTransparent(uint16 posX, uint16 posY, const Graphics::Surf
 }
 
 void GraphicsMan::makeShadowTable(int brightness, byte *shadowPallete) {
+	int32 redFirstOrg, greenFirstOrg, blueFirstOrg;
+	int32 redSecondOrg, greenSecondOrg, blueSecondOrg;
+	int32 redNew, greenNew, blueNew;
+
+	int32 sumOfColorValues;
+	int32 bigValue;
+	int32 currColor;
+
 	int shadow =  brightness * 256 / 100;
-	byte *orginalPallete = new byte[256 * 3];
-	_vm->_system->getPaletteManager()->grabPalette(orginalPallete, 0, 256);
-	Common::MemoryReadStream readS(orginalPallete, 256 * 3);
-	Common::MemoryWriteStream writeS(shadowPallete, 256 * 3);
-	for(int i = 0; i < 256 * 3; i++) {
-		writeS.writeByte(readS.readByte() * shadow / 256);
+	byte *originalPallete = new byte[256 * 3];
+
+	_vm->_system->getPaletteManager()->grabPalette(originalPallete, 0, 256);
+	Common::MemoryReadStream readFirstStream(originalPallete, 256 * 3);
+	Common::MemoryWriteStream writeStream(shadowPallete, 256);
+
+	for (int i = 0; i < 256; i++) {
+		redFirstOrg = readFirstStream.readByte() * shadow / 256;
+		greenFirstOrg = readFirstStream.readByte() * shadow / 256;
+		blueFirstOrg = readFirstStream.readByte() * shadow / 256;
+
+		currColor = 0;
+		Common::MemoryReadStream readSecondStream(originalPallete, 256 * 3);
+		bigValue = 999999999; // infinity
+
+		for (int j = 0; j < 256; j++) {
+			redSecondOrg = readSecondStream.readByte();
+			redNew = redFirstOrg - redSecondOrg;
+			redNew = redNew * redNew;
+
+			greenSecondOrg = readSecondStream.readByte();
+			greenNew = greenFirstOrg - greenSecondOrg;
+			greenNew = greenNew * greenNew;
+
+			blueSecondOrg = readSecondStream.readByte();
+			blueNew = blueFirstOrg - blueSecondOrg;
+			blueNew = blueNew * blueNew;
+
+			sumOfColorValues = redNew + greenNew + blueNew;
+
+			if (sumOfColorValues < bigValue) {
+				bigValue = sumOfColorValues;
+				currColor = j;
+			}
+
+			if (sumOfColorValues == 0) {
+				break;
+			}
+		}
+		writeStream.writeByte(currColor);
 	}
-	delete[] orginalPallete;
+	delete[] originalPallete;
 }
 
 }
