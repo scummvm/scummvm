@@ -226,7 +226,7 @@ void MADSAction::set() {
 					_statusText += kArticleList[articleNum];
 				}
 			} else if ((_articleNumber == VERB_LOOK) || (_vm->getGameID() != GType_RexNebular) ||
-				(scene._vocabStrings[_action._indirectObjectId] != kFenceStr)) {
+				(_action._indirectObjectId >= 0 && scene._vocabStrings[_action._indirectObjectId] != kFenceStr)) {
 				// Write out the article
 				_statusText += kArticleList[_articleNumber];
 			} else {
