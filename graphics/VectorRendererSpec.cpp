@@ -888,7 +888,7 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) {
 	if (clipping.isEmpty() || clipping.contains(r)) {
-		blitAlphaBitmap(source, r);
+		blitKeyBitmap(source, r);
 		return;
 	}
 

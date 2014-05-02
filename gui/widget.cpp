@@ -702,6 +702,25 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 	_gfx.copyFrom(*gfx);
 }
 
+void GraphicsWidget::setAGfx(const Graphics::TransparentSurface *gfx) {
+	_agfx.free();
+
+	if (!gfx || !gfx->getPixels())
+		return;
+
+	if (gfx->format.bytesPerPixel == 1) {
+		warning("GraphicsWidget::setGfx got paletted surface passed");
+		return;
+	}
+
+	if (gfx->w > _w || gfx->h > _h) {
+		warning("GraphicsWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
+		return;
+	}
+
+	_agfx.copyFrom(*gfx);
+}
+
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 	if (w == -1)
 		w = _w;
@@ -728,6 +747,18 @@ void GraphicsWidget::drawWidget() {
 		const int y = _y + (_h - _gfx.h) / 2;
 
 		g_gui.theme()->drawSurfaceClip(Common::Rect(x, y, x + _gfx.w,  y + _gfx.h), getBossClipRect(), _gfx, _state, _alpha, _transparency);
+	} else if (_agfx.getPixels()) {
+		// Check whether the set up surface needs to be converted to the GUI
+		// color format.
+		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
+		if (_agfx.format != requiredFormat) {
+			_agfx.convertToInPlace(requiredFormat);
+		}
+
+		const int x = _x + (_w - _agfx.w) / 2;
+		const int y = _y + (_h - _agfx.h) / 2;
+
+		g_gui.theme()->drawASurface(Common::Rect(x, y, x + _agfx.w,  y + _agfx.h), _agfx, _state, _alpha, _transparency);
 	}
 }
 
