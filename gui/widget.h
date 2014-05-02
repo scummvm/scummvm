@@ -80,6 +80,15 @@ enum {
 	kPressedButtonTime = 200
 };
 
+enum {
+	kPicButtonStateEnabled = 0,
+	kPicButtonHighlight = 1,
+	kPicButtonStateDisabled = 2,
+	kPicButtonStatePressed = 3,
+
+	kPicButtonStateMax = 3
+};
+
 /* Widget */
 class Widget : public GuiObject {
 	friend class Dialog;
@@ -221,8 +230,8 @@ public:
 	PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 	~PicButtonWidget();
 
-	void setGfx(const Graphics::Surface *gfx);
-	void setGfx(int w, int h, int r, int g, int b);
+	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled);
+	void setGfx(int w, int h, int r, int g, int b, int statenum = kPicButtonStateEnabled);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
 	void useThemeTransparency(bool enable) { _transparency = enable; }
@@ -231,7 +240,7 @@ public:
 protected:
 	void drawWidget();
 
-	Graphics::Surface _gfx;
+	Graphics::Surface _gfx[kPicButtonStateMax + 1];
 	int _alpha;
 	bool _transparency;
 	bool _showButton;

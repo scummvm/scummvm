@@ -398,7 +398,7 @@ void ButtonWidget::setUnpressedState() {
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, "", tooltip, cmd, hotkey),
-	  _gfx(), _alpha(256), _transparency(false), _showButton(true) {
+	  _alpha(256), _transparency(false), _showButton(true) {
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
@@ -406,17 +406,18 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, co
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, name, "", tooltip, cmd, hotkey),
-	  _gfx(), _alpha(256), _transparency(false), _showButton(true) {
+	  _alpha(256), _transparency(false), _showButton(true) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 PicButtonWidget::~PicButtonWidget() {
-	_gfx.free();
+	for (int i = 0; i < kPicButtonStateMax + 1; i++)
+		_gfx[i].free();
 }
 
-void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
-	_gfx.free();
+void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
+	_gfx[statenum].free();
 
 	if (!gfx || !gfx->getPixels())
 		return;
@@ -432,10 +433,10 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
 		return;
 	}
 
-	_gfx.copyFrom(*gfx);
+	_gfx[statenum].copyFrom(*gfx);
 }
 
-void PicButtonWidget::setGfx(int w, int h, int r, int g, int b) {
+void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
 	if (w == -1)
 		w = _w;
 	if (h == -1)
@@ -443,27 +444,41 @@ void PicButtonWidget::setGfx(int w, int h, int r, int g, int b) {
 
 	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
 
-	_gfx.free();
-	_gfx.create(w, h, requiredFormat);
-	_gfx.fillRect(Common::Rect(0, 0, w, h), _gfx.format.RGBToColor(r, g, b));
+	_gfx[statenum].free();
+	_gfx[statenum].create(w, h, requiredFormat);
+	_gfx[statenum].fillRect(Common::Rect(0, 0, w, h), _gfx[statenum].format.RGBToColor(r, g, b));
 }
 
 void PicButtonWidget::drawWidget() {
 	if (_showButton)
 		g_gui.theme()->drawButtonClip(Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(), "", _state, getFlags());
 
-	if (_gfx.getPixels()) {
+	Graphics::Surface *gfx;
+
+	if (_state == ThemeEngine::kStateHighlight)
+		gfx = &_gfx[kPicButtonHighlight];
+	else if (_state == ThemeEngine::kStateDisabled)
+		gfx = &_gfx[kPicButtonStateDisabled];
+	else if (_state == ThemeEngine::kStatePressed)
+		gfx = &_gfx[kPicButtonStatePressed];
+	else
+		gfx = &_gfx[kPicButtonStateEnabled];
+
+	if (!gfx)
+		gfx = &_gfx[kPicButtonStateEnabled];
+
+	if (gfx->getPixels()) {
 		// Check whether the set up surface needs to be converted to the GUI
 		// color format.
 		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
-		if (_gfx.format != requiredFormat) {
-			_gfx.convertToInPlace(requiredFormat);
+		if (gfx->format != requiredFormat) {
+			gfx->convertToInPlace(requiredFormat);
 		}
 
-		const int x = _x + (_w - _gfx.w) / 2;
-		const int y = _y + (_h - _gfx.h) / 2;
+		const int x = _x + (_w - gfx->w) / 2;
+		const int y = _y + (_h - gfx->h) / 2;
 
-		g_gui.theme()->drawSurfaceClip(Common::Rect(x, y, x + _gfx.w,  y + _gfx.h), getBossClipRect(), _gfx, _state, _alpha, _transparency);
+		g_gui.theme()->drawSurfaceClip(Common::Rect(x, y, x + gfx->w,  y + gfx->h), getBossClipRect(), *gfx, _state, _alpha, _transparency);
 	}
 }
 
