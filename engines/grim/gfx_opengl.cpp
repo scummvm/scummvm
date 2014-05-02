@@ -101,6 +101,12 @@ GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
 		_dimFragProgram(0), _maxLights(0), _storedDisplay(NULL), 
 		_emergFont(0), _alpha(1.f) {
 	g_driver = this;
+	// GL_LEQUAL as glDepthFucn ensures that subsequent drawing attempts for
+	// the same triangles are not ignored by the depth test.
+	// That's necessary for EMI where some models have multiple faces which
+	// refer to the same vertices. The first face is usually using the
+	// color map and the following are using textures.
+	_depthFunc = (g_grim->getGameType() == GType_MONKEY4) ? GL_LEQUAL : GL_LESS;
 }
 
 GfxOpenGL::~GfxOpenGL() {
@@ -610,7 +616,7 @@ void GfxOpenGL::getShadowColor(byte *r, byte *g, byte *b) {
 void GfxOpenGL::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(_depthFunc);
 }
 
 void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) {
@@ -1076,7 +1082,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 		glEnable(GL_DEPTH_TEST);
 	} else {
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-		glDepthFunc(GL_LESS);
+		glDepthFunc(_depthFunc);
 #ifdef GL_ARB_fragment_program
 		glDisable(GL_FRAGMENT_PROGRAM_ARB);
 #endif
@@ -1367,7 +1373,7 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(_depthFunc);
 }
 
 void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {

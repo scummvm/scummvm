@@ -138,6 +138,7 @@ private:
 	GLint _maxLights;
 	float _alpha;
 	const Actor *_currentActor;
+	GLenum _depthFunc;
 };
 
 } // end of namespace Grim
