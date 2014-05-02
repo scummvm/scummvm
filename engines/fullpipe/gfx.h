@@ -154,7 +154,7 @@ class GameObject : public CObject {
 class PictureObject : public GameObject {
   public:
 	Picture *_picture;
-	PtrList *_pictureObject2List;
+	Common::Array<GameObject *> *_pictureObject2List;
 	int _ox2;
 	int _oy2;
 

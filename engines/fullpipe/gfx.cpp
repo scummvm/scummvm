@@ -192,7 +192,7 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 
 	_picture->load(file);
 
-	_pictureObject2List = new PtrList();
+	_pictureObject2List = new Common::Array<GameObject *>;
 
 	int count = file.readUint16LE();
 
