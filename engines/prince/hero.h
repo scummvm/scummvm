@@ -39,6 +39,8 @@ public:
 	static const int16 kMaxPicWidth = 1280;
 	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
 
+	static const uint8 kShadowColor = 191;
+
 	enum State {
 		STAY = 0,
 		TURN = 1,
@@ -108,6 +110,7 @@ public:
 	void checkNak();
 	Graphics::Surface *zoomSprite(Graphics::Surface *heroFrame);
 	void showHeroAnimFrame();
+	Graphics::Surface *showHeroShadow(Graphics::Surface *heroFrame);
 	void setShadowScale(int32 shadowScale);
 	void specialAnim();
 	void getState();
@@ -160,7 +163,7 @@ public:
 	Animation *_shadowBitmap;
 	
 	uint32 _moveDelay;
-	uint32 _shadMinus; //??
+	uint32 _shadMinus;
 };
 
 }

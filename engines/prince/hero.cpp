@@ -31,7 +31,7 @@
 namespace Prince {
 
 Hero::Hero() : _number(0), _visible(false), _state(MOVE), _middleX(0), _middleY(0)
-	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(1), _moveSetType(0)
+	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0)
 	, _lastDirection(DOWN), _destDirection(DOWN), _talkTime(0), _boredomTime(0), _phase(0)
 	, _specAnim(0), _drawX(0), _drawY(0), _randomSource("prince"), _zoomFactor(0), _scaleValue(0)
 	, _shadZoomFactor(0), _shadScaleValue(0)
@@ -48,6 +48,8 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 	if (animSetNr > sizeof(heroSetTable)) {
 		return false;
 	}
+
+	_shadMinus = heroSetBack[animSetNr];
 
 	for (uint32 i = 0; i < _moveSet.size(); ++i) {
 		delete _moveSet[i];
@@ -188,7 +190,7 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 				}
 			}
 			// loop_lin:
-			for (int i = 0; i < scaledXSize; i++) {
+			for (int j = 0; j < scaledXSize; j++) {
 				sprZoomX -= 100;
 				if (sprZoomX >= 0) {
 					// its_all_r
@@ -196,7 +198,7 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 					xDest++;
 				} else {
 					sprZoomX += _scaleValue;
-					i--;
+					j--;
 				}
 				xSource++;
 			}
@@ -246,6 +248,35 @@ void Hero::countDrawPosition() {
 	}
 }
 
+Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
+	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
+	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
+
+	Graphics::Surface *makeShadow = new Graphics::Surface();
+	makeShadow->create(frameXSize, frameYSize, Graphics::PixelFormat::createFormatCLUT8());
+
+	//make_shadow:
+	for (int y = 0; y < frameYSize; y++) {
+		//ms_loop:
+		for (int x = 0; x < frameXSize; x++) {
+			byte pixel = *(byte*) makeShadow->getBasePtr(x, y);
+			if (pixel == -1) {
+				*(byte*)(makeShadow->getBasePtr(x, y)) = kShadowColor;
+			} else {
+				memcpy(makeShadow->getBasePtr(x, y), heroFrame->getBasePtr(x, y), 1);
+				//*(byte*)(makeShadow->getBasePtr(x, y)) = pixel;
+			}
+		}
+	}
+	return makeShadow;
+	// TODO
+	/*
+	int scaledX = getScaledValue(frameXSize);
+	int drawX = _middleX - scaledX / 2; // just _drawX
+	int DN_ECX5070 = _middleY - _shadMinus;
+	*/
+}
+
 void Hero::showHeroAnimFrame() {
 	if (_phase < _moveSet[_moveSetType]->getFrameCount() - 1) {
 		_phase++;
@@ -253,6 +284,7 @@ void Hero::showHeroAnimFrame() {
 		_phase = 0;
 	}
 	countDrawPosition();
+	//showHeroShadow();
 	//debug("_drawX: %d", _drawX);
 	//debug("_drawY: %d", _drawY);
 	//debug("_middleX: %d", _middleX);

@@ -150,6 +150,7 @@ private:
 	void showTexts();
 	void init();
 	void showLogo();
+	void makeShadowTable(int brightness);
 
 	uint32 getTextWidth(const char *s);
 	void debugEngine(const char *s, ...);

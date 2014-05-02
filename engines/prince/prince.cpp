@@ -290,9 +290,9 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	_mainHero->_lightX = _script->getLightX(_locationNr);
 	_mainHero->_lightY = _script->getLightY(_locationNr);
+	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 	debug("lightX: %d", _mainHero->_lightX);
 	debug("lightY: %d", _mainHero->_lightY);
-	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	_mobList.clear();
 	Resource::loadResource(_mobList, "mob.lst", false);
@@ -305,6 +305,9 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	_animList.clear();
 	Resource::loadResource(_animList, "anim.lst", false);
+
+	_graph->makeShadowTable(70, _graph->_shadowTable70);
+	_graph->makeShadowTable(50, _graph->_shadowTable50);
 
 	return true;
 }

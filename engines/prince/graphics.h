@@ -41,6 +41,7 @@ public:
 	void change();
 
 	void setPalette(const byte *palette);
+	void makeShadowTable(int brightness, byte *shadowTable);
 
 	void draw(uint16 x, uint16 y, const Graphics::Surface *s);
 	void drawTransparent(uint16 x, uint16 y, const Graphics::Surface *s);
@@ -48,6 +49,9 @@ public:
 	Graphics::Surface *_frontScreen;
 	Graphics::Surface *_backScreen;
 	const Graphics::Surface *_roomBackground;
+
+	byte *_shadowTable70;
+	byte *_shadowTable50;
 
 private:
 

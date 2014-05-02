@@ -26,6 +26,8 @@
 
 #include "graphics/palette.h"
 
+#include "common/memstream.h"
+
 namespace Prince {
 
 GraphicsMan::GraphicsMan(PrinceEngine *vm) 
@@ -33,11 +35,15 @@ GraphicsMan::GraphicsMan(PrinceEngine *vm)
 	initGraphics(640, 480, true);
 	_frontScreen = new Graphics::Surface();
 	_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+	_shadowTable70 = new byte[256 * 3];
+	_shadowTable50 = new byte[256 * 3];
 }
 
 GraphicsMan::~GraphicsMan() {
 	_frontScreen->free();
 	delete _frontScreen;
+	delete[] _shadowTable70;
+	delete[] _shadowTable50;
 }
 
 void GraphicsMan::update() {
@@ -80,6 +86,18 @@ void GraphicsMan::drawTransparent(uint16 posX, uint16 posY, const Graphics::Surf
 		}
 	}
    change();
+}
+
+void GraphicsMan::makeShadowTable(int brightness, byte *shadowPallete) {
+	int shadow =  brightness * 256 / 100;
+	byte *orginalPallete = new byte[256 * 3];
+	_vm->_system->getPaletteManager()->grabPalette(orginalPallete, 0, 256);
+	Common::MemoryReadStream readS(orginalPallete, 256 * 3);
+	Common::MemoryWriteStream writeS(shadowPallete, 256 * 3);
+	for(int i = 0; i < 256 * 3; i++) {
+		writeS.writeByte(readS.readByte() * shadow / 256);
+	}
+	delete[] orginalPallete;
 }
 
 }

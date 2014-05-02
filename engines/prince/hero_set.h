@@ -24,6 +24,7 @@ namespace Prince {
 
 typedef const char *HeroSetAnimNames[26];
 
+const int heroSetBack[7] = { 0, 0, 10, 0, 6, 0, 0 };
 extern const HeroSetAnimNames *heroSetTable[7];
 
 }
