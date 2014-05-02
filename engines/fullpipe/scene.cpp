@@ -140,7 +140,7 @@ Scene::~Scene() {
 	// _faObjlist is not used
 
 	for (int i = 0; i < _messageQueueList.size(); i++)
-		delete (MessageQueue *)_messageQueueList[i];
+		delete _messageQueueList[i];
 
 	_messageQueueList.clear();
 
@@ -388,16 +388,16 @@ void Scene::deletePictureObject(PictureObject *obj) {
 
 MessageQueue *Scene::getMessageQueueById(int messageId) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
-		if (((MessageQueue *)_messageQueueList[i])->_dataId == messageId)
-			return (MessageQueue *)_messageQueueList[i];
+		if (_messageQueueList[i]->_dataId == messageId)
+			return _messageQueueList[i];
 
 	return 0;
 }
 
 MessageQueue *Scene::getMessageQueueByName(char *name) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
-		if (!strcmp(((MessageQueue *)_messageQueueList[i])->_queueName, name))
-			return (MessageQueue *)_messageQueueList[i];
+		if (!strcmp(_messageQueueList[i]->_queueName, name))
+			return _messageQueueList[i];
 
 	return 0;
 }
