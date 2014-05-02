@@ -141,7 +141,8 @@ class GameObject : public CObject {
 
 	virtual bool load(MfcArchive &file);
 	void setOXY(int x, int y);
-	void renumPictures(PtrList *lst);
+	void renumPictures(Common::Array<StaticANIObject *> *lst);
+	void renumPictures(Common::Array<PictureObject *> *lst);
 	void setFlags(int16 flags) { _flags = flags; }
 	void clearFlags() { _flags = 0; }
 	const char *getName() { return _objectName; }
@@ -178,7 +179,7 @@ class PictureObject : public GameObject {
 
 class Background : public CObject {
   public:
-	PtrList _picObjList;
+	Common::Array<PictureObject *> _picObjList;
 
 	char *_bgname;
 	int _x;

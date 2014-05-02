@@ -590,10 +590,8 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	scene->setPictureObjectsFlag4();
 
-	for (PtrList::iterator s = scene->_staticANIObjectList1.begin(); s != scene->_staticANIObjectList1.end(); ++s) {
-		StaticANIObject *o = (StaticANIObject *)*s;
-		o->setFlags(o->_flags & 0xFE7F);
-	}
+	for (uint i = 0; i < scene->_staticANIObjectList1.size(); i++)
+		scene->_staticANIObjectList1[i]->_flags &= 0xFE7F;
 
 	PictureObject *p = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);
 	p->setFlags(p->_flags & 0xFFFB);

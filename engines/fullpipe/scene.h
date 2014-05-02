@@ -31,8 +31,8 @@ class MessageQueue;
 
 class Scene : public Background {
  public:
-	PtrList _staticANIObjectList1;
-	PtrList _staticANIObjectList2;
+	Common::Array<StaticANIObject *> _staticANIObjectList1;
+	Common::Array<StaticANIObject *> _staticANIObjectList2;
 	PtrList _messageQueueList;
 	PtrList _faObjectList;
 	Shadows *_shadows;
@@ -82,7 +82,8 @@ class Scene : public Background {
 
   private:
 	static bool compareObjPriority(const void *p1, const void *p2);
-	void objectList_sortByPriority(PtrList &list, bool skipFirst = false);
+	void objectList_sortByPriority(Common::Array<StaticANIObject *> &list, bool skipFirst = false);
+	void objectList_sortByPriority(Common::Array<PictureObject *> &list, bool skipFirst = false);
 };
 
 class SceneTag : public CObject {
