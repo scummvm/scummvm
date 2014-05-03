@@ -298,8 +298,12 @@ void FullpipeEngine::startSoundStream1(char *trackName) {
 }
 
 void FullpipeEngine::stopAllSounds() {
-	// TODO: Differences from stopAllSoundStreams()
-	_mixer->stopAll();
+	// _mixer->stopAll();
+
+	for (int i = 0; i < _currSoundListCount; i++)
+		for (int j = 0; i < _currSoundList1[i]->getCount(); j++) {
+			_currSoundList1[i]->getSoundByIndex(j)->stop();
+		}
 }
 
 void FullpipeEngine::toggleMute() {
