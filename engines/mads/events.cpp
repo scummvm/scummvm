@@ -28,9 +28,6 @@
 #include "mads/events.h"
 #include "mads/scene.h"
 
-#define GAME_FRAME_RATE 50
-#define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE) 
-
 namespace MADS {
 
 EventsManager::EventsManager(MADSEngine *vm) {

@@ -122,13 +122,15 @@ int MADSEngine::hypotenuse(int xv, int yv) {
 }
 
 bool MADSEngine::canLoadGameStateCurrently() {
-	return !_game->_winStatus && !_game->globals()[5]
-		&& _dialogs->_pendingDialog == DIALOG_NONE;
+	return !_game->_winStatus && !_game->globals()[5] 
+		&& _dialogs->_pendingDialog == DIALOG_NONE
+		&& _events->_cursorId == CURSOR_ARROW;
 }
 
 bool MADSEngine::canSaveGameStateCurrently() {
 	return !_game->_winStatus && !_game->globals()[5]
-		&& _dialogs->_pendingDialog == DIALOG_NONE;
+		&& _dialogs->_pendingDialog == DIALOG_NONE
+		&& _events->_cursorId == CURSOR_ARROW;
 }
 
 /**

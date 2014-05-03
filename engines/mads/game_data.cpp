@@ -47,7 +47,7 @@ bool VisitedScenes::exists(int sceneId) {
 }
 
 void VisitedScenes::synchronize(Common::Serializer &s) {
-	SynchronizedList:synchronize(s);
+	SynchronizedList::synchronize(s);
 	s.syncAsByte(_sceneRevisited);
 }
 

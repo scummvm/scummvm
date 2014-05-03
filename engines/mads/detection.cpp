@@ -31,6 +31,7 @@
 #include "common/system.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
+#include "mads/events.h"
 #include "mads/game.h"
 
 #define MAX_SAVES 99
@@ -168,10 +169,16 @@ SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int s
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (f) {
+		MADS::MADSSavegameHeader header;
+		MADS::Game::readSavegameHeader(f, header);
 		delete f;
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, "");
+		SaveStateDescriptor desc(slot, header._saveName);
+		desc.setThumbnail(header._thumbnail);
+		desc.setSaveDate(header._year, header._month, header._day);
+		desc.setSaveTime(header._hour, header._minute);
+		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
 
 		return desc;
 	}

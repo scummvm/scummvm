@@ -519,7 +519,7 @@ const char *const SAVEGAME_STR = "MADS";
 
 bool Game::readSavegameHeader(Common::InSaveFile *in, MADSSavegameHeader &header) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
-	header._thumbnail = NULL;
+	header._thumbnail = nullptr;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
@@ -558,7 +558,8 @@ void Game::writeSavegameHeader(Common::OutSaveFile *out, MADSSavegameHeader &hea
 	out->writeByte(MADS_SAVEGAME_VERSION);
 
 	// Write savegame name
-	out->write(header._saveName.c_str(), header._saveName.size() + 1);
+	out->write(header._saveName.c_str(), header._saveName.size());
+	out->writeByte('\0');
 
 	// Get the active palette
 	uint8 thumbPalette[256 * 3];
