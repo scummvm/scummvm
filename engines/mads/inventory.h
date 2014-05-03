@@ -60,7 +60,7 @@ private:
 	MADSEngine *_vm;
 
 public:
-	Common::Array<int> _inventoryList;
+	SynchronizedList _inventoryList;
 
 	/** 
 	 * Constructor

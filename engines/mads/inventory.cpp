@@ -47,10 +47,22 @@ void InventoryObject::synchronize(Common::Serializer &s) {
 
 void InventoryObjects::load() {
 	File f("*OBJECTS.DAT");
+	int count = f.readUint16LE();
 	Common::Serializer s(&f, nullptr);
 
 	// Load the objects data
-	synchronize(s);
+	reserve(count);
+	for (int i = 0; i < count; ++i) {
+		InventoryObject obj;
+		obj.synchronize(s);
+		push_back(obj);
+
+		// If it's for the player's inventory, add the index to the inventory list
+		if (obj._roomNumber == PLAYER_INVENTORY) {
+			_inventoryList.push_back(i);
+			assert(_inventoryList.size() <= 32);
+		}
+	}
 }
 
 void InventoryObjects::synchronize(Common::Serializer &s) {
@@ -61,23 +73,22 @@ void InventoryObjects::synchronize(Common::Serializer &s) {
 		// Store the data for each object in the inventory lsit
 		for (int idx = 0; idx < count; ++idx)
 			(*this)[idx].synchronize(s);
+
+		// Synchronize the player's inventory
+		_inventoryList.synchronize(s);
 	} else {
 		clear();
-		_inventoryList.clear();
-		reserve(count);
 
 		// Read in each object
+		reserve(count);
 		for (int i = 0; i < count; ++i) {
 			InventoryObject obj;
 			obj.synchronize(s);
 			push_back(obj);
-
-			// If it's for the player's inventory, add the index to the inventory list
-			if (obj._roomNumber == PLAYER_INVENTORY) {
-				_inventoryList.push_back(i);
-				assert(_inventoryList.size() <= 32);
-			}
 		}
+
+		// Synchronize the player's inventory
+		_inventoryList.synchronize(s);
 	}
 }
 
