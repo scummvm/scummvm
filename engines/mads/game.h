@@ -87,7 +87,6 @@ protected:
 	bool _quoteEmergency;
 	bool _vocabEmergency;
 	bool _anyEmergency;
-	int _loadGameSlot;
 	int _lastSave;
 	Common::String _saveName;
 	Common::InSaveFile *_saveFile;
@@ -149,6 +148,7 @@ public:
 	Common::String _aaName;
 	int _winStatus;
 	int _widepipeCtr;
+	int _loadGameSlot;
 public:
 	virtual ~Game();
 

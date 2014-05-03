@@ -690,6 +690,7 @@ void Player::releasePlayerSprites() {
 		} while (--spriteEnd >= _spritesStart);
 	}
 
+	_numSprites = 0;
 	_spritesLoaded = false;
 	_spritesChanged = true;
 }
@@ -722,7 +723,6 @@ void Player::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_visible);
 	s.syncAsByte(_priorVisible);
 
-	s.syncAsSint16LE(_spritesStart);
 	for (int i = 0; i < 8; ++i)
 		s.syncAsByte(_spriteSetsPresent[i]);
 
@@ -751,7 +751,6 @@ void Player::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_frameCount);
 	synchronizeString(s, _spritesPrefix);
 	s.syncAsUint32LE(_priorTimer);
-	s.syncAsSint16LE(_numSprites);
 	s.syncAsByte(_loadsFirst);
 	s.syncAsByte(_loadedFirst);
 	s.syncAsByte(_spritesLoaded);

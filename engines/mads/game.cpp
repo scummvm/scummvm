@@ -273,6 +273,7 @@ void Game::sectionLoop() {
 			Common::Serializer s(_saveFile, nullptr);
 			synchronize(s, false);
 			delete _saveFile;
+			_saveFile = nullptr;
 		}
 
 		// Set player data
@@ -464,14 +465,6 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 		_visitedScenes.synchronize(s);
 		_player.synchronize(s);
 		_screenObjects.synchronize(s);
-
-		if (s.isLoading()) {
-			_scene._userInterface._selectedInvIndex = -1;
-			_currentSectionNumber = -2;
-			_scene._currentSceneId = -2;
-			_sectionNumber = _scene._nextSceneId / 100;
-			_scene._frameStartTime = _vm->_events->getFrameCounter();
-		}
 	} else {
 		// Load scene specific data for the loaded scene
 		_scene._sceneLogic->synchronize(s);
@@ -494,8 +487,18 @@ void Game::loadGame(int slotNumber) {
 		delete header._thumbnail;
 	}
 
-	// Load the initial data such as what scene needs to be loaded up
+	// Load most of the savegame data with the exception of scene specific info
 	synchronize(s, true);
+
+	// Set up section/scene and other initial states for post-load
+	_scene._userInterface._selectedInvIndex = -1;
+	_currentSectionNumber = -2;
+	_scene._currentSceneId = -2;
+	_sectionNumber = _scene._nextSceneId / 100;
+	_scene._frameStartTime = _vm->_events->getFrameCounter();
+
+	_player._spritesLoaded = false;
+	_player._spritesChanged = true;
 }
 
 void Game::saveGame(int slotNumber, const Common::String &saveName) {

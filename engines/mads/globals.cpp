@@ -31,9 +31,9 @@ void Globals::reset() {
 }
 
 void Globals::synchronize(Common::Serializer &s) {
-	int count = 0;
-	int16 v;
+	int count = _data.size();
 	s.syncAsUint16LE(count);
+	int16 v;
 
 	if (s.isSaving()) {
 		for (int idx = 0; idx < count; ++idx) {

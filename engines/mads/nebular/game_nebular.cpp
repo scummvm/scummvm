@@ -748,7 +748,7 @@ void GameNebular::step() {
 void GameNebular::synchronize(Common::Serializer &s, bool phase1) {
 	Game::synchronize(s, phase1);
 
-	if (!phase1) {
+	if (phase1) {
 		_globals.synchronize(s);
 		s.syncAsByte(_storyMode);
 		s.syncAsByte(_difficulty);
