@@ -491,12 +491,15 @@ void Game::loadGame(int slotNumber) {
 	synchronize(s, true);
 
 	// Set up section/scene and other initial states for post-load
-	_scene._userInterface._selectedInvIndex = -1;
 	_currentSectionNumber = -2;
 	_scene._currentSceneId = -2;
 	_sectionNumber = _scene._nextSceneId / 100;
 	_scene._frameStartTime = _vm->_events->getFrameCounter();
 
+	// Default the selected inventory item to the first one, if the player has any
+	_scene._userInterface._selectedInvIndex = _objects._inventoryList.size() > 0 ? 0 : -1;
+
+	// Set player sprites sets flags
 	_player._spritesLoaded = false;
 	_player._spritesChanged = true;
 }
