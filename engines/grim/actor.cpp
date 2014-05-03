@@ -439,10 +439,6 @@ bool Actor::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-void Actor::setYaw(const Math::Angle &yawParam) {
-	_yaw = yawParam;
-}
-
 void Actor::setRot(const Math::Vector3d &pos) {
 	Math::Angle y, p, r;
 	calculateOrientation(pos, &p, &y, &r);
@@ -451,7 +447,7 @@ void Actor::setRot(const Math::Vector3d &pos) {
 
 void Actor::setRot(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_pitch = pitchParam;
-	setYaw(yawParam);
+	_yaw = yawParam;
 	_moveYaw = _yaw;
 	_roll = rollParam;
 	_turning = false;

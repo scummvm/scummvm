@@ -643,9 +643,6 @@ private:
 	int _sayLineText;
 	bool _mustPlaceText;
 
-	// Validate a yaw angle then set it appropriately
-	void setYaw(const Math::Angle &yaw);
-
 	ActionChore *getTurnChore(int dir) {
 		return (dir > 0 ? &_leftTurnChore : &_rightTurnChore);
 	}
