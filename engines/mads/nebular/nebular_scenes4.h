@@ -230,6 +230,22 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
+class Scene413: public Scene4xx {
+private:
+	int _rexDeath;
+	int _canMove;
+
+public:
+	Scene413(MADSEngine *vm) : Scene4xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
 } // End of namespace Nebular
 } // End of namespace MADS
 
