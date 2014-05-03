@@ -383,6 +383,7 @@ void ShaderRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
+  glDepthMask(GL_FALSE);
 
   glBindTexture(GL_TEXTURE_2D, glTexture->id);
 
@@ -405,6 +406,7 @@ void ShaderRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
   glDisable(GL_BLEND);
+  glDepthMask(GL_TRUE);
 }
 
 Graphics::Surface *ShaderRenderer::getScreenshot() {

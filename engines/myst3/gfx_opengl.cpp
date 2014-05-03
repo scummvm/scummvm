@@ -309,6 +309,7 @@ void OpenGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
 
 	glBindTexture(GL_TEXTURE_2D, glTexture->id);
 
@@ -327,6 +328,7 @@ void OpenGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 	glEnd();
 
 	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
 }
 
 Graphics::Surface *OpenGLRenderer::getScreenshot() {

@@ -526,7 +526,7 @@ void Myst3Engine::drawFrame() {
 		_node->draw();
 	}
 
-	for (uint i = 0; i < _movies.size(); i++) {
+	for (int i = _movies.size() - 1; i >= 0 ; i--) {
 		_movies[i]->update();
 		_movies[i]->draw();
 	}
@@ -557,7 +557,7 @@ void Myst3Engine::drawFrame() {
 		_inventory->draw();
 
 	// Draw overlay 2D movies
-	for (uint i = 0; i < _movies.size(); i++) {
+	for (int i = _movies.size() - 1; i >= 0 ; i--) {
 		_movies[i]->drawOverlay();
 	}
 
