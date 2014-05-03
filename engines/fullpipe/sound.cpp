@@ -451,7 +451,7 @@ void FullpipeEngine::updateSoundVolume() {
 void FullpipeEngine::setMusicVolume(int vol) {
 	_musicVolume = vol;
 
-	debug(3, "STUB FullpipeEngine::setMusicVolume()");
+	g_fp->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
 }
 
 } // End of namespace Fullpipe
