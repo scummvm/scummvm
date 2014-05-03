@@ -100,6 +100,8 @@ class GameLoader : public CObject {
 	void readSavegame(const char *fname);
 	void writeSavegame(Scene *sc, const char *fname);
 
+	void restoreDefPicAniInfos();
+
 	GameProject *_gameProject;
 	InteractionController *_interactionController;
 	InputController *_inputController;

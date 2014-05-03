@@ -37,6 +37,7 @@
 #include "fullpipe/scenes.h"
 #include "fullpipe/floaters.h"
 #include "fullpipe/console.h"
+#include "fullpipe/constants.h"
 
 namespace Fullpipe {
 
@@ -205,7 +206,39 @@ void FullpipeEngine::initialize() {
 }
 
 void FullpipeEngine::restartGame() {
-	warning("STUB: FullpipeEngine::restartGame()");
+	_floaters->stopAll();
+
+	clearGlobalMessageQueueList();
+	clearMessages();
+
+	initObjectStates();
+
+	if (_scene2) {
+		_scene2->getAniMan();
+		_scene2 = 0;
+	}
+
+	if (_currentScene) {
+		_gameLoader->unloadScene(_currentScene->_sceneId);
+
+		_currentScene = 0;
+	}
+
+	_gameLoader->restoreDefPicAniInfos();
+
+	getGameLoaderInventory()->clear();
+	getGameLoaderInventory()->addItem(ANI_INV_MAP, 1);
+	getGameLoaderInventory()->rebuildItemRects();
+
+	initMap();
+
+	if (_flgPlayIntro) {
+		_gameLoader->loadScene(SC_INTRO1);
+		_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
+	} else {
+		_gameLoader->loadScene(SC_1);
+		_gameLoader->gotoScene(SC_1, TrubaLeft);
+	}
 }
 
 Common::Error FullpipeEngine::run() {

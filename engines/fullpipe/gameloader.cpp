@@ -634,6 +634,10 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 	return true;
 }
 
+void GameLoader::restoreDefPicAniInfos() {
+	warning("STUB: restoreDefPicAniInfos()");
+}
+
 GameVar *FullpipeEngine::getGameLoaderGameVar() {
 	if (_gameLoader)
 		return _gameLoader->_gameVar;
