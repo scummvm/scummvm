@@ -98,6 +98,15 @@ void Scene401::setup() {
 	setAAName();
 }
 
+void Scene401::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsByte(_northFl);
+	s.syncAsSint16LE(_destPos.x);
+	s.syncAsSint16LE(_destPos.y);
+	s.syncAsUint32LE(_timer);
+}
+
 void Scene401::enter() {
 	if (_scene->_priorSceneId != -2)
 		_northFl = false;
@@ -235,6 +244,51 @@ void Scene402::setup() {
 	_scene->addActiveVocab(0x4);
 	_scene->addActiveVocab(0x124);
 	_scene->addActiveVocab(0xD1);
+}
+
+void Scene402::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsByte(_lightOn);
+	s.syncAsByte(_blowingSmoke);
+	s.syncAsByte(_leftWomanMoving);
+	s.syncAsByte(_rightWomanMoving);
+	s.syncAsByte(_firstTalkToGirlInChair);
+	s.syncAsByte(_waitingGinnyMove);
+	s.syncAsByte(_ginnyLooking);
+	s.syncAsByte(_bigBeatFl);
+	s.syncAsByte(_roxOnStool);
+	s.syncAsByte(_bartenderSteady);
+	s.syncAsByte(_bartenderHandsHips);
+	s.syncAsByte(_bartenderLooksLeft);
+	s.syncAsByte(_bartenderReady);
+	s.syncAsByte(_bartenderTalking);
+	s.syncAsByte(_bartenderCalled);
+	s.syncAsByte(_conversationFl);
+	s.syncAsByte(_activeTeleporter);
+	s.syncAsByte(_activeArrows);
+	s.syncAsByte(_activeArrow1);
+	s.syncAsByte(_activeArrow2);
+	s.syncAsByte(_activeArrow3);
+	s.syncAsByte(_cutSceneReady);
+	s.syncAsByte(_cutSceneNeeded);
+	s.syncAsByte(_helgaReady);
+	s.syncAsByte(_refuseAlienLiquor);
+
+	s.syncAsSint16LE(_drinkTimer);
+	s.syncAsSint16LE(_beatCounter);
+	s.syncAsSint16LE(_bartenderMode);
+	s.syncAsSint16LE(_bartenderDialogNode);
+	s.syncAsSint16LE(_bartenderCurrentQuestion);
+	s.syncAsSint16LE(_helgaTalkMode);
+	s.syncAsSint16LE(_roxMode);
+	s.syncAsSint16LE(_rexMode);
+	s.syncAsSint16LE(_talkTimer);
+
+	_dialog1.synchronize(s);
+	_dialog2.synchronize(s);
+	_dialog3.synchronize(s);
+	_dialog4.synchronize(s);
 }
 
 void Scene402::setDialogNode(int node) {

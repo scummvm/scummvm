@@ -58,6 +58,7 @@ private:
 
 public:
 	Scene401(MADSEngine *vm) : Scene4xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -119,6 +120,7 @@ private:
 	
 public:
 	Scene402(MADSEngine *vm) : Scene4xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();

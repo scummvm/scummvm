@@ -128,6 +128,12 @@ public:
 	 * Starts the conversation
 	 */
 	void start();
+
+	/**
+	 * Synchronize the conversation
+	 */
+	void synchronize(Common::Serializer &s) { warning("TODO: Synchronize Conversation"); };
+
 };
 
 class UserInterface : public MSurface {
