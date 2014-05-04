@@ -185,6 +185,8 @@ private:
 	 * grey table containing the number of grey values for each intensity 
 	 */
 	void greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT], byte greyTable[64], int numColors);
+protected:
+	MADSEngine *_vm;
 public:
 	bool _colorFlags[4];
 	int _colorValues[4];
@@ -192,7 +194,31 @@ public:
 	/**
 	 * Constructor
 	 */
-	Fader();
+	Fader(MADSEngine *vm);
+
+	/**
+	* Sets a new palette
+	*/
+	void setPalette(const byte *colors, uint start, uint num);
+
+	/**
+	* Returns a subset of the currently loaded palette
+	*/
+	void grabPalette(byte *colors, uint start, uint num);
+
+	/**
+	* Gets the entire palette at once
+	*/
+	void getFullPalette(byte palette[PALETTE_SIZE]) {
+		grabPalette(&palette[0], 0, PALETTE_COUNT);
+	}
+
+	/**
+	* Sets the entire palette at once
+	*/
+	void setFullPalette(byte palette[PALETTE_SIZE]) {
+		setPalette(&palette[0], 0, PALETTE_COUNT);
+	}
 
 	int rgbMerge(byte r, byte g, byte b);
 
@@ -201,7 +227,7 @@ public:
 	/**
 	* Fades the given palette to greyscale
 	*/
-	void fadeToGrey(byte palette[PALETTE_SIZE], byte paletteMap[PALETTE_COUNT],
+	void fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 		int baseColor, int numColors, int baseGrey, int numGreys,
 		int tickDelay, int steps);
 };
@@ -213,10 +239,6 @@ private:
 	 * standard VGA palette
 	 */
 	void initVGAPalette(byte *palette);
-protected:
-	MADSEngine *_vm;
-
-	void reset();
 public:
 	byte _mainPalette[PALETTE_SIZE];
 	byte _cyclingPalette[PALETTE_SIZE];
@@ -238,33 +260,9 @@ public:
 	virtual ~Palette() {}
 
 	/**
-	 * Sets a new palette
-	 */
-	void setPalette(const byte *colors, uint start, uint num);
-
-	/**
-	 * Set a palette entry
-	 */
+	* Set a palette entry
+	*/
 	void setEntry(byte palIndex, byte r, byte g, byte b);
-
-	/**
-	 * Returns a subset of the currently loaded palette
-	 */
-	void grabPalette(byte *colors, uint start, uint num);
-	
-	/**
-	 * Gets the entire palette at once
-	 */
-	void getFullPalette(byte palette[PALETTE_SIZE]) {
-		grabPalette(&palette[0], 0, PALETTE_COUNT);
-	}
-
-	/**
-	 * Sets the entire palette at once
-	 */
-	void setFullPalette(byte palette[PALETTE_SIZE]) {
-		setPalette(&palette[0], 0, PALETTE_COUNT);
-	}
 
 	/**
 	 * Returns the palette index in the palette that most closely matches the

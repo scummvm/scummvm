@@ -336,14 +336,23 @@ void RGBList::copy(RGBList &src) {
 
 /*------------------------------------------------------------------------*/
 
-Fader::Fader() {
+Fader::Fader(MADSEngine *vm): _vm(vm) {
 	_colorFlags[0] = _colorFlags[1] = _colorFlags[2] = true;
 	_colorFlags[3] = false;
 	_colorValues[0] = _colorValues[1] = 0;
 	_colorValues[2] = _colorValues[3] = 0;
 }
 
-void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte paletteMap[PALETTE_COUNT],
+
+void Fader::setPalette(const byte *colors, uint start, uint num) {
+	g_system->getPaletteManager()->setPalette(colors, start, num);
+}
+
+void Fader::grabPalette(byte *colors, uint start, uint num) {
+	g_system->getPaletteManager()->grabPalette(colors, start, num);
+}
+
+void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 		int baseColor, int numColors, int baseGrey, int numGreys,
 		int tickDelay, int steps) {
 	GreyEntry map[PALETTE_COUNT];
@@ -373,7 +382,30 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte paletteMap[PALETTE_COUNT
 		}
 	}
 
-	// TODO: More here
+	for (int stepCtr = 0; stepCtr < steps; ++stepCtr) {
+		for (int palCtr = baseColor; palCtr < (baseColor + numColors); ++palCtr) {
+			int index = palCtr - baseColor;
+			for (int colorCtr = 0; colorCtr < 3; ++colorCtr) {
+				map[index]._accum[colorCtr] += palIndex[palCtr][colorCtr];
+				/* map[index].accum[color] += pal_color(temp_pal, palCtr, color); */
+				while (map[index]._accum[colorCtr] >= steps) {
+					map[index]._accum[colorCtr] -= steps;
+					palette[palCtr * 3 + colorCtr] = signs[palCtr][colorCtr];
+				}
+			}
+		}
+
+		setFullPalette(palette);
+
+		// TODO: Adjust waiting
+		_vm->_events->waitForNextFrame();
+	}
+
+	if (paletteMap != nullptr) {
+		for (int palCtr = 0; palCtr < numColors; palCtr++) {
+			paletteMap[palCtr] = map[palCtr]._mapColor;
+		}
+	}
 }
 
 static bool greyCompareFunc(const Fader::GreyTableEntry &g1, const Fader::GreyTableEntry &g2) {
@@ -483,19 +515,12 @@ int Fader::rgbMerge(byte r, byte g, byte b) {
 
 /*------------------------------------------------------------------------*/
 
-Palette::Palette(MADSEngine *vm) : _vm(vm), _paletteUsage(vm) {
-	reset();
-
+Palette::Palette(MADSEngine *vm) : Fader(vm), _paletteUsage(vm) {
 	_lockFl = false;
 	_lowRange = 0;
 	_highRange = 0;
 	Common::fill(&_mainPalette[0], &_mainPalette[PALETTE_SIZE], 0);
 	Common::fill(&_palFlags[0], &_palFlags[PALETTE_COUNT], 0);
-}
-
-void Palette::setPalette(const byte *colors, uint start, uint num) {
-	g_system->getPaletteManager()->setPalette(colors, start, num);
-	reset();
 }
 
 void Palette::setEntry(byte palIndex, byte r, byte g, byte b) {
@@ -504,12 +529,6 @@ void Palette::setEntry(byte palIndex, byte r, byte g, byte b) {
 	_mainPalette[palIndex * 3 + 2] = VGA_COLOR_TRANS(b);
 
 	setPalette((const byte *)&_mainPalette[palIndex * 3], palIndex, 1);
-}
-
-
-void Palette::grabPalette(byte *colors, uint start, uint num) {
-	g_system->getPaletteManager()->grabPalette(colors, start, num);
-	reset();
 }
 
 uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, byte *paletteData) {
@@ -535,9 +554,6 @@ uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, byte *paletteData) {
 	}
 
 	return (uint8)index;
-}
-
-void Palette::reset() {
 }
 
 void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2) {

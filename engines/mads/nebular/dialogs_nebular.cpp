@@ -359,8 +359,15 @@ PictureDialog::PictureDialog(MADSEngine *vm, const Common::Point &pos,
 }
 
 PictureDialog::~PictureDialog() {
+	// Restore cycling flag
 	Scene &scene = _vm->_game->_scene;
+	Palette &palette = *_vm->_palette;
 	scene._cyclingActive = _cyclingActive;
+
+	// Restore palette information
+	Common::copy(&_palette[0], &_palette[PALETTE_SIZE], &palette._mainPalette[0]);
+	Common::copy(&_palFlags[0], &_palFlags[PALETTE_COUNT], &palette._palFlags[0]);
+	palette._rgbList.copy(_rgbList);
 }
 
 void PictureDialog::show() {
