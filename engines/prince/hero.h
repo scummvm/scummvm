@@ -31,13 +31,16 @@
 namespace Prince {
 
 class Animation;
+class PrinceEngine;
 
 class Hero {
 public:
 	static const uint32 kMoveSetSize = 26;
 	static const int16 kZoomStep = 4;
 	static const int16 kMaxPicWidth = 1280;
+	static const int16 kMaxPicHeight = 480;
 	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
+	static const int16 kNormalWidth = 640;
 
 	static const uint8 kShadowColor = 191;
 
@@ -90,7 +93,7 @@ public:
 		Move_BORED2
 	};
 
-	Hero();
+	Hero(PrinceEngine *vm);
 	~Hero();
 	Common::RandomSource _randomSource;
 	bool loadAnimSet(uint32 heroAnimNumber);
@@ -103,6 +106,7 @@ public:
 	void showHero();
 	void moveHero();
 	void rotateHero();
+	void scrollHero();
 	void setScale(int8 zoomBitmapValue);
 	int getScaledValue(int size);
 	void selectZoom();
@@ -116,6 +120,7 @@ public:
 	void getState();
 
 //private:
+	PrinceEngine *_vm;
 	uint16 _number;
 	uint16 _visible;
 	int16 _state;

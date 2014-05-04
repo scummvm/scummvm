@@ -26,11 +26,12 @@
 #include "prince/hero_set.h"
 #include "prince/animation.h"
 #include "prince/resource.h"
+#include "prince/prince.h"
 
 
 namespace Prince {
 
-Hero::Hero() : _number(0), _visible(false), _state(MOVE), _middleX(0), _middleY(0)
+Hero::Hero(PrinceEngine *vm) : _vm(vm), _number(0), _visible(false), _state(MOVE), _middleX(0), _middleY(0)
 	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0)
 	, _lastDirection(DOWN), _destDirection(DOWN), _talkTime(0), _boredomTime(0), _phase(0)
 	, _specAnim(0), _drawX(0), _drawY(0), _randomSource("prince"), _zoomFactor(0), _scaleValue(0)
@@ -269,12 +270,44 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		}
 	}
 	return makeShadow;
-	// TODO
-	/*
-	int scaledX = getScaledValue(frameXSize);
-	int drawX = _middleX - scaledX / 2; // just _drawX
-	int DN_ECX5070 = _middleY - _shadMinus;
-	*/
+
+	// source Bitmap of sprite - esi
+	//int destX = _drawX; // eax
+	int destY = _middleY - _shadMinus; // ecx
+	// modulo of source Bitmap - ebp
+	//int scaledX = getScaledValue(frameXSize); // ebx
+	//int scaledY = getScaledValue(frameYSize); // edx
+	// shadowTable70 - edi
+
+	if (destY > 1 && destY < kMaxPicHeight) {
+		// pushad
+		// edx = destY
+		// ecx = destX
+		// ebx = _lightY
+		// eax = _lightX
+
+		int shadowDirection;
+		if (_lightY > destY) {
+			shadowDirection = 1;
+		} else {
+			shadowDirection = 0;
+		}
+		//int shadowLineLen = 0;
+		//int shadWallDown = 0;
+		// int shadowLine = Linijka();
+		// push lineCode
+		// mov lineCode <- @@Nopik
+		// Line();
+		// pop lineCode
+		// popad
+
+		// sprShadow = shadowTable70
+		// sprModulo = modulo of source Bitmap
+		// sprWidth = scaledX
+		// sprHeight = scaledY
+		//int sprDestX = destX - PicWindowX;
+		//int sprDestY = destY - PicWindowY;
+	}
 }
 
 void Hero::showHeroAnimFrame() {
@@ -491,6 +524,41 @@ void Hero::showHero() {
 		return;
 	}
 }
+
+void Hero::scrollHero() {
+	//FLAGI+SCROLLTYPE ??
+	//int scrollType = 0;
+	int position = _middleX;
+
+	/*
+	switch (scrollType) {
+	case 0:
+		position = _middleX;
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	}
+	*/
+
+	int locationWidth = _vm->_sceneWidth;
+	int difference = locationWidth - kNormalWidth / 2;
+
+	int destValue = 0;
+	if (position > kNormalWidth / 2) {
+		destValue = difference - kNormalWidth / 2;
+	}
+	if (position < difference) {
+		destValue = position - kNormalWidth / 2;
+	}
+	if(destValue < 0) {
+		destValue = 0;
+	}
+	_vm->_picWindowX = destValue;
+	_drawX -= destValue;
+}
+
 }
 
 /* vim: set tabstop=4 noexpandtab: */

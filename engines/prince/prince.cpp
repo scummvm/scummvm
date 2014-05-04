@@ -78,7 +78,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
 	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr),
 	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
-	_walizkaBmp(nullptr), _roomBmp(nullptr), _cursorNr(0) {
+	_walizkaBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -186,8 +186,8 @@ void PrinceEngine::init() {
 
 	_roomBmp = new Image::BitmapDecoder();
 
-	_mainHero = new Hero();
-	_secondHero = new Hero();
+	_mainHero = new Hero(this);
+	_secondHero = new Hero(this);
 
 	_mainHero->loadAnimSet(0);
 }
@@ -287,6 +287,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	if(Resource::loadResource(_mainHero->_shadowBitmap, "shadow", false) == false) {
 		Resource::loadResource(_mainHero->_shadowBitmap, "shadow2", false);
 	}
+
+	_picWindowX = 0;
 
 	_mainHero->_lightX = _script->getLightX(_locationNr);
 	_mainHero->_lightY = _script->getLightY(_locationNr);
@@ -633,7 +635,7 @@ void PrinceEngine::drawScreen() {
 	const Graphics::Surface *roomSurface = _roomBmp->getSurface();	
 	if (roomSurface) {
 		_graph->setPalette(_roomBmp->getPalette());
-		const Graphics::Surface visiblePart = roomSurface->getSubArea(Common::Rect(_cameraX, 0, roomSurface->w, roomSurface->h));
+		const Graphics::Surface visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
 		_graph->draw(0, 0, &visiblePart);
 	}
 
@@ -695,6 +697,9 @@ void PrinceEngine::mainLoop() {
 
 		// TODO: Update all structures, animations, naks, heros etc.
 		_mainHero -> showHero();
+		if(_mainHero->_visible == 1) {
+			_mainHero -> scrollHero();
+		}
 
 		_interpreter->step();
 

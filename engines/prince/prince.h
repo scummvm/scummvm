@@ -140,6 +140,11 @@ public:
 	Hero* _mainHero;
 	Hero* _secondHero;
 
+	uint16 _cameraX;
+	uint16 _newCameraX;
+	uint16 _sceneWidth;
+	uint32 _picWindowX;
+
 private:
 	bool playNextFrame();
 	void keyHandler(Common::Event event);
@@ -180,10 +185,6 @@ private:
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
 	Common::Array<AnimListItem> _animList;
-
-	uint16 _cameraX;
-	uint16 _newCameraX;
-	uint16 _sceneWidth;
 
 	bool _flicLooped;
 	
