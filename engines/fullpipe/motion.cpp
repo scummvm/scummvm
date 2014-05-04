@@ -682,6 +682,76 @@ int MovGraph::getItemIndexByStaticAni(StaticANIObject *ani) {
 	return -1;
 }
 
+Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int flag1, int flag2) {
+	if (!_links.size()) {
+		*arrSize = 0;
+
+		return 0;
+	}
+
+	Common::Array<MovArr *> *arr = new Common::Array<MovArr *>;
+	MovArr *movarr;
+
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		MovGraphLink *lnk = (MovGraphLink *)*i;
+
+		if (flag1) {
+			Common::Point point(x, y);
+			double dist = calcDistance(&point, lnk, 0);
+
+			if (dist >= 0.0 && dist < 2.0) {
+				movarr = new MovArr;
+
+				movarr->_link = lnk;
+				movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - point.y) + 
+								 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(point.x - lnk->_movGraphNode1->_x)) / 
+					lnk->_distance / lnk->_distance;
+				movarr->_point = point;
+
+				arr->push_back(movarr);
+			}
+		} else {
+			if (lnk->_movGraphReact) {
+				if (lnk->_movGraphReact->pointInRegion(x, y)) {
+					if (!(lnk->_flags & 0x10000000) || lnk->_flags & 0x20000000) {
+						if (!flag2) {
+							movarr = new MovArr;
+							movarr->_link = lnk;
+							movarr->_dist = 0.0;
+							movarr->_point.x = lnk->_movGraphNode1->_x;
+							movarr->_point.y = lnk->_movGraphNode1->_y;
+							arr->push_back(movarr);
+
+							movarr = new MovArr;
+							movarr->_link = lnk;
+							movarr->_dist = 1.0;
+							movarr->_point.x = lnk->_movGraphNode1->_x;
+							movarr->_point.y = lnk->_movGraphNode1->_y;
+							arr->push_back(movarr);
+						}
+					} else {
+						movarr = new MovArr;
+						movarr->_link = lnk;
+						movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - y) + 
+										 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(x - lnk->_movGraphNode1->_x)) / 
+							lnk->_distance / lnk->_distance;
+						movarr->_point.x = x;
+						movarr->_point.y = y;
+
+						calcDistance(&movarr->_point, lnk, 0);
+
+						arr->push_back(movarr);
+					}
+				}
+			}
+		}
+	}
+
+	*arrSize = arr->size();
+
+	return arr;
+}
+
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 	for (uint i = 0; i < _items2.size(); i++)
 		if (_items2[i]->_objectId == objectId)
