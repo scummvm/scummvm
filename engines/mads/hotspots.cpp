@@ -66,7 +66,7 @@ int DynamicHotspots::add(int descId, int verbId, int seqIndex, const Common::Rec
 	_entries[idx]._feetPos = Common::Point(-3, 0);
 	_entries[idx]._facing = FACING_NONE;
 	_entries[idx]._verbId = verbId;
-	_entries[idx]._articleNumber = 6;
+	_entries[idx]._articleNumber = PREP_IN;
 	_entries[idx]._cursor = CURSOR_NONE;
 
 	++_count;

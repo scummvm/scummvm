@@ -62,7 +62,7 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	_savedFields._mainObject = 0;
 	_savedFields._secondObject = 0;
 	_savedFields._secondObjectSource = 0;
-	_savedFields._articleNumber = 0;
+	_savedFields._articleNumber = PREP_NONE;
 	_savedFields._lookFlag = false;
 }
 
@@ -223,7 +223,7 @@ void MADSAction::set() {
 		}
 
 		if ((_hotspotId >= 0) && (_articleNumber > 0) && !flag) {
-			if (_articleNumber == 0xff) {
+			if (_articleNumber == PREP_RELATIONAL) {
 				if (_secondObject >= 0) {
 					int articleNum = 0;
 
