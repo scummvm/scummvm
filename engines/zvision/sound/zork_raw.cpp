@@ -185,7 +185,7 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 	char fileIdentifier = (engine->getGameId() == GID_NEMESIS) ? fileName[6] : fileName[7];
 
 	if (engine->getGameId() == GID_NEMESIS) {
-		for (int i = 0; i < 6; ++i) {
+		for (uint i = 0; i < ARRAYSIZE(RawZorkStream::_zNemSoundParamLookupTable); ++i) {
 			if (RawZorkStream::_zNemSoundParamLookupTable[i].identifier == fileIdentifier) {
 				soundParams = RawZorkStream::_zNemSoundParamLookupTable[i];
 				foundParams = true;
