@@ -410,7 +410,7 @@ void SequenceList::scan() {
 	Scene &scene = _vm->_game->_scene;
 
 	for (uint i = 0; i < _entries.size(); ++i) {
-		if (!_entries[i]._active && (_entries[i]._spritesIndex != -1)) {
+		if (_entries[i]._active && (_entries[i]._spritesIndex != -1)) {
 			int idx = scene._spriteSlots.add();
 			setSpriteSlot(i, scene._spriteSlots[idx]);
 		}

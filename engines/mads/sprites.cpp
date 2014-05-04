@@ -404,16 +404,12 @@ void SpriteSets::remove(int idx) {
 			(*this)[idx] = nullptr;
 		} else {
 			while (size() > 0 && (*this)[size() - 1] == nullptr) {
-				delete (*this)[size() - 1];
 				remove_at(size() - 1);
 			}
 		}
 
 		if (_assetCount > 0)
 			--_assetCount;
-		else
-			// FIXME: This is needed, otherwise scene sprites are not cleared in this case
-			clear();
 	}
 }
 
