@@ -117,7 +117,7 @@ static const char *variableNames[] = {
 	"gRViewMPos",
 	"gRViewPos",
 	"gScribe",
-	"gScribeTime"
+	"gScribeTime",
 	"gSubElev",
 	"gSubDr",
 	"gUpMoov",
