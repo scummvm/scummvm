@@ -32,6 +32,12 @@ class MADSEngine;
 
 #define PALETTE_USAGE_COUNT 4
 
+#define PALETTE_RESERVED_LOW_COUNT 18
+#define PALETTE_RESERVED_HIGH_COUNT 10
+
+#define PALETTE_COUNT 256
+#define PALETTE_SIZE (256 * 3)
+
 /**
  * Palette mapping options
  */
@@ -62,6 +68,9 @@ struct RGB6 {
 	byte _u2;
 	byte _flags;
 
+	/**
+	 * Load an entry from a stream
+	 */
 	void load(Common::SeekableReadStream *f);
 };
 
@@ -82,8 +91,6 @@ public:
 private:
 	MADSEngine *_vm;
 	Common::Array<UsageEntry> *_data;
-
-	int rgbMerge(RGB6 &palEntry);
 
 	int getGamePalFreeIndex(int *palIndex);
 
@@ -142,6 +149,11 @@ public:
 	void reset();
 
 	/**
+	 * Copies the data from another instance
+	 */
+	void copy(RGBList &src);
+
+	/**
 	 * Scans for a free slot
 	 */
 	int scan();
@@ -149,10 +161,52 @@ public:
 	bool &operator[](int idx) { return _data[idx]; }
 };
 
-#define PALETTE_COUNT 256
-#define PALETTE_SIZE (256 * 3)
+class Fader {
+public:
+	struct GreyEntry {
+		byte _intensity;
+		byte _mapColor;
+		uint16 _accum[3];
+	};
 
-class Palette {
+	struct GreyTableEntry {
+		int _list;
+		int _mapping;
+	};
+private:
+	void mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColors,
+		int baseGrey, int numGreys, GreyEntry *map);
+
+	void getGreyValues(const byte palette[PALETTE_SIZE], GreyTableEntry greyList[PALETTE_COUNT],
+		int baseColor, int numColors);
+
+	/**
+	 * Given a grey value list containing grey shades (0-63), creates a 64 byte
+	 * grey table containing the number of grey values for each intensity 
+	 */
+	void greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT], byte greyTable[64], int numColors);
+public:
+	bool _colorFlags[4];
+	int _colorValues[4];
+public:
+	/**
+	 * Constructor
+	 */
+	Fader();
+
+	int rgbMerge(byte r, byte g, byte b);
+
+	int rgbMerge(RGB6 &palEntry);
+
+	/**
+	* Fades the given palette to greyscale
+	*/
+	void fadeToGrey(byte palette[PALETTE_SIZE], byte paletteMap[PALETTE_COUNT],
+		int baseColor, int numColors, int baseGrey, int numGreys,
+		int tickDelay, int steps);
+};
+
+class Palette: public Fader {
 private:
 	/**
 	 * Initialises the first 16 palette indexes with the equivalent

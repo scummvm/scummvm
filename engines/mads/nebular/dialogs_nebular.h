@@ -49,9 +49,9 @@ private:
 public:
 	virtual void showDialog();
 
-	virtual void showItem(int objectId, int msgId, int arg);
+	virtual void showItem(int objectId, int messageId, int speech = -1);
 
-	virtual bool show(int id);
+	virtual bool show(int messageId, int objectId = -1);
 };
 
 struct HOGANUS {
@@ -79,7 +79,27 @@ public:
 	/**
 	 * Show the dialog
 	 */
-	bool show();
+	virtual void show();
+};
+
+class PictureDialog : public TextDialog {
+private:
+	int _objectId;
+	bool _cyclingActive;
+	byte _palette[PALETTE_SIZE];
+	uint32 _palFlags[PALETTE_COUNT];
+	RGBList _rgbList;
+
+	/**
+	 * Sets up the palette and fades the screen to gray
+	 */
+	void setupPalette();
+public:
+	PictureDialog(MADSEngine *vm, const Common::Point &pos, int maxChars, int objectId);
+
+	virtual ~PictureDialog();
+
+	virtual void show();
 };
 
 enum DialogTextAlign { ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };

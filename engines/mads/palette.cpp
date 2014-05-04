@@ -69,7 +69,7 @@ static bool sortHelper(const PaletteUsage::UsageEntry &ue1, const PaletteUsage::
 void PaletteUsage::prioritize(Common::Array<RGB6> &palette) {
 	for (uint i = 0; i < _data->size(); ++i) {
 		RGB6 &palEntry = palette[(*_data)[i]._palIndex];
-		(*_data)[i]._sortValue = rgbMerge(palEntry);
+		(*_data)[i]._sortValue = _vm->_palette->rgbMerge(palEntry);
 	}
 	
 	Common::sort(_data->begin(), _data->end(), sortHelper);
@@ -237,12 +237,6 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	return rgbIndex;
 }
 
-
-int PaletteUsage::rgbMerge(RGB6 &palEntry) {
-	return ((palEntry.r + 1) / 4 - 1) * 38 + ((palEntry.g + 1) / 4 - 1) * 76 + 
-		((palEntry.b + 1) / 4 - 1) * 14;
-}
-
 void PaletteUsage::transform(Common::Array<RGB6> &palette) {
 	if (!empty()) {
 		for (uint i = 0; i < _data->size(); ++i) {
@@ -334,6 +328,157 @@ int RGBList::scan() {
 	}
 
 	error("RGBList was full");
+}
+
+void RGBList::copy(RGBList &src) {
+	Common::copy(&src._data[0], &src._data[32], &_data[0]);
+}
+
+/*------------------------------------------------------------------------*/
+
+Fader::Fader() {
+	_colorFlags[0] = _colorFlags[1] = _colorFlags[2] = true;
+	_colorFlags[3] = false;
+	_colorValues[0] = _colorValues[1] = 0;
+	_colorValues[2] = _colorValues[3] = 0;
+}
+
+void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte paletteMap[PALETTE_COUNT],
+		int baseColor, int numColors, int baseGrey, int numGreys,
+		int tickDelay, int steps) {
+	GreyEntry map[PALETTE_COUNT];
+	int intensity;
+	byte palIndex[PALETTE_COUNT][3];
+	bool signs[PALETTE_COUNT][3];
+
+	mapToGreyRamp(palette, baseColor, numColors, baseGrey, numGreys, map);
+
+	for (int palCtr = baseColor; palCtr < (baseColor + numColors); ++palCtr) {
+		int index = palCtr - baseColor;
+		for (int colorCtr = 0; colorCtr < 3; ++colorCtr) {
+			if (_colorFlags[colorCtr]) {
+				int shiftSign = _colorValues[colorCtr];
+				if (shiftSign >= 0) {
+					intensity = map[index]._intensity << shiftSign;
+				} else {
+					intensity = map[index]._intensity >> ABS(shiftSign);
+				}
+			} else {
+				intensity = _colorValues[colorCtr];
+			}
+
+			int diff = intensity - palette[palCtr * 3 + colorCtr];
+			palIndex[palCtr][colorCtr] = (byte)ABS(diff);
+			signs[palCtr][colorCtr] = diff / ABS(diff);
+		}
+	}
+
+	// TODO: More here
+}
+
+static bool greyCompareFunc(const Fader::GreyTableEntry &g1, const Fader::GreyTableEntry &g2) {
+	return g1._list < g2._list;
+}
+
+void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColors,
+		int baseGrey, int numGreys, GreyEntry *map) {
+	GreyTableEntry greyList[PALETTE_COUNT];
+	byte greyTable[64];
+	byte greyIntensity[64];
+	int intensity, shiftSign;
+
+	getGreyValues(palette, greyList, baseColor, numColors);
+	greyPopularity(greyList, greyTable, numColors);
+	
+	for (int idx = 0; idx < numColors; ++idx) {
+		greyList[idx]._mapping = idx;
+		Common::fill(&map[idx]._accum[0], &map[idx]._accum[3], 0);
+	}
+
+	for (int idx = 0; idx < PALETTE_COUNT; ++idx) {
+		map[idx]._mapColor = (byte)idx;
+	}
+	
+	// Sort the mapping list
+	Common::sort(&greyList[0], &greyList[numColors], greyCompareFunc);
+
+	// Initialise state variables
+	int greySum = 0;
+	int greyScan = 0;
+	int greyMark = 0;
+	int greyColors = 0;
+	int greyAccum = 0;
+	int firstColor = 0;
+
+	for (int greyCtr = 0; greyCtr < 64; greyCtr++) {
+		for (int idx = 0; idx < greyTable[greyCtr]; idx++) {
+			greySum += greyList[greyScan++]._list;
+			++greyColors;
+
+			greyAccum += numGreys;
+			while (greyAccum >= numColors) {
+				greyAccum -= numColors;
+				if (greyColors > 0) {
+					greyIntensity[greyMark] = (byte)(greySum / greyColors);
+				}
+
+				for (int rescan = firstColor; rescan < greyScan; ++rescan) {
+					map[greyList[rescan]._mapping]._intensity = greyIntensity[greyMark];
+					map[greyList[rescan]._mapping]._mapColor = (byte)(greyMark + baseGrey);
+				}
+
+				firstColor = greyScan;
+				greySum = 0;
+				greyColors = 0;
+				++greyMark;
+			}
+		}
+	}
+
+	// Process palette with intensities
+	byte *palP = &palette[baseGrey * 3];
+	for (int greys = 0; greys < numGreys; ++greys) {
+		for (int color = 0; color < 3; ++color) {
+			if (_colorFlags[color]) {
+				shiftSign = (byte)_colorValues[color];
+				if (shiftSign >= 0) {
+					intensity = greyIntensity[greys] << shiftSign;
+				} else {
+					intensity = greyIntensity[greys] >> abs(shiftSign);
+				}
+			} else {
+				intensity = _colorValues[color];
+			}
+			*palP++ = VGA_COLOR_TRANS(intensity);
+		}
+	}
+}
+
+void Fader::getGreyValues(const byte palette[PALETTE_SIZE], 
+		GreyTableEntry greyList[PALETTE_COUNT], int baseColor, int numColors) {
+	const byte *palP = &palette[baseColor * 3];
+	GreyTableEntry *destP = greyList;
+
+	for (int i = 0; i < numColors; ++i, palP += 3, ++destP) {
+		int v = rgbMerge(palP[0], palP[1], palP[2]);
+		destP->_list = v >> 7;
+	}
+}
+
+void Fader::greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT], 
+		byte greyTable[64], int numColors) {
+	Common::fill(&greyTable[0], &greyTable[64], 0);
+	for (int i = 0; i < 64; ++i) {
+		++greyTable[greyList[i]._list];
+	}
+}
+
+int Fader::rgbMerge(RGB6 &palEntry) {
+	return rgbMerge(palEntry.r, palEntry.g, palEntry.b);
+}
+
+int Fader::rgbMerge(byte r, byte g, byte b) {
+	return ((r + 1) / 4 - 1) * 38 + ((g + 1) / 4 - 1) * 76 + ((b + 1) / 4 - 1) * 14;
 }
 
 /*------------------------------------------------------------------------*/

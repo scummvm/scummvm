@@ -181,7 +181,7 @@ public:
 	/**
 	* Show the dialog, and wait until a key or mouse press.
 	*/
-	void show();
+	virtual void show();
 };
 
 class MessageDialog: public TextDialog {
@@ -211,9 +211,9 @@ public:
 	virtual ~Dialogs() {}
 
 	virtual void showDialog() = 0;
-	virtual void showItem(int objectId, int messageId, int arg = 0) = 0;
+	virtual void showItem(int objectId, int messageId, int speech = 0) = 0;
 
-	virtual bool show(int msgId) = 0;
+	virtual bool show(int messageId, int objectId = -1) = 0;
 };
 
 } // End of namespace MADS

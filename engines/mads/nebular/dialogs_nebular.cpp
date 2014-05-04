@@ -33,9 +33,9 @@ namespace MADS {
 
 namespace Nebular {
 
-bool DialogsNebular::show(int msgId) {
+bool DialogsNebular::show(int messageId, int objectId) {
 	MADSAction &action = _vm->_game->_scene._action;
-	Common::StringArray msg = _vm->_game->getMessage(msgId);
+	Common::StringArray msg = _vm->_game->getMessage(messageId);
 	Common::String title;
 	Common::String commandText;
 	Common::String valStr;
@@ -76,7 +76,11 @@ bool DialogsNebular::show(int msgId) {
 						if (centerFlag) {
 							crFlag = true;
 						} else {
-							dialog = new TextDialog(_vm, FONT_INTERFACE, _defaultPosition, _dialogWidth);
+							if (objectId == -1) {
+								dialog = new TextDialog(_vm, FONT_INTERFACE, _defaultPosition, _dialogWidth);
+							} else {
+								dialog = new PictureDialog(_vm, _defaultPosition, _dialogWidth, objectId);
+							}
 							dialog->wordWrap(dialogText);
 							dialog->incNumLines();
 						}
@@ -128,7 +132,11 @@ bool DialogsNebular::show(int msgId) {
 		}
 
 		if (!dialog) {
-			dialog = new TextDialog(_vm, FONT_INTERFACE, _defaultPosition, _dialogWidth);
+			if (objectId == -1) {
+				dialog = new TextDialog(_vm, FONT_INTERFACE, _defaultPosition, _dialogWidth);
+			} else {
+				dialog = new PictureDialog(_vm, _defaultPosition, _dialogWidth, objectId);
+			}
 		}
 
 		if (centerFlag) {
@@ -158,8 +166,11 @@ bool DialogsNebular::show(int msgId) {
 	return result;
 }
 
-void DialogsNebular::showItem(int objectId, int messageId, int arg) {
-	show(messageId);
+void DialogsNebular::showItem(int objectId, int messageId, int speech) {
+	// MADS engine doesn't currently support speech
+	assert(!speech);
+
+	show(messageId, objectId);
 #if 0
 	Scene &scene = _vm->_game->_scene;
 	byte highPalette[8 * 3];
@@ -170,15 +181,6 @@ void DialogsNebular::showItem(int objectId, int messageId, int arg) {
 	greyScale[0] = greyScale[1] = greyScale[2] = 0xFFFF;
 	Common::String setName = Common::String::format("*OBJ%.3d.SS", objectId);
 
-	// Turn off cycling if active
-	bool cyclingActive = scene._cyclingActive;
-	scene._cyclingActive = false;
-
-	// Make a copy of the current screen surface
-	byte *savedSurface = new byte[MADS_SCREEN_WIDTH * MADS_SCREEN_HEIGHT];
-	Common::copy(_vm->_screen.getData(), _vm->_screen.getData() +
-		MADS_SCREEN_WIDTH * MADS_SCREEN_HEIGHT, savedSurface);
-	
 
 
 	delete[] savedSurface;
@@ -287,7 +289,7 @@ TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 	wordWrap("\n");
 }
 
-bool CopyProtectionDialog::show() {
+void CopyProtectionDialog::show() {
 	draw();
 	_vm->_events->showCursor();
 
@@ -298,7 +300,6 @@ bool CopyProtectionDialog::show() {
 	}
 
 	_vm->_events->_pendingKeys.clear();
-	return true;
 }
 
 bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
@@ -327,6 +328,54 @@ bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 
 	f.close();
 	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+PictureDialog::PictureDialog(MADSEngine *vm, const Common::Point &pos, 
+		int maxChars, int objectId) : 
+		TextDialog(vm, FONT_INTERFACE, pos, maxChars), _objectId(objectId) {
+	Scene &scene = _vm->_game->_scene;
+	Palette &palette = *_vm->_palette;
+
+	// Turn off cycling if active
+	_cyclingActive = scene._cyclingActive;
+	scene._cyclingActive = false;
+
+	// Save palette information
+	Common::copy(&palette._mainPalette[0], &palette._mainPalette[PALETTE_SIZE], &_palette[0]);
+	Common::copy(&palette._palFlags[0], &palette._palFlags[PALETTE_COUNT], &_palFlags[0]);
+	_rgbList.copy(palette._rgbList);
+
+	// Set up palette allocation
+	uint32 *palFlagP = &palette._palFlags[0];
+	for (int idx = 0; idx < PALETTE_COUNT; ++idx, ++palFlagP) {
+		*palFlagP = (idx < PALETTE_RESERVED_LOW_COUNT ||
+			idx >= (PALETTE_COUNT - PALETTE_RESERVED_HIGH_COUNT - 10)) ? 1 : 0;
+	}
+
+	// Reset the flag list
+	palette._rgbList.reset();
+}
+
+PictureDialog::~PictureDialog() {
+	Scene &scene = _vm->_game->_scene;
+	scene._cyclingActive = _cyclingActive;
+}
+
+void PictureDialog::show() {
+	setupPalette();
+
+	TextDialog::show();
+}
+
+void PictureDialog::setupPalette() {
+	Palette &palette = *_vm->_palette;
+	byte map[PALETTE_COUNT];
+
+	int numColors = PALETTE_COUNT - PALETTE_RESERVED_LOW_COUNT - PALETTE_RESERVED_HIGH_COUNT;
+	palette.fadeToGrey(palette._mainPalette, &map[PALETTE_RESERVED_LOW_COUNT],
+		PALETTE_RESERVED_LOW_COUNT, numColors, 248, 8, 1, 16);
 }
 
 /*------------------------------------------------------------------------*/
