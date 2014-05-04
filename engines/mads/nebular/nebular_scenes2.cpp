@@ -1422,8 +1422,8 @@ void Scene207::actions() {
 void Scene208::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x1A8);
-	_scene->addActiveVocab(0x1A9);
+	_scene->addActiveVocab(NOUN_HUGE_LEGS);
+	_scene->addActiveVocab(NOUN_LEAF_COVERED_PIT);
 	_scene->addActiveVocab(NOUN_PILE_OF_LEAVES);
 	_scene->addActiveVocab(VERB_WALKTO);
 }
@@ -1432,7 +1432,7 @@ void Scene208::updateTrap() {
 	if (_globals[kRhotundaStatus] == 1) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 24);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
-		int idx = _scene->_dynamicHotspots.add(424, 13, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_HUGE_LEGS, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
 		_scene->_hotspots.activate(414, false);
 		return;
@@ -1442,7 +1442,7 @@ void Scene208::updateTrap() {
 	case 0: {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 15);
-		int idx = _scene->_dynamicHotspots.add(426, 13, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_PILE_OF_LEAVES, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(60, 152), FACING_NORTH);
 		}
 		break;
@@ -1450,9 +1450,9 @@ void Scene208::updateTrap() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_hotspots.activate(414, false);
-		int idx = _scene->_dynamicHotspots.add(425, 13, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_LEAF_COVERED_PIT, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
-		_scene->_dynamicHotspots[idx]._articleNumber = 5;
+		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
 		}
 		break;
 	}
@@ -1637,19 +1637,19 @@ void Scene208::actions() {
 			_vm->_dialogs->showItem(OBJ_BIG_LEAVES, 0x326, 0);
 	} else if (_action.isAction(VERB_PUT, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
 		subAction(2);
-	} else if (_action.isAction(VERB_PUT, OBJ_TWINKIFRUIT, 0x1A9)) {
+	} else if (_action.isAction(VERB_PUT, OBJ_TWINKIFRUIT, NOUN_LEAF_COVERED_PIT)) {
 		subAction(3);
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
 			_rhotundaTurnFl = true;
 			_game._player.walk(Common::Point(20, 148), FACING_EAST);
 		}
-	} else if (_action.isAction(VERB_PUT, 0x35, 0x1A9)) {
+	} else if (_action.isAction(VERB_PUT, 0x35, NOUN_LEAF_COVERED_PIT)) {
 		subAction(4);
 		if (_game._player._stepEnabled) {
 			_vm->_dialogs->show(0x514C);
 		}
-	} else if (_action.isAction(VERB_PUT, 0x65, 0x1A9)) {
+	} else if (_action.isAction(VERB_PUT, 0x65, NOUN_LEAF_COVERED_PIT)) {
 		subAction(5);
 		if (_game._player._stepEnabled) {
 			_vm->_dialogs->show(0x514C);
@@ -1672,18 +1672,18 @@ void Scene208::actions() {
 		_vm->_dialogs->show(0x5148);
 	} else if (_action.isAction(VERB_LOOK, NOUN_PILE_OF_LEAVES)) {
 		_vm->_dialogs->show(0x5149);
-	} else if (_action.isAction(VERB_LOOK, 0x1A9)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_LEAF_COVERED_PIT)) {
 		if (_game._difficulty == DIFFICULTY_IMPOSSIBLE)
 			_vm->_dialogs->show(0x514A);
 		else
 			_vm->_dialogs->show(0x514B);
 	} else if (_action.isAction(VERB_LOOK, 0x174) || _action.isAction(VERB_LOOK, 0x175)) {
 		_vm->_dialogs->show(0x514D);
-	} else if (_action.isAction(VERB_TAKE, 0x1A9)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_LEAF_COVERED_PIT)) {
 		_vm->_dialogs->show(0x514E);
-	} else if (_action.isAction(VERB_LOOK, 0x1A8)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_HUGE_LEGS)) {
 		_vm->_dialogs->show(0x514F);
-	} else if (_action.isAction(VERB_TAKE, 0x1A8) || _action.isAction(0xA, 0x1A8)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_HUGE_LEGS) || _action.isAction(0xA, NOUN_HUGE_LEGS)) {
 		_vm->_dialogs->show(0x5150);
 	} else if (_action._savedFields._lookFlag == 0) {
 		return;
