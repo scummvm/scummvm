@@ -39,6 +39,7 @@ enum {
 };
 
 enum Noun {
+	NOUN_BIG_LEAVES     = 0x23,
 	NOUN_BLOWGUN		= 0x29,
 	NOUN_BOMB           = 0x2A,
 	NOUN_BOMBS          = 0x2B,
@@ -87,8 +88,10 @@ enum Noun {
 	NOUN_STUFFED_FISH	= 0x157,
 	NOUN_15F            = 0x15F,
 	NOUN_TIMEBOMB       = 0x171,
+	NOUN_TWINKIFRUIT    = 0x17A,
 	NOUN_VIEW_SCREEN    = 0x180,
 	NOUN_WALK_THROUGH	= 0x18B,
+	NOUN_DEEP_PIT       = 0x19E,
 	NOUN_HUGE_LEGS      = 0x1A8,
 	NOUN_LEAF_COVERED_PIT  = 0x1A9,
 	NOUN_PILE_OF_LEAVES = 0x1AA,

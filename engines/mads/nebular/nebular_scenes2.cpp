@@ -1635,21 +1635,21 @@ void Scene208::actions() {
 		subAction(1);
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->showItem(OBJ_BIG_LEAVES, 0x326, 0);
-	} else if (_action.isAction(VERB_PUT, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_BIG_LEAVES, NOUN_DEEP_PIT) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
 		subAction(2);
-	} else if (_action.isAction(VERB_PUT, OBJ_TWINKIFRUIT, NOUN_LEAF_COVERED_PIT)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_TWINKIFRUIT, NOUN_LEAF_COVERED_PIT)) {
 		subAction(3);
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
 			_rhotundaTurnFl = true;
 			_game._player.walk(Common::Point(20, 148), FACING_EAST);
 		}
-	} else if (_action.isAction(VERB_PUT, 0x35, NOUN_LEAF_COVERED_PIT)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_BURGER, NOUN_LEAF_COVERED_PIT)) {
 		subAction(4);
 		if (_game._player._stepEnabled) {
 			_vm->_dialogs->show(0x514C);
 		}
-	} else if (_action.isAction(VERB_PUT, 0x65, NOUN_LEAF_COVERED_PIT)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_DEAD_FISH, NOUN_LEAF_COVERED_PIT)) {
 		subAction(5);
 		if (_game._player._stepEnabled) {
 			_vm->_dialogs->show(0x514C);
@@ -1668,7 +1668,7 @@ void Scene208::actions() {
 		_vm->_dialogs->show(0x5146);
 	} else if (_action.isAction(VERB_LOOK, 0x9B)) {
 		_vm->_dialogs->show(0x5147);
-	} else if (_action.isAction(VERB_LOOK, 0x19E)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_DEEP_PIT)) {
 		_vm->_dialogs->show(0x5148);
 	} else if (_action.isAction(VERB_LOOK, NOUN_PILE_OF_LEAVES)) {
 		_vm->_dialogs->show(0x5149);
@@ -1683,7 +1683,7 @@ void Scene208::actions() {
 		_vm->_dialogs->show(0x514E);
 	} else if (_action.isAction(VERB_LOOK, NOUN_HUGE_LEGS)) {
 		_vm->_dialogs->show(0x514F);
-	} else if (_action.isAction(VERB_TAKE, NOUN_HUGE_LEGS) || _action.isAction(0xA, NOUN_HUGE_LEGS)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_HUGE_LEGS) || _action.isAction(VERB_PULL, NOUN_HUGE_LEGS)) {
 		_vm->_dialogs->show(0x5150);
 	} else if (_action._savedFields._lookFlag == 0) {
 		return;
