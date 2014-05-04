@@ -1186,7 +1186,10 @@ int MovGraph2::removeObject(StaticANIObject *obj) {
 }
 
 void MovGraph2::freeItems() {
-	warning("STUB: MovGraph2::freeItems()");
+	for (uint i = 0; i < _items2.size(); i++)
+		delete _items2[i];
+
+	_items2.clear();
 }
 
 MessageQueue *MovGraph2::method34(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
