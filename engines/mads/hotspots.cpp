@@ -97,7 +97,7 @@ int DynamicHotspots::setCursor(int index, CursorType cursor) {
 void DynamicHotspots::remove(int index) {
 	Scene &scene = _vm->_game->_scene;
 
-	if (_entries[index]._active) {
+	if (index >= 0 && _entries[index]._active) {
 		if (_entries[index]._seqIndex >= 0)
 			scene._sequences[_entries[index]._seqIndex]._dynamicHotspotIndex = -1;
 		_entries[index]._active = false;
