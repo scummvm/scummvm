@@ -32,6 +32,7 @@
 #include "mads/nebular/nebular_scenes2.h"
 #include "mads/nebular/nebular_scenes3.h"
 #include "mads/nebular/nebular_scenes4.h"
+#include "mads/nebular/nebular_scenes5.h"
 #include "mads/nebular/nebular_scenes8.h"
 
 namespace MADS {

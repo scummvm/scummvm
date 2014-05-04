@@ -63,6 +63,7 @@ public:
 };
 
 } // End of namespace Nebular
+
 } // End of namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES5_H */

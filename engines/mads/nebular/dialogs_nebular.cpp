@@ -243,6 +243,8 @@ void DialogsNebular::showDialog() {
 	case DIALOG_GAME_MENU:
 		//GameMenuDialog::show();
 		break;
+	default:
+		break;
 	}
 }
 
