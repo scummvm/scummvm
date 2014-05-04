@@ -193,9 +193,9 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 		return new Scene413(vm);
 
 	// Scene group #5
-	case 501:
-		// TODO
 	case 502:
+		return new Scene502(vm);
+	case 501:
 		// TODO
 	case 503:
 		// TODO
