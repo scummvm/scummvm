@@ -693,6 +693,12 @@ void Player::releasePlayerSprites() {
 	_numSprites = 0;
 	_spritesLoaded = false;
 	_spritesChanged = true;
+
+	// FIXME: Find out why this occurs
+	if (scene._sprites.size() > 0) {
+		warning("Player::releasePlayerSprites(): leftover sprites remain, clearing list");
+		scene._sprites.clear();
+	}
 }
 
 void Player::synchronize(Common::Serializer &s) {
