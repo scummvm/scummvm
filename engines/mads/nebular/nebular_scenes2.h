@@ -257,6 +257,17 @@ public:
 	virtual void actions();
 };
 
+class Scene213: public SceneTeleporter {
+public:
+	Scene213(MADSEngine *vm) : SceneTeleporter(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+};
+
 class Scene214: public Scene2xx {
 private:
 	uint32 _devilTime;

@@ -4588,6 +4588,66 @@ void Scene212::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene213::setup() {
+	_game._player._spritesPrefix = "";
+
+	// The original is calling Scene2xx::setAAName()
+	_game._aaName = Resources::formatAAName(2);
+}
+
+void Scene213::enter() {
+	if (_globals[kMeteorologistWatch] != 0)
+		_handSpriteId = _scene->_sprites.addSprites("*METHAND", false);
+	else if (_globals[kSexOfRex] == REX_MALE)
+		_handSpriteId = _scene->_sprites.addSprites("*REXHAND", false);
+	else
+		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND", false);
+
+	teleporterEnter();
+
+	// The original is calling Scene2xx::sceneEntrySound()
+		if (_vm->_musicFlag) {
+			if (_globals[kMeteorologistWatch] == 0)
+				_vm->_sound->command(1);
+			else
+				_vm->_sound->command(9);
+		} else
+			_vm->_sound->command(2);
+}
+
+void Scene213::step() {
+	teleporterStep();
+}
+
+void Scene213::actions() {
+	if (teleporterActions()) {
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x59))
+		_vm->_dialogs->show(21301);
+	else if (_action.isAction(VERB_LOOK, 0xC4) || _action.isAction (0xB7, 0xC4))
+		_vm->_dialogs->show(21302);
+	else if (_action.isAction(VERB_LOOK, 0x1CC))
+		_vm->_dialogs->show(21303);
+	else if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(0x103, 0x181))
+		_vm->_dialogs->show(21304);
+	else if (_action.isAction(VERB_LOOK, 0x1CF))
+		_vm->_dialogs->show(21305);
+	else if (_action.isAction(VERB_LOOK, 0x1D0) || _action.isAction(VERB_LOOK, 0x1D1)
+	 || _action.isAction(VERB_LOOK, 0x1D2) || _action.isAction(VERB_LOOK, 0x1D3)
+	 || _action.isAction(VERB_LOOK, 0x1D4) || _action.isAction(VERB_LOOK, 0x1D5)
+	 || _action.isAction(VERB_LOOK, 0x1D6) || _action.isAction(VERB_LOOK, 0x1D7)
+	 || _action.isAction(VERB_LOOK, 0x1D8) || _action.isAction(VERB_LOOK, 0x1D9)
+	 || _action.isAction(VERB_LOOK, 0x1DB) || _action.isAction(VERB_LOOK, 0x7A)
+	 || _action.isAction(VERB_LOOK, 0x1DA))
+		_vm->_dialogs->show(21306);
+	else
+		return;
+
+	_action._inProgress = false;
+}
 
 /*------------------------------------------------------------------------*/
 
