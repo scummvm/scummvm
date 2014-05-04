@@ -105,11 +105,6 @@ public:
 	byte *getPalette() { return _palette; }
 	int getColorCount() { return _colorCount; }
 	bool isBackground() const { return _isBackground; }
-
-	void drawScaled(int frameNumber, MSurface &depthSurface, MSurface &destSurface,
-		int scale, int depth, const Common::Point &pos);
-	void depthDraw(MSurface *surface, MSurface *depthSurface, int frameNumber, 
-		const Common::Point &pt, int depth);
 };
 
 } // End of namespace MADS
