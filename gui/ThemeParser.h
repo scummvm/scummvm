@@ -146,6 +146,7 @@ protected:
 					XML_PROP(padding, false)
 					XML_PROP(orientation, false)
 					XML_PROP(file, false)
+					XML_PROP(autoscale, false)
 				KEY_END()
 
 				XML_KEY(text)

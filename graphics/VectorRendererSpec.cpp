@@ -886,6 +886,17 @@ blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
+blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, bool autoscale) {
+	if (autoscale)
+		source->blit(*_activeSurface, r.left, r.top, Graphics::FLIP_NONE,
+			nullptr, TS_ARGB(255, 255, 255, 255),
+			  r.width(), r.height());
+	else
+		source->blit(*_activeSurface, r.left, r.top);
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
 blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) {
 	if (clipping.isEmpty() || clipping.contains(r)) {
 		blitKeyBitmap(source, r);
@@ -941,12 +952,6 @@ blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const 
 		dst_ptr = dst_ptr - usedW + dst_pitch;
 		src_ptr = src_ptr - usedW + src_pitch;
 	}
-}
-
-template<typename PixelType>
-void VectorRendererSpec<PixelType>::
-blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r) {
-	source->blit(*_activeSurface, r.left, r.top);
 }
 
 template<typename PixelType>
