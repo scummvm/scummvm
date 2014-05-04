@@ -34,9 +34,9 @@ namespace Nebular {
 enum {
 	VERB_WALK_THROUGH = 0x18B,
 	VERB_WALK_TOWARDS = 0x18C,
-	VERB_CLIMB_DOWN = 0x4E,
-	VERB_WALK_DOWN = 0x1AD
+	VERB_WALK_DOWN = 0x1AD,
 
+	VERB_CLIMB_DOWN = 0x4E
 };
 
 void Scene2xx::setAAName() {
@@ -131,7 +131,7 @@ void Scene201::setup() {
 	setAAName();
 
 	_scene->addActiveVocab(NOUN_15F);
-	_scene->addActiveVocab(NOUN_487);
+	_scene->addActiveVocab(NOUN_BIRDS);
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
@@ -148,7 +148,7 @@ void Scene201::enter() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
 	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(185, 46));
 
-	int idx = _scene->_dynamicHotspots.add(1159, 209, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_BIRDS, 209, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
 
 	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == -1)) {
@@ -1424,7 +1424,7 @@ void Scene208::setup() {
 	setAAName();
 	_scene->addActiveVocab(0x1A8);
 	_scene->addActiveVocab(0x1A9);
-	_scene->addActiveVocab(0x1AA);
+	_scene->addActiveVocab(NOUN_PILE_OF_LEAVES);
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
@@ -1578,27 +1578,27 @@ void Scene208::subAction(int mode) {
 	case 2: {
 		switch (mode) {
 		case 1:
-			_game._objects.addToInventory(6);
+			_game._objects.addToInventory(OBJ_BIG_LEAVES);
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals[kLeavesStatus] = 1;
 			break;
 		case 2:
-			_game._objects.setRoom(6, 1);
+			_game._objects.setRoom(OBJ_BIG_LEAVES, 1);
 			_globals[kLeavesStatus] = 2;
 			updateTrap();
 			break;
 		case 3:
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
-			_game._objects.removeFromInventory(10, 1);
+			_game._objects.removeFromInventory(OBJ_TWINKIFRUIT, 1);
 			_vm->_sound->command(34);
 			break;
 		case 4:
-			_game._objects.removeFromInventory(1, 1);
+			_game._objects.removeFromInventory(OBJ_BURGER, 1);
 			_vm->_sound->command(33);
 			break;
 		case 5:
-			_game._objects.removeFromInventory(2, 1);
+			_game._objects.removeFromInventory(OBJ_DEAD_FISH, 1);
 			_vm->_sound->command(33);
 			break;
 		}
@@ -1631,13 +1631,13 @@ void Scene208::actions() {
 		}
 	} else if (_action.isAction(VERB_WALK_TOWARDS, 0x83)) {
 		_scene->_nextSceneId = 212;
-	} else if (_action.isAction(VERB_TAKE, 0x1AA) && (!_globals[kLeavesStatus] || _game._trigger)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_PILE_OF_LEAVES) && (!_globals[kLeavesStatus] || _game._trigger)) {
 		subAction(1);
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->showItem(OBJ_BIG_LEAVES, 0x326, 0);
 	} else if (_action.isAction(VERB_PUT, 0x23, 0x19E) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
 		subAction(2);
-	} else if (_action.isAction(VERB_PUT, 0x17A, 0x1A9)) {
+	} else if (_action.isAction(VERB_PUT, OBJ_TWINKIFRUIT, 0x1A9)) {
 		subAction(3);
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
@@ -1670,7 +1670,7 @@ void Scene208::actions() {
 		_vm->_dialogs->show(0x5147);
 	} else if (_action.isAction(VERB_LOOK, 0x19E)) {
 		_vm->_dialogs->show(0x5148);
-	} else if (_action.isAction(VERB_LOOK, 0x1AA)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_PILE_OF_LEAVES)) {
 		_vm->_dialogs->show(0x5149);
 	} else if (_action.isAction(VERB_LOOK, 0x1A9)) {
 		if (_game._difficulty == DIFFICULTY_IMPOSSIBLE)

@@ -3798,13 +3798,13 @@ void Scene351::actions() {
 			case 1:
 				_scene->_hotspots.activate(0x5C, false);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-				_game._objects.addToInventory(0xF);
+				_game._objects.addToInventory(OBJ_CREDIT_CHIP);
 				break;
 
 			case 2:
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
-				_vm->_dialogs->showItem(0xF, 0x32F);
+				_vm->_dialogs->showItem(OBJ_CREDIT_CHIP, 0x32F);
 				break;
 			}
 		}
@@ -4147,7 +4147,7 @@ void Scene352::actions() {
 
 			case 1:
 				_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-				_game._objects.addToInventory(0x2F);
+				_game._objects.addToInventory(OBJ_GUARDS_ARM);
 				_scene->changeVariant(1);
 				break;
 

@@ -89,6 +89,7 @@ enum Noun {
 	NOUN_TIMEBOMB       = 0x171,
 	NOUN_VIEW_SCREEN    = 0x180,
 	NOUN_WALK_THROUGH	= 0x18B,
+	NOUN_PILE_OF_LEAVES = 0x1AA,
 	NOUN_CAPTIVE_CREATURE = 0x1C3,
 	NOUN_NATIVE_WOMAN	= 0x1DC,
 	NOUN_ALCOHOL		= 0x310,
@@ -96,7 +97,7 @@ enum Noun {
 	NOUN_DROP			= 0x3AD,
 	NOUN_DASH			= 0x3AE,
 	NOUN_SPLASH			= 0x3AF,
-	NOUN_487            = 0x487
+	NOUN_BIRDS          = 0x487
 };
 
 class SceneFactory {
