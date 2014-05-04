@@ -185,6 +185,18 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene409: public SceneTeleporter {
+public:
+	Scene409(MADSEngine *vm) : SceneTeleporter(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene410: public Scene4xx {
 public:
 	Scene410(MADSEngine *vm) : Scene4xx(vm) {}

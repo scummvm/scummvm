@@ -2993,6 +2993,63 @@ void Scene408::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene409::setup() {
+	_game._player._spritesPrefix = "";
+
+	// The original is calling Scene4xx::setAAName()
+	_game._aaName = Resources::formatAAName(4);
+}
+
+void Scene409::enter() {
+	_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
+	teleporterEnter();
+
+	// The original is calling Scene4xx::sceneEntrySound()
+	if (!_vm->_musicFlag)
+		_vm->_sound->command(2);
+	else
+		_vm->_sound->command(10);
+}
+
+void Scene409::step() {
+	teleporterStep();
+}
+
+void Scene409::actions() {
+	if (teleporterActions()) {
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x181))
+		_vm->_dialogs->show(40910);
+	else if (_action.isAction(0x103, 0x181))
+		_vm->_dialogs->show(40910);
+	else if (_action.isAction(VERB_LOOK, 0xC4))
+		_vm->_dialogs->show(40911);
+	else if (_action.isAction(0xB7, 0xC4))
+		_vm->_dialogs->show(40911);
+	else if (_action.isAction(VERB_LOOK, 0x1CC))
+		_vm->_dialogs->show(40912);
+	else if (_action.isAction(VERB_LOOK, 0x1D1) || _action.isAction(VERB_LOOK, 0x1D2)
+		|| _action.isAction(VERB_LOOK, 0x1D3) || _action.isAction(VERB_LOOK, 0x1D4)
+		|| _action.isAction(VERB_LOOK, 0x1D5) || _action.isAction(VERB_LOOK, 0x1D6)
+		|| _action.isAction(VERB_LOOK, 0x1D7) || _action.isAction(VERB_LOOK, 0x1D8)
+		|| _action.isAction(VERB_LOOK, 0x1D9) || _action.isAction(VERB_LOOK, 0x1D0)
+		|| _action.isAction(VERB_LOOK, 0x1DB) || _action.isAction(VERB_LOOK, 0x1DA))
+		_vm->_dialogs->show(40913);
+	else if (_action.isAction(VERB_LOOK, 0x1CF))
+		_vm->_dialogs->show(40914);
+	else if (_action._lookFlag)
+		_vm->_dialogs->show(40914);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 void Scene410::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();

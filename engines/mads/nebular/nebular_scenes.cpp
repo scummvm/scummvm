@@ -180,17 +180,14 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 		return new Scene407(vm);
 	case 408:
 		return new Scene408(vm);
+	case 409:
+		return new Scene409(vm);
 	case 410:
 		return new Scene410(vm);
 	case 411:
 		return new Scene411(vm);
 	case 413:
 		return new Scene413(vm);
-
-	case 409:
-		// TODO
-		// Fall-through for unimplemented scenes in group #4
-		error("Invalid scene %d called", scene._nextSceneId);
 
 	// Scene group #5
 	case 501:
@@ -351,6 +348,272 @@ void SceneInfoNebular::loadCodes(MSurface &depthSurface, Common::SeekableReadStr
 
 	if (destP < endP)
 		Common::fill(destP, endP, 0);
+}
+
+/*------------------------------------------------------------------------*/
+
+int SceneTeleporter::teleporterAddress(int code, bool working) {
+	int limit = working ? 6 : 10;
+
+	for (int i = 0; i < limit; i++) {
+		if (code == _globals[kTeleporterCode + i])
+			return _globals[kTeleporterRoom + i];
+	}
+
+	return -1;
+}
+
+Common::Point SceneTeleporter::teleporterComputeLocation() {
+	Common::Point result;
+
+	switch (_buttonTyped) {
+	case 0:
+		result = Common::Point(179, 200);
+		break;
+
+	case 1:
+		result = Common::Point(166, 170);
+		break;
+
+	case 2:
+		result = Common::Point(179, 170);
+		break;
+
+	case 3:
+		result = Common::Point(192, 170);
+		break;
+
+	case 4:
+		result = Common::Point(166, 180);
+		break;
+
+	case 5:
+		result = Common::Point(179, 180);
+		break;
+
+	case 6:
+		result = Common::Point(192, 180);
+		break;
+
+	case 7:
+		result = Common::Point(166, 190);
+		break;
+
+	case 8:
+		result = Common::Point(179, 190);
+		break;
+
+	case 9:
+		result = Common::Point(192, 190);
+		break;
+
+	case 10:
+		result = Common::Point(194, 200);
+		break;
+
+	case 11:
+		result = Common::Point(164, 200);
+		break;
+
+	default:
+		error("teleporterComputeLocation() - Unexpected button pressed");
+	}
+
+	return result;
+}
+
+void SceneTeleporter::teleporterHandleKey() {
+	switch (_game._trigger) {
+	case 0: {
+		_game._player._stepEnabled = false;
+		Common::Point msgPos = teleporterComputeLocation();
+		_handSequenceId = _scene->_sequences.startReverseCycle(_handSpriteId, false, 4, 2, 0, 0);
+		_scene->_sequences.setMsgPosition(_handSequenceId, msgPos);
+		_scene->_sequences.setDepth(_handSequenceId, 2);
+		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_LOOP, 0, 1);
+		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+
+		if (_globals[kMeteorologistWatch] == 0)
+			_vm->_events->hideCursor();
+
+		}
+		break;
+
+	case 1:
+		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_SPRITE, 3, 3);
+		if (_buttonTyped <= 9) {
+			if (_digitCount < 4) {
+				_curCode *= 10;
+				_curCode += _buttonTyped;
+				_digitCount++;
+				_msgText = "";
+				_msgText.format("%d", _curCode);
+				if (_digitCount < 4)
+					_msgText += "_";
+
+				if (_scene->_currentSceneId != 711)
+					_vm->_sound->command(32);
+			}
+		} else if (_buttonTyped == 11) {
+			_digitCount = 0;
+			_curCode = 0;
+			_msgText = "_";
+			if (_scene->_currentSceneId != 711)
+				_vm->_sound->command(33);
+		} else if (_digitCount == 4) {
+			if (_scene->_currentSceneId != 711)
+				_finishedCodeCounter = 1;
+
+			if (teleporterAddress(_curCode, true) > 0) {
+				_vm->_palette->setEntry(252, 0, 63, 0);
+				if (_scene->_currentSceneId != 711)
+					_vm->_sound->command(34);
+			} else {
+				_vm->_palette->setEntry(252, 63, 0, 0);
+				if (_scene->_currentSceneId != 711)
+					_vm->_sound->command(35);
+			}
+		}
+
+		if (_scene->_currentSceneId != 711) {
+			if (_curMessageId >= 0)
+				_scene->_kernelMessages.remove(_curMessageId);
+			_curMessageId = _scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, 9999999, _msgText);
+		}
+		break;
+
+	case 2:
+		if (_finishedCodeCounter == 1) {
+			_finishedCodeCounter++;
+
+			if (_globals[kMeteorologistWatch] != 0)
+				_scene->_nextSceneId = 202;
+			else {
+				_vm->_events->showCursor();
+				int destination = teleporterAddress(_curCode, true);
+
+				if (destination > 0) {
+					_globals[kTeleporterCommand] = 2;
+					_scene->_nextSceneId = _teleporterSceneId;
+					_globals[kTeleporterDestination] = destination;
+				} else {
+					_globals[kTeleporterCommand] = 4;
+					_scene->_nextSceneId = _teleporterSceneId;
+				}
+			}
+		} else if (_globals[kMeteorologistWatch] != 0)
+			_scene->_sequences.addTimer(30, 230 + _meteorologistCurPlace);
+
+		break;
+
+	case 3:
+		if (!_finishedCodeCounter) {
+			if (_globals[kMeteorologistWatch] == 0) {
+				_game._player._stepEnabled = true;
+				_vm->_events->showCursor();
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void SceneTeleporter::teleporterEnter() {
+	_game._player._visible   = false;
+	_game._player._stepEnabled = (_globals[kMeteorologistWatch] == 0);
+	_scene->_kernelMessages._talkFont = _vm->_font->getFont(FONT_TELE);
+	_scene->_textSpacing = 0;
+	_curCode   = 0;
+	_digitCount = 0;
+	_finishedCodeCounter       = 0;
+	_curMessageId        = -1;
+	_msgText = "_";
+
+	if (_scene->_priorSceneId == -2)
+		_scene->_priorSceneId = _globals[kTeleporterDestination];
+
+	if (_scene->_priorSceneId < 101)
+		_scene->_priorSceneId = 201;
+
+	_globals[kTeleporterDestination] = _scene->_priorSceneId;
+	_vm->_palette->setEntry(252, 63, 63, 0);
+	_vm->_palette->setEntry(253, 0,  0, 0);
+	_teleporterSceneId = _scene->_priorSceneId;
+	if (_teleporterSceneId == 202)
+		_teleporterSceneId = 201;
+
+	int tmpVal = 0;
+	for (int i = 0; i < 10; i++) {
+		if (_teleporterSceneId == _globals[kTeleporterRoom + i])
+			tmpVal = _globals[kTeleporterRoom + i];
+
+		if (_globals[kTeleporterRoom + i] == 301)
+			_meteorologistNextPlace = _globals[kTeleporterCode + i];
+	}
+
+	Common::String msgText2 = Common::String::format("#%d", tmpVal);
+
+	if (_scene->_currentSceneId != 711) {
+		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, 9999999, msgText2);
+		_scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, 9999999, _msgText);
+	}
+
+	_meteorologistCurPlace = 0;
+
+	if (_globals[kMeteorologistWatch] != 0)
+		_scene->_sequences.addTimer(30, 230);
+
+	_vm->_sound->command(36);
+}
+
+bool SceneTeleporter::teleporterActions() {
+	bool retVal = false;
+	static int _buttonList[12] = { 0x1D0, 0x1D1, 0x1D2, 0x1D3, 0x1D4, 0x1D5, 0x1D6, 0x1D7, 0x1D8, 0x1D9, 0x1DB, 0x1DA };
+
+	if (_action.isAction(0x11A) || _action.isAction(VERB_PUSH)) {
+		for (int i = 0; i < 12; i++) {
+			if (_action._activeAction._objectNameId == _buttonList[i])
+				_buttonTyped = i;
+		}
+		teleporterHandleKey();
+		retVal = true;
+	}
+
+	if (_action.isAction(0x1CE, 0x1CF)) {
+		_globals[kTeleporterCommand] = 3;
+		_scene->_nextSceneId = _teleporterSceneId;
+		retVal = true;
+	}
+
+	return (retVal);
+}
+
+void SceneTeleporter::teleporterStep() {
+	if ((_globals[kMeteorologistWatch] != 0) && (_game._trigger >= 230)) {
+		int place = _game._trigger - 230;
+		int digit;
+
+		if (place < 4) {
+			digit = _meteorologistNextPlace;
+			for (int i = 0; i < (3 - place); i++)
+				digit = digit / 10;
+
+			digit   = digit % 10;
+		} else {
+			digit   = 10;
+		}
+		_buttonTyped              = digit;
+		_meteorologistCurPlace = place + 1;
+		_game._trigger = -1;
+	}
+
+	if (_game._trigger) {
+		if (_game._trigger == -1)
+			_game._trigger = 0;
+		teleporterHandleKey();
+	}
 }
 
 } // End of namespace Nebular

@@ -125,7 +125,7 @@ protected:
 	Common::String formAnimName(char sepChar, int suffixNum);
 
 	/**
-	 * Plays appropriate sound for entering varous rooms
+	 * Plays appropriate sound for entering various rooms
 	 */
 	void lowRoomsEntrySound();
 public:
@@ -150,6 +150,34 @@ protected:
 	SceneInfoNebular(MADSEngine *vm) : SceneInfo(vm) {}
 };
 
+class SceneTeleporter : public NebularScene {
+protected:
+	int _buttonTyped;
+	int _curCode;
+	int _digitCount;
+	int _curMessageId;
+	int _handSpriteId;
+	int _handSequenceId;
+	int _finishedCodeCounter;
+	int _meteorologistNextPlace;
+	int _meteorologistCurPlace;
+	int _teleporterSceneId;
+	Common::String _msgText;
+
+	int teleporterAddress(int code, bool working);
+
+	void teleporterHandleKey();
+	Common::Point teleporterComputeLocation();
+	void teleporterEnter();
+	bool teleporterActions();
+	void teleporterStep();
+
+protected:
+	/**
+	* Constructor
+	*/
+	SceneTeleporter(MADSEngine *vm) : NebularScene(vm) {}
+};
 } // End of namespace Nebular
 
 } // End of namespace MADS
