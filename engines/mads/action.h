@@ -151,7 +151,9 @@ public:
 
 	void checkAction();
 	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
-	
+	bool isObject(int objectNameId);
+	bool isTarget(int objectNameId);
+
 	/**
 	 * Check the result of the current action on the sentence
 	 * with the provision that the action is not yet complete.

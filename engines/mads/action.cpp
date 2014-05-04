@@ -385,6 +385,14 @@ bool MADSAction::isAction(int verbId, int objectNameId, int indirectObjectId) {
 	return true;
 }
 
+bool MADSAction::isObject(int objectNameId) {
+	return _activeAction._objectNameId == objectNameId;
+}
+
+bool MADSAction::isTarget(int objectNameId) {
+	return _activeAction._indirectObjectId == objectNameId;
+}
+
 void MADSAction::checkActionAtMousePos() {
 	Scene &scene = _vm->_game->_scene;
 	UserInterface &userInterface = scene._userInterface;

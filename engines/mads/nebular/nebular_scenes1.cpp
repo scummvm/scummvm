@@ -798,7 +798,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action._activeAction._objectNameId == 0x122 && !_fridgeOpenedFl) {
+	if (_action.isObject(0x122) && !_fridgeOpenedFl) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 6, 1, 0, 0);
@@ -970,7 +970,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if ((_action._activeAction._objectNameId == 0xC7 || _action._activeAction._objectNameId == 0xA3) && (_action.isAction(VERB_LOOK) || _action.isAction(0x50) || _action.isAction(0x4F))) {
+	if ((_action.isObject(0xC7) || _action.isObject(0xA3)) && (_action.isAction(VERB_LOOK) || _action.isAction(0x50) || _action.isAction(0x4F))) {
 		if (_game._objects.isInInventory(OBJ_REBREATHER)) {
 			if (!_action.isAction(0x50) && !_action.isAction(0x4F)) {
 				_vm->_dialogs->show(0x27F7);
@@ -984,7 +984,7 @@ void Scene102::actions() {
 		}
 	}
 
-	if ((_action._activeAction._objectNameId == 0xC7 || _action._activeAction._objectNameId == 0xA3) && (_action.isAction(0x50) || _action.isAction(0x4F)) ) {
+	if ((_action.isObject(0xC7) || _action.isObject(0xA3)) && (_action.isAction(0x50) || _action.isAction(0x4F)) ) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(formAnimName('A', -1), 1);
@@ -2470,8 +2470,8 @@ void Scene109::preActions() {
 		_game._player._walkOffScreenSceneId = 108;
 
 	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT))
-	&& (_action.isAction(0x146) || _action.isAction(0x178))
-	&& (_action.isAction(0x65) || _action.isAction(0x157) || _action.isAction(0x35))) {
+	&& (_action.isObject(0x146) || _action.isObject(0x178))
+	&& (_action.isObject(0x65) || _action.isObject(0x157) || _action.isObject(0x35))) {
 		int idx = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if ((idx >= 0) && _game._objects.isInInventory(idx)) {
 			_game._player._prepareWalkPos = Common::Point(106, 38);
@@ -2482,7 +2482,7 @@ void Scene109::preActions() {
 	}
 
 	if ((_action.isAction(0x15A, 0x178) || _action.isAction(0x15C, 0x146))
-	&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isAction(0x178)))
+	&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(0x178)))
 		_game._player._walkOffScreenSceneId = 110;
 
 	_hungryFl = false;
@@ -2495,8 +2495,8 @@ void Scene109::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE)) && ((_action.isAction(0x146) || _action.isAction(0x178)))) {
-		if (_action.isAction(0x65) || _action.isAction(0x157) || _action.isAction(0x35)) {
+	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE)) && (_action.isTarget(0x146) || _action.isTarget(0x178))) {
+		if (_action.isObject(0x65) || _action.isObject(0x157) || _action.isObject(0x35)) {
 			_throwingObjectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			if (_throwingObjectId >= 0) {
 				if ((_game._objects.isInInventory(_throwingObjectId) && _globals[kHoovicAlive]) || _rexThrowingObject) {

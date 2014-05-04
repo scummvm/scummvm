@@ -4551,7 +4551,7 @@ void Scene212::preActions() {
 void Scene212::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(0x52D9);
-	else if (_action.isAction(0x18C) && (_action.isAction(0x82) || _action.isAction(0xE8)))
+	else if (_action.isAction(0x18C) && (_action.isObject(0x82) || _action.isObject(0xE8)))
 		_scene->_nextSceneId = 208;
 	else if (_action.isAction(0x18C, 0x3F))
 		_scene->_nextSceneId = 111;
