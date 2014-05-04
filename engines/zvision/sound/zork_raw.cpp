@@ -192,7 +192,7 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 			}
 		}
 	} else if (engine->getGameId() == GID_GRANDINQUISITOR) {
-		for (int i = 0; i < 6; ++i) {
+		for (uint i = 0; i < ARRAYSIZE(RawZorkStream::_zgiSoundParamLookupTable); ++i) {
 			if (RawZorkStream::_zgiSoundParamLookupTable[i].identifier == fileIdentifier) {
 				soundParams = RawZorkStream::_zgiSoundParamLookupTable[i];
 				foundParams = true;
