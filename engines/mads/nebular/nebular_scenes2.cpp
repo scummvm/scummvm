@@ -30,6 +30,15 @@ namespace MADS {
 
 namespace Nebular {
 
+// Scene 2xx verbs
+enum {
+	VERB_WALK_THROUGH = 0x18B,
+	VERB_WALK_TOWARDS = 0x18C,
+	VERB_CLIMB_DOWN = 0x4E,
+	VERB_WALK_DOWN = 0x1AD
+
+};
+
 void Scene2xx::setAAName() {
 	int idx = (_scene->_nextSceneId == 216) ? 4 : 2;
 	_game._aaName = Resources::formatAAName(idx);
@@ -123,7 +132,7 @@ void Scene201::setup() {
 
 	_scene->addActiveVocab(NOUN_15F);
 	_scene->addActiveVocab(NOUN_487);
-	_scene->addActiveVocab(NOUN_D);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene201::enter() {
@@ -280,7 +289,7 @@ void Scene201::step() {
 
 void Scene201::actions() {
 	if (_action._lookFlag == false) {
-		if (_action.isAction(0x18C, 0x83))
+		if (_action.isAction(VERB_WALK_TOWARDS, 0x83))
 			_scene->_nextSceneId = 202;
 		else if ((_action.isAction(0x50, 0x156)) || (_action.isAction(0x188, 0x16C)) || (_action.isAction(0x188, 0x1B6))) {
 			if (_game._trigger == 0) {
@@ -330,12 +339,12 @@ void Scene202::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	_scene->addActiveVocab(NOUN_C7);
-	_scene->addActiveVocab(NOUN_4E);
-	_scene->addActiveVocab(NOUN_D);
-	_scene->addActiveVocab(NOUN_2C);
-	_scene->addActiveVocab(NOUN_140);
-	_scene->addActiveVocab(NOUN_1C9);
+	_scene->addActiveVocab(NOUN_LADDER);
+	_scene->addActiveVocab(VERB_CLIMB_DOWN);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_BONE);
+	_scene->addActiveVocab(NOUN_SKULL);
+	_scene->addActiveVocab(NOUN_BROKEN_LADDER);
 }
 
 void Scene202::enter() {
@@ -358,14 +367,14 @@ void Scene202::enter() {
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
 	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(149, 113));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
-	int idx = _scene->_dynamicHotspots.add(320, 13, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_BONE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(153, 97), FACING_SOUTH);
 
 	if (!(_globals[kBone202Status] & 1)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(130, 108));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-		idx = _scene->_dynamicHotspots.add(44, 13, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(NOUN_BONE, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(132, 97), FACING_SOUTH);
 	}
 
@@ -373,7 +382,7 @@ void Scene202::enter() {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 0, 0, 0);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[6], Common::Point(166, 110));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 10);
-		idx = _scene->_dynamicHotspots.add(44, 13, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		idx = _scene->_dynamicHotspots.add(NOUN_BONE, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(165, 99), FACING_SOUTH);
 	}
 
@@ -391,8 +400,8 @@ void Scene202::enter() {
 	if (_globals[kLadderBroken]) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 6);
-		_scene->_hotspots.activate(199, false);
-		idx = _scene->_dynamicHotspots.add(457, 13, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		_scene->_hotspots.activate(NOUN_LADDER, false);
+		idx = _scene->_dynamicHotspots.add(NOUN_BROKEN_LADDER, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
 	}
 
@@ -529,8 +538,8 @@ void Scene202::step() {
 	case 93: {
 		_globals[kLadderBroken] = -1;
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 0, 0, 0);
-		_scene->_hotspots.activate(199, false);
-		int idx = _scene->_dynamicHotspots.add(457, 13, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		_scene->_hotspots.activate(NOUN_LADDER, false);
+		int idx = _scene->_dynamicHotspots.add(NOUN_BROKEN_LADDER, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(246, 124), FACING_NORTH);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[11], _globals._sequenceIndexes[5]);
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[11]);
@@ -709,7 +718,7 @@ void Scene202::preActions() {
 	if (player._readyToWalk)
 		_scene->_kernelMessages.reset();
 
-	if (!_ladderTopFl && (_action.isAction(0x4E, 0xC7) || !player._readyToWalk)) {
+	if (!_ladderTopFl && (_action.isAction(0x4E, NOUN_LADDER) || !player._readyToWalk)) {
 		if (_game._trigger == 0) {
 			_vm->_sound->command(29);
 			player._readyToWalk = false;
@@ -741,12 +750,12 @@ void Scene202::preActions() {
 
 void Scene202::actions() {
 	if (_action._lookFlag == false) {
-		if (_action.isAction(0x4E, 0xC7)) {
+		if (_action.isAction(0x4E, NOUN_LADDER)) {
 			_action._inProgress = false;
 			return;
-		} else if (_action.isAction(0x18C, 0x83)) {
+		} else if (_action.isAction(VERB_WALK_TOWARDS, 0x83)) {
 			_scene->_nextSceneId = 203;
-		} else if (_action.isAction(0x18C, 0x82)) {
+		} else if (_action.isAction(VERB_WALK_TOWARDS, 0x82)) {
 			if (_globals[kMeteorologistStatus] != 2) {
 				if (_scene->_activeAnimation)
 					_globals[kMeteorologistStatus] = 1;
@@ -796,7 +805,7 @@ void Scene202::actions() {
 					return;
 				}
 			}
-		} else if ((_action.isAction(0x50, 0xC7)) && (_globals[kLadderBroken] == 0)) {
+		} else if ((_action.isAction(0x50, NOUN_LADDER)) && (_globals[kLadderBroken] == 0)) {
 			switch (_game._trigger) {
 			case 0:
 				_vm->_sound->command(29);
@@ -804,7 +813,7 @@ void Scene202::actions() {
 				_game._player._visible = false;
 				_game._player._stepEnabled = false;
 
-				_ladderHotspotId = _scene->_dynamicHotspots.add(199, 79, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
+				_ladderHotspotId = _scene->_dynamicHotspots.add(NOUN_LADDER, 79, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
 				_scene->_dynamicHotspots.setPosition(_ladderHotspotId, Common::Point(246, 124), FACING_NORTH);
 				_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 1);
@@ -1055,7 +1064,7 @@ void Scene203::step() {
 }
 
 void Scene203::preActions() {
-	if (_rhotundaEatFl && !_action.isAction(0x18C, 0x83)) {
+	if (_rhotundaEatFl && !_action.isAction(VERB_WALK_TOWARDS, 0x83)) {
 		_game._player.walk(Common::Point(158, 136), FACING_SOUTH);
 		_action._inProgress = false;
 		return;
@@ -1068,9 +1077,9 @@ void Scene203::preActions() {
 void Scene203::actions() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(0x4F53);
-	} else if (_action.isAction(0x18C, 0x83)) {
+	} else if (_action.isAction(VERB_WALK_TOWARDS, 0x83)) {
 		_scene->_nextSceneId = 208;
-	} else if (_action.isAction(0x18C, 0x82)) {
+	} else if (_action.isAction(VERB_WALK_TOWARDS, 0x82)) {
 		_scene->_nextSceneId = 202;
 	} else if (_action.isAction(VERB_LOOK, 0x142)) {
 		_vm->_dialogs->show(0x4F4D);
@@ -1095,9 +1104,9 @@ void Scene203::actions() {
 void Scene205::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(NOUN_D);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_CHICKEN);
-	_scene->addActiveVocab(NOUN_10D);
+	_scene->addActiveVocab(NOUN_PIRANHA);
 }
 
 void Scene205::enter() {
@@ -1228,9 +1237,9 @@ void Scene207::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(0x185);
-	_scene->addActiveVocab(NOUN_D);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(0x14D);
-	_scene->addActiveVocab(NOUN_D);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene207::enter() {
@@ -1337,10 +1346,10 @@ void Scene207::step() {
 }
 
 void Scene207::preActions() {
-	if (_action.isAction(0x1AD, 0x1AE))
+	if (_action.isAction(VERB_WALK_DOWN, 0x1AE))
 		_game._player._walkOffScreenSceneId = 211;
 
-	if (_action.isAction(0x18C, 0x1AB))
+	if (_action.isAction(VERB_WALK_TOWARDS, 0x1AB))
 		_game._player._walkOffScreenSceneId = 208;
 
 	if ((_action.isAction(VERB_WALKTO)) || (_action.isAction(VERB_LOOK))) {
@@ -1355,7 +1364,7 @@ void Scene207::preActions() {
 void Scene207::actions() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(0x50E7);
-	} else if (_action.isAction(0x18B, 0x70)) {
+	} else if (_action.isAction(VERB_WALK_THROUGH, 0x70)) {
 		_scene->_nextSceneId = 214;
 	} else {
 		if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
@@ -1416,7 +1425,7 @@ void Scene208::setup() {
 	_scene->addActiveVocab(0x1A8);
 	_scene->addActiveVocab(0x1A9);
 	_scene->addActiveVocab(0x1AA);
-	_scene->addActiveVocab(NOUN_D);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene208::updateTrap() {
@@ -1531,10 +1540,10 @@ void Scene208::preActions() {
 	if (_action.isAction(VERB_LOOK) && player._readyToWalk)
 		player._needToWalk = true;
 
-	if (_action.isAction(0x18C, 0x9B))
+	if (_action.isAction(VERB_WALK_TOWARDS, 0x9B))
 		player._walkOffScreenSceneId = 209;
 
-	if (_action.isAction(0x18C, 0xF6))
+	if (_action.isAction(VERB_WALK_TOWARDS, 0xF6))
 		player._walkOffScreenSceneId = 207;
 }
 
@@ -1610,7 +1619,7 @@ void Scene208::subAction(int mode) {
 }
 
 void Scene208::actions() {
-	if (_action.isAction(0x18C, 0x19F)) {
+	if (_action.isAction(VERB_WALK_TOWARDS, 0x19F)) {
 		if (_globals[kRhotundaStatus])
 			_scene->_nextSceneId = 203;
 		else if (_game._trigger == 0) {
@@ -1620,7 +1629,7 @@ void Scene208::actions() {
 		} else if (_game._trigger == 1) {
 			_scene->_nextSceneId = 203;
 		}
-	} else if (_action.isAction(0x18C, 0x83)) {
+	} else if (_action.isAction(VERB_WALK_TOWARDS, 0x83)) {
 		_scene->_nextSceneId = 212;
 	} else if (_action.isAction(VERB_TAKE, 0x1AA) && (!_globals[kLeavesStatus] || _game._trigger)) {
 		subAction(1);
@@ -2946,7 +2955,7 @@ void Scene209::step() {
 }
 
 void Scene209::preActions() {
-	if (_action.isAction(0x18C, 0x84))
+	if (_action.isAction(VERB_WALK_TOWARDS, 0x84))
 		_game._player._walkOffScreenSceneId = 208;
 
 	if (_globals[36] == 1) {
@@ -2974,7 +2983,7 @@ void Scene209::actions() {
 		return;
 	}
 
-	if (_action.isAction(0x18C, 0x1A2)) {
+	if (_action.isAction(VERB_WALK_TOWARDS, 0x1A2)) {
 		_scene->_nextSceneId = 203;
 		_action._inProgress = false;
 		return;
@@ -3287,7 +3296,7 @@ void Scene210::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(0x70);
-	_scene->addActiveVocab(0x18B);
+	_scene->addActiveVocab(VERB_WALK_THROUGH);
 }
 
 void Scene210::handleConversations() {
@@ -4090,7 +4099,7 @@ void Scene210::step() {
 void Scene210::preActions() {
 	_stopWalking = false;
 
-	if (_action.isAction(0x1AD, 0x1C1))
+	if (_action.isAction(VERB_WALK_DOWN, 0x1C1))
 		_game._player._walkOffScreenSceneId = 211;
 }
 
@@ -4166,9 +4175,9 @@ void Scene210::actions() {
 			_shouldMoveHead = false;
 			break;
 		}
-	} else if (_action.isAction(0x1AD, 0x1BF) || _action.isAction(0x18C, 0x1C0)) {
+	} else if (_action.isAction(VERB_WALK_DOWN, 0x1BF) || _action.isAction(VERB_WALK_TOWARDS, 0x1C0)) {
 		_scene->_nextSceneId = 205;
-	} else if (_action.isAction(0x18B, 0x70)) {
+	} else if (_action.isAction(VERB_WALK_THROUGH, 0x70)) {
 		_scene->_nextSceneId = 215;
 	} else if ((_action.isAction(VERB_PULL, 0x5F) || _action.isAction(VERB_OPEN, 0x5F)) && !_globals[kCurtainOpen]) {
 		switch (_game._trigger) {
@@ -4460,18 +4469,18 @@ void Scene211::step() {
 }
 
 void Scene211::preActions() {
-	if (_action.isAction(0x1AD, 0x1B2) && _game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
+	if (_action.isAction(VERB_WALK_DOWN, 0x1B2) && _game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
 	&& (_scene->_customDest.x <= 52) && (_scene->_customDest.y >= 132))
 		_game._player.walk(Common::Point(52, 132), FACING_WEST);
 
-	if (_action.isAction(0x1AD, 0x1AE)) {
+	if (_action.isAction(VERB_WALK_DOWN, 0x1AE)) {
 		if (_game._objects.isInInventory(OBJ_BINOCULARS) && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 			_game._player.walk(Common::Point(52, 132), FACING_WEST);
 		else
 			_game._player._walkOffScreenSceneId = 210;
 	}
 
-	if (_action.isAction(0x1AD, 0x1B1))
+	if (_action.isAction(VERB_WALK_DOWN, 0x1B1))
 		_game._player._walkOffScreenSceneId = 207;
 }
 
@@ -4544,16 +4553,16 @@ void Scene212::step() {
 }
 
 void Scene212::preActions() {
-	if (_action.isAction(0x18B, 0x41))
+	if (_action.isAction(VERB_WALK_THROUGH, 0x41))
 		_game._player._walkOffScreenSceneId = 111;
 }
 
 void Scene212::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(0x52D9);
-	else if (_action.isAction(0x18C) && (_action.isObject(0x82) || _action.isObject(0xE8)))
+	else if (_action.isAction(VERB_WALK_TOWARDS) && (_action.isObject(0x82) || _action.isObject(0xE8)))
 		_scene->_nextSceneId = 208;
-	else if (_action.isAction(0x18C, 0x3F))
+	else if (_action.isAction(VERB_WALK_TOWARDS, 0x3F))
 		_scene->_nextSceneId = 111;
 	else if (_action.isAction(VERB_LOOK, 0x19C))
 		_vm->_dialogs->show(0x52D1);
