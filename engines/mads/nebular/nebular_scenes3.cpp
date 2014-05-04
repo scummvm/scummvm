@@ -3680,6 +3680,67 @@ void Scene321::step() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene322::setup() {
+	_game._player._spritesPrefix = "";
+	// The original is calling scene3xx_setAAName()
+	_game._aaName = Resources::formatAAName(4);
+}
+
+void Scene322::enter() {
+	if (_globals[kSexOfRex] == REX_MALE)
+		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
+	else
+		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
+
+	teleporterEnter();
+
+	// The original is using scene3xx_sceneEntrySound()
+	if (!_vm->_musicFlag)
+		_vm->_sound->command(2);
+	else
+		_vm->_sound->command(10);
+}
+
+void Scene322::step() {
+	teleporterStep();
+}
+
+void Scene322::actions() {
+	if (_action._lookFlag) {
+		_vm->_dialogs->show(32214);
+		_action._inProgress = false;
+		return;
+	}
+
+	if (teleporterActions()) {
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(0x103, 0x181))
+		_vm->_dialogs->show(32210);
+	else if (_action.isAction(VERB_LOOK, 0xC4))
+		_vm->_dialogs->show(32211);
+	else if (_action.isAction(VERB_LOOK, 0x1CC))
+		_vm->_dialogs->show(32212);
+	else if (_action.isAction(VERB_LOOK, 0x1D0) || _action.isAction(VERB_LOOK, 0x1D1)
+	 || _action.isAction(VERB_LOOK, 0x1D2) || _action.isAction(VERB_LOOK, 0x1D3)
+	 || _action.isAction(VERB_LOOK, 0x1D4) || _action.isAction(VERB_LOOK, 0x1D5)
+	 || _action.isAction(VERB_LOOK, 0x1D6) || _action.isAction(VERB_LOOK, 0x1D7)
+	 || _action.isAction(VERB_LOOK, 0x1D8) || _action.isAction(VERB_LOOK, 0x1D9)
+	 || _action.isAction(VERB_LOOK, 0x1DB) || _action.isAction(VERB_LOOK, 0x7A)
+	 || _action.isAction(VERB_LOOK, 0x1DA))
+		_vm->_dialogs->show(32213);
+	else if (_action.isAction(VERB_LOOK, 0x1CF))
+		_vm->_dialogs->show(32214);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 void Scene351::setup() {
 	if (_scene->_currentSceneId == 391)
 		_globals[kSexOfRex] = REX_MALE;
@@ -4626,9 +4687,9 @@ void Scene359::enter() {
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
 
 	if (_globals[kSexOfRex] == REX_MALE)
-		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMBD_2", false);
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMBD_2");
 	else
-		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*ROXBD_2", false);
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*ROXBD_2");
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(127, 78));

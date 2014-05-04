@@ -321,6 +321,16 @@ public:
 	virtual void step();
 };
 
+class Scene322: public SceneTeleporter {
+public:
+	Scene322(MADSEngine *vm) : SceneTeleporter(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void actions();
+};
+
 class Scene351: public Scene3xx {
 public:
 	Scene351(MADSEngine *vm) : Scene3xx(vm) {}
