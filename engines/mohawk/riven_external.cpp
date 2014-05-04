@@ -405,7 +405,7 @@ void RivenExternal::drawDomeSliders(uint16 startHotspot) {
 
 	// On pspit, the rect is different by two pixels
 	// (alternatively, we could just use hotspot 3 here, but only on pspit is there a hotspot for this)
-	if (_vm->getCurStack() == pspit)
+	if (_vm->getCurStack() == kStackPspit)
 		dstAreaRect.translate(-2, 0);
 
 	// Find out bitmap id
@@ -2016,8 +2016,8 @@ void RivenExternal::xorollcredittime(uint16 argc, uint16 *argv) {
 	// WORKAROUND: The special change stuff only handles one destination and it would
 	// be messy to modify the way that currently works. If we use the trap book on Tay,
 	// we should be using the Tay end game sequences.
-	if (_vm->_vars["returnstackid"] == rspit) {
-		_vm->changeToStack(rspit);
+	if (_vm->_vars["returnstackid"] == kStackRspit) {
+		_vm->changeToStack(kStackRspit);
 		_vm->changeToCard(2);
 		return;
 	}
