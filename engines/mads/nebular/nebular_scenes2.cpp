@@ -4597,11 +4597,11 @@ void Scene213::setup() {
 
 void Scene213::enter() {
 	if (_globals[kMeteorologistWatch] != 0)
-		_handSpriteId = _scene->_sprites.addSprites("*METHAND", false);
+		_handSpriteId = _scene->_sprites.addSprites("*METHAND");
 	else if (_globals[kSexOfRex] == REX_MALE)
-		_handSpriteId = _scene->_sprites.addSprites("*REXHAND", false);
+		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
 	else
-		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND", false);
+		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
 
 	teleporterEnter();
 
