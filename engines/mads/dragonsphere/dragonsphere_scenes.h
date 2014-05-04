@@ -35,7 +35,7 @@ namespace MADS {
 namespace Dragonsphere {
 
 enum Noun {
-	NOUN_LOOK_AT		= 0x0D1,
+	NOUN_LOOK_AT		= 0x0D1
 	// TODO
 };
 

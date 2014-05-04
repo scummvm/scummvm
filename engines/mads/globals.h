@@ -35,6 +35,8 @@ protected:
 public:
 	Globals() {}
 
+	virtual ~Globals() {}
+
 	/**
 	* Square brackets operator for accessing flags
 	*/

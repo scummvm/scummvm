@@ -43,6 +43,7 @@ enum InventoryObject { OBJ_NONE = -1
 class DragonsphereGlobals: public Globals {
 public:
 	DragonsphereGlobals() {}
+	virtual ~DragonsphereGlobals() {}
 };
 
 class GameDragonsphere: public Game {
