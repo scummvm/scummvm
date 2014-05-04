@@ -701,7 +701,7 @@ uint32 Scene1005::getKloggsTextIndex() {
 
 uint32 Scene1005::getTextIndex3() {
 	uint32 textIndex = getGlobalVar(V_TEXT_COUNTING_INDEX2);
-	if (textIndex + 1 >= 10) {
+	if (textIndex + 1 > 10) {
 		textIndex = 0;
 	}
 	setGlobalVar(V_TEXT_COUNTING_INDEX2, textIndex + 1);
