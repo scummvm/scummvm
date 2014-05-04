@@ -507,7 +507,7 @@ bool MctlCompoundArray::load(MfcArchive &file) {
 MovGraphItem::MovGraphItem() {
 	ani = 0;
 	field_4 = 0;
-	field_8 = 0;
+	movarr = 0;
 	field_C = 0;
 	field_10 = 0;
 	field_14 = 0;
@@ -521,6 +521,10 @@ MovGraphItem::MovGraphItem() {
 	field_34 = 0;
 	field_38 = 0;
 	field_3C = 0;
+}
+
+void MovGraphItem::free() {
+	warning("STUB: MovGraphItem::free()");
 }
 
 int MovGraph_messageHandler(ExCommand *cmd);
@@ -576,7 +580,16 @@ int MovGraph::removeObject(StaticANIObject *obj) {
 }
 
 void MovGraph::freeItems() {
-	warning("STUB: MovGraph::freeItems()");
+	for (uint i = 0; i < _items.size(); i++) {
+		_items[i]->free();
+
+		for (int j = 0; j < _items[i]->movarr->size(); j++)
+			delete (_items[i]->movarr)->operator[](j);
+
+		delete _items[i]->movarr;
+	}
+
+	_items.clear();
 }
 
 int MovGraph::method28() {

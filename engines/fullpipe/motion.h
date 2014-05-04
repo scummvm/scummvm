@@ -299,10 +299,19 @@ class MovGraphLink : public CObject {
 	void calcNodeDistanceAndAngle();
 };
 
+struct MovArr {
+	int _afield_0;
+	int _afield_4;
+	int _afield_8;
+	MovGraphLink *_link;
+	double _dist;
+	Common::Point _point;
+};
+
 struct MovGraphItem {
 	StaticANIObject *ani;
 	int field_4;
-	int field_8;
+	Common::Array<MovArr *> *movarr;
 	int field_C;
 	int field_10;
 	int field_14;
@@ -318,15 +327,7 @@ struct MovGraphItem {
 	int field_3C;
 
 	MovGraphItem();
-};
-
-struct MovArr {
-	int _afield_0;
-	int _afield_4;
-	int _afield_8;
-	MovGraphLink *_link;
-	double _dist;
-	Common::Point _point;
+	void free();
 };
 
 class MovGraph : public MotionController {
