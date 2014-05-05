@@ -450,8 +450,7 @@ void SceneTeleporter::teleporterHandleKey() {
 				_curCode *= 10;
 				_curCode += _buttonTyped;
 				_digitCount++;
-				_msgText = "";
-				_msgText.format("%d", _curCode);
+				_msgText = Common::String::format("%d", _curCode);
 				if (_digitCount < 4)
 					_msgText += "_";
 
