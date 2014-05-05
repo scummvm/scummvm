@@ -68,6 +68,12 @@ struct DrawStep {
 		kVectorAlignCenter
 	};
 
+	enum AutoScaleMode {
+		kAutoScaleNone = 0,
+		kAutoScaleStretch = 1,
+		kAutoScaleFit = 2
+	};
+
 	VectorAlignment xAlign;
 	VectorAlignment yAlign;
 
@@ -80,7 +86,7 @@ struct DrawStep {
 
 	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
-	bool autoscale; /**< scale alphaimage if present */
+	Graphics::DrawStep::AutoScaleMode autoscale; /**< scale alphaimage if present */
 
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
 	Graphics::Surface *blitSrc;
@@ -495,7 +501,7 @@ public:
 	virtual void blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
 	virtual void blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
 
-	virtual void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, bool autoscale) = 0;
+	virtual void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, Graphics::DrawStep::AutoScaleMode autoscale = Graphics::DrawStep::kAutoScaleNone) = 0;
 
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing

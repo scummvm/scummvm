@@ -334,7 +334,7 @@ void ThemeItemABitmap::drawSelf(bool draw, bool restore) {
 		_engine->restoreBackground(_area);
 
 	if (draw)
-		_engine->renderer()->blitAlphaBitmap(_bitmap, _area, false);
+		_engine->renderer()->blitAlphaBitmap(_bitmap, _area);
 
 	_engine->addDirtyRect(_area);
 }

@@ -95,7 +95,7 @@ public:
 	void blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping);
 	void blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r);
 	void blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping);
-	void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, bool autoscale);
+	void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, Graphics::DrawStep::AutoScaleMode autoscale = Graphics::DrawStep::kAutoScaleNone);
 
 	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle);
 
