@@ -90,5 +90,56 @@ void Scene7xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene707::setup() {
+	_game._player._spritesPrefix = "";
+	// The original calls Scene7xx::setAAName()
+	_game._aaName = Resources::formatAAName(5);
+}
+
+void Scene707::enter() {
+	_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
+	teleporterEnter();
+
+	// The original uses Scene7xx_sceneEntrySound
+	if (!_vm->_musicFlag)
+		_vm->_sound->command(2);
+	else 
+		_vm->_sound->command(25);
+}
+
+void Scene707::step() {
+	teleporterStep();
+}
+
+void Scene707::actions() {
+	if (teleporterActions()) {
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(0x103, 0x181))
+		_vm->_dialogs->show(70710);
+	else if (_action.isAction(VERB_LOOK, 0xC4))
+		_vm->_dialogs->show(70711);
+	else if (_action.isAction(VERB_LOOK, 0x1CC))
+		_vm->_dialogs->show(70712);
+	else if (_action.isAction(VERB_LOOK, 0x1D0) || _action.isAction(VERB_LOOK, 0x1D1)
+	 || _action.isAction(VERB_LOOK, 0x1D2) || _action.isAction(VERB_LOOK, 0x1D3)
+	 || _action.isAction(VERB_LOOK, 0x1D4) || _action.isAction(VERB_LOOK, 0x1D5)
+	 || _action.isAction(VERB_LOOK, 0x1D6) || _action.isAction(VERB_LOOK, 0x1D7)
+	 || _action.isAction(VERB_LOOK, 0x1D8) || _action.isAction(VERB_LOOK, 0x1D9)
+	 || _action.isAction(VERB_LOOK, 0x1DB) || _action.isAction(VERB_LOOK, 0x7A)
+	 || _action.isAction(VERB_LOOK, 0x1DA))
+		_vm->_dialogs->show(70713);
+	else if (_action.isAction(VERB_LOOK, 0x1CF) || _action._lookFlag)
+		_vm->_dialogs->show(70714);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS

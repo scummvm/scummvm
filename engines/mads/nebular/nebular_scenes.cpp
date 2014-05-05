@@ -253,6 +253,8 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 		error("Invalid scene %d called", scene._nextSceneId);
 
 	// Scene group #7
+	case 707:
+		return new Scene707(vm);
 	case 701:
 		// TODO
 	case 702:
@@ -264,8 +266,6 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 705:
 		// TODO
 	case 706:
-		// TODO
-	case 707:
 		// TODO
 	case 708:
 		// TODO
