@@ -141,5 +141,50 @@ void Scene707::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene711::setup() {
+	// The original was calling Scene7xx::setPlayerSpreitesPrefix()
+	_vm->_sound->command(5);
+	Common::String oldName = _game._player._spritesPrefix;
+	_game._player._spritesPrefix = "";
+	_game._player._scalingVelocity = true;
+
+	if (oldName != _game._player._spritesPrefix)
+		_game._player._spritesChanged = true;
+
+	_vm->_palette->setEntry(16, 10, 63, 63);
+	_vm->_palette->setEntry(17, 10, 45, 45);
+
+	// The original was calling Scene7xx::setAAName()
+	_game._aaName = Resources::formatAAName(5);
+
+	_game._player._spritesPrefix = "";
+}
+
+void Scene711::enter() {
+	if (_globals[kSexOfRex] == REX_FEMALE)
+		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
+	else
+		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
+
+	teleporterEnter();
+
+	// The original was using Scene7xx_SceneEntrySound()
+	if (!_vm->_musicFlag)
+		_vm->_sound->command(2);
+	else 
+		_vm->_sound->command(25);
+}
+
+void Scene711::step() {
+	teleporterStep();
+}
+
+void Scene711::actions() {
+	if (teleporterActions())
+		_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS

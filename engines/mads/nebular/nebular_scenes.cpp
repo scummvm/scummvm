@@ -256,6 +256,8 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	// Scene group #7
 	case 707:
 		return new Scene707(vm);
+	case 711:
+		return new Scene711(vm);
 	case 701:
 		// TODO
 	case 702:
@@ -271,8 +273,6 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 708:
 		// TODO
 	case 710:
-		// TODO
-	case 711:
 		// TODO
 	case 751:
 		// TODO
