@@ -31,6 +31,7 @@
 #include "cge2/bitmap.h"
 #include "cge2/vga13h.h"
 #include "cge2/sound.h"
+#include "cge2/text.h"
 
 namespace CGE2 {
 
@@ -42,11 +43,13 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_midiPlayer = nullptr;
 	_fx = nullptr;
 	_sound = nullptr;
+	_text = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
 	_mode = 0;
 	_music = true;
+	_startupMode = 1;
 }
 
 void CGE2Engine::init() {
@@ -55,6 +58,7 @@ void CGE2Engine::init() {
 	_fx = new Fx(this, 16);
 	_sound = new Sound(this);
 	_midiPlayer = new MusicPlayer(this);
+	_text = new Text(this, "CGE");
 }
 
 void CGE2Engine::deinit() {
@@ -64,6 +68,7 @@ void CGE2Engine::deinit() {
 	delete _fx;
 	delete _sound;
 	delete _midiPlayer;
+	delete _text;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
@@ -93,12 +98,8 @@ Common::Error CGE2Engine::run() {
 	initGraphics(kScrWidth, kScrHeight, false);
 
 	init();
-	
-	showTitle("WELCOME");
 
-	// Temporary code to test the midi player.
-	_midiPlayer->loadMidi(1);
-	g_system->delayMillis(100000);
+	cge2_main();
 	
 	deinit();
 	return Common::kNoError;

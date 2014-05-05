@@ -41,6 +41,7 @@ class Sprite;
 class MusicPlayer;
 class Fx;
 class Sound;
+class Text;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -58,6 +59,11 @@ public:
 	virtual Common::Error run();
 
 	bool showTitle(const char *name);
+	void cge2_main();
+	char *mergeExt(char *buf, const char *name, const char *ext);
+	void inf(const char *text, bool wideSpace = false);
+	void movie(const char *ext);
+	void runGame();
 
 	const ADGameDescription *_gameDescription;
 
@@ -65,6 +71,7 @@ public:
 	Dac *_bitmapPalette;
 	int _mode;
 	bool _music;
+	int _startupMode;
 
 	ResourceManager *_resman;
 	Vga *_vga;
@@ -72,6 +79,7 @@ public:
 	MusicPlayer *_midiPlayer;
 	Fx *_fx;
 	Sound *_sound;
+	Text *_text;
 private:
 	void init();
 	void deinit();
