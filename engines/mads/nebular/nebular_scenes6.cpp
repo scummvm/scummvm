@@ -38,14 +38,17 @@ void Scene6xx::setPlayerSpritesPrefix() {
 	_vm->_sound->command(5);
 	Common::String oldName = _game._player._spritesPrefix;
 
-	_game._player._spritesPrefix = "";
-	// TODO: Scene-specific sprites prefix
-
-	_game._player._scalingVelocity = true;
+	if ((_scene->_nextSceneId == 605) || (_scene->_nextSceneId == 620))
+		_game._player._spritesPrefix = "";
+	else if (_globals[kSexOfRex] == REX_MALE)
+		_game._player._spritesPrefix = "RXM";
+	else
+		_game._player._spritesPrefix = "ROX";
 
 	if (oldName != _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
 
+	_game._player._scalingVelocity = true;
 	_vm->_palette->setEntry(16, 10, 63, 63);
 	_vm->_palette->setEntry(17, 10, 45, 45);
 }
@@ -57,7 +60,22 @@ void Scene6xx::sceneEntrySound() {
 	}
 
 	switch (_scene->_nextSceneId) {
-	// TODO
+	case 601:
+	case 602:
+	case 603:
+	case 604:
+	case 605:
+	case 607:
+	case 608:
+	case 609:
+	case 610:
+	case 612:
+	case 620:
+		_vm->_sound->command(29);
+		break;
+	case 611:
+		_vm->_sound->command(24);
+		break;
 	default:
 		break;
 	}
