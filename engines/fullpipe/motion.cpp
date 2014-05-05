@@ -687,6 +687,64 @@ void MovGraph::calcNodeDistancesAndAngles() {
 	}
 }
 
+bool MovGraph::findClosestLink(int unusedArg, Common::Point *p, MovArr *movarr) {
+#if 0
+	v4 = (double)p->x;
+	v5 = (double)(signed int)p->y;
+	link = 0;
+	v28 = 1.0e20;
+
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		MovGraphLink *lnk = (MovGraphLink *)*i;
+
+		v8 = v6->data;
+
+		if ((lnk->_flags & 0x10000000) && !(lnk->_flags & 0x20000000) ) {
+			v12 = lnk->_movGraphNode1->_x;
+			v13 = lnk->_movGraphNode1->_y;
+			v23 = v12;
+			v14 = lnk->_movGraphNode2->_x;
+			v15 = (double)v12;
+			v27 = v14;
+			v16 = v14 - v12;
+			v17 = lnk->_movGraphNode2->_y;
+			v29 = v15;
+			v18 = v4 - v15;
+			v32 = (double)v13 - v5;
+			v33 = (double)v16;
+			v19 = sqrt(v32 * v32 + v18 * v18);
+			v20 = ((double)(v13 - v17) * v32 + v33 * v18) / lnk->_distance / v19;
+			v21 = v20 * v19;
+			v26 = sqrt(1.0 - v20 * v20) * v19;
+			if ( v20 * v19 < 0.0 ) {
+				v21 = 0.0;
+				v26 = sqrt((v29 - v4) * (v29 - v4) + v32 * v32);
+			}
+			if (v21 > lnk->_distance) {
+				v21 = lnk->_distance;
+				v26 = sqrt(((double)v27 - v4) * ((double)v27 - v4) + ((double)lnk->_movGraphNode2->_y - v5) * ((double)lnk->_movGraphNode2->_y - v5));
+			}
+			if ( v21 >= 0.0 && v21 <= lnk->_distance && v26 < v28 ) {
+				v30 = v23 + (unsigned __int64)(signed __int64)(v33 * v21 / lnk->_distance);
+				v7 = v13 + (unsigned __int64)(signed __int64)((double)(v17 - v13) * v21 / lnk->_distance);
+				v28 = v26;
+				link = lnk;
+			}
+		}
+	}
+
+	if (v28 < 1.0e20) {
+		if (movarr)
+			movarr->_link = link;
+		p->x = v30;
+		p->y = v7;
+
+		return true;
+	}
+#endif
+	return false;
+}
+
 int MovGraph::getItemIndexByStaticAni(StaticANIObject *ani) {
 	for (uint i = 0; i < _items.size(); i++)
 		if (_items[i]->ani == ani)

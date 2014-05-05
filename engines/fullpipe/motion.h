@@ -359,6 +359,7 @@ public:
 
 	double calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
 	void calcNodeDistancesAndAngles();
+	bool findClosestLink(int unusedArg, Common::Point *p, MovArr *movarr);
 	MovGraphNode *calcOffset(int ox, int oy);
 	int getItemIndexByStaticAni(StaticANIObject *ani);
 	Common::Array<MovArr *> *genMovArr(int x, int y, int *arrSize, int flag1, int flag2);
