@@ -30,6 +30,7 @@
 namespace MADS {
 
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+#define VGA_COLOR_REV(x) ((x) * 63 / 255)
 
 void RGB6::load(Common::SeekableReadStream *f) {
 	r = VGA_COLOR_TRANS(f->readByte());
@@ -378,7 +379,7 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 
 			int diff = intensity - palette[palCtr * 3 + colorCtr];
 			palIndex[palCtr][colorCtr] = (byte)ABS(diff);
-			signs[palCtr][colorCtr] = diff / ABS(diff);
+			signs[palCtr][colorCtr] = (diff == 0) ? 0 : (diff < 0 ? -1 : 1);
 		}
 	}
 
@@ -387,7 +388,6 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 			int index = palCtr - baseColor;
 			for (int colorCtr = 0; colorCtr < 3; ++colorCtr) {
 				map[index]._accum[colorCtr] += palIndex[palCtr][colorCtr];
-				/* map[index].accum[color] += pal_color(temp_pal, palCtr, color); */
 				while (map[index]._accum[colorCtr] >= steps) {
 					map[index]._accum[colorCtr] -= steps;
 					palette[palCtr * 3 + colorCtr] = signs[palCtr][colorCtr];
@@ -421,7 +421,7 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 
 	getGreyValues(palette, greyList, baseColor, numColors);
 	greyPopularity(greyList, greyTable, numColors);
-	
+
 	for (int idx = 0; idx < numColors; ++idx) {
 		greyList[idx]._mapping = idx;
 		Common::fill(&map[idx]._accum[0], &map[idx]._accum[3], 0);
@@ -489,11 +489,10 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 void Fader::getGreyValues(const byte palette[PALETTE_SIZE], 
 		GreyTableEntry greyList[PALETTE_COUNT], int baseColor, int numColors) {
 	const byte *palP = &palette[baseColor * 3];
-	GreyTableEntry *destP = greyList;
 
-	for (int i = 0; i < numColors; ++i, palP += 3, ++destP) {
+	for (int i = 0; i < numColors; ++i, palP += 3) {
 		int v = rgbMerge(palP[0], palP[1], palP[2]);
-		destP->_list = v >> 7;
+		greyList[i]._list = v >> 7;
 	}
 }
 
@@ -501,7 +500,9 @@ void Fader::greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT],
 		byte greyTable[64], int numColors) {
 	Common::fill(&greyTable[0], &greyTable[64], 0);
 	for (int i = 0; i < 64; ++i) {
-		++greyTable[greyList[i]._list];
+		int idx = greyList[i]._list;
+		assert(idx >= 0 && idx < 64);
+		++greyTable[idx];
 	}
 }
 
@@ -510,7 +511,7 @@ int Fader::rgbMerge(RGB6 &palEntry) {
 }
 
 int Fader::rgbMerge(byte r, byte g, byte b) {
-	return ((r + 1) / 4 - 1) * 38 + ((g + 1) / 4 - 1) * 76 + ((b + 1) / 4 - 1) * 14;
+	return VGA_COLOR_REV(r) * 38 + VGA_COLOR_REV(g) * 76 + VGA_COLOR_REV(b) * 14;
 }
 
 /*------------------------------------------------------------------------*/
