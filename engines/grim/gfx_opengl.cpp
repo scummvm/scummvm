@@ -101,7 +101,7 @@ GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
 		_dimFragProgram(0), _maxLights(0), _storedDisplay(NULL), 
 		_emergFont(0), _alpha(1.f) {
 	g_driver = this;
-	// GL_LEQUAL as glDepthFucn ensures that subsequent drawing attempts for
+	// GL_LEQUAL as glDepthFunc ensures that subsequent drawing attempts for
 	// the same triangles are not ignored by the depth test.
 	// That's necessary for EMI where some models have multiple faces which
 	// refer to the same vertices. The first face is usually using the

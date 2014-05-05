@@ -344,7 +344,7 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_screenSize = _screenWidth * _screenHeight * 4;
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		// GL_LEQUAL as glDepthFucn ensures that subsequent drawing attempts for
+		// GL_LEQUAL as glDepthFunc ensures that subsequent drawing attempts for
 		// the same triangles are not ignored by the depth test.
 		// That's necessary for EMI where some models have multiple faces which
 		// refer to the same vertices. The first face is usually using the
