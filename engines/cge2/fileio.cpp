@@ -232,6 +232,14 @@ Common::String EncryptedStream::readLine() {
 	return _readStream->readLine();
 }
 
+int EncryptedStream::number(char *s) {
+	int r = atoi(s);
+	char *pp = strchr(s, ':');
+	if (pp)
+		r = (r << 8) + atoi(pp + 1);
+	return r;
+}
+
 int32 EncryptedStream::size() {
 	return _readStream->size();
 }

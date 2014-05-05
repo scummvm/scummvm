@@ -113,6 +113,7 @@ public:
 	int32 size();
 	uint32 read(byte *dataPtr, uint32 dataSize);
 	Common::String readLine();
+	int number(char *s);
 };
 
 } // End of namespace CGE2
