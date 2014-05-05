@@ -282,21 +282,19 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 		error("Invalid scene %d called", scene._nextSceneId);
 
 	// Scene group #8
+	case 804:
+		return new Scene804(vm);
+	case 807:
+		return new Scene807(vm);
 	case 801:
 		// TODO
 	case 802:
 		// TODO
 	case 803:
 		// TODO
-		// Fall-through for unimplemented scenes in group #8
-		error("Invalid scene %d called", scene._nextSceneId);
-	case 804:
-		return new Scene804(vm);
 	case 805:
 		// TODO
 	case 806:
-		// TODO
-	case 807:
 		// TODO
 	case 808:
 		// TODO

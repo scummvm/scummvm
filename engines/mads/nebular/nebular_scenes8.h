@@ -37,17 +37,17 @@ protected:
 	/**
 	 * Initial setup code shared by several scenes
 	 */
-	void setup1();
+	void setPlayerSpritesPrefix();
 
 	/**
 	* Initial setup code shared by several scenes
 	*/
-	void setup2();
+	void setAAName();
 
 	/**
 	 * Common scene enter code used by multiple scenes
 	 */
-	void enter1();
+	void sceneEntrySound();
 public:
 	Scene8xx(MADSEngine *vm) : NebularScene(vm) {}
 };
@@ -72,8 +72,19 @@ public:
 	virtual void actions() {};
 };
 
-} // End of namespace Nebular
+class Scene807: public SceneTeleporter {
+public:
+	Scene807(MADSEngine *vm) : SceneTeleporter(vm) {}
 
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
+} // End of namespace Nebular
 } // End of namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES8_H */

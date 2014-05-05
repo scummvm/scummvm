@@ -30,7 +30,7 @@ namespace MADS {
 
 namespace Nebular {
 
-void Scene8xx::setup1() {
+void Scene8xx::setPlayerSpritesPrefix() {
 	_vm->_sound->command(5);
 	if ((_globals[kFromCockpit] && !_globals[kExitShip]) ||
 			_scene->_nextSceneId == 804 || _scene->_nextSceneId == 805 ||
@@ -44,12 +44,14 @@ void Scene8xx::setup1() {
 	_vm->_palette->setEntry(17, 0x0A, 0x2D, 0x2D);
 }
 
-void Scene8xx::setup2() {
+void Scene8xx::setAAName() {
 	_game._aaName = Resources::formatAAName(5);
 }
 
-void Scene8xx::enter1() {
-	if (_vm->_musicFlag) {
+void Scene8xx::sceneEntrySound() {
+	if (!_vm->_musicFlag)
+		_vm->_sound->command(2);
+	else {
 		switch (_scene->_nextSceneId) {
 		case 801:
 		case 802:
@@ -75,8 +77,8 @@ void Scene8xx::enter1() {
 /*------------------------------------------------------------------------*/
 
 void Scene804::setup() {
-	Scene8xx::setup1();
-	Scene8xx::setup2();
+	Scene8xx::setPlayerSpritesPrefix();
+	Scene8xx::setAAName();
 }
 
 void Scene804::enter() {
@@ -130,7 +132,7 @@ void Scene804::enter() {
 
 	_scene->loadAnimation(Resources::formatName(804, 'r', 1, EXT_AA, ""));
 
-	Scene8xx::enter1();
+	Scene8xx::sceneEntrySound();
 
 	if (_globals[kInSpace] && !_globals[kWindowFixed]) {
 		_scene->_userInterface.setup(kInputLimitedSentences);
@@ -306,6 +308,63 @@ void Scene804::step() {
 	}
 }
 
-} // End of namespace Nebular
+/*------------------------------------------------------------------------*/
 
+void Scene807::setup() {
+	_game._player._spritesPrefix = "";
+	// The original was calling Scene8xx::setAAName()
+	_game._aaName = Resources::formatAAName(5);
+}
+
+void Scene807::enter() {
+	if (_globals[kSexOfRex] == REX_FEMALE)
+		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
+	else
+		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
+
+	teleporterEnter();
+
+	// The original uses Scene8xx::SceneEntrySound()
+	if (!_vm->_musicFlag)
+		_vm->_sound->command(2);
+	else
+		_vm->_sound->command(20);
+}
+
+void Scene807::step() {
+	teleporterStep();
+}
+
+void Scene807::actions() {
+	if (teleporterActions()) {
+		_action._inProgress = false;
+		return;
+	}
+
+	if (_action.isAction(VERB_LOOK, 0x181))
+		_vm->_dialogs->show(80710);
+	else if (_action.isAction(0x103, 0x181))
+		_vm->_dialogs->show(80710);
+	else if (_action.isAction(VERB_LOOK, 0xC4) && _action.isAction(0xB7, 0xC4))
+		_vm->_dialogs->show(80711);
+	else if (_action.isAction(VERB_LOOK, 0x1CC))
+		_vm->_dialogs->show(80712);
+	else if (_action.isAction(VERB_LOOK, 0x1D1) || _action.isAction(VERB_LOOK, 0x1D2)
+	 || _action.isAction(VERB_LOOK, 0x1D3) || _action.isAction(VERB_LOOK, 0x1D4)
+	 || _action.isAction(VERB_LOOK, 0x1D5) || _action.isAction(VERB_LOOK, 0x1D6)
+	 || _action.isAction(VERB_LOOK, 0x1D7) || _action.isAction(VERB_LOOK, 0x1D8)
+	 || _action.isAction(VERB_LOOK, 0x1D9) || _action.isAction(VERB_LOOK, 0x1D0)
+	 || _action.isAction(VERB_LOOK, 0x1DB) || _action.isAction(VERB_LOOK, 0x1DA))
+		_vm->_dialogs->show(80713);
+	else if (_action.isAction(VERB_LOOK, 0x1CF) && _action._lookFlag)
+		_vm->_dialogs->show(80714);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+} // End of namespace Nebular
 } // End of namespace MADS
