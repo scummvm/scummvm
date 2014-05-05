@@ -33,6 +33,7 @@
 #include "mads/nebular/nebular_scenes3.h"
 #include "mads/nebular/nebular_scenes4.h"
 #include "mads/nebular/nebular_scenes5.h"
+#include "mads/nebular/nebular_scenes6.h"
 #include "mads/nebular/nebular_scenes7.h"
 #include "mads/nebular/nebular_scenes8.h"
 

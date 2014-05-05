@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	nebular/nebular_scenes3.o \
 	nebular/nebular_scenes4.o \
 	nebular/nebular_scenes5.o \
+	nebular/nebular_scenes6.o \
 	nebular/nebular_scenes7.o \
 	nebular/nebular_scenes8.o \
 	action.o \
