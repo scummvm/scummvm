@@ -514,5 +514,127 @@ void Scene502::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene503::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x6A);
+	_scene->addActiveVocab(0xD);
+}
+
+void Scene503::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
+
+	if (_globals[kSexOfRex] == REX_MALE)
+		_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMBD_2");
+	else
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*ROXBD_2");
+
+	if (_game._objects[OBJ_DETONATORS]._roomNumber == _scene->_currentSceneId) {
+		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
+		_detonatorHotspotId = _scene->_dynamicHotspots.add(0x6A, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(_detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
+	}
+
+	if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(191, 152);
+		_game._player._facing = FACING_NORTHWEST;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene503::actions() {
+	if (_action.isAction(0x32F, 0xF9))
+		_scene->_nextSceneId = 501;
+	else if (_action.isAction(VERB_TAKE, 0x6A)) {
+		if ( _game._trigger || !_game._objects.isInInventory(OBJ_DETONATORS)) {
+			switch (_game._trigger) {
+			case 0:
+				_game._player._stepEnabled   = false;
+				_game._player._visible     = false;  
+				if (_globals[kSexOfRex] == REX_MALE) {
+					_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
+					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 3);
+					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				} else {
+					_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], true, 8, 1, 0, 0);
+					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
+					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				}
+				break;
+
+			case 1:
+				_vm->_sound->command(9);
+				_scene->_sequences.remove(_globals._sequenceIndexes[1]);  
+				_scene->_dynamicHotspots.remove(_detonatorHotspotId);
+				_game._objects.addToInventory(OBJ_DETONATORS);
+				_vm->_dialogs->showItem(OBJ_DETONATORS, 50326);
+				break;
+
+			case 2:
+				if (_globals[kSexOfRex] == REX_MALE)
+					_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+				else
+					_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
+
+				_game._player._visible   = true;
+				_game._player._stepEnabled = true;
+				break;
+
+			default:
+				break;
+			}                 
+		}
+	} else if (_action._lookFlag)
+		_vm->_dialogs->show(50328);
+	else if (_action.isAction(VERB_LOOK, 0x36F))
+		_vm->_dialogs->show(50310);
+	else if (_action.isAction(VERB_LOOK, 0x36E))
+		_vm->_dialogs->show(50311);
+	else if (_action.isAction(VERB_TAKE, 0x36E) || _action.isAction(VERB_TAKE, 0x36C))
+		_vm->_dialogs->show(50312);
+	else if (_action.isAction(VERB_LOOK, 0x36D))
+		_vm->_dialogs->show(50313);
+	else if (_action.isAction(VERB_LOOK, 0x36C))
+		_vm->_dialogs->show(50314);
+	else if (_action.isAction(VERB_LOOK, 0x331))
+		_vm->_dialogs->show(50315);
+	else if (_action.isAction(VERB_LOOK, 0x330))
+		_vm->_dialogs->show(50316);
+	else if (_action.isAction(VERB_OPEN, 0x330))
+		_vm->_dialogs->show(50317);
+	else if (_action.isAction(VERB_LOOK, 0x36B))
+		_vm->_dialogs->show(50318);
+	else if (_action.isAction(VERB_LOOK, 0x1E4))
+		_vm->_dialogs->show(50319);
+	else if (_action.isAction(VERB_LOOK, 0xE2))
+		_vm->_dialogs->show(50320);
+	else if (_action.isAction(VERB_LOOK, 0x481))
+		_vm->_dialogs->show(50322);
+	else if (_action.isAction(VERB_LOOK, 0x332)) {
+		if (_game._objects.isInRoom(OBJ_DETONATORS))
+			_vm->_dialogs->show(50323);
+		else
+			_vm->_dialogs->show(50324);
+	} else if (_action.isAction(VERB_LOOK, 0x6A) && (_action._savedFields._mainObjectSource == 4))
+		_vm->_dialogs->show(50325);
+	else if (_action.isAction(VERB_LOOK, 0x32E))
+		_vm->_dialogs->show(50327);
+	else if (_action.isAction(VERB_OPEN, 0x36D))
+		_vm->_dialogs->show(50329);
+	else if (_action.isAction(0xC, 0x36D) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
+		_vm->_dialogs->show(50330);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS

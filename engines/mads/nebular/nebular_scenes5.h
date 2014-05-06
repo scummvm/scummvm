@@ -82,8 +82,22 @@ public:
 	virtual void postActions() {};
 };
 
-} // End of namespace Nebular
+class Scene503: public Scene5xx{
+private:
+	int _detonatorHotspotId;
 
+public:
+	Scene503(MADSEngine *vm) : Scene5xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step() {};
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
+} // End of namespace Nebular
 } // End of namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES5_H */
