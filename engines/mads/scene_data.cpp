@@ -141,7 +141,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	_height = infoStream->readUint16LE();
 
 	// HACK for V2 games (for now)
-	if (_vm->getGameID() != GType_RexNebular && _width == 0) {
+	if (_vm->getGameID() != GType_RexNebular) {
 		_width = 320;
 		_height = 156;
 	}
@@ -226,15 +226,18 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	Common::Array<SpriteAsset *> spriteSets;
 	Common::Array<int> usageList;
 
-	for (uint i = 0; i < setNames.size(); ++i) {
-		Common::String setResName;
-		if (sceneFlag || resName.hasPrefix("*"))
-			setResName += "*";
-		setResName += setNames[i];
+	// TODO: The following isn't quite right for V2 games
+	if (_vm->getGameID() == GType_RexNebular) {
+		for (uint i = 0; i < setNames.size(); ++i) {
+			Common::String setResName;
+			if (sceneFlag || resName.hasPrefix("*"))
+				setResName += "*";
+			setResName += setNames[i];
 
-		SpriteAsset *sprites = new SpriteAsset(_vm, setResName, flags);
-		spriteSets.push_back(sprites);
-		usageList.push_back(sprites->_usageIndex); 
+			SpriteAsset *sprites = new SpriteAsset(_vm, setResName, flags);
+			spriteSets.push_back(sprites);
+			usageList.push_back(sprites->_usageIndex); 
+		}
 	}
 
 	_vm->_palette->_paletteUsage.updateUsage(usageList, _usageIndex);
