@@ -259,6 +259,12 @@ void BuriedEngine::updateTimers() {
 	}
 }
 
+void BuriedEngine::removeAllTimers(Window *window) {
+	for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++)
+		if (it->_value.owner == window)
+			_timers.erase(it);
+}
+
 void BuriedEngine::addVideo(VideoWindow *window) {
 	_videos.push_back(window);
 }
