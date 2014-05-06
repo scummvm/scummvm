@@ -114,6 +114,7 @@ public:
 	void checkNak();
 	Graphics::Surface *zoomSprite(Graphics::Surface *heroFrame);
 	void showHeroAnimFrame();
+	void line(int x1, int y1, int x2, int y2);
 	Graphics::Surface *showHeroShadow(Graphics::Surface *heroFrame);
 	void setShadowScale(int32 shadowScale);
 	void specialAnim();

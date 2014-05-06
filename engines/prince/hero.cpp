@@ -249,6 +249,79 @@ void Hero::countDrawPosition() {
 	}
 }
 
+void Hero::line(int x1, int y1, int x2, int y2) {
+	//EAX - x1 <- LightX
+	//EBX - y1 <- LightY
+	//ECX - x2 <- DestX
+	//EDX - y2 <- DestY
+	
+	//pushad
+	int dX = 1;
+	int vx = y2 - y1;
+	if(x2 <= x1) {
+		dX = -1;
+		vx = -1 * vx;
+	}
+	// pl_1
+	int lvx = vx;
+	int dY = 1;
+	int vy = x1 - x2;
+	if (y2 <= y1) {
+		dY = -1;
+		vy = -1 * vy;
+	}
+	// pl_2
+	int lvy = vy;
+	int lx = x1;
+	int ly = y1;
+	int lx2 = x2;
+	int ly2 = y2;
+	int lfa = 0;
+
+	//loop
+	//if (x1 != x2 && y1 != y2) {
+	while (lx != lx2 && ly != ly2) {
+		// not_end
+		// pushad
+		// LineCode() ?
+		// popad
+		int lfx = lfa + lvx;
+		int lfy = lfa + lvy;
+		int lfxy = lfx + lfy - lfa;
+		if (lfxy < 0) {
+			lfxy = -1 * lfxy;
+		}
+		//abs_fxy_done
+		if (lfx < 0) {
+			lfx = -1 * lfx;
+		}
+		//abs_fx_done
+		if (lfy < 0) {
+			lfy = -1 * lfy;
+		}
+		//abs_fy_done
+		if (lfx > lfy || lfx > lfxy) {
+			//c2
+			if (lfy >= lfx || lfy > lfxy) {
+				//c3
+				ly += dY;
+				lx += dX;
+				lfa = lfxy;
+			} else {
+				ly += dY;
+				lfa = lfa + lvy; // lfx / lfy = ?
+			}
+		} else {
+			lx += dX;
+			lfa = lfa + lvx; //9600 ???
+			// jump to @@next
+		}
+		//next
+		// 
+	}
+
+}
+
 Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
 	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
@@ -272,7 +345,7 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 	return makeShadow;
 
 	// source Bitmap of sprite - esi
-	//int destX = _drawX; // eax
+	int destX = _drawX; // eax
 	int destY = _middleY - _shadMinus; // ecx
 	// modulo of source Bitmap - ebp
 	//int scaledX = getScaledValue(frameXSize); // ebx
@@ -305,8 +378,55 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		// sprModulo = modulo of source Bitmap
 		// sprWidth = scaledX
 		// sprHeight = scaledY
-		//int sprDestX = destX - PicWindowX;
-		//int sprDestY = destY - PicWindowY;
+		int sprDestX = destX - _vm->_picWindowX;
+		int sprDestY = destY - _vm->_picWindowY;
+
+		int shadPosX = sprDestX;
+		int shadMinX = sprDestX;
+		int shadMaxX = sprDestX;
+
+		int shadPosY = sprDestY;
+		int shadMinY = sprDestY;
+		int shadMaxY = sprDestY;
+		// destY * kMaxPicWidth / 8 + destX / 8
+		int shadBitAddr = _shadowBitmap->getZoom(destY * kMaxPicWidth / 8 + destX / 8);
+		int shadBitMask = 128 / (destX % 8);
+
+		int shadZoomY2 = _shadScaleValue;
+		int shadZoomY = _scaleValue;
+
+		// lockscreen etc
+
+		// banked2
+		// edx = linijka() + 8
+
+		// linear_loop
+		//for(int i = 0; i <  ; i++) {
+			int ebx16795 = shadPosY;
+			int sprModulo = 0;
+			int shadSkipX = 0;
+			//retry_line:
+			for(int j = 0; j < shadPosY; j++) {
+				shadZoomY -= 100;
+				if(shadZoomY < 0 || _scaleValue != 10000) {
+					shadZoomY += _scaleValue;
+					// esi -= sprWidth
+				} else {
+					break; //to line_y_ok
+				}
+				// esp += 4*4
+				// koniec_bajki
+			}
+			//line_y_ok
+			int shadLastY = 0;
+			if (shadPosY < 0 || shadPosY == shadLastY || shadPosY >= 480 || shadPosX >= 640) {
+				shadLastY = shadPosY;
+				//skip_line
+
+			} else if (shadPosX < 0) {
+				shadSkipX = -1 * shadPosX;	
+			}
+		//}
 	}
 }
 

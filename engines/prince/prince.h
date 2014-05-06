@@ -144,6 +144,7 @@ public:
 	uint16 _newCameraX;
 	uint16 _sceneWidth;
 	uint32 _picWindowX;
+	uint32 _picWindowY;
 
 private:
 	bool playNextFrame();
