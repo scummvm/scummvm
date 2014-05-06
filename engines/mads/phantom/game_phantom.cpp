@@ -80,9 +80,6 @@ void GamePhantom::initialiseGlobals() {
 	/* Section #5 variables */
 	// TODO
 
-	/* Section #6 variables */
-	// TODO
-
 	/* Section #9 variables */
 	// TODO
 
@@ -111,15 +108,6 @@ void GamePhantom::setSectionHandler() {
 		break;
 	case 5:
 		_sectionHandler = new Section5Handler(_vm);
-		break;
-	case 6:
-		_sectionHandler = new Section6Handler(_vm);
-		break;
-	case 7:
-		_sectionHandler = new Section7Handler(_vm);
-		break;
-	case 8:
-		_sectionHandler = new Section8Handler(_vm);
 		break;
 	default:
 		break;

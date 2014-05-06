@@ -106,9 +106,11 @@ public:
 };
 
 // TODO: Temporary, remove once implemented properly
-class DummyScene: public Scene1xx {
+class DummyScene: public PhantomScene {
 public:
-	DummyScene(MADSEngine *vm) : Scene1xx(vm) {}
+	DummyScene(MADSEngine *vm) : PhantomScene(vm) {
+		warning("Unimplemented scene");
+	}
 
 	virtual void setup() {}
 	virtual void enter() {}

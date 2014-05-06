@@ -39,22 +39,114 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	// TODO
 	//scene.addActiveVocab(NOUN_DROP);
 
-	// TODO: Just return a dummy scene for now
-	return new DummyScene(vm);
-
 	switch (scene._nextSceneId) {
-	// Scene group #1
-	case 101:
-	// TODO
+	// Scene group #1 (theater, stage and dressing rooms)
+	case 101:	// seats
+		return new DummyScene(vm);	// TODO
+	case 102:	// music stands
+		return new DummyScene(vm);	// TODO
+	case 103:	// below stage
+		return new DummyScene(vm);	// TODO
+	case 104:	// stage
+		return new DummyScene(vm);	// TODO
+	case 105:	// ground floor, storage room
+		return new DummyScene(vm);	// TODO
+	case 106:	// behind stage
+		return new DummyScene(vm);	// TODO
+	case 107:	// stage right wing
+		return new DummyScene(vm);	// TODO
+	case 108:	// stage left wing
+		return new DummyScene(vm);	// TODO
+	case 109:	// upper floor, staircase
+		return new DummyScene(vm);	// TODO
+	case 110:	// outside dressing rooms 1
+		return new DummyScene(vm);	// TODO
+	case 111:	// outside dressing rooms 2
+		return new DummyScene(vm);	// TODO
+	case 112:	// inside dressing room 1
+		return new DummyScene(vm);	// TODO
+	case 113:	// inside dressing room 2
+		return new DummyScene(vm);	// TODO
+	case 114:	// lower floor, storage room
+		return new DummyScene(vm);	// TODO
+	case 150:	// cutscene
+		return new DummyScene(vm);	// TODO
 
-	// Scene group #2
-	// TODO
+	// Scene group #2 (theater entrance, offices, balcony)
+	case 201:	// entrance / ticket office
+		return new DummyScene(vm);	// TODO
+	case 202:	// outside offices / paintings room
+		return new DummyScene(vm);	// TODO
+	case 203:	// office
+		return new DummyScene(vm);	// TODO
+	case 204:	// library
+		return new DummyScene(vm);	// TODO
+	case 205:	// upper floor, outside balcony boxes
+		return new DummyScene(vm);	// TODO
+	case 206:	// balcony box #1
+		return new DummyScene(vm);	// TODO
+	case 207:	// balcony box #2
+		return new DummyScene(vm);	// TODO
+	case 208:	// stage and balcony view
+		return new DummyScene(vm);	// TODO
+	case 250:	// cutscene
+		return new DummyScene(vm);	// TODO
 
-	// Scene group #3
-	// TODO
+	// Scene group #3 (catwalks, chandelier, lake / catacombs entrance)
+	case 301:	// catwalk #1 above stage
+		return new DummyScene(vm);	// TODO
+	case 302:	// catwalk #2 above stage
+		return new DummyScene(vm);	// TODO
+	case 303:	// above chandelier
+		return new DummyScene(vm);	// TODO
+	case 304:	// chandelier
+		return new DummyScene(vm);	// TODO
+	case 305:	// chandelier fight, phantom closeup
+		return new DummyScene(vm);	// TODO
+	case 306:	// chandelier #2
+		return new DummyScene(vm);	// TODO
+	case 307:	// catwalk #3 above stage
+		return new DummyScene(vm);	// TODO
+	case 308:	// hidden staircase behind balcony box
+		return new DummyScene(vm);	// TODO
+	case 309:	// lake and archway
+		return new DummyScene(vm);	// TODO
+	case 310:	// lake
+		return new DummyScene(vm);	// TODO
 
-	// Scene group #8
-	// TODO
+	// Scene group #4 (labyrinth)
+	case 401:	// labyrinth room, 3 exits
+		return new DummyScene(vm);	// TODO
+	case 403:	// labyrinth room (big), 4 exits + 1 bricked door, left
+		return new DummyScene(vm);	// TODO
+	case 404:	// labyrinth room, 3 exits
+		return new DummyScene(vm);	// TODO
+	case 406:	// labyrinth room, 2 exits
+		return new DummyScene(vm);	// TODO
+	case 407:	// catacomb room / lake
+		return new DummyScene(vm);	// TODO
+	case 408:	// catacomb corridor
+		return new DummyScene(vm);	// TODO
+	case 409:	// catacomb room, door with switch panel
+		return new DummyScene(vm);	// TODO
+	case 410:	// skull switch panel
+		return new DummyScene(vm);	// TODO
+	case 453:	// Labyrinth room (big), 4 exits + 1 bricked door, right
+		return new DummyScene(vm);	// TODO
+	case 456:	// Labyrinth room, 2 exits
+		return new DummyScene(vm);	// TODO
+
+	// Scene group #5 (Phantom's hideout)
+	case 501:	// catacombs, outside phantom's hideout, lake and boat
+		return new DummyScene(vm);	// TODO
+	case 502:	// push panel trap
+		return new DummyScene(vm);	// TODO
+	case 504:	// Phantom's hideout, church organ
+		return new DummyScene(vm);	// TODO
+	case 505:	// Phantom's hideout, sarcophagus
+		return new DummyScene(vm);	// TODO
+	case 506:	// catacomb room with ramp
+		return new DummyScene(vm);	// TODO
 
 	default:
 		error("Invalid scene %d called", scene._nextSceneId);
