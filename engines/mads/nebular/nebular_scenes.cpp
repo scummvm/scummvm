@@ -51,257 +51,245 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	scene.addActiveVocab(NOUN_ALCOHOL);
 
 	switch (scene._nextSceneId) {
-	// Scene group #1
-	case 101:
+	// Scene group #1 (ship, ocean, cave)
+	case 101:	// Ship, cockpit
 		return new Scene101(vm);
-	case 102:
+	case 102:	// Ship, dining room
 		return new Scene102(vm);
-	case 103:
+	case 103:	// Ship, engine room
 		return new Scene103(vm);
-	case 104:
+	case 104:	// Ocean, northwest cliff
 		return new Scene104(vm);
-	case 105:
+	case 105:	// Ocean, northeast cliff with mine
 		return new Scene105(vm);
-	case 106:
+	case 106:	// Ocean, outside ship
 		return new Scene106(vm);
-	case 107:
+	case 107:	// Ocean, bushes
 		return new Scene107(vm);
-	case 108:
+	case 108:	// Ocean, southwest cliff
 		return new Scene108(vm);
-	case 109:
+	case 109:	// Ocean, tunnel
 		return new Scene109(vm);
-	case 110:
+	case 110:	// Ocean, cave with tunnel
 		return new Scene110(vm);
-	case 111:
+	case 111:	// Cave with pool and opening
 		return new Scene111(vm);
-	case 112:
+	case 112:	// cutscene, looking at view screen
 		return new Scene112(vm);
 
-	// Scene group #2
-	case 201:
+	// Scene group #2 (island)
+	case 201:	// outside teleporter
 		return new Scene201(vm);
-	case 202:
+	case 202:	// village
 		return new Scene202(vm);
-	case 203:
+	case 203:	// tree with Rhotunda (fat woman)
 		return new Scene203(vm);
-	case 205:
+	case 205:	// village
 		return new Scene205(vm);
-	case 207:
+	case 207:	// outside witch doctor's hut
 		return new Scene207(vm);
-	case 208:
+	case 208:	// pit with leaves (trap)
 		return new Scene208(vm);
-	case 209:
+	case 209:	// palm tree and bamboo plant
 		return new Scene209(vm);
-	case 210:
+	case 210:	// outside native woman's hut
 		return new Scene210(vm);
-	case 211:
+	case 211:	// palm tree with monkey
 		return new Scene211(vm);
-	case 212:
+	case 212:	// outside cave
 		return new Scene212(vm);
-	case 213:
+	case 213:	// inside teleporter
 		return new Scene213(vm);
-	case 214:
+	case 214:	// inside witch doctor's hut
 		return new Scene214(vm);
-	case 215:
+	case 215:	// inside native woman's hut
 		return new Scene215(vm);
-	case 216:
+	case 216:	// cutscene, monitor showing Rex and native woman
 		return new Scene216(vm);
 
-	// Scene group #3
-	case 301:
+	// Scene group #3 (women's base, cell block)
+	case 301:	// outside teleporter (before chaos)
 		return new Scene301(vm);
-	case 302:
+	case 302:	// room with statue (before chaos)
 		return new Scene302(vm);
-	case 303:
+	case 303:	// western corridor (before chaos)
 		return new Scene303(vm);
-	case 304:
+	case 304:	// crossing with traffic light (before chaos)
 		return new Scene304(vm);
-	case 307:
+	case 307:	// Rex's cell (before chaos)
 		return new Scene307(vm);
-	case 308:
+	case 308:	// sauropod's cell (before chaos)
 		return new Scene308(vm);
-	case 309:
+	case 309:	// multihand monster's cell (before chaos)
 		return new Scene309(vm);
-	case 310:
+	case 310:	// empty cell (before chaos)
 		return new Scene310(vm);
-	case 311:
+	case 311:	// warden's desk (before chaos)
 		return new Scene311(vm);
-	case 313:
+	case 313:	// air shaft overview
 		return new Scene313(vm);
-	case 316:
+	case 316:	// Gender Bender
 		return new Scene316(vm);
-	case 318:
+	case 318:	// doctor's gurney
 		return new Scene318(vm);
-	case 319:
+	case 319:	// doctor Slache closeup (lying on the gurney)
 		return new Scene319(vm);
-	case 320:
+	case 320:	// warden's desk closeup / monitors
 		return new Scene320(vm);
-	case 321:
+	case 321:	// gender bender sex change sequence
 		return new Scene321(vm);
-	case 322:
+	case 322:	// inside teleporter
 		return new Scene322(vm);
-	case 351:
+	case 351:	// outside teleporter (after chaos)
 		return new Scene351(vm);
-	case 352:
+	case 352:	// room with statue (after chaos)
 		return new Scene352(vm);
-	case 353:
+	case 353:	// western corridor (after chaos)
 		return new Scene353(vm);
-	case 354:
+	case 354:	// crossing with traffic light (after chaos)
 		return new Scene354(vm);
-	case 357:
+	case 357:	// Rex's cell (after chaos)
 		return new Scene357(vm);
-	case 358:
+	case 358:	// sauropod's cell (after chaos)
 		return new Scene358(vm);
-	case 359:
+	case 359:	// multihand monster's cell (after chaos)
 		return new Scene359(vm);
-	case 360:
+	case 360:	// empty cell (after chaos)
 		return new Scene360(vm);
-	case 361:
+	case 361:	// warden's desk (after chaos)
 		return new Scene361(vm);
-	case 366:
+	case 366:	// air shaft ending at Gender Bender
 		return new Scene366(vm);
-	case 387:
+	case 387:	// air shaft ending at cell
 		return new Scene387(vm);
-	case 388:
+	case 388:	// air shaft ending at sauropod's cell
 		return new Scene388(vm);
-	case 389:
+	case 389:	// air shaft ending at multihand monster's cell (before chaos)
 		return new Scene389(vm);
-	case 390:
+	case 390:	// air shaft ending at cell
 		return new Scene390(vm);
-	case 391:
+	case 391:	// air shaft ending at warden's desk
 		return new Scene391(vm);
-	case 399:
+	case 399:	// air shaft ending at multihand monster's cell (after chaos)
 		return new Scene399(vm);
 
-	// Scene group #4
-	case 401:
+	// Scene group #4 (women's base)
+	case 401:	// outside bar
 		return new Scene401(vm);
-	case 402:
+	case 402:	// inside bar
 		return new Scene402(vm);
-	case 405:
+	case 405:	// outside armory
 		return new Scene405(vm);
-	case 406:
+	case 406:	// outside storage room
 		return new Scene406(vm);
-	case 407:
+	case 407:	// eastern corridor
 		return new Scene407(vm);
-	case 408:
+	case 408:	// inside armory
 		return new Scene408(vm);
-	case 409:
+	case 409:	// inside female only teleporter
 		return new Scene409(vm);
-	case 410:
+	case 410:	// inside storage room
 		return new Scene410(vm);
-	case 411:
+	case 411:	// lab
 		return new Scene411(vm);
-	case 413:
+	case 413:	// outside female only teleporter
 		return new Scene413(vm);
 
-	// Scene group #5
-	case 502:
+	// Scene group #5 (men's city, lower floor)
+	case 501:	// outside car
+		return new DummyScene(vm);	// TODO
+	case 502:	// inside male only teleporter
 		return new Scene502(vm);
-	case 501:
-		// TODO
-	case 503:
-		// TODO
-	case 504:
-		// TODO
-	case 505:
-		// TODO
-	case 506:
-		// TODO
-	case 507:
-		// TODO
-	case 508:
-		// TODO
-	case 511:
-		// TODO
-	case 512:
-		// TODO
-	case 513:
-		// TODO
-	case 515:
-		// TODO
-	case 551:
-		// TODO
-		// Fall-through for unimplemented scenes in group #5
-		error("Invalid scene %d called", scene._nextSceneId);
+	case 503:	// guard tower
+		return new DummyScene(vm);	// TODO
+	case 504:	// inside car
+		return new DummyScene(vm);	// TODO
+	case 505:	// car view screen
+		return new DummyScene(vm);	// TODO
+	case 506:	// shopping street
+		return new DummyScene(vm);	// TODO
+	case 507:	// inside software house
+		return new DummyScene(vm);	// TODO
+	case 508:	// laser cannon
+		return new DummyScene(vm);	// TODO
+	case 511:	// outside pleasure dome
+		return new DummyScene(vm);	// TODO
+	case 512:	// inside pleasure dome
+		return new DummyScene(vm);	// TODO
+	case 513:	// outside mall
+		return new DummyScene(vm);	// TODO
+	case 515:	// overview
+		return new DummyScene(vm);	// TODO
+	case 551:	// outside teleporter (with skeleton)
+		return new DummyScene(vm);	// TODO
 
-	// Scene group #6
-	case 601:
-		// TODO
-	case 602:
-		// TODO
-	case 603:
-		// TODO
-	case 604:
-		// TODO
-	case 605:
-		// TODO
-	case 607:
-		// TODO
-	case 608:
-		// TODO
-	case 609:
-		// TODO
-	case 610:
-		// TODO
-	case 611:
-		// TODO
-	case 612:
-		// TODO
-	case 620:
-		// TODO
-		// Fall-through for unimplemented scenes in group #6
-		error("Invalid scene %d called", scene._nextSceneId);
+	// Scene group #6 (men's city, upper floor)
+	case 601:	// outside Bruce's house
+		return new DummyScene(vm);	// TODO
+	case 602:	// Bruce's house, living room
+		return new DummyScene(vm);	// TODO
+	case 603:	// Bruce's house, bedroom
+		return new DummyScene(vm);	// TODO
+	case 604:	// viewport
+		return new DummyScene(vm);	// TODO
+	case 605:	// viewport closeup
+		return new DummyScene(vm);	// TODO
+	case 607:	// outside Abdul's garage
+		return new DummyScene(vm);	// TODO
+	case 608:	// inside Abdul's garage
+		return new DummyScene(vm);	// TODO
+	case 609:	// outside Buckluster video store
+		return new DummyScene(vm);	// TODO
+	case 610:	// inside Buckluster video store
+		return new DummyScene(vm);	// TODO
+	case 611:	// back alley
+		return new DummyScene(vm);	// TODO
+	case 612:	// expressway / maintenance building
+		return new DummyScene(vm);	// TODO
+	case 620:	// cutscene, viewport glass breaking
+		return new DummyScene(vm);	// TODO
 
-	// Scene group #7
-	case 707:
+	// Scene group #7 (submerged men's city / upper floor)
+	case 701:	// outside elevator (after city is submerged)
+		return new DummyScene(vm);	// TODO
+	case 702:	// outside teleporter (after city is submerged)
+		return new DummyScene(vm);	// TODO
+	case 703:	// water
+		return new DummyScene(vm);	// TODO
+	case 704:	// water, building in the distance
+		return new DummyScene(vm);	// TODO
+	case 705:	// water, outside building
+		return new DummyScene(vm);	// TODO
+	case 706:	// inside building, pedestral room, outside teleporter
+		return new DummyScene(vm);	// TODO
+	case 707:	// teleporter
 		return new Scene707(vm);
-	case 711:
+	case 710:	// looking at pedestral room through binoculars
+		return new DummyScene(vm);	// TODO
+	case 711:	// inside teleporter
 		return new Scene711(vm);
-	case 701:
-		// TODO
-	case 702:
-		// TODO
-	case 703:
-		// TODO
-	case 704:
-		// TODO
-	case 705:
-		// TODO
-	case 706:
-		// TODO
-	case 708:
-		// TODO
-	case 710:
-		// TODO
-	case 751:
-		// TODO
-	case 752:
-		// TODO
-		// Fall-through for unimplemented scenes in group #7
-		error("Invalid scene %d called", scene._nextSceneId);
+	case 751:	// outside elevator (before city is submerged)
+		return new DummyScene(vm);	// TODO
+	case 752:	// outside teleporter (before city is submerged)
+		return new DummyScene(vm);	// TODO
 
 	// Scene group #8
-	case 804:
+	case 801:	// control room, outside teleporter
+		return new DummyScene(vm);	// TODO
+	case 802:	// launch pad with destroyed ship
+		return new DummyScene(vm);	// TODO
+	case 803:	// empty launch pad
+		return new DummyScene(vm);	// TODO
+	case 804:	// ??? (broken animation)
 		return new Scene804(vm);
-	case 807:
-		return new Scene807(vm);
-	case 801:
-		// TODO
-	case 802:
-		// TODO
-	case 803:
-		// TODO
-	case 805:
-		// TODO
-	case 806:
-		// TODO
-	case 808:
-		// TODO
-	case 810:
-		// TODO
-		// Fall-through for unimplemented scenes in group #8
-		error("Invalid scene %d called", scene._nextSceneId);
+	case 805:	// service panel
+		return new DummyScene(vm);	// TODO
+	case 807:	// teleporter
+		return new DummyScene(vm);	// TODO
+	case 808:	// antigrav control
+		return new DummyScene(vm);	// TODO
+	case 810:	// cutscene: Rex's ship leaving the planet
+		return new DummyScene(vm);	// TODO
 
 	default:
 		error("Invalid scene %d called", scene._nextSceneId);
@@ -450,7 +438,8 @@ void SceneTeleporter::teleporterHandleKey() {
 				_curCode *= 10;
 				_curCode += _buttonTyped;
 				_digitCount++;
-				_msgText = Common::String::format("%d", _curCode);
+				_msgText = "";
+				_msgText.format("%d", _curCode);
 				if (_digitCount < 4)
 					_msgText += "_";
 
@@ -556,7 +545,7 @@ void SceneTeleporter::teleporterEnter() {
 			_meteorologistNextPlace = _globals[kTeleporterCode + i];
 	}
 
-	Common::String msgText2 = Common::String::format("#%.4d", tmpVal);
+	Common::String msgText2 = Common::String::format("#%d", tmpVal);
 
 	if (_scene->_currentSceneId != 711) {
 		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, 9999999, msgText2);

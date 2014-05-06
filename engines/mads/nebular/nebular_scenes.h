@@ -178,6 +178,22 @@ protected:
 	*/
 	SceneTeleporter(MADSEngine *vm) : NebularScene(vm) {}
 };
+
+// TODO: Temporary, remove once all scenes are implemented properly
+class DummyScene: public NebularScene {
+public:
+	DummyScene(MADSEngine *vm) : NebularScene(vm) {
+		warning("Unimplemented scene");
+	}
+
+	virtual void setup() {}
+	virtual void enter() {}
+	virtual void step() {}
+	virtual void preActions() {}
+	virtual void actions() {}
+	virtual void synchronize(Common::Serializer &s) {}
+};
+
 } // End of namespace Nebular
 
 } // End of namespace MADS
