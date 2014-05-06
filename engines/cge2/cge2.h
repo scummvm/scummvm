@@ -64,6 +64,8 @@ public:
 	void inf(const char *text, bool wideSpace = false);
 	void movie(const char *ext);
 	void runGame();
+	void loadScript(const char *fname);
+	void loadSprite(const char *fname, int ref, int scene, int col, int row, int pos);
 
 	const ADGameDescription *_gameDescription;
 
@@ -72,6 +74,7 @@ public:
 	int _mode;
 	bool _music;
 	int _startupMode;
+	int _now;
 
 	ResourceManager *_resman;
 	Vga *_vga;

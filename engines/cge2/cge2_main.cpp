@@ -33,8 +33,103 @@
 
 namespace CGE2 {
 
+void CGE2Engine::loadSprite(const char *fname, int ref, int scene, int col = 0, int row = 0, int pos = 0) {
+	warning("STUB: CGE2Engine::loadSprite");
+}
+
+void CGE2Engine::loadScript(const char *fname) {
+	EncryptedStream scrf(this, fname);
+
+	if (scrf.err())
+		return;
+
+	bool ok = true;
+	int lcnt = 0;
+
+	char tmpStr[kLineMax + 1];
+	Common::String line;
+
+	int lineNum = 0;
+	for (line = scrf.readLine(); !scrf.eos(); line = scrf.readLine()) {
+		lineNum++;
+
+		char *p;
+
+		lcnt++;
+		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
+		if ((line.size() == 0) || (*tmpStr == ';')) // Comments start with ';' - don't bother with them.
+			continue;
+
+		ok = false; // not OK if break
+
+		// sprite ident number
+		if ((p = strtok(tmpStr, " \t\n")) == NULL)
+			break;
+		int SpI = scrf.number(p);
+
+		// sprite file name
+		char *SpN;
+		if ((SpN = strtok(NULL, " ,;/\t\n")) == NULL)
+			break;
+
+		// sprite scene
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+			break;
+		int SpA = scrf.number(p);
+
+		// sprite column
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+			break;
+		int SpX = scrf.number(p);
+
+		// sprite row
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+			break;
+		int SpY = scrf.number(p);
+
+		// sprite Z pos
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+			break;
+		int SpZ = scrf.number(p);
+
+		// sprite life
+		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+			break;
+		bool BkG = scrf.number(p) == 0;
+
+		ok = true; // no break: OK
+
+		_sprite = NULL;
+		loadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
+		if (_sprite) {
+			warning("STUB: CGE2Engine::loadScript - SPARE:: thing");
+			if (BkG)
+				_sprite->_flags._back = true;
+		}
+	}
+
+	if (!ok)
+		error("Bad INI line %d [%s]", lineNum, fname); // Counting starts from 0!
+}
+
 void CGE2Engine::movie(const char *ext) {
-	warning("STUB: CGE2Engine::movie()");
+	assert(ext);
+
+	if (_quitFlag)
+		return;
+
+	char fn[12];
+	sprintf(fn, "CGE.%s", (*ext == '.') ? ext + 1 : ext);
+
+	if (_resman->exist(fn)) {
+		int now = _now;
+		_now = atoi(ext + 1);
+		loadScript(fn);
+
+		warning("STUB:  CGE2Engine::movie()");
+
+		_now = now;
+	}
 }
 
 void CGE2Engine::runGame() {
