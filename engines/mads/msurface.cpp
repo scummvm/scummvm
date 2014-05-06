@@ -488,7 +488,8 @@ void MSurface::translate(Common::Array<RGB6> &palette) {
 		byte *pDest = getBasePtr(0, y);
 
 		for (int x = 0; x < this->w; ++x, ++pDest) {
-			*pDest = palette[*pDest]._palIndex;
+			if (*pDest < 255)	// scene 752 has some palette indices of 255
+				*pDest = palette[*pDest]._palIndex;
 		}
 	}
 }
