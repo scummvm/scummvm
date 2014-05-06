@@ -4027,10 +4027,10 @@ void Scene413::enter() {
 }
 
 void Scene413::step() {
-	if (_scene->_activeAnimation->getCurrentFrame() == 38)
+	if (_scene->_activeAnimation && _scene->_activeAnimation->getCurrentFrame() == 38)
 		_scene->_activeAnimation->setCurrentFrame(37);
 
-	if ((_scene->_activeAnimation->getCurrentFrame() == 21) && _canMove) {
+	if (_scene->_activeAnimation && _scene->_activeAnimation->getCurrentFrame() == 21 && _canMove) {
 		_vm->_sound->command(27);
 		_canMove = false;
 	}
