@@ -265,7 +265,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 707:	// teleporter
 		return new Scene707(vm);
 	case 710:	// looking at pedestral room through binoculars
-		return new DummyScene(vm);	// TODO
+		return new Scene710(vm);
 	case 711:	// inside teleporter
 		return new Scene711(vm);
 	case 751:	// outside elevator (before city is submerged)

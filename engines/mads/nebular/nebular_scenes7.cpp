@@ -141,6 +141,49 @@ void Scene707::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene710::setup() {
+	_game._player._spritesPrefix = "";
+	setAAName();
+}
+
+void Scene710::enter() {
+	_game._scene._userInterface.setup(kInputLimitedSentences);
+
+	if (_game._objects[OBJ_VASE]._roomNumber == 706) {
+		_game._globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', -1));
+		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
+	}
+
+	_game._player._visible = false;
+	_game._scene._sequences.addTimer(600, 70);
+
+	sceneEntrySound();
+}
+
+void Scene710::step() {
+	if (_game._trigger == 70) {
+		if (_game._globals[kCityFlooded])
+			_game._scene._nextSceneId = 701;
+		else
+			_game._scene._nextSceneId = 751;
+	}
+}
+
+void Scene710::actions() {
+	if (_game._scene._action.isAction(0x46F, 0x27)) {
+		_game._player._stepEnabled = false;
+
+		if (_game._globals[kCityFlooded])
+			_game._scene._nextSceneId = 701;
+		else
+			_game._scene._nextSceneId = 751;
+
+		_action._inProgress = false;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
 void Scene711::setup() {
 	// The original was calling Scene7xx::setPlayerSpreitesPrefix()
 	_vm->_sound->command(5);
