@@ -818,6 +818,35 @@ Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int fla
 	return arr;
 }
 
+void MovGraph::shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2) {
+	if (lnk == lnk2) {
+		for (uint i = 0; i < tempObList1.size(); i++)
+			tempObList2.push_back(tempObList1[i]);
+
+		tempObList2.push_back(lnk);
+	} else {
+		lnk->_flags |= 0x80000000;
+
+		tempObList1.push_back(lnk);
+
+		for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+			MovGraphLink *l = (MovGraphLink *)*i;
+
+			if (l->_movGraphNode1 != lnk->_movGraphNode1) {
+				if (l->_movGraphNode2 != lnk->_movGraphNode1) {
+					if (l->_movGraphNode1 != lnk->_movGraphNode2 && l->_movGraphNode2 != lnk->_movGraphNode2)
+						continue;
+				}
+			}
+
+			if (!(l->_flags & 0xA0000000))
+				shuffleTree(l, lnk2, tempObList1, tempObList2);
+		}
+
+		lnk->_flags &= 0x7FFFFFFF;
+	}
+}
+
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 	for (uint i = 0; i < _items2.size(); i++)
 		if (_items2[i]->_objectId == objectId)

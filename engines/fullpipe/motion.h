@@ -363,6 +363,7 @@ public:
 	MovGraphNode *calcOffset(int ox, int oy);
 	int getItemIndexByStaticAni(StaticANIObject *ani);
 	Common::Array<MovArr *> *genMovArr(int x, int y, int *arrSize, int flag1, int flag2);
+	void shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
 };
 
 class Movement;
