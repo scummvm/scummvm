@@ -438,8 +438,7 @@ void SceneTeleporter::teleporterHandleKey() {
 				_curCode *= 10;
 				_curCode += _buttonTyped;
 				_digitCount++;
-				_msgText = "";
-				_msgText.format("%d", _curCode);
+				_msgText = Common::String::format("%d", _curCode);
 				if (_digitCount < 4)
 					_msgText += "_";
 
@@ -545,7 +544,7 @@ void SceneTeleporter::teleporterEnter() {
 			_meteorologistNextPlace = _globals[kTeleporterCode + i];
 	}
 
-	Common::String msgText2 = Common::String::format("#%d", tmpVal);
+	Common::String msgText2 = Common::String::format("#%.4d", tmpVal);
 
 	if (_scene->_currentSceneId != 711) {
 		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, 9999999, msgText2);
