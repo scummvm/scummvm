@@ -50,6 +50,26 @@ public:
 	Scene5xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
+class Scene501: public Scene5xx{
+private:
+	int _mainSequenceId;
+	int _mainSpriteId;
+	int _doorHotspotid;
+	bool _rexPunched;
+
+	void handleSlotActions();
+
+public:
+	Scene501(MADSEngine *vm) : Scene5xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene502: public SceneTeleporter {
 public:
 	Scene502(MADSEngine *vm) : SceneTeleporter(vm) {}

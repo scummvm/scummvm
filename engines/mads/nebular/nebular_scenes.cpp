@@ -197,7 +197,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 
 	// Scene group #5 (men's city, lower floor)
 	case 501:	// outside car
-		return new DummyScene(vm);	// TODO
+		return new Scene501(vm);
 	case 502:	// inside male only teleporter
 		return new Scene502(vm);
 	case 503:	// guard tower
@@ -285,7 +285,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 805:	// service panel
 		return new DummyScene(vm);	// TODO
 	case 807:	// teleporter
-		return new DummyScene(vm);	// TODO
+		return new Scene807(vm);
 	case 808:	// antigrav control
 		return new DummyScene(vm);	// TODO
 	case 810:	// cutscene: Rex's ship leaving the planet
