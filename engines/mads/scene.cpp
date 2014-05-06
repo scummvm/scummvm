@@ -477,26 +477,15 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	// Copy background for the dirty areas to the screen
 	_dirtyAreas.copy(&_backgroundSurface, &_vm->_screen, _posAdjust);
 
-	// TODO: Remove this HACK when sprites are implemented for V2 games
-	if (_vm->getGameID() != GType_RexNebular) {
-		if (transitionType) {
-			// Fading in the screen
-			_vm->_screen.transition(transitionType, surfaceFlag);
-			_vm->_sound->startQueuedCommands();
-		} else {
-			// Copy dirty areas to the screen
-			_dirtyAreas.copyToScreen(_vm->_screen._offset);
-		}
-		return;
-	}
-
 	// Handle dirty areas for foreground objects
-	_spriteSlots.setDirtyAreas();
+	if (_vm->getGameID() == GType_RexNebular)	// TODO: Implement for V2 games
+		_spriteSlots.setDirtyAreas();
 	_textDisplay.setDirtyAreas2();
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
 	// Draw sprites that have changed
-	_spriteSlots.drawSprites(&_vm->_screen);
+	if (_vm->getGameID() == GType_RexNebular)	// TODO: Implement for V2 games
+		_spriteSlots.drawSprites(&_vm->_screen);
 
 	// Draw text elements onto the view
 	_textDisplay.draw(&_vm->_screen);

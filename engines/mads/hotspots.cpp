@@ -182,13 +182,13 @@ Hotspot::Hotspot(Common::SeekableReadStream &f, bool isV2) {
 	_articleNumber = f.readByte();
 	_active = f.readByte() != 0;
 	_cursor = (CursorType)f.readByte();
-	_vocabId = f.readUint16LE();
-	_verbId = f.readUint16LE();
 	if (isV2) {
 		// This looks to be some sort of bitmask. Perhaps it signifies
 		// the valid verbs for this hotspot
 		f.skip(2);		// unknown
 	}
+	_vocabId = f.readUint16LE();
+	_verbId = f.readUint16LE();
 }
 
 /*------------------------------------------------------------------------*/

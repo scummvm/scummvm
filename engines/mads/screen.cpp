@@ -259,7 +259,7 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 }
 
 void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId) {
-	assert(size() < 100);
+	//assert(size() < 100);
 
 	ScreenObject so;
 	so._bounds = bounds;
