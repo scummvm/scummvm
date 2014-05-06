@@ -51,6 +51,9 @@ Window::~Window() {
 	// Remove any of our messages from the queue
 	_vm->removeAllMessages(this);
 
+	// ...and any timers
+	_vm->removeAllTimers(this);
+
 	// Make sure we're not the focused window
 	if (_vm->_focusedWindow == this)
 		_vm->_focusedWindow = 0;

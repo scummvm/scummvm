@@ -105,6 +105,7 @@ public:
 	uint createTimer(Window *window, uint period);
 	bool killTimer(uint timer);
 	void updateTimers();
+	void removeAllTimers(Window *window);
 
 	// Video
 	void addVideo(VideoWindow *window);
