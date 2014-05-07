@@ -39,10 +39,12 @@ Hero::Hero(PrinceEngine *vm) : _vm(vm), _number(0), _visible(false), _state(MOVE
 {
 	_zoomBitmap = new Animation();
 	_shadowBitmap = new Animation();
+	_linijka = new byte[2*1280*4];
 }
 
 Hero::~Hero() {
 	delete _zoomBitmap;
+	delete[] _linijka;
 }
 
 bool Hero::loadAnimSet(uint32 animSetNr) {
@@ -278,54 +280,67 @@ void Hero::line(int x1, int y1, int x2, int y2) {
 	int ly2 = y2;
 	int lfa = 0;
 
+	int shadowLineLen = 0;
+	Common::MemoryWriteStream writeStream(_linijka, 2*1280*4);
 	//loop
-	//if (x1 != x2 && y1 != y2) {
-	while (lx != lx2 && ly != ly2) {
-		// not_end
-		// pushad
-		// LineCode() ?
-		// popad
+	while (lx != lx2 || ly != ly2) {
+		//not_end
+		//nopik
+		if(shadowLineLen == 1280) {
+			break;
+		}
+		writeStream.writeUint16LE(lx);
+		writeStream.writeUint16LE(ly);
+		shadowLineLen++;
+
 		int lfx = lfa + lvx;
 		int lfy = lfa + lvy;
 		int lfxy = lfx + lfy - lfa;
+		int abs_lfxy, abs_lfx, abs_lfy;
+
 		if (lfxy < 0) {
-			lfxy = -1 * lfxy;
+			abs_lfxy = -1 * lfxy;
+		} else {
+			abs_lfxy = lfxy;
 		}
 		//abs_fxy_done
 		if (lfx < 0) {
-			lfx = -1 * lfx;
+			abs_lfx = -1 * lfx;
+		} else {
+			abs_lfx = lfx;
 		}
 		//abs_fx_done
 		if (lfy < 0) {
-			lfy = -1 * lfy;
+			abs_lfy = -1 * lfy;
+		} else {
+			abs_lfy = lfy;
 		}
 		//abs_fy_done
-		if (lfx > lfy || lfx > lfxy) {
+
+		if (abs_lfx > abs_lfy || abs_lfx > abs_lfxy) {
 			//c2
-			if (lfy >= lfx || lfy > lfxy) {
+			if (abs_lfy >= abs_lfx || abs_lfy > abs_lfxy) {
 				//c3
 				ly += dY;
 				lx += dX;
 				lfa = lfxy;
 			} else {
 				ly += dY;
-				lfa = lfa + lvy; // lfx / lfy = ?
+				lfa = lfa + lvy;
 			}
 		} else {
 			lx += dX;
-			lfa = lfa + lvx; //9600 ???
-			// jump to @@next
+			lfa = lfa + lvx;
 		}
 		//next
-		// 
 	}
-
 }
 
-Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
+void Hero::showHeroShadow() {
+//Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
 	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
-
+	/*
 	Graphics::Surface *makeShadow = new Graphics::Surface();
 	makeShadow->create(frameXSize, frameYSize, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -342,8 +357,7 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 			}
 		}
 	}
-	return makeShadow;
-
+	*/
 	// source Bitmap of sprite - esi
 	int destX = _drawX; // eax
 	int destY = _middleY - _shadMinus; // ecx
@@ -370,7 +384,11 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		// int shadowLine = Linijka();
 		// push lineCode
 		// mov lineCode <- @@Nopik
-		// Line();
+		//EAX - x1 <- LightX
+		//EBX - y1 <- LightY
+		//ECX - x2 <- DestX
+		//EDX - y2 <- DestY
+		line(_lightX, _lightY, destX, destY);
 		// pop lineCode
 		// popad
 
@@ -390,7 +408,7 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		int shadMaxY = sprDestY;
 		// destY * kMaxPicWidth / 8 + destX / 8
 		int shadBitAddr = _shadowBitmap->getZoom(destY * kMaxPicWidth / 8 + destX / 8);
-		int shadBitMask = 128 / (destX % 8);
+		int shadBitMask = 128 / pow(2.0, (destX % 8));
 
 		int shadZoomY2 = _shadScaleValue;
 		int shadZoomY = _scaleValue;
@@ -428,6 +446,7 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 			}
 		//}
 	}
+	//return makeShadow;
 }
 
 void Hero::showHeroAnimFrame() {
@@ -437,7 +456,8 @@ void Hero::showHeroAnimFrame() {
 		_phase = 0;
 	}
 	countDrawPosition();
-	//showHeroShadow();
+	//temp:
+	showHeroShadow();
 	//debug("_drawX: %d", _drawX);
 	//debug("_drawY: %d", _drawY);
 	//debug("_middleX: %d", _middleX);

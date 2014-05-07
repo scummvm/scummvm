@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/memstream.h"
 
 #include "graphics/surface.h"
 
@@ -115,7 +116,8 @@ public:
 	Graphics::Surface *zoomSprite(Graphics::Surface *heroFrame);
 	void showHeroAnimFrame();
 	void line(int x1, int y1, int x2, int y2);
-	Graphics::Surface *showHeroShadow(Graphics::Surface *heroFrame);
+	//Graphics::Surface *showHeroShadow(Graphics::Surface *heroFrame);
+	void showHeroShadow();
 	void setShadowScale(int32 shadowScale);
 	void specialAnim();
 	void getState();
@@ -167,6 +169,7 @@ public:
 	// TurnAnim ??
 	Animation *_zoomBitmap; // change to sth else, not Animation ??
 	Animation *_shadowBitmap;
+	byte *_linijka;
 	
 	uint32 _moveDelay;
 	uint32 _shadMinus;
