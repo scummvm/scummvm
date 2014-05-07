@@ -106,6 +106,11 @@ class Scene205: public Scene2xx {
 private:
 	uint32 _lastFishTime, _chickenTime;
 	bool _beingKicked;
+	int _kernelMessage;
+	Conversation _dialog1;
+
+	void handleWomanSpeech(int quoteId);
+
 public:
 	Scene205(MADSEngine *vm) : Scene2xx(vm), _lastFishTime(0), _chickenTime(0) {}
 

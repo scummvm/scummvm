@@ -70,7 +70,7 @@ enum GlobalId {
 	kTeleporterDestination  = 40,
 	kTeleporterUnderstood   = 41,
 	kConv205                = 42,
-	kChickenPpermitted      = 43,
+	kChickenPermitted      = 43,
 	kTwinklesStatus         = 44,
 	kTwinklesApproached     = 45,
 	kConvTwinkles1          = 46,
