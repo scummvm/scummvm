@@ -39,7 +39,8 @@ extern const char *const kOverStr;
 extern const char *const kGameReleaseInfoStr;
 extern const char *const kGameReleaseTitleStr;
 
-extern const uint32 DEFAULT_VGA_PALETTE[16];
+extern const uint32 DEFAULT_VGA_LOW_PALETTE[16];
+extern const uint32 DEFAULT_VGA_HIGH_PALETTE[16];
 
 } // End of namespace MADS
 

@@ -220,9 +220,15 @@ public:
 		setPalette(&palette[0], 0, PALETTE_COUNT);
 	}
 
-	int rgbMerge(byte r, byte g, byte b);
+	/**
+	* Calculates a merge/hash for a given palette entry
+	*/
+	static int rgbMerge(byte r, byte g, byte b);
 
-	int rgbMerge(RGB6 &palEntry);
+	/**
+	* Calculates a merge/hash for a given palette entry
+	*/
+	static int rgbMerge(RGB6 &palEntry);
 
 	/**
 	* Fades the given palette to greyscale

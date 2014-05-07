@@ -442,8 +442,8 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 	int greyAccum = 0;
 	int firstColor = 0;
 
-	for (int greyCtr = 0; greyCtr < 64; greyCtr++) {
-		for (int idx = 0; idx < greyTable[greyCtr]; idx++) {
+	for (int greyCtr = 0; greyCtr < 64; ++greyCtr) {
+		for (int idx = 0; idx < greyTable[greyCtr]; ++idx) {
 			greySum += greyList[greyScan++]._list;
 			++greyColors;
 
@@ -467,7 +467,7 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 		}
 	}
 
-	// Process palette with intensities
+	// Set the palette range of greyscale values to be used
 	byte *palP = &palette[baseGrey * 3];
 	for (int greys = 0; greys < numGreys; ++greys) {
 		for (int color = 0; color < 3; ++color) {
@@ -499,9 +499,8 @@ void Fader::getGreyValues(const byte palette[PALETTE_SIZE],
 void Fader::greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT], 
 		byte greyTable[64], int numColors) {
 	Common::fill(&greyTable[0], &greyTable[64], 0);
-	for (int i = 0; i < 64; ++i) {
+	for (int i = 0; i < numColors; ++i) {
 		int idx = greyList[i]._list;
-		assert(idx >= 0 && idx < 64);
 		++greyTable[idx];
 	}
 }
@@ -645,7 +644,13 @@ void Palette::initVGAPalette(byte *palette) {
 	byte *destP = palette;
 	for (int palIndex = 0; palIndex < 16; ++palIndex) {
 		for (int byteCtr = 2; byteCtr >= 0; --byteCtr)
-			*destP++ = ((DEFAULT_VGA_PALETTE[palIndex] >> (8 * byteCtr)) & 0xff) >> 2;
+			*destP++ = ((DEFAULT_VGA_LOW_PALETTE[palIndex] >> (8 * byteCtr)) & 0xff) >> 2;
+	}
+
+	destP = &palette[0xF0 * 3];
+	for (int palIndex = 0; palIndex < 16; ++palIndex) {
+		for (int byteCtr = 2; byteCtr >= 0; --byteCtr)
+			*destP++ = ((DEFAULT_VGA_HIGH_PALETTE[palIndex] >> (8 * byteCtr)) & 0xff) >> 2;
 	}
 }
 
