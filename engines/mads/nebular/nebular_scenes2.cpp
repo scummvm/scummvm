@@ -1416,6 +1416,9 @@ void Scene205::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_lastFishTime);
 	s.syncAsUint32LE(_chickenTime);
 	s.syncAsByte(_beingKicked);
+	s.syncAsSint16LE(_kernelMessage);
+
+	_dialog1.synchronize(s);
 }
 
 /*****************************************************************************/
