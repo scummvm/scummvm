@@ -1893,6 +1893,11 @@ void Scene105::actions() {
 	_action._inProgress = false;
 }
 
+void Scene105::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_explosionFl);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene106::setup() {
@@ -2100,6 +2105,14 @@ void Scene106::actions() {
 	_action._inProgress = false;
 }
 
+void Scene106::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_backToShipFl);
+	s.syncAsByte(_shadowFl);
+	s.syncAsByte(_firstEmergingFl);
+	s.syncAsSint32LE(_msgPosY);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene107::setup() {
@@ -2211,6 +2224,12 @@ void Scene107::actions() {
 
 	_action._inProgress = false;
 }
+
+void Scene107::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_shootingFl);
+}
+
 
 /*------------------------------------------------------------------------*/
 
@@ -2701,6 +2720,17 @@ void Scene109::actions() {
 	_action._inProgress = false;
 }
 
+void Scene109::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_rexThrowingObject);
+	s.syncAsByte(_hoovicDifficultFl);
+	s.syncAsByte(_beforeEatingRex);
+	s.syncAsByte(_eatingRex);
+	s.syncAsByte(_hungryFl);
+	s.syncAsByte(_eatingFirstFish);
+	s.syncAsSint32LE(_throwingObjectId);
+	s.syncAsSint32LE(_hoovicTrigger);
+}
 
 /*------------------------------------------------------------------------*/
 
@@ -2822,6 +2852,11 @@ void Scene110::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene110::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_crabsFl);
 }
 
 /*------------------------------------------------------------------------*/
@@ -2964,6 +2999,14 @@ void Scene111::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene111::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_stampedFl);
+	s.syncAsByte(_launch1Fl);
+	s.syncAsByte(_launched2Fl);
+	s.syncAsByte(_rexDivingFl);
 }
 
 /*------------------------------------------------------------------------*/
