@@ -104,7 +104,7 @@ void Scene::clearSequenceList() {
 
 void Scene::clearMessageList() {
 	_kernelMessages.clear();
-	_talkFont = "*FONTCONV.FF";
+	_talkFont = FONT_CONVERSATION;
 	_textSpacing  = -1;
 }
 
