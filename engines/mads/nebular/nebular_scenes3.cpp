@@ -2271,7 +2271,7 @@ void Scene316::actions() {
 		_vm->_dialogs->show(0x7B82);
 	else if (_action.isAction(VERB_LOOK, 0x2B9)) {
 		if (!_globals[kAfterHavoc]) {
-			if (_game._difficulty != DIFFICULTY_IMPOSSIBLE)
+			if (_game._difficulty != DIFFICULTY_EASY)
 				_vm->_dialogs->show(0x7B84);
 			else
 				_vm->_dialogs->show(0x7B83);

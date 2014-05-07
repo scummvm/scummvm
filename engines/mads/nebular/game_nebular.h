@@ -35,7 +35,7 @@ namespace Nebular {
 enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
 
 enum Difficulty {
-	DIFFICULTY_HARD = 1, DIFFICULTY_REALLY_HARD = 2, DIFFICULTY_IMPOSSIBLE = 3
+	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
 };
 
 enum InventoryObject {

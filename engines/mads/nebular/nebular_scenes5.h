@@ -97,6 +97,21 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene504: public Scene5xx{
+private:
+	int _carAnimationMode;
+	int _carFrame;
+
+public:
+	Scene504(MADSEngine *vm) : Scene5xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
 } // End of namespace Nebular
 } // End of namespace MADS
 

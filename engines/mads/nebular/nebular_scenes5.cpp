@@ -550,8 +550,8 @@ void Scene503::actions() {
 		if ( _game._trigger || !_game._objects.isInInventory(OBJ_DETONATORS)) {
 			switch (_game._trigger) {
 			case 0:
-				_game._player._stepEnabled   = false;
-				_game._player._visible     = false;  
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
 				if (_globals[kSexOfRex] == REX_MALE) {
 					_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 3);
@@ -569,7 +569,7 @@ void Scene503::actions() {
 
 			case 1:
 				_vm->_sound->command(9);
-				_scene->_sequences.remove(_globals._sequenceIndexes[1]);  
+				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_scene->_dynamicHotspots.remove(_detonatorHotspotId);
 				_game._objects.addToInventory(OBJ_DETONATORS);
 				_vm->_dialogs->showItem(OBJ_DETONATORS, 50326);
@@ -581,13 +581,13 @@ void Scene503::actions() {
 				else
 					_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
 
-				_game._player._visible   = true;
+				_game._player._visible = true;
 				_game._player._stepEnabled = true;
 				break;
 
 			default:
 				break;
-			}                 
+			}
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(50328);
@@ -628,6 +628,203 @@ void Scene503::actions() {
 		_vm->_dialogs->show(50329);
 	else if (_action.isAction(0xC, 0x36D) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(50330);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene504::setup() {
+	_game._player._spritesPrefix = "";
+	setAAName();
+}
+
+void Scene504::enter() {
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 2));
+
+	for (int i = 0; i < 4; i++)
+		_globals._spriteIndexes[5 + i] = _scene->_sprites.addSprites(formAnimName('m', i));
+
+	if (_globals[kSexOfRex] == REX_MALE)
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 0));
+	else {
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 1));
+		_scene->changeVariant(1);
+	}
+
+	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 0);
+	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
+	_carFrame = -1;
+
+	if ((_scene->_priorSceneId == 505) && (_globals[kHoverCarDestination] != _globals[kHoverCarLocation])){
+		_carAnimationMode = 1;
+		_scene->loadAnimation(formAnimName('A', -1));
+		_vm->_sound->command(14);
+		_scene->_sequences.addTimer(1, 70);
+		_game._player._stepEnabled = false;
+	} else {
+		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 3));
+		_carAnimationMode = 1;
+		_scene->loadAnimation(formAnimName('A', -1));
+		if ((_scene->_priorSceneId != -2) && (_scene->_priorSceneId != 505))
+			_globals[kHoverCarLocation] = _scene->_priorSceneId;
+
+		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
+	}
+
+	if (_globals[kTimebombTimer] > 10500)
+		_globals[kTimebombTimer] = 10500;
+
+	sceneEntrySound();
+}
+
+void Scene504::step() {
+	if ((_carAnimationMode == 1) && (_scene->_activeAnimation != nullptr)) {
+		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+			int nextFrame;
+
+			if (_carFrame == 1)
+				nextFrame = 0;
+			else
+				nextFrame = -1;
+
+			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
+				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+				_carFrame = nextFrame;
+			}
+		}
+	}
+
+
+	if (_game._trigger >= 70) {
+		switch (_game._trigger) {
+		case 70:
+			if (_globals[kHoverCarDestination] != -1) {
+				_game._player._stepEnabled = false;
+				_scene->freeAnimation();
+				_carAnimationMode = 2;
+				if (((_globals[kHoverCarLocation] >= 500 && _globals[kHoverCarLocation] <= 599) &&
+					(_globals[kHoverCarDestination] >= 500 && _globals[kHoverCarDestination] <= 599)) ||
+					((_globals[kHoverCarLocation] >= 600 && _globals[kHoverCarLocation] <= 699) &&
+					(_globals[kHoverCarDestination] >= 600 && _globals[kHoverCarDestination] <= 699))) {
+						_scene->loadAnimation(formAnimName('A', -1), 71);
+				} else if (_globals[kHoverCarLocation] > _globals[kHoverCarDestination])
+					_scene->loadAnimation(formAnimName('C', -1), 71);
+				else
+					_scene->loadAnimation(formAnimName('B', -1), 71);
+			}
+			break;
+
+		case 71:
+			_vm->_sound->command(15);
+			_scene->_nextSceneId = _globals[kHoverCarDestination];
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if ((_globals[kTimebombTimer] >= 10800) && (_globals[kTimebombStatus] == 1) && (_game._difficulty != 3)) {
+		_globals[kTimebombStatus] = TIMEBOMB_DEAD;
+		_globals[kTimebombTimer] = 0;
+		_globals[kCheckDaemonTimebomb] = false;
+		_scene->_nextSceneId = 620;
+	}
+}
+
+void Scene504::preActions() {
+	_game._player._needToWalk = false;
+}
+
+void Scene504::actions() {
+	if (_action.isAction(0x1CE, 0x324)) {
+		_vm->_sound->command(15);
+		_scene->_nextSceneId = _globals[kHoverCarLocation];
+	} else if (_action.isAction(0xE, 0x380)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_vm->_sound->command(39);
+			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 13);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			_scene->_sequences.remove(_globals._sequenceIndexes[7]);
+			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 18, 0, 0, 0);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 14);
+			break;
+
+		case 1: {
+			int syncIdx = _globals._sequenceIndexes[3];
+			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 13);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 6);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
+			}
+			break;
+
+		case 2:
+			_scene->_sequences.addTimer(10, 3);
+			break;
+
+		case 3:
+			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
+			if (_globals[kSexOfRex] == REX_MALE) {
+				_vm->_sound->command(34);
+				_scene->_sequences.addTimer(60, 4);
+				_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 14);
+			} else {
+				_vm->_sound->command(40);
+				_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 18, 0, 0, 0);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 14);
+				_scene->_sequences.addTimer(120, 5);
+			}
+			break;
+
+		case 4:
+			_game._player._stepEnabled = true;
+			_globals[kHoverCarDestination] = _globals[kHoverCarLocation];
+			_scene->_nextSceneId = 505;
+			break;
+
+		case 5:
+			_game._player._stepEnabled = true;
+			_scene->_sequences.remove(_globals._sequenceIndexes[8]);
+			_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
+			_vm->_dialogs->show(50421);
+			break;
+
+		default:
+			break;
+		}
+	} else if ((_action._lookFlag) || _action.isAction(VERB_LOOK, 0x388))
+		_vm->_dialogs->show(50412);
+	else if (_action.isAction(VERB_LOOK, 0x383))
+		_vm->_dialogs->show(50410);
+	else if (_action.isAction(VERB_LOOK, 0x380) || _action.isAction(VERB_LOOK, 0x387))
+		_vm->_dialogs->show(50411);
+	else if (_action.isAction(VERB_LOOK, 0x381))
+		_vm->_dialogs->show(50413);
+	else if (_action.isAction(VERB_LOOK, 0x385))
+		_vm->_dialogs->show(50414);
+	else if (_action.isAction(VERB_LOOK, 0x382))
+		_vm->_dialogs->show(50415);
+	else if (_action.isAction(VERB_LOOK, 0x386) || _action.isAction(0xD3, 0x386))
+		_vm->_dialogs->show(50416);
+	else if (_action.isAction(VERB_LOOK, 0x120))
+		_vm->_dialogs->show(50417);
+	else if (_action.isAction(VERB_TAKE, 0x120))
+		_vm->_dialogs->show(50418);
+	else if (_action.isAction(VERB_LOOK, 0x384))
+		_vm->_dialogs->show(50419);
+	else if (_action.isAction(VERB_TAKE, 0x384))
+		_vm->_dialogs->show(50420);
 	else
 		return;
 

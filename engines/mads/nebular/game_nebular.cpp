@@ -38,7 +38,7 @@ namespace Nebular {
 GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
-	_difficulty = DIFFICULTY_IMPOSSIBLE;
+	_difficulty = DIFFICULTY_EASY;
 }
 
 ProtectionResult GameNebular::checkCopyProtection() {
@@ -212,7 +212,7 @@ void GameNebular::initialiseGlobals() {
 		_globals[kLeavesStatus] = LEAVES_ON_TRAP;
 		break;
 
-	case DIFFICULTY_REALLY_HARD:
+	case DIFFICULTY_MEDIUM:
 		_objects.setRoom(OBJ_PLANT_STALK, NOWHERE);
 
 		_globals[kLeavesStatus] = LEAVES_ON_GROUND;
@@ -220,7 +220,7 @@ void GameNebular::initialiseGlobals() {
 		_globals[kPenlightCellStatus] = FIRST_TIME_CHARGED_DURAFAIL;
 		break;
 
-	case DIFFICULTY_IMPOSSIBLE:
+	case DIFFICULTY_EASY:
 		_objects.setRoom(OBJ_BLOWGUN, NOWHERE);
 		_objects.setRoom(OBJ_NOTE, NOWHERE);
 

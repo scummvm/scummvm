@@ -1673,7 +1673,7 @@ void Scene208::actions() {
 	} else if (_action.isAction(VERB_LOOK, NOUN_PILE_OF_LEAVES)) {
 		_vm->_dialogs->show(0x5149);
 	} else if (_action.isAction(VERB_LOOK, NOUN_LEAF_COVERED_PIT)) {
-		if (_game._difficulty == DIFFICULTY_IMPOSSIBLE)
+		if (_game._difficulty == DIFFICULTY_EASY)
 			_vm->_dialogs->show(0x514A);
 		else
 			_vm->_dialogs->show(0x514B);

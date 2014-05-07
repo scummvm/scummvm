@@ -977,7 +977,7 @@ void Scene102::actions() {
 				_action._inProgress = false;
 				return;
 			}
-		} else if (_action.isAction(VERB_LOOK) || (_game._difficulty != DIFFICULTY_IMPOSSIBLE)) {
+		} else if (_action.isAction(VERB_LOOK) || (_game._difficulty != DIFFICULTY_EASY)) {
 			_vm->_dialogs->show(0x27EE);
 			_action._inProgress = false;
 			return;
@@ -2519,7 +2519,7 @@ void Scene109::actions() {
 							break;
 
 						case OBJ_BURGER:
-							_hoovicDifficultFl = (_game._difficulty == DIFFICULTY_IMPOSSIBLE);
+							_hoovicDifficultFl = (_game._difficulty == DIFFICULTY_EASY);
 							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('H', (_hoovicDifficultFl ? 3 : 1)));
 							break;
 						}
@@ -2592,7 +2592,7 @@ void Scene109::actions() {
 								case DIFFICULTY_HARD:
 									threshold = 1;
 									break;
-								case DIFFICULTY_REALLY_HARD:
+								case DIFFICULTY_MEDIUM:
 									threshold = 3;
 									break;
 								default:
