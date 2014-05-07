@@ -38,6 +38,15 @@ typedef struct {
 	int _horizontal;
 	int _seqId[40];
 	uint32 _timer;
+
+	void synchronize(Common::Serializer &s) {
+		s.syncAsByte(_flag);
+		s.syncAsSint32LE(_vertical);
+		s.syncAsSint32LE(_horizontal);
+		for (int i = 0; i < 40; ++i)
+			s.syncAsSint32LE(_seqId[i]);
+		s.syncAsUint32LE(_timer);
+	};
 } ForceField;
 
 class Scene3xx : public NebularScene {
@@ -90,6 +99,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene303: public Scene3xx {
@@ -111,6 +121,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene307: public Scene3xx {
@@ -132,7 +143,7 @@ private:
 
 	Common::String _subQuote2;
 
-	Conversation dialog1, dialog2;
+	Conversation _dialog1, _dialog2;
 
 	void handleDialog();
 	void handleRexDialog(int quote);
@@ -148,6 +159,7 @@ public:
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene308: public Scene3xx {
@@ -160,6 +172,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene309: public Scene3xx {
@@ -175,6 +188,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene310: public Scene3xx {
@@ -187,6 +201,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene311: public Scene3xx {
@@ -200,6 +215,7 @@ public:
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene313: public Scene3xx {
@@ -245,7 +261,7 @@ private:
 
 	Common::String _subQuote2;
 
-	Conversation dialog1;
+	Conversation _dialog1;
 
 	void handleDialog();
 	void handleRexDialogs(int quote);
@@ -259,6 +275,7 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene319: public Scene3xx {
@@ -286,6 +303,7 @@ public:
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene320: public Scene300s {
@@ -310,6 +328,7 @@ public:
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene321: public Scene3xx {
@@ -363,6 +382,7 @@ public:
 	virtual void enter();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene353: public Scene3xx {
@@ -415,6 +435,7 @@ public:
 	virtual void enter();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene360: public Scene3xx {
@@ -482,6 +503,7 @@ public:
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene390: public Scene300s {

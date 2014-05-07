@@ -302,6 +302,11 @@ void Scene302::step() {
 	}
 }
 
+void Scene302::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+	s.syncAsSint32LE(_oldFrame);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene303::setup() {
@@ -455,6 +460,11 @@ void Scene304::step() {
 	}
 }
 
+void Scene304::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+	s.syncAsSint32LE(_explosionSpriteId);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene307::setup() {
@@ -522,13 +532,13 @@ void Scene307::setDialogNode(int node) {
 	case 1:
 		_globals[kMetBuddyBeast] = true;
 		handlePrisonerSpeech(0x10F, 2, 9999999);
-		dialog1.start();
+		_dialog1.start();
 		break;
 
 	case 2:
 		_globals[kMetBuddyBeast] = true;
 		handlePrisonerSpeech(0x111, 2, 9999999);
-		dialog1.start();
+		_dialog1.start();
 		break;
 
 	case 4:
@@ -539,7 +549,7 @@ void Scene307::setDialogNode(int node) {
 	case 5:
 		_globals[kKnowsBuddyBeast] = true;
 		handlePrisonerSpeech(0x117, 2, 9999999);
-		dialog2.start();
+		_dialog2.start();
 		break;
 
 	case 6:
@@ -550,57 +560,57 @@ void Scene307::setDialogNode(int node) {
 	case 7:
 		_globals[kKnowsBuddyBeast] = true;
 		handlePrisonerSpeech(0x124, 10, 9999999);
-		dialog2.write(0x11A, false);
-		dialog2.write(0x11B, true);
-		dialog2.write(0x120, true);
-		dialog2.start();
+		_dialog2.write(0x11A, false);
+		_dialog2.write(0x11B, true);
+		_dialog2.write(0x120, true);
+		_dialog2.start();
 		break;
 
 	case 8:
 		handlePrisonerSpeech(0x12E, 6, 9999999);
-		dialog2.write(0x11A, false);
-		dialog2.write(0x11B, false);
-		dialog2.write(0x11C, true);
-		dialog2.write(0x11D, true);
-		dialog2.write(0x11F, true);
-		dialog2.start();
+		_dialog2.write(0x11A, false);
+		_dialog2.write(0x11B, false);
+		_dialog2.write(0x11C, true);
+		_dialog2.write(0x11D, true);
+		_dialog2.write(0x11F, true);
+		_dialog2.start();
 		break;
 
 	case 9:
 		handlePrisonerSpeech(0x134, 4, 9999999);
-		dialog2.write(0x11D, false);
-		dialog2.start();
+		_dialog2.write(0x11D, false);
+		_dialog2.start();
 		break;
 
 	case 10:
 		handlePrisonerSpeech(0x138, 6, 9999999);
-		dialog2.write(0x11E, false);
-		dialog2.start();
+		_dialog2.write(0x11E, false);
+		_dialog2.start();
 		break;
 
 	case 11:
 		handlePrisonerSpeech(0x13E, 6, 9999999);
-		dialog2.write(0x11F, false);
-		dialog2.write(0x121, true);
-		dialog2.start();
+		_dialog2.write(0x11F, false);
+		_dialog2.write(0x121, true);
+		_dialog2.start();
 		break;
 
 	case 12:
 		handlePrisonerSpeech(0x144, 4, 9999999);
-		dialog2.write(0x11C, false);
-		dialog2.start();
+		_dialog2.write(0x11C, false);
+		_dialog2.start();
 		break;
 
 	case 13:
 		handlePrisonerSpeech(0x148, 7, 9999999);
-		dialog2.write(0x120, false);
-		dialog2.start();
+		_dialog2.write(0x120, false);
+		_dialog2.start();
 		break;
 
 	case 14:
 		handlePrisonerSpeech(0x14F, 3, 9999999);
-		dialog2.write(0x121, false);
-		dialog2.start();
+		_dialog2.write(0x121, false);
+		_dialog2.start();
 		break;
 
 	case 15:
@@ -611,7 +621,7 @@ void Scene307::setDialogNode(int node) {
 	case 16:
 		_globals[kKnowsBuddyBeast] = true;
 		handlePrisonerSpeech(0x10C, 1, 9999999);
-		dialog2.start();
+		_dialog2.start();
 		break;
 
 	default:
@@ -700,13 +710,13 @@ void Scene307::enter() {
 		0x142, 0x143, 0x144, 0x145, 0x146, 0x147, 0x148, 0x149, 0x14A, 0x14B, 0x14C, 0x14D, 0x14E, 0x14F,
 		0x150, 0x151, 0x152, 0x153, 0);
 
-	dialog1.setup(0x3F, 0x113, 0x114, 0x115, -1);
-	dialog2.setup(0x40, 0x11A, 0x11B, 0x11C, 0x11D, 0x11E, 0x11F, 0x120, 0x121, 0x122, 0);
+	_dialog1.setup(0x3F, 0x113, 0x114, 0x115, -1);
+	_dialog2.setup(0x40, 0x11A, 0x11B, 0x11C, 0x11D, 0x11E, 0x11F, 0x120, 0x121, 0x122, 0);
 
 	if (!_game._visitedScenes._sceneRevisited)
-		dialog2.set(0x11A, 0x122, 0);
+		_dialog2.set(0x11A, 0x122, 0);
 	else if (_scene->_priorSceneId == 318)
-		dialog2.write(0x11E, true);
+		_dialog2.write(0x11E, true);
 
 
 	if (_scene->_priorSceneId == -2) {
@@ -826,7 +836,7 @@ void Scene307::step() {
 				_prisonerMessageId++;
 				if (_prisonerMessageId > 0x10A)
 					_prisonerMessageId = 0x104;
-			} else if (_globals[kKnowsBuddyBeast] && (dialog2.read(0) > 1) && (_vm->getRandomNumber(1, 3) == 1)) {
+			} else if (_globals[kKnowsBuddyBeast] && (_dialog2.read(0) > 1) && (_vm->getRandomNumber(1, 3) == 1)) {
 				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(267));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);
 			}
@@ -1127,6 +1137,30 @@ void Scene307::actions() {
 	_action._inProgress = false;
 }
 
+void Scene307::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+	
+	_forceField.synchronize(s);
+	
+	s.syncAsByte(_afterPeeingFl);
+	s.syncAsByte(_duringPeeingFl);
+	s.syncAsByte(_grateOpenedFl);
+	s.syncAsByte(_activePrisonerFl);
+
+	s.syncAsSint32LE(_animationMode);
+	s.syncAsSint32LE(_prisonerMessageId);
+	s.syncAsSint32LE(_fieldCollisionCounter);
+
+	s.syncAsUint32LE(_lastFrameTime);
+	s.syncAsUint32LE(_guardTime);
+	s.syncAsUint32LE(_prisonerTimer);
+
+	s.syncString(_subQuote2);
+
+	_dialog1.synchronize(s);
+	_dialog2.synchronize(s);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene308::setup() {
@@ -1248,6 +1282,12 @@ void Scene308::step() {
 	default:
 		break;
 	}
+}
+
+void Scene308::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+	
+	_forceField.synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/
@@ -1435,6 +1475,18 @@ void Scene309::step() {
 		_scene->_nextSceneId = 308;
 }
 
+void Scene309::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+	
+	_forceField.synchronize(s);
+
+	for (int i = 0; i < 3; ++i)
+		s.syncAsSint32LE(_characterSpriteIndexes[i]);
+	for (int i = 0; i < 3; ++i)
+		s.syncAsSint32LE(_messagesIndexes[i]);
+	s.syncAsSint32LE(_lastFrame);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene310::setup() {
@@ -1466,6 +1518,12 @@ void Scene310::step() {
 
 	if (_game._trigger == 70)
 		_scene->_nextSceneId = 309;
+}
+
+void Scene310::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+	
+	_forceField.synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/
@@ -1755,6 +1813,12 @@ void Scene311::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene311::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+	
+	s.syncAsByte(_checkGuardFl);
 }
 
 /*------------------------------------------------------------------------*/
@@ -2311,41 +2375,41 @@ void Scene318::handleDialog() {
 		_game._player._stepEnabled = true;
 	} else {
 		if (_action._activeAction._verbId < 0x19C)
-			dialog1.write(_action._activeAction._verbId, false);
+			_dialog1.write(_action._activeAction._verbId, false);
 
 		switch (_action._activeAction._verbId) {
 		case 0x191:
 			handleInternDialog(0x19E, 2, 9999999);
-			dialog1.write(0x192, true);
+			_dialog1.write(0x192, true);
 			break;
 
 		case 0x192:
 			handleInternDialog(0x1A0, 5, 9999999);
-			dialog1.write(0x193, true);
+			_dialog1.write(0x193, true);
 			break;
 
 		case 0x193:
 			handleInternDialog(0x1A5, 4, 9999999);
-			dialog1.write(0x194, true);
+			_dialog1.write(0x194, true);
 			break;
 
 		case 0x194:
 			handleInternDialog(0x1A9, 6, 9999999);
-			dialog1.write(0x195, true);
-			dialog1.write(0x196, true);
-			dialog1.write(0x19D, false);
+			_dialog1.write(0x195, true);
+			_dialog1.write(0x196, true);
+			_dialog1.write(0x19D, false);
 			break;
 
 		case 0x195:
 			handleInternDialog(0x1AF, 7, 9999999);
-			if (!dialog1.read(0x196))
-				dialog1.write(0x197, true);
+			if (!_dialog1.read(0x196))
+				_dialog1.write(0x197, true);
 			break;
 
 		case 0x196:
 			handleInternDialog(0x1B6, 5, 9999999);
-			if (!dialog1.read(0x195))
-				dialog1.write(0x197, true);
+			if (!_dialog1.read(0x195))
+				_dialog1.write(0x197, true);
 			break;
 
 		case 0x197:
@@ -2354,7 +2418,7 @@ void Scene318::handleDialog() {
 
 		case 0x198:
 			handleInternDialog(0x1C0, 5, 9999999);
-			dialog1.write(0x19A, true);
+			_dialog1.write(0x19A, true);
 			break;
 
 		case 0x199:
@@ -2363,7 +2427,7 @@ void Scene318::handleDialog() {
 
 		case 0x19A:
 			handleInternDialog(0x1C8, 5, 9999999);
-			dialog1.write(0x19B, true);
+			_dialog1.write(0x19B, true);
 			break;
 
 		case 0x19B:
@@ -2381,7 +2445,7 @@ void Scene318::handleDialog() {
 
 			_dialogFl = false;
 			handleInternDialog(0x1D0, 1, 120);
-			if (dialog1.read(0) || (_action._activeAction._verbId == 0x19D)) {
+			if (_dialog1.read(0) || (_action._activeAction._verbId == 0x19D)) {
 				_explosionFl = true;
 				_internCounter = 3420;
 			}
@@ -2389,7 +2453,7 @@ void Scene318::handleDialog() {
 		}
 
 		if (_action._activeAction._verbId < 0x19C) {
-			dialog1.start();
+			_dialog1.start();
 			_game._player._stepEnabled = true;
 		}
 
@@ -2464,12 +2528,12 @@ void Scene318::enter() {
 	else if (_scene->_priorSceneId != -2)
 		_game._player._playerPos = Common::Point(214, 152);
 
-	dialog1.setup(0x47, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196, 0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19D, 0);
+	_dialog1.setup(0x47, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196, 0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19D, 0);
 
 	if (!_game._visitedScenes._sceneRevisited) {
-		dialog1.set(0x191, 0x198, 0x199, 0x19C, 0);
+		_dialog1.set(0x191, 0x198, 0x199, 0x19C, 0);
 		if (_game._widepipeCtr >= 2)
-			dialog1.write(0x19D, true);
+			_dialog1.write(0x19D, true);
 	}
 
 	if (_scene->_priorSceneId == 307) {
@@ -2514,7 +2578,7 @@ void Scene318::enter() {
 			}
 
 			if (_dialogFl) {
-				dialog1.start();
+				_dialog1.start();
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 8);
 			} else
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
@@ -2709,7 +2773,7 @@ void Scene318::actions() {
 		case 1:
 			_game._player._stepEnabled = true;
 			handleInternDialog(0x18F, 1, 9999999);
-			dialog1.start();
+			_dialog1.start();
 			break;
 
 		case 2: {
@@ -2871,6 +2935,29 @@ void Scene318::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene318::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsUint32LE(_dropTimer);
+
+	s.syncAsSint32LE(_lastFrame);
+	s.syncAsSint32LE(_animMode);
+	s.syncAsSint32LE(_internCounter);
+	s.syncAsSint32LE(_counter);
+
+	s.syncAsByte(_dialogFl);
+	s.syncAsByte(_internTalkingFl);
+	s.syncAsByte(_internWalkingFl);
+	s.syncAsByte(_internVisibleFl);
+	s.syncAsByte(_explosionFl);
+
+	s.syncAsUint32LE(_lastFrameCounter);
+
+	s.syncString(_subQuote2);
+
+	_dialog1.synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/
@@ -3333,6 +3420,29 @@ void Scene319::actions() {
 	_action._inProgress = false;
 }
 
+void Scene319::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	_dialog1.synchronize(s);
+	_dialog2.synchronize(s);
+	_dialog3.synchronize(s);
+
+	s.syncAsUint32LE(_animMode);
+	s.syncAsUint32LE(_animFrame);
+	s.syncAsUint32LE(_nextAction1);
+	s.syncAsUint32LE(_nextAction2);
+	s.syncAsUint32LE(_slacheMode);
+	s.syncAsUint32LE(_slacheTopic);
+	s.syncAsUint32LE(_slachePosY);
+
+	s.syncAsByte(_slacheTalkingFl);
+	s.syncAsByte(_slacheReady);
+	s.syncAsByte(_slacheInitFl);
+	
+	s.syncString(_subQuote2);
+}
+
+
 /*------------------------------------------------------------------------*/
 
 void Scene320::setup() {
@@ -3639,6 +3749,19 @@ void Scene320::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene320::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_blinkFl);
+	s.syncAsByte(_flippedFl);
+
+	s.syncAsSint32LE(_buttonId);
+	s.syncAsSint32LE(_lastFrame);
+	s.syncAsSint32LE(_leftItemId);
+	s.syncAsSint32LE(_posX);
+	s.syncAsSint32LE(_rightItemId);
 }
 
 /*------------------------------------------------------------------------*/
@@ -4439,6 +4562,21 @@ void Scene352::actions() {
 		return;
 }
 
+void Scene352::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_vaultOpenFl);
+	s.syncAsByte(_mustPutArmDownFl);
+	s.syncAsByte(_leaveRoomFl);
+
+	s.syncAsSint32LE(_tapePlayerHotspotIdx);
+	s.syncAsSint32LE(_hotspot1Idx);
+	s.syncAsSint32LE(_hotspot2Idx);
+	s.syncAsSint32LE(_lampHostpotIdx);
+	s.syncAsSint32LE(_commonSequenceIdx);
+	s.syncAsSint32LE(_commonSpriteIndex);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene353::setup() {
@@ -4810,6 +4948,13 @@ void Scene359::actions() {
 
 	_action._inProgress = false;
 }
+
+void Scene359::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsSint32LE(_cardHotspotId);
+}
+
 
 /*------------------------------------------------------------------------*/
 
@@ -5448,6 +5593,13 @@ void Scene389::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene389::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsUint32LE(_monsterTime);
+	s.syncAsSint32LE(_circularQuoteId);
 }
 
 /*------------------------------------------------------------------------*/
