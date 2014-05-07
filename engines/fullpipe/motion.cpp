@@ -847,6 +847,38 @@ void MovGraph::shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<
 	}
 }
 
+Common::Array<Common::Rect *> *MovGraph::getBboxes(MovArr *movarr1, MovArr *movarr2, int *listCount) {
+	Common::Array<MovGraphLink *> tempObList1;
+	Common::Array<MovGraphLink *> tempObList2;
+
+	shuffleTree(movarr1->_link, movarr2->_link, tempObList1, tempObList2);
+
+	*listCount = 0;
+
+	if (!tempObList2.size())
+		return 0;
+
+	*listCount = tempObList2.size();
+
+	Common::Array<Common::Rect *> *res = new Common::Array<Common::Rect *>;
+
+	for (uint i = 0; i < *listCount; i++) {
+		Common::Rect *r = new Common::Rect;
+
+		calcBbox(r, tempObList2[i], movarr1, movarr2);
+
+		delete tempObList2[i];
+	}
+
+	movarr2->_link = movarr1->_link;
+
+	return res;
+}
+
+void MovGraph::calcBbox(Common::Rect *rect, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2) {
+	warning("STUB: MovGraph::calcBbox()");
+}
+
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 	for (uint i = 0; i < _items2.size(); i++)
 		if (_items2[i]->_objectId == objectId)
