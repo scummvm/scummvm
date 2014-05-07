@@ -59,6 +59,7 @@ public:
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene202: public Scene2xx {
@@ -82,6 +83,7 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 
 	void setRandomKernelMessage();
 };
@@ -97,6 +99,7 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene205: public Scene2xx {
@@ -110,6 +113,7 @@ public:
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene207: public Scene2xx {
@@ -128,6 +132,7 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene208: public Scene2xx {
@@ -145,6 +150,7 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene209: public Scene2xx {
@@ -192,6 +198,7 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene210: public Scene2xx {
@@ -230,6 +237,7 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene211: public Scene2xx {
@@ -245,6 +253,7 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene212: public Scene2xx {
@@ -280,6 +289,7 @@ public:
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
+	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene215: public Scene2xx {

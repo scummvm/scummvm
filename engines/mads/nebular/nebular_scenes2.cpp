@@ -333,6 +333,11 @@ void Scene201::actions() {
 	_action._inProgress = false;
 }
 
+void Scene201::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_pterodactylFlag);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene202::setup() {
@@ -987,6 +992,26 @@ void Scene202::actions() {
 	_action._inProgress = false;
 }
 
+void Scene202::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_activeMsgFl);
+	s.syncAsByte(_ladderTopFl);
+	s.syncAsByte(_waitingMeteoFl);
+	s.syncAsByte(_toStationFl);
+	s.syncAsByte(_toTeleportFl);
+
+	s.syncAsSint32LE(_ladderHotspotId);
+	s.syncAsSint32LE(_lastRoute);
+	s.syncAsSint32LE(_stationCounter);
+	s.syncAsSint32LE(_meteoFrame);
+
+	s.syncAsUint32LE(_meteoClock1);
+	s.syncAsUint32LE(_meteoClock2);
+	s.syncAsUint32LE(_startTime);
+
+	s.syncAsSint32LE(_meteorologistSpecial);
+}
+
 /*****************************************************************************/
 
 void Scene203::setup() {
@@ -1097,6 +1122,12 @@ void Scene203::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene203::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_rhotundaEat2Fl);
+	s.syncAsByte(_rhotundaEatFl);
 }
 
 /*****************************************************************************/
@@ -1229,6 +1260,13 @@ void Scene205::step() {
 
 void Scene205::actions() {
 	warning("TODO: Scene205::actions");
+}
+
+void Scene205::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsUint32LE(_lastFishTime);
+	s.syncAsUint32LE(_chickenTime);
+	s.syncAsByte(_beingKicked);
 }
 
 /*****************************************************************************/
@@ -1415,6 +1453,18 @@ void Scene207::actions() {
 	}
 
 	_action._inProgress = false;
+}
+
+void Scene207::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_vultureFl);
+	s.syncAsByte(_spiderFl);
+	s.syncAsByte(_eyeFl);
+
+	s.syncAsSint32LE(_spiderHotspotId);
+	s.syncAsSint32LE(_vultureHotspotId);
+	s.syncAsSint32LE(_spiderTime);
+	s.syncAsSint32LE(_vultureTime);
 }
 
 /*****************************************************************************/
@@ -1696,6 +1746,14 @@ void Scene208::actions() {
 	}
 
 	_action._inProgress = false;
+}
+
+void Scene208::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_rhotundaTurnFl);
+	s.syncAsByte(_boundingFl);
+
+	s.syncAsSint32LE(_rhotundaTime);
 }
 
 /*****************************************************************************/
@@ -3290,6 +3348,35 @@ void Scene209::actions() {
 	}
 }
 
+void Scene209::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_dodgeFl);
+	s.syncAsByte(_forceDodgeFl);
+	s.syncAsByte(_shouldDodgeFl);
+	s.syncAsByte(_pitchFl);
+	s.syncAsByte(_fallFl);
+	s.syncAsByte(_forceFallFl);
+	s.syncAsByte(_shouldFallFl);
+	s.syncAsByte(_playingAnimFl);
+	s.syncAsByte(_playingDialogFl);
+
+	s.syncAsSint32LE(_pauseMode);
+	s.syncAsSint32LE(_pauseCounterThreshold);
+	s.syncAsSint32LE(_pauseCounter);
+
+	s.syncAsByte(_removeMonkeyFl);
+
+	s.syncAsSint32LE(_monkeyPosition);
+
+	s.syncAsByte(_shootReadyFl);
+	s.syncAsByte(_startShootingInTimerFl);
+	s.syncAsByte(_shootMissedLastFl);
+	s.syncAsByte(_binocularsDroppedFl);
+
+	s.syncAsSint32LE(_dialogAbortVal);
+	s.syncAsSint32LE(_counter);
+}
+
 /*****************************************************************************/
 
 void Scene210::setup() {
@@ -4262,6 +4349,33 @@ void Scene210::actions() {
 	_action._inProgress = false;
 }
 
+void Scene210::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsSint32LE(_curDialogNode);
+	s.syncAsSint32LE(_nextHandsPlace);
+	s.syncAsSint32LE(_twinkleAnimationType);
+	s.syncAsSint32LE(_twinklesCurrentFrame);
+
+	s.syncAsByte(_shouldTalk);
+	s.syncAsByte(_shouldFaceRex);
+	s.syncAsByte(_shouldMoveHead);
+	s.syncAsByte(_stopWalking);
+	s.syncAsByte(_twinklesTalking);
+	s.syncAsByte(_twinklesTalk2);
+
+	s.syncAsSint32LE(_doorway);
+
+	s.syncString(_subQuote2);
+
+	_conv1.synchronize(s);
+	_conv2.synchronize(s);
+	_conv3.synchronize(s);
+	_conv5.synchronize(s);
+	_conv6.synchronize(s);
+	_conv7.synchronize(s);
+	_conv8.synchronize(s);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene211::setup() {
@@ -4523,6 +4637,16 @@ void Scene211::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene211::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_ambushFl);
+	s.syncAsByte(_wakeFl);
+
+	s.syncAsSint32LE(_monkeyFrame);
+	s.syncAsSint32LE(_scrollY);
+	s.syncAsUint32LE(_monkeyTime);
 }
 
 /*------------------------------------------------------------------------*/
@@ -4850,6 +4974,13 @@ void Scene214::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene214::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsUint32LE(_devilTime);
+
+	s.syncAsByte(_devilRunningFl);
 }
 
 /*------------------------------------------------------------------------*/
