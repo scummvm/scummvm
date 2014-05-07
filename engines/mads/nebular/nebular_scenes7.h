@@ -50,6 +50,18 @@ public:
 	Scene7xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
+class Scene702: public Scene7xx {
+public:
+	Scene702(MADSEngine *vm) : Scene7xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step() {}
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene707: public SceneTeleporter {
 public:
 	Scene707(MADSEngine *vm) : SceneTeleporter(vm) {}
