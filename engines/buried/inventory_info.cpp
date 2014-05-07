@@ -171,19 +171,25 @@ void BurnedLetterViewWindow::onPaint() {
 			_preBuffer->free();
 			delete _preBuffer;
 		}
+		
+		_preBuffer = ((SceneViewWindow *)getParent())->getStillFrameCopy(_curSceneStaticData.navFrameIndex);
 
-		_preBuffer = _stillFrames->getFrameCopy(_curView);
+		if (!_preBuffer)
+			error("Failed to get scene frame %d", _curSceneStaticData.navFrameIndex);
+
+		const Graphics::Surface *frame = _stillFrames->getFrame(_curView);
+		_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, 0, 432, 189, frame, 0, 0, 0, 0, 0, 0);
 		_rebuildPage = false;
 	}
 
 	Common::Rect absoluteRect = getAbsoluteRect();
-	byte transValue = _vm->isDemo() ? 2 : 0;
-	_vm->_gfx->opaqueTransparentBlit(_vm->_gfx->getScreen(), absoluteRect.left, absoluteRect.top, absoluteRect.width(), absoluteRect.height(), _preBuffer, 0, 0, 0, transValue, transValue, transValue);
+	_vm->_gfx->blit(_preBuffer, absoluteRect.left, absoluteRect.top, absoluteRect.width(), absoluteRect.height());
 
 	if (_curLineIndex >= 0 && ((SceneViewWindow *)_parent)->getGlobalFlags().bcTranslateEnabled == 1) {
 		int numLines = _viewLineCount[_curView];
 		uint32 boxColor = _vm->_gfx->getColor(255, 0, 0);
 		Common::Rect box(1, (187 / numLines) * _curLineIndex, 430, (187 / numLines) * (_curLineIndex + 1) - 1);
+		box.translate(absoluteRect.left, absoluteRect.top);
 		_vm->_gfx->getScreen()->frameRect(box, boxColor);
 	}
 }
@@ -262,8 +268,9 @@ void BurnedLetterViewWindow::onMouseMove(const Common::Point &point, uint flags)
 
 			Common::String translatedText = _vm->getString(_translatedTextResourceID + textLineNumber + _curLineIndex);
 			((SceneViewWindow *)_parent)->displayTranslationText(translatedText);
-			return;
 		}
+
+		return;
 	}
 
 	// Since translation was not enabled, check the current line flag
