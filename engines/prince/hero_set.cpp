@@ -26,7 +26,7 @@
 
 namespace Prince {
 
-static HeroSetAnimNames heroSet5= { 
+static HeroSetAnimNames heroSet5 = { 
 	"SL_DIAB.ANI",
 	"SR_DIAB.ANI",
 	"SU_DIAB.ANI",
@@ -55,7 +55,7 @@ static HeroSetAnimNames heroSet5= {
 	NULL
 };
 
-static HeroSetAnimNames heroSet1= { 
+static HeroSetAnimNames heroSet1 = { 
     "SL_HERO1.ANI", 
     "SR_HERO1.ANI",
     "SU_HERO1.ANI",
@@ -84,7 +84,7 @@ static HeroSetAnimNames heroSet1= {
     "KS_WLOSY.ANI"
 };
 
-static HeroSetAnimNames heroSet2= { 
+static HeroSetAnimNames heroSet2 = { 
     "SL_HERO2.ANI",
     "SR_HERO2.ANI",
     "SU_HERO2.ANI",
@@ -113,7 +113,7 @@ static HeroSetAnimNames heroSet2= {
     "KS_WLO_S.ANI"
 };
 
-static HeroSetAnimNames heroSet3= { 
+static HeroSetAnimNames heroSet3 = { 
     "SL_BEAR.ANI",
     "SR_BEAR.ANI",
     "SU_BEAR.ANI",
@@ -142,7 +142,7 @@ static HeroSetAnimNames heroSet3= {
     NULL,
 };
 
-static HeroSetAnimNames shanSet1= { 
+static HeroSetAnimNames shanSet1 = { 
     "SL_SHAN.ANI",
     "SR_SHAN.ANI",
     "SU_SHAN.ANI",
@@ -171,7 +171,7 @@ static HeroSetAnimNames shanSet1= {
     "B2_SHAN.ANI",
 };
 
-static HeroSetAnimNames shanSet2= { 
+static HeroSetAnimNames shanSet2 = { 
     "SL_SHAN2.ANI",
     "SR_SHAN2.ANI",
     "SU_SHAN.ANI",
@@ -200,7 +200,7 @@ static HeroSetAnimNames shanSet2= {
     "B2_SHAN2.ANI"
 };
 
-static HeroSetAnimNames arivSet1= { 
+static HeroSetAnimNames arivSet1 = { 
     "SL_ARIV.ANI",  
     "SR_ARIV.ANI",
     "SU_ARIV.ANI",

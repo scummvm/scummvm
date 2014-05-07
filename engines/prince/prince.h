@@ -137,8 +137,8 @@ public:
 	Text _textSlots[MAXTEXTS];
 
 	uint64 _frameNr;
-	Hero* _mainHero;
-	Hero* _secondHero;
+	Hero *_mainHero;
+	Hero *_secondHero;
 
 	uint16 _cameraX;
 	uint16 _newCameraX;
@@ -168,7 +168,7 @@ private:
 	Image::BitmapDecoder *_roomBmp;
 	Cursor *_cursor1;
 	Cursor *_cursor2;
-	MhwanhDecoder *_walizkaBmp;
+	MhwanhDecoder *_suitcaseBmp;
 	Debugger *_debugger;
 	GraphicsMan *_graph;
 	Script *_script;

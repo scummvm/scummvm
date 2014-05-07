@@ -67,9 +67,9 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
-    va_start(va, s);
-    vsnprintf(buf, STRINGBUFLEN, s, va);
-    va_end(va);
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
 
 	debug("Prince::Engine frame %08ld %s", _frameNr, buf);
 }
@@ -78,7 +78,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
 	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr),
 	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
-	_walizkaBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0) {
+	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -104,14 +104,14 @@ PrinceEngine::~PrinceEngine() {
 	delete _interpreter;
 	delete _font;
 	delete _roomBmp;
-	delete _walizkaBmp;
+	delete _suitcaseBmp;
 	delete _variaTxt;
 	delete[] _talkTxt;
 	delete _graph;
 	delete _mainHero;
 	delete _secondHero;
 
-	for (uint32 i = 0; i < _objList.size(); ++i) {
+	for (uint i = 0; i < _objList.size(); ++i) {
 		delete _objList[i];
 	}
 	_objList.clear();
@@ -155,8 +155,8 @@ void PrinceEngine::init() {
 	_font = new Font();
 	Resource::loadResource(_font, "font1.raw");
 
-	_walizkaBmp = new MhwanhDecoder();
-	Resource::loadResource(_walizkaBmp, "walizka");
+	_suitcaseBmp = new MhwanhDecoder();
+	Resource::loadResource(_suitcaseBmp, "walizka");
 
 	_script = new Script();
 	Resource::loadResource(_script, "skrypt.dat");
@@ -244,7 +244,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_flicPlayer.close();
 
 	memset(_textSlots, 0, sizeof(_textSlots));
-	for(uint32 sampleId = 0; sampleId < MAX_SAMPLES; ++sampleId) {
+	for(uint32 sampleId = 0; sampleId < MAX_SAMPLES; sampleId++) {
 		stopSample(sampleId);
 	}
 
@@ -284,7 +284,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	Resource::loadResource(_mainHero->_zoomBitmap, "zoom", false);
 
 	_mainHero->_shadowBitmap->clear();
-	if(Resource::loadResource(_mainHero->_shadowBitmap, "shadow", false) == false) {
+	if (Resource::loadResource(_mainHero->_shadowBitmap, "shadow", false) == false) {
 		Resource::loadResource(_mainHero->_shadowBitmap, "shadow2", false);
 	}
 
@@ -299,7 +299,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mobList.clear();
 	Resource::loadResource(_mobList, "mob.lst", false);
 
-	for (uint32 i = 0; i < _objList.size(); ++i) {
+	for (uint32 i = 0; i < _objList.size(); i++) {
 		delete _objList[i];
 	}
 	_objList.clear();
@@ -323,17 +323,17 @@ void PrinceEngine::changeCursor(uint16 curId) {
 	uint16 hotspotY = 0;
 
 	switch(curId) {
-		case 0:
-			CursorMan.showMouse(false);
-			return;
-		case 1:
-			curSurface = _cursor1->getSurface();
-			break;
-		case 2:
-			curSurface = _cursor2->getSurface();
-			hotspotX = curSurface->w >> 1;
-			hotspotY = curSurface->h >> 1;
-			break;
+	case 0:
+		CursorMan.showMouse(false);
+		return;
+	case 1:
+		curSurface = _cursor1->getSurface();
+		break;
+	case 2:
+		curSurface = _cursor2->getSurface();
+		hotspotX = curSurface->w >> 1;
+		hotspotY = curSurface->h >> 1;
+		break;
 	}
 
 	CursorMan.replaceCursorPalette(_roomBmp->getPalette(), 0, 255);
@@ -356,9 +356,9 @@ bool PrinceEngine::playNextFrame() {
 		_graph->drawTransparent(0, 0, s);
 		_graph->change();
 	} else if (_flicLooped) {
-        _flicPlayer.rewind();
-        playNextFrame();
-    }
+		_flicPlayer.rewind();
+		playNextFrame();
+	}
 
 	return true;
 }
@@ -414,14 +414,16 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	}
 
 	uint32 id = _voiceStream[sampleSlot]->readUint32LE();
-	if (id != 0x46464952) {
+	//if (id != 0x46464952) {
+	if (id != MKTAG('F', 'F', 'I', 'R')) {
 		error("It's not RIFF file %s", streamName.c_str());
 		return false;
 	}
 
 	_voiceStream[sampleSlot]->skip(0x20);
 	id = _voiceStream[sampleSlot]->readUint32LE();
-	if (id != 0x61746164) {
+	//if (id != 0x61746164) {
+	if (id != MKTAG('a', 't', 'a', 'd')) {
 		error("No data section in %s id %04x", streamName.c_str(), id);
 		return false;
 	}
@@ -454,7 +456,7 @@ bool PrinceEngine::loadAnim(uint16 animNr, bool loop) {
 	}
 
 	debugEngine("%s loaded", streamName.c_str());
-    _flicLooped = loop;
+	_flicLooped = loop;
 	_flicPlayer.start();
 	playNextFrame();
 	return true;
@@ -550,8 +552,7 @@ void PrinceEngine::hotspot() {
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
 	Common::Point mousePosCamera(mousepos.x + _cameraX, mousepos.y);
 
-	for (Common::Array<Mob>::const_iterator it = _mobList.begin()
-		; it != _mobList.end() ; ++it) {
+	for (Common::Array<Mob>::const_iterator it = _mobList.begin(); it != _mobList.end() ; it++) {
 		const Mob& mob = *it;
 		if (mob._visible)
 			continue;
@@ -596,12 +597,12 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, ui
 }
 
 uint32 PrinceEngine::getTextWidth(const char *s) {
-    uint16 textW = 0;
+	uint16 textW = 0;
 	while (*s) {
-        textW += _font->getCharWidth(*s) + _font->getKerningOffset(0, 0);
-		++s;
-    }
-    return textW;
+		textW += _font->getCharWidth(*s) + _font->getKerningOffset(0, 0);
+		s++;
+	}
+	return textW;
 }
 
 void PrinceEngine::showTexts() {

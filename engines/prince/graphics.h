@@ -34,8 +34,8 @@ class GraphicsMan
 {
 public:
 	GraphicsMan(PrinceEngine *vm);
-    ~GraphicsMan();
-
+	~GraphicsMan();
+	
 	void update();
 
 	void change();

@@ -24,7 +24,7 @@
 
 namespace Prince {
 
-const char * Flags::getFlagName(uint16 flagId)
+const char *Flags::getFlagName(uint16 flagId)
 {
 	switch (flagId) {
 	default: 			return "unknown_flag";

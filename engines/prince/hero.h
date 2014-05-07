@@ -28,6 +28,7 @@
 #include "common/memstream.h"
 
 #include "graphics/surface.h"
+#include "graphics/primitives.h"
 
 namespace Prince {
 
@@ -42,6 +43,7 @@ public:
 	static const int16 kMaxPicHeight = 480;
 	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
 	static const int16 kNormalWidth = 640;
+	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
 
 	static const uint8 kShadowColor = 191;
 
@@ -116,8 +118,8 @@ public:
 	Graphics::Surface *zoomSprite(Graphics::Surface *heroFrame);
 	void showHeroAnimFrame();
 	void line(int x1, int y1, int x2, int y2);
-	//Graphics::Surface *showHeroShadow(Graphics::Surface *heroFrame);
-	void showHeroShadow();
+	void plotPoint(int x, int y);
+	Graphics::Surface *showHeroShadow(Graphics::Surface *heroFrame);
 	void setShadowScale(int32 shadowScale);
 	void specialAnim();
 	void getState();
@@ -140,6 +142,7 @@ public:
 	int16 _lightY;
 	int32 _shadZoomFactor;
 	int32 _shadScaleValue;
+	int32 _shadowLineLen;
 
 
 	// Coords array of coordinates
@@ -169,7 +172,7 @@ public:
 	// TurnAnim ??
 	Animation *_zoomBitmap; // change to sth else, not Animation ??
 	Animation *_shadowBitmap;
-	byte *_linijka;
+	byte *_shadowLine;
 	
 	uint32 _moveDelay;
 	uint32 _shadMinus;

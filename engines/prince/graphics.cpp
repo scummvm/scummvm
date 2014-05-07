@@ -98,31 +98,28 @@ void GraphicsMan::makeShadowTable(int brightness, byte *shadowPallete) {
 	int32 currColor;
 
 	int shadow =  brightness * 256 / 100;
-	byte *originalPallete = new byte[256 * 3];
+	byte *originalPallete = (byte *)malloc(256 * 3);
 
 	_vm->_system->getPaletteManager()->grabPalette(originalPallete, 0, 256);
-	Common::MemoryReadStream readFirstStream(originalPallete, 256 * 3);
-	Common::MemoryWriteStream writeStream(shadowPallete, 256);
 
 	for (int i = 0; i < 256; i++) {
-		redFirstOrg = readFirstStream.readByte() * shadow / 256;
-		greenFirstOrg = readFirstStream.readByte() * shadow / 256;
-		blueFirstOrg = readFirstStream.readByte() * shadow / 256;
+		redFirstOrg = originalPallete[3 * i] * shadow / 256;
+		greenFirstOrg = originalPallete[3 * i + 1] * shadow / 256;
+		blueFirstOrg = originalPallete[3 * i + 2] * shadow / 256;
 
 		currColor = 0;
-		Common::MemoryReadStream readSecondStream(originalPallete, 256 * 3);
 		bigValue = 999999999; // infinity
 
 		for (int j = 0; j < 256; j++) {
-			redSecondOrg = readSecondStream.readByte();
+			redSecondOrg = originalPallete[3 * j];
 			redNew = redFirstOrg - redSecondOrg;
 			redNew = redNew * redNew;
 
-			greenSecondOrg = readSecondStream.readByte();
+			greenSecondOrg = originalPallete[3 * j + 1];
 			greenNew = greenFirstOrg - greenSecondOrg;
 			greenNew = greenNew * greenNew;
 
-			blueSecondOrg = readSecondStream.readByte();
+			blueSecondOrg = originalPallete[3 * j + 2];
 			blueNew = blueFirstOrg - blueSecondOrg;
 			blueNew = blueNew * blueNew;
 
@@ -137,9 +134,9 @@ void GraphicsMan::makeShadowTable(int brightness, byte *shadowPallete) {
 				break;
 			}
 		}
-		writeStream.writeByte(currColor);
+		shadowPallete[i] = currColor;
 	}
-	delete[] originalPallete;
+	free(originalPallete);
 }
 
 }

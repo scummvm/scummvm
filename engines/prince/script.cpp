@@ -45,7 +45,7 @@ void Room::loadMobs(Common::SeekableReadStream &stream) {
 	static const uint8 MAX_MOBS = 64;
 	uint8 mobs[MAX_MOBS];
 	stream.read(&mobs, sizeof(mobs));
-	for(uint8 i = 0; i < sizeof(mobs); ++i) {
+	for (uint8 i = 0; i < sizeof(mobs); i++) {
 		debug("mob %d flag %d", i, mobs[i]);
 	}
 }
@@ -56,7 +56,7 @@ void Room::loadBackAnim(Common::SeekableReadStream &stream) {
 	uint32 backAnim[MAX_BACK_ANIMS];
 	debug("loadBackAnim sizeof %lu", sizeof(backAnim));
 	stream.read(backAnim, sizeof(backAnim));
-	for(uint8 i = 0; i < MAX_BACK_ANIMS; ++i) {
+	for (uint8 i = 0; i < MAX_BACK_ANIMS; i++) {
 		debug("back anim offset %d", backAnim[i]);
 	}
 }
@@ -498,7 +498,7 @@ void Interpreter::O_COMPARE() {
 
 void Interpreter::O_JUMPZ() {
 	int32 offset = readScript<uint32>();
-	if (! _result) {
+	if (!_result) {
 		_currentInstruction += offset - 4;
 	}
 

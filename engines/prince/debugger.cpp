@@ -54,7 +54,7 @@ static int strToInt(const char *s) {
 
 bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 	if (argc == 1) {
-			DebugPrintf("Debugging is currently set at level %d\n", gDebugLevel);
+		DebugPrintf("Debugging is currently set at level %d\n", gDebugLevel);
 	} else { // set level
 		gDebugLevel = atoi(argv[1]);
 		if (0 <= gDebugLevel && gDebugLevel < 11) {

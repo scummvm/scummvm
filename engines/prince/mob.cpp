@@ -71,28 +71,32 @@ bool Mob::loadFromStream(Common::SeekableReadStream &stream) {
 
 void Mob::setData(AttrId dataId, uint16 value) {
 	switch (dataId) {
-		case ExamDir: 
-			_examDirection = (Direction)value;
-			break;
-		case ExamX: 
-			_examPosition.x = value;
-			break;
-		case ExamY:
-			_examPosition.y = value;
-			break;
-		default:
-			assert(false);
+	case ExamDir: 
+		_examDirection = (Direction)value;
+		break;
+	case ExamX: 
+		_examPosition.x = value;
+		break;
+	case ExamY:
+		_examPosition.y = value;
+		break;
+	default:
+		assert(false);
 	}
 }
 
 uint16 Mob::getData(AttrId dataId) {
 	switch (dataId) {
-		case Visible: return _visible;
-		case ExamDir: return _examDirection;
-		case ExamX: return _examPosition.x;
-		case ExamY: return _examPosition.y;
-		default:
-			assert(false);
+	case Visible: 
+		return _visible;
+	case ExamDir: 
+		return _examDirection;
+	case ExamX: 
+		return _examPosition.x;
+	case ExamY: 
+		return _examPosition.y;
+	default:
+		assert(false);
 	}
 }
 

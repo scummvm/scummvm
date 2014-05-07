@@ -30,7 +30,7 @@ namespace Prince {
 
 bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
 	_dataSize = stream.size();
-	_data = (byte*) malloc(_dataSize);
+	_data = (byte *)malloc(_dataSize);
 
 	if (stream.read(_data, _dataSize) != _dataSize) {
 		free(_data);
@@ -38,17 +38,7 @@ bool Animation::loadFromStream(Common::SeekableReadStream &stream) {
 	}
 	return true;
 }
-/*
-const Graphics::Surface * Animation::getSurface(uint16 frameIndex) {
-	// bida kaszing
-	if (frameIndex >= _frameList.size()) {
-		_frameList.resize(frameIndex);
-		_frameList.push_back(_helper->getFrame(frameIndex));
-		
-	}
-	return _frameList[frameIndex];	
-}
-*/
+
 Animation::Animation(): _data(NULL) {
 
 }
@@ -135,20 +125,20 @@ Graphics::Surface *Animation::getFrame(uint frameIndex) {
 	debug("width = %d; height = %d", width, height);
 	Graphics::Surface *surf = new Graphics::Surface();
 	surf->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-    debug("frameData %p", frameData);
-	if (READ_BE_UINT32(frameData + 4) == 0x6D61736D) {
+	debug("frameData %p", frameData);
+	if (READ_BE_UINT32(frameData + 4) == MKTAG('m', 'a', 's', 'm')) {
 		// Compressed
 		Decompressor dec;
-        uint32 ddataSize = READ_LE_UINT32(frameData + 8);
-        byte *ddata = new byte[ddataSize];
+		uint32 ddataSize = READ_LE_UINT32(frameData + 8);
+		byte *ddata = (byte *)malloc(ddataSize);
 		dec.decompress(frameData + 12, ddata, ddataSize);
-        for (uint16 i = 0; i < height; ++i) {
-            memcpy(surf->getBasePtr(0, i), ddata + width * i, width);
-        }
-        delete[] ddata;
+		for (uint16 i = 0; i < height; i++) {
+			memcpy(surf->getBasePtr(0, i), ddata + width * i, width);
+		}
+		free(ddata);
 	} else {
 		// Uncompressed
-        for (uint16 i = 0; i < height; ++i) {
+        for (uint16 i = 0; i < height; i++) {
             memcpy(surf->getBasePtr(0, i), frameData + 4 + width * i, width);
         }
 	}
