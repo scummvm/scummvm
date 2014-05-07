@@ -26,6 +26,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"
+#include "graphics/nine_patch.h"
 #include "graphics/colormasks.h"
 
 #include "gui/ThemeEngine.h"
@@ -902,6 +903,9 @@ blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, Gra
 			nullptr, TS_ARGB(255, 255, 255, 255),
 			  (int)(source->w * ratio), (int)(source->h * ratio));
 
+	} else if (autoscale == Graphics::DrawStep::kAutoScaleNinePatch) {
+		Graphics::NinePatchBitmap nine(source, false);
+		nine.blit(*_activeSurface, r.left, r.top, r.width(), r.height());
 	} else {
 		source->blit(*_activeSurface, r.left, r.top);
 	}

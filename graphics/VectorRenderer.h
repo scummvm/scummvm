@@ -71,7 +71,8 @@ struct DrawStep {
 	enum AutoScaleMode {
 		kAutoScaleNone = 0,
 		kAutoScaleStretch = 1,
-		kAutoScaleFit = 2
+		kAutoScaleFit = 2,
+		kAutoScaleNinePatch = 3
 	};
 
 	VectorAlignment xAlign;
