@@ -148,6 +148,7 @@ private:
 
 public:
 	Scene406(MADSEngine *vm) : Scene4xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -160,10 +161,11 @@ public:
 class Scene407: public Scene4xx {
 private:
 	bool _fromNorth;
-	Common::Point destPos;
+	Common::Point _destPos;
 
 public:
 	Scene407(MADSEngine *vm) : Scene4xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -236,6 +238,7 @@ private:
 
 public:
 	Scene411(MADSEngine *vm) : Scene4xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -252,6 +255,7 @@ private:
 
 public:
 	Scene413(MADSEngine *vm) : Scene4xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();

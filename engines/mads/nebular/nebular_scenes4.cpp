@@ -2729,6 +2729,12 @@ void Scene406::actions() {
 	_action._inProgress = false;
 }
 
+void Scene406::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsByte(_hitStorageDoor);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene407::setup() {
@@ -2782,16 +2788,16 @@ void Scene407::preActions() {
 
 	if (_game._player._needToWalk && _fromNorth) {
 		if (_globals[kSexOfRex] == REX_MALE)
-			destPos = Common::Point(171, 95);
+			_destPos = Common::Point(171, 95);
 		else
-			destPos = Common::Point(173, 96);
+			_destPos = Common::Point(173, 96);
 
-		_game._player.walk(destPos, FACING_SOUTH);
+		_game._player.walk(_destPos, FACING_SOUTH);
 	}
 }
 
 void Scene407::actions() {
-	if ((_game._player._playerPos == destPos) && _fromNorth) {
+	if ((_game._player._playerPos == _destPos) && _fromNorth) {
 		if (_globals[kSexOfRex] == REX_MALE) {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_game._player._stepEnabled = false;
@@ -2835,6 +2841,14 @@ void Scene407::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene407::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsByte(_fromNorth);
+	s.syncAsSint16LE(_destPos.x);
+	s.syncAsSint16LE(_destPos.y);
 }
 
 /*------------------------------------------------------------------------*/
@@ -3957,6 +3971,24 @@ void Scene411::actions() {
 	_action._inProgress = false;
 }
 
+void Scene411::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsSint32LE(_curAnimationFrame);
+	s.syncAsSint32LE(_newIngredient);
+	s.syncAsSint32LE(_newQuantity);
+	s.syncAsSint32LE(_resetFrame);
+	s.syncAsSint32LE(_badThreshold);
+
+	s.syncAsByte(_killRox);
+	s.syncAsByte(_makeMushroomCloud);
+
+	_dialog1.synchronize(s);
+	_dialog2.synchronize(s);
+	_dialog3.synchronize(s);
+	_dialog4.synchronize(s);
+}
+
 /*------------------------------------------------------------------------*/
 
 void Scene413::setup() {
@@ -4100,6 +4132,13 @@ void Scene413::actions() {
 		return;
 
 	_action._inProgress = false;
+}
+
+void Scene413::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsSint32LE(_rexDeath);
+	s.syncAsSint32LE(_canMove);
 }
 
 /*------------------------------------------------------------------------*/
