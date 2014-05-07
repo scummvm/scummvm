@@ -137,6 +137,7 @@ void KernelMessages::reset() {
 	for (uint i = 0; i < _entries.size(); ++i)
 		remove(i);
 
+	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
 	warning("TODO: KernelMessages::reset - sub_20454");
 }
 
