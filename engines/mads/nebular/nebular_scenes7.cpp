@@ -147,15 +147,15 @@ void Scene710::setup() {
 }
 
 void Scene710::enter() {
-	_game._scene._userInterface.setup(kInputLimitedSentences);
+	_scene->_userInterface.setup(kInputLimitedSentences);
 
 	if (_game._objects[OBJ_VASE]._roomNumber == 706) {
-		_game._globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', -1));
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 	}
 
 	_game._player._visible = false;
-	_game._scene._sequences.addTimer(600, 70);
+	_scene->_sequences.addTimer(600, 70);
 
 	sceneEntrySound();
 }
@@ -163,20 +163,20 @@ void Scene710::enter() {
 void Scene710::step() {
 	if (_game._trigger == 70) {
 		if (_game._globals[kCityFlooded])
-			_game._scene._nextSceneId = 701;
+			_scene->_nextSceneId = 701;
 		else
-			_game._scene._nextSceneId = 751;
+			_scene->_nextSceneId = 751;
 	}
 }
 
 void Scene710::actions() {
-	if (_game._scene._action.isAction(0x46F, 0x27)) {
+	if (_action.isAction(0x46F, 0x27)) {
 		_game._player._stepEnabled = false;
 
 		if (_game._globals[kCityFlooded])
-			_game._scene._nextSceneId = 701;
+			_scene->_nextSceneId = 701;
 		else
-			_game._scene._nextSceneId = 751;
+			_scene->_nextSceneId = 751;
 
 		_action._inProgress = false;
 	}
@@ -225,6 +225,188 @@ void Scene711::step() {
 void Scene711::actions() {
 	if (teleporterActions())
 		_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene752::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(0xB3);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(0xD1);
+	_scene->addActiveVocab(0x343);
+}
+
+void Scene752::enter() {
+	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('l', -1));
+	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_8");
+
+	if (_scene->_priorSceneId == 751) {
+		_game._player._playerPos = Common::Point(13, 145);
+		_game._player._facing = FACING_EAST;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(289, 138);
+		_game._player.walk(Common::Point(262, 148), FACING_WEST);
+		_game._player._facing = FACING_WEST;
+		_game._player._visible = true;
+	}
+
+	if (_game._objects[OBJ_ID_CARD]._roomNumber == 752) {
+		_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('i', -1));
+		_globals._sequenceIndexes[13] =  _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
+		int idx = _scene->_dynamicHotspots.add(0xB3, VERB_WALKTO, _globals._sequenceIndexes[13], Common::Rect(0, 0, 0, 0));
+		_cardId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 135), FACING_NORTH);
+	}
+
+	if (_game._globals[kLaserHoleIsThere]) {
+		_globals._sequenceIndexes[14] =  _scene->_sequences.startCycle(_globals._spriteIndexes[14], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 13);
+		int idx = _scene->_dynamicHotspots.add(0x343, 0xD1, _globals._sequenceIndexes[14], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(215, 130), FACING_NORTHWEST);
+	}
+
+	if (_game._globals[kTeleporterCommand]) {
+		switch(_game._globals[kTeleporterCommand]) {
+		case TELEPORTER_BEAM_OUT:
+		case TELEPORTER_WRONG:
+		case TELEPORTER_STEP_OUT:
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			break;
+		default:
+			break;
+		}
+
+		_game._globals[kTeleporterCommand] = TELEPORTER_NONE;
+	}
+
+	if (_globals._timebombTimer > 0)
+		_globals._timebombTimer = 10800 - 600;
+
+	sceneEntrySound();
+}
+
+void Scene752::step() {
+	if (_globals._timebombTimer >= 10800 && _game._globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) {
+		_globals[kTimebombStatus] = TIMEBOMB_DEAD;
+		_globals._timebombTimer = 0;
+		_globals[kCheckDaemonTimebomb] = false;
+		_scene->_nextSceneId = 620;
+	}
+}
+
+void Scene752::preActions() {
+	if (_action.isAction(VERB_WALKTO, 0x4A9)) {
+		_game._player._walkOffScreenSceneId = 751;
+	}
+}
+
+void Scene752::actions() {
+	if (_action.isAction(0x312, 0x22C)) {
+		_action._inProgress = false;
+	} else if (_action.isAction(0x2F9, 0x16C)) {
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_scene->_nextSceneId = 711;
+		_action._inProgress = false;
+	} else if (_action.isAction(VERB_TAKE, 0xB3)) {
+		// Take ID card
+		if (!_game._objects.isInInventory(OBJ_ID_CARD) || _game._trigger) {
+			switch (_game._trigger) {
+			case 0:
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
+				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				break;
+			case 1:
+				_vm->_sound->command(0xF);
+				_scene->_sequences.remove(_globals._sequenceIndexes[13]);
+				_game._objects.addToInventory(OBJ_ID_CARD);
+				_scene->_dynamicHotspots.remove(_cardId);
+				_vm->_dialogs->show(OBJ_ID_CARD, 830);
+				break;
+			case 2:
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				break;
+			default:
+				break;
+			}
+
+			_action._inProgress = false;
+		}
+	} else if (_action.isAction(VERB_TAKE, 0x2D) && _action._mainObjectSource == 4) {
+		// Take bones
+		if (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger) {
+			switch (_game._trigger) {
+			case 0:
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
+				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				break;
+			case 1:
+				_vm->_sound->command(0xF);
+				if (_game._objects.isInInventory(OBJ_BONE))
+					_game._objects.setRoom(OBJ_BONE, NOWHERE);
+				_game._objects.addToInventory(OBJ_BONES);
+				_vm->_dialogs->show(OBJ_BONES, 75221);
+				break;
+			case 2:
+				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				break;
+			default:
+				break;
+			}
+
+			_action._inProgress = false;
+		}
+	} else if (_action.isAction(VERB_LOOK, 0x38F)) {
+		if (_globals[kLaserHoleIsThere])
+			_vm->_dialogs->show(75212);
+		else
+			_vm->_dialogs->show(75210);
+
+		_action._inProgress = false;
+	} else if (_action.isAction(VERB_LOOK, 0x22C)) {
+		_vm->_dialogs->show(75213);
+		_action._inProgress = false;
+	} else if (_action.isAction(VERB_LOOK, 0x38E)) {
+		_vm->_dialogs->show(75214);
+		_action._inProgress = false;
+	} else if (_action.isAction(VERB_LOOK, 0x128)) {
+		_vm->_dialogs->show(75215);
+		_action._inProgress = false;
+	} else if (_action.isAction(VERB_TAKE, 0x128)) {
+		_vm->_dialogs->show(75216);
+		_action._inProgress = false;
+	} else if (_action.isAction(VERB_LOOK, 0x4A9)) {
+		_vm->_dialogs->show(75217);
+		_action._inProgress = false;
+	} else if (_action.isAction(VERB_LOOK, 0x16C)) {
+		_vm->_dialogs->show(75218);
+		_action._inProgress = false;
+	} else if ((_action.isAction(VERB_LOOK, 0x2D) || _action.isAction(VERB_LOOK, 0xB3)) && _action._mainObjectSource == 4) {
+		if (_game._objects[OBJ_ID_CARD]._roomNumber == 752)
+			_vm->_dialogs->show(75219);
+		else
+			_vm->_dialogs->show(75220);
+		_action._inProgress = false;
+	} else if (_action.isAction(VERB_TAKE, 0x2D) && _action._mainObjectSource == 4) {
+		if (_game._objects.isInInventory(OBJ_BONES))
+			_vm->_dialogs->show(75222);
+		_action._inProgress = false;
+	}
 }
 
 /*------------------------------------------------------------------------*/

@@ -86,6 +86,21 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene752: public Scene7xx {
+private:
+	int _cardId;
+
+public:
+	Scene752(MADSEngine *vm) : Scene7xx(vm), _cardId(-1) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 
