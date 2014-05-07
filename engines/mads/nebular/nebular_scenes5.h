@@ -112,6 +112,27 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
+class Scene505: public Scene5xx{
+private:
+	int _frame;
+	int _nextButtonId;
+	int _homeSelectedId;
+	int _selectedId;
+	int _activeCars;
+
+	int _carLocations[9];
+
+public:
+	Scene505(MADSEngine *vm) : Scene5xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
 } // End of namespace Nebular
 } // End of namespace MADS
 

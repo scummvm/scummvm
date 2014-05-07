@@ -205,7 +205,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 504:	// inside car
 		return new Scene504(vm);
 	case 505:	// car view screen
-		return new DummyScene(vm);	// TODO
+		return new Scene505(vm);
 	case 506:	// shopping street
 		return new DummyScene(vm);	// TODO
 	case 507:	// inside software house
