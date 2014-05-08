@@ -181,7 +181,7 @@ uint16 ResourceManager::catRead(byte *buf, uint16 length) {
 /*-----------------------------------------------------------------------
  * EncryptedStream
  *-----------------------------------------------------------------------*/
-EncryptedStream::EncryptedStream(CGE2Engine *vm, const char *name) : _vm(vm) {
+EncryptedStream::EncryptedStream(CGE2Engine *vm, const char *name) : _vm(vm), _lineCount(0) {
 	_error = false;
 	BtKeypack *kp = _vm->_resman->find(name);
 	if (scumm_stricmp(kp->_key, name) != 0)
@@ -229,6 +229,7 @@ bool EncryptedStream::seek(int32 offset) {
 }
 
 Common::String EncryptedStream::readLine() {
+	_lineCount++;
 	return _readStream->readLine();
 }
 
@@ -255,5 +256,11 @@ int32 EncryptedStream::pos() {
 EncryptedStream::~EncryptedStream() {
 	delete _readStream;
 }
+
+const char *EncryptedStream::kIdTab[] = {
+	"[near]", "[mtake]", "[ftake]", "[phase]", "[seq]",
+	"Name", "Type", "Front", "East",
+	"Portable", "Transparent",
+	NULL };
 
 } // End of namespace CGE2

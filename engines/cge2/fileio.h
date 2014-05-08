@@ -102,7 +102,11 @@ class EncryptedStream {
 private:
 	CGE2Engine *_vm;
 	Common::SeekableReadStream *_readStream;
+	const char **_tab;
+	int _lineCount;
 	bool _error;
+
+	static const char *kIdTab[];
 public:
 	EncryptedStream(CGE2Engine *vm, const char *name);
 	~EncryptedStream();
@@ -115,6 +119,7 @@ public:
 	Common::String readLine();
 	static int number(char *s);
 	static char *token(char *s);
+	int getLineCount() { return _lineCount; }
 };
 
 } // End of namespace CGE2
