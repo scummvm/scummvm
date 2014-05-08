@@ -1155,14 +1155,15 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 
 	// Change the cursor to an hourglass
 	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	_useScenePaint = false;
 
 	switch (direction) {
 	case 0: // Push down
 		for (int i = 0; i < DIB_FRAME_HEIGHT; i += stripSize) {
-			curBackground->move(0, stripSize, curBackground->h - stripSize);
+			curBackground->move(0, stripSize, curBackground->h);
 
 			for (int j = 0; j < stripSize; j++)
-				memcpy(curBackground->getBasePtr(0, j), newBackground->getBasePtr(0, i + j), newBackground->w * newBackground->format.bytesPerPixel);
+				memcpy(curBackground->getBasePtr(0, j), newBackground->getBasePtr(0, curBackground->h - (i + stripSize) + j), newBackground->w * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
 			_vm->yield();
@@ -1173,7 +1174,7 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 			curBackground->move(stripSize, 0, curBackground->h);
 
 			for (int j = 0; j < curBackground->h; j++)
-				memcpy(curBackground->getBasePtr(0, j), newBackground->getBasePtr(i, j), stripSize * newBackground->format.bytesPerPixel);
+				memcpy(curBackground->getBasePtr(0, j), newBackground->getBasePtr(newBackground->w - (i + stripSize), j), stripSize * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
 			_vm->yield();
@@ -1184,18 +1185,18 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 			curBackground->move(-stripSize, 0, curBackground->h);
 
 			for (int j = 0; j < curBackground->h; j++)
-				memcpy(curBackground->getBasePtr(curBackground->w - stripSize, j), newBackground->getBasePtr(newBackground->w - i, j), stripSize * newBackground->format.bytesPerPixel);
+				memcpy(curBackground->getBasePtr(curBackground->w - stripSize, j), newBackground->getBasePtr(i, j), stripSize * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
 			_vm->yield();
 		}
 		break;
 	case 3: // Push up
-		for (int i = DIB_FRAME_HEIGHT - stripSize; i >= 0; i -= stripSize) {
-			curBackground->move(0, -stripSize, curBackground->h - stripSize);
+		for (int i = 0; i < DIB_FRAME_HEIGHT; i += stripSize) {
+			curBackground->move(0, -stripSize, curBackground->h);
 
 			for (int j = 0; j < stripSize; j++)
-				memcpy(curBackground->getBasePtr(0, j), newBackground->getBasePtr(0, i + j), newBackground->w * newBackground->format.bytesPerPixel);
+				memcpy(curBackground->getBasePtr(0, curBackground->h - stripSize + j), newBackground->getBasePtr(0, i + j), newBackground->w * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
 			_vm->yield();
@@ -1204,6 +1205,7 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 	}
 
 	_vm->_gfx->setCursor(oldCursor);
+	_useScenePaint = true;
 	return true;
 }
 
