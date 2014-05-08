@@ -2773,7 +2773,7 @@ void Scene209::enter() {
 	if (_scene->_roomChanged) {
 		_game._objects.addToInventory(OBJ_POISON_DARTS);
 		_game._objects.addToInventory(OBJ_BLOWGUN);
-		_globals[36] = 1;
+		_globals[kMonkeyStatus] = 1;
 	}
 
 	_pitchFl = false;
@@ -2801,7 +2801,7 @@ void Scene209::enter() {
 }
 
 void Scene209::step() {
-	if (!_playingAnimFl && !_pitchFl && !_fallFl && !_dodgeFl && (_pauseMode == 0) && (_globals[36] == 1)) {
+	if (!_playingAnimFl && !_pitchFl && !_fallFl && !_dodgeFl && (_pauseMode == 0) && (_globals[kMonkeyStatus] == 1)) {
 		int randAction = _vm->getRandomNumber(1,50);
 		switch (randAction) {
 		case 1:
@@ -3138,7 +3138,7 @@ void Scene209::step() {
 			_startShootingInTimerFl = false;
 
 			if (_fallFl) {
-				_globals[36] = MONKEY_IS_GONE;
+				_globals[kMonkeyStatus] = MONKEY_IS_GONE;
 				_game._objects.setRoom(OBJ_POISON_DARTS, NOWHERE);
 			}
 			_dodgeFl = false;
@@ -3168,7 +3168,7 @@ void Scene209::preActions() {
 	if (_action.isAction(VERB_WALK_TOWARDS, 0x84))
 		_game._player._walkOffScreenSceneId = 208;
 
-	if (_globals[36] == 1) {
+	if (_globals[kMonkeyStatus] == 1) {
 		if ((_action.isAction(NOUN_SHOOT) || _action.isAction(NOUN_HOSE_DOWN)) && _action.isAction(NOUN_MONKEY)
 			&& _action.isAction(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			_game._player._prepareWalkPos = Common::Point(111, 129);
@@ -3305,7 +3305,7 @@ void Scene209::actions() {
 		return;
 	}
 
-	if (_globals[36] == 1) {
+	if (_globals[kMonkeyStatus] == 1) {
 		if ((_action.isAction(NOUN_SHOOT) || _action.isAction(NOUN_HOSE_DOWN)) && _action.isAction(NOUN_MONKEY)
 			&& _action.isAction(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			if (_action.isAction(NOUN_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
@@ -3472,13 +3472,13 @@ void Scene209::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK, 0x100)) {
-		if (_globals[36] == 1) {
+		if (_globals[kMonkeyStatus] == 1) {
 			if (_monkeyPosition == 1)
 				_vm->_dialogs->show(0x51B5);
 			else
 				_vm->_dialogs->show(0x51B6);
 		} else {
-			if (_globals[36] == 0)
+			if (_globals[kMonkeyStatus] == 0)
 				_vm->_dialogs->show(0x51B5);
 			else
 				_vm->_dialogs->show(0x51B7);
