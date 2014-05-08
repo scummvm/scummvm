@@ -240,6 +240,10 @@ int EncryptedStream::number(char *s) {
 	return r;
 }
 
+char *EncryptedStream::token(char *s) {
+	return strtok(s, " =\t,;/()");
+}
+
 int32 EncryptedStream::size() {
 	return _readStream->size();
 }

@@ -63,39 +63,39 @@ void CGE2Engine::loadScript(const char *fname) {
 		ok = false; // not OK if break
 
 		// sprite ident number
-		if ((p = strtok(tmpStr, " \t\n")) == NULL)
+		if ((p = EncryptedStream::token(tmpStr)) == NULL)
 			break;
-		int SpI = scrf.number(p);
+		int SpI = EncryptedStream::number(p);
 
 		// sprite file name
 		char *SpN;
-		if ((SpN = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((SpN = EncryptedStream::token(NULL)) == NULL)
 			break;
 
 		// sprite scene
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = EncryptedStream::token(NULL)) == NULL)
 			break;
-		int SpA = scrf.number(p);
+		int SpA = EncryptedStream::number(p);
 
 		// sprite column
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = EncryptedStream::token(NULL)) == NULL)
 			break;
-		int SpX = scrf.number(p);
+		int SpX = EncryptedStream::number(p);
 
 		// sprite row
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = EncryptedStream::token(NULL)) == NULL)
 			break;
-		int SpY = scrf.number(p);
+		int SpY = EncryptedStream::number(p);
 
 		// sprite Z pos
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = EncryptedStream::token(NULL)) == NULL)
 			break;
-		int SpZ = scrf.number(p);
+		int SpZ = EncryptedStream::number(p);
 
 		// sprite life
-		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
+		if ((p = EncryptedStream::token(NULL)) == NULL)
 			break;
-		bool BkG = scrf.number(p) == 0;
+		bool BkG = EncryptedStream::number(p) == 0;
 
 		ok = true; // no break: OK
 
@@ -126,7 +126,7 @@ void CGE2Engine::movie(const char *ext) {
 		_now = atoi(ext + 1);
 		loadScript(fn);
 
-		warning("STUB:  CGE2Engine::movie()");
+		warning("STUB: CGE2Engine::movie()");
 
 		_now = now;
 	}
