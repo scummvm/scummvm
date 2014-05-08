@@ -88,7 +88,7 @@ void GraphicsMan::drawTransparent(uint16 posX, uint16 posY, const Graphics::Surf
    change();
 }
 
-void GraphicsMan::makeShadowTable(int brightness, byte *shadowPallete) {
+void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
 	int32 redFirstOrg, greenFirstOrg, blueFirstOrg;
 	int32 redSecondOrg, greenSecondOrg, blueSecondOrg;
 	int32 redNew, greenNew, blueNew;
@@ -98,28 +98,28 @@ void GraphicsMan::makeShadowTable(int brightness, byte *shadowPallete) {
 	int32 currColor;
 
 	int shadow =  brightness * 256 / 100;
-	byte *originalPallete = (byte *)malloc(256 * 3);
+	byte *originalPalette = (byte *)malloc(256 * 3);
 
-	_vm->_system->getPaletteManager()->grabPalette(originalPallete, 0, 256);
+	_vm->_system->getPaletteManager()->grabPalette(originalPalette, 0, 256);
 
 	for (int i = 0; i < 256; i++) {
-		redFirstOrg = originalPallete[3 * i] * shadow / 256;
-		greenFirstOrg = originalPallete[3 * i + 1] * shadow / 256;
-		blueFirstOrg = originalPallete[3 * i + 2] * shadow / 256;
+		redFirstOrg = originalPalette[3 * i] * shadow / 256;
+		greenFirstOrg = originalPalette[3 * i + 1] * shadow / 256;
+		blueFirstOrg = originalPalette[3 * i + 2] * shadow / 256;
 
 		currColor = 0;
 		bigValue = 999999999; // infinity
 
 		for (int j = 0; j < 256; j++) {
-			redSecondOrg = originalPallete[3 * j];
+			redSecondOrg = originalPalette[3 * j];
 			redNew = redFirstOrg - redSecondOrg;
 			redNew = redNew * redNew;
 
-			greenSecondOrg = originalPallete[3 * j + 1];
+			greenSecondOrg = originalPalette[3 * j + 1];
 			greenNew = greenFirstOrg - greenSecondOrg;
 			greenNew = greenNew * greenNew;
 
-			blueSecondOrg = originalPallete[3 * j + 2];
+			blueSecondOrg = originalPalette[3 * j + 2];
 			blueNew = blueFirstOrg - blueSecondOrg;
 			blueNew = blueNew * blueNew;
 
@@ -134,9 +134,9 @@ void GraphicsMan::makeShadowTable(int brightness, byte *shadowPallete) {
 				break;
 			}
 		}
-		shadowPallete[i] = currColor;
+		shadowPalette[i] = currColor;
 	}
-	free(originalPallete);
+	free(originalPalette);
 }
 
 }
