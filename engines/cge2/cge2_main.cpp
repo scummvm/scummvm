@@ -69,31 +69,31 @@ void CGE2Engine::loadScript(const char *fname) {
 
 		// sprite file name
 		char *SpN;
-		if ((SpN = EncryptedStream::token(NULL)) == NULL)
+		if ((SpN = EncryptedStream::token(nullptr)) == NULL)
 			break;
 
 		// sprite scene
-		if ((p = EncryptedStream::token(NULL)) == NULL)
+		if ((p = EncryptedStream::token(nullptr)) == NULL)
 			break;
 		int SpA = EncryptedStream::number(p);
 
 		// sprite column
-		if ((p = EncryptedStream::token(NULL)) == NULL)
+		if ((p = EncryptedStream::token(nullptr)) == NULL)
 			break;
 		int SpX = EncryptedStream::number(p);
 
 		// sprite row
-		if ((p = EncryptedStream::token(NULL)) == NULL)
+		if ((p = EncryptedStream::token(nullptr)) == NULL)
 			break;
 		int SpY = EncryptedStream::number(p);
 
 		// sprite Z pos
-		if ((p = EncryptedStream::token(NULL)) == NULL)
+		if ((p = EncryptedStream::token(nullptr)) == NULL)
 			break;
 		int SpZ = EncryptedStream::number(p);
 
 		// sprite life
-		if ((p = EncryptedStream::token(NULL)) == NULL)
+		if ((p = EncryptedStream::token(nullptr)) == NULL)
 			break;
 		bool BkG = EncryptedStream::number(p) == 0;
 
