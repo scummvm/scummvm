@@ -210,6 +210,7 @@ public:
 	void update();
 
 	void setNextFrameTimer(int frameNumber);
+	int getNextFrameTimer() const { return _nextFrameTimer; }
 	void setCurrentFrame(int frameNumber);
 	int getCurrentFrame() const { return _currentFrame; }
 

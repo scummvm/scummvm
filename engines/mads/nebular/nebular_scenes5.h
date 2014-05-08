@@ -133,6 +133,35 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
+class Scene506: public Scene5xx{
+private:
+	int _actionFl;             /* Flag to note daemon is running vs. parser */   
+
+	Common::Point _doorPos;
+	Facing _heroFacing;
+
+	int _doorDepth;
+	int _doorSpriteIdx;
+	int _doorSequenceIdx;
+	int _doorWord;
+
+	bool _labDoorFl;
+	bool _firstDoorFl;
+
+	void room_506_door_sequences();
+
+public:
+	Scene506(MADSEngine *vm) : Scene5xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 
