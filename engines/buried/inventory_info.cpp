@@ -197,52 +197,84 @@ void BurnedLetterViewWindow::onPaint() {
 void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	if (_top.contains(point) && _curView > 0) {
 		_curView--;
-
-		Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
-
-		Graphics::Surface *newFrame = _stillFrames->getFrameCopy(_curView);
+		_curLineIndex = -1;
 
 		int offset = _vm->_gfx->computeVPushOffset(_vm->getTransitionSpeed());
-		for (int i = 0; i < 189; i += offset) {
-			_preBuffer->move(0, offset, _preBuffer->h - offset);
 
-			for (int j = 0; j < offset; j++)
-				memcpy(_preBuffer->getBasePtr(0, j), newFrame->getBasePtr(0, i + j), newFrame->w * newFrame->format.bytesPerPixel);
+		// Only draw if transitions are enabled
+		if (offset != 189) {
+			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 
-			invalidateWindow(false);
-			_vm->yield();
+			Graphics::Surface *oldFrame = _stillFrames->getFrameCopy(_curView + 1);
+			Graphics::Surface *newFrame = _stillFrames->getFrameCopy(_curView);
+			Graphics::Surface *background = ((SceneViewWindow *)getParent())->getStillFrameCopy(_curSceneStaticData.navFrameIndex);
+		
+			for (int i = 0; i < 189; i += offset) {
+				_preBuffer->copyFrom(*background);
+
+				// Blit the top portion (new frame)
+				_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, 0, _preBuffer->w, i, newFrame, 0, 189 - i, 0, 0, 0, 0);
+			
+				// Blit the bottom portion (old frame)
+				_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, i, _preBuffer->w, 189 - i, oldFrame, 0, 0, 0, 0, 0, 0);
+
+				invalidateWindow(false);
+				_vm->yield();
+			}
+
+			oldFrame->free();
+			delete oldFrame;
+			newFrame->free();
+			delete newFrame;
+			background->free();
+			delete background;
+
+			_vm->_gfx->setCursor(oldCursor);
 		}
 
-		_curLineIndex = -1;
 		_rebuildPage = true;
 		invalidateWindow(false);
-
-		_vm->_gfx->setCursor(oldCursor);
 	}
 
 	if (_bottom.contains(point) && _curView < _viewCount - 1) {
 		_curView++;
-
-		Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
-
-		Graphics::Surface *newFrame = _stillFrames->getFrameCopy(_curView);
+		_curLineIndex = -1;
 
 		int offset = _vm->_gfx->computeVPushOffset(_vm->getTransitionSpeed());
-		for (int i = 189 - offset; i >= 0; i -= offset) {
-			_preBuffer->move(0, -offset, _preBuffer->h - offset);
 
-			for (int j = 0; j < offset; j++)
-				memcpy(_preBuffer->getBasePtr(0, j), newFrame->getBasePtr(0, i + j), newFrame->w * newFrame->format.bytesPerPixel);
+		// Only draw if transitions are enabled
+		if (offset != 189) {
+			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 
-			invalidateWindow(false);
-			_vm->yield();
+			Graphics::Surface *oldFrame = _stillFrames->getFrameCopy(_curView - 1);
+			Graphics::Surface *newFrame = _stillFrames->getFrameCopy(_curView);
+			Graphics::Surface *background = ((SceneViewWindow *)getParent())->getStillFrameCopy(_curSceneStaticData.navFrameIndex);
+
+			for (int i = 0 ; i < 189; i += offset) {
+				_preBuffer->copyFrom(*background);
+
+				// Blit the top portion (old frame)
+				_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, 0, _preBuffer->w, 189 - i, oldFrame, 0, i, 0, 0, 0, 0);
+			
+				// Blit the bottom portion (new frame)
+				_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, 189 - i, _preBuffer->w, i, newFrame, 0, 0, 0, 0, 0, 0);
+
+				invalidateWindow(false);
+				_vm->yield();
+			}
+
+			oldFrame->free();
+			delete oldFrame;
+			newFrame->free();
+			delete newFrame;
+			background->free();
+			delete background;
+
+			_vm->_gfx->setCursor(oldCursor);
 		}
 
-		_curLineIndex = -1;
 		_rebuildPage = true;
 		invalidateWindow(false);
-
-		_vm->_gfx->setCursor(oldCursor);
 	}
 
 	if (_putDown.contains(point))
