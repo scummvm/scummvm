@@ -91,8 +91,6 @@ public:
 	void operator -- (void);
 };
 
-
-
 } // End of namespace CGE2
 
 #endif // CGE2_HERO_H
