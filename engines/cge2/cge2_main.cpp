@@ -30,11 +30,22 @@
 #include "cge2/cge2.h"
 #include "cge2/vga13h.h"
 #include "cge2/text.h"
+#include "cge2/snail.h"
 
 namespace CGE2 {
 
-void CGE2Engine::loadSprite(const char *fname, int ref, int scene, int col = 0, int row = 0, int pos = 0) {
-	warning("STUB: CGE2Engine::loadSprite");
+void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
+	char pat[kLineMax];
+	int shpcnt = 0;
+	int seqcnt = 0;
+	int cnt[kActions];
+	int section = idPHASE;
+	bool frnt = true;
+	bool east = false;
+	bool port = false;
+	bool tran = false;
+	warning("STUB: CGE2Engine::loadSprite()");
+	
 }
 
 void CGE2Engine::loadScript(const char *fname) {
@@ -62,6 +73,8 @@ void CGE2Engine::loadScript(const char *fname) {
 
 		ok = false; // not OK if break
 
+		V3D P;
+
 		// sprite ident number
 		if ((p = EncryptedStream::token(tmpStr)) == NULL)
 			break;
@@ -80,17 +93,17 @@ void CGE2Engine::loadScript(const char *fname) {
 		// sprite column
 		if ((p = EncryptedStream::token(nullptr)) == NULL)
 			break;
-		int SpX = EncryptedStream::number(p);
+		P._x = EncryptedStream::number(p);
 
 		// sprite row
 		if ((p = EncryptedStream::token(nullptr)) == NULL)
 			break;
-		int SpY = EncryptedStream::number(p);
+		P._y = EncryptedStream::number(p);
 
 		// sprite Z pos
 		if ((p = EncryptedStream::token(nullptr)) == NULL)
 			break;
-		int SpZ = EncryptedStream::number(p);
+		P._z = EncryptedStream::number(p);
 
 		// sprite life
 		if ((p = EncryptedStream::token(nullptr)) == NULL)
@@ -100,7 +113,7 @@ void CGE2Engine::loadScript(const char *fname) {
 		ok = true; // no break: OK
 
 		_sprite = NULL;
-		loadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
+		loadSprite(SpN, SpI, SpA, P);
 		if (_sprite) {
 			warning("STUB: CGE2Engine::loadScript - SPARE:: thing");
 			if (BkG)

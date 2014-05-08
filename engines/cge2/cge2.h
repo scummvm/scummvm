@@ -65,7 +65,7 @@ public:
 	void movie(const char *ext);
 	void runGame();
 	void loadScript(const char *fname);
-	void loadSprite(const char *fname, int ref, int scene, int col, int row, int pos);
+	void loadSprite(const char *fname, int ref, int scene, V3D &pos);
 
 	const ADGameDescription *_gameDescription;
 
