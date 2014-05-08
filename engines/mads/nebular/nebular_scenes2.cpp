@@ -1651,7 +1651,7 @@ void Scene208::updateTrap() {
 	case 2: {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-		_scene->_hotspots.activate(414, false);
+		_scene->_hotspots.activate(NOUN_DEEP_PIT, false);
 		int idx = _scene->_dynamicHotspots.add(NOUN_LEAF_COVERED_PIT, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
 		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
