@@ -167,7 +167,7 @@ void Scene804::step() {
 		switch (_game._storyMode) {
 		case STORYMODE_NAUGHTY:
 			if (_scene->_activeAnimation->getCurrentFrame() == 81) {
-				_resetFrame = 80; 
+				_resetFrame = 80;
 				_globals[kInSpace] = false;
 				_globals[kBeamIsUp] = true;
 
@@ -177,7 +177,7 @@ void Scene804::step() {
 			}
 			break;
 
-		case STORYMODE_NICE:			 
+		case STORYMODE_NICE:
 			if (_scene->_activeAnimation->getCurrentFrame() == 68) {
 				_resetFrame = 66;
 				_globals[kInSpace] = false;
@@ -240,10 +240,10 @@ void Scene804::step() {
 		case 26:
 		case 28:
 		case 31:
-			_resetFrame = 0; 
+			_resetFrame = 0;
 			break;
 		}
-	} else {   
+	} else {
 		if ((_scene->_activeAnimation->getCurrentFrame() == 36) && (!_throttleGone)) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_throttleGone = true;

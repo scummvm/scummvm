@@ -167,7 +167,7 @@ private:
 
 	void updateChannelState();
 	void updateActiveChannel();
-	
+
 	/**
 	 * Loads up the specified sample
 	 */
@@ -339,12 +339,12 @@ public:
 	 * Main buffer read
 	 */
 	virtual int readBuffer(int16 *buffer, const int numSamples);
-	
+
 	/**
 	 * Mono sound only
 	 */
 	virtual bool isStereo() const { return false; }
-	
+
 	/**
 	 * Data is continuously pushed, so definitive end
 	 */

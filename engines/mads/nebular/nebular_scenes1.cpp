@@ -124,7 +124,7 @@ void Scene101::sayDang() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 17);
 		_scene->_kernelMessages.add(Common::Point(143, 61), 0x1110, 0, 0, 60, _game.getQuote(57));
 		_scene->_sequences.addTimer(120, 73);
-		break; 
+		break;
 
 	case 73:
 		_vm->_dialogs->show(0x2785);
@@ -278,7 +278,7 @@ void Scene101::preActions() {
 		if (_game._player._needToWalk) {
 			switch (_game._trigger) {
 			case 0:
-				_game._player._needToWalk = false;	
+				_game._player._needToWalk = false;
 				_game._player._stepEnabled = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[11]);
 				_globals._sequenceIndexes[11] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
@@ -1248,7 +1248,7 @@ void Scene103::enter() {
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 2, 0);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 0);
 
-	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 25);	
+	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 25);
 	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 72);
 	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 1, 37);
 	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 2, 73);
@@ -1267,7 +1267,7 @@ void Scene103::enter() {
 		_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 6);
 	else
 		_vm->_game->_scene._hotspots.activate(289, false);
-	
+
 	if (_globals[kTurkeyExploded]) {
 		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], -2, -2);
@@ -1325,7 +1325,7 @@ void Scene103::step() {
 	default:
 		break;
 	}
-	
+
 	if (_scene->_frameStartTime >= _updateClock) {
 		pt = _vm->_game->_player._playerPos;
 		dist = _vm->hypotenuse(pt.x - 79, pt.y - 137);
@@ -1471,7 +1471,7 @@ void Scene103::actions() {
 			_sayHiToBinky = false;
 			break;
 		}
-			
+
 		case 2:
 			_scene->_kernelMessages.reset();
 			_scene->_sequences.addTimer(1, 3);
@@ -1868,25 +1868,25 @@ void Scene105::actions() {
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802, 0);
 		}
 	} else if (_action.isAction(VERB_LOOK, 0x195))
-		_vm->_dialogs->show(0x2905); 
+		_vm->_dialogs->show(0x2905);
 	else if (_action.isAction(VERB_LOOK, 0x4D))
-		_vm->_dialogs->show(0x2906); 
+		_vm->_dialogs->show(0x2906);
 	else if (_action.isAction(VERB_LOOK, 0xF0))
-		_vm->_dialogs->show(0x2907); 
+		_vm->_dialogs->show(0x2907);
 	else if (_action.isAction(VERB_LOOK, 0xDD))
-		_vm->_dialogs->show(0x2908); 
+		_vm->_dialogs->show(0x2908);
 	else if (_action.isAction(VERB_TAKE, 0xDD))
-		_vm->_dialogs->show(0x2909); 
+		_vm->_dialogs->show(0x2909);
 	else if (_action.isAction(VERB_LOOK, 0xE0))
-		_vm->_dialogs->show(0x290A); 
+		_vm->_dialogs->show(0x290A);
 	else if (_action.isAction(VERB_LOOK, 0x65))
-		_vm->_dialogs->show(0x290C); 
+		_vm->_dialogs->show(0x290C);
 	else if (_action.isAction(VERB_LOOK, 0x158))
-		_vm->_dialogs->show(0x290D); 
+		_vm->_dialogs->show(0x290D);
 	else if (_action.isAction(VERB_LOOK, 0xF5))
-		_vm->_dialogs->show(0x290E); 
+		_vm->_dialogs->show(0x290E);
 	else if (_action.isAction(VERB_LOOK, 0x129))
-		_vm->_dialogs->show(0x290F); 
+		_vm->_dialogs->show(0x290F);
 	else
 		return;
 
@@ -2289,7 +2289,7 @@ void Scene108::actions() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_game._objects.addToInventory(OBJ_DEAD_FISH);
 			_globals[kFishIn108] = false;
-			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 10808); 
+			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 10808);
 		}
 	} else if (_action.isAction(0x15D, 0xF4))
 		_scene->_nextSceneId = 107;
@@ -2618,7 +2618,7 @@ void Scene109::actions() {
 									threshold = 50;
 									break;
 								}
-								
+
 								if (_globals[kHoovicFishEaten] >= threshold) {
 									int randVal = _vm->getRandomNumber(83, 84);
 									_scene->_kernelMessages.add(Common::Point(230, 24), 0xFDFC, 0, 0, 120, _game.getQuote(randVal));
@@ -2690,28 +2690,28 @@ void Scene109::actions() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_game._objects.addToInventory(OBJ_BURGER);
 	} else if (_action.isAction(VERB_LOOK, 0xF0))
-		_vm->_dialogs->show(0x2A95); 
+		_vm->_dialogs->show(0x2A95);
 	else if (_action.isAction(VERB_LOOK, 0x5A))
-		_vm->_dialogs->show(0x2A96); 
+		_vm->_dialogs->show(0x2A96);
 	else if ((_action.isAction(VERB_TAKE) || _action.isAction(VERB_PULL)) && _action.isAction(0x5A))
-		_vm->_dialogs->show(0x2A97); 
+		_vm->_dialogs->show(0x2A97);
 	else if (_action.isAction(VERB_LOOK, 0x129))
-		_vm->_dialogs->show(0x2A98); 
+		_vm->_dialogs->show(0x2A98);
 	else if (_action.isAction(VERB_TAKE, 0x129))
-		_vm->_dialogs->show(0x2A99); 
+		_vm->_dialogs->show(0x2A99);
 	else if (_action.isAction(VERB_LOOK, 0x45))
-		_vm->_dialogs->show(0x2A9A); 
+		_vm->_dialogs->show(0x2A9A);
 	else if (_action.isAction(VERB_LOOK, 0x178)) {
 		if (_globals[kHoovicAlive])
-			_vm->_dialogs->show(0x2A9B); 
+			_vm->_dialogs->show(0x2A9B);
 		else
 			_vm->_dialogs->show(0x2AA1);
 	} else if (_action.isAction(VERB_LOOK, 0x146))
-		_vm->_dialogs->show(0x2A9C); 
+		_vm->_dialogs->show(0x2A9C);
 	else if (_action.isAction(VERB_LOOK, 0xFC))
-		_vm->_dialogs->show(0x2A9F); 
+		_vm->_dialogs->show(0x2A9F);
 	else if (_action.isAction(VERB_PUT, 0x146))
-		_vm->_dialogs->show(0x2A9E); 
+		_vm->_dialogs->show(0x2A9E);
 	else if (_action.isAction(VERB_LOOK, 0x66))
 		_vm->_dialogs->show(0x2AA2);
 	else
@@ -2835,19 +2835,19 @@ void Scene110::actions() {
 	} else if ((_action._lookFlag) || _action.isAction(VERB_LOOK, 0x3F))
 		_vm->_dialogs->show(0x2AF9);
 	else if (_action.isAction(VERB_LOOK, 0x40) || _action.isAction(0xD1, 0x40))
-		_vm->_dialogs->show(0x2AFA); 
+		_vm->_dialogs->show(0x2AFA);
 	else if (_action.isAction(VERB_LOOK, 0x129))
-		_vm->_dialogs->show(0x2AFB); 
+		_vm->_dialogs->show(0x2AFB);
 	else if (_action.isAction(VERB_TAKE, 0x129))
-		_vm->_dialogs->show(0x2AFC); 
+		_vm->_dialogs->show(0x2AFC);
 	else if (_action.isAction(VERB_LOOK, 0x178))
-		_vm->_dialogs->show(0x2AFD); 
+		_vm->_dialogs->show(0x2AFD);
 	else if (_action.isAction(VERB_LOOK, 0x41))
-		_vm->_dialogs->show(0x2AFE); 
+		_vm->_dialogs->show(0x2AFE);
 	else if (_action.isAction(VERB_LOOK, 0x8F))
-		_vm->_dialogs->show(0x2AFF); 
+		_vm->_dialogs->show(0x2AFF);
 	else if (_action.isAction(VERB_TAKE, 0x8F))
-		_vm->_dialogs->show(0x2B00); 
+		_vm->_dialogs->show(0x2B00);
 	else
 		return;
 

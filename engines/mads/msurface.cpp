@@ -37,10 +37,10 @@ MSurface::MSurface() {
 	_freeFlag = false;
 }
 
-MSurface::MSurface(int width, int height) { 
+MSurface::MSurface(int width, int height) {
 	pixels = nullptr;
 	_freeFlag = false;
-	setSize(width, height); 
+	setSize(width, height);
 }
 
 MSurface::~MSurface() {
@@ -203,7 +203,7 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 		}
 
 	}
-	
+
 	delete[] scaledLineBuf;
 
 }
@@ -212,10 +212,10 @@ void MSurface::empty() {
 	Common::fill(getBasePtr(0, 0), getBasePtr(0, h), 0);
 }
 
-void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds, 
+void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds,
 		const Common::Point &destPos, int transparentColor) {
-	// Validation of the rectangle and position	
-	int destX = destPos.x, destY = destPos.y;		
+	// Validation of the rectangle and position
+	int destX = destPos.x, destY = destPos.y;
 	if ((destX >= w) || (destY >= h))
 		return;
 

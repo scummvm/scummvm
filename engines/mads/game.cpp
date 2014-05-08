@@ -56,7 +56,7 @@ Game *Game::init(MADSEngine *vm) {
 	return nullptr;
 }
 
-Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm), 
+Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 		_scene(vm), _screenObjects(vm), _player(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
 	_loadGameSlot = -1;
@@ -106,7 +106,7 @@ void Game::run() {
 
 	_statusFlag = true;
 	int protectionResult = -1;
-	
+
 	if (_loadGameSlot == -1) {
 		protectionResult = checkCopyProtection();
 		switch (protectionResult) {
@@ -203,7 +203,7 @@ void Game::sectionLoop() {
 		_screenObjects._forceRescan = true;
 		_screenObjects._inputMode = kInputBuildingSentences;
 		_scene._userInterface._scrollbarActive = SCROLLBAR_NONE;
-		
+
 		_player._loadsFirst = true;
 
 		_scene._sceneLogic->setup();
@@ -222,7 +222,7 @@ void Game::sectionLoop() {
 		_scene._scenePaletteUsage.push_back(PaletteUsage::UsageEntry(0xF1));
 		_scene._scenePaletteUsage.push_back(PaletteUsage::UsageEntry(0xF2));
 		_vm->_palette->_paletteUsage.load(&_scene._scenePaletteUsage);
-		
+
 		if (!_player._spritesLoaded && _player._loadsFirst) {
 			if (_player.loadSprites(""))
 				_vm->quitGame();
@@ -342,9 +342,9 @@ void Game::initSection(int sectionNumber) {
 		_vm->_palette->setPalette(_vm->_palette->_mainPalette, 0, 4);
 
 	_vm->_events->loadCursors("*CURSOR.SS");
-	
+
 	assert(_vm->_events->_cursorSprites);
-	_vm->_events->setCursor2((_vm->_events->_cursorSprites->getCount() <= 1) ? 
+	_vm->_events->setCursor2((_vm->_events->_cursorSprites->getCount() <= 1) ?
 		CURSOR_ARROW : CURSOR_WAIT);
 }
 
@@ -474,9 +474,9 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 void Game::loadGame(int slotNumber) {
 	_saveFile = g_system->getSavefileManager()->openForLoading(
 		_vm->generateSaveName(slotNumber));
-	
+
 	Common::Serializer s(_saveFile, nullptr);
-	
+
 	// Load the savaegame header
 	MADSSavegameHeader header;
 	if (!readSavegameHeader(_saveFile, header))

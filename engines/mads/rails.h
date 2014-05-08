@@ -51,7 +51,7 @@ public:
 typedef Common::Array<WalkNode> WalkNodeList;
 
 /**
- * This class handles storing the intermediate walk node points for a 
+ * This class handles storing the intermediate walk node points for a
  * given scene, and calculating walking routes between any two positions.
  */
 class Rails {

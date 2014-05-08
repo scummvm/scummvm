@@ -32,8 +32,8 @@ namespace MADS {
 
 class SpriteSlot;
 
-enum SequenceTrigger { 
-	SEQUENCE_TRIGGER_EXPIRE = 0,	// Trigger when the sequence finishes 
+enum SequenceTrigger {
+	SEQUENCE_TRIGGER_EXPIRE = 0,	// Trigger when the sequence finishes
 	SEQUENCE_TRIGGER_LOOP = 1,		// Trigger when the sequence loops
 	SEQUENCE_TRIGGER_SPRITE = 2		// Trigger when sequence reaches specific sprite
 };
@@ -103,7 +103,7 @@ public:
 	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks,
 		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, int scale, int depth,
 		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
-	
+
 	int addTimer(int timeout, int abortVal);
 	void remove(int seqIndex);
 	void setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot);
@@ -114,13 +114,13 @@ public:
 	void scan();
 	void setDepth(int seqIndex, int depth);
 	void setMsgPosition(int seqIndex, const Common::Point &pt);
-	int addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, 
+	int addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks,
 		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 	int addReverseSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks,
 		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 
 	int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
-	int startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks, 
+	int startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks,
 		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 	void updateTimeout(int spriteIdx, int seqIndex);
 	void setScale(int spriteIdx, int scale);

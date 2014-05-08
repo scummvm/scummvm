@@ -101,7 +101,7 @@ void Rails::setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int route
 	int subIndex = _nodes.size() - 2;
 
 	int distanceVal = _nodes[nodeIndex]._distances[subIndex];
-	if (distanceVal & flags) {                                                                                                                                                   
+	if (distanceVal & flags) {
 		routeLength += distanceVal & 0x3FFF;
 		if (routeLength < _routeLength) {
 			// Found a new shorter route to destination, so set up the route with the found one
@@ -266,7 +266,7 @@ int Rails::getRouteFlags(const Common::Point &src, const Common::Point &dest) {
 void Rails::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_routeLength);
 	s.syncAsSint16LE(_next);
-	
+
 	int count = _routeIndexes.size();
 	if (s.isSaving()) {
 		for (int i = 0; i < count; ++i)

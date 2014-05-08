@@ -63,7 +63,7 @@ SequenceEntry::SequenceEntry() {
 #define SEQUENCE_LIST_SIZE 30
 
 SequenceList::SequenceList(MADSEngine *vm) : _vm(vm) {
-	// IMPORTANT: Preallocate timer slots. Note that sprite slots refer to entries 
+	// IMPORTANT: Preallocate timer slots. Note that sprite slots refer to entries
 	// in this list by index, so we can't just add or delete entries later
 	for (int i = 0; i < SEQUENCE_LIST_SIZE; ++i) {
 		SequenceEntry rec;
@@ -369,7 +369,7 @@ void SequenceList::delay(uint32 priorFrameTime, uint32 currentTime) {
 }
 
 void SequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
-	Scene &scene = _vm->_game->_scene;	
+	Scene &scene = _vm->_game->_scene;
 	SequenceEntry &seqEntry = _entries[seqIndex];
 	SpriteAsset &spriteSet = *scene._sprites[seqEntry._spritesIndex];
 	int numSprites = spriteSet.getCount();
@@ -433,7 +433,7 @@ int SequenceList::addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, i
 	Scene &scene = _vm->_game->_scene;
 	MSprite *spriteFrame = scene._sprites[srcSpriteIdx]->getFrame(0);
 	int depth = scene._depthSurface.getDepth(Common::Point(
-		spriteFrame->_offset.x + (spriteFrame->w / 2), 
+		spriteFrame->_offset.x + (spriteFrame->w / 2),
 		spriteFrame->_offset.y + (spriteFrame->h / 2)));
 
 	return add(srcSpriteIdx, flipped, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0,
@@ -450,7 +450,7 @@ int SequenceList::addReverseSpriteCycle(int srcSpriteIdx, bool flipped, int numT
 		spriteFrame->_offset.x + (spriteFrame->w / 2),
 		spriteFrame->_offset.y + (spriteFrame->h / 2)));
 
-	return add(srcSpriteIdx, flipped, asset->getCount(), triggerCountdown, timeoutTicks, extraTicks, 
+	return add(srcSpriteIdx, flipped, asset->getCount(), triggerCountdown, timeoutTicks, extraTicks,
 		numTicks, 0, 0, true, 100, depth - 1, -1, ANIMTYPE_CYCLED, 0, 0);
 }
 
@@ -463,7 +463,7 @@ int SequenceList::startCycle(int srcSpriteIndex, bool flipped, int cycleIndex) {
 	return result;
 }
 
-int SequenceList::startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks, 
+int SequenceList::startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks,
 		int triggerCountdown, int timeoutTicks, int extraTicks) {
 	SpriteAsset *sprites = _vm->_game->_scene._sprites[srcSpriteIndex];
 	MSprite *frame = sprites->getFrame(0);
@@ -508,4 +508,4 @@ void SequenceList::setDone(int seqIndex) {
 	_entries[seqIndex]._timeout = _vm->_game->_player._priorTimer;
 }
 
-} // End of namespace 
+} // End of namespace

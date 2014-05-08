@@ -72,7 +72,7 @@ void PaletteUsage::prioritize(Common::Array<RGB6> &palette) {
 		RGB6 &palEntry = palette[(*_data)[i]._palIndex];
 		(*_data)[i]._sortValue = _vm->_palette->rgbMerge(palEntry);
 	}
-	
+
 	Common::sort(_data->begin(), _data->end(), sortHelper);
 }
 
@@ -139,7 +139,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	}
 
 	Common::sort(palRange.begin(), palRange.end(), rangeSorter);
-	
+
 	int var3A = (flags & 0x4000) ? 0xffff : 0xfffe;
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
@@ -183,7 +183,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 				(((flags & 0x2000) || (palette[palIndex]._flags & 0x4000)) &&
 				((flags & 0x1000) || (palCount == 0))) ? 0x7fff : 1;
 			int var36 = (palette[palIndex]._flags & 0x80) ? 0 : 2;
-			
+
 			for (int idx = palLow; idx < palIdx; ++idx) {
 				uint32 v = _vm->_palette->_palFlags[idx];
 				if ((v & var3A) && !(v & var36)) {
@@ -225,7 +225,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 				}
 			}
 		}
-		
+
 		assert(var48);
 		int var52 = (noUsageFlag && palette[palIndex]._u2) ? 2 : 0;
 
@@ -430,7 +430,7 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx) {
 		map[idx]._mapColor = (byte)idx;
 	}
-	
+
 	// Sort the mapping list
 	Common::sort(&greyList[0], &greyList[numColors], greyCompareFunc);
 
@@ -486,7 +486,7 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 	}
 }
 
-void Fader::getGreyValues(const byte palette[PALETTE_SIZE], 
+void Fader::getGreyValues(const byte palette[PALETTE_SIZE],
 		GreyTableEntry greyList[PALETTE_COUNT], int baseColor, int numColors) {
 	const byte *palP = &palette[baseColor * 3];
 
@@ -496,7 +496,7 @@ void Fader::getGreyValues(const byte palette[PALETTE_SIZE],
 	}
 }
 
-void Fader::greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT], 
+void Fader::greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT],
 		byte greyTable[64], int numColors) {
 	Common::fill(&greyTable[0], &greyTable[64], 0);
 	for (int i = 0; i < numColors; ++i) {
@@ -590,7 +590,7 @@ void Palette::setSystemPalette() {
 	palData[1 * 3] = palData[1 * 3 + 1] = palData[1 * 3 + 2] = 0x54;
 	palData[2 * 3] = palData[2 * 3 + 1] = palData[2 * 3 + 2] = 0xb4;
 	palData[3 * 3] = palData[3 * 3 + 1] = palData[3 * 3 + 2] = 0xff;
-	
+
 	setPalette(palData, 0, 4);
 }
 
@@ -624,11 +624,11 @@ void Palette::initPalette() {
 		for (int idx = 0; idx < _vm->_game->_player._numSprites; ++idx) {
 			SpriteAsset *asset = _vm->_game->_scene._sprites[
 				_vm->_game->_player._spritesStart + idx];
-			
+
 			uint32 mask = 1;
 			if (asset->_usageIndex)
 				mask <<= asset->_usageIndex;
-			
+
 			palMask = mask;
 		}
 	}

@@ -45,7 +45,7 @@ ProtectionResult GameNebular::checkCopyProtection() {
 	/*
 	// DEBUG: Flag copy protection failure
 	_globals[kCopyProtectFailed] = -1;
-	
+
 	if (!ConfMan.getBool("copy_protection"))
 		return true;
 
@@ -398,7 +398,7 @@ void GameNebular::doObjectAction() {
 				error("TODO: object_get_folder - loc_29B48");
 				messageId = 860;
 			}
-			
+
 			if (id == OBJ_TAPE_PLAYER && _objects[OBJ_AUDIO_TAPE]._roomNumber == OBJ_TAPE_PLAYER)
 				messageId = 867;
 

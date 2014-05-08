@@ -26,7 +26,7 @@
 #define FILENAME_SIZE 13
 
 namespace MADS {
-	
+
 void AAHeader::load(Common::SeekableReadStream *f) {
 	_spriteSetsCount = f->readUint16LE();
 	_miscEntriesCount = f->readUint16LE();
@@ -232,7 +232,7 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 
 		delete frameStream;
 	}
-	
+
 	_miscEntries.clear();
 	_uiEntries.clear();
 	if (_header._miscEntriesCount > 0) {
@@ -255,7 +255,7 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 
 		delete miscStream;
 	}
-	
+
 	// If the animation specifies a font, then load it for access
 	delete _font;
 	if (_header._flags & ANIMFLAG_CUSTOM_FONT) {
@@ -264,7 +264,7 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	} else {
 		_font = nullptr;
 	}
-	
+
 	// Load all the sprite sets for the animation
 	for (uint i = 0; i < _spriteSets.size(); ++i)
 		delete _spriteSets[i];
@@ -398,7 +398,7 @@ void Animation::loadInterface(UserInterface &interfaceSurface, MSurface &depthSu
 	}
 }
 
-bool Animation::hasScroll() const { 
+bool Animation::hasScroll() const {
 	return (_header._scrollPosition.x != 0) || (_header._scrollPosition.x != 0);
 }
 
@@ -452,7 +452,7 @@ void Animation::update() {
 		scene._backgroundSurface.scrollY(_header._scrollPosition.y);
 		scene._spriteSlots.fullRefresh();
 	}
-	
+
 	// Handle any offset adjustment for sprites as of this frame
 	bool paChanged = false;
 	if (scene._posAdjust.x != misc._posAdjust.x) {
@@ -542,7 +542,7 @@ void Animation::update() {
 			_vm->_palette->setEntry(colIndex + 1, me._rgb2[0], me._rgb2[1], me._rgb2[2]);
 
 			// Add a kernel message to display the given text
-			me._kernelMsgIndex = scene._kernelMessages.add(me._pos, colIndex * 0x101 + 0x100, 
+			me._kernelMsgIndex = scene._kernelMessages.add(me._pos, colIndex * 0x101 + 0x100,
 				0, 0, INDEFINITE_TIMEOUT, me._msg);
 			assert(me._kernelMsgIndex >= 0);
 			++_messageCtr;

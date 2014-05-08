@@ -39,8 +39,8 @@ namespace MADS {
 #define FONT_TELE "*FONTTELE.FF"	// Not in Phantom
 #define FONT_PHAN "*FONTPHAN.FF"	// Phantom only
 
-enum SelectionMode { 
-	SELMODE_UNSELECTED = 0, SELMODE_HIGHLIGHTED = 1, SELMODE_SELECTED = 2 
+enum SelectionMode {
+	SELMODE_UNSELECTED = 0, SELMODE_HIGHLIGHTED = 1, SELMODE_SELECTED = 2
 };
 
 class MADSEngine;

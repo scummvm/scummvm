@@ -1139,9 +1139,9 @@ void Scene307::actions() {
 
 void Scene307::synchronize(Common::Serializer &s) {
 	Scene3xx::synchronize(s);
-	
+
 	_forceField.synchronize(s);
-	
+
 	s.syncAsByte(_afterPeeingFl);
 	s.syncAsByte(_duringPeeingFl);
 	s.syncAsByte(_grateOpenedFl);
@@ -1286,7 +1286,7 @@ void Scene308::step() {
 
 void Scene308::synchronize(Common::Serializer &s) {
 	Scene3xx::synchronize(s);
-	
+
 	_forceField.synchronize(s);
 }
 
@@ -1477,7 +1477,7 @@ void Scene309::step() {
 
 void Scene309::synchronize(Common::Serializer &s) {
 	Scene3xx::synchronize(s);
-	
+
 	_forceField.synchronize(s);
 
 	for (int i = 0; i < 3; ++i)
@@ -1522,7 +1522,7 @@ void Scene310::step() {
 
 void Scene310::synchronize(Common::Serializer &s) {
 	Scene3xx::synchronize(s);
-	
+
 	_forceField.synchronize(s);
 }
 
@@ -1817,7 +1817,7 @@ void Scene311::actions() {
 
 void Scene311::synchronize(Common::Serializer &s) {
 	Scene3xx::synchronize(s);
-	
+
 	s.syncAsByte(_checkGuardFl);
 }
 
@@ -3438,7 +3438,7 @@ void Scene319::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_slacheTalkingFl);
 	s.syncAsByte(_slacheReady);
 	s.syncAsByte(_slacheInitFl);
-	
+
 	s.syncString(_subQuote2);
 }
 

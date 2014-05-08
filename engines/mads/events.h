@@ -31,11 +31,11 @@
 
 namespace MADS {
 
-enum CursorType { CURSOR_NONE = 0, CURSOR_ARROW = 1, CURSOR_WAIT = 2, CURSOR_GO_DOWN = 3, 
+enum CursorType { CURSOR_NONE = 0, CURSOR_ARROW = 1, CURSOR_WAIT = 2, CURSOR_GO_DOWN = 3,
 	CURSOR_GO_UP = 4, CURSOR_GO_LEFT = 5, CURSOR_GO_RIGHT = 6 };
 
 #define GAME_FRAME_RATE 50
-#define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE) 
+#define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 
 class MADSEngine;
 
@@ -154,7 +154,7 @@ public:
 	void initVars();
 
 	/**
-	 * Returns true if there's any pending keys to be processed 
+	 * Returns true if there's any pending keys to be processed
 	 */
 	bool isKeyPressed() const { return !_pendingKeys.empty(); }
 };

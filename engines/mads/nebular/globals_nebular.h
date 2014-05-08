@@ -284,7 +284,7 @@ class NebularGlobals: public Globals {
 public:
 	SynchronizedList _spriteIndexes;
 	SynchronizedList _sequenceIndexes;
-	
+
 	int _timebombClock, _timebombTimer;
 public:
 	/**

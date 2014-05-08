@@ -175,7 +175,7 @@ bool Debugger::Cmd_DumpFile(int argc, const char **argv) {
 		} else {
 			outFile.open(argv[1]);
 			byte *data = new byte[inFile.size()];
-			
+
 			inFile.read(data, inFile.size());
 			outFile.write(data, inFile.size());
 
@@ -186,7 +186,7 @@ bool Debugger::Cmd_DumpFile(int argc, const char **argv) {
 			DebugPrintf("File written successfully.\n");
 		}
 	}
-	
+
 	return true;
 }
 

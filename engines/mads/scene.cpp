@@ -32,7 +32,7 @@ namespace MADS {
 
 Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 		_dirtyAreas(_vm),  _dynamicHotspots(vm), _hotspots(vm),
-		_kernelMessages(vm), _sequences(vm), _sprites(vm), _spriteSlots(vm), 
+		_kernelMessages(vm), _sequences(vm), _sprites(vm), _spriteSlots(vm),
 		_textDisplay(vm), _userInterface(vm) {
 	_priorSceneId = 0;
 	_nextSceneId = 0;
@@ -169,11 +169,11 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 		flags |= ANIMFLAG_DITHER;
 	if (_vm->_textWindowStill)
 		flags |= ANIMFLAG_LOAD_BACKGROUND_ONLY;
-		
+
 	_animationData = Animation::init(_vm, this);
 	MSurface depthSurface;
 	_animationData->load(_userInterface, depthSurface, prefix, flags, nullptr, nullptr);
-	
+
 	_vm->_palette->_paletteUsage.load(&_scenePaletteUsage);
 
 	_bandsRange = _sceneInfo->_yBandsEnd - _sceneInfo->_yBandsStart;
@@ -184,7 +184,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_spritesCount = _sprites.size();
 
 	_userInterface.setup(_vm->_game->_screenObjects._inputMode);
-	
+
 	_vm->_game->_screenObjects._category = CAT_NONE;
 	_vm->_events->showCursor();
 
@@ -386,7 +386,7 @@ void Scene::doFrame() {
 		_frameStartTime = _vm->_events->getFrameCounter();
 
 	// Handle parser actions as well as game triggers
-	if ((_action._inProgress && !player._moving && !player._needToWalk && 
+	if ((_action._inProgress && !player._moving && !player._needToWalk &&
 			(player._facing == player._turnToFacing) && !_vm->_game->_trigger) ||
 			(_vm->_game->_trigger && (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_PARSER))) {
 		doAction();
@@ -420,7 +420,7 @@ void Scene::doFrame() {
 			if (_vm->_debugger->_showMousePos) {
 				Common::Point pt = _vm->_events->mousePos();
 				Common::String msg = Common::String::format("(%d,%d)", pt.x, pt.y);
-				mouseTextIndex = _kernelMessages.add(Common::Point(5, 5), 
+				mouseTextIndex = _kernelMessages.add(Common::Point(5, 5),
 					0x203, 0, 0, 1, msg);
 			}
 
@@ -504,7 +504,7 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 }
 
 void Scene::doPreactions() {
-	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences || 
+	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences ||
 			_vm->_game->_screenObjects._inputMode == kInputLimitedSentences) {
 		_vm->_game->_triggerSetupMode = SEQUENCE_TRIGGER_PREPARE;
 		_action.checkAction();
@@ -533,7 +533,7 @@ void Scene::doAction() {
 			flag = !_action._inProgress;
 		}
 
-		if ((_action._inProgress || _vm->_game->_trigger) && 
+		if ((_action._inProgress || _vm->_game->_trigger) &&
 				(!flag || _action._savedFields._commandError == flag)) {
 			_vm->_game->doObjectAction();
 		}
@@ -589,7 +589,7 @@ void Scene::loadAnimation(const Common::String &resName, int trigger) {
 	UserInterface interfaceSurface(_vm);
 
 	_activeAnimation = Animation::init(_vm, this);
-	_activeAnimation->load(interfaceSurface, depthSurface, resName, 
+	_activeAnimation->load(interfaceSurface, depthSurface, resName,
 		_vm->_dithering ? ANIMFLAG_DITHER : 0, nullptr, nullptr);
 	_activeAnimation->startAnimation(trigger);
 }

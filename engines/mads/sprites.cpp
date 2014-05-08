@@ -58,8 +58,8 @@ MSprite::MSprite(): MSurface() {
 }
 
 MSprite::MSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette,
-		const Common::Rect &bounds): 
-		MSurface(bounds.width(), bounds.height()), 
+		const Common::Rect &bounds):
+		MSurface(bounds.width(), bounds.height()),
 		_offset(Common::Point(bounds.left, bounds.top)) {
 	// Load the sprite data
 	loadSprite(source, palette);
@@ -158,7 +158,7 @@ SpriteSlot::SpriteSlot(SpriteFlags type, int seqIndex) {
 
 bool SpriteSlot::operator==(const SpriteSlotSubset &other) const {
 	return (_spritesIndex == other._spritesIndex) && (_frameNumber == other._frameNumber) &&
-		(_position == other._position) && (_depth == other._depth) && 
+		(_position == other._position) && (_depth == other._depth) &&
 		(_scale == other._scale);
 }
 
@@ -324,7 +324,7 @@ void SpriteSlots::drawSprites(MSurface *s) {
 
 		if ((slot._scale < 100) && (slot._scale != -1)) {
 			// Minimalised drawing
-			s->copyFrom(spr, slot._position, slot._depth, &scene._depthSurface, 
+			s->copyFrom(spr, slot._position, slot._depth, &scene._depthSurface,
 				slot._scale, sprite->getTransparencyIndex());
 		} else {
 			int xp, yp;
@@ -339,7 +339,7 @@ void SpriteSlots::drawSprites(MSurface *s) {
 
 			if (slot._depth > 1) {
 				// Draw the frame with depth processing
-				s->copyFrom(spr, Common::Point(xp, yp), slot._depth, &scene._depthSurface, 
+				s->copyFrom(spr, Common::Point(xp, yp), slot._depth, &scene._depthSurface,
 					100, sprite->getTransparencyIndex());
 			} else {
 				// No depth, so simply draw the image

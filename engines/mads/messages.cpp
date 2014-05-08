@@ -50,9 +50,9 @@ void KernelMessages::clear() {
 	scene._textSpacing = -1;
 }
 
-int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags, 
+int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 		uint8 abortTimers, uint32 timeout, const Common::String &msg) {
-	Scene &scene = _vm->_game->_scene; 
+	Scene &scene = _vm->_game->_scene;
 
 	// Find a free slot
 	uint idx = 0;
@@ -80,7 +80,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	rec._actionDetails = scene._action._activeAction;
 
 	if (flags & KMSG_PLAYER_TIMEOUT)
-		rec._frameTimer = _vm->_game->_player._ticksAmount + 
+		rec._frameTimer = _vm->_game->_player._ticksAmount +
 			_vm->_game->_player._priorTimer;
 
 	return idx;
@@ -88,7 +88,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 
 int KernelMessages::addQuote(int quoteId, int abortTimers, uint32 timeout) {
 	Common::String quoteStr = _vm->_game->getQuote(quoteId);
-	return add(Common::Point(), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN, 
+	return add(Common::Point(), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN,
 		abortTimers, timeout, quoteStr);
 }
 
@@ -104,7 +104,7 @@ void KernelMessages::scrollMessage(int msgIndex, int numTicks, bool quoted) {
 	Common::String msg = _entries[msgIndex]._msg;
 
 	if (_entries[msgIndex]._flags & KMSG_PLAYER_TIMEOUT)
-		_entries[msgIndex]._frameTimer2 = _vm->_game->_player._ticksAmount + 
+		_entries[msgIndex]._frameTimer2 = _vm->_game->_player._ticksAmount +
 		_vm->_game->_player._priorTimer;
 
 	_entries[msgIndex]._frameTimer = _entries[msgIndex]._frameTimer2;
@@ -269,7 +269,7 @@ void KernelMessages::processText(int msgIndex) {
 
 	if (msg._textDisplayIndex < 0) {
 		// Need to create a new text display entry for this message
-		int idx = scene._textDisplay.add(x1, y1, msg._color1 | (msg._color2 << 8), 
+		int idx = scene._textDisplay.add(x1, y1, msg._color1 | (msg._color2 << 8),
 			scene._textSpacing, displayMsg, _talkFont);
 		if (idx >= 0)
 			msg._textDisplayIndex = idx;
@@ -330,7 +330,7 @@ void TextDisplayList::reset() {
 		(*this)[i]._active = false;
 }
 
-int TextDisplayList::add(int xp, int yp, uint fontColor, int charSpacing, 
+int TextDisplayList::add(int xp, int yp, uint fontColor, int charSpacing,
 		const Common::String &msg, Font *font) {
 	int usedSlot = -1;
 
@@ -387,7 +387,7 @@ void TextDisplayList::draw(MSurface *s) {
 		if (td._active && (td._expire >= 0)) {
 			td._font->setColors(0xFF, td._color1, td._color2, 0);
 			td._font->writeString(s, td._msg,
-				Common::Point(td._bounds.left, td._bounds.top), 
+				Common::Point(td._bounds.left, td._bounds.top),
 				td._spacing, td._bounds.width());
 		}
 	}

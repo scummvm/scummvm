@@ -127,7 +127,7 @@ void MADSAction::set() {
 		// Two 'look' actions in succession, so the action becomes 'Look around'
 		_statusText = kLookAroundStr;
 	} else {
-		if ((_commandSource == CAT_INV_VOCAB) && (_selectedRow >= 0) 
+		if ((_commandSource == CAT_INV_VOCAB) && (_selectedRow >= 0)
 				&& (_verbType == VERB_THAT) && (_prepType == PREP_NONE)) {
 			// Use/to action
 			int invIndex = userInterface._selectedInvIndex;
@@ -276,7 +276,7 @@ void MADSAction::refresh() {
 	}
 
 	if (!_statusText.empty()) {
-		if ((_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) || 
+		if ((_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) ||
 				(_vm->_game->_screenObjects._inputMode == kInputLimitedSentences)) {
 			Font *font = _vm->_font->getFont(FONT_MAIN);
 			int textSpacing = -1;
@@ -436,7 +436,7 @@ void MADSAction::checkActionAtMousePos() {
 					_hotspotId = userInterface._selectedInvIndex;
 					_articleNumber = _prepType;
 
-					if ((_verbType == VERB_THIS && _prepType == PREP_NONE) || 
+					if ((_verbType == VERB_THIS && _prepType == PREP_NONE) ||
 							(_verbType == VERB_THAT && _prepType != PREP_NONE))
 						_interAwaiting = AWAITING_RIGHT_MOUSE;
 					else

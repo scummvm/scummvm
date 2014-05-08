@@ -180,7 +180,7 @@ public:
 	void deleteTimer(int seqIndex);
 
 	/**
-	 * Add a new slot entry and return it's index 
+	 * Add a new slot entry and return it's index
 	 */
 	int add();
 

@@ -181,7 +181,7 @@ private:
 	int _characterSpriteIndexes[3];
 	int _messagesIndexes[3];
 	int _lastFrame;
-	
+
 public:
 	Scene309(MADSEngine *vm) : Scene3xx(vm) {}
 

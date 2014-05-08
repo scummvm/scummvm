@@ -44,7 +44,7 @@ ProtectionResult GamePhantom::checkCopyProtection() {
 	/*
 	// DEBUG: Flag copy protection failure
 	_globals[5] = -1;
-	
+
 	if (!ConfMan.getBool("copy_protection"))
 		return true;
 

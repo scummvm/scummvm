@@ -29,7 +29,7 @@
 
 namespace MADS {
 
-enum TriggerMode { 
+enum TriggerMode {
 	SEQUENCE_TRIGGER_PARSER = 0,		// Triggers parser
 	SEQUENCE_TRIGGER_DAEMON = 1,		// Triggers step/daemon code
 	SEQUENCE_TRIGGER_PREPARE = 2		// Triggers preparser
@@ -61,7 +61,7 @@ enum {
 enum VerbType { VERB_ONLY, VERB_THIS, VERB_THAT };
 
 enum PrepType {
-	PREP_NONE, PREP_WITH, PREP_TO, PREP_AT, PREP_FROM, PREP_ON, PREP_IN, 
+	PREP_NONE, PREP_WITH, PREP_TO, PREP_AT, PREP_FROM, PREP_ON, PREP_IN,
 	PREP_UNDER, PREP_BEHIND, PREP_RELATIONAL = 0xff
 };
 

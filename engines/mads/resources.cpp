@@ -169,10 +169,10 @@ void HagArchive::loadIndex(MADSEngine *vm) {
 			Common::String::format("SECTION%d.HAG", sectionIndex);
 		if (!hagFile.open(filename))
 			error("Could not locate HAG file - %s", filename.c_str());
-	
+
 		// Check for header
 		char headerBuffer[16];
-		if ((hagFile.read(headerBuffer, 16) != 16) || 
+		if ((hagFile.read(headerBuffer, 16) != 16) ||
 				(strncmp(headerBuffer, MADSCONCAT_STRING, 10) != 0))
 			error("Invalid HAG file opened");
 
@@ -269,7 +269,7 @@ ResourceType HagArchive::getResourceType(const Common::String &resourceName) con
 	} else if (resourceName.hasPrefix("SPCHC")) {
 		// SPEECH resource
 		return RESTYPE_SPEECH;
-	} 
+	}
 
 	// Check for a known extension
 	const char *extPos = strchr(resourceName.c_str(), '.');
@@ -360,7 +360,7 @@ Common::String Resources::formatName(int prefix, char asciiCh, int id, EXTTYPE e
 	return result;
 }
 
-Common::String Resources::formatResource(const Common::String &resName, 
+Common::String Resources::formatResource(const Common::String &resName,
 		const Common::String &hagFilename) {
 //	int v1 = 0, v2 = 0;
 

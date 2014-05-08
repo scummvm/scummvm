@@ -34,7 +34,7 @@ bool MadsPack::isCompressed(Common::SeekableReadStream *stream) {
 	char tempBuffer[8];
 	stream->seek(0);
 	if (stream->read(tempBuffer, 8) == 8) {
-		if (!strncmp(tempBuffer, madsPackString, 8)) 
+		if (!strncmp(tempBuffer, madsPackString, 8))
 			return true;
 	}
 
@@ -58,7 +58,7 @@ void MadsPack::initialise(Common::SeekableReadStream *stream) {
 	stream->seek(14);
 	_count = stream->readUint16LE();
 	_items = new MadsPackEntry[_count];
-	
+
 	byte *headerData = new byte[0xA0];
 	byte *header = headerData;
 	stream->read(headerData, 0xA0);
@@ -77,7 +77,7 @@ void MadsPack::initialise(Common::SeekableReadStream *stream) {
 			// Decompress the entry
 			byte *compressedData = new byte[_items[i].compressedSize];
 			stream->read(compressedData, _items[i].compressedSize);
-			
+
 			FabDecompressor fab;
 			fab.decompress(compressedData, _items[i].compressedSize, _items[i].data, _items[i].size);
 			delete[] compressedData;
@@ -100,7 +100,7 @@ void FabDecompressor::decompress(const byte *srcData, int srcSize, byte *destDat
 	byte copyLen, copyOfsShift, copyOfsMask, copyLenMask;
 	unsigned long copyOfs;
 	byte *destP;
-	
+
 	// Validate that the data starts with the FAB header
 	if (strncmp((const char *)srcData, "FAB", 3) != 0)
 		error("FabDecompressor - Invalid compressed data");
@@ -119,7 +119,7 @@ void FabDecompressor::decompress(const byte *srcData, int srcSize, byte *destDat
 	_srcData = srcData;
 	_srcP = _srcData + 6;
 	_srcSize = srcSize;
-	_bitsLeft = 16;	
+	_bitsLeft = 16;
 	_bitBuffer = READ_LE_UINT16(srcData + 4);
 
 	for (;;) {

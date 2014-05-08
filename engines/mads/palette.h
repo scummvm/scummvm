@@ -42,13 +42,13 @@ class MADSEngine;
  * Palette mapping options
  */
 enum {
-	PALFLAG_BACKGROUND		= 0x8000,  // Loading initial background       
-	PALFLAG_RESERVED		= 0x4000,  // Enable mapping reserved colors 
-	PALFLAG_ANY_TO_CLOSEST	= 0x2000,  // Any color can map to closest     
-	PALFLAG_ALL_TO_CLOSEST	= 0x1000,  // Any colors that can map must map 
-	PALFLAG_TOP_COLORS		= 0x0800,  // Allow mapping to high four colors 
-	PALFLAG_DEFINE_RESERVED	= 0x0400,  // Define initial reserved color    
-	PALFLAG_MASK			= 0xfc00   // Mask for all the palette flags   
+	PALFLAG_BACKGROUND		= 0x8000,  // Loading initial background
+	PALFLAG_RESERVED		= 0x4000,  // Enable mapping reserved colors
+	PALFLAG_ANY_TO_CLOSEST	= 0x2000,  // Any color can map to closest
+	PALFLAG_ALL_TO_CLOSEST	= 0x1000,  // Any colors that can map must map
+	PALFLAG_TOP_COLORS		= 0x0800,  // Allow mapping to high four colors
+	PALFLAG_DEFINE_RESERVED	= 0x0400,  // Define initial reserved color
+	PALFLAG_MASK			= 0xfc00   // Mask for all the palette flags
 };
 
 struct PaletteCycle {
@@ -182,7 +182,7 @@ private:
 
 	/**
 	 * Given a grey value list containing grey shades (0-63), creates a 64 byte
-	 * grey table containing the number of grey values for each intensity 
+	 * grey table containing the number of grey values for each intensity
 	 */
 	void greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT], byte greyTable[64], int numColors);
 protected:
@@ -259,7 +259,7 @@ public:
 	 * Constructor
 	 */
 	Palette(MADSEngine *vm);
-	
+
 	/**
 	 * Destructor
 	 */

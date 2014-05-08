@@ -54,12 +54,12 @@ public:
 	~MadsPack();
 
 	int getCount() const { return _count; }
-	MadsPackEntry &getItem(int index) const { 
+	MadsPackEntry &getItem(int index) const {
 		assert(index < _count);
 		return _items[index]; }
-	MadsPackEntry &operator[](int index) const { 
+	MadsPackEntry &operator[](int index) const {
 		assert(index < _count);
-		return _items[index]; 
+		return _items[index];
 	}
 	Common::MemoryReadStream *getItemStream(int index) {
 		assert(index < _count);

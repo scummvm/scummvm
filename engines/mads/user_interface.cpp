@@ -148,14 +148,14 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 
 			if (dirtyArea->_textActive) {
 				SpriteAsset *asset = scene._sprites[slot._spritesIndex];
-			
+
 				// Get the frame details
 				int frameNumber = ABS(slot._frameNumber);
 				bool flipped = slot._frameNumber < 0;
 
 				if (slot._segmentId == IMG_SPINNING_OBJECT) {
 					MSprite *sprite = asset->getFrame(frameNumber);
-					sprite->copyTo(&userInterface, slot._position, 
+					sprite->copyTo(&userInterface, slot._position,
 						sprite->getTransparencyIndex());
 				} else {
 					MSprite *sprite = asset->getFrame(frameNumber - 1);
@@ -309,7 +309,7 @@ void Conversation::start() {
 
 /*------------------------------------------------------------------------*/
 
-UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm), 
+UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 		_uiSlots(vm) {
 	_invSpritesIndex = -1;
 	_invFrameNumber = 1;
@@ -363,7 +363,7 @@ void UserInterface::load(const Common::String &resName) {
 	// Read in the surface data
 	Common::SeekableReadStream *pixelsStream = madsPack.getItemStream(1);
 	pixelsStream->read(_surface.getData(), MADS_SCREEN_WIDTH * MADS_INTERFACE_HEIGHT);
-	delete pixelsStream; 
+	delete pixelsStream;
 }
 
 void UserInterface::setup(InputMode inputMode) {
@@ -418,7 +418,7 @@ void UserInterface::drawTextElements() {
 
 void UserInterface::mergeFrom(MSurface *src, const Common::Rect &srcBounds,
 	const Common::Point &destPos, int transparencyIndex) {
-	// Validation of the rectangle and position	
+	// Validation of the rectangle and position
 	int destX = destPos.x, destY = destPos.y;
 	if ((destX >= w) || (destY >= h))
 		return;
@@ -502,7 +502,7 @@ void UserInterface::updateInventoryScroller() {
 		// FIXME: This scrolls the inventory up when selecting verbs or attempting to combine items
 		false/*(screenObjects._category != CAT_INV_SCROLLER && _scrollbarOldActive == SCROLLBAR_ELEVATOR)*/
 	) && (_vm->_events->_mouseStatusCopy || _vm->_easyMouse)) {
-		if ((_vm->_events->_mouseClicked || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy)) 
+		if ((_vm->_events->_mouseClicked || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))
 				&& (screenObjects._category == CAT_INV_SCROLLER))
 			_scrollbarStrokeType = (ScrollbarActive)screenObjects._spotId;
 
@@ -637,7 +637,7 @@ void UserInterface::writeVocab(ScrCategory category, int id) {
 			break;
 		}
 
-		font->setColorMode((id == 4) || (_scrollbarActive == SCROLLBAR_ELEVATOR) ? 
+		font->setColorMode((id == 4) || (_scrollbarActive == SCROLLBAR_ELEVATOR) ?
 			SELMODE_HIGHLIGHTED : SELMODE_UNSELECTED);
 		font->writeString(this, vocabStr, Common::Point(bounds.left, bounds.top));
 		break;
@@ -705,7 +705,7 @@ void UserInterface::loadElements() {
 			CAT_INV_ANIM, 0);
 	}
 
-	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences || 
+	if (_vm->_game->_screenObjects._inputMode == kInputBuildingSentences ||
 			_vm->_game->_screenObjects._inputMode == kInputLimitedSentences) {
 		_categoryIndexes[CAT_HOTSPOT - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
@@ -878,7 +878,7 @@ void UserInterface::refresh() {
 
 void UserInterface::inventoryAnim() {
 	Scene &scene = _vm->_game->_scene;
-	if (_vm->_game->_screenObjects._inputMode == kInputConversation || 
+	if (_vm->_game->_screenObjects._inputMode == kInputConversation ||
 			_vm->_game->_screenObjects._inputMode == kInputLimitedSentences ||
 			_invSpritesIndex < 0)
 		return;
@@ -984,7 +984,7 @@ void UserInterface::selectObject(int invIndex) {
 		if (maxVocab) {
 			assert(_uiSlots.size() < 50);
 			int vocabHeight = maxVocab * 8;
-			
+
 			Common::Rect bounds(240, 3, 240 + 80, 3 + vocabHeight);
 			_uiSlots.add(bounds);
 			_uiSlots.draw(false, false);
@@ -1028,7 +1028,7 @@ void UserInterface::updateSelection(ScrCategory category, int newIndex, int *idx
 
 		if (oldIndex >= 0) {
 			writeVocab(category, oldIndex);
-			
+
 			if (getBounds(category, oldIndex, bounds))
 				updateRect(bounds);
 		}

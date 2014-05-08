@@ -63,7 +63,7 @@ public:
 	/**
 	 * Helper method for calculating new dimensions when scaling a sprite
 	 */
-	static int scaleValue(int value, int scale, int err);	
+	static int scaleValue(int value, int scale, int err);
 public:
 	/**
 	 * Basic constructor
@@ -128,7 +128,7 @@ public:
 	 * Returns a pointer to the surface data
 	 */
 	byte *getData() { return (byte *)Graphics::Surface::getPixels(); }
-	
+
 	/**
 	 * Returns a pointer to a given position within the surface
 	 */
@@ -168,8 +168,8 @@ public:
 	/**
 	 * Copies the surface to a given destination surface
 	 */
-	void copyTo(MSurface *dest, int transparentColor = -1) { 
-		dest->copyFrom(this, Common::Rect(w, h), Common::Point(), transparentColor);		
+	void copyTo(MSurface *dest, int transparentColor = -1) {
+		dest->copyFrom(this, Common::Rect(w, h), Common::Point(), transparentColor);
 	}
 
 	/**

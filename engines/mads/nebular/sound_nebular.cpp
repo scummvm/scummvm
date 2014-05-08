@@ -74,7 +74,7 @@ void AdlibChannel::enable(int flag) {
 		// WORKAROUND: Original set _soundData pointer to flag. Since this seems
 		// just intended to invalidate any prior pointer, I've replaced it with
 		// a simple null pointer
-		_soundData = nullptr; 
+		_soundData = nullptr;
 	}
 }
 
@@ -185,7 +185,7 @@ ASound::ASound(Audio::Mixer *mixer, const Common::String &filename, int dataOffs
 	assert(_opl);
 
 	_opl->init(getRate());
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, 
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1,
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	// Initialise the Adlib
@@ -213,7 +213,7 @@ void ASound::adlibInit() {
 	write(4, 0x80);
 }
 
-int ASound::stop() { 
+int ASound::stop() {
 	command0();
 	int result = _pollResult;
 	_pollResult = 0;
@@ -238,7 +238,7 @@ void ASound::noise() {
 	}
 
 	if (_v2) {
-		setFrequency(_channelNum2, (randomVal & _freqMask2) + _freqBase2);		
+		setFrequency(_channelNum2, (randomVal & _freqMask2) + _freqBase2);
 	}
 }
 
@@ -278,7 +278,7 @@ void ASound::resultCheck() {
 }
 
 byte *ASound::loadData(int offset, int size) {
-	// First scan for an existing copy	
+	// First scan for an existing copy
 	Common::List<CachedDataEntry>::iterator i;
 	for (i = _dataCache.begin(); i != _dataCache.end(); ++i) {
 		CachedDataEntry &e = *i;
@@ -392,7 +392,7 @@ void ASound::checkChannels() {
 }
 
 void ASound::pollActiveChannel() {
-	AdlibChannel *chan = _activeChannelPtr; 
+	AdlibChannel *chan = _activeChannelPtr;
 	bool updateFlag = true;
 
 	if (chan->_activeCount) {
@@ -572,7 +572,7 @@ void ASound::pollActiveChannel() {
 						chan->_field1F = *++pSrc;
 						chan->_pSrc += 2;
 						break;
-					
+
 					default:
 						break;
 					}
@@ -624,7 +624,7 @@ void ASound::updateOctave() {
 }
 
 static int _vList1[] = {
-	0x200, 0x21E, 0x23F, 0x261, 0x285, 0x2AB, 
+	0x200, 0x21E, 0x23F, 0x261, 0x285, 0x2AB,
 	0x2D4, 0x2FF, 0x32D, 0x35D, 0x390, 0x3C7
 };
 
@@ -688,7 +688,7 @@ static const int volumeList[] = {
 	0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04,
 	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
 	0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 
+	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
@@ -696,7 +696,7 @@ void ASound::updateActiveChannel() {
 	int reg = 0x40 + outputChannels[outputIndexes[_activeChannelNumber * 2]];
 	int portVal = _ports[reg] & 0xFFC0;
 	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_field1E, 0, 63);
-	
+
 	// Note: Original had a whole block not seeming to be used, since the initialisation
 	// sets a variable to 5660h, and doesn't change it, so the branch is never taken
 	int val = CLIP(newVolume - volumeList[_activeChannelPtr->_fieldD], 0, 63);
@@ -756,7 +756,7 @@ void ASound::processSample() {
 
 	// Write out waveform select
 	write2(8, 0xE0 + _v11, _samplePtr->_waveformSelect & 3);
-	
+
 	// Write out total level & scaling level
 	val = -((_samplePtr->_totalLevel & 0x3F) - 0x3F) | (_samplePtr->_scalingLevel << 6);
 	write2(8, 0x40 + _v11, val);
@@ -813,7 +813,7 @@ int ASound::command0() {
 	_freqMask1 = _freqMask2 = 0;
 	_freqBase1 = _freqBase2 = 0;
 	_v7 = 0;
-	_v8 = 0;	
+	_v8 = 0;
 
 	// Reset Adlib port registers
 	for (int reg = 0x4F; reg >= 0x40; --reg)
@@ -907,21 +907,21 @@ int ASound::command8() {
 
 const ASound1::CommandPtr ASound1::_commandList[42] = {
 	&ASound1::command0, &ASound1::command1, &ASound1::command2, &ASound1::command3,
-	&ASound1::command4, &ASound1::command5, &ASound1::command6, &ASound1::command7, 
+	&ASound1::command4, &ASound1::command5, &ASound1::command6, &ASound1::command7,
 	&ASound1::command8, &ASound1::command9, &ASound1::command10, &ASound1::command11,
 	&ASound1::command12, &ASound1::command13, &ASound1::command14, &ASound1::command15,
-	&ASound1::command16, &ASound1::command17, &ASound1::command18, &ASound1::command19, 
-	&ASound1::command20, &ASound1::command21, &ASound1::command22, &ASound1::command23, 
+	&ASound1::command16, &ASound1::command17, &ASound1::command18, &ASound1::command19,
+	&ASound1::command20, &ASound1::command21, &ASound1::command22, &ASound1::command23,
 	&ASound1::command24, &ASound1::command25, &ASound1::command26, &ASound1::command27,
-	&ASound1::command28, &ASound1::command29, &ASound1::command30, &ASound1::command31, 
+	&ASound1::command28, &ASound1::command29, &ASound1::command30, &ASound1::command31,
 	&ASound1::command32, &ASound1::command33, &ASound1::command34, &ASound1::command35,
-	&ASound1::command36, &ASound1::command37, &ASound1::command38, &ASound1::command39, 
+	&ASound1::command36, &ASound1::command37, &ASound1::command38, &ASound1::command39,
 	&ASound1::command40, &ASound1::command41
 };
 
 ASound1::ASound1(Audio::Mixer *mixer): ASound(mixer, "asound.001", 0x1520) {
 	_cmd23Toggle = false;
-	
+
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x12C);
 	for (int i = 0; i < 98; ++i)
@@ -1134,7 +1134,7 @@ int ASound1::command33() {
 
 int ASound1::command34() {
 	int v = getRandomNumber() & 0x20;
-	if (!v) 
+	if (!v)
 		v = 0x60;
 
 	byte *pData = loadData(0xDD0, 22);

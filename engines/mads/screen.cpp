@@ -278,7 +278,7 @@ void ScreenObjects::check(bool scanFlag) {
 	if (!_vm->_events->_mouseButtons || _inputMode != kInputBuildingSentences)
 		_vm->_events->_rightMousePressed = false;
 
-	if ((_vm->_events->_mouseMoved || userInterface._scrollbarActive 
+	if ((_vm->_events->_mouseMoved || userInterface._scrollbarActive
 			|| _v8332A || _forceRescan) && scanFlag) {
 		_category = CAT_NONE;
 		_selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
@@ -386,7 +386,7 @@ void ScreenObjects::elementHighlighted() {
 		indexEnd = 9;
 		varA = 5;
 		topIndex = 0;
-		idxP = !_vm->_events->_rightMousePressed ? &userInterface._highlightedCommandIndex : 
+		idxP = !_vm->_events->_rightMousePressed ? &userInterface._highlightedCommandIndex :
 			&userInterface._selectedActionIndex;
 
 		if (_vm->_events->_rightMousePressed && userInterface._selectedItemVocabIdx >= 0)

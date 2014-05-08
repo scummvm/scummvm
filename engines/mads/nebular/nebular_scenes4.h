@@ -110,14 +110,14 @@ private:
 	Conversation _dialog2;
 	Conversation _dialog3;
 	Conversation _dialog4;
- 
+
 	void setDialogNode(int node);
 	void handleConversation1();
 	void handleConversation2();
 	void handleConversation3();
 	void handleConversation4();
 	void handleDialogs();
-	
+
 public:
 	Scene402(MADSEngine *vm) : Scene4xx(vm) {}
 	void synchronize(Common::Serializer &s);

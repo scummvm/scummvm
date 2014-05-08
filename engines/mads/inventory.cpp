@@ -31,7 +31,7 @@ void InventoryObject::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_roomNumber);
 	s.syncAsByte(_article);
 	s.syncAsByte(_vocabCount);
-	
+
 	for (int i = 0; i < 3; ++i) {
 		s.syncAsByte(_vocabList[i]._verbType);
 		s.syncAsByte(_vocabList[i]._prepType);
@@ -142,7 +142,7 @@ void InventoryObjects::addToInventory(int objectId) {
 
 		(*this)[objectId]._roomNumber = PLAYER_INVENTORY;
 
-		if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE && 
+		if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE &&
 				_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) {
 			userInterface.categoryChanged();
 			userInterface.selectObject(userInterface._selectedInvIndex);
@@ -164,7 +164,7 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 	int selectedIndex = userInterface._selectedInvIndex;
 	bool noSelection = selectedIndex < 0;
 
-	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE && 
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE &&
 			_vm->_game->_screenObjects._inputMode == kInputBuildingSentences)
 		userInterface.selectObject(-1);
 
@@ -186,7 +186,7 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 			newIndex = 0;
 	}
 
-	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE && 
+	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE &&
 			_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) {
 		userInterface.categoryChanged();
 		userInterface.selectObject(newIndex);

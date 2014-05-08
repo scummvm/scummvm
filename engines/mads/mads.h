@@ -137,7 +137,7 @@ public:
 	Common::String generateSaveName(int slot);
 
 	/**
-	 * Handles loading a game via the GMM 
+	 * Handles loading a game via the GMM
 	 */
 	virtual Common::Error loadGameState(int slot);
 

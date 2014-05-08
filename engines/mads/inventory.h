@@ -62,7 +62,7 @@ private:
 public:
 	SynchronizedList _inventoryList;
 
-	/** 
+	/**
 	 * Constructor
 	 */
 	InventoryObjects(MADSEngine *vm): _vm(vm) {}

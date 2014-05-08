@@ -112,7 +112,7 @@ SceneInfo *SceneInfo::init(MADSEngine *vm) {
 void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		int flags, MSurface &depthSurface, MSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
-	
+
 	// Figure out the resource to use
 	Common::String resourceName;
 	if (sceneFlag) {
@@ -133,7 +133,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		infoStream->skip(6);	// actual scene ID (string)
 		_sceneId = sceneId;
 	}
-	
+
 	// TODO: The following isn't quite right for V2 games (it's all 0)
 	_artFileNum = infoStream->readUint16LE();
 	_depthStyle = infoStream->readUint16LE();
@@ -161,7 +161,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	for (int i = 0; i < 20; ++i) {
 		WalkNode node;
 		node.load(infoStream);
-		
+
 		if (i < nodeCount)
 			_nodes.push_back(node);
 	}
@@ -169,7 +169,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	int spriteSetsCount  = infoStream->readUint16LE();
 	int spriteInfoCount = infoStream->readUint16LE();
 
-	// Load in sprite sets 
+	// Load in sprite sets
 	Common::StringArray setNames;
 	for (int i = 0; i < 10; ++i) {
 		char name[64];
@@ -236,7 +236,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 
 			SpriteAsset *sprites = new SpriteAsset(_vm, setResName, flags);
 			spriteSets.push_back(sprites);
-			usageList.push_back(sprites->_usageIndex); 
+			usageList.push_back(sprites->_usageIndex);
 		}
 	}
 
@@ -248,7 +248,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		assert(asset && _depthStyle != 2);
 
 		MSprite *spr = asset->getFrame(asset->getCount() - 1);
-		bgSurface.copyFrom(spr, si._position, si._depth, &depthSurface, si._scale, 
+		bgSurface.copyFrom(spr, si._position, si._depth, &depthSurface, si._scale,
 			spr->getTransparencyIndex());
 	}
 
@@ -292,7 +292,7 @@ void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &r
 			_vm->_palette->_paletteUsage.prioritize(artHeader._palette);
 		}
 
-		_usageIndex = _vm->_palette->_paletteUsage.process(artHeader._palette, 
+		_usageIndex = _vm->_palette->_paletteUsage.process(artHeader._palette,
 			(flags & 0xF800) | 0x8000);
 		if (_usageIndex > 0) {
 			_vm->_palette->_paletteUsage.transform(artHeader._palette);

@@ -66,7 +66,7 @@ private:
 
 	void sayDang();
 public:
-	Scene101(MADSEngine *vm) : Scene1xx(vm), _sittingFl(false), _panelOpened(false), _messageNum(0), 
+	Scene101(MADSEngine *vm) : Scene1xx(vm), _sittingFl(false), _panelOpened(false), _messageNum(0),
 		_posY(0), _shieldSpriteIdx(0), _chairHotspotId(0), _oldSpecial(0) {}
 
 	virtual void setup();

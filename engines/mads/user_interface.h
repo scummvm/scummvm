@@ -51,7 +51,7 @@ public:
 	int _spritesIndex;
 	int _frameNumber;
 	Common::Point _position;
-	
+
 	// Only used for IMG_OVERPRINT
 	int _width;
 	int _height;

@@ -33,9 +33,9 @@
 
 namespace MADS {
 
-enum AnimFlag { 
+enum AnimFlag {
 	ANIMFLAG_DITHER				= 0x0001,	// Dither to 16 colors
-	ANIMFLAG_CUSTOM_FONT		= 0x0020,	// Load ccustom font 
+	ANIMFLAG_CUSTOM_FONT		= 0x0020,	// Load ccustom font
 	ANIMFLAG_LOAD_BACKGROUND	= 0x0100,	// Load background
 	ANIMFLAG_LOAD_BACKGROUND_ONLY = 0x0200	// Load background only
 };

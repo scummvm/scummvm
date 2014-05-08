@@ -71,7 +71,7 @@ Player::Player(MADSEngine *vm): _vm(vm) {
 	_frameListIndex = 0;
 	_stopWalkerIndex = 0;
 	_totalDistance = 0;
-	
+
 	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
 	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);
 	Common::fill(&_spriteSetsPresent[0], &_spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT], false);
@@ -273,7 +273,7 @@ void Player::update() {
 
 		int newDepth = 1;
 		int yp = MIN(_playerPos.y, (int16)(MADS_SCENE_HEIGHT - 1));
-		
+
 		for (int idx = 1; idx < 15; ++idx) {
 			if (scene._sceneInfo->_depthList[newDepth] >= yp)
 				newDepth = idx + 1;
@@ -299,11 +299,11 @@ void Player::update() {
 			if (slotIndex >= 0) {
 				// Check if the existing player slot has the same details, and can be re-used
 				SpriteSlot &s2 = scene._spriteSlots[slotIndex];
-				bool equal = (s2._seqIndex == slot._seqIndex) 
+				bool equal = (s2._seqIndex == slot._seqIndex)
 					&& (s2._spritesIndex == slot._spritesIndex)
-					&& (s2._frameNumber == slot._frameNumber) 
+					&& (s2._frameNumber == slot._frameNumber)
 					&& (s2._position == slot._position)
-					&& (s2._depth == slot._depth) 
+					&& (s2._depth == slot._depth)
 					&& (s2._scale == slot._scale);
 
 				if (equal)
@@ -319,7 +319,7 @@ void Player::update() {
 				scene._spriteSlots[slotIndex] = slot;
 			}
 
-			// If changing a scene, check to change the scene when the player 
+			// If changing a scene, check to change the scene when the player
 			// has moved off-screen
 			if (_walkOffScreen) {
 				SpriteAsset *asset = scene._sprites[slot._spritesIndex];
@@ -545,7 +545,7 @@ int Player::getSpriteSlot() {
 	SpriteSlots &spriteSlots = _vm->_game->_scene._spriteSlots;
 
 	for (uint idx = 0; idx < spriteSlots.size(); ++idx) {
-		if (spriteSlots[idx]._seqIndex == PLAYER_SEQ_INDEX && 
+		if (spriteSlots[idx]._seqIndex == PLAYER_SEQ_INDEX &&
 				spriteSlots[idx]._flags >= IMG_STATIC)
 			return idx;
 	}

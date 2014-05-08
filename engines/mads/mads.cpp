@@ -37,7 +37,7 @@ namespace MADS {
 
 MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _randomSource("MADS") {
-	
+
 	// Initialise fields
 	_easyMouse = true;
 	_invObjectsAnimated = true;
@@ -122,7 +122,7 @@ int MADSEngine::hypotenuse(int xv, int yv) {
 }
 
 bool MADSEngine::canLoadGameStateCurrently() {
-	return !_game->_winStatus && !_game->globals()[5] 
+	return !_game->_winStatus && !_game->globals()[5]
 		&& _dialogs->_pendingDialog == DIALOG_NONE
 		&& _events->_cursorId != CURSOR_WAIT;
 }

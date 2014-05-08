@@ -40,7 +40,7 @@ SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int
 
 	file.close();
 }
-	
+
 SpriteAsset::SpriteAsset(MADSEngine *vm, Common::SeekableReadStream *stream, int flags) :
 		_vm(vm) {
 	load(stream, flags);
@@ -152,8 +152,8 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 		frame._bounds.setHeight(spriteStream->readUint16LE());
 
 		if (curFrame == 0)
-			debugC(1, kDebugGraphics, "%i frames, x = %i, y = %i, w = %i, h = %i\n", 
-			_frameCount, frame._bounds.left, frame._bounds.top, 
+			debugC(1, kDebugGraphics, "%i frames, x = %i, y = %i, w = %i, h = %i\n",
+			_frameCount, frame._bounds.left, frame._bounds.top,
 			frame._bounds.width(), frame._bounds.height());
 
 		if (_mode == 0) {

@@ -40,7 +40,7 @@ Dialog::~Dialog() {
 
 void Dialog::save(MSurface *s) {
 	_savedSurface = new MSurface(_width, _height);
-	s->copyTo(_savedSurface, 
+	s->copyTo(_savedSurface,
 		Common::Rect(_position.x, _position.y, _position.x + _width, _position.y + _height),
 		Common::Point());
 
@@ -87,7 +87,7 @@ void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte colo
 
 	for (int yp = 0; yp < r.height(); ++yp) {
 		byte *destP = _vm->_screen.getBasePtr(r.left, r.top + yp);
-		
+
 		for (int xp = 0; xp < r.width(); ++xp) {
 			uint16 seedAdjust = currSeed;
 			currSeed += 0x181D;
@@ -103,13 +103,13 @@ void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte colo
 
 /*------------------------------------------------------------------------*/
 
-TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName, 
+TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 		const Common::Point &pos, int maxChars):
 		Dialog(vm) {
 	_vm = vm;
 	_font = _vm->_font->getFont(fontName);
 	_position = pos;
-	
+
 	_vm->_font->setColors(TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK, TEXTDIALOG_BLACK);
 
 	_innerWidth = (_font->maxWidth() + 1) * maxChars;
@@ -123,8 +123,8 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	_askXp = 0;
 
 	// Save the high end of the palette, and set up the entries for dialog display
-	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3], 
-		&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3 + 8 * 3], 
+	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3],
+		&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3 + 8 * 3],
 		&_cyclingPalette[0]);
 	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_CONTENT1, 2, 0x90, 0x80);
 	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_EDGE, 2, 0x9C, 0x70);
@@ -177,7 +177,7 @@ void TextDialog::wordWrap(const Common::String &line) {
 
 	if (!line.empty()) {
 		const char *srcP = line.c_str();
-		
+
 		do {
 			tempLine = "";
 			bool endWord = false;
@@ -274,11 +274,11 @@ void TextDialog::draw() {
 	Dialog::draw();
 
 	// Draw the text lines
-	int lineYp = _position.y + 5; 
+	int lineYp = _position.y + 5;
 	for (int lineNum = 0; lineNum <= _numLines; ++lineNum) {
 		if (_lineXp[lineNum] == -1) {
 			// Draw a line across the entire dialog
-			_vm->_screen.hLine(_position.x + 2, 
+			_vm->_screen.hLine(_position.x + 2,
 				lineYp + (_font->getHeight() + 1)  / 2,
 				_position.x + _width - 4, TEXTDIALOG_BLACK);
 		} else {
@@ -288,7 +288,7 @@ void TextDialog::draw() {
 			if (_lineXp[lineNum] & 0x40)
 				++yp;
 
-			_font->writeString(&_vm->_screen, _lines[lineNum], 
+			_font->writeString(&_vm->_screen, _lines[lineNum],
 				Common::Point(xp, yp), 1);
 
 			if (_lineXp[lineNum] & 0x80) {
@@ -314,7 +314,7 @@ void TextDialog::drawWithInput() {
 	drawContent(Common::Rect(_position.x + 2, _position.y + 2,
 		_position.x + _width - 2, _position.y + _height - 2), 0,
 		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
-	
+
 	error("TODO: drawWithInput");
 }
 
@@ -342,7 +342,7 @@ void TextDialog::show() {
 
 /*------------------------------------------------------------------------*/
 
-MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...): 
+MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...):
 		TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), maxChars) {
 	// Add in passed line list
 	va_list va;

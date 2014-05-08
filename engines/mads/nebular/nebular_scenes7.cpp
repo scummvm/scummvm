@@ -226,7 +226,7 @@ void Scene707::enter() {
 	// The original uses Scene7xx_sceneEntrySound
 	if (!_vm->_musicFlag)
 		_vm->_sound->command(2);
-	else 
+	else
 		_vm->_sound->command(25);
 }
 
@@ -337,7 +337,7 @@ void Scene711::enter() {
 	// The original was using Scene7xx_SceneEntrySound()
 	if (!_vm->_musicFlag)
 		_vm->_sound->command(2);
-	else 
+	else
 		_vm->_sound->command(25);
 }
 

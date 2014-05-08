@@ -145,7 +145,7 @@ int Font::writeString(MSurface *surface, const Common::String &msg, const Common
 
 	int x = pt.x;
 	int y = pt.y;
-	
+
 	int skipY = 0;
 	if (y < 0) {
 		skipY = -y;
@@ -173,7 +173,7 @@ int Font::writeString(MSurface *surface, const Common::String &msg, const Common
 	while (*text) {
 		char theChar = (*text++) & 0x7F;
 		int charWidth = _charWidths[(byte)theChar];
-		
+
 		if (charWidth > 0) {
 
 			if (xPos + charWidth > xEnd)
@@ -212,7 +212,7 @@ int Font::writeString(MSurface *surface, const Common::String &msg, const Common
 		}
 
 		xPos += charWidth + spaceWidth;
-		
+
 	}
 
 	return xPos;

@@ -39,7 +39,7 @@ void Globals::synchronize(Common::Serializer &s) {
 		for (int idx = 0; idx < count; ++idx) {
 			v = _data[idx];
 			s.syncAsSint16LE(v);
-		}	
+		}
 	} else {
 		_data.clear();
 		for (int idx = 0; idx < count; ++idx) {

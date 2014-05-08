@@ -123,7 +123,7 @@ public:
 	 * @param pos			Position for window top-left
 	 * @param maxChars		Horizontal width of window in characters
 	 */
-	TextDialog(MADSEngine *vm, const Common::String &fontName, const Common::Point &pos, 
+	TextDialog(MADSEngine *vm, const Common::String &fontName, const Common::Point &pos,
 		int maxChars);
 
 	/**
@@ -162,7 +162,7 @@ public:
 	void addInput();
 
 	/**
-	 * Adds a bar line to separate sections of text 
+	 * Adds a bar line to separate sections of text
 	 */
 	void addBarLine();
 

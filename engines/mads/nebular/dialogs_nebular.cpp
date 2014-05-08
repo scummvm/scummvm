@@ -46,7 +46,7 @@ bool DialogsNebular::show(int messageId, int objectId) {
 	bool commandFlag = false;
 	bool crFlag = false;
 	TextDialog *dialog = nullptr;
-	_dialogWidth = 17; 
+	_dialogWidth = 17;
 	_capitalizationMode = kUppercase;
 
 	// Loop through the lines of the returned text
@@ -157,7 +157,7 @@ bool DialogsNebular::show(int messageId, int objectId) {
 
 	if (!centerFlag)
 		dialog->incNumLines();
-	
+
 	// Show the dialog
 	_vm->_events->setCursor(CURSOR_ARROW);
 	dialog->show();
@@ -218,7 +218,7 @@ bool DialogsNebular::textNoun(Common::String &dialogText, int nounNum,
 bool DialogsNebular::commandCheck(const char *idStr, Common::String &valStr,
 		const Common::String &command) {
 	uint idLen = strlen(idStr);
-	
+
 	valStr = (command.size() <= idLen) ? "" : Common::String(command.c_str() + idLen);
 
 	// Check whether the command starts with the given Id
@@ -334,8 +334,8 @@ bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 
 /*------------------------------------------------------------------------*/
 
-PictureDialog::PictureDialog(MADSEngine *vm, const Common::Point &pos, 
-		int maxChars, int objectId) : 
+PictureDialog::PictureDialog(MADSEngine *vm, const Common::Point &pos,
+		int maxChars, int objectId) :
 		TextDialog(vm, FONT_INTERFACE, pos, maxChars), _objectId(objectId) {
 	Scene &scene = _vm->_game->_scene;
 	Palette &palette = *_vm->_palette;
@@ -406,7 +406,7 @@ ScreenDialog::DialogLine::DialogLine(const Common::String &s) {
 
 /*------------------------------------------------------------------------*/
 
-ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm), 
+ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
 		_savedSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT) {
 	Game &game = *_vm->_game;
 	Scene &scene = game._scene;
@@ -466,7 +466,7 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
 		MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 157));
 	*/
 
-	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? 
+	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ?
 		kCenterVertTransition : kTransitionFadeIn;
 	game._trigger = 0;
 	_vm->_events->setCursor(CURSOR_ARROW);
