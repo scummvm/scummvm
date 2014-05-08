@@ -83,6 +83,7 @@ public:
 class Sprite {
 protected:
 	SprExt *_ext;
+	CGE2Engine *_vm;
 public:
 	int _ref;
 	signed char _scene;
@@ -149,8 +150,6 @@ public:
 	/*virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
 	virtual void tick();*/
 	void sync(Common::Serializer &s);
-private:
-	CGE2Engine *_vm;
 };
 
 class Queue {

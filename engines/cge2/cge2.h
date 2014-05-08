@@ -42,11 +42,16 @@ class MusicPlayer;
 class Fx;
 class Sound;
 class Text;
+struct HeroTab;
 
 #define kScrWidth      320
 #define kScrHeight     240
 #define kMaxFile       128
 #define kPathMax       128
+#define kDimMax          8
+#define kWayMax         10
+#define kPocketMax       4
+#define kCaveMax       100
 
 class CGE2Engine : public Engine {
 public:
@@ -75,6 +80,7 @@ public:
 	bool _music;
 	int _startupMode;
 	int _now;
+	bool _sex;
 
 	ResourceManager *_resman;
 	Vga *_vga;
@@ -83,6 +89,7 @@ public:
 	Fx *_fx;
 	Sound *_sound;
 	Text *_text;
+	HeroTab *_heroTab[2];
 private:
 	void init();
 	void deinit();

@@ -60,8 +60,8 @@ public:
 };
 
 class V2D : public Common::Point {
-	double trunc(double d) { return (d > 0) ? floor(d) : ceil(d); }
-	double round(double number) { return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5); }
+	static double trunc(double d) { return (d > 0) ? floor(d) : ceil(d); }
+	static double round(double number) { return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5); }
 public:
 	V2D& operator = (const V3D& p3) {
 		double m = Eye._z / (p3._z - Eye._z);

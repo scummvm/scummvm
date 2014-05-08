@@ -8,7 +8,8 @@ MODULE_OBJS = \
 	bitmap.o \
 	sound.o \
 	cge2_main.o \
-	text.o
+	text.o \
+	hero.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CGE2), DYNAMIC_PLUGIN)
