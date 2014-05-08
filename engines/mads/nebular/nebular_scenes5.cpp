@@ -729,7 +729,7 @@ void Scene504::step() {
 		}
 	}
 
-	if ((_globals[kTimebombTimer] >= 10800) && (_globals[kTimebombStatus] == 1) && (_game._difficulty != 3)) {
+	if ((_globals[kTimebombTimer] >= 10800) && (_globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) && (_game._difficulty != 3)) {
 		_globals[kTimebombStatus] = TIMEBOMB_DEAD;
 		_globals[kTimebombTimer] = 0;
 		_globals[kCheckDaemonTimebomb] = false;
@@ -924,7 +924,7 @@ void Scene505::step() {
 					_selectedId = 8;
 			} else {
 				this_button = 0x2DE;
-				if ((_globals[kTimebombStatus] == 1) && (_carLocations[_selectedId] == 501))
+				if ((_globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) && (_carLocations[_selectedId] == 501))
 					_vm->_dialogs->show(431);
 				else if (_selectedId != _homeSelectedId) {
 					_nextButtonId = 0;
