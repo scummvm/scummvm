@@ -45,16 +45,16 @@ struct Dac {
 // From CGETYPE.H:
 class V3D {
 public:
-	double X, Y, Z;
+	double _x, _y, _z;
 	V3D(void) { }
-	V3D(double x, double y, double z = 0) : X(x), Y(y), Z(z) { }
-	V3D(const V3D &p) : X(p.X), Y(p.Y), Z(p.Z) { }
-	V3D operator + (const V3D& p) const { return V3D(X + p.X, Y + p.Y, Z + p.Z); }
-	V3D operator - (const V3D& p) const { return V3D(X - p.X, Y - p.Y, Z - p.Z); }
-	V3D operator * (long n) const { return V3D(X * n, Y * n, Z * n); }
-	V3D operator / (long n) const { return V3D(X / n, Y / n, Z / n); }
-	bool operator == (V3D& p) const { return X == p.X && Y == p.Y && Z == p.Z; }
-	bool operator != (V3D& p) const { return X != p.X || Y != p.Y || Z != p.Z; }
+	V3D(double x, double y, double z = 0) : _x(x), _y(y), _z(z) { }
+	V3D(const V3D &p) : _x(p._x), _y(p._y), _z(p._z) { }
+	V3D operator + (const V3D& p) const { return V3D(_x + p._x, _y + p._y, _z + p._z); }
+	V3D operator - (const V3D& p) const { return V3D(_x - p._x, _y - p._y, _z - p._z); }
+	V3D operator * (long n) const { return V3D(_x * n, _y * n, _z * n); }
+	V3D operator / (long n) const { return V3D(_x / n, _y / n, _z / n); }
+	bool operator == (V3D& p) const { return _x == p._x && _y == p._y && _z == p._z; }
+	bool operator != (V3D& p) const { return _x != p._x || _y != p._y || _z != p._z; }
 	V3D& operator += (const V3D& x) { return *this = *this + x; }
 	V3D& operator -= (const V3D& x) { return *this = *this - x; }
 };
@@ -64,25 +64,25 @@ class V2D : public Common::Point {
 	double round(double number) { return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5); }
 public:
 	V2D& operator = (const V3D& p3) {
-		double m = Eye.Z / (p3.Z - Eye.Z);
-		x = round((Eye.X + (Eye.X - p3.X) * m));
-		y = round((Eye.Y + (Eye.Y - p3.Y) * m));
+		double m = Eye._z / (p3._z - Eye._z);
+		x = round((Eye._x + (Eye._x - p3._x) * m));
+		y = round((Eye._y + (Eye._y - p3._y) * m));
 		return *this;
 	}
 	V2D(void) { }
 	V2D(const V3D& p3) { *this = p3; }
 	V2D(int x, int y) : Common::Point(x, y) { }
 	static V3D Eye;
-	static void SetEye(const V3D &e) { Eye = e; }
-	static void SetEye(const V2D& e2, int z = -SCR_WID_) {
-		Eye.X = e2.x; Eye.Y = e2.y; Eye.Z = z;
+	static void setEye(const V3D &e) { Eye = e; }
+	static void setEye(const V2D& e2, int z = -SCR_WID_) {
+		Eye._x = e2.x; Eye._y = e2.y; Eye._z = z;
 	}
-	static void SetEye(const char *s) {
+	static void setEye(const char *s) {
 		char *tempStr;
 		strcpy(tempStr, s);
-		Eye.X = atoi(EncryptedStream::token(tempStr));
-		Eye.Y = atoi(EncryptedStream::token(tempStr));
-		Eye.Z = atoi(EncryptedStream::token(tempStr));
+		Eye._x = atoi(EncryptedStream::token(tempStr));
+		Eye._y = atoi(EncryptedStream::token(tempStr));
+		Eye._z = atoi(EncryptedStream::token(tempStr));
 	}
 	bool operator <  (const V2D& p) const { return (x <  p.x) && (y <  p.y); }
 	bool operator <= (const V2D& p) const { return (x <= p.x) && (y <= p.y); }
@@ -90,13 +90,18 @@ public:
 	bool operator >= (const V2D& p) const { return (x >= p.x) && (y >= p.y); }
 	V2D operator + (const V2D& p) const { return V2D(x + p.x, y + p.y); }
 	V2D operator - (const V2D& p) const { return V2D(x - p.x, y - p.y); }
-	uint16 Area(void) { return x * y; }
-	bool Limited(const V2D& p) {
+	uint16 area(void) { return x * y; }
+	bool limited(const V2D& p) {
 		return (uint16(x) < uint16(p.x)) && (uint16(y) < uint16(p.y));
 	}
-	V2D Scale(int z) {
-		double m = Eye.Z / (Eye.Z - z);
+	V2D scale(int z) {
+		double m = Eye._z / (Eye._z - z);
 		return V2D(trunc(m * x), trunc(m * y));
+	}
+	static V3D screenToGround(V2D pos) {
+		double z = V2D::Eye._z + (V2D::Eye._y*V2D::Eye._z) / (double(pos.y) - V2D::Eye._y);
+		double x = V2D::Eye._x - ((double(pos.x) - V2D::Eye._x) * (z - V2D::Eye._z)) / V2D::Eye._z;
+		return V3D(round(x), 0, round(z));
 	}
 };
 
