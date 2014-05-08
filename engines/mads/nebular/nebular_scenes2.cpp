@@ -3169,8 +3169,8 @@ void Scene209::preActions() {
 		_game._player._walkOffScreenSceneId = 208;
 
 	if (_globals[kMonkeyStatus] == 1) {
-		if ((_action.isAction(NOUN_SHOOT) || _action.isAction(NOUN_HOSE_DOWN)) && _action.isAction(NOUN_MONKEY)
-			&& _action.isAction(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
+		if ((_action.isAction(NOUN_SHOOT) || _action.isAction(NOUN_HOSE_DOWN)) && _action.isTarget(NOUN_MONKEY)
+			&& _action.isObject(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			_game._player._prepareWalkPos = Common::Point(111, 129);
 			_game._player._prepareWalkFacing = FACING_NORTHEAST;
 			_game._player._needToWalk = true;
