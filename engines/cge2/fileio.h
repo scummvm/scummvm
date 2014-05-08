@@ -45,6 +45,13 @@ class CGE2Engine;
 #define kDatName      "VOL.DAT"
 #define kCryptSeed    0xA5
 
+enum ID {
+	kIdNear, kIdMTake, kIdFTake, kIdPhase, kIdSeq,
+	kIdName, kIdType, kIdFront, kIdEast,
+	kIdPortable, kIdTransparent,
+	kIdNone
+};
+
 struct BtKeypack {
 	char _key[kBtKeySize];
 	uint32 _pos;
@@ -119,6 +126,7 @@ public:
 	Common::String readLine();
 	static int number(char *s);
 	static char *token(char *s);
+	static ID ident(const char *s);
 	int getLineCount() { return _lineCount; }
 };
 

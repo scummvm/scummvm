@@ -245,6 +245,17 @@ char *EncryptedStream::token(char *s) {
 	return strtok(s, " =\t,;/()");
 }
 
+ID EncryptedStream::ident(const char *s) {
+	if (s) {
+		for (const char **e = kIdTab; *e; e++) {
+			if (scumm_stricmp(s, *e) == 0) {
+				return ID(e - kIdTab);
+			}
+		}
+	}
+	return kIdNone;
+}
+
 int32 EncryptedStream::size() {
 	return _readStream->size();
 }
@@ -261,6 +272,7 @@ const char *EncryptedStream::kIdTab[] = {
 	"[near]", "[mtake]", "[ftake]", "[phase]", "[seq]",
 	"Name", "Type", "Front", "East",
 	"Portable", "Transparent",
-	NULL };
+	NULL
+};
 
 } // End of namespace CGE2
