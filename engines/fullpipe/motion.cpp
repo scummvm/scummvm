@@ -879,6 +879,61 @@ void MovGraph::calcBbox(Common::Rect *rect, MovGraphLink *grlink, MovArr *movarr
 	warning("STUB: MovGraph::calcBbox()");
 }
 
+bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
+#if 0
+	int staticsId;
+
+	v7 = idx << 6;
+
+	if (_items[idx]->ani->_statics) {
+		staticsId = _items[idx]->ani->_statics->_staticsId;
+	} else {
+		if (!_items[idx]->ani->_movement->_staticsObj2)
+			return 0;
+
+		staticsId = _items[idx]->ani->_movement->_staticsObj2->_staticsId;
+	}
+
+	v19 = -1;
+	v11 = 100;
+	v12 = genMovArr(x, y, &arrSize, 0, 1);
+	movarr = v12;
+	if ( !v12 )
+		return findClosestLink(idx, (POINT *)&x, arr);
+	unusedArg = 0;
+	if ( arrSize <= 0 ) {
+	LABEL_16:
+		CObjectFree(v12);
+		return 0;
+	}
+	v14 = &v12->_link;
+	do {
+		v15 = _mgm->refreshOffsets(_items[idx]->ani->_id, staticsId, v12->_link->dwordArray2[_field_44]->sceneId);
+		if ( v15 < v11 ) {
+			v11 = v15;
+			v19 = unusedArg;
+		}
+		v16 = _mgm->refreshOffsets(_items[idx]->ani->_id, staticsId, v12->_link->dwordArray2[_field_444]->scene);
+		if ( v16 < v11 ) {
+			v11 = v16;
+			v19 = unusedArg;
+		}
+		v14 += 8;
+		++unusedArg;
+	} while ( unusedArg < arrSize );
+	if ( v19 == -1 ) {
+		v12 = movarr;
+		goto LABEL_16;
+	}
+	v17 = movarr;
+	memcpy(arr, &movarr[v19], 0x20u);
+	CObjectFree(v17);
+#endif
+
+	warning("STUB: MovGraph::calcChunk()");
+	return true;
+}
+
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 	for (uint i = 0; i < _items2.size(); i++)
 		if (_items2[i]->_objectId == objectId)

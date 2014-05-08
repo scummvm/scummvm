@@ -366,6 +366,7 @@ public:
 	void shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
 	Common::Array<Common::Rect *> *getBboxes(MovArr *movarr1, MovArr *movarr2, int *listCount);
 	void calcBbox(Common::Rect *rect, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
+	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);
 };
 
 class Movement;
