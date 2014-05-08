@@ -54,7 +54,6 @@ void Scene7xx::setPlayerSpritesPrefix() {
 	else
 		_game._player._spritesPrefix = "ROX";
 
-
 	_game._player._scalingVelocity = true;
 
 	if (oldName != _game._player._spritesPrefix)

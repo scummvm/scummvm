@@ -67,7 +67,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene502: public SceneTeleporter {
@@ -77,9 +76,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene503: public Scene5xx{
@@ -91,10 +88,7 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene504: public Scene5xx{
@@ -110,7 +104,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene505: public Scene5xx{
@@ -129,9 +122,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene506: public Scene5xx{
@@ -157,9 +148,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene507: public Scene5xx{
@@ -171,10 +160,7 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene508: public Scene5xx{
@@ -188,10 +174,8 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 } // End of namespace Nebular

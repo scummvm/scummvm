@@ -114,10 +114,7 @@ public:
 
 	virtual void setup() {}
 	virtual void enter() {}
-	virtual void step() {}
-	virtual void preActions() {}
 	virtual void actions() {}
-	virtual void synchronize(Common::Serializer &s) {}
 };
 
 } // End of namespace Phantom
