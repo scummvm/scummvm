@@ -499,7 +499,8 @@ void UserInterface::updateInventoryScroller() {
 
 	if ((
 		(screenObjects._category == CAT_INV_SCROLLER) ||
-		(screenObjects._category != CAT_INV_SCROLLER && _scrollbarOldActive == SCROLLBAR_ELEVATOR)
+		// FIXME: This scrolls the inventory up when selecting verbs or attempting to combine items
+		false/*(screenObjects._category != CAT_INV_SCROLLER && _scrollbarOldActive == SCROLLBAR_ELEVATOR)*/
 	) && (_vm->_events->_mouseStatusCopy || _vm->_easyMouse)) {
 		if ((_vm->_events->_mouseClicked || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy)) 
 				&& (screenObjects._category == CAT_INV_SCROLLER))
