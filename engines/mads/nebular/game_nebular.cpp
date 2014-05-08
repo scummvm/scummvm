@@ -358,10 +358,10 @@ void GameNebular::doObjectAction() {
 		dialogs.show(476);
 	} else if (action.isAction(114, 937)) {
 		dialogs.show(477);
-	} else if (action.isAction(VERB_PUT, 276, NOUN_PLANT_STALK) && _objects.isInRoom(OBJ_POISON_DARTS)
-			&& _objects.isInRoom(OBJ_PLANT_STALK)) {
+	} else if (action.isAction(VERB_PUT, 276, NOUN_PLANT_STALK) && _objects.isInInventory(OBJ_POISON_DARTS)
+			&& _objects.isInInventory(OBJ_PLANT_STALK)) {
 		_objects.addToInventory(OBJ_BLOWGUN);
-		_objects.setRoom(OBJ_PLANT_STALK, PLAYER_INVENTORY);
+		_objects.setRoom(OBJ_PLANT_STALK, NOWHERE);
 		_globals[kBlowgunStatus] = 0;
 		dialogs.showItem(OBJ_BLOWGUN, 809);
 	} else if (action.isAction(VERB_PUT, 276, NOUN_BLOWGUN) && _objects.isInInventory(OBJ_POISON_DARTS)
