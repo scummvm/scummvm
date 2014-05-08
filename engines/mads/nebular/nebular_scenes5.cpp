@@ -1350,5 +1350,116 @@ void Scene506::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene507::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x106);
+	_scene->addActiveVocab(0xD);
+}
+
+void Scene507::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', -1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRD_3");
+
+	if ((_game._difficulty != DIFFICULTY_EASY) && (_game._objects[OBJ_PENLIGHT]._roomNumber == _scene->_currentSceneId)) {
+		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
+		_penlightHotspotId = _scene->_dynamicHotspots.add(0x106, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(_penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
+	}
+
+	if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(121, 147);
+		_game._player._facing = FACING_NORTH;
+	}
+
+	sceneEntrySound();
+}
+void Scene507::actions() {
+	if (_action.isAction(0x18B, 0x378))
+		_scene->_nextSceneId = 506;
+	else if (_action.isAction(VERB_TAKE, 0x106)) {
+		if (_game._trigger || !_game._objects.isInInventory(OBJ_PENLIGHT)) {
+			switch (_game._trigger) {
+			case 0:
+				_game._player._stepEnabled = false;
+				_game._player._visible = false;
+				_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
+				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
+				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				break;
+
+			case 1:
+				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_scene->_dynamicHotspots.remove(_penlightHotspotId);
+				_vm->_sound->command(27);
+				_game._objects.addToInventory(OBJ_PENLIGHT);
+				_vm->_dialogs->showItem(OBJ_PENLIGHT, 50730);
+				break;
+
+			case 2:
+				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
+				_game._player._visible = true;
+				_game._player._stepEnabled = true;
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else if (_action._lookFlag)
+		_vm->_dialogs->show(50722);
+	else if (_action.isAction(VERB_LOOK, 0x299))
+		_vm->_dialogs->show(50710);
+	else if (_action.isAction(VERB_TAKE, 0x299))
+		_vm->_dialogs->show(50711);
+	else if (_action.isAction(VERB_LOOK, 0x376))
+		_vm->_dialogs->show(50712);
+	else if (_action.isAction(VERB_TAKE, 0x376))
+		_vm->_dialogs->show(50713);
+	else if (_action.isAction(VERB_LOOK, 0x375))
+		_vm->_dialogs->show(50714);
+	else if (_action.isAction(VERB_LOOK, 0x374))
+		_vm->_dialogs->show(50715);
+	else if (_action.isAction(VERB_LOOK, 0x244)) {
+		if (_scene->_customDest.x < 100)
+			_vm->_dialogs->show(50726);
+		else
+			_vm->_dialogs->show(50716);
+	} else if (_action.isAction(VERB_LOOK, 0x2A7))
+		_vm->_dialogs->show(50717);
+	else if (_action.isAction(VERB_LOOK, 0x2A6))
+		_vm->_dialogs->show(50718);
+	else if (_action.isAction(VERB_LOOK, 0x2A0))
+		_vm->_dialogs->show(50719);
+	else if (_action.isAction(VERB_LOOK, 0x377))
+		_vm->_dialogs->show(50720);
+	else if (_action.isAction(VERB_LOOK, 0xFE))
+		_vm->_dialogs->show(50721);
+	else if (_action.isAction(VERB_OPEN, 0x377))
+		_vm->_dialogs->show(50723);
+	else if (_action.isAction(VERB_LOOK, 0x28E))
+		_vm->_dialogs->show(50724);
+	else if (_action.isAction(VERB_LOOK, 0x197))
+		_vm->_dialogs->show(50725);
+	else if (_action.isAction(VERB_LOOK, 0x29F)) {
+		if (_game._objects.isInRoom(OBJ_PENLIGHT))
+			_vm->_dialogs->show(50728);
+		else
+			_vm->_dialogs->show(50727);
+	} else if (_action.isAction(VERB_LOOK, 0x106) && !_game._objects.isInInventory(OBJ_PENLIGHT)) {
+		if (_game._objects.isInRoom(OBJ_PENLIGHT))
+			_vm->_dialogs->show(50729);
+	} else if (_action.isAction(VERB_LOOK, 0x484))
+		_vm->_dialogs->show(50731);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS

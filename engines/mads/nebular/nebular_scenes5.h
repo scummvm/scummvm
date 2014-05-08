@@ -162,6 +162,21 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene507: public Scene5xx{
+private:
+	int _penlightHotspotId;
+
+public:
+	Scene507(MADSEngine *vm) : Scene5xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step() {};
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 
