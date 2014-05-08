@@ -31,21 +31,34 @@
 #include "cge2/vga13h.h"
 #include "cge2/text.h"
 #include "cge2/snail.h"
+#include "cge2/hero.h"
 
 namespace CGE2 {
 
 void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
-	char pat[kLineMax];
 	int shpcnt = 0;
 	int seqcnt = 0;
 	int cnt[kActions];
-	int section = idPHASE;
+	for (int i = 0; i < kActions; i++)
+		cnt[i] = 0;
+	int section = kIdPhase;
 	bool frnt = true;
 	bool east = false;
 	bool port = false;
 	bool tran = false;
+	Hero *h;
+
+	char tmpStr[kLineMax];
+	mergeExt(tmpStr, fname, kSprExt);
+
+	if (_resman->exist(tmpStr)) { // sprite description file exist
+		EncryptedStream sprf(this, tmpStr);
+		if (sprf.err())
+			error("Bad SPR [%s]", tmpStr);
+
+	}
+
 	warning("STUB: CGE2Engine::loadSprite()");
-	
 }
 
 void CGE2Engine::loadScript(const char *fname) {
@@ -60,10 +73,7 @@ void CGE2Engine::loadScript(const char *fname) {
 	char tmpStr[kLineMax + 1];
 	Common::String line;
 
-	int lineNum = 0;
 	for (line = scrf.readLine(); !scrf.eos(); line = scrf.readLine()) {
-		lineNum++;
-
 		char *p;
 
 		lcnt++;
@@ -122,7 +132,7 @@ void CGE2Engine::loadScript(const char *fname) {
 	}
 
 	if (!ok)
-		error("Bad INI line %d [%s]", lineNum, fname); // Counting starts from 0!
+		error("Bad INI line %d [%s]", scrf.getLineCount(), fname);
 }
 
 void CGE2Engine::movie(const char *ext) {
