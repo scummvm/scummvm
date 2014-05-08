@@ -218,7 +218,7 @@ void MADSAction::set() {
 			} else if (_secondObject < (int)scene._hotspots.size()) {
 				_action._indirectObjectId = scene._hotspots[_secondObject]._vocabId;
 			} else {
-				_action._indirectObjectId = scene._hotspots[_secondObject - scene._hotspots.size()]._vocabId;
+				_action._indirectObjectId = scene._dynamicHotspots[_secondObject - scene._hotspots.size()]._descId;
 			}
 		}
 
@@ -230,10 +230,10 @@ void MADSAction::set() {
 					if ((_secondObjectSource == 2) || (_secondObjectSource == 5)) {
 						InventoryObject &invObject = _vm->_game->_objects.getItem(_hotspotId);
 						articleNum = invObject._article;
-					} else if (_secondObject < (int)scene._hotspots.size()) {
+					} else if (_hotspotId < (int)scene._hotspots.size()) {
 						articleNum = scene._hotspots[_hotspotId]._articleNumber;
 					} else {
-						articleNum = scene._hotspots[_hotspotId - scene._hotspots.size()]._articleNumber;
+						articleNum = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._articleNumber;
 					}
 
 					_statusText += kArticleList[articleNum];
