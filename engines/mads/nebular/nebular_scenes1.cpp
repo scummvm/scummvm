@@ -191,7 +191,7 @@ void Scene101::enter() {
 
 	_game.loadQuoteSet(0x31, 0x32, 0x39, 0x36, 0x37, 0x38, 0);
 
-	if (_globals[10]) {
+	if (_globals[kNeedToStandUp]) {
 		_scene->loadAnimation(Resources::formatName(101, 'S', -1, EXT_AA, ""), 71);
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
@@ -222,7 +222,7 @@ void Scene101::step() {
 		break;
 
 	case 71:
-		_globals[10] = false;
+		_globals[kNeedToStandUp] = false;
 		_game._player._visible = true;
 		_game._player._stepEnabled = true;
 		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;

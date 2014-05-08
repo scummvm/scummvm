@@ -1640,7 +1640,7 @@ void Scene208::updateTrap() {
 		return;
 	}
 
-	switch (_globals[35]) {
+	switch (_globals[kLeavesStatus]) {
 	case 0: {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 15);

@@ -44,7 +44,7 @@ GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
 ProtectionResult GameNebular::checkCopyProtection() {
 	/*
 	// DEBUG: Flag copy protection failure
-	_globals[5] = -1;
+	_globals[kCopyProtectFailed] = -1;
 	
 	if (!ConfMan.getBool("copy_protection"))
 		return true;
@@ -271,7 +271,7 @@ void GameNebular::setSectionHandler() {
 }
 
 void GameNebular::checkShowDialog() {
-	if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globals[5]) {
+	if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globals[kCopyProtectFailed]) {
 		_player.releasePlayerSprites();
 		_vm->_dialogs->showDialog();
 		_vm->_dialogs->_pendingDialog = DIALOG_NONE;
