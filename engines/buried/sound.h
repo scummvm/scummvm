@@ -78,9 +78,14 @@ public:
 	bool startFootsteps(int footstepsID);
 	bool stopFootsteps();
 
-	// PAUSE FUNCTIONS
+	// Pause functions
+	// stop()/restart() do as they say on the tin and aren't true pause functions.
+	// This is what the original does for pausing, and it needs to be done this way.
+	// pause() is used for implementing pauseEngineIntern(). Since stop()/restart()
+	// are not re-entrant, they're not suitable for that purpose.
 	bool stop();
 	bool restart();
+	void pause(bool shouldPause);
 
 	// TIMER CALLBACK FUNCTION
 	void timerCallback();
@@ -113,6 +118,7 @@ private:
 		bool start();
 		bool isPlaying() const;
 		bool stop();
+		void pause(bool shouldPause);
 
 	protected:
 		Audio::RewindableAudioStream *_soundData; // Stream to the data
