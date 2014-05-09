@@ -245,15 +245,23 @@ char *EncryptedStream::token(char *s) {
 	return strtok(s, " =\t,;/()");
 }
 
-ID EncryptedStream::ident(const char *s) {
-	if (s) {
-		for (const char **e = kIdTab; *e; e++) {
-			if (scumm_stricmp(s, *e) == 0) {
-				return ID(e - kIdTab);
+int EncryptedStream::takeEnum(const char **tab, const char *text) {
+	if (text) {
+		for (const char **e = tab; *e; e++) {
+			if (scumm_stricmp(text, *e) == 0) {
+				return e - tab;
 			}
 		}
 	}
-	return kIdNone;
+	return -1;
+}
+
+ID EncryptedStream::ident(const char *s) {
+	return ID(takeEnum(kIdTab, s));
+}
+
+bool EncryptedStream::testBool(char *s) {
+	return number(s) != 0;
 }
 
 int32 EncryptedStream::size() {

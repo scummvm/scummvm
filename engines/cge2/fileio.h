@@ -49,7 +49,7 @@ enum ID {
 	kIdNear, kIdMTake, kIdFTake, kIdPhase, kIdSeq,
 	kIdName, kIdType, kIdFront, kIdEast,
 	kIdPortable, kIdTransparent,
-	kIdNone
+	kIdNone = -1
 };
 
 struct BtKeypack {
@@ -126,7 +126,9 @@ public:
 	Common::String readLine();
 	static int number(char *s);
 	static char *token(char *s);
+	static int takeEnum(const char **tab, const char *text);
 	static ID ident(const char *s);
+	static bool testBool(char *s);
 	int getLineCount() { return _lineCount; }
 };
 

@@ -29,6 +29,10 @@
 
 namespace CGE2 {
 
+Hero::Hero(CGE2Engine *vm) : Sprite(vm) {
+	warning("STUB: Hero::Hero()");
+}
+
 Sprite *Hero::expand(void) {
 	warning("STUB: Hero::expand()");
 	return this;
@@ -88,11 +92,6 @@ void Hero::operator ++ (void) {
 
 void Hero::operator -- (void) {
 	warning("STUB: Hero::operator --()");
-}
-
-bool Sprite::works(Sprite *spr) {
-	warning("STUB: Hero::works()");
-	return false;
 }
 
 uint32 Hero::len(V2D v) {

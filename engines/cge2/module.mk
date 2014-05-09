@@ -9,7 +9,8 @@ MODULE_OBJS = \
 	sound.o \
 	cge2_main.o \
 	text.o \
-	hero.o
+	hero.o \
+	snail.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CGE2), DYNAMIC_PLUGIN)

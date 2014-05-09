@@ -33,7 +33,7 @@
 #include "graphics/surface.h"
 #include "cge2/general.h"
 #include "cge2/bitmap.h"
-//#include "cge/snail.h"
+#include "cge2/snail.h"
 #include "cge2/cge2.h"
 
 namespace CGE2 {
@@ -89,20 +89,20 @@ public:
 	signed char _scene;
 	struct Flags {
 		uint16 _hide : 1;       // general visibility switch
-		uint16 _near : 1;       // Near action lock
 		uint16 _drag : 1;       // sprite is moveable
 		uint16 _hold : 1;       // sprite is held with mouse
-		uint16 _dummy : 1;       // intrrupt driven animation
+		uint16 _trim : 1;       // Trim flag
 		uint16 _slav : 1;       // slave object
-		uint16 _syst : 1;       // system object
 		uint16 _kill : 1;       // dispose memory after remove
 		uint16 _xlat : 1;       // 2nd way display: xlat table
 		uint16 _port : 1;       // portable
 		uint16 _kept : 1;       // kept in pocket
+		uint16 _frnt : 1;       // stay in front of sprite
 		uint16 _east : 1;       // talk to east (in opposite to west)
+		uint16 _near : 1;       // Near action lock
 		uint16 _shad : 1;       // shadow
 		uint16 _back : 1;       // 'send to background' request
-		uint16 _bDel : 1;       // delete bitmaps in ~SPRITE
+		uint16 _zmov : 1;       // sprite needs Z-update in queue
 		uint16 _tran : 1;       // transparent (untouchable)
 	} _flags;
 	int _x;
@@ -118,6 +118,7 @@ public:
 	char _file[kMaxFile];
 	Sprite *_prev;
 	Sprite *_next;
+	struct { byte _ptr, _cnt; } _actionCtrl[kActions];
 
 	bool works(Sprite *spr);
 	bool seqTest(int n);
@@ -125,6 +126,7 @@ public:
 		return _ext != NULL;
 	}
 
+	Sprite(CGE2Engine *vm);
 	Sprite(CGE2Engine *vm, BitmapPtr *shp);
 	virtual ~Sprite();
 	BitmapPtr shp();
@@ -136,7 +138,11 @@ public:
 	inline char *name() {
 		return (_ext) ? _ext->_name : NULL;
 	}
-	void gotoxy(int x, int y);
+	void gotoxyz(int x, int y, int z = 0);
+	void gotoxyz(void);
+	void gotoxyz(V2D pos);
+	void gotoxyz_(V2D pos);
+	void gotoxyz(V3D pos);
 	void center();
 	void show();
 	void hide();

@@ -58,7 +58,7 @@ public:
 	int _funDel0, _funDel;
 	int _maxDist;
 	bool _ignoreMap;
-	Hero(void);
+	Hero(CGE2Engine *vm);
 	void tick(void);
 	Sprite *expand(void);
 	Sprite *contract(void) { return this; }

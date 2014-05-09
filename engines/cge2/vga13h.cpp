@@ -56,6 +56,10 @@ Seq *getConstantSeq(bool seqFlag) {
 	return seq;
 }
 
+Sprite::Sprite(CGE2Engine *vm) {
+	warning("STUB: Sprite::Sprite()");
+}
+
 Sprite::Sprite(CGE2Engine *vm, BitmapPtr *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
@@ -74,10 +78,7 @@ Sprite::Sprite(CGE2Engine *vm, BitmapPtr *shpP)
 }
 
 Sprite::~Sprite() {
-	if (_vm->_sprite == this)
-		_vm->_sprite = NULL;
-
-	contract();
+	warning("STUB: Sprite::~Sprite()");
 }
 
 BitmapPtr Sprite::shp() {
@@ -110,7 +111,10 @@ BitmapPtr *Sprite::setShapeList(BitmapPtr *shpP) {
 		}
 		expand();
 		_ext->_shpList = shpP;
-		_flags._bDel = true;
+
+		//_flags._bDel = true;
+		warning("STUB: Sprite::sync() - Flags changed compared to CGE1's Sprite type.");
+
 		if (!_ext->_seq)
 			setSeq(getConstantSeq(_shpCnt < 2));
 	}
@@ -371,7 +375,7 @@ void Sprite::step(int nr) {
 			_seqPtr = _ext->_seq[_seqPtr]._next;
 		seq = _ext->_seq + _seqPtr;
 		if (seq->_dly >= 0) {
-			gotoxy(_x + (seq->_dx), _y + (seq->_dy));
+			gotoxyz(_x + (seq->_dx), _y + (seq->_dy));
 			_time = seq->_dly;
 		}
 	}
@@ -404,31 +408,28 @@ void Sprite::killXlat() {
 	_flags._xlat = false;
 }
 
-void Sprite::gotoxy(int x, int y) {
-	int xo = _x, yo = _y;
-	if (_x < kScrWidth) {
-		if (x < 0)
-			x = 0;
-		if (x + _w > kScrWidth)
-			x = (kScrWidth - _w);
-		_x = x;
-	}
-	if (_h < kScrHeight) {
-		if (y < 0)
-			y = 0;
-		if (y + _h > kScrHeight)
-			y = (kScrHeight - _h);
-		_y = y;
-	}
-	if (_next)
-		if (_next->_flags._slav)
-			_next->gotoxy(_next->_x - xo + _x, _next->_y - yo + _y);
-	if (_flags._shad)
-		_prev->gotoxy(_prev->_x - xo + _x, _prev->_y - yo + _y);
+void Sprite::gotoxyz(int x, int y, int z) {
+	warning("STUB: Sprite::gotoxyz()");
+}
+
+void Sprite::gotoxyz(void) {
+	warning("STUB: Sprite::gotoxyz()");
+}
+
+void Sprite::gotoxyz(V2D pos) {
+	warning("STUB: Sprite::gotoxyz()");
+}
+
+void Sprite::gotoxyz_(V2D pos) {
+	warning("STUB: Sprite::gotoxyz()");
+}
+
+void Sprite::gotoxyz(V3D pos) {
+	warning("STUB: Sprite::gotoxyz()");
 }
 
 void Sprite::center() {
-	gotoxy((kScrWidth - _w) / 2, (kScrHeight - _h) / 2);
+	gotoxyz((kScrWidth - _w) / 2, (kScrHeight - _h) / 2);
 }
 
 void Sprite::show() {
@@ -494,9 +495,9 @@ void Sprite::sync(Common::Serializer &s) {
 		_flags._near = flags & 0x0002 ? true : false;
 		_flags._drag = flags & 0x0004 ? true : false;
 		_flags._hold = flags & 0x0008 ? true : false;
-		_flags._dummy = flags & 0x0010 ? true : false;
+		//_flags._dummy = flags & 0x0010 ? true : false;
 		_flags._slav = flags & 0x0020 ? true : false;
-		_flags._syst = flags & 0x0040 ? true : false;
+		//_flags._syst = flags & 0x0040 ? true : false;
 		_flags._kill = flags & 0x0080 ? true : false;
 		_flags._xlat = flags & 0x0100 ? true : false;
 		_flags._port = flags & 0x0200 ? true : false;
@@ -504,11 +505,11 @@ void Sprite::sync(Common::Serializer &s) {
 		_flags._east = flags & 0x0800 ? true : false;
 		_flags._shad = flags & 0x1000 ? true : false;
 		_flags._back = flags & 0x2000 ? true : false;
-		_flags._bDel = flags & 0x4000 ? true : false;
+		//_flags._bDel = flags & 0x4000 ? true : false;
 		_flags._tran = flags & 0x8000 ? true : false;
 	} else {
 		flags = (flags << 1) | _flags._tran;
-		flags = (flags << 1) | _flags._bDel;
+		//flags = (flags << 1) | _flags._bDel;
 		flags = (flags << 1) | _flags._back;
 		flags = (flags << 1) | _flags._shad;
 		flags = (flags << 1) | _flags._east;
@@ -516,15 +517,17 @@ void Sprite::sync(Common::Serializer &s) {
 		flags = (flags << 1) | _flags._port;
 		flags = (flags << 1) | _flags._xlat;
 		flags = (flags << 1) | _flags._kill;
-		flags = (flags << 1) | _flags._syst;
+		//flags = (flags << 1) | _flags._syst;
 		flags = (flags << 1) | _flags._slav;
-		flags = (flags << 1) | _flags._dummy;
+		//flags = (flags << 1) | _flags._dummy;
 		flags = (flags << 1) | _flags._hold;
 		flags = (flags << 1) | _flags._drag;
 		flags = (flags << 1) | _flags._near;
 		flags = (flags << 1) | _flags._hide;
 		s.syncAsUint16LE(flags);
 	}
+
+	warning("STUB: Sprite::sync() - Flags changed compared to CGE1's Sprite type.");
 
 	s.syncAsUint16LE(_x);
 	s.syncAsUint16LE(_y);

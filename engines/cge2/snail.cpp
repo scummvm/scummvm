@@ -25,15 +25,36 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef CGE2_MAIN_H
-#define CGE2_MAIN_H
+#include "cge2/snail.h"
+#include "cge2/fileio.h"
 
 namespace CGE2 {
 
-#define kLineMax          512
-#define kIntroExt      ".I80"
-#define kNoByte            -1
+const char *Snail::comTxt[] = {
+	"NOP", "USE", "PAUSE", "INF", "CAVE",
+	"SLAVE", "FOCUS", "SETX", "SETY", "SETZ",
+	"ADD", "SUB", "MUL", "DIV", "IF", "FLAG",
+	"FLASH", "LIGHT", "CYCLE",
+	"CLEAR", "TALK", "MOUSE",
+	"MAP", "COUNT", "MIDI",
+	"SETDLG", "MSKDLG",
+	".DUMMY.",
+	"WAIT", "HIDE", "ROOM",
+	"SAY", "SOUND", "TIME", "KILL",
+	"RSEQ", "SEQ", "SEND", "SWAP",
+	"KEEP", "GIVE",
+	"GETPOS", "GOTO", "MOVEX", "MOVEY",
+	"MOVEZ", "TRANS", "PORT",
+	"NEXT", "NNEXT", "MTNEXT", "FTNEXT",
+	"RNNEXT", "RMTNEXT", "RFTNEXT",
+	"RMNEAR", "RMMTAKE", "RMFTAKE",
+	"SETREF", "BACKPT",
+	"WALKTO", "REACH", "COVER", "UNCOVER",
+	NULL };
 
-} // End of namespace CGE2
+int Snail::com(const char *com) {
+	int i = EncryptedStream::takeEnum(comTxt, com);
+	return (i < 0) ? i : i + kSNCom0 + 1;
+}
 
-#endif // CGE2_MAIN_H
+} // End of namespace CGE2.

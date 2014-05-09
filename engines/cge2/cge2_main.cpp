@@ -35,20 +35,25 @@
 
 namespace CGE2 {
 
+void CGE2Engine::badLab(const char *fn) {
+	error("Misplaced label in %s!", fn);
+}
+
 void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 	int shpcnt = 0;
 	int seqcnt = 0;
 	int cnt[kActions];
 	for (int i = 0; i < kActions; i++)
 		cnt[i] = 0;
-	int section = kIdPhase;
+	ID section = kIdPhase;
 	bool frnt = true;
 	bool east = false;
 	bool port = false;
 	bool tran = false;
 	Hero *h;
+	ID id;
 
-	char tmpStr[kLineMax];
+	char tmpStr[kLineMax + 1];
 	mergeExt(tmpStr, fname, kSprExt);
 
 	if (_resman->exist(tmpStr)) { // sprite description file exist
@@ -56,9 +61,137 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 		if (sprf.err())
 			error("Bad SPR [%s]", tmpStr);
 
+		int label = kNoByte;
+		Common::String line;
+
+		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()){
+			int len = line.size();
+			if (len == 0 || *tmpStr == ';')
+				continue;
+			
+			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
+			
+			char *p;
+			p = EncryptedStream::token(tmpStr);
+			if (*p == '@') {
+				if (label != kNoByte)
+					badLab(fname);
+				label = atoi(p + 1);
+				continue;
+			}
+
+			id = EncryptedStream::ident(p);
+			switch (id) {
+			case kIdName: // will be taken in Expand routine
+				if (label != kNoByte)
+					badLab(fname);
+				break;
+			case kIdType:
+				if (label != kNoByte)
+					badLab(fname);
+				break;
+			case kIdNear:
+			case kIdMTake:
+			case kIdFTake:
+			case kIdPhase:
+			case kIdSeq:
+				if (label != kNoByte)
+					badLab(fname);
+				section = id;
+				break;
+			case kIdFront:
+				if (label != kNoByte)
+					badLab(fname);
+				p = EncryptedStream::token(nullptr);
+				frnt = EncryptedStream::testBool(p);
+				break;
+			case kIdEast:
+				if (label != kNoByte)
+					badLab(fname);
+				p = EncryptedStream::token(nullptr);
+				east = EncryptedStream::testBool(p);
+				break;
+			case kIdPortable:
+				if (label != kNoByte)
+					badLab(fname);
+				p = EncryptedStream::token(nullptr);
+				port = EncryptedStream::testBool(p);
+				break;
+			case kIdTransparent:
+				if (label != kNoByte)
+					badLab(fname);
+				p = EncryptedStream::token(nullptr);
+				tran = EncryptedStream::testBool(p);
+				break;
+			default:
+				if (id >= kIdNear)
+					break;
+				switch (section) {
+				case kIdNear:
+				case kIdMTake:
+				case kIdFTake:
+					if (Snail::com(p) >= 0)
+						++cnt[section];
+					else
+						error("Bad line %d [%s]", sprf.getLineCount(), tmpStr);
+					break;
+				case kIdPhase:
+					if (label != kNoByte)
+						badLab(fname);
+					++shpcnt;
+					break;
+				case kIdSeq:
+					if (label != kNoByte)
+						badLab(fname);
+					++seqcnt;
+					break;
+				}
+				break;
+			}
+			label = kNoByte;
+		}
+
+		if (!shpcnt) {
+			error("No shapes - %s", fname);
+		}
+	} else // No sprite description: mono-shaped sprite with only .BMP file.
+		++shpcnt;
+
+	// Make sprite of choosen type:
+	char c = *fname | 0x20;
+	if (c >= 'a' && c <= 'z' && fname[1] == '0' && fname[2] == '\0') {
+		h = new Hero(this);
+		if (h) {
+			h->gotoxyz(pos);
+			_sprite = h;
+		}
+	} else {
+		if (_sprite)
+			delete _sprite;
+		_sprite = new Sprite(this);
+		if (_sprite)
+			_sprite->gotoxyz(pos);
 	}
 
-	warning("STUB: CGE2Engine::loadSprite()");
+	if (_sprite) {
+		_sprite->_flags._frnt = frnt;
+		_sprite->_flags._east = east;
+		_sprite->_flags._port = port;
+		_sprite->_flags._tran = tran;
+		_sprite->_flags._kill = true;
+
+		// Extract the filename, without the extension
+		Common::strlcpy(_sprite->_file, fname, sizeof(_sprite->_file));
+		char *p = strchr(_sprite->_file, '.');
+		if (p)
+			*p = '\0';
+
+		_sprite->_shpCnt = shpcnt;
+		_sprite->_seqPtr = seqcnt;
+
+		for (int i = 0; i < kActions; i++)
+			_sprite->_actionCtrl[i]._cnt = cnt[i];
+	}
 }
 
 void CGE2Engine::loadScript(const char *fname) {

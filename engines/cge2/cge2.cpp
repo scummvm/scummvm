@@ -126,7 +126,8 @@ bool CGE2Engine::showTitle(const char *name) {
 
 	Sprite D(this, LB);
 	D._flags._kill = true;
-	D._flags._bDel = true;
+	// D._flags._bDel = true;
+	warning("STUB: Sprite::showTitle() - Flags changed compared to CGE1's Sprite type.");
 	D.center();
 	D.show(2);
 
