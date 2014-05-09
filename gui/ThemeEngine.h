@@ -225,6 +225,14 @@ public:
 		kShadingLuminance   ///< Converting colors to luminance for unused areas
 	};
 
+	/// AlphaBitmap scale mode selector
+	enum AutoScaleMode {
+		kAutoScaleNone = 0,		///< Use image dimensions
+		kAutoScaleStretch = 1,	///< Stretch image to full widget size
+		kAutoScaleFit = 2,		///< Scale image to widget size but keep aspect ratio
+		kAutoScaleNinePatch = 3 ///< 9-patch image
+	};
+
 	// Special image ids for images used in the GUI
 	static const char *const kImageLogo;      ///< ScummVM logo used in the launcher
 	static const char *const kImageLogoSmall; ///< ScummVM logo used in the GMM
@@ -355,8 +363,7 @@ public:
 	void drawSurfaceClip(const Common::Rect &r, const Common::Rect &clippingRect, const Graphics::Surface &surface,
 		WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
 
-	void drawASurface(const Common::Rect &r, Graphics::TransparentSurface &surface,
-	                 WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false);
+	void drawASurface(const Common::Rect &r, Graphics::TransparentSurface &surface, AutoScaleMode autoscale);
 
 	void drawSlider(const Common::Rect &r, int width,
 	                WidgetStateInfo state = kStateEnabled);
@@ -637,7 +644,7 @@ protected:
 					 bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
 	void queueBitmapClip(const Graphics::Surface *bitmap, const Common::Rect &clippingRect, const Common::Rect &r, bool alpha);
-	void queueABitmap(Graphics::TransparentSurface *bitmap, const Common::Rect &r, bool alpha);
+	void queueABitmap(Graphics::TransparentSurface *bitmap, const Common::Rect &r, AutoScaleMode autoscale);
 
 	/**
 	 * DEBUG: Draws a white square and writes some text next to it.

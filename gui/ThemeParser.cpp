@@ -468,16 +468,17 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 
 			drawstep->blitAlphaSrc = _theme->getAlphaBitmap(stepNode->values["file"]);
 
-			if (stepNode->values.contains("autoscale"))
+			if (stepNode->values.contains("autoscale")) {
 				if (stepNode->values["autoscale"] == "true" || stepNode->values["autoscale"] == "stretch") {
-					drawstep->autoscale = Graphics::DrawStep::kAutoScaleStretch;
+					drawstep->autoscale = ThemeEngine::kAutoScaleStretch;
 				} else if (stepNode->values["autoscale"] == "fit") {
-					drawstep->autoscale = Graphics::DrawStep::kAutoScaleFit;
+					drawstep->autoscale = ThemeEngine::kAutoScaleFit;
 				} else if (stepNode->values["autoscale"] == "9patch") {
-					drawstep->autoscale = Graphics::DrawStep::kAutoScaleNinePatch;
+					drawstep->autoscale = ThemeEngine::kAutoScaleNinePatch;
 				} else {
-					drawstep->autoscale = Graphics::DrawStep::kAutoScaleNone;
+					drawstep->autoscale = ThemeEngine::kAutoScaleNone;
 				}
+			}
 
 			if (!drawstep->blitAlphaSrc)
 				return parserError("The given filename hasn't been loaded into the GUI.");
