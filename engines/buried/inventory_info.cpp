@@ -171,19 +171,16 @@ void BurnedLetterViewWindow::onPaint() {
 			_preBuffer->free();
 			delete _preBuffer;
 		}
-		
-		_preBuffer = ((SceneViewWindow *)getParent())->getStillFrameCopy(_curSceneStaticData.navFrameIndex);
 
+		_preBuffer = _stillFrames->getFrameCopy(_curView);
 		if (!_preBuffer)
-			error("Failed to get scene frame %d", _curSceneStaticData.navFrameIndex);
+			error("Failed to get burned letter section");
 
-		const Graphics::Surface *frame = _stillFrames->getFrame(_curView);
-		_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, 0, 432, 189, frame, 0, 0, 0, 0, 0, 0);
 		_rebuildPage = false;
 	}
 
 	Common::Rect absoluteRect = getAbsoluteRect();
-	_vm->_gfx->blit(_preBuffer, absoluteRect.left, absoluteRect.top, absoluteRect.width(), absoluteRect.height());
+	_vm->_gfx->opaqueTransparentBlit(_vm->_gfx->getScreen(), absoluteRect.left, absoluteRect.top, absoluteRect.width(), absoluteRect.height(), _preBuffer, 0, 0, 0, 0, 0, 0);
 
 	if (_curLineIndex >= 0 && ((SceneViewWindow *)_parent)->getGlobalFlags().bcTranslateEnabled == 1) {
 		int numLines = _viewLineCount[_curView];
@@ -205,29 +202,20 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 		if (offset != 189) {
 			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 
-			Graphics::Surface *oldFrame = _stillFrames->getFrameCopy(_curView + 1);
 			Graphics::Surface *newFrame = _stillFrames->getFrameCopy(_curView);
-			Graphics::Surface *background = ((SceneViewWindow *)getParent())->getStillFrameCopy(_curSceneStaticData.navFrameIndex);
 		
 			for (int i = 0; i < 189; i += offset) {
-				_preBuffer->copyFrom(*background);
+				_preBuffer->move(0, offset, _preBuffer->h);
 
-				// Blit the top portion (new frame)
-				_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, 0, _preBuffer->w, i, newFrame, 0, 189 - i, 0, 0, 0, 0);
-			
-				// Blit the bottom portion (old frame)
-				_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, i, _preBuffer->w, 189 - i, oldFrame, 0, 0, 0, 0, 0, 0);
+				for (int j = 0; j < offset; j++)
+					memcpy(_preBuffer->getBasePtr(0, j), newFrame->getBasePtr(0, _preBuffer->h - (i + offset) + j), newFrame->w * newFrame->format.bytesPerPixel);
 
 				invalidateWindow(false);
 				_vm->yield();
 			}
 
-			oldFrame->free();
-			delete oldFrame;
 			newFrame->free();
 			delete newFrame;
-			background->free();
-			delete background;
 
 			_vm->_gfx->setCursor(oldCursor);
 		}
@@ -246,29 +234,20 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 		if (offset != 189) {
 			Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 
-			Graphics::Surface *oldFrame = _stillFrames->getFrameCopy(_curView - 1);
 			Graphics::Surface *newFrame = _stillFrames->getFrameCopy(_curView);
-			Graphics::Surface *background = ((SceneViewWindow *)getParent())->getStillFrameCopy(_curSceneStaticData.navFrameIndex);
 
-			for (int i = 0 ; i < 189; i += offset) {
-				_preBuffer->copyFrom(*background);
+			for (int i = 0; i < 189; i += offset) {
+				_preBuffer->move(0, -offset, _preBuffer->h);
 
-				// Blit the top portion (old frame)
-				_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, 0, _preBuffer->w, 189 - i, oldFrame, 0, i, 0, 0, 0, 0);
-			
-				// Blit the bottom portion (new frame)
-				_vm->_gfx->opaqueTransparentBlit(_preBuffer, 0, 189 - i, _preBuffer->w, i, newFrame, 0, 0, 0, 0, 0, 0);
+				for (int j = 0; j < offset; j++)
+					memcpy(_preBuffer->getBasePtr(0, newFrame->h - offset + j), newFrame->getBasePtr(0, i + j), newFrame->w * newFrame->format.bytesPerPixel);
 
 				invalidateWindow(false);
 				_vm->yield();
 			}
 
-			oldFrame->free();
-			delete oldFrame;
 			newFrame->free();
 			delete newFrame;
-			background->free();
-			delete background;
 
 			_vm->_gfx->setCursor(oldCursor);
 		}
