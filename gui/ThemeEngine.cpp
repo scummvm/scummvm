@@ -1265,8 +1265,15 @@ void ThemeEngine::updateScreen(bool render) {
 		_screenQueue.clear();
 	}
 
-	if (render)
+	if (render) {
+#ifdef LAYOUT_DEBUG_DIALOG
+		_vectorRenderer->fillSurface();
+		_themeEval->debugDraw(&_screen, _font);
+		_vectorRenderer->copyWholeFrame(_system);
+#else
 		renderDirtyScreen();
+#endif
+	}
 }
 
 void ThemeEngine::addDirtyRect(Common::Rect r) {

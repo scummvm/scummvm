@@ -123,7 +123,7 @@ int16 ThemeLayoutStacked::getParentHeight() {
 
 #ifdef LAYOUT_DEBUG_DIALOG
 void ThemeLayout::debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {
-	uint16 color = 0xFFFF;
+	uint32 color = 0xFFFFFFFF;
 	font->drawString(screen, getName(), _x, _y, _w, color, Graphics::kTextAlignRight, 0, true);
 	screen->hLine(_x, _y, _x + _w, color);
 	screen->hLine(_x, _y + _h, _x + _w , color);

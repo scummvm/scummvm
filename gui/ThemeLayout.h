@@ -29,7 +29,7 @@
 
 #ifdef LAYOUT_DEBUG_DIALOG
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 #endif
 
