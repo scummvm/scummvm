@@ -584,7 +584,7 @@ void MovGraph::freeItems() {
 		_items[i]->free();
 
 		for (int j = 0; j < _items[i]->movarr->size(); j++)
-			delete (_items[i]->movarr)->operator[](j);
+			delete (*_items[i]->movarr)[j];
 
 		delete _items[i]->movarr;
 	}
@@ -731,8 +731,10 @@ bool MovGraph::findClosestLink(int unusedArg, Common::Point *p, MovArr *movarr) 
 		if (movarr)
 			movarr->_link = link;
 
-		p->x = resx;
-		p->y = resy;
+		if (p) {
+			p->x = resx;
+			p->y = resy;
+		}
 
 		return true;
 	}
@@ -880,10 +882,7 @@ void MovGraph::calcBbox(Common::Rect *rect, MovGraphLink *grlink, MovArr *movarr
 }
 
 bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
-#if 0
 	int staticsId;
-
-	v7 = idx << 6;
 
 	if (_items[idx]->ani->_statics) {
 		staticsId = _items[idx]->ani->_statics->_staticsId;
@@ -894,44 +893,47 @@ bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
 		staticsId = _items[idx]->ani->_movement->_staticsObj2->_staticsId;
 	}
 
-	v19 = -1;
-	v11 = 100;
-	v12 = genMovArr(x, y, &arrSize, 0, 1);
-	movarr = v12;
-	if ( !v12 )
-		return findClosestLink(idx, (POINT *)&x, arr);
-	unusedArg = 0;
-	if ( arrSize <= 0 ) {
-	LABEL_16:
-		CObjectFree(v12);
-		return 0;
-	}
-	v14 = &v12->_link;
-	do {
-		v15 = _mgm->refreshOffsets(_items[idx]->ani->_id, staticsId, v12->_link->dwordArray2[_field_44]->sceneId);
-		if ( v15 < v11 ) {
-			v11 = v15;
-			v19 = unusedArg;
-		}
-		v16 = _mgm->refreshOffsets(_items[idx]->ani->_id, staticsId, v12->_link->dwordArray2[_field_444]->scene);
-		if ( v16 < v11 ) {
-			v11 = v16;
-			v19 = unusedArg;
-		}
-		v14 += 8;
-		++unusedArg;
-	} while ( unusedArg < arrSize );
-	if ( v19 == -1 ) {
-		v12 = movarr;
-		goto LABEL_16;
-	}
-	v17 = movarr;
-	memcpy(arr, &movarr[v19], 0x20u);
-	CObjectFree(v17);
-#endif
+	int arrSize;
 
-	warning("STUB: MovGraph::calcChunk()");
-	return true;
+	Common::Array<MovArr *> *movarr = genMovArr(x, y, &arrSize, 0, 1);
+
+	if (!movarr)
+		return findClosestLink(idx, 0, arr);
+
+	bool res = false;
+
+	int idxmin = -1;
+	int offmin = 100;
+
+	for (uint i = 0; i < arrSize; i++) {
+		int off = _mgm.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44]);
+
+		if (off < offmin) {
+			offmin = off;
+			idxmin = i;
+		}
+
+		off = _mgm.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44 + 1]);
+		if (off < offmin) {
+			offmin = off;
+			idxmin = i;
+		}
+	}
+
+	if (idxmin != -1) {
+		arr->_afield_0 = (*movarr)[idxmin]->_afield_0;
+		arr->_afield_4 = (*movarr)[idxmin]->_afield_4;
+		arr->_afield_8 = (*movarr)[idxmin]->_afield_8;
+		arr->_link = (*movarr)[idxmin]->_link;
+		arr->_dist = (*movarr)[idxmin]->_dist;
+		arr->_point = (*movarr)[idxmin]->_point;
+
+		res = true;
+	}
+
+	delete movarr;
+
+	return res;
 }
 
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
