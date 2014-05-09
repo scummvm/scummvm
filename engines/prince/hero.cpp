@@ -286,8 +286,8 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 	int destX = _drawX; // eax
 	int destY = _middleY - _shadMinus; // ecx
 	// modulo of source Bitmap - ebp
-	//int scaledX = getScaledValue(frameXSize); // ebx
-	//int scaledY = getScaledValue(frameYSize); // edx
+	int scaledX = getScaledValue(frameXSize); // ebx
+	int scaledY = getScaledValue(frameYSize); // edx
 	// shadowTable70 - edi
 
 	if (destY > 1 && destY < kMaxPicHeight) {
@@ -310,8 +310,8 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 
 		// sprShadow = shadowTable70
 		// sprModulo = modulo of source Bitmap
-		// sprWidth = scaledX
-		// sprHeight = scaledY
+		int sprWidth = scaledX;
+		int sprHeight = scaledY;
 		int sprDestX = destX - _vm->_picWindowX;
 		int sprDestY = destY - _vm->_picWindowY;
 
@@ -324,7 +324,7 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		int shadMaxY = sprDestY;
 		// destY * kMaxPicWidth / 8 + destX / 8
 		int shadBitAddr = _shadowBitmap->getZoom(destY * kMaxPicWidth / 8 + destX / 8);
-		int shadBitMask = 128 / (2 << (destX % 8));
+		int shadBitMask = 128 >> (destX % 8);
 
 		int shadZoomY2 = _shadScaleValue;
 		int shadZoomY = _scaleValue;
@@ -334,33 +334,116 @@ Graphics::Surface *Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		// banked2
 		byte *start = _shadowLine + 8;
 
-
 		// linear_loop
 		//for(int i = 0; i <  ; i++) {
 			int ebx16795 = shadPosY;
 			int sprModulo = 0;
 			int shadSkipX = 0;
+
+			int ebxOnStack;
 			//retry_line:
-			for(int j = 0; j < shadPosY; j++) {
+			for (ebxOnStack = sprHeight; ebxOnStack > 0; ebxOnStack--) {
 				shadZoomY -= 100;
-				if(shadZoomY < 0 || _scaleValue != 10000) {
+				if (shadZoomY < 0 && _scaleValue != 10000) {
 					shadZoomY += _scaleValue;
 					// esi -= sprWidth
 				} else {
 					break; //to line_y_ok
 				}
+			}
+			if(ebxOnStack == 0) {
 				// esp += 4*4
 				// koniec_bajki
 			}
 			//line_y_ok
-			int shadLastY = 0;
-			if (shadPosY < 0 || shadPosY == shadLastY || shadPosY >= 480 || shadPosX >= 640) {
+			int shadLastY = 0; //?
+			if (shadPosY >= 0 && shadPosY != shadLastY) {
 				shadLastY = shadPosY;
-				//skip_line
+				if (shadPosY < 480 && shadPosX < 640) {
+					if (shadPosX < 0) {
+						shadSkipX = -1 * shadPosX;
+						//add eax, ebp
+						if (sprWidth > shadSkipX) { //?
+							//add esi, ebp
+							shadBitAddr += shadSkipX / 8;
+							int ebp16844 = shadSkipX % 8;
+							if (ebp16844 != 0) {
+								//loop_rotate:
+								for (int k = 0; k < ebp16844; k++) {
+									//ror shaBitMask !
+									shadBitMask /= 2;
+									if (shadBitMask == 1) {
+										shadBitMask = 128;
+										shadBitAddr++;
+									}
+								}
+							}
+							//draw_line1
+							if (shadPosX < shadMinX) {
+								shadMinX = shadPosX;
+							}
+							//bigger_x
+							if (shadPosX + sprWidth > shadMaxX) {
+								shadMaxX = shadPosX + sprWidth;
+							}
+							//smaller_x
+							if (shadPosY < shadMinY) {
+								shadMinY = shadPosY;
+							}
+							//bigger_y
+							if (shadPosY > shadMaxY) {
+								shadMaxY = shadPosY;
+							}
+							//smaller_y
+							//retry_line2
+							int ebxOnStack2;
+							for(ebxOnStack2 = ebxOnStack; ebxOnStack2 > 0; ebxOnStack2--) {
+								shadZoomY2 -= 100;
+								if (shadZoomY2 < 0 && _shadScaleValue != 10000) {
+									shadZoomY2 += _shadScaleValue;
+									// esi -= sprWidth
+								} else {
+									break; //to line_y_ok_2
+								}
+							}
+							if (ebxOnStack2 == 0) {
+								// esp += 4*4
+								// koniec_bajki
+							}
+							//line_y_ok_2:
+							// push esi
+							// push ecx
+							// int lineDestAddr = eax;
+							// edi = eax
+							// eax = shadBitMask
+							// push eax // push shadBitMask
+							// lineBitAddr = shadBitMask
+							// eax = shadBitAddr
+							// push eax
+							// LineBitAddr = eax
 
-			} else if (shadPosX < 0) {
-				shadSkipX = -1 * shadPosX;	
+							//copy_trans
+							//push eax, ebx, edx, ebp
+							int shadWDFlag = 0;
+							int shadZoomX = _scaleValue;
+							//ebx17061 = shadowTable70;
+							int ebp17062 = shadBitAddr;
+							int ah = shadBitMask;
+
+							//ct_loop:
+							shadZoomX -= 100;
+							if (shadZoomX < 0 && _scaleValue != 10000) {
+								// esi++;
+								shadZoomX += _scaleValue;
+							}
+
+						}
+					} else {
+						//x1_ok
+					}
+				}
 			}
+			//skip_line
 		//}
 	}
 	return makeShadow;
