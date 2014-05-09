@@ -213,7 +213,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 508:	// laser cannon
 		return new Scene508(vm);
 	case 511:	// outside pleasure dome
-		return new DummyScene(vm);	// TODO
+		return new Scene511(vm);
 	case 512:	// inside pleasure dome
 		return new DummyScene(vm);	// TODO
 	case 513:	// outside mall

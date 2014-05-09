@@ -178,6 +178,26 @@ public:
 	virtual void actions();
 };
 
+class Scene511: public Scene5xx{
+private:
+	bool _handingLine;
+	bool _lineMoving;
+
+	int _lineAnimationMode;
+	int _lineFrame;
+	int _lineAnimationPosition;
+
+public:
+	Scene511(MADSEngine *vm) : Scene5xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 
