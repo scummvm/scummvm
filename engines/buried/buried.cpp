@@ -449,14 +449,14 @@ uint32 BuriedEngine::computeFileNameResourceID(int timeZone, int environment, in
 
 void BuriedEngine::pauseEngineIntern(bool pause) {
 	if (pause) {
-		_sound->stop();
+		_sound->pause(true);
 
 		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 			(*it)->pauseVideo();
 
 		_pauseStartTime = g_system->getMillis();
 	} else {
-		_sound->restart();
+		_sound->pause(false);
 
 		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 			(*it)->resumeVideo();

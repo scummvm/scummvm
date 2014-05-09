@@ -76,6 +76,11 @@ void SoundManager::shutDown() {
 	}
 }
 
+void SoundManager::pause(bool shouldPause) {
+	for (int i = 0; i < kMaxSounds; i++)
+		_soundData[i]->pause(shouldPause);
+}
+
 bool SoundManager::setAmbientSound(const Common::String &fileName, bool fade, byte finalVolumeLevel) {
 	// Determine which of the two ambient tracks to use
 	int newAmbientTrack = (_lastAmbient == 0) ? 1 : 0;
@@ -746,6 +751,11 @@ bool SoundManager::Sound::stop() {
 	delete _handle;
 	_handle = 0;
 	return true;
+}
+
+void SoundManager::Sound::pause(bool shouldPause) {
+	if (_soundData && _handle)
+		g_system->getMixer()->pauseHandle(*_handle, shouldPause);
 }
 
 } // End of namespace Buried
