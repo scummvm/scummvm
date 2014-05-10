@@ -56,23 +56,39 @@ Seq *getConstantSeq(bool seqFlag) {
 	return seq;
 }
 
-Sprite::Sprite(CGE2Engine *vm) {
-	warning("STUB: Sprite::Sprite()");
+byte Sprite::_constY = 0;
+byte Sprite::_follow = 0;
+
+Sprite::Sprite(CGE2Engine *vm)
+	: _siz(0, 0), _nearPtr(0), _takePtr(0),
+	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
+	  _ext(NULL), _ref(-1), _scene(0), _vm(vm),
+	  _pos2D(kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
+	memset(_actionCtrl, 0, sizeof(_actionCtrl));
+	memset(_file, 0, sizeof(_file));
+	memset(&_flags, 0, sizeof(_flags));
+	_flags._frnt = 1;
+
+	_ref = 0;
+	_w = _h = 0;
+	_seqPtr = 0;
+	_shpCnt = 0;
 }
 
 Sprite::Sprite(CGE2Engine *vm, BitmapPtr *shpP)
-	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
+	: _siz(0, 0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
-	  _ext(NULL), _ref(-1), _scene(0), _vm(vm) {
+	  _ext(NULL), _ref(-1), _scene(0), _vm(vm),
+	  _pos2D(kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
+	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
+	_flags._frnt = 1;
+
 	_ref = 0;
-	_x = _y = 0;
 	_w = _h = 0;
-	_time = 0;
 	_seqPtr = 0;
 	_shpCnt = 0;
-	_prev = _next = NULL;
 
 	setShapeList(shpP);
 }
