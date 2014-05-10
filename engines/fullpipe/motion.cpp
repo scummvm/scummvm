@@ -628,6 +628,94 @@ int MovGraph::method44() {
 }
 
 MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+#if 0
+	PicAniInfo picAniInfo;
+	int ss;
+
+	MovItem *v9 = method28(subj, xpos, ypos, fuzzyMatch, &ss);
+	subj->getPicAniInfo(&picAniInfo);
+	if ( v9 ) {
+		v41 = this->_callback1(subj, v9, ss);
+		v40 = 0;
+		v10 = MovGraph_getItemIndexByStaticAni(this, subj) << 6;
+		v42 = v10;
+		v11 = (MovGraphItem *)((char *)this->_items + v10);
+		if ( v11->count > 0 ) {
+			ptr = 0;
+			do {
+				if ( *(MovArr **)((char *)&v11->items->movarr + ptr) == v41 ) {
+					v12 = subj->_movement;
+					if ( v12 ) {
+						v13 = v12->_staticsObj1->_staticsId;
+						v14 = StaticANIObject_calcStepLen(&p, subj);
+						v15 = MovGraph_sub_451D50(this, subj, subj->_ox - v14->x, subj->._oy - v14->y, v13, (int)xpos, ypos, 0, fuzzyMatch);
+						v16 = v15;
+						if ( !v15 || !MessageQueue_getExCommandByIndex(v15, 0) )
+							goto return_0;
+						v17 = MessageQueue_getExCommandByIndex(v16, 0);
+						v18 = v17->msg._messageKind;
+						if ( v18 != 1 && v18 != 20 || (v19 = subj->_movement, v17->_messageNum != v19->go._id) || (v20 = v17->msg._field_14, v20 >= 1) && v20 <= v19->_currDynamicPhaseIndex )
+							subj->playIdle();
+					}
+				}
+				v11 = (MovGraphItem *)((char *)this->_items + v42);
+				++v40;
+				v21 = v11->count;
+				ptr += 16;
+			} while ( v40 < v21 );
+		}
+	}
+	v22 = method28(subj, xpos, ypos, fuzzyMatch, &ss);
+	if ( v22
+		 && (v23 = this->_callback1(subj, v22, ss),
+			 v24 = MovGraph_getItemIndexByStaticAni(this, subj),
+			 v25 = 0,
+			 v24 <<= 6,
+			 v26 = (MovGraphItem *)((char *)this->_items + v24),
+			 ptr = v24,
+			 v27 = v26->count,
+			 v27 > 0) ) {
+		v28 = v26->items;
+		while ( v28->movarr != v23 ) {
+			++v25;
+			++v28;
+			if ( v25 >= v27 )
+				goto LABEL_20;
+		}
+		v30 = v26->items;
+		v31 = v26->movarr;
+		v32 = v25;
+		v33 = v30[v32].movarr;
+		xpos = v30[v32].movarr;
+		if ( v31 )
+			CObjectFree(v31);
+		memcpy((char *)&this->_items->movarr + ptr, v33, 0x20u);
+		v34 = xpos;
+		v35 = (MovArr *)operator new(8 * xpos->_movStepCount);
+		v36 = ptr;
+		*(MovArr **)((char *)&this->_items->movarr + ptr) = v35;
+		memcpy(*(void **)((char *)&this->_items->movarr + v36), v34->_movSteps, 8 * v34->_movStepCount);
+		*(int *)((char *)&this->_items->field_10 + v36) = -1;
+		*(int *)((char *)&this->_items->field_14 + v36) = 0;
+		MessageQueue *mq = fillMGMinfo(*(StaticANIObject **)((char *)&this->_items->ani + v36), (MovArr *)((char *)&this->_items->movarr + v36), staticsId);
+		if (mq) {
+			ExCommand *ex = new ExCommand();
+			ex->_messageKind = 17;
+			ex->_messageNum = 54;
+			ex->_parentId = subj->_id;
+			ex->_field_3C = 1;
+			mq->addExCommandToEnd(ex);
+		}
+		subj->setPicAniInfo(&picAniInfo);
+		result = mq;
+	} else {
+	LABEL_20:
+		subj->setPicAniInfo(&picAniInfo);
+	return_0:
+		result = 0;
+	}
+	return result;
+#endif
 	warning("STUB: MovGraph::doWalkTo()");
 
 	return 0;

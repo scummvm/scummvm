@@ -308,6 +308,13 @@ struct MovArr {
 	Common::Point _point;
 };
 
+struct MovItem {
+	MovArr *movarr;
+	int _mfield_4;
+	int _mfield_8;
+	int _mfield_C;
+};
+
 struct MovGraphItem {
 	StaticANIObject *ani;
 	int field_4;
@@ -319,7 +326,7 @@ struct MovGraphItem {
 	int field_1C;
 	int field_20;
 	int field_24;
-	int items;
+	MovItem *items;
 	int count;
 	int field_30;
 	int field_34;
