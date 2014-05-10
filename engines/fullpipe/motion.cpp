@@ -635,34 +635,28 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 	MovItem *v9 = method28(subj, xpos, ypos, fuzzyMatch, &ss);
 	subj->getPicAniInfo(&picAniInfo);
 	if ( v9 ) {
-		v41 = this->_callback1(subj, v9, ss);
-		v40 = 0;
-		v10 = MovGraph_getItemIndexByStaticAni(this, subj) << 6;
-		v42 = v10;
-		v11 = (MovGraphItem *)((char *)this->_items + v10);
-		if ( v11->count > 0 ) {
-			ptr = 0;
-			do {
-				if ( *(MovArr **)((char *)&v11->items->movarr + ptr) == v41 ) {
-					v12 = subj->_movement;
-					if ( v12 ) {
-						v13 = v12->_staticsObj1->_staticsId;
-						v14 = StaticANIObject_calcStepLen(&p, subj);
-						v15 = MovGraph_sub_451D50(this, subj, subj->_ox - v14->x, subj->._oy - v14->y, v13, (int)xpos, ypos, 0, fuzzyMatch);
-						v16 = v15;
-						if ( !v15 || !MessageQueue_getExCommandByIndex(v15, 0) )
-							goto return_0;
-						v17 = MessageQueue_getExCommandByIndex(v16, 0);
-						v18 = v17->msg._messageKind;
-						if ( v18 != 1 && v18 != 20 || (v19 = subj->_movement, v17->_messageNum != v19->go._id) || (v20 = v17->msg._field_14, v20 >= 1) && v20 <= v19->_currDynamicPhaseIndex )
-							subj->playIdle();
-					}
+		MovArr *goal = _callback1(subj, v9, ss);
+		int idx = getItemIndexByStaticAni(subj);
+
+		for (uint i = 0; i < _items[idx]->count; i++) {
+			if (_items[idx]->items[i]->movarr == goal) {
+				if (subj->_movement) {
+					Common::Point point;
+
+					subj->calcStepLen(point);
+					v15 = MovGraph_sub_451D50(this, subj, subj->_ox - point.x, subj->_oy - point.y, subj->_movement->_staticsObj1->_staticsId, xpos, ypos, 0, fuzzyMatch);
+					v16 = v15;
+					if ( !v15 || !MessageQueue_getExCommandByIndex(v15, 0) )
+						goto return_0;
+					
+					ExCommand *ex = MessageQueue_getExCommandByIndex(v16, 0);
+
+					if ((ex->_messageKind != 1 && ex->_messageKind != 20) || 
+						ex->_messageNum != subj->_movement->_id || 
+						(ex->_field_14 >= 1 && ex->_field_14 <= subj->_movement->_currDynamicPhaseIndex))
+						subj->playIdle();
 				}
-				v11 = (MovGraphItem *)((char *)this->_items + v42);
-				++v40;
-				v21 = v11->count;
-				ptr += 16;
-			} while ( v40 < v21 );
+			}
 		}
 	}
 	v22 = method28(subj, xpos, ypos, fuzzyMatch, &ss);
@@ -686,12 +680,12 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 		v31 = v26->movarr;
 		v32 = v25;
 		v33 = v30[v32].movarr;
-		xpos = v30[v32].movarr;
+		vvv = v30[v32].movarr;
 		if ( v31 )
 			CObjectFree(v31);
 		memcpy((char *)&this->_items->movarr + ptr, v33, 0x20u);
-		v34 = xpos;
-		v35 = (MovArr *)operator new(8 * xpos->_movStepCount);
+		v34 = vvv;
+		v35 = (MovArr *)operator new(8 * vvv->_movStepCount);
 		v36 = ptr;
 		*(MovArr **)((char *)&this->_items->movarr + ptr) = v35;
 		memcpy(*(void **)((char *)&this->_items->movarr + v36), v34->_movSteps, 8 * v34->_movStepCount);
