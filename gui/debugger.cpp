@@ -61,6 +61,7 @@ Debugger::Debugger() {
 	DCmd_Register("help",				WRAP_METHOD(Debugger, Cmd_Help));
 	DCmd_Register("openlog",			WRAP_METHOD(Debugger, Cmd_OpenLog));
 
+	DCmd_Register("debuglevel",		WRAP_METHOD(Debugger, Cmd_DebugLevel));
 	DCmd_Register("debugflag_list",		WRAP_METHOD(Debugger, Cmd_DebugFlagsList));
 	DCmd_Register("debugflag_enable",	WRAP_METHOD(Debugger, Cmd_DebugFlagEnable));
 	DCmd_Register("debugflag_disable",	WRAP_METHOD(Debugger, Cmd_DebugFlagDisable));
@@ -500,6 +501,22 @@ bool Debugger::Cmd_OpenLog(int argc, const char **argv) {
 	return true;
 }
 
+
+bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
+	if (argc == 1) {
+		DebugPrintf("Debugging is currently set at level %d\n", gDebugLevel);
+	} else { // set level
+		gDebugLevel = atoi(argv[1]);
+		if (gDebugLevel >= 0 && gDebugLevel < 11) {
+			DebugPrintf("Debug level set to level %d\n", gDebugLevel);
+		} else if (gDebugLevel < 0) {
+			DebugPrintf("Debugging is now disabled\n");
+		} else
+			DebugPrintf("Not a valid debug level (0 - 10)\n");
+	}
+
+	return true;
+}
 
 bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
 	const Common::DebugManager::DebugChannelList &debugLevels = DebugMan.listDebugChannels();
