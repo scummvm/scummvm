@@ -1346,7 +1346,7 @@ void Scene103::step() {
 void Scene103::actions() {
 	if (_action._savedFields._lookFlag) {
 		_vm->_dialogs->show(10322);
-	} else if (_action.isAction(NOUN_WALK_THROUGH, NOUN_DOOR)) {
+	} else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1);

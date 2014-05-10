@@ -30,13 +30,6 @@ namespace MADS {
 
 namespace Nebular {
 
-// Scene 7xx verbs
-enum {
-	VERB_LOOK_AT = 0xD1,
-	VERB_WALK_ALONG = 0x312,
-	VERB_STEP_INTO = 0x2F9
-};
-
 void Scene7xx::setAAName() {
 	_game._aaName = Resources::formatAAName(5);
 }

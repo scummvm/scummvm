@@ -284,17 +284,17 @@ void GameNebular::doObjectAction() {
 	Dialogs &dialogs = *_vm->_dialogs;
 	int id;
 
-	if (action.isAction(NOUN_SMELL) && scene._currentSceneId > 103 && scene._currentSceneId < 111) {
+	if (action.isAction(VERB_SMELL) && scene._currentSceneId > 103 && scene._currentSceneId < 111) {
 		dialogs.show(440);
-	} else if (action.isAction(NOUN_EAT) && scene._currentSceneId > 103 && scene._currentSceneId < 111) {
+	} else if (action.isAction(VERB_EAT) && scene._currentSceneId > 103 && scene._currentSceneId < 111) {
 		dialogs.show(441);
-	} else if (action.isAction(NOUN_SMELL, NOUN_BURGER)) {
+	} else if (action.isAction(VERB_SMELL, NOUN_BURGER)) {
 		dialogs.show(442);
-	} else if (action.isAction(NOUN_EAT, NOUN_BURGER)) {
+	} else if (action.isAction(VERB_EAT, NOUN_BURGER)) {
 		dialogs.show(443);
-	} else if (action.isAction(NOUN_SMELL, NOUN_STUFFED_FISH)) {
+	} else if (action.isAction(VERB_SMELL, NOUN_STUFFED_FISH)) {
 		dialogs.show(444);
-	} else if (action.isAction(NOUN_EAT, NOUN_STUFFED_FISH)) {
+	} else if (action.isAction(VERB_EAT, NOUN_STUFFED_FISH)) {
 		dialogs.show(445);
 	} else if (action.isAction(401, 289)) {
 		dialogs.show(scene._currentSceneId > 103 && scene._currentSceneId < 111 ? 446 : 447);
@@ -304,7 +304,7 @@ void GameNebular::doObjectAction() {
 		dialogs.show(449);
 	} else if (action.isAction(203, 276)) {
 		dialogs.show(450);
-	} else if (action.isAction(NOUN_EAT, 378)) {
+	} else if (action.isAction(VERB_EAT, 378)) {
 		_objects.setRoom(OBJ_TWINKIFRUIT, PLAYER_INVENTORY);
 		dialogs.show(451);
 	} else if (action.isAction(153, 378)) {
@@ -342,13 +342,13 @@ void GameNebular::doObjectAction() {
 		dialogs.show(466);
 	} 	else if (action.isAction(530, 288)) {
 		dialogs.show(467);
-	} else if (action.isAction(NOUN_EAT, 74)) {
+	} else if (action.isAction(VERB_EAT, 74)) {
 		dialogs.show(469);
 	} else if (action.isAction(50, 381)) {
 		dialogs.show(471);
 	} else if (action.isAction(307, 950)) {
 		dialogs.show(472);
-	} else if (action.isAction(NOUN_READ, NOUN_LOG)) {
+	} else if (action.isAction(VERB_READ, NOUN_LOG)) {
 		dialogs.show(473);
 	} else if (action.isAction(1189, 43)) {
 		dialogs.show(474);
@@ -371,12 +371,12 @@ void GameNebular::doObjectAction() {
 		dialogs.show(434);
 	} else if (action.isAction(1196)) {
 		dialogs.show(479);
-	} else if ((action.isAction(287) || action.isAction(NOUN_LOOK_AT) || action.isAction(VERB_LOOK)) &&
+	} else if ((action.isAction(287) || action.isAction(VERB_LOOK_AT) || action.isAction(VERB_LOOK)) &&
 			action.isAction(936) && _objects.isInInventory(OBJ_NOTE)) {
 		_objects.setRoom(OBJ_NOTE, PLAYER_INVENTORY);
 		_objects.addToInventory(OBJ_COMBINATION);
 		dialogs.showItem(OBJ_COMBINATION, 851);
-	} else if ((action.isAction(VERB_LOOK) || action.isAction(NOUN_READ)) &&
+	} else if ((action.isAction(VERB_LOOK) || action.isAction(VERB_READ)) &&
 			((id = _objects.getIdFromDesc(action._activeAction._objectNameId)) > 0 ||
 			(action._activeAction._indirectObjectId > 0 &&
 			(id = _objects.getIdFromDesc(action._activeAction._indirectObjectId))))) {
@@ -574,13 +574,13 @@ void GameNebular::unhandledAction() {
 		_vm->_dialogs->show(0x2A);
 	else if (action.isAction(0x6C))
 		_vm->_dialogs->show(0x1B3);
-	else if ((action.isAction(NOUN_EAT, NOUN_DEAD_FISH) || action.isAction(NOUN_EAT, NOUN_STUFFED_FISH)) && _vm->_game->_objects.isInInventory(_vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId)))
+	else if ((action.isAction(VERB_EAT, NOUN_DEAD_FISH) || action.isAction(VERB_EAT, NOUN_STUFFED_FISH)) && _vm->_game->_objects.isInInventory(_vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId)))
 		_vm->_dialogs->show(0xC);
-	else if ((action.isAction(NOUN_SMELL, NOUN_DEAD_FISH) || action.isAction(NOUN_SMELL, NOUN_STUFFED_FISH)) && _vm->_game->_objects.isInInventory(_vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId)))
+	else if ((action.isAction(VERB_SMELL, NOUN_DEAD_FISH) || action.isAction(VERB_SMELL, NOUN_STUFFED_FISH)) && _vm->_game->_objects.isInInventory(_vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId)))
 		_vm->_dialogs->show(0xD);
-	else if (action.isAction(NOUN_EAT, NOUN_CHICKEN) && _vm->_game->_objects.isInInventory(OBJ_CHICKEN))
+	else if (action.isAction(VERB_EAT, NOUN_CHICKEN) && _vm->_game->_objects.isInInventory(OBJ_CHICKEN))
 		_vm->_dialogs->show(0x390);
-	else if ((action.isAction(NOUN_SHOOT) || action.isAction(NOUN_HOSE_DOWN)) && action.isAction(NOUN_BLOWGUN)) {
+	else if ((action.isAction(VERB_SHOOT) || action.isAction(VERB_HOSE_DOWN)) && action.isAction(NOUN_BLOWGUN)) {
 		if ((_scene._currentSceneId >= 104) && (_scene._currentSceneId <= 111))
 			_vm->_dialogs->show(0x26);
 		else if (action.isAction(0x10D))

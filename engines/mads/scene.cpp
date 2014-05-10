@@ -369,7 +369,7 @@ void Scene::doFrame() {
 	if (_action._selectedAction && player._stepEnabled && !player._needToWalk &&
 			!_vm->_game->_trigger && !player._trigger) {
 		_action.startAction();
-		if (_action._activeAction._verbId == Nebular::NOUN_LOOK_AT) {
+		if (_action._activeAction._verbId == Nebular::VERB_LOOK_AT) {
 			_action._activeAction._verbId = VERB_LOOK;
 			_action._savedFields._command = false;
 		}

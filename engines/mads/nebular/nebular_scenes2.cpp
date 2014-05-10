@@ -30,15 +30,6 @@ namespace MADS {
 
 namespace Nebular {
 
-// Scene 2xx verbs
-enum {
-	VERB_WALK_THROUGH = 0x18B,
-	VERB_WALK_TOWARDS = 0x18C,
-	VERB_WALK_DOWN = 0x1AD,
-
-	VERB_CLIMB_DOWN = 0x4E
-};
-
 void Scene2xx::setAAName() {
 	int idx = (_scene->_nextSceneId == 216) ? 4 : 2;
 	_game._aaName = Resources::formatAAName(idx);
@@ -3086,14 +3077,14 @@ void Scene209::step() {
 		case 234:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_scene->_kernelMessages.reset();
-			if (_action.isAction(NOUN_HOSE_DOWN, NOUN_BLOWGUN, NOUN_MONKEY)) {
+			if (_action.isAction(VERB_HOSE_DOWN, NOUN_BLOWGUN, NOUN_MONKEY)) {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 16, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 11, 12);
 				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(116, 131));
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 12, 239);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 235);
-			} else if (_action.isAction(NOUN_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY)) {
+			} else if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY)) {
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 11, 12);
 				_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(116, 131));
@@ -3169,7 +3160,7 @@ void Scene209::preActions() {
 		_game._player._walkOffScreenSceneId = 208;
 
 	if (_globals[kMonkeyStatus] == 1) {
-		if ((_action.isAction(NOUN_SHOOT) || _action.isAction(NOUN_HOSE_DOWN)) && _action.isTarget(NOUN_MONKEY)
+		if ((_action.isAction(VERB_SHOOT) || _action.isAction(VERB_HOSE_DOWN)) && _action.isTarget(NOUN_MONKEY)
 			&& _action.isObject(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			_game._player._prepareWalkPos = Common::Point(111, 129);
 			_game._player._prepareWalkFacing = FACING_NORTHEAST;
@@ -3306,9 +3297,9 @@ void Scene209::actions() {
 	}
 
 	if (_globals[kMonkeyStatus] == 1) {
-		if ((_action.isAction(NOUN_SHOOT) || _action.isAction(NOUN_HOSE_DOWN)) && _action.isAction(NOUN_MONKEY)
+		if ((_action.isAction(VERB_SHOOT) || _action.isAction(VERB_HOSE_DOWN)) && _action.isAction(NOUN_MONKEY)
 			&& _action.isAction(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
-			if (_action.isAction(NOUN_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
+			if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 231);
 				_startShootingInTimerFl = true;
@@ -3318,7 +3309,7 @@ void Scene209::actions() {
 				return;
 			}
 
-			if (_action.isAction(NOUN_HOSE_DOWN, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
+			if (_action.isAction(VERB_HOSE_DOWN, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 228);
 				_game._player._stepEnabled = false;
