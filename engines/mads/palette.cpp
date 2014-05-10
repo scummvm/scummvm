@@ -377,7 +377,7 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 				intensity = _colorValues[colorCtr];
 			}
 
-			int diff = intensity - palette[palCtr * 3 + colorCtr];
+			int diff = intensity - VGA_COLOR_REV(palette[palCtr * 3 + colorCtr]);
 			palIndex[palCtr][colorCtr] = (byte)ABS(diff);
 			signs[palCtr][colorCtr] = (diff == 0) ? 0 : (diff < 0 ? -1 : 1);
 		}
@@ -390,7 +390,10 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 				map[index]._accum[colorCtr] += palIndex[palCtr][colorCtr];
 				while (map[index]._accum[colorCtr] >= steps) {
 					map[index]._accum[colorCtr] -= steps;
-					palette[palCtr * 3 + colorCtr] = signs[palCtr][colorCtr];
+
+					byte rgb63 = VGA_COLOR_REV(palette[palCtr * 3 + colorCtr]) +
+						signs[palCtr][colorCtr];
+					palette[palCtr * 3 + colorCtr] = VGA_COLOR_TRANS(rgb63);
 				}
 			}
 		}
