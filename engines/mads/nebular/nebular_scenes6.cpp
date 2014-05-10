@@ -83,5 +83,139 @@ void Scene6xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene601::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x343);
+	_scene->addActiveVocab(0xD1);
+}
+
+void Scene601::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_4");
+
+	if (_globals[kLaserHoleIsThere]) {
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
+		_scene->_dynamicHotspots.add(0x343, 0xD1, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	}
+
+	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);  
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+
+	if (_scene->_priorSceneId == 504) {
+		_game._player._playerPos = Common::Point(73, 148);
+		_game._player._facing = FACING_WEST; 
+		_game._player._visible   = false;
+		_game._player._stepEnabled = false;
+		_scene->_sequences.remove(_globals._sequenceIndexes[2]); 
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+		_scene->loadAnimation(formAnimName('R', 1), 70); 
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(229, 129);
+		_game._player._facing = FACING_SOUTHWEST;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene601::step() {
+	switch (_game._trigger) {
+	case 70:
+		_game._player._visible   = true;
+		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_scene->_sequences.addTimer(30, 71);
+		break;
+
+	case 71:
+		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+		_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
+		break; 
+
+	case 72:
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);  
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+		_game._player._stepEnabled = true;
+		break; 
+
+	default:
+		break;
+	}
+}
+
+void Scene601::actions() {
+	if (_action.isAction(0x18B, 0x378))
+		_scene->_nextSceneId = 602;
+	else if (_action.isAction(0x325, 0x324)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_scene->_sequences.remove(_globals._sequenceIndexes[2]);  
+			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+			break;
+
+		case 1: {
+			int syncIdx = _globals._sequenceIndexes[2];
+			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);  
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
+			_scene->_sequences.addTimer(6, 2);
+			}
+			break;
+
+		case 2:
+			_game._player._visible   = false;
+			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 10, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			break;
+
+		case 3: {
+			int syncIdx = _globals._sequenceIndexes[3];
+			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx); 
+			_scene->_nextSceneId = 504;
+			}
+			break;
+
+		default:
+			break;
+		}
+	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, 0x31E)) {
+		if (!_globals[kLaserHoleIsThere])
+			_vm->_dialogs->show(60110);
+		else
+			_vm->_dialogs->show(60111);
+	} else if (_action.isAction(VERB_LOOK, 0x324))
+		_vm->_dialogs->show(60112);
+	else if (_action.isAction(VERB_LOOK, 0x32C))
+		_vm->_dialogs->show(60113);
+	else if (_action.isAction(VERB_LOOK, 0x323))
+		_vm->_dialogs->show(60114);
+	else if (_action.isAction(0x1AD, 0x31E))
+		_vm->_dialogs->show(60115);
+	else if (_action.isAction(VERB_LOOK, 0x48E))
+		_vm->_dialogs->show(60116);
+	else if (_action.isAction(VERB_LOOK, 0x378))
+		_vm->_dialogs->show(60117);
+	else if (_action.isAction(VERB_LOOK, 0x18D))
+		_vm->_dialogs->show(60118);
+	else if (_action.isAction(VERB_LOOK, 0x38F))
+		_vm->_dialogs->show(60119);
+	else if (_action.isAction(VERB_LOOK, 0x3C4))
+		_vm->_dialogs->show(60120);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS

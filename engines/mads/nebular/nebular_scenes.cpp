@@ -225,7 +225,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 
 	// Scene group #6 (men's city, upper floor)
 	case 601:	// outside Bruce's house
-		return new DummyScene(vm);	// TODO
+		return new Scene601(vm);
 	case 602:	// Bruce's house, living room
 		return new DummyScene(vm);	// TODO
 	case 603:	// Bruce's house, bedroom
