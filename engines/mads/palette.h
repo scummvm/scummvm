@@ -168,23 +168,23 @@ public:
 		byte _mapColor;
 		uint16 _accum[3];
 	};
-
-	struct GreyTableEntry {
-		int _list;
-		int _mapping;
-	};
 private:
 	void mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColors,
 		int baseGrey, int numGreys, GreyEntry *map);
 
-	void getGreyValues(const byte palette[PALETTE_SIZE], GreyTableEntry greyList[PALETTE_COUNT],
+	void getGreyValues(const byte palette[PALETTE_SIZE], byte greyList[PALETTE_COUNT],
 		int baseColor, int numColors);
 
 	/**
 	 * Given a grey value list containing grey shades (0-63), creates a 64 byte
 	 * grey table containing the number of grey values for each intensity
 	 */
-	void greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT], byte greyTable[64], int numColors);
+	void greyPopularity(const byte greyList[PALETTE_COUNT], byte greyTable[64], int numColors);
+
+	/**
+	 * Does an insertion sort of a given id/value array pair
+	 */
+	void insertionSort(int size, byte *id, byte *value);
 protected:
 	MADSEngine *_vm;
 public:

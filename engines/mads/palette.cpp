@@ -359,7 +359,7 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 	GreyEntry map[PALETTE_COUNT];
 	int intensity;
 	byte palIndex[PALETTE_COUNT][3];
-	bool signs[PALETTE_COUNT][3];
+	int8 signs[PALETTE_COUNT][3];
 
 	mapToGreyRamp(palette, baseColor, numColors, baseGrey, numGreys, map);
 
@@ -408,13 +408,10 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 	}
 }
 
-static bool greyCompareFunc(const Fader::GreyTableEntry &g1, const Fader::GreyTableEntry &g2) {
-	return g1._list < g2._list;
-}
-
 void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColors,
 		int baseGrey, int numGreys, GreyEntry *map) {
-	GreyTableEntry greyList[PALETTE_COUNT];
+	byte greyList[PALETTE_COUNT];
+	byte greyMapping[PALETTE_COUNT];
 	byte greyTable[64];
 	byte greyIntensity[64];
 	int intensity, shiftSign;
@@ -423,7 +420,7 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 	greyPopularity(greyList, greyTable, numColors);
 
 	for (int idx = 0; idx < numColors; ++idx) {
-		greyList[idx]._mapping = idx;
+		greyMapping[idx] = idx;
 		Common::fill(&map[idx]._accum[0], &map[idx]._accum[3], 0);
 	}
 
@@ -431,8 +428,8 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 		map[idx]._mapColor = (byte)idx;
 	}
 
-	// Sort the mapping list
-	Common::sort(&greyList[0], &greyList[numColors], greyCompareFunc);
+	// Sort the mapping lists
+	insertionSort(numColors, greyList, greyMapping);
 
 	// Initialise state variables
 	int greySum = 0;
@@ -444,7 +441,7 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 
 	for (int greyCtr = 0; greyCtr < 64; ++greyCtr) {
 		for (int idx = 0; idx < greyTable[greyCtr]; ++idx) {
-			greySum += greyList[greyScan++]._list;
+			greySum += greyList[greyScan++];
 			++greyColors;
 
 			greyAccum += numGreys;
@@ -455,8 +452,8 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 				}
 
 				for (int rescan = firstColor; rescan < greyScan; ++rescan) {
-					map[greyList[rescan]._mapping]._intensity = greyIntensity[greyMark];
-					map[greyList[rescan]._mapping]._mapColor = (byte)(greyMark + baseGrey);
+					map[greyMapping[rescan]]._intensity = greyIntensity[greyMark];
+					map[greyMapping[rescan]]._mapColor = (byte)(greyMark + baseGrey);
 				}
 
 				firstColor = greyScan;
@@ -487,22 +484,74 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 }
 
 void Fader::getGreyValues(const byte palette[PALETTE_SIZE],
-		GreyTableEntry greyList[PALETTE_COUNT], int baseColor, int numColors) {
+		byte greyList[PALETTE_COUNT], int baseColor, int numColors) {
 	const byte *palP = &palette[baseColor * 3];
 
 	for (int i = 0; i < numColors; ++i, palP += 3) {
 		int v = rgbMerge(palP[0], palP[1], palP[2]);
-		greyList[i]._list = v >> 7;
+		greyList[i] = v >> 7;
 	}
 }
 
-void Fader::greyPopularity(const GreyTableEntry greyList[PALETTE_COUNT],
+void Fader::greyPopularity(const byte greyList[PALETTE_COUNT],
 		byte greyTable[64], int numColors) {
 	Common::fill(&greyTable[0], &greyTable[64], 0);
 	for (int i = 0; i < numColors; ++i) {
-		int idx = greyList[i]._list;
+		int idx = greyList[i];
 		++greyTable[idx];
 	}
+}
+
+void Fader::insertionSort(int size, byte *id, byte *value) {
+	bool restartFlag;
+	int endIndex = size - 1;
+
+	do {
+		restartFlag = false;
+		if (endIndex <= 0)
+			break;
+
+		for (int arrIndex = 0; arrIndex < endIndex && !restartFlag; ++arrIndex) {
+			byte *idP = id + arrIndex;
+			byte *valueP = value + arrIndex;
+
+			// Check whether the next index is out of order with the one following it
+			if (*idP > *(idP + 1)) {
+				// Found an incorrect ordering
+				restartFlag = true;
+
+				// Save id/value at current index
+				byte savedId = *idP;
+				byte savedValue = *valueP;
+
+				int moveCount = size - arrIndex - 1;
+				if (moveCount > 0) {
+					Common::copy(idP + 1, idP + moveCount + 2, idP);
+					Common::copy(valueP + 1, valueP + moveCount + 2, valueP);
+				}
+
+				// Scan for insert spot
+				int idx = 0;
+				if (endIndex > 0) {
+					bool breakFlag = false;
+					for (; idx <= endIndex && !breakFlag; ++idx) {
+						breakFlag = savedId < id[idx];
+					}
+				}
+
+				// Set up an insert point for entry
+				moveCount = size - idx - 1;
+				if (moveCount > 0) {
+					Common::copy_backward(id + idx, id + idx + moveCount, id + idx + moveCount + 1);
+					Common::copy_backward(value + idx, value + idx + moveCount, value + idx + moveCount + 1);
+				}
+
+				// Set shifted values at the new position
+				id[idx] = savedId;
+				value[idx] = savedValue;
+			}
+		}
+	} while (restartFlag);
 }
 
 int Fader::rgbMerge(RGB6 &palEntry) {
