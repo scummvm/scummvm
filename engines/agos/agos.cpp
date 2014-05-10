@@ -243,7 +243,6 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	_backFlag = false;
 
-	_debugMode = 0;
 	_dumpScripts = false;
 	_dumpOpcodes = false;
 	_dumpVgaScripts = false;
@@ -676,7 +675,6 @@ Common::Error AGOSEngine::init() {
 	}
 
 	// TODO: Use special debug levels instead of the following hack.
-	_debugMode = (gDebugLevel >= 0);
 	switch (gDebugLevel) {
 	case 2: _dumpOpcodes    = true; break;
 	case 3: _dumpVgaOpcodes = true; break;
