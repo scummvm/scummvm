@@ -215,7 +215,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 511:	// outside pleasure dome
 		return new Scene511(vm);
 	case 512:	// inside pleasure dome
-		return new DummyScene(vm);	// TODO
+		return new Scene512(vm);
 	case 513:	// outside mall
 		return new DummyScene(vm);	// TODO
 	case 515:	// overview
