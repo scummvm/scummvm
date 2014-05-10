@@ -2558,5 +2558,27 @@ void Scene513::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene515::setup() {
+	_game._player._spritesPrefix = "";
+	setAAName();
+}
+
+void Scene515::enter() {
+	_game._player._visible   = false;
+	_game._player._stepEnabled = false;
+	_scene->_sequences.addTimer(30, 70);
+
+	sceneEntrySound();
+}
+
+void Scene515::step() {
+	if (_game._trigger == 70)
+		_scene->loadAnimation(formAnimName('A', -1), 71);
+	else if (_game._trigger == 71)
+		_scene->_nextSceneId = 508;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
