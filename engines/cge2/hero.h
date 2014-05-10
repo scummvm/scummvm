@@ -42,7 +42,15 @@ struct HeroTab {
 	Sprite *_face;
 	Sprite *_pocket[kPocketMax + 1];
 	int _pocPtr;
-	V2D _posTab[kCaveMax];
+	V2D *_posTab[kCaveMax];
+	HeroTab(CGE2Engine *vm) {
+		for (int i = 0; i < kCaveMax; i++)
+			_posTab[i] = new V2D(vm);
+	}
+	~HeroTab() {
+		for (int i = 0; i < kCaveMax; i++)
+			delete _posTab[i];
+	}
 };
 
 class Hero : public Sprite {
@@ -72,7 +80,8 @@ public:
 	bool findWay(void);
 	static int snap(int p, int q, int grid);
 	void walkTo(V3D pos);
-	void walkTo(V2D pos) { walkTo(V2D::screenToGround(pos)); }
+	void walkTo(V2D pos) { walkTo(screenToGround(pos)); }
+	V3D screenToGround(V2D pos);
 	void walkTo(Sprite *spr);
 	void say(void) { step(_sayStart); }
 	void fun(void);

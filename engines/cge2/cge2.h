@@ -32,7 +32,6 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "cge2/fileio.h"
-#include "cge2/general.h"
 
 namespace CGE2 {
 
@@ -43,6 +42,9 @@ class Fx;
 class Sound;
 class Text;
 struct HeroTab;
+class V3D;
+class V2D;
+class Dac;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -91,6 +93,7 @@ public:
 	Sound *_sound;
 	Text *_text;
 	HeroTab *_heroTab[2];
+	V3D *_eye;
 private:
 	void init();
 	void deinit();

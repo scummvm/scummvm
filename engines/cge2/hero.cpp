@@ -117,6 +117,13 @@ void Hero::walkTo(Sprite *spr) {
 	warning("STUB: Hero::walkTo()");
 }
 
+V3D Hero::screenToGround(V2D pos) {
+	double z = _vm->_eye->_z + (_vm->_eye->_y * _vm->_eye->_z) / (double(pos.y) - _vm->_eye->_y);
+	double x = _vm->_eye->_x - ((double(pos.x) - _vm->_eye->_x) * (z - _vm->_eye->_z)) / _vm->_eye->_z;
+	return V3D(V2D::round(x), 0, V2D::round(z));
+}
+
+
 int Hero::cross(const V2D &a, const V2D &b) {
 	warning("STUB: Hero::cross()");
 	return 0;

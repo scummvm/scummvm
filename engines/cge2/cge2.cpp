@@ -33,6 +33,7 @@
 #include "cge2/sound.h"
 #include "cge2/text.h"
 #include "cge2/hero.h"
+#include "cge2/general.h"
 
 namespace CGE2 {
 
@@ -47,6 +48,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_text = nullptr;
 	for (int i = 0; i < 2; i++)
 		_heroTab[i] = nullptr;
+	_eye = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -65,7 +67,8 @@ void CGE2Engine::init() {
 	_midiPlayer = new MusicPlayer(this);
 	_text = new Text(this, "CGE");
 	for (int i = 0; i < 2; i++)
-		_heroTab[i] = new HeroTab();
+		_heroTab[i] = new HeroTab(this);
+	_eye = new V3D();
 }
 
 void CGE2Engine::deinit() {
@@ -78,6 +81,7 @@ void CGE2Engine::deinit() {
 	delete _text;
 	for (int i = 0; i < 2; i++)
 		delete _heroTab[i];
+	delete _eye;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {

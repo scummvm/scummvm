@@ -60,10 +60,10 @@ byte Sprite::_constY = 0;
 byte Sprite::_follow = 0;
 
 Sprite::Sprite(CGE2Engine *vm)
-	: _siz(0, 0), _nearPtr(0), _takePtr(0),
+	: _siz(_vm, 0, 0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
 	  _ext(NULL), _ref(-1), _scene(0), _vm(vm),
-	  _pos2D(kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
+	  _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
@@ -76,10 +76,10 @@ Sprite::Sprite(CGE2Engine *vm)
 }
 
 Sprite::Sprite(CGE2Engine *vm, BitmapPtr *shpP)
-	: _siz(0, 0), _nearPtr(0), _takePtr(0),
+	: _siz(_vm, 0, 0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
 	  _ext(NULL), _ref(-1), _scene(0), _vm(vm),
-	  _pos2D(kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
+	  _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
@@ -383,18 +383,7 @@ Sprite *Sprite::backShow(bool fast) {
 }
 
 void Sprite::step(int nr) {
-	if (nr >= 0)
-		_seqPtr = nr;
-	if (_ext) {
-		Seq *seq;
-		if (nr < 0)
-			_seqPtr = _ext->_seq[_seqPtr]._next;
-		seq = _ext->_seq + _seqPtr;
-		if (seq->_dly >= 0) {
-			gotoxyz(_x + (seq->_dx), _y + (seq->_dy));
-			_time = seq->_dly;
-		}
-	}
+	warning("STUB: Sprite::step()");
 }
 
 //void Sprite::tick() {
@@ -449,26 +438,13 @@ void Sprite::center() {
 }
 
 void Sprite::show() {
-	SprExt *e;
-	e = _ext;
-	e->_x0 = e->_x1;
-	e->_y0 = e->_y1;
-	e->_b0 = e->_b1;
-	e->_x1 = _x;
-	e->_y1 = _y;
-	e->_b1 = shp();
-	if (!_flags._hide) {
-		if (_flags._xlat)
-			e->_b1->xShow(e->_x1, e->_y1);
-		else
-			e->_b1->show(e->_x1, e->_y1);
-	}
+	warning("STUB: Sprite::show()");
 }
 
 void Sprite::show(uint16 pg) {
 	Graphics::Surface *a = _vm->_vga->_page[1];
 	_vm->_vga->_page[1] = _vm->_vga->_page[pg & 3];
-	shp()->show(_x, _y);
+	shp()->show(_pos2D.x, _pos2D.y);
 	_vm->_vga->_page[1] = a;
 }
 
@@ -545,9 +521,9 @@ void Sprite::sync(Common::Serializer &s) {
 
 	warning("STUB: Sprite::sync() - Flags changed compared to CGE1's Sprite type.");
 
-	s.syncAsUint16LE(_x);
-	s.syncAsUint16LE(_y);
-	s.syncAsByte(_z);
+	s.syncAsUint16LE(_pos3D._x);
+	s.syncAsUint16LE(_pos3D._y);
+	s.syncAsByte(_pos3D._z);
 	s.syncAsUint16LE(_w);
 	s.syncAsUint16LE(_h);
 	s.syncAsUint16LE(_time);
@@ -614,7 +590,7 @@ void Queue::insert(Sprite *spr, Sprite *nxt) {
 void Queue::insert(Sprite *spr) {
 	Sprite *s;
 	for (s = _head; s; s = s->_next)
-		if (s->_z > spr->_z)
+		if (s->_pos3D._z > spr->_pos3D._z)
 			break;
 	if (s)
 		insert(spr, s);

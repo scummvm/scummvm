@@ -105,9 +105,6 @@ public:
 		uint16 _zmov : 1;       // sprite needs Z-update in queue
 		uint16 _tran : 1;       // transparent (untouchable)
 	} _flags;
-	int _x;
-	int _y;
-	signed char _z;
 	uint16 _w;
 	uint16 _h;
 	uint16 _time;
@@ -119,6 +116,11 @@ public:
 	Sprite *_prev;
 	Sprite *_next;
 	struct { byte _ptr, _cnt; } _actionCtrl[kActions];
+	V2D _pos2D;
+	V3D _pos3D;
+	V2D _siz;
+	static byte _constY;
+	static byte _follow;
 
 	bool works(Sprite *spr);
 	bool seqTest(int n);

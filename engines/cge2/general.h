@@ -31,6 +31,7 @@
 #include "common/file.h"
 #include "common/rect.h"
 #include "cge2/fileio.h"
+#include "cge2/cge2.h"
 
 namespace CGE2 {
 
@@ -60,49 +61,44 @@ public:
 };
 
 class V2D : public Common::Point {
-	static double trunc(double d) { return (d > 0) ? floor(d) : ceil(d); }
-	static double round(double number) { return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5); }
+	CGE2Engine *_vm;
 public:
 	V2D& operator = (const V3D& p3) {
-		double m = Eye._z / (p3._z - Eye._z);
-		x = round((Eye._x + (Eye._x - p3._x) * m));
-		y = round((Eye._y + (Eye._y - p3._y) * m));
+		double m = _vm->_eye->_z / (p3._z - _vm->_eye->_z);
+		x = round((_vm->_eye->_x + (_vm->_eye->_x - p3._x) * m));
+		y = round((_vm->_eye->_y + (_vm->_eye->_y - p3._y) * m));
 		return *this;
 	}
-	V2D(void) { }
-	V2D(const V3D& p3) { *this = p3; }
-	V2D(int x, int y) : Common::Point(x, y) { }
-	static V3D Eye;
-	static void setEye(const V3D &e) { Eye = e; }
-	static void setEye(const V2D& e2, int z = -SCR_WID_) {
-		Eye._x = e2.x; Eye._y = e2.y; Eye._z = z;
+	V2D(CGE2Engine *vm) : _vm(vm) { }
+	V2D(CGE2Engine *vm, const V3D& p3) : _vm(vm) { *this = p3; }
+	V2D(CGE2Engine *vm, int x, int y) : _vm(vm), Common::Point(x, y) { }
+	void setEye(V3D &e) { _vm->_eye = &e; }
+	void setEye(const V2D& e2, int z = -SCR_WID_) {
+		_vm->_eye->_x = e2.x; _vm->_eye->_y = e2.y; _vm->_eye->_z = z;
 	}
-	static void setEye(const char *s) {
+	void setEye(const char *s) {
 		char *tempStr;
 		strcpy(tempStr, s);
-		Eye._x = atoi(EncryptedStream::token(tempStr));
-		Eye._y = atoi(EncryptedStream::token(tempStr));
-		Eye._z = atoi(EncryptedStream::token(tempStr));
+		_vm->_eye->_x = atoi(EncryptedStream::token(tempStr));
+		_vm->_eye->_y = atoi(EncryptedStream::token(tempStr));
+		_vm->_eye->_z = atoi(EncryptedStream::token(tempStr));
 	}
 	bool operator <  (const V2D& p) const { return (x <  p.x) && (y <  p.y); }
 	bool operator <= (const V2D& p) const { return (x <= p.x) && (y <= p.y); }
 	bool operator >(const V2D& p) const { return (x >  p.x) && (y >  p.y); }
 	bool operator >= (const V2D& p) const { return (x >= p.x) && (y >= p.y); }
-	V2D operator + (const V2D& p) const { return V2D(x + p.x, y + p.y); }
-	V2D operator - (const V2D& p) const { return V2D(x - p.x, y - p.y); }
+	V2D operator + (const V2D& p) const { return V2D(_vm, x + p.x, y + p.y); }
+	V2D operator - (const V2D& p) const { return V2D(_vm, x - p.x, y - p.y); }
 	uint16 area(void) { return x * y; }
 	bool limited(const V2D& p) {
 		return (uint16(x) < uint16(p.x)) && (uint16(y) < uint16(p.y));
 	}
 	V2D scale(int z) {
-		double m = Eye._z / (Eye._z - z);
-		return V2D(trunc(m * x), trunc(m * y));
+		double m = _vm->_eye->_z / (_vm->_eye->_z - z);
+		return V2D(_vm, trunc(m * x), trunc(m * y));
 	}
-	static V3D screenToGround(V2D pos) {
-		double z = V2D::Eye._z + (V2D::Eye._y*V2D::Eye._z) / (double(pos.y) - V2D::Eye._y);
-		double x = V2D::Eye._x - ((double(pos.x) - V2D::Eye._x) * (z - V2D::Eye._z)) / V2D::Eye._z;
-		return V3D(round(x), 0, round(z));
-	}
+	static double trunc(double d) { return (d > 0) ? floor(d) : ceil(d); }
+	static double round(double number) { return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5); }
 };
 
 } // End of namespace CGE2
