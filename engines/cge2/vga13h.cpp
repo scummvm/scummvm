@@ -94,7 +94,10 @@ Sprite::Sprite(CGE2Engine *vm, BitmapPtr *shpP)
 }
 
 Sprite::~Sprite() {
-	warning("STUB: Sprite::~Sprite()");
+	if (_vm->_sprite == this)
+		_vm->_sprite = NULL;
+
+	contract();
 }
 
 BitmapPtr Sprite::shp() {
