@@ -583,7 +583,7 @@ void MovGraph::freeItems() {
 	for (uint i = 0; i < _items.size(); i++) {
 		_items[i]->free();
 
-		for (int j = 0; j < _items[i]->movarr->size(); j++)
+		for (uint j = 0; j < _items[i]->movarr->size(); j++)
 			delete (*_items[i]->movarr)[j];
 
 		delete _items[i]->movarr;
@@ -946,7 +946,7 @@ Common::Array<Common::Rect *> *MovGraph::getBboxes(MovArr *movarr1, MovArr *mova
 
 	Common::Array<Common::Rect *> *res = new Common::Array<Common::Rect *>;
 
-	for (uint i = 0; i < *listCount; i++) {
+	for (int i = 0; i < *listCount; i++) {
 		Common::Rect *r = new Common::Rect;
 
 		calcBbox(r, tempObList2[i], movarr1, movarr2);
@@ -987,7 +987,7 @@ bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
 	int idxmin = -1;
 	int offmin = 100;
 
-	for (uint i = 0; i < arrSize; i++) {
+	for (int i = 0; i < arrSize; i++) {
 		int off = _mgm.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44]);
 
 		if (off < offmin) {
