@@ -221,7 +221,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 515:	// overview
 		return new Scene515(vm);
 	case 551:	// outside teleporter (with skeleton)
-		return new DummyScene(vm);	// TODO
+		return new Scene551(vm);
 
 	// Scene group #6 (men's city, upper floor)
 	case 601:	// outside Bruce's house
