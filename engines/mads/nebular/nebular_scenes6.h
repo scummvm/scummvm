@@ -62,6 +62,26 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene602: public Scene6xx{
+private:
+	int _lastSpriteIdx;
+	int _lastSequenceIdx;
+	int _cycleIndex;
+	int _safeMode;
+
+	void handleSafeActions();
+
+public:
+	Scene602(MADSEngine *vm) : Scene6xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step() {};
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 
