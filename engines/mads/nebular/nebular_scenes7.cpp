@@ -89,6 +89,93 @@ void Scene7xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene701::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(NOUN_BOAT);
+	_scene->addActiveVocab(VERB_CLIMB_INTO);
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+void Scene701::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 5));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', 0));
+	//_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));	// FIXME: Invalid resource?
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RM202A1");
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 8));
+
+	if (_scene->_roomChanged) {
+		_game._objects.addToInventory(OBJ_BINOCULARS);
+		_game._objects.addToInventory(OBJ_TWINKIFRUIT);
+		_game._objects.addToInventory(OBJ_BOMB);
+		_game._objects.addToInventory(OBJ_CHICKEN);
+		_game._objects.addToInventory(OBJ_BONES);
+
+		_globals[kCityFlooded] = true;
+		_globals[kLineStatus] = LINE_TIED;
+		_globals[kBoatRaised] = false;
+	}
+
+	if (_globals[kBoatStatus] == BOAT_UNFLOODED) {
+		if (_globals[kBoatRaised]) {
+			_globals[kBoatStatus] = BOAT_GONE;
+		} else {
+			if (_globals[kLineStatus] == LINE_TIED) {
+				_globals[kBoatStatus] = BOAT_TIED_FLOATING;
+			} else {
+				if (_game._difficulty == DIFFICULTY_HARD) {
+					_globals[kBoatStatus] = BOAT_ADRIFT;
+				} else {
+					_globals[kBoatStatus] = BOAT_TIED;
+				}
+			}
+		}
+	}
+
+	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+
+	int boatStatus = (_scene->_priorSceneId == 703) ? BOAT_GONE : _globals[kBoatStatus];
+
+	switch (boatStatus) {
+	case BOAT_TIED_FLOATING:
+		_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 20, 0, 0, 0);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 10);
+		break;
+	case BOAT_ADRIFT:
+		_globals._sequenceIndexes[6] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[6], false, 20, 0, 0, 0);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 10);
+		break;
+	case BOAT_TIED:
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
+		break;
+	case BOAT_GONE:
+		_scene->_hotspots.activate(NOUN_BOAT, false);
+		break;
+	default:
+		break;
+	}
+
+	// TODO: Line status
+
+	// TODO
+}
+
+void Scene701::preActions() {
+	// TODO
+}
+
+void Scene701::actions() {
+	// TODO
+}
+
+/*------------------------------------------------------------------------*/
+
 void Scene702::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
