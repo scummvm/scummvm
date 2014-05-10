@@ -414,23 +414,78 @@ void Sprite::killXlat() {
 }
 
 void Sprite::gotoxyz(int x, int y, int z) {
-	warning("STUB: Sprite::gotoxyz()");
+	gotoxyz(V3D(x, y, z));
 }
 
 void Sprite::gotoxyz(void) {
-	warning("STUB: Sprite::gotoxyz()");
+	gotoxyz(_pos3D);
 }
 
 void Sprite::gotoxyz(V2D pos) {
-	warning("STUB: Sprite::gotoxyz()");
+	V2D o = _pos2D;
+	int ctr = _siz.x >> 1;
+	int rem = _siz.x - ctr;
+	byte trim = 0;
+
+	if (_ref / 10 == 14) { // HERO
+		int z = V2D::trunc(_pos3D._z);
+		ctr = (ctr * V2D::trunc(_vm->_eye->_z) / (V2D::trunc(_vm->_eye->_z) - z));
+		rem = (rem * V2D::trunc(_vm->_eye->_z) / (V2D::trunc(_vm->_eye->_z) - z));
+		ctr = (ctr * 3) / 4;
+		rem = (rem * 3) / 4;
+ 	}
+
+	if (pos.x - ctr < 0) {
+		pos.x = ctr;
+		++trim;
+	}
+	if (pos.x + rem > kScrWidth) {
+		pos.x = kScrWidth - rem;
+		++trim;
+	}
+	_pos2D.x = pos.x;
+
+	if (pos.y < -kPanHeight) {
+		pos.y = -kPanHeight;
+		++trim;
+	}
+	if (pos.y + _siz.y > kWorldHeight) {
+		pos.y = kWorldHeight - _siz.y;
+		++trim;
+	}
+	_pos2D.y = pos.y;
+
+	_flags._trim = (trim != 0);
+
+	if (!_follow) {
+		double m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
+		_pos3D._x = (_vm->_eye->_x + V2D::round(_vm->_eye->_x - _pos2D.x) / m);
+		if (!_constY)
+			_pos3D._y = (_vm->_eye->_y + V2D::round(_vm->_eye->_y - _pos2D.y) / m);
+	}
+
+	if (_next && _next->_flags._slav)
+		_next->gotoxyz(_next->_pos2D - o + _pos2D);
+
+	if (_flags._shad)
+		_prev->gotoxyz(_prev->_pos2D - o + _pos2D);
+
+	if (_ref == 141 && _pos3D._y >= 5)
+		warning("Sprite::gotoxyz - asm nop");
 }
 
 void Sprite::gotoxyz_(V2D pos) {
-	warning("STUB: Sprite::gotoxyz()");
+	_constY++;
+	gotoxyz(pos);
+	--_constY;
 }
 
 void Sprite::gotoxyz(V3D pos) {
-	warning("STUB: Sprite::gotoxyz()");
+	_follow++;
+	if (pos._z != _pos3D._z)
+		_flags._zmov = true;
+	gotoxyz(V2D(_vm, _pos3D = pos));
+	--_follow;
 }
 
 void Sprite::center() {

@@ -48,6 +48,8 @@ class Dac;
 
 #define kScrWidth      320
 #define kScrHeight     240
+#define kPanHeight     40
+#define kWorldHeight   (kScrHeight - kPanHeight)
 #define kMaxFile       128
 #define kPathMax       128
 #define kDimMax          8
