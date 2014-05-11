@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -93,6 +93,30 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step() {};
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
+class Scene604: public Scene6xx{
+private:
+	int _timebombHotspotId;
+	int _bombMode;
+	int _monsterFrame;
+
+	uint32 _monsterTimer;
+
+	bool _monsterActive;
+	bool _animationActiveFl;
+
+	void handleBombActions();
+
+public:
+	Scene604(MADSEngine *vm) : Scene6xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
 	virtual void preActions() {};
 	virtual void actions();
 	virtual void postActions() {};
