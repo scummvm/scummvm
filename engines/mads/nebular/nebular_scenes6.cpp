@@ -939,5 +939,51 @@ void Scene604::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene605::setup() {
+	_game._player._spritesPrefix = "";
+	setAAName();
+}
+
+void Scene605::enter() {
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('r', -1));
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', -1));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('l', -1));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('p', -1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('n', -1));
+	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('f', -1));
+
+	_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 15, 0, 0, 0);
+	_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 17, 0, 0, 0);
+	_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 14, 0, 0, 0);
+	_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 13, 0, 0, 0);
+	_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], false, 17, 0, 0, 0);
+	_globals._sequenceIndexes[6] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[6], false, 18, 0, 0, 0);
+
+	_game._player._visible = false;
+	_game._player._stepEnabled = false;
+	_scene->_sequences.addTimer(600, 70);
+	_scene->_userInterface.setup(kInputLimitedSentences);
+	sceneEntrySound();
+	_vm->_sound->command(22);
+}
+
+void Scene605::step() {
+	if (_game._trigger == 70) {
+		_vm->_sound->command(23);
+		if (_globals[kResurrectRoom] >= 700)
+			_vm->_dialogs->show(60598);
+		else
+			_vm->_dialogs->show(60599);
+
+		_scene->_nextSceneId = _globals[kResurrectRoom];
+	}
+}
+
+void Scene605::actions() {
+	return;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS
