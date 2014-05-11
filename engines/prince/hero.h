@@ -34,6 +34,7 @@ namespace Prince {
 
 class Animation;
 class PrinceEngine;
+class GraphicsMan;
 
 class Hero {
 public:
@@ -44,8 +45,9 @@ public:
 	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
 	static const int16 kNormalWidth = 640;
 	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
+	static const int16 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
 
-	static const uint8 kShadowColor = 191;
+	static const byte kShadowColor = 191;
 
 	enum State {
 		STAY = 0,
@@ -96,7 +98,7 @@ public:
 		Move_BORED2
 	};
 
-	Hero(PrinceEngine *vm);
+	Hero(PrinceEngine *vm, GraphicsMan *graph);
 	~Hero();
 	Common::RandomSource _randomSource;
 	bool loadAnimSet(uint32 heroAnimNumber);
@@ -119,13 +121,15 @@ public:
 	void showHeroAnimFrame();
 	void line(int x1, int y1, int x2, int y2);
 	void plotPoint(int x, int y);
-	Graphics::Surface *showHeroShadow(Graphics::Surface *heroFrame);
+	//Graphics::Surface *showHeroShadow();
+	void showHeroShadow();
 	void setShadowScale(int32 shadowScale);
 	void specialAnim();
 	void getState();
 
 //private:
 	PrinceEngine *_vm;
+	GraphicsMan *_graph;
 	uint16 _number;
 	uint16 _visible;
 	int16 _state;
@@ -143,7 +147,9 @@ public:
 	int32 _shadZoomFactor;
 	int32 _shadScaleValue;
 	int32 _shadowLineLen;
-
+	int16 _shadowDrawX;
+	int16 _shadowDrawY;
+	int16 _shadLastY;
 
 	// Coords array of coordinates
 	// DirTab array of directions

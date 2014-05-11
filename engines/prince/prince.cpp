@@ -186,8 +186,8 @@ void PrinceEngine::init() {
 
 	_roomBmp = new Image::BitmapDecoder();
 
-	_mainHero = new Hero(this);
-	_secondHero = new Hero(this);
+	_mainHero = new Hero(this, _graph);
+	_secondHero = new Hero(this, _graph);
 
 	_mainHero->loadAnimSet(0);
 }
@@ -414,7 +414,6 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	}
 
 	uint32 id = _voiceStream[sampleSlot]->readUint32LE();
-	//if (id != 0x46464952) {
 	if (id != MKTAG('F', 'F', 'I', 'R')) {
 		error("It's not RIFF file %s", streamName.c_str());
 		return false;
@@ -422,7 +421,6 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 
 	_voiceStream[sampleSlot]->skip(0x20);
 	id = _voiceStream[sampleSlot]->readUint32LE();
-	//if (id != 0x61746164) {
 	if (id != MKTAG('a', 't', 'a', 'd')) {
 		error("No data section in %s id %04x", streamName.c_str(), id);
 		return false;
@@ -642,10 +640,13 @@ void PrinceEngine::drawScreen() {
 
 	if (_mainHero->_visible) {
 		const Graphics::Surface *mainHeroSurface = _mainHero->getSurface();
+		//const Graphics::Surface *mainHeroShadow = _mainHero->showHeroShadow();
 
-		if (mainHeroSurface) 
-			//_graph->drawTransparent(_mainHero->_middleX, _mainHero->_middleY, mainHeroSurface);
+		if (mainHeroSurface) {
+			_mainHero->showHeroShadow();
 			_graph->drawTransparent(_mainHero->_drawX, _mainHero->_drawY, mainHeroSurface);
+			//_graph->drawTransparent(_mainHero->_shadowDrawX, _mainHero->_shadowDrawY, mainHeroShadow);
+		}
 	}
 
 	playNextFrame();
