@@ -99,16 +99,16 @@ TurnDepthPreChange::TurnDepthPreChange(BuriedEngine *vm, Window *viewWindow, con
 			_staticData.destUp.destinationScene.depth = upDepth;
 
 		if (leftDepth >= 0)
-			_staticData.destUp.destinationScene.depth = leftDepth;
+			_staticData.destLeft.destinationScene.depth = leftDepth;
 
 		if (rightDepth >= 0)
-			_staticData.destUp.destinationScene.depth = rightDepth;
+			_staticData.destRight.destinationScene.depth = rightDepth;
 
 		if (downDepth >= 0)
-			_staticData.destUp.destinationScene.depth = downDepth;
+			_staticData.destDown.destinationScene.depth = downDepth;
 
 		if (forwardDepth >= 0)
-			_staticData.destUp.destinationScene.depth = forwardDepth;
+			_staticData.destForward.destinationScene.depth = forwardDepth;
 	}
 }
 
