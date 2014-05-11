@@ -20,8 +20,7 @@
  *
  */
 
-
-
+#include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/textconsole.h"
 
@@ -531,7 +530,7 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 	_classMode1 = 0;
 	_classMode2 = 0;
 
-	if (_dumpScripts)
+	if (DebugMan.isDebugChannelEnabled(kDebugScript))
 		dumpSubroutine(sub);
 
 	if (++_recursionDepth > 40)

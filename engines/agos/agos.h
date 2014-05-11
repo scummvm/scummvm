@@ -63,7 +63,8 @@ namespace AGOS {
 
 enum {
 	kDebugOpcode = 1 << 0,
-	kDebugVGAOpcode = 1 << 1
+	kDebugVGAOpcode = 1 << 1,
+	kDebugScript = 1 << 2
 };
 
 uint fileReadItemID(Common::SeekableReadStream *in);
@@ -332,7 +333,6 @@ protected:
 	Common::Language _language;
 	bool _copyProtection;
 	bool _pause;
-	bool _dumpScripts;
 	bool _dumpVgaScripts;
 	bool _dumpImages;
 	bool _speech;
