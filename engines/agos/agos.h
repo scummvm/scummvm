@@ -329,7 +329,6 @@ protected:
 	bool _fastMode;
 	bool _backFlag;
 
-	uint16 _debugMode;
 	Common::Language _language;
 	bool _copyProtection;
 	bool _pause;
