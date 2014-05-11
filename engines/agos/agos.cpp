@@ -147,7 +147,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	DebugMan.addDebugChannel(kDebugOpcode, "opcode", "Opcode debug level");
 	DebugMan.addDebugChannel(kDebugVGAOpcode, "vga_opcode", "VGA Opcode debug level");
-	DebugMan.addDebugChannel(kDebugScript, "script", "Script debug level");
+	DebugMan.addDebugChannel(kDebugSubroutine, "subroutine", "Subroutine debug level");
 
 	_vcPtr = 0;
 	_vcGetOutOfCode = 0;

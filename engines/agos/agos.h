@@ -64,7 +64,7 @@ namespace AGOS {
 enum {
 	kDebugOpcode = 1 << 0,
 	kDebugVGAOpcode = 1 << 1,
-	kDebugScript = 1 << 2
+	kDebugSubroutine = 1 << 2
 };
 
 uint fileReadItemID(Common::SeekableReadStream *in);

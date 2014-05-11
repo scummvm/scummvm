@@ -530,7 +530,7 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 	_classMode1 = 0;
 	_classMode2 = 0;
 
-	if (DebugMan.isDebugChannelEnabled(kDebugScript))
+	if (DebugMan.isDebugChannelEnabled(kDebugSubroutine))
 		dumpSubroutine(sub);
 
 	if (++_recursionDepth > 40)
