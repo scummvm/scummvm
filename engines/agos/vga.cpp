@@ -648,7 +648,7 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 	if (height == 0 || width == 0)
 		return;
 
-	if (_dumpImages)
+	if (DebugMan.isDebugChannelEnabled(kDebugImageDump))
 		dumpSingleBitmap(_vgaCurZoneNum, state.image, state.srcPtr, width, height,
 											 state.palette);
 	state.width = state.draw_width = width;		/* cl */

@@ -65,7 +65,8 @@ enum {
 	kDebugOpcode = 1 << 0,
 	kDebugVGAOpcode = 1 << 1,
 	kDebugSubroutine = 1 << 2,
-	kDebugVGAScript = 1 << 3
+	kDebugVGAScript = 1 << 3,
+	kDebugImageDump = 1 << 4
 };
 
 uint fileReadItemID(Common::SeekableReadStream *in);
@@ -334,7 +335,6 @@ protected:
 	Common::Language _language;
 	bool _copyProtection;
 	bool _pause;
-	bool _dumpImages;
 	bool _speech;
 	bool _subtitles;
 	bool _vgaVar9;

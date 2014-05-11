@@ -149,6 +149,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	DebugMan.addDebugChannel(kDebugVGAOpcode, "vga_opcode", "VGA Opcode debug level");
 	DebugMan.addDebugChannel(kDebugSubroutine, "subroutine", "Subroutine debug level");
 	DebugMan.addDebugChannel(kDebugVGAScript, "vga_script", "VGA Script debug level");
+	DebugMan.addDebugChannel(kDebugImageDump, "image_dump", "Enable dumping of images to files");
 
 	_vcPtr = 0;
 	_vcGetOutOfCode = 0;
@@ -248,8 +249,6 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_fastMode = false;
 
 	_backFlag = false;
-
-	_dumpImages = false;
 
 	_copyProtection = false;
 	_pause = false;
