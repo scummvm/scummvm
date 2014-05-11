@@ -146,6 +146,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	: Engine(system), _rnd("agos"), _gameDescription(gd) {
 
 	DebugMan.addDebugChannel(kDebugOpcode, "opcode", "Opcode debug level");
+	DebugMan.addDebugChannel(kDebugVGAOpcode, "vga_opcode", "VGA Opcode debug level");
 
 	_vcPtr = 0;
 	_vcGetOutOfCode = 0;
@@ -248,7 +249,6 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	_dumpScripts = false;
 	_dumpVgaScripts = false;
-	_dumpVgaOpcodes = false;
 	_dumpImages = false;
 
 	_copyProtection = false;
@@ -678,7 +678,6 @@ Common::Error AGOSEngine::init() {
 
 	// TODO: Use special debug levels instead of the following hack.
 	switch (gDebugLevel) {
-	case 3: _dumpVgaOpcodes = true; break;
 	case 4: _dumpScripts    = true; break;
 	case 5: _dumpVgaScripts = true; break;
 	}

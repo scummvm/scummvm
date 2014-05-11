@@ -62,7 +62,8 @@ struct Surface;
 namespace AGOS {
 
 enum {
-	kDebugOpcode = 1 << 0
+	kDebugOpcode = 1 << 0,
+	kDebugVGAOpcode = 1 << 1
 };
 
 uint fileReadItemID(Common::SeekableReadStream *in);
@@ -334,7 +335,6 @@ protected:
 	bool _pause;
 	bool _dumpScripts;
 	bool _dumpVgaScripts;
-	bool _dumpVgaOpcodes;
 	bool _dumpImages;
 	bool _speech;
 	bool _subtitles;

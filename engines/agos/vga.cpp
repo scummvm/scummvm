@@ -27,6 +27,7 @@
 #include "agos/intern.h"
 #include "agos/vga.h"
 
+#include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -152,7 +153,7 @@ void AGOSEngine::runVgaScript() {
 	for (;;) {
 		uint opcode;
 
-		if (_dumpVgaOpcodes) {
+		if (DebugMan.isDebugChannelEnabled(kDebugVGAOpcode)) {
 			if (_vcPtr != (const byte *)&_vcGetOutOfCode) {
 				debugN("%.5d %.5X: %5d %4d ", _vgaTickCounter, (unsigned int)(_vcPtr - _curVgaFile1), _vgaCurSpriteId, _vgaCurZoneNum);
 				dumpVideoScript(_vcPtr, true);
@@ -381,8 +382,7 @@ void AGOSEngine::vcSkipNextInstruction() {
 		_vcPtr += opcodeParamLenPN[opcode];
 	}
 
-	if (_dumpVgaOpcodes)
-		debugN("; skipped\n");
+	debugCN(kDebugVGAOpcode, "; skipped\n");
 }
 
 // VGA Script commands
