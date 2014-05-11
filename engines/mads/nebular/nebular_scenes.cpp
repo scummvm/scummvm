@@ -247,7 +247,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 612:	// expressway / maintenance building
 		return new DummyScene(vm);	// TODO
 	case 620:	// cutscene, viewport glass breaking
-		return new DummyScene(vm);	// TODO
+		return new Scene620(vm);
 
 	// Scene group #7 (submerged men's city / upper floor)
 	case 701:	// outside elevator (after city is submerged)
