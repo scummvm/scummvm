@@ -133,6 +133,33 @@ public:
 	virtual void actions();
 	virtual void postActions() {};
 };
+
+class Scene607: public Scene6xx{
+private:
+	uint32 _dogTimer;
+	uint32 _lastFrameTime;
+
+	bool _dogLoop;
+	bool _dogEatsRex;
+	bool _dogBarking;
+	bool _shopAvailable;
+
+	int _animationMode;
+	int _animationActive;
+	int _counter;
+
+	void handleThrowingBone();
+
+public:
+	Scene607(MADSEngine *vm) : Scene6xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
 } // End of namespace Nebular
 } // End of namespace MADS
 

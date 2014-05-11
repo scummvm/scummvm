@@ -235,7 +235,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 605:	// viewport closeup
 		return new Scene605(vm);
 	case 607:	// outside Abdul's garage
-		return new DummyScene(vm);	// TODO
+		return new Scene607(vm);
 	case 608:	// inside Abdul's garage
 		return new DummyScene(vm);	// TODO
 	case 609:	// outside Buckluster video store
