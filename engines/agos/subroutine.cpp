@@ -564,8 +564,7 @@ restart:
 			else
 				_codePtr += 8;
 
-			if (_dumpOpcodes)
-				debug("; %d", sub->id);
+				debugC(kDebugOpcode, "; %d", sub->id);
 			result = runScript();
 			if (result != 0) {
 				break;

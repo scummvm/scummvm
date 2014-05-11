@@ -61,6 +61,10 @@ struct Surface;
 
 namespace AGOS {
 
+enum {
+	kDebugOpcode = 1 << 0
+};
+
 uint fileReadItemID(Common::SeekableReadStream *in);
 
 #define CHECK_BOUNDS(x, y) assert((uint)(x) < ARRAYSIZE(y))
@@ -329,7 +333,6 @@ protected:
 	bool _copyProtection;
 	bool _pause;
 	bool _dumpScripts;
-	bool _dumpOpcodes;
 	bool _dumpVgaScripts;
 	bool _dumpVgaOpcodes;
 	bool _dumpImages;
