@@ -887,7 +887,8 @@ blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, GUI::ThemeEngine::AutoScaleMode autoscale) {
+blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, GUI::ThemeEngine::AutoScaleMode autoscale,
+			Graphics::DrawStep::VectorAlignment xAlign, Graphics::DrawStep::VectorAlignment yAlign) {
 	if (autoscale == GUI::ThemeEngine::kAutoScaleStretch) {
 		source->blit(*_activeSurface, r.left, r.top, Graphics::FLIP_NONE,
 			nullptr, TS_ARGB(255, 255, 255, 255),
@@ -899,9 +900,16 @@ blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, GUI
 		if (ratio2 < ratio)
 			ratio = ratio2;
 
-		source->blit(*_activeSurface, r.left, r.top, Graphics::FLIP_NONE,
+		int offx = 0, offy = 0;
+		if (xAlign == Graphics::DrawStep::kVectorAlignCenter)
+			offx = (r.width() - (int)(source->w * ratio)) >> 1;
+
+		if (yAlign == Graphics::DrawStep::kVectorAlignCenter)
+			offy = (r.height() - (int)(source->h * ratio)) >> 1;
+
+		source->blit(*_activeSurface, r.left + offx, r.top + offy, Graphics::FLIP_NONE,
 			nullptr, TS_ARGB(255, 255, 255, 255),
-			  (int)(source->w * ratio), (int)(source->h * ratio));
+	                  (int)(source->w * ratio), (int)(source->h * ratio));
 
 	} else if (autoscale == GUI::ThemeEngine::kAutoScaleNinePatch) {
 		Graphics::NinePatchBitmap nine(source, false);

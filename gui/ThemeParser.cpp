@@ -468,6 +468,9 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 
 			drawstep->blitAlphaSrc = _theme->getAlphaBitmap(stepNode->values["file"]);
 
+			if (!drawstep->blitAlphaSrc)
+				return parserError("The given filename hasn't been loaded into the GUI.");
+
 			if (stepNode->values.contains("autoscale")) {
 				if (stepNode->values["autoscale"] == "true" || stepNode->values["autoscale"] == "stretch") {
 					drawstep->autoscale = ThemeEngine::kAutoScaleStretch;
@@ -480,8 +483,35 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 				}
 			}
 
-			if (!drawstep->blitAlphaSrc)
-				return parserError("The given filename hasn't been loaded into the GUI.");
+			if (stepNode->values.contains("xpos")) {
+				val = stepNode->values["xpos"];
+
+				if (parseIntegerKey(val, 1, &x))
+					drawstep->x = x;
+				else if (val == "center")
+					drawstep->xAlign = Graphics::DrawStep::kVectorAlignCenter;
+				else if (val == "left")
+					drawstep->xAlign = Graphics::DrawStep::kVectorAlignLeft;
+				else if (val == "right")
+					drawstep->xAlign = Graphics::DrawStep::kVectorAlignRight;
+				else
+					return parserError("Invalid value for X Position");
+			}
+
+			if (stepNode->values.contains("ypos")) {
+				val = stepNode->values["ypos"];
+
+				if (parseIntegerKey(val, 1, &x))
+					drawstep->y = x;
+				else if (val == "center")
+					drawstep->yAlign = Graphics::DrawStep::kVectorAlignCenter;
+				else if (val == "top")
+					drawstep->yAlign = Graphics::DrawStep::kVectorAlignTop;
+				else if (val == "bottom")
+					drawstep->yAlign = Graphics::DrawStep::kVectorAlignBottom;
+				else
+					return parserError("Invalid value for Y Position");
+			}
 		}
 
 		if (functionName == "roundedsq" || functionName == "circle" || functionName == "tab") {
