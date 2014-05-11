@@ -229,7 +229,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 602:	// Bruce's house, living room
 		return new Scene602(vm);
 	case 603:	// Bruce's house, bedroom
-		return new DummyScene(vm);	// TODO
+		return new Scene603(vm);
 	case 604:	// viewport
 		return new DummyScene(vm);	// TODO
 	case 605:	// viewport closeup
