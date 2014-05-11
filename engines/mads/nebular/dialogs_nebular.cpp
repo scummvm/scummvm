@@ -393,6 +393,8 @@ void PictureDialog::restore() {
 		_vm->_palette->setFullPalette(palette._mainPalette);
 		Common::copy(&_palFlags[0], &_palFlags[PALETTE_COUNT], &palette._palFlags[0]);
 		palette._rgbList.copy(_rgbList);
+
+		_vm->_dialogs->_defaultPosition.y = -1;
 	}
 }
 

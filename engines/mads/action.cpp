@@ -75,6 +75,7 @@ void MADSAction::clear() {
 	_articleNumber = 0;
 	_lookFlag = false;
 	_pointEstablished = 0;
+	_statusText.clear();
 	_selectedRow = -1;
 	_hotspotId = -1;
 	_secondObject = -1;
