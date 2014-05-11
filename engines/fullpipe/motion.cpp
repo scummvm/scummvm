@@ -632,10 +632,12 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 	PicAniInfo picAniInfo;
 	int ss;
 
-	MovItem *v9 = method28(subj, xpos, ypos, fuzzyMatch, &ss);
+	MovItem *movitem = method28(subj, xpos, ypos, fuzzyMatch, &ss);
+
 	subj->getPicAniInfo(&picAniInfo);
-	if ( v9 ) {
-		MovArr *goal = _callback1(subj, v9, ss);
+
+	if (movitem) {
+		MovArr *goal = _callback1(subj, movitem, ss);
 		int idx = getItemIndexByStaticAni(subj);
 
 		for (uint i = 0; i < _items[idx]->count; i++) {
@@ -644,12 +646,13 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 					Common::Point point;
 
 					subj->calcStepLen(point);
-					v15 = MovGraph_sub_451D50(this, subj, subj->_ox - point.x, subj->_oy - point.y, subj->_movement->_staticsObj1->_staticsId, xpos, ypos, 0, fuzzyMatch);
-					v16 = v15;
-					if ( !v15 || !MessageQueue_getExCommandByIndex(v15, 0) )
-						goto return_0;
+
+					MessageQueue *mq = MovGraph_sub_451D50(this, subj, subj->_ox - point.x, subj->_oy - point.y, subj->_movement->_staticsObj1->_staticsId, xpos, ypos, 0, fuzzyMatch);
+
+					if (!mq || !mq->getExCommandByIndex(0))
+						return 0;
 					
-					ExCommand *ex = MessageQueue_getExCommandByIndex(v16, 0);
+					ExCommand *ex = mq->getExCommandByIndex(0);
 
 					if ((ex->_messageKind != 1 && ex->_messageKind != 20) || 
 						ex->_messageNum != subj->_movement->_id || 
@@ -659,56 +662,53 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 			}
 		}
 	}
-	v22 = method28(subj, xpos, ypos, fuzzyMatch, &ss);
-	if ( v22
-		 && (v23 = this->_callback1(subj, v22, ss),
-			 v24 = MovGraph_getItemIndexByStaticAni(this, subj),
-			 v25 = 0,
-			 v24 <<= 6,
-			 v26 = (MovGraphItem *)((char *)this->_items + v24),
-			 ptr = v24,
-			 v27 = v26->count,
-			 v27 > 0) ) {
-		v28 = v26->items;
-		while ( v28->movarr != v23 ) {
-			++v25;
-			++v28;
-			if ( v25 >= v27 )
-				goto LABEL_20;
+
+	movitem = method28(subj, xpos, ypos, fuzzyMatch, &ss);
+	if (movitem) {
+		MovArr *goal = _callback1(subj, movitem, ss);
+		int idx = getItemIndexByStaticAni(subj);
+		v25 = 0;
+		idx <<= 6;
+
+		if (_items[idx]->count > 0) {
+			int arridx = 0;
+
+			while (_items[idx]->items[arridx]->movarr != goal) {
+				arridx++;
+
+				if (arridx >= _items[idx]->count) {
+					subj->setPicAniInfo(&picAniInfo);
+					return 0;
+				}
+			}
+
+			_items[idx]->movarr.clear();
+
+			memcpy(_items[idx]->movarr, _items[idx]->items[arridx].movarr, 0x20u);
+			_items[idx]->movarr = (MovArr *)operator new(8 * _items[idx]->items[arridx].movarr->_movStepCount);
+			memcpy(_items[idx]->movarr, _items[idx]->items[arridx].movarr, 8 * _items[idx]->items[arridx].movarr->_movStepCount);
+
+			_items[idx]->field_10 = -1;
+			_items[idx]->field_14 = 0;
+
+			MessageQueue *mq = fillMGMinfo(_items[idx]->ani, _items[idx]->movarr, staticsId);
+			if (mq) {
+				ExCommand *ex = new ExCommand();
+				ex->_messageKind = 17;
+				ex->_messageNum = 54;
+				ex->_parentId = subj->_id;
+				ex->_field_3C = 1;
+				mq->addExCommandToEnd(ex);
+			}
+			subj->setPicAniInfo(&picAniInfo);
+
+			return mq;
 		}
-		v30 = v26->items;
-		v31 = v26->movarr;
-		v32 = v25;
-		v33 = v30[v32].movarr;
-		vvv = v30[v32].movarr;
-		if ( v31 )
-			CObjectFree(v31);
-		memcpy((char *)&this->_items->movarr + ptr, v33, 0x20u);
-		v34 = vvv;
-		v35 = (MovArr *)operator new(8 * vvv->_movStepCount);
-		v36 = ptr;
-		*(MovArr **)((char *)&this->_items->movarr + ptr) = v35;
-		memcpy(*(void **)((char *)&this->_items->movarr + v36), v34->_movSteps, 8 * v34->_movStepCount);
-		*(int *)((char *)&this->_items->field_10 + v36) = -1;
-		*(int *)((char *)&this->_items->field_14 + v36) = 0;
-		MessageQueue *mq = fillMGMinfo(*(StaticANIObject **)((char *)&this->_items->ani + v36), (MovArr *)((char *)&this->_items->movarr + v36), staticsId);
-		if (mq) {
-			ExCommand *ex = new ExCommand();
-			ex->_messageKind = 17;
-			ex->_messageNum = 54;
-			ex->_parentId = subj->_id;
-			ex->_field_3C = 1;
-			mq->addExCommandToEnd(ex);
-		}
-		subj->setPicAniInfo(&picAniInfo);
-		result = mq;
-	} else {
-	LABEL_20:
-		subj->setPicAniInfo(&picAniInfo);
-	return_0:
-		result = 0;
 	}
-	return result;
+
+	subj->setPicAniInfo(&picAniInfo);
+
+	return 0;
 #endif
 	warning("STUB: MovGraph::doWalkTo()");
 
