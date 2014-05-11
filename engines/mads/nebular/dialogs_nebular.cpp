@@ -171,20 +171,6 @@ void DialogsNebular::showItem(int objectId, int messageId, int speech) {
 	assert(!speech);
 
 	show(messageId, objectId);
-#if 0
-	Scene &scene = _vm->_game->_scene;
-	byte highPalette[8 * 3];
-	Common::copy(&_vm->_palette->_mainPalette[0x2E8], &_vm->_palette->_mainPalette[PALETTE_SIZE],
-		&highPalette[0]);
-	byte *depthP = scene._depthSurface.getData();
-	byte greyScale[3];
-	greyScale[0] = greyScale[1] = greyScale[2] = 0xFFFF;
-	Common::String setName = Common::String::format("*OBJ%.3d.SS", objectId);
-
-
-
-	delete[] savedSurface;
-#endif
 }
 
 Common::String DialogsNebular::getVocab(int vocabId) {
@@ -211,7 +197,7 @@ Common::String DialogsNebular::getVocab(int vocabId) {
 
 bool DialogsNebular::textNoun(Common::String &dialogText, int nounNum,
 		const Common::String &valStr) {
-	warning("TODO: textNoun");
+	error("TODO: textNoun");
 	return false;
 }
 
@@ -337,12 +323,25 @@ bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 PictureDialog::PictureDialog(MADSEngine *vm, const Common::Point &pos,
 		int maxChars, int objectId) :
 		TextDialog(vm, FONT_INTERFACE, pos, maxChars), _objectId(objectId) {
-	Scene &scene = _vm->_game->_scene;
-	Palette &palette = *_vm->_palette;
-
 	// Turn off cycling if active
+	Scene &scene = _vm->_game->_scene;
 	_cyclingActive = scene._cyclingActive;
 	scene._cyclingActive = false;
+}
+
+PictureDialog::~PictureDialog() {
+	// Restore cycling flag
+	Scene &scene = _vm->_game->_scene;
+	scene._cyclingActive = _cyclingActive;
+}
+
+void PictureDialog::save() {
+	Palette &palette = *_vm->_palette;
+	byte map[PALETTE_COUNT];
+
+	// Save the entire screen
+	_savedSurface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
+	_vm->_screen.copyTo(_savedSurface);
 
 	// Save palette information
 	Common::copy(&palette._mainPalette[0], &palette._mainPalette[PALETTE_SIZE], &_palette[0]);
@@ -358,34 +357,43 @@ PictureDialog::PictureDialog(MADSEngine *vm, const Common::Point &pos,
 
 	// Reset the flag list
 	palette._rgbList.reset();
-}
 
-PictureDialog::~PictureDialog() {
-	// Restore cycling flag
-	Scene &scene = _vm->_game->_scene;
-	Palette &palette = *_vm->_palette;
-	scene._cyclingActive = _cyclingActive;
-
-	// Restore palette information
-	Common::copy(&_palette[0], &_palette[PALETTE_SIZE], &palette._mainPalette[0]);
-	_vm->_palette->setFullPalette(palette._mainPalette);
-	Common::copy(&_palFlags[0], &_palFlags[PALETTE_COUNT], &palette._palFlags[0]);
-	palette._rgbList.copy(_rgbList);
-}
-
-void PictureDialog::show() {
-	setupPalette();
-
-	TextDialog::show();
-}
-
-void PictureDialog::setupPalette() {
-	Palette &palette = *_vm->_palette;
-	byte map[PALETTE_COUNT];
-
+	// Fade the screen to grey
 	int numColors = PALETTE_COUNT - PALETTE_RESERVED_LOW_COUNT - PALETTE_RESERVED_HIGH_COUNT;
 	palette.fadeToGrey(palette._mainPalette, &map[PALETTE_RESERVED_LOW_COUNT],
 		PALETTE_RESERVED_LOW_COUNT, numColors, 248, 8, 1, 16);
+
+	// Remap the greyed out screen to use the small greyscale range
+	// at the top end of the palette
+	_vm->_screen.translate(map);
+
+	// Load the inventory picture
+	Common::String setName = Common::String::format("*OB%.3d.SS", _objectId);
+	SpriteAsset *asset = new SpriteAsset(_vm, setName, 0x8000);
+	palette.setFullPalette(palette._mainPalette);
+
+	// Draw the inventory picture
+	MSprite *frame = asset->getFrame(0);
+	frame->copyTo(&_vm->_screen, Common::Point(160 - frame->w / 2, 6),
+		frame->getTransparencyIndex());
+	_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
+}
+
+void PictureDialog::restore() {
+	if (_savedSurface) {
+		_savedSurface->copyTo(&_vm->_screen);
+		delete _savedSurface;
+		_savedSurface = nullptr;
+
+		_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
+
+		// Restore palette information
+		Palette &palette = *_vm->_palette;
+		Common::copy(&_palette[0], &_palette[PALETTE_SIZE], &palette._mainPalette[0]);
+		_vm->_palette->setFullPalette(palette._mainPalette);
+		Common::copy(&_palFlags[0], &_palFlags[PALETTE_COUNT], &palette._palFlags[0]);
+		palette._rgbList.copy(_rgbList);
+	}
 }
 
 /*------------------------------------------------------------------------*/

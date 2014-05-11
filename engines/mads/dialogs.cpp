@@ -34,22 +34,20 @@ Dialog::Dialog(MADSEngine *vm): _vm(vm), _savedSurface(nullptr),
 }
 
 Dialog::~Dialog() {
-	restore(&_vm->_screen);
 }
 
-
-void Dialog::save(MSurface *s) {
+void Dialog::save() {
 	_savedSurface = new MSurface(_width, _height);
-	s->copyTo(_savedSurface,
+	_vm->_screen.copyTo(_savedSurface,
 		Common::Rect(_position.x, _position.y, _position.x + _width, _position.y + _height),
 		Common::Point());
 
 	_vm->_screen.copyRectToScreen(getBounds());
 }
 
-void Dialog::restore(MSurface *s) {
+void Dialog::restore() {
 	if (_savedSurface) {
-		_savedSurface->copyTo(s, _position);
+		_savedSurface->copyTo(&_vm->_screen, _position);
 		delete _savedSurface;
 		_savedSurface = nullptr;
 
@@ -58,8 +56,11 @@ void Dialog::restore(MSurface *s) {
 }
 
 void Dialog::draw() {
+	// Calculate the dialog positioning
+	calculateBounds();
+
 	// Save the screen portion the dialog will overlap
-	save(&_vm->_screen);
+	save();
 
 	// Draw the dialog
 	// Fill entire content of dialog
@@ -80,6 +81,9 @@ void Dialog::draw() {
 	drawContent(Common::Rect(_position.x + 2, _position.y + 2,
 		_position.x + _width - 2, _position.y + _height - 2), 0,
 		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
+}
+
+void Dialog::calculateBounds() {
 }
 
 void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte color2) {
@@ -259,16 +263,7 @@ void TextDialog::draw() {
 		--_numLines;
 
 	// Figure out the size and position for the dialog
-	_height = (_font->getHeight() + 1) * (_numLines + 1) + 10;
-	if (_position.x == -1)
-		_position.x = 160 - (_width / 2);
-	if (_position.y == -1)
-		_position.y = 100 - (_height / 2);
-
-	if ((_position.x + _width) > _vm->_screen.getWidth())
-		_position.x = _vm->_screen.getWidth() - (_position.x + _width);
-	if ((_position.y + _height) > _vm->_screen.getHeight())
-		_position.y = _vm->_screen.getHeight() - (_position.y + _height);
+	calculateBounds();
 
 	// Draw the underlying dialog
 	Dialog::draw();
@@ -305,6 +300,19 @@ void TextDialog::draw() {
 	_vm->_screen.copyRectToScreen(getBounds());
 }
 
+void TextDialog::calculateBounds() {
+	_height = (_font->getHeight() + 1) * (_numLines + 1) + 10;
+	if (_position.x == -1)
+		_position.x = 160 - (_width / 2);
+	if (_position.y == -1)
+		_position.y = 100 - (_height / 2);
+
+	if ((_position.x + _width) > _vm->_screen.getWidth())
+		_position.x = _vm->_screen.getWidth() - (_position.x + _width);
+	if ((_position.y + _height) > _vm->_screen.getHeight())
+		_position.y = _vm->_screen.getHeight() - (_position.y + _height);
+}
+
 void TextDialog::drawWithInput() {
 	//int innerWidth = _innerWidth;
 	//int lineHeight = _font->getHeight() + 1;
@@ -325,6 +333,7 @@ void TextDialog::restorePalette() {
 }
 
 void TextDialog::show() {
+	// Draw the dialog
 	draw();
 	_vm->_events->showCursor();
 
@@ -338,6 +347,9 @@ void TextDialog::show() {
 		_vm->_events->waitForNextFrame();
 		_vm->_events->_pendingKeys.clear();
 	}
+
+	// Restore the background
+	restore();
 }
 
 /*------------------------------------------------------------------------*/

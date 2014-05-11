@@ -89,17 +89,14 @@ private:
 	byte _palette[PALETTE_SIZE];
 	uint32 _palFlags[PALETTE_COUNT];
 	RGBList _rgbList;
+protected:
+	virtual void save();
 
-	/**
-	 * Sets up the palette and fades the screen to gray
-	 */
-	void setupPalette();
+	virtual void restore();
 public:
 	PictureDialog(MADSEngine *vm, const Common::Point &pos, int maxChars, int objectId);
 
 	virtual ~PictureDialog();
-
-	virtual void show();
 };
 
 enum DialogTextAlign { ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };

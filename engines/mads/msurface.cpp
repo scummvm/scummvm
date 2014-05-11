@@ -494,6 +494,16 @@ void MSurface::translate(Common::Array<RGB6> &palette) {
 	}
 }
 
+void MSurface::translate(byte map[PALETTE_COUNT]) {
+	for (int y = 0; y < this->h; ++y) {
+		byte *pDest = getBasePtr(0, y);
+
+		for (int x = 0; x < this->w; ++x, ++pDest) {
+				*pDest = map[*pDest];
+		}
+	}
+}
+
 MSurface *MSurface::flipHorizontal() const {
 	MSurface *dest = new MSurface(this->w, this->h);
 

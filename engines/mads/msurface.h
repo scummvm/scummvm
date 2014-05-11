@@ -205,6 +205,11 @@ public:
 	void translate(Common::Array<RGB6> &palette);
 
 	/**
+	* Translates the pixels of an image used the passed palette with RGB mapping
+	*/
+	void translate(byte map[PALETTE_COUNT]);
+
+	/**
 	 * Create a new surface which is a flipped horizontal copy of the current one
 	 */
 	MSurface *flipHorizontal() const;

@@ -40,15 +40,13 @@ protected:
 
 	/**
 	 * Save the section of the passed surface the dialog will cover.
-	 * @param s		Screen surface to save
 	 */
-	void save(MSurface *s);
+	virtual void save();
 
 	/**
 	 * Restore saved dialog surface
-	 * @param s		Screen surface to restore to.
 	 */
-	void restore(MSurface *s);
+	virtual void restore();
 
 	/**
 	 * Draws the content of a dialog with a gravelly alternating color.
@@ -59,6 +57,11 @@ protected:
 	 * Draw the dialog
 	 */
 	virtual void draw();
+
+	/**
+	 * Calculate bounds for the dialog
+	 */
+	virtual void calculateBounds();
 public:
 	/**
 	 * Constructor
@@ -115,6 +118,11 @@ protected:
 	Common::String _lines[TEXT_DIALOG_MAX_LINES];
 	int _lineXp[TEXT_DIALOG_MAX_LINES];
 	byte _cyclingPalette[8 * 3];
+
+	/**
+	 * Calculate the bounds for the dialog
+	 */
+	virtual void calculateBounds();
 public:
 	/**
 	 * Constructor
