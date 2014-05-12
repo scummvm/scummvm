@@ -45,6 +45,7 @@ struct HeroTab;
 class V3D;
 class V2D;
 class Dac;
+class Spare;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -96,6 +97,7 @@ public:
 	Text *_text;
 	HeroTab *_heroTab[2];
 	V3D *_eye;
+	Spare *_spare;
 private:
 	void init();
 	void deinit();

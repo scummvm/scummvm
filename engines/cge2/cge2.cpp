@@ -34,6 +34,7 @@
 #include "cge2/text.h"
 #include "cge2/hero.h"
 #include "cge2/general.h"
+#include "cge2/spare.h"
 
 namespace CGE2 {
 
@@ -49,6 +50,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	for (int i = 0; i < 2; i++)
 		_heroTab[i] = nullptr;
 	_eye = nullptr;
+	_spare = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -69,6 +71,7 @@ void CGE2Engine::init() {
 	for (int i = 0; i < 2; i++)
 		_heroTab[i] = new HeroTab(this);
 	_eye = new V3D();
+	_spare = new Spare(this);
 }
 
 void CGE2Engine::deinit() {
@@ -82,6 +85,7 @@ void CGE2Engine::deinit() {
 	for (int i = 0; i < 2; i++)
 		delete _heroTab[i];
 	delete _eye;
+	delete _spare;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
