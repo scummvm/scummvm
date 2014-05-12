@@ -121,7 +121,6 @@ public:
 	void showHeroAnimFrame();
 	void line(int x1, int y1, int x2, int y2);
 	void plotPoint(int x, int y);
-	//Graphics::Surface *showHeroShadow();
 	void showHeroShadow();
 	void setShadowScale(int32 shadowScale);
 	void specialAnim();

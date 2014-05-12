@@ -265,7 +265,6 @@ static void plot(int x, int y, int color, void *data) {
 }
 
 void Hero::showHeroShadow() {
-//Graphics::Surface *Hero::showHeroShadow() {
 	int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
 	Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
 	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
@@ -274,16 +273,6 @@ void Hero::showHeroShadow() {
 	Graphics::Surface *makeShadow = new Graphics::Surface();
 	makeShadow->create(frameXSize, frameYSize, Graphics::PixelFormat::createFormatCLUT8());
 
-	//Graphics::Surface *destShadow = new Graphics::Surface();
-	//destShadow->create(frameXSize, frameYSize, Graphics::PixelFormat::createFormatCLUT8());
-	/*
-	for (int y = 0; y < frameYSize; y++) {
-		byte *src = (byte *)destShadow->getBasePtr(0, y);
-		for (int x = 0; x < frameXSize; x++, src++) {
-			*src = 0xFF;
-		}
-	}
-	*/
 	for (int y = 0; y < frameYSize; y++) {
 		byte *src = (byte *)heroFrame->getBasePtr(0, y);
 		byte *dst = (byte *)makeShadow->getBasePtr(0, y);
@@ -301,17 +290,11 @@ void Hero::showHeroShadow() {
 	int destX = _drawX; // eax
 	int destY = _middleY - _shadMinus; // ecx
 	// modulo of source Bitmap - ebp
-	int scaledX = getScaledValue(frameXSize); // ebx
-	int scaledY = getScaledValue(frameYSize); // edx
+	//int scaledX = getScaledValue(frameXSize); // ebx
+	//int scaledY = getScaledValue(frameYSize); // edx
 	// shadowTable70 - edi
 
 	if (destY > 1 && destY < kMaxPicHeight) {
-		// pushad
-		// edx = destY
-		// ecx = destX
-		// ebx = _lightY
-		// eax = _lightX
-
 		int shadDirection;
 		if (_lightY > destY) {
 			shadDirection = 1;
@@ -325,10 +308,14 @@ void Hero::showHeroShadow() {
 
 		byte *sprShadow = (byte *)_graph->_shadowTable70;
 		// sprModulo = modulo of source Bitmap
-		int sprWidth = scaledX;
-		int sprHeight = scaledY;
-		int sprDestX = destX - _vm->_picWindowX; //test this
-		int sprDestY = destY - _vm->_picWindowY; //test this
+		//int sprWidth = scaledX; // this or normal size?
+		//int sprHeight = scaledY;
+		int sprWidth = frameXSize;
+		int sprHeight = frameYSize;
+		//int sprDestX = destX - _vm->_picWindowX; //test this
+		//int sprDestY = destY - _vm->_picWindowY; //test this
+		int sprDestX = destX;
+		int sprDestY = destY;
 
 		_shadowDrawX = sprDestX; // to fix
 		_shadowDrawY = sprDestY;
@@ -340,28 +327,29 @@ void Hero::showHeroShadow() {
 		int shadPosY = sprDestY;
 		int shadMinY = sprDestY;
 		int shadMaxY = sprDestY;
-		int shadBitAddr = destY * kMaxPicWidth / 8 + destX / 8; // for temp _shadowBitmap->getZoom() 
+		int shadBitAddr = destY * kMaxPicWidth / 8 + destX / 8;
 		int shadBitMask = 128 >> (destX % 8);
 
 		int shadZoomY2 = _shadScaleValue;
 		int shadZoomY = _scaleValue;
 
-		// lockscreen etc
-		//byte *destShadowStart = (byte *)destShadow->getBasePtr(0, 0); // need this?
-		byte *shadowStart = (byte *)makeShadow->getBasePtr(0, frameYSize - 1); // !TEST IT! esi, first pixel from last row of black hero
-		byte *background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX, sprDestY); // !TEST IT! eax, pixel of background where shadow sprite starts 
-		//byte *background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX, sprDestY + frameYSize);
-		int diff = 0;
-		
+		int diffX = 0;
+		int diffY = 0;
+
+		int blackHeroX = 0;
+		int blackHeroY = frameYSize - 1;
+
+		byte *shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY); // esi, first pixel from last row of black hero
+		byte *background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX, sprDestY); // eax, pixel of background where shadow sprite starts
 
 		// banked2
 		byte *shadowLineStart = _shadowLine + 8;
 
 		// linear_loop
 		for(int i = 0; i < sprHeight; i++) {
-			int ebx16795 = shadPosY;
 			int sprModulo = 0;
 			int shadSkipX = 0;
+			int ct_loop = 0;
 
 			int ebxOnStack;
 			//retry_line:
@@ -369,200 +357,210 @@ void Hero::showHeroShadow() {
 				shadZoomY -= 100;
 				if (shadZoomY < 0 && _scaleValue != 10000) {
 					shadZoomY += _scaleValue;
-					shadowStart -= sprWidth;
+					blackHeroY--;
+					if (blackHeroY < 0) {
+						break;
+					}
+					shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY);
 				} else {
 					break; //to line_y_ok
 				}
 			}
 			if(ebxOnStack == 0) {
-				// esp += 4*4
-				// koniec_bajki
+				break;
+			}
+			if (blackHeroY < 0) {
+				break;
 			}
 			//line_y_ok
-			//if (shadPosY >= 0 && shadPosY != _shadLastY) {
-			if (shadPosY >= 0) {
-				//_shadLastY = shadPosY; 
-				if (shadPosY < 480 && shadPosX < 640) {
-					if (shadPosX < 0) { //?
-						shadSkipX = -1 * shadPosX;
-						background += shadSkipX;
-						if (sprWidth > shadSkipX) {
-							shadowStart += shadSkipX;
-							shadBitAddr += shadSkipX / 8;
-							int ebp16844 = shadSkipX % 8;
-							if (ebp16844 != 0) {
-								//loop_rotate:
-								for (int k = 0; k < ebp16844; k++) {
-									//ror(shadBitMask, 1)
-									if (shadBitMask == 1) {
-										shadBitMask = 128;
-										shadBitAddr++;
-									} else {
-										shadBitMask /= 2;
-									}
+			if (shadPosY >= 0 && shadPosY < 480 && shadPosX < 640) {
+				if (shadPosX < 0) { //when it happens?
+					shadSkipX = -1 * shadPosX;
+					background += shadSkipX;
+					if (sprWidth > shadSkipX) {
+						shadowStart += shadSkipX;
+						shadBitAddr += shadSkipX / 8;
+						int ebp16844 = shadSkipX % 8;
+						if (ebp16844 != 0) {
+							//loop_rotate:
+							for (int k = 0; k < ebp16844; k++) {
+								//ror(shadBitMask, 1)
+								if (shadBitMask == 1) {
+									shadBitMask = 128;
+									shadBitAddr++;
+								} else {
+									shadBitMask /= 2;
 								}
 							}
-						} else {
-							//skip_line //?
-							// no draw_line1
 						}
 					} else {
-						//x1_ok
-						if (shadPosX + sprWidth  > 640) {
-							int ecx16861 = sprWidth - (shadPosX + sprWidth - 640);
-							sprModulo = shadPosX + sprWidth - 640;
-						} else {
-							//draw_line
-							int ecx16868 = sprWidth;
+						//skip_line //?
+						// no draw_line1
+						//no ct_loop?
+					}
+				} else {
+					//x1_ok
+					if (shadPosX + sprWidth > 640) {
+						ct_loop = 640 - shadPosX; // test it
+						sprModulo = shadPosX + sprWidth - 640;
+					} else {
+						//draw_line
+						ct_loop = sprWidth;
+					}
+				}
+				//draw_line1
+				if (shadPosX < shadMinX) {
+					shadMinX = shadPosX;
+				}
+				//bigger_x
+				if (shadPosX + sprWidth > shadMaxX) {
+					shadMaxX = shadPosX + sprWidth;
+				}
+				//smaller_x
+				if (shadPosY < shadMinY) {
+					shadMinY = shadPosY;
+				}
+				//bigger_y
+				if (shadPosY > shadMaxY) {
+					shadMaxY = shadPosY;
+				}
+				//smaller_y
+				//retry_line2
+				int ebxOnStack2;
+				for(ebxOnStack2 = ebxOnStack; ebxOnStack2 > 0; ebxOnStack2--) {
+					shadZoomY2 -= 100;
+					if (shadZoomY2 < 0 && _shadScaleValue != 10000) {
+						shadZoomY2 += _shadScaleValue;
+						blackHeroY--;
+						if (blackHeroY < 0) {
+							break;
 						}
+						shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY);
+					} else {
+						break; //to line_y_ok_2
 					}
-					//draw_line1
-					if (shadPosX < shadMinX) {
-						shadMinX = shadPosX;
-					}
-					//bigger_x
-					if (shadPosX + sprWidth > shadMaxX) {
-						shadMaxX = shadPosX + sprWidth;
-					}
-					//smaller_x
-					if (shadPosY < shadMinY) {
-						shadMinY = shadPosY;
-					}
-					//bigger_y
-					if (shadPosY > shadMaxY) { //?
-						shadMaxY = shadPosY;
-					}
-					//smaller_y
-					//retry_line2
-					int ebxOnStack2;
-					for(ebxOnStack2 = ebxOnStack; ebxOnStack2 > 0; ebxOnStack2--) {
-						shadZoomY2 -= 100;
-						if (shadZoomY2 < 0 && _shadScaleValue != 10000) {
-							shadZoomY2 += _shadScaleValue;
-							shadowStart -= sprWidth;
-						} else {
-							break; //to line_y_ok_2
-						}
-					}
-					if (ebxOnStack2 == 0) {
-						// esp += 4*4
-						// koniec_bajki
-					}
-					//line_y_ok_2:
-					// push esi
-					// push ecx
-					// int lineDestAddr = eax;
-					// edi = eax
-					// eax = shadBitMask
-					// push eax // push shadBitMask
-					// lineBitAddr = shadBitMask
-					// eax = shadBitAddr
-					// push eax
-					// LineBitAddr = eax
+				}
+				if (blackHeroY < 0) {
+					break;
+				}
+				if (ebxOnStack2 == 0) {
+					break;
+				}
+				//line_y_ok_2:
+				// push esi
+				// push ecx
+				// int lineDestAddr = eax;
+				// edi = eax
+				// eax = shadBitMask
+				// push eax // push shadBitMask
+				// lineBitAddr = shadBitMask
+				// eax = shadBitAddr
+				// push eax
+				// LineBitAddr = eax
 
-					//copy_trans
-					//push eax, ebx, edx, ebp
-					int shadWDFlag = 0;
-					int shadZoomX = _scaleValue;
-					//ct_loop:
-					for (int j = 0; j < sprWidth; j++) { //? ecx to check
-						shadZoomX -= 100;
-						if (shadZoomX < 0 && _scaleValue != 10000) {
-							shadowStart++;
-							shadZoomX += _scaleValue;
-						} else {
-							//point_ok:
-							if (*shadowStart == kShadowColor) {
-								if (shadBitMask != _shadowBitmap->getZoom(shadBitAddr)) { //tofix
-									if (shadWallDown == 0) {
-										if (shadBitMask != _shadowBitmap->getZoom(shadBitAddr + kShadowBitmapSize)) {
-											shadWDFlag = 1;
-											//shadow
-											*background = *(sprShadow + *background);
-										}
+				//copy_trans
+				//push eax, ebx, edx, ebp
+				int shadWDFlag = 0;
+				int shadZoomX = _scaleValue;
+				int backgroundDiff = 0;
+				//ct_loop:
+				for (int j = 0; j < ct_loop; j++) {
+					shadZoomX -= 100;
+					if (shadZoomX < 0 && _scaleValue != 10000) {
+						blackHeroX++;
+						shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY);
+						shadZoomX += _scaleValue;
+					} else {
+						//point_ok:
+						if (*shadowStart == kShadowColor) {
+							if (shadBitMask != _shadowBitmap->getZoom(shadBitAddr)) { //tofix
+								if (shadWallDown == 0) {
+									if (shadBitMask != _shadowBitmap->getZoom(shadBitAddr + kShadowBitmapSize)) { //tofix
+										shadWDFlag = 1;
 									}
-								} else {
-									//shadow
-									*background = *(sprShadow + *background);
 								}
 							}
-							//ct_next
-							//ror(shadBitMask, 1)
-							if (shadBitMask == 1) {
-								shadBitMask = 128;
-								shadBitAddr++;
-							} else {
-								shadBitMask /= 2;
-							}
-							//okok
-							shadowStart++;
-							background++;
-							//destShadowStart++;
+							//shadow
+							//*background = *(sprShadow + *background); //wrong color
+							*background = 0;
 						}
-					}
-					//byebyebye
-					if (shadWallDown == 0 && shadWDFlag != 0) {
-						//shadWall itp
-						// 
-					}
-					//byebye
-					// pop ...
-					if (shadDirection != 0 && shadWallDown != 0) {
-						// push...
-						// krap2
-						// WALL_copy_trans
-					}
-					//next_line
-					//int ecx16965 = sprWidth;
-					if (*(shadowLineStart + 2) < *(shadowLineStart - 2)) {
-						//minus_y
-						shadBitAddr += kMaxPicWidth / 8;
-						shadPosY++;
-						//add eax, VESA_ScanLine
-						background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diff, sprDestY + i);
-					} else if (*(shadowLineStart + 2) > *(shadowLineStart - 2)) {
-						shadBitAddr -= kMaxPicWidth / 8;
-						shadPosY--;
-						//sub eax, VESA_ScanLine
-						background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diff, sprDestY - i);
-					}
-					//no_change_y
-					if (*shadowLineStart < *(shadowLineStart - 4)) {
-						//minus_x
-						shadPosX--;
-						//rol
-						if (shadBitMask == 128) {
-							shadBitMask = 1;
-							shadBitAddr--;
-						} else {
-							shadBitMask *= 2;
-						}
-						//eax--;
-						//background--;
-						diff--;
-					} else if (*shadowLineStart > *(shadowLineStart - 4)) {
-						shadPosX++;
-						//ror
+						//ct_next
+						//ror(shadBitMask, 1)
 						if (shadBitMask == 1) {
 							shadBitMask = 128;
 							shadBitAddr++;
 						} else {
 							shadBitMask /= 2;
 						}
-						//background++;
-						diff++;
+						//okok
+						blackHeroX++;
+						shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY);
+						backgroundDiff++;
+						background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX + backgroundDiff, sprDestY + diffY);
 					}
-					//no_change_x
-					shadowLineStart += 4;
-					shadowStart = (byte *)makeShadow->getBasePtr(0, frameYSize - 1 - i);
-					//background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX, sprDestY + i);
+				}
+				//byebyebye
+				if (shadWallDown == 0 && shadWDFlag != 0) {
+					//shadWall etc
+				}
+				//byebye
+				// pop ...
+				if (shadDirection != 0 && shadWallDown != 0) {
+					// push...
+					// krap2
+					// WALL_copy_trans
 				}
 			}
 			//skip_line
+			//add esi, sprWidth - don't need it?
+
+			//next_line
+			if (*(shadowLineStart + 2) < *(shadowLineStart - 2)) {
+				//minus_y
+				shadBitAddr += kMaxPicWidth / 8;
+				shadPosY++;
+				diffY--;
+				background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX, sprDestY + diffY);
+			} else if (*(shadowLineStart + 2) > *(shadowLineStart - 2)) {
+				shadBitAddr -= kMaxPicWidth / 8;
+				shadPosY--;
+				diffY++;
+				background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX, sprDestY + diffY);
+			}
+			//no_change_y
+			if (*shadowLineStart < *(shadowLineStart - 4)) {
+				//minus_x
+				shadPosX--;
+				//rol
+				if (shadBitMask == 128) {
+					shadBitMask = 1;
+					shadBitAddr--;
+				} else {
+					shadBitMask *= 2;
+				}
+				diffX--;
+			} else if (*shadowLineStart > *(shadowLineStart - 4)) {
+				shadPosX++;
+				//ror
+				if (shadBitMask == 1) {
+					shadBitMask = 128;
+					shadBitAddr++;
+				} else {
+					shadBitMask /= 2;
+				}
+				diffX++;
+			}
+			//no_change_x
+			shadowLineStart += 4;
+			blackHeroY--;
+			if (blackHeroY < 0) {
+				break;
+			}
+			blackHeroX = 0;
+			shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY);
 		}
+		//koniec_bajki
 	}
-	//return makeShadow;
-	//return destShadow;
 }
 
 void Hero::showHeroAnimFrame() {
