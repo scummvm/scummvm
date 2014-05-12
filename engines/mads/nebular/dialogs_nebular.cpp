@@ -390,8 +390,13 @@ void PictureDialog::save() {
 	// Set up palette allocation
 	uint32 *palFlagP = &palette._palFlags[0];
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx, ++palFlagP) {
-		*palFlagP = (idx < PALETTE_RESERVED_LOW_COUNT ||
-			idx >= (PALETTE_COUNT - PALETTE_RESERVED_HIGH_COUNT - 10)) ? 1 : 0;
+		if (idx < PALETTE_RESERVED_LOW_COUNT ||
+			idx >= (PALETTE_COUNT - PALETTE_RESERVED_HIGH_COUNT - 10)) {
+			*palFlagP = 1;
+			map[idx] = idx;
+		} else {
+			*palFlagP = 0;
+		}
 	}
 
 	// Reset the flag list
@@ -413,6 +418,8 @@ void PictureDialog::save() {
 
 	// Draw the inventory picture
 	MSprite *frame = asset->getFrame(0);
+	_position.y = frame->h + 12;
+
 	frame->copyTo(&_vm->_screen, Common::Point(160 - frame->w / 2, 6),
 		frame->getTransparencyIndex());
 	_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
