@@ -195,10 +195,49 @@ Common::String DialogsNebular::getVocab(int vocabId) {
 	return vocab;
 }
 
-bool DialogsNebular::textNoun(Common::String &dialogText, int nounNum,
-		const Common::String &valStr) {
-	error("TODO: textNoun");
-	return false;
+bool DialogsNebular::textNoun(Common::String &dest, int nounId, const Common::String &source) {
+	// Ensure the destination has parameter specifications
+	if (!source.hasPrefix(":"))
+		return false;
+
+	// Extract the first (singular) result value
+	Common::String param1 = Common::String(source.c_str() + 1);
+	Common::String param2;
+	const char *sepChar = strchr(source.c_str() + 1, ':');
+	if (sepChar) {
+		param1 = Common::String(source.c_str() + 1, sepChar);
+
+		// Get the second, plural form
+		param2 = Common::String(sepChar + 1);
+	}
+
+	// Get the vocab to use
+	MADSAction &action = _vm->_game->_scene._action;
+	Common::String vocab = _vm->_dialogs->getVocab(action._activeAction._verbId);
+	Common::String *str;
+
+	if (vocab.hasSuffix("s") || vocab.hasSuffix("S")) {
+		str = &param2;
+	} else {
+		str = &param1;
+
+		if (param1 == "a ") {
+			switch (toupper(vocab[0])) {
+			case 'A':
+			case 'E':
+			case 'I':
+			case 'O':
+			case 'U':
+				param1 = "an ";
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	dest += *str;
+	return true;
 }
 
 bool DialogsNebular::commandCheck(const char *idStr, Common::String &valStr,

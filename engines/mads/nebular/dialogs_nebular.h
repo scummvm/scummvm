@@ -41,9 +41,9 @@ private:
 
 	DialogsNebular(MADSEngine *vm): Dialogs(vm) {}
 
-	Common::String getVocab(int vocabId);
+	virtual Common::String getVocab(int vocabId);
 
-	bool textNoun(Common::String &dialogText, int nounNum, const Common::String &valStr);
+	bool textNoun(Common::String &dest, int nounId, const Common::String &source);
 
 	bool commandCheck(const char *idStr, Common::String &valStr, const Common::String &command);
 public:

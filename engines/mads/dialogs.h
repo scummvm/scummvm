@@ -220,7 +220,7 @@ public:
 
 	virtual void showDialog() = 0;
 	virtual void showItem(int objectId, int messageId, int speech = 0) = 0;
-
+	virtual Common::String getVocab(int vocabId) = 0;
 	virtual bool show(int messageId, int objectId = -1) = 0;
 };
 
