@@ -684,9 +684,11 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 
 			_items[idx]->movarr.clear();
 
-			memcpy(_items[idx]->movarr, _items[idx]->items[arridx].movarr, 0x20u);
-			_items[idx]->movarr = (MovArr *)operator new(8 * _items[idx]->items[arridx].movarr->_movStepCount);
-			memcpy(_items[idx]->movarr, _items[idx]->items[arridx].movarr, 8 * _items[idx]->items[arridx].movarr->_movStepCount);
+			for (uint i = 0; i < _items[idx]->items[arridx].movarr->_movStepCount; i++) {
+				MovArr *m = new MovArr;
+
+				*m = *_items[idx]->items[arridx].movarr[i];
+			}
 
 			_items[idx]->field_10 = -1;
 			_items[idx]->field_14 = 0;
@@ -1003,12 +1005,7 @@ bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
 	}
 
 	if (idxmin != -1) {
-		arr->_afield_0 = (*movarr)[idxmin]->_afield_0;
-		arr->_afield_4 = (*movarr)[idxmin]->_afield_4;
-		arr->_afield_8 = (*movarr)[idxmin]->_afield_8;
-		arr->_link = (*movarr)[idxmin]->_link;
-		arr->_dist = (*movarr)[idxmin]->_dist;
-		arr->_point = (*movarr)[idxmin]->_point;
+		*arr = *(*movarr)[idxmin];
 
 		res = true;
 	}
