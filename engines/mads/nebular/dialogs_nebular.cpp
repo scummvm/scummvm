@@ -416,13 +416,23 @@ void PictureDialog::save() {
 	SpriteAsset *asset = new SpriteAsset(_vm, setName, 0x8000);
 	palette.setFullPalette(palette._mainPalette);
 
-	// Draw the inventory picture
+	// Get the inventory frame, and adjust the dialog position to allow for it
 	MSprite *frame = asset->getFrame(0);
 	_position.y = frame->h + 12;
 
+	// Draw the inventory picture
 	frame->copyTo(&_vm->_screen, Common::Point(160 - frame->w / 2, 6),
 		frame->getTransparencyIndex());
 	_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
+
+	// Adjust the dialog colours to use
+	TEXTDIALOG_CONTENT1 -= 10;
+	TEXTDIALOG_CONTENT2 -= 10;
+	TEXTDIALOG_EDGE -= 10;
+	TEXTDIALOG_BACKGROUND -= 10;
+	TEXTDIALOG_FC -= 10;
+	TEXTDIALOG_FD -= 10;
+	TEXTDIALOG_FE -= 10;
 }
 
 void PictureDialog::restore() {

@@ -31,27 +31,24 @@
 namespace MADS {
 
 class Dialog {
+private:
+	void setDialogPalette();
 protected:
 	MADSEngine *_vm;
 	MSurface *_savedSurface;
 	Common::Point _position;
 	int _width;
 	int _height;
+	byte _dialogPalette[8 * 3];
 
-	/**
-	 * Save the section of the passed surface the dialog will cover.
-	 */
-	virtual void save();
-
-	/**
-	 * Restore saved dialog surface
-	 */
-	virtual void restore();
-
-	/**
-	 * Draws the content of a dialog with a gravelly alternating color.
-	 */
-	void drawContent(const Common::Rect &r, int seed, byte color1, byte color2);
+	int TEXTDIALOG_CONTENT1;
+	int TEXTDIALOG_CONTENT2;
+	int TEXTDIALOG_EDGE;
+	int TEXTDIALOG_BACKGROUND;
+	int TEXTDIALOG_FC;
+	int TEXTDIALOG_FD;
+	int TEXTDIALOG_FE;
+	int TEXTDIALOG_BLACK;
 protected:
 	/**
 	 * Draw the dialog
@@ -62,6 +59,21 @@ protected:
 	 * Calculate bounds for the dialog
 	 */
 	virtual void calculateBounds();
+
+	/**
+	* Save the section of the passed surface the dialog will cover.
+	*/
+	virtual void save();
+
+	/**
+	* Restore saved dialog surface
+	*/
+	virtual void restore();
+
+	/**
+	* Draws the content of a dialog with a gravelly alternating color.
+	*/
+	void drawContent(const Common::Rect &r, int seed, byte color1, byte color2);
 public:
 	/**
 	 * Constructor
@@ -80,17 +92,6 @@ public:
 		return Common::Rect(_position.x, _position.y,
 			_position.x + _width, _position.y + _height);
 	}
-};
-
-enum {
-	TEXTDIALOG_CONTENT1 = 0XF8,
-	TEXTDIALOG_CONTENT2 = 0XF9,
-	TEXTDIALOG_EDGE = 0XFA,
-	TEXTDIALOG_BACKGROUND = 0XFB,
-	TEXTDIALOG_FC = 0XFC,
-	TEXTDIALOG_FD = 0XFD,
-	TEXTDIALOG_FE = 0XFE,
-	TEXTDIALOG_BLACK = 0
 };
 
 #define TEXT_DIALOG_MAX_LINES 20
@@ -117,7 +118,6 @@ protected:
 	int _askLineNum;
 	Common::String _lines[TEXT_DIALOG_MAX_LINES];
 	int _lineXp[TEXT_DIALOG_MAX_LINES];
-	byte _cyclingPalette[8 * 3];
 
 	/**
 	 * Calculate the bounds for the dialog

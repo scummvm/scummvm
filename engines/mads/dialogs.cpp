@@ -31,6 +31,14 @@ namespace MADS {
 
 Dialog::Dialog(MADSEngine *vm): _vm(vm), _savedSurface(nullptr),
 		_position(Common::Point(-1, -1)), _width(0), _height(0) {
+	TEXTDIALOG_CONTENT1 = 0XF8;
+	TEXTDIALOG_CONTENT2 = 0XF9;
+	TEXTDIALOG_EDGE = 0XFA;
+	TEXTDIALOG_BACKGROUND = 0XFB;
+	TEXTDIALOG_FC = 0XFC;
+	TEXTDIALOG_FD = 0XFD;
+	TEXTDIALOG_FE = 0XFE;
+	TEXTDIALOG_BLACK = 0;
 }
 
 Dialog::~Dialog() {
@@ -52,6 +60,10 @@ void Dialog::restore() {
 		_savedSurface = nullptr;
 
 		_vm->_screen.copyRectToScreen(getBounds());
+
+		Common::copy(&_dialogPalette[0], &_dialogPalette[8 * 3],
+			&_vm->_palette->_mainPalette[248 * 3]);
+		_vm->_palette->setPalette(_vm->_palette->_mainPalette, 248, 8);
 	}
 }
 
@@ -61,6 +73,8 @@ void Dialog::draw() {
 
 	// Save the screen portion the dialog will overlap
 	save();
+
+	setDialogPalette();
 
 	// Draw the dialog
 	// Fill entire content of dialog
@@ -81,6 +95,20 @@ void Dialog::draw() {
 	drawContent(Common::Rect(_position.x + 2, _position.y + 2,
 		_position.x + _width - 2, _position.y + _height - 2), 0,
 		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
+}
+
+void Dialog::setDialogPalette() {
+	// Save the high end of the palette, and set up the entries for dialog display
+	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3],
+		&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3 + 8 * 3],
+		&_dialogPalette[0]);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_CONTENT1, 2, 0x90, 0x80);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_EDGE, 2, 0x9C, 0x70);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FC, 2, 0x90, 0x80);
+	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FE, 1, 0xDC, 0xDC);
+
+	_vm->_palette->setPalette(_vm->_palette->_mainPalette + (TEXTDIALOG_CONTENT1 * 3),
+		TEXTDIALOG_CONTENT1, 8);
 }
 
 void Dialog::calculateBounds() {
@@ -125,22 +153,9 @@ TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
 	Common::fill(&_lineXp[0], &_lineXp[TEXT_DIALOG_MAX_LINES], 0);
 	_askLineNum = -1;
 	_askXp = 0;
-
-	// Save the high end of the palette, and set up the entries for dialog display
-	Common::copy(&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3],
-		&_vm->_palette->_mainPalette[TEXTDIALOG_CONTENT1 * 3 + 8 * 3],
-		&_cyclingPalette[0]);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_CONTENT1, 2, 0x90, 0x80);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_EDGE, 2, 0x9C, 0x70);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FC, 2, 0x90, 0x80);
-	Palette::setGradient(_vm->_palette->_mainPalette, TEXTDIALOG_FE, 1, 0xDC, 0xDC);
-
-	_vm->_palette->setPalette(_vm->_palette->_mainPalette + (TEXTDIALOG_CONTENT1 * 3),
-		TEXTDIALOG_CONTENT1, 8);
 }
 
 TextDialog::~TextDialog() {
-	restorePalette();
 }
 
 void TextDialog::addLine(const Common::String &line, bool underline) {
@@ -324,12 +339,6 @@ void TextDialog::drawWithInput() {
 		TEXTDIALOG_CONTENT1, TEXTDIALOG_CONTENT2);
 
 	error("TODO: drawWithInput");
-}
-
-void TextDialog::restorePalette() {
-	Common::copy(&_cyclingPalette[0], &_cyclingPalette[8 * 3],
-		&_vm->_palette->_mainPalette[248 * 3]);
-	_vm->_palette->setPalette(_vm->_palette->_mainPalette, 248, 8);
 }
 
 void TextDialog::show() {
