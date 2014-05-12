@@ -237,7 +237,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 607:	// outside Abdul's garage
 		return new Scene607(vm);
 	case 608:	// inside Abdul's garage
-		return new DummyScene(vm);	// TODO
+		return new Scene608(vm);
 	case 609:	// outside Buckluster video store
 		return new DummyScene(vm);	// TODO
 	case 610:	// inside Buckluster video store

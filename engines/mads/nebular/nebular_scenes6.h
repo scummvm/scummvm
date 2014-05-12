@@ -161,6 +161,54 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene608: public Scene6xx{
+private:
+	int _carMode;
+	int _carFrame;
+	int _carMoveMode;
+	int _dogDeathMode;
+	int _carHotspotId;
+	int _barkCount;
+	int _polycementHotspotId;
+	int _animationMode;
+	int _nextTrigger;
+	int _throwMode;
+
+	bool _resetPositionsFl;
+	bool _dogActiveFl;
+	bool _dogBarkingFl;
+	bool _dogFirstEncounter;
+	bool _rexBeingEaten;
+	bool _dogHitWindow;
+	bool _checkFl;
+	bool _dogSquashFl;
+	bool _dogSafeFl;
+	bool _buttonPressedonTimeFl;
+	bool _dogUnderCar;
+	bool _dogYelping;
+
+	long _dogWindowTimer;
+	long _dogRunTimer;
+
+	uint32 _dogTimer1;
+	uint32 _dogTimer2;
+
+	void resetDogVariables();
+	void restoreAnimations();
+	void setCarAnimations();
+	void handleThrowingBone();
+
+public:
+	Scene608(MADSEngine *vm) : Scene6xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene620: public Scene6xx{
 public:
 	Scene620(MADSEngine *vm) : Scene6xx(vm) {}
