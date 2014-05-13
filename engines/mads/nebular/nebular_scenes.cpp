@@ -241,7 +241,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 609:	// outside Buckluster video store
 		return new Scene609(vm);
 	case 610:	// inside Buckluster video store
-		return new DummyScene(vm);	// TODO
+		return new Scene610(vm);
 	case 611:	// back alley
 		return new DummyScene(vm);	// TODO
 	case 612:	// expressway / maintenance building

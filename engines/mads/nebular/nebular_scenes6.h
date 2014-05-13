@@ -226,6 +226,27 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene610: public Scene6xx{
+private:
+	int _handsetHotspotId;
+	int _checkVal;
+
+	bool _cellCharging;
+
+	long _cellChargingTimer;
+	uint32 _lastFrameTimer;
+
+public:
+	Scene610(MADSEngine *vm) : Scene6xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene620: public Scene6xx{
 public:
 	Scene620(MADSEngine *vm) : Scene6xx(vm) {}
