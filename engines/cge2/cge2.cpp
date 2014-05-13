@@ -51,6 +51,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 		_heroTab[i] = nullptr;
 	_eye = nullptr;
 	_spare = nullptr;
+	_commandHandler = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -72,6 +73,7 @@ void CGE2Engine::init() {
 		_heroTab[i] = new HeroTab(this);
 	_eye = new V3D();
 	_spare = new Spare(this);
+	_commandHandler = new CommandHandler(this, false);
 }
 
 void CGE2Engine::deinit() {
@@ -86,6 +88,7 @@ void CGE2Engine::deinit() {
 		delete _heroTab[i];
 	delete _eye;
 	delete _spare;
+	delete _commandHandler;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {

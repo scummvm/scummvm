@@ -46,6 +46,7 @@ class V3D;
 class V2D;
 class Dac;
 class Spare;
+class CommandHandler;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -104,6 +105,7 @@ public:
 	HeroTab *_heroTab[2];
 	V3D *_eye;
 	Spare *_spare;
+	CommandHandler *_commandHandler;
 private:
 	void init();
 	void deinit();

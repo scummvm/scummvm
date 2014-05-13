@@ -52,6 +52,14 @@ const char *CommandHandler::_commandText[] = {
 	"WALKTO", "REACH", "COVER", "UNCOVER",
 	NULL };
 
+CommandHandler::CommandHandler(CGE2Engine *vm, bool turbo) : _vm(vm) {
+	warning("STUB: CommandHandler::CommandHandler()");
+}
+
+CommandHandler::~CommandHandler() {
+	warning("STUB: CommandHandler::~CommandHandler()");
+}
+
 void CommandHandler::runCommand() {
 	warning("STUB: CommandHandler::runCommand()");
 }
@@ -78,7 +86,7 @@ void CommandHandler::reset() {
 }
 
 int CommandHandler::com(const char *com) {
-	int i = EncryptedStream::takeEnum(_commandText, com);
+	int i = _vm->takeEnum(_commandText, com);
 	return (i < 0) ? i : i + kCmdCom0 + 1;
 }
 
