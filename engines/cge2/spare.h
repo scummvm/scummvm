@@ -37,14 +37,14 @@ class Spare {
 	Common::Array<Sprite*> _container;
 public:
 	void make(Sprite *spr);
-	Spare(CGE2Engine *vm);
+	Spare(CGE2Engine *vm) : _vm(vm) {}
 	Sprite *take(int ref);
 	void takeCave(int cav);
 	void dispose(Sprite *spr);
 	void dispose(int ref);
 	void dispose();
 	void synchronize();
-	uint16 count() { _container.size(); }
+	uint16 count() { return _container.size(); }
 	void clear();
 };
 

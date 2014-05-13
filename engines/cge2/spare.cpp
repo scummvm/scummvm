@@ -34,10 +34,10 @@ void Spare::synchronize() {
 }
 
 void Spare::clear() {
+	for (int i = 0; i < _container.size(); i++)
+		delete _container[i];
 	_container.clear();
 }
-
-Spare::Spare(CGE2Engine *vm) : _vm(vm) {}
 
 Sprite *Spare::take(int ref) {
 	for (int i = 0; i < _container.size(); i++) {
