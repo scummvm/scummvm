@@ -34,7 +34,7 @@ namespace CGE2 {
 
 class Spare {
 	CGE2Engine *_vm;
-	Common::Array<Sprite> _container;
+	Common::Array<Sprite*> _container;
 public:
 	void make(Sprite *spr);
 	Spare(CGE2Engine *vm);

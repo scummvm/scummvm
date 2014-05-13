@@ -41,8 +41,8 @@ Spare::Spare(CGE2Engine *vm) : _vm(vm) {}
 
 Sprite *Spare::take(int ref) {
 	for (int i = 0; i < _container.size(); i++) {
-		if (_container[i]._ref == ref) {
-			return &_container[i];
+		if (_container[i]->_ref == ref) {
+			return _container[i];
 		}
 	}
 	return nullptr;
@@ -55,7 +55,7 @@ void Spare::takeCave(int cav) {
 }
 
 void Spare::make(Sprite *spr) {
-	_container.insert_at(_container.size(), *spr);
+	_container.insert_at(_container.size(), spr);
 }
 
 void Spare::dispose(Sprite *spr) {
@@ -65,7 +65,7 @@ void Spare::dispose(Sprite *spr) {
 		_vm->_vga->_showQ->remove(spr);
 
 		for (int i = 0; i < _container.size(); i++) {
-			if (spr == &_container[i]) {
+			if (spr == _container[i]) {
 				_container.remove_at(i);
 			}
 		}
@@ -78,8 +78,8 @@ void Spare::dispose(int ref) {
 
 void Spare::dispose() {
 	for (int i = 0; i < _container.size(); i++) {
-		if (_container[i]._ref > 255) {
-			dispose(&_container[i]);
+		if (_container[i]->_ref > 255) {
+			dispose(_container[i]);
 		}
 	}
 }
