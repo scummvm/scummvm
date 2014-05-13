@@ -46,6 +46,7 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 
 Hero::~Hero() {
 	delete _zoomBitmap;
+	delete _shadowBitmap;
 	delete[] _shadowLine;
 }
 
@@ -286,13 +287,11 @@ void Hero::showHeroShadow() {
 		}
 	}
 
-	// source Bitmap of sprite - esi
-	int destX = _drawX; // eax
-	int destY = _middleY - _shadMinus; // ecx
-	// modulo of source Bitmap - ebp
-	//int scaledX = getScaledValue(frameXSize); // ebx
-	//int scaledY = getScaledValue(frameYSize); // edx
-	// shadowTable70 - edi
+	int scaledX = getScaledValue(frameXSize);
+	//int scaledY = getScaledValue(frameYSize);
+
+	int destX = _middleX - scaledX / 2;
+	int destY = _middleY - _shadMinus;
 
 	if (destY > 1 && destY < kMaxPicHeight) {
 		int shadDirection;
@@ -307,15 +306,10 @@ void Hero::showHeroShadow() {
 		Graphics::drawLine(_lightX, _lightY, destX, destY, 0, &plot, this);
 
 		byte *sprShadow = (byte *)_graph->_shadowTable70;
-		// sprModulo = modulo of source Bitmap
-		//int sprWidth = scaledX; // this or normal size?
-		//int sprHeight = scaledY;
 		int sprWidth = frameXSize;
 		int sprHeight = frameYSize;
-		//int sprDestX = destX - _vm->_picWindowX; //test this
-		//int sprDestY = destY - _vm->_picWindowY; //test this
-		int sprDestX = destX;
-		int sprDestY = destY;
+		int sprDestX = destX - _vm->_picWindowX;
+		int sprDestY = destY - _vm->_picWindowY;
 
 		_shadowDrawX = sprDestX; // to fix
 		_shadowDrawY = sprDestY;
@@ -347,7 +341,6 @@ void Hero::showHeroShadow() {
 
 		// linear_loop
 		for(int i = 0; i < sprHeight; i++) {
-			int sprModulo = 0;
 			int shadSkipX = 0;
 			int ct_loop = 0;
 
@@ -402,7 +395,6 @@ void Hero::showHeroShadow() {
 					//x1_ok
 					if (shadPosX + sprWidth > 640) {
 						ct_loop = 640 - shadPosX; // test it
-						sprModulo = shadPosX + sprWidth - 640;
 					} else {
 						//draw_line
 						ct_loop = sprWidth;
@@ -517,13 +509,13 @@ void Hero::showHeroShadow() {
 			//next_line
 			if (*(shadowLineStart + 2) < *(shadowLineStart - 2)) {
 				//minus_y
-				shadBitAddr += kMaxPicWidth / 8;
-				shadPosY++;
+				shadBitAddr -= kMaxPicWidth / 8;
+				shadPosY--;
 				diffY--;
 				background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX, sprDestY + diffY);
 			} else if (*(shadowLineStart + 2) > *(shadowLineStart - 2)) {
-				shadBitAddr -= kMaxPicWidth / 8;
-				shadPosY--;
+				shadBitAddr += kMaxPicWidth / 8;
+				shadPosY++;
 				diffY++;
 				background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX, sprDestY + diffY);
 			}
@@ -561,6 +553,7 @@ void Hero::showHeroShadow() {
 		}
 		//koniec_bajki
 	}
+	delete makeShadow;
 }
 
 void Hero::showHeroAnimFrame() {
