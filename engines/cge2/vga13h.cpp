@@ -209,7 +209,7 @@ Sprite *Sprite::expand() {
 	if (_ext)
 		return this;
 
-	_ext = new SprExt;
+	_ext = new SprExt(_vm);
 	assert(_ext != NULL);
 	if (!*_file)
 		return this;
@@ -507,9 +507,7 @@ void Sprite::show(uint16 pg) {
 }
 
 void Sprite::hide() {
-	SprExt *e = _ext;
-	if (e->_b0)
-		e->_b0->hide(e->_x0, e->_y0);
+	warning("STUB: Sprite::hide()");
 }
 
 BitmapPtr Sprite::ghost() {
@@ -519,12 +517,9 @@ BitmapPtr Sprite::ghost() {
 
 	BitmapPtr bmp = new Bitmap(_vm, 0, 0, (uint8 *)NULL);
 	assert(bmp != NULL);
-	bmp->_w = e->_b1->_w;
-	bmp->_h = e->_b1->_h;
-	bmp->_b = new HideDesc[bmp->_h];
-	assert(bmp->_b != NULL);
-	bmp->_v = (uint8 *) memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
-	bmp->_map = (e->_y1 << 16) + e->_x1;
+
+	warning("STUB: Sprite::ghost()");
+
 	return bmp;
 }
 

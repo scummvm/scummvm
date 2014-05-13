@@ -60,23 +60,18 @@ struct Seq {
 
 class SprExt {
 public:
-	int _x0;
-	int _y0;
-	int _x1;
-	int _y1;
+	V2D _p0;
+	V2D _p1;
 	BitmapPtr _b0;
 	BitmapPtr _b1;
 	BitmapPtr *_shpList;
+	int _location;
 	Seq *_seq;
 	char *_name;
-	/*CommandHandler::Command *_near;
-	CommandHandler::Command *_take;*/
-	SprExt() :
-		_x0(0), _y0(0),
-		_x1(0), _y1(0),
-		_b0(NULL), _b1(NULL),
-		_shpList(NULL), _seq(NULL),
-		_name(NULL)/*, _near(NULL), _take(NULL)*/
+	CommandHandler::Command *_actions[kActions];
+	SprExt(CGE2Engine *vm) : _p0(vm, 0, 0), _p1(vm, 0, 0),
+		_b0(NULL), _b1(NULL),_shpList(NULL), _location(0),
+		_seq(NULL), _name(NULL)
 	{}
 };
 
