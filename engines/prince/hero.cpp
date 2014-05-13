@@ -57,7 +57,7 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 
 	_shadMinus = heroSetBack[animSetNr];
 
-	for (uint32 i = 0; i < _moveSet.size(); ++i) {
+	for (uint32 i = 0; i < _moveSet.size(); i++) {
 		delete _moveSet[i];
 	}
 
@@ -77,22 +77,11 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 	return true;
 }
 
-const Graphics::Surface * Hero::getSurface() {
+Graphics::Surface *Hero::getSurface() {
 	if (_moveSet[_moveSetType]) {
-		debug("BaseX: %d", _moveSet[_moveSetType]->getBaseX());
-		debug("BaseY: %d", _moveSet[_moveSetType]->getBaseY());
-		//debug("FrameCount: %d", _moveSet[_moveSetType]->getFrameCount());
-		//debug("LoopCount: %d", _moveSet[_moveSetType]->getLoopCount());
-		//debug("PhaseCount: %d", _moveSet[_moveSetType]->getPhaseCount());
-		//debug("PhaseFrameIndex(%d): %d", _frame, _moveSet[_moveSetType]->getPhaseFrameIndex(_frame));
-		//debug("PhaseOffsetX(%d): %d", _frame, _moveSet[_moveSetType]->getPhaseOffsetX(_frame));
-		//debug("PhaseOffsetY(%d) %d", _frame, _moveSet[_moveSetType]->getPhaseOffsetY(_frame));
-		//debug("FrameSizeX(%d) %d", _frame, _moveSet[_moveSetType]->getFrameWidth(_frame));
-		//debug("FrameSizeY(%d) %d", _frame, _moveSet[_moveSetType]->getFrameHeight(_frame));
-		//getState();
 		int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
 		Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
-		return zoomSprite(heroFrame);
+		return heroFrame;
 	}
 	return NULL;
 }
@@ -173,49 +162,46 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 	Graphics::Surface *zoomedFrame = new Graphics::Surface();
 	zoomedFrame->create(scaledXSize, scaledYSize, Graphics::PixelFormat::createFormatCLUT8());
 	
-	if (_zoomFactor != 0) {
-		int sprZoomX;
-		int sprZoomY = _scaleValue;
-		uint xSource = 0;
-		uint ySource = 0;
-		uint xDest = 0;
-		uint yDest = 0;
+	int sprZoomX;
+	int sprZoomY = _scaleValue;
+	uint xSource = 0;
+	uint ySource = 0;
+	uint xDest = 0;
+	uint yDest = 0;
 
-		for (int i = 0; i < scaledYSize; i++) {
-			// linear_loop:
-			while(1) {
-				sprZoomY -= 100;
-				if (sprZoomY >= 0 || _scaleValue == 10000) {
-					// all_r_y
-					sprZoomX = _scaleValue;
-					break; // to loop_lin
-				} else {
-					sprZoomY += _scaleValue;
-					xSource = 0;
-					ySource++;
-				}
+	for (int i = 0; i < scaledYSize; i++) {
+		// linear_loop:
+		while(1) {
+			sprZoomY -= 100;
+			if (sprZoomY >= 0 || _scaleValue == 10000) {
+				// all_r_y
+				sprZoomX = _scaleValue;
+				break; // to loop_lin
+			} else {
+				sprZoomY += _scaleValue;
+				xSource = 0;
+				ySource++;
 			}
-			// loop_lin:
-			for (int j = 0; j < scaledXSize; j++) {
-				sprZoomX -= 100;
-				if (sprZoomX >= 0) {
-					// its_all_r
-					memcpy(zoomedFrame->getBasePtr(xDest, yDest), heroFrame->getBasePtr(xSource, ySource), 1);
-					xDest++;
-				} else {
-					sprZoomX += _scaleValue;
-					j--;
-				}
-				xSource++;
-			}
-			xDest = 0;
-			yDest++;
-			xSource = 0;
-			ySource++;
 		}
-		return zoomedFrame;
+		// loop_lin:
+		for (int j = 0; j < scaledXSize; j++) {
+			sprZoomX -= 100;
+			if (sprZoomX >= 0) {
+				// its_all_r
+				memcpy(zoomedFrame->getBasePtr(xDest, yDest), heroFrame->getBasePtr(xSource, ySource), 1);
+				xDest++;
+			} else {
+				sprZoomX += _scaleValue;
+				j--;
+			}
+			xSource++;
+		}
+		xDest = 0;
+		yDest++;
+		xSource = 0;
+		ySource++;
 	}
-	return heroFrame;
+	return zoomedFrame;
 }
 
 void Hero::countDrawPosition() {
@@ -243,8 +229,6 @@ void Hero::countDrawPosition() {
 
 	if (_zoomFactor != 0) {
 		//notfullSize
-		debug("scaledX: %d", scaledX);
-		debug("scaledY: %d", scaledY);
 		_drawX = _middleX - scaledX / 2;
 		_drawY = tempMiddleY + 1 - scaledY;
 	} else {
@@ -265,9 +249,7 @@ static void plot(int x, int y, int color, void *data) {
 	shadowLine->_shadowLineLen++;
 }
 
-void Hero::showHeroShadow() {
-	int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
-	Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
+void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
 	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
 	
@@ -419,7 +401,7 @@ void Hero::showHeroShadow() {
 				//smaller_y
 				//retry_line2
 				int ebxOnStack2;
-				for(ebxOnStack2 = ebxOnStack; ebxOnStack2 > 0; ebxOnStack2--) {
+				for (ebxOnStack2 = ebxOnStack; ebxOnStack2 > 0; ebxOnStack2--) {
 					shadZoomY2 -= 100;
 					if (shadZoomY2 < 0 && _shadScaleValue != 10000) {
 						shadZoomY2 += _shadScaleValue;
@@ -441,14 +423,12 @@ void Hero::showHeroShadow() {
 				//line_y_ok_2:
 				// push esi
 				// push ecx
-				// int lineDestAddr = eax;
-				// edi = eax
-				// eax = shadBitMask
-				// push eax // push shadBitMask
-				// lineBitAddr = shadBitMask
-				// eax = shadBitAddr
-				// push eax
-				// LineBitAddr = eax
+				// lineDestAddr = eax;
+				// edi = eax -> needed in copy trans
+				// push shadBitMask
+				// lineBitAddr = shadBitMask;
+				// push shadBitAddr;
+				// lineBitAddr = shadBitAddr;
 
 				//copy_trans
 				//push eax, ebx, edx, ebp
@@ -473,8 +453,7 @@ void Hero::showHeroShadow() {
 								}
 							}
 							//shadow
-							//*background = *(sprShadow + *background); //wrong color
-							*background = 0;
+							*background = *(sprShadow + *background);
 						}
 						//ct_next
 						//ror(shadBitMask, 1)
@@ -493,14 +472,56 @@ void Hero::showHeroShadow() {
 				}
 				//byebyebye
 				if (shadWallDown == 0 && shadWDFlag != 0) {
-					//shadWall etc
+					//shadWallDown = shadPosX;
+					//shadWallBitAddr = lineBitAddr;
+					//shadWallDestAddr = lineDestAddr;
+					//shadWallBitMask = lineBitMask;
+					//shadWallPosY = shadPosY;
+					//shadWallSkipX = shadSkipX;
+					//shadWallModulo = sprModulo;
 				}
 				//byebye
-				// pop ...
+				//pop ebp edx ebx eax
+				//pop shadBitAddr
+				//pop shadBitMask
+				//pop ecx
+				//pop edi
 				if (shadDirection != 0 && shadWallDown != 0) {
-					// push...
-					// krap2
-					// WALL_copy_trans
+					//push esi
+					//esi = edi;
+					//push	shadBitMask
+					//push	shadBitAddr
+					//shadBitMask = shadWallBitMask;
+					//shadBitAddr = shadWallBitAddr;
+					//eax = shadWallSkipX;
+					//edi = shadWallDestAddr;
+					//esi += shadWallSkipX;
+					//if (ct_loop > shadWallSkipX && ct_loop - shadWallSkipX > shadWallModulo) {
+						//WALL_copy_trans
+					//} else {
+						//krap2
+						//pop shadBitAddr
+						//pop shadBitMask
+						//pop esi
+						//ebx = VESA_ScanLine
+						if (shadDirection != 0) {
+							//shadWallDestAddr -= ebx; //SCREENWIDTH
+							//shadWallBitAddr -= kMaxPicWidth / 8;
+							//shadWallPosY--;
+						} else {
+							//down_direct
+							//shadWallDestAddr += ebx; //SCREENWIDTH
+							//shadWallBitAddr += kMaxPicWidth / 8;
+							//shadWallPosY++;
+						}
+						//compareagain
+						//if (shadWallPosY < shadMinY) {
+						//	shadMinY = shadWallPosY;
+						//}
+						//if (shadWallPosY > shadMaxY) {
+						//	shadMaxY = shadWallPosY;
+						//}
+					//}
 				}
 			}
 			//skip_line
@@ -553,6 +574,7 @@ void Hero::showHeroShadow() {
 		}
 		//koniec_bajki
 	}
+	makeShadow->free();
 	delete makeShadow;
 }
 

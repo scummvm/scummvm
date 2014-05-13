@@ -63,8 +63,7 @@ void GraphicsMan::change() {
 	_changed = true;
 }
 
-void GraphicsMan::draw(uint16 posX, uint16 posY, const Graphics::Surface *s)
-{
+void GraphicsMan::draw(uint16 posX, uint16 posY, const Graphics::Surface *s) {
 	uint16 w = MIN(_frontScreen->w, s->w);
 	for (uint y = 0; y < s->h; y++) {
 		if (y < _frontScreen->h) {
@@ -74,18 +73,16 @@ void GraphicsMan::draw(uint16 posX, uint16 posY, const Graphics::Surface *s)
 	change();
 }
 
-void GraphicsMan::drawTransparent(uint16 posX, uint16 posY, const Graphics::Surface *s)
-{
+void GraphicsMan::drawTransparent(uint16 posX, uint16 posY, const Graphics::Surface *s) {
 	for (uint y = 0; y < s->h; ++y) {
 		for (uint x = 0; x < s->w; ++x) {
 			byte pixel = *((byte*)s->getBasePtr(x, y));
 			if (pixel != 255) {
-				//*((byte*)_frontScreen->getBasePtr(x, y)) = pixel;
 				*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = pixel;
 			}
 		}
 	}
-   change();
+	change();
 }
 
 void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
@@ -98,9 +95,8 @@ void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
 	int32 currColor;
 
 	int shadow =  brightness * 256 / 100;
-	byte *originalPalette = (byte *)malloc(256 * 3);
 
-	_vm->_system->getPaletteManager()->grabPalette(originalPalette, 0, 256);
+	const byte *originalPalette = _vm->_roomBmp->getPalette();
 
 	for (int i = 0; i < 256; i++) {
 		redFirstOrg = originalPalette[3 * i] * shadow / 256;
@@ -136,7 +132,6 @@ void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
 		}
 		shadowPalette[i] = currColor;
 	}
-	free(originalPalette);
 }
 
 }

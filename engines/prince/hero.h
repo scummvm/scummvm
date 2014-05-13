@@ -103,7 +103,7 @@ public:
 	Common::RandomSource _randomSource;
 	bool loadAnimSet(uint32 heroAnimNumber);
 
-	const Graphics::Surface * getSurface();
+	Graphics::Surface *getSurface();
 
 	void setPos(int16 x, int16 y) { _middleX = x; _middleY = y; }
 	void setVisible(bool flag) { _visible = flag; }
@@ -121,7 +121,7 @@ public:
 	void showHeroAnimFrame();
 	void line(int x1, int y1, int x2, int y2);
 	void plotPoint(int x, int y);
-	void showHeroShadow();
+	void showHeroShadow(Graphics::Surface *heroFrame);
 	void setShadowScale(int32 shadowScale);
 	void specialAnim();
 	void getState();

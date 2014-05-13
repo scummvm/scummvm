@@ -108,13 +108,22 @@ PrinceEngine::~PrinceEngine() {
 	delete _variaTxt;
 	delete[] _talkTxt;
 	delete _graph;
-	delete _mainHero;
-	delete _secondHero;
 
-	for (uint i = 0; i < _objList.size(); ++i) {
+	for (uint i = 0; i < _objList.size(); i++) {
 		delete _objList[i];
 	}
 	_objList.clear();
+
+	for (uint i = 0; i < _mainHero->_moveSet.size(); i++) {
+		delete _mainHero->_moveSet[i];
+	}
+
+	for (uint i = 0; i < _secondHero->_moveSet.size(); i++) {
+		delete _secondHero->_moveSet[i];
+	}
+
+	delete _mainHero;
+	delete _secondHero;
 }
 
 GUI::Debugger *PrinceEngine::getDebugger() {
@@ -189,7 +198,8 @@ void PrinceEngine::init() {
 	_mainHero = new Hero(this, _graph);
 	_secondHero = new Hero(this, _graph);
 
-	_mainHero->loadAnimSet(0);
+	_mainHero->loadAnimSet(1);
+	_secondHero->loadAnimSet(3);
 }
 
 void PrinceEngine::showLogo() {
@@ -278,6 +288,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	Resource::loadResource(_roomBmp, "room");
 	if (_roomBmp->getSurface()) {
 		_sceneWidth = _roomBmp->getSurface()->w;
+		_graph->setPalette(_roomBmp->getPalette());
 	}
 
 	_mainHero->_zoomBitmap->clear();
@@ -532,16 +543,16 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		debugEngine("%d", _mainHero->_state);
 		break;
 	case Common::KEYCODE_i:
-		_mainHero->_middleY -= 10;
+		_mainHero->_middleY -= 5;
 		break;
 	case Common::KEYCODE_k:
-		_mainHero->_middleY += 10;
+		_mainHero->_middleY += 5;
 		break;
 	case Common::KEYCODE_j:
-		_mainHero->_middleX -= 10;
+		_mainHero->_middleX -= 5;
 		break;
 	case Common::KEYCODE_l:
-		_mainHero->_middleX += 10;
+		_mainHero->_middleX += 5;
 		break;
 	}
 }
@@ -633,20 +644,25 @@ void PrinceEngine::showTexts() {
 void PrinceEngine::drawScreen() {
 	const Graphics::Surface *roomSurface = _roomBmp->getSurface();	
 	if (roomSurface) {
-		_graph->setPalette(_roomBmp->getPalette());
 		const Graphics::Surface visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
 		_graph->draw(0, 0, &visiblePart);
 	}
 
 	if (_mainHero->_visible) {
-		const Graphics::Surface *mainHeroSurface = _mainHero->getSurface();
-		//const Graphics::Surface *mainHeroShadow = _mainHero->showHeroShadow();
-
+		Graphics::Surface *mainHeroSurface = _mainHero->getSurface();
 		if (mainHeroSurface) {
-			_mainHero->showHeroShadow();
-			_graph->drawTransparent(_mainHero->_drawX, _mainHero->_drawY, mainHeroSurface);
-			//_graph->drawTransparent(_mainHero->_shadowDrawX, _mainHero->_shadowDrawY, mainHeroShadow);
+			_mainHero->showHeroShadow(mainHeroSurface);
+			if (_mainHero->_zoomFactor != 0) {
+				Graphics::Surface *zoomedHeroSurface = _mainHero->zoomSprite(mainHeroSurface);
+				_graph->drawTransparent(_mainHero->_drawX, _mainHero->_drawY, zoomedHeroSurface);
+				zoomedHeroSurface->free();
+				delete zoomedHeroSurface;
+			} else {
+				_graph->drawTransparent(_mainHero->_drawX, _mainHero->_drawY, mainHeroSurface);
+			}
 		}
+		mainHeroSurface->free();
+		delete mainHeroSurface;
 	}
 
 	playNextFrame();

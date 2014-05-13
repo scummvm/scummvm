@@ -145,6 +145,7 @@ public:
 	uint16 _sceneWidth;
 	uint32 _picWindowX;
 	uint32 _picWindowY;
+	Image::BitmapDecoder *_roomBmp;
 
 private:
 	bool playNextFrame();
@@ -165,7 +166,6 @@ private:
 	uint8 _cursorNr;
 
 	Common::RandomSource *_rnd;
-	Image::BitmapDecoder *_roomBmp;
 	Cursor *_cursor1;
 	Cursor *_cursor2;
 	MhwanhDecoder *_suitcaseBmp;
