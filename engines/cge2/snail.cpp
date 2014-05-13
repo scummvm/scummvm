@@ -30,7 +30,7 @@
 
 namespace CGE2 {
 
-const char *Snail::comTxt[] = {
+const char *CommandHandler::_commandText[] = {
 	"NOP", "USE", "PAUSE", "INF", "CAVE",
 	"SLAVE", "FOCUS", "SETX", "SETY", "SETZ",
 	"ADD", "SUB", "MUL", "DIV", "IF", "FLAG",
@@ -52,9 +52,34 @@ const char *Snail::comTxt[] = {
 	"WALKTO", "REACH", "COVER", "UNCOVER",
 	NULL };
 
-int Snail::com(const char *com) {
-	int i = EncryptedStream::takeEnum(comTxt, com);
-	return (i < 0) ? i : i + kSNCom0 + 1;
+void CommandHandler::runCommand() {
+	warning("STUB: CommandHandler::runCommand()");
+}
+
+void CommandHandler::addCommand(CommandType com, int ref, int val, void *ptr) {
+	warning("STUB: CommandHandler::addCommand()");
+}
+
+void CommandHandler::addCallback(CommandType com, int ref, int val, CallbackType cbType) {
+	warning("STUB: CommandHandler::addCallback()");
+}
+
+void CommandHandler::insertCommand(CommandType com, int ref, int val, void *ptr) {
+	warning("STUB: CommandHandler::insertCommand()");
+}
+
+bool CommandHandler::idle() {
+	warning("STUB: CommandHandler::idle()");
+	return false;
+}
+
+void CommandHandler::reset() {
+	warning("STUB: CommandHandler::reset()");
+}
+
+int CommandHandler::com(const char *com) {
+	int i = EncryptedStream::takeEnum(_commandText, com);
+	return (i < 0) ? i : i + kCmdCom0 + 1;
 }
 
 } // End of namespace CGE2.

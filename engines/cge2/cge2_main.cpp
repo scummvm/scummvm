@@ -131,7 +131,7 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 				case kIdNear:
 				case kIdMTake:
 				case kIdFTake:
-					if (Snail::com(p) >= 0)
+					if (CommandHandler::com(p) >= 0)
 						++cnt[section];
 					else
 						error("Bad line %d [%s]", sprf.getLineCount(), tmpStr);

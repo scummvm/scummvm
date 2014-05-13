@@ -58,6 +58,10 @@ class Spare;
 #define kPocketMax       4
 #define kCaveMax       100
 
+enum CallbackType {
+	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume
+};
+
 class CGE2Engine : public Engine {
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
