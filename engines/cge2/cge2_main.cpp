@@ -32,6 +32,7 @@
 #include "cge2/text.h"
 #include "cge2/snail.h"
 #include "cge2/hero.h"
+#include "cge2/spare.h"
 
 namespace CGE2 {
 
@@ -174,6 +175,8 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 	}
 
 	if (_sprite) {
+		_sprite->_ref = ref;
+
 		_sprite->_flags._frnt = frnt;
 		_sprite->_flags._east = east;
 		_sprite->_flags._port = port;
@@ -258,9 +261,15 @@ void CGE2Engine::loadScript(const char *fname) {
 		_sprite = NULL;
 		loadSprite(SpN, SpI, SpA, P);
 		if (_sprite) {
-			warning("STUB: CGE2Engine::loadScript - SPARE:: thing");
 			if (BkG)
 				_sprite->_flags._back = true;
+
+			int n = _spare->count();
+			if (_spare->locate(_sprite->_ref) == nullptr)
+				_spare->store(_sprite);
+			_sprite = nullptr;
+			if (_spare->count() == n)
+				error("Durplicated reference! %s", SpN);
 		}
 	}
 
