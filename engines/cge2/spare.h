@@ -36,8 +36,9 @@ class Spare {
 	CGE2Engine *_vm;
 	Common::Array<Sprite*> _container;
 public:
-	void make(Sprite *spr);
 	Spare(CGE2Engine *vm) : _vm(vm) {}
+	~Spare() { clear(); }
+	void make(Sprite *spr);	
 	Sprite *take(int ref);
 	void takeCave(int cav);
 	void dispose(Sprite *spr);
