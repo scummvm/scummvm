@@ -77,6 +77,8 @@ public:
 	void loadScript(const char *fname);
 	void loadSprite(const char *fname, int ref, int scene, V3D &pos);
 	void badLab(const char *fn);
+	void caveUp(int cav);
+	void showBak(int ref);
 
 	const ADGameDescription *_gameDescription;
 
