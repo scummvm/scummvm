@@ -38,7 +38,7 @@ class Spare {
 public:
 	Spare(CGE2Engine *vm) : _vm(vm) {}
 	~Spare() { clear(); }
-	void make(Sprite *spr);	
+	void store(Sprite *spr);	
 	Sprite *locate(int ref);
 	void takeCave(int cav);
 	void dispose(Sprite *spr);

@@ -54,7 +54,7 @@ void Spare::takeCave(int cav) {
 	_vm->_vga->_showQ->insert(spr);
 }
 
-void Spare::make(Sprite *spr) {
+void Spare::store(Sprite *spr) {
 	_container.insert_at(_container.size(), spr);
 }
 
