@@ -161,6 +161,7 @@ void Game::gameLoop() {
 		setSectionHandler();
 		_sectionHandler->preLoadSection();
 		initSection(_sectionNumber);
+		_vm->_sound->init(_sectionNumber);
 		_sectionHandler->postLoadSection();
 
 		_scene._spriteSlots.reset();

@@ -48,8 +48,14 @@ void SoundManager::init(int sectionNumber) {
 	switch (_vm->getGameID()) {
 	case GType_RexNebular:
 		// TODO: Other Rex Adlib section drivers
-		assert(sectionNumber == 1);
-		_driver = new Nebular::ASound1(_mixer);
+		switch (sectionNumber) {
+		case 1:
+			_driver = new Nebular::ASound1(_mixer);
+			break;
+		default:
+			_driver = nullptr;
+			break;
+		}
 		break;
 
 	default:
