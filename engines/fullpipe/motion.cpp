@@ -529,7 +529,7 @@ void MovGraphItem::free() {
 
 int MovGraph_messageHandler(ExCommand *cmd);
 
-int MovGraphCallback(int a1, int a2, int a3) {
+MovArr *MovGraphCallback(StaticANIObject *ani, MovItem *item, signed int counter) {
 	warning("STUB: MovgraphCallback");
 
 	return 0;
@@ -592,7 +592,7 @@ void MovGraph::freeItems() {
 	_items.clear();
 }
 
-int MovGraph::method28() {
+MovItem *MovGraph::method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) {
 	warning("STUB: MovGraph::method28()");
 
 	return 0;
@@ -641,13 +641,13 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 		int idx = getItemIndexByStaticAni(subj);
 
 		for (uint i = 0; i < _items[idx]->count; i++) {
-			if (_items[idx]->items[i]->movarr == goal) {
+			if (_items[idx]->items[i].movarr == goal) {
 				if (subj->_movement) {
 					Common::Point point;
 
-					subj->calcStepLen(point);
+					subj->calcStepLen(&point);
 
-					MessageQueue *mq = MovGraph_sub_451D50(this, subj, subj->_ox - point.x, subj->_oy - point.y, subj->_movement->_staticsObj1->_staticsId, xpos, ypos, 0, fuzzyMatch);
+					MessageQueue *mq = sub1(subj, subj->_ox - point.x, subj->_oy - point.y, subj->_movement->_staticsObj1->_staticsId, xpos, ypos, 0, fuzzyMatch);
 
 					if (!mq || !mq->getExCommandByIndex(0))
 						return 0;
@@ -667,13 +667,11 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 	if (movitem) {
 		MovArr *goal = _callback1(subj, movitem, ss);
 		int idx = getItemIndexByStaticAni(subj);
-		v25 = 0;
-		idx <<= 6;
 
 		if (_items[idx]->count > 0) {
 			int arridx = 0;
 
-			while (_items[idx]->items[arridx]->movarr != goal) {
+			while (_items[idx]->items[arridx].movarr != goal) {
 				arridx++;
 
 				if (arridx >= _items[idx]->count) {
@@ -682,7 +680,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 				}
 			}
 
-			_items[idx]->movarr.clear();
+			_items[idx]->movarr->clear();
 
 			for (uint i = 0; i < _items[idx]->items[arridx].movarr->_movStepCount; i++) {
 				MovArr *m = new MovArr;
@@ -713,6 +711,18 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 	return 0;
 #endif
 	warning("STUB: MovGraph::doWalkTo()");
+
+	return 0;
+}
+
+MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9) {
+	warning("STUB: *MovGraph::sub1()");
+
+	return 0;
+}
+
+MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId) {
+	warning("STUB: *MovGraph::fillMGMinfo()");
 
 	return 0;
 }

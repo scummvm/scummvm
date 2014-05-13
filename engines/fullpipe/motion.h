@@ -31,6 +31,7 @@ class MctlConnectionPoint;
 class MovGraphLink;
 class MessageQueue;
 class ExCommand2;
+struct MovItem;
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
 int doSomeAnimation(int objId, int objKey, int a3);
@@ -52,7 +53,7 @@ public:
 	virtual void addObject(StaticANIObject *obj) {}
 	virtual int removeObject(StaticANIObject *obj) { return 0; }
 	virtual void freeItems() {}
-	virtual int method28() { return 0; }
+	virtual MovItem *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) { return 0; }
 	virtual int method2C(StaticANIObject *obj, int x, int y) { return 0; }
 	virtual int method30() { return 0; }
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
@@ -299,9 +300,14 @@ class MovGraphLink : public CObject {
 	void calcNodeDistanceAndAngle();
 };
 
+struct MovStep {
+	int sfield_0;
+	MovGraphLink *link;
+};
+
 struct MovArr {
-	int _afield_0;
-	int _afield_4;
+	MovStep *_movSteps;
+	int _movStepCount;
 	int _afield_8;
 	MovGraphLink *_link;
 	double _dist;
@@ -343,7 +349,7 @@ public:
 	ObList _links;
 	int _field_44;
 	Common::Array<MovGraphItem *> _items;
-	int (*_callback1)(int, int, int);
+	MovArr *(*_callback1)(StaticANIObject *ani, MovItem *item, int counter);
 	MGM _mgm;
 
 public:
@@ -355,7 +361,7 @@ public:
 	virtual void addObject(StaticANIObject *obj);
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
-	virtual int method28();
+	virtual MovItem *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount);
 	virtual int method2C(StaticANIObject *obj, int x, int y);
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual int changeCallback();
@@ -374,6 +380,8 @@ public:
 	Common::Array<Common::Rect *> *getBboxes(MovArr *movarr1, MovArr *movarr2, int *listCount);
 	void calcBbox(Common::Rect *rect, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
 	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);
+	MessageQueue *sub1(StaticANIObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9);
+	MessageQueue *fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId);
 };
 
 class Movement;
