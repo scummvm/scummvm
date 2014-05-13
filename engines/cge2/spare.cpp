@@ -39,7 +39,7 @@ void Spare::clear() {
 	_container.clear();
 }
 
-Sprite *Spare::take(int ref) {
+Sprite *Spare::locate(int ref) {
 	for (int i = 0; i < _container.size(); i++) {
 		if (_container[i]->_ref == ref) {
 			return _container[i];
@@ -50,7 +50,7 @@ Sprite *Spare::take(int ref) {
 
 void Spare::takeCave(int cav) {
 	int ref = cav << 8;
-	Sprite *spr = take(ref);
+	Sprite *spr = locate(ref);
 	_vm->_vga->_showQ->insert(spr);
 }
 
