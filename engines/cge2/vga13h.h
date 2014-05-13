@@ -55,6 +55,7 @@ struct Seq {
 	uint8 _next;
 	int8 _dx;
 	int8 _dy;
+	int8 _dz;
 	int _dly;
 };
 
@@ -114,6 +115,7 @@ public:
 	Sprite *_next;
 	static byte _constY;
 	static byte _follow;
+	static Seq _stdSeq8[];
 
 	bool works(Sprite *spr);
 	bool seqTest(int n);

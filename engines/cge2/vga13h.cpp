@@ -61,6 +61,17 @@ void(*Sprite::notify) (void) = nullptr;
 byte Sprite::_constY = 0;
 byte Sprite::_follow = 0;
 
+Seq Sprite::_stdSeq8[] =
+{ { 0, 0, 0, 0, 0, 0 },
+  { 1, 1, 0, 0, 0, 0 },
+  { 2, 2, 0, 0, 0, 0 },
+  { 3, 3, 0, 0, 0, 0 },
+  { 4, 4, 0, 0, 0, 0 },
+  { 5, 5, 0, 0, 0, 0 },
+  { 6, 6, 0, 0, 0, 0 },
+  { 7, 7, 0, 0, 0, 0 },
+};
+
 Sprite::Sprite(CGE2Engine *vm)
 	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
       _next(NULL), _prev(NULL), _time(0),
@@ -104,7 +115,25 @@ BitmapPtr Sprite::shp() {
 }
 
 void Sprite::setShapeList(BitmapPtr *shp, int cnt) {
-	warning("STUB: Sprite::setShapeList()");
+	_shpCnt = cnt;
+	_siz.x = 0;
+	_siz.y = 0;
+
+	if (shp) {
+		for (int i = 0; i < cnt; i++) {
+			BitmapPtr p = *shp + i;
+			if (p->_w > _siz.x)
+				_siz.x = p->_w;
+			if (p->_h > _siz.y)
+				_siz.y = p->_w;
+		}
+		expand();
+		_ext->_shpList = shp;
+		if (!_ext->_seq) {
+			setSeq(_stdSeq8);
+			_seqCnt = (cnt < ARRAYSIZE(_stdSeq8)) ? cnt : ARRAYSIZE(_stdSeq8);
+		}
+	}
 }
 
 bool Sprite::works(Sprite *spr) {
