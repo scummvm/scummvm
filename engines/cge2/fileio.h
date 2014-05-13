@@ -112,8 +112,6 @@ private:
 	const char **_tab;
 	int _lineCount;
 	bool _error;
-
-	static const char *kIdTab[];
 public:
 	EncryptedStream(CGE2Engine *vm, const char *name);
 	~EncryptedStream();
@@ -124,12 +122,9 @@ public:
 	int32 size();
 	uint32 read(byte *dataPtr, uint32 dataSize);
 	Common::String readLine();
-	static int number(char *s);
-	static char *token(char *s);
-	static int takeEnum(const char **tab, const char *text);
-	static ID ident(const char *s);
-	static bool testBool(char *s);
 	int getLineCount() { return _lineCount; }
+
+	static const char *kIdTab[];
 };
 
 } // End of namespace CGE2

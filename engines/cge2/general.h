@@ -79,9 +79,9 @@ public:
 	void setEye(const char *s) {
 		char *tempStr;
 		strcpy(tempStr, s);
-		_vm->_eye->_x = atoi(EncryptedStream::token(tempStr));
-		_vm->_eye->_y = atoi(EncryptedStream::token(tempStr));
-		_vm->_eye->_z = atoi(EncryptedStream::token(tempStr));
+		_vm->_eye->_x = atoi(_vm->token(tempStr));
+		_vm->_eye->_y = atoi(_vm->token(tempStr));
+		_vm->_eye->_z = atoi(_vm->token(tempStr));
 	}
 	bool operator <  (const V2D& p) const { return (x <  p.x) && (y <  p.y); }
 	bool operator <= (const V2D& p) const { return (x <= p.x) && (y <= p.y); }

@@ -233,37 +233,6 @@ Common::String EncryptedStream::readLine() {
 	return _readStream->readLine();
 }
 
-int EncryptedStream::number(char *s) {
-	int r = atoi(s);
-	char *pp = strchr(s, ':');
-	if (pp)
-		r = (r << 8) + atoi(pp + 1);
-	return r;
-}
-
-char *EncryptedStream::token(char *s) {
-	return strtok(s, " =\t,;/()");
-}
-
-int EncryptedStream::takeEnum(const char **tab, const char *text) {
-	if (text) {
-		for (const char **e = tab; *e; e++) {
-			if (scumm_stricmp(text, *e) == 0) {
-				return e - tab;
-			}
-		}
-	}
-	return -1;
-}
-
-ID EncryptedStream::ident(const char *s) {
-	return ID(takeEnum(kIdTab, s));
-}
-
-bool EncryptedStream::testBool(char *s) {
-	return number(s) != 0;
-}
-
 int32 EncryptedStream::size() {
 	return _readStream->size();
 }

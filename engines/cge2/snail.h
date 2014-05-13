@@ -132,7 +132,7 @@ public:
 	void insertCommand(CommandType com, int ref, int val, void *ptr);
 	bool idle();
 	void reset();
-	static int com(const char *com);
+	int com(const char *com);
 private:
 	CGE2Engine *_vm;
 	bool _turbo;

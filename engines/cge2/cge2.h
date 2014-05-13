@@ -85,6 +85,12 @@ public:
 	void caveUp(int cav);
 	void showBak(int ref);
 
+	int number(char *s);
+	char *token(char *s);
+	int takeEnum(const char **tab, const char *text);
+	ID ident(const char *s);
+	bool testBool(char *s);
+
 	const ADGameDescription *_gameDescription;
 
 	bool _quitFlag;

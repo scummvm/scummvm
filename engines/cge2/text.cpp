@@ -107,7 +107,7 @@ void Text::load() {
 		if (!Common::isDigit(*s))
 			continue;
 
-		int r = tf.number(s);
+		int r = _vm->number(s);
 
 		s += strlen(s);
 		if (s < tmpStr + n)

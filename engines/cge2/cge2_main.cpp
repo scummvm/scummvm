@@ -36,6 +36,37 @@
 
 namespace CGE2 {
 
+int CGE2Engine::number(char *s) {
+	int r = atoi(s);
+	char *pp = strchr(s, ':');
+	if (pp)
+		r = (r << 8) + atoi(pp + 1);
+	return r;
+}
+
+char *CGE2Engine::token(char *s) {
+	return strtok(s, " =\t,;/()");
+}
+
+int CGE2Engine::takeEnum(const char **tab, const char *text) {
+	if (text) {
+		for (const char **e = tab; *e; e++) {
+			if (scumm_stricmp(text, *e) == 0) {
+				return e - tab;
+			}
+		}
+	}
+	return -1;
+}
+
+ID CGE2Engine::ident(const char *s) {
+	return ID(takeEnum(EncryptedStream::kIdTab, s));
+}
+
+bool CGE2Engine::testBool(char *s) {
+	return number(s) != 0;
+}
+
 void CGE2Engine::badLab(const char *fn) {
 	error("Misplaced label in %s!", fn);
 }
@@ -73,7 +104,7 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 			
 			char *p;
-			p = EncryptedStream::token(tmpStr);
+			p = token(tmpStr);
 			if (*p == '@') {
 				if (label != kNoByte)
 					badLab(fname);
@@ -81,7 +112,7 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 				continue;
 			}
 
-			id = EncryptedStream::ident(p);
+			id = ident(p);
 			switch (id) {
 			case kIdName: // will be taken in Expand routine
 				if (label != kNoByte)
@@ -103,26 +134,26 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 			case kIdFront:
 				if (label != kNoByte)
 					badLab(fname);
-				p = EncryptedStream::token(nullptr);
-				frnt = EncryptedStream::testBool(p);
+				p = token(nullptr);
+				frnt = testBool(p);
 				break;
 			case kIdEast:
 				if (label != kNoByte)
 					badLab(fname);
-				p = EncryptedStream::token(nullptr);
-				east = EncryptedStream::testBool(p);
+				p = token(nullptr);
+				east = testBool(p);
 				break;
 			case kIdPortable:
 				if (label != kNoByte)
 					badLab(fname);
-				p = EncryptedStream::token(nullptr);
-				port = EncryptedStream::testBool(p);
+				p = token(nullptr);
+				port = testBool(p);
 				break;
 			case kIdTransparent:
 				if (label != kNoByte)
 					badLab(fname);
-				p = EncryptedStream::token(nullptr);
-				tran = EncryptedStream::testBool(p);
+				p = token(nullptr);
+				tran = testBool(p);
 				break;
 			default:
 				if (id >= kIdNear)
@@ -131,7 +162,7 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 				case kIdNear:
 				case kIdMTake:
 				case kIdFTake:
-					if (CommandHandler::com(p) >= 0)
+					if (_commandHandler->com(p) >= 0)
 						++cnt[section];
 					else
 						error("Bad line %d [%s]", sprf.getLineCount(), tmpStr);
@@ -222,39 +253,39 @@ void CGE2Engine::loadScript(const char *fname) {
 		V3D P;
 
 		// sprite ident number
-		if ((p = EncryptedStream::token(tmpStr)) == NULL)
+		if ((p = token(tmpStr)) == NULL)
 			break;
-		int SpI = EncryptedStream::number(p);
+		int SpI = number(p);
 
 		// sprite file name
 		char *SpN;
-		if ((SpN = EncryptedStream::token(nullptr)) == NULL)
+		if ((SpN = token(nullptr)) == NULL)
 			break;
 
 		// sprite scene
-		if ((p = EncryptedStream::token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == NULL)
 			break;
-		int SpA = EncryptedStream::number(p);
+		int SpA = number(p);
 
 		// sprite column
-		if ((p = EncryptedStream::token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == NULL)
 			break;
-		P._x = EncryptedStream::number(p);
+		P._x = number(p);
 
 		// sprite row
-		if ((p = EncryptedStream::token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == NULL)
 			break;
-		P._y = EncryptedStream::number(p);
+		P._y = number(p);
 
 		// sprite Z pos
-		if ((p = EncryptedStream::token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == NULL)
 			break;
-		P._z = EncryptedStream::number(p);
+		P._z = number(p);
 
 		// sprite life
-		if ((p = EncryptedStream::token(nullptr)) == NULL)
+		if ((p = token(nullptr)) == NULL)
 			break;
-		bool BkG = EncryptedStream::number(p) == 0;
+		bool BkG = number(p) == 0;
 
 		ok = true; // no break: OK
 
