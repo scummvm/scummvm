@@ -56,41 +56,33 @@ Seq *getConstantSeq(bool seqFlag) {
 	return seq;
 }
 
+void(*Sprite::notify) (void) = nullptr;
+
 byte Sprite::_constY = 0;
 byte Sprite::_follow = 0;
 
 Sprite::Sprite(CGE2Engine *vm)
-	: _siz(_vm, 0, 0), _nearPtr(0), _takePtr(0),
-	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
+	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
+      _next(NULL), _prev(NULL), _time(0),
 	  _ext(NULL), _ref(-1), _scene(0), _vm(vm),
 	  _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
 	_flags._frnt = 1;
-
-	_ref = 0;
-	_w = _h = 0;
-	_seqPtr = 0;
-	_shpCnt = 0;
 }
 
-Sprite::Sprite(CGE2Engine *vm, BitmapPtr *shpP)
-	: _siz(_vm, 0, 0), _nearPtr(0), _takePtr(0),
-	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
-	  _ext(NULL), _ref(-1), _scene(0), _vm(vm),
-	  _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
+Sprite::Sprite(CGE2Engine *vm, BitmapPtr *shpP, int cnt)
+	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
+     _next(NULL), _prev(NULL), _time(0),
+     _ext(NULL), _ref(-1), _scene(0), _vm(vm),
+     _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
 	_flags._frnt = 1;
 
-	_ref = 0;
-	_w = _h = 0;
-	_seqPtr = 0;
-	_shpCnt = 0;
-
-	setShapeList(shpP);
+	setShapeList(shpP, cnt);
 }
 
 Sprite::~Sprite() {
@@ -111,33 +103,8 @@ BitmapPtr Sprite::shp() {
 	return e->_shpList[i];
 }
 
-BitmapPtr *Sprite::setShapeList(BitmapPtr *shpP) {
-	BitmapPtr *r = (_ext) ? _ext->_shpList : NULL;
-
-	_shpCnt = 0;
-	_w = 0;
-	_h = 0;
-
-	if (shpP) {
-		BitmapPtr *p;
-		for (p = shpP; *p; p++) {
-			BitmapPtr b = (*p); // ->Code();
-			if (b->_w > _w)
-				_w = b->_w;
-			if (b->_h > _h)
-				_h = b->_h;
-			_shpCnt++;
-		}
-		expand();
-		_ext->_shpList = shpP;
-
-		//_flags._bDel = true;
-		warning("STUB: Sprite::sync() - Flags changed compared to CGE1's Sprite type.");
-
-		if (!_ext->_seq)
-			setSeq(getConstantSeq(_shpCnt < 2));
-	}
-	return r;
+void Sprite::setShapeList(BitmapPtr *shp, int cnt) {
+	warning("STUB: Sprite::setShapeList()");
 }
 
 bool Sprite::works(Sprite *spr) {
@@ -492,7 +459,7 @@ void Sprite::gotoxyz(V3D pos) {
 }
 
 void Sprite::center() {
-	gotoxyz((kScrWidth - _w) / 2, (kScrHeight - _h) / 2);
+	gotoxyz(kScrWidth >> 1, (kWorldHeight - _siz.y) >> 1, 0);
 }
 
 void Sprite::show() {
@@ -577,11 +544,7 @@ void Sprite::sync(Common::Serializer &s) {
 	s.syncAsUint16LE(_pos3D._x);
 	s.syncAsUint16LE(_pos3D._y);
 	s.syncAsByte(_pos3D._z);
-	s.syncAsUint16LE(_w);
-	s.syncAsUint16LE(_h);
 	s.syncAsUint16LE(_time);
-	s.syncAsByte(_nearPtr);
-	s.syncAsByte(_takePtr);
 	s.syncAsSint16LE(_seqPtr);
 	s.syncAsUint16LE(_shpCnt);
 	s.syncBytes((byte *)&_file[0], 9);
@@ -1019,35 +982,41 @@ void Bitmap::hide(int16 x, int16 y) {
 
 /*--------------------------------------------------------------------------*/
 
-HorizLine::HorizLine(CGE2Engine *vm) : Sprite(vm, NULL), _vm(vm) {
+HorizLine::HorizLine(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *HL = new BitmapPtr[2];
 	HL[0] = new Bitmap(_vm, "HLINE");
 	HL[1] = NULL;
 
-	setShapeList(HL);
+	setShapeList(HL, 1);
+
+	warning("HorizLine::HorizLine() - Recheck this!");
 }
 
-SceneLight::SceneLight(CGE2Engine *vm) : Sprite(vm, NULL), _vm(vm) {
+SceneLight::SceneLight(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *PR = new BitmapPtr[2];
 	PR[0] = new Bitmap(_vm, "PRESS");
 	PR[1] = NULL;
 
-	setShapeList(PR);
+	setShapeList(PR, 1);
+
+	warning("SceneLight::SceneLight() - Recheck this!");
 }
 
-Speaker::Speaker(CGE2Engine *vm): Sprite(vm, NULL), _vm(vm) {
+Speaker::Speaker(CGE2Engine *vm): Sprite(vm), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *SP = new BitmapPtr[3];
 	SP[0] = new Bitmap(_vm, "SPK_L");
 	SP[1] = new Bitmap(_vm, "SPK_R");
 	SP[2] = NULL;
 
-	setShapeList(SP);
+	setShapeList(SP, 2);
+
+	warning("Speaker::Speaker() - Recheck this!");
 }
 
-PocLight::PocLight(CGE2Engine *vm): Sprite(vm, NULL), _vm(vm) {
+PocLight::PocLight(CGE2Engine *vm): Sprite(vm), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *LI = new BitmapPtr[5];
 	LI[0] = new Bitmap(_vm, "LITE0");
@@ -1056,9 +1025,11 @@ PocLight::PocLight(CGE2Engine *vm): Sprite(vm, NULL), _vm(vm) {
 	LI[3] = new Bitmap(_vm, "LITE3");
 	LI[4] = NULL;
 
-	setShapeList(LI);
+	setShapeList(LI, 4);
 
 	_flags._kill = false;
+
+	warning("PocLight::PocLight() - Recheck this!");
 }
 
 } // End of namespace CGE2

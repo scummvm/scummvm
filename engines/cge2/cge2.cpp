@@ -135,7 +135,7 @@ bool CGE2Engine::showTitle(const char *name) {
 	LB[1] = NULL;
 	_bitmapPalette = NULL;
 
-	Sprite D(this, LB);
+	Sprite D(this, LB, 2);
 	D._flags._kill = true;
 	// D._flags._bDel = true;
 	warning("STUB: Sprite::showTitle() - Flags changed compared to CGE1's Sprite type.");

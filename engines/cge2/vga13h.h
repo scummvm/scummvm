@@ -100,20 +100,18 @@ public:
 		uint16 _zmov : 1;       // sprite needs Z-update in queue
 		uint16 _tran : 1;       // transparent (untouchable)
 	} _flags;
-	uint16 _w;
-	uint16 _h;
-	uint16 _time;
-	uint8 _nearPtr;
-	uint8 _takePtr;
-	int _seqPtr;
-	int _shpCnt;
-	char _file[kMaxFile];
-	Sprite *_prev;
-	Sprite *_next;
-	struct { byte _ptr, _cnt; } _actionCtrl[kActions];
 	V2D _pos2D;
 	V3D _pos3D;
 	V2D _siz;
+	uint16 _time;
+	struct { byte _ptr, _cnt; } _actionCtrl[kActions];
+	int _seqPtr;
+	int _seqCnt;
+	int _shpCnt;
+	char _file[kMaxFile];
+	// Following trailer is not saved with the game:
+	Sprite *_prev;
+	Sprite *_next;
 	static byte _constY;
 	static byte _follow;
 
@@ -122,12 +120,14 @@ public:
 	inline bool active() {
 		return _ext != NULL;
 	}
-
 	Sprite(CGE2Engine *vm);
-	Sprite(CGE2Engine *vm, BitmapPtr *shp);
+	Sprite(CGE2Engine *vm, BitmapPtr *shp, int cnt);
 	virtual ~Sprite();
 	BitmapPtr shp();
-	BitmapPtr *setShapeList(BitmapPtr *shp);
+	void setShapeList(BitmapPtr *shp, int cnt);
+	void moveShapesHi(void);
+	void moveShapesLo(void);
+	int LabVal(Action snq, int lab);
 	Sprite *expand();
 	Sprite *contract();
 	Sprite *backShow(bool fast = false);
@@ -141,18 +141,22 @@ public:
 	void gotoxyz_(V2D pos);
 	void gotoxyz(V3D pos);
 	void center();
+	void show(uint16 pg);
+	void hide(uint16 pg);
 	void show();
 	void hide();
 	BitmapPtr ghost();
-	void show(uint16 pg);
 	void makeXlat(uint8 *x);
 	void killXlat();
 	void step(int nr = -1);
 	Seq *setSeq(Seq *seq);
-	//CommandHandler::Command *snList(SnList type);
-	/*virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
-	virtual void tick();*/
+	CommandHandler::Command *snList(Action type);
+	//virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
+	//virtual void tick();
+	void clrHide(void) { if (_ext) _ext->_b0 = NULL; }
 	void sync(Common::Serializer &s);
+
+	static void (*notify) (void);
 };
 
 class Queue {
