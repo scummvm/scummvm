@@ -205,7 +205,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_lastInputScriptTime = 0;
 	_bootParam = 0;
 	_dumpScripts = false;
-	_debugMode = 0;
+	_debugMode = false;
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
 	_objectStateTable = NULL;
@@ -2281,7 +2281,7 @@ void ScummEngine::scummLoop_updateScummVars() {
 		VAR(VAR_MOUSE_Y) = _mouse.y;
 		if (VAR_DEBUGMODE != 0xFF) {
 			// This is NOT for the Mac version of Indy3/Loom
-			VAR(VAR_DEBUGMODE) = _debugMode;
+			VAR(VAR_DEBUGMODE) = (_debugMode ? 1 : 0);
 		}
 	} else if (_game.version >= 1) {
 		// We use shifts below instead of dividing by V12_X_MULTIPLIER resp.
