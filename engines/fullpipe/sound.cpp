@@ -301,7 +301,7 @@ void FullpipeEngine::stopAllSounds() {
 	// _mixer->stopAll();
 
 	for (int i = 0; i < _currSoundListCount; i++)
-		for (int j = 0; i < _currSoundList1[i]->getCount(); j++) {
+		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
 			_currSoundList1[i]->getSoundByIndex(j)->stop();
 		}
 }
