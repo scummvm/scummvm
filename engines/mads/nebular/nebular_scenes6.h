@@ -247,6 +247,59 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene611: public Scene6xx{
+private:
+	bool _seenRatFl;
+	bool _eyesRunningFl;
+	bool _shouldRemoveEyes;
+	bool _ratPresentFl;
+	bool _duringDialogFl;
+	bool _resetBatterieText;
+	bool _hermitTalkingFl;
+	bool _hermitMovingFl;
+	bool _alreadyTalkingFl;
+	bool _giveBatteriesFl;
+	bool _startTradingFl;
+	bool _check1Fl;
+	bool _stickFingerFl;
+
+	int _randVal;
+	int _ratHotspotId;
+	int _hermitDialogNode;
+	int _hermitDisplayedQuestion;
+	int _nextFrame;
+	int _hermitMode;
+
+	uint32 _ratTimer;
+
+	Conversation _dialog1;
+	Conversation _dialog2;
+
+	Common::Point _defaultDialogPos;
+
+	void handleTrading();
+	void handleRatMoves();
+	void handleDialog();
+	void handleSubDialog1();
+	void handleSubDialog2();
+	void handleTalking(int delay);
+	void setDialogNode(int node);
+	void displayHermitQuestions(int question);
+
+	bool check2ChargedBatteries();
+	bool check4ChargedBatteries();
+
+public:
+	Scene611(MADSEngine *vm) : Scene6xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene620: public Scene6xx{
 public:
 	Scene620(MADSEngine *vm) : Scene6xx(vm) {}
