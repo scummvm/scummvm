@@ -380,7 +380,7 @@ void FullpipeEngine::updateEvents() {
 		case Common::EVENT_QUIT:
 			_gameContinue = false;
 			break;
-			case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
 				ex = new ExCommand(0, 17, 107, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
