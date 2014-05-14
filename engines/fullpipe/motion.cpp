@@ -1500,6 +1500,8 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	PicAniInfo picAniInfo;
 	Common::Point point;
 
+	debug(0, "MovGraph2::doWalkTo(%d, %d, %d, %d, %d)", obj->_id, xpos, ypos, fuzzyMatch, staticsId);
+
 	int idx = getItemIndexByGameObjectId(obj->_id);
 
 	if (idx < 0)
@@ -3127,11 +3129,11 @@ bool MovGraphReact::pointInRegion(int x, int y) {
 	}
 }
 
-int startWalkTo(int objId, int objKey, int x, int y, int a5) {
-	MctlCompound *mc = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
+int startWalkTo(int objId, int objKey, int x, int y, int fuzzyMatch) {
+	MctlCompound *mc = getCurrSceneSc2MotionController();
 
 	if (mc)
-		return (mc->method34(g_fp->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, a5, 0) != 0);
+		return (mc->method34(g_fp->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, fuzzyMatch, 0) != 0);
 
 	return 0;
 }
