@@ -358,7 +358,7 @@ void Scene::stopAllSounds() {
 }
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
-	for (uint i = 0; i < _picObjList.size(); i++) {
+	for (uint i = 1; i < _picObjList.size(); i++) {
 		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_okeyCode == flags)
 			return (PictureObject *)_picObjList[i];
 	}
