@@ -405,6 +405,57 @@ public:
 	virtual int command(int commandId, int param);
 };
 
+class ASound2 : public ASound {
+private:
+	byte _command12Param;
+private:
+	typedef int (ASound2::*CommandPtr)();
+	static const CommandPtr _commandList[44];
+
+	int command9();
+	int command10();
+	int command11();
+	int command12();
+	int command13();
+	int command14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command26();
+	int command27();
+	int command28();
+	int command29();
+	int command30();
+	int command31();
+	int command32();
+	int command33();
+	int command34();
+	int command35();
+	int command36();
+	int command37();
+	int command38();
+	int command39();
+	int command40();
+	int command41();
+	int command42();
+	int command43();
+
+	void command9Randomize();
+	void command9Apply(byte *data, int val, int incr);
+public:
+	ASound2(Audio::Mixer *mixer);
+
+	virtual int command(int commandId, int param);
+};
+
 } // End of namespace Nebular
 
 } // End of namespace MADS

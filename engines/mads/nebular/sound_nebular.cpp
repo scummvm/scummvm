@@ -1202,6 +1202,368 @@ int ASound1::command2627293032() {
 	return (_commandParam > 0x40) ? _commandParam - 0x40 : _commandParam & 0xff00;
 }
 
+
+/*-----------------------------------------------------------------------*/
+
+const ASound2::CommandPtr ASound2::_commandList[44] = {
+	&ASound2::command0, &ASound2::command1, &ASound2::command2, &ASound2::command3,
+	&ASound2::command4, &ASound2::command5, &ASound2::command6, &ASound2::command7,
+	&ASound2::command8, &ASound2::command9, &ASound2::command10, &ASound2::command11,
+	&ASound2::command12, &ASound2::command13, &ASound2::command14, &ASound2::command15,
+	&ASound2::command16, &ASound2::command17, &ASound2::command18, &ASound2::command19,
+	&ASound2::command20, &ASound2::command21, &ASound2::command22, &ASound2::command23,
+	&ASound2::command24, &ASound2::command25, &ASound2::command26, &ASound2::command27,
+	&ASound2::command28, &ASound2::command29, &ASound2::command30, &ASound2::command31,
+	&ASound2::command32, &ASound2::command33, &ASound2::command34, &ASound2::command35,
+	&ASound2::command36, &ASound2::command37, &ASound2::command38, &ASound2::command39,
+	&ASound2::command40, &ASound2::command41, &ASound2::command42, &ASound2::command43
+};
+
+ASound2::ASound2(Audio::Mixer *mixer) : ASound(mixer, "asound.002", 0x15E0) {
+	_command12Param = 0xFD;
+
+	// Load sound samples
+	_soundFile.seek(_dataOffset + 0x144);
+	for (int i = 0; i < 164; ++i)
+		_samples.push_back(AdlibSample(_soundFile));
+}
+
+int ASound2::command(int commandId, int param) {
+	if (commandId > 43)
+		return 0;
+
+	_frameCounter = 0;
+	return (this->*_commandList[commandId])();
+}
+
+int ASound2::command9() {
+	byte *pData1 = loadData(0x1094, 376);
+	if (!isSoundActive(pData1)) {
+		command1();
+		_channels[0].load(pData1);
+		_channels[2].load(loadData(0x123E, 130));
+		
+		command9Randomize();
+		_channels[1].load(loadData(0x120C, 50));
+	}
+	return 0;
+}
+
+void ASound2::command9Randomize() {
+	// Randomization
+	int v;
+	while (((v = getRandomNumber()) & 0x3F) > 36)
+		;
+
+	byte *pData = loadData(0x120C, 50);
+	command9Apply(pData, v + 20, -1);
+	command9Apply(pData + 1, 10 - ((v + 1) / 6), 1);
+}
+
+void ASound2::command9Apply(byte *data, int val, int incr) {
+	data += 8;
+	for (int ctr = 0; ctr < 10; ++ctr, data += 4, val += incr) {
+		*data = val;
+	}
+}
+
+int ASound2::command10() {
+	byte *pData1 = loadData(0x12C0, 60);
+	if (!isSoundActive(pData1)) {
+		command1();
+		_channels[0].load(pData1);
+		_channels[1].load(loadData(0x12FC, 318));
+		_channels[2].load(loadData(0x143A, 110));
+	}
+
+	return 0;
+}
+
+int ASound2::command11() {
+	byte *pData = loadData(0x14A8, 170);
+	if (!isSoundActive(pData)) {
+		playSoundData(pData);
+		playSoundData(loadData(0x1552, 1802));
+		playSoundData(loadData(0x1C5C, 716));
+		playSoundData(loadData(0x1F28, 106));
+	}
+
+	return 0;
+}
+
+int ASound2::command12() {
+	_command12Param += 26;
+	byte v = _command12Param & 0x7f;
+
+	byte *pData = loadData(0x4A5E, 38);
+	pData[5] = pData[20] = v;
+	playSoundData(pData);
+
+	pData = loadData(0x4A84, 30);
+	pData[5] = pData[18] = v;
+	playSoundData(pData);
+
+	return 0;
+}
+
+int ASound2::command13() {
+	playSoundData(loadData(0x4AA2, 20));
+	playSoundData(loadData(0x4AB6, 20));
+
+	return 0;
+}
+
+int ASound2::command14() {
+	playSound(0x4ACA, 40);
+	playSound(0x4AF2, 42);
+
+	return 0;
+}
+
+int ASound2::command15() {
+	byte *pData1 = loadData(0x1F92, 1074);
+	if (!isSoundActive(pData1)) {
+		command1();
+		playSoundData(pData1);
+		playSound(0x23C4, 1050);
+		playSound(0x27DE, 58);
+		playSound(0x2818, 712);
+		playSound(0x2AE0, 256);
+	}
+
+	return 0;
+}
+
+int ASound2::command16() {
+	byte *pData1 = loadData(0x3960, 280);
+	if (!isSoundActive(pData1)) {
+		command1();
+		playSoundData(pData1);
+		playSound(0x3A78, 266);
+		playSound(0x3B72, 322);
+		playSound(0x3CC4, 488);
+		playSound(0x3EAC, 104);
+		playSound(0x3F14, 104);
+	}
+
+	return 0;
+}
+
+int ASound2::command17() {
+	byte *pData1 = loadData(0x3F7C, 432);
+	if (!isSoundActive(pData1)) {
+		command1();
+		playSoundData(pData1);
+		playSound(0x412C, 422);
+		playSound(0x42D2, 424);
+		playSound(0x447A, 418);
+	}
+
+	return 0;
+}
+
+static const int command18_list[16][2] = {
+	{ 0x337C, 28 }, { 0x3398, 26 }, { 0x33B2, 26 }, { 0x33CC, 26 },
+	{ 0x33E6, 56 }, { 0x341E, 46 }, { 0x344C, 56 }, { 0x3484, 22 },
+	{ 0x349A, 38 }, { 0x34C0, 62 }, { 0x34FE, 26 }, { 0x3518, 26 },
+	{ 0x3532, 26 }, { 0x354C, 26 }, { 0x3566, 32 }, { 0x3586, 24 }
+};
+
+int ASound2::command18() {
+	if (_channels[3]._activeCount == 0) {
+		int idx = (getRandomNumber() & 0x1E) >> 1;
+		byte *pData = loadData(command18_list[idx][0], command18_list[idx][1]);
+		_channels[3].load(pData);
+	}
+
+	return 0;
+}
+
+int ASound2::command19() {
+	byte *pData1 = loadData(0x2BE0, 366);
+	if (!isSoundActive(pData1)) {
+		command1();
+		playSoundData(pData1);
+		playSound(0x2D4E, 460);
+		playSound(0x2F1A, 266);
+		playSound(0x3024, 328);
+		playSound(0x316C, 162);
+		playSound(0x320E, 366);
+	}
+
+	return 0;
+}
+
+int ASound2::command20() {
+	playSound(0x4A36, 40);
+
+	return 0;
+}
+
+int ASound2::command21() {
+	playSound(0x49DE, 16);
+	playSound(0x49EE, 16);
+	playSound(0x49FF, 16);
+	
+	return 0;
+}
+
+int ASound2::command22() {
+	playSound(0x4A0E, 24);
+	playSound(0x4A26, 16);
+
+	return 0;
+}
+
+int ASound2::command23() {
+	playSound(0x49B6, 16);
+
+	return 0;
+}
+
+int ASound2::command24() {
+	playSound(0x49C6, 24);
+
+	return 0;
+}
+
+int ASound2::command25() {
+	playSound(0x49AC, 10);
+
+	return 0;
+}
+
+int ASound2::command26() {
+	playSound(0x498A, 14);
+	playSound(0x4998, 20);
+
+	return 0;
+}
+
+int ASound2::command27() {
+	playSound(0x4912, 80);
+	playSound(0x4962, 40);
+
+	return 0;
+}
+
+int ASound2::command28() {
+	playSound(0x48E8, 28);
+	playSound(0x4904, 14);
+
+	return 0;
+}
+
+int ASound2::command29() {
+	playSound(0x48B2, 22);
+
+	return 0;
+}
+
+int ASound2::command30() {
+	playSound(0x4870, 22);
+	playSound(0x4886, 22);
+	playSound(0x489C, 22);
+
+	return 0;
+}
+
+int ASound2::command31() {
+	playSound(0x482E, 22);
+	playSound(0x4844, 22);
+	playSound(0x489C, 22);
+
+	return 0;
+}
+
+int ASound2::command32() {
+	playSound(0x46E8, 10);
+
+	return 0;
+}
+
+int ASound2::command33() {
+	playSound(0x46D8, 16);
+
+	return 0;
+}
+
+int ASound2::command34() {
+	playSound(0x46C8, 16);
+
+	return 0;
+}
+
+int ASound2::command35() {
+	playSound(0x46B2, 22);
+
+	return 0;
+}
+
+int ASound2::command36() {
+	playSound(0x4624, 16);
+
+	return 0;
+}
+
+int ASound2::command37() {
+	playSound(0x4674, 20);
+	playSound(0x4688, 32);
+	playSound(0x46A8, 10);
+
+	return 0;
+}
+
+int ASound2::command38() {
+	byte *pData1 = loadData(0x359E, 202);
+	if (!isSoundActive(pData1)) {
+		command1();
+		playSoundData(pData1);
+		playSound(0x3668, 220);
+		playSound(0x3744, 124);
+		playSound(0x37C0, 162);
+		playSound(0x3862, 78);
+		playSound(0x38B0, 176);
+	}
+
+	return 0;
+}
+
+int ASound2::command39() {
+	byte *pData = loadData(0x466A, 10);
+	pData[6] = (getRandomNumber() & 7) + 85;
+	playSoundData(pData);
+
+	return 0;
+}
+
+int ASound2::command40() {
+	playSound(0x4634, 34);
+	playSound(0x4656, 20);
+
+	return 0;
+}
+
+int ASound2::command41() {
+	playSound(0x48C8, 32);
+
+	return 0;
+}
+
+int ASound2::command42() {
+	playSound(0x46F2, 156);
+	playSound(0x478E, 160);
+
+	return 0;
+}
+
+int ASound2::command43() {
+	playSound(0x4B1C, 40);
+	playSound(0x4B44, 41);
+
+	return 0;
+}
+
 } // End of namespace Nebular
 
 } // End of namespace MADS

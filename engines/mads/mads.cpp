@@ -43,7 +43,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_invObjectsAnimated = true;
 	_textWindowStill = false;
 	_screenFade = SCREEN_FADE_SMOOTH;
-	_musicFlag = false;
+	_musicFlag = true;
 	_dithering = false;
 
 	_debugger = nullptr;
