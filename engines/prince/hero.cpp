@@ -315,6 +315,8 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		int blackHeroX = 0;
 		int blackHeroY = frameYSize - 1;
 
+		int shadLastY = 0;
+
 		byte *shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY); // esi, first pixel from last row of black hero
 		byte *background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX, sprDestY); // eax, pixel of background where shadow sprite starts
 
@@ -348,7 +350,8 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				break;
 			}
 			//line_y_ok
-			if (shadPosY >= 0 && shadPosY < 480 && shadPosX < 640) {
+			if (shadLastY != shadPosY && shadPosY >= 0 && shadPosY < 480 && shadPosX < 640) {
+				shadLastY = shadPosY;
 				if (shadPosX < 0) { //when it happens?
 					shadSkipX = -1 * shadPosX;
 					background += shadSkipX;
@@ -533,12 +536,10 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				shadBitAddr -= kMaxPicWidth / 8;
 				shadPosY--;
 				diffY--;
-				background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX, sprDestY + diffY);
 			} else if (*(shadowLineStart + 2) > *(shadowLineStart - 2)) {
 				shadBitAddr += kMaxPicWidth / 8;
 				shadPosY++;
 				diffY++;
-				background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX, sprDestY + diffY);
 			}
 			//no_change_y
 			if (*shadowLineStart < *(shadowLineStart - 4)) {
@@ -570,6 +571,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				break;
 			}
 			blackHeroX = 0;
+			background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX, sprDestY + diffY);
 			shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY);
 		}
 		//koniec_bajki
