@@ -300,6 +300,24 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene612: public Scene6xx{
+private:
+	int action;
+	int _cycleIndex;
+
+	void handleWinchMovement();
+
+public:
+	Scene612(MADSEngine *vm) : Scene6xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene620: public Scene6xx{
 public:
 	Scene620(MADSEngine *vm) : Scene6xx(vm) {}
