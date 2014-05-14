@@ -1681,7 +1681,7 @@ void Scene208::enter() {
 
 	_game.loadQuoteSet(0x81, 0x46, 0);
 
-	if ((_scene->_priorSceneId == 207) && (_globals[kMonkeyStatus] == 1)) {
+	if ((_scene->_priorSceneId == 207) && (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
 		int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(129));
 		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 	}
@@ -2764,7 +2764,7 @@ void Scene209::enter() {
 	if (_scene->_roomChanged) {
 		_game._objects.addToInventory(OBJ_POISON_DARTS);
 		_game._objects.addToInventory(OBJ_BLOWGUN);
-		_globals[kMonkeyStatus] = 1;
+		_globals[kMonkeyStatus] = MONKEY_HAS_BINOCULARS;
 	}
 
 	_pitchFl = false;
@@ -2792,7 +2792,7 @@ void Scene209::enter() {
 }
 
 void Scene209::step() {
-	if (!_playingAnimFl && !_pitchFl && !_fallFl && !_dodgeFl && (_pauseMode == 0) && (_globals[kMonkeyStatus] == 1)) {
+	if (!_playingAnimFl && !_pitchFl && !_fallFl && !_dodgeFl && (_pauseMode == 0) && (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS)) {
 		int randAction = _vm->getRandomNumber(1,50);
 		switch (randAction) {
 		case 1:
@@ -3159,7 +3159,7 @@ void Scene209::preActions() {
 	if (_action.isAction(VERB_WALK_TOWARDS, 0x84))
 		_game._player._walkOffScreenSceneId = 208;
 
-	if (_globals[kMonkeyStatus] == 1) {
+	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
 		if ((_action.isAction(VERB_SHOOT) || _action.isAction(VERB_HOSE_DOWN)) && _action.isTarget(NOUN_MONKEY)
 			&& _action.isObject(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			_game._player._prepareWalkPos = Common::Point(111, 129);
@@ -3296,7 +3296,7 @@ void Scene209::actions() {
 		return;
 	}
 
-	if (_globals[kMonkeyStatus] == 1) {
+	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
 		if ((_action.isAction(VERB_SHOOT) || _action.isAction(VERB_HOSE_DOWN)) && _action.isAction(NOUN_MONKEY)
 			&& _action.isAction(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
@@ -3463,13 +3463,13 @@ void Scene209::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK, 0x100)) {
-		if (_globals[kMonkeyStatus] == 1) {
+		if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
 			if (_monkeyPosition == 1)
 				_vm->_dialogs->show(0x51B5);
 			else
 				_vm->_dialogs->show(0x51B6);
 		} else {
-			if (_globals[kMonkeyStatus] == 0)
+			if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
 				_vm->_dialogs->show(0x51B5);
 			else
 				_vm->_dialogs->show(0x51B7);
