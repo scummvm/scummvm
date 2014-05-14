@@ -1522,9 +1522,6 @@ Movement::~Movement() {
 		if (_updateFlag1)
 			_dynamicPhases.remove_at(0);
 
-		for (uint i = 0; i < _dynamicPhases.size(); i++)
-			delete _dynamicPhases[i];
-
 		_dynamicPhases.clear();
 	}
 
