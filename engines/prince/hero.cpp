@@ -36,8 +36,8 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0)
 	, _lastDirection(DOWN), _destDirection(DOWN), _talkTime(0), _boredomTime(0), _phase(0)
 	, _specAnim(0), _drawX(0), _drawY(0), _randomSource("prince"), _zoomFactor(0), _scaleValue(0)
-	, _shadZoomFactor(0), _shadScaleValue(0), _shadowLineLen(0), _shadowDrawX(0), _shadowDrawY(0)
-	, _shadLastY(0)
+	, _shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0)
+	, _frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0)
 {
 	_zoomBitmap = new Animation();
 	_shadowBitmap = new Animation();
@@ -145,22 +145,8 @@ void Hero::checkNak() {
 }
 
 Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
-	int16 tempMiddleY;
-	int16 baseX = _moveSet[_moveSetType]->getBaseX();
-	int16 baseY = _moveSet[_moveSetType]->getBaseY();
-	// any chance?
-	if (baseX == 320) {
-		tempMiddleY = _middleY - (baseY - 240);
-	} else {
-		tempMiddleY = _middleY;
-	}
-	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
-	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
-	int scaledXSize = getScaledValue(frameXSize);
-	int scaledYSize = getScaledValue(frameYSize);
-
 	Graphics::Surface *zoomedFrame = new Graphics::Surface();
-	zoomedFrame->create(scaledXSize, scaledYSize, Graphics::PixelFormat::createFormatCLUT8());
+	zoomedFrame->create(_scaledFrameXSize, _scaledFrameYSize, Graphics::PixelFormat::createFormatCLUT8());
 	
 	int sprZoomX;
 	int sprZoomY = _scaleValue;
@@ -169,7 +155,7 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 	uint xDest = 0;
 	uint yDest = 0;
 
-	for (int i = 0; i < scaledYSize; i++) {
+	for (int i = 0; i < _scaledFrameYSize; i++) {
 		// linear_loop:
 		while(1) {
 			sprZoomY -= 100;
@@ -184,7 +170,7 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 			}
 		}
 		// loop_lin:
-		for (int j = 0; j < scaledXSize; j++) {
+		for (int j = 0; j < _scaledFrameXSize; j++) {
 			sprZoomX -= 100;
 			if (sprZoomX >= 0) {
 				// its_all_r
@@ -214,10 +200,10 @@ void Hero::countDrawPosition() {
 	} else {
 		tempMiddleY = _middleY;
 	}
-	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
-	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
-	int scaledX = getScaledValue(frameXSize);
-	int scaledY = getScaledValue(frameYSize);
+	_frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
+	_frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
+	_scaledFrameXSize = getScaledValue(_frameXSize);
+	_scaledFrameYSize = getScaledValue(_frameYSize);
 	
 	//TODO
 	//int tempHeroHeight = scaledY; // not used? global?
@@ -229,38 +215,35 @@ void Hero::countDrawPosition() {
 
 	if (_zoomFactor != 0) {
 		//notfullSize
-		_drawX = _middleX - scaledX / 2;
-		_drawY = tempMiddleY + 1 - scaledY;
+		_drawX = _middleX - _scaledFrameXSize / 2;
+		_drawY = tempMiddleY + 1 - _scaledFrameYSize;
 	} else {
 		//fullSize
-		_drawX = _middleX - frameXSize / 2;
-		_drawY = tempMiddleY + 1 - frameYSize;
+		_drawX = _middleX - _frameXSize / 2;
+		_drawY = tempMiddleY + 1 - _frameYSize;
 	}
 }
 
 void Hero::plotPoint(int x, int y) {
-	WRITE_UINT16(&_shadowLine[_shadowLineLen * 4], x);
-	WRITE_UINT16(&_shadowLine[_shadowLineLen * 4 + 2], y);
+	WRITE_UINT16(&_shadowLine[_shadLineLen * 4], x);
+	WRITE_UINT16(&_shadowLine[_shadLineLen * 4 + 2], y);
 }
 
 static void plot(int x, int y, int color, void *data) {
 	Hero *shadowLine = (Hero *)data;
 	shadowLine->plotPoint(x, y);
-	shadowLine->_shadowLineLen++;
+	shadowLine->_shadLineLen++;
 }
 
 void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
-	int16 frameXSize = _moveSet[_moveSetType]->getFrameWidth(_phase);
-	int16 frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
-	
 	Graphics::Surface *makeShadow = new Graphics::Surface();
-	makeShadow->create(frameXSize, frameYSize, Graphics::PixelFormat::createFormatCLUT8());
+	makeShadow->create(_frameXSize, _frameYSize, Graphics::PixelFormat::createFormatCLUT8());
 
-	for (int y = 0; y < frameYSize; y++) {
+	for (int y = 0; y < _frameYSize; y++) {
 		byte *src = (byte *)heroFrame->getBasePtr(0, y);
 		byte *dst = (byte *)makeShadow->getBasePtr(0, y);
 
-		for (int x = 0; x < frameXSize; x++, dst++, src++) {
+		for (int x = 0; x < _frameXSize; x++, dst++, src++) {
 			if (*src != 0xFF) {
 				*dst = kShadowColor;
 			} else {
@@ -269,11 +252,8 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		}
 	}
 
-	int scaledX = getScaledValue(frameXSize);
-	//int scaledY = getScaledValue(frameYSize);
-
-	int destX = _middleX - scaledX / 2;
-	int destY = _middleY - _shadMinus;
+	int destX = _middleX - _scaledFrameXSize / 2;
+	int destY = _middleY - _shadMinus - 1;
 
 	if (destY > 1 && destY < kMaxPicHeight) {
 		int shadDirection;
@@ -284,25 +264,21 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		}
 
 		int shadWallDown = 0;
-		_shadowLineLen = 0;
+		_shadLineLen = 0;
 		Graphics::drawLine(_lightX, _lightY, destX, destY, 0, &plot, this);
 
 		byte *sprShadow = (byte *)_graph->_shadowTable70;
-		int sprWidth = frameXSize;
-		int sprHeight = frameYSize;
-		int sprDestX = destX - _vm->_picWindowX;
-		int sprDestY = destY - _vm->_picWindowY;
 
-		_shadowDrawX = sprDestX; // to fix
-		_shadowDrawY = sprDestY;
+		_shadDrawX = destX - _vm->_picWindowX;
+		_shadDrawY = destY - _vm->_picWindowY;
 
-		int shadPosX = sprDestX;
-		int shadMinX = sprDestX;
-		int shadMaxX = sprDestX;
+		int shadPosX = _shadDrawX;
+		int shadMinX = _shadDrawX;
+		int shadMaxX = _shadDrawX;
 
-		int shadPosY = sprDestY;
-		int shadMinY = sprDestY;
-		int shadMaxY = sprDestY;
+		int shadPosY = _shadDrawY;
+		int shadMinY = _shadDrawY;
+		int shadMaxY = _shadDrawY;
 		int shadBitAddr = destY * kMaxPicWidth / 8 + destX / 8;
 		int shadBitMask = 128 >> (destX % 8);
 
@@ -313,24 +289,24 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 		int diffY = 0;
 
 		int blackHeroX = 0;
-		int blackHeroY = frameYSize - 1;
+		int blackHeroY = _frameYSize - 1;
 
 		int shadLastY = 0;
 
-		byte *shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY); // esi, first pixel from last row of black hero
-		byte *background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX, sprDestY); // eax, pixel of background where shadow sprite starts
+		byte *shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY); // first pixel from last row of black hero
+		byte *background = (byte *)_graph->_frontScreen->getBasePtr(_shadDrawX, _shadDrawY); // pixel of background where shadow sprite starts
 
 		// banked2
 		byte *shadowLineStart = _shadowLine + 8;
 
 		// linear_loop
-		for(int i = 0; i < sprHeight; i++) {
+		for(int i = 0; i < _frameYSize; i++) {
 			int shadSkipX = 0;
 			int ct_loop = 0;
 
 			int ebxOnStack;
 			//retry_line:
-			for (ebxOnStack = sprHeight - i; ebxOnStack > 0; ebxOnStack--) {
+			for (ebxOnStack = _frameYSize - i; ebxOnStack > 0; ebxOnStack--) {
 				shadZoomY -= 100;
 				if (shadZoomY < 0 && _scaleValue != 10000) {
 					shadZoomY += _scaleValue;
@@ -355,7 +331,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				if (shadPosX < 0) { //when it happens?
 					shadSkipX = -1 * shadPosX;
 					background += shadSkipX;
-					if (sprWidth > shadSkipX) {
+					if (_frameXSize > shadSkipX) {
 						shadowStart += shadSkipX;
 						shadBitAddr += shadSkipX / 8;
 						int ebp16844 = shadSkipX % 8;
@@ -378,11 +354,11 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					}
 				} else {
 					//x1_ok
-					if (shadPosX + sprWidth > 640) {
+					if (shadPosX + _frameXSize > 640) {
 						ct_loop = 640 - shadPosX; // test it
 					} else {
 						//draw_line
-						ct_loop = sprWidth;
+						ct_loop = _frameXSize;
 					}
 				}
 				//draw_line1
@@ -390,8 +366,8 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					shadMinX = shadPosX;
 				}
 				//bigger_x
-				if (shadPosX + sprWidth > shadMaxX) {
-					shadMaxX = shadPosX + sprWidth;
+				if (shadPosX + _frameXSize > shadMaxX) {
+					shadMaxX = shadPosX + _frameXSize;
 				}
 				//smaller_x
 				if (shadPosY < shadMinY) {
@@ -470,7 +446,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 						blackHeroX++;
 						shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY);
 						backgroundDiff++;
-						background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX + backgroundDiff, sprDestY + diffY);
+						background = (byte *)_graph->_frontScreen->getBasePtr(_shadDrawX + diffX + backgroundDiff, _shadDrawY + diffY);
 					}
 				}
 				//byebyebye
@@ -571,7 +547,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				break;
 			}
 			blackHeroX = 0;
-			background = (byte *)_graph->_frontScreen->getBasePtr(sprDestX + diffX, sprDestY + diffY);
+			background = (byte *)_graph->_frontScreen->getBasePtr(_shadDrawX + diffX, _shadDrawY + diffY);
 			shadowStart = (byte *)makeShadow->getBasePtr(blackHeroX, blackHeroY);
 		}
 		//koniec_bajki
@@ -587,12 +563,6 @@ void Hero::showHeroAnimFrame() {
 		_phase = 0;
 	}
 	countDrawPosition();
-	//temp:
-	//showHeroShadow();
-	//debug("_drawX: %d", _drawX);
-	//debug("_drawY: %d", _drawY);
-	//debug("_middleX: %d", _middleX);
-	//debug("_middleY: %d", _middleY);
 }
 
 void Hero::setScale(int8 zoomBitmapValue) {
@@ -603,14 +573,10 @@ void Hero::setScale(int8 zoomBitmapValue) {
 		_zoomFactor = zoomBitmapValue;
 		_scaleValue = 10000 / _zoomFactor;
 	}
-	debug("_zoomFactor: %d", _zoomFactor);
-	debug("_scaleValue: %d", _scaleValue);
 }
 
 void Hero::selectZoom() {
 	int8 zoomBitmapValue = _zoomBitmap->getZoom(_middleY / 4 * kZoomBitmapWidth + _middleX / 4);
-	debug("offset: %d", _middleY / 4 * kZoomBitmapWidth + _middleX / 4);
-	debug("zoomBitmapValue: %d", _zoomFactor);
 	setScale(zoomBitmapValue);
 }
 
@@ -623,8 +589,6 @@ void Hero::setShadowScale(int32 shadowScale) {
 		_shadZoomFactor = shadowScale;
 		_shadScaleValue = 10000 / _shadZoomFactor;
 	}
-	debug("_shadZoomFactor: %d", _shadZoomFactor);
-	debug("_shadScaleValue: %d", _shadScaleValue);
 }
 
 void Hero::specialAnim() {

@@ -129,26 +129,32 @@ public:
 //private:
 	PrinceEngine *_vm;
 	GraphicsMan *_graph;
+	
 	uint16 _number;
 	uint16 _visible;
 	int16 _state;
 	int16 _middleX; // middle of X
 	int16 _middleY; // lower part of hero
-	int16 _drawX;
-	int16 _drawY;
 	int16 _lastDirection;
 	int16 _destDirection;
 	int16 _moveSetType;
+	
 	int8 _zoomFactor;
 	int16 _scaleValue;
+	int16 _frameXSize;
+	int16 _frameYSize;
+	int16 _scaledFrameXSize;
+	int16 _scaledFrameYSize;
+	int16 _drawX;
+	int16 _drawY;
+	
 	int16 _lightX; // for hero's shadow
 	int16 _lightY;
 	int32 _shadZoomFactor;
 	int32 _shadScaleValue;
-	int32 _shadowLineLen;
-	int16 _shadowDrawX;
-	int16 _shadowDrawY;
-	int16 _shadLastY;
+	int32 _shadLineLen;
+	int16 _shadDrawX;
+	int16 _shadDrawY;
 
 	// Coords array of coordinates
 	// DirTab array of directions
