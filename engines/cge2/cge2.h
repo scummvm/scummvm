@@ -28,6 +28,7 @@
 #ifndef CGE2_H
 #define CGE2_H
 
+#include "common/random.h"
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
@@ -85,6 +86,7 @@ public:
 	void caveUp(int cav);
 	void showBak(int ref);
 	void loadTab();
+	int newRandom(int range);
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
@@ -97,6 +99,8 @@ public:
 	bool testBool(char *s);
 
 	const ADGameDescription *_gameDescription;
+
+	Common::RandomSource _randomSource;
 
 	bool _quitFlag;
 	Dac *_bitmapPalette;

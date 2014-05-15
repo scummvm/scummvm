@@ -39,7 +39,7 @@
 namespace CGE2 {
 
 CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
-	: Engine(syst), _gameDescription(gameDescription) {
+	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge") {
 	_resman = nullptr;
 	_vga = nullptr;
 	_sprite = nullptr;

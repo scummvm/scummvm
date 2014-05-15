@@ -413,4 +413,11 @@ void CGE2Engine::setEye(const char *s) {
 	_eye->_z = atoi(token(NULL));
 }
 
+int CGE2Engine::newRandom(int range) {
+	if (!range)
+		return 0;
+
+	return _randomSource.getRandomNumber(range - 1);
+}
+
 } // End of namespace CGE2
