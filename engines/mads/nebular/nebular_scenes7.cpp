@@ -120,19 +120,14 @@ void Scene701::enter() {
 	}
 
 	if (_globals[kBoatStatus] == BOAT_UNFLOODED) {
-		if (_globals[kBoatRaised]) {
+		if (_globals[kBoatRaised])
 			_globals[kBoatStatus] = BOAT_GONE;
-		} else {
-			if (_globals[kLineStatus] == LINE_TIED) {
-				_globals[kBoatStatus] = BOAT_TIED_FLOATING;
-			} else {
-				if (_game._difficulty == DIFFICULTY_HARD) {
-					_globals[kBoatStatus] = BOAT_ADRIFT;
-				} else {
-					_globals[kBoatStatus] = BOAT_TIED;
-				}
-			}
-		}
+		else if (_globals[kLineStatus] == LINE_TIED)
+			_globals[kBoatStatus] = BOAT_TIED_FLOATING;
+		else if (_game._difficulty == DIFFICULTY_HARD)
+			_globals[kBoatStatus] = BOAT_ADRIFT;
+		else 
+			_globals[kBoatStatus] = BOAT_TIED;
 	}
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
@@ -213,81 +208,67 @@ void Scene702::enter() {
 }
 
 void Scene702::preActions() {
-	if (_action.isAction(VERB_WALKTO, NOUN_WEST_END_OF_PLATFORM)) {
+	if (_action.isAction(VERB_WALKTO, NOUN_WEST_END_OF_PLATFORM))
 		_game._player._walkOffScreenSceneId = 701;
-	}
 }
 
 void Scene702::actions() {
-	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM)) {
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER)) {
+	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
+		; // Only set the action as finished
+	else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 711;
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4) {
-		// Take bones
-		if (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger) {
-			switch (_game._trigger) {
-			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
-				_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
-				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-				break;
-			case 1:
-				_vm->_sound->command(0xF);
-				if (_game._objects.isInInventory(OBJ_BONE))
-					_game._objects.setRoom(OBJ_BONE, NOWHERE);
-				_game._objects.addToInventory(OBJ_BONES);
-				_vm->_dialogs->show(OBJ_BONES, 70218);
-				break;
-			case 2:
-				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
-				break;
-			default:
-				break;
-			}
-
-			_action._inProgress = false;
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4 && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			break;
+		case 1:
+			_vm->_sound->command(0xF);
+			if (_game._objects.isInInventory(OBJ_BONE))
+				_game._objects.setRoom(OBJ_BONE, NOWHERE);
+			_game._objects.addToInventory(OBJ_BONES);
+			_vm->_dialogs->show(OBJ_BONES, 70218);
+			break;
+		case 2:
+			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			break;
+		default:
+			break;
 		}
-	} else if (_action._lookFlag) {
+	} else if (_action._lookFlag)
 		_vm->_dialogs->show(70210);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
 		_vm->_dialogs->show(70211);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_BLOCK)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_BLOCK))
 		_vm->_dialogs->show(70212);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_ROCK)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCK))
 		_vm->_dialogs->show(70213);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_TAKE, NOUN_ROCK)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_ROCK))
 		_vm->_dialogs->show(70214);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_WEST_END_OF_PLATFORM)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_WEST_END_OF_PLATFORM))
 		_vm->_dialogs->show(70215);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(70216);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_BONES) && _action._mainObjectSource == 4) {
+	else if (_action.isAction(VERB_LOOK, NOUN_BONES) && _action._mainObjectSource == 4)
 		_vm->_dialogs->show(70217);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4) {
+	else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(70219);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY))
 		_vm->_dialogs->show(70220);
-		_action._inProgress = false;
-	}
+	else
+		return;
+
+	_action._inProgress = false;
 }
 
 /*------------------------------------------------------------------------*/
@@ -507,108 +488,90 @@ void Scene752::preActions() {
 }
 
 void Scene752::actions() {
-	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM)) {
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER)) {
+	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
+		;
+	else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 711;
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_TAKE, NOUN_ID_CARD)) {
-		// Take ID card
-		if (!_game._objects.isInInventory(OBJ_ID_CARD) || _game._trigger) {
-			switch (_game._trigger) {
-			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
-				_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
-				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-				break;
-			case 1:
-				_vm->_sound->command(0xF);
-				_scene->_sequences.remove(_globals._sequenceIndexes[13]);
-				_game._objects.addToInventory(OBJ_ID_CARD);
-				_scene->_dynamicHotspots.remove(_cardId);
-				_vm->_dialogs->show(OBJ_ID_CARD, 830);
-				break;
-			case 2:
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
-				break;
-			default:
-				break;
-			}
-
-			_action._inProgress = false;
+	} else if (_action.isAction(VERB_TAKE, NOUN_ID_CARD) && (!_game._objects.isInInventory(OBJ_ID_CARD) || _game._trigger)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			break;
+		case 1:
+			_vm->_sound->command(0xF);
+			_scene->_sequences.remove(_globals._sequenceIndexes[13]);
+			_game._objects.addToInventory(OBJ_ID_CARD);
+			_scene->_dynamicHotspots.remove(_cardId);
+			_vm->_dialogs->show(OBJ_ID_CARD, 830);
+			break;
+		case 2:
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			break;
+		default:
+			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4) {
-		// Take bones
-		if (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger) {
-			switch (_game._trigger) {
-			case 0:
-				_game._player._stepEnabled = false;
-				_game._player._visible = false;
-				_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
-				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
-				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-				break;
-			case 1:
-				_vm->_sound->command(0xF);
-				if (_game._objects.isInInventory(OBJ_BONE))
-					_game._objects.setRoom(OBJ_BONE, NOWHERE);
-				_game._objects.addToInventory(OBJ_BONES);
-				_vm->_dialogs->show(OBJ_BONES, 75221);
-				break;
-			case 2:
-				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
-				_game._player._visible = true;
-				_game._player._stepEnabled = true;
-				break;
-			default:
-				break;
-			}
-
-			_action._inProgress = false;
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4 && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
+		switch (_game._trigger) {
+		case 0:
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 5, 2, 0, 0);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			break;
+		case 1:
+			_vm->_sound->command(0xF);
+			if (_game._objects.isInInventory(OBJ_BONE))
+				_game._objects.setRoom(OBJ_BONE, NOWHERE);
+			_game._objects.addToInventory(OBJ_BONES);
+			_vm->_dialogs->show(OBJ_BONES, 75221);
+			break;
+		case 2:
+			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			break;
+		default:
+			break;
 		}
 	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_CITY)) {
 		if (_globals[kLaserHoleIsThere])
 			_vm->_dialogs->show(75212);
 		else
 			_vm->_dialogs->show(75210);
-
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
 		_vm->_dialogs->show(75213);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_BLOCK)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_BLOCK))
 		_vm->_dialogs->show(75214);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_ROCK)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCK))
 		_vm->_dialogs->show(75215);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_TAKE, NOUN_ROCK)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_ROCK))
 		_vm->_dialogs->show(75216);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_WEST_END_OF_PLATFORM)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_WEST_END_OF_PLATFORM))
 		_vm->_dialogs->show(75217);
-		_action._inProgress = false;
-	} else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(75218);
-		_action._inProgress = false;
-	} else if ((_action.isAction(VERB_LOOK, NOUN_BONES) || _action.isAction(VERB_LOOK, NOUN_ID_CARD)) && _action._mainObjectSource == 4) {
+	else if ((_action.isAction(VERB_LOOK, NOUN_BONES) || _action.isAction(VERB_LOOK, NOUN_ID_CARD)) && _action._mainObjectSource == 4) {
 		if (_game._objects[OBJ_ID_CARD]._roomNumber == 752)
 			_vm->_dialogs->show(75219);
 		else
 			_vm->_dialogs->show(75220);
-		_action._inProgress = false;
 	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(75222);
-		_action._inProgress = false;
-	}
+	} else
+		return;
+
+	_action._inProgress = false;
 }
 
 /*------------------------------------------------------------------------*/
