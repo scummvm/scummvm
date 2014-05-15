@@ -67,6 +67,11 @@ public:
 	int _field1D;
 	int _field1E;
 	int _field1F;
+	
+	// TODO: Only used by asound.003. Figure out usage
+	byte _field20;
+public:
+	static bool _channelsEnabled;
 public:
 	AdlibChannel();
 
@@ -180,6 +185,8 @@ private:
 
 	void updateFNumber();
 protected:
+	int _commandParam;
+
 	/**
 	 * Queue a byte for an Adlib register
 	 */
@@ -245,7 +252,7 @@ protected:
 	 */
 	int getRandomNumber();
 
-	int command0();
+	virtual int command0();
 	int command1();
 	int command2();
 	int command3();
@@ -361,7 +368,6 @@ private:
 	typedef int (ASound1::*CommandPtr)();
 	static const CommandPtr _commandList[42];
 	bool _cmd23Toggle;
-	int _commandParam;
 
 	int command9();
 	int command10();
@@ -412,6 +418,7 @@ private:
 	typedef int (ASound2::*CommandPtr)();
 	static const CommandPtr _commandList[44];
 
+	virtual int command0();
 	int command9();
 	int command10();
 	int command11();
@@ -452,6 +459,67 @@ private:
 	void command9Apply(byte *data, int val, int incr);
 public:
 	ASound2(Audio::Mixer *mixer);
+
+	virtual int command(int commandId, int param);
+};
+
+class ASound3 : public ASound {
+private:
+	bool _command39Flag;
+
+	typedef int (ASound3::*CommandPtr)();
+	static const CommandPtr _commandList[61];
+
+	int command9();
+	int command10();
+	int command11();
+	int command13();
+	int command14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command26();
+	int command27();
+	int command28();
+	int command29();
+	int command30();
+	int command31();
+	int command32();
+	int command33();
+	int command34();
+	int command35();
+	int command36();
+	int command37();
+	int command38();
+	int command39();
+	int command40();
+	int command41();
+	int command42();
+	int command43();
+	int command44();
+	int command45();
+	int command46();
+	int command47();
+	int command49();
+	int command50();
+	int command51();
+	int command57();
+	int command59();
+	int command60();
+	int nullCommand() { return 0; }
+
+	void command9Randomize();
+	void command9Apply(byte *data, int val, int incr);
+public:
+	ASound3(Audio::Mixer *mixer);
 
 	virtual int command(int commandId, int param);
 };
