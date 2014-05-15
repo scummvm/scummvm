@@ -149,8 +149,10 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	DebugMan.addDebugChannel(kDebugVGAOpcode, "vga_opcode", "VGA Opcode debug level");
 	DebugMan.addDebugChannel(kDebugSubroutine, "subroutine", "Subroutine debug level");
 	DebugMan.addDebugChannel(kDebugVGAScript, "vga_script", "VGA Script debug level");
+	//Image dumping command disabled as it doesn't work well
+#if 0
 	DebugMan.addDebugChannel(kDebugImageDump, "image_dump", "Enable dumping of images to files");
-
+#endif
 	_vcPtr = 0;
 	_vcGetOutOfCode = 0;
 	_gameOffsetsPtr = 0;
