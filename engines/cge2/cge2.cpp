@@ -131,34 +131,4 @@ Common::Error CGE2Engine::run() {
 	return Common::kNoError;
 }
 
-bool CGE2Engine::showTitle(const char *name) {
-	if (_quitFlag)
-		return false;
-
-	_bitmapPalette = _vga->_sysPal;
-	BitmapPtr *LB = new BitmapPtr[2];
-	LB[0] = new Bitmap(this, name);
-	LB[1] = NULL;
-	_bitmapPalette = NULL;
-
-	Sprite D(this, LB, 1);
-	D._flags._kill = true;
-	warning("STUB: Sprite::showTitle() - Flags changed compared to CGE1's Sprite type.");
-	D.gotoxyz(kScrWidth >> 1, -(kPanHeight >> 1));
-	_vga->sunset();
-	
-	D.show(2);
-
-	_vga->copyPage(1, 2);
-	_vga->copyPage(0, 1);
-	
-	_vga->sunrise(_vga->_sysPal);
-
-	_vga->update();
-	
-	warning("STUB: CGE2Engine::showTitle()");
-
-	return true;
-}
-
 } // End of namespace CGE2
