@@ -384,4 +384,22 @@ char *CGE2Engine::mergeExt(char *buf, const char *name, const char *ext) {
 	return buf;
 }
 
+void CGE2Engine::setEye(V3D &e) { 
+	_eye = &e;
+}
+
+void CGE2Engine::setEye(const V2D& e2, int z) {
+	_eye->_x = e2.x;
+	_eye->_y = e2.y;
+	_eye->_z = z;
+}
+
+void CGE2Engine::setEye(const char *s) {
+	char tempStr[kLineMax];
+	strcpy(tempStr, s);
+	_eye->_x = atoi(token(tempStr));
+	_eye->_y = atoi(token(NULL));
+	_eye->_z = atoi(token(NULL));
+}
+
 } // End of namespace CGE2

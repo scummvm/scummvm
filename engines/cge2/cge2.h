@@ -84,6 +84,11 @@ public:
 	void badLab(const char *fn);
 	void caveUp(int cav);
 	void showBak(int ref);
+	void loadTab();
+
+	void setEye(V3D &e);
+	void setEye(const V2D& e2, int z = -kScrWidth);
+	void setEye(const char *s);
 
 	int number(char *s);
 	char *token(char *s);
@@ -110,6 +115,7 @@ public:
 	Text *_text;
 	HeroTab *_heroTab[2];
 	V3D *_eye;
+	V3D *_eyeTab[kCaveMax];
 	Spare *_spare;
 	CommandHandler *_commandHandler;
 private:

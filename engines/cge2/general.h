@@ -72,17 +72,6 @@ public:
 	V2D(CGE2Engine *vm) : _vm(vm) { }
 	V2D(CGE2Engine *vm, const V3D& p3) : _vm(vm) { *this = p3; }
 	V2D(CGE2Engine *vm, int x, int y) : _vm(vm), Common::Point(x, y) { }
-	void setEye(V3D &e) { _vm->_eye = &e; }
-	void setEye(const V2D& e2, int z = -SCR_WID_) {
-		_vm->_eye->_x = e2.x; _vm->_eye->_y = e2.y; _vm->_eye->_z = z;
-	}
-	void setEye(const char *s) {
-		char *tempStr;
-		strcpy(tempStr, s);
-		_vm->_eye->_x = atoi(_vm->token(tempStr));
-		_vm->_eye->_y = atoi(_vm->token(tempStr));
-		_vm->_eye->_z = atoi(_vm->token(tempStr));
-	}
 	bool operator <  (const V2D& p) const { return (x <  p.x) && (y <  p.y); }
 	bool operator <= (const V2D& p) const { return (x <= p.x) && (y <= p.y); }
 	bool operator >(const V2D& p) const { return (x >  p.x) && (y >  p.y); }
