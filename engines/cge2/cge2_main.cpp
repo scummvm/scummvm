@@ -343,14 +343,11 @@ void CGE2Engine::showBak(int ref) {
 	Sprite *spr = _spare->locate(ref);
 	if (spr != nullptr) {
 		_bitmapPalette = _vga->_sysPal;
-		warning("Check again this ^ !");
 		spr->expand();
 		_bitmapPalette = NULL;
-		//spr->show(2);
+		spr->show(2);
 		_vga->copyPage(1, 2);
 		_spare->dispose(spr);
-
-		warning("STUB: CGE2Engine::showBak()");
 	}
 }
 
