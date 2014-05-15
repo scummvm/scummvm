@@ -356,12 +356,39 @@ void CGE2Engine::runGame() {
 }
 
 void CGE2Engine::loadTab() {
-	char *n = _text->getText(240);
 	setEye(_text->getText(240));
 	for (int i = 0; i < kCaveMax; i++)
 		_eyeTab[i] == _eye;
 
-	warning("STUB: CGE2Engine::loadTab()");
+	if (_resman->exist(kTabName)) {
+		EncryptedStream f(this, kTabName);
+		Common::File output;
+		for (int i = 0; i < kCaveMax; i++) {
+			for (int j = 0; j < 3; j++) {
+				signed b = f.readSigned();
+				unsigned a = f.readUnsigned();
+				uint16 round = uint16((long(a) << 16) / 100);
+				
+				if (round > 0x7FFF)
+					b++;
+			
+				switch (j) {
+				case 0:
+					_eyeTab[i]->_x = b;
+					break;
+				case 1:
+					_eyeTab[i]->_y = b;
+					break;
+				case 2:
+					_eyeTab[i]->_z = b;
+					break;
+				}
+				
+			}
+		}
+	}
+
+	warning("STUB: CGE2Engine::loadTab() - Recheck this");
 }
 
 void CGE2Engine::cge2_main() {

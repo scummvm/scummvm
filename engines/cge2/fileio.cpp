@@ -216,6 +216,14 @@ uint32 EncryptedStream::read(byte *dataPtr, uint32 dataSize) {
 	return _readStream->read(dataPtr, dataSize);
 }
 
+unsigned EncryptedStream::readUnsigned() {
+	return _readStream->readUint16BE();
+}
+
+signed EncryptedStream::readSigned() {
+	return _readStream->readSint16BE();
+}
+
 bool EncryptedStream::err() {
 	return (_error & _readStream->err());
 }

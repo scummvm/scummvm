@@ -121,6 +121,8 @@ public:
 	int32 pos();
 	int32 size();
 	uint32 read(byte *dataPtr, uint32 dataSize);
+	unsigned readUnsigned();
+	signed readSigned();
 	Common::String readLine();
 	int getLineCount() { return _lineCount; }
 
