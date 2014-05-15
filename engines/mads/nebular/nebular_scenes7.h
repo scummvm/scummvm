@@ -74,6 +74,38 @@ public:
 	virtual void actions();
 };
 
+class Scene703: public Scene7xx{
+private:
+	int _monsterMode;
+	int _boatFrame;
+	int _curSequence;
+	int _boatDir;
+
+	bool _useBomb;
+	bool _startMonsterTimer;
+	bool _rexDeathFl;
+	bool _restartTrigger70Fl;
+
+	uint32 _lastFrameTime;
+	uint32 _monsterTime;
+
+	Conversation _dialog1;
+
+	void handleBottleInterface();
+	void setBottleSequence();
+	void handleFillBottle(int quote);
+
+public:
+	Scene703(MADSEngine *vm) : Scene7xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene707: public SceneTeleporter {
 public:
 	Scene707(MADSEngine *vm) : SceneTeleporter(vm) {}
