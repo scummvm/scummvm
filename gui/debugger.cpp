@@ -505,6 +505,7 @@ bool Debugger::Cmd_OpenLog(int argc, const char **argv) {
 bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 	if (argc == 1) { // print level
 		DebugPrintf("Debugging is currently %s (set at level %d)\n", (gDebugLevel >= 0) ? "enabled" : "disabled", gDebugLevel);
+		DebugPrintf("Usage: %s <n> where n is 0 to 10 or -1 to disable debugging\n", argv[0]);
 	} else { // set level
 		gDebugLevel = atoi(argv[1]);
 		if (gDebugLevel >= 0 && gDebugLevel < 11) {
@@ -512,7 +513,8 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 		} else if (gDebugLevel < 0) {
 			DebugPrintf("Debugging is now disabled\n");
 		} else {
-			DebugPrintf("Invalid debug level value (0 to 10 or -1 to disable)\n");
+			DebugPrintf("Invalid debug level value\n");
+			DebugPrintf("Usage: %s <n> where n is 0 to 10 or -1 to disable debugging\n", argv[0]);
 		}
 	}
 
