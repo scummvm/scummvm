@@ -205,143 +205,85 @@ Sprite *Sprite::expand() {
 	if (_ext)
 		return this;
 
+	if (notify != nullptr)
+		notify();
+
 	_ext = new SprExt(_vm);
 	assert(_ext != NULL);
+
 	if (!*_file)
 		return this;
 
-	static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
 	char fname[kPathMax];
 
 	Common::Array<BitmapPtr> shplist;
-	for (int i = 0; i < _shpCnt + 1; ++i)
+	for (int i = 0; i < _shpCnt; ++i)
 		shplist.push_back(NULL);
 
-	Seq *seq = NULL;
-	int shapeCount = 0,
-		seqCount = 0,
-		nearCount = 0,
-		takeCount = 0,
+	int cnt[kActions],
+		shpcnt = 0,
+		seqcnt = 0,
 		maxnow = 0,
 		maxnxt = 0;
 
-	warning("STUB: Sprite::expand()");
+	Seq *seq;
+	if (_seqCnt) {
+		seq = new Seq[_seqCnt];
+		if (seq == NULL)
+			error("No core %s", fname);
+	} else
+		seq = nullptr;
 
-	//CommandHandler::Command *nearList = NULL;
-	//CommandHandler::Command *takeList = NULL;
-	//_vm->mergeExt(fname, _file, kSprExt);
-	//if (_vm->_resman->exist(fname)) { // sprite description file exist
-	//	EncryptedStream sprf(_vm, fname);
-	//	if (sprf.err())
-	//		error("Bad SPR [%s]", fname);
-	//	Common::String line;
-	//	char tmpStr[kLineMax + 1];
-	//	int lcnt = 0;
+	for (int i = 0; i < kActions; i++)
+		cnt[i] = 0;
 
-	//	for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
-	//		int len = line.size();
-	//		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-	//		lcnt++;
-	//		if (len == 0 || *tmpStr == '.')
-	//			continue;
+	for (int i = 0; i < kActions; i++){
+		byte n = _actionCtrl[i]._cnt;
+		if (n) {
+			_ext->_actions[i] = new CommandHandler::Command[n];
+			if (_ext->_actions[i] == nullptr)
+				error("No core %s", fname);
+		} else
+			_ext->_actions[i] = nullptr;
+	}
 
-	//		CommandHandler::Command *c;
-	//		switch (_vm->takeEnum(Comd, strtok(tmpStr, " =\t"))) {
-	//		case 0:
-	//			// Name
-	//			setName(strtok(NULL, ""));
-	//			break;
-	//		case 1:
-	//			// Phase
-	//			// In case the shape index gets too high, increase the array size
-	//			while ((shapeCount + 1) >= (int)shplist.size()) {
-	//				shplist.push_back(NULL);
-	//				++_shpCnt;
-	//			}
-	//			shplist[shapeCount++] = new Bitmap(_vm, strtok(NULL, " \t,;/"));
-	//			break;
-	//		case 2:
-	//			// Seq
-	//			seq = (Seq *)realloc(seq, (seqCount + 1) * sizeof(*seq));
-	//			assert(seq != NULL);
-	//			Seq *s;
-	//			s = &seq[seqCount++];
-	//			s->_now = atoi(strtok(NULL, " \t,;/"));
-	//			if (s->_now > maxnow)
-	//				maxnow = s->_now;
-	//			s->_next = atoi(strtok(NULL, " \t,;/"));
-	//			switch (s->_next) {
-	//			case 0xFF:
-	//				s->_next = seqCount;
-	//				break;
-	//			case 0xFE:
-	//				s->_next = seqCount - 1;
-	//				break;
-	//			}
-	//			if (s->_next > maxnxt)
-	//				maxnxt = s->_next;
-	//			s->_dx = atoi(strtok(NULL, " \t,;/"));
-	//			s->_dy = atoi(strtok(NULL, " \t,;/"));
-	//			s->_dly = atoi(strtok(NULL, " \t,;/"));
-	//			break;
-	//		case 3:
-	//			// Near
-	//			if (_nearPtr == kNoPtr)
-	//				break;
-	//			nearList = (CommandHandler::Command *)realloc(nearList, (nearCount + 1) * sizeof(*nearList));
-	//			assert(nearList != NULL);
-	//			c = &nearList[nearCount++];
-	//			if ((c->_commandType = (CommandType)_vm->takeEnum(CommandHandler::_commandText, strtok(NULL, " \t,;/"))) < 0)
-	//				error("Bad NEAR in %d [%s]", lcnt, fname);
-	//			c->_ref = atoi(strtok(NULL, " \t,;/"));
-	//			c->_val = atoi(strtok(NULL, " \t,;/"));
-	//			c->_spritePtr = NULL;
-	//			break;
-	//		case 4:
-	//			// Take
-	//			if (_takePtr == kNoPtr)
-	//				break;
-	//			takeList = (CommandHandler::Command *)realloc(takeList, (takeCount + 1) * sizeof(*takeList));
-	//			assert(takeList != NULL);
-	//			c = &takeList[takeCount++];
-	//			if ((c->_commandType = (CommandType)_vm->takeEnum(CommandHandler::_commandText, strtok(NULL, " \t,;/"))) < 0)
-	//				error("Bad NEAR in %d [%s]", lcnt, fname);
-	//			c->_ref = atoi(strtok(NULL, " \t,;/"));
-	//			c->_val = atoi(strtok(NULL, " \t,;/"));
-	//			c->_spritePtr = NULL;
-	//			break;
-	//		}
-	//	}
-	//} else {
-	//	// no sprite description: try to read immediately from .BMP
-	//	shplist[shapeCount++] = new Bitmap(_vm, _file);
-	//}
+	int section = kIdPhase;
 
-	//shplist[shapeCount] = NULL;
-	//if (seq) {
-	//	if (maxnow >= shapeCount)
-	//		error("Bad PHASE in SEQ [%s]", fname);
-	//	if (maxnxt >= seqCount)
-	//		error("Bad JUMP in SEQ [%s]", fname);
-	//	setSeq(seq);
-	//} else
-	//	setSeq(getConstantSeq(_shpCnt == 1));
+	_vm->mergeExt(fname, _file, kSprExt);
+	if (_vm->_resman->exist(fname)) { // sprite description file exist
 
-	//// Set the shape list
-	//BitmapPtr *shapeList = new BitmapPtr[shplist.size()];
-	//for (uint i = 0; i < shplist.size(); ++i)
-	//	shapeList[i] = shplist[i];
+		warning("STUB: Sprite::expand()");
 
-	//setShapeList(shapeList);
+	} else // no sprite description: try to read immediately from .BMP
+		shplist[shpcnt++] = new Bitmap (_vm, _file);
 
-	//if (nearList)
-	//	nearList[nearCount - 1]._spritePtr = _ext->_near = nearList;
-	//else
-	//	_nearPtr = kNoPtr;
-	//if (takeList)
-	//	takeList[takeCount - 1]._spritePtr = _ext->_take = takeList;
-	//else
-	//	_takePtr = kNoPtr;
+	if (seq) {
+		if (maxnow >= shpcnt)
+			error("Bad PHASE in SEQ %s", fname);
+		if (maxnxt && maxnxt >= seqcnt)
+			error("Bad JUMP in SEQ %s", fname);
+		setSeq(seq);
+	} else {
+		setSeq(_stdSeq8);
+		_seqCnt = (shpcnt < ARRAYSIZE(_stdSeq8)) ? shpcnt : ARRAYSIZE(_stdSeq8);
+	}
+
+	// Set the shape list
+	BitmapPtr *shapeList = new BitmapPtr[shplist.size()];
+	for (uint i = 0; i < shplist.size(); ++i)
+		shapeList[i] = shplist[i];
+
+	setShapeList(shapeList, shpcnt);
+
+	if (_file[2] == '~') { // FLY-type sprite
+		Seq *seq = _ext->_seq;
+		int x = (seq + 1)->_dx, y = (seq + 1)->_dy, z = (seq + 1)->_dz;
+		// random position
+		seq->_dx = _vm->newRandom(x + x) - x;
+		seq->_dy = _vm->newRandom(y + y) - y;
+		seq->_dz = _vm->newRandom(z + z) - z;
+		gotoxyz(_pos3D + V3D(seq->_dx, seq->_dy, seq->_dz));
+	}
 
 	return this;
 }
