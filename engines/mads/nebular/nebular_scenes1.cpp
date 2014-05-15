@@ -2455,8 +2455,7 @@ void Scene109::step() {
 		_hungryFl = true;
 	}
 
-	// FIXME: The fish animation never moves, so x is never updated and the scene freezes
-	if (_eatingFirstFish /*&& (_scene->_sequences[_globals._sequenceIndexes[10]]._msgPos.x >= 178)*/) {
+	if (_eatingFirstFish && (_scene->_sequences[_globals._sequenceIndexes[10]]._msgPos.x >= 178)) {
 		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 4, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 4);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_SPRITE, 29, 72);
