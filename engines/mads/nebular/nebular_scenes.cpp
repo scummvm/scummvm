@@ -425,7 +425,7 @@ void SceneTeleporter::teleporterHandleKey() {
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_LOOP, 0, 1);
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 
-		if (_globals[kMeteorologistWatch] == 0)
+		if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
 			_vm->_events->hideCursor();
 
 		}
@@ -477,7 +477,7 @@ void SceneTeleporter::teleporterHandleKey() {
 		if (_finishedCodeCounter == 1) {
 			_finishedCodeCounter++;
 
-			if (_globals[kMeteorologistWatch] != 0)
+			if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
 				_scene->_nextSceneId = 202;
 			else {
 				_vm->_events->showCursor();
@@ -492,14 +492,14 @@ void SceneTeleporter::teleporterHandleKey() {
 					_scene->_nextSceneId = _teleporterSceneId;
 				}
 			}
-		} else if (_globals[kMeteorologistWatch] != 0)
+		} else if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
 			_scene->_sequences.addTimer(30, 230 + _meteorologistCurPlace);
 
 		break;
 
 	case 3:
 		if (!_finishedCodeCounter) {
-			if (_globals[kMeteorologistWatch] == 0) {
+			if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL) {
 				_game._player._stepEnabled = true;
 				_vm->_events->showCursor();
 			}
@@ -513,7 +513,7 @@ void SceneTeleporter::teleporterHandleKey() {
 
 void SceneTeleporter::teleporterEnter() {
 	_game._player._visible   = false;
-	_game._player._stepEnabled = (_globals[kMeteorologistWatch] == 0);
+	_game._player._stepEnabled = (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL);
 	_scene->_kernelMessages._talkFont = _vm->_font->getFont(FONT_TELE);
 	_scene->_textSpacing = 0;
 	_curCode   = 0;
@@ -553,7 +553,7 @@ void SceneTeleporter::teleporterEnter() {
 
 	_meteorologistCurPlace = 0;
 
-	if (_globals[kMeteorologistWatch] != 0)
+	if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
 		_scene->_sequences.addTimer(30, 230);
 
 	_vm->_sound->command(36);
@@ -582,7 +582,7 @@ bool SceneTeleporter::teleporterActions() {
 }
 
 void SceneTeleporter::teleporterStep() {
-	if ((_globals[kMeteorologistWatch] != 0) && (_game._trigger >= 230)) {
+	if ((_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL) && (_game._trigger >= 230)) {
 		int place = _game._trigger - 230;
 		int digit;
 

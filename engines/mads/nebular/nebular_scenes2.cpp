@@ -99,7 +99,7 @@ void Scene2xx::sceneEntrySound() {
 				_vm->_sound->command(10);
 			break;
 		case 213:
-			if (_globals[kMeteorologistWatch] == 0)
+			if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
 				_vm->_sound->command(1);
 			else
 				_vm->_sound->command(9);
@@ -419,26 +419,23 @@ void Scene202::enter() {
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_BINOCULARS);
 
-	if (_globals[kMeteorologistWatch]) {
+	if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
-		if (_globals[kMeteorologistWatch] == 2)
-			_ladderTopFl = true;
-		else
-			_ladderTopFl = false;
-
-		if (_globals[kMeteorologistWatch] < 1)
-			_globals._sequenceIndexes[10] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 6);
-		else
-			_globals._sequenceIndexes[10] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 8);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
+		_ladderTopFl = (_globals[kMeteorologistWatch] == METEOROLOGIST_TOWER);
 
 		if (_ladderTopFl) {
+			_globals._sequenceIndexes[10] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], true, 8);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
+
 			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[10], Common::Point(247, 82));
 			_game._player._playerPos = Common::Point(246, 124);
 			_game._player._facing = FACING_NORTH;
 			_globals[kTeleporterUnderstood] = true;
 		} else {
+			_globals._sequenceIndexes[10] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 6);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 1);
+
 			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[10], Common::Point(172, 123));
 			_game._player._playerPos = Common::Point(171, 122);
 			_game._player._facing = FACING_NORTH;
@@ -447,15 +444,17 @@ void Scene202::enter() {
 		_scene->loadAnimation(formAnimName('M', -1), 71);
 		_scene->_activeAnimation->setCurrentFrame(200);
 	} else {
-		_game._player._visible = false;
-		_scene->_sequences.startCycle(_globals._sequenceIndexes[9], true, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[9], Common::Point(247, 82));
-		_game._player._playerPos = Common::Point(246, 124);
-		_game._player._facing = FACING_NORTH;
+		if (_ladderTopFl) {
+			_game._player._visible = false;
+			_scene->_sequences.startCycle(_globals._sequenceIndexes[9], true, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[9], Common::Point(247, 82));
+			_game._player._playerPos = Common::Point(246, 124);
+			_game._player._facing = FACING_NORTH;
+		}
 	}
 
-	_meteorologistSpecial = 0;
+	_meteorologistSpecial = false;
 }
 
 void Scene202::setRandomKernelMessage() {
@@ -480,30 +479,35 @@ void Scene202::step() {
 	if (_game._trigger == 71) {
 		_vm->_sound->command(3);
 		_vm->_sound->command(9);
-		_meteoClock1 = 900 + _scene->_frameStartTime;
-		Common::Point msgPos;
-		int msgFlag;
-		if (!_ladderTopFl) {
-			msgPos = Common::Point(0, 0);
-			msgFlag = 2;
-		} else {
-			msgPos = Common::Point(248, 15);
-			msgFlag = 0;
-		}
-		int msgIndex = _scene->_kernelMessages.add(msgPos, 0x1110, msgFlag | 32, 0, 120, _game.getQuote(102));
-		_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
 
-		if (_globals[kMeteorologistWatch] == 1) {
-			_action._activeAction._verbId = VERB_LOOK;
-			_action._activeAction._objectNameId = 39;
-			_action._activeAction._indirectObjectId = 438;
-			_game._triggerSetupMode = SEQUENCE_TRIGGER_PARSER;
-			_scene->_sequences.addTimer(120, 2);
-			_meteorologistSpecial = -1;
-		} else if (_globals[kMeteorologistWatch] == 2) {
-			_scene->_sequences.addTimer(120, 90);
+		_meteoClock1 = _scene->_frameStartTime + 15 * 60;
+
+		if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL) {
+			Common::Point msgPos;
+			int msgFlag;
+			if (!_ladderTopFl) {
+				msgPos = Common::Point(0, 0);
+				msgFlag = 2;
+			} else {
+				msgPos = Common::Point(248, 15);
+				msgFlag = 0;
+			}
+			int msgIndex = _scene->_kernelMessages.add(msgPos, 0x1110, msgFlag | 32, 0, 120, _game.getQuote(102));
+			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
+
+			if (_globals[kMeteorologistWatch] == METEOROLOGIST_GROUND) {
+				_action._activeAction._verbId = VERB_LOOK;
+				_action._activeAction._objectNameId = NOUN_BINOCULARS;
+				_action._activeAction._indirectObjectId = NOUN_STRANGE_DEVICE;
+				_game._triggerSetupMode = SEQUENCE_TRIGGER_PARSER;
+				_scene->_sequences.addTimer(2 * 60, 2);
+				_meteorologistSpecial = true;
+			} else if (_globals[kMeteorologistWatch] == METEOROLOGIST_TOWER) {
+				_scene->_sequences.addTimer(2 * 60, 90);
+			}
 		}
-		_globals[kMeteorologistWatch] = 0;
+
+		_globals[kMeteorologistWatch] = METEOROLOGIST_NORMAL;
 	}
 
 	switch (_game._trigger) {
@@ -550,7 +554,7 @@ void Scene202::step() {
 		break;
 	}
 
-	if (!_scene->_activeAnimation && (_globals[kMeteorologistStatus] != 2) && (_meteoClock2 <= _scene->_frameStartTime) && (_meteoClock1 <= _scene->_frameStartTime)) {
+	if (!_scene->_activeAnimation && (_globals[kMeteorologistStatus] != METEOROLOGIST_GONE) && (_meteoClock2 <= _scene->_frameStartTime) && (_meteoClock1 <= _scene->_frameStartTime)) {
 		int randVal = _vm->getRandomNumber(1, 500);
 		int threshold = 1;
 		if (_ladderTopFl)
@@ -574,10 +578,10 @@ void Scene202::step() {
 
 	if (_waitingMeteoFl) {
 		if (_scene->_activeAnimation->getCurrentFrame() >= 200) {
-			if ((_globals[kMeteorologistWatch] == 2) || _globals[kLadderBroken]) {
+			if ((_globals[kMeteorologistWatch] == METEOROLOGIST_TOWER) || _globals[kLadderBroken]) {
 				_scene->_nextSceneId = 213;
 			} else {
-				_vm->_dialogs->show(0x4EE9);
+				_vm->_dialogs->show(20201);
 				_scene->_reloadSceneFlag = true;
 			}
 		}
@@ -597,7 +601,7 @@ void Scene202::step() {
 		}
 	}
 
-	if (_meteoClock2 + 7200 <= _scene->_frameStartTime) {
+	if (_meteoClock2 + 120 * 60 <= _scene->_frameStartTime) {
 		_toTeleportFl = true;
 	}
 
@@ -613,10 +617,12 @@ void Scene202::step() {
 	case 42:
 	case 77:
 	case 96:
+		_stationCounter = 0;
 		frameStep = subStep1(randVal);
 		break;
 	case 51:
 	case 74:
+		_toStationFl = false;
 		frameStep = subStep2(randVal);
 		break;
 	case 27:
@@ -645,19 +651,13 @@ void Scene202::step() {
 		break;
 	}
 
-	if (frameStep < 0)
-		return;
-
-	int nextFrame = 1 + _scene->_activeAnimation->getCurrentFrame() - frameStep;
-	if (nextFrame) {
-		_scene->_activeAnimation->setCurrentFrame(nextFrame);
-		_meteoFrame = nextFrame;
+	if (frameStep >= 0 && frameStep != _scene->_activeAnimation->getCurrentFrame() + 1) {
+		_scene->_activeAnimation->setCurrentFrame(frameStep);
+		_meteoFrame = frameStep;
 	}
 }
 
 int Scene202::subStep1(int randVal) {
-	_stationCounter = 0;
-
 	if ((randVal <= 100) || _toStationFl)
 		return 42;
 
@@ -671,8 +671,6 @@ int Scene202::subStep1(int randVal) {
 }
 
 int Scene202::subStep2(int randVal) {
-	_toStationFl = false;
-
 	if ((randVal <= 150) && (_stationCounter < 5))
 		return 51;
 
@@ -849,7 +847,7 @@ void Scene202::actions() {
 					_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[10], Common::Point(172, 123));
 					if (_scene->_activeAnimation) {
 						_waitingMeteoFl = true;
-						_globals[kMeteorologistWatch] = 1;
+						_globals[kMeteorologistWatch] = METEOROLOGIST_GROUND;
 					} else {
 						_scene->_sequences.addTimer(120, 2);
 					}
@@ -894,7 +892,7 @@ void Scene202::actions() {
 							_scene->_sequences.addTimer(120, 2);
 						} else {
 							_waitingMeteoFl = true;
-							_globals[kMeteorologistWatch] = 2;
+							_globals[kMeteorologistWatch] = METEOROLOGIST_GONE;
 							if ((_scene->_activeAnimation->getCurrentFrame() >= 44) && (_scene->_activeAnimation->getCurrentFrame() <= 75)) {
 								_scene->_kernelMessages.reset();
 								int msgIndex = _scene->_kernelMessages.add(Common::Point(248, 15), 0x1110, 32, 0, 60, _game.getQuote(100));
@@ -911,7 +909,7 @@ void Scene202::actions() {
 				case 2:
 					if (!_scene->_activeAnimation)
 						_vm->_dialogs->show(0x4EFE);
-					_meteorologistSpecial = 0;
+					_meteorologistSpecial = false;
 					_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 					_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);
 					_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[9], Common::Point(247, 82));
@@ -1000,7 +998,7 @@ void Scene202::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_meteoClock2);
 	s.syncAsUint32LE(_startTime);
 
-	s.syncAsSint32LE(_meteorologistSpecial);
+	s.syncAsByte(_meteorologistSpecial);
 }
 
 /*****************************************************************************/
@@ -4863,7 +4861,7 @@ void Scene213::setup() {
 }
 
 void Scene213::enter() {
-	if (_globals[kMeteorologistWatch] != 0)
+	if (_globals[kMeteorologistWatch] != METEOROLOGIST_ABSENT)
 		_handSpriteId = _scene->_sprites.addSprites("*METHAND");
 	else if (_globals[kSexOfRex] == REX_MALE)
 		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
@@ -4874,7 +4872,7 @@ void Scene213::enter() {
 
 	// The original is calling Scene2xx::sceneEntrySound()
 		if (_vm->_musicFlag) {
-			if (_globals[kMeteorologistWatch] == 0)
+			if (_globals[kMeteorologistWatch] == METEOROLOGIST_ABSENT)
 				_vm->_sound->command(1);
 			else
 				_vm->_sound->command(9);

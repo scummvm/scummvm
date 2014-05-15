@@ -67,7 +67,7 @@ private:
 	bool _activeMsgFl, _ladderTopFl, _waitingMeteoFl, _toStationFl, _toTeleportFl;
 	int _ladderHotspotId, _lastRoute, _stationCounter, _meteoFrame;
 	uint32 _meteoClock1, _meteoClock2, _startTime;
-	int _meteorologistSpecial;
+	bool _meteorologistSpecial;
 
 	int subStep1(int randVal);
 	int subStep2(int randVal);
