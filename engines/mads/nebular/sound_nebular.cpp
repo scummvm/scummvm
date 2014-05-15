@@ -686,7 +686,7 @@ void ASound::updateChannelState() {
 }
 
 static const int outputIndexes[] = {
-	3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 13, 16, 14, 17
+	0, 3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 13, 16, 14, 17
 };
 static const int outputChannels[] = {
 	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21, 0
@@ -704,7 +704,7 @@ static const int volumeList[] = {
 };
 
 void ASound::updateActiveChannel() {
-	int reg = 0x40 + outputChannels[outputIndexes[_activeChannelNumber * 2]];
+	int reg = 0x40 + outputChannels[outputIndexes[_activeChannelNumber * 2 + 1]];
 	int portVal = _ports[reg] & 0xFFC0;
 	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_field1E, 0, 63);
 
@@ -725,7 +725,7 @@ void ASound::loadSample(int sampleIndex) {
 
 	_activeChannelReg = _activeChannelNumber;
 	_samplePtr = &_samples[sampleIndex * 2];
-	_v11 = outputChannels[outputIndexes[_activeChannelReg * 2 - 1]];
+	_v11 = outputChannels[outputIndexes[_activeChannelReg * 2]];
 	processSample();
 
 	AdlibChannelData &cd = _channelData[_activeChannelNumber];
@@ -735,7 +735,7 @@ void ASound::loadSample(int sampleIndex) {
 	cd._field0 = _samplePtr->_fieldE;
 
 	_samplePtr = &_samples[sampleIndex * 2 + 1];
-	_v11 = outputChannels[outputIndexes[_activeChannelReg * 2]];
+	_v11 = outputChannels[outputIndexes[_activeChannelReg * 2 + 1]];
 	processSample();
 }
 
