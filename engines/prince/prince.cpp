@@ -294,10 +294,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->_zoomBitmap->clear();
 	Resource::loadResource(_mainHero->_zoomBitmap, "zoom", false);
 
-	_mainHero->_shadowBitmap->clear();
-	if (Resource::loadResource(_mainHero->_shadowBitmap, "shadow", false) == false) {
-		Resource::loadResource(_mainHero->_shadowBitmap, "shadow2", false);
-	}
+	loadShadow(_mainHero->_shadowBitmap, _mainHero->kShadowBitmapSize, "shadow", "shadow2");
 
 	_picWindowX = 0;
 
@@ -468,6 +465,31 @@ bool PrinceEngine::loadAnim(uint16 animNr, bool loop) {
 	_flicLooped = loop;
 	_flicPlayer.start();
 	playNextFrame();
+	return true;
+}
+
+bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2) {
+
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName1);
+	if (!stream) {
+		return false;
+	}
+
+	if (stream->read(shadowBitmap, dataSize) != dataSize) {
+		free(shadowBitmap);
+		return false;
+	}
+
+	stream = SearchMan.createReadStreamForMember(resourceName2);
+	if (!stream) {
+		return false;
+	}
+
+	byte *shadowBitmap2 = shadowBitmap + dataSize;
+	if (stream->read(shadowBitmap2, dataSize) != dataSize) {
+		free(shadowBitmap);
+		return false;
+	}
 	return true;
 }
 

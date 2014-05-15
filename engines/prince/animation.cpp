@@ -58,11 +58,6 @@ void Animation::clear() {
 }
 
 // TEMP
-/*
-int8 Animation::getZoom(uint16 offset) const {
-	return *(uint8*)(_data+offset);
-}
-*/
 int16 Animation::getZoom(uint16 offset) const {
 	return READ_LE_UINT16(_data + offset);
 }

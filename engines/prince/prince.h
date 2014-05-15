@@ -124,6 +124,7 @@ public:
 	bool loadAnim(uint16 animNr, bool loop);
 	bool loadVoice(uint32 textSlot, uint32 sampleSlot, const Common::String &name);
 	bool loadSample(uint32 sampleSlot, const Common::String &name);
+	bool loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2);
 
 	void playSample(uint16 sampleId, uint16 loopType);
 	void stopSample(uint16 sampleId);

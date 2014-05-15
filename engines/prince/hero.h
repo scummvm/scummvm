@@ -45,7 +45,8 @@ public:
 	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
 	static const int16 kNormalWidth = 640;
 	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
-	static const int16 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
+	static const int32 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
+	static const int16 kScreenWidth = 640;
 
 	static const byte kShadowColor = 191;
 
@@ -182,7 +183,7 @@ public:
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
 	// TurnAnim ??
 	Animation *_zoomBitmap; // change to sth else, not Animation ??
-	Animation *_shadowBitmap;
+	byte *_shadowBitmap;
 	byte *_shadowLine;
 	
 	uint32 _moveDelay;
