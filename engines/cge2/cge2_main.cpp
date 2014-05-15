@@ -358,8 +358,19 @@ void CGE2Engine::runGame() {
 	warning("STUB: CGE2Engine::runGame()");
 }
 
+void CGE2Engine::loadTab() {
+	char *n = _text->getText(240);
+	setEye(_text->getText(240));
+	for (int i = 0; i < kCaveMax; i++)
+		_eyeTab[i] == _eye;
+
+	warning("STUB: CGE2Engine::loadTab()");
+}
+
 void CGE2Engine::cge2_main() {
 	warning("STUB: CGE2Engine::cge2_main()");
+
+	loadTab();
 
 	_mode++;
 
