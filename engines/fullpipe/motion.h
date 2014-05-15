@@ -315,7 +315,7 @@ struct MovArr {
 };
 
 struct MovItem {
-	MovArr *movarr;
+	Common::Array<MovArr *> *movarr;
 	int _mfield_4;
 	int _mfield_8;
 	int _mfield_C;

@@ -398,6 +398,7 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 		info->ox = _ox;
 		info->oy = _oy;
 		info->priority = _priority;
+		warning("Yep %d", _id);
 
 		return true;
 	}

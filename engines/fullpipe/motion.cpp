@@ -628,7 +628,6 @@ int MovGraph::method44() {
 }
 
 MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-#if 0
 	PicAniInfo picAniInfo;
 	int ss;
 
@@ -641,7 +640,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 		int idx = getItemIndexByStaticAni(subj);
 
 		for (uint i = 0; i < _items[idx]->count; i++) {
-			if (_items[idx]->items[i].movarr == goal) {
+			if ((*_items[idx]->items[i].movarr)[0] == goal) {
 				if (subj->_movement) {
 					Common::Point point;
 
@@ -671,7 +670,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 		if (_items[idx]->count > 0) {
 			int arridx = 0;
 
-			while (_items[idx]->items[arridx].movarr != goal) {
+			while ((*_items[idx]->items[arridx].movarr)[0] != goal) {
 				arridx++;
 
 				if (arridx >= _items[idx]->count) {
@@ -682,16 +681,16 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 
 			_items[idx]->movarr->clear();
 
-			for (uint i = 0; i < _items[idx]->items[arridx].movarr->_movStepCount; i++) {
+			for (uint i = 0; i < (*_items[idx]->items[arridx].movarr)[i]->_movStepCount; i++) {
 				MovArr *m = new MovArr;
 
-				*m = *_items[idx]->items[arridx].movarr[i];
+				*m = *(*_items[idx]->items[arridx].movarr)[i];
 			}
 
 			_items[idx]->field_10 = -1;
 			_items[idx]->field_14 = 0;
 
-			MessageQueue *mq = fillMGMinfo(_items[idx]->ani, _items[idx]->movarr, staticsId);
+			MessageQueue *mq = fillMGMinfo(_items[idx]->ani, (*_items[idx]->movarr)[0], staticsId);
 			if (mq) {
 				ExCommand *ex = new ExCommand();
 				ex->_messageKind = 17;
@@ -707,10 +706,6 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 	}
 
 	subj->setPicAniInfo(&picAniInfo);
-
-	return 0;
-#endif
-	warning("STUB: MovGraph::doWalkTo()");
 
 	return 0;
 }
@@ -1516,6 +1511,8 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	point.x = 0;
 
 	obj->getPicAniInfo(&picAniInfo);
+
+	warning("p: %d %d", picAniInfo.movementId, picAniInfo.objectId);
 
 	int idxsub;
 
