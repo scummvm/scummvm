@@ -368,4 +368,9 @@ bool Bitmap::loadVBM(EncryptedStream *f) {
 	return (!f->err());
 }
 
+void Bitmap::xLatPos(V2D& p) {
+	p.x -= (_w >> 1);
+	p.y = kWorldHeight - p.y - _h;
+}
+
 } // End of namespace CGE2

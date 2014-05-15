@@ -28,7 +28,7 @@
 #ifndef CGE2_BITMAP_H
 #define CGE2_BITMAP_H
 
-#include "cge/general.h"
+#include "cge2/general.h"
 #include "common/file.h"
 
 namespace CGE2 {
@@ -77,6 +77,7 @@ public:
 	void show(int16 x, int16 y);
 	void xShow(int16 x, int16 y);
 	bool solidAt(int16 x, int16 y);
+	void xLatPos(V2D& p);
 };
 
 
