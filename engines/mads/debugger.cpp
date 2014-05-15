@@ -30,7 +30,7 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	_showMousePos = false;
 
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("scene", WRAP_METHOD(Debugger, Cmd_Mouse));
+	DCmd_Register("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
 	DCmd_Register("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
 	DCmd_Register("show_hotspots", WRAP_METHOD(Debugger, Cmd_ShowHotSpots));
 	DCmd_Register("list_hotspots", WRAP_METHOD(Debugger, Cmd_ListHotSpots));
@@ -60,7 +60,7 @@ static int strToInt(const char *s) {
 
 bool Debugger::Cmd_Mouse(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Format: mouse [ on | off ]\n");
+		DebugPrintf("Usage: %s [ on | off ]\n", argv[0]);
 	} else {
 		_showMousePos = strcmp(argv[1], "on") == 0;
 	}
@@ -178,6 +178,7 @@ bool Debugger::Cmd_DumpFile(int argc, const char **argv) {
 
 			inFile.read(data, inFile.size());
 			outFile.write(data, inFile.size());
+			outFile.flush();
 
 			delete[] data;
 			inFile.close();
