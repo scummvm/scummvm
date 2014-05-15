@@ -125,7 +125,7 @@ void Sprite::setShapeList(BitmapPtr *shp, int cnt) {
 			if (p->_w > _siz.x)
 				_siz.x = p->_w;
 			if (p->_h > _siz.y)
-				_siz.y = p->_w;
+				_siz.y = p->_h;
 		}
 		expand();
 		_ext->_shpList = shp;
@@ -497,7 +497,7 @@ void Sprite::show() {
 
 void Sprite::show(uint16 pg) {
 	Graphics::Surface *a = _vm->_vga->_page[1];
-	_vm->_vga->_page[1] = _vm->_vga->_page[pg & 3];
+	_vm->_vga->_page[1] = _vm->_vga->_page[pg];
 	shp()->show(_pos2D.x, _pos2D.y);
 	_vm->_vga->_page[1] = a;
 }
@@ -950,6 +950,10 @@ void Bitmap::xShow(int16 x, int16 y) {
 
 
 void Bitmap::show(int16 x, int16 y) {
+	V2D pos(_vm, x, y);
+	xLatPos(pos);
+	x = pos.x;
+	y = pos.y;
 	const byte *srcP = (const byte *)_v;
 	byte *destEndP = (byte *)_vm->_vga->_page[1]->getBasePtr(0, kScrHeight);
 

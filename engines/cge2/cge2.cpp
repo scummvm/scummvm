@@ -141,16 +141,17 @@ bool CGE2Engine::showTitle(const char *name) {
 	LB[1] = NULL;
 	_bitmapPalette = NULL;
 
-	Sprite D(this, LB, 2);
+	Sprite D(this, LB, 1);
 	D._flags._kill = true;
-	// D._flags._bDel = true;
 	warning("STUB: Sprite::showTitle() - Flags changed compared to CGE1's Sprite type.");
-	D.center();
+	D.gotoxyz(kScrWidth >> 1, -(kPanHeight >> 1));
+	_vga->sunset();
+	
 	D.show(2);
 
-	_vga->sunset();
 	_vga->copyPage(1, 2);
 	_vga->copyPage(0, 1);
+	
 	_vga->sunrise(_vga->_sysPal);
 
 	_vga->update();
