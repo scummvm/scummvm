@@ -103,7 +103,7 @@ void Scene701::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 5));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', 0));
-	//_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));	// FIXME: Invalid resource?
+	//_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));	// FIXME: Broken sprite?
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RM202A1");
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 8));
 
@@ -156,17 +156,167 @@ void Scene701::enter() {
 		break;
 	}
 
-	// TODO: Line status
+	// TODO: Enable once sprite 3 can be loaded properly
+	/*
+	if (_globals[kLineStatus] == LINE_DROPPED || _globals[kLineStatus] == LINE_TIED) {
+		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
+		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		_fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
+	}
+	*/
 
-	// TODO
+	if (_scene->_priorSceneId == 702) {
+		_game._player._playerPos = Common::Point(309, 138);
+		_game._player._facing = FACING_WEST;
+	} else if (_scene->_priorSceneId == 710) {
+		_game._player._playerPos = Common::Point(154, 129);
+		_game._player._facing = FACING_NORTH;
+		_game._player._visible = false;
+		_game._player._stepEnabled = false;
+		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
+		_scene->_sequences.addTimer(15, 60);
+	} else if (_scene->_priorSceneId == 703) {
+		_game._player._playerPos = Common::Point(231, 127);
+		_game._player._facing = FACING_SOUTH;
+		_game._player._visible = false;
+		_game._player._stepEnabled = false;
+		_scene->loadAnimation(formAnimName('B', 1), 80);
+		_vm->_sound->command(28);
+	} else if (_scene->_priorSceneId != -2 && _scene->_priorSceneId != -620) {
+		_game._player._playerPos = Common::Point(22, 131);
+		_game._player._facing = FACING_EAST;
+		// TODO: Enable once step() is implemented
+		//_game._player._stepEnabled = false;
+		//_scene->_sequences.addTimer(1 * 60, 70);
+	}
+
+	_game.loadQuoteSet(0x310, 0x30F, 0);
+	sceneEntrySound();
+}
+
+void Scene701::step() {
+	switch(_game._trigger) {
+	case 60:
+		// TODO
+		break;
+	case 61:
+		// TODO
+		break;
+	case 70:
+		// TODO
+		break;
+	case 71:
+		_game._player.walk(Common::Point(61, 131), FACING_EAST);
+		_scene->_sequences.addTimer(2 * 60, 72);
+		break;
+	case 72:
+		// TODO
+		break;
+	case 73:
+		// TODO
+		break;
+	case 80:
+		_game._player._visible = true;
+		// TODO
+		_globals[kBoatStatus] = BOAT_TIED;
+		_game._player._stepEnabled = true;
+		break;
+	}
 }
 
 void Scene701::preActions() {
-	// TODO
+	if (_action.isAction(VERB_WALKTO, NOUN_EAST_END_OF_PLATFORM)) {
+		_game._player._walkOffScreenSceneId = 702;
+	}
+
+	if (_action.isAction(VERB_LOOK, NOUN_BUILDING)) {
+		_game._player.walk(Common::Point(154, 129), FACING_NORTHEAST);
+	}
+
+	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING)) {
+		_game._player.walk(Common::Point(154, 129), FACING_NORTH);
+	}
 }
 
 void Scene701::actions() {
-	// TODO
+	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
+		return;
+	
+	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING) && _game._objects[OBJ_VASE]._roomNumber == 706) {
+		switch (_game._trigger) {
+		case 0:
+			// TODO
+			break;
+		case 1:
+			// TODO
+			break;
+		case 2:
+			_scene->_nextSceneId = 710;
+			break;
+		}
+	} else if (_action.isAction(VERB_STEP_INTO, NOUN_ELEVATOR)) {
+		switch (_game._trigger) {
+		case 0:
+			// TODO
+			break;
+		case 1:
+			// TODO
+			break;
+		case 3:
+			// TODO
+			break;
+		case 4:
+			// TODO
+			break;
+		}
+	} else if (false) {
+		// TODO: boat + fishing line action
+	} else if (_action.isAction(VERB_CLIMB_INTO, NOUN_BOAT) && _globals[kBoatStatus] == BOAT_TIED) {
+		switch (_game._trigger) {
+		case 0:
+			// TODO
+			break;
+		case 1:
+			_scene->_nextSceneId = 703;
+			break;
+		}
+	} else if (_action._lookFlag) {
+		if (_globals[kBoatStatus] != BOAT_GONE) {
+			if (_globals[kBoatStatus] == BOAT_TIED)
+				_vm->_dialogs->show(70128);
+			else
+				_vm->_dialogs->show(70110);
+		} else {
+			_vm->_dialogs->show(70111);
+		}
+	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY)) {
+		_vm->_dialogs->show(70112);
+	} else if (_action.isAction(VERB_LOOK, 0)) {
+		_vm->_dialogs->show(70113);
+	} else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM)) {
+		_vm->_dialogs->show(70114);
+	} else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_PYLON)) {
+		_vm->_dialogs->show(70115);
+	} else if (false) {
+		// TODO: hook
+	} else if (_action.isAction(VERB_LOOK, NOUN_ROCK)) {
+		_vm->_dialogs->show(70118);
+	} else if (_action.isAction(VERB_TAKE, NOUN_ROCK)) {
+		_vm->_dialogs->show(70119);
+	} else if (_action.isAction(VERB_LOOK, NOUN_EAST_END_OF_PLATFORM)) {
+		_vm->_dialogs->show(70120);
+	} else if (_action.isAction(VERB_LOOK, NOUN_BUILDING)) {
+		_vm->_dialogs->show(70121);
+	} else if (_action.isAction(VERB_LOOK, NOUN_BOAT)) {
+		if (_globals[kBoatStatus] == BOAT_ADRIFT || _globals[kBoatStatus] == BOAT_TIED_FLOATING)
+			_vm->_dialogs->show(70122);
+		else
+			_vm->_dialogs->show(70123);
+	} else if (false) {
+		// TODO: fishing rod + boat
+	}
 }
 
 /*------------------------------------------------------------------------*/

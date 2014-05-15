@@ -51,13 +51,17 @@ public:
 };
 
 class Scene701: public Scene7xx {
+private:
+	int _fishingLineId;
+
 public:
-	Scene701(MADSEngine *vm) : Scene7xx(vm) {}
+	Scene701(MADSEngine *vm) : Scene7xx(vm), _fishingLineId(-1) {}
 
 	virtual void setup();
 	virtual void enter();
 	virtual void preActions();
 	virtual void actions();
+	virtual void step();
 };
 
 class Scene702: public Scene7xx {
