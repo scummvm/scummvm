@@ -67,6 +67,9 @@ void SoundManager::init(int sectionNumber) {
 		case 6:
 			_driver = new Nebular::ASound6(_mixer);
 			break;
+		case 7:
+			_driver = new Nebular::ASound1(_mixer);
+			break;
 		default:
 			_driver = nullptr;
 			break;
