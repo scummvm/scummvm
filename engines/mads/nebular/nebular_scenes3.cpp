@@ -2678,7 +2678,7 @@ void Scene318::step() {
 	case 60:
 		_vm->_sound->command(3);
 		_animMode = 2;
-		_scene->_reloadSceneFlag= true;
+		_scene->_reloadSceneFlag = true;
 		break;
 
 	case 61:
