@@ -413,6 +413,10 @@ void ASound::pollActiveChannel() {
 		if (--_activeChannelPtr->_activeCount <= 0) {
 			for (;;) {
 				byte *pSrc = chan->_pSrc;
+				if (!chan->_ptr1) {
+					warning("pollActiveChannel(): No data found for sound channel");
+					break;
+				}
 				if (!(*pSrc & 0x80) || (*pSrc <= 0xF0)) {
 					if (updateFlag)
 						updateActiveChannel();
