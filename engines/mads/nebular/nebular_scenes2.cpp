@@ -1180,7 +1180,7 @@ void Scene205::enter() {
 		_game._player._playerPos = Common::Point(99, 152);
 
 	if (_globals[kSexOfRex] != SEX_MALE) {
-		_scene->loadAnimation(formAnimName('a', -1), 0);
+		_scene->loadAnimation(formAnimName('a', -1));
 		_scene->_activeAnimation->_resetFlag = false;
 	} else {
 		_beingKicked = true;
@@ -4100,7 +4100,7 @@ void Scene210::enter() {
 	}
 
 	if (_globals[kTwinklesStatus] == 0) {
-		_scene->loadAnimation(formAnimName('A', -1), 0);
+		_scene->loadAnimation(formAnimName('A', -1));
 		_twinkleAnimationType = 1;
 	} else
 		_scene->_hotspots.activate(476, false);

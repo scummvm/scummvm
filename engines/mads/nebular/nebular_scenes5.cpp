@@ -1933,7 +1933,7 @@ void Scene511::actions() {
 						_lineAnimationMode = 1;
 						_lineAnimationPosition = 1;
 						_lineMoving = true;
-						_scene->loadAnimation(formAnimName('R', -1), 0);
+						_scene->loadAnimation(formAnimName('R', -1));
 						_scene->_sequences.addTimer(1, 1);
 					} else if (_game._trigger == 1) {
 						if (_lineMoving) {

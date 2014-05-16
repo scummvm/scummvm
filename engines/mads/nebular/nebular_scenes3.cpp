@@ -3215,7 +3215,7 @@ void Scene319::step() {
 		_nextAction1 = _nextAction2;
 		_animFrame = 0;
 		_scene->freeAnimation();
-		_scene->loadAnimation(formAnimName('b', 0), false);
+		_scene->loadAnimation(formAnimName('b', 0));
 		if (_nextAction1 == 3)
 			_scene->_activeAnimation->setCurrentFrame(85);
 		else if (_nextAction1 == 1)
