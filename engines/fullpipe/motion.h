@@ -60,7 +60,7 @@ public:
 	virtual int changeCallback() { return 0; }
 	virtual int method3C(StaticANIObject *ani, int flag) { return 0; }
 	virtual int method40() { return 0; }
-	virtual int method44() { return 0; }
+	virtual bool method44(StaticANIObject *ani, int x, int y) { return false; }
 	virtual int method48() { return -1; }
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 
@@ -366,7 +366,7 @@ public:
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual int changeCallback();
 	virtual int method3C(StaticANIObject *ani, int flag);
-	virtual int method44();
+	virtual bool method44(StaticANIObject *ani, int x, int y);
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual int method50();
 

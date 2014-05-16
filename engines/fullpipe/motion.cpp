@@ -621,10 +621,31 @@ int MovGraph::method3C(StaticANIObject *ani, int flag) {
 	return 0;
 }
 
-int MovGraph::method44() {
-	warning("STUB: MovGraph::method44()");
+bool MovGraph::method44(StaticANIObject *ani, int x, int y) {
+	int idx = getItemIndexByStaticAni(ani);
+	MovArr m;
 
-	return 0;
+	if (idx != -1) {
+		if (x != -1 || y != -1) {
+			int counter;
+
+			MovItem *movitem = method28(ani, x, y, 0, &counter);
+
+			if (movitem) {
+				MovArr *movarr = _callback1(ani, movitem, counter);
+				int cnt = movarr->_movStepCount;
+
+				if (cnt > 0) {
+					if (movarr->_movSteps[cnt - 1].link->_flags & 0x4000000)
+						return true;
+				}
+			}
+		} else if (calcChunk(idx, ani->_ox, ani->_oy, &m, 0) && m._link && (m._link->_flags & 0x4000000)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
@@ -1511,8 +1532,6 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	point.x = 0;
 
 	obj->getPicAniInfo(&picAniInfo);
-
-	warning("p: %d %d", picAniInfo.movementId, picAniInfo.objectId);
 
 	int idxsub;
 
