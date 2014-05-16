@@ -3017,7 +3017,7 @@ void Scene209::step() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 7);
 			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(116, 131));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 228);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 229);
 			break;
 
 		case 229: {
@@ -3295,8 +3295,8 @@ void Scene209::actions() {
 	}
 
 	if (_globals[kMonkeyStatus] == MONKEY_HAS_BINOCULARS) {
-		if ((_action.isAction(VERB_SHOOT) || _action.isAction(VERB_HOSE_DOWN)) && _action.isAction(NOUN_MONKEY)
-			&& _action.isAction(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
+		if ((_action.isAction(VERB_SHOOT) || _action.isAction(VERB_HOSE_DOWN)) && _action.isTarget(NOUN_MONKEY)
+			&& _action.isObject(NOUN_BLOWGUN) && _game._objects.isInInventory(OBJ_BLOWGUN) && _game._objects.isInInventory(OBJ_POISON_DARTS)) {
 			if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_MONKEY) && !_startShootingInTimerFl) {
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(1, 231);
