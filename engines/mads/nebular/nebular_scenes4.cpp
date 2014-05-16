@@ -3513,8 +3513,7 @@ void Scene411::enter() {
 	_dialog3.setup(0x5D, 0x254, 0x260, 0x25C, 0x258, 0x262, -1);
 	_dialog4.setup(0x5E, 0x255, 0x261, 0x25D, 0x259, 0x262, -1);
 
-	warning("TODO: Replace the next line by: if ((_globals[kNextIngredient] >= 4) && (!object_get_folder(OBJ_CHARGE_CASES, 3))) {");
-	if (_globals[kNextIngredient] >= 4) {
+	if (_globals[kNextIngredient] >= 4 && _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 		_scene->_hotspots.activate(0x3AB, false);
 		_scene->_hotspots.activate(0x30D, true);
 	} else {
@@ -3522,11 +3521,9 @@ void Scene411::enter() {
 		_scene->_hotspots.activate(0x3AB, true);
 	}
 
-	warning("TODO: Replace the next line by: if ((!_globals[kNextIngredient] >= 4) && (object_get_folder(OBJ_CHARGE_CASES, 3))) {");
-	if (!(_globals[kNextIngredient] >= 4))
+	if (_globals[kNextIngredient] >= 4 && _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], true, 6);
-	else if (true) {
-		warning("TODO: The previous if was: else if (!object_get_folder(OBJ_CHARGE_CASES, 3)) {");
+	} else if (!_game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 		switch (_globals[kNextIngredient]) {
 		case 1:
 			_vm->_sound->command(53);
@@ -3559,8 +3556,7 @@ void Scene411::enter() {
 		}
 	}
 
-	warning("TODO: Replace the next if by: if ((_globals[kNextIngredient] >= 4) && (object_get_folder(OBJ_CHARGE_CASES, 3))) {");
-	if (_globals[kNextIngredient] >= 4) {
+	if (_globals[kNextIngredient] >= 4 && _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], true, 6);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
 	}
@@ -3722,9 +3718,9 @@ void Scene411::actions() {
 		return;
 	}
 
-	warning("TODO: add the following condition to the if statement: (!object_get_folder(OBJ_CHARGE_CASES, 3)) &&");
-	if ((_globals[kNextIngredient] >= 4) && (_action.isAction(VERB_TAKE, 0x3AB) || _action.isAction(VERB_PUT, 0x48, 0x3AB)) &&
-		(_game._objects.isInInventory(OBJ_CHARGE_CASES))) {
+	if ((_globals[kNextIngredient] >= 4) && (_action.isAction(VERB_TAKE, 0x3AB) || _action.isAction(VERB_PUT, 0x48, 0x3AB)) 
+			&& !_game._objects[OBJ_CHARGE_CASES].getQuality(3) 
+			&& _game._objects.isInInventory(OBJ_CHARGE_CASES)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(10);
@@ -3764,7 +3760,7 @@ void Scene411::actions() {
 			_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			warning("TODO: InventoryObjects_setData(OBJ_CHARGE_CASES, 3, true);");
+			_game._objects[OBJ_CHARGE_CASES].setQuality(3, 1);
 			_vm->_dialogs->showItem(OBJ_CHARGE_CASES, 41142);
 			break;
 		}
@@ -3927,15 +3923,12 @@ void Scene411::actions() {
 	else if ((_action.isAction(VERB_LOOK, 0x3A9)) && (_game._objects.isInRoom(OBJ_LECITHIN)))
 		_vm->_dialogs->show(41123);
 	else if (_action.isAction(VERB_LOOK, 0x30D)) {
-		if (_globals[kNextIngredient] > 0) {
-			warning("TODO: the if statement should be: if ((_globals[kNextIngredient] > 0) && !object_get_folder(OBJ_CHARGE_CASES, 3))");
+		if (_globals[kNextIngredient] > 0 && !_game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 			_vm->_dialogs->show(41126);
-		} else if (_globals[kNextIngredient] == 0) {
-			warning("TODO: the if statement should be: else if ((_globals[kNextIngredient] == 0) || object_get_folder(OBJ_CHARGE_CASES, 3)) {");
+		} else if (_globals[kNextIngredient] == 0 || _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 			_vm->_dialogs->show(41125);
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x3AB)) {
-		warning("TODO: The if statement should be if (_action.isAction(VERB_LOOK, 0x3AB) && !object_get_folder(OBJ_CHARGE_CASES, 3)) {");
+	} else if (_action.isAction(VERB_LOOK, 0x3AB) && _game._objects[OBJ_CHARGE_CASES].getQuality(3) == 0) {
 		_vm->_dialogs->show(41127);
 	} else if (_action.isAction(VERB_TAKE, 0x30D))
 		_vm->_dialogs->show(41128);

@@ -1785,9 +1785,8 @@ void Scene706::actions() {
 	}
 	
 	if (_action.isAction(VERB_PUT, 0x344) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
-		warning("Replace the next if when the function is implemented");
-		warning("if (sub_13D46(_game._objects.getIdFromDesc(_action._activeAction._objectNameId), 0xA))");
-		if (true)
+		int objectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
+		if (_game._objects[objectId].hasQuality(10))
 			_vm->_dialogs->show(70626);
 		else
 			_vm->_dialogs->show(70627);

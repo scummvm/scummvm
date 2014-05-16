@@ -98,7 +98,7 @@ void GameNebular::initialiseGlobals() {
 
 	/* Section #4 variables */
 	_globals[kBadFirstIngredient] = -1;
-	_objects.setQuality(OBJ_CHARGE_CASES, EXPLOSIVES_INSIDE, nullptr);
+	_objects[OBJ_CHARGE_CASES].setQuality(EXPLOSIVES_INSIDE, 0);
 	_globals[kHasPurchased] = false;
 	_globals[kBeenThruHelgaScene] = false;
 	_globals[kNextIngredient] = 0;
@@ -394,8 +394,7 @@ void GameNebular::doObjectAction() {
 			dialogs.showItem(id, 402);
 		} else {
 			int messageId = 800 + id;
-			if (id == OBJ_CHARGE_CASES) {
-				error("TODO: object_get_folder - loc_29B48");
+			if ((id == OBJ_CHARGE_CASES) && _objects[OBJ_CHARGE_CASES].getQuality(3) != 0) {
 				messageId = 860;
 			}
 
@@ -435,7 +434,14 @@ void GameNebular::doObjectAction() {
 		dialogs.show(_globals[kTopButtonPushed] ? 502 : 501);
 	} else if ((action.isAction(25, 106, 72) || action.isAction(VERB_PUT, 106, 72)) &&
 			_objects.isInInventory(OBJ_DETONATORS) && _objects.isInInventory(OBJ_CHARGE_CASES)) {
-		error("TODO: loc_29DBA");
+		if (_objects[OBJ_CHARGE_CASES].getQuality(3)) {
+			_objects.setRoom(OBJ_CHARGE_CASES, 1);
+			_objects.setRoom(OBJ_DETONATORS, 1);
+			_objects.addToInventory(OBJ_BOMBS);
+			dialogs.showItem(OBJ_BOMBS, 403);
+		} else {
+			dialogs.show(405);
+		}
 	} else if (action.isAction(25, 106)) {
 		dialogs.show(470);
 	} else if ((action.isAction(25, 371, 43) || action.isAction(7, 371, 43) || action.isAction(25, 371, 42)

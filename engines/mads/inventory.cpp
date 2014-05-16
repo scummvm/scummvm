@@ -31,16 +31,46 @@ void InventoryObject::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_roomNumber);
 	s.syncAsByte(_article);
 	s.syncAsByte(_vocabCount);
+	s.syncAsByte(_qualitiesCount);
+	s.skip(1);
 
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < MAX_VOCAB; ++i) {
+		s.syncAsUint16LE(_vocabList[i]._vocabId);
 		s.syncAsByte(_vocabList[i]._verbType);
 		s.syncAsByte(_vocabList[i]._prepType);
-		s.syncAsUint16LE( _vocabList[i]._vocabId);
 	}
 
-	s.skip(4);	// field12
-	s.syncBytes((byte *)&_mutilateString[0], 10);
-	s.skip(16);
+	for (int i = 0; i < MAX_QUALITIES; ++i)
+		s.syncAsByte(_qualityId[i]);
+	for (int i = 0; i < MAX_QUALITIES; ++i)
+		s.syncAsSint32LE(_qualityValue[i]);
+}
+
+bool InventoryObject::hasQuality(int qualityId) const {
+	for (int i = 0; i < _qualitiesCount; ++i) {
+		if (_qualityId[i] == qualityId)
+			return true;
+	}
+
+	return false;
+}
+
+void InventoryObject::setQuality(int qualityId, int qualityValue) {
+	for (int i = 0; i < _qualitiesCount; ++i) {
+		if (_qualityId[i] == qualityId) {
+			_qualityValue[i] = qualityValue;
+		}
+	}
+}
+
+int InventoryObject::getQuality(int qualityId) const {
+	for (int i = 0; i < _qualitiesCount; ++i) {
+		if (_qualityId[i] == qualityId) {
+			return _qualityValue[i];
+		}
+	}
+
+	return 0;
 }
 
 /*------------------------------------------------------------------------*/
@@ -89,20 +119,6 @@ void InventoryObjects::synchronize(Common::Serializer &s) {
 
 		// Synchronize the player's inventory
 		_inventoryList.synchronize(s);
-	}
-}
-
-void InventoryObjects::setQuality(int objIndex, int id, const byte *p) {
-	// TODO: This whole method seems weird. Check it out more thoroughly once
-	// more of the engine is implemented
-	for (int i = 0; i < (int)size(); ++i) {
-		InventoryObject &obj = (*this)[i];
-		if (obj._vocabList[0]._verbType <= i)
-			break;
-
-		if (obj._mutilateString[6 + i] == id) {
-			(*this)[objIndex]._objFolder = p;
-		}
 	}
 }
 

@@ -35,24 +35,46 @@ enum {
 
 class MADSEngine;
 
+#define MAX_VOCAB 5
+#define MAX_QUALITIES 4
+
 class InventoryObject {
 public:
 	int _descId;
 	int _roomNumber;
 	int _article;
 	int _vocabCount;
+	int _qualitiesCount;
+	int syntax;
+
 	struct {
+		int _vocabId;
 		VerbType _verbType;
 		PrepType _prepType;
-		int _vocabId;
-	} _vocabList[3];
-	char _mutilateString[10];	// ???
-	const byte *_objFolder;		// ???
+	} _vocabList[MAX_VOCAB];
+
+	int _qualityId[MAX_QUALITIES];
+	int _qualityValue[MAX_QUALITIES];
 
 	/**
 	 * Synchronizes the data for a given object
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Returns true if the given object has the specified quality
+	 */
+	bool hasQuality(int qualityId) const;
+
+	/**
+	 * Sets the quality value for a given quality Id
+	 */
+	void setQuality(int qualityId, int qualityValue);
+
+	/**
+	 * Gets the quality value for a given quality Id
+	 */
+	int getQuality(int qualityId) const;
 };
 
 class InventoryObjects: public Common::Array<InventoryObject> {
@@ -83,11 +105,6 @@ public:
 	InventoryObject &getItem(int itemIndex) {
 		return (*this)[_inventoryList[itemIndex]];
 	}
-
-	/**
-	 * Set the associated quality data for an inventory object
-	 */
-	void setQuality(int objIndex, int id, const byte *p);
 
 	/**
 	 * Sets an item's scene number
