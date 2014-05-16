@@ -561,9 +561,9 @@ void SceneTeleporter::teleporterEnter() {
 
 bool SceneTeleporter::teleporterActions() {
 	bool retVal = false;
-	static int _buttonList[12] = { 0x1D0, 0x1D1, 0x1D2, 0x1D3, 0x1D4, 0x1D5, 0x1D6, 0x1D7, 0x1D8, 0x1D9, 0x1DB, 0x1DA };
+	static int _buttonList[12] = { NOUN_0_KEY, NOUN_1_KEY, NOUN_2_KEY, NOUN_3_KEY, NOUN_4_KEY, NOUN_5_KEY, NOUN_6_KEY, NOUN_7_KEY, NOUN_8_KEY, NOUN_9_KEY, NOUN_SMILE_KEY, NOUN_FROWN_KEY };
 
-	if (_action.isAction(0x11A) || _action.isAction(VERB_PUSH)) {
+	if (_action.isAction(VERB_PRESS) || _action.isAction(VERB_PUSH)) {
 		for (int i = 0; i < 12; i++) {
 			if (_action._activeAction._objectNameId == _buttonList[i])
 				_buttonTyped = i;
@@ -572,7 +572,7 @@ bool SceneTeleporter::teleporterActions() {
 		retVal = true;
 	}
 
-	if (_action.isAction(0x1CE, 0x1CF)) {
+	if (_action.isAction(VERB_EXIT_FROM, NOUN_DEVICE)) {
 		_globals[kTeleporterCommand] = 3;
 		_scene->_nextSceneId = _teleporterSceneId;
 		retVal = true;
@@ -595,7 +595,7 @@ void SceneTeleporter::teleporterStep() {
 		} else {
 			digit   = 10;
 		}
-		_buttonTyped              = digit;
+		_buttonTyped = digit;
 		_meteorologistCurPlace = place + 1;
 		_game._trigger = -1;
 	}

@@ -4861,7 +4861,7 @@ void Scene213::setup() {
 }
 
 void Scene213::enter() {
-	if (_globals[kMeteorologistWatch] != METEOROLOGIST_ABSENT)
+	if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
 		_handSpriteId = _scene->_sprites.addSprites("*METHAND");
 	else if (_globals[kSexOfRex] == REX_MALE)
 		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
@@ -4872,7 +4872,7 @@ void Scene213::enter() {
 
 	// The original is calling Scene2xx::sceneEntrySound()
 		if (_vm->_musicFlag) {
-			if (_globals[kMeteorologistWatch] == METEOROLOGIST_ABSENT)
+			if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
 				_vm->_sound->command(1);
 			else
 				_vm->_sound->command(9);
@@ -4890,23 +4890,23 @@ void Scene213::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x59))
+	if (_action.isAction(VERB_LOOK, NOUN_CONTROL_PANEL))
 		_vm->_dialogs->show(21301);
-	else if (_action.isAction(VERB_LOOK, 0xC4) || _action.isAction (0xB7, 0xC4))
+	else if (_action.isAction(VERB_LOOK, NOUN_KEYPAD) || _action.isAction (VERB_INSPECT, NOUN_KEYPAD))
 		_vm->_dialogs->show(21302);
-	else if (_action.isAction(VERB_LOOK, 0x1CC))
+	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
 		_vm->_dialogs->show(21303);
-	else if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(0x103, 0x181))
+	else if (_action.isAction(VERB_LOOK, NOUN_VIEWPORT) || _action.isAction(VERB_PEER_THROUGH, NOUN_VIEWPORT))
 		_vm->_dialogs->show(21304);
-	else if (_action.isAction(VERB_LOOK, 0x1CF))
+	else if (_action.isAction(VERB_LOOK, NOUN_DEVICE))
 		_vm->_dialogs->show(21305);
-	else if (_action.isAction(VERB_LOOK, 0x1D0) || _action.isAction(VERB_LOOK, 0x1D1)
-	 || _action.isAction(VERB_LOOK, 0x1D2) || _action.isAction(VERB_LOOK, 0x1D3)
-	 || _action.isAction(VERB_LOOK, 0x1D4) || _action.isAction(VERB_LOOK, 0x1D5)
-	 || _action.isAction(VERB_LOOK, 0x1D6) || _action.isAction(VERB_LOOK, 0x1D7)
-	 || _action.isAction(VERB_LOOK, 0x1D8) || _action.isAction(VERB_LOOK, 0x1D9)
-	 || _action.isAction(VERB_LOOK, 0x1DB) || _action.isAction(VERB_LOOK, 0x7A)
-	 || _action.isAction(VERB_LOOK, 0x1DA))
+	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY)
+	      || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY)
+	      || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY)
+	      || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY)
+	      || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY)
+	      || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY)
+	      || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY))
 		_vm->_dialogs->show(21306);
 	else
 		return;
