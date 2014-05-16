@@ -247,10 +247,19 @@ void Scene701::actions() {
 	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING) && _game._objects[OBJ_VASE]._roomNumber == 706) {
 		switch (_game._trigger) {
 		case 0:
-			// TODO
+			_game._player._stepEnabled = false;
+			_game._player._visible = false;
+			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
-		case 1:
-			// TODO
+		case 1: {
+			int temp = _globals._sequenceIndexes[5];
+			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], temp);
+			_scene->_sequences.addTimer(15, 2);
+			}
 			break;
 		case 2:
 			_scene->_nextSceneId = 710;
@@ -259,10 +268,13 @@ void Scene701::actions() {
 	} else if (_action.isAction(VERB_STEP_INTO, NOUN_ELEVATOR)) {
 		switch (_game._trigger) {
 		case 0:
-			// TODO
+			_game._player._stepEnabled = false;
+			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+			// TODO: finish this
 			break;
 		case 1:
-			// TODO
+			_game._player.walk(Common::Point(22, 131), FACING_EAST);
+			_scene->_sequences.addTimer(2 * 60, 3);
 			break;
 		case 3:
 			// TODO
