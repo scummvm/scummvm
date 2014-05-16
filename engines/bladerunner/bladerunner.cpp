@@ -220,7 +220,7 @@ void BladeRunnerEngine::playOuttake(int id, bool no_localization) {
 
 	VQADecoder vqa_decoder(s);
 
-	bool b = vqa_decoder.read_header();
+	bool b = vqa_decoder.readHeader();
 	if (!b) return;
 
 	uint32 frame_count = 0;
@@ -238,13 +238,13 @@ void BladeRunnerEngine::playOuttake(int id, bool no_localization) {
 
 		if (next_frame_time <= cur_time)
 		{
-			int frame_number = vqa_decoder.read_frame();
+			int frame_number = vqa_decoder.readFrame();
 			debug("frame_number: %d", frame_number);
 
 			if (frame_number < 0)
 				break;
 
-			b = vqa_decoder.decode_frame((uint16*)_surface1.getPixels());
+			b = vqa_decoder.decodeFrame((uint16*)_surface1.getPixels());
 
 			_system->copyRectToScreen(_surface1.getPixels(), _surface1.pitch, 0, 0, _surface1.w, _surface1.h);
 			_system->updateScreen();

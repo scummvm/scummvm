@@ -29,6 +29,7 @@
 #include "common/types.h"
 
 namespace BladeRunner {
+
 class VQADecoder
 {
 	struct Header
@@ -70,94 +71,93 @@ class VQADecoder
 
 	struct LoopInfo
 	{
-		uint16  loop_count;
+		uint16  loopCount;
 		uint32  flags;
-		Loop     *loops;
+		Loop   *loops;
 
 		LoopInfo()
-			: loop_count(0)
+			: loopCount(0)
 		{}
 	};
 
 	struct ClipInfo
 	{
-		uint16 clip_count;
+		uint16 clipCount;
 	};
 
-	Common::SeekableReadStream *r;
+	Common::SeekableReadStream *_s;
 
-	Header   header;
-	LoopInfo loop_info;
-	ClipInfo clip_info;
+	Header   _header;
+	LoopInfo _loopInfo;
+	ClipInfo _clipInfo;
 
-	uint16 *frame;
-	uint16 *zbuf;
+	uint16  *_frame;
+	uint16  *_zbuf;
 
-	size_t  codebookSize;
-	uint8  *codebook;
-	uint8  *cbfz;
+	size_t   _codebookSize;
+	uint8   *_codebook;
+	uint8   *_cbfz;
 
-	size_t  vptrSize;
-	uint8  *vptr;
+	size_t   _vptrSize;
+	uint8   *_vptr;
 
-	uint32 *frame_info;
+	uint32  *_frameInfo;
 
-	int     cur_frame;
+	int      _curFrame;
+	int      _curLoop;
+	int      _loopSpecial;
+	int      _loopDefault;
 
-	int     cur_loop;
-	int     loop_special;
-	int     loop_default;
+	uint32   _maxVIEWChunkSize;
+	uint32   _maxZBUFChunkSize;
+	uint32   _maxAESCChunkSize;
+	uint8   *_zbufChunk;
 
-	uint32  max_view_chunk_size;
-	uint32  max_zbuf_chunk_size;
-	uint32  max_aesc_chunk_size;
-	uint8  *zbuf_chunk;
-
-	bool   has_view;
+	bool   _hasView;
 	// view_t view;
 
 	// ima_adpcm_ws_decoder_t ima_adpcm_ws_decoder;
-	int16 *audio_frame;
+	int16 *_audioFrame;
 
-	bool read_vqhd(uint32 size);
-	bool read_msci(uint32 size);
-	bool read_mfci(uint32 size);
-	bool read_linf(uint32 size);
-	bool read_cinf(uint32 size);
-	bool read_finf(uint32 size);
-	bool read_lnin(uint32 size);
-	bool read_clip(uint32 size);
+	bool readVQHD(uint32 size);
+	bool readMSCI(uint32 size);
+	bool readMFCI(uint32 size);
+	bool readLINF(uint32 size);
+	bool readCINF(uint32 size);
+	bool readFINF(uint32 size);
+	bool readLNIN(uint32 size);
+	bool readCLIP(uint32 size);
 
-	bool read_sn2j(uint32 size);
-	bool read_snd2(uint32 size);
-	bool read_vqfr(uint32 size);
-	bool read_vptr(uint32 size);
-	bool read_vqfl(uint32 size);
-	bool read_cbfz(uint32 size);
-	bool read_zbuf(uint32 size);
-	bool read_view(uint32 size);
-	bool read_aesc(uint32 size);
-	bool read_lite(uint32 size);
+	bool readSN2J(uint32 size);
+	bool readSND2(uint32 size);
+	bool readVQFR(uint32 size);
+	bool readVPTR(uint32 size);
+	bool readVQFL(uint32 size);
+	bool readCBFZ(uint32 size);
+	bool readZBUF(uint32 size);
+	bool readVIEW(uint32 size);
+	bool readAESC(uint32 size);
+	bool readLITE(uint32 size);
 
 public:
 	VQADecoder(Common::SeekableReadStream *r);
 	~VQADecoder();
 
-	bool read_header();
-	int  read_frame();
+	bool readHeader();
+	int  readFrame();
 
-	void vptr_write_block(uint16 *frame, unsigned int dst_block, unsigned int src_block, int count, bool alpha = false) const;
+	void VPTRWriteBlock(uint16 *frame, unsigned int dst_block, unsigned int src_block, int count, bool alpha = false) const;
 
-	void set_loop_special(int loop, bool wait);
-	void set_loop_default(int loop);
+	void setLoopSpecial(int loop, bool wait);
+	void setLoopDefault(int loop);
 
-	bool seek_to_frame(int frame);
-	bool decode_frame(uint16 *frame);
+	bool seekToFrame(int frame);
+	bool decodeFrame(uint16 *frame);
 
-	int16 *get_audio_frame();
+	int16 *getAudioFrame();
 
 	// bool get_view(view_t *view);
-	bool get_zbuf(uint16 *zbuf);
+	bool getZBUF(uint16 *zbuf);
 };
 
 }; // End of namespace BladeRunner
