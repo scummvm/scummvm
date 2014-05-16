@@ -40,6 +40,7 @@ enum {
 
 enum Verb {
 	VERB_CLIMB_DOWN     = 0x04E,
+	VERB_CLIMB_UP       = 0x050,
 	VERB_EAT			= 0x075,
 	VERB_EXAMINE		= 0x07D,
 	VERB_HOSE_DOWN		= 0x0A6,
@@ -57,6 +58,7 @@ enum Verb {
 	VERB_SHOOT          = 0x13A,
 	VERB_SIT_IN         = 0x13F,
 	VERB_SMELL			= 0x147,
+	VERB_WALK_INSIDE    = 0x188,
 	VERB_WALK_THROUGH   = 0x18B,
 	VERB_WALK_TOWARDS   = 0x18C,
 	VERB_WALK_DOWN      = 0x1AD,
@@ -101,6 +103,7 @@ enum Noun {
 	NOUN_REFRIDGERATOR	= 0x122,
 	NOUN_ROBO_KITCHEN	= 0x127,
 	NOUN_ROCK           = 0x128,
+	NOUN_ROCKS          = 0x129,
 	NOUN_SHIELD_ACCESS_PANEL  = 0x135,
 	NOUN_SHIELD_MODULATOR	= 0x137,
 	NOUN_SKULL          = 0x140,
