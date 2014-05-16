@@ -161,6 +161,10 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 			invIndex = idx;
 	}
 
+	// If the object isn't in the player's inventory, stop here
+	if (invIndex < 0)
+		return;
+
 	int selectedIndex = userInterface._selectedInvIndex;
 	bool noSelection = selectedIndex < 0;
 
