@@ -582,7 +582,10 @@ bool SceneTeleporter::teleporterActions() {
 }
 
 void SceneTeleporter::teleporterStep() {
-	if ((_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL) && (_game._trigger >= 230)) {
+	if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
+		return;
+
+	if (_game._trigger >= 230) {
 		int place = _game._trigger - 230;
 		int digit;
 
