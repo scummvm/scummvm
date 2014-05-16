@@ -261,6 +261,8 @@ protected:
 	int command6();
 	int command7();
 	int command8();
+
+	int nullCommand() { return 0; }
 public:
 	Audio::Mixer *_mixer;
 	FM_OPL *_opl;
@@ -514,7 +516,6 @@ private:
 	int command57();
 	int command59();
 	int command60();
-	int nullCommand() { return 0; }
 
 	void command9Randomize();
 	void command9Apply(byte *data, int val, int incr);
@@ -554,7 +555,6 @@ private:
 	int command58();
 	int command59();
 	int command60();
-	int nullCommand() { return 0; }
 
 	void method1();
 public:
@@ -609,6 +609,34 @@ public:
 	virtual int command(int commandId, int param);
 };
 
+class ASound6 : public ASound {
+private:
+	typedef int (ASound6::*CommandPtr)();
+	static const CommandPtr _commandList[30];
+
+	int command9();
+	int command10();
+	int command11();
+	int command12();
+	int command13();
+	int command14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command29();
+public:
+	ASound6(Audio::Mixer *mixer);
+
+	virtual int command(int commandId, int param);
+};
 
 } // End of namespace Nebular
 
