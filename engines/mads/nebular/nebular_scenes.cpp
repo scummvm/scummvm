@@ -280,7 +280,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 		return new DummyScene(vm);	// TODO
 	case 803:	// empty launch pad
 		return new DummyScene(vm);	// TODO
-	case 804:	// ??? (broken animation)
+	case 804:	// inside Rex's ship - cockpit
 		return new Scene804(vm);
 	case 805:	// service panel
 		return new DummyScene(vm);	// TODO
