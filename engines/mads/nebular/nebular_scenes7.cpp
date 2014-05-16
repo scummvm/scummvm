@@ -532,7 +532,7 @@ void Scene703::enter() {
 		_curSequence = 2;
 		_boatDir = 2;
 		_monsterMode = 0;
-		_scene->loadAnimation(formAnimName('A', -1), 0);
+		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_activeAnimation->setCurrentFrame(34);
 	} else if (_scene->_priorSceneId != -2) {
 		_game._player._stepEnabled = false;
@@ -540,27 +540,27 @@ void Scene703::enter() {
 		if (_globals[kMonsterAlive]) {
 			_monsterMode = 1;
 			_curSequence = 0;
-			_scene->loadAnimation(formAnimName('B', -1), 0);
+			_scene->loadAnimation(formAnimName('B', -1));
 		} else {
 			_curSequence = 0;
 			_monsterMode = 0;
-			_scene->loadAnimation(formAnimName('A', -1), 0);
+			_scene->loadAnimation(formAnimName('A', -1));
 		}
 	} else if (_globals[kMonsterAlive]) {
 		_curSequence = 0;
 		_boatDir = 1;
 		_monsterMode = 1;
-		_scene->loadAnimation(formAnimName('B', -1), 0);
+		_scene->loadAnimation(formAnimName('B', -1));
 		_scene->_activeAnimation->setCurrentFrame(39);
 	} else if (_boatDir == 1) {
 		_curSequence = 0;
 		_monsterMode = 0;
-		_scene->loadAnimation(formAnimName('A', -1), 0);
+		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_activeAnimation->setCurrentFrame(9);
 	} else if (_boatDir == 2) {
 		_curSequence = 0;
 		_monsterMode = 0;
-		_scene->loadAnimation(formAnimName('A', -1), 0);
+		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_activeAnimation->setCurrentFrame(56);
 	}
 
@@ -594,7 +594,7 @@ void Scene703::step() {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 3;
-		_scene->loadAnimation(formAnimName('D', -1), 0);
+		_scene->loadAnimation(formAnimName('D', -1));
 		_rexDeathFl = false;
 		_monsterTime = 0;
 	}
@@ -941,6 +941,345 @@ void Scene703::actions() {
 			_vm->_dialogs->show(70315);
 	} else if (_action.isAction(VERB_LOOK, 0x3B3))
 		_vm->_dialogs->show(70316);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void Scene704::setup() {
+	_game._player._spritesPrefix = "";
+	setAAName();
+	_scene->addActiveVocab(0x2E);
+	_scene->addActiveVocab(0xD1);
+}
+
+void Scene704::handleBottleInterface() {
+	switch (_globals[kBottleStatus]) {
+	case 0:
+		_dialog1.write(0x311, true);
+		_dialog1.write(0x312, true);
+		_dialog1.write(0x313, true);
+		_dialog1.write(0x314, true);
+		_dialog1.write(0x315, true);
+		break;
+
+	case 1:
+		_dialog1.write(0x311, false);
+		_dialog1.write(0x312, true);
+		_dialog1.write(0x313, true);
+		_dialog1.write(0x314, true);
+		_dialog1.write(0x315, true);
+		break;
+
+	case 2:
+		_dialog1.write(0x311, false);
+		_dialog1.write(0x312, false);
+		_dialog1.write(0x313, true);
+		_dialog1.write(0x314, true);
+		_dialog1.write(0x315, true);
+		break;
+
+	case 3:
+		_dialog1.write(0x311, false);
+		_dialog1.write(0x312, false);
+		_dialog1.write(0x313, false);
+		_dialog1.write(0x314, true);
+		_dialog1.write(0x315, true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Scene704::setBottleSequence() {
+	_scene->_userInterface.setup(kInputBuildingSentences);
+	_game._player._stepEnabled = false;
+	if (_boatDirection == 2)
+		_animationMode = 6;
+	else
+		_animationMode = 7;
+}
+
+void Scene704::handleFillBottle(int quote) {
+	switch (quote) {
+	case 0x311:
+		_globals[kBottleStatus] = 1;
+		setBottleSequence();
+		break;
+
+	case 0x312:
+		_globals[kBottleStatus] = 2;
+		setBottleSequence();
+		break;
+
+	case 0x313:
+		_globals[kBottleStatus] = 3;
+		setBottleSequence();
+		break;
+
+	case 0x314:
+		_globals[kBottleStatus] = 4;
+		setBottleSequence();
+		break;
+
+	case 0x315:
+		_scene->_userInterface.setup(kInputBuildingSentences);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Scene704::enter() {
+	if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId) {
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
+		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
+		if (_scene->_priorSceneId == 705) {
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
+		} else {
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(190, 122));
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
+		}
+		int idx = _scene->_dynamicHotspots.add(0x2D, 0xD1, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_bottleHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
+	}
+
+	_game._player._visible = false;
+	_takeBottleFl = false;
+	_boatCurrentFrame = -1;
+
+	if (_scene->_priorSceneId == 705) {
+		_game._player._stepEnabled = false;
+		_animationMode = 2;
+		_boatDirection = 2;
+		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->_activeAnimation->setCurrentFrame(36);
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._stepEnabled = false;
+		_boatDirection = 1;
+		_scene->loadAnimation(formAnimName('A', -1));
+	} else if (_boatDirection == 1) {
+		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->_activeAnimation->setCurrentFrame(8);
+	} else if (_boatDirection == 2) {
+		if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId) {
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
+		}
+		_scene->loadAnimation(formAnimName('A', -1));
+		_scene->_activeAnimation->setCurrentFrame(57);
+	}
+
+	if (_scene->_roomChanged)
+		_globals[kMonsterAlive] = false;
+
+	_game.loadQuoteSet(0x311, 0x312, 0x313, 0x314, 0x315, 0);
+	_dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
+
+	sceneEntrySound();
+	_vm->_sound->command(28);
+}
+
+void Scene704::step() {
+	if (_scene->_activeAnimation != nullptr) {
+		if (_scene->_activeAnimation->getCurrentFrame() != _boatCurrentFrame) {
+			_boatCurrentFrame = _scene->_activeAnimation->getCurrentFrame();
+			int nextFrame = -1;
+
+			switch (_boatCurrentFrame) {
+			case 10:
+				switch (_animationMode) {
+				case 1:
+					nextFrame = 10;
+					break;
+				case 5:
+					nextFrame = 74;
+					break;
+				case 7:
+					_animationMode = 0;
+					nextFrame = 92;
+					break;
+				default:
+					if (!_game._player._stepEnabled)
+						_game._player._stepEnabled = true;
+
+					nextFrame = 8;
+					break;
+				}
+				break;
+
+			case 36:
+				if (_animationMode != 2)
+					_scene->_nextSceneId = 705;
+				break;
+
+			case 59:
+				switch (_animationMode) {
+				case 3:
+					nextFrame = 59;
+					break;
+
+				case 4:
+					nextFrame = 65;
+					break;
+
+				case 6:
+					_animationMode = 0;
+					nextFrame = 83;
+					break;
+
+				default:
+					if (!_game._player._stepEnabled) {
+						_game._player._stepEnabled = true;
+					}
+					nextFrame = 57;
+					break;
+				}
+				break;
+
+			case 65:
+				_scene->_nextSceneId = 703;
+				break;
+
+			case 74:
+				nextFrame = 10;
+				break;
+
+			case 83:
+				nextFrame = 59;
+				break;
+
+			case 90:
+				if (_takeBottleFl) {
+					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+					_scene->_dynamicHotspots.remove(_bottleHotspotId);
+					_game._objects.addToInventory(OBJ_BOTTLE);
+					_vm->_sound->command(15);
+					_vm->_dialogs->showItem(OBJ_BOTTLE, 70415);
+				}
+				break;
+
+			case 92:
+				nextFrame = 57;
+				if (!_game._player._stepEnabled && !_takeBottleFl) {
+					_scene->_sequences.addTimer(30, 70);
+					_game._player._stepEnabled = true;
+				}
+				break;
+
+			case 98:
+				if (_takeBottleFl) {
+					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+					_scene->_dynamicHotspots.remove(_bottleHotspotId);
+					_game._objects.addToInventory(OBJ_BOTTLE);
+					_vm->_sound->command(15);
+					_vm->_dialogs->showItem(OBJ_BOTTLE, 70415);
+				}
+				break;
+
+			case 101:
+				nextFrame = 8;
+				if (!_game._player._stepEnabled && !_takeBottleFl) {
+					_scene->_sequences.addTimer(30, 70);
+					_game._player._stepEnabled = true;
+				}
+				break;
+
+			default:
+				break;
+			}
+
+			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
+				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+				_boatCurrentFrame = nextFrame;
+			}
+		}
+	}
+
+	if (_game._trigger == 70) {
+		switch (_globals[kBottleStatus]) {
+		case 0:
+			_vm->_dialogs->show(432);
+			break;
+
+		case 1:
+			_vm->_dialogs->show(70324);
+			break;
+
+		case 2:
+			_vm->_dialogs->show(70325);
+			break;
+
+		case 3:
+			_vm->_dialogs->show(70326);
+			break;
+
+		case 4:
+			_vm->_dialogs->show(70327);
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+void Scene704::actions() {
+	if (_game._screenObjects._inputMode == 1)
+		handleFillBottle(_action._activeAction._verbId);
+	else if (_action.isAction(0x3B1, 0x3B4)) {
+		_game._player._stepEnabled = false;
+		if (_boatDirection == 1)
+			_animationMode = 5;
+		else
+			_animationMode = 3;
+	} else if (_action.isAction(0x3B1, 0x3B2)) {
+		_game._player._stepEnabled = false;
+		if (_boatDirection == 2)
+			_animationMode = 4;
+		else
+			_animationMode = 1;
+	} else if (_action.isAction(VERB_TAKE, 0x2E)) {
+		if (!_game._objects.isInInventory(OBJ_BOTTLE)) {
+			_game._player._stepEnabled = false;
+			_takeBottleFl = true;
+			if (_boatDirection == 2) {
+				_animationMode = 6;
+			} else {
+				_animationMode = 7;
+			}
+		}
+	} else if (_action.isAction(VERB_PUT, 0x2E, 0x18F) || _action.isAction(0x85, 0x2E, 0x18F)) {
+		if (_game._objects.isInInventory(OBJ_BOTTLE)) {
+			if (_globals[kBottleStatus] != 4) {
+				_takeBottleFl = false;
+				handleBottleInterface();
+				_dialog1.start();
+			} else
+				_vm->_dialogs->show(70323);
+		}
+	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, 0x18F))
+		_vm->_dialogs->show(70410);
+	else if (_action.isAction(VERB_LOOK, 0x3B2)) {
+		if (_game._visitedScenes.exists(710))
+			_vm->_dialogs->show(70411);
+		else
+			_vm->_dialogs->show(70412);
+	} else if (_action.isAction(VERB_LOOK, 0x3B3))
+		_vm->_dialogs->show(70413);
+	else if (_action.isAction(VERB_LOOK, 0x2E) && (_action._mainObjectSource == 4))
+		_vm->_dialogs->show(70414);
+	else if (_action.isAction(VERB_LOOK, 0x3B4))
+		_vm->_dialogs->show(70416);
+	else if (_action.isAction(VERB_LOOK, 0x142))
+		_vm->_dialogs->show(70417);
 	else
 		return;
 

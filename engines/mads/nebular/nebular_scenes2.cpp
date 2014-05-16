@@ -761,7 +761,7 @@ void Scene202::actions() {
 				_globals[kMeteorologistStatus] = METEOROLOGIST_ABSENT;
 		}
 		_scene->_nextSceneId = 201;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONE) && _action._mainObjectSource == 4) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONE) && (_action._mainObjectSource == 4)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._objects.isInInventory(OBJ_BONES)) {

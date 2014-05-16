@@ -106,6 +106,32 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene704: public Scene7xx{
+private:
+	int _bottleHotspotId;
+	int _boatCurrentFrame;
+	int _animationMode;
+	int _boatDirection;
+
+	bool _takeBottleFl;
+
+	Conversation _dialog1;
+
+	void handleFillBottle(int quote);
+	void setBottleSequence();
+	void handleBottleInterface();
+
+public:
+	Scene704(MADSEngine *vm) : Scene7xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene707: public SceneTeleporter {
 public:
 	Scene707(MADSEngine *vm) : SceneTeleporter(vm) {}
