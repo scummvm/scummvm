@@ -46,7 +46,7 @@ struct SequenceSubEntries {
 	int _count;
 	SequenceTrigger _mode[SEQUENCE_ENTRY_SUBSET_MAX];
 	int _frameIndex[SEQUENCE_ENTRY_SUBSET_MAX];
-	int8 _trigger[SEQUENCE_ENTRY_SUBSET_MAX];
+	int _trigger[SEQUENCE_ENTRY_SUBSET_MAX];
 };
 
 struct SequenceEntry {
