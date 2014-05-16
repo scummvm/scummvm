@@ -47,7 +47,6 @@ void SoundManager::init(int sectionNumber) {
 
 	switch (_vm->getGameID()) {
 	case GType_RexNebular:
-		// TODO: Other Rex Adlib section drivers
 		switch (sectionNumber) {
 		case 1:
 			_driver = new Nebular::ASound1(_mixer);
@@ -73,6 +72,8 @@ void SoundManager::init(int sectionNumber) {
 		case 8:
 			_driver = new Nebular::ASound8(_mixer);
 			break;
+		case 9:
+			error("Sound driver 9 not implemented");
 		default:
 			_driver = nullptr;
 			break;
