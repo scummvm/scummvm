@@ -132,6 +132,25 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene705: public Scene7xx{
+private:
+	Conversation _dialog1;
+
+	void handleFillBottle(int quote);
+	void setBottleSequence();
+	void handleBottleInterface();
+
+public:
+	Scene705(MADSEngine *vm) : Scene7xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene707: public SceneTeleporter {
 public:
 	Scene707(MADSEngine *vm) : SceneTeleporter(vm) {}
