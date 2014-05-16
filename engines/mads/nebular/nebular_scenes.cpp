@@ -269,7 +269,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 711:	// inside teleporter
 		return new Scene711(vm);
 	case 751:	// outside elevator (before city is submerged)
-		return new DummyScene(vm);	// TODO
+		return new Scene751(vm);
 	case 752:	// outside teleporter (before city is submerged)
 		return new Scene752(vm);
 

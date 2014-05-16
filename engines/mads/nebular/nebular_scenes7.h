@@ -204,6 +204,21 @@ public:
 	virtual void actions();
 };
 
+class Scene751: public Scene7xx{
+private:
+	bool _rexHandingLine;
+
+public:
+	Scene751(MADSEngine *vm) : Scene7xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene752: public Scene7xx {
 private:
 	int _cardId;
