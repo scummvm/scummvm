@@ -206,6 +206,10 @@ void DirtyAreas::copy(MSurface *srcSurface, MSurface *destSurface, const Common:
 	for (uint i = 0; i < size(); ++i) {
 		const Common::Rect &srcBounds = (*this)[i]._bounds;
 
+		// Check if this is a sane rectangle before attempting to create it
+		if (srcBounds.left >= srcBounds.right || srcBounds.top >= srcBounds.bottom)
+			continue;
+
 		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
 			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
 
@@ -219,6 +223,10 @@ void DirtyAreas::copyToScreen(const Common::Point &posAdjust) {
 	for (uint i = 0; i < size(); ++i) {
 		const Common::Rect &srcBounds = (*this)[i]._bounds;
 
+		// Check if this is a sane rectangle before attempting to create it
+		if (srcBounds.left >= srcBounds.right || srcBounds.top >= srcBounds.bottom)
+			continue;
+		
 		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
 			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
 
