@@ -151,6 +151,29 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene706: public Scene7xx{
+private:
+	int _vaseHotspotId;
+	int _vaseMode;       // CHECKME: Use?
+	int _animationMode;
+	int _animationFrame;
+
+	bool _emptyPedestral;
+
+	void handleTakeVase();
+	void handleRexDeath();
+
+public:
+	Scene706(MADSEngine *vm) : Scene7xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene707: public SceneTeleporter {
 public:
 	Scene707(MADSEngine *vm) : SceneTeleporter(vm) {}

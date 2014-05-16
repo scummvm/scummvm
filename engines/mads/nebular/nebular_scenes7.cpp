@@ -381,7 +381,7 @@ void Scene702::actions() {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 711;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4 && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -420,9 +420,9 @@ void Scene702::actions() {
 		_vm->_dialogs->show(70215);
 	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(70216);
-	else if (_action.isAction(VERB_LOOK, NOUN_BONES) && _action._mainObjectSource == 4)
+	else if (_action.isAction(VERB_LOOK, NOUN_BONES) && (_action._mainObjectSource == 4))
 		_vm->_dialogs->show(70217);
-	else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4) {
+	else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(70219);
 	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY))
@@ -1564,6 +1564,277 @@ void Scene705::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene706::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x2E);
+	_scene->addActiveVocab(0x17D);
+	_scene->addActiveVocab(0xD);
+}
+
+void Scene706::handleRexDeath() {
+	switch (_game._trigger) {
+	case 0:
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_scene->loadAnimation(formAnimName('a', -1), 2);
+		break;
+
+	case 2:
+		if (_animationMode == 1)
+			_vm->_dialogs->show(70625);
+		else if (_globals[kBottleStatus] < 2)
+			_vm->_dialogs->show(70628);
+		else
+			_vm->_dialogs->show(70629);
+
+		_game._objects.setRoom(OBJ_VASE, _scene->_currentSceneId);
+		if (_animationMode == 2)
+			_game._objects.setRoom(OBJ_BOTTLE, 2);
+
+		_animationMode = 0;
+		_scene->_reloadSceneFlag = true;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Scene706::handleTakeVase() {
+	switch (_game._trigger) {
+	case 0:
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 4, 2, 0, 0);
+		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 7, 1);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		break;
+
+	case 1:
+		_vm->_sound->command(9);
+		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+		_scene->_dynamicHotspots.remove(_vaseHotspotId);
+		_game._objects.addToInventory(OBJ_VASE);
+		if (_vaseMode == 1) {
+			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
+			int idx = _scene->_dynamicHotspots.add(0x2E, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
+			_game._objects.setRoom(OBJ_BOTTLE, _scene->_currentSceneId);
+		}
+		break;
+
+	case 2:
+		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[3]);
+		_game._player._visible = true;
+		_vm->_dialogs->showItem(OBJ_VASE, 70630);
+		_game._player._stepEnabled = true;
+		break;
+	}
+}
+
+void Scene706::enter() {
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_3");
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', -1));
+
+	if (!_game._visitedScenes._sceneRevisited)
+		_emptyPedestral = false;
+
+	if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId) {
+		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('v', -1));
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 4);
+		int idx = _scene->_dynamicHotspots.add(0x17D, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_vaseHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
+	} else if (_game._objects.isInRoom(OBJ_BOTTLE)) {
+		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
+		int idx = _scene->_dynamicHotspots.add(0x2E, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
+	}
+
+	_game._player._visible = true;
+
+	if (_scene->_priorSceneId == 707) {
+		_game._player._playerPos = Common::Point(277, 103);
+		_game._player._facing = FACING_SOUTHWEST;
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(167, 152);
+		_game._player._facing = FACING_NORTH;
+	}
+
+	if (_globals[kTeleporterCommand]) {
+		_game._player._visible = false;
+		_game._player._stepEnabled = false;
+
+		switch (_globals[kTeleporterCommand]) {
+		case 1:
+			_scene->loadAnimation(formAnimName('E', 1), 75);
+			break;
+
+		case 2:
+			_scene->loadAnimation(formAnimName('E', -1), 80);
+			break;
+
+		default:
+			_game._player.walk(Common::Point(264, 116), FACING_SOUTHWEST);
+			_game._player._visible = true;
+			_game._player._stepEnabled = true;
+			break;
+		}
+		_globals[kTeleporterCommand] = 0;
+	}
+
+	_animationMode = 0;
+
+	if (_scene->_roomChanged) {
+		_game._objects.addToInventory(OBJ_BOTTLE);
+		_globals[kBottleStatus] = 2;
+	}
+
+	sceneEntrySound();
+}
+
+void Scene706::step() {
+	if (_game._trigger == 75) {
+		_game._player._stepEnabled = true;
+		_game._player._visible = true;
+		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+		_game._player.walk(Common::Point(264, 116), FACING_SOUTHWEST);
+	}
+
+	if (_game._trigger == 80) {
+		_globals[kTeleporterCommand] = 1;
+		_scene->_nextSceneId = _globals[kTeleporterDestination];
+		_scene->_reloadSceneFlag = true;
+	}
+
+	if (_scene->_activeAnimation != nullptr) {
+		if ((_animationMode != 0) && (_scene->_activeAnimation->getCurrentFrame() != _animationFrame)) {
+			_animationFrame = _scene->_activeAnimation->getCurrentFrame();
+
+			if (_animationFrame == 6) {
+				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+				_game._objects.setRoom(OBJ_VASE, 2);
+
+				if (_animationMode == 2) {
+					_game._objects.setRoom(OBJ_BOTTLE, 1);
+
+					_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
+					_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
+					_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
+					int idx = _scene->_dynamicHotspots.add(0x2E, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+					_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
+				}
+			}
+		}
+	}
+}
+
+void Scene706::preActions() {
+	if (_action.isAction(VERB_LOOK, 0x46E))
+		_game._player._needToWalk = true;
+}
+
+void Scene706::actions() {
+	if (_action.isAction(0x188, 0x16C)) {
+		_game._player._stepEnabled = false;
+		_game._player._visible = false;
+		_scene->_nextSceneId = 707;
+		_action._inProgress = false;
+		return;
+	}
+	
+	if (_action.isAction(0x298, 0x2FA)) {
+		_scene->_nextSceneId = 705;
+		_action._inProgress = false;
+		return;
+	}
+	
+	if (_action.isAction(VERB_TAKE, 0x17D)) {
+		if (_game._difficulty != DIFFICULTY_EASY) {
+			_animationMode = 1;
+			handleRexDeath();
+		} else if (_game._trigger || !_game._objects.isInInventory(OBJ_VASE)) {
+			handleTakeVase();
+			_emptyPedestral = true;
+		}
+		_action._inProgress = false;
+		return;
+	}
+	
+	if (_action.isAction(VERB_PUT, 0x2E, 0x344)) {
+		if ((_globals[kBottleStatus] == 2 && _game._difficulty == DIFFICULTY_HARD) ||
+			 (_globals[kBottleStatus] != 0 && _game._difficulty != DIFFICULTY_HARD)) {
+			if (!_game._objects.isInInventory(OBJ_VASE) || _game._trigger) {
+				_vaseMode = 1;
+				handleTakeVase();
+				_action._inProgress = false;
+				return;
+			}
+		} else if (_game._objects.isInRoom(OBJ_VASE) || _game._trigger) {
+			_animationMode = 2;
+			handleRexDeath();
+			_action._inProgress = false;
+			return;
+		}
+	}
+	
+	if (_action.isAction(VERB_PUT, 0x344) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+		warning("Replace the next if when the function is implemented");
+		warning("if (sub_13D46(_game._objects.getIdFromDesc(_action._activeAction._objectNameId), 0xA))");
+		if (true)
+			_vm->_dialogs->show(70626);
+		else
+			_vm->_dialogs->show(70627);
+	} else if (_action.isAction(VERB_TAKE, 0x2E) && _game._objects.isInInventory(OBJ_VASE))
+		_vm->_dialogs->show(70631);
+	else if (_action._lookFlag) {
+		if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId)
+			_vm->_dialogs->show(70610);
+		else
+			_vm->_dialogs->show(70611);
+	} else if (_action.isAction(VERB_LOOK, 0x89))
+		_vm->_dialogs->show(70612);
+	else if (_action.isAction(VERB_LOOK, 0x32B))
+		_vm->_dialogs->show(70613);
+	else if (_action.isAction(VERB_LOOK, 0x46B))
+		_vm->_dialogs->show(70614);
+	else if (_action.isAction(VERB_TAKE, 0x46B))
+		_vm->_dialogs->show(70615);
+	else if (_action.isAction(VERB_LOOK, 0x46D))
+		_vm->_dialogs->show(70616);
+	else if (_action.isAction(VERB_LOOK, 0x46E))
+		_vm->_dialogs->show(70617);
+	else if (_action.isAction(VERB_LOOK, 0x46C))
+		_vm->_dialogs->show(70618);
+	else if (_action.isAction(VERB_LOOK, 0x18D))
+		_vm->_dialogs->show(70619);
+	else if (_action.isAction(VERB_LOOK, 0x344)) {
+		if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId)
+			_vm->_dialogs->show(70620);
+		else if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId)
+			_vm->_dialogs->show(70622);
+		else
+			_vm->_dialogs->show(70621);
+	} else if (_action.isAction(VERB_LOOK, 0x16C))
+		_vm->_dialogs->show(70623);
+	else if (_action.isAction(VERB_LOOK, 0x17D) && (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId))
+		_vm->_dialogs->show(70624);
+	else if (_action.isAction(VERB_LOOK, 0x2E) && (_action._mainObjectSource == 4))
+		_vm->_dialogs->show(70632);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 void Scene707::setup() {
 	_game._player._spritesPrefix = "";
 	// The original calls Scene7xx::setAAName()
@@ -1809,7 +2080,7 @@ void Scene752::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4 && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1851,12 +2122,12 @@ void Scene752::actions() {
 		_vm->_dialogs->show(75217);
 	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(75218);
-	else if ((_action.isAction(VERB_LOOK, NOUN_BONES) || _action.isAction(VERB_LOOK, NOUN_ID_CARD)) && _action._mainObjectSource == 4) {
+	else if ((_action.isAction(VERB_LOOK, NOUN_BONES) || _action.isAction(VERB_LOOK, NOUN_ID_CARD)) && (_action._mainObjectSource == 4)) {
 		if (_game._objects[OBJ_ID_CARD]._roomNumber == 752)
 			_vm->_dialogs->show(75219);
 		else
 			_vm->_dialogs->show(75220);
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && _action._mainObjectSource == 4) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(75222);
 	} else

@@ -261,7 +261,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 705:	// water, outside building
 		return new Scene705(vm);
 	case 706:	// inside building, pedestral room, outside teleporter
-		return new DummyScene(vm);	// TODO
+		return new Scene706(vm);
 	case 707:	// teleporter
 		return new Scene707(vm);
 	case 710:	// looking at pedestral room through binoculars
