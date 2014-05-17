@@ -187,9 +187,8 @@ void Scene701::enter() {
 	} else if (_scene->_priorSceneId != -2 && _scene->_priorSceneId != -620) {
 		_game._player._playerPos = Common::Point(22, 131);
 		_game._player._facing = FACING_EAST;
-		// TODO: Enable once step() is implemented
-		//_game._player._stepEnabled = false;
-		//_scene->_sequences.addTimer(1 * 60, 70);
+		_game._player._stepEnabled = false;
+		_scene->_sequences.addTimer(1 * 60, 70);
 	}
 
 	_game.loadQuoteSet(0x310, 0x30F, 0);
@@ -199,27 +198,49 @@ void Scene701::enter() {
 void Scene701::step() {
 	switch(_game._trigger) {
 	case 60:
-		// TODO
+		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
+		_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		break;
 	case 61:
-		// TODO
+		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
+		_game._player._visible = true;
+		_game._player._stepEnabled = true;
 		break;
 	case 70:
-		// TODO
+		_vm->_sound->command(16);
+		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		break;
 	case 71:
 		_game._player.walk(Common::Point(61, 131), FACING_EAST);
 		_scene->_sequences.addTimer(2 * 60, 72);
 		break;
 	case 72:
-		// TODO
+		_vm->_sound->command(17);
+		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 		break;
 	case 73:
-		// TODO
+		_game._player._stepEnabled = true;
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1); 
+		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+		_scene->_kernelMessages.reset();
 		break;
 	case 80:
 		_game._player._visible = true;
-		// TODO
+		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
+		int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_CLIMB_INTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTH);
 		_globals[kBoatStatus] = BOAT_TIED;
 		_game._player._stepEnabled = true;
 		break;
@@ -270,25 +291,64 @@ void Scene701::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			// TODO: finish this
+			_vm->_sound->command(16);
+			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+			_scene->_kernelMessages.reset();
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x310, 34, 0, 120, _game.getQuote(0x30D));
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 		case 1:
 			_game._player.walk(Common::Point(22, 131), FACING_EAST);
 			_scene->_sequences.addTimer(2 * 60, 3);
 			break;
 		case 3:
-			// TODO
+			_vm->_sound->command(17);
+			_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 			break;
 		case 4:
-			// TODO
+			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1); 
+			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
+			_globals[kResurrectRoom] = 701;
+			_scene->_nextSceneId = 605;
 			break;
 		}
-	} else if (false) {
-		// TODO: boat + fishing line action
+	} else if ((_action.isAction(VERB_PULL, NOUN_BOAT) || _action.isAction(VERB_TAKE, NOUN_BOAT) ||
+			   _action.isAction(VERB_PULL, NOUN_FISHING_LINE) || _action.isAction(VERB_TAKE, NOUN_FISHING_LINE)) &&
+			   !_game._objects.isInInventory(OBJ_FISHING_LINE)) {
+		if (_globals[kBoatStatus] == BOAT_TIED_FLOATING) {
+			switch (_game._trigger) {
+			case 0:
+				// TODO
+				break;
+			case 1:
+				// TODO
+				break;
+			case 2:
+				_globals[kBoatStatus] = BOAT_TIED;
+				_globals[kLineStatus] = LINE_NOW_UNTIED;
+				_game._player._stepEnabled = true;
+				break;
+			}
+		} else if (_globals[kBoatStatus] == BOAT_TIED) {
+			_vm->_dialogs->show(70125);
+		} else if (_globals[kLineStatus] == LINE_DROPPED) {
+			// TODO
+		} else {
+			_vm->_dialogs->show(70127);
+		}
 	} else if (_action.isAction(VERB_CLIMB_INTO, NOUN_BOAT) && _globals[kBoatStatus] == BOAT_TIED) {
 		switch (_game._trigger) {
 		case 0:
-			// TODO
+			_game._player._stepEnabled = false;
+			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+			_game._player._visible = false;
+			_scene->loadAnimation(formAnimName('B', 0), 1);
 			break;
 		case 1:
 			_scene->_nextSceneId = 703;
@@ -311,8 +371,11 @@ void Scene701::actions() {
 		_vm->_dialogs->show(70114);
 	} else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_PYLON)) {
 		_vm->_dialogs->show(70115);
-	} else if (false) {
-		// TODO: hook
+	} else if (_action.isAction(VERB_LOOK, NOUN_HOOK)) {
+		if (_globals[kLineStatus] == LINE_NOT_DROPPED || _globals[kLineStatus] == LINE_NOW_UNTIED)
+			_vm->_dialogs->show(70116);
+		else
+			_vm->_dialogs->show(70117);
 	} else if (_action.isAction(VERB_LOOK, NOUN_ROCK)) {
 		_vm->_dialogs->show(70118);
 	} else if (_action.isAction(VERB_TAKE, NOUN_ROCK)) {
@@ -326,8 +389,9 @@ void Scene701::actions() {
 			_vm->_dialogs->show(70122);
 		else
 			_vm->_dialogs->show(70123);
-	} else if (false) {
-		// TODO: fishing rod + boat
+	} else if (_action.isAction(VERB_CAST, NOUN_FISHING_ROD, NOUN_BOAT)) {
+		if (_game._objects.isInInventory(OBJ_FISHING_LINE))
+			_vm->_dialogs->show(70124);
 	}
 }
 

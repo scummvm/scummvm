@@ -39,6 +39,7 @@ enum {
 };
 
 enum Verb {
+	VERB_CAST           = 0x03D,
 	VERB_CLIMB_DOWN     = 0x04E,
 	VERB_CLIMB_UP       = 0x050,
 	VERB_EAT			= 0x075,
@@ -65,7 +66,7 @@ enum Verb {
 	VERB_EXIT_FROM      = 0x1CE,
 	VERB_CLIMB_INTO     = 0x2F7,
 	VERB_STEP_INTO      = 0x2F9,
-	VERB_WALK_ALONG     = 0x312,
+	VERB_WALK_ALONG     = 0x312
 };
 
 enum Noun {
@@ -85,6 +86,7 @@ enum Noun {
 	NOUN_DOOR			= 0x6E,
 	NOUN_ENTER_KEY      = 0x7A,
 	NOUN_FISHING_LINE	= 0x87,
+	NOUN_FISHING_ROD    = 0x88,
 	NOUN_FRONT_WINDOW	= 0x8E,
 	NOUN_FUZZY_DICE		= 0x91,
 	NOUN_HOTPANTS		= 0x0A7,
@@ -150,6 +152,7 @@ enum Noun {
 	NOUN_DROP			= 0x3AD,
 	NOUN_DASH			= 0x3AE,
 	NOUN_SPLASH			= 0x3AF,
+	NOUN_HOOK           = 0x467,
 	NOUN_BIRDS          = 0x487,
 	NOUN_WEST_END_OF_PLATFORM = 0x4A9,
 	NOUN_EAST_END_OF_PLATFORM = 0x4AA
