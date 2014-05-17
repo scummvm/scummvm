@@ -434,7 +434,29 @@ done:
 void KernelMessages::initRandomMessages(int maxSimultaneousMessages,
 		const Common::Rect &bounds, int minYSpacing, int scrollRate,
 		int color, int duration, int quoteId, ...) {
-	// TODO
+	// Reset the random messages list
+	_randomMessages.clear();
+	_randomMessages.resize(maxSimultaneousMessages);
+
+	// Store passed parameters
+	_randomMessages._bounds = bounds;
+	_randomMessages._randomSpacing = minYSpacing;
+	_randomMessages._scrollRate = scrollRate;
+	_randomMessages._color = color;
+	_randomMessages._duration = duration;
+
+	// Store the variable length random quote list
+	va_list va;
+	va_start(va, quoteId);
+	_randomQuotes.clear();
+
+	while (quoteId > 0) {
+		_randomQuotes.push_back(quoteId);
+		assert(_randomQuotes.size() < 100);
+		quoteId = va_arg(va, int);
+	}
+
+	va_end(va);
 }
 
 
