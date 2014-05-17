@@ -90,9 +90,13 @@ void CGE2Engine::deinit() {
 	delete _text;
 	for (int i = 0; i < 2; i++)
 		delete _heroTab[i];
-	delete _eye;
-	for (int i = 0; i < kCaveMax; i++)
+	for (int i = 0; i < kCaveMax; i++) {
+		if (_eye == _eyeTab[i])
+			_eye = nullptr;
 		delete _eyeTab[i];
+	}
+	if (_eye != nullptr)
+		delete _eye;
 	delete _spare;
 	delete _commandHandler;
 }
