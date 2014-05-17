@@ -1865,7 +1865,7 @@ EOF
 $CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
 if $_strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
 	_endian=big
-elif strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
 echo $_endian;
