@@ -89,6 +89,7 @@ public:
 	void loadTab();
 	int newRandom(int range);
 	void loadMap(int cav);
+	void openPocket();
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);

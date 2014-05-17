@@ -338,6 +338,9 @@ void CGE2Engine::caveUp(int cav) {
 	_eye = _eyeTab[_now];
 	_mouseTop = V2D(this, V3D(0, 1, kScrDepth)).y;
 	loadTab();
+	_spare->takeCave(bakRef);
+	openPocket();
+	
 
 	_vga->update();
 
@@ -358,6 +361,15 @@ void CGE2Engine::showBak(int ref) {
 
 void CGE2Engine::loadMap(int cav) {
 	warning("STUB:  CGE2Engine::loadMap()");
+}
+
+void CGE2Engine::openPocket() {
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < kPocketMax + 1; j++) {
+			int ref = (_heroTab[i])->_pocket[j]->_ref;
+			_heroTab[i]->_pocket[j] = (ref == -1) ? nullptr : _vga->_showQ->locate(ref);
+		}
+	}
 }
 
 void CGE2Engine::runGame() {
