@@ -529,14 +529,27 @@ void MovGraphItem::free() {
 
 int MovGraph_messageHandler(ExCommand *cmd);
 
-MovArr *MovGraphCallback(StaticANIObject *ani, MovItem *item, signed int counter) {
-	warning("STUB: MovgraphCallback");
+MovArr *movGraphCallback(StaticANIObject *ani, MovItem *item, signed int counter) {
+#if 0
+MovArr *movGraphCallback(StaticANIObject *ani, Common:Array<MovItem *> items, int itemidx, signed int counter) {
 
+	int residx = itemidx;
+
+	while (counter > 1) {
+		if (items[itemidx]._mfield_4 > items[itemidx + 1]._mfield_4)
+			residx = itemidx;
+
+		counter--;
+		itemidx++;
+	}
+
+	return items[residx].movarr;
+#endif
 	return 0;
 }
 
 MovGraph::MovGraph() {
-	_callback1 = MovGraphCallback;
+	_callback1 = movGraphCallback;
 	_field_44 = 0;
 	insertMessageHandler(MovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
 
