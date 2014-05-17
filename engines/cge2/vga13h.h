@@ -168,8 +168,6 @@ public:
 	Queue(bool show);
 	~Queue();
 
-	bool _show;
-
 	void append(Sprite *spr);
 	void insert(Sprite *spr, Sprite *nxt);
 	void insert(Sprite *spr);
@@ -181,6 +179,7 @@ public:
 		return _tail;
 	}
 	Sprite *locate(int ref);
+	bool locate(Sprite *spr);
 	void clear();
 };
 

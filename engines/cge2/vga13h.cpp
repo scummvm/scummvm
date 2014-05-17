@@ -314,12 +314,7 @@ Sprite *Sprite::contract() {
 }
 
 Sprite *Sprite::backShow(bool fast) {
-	expand();
-	show(2);
-	show(1);
-	if (fast)
-		show(0);
-	contract();
+	warning("STUB: Sprite::backShow()");
 	return this;
 }
 
@@ -525,7 +520,7 @@ void Sprite::sync(Common::Serializer &s) {
 	s.syncAsUint16LE(unused);	// _next
 }
 
-Queue::Queue(bool show) : _head(NULL), _tail(NULL), _show(show) {
+Queue::Queue(bool show) : _head(NULL), _tail(NULL) {
 }
 
 Queue::~Queue() {
@@ -541,52 +536,51 @@ void Queue::clear() {
 }
 
 void Queue::append(Sprite *spr) {
-	if (_tail) {
-		spr->_prev = _tail;
-		_tail->_next = spr;
-	} else
-		_head = spr;
-	_tail = spr;
-	if (_show)
+	if (spr->_flags._back)
+		spr->backShow();
+	else {
 		spr->expand();
-	else
-		spr->contract();
+		if (_tail) {
+			spr->_prev = _tail;
+			_tail->_next = spr;
+		} else
+			_head = spr;
+
+		_tail = spr;
+	}
 }
 
 void Queue::insert(Sprite *spr, Sprite *nxt) {
-	if (nxt == _head) {
-		spr->_next = _head;
-		_head = spr;
-		if (!_tail)
-			_tail = spr;
-	} else {
-		assert(nxt);
-		spr->_next = nxt;
-		spr->_prev = nxt->_prev;
-		if (spr->_prev)
-			spr->_prev->_next = spr;
-	}
-	if (spr->_next)
-		spr->_next->_prev = spr;
-	if (_show)
+	if (spr->_flags._back)
+		spr->backShow();
+	else {
 		spr->expand();
-	else
-		spr->contract();
+		if (nxt == _head) {
+			spr->_next = _head;
+			_head = spr;
+			if (!_tail)
+				_tail = spr;
+		} else {
+			spr->_next = nxt;
+			spr->_prev = nxt->_prev;
+			if (spr->_prev)
+				spr->_prev->_next = spr;
+		}
+		if (spr->_next)
+			spr->_next->_prev = spr;
+	}
 }
 
 void Queue::insert(Sprite *spr) {
 	Sprite *s;
 	for (s = _head; s; s = s->_next)
-		if (s->_pos3D._z > spr->_pos3D._z)
+		if (s->_pos3D._z < spr->_pos3D._z)
 			break;
+
 	if (s)
 		insert(spr, s);
 	else
 		append(spr);
-	if (_show)
-		spr->expand();
-	else
-		spr->contract();
 }
 
 template<typename T>
@@ -614,6 +608,14 @@ Sprite *Queue::locate(int ref) {
 			return spr;
 	}
 	return NULL;
+}
+
+bool Queue::locate(Sprite *spr) {
+	Sprite *s;
+	for (s = _head; s; s = s->_next)
+		if (s == spr)
+			return true;
+	return false;
 }
 
 Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0), _vm(vm) {
