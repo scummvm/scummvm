@@ -335,6 +335,11 @@ void CGE2Engine::caveUp(int cav) {
 	if (_music)
 		_midiPlayer->loadMidi(bakRef);
 	showBak(bakRef);
+	_eye = _eyeTab[_now];
+	_mouseTop = V2D(this, V3D(0, 1, kScrDepth)).y;
+	loadTab();
+
+	_vga->update();
 
 	warning("STUB: CGE2Engine::caveUp()");
 }
@@ -349,6 +354,10 @@ void CGE2Engine::showBak(int ref) {
 		_vga->copyPage(1, 2);
 		_spare->dispose(spr);
 	}
+}
+
+void CGE2Engine::loadMap(int cav) {
+	warning("STUB:  CGE2Engine::loadMap()");
 }
 
 void CGE2Engine::runGame() {

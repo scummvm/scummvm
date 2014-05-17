@@ -62,6 +62,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_startupMode = 1;
 	_now = 1;
 	_sex = true;
+	_mouseTop = kWorldHeight / 3;
 }
 
 void CGE2Engine::init() {

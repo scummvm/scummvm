@@ -51,6 +51,7 @@ class CommandHandler;
 
 #define kScrWidth      320
 #define kScrHeight     240
+#define kScrDepth      480
 #define kPanHeight     40
 #define kWorldHeight   (kScrHeight - kPanHeight)
 #define kMaxFile       128
@@ -87,6 +88,7 @@ public:
 	void showBak(int ref);
 	void loadTab();
 	int newRandom(int range);
+	void loadMap(int cav);
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
@@ -109,6 +111,7 @@ public:
 	int _startupMode;
 	int _now;
 	bool _sex;
+	int _mouseTop;
 
 	ResourceManager *_resman;
 	Vga *_vga;
