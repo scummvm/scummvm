@@ -1843,6 +1843,12 @@ if test "$_global_constructors" = yes; then
 fi
 echo $_global_constructors
 
+if test ! "x$(which $_host_alias-strings)" = "x"; then
+_strings=$_host_alias-strings
+else
+_strings=strings
+fi
+
 #
 # Check for endianness
 #
@@ -1857,7 +1863,7 @@ void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
 $CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
-if strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
+if $_strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
 	_endian=big
 elif strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
 	_endian=little
