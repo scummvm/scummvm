@@ -65,18 +65,32 @@ public:
 	KernelMessage();
 };
 
+struct RandomEntry {
+	int _handle;
+	int _quoteId;
+
+	RandomEntry() { _handle = _quoteId = -1; }
+};
+
+class RandomMessages: public Common::Array<RandomEntry> {
+public:
+	Common::Rect _bounds;
+	int _randomSpacing;
+	int _color;
+	int _duration;
+	int _scrollRate;
+public:
+	RandomMessages();
+
+	void reset();
+};
+
 class KernelMessages {
 private:
 	MADSEngine *_vm;
 
-	struct RandomEntry {
-		int _handle;
-		int _quote;
-	};
-	RandomEntry _randomMessages[RANDOM_MESSAGE_SIZE];
-	int _randomMaxMessages;
-
-	void resetRandomMessages();
+	Common::Array<int> _randomQuotes;
+	RandomMessages _randomMessages;
 public:
 	Common::Array<KernelMessage> _entries;
 	Font *_talkFont;

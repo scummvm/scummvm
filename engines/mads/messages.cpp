@@ -29,6 +29,19 @@
 
 namespace MADS {
 
+RandomMessages::RandomMessages() {
+	reserve(RANDOM_MESSAGE_SIZE);
+	_randomSpacing = 0;
+}
+
+void RandomMessages::reset() {
+	for (uint i = 0; i < size(); ++i) {
+		(*this)[i]._handle = -1;
+		(*this)[i]._quoteId = -1;
+	}
+}
+
+
 KernelMessages::KernelMessages(MADSEngine *vm): _vm(vm) {
 	for (int i = 0; i < KERNEL_MESSAGES_SIZE; ++i) {
 		KernelMessage rec;
@@ -36,9 +49,6 @@ KernelMessages::KernelMessages(MADSEngine *vm): _vm(vm) {
 	}
 
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
-
-	_randomMaxMessages = 0;
-	resetRandomMessages();
 }
 
 KernelMessages::~KernelMessages() {
@@ -141,7 +151,7 @@ void KernelMessages::reset() {
 		remove(i);
 
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
-	resetRandomMessages();
+	_randomMessages.clear();
 }
 
 void KernelMessages::update() {
@@ -306,27 +316,20 @@ void KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
 	}
 }
 
-void KernelMessages::resetRandomMessages() {
-	for (int i = 0; i < RANDOM_MESSAGE_SIZE; ++i) {
-		_randomMessages[i]._handle = -1;
-		_randomMessages[i]._quote = -1;
-	}
-}
-
 #define RANDOM_MESSAGE_TRIGGER 240
 
 void KernelMessages::randomServer() {
 	if ((_vm->_game->_trigger >= RANDOM_MESSAGE_TRIGGER) &&
-		(_vm->_game->_trigger <  (RANDOM_MESSAGE_TRIGGER + _randomMaxMessages))) {
+		(_vm->_game->_trigger <  (RANDOM_MESSAGE_TRIGGER + (int)_randomMessages.size()))) {
 		_randomMessages[_vm->_game->_trigger - RANDOM_MESSAGE_TRIGGER]._handle = -1;
-		_randomMessages[_vm->_game->_trigger - RANDOM_MESSAGE_TRIGGER]._quote = -1;
+		_randomMessages[_vm->_game->_trigger - RANDOM_MESSAGE_TRIGGER]._quoteId = -1;
 	}
 }
 
 int KernelMessages::checkRandom() {
 	int total = 0;
 
-	for (int i = 0; i < _randomMaxMessages; ++i) {
+	for (uint i = 0; i < _randomMessages.size(); ++i) {
 		if (_randomMessages[i]._handle >= 0)
 			++total;
 	}
@@ -335,8 +338,97 @@ int KernelMessages::checkRandom() {
 }
 
 bool KernelMessages::generateRandom(int major, int minor) {
-	// TODO
-	return false;
+	bool generatedMessage = false;
+
+	// Scan through the random messages array
+	for (uint msgCtr = 0; msgCtr < _randomMessages.size(); msgCtr++) {
+		// Find currently active random messages
+		if (_randomMessages[msgCtr]._handle < 0) {
+			// Check whether there's any existing 'scrolling in' message
+			bool bad = false;
+			for (uint scanCtr = 0; scanCtr < _randomMessages.size(); ++scanCtr) {
+				if (_randomMessages[scanCtr]._handle >= 0) {
+					if (_entries[_randomMessages[scanCtr]._handle]._flags & KMSG_SCROLL) {
+						bad = true;
+						break;
+					}
+				}
+			}
+
+			// Do a random check for a new message to appear
+			if (_vm->getRandomNumber(major) <= minor && !bad) {
+				int quoteId;
+
+				// Pick a random quote to display from the available list
+				do {
+					int quoteIdx = _vm->getRandomNumber(_randomQuotes.size() - 1);
+					quoteId = _randomQuotes[quoteIdx];
+
+					// Ensure the quote isn't already in use
+					bad = false;
+					for (uint scanCtr = 0; scanCtr < _randomMessages.size(); ++scanCtr) {
+						if (quoteId == _randomMessages[scanCtr]._quoteId) {
+							bad = true;
+							break;
+						}
+					}
+				} while (bad);
+
+				// Store the quote Id to be used
+				_randomMessages[msgCtr]._quoteId = quoteId;
+
+				// Position the message at a random position
+				Common::Point textPos;
+				textPos.x = _vm->getRandomNumber(_randomMessages._bounds.left,
+					_randomMessages._bounds.right);
+
+				// Figure out Y position, making sure not to be overlapping with
+				// any other on-screen message
+				int abortCounter = 0;
+
+				do {
+					// Ensure we don't get stuck in an infinite loop if too many messages
+					// are alrady on-screen
+					if (abortCounter++ > 100) goto done;
+					bad = false;
+
+					// Set potential new Y position
+					textPos.y = _vm->getRandomNumber(_randomMessages._bounds.top,
+						_randomMessages._bounds.bottom);
+
+					// Ensure it doesn't overlap an existing on-screen message
+					for (uint msgCtr2 = 0; msgCtr2 < _randomMessages.size(); ++msgCtr2) {
+						if (_randomMessages[msgCtr2]._handle >= 0) {
+							int lastY = _entries[_randomMessages[msgCtr2]._handle]._position.y;
+
+							if ((textPos.y >= (lastY - _randomMessages._randomSpacing)) &&
+								(textPos.y <= (lastY + _randomMessages._randomSpacing))) {
+								bad = true;
+							}
+						}
+					}
+				} while (bad);
+
+				// Add the message
+				_randomMessages[msgCtr]._handle = add(textPos, _randomMessages._color, 0,
+					RANDOM_MESSAGE_TRIGGER + msgCtr, _randomMessages._duration,
+					_vm->_game->getQuote(_randomMessages[msgCtr]._quoteId));
+
+				if (_randomMessages._scrollRate > 0) {
+					if (_randomMessages[msgCtr]._handle >= 0) {
+						setQuoted(_randomMessages[msgCtr]._handle,
+							_randomMessages._scrollRate, true);
+					}
+				}
+
+				generatedMessage = true;
+				break;
+			}
+		}
+	}
+
+done:
+	return generatedMessage;
 }
 
 void KernelMessages::initRandomMessages(int maxSimultaneousMessages,
