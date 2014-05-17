@@ -31,22 +31,22 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
-struct MenuItem {
-	bool _actvFl;
-	int  _lineSize;
-	char _line[90];
-};
-
-struct ScoreItem {
-	Common::String _name;
-	Common::String _score;
-};
-
 enum ComputerEnum { COMPUTER_HOPKINS = 1, COMPUTER_SAMANTHA = 2, COMPUTER_PUBLIC = 3 };
 
 class ComputerManager {
 private:
 	HopkinsEngine *_vm;
+
+	struct MenuItem {
+		int  _lineSize;
+		char _line[90];
+	};
+
+	struct ScoreItem {
+		Common::String _name;
+		Common::String _score;
+	};
+
 	MenuItem _menuText[50];
 	char _inputBuf[200];
 	ScoreItem _score[6];
@@ -84,14 +84,14 @@ private:
 	void displayLives();
 	void displayBricks();
 	void displayGamesSubMenu();
-	int  displayHiscores();
+	int displayHiscores();
 	void displayHiscoreLine(const byte *objectData, int x, int y, int curChar);
 	void displayMessage(int xp, int yp, int textIdx);
 	void displayScore();
 	void displayScoreChar(int charPos, int charDisp);
 	void getScoreName();
 	void playBreakout();
-	int  moveBall();
+	int moveBall();
 	void saveScore();
 	void checkBallCollisions();
 
