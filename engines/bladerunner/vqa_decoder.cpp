@@ -20,9 +20,6 @@
  *
  */
 
-#ifndef BLADERUNNER_VQA_DECODER_H
-#define BLADERUNNER_VQA_DECODER_H
-
 #include "bladerunner/vqa_decoder.h"
 
 #include "bladerunner/decompress_lcw.h"
@@ -880,5 +877,3 @@ int16 *VQADecoder::getAudioFrame()
 }
 
 }; // End of namespace BladeRunner
-
-#endif
