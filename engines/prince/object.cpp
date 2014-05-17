@@ -32,7 +32,7 @@
 
 namespace Prince {
 
-Object::Object() : _surface(NULL), _x(0), _y(0), _z(0) {
+Object::Object() : _surface(NULL), _x(0), _y(0), _z(0), _overlay(0) {
 }
 
 Object::~Object() {
@@ -45,9 +45,11 @@ Object::~Object() {
 
 void Object::loadSurface(Common::SeekableReadStream &stream) {
 	stream.skip(4);
-
+	int width = stream.readUint16LE();
+	int height = stream.readUint16LE();
 	_surface = new Graphics::Surface();
-	_surface->create(stream.readUint16LE(), stream.readUint16LE(), Graphics::PixelFormat::createFormatCLUT8());
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
 	for (int h = 0; h < _surface->h; ++h) {
 		stream.read(_surface->getBasePtr(0, h), _surface->w);
 	}
@@ -71,11 +73,12 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	loadSurface(*obStream);
 	delete obStream;
 
+	_overlay = stream.readUint16LE();
 	_z = stream.readUint16LE();
 	
 	stream.seek(pos + 16);
 
-	debug("Object x %d, y %d, z %d", _x, _y, _z);
+	debug("Object x %d, y %d, z %d overlay %d", _x, _y, _z, _overlay);
 
 	return true;
 }

@@ -47,8 +47,24 @@ namespace Detail {
 class Room {
 public:
 	Room();
+	int _mobs; // mob flag offset
+	int _backAnim; // offset to array of animation numbers
+	int _obj; // offset to array of object numbers
+	int _nak; // offset to array of overlays
+	int _itemUse;
+	int _itemGive;
+	int _walkTo; // offset to array of WALKTO events or 0
+	int _examine; // offset to array of EXAMINE events or 0
+	int _pickup;
+	int _use;
+	int _pushOpen;
+	int _pullClose;
+	int _talk;
+	int _give;
+	//Room_Pad	db	64-(Room_Pad-Room_Mobs) dup (0) ???
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
+	bool loadRoom(byte *roomData);
 
 private:
 
@@ -109,11 +125,11 @@ public:
 		return Detail::LittleEndianReader<T>(&_data[address]);
 	}
 
-	//uint32 getRoomTableOffset();
 	uint32 getStartGameOffset();
 	int16 getLightX(int locationNr);
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
+	uint8 *getRoomOffset(int locationNr);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);

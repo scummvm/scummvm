@@ -76,7 +76,7 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
-	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr),
+	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr),
 	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0) {
 
@@ -108,6 +108,7 @@ PrinceEngine::~PrinceEngine() {
 	delete _variaTxt;
 	delete[] _talkTxt;
 	delete _graph;
+	delete _room;
 
 	for (uint i = 0; i < _objList.size(); i++) {
 		delete _objList[i];
@@ -194,6 +195,8 @@ void PrinceEngine::init() {
 	delete talkTxtStream;
 
 	_roomBmp = new Image::BitmapDecoder();
+
+	_room = new Room();
 
 	_mainHero = new Hero(this, _graph);
 	_secondHero = new Hero(this, _graph);
@@ -298,12 +301,6 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	_picWindowX = 0;
 
-	_mainHero->_lightX = _script->getLightX(_locationNr);
-	_mainHero->_lightY = _script->getLightY(_locationNr);
-	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
-	debug("lightX: %d", _mainHero->_lightX);
-	debug("lightY: %d", _mainHero->_lightY);
-
 	_mobList.clear();
 	Resource::loadResource(_mobList, "mob.lst", false);
 
@@ -315,6 +312,12 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	_animList.clear();
 	Resource::loadResource(_animList, "anim.lst", false);
+
+	_mainHero->_lightX = _script->getLightX(_locationNr);
+	_mainHero->_lightY = _script->getLightY(_locationNr);
+	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
+
+	_room->loadRoom(_script->getRoomOffset(_locationNr));
 
 	_graph->makeShadowTable(70, _graph->_shadowTable70);
 	_graph->makeShadowTable(50, _graph->_shadowTable50);
@@ -688,10 +691,13 @@ void PrinceEngine::drawScreen() {
 	}
 
 	playNextFrame();
-
-	//if (_objectList)
-	//	  _graph->drawTransparent(_objectList->getSurface());
-
+	/*
+	if (!_objList.empty()) {
+		for (int i = 0; i < _objList.size(); i++) {
+			_graph->drawTransparent(_objList[i]->_x, _objList[i]->_y, _objList[i]->getSurface());
+		}
+	}
+	*/
 	hotspot();
 
 	showTexts();

@@ -63,6 +63,7 @@ class MhwanhDecoder;
 class Font;
 class Hero;
 class Animation;
+class Room;
 
 struct Text {
 	const char *_str;
@@ -177,7 +178,7 @@ private:
 	Interpreter *_interpreter;
 	Font *_font;
 	MusicPlayer *_midiPlayer;
-
+	Room *_room;
 
 	static const uint32 MAX_SAMPLES = 60;	
 	Common::SeekableReadStream *_voiceStream[MAX_SAMPLES];

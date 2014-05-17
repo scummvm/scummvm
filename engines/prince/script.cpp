@@ -40,6 +40,29 @@ static const uint16 NUM_OPCODES = 144;
 
 Room::Room() {}
 
+bool Room::loadRoom(byte *roomData) {
+	int roomSize = 64;
+	Common::MemoryReadStream roomStream(roomData, roomSize);
+	
+	_mobs = roomStream.readSint32LE();
+	_backAnim = roomStream.readSint32LE();
+	_obj = roomStream.readSint32LE();
+	_nak = roomStream.readSint32LE();
+	_itemUse = roomStream.readSint32LE();
+	_itemGive = roomStream.readSint32LE();
+	_walkTo = roomStream.readSint32LE();
+	_examine = roomStream.readSint32LE();
+	_pickup = roomStream.readSint32LE();
+	_use = roomStream.readSint32LE();
+	_pushOpen = roomStream.readSint32LE();
+	_pullClose = roomStream.readSint32LE();
+	_talk = roomStream.readSint32LE();
+	_give = roomStream.readSint32LE();
+
+	return true;
+}
+
+/*
 void Room::loadMobs(Common::SeekableReadStream &stream) {
 	debug("loadMobs %d", stream.pos());
 	static const uint8 MAX_MOBS = 64;
@@ -73,7 +96,8 @@ void Room::loadPushOpen(Common::SeekableReadStream &stream) {}
 void Room::loadPullClose(Common::SeekableReadStream &stream) {}
 void Room::loadTalk(Common::SeekableReadStream &stream) {}
 void Room::loadGive(Common::SeekableReadStream &stream) {}
-
+*/
+/*
 void Room::nextLoadStep(Common::SeekableReadStream &stream, LoadingStep step) {
 	uint32 offset = stream.readUint32LE();
 	uint32 pos = stream.pos();
@@ -85,7 +109,8 @@ void Room::nextLoadStep(Common::SeekableReadStream &stream, LoadingStep step) {
 
 	stream.seek(pos);
 }
-
+*/
+/*
 bool Room::loadFromStream(Common::SeekableReadStream &stream) {
 
 	uint32 pos = stream.pos();
@@ -109,8 +134,9 @@ bool Room::loadFromStream(Common::SeekableReadStream &stream) {
 	static const uint8 ROOM_ENTRY_SIZE = 64;
 	stream.seek(pos + ROOM_ENTRY_SIZE);
 
-	return true;;
+	return true;
 }
+*/
 
 Script::Script() : _data(nullptr), _dataSize(0) {
 }
@@ -172,6 +198,10 @@ int32 Script::getShadowScale(int locationNr) {
 
 uint32 Script::getStartGameOffset() {
 	return _scriptInfo.startGame;
+}
+
+uint8 *Script::getRoomOffset(int locationNr) {
+	return &_data[_scriptInfo.rooms + locationNr * 64]; // Room_Len (64?)
 }
 
 InterpreterFlags::InterpreterFlags() {
