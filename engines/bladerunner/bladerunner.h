@@ -53,11 +53,11 @@ public:
 
 	int in_script_counter;
 
+	Graphics::Surface _surface1;
+
 private:
 	static const int kArchiveCount = 10;
 	MIXArchive _archives[kArchiveCount];
-
-	Graphics::Surface _surface1;
 
 public:
 	BladeRunnerEngine(OSystem *syst);
@@ -77,7 +77,7 @@ public:
 	void gameTick();
 	void handleEvents();
 
-	void playOuttake(int id, bool no_localization);
+	void outtakePlay(int id, bool no_localization, int container = -1);
 
 	bool openArchive(const Common::String &name);
 	bool closeArchive(const Common::String &name);

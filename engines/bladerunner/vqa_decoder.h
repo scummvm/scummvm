@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BLADERUNNER_VQA_H
-#define BLADERUNNER_VQA_H
+#ifndef BLADERUNNER_VQA_DECODER_H
+#define BLADERUNNER_VQA_DECODER_H
 
 #include "common/debug.h"
 #include "common/str.h"
@@ -103,11 +103,6 @@ class VQADecoder
 
 	uint32  *_frameInfo;
 
-	int      _curFrame;
-	int      _curLoop;
-	int      _loopSpecial;
-	int      _loopDefault;
-
 	uint32   _maxVIEWChunkSize;
 	uint32   _maxZBUFChunkSize;
 	uint32   _maxAESCChunkSize;
@@ -140,16 +135,15 @@ class VQADecoder
 	bool readLITE(uint32 size);
 
 public:
-	VQADecoder(Common::SeekableReadStream *r);
+	VQADecoder();
 	~VQADecoder();
 
-	bool readHeader();
-	int  readFrame();
+	bool open(Common::SeekableReadStream *s);
+	bool readFrame();
 
-	void VPTRWriteBlock(uint16 *frame, unsigned int dst_block, unsigned int src_block, int count, bool alpha = false) const;
+	int getFrameTime() { return 1000 / _header.frameRate; }
 
-	void setLoopSpecial(int loop, bool wait);
-	void setLoopDefault(int loop);
+	void VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false) const;
 
 	bool seekToFrame(int frame);
 	bool decodeFrame(uint16 *frame);
@@ -158,6 +152,8 @@ public:
 
 	// bool get_view(view_t *view);
 	bool getZBUF(uint16 *zbuf);
+
+	friend class VQAPlayer;
 };
 
 }; // End of namespace BladeRunner

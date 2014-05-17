@@ -25,6 +25,7 @@
 #include "bladerunner/chapters.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/image.h"
+#include "bladerunner/outtake.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/vqa_decoder.h"
 
@@ -206,56 +207,12 @@ void BladeRunnerEngine::handleEvents() {
 	}
 }
 
-void BladeRunnerEngine::playOuttake(int id, bool no_localization) {
+void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) {
 	Common::String name = _gameInfo->getOuttake(id);
 
-	if (no_localization)
-		name += ".VQA";
-	else
-		name += "_E.VQA";
+	OuttakePlayer player(this);
 
-	Common::SeekableReadStream *s = getResourceStream(name);
-	if (!s)
-		return;
-
-	VQADecoder vqa_decoder(s);
-
-	bool b = vqa_decoder.readHeader();
-	if (!b) return;
-
-	uint32 frame_count = 0;
-	uint32 start_time = 0;
-	uint32 next_frame_time = 0;
-
-	for (;;)
-	{
-		handleEvents();
-		// TODO: Handle skips
-		if (shouldQuit())
-			break;
-
-		uint32 cur_time = next_frame_time + 1;
-
-		if (next_frame_time <= cur_time)
-		{
-			int frame_number = vqa_decoder.readFrame();
-			debug("frame_number: %d", frame_number);
-
-			if (frame_number < 0)
-				break;
-
-			b = vqa_decoder.decodeFrame((uint16*)_surface1.getPixels());
-
-			_system->copyRectToScreen(_surface1.getPixels(), _surface1.pitch, 0, 0, _surface1.w, _surface1.h);
-			_system->updateScreen();
-
-			++frame_count;
-
-			if (!next_frame_time)
-				next_frame_time = cur_time;
-			next_frame_time = next_frame_time + (60 * 1000) / 15;
-		}
-	}
+	player.play(name, noLocalization, -1);
 }
 
 bool BladeRunnerEngine::openArchive(const Common::String &name) {

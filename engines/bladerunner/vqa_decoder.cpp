@@ -66,17 +66,13 @@ namespace BladeRunner {
 #define kWVQA 0x57565141
 #define kZBUF 0x5A425546
 
-VQADecoder::VQADecoder(Common::SeekableReadStream *s)
-	: _s(s),
+VQADecoder::VQADecoder()
+	: _s(nullptr),
 	  _frame(0),
 	  _zbuf(0),
 	  _codebook(0),
 	  _cbfz(0),
 	  _vptr(0),
-	  _curFrame(-1),
-	  _curLoop(-1),
-	  _loopSpecial(-1),
-	  _loopDefault(-1),
 	  _hasView(false),
 	  _audioFrame(0),
 	  _maxVIEWChunkSize(0),
@@ -126,7 +122,7 @@ bool readIFFChunkHeader(Common::SeekableReadStream *s, IFFChunkHeader *ts)
 	ts->size = s->readUint32BE();
 
 	// if (ts->size != roundup(ts->size))
-	// 	debug("%s: %d\n", strTag(ts->id), ts->size);
+	// 	debug("%s: %d", strTag(ts->id), ts->size);
 
 	return true;
 }
@@ -144,26 +140,27 @@ const char *strTag(uint32 tag)
 	return s;
 }
 
-bool VQADecoder::readHeader()
+bool VQADecoder::open(Common::SeekableReadStream *s)
 {
 	IFFChunkHeader chd;
 	uint32 type;
 	bool rc;
 
-	readIFFChunkHeader(_s, &chd);
+	readIFFChunkHeader(s, &chd);
 	if (chd.id != kFORM || !chd.size)
 		return false;
 
-	type = _s->readUint32BE();
+	type = s->readUint32BE();
 
 	if (type != kWVQA)
 		return false;
 
+	_s = s;
 	do {
 		if (!readIFFChunkHeader(_s, &chd))
 			return false;
 
-		debug("\t%s : %x\n", strTag(chd.id), chd.size);
+		debug("\t%s : %x", strTag(chd.id), chd.size);
 
 		rc = false;
 		switch (chd.id)
@@ -177,21 +174,21 @@ bool VQADecoder::readHeader()
 			case kMSCI: rc = readMSCI(chd.size); break;
 			case kVQHD: rc = readVQHD(chd.size); break;
 			default:
-				debug("Unhandled chunk '%s'\n", strTag(chd.id));
+				debug("Unhandled chunk '%s'", strTag(chd.id));
 				_s->skip(roundup(chd.size));
 				rc = true;
 		}
 
 		if (!rc)
 		{
-			debug("failed to handle chunk %s\n", strTag(chd.id));
-			return false;
+			debug("failed to handle chunk %s", strTag(chd.id));
+			return -1;
 		}
 
 	} while (chd.id != kFINF);
 
 	for (int i = 0; i != _loopInfo.loopCount; ++i) {
-		debug("LOOP %2d: %4d %4d %s\n", i,
+		debug("LOOP %2d: %4d %4d %s", i,
 			_loopInfo.loops[i].begin,
 			_loopInfo.loops[i].end,
 			_loopInfo.loops[i].name.c_str());
@@ -229,32 +226,32 @@ bool VQADecoder::readVQHD(uint32 size)
 
 	if (_header.offset_x || _header.offset_y)
 	{
-		debug("_header.offset_x, _header.offset_y: %d %d\n", _header.offset_x, _header.offset_y);
+		debug("_header.offset_x, _header.offset_y: %d %d", _header.offset_x, _header.offset_y);
 	}
 
 	// if (_header.unk3 || _header.unk4 != 4 || _header.unk5 || _header.flags != 0x0014)
 	{
-		debug("_header.version      %d\n", _header.version);
-		debug("_header.flags        %04x\n", _header.flags);
-		debug("_header.numFrames    %d\n", _header.numFrames);
-		debug("_header.width        %d\n", _header.width);
-		debug("_header.height       %d\n", _header.height);
-		debug("_header.blockW       %d\n", _header.blockW);
-		debug("_header.blockH       %d\n", _header.blockH);
-		debug("_header.frameRate    %d\n", _header.frameRate);
-		debug("_header.cbParts      %d\n", _header.cbParts);
-		debug("_header.colors       %d\n", _header.colors);
-		debug("_header.maxBlocks    %d\n", _header.maxBlocks);
-		debug("_header.offsetX      %d\n", _header.offset_x);
-		debug("_header.offsetY      %d\n", _header.offset_y);
-		debug("_header.maxVPTRSize  %d\n", _header.maxVPTRSize);
-		debug("_header.freq         %d\n", _header.freq);
-		debug("_header.channels     %d\n", _header.channels);
-		debug("_header.bits         %d\n", _header.bits);
-		debug("_header.unk3         %d\n", _header.unk3);
-		debug("_header.unk4         %d\n", _header.unk4);
-		debug("_header.maxCBFZSize  %d\n", _header.maxCBFZSize);
-		debug("_header.unk5         %d\n", _header.unk5);
+		debug("_header.version      %d", _header.version);
+		debug("_header.flags        %04x", _header.flags);
+		debug("_header.numFrames    %d", _header.numFrames);
+		debug("_header.width        %d", _header.width);
+		debug("_header.height       %d", _header.height);
+		debug("_header.blockW       %d", _header.blockW);
+		debug("_header.blockH       %d", _header.blockH);
+		debug("_header.frameRate    %d", _header.frameRate);
+		debug("_header.cbParts      %d", _header.cbParts);
+		debug("_header.colors       %d", _header.colors);
+		debug("_header.maxBlocks    %d", _header.maxBlocks);
+		debug("_header.offsetX      %d", _header.offset_x);
+		debug("_header.offsetY      %d", _header.offset_y);
+		debug("_header.maxVPTRSize  %d", _header.maxVPTRSize);
+		debug("_header.freq         %d", _header.freq);
+		debug("_header.channels     %d", _header.channels);
+		debug("_header.bits         %d", _header.bits);
+		debug("_header.unk3         %d", _header.unk3);
+		debug("_header.unk4         %d", _header.unk4);
+		debug("_header.maxCBFZSize  %d", _header.maxCBFZSize);
+		debug("_header.unk5         %d", _header.unk5);
 	}
 
 	// exit(-1);
@@ -289,19 +286,19 @@ bool VQADecoder::readMSCI(uint32 size)
 		{
 		case kVIEW:
 			_maxVIEWChunkSize = size;
-			debug("max VIEW size: %08x\n", _maxVIEWChunkSize);
+			debug("max VIEW size: %08x", _maxVIEWChunkSize);
 			break;
 		case kZBUF:
 			_maxZBUFChunkSize = size;
 			_zbufChunk = new uint8[roundup(_maxZBUFChunkSize)];
-			debug("max ZBUF size: %08x\n", _maxZBUFChunkSize);
+			debug("max ZBUF size: %08x", _maxZBUFChunkSize);
 			break;
 		case kAESC:
 			_maxAESCChunkSize = size;
-			debug("max AESC size: %08x\n", _maxAESCChunkSize);
+			debug("max AESC size: %08x", _maxAESCChunkSize);
 			break;
 		default:
-			debug("Unknown tag in MSCT: %s\n", strTag(tag));
+			debug("Unknown tag in MSCT: %s", strTag(tag));
 		}
 
 		uint32 zero;
@@ -336,7 +333,7 @@ bool VQADecoder::readLINF(uint32 size)
 		_loopInfo.loops[i].begin = _s->readUint16LE();
 		_loopInfo.loops[i].end   = _s->readUint16LE();
 
-		// debug("Loop %d: %04x %04x\n", i, _loopInfo.loops[i].begin, _loopInfo.loops[i].end);
+		// debug("Loop %d: %04x %04x", i, _loopInfo.loops[i].begin, _loopInfo.loops[i].end);
 	}
 
 	return true;
@@ -363,7 +360,7 @@ bool VQADecoder::readCINF(uint32 size)
 		uint32 b;
 		a = _s->readUint16LE();
 		b = _s->readUint32LE();
-		debug("%4d %08x\n", a, b);
+		debug("%4d %08x", a, b);
 	}
 
 	return true;
@@ -384,7 +381,7 @@ bool VQADecoder::readFINF(uint32 size)
 		for (uint32 i = 0; i != _header.numFrames; ++i)
 		{
 			uint32 diff = _frameInfo[i] - last;
-			debug("_frameInfo[%4d] = 0x%08x   - %08x\n", i, _frameInfo[i], diff);
+			debug("_frameInfo[%4d] = 0x%08x   - %08x", i, _frameInfo[i], diff);
 			last = _frameInfo[i];
 		}
 	}
@@ -449,57 +446,24 @@ bool VQADecoder::readMFCI(uint32 size)
 	return true;
 }
 
-int VQADecoder::readFrame()
+bool VQADecoder::readFrame()
 {
-	// debug("VQADecoder::readFrame(): %d, %d, %d, %d\n", _loopDefault, _loopSpecial, _curLoop, _curFrame);
-
-	if (_loopInfo.loopCount)
-	{
-		if (_loopSpecial >= 0)
-		{
-			_curLoop = _loopSpecial;
-			_loopSpecial = -1;
-
-			_curFrame = _loopInfo.loops[_curLoop].begin;
-			seekToFrame(_curFrame);
-		}
-		else if (_curLoop == -1 && _loopDefault >= 0)
-		{
-			_curLoop = _loopDefault;
-			_curFrame = _loopInfo.loops[_curLoop].begin;
-			seekToFrame(_curFrame);
-		}
-		else if (_curLoop >= -1 && _curFrame == _loopInfo.loops[_curLoop].end)
-		{
-			if (_loopDefault == -1)
-				return -1;
-
-			_curLoop = _loopDefault;
-			_curFrame = _loopInfo.loops[_curLoop].begin;
-			seekToFrame(_curFrame);
-		}
-		else
-			++_curFrame;
-	}
-	else
-		++_curFrame;
-
-	if (_curFrame >= _header.numFrames)
-		return -1;
-
 	IFFChunkHeader chd;
+
+	if (!_s)
+		return false;
 
 	_hasView = false;
 
 	if (remain(_s) < 8) {
-		debug("remain: %d\n", remain(_s));
-		return -1;
+		debug("remain: %d", remain(_s));
+		return false;
 	}
 
 	do {
 		if (!readIFFChunkHeader(_s, &chd)) {
-			debug("Error reading chunk header\n");
-			return -1;
+			debug("Error reading chunk header");
+			return false;
 		}
 
 		// debug("%s ", strTag(chd.id));
@@ -522,12 +486,12 @@ int VQADecoder::readFrame()
 
 		if (!rc)
 		{
-			debug("Error handling chunk %s\n", strTag(chd.id));
-			return -1;
+			debug("Error handling chunk %s", strTag(chd.id));
+			return false;
 		}
 	} while (chd.id != kVQFR);
 
-	return _curFrame;
+	return true;
 }
 
 
@@ -551,7 +515,7 @@ bool VQADecoder::readSND2(uint32 size)
 {
 	if (size != 735)
 	{
-		debug("audio frame size: %d\n", size);
+		debug("audio frame size: %d", size);
 		return false;
 	}
 
@@ -592,7 +556,7 @@ bool VQADecoder::readVQFR(uint32 size)
 
 		if (!rc)
 		{
-			debug("VQFR: error handling chunk %s\n", strTag(chd.id));
+			debug("VQFR: error handling chunk %s", strTag(chd.id));
 			return false;
 		}
 	}
@@ -620,7 +584,7 @@ bool VQADecoder::readVQFL(uint32 size)
 
 		if (!rc)
 		{
-			debug("VQFL: error handling chunk %s\n", strTag(chd.id));
+			debug("VQFL: error handling chunk %s", strTag(chd.id));
 			return false;
 		}
 	}
@@ -632,7 +596,7 @@ bool VQADecoder::readCBFZ(uint32 size)
 {
 	if (size > _header.maxCBFZSize)
 	{
-		debug("%d > %d\n", size, _header.maxCBFZSize);
+		debug("%d > %d", size, _header.maxCBFZSize);
 		return false;
 	}
 
@@ -698,7 +662,7 @@ int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen)
 bool VQADecoder::readZBUF(uint32 size)
 {
 	if (size > _maxZBUFChunkSize) {
-		debug("VQA ERROR: ZBUF chunk size: %08x > %08x\n", size, _maxZBUFChunkSize);
+		debug("VQA ERROR: ZBUF chunk size: %08x > %08x", size, _maxZBUFChunkSize);
 		_s->skip(roundup(size));
 		return false;
 	}
@@ -713,7 +677,7 @@ bool VQADecoder::readZBUF(uint32 size)
 
 	if (width != _header.width || height != _header.height)
 	{
-		debug("%d, %d, %d, %d\n", width, height, complete, unk0);
+		debug("%d, %d, %d, %d", width, height, complete, unk0);
 		_s->skip(roundup(remain));
 		return false;
 	}
@@ -828,18 +792,6 @@ void VQADecoder::VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned i
 	while (--count);
 }
 
-void VQADecoder::setLoopSpecial(int loop, bool wait)
-{
-	_loopSpecial = loop;
-	if (!wait)
-		_curLoop = -1;
-}
-
-void VQADecoder::setLoopDefault(int loop)
-{
-	_loopDefault = loop;
-}
-
 bool VQADecoder::seekToFrame(int frame)
 {
 	if (frame < 0 || frame >= _header.numFrames)
@@ -913,7 +865,7 @@ bool VQADecoder::decodeFrame(uint16 *frame)
 			dstBlock += count;
 			break;
 		default:
-			debug("Undefined case %d\n", command >> 13);
+			debug("Undefined case %d", command >> 13);
 		}
 	}
 
