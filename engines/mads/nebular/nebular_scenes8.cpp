@@ -300,6 +300,214 @@ void Scene801::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene802::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(0x137);
+	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(0x123);
+}
+
+void Scene802::enter() {
+	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_8");
+	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 2));
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 0));
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('f', 1));
+	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RXMBD_8");
+	_globals[kBetweenRooms] = false;
+
+	if ((_globals[kCameFromCut]) && (_globals[kCutX] != 0)) {
+		_game._player._playerPos.x = _globals[kCutX];
+		_game._player._playerPos.y = _globals[kCutY];
+		_game._player._facing = (Facing)_globals[kCutFacing];
+		_globals[kCutX] = 0; 
+		_globals[kCameFromCut] = false;
+		_globals[kReturnFromCut] = false;
+		_globals[kBeamIsUp] = false;
+		_globals[kForceBeamDown] = false;
+		_globals[kDontRepeat] = false;
+		_globals[kAntigravClock] = _scene->_frameStartTime;
+	} else if (_scene->_priorSceneId == 801) {
+		_game._player._playerPos = Common::Point(15, 129);
+		_game._player._facing = FACING_EAST;
+	} else if (_scene->_priorSceneId == 803) {
+		_game._player._playerPos = Common::Point(303, 119);
+		_game._player._facing = FACING_WEST;
+
+	} else if (_scene->_priorSceneId != -2) {
+		_game._player._playerPos = Common::Point(15, 129); 
+		_game._player._facing = FACING_EAST; 
+	}
+
+	_game._player._visible = true;
+
+
+
+	if (_globals[kHasWatchedAntigrav] && !_globals[kRemoteSequenceRan]) {
+		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		_scene->_sequences.addTimer(200, 70);
+	}
+
+	if ((_globals[kRemoteOnGround]) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
+		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
+		int idx = _scene->_dynamicHotspots.add(0x123, 0xD,_globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
+	}
+
+	if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]) {
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
+		int idx = _scene->_dynamicHotspots.add(0x137, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(93, 97), FACING_NORTH);
+	}
+	sceneEntrySound();
+}
+
+void Scene802::step() {
+	if (_game._trigger == 70) {
+		_game._player._stepEnabled = false;
+		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 19);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 4, 72);
+	}
+
+	if (_game._trigger == 71) {
+		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
+		int idx = _scene->_dynamicHotspots.add(0x123, 0xD, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
+
+		_globals[kRemoteSequenceRan] = true;
+		_globals[kRemoteOnGround] = true;
+		_game._player._stepEnabled = true;
+	}
+
+	if (_game._trigger == 72)
+		_vm->_sound->command(13);
+}
+
+void Scene802::preActions() {
+	if (_action.isAction(0x18C, 0x393))
+		_game._player._walkOffScreenSceneId = 801;
+
+	if (_action.isAction(0x1AD, 0x1C1)) {
+		_game._player._walkOffScreenSceneId = 803;
+		_globals[kForceBeamDown] = false;
+	}
+
+	if (_action.isAction(VERB_TAKE, 0x139))
+		_game._player._needToWalk = false;
+}
+
+void Scene802::actions() {
+	if (_action.isAction(VERB_TAKE, 0x137) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
+		switch (_game._trigger) {
+		case (0):
+			_game._player._stepEnabled = false;
+			_game._player._visible = false; 
+			_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], true, 7, 2, 0, 0);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			break;
+
+		case 1:
+			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
+			_vm->_sound->command(9);
+			break;
+
+		case 2:
+			_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
+			_game._player._visible = true;
+			_scene->_sequences.addTimer(20, 3);
+			break; 
+
+		case 3:
+			_game._player._stepEnabled = true;
+			_game._objects.addToInventory(OBJ_SHIELD_MODULATOR);
+			_vm->_dialogs->showItem(OBJ_SHIELD_MODULATOR, 80215);
+			break;
+
+		default:
+			break;
+		}
+	} else if ((_action.isAction(VERB_TAKE, 0x123)) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
+		switch (_game._trigger) {
+		case (0):
+			_game._player._stepEnabled = false;
+			_game._player._visible = false; 
+			_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], true, 7, 2, 0, 0);
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 4);
+			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 4, 1);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			break;
+
+		case 1:
+			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+			_vm->_sound->command(9);
+			_globals[kRemoteOnGround] = false;
+			break;
+
+		case 2:
+			_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
+			_game._player._visible = true;
+			_scene->_sequences.addTimer(20, 3);
+			break; 
+
+		case 3:
+			_game._player._stepEnabled = true;
+			_game._objects.addToInventory(OBJ_REMOTE);
+			_vm->_dialogs->showItem(OBJ_REMOTE, 80223);
+			break;
+
+		default:
+			break;
+		}
+	} else if (!_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
+		&& (_action.isAction(VERB_LOOK, 0x392) || _action._lookFlag))
+		_vm->_dialogs->show(80210);
+	else if (!_globals[kRemoteOnGround]&& !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
+		&& (_action.isAction(VERB_LOOK, 0x392) || _action._lookFlag))
+		_vm->_dialogs->show(80211);
+	else if (_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
+		&& (_action.isAction(VERB_LOOK, 0x392) || _action._lookFlag))
+		_vm->_dialogs->show(80213);
+	else if (_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled]) 
+		&& (_action.isAction(VERB_LOOK, 0x392) || _action._lookFlag))
+		_vm->_dialogs->show(80212);
+	else if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && _action.isAction(VERB_LOOK, 0x137))
+		_vm->_dialogs->show(80214);
+	else if (_globals[kRemoteOnGround] && _action.isAction(VERB_LOOK, 0x123))
+		_vm->_dialogs->show(80216);
+	else if (_action.isAction(VERB_LOOK, 0x139)) {
+		if ((!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) && (!_globals[kShieldModInstalled]))
+			_vm->_dialogs->show(80218);
+		else
+			_vm->_dialogs->show(80217);
+	} else if (_action.isAction(VERB_LOOK, 0x39))
+		_vm->_dialogs->show(80219);
+	else if (_action.isAction(VERB_LOOK, 0x1C1))
+		_vm->_dialogs->show(80220);
+	else if (_action.isAction(VERB_LOOK, 0x142))
+		_vm->_dialogs->show(80221);
+	else if (_action.isAction(VERB_TAKE, 0x139))
+		_vm->_dialogs->show(80222);
+	else if (_action.isAction(VERB_LOOK, 0x174) || _action.isAction(VERB_LOOK, 0x175))
+		_vm->_dialogs->show(80224);
+	else if (_action.isAction(VERB_LOOK, 0x393))
+		_vm->_dialogs->show(80225);
+	else
+		return;
+
+	_action._inProgress = false;
+}
+
+/*------------------------------------------------------------------------*/
+
 void Scene804::setup() {
 	Scene8xx::setPlayerSpritesPrefix();
 	Scene8xx::setAAName();

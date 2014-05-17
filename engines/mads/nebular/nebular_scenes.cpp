@@ -277,7 +277,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 801:	// control room, outside teleporter
 		return new Scene801(vm);
 	case 802:	// launch pad with destroyed ship
-		return new DummyScene(vm);	// TODO
+		return new Scene802(vm);
 	case 803:	// empty launch pad
 		return new DummyScene(vm);	// TODO
 	case 804:	// inside Rex's ship - cockpit
