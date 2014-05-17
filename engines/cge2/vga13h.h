@@ -35,6 +35,7 @@
 #include "cge2/bitmap.h"
 #include "cge2/snail.h"
 #include "cge2/cge2.h"
+#include "cge2/spare.h"
 
 namespace CGE2 {
 
@@ -132,7 +133,7 @@ public:
 	int LabVal(Action snq, int lab);
 	Sprite *expand();
 	Sprite *contract();
-	Sprite *backShow(bool fast = false);
+	void backShow(void);
 	void setName(char *newName);
 	inline char *name() {
 		return (_ext) ? _ext->_name : NULL;

@@ -313,9 +313,11 @@ Sprite *Sprite::contract() {
 	return this;
 }
 
-Sprite *Sprite::backShow(bool fast) {
-	warning("STUB: Sprite::backShow()");
-	return this;
+void Sprite::backShow(void) {
+	expand();
+	show(2);
+	show(1);
+	_vm->_spare->dispose(this);
 }
 
 void Sprite::step(int nr) {
