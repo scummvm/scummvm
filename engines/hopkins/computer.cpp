@@ -345,6 +345,7 @@ static const char _spanishText[] =
  * Load Menu data
  */
 void ComputerManager::loadMenu() {
+	debug(9, "ComputerManager::loadMenu()");
 	char *ptr;
 	if (_vm->_fileIO->fileExists("COMPUTAN.TXT")) {
 		ptr = (char *)_vm->_fileIO->loadFile("COMPUTAN.TXT");
@@ -368,17 +369,19 @@ void ComputerManager::loadMenu() {
 	char *tmpPtr = ptr;
 	int lineNum = 0;
 
+	const char lineSep = tmpPtr[0];
+
 	while (tmpPtr[0] != '\0' && lineNum < ARRAYSIZE(_menuText)) {
 		if (tmpPtr[0] == '%' && tmpPtr[1] == '%') {
 			// End of file marker found - Break out of parse loop
 			break;
 		}
 
-		if (tmpPtr[0] == '%') {
+		if (tmpPtr[0] == lineSep) {
 			int strPos = 0;
 			while (strPos < ARRAYSIZE(_menuText[0]._line)) {
 				char curChar = tmpPtr[strPos + 2];
-				if (curChar == '\0' || curChar == '%' || curChar == 0x0a) // Line Feed
+				if (curChar == '\0' || curChar == lineSep || curChar == 0x0a) // Line Feed
 					break;
 				_menuText[lineNum]._line[strPos++] = curChar;
 			}
@@ -388,7 +391,10 @@ void ComputerManager::loadMenu() {
 				_menuText[lineNum]._lineSize = strPos - 1;
 			}
 
-			++lineNum;
+			if (strPos != 0) {
+				debug(9, "_menuText[%d]._line (size: %d): \"%s\"", lineNum, _menuText[lineNum]._lineSize, _menuText[lineNum]._line);
+				++lineNum;
+			}
 		}
 		++tmpPtr;
 	}
