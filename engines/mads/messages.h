@@ -34,6 +34,7 @@ namespace MADS {
 #define KERNEL_MESSAGES_SIZE 10
 #define INDEFINITE_TIMEOUT 9999999
 #define TEXT_DISPLAY_SIZE 40
+#define RANDOM_MESSAGE_SIZE 4
 
 enum KernelMessageFlags {
 	KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8,
@@ -67,9 +68,19 @@ public:
 class KernelMessages {
 private:
 	MADSEngine *_vm;
+
+	struct RandomEntry {
+		int _handle;
+		int _quote;
+	};
+	RandomEntry _randomMessages[RANDOM_MESSAGE_SIZE];
+	int _randomMaxMessages;
+
+	void resetRandomMessages();
 public:
 	Common::Array<KernelMessage> _entries;
 	Font *_talkFont;
+public:	
 	KernelMessages(MADSEngine *vm);
 	~KernelMessages();
 
@@ -85,6 +96,25 @@ public:
 	void processText(int msgIndex);
 	void delay(uint32 priorFrameTime, uint32 currentTime);
 	void setQuoted(int msgIndex, int numTicks, bool quoted);
+
+	void initRandomMessages(int maxSimultaneousMessages,
+		const Common::Rect &bounds, int minYSpacing, int scrollRate,
+		int color, int duration, int quoteId, ...);
+
+	/**
+	 * Handles expiring any active random messages as necessary
+	 */
+	void randomServer();
+
+	/**
+	 * Return the number of currently active random messages
+	 */
+	int checkRandom();
+
+	/**
+	 * Handles generating new random messages
+	 */
+	bool generateRandom(int major, int minor);
 };
 
 class TextDisplay {

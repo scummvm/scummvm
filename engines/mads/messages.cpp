@@ -36,6 +36,9 @@ KernelMessages::KernelMessages(MADSEngine *vm): _vm(vm) {
 	}
 
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
+
+	_randomMaxMessages = 0;
+	resetRandomMessages();
 }
 
 KernelMessages::~KernelMessages() {
@@ -138,7 +141,7 @@ void KernelMessages::reset() {
 		remove(i);
 
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
-	warning("TODO: KernelMessages::reset - sub_20454");
+	resetRandomMessages();
 }
 
 void KernelMessages::update() {
@@ -302,6 +305,46 @@ void KernelMessages::setQuoted(int msgIndex, int numTicks, bool quoted) {
 		msg._frameTimer = msg._frameTimer2;
 	}
 }
+
+void KernelMessages::resetRandomMessages() {
+	for (int i = 0; i < RANDOM_MESSAGE_SIZE; ++i) {
+		_randomMessages[i]._handle = -1;
+		_randomMessages[i]._quote = -1;
+	}
+}
+
+#define RANDOM_MESSAGE_TRIGGER 240
+
+void KernelMessages::randomServer() {
+	if ((_vm->_game->_trigger >= RANDOM_MESSAGE_TRIGGER) &&
+		(_vm->_game->_trigger <  (RANDOM_MESSAGE_TRIGGER + _randomMaxMessages))) {
+		_randomMessages[_vm->_game->_trigger - RANDOM_MESSAGE_TRIGGER]._handle = -1;
+		_randomMessages[_vm->_game->_trigger - RANDOM_MESSAGE_TRIGGER]._quote = -1;
+	}
+}
+
+int KernelMessages::checkRandom() {
+	int total = 0;
+
+	for (int i = 0; i < _randomMaxMessages; ++i) {
+		if (_randomMessages[i]._handle >= 0)
+			++total;
+	}
+	
+	return total;
+}
+
+bool KernelMessages::generateRandom(int major, int minor) {
+	// TODO
+	return false;
+}
+
+void KernelMessages::initRandomMessages(int maxSimultaneousMessages,
+		const Common::Rect &bounds, int minYSpacing, int scrollRate,
+		int color, int duration, int quoteId, ...) {
+	// TODO
+}
+
 
 /*------------------------------------------------------------------------*/
 

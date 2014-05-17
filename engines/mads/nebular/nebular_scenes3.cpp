@@ -5536,7 +5536,9 @@ void Scene389::enter() {
 	else {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', -1));
 		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
-		warning("TODO: sub71704(1, 88, 177, 19, 17, 0xD, 2, 0xFDFC, 0x3C, 0xF7, 0xF8, 0xF9, 0);");
+		_scene->_kernelMessages.initRandomMessages(1,
+			Common::Rect(88, 19, 177, 77), 13, 2, 0xFDFC, 60,
+			247, 248, 249, 0);
 	}
 
 	_vm->_palette->setEntry(252, 63, 37, 26);
@@ -5548,10 +5550,13 @@ void Scene389::enter() {
 }
 
 void Scene389::step() {
-	warning("TODO: sub7178C()");
-
+	int chanceMajor, chanceMinor;
+	
+	_scene->_kernelMessages.randomServer();
 	if (_scene->_frameStartTime >= _monsterTime) {
-		warning("sub717B2(20, (sub7176C() << 2) + 1);");
+		chanceMajor = 20;
+		chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
+		_scene->_kernelMessages.generateRandom(chanceMajor, chanceMinor);
 		_monsterTime = _scene->_frameStartTime + 2;
 	}
 }

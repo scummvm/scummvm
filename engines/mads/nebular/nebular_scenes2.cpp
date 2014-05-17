@@ -1174,7 +1174,9 @@ void Scene205::enter() {
 	_chickenTime = _vm->_game->_scene._frameStartTime;
 
 	if (_globals[kSexOfRex] == SEX_FEMALE)
-		warning("sub71704(0x3, 0xC3, 0x108, 0x63, 0x86, 0xD, 2, 0xFDFC, 0x3C, 0x6C, 0x6C, 0x6D, 0x6D, 0x6E, 0x6E, 0x6F, 0x6C, 0);");
+		_scene->_kernelMessages.initRandomMessages(3,
+			Common::Rect(195, 99, 264, 134), 13, 2, 0xFDFC, 60,
+			108, 108, 109, 109, 110, 110, 111, 108, 0);
 
 	if (_scene->_priorSceneId != -2)
 		_game._player._playerPos = Common::Point(99, 152);
@@ -1196,13 +1198,18 @@ void Scene205::enter() {
 }
 
 void Scene205::step() {
+	int chanceMajor, chanceMinor;
+
 	if (_globals[kSexOfRex] == SEX_FEMALE) {
-		warning("TODO: sub7178C()");
+		_scene->_kernelMessages.randomServer();
 
 		if (_vm->_game->_scene._frameStartTime >= _chickenTime) {
-			warning("TODO: if (sub717B2(100, 1 + sub7176C())) {");
-			_vm->_sound->command(28);
-			//	 }
+			chanceMajor = 100;
+			chanceMinor = _scene->_kernelMessages.checkRandom() + 1;
+
+			if (_scene->_kernelMessages.generateRandom(chanceMajor, chanceMinor))
+				_vm->_sound->command(28);
+
 			_chickenTime = _vm->_game->_scene._frameStartTime + 2;
 		}
 	}
@@ -4553,7 +4560,9 @@ void Scene211::enter() {
 	_game.loadQuoteSet(0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 1, 0);
 
 	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY)
-		warning("sub71704(0x2, 0x0, 0x36, 0x0, 0x1E, 0xD, 2, 0xFDFC, 0x3C, 0x97, 0x98, 0x99, 0x9A, 0);");
+		_scene->_kernelMessages.initRandomMessages(2,
+			Common::Rect(0, 0, 54, 30), 13, 2, 0xFDFC, 60,
+			151, 152, 153, 154, 0);
 
 	_monkeyTime = _vm->_game->_scene._frameStartTime;
 	_scrollY = 30;
@@ -4565,13 +4574,18 @@ void Scene211::enter() {
 }
 
 void Scene211::step() {
+	int chanceMajor, chanceMinor;
+
 	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
-		warning("TODO: sub7178C()");
+		_scene->_kernelMessages.randomServer();
 
 		if (!_ambushFl && !_wakeFl && (_vm->_game->_scene._frameStartTime >= _monkeyTime)) {
-			warning("if (sub717B2(80, 1 + sub7176C())) {");
+			chanceMajor = 80;
+			chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
+
+			if (_scene->_kernelMessages.generateRandom(chanceMajor, chanceMinor))
 				_vm->_sound->command(18);
-			// }
+
 			_monkeyTime = _vm->_game->_scene._frameStartTime + 2;
 		}
 
