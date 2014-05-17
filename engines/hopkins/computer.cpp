@@ -392,7 +392,7 @@ void ComputerManager::loadMenu() {
 			++lineNum;
 		}
 		++tmpPtr;
-	} while (!loopCond);
+	} while (!loopCond && tmpPtr[0] != '\0' && lineNum < 50);
 	_vm->_globals->freeMemory((byte *)ptr);
 }
 
