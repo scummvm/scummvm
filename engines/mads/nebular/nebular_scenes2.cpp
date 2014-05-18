@@ -1340,7 +1340,7 @@ void Scene205::actions() {
 			_vm->_sound->command(27);
 		} else if (_game._trigger == 1) {
 			if (_scene->_activeAnimation != nullptr)
-				warning("scene->_activeAnimation._spriteSetsCount = 0;");
+				_scene->_activeAnimation->resetSpriteSetsCount();
 
 			_vm->_dialogs->show(20516);
 			_scene->_reloadSceneFlag = true;
