@@ -515,7 +515,7 @@ MovGraphItem::MovGraphItem() {
 	field_1C = 0;
 	field_20 = 0;
 	field_24 = 0;
-	items = 0;
+	movitems = 0;
 	count = 0;
 	field_30 = 0;
 	field_34 = 0;
@@ -529,23 +529,19 @@ void MovGraphItem::free() {
 
 int MovGraph_messageHandler(ExCommand *cmd);
 
-MovArr *movGraphCallback(StaticANIObject *ani, MovItem *item, signed int counter) {
-#if 0
-MovArr *movGraphCallback(StaticANIObject *ani, Common:Array<MovItem *> items, int itemidx, signed int counter) {
-
-	int residx = itemidx;
+Common::Array<MovArr *> *movGraphCallback(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter) {
+	int residx = 0;
+	int itemidx = 0;
 
 	while (counter > 1) {
-		if (items[itemidx]._mfield_4 > items[itemidx + 1]._mfield_4)
+		if ((*items)[itemidx]->_mfield_4 > (*items)[itemidx + 1]->_mfield_4)
 			residx = itemidx;
 
 		counter--;
 		itemidx++;
 	}
 
-	return items[residx].movarr;
-#endif
-	return 0;
+	return (*items)[residx]->movarr;
 }
 
 MovGraph::MovGraph() {
@@ -604,8 +600,7 @@ void MovGraph::freeItems() {
 
 	_items.clear();
 }
-
-MovItem *MovGraph::method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) {
+Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) {
 	warning("STUB: MovGraph::method28()");
 
 	return 0;
@@ -642,14 +637,14 @@ bool MovGraph::method44(StaticANIObject *ani, int x, int y) {
 		if (x != -1 || y != -1) {
 			int counter;
 
-			MovItem *movitem = method28(ani, x, y, 0, &counter);
+			Common::Array<MovItem *> *movitem = method28(ani, x, y, 0, &counter);
 
 			if (movitem) {
-				MovArr *movarr = _callback1(ani, movitem, counter);
-				int cnt = movarr->_movStepCount;
+				Common::Array<MovArr *> *movarr = _callback1(ani, movitem, counter);
+				int cnt = (*movarr)[0]->_movStepCount;
 
 				if (cnt > 0) {
-					if (movarr->_movSteps[cnt - 1].link->_flags & 0x4000000)
+					if ((*movarr)[0]->_movSteps[cnt - 1].link->_flags & 0x4000000)
 						return true;
 				}
 			}
@@ -665,16 +660,16 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 	PicAniInfo picAniInfo;
 	int ss;
 
-	MovItem *movitem = method28(subj, xpos, ypos, fuzzyMatch, &ss);
+	Common::Array<MovItem *> *movitem = method28(subj, xpos, ypos, fuzzyMatch, &ss);
 
 	subj->getPicAniInfo(&picAniInfo);
 
 	if (movitem) {
-		MovArr *goal = _callback1(subj, movitem, ss);
+		Common::Array<MovArr *> *goal = _callback1(subj, movitem, ss);
 		int idx = getItemIndexByStaticAni(subj);
 
 		for (uint i = 0; i < _items[idx]->count; i++) {
-			if ((*_items[idx]->items[i].movarr)[0] == goal) {
+			if (_items[idx]->movitems->operator[](i)->movarr == goal) {
 				if (subj->_movement) {
 					Common::Point point;
 
@@ -698,13 +693,13 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 
 	movitem = method28(subj, xpos, ypos, fuzzyMatch, &ss);
 	if (movitem) {
-		MovArr *goal = _callback1(subj, movitem, ss);
+		Common::Array<MovArr *> *goal = _callback1(subj, movitem, ss);
 		int idx = getItemIndexByStaticAni(subj);
 
 		if (_items[idx]->count > 0) {
 			int arridx = 0;
 
-			while ((*_items[idx]->items[arridx].movarr)[0] != goal) {
+			while (_items[idx]->movitems->operator[](arridx)->movarr != goal) {
 				arridx++;
 
 				if (arridx >= _items[idx]->count) {
@@ -715,10 +710,10 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 
 			_items[idx]->movarr->clear();
 
-			for (uint i = 0; i < (*_items[idx]->items[arridx].movarr)[i]->_movStepCount; i++) {
+			for (uint i = 0; i < (*_items[idx]->movitems->operator[](arridx)->movarr)[i]->_movStepCount; i++) {
 				MovArr *m = new MovArr;
 
-				*m = *(*_items[idx]->items[arridx].movarr)[i];
+				*m = *(*_items[idx]->movitems->operator[](arridx)->movarr)[i];
 			}
 
 			_items[idx]->field_10 = -1;

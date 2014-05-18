@@ -53,7 +53,7 @@ public:
 	virtual void addObject(StaticANIObject *obj) {}
 	virtual int removeObject(StaticANIObject *obj) { return 0; }
 	virtual void freeItems() {}
-	virtual MovItem *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) { return 0; }
+	virtual Common::Array<MovItem *> *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) { return 0; }
 	virtual int method2C(StaticANIObject *obj, int x, int y) { return 0; }
 	virtual int method30() { return 0; }
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
@@ -332,7 +332,7 @@ struct MovGraphItem {
 	int field_1C;
 	int field_20;
 	int field_24;
-	MovItem *items;
+	Common::Array<MovItem *> *movitems;
 	int count;
 	int field_30;
 	int field_34;
@@ -349,7 +349,7 @@ public:
 	ObList _links;
 	int _field_44;
 	Common::Array<MovGraphItem *> _items;
-	MovArr *(*_callback1)(StaticANIObject *ani, MovItem *item, int counter);
+	Common::Array<MovArr *> *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter);
 	MGM _mgm;
 
 public:
@@ -361,7 +361,7 @@ public:
 	virtual void addObject(StaticANIObject *obj);
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
-	virtual MovItem *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount);
+	virtual Common::Array<MovItem *> *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount);
 	virtual int method2C(StaticANIObject *obj, int x, int y);
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual int changeCallback();
