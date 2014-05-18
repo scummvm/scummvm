@@ -103,7 +103,7 @@ void Scene701::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 5));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', 0));
-	//_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));	// FIXME: Broken sprite?
+//	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));	// TODO: FIXME: Broken sprite?
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RM202A1");
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 8));
 
@@ -156,15 +156,15 @@ void Scene701::enter() {
 		break;
 	}
 
-	// TODO: Enable once sprite 3 can be loaded properly
-	/*
+// TODO: Enable once sprite 3 can be loaded properly
+/*
 	if (_globals[kLineStatus] == LINE_DROPPED || _globals[kLineStatus] == LINE_TIED) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
 	}
-	*/
+*/
 
 	if (_scene->_priorSceneId == 702) {
 		_game._player._playerPos = Common::Point(309, 138);
@@ -203,11 +203,13 @@ void Scene701::step() {
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		break;
+
 	case 61:
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
 		_game._player._visible = true;
 		_game._player._stepEnabled = true;
 		break;
+
 	case 70:
 		_vm->_sound->command(16);
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -216,10 +218,12 @@ void Scene701::step() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		break;
+
 	case 71:
 		_game._player.walk(Common::Point(61, 131), FACING_EAST);
 		_scene->_sequences.addTimer(2 * 60, 72);
 		break;
+
 	case 72:
 		_vm->_sound->command(17);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
@@ -227,14 +231,16 @@ void Scene701::step() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 		break;
+
 	case 73:
 		_game._player._stepEnabled = true;
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1); 
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_kernelMessages.reset();
 		break;
-	case 80:
+
+	case 80: {
 		_game._player._visible = true;
 		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
@@ -243,28 +249,29 @@ void Scene701::step() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTH);
 		_globals[kBoatStatus] = BOAT_TIED;
 		_game._player._stepEnabled = true;
+		}
+		break;
+
+	default:
 		break;
 	}
 }
 
 void Scene701::preActions() {
-	if (_action.isAction(VERB_WALKTO, NOUN_EAST_END_OF_PLATFORM)) {
+	if (_action.isAction(VERB_WALKTO, NOUN_EAST_END_OF_PLATFORM))
 		_game._player._walkOffScreenSceneId = 702;
-	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_BUILDING)) {
+	if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTHEAST);
-	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING)) {
+	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTH);
-	}
 }
 
 void Scene701::actions() {
 	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
 		return;
-	
+
 	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING) && _game._objects[OBJ_VASE]._roomNumber == 706) {
 		switch (_game._trigger) {
 		case 0:
@@ -274,6 +281,7 @@ void Scene701::actions() {
 			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
+
 		case 1: {
 			int temp = _globals._sequenceIndexes[5];
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
@@ -282,8 +290,12 @@ void Scene701::actions() {
 			_scene->_sequences.addTimer(15, 2);
 			}
 			break;
+
 		case 2:
 			_scene->_nextSceneId = 710;
+			break;
+
+		default:
 			break;
 		}
 	} else if (_action.isAction(VERB_STEP_INTO, NOUN_ELEVATOR)) {
@@ -299,10 +311,12 @@ void Scene701::actions() {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x310, 34, 0, 120, _game.getQuote(0x30D));
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
+
 		case 1:
 			_game._player.walk(Common::Point(22, 131), FACING_EAST);
 			_scene->_sequences.addTimer(2 * 60, 3);
 			break;
+
 		case 3:
 			_vm->_sound->command(17);
 			_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
@@ -310,12 +324,16 @@ void Scene701::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 			break;
+
 		case 4:
-			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1); 
+			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_globals[kResurrectRoom] = 701;
 			_scene->_nextSceneId = 605;
+			break;
+
+		default:
 			break;
 		}
 	} else if ((_action.isAction(VERB_PULL, NOUN_BOAT) || _action.isAction(VERB_TAKE, NOUN_BOAT) ||
@@ -324,21 +342,43 @@ void Scene701::actions() {
 		if (_globals[kBoatStatus] == BOAT_TIED_FLOATING) {
 			switch (_game._trigger) {
 			case 0:
-				// TODO
+				_game._player._stepEnabled = false;
+				_scene->_sequences.remove(_globals._sequenceIndexes[4]);
+				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+				_scene->_dynamicHotspots.remove(_fishingLineId);
+				_scene->_hotspots.activate(NOUN_BOAT, false);
+				_game._player._visible = false;
+				_scene->loadAnimation(formAnimName('E', -1), 1);
 				break;
-			case 1:
-				// TODO
+
+			case 1: {
+				_game._player._visible = true;
+				_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
+				_scene->_sequences.setDepth (_globals._sequenceIndexes[2], 9);
+				int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_CLIMB_INTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+				_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
+				_scene->_sequences.addTimer(15, 2);
+				}
 				break;
+
 			case 2:
 				_globals[kBoatStatus] = BOAT_TIED;
 				_globals[kLineStatus] = LINE_NOW_UNTIED;
 				_game._player._stepEnabled = true;
 				break;
+
+			default:
+				break;
 			}
 		} else if (_globals[kBoatStatus] == BOAT_TIED) {
 			_vm->_dialogs->show(70125);
 		} else if (_globals[kLineStatus] == LINE_DROPPED) {
-			// TODO
+			_globals[kLineStatus] = LINE_NOW_UNTIED;
+			_game._objects.addToInventory(OBJ_FISHING_LINE);
+			_vm->_sound->command(15);
+			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
+			_vm->_dialogs->showItem(OBJ_FISHING_LINE, 70126);
 		} else {
 			_vm->_dialogs->show(70127);
 		}
@@ -350,8 +390,12 @@ void Scene701::actions() {
 			_game._player._visible = false;
 			_scene->loadAnimation(formAnimName('B', 0), 1);
 			break;
+
 		case 1:
 			_scene->_nextSceneId = 703;
+			break;
+
+		default:
 			break;
 		}
 	} else if (_action._lookFlag) {
@@ -360,39 +404,40 @@ void Scene701::actions() {
 				_vm->_dialogs->show(70128);
 			else
 				_vm->_dialogs->show(70110);
-		} else {
+		} else
 			_vm->_dialogs->show(70111);
-		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY))
 		_vm->_dialogs->show(70112);
-	} else if (_action.isAction(VERB_LOOK, 0)) {
+	else if (_action.isAction(VERB_LOOK, 0))
 		_vm->_dialogs->show(70113);
-	} else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
 		_vm->_dialogs->show(70114);
-	} else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_PYLON)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_PYLON))
 		_vm->_dialogs->show(70115);
-	} else if (_action.isAction(VERB_LOOK, NOUN_HOOK)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_HOOK)) {
 		if (_globals[kLineStatus] == LINE_NOT_DROPPED || _globals[kLineStatus] == LINE_NOW_UNTIED)
 			_vm->_dialogs->show(70116);
 		else
 			_vm->_dialogs->show(70117);
-	} else if (_action.isAction(VERB_LOOK, NOUN_ROCK)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_ROCK))
 		_vm->_dialogs->show(70118);
-	} else if (_action.isAction(VERB_TAKE, NOUN_ROCK)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_ROCK))
 		_vm->_dialogs->show(70119);
-	} else if (_action.isAction(VERB_LOOK, NOUN_EAST_END_OF_PLATFORM)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_EAST_END_OF_PLATFORM))
 		_vm->_dialogs->show(70120);
-	} else if (_action.isAction(VERB_LOOK, NOUN_BUILDING)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
 		_vm->_dialogs->show(70121);
-	} else if (_action.isAction(VERB_LOOK, NOUN_BOAT)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_BOAT)) {
 		if (_globals[kBoatStatus] == BOAT_ADRIFT || _globals[kBoatStatus] == BOAT_TIED_FLOATING)
 			_vm->_dialogs->show(70122);
 		else
 			_vm->_dialogs->show(70123);
-	} else if (_action.isAction(VERB_CAST, NOUN_FISHING_ROD, NOUN_BOAT)) {
-		if (_game._objects.isInInventory(OBJ_FISHING_LINE))
-			_vm->_dialogs->show(70124);
-	}
+	} else if (_action.isAction(VERB_CAST, NOUN_FISHING_ROD, NOUN_BOAT) && _game._objects.isInInventory(OBJ_FISHING_LINE))
+		_vm->_dialogs->show(70124);
+	else
+		return;
+
+	_action._inProgress = false;
 }
 
 /*------------------------------------------------------------------------*/
@@ -1812,13 +1857,13 @@ void Scene706::actions() {
 		_action._inProgress = false;
 		return;
 	}
-	
+
 	if (_action.isAction(0x298, 0x2FA)) {
 		_scene->_nextSceneId = 705;
 		_action._inProgress = false;
 		return;
 	}
-	
+
 	if (_action.isAction(VERB_TAKE, 0x17D)) {
 		if (_game._difficulty != DIFFICULTY_EASY) {
 			_animationMode = 1;
@@ -1830,7 +1875,7 @@ void Scene706::actions() {
 		_action._inProgress = false;
 		return;
 	}
-	
+
 	if (_action.isAction(VERB_PUT, 0x2E, 0x344)) {
 		if ((_globals[kBottleStatus] == 2 && _game._difficulty == DIFFICULTY_HARD) ||
 			 (_globals[kBottleStatus] != 0 && _game._difficulty != DIFFICULTY_HARD)) {
@@ -1847,7 +1892,7 @@ void Scene706::actions() {
 			return;
 		}
 	}
-	
+
 	if (_action.isAction(VERB_PUT, 0x344) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		int objectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if (_game._objects[objectId].hasQuality(10))
@@ -2083,7 +2128,7 @@ void Scene751::enter() {
 	} else if (_rexHandingLine) {
 		_game._player._visible = false;
 		_game._player._playerPos = Common::Point(268, 140);
-		_game._player._facing = FACING_NORTHWEST; 
+		_game._player._facing = FACING_NORTHWEST;
 		_game._player._visible = false;
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 7);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
@@ -2140,7 +2185,7 @@ void Scene751::step() {
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
-		break; 
+		break;
 
 	case 61:
 		_game._player.walk(Common::Point(61, 131), FACING_EAST);
@@ -2153,10 +2198,10 @@ void Scene751::step() {
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
-		break; 
+		break;
 
 	case 63:
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1); 
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_game._player._stepEnabled = true;
@@ -2201,12 +2246,12 @@ void Scene751::preActions() {
 			_game._player._visible = true;
 			_rexHandingLine = false;
 			_game._player._stepEnabled = true;
-			_game._player._readyToWalk = true; 
+			_game._player._readyToWalk = true;
 			break;
 
 		default:
 			break;
-		} 
+		}
 	}
 }
 
@@ -2239,7 +2284,7 @@ void Scene751::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(0x2F9, 0x317)) { 
+	} else if (_action.isAction(0x2F9, 0x317)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -2254,7 +2299,7 @@ void Scene751::actions() {
 			break;
 
 		case 1:
-			_game._player.walk(Common::Point(22, 131), FACING_EAST); 
+			_game._player.walk(Common::Point(22, 131), FACING_EAST);
 			_scene->_sequences.addTimer(120, 3);
 			break;
 
@@ -2267,7 +2312,7 @@ void Scene751::actions() {
 			break;
 
 		case 4:
-			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1); 
+			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_scene->_sequences.addTimer(60, 5);
@@ -2337,7 +2382,7 @@ void Scene751::actions() {
 		_vm->_dialogs->show(75113);
 	else if (_action.isAction(VERB_LOOK, 0x316))
 		_vm->_dialogs->show(75114);
-	else if ((_action.isAction(VERB_LOOK, 0x467) || _action.isAction(VERB_LOOK, 0x87)) 
+	else if ((_action.isAction(VERB_LOOK, 0x467) || _action.isAction(VERB_LOOK, 0x87))
 		&& (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3))
 		_vm->_dialogs->show(75116);
 	else if (_action.isAction(VERB_LOOK, 0x467))
