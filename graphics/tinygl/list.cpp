@@ -229,8 +229,8 @@ unsigned int glGenLists(int range) {
 			count++;
 			if (count == range) {
 				list = i - range + 1;
-				for (int i = 0; i < range; i++) {
-					alloc_list(c, list + i);
+				for (int j = 0; j < range; j++) {
+					alloc_list(c, list + j);
 				}
 				return list;
 			}
