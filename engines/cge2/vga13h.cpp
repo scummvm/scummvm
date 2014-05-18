@@ -72,6 +72,14 @@ Seq Sprite::_stdSeq8[] =
   { 7, 7, 0, 0, 0, 0 },
 };
 
+SprExt::SprExt(CGE2Engine *vm)
+	: _p0(vm, 0, 0), _p1(vm, 0, 0),
+     _b0(NULL), _b1(NULL), _shpList(NULL),
+	 _location(0), _seq(NULL), _name(NULL) {
+	for (int i = 0; i < kActions; i++)
+		_actions[i] = nullptr;
+}
+
 Sprite::Sprite(CGE2Engine *vm)
 	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
       _next(NULL), _prev(NULL), _time(0),

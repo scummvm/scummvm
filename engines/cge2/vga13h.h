@@ -71,10 +71,7 @@ public:
 	Seq *_seq;
 	char *_name;
 	CommandHandler::Command *_actions[kActions];
-	SprExt(CGE2Engine *vm) : _p0(vm, 0, 0), _p1(vm, 0, 0),
-		_b0(NULL), _b1(NULL),_shpList(NULL), _location(0),
-		_seq(NULL), _name(NULL)
-	{}
+	SprExt(CGE2Engine *vm);
 };
 
 class Sprite {
