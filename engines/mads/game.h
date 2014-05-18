@@ -149,6 +149,8 @@ public:
 	int _winStatus;
 	int _widepipeCtr;
 	int _loadGameSlot;
+	bool _ongoingGame;
+
 public:
 	virtual ~Game();
 

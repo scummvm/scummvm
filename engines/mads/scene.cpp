@@ -255,7 +255,7 @@ void Scene::loadVocabStrings() {
 }
 
 void Scene::initPaletteAnimation(Common::Array<PaletteCycle> &palCycles, bool animFlag) {
-	// Initialise the animation palette and ticks list
+	// Initialize the animation palette and ticks list
 	_cycleTicks.clear();
 	_paletteCycles.clear();
 
@@ -334,7 +334,7 @@ bool Scene::getDepthHighBits(const Common::Point &pt) {
 }
 
 void Scene::loop() {
-	while (!_vm->shouldQuit() && !_reloadSceneFlag && _nextSceneId == _currentSceneId) {
+	while (!_vm->shouldQuit() && !_reloadSceneFlag && (_nextSceneId == _currentSceneId) && _vm->_game->_ongoingGame) {
 		// Handle drawing a game frame
 		doFrame();
 

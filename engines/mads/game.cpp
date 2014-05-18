@@ -77,6 +77,8 @@ Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
 	_triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 	_winStatus = 0;
 	_widepipeCtr = 0;
+	_ongoingGame = true;
+
 
 	// Load the inventory object list
 	_objects.load();
@@ -152,7 +154,7 @@ void Game::run() {
 }
 
 void Game::gameLoop() {
-	while (!_vm->shouldQuit() && _statusFlag) {
+	while (!_vm->shouldQuit() && _statusFlag && _ongoingGame) {
 		if (_loadGameSlot != -1) {
 			loadGame(_loadGameSlot);
 			_loadGameSlot = -1;
@@ -166,9 +168,8 @@ void Game::gameLoop() {
 
 		_scene._spriteSlots.reset();
 
-		if (_sectionNumber == _currentSectionNumber) {
+		if (_sectionNumber == _currentSectionNumber)
 			sectionLoop();
-		}
 
 		_player.releasePlayerSprites();
 		assert(_scene._sprites.size() == 0);
@@ -183,7 +184,7 @@ void Game::gameLoop() {
 }
 
 void Game::sectionLoop() {
-	while (!_vm->shouldQuit() && _statusFlag && _sectionNumber == _currentSectionNumber) {
+	while (!_vm->shouldQuit() && _statusFlag && (_sectionNumber == _currentSectionNumber) && _ongoingGame) {
 		_kernelMode = KERNEL_ROOM_PRELOAD;
 		_player._spritesChanged = true;
 		_quoteEmergency = false;
@@ -460,6 +461,7 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 		s.syncAsUint16LE(_triggerMode);
 		synchronizeString(s, _aaName);
 		s.syncAsSint16LE(_lastSave);
+		s.syncAsByte(_ongoingGame);
 
 		_scene.synchronize(s);
 		_objects.synchronize(s);

@@ -79,6 +79,18 @@ public:
 	virtual void postActions() {};
 };
 
+class Scene803: public Scene8xx{
+public:
+	Scene803(MADSEngine *vm) : Scene8xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step();
+	virtual void preActions();
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 class Scene804: public Scene8xx {
 private:
 	bool _messWithThrottle;
