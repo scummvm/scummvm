@@ -48,10 +48,10 @@ Sprite *Spare::locate(int ref) {
 	return nullptr;
 }
 
-void Spare::takeCave(int cav) {
-	int ref = cav << 8;
+void Spare::takeCave(int ref) {
 	Sprite *spr = locate(ref);
-	_vm->_vga->_showQ->insert(spr);
+	if (spr != nullptr)
+		_vm->_vga->_showQ->insert(spr);
 }
 
 void Spare::store(Sprite *spr) {
