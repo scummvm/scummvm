@@ -279,11 +279,11 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 802:	// launch pad with destroyed ship
 		return new Scene802(vm);
 	case 803:	// empty launch pad
-		return new DummyScene(vm);	// TODO
+		return new Scene803(vm);
 	case 804:	// inside Rex's ship - cockpit
 		return new Scene804(vm);
 	case 805:	// service panel
-		return new DummyScene(vm);	// TODO
+		return new Scene805(vm);
 	case 807:	// teleporter
 		return new Scene807(vm);
 	case 808:	// antigrav control
