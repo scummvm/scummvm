@@ -1436,5 +1436,32 @@ void Scene808::actions() {
 
 /*------------------------------------------------------------------------*/
 
+void Scene810::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
+
+void Scene810::enter() {
+	_scene->_userInterface.setup(kInputLimitedSentences);
+	_game._player._visible = false;
+	_game._player._stepEnabled = false;
+	_scene->loadAnimation(Resources::formatName(810, 'a', -1, EXT_AA, ""));
+	_moveAllowed = true;
+
+	sceneEntrySound();
+}
+
+void Scene810::step() {
+	if ((_scene->_activeAnimation->getCurrentFrame() == 200) && _moveAllowed) {
+		_scene->_sequences.addTimer(100, 70);
+		_moveAllowed = false;
+	}
+
+	if (_game._trigger == 70)
+		_scene->_nextSceneId = 804;
+}
+
+/*------------------------------------------------------------------------*/
+
 } // End of namespace Nebular
 } // End of namespace MADS

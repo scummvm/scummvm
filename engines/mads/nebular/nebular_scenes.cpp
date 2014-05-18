@@ -289,7 +289,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 808:	// antigrav control
 		return new Scene808(vm);
 	case 810:	// cutscene: Rex's ship leaving the planet
-		return new DummyScene(vm);	// TODO
+		return new Scene810(vm);
 
 	default:
 		error("Invalid scene %d called", scene._nextSceneId);
