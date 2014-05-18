@@ -1331,8 +1331,7 @@ void Scene205::actions() {
 			_game._player._stepEnabled = false;
 			_vm->_palette->lock();
 			_scene->_kernelMessages.reset();
-			warning("TODO: sub70402();");
-
+			_game._player.removePlayerSprites();
 			_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('a', 0));
 			_vm->_palette->refreshSceneColors();
 			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, 1, 0, 0);

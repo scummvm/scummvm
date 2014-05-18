@@ -219,6 +219,8 @@ public:
 	static void preloadSequences(const Common::String &prefix, int level) {
 		// No implementation in ScummVM
 	}
+
+	void removePlayerSprites();
 };
 
 } // End of namespace MADS

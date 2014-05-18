@@ -766,4 +766,18 @@ void Player::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_mirror);
 }
 
+void Player::removePlayerSprites() {
+	int heroSpriteId = _spritesStart;
+	for (int i = 0; i < 8; i++) {
+		if (_spriteSetsPresent[i]) {
+			_vm->_game->_scene._sprites.remove(heroSpriteId++);
+			_spriteSetsPresent[i] = false;
+		}
+	}
+
+	_vm->_game->_scene._spriteSlots.clear();
+	_vm->_game->_scene._spriteSlots.fullRefresh();
+	_vm->_game->_player._visible = false;
+}
+
 } // End of namespace MADS
