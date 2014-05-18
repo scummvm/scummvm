@@ -133,6 +133,21 @@ public:
 	virtual void actions();
 };
 
+class Scene808: public Scene8xx{
+private:
+	bool _goingTo803;
+
+public:
+	Scene808(MADSEngine *vm) : Scene8xx(vm) {}
+
+	virtual void setup();
+	virtual void enter();
+	virtual void step() {};
+	virtual void preActions() {};
+	virtual void actions();
+	virtual void postActions() {};
+};
+
 } // End of namespace Nebular
 } // End of namespace MADS
 

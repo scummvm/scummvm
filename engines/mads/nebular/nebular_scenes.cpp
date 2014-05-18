@@ -287,7 +287,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	case 807:	// teleporter
 		return new Scene807(vm);
 	case 808:	// antigrav control
-		return new DummyScene(vm);	// TODO
+		return new Scene808(vm);
 	case 810:	// cutscene: Rex's ship leaving the planet
 		return new DummyScene(vm);	// TODO
 
