@@ -709,7 +709,7 @@ void Scene803::step() {
 			else
 				_game._winStatus = 3;
 
-			_game._ongoingGame = false;
+			_vm->quitGame();
 		}
 	}
 
