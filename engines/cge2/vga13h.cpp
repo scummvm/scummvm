@@ -297,26 +297,41 @@ Sprite *Sprite::expand() {
 }
 
 Sprite *Sprite::contract() {
-	//SprExt *e = _ext;
-	//if (!e)
-	//	return this;
+	SprExt *e = _ext;
+	if (!e)
+		return this;
 
-	//if (e->_name)
-	//	delete[] e->_name;
-	//if (_flags._bDel && e->_shpList) {
-	//	for (int i = 0; e->_shpList[i]; i++)
-	//		delete e->_shpList[i];
-	//	delete[] e->_shpList;
-	//}
+	if (_file[2] == '~') { // FLY-type sprite
+		Seq *seq = _ext->_seq;
+		// return to middle
+		gotoxyz(_pos3D - V3D(seq->_dx, seq->_dy, seq->_dz));
+		seq->_dx = seq->_dy = seq->_dz = 0;
+	}
 
-	//free(e->_seq);
-	//free(e->_near);
-	//free(e->_take);
+	if (notify)
+		notify();
 
-	//delete e;
-	//_ext = NULL;
+	if (e->_name)
+		delete[] e->_name;
 
-	warning("STUB: Sprite::contract()");
+	if (e->_shpList) {
+		for (int i = 0; i < _shpCnt; i++)
+			e->_shpList[i]->release();
+		delete[] e->_shpList;
+	}
+
+	if (e->_seq) {
+		if (e->_seq == _stdSeq8)
+			_seqCnt = 0;
+		else
+			delete[] e->_seq;
+	}
+
+	for (int i = 0; i < kActions; i++)
+		if (e->_actions[i])
+			delete[] e->_actions[i];
+
+	_ext = nullptr;
 
 	return this;
 }
@@ -379,7 +394,7 @@ void Sprite::gotoxyz(V2D pos) {
 		rem = (rem * V2D::trunc(_vm->_eye->_z) / (V2D::trunc(_vm->_eye->_z) - z));
 		ctr = (ctr * 3) / 4;
 		rem = (rem * 3) / 4;
- 	}
+	}
 
 	if (pos.x - ctr < 0) {
 		pos.x = ctr;
