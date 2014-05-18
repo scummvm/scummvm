@@ -111,10 +111,12 @@ Bitmap::Bitmap(CGE2Engine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(N
 }
 
 Bitmap::~Bitmap() {
+	release();
+}
+
+void Bitmap::release() {
 	free(_m);
 	delete[] _v;
-
-	warning("Bitmap: Don't forget to review the whole implemenation!");
 }
 
 Bitmap &Bitmap::operator=(const Bitmap &bmp) {

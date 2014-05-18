@@ -73,6 +73,7 @@ public:
 
 	Bitmap *code();
 	Bitmap &operator=(const Bitmap &bmp);
+	void release();
 	void hide(int16 x, int16 y);
 	void show(int16 x, int16 y);
 	void xShow(int16 x, int16 y);
