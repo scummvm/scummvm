@@ -26,28 +26,8 @@
 namespace MADS {
 
 void Globals::reset() {
-	for (uint i = 0; i < _data.size(); ++i)
-		_data[i] = 0;
+	for (uint i = 0; i < size(); ++i)
+		(*this)[i] = 0;
 }
-
-void Globals::synchronize(Common::Serializer &s) {
-	int count = _data.size();
-	s.syncAsUint16LE(count);
-	int16 v;
-
-	if (s.isSaving()) {
-		for (int idx = 0; idx < count; ++idx) {
-			v = _data[idx];
-			s.syncAsSint16LE(v);
-		}
-	} else {
-		_data.clear();
-		for (int idx = 0; idx < count; ++idx) {
-			s.syncAsSint16LE(v);
-			_data.push_back(v);
-		}
-	}
-}
-
 
 } // End of namespace MADS

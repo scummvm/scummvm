@@ -36,7 +36,7 @@ enum GlobalId {
 	kSexOfRex				= 0,
 	kOldSexOfRex			= 1,
 	kWalkerTiming           = 2,
-	kWalkerTiming0			= 3,
+//	kWalkerTiming0			= 3,
 	kTalkInanimateCount		= 4,
 	kCopyProtectFailed		= 5,
 
@@ -162,9 +162,9 @@ enum GlobalId {
 
 	/* Section #6 Time-Bomb Variables */
 	kTimebombClock			= 142,
-	kTimebombClock0			= 143,
+//	kTimebombClock0			= 143,
 	kTimebombTimer			= 144,
-	kTimebombTimer0			= 145,
+//	kTimebombTimer0			= 145,
 	kWarnedFloodCity		= 146,
 
 	/* Section #7 Variables */
@@ -175,9 +175,9 @@ enum GlobalId {
 
 	/* Section #8 Variables */
 	kAntigravClock			= 160,
-	kAntigravClock0			= 161,
+//	kAntigravClock0			= 161,
 	kAntigravTiming			= 162,
-	kAntigravTiming0		= 163,
+//	kAntigravTiming0		= 163,
 	kWindowFixed			= 164,
 	kInSpace                = 165,
 	kReturnFromCut			= 166,

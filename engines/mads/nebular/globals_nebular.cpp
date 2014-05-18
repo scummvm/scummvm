@@ -30,7 +30,7 @@ namespace Nebular {
 
 NebularGlobals::NebularGlobals(): Globals() {
 	// Initialize lists
-	_data.resize(210);
+	resize(210);
 	_spriteIndexes.resize(30);
 	_sequenceIndexes.resize(30);
 
