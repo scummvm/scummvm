@@ -58,16 +58,24 @@ void Spare::store(Sprite *spr) {
 	_container.insert_at(_container.size(), spr);
 }
 
-void Spare::dispose(Sprite *spr) {
-	warning("STUB: Spare::Dispose()");
+void Spare::update(Sprite *spr) {
+	Sprite *sp = locate(spr->_ref);
+	if (sp == nullptr)
+		store(spr);
+}
 
+void Spare::dispose(Sprite *spr) {
 	if (spr) {
 		_vm->_vga->_showQ->remove(spr);
-
-		for (int i = 0; i < _container.size(); i++) {
-			if (spr == _container[i]) {
-				_container.remove_at(i);
+		update(spr->contract());
+		if (spr->_ref / 10 != 14) { // IIRC if it's == 14, it's the sprite of a Hero. No idea yet why it shouldn't be deleted then.
+			for (int i = 0; i < _container.size(); i++) {
+				if (spr == _container[i]) {
+					_container.remove_at(i);
+				}
 			}
+
+			delete spr;
 		}
 	}
 }

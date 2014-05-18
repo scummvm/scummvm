@@ -41,6 +41,7 @@ public:
 	void store(Sprite *spr);	
 	Sprite *locate(int ref);
 	void takeCave(int ref); // Note that it takes the ref of the sprite now, not the number of the scene, like the original!
+	void update(Sprite *spr);
 	void dispose(Sprite *spr);
 	void dispose(int ref);
 	void dispose();
