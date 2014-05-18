@@ -337,14 +337,17 @@ void CGE2Engine::caveUp(int cav) {
 	showBak(bakRef);
 	_eye = _eyeTab[_now];
 	_mouseTop = V2D(this, V3D(0, 1, kScrDepth)).y;
-	loadTab();
 	_spare->takeCave(bakRef);
 	openPocket();
 	
+	warning("STUB: CGE2Engine::caveUp()");
+	// TODO: Implement "Hero" things here!
+
+
 
 	_vga->update();
 
-	warning("STUB: CGE2Engine::caveUp()");
+	
 }
 
 void CGE2Engine::showBak(int ref) {
