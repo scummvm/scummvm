@@ -2138,8 +2138,6 @@ void Scene316::handleRoxInGrate() {
 }
 
 void Scene316::enter() {
-	int series;
-
 	if (_globals[kSexOfRex] == REX_MALE) {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', -1));
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCL_8");
@@ -2165,8 +2163,8 @@ void Scene316::enter() {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_vm->_sound->command(44);
-		series = (_globals[kSexOfRex] == REX_MALE) ? 1 : 2;
-		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[series], false, 6, 1, 0, 0);
+		int spriteIdx = (_globals[kSexOfRex] == REX_MALE) ? 1 : 2;
+		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[spriteIdx], false, 6, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 	} else if (_scene->_priorSceneId != -2)
@@ -2177,8 +2175,6 @@ void Scene316::enter() {
 }
 
 void Scene316::step() {
-	int temp;
-
 	if (_game._trigger == 60) {
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[1]);
 		_game._player._visible = true;
@@ -2200,20 +2196,22 @@ void Scene316::step() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 			break;
 
-		case 71:
-			temp = _globals._sequenceIndexes[3];
+		case 71: {
+			int synxIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], temp);
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], synxIdx);
+			}
 			break;
 
-		case 72:
-			temp = _globals._sequenceIndexes[6];
+		case 72: {
+			int synxIdx = _globals._sequenceIndexes[6];
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 12, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 6, 9);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[6], temp);
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[6], synxIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
+			}
 			break;
 
 		case 73:
@@ -2230,11 +2228,12 @@ void Scene316::step() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
 			break;
 
-		case 74:
-			temp = _globals._sequenceIndexes[3];
+		case 74: {
+			int synxIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], temp);
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], synxIdx);
+			}
 			break;
 
 		case 75:
@@ -2360,17 +2359,15 @@ void Scene318::setup() {
 }
 
 void Scene318::handleDialog() {
-	int temp;
-
 	if (!_game._trigger) {
 		_game._player._stepEnabled = false;
 		handleRexDialogs(_action._activeAction._verbId);
 	} else if (_game._trigger == 2) {
-		temp = _globals._sequenceIndexes[2];
+		int synxIdx = _globals._sequenceIndexes[2];
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], temp);
+		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], synxIdx);
 		_vm->_sound->command(3);
 		_scene->_userInterface.setup(kInputLimitedSentences);
 		_game._player._stepEnabled = true;
