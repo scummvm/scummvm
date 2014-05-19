@@ -27,6 +27,7 @@
 
 #include "cge2/snail.h"
 #include "cge2/fileio.h"
+#include "cge2/hero.h"
 
 namespace CGE2 {
 
@@ -88,6 +89,118 @@ void CommandHandler::reset() {
 int CommandHandler::com(const char *com) {
 	int i = _vm->takeEnum(_commandText, com);
 	return (i < 0) ? i : i + kCmdCom0 + 1;
+}
+
+void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
+	if (!spr || !spr->active())
+		return;
+
+	int cnt = spr->_actionCtrl[snq]._cnt;
+	if (cnt) {
+		byte ptr = spr->_actionCtrl[snq]._ptr;
+		CommandHandler::Command *comtab = spr->snList(snq);
+		CommandHandler::Command *c = &comtab[ptr];
+		CommandHandler::Command *p;
+		CommandHandler::Command *q = &comtab[cnt];
+
+		warning("STUB: CGE2Engine::feedSnail()");
+		// Dont bother with pockets (inventory system) for now... TODO: Implement it later!!!
+		/*
+		int pocFre = freePockets(hero->_ref & 1);
+		int pocReq = 0;
+		for (p = c; p < q && p->_commandType != kCmdNext; p++) { // scan commands
+			// drop from pocket?
+			if ((p->_commandType == kCmdSend && p->_val != _now)
+				|| p->_commandType == kCmdGive) {
+				int ref = p->_ref;
+				if (ref < 0)
+					ref = spr->_ref;
+				if (findActivePocket(ref) >= 0)
+					--pocReq;
+			}
+			// make/dispose additional room?
+			if (p->_commandType == kCmdRoom) {
+				if (p->_val == 0)
+					++pocReq;
+				else
+					--pocReq;
+			}
+			// put into pocket?
+			if (p->_commandType == kCmdKeep)
+				++pocReq;
+			// overloaded?
+			if (pocReq > pocFre) {
+				pocFul();
+				return;
+			}
+		}*/
+
+		while (c < q) {
+			if (c->_commandType == kCmdTalk) {
+				if ((_commandHandler->_talkEnable = (c->_val != 0)) == false)
+					killText();
+			}
+			if (c->_commandType == kCmdWalk || c->_commandType == kCmdReach) {
+				if (c->_val == -1)
+					c->_val = spr->_ref;
+			}
+			if (c->_commandType == kCmdNext) {
+				Sprite *s;
+
+				switch (c->_ref) {
+				case -2:
+					s = hero;
+					break;
+				case -1:
+					s = spr;
+					break;
+				default:
+					s = _vga->_showQ->locate(c->_ref);
+					break;
+				}
+
+				if (s) {
+					if (s->_actionCtrl[snq]._cnt) {
+						int v;
+						switch (c->_val) {
+						case -1:
+							v = int(c - comtab + 1);
+							break;
+						case -2:
+							v = int(c - comtab);
+							break;
+						case -3:
+							v = -1;
+							break;
+						default:
+							v = c->_val;
+							if ((v > 255) && s)
+								v = s->labVal(snq, v >> 8);
+							break;
+						}
+						if (v >= 0)
+							s->_actionCtrl[snq]._ptr = v;
+					}
+				}
+				if (s == spr)
+					break;
+			}
+			if (c->_commandType == kCmdIf) {
+				Sprite *s = (c->_ref < 0) ? spr : _vga->_showQ->locate(c->_ref);
+				if (s) { // sprite extsts 
+					if (!s->seqTest(-1)) { // not parked
+						int v = c->_val;
+						if (v > 255) if (s) v = s->labVal(snq, v >> 8);
+						c = comtab + (v - 1);
+					}
+				}
+			} else
+				_commandHandler->addCommand(c->_commandType, c->_ref, c->_val, spr);
+
+			++c;
+		}
+	}
+	
 }
 
 } // End of namespace CGE2.

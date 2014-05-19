@@ -209,6 +209,16 @@ void Sprite::setName(char *newName) {
 	}
 }
 
+int Sprite::labVal(Action snq, int lab) {
+	warning("STUB: Sprite::labVal()");
+	return 0;
+}
+
+CommandHandler::Command *Sprite::snList(Action type) {
+	SprExt *e = _ext;
+	return (e) ? e->_actions[type] : NULL;
+}
+
 Sprite *Sprite::expand() {
 	if (_ext)
 		return this;

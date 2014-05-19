@@ -34,8 +34,6 @@ void Spare::synchronize() {
 }
 
 void Spare::clear() {
-	for (int i = 0; i < _container.size(); i++)
-		delete _container[i];
 	_container.clear();
 }
 
@@ -78,10 +76,10 @@ void Spare::dispose(Sprite *spr) {
 			for (int i = 0; i < _container.size(); i++) {
 				if (spr == _container[i]) {
 					_container.remove_at(i);
+					delete spr;
+					break;
 				}
 			}
-
-			delete spr;
 		}
 	}
 }

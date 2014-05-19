@@ -33,8 +33,6 @@
 
 namespace CGE2 {
 
-enum Action { kNear, kMTake, kFTake, kActions };
-
 enum CommandType {
 	kCmdCom0 = 128,
 	kCmdNop,     // NOP                       :: do nothing

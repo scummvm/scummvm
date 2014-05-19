@@ -50,6 +50,8 @@ class Spare;
 class CommandHandler;
 class InfoLine;
 class Mouse;
+class Talk;
+class Hero;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -66,6 +68,8 @@ class Mouse;
 enum CallbackType {
 	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume
 };
+
+enum Action { kNear, kMTake, kFTake, kActions };
 
 class Font {
 	char _path[kPathMax];
@@ -109,6 +113,11 @@ public:
 	void selectPocket(int n);
 	void busy(bool on);
 	void show();
+	void feedSnail(Sprite *spr, Action snq, Hero *hero);
+	int freePockets(int sx);
+	int findActivePocket(int ref);
+	void pocFul();
+	void killText();
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
@@ -146,8 +155,10 @@ public:
 	V3D *_eyeTab[kCaveMax];
 	Spare *_spare;
 	CommandHandler *_commandHandler;
+	CommandHandler *_commandHandlerTurbo;
 	InfoLine *_infoLine;
 	Mouse *_mouse;
+	Talk *_talk;
 private:
 	void init();
 	void deinit();

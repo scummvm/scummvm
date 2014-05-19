@@ -361,6 +361,9 @@ void CGE2Engine::caveUp(int cav) {
 	_sprite = _vga->_showQ->first();
 	if (_startupMode)
 		_vga->sunrise(_vga->_sysPal);
+
+	feedSnail(_vga->_showQ->locate(bakRef + 255), kNear, _heroTab[_sex]->_ptr);
+	//setDrawColors();
 }
 
 void CGE2Engine::showBak(int ref) {
@@ -516,6 +519,43 @@ bool CGE2Engine::showTitle(const char *name) {
 	warning("STUB: CGE2Engine::showTitle()");
 
 	return true;
+}
+
+int CGE2Engine::freePockets(int sx) {
+	int n = 0;
+	for (int i = 0; i < kPocketMax; i++){
+		if (_heroTab[sx]->_pocket[i] == nullptr)
+			++n;
+	}
+	return n;
+}
+
+int CGE2Engine::findActivePocket(int ref) {
+	for (int i = 0; i < kPocketMax; i++) {
+		Sprite *spr = _heroTab[_sex]->_pocket[i];
+		if (ref >= 0) {
+			if (spr && spr->_ref == ref)
+				return i;
+		} else if (!spr)
+			return i;
+	}
+	return -1;
+}
+
+void CGE2Engine::pocFul() {
+	Hero *h = _heroTab[_sex]->_ptr;
+	h->park();
+	_commandHandler->addCommand(kCmdWait, -1, -1, h);
+	_commandHandler->addCommand(kCmdSound, -1, 2, h);
+	_commandHandler->addCommand(kCmdSay, -1, kPocketFull + _sex, h);
+}
+
+void CGE2Engine::killText() {
+	if (!_talk)
+		return;
+
+	_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, _talk);
+	_talk = NULL;
 }
 
 } // End of namespace CGE2

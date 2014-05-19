@@ -127,7 +127,7 @@ public:
 	void setShapeList(BitmapPtr *shp, int cnt);
 	void moveShapesHi(void);
 	void moveShapesLo(void);
-	int LabVal(Action snq, int lab);
+	int labVal(Action snq, int lab);
 	Sprite *expand();
 	Sprite *contract();
 	void backShow(void);

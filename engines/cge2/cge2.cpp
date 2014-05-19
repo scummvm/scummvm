@@ -36,6 +36,7 @@
 #include "cge2/general.h"
 #include "cge2/spare.h"
 #include "cge2/events.h"
+#include "cge2/talk.h"
 
 namespace CGE2 {
 
@@ -55,8 +56,10 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 		_eyeTab[i] = nullptr;
 	_spare = nullptr;
 	_commandHandler = nullptr;
+	_commandHandlerTurbo = nullptr;
 	_infoLine = nullptr;
 	_mouse = nullptr;
+	_talk = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -83,14 +86,15 @@ void CGE2Engine::init() {
 		_eyeTab[i] = new V3D();
 	_spare = new Spare(this);
 	_commandHandler = new CommandHandler(this, false);
+	_commandHandlerTurbo = new CommandHandler(this, true);
 	_infoLine = new InfoLine(this, kInfoW);
 	_mouse = new Mouse(this);
+	_talk = new Talk(this);
 }
 
 void CGE2Engine::deinit() {
 	delete _resman;
 	delete _vga;
-	delete _sprite;
 	delete _fx;
 	delete _sound;
 	delete _midiPlayer;
@@ -105,9 +109,12 @@ void CGE2Engine::deinit() {
 	if (_eye != nullptr)
 		delete _eye;
 	delete _spare;
+	delete _sprite;
 	delete _commandHandler;
+	delete _commandHandlerTurbo;
 	delete _infoLine;
 	delete _mouse;
+	delete _talk;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
