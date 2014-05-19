@@ -404,12 +404,12 @@ void ASound::checkChannels() {
 
 void ASound::pollActiveChannel() {
 	AdlibChannel *chan = _activeChannelPtr;
-	bool updateFlag = true;
 
 	if (chan->_activeCount) {
 		if (chan->_field8 > 0 && --chan->_field8 == 0)
 			updateOctave();
 
+		bool updateFlag = true;
 		if (--_activeChannelPtr->_activeCount <= 0) {
 			for (;;) {
 				byte *pSrc = chan->_pSrc;
