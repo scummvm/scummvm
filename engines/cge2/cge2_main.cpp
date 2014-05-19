@@ -358,7 +358,9 @@ void CGE2Engine::caveUp(int cav) {
 	_vga->copyPage(1, 0);
 	show();
 
-	_vga->update();
+	_sprite = _vga->_showQ->first();
+	if (_startupMode)
+		_vga->sunrise(_vga->_sysPal);
 }
 
 void CGE2Engine::showBak(int ref) {
