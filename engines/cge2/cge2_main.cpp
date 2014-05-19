@@ -343,6 +343,10 @@ void CGE2Engine::caveUp(int cav) {
 	warning("STUB: CGE2Engine::caveUp()");
 	// TODO: Implement "Hero" things here!
 
+	_sound->stop();
+	_fx->clear();
+
+	selectPocket(-1);
 
 
 	_vga->update();
@@ -368,6 +372,10 @@ void CGE2Engine::loadMap(int cav) {
 
 void CGE2Engine::openPocket() {
 	warning("STUB: CGE2Engine::openPocket()");
+}
+
+void CGE2Engine::selectPocket(int n) {
+	warning("STUB: CGE2Engine::selectPocket()");
 }
 
 void CGE2Engine::runGame() {
