@@ -348,7 +348,7 @@ void CGE2Engine::caveUp(int cav) {
 
 	selectPocket(-1);
 	_infoLine->setText(nullptr);
-
+	busy(false);
 
 	_vga->update();
 
@@ -376,6 +376,10 @@ void CGE2Engine::openPocket() {
 }
 
 void CGE2Engine::selectPocket(int n) {
+	warning("STUB: CGE2Engine::selectPocket()");
+}
+
+void CGE2Engine::busy(bool on) {
 	warning("STUB: CGE2Engine::selectPocket()");
 }
 
