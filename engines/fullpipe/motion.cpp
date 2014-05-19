@@ -611,7 +611,81 @@ int MovGraph::method2C(StaticANIObject *obj, int x, int y) {
 	return method3C(obj, 1);
 }
 
-MessageQueue *MovGraph::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+MessageQueue *MovGraph::method34(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+#if 0
+	if (!ani) {
+		if (_itemsCount < 1)
+			return 0;
+
+		ani = _items->ani;
+	}
+	if (ABS(ani->_ox - x) < 50 && ABS(ani->_oy - y) < 50)
+		return 0;
+
+	if (!ani->isIdle())
+		return 0;
+
+	if (ani->_flags & 0x100)
+		return 0;
+
+	v10 = method28(ani, x, y, fuzzyMatch, (int *)&ani);
+
+	if (!v10)
+		return 0;
+
+	if (!ani->_movement) {
+		v20 = v10;
+		v33 = (int)ani;
+		goto LABEL_34;
+	}
+
+	Common::Point point;
+
+	ani->calcStepLen(&point);
+
+	MessageQueue *mq = sub1(ani, ani->_ox - point.x, ani->_oy - point.y, ani->_movement->_staticsObj1->_staticsId, x, y, 0, fuzzyMatch);
+
+	if (!mq || !mq->getExCommandByIndex(0))
+		return 0;
+
+	ExCommand *ex = mq->getExCommandByIndex(0);
+
+	if ((ex->_messageKind != 1 && ex->_messageKind != 20) || ex->_messageNum != ani->_movement->_id ||
+		(ex->_field_14 >= 1 && ex->_field_14 <= ani->_movement->_currDynamicPhaseIndex)) {
+		v22 = GlobalMessageQueueList_compact(&g_globalMessageQueueList);
+		v23 = MessageQueue_ctor1(v21, v22);
+		a2 = (int)v23;
+		v25 = ExCommand_ctor(v24, ani->_id, 21, 0, 0, 0, 0, 1, 0, 0, 0);
+		v23 = (MessageQueue *)a2;
+		v26 = (int)&v23->exCommands.obj.vmt;
+		v27 = ani->go._okeyCode;
+		v25->msg._keyCode = (unsigned __int16)v27;
+		v25->_field_3C = 1;
+		v25->msg._field_24 = 0;
+		CPtrList::AddTail(&v23->exCommands, v25);
+		v29 = ExCommand_ctor(v28, ani->go._id, 51, 0, x, y, 0, 1, 0, 0, 0);
+		v23 = (MessageQueue *)a2;
+		v30 = fuzzyMatch;
+		v29->_keyCode = ani->_okeyCode;
+		v29->_field_3C = 1;
+		v29->_field_24 = 0;
+		v29->_field_20 = v30;
+		CPtrList::AddTail(v26, v29);
+		if (MessageQueue_chain(v23, 0))
+			return v23;
+		if (v23)
+			delete v23;
+		return 0;
+	}
+
+	ani->setSomeDynamicPhaseIndex(ex->_field_14);
+	method28(ani, x, y, fuzzyMatch, (int *)&ani);
+	v33 = this->_items[getItemIndexByStaticAni(ani)].count;
+	v20 = this->_items[getItemIndexByStaticAni(ani)].movitems;
+ LABEL_34:
+	v32 = this->_callback1(ani, v20, v33);
+	return method50(ani, v32, a2);
+#endif
 	warning("STUB: MovGraph::method34()");
 
 	return 0;
