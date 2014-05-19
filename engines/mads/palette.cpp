@@ -714,6 +714,18 @@ void Palette::setLowRange() {
 	_vm->_palette->setPalette(_mainPalette, 0, 4);
 }
 
+void Palette::setColorFlags(byte r, byte g, byte b) {
+	_colorFlags[0] = r;
+	_colorFlags[1] = g;
+	_colorFlags[2] = b;
+}
+
+void Palette::setColorValues(byte r, byte g, byte b) {
+	_colorValues[0] = r;
+	_colorValues[1] = g;
+	_colorValues[2] = b;
+}
+
 void Palette::fadeOut(byte palette[PALETTE_SIZE], int start, int count, int v1, int v2, int v3, int v4, int v5, int v6) {
 	warning("TODO: Palette::fadeOut()");
 }

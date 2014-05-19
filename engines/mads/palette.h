@@ -308,6 +308,8 @@ public:
 		warning("TODO: Palette::close");
 	}
 
+	void setColorFlags(byte r, byte g, byte b);
+	void setColorValues(byte r, byte g, byte b);
 	void fadeOut(byte palette[PALETTE_SIZE], int start, int count, int v1, int v2, int v3, int v4, int v5, int v6);
 
 	void lock();
