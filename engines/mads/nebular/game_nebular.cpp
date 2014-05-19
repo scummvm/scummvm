@@ -586,13 +586,13 @@ void GameNebular::unhandledAction() {
 		_vm->_dialogs->show(13);
 	else if (action.isAction(VERB_EAT, NOUN_CHICKEN) && _vm->_game->_objects.isInInventory(OBJ_CHICKEN))
 		_vm->_dialogs->show(912);
-	else if ((action.isAction(VERB_SHOOT) || action.isAction(VERB_HOSE_DOWN)) && action.isAction(NOUN_BLOWGUN)) {
+	else if ((action.isAction(VERB_SHOOT) || action.isAction(VERB_HOSE_DOWN)) && action.isObject(NOUN_BLOWGUN)) {
 		if ((_scene._currentSceneId >= 104) && (_scene._currentSceneId <= 111))
 			_vm->_dialogs->show(38);
 		else if (action.isAction(0x10D))
 			_vm->_dialogs->show(41);
-		else if (action.isAction(NOUN_CHICKEN) || action.isAction(0x185) || action.isAction(0x14D)
-				|| action.isAction(0x1DD) || action.isAction(0x15F) || action.isAction(NOUN_CAPTIVE_CREATURE)) {
+		else if (action.isObject(NOUN_CHICKEN) || action.isAction(0x185) || action.isAction(0x14D)
+				|| action.isAction(0x1DD) || action.isAction(0x15F) || action.isObject(NOUN_CAPTIVE_CREATURE)) {
 			_vm->_dialogs->show(40);
 		} else
 			_vm->_dialogs->show(39);
