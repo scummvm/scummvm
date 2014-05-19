@@ -1232,13 +1232,8 @@ void Scene402::step() {
 		break;
 
 	case 53:
-		if (_bigBeatFl) {
-			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
-		} else {
-			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
-		}
+		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
+		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
 		_waitingGinnyMove = false;
 		break;
@@ -1378,14 +1373,12 @@ void Scene402::step() {
 		}
 	}
 
-	if (!_blowingSmoke) {
-		if (_vm->getRandomNumber(1, 300) == 1) {
-			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 1, 0, 0);
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 14);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 30);
-			_blowingSmoke = true;
-		}
+	if (!_blowingSmoke && (_vm->getRandomNumber(1, 300) == 1)) {
+		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 1, 0, 0);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 14);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 30);
+		_blowingSmoke = true;
 	}
 
 	switch (_game._trigger) {
