@@ -367,12 +367,7 @@ void CGE2Engine::loadMap(int cav) {
 }
 
 void CGE2Engine::openPocket() {
-	for (int i = 0; i < 2; i++) {
-		for (int j = 0; j < kPocketMax + 1; j++) {
-			int ref = (_heroTab[i])->_pocket[j]->_ref;
-			_heroTab[i]->_pocket[j] = (ref == -1) ? nullptr : _vga->_showQ->locate(ref);
-		}
-	}
+	warning("STUB: CGE2Engine::openPocket()");
 }
 
 void CGE2Engine::runGame() {
