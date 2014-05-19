@@ -587,7 +587,6 @@ uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, byte *paletteData) {
 	byte index = 0;
 	int32 minDist = 0x7fffffff;
 	byte palData[PALETTE_SIZE];
-	int Rdiff, Gdiff, Bdiff;
 
 	if (paletteData == NULL) {
 		g_system->getPaletteManager()->grabPalette(palData, 0, PALETTE_COUNT);
@@ -595,9 +594,9 @@ uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, byte *paletteData) {
 	}
 
 	for (int palIndex = 0; palIndex < PALETTE_COUNT; ++palIndex) {
-		Rdiff = r - paletteData[palIndex * 3];
-		Gdiff = g - paletteData[palIndex * 3 + 1];
-		Bdiff = b - paletteData[palIndex * 3 + 2];
+		int Rdiff = r - paletteData[palIndex * 3];
+		int Gdiff = g - paletteData[palIndex * 3 + 1];
+		int Bdiff = b - paletteData[palIndex * 3 + 2];
 
 		if (Rdiff * Rdiff + Gdiff * Gdiff + Bdiff * Bdiff < minDist) {
 			minDist = Rdiff * Rdiff + Gdiff * Gdiff + Bdiff * Bdiff;
@@ -609,7 +608,6 @@ uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, byte *paletteData) {
 }
 
 void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, int rgbValue2) {
-	int rgbCtr = 0;
 	int rgbCurrent = rgbValue2;
 	int rgbDiff = -(rgbValue2 - rgbValue1);
 
@@ -618,6 +616,7 @@ void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, in
 		int endVal = count - 1;
 		int numLeft = count;
 
+		int rgbCtr = 0;
 		do {
 			pDest[0] = pDest[1] = pDest[2] = rgbCurrent;
 
