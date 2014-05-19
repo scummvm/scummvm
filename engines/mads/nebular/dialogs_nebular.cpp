@@ -425,7 +425,7 @@ void PictureDialog::save() {
 		frame->getTransparencyIndex());
 	_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
 
-	// Adjust the dialog colours to use
+	// Adjust the dialog colors to use
 	TEXTDIALOG_CONTENT1 -= 10;
 	TEXTDIALOG_CONTENT2 -= 10;
 	TEXTDIALOG_EDGE -= 10;

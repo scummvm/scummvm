@@ -59,7 +59,7 @@ ProtectionResult GameNebular::checkCopyProtection() {
 	return PROTECTION_SUCCEED;
 }
 
-void GameNebular::initialiseGlobals() {
+void GameNebular::initializeGlobals() {
 	int count, count2;
 	int bad;
 

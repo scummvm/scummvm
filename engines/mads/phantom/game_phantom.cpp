@@ -58,7 +58,7 @@ ProtectionResult GamePhantom::checkCopyProtection() {
 	return PROTECTION_SUCCEED;
 }
 
-void GamePhantom::initialiseGlobals() {
+void GamePhantom::initializeGlobals() {
 	//int count, count2;
 	//int bad;
 

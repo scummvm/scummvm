@@ -95,7 +95,7 @@ Game::~Game() {
 }
 
 void Game::run() {
-	initialiseGlobals();
+	initializeGlobals();
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
@@ -144,7 +144,7 @@ void Game::run() {
 	}
 
 	if (protectionResult != 1 && protectionResult != 2) {
-		initialiseGlobals();
+		initializeGlobals();
 	}
 
 	if (_statusFlag)

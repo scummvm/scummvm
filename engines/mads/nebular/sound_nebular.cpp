@@ -154,7 +154,7 @@ ASound::ASound(Audio::Mixer *mixer, const Common::String &filename, int dataOffs
 	if (!_soundFile.open(filename))
 		error("Could not open file - %s", filename.c_str());
 
-	// Initialise fields
+	// Initialize fields
 	_commandParam = 0;
 	_activeChannelPtr = nullptr;
 	_samplePtr = nullptr;

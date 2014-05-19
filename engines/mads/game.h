@@ -112,7 +112,7 @@ protected:
 	/**
 	 * Initialises global variables for a new game
 	 */
-	virtual void initialiseGlobals() = 0;
+	virtual void initializeGlobals() = 0;
 
 	/**
 	 * Set up the section handler specific to each section

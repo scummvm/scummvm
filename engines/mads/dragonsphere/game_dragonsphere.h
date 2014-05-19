@@ -53,7 +53,7 @@ protected:
 
 	virtual ProtectionResult checkCopyProtection();
 
-	virtual void initialiseGlobals();
+	virtual void initializeGlobals();
 
 	virtual void setSectionHandler();
 

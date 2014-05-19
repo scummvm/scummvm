@@ -58,7 +58,7 @@ ProtectionResult GameDragonsphere::checkCopyProtection() {
 	return PROTECTION_SUCCEED;
 }
 
-void GameDragonsphere::initialiseGlobals() {
+void GameDragonsphere::initializeGlobals() {
 	//int count, count2;
 	//int bad;
 
