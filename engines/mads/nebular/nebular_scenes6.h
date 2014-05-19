@@ -57,9 +57,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene602: public Scene6xx{
@@ -76,10 +74,7 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene603: public Scene6xx{
@@ -92,10 +87,7 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene604: public Scene6xx{
@@ -117,9 +109,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene605: public Scene6xx{
@@ -129,9 +119,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene607: public Scene6xx{
@@ -158,7 +146,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene608: public Scene6xx{
@@ -206,7 +193,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene609: public Scene6xx{
@@ -223,7 +209,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene610: public Scene6xx{
@@ -242,9 +227,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene611: public Scene6xx{
@@ -297,7 +280,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene612: public Scene6xx{
@@ -313,9 +295,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene620: public Scene6xx{
@@ -325,9 +305,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions() {};
-	virtual void postActions() {};
 };
 } // End of namespace Nebular
 } // End of namespace MADS

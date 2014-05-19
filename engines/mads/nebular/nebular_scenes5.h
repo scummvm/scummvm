@@ -195,7 +195,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene512: public Scene5xx{
@@ -208,10 +207,7 @@ public:
 
 	virtual void setup();
 	virtual void enter();
-	virtual void step() {};
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene513: public Scene5xx{
@@ -221,9 +217,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene515: public Scene5xx{
@@ -233,9 +227,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions() {};
-	virtual void postActions() {};
 };
 
 class Scene551: public Scene5xx{
@@ -247,7 +239,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 } // End of namespace Nebular
 } // End of namespace MADS

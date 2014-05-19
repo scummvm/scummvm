@@ -101,9 +101,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene704: public Scene7xx{
@@ -127,9 +125,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene705: public Scene7xx{
@@ -146,9 +142,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void preActions() {};
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene706: public Scene7xx{
@@ -171,7 +165,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene707: public SceneTeleporter {
@@ -216,7 +209,6 @@ public:
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void postActions() {};
 };
 
 class Scene752: public Scene7xx {
