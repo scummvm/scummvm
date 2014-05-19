@@ -1198,16 +1198,12 @@ void Scene205::enter() {
 }
 
 void Scene205::step() {
-	int chanceMajor, chanceMinor;
-
 	if (_globals[kSexOfRex] == SEX_FEMALE) {
 		_scene->_kernelMessages.randomServer();
 
 		if (_vm->_game->_scene._frameStartTime >= _chickenTime) {
-			chanceMajor = 100;
-			chanceMinor = _scene->_kernelMessages.checkRandom() + 1;
-
-			if (_scene->_kernelMessages.generateRandom(chanceMajor, chanceMinor))
+			int chanceMinor = _scene->_kernelMessages.checkRandom() + 1;
+			if (_scene->_kernelMessages.generateRandom(100, chanceMinor))
 				_vm->_sound->command(28);
 
 			_chickenTime = _vm->_game->_scene._frameStartTime + 2;
@@ -4573,16 +4569,12 @@ void Scene211::enter() {
 }
 
 void Scene211::step() {
-	int chanceMajor, chanceMinor;
-
 	if (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY) {
 		_scene->_kernelMessages.randomServer();
 
 		if (!_ambushFl && !_wakeFl && (_vm->_game->_scene._frameStartTime >= _monkeyTime)) {
-			chanceMajor = 80;
-			chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
-
-			if (_scene->_kernelMessages.generateRandom(chanceMajor, chanceMinor))
+			int chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
+			if (_scene->_kernelMessages.generateRandom(80, chanceMinor))
 				_vm->_sound->command(18);
 
 			_monkeyTime = _vm->_game->_scene._frameStartTime + 2;

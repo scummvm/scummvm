@@ -5550,13 +5550,10 @@ void Scene389::enter() {
 }
 
 void Scene389::step() {
-	int chanceMajor, chanceMinor;
-	
 	_scene->_kernelMessages.randomServer();
 	if (_scene->_frameStartTime >= _monsterTime) {
-		chanceMajor = 20;
-		chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
-		_scene->_kernelMessages.generateRandom(chanceMajor, chanceMinor);
+		int chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
+		_scene->_kernelMessages.generateRandom(20, chanceMinor);
 		_monsterTime = _scene->_frameStartTime + 2;
 	}
 }
