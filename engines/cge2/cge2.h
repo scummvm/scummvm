@@ -49,6 +49,7 @@ class Dac;
 class Spare;
 class CommandHandler;
 class InfoLine;
+class Mouse;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -107,6 +108,7 @@ public:
 	void openPocket();
 	void selectPocket(int n);
 	void busy(bool on);
+	void show();
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
@@ -130,6 +132,7 @@ public:
 	int _now;
 	bool _sex;
 	int _mouseTop;
+	bool _dark;
 
 	ResourceManager *_resman;
 	Vga *_vga;
@@ -144,6 +147,7 @@ public:
 	Spare *_spare;
 	CommandHandler *_commandHandler;
 	InfoLine *_infoLine;
+	Mouse *_mouse;
 private:
 	void init();
 	void deinit();

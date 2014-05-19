@@ -35,6 +35,7 @@
 #include "cge2/hero.h"
 #include "cge2/general.h"
 #include "cge2/spare.h"
+#include "cge2/events.h"
 
 namespace CGE2 {
 
@@ -55,6 +56,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_spare = nullptr;
 	_commandHandler = nullptr;
 	_infoLine = nullptr;
+	_mouse = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -64,6 +66,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_now = 1;
 	_sex = true;
 	_mouseTop = kWorldHeight / 3;
+	_dark = false;
 }
 
 void CGE2Engine::init() {
@@ -81,6 +84,7 @@ void CGE2Engine::init() {
 	_spare = new Spare(this);
 	_commandHandler = new CommandHandler(this, false);
 	_infoLine = new InfoLine(this, kInfoW);
+	_mouse = new Mouse(this);
 }
 
 void CGE2Engine::deinit() {
@@ -103,6 +107,7 @@ void CGE2Engine::deinit() {
 	delete _spare;
 	delete _commandHandler;
 	delete _infoLine;
+	delete _mouse;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {

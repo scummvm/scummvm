@@ -33,6 +33,7 @@
 #include "cge2/snail.h"
 #include "cge2/hero.h"
 #include "cge2/spare.h"
+#include "cge2/events.h"
 
 namespace CGE2 {
 
@@ -350,9 +351,13 @@ void CGE2Engine::caveUp(int cav) {
 	_infoLine->setText(nullptr);
 	busy(false);
 
-	_vga->update();
+	if (!_dark)
+		_vga->sunset();
+	show();
+	_vga->copyPage(1, 0);
+	show();
 
-	
+	_vga->update();
 }
 
 void CGE2Engine::showBak(int ref) {
@@ -381,6 +386,10 @@ void CGE2Engine::selectPocket(int n) {
 
 void CGE2Engine::busy(bool on) {
 	warning("STUB: CGE2Engine::selectPocket()");
+}
+
+void CGE2Engine::show() {
+	warning("STUB: CGE2Engine::show()");
 }
 
 void CGE2Engine::runGame() {
