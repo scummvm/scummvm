@@ -1542,8 +1542,8 @@ void Scene207::actions() {
 	} else {
 		if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
 		    (_game._player._playerPos.y > 111) && (_game._player._playerPos.y < 130)) {
-			if ((_game._player._playerPos.x <= 162) && (_game._player._playerPos.x >= 181) &&
-			    (_game._player._playerPos.y <= 115) && (_game._player._playerPos.y >= 126)) {
+			if ((_game._player._playerPos.x <= 162) || (_game._player._playerPos.x >= 181) ||
+			    (_game._player._playerPos.y <= 115) || (_game._player._playerPos.y >= 126)) {
 				_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 10, 2, 0, 0);
 				_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 2, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 6);
