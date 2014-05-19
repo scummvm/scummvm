@@ -48,10 +48,16 @@ Sprite *Spare::locate(int ref) {
 	return nullptr;
 }
 
-void Spare::takeCave(int ref) {
-	Sprite *spr = locate(ref);
-	if (spr != nullptr)
-		_vm->_vga->_showQ->insert(spr);
+void Spare::takeCave(int cav) {
+	int bakRef = cav << 8;
+	Common::Array<Sprite*> tempCont = _container;
+	for (int i = 0; i < tempCont.size(); i++) {
+		Sprite *spr = tempCont[i];
+		int c = spr->_scene;
+		if ((c == _vm->_now || c == 0) && spr->_ref != bakRef) {
+			_vm->_vga->_showQ->insert(spr);
+		}
+	}
 }
 
 void Spare::store(Sprite *spr) {

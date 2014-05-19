@@ -208,6 +208,7 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 
 	if (_sprite) {
 		_sprite->_ref = ref;
+		_sprite->_scene = scene;
 
 		_sprite->_flags._frnt = frnt;
 		_sprite->_flags._east = east;
@@ -338,7 +339,7 @@ void CGE2Engine::caveUp(int cav) {
 	showBak(bakRef);
 	_eye = _eyeTab[_now];
 	_mouseTop = V2D(this, V3D(0, 1, kScrDepth)).y;
-	_spare->takeCave(bakRef);
+	_spare->takeCave(_now);
 	openPocket();
 	
 	warning("STUB: CGE2Engine::caveUp()");
