@@ -577,29 +577,29 @@ void GameNebular::unhandledAction() {
 
 	if (action.isAction(VERB_THROW, NOUN_BOMB) || action.isAction(VERB_THROW, NOUN_BOMBS)
 	|| action.isAction(VERB_THROW, NOUN_TIMEBOMB) || action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB))
-		_vm->_dialogs->show(0x2A);
+		_vm->_dialogs->show(42);
 	else if (action.isAction(0x6C))
-		_vm->_dialogs->show(0x1B3);
+		_vm->_dialogs->show(435);
 	else if ((action.isAction(VERB_EAT, NOUN_DEAD_FISH) || action.isAction(VERB_EAT, NOUN_STUFFED_FISH)) && _vm->_game->_objects.isInInventory(_vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId)))
-		_vm->_dialogs->show(0xC);
+		_vm->_dialogs->show(12);
 	else if ((action.isAction(VERB_SMELL, NOUN_DEAD_FISH) || action.isAction(VERB_SMELL, NOUN_STUFFED_FISH)) && _vm->_game->_objects.isInInventory(_vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId)))
-		_vm->_dialogs->show(0xD);
+		_vm->_dialogs->show(13);
 	else if (action.isAction(VERB_EAT, NOUN_CHICKEN) && _vm->_game->_objects.isInInventory(OBJ_CHICKEN))
-		_vm->_dialogs->show(0x390);
+		_vm->_dialogs->show(912);
 	else if ((action.isAction(VERB_SHOOT) || action.isAction(VERB_HOSE_DOWN)) && action.isAction(NOUN_BLOWGUN)) {
 		if ((_scene._currentSceneId >= 104) && (_scene._currentSceneId <= 111))
-			_vm->_dialogs->show(0x26);
+			_vm->_dialogs->show(38);
 		else if (action.isAction(0x10D))
-			_vm->_dialogs->show(0x29);
+			_vm->_dialogs->show(41);
 		else if (action.isAction(NOUN_CHICKEN) || action.isAction(0x185) || action.isAction(0x14D)
 				|| action.isAction(0x1DD) || action.isAction(0x15F) || action.isAction(NOUN_CAPTIVE_CREATURE)) {
-			_vm->_dialogs->show(0x28);
+			_vm->_dialogs->show(40);
 		} else
-			_vm->_dialogs->show(0x27);
+			_vm->_dialogs->show(39);
 	} else if (action.isAction(VERB_TALKTO)) {
 		_globals[kTalkInanimateCount] = (_globals[kTalkInanimateCount] + 1) % 16;
 		if (!_globals[kTalkInanimateCount]) {
-			_vm->_dialogs->show(0x2);
+			_vm->_dialogs->show(2);
 		} else {
 			Common::String tmpMsg = "\"Greetings, ";
 			tmpMsg += _vm->_game->_scene.getVocab(action._activeAction._objectNameId);
@@ -608,78 +608,78 @@ void GameNebular::unhandledAction() {
 			_scene._kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, tmpMsg);
 		}
 	} else if (action.isAction(VERB_GIVE, NOUN_DOOR, 0x46) || action.isAction(VERB_CLOSE, NOUN_CHAIR))
-		_vm->_dialogs->show(0x3);
+		_vm->_dialogs->show(3);
 	else if (action.isAction(VERB_THROW)) {
 		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
 		if (objId < 0)
-			_vm->_dialogs->show(0x4);
+			_vm->_dialogs->show(4);
 		else if (_vm->_game->_objects[objId]._roomNumber != 2)
-			_vm->_dialogs->show(0x5);
+			_vm->_dialogs->show(5);
 		else
-			_vm->_dialogs->show(0x6);
+			_vm->_dialogs->show(6);
 	} else if (action.isAction(VERB_LOOK)) {
 		if (action.isAction(0x27) && (action._activeAction._indirectObjectId > 0))
-			_vm->_dialogs->show(0xA);
+			_vm->_dialogs->show(10);
 		else if (randVal < 600)
-			_vm->_dialogs->show(0x7);
+			_vm->_dialogs->show(7);
 		else
-			_vm->_dialogs->show(0x15);
+			_vm->_dialogs->show(21);
 	} else if (action.isAction(VERB_TAKE)) {
 		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
 		if (_vm->_game->_objects.isInInventory(objId))
-			_vm->_dialogs->show(0x10);
+			_vm->_dialogs->show(16);
 		else if (randVal <= 333)
-			_vm->_dialogs->show(0x8);
+			_vm->_dialogs->show(8);
 		else if (randVal <= 666)
-			_vm->_dialogs->show(0x16);
+			_vm->_dialogs->show(22);
 		else
-			_vm->_dialogs->show(0x17);
+			_vm->_dialogs->show(23);
 	} else if (action.isAction(VERB_CLOSE)) {
 		if (randVal <= 333)
-			_vm->_dialogs->show(0x9);
+			_vm->_dialogs->show(9);
 		else
-			_vm->_dialogs->show(0x21);
+			_vm->_dialogs->show(33);
 	} else if (action.isAction(VERB_OPEN)) {
 		if (randVal <= 500)
-			_vm->_dialogs->show(0x1E);
+			_vm->_dialogs->show(30);
 		else if (randVal <= 750)
-			_vm->_dialogs->show(0x1F);
+			_vm->_dialogs->show(31);
 		else
-			_vm->_dialogs->show(0x20);
+			_vm->_dialogs->show(32);
 	} else if (action.isAction(VERB_PULL))
-		_vm->_dialogs->show(0x12);
+		_vm->_dialogs->show(18);
 	else if (action.isAction(VERB_PUSH)) {
 		if (randVal < 750)
-			_vm->_dialogs->show(0x13);
+			_vm->_dialogs->show(19);
 		else
-			_vm->_dialogs->show(0x14);
+			_vm->_dialogs->show(20);
 	} else if (action.isAction(VERB_PUT)) {
 		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
 		if (_vm->_game->_objects.isInInventory(objId))
-			_vm->_dialogs->show(0x19);
+			_vm->_dialogs->show(25);
 		else
-			_vm->_dialogs->show(0x18);
+			_vm->_dialogs->show(24);
 	} else if (action.isAction(VERB_GIVE)) {
 		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);
 		if (!_vm->_game->_objects.isInInventory(objId))
-			_vm->_dialogs->show(0x1A);
+			_vm->_dialogs->show(26);
 		else if (randVal <= 500)
-			_vm->_dialogs->show(0x1C);
+			_vm->_dialogs->show(28);
 		else
-			_vm->_dialogs->show(0x1D);
+			_vm->_dialogs->show(29);
 	} else if (!action.isAction(VERB_WALKTO) && !action.isAction(0x187) && !action.isAction(0x18C) && !action.isAction(0x1AD)
 			&& !action.isAction(0x15C) && !action.isAction(0x159) && !action.isAction(0x15A) && !action.isAction(0x15B)
 			&& !action.isAction(0x15E)) {
 		if (randVal <= 100)
-			_vm->_dialogs->show(0x24);
+			_vm->_dialogs->show(36);
 		else if (randVal <= 200)
-			_vm->_dialogs->show(0x1);
+			_vm->_dialogs->show(1);
 		else if (randVal <= 475)
-			_vm->_dialogs->show(0x22);
+			_vm->_dialogs->show(34);
 		else if (randVal <= 750)
-			_vm->_dialogs->show(0x23);
+			_vm->_dialogs->show(35);
 		else
-			_vm->_dialogs->show(0x25);
+			_vm->_dialogs->show(37);
 	}
 }
 
