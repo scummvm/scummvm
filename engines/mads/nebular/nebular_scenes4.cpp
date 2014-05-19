@@ -158,12 +158,12 @@ void Scene401::step() {
 }
 
 void Scene401::preActions() {
-	if (_action.isAction(0x1AD, 0x2B4)) {
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B4)) {
 		_game._player.walk(Common::Point(149, 89), FACING_NORTH);
 		_northFl = false;
 	}
 
-	if (_action.isAction(0x1AD, 0x2B3) && !_northFl)
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B3) && !_northFl)
 		_game._player._walkOffScreenSceneId = 405;
 
 	if (_action.isAction(VERB_TAKE))
@@ -207,7 +207,7 @@ void Scene401::actions() {
 	if (_action.isAction(0x242, 0x241)) {
 		if (!_northFl)
 			_scene->_nextSceneId = 402;
-	} else if (_action.isAction(0x1AD, 0x2B4))
+	} else if (_action.isAction(VERB_WALK_DOWN, 0x2B4))
 		_scene->_nextSceneId = 354;
 	else if (_action.isAction(VERB_LOOK, 0x1F3)) {
 		if (_globals[kHasBeenScanned])
@@ -1977,7 +1977,7 @@ void Scene402::step() {
 }
 
 void Scene402::preActions() {
-	if (_action.isAction(0x30B, 0x24A) && (_game._player._prepareWalkPos.x != 248))
+	if (_action.isAction(VERB_SIT_ON, 0x24A) && (_game._player._prepareWalkPos.x != 248))
 		_game._player.walk(Common::Point(232, 112), FACING_EAST);
 
 	if (_action.isAction(VERB_WALKTO, 0x309))
@@ -2144,10 +2144,10 @@ void Scene402::actions() {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(120, 44);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(0x30B, 0x24A) && (_game._player._targetPos.x == 248)){
+	} else if (_action.isAction(VERB_WALK_ALONG, 0x24A) && (_game._player._targetPos.x == 248)){
 		_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 120, _game.getQuote(0x20D));
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x20E));
-	} else if (_action.isAction(0x30B, 0x24A) && !_roxOnStool && (_game._player._targetPos.x != 248)) {
+	} else if (_action.isAction(VERB_WALK_ALONG, 0x24A) && !_roxOnStool && (_game._player._targetPos.x != 248)) {
 		_game._player._visible = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
@@ -2435,10 +2435,10 @@ void Scene405::preActions() {
 	if (_action.isAction(VERB_TAKE))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(0x1AD, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
 		_game._player._walkOffScreenSceneId = 401;
 
-	if (_action.isAction(0x1AD, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
 		_game._player._walkOffScreenSceneId = 406;
 
 	if (_action.isAction(VERB_CLOSE, 0x259) && _globals[kArmoryDoorOpen])
@@ -2446,11 +2446,11 @@ void Scene405::preActions() {
 }
 
 void Scene405::actions() {
-	if (_action.isAction(0x18B, 0x6E))
+	if (_action.isAction(VERB_WALK_THROUGH, 0x6E))
 		_scene->_nextSceneId = 413;
-	else if (_action.isAction(0x18B, 0x259) && _globals[kArmoryDoorOpen])
+	else if (_action.isAction(VERB_WALK_THROUGH, 0x259) && _globals[kArmoryDoorOpen])
 		_scene->_nextSceneId = 408;
-	else if (_action.isAction(0x18B, 0x259) && !_globals[kArmoryDoorOpen])
+	else if (_action.isAction(VERB_WALK_THROUGH, 0x259) && !_globals[kArmoryDoorOpen])
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(0x24F));
 	else if (_action.isAction(VERB_PUT, 0x131, 0x251) && !_globals[kArmoryDoorOpen]) {
 		_game._player._stepEnabled = false;
@@ -2621,10 +2621,10 @@ void Scene406::step() {
 }
 
 void Scene406::preActions() {
-	if (_action.isAction(0x1AD, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
 		_game._player._walkOffScreenSceneId = 405;
 
-	if (_action.isAction(0x1AD, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
 		_game._player._walkOffScreenSceneId = 407;
 
 	if (_action.isAction(VERB_TAKE))
@@ -2635,16 +2635,16 @@ void Scene406::preActions() {
 }
 
 void Scene406::actions() {
-	if (_action.isAction(0x18B, 0x6E) && (_game._player._targetPos.x> 100)) {
+	if (_action.isAction(VERB_WALK_THROUGH, 0x6E) && (_game._player._targetPos.x> 100)) {
 		_game._player._stepEnabled = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 3, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 		_vm->_sound->command(19);
-	} else if (_action.isAction(0x18B, 0x6E) && _globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100))
+	} else if (_action.isAction(VERB_WALK_THROUGH, 0x6E) && _globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100))
 		_scene->_nextSceneId = 410;
-	else if (_action.isAction(0x18B, 0x6E) && !_globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100)) {
+	else if (_action.isAction(VERB_WALK_THROUGH, 0x6E) && !_globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100)) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(0x24F));
 		if (!_hitStorageDoor) {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -2774,7 +2774,7 @@ void Scene407::preActions() {
 	if (_action.isAction(VERB_LOOK, 0x6E))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(0x1AD, 0x2B4)) {
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B4)) {
 		_game._player.walk(Common::Point(172, 91), FACING_NORTH);
 		_fromNorth = false;
 	}
@@ -2813,9 +2813,9 @@ void Scene407::actions() {
 		}
 	}
 
-	if (_action.isAction(0x1AD, 0x2B3) && !_fromNorth)
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B3) && !_fromNorth)
 		_scene->_nextSceneId = 406;
-	else if (_action.isAction(0x1AD, 0x2B4))
+	else if (_action.isAction(VERB_WALK_DOWN, 0x2B4))
 		_scene->_nextSceneId = 318;
 	else if (_action.isAction(VERB_LOOK, 0x1F3)) {
 		if (_globals[kHasBeenScanned])
@@ -3030,11 +3030,11 @@ void Scene409::actions() {
 
 	if (_action.isAction(VERB_LOOK, 0x181))
 		_vm->_dialogs->show(40910);
-	else if (_action.isAction(0x103, 0x181))
+	else if (_action.isAction(VERB_PEER_THROUGH, 0x181))
 		_vm->_dialogs->show(40910);
 	else if (_action.isAction(VERB_LOOK, 0xC4))
 		_vm->_dialogs->show(40911);
-	else if (_action.isAction(0xB7, 0xC4))
+	else if (_action.isAction(VERB_INSPECT, 0xC4))
 		_vm->_dialogs->show(40911);
 	else if (_action.isAction(VERB_LOOK, 0x1CC))
 		_vm->_dialogs->show(40912);
@@ -4086,11 +4086,11 @@ void Scene413::preActions() {
 }
 
 void Scene413::actions() {
-	if (_action.isAction(0x188, 0x16C)) {
+	if (_action.isAction(VERB_WALK_INSIDE, 0x16C)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 409;
-	} else if (_action.isAction(0x188, 0x2B3))
+	} else if (_action.isAction(VERB_WALK_INSIDE, 0x2B3))
 		_scene->_nextSceneId = 405;
 	else if (_action.isAction(VERB_LOOK, 0x2C4))
 		_vm->_dialogs->show(41310);

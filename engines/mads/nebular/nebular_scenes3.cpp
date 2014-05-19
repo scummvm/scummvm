@@ -959,7 +959,7 @@ void Scene307::actions() {
 		default:
 			break;
 		}
-	}else if (_action.isAction(0x2F7, 0x11)) {
+	}else if (_action.isAction(VERB_CLIMB_INTO, 0x11)) {
 		if (_grateOpenedFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -1698,7 +1698,7 @@ void Scene311::actions() {
 		_scene->_kernelMessages.addQuote(0xFA, 120, 0);
 	} else if (_action.isAction(0x21F, 0x1E4))
 		_scene->_nextSceneId = 320;
-	else if (_action.isAction(0x2F7, 0x11)) {
+	else if (_action.isAction(VERB_CLIMB_INTO, 0x11)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1794,13 +1794,13 @@ void Scene311::actions() {
 		_vm->_dialogs->show(31110);
 	else if (_action.isAction(VERB_LOOK, 0x18D))
 		_vm->_dialogs->show(31111);
-	else if (_action.isAction(VERB_LOOK, 0x220) || _action.isAction(0x155, 0x220))
+	else if (_action.isAction(VERB_LOOK, 0x220) || _action.isAction(VERB_STARE_AT, 0x220))
 		_vm->_dialogs->show(31112);
-	else if (_action.isAction(VERB_LOOK, 0x208) || _action.isAction(0x155, 0x208))
+	else if (_action.isAction(VERB_LOOK, 0x208) || _action.isAction(VERB_STARE_AT, 0x208))
 		_vm->_dialogs->show(31113);
 	else if (_action.isAction(VERB_TAKE, 0x208))
 		_vm->_dialogs->show(31114);
-	else if (_action.isAction(VERB_LOOK, 0xCD) || _action.isAction(0x155, 0xCD))
+	else if (_action.isAction(VERB_LOOK, 0xCD) || _action.isAction(VERB_STARE_AT, 0xCD))
 		_vm->_dialogs->show(31115);
 	else if (_action.isAction(VERB_TAKE, 0xCD))
 		_vm->_dialogs->show(31116);
@@ -2249,7 +2249,7 @@ void Scene316::step() {
 }
 
 void Scene316::preActions() {
-	if (_action.isAction(0x1AD, 0x2B9)) {
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B9)) {
 		if (_globals[kAfterHavoc])
 			_game._player._walkOffScreenSceneId = 354;
 		else
@@ -2258,7 +2258,7 @@ void Scene316::preActions() {
 }
 
 void Scene316::actions() {
-	if (_action.isAction(0x2F7, 0x11)) {
+	if (_action.isAction(VERB_CLIMB_INTO, 0x11)) {
 		if (_globals[kSexOfRex] == REX_FEMALE)
 			handleRoxInGrate();
 		else
@@ -2740,7 +2740,7 @@ void Scene318::preActions() {
 	if (_game._player._needToWalk)
 		_game._player._needToWalk = _game._player._visible;
 
-	if (_action.isAction(0x1AD, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
 		_game._player._walkOffScreenSceneId = 357;
 }
 
@@ -2832,7 +2832,7 @@ void Scene318::actions() {
 	}
 
 	if (_game._player._visible) {
-		if (_action.isAction(0x1AD, 0x2B3)) {
+		if (_action.isAction(VERB_WALK_DOWN, 0x2B3)) {
 			_scene->_nextSceneId = 407;
 			_action._inProgress = false;
 			return;
@@ -3641,7 +3641,7 @@ void Scene320::step() {
 void Scene320::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(32011);
-	else if ((_action.isAction(0x11A) || _action.isAction(VERB_PUSH)) &&
+	else if ((_action.isAction(VERB_PRESS) || _action.isAction(VERB_PUSH)) &&
 		(_action.isAction(0x2E8) || _action.isAction(0x2E9) || _action.isAction(0x2EA) || _action.isAction(0x2EB) ||
 		 _action.isAction(0x2DE) || _action.isAction(0x2DD) || _action.isAction(0x2E0) || _action.isAction(0x2E1) ||
 		 _action.isAction(0x2E2) || _action.isAction(0x2E3) || _action.isAction(0x2E4) || _action.isAction(0x2E5) ||
@@ -3735,7 +3735,7 @@ void Scene320::actions() {
 		_vm->_dialogs->show(32012);
 	else if (_action.isAction(VERB_TAKE, 0x2F2))
 		_vm->_dialogs->show(32013);
-	else if (_action.isAction(VERB_TAKE, 0x2EE) || _action.isAction(0x75, 0x2EE))
+	else if (_action.isAction(VERB_TAKE, 0x2EE) || _action.isAction(VERB_EAT, 0x2EE))
 		_vm->_dialogs->show(32014);
 	else if (_action.isAction(VERB_TAKE, 0x2F3))
 		_vm->_dialogs->show(32015);
@@ -3838,7 +3838,7 @@ void Scene322::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(0x103, 0x181))
+	if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(VERB_PEER_THROUGH, 0x181))
 		_vm->_dialogs->show(32210);
 	else if (_action.isAction(VERB_LOOK, 0xC4))
 		_vm->_dialogs->show(32211);
@@ -3954,9 +3954,9 @@ void Scene351::step() {
 void Scene351::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35121);
-	else if (_action.isAction(0x2F9, 0x16C))
+	else if (_action.isAction(VERB_STEP_INTO, 0x16C))
 		_scene->_nextSceneId = 322;
-	else if (_action.isAction(0x1AD, 0x2B3))
+	else if (_action.isAction(VERB_WALK_DOWN, 0x2B3))
 		_scene->_nextSceneId = 352;
 	else if (_action.isAction(VERB_TAKE, 0x5C)) {
 		if (_game._trigger || !_game._objects.isInInventory(0xF)) {
@@ -4217,7 +4217,7 @@ void Scene352::preActions() {
 			_game._player.walk(Common::Point(271, 111), FACING_NORTHEAST);
 	}
 
-	if (_action.isAction(0x18B, 0x70) || _action.isAction(0x1AD, 0x2B3) || _action.isAction(VERB_PUT, 0x3B6, 0x89)) {
+	if (_action.isAction(VERB_WALK_THROUGH, 0x70) || _action.isAction(VERB_WALK_DOWN, 0x2B3) || _action.isAction(VERB_PUT, 0x3B6, 0x89)) {
 		if (_game._objects.isInInventory(OBJ_GUARDS_ARM))
 			_game._player.walk(Common::Point(230, 117), FACING_NORTHWEST);
 	}
@@ -4288,15 +4288,15 @@ void Scene352::actions() {
 	bool exit_corridor = false;
 	bool exit_doorway = false;
 
-	if (_action.isAction(0x1AD, 0x2B3)) {
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B3)) {
 		exit_corridor = true;
 	}
 
-	if (_action.isAction(0x18B, 0x70)) {
+	if (_action.isAction(VERB_WALK_THROUGH, 0x70)) {
 		exit_doorway = true;
 	}
 
-	if (_action.isAction(0x1AD, 0x2B3) || _action.isAction(0x18B, 0x70) || _action.isAction(VERB_PUT, 0x3B6, 0x89)) {
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B3) || _action.isAction(VERB_WALK_THROUGH, 0x70) || _action.isAction(VERB_PUT, 0x3B6, 0x89)) {
 		if (_mustPutArmDownFl)
 			putArmDown(exit_corridor, exit_doorway);
 		else if (exit_corridor)
@@ -4598,9 +4598,9 @@ void Scene353::enter() {
 void Scene353::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35315);
-	else if (_action.isAction(0x18B, 0x70))
+	else if (_action.isAction(VERB_WALK_THROUGH, 0x70))
 		_scene->_nextSceneId = 352;
-	else if (_action.isAction(0x1AD, 0x2B3))
+	else if (_action.isAction(VERB_WALK_DOWN, 0x2B3))
 		_scene->_nextSceneId = 354;
 	else if (_action.isAction(VERB_LOOK, 0x23D))
 		_vm->_dialogs->show(35310);
@@ -4649,21 +4649,21 @@ void Scene354::enter() {
 }
 
 void Scene354::preActions() {
-	if (_action.isAction(0x1AD, 0x2B3))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B3))
 		_game._player._walkOffScreenSceneId = 401;
 }
 
 void Scene354::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35414);
-	else if (_action.isAction(0x1AD, 0x2B4)) {
+	else if (_action.isAction(VERB_WALK_DOWN, 0x2B4)) {
 		_game._player.startWalking(Common::Point(208, 0), FACING_NORTHEAST);
 		_game._player._walkOffScreenSceneId = 353;
-	} else if (_action.isAction(0x1AD, 0x2B9))
+	} else if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
 		_scene->_nextSceneId = 361;
-	else if (_action.isAction(0x1AD, 0x2BA))
+	else if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
 		_scene->_nextSceneId = 316;
-	else if (_action.isAction(0x1AD, 0x2B3))
+	else if (_action.isAction(VERB_WALK_DOWN, 0x2B3))
 		_scene->_nextSceneId = 401;
 	else if (_action.isAction(VERB_LOOK, 0x2C6))
 		_vm->_dialogs->show(35410);
@@ -4716,10 +4716,10 @@ void Scene357::enter() {
 }
 
 void Scene357::preActions() {
-	if (_action.isAction(0x1AD, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
 		_game._player._walkOffScreenSceneId = 318;
 
-	if (_action.isAction(0x1AD, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
 		_game._player._walkOffScreenSceneId = 358;
 }
 
@@ -4728,7 +4728,7 @@ void Scene357::actions() {
 		_vm->_dialogs->show(35715);
 	else if (_action.isAction(VERB_LOOK, 0x11))
 		_vm->_dialogs->show(35710);
-	else if (_action.isAction(0x2F7, 0x11))
+	else if (_action.isAction(VERB_CLIMB_INTO, 0x11))
 		_vm->_dialogs->show(35711);
 	else if (_action.isAction(VERB_LOOK, 0x1CB))
 		_vm->_dialogs->show(35712);
@@ -4780,10 +4780,10 @@ void Scene358::enter() {
 }
 
 void Scene358::preActions() {
-	if (_action.isAction(0x1AD, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
 		_game._player._walkOffScreenSceneId = 357;
 
-	if (_action.isAction(0x1AD, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
 		_game._player._walkOffScreenSceneId = 359;
 }
 
@@ -4846,10 +4846,10 @@ void Scene359::enter() {
 }
 
 void Scene359::preActions() {
-	if (_action.isAction(0x1AD, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
 		_game._player._walkOffScreenSceneId = 358;
 
-	if (_action.isAction(0x1AD, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
 		_game._player._walkOffScreenSceneId = 360;
 }
 
@@ -4976,10 +4976,10 @@ void Scene360::enter() {
 }
 
 void Scene360::preActions() {
-	if (_action.isAction(0x1AD, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
 		_game._player._walkOffScreenSceneId = 359;
 
-	if (_action.isAction(0x1AD, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
 		_game._player._walkOffScreenSceneId = 361;
 }
 
@@ -5348,10 +5348,10 @@ void Scene361::step() {
 }
 
 void Scene361::preActions() {
-	if (_action.isAction(0x1AD, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
 		_game._player._walkOffScreenSceneId = 360;
 
-	if (_action.isAction(0x1AD, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
 		_game._player._walkOffScreenSceneId = 354;
 }
 
@@ -5361,7 +5361,7 @@ void Scene361::actions() {
 	else if (_action.isAction(0x21F, 0x1E4)) {
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.addQuote(0xFC, 120, 0);
-	} else if (_action.isAction(0x2F7, 0x11)) {
+	} else if (_action.isAction(VERB_CLIMB_INTO, 0x11)) {
 		if (_globals[kSexOfRex] == REX_FEMALE)
 			handleRoxAction();
 		else
@@ -5370,13 +5370,13 @@ void Scene361::actions() {
 		_vm->_dialogs->show(36110);
 	else if (_action.isAction(VERB_LOOK, 0x18D))
 		_vm->_dialogs->show(36111);
-	else if (_action.isAction(VERB_LOOK, 0x220) || _action.isAction(0x155, 0x220))
+	else if (_action.isAction(VERB_LOOK, 0x220) || _action.isAction(VERB_STARE_AT, 0x220))
 		_vm->_dialogs->show(36112);
-	else if (_action.isAction(VERB_LOOK, 0x208) || _action.isAction(0x155, 0x208))
+	else if (_action.isAction(VERB_LOOK, 0x208) || _action.isAction(VERB_STARE_AT, 0x208))
 		_vm->_dialogs->show(36113);
 	else if (_action.isAction(VERB_TAKE, 0x208))
 		_vm->_dialogs->show(36114);
-	else if (_action.isAction(VERB_LOOK, 0x2F8) || _action.isAction(0x155, 0x2F8))
+	else if (_action.isAction(VERB_LOOK, 0x2F8) || _action.isAction(VERB_STARE_AT, 0x2F8))
 		_vm->_dialogs->show(36115);
 	else if (_action.isAction(VERB_TAKE, 0x2F8))
 		_vm->_dialogs->show(36116);
@@ -5414,7 +5414,7 @@ void Scene366::actions() {
 		else
 			_vm->_dialogs->show(36613);
 		_scene->_nextSceneId = 316;
-	} else if (_action.isAction(0xD3, 0x2D3)) {
+	} else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
 		if (_game._visitedScenes.exists(321))
 			_vm->_dialogs->show(36611);
 		else
@@ -5443,7 +5443,7 @@ void Scene387::enter() {
 void Scene387::actions() {
 	if (_action.isAction(0x2D5, 0x2D4))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(0xD3, 0x2D3))
+	else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3))
 		_vm->_dialogs->show(38710);
 	else if (_action.isAction(VERB_OPEN, 0x2D3))
 		_vm->_dialogs->show(38711);
@@ -5503,7 +5503,7 @@ void Scene388::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(0xD3, 0x2D3)) {
+	} else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(38811);
 		else
@@ -5576,7 +5576,7 @@ void Scene389::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(0xD3, 0x2D3)) {
+	} else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
 		if (_globals[kAfterHavoc]) {
 			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 				_vm->_dialogs->show(38911);
@@ -5619,7 +5619,7 @@ void Scene390::enter() {
 void Scene390::actions() {
 	if (_action.isAction(0x2D5, 0x2D4))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(0xD3, 0x2D3))
+	else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3))
 		_vm->_dialogs->show(39010);
 	else if (_action.isAction(VERB_OPEN, 0x2D3))
 		_vm->_dialogs->show(39011);
@@ -5657,7 +5657,7 @@ void Scene391::actions() {
 			_scene->_nextSceneId = 361;
 		else
 			_scene->_nextSceneId = 311;
-	} else if (_action.isAction(0xD3, 0x2D3)) {
+	} else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(39111);
 		else
@@ -5684,7 +5684,7 @@ void Scene399::enter() {
 void Scene399::actions() {
 	if (_action.isAction(0x2D5, 0x2D4))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(0xD3, 0x2D3)) {
+	else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
 		if (_globals[kAfterHavoc]) {
 			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 				_vm->_dialogs->show(38911);

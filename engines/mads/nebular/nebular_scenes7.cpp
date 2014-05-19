@@ -1850,7 +1850,7 @@ void Scene706::preActions() {
 }
 
 void Scene706::actions() {
-	if (_action.isAction(0x188, 0x16C)) {
+	if (_action.isAction(VERB_WALK_INSIDE, 0x16C)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 707;
@@ -1858,7 +1858,7 @@ void Scene706::actions() {
 		return;
 	}
 
-	if (_action.isAction(0x298, 0x2FA)) {
+	if (_action.isAction(VERB_EXIT, 0x2FA)) {
 		_scene->_nextSceneId = 705;
 		_action._inProgress = false;
 		return;
@@ -1970,7 +1970,7 @@ void Scene707::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(0x103, 0x181))
+	if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(VERB_PEER_THROUGH, 0x181))
 		_vm->_dialogs->show(70710);
 	else if (_action.isAction(VERB_LOOK, 0xC4))
 		_vm->_dialogs->show(70711);
@@ -2256,7 +2256,7 @@ void Scene751::preActions() {
 }
 
 void Scene751::actions() {
-	if (_action.isAction(0x312, 0x22C))
+	if (_action.isAction(VERB_WALK_ALONG, 0x22C))
 		; // Nothing
 	else if (_action.isAction(VERB_LOOK, 0x27, 0x470)) {
 		switch (_game._trigger) {
@@ -2284,7 +2284,7 @@ void Scene751::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(0x2F9, 0x317)) {
+	} else if (_action.isAction(VERB_STEP_INTO, 0x317)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;

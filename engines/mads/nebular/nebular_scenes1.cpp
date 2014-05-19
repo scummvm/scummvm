@@ -481,7 +481,7 @@ void Scene101::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0xA8) || _action.isAction(VERB_LOOK, 0xF8) || _action.isAction(0x7D, 0xA8) || _action.isAction(0x7D, 0xF8)) {
+	if (_action.isAction(VERB_LOOK, 0xA8) || _action.isAction(VERB_LOOK, 0xF8) || _action.isAction(VERB_EXAMINE, 0xA8) || _action.isAction(VERB_EXAMINE, 0xF8)) {
 		_vm->_dialogs->show(10103);
 		_action._inProgress = false;
 		return;
@@ -493,7 +493,7 @@ void Scene101::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0xE1) || _action.isAction(0xD2, 0xE1)) {
+	if (_action.isAction(VERB_LOOK, 0xE1) || _action.isAction(VERB_LOOK_IN, 0xE1)) {
 		_vm->_dialogs->show(10105);
 		_action._inProgress = false;
 		return;
@@ -595,7 +595,7 @@ void Scene101::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_LOOK) || _action.isAction(0x112)) && _action.isAction(0x17E)) {
+	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PLAY)) && _action.isAction(0x17E)) {
 		_vm->_dialogs->show(10124);
 		_action._inProgress = false;
 		return;
@@ -875,7 +875,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(0x18B, 0x6E)) {
+	if (_action.isAction(VERB_WALK_THROUGH, 0x6E)) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
@@ -922,13 +922,13 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(0x155, 0x46) || _action.isAction(VERB_LOOK, 0x46)) {
+	if (_action.isAction(VERB_STARE_AT, 0x46) || _action.isAction(VERB_LOOK, 0x46)) {
 		_vm->_dialogs->show(10203);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(0x155, 0xFD) || _action.isAction(VERB_LOOK, 0xFD)) {
+	if (_action.isAction(VERB_STARE_AT, 0xFD) || _action.isAction(VERB_LOOK, 0xFD)) {
 		_vm->_dialogs->show(10202);
 		_action._inProgress = false;
 		return;
@@ -970,9 +970,9 @@ void Scene102::actions() {
 		return;
 	}
 
-	if ((_action.isObject(0xC7) || _action.isObject(0xA3)) && (_action.isAction(VERB_LOOK) || _action.isAction(0x50) || _action.isAction(0x4F))) {
+	if ((_action.isObject(0xC7) || _action.isObject(0xA3)) && (_action.isAction(VERB_LOOK) || _action.isAction(VERB_CLIMB_UP) || _action.isAction(0x4F))) {
 		if (_game._objects.isInInventory(OBJ_REBREATHER)) {
-			if (!_action.isAction(0x50) && !_action.isAction(0x4F)) {
+			if (!_action.isAction(VERB_CLIMB_UP) && !_action.isAction(0x4F)) {
 				_vm->_dialogs->show(10231);
 				_action._inProgress = false;
 				return;
@@ -984,7 +984,7 @@ void Scene102::actions() {
 		}
 	}
 
-	if ((_action.isObject(0xC7) || _action.isObject(0xA3)) && (_action.isAction(0x50) || _action.isAction(0x4F)) ) {
+	if ((_action.isObject(0xC7) || _action.isObject(0xA3)) && (_action.isAction(VERB_CLIMB_UP) || _action.isAction(0x4F)) ) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(formAnimName('A', -1), 1);
@@ -1025,7 +1025,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x197) || _action.isAction(0xD3, 0x197)) {
+	if (_action.isAction(VERB_LOOK, 0x197) || _action.isAction(VERB_LOOK_THROUGH, 0x197)) {
 		_vm->_dialogs->show(10227);
 		_action._inProgress = false;
 		return;
@@ -1056,14 +1056,14 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x47) || (_action.isAction(0x13F, 0x47) && !_chairDescrFl)) {
+	if (_action.isAction(VERB_LOOK, 0x47) || (_action.isAction(VERB_SIT_IN, 0x47) && !_chairDescrFl)) {
 		_chairDescrFl = true;
 		_vm->_dialogs->show(10210);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(0x13F, 0x47)) {
+	if (_action.isAction(VERB_SIT_IN, 0x47)) {
 		_vm->_dialogs->show(10211);
 		_action._inProgress = false;
 		return;
@@ -1716,10 +1716,10 @@ void Scene104::step() {
 }
 
 void Scene104::preActions() {
-	if (_action.isAction(0x15D, 0x74))
+	if (_action.isAction(VERB_SWIM_TOWARDS, 0x74))
 		_game._player._walkOffScreenSceneId = 105;
 
-	if (_action.isAction(0x15D, 0x75))
+	if (_action.isAction(VERB_SWIM_TOWARDS, 0x75))
 		_game._player._walkOffScreenSceneId = 106;
 }
 
@@ -1843,10 +1843,10 @@ void Scene105::step() {
 }
 
 void Scene105::preActions() {
-	if (_action.isAction(0x15D, 0x195))
+	if (_action.isAction(VERB_SWIM_TOWARDS, 0x195))
 		_game._player._walkOffScreenSceneId = 104;
 
-	if (_action.isAction(0x15D, 0xF5))
+	if (_action.isAction(VERB_SWIM_TOWARDS, 0xF5))
 		_game._player._walkOffScreenSceneId = 107;
 
 	if (_action.isAction(0xE0) && (_action.isAction(VERB_TALKTO) || _action.isAction(VERB_LOOK)))
@@ -2052,20 +2052,20 @@ void Scene106::step() {
 }
 
 void Scene106::preActions() {
-	if (_action.isAction(0x15D, 0x12E) || _action.isAction(0x15D, 0x130)) {
+	if (_action.isAction(VERB_SWIM_TOWARDS, 0x12E) || _action.isAction(VERB_SWIM_TOWARDS, 0x130)) {
 		_game._player._stepEnabled = false;
 		_scene->_sprites[_game._player._spritesStart + 1]->_charInfo->_velocity = 24;
 		_game._player._walkOffScreenSceneId = 104;
 	}
 
-	if (_action.isAction(0x15D, 0xF3))
+	if (_action.isAction(VERB_SWIM_TOWARDS, 0xF3))
 		_game._player._walkOffScreenSceneId = 107;
 }
 
 void Scene106::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10614);
-	else if (_action.isAction(0x15C, 0xD9)) {
+	else if (_action.isAction(VERB_SWIM_TO, 0xD9)) {
 		_game._player._stepEnabled = false;
 		_game._player._prepareWalkPos = Common::Point(95, 72);
 		_game._player._prepareWalkFacing = FACING_WEST;
@@ -2073,7 +2073,7 @@ void Scene106::actions() {
 		_game._player._readyToWalk = true;
 		_game._player._frameNumber = 9;
 		_backToShipFl = true;
-	} else if (_action.isAction(VERB_LOOK, 0x13) || _action.isAction(0xD1, 0x13))
+	} else if (_action.isAction(VERB_LOOK, 0x13) || _action.isAction(VERB_LOOK_AT, 0x13))
 		_vm->_dialogs->show(10601);
 	else if (_action.isAction(VERB_TAKE, 0x13))
 		_vm->_dialogs->show(10602);
@@ -2083,11 +2083,11 @@ void Scene106::actions() {
 		_vm->_dialogs->show(10604);
 	else if (_action.isAction(VERB_LOOK, 0xF3))
 		_vm->_dialogs->show(10605);
-	else if (_action.isAction(VERB_LOOK, 0x109) || _action.isAction(0xD1, 0x109))
+	else if (_action.isAction(VERB_LOOK, 0x109) || _action.isAction(VERB_LOOK_AT, 0x109))
 		_vm->_dialogs->show(10606);
 	else if (_action.isAction(0x109) && (_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)))
 		_vm->_dialogs->show(10607);
-	else if (_action.isAction(VERB_LOOK, 0x139) || _action.isAction(0xD1, 0x139))
+	else if (_action.isAction(VERB_LOOK, 0x139) || _action.isAction(VERB_LOOK_AT, 0x139))
 		_vm->_dialogs->show(10608);
 	else if (_action.isAction(VERB_LOOK, 0xD9))
 		_vm->_dialogs->show(10609);
@@ -2178,10 +2178,10 @@ void Scene107::step() {
 }
 
 void Scene107::preActions() {
-	if (_action.isAction(0x15D, 0xF6))
+	if (_action.isAction(VERB_SWIM_TOWARDS, 0xF6))
 		_game._player._walkOffScreenSceneId = 106;
 
-	if (_action.isAction(0x15D, 0xF5))
+	if (_action.isAction(VERB_SWIM_TOWARDS, 0xF5))
 		_game._player._walkOffScreenSceneId = 108;
 }
 
@@ -2199,7 +2199,7 @@ void Scene107::actions() {
 			_globals[kFishIn107] = false;
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802);
 		}
-	} else if (_action.isAction(0x15D, 0xEE))
+	} else if (_action.isAction(VERB_SWIM_TOWARDS, 0xEE))
 		_scene->_nextSceneId = 105;
 	else if (_action.isAction(VERB_LOOK, 0xEE))
 		_vm->_dialogs->show(10701);
@@ -2273,7 +2273,7 @@ void Scene108::enter() {
 }
 
 void Scene108::preActions() {
-	if (_action.isAction(0x15E, 0xFB))
+	if (_action.isAction(VERB_SWIM_UNDER, 0xFB))
 		_game._player._walkOffScreenSceneId = 109;
 }
 
@@ -2291,7 +2291,7 @@ void Scene108::actions() {
 			_globals[kFishIn108] = false;
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 10808);
 		}
-	} else if (_action.isAction(0x15D, 0xF4))
+	} else if (_action.isAction(VERB_SWIM_TOWARDS, 0xF4))
 		_scene->_nextSceneId = 107;
 	else if (_action.isAction(VERB_LOOK, 0x4D))
 		_vm->_dialogs->show(10801);
@@ -2485,7 +2485,7 @@ void Scene109::step() {
 }
 
 void Scene109::preActions() {
-	if (_action.isAction(0x15E, 0xFC))
+	if (_action.isAction(VERB_SWIM_UNDER, 0xFC))
 		_game._player._walkOffScreenSceneId = 108;
 
 	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT))
@@ -2500,7 +2500,7 @@ void Scene109::preActions() {
 		}
 	}
 
-	if ((_action.isAction(0x15A, 0x178) || _action.isAction(0x15C, 0x146))
+	if ((_action.isAction(VERB_SWIM_INTO, 0x178) || _action.isAction(VERB_SWIM_TO, 0x146))
 	&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(0x178)))
 		_game._player._walkOffScreenSceneId = 110;
 
@@ -2789,7 +2789,7 @@ void Scene110::step() {
 }
 
 void Scene110::preActions() {
-	if (_action.isAction(0x15B, 0x41))
+	if (_action.isAction(VERB_SWIM_THROUGH, 0x41))
 		_game._player._walkOffScreenSceneId = 109;
 
 	if (_crabsFl) {
@@ -2817,7 +2817,7 @@ void Scene110::preActions() {
 }
 
 void Scene110::actions() {
-	if (_action.isAction(0x15B, 0x178)) {
+	if (_action.isAction(VERB_SWIM_THROUGH, 0x178)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(110, 'T', 0, EXT_AA, ""), 1);
@@ -2833,7 +2833,7 @@ void Scene110::actions() {
 		}
 	} else if ((_action._lookFlag) || _action.isAction(VERB_LOOK, 0x3F))
 		_vm->_dialogs->show(11001);
-	else if (_action.isAction(VERB_LOOK, 0x40) || _action.isAction(0xD1, 0x40))
+	else if (_action.isAction(VERB_LOOK, 0x40) || _action.isAction(VERB_LOOK_AT, 0x40))
 		_vm->_dialogs->show(11002);
 	else if (_action.isAction(VERB_LOOK, 0x129))
 		_vm->_dialogs->show(11003);
@@ -2964,12 +2964,12 @@ void Scene111::step() {
 }
 
 void Scene111::preActions() {
-	if (_action.isAction(0x18B, 0x41))
+	if (_action.isAction(VERB_WALK_THROUGH, 0x41))
 		_game._player._walkOffScreenSceneId = 212;
 }
 
 void Scene111::actions() {
-	if (_action.isAction(0x6D, 0x116) && _game._objects.isInInventory(OBJ_REBREATHER)) {
+	if (_action.isAction(VERB_DIVE_INTO, 0x116) && _game._objects.isInInventory(OBJ_REBREATHER)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(111, 'A', 1, EXT_AA, ""), 1);

@@ -147,7 +147,7 @@ void Scene601::step() {
 }
 
 void Scene601::actions() {
-	if (_action.isAction(0x18B, 0x378))
+	if (_action.isAction(VERB_WALK_THROUGH, 0x378))
 		_scene->_nextSceneId = 602;
 	else if (_action.isAction(0x325, 0x324)) {
 		switch (_game._trigger) {
@@ -197,7 +197,7 @@ void Scene601::actions() {
 		_vm->_dialogs->show(60113);
 	else if (_action.isAction(VERB_LOOK, 0x323))
 		_vm->_dialogs->show(60114);
-	else if (_action.isAction(0x1AD, 0x31E))
+	else if (_action.isAction(VERB_WALK_DOWN, 0x31E))
 		_vm->_dialogs->show(60115);
 	else if (_action.isAction(VERB_LOOK, 0x48E))
 		_vm->_dialogs->show(60116);
@@ -383,9 +383,9 @@ void Scene602::handleSafeActions() {
 }
 
 void Scene602::actions() {
-	if (_action.isAction(0x18B, 0x1F9))
+	if (_action.isAction(VERB_WALK_THROUGH, 0x1F9))
 		_scene->_nextSceneId = 601;
-	else if (_action.isAction(0x18B, 0x70))
+	else if (_action.isAction(VERB_WALK_THROUGH, 0x70))
 		_scene->_nextSceneId = 603;
 	else if (_action.isAction(VERB_OPEN, 0x3D3) && ((_globals[kSafeStatus] == 0) || (_globals[kSafeStatus] == 2))) {
 		_safeMode = 1;
@@ -564,7 +564,7 @@ void Scene603::enter() {
 }
 
 void Scene603::actions() {
-	if (_action.isAction(0x18C, 0x3F1))
+	if (_action.isAction(VERB_WALK_TOWARDS, 0x3F1))
 		_scene->_nextSceneId = 602;
 	else if (_action.isAction(VERB_TAKE, 0x57)) {
 		if ( _game._trigger || !_game._objects.isInInventory(OBJ_COMPACT_CASE)) {
@@ -1296,7 +1296,7 @@ void Scene607::preActions() {
 	if (_action.isAction(VERB_TALKTO, 0x471))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(0x18B, 0x478) && (_globals[kDogStatus] == 2) && (_game._difficulty != DIFFICULTY_EASY)) {
+	if (_action.isAction(VERB_WALK_THROUGH, 0x478) && (_globals[kDogStatus] == 2) && (_game._difficulty != DIFFICULTY_EASY)) {
 		_shopAvailable = true;
 		_dogTimer = 0;
 	}
@@ -1309,7 +1309,7 @@ void Scene607::preActions() {
 }
 
 void Scene607::actions() {
-	if (_action.isAction(0x18B, 0x478))
+	if (_action.isAction(VERB_WALK_THROUGH, 0x478))
 		_scene->_nextSceneId = 608;
 	else if (_action.isAction(0x325, 0x324)) {
 		switch (_game._trigger) {
@@ -1406,7 +1406,7 @@ void Scene607::actions() {
 		_vm->_dialogs->show(60727);
 	else if (_action.isAction(VERB_LOOK, 0x31F))
 		_vm->_dialogs->show(60728);
-	else if (_action.isAction(0x1AD, 0x31E))
+	else if (_action.isAction(VERB_WALK_DOWN, 0x31E))
 		_vm->_dialogs->show(60730);
 	else if (_action.isAction(0x3FF) && (_action.isAction(VERB_OPEN) || _action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)))
 		_vm->_dialogs->show(60731);
@@ -2091,7 +2091,7 @@ void Scene608::preActions() {
 }
 
 void Scene608::actions() {
-	if (_action.isAction(0x18B, 0x70))
+	if (_action.isAction(VERB_WALK_THROUGH, 0x70))
 		_scene->_nextSceneId = 607;
 	else if (_action.isAction(VERB_PUSH, 0x403)) {
 		_game._player._stepEnabled = true;
@@ -2586,9 +2586,9 @@ void Scene609::preActions() {
 }
 
 void Scene609::actions() {
-	if (_action.isAction(0x18C, 0x423))
+	if (_action.isAction(VERB_WALK_TOWARDS, 0x423))
 		_scene->_nextSceneId = 611;
-	else if (_action.isAction(0x18B, 0x425)) {
+	else if (_action.isAction(VERB_WALK_THROUGH, 0x425)) {
 		if (!_globals[kBeenInVideoStore]) {
 			switch (_game._trigger) {
 			case 0:
@@ -2691,7 +2691,7 @@ void Scene609::actions() {
 			_vm->_dialogs->show(60918);
 		else
 			_vm->_dialogs->show(60919);
-	} else if (_action.isAction(0x1AD, 0x31E))
+	} else if (_action.isAction(VERB_WALK_DOWN, 0x31E))
 		_vm->_dialogs->show(60730);
 	else
 		return;
@@ -2763,7 +2763,7 @@ void Scene610::step() {
 }
 
 void Scene610::actions() {
-	if (_action.isAction(0x1CE, 0x427))
+	if (_action.isAction(VERB_EXIT_FROM, 0x427))
 		_scene->_nextSceneId = 609;
 	else if (_action.isAction(VERB_TAKE, 0x108)) {
 		if ( _game._trigger || !_game._objects.isInInventory(OBJ_PHONE_HANDSET)) {
@@ -4130,7 +4130,7 @@ void Scene611::step() {
 }
 
 void Scene611::preActions() {
-	if (_action.isAction(0x1AD, 0x423))
+	if (_action.isAction(VERB_WALK_DOWN, 0x423))
 		_game._player._walkOffScreenSceneId = 609;
 
 	if (_resetBatterieText)
@@ -4458,7 +4458,7 @@ void Scene612::actions() {
 		_vm->_dialogs->show(61223);
 	else if (_action.isAction(VERB_LOOK, 0x257))
 		_vm->_dialogs->show(61224);
-	else if (_action.isAction(0x1AD, 0x461) || _action.isAction(0x1AD, 0x463))
+	else if (_action.isAction(VERB_WALK_DOWN, 0x461) || _action.isAction(VERB_WALK_DOWN, 0x463))
 		_vm->_dialogs->show(61225);
 	else
 		return;

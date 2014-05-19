@@ -712,7 +712,7 @@ void Scene202::preActions() {
 	if (player._readyToWalk)
 		_scene->_kernelMessages.reset();
 
-	if (!_ladderTopFl && (_action.isAction(0x4E, NOUN_LADDER) || !player._readyToWalk)) {
+	if (!_ladderTopFl && (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER) || !player._readyToWalk)) {
 		if (_game._trigger == 0) {
 			_vm->_sound->command(29);
 			player._readyToWalk = false;
@@ -930,7 +930,7 @@ void Scene202::actions() {
 				return;
 			}
 		}
-	} else if (_action.isAction(0x188, 0xAA)) {
+	} else if (_action.isAction(VERB_WALK_INSIDE, 0xAA)) {
 		setRandomKernelMessage();
 	} else if (_action.isAction(VERB_LOOK, NOUN_ROCKS)) {
 		_vm->_dialogs->show(20202);
@@ -1342,7 +1342,7 @@ void Scene205::actions() {
 			_scene->_reloadSceneFlag = true;
 		}
 	} else {
-		if (_action.isAction(0x1AD, 0x1C7))
+		if (_action.isAction(VERB_WALK_DOWN, 0x1C7))
 			_scene->_nextSceneId = 210;
 
 		if (_action.isAction(VERB_WALKTO, 0x86) || _action.isAction(VERB_WALKTO, 0x1C2)) {
@@ -4464,7 +4464,7 @@ void Scene210::actions() {
 		_vm->_dialogs->show(21009);
 	} else if (_action.isAction(VERB_LOOK, 0x1DC)) {
 		_vm->_dialogs->show(21010);
-	} else if (_action.isAction(0x13A, 0x1DC) || _action.isAction(0xA6, 0x1DC)) {
+	} else if (_action.isAction(VERB_SHOOT, 0x1DC) || _action.isAction(VERB_HOSE_DOWN, 0x1DC)) {
 		_vm->_dialogs->show(21011);
 	} else if (_action.isAction(VERB_LOOK, 0x1BF)) {
 		_vm->_dialogs->show(21012);
@@ -5086,7 +5086,7 @@ void Scene214::actions() {
 		_vm->_dialogs->show(21415);
 	else if (_action.isAction(VERB_GIVE, 0x17A, 0x1C3))
 		_vm->_dialogs->show(21416);
-	else if (_action.isAction(0x13A, 0x29, 0x1C3) || _action.isAction(0xA6, 0x29, 0x1C3))
+	else if (_action.isAction(VERB_SHOOT, 0x29, 0x1C3) || _action.isAction(VERB_HOSE_DOWN, 0x29, 0x1C3))
 		_vm->_dialogs->show(21417);
 	else if (_action.isAction(VERB_LOOK, 0x473))
 		_vm->_dialogs->show(21418);
