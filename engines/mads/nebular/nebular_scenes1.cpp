@@ -272,7 +272,7 @@ void Scene101::preActions() {
 		_game._player._needToWalk = true;
 
 	if (_sittingFl) {
-		if (_action.isAction(VERB_LOOK) || _action.isAction(0x47) || _action.isAction(VERB_TALKTO) || _action.isAction(0x103) || _action.isAction(0x7D))
+		if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_CHAIR) || _action.isAction(VERB_TALKTO) || _action.isAction(VERB_PEER_THROUGH) || _action.isAction(VERB_EXAMINE))
 			_game._player._needToWalk = false;
 
 		if (_game._player._needToWalk) {
@@ -301,12 +301,12 @@ void Scene101::preActions() {
 		}
 	}
 
-	if (_panelOpened && !(_action.isAction(0x135) || _action.isAction(0x137))) {
+	if (_panelOpened && !(_action.isObject(NOUN_SHIELD_ACCESS_PANEL) || _action.isObject(NOUN_SHIELD_MODULATOR))) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._player._needToWalk) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[13]);
-				_shieldSpriteIdx = _game._objects.isInRoom(0x18) ? 13 : 14;
+				_shieldSpriteIdx = _game._objects.isInRoom(OBJ_SHIELD_MODULATOR) ? 13 : 14;
 				_globals._sequenceIndexes[13] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[_shieldSpriteIdx], false, 6, 1, 0, 0);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				_game._player._stepEnabled = false;
@@ -330,13 +330,13 @@ void Scene101::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALKTO, 0xCC)) {
+	if (_action.isAction(VERB_WALKTO, NOUN_LIFE_SUPPORT_SECTION)) {
 		_scene->_nextSceneId = 102;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(0x13F, 0x47) || (_action.isAction(VERB_LOOK, 0x180) && !_sittingFl)) {
+	if (_action.isAction(VERB_SIT_IN, NOUN_CHAIR) || (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN) && !_sittingFl)) {
 		if (!_sittingFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -361,7 +361,7 @@ void Scene101::actions() {
 				_sittingFl = true;
 				_scene->_hotspots.activate(71, false);
 				_chairHotspotId = _scene->_dynamicHotspots.add(71, 0x13F, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
-				if (!_action.isAction(VERB_LOOK, 0x180)) {
+				if (!_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN)) {
 					_action._inProgress = false;
 					return;
 				}
@@ -375,7 +375,7 @@ void Scene101::actions() {
 		}
 	}
 
-	if (((_action.isAction(VERB_WALKTO, 0x135) || _action.isAction(VERB_OPEN, 0x135))) && !_panelOpened) {
+	if (((_action.isAction(VERB_WALKTO, NOUN_SHIELD_ACCESS_PANEL) || _action.isAction(VERB_OPEN, NOUN_SHIELD_ACCESS_PANEL))) && !_panelOpened) {
 		switch (_game._trigger) {
 		case 0:
 			_shieldSpriteIdx = _game._objects.isInRoom(0x18) ? 13 : 14;
@@ -399,19 +399,19 @@ void Scene101::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_TAKE, 0x137) || _action.isAction(VERB_PULL, 0x137)) && _game._objects.isInRoom(0x18)) {
+	if ((_action.isAction(VERB_TAKE, NOUN_SHIELD_MODULATOR) || _action.isAction(VERB_PULL, NOUN_SHIELD_MODULATOR)) && _game._objects.isInRoom(OBJ_SHIELD_MODULATOR)) {
 		_game._objects.addToInventory(OBJ_SHIELD_MODULATOR);
 		_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 		_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[14], false, 6, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], -2, -2);
-		_scene->_hotspots.activate(0x137, false);
+		_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, false);
 		_vm->_dialogs->showItem(OBJ_SHIELD_MODULATOR, 10120);
 		_vm->_sound->command(22);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x135) || (_action.isAction(VERB_LOOK, 0x137) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) ) {
+	if (_action.isAction(VERB_LOOK, NOUN_SHIELD_ACCESS_PANEL) || (_action.isAction(VERB_LOOK, NOUN_SHIELD_MODULATOR) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) ) {
 		if (_panelOpened) {
 			if (_game._objects.isInRoom(OBJ_SHIELD_MODULATOR))
 				_vm->_dialogs->show(10128);
@@ -475,7 +475,7 @@ void Scene101::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_LOOK) || _action.isAction(0x103)) && (_action.isAction(0x8E) || _action.isAction(0xF9))) {
+	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PEER_THROUGH)) && (_action.isAction(0x8E) || _action.isAction(0xF9))) {
 		_vm->_dialogs->show(10102);
 		_action._inProgress = false;
 		return;
