@@ -399,7 +399,7 @@ void Animation::loadInterface(UserInterface &interfaceSurface, MSurface &depthSu
 }
 
 bool Animation::hasScroll() const {
-	return (_header._scrollPosition.x != 0) || (_header._scrollPosition.x != 0);
+	return (_header._scrollPosition.x != 0) || (_header._scrollPosition.y != 0);
 }
 
 void Animation::update() {
