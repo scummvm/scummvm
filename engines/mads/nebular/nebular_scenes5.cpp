@@ -886,10 +886,9 @@ void Scene505::enter() {
 }
 
 void Scene505::step() {
-	int resetFrame;
 	if (_frame != _scene->_activeAnimation->getCurrentFrame()) {
 		_frame = _scene->_activeAnimation->getCurrentFrame();
-		resetFrame = -1;
+		int resetFrame = -1;
 
 		switch (_frame) {
 		case 4:
@@ -1267,8 +1266,6 @@ void Scene506::room_506_door_sequences() {
 }
 
 void Scene506::actions() {
-	int temp;
-
 	if (_action.isAction(0x242, 0x37D)) {
 		if (_firstDoorFl) {
 			_heroFacing = FACING_NORTHWEST;
@@ -1293,11 +1290,12 @@ void Scene506::actions() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
-		case 1:
-			temp = _globals._sequenceIndexes[3];
+		case 1: {
+			int syncIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], temp);
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
+			}
 			break;
 
 		case 2:
@@ -1307,12 +1305,13 @@ void Scene506::actions() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
-		case 3:
-			temp = _globals._sequenceIndexes[4];
+		case 3: {
+			int syncIdx = _globals._sequenceIndexes[4];
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], temp);
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_nextSceneId = 504;
+			}
 			break;
 
 		default:
