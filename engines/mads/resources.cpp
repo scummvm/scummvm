@@ -410,13 +410,13 @@ void SynchronizedList::synchronize(Common::Serializer &s) {
 
 void synchronizeString(Common::Serializer &s, Common::String &str) {
 	int len = str.size();
-	char c;
 	s.syncAsUint16LE(len);
 
 	if (s.isSaving()) {
 		s.syncBytes((byte *)str.c_str(), len);
 	} else {
 		str.clear();
+		char c;
 		for (int i = 0; i < len; ++i) {
 			s.syncAsByte(c);
 			str += c;
