@@ -48,6 +48,7 @@ class V2D;
 class Dac;
 class Spare;
 class CommandHandler;
+class InfoLine;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -63,6 +64,20 @@ class CommandHandler;
 
 enum CallbackType {
 	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume
+};
+
+class Font {
+	char _path[kPathMax];
+	void load();
+	CGE2Engine *_vm;
+public:
+	uint8  *_widthArr;
+	uint16 *_pos;
+	uint8  *_map;
+	Font(CGE2Engine *vm, const char *name);
+	~Font();
+	uint16 width(const char *text);
+	void save();
 };
 
 class CGE2Engine : public Engine {
@@ -127,6 +142,7 @@ public:
 	V3D *_eyeTab[kCaveMax];
 	Spare *_spare;
 	CommandHandler *_commandHandler;
+	InfoLine *_infoLine;
 private:
 	void init();
 	void deinit();

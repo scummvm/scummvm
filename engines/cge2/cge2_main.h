@@ -34,6 +34,7 @@ namespace CGE2 {
 #define kIntroExt      ".I80"
 #define kNoByte            -1
 #define kTabName    "CGE.TAB"
+#define kInfoW            140
 
 } // End of namespace CGE2
 

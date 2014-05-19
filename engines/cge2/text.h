@@ -28,7 +28,7 @@
 #ifndef CGE2_TEXT_H
 #define CGE2_TEXT_H
 
-//#include "cge/talk.h"
+#include "cge2/talk.h"
 #include "cge2/cge2.h"
 
 namespace CGE2 {

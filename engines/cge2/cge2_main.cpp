@@ -347,6 +347,7 @@ void CGE2Engine::caveUp(int cav) {
 	_fx->clear();
 
 	selectPocket(-1);
+	_infoLine->setText(nullptr);
 
 
 	_vga->update();

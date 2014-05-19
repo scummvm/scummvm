@@ -11,7 +11,8 @@ MODULE_OBJS = \
 	text.o \
 	hero.o \
 	snail.o \
-	spare.o
+	spare.o \
+	talk.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CGE2), DYNAMIC_PLUGIN)
