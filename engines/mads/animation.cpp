@@ -464,9 +464,8 @@ void Animation::update() {
 		paChanged = true;
 	}
 
-	int newIndex = -1;
 	if (paChanged) {
-		newIndex = scene._spriteSlots.add();
+		int newIndex = scene._spriteSlots.add();
 		scene._spriteSlots[newIndex]._seqIndex = -1;
 		scene._spriteSlots[newIndex]._flags = IMG_REFRESH;
 	}
