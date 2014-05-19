@@ -106,7 +106,7 @@ private:
 	MADSEngine *_vm;
 	Common::String _statusText;
 
-	void appendVocab(int vocabId, bool capitalise = false);
+	void appendVocab(int vocabId, bool capitalize = false);
 
 	void startWalkingDirectly(int walkType);
 public:

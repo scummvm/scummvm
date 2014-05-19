@@ -87,9 +87,9 @@ void MADSAction::clear() {
 	_pickedWord = 0;
 }
 
-void MADSAction::appendVocab(int vocabId, bool capitalise) {
+void MADSAction::appendVocab(int vocabId, bool capitalize) {
 	Common::String vocabStr = _vm->_game->_scene.getVocab(vocabId);
-	if (capitalise)
+	if (capitalize)
 		vocabStr.setChar(toupper(vocabStr[0]), 0);
 
 	_statusText += vocabStr;
@@ -109,7 +109,6 @@ void MADSAction::startWalkingDirectly(int walkType) {
 void MADSAction::set() {
 	Scene &scene = _vm->_game->_scene;
 	UserInterface &userInterface = scene._userInterface;
-	bool flag = false;
 	_statusText = "";
 
 	_action._verbId = VERB_NONE;
@@ -128,6 +127,7 @@ void MADSAction::set() {
 		// Two 'look' actions in succession, so the action becomes 'Look around'
 		_statusText = kLookAroundStr;
 	} else {
+		bool flag = false;
 		if ((_commandSource == CAT_INV_VOCAB) && (_selectedRow >= 0)
 				&& (_verbType == VERB_THAT) && (_prepType == PREP_NONE)) {
 			// Use/to action
@@ -137,7 +137,7 @@ void MADSAction::set() {
 			_action._objectNameId = objEntry._descId;
 			_action._verbId = objEntry._vocabList[_selectedRow]._vocabId;
 
-			// Set up the status text stirng
+			// Set up the status text string
 			_statusText = kUseStr;
 			appendVocab(_action._objectNameId);
 			_statusText += kToStr;
