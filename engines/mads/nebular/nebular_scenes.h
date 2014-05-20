@@ -50,7 +50,7 @@ enum Verb {
 	VERB_CUT            = 0x061,
 	VERB_DAMPEN         = 0x064,
 	VERB_DIVE_INTO      = 0x06D,
-	NOUN_DRINK          = 0x072,
+	VERB_DRINK          = 0x072,
 	VERB_EAT            = 0x075,
 	VERB_EXAMINE        = 0x07D,
 	VERB_HOSE_DOWN      = 0x0A6,
