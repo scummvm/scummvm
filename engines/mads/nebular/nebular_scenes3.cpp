@@ -862,7 +862,7 @@ void Scene307::actions() {
 		_vm->_dialogs->show(30715);
 	else if (_game._screenObjects._inputMode == 1)
 		handleDialog();
-	else if (_action.isAction(VERB_TALKTO, 0x207) || _action.isAction(VERB_TALKTO, 0x18D) || _action.isAction(VERB_TALKTO, 0x21B)) {
+	else if (_action.isAction(VERB_TALKTO, NOUN_CELL_WALL) || _action.isAction(VERB_TALKTO, NOUN_WALL) || _action.isAction(VERB_TALKTO, NOUN_TOILET)) {
 		int node, say;
 		if (_globals[kKnowsBuddyBeast]) {
 			say = 0x10E;
@@ -959,7 +959,7 @@ void Scene307::actions() {
 		default:
 			break;
 		}
-	}else if (_action.isAction(VERB_CLIMB_INTO, 0x11)) {
+	}else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
 		if (_grateOpenedFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -1042,9 +1042,9 @@ void Scene307::actions() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_USE, 0x21B) && (_game._storyMode != STORYMODE_NAUGHTY))
+	} else if (_action.isAction(VERB_USE, NOUN_TOILET) && (_game._storyMode != STORYMODE_NAUGHTY))
 		_vm->_dialogs->show(30723);
-	else if (_action.isAction(VERB_USE, 0x21B)) {
+	else if (_action.isAction(VERB_USE, NOUN_TOILET)) {
 		if (!_afterPeeingFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -1094,24 +1094,24 @@ void Scene307::actions() {
 			int idx = _scene->_kernelMessages.add(Common::Point(85, 39), 0x1110, 0, 0, 180, _game.getQuote(238));
 			_scene->_kernelMessages.setQuoted(idx, 4, true);
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x11)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT)) {
 		if (!_grateOpenedFl)
 			_vm->_dialogs->show(30710);
 		else
 			_vm->_dialogs->show(30711);
-	} else if (_action.isAction(VERB_LOOK, 0x1CB))
+	} else if (_action.isAction(VERB_LOOK, NOUN_BED))
 		_vm->_dialogs->show(30712);
-	else if (_action.isAction(VERB_LOOK, 0x216))
+	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
 		_vm->_dialogs->show(30713);
-	else if (_action.isAction(VERB_LOOK, 0x21B))
+	else if (_action.isAction(VERB_LOOK, NOUN_TOILET))
 		_vm->_dialogs->show(30714);
 	else if (_action.isAction(0x134, 0x12C))
 		_vm->_dialogs->show(30716);
-	else if (_action.isAction(VERB_LOOK, 0x207))
+	else if (_action.isAction(VERB_LOOK, NOUN_CELL_WALL))
 		_vm->_dialogs->show(30717);
-	else if (_action.isAction(VERB_LOOK, 0xCD))
+	else if (_action.isAction(VERB_LOOK, NOUN_LIGHT))
 		_vm->_dialogs->show(30718);
-	else if (_action.isAction(VERB_WALK_INTO, 0x204)) {
+	else if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR)) {
 		switch (_fieldCollisionCounter) {
 		case 0:
 			_vm->_dialogs->show(30719);
@@ -1696,9 +1696,9 @@ void Scene311::actions() {
 		_checkGuardFl = false;
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.addQuote(0xFA, 120, 0);
-	} else if (_action.isAction(VERB_SIT_AT, 0x1E4))
+	} else if (_action.isAction(VERB_SIT_AT, NOUN_DESK))
 		_scene->_nextSceneId = 320;
-	else if (_action.isAction(VERB_CLIMB_INTO, 0x11)) {
+	else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1790,25 +1790,25 @@ void Scene311::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x1E4))
+	} else if (_action.isAction(VERB_LOOK, NOUN_DESK))
 		_vm->_dialogs->show(31110);
-	else if (_action.isAction(VERB_LOOK, 0x18D))
+	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
 		_vm->_dialogs->show(31111);
-	else if (_action.isAction(VERB_LOOK, 0x220) || _action.isAction(VERB_STARE_AT, 0x220))
+	else if (_action.isAction(VERB_LOOK, NOUN_LIGHTING_FIXTURE) || _action.isAction(VERB_STARE_AT, NOUN_LIGHTING_FIXTURE))
 		_vm->_dialogs->show(31112);
-	else if (_action.isAction(VERB_LOOK, 0x208) || _action.isAction(VERB_STARE_AT, 0x208))
+	else if (_action.isAction(VERB_LOOK, NOUN_LIGHTS) || _action.isAction(VERB_STARE_AT, NOUN_LIGHTS))
 		_vm->_dialogs->show(31113);
-	else if (_action.isAction(VERB_TAKE, 0x208))
+	else if (_action.isAction(VERB_TAKE, NOUN_LIGHTS))
 		_vm->_dialogs->show(31114);
-	else if (_action.isAction(VERB_LOOK, 0xCD) || _action.isAction(VERB_STARE_AT, 0xCD))
+	else if (_action.isAction(VERB_LOOK, NOUN_LIGHT) || _action.isAction(VERB_STARE_AT, NOUN_LIGHT))
 		_vm->_dialogs->show(31115);
-	else if (_action.isAction(VERB_TAKE, 0xCD))
+	else if (_action.isAction(VERB_TAKE, NOUN_LIGHT))
 		_vm->_dialogs->show(31116);
-	else if (_action.isAction(VERB_LOOK, 0x2BA))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
 		_vm->_dialogs->show(31117);
-	else if (_action.isAction(VERB_LOOK, 0x2B9))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
 		_vm->_dialogs->show(31118);
-	else if (_action.isAction(VERB_LOOK, 0x11))
+	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
 		_vm->_dialogs->show(31120);
 	else
 		return;
@@ -1866,24 +1866,24 @@ void Scene313::enter() {
 }
 
 void Scene313::actions() {
-	if (_action.isAction(VERB_CRAWL_TO, 0x2FC))
+	if (_action.isAction(VERB_CRAWL_TO, NOUN_FOURTH_CELL))
 		_scene->_nextSceneId = 387;
-	else if (_action.isAction(VERB_CRAWL_TO, 0x2FD))
+	else if (_action.isAction(VERB_CRAWL_TO, NOUN_THIRD_CELL))
 		_scene->_nextSceneId = 388;
-	else if (_action.isAction(VERB_CRAWL_TO, 0x2FE)) {
+	else if (_action.isAction(VERB_CRAWL_TO, NOUN_SECOND_CELL)) {
 		if (_globals[kAfterHavoc])
 			_scene->_nextSceneId = 399;
 		else
 			_scene->_nextSceneId = 389;
-	} else if (_action.isAction(VERB_CRAWL_TO, 0x2FF))
+	} else if (_action.isAction(VERB_CRAWL_TO, NOUN_FIRST_CELL))
 		_scene->_nextSceneId = 390;
-	else if (_action.isAction(VERB_CRAWL_TO, 0x2EF)) {
+	else if (_action.isAction(VERB_CRAWL_TO, NOUN_SECURITY_STATION)) {
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_globals[kSexOfRex] = REX_MALE;
 			_vm->_dialogs->show(31301);
 		}
 		_scene->_nextSceneId = 391;
-	} else if (_action.isAction(VERB_CRAWL_TO, 0x300)) {
+	} else if (_action.isAction(VERB_CRAWL_TO, NOUN_EQUIPMENT_ROOM)) {
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_globals[kSexOfRex] = REX_MALE;
 			_vm->_dialogs->show(31301);
@@ -2249,7 +2249,7 @@ void Scene316::step() {
 }
 
 void Scene316::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN, 0x2B9)) {
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST)) {
 		if (_globals[kAfterHavoc])
 			_game._player._walkOffScreenSceneId = 354;
 		else
@@ -2258,12 +2258,12 @@ void Scene316::preActions() {
 }
 
 void Scene316::actions() {
-	if (_action.isAction(VERB_CLIMB_INTO, 0x11)) {
+	if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
 		if (_globals[kSexOfRex] == REX_FEMALE)
 			handleRoxInGrate();
 		else
 			handleRexInGrate();
-	} else if (_action.isAction(VERB_WALK_UP, 0x226) || _action.isAction(VERB_WALK_ONTO, 0x22C)) {
+	} else if (_action.isAction(VERB_WALK_UP, NOUN_RAMP) || _action.isAction(VERB_WALK_ONTO, NOUN_PLATFORM)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_globals[kCityFlooded]) {
@@ -2314,35 +2314,35 @@ void Scene316::actions() {
 			_scene->_nextSceneId = 321;
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x22C))
+	} else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
 		_vm->_dialogs->show(31610);
-	else if (_action.isAction(VERB_LOOK, 0x1B6)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_STRANGE_DEVICE)) {
 		if (_game._visitedScenes.exists(321))
 			_vm->_dialogs->show(31612);
 		else
 			_vm->_dialogs->show(31611);
-	} else if (_action.isAction(VERB_LOOK, 0x2C6))
+	} else if (_action.isAction(VERB_LOOK, NOUN_CONTROLS))
 		_vm->_dialogs->show(31613);
-	else if (_action.isAction(VERB_LOOK, 0x2C7))
+	else if (_action.isAction(VERB_LOOK, NOUN_EQUIPMENT))
 		_vm->_dialogs->show(31614);
-	else if (_action.isAction(VERB_LOOK, 0x1E0))
+	else if (_action.isAction(VERB_LOOK, NOUN_PANEL))
 		_vm->_dialogs->show(31615);
-	else if (_action.isAction(VERB_LOOK, 0xE2))
+	else if (_action.isAction(VERB_LOOK, NOUN_MONITOR))
 		_vm->_dialogs->show(31616);
-	else if (_action.isAction(VERB_LOOK, 0x226))
+	else if (_action.isAction(VERB_LOOK, NOUN_RAMP))
 		_vm->_dialogs->show(31617);
-	else if (_action.isAction(VERB_LOOK, 0x11))
+	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
 		_vm->_dialogs->show(31618);
-	else if (_action.isAction(VERB_LOOK, 0x2B9)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST)) {
 		if (!_globals[kAfterHavoc]) {
 			if (_game._difficulty != DIFFICULTY_EASY)
 				_vm->_dialogs->show(31620);
 			else
 				_vm->_dialogs->show(31619);
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x89))
+	} else if (_action.isAction(VERB_LOOK, NOUN_FLOOR))
 		_vm->_dialogs->show(31621);
-	else if (_action.isAction(VERB_LOOK, 0x257))
+	else if (_action.isAction(VERB_LOOK, NOUN_SUPPORT))
 		_vm->_dialogs->show(31622);
 	else
 		return;
@@ -2740,7 +2740,7 @@ void Scene318::preActions() {
 	if (_game._player._needToWalk)
 		_game._player._needToWalk = _game._player._visible;
 
-	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
 		_game._player._walkOffScreenSceneId = 357;
 }
 
@@ -2751,7 +2751,7 @@ void Scene318::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TALKTO, 0x307)) {
+	if (_action.isAction(VERB_TALKTO, NOUN_INTERN)) {
 		switch (_game._trigger) {
 		case 0: {
 			_dialogFl = true;
@@ -2790,7 +2790,7 @@ void Scene318::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x12C) && (_game._objects.isInRoom(OBJ_SCALPEL) || _game._trigger)) {
+	if (_action.isAction(VERB_TAKE, NOUN_SCALPEL) && (_game._objects.isInRoom(OBJ_SCALPEL) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -2832,13 +2832,13 @@ void Scene318::actions() {
 	}
 
 	if (_game._player._visible) {
-		if (_action.isAction(VERB_WALK_DOWN, 0x2B3)) {
+		if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH)) {
 			_scene->_nextSceneId = 407;
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(VERB_TAKE, 0x165)) {
+		if (_action.isAction(VERB_TAKE, NOUN_TAPE_PLAYER)) {
 			if (_game._objects.isInRoom(OBJ_AUDIO_TAPE)) {
 				_vm->_dialogs->showItem(OBJ_AUDIO_TAPE, 0x7C5B);
 				_game._objects.addToInventory(OBJ_AUDIO_TAPE);
@@ -2849,7 +2849,7 @@ void Scene318::actions() {
 			return;
 		}
 
-		if (_action.isAction(VERB_LOOK, 0x165)) {
+		if (_action.isAction(VERB_LOOK, NOUN_TAPE_PLAYER)) {
 			if (_game._objects.isInRoom(OBJ_AUDIO_TAPE))
 				_vm->_dialogs->show(31833);
 			else
@@ -2859,68 +2859,68 @@ void Scene318::actions() {
 			return;
 		}
 
-		if (_action.isAction(VERB_WALK_INTO, 0x488)) {
+		if (_action.isAction(VERB_WALK_INTO, NOUN_DOCTORS_OFFICE)) {
 			_vm->_dialogs->show(31831);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(VERB_LOOK, 0x2D9)) {
+		if (_action.isAction(VERB_LOOK, NOUN_GURNEY)) {
 			_vm->_dialogs->show(31823);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(VERB_LOOK, 0x308)) {
+		if (_action.isAction(VERB_LOOK, NOUN_INSTRUMENT_TABLE)) {
 			_vm->_dialogs->show(31825);
 			_action._inProgress = false;
 			return;
 		}
 	} else { // Not visible
-		if (_action.isAction(VERB_LOOK, 0x2D9)) {
+		if (_action.isAction(VERB_LOOK, NOUN_GURNEY)) {
 			_vm->_dialogs->show(31822);
 			_action._inProgress = false;
 			return;
 		}
 
-		if (_action.isAction(VERB_LOOK, 0x308)) {
+		if (_action.isAction(VERB_LOOK, NOUN_INSTRUMENT_TABLE)) {
 			_vm->_dialogs->show(31824);
 			_action._inProgress = false;
 			return;
 		}
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x18D))
+	if (_action.isAction(VERB_LOOK, NOUN_WALL))
 		_vm->_dialogs->show(31810);
-	else if (_action.isAction(VERB_LOOK, 0x89))
+	else if (_action.isAction(VERB_LOOK, NOUN_FLOOR))
 		_vm->_dialogs->show(31811);
-	else if (_action.isAction(VERB_LOOK, 0x2BA))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
 		_vm->_dialogs->show(31812);
-	else if (_action.isAction(VERB_LOOK, 0x2B3))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
 		_vm->_dialogs->show(31813);
-	else if (_action.isAction(VERB_LOOK, 0x2CB))
+	else if (_action.isAction(VERB_LOOK, NOUN_FAUCET))
 		_vm->_dialogs->show(31814);
-	else if (_action.isAction(VERB_LOOK, 0x216))
+	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
 		_vm->_dialogs->show(31815);
-	else if (_action.isAction(VERB_LOOK, 0x319))
+	else if (_action.isAction(VERB_LOOK, NOUN_CONVEYOR_BELT))
 		_vm->_dialogs->show(31816);
-	else if (_action.isAction(VERB_LOOK, 0x477))
+	else if (_action.isAction(VERB_LOOK, NOUN_LARGE_BLADE))
 		_vm->_dialogs->show(31817);
-	else if (_action.isAction(VERB_LOOK, 0xE2))
+	else if (_action.isAction(VERB_LOOK, NOUN_MONITOR))
 		_vm->_dialogs->show(31818);
-	else if (_action.isAction(VERB_LOOK, 0x2C9))
+	else if (_action.isAction(VERB_LOOK, NOUN_CABINETS))
 		_vm->_dialogs->show(31819);
-	else if (_action.isAction(VERB_LOOK, 0x2C7))
+	else if (_action.isAction(VERB_LOOK, NOUN_EQUIPMENT))
 		_vm->_dialogs->show(31820);
-	else if (_action.isAction(VERB_LOOK, 0x2C8))
+	else if (_action.isAction(VERB_LOOK, NOUN_SHELF))
 		_vm->_dialogs->show(31821);
-	else if (_action.isAction(VERB_OPEN, 0x2C9))
+	else if (_action.isAction(VERB_OPEN, NOUN_CABINETS))
 		_vm->_dialogs->show(31829);
-	else if (_action.isAction(VERB_LOOK, 0x307))
+	else if (_action.isAction(VERB_LOOK, NOUN_INTERN))
 		_vm->_dialogs->show(31830);
-	else if (_action.isAction(VERB_LOOK, 0x3A1))
+	else if (_action.isAction(VERB_LOOK, NOUN_PROFESSOR))
 		_vm->_dialogs->show(31832);
-	else if (_action.isAction(VERB_LOOK, 0x3A2))
+	else if (_action.isAction(VERB_LOOK, NOUN_PROFESSORS_GURNEY))
 		_vm->_dialogs->show(31836);
 	else if (_action._lookFlag) {
 		if (_game._player._visible || _game._objects.isInInventory(OBJ_SCALPEL))
@@ -3709,39 +3709,39 @@ void Scene320::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LEAVE, 0x2EF))
+	} else if (_action.isAction(VERB_LEAVE, NOUN_SECURITY_STATION))
 		_scene->_nextSceneId = 311;
-	else if (_action.isAction(VERB_LOOK, 0x2DC))
+	else if (_action.isAction(VERB_LOOK, NOUN_RIGHT_MONITOR))
 		_vm->_dialogs->show(32001);
-	else if (_action.isAction(VERB_LOOK, 0x2DB))
+	else if (_action.isAction(VERB_LOOK, NOUN_LEFT_MONITOR))
 		_vm->_dialogs->show(32002);
-	else if (_action.isAction(VERB_LOOK, 0x1E4))
+	else if (_action.isAction(VERB_LOOK, NOUN_DESK))
 		_vm->_dialogs->show(32003);
-	else if (_action.isAction(VERB_LOOK, 0x2EF))
+	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_STATION))
 		_vm->_dialogs->show(32004);
-	else if (_action.isAction(VERB_LOOK, 0x2ED))
+	else if (_action.isAction(VERB_LOOK, NOUN_MUG))
 		_vm->_dialogs->show(32005);
-	else if (_action.isAction(VERB_LOOK, 0x2EE))
+	else if (_action.isAction(VERB_LOOK, NOUN_DOUGHNUT))
 		_vm->_dialogs->show(32006);
-	else if (_action.isAction(VERB_LOOK, 0x2F1))
+	else if (_action.isAction(VERB_LOOK, NOUN_MAGAZINE))
 		_vm->_dialogs->show(32006);
-	else if (_action.isAction(VERB_LOOK, 0x2F3))
+	else if (_action.isAction(VERB_LOOK, NOUN_PAPER_FOOTBALL))
 		_vm->_dialogs->show(32008);
-	else if (_action.isAction(VERB_LOOK, 0x2F0))
+	else if (_action.isAction(VERB_LOOK, NOUN_NEWSPAPER))
 		_vm->_dialogs->show(32009);
-	else if (_action.isAction(VERB_LOOK, 0x2F2))
+	else if (_action.isAction(VERB_LOOK, NOUN_CLIPBOARD))
 		_vm->_dialogs->show(32010);
-	else if (_action.isAction(VERB_TAKE, 0x2ED))
+	else if (_action.isAction(VERB_TAKE, NOUN_MUG))
 		_vm->_dialogs->show(32012);
-	else if (_action.isAction(VERB_TAKE, 0x2F2))
+	else if (_action.isAction(VERB_TAKE, NOUN_CLIPBOARD))
 		_vm->_dialogs->show(32013);
-	else if (_action.isAction(VERB_TAKE, 0x2EE) || _action.isAction(VERB_EAT, 0x2EE))
+	else if (_action.isAction(VERB_TAKE, NOUN_DOUGHNUT) || _action.isAction(VERB_EAT, NOUN_DOUGHNUT))
 		_vm->_dialogs->show(32014);
-	else if (_action.isAction(VERB_TAKE, 0x2F3))
+	else if (_action.isAction(VERB_TAKE, NOUN_PAPER_FOOTBALL))
 		_vm->_dialogs->show(32015);
-	else if (_action.isAction(VERB_TAKE, 0x2F1))
+	else if (_action.isAction(VERB_TAKE, NOUN_MAGAZINE))
 		_vm->_dialogs->show(32016);
-	else if (_action.isAction(VERB_TAKE, 0x2F0))
+	else if (_action.isAction(VERB_TAKE, NOUN_NEWSPAPER))
 		_vm->_dialogs->show(32017);
 	else
 		return;
@@ -3838,21 +3838,21 @@ void Scene322::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(VERB_PEER_THROUGH, 0x181))
+	if (_action.isAction(VERB_LOOK, NOUN_VIEWPORT) || _action.isAction(VERB_PEER_THROUGH, NOUN_VIEWPORT))
 		_vm->_dialogs->show(32210);
-	else if (_action.isAction(VERB_LOOK, 0xC4))
+	else if (_action.isAction(VERB_LOOK, NOUN_KEYPAD))
 		_vm->_dialogs->show(32211);
-	else if (_action.isAction(VERB_LOOK, 0x1CC))
+	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
 		_vm->_dialogs->show(32212);
-	else if (_action.isAction(VERB_LOOK, 0x1D0) || _action.isAction(VERB_LOOK, 0x1D1)
-	 || _action.isAction(VERB_LOOK, 0x1D2) || _action.isAction(VERB_LOOK, 0x1D3)
-	 || _action.isAction(VERB_LOOK, 0x1D4) || _action.isAction(VERB_LOOK, 0x1D5)
-	 || _action.isAction(VERB_LOOK, 0x1D6) || _action.isAction(VERB_LOOK, 0x1D7)
-	 || _action.isAction(VERB_LOOK, 0x1D8) || _action.isAction(VERB_LOOK, 0x1D9)
-	 || _action.isAction(VERB_LOOK, 0x1DB) || _action.isAction(VERB_LOOK, 0x7A)
-	 || _action.isAction(VERB_LOOK, 0x1DA))
+	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
 		_vm->_dialogs->show(32213);
-	else if (_action.isAction(VERB_LOOK, 0x1CF))
+	else if (_action.isAction(VERB_LOOK, NOUN_DEVICE))
 		_vm->_dialogs->show(32214);
 	else
 		return;
@@ -3954,11 +3954,11 @@ void Scene351::step() {
 void Scene351::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35121);
-	else if (_action.isAction(VERB_STEP_INTO, 0x16C))
+	else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER))
 		_scene->_nextSceneId = 322;
-	else if (_action.isAction(VERB_WALK_DOWN, 0x2B3))
+	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH))
 		_scene->_nextSceneId = 352;
-	else if (_action.isAction(VERB_TAKE, 0x5C)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP)) {
 		if (_game._trigger || !_game._objects.isInInventory(0xF)) {
 			switch (_game._trigger) {
 			case 0:
@@ -3990,30 +3990,30 @@ void Scene351::actions() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x180))
+	} else if (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN))
 		_vm->_dialogs->show(35110);
-	else if (_action.isAction(VERB_LOOK, 0x23A))
+	else if (_action.isAction(VERB_LOOK, NOUN_RIP_IN_FLOOR))
 		_vm->_dialogs->show(35111);
-	else if (_action.isAction(VERB_LOOK, 0x1E6))
+	else if (_action.isAction(VERB_LOOK, NOUN_FIRE_HYDRANT))
 		_vm->_dialogs->show(35112);
-	else if (_action.isAction(VERB_LOOK, 0x239)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_GUARD)) {
 		if (_game._objects[0xF]._roomNumber == 351)
 			_vm->_dialogs->show(35114);
 		else
 			_vm->_dialogs->show(35113);
-	} else if (_action.isAction(VERB_LOOK, 0x2C7))
+	} else if (_action.isAction(VERB_LOOK, NOUN_EQUIPMENT))
 		_vm->_dialogs->show(35115);
-	else if (_action.isAction(VERB_LOOK, 0x1E4))
+	else if (_action.isAction(VERB_LOOK, NOUN_DESK))
 		_vm->_dialogs->show(35116);
-	else if (_action.isAction(VERB_LOOK, 0xD7))
+	else if (_action.isAction(VERB_LOOK, NOUN_MACHINE))
 		_vm->_dialogs->show(35117);
-	else if (_action.isAction(VERB_LOOK, 0x16C))
+	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(35118);
-	else if (_action.isAction(VERB_LOOK, 0x59))
+	else if (_action.isAction(VERB_LOOK, NOUN_CONTROL_PANEL))
 		_vm->_dialogs->show(35119);
-	else if (_action.isAction(VERB_LOOK, 0x2B3))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
 		_vm->_dialogs->show(35120);
-	else if (_action.isAction(VERB_LOOK, 0x1EB))
+	else if (_action.isAction(VERB_LOOK, NOUN_POLE))
 		_vm->_dialogs->show(35122);
 	else
 		return;
@@ -4171,7 +4171,7 @@ void Scene352::enter() {
 void Scene352::preActions() {
 	_leaveRoomFl = false;
 
-	if (_action.isAction(VERB_OPEN, 0x1F8))
+	if (_action.isAction(VERB_OPEN, NOUN_VAULT))
 		_game._player.walk(Common::Point(266, 111), FACING_NORTHEAST);
 
 	if (_vaultOpenFl && !_action.isAction(0x1F8) && !_action.isAction(0x2F6) && !_action.isAction(0x2F5) && !_action.isAction(0x2F4)) {
@@ -4210,14 +4210,14 @@ void Scene352::preActions() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, 0x3B6, 0x1F3)) {
+	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM, 0x1F3)) {
 		if (_globals[kSexOfRex] == REX_MALE)
 			_game._player.walk(Common::Point(269, 111), FACING_NORTHEAST);
 		else
 			_game._player.walk(Common::Point(271, 111), FACING_NORTHEAST);
 	}
 
-	if (_action.isAction(VERB_WALK_THROUGH, 0x70) || _action.isAction(VERB_WALK_DOWN, 0x2B3) || _action.isAction(VERB_PUT, 0x3B6, 0x89)) {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM, 0x89)) {
 		if (_game._objects.isInInventory(OBJ_GUARDS_ARM))
 			_game._player.walk(Common::Point(230, 117), FACING_NORTHWEST);
 	}
@@ -4230,7 +4230,7 @@ void Scene352::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, 0x1F8)) {
+	if (_action.isAction(VERB_OPEN, NOUN_VAULT)) {
 		if (!_vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -4288,15 +4288,15 @@ void Scene352::actions() {
 	bool exit_corridor = false;
 	bool exit_doorway = false;
 
-	if (_action.isAction(VERB_WALK_DOWN, 0x2B3)) {
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH)) {
 		exit_corridor = true;
 	}
 
-	if (_action.isAction(VERB_WALK_THROUGH, 0x70)) {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY)) {
 		exit_doorway = true;
 	}
 
-	if (_action.isAction(VERB_WALK_DOWN, 0x2B3) || _action.isAction(VERB_WALK_THROUGH, 0x70) || _action.isAction(VERB_PUT, 0x3B6, 0x89)) {
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM, 0x89)) {
 		if (_mustPutArmDownFl)
 			putArmDown(exit_corridor, exit_doorway);
 		else if (exit_corridor)
@@ -4308,7 +4308,7 @@ void Scene352::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x3B6)) {
+	if (_action.isAction(VERB_TAKE, NOUN_GUARDS_ARM)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_GUARDS_ARM)) {
 			switch (_game._trigger) {
 			case 0:
@@ -4344,7 +4344,7 @@ void Scene352::actions() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, 0x3B6, 0x1F3)) {
+	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM, 0x1F3)) {
 		if (!_vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -4423,7 +4423,7 @@ void Scene352::actions() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_TAKE, 0x2F4)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_YOUR_STUFF)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -4470,7 +4470,7 @@ void Scene352::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, 0x165) && !_game._objects.isInInventory(OBJ_TAPE_PLAYER)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_TAPE_PLAYER) && !_game._objects.isInInventory(OBJ_TAPE_PLAYER)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -4508,53 +4508,53 @@ void Scene352::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x1F3))
+	} else if (_action.isAction(VERB_LOOK, NOUN_SCANNER))
 		_vm->_dialogs->show(35210);
-	else if (_action.isAction(VERB_LOOK, 0xE2)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_MONITOR)) {
 		if (_game._storyMode == STORYMODE_NAUGHTY)
 			_vm->_dialogs->show(35211);
 		else
 			_vm->_dialogs->show(35212);
-	} else if (_action.isAction(VERB_LOOK, 0x1CC))
+	} else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
 		_vm->_dialogs->show(35213);
-	else if (_action.isAction(VERB_LOOK, 0x2CD))
+	else if (_action.isAction(VERB_LOOK, NOUN_STATUE))
 		_vm->_dialogs->show(35214);
-	else if (_action.isAction(VERB_LOOK, 0x165) && (_action._savedFields._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_TAPE_PLAYER) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(35215);
-	else if (_action.isAction(VERB_LOOK, 0x11))
+	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
 		_vm->_dialogs->show(35216);
-	else if (_action.isAction(VERB_LOOK, 0x3B6) && (_action._savedFields._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_GUARDS_ARM) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(35217);
-	else if (_action.isAction(VERB_LOOK, 0x2DA))
+	else if (_action.isAction(VERB_LOOK, NOUN_IRONING_BOARD))
 		_vm->_dialogs->show(35218);
-	else if (_action.isAction(VERB_LOOK, 0x51))
+	else if (_action.isAction(VERB_LOOK, NOUN_CLOCK))
 		_vm->_dialogs->show(35219);
-	else if (_action.isAction(VERB_LOOK, 0x2CE))
+	else if (_action.isAction(VERB_LOOK, NOUN_GAUGE))
 		_vm->_dialogs->show(35220);
-	else if (_action.isAction(VERB_LOOK, 0x1F8)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_VAULT)) {
 		if (!_vaultOpenFl)
 			_vm->_dialogs->show(35221);
-	} else if (_action.isAction(VERB_LOOK, 0x2F4))
+	} else if (_action.isAction(VERB_LOOK, NOUN_YOUR_STUFF))
 		_vm->_dialogs->show(35222);
-	else if (_action.isAction(VERB_LOOK, 0x2F5))
+	else if (_action.isAction(VERB_LOOK, NOUN_OTHER_STUFF))
 		_vm->_dialogs->show(35223);
-	else if (_action.isAction(VERB_LOOK, 0x2B3))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
 		_vm->_dialogs->show(35224);
-	else if (_action.isAction(VERB_TAKE, 0x2F5))
+	else if (_action.isAction(VERB_TAKE, NOUN_OTHER_STUFF))
 		_vm->_dialogs->show(35226);
-	else if (_action.isAction(VERB_LOOK, 0x1E4))
+	else if (_action.isAction(VERB_LOOK, NOUN_DESK))
 		_vm->_dialogs->show(35229);
-	else if (_action.isAction(VERB_LOOK, 0x239))
+	else if (_action.isAction(VERB_LOOK, NOUN_GUARD))
 		_vm->_dialogs->show(35230);
-	else if (_action.isAction(VERB_LOOK, 0x70))
+	else if (_action.isAction(VERB_LOOK, NOUN_DOORWAY))
 		_vm->_dialogs->show(35231);
-	else if (_action.isAction(VERB_LOOK, 0x160))
+	else if (_action.isAction(VERB_LOOK, NOUN_TABLE))
 		_vm->_dialogs->show(35232);
-	else if (_action.isAction(VERB_LOOK, 0x3B5))
+	else if (_action.isAction(VERB_LOOK, NOUN_PROJECTOR))
 		_vm->_dialogs->show(35233);
-	else if (_action.isAction(VERB_LOOK, 0x257))
+	else if (_action.isAction(VERB_LOOK, NOUN_SUPPORT))
 		_vm->_dialogs->show(35234);
-	else if (_action.isAction(VERB_LOOK, 0x1F5))
+	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_MONITOR))
 		_vm->_dialogs->show(35235);
 	else
 		return;
@@ -4598,25 +4598,25 @@ void Scene353::enter() {
 void Scene353::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35315);
-	else if (_action.isAction(VERB_WALK_THROUGH, 0x70))
+	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
 		_scene->_nextSceneId = 352;
-	else if (_action.isAction(VERB_WALK_DOWN, 0x2B3))
+	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH))
 		_scene->_nextSceneId = 354;
-	else if (_action.isAction(VERB_LOOK, 0x23D))
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCK_CHUNK))
 		_vm->_dialogs->show(35310);
-	else if (_action.isAction(VERB_LOOK, 0x1FA) || _action.isAction(VERB_LOOK, 0x10C))
+	else if (_action.isAction(VERB_LOOK, NOUN_PIPES) || _action.isAction(VERB_LOOK, NOUN_PIPE))
 		_vm->_dialogs->show(35311);
-	else if (_action.isAction(VERB_LOOK, 0x23C))
+	else if (_action.isAction(VERB_LOOK, NOUN_BROKEN_BEAM))
 		_vm->_dialogs->show(35312);
-	else if (_action.isAction(VERB_LOOK, 0x70))
+	else if (_action.isAction(VERB_LOOK, NOUN_DOORWAY))
 		_vm->_dialogs->show(35313);
-	else if (_action.isAction(VERB_LOOK, 0x2B3))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
 		_vm->_dialogs->show(35314);
-	else if (_action.isAction(VERB_LOOK, 0x89))
+	else if (_action.isAction(VERB_LOOK, NOUN_FLOOR))
 		_vm->_dialogs->show(35316);
-	else if (_action.isAction(VERB_LOOK, 0x46))
+	else if (_action.isAction(VERB_LOOK, NOUN_CEILING))
 		_vm->_dialogs->show(35317);
-	else if (_action.isAction(VERB_LOOK, 0x18D))
+	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
 		_vm->_dialogs->show(35318);
 	else
 		return;
@@ -4649,41 +4649,41 @@ void Scene354::enter() {
 }
 
 void Scene354::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN, 0x2B3))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH))
 		_game._player._walkOffScreenSceneId = 401;
 }
 
 void Scene354::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35414);
-	else if (_action.isAction(VERB_WALK_DOWN, 0x2B4)) {
+	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_NORTH)) {
 		_game._player.startWalking(Common::Point(208, 0), FACING_NORTHEAST);
 		_game._player._walkOffScreenSceneId = 353;
-	} else if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
+	} else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_scene->_nextSceneId = 361;
-	else if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
+	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
 		_scene->_nextSceneId = 316;
-	else if (_action.isAction(VERB_WALK_DOWN, 0x2B3))
+	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH))
 		_scene->_nextSceneId = 401;
-	else if (_action.isAction(VERB_LOOK, 0x2C6))
+	else if (_action.isAction(VERB_LOOK, NOUN_CONTROLS))
 		_vm->_dialogs->show(35410);
-	else if (_action.isAction(VERB_LOOK, 0x1FD))
+	else if (_action.isAction(VERB_LOOK, NOUN_SIGNAL))
 		_vm->_dialogs->show(35411);
-	else if (_action.isAction(VERB_LOOK, 0x2D0))
+	else if (_action.isAction(VERB_LOOK, NOUN_CATWALK))
 		_vm->_dialogs->show(35412);
-	else if (_action.isAction(VERB_LOOK, 0x206))
+	else if (_action.isAction(VERB_LOOK, NOUN_AIR_DUCT))
 		_vm->_dialogs->show(35413);
-	else if (_action.isAction(VERB_LOOK, 0x2B4))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_NORTH))
 		_vm->_dialogs->show(35415);
-	else if (_action.isAction(VERB_LOOK, 0x2B3))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_SOUTH))
 		_vm->_dialogs->show(35416);
-	else if (_action.isAction(VERB_LOOK, 0x2B9))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
 		_vm->_dialogs->show(35417);
-	else if (_action.isAction(VERB_LOOK, 0x2BA))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
 		_vm->_dialogs->show(35418);
-	else if (_action.isAction(VERB_LOOK, 0x218))
+	else if (_action.isAction(VERB_LOOK, NOUN_DEBRIS))
 		_vm->_dialogs->show(35419);
-	else if (_action.isAction(VERB_LOOK, 0x239))
+	else if (_action.isAction(VERB_LOOK, NOUN_GUARD))
 		_vm->_dialogs->show(35420);
 	else
 		return;
@@ -4716,41 +4716,41 @@ void Scene357::enter() {
 }
 
 void Scene357::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_game._player._walkOffScreenSceneId = 318;
 
-	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
 		_game._player._walkOffScreenSceneId = 358;
 }
 
 void Scene357::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35715);
-	else if (_action.isAction(VERB_LOOK, 0x11))
+	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
 		_vm->_dialogs->show(35710);
-	else if (_action.isAction(VERB_CLIMB_INTO, 0x11))
+	else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT))
 		_vm->_dialogs->show(35711);
-	else if (_action.isAction(VERB_LOOK, 0x1CB))
+	else if (_action.isAction(VERB_LOOK, NOUN_BED))
 		_vm->_dialogs->show(35712);
-	else if (_action.isAction(VERB_LOOK, 0x216))
+	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
 		_vm->_dialogs->show(35713);
-	else if (_action.isAction(VERB_LOOK, 0x21B))
+	else if (_action.isAction(VERB_LOOK, NOUN_TOILET))
 		_vm->_dialogs->show(35714);
-	else if (_action.isAction(VERB_LOOK, 0x207))
+	else if (_action.isAction(VERB_LOOK, NOUN_CELL_WALL))
 		_vm->_dialogs->show(35716);
-	else if (_action.isAction(VERB_LOOK, 0xCD))
+	else if (_action.isAction(VERB_LOOK, NOUN_LIGHT))
 		_vm->_dialogs->show(35717);
-	else if (_action.isAction(VERB_LOOK, 0x23A))
+	else if (_action.isAction(VERB_LOOK, NOUN_RIP_IN_FLOOR))
 		_vm->_dialogs->show(35718);
-	else if (_action.isAction(VERB_LOOK, 0x218))
+	else if (_action.isAction(VERB_LOOK, NOUN_DEBRIS))
 		_vm->_dialogs->show(35719);
-	else if (_action.isAction(VERB_TAKE, 0x218))
+	else if (_action.isAction(VERB_TAKE, NOUN_DEBRIS))
 		_vm->_dialogs->show(35720);
-	else if (_action.isAction(VERB_LOOK, 0x18D))
+	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
 		_vm->_dialogs->show(35721);
-	else if (_action.isAction(VERB_LOOK, 0x2B9))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
 		_vm->_dialogs->show(35722);
-	else if (_action.isAction(VERB_LOOK, 0x2BA))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
 		_vm->_dialogs->show(35723);
 	else
 		return;
@@ -4780,29 +4780,29 @@ void Scene358::enter() {
 }
 
 void Scene358::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_game._player._walkOffScreenSceneId = 357;
 
-	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
 		_game._player._walkOffScreenSceneId = 359;
 }
 
 void Scene358::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35815);
-	else if (_action.isAction(VERB_LOOK, 0x2BA))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
 		_vm->_dialogs->show(35810);
-	else if (_action.isAction(VERB_LOOK, 0x2B9))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
 		_vm->_dialogs->show(35811);
-	else if (_action.isAction(VERB_LOOK, 0x1CB))
+	else if (_action.isAction(VERB_LOOK, NOUN_BED))
 		_vm->_dialogs->show(35812);
-	else if (_action.isAction(VERB_LOOK, 0x216))
+	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
 		_vm->_dialogs->show(35813);
-	else if (_action.isAction(VERB_LOOK, 0x21B))
+	else if (_action.isAction(VERB_LOOK, NOUN_TOILET))
 		_vm->_dialogs->show(35814);
-	else if (_action.isAction(VERB_LOOK, 0x204) || _action.isAction(VERB_LOOK, 0x18D))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR) || _action.isAction(VERB_LOOK, NOUN_WALL))
 		_vm->_dialogs->show(35816);
-	else if (_action.isAction(VERB_LOOK, 0x11))
+	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
 		_vm->_dialogs->show(35817);
 	else
 		return;
@@ -4846,10 +4846,10 @@ void Scene359::enter() {
 }
 
 void Scene359::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_game._player._walkOffScreenSceneId = 358;
 
-	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
 		_game._player._walkOffScreenSceneId = 360;
 }
 
@@ -4859,7 +4859,7 @@ void Scene359::actions() {
 			_vm->_dialogs->show(35914);
 		else
 			_vm->_dialogs->show(35915);
-	} else if (_action.isAction(VERB_TAKE, 0x131)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_SECURITY_CARD)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_SECURITY_CARD)) {
 			switch (_game._trigger) {
 			case 0:
@@ -4903,43 +4903,43 @@ void Scene359::actions() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x23E))
+	} else if (_action.isAction(VERB_LOOK, NOUN_BLOODY_CELL_WALL))
 		_vm->_dialogs->show(35910);
-	else if (_action.isAction(VERB_LOOK, 0x1CB))
+	else if (_action.isAction(VERB_LOOK, NOUN_BED))
 		_vm->_dialogs->show(35911);
-	else if (_action.isAction(VERB_LOOK, 0x216))
+	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
 		_vm->_dialogs->show(35912);
-	else if (_action.isAction(VERB_LOOK, 0x21B))
+	else if (_action.isAction(VERB_LOOK, NOUN_TOILET))
 		_vm->_dialogs->show(35913);
-	else if (_action.isAction(VERB_LOOK, 0x2B9))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
 		_vm->_dialogs->show(35916);
-	else if (_action.isAction(VERB_LOOK, 0x2BA))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
 		_vm->_dialogs->show(35917);
-	else if (_action.isAction(VERB_LOOK, 0x215))
+	else if (_action.isAction(VERB_LOOK, NOUN_LIMB))
 		_vm->_dialogs->show(35918);
-	else if (_action.isAction(VERB_TAKE, 0x215))
+	else if (_action.isAction(VERB_TAKE, NOUN_LIMB))
 		_vm->_dialogs->show(35919);
-	else if (_action.isAction(VERB_LOOK, 0x131) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_SECURITY_CARD) && (_action._mainObjectSource == 4))
 		_vm->_dialogs->show(35921);
-	else if (_action.isAction(VERB_LOOK, 0x2D2)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_BLOOD_STAIN)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 			_vm->_dialogs->show(35922);
 		else
 			_vm->_dialogs->show(35923);
-	} else if (_action.isAction(VERB_LOOK, 0x23F))
+	} else if (_action.isAction(VERB_LOOK, NOUN_WALL_BOARD))
 		_vm->_dialogs->show(35924);
-	else if (_action.isAction(VERB_TAKE, 0x23F))
+	else if (_action.isAction(VERB_TAKE, NOUN_WALL_BOARD))
 		_vm->_dialogs->show(35925);
-	else if (_action.isAction(VERB_LOOK, 0x23A))
+	else if (_action.isAction(VERB_LOOK, NOUN_RIP_IN_FLOOR))
 		_vm->_dialogs->show(35926);
-	else if (_action.isAction(VERB_LOOK, 0x204))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR))
 		_vm->_dialogs->show(35927);
-	else if (_action.isAction(VERB_LOOK, 0x89)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_FLOOR)) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 			_vm->_dialogs->show(35928);
 		else
 			_vm->_dialogs->show(35929);
-	} else if (_action.isAction(VERB_OPEN, 0x11) || _action.isAction(VERB_LOOK, 0x11))
+	} else if (_action.isAction(VERB_OPEN, NOUN_AIR_VENT) || _action.isAction(VERB_LOOK, NOUN_AIR_VENT))
 		_vm->_dialogs->show(36016);
 	else
 		return;
@@ -4976,31 +4976,31 @@ void Scene360::enter() {
 }
 
 void Scene360::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_game._player._walkOffScreenSceneId = 359;
 
-	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
 		_game._player._walkOffScreenSceneId = 361;
 }
 
 void Scene360::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(36015);
-	else if (_action.isAction(VERB_LOOK, 0x2BA))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
 		_vm->_dialogs->show(36010);
-	else if (_action.isAction(VERB_LOOK, 0x2B9))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
 		_vm->_dialogs->show(36011);
-	else if (_action.isAction(VERB_LOOK, 0x1CB))
+	else if (_action.isAction(VERB_LOOK, NOUN_BED))
 		_vm->_dialogs->show(36012);
-	else if (_action.isAction(VERB_LOOK, 0x216))
+	else if (_action.isAction(VERB_LOOK, NOUN_SINK))
 		_vm->_dialogs->show(36013);
-	else if (_action.isAction(VERB_LOOK, 0x21B))
+	else if (_action.isAction(VERB_LOOK, NOUN_TOILET))
 		_vm->_dialogs->show(36014);
-	else if (_action.isAction(VERB_LOOK, 0x11))
+	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
 		_vm->_dialogs->show(36016);
-	else if (_action.isAction(VERB_LOOK, 0x204))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR))
 		_vm->_dialogs->show(36017);
-	else if (_action.isAction(VERB_LOOK, 0x18D))
+	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
 		_vm->_dialogs->show(36018);
 	else
 		return;
@@ -5348,43 +5348,43 @@ void Scene361::step() {
 }
 
 void Scene361::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN, 0x2B9))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_game._player._walkOffScreenSceneId = 360;
 
-	if (_action.isAction(VERB_WALK_DOWN, 0x2BA))
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
 		_game._player._walkOffScreenSceneId = 354;
 }
 
 void Scene361::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(36119);
-	else if (_action.isAction(VERB_SIT_AT, 0x1E4)) {
+	else if (_action.isAction(VERB_SIT_AT, NOUN_DESK)) {
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.addQuote(0xFC, 120, 0);
-	} else if (_action.isAction(VERB_CLIMB_INTO, 0x11)) {
+	} else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
 		if (_globals[kSexOfRex] == REX_FEMALE)
 			handleRoxAction();
 		else
 			handleRexAction();
-	} else if (_action.isAction(VERB_LOOK, 0x1E4))
+	} else if (_action.isAction(VERB_LOOK, NOUN_DESK))
 		_vm->_dialogs->show(36110);
-	else if (_action.isAction(VERB_LOOK, 0x18D))
+	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
 		_vm->_dialogs->show(36111);
-	else if (_action.isAction(VERB_LOOK, 0x220) || _action.isAction(VERB_STARE_AT, 0x220))
+	else if (_action.isAction(VERB_LOOK, NOUN_LIGHTING_FIXTURE) || _action.isAction(VERB_STARE_AT, NOUN_LIGHTING_FIXTURE))
 		_vm->_dialogs->show(36112);
-	else if (_action.isAction(VERB_LOOK, 0x208) || _action.isAction(VERB_STARE_AT, 0x208))
+	else if (_action.isAction(VERB_LOOK, NOUN_LIGHTS) || _action.isAction(VERB_STARE_AT, NOUN_LIGHTS))
 		_vm->_dialogs->show(36113);
-	else if (_action.isAction(VERB_TAKE, 0x208))
+	else if (_action.isAction(VERB_TAKE, NOUN_LIGHTS))
 		_vm->_dialogs->show(36114);
-	else if (_action.isAction(VERB_LOOK, 0x2F8) || _action.isAction(VERB_STARE_AT, 0x2F8))
+	else if (_action.isAction(VERB_LOOK, NOUN_LIGHT_BULB) || _action.isAction(VERB_STARE_AT, NOUN_LIGHT_BULB))
 		_vm->_dialogs->show(36115);
-	else if (_action.isAction(VERB_TAKE, 0x2F8))
+	else if (_action.isAction(VERB_TAKE, NOUN_LIGHT_BULB))
 		_vm->_dialogs->show(36116);
-	else if (_action.isAction(VERB_LOOK, 0x2BA))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
 		_vm->_dialogs->show(36117);
-	else if (_action.isAction(VERB_LOOK, 0x2B9))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_EAST))
 		_vm->_dialogs->show(36118);
-	else if (_action.isAction(VERB_LOOK, 0x11))
+	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
 		_vm->_dialogs->show(36120);
 	else
 		return;
@@ -5406,15 +5406,15 @@ void Scene366::enter() {
 }
 
 void Scene366::actions() {
-	if (_action.isAction(VERB_RETURN_TO, 0x2D4))
+	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
 		_scene->_nextSceneId = 302;
-	else if (_action.isAction(VERB_OPEN, 0x2D3)) {
+	else if (_action.isAction(VERB_OPEN, NOUN_GRATE)) {
 		if (_game._visitedScenes.exists(316))
 			_vm->_dialogs->show(36612);
 		else
 			_vm->_dialogs->show(36613);
 		_scene->_nextSceneId = 316;
-	} else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
+	} else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
 		if (_game._visitedScenes.exists(321))
 			_vm->_dialogs->show(36611);
 		else
@@ -5441,11 +5441,11 @@ void Scene387::enter() {
 }
 
 void Scene387::actions() {
-	if (_action.isAction(VERB_RETURN_TO, 0x2D4))
+	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3))
+	else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE))
 		_vm->_dialogs->show(38710);
-	else if (_action.isAction(VERB_OPEN, 0x2D3))
+	else if (_action.isAction(VERB_OPEN, NOUN_GRATE))
 		_vm->_dialogs->show(38711);
 	else
 		return;
@@ -5479,9 +5479,9 @@ void Scene388::enter() {
 }
 
 void Scene388::actions() {
-	if (_action.isAction(VERB_RETURN_TO, 0x2D4))
+	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_TALKTO, 0x303)) {
+	else if (_action.isAction(VERB_TALKTO, NOUN_SAUROPOD)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -5503,12 +5503,12 @@ void Scene388::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
+	} else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(38811);
 		else
 			_vm->_dialogs->show(38810);
-	} else if (_action.isAction(VERB_OPEN, 0x2D3))
+	} else if (_action.isAction(VERB_OPEN, NOUN_GRATE))
 		_vm->_dialogs->show(38812);
 	else
 		return;
@@ -5556,9 +5556,9 @@ void Scene389::step() {
 }
 
 void Scene389::actions() {
-	if (_action.isAction(VERB_RETURN_TO, 0x2D4))
+	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_TALKTO, 0x304)) {
+	else if (_action.isAction(VERB_TALKTO, NOUN_MONSTER)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -5576,7 +5576,7 @@ void Scene389::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
+	} else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
 		if (_globals[kAfterHavoc]) {
 			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 				_vm->_dialogs->show(38911);
@@ -5584,7 +5584,7 @@ void Scene389::actions() {
 				_vm->_dialogs->show(38912);
 		} else
 			_vm->_dialogs->show(38910);
-	} else if (_action.isAction(VERB_OPEN, 0x2D3)) {
+	} else if (_action.isAction(VERB_OPEN, NOUN_GRATE)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(38914);
 		else
@@ -5617,11 +5617,11 @@ void Scene390::enter() {
 }
 
 void Scene390::actions() {
-	if (_action.isAction(VERB_RETURN_TO, 0x2D4))
+	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3))
+	else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE))
 		_vm->_dialogs->show(39010);
-	else if (_action.isAction(VERB_OPEN, 0x2D3))
+	else if (_action.isAction(VERB_OPEN, NOUN_GRATE))
 		_vm->_dialogs->show(39011);
 	else
 		return;
@@ -5643,9 +5643,9 @@ void Scene391::enter() {
 }
 
 void Scene391::actions() {
-	if (_action.isAction(VERB_RETURN_TO, 0x2D4))
+	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_OPEN, 0x2D3)) {
+	else if (_action.isAction(VERB_OPEN, NOUN_GRATE)) {
 		if (_globals[kKickedIn391Grate])
 			_vm->_dialogs->show(39113);
 		else {
@@ -5657,7 +5657,7 @@ void Scene391::actions() {
 			_scene->_nextSceneId = 361;
 		else
 			_scene->_nextSceneId = 311;
-	} else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
+	} else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(39111);
 		else
@@ -5682,9 +5682,9 @@ void Scene399::enter() {
 }
 
 void Scene399::actions() {
-	if (_action.isAction(VERB_RETURN_TO, 0x2D4))
+	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
 		_scene->_nextSceneId = 313;
-	else if (_action.isAction(VERB_LOOK_THROUGH, 0x2D3)) {
+	else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE)) {
 		if (_globals[kAfterHavoc]) {
 			if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 				_vm->_dialogs->show(38911);
@@ -5692,7 +5692,7 @@ void Scene399::actions() {
 				_vm->_dialogs->show(38912);
 		} else
 			_vm->_dialogs->show(38910);
-	} else if (_action.isAction(VERB_OPEN, 0x2D3)) {
+	} else if (_action.isAction(VERB_OPEN, NOUN_GRATE)) {
 		if (_globals[kAfterHavoc])
 			_vm->_dialogs->show(38914);
 		else

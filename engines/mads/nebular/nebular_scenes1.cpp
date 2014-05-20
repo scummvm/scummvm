@@ -268,7 +268,7 @@ void Scene101::step() {
 }
 
 void Scene101::preActions() {
-	if (_action.isAction(VERB_LOOK, 0x180))
+	if (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN))
 		_game._player._needToWalk = true;
 
 	if (_sittingFl) {
@@ -424,13 +424,13 @@ void Scene101::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, 0x135) && _panelOpened) {
+	if (_action.isAction(VERB_OPEN, NOUN_SHIELD_ACCESS_PANEL) && _panelOpened) {
 		_vm->_dialogs->show(10130);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x180) && _sittingFl) {
+	if (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN) && _sittingFl) {
 		if (_globals[kWatchedViewScreen]) {
 			sayDang();
 		} else {
@@ -469,7 +469,7 @@ void Scene101::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x47)) {
+	if (_action.isAction(VERB_LOOK, NOUN_CHAIR)) {
 		_vm->_dialogs->show(10101);
 		_action._inProgress = false;
 		return;
@@ -481,115 +481,115 @@ void Scene101::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0xA8) || _action.isAction(VERB_LOOK, 0xF8) || _action.isAction(VERB_EXAMINE, 0xA8) || _action.isAction(VERB_EXAMINE, 0xF8)) {
+	if (_action.isAction(VERB_LOOK, NOUN_HULL) || _action.isAction(VERB_LOOK, NOUN_OUTER_HULL) || _action.isAction(VERB_EXAMINE, NOUN_HULL) || _action.isAction(VERB_EXAMINE, NOUN_OUTER_HULL)) {
 		_vm->_dialogs->show(10103);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x91)) {
+	if (_action.isAction(VERB_LOOK, NOUN_FUZZY_DICE)) {
 		_vm->_dialogs->show(10104);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0xE1) || _action.isAction(VERB_LOOK_IN, 0xE1)) {
+	if (_action.isAction(VERB_LOOK, NOUN_MIRROR) || _action.isAction(VERB_LOOK_IN, NOUN_MIRROR)) {
 		_vm->_dialogs->show(10105);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x60)) {
+	if (_action.isAction(VERB_LOOK, NOUN_CURTAINS)) {
 		_vm->_dialogs->show(10106);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x111)) {
+	if (_action.isAction(VERB_LOOK, NOUN_PLASTIC_JESUS)) {
 		_vm->_dialogs->show(10107);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x7B) || (_action.isAction(VERB_OPEN, 0x7B) && !_game._objects.isInInventory(OBJ_REBREATHER))) {
+	if (_action.isAction(VERB_LOOK, NOUN_ESCAPE_HATCH) || (_action.isAction(VERB_OPEN, NOUN_ESCAPE_HATCH) && !_game._objects.isInInventory(OBJ_REBREATHER))) {
 		_vm->_dialogs->show(10109);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, 0x7B)) {
+	if (_action.isAction(VERB_OPEN, NOUN_ESCAPE_HATCH)) {
 		_vm->_dialogs->show(10110);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x166)) {
+	if (_action.isAction(VERB_LOOK, NOUN_TARGET_COMPUTER)) {
 		_vm->_dialogs->show(10111);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0xCA)) {
+	if (_action.isAction(VERB_LOOK, NOUN_LIBRARY_COMPUTER)) {
 		_vm->_dialogs->show(10126);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x63)) {
+	if (_action.isAction(VERB_LOOK, NOUN_DAMAGE_CONTROL_PANEL)) {
 		_vm->_dialogs->show(10112);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0xEB)) {
+	if (_action.isAction(VERB_LOOK, NOUN_NAVIGATION_CONTROLS)) {
 		_vm->_dialogs->show(10113);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x78)) {
+	if (_action.isAction(VERB_LOOK, NOUN_ENGINEERING_CONTROLS)) {
 		_vm->_dialogs->show(10114);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x190)) {
+	if (_action.isAction(VERB_LOOK, NOUN_WEAPONS_DISPLAY)) {
 		_vm->_dialogs->show(10115);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x138)) {
+	if (_action.isAction(VERB_LOOK, NOUN_SHIELD_STATUS_PANEL)) {
 		_vm->_dialogs->show(10116);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x111)) {
+	if (_action.isAction(VERB_TAKE, NOUN_PLASTIC_JESUS)) {
 		_vm->_dialogs->show(10118);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x91)) {
+	if (_action.isAction(VERB_TAKE, NOUN_FUZZY_DICE)) {
 		_vm->_dialogs->show(10119);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, 0x63)) {
+	if (_action.isAction(VERB_OPEN, NOUN_DAMAGE_CONTROL_PANEL)) {
 		_vm->_dialogs->show(10121);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, 0x60)) {
+	if (_action.isAction(VERB_OPEN, NOUN_CURTAINS)) {
 		_vm->_dialogs->show(10122);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_CLOSE, 0x60)) {
+	if (_action.isAction(VERB_CLOSE, NOUN_CURTAINS)) {
 		_vm->_dialogs->show(10123);
 		_action._inProgress = false;
 		return;
@@ -875,7 +875,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALK_THROUGH, 0x6E)) {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR)) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
@@ -892,43 +892,43 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALKTO, 0x79)) {
+	if (_action.isAction(VERB_WALKTO, NOUN_ENGINEERING_SECTION)) {
 		_scene->_nextSceneId = 103;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_WALKTO, 0x117) || _action.isAction(VERB_LOOK, 0x117) || _action.isAction(VERB_WALKTO, 0x27)) {
+	if (_action.isAction(VERB_WALKTO, NOUN_POSTER) || _action.isAction(VERB_LOOK, NOUN_POSTER) || _action.isAction(VERB_WALKTO, NOUN_BINOCULARS)) {
 		addRandomMessage();
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x194)) {
+	if (_action.isAction(VERB_LOOK, NOUN_WEIGHT_MACHINE)) {
 		_vm->_dialogs->show(10212);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x79)) {
+	if (_action.isAction(VERB_LOOK, NOUN_ENGINEERING_SECTION)) {
 		_vm->_dialogs->show(10205);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x6E)) {
+	if (_action.isAction(VERB_LOOK, NOUN_DOOR)) {
 		_vm->_dialogs->show(10204);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_STARE_AT, 0x46) || _action.isAction(VERB_LOOK, 0x46)) {
+	if (_action.isAction(VERB_STARE_AT, NOUN_CEILING) || _action.isAction(VERB_LOOK, NOUN_CEILING)) {
 		_vm->_dialogs->show(10203);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_STARE_AT, 0xFD) || _action.isAction(VERB_LOOK, 0xFD)) {
+	if (_action.isAction(VERB_STARE_AT, NOUN_OVERHEAD_LAMP) || _action.isAction(VERB_LOOK, NOUN_OVERHEAD_LAMP)) {
 		_vm->_dialogs->show(10202);
 		_action._inProgress = false;
 		return;
@@ -964,7 +964,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x52)) {
+	if (_action.isAction(VERB_LOOK, NOUN_CLOSET)) {
 		_vm->_dialogs->show(10219);
 		_action._inProgress = false;
 		return;
@@ -1019,19 +1019,19 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x118)) {
+	if (_action.isAction(VERB_LOOK, NOUN_POWER_STATUS_PANEL)) {
 		_vm->_dialogs->show(10226);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x197) || _action.isAction(VERB_LOOK_THROUGH, 0x197)) {
+	if (_action.isAction(VERB_LOOK, NOUN_WINDOW) || _action.isAction(VERB_LOOK_THROUGH, NOUN_WINDOW)) {
 		_vm->_dialogs->show(10227);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x70) || _action.isAction(VERB_WALKTO, 0x70)) {
+	if (_action.isAction(VERB_LOOK, NOUN_DOORWAY) || _action.isAction(VERB_WALKTO, NOUN_DOORWAY)) {
 		_vm->_dialogs->show(10228);
 		_action._inProgress = false;
 		return;
@@ -1056,20 +1056,20 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x47) || (_action.isAction(VERB_SIT_IN, 0x47) && !_chairDescrFl)) {
+	if (_action.isAction(VERB_LOOK, NOUN_CHAIR) || (_action.isAction(VERB_SIT_IN, NOUN_CHAIR) && !_chairDescrFl)) {
 		_chairDescrFl = true;
 		_vm->_dialogs->show(10210);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_SIT_IN, 0x47)) {
+	if (_action.isAction(VERB_SIT_IN, NOUN_CHAIR)) {
 		_vm->_dialogs->show(10211);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0xDE)) {
+	if (_action.isAction(VERB_LOOK, NOUN_MEDICINE_CABINET)) {
 		if (_globals[kMedicineCabinetOpen])
 			_vm->_dialogs->show(10207);
 		else
@@ -1079,7 +1079,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_CLOSE, 0xDE) && _globals[kMedicineCabinetOpen]) {
+	if (_action.isAction(VERB_CLOSE, NOUN_MEDICINE_CABINET) && _globals[kMedicineCabinetOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->_sequences.remove(_globals._sequenceIndexes[8]);
@@ -1103,7 +1103,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, 0xDE) && !_globals[kMedicineCabinetOpen]) {
+	if (_action.isAction(VERB_OPEN, NOUN_MEDICINE_CABINET) && !_globals[kMedicineCabinetOpen]) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
@@ -1133,7 +1133,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x27) && _game._objects.isInRoom(OBJ_BINOCULARS)) {
+	if (_action.isAction(VERB_TAKE, NOUN_BINOCULARS) && _game._objects.isInRoom(OBJ_BINOCULARS)) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[11] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
@@ -1157,7 +1157,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x35) && _game._objects.isInRoom(OBJ_BURGER)) {
+	if (_action.isAction(VERB_TAKE, NOUN_BURGER) && _game._objects.isInRoom(OBJ_BURGER)) {
 		if (_game._trigger == 0) {
 			_vm->_dialogs->showItem(OBJ_BURGER, 10235);
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
@@ -1171,7 +1171,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x117)) {
+	if (_action.isAction(VERB_TAKE, NOUN_POSTER)) {
 		_vm->_dialogs->show(10224);
 		_action._inProgress = false;
 		return;
@@ -1183,26 +1183,26 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x89)) {
+	if (_action.isAction(VERB_LOOK, NOUN_FLOOR)) {
 		_vm->_dialogs->show(10232);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x27) && !_game._objects.isInInventory(OBJ_BINOCULARS)) {
+	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS) && !_game._objects.isInInventory(OBJ_BINOCULARS)) {
 		_vm->_dialogs->show(10233);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x35) && (_action._mainObjectSource == 4)) {
+	if (_action.isAction(VERB_LOOK, NOUN_BURGER) && (_action._mainObjectSource == 4)) {
 		_vm->_dialogs->show(801);
 		_action._inProgress = false;
 	}
 }
 
 void Scene102::postActions() {
-	if (_action.isAction(VERB_PUT, 0x127) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (_action.isAction(VERB_PUT, NOUN_ROBO_KITCHEN) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		_vm->_dialogs->show(10217);
 		_action._inProgress = false;
 	}
@@ -1716,23 +1716,23 @@ void Scene104::step() {
 }
 
 void Scene104::preActions() {
-	if (_action.isAction(VERB_SWIM_TOWARDS, 0x74))
+	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_EASTERN_CLIFF_FACE))
 		_game._player._walkOffScreenSceneId = 105;
 
-	if (_action.isAction(VERB_SWIM_TOWARDS, 0x75))
+	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_EAT))
 		_game._player._walkOffScreenSceneId = 106;
 }
 
 void Scene104::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10405);
-	else if (_action.isAction(VERB_LOOK, 0x5E))
+	else if (_action.isAction(VERB_LOOK, NOUN_CURIOUS_WEED_PATCH))
 		_vm->_dialogs->show(10404);
-	else if (_action.isAction(VERB_LOOK, 0x158))
+	else if (_action.isAction(VERB_LOOK, NOUN_SURFACE))
 		_vm->_dialogs->show(10403);
-	else if (_action.isAction(VERB_LOOK, 0x4D))
+	else if (_action.isAction(VERB_LOOK, NOUN_CLIFF_FACE))
 		_vm->_dialogs->show(10401);
-	else if (_action.isAction(VERB_LOOK, 0xF0))
+	else if (_action.isAction(VERB_LOOK, NOUN_OCEAN_FLOOR))
 		_vm->_dialogs->show(10402);
 	else
 		return;
@@ -1843,10 +1843,10 @@ void Scene105::step() {
 }
 
 void Scene105::preActions() {
-	if (_action.isAction(VERB_SWIM_TOWARDS, 0x195))
+	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_WESTERN_CLIFF_FACE))
 		_game._player._walkOffScreenSceneId = 104;
 
-	if (_action.isAction(VERB_SWIM_TOWARDS, 0xF5))
+	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_SOUTH))
 		_game._player._walkOffScreenSceneId = 107;
 
 	if (_action.isObject(0xE0) && (_action.isAction(VERB_TALKTO) || _action.isAction(VERB_LOOK)))
@@ -1856,7 +1856,7 @@ void Scene105::preActions() {
 void Scene105::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10512);
-	else if (_action.isAction(VERB_TAKE, 0x65) && _globals[kFishIn105]) {
+	else if (_action.isAction(VERB_TAKE, NOUN_DEAD_FISH) && _globals[kFishIn105]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
 			int randVal = _vm->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
@@ -1867,25 +1867,25 @@ void Scene105::actions() {
 			_globals[kFishIn105] = false;
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802, 0);
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x195))
+	} else if (_action.isAction(VERB_LOOK, NOUN_WESTERN_CLIFF_FACE))
 		_vm->_dialogs->show(10501);
-	else if (_action.isAction(VERB_LOOK, 0x4D))
+	else if (_action.isAction(VERB_LOOK, NOUN_CLIFF_FACE))
 		_vm->_dialogs->show(10502);
-	else if (_action.isAction(VERB_LOOK, 0xF0))
+	else if (_action.isAction(VERB_LOOK, NOUN_OCEAN_FLOOR))
 		_vm->_dialogs->show(10503);
-	else if (_action.isAction(VERB_LOOK, 0xDD))
+	else if (_action.isAction(VERB_LOOK, NOUN_MEDICAL_WASTE))
 		_vm->_dialogs->show(10504);
-	else if (_action.isAction(VERB_TAKE, 0xDD))
+	else if (_action.isAction(VERB_TAKE, NOUN_MEDICAL_WASTE))
 		_vm->_dialogs->show(10505);
-	else if (_action.isAction(VERB_LOOK, 0xE0))
+	else if (_action.isAction(VERB_LOOK, NOUN_MINE))
 		_vm->_dialogs->show(10506);
-	else if (_action.isAction(VERB_LOOK, 0x65))
+	else if (_action.isAction(VERB_LOOK, NOUN_DEAD_FISH))
 		_vm->_dialogs->show(10508);
-	else if (_action.isAction(VERB_LOOK, 0x158))
+	else if (_action.isAction(VERB_LOOK, NOUN_SURFACE))
 		_vm->_dialogs->show(10509);
-	else if (_action.isAction(VERB_LOOK, 0xF5))
+	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_AREA_TO_SOUTH))
 		_vm->_dialogs->show(10510);
-	else if (_action.isAction(VERB_LOOK, 0x129))
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
 		_vm->_dialogs->show(10511);
 	else
 		return;
@@ -2052,20 +2052,20 @@ void Scene106::step() {
 }
 
 void Scene106::preActions() {
-	if (_action.isAction(VERB_SWIM_TOWARDS, 0x12E) || _action.isAction(VERB_SWIM_TOWARDS, 0x130)) {
+	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_SEA_CLIFF) || _action.isAction(VERB_SWIM_TOWARDS, NOUN_SEAWEED_BANK)) {
 		_game._player._stepEnabled = false;
 		_scene->_sprites[_game._player._spritesStart + 1]->_charInfo->_velocity = 24;
 		_game._player._walkOffScreenSceneId = 104;
 	}
 
-	if (_action.isAction(VERB_SWIM_TOWARDS, 0xF3))
+	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_EAST))
 		_game._player._walkOffScreenSceneId = 107;
 }
 
 void Scene106::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10614);
-	else if (_action.isAction(VERB_SWIM_TO, 0xD9)) {
+	else if (_action.isAction(VERB_SWIM_TO, NOUN_MAIN_AIRLOCK)) {
 		_game._player._stepEnabled = false;
 		_game._player._prepareWalkPos = Common::Point(95, 72);
 		_game._player._prepareWalkFacing = FACING_WEST;
@@ -2073,31 +2073,31 @@ void Scene106::actions() {
 		_game._player._readyToWalk = true;
 		_game._player._frameNumber = 9;
 		_backToShipFl = true;
-	} else if (_action.isAction(VERB_LOOK, 0x13) || _action.isAction(VERB_LOOK_AT, 0x13))
+	} else if (_action.isAction(VERB_LOOK, NOUN_ANEMONE) || _action.isAction(VERB_LOOK_AT, NOUN_ANEMONE))
 		_vm->_dialogs->show(10601);
-	else if (_action.isAction(VERB_TAKE, 0x13))
+	else if (_action.isAction(VERB_TAKE, NOUN_ANEMONE))
 		_vm->_dialogs->show(10602);
-	else if (_action.isAction(VERB_LOOK, 0x12F) || _action.isAction(VERB_LOOK, 0x130))
+	else if (_action.isAction(VERB_LOOK, NOUN_SEAWEED) || _action.isAction(VERB_LOOK, NOUN_SEAWEED_BANK))
 		_vm->_dialogs->show(10603);
-	else if (_action.isAction(VERB_TAKE, 0x12F) || _action.isAction(VERB_TAKE, 0x130))
+	else if (_action.isAction(VERB_TAKE, NOUN_SEAWEED) || _action.isAction(VERB_TAKE, NOUN_SEAWEED_BANK))
 		_vm->_dialogs->show(10604);
-	else if (_action.isAction(VERB_LOOK, 0xF3))
+	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_AREA_TO_EAST))
 		_vm->_dialogs->show(10605);
-	else if (_action.isAction(VERB_LOOK, 0x109) || _action.isAction(VERB_LOOK_AT, 0x109))
+	else if (_action.isAction(VERB_LOOK, NOUN_PILE_OF_ROCKS) || _action.isAction(VERB_LOOK_AT, NOUN_PILE_OF_ROCKS))
 		_vm->_dialogs->show(10606);
 	else if (_action.isObject(0x109) && (_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)))
 		_vm->_dialogs->show(10607);
-	else if (_action.isAction(VERB_LOOK, 0x139) || _action.isAction(VERB_LOOK_AT, 0x139))
+	else if (_action.isAction(VERB_LOOK, NOUN_SHIP) || _action.isAction(VERB_LOOK_AT, NOUN_SHIP))
 		_vm->_dialogs->show(10608);
-	else if (_action.isAction(VERB_LOOK, 0xD9))
+	else if (_action.isAction(VERB_LOOK, NOUN_MAIN_AIRLOCK))
 		_vm->_dialogs->show(10609);
-	else if (_action.isAction(VERB_OPEN, 0xD9))
+	else if (_action.isAction(VERB_OPEN, NOUN_MAIN_AIRLOCK))
 		_vm->_dialogs->show(10610);
-	else if (_action.isAction(VERB_CLOSE, 0xD9))
+	else if (_action.isAction(VERB_CLOSE, NOUN_MAIN_AIRLOCK))
 		_vm->_dialogs->show(10611);
-	else if (_action.isAction(VERB_LOOK, 0x12E))
+	else if (_action.isAction(VERB_LOOK, NOUN_SEA_CLIFF))
 		_vm->_dialogs->show(10612);
-	else if (_action.isAction(VERB_LOOK, 0xF0))
+	else if (_action.isAction(VERB_LOOK, NOUN_OCEAN_FLOOR))
 		_vm->_dialogs->show(10613);
 	else
 		return;
@@ -2178,17 +2178,17 @@ void Scene107::step() {
 }
 
 void Scene107::preActions() {
-	if (_action.isAction(VERB_SWIM_TOWARDS, 0xF6))
+	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_WEST))
 		_game._player._walkOffScreenSceneId = 106;
 
-	if (_action.isAction(VERB_SWIM_TOWARDS, 0xF5))
+	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_SOUTH))
 		_game._player._walkOffScreenSceneId = 108;
 }
 
 void Scene107::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10708);
-	else if (_action.isAction(VERB_TAKE, 0x65) && _globals[kFishIn107]) {
+	else if (_action.isAction(VERB_TAKE, NOUN_DEAD_FISH) && _globals[kFishIn107]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
 			int randVal = _vm->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
@@ -2199,25 +2199,25 @@ void Scene107::actions() {
 			_globals[kFishIn107] = false;
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 802);
 		}
-	} else if (_action.isAction(VERB_SWIM_TOWARDS, 0xEE))
+	} else if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_NORTHERN_SEA_CLIFF))
 		_scene->_nextSceneId = 105;
-	else if (_action.isAction(VERB_LOOK, 0xEE))
+	else if (_action.isAction(VERB_LOOK, NOUN_NORTHERN_SEA_CLIFF))
 		_vm->_dialogs->show(10701);
-	else if (_action.isAction(VERB_LOOK, 0x65) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_DEAD_FISH) && (_action._mainObjectSource == 4))
 		_vm->_dialogs->show(10702);
-	else if (_action.isAction(VERB_LOOK, 0x38))
+	else if (_action.isAction(VERB_LOOK, NOUN_BUSH_LIKE_FORMATION))
 		_vm->_dialogs->show(10703);
-	else if (_action.isAction(VERB_LOOK, 0x128))
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCK))
 		_vm->_dialogs->show(10704);
-	else if (_action.isAction(VERB_LOOK, 0x12F))
+	else if (_action.isAction(VERB_LOOK, NOUN_SEAWEED))
 		_vm->_dialogs->show(10705);
-	else if (_action.isAction(VERB_LOOK, 0xF5))
+	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_AREA_TO_SOUTH))
 		_vm->_dialogs->show(10706);
-	else if (_action.isAction(VERB_LOOK, 0x4D))
+	else if (_action.isAction(VERB_LOOK, NOUN_CLIFF_FACE))
 		_vm->_dialogs->show(10707);
-	else if (_action.isAction(VERB_LOOK, 0xDA))
+	else if (_action.isAction(VERB_LOOK, NOUN_MANTA_RAY))
 		_vm->_dialogs->show(10709);
-	else if (_action.isAction(VERB_TAKE, 0xDA))
+	else if (_action.isAction(VERB_TAKE, NOUN_MANTA_RAY))
 		_vm->_dialogs->show(10710);
 	else
 		return;
@@ -2273,14 +2273,14 @@ void Scene108::enter() {
 }
 
 void Scene108::preActions() {
-	if (_action.isAction(VERB_SWIM_UNDER, 0xFB))
+	if (_action.isAction(VERB_SWIM_UNDER, NOUN_OVERHANG_TO_EAST))
 		_game._player._walkOffScreenSceneId = 109;
 }
 
 void Scene108::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(10812);
-	else if (_action.isAction(VERB_TAKE, 0x65) && _globals[kFishIn108]) {
+	else if (_action.isAction(VERB_TAKE, NOUN_DEAD_FISH) && _globals[kFishIn108]) {
 		if (_game._objects.isInInventory(OBJ_DEAD_FISH)) {
 			int randVal = _vm->getRandomNumber(74, 76);
 			_scene->_kernelMessages.reset();
@@ -2291,27 +2291,27 @@ void Scene108::actions() {
 			_globals[kFishIn108] = false;
 			_vm->_dialogs->showItem(OBJ_DEAD_FISH, 10808);
 		}
-	} else if (_action.isAction(VERB_SWIM_TOWARDS, 0xF4))
+	} else if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_NORTH))
 		_scene->_nextSceneId = 107;
-	else if (_action.isAction(VERB_LOOK, 0x4D))
+	else if (_action.isAction(VERB_LOOK, NOUN_CLIFF_FACE))
 		_vm->_dialogs->show(10801);
-	else if (_action.isAction(VERB_LOOK, 0xF0))
+	else if (_action.isAction(VERB_LOOK, NOUN_OCEAN_FLOOR))
 		_vm->_dialogs->show(10802);
-	else if (_action.isAction(VERB_LOOK, 0xF1))
+	else if (_action.isAction(VERB_LOOK, NOUN_ODD_ROCK_FORMATION))
 		_vm->_dialogs->show(10803);
-	else if (_action.isAction(VERB_TAKE, 0xF1))
+	else if (_action.isAction(VERB_TAKE, NOUN_ODD_ROCK_FORMATION))
 		_vm->_dialogs->show(10804);
-	else if (_action.isAction(VERB_LOOK, 0x129))
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
 		_vm->_dialogs->show(10805);
-	else if (_action.isAction(VERB_TAKE, 0x129))
+	else if (_action.isAction(VERB_TAKE, NOUN_ROCKS))
 		_vm->_dialogs->show(10806);
-	else if (_action.isAction(VERB_LOOK, 0x65))
+	else if (_action.isAction(VERB_LOOK, NOUN_DEAD_FISH))
 		_vm->_dialogs->show(10807);
-	else if (_action.isAction(VERB_LOOK, 0xFB))
+	else if (_action.isAction(VERB_LOOK, NOUN_OVERHANG_TO_EAST))
 		_vm->_dialogs->show(10809);
-	else if (_action.isAction(VERB_LOOK, 0xF4))
+	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_AREA_TO_NORTH))
 		_vm->_dialogs->show(10810);
-	else if (_action.isAction(VERB_LOOK, 0x158))
+	else if (_action.isAction(VERB_LOOK, NOUN_SURFACE))
 		_vm->_dialogs->show(10811);
 	else
 		return;
@@ -2485,7 +2485,7 @@ void Scene109::step() {
 }
 
 void Scene109::preActions() {
-	if (_action.isAction(VERB_SWIM_UNDER, 0xFC))
+	if (_action.isAction(VERB_SWIM_UNDER, NOUN_OVERHANG_TO_WEST))
 		_game._player._walkOffScreenSceneId = 108;
 
 	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT))
@@ -2500,7 +2500,7 @@ void Scene109::preActions() {
 		}
 	}
 
-	if ((_action.isAction(VERB_SWIM_INTO, 0x178) || _action.isAction(VERB_SWIM_TO, 0x146))
+	if ((_action.isAction(VERB_SWIM_INTO, NOUN_TUNNEL) || _action.isAction(VERB_SWIM_TO, NOUN_SMALL_HOLE))
 	&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(0x178)))
 		_game._player._walkOffScreenSceneId = 110;
 
@@ -2685,33 +2685,33 @@ void Scene109::actions() {
 		}
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x35) && _game._objects.isInRoom(OBJ_BURGER)) {
+	if (_action.isAction(VERB_TAKE, NOUN_BURGER) && _game._objects.isInRoom(OBJ_BURGER)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_game._objects.addToInventory(OBJ_BURGER);
-	} else if (_action.isAction(VERB_LOOK, 0xF0))
+	} else if (_action.isAction(VERB_LOOK, NOUN_OCEAN_FLOOR))
 		_vm->_dialogs->show(10901);
-	else if (_action.isAction(VERB_LOOK, 0x5A))
+	else if (_action.isAction(VERB_LOOK, NOUN_CORAL))
 		_vm->_dialogs->show(10902);
 	else if ((_action.isAction(VERB_TAKE) || _action.isAction(VERB_PULL)) && _action.isObject(0x5A))
 		_vm->_dialogs->show(10903);
-	else if (_action.isAction(VERB_LOOK, 0x129))
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
 		_vm->_dialogs->show(10904);
-	else if (_action.isAction(VERB_TAKE, 0x129))
+	else if (_action.isAction(VERB_TAKE, NOUN_ROCKS))
 		_vm->_dialogs->show(10905);
-	else if (_action.isAction(VERB_LOOK, 0x45))
+	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_WALL))
 		_vm->_dialogs->show(10906);
-	else if (_action.isAction(VERB_LOOK, 0x178)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_TUNNEL)) {
 		if (_globals[kHoovicAlive])
 			_vm->_dialogs->show(10907);
 		else
 			_vm->_dialogs->show(10913);
-	} else if (_action.isAction(VERB_LOOK, 0x146))
+	} else if (_action.isAction(VERB_LOOK, NOUN_SMALL_HOLE))
 		_vm->_dialogs->show(10908);
-	else if (_action.isAction(VERB_LOOK, 0xFC))
+	else if (_action.isAction(VERB_LOOK, NOUN_OVERHANG_TO_WEST))
 		_vm->_dialogs->show(10911);
-	else if (_action.isAction(VERB_PUT, 0x146))
+	else if (_action.isAction(VERB_PUT, NOUN_SMALL_HOLE))
 		_vm->_dialogs->show(10910);
-	else if (_action.isAction(VERB_LOOK, 0x66))
+	else if (_action.isAction(VERB_LOOK, NOUN_DEAD_PURPLE_MONSTER))
 		_vm->_dialogs->show(10914);
 	else
 		return;
@@ -2789,7 +2789,7 @@ void Scene110::step() {
 }
 
 void Scene110::preActions() {
-	if (_action.isAction(VERB_SWIM_THROUGH, 0x41))
+	if (_action.isAction(VERB_SWIM_THROUGH, NOUN_CAVE_ENTRANCE))
 		_game._player._walkOffScreenSceneId = 109;
 
 	if (_crabsFl) {
@@ -2817,7 +2817,7 @@ void Scene110::preActions() {
 }
 
 void Scene110::actions() {
-	if (_action.isAction(VERB_SWIM_THROUGH, 0x178)) {
+	if (_action.isAction(VERB_SWIM_THROUGH, NOUN_TUNNEL)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(110, 'T', 0, EXT_AA, ""), 1);
@@ -2831,21 +2831,21 @@ void Scene110::actions() {
 			_scene->_nextSceneId = 111;
 			break;
 		}
-	} else if ((_action._lookFlag) || _action.isAction(VERB_LOOK, 0x3F))
+	} else if ((_action._lookFlag) || _action.isAction(VERB_LOOK, NOUN_CAVE))
 		_vm->_dialogs->show(11001);
-	else if (_action.isAction(VERB_LOOK, 0x40) || _action.isAction(VERB_LOOK_AT, 0x40))
+	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_CEILING) || _action.isAction(VERB_LOOK_AT, NOUN_CAVE_CEILING))
 		_vm->_dialogs->show(11002);
-	else if (_action.isAction(VERB_LOOK, 0x129))
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
 		_vm->_dialogs->show(11003);
-	else if (_action.isAction(VERB_TAKE, 0x129))
+	else if (_action.isAction(VERB_TAKE, NOUN_ROCKS))
 		_vm->_dialogs->show(11004);
-	else if (_action.isAction(VERB_LOOK, 0x178))
+	else if (_action.isAction(VERB_LOOK, NOUN_TUNNEL))
 		_vm->_dialogs->show(11005);
-	else if (_action.isAction(VERB_LOOK, 0x41))
+	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_ENTRANCE))
 		_vm->_dialogs->show(11006);
-	else if (_action.isAction(VERB_LOOK, 0x8F))
+	else if (_action.isAction(VERB_LOOK, NOUN_FUNGOIDS))
 		_vm->_dialogs->show(11007);
-	else if (_action.isAction(VERB_TAKE, 0x8F))
+	else if (_action.isAction(VERB_TAKE, NOUN_FUNGOIDS))
 		_vm->_dialogs->show(11008);
 	else
 		return;
@@ -2964,12 +2964,12 @@ void Scene111::step() {
 }
 
 void Scene111::preActions() {
-	if (_action.isAction(VERB_WALK_THROUGH, 0x41))
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_CAVE_ENTRANCE))
 		_game._player._walkOffScreenSceneId = 212;
 }
 
 void Scene111::actions() {
-	if (_action.isAction(VERB_DIVE_INTO, 0x116) && _game._objects.isInInventory(OBJ_REBREATHER)) {
+	if (_action.isAction(VERB_DIVE_INTO, NOUN_POOL) && _game._objects.isInInventory(OBJ_REBREATHER)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(Resources::formatName(111, 'A', 1, EXT_AA, ""), 1);
@@ -2982,15 +2982,15 @@ void Scene111::actions() {
 			_scene->_nextSceneId = 110;
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, 0x43))
+	} else if (_action.isAction(VERB_LOOK, NOUN_CAVE_FLOOR))
 		_vm->_dialogs->show(11101);
-	else if (_action.isAction(VERB_LOOK, 0x116))
+	else if (_action.isAction(VERB_LOOK, NOUN_POOL))
 		_vm->_dialogs->show(11102);
-	else if (_action.isAction(VERB_LOOK, 0x41))
+	else if (_action.isAction(VERB_LOOK, NOUN_CAVE_ENTRANCE))
 		_vm->_dialogs->show(11103);
-	else if (_action.isAction(VERB_LOOK, 0x153))
+	else if (_action.isAction(VERB_LOOK, NOUN_STALAGMITES))
 		_vm->_dialogs->show(11104);
-	else if (_action.isAction(VERB_LOOK, 0xC8))
+	else if (_action.isAction(VERB_LOOK, NOUN_LARGE_STALAGMITE))
 		_vm->_dialogs->show(11105);
 	else if ((_action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)) && (_action.isObject(0x153) || _action.isObject(0xC8)))
 		_vm->_dialogs->show(11106);

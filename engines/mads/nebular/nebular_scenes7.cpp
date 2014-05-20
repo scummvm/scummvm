@@ -1010,57 +1010,57 @@ void Scene703::actions() {
 			_curSequence = 4;
 		else
 			_curSequence = 1;
-	} else if (_action.isAction(VERB_THROW, 0x2C, 0x468) || _action.isAction(VERB_THROW, 0x2D, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BONE, 0x468) || _action.isAction(VERB_THROW, NOUN_BONES, 0x468)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_activeAnimation->setCurrentFrame(19);
-	} else if (_action.isAction(VERB_THROW, 0x49, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN, 0x468)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
-	} else if (_action.isAction(VERB_THROW, 0x17A, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_TWINKIFRUIT, 0x468)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_activeAnimation->setCurrentFrame(39);
-	} else if (_action.isAction(VERB_THROW, 0x2A, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BOMB, 0x468)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_activeAnimation->setCurrentFrame(59);
-	} else if (_action.isAction(VERB_THROW, 0x4A, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB, 0x468)) {
 		_useBomb = true;
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
-	} else if (_action.isAction(VERB_PUT, 0x2E, 0x18F) || _action.isAction(0x85, 0x2E, 0x18F)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_BOTTLE, 0x18F) || _action.isAction(0x85, 0x2E, 0x18F)) {
 		if (_globals[kBottleStatus] != 4) {
 			handleBottleInterface();
 			_dialog1.start();
 		} else
 			_vm->_dialogs->show(70323);
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, 0x468)) {
+	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_SEA_MONSTER)) {
 		if (_globals[kMonsterAlive])
 			_vm->_dialogs->show(70310);
-	} else if (_action.isAction(VERB_LOOK, 0x18F)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_WATER)) {
 		if (!_globals[kMonsterAlive])
 			_vm->_dialogs->show(70311);
 		else
 			_vm->_dialogs->show(70312);
-	} else if (_action.isAction(VERB_LOOK, 0x3B2)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_BUILDING_TO_NORTH)) {
 		if (_globals[kMonsterAlive])
 			_vm->_dialogs->show(70313);
 		else if (_game._visitedScenes.exists(710))
 			_vm->_dialogs->show(70314);
 		else
 			_vm->_dialogs->show(70315);
-	} else if (_action.isAction(VERB_LOOK, 0x3B3))
+	} else if (_action.isAction(VERB_LOOK, NOUN_VOLCANO_RIM))
 		_vm->_dialogs->show(70316);
 	else
 		return;
@@ -1367,7 +1367,7 @@ void Scene704::actions() {
 			_animationMode = 4;
 		else
 			_animationMode = 1;
-	} else if (_action.isAction(VERB_TAKE, 0x2E)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BOTTLE)) {
 		if (!_game._objects.isInInventory(OBJ_BOTTLE)) {
 			_game._player._stepEnabled = false;
 			_takeBottleFl = true;
@@ -1377,7 +1377,7 @@ void Scene704::actions() {
 				_animationMode = 7;
 			}
 		}
-	} else if (_action.isAction(VERB_PUT, 0x2E, 0x18F) || _action.isAction(0x85, 0x2E, 0x18F)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_BOTTLE, 0x18F) || _action.isAction(0x85, 0x2E, 0x18F)) {
 		if (_game._objects.isInInventory(OBJ_BOTTLE)) {
 			if (_globals[kBottleStatus] != 4) {
 				_takeBottleFl = false;
@@ -1386,20 +1386,20 @@ void Scene704::actions() {
 			} else
 				_vm->_dialogs->show(70323);
 		}
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, 0x18F))
+	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_WATER))
 		_vm->_dialogs->show(70410);
-	else if (_action.isAction(VERB_LOOK, 0x3B2)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING_TO_NORTH)) {
 		if (_game._visitedScenes.exists(710))
 			_vm->_dialogs->show(70411);
 		else
 			_vm->_dialogs->show(70412);
-	} else if (_action.isAction(VERB_LOOK, 0x3B3))
+	} else if (_action.isAction(VERB_LOOK, NOUN_VOLCANO_RIM))
 		_vm->_dialogs->show(70413);
-	else if (_action.isAction(VERB_LOOK, 0x2E) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == 4))
 		_vm->_dialogs->show(70414);
-	else if (_action.isAction(VERB_LOOK, 0x3B4))
+	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_WATER_TO_SOUTH))
 		_vm->_dialogs->show(70416);
-	else if (_action.isAction(VERB_LOOK, 0x142))
+	else if (_action.isAction(VERB_LOOK, NOUN_SKY))
 		_vm->_dialogs->show(70417);
 	else
 		return;
@@ -1625,7 +1625,7 @@ void Scene705::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_CLIMB_THROUGH, 0x197)) {
+	} else if (_action.isAction(VERB_CLIMB_THROUGH, NOUN_WINDOW)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1647,23 +1647,23 @@ void Scene705::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(0x85, 0x2E, 0x18F) || _action.isAction(VERB_PUT, 0x2E, 0x18F)) {
+	} else if (_action.isAction(0x85, 0x2E, 0x18F) || _action.isAction(VERB_PUT, NOUN_BOTTLE, 0x18F)) {
 		if (_globals[kBottleStatus] != 4) {
 			handleBottleInterface();
 			_dialog1.start();
 		} else
 			_vm->_dialogs->show(70323);
-	} if (_action._lookFlag || _action.isAction(VERB_LOOK, 0x18F))
+	} if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_WATER))
 		_vm->_dialogs->show(70511);
-	else if (_action.isAction(VERB_LOOK, 0x3B3))
+	else if (_action.isAction(VERB_LOOK, NOUN_VOLCANO_RIM))
 		_vm->_dialogs->show(70512);
-	else if (_action.isAction(VERB_LOOK, 0x3B4))
+	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_WATER_TO_SOUTH))
 		_vm->_dialogs->show(70513);
-	else if (_action.isAction(VERB_LOOK, 0x142))
+	else if (_action.isAction(VERB_LOOK, NOUN_SKY))
 		_vm->_dialogs->show(70514);
-	else if (_action.isAction(VERB_LOOK, 0x323))
+	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
 		_vm->_dialogs->show(70515);
-	else if (_action.isAction(VERB_LOOK, 0x197))
+	else if (_action.isAction(VERB_LOOK, NOUN_WINDOW))
 		_vm->_dialogs->show(70516);
 	else
 		return;
@@ -1845,12 +1845,12 @@ void Scene706::step() {
 }
 
 void Scene706::preActions() {
-	if (_action.isAction(VERB_LOOK, 0x46E))
+	if (_action.isAction(VERB_LOOK, NOUN_PORTRAIT))
 		_game._player._needToWalk = true;
 }
 
 void Scene706::actions() {
-	if (_action.isAction(VERB_WALK_INSIDE, 0x16C)) {
+	if (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 707;
@@ -1858,13 +1858,13 @@ void Scene706::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_EXIT, 0x2FA)) {
+	if (_action.isAction(VERB_EXIT, NOUN_ROOM)) {
 		_scene->_nextSceneId = 705;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x17D)) {
+	if (_action.isAction(VERB_TAKE, NOUN_VASE)) {
 		if (_game._difficulty != DIFFICULTY_EASY) {
 			_animationMode = 1;
 			handleRexDeath();
@@ -1876,7 +1876,7 @@ void Scene706::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_PUT, 0x2E, 0x344)) {
+	if (_action.isAction(VERB_PUT, NOUN_BOTTLE, 0x344)) {
 		if ((_globals[kBottleStatus] == 2 && _game._difficulty == DIFFICULTY_HARD) ||
 			 (_globals[kBottleStatus] != 0 && _game._difficulty != DIFFICULTY_HARD)) {
 			if (!_game._objects.isInInventory(OBJ_VASE) || _game._trigger) {
@@ -1893,47 +1893,47 @@ void Scene706::actions() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, 0x344) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (_action.isAction(VERB_PUT, NOUN_PEDESTAL) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		int objectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if (_game._objects[objectId].hasQuality(10))
 			_vm->_dialogs->show(70626);
 		else
 			_vm->_dialogs->show(70627);
-	} else if (_action.isAction(VERB_TAKE, 0x2E) && _game._objects.isInInventory(OBJ_VASE))
+	} else if (_action.isAction(VERB_TAKE, NOUN_BOTTLE) && _game._objects.isInInventory(OBJ_VASE))
 		_vm->_dialogs->show(70631);
 	else if (_action._lookFlag) {
 		if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(70610);
 		else
 			_vm->_dialogs->show(70611);
-	} else if (_action.isAction(VERB_LOOK, 0x89))
+	} else if (_action.isAction(VERB_LOOK, NOUN_FLOOR))
 		_vm->_dialogs->show(70612);
-	else if (_action.isAction(VERB_LOOK, 0x32B))
+	else if (_action.isAction(VERB_LOOK, NOUN_PILLAR))
 		_vm->_dialogs->show(70613);
-	else if (_action.isAction(VERB_LOOK, 0x46B))
+	else if (_action.isAction(VERB_LOOK, NOUN_OLD_TEA_CUP))
 		_vm->_dialogs->show(70614);
-	else if (_action.isAction(VERB_TAKE, 0x46B))
+	else if (_action.isAction(VERB_TAKE, NOUN_OLD_TEA_CUP))
 		_vm->_dialogs->show(70615);
-	else if (_action.isAction(VERB_LOOK, 0x46D))
+	else if (_action.isAction(VERB_LOOK, NOUN_OLD_VASE))
 		_vm->_dialogs->show(70616);
-	else if (_action.isAction(VERB_LOOK, 0x46E))
+	else if (_action.isAction(VERB_LOOK, NOUN_PORTRAIT))
 		_vm->_dialogs->show(70617);
-	else if (_action.isAction(VERB_LOOK, 0x46C))
+	else if (_action.isAction(VERB_LOOK, NOUN_NAME_PLATE))
 		_vm->_dialogs->show(70618);
-	else if (_action.isAction(VERB_LOOK, 0x18D))
+	else if (_action.isAction(VERB_LOOK, NOUN_WALL))
 		_vm->_dialogs->show(70619);
-	else if (_action.isAction(VERB_LOOK, 0x344)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_PEDESTAL)) {
 		if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(70620);
 		else if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId)
 			_vm->_dialogs->show(70622);
 		else
 			_vm->_dialogs->show(70621);
-	} else if (_action.isAction(VERB_LOOK, 0x16C))
+	} else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(70623);
-	else if (_action.isAction(VERB_LOOK, 0x17D) && (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId))
+	else if (_action.isAction(VERB_LOOK, NOUN_VASE) && (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId))
 		_vm->_dialogs->show(70624);
-	else if (_action.isAction(VERB_LOOK, 0x2E) && (_action._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_BOTTLE) && (_action._mainObjectSource == 4))
 		_vm->_dialogs->show(70632);
 	else
 		return;
@@ -1970,21 +1970,21 @@ void Scene707::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x181) || _action.isAction(VERB_PEER_THROUGH, 0x181))
+	if (_action.isAction(VERB_LOOK, NOUN_VIEWPORT) || _action.isAction(VERB_PEER_THROUGH, NOUN_VIEWPORT))
 		_vm->_dialogs->show(70710);
-	else if (_action.isAction(VERB_LOOK, 0xC4))
+	else if (_action.isAction(VERB_LOOK, NOUN_KEYPAD))
 		_vm->_dialogs->show(70711);
-	else if (_action.isAction(VERB_LOOK, 0x1CC))
+	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
 		_vm->_dialogs->show(70712);
-	else if (_action.isAction(VERB_LOOK, 0x1D0) || _action.isAction(VERB_LOOK, 0x1D1)
-	 || _action.isAction(VERB_LOOK, 0x1D2) || _action.isAction(VERB_LOOK, 0x1D3)
-	 || _action.isAction(VERB_LOOK, 0x1D4) || _action.isAction(VERB_LOOK, 0x1D5)
-	 || _action.isAction(VERB_LOOK, 0x1D6) || _action.isAction(VERB_LOOK, 0x1D7)
-	 || _action.isAction(VERB_LOOK, 0x1D8) || _action.isAction(VERB_LOOK, 0x1D9)
-	 || _action.isAction(VERB_LOOK, 0x1DB) || _action.isAction(VERB_LOOK, 0x7A)
-	 || _action.isAction(VERB_LOOK, 0x1DA))
+	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY)
+	 || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
 		_vm->_dialogs->show(70713);
-	else if (_action.isAction(VERB_LOOK, 0x1CF) || _action._lookFlag)
+	else if (_action.isAction(VERB_LOOK, NOUN_DEVICE) || _action._lookFlag)
 		_vm->_dialogs->show(70714);
 	else
 		return;
@@ -2214,13 +2214,13 @@ void Scene751::step() {
 }
 
 void Scene751::preActions() {
-	if (_action.isAction(VERB_LOOK, 0x470))
+	if (_action.isAction(VERB_LOOK, NOUN_TALL_BUILDING))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTHEAST);
 
-	if (_action.isAction(VERB_LOOK, 0x27, 0x470))
+	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, 0x470))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTH);
 
-	if (_action.isAction(VERB_WALKTO, 0x4AA))
+	if (_action.isAction(VERB_WALKTO, NOUN_EAST_END_OF_PLATFORM))
 		_game._player._walkOffScreenSceneId = 752;
 
 	if (!_rexHandingLine)
@@ -2229,7 +2229,7 @@ void Scene751::preActions() {
 	if (_action.isAction(VERB_LOOK) || _action.isAction(0x87) || _action.isAction(VERB_TALKTO))
 		_game._player._needToWalk = false;
 
-	if ((!_action.isAction(VERB_PUT, 0x87, 0x467) || !_action.isAction(0x170, 0x87, 0x467) || !_action.isAction(0x19, 0x87, 0x467))
+	if ((!_action.isAction(VERB_PUT, NOUN_FISHING_LINE, 0x467) || !_action.isAction(0x170, 0x87, 0x467) || !_action.isAction(0x19, 0x87, 0x467))
 	&& (_game._player._needToWalk)) {
 		switch (_game._trigger) {
 		case 0:
@@ -2256,9 +2256,9 @@ void Scene751::preActions() {
 }
 
 void Scene751::actions() {
-	if (_action.isAction(VERB_WALK_ALONG, 0x22C))
+	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
 		; // Nothing
-	else if (_action.isAction(VERB_LOOK, 0x27, 0x470)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, 0x470)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -2284,7 +2284,7 @@ void Scene751::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_STEP_INTO, 0x317)) {
+	} else if (_action.isAction(VERB_STEP_INTO, NOUN_ELEVATOR)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -2326,7 +2326,7 @@ void Scene751::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUT, 0x87, 0x467) || _action.isAction(0x170, 0x87, 0x467) || _action.isAction(0x19, 0x87, 0x467)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_FISHING_LINE, 0x467) || _action.isAction(0x170, 0x87, 0x467) || _action.isAction(0x19, 0x87, 0x467)) {
 		if (_globals[kLineStatus] == 1) {
 			switch (_game._trigger) {
 			case 0:
@@ -2374,28 +2374,28 @@ void Scene751::actions() {
 				break;
 			}
 		}
-	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, 0x38F))
+	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_CITY))
 		_vm->_dialogs->show(75110);
-	else if (_action.isAction(VERB_LOOK, 0x317))
+	else if (_action.isAction(VERB_LOOK, NOUN_ELEVATOR))
 		_vm->_dialogs->show(75112);
-	else if (_action.isAction(VERB_LOOK, 0x22C))
+	else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
 		_vm->_dialogs->show(75113);
-	else if (_action.isAction(VERB_LOOK, 0x316))
+	else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_PYLON))
 		_vm->_dialogs->show(75114);
-	else if ((_action.isAction(VERB_LOOK, 0x467) || _action.isAction(VERB_LOOK, 0x87))
+	else if ((_action.isAction(VERB_LOOK, NOUN_HOOK) || _action.isAction(VERB_LOOK, NOUN_FISHING_LINE))
 		&& (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3))
 		_vm->_dialogs->show(75116);
-	else if (_action.isAction(VERB_LOOK, 0x467))
+	else if (_action.isAction(VERB_LOOK, NOUN_HOOK))
 		_vm->_dialogs->show(75115);
-	else if (_action.isAction(VERB_LOOK, 0x128))
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCK))
 		_vm->_dialogs->show(75117);
-	else if (_action.isAction(VERB_TAKE, 0x128))
+	else if (_action.isAction(VERB_TAKE, NOUN_ROCK))
 		_vm->_dialogs->show(75118);
-	else if (_action.isAction(VERB_LOOK, 0x4AA))
+	else if (_action.isAction(VERB_LOOK, NOUN_EAST_END_OF_PLATFORM))
 		_vm->_dialogs->show(75119);
-	else if (_action.isAction(VERB_TAKE, 0x87) && (_globals[kLineStatus] == 3 || _globals[kLineStatus] == 2))
+	else if (_action.isAction(VERB_TAKE, NOUN_FISHING_LINE) && (_globals[kLineStatus] == 3 || _globals[kLineStatus] == 2))
 		_vm->_dialogs->show(75121);
-	else if (_action.isAction(VERB_LOOK, 0x470))
+	else if (_action.isAction(VERB_LOOK, NOUN_TALL_BUILDING))
 		_vm->_dialogs->show(75122);
 	else if (_action.isAction(0x170, 0x87, 0x316) || _action.isAction(0x19, 0x87, 0x316))
 		_vm->_dialogs->show(75123);
