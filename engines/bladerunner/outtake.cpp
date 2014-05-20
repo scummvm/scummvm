@@ -23,8 +23,10 @@
 #include "bladerunner/outtake.h"
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/vqa_player.h"
+#include "bladerunner/vqa_decoder.h"
 
+#include "common/debug.h"
+#include "common/events.h"
 #include "common/system.h"
 
 namespace BladeRunner {
@@ -41,27 +43,33 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	else
 		resName = name + "_E.VQA";
 
-	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surface1);
-	_vqaPlayer->open(resName);
+	Common::SeekableReadStream *s = _vm->getResourceStream(resName);
 
-	for (;;) {
-		_vm->handleEvents();
-		if (_vm->shouldQuit())
-			break;
+	_vqaDecoder = new VQADecoder();
+	_vqaDecoder->loadStream(s);
 
-		int r = _vqaPlayer->update();
-		if (r == -3)
-			break;
+	_vqaDecoder->start();
 
-		if (r >= 0) {
-			_vm->_system->copyRectToScreen(_vm->_surface1.getPixels(), _vm->_surface1.pitch, 0, 0, _vm->_surface1.w, _vm->_surface1.h);
+	uint32 last = _vm->_system->getMillis();
+
+	while (!_vqaDecoder->endOfVideo() && !_vm->shouldQuit()) {
+		if (_vqaDecoder->needsUpdate()) {
+			uint32 now = _vm->_system->getMillis();
+			debug("delta: %d", now - last);
+			last = now;
+
+			const Graphics::Surface *surface = _vqaDecoder->decodeNextFrame();
+			_vm->_system->copyRectToScreen((const byte *)surface->getBasePtr(0, 0), surface->pitch, 0, 0, 640, 480);
 			_vm->_system->updateScreen();
-			_vm->_system->delayMillis(10);
 		}
-	}
 
-	delete _vqaPlayer;
-	_vqaPlayer = nullptr;
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+				return;
+
+		_vm->_system->delayMillis(10);
+	}
 }
 
 }; // End of namespace BladeRunner

@@ -20,35 +20,31 @@
  *
  */
 
-#ifndef BLADERUNNER_OUTTAKE_H
-#define BLADERUNNER_OUTTAKE_H
+#ifndef BLADERUNNER_AUD_DECODER_H
+#define BLADERUNNER_AUD_DECODER_H
 
-#include "common/str.h"
-
-#include "graphics/surface.h"
+#include "common/types.h"
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
-class VQADecoder;
-
-class OuttakePlayer {
-	BladeRunnerEngine *_vm;
-
-	bool               _isVQAOpen;
-	VQADecoder        *_vqaDecoder;
-	Graphics::Surface *_surface;
+class ADPCMWestwoodDecoder {
+	int16 _stepIndex;
+	int32 _predictor;
 
 public:
-	OuttakePlayer(BladeRunnerEngine *vm) :
-		_vm(vm),
-		_isVQAOpen(false),
-		_vqaDecoder(nullptr)
+	ADPCMWestwoodDecoder()
+		: _stepIndex(0), _predictor(0)
 	{}
 
-	void play(const Common::String &name, bool noLocalization, int container);
+	void setParameters(int16 stepIndex, int32 predictor)
+	{
+		_stepIndex = stepIndex;
+		_predictor = predictor;
+	}
+
+	void decode(uint8 *in, size_t size, int16 *out);
 };
 
-}; // End of namespace BladeRunner
+};
 
 #endif

@@ -26,6 +26,7 @@
 #include "bladerunner/vqa_decoder.h"
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include "graphics/surface.h"
 
@@ -46,6 +47,8 @@ class VQAPlayer {
 	int _loopDefault;
 
 	uint32 _nextFrameTime;
+	bool   _audioStarted;
+	Audio::SoundHandle _soundHandle;
 
 public:
 
@@ -58,7 +61,8 @@ public:
 		  _curLoop(-1),
 		  _loopSpecial(-1),
 		  _loopDefault(-1),
-		  _nextFrameTime(0)
+		  _nextFrameTime(0),
+		  _audioStarted(false)
 	{}
 
 	bool open(const Common::String &name);

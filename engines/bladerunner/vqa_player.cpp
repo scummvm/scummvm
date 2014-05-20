@@ -24,6 +24,8 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "audio/decoders/raw.h"
+
 #include "common/system.h"
 
 namespace BladeRunner {
@@ -38,6 +40,8 @@ bool VQAPlayer::open(const Common::String &name) {
 		_s = nullptr;
 		return false;
 	}
+
+	_audioStream = Audio::makeQueuingAudioStream(_decoder._header.freq, _decoder._header.channels == 2);
 
 	return true;
 }
@@ -78,11 +82,30 @@ int VQAPlayer::update() {
 	else
 		++_curFrame;
 
-	if (_curFrame >= _decoder._header.numFrames)
+	if (_curFrame >= _decoder._header.numFrames) {
+		if (_audioStream)
+			_audioStream->finish();
 		return -3;
+	}
 
 	_decoder.readFrame();
 	_decoder.decodeFrame((uint16*)_surface->getPixels());
+
+	if (_audioStream) {
+		int16 *audioFrame = (int16*)malloc(2940);
+		memcpy(audioFrame, _decoder.getAudioFrame(), 2940);
+		_audioStream->queueBuffer((byte*)audioFrame, 2940, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+
+		if (!_audioStarted)
+			_vm->_mixer->playStream(
+				Audio::Mixer::kPlainSoundType,
+				&_soundHandle,
+				_audioStream,
+				-1
+			);
+
+		_audioStarted = true;
+	}
 
 	return _curFrame;
 }

@@ -58,13 +58,12 @@ Common::Error BladeRunnerEngine::run() {
 
 	startup();
 
-	if (!warnUserAboutUnsupportedGame())
-		return Common::kNoError;
+	if (warnUserAboutUnsupportedGame()) {
+		init2();
 
-	init2();
-
-	/* TODO: Check for save games and enter KIA */
-	gameLoop();
+		/* TODO: Check for save games and enter KIA */
+		gameLoop();
+	}
 
 	shutdown();
 
@@ -168,6 +167,10 @@ void BladeRunnerEngine::gameTick() {
 	if (_gameIsRunning && _windowIsActive) {
 		// TODO: Only run if not in Kia, script, nor AI
 		_settings->openNewScene();
+
+		outtakePlay(28, true);
+		outtakePlay(41, true);
+		outtakePlay( 0, false);
 
 		// TODO: Autosave
 		// TODO: Kia
