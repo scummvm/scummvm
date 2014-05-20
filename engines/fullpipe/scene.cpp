@@ -139,12 +139,12 @@ Scene::~Scene() {
 
 	// _faObjlist is not used
 
-	for (int i = 0; i < _messageQueueList.size(); i++)
+	for (uint i = 0; i < _messageQueueList.size(); i++)
 		delete _messageQueueList[i];
 
 	_messageQueueList.clear();
 
-	for (int i = 0; i < _staticANIObjectList1.size(); i++)
+	for (uint i = 0; i < _staticANIObjectList1.size(); i++)
 		delete _staticANIObjectList1[i];
 
 	_staticANIObjectList1.clear();
@@ -287,7 +287,7 @@ void Scene::init() {
 	if (_staticANIObjectList2.size() != _staticANIObjectList1.size()) {
 		_staticANIObjectList2.clear();
 
-		for (int i = 0; i < _staticANIObjectList1.size(); i++)
+		for (uint i = 0; i < _staticANIObjectList1.size(); i++)
 			_staticANIObjectList2.push_back(_staticANIObjectList1[i]);
 	}
 }
@@ -353,7 +353,7 @@ void Scene::setPictureObjectsFlag4() {
 }
 
 void Scene::stopAllSounds() {
-	for (uint i = 0; i < _soundList->getCount(); i++)
+	for (int i = 0; i < _soundList->getCount(); i++)
 		_soundList->getSoundByIndex(i)->stop();
 }
 
@@ -507,11 +507,11 @@ void Scene::draw() {
 
 	objectList_sortByPriority(_staticANIObjectList2);
 
-	for (int i = 0; i < _staticANIObjectList2.size(); i++)
+	for (uint i = 0; i < _staticANIObjectList2.size(); i++)
 		_staticANIObjectList2[i]->draw2();
 
 	int priority = -1;
-	for (int i = 0; i < _staticANIObjectList2.size(); i++) {
+	for (uint i = 0; i < _staticANIObjectList2.size(); i++) {
 		drawContent(_staticANIObjectList2[i]->_priority, priority, false);
 		_staticANIObjectList2[i]->draw();
 
@@ -642,7 +642,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 void Scene::update(int counterdiff) {
 	debug(6, "Scene::update(%d)", counterdiff);
 
-	for (int i = 0; i < _staticANIObjectList2.size(); i++)
+	for (uint i = 0; i < _staticANIObjectList2.size(); i++)
 		_staticANIObjectList2[i]->update(counterdiff);
 }
 
