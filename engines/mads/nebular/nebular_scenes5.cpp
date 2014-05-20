@@ -274,7 +274,7 @@ void Scene501::step() {
 }
 
 void Scene501::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN) && (_action.isAction(0x321) || _action.isAction(0x322)))
+	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(0x321) || _action.isObject(0x322)))
 		_game._player._walkOffScreenSceneId = 551;
 }
 
@@ -745,7 +745,7 @@ void Scene504::actions() {
 	if (_action.isAction(VERB_EXIT_FROM, 0x324)) {
 		_vm->_sound->command(15);
 		_scene->_nextSceneId = _globals[kHoverCarLocation];
-	} else if (_action.isAction(0xE, 0x380)) {
+	} else if (_action.isAction(VERB_ACTIVATE, 0x380)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1073,7 +1073,7 @@ void Scene505::step() {
 void Scene505::actions() {
 	if (_action.isAction(VERB_PRESS))
 		_nextButtonId = _action._activeAction._objectNameId;
-	else if (_action.isAction(0x2D5, 0x38C))
+	else if (_action.isAction(VERB_RETURN_TO, 0x38C))
 		_scene->_nextSceneId = 504;
 	else if (_action.isAction(VERB_LOOK, 0x180))
 		_vm->_dialogs->show(50510);
@@ -1651,10 +1651,10 @@ void Scene508::actions() {
 		} else {
 			_vm->_dialogs->show(50837);
 		}
-	} else if (_action.isAction(0x365, 0x120, 0x343) || _action.isAction(VERB_PUT, 0x120, 0x344) || _action.isAction(VERB_PUT, 0x120, 0x343)) {
+	} else if (_action.isAction(VERB_REFLECT, 0x120, 0x343) || _action.isAction(VERB_PUT, 0x120, 0x344) || _action.isAction(VERB_PUT, 0x120, 0x343)) {
 		_chosenObject = 1;
 		handlePedestral();
-	} else if (_action.isAction(VERB_PUT, 0x57, 0x344) || _action.isAction(VERB_PUT, 0x57, 0x343) || _action.isAction(0x365, 0x57, 0x343)) {
+	} else if (_action.isAction(VERB_PUT, 0x57, 0x344) || _action.isAction(VERB_PUT, 0x57, 0x343) || _action.isAction(VERB_REFLECT, 0x57, 0x343)) {
 		_chosenObject = 2;
 		handlePedestral();
 	} else if (_action._lookFlag)
@@ -2681,7 +2681,7 @@ void Scene551::step() {
 }
 
 void Scene551::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN) && (_action.isAction(0x360) || _action.isAction(0x361)))
+	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(0x360) || _action.isObject(0x361)))
 		_game._player._walkOffScreenSceneId = 501;
 }
 

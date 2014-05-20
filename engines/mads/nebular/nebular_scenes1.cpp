@@ -475,7 +475,7 @@ void Scene101::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PEER_THROUGH)) && (_action.isAction(0x8E) || _action.isAction(0xF9))) {
+	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PEER_THROUGH)) && (_action.isObject(NOUN_FRONT_WINDOW) || _action.isObject(NOUN_OUTSIDE))) {
 		_vm->_dialogs->show(10102);
 		_action._inProgress = false;
 		return;
@@ -595,7 +595,7 @@ void Scene101::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PLAY)) && _action.isAction(0x17E)) {
+	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PLAY)) && _action.isObject(0x17E)) {
 		_vm->_dialogs->show(10124);
 		_action._inProgress = false;
 		return;
@@ -758,10 +758,10 @@ void Scene102::step() {
 }
 
 void Scene102::preActions() {
-	if (_action.isAction(0x122) || _action.isAction(0x117))
+	if (_action.isObject(0x122) || _action.isObject(0x117))
 		_game._player._needToWalk = _game._player._readyToWalk;
 
-	if (_fridgeOpenedFl && !_action.isAction(0x122)) {
+	if (_fridgeOpenedFl && !_action.isObject(0x122)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._player._needToWalk) {
@@ -798,7 +798,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isObject(0x122) && !_fridgeOpenedFl) {
+	if (_action.isObject(NOUN_REFRIGERATOR) && !_fridgeOpenedFl) {
 		switch (_game._trigger) {
 		case 0:
 			_globals._sequenceIndexes[7] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[7], false, 6, 1, 0, 0);
@@ -838,7 +838,7 @@ void Scene102::actions() {
 		}
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x122) || _action.isAction(VERB_OPEN, 0x122)) {
+	if (_action.isAction(VERB_LOOK, NOUN_REFRIGERATOR) || _action.isAction(VERB_OPEN, NOUN_REFRIGERATOR)) {
 		if (_game._objects.isInRoom(OBJ_BURGER))
 			_vm->_dialogs->show(10230);
 		else
@@ -849,7 +849,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_WALKTO, 0x122) && justOpenedFl) {
+	if (_action.isAction(VERB_WALKTO, NOUN_REFRIGERATOR) && justOpenedFl) {
 		_fridgeFirstOpenFl = false;
 		int quoteId = _vm->getRandomNumber(59, 63);
 		Common::String curQuote = _game.getQuote(quoteId);
@@ -863,13 +863,13 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_CLOSE, 0x122)) {
+	if (_action.isAction(VERB_CLOSE, NOUN_REFRIGERATOR)) {
 		_vm->_dialogs->show(10213);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, 0x122)) {
+	if (_action.isAction(VERB_TAKE, NOUN_REFRIGERATOR)) {
 		_vm->_dialogs->show(8);
 		_action._inProgress = false;
 		return;
@@ -934,31 +934,31 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x127)) {
+	if (_action.isAction(VERB_LOOK, NOUN_ROBO_KITCHEN)) {
 		_vm->_dialogs->show(10215);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_PUT, 0x35, 0x127) && _game._objects.isInInventory(OBJ_BURGER)) {
+	if (_action.isAction(VERB_PUT, NOUN_BURGER, NOUN_ROBO_KITCHEN) && _game._objects.isInInventory(OBJ_BURGER)) {
 		_vm->_dialogs->show(10216);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_PUT, 0x122) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
+	if (_action.isAction(VERB_PUT, NOUN_REFRIGERATOR) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
 		_vm->_dialogs->show(10217);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_PUT, 0x127) && (_action.isAction(0x65) || _action.isAction(0x157))) {
+	if (_action.isAction(VERB_PUT, NOUN_DEAD_FISH, NOUN_ROBO_KITCHEN) || _action.isAction(VERB_PUT, NOUN_STUFFED_FISH, NOUN_ROBO_KITCHEN)) {
 		_vm->_dialogs->show(10230);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, 0x127)) {
+	if (_action.isAction(VERB_OPEN, NOUN_ROBO_KITCHEN)) {
 		_vm->_dialogs->show(10218);
 		_action._inProgress = false;
 		return;
@@ -970,9 +970,9 @@ void Scene102::actions() {
 		return;
 	}
 
-	if ((_action.isObject(0xC7) || _action.isObject(0xA3)) && (_action.isAction(VERB_LOOK) || _action.isAction(VERB_CLIMB_UP) || _action.isAction(0x4F))) {
+	if ((_action.isObject(NOUN_LADDER) || _action.isObject(0xA3)) && (_action.isAction(VERB_LOOK) || _action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH))) {
 		if (_game._objects.isInInventory(OBJ_REBREATHER)) {
-			if (!_action.isAction(VERB_CLIMB_UP) && !_action.isAction(0x4F)) {
+			if (!_action.isAction(VERB_CLIMB_UP) && !_action.isAction(VERB_CLIMB_THROUGH)) {
 				_vm->_dialogs->show(10231);
 				_action._inProgress = false;
 				return;
@@ -984,7 +984,7 @@ void Scene102::actions() {
 		}
 	}
 
-	if ((_action.isObject(0xC7) || _action.isObject(0xA3)) && (_action.isAction(VERB_CLIMB_UP) || _action.isAction(0x4F)) ) {
+	if ((_action.isObject(NOUN_LADDER) || _action.isObject(0xA3)) && (_action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH)) ) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(formAnimName('A', -1), 1);
@@ -1037,20 +1037,20 @@ void Scene102::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, 0x71) || ((_action.isAction(VERB_CLOSE, 0x71) || _action.isAction(VERB_PUSH, 0x71)) && !_drawerDescrFl)) {
+	if (_action.isAction(VERB_LOOK, NOUN_DRAWER) || ((_action.isAction(VERB_CLOSE, NOUN_DRAWER) || _action.isAction(VERB_PUSH, NOUN_DRAWER)) && !_drawerDescrFl)) {
 		_vm->_dialogs->show(10220);
 		_drawerDescrFl = true;
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_CLOSE, 0x71) || _action.isAction(VERB_PUSH, 0x71)) {
+	if (_action.isAction(VERB_CLOSE, NOUN_DRAWER) || _action.isAction(VERB_PUSH, NOUN_DRAWER)) {
 		_vm->_dialogs->show(10221);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (_action.isAction(VERB_OPEN, 0x71)) {
+	if (_action.isAction(VERB_OPEN, NOUN_DRAWER)) {
 		_vm->_dialogs->show(10236);
 		_action._inProgress = false;
 		return;
@@ -1177,7 +1177,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)) && _action.isAction(0x194)) {
+	if ((_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)) && _action.isObject(0x194)) {
 		_vm->_dialogs->show(10225);
 		_action._inProgress = false;
 		return;
@@ -1849,7 +1849,7 @@ void Scene105::preActions() {
 	if (_action.isAction(VERB_SWIM_TOWARDS, 0xF5))
 		_game._player._walkOffScreenSceneId = 107;
 
-	if (_action.isAction(0xE0) && (_action.isAction(VERB_TALKTO) || _action.isAction(VERB_LOOK)))
+	if (_action.isObject(0xE0) && (_action.isAction(VERB_TALKTO) || _action.isAction(VERB_LOOK)))
 		_game._player._needToWalk = false;
 }
 
@@ -2085,7 +2085,7 @@ void Scene106::actions() {
 		_vm->_dialogs->show(10605);
 	else if (_action.isAction(VERB_LOOK, 0x109) || _action.isAction(VERB_LOOK_AT, 0x109))
 		_vm->_dialogs->show(10606);
-	else if (_action.isAction(0x109) && (_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)))
+	else if (_action.isObject(0x109) && (_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)))
 		_vm->_dialogs->show(10607);
 	else if (_action.isAction(VERB_LOOK, 0x139) || _action.isAction(VERB_LOOK_AT, 0x139))
 		_vm->_dialogs->show(10608);
@@ -2692,7 +2692,7 @@ void Scene109::actions() {
 		_vm->_dialogs->show(10901);
 	else if (_action.isAction(VERB_LOOK, 0x5A))
 		_vm->_dialogs->show(10902);
-	else if ((_action.isAction(VERB_TAKE) || _action.isAction(VERB_PULL)) && _action.isAction(0x5A))
+	else if ((_action.isAction(VERB_TAKE) || _action.isAction(VERB_PULL)) && _action.isObject(0x5A))
 		_vm->_dialogs->show(10903);
 	else if (_action.isAction(VERB_LOOK, 0x129))
 		_vm->_dialogs->show(10904);
@@ -2992,7 +2992,7 @@ void Scene111::actions() {
 		_vm->_dialogs->show(11104);
 	else if (_action.isAction(VERB_LOOK, 0xC8))
 		_vm->_dialogs->show(11105);
-	else if ((_action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)) && (_action.isAction(0x153) || _action.isAction(0xC8)))
+	else if ((_action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)) && (_action.isObject(0x153) || _action.isObject(0xC8)))
 		_vm->_dialogs->show(11106);
 	else
 		return;

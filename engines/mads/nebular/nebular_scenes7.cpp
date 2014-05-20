@@ -1625,7 +1625,7 @@ void Scene705::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(0x4F, 0x197)) {
+	} else if (_action.isAction(VERB_CLIMB_THROUGH, 0x197)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;

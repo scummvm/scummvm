@@ -402,7 +402,7 @@ void Scene602::actions() {
 			handleSafeActions();
 		}
 	} else if ((_action.isAction(VERB_PUT, 0x120, 0x343) || _action.isAction(VERB_PUT, 0x57, 0x343)
-		|| _action.isAction(0x365, 0x57, 0x343) || _action.isAction(0x365, 0x120, 0x343)) && (_globals[kSafeStatus] == 0)) {
+		|| _action.isAction(VERB_REFLECT, 0x57, 0x343) || _action.isAction(VERB_REFLECT, 0x120, 0x343)) && (_globals[kSafeStatus] == 0)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_dialogs->show(60230);
