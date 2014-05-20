@@ -41,6 +41,8 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("show_quote", WRAP_METHOD(Debugger, Cmd_ShowQuote));
 	DCmd_Register("show_vocab", WRAP_METHOD(Debugger, Cmd_ShowVocab));
 	DCmd_Register("dump_vocab", WRAP_METHOD(Debugger, Cmd_DumpVocab));
+	DCmd_Register("show_item", WRAP_METHOD(Debugger, Cmd_ShowItem));
+	DCmd_Register("dump_items", WRAP_METHOD(Debugger, Cmd_DumpItems));
 	DCmd_Register("item", WRAP_METHOD(Debugger, Cmd_Item));
 }
 
@@ -238,6 +240,52 @@ bool Debugger::Cmd_DumpVocab(int argc, const char **argv) {
 	outFile.close();
 
 	DebugPrintf("Game vocab dumped\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_ShowItem(int argc, const char **argv) {
+	InventoryObjects &objects = _vm->_game->_objects;
+
+	if (argc != 2) {
+		for (uint32 i = 0; i < objects.size(); i++) {
+			Common::String desc = _vm->_game->_scene.getVocab(objects[i]._descId);
+			DebugPrintf("%03d: '%s'\n", i, desc.c_str());
+		}
+	} else {
+		int vocabId = strToInt(argv[1]);
+		Common::String desc = _vm->_game->_scene.getVocab(objects[vocabId]._descId);
+		DebugPrintf("%03d: '%s'\n", vocabId, desc.c_str());
+	}
+
+	return true;
+}
+
+bool Debugger::Cmd_DumpItems(int argc, const char **argv) {
+	InventoryObjects &objects = _vm->_game->_objects;
+
+	Common::DumpFile outFile;
+	outFile.open("items.txt");
+
+	for (uint32 i = 0; i < objects.size(); i++) {
+		Common::String curId = Common::String::format("%d", i);
+		Common::String desc = _vm->_game->_scene.getVocab(objects[i]._descId);
+		desc.toUppercase();
+
+		for (uint j = 0; j < desc.size(); j++) {
+			if (desc[j] == ' ' || desc[j] == '-')
+				desc.setChar('_', j);
+		}
+
+		Common::String cur = "\tOBJ_" + desc + " = " + curId + ",\n";
+		
+		outFile.writeString(cur.c_str());
+	}
+
+	outFile.flush();
+	outFile.close();
+
+	DebugPrintf("Game items dumped\n");
 
 	return true;
 }
