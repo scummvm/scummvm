@@ -86,6 +86,7 @@ private:
 
 public:
 	Scene503(MADSEngine *vm) : Scene5xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -99,6 +100,7 @@ private:
 
 public:
 	Scene504(MADSEngine *vm) : Scene5xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -119,6 +121,7 @@ private:
 
 public:
 	Scene505(MADSEngine *vm) : Scene5xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -128,8 +131,6 @@ public:
 
 class Scene506: public Scene5xx{
 private:
-	int _actionFl;             /* Flag to note daemon is running vs. parser */   
-
 	Common::Point _doorPos;
 	Facing _heroFacing;
 
@@ -140,11 +141,13 @@ private:
 
 	bool _labDoorFl;
 	bool _firstDoorFl;
+	bool _actionFl;
 
-	void room_506_door_sequences();
+	void handleDoorSequences();
 
 public:
 	Scene506(MADSEngine *vm) : Scene5xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -158,6 +161,7 @@ private:
 
 public:
 	Scene507(MADSEngine *vm) : Scene5xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -172,6 +176,7 @@ private:
 
 public:
 	Scene508(MADSEngine *vm) : Scene5xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -190,6 +195,7 @@ private:
 
 public:
 	Scene511(MADSEngine *vm) : Scene5xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -205,6 +211,7 @@ private:
 
 public:
 	Scene512(MADSEngine *vm) : Scene5xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();

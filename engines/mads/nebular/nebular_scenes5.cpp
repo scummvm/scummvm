@@ -530,6 +530,12 @@ void Scene503::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
+void Scene503::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsSint16LE(_detonatorHotspotId);
+}
+
 void Scene503::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 
@@ -648,6 +654,13 @@ void Scene503::actions() {
 void Scene504::setup() {
 	_game._player._spritesPrefix = "";
 	setAAName();
+}
+
+void Scene504::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsSint16LE(_carAnimationMode);
+	s.syncAsSint16LE(_carFrame);
 }
 
 void Scene504::enter() {
@@ -845,6 +858,19 @@ void Scene504::actions() {
 void Scene505::setup() {
 	_game._player._spritesPrefix = "";
 	setAAName();
+}
+
+void Scene505::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsSint16LE(_frame);
+	s.syncAsSint16LE(_nextButtonId);
+	s.syncAsSint16LE(_homeSelectedId);
+	s.syncAsSint16LE(_selectedId);
+	s.syncAsSint16LE(_activeCars);
+
+	for (int i = 0; i < 9; i++)
+		s.syncAsSint16LE(_carLocations[i]);
 }
 
 void Scene505::enter() {
@@ -1104,6 +1130,24 @@ void Scene506::setup() {
 	_scene->addActiveVocab(NOUN_LABORATORY);
 }
 
+void Scene506::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsSint16LE(_doorPos.x);
+	s.syncAsSint16LE(_doorPos.y);
+
+	s.syncAsByte(_heroFacing);
+
+	s.syncAsSint16LE(_doorDepth);
+	s.syncAsSint16LE(_doorSpriteIdx);
+	s.syncAsSint16LE(_doorSequenceIdx);
+	s.syncAsSint16LE(_doorWord);
+
+	s.syncAsByte(_labDoorFl);
+	s.syncAsByte(_firstDoorFl);
+	s.syncAsByte(_actionFl);
+}
+
 void Scene506::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('q', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('q', 1));
@@ -1161,7 +1205,7 @@ void Scene506::step() {
 				_doorWord = 0x37D;
 			}
 		}
-		room_506_door_sequences();
+		handleDoorSequences();
 	}
 
 	if (_game._trigger >= 70) {
@@ -1191,7 +1235,7 @@ void Scene506::step() {
 	}
 }
 
-void Scene506::room_506_door_sequences() {
+void Scene506::handleDoorSequences() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 
 	if (_firstDoorFl) {
@@ -1281,14 +1325,14 @@ void Scene506::actions() {
 			_doorPos = Common::Point(16, 111);
 		}
 		_actionFl = true;
-		room_506_door_sequences();
+		handleDoorSequences();
 	} else if (_action.isAction(VERB_WALK_INTO, NOUN_SOFTWARE_STORE)) {
 		if (_firstDoorFl) {
 			_heroFacing = FACING_NORTHWEST;
 			_doorPos = Common::Point(80, 102);
 		}
 		_actionFl = true;
-		room_506_door_sequences();
+		handleDoorSequences();
 	} else if (_action.isAction(VERB_GET_INTO, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:
@@ -1363,6 +1407,12 @@ void Scene507::setup() {
 	setAAName();
 	_scene->addActiveVocab(NOUN_PENLIGHT);
 	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+void Scene507::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsSint16LE(_penlightHotspotId);
 }
 
 void Scene507::enter() {
@@ -1475,6 +1525,12 @@ void Scene508::setup() {
 	_scene->addActiveVocab(NOUN_SPINACH_PATCH_DOLL);
 	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
+}
+
+void Scene508::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsSint16LE(_chosenObject);
 }
 
 void Scene508::enter() {
@@ -1734,6 +1790,17 @@ void Scene511::setup() {
 	_scene->addActiveVocab(NOUN_BOAT);
 	_scene->addActiveVocab(NOUN_FISHING_LINE);
 	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+void Scene511::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsByte(_handingLine);
+	s.syncAsByte(_lineMoving);
+
+	s.syncAsSint16LE(_lineAnimationMode);
+	s.syncAsSint16LE(_lineFrame);
+	s.syncAsSint16LE(_lineAnimationPosition);
 }
 
 void Scene511::enter() {
@@ -2056,6 +2123,13 @@ void Scene512::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_PADLOCK_KEY);
 	_scene->addActiveVocab(NOUN_REGISTER_DRAWER);
+}
+
+void Scene512::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsSint16LE(_fishingRodHotspotId);
+	s.syncAsSint16LE(_keyHotspotId);
 }
 
 void Scene512::enter() {
