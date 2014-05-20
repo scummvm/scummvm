@@ -2518,7 +2518,7 @@ void Scene318::enter() {
 	if (_game._objects.isInRoom(OBJ_SCALPEL)) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 0, 120);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 4);
-		_scene->_dynamicHotspots.add(0x12C, VERB_TAKE, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.add(NOUN_SCALPEL, VERB_TAKE, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 	}
 
 	if (_scene->_priorSceneId == 357)
@@ -4058,7 +4058,7 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 
 	case 2: {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(0x3B6, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 		_scene->changeVariant(0);
 		}
@@ -4139,7 +4139,7 @@ void Scene352::enter() {
 	if (_game._objects.isInRoom(OBJ_TAPE_PLAYER)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 5);
-		int idx = _scene->_dynamicHotspots.add(0x165, 0xD, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_TAPE_PLAYER, 0xD, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_tapePlayerHotspotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(84, 145), FACING_WEST);
 	}
 
@@ -4153,7 +4153,7 @@ void Scene352::enter() {
 
 	if (_game._objects.isInRoom(OBJ_GUARDS_ARM)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(0x3B6, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 	} else
 		_mustPutArmDownFl = true;
@@ -4405,7 +4405,7 @@ void Scene352::actions() {
 				_vaultOpenFl = true;
 				int idx;
 				if (!_globals[kHaveYourStuff]) {
-					idx = _scene->_dynamicHotspots.add(0x2F4, 0xD, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
+					idx = _scene->_dynamicHotspots.add(NOUN_YOUR_STUFF, 0xD, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
 					_hotspot2Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(280, 111), FACING_NORTHEAST);
 					_globals._sequenceIndexes[1] = _commonSequenceIdx;
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x102));
@@ -4414,9 +4414,9 @@ void Scene352::actions() {
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x103));
 				}
 
-				idx = _scene->_dynamicHotspots.add(0x2F5, 0xD, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));
+				idx = _scene->_dynamicHotspots.add(NOUN_OTHER_STUFF, 0xD, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));
 				_hotspot1Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
-				idx = _scene->_dynamicHotspots.add(0x2F6, 0xD, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
+				idx = _scene->_dynamicHotspots.add(NOUN_LAMP, 0xD, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
 				_lampHostpotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
 				_game._player._stepEnabled = true;
 				}
@@ -4833,7 +4833,7 @@ void Scene359::enter() {
 
 	if (_game._objects.isInRoom(OBJ_SECURITY_CARD)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_cardHotspotId = _scene->_dynamicHotspots.add(0x131, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_cardHotspotId = _scene->_dynamicHotspots.add(NOUN_SECURITY_CARD, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
 	}
 

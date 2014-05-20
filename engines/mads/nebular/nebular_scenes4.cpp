@@ -849,14 +849,14 @@ void Scene402::enter() {
 		_globals._sequenceIndexes[14] = _scene->_sequences.startCycle(_globals._spriteIndexes[14], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 7);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[14], Common::Point(210, 80));
-		int idx = _scene->_dynamicHotspots.add(0x124, 0xD1, _globals._sequenceIndexes[14], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_REPAIR_LIST, 0xD1, _globals._sequenceIndexes[14], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_NONE);
 	}
 
 	{
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
-		int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 	}
 
@@ -864,7 +864,7 @@ void Scene402::enter() {
 		_globals._sequenceIndexes[15] = _scene->_sequences.startCycle(_globals._spriteIndexes[15], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[15], 8);
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[15], Common::Point(250, 80));
-		int idx = _scene->_dynamicHotspots.add(0x5C, 0x4, _globals._sequenceIndexes[15], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_CREDIT_CHIP, 0x4, _globals._sequenceIndexes[15], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_NONE);
 	}
 
@@ -926,7 +926,7 @@ void Scene402::step() {
 			_globals._sequenceIndexes[10] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[10], false, 7, 0, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 3, 4);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 8);
-			int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[10], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[10], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 			_bartenderTalking = true;
 			if (_talkTimer > 1000)
@@ -939,7 +939,7 @@ void Scene402::step() {
 	if ((_game._trigger == 101) && _bartenderTalking) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
-		int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
 		_bartenderSteady = true;
@@ -1068,7 +1068,7 @@ void Scene402::step() {
 			_globals._sequenceIndexes[15] = _scene->_sequences.startCycle(_globals._spriteIndexes[15], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[15], 8);
 			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[15], Common::Point(250, 80));
-			int idx = _scene->_dynamicHotspots.add(0x5C, 0x4, _globals._sequenceIndexes[15], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(NOUN_CREDIT_CHIP, 0x4, _globals._sequenceIndexes[15], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_NONE);
 			}
 			break;
@@ -1101,7 +1101,7 @@ void Scene402::step() {
 		int seqIdx = _globals._sequenceIndexes[12];
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 		_bartenderSteady = true;
-		int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], seqIdx);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
@@ -1179,7 +1179,7 @@ void Scene402::step() {
 	case 91: {
 		_scene->_sequences.remove(_globals._sequenceIndexes[9]);
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
-		int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
 		_bartenderSteady = true;
@@ -1271,7 +1271,7 @@ void Scene402::step() {
 			case 1: {
 				_globals._sequenceIndexes[10] = _scene->_sequences.startCycle(_globals._spriteIndexes[10], false, 4);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 8);
-				int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[10], Common::Rect(0, 0, 0, 0));
+				int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[10], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 				_bartenderHandsHips = true;
 				}
@@ -1280,7 +1280,7 @@ void Scene402::step() {
 			case 2: {
 				_globals._sequenceIndexes[11] = _scene->_sequences.startCycle(_globals._spriteIndexes[11], false, 2);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[11], 8);
-				int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[11], Common::Rect(0, 0, 0, 0));
+				int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[11], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 				_bartenderLooksLeft = true;
 				}
@@ -1289,7 +1289,7 @@ void Scene402::step() {
 			case 3: {
 				_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
-				int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+				int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 				_bartenderSteady = true;
 				}
@@ -1582,7 +1582,7 @@ void Scene402::step() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 			_bartenderHandsHips = false;
 			_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
-			int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 			_bartenderSteady = true;
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
@@ -1590,7 +1590,7 @@ void Scene402::step() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[11]);
 			_bartenderLooksLeft = false;
 			_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
-			int idx = _scene->_dynamicHotspots.add(0x30E, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, 0xD, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 			_bartenderSteady = true;
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
@@ -2863,7 +2863,7 @@ void Scene408::enter() {
 	if (_game._objects.isInRoom(OBJ_TARGET_MODULE)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
-		int idx = _scene->_dynamicHotspots.add(0x167, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_TARGET_MODULE, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(283, 128), FACING_NORTHEAST);
 	}
 	sceneEntrySound();
@@ -3557,21 +3557,21 @@ void Scene411::enter() {
 	if (_game._objects.isInRoom(OBJ_FORMALDEHYDE)) {
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 1);
-		int idx = _scene->_dynamicHotspots.add(0x2D6, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_FORMALDEHYDE, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(206, 145), FACING_SOUTHEAST);
 	}
 
 	if (_game._objects.isInRoom(OBJ_PETROX)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 8);
-		int idx = _scene->_dynamicHotspots.add(0x2D7, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_PETROX, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 112), FACING_NORTHEAST);
 	}
 
 	if (_game._objects.isInRoom(OBJ_LECITHIN)) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 8);
-		int idx = _scene->_dynamicHotspots.add(0x3A9, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_LECITHIN, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(220, 121), FACING_NORTHEAST);
 	}
 

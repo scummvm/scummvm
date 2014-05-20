@@ -353,14 +353,14 @@ void Scene802::enter() {
 	if ((_globals[kRemoteOnGround]) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
-		int idx = _scene->_dynamicHotspots.add(0x123, 0xD,_globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_REMOTE, 0xD,_globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
 	}
 
 	if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
-		int idx = _scene->_dynamicHotspots.add(0x137, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_SHIELD_MODULATOR, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(93, 97), FACING_NORTH);
 	}
 	sceneEntrySound();
@@ -378,7 +378,7 @@ void Scene802::step() {
 	if (_game._trigger == 71) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
-		int idx = _scene->_dynamicHotspots.add(0x123, 0xD, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_REMOTE, 0xD, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
 
 		_globals[kRemoteSequenceRan] = true;
@@ -535,7 +535,7 @@ void Scene803::enter() {
 	if (_globals[kHoppyDead]) {
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('e', 1));
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
-		int idx = _scene->_dynamicHotspots.add(0x472, 0xD, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_GUTS, 0xD, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
 	}
 
@@ -627,7 +627,7 @@ void Scene803::step() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5],SEQUENCE_TRIGGER_EXPIRE, 0, 101);
 		} else {
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
-			int idx = _scene->_dynamicHotspots.add(0x472, 0xD, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(NOUN_GUTS, 0xD, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
 			_vm->_sound->command(16);
 			_globals[kCameFromCut] = true;
@@ -646,7 +646,7 @@ void Scene803::step() {
 
 	if (_game._trigger == 101) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
-		int idx = _scene->_dynamicHotspots.add(0x472, 0xD, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_GUTS, 0xD, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(66, 123), FACING_SOUTH);
 		_vm->_sound->command(16);
 		_globals[kCameFromCut] = true;
@@ -1075,14 +1075,14 @@ void Scene805::enter() {
 	if (_globals[kShieldModInstalled]) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 25);
-		int idx = _scene->_dynamicHotspots.add(0x137, 0x476, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_SHIELD_MODULATOR, 0x476, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
 	}
 
 	if (_globals[kTargetModInstalled]) {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 12);
-		int idx = _scene->_dynamicHotspots.add(0x167, 0x476, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_TARGET_MODULE, 0x476, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
 	}
 
@@ -1093,7 +1093,7 @@ void Scene805::step() {
 	if (_game._trigger == 70) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 25);
-		int idx = _scene->_dynamicHotspots.add(0x137, 0x476, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_SHIELD_MODULATOR, 0x476, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
 		_globals[kShieldModInstalled] = true;
 		_game._objects.setRoom(OBJ_SHIELD_MODULATOR, NOWHERE);
@@ -1104,7 +1104,7 @@ void Scene805::step() {
 	if (_game._trigger == 80) {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 12);
-		int idx = _scene->_dynamicHotspots.add(0x167, 0x476, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_TARGET_MODULE, 0x476, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
 		_globals[kTargetModInstalled] = true;
 		_game._objects.setRoom(OBJ_TARGET_MODULE, NOWHERE);

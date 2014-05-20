@@ -181,7 +181,7 @@ void Scene101::enter() {
 		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 17);
 		_scene->_hotspots.activate(NOUN_CHAIR, false);
-		_chairHotspotId = _scene->_dynamicHotspots.add(0x47, 0x13F, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
+		_chairHotspotId = _scene->_dynamicHotspots.add(NOUN_CHAIR, 0x13F, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
 		if (_scene->_priorSceneId == 112)
 			sayDang();
 	} else {
@@ -2887,11 +2887,11 @@ void Scene111::enter() {
 	_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 
-	int idx = _scene->_dynamicHotspots.add(0x1F, 0xD1, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-	idx = _scene->_dynamicHotspots.add(0x1F, 0xD1, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-	idx = _scene->_dynamicHotspots.add(0x1F, 0xD1, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 
 	_launch1Fl = false;
@@ -2942,14 +2942,14 @@ void Scene111::step() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
 		_launch1Fl = true;
-		int idx = _scene->_dynamicHotspots.add(0x1F, 0xD1, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
 	if (!_launched2Fl && (_vm->getRandomNumber(1, 30000) == 1)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(0x1F, 0xD1, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 		_launched2Fl = true;
 	}

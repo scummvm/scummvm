@@ -97,7 +97,7 @@ void Scene601::enter() {
 
 	if (_globals[kLaserHoleIsThere]) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
-		_scene->_dynamicHotspots.add(0x343, 0xD1, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.add(NOUN_LASER_BEAM, 0xD1, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	}
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
@@ -240,7 +240,7 @@ void Scene602::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 9);
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 9);
-		int idx = _scene->_dynamicHotspots.add(0x343, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
 		_scene->changeVariant(1);
 	} else
@@ -262,7 +262,7 @@ void Scene602::enter() {
 
 	_lastSequenceIdx = _scene->_sequences.startCycle(_lastSpriteIdx, false, _cycleIndex);
 	_scene->_sequences.setDepth(_lastSequenceIdx, 14);
-	int idx = _scene->_dynamicHotspots.add(0x3D3, VERB_WALKTO, _lastSequenceIdx, Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, _lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 
 	if (_game._objects.isInRoom(OBJ_DOOR_KEY)) {
@@ -346,7 +346,7 @@ void Scene602::handleSafeActions() {
 		_lastSequenceIdx = _scene->_sequences.startCycle(_lastSpriteIdx, false, _cycleIndex);
 		_scene->_sequences.setDepth(_lastSequenceIdx, 14);
 		_scene->_sequences.updateTimeout(_lastSequenceIdx, synxIdx);
-		int idx = _scene->_dynamicHotspots.add(0x3D3, VERB_WALKTO, _lastSequenceIdx, Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, _lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 		if (_safeMode == 3) {
 			_scene->_kernelMessages.reset();
@@ -419,11 +419,11 @@ void Scene602::actions() {
 			_lastSpriteIdx = _globals._spriteIndexes[3];
 			_lastSequenceIdx = _scene->_sequences.startCycle(_lastSpriteIdx, false, -1);
 			_scene->_sequences.setDepth(_lastSequenceIdx, 14);
-			int idx = _scene->_dynamicHotspots.add(0x3D3, VERB_WALKTO, _lastSequenceIdx, Common::Rect(0, 0, 0, 0));
+			int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, _lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 9);
-			idx = _scene->_dynamicHotspots.add(0x343, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+			idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
 			_scene->_sequences.addTimer(60, 2);
 			}
@@ -544,7 +544,7 @@ void Scene603::enter() {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-		_compactCaseHotspotId = _scene->_dynamicHotspots.add(0x57, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_compactCaseHotspotId = _scene->_dynamicHotspots.add(NOUN_COMPACT_CASE, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_compactCaseHotspotId, Common::Point(250, 152), FACING_SOUTHEAST);
 	}
 
@@ -553,7 +553,7 @@ void Scene603::enter() {
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', -1));
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
-		_noteHotspotId = _scene->_dynamicHotspots.add(0x3A8, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		_noteHotspotId = _scene->_dynamicHotspots.add(NOUN_NOTE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_noteHotspotId, Common::Point(242, 118), FACING_NORTHEAST);
 	}
 
@@ -688,7 +688,7 @@ void Scene604::enter() {
 
 	if (_globals[kTimebombStatus] == 1) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
-		_timebombHotspotId = _scene->_dynamicHotspots.add(0x171, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		_timebombHotspotId = _scene->_dynamicHotspots.add(NOUN_TIMEBOMB, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 	}
 
@@ -820,7 +820,7 @@ void Scene604::handleBombActions() {
 
 	case 1:
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
-		_timebombHotspotId = _scene->_dynamicHotspots.add(0x171, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		_timebombHotspotId = _scene->_dynamicHotspots.add(NOUN_TIMEBOMB, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 		_game._objects.setRoom(OBJ_TIMEBOMB, _scene->_currentSceneId);
 		break;
@@ -1429,7 +1429,7 @@ void Scene608::setup() {
 
 void Scene608::resetDogVariables() {
 	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
-	int idx = _scene->_dynamicHotspots.add(0x471, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_OBNOXIOUS_DOG, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(194, 142), FACING_EAST);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 4);
 	_dogBarkingFl = false;
@@ -1542,7 +1542,7 @@ void Scene608::enter() {
 	if (_game._objects.isInRoom(OBJ_POLYCEMENT)) {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		int idx = _scene->_dynamicHotspots.add(0x115, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_POLYCEMENT, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_polycementHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(249, 129), FACING_NORTHEAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
 	}
@@ -1550,7 +1550,7 @@ void Scene608::enter() {
 	if (_game._objects.isInRoom(OBJ_REARVIEW_MIRROR)) {
 		_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('m', -1));
 		_globals._sequenceIndexes[12] = _scene->_sequences.startCycle(_globals._spriteIndexes[12], false, 1);
-		int idx = _scene->_dynamicHotspots.add(0x120, VERB_WALKTO, _globals._sequenceIndexes[12], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_REARVIEW_MIRROR, VERB_WALKTO, _globals._sequenceIndexes[12], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(71, 113), FACING_NORTHEAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 15);
 	}
@@ -1594,14 +1594,14 @@ void Scene608::enter() {
 		_carMode = 0;
 		_dogDeathMode = 0;
 		_resetPositionsFl = false;
-		int idx = _scene->_dynamicHotspots.add(0x324, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
+		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('A', -1));
 	} else if (_globals[kCarStatus] == 3) {
 		_carMode = 0;
 		_dogDeathMode = 0;
 		_resetPositionsFl = false;
-		int idx = _scene->_dynamicHotspots.add(0x324, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
+		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_activeAnimation->setCurrentFrame(6);
@@ -1609,21 +1609,21 @@ void Scene608::enter() {
 		_carMode = 2;
 		_dogDeathMode = 0;
 		_resetPositionsFl = false;
-		int idx = _scene->_dynamicHotspots.add(0x324, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
+		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('C', -1));
 	} else if (_globals[kCarStatus] == 2) {
 		_carMode = 1;
 		_dogDeathMode = 2;
 		_resetPositionsFl = true;
-		int idx = _scene->_dynamicHotspots.add(0x324, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
+		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('B', -1));
 	} else {
 		_carMode = 3;
 		_dogDeathMode = 2;
 		_resetPositionsFl = true;
-		int idx = _scene->_dynamicHotspots.add(0x324, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
+		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 		_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('D', -1));
 	}
@@ -1688,7 +1688,7 @@ void Scene608::step() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 				_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], false, 5, 8, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 4);
-				int idx = _scene->_dynamicHotspots.add(0x471, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+				int idx = _scene->_dynamicHotspots.add(NOUN_OBNOXIOUS_DOG, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(194, 142), FACING_EAST);
 				_barkCount = 0;
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 2, 100);
@@ -2140,7 +2140,7 @@ void Scene608::actions() {
 				_scene->_sequences.addTimer(1, 2);
 			else {
 				_scene->_dynamicHotspots.remove(_carHotspotId);
-				int idx = _scene->_dynamicHotspots.add(0x324, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
+				int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 				_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 				if (_globals[kCarStatus] == 1)
 					_scene->_sequences.addTimer(120, 3);
@@ -2208,7 +2208,7 @@ void Scene608::actions() {
 				_dogDeathMode = 2;
 			}
 			_scene->_dynamicHotspots.remove(_carHotspotId);
-			int idx = _scene->_dynamicHotspots.add(0x324, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
+			int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 			_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 			_game._player._stepEnabled = true;
 			}
@@ -2724,7 +2724,7 @@ void Scene610::enter() {
 
 	if (_game._objects[OBJ_PHONE_HANDSET]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_handsetHotspotId = _scene->_dynamicHotspots.add(0x108, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_handsetHotspotId = _scene->_dynamicHotspots.add(NOUN_PHONE_HANDSET, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
 		if ((_globals[kHandsetCellStatus] == 2) && (_game._difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
 			_globals[kHandsetCellStatus] = 1;
@@ -2810,7 +2810,7 @@ void Scene610::actions() {
 
 		case 1:
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-			_handsetHotspotId = _scene->_dynamicHotspots.add(0x108, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+			_handsetHotspotId = _scene->_dynamicHotspots.add(NOUN_PHONE_HANDSET, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(_handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
 			_game._objects.setRoom(OBJ_PHONE_HANDSET, _scene->_currentSceneId);
 			break;
@@ -3808,7 +3808,7 @@ void Scene611::step() {
 	} else if (_game._trigger == 81) {
 		int syncId = _globals._sequenceIndexes[1];
 		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 20, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(0x275, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_RAT, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_ratHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(272, 154), FACING_SOUTHEAST);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 9, 10);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], syncId);
@@ -4329,7 +4329,7 @@ void Scene612::enter() {
 		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('f', -1));
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
-		int idx = _scene->_dynamicHotspots.add(0x87, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(34, 117), FACING_SOUTHEAST);
 	}
 

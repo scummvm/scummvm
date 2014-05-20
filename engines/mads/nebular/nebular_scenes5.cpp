@@ -166,7 +166,7 @@ void Scene501::enter() {
 	}
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-	int idx = _scene->_dynamicHotspots.add(0x6E, 0x18B, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_DOOR, 0x18B, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 	_doorHotspotid = _scene->_dynamicHotspots.setPosition(idx,Common::Point(282, 110), FACING_NORTH);
 	_scene->_dynamicHotspots.setCursor(_doorHotspotid, CURSOR_GO_UP);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
@@ -233,7 +233,7 @@ void Scene501::step() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_vm->_sound->command(12);
-			_doorHotspotid = _scene->_dynamicHotspots.add(0x6E, 0x18B, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			_doorHotspotid = _scene->_dynamicHotspots.add(NOUN_DOOR, 0x18B, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(_globals._sequenceIndexes[3], Common::Point(282, 110), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(_doorHotspotid, CURSOR_GO_UP);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
@@ -540,7 +540,7 @@ void Scene503::enter() {
 
 	if (_game._objects[OBJ_DETONATORS]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_detonatorHotspotId = _scene->_dynamicHotspots.add(0x6A, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_detonatorHotspotId = _scene->_dynamicHotspots.add(NOUN_DETONATORS, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
 	}
 
@@ -1111,12 +1111,12 @@ void Scene506::enter() {
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_3");
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-	int idx = _scene->_dynamicHotspots.add(0x37D, 0x242, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_LABORATORY, 0x242, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(65, 125), FACING_NORTHWEST);
 	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
-	idx = _scene->_dynamicHotspots.add(0x336, 0x242, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(NOUN_SOFTWARE_STORE, 0x242, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 	hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(112, 102), FACING_NORTHWEST);
 	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
@@ -1371,7 +1371,7 @@ void Scene507::enter() {
 
 	if ((_game._difficulty != DIFFICULTY_EASY) && (_game._objects[OBJ_PENLIGHT]._roomNumber == _scene->_currentSceneId)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_penlightHotspotId = _scene->_dynamicHotspots.add(0x106, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_penlightHotspotId = _scene->_dynamicHotspots.add(NOUN_PENLIGHT, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
 	}
 
@@ -1495,7 +1495,7 @@ void Scene508::enter() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
-		int idx = _scene->_dynamicHotspots.add(0x343, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
 		_scene->_hotspots.activate(NOUN_HOLE, false);
 		_scene->_hotspots.activate(NOUN_LASER_BEAM, false);
@@ -1505,7 +1505,7 @@ void Scene508::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 11);
-		int idx = _scene->_dynamicHotspots.add(0x343, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 6, 8);
@@ -1640,7 +1640,7 @@ void Scene508::actions() {
 				_vm->_sound->command(22);
 				_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 11);
-				int idx = _scene->_dynamicHotspots.add(0x343, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+				int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
 				_scene->_kernelMessages.reset();
 				_scene->changeVariant(1);
@@ -1748,7 +1748,7 @@ void Scene511::enter() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
 		_scene->_hotspots.activate(NOUN_BOAT, false);
-		int idx = _scene->_dynamicHotspots.add(0x345, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(75, 124), FACING_NORTH);
 		_scene->_hotspots.activate(NOUN_ROPE, false);
 	} else {
@@ -1779,7 +1779,7 @@ void Scene511::enter() {
 	if (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3) {
 		_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('b', 4));
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, frame);
-		int idx = _scene->_dynamicHotspots.add(0x87, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 3);
 		if (_globals[kBoatRaised])
@@ -1981,7 +1981,7 @@ void Scene511::actions() {
 						_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 						_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, -2);
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 4);
-						int idx = _scene->_dynamicHotspots.add(0x87, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
+						int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
 						_game._objects.removeFromInventory(OBJ_FISHING_LINE, 1);
 						_handingLine = false;
@@ -2069,7 +2069,7 @@ void Scene512::enter() {
 
 	if (_game._objects[OBJ_FISHING_ROD]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_fishingRodHotspotId = _scene->_dynamicHotspots.add(0x88, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_fishingRodHotspotId = _scene->_dynamicHotspots.add(NOUN_FISHING_ROD, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_fishingRodHotspotId, Common::Point(199, 101), FACING_NORTHEAST);
 	}
 
@@ -2081,7 +2081,7 @@ void Scene512::enter() {
 		if (_game._objects[OBJ_PADLOCK_KEY]._roomNumber == _scene->_currentSceneId) {
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 3);
-			_keyHotspotId = _scene->_dynamicHotspots.add(0xFF, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+			_keyHotspotId = _scene->_dynamicHotspots.add(NOUN_PADLOCK_KEY, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(_keyHotspotId, Common::Point(218, 152), FACING_NORTHEAST);
 		}
 		if (_globals[kRegisterOpen]) {
