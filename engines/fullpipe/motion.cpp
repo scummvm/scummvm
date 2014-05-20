@@ -735,7 +735,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 		Common::Array<MovArr *> *goal = _callback1(subj, movitem, ss);
 		int idx = getItemIndexByStaticAni(subj);
 
-		for (uint i = 0; i < _items[idx]->count; i++) {
+		for (int i = 0; i < _items[idx]->count; i++) {
 			if (_items[idx]->movitems->operator[](i)->movarr == goal) {
 				if (subj->_movement) {
 					Common::Point point;
@@ -777,7 +777,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 
 			_items[idx]->movarr->clear();
 
-			for (uint i = 0; i < (*_items[idx]->movitems->operator[](arridx)->movarr)[i]->_movStepCount; i++) {
+			for (int i = 0; i < (*_items[idx]->movitems->operator[](arridx)->movarr)[i]->_movStepCount; i++) {
 				MovArr *m = new MovArr;
 
 				*m = *(*_items[idx]->movitems->operator[](arridx)->movarr)[i];
