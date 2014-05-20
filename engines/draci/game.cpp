@@ -63,6 +63,7 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	_shouldQuit = 0;
 	_shouldExitLoop = 0;
 	_isReloaded = 0;
+	_isPositionLoaded = 0;
 	_speechTick = 0;
 	_speechDuration = 0;
 	_objUnderCursor = 0;
