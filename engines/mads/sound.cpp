@@ -81,7 +81,9 @@ void SoundManager::init(int sectionNumber) {
 		break;
 
 	default:
-		error("Unknown game");
+		warning("SoundManager: Unknown game");
+		_driver = nullptr;
+		break;
 	}
 }
 
