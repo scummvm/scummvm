@@ -225,6 +225,15 @@ void Scene602::setup() {
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
 
+void Scene602::synchronize(Common::Serializer &s) {
+	Scene6xx::synchronize(s);
+
+	s.syncAsSint16LE(_lastSpriteIdx);
+	s.syncAsSint16LE(_lastSequenceIdx);
+	s.syncAsSint16LE(_cycleIndex);
+	s.syncAsSint16LE(_safeMode);
+}
+
 void Scene602::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -538,6 +547,13 @@ void Scene603::setup() {
 	_scene->addActiveVocab(NOUN_NOTE);
 }
 
+void Scene603::synchronize(Common::Serializer &s) {
+	Scene6xx::synchronize(s);
+
+	s.syncAsSint16LE(_compactCaseHotspotId);
+	s.syncAsSint16LE(_noteHotspotId);
+}
+
 void Scene603::enter() {
 	if (_game._objects[OBJ_COMPACT_CASE]._roomNumber == _scene->_currentSceneId) {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXMRD_3");
@@ -678,6 +694,19 @@ void Scene604::setup() {
 	_scene->addActiveVocab(NOUN_SEA_MONSTER);
 	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_TIMEBOMB);
+}
+
+void Scene604::synchronize(Common::Serializer &s) {
+	Scene6xx::synchronize(s);
+
+	s.syncAsSint16LE(_timebombHotspotId);
+	s.syncAsSint16LE(_bombMode);
+	s.syncAsSint16LE(_monsterFrame);
+
+	s.syncAsUint32LE(_monsterTimer);
+
+	s.syncAsByte(_monsterActive);
+	s.syncAsByte(_animationActiveFl);
 }
 
 void Scene604::enter() {
@@ -990,6 +1019,22 @@ void Scene607::setup() {
 	setAAName();
 	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
 	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+void Scene607::synchronize(Common::Serializer &s) {
+	Scene6xx::synchronize(s);
+
+	s.syncAsUint32LE(_dogTimer);
+	s.syncAsUint32LE(_lastFrameTime);
+
+	s.syncAsByte(_dogLoop);
+	s.syncAsByte(_dogEatsRex);
+	s.syncAsByte(_dogBarking);
+	s.syncAsByte(_shopAvailable);
+
+	s.syncAsSint16LE(_animationMode);
+	s.syncAsSint16LE(_animationActive);
+	s.syncAsSint16LE(_counter);
 }
 
 void Scene607::enter() {
@@ -1425,6 +1470,40 @@ void Scene608::setup() {
 	_scene->addActiveVocab(NOUN_POLYCEMENT);
 	_scene->addActiveVocab(NOUN_CAR);
 	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
+}
+
+void Scene608::synchronize(Common::Serializer &s) {
+	Scene6xx::synchronize(s);
+
+	s.syncAsSint16LE(_carMode);
+	s.syncAsSint16LE(_carFrame);
+	s.syncAsSint16LE(_carMoveMode);
+	s.syncAsSint16LE(_dogDeathMode);
+	s.syncAsSint16LE(_carHotspotId);
+	s.syncAsSint16LE(_barkCount);
+	s.syncAsSint16LE(_polycementHotspotId);
+	s.syncAsSint16LE(_animationMode);
+	s.syncAsSint16LE(_nextTrigger);
+	s.syncAsSint16LE(_throwMode);
+
+	s.syncAsByte(_resetPositionsFl);
+	s.syncAsByte(_dogActiveFl);
+	s.syncAsByte(_dogBarkingFl);
+	s.syncAsByte(_dogFirstEncounter);
+	s.syncAsByte(_rexBeingEaten);
+	s.syncAsByte(_dogHitWindow);
+	s.syncAsByte(_checkFl);
+	s.syncAsByte(_dogSquashFl);
+	s.syncAsByte(_dogSafeFl);
+	s.syncAsByte(_buttonPressedonTimeFl);
+	s.syncAsByte(_dogUnderCar);
+	s.syncAsByte(_dogYelping);
+
+	s.syncAsSint32LE(_dogWindowTimer);
+	s.syncAsSint32LE(_dogRunTimer);
+
+	s.syncAsUint32LE(_dogTimer1);
+	s.syncAsUint32LE(_dogTimer2);
 }
 
 void Scene608::resetDogVariables() {
@@ -2383,6 +2462,12 @@ void Scene609::setup() {
 	setAAName();
 }
 
+void Scene609::synchronize(Common::Serializer &s) {
+	Scene6xx::synchronize(s);
+
+	s.syncAsSint16LE(_videoDoorMode);
+}
+
 void Scene609::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -2708,6 +2793,18 @@ void Scene610::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
+void Scene610::synchronize(Common::Serializer &s) {
+	Scene6xx::synchronize(s);
+
+	s.syncAsSint16LE(_handsetHotspotId);
+	s.syncAsSint16LE(_checkVal);
+
+	s.syncAsByte(_cellCharging);
+
+	s.syncAsSint32LE(_cellChargingTimer);
+	s.syncAsUint32LE(_lastFrameTimer);
+}
+
 void Scene610::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_9");
@@ -2889,6 +2986,39 @@ void Scene611::setup() {
 	setAAName();
 	_scene->addActiveVocab(NOUN_RAT);
 	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+void Scene611::synchronize(Common::Serializer &s) {
+	Scene6xx::synchronize(s);
+
+	s.syncAsByte(_seenRatFl);
+	s.syncAsByte(_eyesRunningFl);
+	s.syncAsByte(_shouldRemoveEyes);
+	s.syncAsByte(_ratPresentFl);
+	s.syncAsByte(_duringDialogFl);
+	s.syncAsByte(_resetBatterieText);
+	s.syncAsByte(_hermitTalkingFl);
+	s.syncAsByte(_hermitMovingFl);
+	s.syncAsByte(_alreadyTalkingFl);
+	s.syncAsByte(_giveBatteriesFl);
+	s.syncAsByte(_startTradingFl);
+	s.syncAsByte(_check1Fl);
+	s.syncAsByte(_stickFingerFl);
+
+	s.syncAsSint16LE(_randVal);
+	s.syncAsSint16LE(_ratHotspotId);
+	s.syncAsSint16LE(_hermitDialogNode);
+	s.syncAsSint16LE(_hermitDisplayedQuestion);
+	s.syncAsSint16LE(_nextFrame);
+	s.syncAsSint16LE(_hermitMode);
+
+	s.syncAsUint32LE(_ratTimer);
+
+	s.syncAsSint16LE(_defaultDialogPos.x);
+	s.syncAsSint16LE(_defaultDialogPos.y);
+
+	_dialog1.synchronize(s);
+	_dialog2.synchronize(s);
 }
 
 void Scene611::handleRatMoves() {
@@ -4266,6 +4396,13 @@ void Scene612::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
+void Scene612::synchronize(Common::Serializer &s) {
+	Scene6xx::synchronize(s);
+
+	s.syncAsSint16LE(_actionMode);
+	s.syncAsSint16LE(_cycleIndex);
+}
+
 void Scene612::handleWinchMovement() {
 	switch (_game._trigger) {
 	case 0:
@@ -4281,7 +4418,7 @@ void Scene612::handleWinchMovement() {
 	case 1:
 		// CHECKME: Is the "else" block useful as action is always equal to 1 at this point?
 		// Or is it a missing bit of code we could fix?
-		if (action == 1) {
+		if (_actionMode == 1) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 17, 7, 0, 0);
 			_vm->_sound->command(19);
@@ -4426,7 +4563,7 @@ void Scene612::actions() {
 		}
 	} else if (_action.isAction(VERB_UNLOCK, 0xFF, 0x45F)) {
 		_cycleIndex = -2;
-		action = 1;
+		_actionMode = 1;
 		handleWinchMovement();
 	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_EXPRESSWAY))
 		_vm->_dialogs->show(61210);

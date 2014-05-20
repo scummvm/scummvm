@@ -71,6 +71,7 @@ private:
 
 public:
 	Scene602(MADSEngine *vm) : Scene6xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -84,6 +85,7 @@ private:
 
 public:
 	Scene603(MADSEngine *vm) : Scene6xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -105,6 +107,7 @@ private:
 
 public:
 	Scene604(MADSEngine *vm) : Scene6xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -140,6 +143,7 @@ private:
 
 public:
 	Scene607(MADSEngine *vm) : Scene6xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -187,6 +191,7 @@ private:
 
 public:
 	Scene608(MADSEngine *vm) : Scene6xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -203,6 +208,7 @@ private:
 
 public:
 	Scene609(MADSEngine *vm) : Scene6xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -223,6 +229,7 @@ private:
 
 public:
 	Scene610(MADSEngine *vm) : Scene6xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -274,6 +281,7 @@ private:
 
 public:
 	Scene611(MADSEngine *vm) : Scene6xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -284,13 +292,14 @@ public:
 
 class Scene612: public Scene6xx{
 private:
-	int action;
+	int _actionMode;
 	int _cycleIndex;
 
 	void handleWinchMovement();
 
 public:
 	Scene612(MADSEngine *vm) : Scene6xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
