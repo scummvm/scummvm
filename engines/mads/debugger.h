@@ -45,6 +45,7 @@ protected:
 	bool Cmd_ShowQuote(int argc, const char **argv);
 	bool Cmd_ShowVocab(int argc, const char **argv);
 	bool Cmd_DumpVocab(int argc, const char **argv);
+	bool Cmd_ShowMessage(int argc, const char **argv);
 	bool Cmd_ShowItem(int argc, const char **argv);
 	bool Cmd_DumpItems(int argc, const char **argv);
 	bool Cmd_Item(int argc, const char **argv);

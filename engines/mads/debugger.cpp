@@ -41,6 +41,7 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("show_quote", WRAP_METHOD(Debugger, Cmd_ShowQuote));
 	DCmd_Register("show_vocab", WRAP_METHOD(Debugger, Cmd_ShowVocab));
 	DCmd_Register("dump_vocab", WRAP_METHOD(Debugger, Cmd_DumpVocab));
+	DCmd_Register("show_message", WRAP_METHOD(Debugger, Cmd_ShowMessage));
 	DCmd_Register("show_item", WRAP_METHOD(Debugger, Cmd_ShowItem));
 	DCmd_Register("dump_items", WRAP_METHOD(Debugger, Cmd_DumpItems));
 	DCmd_Register("item", WRAP_METHOD(Debugger, Cmd_Item));
@@ -240,6 +241,21 @@ bool Debugger::Cmd_DumpVocab(int argc, const char **argv) {
 	outFile.close();
 
 	DebugPrintf("Game vocab dumped\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_ShowMessage(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <message number>\n", argv[0]);
+	} else {
+		int messageId = strToInt(argv[1]);
+		Common::StringArray msg = _vm->_game->getMessage(messageId);
+		for (uint idx = 0; idx < msg.size(); ++idx) {
+			Common::String srcLine = msg[idx];
+			DebugPrintf("%s\n", srcLine.c_str());
+		}
+	}
 
 	return true;
 }
