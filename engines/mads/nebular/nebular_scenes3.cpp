@@ -1111,7 +1111,7 @@ void Scene307::actions() {
 		_vm->_dialogs->show(30717);
 	else if (_action.isAction(VERB_LOOK, 0xCD))
 		_vm->_dialogs->show(30718);
-	else if (_action.isAction(0x242, 0x204)) {
+	else if (_action.isAction(VERB_WALK_INTO, 0x204)) {
 		switch (_fieldCollisionCounter) {
 		case 0:
 			_vm->_dialogs->show(30719);
@@ -2263,7 +2263,7 @@ void Scene316::actions() {
 			handleRoxInGrate();
 		else
 			handleRexInGrate();
-	} else if (_action.isAction(0x227, 0x226) || _action.isAction(0x2B5, 0x22C)) {
+	} else if (_action.isAction(VERB_WALK_UP, 0x226) || _action.isAction(VERB_WALK_ONTO, 0x22C)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_globals[kCityFlooded]) {
@@ -2859,7 +2859,7 @@ void Scene318::actions() {
 			return;
 		}
 
-		if (_action.isAction(0x242, 0x488)) {
+		if (_action.isAction(VERB_WALK_INTO, 0x488)) {
 			_vm->_dialogs->show(31831);
 			_action._inProgress = false;
 			return;

@@ -204,7 +204,7 @@ void Scene401::actions() {
 		}
 	}
 
-	if (_action.isAction(0x242, 0x241)) {
+	if (_action.isAction(VERB_WALK_INTO, 0x241)) {
 		if (!_northFl)
 			_scene->_nextSceneId = 402;
 	} else if (_action.isAction(VERB_WALK_DOWN, 0x2B4))
@@ -2048,9 +2048,9 @@ void Scene402::actions() {
 		_game._player._stepEnabled = true;
 	} else if (_game._screenObjects._inputMode == 1)
 		handleDialogs();
-	else if (_action.isAction(0x242, 0x2B3))
+	else if (_action.isAction(VERB_WALK_INTO, 0x2B3))
 		_scene->_nextSceneId = 401;
-	else if (_action.isAction(0x2B5, 0x248))
+	else if (_action.isAction(VERB_WALK_ONTO, 0x248))
 		; // just... nothing
 	else if (_action.isAction(VERB_TALKTO, 0x3AA)) {
 		switch (_game._trigger) {
@@ -2878,7 +2878,7 @@ void Scene408::preActions() {
 }
 
 void Scene408::actions() {
-	if (_action.isAction(0x242, 0x2B3)) {
+	if (_action.isAction(VERB_WALK_INTO, 0x2B3)) {
 		_scene->_nextSceneId = 405;
 		_vm->_sound->command(58);
 	} else if (_action.isAction(VERB_TAKE, 0x167) && (_game._objects.isInRoom(OBJ_TARGET_MODULE) || _game._trigger)) {
@@ -3127,7 +3127,7 @@ void Scene410::preActions() {
 }
 
 void Scene410::actions() {
-	if (_action.isAction(0x242, 0x2B3))
+	if (_action.isAction(VERB_WALK_INTO, 0x2B3))
 		_scene->_nextSceneId = 406;
 	else if (_action.isAction(VERB_TAKE, 0x48) && (_game._objects.isInRoom(OBJ_CHARGE_CASES) || _game._trigger)) {
 		switch (_game._trigger) {
@@ -3704,7 +3704,7 @@ void Scene411::actions() {
 		return;
 	}
 
-	if (_action.isAction(0x242, 0x2B3)) {
+	if (_action.isAction(VERB_WALK_INTO, 0x2B3)) {
 		_scene->_nextSceneId = 406;
 		_vm->_sound->command(10);
 		_action._inProgress = false;

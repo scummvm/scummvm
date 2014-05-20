@@ -279,7 +279,7 @@ void Scene501::preActions() {
 }
 
 void Scene501::actions() {
-	if (_action.isAction(0x36A, 0x324)) {
+	if (_action.isAction(VERB_GET_INTO, 0x324)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -544,7 +544,7 @@ void Scene503::enter() {
 }
 
 void Scene503::actions() {
-	if (_action.isAction(0x32F, 0xF9))
+	if (_action.isAction(VERB_WALK, 0xF9))
 		_scene->_nextSceneId = 501;
 	else if (_action.isAction(VERB_TAKE, 0x6A)) {
 		if ( _game._trigger || !_game._objects.isInInventory(OBJ_DETONATORS)) {
@@ -626,7 +626,7 @@ void Scene503::actions() {
 		_vm->_dialogs->show(50327);
 	else if (_action.isAction(VERB_OPEN, 0x36D))
 		_vm->_dialogs->show(50329);
-	else if (_action.isAction(0xC, 0x36D) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
+	else if (_action.isAction(VERB_THROW, 0x36D) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(50330);
 	else
 		return;
@@ -1186,7 +1186,7 @@ void Scene506::room_506_door_sequences() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 
 	if (_firstDoorFl) {
-		if (_action.isAction(0x242, 0x336) || ((_scene->_priorSceneId == 507) && !_actionFl)) {
+		if (_action.isAction(VERB_WALK_INTO, 0x336) || ((_scene->_priorSceneId == 507) && !_actionFl)) {
 			_doorDepth = 13;
 			_doorSpriteIdx = _globals._spriteIndexes[2];
 			_doorSequenceIdx = _globals._sequenceIndexes[2];
@@ -1266,21 +1266,21 @@ void Scene506::room_506_door_sequences() {
 }
 
 void Scene506::actions() {
-	if (_action.isAction(0x242, 0x37D)) {
+	if (_action.isAction(VERB_WALK_INTO, 0x37D)) {
 		if (_firstDoorFl) {
 			_heroFacing = FACING_NORTHWEST;
 			_doorPos = Common::Point(16, 111);
 		}
 		_actionFl = true;
 		room_506_door_sequences();
-	} else if (_action.isAction(0x242, 0x336)) {
+	} else if (_action.isAction(VERB_WALK_INTO, 0x336)) {
 		if (_firstDoorFl) {
 			_heroFacing = FACING_NORTHWEST;
 			_doorPos = Common::Point(80, 102);
 		}
 		_actionFl = true;
 		room_506_door_sequences();
-	} else if (_action.isAction(0x36A, 0x324)) {
+	} else if (_action.isAction(VERB_GET_INTO, 0x324)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1528,7 +1528,7 @@ void Scene508::enter() {
 }
 
 void Scene508::preActions() {
-	if (_action.isAction(0x32F, 0xF9))
+	if (_action.isAction(VERB_WALK, 0xF9))
 		_game._player._walkOffScreenSceneId = 506;
 }
 
@@ -1882,9 +1882,9 @@ void Scene511::preActions() {
 }
 
 void Scene511::actions() {
-	if (_action.isAction(0x242, 0x372))
+	if (_action.isAction(VERB_WALK_INTO, 0x372))
 		_scene->_nextSceneId = 512;
-	else if (_action.isAction(0x36A, 0x324)) {
+	else if (_action.isAction(VERB_GET_INTO, 0x324)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -2004,7 +2004,7 @@ void Scene511::actions() {
 		_vm->_dialogs->show(51117);
 	else if (_action.isAction(VERB_LOOK, 0x37C))
 		_vm->_dialogs->show(51118);
-	else if (_action.isAction(0x17B, 0xFF, 0x37C) || _action.isAction(0x17B, 0x6F, 0x37C))
+	else if (_action.isAction(VERB_UNLOCK, 0xFF, 0x37C) || _action.isAction(VERB_UNLOCK, 0x6F, 0x37C))
 		_vm->_dialogs->show(51119);
 	else if ( (_action.isAction(VERB_PUT) || _action.isAction(VERB_THROW))
 		 && (_action.isAction(0x171) || _action.isAction(0x2A) || _action.isAction(0x2B))
@@ -2102,7 +2102,7 @@ void Scene512::enter() {
 }
 
 void Scene512::actions() {
-	if (_action.isAction(0x32F, 0xF9))
+	if (_action.isAction(VERB_WALK, 0xF9))
 		_scene->_nextSceneId = 511;
 	else if (_action.isAction(VERB_TAKE, 0x88)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_FISHING_ROD)) {
@@ -2436,7 +2436,7 @@ void Scene513::step() {
 }
 
 void Scene513::actions() {
-	if (_action.isAction(0x36A, 0x324)) {
+	if (_action.isAction(VERB_GET_INTO, 0x324)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;

@@ -395,7 +395,7 @@ void Scene602::actions() {
 		_safeMode = 2;
 		_cycleIndex = -1;
 		handleSafeActions();
-	} else if (_action.isAction(0x17B, 0x3A7, 0x3D3)) {
+	} else if (_action.isAction(VERB_UNLOCK, 0x3A7, 0x3D3)) {
 		if ((_globals[kSafeStatus] == 0) && (_game._difficulty != DIFFICULTY_HARD)) {
 			_safeMode = 3;
 			_cycleIndex = -2;
@@ -506,7 +506,7 @@ void Scene602::actions() {
 			_vm->_dialogs->show(60235);
 		else
 			_vm->_dialogs->show(60236);
-	} else if (_action.isAction(0x17B, 0x6F, 0x3D3) || _action.isAction(0x17B, 0xFF, 0x3D3))
+	} else if (_action.isAction(VERB_UNLOCK, 0x6F, 0x3D3) || _action.isAction(VERB_UNLOCK, 0xFF, 0x3D3))
 		_vm->_dialogs->show(60225);
 	else if (_action.isAction(VERB_PULL, 0x3D3))
 		_vm->_dialogs->show(60226);
@@ -2581,7 +2581,7 @@ void Scene609::enterStore() {
 }
 
 void Scene609::preActions() {
-	if (_action.isAction(0x17B, 0x6F, 0x425))
+	if (_action.isAction(VERB_UNLOCK, 0x6F, 0x425))
 		_game._player.walk(Common::Point(78, 99), FACING_NORTHWEST);
 }
 
@@ -2629,7 +2629,7 @@ void Scene609::actions() {
 			_videoDoorMode = 2;
 			enterStore();
 		}
-	} else if (_action.isAction(0x17B, 0x6F, 0x425)) {
+	} else if (_action.isAction(VERB_UNLOCK, 0x6F, 0x425)) {
 		_videoDoorMode = 1;
 		enterStore();
 	} else if (_action.isAction(0x325, 0x324)) {
@@ -4424,7 +4424,7 @@ void Scene612::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(0x17B, 0xFF, 0x45F)) {
+	} else if (_action.isAction(VERB_UNLOCK, 0xFF, 0x45F)) {
 		_cycleIndex = -2;
 		action = 1;
 		handleWinchMovement();
