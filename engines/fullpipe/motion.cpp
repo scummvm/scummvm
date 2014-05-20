@@ -612,14 +612,14 @@ int MovGraph::method2C(StaticANIObject *obj, int x, int y) {
 }
 
 MessageQueue *MovGraph::method34(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-#if 0
 	if (!ani) {
-		if (_itemsCount < 1)
+		if (!_items.size())
 			return 0;
 
-		ani = _items->ani;
+		ani = _items[0]->ani;
 	}
-	if (ABS(ani->_ox - x) < 50 && ABS(ani->_oy - y) < 50)
+
+	if (ABS(ani->_ox - xpos) < 50 && ABS(ani->_oy - ypos) < 50)
 		return 0;
 
 	if (!ani->isIdle())
@@ -628,20 +628,18 @@ MessageQueue *MovGraph::method34(StaticANIObject *ani, int xpos, int ypos, int f
 	if (ani->_flags & 0x100)
 		return 0;
 
-	v10 = method28(ani, x, y, fuzzyMatch, (int *)&ani);
+	int count;
+	Common::Array<MovItem *> *movitems = method28(ani, xpos, ypos, fuzzyMatch, &count);
 
-	if (!v10)
+	if (!movitems)
 		return 0;
 
-	if (!ani->_movement) {
-		v20 = v10;
-		v33 = (int)ani;
-	} else {
+	if (ani->_movement) {
 		Common::Point point;
 
 		ani->calcStepLen(&point);
 
-		MessageQueue *mq = sub1(ani, ani->_ox - point.x, ani->_oy - point.y, ani->_movement->_staticsObj1->_staticsId, x, y, 0, fuzzyMatch);
+		MessageQueue *mq = sub1(ani, ani->_ox - point.x, ani->_oy - point.y, ani->_movement->_staticsObj1->_staticsId, xpos, ypos, 0, fuzzyMatch);
 
 		if (!mq || !mq->getExCommandByIndex(0))
 			return 0;
@@ -655,10 +653,10 @@ MessageQueue *MovGraph::method34(StaticANIObject *ani, int xpos, int ypos, int f
 			ex = new ExCommand(ani->_id, 21, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_keyCode = ani->_okeyCode;
 			ex->_field_3C = 1;
-			ex->msg._field_24 = 0;
+			ex->_field_24 = 0;
 			mq->addExCommandToEnd(ex);
 
-			ex = new ExCommand(ani->_id, 51, 0, x, y, 0, 1, 0, 0, 0);
+			ex = new ExCommand(ani->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
 			ex->_keyCode = ani->_okeyCode;
 			ex->_field_3C = 1;
 			ex->_field_24 = 0;
@@ -673,22 +671,17 @@ MessageQueue *MovGraph::method34(StaticANIObject *ani, int xpos, int ypos, int f
 			return 0;
 		}
 
-		StaticANIObject *ani2;
+		int count2;
 
 		ani->setSomeDynamicPhaseIndex(ex->_field_14);
-		method28(ani, x, y, fuzzyMatch, ani2);
+		method28(ani, xpos, ypos, fuzzyMatch, &count2);
 
-		int idx = getItemIndexByStaticAni(ani2);
-		v33 = this->_items[idx].count;
-		v20 = this->_items[idx].movitems;
+		int idx = getItemIndexByStaticAni(ani);
+		count = _items[idx]->count;
+		movitems = _items[idx]->movitems;
 	}
 
-	v32 = this->_callback1(ani, v20, v33);
-	return method50(ani, v32, mq);
-#endif
-	warning("STUB: MovGraph::method34()");
-
-	return 0;
+	return method50(ani, _callback1(ani, movitems, count), staticsId);
 }
 
 int MovGraph::changeCallback() {
@@ -825,7 +818,7 @@ MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int st
 	return 0;
 }
 
-int MovGraph::method50() {
+MessageQueue *MovGraph::method50(StaticANIObject *ani, Common::Array<MovArr *> *movarr, int staticsId) {
 	warning("STUB: MovGraph::method50()");
 
 	return 0;
