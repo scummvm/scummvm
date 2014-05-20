@@ -39,6 +39,8 @@ Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("show_codes", WRAP_METHOD(Debugger, Cmd_ShowCodes));
 	DCmd_Register("dump_file", WRAP_METHOD(Debugger, Cmd_DumpFile));
 	DCmd_Register("show_quote", WRAP_METHOD(Debugger, Cmd_ShowQuote));
+	DCmd_Register("show_vocab", WRAP_METHOD(Debugger, Cmd_ShowVocab));
+	DCmd_Register("dump_vocab", WRAP_METHOD(Debugger, Cmd_DumpVocab));
 	DCmd_Register("item", WRAP_METHOD(Debugger, Cmd_Item));
 }
 
@@ -196,6 +198,46 @@ bool Debugger::Cmd_ShowQuote(int argc, const char **argv) {
 		DebugPrintf("Usage: %s <quote number>\n", argv[0]);
 	else
 		DebugPrintf("%s", _vm->_game->getQuote(strToInt(argv[1])).c_str());
+
+	return true;
+}
+
+bool Debugger::Cmd_ShowVocab(int argc, const char **argv) {
+	if (argc != 2) {
+		for (uint32 i = 0; i < _vm->_game->_scene.getVocabStringsCount(); i++) {
+			DebugPrintf("%03d: '%s'\n", i, _vm->_game->_scene.getVocab(i + 1).c_str());
+		}
+	} else {
+		int vocabId = strToInt(argv[1]);
+		DebugPrintf("%03d: '%s'\n", vocabId, _vm->_game->_scene.getVocab(vocabId + 1).c_str());
+	}
+
+	return true;
+}
+
+bool Debugger::Cmd_DumpVocab(int argc, const char **argv) {
+	Common::DumpFile outFile;
+	outFile.open("vocab.txt");
+
+	for (uint32 i = 0; i < _vm->_game->_scene.getVocabStringsCount(); i++) {
+		Common::String curId = Common::String::format("%x", i + 1);
+		Common::String curVocab = _vm->_game->_scene.getVocab(i + 1);
+		curVocab.toUppercase();
+
+		for (uint j = 0; j < curVocab.size(); j++) {
+			if (curVocab[j] == ' ' || curVocab[j] == '-')
+				curVocab.setChar('_', j);
+		}
+
+		Common::String cur = "\tNOUN_" + curVocab + " = 0x" + curId + ",\n";
+		
+		outFile.writeString(cur.c_str());
+	}
+
+	outFile.flush();
+	outFile.close();
+
+	DebugPrintf("Game vocab dumped\n");
 
 	return true;
 }

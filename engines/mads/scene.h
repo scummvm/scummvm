@@ -152,6 +152,11 @@ public:
 	void addActiveVocab(int vocabId);
 
 	/**
+	 * Get the number of entries in the game's vocabulary
+	 */
+	uint32 getVocabStringsCount() const;
+
+	/**
 	 * Clear the sequence list
 	 */
 	void clearSequenceList();

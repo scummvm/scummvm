@@ -254,6 +254,10 @@ void Scene::loadVocabStrings() {
 	f.close();
 }
 
+uint32 Scene::getVocabStringsCount() const {
+	return _vocabStrings.size();
+}
+
 void Scene::initPaletteAnimation(Common::Array<PaletteCycle> &palCycles, bool animFlag) {
 	// Initialize the animation palette and ticks list
 	_cycleTicks.clear();
