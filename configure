@@ -1843,10 +1843,13 @@ if test "$_global_constructors" = yes; then
 fi
 echo $_global_constructors
 
-if test ! "x$(which $_host_alias-strings)" = "x"; then
+echo_n "Checking for $_host_alias-strings... "
+if test ! "x$(which $_host_alias-strings 2>/dev/null)" = "x"; then
 _strings=$_host_alias-strings
+echo yes
 else
 _strings=strings
+echo no
 fi
 
 #
