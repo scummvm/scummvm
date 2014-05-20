@@ -29,7 +29,7 @@
 
 namespace Draci {
 
-#define DRACI_SAVEGAME_VERSION 1
+#define DRACI_SAVEGAME_VERSION 2
 
 struct DraciSavegameHeader {
 	uint8 version;

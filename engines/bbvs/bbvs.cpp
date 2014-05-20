@@ -79,7 +79,41 @@ BbvsEngine::BbvsEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine(syst), _gameDescription(gd) {
 	
 	_random = new Common::RandomSource("bbvs");
-	
+	_currActionCommandIndex = -1;
+	_buttheadObject = nullptr;
+	_beavisObject = nullptr;
+	_currCameraNum = 0;
+	_walkAreasCount = 0;
+	_walkInfosCount = 0;
+	_walkableRectsCount = 0;
+	_sourceWalkArea = nullptr;
+	_destWalkArea = nullptr;
+	_currWalkDistance = kMaxDistance;
+	_walkReachedDestArea = false;
+	_hasSnapshot = false;
+	_snapshot = nullptr;
+	_snapshotStream = nullptr;
+	_isSaveAllowed = false;
+
+	for (int i = 0; i < 80; i++) {
+		_walkAreas[i].x = 0;
+		_walkAreas[i].y = 0;
+		_walkAreas[i].width = 0;
+		_walkAreas[i].height = 0;
+		_walkAreas[i].checked = false;
+		_walkAreas[i].linksCount = 0;
+		for (int j = 0; j < 16; j++)
+			_walkAreas[i].links[j] = nullptr;
+		for (int j = 0; j < 32; j++) {
+			_walkAreas[i].linksD1[j] = nullptr;
+			_walkAreas[i].linksD2[j] = nullptr;
+		}
+	}
+
+	for (int i = 0; i < 256; i++) {
+		_walkInfoPtrs[i] = nullptr;
+	}
+
 	Engine::syncSoundSettings();
 
 }

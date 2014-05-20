@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.4.0git\n"
+"Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-02-14 21:53+0000\n"
-"PO-Revision-Date: 2013-05-01 16:53+0100\n"
+"PO-Revision-Date: 2014-02-27 21:43+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "Language: Cesky\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.6.4\n"
 "X-Poedit-Basepath: ..\n"
 
 #: gui/about.cpp:93
@@ -509,9 +509,8 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Opravdu chcete odstranit nastavení této hry?"
 
 #: gui/launcher.cpp:998
-#, fuzzy
 msgid "Do you want to load savegame?"
-msgstr "Chcete hru nahrát nebo ulo¾it?"
+msgstr "Chcete naèíst ulo¾enou pozici?"
 
 #: gui/launcher.cpp:1047
 msgid "This game does not support loading games from the launcher."
@@ -750,15 +749,16 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Opravdový Roland MT-32 (¾ádná GM emulace)"
 
 #: gui/options.cpp:890
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Re¾im Roland GS (vypne mapování GM)"
+msgstr "Zaøízení Roland GS (zapne mapování MT-32)"
 
 #: gui/options.cpp:890
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Za¹krtnìte, pokud chcete povolit záplaty mapování umo¾òující emulovat MT-32 "
+"na zaøízení Roland GS"
 
 #: gui/options.cpp:899
 msgid "Don't use Roland MT-32 music"
@@ -1021,23 +1021,20 @@ msgid "Disabled GFX"
 msgstr "GFX zakázáno"
 
 #: gui/ThemeEngine.cpp:347
-#, fuzzy
 msgid "Standard Renderer"
-msgstr "Standardní Vykreslovaè (16bpp)"
+msgstr "Standardní Vykreslovaè"
 
 #: gui/ThemeEngine.cpp:347 engines/scumm/dialogs.cpp:658
 msgid "Standard"
 msgstr "Standardní"
 
 #: gui/ThemeEngine.cpp:349
-#, fuzzy
 msgid "Antialiased Renderer"
-msgstr "Vykreslovaè s vyhlazenými hranami (16bpp)"
+msgstr "Vykreslovaè s vyhlazenými hranami"
 
 #: gui/ThemeEngine.cpp:349
-#, fuzzy
 msgid "Antialiased"
-msgstr "S vyhlazenými hranami (16bpp)"
+msgstr "S vyhlazenými hranami"
 
 #: gui/widget.cpp:322 gui/widget.cpp:324 gui/widget.cpp:330 gui/widget.cpp:332
 msgid "Clear value"
@@ -1667,13 +1664,12 @@ msgid "Windowed mode"
 msgstr "Re¾im do okna"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:118
-#, fuzzy
 msgid "OpenGL"
-msgstr "Otevøít"
+msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:119
 msgid "OpenGL (No filtering)"
-msgstr ""
+msgstr "OpenGL (bez filtrování)"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2341,19 +2337,19 @@ msgstr "~E~fekt Vody Zapnut"
 
 #: engines/neverhood/detection.cpp:167
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Pøeskoèit scény v Síni záznamù"
 
 #: engines/neverhood/detection.cpp:168
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Umo¾òuje hráèi pøeskoèit scény v Síni záznamù"
 
 #: engines/neverhood/detection.cpp:174
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Zvìt¹it filmy o výrobì na celou obrazovku"
 
 #: engines/neverhood/detection.cpp:175
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "Zvìt¹it filmy o výrobì tak, aby vyu¾ivaly celou obrazovku"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -3180,9 +3176,8 @@ msgid "DXA cutscenes found but ScummVM has been built without zlib support"
 msgstr "Videa DXA nalezena, ale ScummVM byl sestaven bez podpory zlib"
 
 #: engines/sword1/animation.cpp:561
-#, fuzzy
 msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
-msgstr "Videa PSX nalezena, ale ScummVM byl sestaven bez podpory barev RGB"
+msgstr "Videa MPEG-2 nalezena, ale ScummVM byl sestaven bez MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -3234,10 +3229,9 @@ msgid ""
 msgstr "Videa PSX nalezena, ale ScummVM byl sestaven bez podpory barev RGB"
 
 #: engines/sword2/animation.cpp:461
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr "Videa DXA nalezena, ale ScummVM byl sestaven bez podpory zlib"
+msgstr "Videa MPEG-2 nalezena, ale ScummVM byl sestaven bez podpory MPEG-2"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"

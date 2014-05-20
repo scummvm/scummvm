@@ -287,7 +287,7 @@ void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
 	_fileIdx = file;
 	_frameIdx = frame;
 	memset(_name, 0, sizeof(_name));
-	strcpy(_name, n);
+	Common::strlcpy(_name, n, sizeof(_name));
 	_realWidth = w;
 
 	switch (type) {

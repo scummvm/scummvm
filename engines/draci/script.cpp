@@ -634,8 +634,16 @@ void Script::stayOn(const Common::Array<int> &params) {
 		return;
 	}
 
-	int x = params[0];
-	int y = params[1];
+	int x, y;
+	Common::Point afterLoadingPos = _vm->_game->getHeroLoadingPosition();
+	if(_vm->_game->isPositionLoaded() == true) {
+		x = afterLoadingPos.x;
+		y = afterLoadingPos.y;
+	}
+	else {
+		x = params[0];
+		y = params[1];
+	}
 	SightDirection dir = static_cast<SightDirection> (params[2]);
 
 	// Jumps into the given position regardless of the walking map.
@@ -670,6 +678,11 @@ void Script::walkOnPlay(const Common::Array<int> &params) {
 		return;
 	}
 
+	if(_vm->_game->isPositionLoaded() == true) {
+		_vm->_game->setPositionLoaded(false);
+		return;
+	}
+
 	int x = params[0];
 	int y = params[1];
 	SightDirection dir = static_cast<SightDirection> (params[2]);
@@ -685,6 +698,10 @@ void Script::walkOnPlay(const Common::Array<int> &params) {
 void Script::newRoom(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
+	}
+
+	if(_vm->_game->isPositionLoaded() == true) {
+		_vm->_game->setPositionLoaded(false);
 	}
 
 	int room = params[0] - 1;

@@ -52,7 +52,6 @@ IntData::IntData() {
 	_hasPalette = false;
 	_flashTimer = 0;
 	_flashStep = 0;
-	field26 = 0;
 	_skipFading = false;
 	_palStartIndex = 0;
 	_palEndIndex = 0;
@@ -83,6 +82,9 @@ EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
 
 	_fadeFirstCol = _fadeLastCol = 0;
 	_fadeCount = 1;
+
+	for (int i = 0; i < 4; i++)
+		_cycleNext[i] = nullptr;
 }
 
 void EventsManager::startMainClockInt() {
@@ -185,13 +187,9 @@ void EventsManager::showMousePosition() {
 void EventsManager::voyeurTimer() {
 	_gameData._flashTimer += _gameData._flashStep;
 
-	if (--_gameData.field26 <= 0) {
-		if (_gameData._flipWait) {
-			_gameData._flipWait = false;
-			_gameData._skipFading = false;
-		}
-
-		_gameData.field26 >>= 8;
+	if (_gameData._flipWait) {
+		_gameData._flipWait = false;
+		_gameData._skipFading = false;
 	}
 
 	videoTimer();
@@ -268,18 +266,18 @@ void EventsManager::pollEvents() {
 			}
 			return;
 		case Common::EVENT_LBUTTONDOWN:
-			_vm->_eventsManager->_newLeftClick = true;
-			_vm->_eventsManager->_newMouseClicked = true;
+			_newLeftClick = true;
+			_newMouseClicked = true;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_vm->_eventsManager->_newRightClick = true;
-			_vm->_eventsManager->_newMouseClicked = true;
+			_newRightClick = true;
+			_newMouseClicked = true;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_vm->_eventsManager->_newMouseClicked = false;
-			_vm->_eventsManager->_newLeftClick = false;
-			_vm->_eventsManager->_newRightClick = false;
+			_newMouseClicked = false;
+			_newLeftClick = false;
+			_newRightClick = false;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -526,8 +524,8 @@ void EventsManager::setCursor(PictureResource *pic) {
 	_vm->_graphicsManager->sDrawPic(pic, &cursor, Common::Point());
 }
 
-void EventsManager::setCursor(byte *cursorData, int width, int height) {
-	CursorMan.replaceCursor(cursorData, width, height, width / 2, height / 2, 0);
+void EventsManager::setCursor(byte *cursorData, int width, int height, int keyColor) {
+	CursorMan.replaceCursor(cursorData, width, height, width / 2, height / 2, keyColor);
 }
 
 void EventsManager::setCursorColor(int idx, int mode) {
@@ -576,13 +574,13 @@ void EventsManager::getMouseInfo() {
 		}
 	}
 
-	_vm->_eventsManager->_mouseClicked = _vm->_eventsManager->_newMouseClicked;
-	_vm->_eventsManager->_leftClick = _vm->_eventsManager->_newLeftClick;
-	_vm->_eventsManager->_rightClick = _vm->_eventsManager->_newRightClick;
+	_mouseClicked = _newMouseClicked;
+	_leftClick = _newLeftClick;
+	_rightClick = _newRightClick;
 
-	_vm->_eventsManager->_newMouseClicked = false;
-	_vm->_eventsManager->_newLeftClick = false;
-	_vm->_eventsManager->_newRightClick = false;
+	_newMouseClicked = false;
+	_newLeftClick = false;
+	_newRightClick = false;
 }
 
 void EventsManager::startCursorBlink() {

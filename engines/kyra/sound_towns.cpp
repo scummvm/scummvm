@@ -538,7 +538,8 @@ bool SoundTownsPC98_v2::init() {
 		// check if we have access to CD audio.
 		Resource *r = _vm->resource();
 		if (_musicEnabled &&
-			(r->exists("track1.mp3") || r->exists("track1.ogg") || r->exists("track1.flac") || r->exists("track1.fla")))
+		    (r->exists("track1.mp3") || r->exists("track1.ogg") || r->exists("track1.flac") || r->exists("track1.fla")
+		     || r->exists("track01.mp3") || r->exists("track01.ogg") || r->exists("track01.flac") || r->exists("track01.fla")))
 				_musicEnabled = 2;
 		else
 			_musicEnabled = 1;

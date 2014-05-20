@@ -86,13 +86,13 @@ class ResourceManager {
 	uint16 catRead(byte *buf, uint16 length);
 	Common::File *_catFile;
 	Common::File *_datFile;
-	uint16  XCrypt(byte *buf, uint16 length);
+	void XCrypt(byte *buf, uint16 length);
 public:
 
 	ResourceManager();
 	~ResourceManager();
 	uint16 read(byte *buf, uint16 length);
-	bool seek(int32 offs, int whence = 0);
+	bool seek(int32 offs, int whence = SEEK_SET);
 
 	BtKeypack *find(const char *key);
 	bool exist(const char *name);

@@ -48,7 +48,7 @@ GraphicsManager::GraphicsManager(VoyeurEngine *vm) : _defaultDrawInfo(1, Common:
 	_vPort = NULL;
 	_fontPtr = NULL;
 	Common::fill(&_VGAColors[0], &_VGAColors[PALETTE_SIZE], 0);
-	_fontChar = new PictureResource(0, 0xff, 0xff, 0, Common::Rect(), 0, NULL, 0);
+	_fontChar = new PictureResource(DISPFLAG_NONE, 0xff, 0xff, 0, Common::Rect(), 0, NULL, 0);
 	_backColors = nullptr;
 }
 
@@ -65,7 +65,7 @@ GraphicsManager::~GraphicsManager() {
 
 void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 	if (viewPort->_activePage) {
-		viewPort->_activePage->_flags |= 1;
+		viewPort->_activePage->_flags |= DISPFLAG_1;
 		Common::Rect *clipRect = _clipPtr;
 		_clipPtr = &viewPort->_clipRect;
 
@@ -219,7 +219,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	widthDiff2 = destPic->_bounds.width() - width2;
 
 	if (destViewPort) {
-		if (!_saveBack || ((srcPic->_flags & DISPFLAG_800) != 0)) {
+		if (!_saveBack || (srcPic->_flags & DISPFLAG_800)) {
 			backBounds.left = destPic->_bounds.left + offset.x;
 			backBounds.top = destPic->_bounds.top + offset.y;
 			backBounds.setWidth(width2);
@@ -548,8 +548,8 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 		} else {
 			// loc_26673
-			int pick = srcPic->_pick;
-			int onOff = srcPic->_onOff;
+			byte pick = srcPic->_pick;
+			byte onOff = srcPic->_onOff;
 
 			if (!(srcFlags & PICFLAG_PIC_OFFSET)) {
 				srcP = srcImgData += srcOffset;
@@ -845,7 +845,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	}
 
 	if (cursorData) {
-		_vm->_eventsManager->setCursor(cursorData, width2, height1);
+		_vm->_eventsManager->setCursor(cursorData, width2, height1, srcPic->_keyColor);
 		delete[] cursorData;
 	}
 }
@@ -864,7 +864,7 @@ void GraphicsManager::fillPic(DisplayResource *display, byte onOff) {
 	}
 
 	PictureResource picResource;
-	picResource._flags = 0;
+	picResource._flags = DISPFLAG_NONE;
 	picResource._select = 0xff;
 	picResource._pick = 0;
 	picResource._onOff = onOff;
@@ -991,8 +991,8 @@ void GraphicsManager::screenReset() {
 	resetPalette();
 
 	_backgroundPage = NULL;
-	(*_vPort)->setupViewPort(NULL);
-	fillPic(*_vPort, 0);	
+	_vPort->setupViewPort(NULL);
+	fillPic(_vPort, 0);	
 
 	_vm->flipPageAndWait();
 }

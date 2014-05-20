@@ -86,6 +86,9 @@ bool ThreadResource::loadAStack(int stackId) {
 }
 
 void ThreadResource::unloadAStack(int stackId) {
+	if (stackId < 0)
+		return;
+
 	if ((_vm->_stampFlags & 1) && _useCount[stackId]) {
 		if (--_useCount[stackId] == 0) {
 			_vm->_stampLibPtr->freeBoltMember(_vm->_controlPtr->_memberIds[stackId]);
@@ -458,7 +461,7 @@ void ThreadResource::parsePlayCommands() {
 					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + i * 2)._picResource;
 					pal = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + i * 2 + 1)._cMapResource;
 
-					(*_vm->_graphicsManager->_vPort)->setupViewPort(pic);
+					_vm->_graphicsManager->_vPort->setupViewPort(pic);
 					pal->startFade();
 
 					_vm->flipPageAndWaitForFade();
@@ -622,14 +625,14 @@ void ThreadResource::parsePlayCommands() {
 			v2 = READ_LE_UINT16(dataP);
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2) {
-				_vm->_voy->_computerTextId = READ_LE_UINT16(dataP + 2);
+				_vm->_voy->_computerTextId = READ_LE_UINT16(dataP + 2) - 1;
 				_vm->_voy->_computerTimeMin = READ_LE_UINT16(dataP + 4);
 				_vm->_voy->_computerTimeMax = READ_LE_UINT16(dataP + 6);
 
-				_vm->_voy->_rect4E4.left = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4];
-				_vm->_voy->_rect4E4.top = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4 + 1];
-				_vm->_voy->_rect4E4.right = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4 + 2];
-				_vm->_voy->_rect4E4.bottom = COMP_BUT_TABLE[_vm->_voy->_computerTextId * 4 + 3];
+				_vm->_voy->_computerScreenRect.left = COMPUTER_SCREEN_TABLE[_vm->_voy->_computerTextId * 4];
+				_vm->_voy->_computerScreenRect.top = COMPUTER_SCREEN_TABLE[_vm->_voy->_computerTextId * 4 + 1];
+				_vm->_voy->_computerScreenRect.right = COMPUTER_SCREEN_TABLE[_vm->_voy->_computerTextId * 4 + 2];
+				_vm->_voy->_computerScreenRect.bottom = COMPUTER_SCREEN_TABLE[_vm->_voy->_computerTextId * 4 + 3];
 			}
 
 			dataP += 8;
@@ -984,6 +987,14 @@ int ThreadResource::doApt() {
 
 	_vm->_eventsManager->_intPtr._hasPalette = true;
 
+	// Set up the cursors
+	PictureResource *unselectedCursor = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 2)._picResource;
+	PictureResource *selectedCursor = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 3)._picResource;
+	unselectedCursor->_keyColor = 0xff;
+	selectedCursor->_keyColor = 0xff;
+	_vm->_eventsManager->setCursor(unselectedCursor);
+	_vm->_eventsManager->showCursor();
+
 	// Main loop to allow users to move the cursor and select hotspots
 	int hotspotId;
 	int prevHotspotId = -1;
@@ -1009,7 +1020,7 @@ int ThreadResource::doApt() {
 
 		// Loop through the hotspot list
 		hotspotId = -1;
-		pt = _vm->_eventsManager->getMousePos();
+		pt = _vm->_eventsManager->getMousePos() + Common::Point(16, 16);
 		for (int idx = 0; idx < (int)hotspots.size(); ++idx) {
 			if (hotspots[idx].contains(pt)) {
 				// Cursor is within hotspot area
@@ -1030,7 +1041,7 @@ int ThreadResource::doApt() {
 					// Draw the text description for the highlighted hotspot
 					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 
 						hotspotId + 6)._picResource;
-					_vm->_graphicsManager->sDrawPic(pic, *_vm->_graphicsManager->_vPort,
+					_vm->_graphicsManager->sDrawPic(pic, _vm->_graphicsManager->_vPort,
 						Common::Point(106, 200));
 				}
 
@@ -1042,11 +1053,8 @@ int ThreadResource::doApt() {
 		if (gmmHotspot.contains(pt))
 			hotspotId = 42;
 
-		// Draw either standard or highlighted eye cursor
-		pic = _vm->_bVoy->boltEntry((hotspotId == -1) ? _vm->_playStampGroupId + 2 :
-			_vm->_playStampGroupId + 3)._picResource;
-		_vm->_graphicsManager->sDrawPic(pic, *_vm->_graphicsManager->_vPort, pt);
-
+		// Update the cursor to either standard or highlighted eye cursor
+		_vm->_eventsManager->setCursor((hotspotId == -1) ? unselectedCursor : selectedCursor);
 		_vm->flipPageAndWait();
 
 		if (hotspotId == 42 && _vm->_eventsManager->_leftClick) {
@@ -1057,6 +1065,7 @@ int ThreadResource::doApt() {
 
 	} while (!_vm->shouldQuit() && (!_vm->_eventsManager->_leftClick || hotspotId == -1));
 
+	_vm->_eventsManager->hideCursor();
 	pt = _vm->_eventsManager->getMousePos();
 	_aptPos.x = pt.x;
 	_aptPos.y = pt.y;
@@ -1079,6 +1088,7 @@ int ThreadResource::doApt() {
 	}
 
 	freeTheApt();
+
 	if (_vm->_voy->_transitionId == 1 && hotspotId == 0)
 		_vm->checkTransition();
 
@@ -1095,12 +1105,12 @@ void ThreadResource::doRoom() {
 	vm.makeViewFinderP();
 	voy._fadingType = 0;
 	
-	if (!vm._bVoy->getBoltGroup(vm._playStampGroupId, true))
+	if (!vm._bVoy->getBoltGroup(vm._playStampGroupId))
 		return;
 
 	vm._graphicsManager->_backColors = vm._bVoy->boltEntry(vm._playStampGroupId + 1)._cMapResource;
 	vm._graphicsManager->_backgroundPage = vm._bVoy->boltEntry(vm._playStampGroupId)._picResource;
-	(*vm._graphicsManager->_vPort)->setupViewPort(vm._graphicsManager->_backgroundPage);
+	vm._graphicsManager->_vPort->setupViewPort(vm._graphicsManager->_backgroundPage);
 	vm._graphicsManager->_backColors->startFade();
 
 	voy._fadingStep1 = 2;
@@ -1145,7 +1155,8 @@ void ThreadResource::doRoom() {
 			pt += Common::Point(30, 15);
 
 			hotspotId = -1;
-			if (voy._computerTextId != -1 && voy._rect4E4.contains(pt))
+
+			if (voy._computerTextId != -1 && voy._computerScreenRect.contains(pt))
 				hotspotId = 999;
 
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {
@@ -1224,7 +1235,7 @@ void ThreadResource::doRoom() {
 			vm._graphicsManager->_backgroundPage = vm._bVoy->boltEntry(
 				vm._playStampGroupId)._picResource;
 
-			(*vm._graphicsManager->_vPort)->setupViewPort();
+			vm._graphicsManager->_vPort->setupViewPort();
 			vm._graphicsManager->_backColors->startFade();
 			_vm->flipPageAndWait();
 
@@ -1263,7 +1274,7 @@ void ThreadResource::doRoom() {
 	vm.makeViewFinderP();
 
 	if (voy._boltGroupId2 != -1) {
-		vm._bVoy->freeBoltGroup(voy._boltGroupId2, 1);
+		vm._bVoy->freeBoltGroup(voy._boltGroupId2);
 		voy._boltGroupId2 = -1;
 	}
 
@@ -1299,12 +1310,13 @@ int ThreadResource::doInterface() {
 	if (_vm->_voy->_RTVNum >= _vm->_voy->_RTVLimit || _vm->_voy->_RTVNum < 0)
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit - 1;
 
-	if (_vm->_voy->_transitionId < 15 && _vm->_debugger->_isTimeActive &&
-			(_vm->_voy->_RTVLimit - 3) < _vm->_voy->_RTVNum) {
+	if (_vm->_voy->_transitionId < 15 && _vm->_debugger->_isTimeActive
+		&& (_vm->_voy->_RTVLimit - 3) < _vm->_voy->_RTVNum) {
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit;
 		_vm->makeViewFinder();
 
 		_vm->initIFace();
+		_vm->_eventsManager->hideCursor();
 		_vm->_voy->_RTVNum = _vm->_voy->_RTVLimit - 4;
 		_vm->_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
@@ -1316,6 +1328,8 @@ int ThreadResource::doInterface() {
 		_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 		chooseSTAMPButton(20);
 		parsePlayCommands();
+
+		_vm->_eventsManager->showCursor();
 	}
 
 	_vm->checkTransition();
@@ -1406,20 +1420,20 @@ int ThreadResource::doInterface() {
 
 		// Regularly update the time display
 		if (_vm->_voy->_RTANum & 2) {
-			_vm->_graphicsManager->drawANumber(*_vm->_graphicsManager->_vPort, 
+			_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort, 
 				_vm->_gameMinute / 10, Common::Point(190, 25));
-			_vm->_graphicsManager->drawANumber(*_vm->_graphicsManager->_vPort, 
+			_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort, 
 				_vm->_gameMinute % 10, Common::Point(201, 25));
 
 			if (_vm->_voy->_RTANum & 4) {
 				int v = _vm->_gameHour / 10;
-				_vm->_graphicsManager->drawANumber(*_vm->_graphicsManager->_vPort, 
+				_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort, 
 					v == 0 ? 10 : v, Common::Point(161, 25));
-				_vm->_graphicsManager->drawANumber(*_vm->_graphicsManager->_vPort, 
+				_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort, 
 					_vm->_gameHour % 10, Common::Point(172, 25));
 
 				pic = _vm->_bVoy->boltEntry(_vm->_voy->_isAM ? 272 : 273)._picResource;
-				_vm->_graphicsManager->sDrawPic(pic, *_vm->_graphicsManager->_vPort, 
+				_vm->_graphicsManager->sDrawPic(pic, _vm->_graphicsManager->_vPort, 
 					Common::Point(215, 27));
 			}
 		}
@@ -1587,13 +1601,13 @@ void ThreadResource::loadTheApt() {
 		_vm->_voy->_aptLoadMode = -1;
 		_vm->_graphicsManager->_backgroundPage = _vm->_bVoy->boltEntry(
 			_vm->_playStampGroupId + 5)._picResource;
-		(*_vm->_graphicsManager->_vPort)->setupViewPort(
+		_vm->_graphicsManager->_vPort->setupViewPort(
 			_vm->_graphicsManager->_backgroundPage);
 	} else {
 		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
 		_vm->_graphicsManager->_backgroundPage = _vm->_bVoy->boltEntry(
 			_vm->_playStampGroupId + 5)._picResource;
-		(*_vm->_graphicsManager->_vPort)->setupViewPort(
+		_vm->_graphicsManager->_vPort->setupViewPort(
 			_vm->_graphicsManager->_backgroundPage);
 	}
 
@@ -1625,14 +1639,14 @@ void ThreadResource::freeTheApt() {
 		_vm->_graphicsManager->resetPalette();
 	}
 
-	(*_vm->_graphicsManager->_vPort)->setupViewPort(nullptr);
+	_vm->_graphicsManager->_vPort->setupViewPort(nullptr);
 	_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
 	_vm->_playStampGroupId = -1;
 	_vm->_voy->_viewBounds = nullptr;
 }
 
 void ThreadResource::doAptAnim(int mode) {
-	_vm->_bVoy->freeBoltGroup(0x100, true);
+	_vm->_bVoy->freeBoltGroup(0x100);
 
 	// Figure out the resource to use
 	int id = 0;
@@ -1685,7 +1699,7 @@ void ThreadResource::doAptAnim(int mode) {
 
 		for (int idx = 0; (idx < 6) && !_vm->shouldQuit(); ++idx) {
 			PictureResource *pic = _vm->_bVoy->boltEntry(id + idx + 1)._picResource;
-			(*_vm->_graphicsManager->_vPort)->setupViewPort(pic);
+			_vm->_graphicsManager->_vPort->setupViewPort(pic);
 			pal->startFade();
 
 			_vm->flipPageAndWait();

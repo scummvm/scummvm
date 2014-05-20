@@ -61,6 +61,14 @@ struct Surface;
 
 namespace AGOS {
 
+enum {
+	kDebugOpcode = 1 << 0,
+	kDebugVGAOpcode = 1 << 1,
+	kDebugSubroutine = 1 << 2,
+	kDebugVGAScript = 1 << 3,
+	kDebugImageDump = 1 << 4
+};
+
 uint fileReadItemID(Common::SeekableReadStream *in);
 
 #define CHECK_BOUNDS(x, y) assert((uint)(x) < ARRAYSIZE(y))
@@ -324,15 +332,9 @@ protected:
 	bool _fastMode;
 	bool _backFlag;
 
-	uint16 _debugMode;
 	Common::Language _language;
 	bool _copyProtection;
 	bool _pause;
-	bool _dumpScripts;
-	bool _dumpOpcodes;
-	bool _dumpVgaScripts;
-	bool _dumpVgaOpcodes;
-	bool _dumpImages;
 	bool _speech;
 	bool _subtitles;
 	bool _vgaVar9;
@@ -584,6 +586,7 @@ protected:
 
 	byte _saveLoadType, _saveLoadSlot;
 	char _saveLoadName[108];
+	char _saveBuf[200];
 
 	Graphics::Surface *_backGroundBuf;
 	Graphics::Surface *_backBuf;
@@ -833,6 +836,9 @@ protected:
 	void resetNameWindow();
 	void displayBoxStars();
 	void invertBox(HitArea * ha, byte a, byte b, byte c, byte d);
+
+	virtual void handleMouseWheelUp();
+	virtual void handleMouseWheelDown();
 
 	virtual void initMouse();
 	virtual void handleMouseMoved();
@@ -1706,10 +1712,13 @@ protected:
 	void setExitState(Item *i, uint16 n, uint16 d, uint16 s);
 	void setSRExit(Item *i, int n, int d, uint16 s);
 
-	virtual void listSaveGames(char *dst);
+	virtual void handleMouseWheelUp();
+	virtual void handleMouseWheelDown();
+
+	virtual void listSaveGames();
 	virtual bool confirmOverWrite(WindowBlock *window);
 	virtual void userGame(bool load);
-	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
+	virtual int userGameGetKey(bool *b, uint maxChar);
 
 	virtual Common::String genSaveName(int slot) const;
 };
@@ -1829,6 +1838,9 @@ protected:
 
 	virtual void clearName();
 
+	virtual void handleMouseWheelUp();
+	virtual void handleMouseWheelDown();
+
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 
 	virtual void initMouse();
@@ -1841,9 +1853,9 @@ protected:
 
 	virtual void playSpeech(uint16 speechId, uint16 vgaSpriteId);
 
-	virtual void listSaveGames(char *dst);
+	virtual void listSaveGames();
 	virtual void userGame(bool load);
-	virtual int userGameGetKey(bool *b, char *buf, uint maxChar);
+	virtual int userGameGetKey(bool *b, uint maxChar);
 
 	virtual void playMusic(uint16 music, uint16 track);
 
@@ -1927,6 +1939,7 @@ public:
 	void off_listSaveGames();
 	void off_checkCD();
 	void off_screenTextBox();
+	void off_b2Set();
 	void off_isAdjNoun();
 	void off_hyperLinkOn();
 	void off_hyperLinkOff();
@@ -1969,11 +1982,16 @@ protected:
 	virtual uint16 readUint16Wrapper(const void *src);
 	virtual uint32 readUint32Wrapper(const void *src);
 
+	void setLoyaltyRating(byte rating);
+
 	void playVideo(const char *filename, bool lastSceneUsed = false);
 	void stopInteractiveVideo();
 
 	virtual void drawImage(VC10_state *state);
 	void scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY);
+
+	virtual void handleMouseWheelUp();
+	virtual void handleMouseWheelDown();
 
 	void drawMousePart(int image, byte x, byte y);
 	virtual void initMouse();

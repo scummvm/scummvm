@@ -42,10 +42,10 @@
 /**
  * This is the namespace of the Voyeur engine.
  *
- * Status of this engine: In Development
+ * Status of this engine: Complete
  *
  * Games using this engine:
- * - Voyeur
+ * - Voyeur (Dos)
  */
 namespace Voyeur {
 

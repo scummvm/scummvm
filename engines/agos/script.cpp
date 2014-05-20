@@ -22,6 +22,7 @@
 
 // Item script opcodes for Simon1/Simon2
 
+#include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -264,7 +265,7 @@ void AGOSEngine::o_add() {
 	uint var = getVarWrapper();
 	writeVariable(var, readVariable(var) + getVarOrWord());
 
-	// WORKAROUND: The converation of the male in Vid-Phone Booth at Dave's Space Bar
+	// WORKAROUND: The conversation of the male in Vid-Phone Booth at Dave's Space Bar
 	// is based on variable 116, but stops due to a missing option (37).
 	if (getGameType() == GType_FF && _currentTable->id == 10538 && readVariable(116) == 37)
 			writeVariable(116, 38);
@@ -987,7 +988,7 @@ int AGOSEngine::runScript() {
 		return 1;
 
 	do {
-		if (_dumpOpcodes)
+		if (DebugMan.isDebugChannelEnabled(kDebugOpcode))
 			dumpOpcode(_codePtr);
 
 		if (getGameType() == GType_ELVIRA1) {

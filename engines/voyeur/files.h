@@ -82,7 +82,7 @@ public:
 
 	byte *_boltPageFrame;
 public:
-	BoltFilesState();
+	BoltFilesState(VoyeurEngine *vm);
 
 	byte *decompress(byte *buf, int size, int mode);
 	void nextBlock();
@@ -106,8 +106,8 @@ public:
 	BoltFile(const Common::String &filename, BoltFilesState &state);
 	virtual ~BoltFile();
 
-	BoltGroup *getBoltGroup(uint16 id, bool process = true);
-	void freeBoltGroup(uint16 id, bool freeEntries = true);
+	BoltGroup *getBoltGroup(uint16 id);
+	void freeBoltGroup(uint16 id);
 	void freeBoltMember(uint32 id);
 	byte *memberAddr(uint32 id);
 	byte *memberAddrOffset(uint32 id);
@@ -204,13 +204,14 @@ public:
 
 class FilesManager {
 public:
-	BoltFilesState _boltFilesState;
+	BoltFilesState *_boltFilesState;
 	BoltFile *_curLibPtr;
 public:
 	FilesManager(VoyeurEngine *vm);
+	~FilesManager();
 
 	bool openBoltLib(const Common::String &filename, BoltFile *&boltFile);
-	byte *fload(const Common::String &filename, int *size = NULL);
+	byte *fload(const Common::String &filename, int *size);
 };
 
 class RectEntry: public Common::Rect {
@@ -230,11 +231,21 @@ public:
 	virtual ~RectResource() {}
 };
 
-enum DisplayFlag { DISPFLAG_1 = 1, DISPFLAG_2 = 2, DISPFLAG_4 = 4, DISPFLAG_8 = 8, 
+/* bvoy.blt resource types */
+
+enum PictureFlag {
+	PICFLAG_2 = 2, PICFLAG_PIC_OFFSET = 8, PICFLAG_CLEAR_SCREEN = 0x10, 
+	PICFLAG_20 = 0x20, PICFLAG_HFLIP = 0x40, PICFLAG_VFLIP = 0x80, PICFLAG_100 = 0x100,
+	PICFLAG_CLEAR_SCREEN00 = 0x1000 
+};
+
+enum DisplayFlag {
+	DISPFLAG_1 = 1, DISPFLAG_2 = 2, DISPFLAG_4 = 4, DISPFLAG_8 = 8, 
 	DISPFLAG_10 = 0x10, DISPFLAG_20 = 0x20, DISPFLAG_40 = 0x40, DISPFLAG_80 = 0x80,
 	DISPFLAG_100 = 0x100, DISPFLAG_200 = 0x200, DISPFLAG_400 = 0x400, 
 	DISPFLAG_800 = 0x800, DISPFLAG_1000 = 0x1000, DISPFLAG_2000 = 0x2000,
-	DISPFLAG_4000 = 0x4000, DISPFLAG_VIEWPORT = 0x8000, DISPFLAG_CURSOR = 0x10000 };
+	DISPFLAG_4000 = 0x4000, DISPFLAG_VIEWPORT = 0x8000, DISPFLAG_CURSOR = 0x10000,
+	DISPFLAG_NONE = 0};
 
 class DisplayResource {
 private:
@@ -266,13 +277,6 @@ public:
 	bool clipRect(Common::Rect &rect);
 };
 
-/* bvoy.blt resource types */
-
-enum PictureFlag { PICFLAG_2 = 2, PICFLAG_PIC_OFFSET = 8, PICFLAG_CLEAR_SCREEN = 0x10, 
-	PICFLAG_20 = 0x20, PICFLAG_HFLIP = 0x40, PICFLAG_VFLIP = 0x80, PICFLAG_100 = 0x100,
-	PICFLAG_CLEAR_SCREEN00 = 0x1000 
-};
-
 class PictureResource: public DisplayResource {
 private:
 	/**
@@ -291,6 +295,7 @@ public:
 	Common::Rect _bounds;
 	uint32 _maskData;
 	uint _planeSize;
+	byte _keyColor;
 
 	/**
 	 * Image data for the picture
@@ -347,7 +352,7 @@ public:
 	void setupViewPort();
 	void setupViewPort(PictureResource *pic, Common::Rect *clippingRect = NULL);
 	void addSaveRect(int pageIndex, const Common::Rect &r);
-	void fillPic(byte onOff = 0);
+	void fillPic(byte onOff);
 	void drawIfaceTime();
 	void drawPicPerm(PictureResource *pic, const Common::Point &pt);
 };

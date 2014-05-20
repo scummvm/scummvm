@@ -42,6 +42,8 @@ const byte ShootEmUp::kAvvyY = 150;
 const byte ShootEmUp::kShooting[7] = { 86, 79, 80, 81, 80, 79, 86 };
 const byte ShootEmUp::kTimesASecond = 18;
 const byte ShootEmUp::kFlashTime = 20; // If flash_time is <= this, the word "time" will flash. Should be about 20.
+const byte ShootEmUp::kLeftMargin = 10;
+const int16 ShootEmUp::kRightMargin = 605;
 
 ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_vm = vm;
@@ -67,7 +69,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_avvyAnim = 1;
 	_avvyFacing = kFacingLeft;
 	_altWasPressedBefore = false;
-	_throwNext = 74;
+	_throwNext = 73;
 	_firing = false;
 	for (int i = 0; i < 4; i++) {
 		_running[i]._x = kFlag;
@@ -93,7 +95,7 @@ ShootEmUp::ShootEmUp(AvalancheEngine *vm) {
 	_gotOut = false;
 }
 
-void ShootEmUp::run() {
+uint16 ShootEmUp::run() {
 	CursorMan.showMouse(false);
 	_vm->_graphics->saveScreen();
 	_vm->fadeOut();
@@ -115,7 +117,7 @@ void ShootEmUp::run() {
 
 	setup();
 	
-	do {
+	while ((_time != 0) && (!_vm->shouldQuit())) {
 		uint32 beginLoop = _vm->_system->getMillis();
 
 		blankIt();
@@ -139,14 +141,15 @@ void ShootEmUp::run() {
 		uint32 delay = _vm->_system->getMillis() - beginLoop;
 		if (delay <= 55)
 			_vm->_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
-
-	} while (_time != 0);
-
+	};
+	
 	_vm->fadeOut();
 	_vm->_graphics->restoreScreen();
 	_vm->_graphics->removeBackup();
 	_vm->fadeIn();
 	CursorMan.showMouse(true);
+
+	return _score;
 }
 
 bool ShootEmUp::overlap(uint16 a1x, uint16 a1y, uint16 a2x, uint16 a2y, uint16 b1x, uint16 b1y, uint16 b2x, uint16 b2y) {
@@ -420,7 +423,49 @@ void ShootEmUp::moveAvvy() {
 }
 
 void ShootEmUp::readKbd() {
-	warning("STUB: ShootEmUp::readKbd()");
+	Common::Event event;
+	_vm->getEvent(event);
+
+	if ((event.type == Common::EVENT_KEYUP) && ((event.kbd.keycode == Common::KEYCODE_LALT) || (event.kbd.keycode == Common::KEYCODE_RALT))) {
+		// Don't let the player fire continuously by holding down one of the ALT keys.
+		_altWasPressedBefore = false;
+		return;
+	}
+
+	if (_firing) // So you can't stack up shots while the shooting animation plays.
+		return;
+
+	if (event.type == Common::EVENT_KEYDOWN) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_LALT: // Alt was pressed - shoot!
+		case Common::KEYCODE_RALT: // Falltrough is intended.
+			if (_altWasPressedBefore || (_count321 != 0))
+				return;
+
+			_altWasPressedBefore = true;
+			_firing = true;
+			define(_avvyPos + 27, kAvvyY + 5, _throwNext, 0, -2, 53, true, true);
+			_throwNext++;
+			if (_throwNext == 79)
+				_throwNext = 73;
+			_avvyAnim = 0;
+			_wasFacing = _avvyFacing;
+			_avvyFacing = kAvvyShoots;
+			return;
+		case Common::KEYCODE_RSHIFT: // Right shift: move right.
+			_avvyPos += 5;
+			if (_avvyPos > kRightMargin)
+				_avvyPos = kRightMargin;
+			return;
+		case Common::KEYCODE_LSHIFT: // Left shift: move left.
+			_avvyPos -= 5;
+			if (_avvyPos < kLeftMargin)
+				_avvyPos = kLeftMargin;
+			return;
+		default:
+			break;
+		}
+	}
 }
 
 void ShootEmUp::animate() {

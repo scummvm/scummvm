@@ -585,7 +585,7 @@ bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
 
 	if (_codecTag == MKTAG('m', 'p', '4', 'a')) {
 		Common::String audioType;
-		switch (_parentTrack->objectTypeMP4) {
+		switch (_objectTypeMP4) {
 		case 0x40: // AAC
 #ifdef USE_FAAD
 			return true;
@@ -643,13 +643,13 @@ void QuickTimeAudioDecoder::AudioSampleDesc::initCodec() {
 	switch (_codecTag) {
 	case MKTAG('Q', 'D', 'M', '2'):
 #ifdef AUDIO_QDM2_H
-		_codec = makeQDM2Decoder(_parentTrack->extraData);
+		_codec = makeQDM2Decoder(_extraData);
 #endif
 		break;
 	case MKTAG('m', 'p', '4', 'a'):
 #ifdef USE_FAAD
-		if (_parentTrack->objectTypeMP4 == 0x40)
-			_codec = makeAACDecoder(_parentTrack->extraData);
+		if (_objectTypeMP4 == 0x40)
+			_codec = makeAACDecoder(_extraData);
 #endif
 		break;
 	default:

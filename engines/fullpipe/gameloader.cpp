@@ -21,6 +21,7 @@
  */
 
 #include "fullpipe/fullpipe.h"
+#include "graphics/thumbnail.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/scene.h"
@@ -272,7 +273,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			g_fp->_currSoundList1[0] = g_fp->accessScene(SC_COMMON)->_soundList;
 		}
 
-		g_vars->scene18_var01 = 0;
+		g_vars->scene18_inScene18p1 = false;
 
 		if ((pre.preloadId1 != SC_18 || pre.sceneId != SC_19) && (pre.preloadId1 != SC_19 || (pre.sceneId != SC_18 && pre.sceneId != SC_19))) {
 			if (g_fp->_scene3) {
@@ -282,9 +283,9 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 				g_fp->_scene3 = 0;
 			}
 		} else {
-			scene19_preload(g_fp->accessScene(pre.preloadId1), pre.keyCode);
+			scene19_setMovements(g_fp->accessScene(pre.preloadId1), pre.keyCode);
 
-			g_vars->scene18_var01 = 1;
+			g_vars->scene18_inScene18p1 = true;
 
 			if (pre.preloadId1 == SC_18) {
 				g_fp->_gameLoader->saveScenePicAniInfos(SC_18);
@@ -501,6 +502,14 @@ void GameLoader::updateSystems(int counterdiff) {
 	}
 }
 
+void GameLoader::readSavegame(const char *fname) {
+	warning("STUB: readSavegame(%s)", fname);
+}
+
+void GameLoader::writeSavegame(Scene *sc, const char *fname) {
+	warning("STUB: writeSavegame(sc, %s)", fname);
+}
+
 Sc2::Sc2() {
 	_sceneId = 0;
 	_field_2 = 0;
@@ -591,6 +600,42 @@ bool PreloadItems::load(MfcArchive &file) {
 	}
 
 	return true;
+}
+
+const char *getSavegameFile(int saveGameIdx) {
+	static char buffer[20];
+	sprintf(buffer, "fullpipe.s%02d", saveGameIdx);
+	return buffer;
+}
+
+bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
+	char saveIdentBuffer[6];
+	header.thumbnail = NULL;
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, 6);
+	if (strcmp(saveIdentBuffer, "SVMCR"))
+		return false;
+
+	header.version = in->readByte();
+	if (header.version != FULLPIPE_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header.saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+
+	// Get the thumbnail
+	header.thumbnail = Graphics::loadThumbnail(*in);
+	if (!header.thumbnail)
+		return false;
+
+	return true;
+}
+
+void GameLoader::restoreDefPicAniInfos() {
+	warning("STUB: restoreDefPicAniInfos()");
 }
 
 GameVar *FullpipeEngine::getGameLoaderGameVar() {

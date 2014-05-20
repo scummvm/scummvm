@@ -20,59 +20,26 @@
  *
  */
 
-#ifndef CREATE_KYRADAT_EXTRACT_H
-#define CREATE_KYRADAT_EXTRACT_H
+#ifndef CREATE_KYRADAT_RESOURCES_H
+#define CREATE_KYRADAT_RESOURCES_H
 
 #include "create_kyradat.h"
-#include "pak.h"
-#include "util.h"
 
-enum kExtractType {
-	kTypeStringList = 0,
-	kTypeRoomList,
-	kTypeShapeList,
-	kTypeRawData,
-	kTypeForestSeqData,
-	kTypeAmigaSfxTable,
-	kTypeTownsWDSfxTable,
+#include "common/util.h"
+#include "common/language.h"
+#include "common/platform.h"
 
-	k2TypeSeqData,
-	k2TypeShpDataV1,
-	k2TypeShpDataV2,
-	k2TypeSoundList,
-	k2TypeLangSoundList,
-	k2TypeSize10StringList,
-	k2TypeSfxList,
+using namespace Common;
 
-	k3TypeRaw16to8,
-	k3TypeShpData,
-
-	kLoLTypeRaw16,
-	kLoLTypeRaw32,
-	kLoLTypeButtonDef,
-	kLoLTypeCharData,
-	kLoLTypeSpellData,
-	kLoLTypeCompassData,
-	kLoLTypeFlightShpData,
-
-	kEoB2TypeSeqData,
-	kEoB2TypeShapeData,
-	kEoBTypeNpcData
+struct ResourceProvider {
+	kExtractID id;
+	kGame game;
+	Platform platform;
+	kSpecial special;
+	Language language;
+	const void *provider;
 };
 
-struct ExtractInformation {
-	int game;
-	int platform;
-	int lang;
-	int special;
-};
-
-struct ExtractType {
-	int type;
-	bool (*extract)(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
-};
-
-const ExtractType *findExtractType(const int type);
-byte getTypeID(int type);
+const ResourceProvider *obtainResourceProviders();
 
 #endif

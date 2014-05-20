@@ -107,7 +107,6 @@ struct SavegameHeader {
 	Graphics::Surface *thumbnail;
 	int saveYear, saveMonth, saveDay;
 	int saveHour, saveMinutes;
-	int totalFrames;
 };
 
 extern const char *savegameStr;
@@ -168,7 +167,6 @@ public:
 	int    _now;
 	int    _lev;
 	int    _mode;
-	int    _soundOk;
 	int    _gameCase2Cpt;
 	int    _offUseCount;
 	Dac   *_bitmapPalette;

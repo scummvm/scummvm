@@ -39,9 +39,9 @@
 namespace Pegasus {
 
 Item::Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) : IDObject(id) {
-	_itemNeighborhood = neighborhood;
-	_itemRoom = room;
-	_itemDirection = direction;
+	_originalNeighborhood = _itemNeighborhood = neighborhood;
+	_originalRoom = _itemRoom = room;
+	_originalDirection = _itemDirection = direction;
 	_itemWeight = 1;
 	_itemOwnerID = kNoActorID;
 	_itemState = 0;
@@ -129,6 +129,14 @@ Item::Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room
 Item::~Item() {
 	delete[] _sharedAreaInfo.entries;
 	delete[] _itemExtras.entries;
+}
+
+void Item::reset() {
+	_itemNeighborhood = _originalNeighborhood;
+	_itemRoom = _originalRoom;
+	_itemDirection = _originalDirection;
+	_itemOwnerID = kNoActorID;
+	_itemState = 0;
 }
 
 void Item::writeToStream(Common::WriteStream *stream) {

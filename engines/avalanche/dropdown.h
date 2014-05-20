@@ -27,17 +27,17 @@
 
 /* Original name: DROPDOWN		A customized version of Oopmenu (qv). */
 
-#ifndef AVALANCHE_MENU_H
-#define AVALANCHE_MENU_H
+#ifndef AVALANCHE_DROPDOWN_H
+#define AVALANCHE_DROPDOWN_H
 
 #include "common/str.h"
 
 namespace Avalanche {
 class AvalancheEngine;
 
-class Menu;
+class DropDownMenu;
 
-typedef void (Menu::*MenuFunc)();
+typedef void (DropDownMenu::*MenuFunc)();
 static const Color kMenuBackgroundColor = kColorLightgray;
 static const Color kMenuBorderColor = kColorBlack;
 
@@ -49,13 +49,13 @@ public:
 	int16 _xpos, _xright;
 	MenuFunc _setupFunc, _chooseFunc;
 
-	void init(char trig, char alTtrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, Menu *menu);
+	void init(char trig, char alTtrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, DropDownMenu *menu);
 	void draw();
 	void highlight();
 	bool parseAltTrigger(char key);
 
 private:
-	Menu *_menu;
+	DropDownMenu *_dropdown;
 };
 
 struct OptionType {
@@ -75,7 +75,7 @@ public:
 	byte _activeNum; // And if so, which is it?
 	byte _choiceNum; // Your choice?
 
-	void init(Menu *menu);
+	void init(DropDownMenu *menu);
 	void reset();
 	void setupOption(Common::String title, char trigger, Common::String shortcut, bool valid);
 	void display();
@@ -88,7 +88,7 @@ private:
 	byte _optionNum;
 	byte _highlightNum;
 
-	Menu *_menu;
+	DropDownMenu *_dropdown;
 
 	void displayOption(byte y, bool highlit);
 	void moveHighlight(int8 inc);
@@ -103,20 +103,20 @@ public:
 	byte _menuNum;
 
 	MenuBar();
-	void init(Menu *menu);
+	void init(DropDownMenu *menu);
 	void createMenuItem(char trig, Common::String title, char altTrig, MenuFunc setupFunc, MenuFunc chooseFunc);
 	void draw();
 	void chooseMenuItem(int16 x);
 
 private:
-	Menu *_menu;
+	DropDownMenu *_dropdown;
 
 	void setupMenuItem(byte which);
 	// CHECKME: Useless function
 	void parseAltTrigger(char c);
 };
 
-class Menu {
+class DropDownMenu {
 public:
 	friend class HeadType;
 	friend class MenuItem;
@@ -125,7 +125,7 @@ public:
 	MenuItem _activeMenuItem;
 	MenuBar _menuBar;
 
-	Menu(AvalancheEngine *vm);
+	DropDownMenu(AvalancheEngine *vm);
 
 	void update();
 	void setup(); // Standard menu bar.
@@ -179,4 +179,4 @@ private:
 
 } // End of namespace Avalanche.
 
-#endif // AVALANCHE_MENU_H
+#endif // AVALANCHE_DROPDOWN_H

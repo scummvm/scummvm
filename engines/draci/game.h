@@ -215,6 +215,7 @@ public:
 	void walkHero(int x, int y, SightDirection dir);	// start walking and leave callback as is
 	void setHeroPosition(const Common::Point &p);
 	const Common::Point &getHeroPosition() const { return _hero; }
+	const Common::Point &getHeroLoadingPosition() const { return _heroLoading; }
 	void positionAnimAsHero(Animation *anim);
 	void positionHeroAsAnim(Animation *anim);
 
@@ -290,6 +291,8 @@ public:
 	void setExitLoop(bool exit) { _shouldExitLoop = exit; }
 	bool isReloaded() const { return _isReloaded; }
 	void setIsReloaded(bool value) { _isReloaded = value; }
+	bool isPositionLoaded() { return _isPositionLoaded; }
+	void setPositionLoaded(bool value) { _isPositionLoaded = value; }
 
 	void setSpeechTiming(uint tick, uint duration);
 	void shiftSpeechAndFadeTick(int delta);
@@ -327,7 +330,7 @@ public:
 	void setEnableSpeedText(bool value) { _enableSpeedText = value; }
 	bool getEnableSpeedText() const { return _enableSpeedText; }
 
-	void DoSync(Common::Serializer &s);
+	void DoSync(Common::Serializer &s, uint8 saveVersion);
 
 private:
 	void updateOrdinaryCursor();
@@ -352,6 +355,8 @@ private:
 	GameInfo _info;
 
 	Common::Point _hero;
+	Common::Point _heroLoading;
+	Common::Point _lastTarget;
 
 	int *_variables;
 	Person *_persons;
@@ -395,6 +400,7 @@ private:
 	bool _shouldQuit;
 	bool _shouldExitLoop;
 	bool _isReloaded;
+	bool _isPositionLoaded;
 
 	uint _speechTick;
 	uint _speechDuration;
@@ -408,6 +414,7 @@ private:
 	int _fadePhases;
 	int _fadePhase;
 	uint _fadeTick;
+	bool _isFadeOut;
 	int _mouseChangeTick;
 
 	bool _enableQuickHero;

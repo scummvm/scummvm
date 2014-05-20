@@ -439,8 +439,8 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 }
 
 void WalkingState::setCallback(const GPL2Program *program, uint16 offset) {
-	_callback = program;
-	_callbackOffset = offset;
+	_callback = _callbackLast = program;
+	_callbackOffset = _callbackOffsetLast = offset;
 }
 
 void WalkingState::callback() {
@@ -452,6 +452,12 @@ void WalkingState::callback() {
 	const GPL2Program &originalCallback = *_callback;
 	_callback = NULL;
 	_vm->_script->runWrapper(originalCallback, _callbackOffset, true, false);
+	_callbackLast = NULL;
+	_callbackOffset = 0;
+}
+
+void WalkingState::callbackLast() {
+	setCallback(_callbackLast, _callbackOffsetLast);
 }
 
 bool WalkingState::continueWalkingOrClearPath() {

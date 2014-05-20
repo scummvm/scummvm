@@ -50,10 +50,10 @@ RL2Decoder::~RL2Decoder() {
 bool RL2Decoder::loadVideo(int videoId) {
 	Common::String filename = Common::String::format("%s.rl2", 
 		::Voyeur::SZ_FILENAMES[videoId * 2]);
-	return loadFile(filename);
+	return loadRL2File(filename, false);
 }
 
-bool RL2Decoder::loadFile(const Common::String &file, bool palFlag) {
+bool RL2Decoder::loadRL2File(const Common::String &file, bool palFlag) {
 	bool result = VideoDecoder::loadFile(file);
 	_paletteStart = palFlag ? 0 : 128;
 	return result;
@@ -100,7 +100,7 @@ const Common::List<Common::Rect> *RL2Decoder::getDirtyRects() const {
 	if (_videoTrack)
 		return _videoTrack->getDirtyRects();
 
-	return 0;
+	return nullptr;
 }
 
 void RL2Decoder::clearDirtyRects() {
@@ -115,7 +115,7 @@ void RL2Decoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 
 void RL2Decoder::readNextPacket() {
 	int frameNumber = getCurFrame();
-	RL2AudioTrack *audioTrack = getAudioTrack();
+	RL2AudioTrack *audioTrack = getRL2AudioTrack();
 
 	// Handle queueing sound data
 	if (_soundFrameNumber == -1)
@@ -224,8 +224,7 @@ Common::Rational RL2Decoder::RL2FileHeader::getFrameRate() const {
 /*------------------------------------------------------------------------*/
 
 RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack, 
-		Common::SeekableReadStream *stream): 
-		_header(header), _audioTrack(audioTrack), _fileStream(stream) {
+		Common::SeekableReadStream *stream): _header(header), _fileStream(stream) {
 
 	_frameOffsets = nullptr;
 
@@ -465,7 +464,7 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 	int paletteStart = getPaletteStart();
 	int paletteCount = getPaletteCount();
 
-	PictureResource videoFrame(getVideoTrack()->getBackSurface());
+	PictureResource videoFrame(getRL2VideoTrack()->getBackSurface());
 	int picCtr = 0;
 	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager->_mouseClicked) {
 		if (hasDirtyPalette()) {

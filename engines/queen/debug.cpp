@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/util.h"
 
 #include "queen/debug.h"
 
@@ -57,8 +58,17 @@ void Debugger::postEnter() {
 	_vm->graphics()->setupMouseCursor();
 }
 
+static bool isNumeric(const char *arg) {
+	const char *str = arg;
+	bool retVal = true;
+	while (retVal && (*str != '\0')) {
+		retVal = Common::isDigit(*str++);
+	}
+	return retVal;
+}
+
 bool Debugger::Cmd_Asm(int argc, const char **argv) {
-	if (argc == 2) {
+	if (argc == 2 && isNumeric(argv[1])) {
 		uint16 sm = atoi(argv[1]);
 		_vm->logic()->executeSpecialMove(sm);
 		return false;
@@ -75,12 +85,17 @@ bool Debugger::Cmd_Areas(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Bob(int argc, const char **argv) {
-	if (argc >= 3) {
+	if (argc >= 3 && isNumeric(argv[1])) {
 		int bobNum = atoi(argv[1]);
 		if (bobNum >= Graphics::MAX_BOBS_NUMBER) {
 			DebugPrintf("Bob %d is out of range (range: 0 - %d)\n", bobNum, Graphics::MAX_BOBS_NUMBER);
 		} else {
-			int param = (argc > 3) ? atoi(argv[3]) : 0;
+			int param = 0;
+			if (argc > 3 && isNumeric(argv[3])) {
+				param = atoi(argv[3]);
+			} else {
+				DebugPrintf("Invalid parameter for bob command '%s'\n", argv[2]);
+			}
 			BobSlot *bob = _vm->graphics()->bob(bobNum);
 			if (!strcmp(argv[2], "toggle")) {
 				bob->active = !bob->active;
@@ -109,22 +124,21 @@ bool Debugger::Cmd_Bob(int argc, const char **argv) {
 
 bool Debugger::Cmd_GameState(int argc, const char **argv) {
 	uint16 slot;
-	switch (argc) {
-	case 2:
+	if ((argc == 2 || argc == 3) && isNumeric(argv[1])) {
 		slot = atoi(argv[1]);
 		DebugPrintf("GAMESTATE[%d] ", slot);
-		DebugPrintf("is %d\n", _vm->logic()->gameState(slot));
-		break;
-	case 3:
-		slot = atoi(argv[1]);
-		DebugPrintf("GAMESTATE[%d] ", slot);
-		DebugPrintf("was %d ", _vm->logic()->gameState(slot));
-		_vm->logic()->gameState(slot, atoi(argv[2]));
-		DebugPrintf("now %d\n", _vm->logic()->gameState(slot));
-		break;
-	default:
-		DebugPrintf("Usage: %s slotnum value\n", argv[0]);
-		break;
+		DebugPrintf("%s %d\n", (argc == 2) ? "is" : "was", _vm->logic()->gameState(slot));
+
+		if (argc == 3) {
+			if (isNumeric(argv[1])) {
+				_vm->logic()->gameState(slot, atoi(argv[2]));
+				DebugPrintf("now %d\n", _vm->logic()->gameState(slot));
+			} else {
+				DebugPrintf("Usage: %s slotnum <value>\n", argv[0]);
+			}
+		}
+	} else {
+		DebugPrintf("Usage: %s slotnum <value>\n", argv[0]);
 	}
 	return true;
 }
@@ -164,7 +178,7 @@ bool Debugger::Cmd_PrintBobs(int argc, const char**argv) {
 }
 
 bool Debugger::Cmd_Room(int argc, const char **argv) {
-	if (argc == 2) {
+	if (argc == 2 && isNumeric(argv[1])) {
 		uint16 roomNum = atoi(argv[1]);
 		_vm->logic()->joePos(0, 0);
 		_vm->logic()->newRoom(roomNum);
@@ -180,7 +194,7 @@ bool Debugger::Cmd_Room(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Song(int argc, const char **argv) {
-	if (argc == 2) {
+	if (argc == 2 && isNumeric(argv[1])) {
 		int16 songNum = atoi(argv[1]);
 		_vm->sound()->playSong(songNum);
 		DebugPrintf("Playing song %d\n", songNum);

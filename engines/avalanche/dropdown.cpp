@@ -28,42 +28,42 @@
 /* Original name: DROPDOWN		A customized version of Oopmenu (qv). */
 
 #include "avalanche/avalanche.h"
-#include "avalanche/menu.h"
+#include "avalanche/dropdown.h"
 
 namespace Avalanche {
 
-void HeadType::init(char trig, char altTrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, Menu *menu) {
+void HeadType::init(char trig, char altTrig, Common::String title, byte pos, MenuFunc setupFunc, MenuFunc chooseFunc, DropDownMenu *menu) {
 	_trigger = trig;
 	_altTrigger = altTrig;
 	_title = title;
 	_position = pos;
-	_xpos = _position * _menu->kSpacing + _menu->kIndent;
-	_xright = (_position + 1) * _menu->kSpacing + _menu->kIndent;
+	_xpos = _position * _dropdown->kSpacing + _dropdown->kIndent;
+	_xright = (_position + 1) * _dropdown->kSpacing + _dropdown->kIndent;
 	_setupFunc = setupFunc;
 	_chooseFunc = chooseFunc;
 
-	_menu = menu;
+	_dropdown = menu;
 }
 
 void HeadType::draw() {
 	CursorMan.showMouse(false);
-	_menu->drawMenuText(_xpos, 1, _trigger, _title, true, false);
+	_dropdown->drawMenuText(_xpos, 1, _trigger, _title, true, false);
 	CursorMan.showMouse(true);
 }
 
 void HeadType::highlight() {
 	CursorMan.showMouse(false);
 
-	_menu->_vm->_sound->stopSound();
-	_menu->drawMenuText(_xpos, 1, _trigger, _title, true, true);
+	_dropdown->_vm->_sound->stopSound();
+	_dropdown->drawMenuText(_xpos, 1, _trigger, _title, true, true);
 
-	_menu->_activeMenuItem._left = _xpos;
-	_menu->_activeMenuItem._activeNow = true;
-	_menu->_activeMenuItem._activeNum = _position;
-	_menu->_menuActive = true;
+	_dropdown->_activeMenuItem._left = _xpos;
+	_dropdown->_activeMenuItem._activeNow = true;
+	_dropdown->_activeMenuItem._activeNum = _position;
+	_dropdown->_menuActive = true;
 
 	// Force reload and redraw of cursor.
-	_menu->_vm->_currentMouse = 177;
+	_dropdown->_vm->_currentMouse = 177;
 
 }
 
@@ -73,12 +73,12 @@ bool HeadType::parseAltTrigger(char key) {
 	return false;
 }
 
-void MenuItem::init(Menu *menu) {
-	_menu = menu;
+void MenuItem::init(DropDownMenu *menu) {
+	_dropdown = menu;
 
 	_activeNow = false;
 	_activeNum = 1;
-	_menu->_menuActive = false;
+	_dropdown->_menuActive = false;
 }
 
 void MenuItem::reset() {
@@ -113,8 +113,8 @@ void MenuItem::displayOption(byte y, bool highlit) {
 	else
 		backgroundColor = kColorLightgray;
 
-	_menu->_vm->_graphics->drawMenuBlock((_flx1 + 1) * 8, 3 + (y + 1) * 10, (_flx2 + 1) * 8, 13 + (y + 1) * 10, backgroundColor);
-	_menu->drawMenuText(_left, 4 + (y + 1) * 10, _options[y]._trigger, text, _options[y]._valid, highlit);
+	_dropdown->_vm->_graphics->drawMenuBlock((_flx1 + 1) * 8, 3 + (y + 1) * 10, (_flx2 + 1) * 8, 13 + (y + 1) * 10, backgroundColor);
+	_dropdown->drawMenuText(_left, 4 + (y + 1) * 10, _options[y]._trigger, text, _options[y]._valid, highlit);
 }
 
 void MenuItem::display() {
@@ -125,15 +125,15 @@ void MenuItem::display() {
 	_flx2 = _left + _width;
 	_fly = 15 + _optionNum * 10;
 	_activeNow = true;
-	_menu->_menuActive = true;
+	_dropdown->_menuActive = true;
 
-	_menu->_vm->_graphics->drawMenuItem((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly);
+	_dropdown->_vm->_graphics->drawMenuItem((_flx1 + 1) * 8, 12, (_flx2 + 1) * 8, _fly);
 
 	displayOption(0, true);
 	for (int y = 1; y < _optionNum; y++)
 		displayOption(y, false);
 
-	_menu->_vm->_currentMouse = 177;
+	_dropdown->_vm->_currentMouse = 177;
 
 	CursorMan.showMouse(true); // 4 = fletch
 }
@@ -141,12 +141,12 @@ void MenuItem::display() {
 void MenuItem::wipe() {
 	CursorMan.showMouse(false);
 
-	_menu->drawMenuText(_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._xpos, 1,
-		_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._trigger,
-		_menu->_menuBar._menuItems[_menu->_activeMenuItem._activeNum]._title, true, false);
+	_dropdown->drawMenuText(_dropdown->_menuBar._menuItems[_dropdown->_activeMenuItem._activeNum]._xpos, 1,
+		_dropdown->_menuBar._menuItems[_dropdown->_activeMenuItem._activeNum]._trigger,
+		_dropdown->_menuBar._menuItems[_dropdown->_activeMenuItem._activeNum]._title, true, false);
 
 	_activeNow = false;
-	_menu->_menuActive = false;
+	_dropdown->_menuActive = false;
 	_firstlix = false;
 
 	CursorMan.showMouse(true);
@@ -191,7 +191,7 @@ void MenuItem::select(byte which) {
 	if (_choiceNum > _optionNum)
 		_choiceNum = 0; // Off the top, I suppose.
 
-	(_menu->*_menu->_menuBar._menuItems[_activeNum]._chooseFunc)();
+	(_dropdown->*_dropdown->_menuBar._menuItems[_activeNum]._chooseFunc)();
 }
 
 void MenuItem::parseKey(char c) {
@@ -204,34 +204,34 @@ void MenuItem::parseKey(char c) {
 		}
 	}
 	if (!found)
-		_menu->_vm->_sound->blip();
+		_dropdown->_vm->_sound->blip();
 }
 
 MenuBar::MenuBar() {
 	_menuNum = 0;
-	_menu = nullptr;
+	_dropdown = nullptr;
 }
 
-void MenuBar::init(Menu *menu) {
-	_menu = menu;
+void MenuBar::init(DropDownMenu *menu) {
+	_dropdown = menu;
 	_menuNum = 0;
 }
 
 void MenuBar::createMenuItem(char trig, Common::String title, char altTrig, MenuFunc setupFunc, MenuFunc chooseFunc) {
-	_menuItems[_menuNum].init(trig, altTrig, title, _menuNum, setupFunc, chooseFunc, _menu);
+	_menuItems[_menuNum].init(trig, altTrig, title, _menuNum, setupFunc, chooseFunc, _dropdown);
 	_menuNum++;
 }
 
 void MenuBar::draw() {
-	_menu->_vm->_graphics->drawMenuBar(kMenuBackgroundColor);
+	_dropdown->_vm->_graphics->drawMenuBar(kMenuBackgroundColor);
 
-	byte savecp = _menu->_vm->_cp;
-	_menu->_vm->_cp = 3;
+	byte savecp = _dropdown->_vm->_cp;
+	_dropdown->_vm->_cp = 3;
 
 	for (int i = 0; i < _menuNum; i++)
 		_menuItems[i].draw();
 
-	_menu->_vm->_cp = savecp;
+	_dropdown->_vm->_cp = savecp;
 }
 
 void MenuBar::parseAltTrigger(char c) {
@@ -244,13 +244,13 @@ void MenuBar::parseAltTrigger(char c) {
 }
 
 void MenuBar::setupMenuItem(byte which) {
-	if (_menu->_activeMenuItem._activeNow) {
-		_menu->_activeMenuItem.wipe(); // Get rid of menu.
-		if (_menu->_activeMenuItem._activeNum == _menuItems[which]._position)
+	if (_dropdown->_activeMenuItem._activeNow) {
+		_dropdown->_activeMenuItem.wipe(); // Get rid of menu.
+		if (_dropdown->_activeMenuItem._activeNum == _menuItems[which]._position)
 			return; // Clicked on own highlight.
 	}
 	_menuItems[which].highlight();
-	(_menu->*_menuItems[which]._setupFunc)();
+	(_dropdown->*_menuItems[which]._setupFunc)();
 }
 
 void MenuBar::chooseMenuItem(int16 x) {
@@ -262,7 +262,7 @@ void MenuBar::chooseMenuItem(int16 x) {
 	}
 }
 
-Menu::Menu(AvalancheEngine *vm) {
+DropDownMenu::DropDownMenu(AvalancheEngine *vm) {
 	_vm = vm;
 	_activeMenuItem.init(this);
 	_menuBar.init(this);
@@ -271,7 +271,7 @@ Menu::Menu(AvalancheEngine *vm) {
 	_lastPerson = kPeopleNone;
 }
 
-void Menu::findWhatYouCanDoWithIt() {
+void DropDownMenu::findWhatYouCanDoWithIt() {
 	switch (_vm->_thinks) {
 	case kObjectWine:
 	case kObjectPotion:
@@ -299,7 +299,7 @@ void Menu::findWhatYouCanDoWithIt() {
 	}
 }
 
-void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, bool valid, bool highlighted) {
+void DropDownMenu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, bool valid, bool highlighted) {
 	Color fontColor;
 	Color backgroundColor;
 	if (highlighted) {
@@ -342,11 +342,11 @@ void Menu::drawMenuText(int16 x, int16 y, char trigger, Common::String text, boo
 	_vm->_graphics->refreshScreen();
 }
 
-void Menu::bleep() {
+void DropDownMenu::bleep() {
 	_vm->_sound->playNote(177, 7);
 }
 
-void Menu::parseKey(char r, char re) {
+void DropDownMenu::parseKey(char r, char re) {
 #if 0
 	switch (r) {
 	case 0:
@@ -395,24 +395,24 @@ void Menu::parseKey(char r, char re) {
 	warning("STUB: Dropdown::parseKey()"); // To be implemented properly later! Don't remove the comment above!
 }
 
-Common::String Menu::selectGender(byte x) {
+Common::String DropDownMenu::selectGender(byte x) {
 	if (x < 175)
 		return "im";
 	else
 		return "er";
 }
 
-void Menu::setupMenuGame() {
+void DropDownMenu::setupMenuGame() {
 	_activeMenuItem.reset();
 	_activeMenuItem.setupOption("Help...", 'H', "f1", true);
-	_activeMenuItem.setupOption("Boss Key", 'B', "alt-B", false);
-	_activeMenuItem.setupOption("Untrash screen", 'U', "ctrl-f7", true);
+	_activeMenuItem.setupOption("Boss Key", 'B', "alt-B", true);
+	_activeMenuItem.setupOption("Untrash screen", 'U', "ctrl-f7", false);
 	_activeMenuItem.setupOption("Score and rank", 'S', "f9", true);
 	_activeMenuItem.setupOption("About Avvy...", 'A', "shift-f10", true);
 	_activeMenuItem.display();
 }
 
-void Menu::setupMenuFile() {
+void DropDownMenu::setupMenuFile() {
 	_activeMenuItem.reset();
 	_activeMenuItem.setupOption("New game", 'N', "f4", true);
 	_activeMenuItem.setupOption("Load...", 'L', "^f3", true);
@@ -423,7 +423,7 @@ void Menu::setupMenuFile() {
 	_activeMenuItem.display();
 }
 
-void Menu::setupMenuAction() {
+void DropDownMenu::setupMenuAction() {
 	_activeMenuItem.reset();
 
 	Common::String f5Does = _vm->f5Does();
@@ -449,7 +449,7 @@ void Menu::setupMenuAction() {
 	_activeMenuItem.display();
 }
 
-void Menu::setupMenuPeople() {
+void DropDownMenu::setupMenuPeople() {
 	if (!people.empty())
 		people.clear();
 
@@ -465,7 +465,7 @@ void Menu::setupMenuPeople() {
 	_activeMenuItem.display();
 }
 
-void Menu::setupMenuObjects() {
+void DropDownMenu::setupMenuObjects() {
 	_activeMenuItem.reset();
 	for (int i = 0; i < kObjectNum; i++) {
 		if (_vm->_objects[i])
@@ -474,7 +474,7 @@ void Menu::setupMenuObjects() {
 	_activeMenuItem.display();
 }
 
-void Menu::setupMenuWith() {
+void DropDownMenu::setupMenuWith() {
 	_activeMenuItem.reset();
 
 	if (_vm->_thinkThing) {
@@ -531,7 +531,7 @@ void Menu::setupMenuWith() {
 	_activeMenuItem.display();
 }
 
-void Menu::runMenuGame() {
+void DropDownMenu::runMenuGame() {
 	// Help, boss, untrash screen.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
@@ -541,7 +541,7 @@ void Menu::runMenuGame() {
 		_vm->callVerb(kVerbCodeBoss);
 		break;
 	case 2:
-		_vm->majorRedraw();
+		_vm->_graphics->refreshScreen();
 		break;
 	case 3:
 		_vm->callVerb(kVerbCodeScore);
@@ -552,7 +552,7 @@ void Menu::runMenuGame() {
 	}
 }
 
-void Menu::runMenuFile() {
+void DropDownMenu::runMenuFile() {
 	// New game, load, save, save as, DOS shell, about, quit.
 	switch (_activeMenuItem._choiceNum) {
 	case 0:
@@ -579,7 +579,7 @@ void Menu::runMenuFile() {
 	}
 }
 
-void Menu::runMenuAction() {
+void DropDownMenu::runMenuAction() {
 	// Get up, pause game, open door, look, inventory, walk/run.
 	switch (_activeMenuItem._choiceNum) {
 	case 0: {
@@ -616,16 +616,16 @@ void Menu::runMenuAction() {
 	}
 }
 
-void Menu::runMenuObjects() {
+void DropDownMenu::runMenuObjects() {
 	_vm->thinkAbout(_vm->_objectList[_activeMenuItem._choiceNum], AvalancheEngine::kThing);
 }
 
-void Menu::runMenuPeople() {
+void DropDownMenu::runMenuPeople() {
 	_vm->thinkAbout(people[_activeMenuItem._choiceNum], AvalancheEngine::kPerson);
 	_lastPerson = (People)people[_activeMenuItem._choiceNum];
 }
 
-void Menu::runMenuWith() {
+void DropDownMenu::runMenuWith() {
 	_vm->_parser->_thing = _vm->_thinks;
 
 	if (_vm->_thinkThing) {
@@ -664,21 +664,21 @@ void Menu::runMenuWith() {
 	_vm->callVerb((VerbCode)(byte)_verbStr[_activeMenuItem._choiceNum]);
 }
 
-void Menu::setup() {
+void DropDownMenu::setup() {
 	_menuBar.init(this);
 	_activeMenuItem.init(this);
 
-	_menuBar.createMenuItem('F', "File", '!', &Avalanche::Menu::setupMenuFile, &Avalanche::Menu::runMenuFile);
-	_menuBar.createMenuItem('G', "Game", 34, &Avalanche::Menu::setupMenuGame, &Avalanche::Menu::runMenuGame);
-	_menuBar.createMenuItem('A', "Action", 30, &Avalanche::Menu::setupMenuAction, &Avalanche::Menu::runMenuAction);
-	_menuBar.createMenuItem('O', "Objects", 24, &Avalanche::Menu::setupMenuObjects, &Avalanche::Menu::runMenuObjects);
-	_menuBar.createMenuItem('P', "People", 25, &Avalanche::Menu::setupMenuPeople, &Avalanche::Menu::runMenuPeople);
-	_menuBar.createMenuItem('W', "With", 17, &Avalanche::Menu::setupMenuWith, &Avalanche::Menu::runMenuWith);
+	_menuBar.createMenuItem('F', "File", '!', &Avalanche::DropDownMenu::setupMenuFile, &Avalanche::DropDownMenu::runMenuFile);
+	_menuBar.createMenuItem('G', "Game", 34, &Avalanche::DropDownMenu::setupMenuGame, &Avalanche::DropDownMenu::runMenuGame);
+	_menuBar.createMenuItem('A', "Action", 30, &Avalanche::DropDownMenu::setupMenuAction, &Avalanche::DropDownMenu::runMenuAction);
+	_menuBar.createMenuItem('O', "Objects", 24, &Avalanche::DropDownMenu::setupMenuObjects, &Avalanche::DropDownMenu::runMenuObjects);
+	_menuBar.createMenuItem('P', "People", 25, &Avalanche::DropDownMenu::setupMenuPeople, &Avalanche::DropDownMenu::runMenuPeople);
+	_menuBar.createMenuItem('W', "With", 17, &Avalanche::DropDownMenu::setupMenuWith, &Avalanche::DropDownMenu::runMenuWith);
 
 	_menuBar.draw();
 }
 
-void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
+void DropDownMenu::update() {
 	_vm->_graphics->saveScreen();
 
 	Common::Point cursorPos = _vm->getMousePos();
@@ -769,7 +769,7 @@ void Menu::update() { // TODO: Optimize it ASAP!!! It really needs it...
 	_vm->_graphics->removeBackup();
 }
 
-char Menu::getThingChar(byte which) {
+char DropDownMenu::getThingChar(byte which) {
 	static const char thingsChar[] = "WMBParCLguKeSnIohn"; // V=Vinegar
 
 	char result;
@@ -786,7 +786,7 @@ char Menu::getThingChar(byte which) {
 	return result;
 }
 
-byte Menu::getNameChar(People whose) {
+byte DropDownMenu::getNameChar(People whose) {
 	static const char ladChar[] = "ASCDMTRwLfgeIyPu";
 	static const char lassChar[] = "kG\0xB1o";
 
@@ -798,7 +798,7 @@ byte Menu::getNameChar(People whose) {
 		error("getName() - Unexpected character id %d", (byte) whose);
 }
 
-Common::String Menu::getThing(byte which) {
+Common::String DropDownMenu::getThing(byte which) {
 	static const char things[kObjectNum][20] = {
 		"Wine", "Money-bag", "Bodkin", "Potion", "Chastity belt",
 		"Crossbow bolt", "Crossbow", "Lute", "Pilgrim's badge", "Mushroom", "Key",
@@ -830,15 +830,15 @@ Common::String Menu::getThing(byte which) {
 	return result;
 }
 
-bool Menu::isActive() {
+bool DropDownMenu::isActive() {
 	return _menuActive;
 }
 
-void Menu::init() {
+void DropDownMenu::init() {
 	_menuActive = false;
 }
 
-void Menu::resetVariables() {
+void DropDownMenu::resetVariables() {
 	_lastPerson = kPeoplePardon;
 }
 } // End of namespace Avalanche.

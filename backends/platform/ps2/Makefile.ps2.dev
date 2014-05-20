@@ -1,0 +1,170 @@
+# SCUMMVM-PS2 MakeFile
+
+
+# Use only this section to modify how the makefile behaves ------------
+
+# Scummvm engine config: choose which engines are enabled
+ENABLE_SCUMM = $(ENABLED)
+ENABLE_SCUMM_7_8 = 1
+# ENABLE_HE = 1
+ENABLE_SCI = $(ENABLED)
+# ENABLE_SCI32 = $(ENABLED)
+# ENABLE_SKY = $(ENABLED)
+# ENABLE_SWORD1 = $(ENABLED)
+# ENABLE_SWORD2 = $(ENABLED)
+
+# Set to 1 to enable seeing the commands to gcc
+VERBOSE_BUILD = 1
+# Set to 1 to enable, 0 to disable dynamic modules
+DYNAMIC_MODULES = 0
+# Set to 1 to enable debugging
+ENABLE_DEBUG = 0
+# Set to 1 to enable profiling
+ENABLE_PROFILING = 1
+# Set to 1 to disable HDD+NET
+DISABLE_NETWORK = 0
+# Set to 1 to enable, 0 to disable libmad and libogg
+USE_LIBMAD = 1
+USE_LIBOGG = 1
+
+# ---------------------------------------------------------------------
+
+
+# General variables
+srcdir = ../../..
+VPATH = $(srcdir)
+TARGET = scummvm.elf
+# PS2 SDK location variables
+# PS2SDK = /works/tools/devel/ps2/sdk
+
+# Check PS2SDK presence
+ifeq ($(PS2SDK),)
+$(error $$(PS2SDK) needs to be set.)
+endif
+
+# Variables for common Scummvm makefile
+CC     = ee-gcc
+CXX    = ee-g++
+FLAGS  = -pedantic -Wall -W
+FLAGS += -Wcast-qual -Wconversion -Wpointer-arith -Wshadow -Wwrite-strings
+FLAGS += -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-unused-parameter
+CFLAGS = $(FLAGS) -std=c99
+CXXFLAGS = $(FLAGS) -Wnon-virtual-dtor -Wno-reorder -fno-exceptions -fno-rtti
+
+DEFINES  = -D_EE -D__PLAYSTATION2__ -D__NEW_PS2SDK__ -DUSE_ZLIB -DFORCE_RTL -DDATA_PATH=\"host:data\"
+DEFINES += -DDISABLE_SAVEGAME_SORTING -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU
+# DEFINES += -DLOGORRHEIC
+
+INCDIR   := $(PS2SDK)/ee/include $(PS2SDK)/common/include $(PS2SDK)/ports/include . $(srcdir) $(srcdir)/engines
+INCLUDES := $(addprefix -I, $(INCDIR))
+DEPDIR = .deps
+MODULE_DIRS += ./
+MKDIR	= mkdir -p
+RM	= rm -f
+RM_REC	= rm -rf
+AR      = ee-ar cru
+RANLIB  = ee-ranlib
+STRIP   = ee-strip
+AS      = ee-gcc
+LD      = ee-gcc
+HAVE_GCC3 = true
+CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP
+
+# Variables for dynamic plugin building
+PLUGIN_PREFIX =
+PLUGIN_SUFFIX = .plg
+PLUGIN_EXTRA_DEPS = $(TARGET)
+PLUGIN_LDFLAGS  = -nostartfiles $(srcdir)/backends/plugins/elf/version.o -Wl,-q,--just-symbols,$(TARGET),--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms
+PLUGIN_LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
+
+# Test for adding different libs
+ifeq ($(USE_LIBMAD),1)
+DEFINES += -DUSE_MAD
+LIBS	+= -lmad
+endif
+ifeq ($(USE_LIBOGG), 1)
+DEFINES += -DUSE_VORBIS -DUSE_TREMOR
+LIBS	+= -ltremor
+endif
+
+# Test for dynamic plugins
+ifeq ($(DYNAMIC_MODULES),1)
+ENABLED = DYNAMIC_PLUGIN
+DEFINES += -DDYNAMIC_MODULES -DUSE_ELF_LOADER -DMIPS_TARGET -DUNCACHED_PLUGINS -DPLUGIN_DIRECTORY=\"host:plugins\"
+PRE_OBJS_FLAGS = -Wl,--whole-archive
+POST_OBJS_FLAGS = -Wl,--no-whole-archive
+else
+ENABLED = STATIC_PLUGIN
+endif
+
+# Test for debug
+ifeq ($(ENABLE_DEBUG),1)
+DEFINES += -D__PS2_DEBUG__
+FLAGS += -G2 -g
+LIBS += -lps2gdbStub -lps2ip -ldebug
+else
+DEFINES += -DRELEASE_BUILD
+FLAGS += -G2 -O2 -s -Wuninitialized
+# LDFLAGS += -s
+endif
+
+# Test for profiling
+ifeq ($(ENABLE_PROFILING),1)
+DEFINES += -DENABLE_PROFILING
+FLAGS += -G2 -pg -g
+LDFLAGS += -pg
+endif
+
+# Test for net support
+ifeq ($(DISABLE_NETWORK),1)
+DEFINES += -DNO_ADAPTOR
+endif
+
+# PS2 LIBS
+PS2LIBS = -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lz -lm -lc -lfileXio -lkernel -lstdc++
+
+# Add in PS2SDK includes and libraries.
+LIBS += $(PS2LIBS)
+
+OBJS := $(srcdir)/backends/platform/ps2/DmaPipe.o \
+        $(srcdir)/backends/platform/ps2/Gs2dScreen.o \
+        $(srcdir)/backends/platform/ps2/irxboot.o \
+        $(srcdir)/backends/platform/ps2/ps2input.o \
+        $(srcdir)/backends/platform/ps2/ps2pad.o \
+        $(srcdir)/backends/platform/ps2/savefilemgr.o \
+        $(srcdir)/backends/platform/ps2/fileio.o \
+        $(srcdir)/backends/platform/ps2/asyncfio.o \
+        $(srcdir)/backends/platform/ps2/icon.o \
+        $(srcdir)/backends/platform/ps2/cd.o \
+        $(srcdir)/backends/platform/ps2/eecodyvdfs.o \
+        $(srcdir)/backends/platform/ps2/rpckbd.o \
+        $(srcdir)/backends/platform/ps2/systemps2.o \
+        $(srcdir)/backends/platform/ps2/ps2mutex.o \
+        $(srcdir)/backends/platform/ps2/ps2time.o \
+        $(srcdir)/backends/platform/ps2/ps2debug.o
+
+ifeq ($(DYNAMIC_MODULES),1)
+OBJS += $(srcdir)/backends/plugins/elf/elf-loader.o \
+        $(srcdir)/backends/plugins/elf/elf-provider.o \
+        $(srcdir)/backends/plugins/elf/shorts-segment-manager.o \
+        $(srcdir)/backends/plugins/elf/memory-manager.o \
+        $(srcdir)/backends/plugins/elf/mips-loader.o \
+        $(srcdir)/backends/plugins/elf/version.o
+endif
+
+BACKEND := ps2
+
+# Include common Scummvm makefile
+include $(srcdir)/Makefile.common
+
+LDFLAGS += -L$(PS2SDK)/ee/lib -L$(PS2SDK)/ports/lib
+ifeq ($(DYNAMIC_MODULES),1)
+LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
+else
+LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T $(PS2SDK)/ee/startup/linkfile
+endif
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(LD) $(PRE_OBJS_FLAGS) $(OBJS) $(POST_OBJS_FLAGS) $(LDFLAGS) $(LIBS) -o $@

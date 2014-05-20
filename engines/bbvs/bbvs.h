@@ -199,6 +199,7 @@ struct WalkArea {
 	bool contains(const Common::Point &pt) const;
 };
 
+const int kSnapshotSize = 23072;
 const int kSceneObjectsCount = 64;
 const int kSceneSoundsCount = 8;
 const int kInventoryItemStatusCount = 50;
@@ -209,6 +210,7 @@ const int kSceneVisitedCount = 64;
 const int kMainMenu = 44;
 const int kCredits  = 45;
 
+const int kMaxDistance = 0xFFFFFF;
 static const int8 kWalkTurnTbl[] = {
 	7, 9, 4, 8, 6, 10, 5, 11
 };
@@ -303,7 +305,6 @@ public:
 	bool _walkReachedDestArea;
 	
 	bool _hasSnapshot;
-	uint32 _snapshotSize;
 	byte *_snapshot;
 	Common::SeekableMemoryWriteStream *_snapshotStream;
 	

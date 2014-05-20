@@ -71,12 +71,12 @@ public:
 };
 
 class SaveLoad_br : public SaveLoad {
-	Parallaction_br *_vm;
+//	Parallaction_br *_vm;
 	virtual void doLoadGame(uint16 slot);
 	virtual void doSaveGame(uint16 slot, const char* name);
 
 public:
-	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra"), _vm(vm) { }
+	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra") { }
 
 	virtual void getGamePartProgress(bool *complete, int size);
 	virtual void setPartComplete(const char *part);

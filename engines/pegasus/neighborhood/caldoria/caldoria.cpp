@@ -196,6 +196,8 @@ void Caldoria::start() {
 		if (!pullbackMovie->loadFile("Images/Caldoria/Pullback.movie"))
 			error("Could not load pullback movie");
 
+		pullbackMovie->setVolume(MIN<uint>(_vm->getSoundFXLevel(), 0xFF));
+
 		// Draw the first frame so we can fade to it
 		const Graphics::Surface *frame = pullbackMovie->decodeNextFrame();
 		assert(frame);
@@ -907,7 +909,7 @@ void Caldoria::arriveAtCaldoria49() {
 		setCurrentAlternate(kAltCaldoriaNormal);
 
 	// Need to force the loop to play.
-	if (GameState.getCurrentDirection() == kNorth) {
+	if (GameState.getCurrentDirection() == kNorth && !GameState.getCaldoriaSinclairShot()) {
 		GameState.setCaldoriaFuseTimeLimit(kSinclairShootsTimeLimit);
 		startExtraSequence(kCa49NorthVoiceAnalysis, kExtraCompletedFlag, kFilterNoInput);
 	}
@@ -1916,10 +1918,13 @@ uint Caldoria::getNumHints() {
 					numHints = 1;
 			}
 			break;
+#if 0
+		// The hint file is missing
 		case MakeRoomView(kCaldoria49, kEast):
 		case MakeRoomView(kCaldoria54, kEast):
 			numHints = 1;
 			break;
+#endif
 		case MakeRoomView(kCaldoria49, kNorth):
 			numHints = 1;
 			break;
@@ -1950,9 +1955,12 @@ Common::String Caldoria::getHintMovie(uint hintNum) {
 			}
 
 			return "Images/AI/Globals/XGLOB1A";
+#if 0
+		// The hint file is missing
 		case MakeRoomView(kCaldoria49, kEast):
 		case MakeRoomView(kCaldoria54, kEast):
 			return "Images/AI/Caldoria/X49E";
+#endif
 		case MakeRoomView(kCaldoria49, kNorth):
 			return "Images/AI/Caldoria/X49NB2";
 		}

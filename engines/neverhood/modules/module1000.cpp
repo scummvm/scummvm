@@ -228,7 +228,7 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isKlaymenFloor(false), _isClimbingLadder(false) {
+	: Scene(vm, parentModule), _isKlaymenFloor(false), _isClimbingLadder(false), _asKlaymenPeekHand(nullptr) {
 
 	NRect tempClipRect;
 	Sprite *tempSprite;
@@ -693,22 +693,18 @@ uint32 Scene1005::getTextIndex1() {
 uint32 Scene1005::getKloggsTextIndex() {
 	uint32 textIndex = getGlobalVar(V_TEXT_COUNTING_INDEX1);
 	if (textIndex + 1 > 10) {
-		setGlobalVar(V_TEXT_COUNTING_INDEX1, 0);
 		textIndex = 0;
-	} else {
-		setGlobalVar(V_TEXT_COUNTING_INDEX1, textIndex + 1);
 	}
+	setGlobalVar(V_TEXT_COUNTING_INDEX1, textIndex + 1);
 	return textIndex + 40;
 }
 
 uint32 Scene1005::getTextIndex3() {
 	uint32 textIndex = getGlobalVar(V_TEXT_COUNTING_INDEX2);
-	if (textIndex + 1 >= 10) {
-		setGlobalVar(V_TEXT_COUNTING_INDEX2, 0);
+	if (textIndex + 1 > 10) {
 		textIndex = 0;
-	} else {
-		setGlobalVar(V_TEXT_COUNTING_INDEX2, textIndex + 1);
 	}
+	setGlobalVar(V_TEXT_COUNTING_INDEX2, textIndex + 1);
 	return textIndex + 30;
 }
 

@@ -38,6 +38,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed8",      "Carol Reed 8 - Amber's Blood"},
 	{"carolreed9",      "Carol Reed 9 - Cold Case Summer"},
 	{"chivalry",        "Chivalry is Not Dead"},
+	{"corrosion",		"Corrosion: Cold Winter Waiting"},
 	{"deadcity",        "Dead City"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"dirtysplit",      "Dirty Split"},
@@ -58,6 +59,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"projectdoom",     "Project: Doom"},
 	{"reversion1",      "Reversion: The Escape"},
 	{"reversion2",      "Reversion: The Meeting"},
+	{"rhiannon",		"Rhiannon: Curse of the four Branches"},
+	{"ritter",			"1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
 	{"rosemary",        "Rosemary"},
 	{"securanote",      "Securanote"},
 	{"shaban",          "Shaban"},
@@ -70,6 +73,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"twc",             "the white chamber"},
 	{"wintermute",      "Wintermute engine game"},
 	{"wtetris",         "Wilma Tetris"},
+	{"zilm",            "Zilm: A Game of Reflex"},
 	{0, 0}
 };
 
@@ -119,6 +123,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"bickadoodle",
 		"",
 		AD_ENTRY1s("data.dcp", "84db4d1594cac95e25614985775d10a8", 35303844),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Bickadoodle (download from http://aethericgames.com/games/bickadoodle/download-bickadoodle/)
+	{
+		"bickadoodle",
+		"",
+		AD_ENTRY1s("data.dcp", "1584d83577c32add0fce27fae91141a2", 35337728),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -232,6 +246,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"chivalry",
 		"",
 		AD_ENTRY1s("data.dcp", "ae6d91b9517f4d2851a8ad94c96951c8", 7278302),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_TESTING,
+		GUIO0()
+	},
+	// Corrosion: Cold Winter Waiting
+	{
+		"corrosion",
+		"",
+		AD_ENTRY1s("data.dcp", "ae885b1a8faa0b27f43c0e8f0df02fc9", 525931618),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_TESTING,
@@ -428,7 +452,21 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	// Ghosts in the Sheet
+	// Ghost in the Sheet
+	{
+		"ghostsheet",
+		"",
+		{
+			{"english.dcp", 0, "e6d0aad2c89996bcabe416105a3d6d3a", 12221017},
+			{"data.dcp", 0, "b2f8b05328e4881e15e98e845b63f451", 168003},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Ghost in the Sheet (Demo)
 	{
 		"ghostsheet",
 		"Demo",
@@ -525,6 +563,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"julia",
 		"",
 		AD_ENTRY1s("data.dcp", "c2264b4f8fcd132d2913ff5b6076a24f", 10109741),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// J.U.L.I.A. (English, Bundle in a box-version)
+	{
+		"julia",
+		"Version 1.2",
+		AD_ENTRY1s("data.dcp", "fe90023ccc22f35185b40b910e0d03a2", 10101373),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -996,6 +1044,56 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Reversion: The Meeting Version 2.0.2412 (Chinese)
+	{
+		"reversion2",
+		"Version 2.0.2412",
+		{
+			{"data.dcp", 0, "f4ffc4df24b7bebad56a24930f33a2bc", 255766600},
+			{"xlanguage_nz.dcp", 0, "17c79af4928e24484bee77a7e807cc2a", 10737127},
+			{"Linux.dcp", 0, "21858bd77dc86b03f701fd47900e2f51", 984535},
+			AD_LISTEND
+		},
+		Common::ZH_CNA,
+		Common::kPlatformLinux,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Meeting Version 2.0.2412 (English)
+	{
+		"reversion2",
+		"Version 2.0.2412",
+		{
+			{"data.dcp", 0, "f4ffc4df24b7bebad56a24930f33a2bc", 255766600},
+			{"xlanguage_en.dcp", 0, "0598bf752ce93b42bcaf1094df537c7b", 8533057},
+			{"Linux.dcp", 0, "21858bd77dc86b03f701fd47900e2f51", 984535},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformLinux,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Rhiannon: Curse of the four Branches
+	{
+		"rhiannon",
+		"",
+		AD_ENTRY1s("data.dcp", "870f348900b735f1cc79c0608ce32b0e", 1046169851),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde
+	{
+		"ritter",
+		"",
+		AD_ENTRY1s("data.dcp", "5ac416cee605d3a30f4d59687b1cdab2", 364260278),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Rosemary
 	{
 		"rosemary",
@@ -1103,6 +1201,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"wtetris",
 		"",
 		AD_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Zilm: A Game of Reflex 1.0
+	{
+		"Zilm",
+		"1.0",
+		AD_ENTRY1s("data.dcp",  "098dffaf03d8adbb4cb5633e4733e63c", 351726),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,

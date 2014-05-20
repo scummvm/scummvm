@@ -30,6 +30,7 @@
 
 namespace Avalanche {
 
+enum MonsterType { kMonsterTypeGhost, kMonsterTypeGlerk };
 
 enum Flavour { kFlavourEga, kFlavourBgi, kFlavourNatural, kFlavourTwo, kFlavourOne };
 

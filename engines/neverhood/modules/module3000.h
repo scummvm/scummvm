@@ -34,8 +34,8 @@ public:
 	Module3000(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module3000();
 protected:
-	int _soundVolume;
-	bool _isWallBroken;
+	int _waterfallSoundVolume;
+	bool _isWaterfallRunning;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };

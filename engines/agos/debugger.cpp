@@ -33,7 +33,6 @@ Debugger::Debugger(AGOSEngine *vm)
 	_vm = vm;
 
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("level",    WRAP_METHOD(Debugger, Cmd_DebugLevel));
 	DCmd_Register("music",    WRAP_METHOD(Debugger, Cmd_PlayMusic));
 	DCmd_Register("sound",    WRAP_METHOD(Debugger, Cmd_PlaySound));
 	DCmd_Register("voice",    WRAP_METHOD(Debugger, Cmd_PlayVoice));
@@ -46,28 +45,6 @@ Debugger::Debugger(AGOSEngine *vm)
 	DCmd_Register("dumpimage",      WRAP_METHOD(Debugger, Cmd_dumpImage));
 	DCmd_Register("dumpscript",     WRAP_METHOD(Debugger, Cmd_dumpScript));
 
-}
-
-
-bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
-	if (argc == 1) {
-		if (_vm->_debugMode == false)
-			DebugPrintf("Debugging is not enabled at this time\n");
-		else
-			DebugPrintf("Debugging is currently set at level %d\n", gDebugLevel);
-	} else { // set level
-		gDebugLevel = atoi(argv[1]);
-		if (0 <= gDebugLevel && gDebugLevel < 11) {
-			_vm->_debugMode = true;
-			DebugPrintf("Debug level set to level %d\n", gDebugLevel);
-		} else if (gDebugLevel < 0) {
-			_vm->_debugMode = false;
-			DebugPrintf("Debugging is now disabled\n");
-		} else
-			DebugPrintf("Not a valid debug level (0 - 10)\n");
-	}
-
-	return true;
 }
 
 bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {

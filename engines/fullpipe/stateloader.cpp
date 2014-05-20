@@ -55,9 +55,8 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	_inventory->rebuildItemRects();
 
-	for (PtrList::iterator p = _inventory->getScene()->_picObjList.begin(); p != _inventory->getScene()->_picObjList.end(); ++p) {
-		((MemoryObject *)((PictureObject *)*p)->_picture)->load();
-	}
+	for (uint i = 0; i < _inventory->getScene()->_picObjList.size(); i++)
+		((MemoryObject *)_inventory->getScene()->_picObjList[i]->_picture)->load();
 
 	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;

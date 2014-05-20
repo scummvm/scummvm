@@ -24,6 +24,7 @@
  */
 
 #include "pegasus/gamestate.h"
+#include "pegasus/pegasus.h"
 #include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/caldoria/caldoriamessages.h"
@@ -43,6 +44,10 @@ void CaldoriaMessages::openInteraction() {
 	notifyMe(this, kMessageDoneFlag, kMessageDoneFlag);
 	_messageCallBack.setCallBackFlag(kMessageDoneFlag);
 	_messageNumber = 1;
+}
+
+void CaldoriaMessages::setSoundFXLevel(const uint16 fxLevel) {
+	_messageMovie.setVolume(fxLevel);
 }
 
 void CaldoriaMessages::initInteraction() {
@@ -101,6 +106,7 @@ void CaldoriaMessages::play1Message(uint messageNumber) {
 		GameState.setCaldoriaSeenMessages(true);
 	}
 
+	_messageMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 	_messageMovie.moveElementTo(kCaldoriaMessageLeft, kCaldoriaMessageTop);
 	_messageMovie.setDisplayOrder(kCaldoriaMessagesOrder);
 	_messageMovie.startDisplaying();

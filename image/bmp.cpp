@@ -119,6 +119,10 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (!_codec)
 		return false;
 
+	// If the image size is zero, set it to the rest of the stream.
+	if (imageSize == 0)
+		imageSize = stream.size() - imageOffset;
+
 	// Grab the frame data
 	Common::SeekableSubReadStream subStream(&stream, imageOffset, imageOffset + imageSize);
 

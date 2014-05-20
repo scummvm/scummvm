@@ -64,7 +64,7 @@ void RenderQueue::addSprite(SpriteDrawItem &sprite) {
 	// Add sprite sorted by priority
 	RenderQueueArray::iterator iter = _currQueue->begin();
 	while (iter != _currQueue->end() && (*iter).priority <= item.priority) {
-		iter++;
+		++iter;
 	}
 	_currQueue->insert(iter, item);
 
@@ -103,7 +103,7 @@ void RenderQueue::addMask(SegmapMaskRect &mask) {
 	if (rectIntersectsItem(item.rect)) {
 		RenderQueueArray::iterator iter = _currQueue->begin();
 		while (iter != _currQueue->end() && (*iter).priority <= item.priority) {
-			iter++;
+			++iter;
 		}
 		_currQueue->insert(iter, item);
 	}
@@ -118,7 +118,7 @@ void RenderQueue::update() {
 
 	if (!doFullRefresh) {
 
-		for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); iter++) {
+		for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); ++iter) {
 			RenderQueueItem *item = &(*iter);
 			RenderQueueItem *prevItem = findItemInQueue(_prevQueue, *item);
 			if (prevItem) {
@@ -133,7 +133,7 @@ void RenderQueue::update() {
 			}
 		}
 
-		for (RenderQueueArray::iterator iter = _prevQueue->begin(); iter != _prevQueue->end(); iter++) {
+		for (RenderQueueArray::iterator iter = _prevQueue->begin(); iter != _prevQueue->end(); ++iter) {
 			RenderQueueItem *prevItem = &(*iter);
 			RenderQueueItem *item = findItemInQueue(_currQueue, *prevItem);
 			if (!item) {
@@ -144,7 +144,7 @@ void RenderQueue::update() {
 
 		restoreDirtyBackground();
 
-		for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); iter++) {
+		for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); ++iter) {
 			RenderQueueItem *item = &(*iter);
 			if (item->flags != kUnchanged)
 				invalidateItemsByRect(item->rect, item);
@@ -163,7 +163,7 @@ void RenderQueue::update() {
 		_vm->_screen->_fullRefresh = false;
 	}
 
-	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); iter++) {
+	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); ++iter) {
 		const RenderQueueItem *item = &(*iter);
 
 		if (item->flags == kRefresh || doFullRefresh) {
@@ -208,7 +208,7 @@ void RenderQueue::clear() {
 }
 
 bool RenderQueue::rectIntersectsItem(const Common::Rect &rect) {
-	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); iter++) {
+	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); ++iter) {
 		const RenderQueueItem *item = &(*iter);
 		if (rect.intersects(item->rect))
 			return true;
@@ -220,7 +220,7 @@ RenderQueueItem *RenderQueue::findItemInQueue(RenderQueueArray *queue, const Ren
 	/* This checks if the given item also exists in the previously drawn frame.
 	   The state of the item (position, color etc) is handled elsewhere.
 	*/
-	for (RenderQueueArray::iterator iter = queue->begin(); iter != queue->end(); iter++) {
+	for (RenderQueueArray::iterator iter = queue->begin(); iter != queue->end(); ++iter) {
 		RenderQueueItem *prevItem = &(*iter);
 		if (prevItem->type == item.type) {
 			switch (item.type) {
@@ -262,7 +262,7 @@ bool RenderQueue::hasItemChanged(const RenderQueueItem &item1, const RenderQueue
 }
 
 void RenderQueue::invalidateItemsByRect(const Common::Rect &rect, const RenderQueueItem *item) {
-	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); iter++) {
+	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); ++iter) {
 		RenderQueueItem *subItem = &(*iter);
 		if (item != subItem &&
 			subItem->flags == kUnchanged &&

@@ -81,9 +81,7 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	// (ie. if one uses enter to access the restore menu, we never receive
 	// the key up event, which leads to bad things)
 	// This is to closely emulate what the GetKeys() function did on Mac OS
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event))
-		;
+	pumpEvents();
 
 	// Now create the bitfield
 	InputBits currentBits = 0;
@@ -204,6 +202,13 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 	}
 
 	return false;
+}
+
+void InputDeviceManager::pumpEvents() {
+	// Just poll for events. notifyEvent() will pick up on them.
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event))
+		;
 }
 
 int operator==(const Input &arg1, const Input &arg2) {

@@ -287,7 +287,7 @@ void MoviePlayerDXA::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 
 void MoviePlayerDXA::playVideo() {
 	// Most of the videos included in the Amiga version, reduced the
-	// resoluton to 384 x 280, so require the screen to be cleared,
+	// resolution to 384 x 280, so require the screen to be cleared,
 	// before starting playing those videos.
 	if (getWidth() == 384 && getHeight() == 280) {
 		_vm->clearSurfaces();

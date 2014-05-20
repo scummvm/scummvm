@@ -37,8 +37,8 @@ public:
 	virtual ~Module2300();
 protected:
 	int _sceneNum;
-	bool _isWallBroken;
-	int _soundVolume;
+	int _waterfallSoundVolume;
+	bool _isWaterfallRunning;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 };

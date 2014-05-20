@@ -37,6 +37,7 @@
         @ We hold:       r10            B
         @            r8  r14 r7       D E F
         @                r12            H
+        .align 2
 scale2x_8_arm:
         STMFD   r13!,{r4-r5,r7-r8,r10-r11,r14}
         LDR     r4, [r13,#4*7]
@@ -85,6 +86,7 @@ end8:
 
         LDMFD   r13!,{r4-r5,r7-r8,r10-r11,PC}
 
+        .align 2
 scale2x_16_arm:
         STMFD   r13!,{r4-r5,r7-r8,r10-r11,r14}
         LDR     r4, [r13,#4*7]
@@ -133,6 +135,7 @@ end16:
 
         LDMFD   r13!,{r4-r5,r7-r8,r10-r11,PC}
 
+        .align 2
 scale2x_32_arm:
         STMFD   r13!,{r4-r5,r7-r8,r10-r11,r14}
         LDR     r4, [r13,#4*7]

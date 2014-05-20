@@ -2029,6 +2029,7 @@ void WSC::moleculeGameClick(const HotSpotID id) {
 			_moleculesMovie.start();
 
 			while (_moleculesMovie.isRunning()) {
+				InputDevice.pumpEvents();
 				_vm->checkCallBacks();
 				_vm->refreshDisplay();
 				_vm->_system->delayMillis(10);
@@ -2063,6 +2064,7 @@ void WSC::moleculeGameClick(const HotSpotID id) {
 		_moleculesMovie.start();
 
 		while (_moleculesMovie.isRunning()) {
+			InputDevice.pumpEvents();
 			_vm->checkCallBacks();
 			_vm->refreshDisplay();
 			_vm->_system->delayMillis(10);
@@ -2076,6 +2078,7 @@ void WSC::moleculeGameClick(const HotSpotID id) {
 
 
 		while (_moleculesMovie.isRunning()) {
+			InputDevice.pumpEvents();
 			_vm->checkCallBacks();
 			_vm->refreshDisplay();
 			_vm->_system->delayMillis(10);

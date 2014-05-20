@@ -28,6 +28,7 @@
 
 	@ Assumes dst is aligned (so did the C)
 	@ Assumes 16bit (so did the C)
+	.align 2
 Normal2xARM:
 	@ r0 = src
 	@ r1 = srcPitch
@@ -92,6 +93,7 @@ thin:
 
 	@ Assumes dst is aligned (so did the C)
 	@ Assumes 16bit (so did the C)
+	.align 2
 Normal2xAspectMask:
 	@ r0 = src
 	@ r1 = srcPitch

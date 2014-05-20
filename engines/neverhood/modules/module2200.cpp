@@ -885,7 +885,7 @@ void Scene2205::update() {
 	} else if (_isLightOn && !getGlobalVar(V_LIGHTS_ON)) {
 		_palette->addPalette(0xD00A028D, 0, 256, 0);
 		changeBackground(0xD00A028D);
-		_ssLightSwitch->setFileHashes(0x2D339030, 0xDAC86E84);
+		_ssLightSwitch->setFileHashes(0xD6C86E84, 0xDAC86E84);
 		sendMessage(_ssDoorFrame, 0x2000, 0);
 		changeMouseCursor(0xA0289D08);
 		_isKlaymenInLight = true;

@@ -71,7 +71,7 @@ public:
 	int getDimy();
 
 	// Creation
-	virtual void create(int dimx, int dimy, int nBpp);
+	void create(int dimx, int dimy, int nBpp);
 	virtual void destroy();
 
 	// These are valid only if the buffer is locked

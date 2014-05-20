@@ -331,6 +331,7 @@ void InventoryItemsPicture::playEndMessage(DisplayElement *pushElement) {
 	endMessage.start();
 
 	while (endMessage.isRunning()) {
+		InputDevice.pumpEvents();
 		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);

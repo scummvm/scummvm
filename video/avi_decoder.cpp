@@ -71,7 +71,6 @@ namespace Video {
 // Stream Types
 enum {
 	kStreamTypePaletteChange = MKTAG16('p', 'c'),
-	kStreamTypeRawVideo      = MKTAG16('d', 'b'),
 	kStreamTypeAudio         = MKTAG16('w', 'b')
 };
 
@@ -399,10 +398,6 @@ void AVIDecoder::readNextPacket() {
 		if (getStreamType(nextTag) == kStreamTypePaletteChange) {
 			// Palette Change
 			videoTrack->loadPaletteFromChunk(chunk);
-		} else if (getStreamType(nextTag) == kStreamTypeRawVideo) {
-			// TODO: Check if this really is uncompressed. Many videos
-			// falsely put compressed data in here.
-			error("Uncompressed AVI frame found");
 		} else {
 			// Otherwise, assume it's a compressed frame
 			videoTrack->decodeFrame(chunk);

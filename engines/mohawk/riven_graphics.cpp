@@ -289,7 +289,7 @@ void RivenGraphics::showInventory() {
 		drawInventoryImage(101, g_demoExitRect);
 	} else {
 		// We don't want to show the inventory on setup screens or in other journals.
-		if (_vm->getCurStack() == aspit)
+		if (_vm->getCurStack() == kStackAspit)
 			return;
 
 		// There are three books and three vars. We have three different

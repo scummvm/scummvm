@@ -27,14 +27,26 @@ namespace Fullpipe {
 
 class PictureObject;
 class Picture;
+class Sound;
+
+struct FileInfo {
+	char filename[260];
+	bool empty;
+	char date[16];
+	int fx1;
+	int fx2;
+	int fy1;
+	int fy2;
+};
 
 class BaseModalObject {
  public:
 
 	BaseModalObject *_parentObj;
+	ObjType _objtype;
 
  public:
- 	BaseModalObject() : _parentObj(0) {}
+	BaseModalObject() : _parentObj(0) { _objtype = kObjTypeDefault; }
 	virtual ~BaseModalObject() {}
 
 
@@ -147,19 +159,47 @@ class ModalCredits : public BaseModalObject {
 	virtual void saveload() {}
 };
 
+struct MenuArea {
+	int picIdL;
+	PictureObject *picObjD;
+	PictureObject *picObjL;
+};
+
 class ModalMainMenu : public BaseModalObject {
 public:
-	int _field_34;
+	Scene *_scene;
+	int _hoverAreaId;
+	Common::Array<MenuArea *> _areas;
+	int _menuSliderIdx;
+	int _musicSliderIdx;
+	MenuArea *_lastArea;
+	int _sliderOffset;
+	int _mfield_34;
+	Common::Rect _screct;
+	int _bgX;
+	int _bgY;
+	int _debugKeyCount;
 
 public:
 	ModalMainMenu();
 	virtual ~ModalMainMenu() {}
 
 	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return false; }
-	virtual bool init(int counterdiff) { return true; }
-	virtual void update() {}
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
 	virtual void saveload() {}
+
+private:
+	bool isSaveAllowed();
+	void enableDebugMenuButton();
+	void setSliderPos();
+	void enableDebugMenu(char c);
+	int checkHover(Common::Point &point);
+	void updateVolume();
+	void updateSoundVolume(Sound *snd);
+	void updateSliderPos();
+	bool isOverArea(PictureObject *obj, Common::Point *point);
 };
 
 class ModalHelp : public BaseModalObject {
@@ -187,25 +227,66 @@ public:
 class ModalQuery : public BaseModalObject {
 public:
 	ModalQuery();
-	virtual ~ModalQuery() {}
+	virtual ~ModalQuery();
 
 	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return false; }
-	virtual bool init(int counterdiff) { return true; }
-	virtual void update() {}
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
 	virtual void saveload() {}
+
+	bool create(Scene *sc, PictureObject *picObjList, int picId);
+	int getQueryResult() { return _queryResult; }
+
+
+private:
+	PictureObject *_picObjList;
+	PictureObject *_bg;
+	PictureObject *_okBtn;
+	PictureObject *_cancelBtn;
+	int _queryResult;
+
 };
 
 class ModalSaveGame : public BaseModalObject {
 public:
 	ModalSaveGame();
-	virtual ~ModalSaveGame() {}
+	virtual ~ModalSaveGame();
 
 	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return false; }
-	virtual bool init(int counterdiff) { return true; }
-	virtual void update() {}
-	virtual void saveload() {}
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload();
+
+	void processMouse(int x, int y);
+
+	void setScene(Scene *sc);
+	void setup(Scene *sc, int mode);
+	void processKey(int key);
+
+	char *getSaveName();
+	bool getFileInfo(int slot, FileInfo *fileinfo);
+
+	Common::Rect _rect;
+	int _oldBgX;
+	int _oldBgY;
+	PictureObject *_bgr;
+	PictureObject *_okD;
+	PictureObject *_okL;
+	PictureObject *_cancelD;
+	PictureObject *_cancelL;
+	PictureObject *_emptyD;
+	PictureObject *_emptyL;
+	PictureObject *_fullD;
+	PictureObject *_fullL;
+	Scene *_menuScene;
+	int _mode;
+	ModalQuery *_queryDlg;
+	Common::Array <FileInfo *> _files;
+	Common::Array <PictureObject *> _arrayL;
+	Common::Array <PictureObject *> _arrayD;
+	int _queryRes;
 };
 
 

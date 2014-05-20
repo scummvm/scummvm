@@ -94,6 +94,7 @@ void Fader::startFaderSync(const FaderMoveSpec &spec) {
 		start();
 
 		while (isFading()) {
+			InputDevice.pumpEvents();
 			((PegasusEngine *)g_engine)->checkCallBacks();
 			useIdleTime();
 		}

@@ -44,18 +44,20 @@ class RivenConsole;
 class RivenSaveLoad;
 class RivenOptionsDialog;
 
-#define RIVEN_STACKS 8
-
 // Riven Stack Types
 enum {
-	aspit = 0,		// Main Menu, Books, Setup
-	bspit = 1,		// Book-Making Island
-	gspit = 2,		// Garden Island
-	jspit = 3,		// Jungle Island
-	ospit = 4,		// 233rd Age (Gehn's Office)
-	pspit = 5,		// Prison Island
-	rspit = 6,		// Rebel Age (Tay)
-	tspit = 7		// Temple Island
+	kStackUnknown = 0, // Default value for ReturnStackID
+	kStackOspit = 1,   // 233rd Age (Gehn's Office)
+	kStackPspit = 2,   // Prison Island
+	kStackRspit = 3,   // Temple Island
+	kStackTspit = 4,   // Rebel Age (Tay)
+	kStackBspit = 5,   // Book-Making Island
+	kStackGspit = 6,   // Garden Island
+	kStackJspit = 7,   // Jungle Island
+	kStackAspit = 8,   // Main Menu, Books, Setup
+
+	kStackFirst = kStackOspit,
+	kStackLast = kStackAspit
 };
 
 // NAME Resource ID's

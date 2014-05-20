@@ -101,7 +101,7 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 			}
 
 		case 'W':{
-				int n = (int16)READ_BE_UINT16(p);
+				uint16 n = READ_BE_UINT16(p);
 				p += 2;
 				if (getGameType() == GType_PP) {
 					if (n >= 60000 && n < 62048)
@@ -222,14 +222,18 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 			error("dumpVideoScript: Opcode %d out of range (%d)", opcode, _numVideoOpcodes);
 		}
 
-		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		if (getGameType() == GType_PP) {
+			strn = str = puzzlepack_videoOpcodeNameTable[opcode];
+		} else if (getGameType() == GType_FF) {
 			strn = str = feeblefiles_videoOpcodeNameTable[opcode];
 		} else if (getGameType() == GType_SIMON2) {
 			strn = str = simon2_videoOpcodeNameTable[opcode];
 		} else if (getGameType() == GType_SIMON1) {
 			strn = str = simon1_videoOpcodeNameTable[opcode];
-		} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		} else if (getGameType() == GType_WW) {
 			strn = str = ww_videoOpcodeNameTable[opcode];
+		} else if (getGameType() == GType_ELVIRA2) {
+			strn = str = elvira2_videoOpcodeNameTable[opcode];
 		} else if (getGameType() == GType_ELVIRA1) {
 			strn = str = elvira1_videoOpcodeNameTable[opcode];
 		} else {
@@ -250,25 +254,39 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 			case 'x':
 				debugN("\n");
 				return;
-			case 'b':
+			case 'b': {
 				debugN("%d ", *src++);
 				break;
-			case 'd':
+				}
+			case 'w': {
+				int16 v = (int16)readUint16Wrapper(src);
+				src += 2;
+				if (v < 0)
+					debugN("[%d] ", -v);
+				else
+					debugN("%d ", v);
+				break;
+				}
+			case 'd': {
 				debugN("%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
-			case 'v':
+				}
+			case 'v': {
 				debugN("[%d] ", readUint16Wrapper(src));
 				src += 2;
 				break;
-			case 'i':
+				}
+			case 'i': {
 				debugN("%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
-			case 'j':
+				}
+			case 'j': {
 				debugN("-> ");
 				break;
-			case 'q':
+				}
+			case 'q': {
 				while (readUint16Wrapper(src) != end) {
 					debugN("(%d,%d) ", readUint16Wrapper(src),
 									readUint16Wrapper(src + 2));
@@ -276,6 +294,7 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 				}
 				src += 2;
 				break;
+				}
 			default:
 				error("dumpVideoScript: Invalid fmt string '%c' in decompile VGA", *str);
 			}

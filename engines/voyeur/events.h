@@ -55,7 +55,6 @@ public:
 	bool _flipWait;
 	int _flashTimer;
 	int _flashStep;
-	int field26;
 	bool _hasPalette;
 	bool _skipFading;
 	int _palStartIndex;
@@ -126,7 +125,7 @@ public:
 	void addFadeInt();
 
 	void setCursor(PictureResource *pic);
-	void setCursor(byte *cursorData, int width, int height);
+	void setCursor(byte *cursorData, int width, int height, int keyColor);
 	void setCursorColor(int idx, int mode);
 	void showCursor();
 	void hideCursor();

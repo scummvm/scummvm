@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -1129,7 +1130,7 @@ void AGOSEngine::animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, i
 		assert(READ_BE_UINT16(&((AnimationHeader_WW *) p)->id) == vgaSpriteId);
 	}
 
-	if (_dumpVgaScripts) {
+	if (DebugMan.isDebugChannelEnabled(kDebugVGAScript)) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			dumpVgaScript(_curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), zoneNum, vgaSpriteId);
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
@@ -1235,7 +1236,7 @@ void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 		}
 	}
 
-	if (_dumpVgaScripts) {
+	if (DebugMan.isDebugChannelEnabled(kDebugVGAScript)) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			dumpVgaScript(_curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble*)b)->scriptOffs), zoneNum, vgaSpriteId);
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {

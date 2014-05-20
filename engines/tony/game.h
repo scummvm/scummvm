@@ -300,6 +300,7 @@ public:
 	RMOptionScreen();
 	virtual ~RMOptionScreen();
 
+	using RMGfxWoodyBuffer::init;
 	void init(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool &result);
 	void initLoadMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result);
 	void initSaveMenuOnly(CORO_PARAM, RMGfxTargetBuffer &bigBuf, bool bAlternateGfx, bool &result);

@@ -89,7 +89,6 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DCmd_Register("loadgame",  WRAP_METHOD(ScummDebugger, Cmd_LoadGame));
 	DCmd_Register("savegame",  WRAP_METHOD(ScummDebugger, Cmd_SaveGame));
 
-	DCmd_Register("level",     WRAP_METHOD(ScummDebugger, Cmd_DebugLevel));
 	DCmd_Register("debug",     WRAP_METHOD(ScummDebugger, Cmd_Debug));
 
 	DCmd_Register("show",      WRAP_METHOD(ScummDebugger, Cmd_Show));
@@ -102,6 +101,18 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 
 ScummDebugger::~ScummDebugger() {
 	 // we need this destructor, even if it is empty, for __SYMBIAN32__
+}
+
+void ScummDebugger::preEnter() {
+}
+
+void ScummDebugger::postEnter() {
+	// Runtime debug level change is dealt with by the base class "debuglevel" command
+	// but need to ensure that the _debugMode parameter is updated in sync.
+	_vm->_debugMode = (gDebugLevel >= 0);
+	// Boot params often need debugging switched on to work
+	if (_vm->_bootParam)
+		_vm->_debugMode = true;
 }
 
 ///////////////////////////////////////////////////
@@ -518,27 +529,6 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 		DebugPrintf("Usage: debug [+CHANNEL|-CHANNEL]\n");
 		DebugPrintf("Enables or disables the given debug channel.\n");
 		DebugPrintf("When used without parameters, lists all available debug channels and their status.\n");
-	}
-
-	return true;
-}
-
-bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
-	if (argc == 1) {
-		if (_vm->_debugMode == false)
-			DebugPrintf("Debugging is not enabled at this time\n");
-		else
-			DebugPrintf("Debugging is currently set at level %d\n", gDebugLevel);
-	} else { // set level
-		gDebugLevel = atoi(argv[1]);
-		if (gDebugLevel >= 0) {
-			_vm->_debugMode = true;
-			DebugPrintf("Debug level set to level %d\n", gDebugLevel);
-		} else if (gDebugLevel < 0) {
-			_vm->_debugMode = false;
-			DebugPrintf("Debugging is now disabled\n");
-		} else
-			DebugPrintf("Not a valid debug level\n");
 	}
 
 	return true;

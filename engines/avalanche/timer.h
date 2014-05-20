@@ -170,7 +170,7 @@ public:
 
 private:
 	AvalancheEngine *_vm;
-
+	byte _shootEmUpScore;
 };
 
 } // End of namespace Avalanche.

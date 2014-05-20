@@ -91,6 +91,7 @@ struct QueueRequest {
 bool operator==(const QueueRequest &arg1, const QueueRequest &arg2);
 bool operator!=(const QueueRequest &arg1, const QueueRequest &arg2);
 
+class CaldoriaBomb;
 class GameInteraction;
 class Item;
 class Neighborhood;
@@ -109,6 +110,7 @@ protected:
 typedef Common::Queue<QueueRequest> NeighborhoodActionQueue;
 
 class Neighborhood : public IDObject, public NotificationReceiver, public InputHandler, public Idler {
+friend class CaldoriaBomb;
 friend class StriderCallBack;
 
 public:

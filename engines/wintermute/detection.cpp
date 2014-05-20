@@ -107,11 +107,11 @@ public:
 					}
 				}
 				// Prefix to avoid collisions with actually known games
-				name = "wmefan-" + name;
+				name = "wmeunk-" + name;
 				Common::strlcpy(s_fallbackGameIdBuf, name.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
 				s_fallbackDesc.gameid = s_fallbackGameIdBuf;
 				if (caption != name) {
-					caption += " (fangame) ";
+					caption += " (unknown version) ";
 					char *offset = s_fallbackGameIdBuf + name.size() + 1;
 					uint32 remainingLength = (sizeof(s_fallbackGameIdBuf) - 1) - (name.size() + 1);
 					Common::strlcpy(offset, caption.c_str(), remainingLength);

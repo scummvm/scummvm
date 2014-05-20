@@ -55,6 +55,14 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc)
 	_console = new CineConsole(this);
 
 	g_cine = this;
+
+	for (int i = 0; i < NUM_FONT_CHARS; i++) {
+		_textHandler.fontParamTable[i].characterIdx = 0;
+		_textHandler.fontParamTable[i].characterWidth = 0;
+	}
+	_restartRequested = false;
+	_preLoad = false;
+	_timerDelayMultiplier = 12;
 }
 
 CineEngine::~CineEngine() {

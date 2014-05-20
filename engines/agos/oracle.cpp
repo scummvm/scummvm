@@ -180,7 +180,7 @@ void AGOSEngine_Feeble::oracleTextUp() {
 
 	if (_textWindow->scrollY > _oracleMaxScrollY)		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
-	while (1) {
+	while (!shouldQuit()) {
 		if (_textWindow->scrollY == _oracleMaxScrollY)
 			break;
 		_textWindow->textRow = 105;
@@ -214,7 +214,7 @@ void AGOSEngine_Feeble::oracleTextDown() {
 
 	if (_textWindow->scrollY > _oracleMaxScrollY)		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
-	while (1) {
+	while (!shouldQuit()) {
 		if (_textWindow->scrollY == 0)
 			break;
 

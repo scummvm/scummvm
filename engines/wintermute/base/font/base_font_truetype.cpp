@@ -625,6 +625,8 @@ bool BaseFontTT::initFont() {
 		warning("Looking for %s", fontName.c_str());
 		_font = FontMan.getFontByName(fontName);
 	}
+#else
+	warning("BaseFontTT::InitFont - FreeType2-support not compiled in, TTF-fonts will not be loaded");
 #endif // USE_FREETYPE2
 
 	// Fallback4: Just use the Big GUI-font. (REALLY undesireable)

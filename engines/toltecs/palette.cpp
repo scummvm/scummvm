@@ -120,7 +120,7 @@ uint16 Palette::findFragment(int16 id) {
 	debug(0, "Palette::findFragment(%d)", id);
 
 	uint16 result = 0;
-	for (PaletteFragmentArray::iterator iter = _fragments.begin(); iter != _fragments.end(); iter++) {
+	for (PaletteFragmentArray::iterator iter = _fragments.begin(); iter != _fragments.end(); ++iter) {
 		PaletteFragment fragment = *iter;
 		if (fragment.id == id) {
 			result = (fragment.count << 8) | fragment.index;
@@ -193,7 +193,7 @@ void Palette::saveState(Common::WriteStream *out) {
 
 	uint16 fragmentCount = _fragments.size();
 	out->writeUint16LE(fragmentCount);
-	for (PaletteFragmentArray::iterator iter = _fragments.begin(); iter != _fragments.end(); iter++) {
+	for (PaletteFragmentArray::iterator iter = _fragments.begin(); iter != _fragments.end(); ++iter) {
 		PaletteFragment fragment = *iter;
 		out->writeUint16LE(fragment.id);
 		out->writeByte(fragment.index);

@@ -603,7 +603,7 @@ uint32 Scene1305::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+	: Scene(vm, parentModule), _asKey(nullptr) {
 
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 4);
@@ -683,7 +683,6 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 		clearRectList();
 		sendMessage(_asElevator, NM_KLAYMEN_OPEN_DOOR, 0);
 	}
-
 }
 
 Scene1306::~Scene1306() {
@@ -942,6 +941,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite2 = insertStaticSprite(0x40043120, 995);
 	_sprite3 = insertStaticSprite(0x43003100, 995);
 	_sprite4 = NULL;
+	_sprite5 = nullptr;
 
 	if (which < 0) {
 		// Restoring game

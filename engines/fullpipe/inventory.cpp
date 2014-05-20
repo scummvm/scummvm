@@ -447,6 +447,15 @@ int Inventory2::getHoveredItem(Common::Point *point) {
 	return 0;
 }
 
+void Inventory2::clear() {
+	unselectItem(0);
+
+	for (uint i = 0; i < _inventoryItems.size(); i++)
+		getInventoryPoolItemFieldCById(_inventoryItems[i]->itemId);
+
+	_inventoryItems.clear();
+}
+
 void FullpipeEngine::getAllInventory() {
 	Inventory2 *inv = getGameLoaderInventory();
 

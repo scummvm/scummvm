@@ -586,7 +586,7 @@ protected:
 	bool _dumpScripts;
 	bool _hexdumpScripts;
 	bool _showStack;
-	uint16 _debugMode;
+	bool _debugMode;
 
 	// Save/Load class - some of this may be GUI
 	byte _saveLoadFlag, _saveLoadSlot;

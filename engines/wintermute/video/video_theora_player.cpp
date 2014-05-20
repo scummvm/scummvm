@@ -127,6 +127,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 #if defined (USE_THEORADEC)
 	_theoraDecoder = new Video::TheoraDecoder();
 #else
+	warning("VideoTheoraPlayer::initialize - Theora support not compiled in, video will be skipped: %s", filename.c_str());
 	return STATUS_FAILED;
 #endif
 	_theoraDecoder->loadStream(_file);

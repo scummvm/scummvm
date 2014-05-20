@@ -48,7 +48,7 @@ Background::~Background() {
  * @remarks	Originally called 'pics_link'
  */
 void Background::update() {
-	if (_vm->_menu->isActive())
+	if (_vm->_dropdown->isActive())
 		return; // No animation when the menus are up.
 
 	switch (_vm->_room) {
@@ -261,7 +261,7 @@ void Background::update() {
 	}
 }
 
-void Background::load(byte number) {
+void Background::loadSprites(byte number) {
 	Common::File f;
 	_filename = _filename.format("chunk%d.avd", number);
 	if (!f.open(_filename))

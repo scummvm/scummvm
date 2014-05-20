@@ -38,10 +38,9 @@ namespace Hopkins {
 ComputerManager::ComputerManager(HopkinsEngine *vm) {
 	_vm = vm;
 
-	for (int i = 0; i < 50; i++) {
-		_menuText[i]._actvFl = false;
+	for (int i = 0; i < ARRAYSIZE(_menuText); i++) {
 		_menuText[i]._lineSize = 0;
-		memset(_menuText[i]._line, 0, 90);
+		memset(_menuText[i]._line, 0, ARRAYSIZE(_menuText[0]._line));
 	}
 	Common::fill(&_inputBuf[0], &_inputBuf[200], '\0');
 	_breakoutSpr = NULL;
@@ -346,6 +345,7 @@ static const char _spanishText[] =
  * Load Menu data
  */
 void ComputerManager::loadMenu() {
+	debug(9, "ComputerManager::loadMenu()");
 	char *ptr;
 	if (_vm->_fileIO->fileExists("COMPUTAN.TXT")) {
 		ptr = (char *)_vm->_fileIO->loadFile("COMPUTAN.TXT");
@@ -353,46 +353,52 @@ void ComputerManager::loadMenu() {
 		switch (_vm->_globals->_language) {
 		case LANG_FR:
 			ptr = (char *)_vm->_globals->allocMemory(sizeof(_frenchText));
-			strcpy(ptr, _frenchText);
+			Common::strlcpy(ptr, _frenchText, sizeof(_frenchText));
 			break;
 		case LANG_SP:
 			ptr = (char *)_vm->_globals->allocMemory(sizeof(_spanishText));
-			strcpy(ptr, _spanishText);
+			Common::strlcpy(ptr, _spanishText, sizeof(_spanishText));
 			break;
 		default:
 			ptr = (char *)_vm->_globals->allocMemory(sizeof(_englishText));
-			strcpy(ptr, _englishText);
+			Common::strlcpy(ptr, _englishText, sizeof(_englishText));
 			break;
 		}
 	}
 
 	char *tmpPtr = ptr;
 	int lineNum = 0;
-	int strPos;
-	bool loopCond = false;
 
-	do {
-		if (tmpPtr[0] == '%') {
-			if (tmpPtr[1] == '%') {
-				loopCond = true;
-				break;
-			}
-			_menuText[lineNum]._actvFl = 1;
-			strPos = 0;
-			while (strPos <= 89) {
+	const char lineSep = tmpPtr[0];
+
+	while (tmpPtr[0] != '\0' && lineNum < ARRAYSIZE(_menuText)) {
+		if (tmpPtr[0] == '%' && tmpPtr[1] == '%') {
+			// End of file marker found - Break out of parse loop
+			break;
+		}
+
+		if (tmpPtr[0] == lineSep) {
+			int strPos = 0;
+			while (strPos < ARRAYSIZE(_menuText[0]._line)) {
 				char curChar = tmpPtr[strPos + 2];
-				if (curChar == '%' || curChar == 10)
+				if (curChar == '\0' || curChar == lineSep || curChar == 0x0a) // Line Feed
 					break;
 				_menuText[lineNum]._line[strPos++] = curChar;
 			}
-			if (strPos <= 89) {
+
+			if (strPos < ARRAYSIZE(_menuText[0]._line)) {
 				_menuText[lineNum]._line[strPos] = 0;
 				_menuText[lineNum]._lineSize = strPos - 1;
 			}
-			++lineNum;
+
+			if (strPos != 0) {
+				debug(9, "_menuText[%d]._line (size: %d): \"%s\"", lineNum, _menuText[lineNum]._lineSize, _menuText[lineNum]._line);
+				++lineNum;
+			}
 		}
 		++tmpPtr;
-	} while (!loopCond);
+	}
+
 	_vm->_globals->freeMemory((byte *)ptr);
 }
 

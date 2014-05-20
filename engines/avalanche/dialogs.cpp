@@ -93,6 +93,7 @@ void Dialogs::setReadyLight(byte state) {
 	if (_vm->_ledStatus == state)
 		return; // Already like that!
 
+	// TODO: Implement different patterns for green color.
 	Color color = kColorBlack;
 	switch (state) {
 	case 0:
@@ -104,9 +105,7 @@ void Dialogs::setReadyLight(byte state) {
 		color = kColorGreen;
 		break; // Hit a key
 	}
-	warning("STUB: Dialogs::setReadyLight()");
-
-	CursorMan.showMouse(false);
+	
 	_vm->_graphics->drawReadyLight(color);
 	CursorMan.showMouse(true);
 	_vm->_ledStatus = state;
@@ -158,7 +157,7 @@ void Dialogs::scrollModeNormal() {
 	Common::String e = "(c) 1994";
 
 	setReadyLight(3);
-	_vm->_seeScroll = true;
+	_vm->_animationsEnabled = false;
 	_vm->_graphics->loadMouse(kCurFletch);
 
 	_vm->_graphics->saveScreen();
@@ -175,7 +174,8 @@ void Dialogs::scrollModeNormal() {
 				(event.kbd.keycode == Common::KEYCODE_PLUS)))) {
 				escape = true;
 				break;
-			}
+			} else if (event.type == Common::EVENT_KEYDOWN)
+				_vm->errorLed();
 		}
 	}
 
@@ -216,10 +216,8 @@ void Dialogs::scrollModeNormal() {
 #endif
 
 	setReadyLight(0);
-	_vm->_seeScroll = false;
+	_vm->_animationsEnabled = true;
 	_vm->_holdLeftMouse = false; // Used in Lucerna::checkclick().
-
-	warning("STUB: Scrolls::scrollModeNormal()");
 }
 
 /**
@@ -290,7 +288,7 @@ bool Dialogs::theyMatch(TuneType &played) {
  */
 void Dialogs::scrollModeMusic() {
 	setReadyLight(3);
-	_vm->_seeScroll = true;
+	_vm->_animationsEnabled = false;
 	CursorMan.showMouse(false);
 	_vm->_graphics->loadMouse(kCurFletch);
 
@@ -299,7 +297,7 @@ void Dialogs::scrollModeMusic() {
 		played[i] = kPitchInvalid;
 	int8 lastOne = -1, thisOne = -1; // Invalid values.
 
-	_vm->_seeScroll = true;
+	_vm->_animationsEnabled = false;
 
 	_vm->_graphics->saveScreen();
 	_vm->_graphics->showScroll();
@@ -363,6 +361,7 @@ void Dialogs::scrollModeMusic() {
 					value = 11;
 					break;
 				default:
+					error("cannot happen");
 					break;
 				}
 
@@ -392,7 +391,7 @@ void Dialogs::scrollModeMusic() {
 	_vm->_graphics->restoreScreen();
 	_vm->_graphics->removeBackup();
 
-	_vm->_seeScroll = false;
+	_vm->_animationsEnabled = true;
 	CursorMan.showMouse(true);
 }
 
@@ -645,9 +644,6 @@ void Dialogs::solidify(byte n) {
  * 'calldriver' and 'display' by using Common::String instead of a private buffer.
  */
 void Dialogs::displayText(Common::String text) {
-//	bool was_virtual; // Was the mouse cursor virtual on entry to this proc?
-	warning("STUB: Scrolls::calldrivers()");
-
 	_vm->_sound->stopSound();
 
 	setReadyLight(0);
@@ -822,6 +818,8 @@ void Dialogs::displayText(Common::String text) {
 			}
 		}
 	}
+
+	setReadyLight(2);
 }
 
 void Dialogs::setTalkPos(int16 x, int16 y) {

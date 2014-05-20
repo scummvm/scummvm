@@ -101,6 +101,7 @@ public:
 	/**
 	 * Initialization and closing
 	 */
+	using RMGfxWoodyBuffer::init;
 	void init();
 	void close();
 	void reset();
@@ -209,6 +210,7 @@ public:
 	/**
 	 * Initialization
 	 */
+	using RMGfxSourceBuffer8RLEByte::init;
 	void init();
 	void close();
 

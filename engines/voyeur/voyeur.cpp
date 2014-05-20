@@ -71,8 +71,17 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_eventsManager = new EventsManager(this);
 	_filesManager = new FilesManager(this);
 	_graphicsManager = new GraphicsManager(this);
-	_soundManager = new SoundManager(this, _mixer);
+	_soundManager = new SoundManager(_mixer);
 	_voy = new SVoy(this);
+
+	_stampLibPtr = nullptr;
+	_controlGroupPtr = nullptr;
+	_stampData = nullptr;
+	_stackGroupPtr = nullptr;
+	_glGoState = -1;
+	_glGoStack = -1;
+	_resolvePtr = nullptr;
+	_mainThread = nullptr;
 }
 
 VoyeurEngine::~VoyeurEngine() {
@@ -205,7 +214,7 @@ bool VoyeurEngine::doHeadTitle() {
 
 void VoyeurEngine::showConversionScreen() {
 	_graphicsManager->_backgroundPage = _bVoy->boltEntry(0x502)._picResource;
-	(*_graphicsManager->_vPort)->setupViewPort();
+	_graphicsManager->_vPort->setupViewPort();
 	flipPageAndWait();
 
 	// Immediate palette load to show the initial screen
@@ -238,22 +247,19 @@ bool VoyeurEngine::doLock() {
 	byte *wrongVoc = _filesManager->fload("wrong.voc", &wrongVocSize);
 
 	if (_bVoy->getBoltGroup(0x700)) {
-		_voy->_viewBounds = _bVoy->boltEntry(0x704)._rectResource;
-
 		Common::String password = "3333";
-		PictureResource *cursorPic = _bVoy->getPictureResource(0x702);
-		assert(cursorPic);
 
-		// Get the mappings of keys on the keypad
-		byte *keyData = _bVoy->memberAddr(0x705);
-		int keyCount = READ_LE_UINT16(keyData);
-
-		_graphicsManager->_backColors = _bVoy->getCMapResource(0x7010000);
 		_graphicsManager->_backgroundPage = _bVoy->getPictureResource(0x700);
-		(*_graphicsManager->_vPort)->setupViewPort();
+		_graphicsManager->_backColors = _bVoy->getCMapResource(0x701);
+		PictureResource *cursorPic = _bVoy->getPictureResource(0x702);
+		_voy->_viewBounds = _bVoy->boltEntry(0x704)._rectResource;
+		Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(0x705)._rectResource->_entries;
+
+		assert(cursorPic);
+		_graphicsManager->_vPort->setupViewPort();
 
 		_graphicsManager->_backColors->startFade();
-		(*_graphicsManager->_vPort)->_parent->_flags |= DISPFLAG_8;
+		_graphicsManager->_vPort->_parent->_flags |= DISPFLAG_8;
 		_graphicsManager->flipPage();
 		_eventsManager->sWaitFlip();
 
@@ -274,16 +280,15 @@ bool VoyeurEngine::doLock() {
 
 		_graphicsManager->_fontPtr->_curFont = _bVoy->boltEntry(0x708)._fontResource;
 		_graphicsManager->_fontPtr->_fontSaveBack = 0;
-		_graphicsManager->_fontPtr->_fontFlags = 0;
+		_graphicsManager->_fontPtr->_fontFlags = DISPFLAG_NONE;
 
 		Common::String dateString = "ScummVM";
  		Common::String displayString = Common::String::format("Last Play %s", dateString.c_str());
 
 		bool firstLoop = true;
 		bool breakFlag = false;
-		bool flag = false;
 		while (!breakFlag && !shouldQuit()) {
-			(*_graphicsManager->_vPort)->setupViewPort();
+			_graphicsManager->_vPort->setupViewPort();
 			flipPageAndWait();
 
 			// Display the last play time
@@ -292,7 +297,7 @@ bool VoyeurEngine::doLock() {
 			_graphicsManager->_fontPtr->_justifyWidth = 384;
 			_graphicsManager->_fontPtr->_justifyHeight = 97;
 
-			(*_graphicsManager->_vPort)->drawText(displayString);
+			_graphicsManager->_vPort->drawText(displayString);
 			flipPageAndWait();
 
 			if (firstLoop) {
@@ -306,17 +311,13 @@ bool VoyeurEngine::doLock() {
 				do {
 					// Scan through the list of key rects to check if a keypad key is highlighted
 					key = -1;
-					Common::Point mousePos = _eventsManager->getMousePos() + 
-						Common::Point(30, 20);
+					Common::Point mousePos = _eventsManager->getMousePos() + Common::Point(20, 10);
 
-					for (int keyIndex = 0; keyIndex < keyCount; ++keyIndex) { 
-						int x1 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 1) << 1));
-						int x2 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 3) << 1));
-						int y1 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 2) << 1));
-						int y2 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 4) << 1));
-
-						if (mousePos.x >= x1 && mousePos.x <= x2 && mousePos.y >= y1 && mousePos.y <= y2) {
+					int keyCount = hotspots.size();
+					for (int keyIndex = 0; keyIndex < keyCount; ++keyIndex) {
+						if (hotspots[keyIndex].contains(mousePos)) {
 							key = keyIndex;
+							break;
 						}
 					}
 
@@ -324,6 +325,7 @@ bool VoyeurEngine::doLock() {
 					_eventsManager->_intPtr._hasPalette = true;
 
 					_eventsManager->delay(1);
+					_eventsManager->getMouseInfo();
 				} while (!shouldQuit() && !_eventsManager->_mouseClicked);
 				_eventsManager->_mouseClicked = false;
 			} while (!shouldQuit() && key == -1);
@@ -346,24 +348,16 @@ bool VoyeurEngine::doLock() {
 				}
 			} else if (key == 10) {
 				// Accept key
-				if (!flag) {
-					if ((password.empty() && displayString.empty()) || (password == displayString)) {
-						breakFlag = true;
-						result = true;
-						break;
-					}
-				} else {
-					if (displayString.size() > 0) {
-						result = true;
-						breakFlag = true;
-						break;
-					} 
+				if ((password.empty() && displayString.empty()) || (password == displayString)) {
+					breakFlag = true;
+					result = true;
+					break;
 				}
 			} else if (key == 11) {
 				// New code
 				if ((password.empty() && displayString.empty()) || (password != displayString)) {
-					(*_graphicsManager->_vPort)->setupViewPort();
-					flag = true;
+					_graphicsManager->_vPort->setupViewPort();
+					password = displayString;
 					displayString = "";
 					continue;
 				}
@@ -379,7 +373,7 @@ bool VoyeurEngine::doLock() {
 			_soundManager->playVOCMap(wrongVoc, wrongVocSize);
 		}
 
-		_graphicsManager->fillPic(*_graphicsManager->_vPort);
+		_graphicsManager->fillPic(_graphicsManager->_vPort, 0);
 		flipPageAndWait();
 		_graphicsManager->resetPalette();
 
@@ -396,47 +390,52 @@ bool VoyeurEngine::doLock() {
 }
 
 void VoyeurEngine::showTitleScreen() {
-	if (_bVoy->getBoltGroup(0x500)) {
-		_graphicsManager->_backgroundPage = _bVoy->getPictureResource(0x500);
+	if (!_bVoy->getBoltGroup(0x500))
+		return;
 
-		(*_graphicsManager->_vPort)->setupViewPort();
-		flipPageAndWait();
+	_graphicsManager->_backgroundPage = _bVoy->getPictureResource(0x500);
 
-		// Immediate palette load to show the initial screen
-		CMapResource *cMap = _bVoy->getCMapResource(0x501);
-		assert(cMap);
-		cMap->_steps = 60;
-		cMap->startFade();
+	_graphicsManager->_vPort->setupViewPort();
+	flipPageAndWait();
 
-		// Wait briefly
-		_eventsManager->delayClick(200);
-		if (shouldQuit())
-			return;
+	// Immediate palette load to show the initial screen
+	CMapResource *cMap = _bVoy->getCMapResource(0x501);
+	assert(cMap);
+	cMap->_steps = 60;
+	cMap->startFade();
 
-		// Fade out the screen
-		cMap = _bVoy->getCMapResource(0x504);
-		cMap->_steps = 30;
-		cMap->startFade();
-
-		flipPageAndWaitForFade();
-		if (shouldQuit())
-			return;
-
-		_graphicsManager->screenReset();
-		_eventsManager->delayClick(200);
-
-		// Voyeur title
-		playRL2Video("a1100100.rl2");
-		_graphicsManager->screenReset();
-
+	// Wait briefly
+	_eventsManager->delayClick(200);
+	if (shouldQuit()) {
 		_bVoy->freeBoltGroup(0x500);
+		return;
 	}
+
+	// Fade out the screen
+	cMap = _bVoy->getCMapResource(0x504);
+	cMap->_steps = 30;
+	cMap->startFade();
+
+	flipPageAndWaitForFade();
+	if (shouldQuit()) {
+		_bVoy->freeBoltGroup(0x500);
+		return;
+	}
+
+	_graphicsManager->screenReset();
+	_eventsManager->delayClick(200);
+
+	// Voyeur title
+	playRL2Video("a1100100.rl2");
+	_graphicsManager->screenReset();
+
+	_bVoy->freeBoltGroup(0x500);
 }
 
 void VoyeurEngine::doOpening() {
 	_graphicsManager->screenReset();
 
-	if (!_bVoy->getBoltGroup(0x200, true))
+	if (!_bVoy->getBoltGroup(0x200))
 		return;
 
 	byte *frameTable = _bVoy->memberAddr(0x215);
@@ -463,11 +462,11 @@ void VoyeurEngine::doOpening() {
 		_graphicsManager->setColor(i, 8, 8, 8);
 
 	_eventsManager->_intPtr._hasPalette = true;
-	(*_graphicsManager->_vPort)->setupViewPort();
+	_graphicsManager->_vPort->setupViewPort();
 	flipPageAndWait();
 	
 	RL2Decoder decoder;
-	decoder.loadFile("a2300100.rl2");
+	decoder.loadRL2File("a2300100.rl2", false);
 	decoder.start();
 	
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked) {
@@ -500,7 +499,7 @@ void VoyeurEngine::doOpening() {
 			}
 
 			if (textPic) {
-				_graphicsManager->sDrawPic(textPic, *_graphicsManager->_vPort, textPos);
+				_graphicsManager->sDrawPic(textPic, _graphicsManager->_vPort, textPos);
 				flipPageAndWait();
 			}
 		}
@@ -521,7 +520,7 @@ void VoyeurEngine::doOpening() {
 
 void VoyeurEngine::playRL2Video(const Common::String &filename) {
 	RL2Decoder decoder;
-	decoder.loadFile(filename);
+	decoder.loadRL2File(filename, false);
 	decoder.start();
 
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked) {
@@ -595,8 +594,8 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 	if (_voy->_eventFlags & EVTFLAG_8) {
 		assert(pic);
-		byte *imgData = (*_graphicsManager->_vPort)->_currentPic->_imgData;
-		(*_graphicsManager->_vPort)->_currentPic->_imgData = pic->_imgData;
+		byte *imgData = _graphicsManager->_vPort->_currentPic->_imgData;
+		_graphicsManager->_vPort->_currentPic->_imgData = pic->_imgData;
 		pic->_imgData = imgData;
 		_voy->_eventFlags &= ~EVTFLAG_8;
 	}
@@ -609,7 +608,7 @@ void VoyeurEngine::playAudio(int audioId) {
 	_graphicsManager->_backColors = _bVoy->boltEntry(0x7F01 + 
 		BLIND_TABLE[audioId] * 2)._cMapResource;
 
-	(*_graphicsManager->_vPort)->setupViewPort();
+	_graphicsManager->_vPort->setupViewPort();
 	_graphicsManager->_backColors->startFade();
 	flipPageAndWaitForFade();
 
@@ -629,7 +628,7 @@ void VoyeurEngine::playAudio(int audioId) {
 	_soundManager->stopVOCPlay();
 
 	_bVoy->freeBoltGroup(0x7F00);
-	(*_graphicsManager->_vPort)->setupViewPort(NULL);
+	_graphicsManager->_vPort->setupViewPort(NULL);
 
 	_voy->_eventFlags &= ~EVTFLAG_RECORDING;
 	_voy->_playStampMode = 129;
@@ -640,13 +639,13 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	_graphicsManager->setColor(224, 220, 220, 220);
 	_eventsManager->_intPtr._hasPalette = true;
 
-	(*_graphicsManager->_vPort)->setupViewPort(NULL);
-	(*_graphicsManager->_vPort)->fillPic(128);
+	_graphicsManager->_vPort->setupViewPort(NULL);
+	_graphicsManager->_vPort->fillPic(0x80);
 	_graphicsManager->flipPage();
 	_eventsManager->sWaitFlip();
 
 	flipPageAndWait();
-	(*_graphicsManager->_vPort)->fillPic(128);
+	_graphicsManager->_vPort->fillPic(0x80);
 
 	FontInfoResource &fi = *_graphicsManager->_fontPtr;
 	fi._curFont = _bVoy->boltEntry(257)._fontResource;
@@ -657,7 +656,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	fi._justifyWidth = 384;
 	fi._justifyHeight = 120;
 
-	(*_graphicsManager->_vPort)->drawText(time);
+	_graphicsManager->_vPort->drawText(time);
 	
 	if (!location.empty()) {
 		fi._pos = Common::Point(0, 138);
@@ -665,7 +664,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 		fi._justifyWidth = 384;
 		fi._justifyHeight = 140;
 
-		(*_graphicsManager->_vPort)->drawText(location);
+		_graphicsManager->_vPort->drawText(location);
 	}
 
 	flipPageAndWait();
@@ -676,7 +675,7 @@ void VoyeurEngine::saveLastInplay() {
 }
 
 void VoyeurEngine::flipPageAndWait() {
-	(*_graphicsManager->_vPort)->_flags |= DISPFLAG_8;
+	_graphicsManager->_vPort->_flags |= DISPFLAG_8;
 	_graphicsManager->flipPage();
 	_eventsManager->sWaitFlip();
 }
@@ -698,7 +697,7 @@ void VoyeurEngine::showEndingNews() {
 	PictureResource *pic = _bVoy->boltEntry(_playStampGroupId)._picResource;
 	CMapResource *pal = _bVoy->boltEntry(_playStampGroupId + 1)._cMapResource;
 
-	(*_graphicsManager->_vPort)->setupViewPort(pic);
+	_graphicsManager->_vPort->setupViewPort(pic);
 	pal->startFade();
 	flipPageAndWaitForFade();
 
@@ -713,7 +712,7 @@ void VoyeurEngine::showEndingNews() {
 			pal = _bVoy->boltEntry(_playStampGroupId + idx * 2 + 1)._cMapResource;
 		}
 
-		(*_graphicsManager->_vPort)->setupViewPort(pic);
+		_graphicsManager->_vPort->setupViewPort(pic);
 		pal->startFade();
 		flipPageAndWaitForFade();
 
