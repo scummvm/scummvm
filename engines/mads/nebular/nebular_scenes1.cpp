@@ -1719,7 +1719,7 @@ void Scene104::preActions() {
 	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_EASTERN_CLIFF_FACE))
 		_game._player._walkOffScreenSceneId = 105;
 
-	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_EAT))
+	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_SOUTH))
 		_game._player._walkOffScreenSceneId = 106;
 }
 
