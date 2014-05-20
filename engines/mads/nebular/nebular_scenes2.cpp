@@ -1353,7 +1353,7 @@ void Scene205::actions() {
 		} else if (_action.isAction(VERB_TAKE, NOUN_CHICKEN_ON_SPIT) && _globals[kChickenPermitted] && _game._objects.isInRoom(OBJ_CHICKEN)) {
 			_game._objects.addToInventory(OBJ_CHICKEN);
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
-			_scene->_hotspots.activate(0x1C2, false);
+			_scene->_hotspots.activate(NOUN_CHICKEN_ON_SPIT, false);
 			_vm->_dialogs->showItem(OBJ_CHICKEN, 812);
 		} else if (_action.isAction(VERB_TAKE, NOUN_CHICKEN_ON_SPIT) && (!_globals[kChickenPermitted]))
 			_scene->_kernelMessages.add(Common::Point(186, 27), 0xFBFA, 32, 0, 120, _game.getQuote(0x80));
@@ -1409,9 +1409,9 @@ void Scene205::synchronize(Common::Serializer &s) {
 void Scene207::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x185);
+	_scene->addActiveVocab(NOUN_VULTURE);
 	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(0x14D);
+	_scene->addActiveVocab(NOUN_SPIDER);
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
@@ -1896,7 +1896,7 @@ void Scene208::synchronize(Common::Serializer &s) {
 void Scene209::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x10F);
+	_scene->addActiveVocab(NOUN_PLANT_STALK);
 }
 
 void Scene209::handlePause() {
@@ -3517,7 +3517,7 @@ void Scene209::synchronize(Common::Serializer &s) {
 void Scene210::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x70);
+	_scene->addActiveVocab(NOUN_DOORWAY);
 	_scene->addActiveVocab(VERB_WALK_THROUGH);
 }
 
@@ -4517,7 +4517,7 @@ void Scene211::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	_scene->addActiveVocab(0x144);
+	_scene->addActiveVocab(NOUN_SLITHERING_SNAKE);
 }
 
 void Scene211::enter() {
@@ -4793,7 +4793,7 @@ void Scene212::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	_scene->addActiveVocab(0x19D);
+	_scene->addActiveVocab(NOUN_BOUNCING_REPTILE);
 }
 
 void Scene212::enter() {
@@ -4822,7 +4822,7 @@ void Scene212::preActions() {
 void Scene212::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21209);
-	else if (_action.isAction(VERB_WALK_TOWARDS) && (_action.isObject(0x82) || _action.isObject(0xE8)))
+	else if (_action.isAction(VERB_WALK_TOWARDS) && (_action.isObject(NOUN_FIELD_TO_NORTH) || _action.isObject(NOUN_MOUNTAINS)))
 		_scene->_nextSceneId = 208;
 	else if (_action.isAction(VERB_WALK_TOWARDS, NOUN_CAVE))
 		_scene->_nextSceneId = 111;
@@ -4916,8 +4916,8 @@ void Scene213::actions() {
 void Scene214::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x1C3);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_CAPTIVE_CREATURE);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene214::enter() {
@@ -4934,7 +4934,7 @@ void Scene214::enter() {
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(103, 86));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 11);
 	} else {
-		_scene->_hotspots.activate(0x114, false);
+		_scene->_hotspots.activate(NOUN_POISON_DARTS, false);
 	}
 
 	if (_game._objects.isInRoom(OBJ_BLOWGUN)) {
@@ -4942,7 +4942,7 @@ void Scene214::enter() {
 		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], Common::Point(90, 87));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
 	} else {
-		_scene->_hotspots.activate(0x29, false);
+		_scene->_hotspots.activate(NOUN_BLOWGUN, false);
 	}
 
 	if (_scene->_priorSceneId != -2)
@@ -5010,7 +5010,7 @@ void Scene214::actions() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_game._objects.addToInventory(OBJ_POISON_DARTS);
-			_scene->_hotspots.activate(0x114, false);
+			_scene->_hotspots.activate(NOUN_POISON_DARTS, false);
 			break;
 
 		case 2:
@@ -5039,7 +5039,7 @@ void Scene214::actions() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_game._objects.addToInventory(OBJ_BLOWGUN);
-			_scene->_hotspots.activate(0x29, false);
+			_scene->_hotspots.activate(NOUN_BLOWGUN, false);
 			break;
 
 		case 2:

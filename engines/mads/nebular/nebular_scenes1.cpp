@@ -160,7 +160,7 @@ void Scene101::enter() {
 	_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, 0, 10, 4);
 	_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 6, 0, 32, 47);
 
-	_scene->_hotspots.activate(0x137, false);
+	_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, false);
 	_panelOpened = false;
 
 	// HACK: set the prior scene to 102 for now when the game starts, to avoid Rex's getting up animation
@@ -180,7 +180,7 @@ void Scene101::enter() {
 		_game._player._facing = FACING_NORTHEAST;
 		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 17);
-		_scene->_hotspots.activate(0x47, false);
+		_scene->_hotspots.activate(NOUN_CHAIR, false);
 		_chairHotspotId = _scene->_dynamicHotspots.add(0x47, 0x13F, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
 		if (_scene->_priorSceneId == 112)
 			sayDang();
@@ -317,7 +317,7 @@ void Scene101::preActions() {
 		case 1:
 			_game._player._stepEnabled = true;
 			_panelOpened = false;
-			_scene->_hotspots.activate(0x137, false);
+			_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, false);
 			break;
 		}
 	}
@@ -378,7 +378,7 @@ void Scene101::actions() {
 	if (((_action.isAction(VERB_WALKTO, NOUN_SHIELD_ACCESS_PANEL) || _action.isAction(VERB_OPEN, NOUN_SHIELD_ACCESS_PANEL))) && !_panelOpened) {
 		switch (_game._trigger) {
 		case 0:
-			_shieldSpriteIdx = _game._objects.isInRoom(0x18) ? 13 : 14;
+			_shieldSpriteIdx = _game._objects.isInRoom(OBJ_SHIELD_MODULATOR) ? 13 : 14;
 			_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[_shieldSpriteIdx], false, 6, 1, 0, 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			_game._player._stepEnabled = false;
@@ -391,8 +391,8 @@ void Scene101::actions() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], -2, -2);
 			_game._player._stepEnabled = true;
 			_panelOpened = true;
-			if (_game._objects.isInRoom(0x18))
-				_scene->_hotspots.activate(0x137, true);
+			if (_game._objects.isInRoom(OBJ_SHIELD_MODULATOR))
+				_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, true);
 			break;
 		}
 		_action._inProgress = false;
@@ -595,7 +595,7 @@ void Scene101::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PLAY)) && _action.isObject(0x17E)) {
+	if ((_action.isAction(VERB_LOOK) || _action.isAction(VERB_PLAY)) && _action.isObject(NOUN_VIDEO_GAME)) {
 		_vm->_dialogs->show(10124);
 		_action._inProgress = false;
 		return;
@@ -657,9 +657,9 @@ void Scene102::enter() {
 	if (_game._objects.isInRoom(OBJ_BINOCULARS))
 		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 24, 0, 0, 24);
 	else
-		_scene->_hotspots.activate(0x27, false);
+		_scene->_hotspots.activate(NOUN_BINOCULARS, false);
 
-	_scene->_hotspots.activate(0x35, false);
+	_scene->_hotspots.activate(NOUN_BURGER, false);
 
 	if (_globals[kMedicineCabinetOpen]) {
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 0, 0);
@@ -758,10 +758,10 @@ void Scene102::step() {
 }
 
 void Scene102::preActions() {
-	if (_action.isObject(0x122) || _action.isObject(0x117))
+	if (_action.isObject(NOUN_REFRIGERATOR) || _action.isObject(NOUN_POSTER))
 		_game._player._needToWalk = _game._player._readyToWalk;
 
-	if (_fridgeOpenedFl && !_action.isObject(0x122)) {
+	if (_fridgeOpenedFl && !_action.isObject(NOUN_REFRIGERATOR)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._player._needToWalk) {
@@ -777,7 +777,7 @@ void Scene102::preActions() {
 		case 1:
 			if (_game._objects.isInRoom(OBJ_BURGER)) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-				_scene->_hotspots.activate(0x35, false);
+				_scene->_hotspots.activate(NOUN_BURGER, false);
 			}
 			_fridgeOpenedFl = false;
 			_game._player._stepEnabled = true;
@@ -833,7 +833,7 @@ void Scene102::actions() {
 			_game._player._stepEnabled = true;
 			justOpenedFl = true;
 			if (_game._objects.isInRoom(OBJ_BURGER))
-				_scene->_hotspots.activate(0x35, true);
+				_scene->_hotspots.activate(NOUN_BURGER, true);
 			break;
 		}
 	}
@@ -970,7 +970,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if ((_action.isObject(NOUN_LADDER) || _action.isObject(0xA3)) && (_action.isAction(VERB_LOOK) || _action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH))) {
+	if ((_action.isObject(NOUN_LADDER) || _action.isObject(NOUN_HATCHWAY)) && (_action.isAction(VERB_LOOK) || _action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH))) {
 		if (_game._objects.isInInventory(OBJ_REBREATHER)) {
 			if (!_action.isAction(VERB_CLIMB_UP) && !_action.isAction(VERB_CLIMB_THROUGH)) {
 				_vm->_dialogs->show(10231);
@@ -984,7 +984,7 @@ void Scene102::actions() {
 		}
 	}
 
-	if ((_action.isObject(NOUN_LADDER) || _action.isObject(0xA3)) && (_action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH)) ) {
+	if ((_action.isObject(NOUN_LADDER) || _action.isObject(NOUN_HATCHWAY)) && (_action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH)) ) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(formAnimName('A', -1), 1);
@@ -1146,7 +1146,7 @@ void Scene102::actions() {
 		case 1:
 			_game._objects.addToInventory(OBJ_BINOCULARS);
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
-			_scene->_hotspots.activate(0x27, false);
+			_scene->_hotspots.activate(NOUN_BINOCULARS, false);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 			_vm->_sound->command(22);
@@ -1162,7 +1162,7 @@ void Scene102::actions() {
 			_vm->_dialogs->showItem(OBJ_BURGER, 10235);
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 			_game._objects.addToInventory(OBJ_BURGER);
-			_scene->_hotspots.activate(0x35, false);
+			_scene->_hotspots.activate(NOUN_BURGER, false);
 			_vm->_sound->command(22);
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
@@ -1177,7 +1177,7 @@ void Scene102::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)) && _action.isObject(0x194)) {
+	if ((_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)) && _action.isObject(NOUN_WEIGHT_MACHINE)) {
 		_vm->_dialogs->show(10225);
 		_action._inProgress = false;
 		return;
@@ -1849,7 +1849,7 @@ void Scene105::preActions() {
 	if (_action.isAction(VERB_SWIM_TOWARDS, NOUN_OPEN_AREA_TO_SOUTH))
 		_game._player._walkOffScreenSceneId = 107;
 
-	if (_action.isObject(0xE0) && (_action.isAction(VERB_TALKTO) || _action.isAction(VERB_LOOK)))
+	if (_action.isObject(NOUN_MINE) && (_action.isAction(VERB_TALKTO) || _action.isAction(VERB_LOOK)))
 		_game._player._needToWalk = false;
 }
 
@@ -2085,7 +2085,7 @@ void Scene106::actions() {
 		_vm->_dialogs->show(10605);
 	else if (_action.isAction(VERB_LOOK, NOUN_PILE_OF_ROCKS) || _action.isAction(VERB_LOOK_AT, NOUN_PILE_OF_ROCKS))
 		_vm->_dialogs->show(10606);
-	else if (_action.isObject(0x109) && (_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)))
+	else if (_action.isObject(NOUN_PILE_OF_ROCKS) && (_action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)))
 		_vm->_dialogs->show(10607);
 	else if (_action.isAction(VERB_LOOK, NOUN_SHIP) || _action.isAction(VERB_LOOK_AT, NOUN_SHIP))
 		_vm->_dialogs->show(10608);
@@ -2119,7 +2119,7 @@ void Scene107::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	_scene->addActiveVocab(0xDA);
+	_scene->addActiveVocab(NOUN_MANTA_RAY);
 }
 
 void Scene107::enter() {
@@ -2333,8 +2333,8 @@ Scene109::Scene109(MADSEngine *vm) : Scene1xx(vm) {
 }
 
 void Scene109::setup() {
-	_scene->addActiveVocab(0x66);
-	_scene->addActiveVocab(0xE5);
+	_scene->addActiveVocab(NOUN_DEAD_PURPLE_MONSTER);
+	_scene->addActiveVocab(NOUN_MONSTER_SLUDGE);
 
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -2489,8 +2489,8 @@ void Scene109::preActions() {
 		_game._player._walkOffScreenSceneId = 108;
 
 	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT))
-	&& (_action.isObject(0x146) || _action.isObject(0x178))
-	&& (_action.isObject(0x65) || _action.isObject(0x157) || _action.isObject(0x35))) {
+	&& (_action.isObject(NOUN_SMALL_HOLE) || _action.isObject(NOUN_TUNNEL))
+	&& (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER))) {
 		int idx = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if ((idx >= 0) && _game._objects.isInInventory(idx)) {
 			_game._player._prepareWalkPos = Common::Point(106, 38);
@@ -2501,7 +2501,7 @@ void Scene109::preActions() {
 	}
 
 	if ((_action.isAction(VERB_SWIM_INTO, NOUN_TUNNEL) || _action.isAction(VERB_SWIM_TO, NOUN_SMALL_HOLE))
-	&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(0x178)))
+	&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(NOUN_TUNNEL)))
 		_game._player._walkOffScreenSceneId = 110;
 
 	_hungryFl = false;
@@ -2515,7 +2515,7 @@ void Scene109::actions() {
 	}
 
 	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE)) && (_action.isTarget(0x146) || _action.isTarget(0x178))) {
-		if (_action.isObject(0x65) || _action.isObject(0x157) || _action.isObject(0x35)) {
+		if (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER)) {
 			_throwingObjectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			if (_throwingObjectId >= 0) {
 				if ((_game._objects.isInInventory(_throwingObjectId) && _globals[kHoovicAlive]) || _rexThrowingObject) {
@@ -2692,7 +2692,7 @@ void Scene109::actions() {
 		_vm->_dialogs->show(10901);
 	else if (_action.isAction(VERB_LOOK, NOUN_CORAL))
 		_vm->_dialogs->show(10902);
-	else if ((_action.isAction(VERB_TAKE) || _action.isAction(VERB_PULL)) && _action.isObject(0x5A))
+	else if ((_action.isAction(VERB_TAKE) || _action.isAction(VERB_PULL)) && _action.isObject(NOUN_CORAL))
 		_vm->_dialogs->show(10903);
 	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
 		_vm->_dialogs->show(10904);
@@ -2737,7 +2737,7 @@ void Scene110::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	_scene->addActiveVocab(0x5B);
+	_scene->addActiveVocab(NOUN_CRAB);
 }
 
 void Scene110::enter() {
@@ -2861,7 +2861,7 @@ void Scene110::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 void Scene111::setup() {
-	_scene->addActiveVocab(0x1F);
+	_scene->addActiveVocab(NOUN_BATS);
 
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -2992,7 +2992,7 @@ void Scene111::actions() {
 		_vm->_dialogs->show(11104);
 	else if (_action.isAction(VERB_LOOK, NOUN_LARGE_STALAGMITE))
 		_vm->_dialogs->show(11105);
-	else if ((_action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)) && (_action.isObject(0x153) || _action.isObject(0xC8)))
+	else if ((_action.isAction(VERB_PULL) || _action.isAction(VERB_TAKE)) && (_action.isObject(NOUN_STALAGMITES) || _action.isObject(NOUN_LARGE_STALAGMITE)))
 		_vm->_dialogs->show(11106);
 	else
 		return;

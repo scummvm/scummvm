@@ -305,9 +305,9 @@ void Scene801::actions() {
 void Scene802::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x137);
-	_scene->addActiveVocab(0xD);
-	_scene->addActiveVocab(0x123);
+	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
+	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(NOUN_REMOTE);
 }
 
 void Scene802::enter() {
@@ -513,8 +513,8 @@ void Scene802::actions() {
 void Scene803::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x472);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_GUTS);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 
 	if ((!_globals[kFromCockpit] && _globals[kReturnFromCut] && !_globals[kBeamIsUp])
 		|| (_globals[kFromCockpit] && !_globals[kExitShip])) {
@@ -1060,9 +1060,9 @@ void Scene804::step() {
 void Scene805::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x476);
-	_scene->addActiveVocab(0x167);
-	_scene->addActiveVocab(0x137);
+	_scene->addActiveVocab(NOUN_REMOVE);
+	_scene->addActiveVocab(NOUN_TARGET_MODULE);
+	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
 }
 
 void Scene805::enter() {

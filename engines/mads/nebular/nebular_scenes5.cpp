@@ -95,8 +95,8 @@ void Scene5xx::sceneEntrySound() {
 void Scene501::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x6E);
-	_scene->addActiveVocab(0x18B);
+	_scene->addActiveVocab(NOUN_DOOR);
+	_scene->addActiveVocab(NOUN_WALK_THROUGH);
 }
 
 void Scene501::synchronize(Common::Serializer &s) {
@@ -283,7 +283,7 @@ void Scene501::step() {
 }
 
 void Scene501::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(0x321) || _action.isObject(0x322)))
+	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(NOUN_STREET_TO_EAST) || _action.isObject(NOUN_SIDEWALK_TO_EAST)))
 		_game._player._walkOffScreenSceneId = 551;
 }
 
@@ -526,8 +526,8 @@ void Scene502::actions() {
 void Scene503::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x6A);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_DETONATORS);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene503::enter() {
@@ -1099,9 +1099,9 @@ void Scene505::actions() {
 void Scene506::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x242);
-	_scene->addActiveVocab(0x336);
-	_scene->addActiveVocab(0x37D);
+	_scene->addActiveVocab(NOUN_WALK_INTO);
+	_scene->addActiveVocab(NOUN_SOFTWARE_STORE);
+	_scene->addActiveVocab(NOUN_LABORATORY);
 }
 
 void Scene506::enter() {
@@ -1361,8 +1361,8 @@ void Scene506::actions() {
 void Scene507::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x106);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_PENLIGHT);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene507::enter() {
@@ -1472,9 +1472,9 @@ void Scene507::actions() {
 void Scene508::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x364);
-	_scene->addActiveVocab(0xD);
-	_scene->addActiveVocab(0x343);
+	_scene->addActiveVocab(NOUN_SPINACH_PATCH_DOLL);
+	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
 
 void Scene508::enter() {
@@ -1497,8 +1497,8 @@ void Scene508::enter() {
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
 		int idx = _scene->_dynamicHotspots.add(0x343, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
-		_scene->_hotspots.activate(0x342, false);
-		_scene->_hotspots.activate(0x343, false);
+		_scene->_hotspots.activate(NOUN_HOLE, false);
+		_scene->_hotspots.activate(NOUN_LASER_BEAM, false);
 	} else {
 		_scene->changeVariant(1);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
@@ -1512,8 +1512,8 @@ void Scene508::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 6);
 		if (_globals[kLaserHoleIsThere]) {
 			_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, -2);
-			_scene->_hotspots.activate(0x342, true);
-			_scene->_hotspots.activate(0x343, true);
+			_scene->_hotspots.activate(NOUN_HOLE, true);
+			_scene->_hotspots.activate(NOUN_LASER_BEAM, true);
 		}
 		_vm->_sound->command(21);
 	}
@@ -1572,8 +1572,8 @@ void Scene508::handlePedestral() {
 
 		case 2:
 			_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, -2);
-			_scene->_hotspots.activate(0x342, true);
-			_scene->_hotspots.activate(0x343, true);
+			_scene->_hotspots.activate(NOUN_HOLE, true);
+			_scene->_hotspots.activate(NOUN_LASER_BEAM, true);
 			break;
 
 		case 3:
@@ -1731,9 +1731,9 @@ void Scene508::actions() {
 void Scene511::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x345);
-	_scene->addActiveVocab(0x87);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_BOAT);
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene511::enter() {
@@ -1747,10 +1747,10 @@ void Scene511::enter() {
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 0));
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
-		_scene->_hotspots.activate(0x345, false);
+		_scene->_hotspots.activate(NOUN_BOAT, false);
 		int idx = _scene->_dynamicHotspots.add(0x345, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(75, 124), FACING_NORTH);
-		_scene->_hotspots.activate(0x347, false);
+		_scene->_hotspots.activate(NOUN_ROPE, false);
 	} else {
 		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('b', 2));
 		_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 3));
@@ -1765,8 +1765,8 @@ void Scene511::enter() {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6],5);
 
-		_scene->_hotspots.activate(0x347, true);
-		_scene->_hotspots.activate(0x345, true);
+		_scene->_hotspots.activate(NOUN_ROPE, true);
+		_scene->_hotspots.activate(NOUN_BOAT, true);
 		_scene->changeVariant(1);
 	}
 
@@ -2052,10 +2052,10 @@ void Scene511::actions() {
 void Scene512::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x88);
-	_scene->addActiveVocab(0xD);
-	_scene->addActiveVocab(0xFF);
-	_scene->addActiveVocab(0x366);
+	_scene->addActiveVocab(NOUN_FISHING_ROD);
+	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(NOUN_PADLOCK_KEY);
+	_scene->addActiveVocab(NOUN_REGISTER_DRAWER);
 }
 
 void Scene512::enter() {
@@ -2076,7 +2076,7 @@ void Scene512::enter() {
 	if (!_game._visitedScenes._sceneRevisited)
 		_globals[kRegisterOpen] = false;
 
-	_scene->_hotspots.activate(0xFF, false);
+	_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
 	if (_game._difficulty == DIFFICULTY_EASY) {
 		if (_game._objects[OBJ_PADLOCK_KEY]._roomNumber == _scene->_currentSceneId) {
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
@@ -2087,20 +2087,20 @@ void Scene512::enter() {
 		if (_globals[kRegisterOpen]) {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-			_scene->_hotspots.activate(0xFF, false);
+			_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
 		}
 	} else if (_globals[kRegisterOpen]) {
 		if (_game._objects[OBJ_PADLOCK_KEY]._roomNumber == _scene->_currentSceneId) {
-			_scene->_hotspots.activate(0xFF, true);
+			_scene->_hotspots.activate(NOUN_PADLOCK_KEY, true);
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 3);
 		} else {
-			_scene->_hotspots.activate(0xFF, false);
+			_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
 		}
 	} else
-		_scene->_hotspots.activate(0xFF, false);
+		_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
 
 	if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(144, 152);
@@ -2190,7 +2190,7 @@ void Scene512::actions() {
 			case 5:
 				_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], false, 14, 0, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 3);
-				_scene->_hotspots.activate(0xFF, true);
+				_scene->_hotspots.activate(NOUN_PADLOCK_KEY, true);
 				_scene->_sequences.addTimer(60, 6);
 				break;
 
@@ -2227,7 +2227,7 @@ void Scene512::actions() {
 				_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 				_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 12, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 3);
-				_scene->_hotspots.activate(0xFF, false);
+				_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
@@ -2268,7 +2268,7 @@ void Scene512::actions() {
 					_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 					_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 					_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
-					_scene->_hotspots.activate(0xFF, false);
+					_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
 				}
 				_vm->_sound->command(9);
 				_game._objects.addToInventory(OBJ_PADLOCK_KEY);
@@ -2346,8 +2346,8 @@ void Scene512::actions() {
 void Scene513::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x367);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_ELEVATOR_DOOR);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene513::enter() {
@@ -2690,7 +2690,7 @@ void Scene551::step() {
 }
 
 void Scene551::preActions() {
-	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(0x360) || _action.isObject(0x361)))
+	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(NOUN_STREET_TO_WEST) || _action.isObject(NOUN_SIDEWALK_TO_WEST)))
 		_game._player._walkOffScreenSceneId = 501;
 }
 

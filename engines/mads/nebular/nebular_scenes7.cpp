@@ -646,7 +646,7 @@ void Scene703::enter() {
 	_boatFrame = -1;
 
 	if (!_globals[kMonsterAlive])
-		_scene->_hotspots.activate(0x468, false);
+		_scene->_hotspots.activate(NOUN_SEA_MONSTER, false);
 
 	if (_scene->_priorSceneId == 704) {
 		_game._player._stepEnabled = false;
@@ -960,7 +960,7 @@ void Scene703::step() {
 				break;
 
 			case 126:
-				_scene->_hotspots.activate(0x468, false);
+				_scene->_hotspots.activate(NOUN_SEA_MONSTER, false);
 				_globals[kMonsterAlive] = false;
 				_scene->freeAnimation();
 				_monsterMode = 0;
@@ -1073,8 +1073,8 @@ void Scene703::actions() {
 void Scene704::setup() {
 	_game._player._spritesPrefix = "";
 	setAAName();
-	_scene->addActiveVocab(0x2E);
-	_scene->addActiveVocab(0xD1);
+	_scene->addActiveVocab(NOUN_BOTTLE);
+	_scene->addActiveVocab(NOUN_LOOK_AT);
 }
 
 void Scene704::handleBottleInterface() {
@@ -1676,9 +1676,9 @@ void Scene705::actions() {
 void Scene706::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x2E);
-	_scene->addActiveVocab(0x17D);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_BOTTLE);
+	_scene->addActiveVocab(NOUN_VASE);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene706::handleRexDeath() {
@@ -2085,8 +2085,8 @@ void Scene711::actions() {
 void Scene751::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x87);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene751::enter() {

@@ -470,8 +470,8 @@ void Scene304::synchronize(Common::Serializer &s) {
 void Scene307::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x11);
-	_scene->addActiveVocab(0x2F7);
+	_scene->addActiveVocab(NOUN_AIR_VENT);
+	_scene->addActiveVocab(NOUN_CLIMB_INTO);
 }
 
 void Scene307::handleRexDialog(int quote) {
@@ -2510,9 +2510,9 @@ void Scene318::enter() {
 		_scene->loadAnimation(formAnimName('f', -1));
 		_scene->_activeAnimation->_resetFlag = true;
 	} else if (!_globals[kHasSeenProfPyro]) {
-		_scene->_hotspots.activate(0x3A2, false);
-		_scene->_hotspots.activate(0x3A1, false);
-		_scene->_hotspots.activate(0x165, false);
+		_scene->_hotspots.activate(NOUN_PROFESSORS_GURNEY, false);
+		_scene->_hotspots.activate(NOUN_PROFESSOR, false);
+		_scene->_hotspots.activate(NOUN_TAPE_PLAYER, false);
 	}
 
 	if (_game._objects.isInRoom(OBJ_SCALPEL)) {
@@ -2542,7 +2542,7 @@ void Scene318::enter() {
 	}
 
 	_lastFrame = 0;
-	_scene->_hotspots.activate(0x307, false);
+	_scene->_hotspots.activate(NOUN_INTERN, false);
 
 	if (_scene->_priorSceneId != -2) {
 		_dialogFl = false;
@@ -2572,7 +2572,7 @@ void Scene318::enter() {
 				_dialogFl = false;
 			} else {
 				_scene->loadAnimation(formAnimName('b', -1), 61);
-				_scene->_hotspots.activate(0x307, true);
+				_scene->_hotspots.activate(NOUN_INTERN, true);
 			}
 
 			if (_dialogFl) {
@@ -2658,7 +2658,7 @@ void Scene318::step() {
 
 				if (nextFrame == 184) {
 					handleInternDialog(0x1D1, 3, 240);
-					_scene->_hotspots.activate(0x307, false);
+					_scene->_hotspots.activate(NOUN_INTERN, false);
 					_internVisibleFl = false;
 				}
 				break;
@@ -3642,10 +3642,10 @@ void Scene320::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(32011);
 	else if ((_action.isAction(VERB_PRESS) || _action.isAction(VERB_PUSH)) &&
-		(_action.isObject(0x2E8) || _action.isObject(0x2E9) || _action.isObject(0x2EA) || _action.isObject(0x2EB) ||
-		 _action.isObject(0x2DE) || _action.isObject(0x2DD) || _action.isObject(0x2E0) || _action.isObject(0x2E1) ||
-		 _action.isObject(0x2E2) || _action.isObject(0x2E3) || _action.isObject(0x2E4) || _action.isObject(0x2E5) ||
-		 _action.isObject(0x2E6) || _action.isObject(0x2E7)
+		(_action.isObject(NOUN_LEFT_1_KEY) || _action.isObject(NOUN_LEFT_2_KEY) || _action.isObject(NOUN_LEFT_3_KEY) || _action.isObject(NOUN_LEFT_4_KEY) ||
+		 _action.isObject(NOUN_GREEN_BUTTON) || _action.isObject(NOUN_RED_BUTTON) || _action.isObject(NOUN_RIGHT_1_KEY) || _action.isObject(NOUN_RIGHT_2_KEY) ||
+		 _action.isObject(NOUN_RIGHT_3_KEY) || _action.isObject(NOUN_RIGHT_4_KEY) || _action.isObject(NOUN_RIGHT_5_KEY) || _action.isObject(NOUN_RIGHT_6_KEY) ||
+		 _action.isObject(NOUN_RIGHT_7_KEY) || _action.isObject(NOUN_RIGHT_8_KEY)
 		)) {
 		switch (_game._trigger) {
 		case 0:
@@ -3868,7 +3868,7 @@ void Scene351::setup() {
 
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene351::enter() {
@@ -3879,11 +3879,11 @@ void Scene351::enter() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*ROXRC_7");
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXRD_7");
 
-	if (_game._objects.isInRoom(0xF)) {
+	if (_game._objects.isInRoom(OBJ_CREDIT_CHIP)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 4);
 	} else
-		_scene->_hotspots.activate(0x5C, false);
+		_scene->_hotspots.activate(NOUN_CREDIT_CHIP, false);
 
 	if (_scene->_priorSceneId == 352)
 		_game._player._playerPos = Common::Point(148, 152);
@@ -3978,7 +3978,7 @@ void Scene351::actions() {
 				break;
 
 			case 1:
-				_scene->_hotspots.activate(0x5C, false);
+				_scene->_hotspots.activate(NOUN_CREDIT_CHIP, false);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_game._objects.addToInventory(OBJ_CREDIT_CHIP);
 				break;
@@ -4027,10 +4027,10 @@ void Scene352::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	_scene->addActiveVocab(0xD);
-	_scene->addActiveVocab(0x2F4);
-	_scene->addActiveVocab(0x2F5);
-	_scene->addActiveVocab(0x2F6);
+	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(NOUN_YOUR_STUFF);
+	_scene->addActiveVocab(NOUN_OTHER_STUFF);
+	_scene->addActiveVocab(NOUN_LAMP);
 }
 
 void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
@@ -4815,7 +4815,7 @@ void Scene358::actions() {
 void Scene359::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene359::enter() {
@@ -5464,7 +5464,7 @@ void Scene388::enter() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
 	if (_globals[kAfterHavoc])
-		_scene->_hotspots.activate(0x303, false);
+		_scene->_hotspots.activate(NOUN_SAUROPOD, false);
 	else {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('b', 0));
 		_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
@@ -5529,7 +5529,7 @@ void Scene389::enter() {
 	_circularQuoteId = 0x159;
 
 	if (_globals[kAfterHavoc])
-		_scene->_hotspots.activate(0x304, false);
+		_scene->_hotspots.activate(NOUN_MONSTER, false);
 	else {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', -1));
 		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);

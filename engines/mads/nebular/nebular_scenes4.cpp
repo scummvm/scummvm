@@ -235,15 +235,15 @@ void Scene402::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	_scene->addActiveVocab(0x30E);
-	_scene->addActiveVocab(0x306);
-	_scene->addActiveVocab(0x72);
-	_scene->addActiveVocab(0x27);
-	_scene->addActiveVocab(0xD);
-	_scene->addActiveVocab(0x5C);
-	_scene->addActiveVocab(0x4);
-	_scene->addActiveVocab(0x124);
-	_scene->addActiveVocab(0xD1);
+	_scene->addActiveVocab(NOUN_BARTENDER);
+	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
+	_scene->addActiveVocab(NOUN_DRINK);
+	_scene->addActiveVocab(NOUN_BINOCULARS);
+	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(NOUN_CREDIT_CHIP);
+	_scene->addActiveVocab(NOUN_TAKE);
+	_scene->addActiveVocab(NOUN_REPAIR_LIST);
+	_scene->addActiveVocab(NOUN_LOOK_AT);
 }
 
 void Scene402::synchronize(Common::Serializer &s) {
@@ -2849,8 +2849,8 @@ void Scene407::synchronize(Common::Serializer &s) {
 void Scene408::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x167);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_TARGET_MODULE);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene408::enter() {
@@ -2873,7 +2873,7 @@ void Scene408::preActions() {
 	if ((_action.isAction(VERB_TAKE) && !_action.isAction(0x167)) || _action.isAction(VERB_PULL, NOUN_PIN) || _action.isAction(VERB_OPEN, NOUN_CARTON))
 		_game._player._needToWalk = false;
 
-	if ((_action.isAction(VERB_LOOK, NOUN_TARGET_MODULE) && _game._objects.isInRoom(0x17)) || _action.isAction(VERB_LOOK, NOUN_CHEST))
+	if ((_action.isAction(VERB_LOOK, NOUN_TARGET_MODULE) && _game._objects.isInRoom(OBJ_TARGET_MODULE)) || _action.isAction(VERB_LOOK, NOUN_CHEST))
 		_game._player._needToWalk = true;
 }
 
@@ -3069,7 +3069,7 @@ void Scene410::enter() {
 	if (_game._objects.isInRoom(OBJ_CHARGE_CASES))
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 	else
-		_scene->_hotspots.activate(0x48, false);
+		_scene->_hotspots.activate(NOUN_CHARGE_CASES, false);
 
 	if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(155, 150);
@@ -3144,7 +3144,7 @@ void Scene410::actions() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_scene->_hotspots.activate(0x48, false);
+			_scene->_hotspots.activate(NOUN_CHARGE_CASES, false);
 			_game._objects.addToInventory(OBJ_CHARGE_CASES);
 			_vm->_dialogs->showItem(OBJ_CHARGE_CASES, 41032);
 			break;
@@ -3464,11 +3464,11 @@ void Scene411::giveToRex(int object) {
 void Scene411::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0xD);
-	_scene->addActiveVocab(0x306);
-	_scene->addActiveVocab(0x2D6);
-	_scene->addActiveVocab(0x2D7);
-	_scene->addActiveVocab(0x3A9);
+	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
+	_scene->addActiveVocab(NOUN_FORMALDEHYDE);
+	_scene->addActiveVocab(NOUN_PETROX);
+	_scene->addActiveVocab(NOUN_LECITHIN);
 }
 
 void Scene411::enter() {
@@ -3507,11 +3507,11 @@ void Scene411::enter() {
 	_dialog4.setup(0x5E, 0x255, 0x261, 0x25D, 0x259, 0x262, -1);
 
 	if (_globals[kNextIngredient] >= 4 && _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
-		_scene->_hotspots.activate(0x3AB, false);
-		_scene->_hotspots.activate(0x30D, true);
+		_scene->_hotspots.activate(NOUN_EXPLOSIVES, false);
+		_scene->_hotspots.activate(NOUN_KETTLE, true);
 	} else {
-		_scene->_hotspots.activate(0x30D, false);
-		_scene->_hotspots.activate(0x3AB, true);
+		_scene->_hotspots.activate(NOUN_KETTLE, false);
+		_scene->_hotspots.activate(NOUN_EXPLOSIVES, true);
 	}
 
 	if (_globals[kNextIngredient] >= 4 && _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
@@ -3649,8 +3649,8 @@ void Scene411::step() {
 				if (_makeMushroomCloud) {
 					_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 5, 1, 0, 0);
 					_makeMushroomCloud = false;
-					_scene->_hotspots.activate(0x3AB, false);
-					_scene->_hotspots.activate(0x30D, true);
+					_scene->_hotspots.activate(NOUN_EXPLOSIVES, false);
+					_scene->_hotspots.activate(NOUN_KETTLE, true);
 				}
 				break;
 
@@ -3736,8 +3736,8 @@ void Scene411::actions() {
 			break;
 
 		case 111:
-			_scene->_hotspots.activate(0x30D, true);
-			_scene->_hotspots.activate(0x3AB, false);
+			_scene->_hotspots.activate(NOUN_KETTLE, true);
+			_scene->_hotspots.activate(NOUN_EXPLOSIVES, false);
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 

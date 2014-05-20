@@ -86,8 +86,8 @@ void Scene6xx::sceneEntrySound() {
 void Scene601::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x343);
-	_scene->addActiveVocab(0xD1);
+	_scene->addActiveVocab(NOUN_LASER_BEAM);
+	_scene->addActiveVocab(NOUN_LOOK_AT);
 }
 
 void Scene601::enter() {
@@ -220,9 +220,9 @@ void Scene601::actions() {
 void Scene602::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0xD);
-	_scene->addActiveVocab(0x3D3);
-	_scene->addActiveVocab(0x343);
+	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(NOUN_SAFE);
+	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
 
 void Scene602::enter() {
@@ -244,7 +244,7 @@ void Scene602::enter() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
 		_scene->changeVariant(1);
 	} else
-		_scene->_hotspots.activate(0x342, false);
+		_scene->_hotspots.activate(NOUN_HOLE, false);
 
 	if (_globals[kSafeStatus] == 0) {
 		_lastSpriteIdx = _globals._spriteIndexes[2];
@@ -270,9 +270,9 @@ void Scene602::enter() {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 15);
 		if (_globals[kSafeStatus] == 0 || _globals[kSafeStatus] == 2)
-			_scene->_hotspots.activate(0x6F, false);
+			_scene->_hotspots.activate(NOUN_DOOR_KEY, false);
 	} else
-		_scene->_hotspots.activate(0x6F, false);
+		_scene->_hotspots.activate(NOUN_DOOR_KEY, false);
 
 	if (_scene->_priorSceneId == 603) {
 		_game._player._playerPos = Common::Point(228, 126);
@@ -320,7 +320,7 @@ void Scene602::handleSafeActions() {
 				_lastSequenceIdx = _scene->_sequences.addSpriteCycle(_lastSpriteIdx, false, 12, 1, 0, 0);
 				_scene->_sequences.setDepth(_lastSequenceIdx, 14);
 				if (_game._objects[OBJ_DOOR_KEY]._roomNumber == _scene->_currentSceneId)
-					_scene->_hotspots.activate(0x6F, true);
+					_scene->_hotspots.activate(NOUN_DOOR_KEY, true);
 
 				_scene->_sequences.addSubEntry(_lastSequenceIdx,
 					SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -335,7 +335,7 @@ void Scene602::handleSafeActions() {
 			_lastSequenceIdx = _scene->_sequences.startReverseCycle(_lastSpriteIdx, false, 12, 1, 0, 0);
 			_scene->_sequences.setDepth(_lastSequenceIdx, 14);
 			if (_game._objects[OBJ_DOOR_KEY]._roomNumber == _scene->_currentSceneId)
-				_scene->_hotspots.activate(0x6F, false);
+				_scene->_hotspots.activate(NOUN_DOOR_KEY, false);
 
 			_scene->_sequences.addSubEntry(_lastSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		}
@@ -453,7 +453,7 @@ void Scene602::actions() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[6]);
-			_scene->_hotspots.activate(0x6F, false);
+			_scene->_hotspots.activate(NOUN_DOOR_KEY, false);
 			_vm->_sound->command(9);
 			_game._objects.addToInventory(OBJ_DOOR_KEY);
 			break;
@@ -533,9 +533,9 @@ void Scene602::actions() {
 void Scene603::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0xD);
-	_scene->addActiveVocab(0x57);
-	_scene->addActiveVocab(0x3A8);
+	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(NOUN_COMPACT_CASE);
+	_scene->addActiveVocab(NOUN_NOTE);
 }
 
 void Scene603::enter() {
@@ -675,9 +675,9 @@ void Scene603::actions() {
 void Scene604::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x468);
+	_scene->addActiveVocab(NOUN_SEA_MONSTER);
 	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(0x171);
+	_scene->addActiveVocab(NOUN_TIMEBOMB);
 }
 
 void Scene604::enter() {
@@ -988,7 +988,7 @@ void Scene605::actions() {
 void Scene607::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x471);
+	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
@@ -1017,7 +1017,7 @@ void Scene607::enter() {
 		_dogEatsRex = false;
 		_dogTimer = 0;
 	} else
-		_scene->_hotspots.activate(0x471, false);
+		_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, false);
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
@@ -1076,7 +1076,7 @@ void Scene607::step() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
 		_dogBarking = false;
 		_globals[kDogStatus] = 1;
-		_scene->_hotspots.activate(0x471, true);
+		_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, true);
 	}
 
 	if (!_dogEatsRex && (_game._difficulty != DIFFICULTY_EASY) && !_animationActive && (_globals[kDogStatus] == 1)
@@ -1247,7 +1247,7 @@ void Scene607::handleThrowingBone() {
 		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
 
 		if (_animationMode != 1)
-			_scene->_hotspots.activate(0x471, false);
+			_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, false);
 		else {
 			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
@@ -1421,10 +1421,10 @@ void Scene607::actions() {
 void Scene608::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0xD);
-	_scene->addActiveVocab(0x115);
-	_scene->addActiveVocab(0x324);
-	_scene->addActiveVocab(0x471);
+	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(NOUN_POLYCEMENT);
+	_scene->addActiveVocab(NOUN_CAR);
+	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
 }
 
 void Scene608::resetDogVariables() {
@@ -2438,7 +2438,7 @@ void Scene609::step() {
 		break;
 
 	case 61:
-		_scene->_hotspots.activate(0x425, false);
+		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, false);
 		_game._player.walk(Common::Point(101, 100), FACING_EAST);
 		_scene->_sequences.addTimer(180, 62);
 		break;
@@ -2446,7 +2446,7 @@ void Scene609::step() {
 	case 62:
 		_scene->_sequences.remove( _globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
-		_scene->_hotspots.activate(0x425, true);
+		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, true);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
 		break;
@@ -2550,7 +2550,7 @@ void Scene609::enterStore() {
 		break;
 
 	case 6:
-		_scene->_hotspots.activate(0x425, false);
+		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, false);
 		if (_videoDoorMode == 1) {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, _game.getQuote(0x307));
@@ -2567,7 +2567,7 @@ void Scene609::enterStore() {
 		break;
 
 	case 8:
-		_scene->_hotspots.activate(0x425, true);
+		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, true);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
 		_globals[kBeenInVideoStore] = true;
@@ -2704,8 +2704,8 @@ void Scene609::actions() {
 void Scene610::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x108);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_PHONE_HANDSET);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene610::enter() {
@@ -2887,8 +2887,8 @@ void Scene610::actions() {
 void Scene611::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x275);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_RAT);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene611::handleRatMoves() {
@@ -3756,7 +3756,7 @@ void Scene611::enter() {
 		_stickFingerFl = false;
 	} else {
 		_hermitMode = 0;
-		_scene->_hotspots.activate(0x45A, false);
+		_scene->_hotspots.activate(NOUN_HERMIT, false);
 	}
 
 	// CHECKME: The last line of the block looks extremely useless
@@ -4117,7 +4117,7 @@ void Scene611::step() {
 			_startTradingFl = false;
 			_nextFrame = 52;
 			_globals[kHasTalkedToHermit] = true;
-			_scene->_hotspots.activate(0x45A, false);
+			_scene->_hotspots.activate(NOUN_HERMIT, false);
 		} else {
 			_game._player._stepEnabled = true;
 			_hermitMode = 1;
@@ -4262,8 +4262,8 @@ void Scene611::actions() {
 void Scene612::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(0x87);
-	_scene->addActiveVocab(0xD);
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(NOUN_WALK_TO);
 }
 
 void Scene612::handleWinchMovement() {
