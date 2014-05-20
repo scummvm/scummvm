@@ -56,6 +56,7 @@ private:
 
 public:
 	Scene701(MADSEngine *vm) : Scene7xx(vm), _fishingLineId(-1) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -97,6 +98,7 @@ private:
 
 public:
 	Scene703(MADSEngine *vm) : Scene7xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -121,6 +123,7 @@ private:
 
 public:
 	Scene704(MADSEngine *vm) : Scene7xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -138,6 +141,7 @@ private:
 
 public:
 	Scene705(MADSEngine *vm) : Scene7xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -159,6 +163,7 @@ private:
 
 public:
 	Scene706(MADSEngine *vm) : Scene7xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -203,6 +208,7 @@ private:
 
 public:
 	Scene751(MADSEngine *vm) : Scene7xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -217,6 +223,7 @@ private:
 
 public:
 	Scene752(MADSEngine *vm) : Scene7xx(vm), _cardId(-1) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();

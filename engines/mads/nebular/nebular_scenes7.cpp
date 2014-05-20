@@ -99,6 +99,12 @@ void Scene701::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
+void Scene701::synchronize(Common::Serializer &s) {
+	Scene7xx::synchronize(s);
+
+	s.syncAsSint16LE(_fishingLineId);
+}
+
 void Scene701::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 5));
@@ -547,6 +553,25 @@ void Scene702::actions() {
 void Scene703::setup() {
 	_game._player._spritesPrefix = "";
 	setAAName();
+}
+
+void Scene703::synchronize(Common::Serializer &s) {
+	Scene7xx::synchronize(s);
+
+	s.syncAsSint16LE(_monsterMode);
+	s.syncAsSint16LE(_boatFrame);
+	s.syncAsSint16LE(_curSequence);
+	s.syncAsSint16LE(_boatDir);
+
+	s.syncAsByte(_useBomb);
+	s.syncAsByte(_startMonsterTimer);
+	s.syncAsByte(_rexDeathFl);
+	s.syncAsByte(_restartTrigger70Fl);
+
+	s.syncAsUint32LE(_lastFrameTime);
+	s.syncAsUint32LE(_monsterTime);
+
+	_dialog1.synchronize(s);
 }
 
 void Scene703::handleBottleInterface() {
@@ -1077,6 +1102,19 @@ void Scene704::setup() {
 	_scene->addActiveVocab(VERB_LOOK_AT);
 }
 
+void Scene704::synchronize(Common::Serializer &s) {
+	Scene7xx::synchronize(s);
+
+	s.syncAsSint16LE(_bottleHotspotId);
+	s.syncAsSint16LE(_boatCurrentFrame);
+	s.syncAsSint16LE(_animationMode);
+	s.syncAsSint16LE(_boatDirection);
+
+	s.syncAsByte(_takeBottleFl);
+
+	_dialog1.synchronize(s);
+}
+
 void Scene704::handleBottleInterface() {
 	switch (_globals[kBottleStatus]) {
 	case 0:
@@ -1414,6 +1452,12 @@ void Scene705::setup() {
 	setAAName();
 }
 
+void Scene705::synchronize(Common::Serializer &s) {
+	Scene7xx::synchronize(s);
+
+	_dialog1.synchronize(s);
+}
+
 void Scene705::handleBottleInterface() {
 	switch (_globals[kBottleStatus]) {
 	case 0:
@@ -1679,6 +1723,17 @@ void Scene706::setup() {
 	_scene->addActiveVocab(NOUN_BOTTLE);
 	_scene->addActiveVocab(NOUN_VASE);
 	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+void Scene706::synchronize(Common::Serializer &s) {
+	Scene7xx::synchronize(s);
+
+	s.syncAsSint16LE(_vaseHotspotId);
+	s.syncAsSint16LE(_vaseMode);
+	s.syncAsSint16LE(_animationMode);
+	s.syncAsSint16LE(_animationFrame);
+
+	s.syncAsByte(_emptyPedestral);
 }
 
 void Scene706::handleRexDeath() {
@@ -2089,6 +2144,12 @@ void Scene751::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
+void Scene751::synchronize(Common::Serializer &s) {
+	Scene7xx::synchronize(s);
+
+	s.syncAsByte(_rexHandingLine);
+}
+
 void Scene751::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RM701X0");
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
@@ -2415,6 +2476,12 @@ void Scene752::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(VERB_LOOK_AT);
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
+}
+
+void Scene752::synchronize(Common::Serializer &s) {
+	Scene7xx::synchronize(s);
+
+	s.syncAsByte(_cardId);
 }
 
 void Scene752::enter() {
