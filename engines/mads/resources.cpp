@@ -149,7 +149,7 @@ Common::SeekableReadStream *HagArchive::createReadStreamForMember(const Common::
 void HagArchive::loadIndex(MADSEngine *vm) {
 	Common::File hagFile;
 
-	for (int sectionIndex = -1; sectionIndex < 10; ++sectionIndex) {
+	for (int sectionIndex = -1; sectionIndex < 11; ++sectionIndex) {
 		if (sectionIndex == 0)
 			continue;
 
@@ -167,6 +167,13 @@ void HagArchive::loadIndex(MADSEngine *vm) {
 
 		Common::String filename = (sectionIndex == -1) ? "GLOBAL.HAG" :
 			Common::String::format("SECTION%d.HAG", sectionIndex);
+		if (sectionIndex == 10) {
+			// Speech
+			if (!Common::File::exists("SPEECH.HAG"))
+				break;
+			else
+				filename = "SPEECH.HAG";
+		}
 		if (!hagFile.open(filename))
 			error("Could not locate HAG file - %s", filename.c_str());
 
