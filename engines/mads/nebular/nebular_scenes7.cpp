@@ -1074,7 +1074,7 @@ void Scene704::setup() {
 	_game._player._spritesPrefix = "";
 	setAAName();
 	_scene->addActiveVocab(NOUN_BOTTLE);
-	_scene->addActiveVocab(NOUN_LOOK_AT);
+	_scene->addActiveVocab(VERB_LOOK_AT);
 }
 
 void Scene704::handleBottleInterface() {
@@ -1678,7 +1678,7 @@ void Scene706::setup() {
 	setAAName();
 	_scene->addActiveVocab(NOUN_BOTTLE);
 	_scene->addActiveVocab(NOUN_VASE);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene706::handleRexDeath() {
@@ -2086,7 +2086,7 @@ void Scene751::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene751::enter() {

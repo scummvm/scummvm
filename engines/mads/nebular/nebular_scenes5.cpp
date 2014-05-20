@@ -96,7 +96,7 @@ void Scene501::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_DOOR);
-	_scene->addActiveVocab(NOUN_WALK_THROUGH);
+	_scene->addActiveVocab(VERB_WALK_THROUGH);
 }
 
 void Scene501::synchronize(Common::Serializer &s) {
@@ -527,7 +527,7 @@ void Scene503::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_DETONATORS);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene503::enter() {
@@ -1099,7 +1099,7 @@ void Scene505::actions() {
 void Scene506::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(NOUN_WALK_INTO);
+	_scene->addActiveVocab(VERB_WALK_INTO);
 	_scene->addActiveVocab(NOUN_SOFTWARE_STORE);
 	_scene->addActiveVocab(NOUN_LABORATORY);
 }
@@ -1362,7 +1362,7 @@ void Scene507::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_PENLIGHT);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene507::enter() {
@@ -1473,7 +1473,7 @@ void Scene508::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_SPINACH_PATCH_DOLL);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
 
@@ -1733,7 +1733,7 @@ void Scene511::setup() {
 	setAAName();
 	_scene->addActiveVocab(NOUN_BOAT);
 	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene511::enter() {
@@ -2053,7 +2053,7 @@ void Scene512::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_FISHING_ROD);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_PADLOCK_KEY);
 	_scene->addActiveVocab(NOUN_REGISTER_DRAWER);
 }
@@ -2347,7 +2347,7 @@ void Scene513::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_ELEVATOR_DOOR);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene513::enter() {

@@ -87,7 +87,7 @@ void Scene601::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
-	_scene->addActiveVocab(NOUN_LOOK_AT);
+	_scene->addActiveVocab(VERB_LOOK_AT);
 }
 
 void Scene601::enter() {
@@ -220,7 +220,7 @@ void Scene601::actions() {
 void Scene602::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_SAFE);
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
@@ -533,7 +533,7 @@ void Scene602::actions() {
 void Scene603::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_COMPACT_CASE);
 	_scene->addActiveVocab(NOUN_NOTE);
 }
@@ -1421,7 +1421,7 @@ void Scene607::actions() {
 void Scene608::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_POLYCEMENT);
 	_scene->addActiveVocab(NOUN_CAR);
 	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
@@ -2705,7 +2705,7 @@ void Scene610::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_PHONE_HANDSET);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene610::enter() {
@@ -2888,7 +2888,7 @@ void Scene611::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_RAT);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene611::handleRatMoves() {
@@ -4263,7 +4263,7 @@ void Scene612::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene612::handleWinchMovement() {

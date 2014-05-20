@@ -4917,7 +4917,7 @@ void Scene214::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_CAPTIVE_CREATURE);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene214::enter() {

@@ -306,7 +306,7 @@ void Scene802::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_REMOTE);
 }
 
@@ -514,7 +514,7 @@ void Scene803::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_GUTS);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 
 	if ((!_globals[kFromCockpit] && _globals[kReturnFromCut] && !_globals[kBeamIsUp])
 		|| (_globals[kFromCockpit] && !_globals[kExitShip])) {

@@ -3868,7 +3868,7 @@ void Scene351::setup() {
 
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene351::enter() {
@@ -4027,7 +4027,7 @@ void Scene352::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_YOUR_STUFF);
 	_scene->addActiveVocab(NOUN_OTHER_STUFF);
 	_scene->addActiveVocab(NOUN_LAMP);
@@ -4815,7 +4815,7 @@ void Scene358::actions() {
 void Scene359::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene359::enter() {

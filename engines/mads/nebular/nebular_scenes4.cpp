@@ -237,13 +237,13 @@ void Scene402::setup() {
 
 	_scene->addActiveVocab(NOUN_BARTENDER);
 	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
-	_scene->addActiveVocab(NOUN_DRINK);
+	_scene->addActiveVocab(VERB_DRINK);
 	_scene->addActiveVocab(NOUN_BINOCULARS);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_CREDIT_CHIP);
-	_scene->addActiveVocab(NOUN_TAKE);
+	_scene->addActiveVocab(VERB_TAKE);
 	_scene->addActiveVocab(NOUN_REPAIR_LIST);
-	_scene->addActiveVocab(NOUN_LOOK_AT);
+	_scene->addActiveVocab(VERB_LOOK_AT);
 }
 
 void Scene402::synchronize(Common::Serializer &s) {
@@ -2850,7 +2850,7 @@ void Scene408::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_TARGET_MODULE);
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene408::enter() {
@@ -3464,7 +3464,7 @@ void Scene411::giveToRex(int object) {
 void Scene411::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
-	_scene->addActiveVocab(NOUN_WALK_TO);
+	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
 	_scene->addActiveVocab(NOUN_FORMALDEHYDE);
 	_scene->addActiveVocab(NOUN_PETROX);
