@@ -91,7 +91,9 @@ enum InventoryObject {
 // HACK: A stub for now, remove from here once it's implemented properly
 class DragonsphereGlobals: public Globals {
 public:
-	DragonsphereGlobals() {}
+	DragonsphereGlobals() {
+		resize(210);	// Rex has 210 globals
+	}
 	virtual ~DragonsphereGlobals() {}
 };
 

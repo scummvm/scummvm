@@ -67,7 +67,10 @@ enum InventoryObject {
 // HACK: A stub for now, remove from here once it's implemented properly
 class PhantomGlobals: public Globals {
 public:
-	PhantomGlobals() {}
+	PhantomGlobals() {
+		resize(210);	// Rex has 210 globals
+	}
+	virtual ~PhantomGlobals() {}
 };
 
 class GamePhantom: public Game {
