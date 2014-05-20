@@ -99,6 +99,15 @@ void Scene501::setup() {
 	_scene->addActiveVocab(0x18B);
 }
 
+void Scene501::synchronize(Common::Serializer &s) {
+	Scene5xx::synchronize(s);
+
+	s.syncAsSint16LE(_mainSequenceId);
+	s.syncAsSint16LE(_mainSpriteId);
+	s.syncAsSint16LE(_doorHotspotid);
+	s.syncAsByte(_rexPunched);
+}
+
 void Scene501::handleSlotActions() {
 	switch (_game._trigger) {
 	case 0:

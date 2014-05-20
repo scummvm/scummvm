@@ -61,6 +61,7 @@ private:
 
 public:
 	Scene501(MADSEngine *vm) : Scene5xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
