@@ -35,8 +35,33 @@ namespace Phantom {
 // TODO: Adapt for Phantom's difficulty setting
 enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
 
-enum InventoryObject { OBJ_NONE = -1
-	// TODO
+enum InventoryObject {
+	OBJ_NONE = -1,
+	OBJ_KEY = 0,
+	OBJ_LANTERN = 1,
+	OBJ_RED_FRAME = 2,
+	OBJ_SANDBAG = 3,
+	OBJ_YELLOW_FRAME = 4,
+	OBJ_FIRE_AXE = 5,
+	OBJ_SMALL_NOTE = 6,
+	OBJ_ROPE = 7,
+	OBJ_SWORD = 8,
+	OBJ_ENVELOPE = 9,
+	OBJ_TICKET = 10,
+	OBJ_PIECE_OF_PAPER = 11,
+	OBJ_PARCHMENT = 12,
+	OBJ_LETTER = 13,
+	OBJ_NOTICE = 14,
+	OBJ_BOOK = 15,
+	OBJ_CRUMPLED_NOTE = 16,
+	OBJ_BLUE_FRAME = 17,
+	OBJ_LARGE_NOTE = 18,
+	OBJ_GREEN_FRAME = 19,
+	OBJ_MUSIC_SCORE = 20,
+	OBJ_WEDDING_RING = 21,
+	OBJ_CABLE_HOOK = 22,
+	OBJ_ROPE_WITH_HOOK = 23,
+	OBJ_OAR = 24
 };
 
 // HACK: A stub for now, remove from here once it's implemented properly
