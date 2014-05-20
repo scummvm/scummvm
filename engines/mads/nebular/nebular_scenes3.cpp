@@ -2697,7 +2697,7 @@ void Scene318::step() {
 	}
 
 	uint32 tmpFrame = _vm->_events->getFrameCounter();
-	uint32 diffFrame = tmpFrame - _lastFrameCounter;
+	long diffFrame = tmpFrame - _lastFrameCounter;
 	_lastFrameCounter = tmpFrame;
 
 	if ((_animMode == 2) && !_internVisibleFl && _game._player._stepEnabled) {
