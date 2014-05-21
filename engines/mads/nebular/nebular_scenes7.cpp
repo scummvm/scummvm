@@ -2478,7 +2478,7 @@ void Scene752::setup() {
 void Scene752::synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
 
-	s.syncAsByte(_cardId);
+	s.syncAsSint16LE(_cardId);
 }
 
 void Scene752::enter() {
