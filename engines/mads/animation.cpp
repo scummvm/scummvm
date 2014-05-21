@@ -36,7 +36,7 @@ void AAHeader::load(Common::SeekableReadStream *f) {
 	_flags = f->readByte();
 
 	f->skip(2);
-	_animMode = f->readUint16LE();
+	_bgType = (AnimBgType)f->readUint16LE();
 	_roomNumber = f->readUint16LE();
 	f->skip(2);
 	_manualFlag = f->readUint16LE() != 0;
@@ -186,7 +186,7 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	_header.load(stream);
 	delete stream;
 
-	if (_header._animMode == 4)
+	if (_header._bgType == ANIMBG_INTERFACE)
 		flags |= PALFLAG_RESERVED;
 
 	if (flags & ANIMFLAG_LOAD_BACKGROUND) {
@@ -296,7 +296,7 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	if (usageList.size() > 0)
 		_vm->_palette->_paletteUsage.updateUsage(usageList, _header._messagesCount);
 
-	if (_header._animMode == 4) {
+	if (_header._bgType == ANIMBG_INTERFACE) {
 		// Remaps the sprite list indexes for frames to the loaded sprite list indexes
 		for (uint i = 0; i < _frameEntries.size(); ++i) {
 			int spriteListIndex = _frameEntries[i]._spriteSlot._spritesIndex;
@@ -377,7 +377,7 @@ bool Animation::drawFrame(SpriteAsset &spriteSet, const Common::Point &pt, int f
 void Animation::loadInterface(UserInterface &interfaceSurface, MSurface &depthSurface,
 		AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo) {
 	_scene->_depthStyle = 0;
-	if (header._animMode <= 2) {
+	if (header._bgType <= ANIMBG_FULL_SIZE) {
 		_vm->_palette->_paletteUsage.setEmpty();
 		sceneInfo->load(header._roomNumber, flags, header._interfaceFile, 0, depthSurface, interfaceSurface);
 		_scene->_depthStyle = sceneInfo->_depthStyle == 2 ? 1 : 0;
@@ -386,7 +386,7 @@ void Animation::loadInterface(UserInterface &interfaceSurface, MSurface &depthSu
 			for (uint i = 0; i < sceneInfo->_paletteCycles.size(); ++i)
 				palCycles->push_back(sceneInfo->_paletteCycles[i]);
 		}
-	} else if (header._animMode == 4) {
+	} else if (header._bgType == ANIMBG_INTERFACE) {
 		// Load a scene interface
 		Common::String resourceName = "*" + header._interfaceFile;
 		interfaceSurface.load(resourceName);

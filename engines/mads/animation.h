@@ -40,6 +40,11 @@ enum AnimFlag {
 	ANIMFLAG_LOAD_BACKGROUND_ONLY = 0x0200	// Load background only
 };
 
+enum AnimBgType {
+	ANIMBG_ROOM = 1, ANIMBG_FULL_SIZE = 2, ANIMBG_BLACK_SCREEN = 3,
+	ANIMBG_INTERFACE = 4
+};
+
 class MADSEngine;
 class Scene;
 
@@ -112,7 +117,7 @@ public:
 	int _frameEntriesCount;
 	int _messagesCount;
 	byte _flags;
-	int _animMode;
+	AnimBgType _bgType;
 	int _roomNumber;
 	bool _manualFlag;
 	int _spritesIndex;
@@ -215,7 +220,6 @@ public:
 	int getCurrentFrame() const { return _currentFrame; }
 
 	bool freeFlag() const { return _freeFlag; }
-	bool getAnimMode() const { return _header._animMode; }
 	int roomNumber() const { return _header._roomNumber; }
 
 	void resetSpriteSetsCount() { _header._spriteSetsCount = 0; } // CHECKME: See if it doesn't leak the memory when the destructor is called
