@@ -58,7 +58,7 @@ public:
 	virtual int method30() { return 0; }
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 	virtual int changeCallback() { return 0; }
-	virtual int method3C(StaticANIObject *ani, int flag) { return 0; }
+	virtual bool method3C(StaticANIObject *ani, int flag) { return 0; }
 	virtual int method40() { return 0; }
 	virtual bool method44(StaticANIObject *ani, int x, int y) { return false; }
 	virtual int method48() { return -1; }
@@ -365,7 +365,7 @@ public:
 	virtual int method2C(StaticANIObject *obj, int x, int y);
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual int changeCallback();
-	virtual int method3C(StaticANIObject *ani, int flag);
+	virtual bool method3C(StaticANIObject *ani, int flag);
 	virtual bool method44(StaticANIObject *ani, int x, int y);
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual MessageQueue *method50(StaticANIObject *ani, Common::Array<MovArr *> *movarr, int staticsId);

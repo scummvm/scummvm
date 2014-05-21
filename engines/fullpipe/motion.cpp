@@ -690,10 +690,39 @@ int MovGraph::changeCallback() {
 	return 0;
 }
 
-int MovGraph::method3C(StaticANIObject *ani, int flag) {
-	warning("STUB: MovGraph::method3C()");
+bool MovGraph::method3C(StaticANIObject *ani, int flag) {
+	int idx = getItemIndexByStaticAni(ani);
 
-	return 0;
+	if (idx == -1)
+		return false;
+
+	Common::Point point;
+	MovArr movarr;
+
+	point.x = ani->_ox;
+	point.y = ani->_oy;
+
+	findClosestLink(idx, &point, &movarr);
+	ani->setOXY(point.x, point.y);
+
+	if (flag) {
+		Statics *st;
+
+		if (ani->_statics) {
+			int t = _mgm.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44]);
+			if (t > _mgm.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44 + 1]))
+				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44 + 1]);
+			else
+				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44]);
+		} else {
+			ani->stopAnim_maybe();
+			st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44]);
+		}
+
+		ani->_statics = st;
+	}
+
+	return true;
 }
 
 bool MovGraph::method44(StaticANIObject *ani, int x, int y) {
