@@ -187,8 +187,6 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 
 	_vm->_game->_screenObjects._category = CAT_NONE;
 	_vm->_events->showCursor();
-
-	warning("TODO: inventory_anim_allocate");
 }
 
 void Scene::loadHotspots() {

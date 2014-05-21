@@ -1400,8 +1400,6 @@ void Scene205::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_chickenTime);
 	s.syncAsByte(_beingKicked);
 	s.syncAsSint16LE(_kernelMessage);
-
-	_dialog1.synchronize(s);
 }
 
 /*****************************************************************************/
@@ -4501,14 +4499,6 @@ void Scene210::synchronize(Common::Serializer &s) {
 	s.syncAsSint32LE(_doorway);
 
 	s.syncString(_subQuote2);
-
-	_conv1.synchronize(s);
-	_conv2.synchronize(s);
-	_conv3.synchronize(s);
-	_conv5.synchronize(s);
-	_conv6.synchronize(s);
-	_conv7.synchronize(s);
-	_conv8.synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/

@@ -838,7 +838,6 @@ void UserInterface::addConversationMessage(int vocabId, const Common::String &ms
 void UserInterface::loadInventoryAnim(int objectId) {
 	Scene &scene = _vm->_game->_scene;
 	noInventoryAnim();
-	bool flag = true;
 
 	if (_vm->_invObjectsAnimated) {
 		Common::String resName = Common::String::format("*OB%.3dI", objectId);
@@ -846,12 +845,7 @@ void UserInterface::loadInventoryAnim(int objectId) {
 		_invSpritesIndex = scene._sprites.add(asset, 1);
 		if (_invSpritesIndex >= 0) {
 			_invFrameNumber = 1;
-			flag = false;
 		}
-	}
-
-	if (flag) {
-		// TODO: Use of inv_object_data?
 	}
 }
 

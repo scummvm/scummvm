@@ -3016,9 +3016,6 @@ void Scene611::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint16LE(_defaultDialogPos.x);
 	s.syncAsSint16LE(_defaultDialogPos.y);
-
-	_dialog1.synchronize(s);
-	_dialog2.synchronize(s);
 }
 
 void Scene611::handleRatMoves() {

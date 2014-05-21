@@ -567,8 +567,6 @@ void Scene703::synchronize(Common::Serializer &s) {
 
 	s.syncAsUint32LE(_lastFrameTime);
 	s.syncAsUint32LE(_monsterTime);
-
-	_dialog1.synchronize(s);
 }
 
 void Scene703::handleBottleInterface() {
@@ -1108,8 +1106,6 @@ void Scene704::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_boatDirection);
 
 	s.syncAsByte(_takeBottleFl);
-
-	_dialog1.synchronize(s);
 }
 
 void Scene704::handleBottleInterface() {
@@ -1451,8 +1447,6 @@ void Scene705::setup() {
 
 void Scene705::synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
-
-	_dialog1.synchronize(s);
 }
 
 void Scene705::handleBottleInterface() {

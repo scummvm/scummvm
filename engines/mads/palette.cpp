@@ -400,7 +400,6 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 
 		setFullPalette(palette);
 
-		// TODO: Adjust waiting
 		_vm->_events->waitForNextFrame();
 	}
 

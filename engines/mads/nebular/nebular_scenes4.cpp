@@ -284,11 +284,6 @@ void Scene402::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_roxMode);
 	s.syncAsSint16LE(_rexMode);
 	s.syncAsSint16LE(_talkTimer);
-
-	_dialog1.synchronize(s);
-	_dialog2.synchronize(s);
-	_dialog3.synchronize(s);
-	_dialog4.synchronize(s);
 }
 
 void Scene402::setDialogNode(int node) {
@@ -3968,11 +3963,6 @@ void Scene411::synchronize(Common::Serializer &s) {
 
 	s.syncAsByte(_killRox);
 	s.syncAsByte(_makeMushroomCloud);
-
-	_dialog1.synchronize(s);
-	_dialog2.synchronize(s);
-	_dialog3.synchronize(s);
-	_dialog4.synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/

@@ -310,7 +310,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 
 	int destRight = this->getWidth() - 1;
 	int destBottom = this->getHeight() - 1;
-	bool normalFrame = true;	// TODO: false for negative frame numbers
+	bool normalFrame = true;
 	int frameWidth = src->getWidth();
 	int frameHeight = src->getHeight();
 

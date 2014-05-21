@@ -1157,9 +1157,6 @@ void Scene307::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_prisonerTimer);
 
 	s.syncString(_subQuote2);
-
-	_dialog1.synchronize(s);
-	_dialog2.synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/
@@ -2954,8 +2951,6 @@ void Scene318::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_lastFrameCounter);
 
 	s.syncString(_subQuote2);
-
-	_dialog1.synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/
@@ -3420,10 +3415,6 @@ void Scene319::actions() {
 
 void Scene319::synchronize(Common::Serializer &s) {
 	Scene3xx::synchronize(s);
-
-	_dialog1.synchronize(s);
-	_dialog2.synchronize(s);
-	_dialog3.synchronize(s);
 
 	s.syncAsUint32LE(_animMode);
 	s.syncAsUint32LE(_animFrame);
