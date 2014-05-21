@@ -296,18 +296,10 @@ void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
 	if (usageList.size() > 0)
 		_vm->_palette->_paletteUsage.updateUsage(usageList, _header._messagesCount);
 
-	if (_header._bgType == ANIMBG_INTERFACE) {
-		// Remaps the sprite list indexes for frames to the loaded sprite list indexes
-		for (uint i = 0; i < _frameEntries.size(); ++i) {
-			int spriteListIndex = _frameEntries[i]._spriteSlot._spritesIndex;
-			_frameEntries[i]._spriteSlot._spritesIndex = _spriteListIndexes[spriteListIndex];
-		}
-	} else {
-		// Remaps the sprite list indexes for frames to the loaded sprite list indexes
-		for (uint i = 0; i < _frameEntries.size(); ++i) {
-			int spriteListIndex = _frameEntries[i]._spriteSlot._spritesIndex;
-			_frameEntries[i]._spriteSlot._spritesIndex = _spriteListIndexes[spriteListIndex];
-		}
+	// Remaps the sprite list indexes for frames to the loaded sprite list indexes
+	for (uint i = 0; i < _frameEntries.size(); ++i) {
+		int spriteListIndex = _frameEntries[i]._spriteSlot._spritesIndex;
+		_frameEntries[i]._spriteSlot._spritesIndex = _spriteListIndexes[spriteListIndex];
 	}
 
 	f.close();
