@@ -1843,13 +1843,13 @@ if test "$_global_constructors" = yes; then
 fi
 echo $_global_constructors
 
-echo_n "Checking for $_host_alias-strings... "
+echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
 if test ! "x$(which $_host_alias-strings 2>/dev/null)" = "x"; then
 _strings=$_host_alias-strings
-echo yes
+echo yes >> "$TMPLOG"
 else
 _strings=strings
-echo no
+echo no >> "$TMPLOG"
 fi
 
 #
