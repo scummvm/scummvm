@@ -84,11 +84,6 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
-/**
-* Synchronize string support method
-*/
-void synchronizeString(Common::Serializer &s, Common::String &str);
-
 } // End of namespace MADS
 
 #endif /* MADS_RESOURCES_H */

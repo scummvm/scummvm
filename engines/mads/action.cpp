@@ -678,7 +678,7 @@ void MADSAction::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_statusTextIndex);
 	s.syncAsSint16LE(_hotspotId);
 	_savedFields.synchronize(s);
-	synchronizeString(s, _sentence);
+	s.syncString(_sentence);
 
 	s.syncAsSint16LE(_verbType);
 	s.syncAsSint16LE(_prepType);

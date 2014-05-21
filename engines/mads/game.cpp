@@ -457,7 +457,7 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 		s.syncAsSint16LE(_trigger);
 		s.syncAsUint16LE(_triggerSetupMode);
 		s.syncAsUint16LE(_triggerMode);
-		synchronizeString(s, _aaName);
+		s.syncString(_aaName);
 		s.syncAsSint16LE(_lastSave);
 
 		_scene.synchronize(s);

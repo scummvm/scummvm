@@ -755,7 +755,7 @@ void Player::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_totalDistance);
 	s.syncAsSint16LE(_velocity);
 	s.syncAsUint16LE(_frameCount);
-	synchronizeString(s, _spritesPrefix);
+	s.syncString(_spritesPrefix);
 	s.syncAsUint32LE(_priorTimer);
 	s.syncAsByte(_loadsFirst);
 	s.syncAsByte(_loadedFirst);
