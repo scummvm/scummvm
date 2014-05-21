@@ -79,6 +79,8 @@ private:
 	int getBit();
 public:
 	void decompress(const byte *srcData, int srcSize, byte *destData, int destSize);
+
+	static bool isCompressed(const byte *srcData);
 };
 
 } // End of namespace MADS

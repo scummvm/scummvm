@@ -69,18 +69,20 @@ void MadsPack::initialise(Common::SeekableReadStream *stream) {
 		_items[i].size = READ_LE_UINT32(header + 2);
 		_items[i].compressedSize = READ_LE_UINT32(header + 6);
 
-		_items[i].data = new byte[_items[i].size];
-		if (_items[i].size == _items[i].compressedSize) {
+		byte *sourceData = new byte[_items[i].compressedSize];
+		stream->read(sourceData, _items[i].compressedSize);
+
+		if (_items[i].size == _items[i].compressedSize &&
+				!FabDecompressor::isCompressed(sourceData)) {
 			// Entry isn't compressed
-			stream->read(_items[i].data, _items[i].size);
+			_items[i].data = sourceData;
 		} else {
 			// Decompress the entry
-			byte *compressedData = new byte[_items[i].compressedSize];
-			stream->read(compressedData, _items[i].compressedSize);
+			_items[i].data = new byte[_items[i].size];
 
 			FabDecompressor fab;
-			fab.decompress(compressedData, _items[i].compressedSize, _items[i].data, _items[i].size);
-			delete[] compressedData;
+			fab.decompress(sourceData, _items[i].compressedSize, _items[i].data, _items[i].size);
+			delete[] sourceData;
 		}
 	}
 
@@ -95,6 +97,10 @@ MadsPack::~MadsPack() {
 }
 
 //--------------------------------------------------------------------------
+
+bool FabDecompressor::isCompressed(const byte *srcData) {
+	return strncmp((const char *)srcData, "FAB", 3) == 0;
+}
 
 void FabDecompressor::decompress(const byte *srcData, int srcSize, byte *destData, int destSize) {
 	byte copyLen, copyOfsShift, copyOfsMask, copyLenMask;

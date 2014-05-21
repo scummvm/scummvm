@@ -109,7 +109,7 @@ void Scene701::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 5));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', 0));
-//	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));	// TODO: FIXME: Broken sprite?
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));	// TODO: FIXME: Broken sprite?
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RM202A1");
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 8));
 
@@ -162,15 +162,12 @@ void Scene701::enter() {
 		break;
 	}
 
-// TODO: Enable once sprite 3 can be loaded properly
-/*
 	if (_globals[kLineStatus] == LINE_DROPPED || _globals[kLineStatus] == LINE_TIED) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
 	}
-*/
 
 	if (_scene->_priorSceneId == 702) {
 		_game._player._playerPos = Common::Point(309, 138);
