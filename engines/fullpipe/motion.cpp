@@ -606,7 +606,7 @@ Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y,
 	return 0;
 }
 
-int MovGraph::method2C(StaticANIObject *obj, int x, int y) {
+bool MovGraph::method2C(StaticANIObject *obj, int x, int y) {
 	obj->setOXY(x, y);
 	return method3C(obj, 1);
 }
@@ -3258,17 +3258,17 @@ int startWalkTo(int objId, int objKey, int x, int y, int fuzzyMatch) {
 	return 0;
 }
 
-int doSomeAnimation(int objId, int objKey, int a3) {
+bool doSomeAnimation(int objId, int objKey, int a3) {
 	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(objId, objKey);
 	MctlCompound *cmp = getCurrSceneSc2MotionController();
 
 	if (ani && cmp)
 		return cmp->method3C(ani, a3);
 
-	return 0;
+	return false;
 }
 
-int doSomeAnimation2(int objId, int objKey) {
+bool doSomeAnimation2(int objId, int objKey) {
 	return doSomeAnimation(objId, objKey, 0);
 }
 

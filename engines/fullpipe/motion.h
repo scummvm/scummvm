@@ -34,8 +34,8 @@ class ExCommand2;
 struct MovItem;
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
-int doSomeAnimation(int objId, int objKey, int a3);
-int doSomeAnimation2(int objId, int objKey);
+bool doSomeAnimation(int objId, int objKey, int a3);
+bool doSomeAnimation2(int objId, int objKey);
 
 class MotionController : public CObject {
 public:
@@ -54,7 +54,7 @@ public:
 	virtual int removeObject(StaticANIObject *obj) { return 0; }
 	virtual void freeItems() {}
 	virtual Common::Array<MovItem *> *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) { return 0; }
-	virtual int method2C(StaticANIObject *obj, int x, int y) { return 0; }
+	virtual bool method2C(StaticANIObject *obj, int x, int y) { return false; }
 	virtual int method30() { return 0; }
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 	virtual int changeCallback() { return 0; }
@@ -362,7 +362,7 @@ public:
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
 	virtual Common::Array<MovItem *> *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount);
-	virtual int method2C(StaticANIObject *obj, int x, int y);
+	virtual bool method2C(StaticANIObject *obj, int x, int y);
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual int changeCallback();
 	virtual bool method3C(StaticANIObject *ani, int flag);
