@@ -322,7 +322,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					break;
 				}
 			}
-			if(j == 0) {
+			if (j == 0) {
 				break;
 			}
 			if (shadowHeroY < 0) {
@@ -344,7 +344,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 									shadBitMask = 128;
 									shadBitAddr++;
 								} else {
-									shadBitMask = shadBitMask >> 1;
+									shadBitMask >>= 1;
 								}
 							}
 						}
@@ -416,7 +416,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 							shadBitMaskCopyTrans = 128;
 							shadBitAddrCopyTrans++;
 						} else {
-							shadBitMaskCopyTrans = shadBitMaskCopyTrans >> 1;
+							shadBitMaskCopyTrans >>= 1;
 						}
 						//okok
 						backgroundDiff++;
@@ -426,7 +426,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					shadowHero = (byte *)makeShadow->getBasePtr(shadowHeroX, shadowHeroY);
 				}
 				//byebyebye
-				if (shadWallDown == 0 && shadWDFlag == true) {
+				if (!shadWallDown && shadWDFlag) {
 					shadWallDown = shadPosX;
 					shadWallBitAddr = shadBitAddr;
 					shadWallDestAddr = (byte *)_graph->_frontScreen->getBasePtr(_shadDrawX + diffX, _shadDrawY + diffY);
@@ -465,7 +465,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 									shadBitMaskWallCopyTrans = 128;
 									shadBitAddrWallCopyTrans++;
 								} else {
-									shadBitMaskWallCopyTrans= shadBitMaskWallCopyTrans >> 1;
+									shadBitMaskWallCopyTrans >>= 1;
 								}
 								//okok
 								backgroundDiffWall++;
@@ -502,7 +502,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					shadBitMask = 1;
 					shadBitAddr--;
 				} else {
-					shadBitMask = shadBitMask << 1;
+					shadBitMask <<= 1;
 				}
 				diffX--;
 			} else if (*shadowLineStart > *(shadowLineStart - 4)) {
@@ -512,7 +512,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					shadBitMask = 128;
 					shadBitAddr++;
 				} else {
-					shadBitMask = shadBitMask >> 1;
+					shadBitMask >>= 1;
 				}
 				diffX++;
 			}
@@ -526,7 +526,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 			background = (byte *)_graph->_frontScreen->getBasePtr(_shadDrawX + diffX, _shadDrawY + diffY);
 			shadowHero = (byte *)makeShadow->getBasePtr(shadowHeroX, shadowHeroY);
 		}
-		//koniec_bajki
+		//koniec_bajki - end_of_a_story
 	}
 	makeShadow->free();
 	delete makeShadow;
