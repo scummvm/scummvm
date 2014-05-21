@@ -72,21 +72,21 @@ void Scene1xx::setPlayerSpritesPrefix() {
 	_vm->_sound->command(5);
 	Common::String oldName = _game._player._spritesPrefix;
 	if (_scene->_nextSceneId <= 103 || _scene->_nextSceneId == 111) {
-		if (_globals[kSexOfRex] == SEX_FEMALE) {
+		if (_globals[kSexOfRex] == SEX_FEMALE)
 			_game._player._spritesPrefix = "ROX";
-		} else {
+		else {
 			_game._player._spritesPrefix = "RXM";
 			_globals[kSexOfRex] = SEX_MALE;
 		}
 	} else if (_scene->_nextSceneId <= 110) {
 		_game._player._spritesPrefix = "RXSW";
 		_globals[kSexOfRex] = SEX_UNKNOWN;
-	} else if (_scene->_nextSceneId == 112) {
+	} else if (_scene->_nextSceneId == 112)
 		_game._player._spritesPrefix = "";
-	}
 
 	if (oldName == _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
+
 	if (_scene->_nextSceneId == 105 || (_scene->_nextSceneId == 109 && _globals[kHoovicAlive])) {
 		_game._player._spritesChanged = true;
 		_game._player._loadsFirst = false;
@@ -107,6 +107,19 @@ Scene101::Scene101(MADSEngine *vm) : Scene1xx(vm) {
 	_shieldSpriteIdx = 0;
 	_chairHotspotId = 0;
 	_oldSpecial = 0;
+}
+
+void Scene101::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+	s.syncAsByte(_sittingFl);
+	s.syncAsByte(_panelOpened);
+
+	s.syncAsSint16LE(_messageNum);
+	s.syncAsSint16LE(_posY);
+	s.syncAsSint16LE(_shieldSpriteIdx);
+	s.syncAsSint16LE(_chairHotspotId);
+	s.syncAsSint16LE(_oldSpecial);
 }
 
 void Scene101::setup() {
@@ -139,6 +152,9 @@ void Scene101::sayDang() {
 	case 73:
 		_vm->_dialogs->show(10117);
 		_game._player._stepEnabled = true;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -242,6 +258,9 @@ void Scene101::step() {
 	case 73:
 		sayDang();
 		break;
+
+	default:
+		break;
 	}
 
 	if (_scene->_activeAnimation != nullptr) {
@@ -307,6 +326,9 @@ void Scene101::preActions() {
 				_globals._sequenceIndexes[12] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[12], false, 6, 0, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 4);
 				break;
+
+			default:
+				break;
 			}
 		}
 	}
@@ -328,6 +350,9 @@ void Scene101::preActions() {
 			_game._player._stepEnabled = true;
 			_panelOpened = false;
 			_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, false);
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -377,6 +402,9 @@ void Scene101::actions() {
 				}
 				_game._trigger = 0;
 				break;
+
+			default:
+				break;
 			}
 		} else {
 			_vm->_dialogs->show(10131);
@@ -385,7 +413,7 @@ void Scene101::actions() {
 		}
 	}
 
-	if (((_action.isAction(VERB_WALKTO, NOUN_SHIELD_ACCESS_PANEL) || _action.isAction(VERB_OPEN, NOUN_SHIELD_ACCESS_PANEL))) && !_panelOpened) {
+	if ((_action.isAction(VERB_WALKTO, NOUN_SHIELD_ACCESS_PANEL) || _action.isAction(VERB_OPEN, NOUN_SHIELD_ACCESS_PANEL)) && !_panelOpened) {
 		switch (_game._trigger) {
 		case 0:
 			_shieldSpriteIdx = _game._objects.isInRoom(OBJ_SHIELD_MODULATOR) ? 13 : 14;
@@ -403,6 +431,9 @@ void Scene101::actions() {
 			_panelOpened = true;
 			if (_game._objects.isInRoom(OBJ_SHIELD_MODULATOR))
 				_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, true);
+			break;
+
+		default:
 			break;
 		}
 		_action._inProgress = false;
@@ -427,9 +458,9 @@ void Scene101::actions() {
 				_vm->_dialogs->show(10128);
 			else
 				_vm->_dialogs->show(10129);
-		} else {
+		} else
 			_vm->_dialogs->show(10127);
-		}
+
 		_action._inProgress = false;
 		return;
 	}
@@ -441,9 +472,9 @@ void Scene101::actions() {
 	}
 
 	if (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN) && _sittingFl) {
-		if (_globals[kWatchedViewScreen]) {
+		if (_globals[kWatchedViewScreen])
 			sayDang();
-		} else {
+		else {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
@@ -472,6 +503,9 @@ void Scene101::actions() {
 				_globals[kWatchedViewScreen] = true;
 				_sittingFl = true;
 				_scene->_nextSceneId = 112;
+				break;
+
+			default:
 				break;
 			}
 		}
@@ -612,19 +646,6 @@ void Scene101::actions() {
 	}
 }
 
-void Scene101::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-
-	s.syncAsByte(_sittingFl);
-	s.syncAsByte(_panelOpened);
-
-	s.syncAsSint16LE(_messageNum);
-	s.syncAsSint16LE(_posY);
-	s.syncAsSint16LE(_shieldSpriteIdx);
-	s.syncAsSint16LE(_chairHotspotId);
-	s.syncAsSint16LE(_oldSpecial);
-}
-
 /*------------------------------------------------------------------------*/
 
 Scene102::Scene102(MADSEngine *vm) : Scene1xx(vm) {
@@ -635,6 +656,19 @@ Scene102::Scene102(MADSEngine *vm) : Scene1xx(vm) {
 	_drawerDescrFl = false;
 	_activeMsgFl = false;
 	_fridgeCommentCount = 0;
+}
+
+void Scene102::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+	s.syncAsByte(_fridgeOpenedFl);
+	s.syncAsByte(_fridgeOpenedDescr);
+	s.syncAsByte(_fridgeFirstOpenFl);
+	s.syncAsByte(_chairDescrFl);
+	s.syncAsByte(_drawerDescrFl);
+	s.syncAsByte(_activeMsgFl);
+
+	s.syncAsSint16LE(_fridgeCommentCount);
 }
 
 void Scene102::setup() {
@@ -659,7 +693,6 @@ void Scene102::enter() {
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 3));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('x', 4));
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('x', 5));
-
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', -1));
 	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('c', -1));
 	_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('e', -1));
@@ -691,9 +724,9 @@ void Scene102::enter() {
 		_game._player._stepEnabled = false;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 2, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
-	} else if (_scene->_priorSceneId == 103) {
+	} else if (_scene->_priorSceneId == 103)
 		_game._player._playerPos = Common::Point(47, 152);
-	} else if (_scene->_priorSceneId != -2) {
+	else if (_scene->_priorSceneId != -2) {
 		_game._player._facing = FACING_NORTHWEST;
 		_game._player._playerPos = Common::Point(32, 129);
 	}
@@ -802,6 +835,9 @@ void Scene102::preActions() {
 			_fridgeOpenedFl = false;
 			_game._player._stepEnabled = true;
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -810,14 +846,13 @@ void Scene102::preActions() {
 }
 
 void Scene102::actions() {
-	bool justOpenedFl = false;
-
 	if (_action._lookFlag) {
 		_vm->_dialogs->show(10234);
 		_action._inProgress = false;
 		return;
 	}
 
+	bool justOpenedFl = false;
 	if (_action.isObject(NOUN_REFRIGERATOR) && !_fridgeOpenedFl) {
 		switch (_game._trigger) {
 		case 0:
@@ -854,6 +889,9 @@ void Scene102::actions() {
 			justOpenedFl = true;
 			if (_game._objects.isInRoom(OBJ_BURGER))
 				_scene->_hotspots.activate(NOUN_BURGER, true);
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -906,6 +944,9 @@ void Scene102::actions() {
 
 		case 1:
 			_scene->_nextSceneId = 101;
+			break;
+
+		default:
 			break;
 		}
 		_action._inProgress = false;
@@ -1034,6 +1075,9 @@ void Scene102::actions() {
 				_vm->_dialogs->show(10237);
 			_scene->_nextSceneId = 106;
 			break;
+
+		default:
+			break;
 		}
 		_action._inProgress = false;
 		return;
@@ -1118,6 +1162,9 @@ void Scene102::actions() {
 			_globals[kMedicineCabinetOpen] = false;
 			_vm->_dialogs->show(10209);
 			break;
+
+		default:
+			break;
 		}
 		_action._inProgress = false;
 		return;
@@ -1148,6 +1195,9 @@ void Scene102::actions() {
 			}
 			_globals[kMedicineCabinetVirgin] = false;
 			break;
+
+		default:
+			break;
 		}
 		_action._inProgress = false;
 		return;
@@ -1171,6 +1221,9 @@ void Scene102::actions() {
 			_game._player._stepEnabled = true;
 			_vm->_sound->command(22);
 			_vm->_dialogs->showItem(OBJ_BINOCULARS, 10201);
+			break;
+
+		default:
 			break;
 		}
 		_action._inProgress = false;
@@ -1228,23 +1281,17 @@ void Scene102::postActions() {
 	}
 }
 
-void Scene102::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-
-	s.syncAsByte(_fridgeOpenedFl);
-	s.syncAsByte(_fridgeOpenedDescr);
-	s.syncAsByte(_fridgeFirstOpenFl);
-	s.syncAsByte(_chairDescrFl);
-	s.syncAsByte(_drawerDescrFl);
-	s.syncAsByte(_activeMsgFl);
-
-	s.syncAsSint16LE(_fridgeCommentCount);
-}
-
 /*------------------------------------------------------------------------*/
 
 Scene103::Scene103(MADSEngine *vm) : Scene1xx(vm) {
 	_updateClock = 0;
+}
+
+void Scene103::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	byte dummy = 0;
+	s.syncAsByte(dummy); // In order to avoid to break savegame compatibility
+	s.syncAsUint32LE(_updateClock);
 }
 
 void Scene103::setup() {
@@ -1265,15 +1312,16 @@ void Scene103::enter() {
 	_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('t', -1));
 	_globals._spriteIndexes[10] = _scene->_sprites.addSprites(formAnimName('r', -1));
 	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('c', -1));
-
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_2");
 	_globals._spriteIndexes[13] = _scene->_sprites.addSprites("*RXMRD_3");
 	_globals._spriteIndexes[15] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 7, 0, 1, 0);
+
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 2, 0);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 0);
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 25);
 	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 2, 72);
+
 	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 0, 1, 37);
 	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 2, 73);
 
@@ -1303,7 +1351,6 @@ void Scene103::enter() {
 
 	if (_scene->_priorSceneId == 102) {
 		_game._player._stepEnabled = false;
-
 		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 	}
@@ -1325,24 +1372,23 @@ void Scene103::enter() {
 }
 
 void Scene103::step() {
-	Common::Point pt;
-	int dist;
-
 	switch (_vm->_game->_trigger) {
 	case 70:
 		_vm->_game->_player._stepEnabled = true;
 		break;
 
-	case 72:
-		pt = _vm->_game->_player._playerPos;
-		dist = _vm->hypotenuse(pt.x - 58, pt.y - 93);
+	case 72: {
+		Common::Point pt = _vm->_game->_player._playerPos;
+		int dist = _vm->hypotenuse(pt.x - 58, pt.y - 93);
 		_vm->_sound->command(27, (dist * -128 / 378) + 127);
+		}
 		break;
 
-	case 73:
-		pt = _vm->_game->_player._playerPos;
-		dist = _vm->hypotenuse(pt.x - 266, pt.y - 81);
+	case 73: {
+		Common::Point pt = _vm->_game->_player._playerPos;
+		int dist = _vm->hypotenuse(pt.x - 266, pt.y - 81);
 		_vm->_sound->command(27, (dist * -127 / 378) + 127);
+		}
 		break;
 
 	default:
@@ -1350,8 +1396,8 @@ void Scene103::step() {
 	}
 
 	if (_scene->_frameStartTime >= _updateClock) {
-		pt = _vm->_game->_player._playerPos;
-		dist = _vm->hypotenuse(pt.x - 79, pt.y - 137);
+		Common::Point pt = _vm->_game->_player._playerPos;
+		int dist = _vm->hypotenuse(pt.x - 79, pt.y - 137);
 		_vm->_sound->command(29, (dist * -127 / 378) + 127);
 
 		pt = _vm->_game->_player._playerPos;
@@ -1367,9 +1413,9 @@ void Scene103::step() {
 }
 
 void Scene103::actions() {
-	if (_action._savedFields._lookFlag) {
+	if (_action._savedFields._lookFlag)
 		_vm->_dialogs->show(10322);
-	} else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR)) {
+	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 6, 1);
@@ -1445,9 +1491,9 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, 362)) {
+	} else if (_action.isAction(VERB_LOOK, 362))
 		_vm->_dialogs->show(10301);
-	} else if (_action.isAction(VERB_TAKE, 362)) {
+	else if (_action.isAction(VERB_TAKE, 362)) {
 		// Take Turkey
 		if (!_vm->_game->_trigger)
 			_vm->_sound->command(31);
@@ -1477,9 +1523,9 @@ void Scene103::actions() {
 			_vm->_dialogs->show(10302);
 			_scene->_hotspots.activate(362, false);
 		}
-	} else if (_action.isAction(VERB_LOOK, 250)) {
+	} else if (_action.isAction(VERB_LOOK, 250))
 		_vm->_dialogs->show(!_globals[kTurkeyExploded] ? 10323 : 10303);
-	} else if (_action.isAction(VERB_TALKTO, 27)) {
+	else if (_action.isAction(VERB_TALKTO, 27)) {
 		switch (_vm->_game->_trigger) {
 		case 0: {
 			_game._player._stepEnabled = false;
@@ -1507,43 +1553,40 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_LOOK, 27)) {
+	} else if (_action.isAction(VERB_LOOK, 27))
 		_vm->_dialogs->show(10304);
-	} else if (_action.isAction(VERB_LOOK, 36)) {
+	else if (_action.isAction(VERB_LOOK, 36))
 		_vm->_dialogs->show(10307);
-	} else if (_action.isAction(VERB_LOOK, 55)) {
+	else if (_action.isAction(VERB_LOOK, 55))
 		_vm->_dialogs->show(10308);
-	} else if (_action.isAction(VERB_TAKE, 315)) {
+	else if (_action.isAction(VERB_TAKE, 315))
 		_vm->_dialogs->show(10309);
-	} else if (_action.isAction(VERB_TAKE, 85)) {
+	else if (_action.isAction(VERB_TAKE, 85))
 		_vm->_dialogs->show(10310);
-	} else if (_action.isAction(VERB_LOOK, 144)) {
+	else if (_action.isAction(VERB_LOOK, 144))
 		_vm->_dialogs->show(10312);
-	} else if (_action.isAction(VERB_OPEN, 144)) {
+	else if (_action.isAction(VERB_OPEN, 144))
 		_vm->_dialogs->show(10313);
-	} else if (_action.isAction(VERB_CLOSE, 27)) {
+	else if (_action.isAction(VERB_CLOSE, 27))
 		_vm->_dialogs->show(10314);
-	} else if (_action.isAction(VERB_LOOK, 310)) {
+	else if (_action.isAction(VERB_LOOK, 310))
 		_vm->_dialogs->show(10315);
-	} else if (_action.isAction(VERB_LOOK, 178)) {
+	else if (_action.isAction(VERB_LOOK, 178))
 		_vm->_dialogs->show(10316);
-	} else if (_action.isAction(VERB_LOOK, 283)) {
+	else if (_action.isAction(VERB_LOOK, 283))
 		_vm->_dialogs->show(10317);
-	} else if (_action.isAction(VERB_LOOK, 120)) {
+	else if (_action.isAction(VERB_LOOK, 120))
 		_vm->_dialogs->show(10318);
-	} else if (_action.isAction(VERB_LOOK, 289) &&
-			_game._objects.isInInventory(OBJ_REBREATHER)) {
+	else if (_action.isAction(VERB_LOOK, 289) && _game._objects.isInInventory(OBJ_REBREATHER))
 		_vm->_dialogs->show(10319);
-	} else if (_action.isAction(VERB_LOOK, 371) &&
-			_game._objects.isInInventory(OBJ_TIMER_MODULE)) {
+	else if (_action.isAction(VERB_LOOK, 371) && _game._objects.isInInventory(OBJ_TIMER_MODULE))
 		_vm->_dialogs->show(10320);
-	} else if (_action.isAction(VERB_LOOK, 137)) {
+	else if (_action.isAction(VERB_LOOK, 137))
 		_vm->_dialogs->show(10321);
-	} else if (_action.isAction(VERB_LOOK, 409)) {
+	else if (_action.isAction(VERB_LOOK, 409))
 		_vm->_dialogs->show(_game._objects.isInInventory(OBJ_TIMER_MODULE) ? 10324 : 10325);
-	} else {
+	else
 		return;
-	}
 
 	_action._inProgress = false;
 }
@@ -1552,21 +1595,11 @@ void Scene103::postActions() {
 	if (_action.isAction(27) && !_action.isAction(VERB_WALKTO)) {
 		_vm->_dialogs->show(10305);
 		_action._inProgress = false;
-	} else {
-		if (_action.isAction(VERB_PUT, 85, 144)) {
-			Common::String msg = _game.getQuote(73);
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110,
-				34, 0, 120, msg);
-			_action._inProgress = false;
-		}
+	} else if (_action.isAction(VERB_PUT, 85, 144)) {
+		Common::String msg = _game.getQuote(73);
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, msg);
+		_action._inProgress = false;
 	}
-}
-
-void Scene103::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-	byte dummy = 0;
-	s.syncAsByte(dummy); // In order to avoid to break savegame compatibility
-	s.syncAsUint32LE(_updateClock);
 }
 
 /*------------------------------------------------------------------------*/
@@ -1574,6 +1607,13 @@ void Scene103::synchronize(Common::Serializer &s) {
 Scene104::Scene104(MADSEngine *vm) : Scene1xx(vm) {
 	_kargShootingFl = false;
 	_loseFl = false;
+}
+
+void Scene104::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+
+	s.syncAsByte(_kargShootingFl);
+	s.syncAsByte(_loseFl);
 }
 
 void Scene104::setup() {
@@ -1647,6 +1687,9 @@ void Scene104::step() {
 				_vm->_dialogs->show(10406);
 				_scene->_reloadSceneFlag = true;
 				break;
+
+			default:
+				break;
 			}
 			break;
 
@@ -1686,6 +1729,9 @@ void Scene104::step() {
 				_vm->_dialogs->show(10406);
 				_scene->_reloadSceneFlag = true;
 				break;
+
+			default:
+				break;
 			}
 			break;
 
@@ -1717,6 +1763,9 @@ void Scene104::step() {
 			case 2:
 				_vm->_dialogs->show(10406);
 				_scene->_reloadSceneFlag = true;
+				break;
+
+			default:
 				break;
 			}
 			break;
@@ -1768,17 +1817,15 @@ void Scene104::actions() {
 	_action._inProgress = false;
 }
 
-void Scene104::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-
-	s.syncAsByte(_kargShootingFl);
-	s.syncAsByte(_loseFl);
-}
-
 /*------------------------------------------------------------------------*/
 
 Scene105::Scene105(MADSEngine *vm) : Scene1xx(vm) {
 	_explosionFl = false;
+}
+
+void Scene105::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_explosionFl);
 }
 
 void Scene105::setup() {
@@ -1861,6 +1908,9 @@ void Scene105::step() {
 			_scene->_reloadSceneFlag = true;
 			_scene->_sequences.addTimer(90, 4);
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -1925,11 +1975,6 @@ void Scene105::actions() {
 	_action._inProgress = false;
 }
 
-void Scene105::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-	s.syncAsByte(_explosionFl);
-}
-
 /*------------------------------------------------------------------------*/
 
 Scene106::Scene106(MADSEngine *vm) : Scene1xx(vm) {
@@ -1937,6 +1982,14 @@ Scene106::Scene106(MADSEngine *vm) : Scene1xx(vm) {
 	_shadowFl = false;
 	_firstEmergingFl = false;
 	_msgPosY = 0;
+}
+
+void Scene106::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_backToShipFl);
+	s.syncAsByte(_shadowFl);
+	s.syncAsByte(_firstEmergingFl);
+	s.syncAsSint32LE(_msgPosY);
 }
 
 void Scene106::setup() {
@@ -2144,18 +2197,15 @@ void Scene106::actions() {
 	_action._inProgress = false;
 }
 
-void Scene106::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-	s.syncAsByte(_backToShipFl);
-	s.syncAsByte(_shadowFl);
-	s.syncAsByte(_firstEmergingFl);
-	s.syncAsSint32LE(_msgPosY);
-}
-
 /*------------------------------------------------------------------------*/
 
 Scene107::Scene107(MADSEngine *vm) : Scene1xx(vm) {
 	_shootingFl = false;
+}
+
+void Scene107::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_shootingFl);
 }
 
 void Scene107::setup() {
@@ -2268,12 +2318,6 @@ void Scene107::actions() {
 	_action._inProgress = false;
 }
 
-void Scene107::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-	s.syncAsByte(_shootingFl);
-}
-
-
 /*------------------------------------------------------------------------*/
 
 void Scene108::setup() {
@@ -2374,6 +2418,18 @@ Scene109::Scene109(MADSEngine *vm) : Scene1xx(vm) {
 
 	_throwingObjectId = -1;
 	_hoovicTrigger = 0;
+}
+
+void Scene109::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_rexThrowingObject);
+	s.syncAsByte(_hoovicDifficultFl);
+	s.syncAsByte(_beforeEatingRex);
+	s.syncAsByte(_eatingRex);
+	s.syncAsByte(_hungryFl);
+	s.syncAsByte(_eatingFirstFish);
+	s.syncAsSint32LE(_throwingObjectId);
+	s.syncAsSint32LE(_hoovicTrigger);
 }
 
 void Scene109::setup() {
@@ -2763,22 +2819,15 @@ void Scene109::actions() {
 	_action._inProgress = false;
 }
 
-void Scene109::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-	s.syncAsByte(_rexThrowingObject);
-	s.syncAsByte(_hoovicDifficultFl);
-	s.syncAsByte(_beforeEatingRex);
-	s.syncAsByte(_eatingRex);
-	s.syncAsByte(_hungryFl);
-	s.syncAsByte(_eatingFirstFish);
-	s.syncAsSint32LE(_throwingObjectId);
-	s.syncAsSint32LE(_hoovicTrigger);
-}
-
 /*------------------------------------------------------------------------*/
 
 Scene110::Scene110(MADSEngine *vm) : Scene1xx(vm) {
 	_crabsFl = false;
+}
+
+void Scene110::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_crabsFl);
 }
 
 void Scene110::setup() {
@@ -2901,11 +2950,6 @@ void Scene110::actions() {
 	_action._inProgress = false;
 }
 
-void Scene110::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-	s.syncAsByte(_crabsFl);
-}
-
 /*------------------------------------------------------------------------*/
 
 Scene111::Scene111(MADSEngine *vm) : Scene1xx(vm) {
@@ -2913,6 +2957,14 @@ Scene111::Scene111(MADSEngine *vm) : Scene1xx(vm) {
 	_launch1Fl = false;
 	_launched2Fl = false;
 	_rexDivingFl = false;
+}
+
+void Scene111::synchronize(Common::Serializer &s) {
+	Scene1xx::synchronize(s);
+	s.syncAsByte(_stampedFl);
+	s.syncAsByte(_launch1Fl);
+	s.syncAsByte(_launched2Fl);
+	s.syncAsByte(_rexDivingFl);
 }
 
 void Scene111::setup() {
@@ -3053,14 +3105,6 @@ void Scene111::actions() {
 		return;
 
 	_action._inProgress = false;
-}
-
-void Scene111::synchronize(Common::Serializer &s) {
-	Scene1xx::synchronize(s);
-	s.syncAsByte(_stampedFl);
-	s.syncAsByte(_launch1Fl);
-	s.syncAsByte(_launched2Fl);
-	s.syncAsByte(_rexDivingFl);
 }
 
 /*------------------------------------------------------------------------*/
