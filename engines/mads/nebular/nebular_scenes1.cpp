@@ -1244,7 +1244,6 @@ void Scene102::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 Scene103::Scene103(MADSEngine *vm) : Scene1xx(vm) {
-	_sayHiToBinky = false;
 	_updateClock = 0;
 }
 
@@ -1322,7 +1321,6 @@ void Scene103::enter() {
 
 	_vm->_palette->setEntry(252, 63, 63, 10);
 	_vm->_palette->setEntry(253, 45, 45, 10);
-	_sayHiToBinky = false;
 	_updateClock = _scene->_frameStartTime;
 }
 
@@ -1493,7 +1491,6 @@ void Scene103::actions() {
 		case 1: {
 			Common::String msg = _game.getQuote(72);
 			_scene->_kernelMessages.add(Common::Point(310, 132), 0xFDFC, 16, 2, 120, msg);
-			_sayHiToBinky = false;
 			break;
 		}
 
@@ -1567,7 +1564,8 @@ void Scene103::postActions() {
 
 void Scene103::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
-	s.syncAsByte(_sayHiToBinky);
+	byte dummy = 0;
+	s.syncAsByte(dummy); // In order to avoid to break savegame compatibility
 	s.syncAsUint32LE(_updateClock);
 }
 
