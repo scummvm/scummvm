@@ -1777,6 +1777,10 @@ void Scene104::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+Scene105::Scene105(MADSEngine *vm) : Scene1xx(vm) {
+	_explosionFl = false;
+}
+
 void Scene105::setup() {
 	// Preloading has been skipped
 	setPlayerSpritesPrefix();
@@ -1927,6 +1931,13 @@ void Scene105::synchronize(Common::Serializer &s) {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene106::Scene106(MADSEngine *vm) : Scene1xx(vm) {
+	_backToShipFl = false;
+	_shadowFl = false;
+	_firstEmergingFl = false;
+	_msgPosY = 0;
+}
 
 void Scene106::setup() {
 	setPlayerSpritesPrefix();
@@ -2143,6 +2154,10 @@ void Scene106::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+Scene107::Scene107(MADSEngine *vm) : Scene1xx(vm) {
+	_shootingFl = false;
+}
+
 void Scene107::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -2348,6 +2363,7 @@ void Scene108::actions() {
 }
 
 /*------------------------------------------------------------------------*/
+
 Scene109::Scene109(MADSEngine *vm) : Scene1xx(vm) {
 	_rexThrowingObject = false;
 	_hoovicDifficultFl = false;
@@ -2761,6 +2777,10 @@ void Scene109::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+Scene110::Scene110(MADSEngine *vm) : Scene1xx(vm) {
+	_crabsFl = false;
+}
+
 void Scene110::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -2887,6 +2907,13 @@ void Scene110::synchronize(Common::Serializer &s) {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene111::Scene111(MADSEngine *vm) : Scene1xx(vm) {
+	_stampedFl = false;
+	_launch1Fl = false;
+	_launched2Fl = false;
+	_rexDivingFl = false;
+}
 
 void Scene111::setup() {
 	_scene->addActiveVocab(NOUN_BATS);

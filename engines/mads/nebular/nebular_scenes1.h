@@ -136,7 +136,7 @@ private:
 	bool _explosionFl;
 
 public:
-	Scene105(MADSEngine *vm) : Scene1xx(vm), _explosionFl(false) {}
+	Scene105(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -155,7 +155,7 @@ private:
 	int _msgPosY;
 
 public:
-	Scene106(MADSEngine *vm) : Scene1xx(vm), _backToShipFl(false), _shadowFl(false), _firstEmergingFl(false), _msgPosY(0) {}
+	Scene106(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -170,7 +170,7 @@ private:
 	bool _shootingFl;
 
 public:
-	Scene107(MADSEngine *vm) : Scene1xx(vm), _shootingFl(false) {}
+	Scene107(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -218,7 +218,7 @@ private:
 	bool _crabsFl;
 
 public:
-	Scene110(MADSEngine *vm) : Scene1xx(vm), _crabsFl(false) {}
+	Scene110(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -236,7 +236,7 @@ private:
 	bool _rexDivingFl;
 
 public:
-	Scene111(MADSEngine *vm) : Scene1xx(vm), _stampedFl(false), _launch1Fl(false), _launched2Fl(false), _rexDivingFl(false) {}
+	Scene111(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
