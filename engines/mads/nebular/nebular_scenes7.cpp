@@ -109,7 +109,7 @@ void Scene701::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 5));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', 0));
-	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));	// TODO: FIXME: Broken sprite?
+	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 1));
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites("*RM202A1");
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('b', 8));
 
