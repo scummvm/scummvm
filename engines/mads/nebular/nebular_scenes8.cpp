@@ -83,6 +83,13 @@ void Scene801::setup() {
 	setAAName();
 }
 
+void Scene801::synchronize(Common::Serializer &s) {
+	Scene8xx::synchronize(s);
+
+	s.syncAsByte(_walkThroughDoor);
+}
+
+
 void Scene801::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -829,6 +836,21 @@ void Scene804::setup() {
 	Scene8xx::setAAName();
 }
 
+void Scene804::synchronize(Common::Serializer &s) {
+	Scene8xx::synchronize(s);
+
+	s.syncAsByte(_messWithThrottle);
+	s.syncAsByte(_movingThrottle);
+	s.syncAsByte(_throttleGone);
+	s.syncAsByte(_dontPullThrottleAgain);
+	s.syncAsByte(_pullThrottleReally);
+	s.syncAsByte(_alreadyOrgan);
+	s.syncAsByte(_alreadyPop);
+
+	s.syncAsSint16LE(_resetFrame);
+	s.syncAsUint32LE(_throttleCounter);
+}
+
 void Scene804::enter() {
 	_messWithThrottle = false;
 	_throttleCounter = 0;
@@ -1235,6 +1257,12 @@ void Scene808::setup() {
 	setAAName();
 }
 
+void Scene808::synchronize(Common::Serializer &s) {
+	Scene8xx::synchronize(s);
+
+	s.syncAsByte(_goingTo803);
+}
+
 void Scene808::enter() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
@@ -1439,6 +1467,12 @@ void Scene808::actions() {
 void Scene810::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
+}
+
+void Scene810::synchronize(Common::Serializer &s) {
+	Scene8xx::synchronize(s);
+
+	s.syncAsByte(_moveAllowed);
 }
 
 void Scene810::enter() {

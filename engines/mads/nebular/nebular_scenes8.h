@@ -58,6 +58,7 @@ private:
 
 public:
 	Scene801(MADSEngine *vm) : Scene8xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -101,6 +102,7 @@ private:
 	bool _alreadyPop;
 public:
 	Scene804(MADSEngine *vm) : Scene8xx(vm), _throttleCounter(0) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -135,6 +137,7 @@ private:
 
 public:
 	Scene808(MADSEngine *vm) : Scene8xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -147,6 +150,7 @@ private:
 
 public:
 	Scene810(MADSEngine *vm) : Scene8xx(vm) {}
+	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
