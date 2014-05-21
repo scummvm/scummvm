@@ -99,6 +99,16 @@ void Scene1xx::setPlayerSpritesPrefix() {
 
 /*------------------------------------------------------------------------*/
 
+Scene101::Scene101(MADSEngine *vm) : Scene1xx(vm) {
+	_sittingFl = false;
+	_panelOpened = false;
+	_messageNum = 0;
+	_posY = 0;
+	_shieldSpriteIdx = 0;
+	_chairHotspotId = 0;
+	_oldSpecial = 0;
+}
+
 void Scene101::setup() {
 	_scene->_animationData->preLoad(formAnimName('A', -1), 3);
 	setPlayerSpritesPrefix();
@@ -616,6 +626,16 @@ void Scene101::synchronize(Common::Serializer &s) {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene102::Scene102(MADSEngine *vm) : Scene1xx(vm) {
+	_fridgeOpenedFl = false;
+	_fridgeOpenedDescr = false;
+	_fridgeFirstOpenFl = false;
+	_chairDescrFl = false;
+	_drawerDescrFl = false;
+	_activeMsgFl = false;
+	_fridgeCommentCount = 0;
+}
 
 void Scene102::setup() {
 	_scene->_animationData->preLoad(formAnimName('A', -1), 3);
@@ -1223,6 +1243,11 @@ void Scene102::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+Scene103::Scene103(MADSEngine *vm) : Scene1xx(vm) {
+	_sayHiToBinky = false;
+	_updateClock = 0;
+}
+
 void Scene103::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -1547,6 +1572,11 @@ void Scene103::synchronize(Common::Serializer &s) {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene104::Scene104(MADSEngine *vm) : Scene1xx(vm) {
+	_kargShootingFl = false;
+	_loseFl = false;
+}
 
 void Scene104::setup() {
 	// Preloading has been skipped

@@ -66,8 +66,7 @@ private:
 
 	void sayDang();
 public:
-	Scene101(MADSEngine *vm) : Scene1xx(vm), _sittingFl(false), _panelOpened(false), _messageNum(0),
-		_posY(0), _shieldSpriteIdx(0), _chairHotspotId(0), _oldSpecial(0) {}
+	Scene101(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -91,8 +90,7 @@ private:
 	void addRandomMessage();
 
 public:
-	Scene102(MADSEngine *vm) : Scene1xx(vm), _fridgeOpenedFl(false), _fridgeOpenedDescr(false), _fridgeFirstOpenFl(false),
-		_chairDescrFl(false), _drawerDescrFl(false), _activeMsgFl(false), _fridgeCommentCount(0) {}
+	Scene102(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -108,7 +106,7 @@ private:
 	bool _sayHiToBinky;
 	uint32 _updateClock;
 public:
-	Scene103(MADSEngine *vm) : Scene1xx(vm) {}
+	Scene103(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -124,7 +122,7 @@ private:
 	bool _loseFl;
 
 public:
-	Scene104(MADSEngine *vm) : Scene1xx(vm), _kargShootingFl(false), _loseFl(false) {}
+	Scene104(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
