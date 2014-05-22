@@ -93,9 +93,9 @@ void Scene4xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene401::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
+Scene401::Scene401(MADSEngine *vm) : Scene4xx(vm), _destPos(0, 0) {
+	_northFl = false;
+	_timer = 0;
 }
 
 void Scene401::synchronize(Common::Serializer &s) {
@@ -105,6 +105,11 @@ void Scene401::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_destPos.x);
 	s.syncAsSint16LE(_destPos.y);
 	s.syncAsUint32LE(_timer);
+}
+
+void Scene401::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
 }
 
 void Scene401::enter() {
@@ -231,19 +236,43 @@ void Scene401::actions() {
 }
 
 /*------------------------------------------------------------------------*/
-void Scene402::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
 
-	_scene->addActiveVocab(NOUN_BARTENDER);
-	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
-	_scene->addActiveVocab(VERB_DRINK);
-	_scene->addActiveVocab(NOUN_BINOCULARS);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_CREDIT_CHIP);
-	_scene->addActiveVocab(VERB_TAKE);
-	_scene->addActiveVocab(NOUN_REPAIR_LIST);
-	_scene->addActiveVocab(VERB_LOOK_AT);
+Scene402::Scene402(MADSEngine *vm) : Scene4xx(vm) {
+	_lightOn = false;
+	_blowingSmoke = false;
+	_leftWomanMoving = false;
+	_rightWomanMoving = false;
+	_firstTalkToGirlInChair = false;
+	_waitingGinnyMove = false;
+	_ginnyLooking = false;
+	_bigBeatFl = false;
+	_roxOnStool = false;
+	_bartenderSteady = false;
+	_bartenderHandsHips = false;
+	_bartenderLooksLeft = false;
+	_bartenderReady = false;
+	_bartenderTalking = false;
+	_bartenderCalled = false;
+	_conversationFl = false;
+	_activeTeleporter = false;
+	_activeArrows = false;
+	_activeArrow1 = false;
+	_activeArrow2 = false;
+	_activeArrow3 = false;
+	_cutSceneReady = false;
+	_cutSceneNeeded = false;
+	_helgaReady = false;
+	_refuseAlienLiquor = false;
+
+	_drinkTimer = -1;
+	_beatCounter = -1;
+	_bartenderMode = -1;
+	_bartenderDialogNode = -1;
+	_bartenderCurrentQuestion = -1;
+	_helgaTalkMode = -1;
+	_roxMode = -1;
+	_rexMode = -1;
+	_talkTimer = -1;
 }
 
 void Scene402::synchronize(Common::Serializer &s) {
@@ -284,6 +313,21 @@ void Scene402::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_roxMode);
 	s.syncAsSint16LE(_rexMode);
 	s.syncAsSint16LE(_talkTimer);
+}
+
+void Scene402::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+
+	_scene->addActiveVocab(NOUN_BARTENDER);
+	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
+	_scene->addActiveVocab(VERB_DRINK);
+	_scene->addActiveVocab(NOUN_BINOCULARS);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_CREDIT_CHIP);
+	_scene->addActiveVocab(VERB_TAKE);
+	_scene->addActiveVocab(NOUN_REPAIR_LIST);
+	_scene->addActiveVocab(VERB_LOOK_AT);
 }
 
 void Scene402::setDialogNode(int node) {
@@ -2514,6 +2558,16 @@ void Scene405::actions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene406::Scene406(MADSEngine *vm) : Scene4xx(vm) {
+	_hitStorageDoor = false;
+}
+
+void Scene406::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsByte(_hitStorageDoor);
+}
+
 void Scene406::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -2717,13 +2771,19 @@ void Scene406::actions() {
 	_action._inProgress = false;
 }
 
-void Scene406::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
+/*------------------------------------------------------------------------*/
 
-	s.syncAsByte(_hitStorageDoor);
+Scene407::Scene407(MADSEngine *vm) : Scene4xx(vm), _destPos(0, 0) {
+	_fromNorth = false;
 }
 
-/*------------------------------------------------------------------------*/
+void Scene407::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsByte(_fromNorth);
+	s.syncAsSint16LE(_destPos.x);
+	s.syncAsSint16LE(_destPos.y);
+}
 
 void Scene407::setup() {
 	setPlayerSpritesPrefix();
@@ -2829,14 +2889,6 @@ void Scene407::actions() {
 		return;
 
 	_action._inProgress = false;
-}
-
-void Scene407::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
-
-	s.syncAsByte(_fromNorth);
-	s.syncAsSint16LE(_destPos.x);
-	s.syncAsSint16LE(_destPos.y);
 }
 
 /*------------------------------------------------------------------------*/
@@ -3213,6 +3265,30 @@ void Scene410::actions() {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene411::Scene411(MADSEngine *vm) : Scene4xx(vm) {
+	_curAnimationFrame = -1;
+	_newIngredient = -1;
+	_newQuantity = -1;
+	_resetFrame = -1;
+	_badThreshold = -1;
+
+	_killRox = false;
+	_makeMushroomCloud = false;
+}
+
+void Scene411::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsSint32LE(_curAnimationFrame);
+	s.syncAsSint32LE(_newIngredient);
+	s.syncAsSint32LE(_newQuantity);
+	s.syncAsSint32LE(_resetFrame);
+	s.syncAsSint32LE(_badThreshold);
+
+	s.syncAsByte(_killRox);
+	s.syncAsByte(_makeMushroomCloud);
+}
 
 bool Scene411::addIngredient() {
 	bool retVal = false;
@@ -3952,20 +4028,19 @@ void Scene411::actions() {
 	_action._inProgress = false;
 }
 
-void Scene411::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
+/*------------------------------------------------------------------------*/
 
-	s.syncAsSint32LE(_curAnimationFrame);
-	s.syncAsSint32LE(_newIngredient);
-	s.syncAsSint32LE(_newQuantity);
-	s.syncAsSint32LE(_resetFrame);
-	s.syncAsSint32LE(_badThreshold);
-
-	s.syncAsByte(_killRox);
-	s.syncAsByte(_makeMushroomCloud);
+Scene413::Scene413(MADSEngine *vm) : Scene4xx(vm) {
+	_rexDeath = -1;
+	_canMove = -1;
 }
 
-/*------------------------------------------------------------------------*/
+void Scene413::synchronize(Common::Serializer &s) {
+	Scene4xx::synchronize(s);
+
+	s.syncAsSint32LE(_rexDeath);
+	s.syncAsSint32LE(_canMove);
+}
 
 void Scene413::setup() {
 	setPlayerSpritesPrefix();
@@ -4108,13 +4183,6 @@ void Scene413::actions() {
 		return;
 
 	_action._inProgress = false;
-}
-
-void Scene413::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
-
-	s.syncAsSint32LE(_rexDeath);
-	s.syncAsSint32LE(_canMove);
 }
 
 /*------------------------------------------------------------------------*/

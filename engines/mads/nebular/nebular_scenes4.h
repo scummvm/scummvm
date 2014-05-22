@@ -57,7 +57,7 @@ private:
 	uint32 _timer;
 
 public:
-	Scene401(MADSEngine *vm) : Scene4xx(vm) {}
+	Scene401(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -118,7 +118,7 @@ private:
 	void handleDialogs();
 
 public:
-	Scene402(MADSEngine *vm) : Scene4xx(vm) {}
+	Scene402(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -144,7 +144,7 @@ private:
 	bool _hitStorageDoor;
 
 public:
-	Scene406(MADSEngine *vm) : Scene4xx(vm) {}
+	Scene406(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -160,7 +160,7 @@ private:
 	Common::Point _destPos;
 
 public:
-	Scene407(MADSEngine *vm) : Scene4xx(vm) {}
+	Scene407(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -227,7 +227,7 @@ private:
 	bool addIngredient();
 
 public:
-	Scene411(MADSEngine *vm) : Scene4xx(vm) {}
+	Scene411(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -243,7 +243,7 @@ private:
 	int _canMove;
 
 public:
-	Scene413(MADSEngine *vm) : Scene4xx(vm) {}
+	Scene413(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
