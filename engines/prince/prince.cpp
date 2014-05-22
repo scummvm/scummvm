@@ -115,6 +115,12 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
+	for (uint32 i = 0; i < _backAnimList.size(); i++) {
+		delete _backAnimList[i]._animData;
+		delete _backAnimList[i]._shadowData;
+	}
+	_backAnimList.clear();
+
 	for (uint i = 0; i < _mainHero->_moveSet.size(); i++) {
 		delete _mainHero->_moveSet[i];
 	}
@@ -317,6 +323,11 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	_room->loadRoom(_script->getRoomOffset(_locationNr));
+	for (uint32 i = 0; i < _backAnimList.size(); i++) {
+		delete _backAnimList[i]._animData;
+		delete _backAnimList[i]._shadowData;
+	}
+	_backAnimList.clear();
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
 
 	_graph->makeShadowTable(70, _graph->_shadowTable70);
@@ -475,24 +486,33 @@ bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *r
 
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName1);
 	if (!stream) {
+		delete stream;
 		return false;
 	}
 
 	if (stream->read(shadowBitmap, dataSize) != dataSize) {
 		free(shadowBitmap);
+		delete stream;
 		return false;
 	}
 
-	stream = SearchMan.createReadStreamForMember(resourceName2);
-	if (!stream) {
+	Common::SeekableReadStream *stream2 = SearchMan.createReadStreamForMember(resourceName2);
+	if (!stream2) {
+		delete stream;
+		delete stream2;
 		return false;
 	}
 
 	byte *shadowBitmap2 = shadowBitmap + dataSize;
-	if (stream->read(shadowBitmap2, dataSize) != dataSize) {
+	if (stream2->read(shadowBitmap2, dataSize) != dataSize) {
 		free(shadowBitmap);
+		delete stream;
+		delete stream2;
 		return false;
 	}
+
+	delete stream;
+	delete stream2;
 	return true;
 }
 
@@ -700,7 +720,6 @@ void PrinceEngine::drawScreen() {
 		delete mainHeroSurface;
 	}
 
-	playNextFrame();
 	/*
 	if (!_objList.empty()) {
 		for (int i = 0; i < _objList.size(); i++) {
@@ -709,8 +728,13 @@ void PrinceEngine::drawScreen() {
 	}
 	*/
 	for (int i = 0; i < _backAnimList.size() ; i++) {
-		_graph->drawTransparent(_backAnimList[i]._x, _backAnimList[i]._y, _backAnimList[i]._animData->getFrame(testAnimFrame));
+		Graphics::Surface *backAnimSurface = _backAnimList[i]._animData->getFrame(testAnimFrame);
+		_graph->drawTransparent(_backAnimList[i]._x, _backAnimList[i]._y, backAnimSurface); // out of range now - crash .exe
+		backAnimSurface->free();
+		delete backAnimSurface;
 	}
+
+	playNextFrame();
 
 	hotspot();
 
