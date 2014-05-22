@@ -1422,7 +1422,7 @@ void Actor::update(uint frameTime) {
 			if (!_walkChore.isPlaying()) {
 				_walkChore.playLooping(true);
 			}
-			if (_restChore.isPlaying()) {
+			if (g_grim->getGameType() == GType_GRIM && _restChore.isPlaying()) {
 				_restChore.stop(true);
 			}
 		} else {
@@ -1439,7 +1439,7 @@ void Actor::update(uint frameTime) {
 		if (_walkedCur || _walkedLast)
 			_currTurnDir = 0;
 
-		if (_restChore.isValid()) {
+		if (g_grim->getGameType() == GType_GRIM && _restChore.isValid()) {
 			if (_currTurnDir != 0) {
 				if (getTurnChore(_currTurnDir)->isPlaying() && _restChore.isPlaying()) {
 					_restChore.stop(true, 500);
