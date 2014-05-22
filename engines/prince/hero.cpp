@@ -392,7 +392,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 				int shadBitMaskCopyTrans = shadBitMask;
 				int shadBitAddrCopyTrans = shadBitAddr;
 				//ct_loop:
-				for (int j = 0; j < ct_loop; j++) {
+				for (int l = 0; l < ct_loop; l++) {
 					shadZoomX -= 100;
 					if (shadZoomX < 0 && _scaleValue != 10000) {
 						shadZoomX += _scaleValue;
@@ -449,7 +449,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 						int backgroundDiffWall = 0;
 						int shadowHeroXWall = 0;
 						//ct_loop:
-						for (int j = 0; j < ct_loop; j++) {
+						for (int m = 0; m < ct_loop; m++) {
 							shadZoomX -= 100;
 							if (shadZoomX < 0 && _scaleValue != 10000) {
 								shadZoomX += _scaleValue;

@@ -51,7 +51,7 @@ bool PtcArchive::open(const Common::String &filename) {
 	if (!_stream)
 		return false;
 
-	uint32 magic = _stream->readUint32LE();
+	_stream->readUint32LE(); // magic
 	uint32 fileTableOffset = _stream->readUint32LE() ^ 0x4D4F4B2D; // MOK-
 	uint32 fileTableSize = _stream->readUint32LE() ^ 0x534F4654; // SOFT
 

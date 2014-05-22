@@ -78,7 +78,7 @@ bool Debugger::Cmd_SetFlag(int argc, const char **argv) {
 		return true;
 	}
 
-	int flagNum = strToInt(argv[1]);
+	//int flagNum = strToInt(argv[1]);
 	//g_globals->setFlag(flagNum);
 	return true;
 }
@@ -93,7 +93,7 @@ bool Debugger::Cmd_GetFlag(int argc, const char **argv) {
 		return true;
 	}
 
-	int flagNum = strToInt(argv[1]);
+	//int flagNum = strToInt(argv[1]);
 	//DebugPrintf("Value: %d\n", g_globals->getFlag(flagNum));
 	return true;
 }
@@ -108,7 +108,7 @@ bool Debugger::Cmd_ClearFlag(int argc, const char **argv) {
 		return true;
 	}
 
-	int flagNum = strToInt(argv[1]);
+	//int flagNum = strToInt(argv[1]);
 	//g_globals->clearFlag(flagNum);
 	return true;
 }

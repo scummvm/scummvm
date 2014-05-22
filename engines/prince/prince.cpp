@@ -115,7 +115,7 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
-	for (uint32 i = 0; i < _backAnimList.size(); i++) {
+	for (uint i = 0; i < _backAnimList.size(); i++) {
 		delete _backAnimList[i]._animData;
 		delete _backAnimList[i]._shadowData;
 	}
@@ -727,7 +727,7 @@ void PrinceEngine::drawScreen() {
 		}
 	}
 	*/
-	for (int i = 0; i < _backAnimList.size() ; i++) {
+	for (uint i = 0; i < _backAnimList.size() ; i++) {
 		Graphics::Surface *backAnimSurface = _backAnimList[i]._animData->getFrame(testAnimFrame);
 		_graph->drawTransparent(_backAnimList[i]._x, _backAnimList[i]._y, backAnimSurface); // out of range now - crash .exe
 		backAnimSurface->free();

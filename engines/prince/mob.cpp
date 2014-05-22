@@ -97,6 +97,7 @@ uint16 Mob::getData(AttrId dataId) {
 		return _examPosition.y;
 	default:
 		assert(false);
+		return 0;
 	}
 }
 
