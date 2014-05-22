@@ -99,11 +99,10 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()){
 			int len = line.size();
+			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 			if (len == 0 || *tmpStr == ';')
 				continue;
-			
-			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-			
+					
 			char *p;
 			p = token(tmpStr);
 			if (*p == '@') {
