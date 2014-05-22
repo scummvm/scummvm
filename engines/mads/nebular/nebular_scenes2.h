@@ -54,7 +54,8 @@ private:
 	bool _pterodactylFlag;
 
 public:
-	Scene201(MADSEngine *vm) : Scene2xx(vm), _pterodactylFlag(false) {}
+	Scene201(MADSEngine *vm);
+
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -75,9 +76,8 @@ private:
 	int subStep4(int randVal);
 
 public:
-	Scene202(MADSEngine *vm) : Scene2xx(vm), _activeMsgFl(false), _ladderTopFl(false), _waitingMeteoFl(false),
-		_ladderHotspotId(-1), _meteoClock1(0), _meteoClock2(0), _toStationFl(false), _toTeleportFl(false),
-		_lastRoute(0), _stationCounter(0), _meteoFrame(0) {}
+	Scene202(MADSEngine *vm);
+
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -93,7 +93,8 @@ private:
 	bool _rhotundaEat2Fl, _rhotundaEatFl;
 
 public:
-	Scene203(MADSEngine *vm) : Scene2xx(vm), _rhotundaEat2Fl(false), _rhotundaEatFl(false) {}
+	Scene203(MADSEngine *vm);
+
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -112,7 +113,7 @@ private:
 	void handleWomanSpeech(int quoteId);
 
 public:
-	Scene205(MADSEngine *vm) : Scene2xx(vm), _lastFishTime(0), _chickenTime(0) {}
+	Scene205(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -131,7 +132,8 @@ private:
 	void moveSpider();
 
 public:
-	Scene207(MADSEngine *vm) : Scene2xx(vm), _vultureFl(false), _spiderFl(false), _spiderHotspotId(-1), _vultureHotspotId(-1), _spiderTime(0), _vultureTime(0) {}
+	Scene207(MADSEngine *vm);
+
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -149,7 +151,8 @@ private:
 	void subAction(int mode);
 
 public:
-	Scene208(MADSEngine *vm) : Scene2xx(vm), _rhotundaTurnFl(false), _boundingFl(false), _rhotundaTime(0) {}
+	Scene208(MADSEngine *vm);
+
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -194,10 +197,8 @@ private:
 	void handleMonkey2();
 
 public:
-	Scene209(MADSEngine *vm) : Scene2xx(vm), _dodgeFl(false), _forceDodgeFl(false), _pitchFl(false), _fallFl(false), _forceFallFl(false),
-	   _playingAnimFl(false), _shouldFallFl(false), _shouldDodgeFl(false), _monkeyPosition(0), _counter(0), _pauseMode(0),
-	   _binocularsDroppedFl(false), _startShootingInTimerFl(false), _dialogAbortVal(0), _playingDialogFl(false),_shootMissedLastFl(false),
-	   _removeMonkeyFl(false), _shootReadyFl(false), _pauseCounterThreshold(0), _pauseCounter(0) {}
+	Scene209(MADSEngine *vm);
+
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -234,9 +235,8 @@ private:
 	void newNode(int node);
 	void restoreDialogNode(int node, int msgId, int posY);
 public:
-	Scene210(MADSEngine *vm) : Scene2xx(vm), _curDialogNode(-1), _nextHandsPlace(0), _twinkleAnimationType(0), _twinklesCurrentFrame(0),
-		_shouldTalk(false), _shouldFaceRex(false), _shouldMoveHead(false), _stopWalking(false), _twinklesTalking(false),
-		_twinklesTalk2(false), _doorway(0), _subQuote2("") {}
+	Scene210(MADSEngine *vm);
+
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -252,7 +252,8 @@ private:
 	uint32 _monkeyTime;
 
 public:
-	Scene211(MADSEngine *vm) : Scene2xx(vm), _ambushFl(false), _wakeFl(false), _monkeyFrame(0), _scrollY(0), _monkeyTime(0) {}
+	Scene211(MADSEngine *vm);
+
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
@@ -287,7 +288,7 @@ private:
 	bool _devilRunningFl;
 
 public:
-	Scene214(MADSEngine *vm) : Scene2xx(vm), _devilTime(0), _devilRunningFl(false) {}
+	Scene214(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();

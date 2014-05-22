@@ -117,6 +117,15 @@ void Scene2xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
+Scene201::Scene201(MADSEngine *vm) : Scene2xx(vm) {
+	_pterodactylFlag = false;
+}
+
+void Scene201::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_pterodactylFlag);
+}
+
 void Scene201::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -324,12 +333,41 @@ void Scene201::actions() {
 	_action._inProgress = false;
 }
 
-void Scene201::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsByte(_pterodactylFlag);
+/*------------------------------------------------------------------------*/
+
+Scene202::Scene202(MADSEngine *vm) : Scene2xx(vm) {
+	_activeMsgFl = false;
+	_ladderTopFl = false;
+	_waitingMeteoFl = false;
+	_ladderHotspotId = -1;
+	_meteoClock1 = 0;
+	_meteoClock2 = 0;
+	_toStationFl = false;
+	_toTeleportFl = false;
+	_lastRoute = 0;
+	_stationCounter = 0;
+	_meteoFrame = 0;
 }
 
-/*------------------------------------------------------------------------*/
+void Scene202::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_activeMsgFl);
+	s.syncAsByte(_ladderTopFl);
+	s.syncAsByte(_waitingMeteoFl);
+	s.syncAsByte(_toStationFl);
+	s.syncAsByte(_toTeleportFl);
+
+	s.syncAsSint32LE(_ladderHotspotId);
+	s.syncAsSint32LE(_lastRoute);
+	s.syncAsSint32LE(_stationCounter);
+	s.syncAsSint32LE(_meteoFrame);
+
+	s.syncAsUint32LE(_meteoClock1);
+	s.syncAsUint32LE(_meteoClock2);
+	s.syncAsUint32LE(_startTime);
+
+	s.syncAsByte(_meteorologistSpecial);
+}
 
 void Scene202::setup() {
 	setPlayerSpritesPrefix();
@@ -973,27 +1011,18 @@ void Scene202::actions() {
 	_action._inProgress = false;
 }
 
-void Scene202::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsByte(_activeMsgFl);
-	s.syncAsByte(_ladderTopFl);
-	s.syncAsByte(_waitingMeteoFl);
-	s.syncAsByte(_toStationFl);
-	s.syncAsByte(_toTeleportFl);
+/*****************************************************************************/
 
-	s.syncAsSint32LE(_ladderHotspotId);
-	s.syncAsSint32LE(_lastRoute);
-	s.syncAsSint32LE(_stationCounter);
-	s.syncAsSint32LE(_meteoFrame);
-
-	s.syncAsUint32LE(_meteoClock1);
-	s.syncAsUint32LE(_meteoClock2);
-	s.syncAsUint32LE(_startTime);
-
-	s.syncAsByte(_meteorologistSpecial);
+Scene203::Scene203(MADSEngine *vm) : Scene2xx(vm) {
+	_rhotundaEat2Fl = false;
+	_rhotundaEatFl = false;
 }
 
-/*****************************************************************************/
+void Scene203::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_rhotundaEat2Fl);
+	s.syncAsByte(_rhotundaEatFl);
+}
 
 void Scene203::setup() {
 	setPlayerSpritesPrefix();
@@ -1105,12 +1134,6 @@ void Scene203::actions() {
 	_action._inProgress = false;
 }
 
-void Scene203::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsByte(_rhotundaEat2Fl);
-	s.syncAsByte(_rhotundaEatFl);
-}
-
 /*****************************************************************************/
 
 void Scene205::setup() {
@@ -1119,6 +1142,22 @@ void Scene205::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(NOUN_CHICKEN);
 	_scene->addActiveVocab(NOUN_PIRANHA);
+}
+
+Scene205::Scene205(MADSEngine *vm) : Scene2xx(vm) {
+	_lastFishTime = 0;
+	_chickenTime = 0;
+	_beingKicked = false;
+	_kernelMessage = -1;
+}
+
+void Scene205::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+
+	s.syncAsUint32LE(_lastFishTime);
+	s.syncAsUint32LE(_chickenTime);
+	s.syncAsByte(_beingKicked);
+	s.syncAsSint16LE(_kernelMessage);
 }
 
 void Scene205::enter() {
@@ -1394,15 +1433,30 @@ void Scene205::actions() {
 	_action._inProgress = false;
 }
 
-void Scene205::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsUint32LE(_lastFishTime);
-	s.syncAsUint32LE(_chickenTime);
-	s.syncAsByte(_beingKicked);
-	s.syncAsSint16LE(_kernelMessage);
+/*****************************************************************************/
+
+Scene207::Scene207(MADSEngine *vm) : Scene2xx(vm) {
+	_vultureFl = false;
+	_spiderFl = false;
+	_eyeFl = false;
+	_spiderHotspotId = -1;
+	_vultureHotspotId = -1;
+	_spiderTime = 0;
+	_vultureTime = 0;
 }
 
-/*****************************************************************************/
+void Scene207::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+
+	s.syncAsByte(_vultureFl);
+	s.syncAsByte(_spiderFl);
+	s.syncAsByte(_eyeFl);
+
+	s.syncAsSint32LE(_spiderHotspotId);
+	s.syncAsSint32LE(_vultureHotspotId);
+	s.syncAsSint32LE(_spiderTime);
+	s.syncAsSint32LE(_vultureTime);
+}
 
 void Scene207::setup() {
 	setPlayerSpritesPrefix();
@@ -1533,11 +1587,11 @@ void Scene207::preActions() {
 }
 
 void Scene207::actions() {
-	if (_action._savedFields._lookFlag) {
+	if (_action._savedFields._lookFlag)
 		_vm->_dialogs->show(20711);
-	} else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY)) {
+	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
 		_scene->_nextSceneId = 214;
-	} else {
+	else {
 		if ((_game._player._playerPos.x > 150) && (_game._player._playerPos.x < 189) &&
 		    (_game._player._playerPos.y > 111) && (_game._player._playerPos.y < 130)) {
 			if ((_game._player._playerPos.x <= 162) || (_game._player._playerPos.x >= 181) ||
@@ -1553,54 +1607,55 @@ void Scene207::actions() {
 			_eyeFl = false;
 		}
 
-		if (_action.isAction(VERB_LOOK, NOUN_DENSE_FOREST)) {
+		if (_action.isAction(VERB_LOOK, NOUN_DENSE_FOREST))
 			_vm->_dialogs->show(20701);
-		} else if (_action.isAction(VERB_LOOK, NOUN_HEDGE)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_HEDGE))
 			_vm->_dialogs->show(20702);
-		} else if (_action.isAction(VERB_LOOK, NOUN_SKULL_AND_CROSSBONES)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_SKULL_AND_CROSSBONES))
 			_vm->_dialogs->show(20703);
-		} else if (_action.isAction(VERB_LOOK, NOUN_CAULDRON)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_CAULDRON))
 			_vm->_dialogs->show(20704);
-		} else if (_action.isAction(VERB_LOOK, NOUN_WITCHDOCTOR_HUT)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_WITCHDOCTOR_HUT))
 			_vm->_dialogs->show(20705);
-		} else if (_action.isAction(VERB_LOOK, NOUN_PATH_TO_WEST)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_PATH_TO_WEST))
 			_vm->_dialogs->show(20706);
-		} else if (_action.isAction(VERB_LOOK, NOUN_MOUNTAINS)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_MOUNTAINS))
 			_vm->_dialogs->show(20707);
-		} else if (_action.isAction(VERB_LOOK, NOUN_ALOE_PLANT)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_ALOE_PLANT))
 			_vm->_dialogs->show(20708);
-		} else if (_action.isAction(VERB_LOOK, NOUN_LAWN)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_LAWN))
 			_vm->_dialogs->show(20709);
-		} else if (_action.isAction(VERB_LOOK, NOUN_VULTURE)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_VULTURE))
 			_vm->_dialogs->show(20710);
-		} else if (_action.isAction(VERB_TAKE, NOUN_SKULL_AND_CROSSBONES)) {
+		else if (_action.isAction(VERB_TAKE, NOUN_SKULL_AND_CROSSBONES))
 			_vm->_dialogs->show(20712);
-		} else if (_action.isAction(VERB_TAKE, NOUN_ALOE_PLANT)) {
+		else if (_action.isAction(VERB_TAKE, NOUN_ALOE_PLANT))
 			_vm->_dialogs->show(20713);
-		} else if (_action.isAction(VERB_LOOK, NOUN_SPIDER)) {
+		else if (_action.isAction(VERB_LOOK, NOUN_SPIDER))
 			_vm->_dialogs->show(20714);
-		} else if (_action.isAction(VERB_TAKE, NOUN_SPIDER)) {
+		else if (_action.isAction(VERB_TAKE, NOUN_SPIDER))
 			_vm->_dialogs->show(20715);
-		} else
+		else
 			return;
 	}
 
 	_action._inProgress = false;
 }
 
-void Scene207::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsByte(_vultureFl);
-	s.syncAsByte(_spiderFl);
-	s.syncAsByte(_eyeFl);
+/*****************************************************************************/
 
-	s.syncAsSint32LE(_spiderHotspotId);
-	s.syncAsSint32LE(_vultureHotspotId);
-	s.syncAsSint32LE(_spiderTime);
-	s.syncAsSint32LE(_vultureTime);
+Scene208::Scene208(MADSEngine *vm) : Scene2xx(vm) {
+	_rhotundaTurnFl = false;
+	_boundingFl = false;
+	_rhotundaTime = 0;
 }
 
-/*****************************************************************************/
+void Scene208::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_rhotundaTurnFl);
+	s.syncAsByte(_boundingFl);
+	s.syncAsSint32LE(_rhotundaTime);
+}
 
 void Scene208::setup() {
 	setPlayerSpritesPrefix();
@@ -1758,6 +1813,7 @@ void Scene208::subAction(int mode) {
 		_vm->_sound->command(20);
 		}
 		break;
+
 	case 2: {
 		switch (mode) {
 		case 1:
@@ -1765,24 +1821,31 @@ void Scene208::subAction(int mode) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals[kLeavesStatus] = 1;
 			break;
+
 		case 2:
 			_game._objects.setRoom(OBJ_BIG_LEAVES, 1);
 			_globals[kLeavesStatus] = 2;
 			updateTrap();
 			break;
+
 		case 3:
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_game._objects.removeFromInventory(OBJ_TWINKIFRUIT, 1);
 			_vm->_sound->command(34);
 			break;
+
 		case 4:
 			_game._objects.removeFromInventory(OBJ_BURGER, 1);
 			_vm->_sound->command(33);
 			break;
+
 		case 5:
 			_game._objects.removeFromInventory(OBJ_DEAD_FISH, 1);
 			_vm->_sound->command(33);
+			break;
+
+		default:
 			break;
 		}
 
@@ -1794,9 +1857,13 @@ void Scene208::subAction(int mode) {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		}
 		break;
+
 	case 3:
 		_game._player._visible = true;
 		_game._player._stepEnabled = true;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -1809,18 +1876,17 @@ void Scene208::actions() {
 			_game._player._stepEnabled = false;
 			int msgIndex = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, _game.getQuote(70));
 			_scene->_kernelMessages.setQuoted(msgIndex, 4, true);
-		} else if (_game._trigger == 1) {
+		} else if (_game._trigger == 1)
 			_scene->_nextSceneId = 203;
-		}
-	} else if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH)) {
+	} else if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH))
 		_scene->_nextSceneId = 212;
-	} else if (_action.isAction(VERB_TAKE, NOUN_PILE_OF_LEAVES) && (!_globals[kLeavesStatus] || _game._trigger)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_PILE_OF_LEAVES) && (!_globals[kLeavesStatus] || _game._trigger)) {
 		subAction(1);
 		if (_game._player._stepEnabled)
 			_vm->_dialogs->showItem(OBJ_BIG_LEAVES, 0x326, 0);
-	} else if (_action.isAction(VERB_PUT, NOUN_BIG_LEAVES, NOUN_DEEP_PIT) && (_globals[kLeavesStatus] == 1 || _game._trigger)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_BIG_LEAVES, NOUN_DEEP_PIT) && (_globals[kLeavesStatus] == 1 || _game._trigger))
 		subAction(2);
-	} else if (_action.isAction(VERB_PUT, NOUN_TWINKIFRUIT, NOUN_LEAF_COVERED_PIT)) {
+	else if (_action.isAction(VERB_PUT, NOUN_TWINKIFRUIT, NOUN_LEAF_COVERED_PIT)) {
 		subAction(3);
 		if (_game._player._stepEnabled) {
 			_game._player._stepEnabled = false;
@@ -1829,67 +1895,108 @@ void Scene208::actions() {
 		}
 	} else if (_action.isAction(VERB_PUT, NOUN_BURGER, NOUN_LEAF_COVERED_PIT)) {
 		subAction(4);
-		if (_game._player._stepEnabled) {
+		if (_game._player._stepEnabled)
 			_vm->_dialogs->show(20812);
-		}
 	} else if (_action.isAction(VERB_PUT, NOUN_DEAD_FISH, NOUN_LEAF_COVERED_PIT)) {
 		subAction(5);
-		if (_game._player._stepEnabled) {
+		if (_game._player._stepEnabled)
 			_vm->_dialogs->show(20812);
-		}
-	} else if (_action.isAction(VERB_LOOK, NOUN_CUMULOUS_CLOUD)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_CUMULOUS_CLOUD))
 		_vm->_dialogs->show(20801);
-	} else if (_action.isAction(VERB_LOOK, NOUN_OPEN_AREA_TO_WEST)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_OPEN_AREA_TO_WEST))
 		_vm->_dialogs->show(20802);
-	} else if (_action.isAction(VERB_LOOK, NOUN_THORNY_BUSH)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_THORNY_BUSH))
 		_vm->_dialogs->show(20803);
-	} else if (_action.isAction(VERB_LOOK, NOUN_ROCKS)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_ROCKS))
 		_vm->_dialogs->show(20804);
-	} else if (_action.isAction(VERB_LOOK, NOUN_SMALL_CACTUS)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_SMALL_CACTUS))
 		_vm->_dialogs->show(20805);
-	} else if (_action.isAction(VERB_TAKE, NOUN_SMALL_CACTUS)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_SMALL_CACTUS))
 		_vm->_dialogs->show(20806);
-	} else if (_action.isAction(VERB_LOOK, NOUN_GRASSLAND_TO_EAST)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_GRASSLAND_TO_EAST))
 		_vm->_dialogs->show(20807);
-	} else if (_action.isAction(VERB_LOOK, NOUN_DEEP_PIT)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_DEEP_PIT))
 		_vm->_dialogs->show(20808);
-	} else if (_action.isAction(VERB_LOOK, NOUN_PILE_OF_LEAVES)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_PILE_OF_LEAVES))
 		_vm->_dialogs->show(20809);
-	} else if (_action.isAction(VERB_LOOK, NOUN_LEAF_COVERED_PIT)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_LEAF_COVERED_PIT)) {
 		if (_game._difficulty == DIFFICULTY_EASY)
 			_vm->_dialogs->show(20810);
 		else
 			_vm->_dialogs->show(20811);
-	} else if (_action.isAction(VERB_LOOK, NOUN_TREE) || _action.isAction(VERB_LOOK, NOUN_TREES)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_TREE) || _action.isAction(VERB_LOOK, NOUN_TREES))
 		_vm->_dialogs->show(20813);
-	} else if (_action.isAction(VERB_TAKE, NOUN_LEAF_COVERED_PIT)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_LEAF_COVERED_PIT))
 		_vm->_dialogs->show(20814);
-	} else if (_action.isAction(VERB_LOOK, NOUN_HUGE_LEGS)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_HUGE_LEGS))
 		_vm->_dialogs->show(20815);
-	} else if (_action.isAction(VERB_TAKE, NOUN_HUGE_LEGS) || _action.isAction(VERB_PULL, NOUN_HUGE_LEGS)) {
+	else if (_action.isAction(VERB_TAKE, NOUN_HUGE_LEGS) || _action.isAction(VERB_PULL, NOUN_HUGE_LEGS))
 		_vm->_dialogs->show(20816);
-	} else if (_action._savedFields._lookFlag == 0) {
-		return;
-	} else if (_globals[kRhotundaStatus] == 1) {
+	else if (_action._savedFields._lookFlag && (_globals[kRhotundaStatus] == 1))
 		_vm->_dialogs->show(20819);
-	} else if (_globals[kLeavesStatus] == 2) {
+	else if (_action._savedFields._lookFlag && (_globals[kLeavesStatus] == 2))
 		_vm->_dialogs->show(20818);
-	} else {
+	else if (_action._savedFields._lookFlag)
 		_vm->_dialogs->show(20817);
-	}
+	else
+		return;
 
 	_action._inProgress = false;
 }
 
-void Scene208::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsByte(_rhotundaTurnFl);
-	s.syncAsByte(_boundingFl);
+/*****************************************************************************/
 
-	s.syncAsSint32LE(_rhotundaTime);
+Scene209::Scene209(MADSEngine *vm) : Scene2xx(vm) {
+	_dodgeFl = false;
+	_forceDodgeFl = false;
+	_pitchFl = false;
+	_fallFl = false;
+	_forceFallFl = false;
+	_playingAnimFl = false;
+	_shouldFallFl = false;
+	_shouldDodgeFl = false;
+	_monkeyPosition = 0;
+	_counter = 0;
+	_pauseMode = 0;
+	_binocularsDroppedFl = false;
+	_startShootingInTimerFl = false;
+	_dialogAbortVal = 0;
+	_playingDialogFl = false;
+	_shootMissedLastFl = false;
+	_removeMonkeyFl = false;
+	_shootReadyFl = false;
+	_pauseCounterThreshold = 0;
+	_pauseCounter = 0;
 }
 
-/*****************************************************************************/
+void Scene209::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_dodgeFl);
+	s.syncAsByte(_forceDodgeFl);
+	s.syncAsByte(_shouldDodgeFl);
+	s.syncAsByte(_pitchFl);
+	s.syncAsByte(_fallFl);
+	s.syncAsByte(_forceFallFl);
+	s.syncAsByte(_shouldFallFl);
+	s.syncAsByte(_playingAnimFl);
+	s.syncAsByte(_playingDialogFl);
+
+	s.syncAsSint32LE(_pauseMode);
+	s.syncAsSint32LE(_pauseCounterThreshold);
+	s.syncAsSint32LE(_pauseCounter);
+
+	s.syncAsByte(_removeMonkeyFl);
+
+	s.syncAsSint32LE(_monkeyPosition);
+
+	s.syncAsByte(_shootReadyFl);
+	s.syncAsByte(_startShootingInTimerFl);
+	s.syncAsByte(_shootMissedLastFl);
+	s.syncAsByte(_binocularsDroppedFl);
+
+	s.syncAsSint32LE(_dialogAbortVal);
+	s.syncAsSint32LE(_counter);
+}
 
 void Scene209::setup() {
 	setPlayerSpritesPrefix();
@@ -3481,36 +3588,41 @@ void Scene209::actions() {
 	}
 }
 
-void Scene209::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsByte(_dodgeFl);
-	s.syncAsByte(_forceDodgeFl);
-	s.syncAsByte(_shouldDodgeFl);
-	s.syncAsByte(_pitchFl);
-	s.syncAsByte(_fallFl);
-	s.syncAsByte(_forceFallFl);
-	s.syncAsByte(_shouldFallFl);
-	s.syncAsByte(_playingAnimFl);
-	s.syncAsByte(_playingDialogFl);
+/*****************************************************************************/
 
-	s.syncAsSint32LE(_pauseMode);
-	s.syncAsSint32LE(_pauseCounterThreshold);
-	s.syncAsSint32LE(_pauseCounter);
-
-	s.syncAsByte(_removeMonkeyFl);
-
-	s.syncAsSint32LE(_monkeyPosition);
-
-	s.syncAsByte(_shootReadyFl);
-	s.syncAsByte(_startShootingInTimerFl);
-	s.syncAsByte(_shootMissedLastFl);
-	s.syncAsByte(_binocularsDroppedFl);
-
-	s.syncAsSint32LE(_dialogAbortVal);
-	s.syncAsSint32LE(_counter);
+Scene210::Scene210(MADSEngine *vm) : Scene2xx(vm) {
+	_curDialogNode = -1;
+	_nextHandsPlace = 0;
+	_twinkleAnimationType = 0;
+	_twinklesCurrentFrame = 0;
+	_shouldTalk = false;
+	_shouldFaceRex = false;
+	_shouldMoveHead = false;
+	_stopWalking = false;
+	_twinklesTalking = false;
+	_twinklesTalk2 = false;
+	_doorway = 0;
+	_subQuote2 = "";
 }
 
-/*****************************************************************************/
+void Scene210::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsSint32LE(_curDialogNode);
+	s.syncAsSint32LE(_nextHandsPlace);
+	s.syncAsSint32LE(_twinkleAnimationType);
+	s.syncAsSint32LE(_twinklesCurrentFrame);
+
+	s.syncAsByte(_shouldTalk);
+	s.syncAsByte(_shouldFaceRex);
+	s.syncAsByte(_shouldMoveHead);
+	s.syncAsByte(_stopWalking);
+	s.syncAsByte(_twinklesTalking);
+	s.syncAsByte(_twinklesTalk2);
+
+	s.syncAsSint32LE(_doorway);
+
+	s.syncString(_subQuote2);
+}
 
 void Scene210::setup() {
 	setPlayerSpritesPrefix();
@@ -4482,26 +4594,25 @@ void Scene210::actions() {
 	_action._inProgress = false;
 }
 
-void Scene210::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsSint32LE(_curDialogNode);
-	s.syncAsSint32LE(_nextHandsPlace);
-	s.syncAsSint32LE(_twinkleAnimationType);
-	s.syncAsSint32LE(_twinklesCurrentFrame);
+/*------------------------------------------------------------------------*/
 
-	s.syncAsByte(_shouldTalk);
-	s.syncAsByte(_shouldFaceRex);
-	s.syncAsByte(_shouldMoveHead);
-	s.syncAsByte(_stopWalking);
-	s.syncAsByte(_twinklesTalking);
-	s.syncAsByte(_twinklesTalk2);
-
-	s.syncAsSint32LE(_doorway);
-
-	s.syncString(_subQuote2);
+Scene211::Scene211(MADSEngine *vm) : Scene2xx(vm) {
+	_ambushFl = false;
+	_wakeFl = false;
+	_monkeyFrame = 0;
+	_scrollY = 0;
+	_monkeyTime = 0;
 }
 
-/*------------------------------------------------------------------------*/
+void Scene211::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+	s.syncAsByte(_ambushFl);
+	s.syncAsByte(_wakeFl);
+
+	s.syncAsSint32LE(_monkeyFrame);
+	s.syncAsSint32LE(_scrollY);
+	s.syncAsUint32LE(_monkeyTime);
+}
 
 void Scene211::setup() {
 	setPlayerSpritesPrefix();
@@ -4767,16 +4878,6 @@ void Scene211::actions() {
 	_action._inProgress = false;
 }
 
-void Scene211::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsByte(_ambushFl);
-	s.syncAsByte(_wakeFl);
-
-	s.syncAsSint32LE(_monkeyFrame);
-	s.syncAsSint32LE(_scrollY);
-	s.syncAsUint32LE(_monkeyTime);
-}
-
 /*------------------------------------------------------------------------*/
 
 void Scene212::setup() {
@@ -4902,6 +5003,18 @@ void Scene213::actions() {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene214::Scene214(MADSEngine *vm) : Scene2xx(vm) {
+	_devilTime = 0;
+	_devilRunningFl = false;
+}
+
+void Scene214::synchronize(Common::Serializer &s) {
+	Scene2xx::synchronize(s);
+
+	s.syncAsUint32LE(_devilTime);
+	s.syncAsByte(_devilRunningFl);
+}
 
 void Scene214::setup() {
 	setPlayerSpritesPrefix();
@@ -5102,13 +5215,6 @@ void Scene214::actions() {
 		return;
 
 	_action._inProgress = false;
-}
-
-void Scene214::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
-	s.syncAsUint32LE(_devilTime);
-
-	s.syncAsByte(_devilRunningFl);
 }
 
 /*------------------------------------------------------------------------*/
