@@ -497,62 +497,61 @@ void UserInterface::updateInventoryScroller() {
 
 	_scrollbarActive = SCROLLBAR_NONE;
 
-	if ((
-		(screenObjects._category == CAT_INV_SCROLLER) ||
-		// FIXME: This scrolls the inventory up when selecting verbs or attempting to combine items
-		false/*(screenObjects._category != CAT_INV_SCROLLER && _scrollbarOldActive == SCROLLBAR_ELEVATOR)*/
-	) && (_vm->_events->_mouseStatusCopy || _vm->_easyMouse)) {
-		if ((_vm->_events->_mouseClicked || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))
-				&& (screenObjects._category == CAT_INV_SCROLLER))
-			_scrollbarStrokeType = (ScrollbarActive)screenObjects._spotId;
+	if ((screenObjects._category == CAT_INV_SCROLLER) || (screenObjects._category != CAT_INV_SCROLLER 
+			&& _scrollbarOldActive == SCROLLBAR_ELEVATOR && _vm->_events->_mouseStatusCopy)) {
+		if (_vm->_events->_mouseStatusCopy || _vm->_easyMouse) {
+			if ((_vm->_events->_mouseClicked || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))
+					&& (screenObjects._category == CAT_INV_SCROLLER))
+				_scrollbarStrokeType = (ScrollbarActive)screenObjects._spotId;
 
-		if (screenObjects._spotId == _scrollbarStrokeType || _scrollbarOldActive == SCROLLBAR_ELEVATOR) {
-			_scrollbarActive = _scrollbarStrokeType;
-			uint32 currentMilli = g_system->getMillis();
-			uint32 timeInc = _scrollbarQuickly ? 100 : 380;
+			if (screenObjects._spotId == _scrollbarStrokeType || _scrollbarOldActive == SCROLLBAR_ELEVATOR) {
+				_scrollbarActive = _scrollbarStrokeType;
+				uint32 currentMilli = g_system->getMillis();
+				uint32 timeInc = _scrollbarQuickly ? 100 : 380;
 
-			if (_vm->_events->_mouseStatus && (_scrollbarMilliTime + timeInc) <= currentMilli) {
-				_scrollbarQuickly = _vm->_events->_vD2 < 1;
-				_scrollbarMilliTime = currentMilli;
+				if (_vm->_events->_mouseStatus && (_scrollbarMilliTime + timeInc) <= currentMilli) {
+					_scrollbarQuickly = _vm->_events->_vD2 < 1;
+					_scrollbarMilliTime = currentMilli;
 
-				switch (_scrollbarStrokeType) {
-				case SCROLLBAR_UP:
-					// Scroll up
-					if (_inventoryTopIndex > 0 && inventoryList.size() > 0) {
-						--_inventoryTopIndex;
-						_inventoryChanged = true;
+					switch (_scrollbarStrokeType) {
+					case SCROLLBAR_UP:
+						// Scroll up
+						if (_inventoryTopIndex > 0 && inventoryList.size() > 0) {
+							--_inventoryTopIndex;
+							_inventoryChanged = true;
+						}
+						break;
+
+					case SCROLLBAR_DOWN:
+						// Scroll down
+						if (_inventoryTopIndex < ((int)inventoryList.size() - 1) && inventoryList.size() > 1) {
+							++_inventoryTopIndex;
+							_inventoryChanged = true;
+						}
+						break;
+
+					case SCROLLBAR_ELEVATOR: {
+						// Inventory slider
+						int newIndex = CLIP((int)_vm->_events->currentPos().y - 170, 0, 17)
+							* inventoryList.size() / 10;
+						if (newIndex >= (int)inventoryList.size())
+							newIndex = inventoryList.size() - 1;
+
+						if (inventoryList.size() > 0) {
+							_inventoryChanged = newIndex != _inventoryTopIndex;
+							_inventoryTopIndex = newIndex;
+						}
+						break;
 					}
-					break;
 
-				case SCROLLBAR_DOWN:
-					// Scroll down
-					if (_inventoryTopIndex < ((int)inventoryList.size() - 1) && inventoryList.size() > 1) {
-						++_inventoryTopIndex;
-						_inventoryChanged = true;
+					default:
+						break;
 					}
-					break;
 
-				case SCROLLBAR_ELEVATOR: {
-					// Inventory slider
-					int newIndex = CLIP((int)_vm->_events->currentPos().y - 170, 0, 17)
-						* inventoryList.size() / 10;
-					if (newIndex >= (int)inventoryList.size())
-						newIndex = inventoryList.size() - 1;
-
-					if (inventoryList.size() > 0) {
-						_inventoryChanged = newIndex != _inventoryTopIndex;
-						_inventoryTopIndex = newIndex;
+					if (_inventoryChanged) {
+						int dummy;
+						updateSelection(CAT_INV_LIST, 0, &dummy);
 					}
-					break;
-				}
-
-				default:
-					break;
-				}
-
-				if (_inventoryChanged) {
-					int dummy;
-					updateSelection(CAT_INV_LIST, 0, &dummy);
 				}
 			}
 		}
