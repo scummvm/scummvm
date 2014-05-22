@@ -266,6 +266,16 @@ void Scene301::step() {
 
 /*------------------------------------------------------------------------*/
 
+Scene302::Scene302(MADSEngine *vm) : Scene3xx(vm) {
+	_oldFrame = 0;
+}
+
+void Scene302::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsSint32LE(_oldFrame);
+}
+
 void Scene302::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -302,11 +312,6 @@ void Scene302::step() {
 	}
 }
 
-void Scene302::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-	s.syncAsSint32LE(_oldFrame);
-}
-
 /*------------------------------------------------------------------------*/
 
 void Scene303::setup() {
@@ -335,6 +340,16 @@ void Scene303::step() {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene304::Scene304(MADSEngine *vm) : Scene3xx(vm) {
+	_explosionSpriteId = -1;
+}
+
+void Scene304::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsSint32LE(_explosionSpriteId);
+}
 
 void Scene304::setup() {
 	setPlayerSpritesPrefix();
@@ -460,12 +475,45 @@ void Scene304::step() {
 	}
 }
 
-void Scene304::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-	s.syncAsSint32LE(_explosionSpriteId);
+/*------------------------------------------------------------------------*/
+
+Scene307::Scene307(MADSEngine *vm) : Scene3xx(vm) {
+	_afterPeeingFl = false;
+	_duringPeeingFl = false;
+	_grateOpenedFl = false;
+	_activePrisonerFl = false;
+
+	_animationMode = -1;
+	_prisonerMessageId = -1;
+	_fieldCollisionCounter = -1;
+
+	_lastFrameTime = 0;
+	_guardTime = 0;
+	_prisonerTimer = 0;
+
+	_subQuote2 = "";
 }
 
-/*------------------------------------------------------------------------*/
+void Scene307::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	_forceField.synchronize(s);
+
+	s.syncAsByte(_afterPeeingFl);
+	s.syncAsByte(_duringPeeingFl);
+	s.syncAsByte(_grateOpenedFl);
+	s.syncAsByte(_activePrisonerFl);
+
+	s.syncAsSint32LE(_animationMode);
+	s.syncAsSint32LE(_prisonerMessageId);
+	s.syncAsSint32LE(_fieldCollisionCounter);
+
+	s.syncAsUint32LE(_lastFrameTime);
+	s.syncAsUint32LE(_guardTime);
+	s.syncAsUint32LE(_prisonerTimer);
+
+	s.syncString(_subQuote2);
+}
 
 void Scene307::setup() {
 	setPlayerSpritesPrefix();
@@ -1138,27 +1186,6 @@ void Scene307::actions() {
 	_action._inProgress = false;
 }
 
-void Scene307::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	_forceField.synchronize(s);
-
-	s.syncAsByte(_afterPeeingFl);
-	s.syncAsByte(_duringPeeingFl);
-	s.syncAsByte(_grateOpenedFl);
-	s.syncAsByte(_activePrisonerFl);
-
-	s.syncAsSint32LE(_animationMode);
-	s.syncAsSint32LE(_prisonerMessageId);
-	s.syncAsSint32LE(_fieldCollisionCounter);
-
-	s.syncAsUint32LE(_lastFrameTime);
-	s.syncAsUint32LE(_guardTime);
-	s.syncAsUint32LE(_prisonerTimer);
-
-	s.syncString(_subQuote2);
-}
-
 /*------------------------------------------------------------------------*/
 
 void Scene308::setup() {
@@ -1289,6 +1316,27 @@ void Scene308::synchronize(Common::Serializer &s) {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene309::Scene309(MADSEngine *vm) : Scene3xx(vm) {
+	for (int i = 0; i < 3; i++) {
+		_characterSpriteIndexes[i] = -1;
+		_messagesIndexes[i] = -1;
+	}
+	
+	_lastFrame = -1;
+}
+
+void Scene309::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	_forceField.synchronize(s);
+
+	for (int i = 0; i < 3; ++i)
+		s.syncAsSint32LE(_characterSpriteIndexes[i]);
+	for (int i = 0; i < 3; ++i)
+		s.syncAsSint32LE(_messagesIndexes[i]);
+	s.syncAsSint32LE(_lastFrame);
+}
 
 void Scene309::setup() {
 	setPlayerSpritesPrefix();
@@ -1473,18 +1521,6 @@ void Scene309::step() {
 		_scene->_nextSceneId = 308;
 }
 
-void Scene309::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	_forceField.synchronize(s);
-
-	for (int i = 0; i < 3; ++i)
-		s.syncAsSint32LE(_characterSpriteIndexes[i]);
-	for (int i = 0; i < 3; ++i)
-		s.syncAsSint32LE(_messagesIndexes[i]);
-	s.syncAsSint32LE(_lastFrame);
-}
-
 /*------------------------------------------------------------------------*/
 
 void Scene310::setup() {
@@ -1525,6 +1561,16 @@ void Scene310::synchronize(Common::Serializer &s) {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene311::Scene311(MADSEngine *vm) : Scene3xx(vm) {
+	_checkGuardFl = false;
+}
+
+void Scene311::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_checkGuardFl);
+}
 
 void Scene311::setup() {
 	if (_scene->_currentSceneId == 391)
@@ -1811,12 +1857,6 @@ void Scene311::actions() {
 		return;
 
 	_action._inProgress = false;
-}
-
-void Scene311::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	s.syncAsByte(_checkGuardFl);
 }
 
 /*------------------------------------------------------------------------*/
@@ -2349,6 +2389,46 @@ void Scene316::actions() {
 
 
 /*------------------------------------------------------------------------*/
+
+Scene318::Scene318(MADSEngine *vm) : Scene3xx(vm) {
+	_dropTimer = 0;
+
+	_lastFrame = -1;
+	_animMode = -1;
+	_internCounter = -1;
+	_counter = -1;
+
+	_dialogFl = false;
+	_internTalkingFl = false;
+	_internWalkingFl = false;
+	_internVisibleFl = false;
+	_explosionFl = false;
+
+	_lastFrameCounter = 0;
+
+	_subQuote2 = "";
+}
+
+void Scene318::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsUint32LE(_dropTimer);
+
+	s.syncAsSint32LE(_lastFrame);
+	s.syncAsSint32LE(_animMode);
+	s.syncAsSint32LE(_internCounter);
+	s.syncAsSint32LE(_counter);
+
+	s.syncAsByte(_dialogFl);
+	s.syncAsByte(_internTalkingFl);
+	s.syncAsByte(_internWalkingFl);
+	s.syncAsByte(_internVisibleFl);
+	s.syncAsByte(_explosionFl);
+
+	s.syncAsUint32LE(_lastFrameCounter);
+
+	s.syncString(_subQuote2);
+}
 
 void Scene318::setup() {
 	setPlayerSpritesPrefix();
@@ -2932,28 +3012,41 @@ void Scene318::actions() {
 	_action._inProgress = false;
 }
 
-void Scene318::synchronize(Common::Serializer &s) {
+/*------------------------------------------------------------------------*/
+
+Scene319::Scene319(MADSEngine *vm) : Scene3xx(vm) {
+	_animMode = -1;
+	_animFrame = -1;
+	_nextAction1 = -1;
+	_nextAction2 = -1;
+	_slacheMode = -1;
+	_slacheTopic = -1;
+	_slachePosY = -1;
+
+	_slacheTalkingFl = false;
+	_slacheReady = false;
+	_slacheInitFl = false;
+
+	_subQuote2 = "";
+}
+
+void Scene319::synchronize(Common::Serializer &s) {
 	Scene3xx::synchronize(s);
 
-	s.syncAsUint32LE(_dropTimer);
+	s.syncAsUint32LE(_animMode);
+	s.syncAsUint32LE(_animFrame);
+	s.syncAsUint32LE(_nextAction1);
+	s.syncAsUint32LE(_nextAction2);
+	s.syncAsUint32LE(_slacheMode);
+	s.syncAsUint32LE(_slacheTopic);
+	s.syncAsUint32LE(_slachePosY);
 
-	s.syncAsSint32LE(_lastFrame);
-	s.syncAsSint32LE(_animMode);
-	s.syncAsSint32LE(_internCounter);
-	s.syncAsSint32LE(_counter);
-
-	s.syncAsByte(_dialogFl);
-	s.syncAsByte(_internTalkingFl);
-	s.syncAsByte(_internWalkingFl);
-	s.syncAsByte(_internVisibleFl);
-	s.syncAsByte(_explosionFl);
-
-	s.syncAsUint32LE(_lastFrameCounter);
+	s.syncAsByte(_slacheTalkingFl);
+	s.syncAsByte(_slacheReady);
+	s.syncAsByte(_slacheInitFl);
 
 	s.syncString(_subQuote2);
 }
-
-/*------------------------------------------------------------------------*/
 
 void Scene319::setup() {
 	setPlayerSpritesPrefix();
@@ -3413,26 +3506,31 @@ void Scene319::actions() {
 	_action._inProgress = false;
 }
 
-void Scene319::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
+/*------------------------------------------------------------------------*/
 
-	s.syncAsUint32LE(_animMode);
-	s.syncAsUint32LE(_animFrame);
-	s.syncAsUint32LE(_nextAction1);
-	s.syncAsUint32LE(_nextAction2);
-	s.syncAsUint32LE(_slacheMode);
-	s.syncAsUint32LE(_slacheTopic);
-	s.syncAsUint32LE(_slachePosY);
+Scene320::Scene320(MADSEngine *vm) : Scene300s(vm) {
+	_blinkFl = false;
+	_flippedFl = false;
 
-	s.syncAsByte(_slacheTalkingFl);
-	s.syncAsByte(_slacheReady);
-	s.syncAsByte(_slacheInitFl);
-
-	s.syncString(_subQuote2);
+	_buttonId = -1;
+	_lastFrame = -1;
+	_leftItemId = -1;
+	_posX = -1;
+	_rightItemId = -1;
 }
 
+void Scene320::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
 
-/*------------------------------------------------------------------------*/
+	s.syncAsByte(_blinkFl);
+	s.syncAsByte(_flippedFl);
+
+	s.syncAsSint32LE(_buttonId);
+	s.syncAsSint32LE(_lastFrame);
+	s.syncAsSint32LE(_leftItemId);
+	s.syncAsSint32LE(_posX);
+	s.syncAsSint32LE(_rightItemId);
+}
 
 void Scene320::setup() {
 	setPlayerSpritesPrefix();
@@ -3740,19 +3838,6 @@ void Scene320::actions() {
 	_action._inProgress = false;
 }
 
-void Scene320::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	s.syncAsByte(_blinkFl);
-	s.syncAsByte(_flippedFl);
-
-	s.syncAsSint32LE(_buttonId);
-	s.syncAsSint32LE(_lastFrame);
-	s.syncAsSint32LE(_leftItemId);
-	s.syncAsSint32LE(_posX);
-	s.syncAsSint32LE(_rightItemId);
-}
-
 /*------------------------------------------------------------------------*/
 
 void Scene321::setup() {
@@ -4013,6 +4098,34 @@ void Scene351::actions() {
 }
 
 /*------------------------------------------------------------------------*/
+
+Scene352::Scene352(MADSEngine *vm) : Scene3xx(vm) {
+	_vaultOpenFl = false;
+	_mustPutArmDownFl = false;
+	_leaveRoomFl = false;
+
+	_tapePlayerHotspotIdx = -1;
+	_hotspot1Idx = -1;
+	_hotspot2Idx = -1;
+	_lampHostpotIdx = -1;
+	_commonSequenceIdx = -1;
+	_commonSpriteIndex = -1;
+}
+
+void Scene352::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsByte(_vaultOpenFl);
+	s.syncAsByte(_mustPutArmDownFl);
+	s.syncAsByte(_leaveRoomFl);
+
+	s.syncAsSint32LE(_tapePlayerHotspotIdx);
+	s.syncAsSint32LE(_hotspot1Idx);
+	s.syncAsSint32LE(_hotspot2Idx);
+	s.syncAsSint32LE(_lampHostpotIdx);
+	s.syncAsSint32LE(_commonSequenceIdx);
+	s.syncAsSint32LE(_commonSpriteIndex);
+}
 
 void Scene352::setup() {
 	setPlayerSpritesPrefix();
@@ -4551,21 +4664,6 @@ void Scene352::actions() {
 		return;
 }
 
-void Scene352::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	s.syncAsByte(_vaultOpenFl);
-	s.syncAsByte(_mustPutArmDownFl);
-	s.syncAsByte(_leaveRoomFl);
-
-	s.syncAsSint32LE(_tapePlayerHotspotIdx);
-	s.syncAsSint32LE(_hotspot1Idx);
-	s.syncAsSint32LE(_hotspot2Idx);
-	s.syncAsSint32LE(_lampHostpotIdx);
-	s.syncAsSint32LE(_commonSequenceIdx);
-	s.syncAsSint32LE(_commonSpriteIndex);
-}
-
 /*------------------------------------------------------------------------*/
 
 void Scene353::setup() {
@@ -4803,6 +4901,16 @@ void Scene358::actions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene359::Scene359(MADSEngine *vm) : Scene3xx(vm) {
+	_cardHotspotId = -1;
+}
+
+void Scene359::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsSint32LE(_cardHotspotId);
+}
+
 void Scene359::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -4937,13 +5045,6 @@ void Scene359::actions() {
 
 	_action._inProgress = false;
 }
-
-void Scene359::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	s.syncAsSint32LE(_cardHotspotId);
-}
-
 
 /*------------------------------------------------------------------------*/
 
@@ -5509,6 +5610,18 @@ void Scene388::actions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene389::Scene389(MADSEngine *vm) : Scene300s(vm) {
+	_monsterTime = 0;
+	_circularQuoteId = -1;
+}
+
+void Scene389::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	s.syncAsUint32LE(_monsterTime);
+	s.syncAsSint32LE(_circularQuoteId);
+}
+
 void Scene389::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -5584,13 +5697,6 @@ void Scene389::actions() {
 		return;
 
 	_action._inProgress = false;
-}
-
-void Scene389::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	s.syncAsUint32LE(_monsterTime);
-	s.syncAsSint32LE(_circularQuoteId);
 }
 
 /*------------------------------------------------------------------------*/

@@ -94,7 +94,7 @@ private:
 	int _oldFrame;
 
 public:
-	Scene302(MADSEngine *vm) : Scene3xx(vm), _oldFrame(0) {}
+	Scene302(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -116,7 +116,7 @@ private:
 	int _explosionSpriteId;
 
 public:
-	Scene304(MADSEngine *vm) : Scene3xx(vm), _explosionSpriteId(-1) {}
+	Scene304(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -153,7 +153,7 @@ private:
 	void handlePrisonerSpeech(int firstQuoteId, int number, long timeout);
 
 public:
-	Scene307(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene307(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -183,7 +183,7 @@ private:
 	int _lastFrame;
 
 public:
-	Scene309(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene309(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -209,7 +209,7 @@ private:
 	bool _checkGuardFl;
 
 public:
-	Scene311(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene311(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -268,7 +268,7 @@ private:
 	void handleInternDialog(int quoteId, int quoteNum, uint32 timeout);
 
 public:
-	Scene318(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene318(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -297,7 +297,7 @@ private:
 	void handleRexDialogues(int quote);
 	void handleSlacheDialogs(int quoteId, int counter, uint32 timer);
 public:
-	Scene319(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene319(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -322,7 +322,7 @@ private:
 	int _rightItemId;
 
 public:
-	Scene320(MADSEngine *vm) : Scene300s(vm) {}
+	Scene320(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -376,7 +376,7 @@ private:
 	void putArmDown(bool corridorExit, bool doorwayExit);
 
 public:
-	Scene352(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene352(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -429,7 +429,7 @@ private:
 	int _cardHotspotId;
 
 public:
-	Scene359(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene359(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
@@ -497,7 +497,7 @@ private:
 	int _circularQuoteId;
 
 public:
-	Scene389(MADSEngine *vm) : Scene300s(vm) {}
+	Scene389(MADSEngine *vm);
 
 	virtual void setup();
 	virtual void enter();
