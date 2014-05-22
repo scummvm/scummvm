@@ -76,7 +76,7 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
-	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr),
+	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), testAnimNr(0), testAnimFrame(0),
 	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0) {
 
@@ -163,25 +163,25 @@ void PrinceEngine::init() {
 	_midiPlayer = new MusicPlayer(this);
 	 
 	_font = new Font();
-	Resource::loadResource(_font, "font1.raw");
+	Resource::loadResource(_font, "font1.raw", true);
 
 	_suitcaseBmp = new MhwanhDecoder();
-	Resource::loadResource(_suitcaseBmp, "walizka");
+	Resource::loadResource(_suitcaseBmp, "walizka", true);
 
-	_script = new Script();
-	Resource::loadResource(_script, "skrypt.dat");
+	_script = new Script(this);
+	Resource::loadResource(_script, "skrypt.dat", true);
 
 	_flags = new InterpreterFlags();
 	_interpreter = new Interpreter(this, _script, _flags);
 
 	_variaTxt = new VariaTxt();
-	Resource::loadResource(_variaTxt, "variatxt.dat");
+	Resource::loadResource(_variaTxt, "variatxt.dat", true);
 	
 	_cursor1 = new Cursor();
-	Resource::loadResource(_cursor1, "mouse1.cur");
+	Resource::loadResource(_cursor1, "mouse1.cur", true);
 
 	_cursor2 = new Cursor();
-	Resource::loadResource(_cursor2, "mouse2.cur");
+	Resource::loadResource(_cursor2, "mouse2.cur", true);
 
 	Common::SeekableReadStream *talkTxtStream = SearchMan.createReadStreamForMember("talktxt.dat");
 	if (!talkTxtStream) {
@@ -207,7 +207,7 @@ void PrinceEngine::init() {
 
 void PrinceEngine::showLogo() {
 	MhwanhDecoder logo;
-	if (Resource::loadResource(&logo, "logo.raw")) {
+	if (Resource::loadResource(&logo, "logo.raw", true)) {
 		_graph->setPalette(logo.getPalette());
 		_graph->draw(0, 0, logo.getSurface());
 		_graph->update();
@@ -245,7 +245,6 @@ bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 	_flags = stream.readUint16LE();
 
 	debug("AnimListItem type %d, fileNumber %d, x %d, y %d, flags %d", _type, _fileNumber, _x, _y, _flags);
-
 
 	// 32 byte aligment
 	stream.seek(pos + 32);
@@ -288,7 +287,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_midiPlayer->loadMidi(musName);
 
 	// load location background, replace old one
-	Resource::loadResource(_roomBmp, "room");
+	Resource::loadResource(_roomBmp, "room", true);
 	if (_roomBmp->getSurface()) {
 		_sceneWidth = _roomBmp->getSurface()->w;
 		_graph->setPalette(_roomBmp->getPalette());
@@ -318,6 +317,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	_room->loadRoom(_script->getRoomOffset(_locationNr));
+	_script->installBackAnims(_backAnimList, _room->_backAnim);
 
 	_graph->makeShadowTable(70, _graph->_shadowTable70);
 	_graph->makeShadowTable(50, _graph->_shadowTable50);
@@ -524,9 +524,15 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_LEFT:
 		scrollCameraLeft(32);
+		if(testAnimNr > 0) {
+			testAnimNr--;
+		}
+		debug("testAnimNr: %d", testAnimNr);
 		break;
 	case Common::KEYCODE_RIGHT:
 		scrollCameraRight(32);
+		testAnimNr++;
+		debug("testAnimNr: %d", testAnimNr);
 		break;
 	case Common::KEYCODE_ESCAPE:
 		_flags->setFlagValue(Flags::ESCAPED2, 1);
@@ -534,10 +540,14 @@ void PrinceEngine::keyHandler(Common::Event event) {
 	case Common::KEYCODE_UP:
 		_mainHero->_phase++;
 		debugEngine("%d", _mainHero->_phase);
+		testAnimFrame++;
 		break;
 	case Common::KEYCODE_DOWN:
 		if(_mainHero->_phase > 0) {
 			_mainHero->_phase--;
+		}
+		if (testAnimFrame > 0) {
+			testAnimFrame--;
 		}
 		debugEngine("%d", _mainHero->_phase);
 		break;
@@ -698,6 +708,10 @@ void PrinceEngine::drawScreen() {
 		}
 	}
 	*/
+	for (int i = 0; i < _backAnimList.size() ; i++) {
+		_graph->drawTransparent(_backAnimList[i]._x, _backAnimList[i]._y, _backAnimList[i]._animData->getFrame(testAnimFrame));
+	}
+
 	hotspot();
 
 	showTexts();

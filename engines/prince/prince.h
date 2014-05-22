@@ -86,8 +86,55 @@ struct AnimListItem {
 	uint16 _loopType;
 	uint16 _nextAnim;
 	uint16 _flags;
-
 	bool loadFromStream(Common::SeekableReadStream &stream);
+};
+
+struct BAS {
+	int32 _type; // type of sequence
+	int32 _data; // additional data
+	int32 _anims; // number of animations
+	int32 _current; // actual number of animation
+	int32 _counter; // time counter for animation
+	int32 _currRelative; //actual relative number for animation
+	int32 _data2; // additional data for measurements
+};
+
+struct BASA {
+	int16 _num;	// animation number
+	int16 _start;	// initial frame
+	int16 _end;	// final frame
+	int16 _pad;	// fulfilment to 8 bytes
+};
+
+// background and normal animation
+struct Anim {
+	int32 _addr; //animation adress
+	int32 _seq;
+	int16 _usage;
+	int16 _state; // state of animation: 0 - turning on, 1 - turning off
+	int16 _flags;
+	int16 _frame; // number of phase to show
+	int16 _lastFrame; // last phase
+	int16 _loopFrame; // first frame of loop
+	int16 _showFrame; // actual visible frame of animation
+	int16 _loopType;	 // type of loop (0 - last frame; 1 - normal loop (begin from _loopFrame); 2 - no loop; 3 - load new animation)
+	int16 _nextAnim; // number of next animation to load after actual
+	int16 _x;
+	int16 _y;
+	int32 _currFrame;
+	int16 _currX;
+	int16 _currY;
+	int16 _currW;
+	int16 _currH;
+	int16 _packFlag;
+	int32 _shadow;
+	int32 _currShadowFrame;
+	int16 _packShadowFlag;
+	int32 _shadowBack;
+	int16 _relX;
+	int16 _relY;
+	Animation *_animData;
+	Animation *_shadowData;
 };
 
 struct DebugChannel {
@@ -149,6 +196,12 @@ public:
 	uint32 _picWindowY;
 	Image::BitmapDecoder *_roomBmp;
 
+	Common::Array<AnimListItem> _animList;
+	Common::Array<Anim> _backAnimList;
+
+	int testAnimNr;
+	int testAnimFrame;
+
 private:
 	bool playNextFrame();
 	void keyHandler(Common::Event event);
@@ -187,7 +240,6 @@ private:
 	Animation *_zoom;
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
-	Common::Array<AnimListItem> _animList;
 
 	bool _flicLooped;
 	

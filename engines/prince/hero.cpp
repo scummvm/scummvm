@@ -69,7 +69,7 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 		Animation *anim = NULL;
 		if (animSet[i] != NULL) {
 			anim = new Animation();
-			Resource::loadResource(anim, animSet[i]);
+			Resource::loadResource(anim, animSet[i], true);
 		}
 		_moveSet[i] = anim;
 	}

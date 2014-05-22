@@ -36,6 +36,8 @@ namespace Common {
 namespace Prince {
 
 class PrinceEngine;
+class Animation;
+struct Anim;
 
 namespace Detail {
 	template <typename T> T LittleEndianReader(void *data);
@@ -91,7 +93,7 @@ private:
 
 class Script {
 public:
-	Script();
+	Script(PrinceEngine *vm);
 	~Script();
 
 	struct ScriptInfo {
@@ -130,13 +132,14 @@ public:
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
 	uint8 *getRoomOffset(int locationNr);
-	void installBackAnims(int offset);
+	void installBackAnims(Common::Array<Anim> &_backanimList, int offset);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);
 	}
 
 private:
+	PrinceEngine *_vm;
 	uint8 *_data;
 	uint32 _dataSize;
 	Common::Array<Room> _roomList;

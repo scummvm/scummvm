@@ -38,7 +38,7 @@ namespace Resource {
 	}
 
 	template<typename T>
-	bool loadResource(T *resource, const char *resourceName, bool required = true) {
+	bool loadResource(T *resource, const char *resourceName, bool required) {
 		Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(resourceName));
 		if (!stream) {
 			if (required) 

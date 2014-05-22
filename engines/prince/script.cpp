@@ -27,6 +27,7 @@
 #include "prince/font.h"
 #include "prince/hero.h"
 #include "prince/resource.h"
+#include "prince/animation.h"
 
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -139,7 +140,7 @@ bool Room::loadFromStream(Common::SeekableReadStream &stream) {
 }
 */
 
-Script::Script() : _data(nullptr), _dataSize(0) {
+Script::Script(PrinceEngine *vm) : _vm(vm), _data(nullptr), _dataSize(0) {
 }
 
 Script::~Script() {
@@ -205,15 +206,54 @@ uint8 *Script::getRoomOffset(int locationNr) {
 	return &_data[_scriptInfo.rooms + locationNr * 64];
 }
 
-void Script::installBackAnims(int offset) {
-	// 3760
-	int numberOfSubAnimations = READ_UINT32(&_data[offset]);
-	debug("nrOfSubAnimations: %d", numberOfSubAnimations);
-	// begin data of animations:
-	int value1 = READ_UINT32(&_data[offset + 28]); //size of BAS - first anim Nr
-	debug("firstAnimNr: %d", value1);
-	int value2 = READ_UINT32(&_data[offset + 28 + 8]); // + size of BASA - next anim Nr
-	debug("secondAnimNr: %d", value2);
+void Script::installBackAnims(Common::Array<Anim> &_backanimList, int offset) {
+	for (uint i = 0; i < 64; i++) {
+		int animOffset = READ_UINT32(&_data[offset]);
+		int animNumber = READ_UINT16(&_data[animOffset + 28]);
+		Anim newAnim;
+		if (animOffset != 0) {
+			const Common::String animName = Common::String::format("AN%02d", animNumber);
+			const Common::String shadowName = Common::String::format("AN%02dS", animNumber, false);
+			newAnim._animData = new Animation();
+			newAnim._shadowData = new Animation();
+			Resource::loadResource(newAnim._animData, animName.c_str(), true);
+			if (!Resource::loadResource(newAnim._shadowData, shadowName.c_str(), false)) {
+				newAnim._shadowData = nullptr;
+			}
+			newAnim._seq = 0;
+			newAnim._usage = 0;
+			newAnim._state = 0; // enabled
+			if ((_vm->_animList[animNumber]._flags & 4) != 0) {
+				newAnim._state = 1;
+				newAnim._frame = _vm->_animList[animNumber]._endPhase;
+				newAnim._showFrame = _vm->_animList[animNumber]._endPhase;
+			} else {
+				newAnim._frame = _vm->_animList[animNumber]._startPhase;
+				newAnim._showFrame = _vm->_animList[animNumber]._startPhase;
+			}
+			newAnim._flags = _vm->_animList[animNumber]._flags;
+			newAnim._lastFrame = _vm->_animList[animNumber]._endPhase;
+			newAnim._loopFrame = _vm->_animList[animNumber]._loopPhase;
+			newAnim._loopType = _vm->_animList[animNumber]._loopType;
+			newAnim._nextAnim = _vm->_animList[animNumber]._nextAnim;
+			newAnim._x = _vm->_animList[animNumber]._x;
+			newAnim._y = _vm->_animList[animNumber]._y;
+			newAnim._currFrame = 0;
+			newAnim._currX = _vm->_animList[animNumber]._x;
+			newAnim._currY = _vm->_animList[animNumber]._y;
+			newAnim._currW = 0;
+			newAnim._currH = 0;
+			newAnim._packFlag = 0;
+			//newAnim._currShadowFrame =
+			//newAnim._packShadowFlag =
+			newAnim._shadowBack = _vm->_animList[animNumber]._type;
+			//newAnim._relX =
+			//newAnim._relY =
+			_backanimList.push_back(newAnim);
+			debug("animNo: %d", animNumber);
+		}
+		offset += 4;
+	}
 }
 
 InterpreterFlags::InterpreterFlags() {

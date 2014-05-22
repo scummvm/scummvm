@@ -117,10 +117,10 @@ Graphics::Surface *Animation::getFrame(uint frameIndex) {
 	byte *frameData = _data + READ_LE_UINT32(_data + 16 + frameIndex * 4);
 	int16 width = READ_LE_UINT16(frameData + 0);
 	int16 height = READ_LE_UINT16(frameData + 2);
-	debug("width = %d; height = %d", width, height);
+	//debug("width = %d; height = %d", width, height);
 	Graphics::Surface *surf = new Graphics::Surface();
 	surf->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	debug("frameData %p", frameData);
+	//debug("frameData %p", frameData);
 	if (READ_BE_UINT32(frameData + 4) == MKTAG('m', 'a', 's', 'm')) {
 		// Compressed
 		Decompressor dec;

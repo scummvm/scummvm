@@ -33,7 +33,6 @@ namespace Prince {
 class Animation {
 public:
     bool loadFromStream(Common::SeekableReadStream &stream);
-    //const Graphics::Surface *getSurface(uint16 frameIndex);
 
 	Animation();
 	Animation(byte *data, uint32 dataSize);
