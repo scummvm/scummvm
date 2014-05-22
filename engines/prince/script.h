@@ -130,6 +130,7 @@ public:
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
 	uint8 *getRoomOffset(int locationNr);
+	void installBackAnims(int offset);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);

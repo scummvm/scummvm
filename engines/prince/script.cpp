@@ -46,6 +46,7 @@ bool Room::loadRoom(byte *roomData) {
 	
 	_mobs = roomStream.readSint32LE();
 	_backAnim = roomStream.readSint32LE();
+	debug("%d", _backAnim);
 	_obj = roomStream.readSint32LE();
 	_nak = roomStream.readSint32LE();
 	_itemUse = roomStream.readSint32LE();
@@ -201,7 +202,18 @@ uint32 Script::getStartGameOffset() {
 }
 
 uint8 *Script::getRoomOffset(int locationNr) {
-	return &_data[_scriptInfo.rooms + locationNr * 64]; // Room_Len (64?)
+	return &_data[_scriptInfo.rooms + locationNr * 64];
+}
+
+void Script::installBackAnims(int offset) {
+	// 3760
+	int numberOfSubAnimations = READ_UINT32(&_data[offset]);
+	debug("nrOfSubAnimations: %d", numberOfSubAnimations);
+	// begin data of animations:
+	int value1 = READ_UINT32(&_data[offset + 28]); //size of BAS - first anim Nr
+	debug("firstAnimNr: %d", value1);
+	int value2 = READ_UINT32(&_data[offset + 28 + 8]); // + size of BASA - next anim Nr
+	debug("secondAnimNr: %d", value2);
 }
 
 InterpreterFlags::InterpreterFlags() {
