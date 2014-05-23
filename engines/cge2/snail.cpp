@@ -53,12 +53,14 @@ const char *CommandHandler::_commandText[] = {
 	"WALKTO", "REACH", "COVER", "UNCOVER",
 	NULL };
 
-CommandHandler::CommandHandler(CGE2Engine *vm, bool turbo) : _vm(vm) {
-	warning("STUB: CommandHandler::CommandHandler()");
+CommandHandler::CommandHandler(CGE2Engine *vm, bool turbo)
+	: _turbo(turbo), _textDelay(false), _timerExpiry(0), _talkEnable(true),
+      _head(0), _tail(0), _commandList((Command *)malloc(sizeof(Command)* 256)),
+      _count(1), _vm(vm) {
 }
 
 CommandHandler::~CommandHandler() {
-	warning("STUB: CommandHandler::~CommandHandler()");
+	free(_commandList);
 }
 
 void CommandHandler::runCommand() {
@@ -66,7 +68,17 @@ void CommandHandler::runCommand() {
 }
 
 void CommandHandler::addCommand(CommandType com, int ref, int val, void *ptr) {
-	warning("STUB: CommandHandler::addCommand()");
+	if (ref == 2)
+		ref = 142 - _vm->_sex;
+	Command *headCmd = &_commandList[_head++];
+	headCmd->_commandType = com;
+	headCmd->_ref = ref;
+	headCmd->_val = val;
+	headCmd->_spritePtr = ptr;
+	headCmd->_cbType = kNullCB;
+	if (headCmd->_commandType == kCmdClear) {
+		clear();
+	}
 }
 
 void CommandHandler::addCallback(CommandType com, int ref, int val, CallbackType cbType) {
@@ -84,6 +96,12 @@ bool CommandHandler::idle() {
 
 void CommandHandler::reset() {
 	warning("STUB: CommandHandler::reset()");
+}
+
+void CommandHandler::clear() {
+	_tail = _head;
+	_vm->killText();
+	_timerExpiry = 0;
 }
 
 int CommandHandler::com(const char *com) {

@@ -131,6 +131,7 @@ public:
 	void insertCommand(CommandType com, int ref, int val, void *ptr);
 	bool idle();
 	void reset();
+	void clear();
 	int com(const char *com);
 private:
 	CGE2Engine *_vm;
@@ -139,7 +140,8 @@ private:
 	uint8 _tail;
 	bool _busy;
 	bool _textDelay;
-	uint32 _timerExpiry;
+	uint32 _timerExpiry; // "pause" in the original.
+	int _count;
 };
 
 } // End of namespace CGE2
