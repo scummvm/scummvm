@@ -90,8 +90,7 @@ void CommandHandler::insertCommand(CommandType com, int ref, int val, void *ptr)
 }
 
 bool CommandHandler::idle() {
-	warning("STUB: CommandHandler::idle()");
-	return false;
+	return (!_vm->_waitRef && _head == _tail);
 }
 
 void CommandHandler::reset() {

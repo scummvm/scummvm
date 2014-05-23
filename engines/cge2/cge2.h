@@ -147,6 +147,7 @@ public:
 	bool _sex;
 	int _mouseTop;
 	bool _dark;
+	int _waitRef;
 
 	ResourceManager *_resman;
 	Vga *_vga;

@@ -72,6 +72,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_dark = false;
 	_lastFrame = 0;
 	_lastTick = 0;
+	_waitRef = 0;
 }
 
 void CGE2Engine::init() {
