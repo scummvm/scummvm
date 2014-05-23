@@ -55,7 +55,7 @@ private:
 	int _fishingLineId;
 
 public:
-	Scene701(MADSEngine *vm) : Scene7xx(vm), _fishingLineId(-1) {}
+	Scene701(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -97,7 +97,7 @@ private:
 	void handleFillBottle(int quote);
 
 public:
-	Scene703(MADSEngine *vm) : Scene7xx(vm) {}
+	Scene703(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -122,7 +122,7 @@ private:
 	void handleBottleInterface();
 
 public:
-	Scene704(MADSEngine *vm) : Scene7xx(vm) {}
+	Scene704(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -152,7 +152,7 @@ public:
 class Scene706: public Scene7xx{
 private:
 	int _vaseHotspotId;
-	int _vaseMode;       // CHECKME: Use?
+	int _vaseMode;
 	int _animationMode;
 	int _animationFrame;
 
@@ -162,7 +162,7 @@ private:
 	void handleRexDeath();
 
 public:
-	Scene706(MADSEngine *vm) : Scene7xx(vm) {}
+	Scene706(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -207,7 +207,7 @@ private:
 	bool _rexHandingLine;
 
 public:
-	Scene751(MADSEngine *vm) : Scene7xx(vm) {}
+	Scene751(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -222,7 +222,7 @@ private:
 	int _cardId;
 
 public:
-	Scene752(MADSEngine *vm) : Scene7xx(vm), _cardId(-1) {}
+	Scene752(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();

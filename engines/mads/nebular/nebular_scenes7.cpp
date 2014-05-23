@@ -89,6 +89,16 @@ void Scene7xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
+Scene701::Scene701(MADSEngine *vm) : Scene7xx(vm) {
+	_fishingLineId = -1;
+}
+
+void Scene701::synchronize(Common::Serializer &s) {
+	Scene7xx::synchronize(s);
+
+	s.syncAsSint16LE(_fishingLineId);
+}
+
 void Scene701::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -97,12 +107,6 @@ void Scene701::setup() {
 	_scene->addActiveVocab(VERB_CLIMB_INTO);
 	_scene->addActiveVocab(NOUN_FISHING_LINE);
 	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene701::synchronize(Common::Serializer &s) {
-	Scene7xx::synchronize(s);
-
-	s.syncAsSint16LE(_fishingLineId);
 }
 
 void Scene701::enter() {
@@ -547,9 +551,19 @@ void Scene702::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene703::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
+Scene703::Scene703(MADSEngine *vm) : Scene7xx(vm) {
+	_monsterMode = -1;
+	_boatFrame = -1;
+	_curSequence = -1;
+	_boatDir = -1;
+
+	_useBomb = false;
+	_startMonsterTimer = false;
+	_rexDeathFl = false;
+	_restartTrigger70Fl = false;
+
+	_lastFrameTime = 0;
+	_monsterTime = 0;
 }
 
 void Scene703::synchronize(Common::Serializer &s) {
@@ -567,6 +581,11 @@ void Scene703::synchronize(Common::Serializer &s) {
 
 	s.syncAsUint32LE(_lastFrameTime);
 	s.syncAsUint32LE(_monsterTime);
+}
+
+void Scene703::setup() {
+	_game._player._spritesPrefix = "";
+	setAAName();
 }
 
 void Scene703::handleBottleInterface() {
@@ -1090,11 +1109,13 @@ void Scene703::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene704::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
-	_scene->addActiveVocab(NOUN_BOTTLE);
-	_scene->addActiveVocab(VERB_LOOK_AT);
+Scene704::Scene704(MADSEngine *vm) : Scene7xx(vm) {
+	_bottleHotspotId = -1;
+	_boatCurrentFrame = -1;
+	_animationMode = -1;
+	_boatDirection = -1;
+
+	_takeBottleFl = false;
 }
 
 void Scene704::synchronize(Common::Serializer &s) {
@@ -1106,6 +1127,13 @@ void Scene704::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_boatDirection);
 
 	s.syncAsByte(_takeBottleFl);
+}
+
+void Scene704::setup() {
+	_game._player._spritesPrefix = "";
+	setAAName();
+	_scene->addActiveVocab(NOUN_BOTTLE);
+	_scene->addActiveVocab(VERB_LOOK_AT);
 }
 
 void Scene704::handleBottleInterface() {
@@ -1708,12 +1736,13 @@ void Scene705::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene706::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_BOTTLE);
-	_scene->addActiveVocab(NOUN_VASE);
-	_scene->addActiveVocab(VERB_WALKTO);
+Scene706::Scene706(MADSEngine *vm) : Scene7xx(vm) {
+	_vaseHotspotId = -1;
+	_vaseMode = -1;
+	_animationMode = -1;
+	_animationFrame = -1;
+
+	_emptyPedestral = false;
 }
 
 void Scene706::synchronize(Common::Serializer &s) {
@@ -1725,6 +1754,14 @@ void Scene706::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_animationFrame);
 
 	s.syncAsByte(_emptyPedestral);
+}
+
+void Scene706::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_BOTTLE);
+	_scene->addActiveVocab(NOUN_VASE);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene706::handleRexDeath() {
@@ -2128,17 +2165,21 @@ void Scene711::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene751::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
+Scene751::Scene751(MADSEngine *vm) : Scene7xx(vm) {
+	_rexHandingLine = false;
 }
 
 void Scene751::synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
 
 	s.syncAsByte(_rexHandingLine);
+}
+
+void Scene751::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene751::enter() {
@@ -2459,6 +2500,16 @@ void Scene751::actions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene752::Scene752(MADSEngine *vm) : Scene7xx(vm) {
+	_cardId = -1;
+}
+
+void Scene752::synchronize(Common::Serializer &s) {
+	Scene7xx::synchronize(s);
+
+	s.syncAsSint16LE(_cardId);
+}
+
 void Scene752::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -2467,12 +2518,6 @@ void Scene752::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 	_scene->addActiveVocab(VERB_LOOK_AT);
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
-}
-
-void Scene752::synchronize(Common::Serializer &s) {
-	Scene7xx::synchronize(s);
-
-	s.syncAsSint16LE(_cardId);
 }
 
 void Scene752::enter() {
