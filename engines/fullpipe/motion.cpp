@@ -842,108 +842,89 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int a5, int x1,
 }
 
 MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId) {
-#if 0
-	v27 = ani->_ox;
-	v8 = movarr->_movStepCount;
-	v9 = 0;
+	if (!movarr->_movStepCount)
+		return 0;
+
 	MessageQueue *mq = 0;
-	v28 = ani->_oy;
-	v26 = 0;
-	if (v8 > 0) {
-		while (1) {
-			if (v9 < v8 - 1) {
-				v10 = (MovStepShifted *)&movarr->_movSteps[v9 + 1].link;
-				movarra = (MovStepShifted *)&movarr->_movSteps[v9 + 1].link;
-				do {
-					if ( *(_DWORD *)(*(_DWORD *)(v10[-1].link + 16) + 4 * (unsigned int)((char *)v10[-2]._sfield_0 + _field_44)) !=
-						 *(_DWORD *)(*(_DWORD *)(movarra->link + 16) + 4 * (unsigned int)((char *)v10[-1]._sfield_0 + _field_44)) )
-						break;
-					++v9;
-					v10 = movarra + 1;
-					++movarra;
-				} while (v9 < v8 - 1);
-			}
+	int ox = ani->_ox;
+	int oy = ani->_oy;
+	int id1 = 0;
+	int id2;
 
-			ani->getMovementById(movarr->_movSteps[v9].link->dwordArray1[_field_44 + movarr->_movSteps[v9]._sfield_0]);
-			v11 = movarr->_movStepCount - 1;
-			v13 = __OFSUB__(v9, v11);
-			v12 = v9 - v11 < 0;
-			if (v9 == v11) {
-				if (staticsId) {
-					id2 = staticsId;
-					goto LABEL_13;
-				}
-				v13 = __OFSUB__(v9, v11);
-				v12 = v9 - v11 < 0;
-			}
-			if (v12 ^ v13)
-				id2 = ani->getMovementById(movarr->_movSteps[v9 + 1].link->dwordArray1[_field_44 + movarr->_movSteps[v9]._sfield_0])->_staticsObj1->_staticsId;
-			else
-				id2 = movarr->_movSteps[v9].link->_dwordArray2[_field_44 + movarr->_movSteps[v9]._sfield_0];
-		LABEL_13:
-			v14 = movarr->_movSteps;
-			v15 = movarr->_movStepCount - 1;
-
-			if (v9 == v15) {
-				v16 = v14[v9].link->_movGraphNode1->_distance;
-				v17 = movarr->_point.x;
-				v33 = movarr->_point.y;
-				ny = v33;
-				v32 = v17;
-				v34 = v16;
-				nx = v17;
-				nd = v16;
-			} else {
-				v18 = v14[v9]._sfield_0;
-				v19 = &v14[v9];
-				if (v18) {
-					v21 = (MovGraphNodeShifted *)&v19->link->_movGraphNode1->_x;
-					nx = v21->_x;
-					ny = v21->_y;
-					nd = v21->_distance;
-				} else {
-					v20 = (MovGraphNodeShifted *)&v19->link->_movGraphNode2->_x;
-					nx = v20->_x;
-					ny = v20->_y;
-					nd = v20->_distance;
-				}
-			}
-			memset(&mgminfo, 0, sizeof(mgminfo));
-			mgminfo.ani = ani;
-			mgminfo.staticsId2 = id2;
-			mgminfo.staticsId1 = v26;
-			mgminfo.x1 = nx;
-			mgminfo.x2 = v27;
-			mgminfo.y2 = v28;
-			mgminfo.y1 = ny;
-			mgminfo.field_1C = nd;
-			mgminfo.movementId = movarr->_movSteps[v9].link->dwordArray1[_field_44 + movarr->_movSteps[v9]._sfield_0];
-			mgminfo.flags = (mq != 0) | 48 * (mq != 0) | 0xE;
-			v23 = _mgm->genMovement(&mgminfo);
-
-			if (mq) {
-				if (v23) {
-					mq->transferExCommands(v23);
-					delete v23;
-				}
-			} else {
-				mq = v23;
-			}
-			v27 = nx;
-			v28 = ny;
-			v26 = id2;
-
-			v8 = movarr->_movStepCount;
-			++v9;
-			if (v9 >= v8)
-				return mq;
+	for (int i = 0; i < movarr->_movStepCount; i++) {
+		while (i < movarr->_movStepCount - 1) {
+			if (movarr->_movSteps[i    ].link->_dwordArray1[movarr->_movSteps[i - 1].sfield_0 + _field_44] !=
+				movarr->_movSteps[i + 1].link->_dwordArray1[movarr->_movSteps[i    ].sfield_0 + _field_44])
+				break;
+			i++;
 		}
-	}
-	return 0;
-#endif
-	warning("STUB: *MovGraph::fillMGMinfo()");
 
-	return 0;
+		MovStep *st = &movarr->_movSteps[i];
+
+		ani->getMovementById(st->link->_dwordArray1[_field_44 + st->sfield_0]);
+
+		if (i == movarr->_movStepCount - 1 && staticsId) {
+			id2 = staticsId;
+		} else {
+			if (i < movarr->_movStepCount - 1)
+				id2 = ani->getMovementById(movarr->_movSteps[i + 1].link->_dwordArray1[_field_44 + st->sfield_0])->_staticsObj1->_staticsId;
+			else
+				id2 = st->link->_dwordArray2[_field_44 + st->sfield_0];
+		}
+
+		int nx, ny, nd;
+
+		if (i == movarr->_movStepCount - 1) {
+			nx = movarr->_point.x;
+			ny = movarr->_point.y;
+			nd = st->link->_movGraphNode1->_distance;
+		} else {
+			if (st->sfield_0) {
+				nx = st->link->_movGraphNode1->_x;
+				ny = st->link->_movGraphNode1->_y;
+				nd = st->link->_movGraphNode1->_distance;
+			} else {
+				nx = st->link->_movGraphNode2->_x;
+				ny = st->link->_movGraphNode2->_y;
+				nd = st->link->_movGraphNode2->_distance;
+			}
+		}
+
+		MGMInfo mgminfo;
+
+		memset(&mgminfo, 0, sizeof(mgminfo));
+		mgminfo.ani = ani;
+		mgminfo.staticsId2 = id2;
+		mgminfo.staticsId1 = id1;
+		mgminfo.x1 = nx;
+		mgminfo.x2 = ox;
+		mgminfo.y2 = oy;
+		mgminfo.y1 = ny;
+		mgminfo.field_1C = nd;
+		mgminfo.movementId = st->link->_dwordArray1[_field_44 + st->sfield_0];
+
+		mgminfo.flags = 0xe;
+		if (mq)
+			mgminfo.flags |= 0x31;
+
+		MessageQueue *newmq = _mgm.genMovement(&mgminfo);
+
+		if (mq) {
+			if (newmq) {
+				mq->transferExCommands(newmq);
+
+				delete newmq;
+			}
+		} else {
+			mq = newmq;
+		}
+
+		ox = nx;
+		oy = ny;
+		id1 = id2;
+	}
+
+	return mq;
 }
 
 MessageQueue *MovGraph::method50(StaticANIObject *ani, Common::Array<MovArr *> *movarr, int staticsId) {
