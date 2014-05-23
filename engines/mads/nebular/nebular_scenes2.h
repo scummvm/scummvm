@@ -55,12 +55,12 @@ private:
 
 public:
 	Scene201(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene202: public Scene2xx {
@@ -77,13 +77,13 @@ private:
 
 public:
 	Scene202(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 
 	void setRandomKernelMessage();
 };
@@ -94,13 +94,13 @@ private:
 
 public:
 	Scene203(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene205: public Scene2xx {
@@ -114,12 +114,12 @@ private:
 
 public:
 	Scene205(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene207: public Scene2xx {
@@ -133,13 +133,13 @@ private:
 
 public:
 	Scene207(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene208: public Scene2xx {
@@ -152,13 +152,13 @@ private:
 
 public:
 	Scene208(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene209: public Scene2xx {
@@ -198,13 +198,13 @@ private:
 
 public:
 	Scene209(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene210: public Scene2xx {
@@ -234,15 +234,16 @@ private:
 	void handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay);
 	void newNode(int node);
 	void restoreDialogNode(int node, int msgId, int posY);
+
 public:
 	Scene210(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene211: public Scene2xx {
@@ -253,13 +254,13 @@ private:
 
 public:
 	Scene211(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene212: public Scene2xx {
@@ -289,12 +290,12 @@ private:
 
 public:
 	Scene214(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene215: public Scene2xx {

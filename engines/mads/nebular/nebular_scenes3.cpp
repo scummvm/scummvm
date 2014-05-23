@@ -1193,6 +1193,12 @@ void Scene308::setup() {
 	setAAName();
 }
 
+void Scene308::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	_forceField.synchronize(s);
+}
+
 void Scene308::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC003x0");
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*SC003x1");
@@ -1307,12 +1313,6 @@ void Scene308::step() {
 	default:
 		break;
 	}
-}
-
-void Scene308::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	_forceField.synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/
@@ -1528,6 +1528,12 @@ void Scene310::setup() {
 	setAAName();
 }
 
+void Scene310::synchronize(Common::Serializer &s) {
+	Scene3xx::synchronize(s);
+
+	_forceField.synchronize(s);
+}
+
 void Scene310::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC003x0");
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*SC003x1");
@@ -1552,12 +1558,6 @@ void Scene310::step() {
 
 	if (_game._trigger == 70)
 		_scene->_nextSceneId = 309;
-}
-
-void Scene310::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	_forceField.synchronize(s);
 }
 
 /*------------------------------------------------------------------------*/

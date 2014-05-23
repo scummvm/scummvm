@@ -65,15 +65,16 @@ private:
 	int _oldSpecial;
 
 	void sayDang();
+
 public:
 	Scene101(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene102 : public Scene1xx {
@@ -91,6 +92,7 @@ private:
 
 public:
 	Scene102(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
@@ -98,21 +100,21 @@ public:
 	virtual void preActions();
 	virtual void actions();
 	virtual void postActions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene103 : public Scene1xx {
 private:
 	uint32 _updateClock;
+
 public:
 	Scene103(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void actions();
 	virtual void postActions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene104 : public Scene1xx {
@@ -122,13 +124,13 @@ private:
 
 public:
 	Scene104(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene105 : public Scene1xx {
@@ -137,13 +139,13 @@ private:
 
 public:
 	Scene105(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene106 : public Scene1xx {
@@ -156,13 +158,13 @@ private:
 
 public:
 	Scene106(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene107 : public Scene1xx {
@@ -171,13 +173,13 @@ private:
 
 public:
 	Scene107(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene108 : public Scene1xx {
@@ -204,13 +206,13 @@ private:
 
 public:
 	Scene109(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene110 : public Scene1xx {
@@ -219,13 +221,13 @@ private:
 
 public:
 	Scene110(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene111 : public Scene1xx {
@@ -237,13 +239,13 @@ private:
 
 public:
 	Scene111(MADSEngine *vm);
+	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
 	virtual void preActions();
 	virtual void actions();
-	virtual void synchronize(Common::Serializer &s);
 };
 
 class Scene112 : public Scene1xx {
@@ -257,7 +259,6 @@ public:
 };
 
 } // End of namespace Nebular
-
 } // End of namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES1_H */

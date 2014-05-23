@@ -123,6 +123,7 @@ Scene201::Scene201(MADSEngine *vm) : Scene2xx(vm) {
 
 void Scene201::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
+
 	s.syncAsByte(_pterodactylFlag);
 }
 
@@ -351,6 +352,7 @@ Scene202::Scene202(MADSEngine *vm) : Scene2xx(vm) {
 
 void Scene202::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
+
 	s.syncAsByte(_activeMsgFl);
 	s.syncAsByte(_ladderTopFl);
 	s.syncAsByte(_waitingMeteoFl);
@@ -1020,6 +1022,7 @@ Scene203::Scene203(MADSEngine *vm) : Scene2xx(vm) {
 
 void Scene203::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
+
 	s.syncAsByte(_rhotundaEat2Fl);
 	s.syncAsByte(_rhotundaEatFl);
 }
@@ -1652,6 +1655,7 @@ Scene208::Scene208(MADSEngine *vm) : Scene2xx(vm) {
 
 void Scene208::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
+
 	s.syncAsByte(_rhotundaTurnFl);
 	s.syncAsByte(_boundingFl);
 	s.syncAsSint32LE(_rhotundaTime);
@@ -1971,6 +1975,7 @@ Scene209::Scene209(MADSEngine *vm) : Scene2xx(vm) {
 
 void Scene209::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
+
 	s.syncAsByte(_dodgeFl);
 	s.syncAsByte(_forceDodgeFl);
 	s.syncAsByte(_shouldDodgeFl);
@@ -3607,6 +3612,7 @@ Scene210::Scene210(MADSEngine *vm) : Scene2xx(vm) {
 
 void Scene210::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
+
 	s.syncAsSint32LE(_curDialogNode);
 	s.syncAsSint32LE(_nextHandsPlace);
 	s.syncAsSint32LE(_twinkleAnimationType);
@@ -4606,6 +4612,7 @@ Scene211::Scene211(MADSEngine *vm) : Scene2xx(vm) {
 
 void Scene211::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
+
 	s.syncAsByte(_ambushFl);
 	s.syncAsByte(_wakeFl);
 

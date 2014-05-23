@@ -114,7 +114,6 @@ void Scene101::synchronize(Common::Serializer &s) {
 
 	s.syncAsByte(_sittingFl);
 	s.syncAsByte(_panelOpened);
-
 	s.syncAsSint16LE(_messageNum);
 	s.syncAsSint16LE(_posY);
 	s.syncAsSint16LE(_shieldSpriteIdx);
@@ -1289,6 +1288,7 @@ Scene103::Scene103(MADSEngine *vm) : Scene1xx(vm) {
 
 void Scene103::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
+
 	byte dummy = 0;
 	s.syncAsByte(dummy); // In order to avoid to break savegame compatibility
 	s.syncAsUint32LE(_updateClock);
@@ -1825,6 +1825,7 @@ Scene105::Scene105(MADSEngine *vm) : Scene1xx(vm) {
 
 void Scene105::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
+
 	s.syncAsByte(_explosionFl);
 }
 
@@ -1986,6 +1987,7 @@ Scene106::Scene106(MADSEngine *vm) : Scene1xx(vm) {
 
 void Scene106::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
+
 	s.syncAsByte(_backToShipFl);
 	s.syncAsByte(_shadowFl);
 	s.syncAsByte(_firstEmergingFl);
@@ -2205,6 +2207,7 @@ Scene107::Scene107(MADSEngine *vm) : Scene1xx(vm) {
 
 void Scene107::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
+
 	s.syncAsByte(_shootingFl);
 }
 
@@ -2422,6 +2425,7 @@ Scene109::Scene109(MADSEngine *vm) : Scene1xx(vm) {
 
 void Scene109::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
+
 	s.syncAsByte(_rexThrowingObject);
 	s.syncAsByte(_hoovicDifficultFl);
 	s.syncAsByte(_beforeEatingRex);
@@ -2827,6 +2831,7 @@ Scene110::Scene110(MADSEngine *vm) : Scene1xx(vm) {
 
 void Scene110::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
+
 	s.syncAsByte(_crabsFl);
 }
 
@@ -2961,6 +2966,7 @@ Scene111::Scene111(MADSEngine *vm) : Scene1xx(vm) {
 
 void Scene111::synchronize(Common::Serializer &s) {
 	Scene1xx::synchronize(s);
+
 	s.syncAsByte(_stampedFl);
 	s.syncAsByte(_launch1Fl);
 	s.syncAsByte(_launched2Fl);
