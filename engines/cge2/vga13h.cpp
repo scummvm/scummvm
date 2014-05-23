@@ -565,7 +565,15 @@ void Sprite::center() {
 }
 
 void Sprite::show() {
-	warning("STUB: Sprite::show()");
+	SprExt *e = _ext;
+	if (e) {
+		e->_p0 = e->_p1;
+		e->_b0 = e->_b1;
+		e->_p1 = _pos2D;
+		e->_b1 = shp();
+	}
+	if (!_flags._hide)
+		e->_b1->show(e->_p1.x, e->_p1.y);
 }
 
 void Sprite::show(uint16 pg) {
