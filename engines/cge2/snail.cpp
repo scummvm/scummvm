@@ -90,15 +90,14 @@ void CommandHandler::runCommand() {
 
 				// Delay is finished
 				_timerExpiry = 0;
-			} else {
-				if (_textDelay) {
-					if (_vm->_talk) {
-						_vm->snKill((Sprite *)_vm->_talk);
-						_vm->_talk = nullptr;
-					}
-					_textDelay = false;
+			} else if (_textDelay) {
+				if (_vm->_talk) {
+					_vm->snKill((Sprite *)_vm->_talk);
+					_vm->_talk = nullptr;
 				}
+				_textDelay = false;
 			}
+			
 			if (_vm->_talk && tailCmd._commandType != kCmdPause)
 				break;
 		}

@@ -97,7 +97,6 @@ void CGE2Engine::init() {
 	_commandHandlerTurbo = new CommandHandler(this, true);
 	_infoLine = new InfoLine(this, kInfoW);
 	_mouse = new Mouse(this);
-	_talk = new Talk(this);
 	for (int i = 0; i < kMaxPoint; i++)
 		_point[i] = new V3D();
 }
@@ -124,7 +123,8 @@ void CGE2Engine::deinit() {
 	delete _commandHandlerTurbo;
 	delete _infoLine;
 	delete _mouse;
-	delete _talk;
+	if (_talk != nullptr)
+		delete _talk;
 	for (int i = 0; i < kMaxPoint; i++) {
 		delete _point[i];
 	}
