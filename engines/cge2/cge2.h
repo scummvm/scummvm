@@ -115,7 +115,6 @@ public:
 	void openPocket();
 	void selectPocket(int n);
 	void busy(bool on);
-	void show();
 	void feedSnail(Sprite *spr, Action snq, Hero *hero);
 	int freePockets(int sx);
 	int findActivePocket(int ref);

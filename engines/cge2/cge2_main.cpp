@@ -366,9 +366,9 @@ void CGE2Engine::caveUp(int cav) {
 
 	if (!_dark)
 		_vga->sunset();
-	show();
+	_vga->show();
 	_vga->copyPage(1, 0);
-	show();
+	_vga->show();
 
 	_sprite = _vga->_showQ->first();
 	if (_startupMode)
@@ -458,10 +458,6 @@ void CGE2Engine::selectPocket(int n) {
 
 void CGE2Engine::busy(bool on) {
 	warning("STUB: CGE2Engine::selectPocket()");
-}
-
-void CGE2Engine::show() {
-	warning("STUB: CGE2Engine::show()");
 }
 
 void CGE2Engine::runGame() {
