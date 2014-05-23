@@ -1502,7 +1502,7 @@ void Scene103::actions() {
 			_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 6, _vm->_game->_trigger < 1 ? 1 : 0);
 			if (_vm->_game->_trigger) {
 				// Lock the turkey into a permanent "exploded" frame
-				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], -1, -1);
+				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], -2, -2);
 
 				// Rex says "Gads.."
 				Common::String msg = _game.getQuote(51);
