@@ -52,6 +52,7 @@ class InfoLine;
 class Mouse;
 class Talk;
 class Hero;
+class Bitmap;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -64,6 +65,7 @@ class Hero;
 #define kWayMax         10
 #define kPocketMax       4
 #define kCaveMax       100
+#define kMaxPoint        4
 
 enum CallbackType {
 	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume
@@ -108,6 +110,7 @@ public:
 	void loadSprite(const char *fname, int ref, int scene, V3D &pos);
 	void badLab(const char *fn);
 	void caveUp(int cav);
+	void switchCave(int cav);
 	void showBak(int ref);
 	void loadTab();
 	int newRandom(int range);
@@ -122,6 +125,7 @@ public:
 	void killText();
 	void mainLoop();
 	void handleFrame();
+	Sprite *locate(int ref);
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
@@ -133,6 +137,44 @@ public:
 	int takeEnum(const char **tab, const char *text);
 	ID ident(const char *s);
 	bool testBool(char *s);
+
+	void snKill(Sprite *spr);
+	void snHide(Sprite *spr, int val);
+	void snMidi(int val);
+	void snSetDlg(int clr, int set);
+	void snMskDlg(int clr, int set);
+	void snSeq(Sprite *spr, int val);
+	void snRSeq(Sprite *spr, int val);
+	void snSend(Sprite *spr, int val);
+	void snSwap(Sprite *spr, int val);
+	void snCover(Sprite *spr, int val);
+	void snUncover(Sprite *spr, Sprite *spr2);
+	void snFocus(int val);
+	void snKeep(Sprite *spr, int val);
+	void snGive(Sprite *spr, int val);
+	void snGoto(Sprite *spr, int val);
+	void snMove(Sprite *spr, V3D pos);
+	void snSlave(Sprite *spr, int val);
+	void snTrans(Sprite *spr, int val);
+	void snPort(Sprite *spr, int val);
+	void snMouse(int val);
+	void snNNext(Sprite *spr, Action act, int val);
+	void snRNNext(Sprite *spr, int val);
+	void snRMTNext(Sprite *spr, int val);
+	void snRFTNext(Sprite *spr, int val);
+	void snRmNear(Sprite *spr);
+	void snRmMTake(Sprite *spr);
+	void snRmFTake(Sprite *spr);
+	void snFlag(int ref, int val);
+	void snSetRef(Sprite *spr, int val);
+	void snBackPt(Sprite *spr, int val);
+	void snFlash(int val);
+	void snLight(int val);
+	void snWalk(Sprite *spr, int val);
+	void snReach(Sprite *spr, int val);
+	void snSound(Sprite *spr, int val, int cnt);
+	void snRoom(Sprite *spr, int val);
+	void snGhost(Bitmap *bmp);
 
 	const ADGameDescription *_gameDescription;
 
@@ -147,7 +189,13 @@ public:
 	bool _sex;
 	int _mouseTop;
 	bool _dark;
+	int _waitSeq;
 	int _waitRef;
+	struct CommandStat {
+		int *_wait;
+		int _ref[2];
+	} _commandStat;
+	bool _taken;
 
 	ResourceManager *_resman;
 	Vga *_vga;
@@ -165,6 +213,7 @@ public:
 	InfoLine *_infoLine;
 	Mouse *_mouse;
 	Talk *_talk;
+	V3D *_point[kMaxPoint];
 private:
 	void init();
 	void deinit();

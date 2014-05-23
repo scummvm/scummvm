@@ -28,6 +28,7 @@
 #include "cge2/snail.h"
 #include "cge2/fileio.h"
 #include "cge2/hero.h"
+#include "cge2/text.h"
 
 namespace CGE2 {
 
@@ -64,7 +65,408 @@ CommandHandler::~CommandHandler() {
 }
 
 void CommandHandler::runCommand() {
-	warning("STUB: CommandHandler::runCommand()");
+	if (!_turbo && _vm->_commandStat._wait) {
+		if (*(_vm->_commandStat._wait))
+			return;
+		else {
+			++_vm->_commandStat._ref[0];
+			warning("STUB: CommandHandler::runCommand() - Sound code missing!");
+			_vm->_commandStat._wait = nullptr;
+		}
+	}
+
+	uint8 tmpHead = _head;
+	while (_tail != tmpHead) {
+		Command tailCmd = _commandList[_tail];
+
+		if (!_turbo) { // only for the slower one
+			if (_vm->_waitRef)
+				break;
+			if (_timerExpiry) {
+				// Delay in progress
+				if (_timerExpiry > g_system->getMillis())
+					// Delay not yet ended
+					break;
+
+				// Delay is finished
+				_timerExpiry = 0;
+			} else {
+				if (_textDelay) {
+					if (_vm->_talk) {
+						_vm->snKill((Sprite *)_vm->_talk);
+						_vm->_talk = nullptr;
+					}
+					_textDelay = false;
+				}
+			}
+			if (_vm->_talk && tailCmd._commandType != kCmdPause)
+				break;
+		}
+		++_tail;
+		_vm->_taken = false;
+		Sprite *spr;
+		if (tailCmd._commandType > kCmdSpr)
+			spr = (tailCmd._ref < 0) ? ((Sprite *)tailCmd._spritePtr) : _vm->locate(tailCmd._ref);
+
+		switch (tailCmd._commandType) {
+		case kCmdUse:
+			break;
+		case kCmdPause:
+			_timerExpiry = g_system->getMillis() + tailCmd._val * kCommandFrameDelay;
+			if (_vm->_talk)
+				_textDelay = true;
+			break;
+		case kCmdWait:
+			if (spr && spr->active() && (spr->_scene == _vm->_now || spr->_scene == 0)) {
+				_vm->_waitSeq = tailCmd._val;
+				_vm->_waitRef = spr->_ref;
+			}
+			break;
+		case kCmdHide:
+			_vm->snHide(spr, tailCmd._val);
+			break;
+		case kCmdSay:
+			if (spr && spr->active() && _talkEnable) //-- mouth animation
+				warning("STUB: CommandHandler::runCommand() - Mouth animation missing!");
+			break;
+		case kCmdInf:
+			if (_talkEnable)
+				_vm->inf(((tailCmd._val) >= 0) ? _vm->_text->getText(tailCmd._val) : (const char *)tailCmd._spritePtr);
+			break;
+		case kCmdTime:
+			warning("STUB: CommandHandler::runCommand() - Something missing connected to kCmdTime!");
+			break;
+		case kCmdCave:
+			_vm->switchCave(tailCmd._val);
+			break;
+		case kCmdMidi:
+			_vm->snMidi(tailCmd._val);
+			break;
+		case kCmdSetDlg:
+			_vm->snSetDlg(tailCmd._ref, tailCmd._val);
+			break;
+		case kCmdMskDlg:
+			_vm->snMskDlg(tailCmd._ref, tailCmd._val);
+			break;
+		case kCmdKill:
+			_vm->snKill(spr);
+			break;
+		case kCmdSeq:
+			_vm->snSeq(spr, tailCmd._val);
+			break;
+		case kCmdRSeq:
+			_vm->snRSeq(spr, tailCmd._val);
+			break;
+		case kCmdSend:
+			_vm->snSend(spr, tailCmd._val);
+			break;
+		case kCmdSwap:
+			_vm->snSwap(spr, tailCmd._val);
+			break;
+		case kCmdCover:
+			_vm->snCover(spr, tailCmd._val);
+			break;
+		case kCmdUncover:
+			_vm->snUncover(spr, (tailCmd._val >= 0) ? _vm->locate(tailCmd._val) : ((Sprite *)tailCmd._spritePtr));
+			break;
+		case kCmdFocus:
+			_vm->snFocus(tailCmd._val);
+			break;
+		case kCmdKeep:
+			_vm->snKeep(spr, tailCmd._val);
+			break;
+		case kCmdGive:
+			_vm->snGive(spr, tailCmd._val);
+			break;
+		case kCmdSetX:
+			_vm->_point[tailCmd._val]->_x = tailCmd._ref;
+			break;
+		case kCmdSetY:
+			_vm->_point[tailCmd._val]->_y = tailCmd._ref;
+			break;
+		case kCmdSetZ:
+			_vm->_point[tailCmd._val]->_z = tailCmd._ref;
+			break;
+		case kCmdAdd:
+			*(_vm->_point[tailCmd._ref]) = *(_vm->_point[tailCmd._ref]) + *(_vm->_point[tailCmd._val]);
+			break;
+		case kCmdSub:
+			*(_vm->_point[tailCmd._ref]) = *(_vm->_point[tailCmd._ref]) - *(_vm->_point[tailCmd._val]);
+			break;
+		case kCmdMul:
+			*(_vm->_point[tailCmd._ref]) = *(_vm->_point[tailCmd._ref]) * tailCmd._val;
+			break;
+		case kCmdDiv:
+			*(_vm->_point[tailCmd._ref]) = *(_vm->_point[tailCmd._ref]) / tailCmd._val;
+			break;
+		case kCmdGetPos:
+			if (spr)
+				*(_vm->_point[tailCmd._val]) = spr->_pos3D;
+			break;
+		case kCmdGoto:
+			_vm->snGoto(spr, tailCmd._val);
+			break;
+		case kCmdMoveX:
+			_vm->snMove(spr, V3D(tailCmd._val, 0, 0));
+			break;
+		case kCmdMoveY:
+			_vm->snMove(spr, V3D(0, tailCmd._val, 0));
+			break;
+		case kCmdMoveZ:
+			_vm->snMove(spr, V3D(0, 0, tailCmd._val));
+			break;
+		case kCmdSlave:
+			_vm->snSlave(spr, tailCmd._val);
+			break;
+		case kCmdTrans:
+			_vm->snTrans(spr, tailCmd._val);
+			break;
+		case kCmdPort:
+			_vm->snPort(spr, tailCmd._val);
+			break;
+		case kCmdNext:
+			break;
+		case kCmdIf:
+			break;
+		case kCmdTalk:
+			break;
+		case kCmdMouse:
+			_vm->snMouse(tailCmd._val != 0);
+			break;
+		case kCmdNNext:
+			_vm->snNNext(spr, kNear, tailCmd._val);
+			break;
+		case kCmdMTNext:
+			_vm->snNNext(spr, kMTake, tailCmd._val);
+			break;
+		case kCmdFTNext:
+			_vm->snNNext(spr, kFTake, tailCmd._val);
+			break;
+		case kCmdRNNext:
+			_vm->snRNNext(spr, tailCmd._val);
+			break;
+		case kCmdRMTNext:
+			_vm->snRMTNext(spr, tailCmd._val);
+			break;
+		case kCmdRFTNext:
+			_vm->snRFTNext(spr, tailCmd._val);
+			break;
+		case kCmdRMNear:
+			_vm->snRmNear(spr);
+			break;
+		case kCmdRMMTake:
+			_vm->snRmMTake(spr);
+			break;
+		case kCmdRMFTake:
+			_vm->snRmFTake(spr);
+			break;
+		case kCmdFlag:
+			_vm->snFlag(tailCmd._ref & 3, tailCmd._val);
+			break;
+		case kCmdSetRef:
+			_vm->snSetRef(spr, tailCmd._val);
+			break;
+		case kCmdBackPt:
+			_vm->snBackPt(spr, tailCmd._val);
+			break;
+		case kCmdFlash:
+			_vm->snFlash(tailCmd._val != 0);
+			break;
+		case kCmdLight:
+			_vm->snLight(tailCmd._val != 0);
+			break;
+		case kCmdCycle:
+			warning("Unhandled command - kCmdCycle");
+			break;
+		case kCmdWalk:
+			_vm->snWalk(spr, tailCmd._val);
+			break;
+		case kCmdReach:
+			_vm->snReach(spr, tailCmd._val);
+			break;
+		case kCmdSound:
+			_vm->snSound(spr, tailCmd._val, _count);
+			_count = 1;
+			break;
+		case kCmdMap:
+			_vm->_heroTab[tailCmd._ref & 1]->_ptr->_ignoreMap = tailCmd._val == 0;
+			break;
+		case kCmdCount:
+			_count = tailCmd._val;
+			break;
+		case kCmdRoom:
+			_vm->snRoom(spr, tailCmd._val);
+			break;
+		case kCmdDim:
+			warning("Unhandled command - kCmdDim");
+			break;
+		case kCmdExec:
+			warning("Unhandled command - kCmdExec");
+			break;
+		case kCmdStep:
+			spr->step();
+			break;
+		case kCmdGhost:
+			_vm->snGhost((Bitmap *)tailCmd._spritePtr);
+			break;
+		default:
+			warning("Unhandled command");
+			break;
+		}
+
+		if (_vm->_taken)
+			_vm->_spare->dispose(spr);
+
+		if (!_turbo)
+			break;
+	}
+}
+
+void CGE2Engine::snKill(Sprite *spr) {
+	warning("STUB: CGE2Engine::snKill()");
+}
+
+void CGE2Engine::snHide(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snHide()");
+}
+
+void CGE2Engine::snMidi(int val) {
+	warning("STUB: CGE2Engine::snMidi()");
+}
+
+void CGE2Engine::snSetDlg(int clr, int set) {
+	warning("STUB: CGE2Engine::snSetDlg()");
+}
+
+void CGE2Engine::snMskDlg(int clr, int set) {
+	warning("STUB: CGE2Engine::snMskDlg()");
+}
+
+void CGE2Engine::snSeq(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snSeq()");
+}
+
+void CGE2Engine::snRSeq(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snRSeq()");
+}
+
+void CGE2Engine::snSend(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snSend()");
+}
+
+void CGE2Engine::snSwap(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snSwap()");
+}
+void CGE2Engine::snCover(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snCover()");
+}
+
+void CGE2Engine::snUncover(Sprite *spr, Sprite *spr2) {
+	warning("STUB: CGE2Engine::snUncover()");
+}
+
+void CGE2Engine::snFocus(int val) {
+	warning("STUB: CGE2Engine::snFocus()");
+}
+
+void CGE2Engine::snKeep(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snKeep()");
+}
+
+void CGE2Engine::snGive(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snGive()");
+}
+
+void CGE2Engine::snGoto(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snGoto()");
+}
+
+void CGE2Engine::snMove(Sprite *spr, V3D pos) {
+	warning("STUB: CGE2Engine::snMove()");
+}
+
+void CGE2Engine::snSlave(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snSlave()");
+}
+
+void CGE2Engine::snTrans(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snTrans()");
+}
+
+void CGE2Engine::snPort(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snPort()");
+}
+
+void CGE2Engine::snMouse(int val) {
+	warning("STUB: CGE2Engine::snMouse()");
+}
+
+void CGE2Engine::snNNext(Sprite *spr, Action act, int val) {
+	warning("STUB: CGE2Engine::snNNext()");
+}
+
+void CGE2Engine::snRNNext(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snRNNext()");
+}
+
+void CGE2Engine::snRMTNext(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snRMTNext()");
+}
+
+void CGE2Engine::snRFTNext(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snRFTNext()");
+}
+
+void CGE2Engine::snRmNear(Sprite *spr) {
+	warning("STUB: CGE2Engine::snRmNear()");
+}
+
+void CGE2Engine::snRmMTake(Sprite *spr) {
+	warning("STUB: CGE2Engine::snRmMTake()");
+}
+
+void CGE2Engine::snRmFTake(Sprite *spr) {
+	warning("STUB: CGE2Engine::snRmFTake()");
+}
+
+void CGE2Engine::snFlag(int ref, int val) {
+	warning("STUB: CGE2Engine::snFlag()");
+}
+
+void CGE2Engine::snSetRef(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snSetRef()");
+}
+
+void CGE2Engine::snBackPt(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snBackPt()");
+}
+
+void CGE2Engine::snFlash(int val) {
+	warning("STUB: CGE2Engine::snFlash()");
+}
+
+void CGE2Engine::snLight(int val) {
+	warning("STUB: CGE2Engine::snLight()");
+}
+
+void CGE2Engine::snWalk(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snWalk()");
+}
+
+void CGE2Engine::snReach(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snReach()");
+}
+
+void CGE2Engine::snSound(Sprite *spr, int val, int cnt) {
+	warning("STUB: CGE2Engine::snSound()");
+}
+
+void CGE2Engine::snRoom(Sprite *spr, int val) {
+	warning("STUB: CGE2Engine::snRoom()");
+}
+
+void CGE2Engine::snGhost(Bitmap *bmp) {
+	warning("STUB: CGE2Engine::snGhost()");
 }
 
 void CommandHandler::addCommand(CommandType com, int ref, int val, void *ptr) {

@@ -378,6 +378,10 @@ void CGE2Engine::caveUp(int cav) {
 	//setDrawColors(); - It's only for debugging purposes. Can be left out for now.
 }
 
+void CGE2Engine::switchCave(int cav) {
+	warning("STUB: CGE2Engine::switchCave()");
+}
+
 void CGE2Engine::showBak(int ref) {
 	Sprite *spr = _spare->locate(ref);
 	if (spr != nullptr) {
@@ -431,6 +435,17 @@ void CGE2Engine::handleFrame() {
 		tick();
 		_lastTick = millis;
 	}
+}
+
+Sprite *CGE2Engine::locate(int ref) {
+	_taken = false;
+	Sprite *spr = _vga->_showQ->locate(ref);
+	if (!spr) {
+		spr = _spare->locate(ref);
+		if (spr)
+			_taken = true;
+	}
+	return spr;
 }
 
 void CGE2Engine::tick() {

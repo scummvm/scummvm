@@ -60,6 +60,8 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_infoLine = nullptr;
 	_mouse = nullptr;
 	_talk = nullptr;
+	for (int i = 0; i < kMaxPoint; i++)
+		_point[i] = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -72,7 +74,10 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_dark = false;
 	_lastFrame = 0;
 	_lastTick = 0;
+	_waitSeq = 0;
 	_waitRef = 0;
+	_commandStat = { nullptr, { 0 , 0 } };
+	_taken = false;
 }
 
 void CGE2Engine::init() {
@@ -93,6 +98,8 @@ void CGE2Engine::init() {
 	_infoLine = new InfoLine(this, kInfoW);
 	_mouse = new Mouse(this);
 	_talk = new Talk(this);
+	for (int i = 0; i < kMaxPoint; i++)
+		_point[i] = new V3D();
 }
 
 void CGE2Engine::deinit() {
@@ -118,6 +125,9 @@ void CGE2Engine::deinit() {
 	delete _infoLine;
 	delete _mouse;
 	delete _talk;
+	for (int i = 0; i < kMaxPoint; i++) {
+		delete _point[i];
+	}
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {

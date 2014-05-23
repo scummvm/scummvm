@@ -33,6 +33,9 @@
 
 namespace CGE2 {
 
+#define kCommandFrameRate  80
+#define kCommandFrameDelay (1000 / kCommandFrameRate)
+
 enum CommandType {
 	kCmdCom0 = 128,
 	kCmdNop,     // NOP                       :: do nothing
