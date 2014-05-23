@@ -368,7 +368,7 @@ void CGE2Engine::caveUp(int cav) {
 		_vga->sunrise(_vga->_sysPal);
 
 	feedSnail(_vga->_showQ->locate(bakRef + 255), kNear, _heroTab[_sex]->_ptr);
-	//setDrawColors();
+	//setDrawColors(); - It's only for debugging purposes. Can be left out for now.
 }
 
 void CGE2Engine::showBak(int ref) {
