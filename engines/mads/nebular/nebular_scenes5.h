@@ -60,7 +60,7 @@ private:
 	void handleSlotActions();
 
 public:
-	Scene501(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene501(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -85,7 +85,7 @@ private:
 	int _detonatorHotspotId;
 
 public:
-	Scene503(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene503(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -99,7 +99,7 @@ private:
 	int _carFrame;
 
 public:
-	Scene504(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene504(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -120,7 +120,7 @@ private:
 	int _carLocations[9];
 
 public:
-	Scene505(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene505(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -146,7 +146,7 @@ private:
 	void handleDoorSequences();
 
 public:
-	Scene506(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene506(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -160,7 +160,7 @@ private:
 	int _penlightHotspotId;
 
 public:
-	Scene507(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene507(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -175,7 +175,7 @@ private:
 	void handlePedestral();
 
 public:
-	Scene508(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene508(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -194,7 +194,7 @@ private:
 	int _lineAnimationPosition;
 
 public:
-	Scene511(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene511(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -210,7 +210,7 @@ private:
   int _keyHotspotId;
 
 public:
-	Scene512(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene512(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();

@@ -92,11 +92,12 @@ void Scene5xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene501::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_DOOR);
-	_scene->addActiveVocab(VERB_WALK_THROUGH);
+Scene501::Scene501(MADSEngine *vm) : Scene5xx(vm) {
+	_mainSequenceId = -1;
+	_mainSpriteId = -1;
+	_doorHotspotid = -1;
+
+	_rexPunched = false;
 }
 
 void Scene501::synchronize(Common::Serializer &s) {
@@ -106,6 +107,13 @@ void Scene501::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_mainSpriteId);
 	s.syncAsSint16LE(_doorHotspotid);
 	s.syncAsByte(_rexPunched);
+}
+
+void Scene501::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_DOOR);
+	_scene->addActiveVocab(VERB_WALK_THROUGH);
 }
 
 void Scene501::handleSlotActions() {
@@ -523,17 +531,21 @@ void Scene502::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene503::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_DETONATORS);
-	_scene->addActiveVocab(VERB_WALKTO);
+Scene503::Scene503(MADSEngine *vm) : Scene5xx(vm) {
+	_detonatorHotspotId = -1;
 }
 
 void Scene503::synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_detonatorHotspotId);
+}
+
+void Scene503::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_DETONATORS);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene503::enter() {
@@ -651,9 +663,9 @@ void Scene503::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene504::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
+Scene504::Scene504(MADSEngine *vm) : Scene5xx(vm) {
+	_carAnimationMode = -1;
+	_carFrame = -1;
 }
 
 void Scene504::synchronize(Common::Serializer &s) {
@@ -661,6 +673,11 @@ void Scene504::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint16LE(_carAnimationMode);
 	s.syncAsSint16LE(_carFrame);
+}
+
+void Scene504::setup() {
+	_game._player._spritesPrefix = "";
+	setAAName();
 }
 
 void Scene504::enter() {
@@ -855,9 +872,15 @@ void Scene504::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene505::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
+Scene505::Scene505(MADSEngine *vm) : Scene5xx(vm) {
+	_frame = -1;
+	_nextButtonId = -1;
+	_homeSelectedId = -1;
+	_selectedId = -1;
+	_activeCars = -1;
+
+	for (int i = 0; i < 9; i++)
+		_carLocations[i] = -1;
 }
 
 void Scene505::synchronize(Common::Serializer &s) {
@@ -871,6 +894,11 @@ void Scene505::synchronize(Common::Serializer &s) {
 
 	for (int i = 0; i < 9; i++)
 		s.syncAsSint16LE(_carLocations[i]);
+}
+
+void Scene505::setup() {
+	_game._player._spritesPrefix = "";
+	setAAName();
 }
 
 void Scene505::enter() {
@@ -1122,12 +1150,17 @@ void Scene505::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene506::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALK_INTO);
-	_scene->addActiveVocab(NOUN_SOFTWARE_STORE);
-	_scene->addActiveVocab(NOUN_LABORATORY);
+Scene506::Scene506(MADSEngine *vm) : Scene5xx(vm), _doorPos(0, 0) {
+	_heroFacing = FACING_DUMMY;
+
+	_doorDepth = -1;
+	_doorSpriteIdx = -1;
+	_doorSequenceIdx = -1;
+	_doorWord = -1;
+
+	_labDoorFl = false;
+	_firstDoorFl = false;
+	_actionFl = false;
 }
 
 void Scene506::synchronize(Common::Serializer &s) {
@@ -1146,6 +1179,14 @@ void Scene506::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_labDoorFl);
 	s.syncAsByte(_firstDoorFl);
 	s.syncAsByte(_actionFl);
+}
+
+void Scene506::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(VERB_WALK_INTO);
+	_scene->addActiveVocab(NOUN_SOFTWARE_STORE);
+	_scene->addActiveVocab(NOUN_LABORATORY);
 }
 
 void Scene506::enter() {
@@ -1402,17 +1443,21 @@ void Scene506::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene507::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_PENLIGHT);
-	_scene->addActiveVocab(VERB_WALKTO);
+Scene507::Scene507(MADSEngine *vm) : Scene5xx(vm) {
+	_penlightHotspotId = -1;
 }
 
 void Scene507::synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_penlightHotspotId);
+}
+
+void Scene507::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_PENLIGHT);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene507::enter() {
@@ -1519,18 +1564,22 @@ void Scene507::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene508::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_SPINACH_PATCH_DOLL);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
+Scene508::Scene508(MADSEngine *vm) : Scene5xx(vm) {
+	_chosenObject = -1;
 }
 
 void Scene508::synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_chosenObject);
+}
+
+void Scene508::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_SPINACH_PATCH_DOLL);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
 
 void Scene508::enter() {
@@ -1784,12 +1833,13 @@ void Scene508::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene511::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_BOAT);
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
+Scene511::Scene511(MADSEngine *vm) : Scene5xx(vm) {
+	_handingLine = false;
+	_lineMoving = false;
+
+	_lineAnimationMode = -1;
+	_lineFrame = -1;
+	_lineAnimationPosition = -1;
 }
 
 void Scene511::synchronize(Common::Serializer &s) {
@@ -1801,6 +1851,14 @@ void Scene511::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_lineAnimationMode);
 	s.syncAsSint16LE(_lineFrame);
 	s.syncAsSint16LE(_lineAnimationPosition);
+}
+
+void Scene511::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_BOAT);
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene511::enter() {
@@ -2116,13 +2174,9 @@ void Scene511::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene512::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_FISHING_ROD);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_PADLOCK_KEY);
-	_scene->addActiveVocab(NOUN_REGISTER_DRAWER);
+Scene512::Scene512(MADSEngine *vm) : Scene5xx(vm) {
+	_fishingRodHotspotId = -1;
+	_keyHotspotId = -1;
 }
 
 void Scene512::synchronize(Common::Serializer &s) {
@@ -2130,6 +2184,15 @@ void Scene512::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint16LE(_fishingRodHotspotId);
 	s.syncAsSint16LE(_keyHotspotId);
+}
+
+void Scene512::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_FISHING_ROD);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_PADLOCK_KEY);
+	_scene->addActiveVocab(NOUN_REGISTER_DRAWER);
 }
 
 void Scene512::enter() {
