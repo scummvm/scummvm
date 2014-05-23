@@ -78,9 +78,8 @@ void Scene8xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene801::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
+Scene801::Scene801(MADSEngine *vm) : Scene8xx(vm) {
+	_walkThroughDoor = false;
 }
 
 void Scene801::synchronize(Common::Serializer &s) {
@@ -89,6 +88,10 @@ void Scene801::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_walkThroughDoor);
 }
 
+void Scene801::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+}
 
 void Scene801::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
@@ -830,10 +833,17 @@ void Scene803::actions() {
 
 /*------------------------------------------------------------------------*/
 
+Scene804::Scene804(MADSEngine *vm) : Scene8xx(vm) {
+	_messWithThrottle = false;
+	_movingThrottle = false;
+	_throttleGone = false;
+	_dontPullThrottleAgain = false;
+	_pullThrottleReally = false;
+	_alreadyOrgan = false;
+	_alreadyPop = false;
 
-void Scene804::setup() {
-	Scene8xx::setPlayerSpritesPrefix();
-	Scene8xx::setAAName();
+	_throttleCounter = 0;
+	_resetFrame = -1;
 }
 
 void Scene804::synchronize(Common::Serializer &s) {
@@ -849,6 +859,11 @@ void Scene804::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint16LE(_resetFrame);
 	s.syncAsUint32LE(_throttleCounter);
+}
+
+void Scene804::setup() {
+	Scene8xx::setPlayerSpritesPrefix();
+	Scene8xx::setAAName();
 }
 
 void Scene804::enter() {
@@ -1252,15 +1267,19 @@ void Scene807::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene808::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
+Scene808::Scene808(MADSEngine *vm) : Scene8xx(vm) {
+	_goingTo803 = false;
 }
 
 void Scene808::synchronize(Common::Serializer &s) {
 	Scene8xx::synchronize(s);
 
 	s.syncAsByte(_goingTo803);
+}
+
+void Scene808::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
 }
 
 void Scene808::enter() {
@@ -1464,15 +1483,19 @@ void Scene808::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene810::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
+Scene810::Scene810(MADSEngine *vm) : Scene8xx(vm) {
+	_moveAllowed = false;
 }
 
 void Scene810::synchronize(Common::Serializer &s) {
 	Scene8xx::synchronize(s);
 
 	s.syncAsByte(_moveAllowed);
+}
+
+void Scene810::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
 }
 
 void Scene810::enter() {

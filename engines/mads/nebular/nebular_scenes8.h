@@ -57,7 +57,7 @@ private:
 	bool _walkThroughDoor;
 
 public:
-	Scene801(MADSEngine *vm) : Scene8xx(vm) {}
+	Scene801(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -92,16 +92,17 @@ public:
 class Scene804: public Scene8xx {
 private:
 	bool _messWithThrottle;
-	uint32 _throttleCounter;
 	bool _movingThrottle;
 	bool _throttleGone;
 	bool _dontPullThrottleAgain;
-	int _resetFrame;
 	bool _pullThrottleReally;
 	bool _alreadyOrgan;
 	bool _alreadyPop;
+	uint32 _throttleCounter;
+	int _resetFrame;
+
 public:
-	Scene804(MADSEngine *vm) : Scene8xx(vm), _throttleCounter(0) {}
+	Scene804(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -136,7 +137,7 @@ private:
 	bool _goingTo803;
 
 public:
-	Scene808(MADSEngine *vm) : Scene8xx(vm) {}
+	Scene808(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -149,7 +150,7 @@ private:
 	bool _moveAllowed;
 
 public:
-	Scene810(MADSEngine *vm) : Scene8xx(vm) {}
+	Scene810(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
