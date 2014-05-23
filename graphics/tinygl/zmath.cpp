@@ -214,6 +214,7 @@ void gl_M4_Rotate(M4 *a, float t, int u) {
 	a->m[w][w] = c;
 }
 
+/*
 // inverse of a 3x3 matrix
 void gl_M3_Inv(M3 *a, const M3 *m) {
 	float det;
@@ -234,6 +235,7 @@ void gl_M3_Inv(M3 *a, const M3 *m) {
 	a->m[2][1] = -(m->m[0][0] * m->m[2][1] - m->m[0][1] * m->m[2][0]) / det;
 	a->m[2][2] = (m->m[0][0] * m->m[1][1] - m->m[0][1] * m->m[1][0]) / det;
 }
+*/
 
 // vector arithmetic
 

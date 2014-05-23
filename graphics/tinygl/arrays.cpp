@@ -28,7 +28,7 @@ void glopArrayElement(GLContext *c, GLParam *param) {
 		c->current_normal.X = c->normal_array[i];
 		c->current_normal.Y = c->normal_array[i + 1];
 		c->current_normal.Z = c->normal_array[i + 2];
-		c->current_normal.Z = 0.0f;
+		c->current_normal.W = 0.0f;
 	}
 	if (states & TEXCOORD_ARRAY) {
 		int size = c->texcoord_array_size;

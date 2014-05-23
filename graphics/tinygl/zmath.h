@@ -5,9 +5,59 @@ namespace TinyGL {
 
 // Matrix & Vertex
 
+class Vector3
+{
+public:
+	Vector3();
+	Vector3(float x, float y, float z);
+
+	Vector3 operator*(float value);
+	Vector3 operator+(const Vector3& other);
+	Vector3 operator-(const Vector3& other);
+
+private:
+	float v[3];
+};
+
+class Vector4
+{
+public:
+	Vector4();
+	Vector4(float x, float y, float z, float w);
+
+	Vector4 operator*(float value);
+	Vector4 operator+(const Vector4& other);
+	Vector4 operator-(const Vector4& other);
+
+private:
+	float v[4];
+};
+
+class Matrix4
+{
+public:
+	Matrix4();
+	Matrix4(const Matrix4& other);
+
+	Matrix4 operator=(const Matrix4& other);
+	Matrix4 operator*(const Matrix4& b);
+	static Matrix4 identity();
+
+	Matrix4 transpose() const;
+	Matrix4 inverseOrtho() const;
+	Matrix4 inverse() const;
+	Matrix4 rotation() const;
+
+	Vector3 transform(const Vector3& vector);
+	Vector4 transform(const Vector4& vector);
+private:
+	float m[4][4];
+};
+
 struct M4 {
 	float m[4][4];
 };
+
 
 struct M3 {
 	float m[3][3];
