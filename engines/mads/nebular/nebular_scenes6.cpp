@@ -217,12 +217,11 @@ void Scene601::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene602::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_SAFE);
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
+Scene602::Scene602(MADSEngine *vm) : Scene6xx(vm) {
+	_lastSpriteIdx = -1;
+	_lastSequenceIdx = -1;
+	_cycleIndex = -1;
+	_safeMode = -1;
 }
 
 void Scene602::synchronize(Common::Serializer &s) {
@@ -232,6 +231,14 @@ void Scene602::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_lastSequenceIdx);
 	s.syncAsSint16LE(_cycleIndex);
 	s.syncAsSint16LE(_safeMode);
+}
+
+void Scene602::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_SAFE);
+	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
 
 void Scene602::enter() {
@@ -539,12 +546,9 @@ void Scene602::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene603::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_COMPACT_CASE);
-	_scene->addActiveVocab(NOUN_NOTE);
+Scene603::Scene603(MADSEngine *vm) : Scene6xx(vm) {
+	_compactCaseHotspotId = -1;
+	_noteHotspotId = -1;
 }
 
 void Scene603::synchronize(Common::Serializer &s) {
@@ -552,6 +556,14 @@ void Scene603::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint16LE(_compactCaseHotspotId);
 	s.syncAsSint16LE(_noteHotspotId);
+}
+
+void Scene603::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_COMPACT_CASE);
+	_scene->addActiveVocab(NOUN_NOTE);
 }
 
 void Scene603::enter() {
@@ -688,12 +700,15 @@ void Scene603::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene604::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_SEA_MONSTER);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_TIMEBOMB);
+Scene604::Scene604(MADSEngine *vm) : Scene6xx(vm) {
+	_timebombHotspotId = -1;
+	_bombMode = -1;
+	_monsterFrame = -1;
+
+	_monsterTimer = 0;
+
+	_monsterActive = false;
+	_animationActiveFl = false;
 }
 
 void Scene604::synchronize(Common::Serializer &s) {
@@ -707,6 +722,14 @@ void Scene604::synchronize(Common::Serializer &s) {
 
 	s.syncAsByte(_monsterActive);
 	s.syncAsByte(_animationActiveFl);
+}
+
+void Scene604::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_SEA_MONSTER);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_TIMEBOMB);
 }
 
 void Scene604::enter() {
@@ -1014,11 +1037,18 @@ void Scene605::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene607::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
-	_scene->addActiveVocab(VERB_WALKTO);
+Scene607::Scene607(MADSEngine *vm) : Scene6xx(vm) {
+	_dogTimer = 0;
+	_lastFrameTime = 0;
+
+	_dogLoop = false;
+	_dogEatsRex = false;
+	_dogBarking = false;
+	_shopAvailable = false;
+
+	_animationMode = -1;
+	_animationActive = -1;
+	_counter = -1;
 }
 
 void Scene607::synchronize(Common::Serializer &s) {
@@ -1035,6 +1065,13 @@ void Scene607::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_animationMode);
 	s.syncAsSint16LE(_animationActive);
 	s.syncAsSint16LE(_counter);
+}
+
+void Scene607::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene607::enter() {
@@ -1463,13 +1500,36 @@ void Scene607::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene608::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_POLYCEMENT);
-	_scene->addActiveVocab(NOUN_CAR);
-	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
+Scene608::Scene608(MADSEngine *vm) : Scene6xx(vm) {
+	_carMode = -1;
+	_carFrame = -1;
+	_carMoveMode = -1;
+	_dogDeathMode = -1;
+	_carHotspotId = -1;
+	_barkCount = -1;
+	_polycementHotspotId = -1;
+	_animationMode = -1;
+	_nextTrigger = -1;
+	_throwMode = -1;
+
+	_resetPositionsFl = false;
+	_dogActiveFl = false;
+	_dogBarkingFl = false;
+	_dogFirstEncounter = false;
+	_rexBeingEaten = false;
+	_dogHitWindow = false;
+	_checkFl = false;
+	_dogSquashFl = false;
+	_dogSafeFl = false;
+	_buttonPressedonTimeFl = false;
+	_dogUnderCar = false;
+	_dogYelping = false;
+
+	_dogWindowTimer = -1;
+	_dogRunTimer = -1;
+
+	_dogTimer1 = 0;
+	_dogTimer2 = 0;
 }
 
 void Scene608::synchronize(Common::Serializer &s) {
@@ -1504,6 +1564,15 @@ void Scene608::synchronize(Common::Serializer &s) {
 
 	s.syncAsUint32LE(_dogTimer1);
 	s.syncAsUint32LE(_dogTimer2);
+}
+
+void Scene608::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_POLYCEMENT);
+	_scene->addActiveVocab(NOUN_CAR);
+	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
 }
 
 void Scene608::resetDogVariables() {
@@ -2457,15 +2526,19 @@ void Scene608::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene609::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
+Scene609::Scene609(MADSEngine *vm) : Scene6xx(vm) {
+	_videoDoorMode = -1;
 }
 
 void Scene609::synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsSint16LE(_videoDoorMode);
+}
+
+void Scene609::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
 }
 
 void Scene609::enter() {
@@ -2786,11 +2859,14 @@ void Scene609::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene610::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_PHONE_HANDSET);
-	_scene->addActiveVocab(VERB_WALKTO);
+Scene610::Scene610(MADSEngine *vm) : Scene6xx(vm) {
+	_handsetHotspotId = -1;
+	_checkVal = -1;
+
+	_cellCharging = false;
+
+	_cellChargingTimer = -1;
+	_lastFrameTimer = 0;
 }
 
 void Scene610::synchronize(Common::Serializer &s) {
@@ -2803,6 +2879,13 @@ void Scene610::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint32LE(_cellChargingTimer);
 	s.syncAsUint32LE(_lastFrameTimer);
+}
+
+void Scene610::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_PHONE_HANDSET);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene610::enter() {
@@ -2981,11 +3064,29 @@ void Scene610::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene611::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_RAT);
-	_scene->addActiveVocab(VERB_WALKTO);
+Scene611::Scene611(MADSEngine *vm) : Scene6xx(vm), _defaultDialogPos(0, 0) {
+	_seenRatFl = false;
+	_eyesRunningFl = false;
+	_shouldRemoveEyes = false;
+	_ratPresentFl = false;
+	_duringDialogFl = false;
+	_resetBatterieText = false;
+	_hermitTalkingFl = false;
+	_hermitMovingFl = false;
+	_alreadyTalkingFl = false;
+	_giveBatteriesFl = false;
+	_startTradingFl = false;
+	_check1Fl = false;
+	_stickFingerFl = false;
+
+	_randVal = -1;
+	_ratHotspotId = -1;
+	_hermitDialogNode = -1;
+	_hermitDisplayedQuestion = -1;
+	_nextFrame = -1;
+	_hermitMode = -1;
+
+	_ratTimer = 0;
 }
 
 void Scene611::synchronize(Common::Serializer &s) {
@@ -3016,6 +3117,13 @@ void Scene611::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint16LE(_defaultDialogPos.x);
 	s.syncAsSint16LE(_defaultDialogPos.y);
+}
+
+void Scene611::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_RAT);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene611::handleRatMoves() {
@@ -4386,11 +4494,9 @@ void Scene611::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene612::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
+Scene612::Scene612(MADSEngine *vm) : Scene6xx(vm) {
+	_actionMode = -1;
+	_cycleIndex = -1;
 }
 
 void Scene612::synchronize(Common::Serializer &s) {
@@ -4398,6 +4504,13 @@ void Scene612::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint16LE(_actionMode);
 	s.syncAsSint16LE(_cycleIndex);
+}
+
+void Scene612::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 void Scene612::handleWinchMovement() {

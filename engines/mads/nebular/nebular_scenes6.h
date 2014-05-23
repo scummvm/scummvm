@@ -70,7 +70,7 @@ private:
 	void handleSafeActions();
 
 public:
-	Scene602(MADSEngine *vm) : Scene6xx(vm) {}
+	Scene602(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -84,7 +84,7 @@ private:
 	int _noteHotspotId;
 
 public:
-	Scene603(MADSEngine *vm) : Scene6xx(vm) {}
+	Scene603(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -106,7 +106,7 @@ private:
 	void handleBombActions();
 
 public:
-	Scene604(MADSEngine *vm) : Scene6xx(vm) {}
+	Scene604(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -142,7 +142,7 @@ private:
 	void handleThrowingBone();
 
 public:
-	Scene607(MADSEngine *vm) : Scene6xx(vm) {}
+	Scene607(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -190,7 +190,7 @@ private:
 	void handleThrowingBone();
 
 public:
-	Scene608(MADSEngine *vm) : Scene6xx(vm) {}
+	Scene608(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -207,7 +207,7 @@ private:
 	void enterStore();
 
 public:
-	Scene609(MADSEngine *vm) : Scene6xx(vm) {}
+	Scene609(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -228,7 +228,7 @@ private:
 	uint32 _lastFrameTimer;
 
 public:
-	Scene610(MADSEngine *vm) : Scene6xx(vm) {}
+	Scene610(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -280,7 +280,7 @@ private:
 	bool check4ChargedBatteries();
 
 public:
-	Scene611(MADSEngine *vm) : Scene6xx(vm) {}
+	Scene611(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -298,7 +298,7 @@ private:
 	void handleWinchMovement();
 
 public:
-	Scene612(MADSEngine *vm) : Scene6xx(vm) {}
+	Scene612(MADSEngine *vm);
 	void synchronize(Common::Serializer &s);
 
 	virtual void setup();
