@@ -298,14 +298,7 @@ void Set::Setup::load(Set *set, int id, TextSplitter &ts) {
 	_name = buf;
 
 	ts.scanString(" background %256s", 1, buf);
-	_bkgndBm = Bitmap::create(buf);
-	if (!_bkgndBm) {
-		Debug::warning(Debug::Bitmaps | Debug::Sets,
-					   "Unable to load scene bitmap: %s\n", buf);
-	} else {
-		Debug::debug(Debug::Bitmaps | Debug::Sets,
-					 "Loaded scene bitmap: %s\n", buf);
-	}
+	_bkgndBm = loadBackground(buf);
 
 	// ZBuffer is optional
 	_bkgndZBm = NULL;
@@ -355,7 +348,7 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	data->read(fileName, fNameLen);
 
 	_bkgndZBm = NULL;
-	_bkgndBm = Bitmap::create(fileName);
+	_bkgndBm = loadBackground(fileName);
 
 	char v[4 * 4];
 	data->read(v, 4 * 3);
@@ -630,6 +623,26 @@ void Set::setSetup(int num) {
 	}
 	_currSetup = _setups + num;
 	g_grim->flagRefreshShadowMask(true);
+}
+
+Bitmap::Ptr Set::loadBackground(const char *fileName) {
+	Bitmap::Ptr bg = Bitmap::create(fileName);
+	if (!bg) {
+		Debug::warning(Debug::Bitmaps | Debug::Sets,
+					   "Unable to load scene bitmap: %s, loading dfltroom instead", fileName);
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			bg = Bitmap::create("dfltroom.til");
+		} else {
+			bg = Bitmap::create("dfltroom.bm");
+		}
+		if (!bg) {
+			Debug::error(Debug::Bitmaps | Debug::Sets, "Unable to load dfltroom");
+		}
+	} else {
+		Debug::debug(Debug::Bitmaps | Debug::Sets,
+					 "Loaded scene bitmap: %s", fileName);
+	}
+	return bg;
 }
 
 void Set::drawBackground() const {

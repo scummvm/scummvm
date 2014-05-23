@@ -55,6 +55,7 @@ public:
 	int _minVolume;
 	int _maxVolume;
 
+	static Bitmap::Ptr loadBackground(const char *fileName);
 	void drawBackground() const;
 	void drawBitmaps(ObjectState::Position stage);
 	void setupCamera() {
