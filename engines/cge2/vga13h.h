@@ -152,7 +152,7 @@ public:
 	Seq *setSeq(Seq *seq);
 	CommandHandler::Command *snList(Action type);
 	//virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
-	//virtual void tick();
+	virtual void tick();
 	void clrHide(void) { if (_ext) _ext->_b0 = NULL; }
 	void sync(Common::Serializer &s);
 

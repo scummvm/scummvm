@@ -31,11 +31,13 @@
 namespace CGE2 {
 
 #define kLineMax          512
-#define kIntroExt      ".I80"
-#define kNoByte            -1 // Recheck this! We have no proof for it's original value.
-#define kTabName    "CGE.TAB"
+#define kIntroExt         ".I80"
+#define kNoByte           -1 // Recheck this! We have no proof for it's original value.
+#define kTabName          "CGE.TAB"
 #define kInfoW            140
 #define kPocketFull       170
+#define kGameFrameDelay   (1000 / 50)
+#define kGameTickDelay    (1000 / 62)
 
 } // End of namespace CGE2
 

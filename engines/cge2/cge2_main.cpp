@@ -330,8 +330,15 @@ void CGE2Engine::movie(const char *ext) {
 		loadScript(fn);
 		caveUp(_now);
 
+		while (!_commandHandler->idle() && !_quitFlag)
+			mainLoop();
+
 		warning("STUB: CGE2Engine::movie()");
 
+		_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
+		_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
+		_vga->_showQ->clear();
+		_spare->clear();
 		_now = now;
 	}
 }
@@ -383,8 +390,62 @@ void CGE2Engine::showBak(int ref) {
 	}
 }
 
+void CGE2Engine::mainLoop() {
+	_vga->show();
+	_commandHandlerTurbo->runCommand();
+	_commandHandler->runCommand();
+
+	// Handle a delay between game frames
+	handleFrame();
+
+	// Handle any pending events
+	//_eventManager->poll();
+	warning("STUB: CGE2Engine::mainLoop() - Event handling is missing!");
+
+	// Check shouldQuit()
+	_quitFlag = shouldQuit();
+}
+
+void CGE2Engine::handleFrame() {
+	// Game frame delay
+	uint32 millis = g_system->getMillis();
+	while (!_quitFlag && (millis < (_lastFrame + kGameFrameDelay))) {
+		// Handle any pending events
+		//_eventManager->poll();
+		warning("STUB: CGE2Engine::handleFrame() - Event handling is missing!");
+
+		if (millis >= (_lastTick + kGameTickDelay)) {
+			// Dispatch the tick to any active objects
+			tick();
+			_lastTick = millis;
+		}
+
+		// Slight delay
+		g_system->delayMillis(5);
+		millis = g_system->getMillis();
+	}
+	_lastFrame = millis;
+
+	if (millis >= (_lastTick + kGameTickDelay)) {
+		// Dispatch the tick to any active objects
+		tick();
+		_lastTick = millis;
+	}
+}
+
+void CGE2Engine::tick() {
+	for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
+		if (spr->_time) {
+			if (!spr->_flags._hide) {
+				if (--spr->_time == 0)
+					spr->tick();
+			}
+		}
+	}
+}
+
 void CGE2Engine::loadMap(int cav) {
-	warning("STUB:  CGE2Engine::loadMap()");
+	warning("STUB: CGE2Engine::loadMap()");
 }
 
 void CGE2Engine::openPocket() {

@@ -458,9 +458,9 @@ void Sprite::step(int nr) {
 	warning("STUB: Sprite::step()");
 }
 
-//void Sprite::tick() {
-//	step();
-//}
+void Sprite::tick() {
+	step();
+}
 
 void Sprite::makeXlat(uint8 *x) {
 	if (!_ext)

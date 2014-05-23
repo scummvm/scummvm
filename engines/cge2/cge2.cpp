@@ -70,6 +70,8 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_sex = true;
 	_mouseTop = kWorldHeight / 3;
 	_dark = false;
+	_lastFrame = 0;
+	_lastTick = 0;
 }
 
 void CGE2Engine::init() {

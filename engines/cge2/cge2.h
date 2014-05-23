@@ -86,6 +86,9 @@ public:
 };
 
 class CGE2Engine : public Engine {
+private:
+	uint32 _lastFrame, _lastTick;
+	void tick();
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
 	virtual bool hasFeature(EngineFeature f) const;
@@ -118,6 +121,8 @@ public:
 	int findActivePocket(int ref);
 	void pocFul();
 	void killText();
+	void mainLoop();
+	void handleFrame();
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
