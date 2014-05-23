@@ -584,7 +584,9 @@ void Sprite::show(uint16 pg) {
 }
 
 void Sprite::hide() {
-	warning("STUB: Sprite::hide()");
+	SprExt *e = _ext;
+	if (e->_b0)
+		e->_b0->hide(e->_p0.x, e->_p0.y);
 }
 
 BitmapPtr Sprite::ghost() {
@@ -1093,6 +1095,10 @@ void Bitmap::show(int16 x, int16 y) {
 
 
 void Bitmap::hide(int16 x, int16 y) {
+	V2D pos(_vm, x, y);
+	xLatPos(pos);
+	x = pos.x;
+	y = pos.y;
 	for (int yp = y; yp < y + _h; yp++) {
 		const byte *srcP = (const byte *)_vm->_vga->_page[2]->getBasePtr(x, yp);
 		byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(x, yp);
