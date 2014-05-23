@@ -684,10 +684,8 @@ MessageQueue *MovGraph::method34(StaticANIObject *ani, int xpos, int ypos, int f
 	return method50(ani, _callback1(ani, movitems, count), staticsId);
 }
 
-int MovGraph::changeCallback() {
-	warning("STUB: MovGraph::changeCallback()");
-
-	return 0;
+void MovGraph::changeCallback(Common::Array<MovArr *> *(*callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) {
+	_callback1 = callback1;
 }
 
 bool MovGraph::method3C(StaticANIObject *ani, int flag) {
