@@ -115,11 +115,13 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
+	/*
 	for (uint i = 0; i < _backAnimList.size(); i++) {
 		delete _backAnimList[i]._animData;
 		delete _backAnimList[i]._shadowData;
 	}
 	_backAnimList.clear();
+	*/
 
 	for (uint i = 0; i < _mainHero->_moveSet.size(); i++) {
 		delete _mainHero->_moveSet[i];
@@ -323,11 +325,13 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	_room->loadRoom(_script->getRoomOffset(_locationNr));
+	/*
 	for (uint32 i = 0; i < _backAnimList.size(); i++) {
 		delete _backAnimList[i]._animData;
 		delete _backAnimList[i]._shadowData;
 	}
 	_backAnimList.clear();
+	*/
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
 
 	_graph->makeShadowTable(70, _graph->_shadowTable70);
@@ -696,6 +700,18 @@ void PrinceEngine::showTexts() {
 	}
 }
 
+void PrinceEngine::showBackAnims() {
+	int tempAnimNr = 0;
+	for (uint i = 0; i < _backAnimList.size(); i++) {
+		if (_backAnimList[i].backAnims[tempAnimNr]._state == 0) {
+			Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[tempAnimNr]._animData->getFrame(testAnimFrame);
+			_graph->drawTransparent(_backAnimList[i].backAnims[tempAnimNr]._x, _backAnimList[i].backAnims[tempAnimNr]._y, backAnimSurface); // out of range now - crash .exe
+			backAnimSurface->free();
+			delete backAnimSurface;
+		}
+	}
+}
+
 void PrinceEngine::drawScreen() {
 	const Graphics::Surface *roomSurface = _roomBmp->getSurface();	
 	if (roomSurface) {
@@ -727,12 +743,8 @@ void PrinceEngine::drawScreen() {
 		}
 	}
 	*/
-	for (uint i = 0; i < _backAnimList.size() ; i++) {
-		Graphics::Surface *backAnimSurface = _backAnimList[i]._animData->getFrame(testAnimFrame);
-		_graph->drawTransparent(_backAnimList[i]._x, _backAnimList[i]._y, backAnimSurface); // out of range now - crash .exe
-		backAnimSurface->free();
-		delete backAnimSurface;
-	}
+
+	showBackAnims();
 
 	playNextFrame();
 

@@ -38,6 +38,7 @@ namespace Prince {
 class PrinceEngine;
 class Animation;
 struct Anim;
+struct BackgroundAnim;
 
 namespace Detail {
 	template <typename T> T LittleEndianReader(void *data);
@@ -132,8 +133,8 @@ public:
 	int16 getLightY(int locationNr);
 	int32 getShadowScale(int locationNr);
 	uint8 *getRoomOffset(int locationNr);
-	void installBackAnims(Common::Array<Anim> &_backanimList, int offset);
-	void installSingleBackAnim(Common::Array<Anim> &_backanimList, int offset);
+	void installBackAnims(Common::Array<BackgroundAnim> &_backanimList, int offset);
+	void installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);

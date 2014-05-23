@@ -109,7 +109,7 @@ struct BASA {
 // background and normal animation
 struct Anim {
 	int32 _addr; //animation adress
-	int32 _seq;
+	//int32 _seq;
 	int16 _usage;
 	int16 _state; // state of animation: 0 - turning on, 1 - turning off
 	int16 _flags;
@@ -135,6 +135,11 @@ struct Anim {
 	int16 _relY;
 	Animation *_animData;
 	Animation *_shadowData;
+};
+
+struct BackgroundAnim {
+	BAS _seq;
+	Common::Array<Anim> backAnims;
 };
 
 struct DebugChannel {
@@ -197,7 +202,8 @@ public:
 	Image::BitmapDecoder *_roomBmp;
 
 	Common::Array<AnimListItem> _animList;
-	Common::Array<Anim> _backAnimList;
+	//Common::Array<Anim> _backAnimList;
+	Common::Array<BackgroundAnim> _backAnimList;
 
 	int testAnimNr;
 	int testAnimFrame;
@@ -212,6 +218,7 @@ private:
 	void showTexts();
 	void init();
 	void showLogo();
+	void showBackAnims();
 	void makeShadowTable(int brightness);
 
 	uint32 getTextWidth(const char *s);

@@ -205,51 +205,98 @@ uint8 *Script::getRoomOffset(int locationNr) {
 	return &_data[_scriptInfo.rooms + locationNr * 64];
 }
 
-void Script::installSingleBackAnim(Common::Array<Anim> &_backanimList, int offset) {
+void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset) {
+
+	BackgroundAnim newBackgroundAnim;
+
 	int animOffset = READ_UINT32(&_data[offset]);
-	int animNumber = READ_UINT16(&_data[animOffset + 28]);
-	Anim newAnim;
+	int anims = READ_UINT32(&_data[animOffset + 8]);
+
+	if (anims == 0) {
+		anims = 1;
+	}
+
 	if (animOffset != 0) {
-		const Common::String animName = Common::String::format("AN%02d", animNumber);
-		const Common::String shadowName = Common::String::format("AN%02dS", animNumber);
-		newAnim._animData = new Animation();
-		newAnim._shadowData = new Animation();
-		Resource::loadResource(newAnim._animData, animName.c_str(), true);
-		if (!Resource::loadResource(newAnim._shadowData, shadowName.c_str(), false)) {
-			delete newAnim._shadowData;
-			newAnim._shadowData = nullptr;
+		for (int i = 0; i < anims; i++) {
+			Anim newAnim;
+			int animNumber = READ_UINT16(&_data[animOffset + 28 + i * 8]);
+			const Common::String animName = Common::String::format("AN%02d", animNumber);
+			const Common::String shadowName = Common::String::format("AN%02dS", animNumber);
+			newAnim._animData = new Animation();
+			newAnim._shadowData = new Animation();
+			Resource::loadResource(newAnim._animData, animName.c_str(), true);
+			if (!Resource::loadResource(newAnim._shadowData, shadowName.c_str(), false)) {
+				delete newAnim._shadowData;
+				newAnim._shadowData = nullptr;
+			}
+			//newAnim._seq = 0;
+			newAnim._usage = 0;
+			newAnim._state = 0; // enabled
+			if ((_vm->_animList[animNumber]._flags & 4) != 0) {
+				newAnim._state = 1;
+				newAnim._frame = _vm->_animList[animNumber]._endPhase;
+				newAnim._showFrame = _vm->_animList[animNumber]._endPhase;
+			} else {
+				newAnim._frame = _vm->_animList[animNumber]._startPhase;
+				newAnim._showFrame = _vm->_animList[animNumber]._startPhase;
+			}
+			newAnim._flags = _vm->_animList[animNumber]._flags;
+			newAnim._lastFrame = _vm->_animList[animNumber]._endPhase;
+			newAnim._loopFrame = _vm->_animList[animNumber]._loopPhase;
+			newAnim._loopType = _vm->_animList[animNumber]._loopType;
+			newAnim._nextAnim = _vm->_animList[animNumber]._nextAnim;
+			newAnim._x = _vm->_animList[animNumber]._x;
+			newAnim._y = _vm->_animList[animNumber]._y;
+			newAnim._currFrame = 0;
+			newAnim._currX = _vm->_animList[animNumber]._x;
+			newAnim._currY = _vm->_animList[animNumber]._y;
+			newAnim._currW = 0;
+			newAnim._currH = 0;
+			newAnim._packFlag = 0;
+			newAnim._shadowBack = _vm->_animList[animNumber]._type;
+			newBackgroundAnim.backAnims.push_back(newAnim);
+			debug("%d - animNo: %d", i, animNumber);
 		}
-		newAnim._seq = 0;
-		newAnim._usage = 0;
-		newAnim._state = 0; // enabled
-		if ((_vm->_animList[animNumber]._flags & 4) != 0) {
-			newAnim._state = 1;
-			newAnim._frame = _vm->_animList[animNumber]._endPhase;
-			newAnim._showFrame = _vm->_animList[animNumber]._endPhase;
-		} else {
-			newAnim._frame = _vm->_animList[animNumber]._startPhase;
-			newAnim._showFrame = _vm->_animList[animNumber]._startPhase;
+
+		newBackgroundAnim._seq._type = READ_UINT32(&_data[animOffset]);
+		debug("type: %d", newBackgroundAnim._seq._type);
+		newBackgroundAnim._seq._data = READ_UINT32(&_data[animOffset + 4]);
+		debug("data: %d", newBackgroundAnim._seq._data);
+		newBackgroundAnim._seq._anims = READ_UINT32(&_data[animOffset + 8]);
+		anims = newBackgroundAnim._seq._anims;
+		debug("anims: %d", newBackgroundAnim._seq._anims);
+		//newBackgroundAnim._seq._current = READ_UINT32(&_data[animOffset + 12]);
+		newBackgroundAnim._seq._current = 0; // nr on list like now or should it be fileNr of anim - check it
+		debug("current: %d", newBackgroundAnim._seq._current);
+		//newBackgroundAnim._seq._counter = READ_UINT32(&_data[animOffset + 16]);
+		newBackgroundAnim._seq._counter = 0;
+		debug("counter: %d", newBackgroundAnim._seq._counter);
+		//newBackgroundAnim._seq._currRelative = READ_UINT32(&_data[animOffset + 20]);
+		newBackgroundAnim._seq._currRelative = 0;
+		debug("currRelative: %d", newBackgroundAnim._seq._currRelative);
+		newBackgroundAnim._seq._data2 = READ_UINT32(&_data[animOffset + 24]);
+		debug("data2: %d", newBackgroundAnim._seq._data2);
+
+		int start = READ_UINT16(&_data[animOffset + 28 + 2]); // BASA_Start of first frame
+		debug("start: %d", start);
+		int end = READ_UINT16(&_data[animOffset + 28 + 2]); //BASA_End of first frame
+		debug("end: %d", end);
+
+		if (start != 65535) {
+			newBackgroundAnim.backAnims[0]._frame = start;
+			newBackgroundAnim.backAnims[0]._showFrame = start;
+			newBackgroundAnim.backAnims[0]._loopFrame = start;
 		}
-		newAnim._flags = _vm->_animList[animNumber]._flags;
-		newAnim._lastFrame = _vm->_animList[animNumber]._endPhase;
-		newAnim._loopFrame = _vm->_animList[animNumber]._loopPhase;
-		newAnim._loopType = _vm->_animList[animNumber]._loopType;
-		newAnim._nextAnim = _vm->_animList[animNumber]._nextAnim;
-		newAnim._x = _vm->_animList[animNumber]._x;
-		newAnim._y = _vm->_animList[animNumber]._y;
-		newAnim._currFrame = 0;
-		newAnim._currX = _vm->_animList[animNumber]._x;
-		newAnim._currY = _vm->_animList[animNumber]._y;
-		newAnim._currW = 0;
-		newAnim._currH = 0;
-		newAnim._packFlag = 0;
-		newAnim._shadowBack = _vm->_animList[animNumber]._type;
-		_backanimList.push_back(newAnim);
-		//debug("animNo: %d", animNumber);
+
+		if (end != 65535) {
+			newBackgroundAnim.backAnims[0]._lastFrame = end;
+		}
+
+		_backanimList.push_back(newBackgroundAnim);
 	}
 }
 
-void Script::installBackAnims(Common::Array<Anim> &_backanimList, int offset) {
+void Script::installBackAnims(Common::Array<BackgroundAnim> &_backanimList, int offset) {
 	for (uint i = 0; i < 64; i++) {
 		installSingleBackAnim(_backanimList, offset);
 		offset += 4;
