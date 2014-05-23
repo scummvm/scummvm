@@ -621,6 +621,7 @@ private:
 		int _chore;
 
 		static const unsigned int fadeTime;
+		static const unsigned int talkFadeTime;
 	};
 	ActionChore _restChore;
 

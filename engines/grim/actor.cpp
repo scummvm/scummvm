@@ -1234,7 +1234,7 @@ void Actor::shutUp() {
 
 	if (_lipSync) {
 		if (_talkAnim != -1)
-			_talkChore[_talkAnim].stop();
+			_talkChore[_talkAnim].stop(g_grim->getGameType() == GType_MONKEY4, ActionChore::talkFadeTime);
 		_lipSync = NULL;
 	}
 	// having a lipsync is no guarantee the mumble chore is no running. the talk chores may be -1 (domino in do)
@@ -1502,14 +1502,18 @@ void Actor::update(uint frameTime) {
 					if (_talkChore[anim].isValid()) {
 						stopMumbleChore();
 						if (_talkAnim != -1) {
-							_talkChore[_talkAnim].stop();
+							_talkChore[_talkAnim].stop(g_grim->getGameType() == GType_MONKEY4, ActionChore::talkFadeTime);
 						}
-
-						// Run the stop_talk chore so that it resets the components
-						// to the right visibility.
-						stopTalking();
+						if (g_grim->getGameType() == GType_GRIM) {
+							// Run the stop_talk chore so that it resets the components
+							// to the right visibility.
+							stopTalking();
+						} else {
+							// Make sure the talk rest chore isn't playing.
+							_talkChore[0].stop();
+						}
 						_talkAnim = anim;
-						_talkChore[_talkAnim].play();
+						_talkChore[_talkAnim].play(g_grim->getGameType() == GType_MONKEY4, ActionChore::talkFadeTime);
 					} else if (_mumbleChore.isValid() && !_mumbleChore.isPlaying()) {
 						_mumbleChore.playLooping();
 						_talkAnim = -1;
@@ -1517,7 +1521,7 @@ void Actor::update(uint frameTime) {
 				} else {
 					stopMumbleChore();
 					if (_talkAnim != -1)
-						_talkChore[_talkAnim].stop();
+						_talkChore[_talkAnim].stop(true, ActionChore::talkFadeTime);
 
 					_talkAnim = 0;
 					stopTalking();
@@ -2272,6 +2276,7 @@ void Actor::restoreCleanBuffer() {
 }
 
 unsigned const int Actor::ActionChore::fadeTime = 150;
+unsigned const int Actor::ActionChore::talkFadeTime = 50;
 
 Actor::ActionChore::ActionChore() :
 	_costume(NULL),
