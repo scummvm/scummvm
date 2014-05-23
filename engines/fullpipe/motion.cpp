@@ -926,6 +926,67 @@ MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int st
 }
 
 MessageQueue *MovGraph::method50(StaticANIObject *ani, Common::Array<MovArr *> *movarr, int staticsId) {
+#if 0
+	if (_itemsCount <= 0)
+		return 0;
+
+	int idx;
+	int movidx;
+	bool done = false;
+
+	for (idx = 0; idx <= _itemsCount && !done; idx++) {
+		if (idx == _itemsCount)
+			return 0;
+
+		if (_items[idx]->ani == ani) {
+			if (!_items[idx]->movitems)
+				return 0;
+
+			if (_items[idx]->count < 1)
+				return 0;
+
+			for (movidx = 0; movidx < _items[idx]->count; movidx++)
+				if (_items[idx]->movitems[movidx]->movarr == movarr) {
+					done = true;
+
+					break;
+				}
+			}
+		}
+	}
+
+	v11 = this->_items;
+	v12 = idx << 6;
+	v13 = (*(MovItem **)((char *)&v11->movitems + v12))[movidx].movarr;
+	if ( *(MovArr **)((char *)&v11->movarr + v12) )
+		CObjectFree(*(void **)((char *)&v11->movarr + v12));
+	memcpy((char *)&this->_items->movarr + v12, v13, 0x20u);
+	*(MovArr **)((char *)&this->_items->movarr + v12) = (MovArr *)operator new(8 * v13->_movStepCount);
+	memcpy(*(void **)((char *)&this->_items->movarr + v12), v13->_movSteps, 8 * v13->_movStepCount);
+	*(int *)((char *)&this->_items->field_10 + v12) = -1;
+	*(int *)((char *)&this->_items->field_14 + v12) = 0;
+
+	MessageQueue *mq = fillMGMinfo(*(StaticANIObject **)((char *)&this->_items->ani + v12), (MovArr *)((char *)&this->_items->movarr + v12), 0);
+	if (!mq)
+		return 0;
+
+	ExCommand *ex = new ExCommand();
+
+	ex->_messageKind = 17;
+	ex->_messageNum = 54;
+	ex->_parentId = ani->_id;
+	ex->_field_3C = 1;
+	mq->addExCommandToEnd(ex);
+
+	if (!mq->chain(ani)) {
+		delete mq;
+
+		return 0;
+	}
+
+	return mq;
+#endif
+
 	warning("STUB: MovGraph::method50()");
 
 	return 0;
