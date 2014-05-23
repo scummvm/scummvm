@@ -375,4 +375,14 @@ void Bitmap::xLatPos(V2D& p) {
 	p.y = kWorldHeight - p.y - _h;
 }
 
+bool Bitmap::moveHi(void) {
+	warning("STUB: Bitmap::moveHi()");
+	return true;
+}
+
+bool Bitmap::moveLo(void) {
+	warning("STUB: Bitmap::moveLo()");
+	return true;
+}
+
 } // End of namespace CGE2

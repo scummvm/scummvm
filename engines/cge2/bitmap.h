@@ -79,6 +79,8 @@ public:
 	void xShow(int16 x, int16 y);
 	bool solidAt(int16 x, int16 y);
 	void xLatPos(V2D& p);
+	bool moveHi(void);
+	bool moveLo(void);
 };
 
 

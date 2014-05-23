@@ -232,8 +232,6 @@ Sprite *Sprite::expand() {
 	if (!*_file)
 		return this;
 
-	char fname[kPathMax];
-
 	Common::Array<BitmapPtr> shplist;
 	for (int i = 0; i < _shpCnt; ++i)
 		shplist.push_back(NULL);
@@ -243,6 +241,9 @@ Sprite *Sprite::expand() {
 		seqcnt = 0,
 		maxnow = 0,
 		maxnxt = 0;
+
+	char fname[kPathMax];
+	_vm->mergeExt(fname, _file, kSprExt);
 
 	Seq *seq;
 	if (_seqCnt) {
@@ -265,14 +266,114 @@ Sprite *Sprite::expand() {
 			_ext->_actions[i] = nullptr;
 	}
 
-	int section = kIdPhase;
-
-	_vm->mergeExt(fname, _file, kSprExt);
 	if (_vm->_resman->exist(fname)) { // sprite description file exist
+		EncryptedStream sprf(_vm, fname);
+		if (sprf.err())
+			error("Bad SPR [%s]", fname);
 
-		warning("STUB: Sprite::expand()");
+		int label = kNoByte;
+		ID section = kIdPhase;
+		ID id;
+		Common::String line;
+		char tmpStr[kLineMax + 1];
 
-	} else // no sprite description: try to read immediately from .BMP
+		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()){
+			int len = line.size();
+			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
+			if (len == 0 || *tmpStr == ';')
+				continue;
+
+			char *p = _vm->token(tmpStr);
+			if (*p == '@') {
+				label = atoi(p + 1);
+				continue;
+			}
+
+			id = _vm->ident(p);
+			switch (id) {
+			case kIdType:
+				break;
+			case kIdNear:
+			case kIdMTake:
+			case kIdFTake:
+			case kIdPhase:
+			case kIdSeq:
+				section = id;
+				break;
+			case kIdName:
+				Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
+				for (p = tmpStr; *p != '='; p++); // We search for the =
+				setName(_vm->tail(p));
+				break;
+			default:
+				if (id >= kIdNear)
+					break;
+				Seq *s;
+				switch (section) {
+				case kIdNear:
+				case kIdMTake:
+				case kIdFTake:
+					id = (ID)_vm->_commandHandler->com(p);
+					if (_actionCtrl[section]._cnt) {
+						CommandHandler::Command *c = &_ext->_actions[section][cnt[section]++];
+						c->_commandType = CommandType(id);
+						c->_lab = label;
+						if ((p = _vm->token(nullptr)) == NULL)
+							error("Unexpected end of file! %s", fname);
+						c->_ref = _vm->number(p);
+						if ((p = _vm->token(nullptr)) == NULL)
+							error("Unexpected end of file! %s", fname);
+						c->_val = _vm->number(p);
+						c->_spritePtr = nullptr;
+					}
+					break;
+				case kIdSeq:
+					s = &seq[seqcnt++];
+					s->_now = atoi(p);
+					if (s->_now > maxnow)
+						maxnow = s->_now;
+					if ((p = _vm->token(nullptr)) == NULL)
+						break;
+					s->_next = _vm->number(p);
+					switch (s->_next) {
+					case 0xFF:
+						s->_next = seqcnt;
+						break;
+					case 0xFE:
+						s->_next = seqcnt - 1;
+						break;
+					}
+					if (s->_next > maxnxt)
+						maxnxt = s->_next;
+					if ((p = _vm->token(nullptr)) == NULL)
+						error("Unexpected end of file! %s", fname);
+					s->_dx = _vm->number(p);
+					if ((p = _vm->token(nullptr)) == NULL)
+						error("Unexpected end of file! %s", fname);
+					s->_dy = _vm->number(p);
+					if ((p = _vm->token(nullptr)) == NULL)
+						error("Unexpected end of file! %s", fname);
+					s->_dz = _vm->number(p);
+					if ((p = _vm->token(nullptr)) == NULL)
+						error("Unexpected end of file! %s", fname);
+					s->_dly = _vm->number(p);
+					break;
+				case kIdPhase:
+					BitmapPtr bmp = new Bitmap(_vm, p);
+					shplist[shpcnt] = bmp;
+					if (!shplist[shpcnt]->moveHi())
+						error("No EMS");
+					shpcnt++;
+					break;
+				}
+				break;
+			}
+			label = kNoByte;
+		}
+
+		if (!shpcnt)
+			error("No shapes - %s", fname);
+		} else // no sprite description: try to read immediately from .BMP
 		shplist[shpcnt++] = new Bitmap (_vm, _file);
 
 	if (seq) {

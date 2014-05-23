@@ -37,7 +37,7 @@
 
 namespace CGE2 {
 
-int CGE2Engine::number(char *s) {
+int CGE2Engine::number(char *s) { // TODO: Rework it later to include the preceding token() call!
 	int r = atoi(s);
 	char *pp = strchr(s, ':');
 	if (pp)
@@ -47,6 +47,12 @@ int CGE2Engine::number(char *s) {
 
 char *CGE2Engine::token(char *s) {
 	return strtok(s, " =\t,;/()");
+}
+
+char *CGE2Engine::tail(char *s) {
+	if (s && (*s == '='))
+		s++;
+	return s;
 }
 
 int CGE2Engine::takeEnum(const char **tab, const char *text) {
@@ -222,7 +228,7 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 			*p = '\0';
 
 		_sprite->_shpCnt = shpcnt;
-		_sprite->_seqPtr = seqcnt;
+		_sprite->_seqCnt = seqcnt;
 
 		for (int i = 0; i < kActions; i++)
 			_sprite->_actionCtrl[i]._cnt = cnt[i];

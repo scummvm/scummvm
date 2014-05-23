@@ -114,6 +114,7 @@ class CommandHandler {
 public:
 	struct Command {
 		CommandType _commandType;
+		byte _lab;
 		int _ref;
 		int _val;
 		void *_spritePtr;
