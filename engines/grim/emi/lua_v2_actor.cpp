@@ -573,14 +573,14 @@ void Lua_V2::SetActorTalkChore() {
 	}
 
 	int index = (int)lua_getnumber(indexObj);
-	if (index < 1 || index > 16)
+	if (index < 0 || index >= 16)
 		return;
 
 	Actor *actor = getactor(actorObj);
 
 	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
-	actor->setTalkChore(index, chore, costume);
+	actor->setTalkChore(index + 1, chore, costume);
 }
 
 void Lua_V2::SetActorMumblechore() {
