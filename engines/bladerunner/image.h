@@ -42,6 +42,6 @@ public:
 	void copyToSurface(Graphics::Surface *surface) const;
 };
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner
 
 #endif

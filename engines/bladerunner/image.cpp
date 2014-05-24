@@ -75,4 +75,4 @@ void Image::copyToSurface(Graphics::Surface *dst) const {
 	dst->copyRectToSurface(_surface, 0, 0, Common::Rect(_surface.w, _surface.h));
 }
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner

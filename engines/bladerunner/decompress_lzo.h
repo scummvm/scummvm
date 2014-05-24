@@ -29,6 +29,6 @@ namespace BladeRunner {
 
 int decompress_lzo1x(const uint8 *in, size_t inLen, uint8 *out, size_t *outLen);
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner
 
 #endif

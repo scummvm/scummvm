@@ -77,6 +77,6 @@ public:
 	char *getOuttake(int i)        { return _outtakes[i]; }
 };
 
-} // End of namespace Blade Runner
+} // End of namespace BladeRunner
 
 #endif

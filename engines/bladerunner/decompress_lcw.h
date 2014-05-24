@@ -30,6 +30,6 @@ namespace BladeRunner {
 uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen);
 uint32 decompress_lcw_output_size(void *inBuf, uint32 inLen);
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner
 
 #endif

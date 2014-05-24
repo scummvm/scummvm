@@ -164,4 +164,4 @@ void ADPCMWestwoodDecoder::decode(uint8 *in, size_t size, int16 *out)
 	_predictor = predictor;
 }
 
-};
+} // End of namespace BladeRunner

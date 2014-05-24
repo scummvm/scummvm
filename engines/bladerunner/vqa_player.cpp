@@ -129,4 +129,4 @@ void VQAPlayer::queueAudioFrame(Audio::AudioStream *audioStream) {
 	_audioStream->queueAudioStream(audioStream, DisposeAfterUse::YES);
 }
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner

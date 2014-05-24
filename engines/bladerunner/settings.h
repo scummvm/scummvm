@@ -89,6 +89,6 @@ public:
 	bool openNewScene();
 };
 
-} // End of namespace Blade Runner
+} // End of namespace BladeRunner
 
 #endif

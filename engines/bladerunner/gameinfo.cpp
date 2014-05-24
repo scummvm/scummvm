@@ -109,4 +109,4 @@ bool GameInfo::open(const Common::String &name) {
 	return !s->err();
 }
 
-} // End of namespace Blade Runner
+} // End of namespace BladeRunner

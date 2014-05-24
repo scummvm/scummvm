@@ -85,6 +85,6 @@ private:
 	void queueAudioFrame(Audio::AudioStream *audioStream);
 };
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner
 
 #endif

@@ -215,6 +215,6 @@ private:
 	};
 };
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner
 
 #endif

@@ -86,6 +86,6 @@ public:
 	Common::SeekableReadStream *getResourceStream(const Common::String &name);
 };
 
-} // End of namespace Blade Runner
+} // End of namespace BladeRunner
 
 #endif

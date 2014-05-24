@@ -57,6 +57,6 @@ public:
 	int  currentResouceId() { return _chapter ? _resourceIds[_chapter] : -1; }
 };
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner
 
 #endif

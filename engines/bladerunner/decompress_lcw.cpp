@@ -159,4 +159,4 @@ uint32 decompress_lcw_output_size(uint8 *inBuf, uint32 inLen) {
 	return outsize;
 }
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner

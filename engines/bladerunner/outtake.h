@@ -49,6 +49,6 @@ public:
 	void play(const Common::String &name, bool noLocalization, int container);
 };
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner
 
 #endif

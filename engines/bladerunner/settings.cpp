@@ -96,4 +96,4 @@ bool Settings::openNewScene() {
 	return true;
 }
 
-} // End of namespace Blade Runner
+} // End of namespace BladeRunner

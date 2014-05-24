@@ -140,4 +140,4 @@ eof_found:
 	return ip != ip_end;
 }
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner

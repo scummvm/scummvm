@@ -934,4 +934,4 @@ bool VQADecoder::VQAAudioTrack::readSN2J(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-}; // End of namespace BladeRunner
+} // End of namespace BladeRunner
