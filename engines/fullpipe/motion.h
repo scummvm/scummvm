@@ -307,7 +307,7 @@ struct MovStep {
 };
 
 struct MovArr {
-	MovStep *_movSteps;
+	Common::Array<MovStep *> _movSteps;
 	int _movStepCount;
 	int _afield_8;
 	MovGraphLink *_link;

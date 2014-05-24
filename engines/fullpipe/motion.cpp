@@ -738,7 +738,7 @@ bool MovGraph::method44(StaticANIObject *ani, int x, int y) {
 				int cnt = (*movarr)[0]->_movStepCount;
 
 				if (cnt > 0) {
-					if ((*movarr)[0]->_movSteps[cnt - 1].link->_flags & 0x4000000)
+					if ((*movarr)[0]->_movSteps[cnt - 1]->link->_flags & 0x4000000)
 						return true;
 				}
 			}
@@ -851,13 +851,13 @@ MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int st
 
 	for (int i = 0; i < movarr->_movStepCount; i++) {
 		while (i < movarr->_movStepCount - 1) {
-			if (movarr->_movSteps[i    ].link->_dwordArray1[movarr->_movSteps[i - 1].sfield_0 + _field_44] !=
-				movarr->_movSteps[i + 1].link->_dwordArray1[movarr->_movSteps[i    ].sfield_0 + _field_44])
+			if (movarr->_movSteps[i    ]->link->_dwordArray1[movarr->_movSteps[i - 1]->sfield_0 + _field_44] !=
+				movarr->_movSteps[i + 1]->link->_dwordArray1[movarr->_movSteps[i    ]->sfield_0 + _field_44])
 				break;
 			i++;
 		}
 
-		MovStep *st = &movarr->_movSteps[i];
+		MovStep *st = movarr->_movSteps[i];
 
 		ani->getMovementById(st->link->_dwordArray1[_field_44 + st->sfield_0]);
 
@@ -865,7 +865,7 @@ MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int st
 			id2 = staticsId;
 		} else {
 			if (i < movarr->_movStepCount - 1)
-				id2 = ani->getMovementById(movarr->_movSteps[i + 1].link->_dwordArray1[_field_44 + st->sfield_0])->_staticsObj1->_staticsId;
+				id2 = ani->getMovementById(movarr->_movSteps[i + 1]->link->_dwordArray1[_field_44 + st->sfield_0])->_staticsObj1->_staticsId;
 			else
 				id2 = st->link->_dwordArray2[_field_44 + st->sfield_0];
 		}
@@ -955,18 +955,19 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, Common::Array<MovArr *> *
 		}
 	}
 
-	v11 = this->_items;
-	v12 = idx << 6;
-	v13 = (*(MovItem **)((char *)&v11->movitems + v12))[movidx].movarr;
-	if ( *(MovArr **)((char *)&v11->movarr + v12) )
-		CObjectFree(*(void **)((char *)&v11->movarr + v12));
-	memcpy((char *)&this->_items->movarr + v12, v13, 0x20u);
-	*(MovArr **)((char *)&this->_items->movarr + v12) = (MovArr *)operator new(8 * v13->_movStepCount);
-	memcpy(*(void **)((char *)&this->_items->movarr + v12), v13->_movSteps, 8 * v13->_movStepCount);
-	*(int *)((char *)&this->_items->field_10 + v12) = -1;
-	*(int *)((char *)&this->_items->field_14 + v12) = 0;
+	if (_items[idx]->movarr)
+		delete _items[idx]->movarr;
 
-	MessageQueue *mq = fillMGMinfo(*(StaticANIObject **)((char *)&this->_items->ani + v12), (MovArr *)((char *)&this->_items->movarr + v12), 0);
+	_items[idx]->movarr = _items[idx]->movitems[movidx].movarr;
+
+	_items[idx]->movarr->_movSteps.clear();
+	_items[idx]->movarr->_movSteps = _items[idx]->movitems[movidx].movarr->_movSteps;
+
+	_items[idx]->field_10 = -1;
+	_items[idx]->field_14 = 0;
+
+	MessageQueue *mq = fillMGMinfo(_items[idx]->ani, _items[idx]->movarr, 0);
+
 	if (!mq)
 		return 0;
 
