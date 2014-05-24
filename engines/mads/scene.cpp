@@ -548,7 +548,7 @@ void Scene::doAction() {
 
 			if (_action._inProgress) {
 				_action._savedFields._commandError = true;
-				warning("TODO: PtrUnk4");
+				_sceneLogic->unhandledAction();
 			}
 
 			if (_action._inProgress)

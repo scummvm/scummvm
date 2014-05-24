@@ -115,6 +115,11 @@ public:
 	virtual void postActions() {}
 
 	/**
+	 * Unhandled action handling
+	 */
+	virtual void unhandledAction() {}
+
+	/**
 	 * Synchronize any local data for the scene
 	 */
 	virtual void synchronize(Common::Serializer &s) {}
