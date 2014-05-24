@@ -752,7 +752,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 		int idx = getItemIndexByStaticAni(subj);
 
 		for (int i = 0; i < _items[idx]->count; i++) {
-			if (_items[idx]->movitems->operator[](i)->movarr == goal) {
+			if ((*_items[idx]->movitems)[i]->movarr == goal) {
 				if (subj->_movement) {
 					Common::Point point;
 
@@ -782,7 +782,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 		if (_items[idx]->count > 0) {
 			int arridx = 0;
 
-			while (_items[idx]->movitems->operator[](arridx)->movarr != goal) {
+			while ((*_items[idx]->movitems)[arridx]->movarr != goal) {
 				arridx++;
 
 				if (arridx >= _items[idx]->count) {
@@ -792,8 +792,8 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 			}
 
 			_items[idx]->movarr._movSteps.clear();
-			_items[idx]->movarr = *_items[idx]->movitems->operator[](arridx)->movarr;
-			_items[idx]->movarr._movSteps = _items[idx]->movitems->operator[](arridx)->movarr->_movSteps;
+			_items[idx]->movarr = *(*_items[idx]->movitems)[arridx]->movarr;
+			_items[idx]->movarr._movSteps = (*_items[idx]->movitems)[arridx]->movarr->_movSteps;
 			_items[idx]->movarr._afield_8 = -1;
 			_items[idx]->movarr._link = 0;
 
@@ -929,7 +929,7 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 				return 0;
 
 			for (movidx = 0; movidx < _items[idx]->count; movidx++) {
-				if (_items[idx]->movitems->operator[](movidx)->movarr == movarr) {
+				if ((*_items[idx]->movitems)[movidx]->movarr == movarr) {
 					done = true;
 
 					break;
@@ -939,8 +939,8 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 	}
 
 	_items[idx]->movarr._movSteps.clear();
-	_items[idx]->movarr = *_items[idx]->movitems->operator[](movidx)->movarr;
-	_items[idx]->movarr._movSteps = _items[idx]->movitems->operator[](movidx)->movarr->_movSteps;
+	_items[idx]->movarr = *(*_items[idx]->movitems)[movidx]->movarr;
+	_items[idx]->movarr._movSteps = (*_items[idx]->movitems)[movidx]->movarr->_movSteps;
 	_items[idx]->movarr._afield_8 = -1;
 	_items[idx]->movarr._link = 0;
 
