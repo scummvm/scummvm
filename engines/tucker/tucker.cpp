@@ -604,6 +604,7 @@ void TuckerEngine::mainLoop() {
 				_flagsTable[236] = 74;
 			}
 		}
+
 		if (_flagsTable[236] > 70) {
 			handleCreditsSequence();
 			_quitGame = true;

@@ -115,7 +115,8 @@ void TuckerEngine::handleCreditsSequence() {
 		if (counter4 == _creditsSequenceTimecounts[num]) {
 			_fadePaletteCounter = 0;
 			clearSprites();
-			++num;
+			if (num < 6)
+				++num;
 			Common::String filename;
 			if (num == 6) {
 				for (int i = 0; i < 16; ++i) {
@@ -123,6 +124,7 @@ void TuckerEngine::handleCreditsSequence() {
 					loadImage(filename.c_str(), imgBuf + i * 64000, 2);
 				}
 			} else {
+				filename = "";
 				switch (num) {
 				case 1:
 					filename = "loc75.pcx";
@@ -140,7 +142,8 @@ void TuckerEngine::handleCreditsSequence() {
 					filename = "loc78.pcx";
 					break;
 				}
-				loadImage(filename.c_str(), _quadBackgroundGfxBuf, 2);
+				if (filename != "")
+					loadImage(filename.c_str(), _quadBackgroundGfxBuf, 2);
 			}
 			_spritesCount = _creditsSequenceSpriteCounts[num];
 			++_flagsTable[236];
