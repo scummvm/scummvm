@@ -910,16 +910,15 @@ MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int st
 }
 
 MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int staticsId) {
-#if 0
-	if (_itemsCount <= 0)
+	if (_items.size() == 0)
 		return 0;
 
 	int idx;
 	int movidx;
 	bool done = false;
 
-	for (idx = 0; idx <= _itemsCount && !done; idx++) {
-		if (idx == _itemsCount)
+	for (idx = 0; idx <= _items.size() && !done; idx++) {
+		if (idx == _items.size())
 			return 0;
 
 		if (_items[idx]->ani == ani) {
@@ -929,8 +928,8 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 			if (_items[idx]->count < 1)
 				return 0;
 
-			for (movidx = 0; movidx < _items[idx]->count; movidx++)
-				if (_items[idx]->movitems[movidx]->movarr == movarr) {
+			for (movidx = 0; movidx < _items[idx]->count; movidx++) {
+				if (_items[idx]->movitems->operator[](movidx)->movarr == movarr) {
 					done = true;
 
 					break;
@@ -939,16 +938,13 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 		}
 	}
 
-	if (_items[idx]->movarr)
-		delete _items[idx]->movarr;
+	_items[idx]->movarr._movSteps.clear();
+	_items[idx]->movarr = *_items[idx]->movitems->operator[](movidx)->movarr;
+	_items[idx]->movarr._movSteps = _items[idx]->movitems->operator[](movidx)->movarr->_movSteps;
+	_items[idx]->movarr._afield_8 = -1;
+	_items[idx]->movarr._link = 0;
 
-	_items[idx]->copyPart(_items[idx]->movitems[movidx]);
-	_items[idx]->movarr->_movSteps.clear();
-	_items[idx]->movarr->_movSteps = _items[idx]->movitems[movidx].movarr->_movSteps;
-	_items[idx]->field_10 = -1;
-	_items[idx]->field_14 = 0;
-
-	MessageQueue *mq = fillMGMinfo(_items[idx]->ani, _items[idx]->movarr, 0);
+	MessageQueue *mq = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, 0);
 
 	if (!mq)
 		return 0;
@@ -968,11 +964,6 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 	}
 
 	return mq;
-#endif
-
-	warning("STUB: MovGraph::method50()");
-
-	return 0;
 }
 
 double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch) {
