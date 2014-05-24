@@ -39,12 +39,6 @@ SequenceEntry::SequenceEntry() {
 	_depth = 0;
 	_scale = 0;
 	_dynamicHotspotIndex = -1;
-	_field18 = 0;
-	_field1A = 0;
-	_field1C = 0;
-	_field1E = 0;
-	_field20 = 0;
-	_field22 = 0;
 	_triggerCountdown = 0;
 	_doneFlag = 0;
 	_triggerMode = SEQUENCE_TRIGGER_DAEMON;
@@ -226,26 +220,27 @@ bool SequenceList::loadSprites(int seqIndex) {
 			int height = frame->getHeight() * seqEntry._scale / 100;
 			Common::Point pt = spriteSlot._position;
 
-			// ToDO: Find out the proper meanings of the following fields
+			// Handle sprite movement, if present
 			if (seqEntry._flags & 1) {
-				seqEntry._field20 += seqEntry._field18;
-				if (seqEntry._field20 >= 100) {
-					int v = seqEntry._field20 / 100;
-					seqEntry._position.x += v * seqEntry._field1C;
-					seqEntry._field20 -= v * 100;
+				seqEntry._posAccum.x += seqEntry._posDiff.x;
+				if (seqEntry._posAccum.x >= 100) {
+					int v = seqEntry._posAccum.x / 100;
+					seqEntry._position.x += v * seqEntry._posSign.x;
+					seqEntry._posAccum.x -= v * 100;
 				}
 
-				seqEntry._field22 += seqEntry._field1A;
-				if (seqEntry._field22 >= 100) {
-					int v = seqEntry._field22 / 100;
-					seqEntry._position.y += v * seqEntry._field1E;
-					seqEntry._field22 -= v * 100;
+				seqEntry._posAccum.y += seqEntry._posDiff.y;
+				if (seqEntry._posAccum.y >= 100) {
+					int v = seqEntry._posAccum.y / 100;
+					seqEntry._position.y += v * seqEntry._posSign.y;
+					seqEntry._posAccum.y -= v * 100;
 				}
 			}
 
 			if (seqEntry._flags & 2) {
+				// Check for object having moved off-scren
 				if ((pt.x + width) < 0 || (pt.x + width) >= MADS_SCREEN_WIDTH ||
-						pt.y < 0 || (pt.y + height) >= MADS_SCENE_HEIGHT) {
+						pt.y < 0 || (pt.y - height) >= MADS_SCENE_HEIGHT) {
 					result = true;
 					seqEntry._doneFlag = true;
 				}
@@ -509,10 +504,30 @@ void SequenceList::setDone(int seqIndex) {
 }
 
 void SequenceList::setMotion(int seqIndex, int flags, int deltaX, int deltaY) {
-	warning("TODO: setMotion()");
-	// HACK: Just offset by the delta for now
-	_entries[seqIndex]._position.x += deltaX;
-	_entries[seqIndex]._position.y += deltaY;
+	SequenceEntry &se = _entries[seqIndex];
+	se._flags = flags | 1;
+
+	// Set the direction sign for movement
+	if (deltaX > 0) {
+		se._posSign.x = 1;
+	} else if (deltaX < 0) {
+		se._posSign.x = -1;
+	} else {
+		se._posSign.x = 0;
+	}
+
+	if (deltaY > 0) {
+		se._posSign.y = 1;
+	}
+	else if (deltaY < 0) {
+		se._posSign.y = -1;
+	} else {
+		se._posSign.y = 0;
+	}
+
+	se._posDiff.x = ABS(deltaX);
+	se._posDiff.y = ABS(deltaY);
+	se._posAccum.x = se._posAccum.y = 0;
 }
 
 } // End of namespace
