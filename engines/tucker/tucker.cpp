@@ -890,9 +890,8 @@ void TuckerEngine::updateCharPosition() {
 				if (action->_testFlag1Num < 500) {
 					if (action->_testFlag1Num >= 300)
 						error("updateCharPosition() - Unexpected value for _testFlag1Num : %d", action->_testFlag1Num);
-					if (_flagsTable[action->_testFlag1Num] != action->_testFlag1Value) {
+					if (_flagsTable[action->_testFlag1Num] != action->_testFlag1Value)
 						skip = false;
-					}
 				} else if (_inventoryItemsState[action->_testFlag1Num - 500] != action->_testFlag1Value) {
 					skip = false;
 				}
@@ -900,9 +899,10 @@ void TuckerEngine::updateCharPosition() {
 			}
 			if (action->_testFlag2Num != 0) {
 				if (action->_testFlag2Num < 500) {
-					if (_flagsTable[action->_testFlag2Num] != action->_testFlag2Value) {
+					if (action->_testFlag2Num >= 300)
+						error("updateCharPosition() - Unexpected value for _testFlag1Num : %d", action->_testFlag1Num);
+					if (_flagsTable[action->_testFlag2Num] != action->_testFlag2Value)
 						skip = false;
-					}
 				} else if (_inventoryItemsState[action->_testFlag2Num - 500] != action->_testFlag2Value) {
 					skip = false;
 				}
