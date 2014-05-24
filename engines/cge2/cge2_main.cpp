@@ -451,12 +451,18 @@ Sprite *CGE2Engine::locate(int ref) {
 void CGE2Engine::tick() {
 	for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 		if (spr->_time) {
-			if (!spr->_flags._hide) {
-				if (--spr->_time == 0)
-					spr->tick();
-			}
+			if (--spr->_time == 0)
+				spr->tick();
+		}
+		if (_waitRef) {
+			if (_waitRef == _sprite->_ref)
+				if (spr->seqTest(_waitSeq))
+					_waitRef = 0;
 		}
 	}
+
+	//Mouse->Tick();
+	warning("STUB: CGE2Engine::tick() - Mouse");
 }
 
 void CGE2Engine::loadMap(int cav) {
