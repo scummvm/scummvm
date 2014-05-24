@@ -61,6 +61,11 @@ Scene::Scene(MADSEngine *vm): _vm(vm), _action(_vm), _depthSurface(vm),
 
 	_paletteUsageF.push_back(PaletteUsage::UsageEntry(0xF));
 
+	// Set up a scene surface that maps to our physical screen drawing surface
+	_sceneSurface.init(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT, MADS_SCREEN_WIDTH,
+		_vm->_screen.getPixels(), Graphics::PixelFormat::createFormatCLUT8());
+
+	// Set up the verb list
 	_verbList.push_back(VerbInit(VERB_LOOK, VERB_THAT, PREP_NONE));
 	_verbList.push_back(VerbInit(VERB_TAKE, VERB_THAT, PREP_NONE));
 	_verbList.push_back(VerbInit(VERB_PUSH, VERB_THAT, PREP_NONE));
@@ -487,7 +492,7 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 
 	// Draw sprites that have changed
 	if (_vm->getGameID() == GType_RexNebular)	// TODO: Implement for V2 games
-		_spriteSlots.drawSprites(&_vm->_screen);
+		_spriteSlots.drawSprites(&_sceneSurface);
 
 	// Draw text elements onto the view
 	_textDisplay.draw(&_vm->_screen);

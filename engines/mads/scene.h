@@ -84,6 +84,7 @@ protected:
 	MADSEngine *_vm;
 public:
 	SceneLogic *_sceneLogic;
+	MSurface _sceneSurface;
 	int _priorSceneId;
 	int _nextSceneId;
 	int _currentSceneId;
