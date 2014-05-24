@@ -306,7 +306,7 @@ void Scene101::preActions() {
 		if (_game._player._needToWalk) {
 			switch (_game._trigger) {
 			case 0:
-				_game._player._needToWalk = false;
+				_game._player._readyToWalk = false;
 				_game._player._stepEnabled = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[11]);
 				_globals._sequenceIndexes[11] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
@@ -319,7 +319,7 @@ void Scene101::preActions() {
 				_sittingFl = false;
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
-				_game._player._needToWalk = true;
+				_game._player._readyToWalk = true;
 				_scene->_hotspots.activate(71, true);
 				_scene->_dynamicHotspots.remove(_chairHotspotId);
 				_globals._sequenceIndexes[12] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[12], false, 6, 0, 0, 0);
