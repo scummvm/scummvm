@@ -448,6 +448,10 @@ Sprite *CGE2Engine::locate(int ref) {
 	return spr;
 }
 
+bool CGE2Engine::isHero(Sprite *spr) {
+	return spr && spr->_ref / 10 == 14;
+}
+
 void CGE2Engine::tick() {
 	for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 		if (spr->_time) {

@@ -72,7 +72,7 @@ void Spare::dispose(Sprite *spr) {
 	if (spr) {
 		_vm->_vga->_showQ->remove(spr);
 		update(spr->contract());
-		if (spr->_ref / 10 != 14) { // IIRC if it's == 14, it's the sprite of a Hero. No idea yet why it shouldn't be deleted then.
+		if (!_vm->isHero(spr)) {
 			for (int i = 0; i < _container.size(); i++) {
 				if (spr == _container[i]) {
 					_container.remove_at(i);
