@@ -507,14 +507,6 @@ bool MctlCompoundArray::load(MfcArchive &file) {
 MovGraphItem::MovGraphItem() {
 	ani = 0;
 	field_4 = 0;
-	movarr = 0;
-	field_C = 0;
-	field_10 = 0;
-	field_14 = 0;
-	field_18 = 0;
-	field_1C = 0;
-	field_20 = 0;
-	field_24 = 0;
 	movitems = 0;
 	count = 0;
 	field_30 = 0;
@@ -529,7 +521,7 @@ void MovGraphItem::free() {
 
 int MovGraph_messageHandler(ExCommand *cmd);
 
-Common::Array<MovArr *> *movGraphCallback(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter) {
+MovArr *movGraphCallback(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter) {
 	int residx = 0;
 	int itemidx = 0;
 
@@ -592,10 +584,7 @@ void MovGraph::freeItems() {
 	for (uint i = 0; i < _items.size(); i++) {
 		_items[i]->free();
 
-		for (uint j = 0; j < _items[i]->movarr->size(); j++)
-			delete (*_items[i]->movarr)[j];
-
-		delete _items[i]->movarr;
+		_items[i]->movarr._movSteps.clear();
 	}
 
 	_items.clear();
@@ -684,7 +673,7 @@ MessageQueue *MovGraph::method34(StaticANIObject *ani, int xpos, int ypos, int f
 	return method50(ani, _callback1(ani, movitems, count), staticsId);
 }
 
-void MovGraph::changeCallback(Common::Array<MovArr *> *(*callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) {
+void MovGraph::changeCallback(MovArr *(*callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) {
 	_callback1 = callback1;
 }
 
@@ -734,11 +723,11 @@ bool MovGraph::method44(StaticANIObject *ani, int x, int y) {
 			Common::Array<MovItem *> *movitem = method28(ani, x, y, 0, &counter);
 
 			if (movitem) {
-				Common::Array<MovArr *> *movarr = _callback1(ani, movitem, counter);
-				int cnt = (*movarr)[0]->_movStepCount;
+				MovArr *movarr = _callback1(ani, movitem, counter);
+				int cnt = movarr->_movStepCount;
 
 				if (cnt > 0) {
-					if ((*movarr)[0]->_movSteps[cnt - 1]->link->_flags & 0x4000000)
+					if (movarr->_movSteps[cnt - 1]->link->_flags & 0x4000000)
 						return true;
 				}
 			}
@@ -759,7 +748,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 	subj->getPicAniInfo(&picAniInfo);
 
 	if (movitem) {
-		Common::Array<MovArr *> *goal = _callback1(subj, movitem, ss);
+		MovArr *goal = _callback1(subj, movitem, ss);
 		int idx = getItemIndexByStaticAni(subj);
 
 		for (int i = 0; i < _items[idx]->count; i++) {
@@ -787,7 +776,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 
 	movitem = method28(subj, xpos, ypos, fuzzyMatch, &ss);
 	if (movitem) {
-		Common::Array<MovArr *> *goal = _callback1(subj, movitem, ss);
+		MovArr *goal = _callback1(subj, movitem, ss);
 		int idx = getItemIndexByStaticAni(subj);
 
 		if (_items[idx]->count > 0) {
@@ -802,18 +791,13 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 				}
 			}
 
-			_items[idx]->movarr->clear();
+			_items[idx]->movarr._movSteps.clear();
+			_items[idx]->movarr = *_items[idx]->movitems->operator[](arridx)->movarr;
+			_items[idx]->movarr._movSteps = _items[idx]->movitems->operator[](arridx)->movarr->_movSteps;
+			_items[idx]->movarr._afield_8 = -1;
+			_items[idx]->movarr._link = 0;
 
-			for (int i = 0; i < (*_items[idx]->movitems->operator[](arridx)->movarr)[i]->_movStepCount; i++) {
-				MovArr *m = new MovArr;
-
-				*m = *(*_items[idx]->movitems->operator[](arridx)->movarr)[i];
-			}
-
-			_items[idx]->field_10 = -1;
-			_items[idx]->field_14 = 0;
-
-			MessageQueue *mq = fillMGMinfo(_items[idx]->ani, (*_items[idx]->movarr)[0], staticsId);
+			MessageQueue *mq = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, staticsId);
 			if (mq) {
 				ExCommand *ex = new ExCommand();
 				ex->_messageKind = 17;
@@ -925,7 +909,7 @@ MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int st
 	return mq;
 }
 
-MessageQueue *MovGraph::method50(StaticANIObject *ani, Common::Array<MovArr *> *movarr, int staticsId) {
+MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int staticsId) {
 #if 0
 	if (_itemsCount <= 0)
 		return 0;
@@ -958,11 +942,9 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, Common::Array<MovArr *> *
 	if (_items[idx]->movarr)
 		delete _items[idx]->movarr;
 
-	_items[idx]->movarr = _items[idx]->movitems[movidx].movarr;
-
+	_items[idx]->copyPart(_items[idx]->movitems[movidx]);
 	_items[idx]->movarr->_movSteps.clear();
 	_items[idx]->movarr->_movSteps = _items[idx]->movitems[movidx].movarr->_movSteps;
-
 	_items[idx]->field_10 = -1;
 	_items[idx]->field_14 = 0;
 
