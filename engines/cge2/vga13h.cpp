@@ -455,7 +455,35 @@ void Sprite::backShow(void) {
 }
 
 void Sprite::step(int nr) {
-	warning("STUB: Sprite::step()");
+	if (nr >= 0)
+		_seqPtr = nr;
+
+	if (_ext) {
+		V3D p = _pos3D;
+		Seq *seq;
+
+		if (nr < 0)
+			_seqPtr = _ext->_seq[_seqPtr]._next;
+
+		if (_file[2] == '~') { // FLY-type sprite
+			warning("STUB: Sprite::step() - FLY-type sprite");
+		} else {
+			seq = _ext->_seq + _seqPtr;
+			if (seq->_dz == 127 && seq->_dx != 0) {
+				_vm->_commandHandlerTurbo->addCommand(kCmdSound, -1, 256 * seq->_dy + seq->_dx, this);
+			} else {
+				p._x += seq->_dx;
+				p._y += seq->_dy;
+				p._z += seq->_dz;
+				//if (!_flags._kept)
+				//	gotoxyz(p);
+				warning("Sprite::step()");
+			}
+		}
+		if (seq->_dly >= 0)
+			_time = seq->_dly;
+	} else if (_vm->_waitRef && _vm->_waitRef == _ref)
+		_vm->_waitRef = 0;
 }
 
 void Sprite::tick() {
