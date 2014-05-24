@@ -76,16 +76,16 @@ struct Text {
 };
 
 struct AnimListItem {
-	uint16 _type;
+	uint16 _type; // type of animation - for background anims RND of frame
 	uint16 _fileNumber;
-	uint16 _startPhase;
+	uint16 _startPhase; // first phase number
 	uint16 _endPhase;
 	uint16 _loopPhase;
 	int16 _x;
 	int16 _y;
 	uint16 _loopType;
-	uint16 _nextAnim;
-	uint16 _flags;
+	uint16 _nextAnim; // number of animation to do for loop = 3
+	uint16 _flags; // byte 0 - draw overlays, byte 1 - draw in front of overlay, byte 2 - load but turn off drawing
 	bool loadFromStream(Common::SeekableReadStream &stream);
 };
 

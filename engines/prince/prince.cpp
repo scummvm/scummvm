@@ -253,6 +253,7 @@ bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 	_flags = stream.readUint16LE();
 
 	debug("AnimListItem type %d, fileNumber %d, x %d, y %d, flags %d", _type, _fileNumber, _x, _y, _flags);
+	debug("startPhase %d, endPhase %d, loopPhase %d", _startPhase, _endPhase, _loopPhase);
 
 	// 32 byte aligment
 	stream.seek(pos + 32);
@@ -704,7 +705,64 @@ void PrinceEngine::showBackAnims() {
 	int tempAnimNr = 0;
 	for (uint i = 0; i < _backAnimList.size(); i++) {
 		if (_backAnimList[i].backAnims[tempAnimNr]._state == 0) {
-			Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[tempAnimNr]._animData->getFrame(testAnimFrame);
+			_backAnimList[i]._seq._counter++;
+
+			if (_backAnimList[i]._seq._type == 2) {
+				if (_backAnimList[i]._seq._currRelative == 0) {
+					if (_backAnimList[i]._seq._counter >= _backAnimList[i]._seq._data) {
+						//change_back_anim
+					} else {
+						//not_type_2_1
+					}
+				} else {
+					//not_type_2_1
+				}
+			}
+
+			//not_type_2_1:
+			if (_backAnimList[i]._seq._type == 3) {
+				if (_backAnimList[i]._seq._currRelative == 0) {
+					if (_backAnimList[i]._seq._counter < _backAnimList[i]._seq._data2) {
+						//empty_frame - do not show anything
+					} else {
+						//movzx	eax,w [ebx+size BAS+BASA_Num]
+						//mov	d [ebx.BAS_Current],eax
+						//call	SetBackAnim
+						//inc	d [ebx.BAS_CurrRelative]
+					}
+				} else {
+					//not_type_3_1
+				}
+			}
+			//not_type_3_1:
+
+			//show_bugger
+
+			debug("frame: %d", _backAnimList[i].backAnims[tempAnimNr]._lastFrame);
+			if (_backAnimList[i].backAnims[tempAnimNr]._frame == _backAnimList[i].backAnims[tempAnimNr]._lastFrame) {
+				//loop_back_anim
+				_backAnimList[i].backAnims[tempAnimNr]._frame = _backAnimList[i].backAnims[tempAnimNr]._loopFrame;
+
+				//change_back_anim
+				if (_backAnimList[i]._seq._type == 0) {
+					//show_bugger ??
+					_backAnimList[i].backAnims[tempAnimNr]._frame++; //??
+					//not_end
+				} else if (_backAnimList[i]._seq._type == 1) {
+					//repeat_rnd
+				}
+			} else {
+				_backAnimList[i].backAnims[tempAnimNr]._frame++;
+				//not_end
+			}
+
+			//not_end:
+			_backAnimList[i].backAnims[tempAnimNr]._showFrame = _backAnimList[i].backAnims[tempAnimNr]._frame;
+			//ShowFrameCode
+			//ShowFrameCodeShadow
+
+			int frame = _backAnimList[i].backAnims[tempAnimNr]._frame;
+			Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[tempAnimNr]._animData->getFrame(frame);
 			_graph->drawTransparent(_backAnimList[i].backAnims[tempAnimNr]._x, _backAnimList[i].backAnims[tempAnimNr]._y, backAnimSurface); // out of range now - crash .exe
 			backAnimSurface->free();
 			delete backAnimSurface;

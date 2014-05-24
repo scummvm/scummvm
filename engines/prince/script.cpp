@@ -242,6 +242,7 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList,
 			}
 			newAnim._flags = _vm->_animList[animNumber]._flags;
 			newAnim._lastFrame = _vm->_animList[animNumber]._endPhase;
+			debug("lastFrame: %d", _vm->_animList[animNumber]._endPhase);
 			newAnim._loopFrame = _vm->_animList[animNumber]._loopPhase;
 			newAnim._loopType = _vm->_animList[animNumber]._loopType;
 			newAnim._nextAnim = _vm->_animList[animNumber]._nextAnim;
