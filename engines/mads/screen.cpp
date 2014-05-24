@@ -545,6 +545,8 @@ void ScreenObjects::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 ScreenSurface::ScreenSurface() {
+	_shakeCountdown = -1;
+	_random = 0x4D2;
 }
 
 void ScreenSurface::init() {
@@ -553,7 +555,7 @@ void ScreenSurface::init() {
 
 void ScreenSurface::copyRectToScreen(const Common::Point &destPos,
 		const Common::Rect &bounds) {
-	byte *buf = getBasePtr(destPos.x, destPos.y);
+	const byte *buf = getBasePtr(destPos.x, destPos.y);
 
 	if (bounds.width() != 0 && bounds.height() != 0)
 		g_system->copyRectToScreen(buf, this->pitch, bounds.left, bounds.top,
@@ -564,8 +566,25 @@ void ScreenSurface::copyRectToScreen(const Common::Rect &bounds) {
 	copyRectToScreen(Common::Point(bounds.left, bounds.top), bounds);
 }
 
-
 void ScreenSurface::updateScreen() {
+	if (_shakeCountdown >= 0) {
+		_random = _random * 5 + 1;
+		int offset = (_random >> 8) & 3;
+		if (_shakeCountdown-- <= 0)
+			offset = 0;
+
+		// Copy the screen with the left hand hide side of the screen of a given
+		// offset width shown at the very right. The offset changes to give 
+		// an effect of shaking the screen
+		offset *= 4;
+		const byte *buf = getBasePtr(offset, 0);
+		g_system->copyRectToScreen(buf, this->pitch, 0, 0,
+			this->pitch - offset, this->h);
+		if (offset > 0)
+			g_system->copyRectToScreen(this->pixels, this->pitch, 
+				this->pitch - offset, 0, offset, this->h);
+	}
+
 	g_system->updateScreen();
 }
 

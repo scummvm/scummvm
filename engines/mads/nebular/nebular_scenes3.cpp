@@ -2800,7 +2800,7 @@ void Scene318::step() {
 
 		if (_internCounter >= 3600) {
 			_vm->_sound->command(59);
-			warning("TODO: shake_countdown = 20;");
+			_vm->_screen._shakeCountdown = 20;
 			_internWalkingFl = true;
 		}
 	}
@@ -3270,22 +3270,22 @@ void Scene319::step() {
 
 		if (_animMode == 2) {
 			if (_animFrame == 13)
-				warning("TODO: shake_countdown = 40;");
+				_vm->_screen._shakeCountdown = 40;
 
 			if (_animFrame == 16)
-				warning("TODO: shake_countdown = 1;");
+				_vm->_screen._shakeCountdown = 1;
 		}
 
 		if (_animMode == 3) {
 			if (_animFrame == 11)
-				warning("TODO: shake_countdown = 60;");
+				_vm->_screen._shakeCountdown = 60;
 
 			if (_animFrame == 18)
-				warning("TODO: shake_countdown = 1;");
+				_vm->_screen._shakeCountdown = 1;
 		}
 
 		if ((_animMode == 4) && (_animFrame == 16))
-			warning("TODO: shake_countdown = 80;");
+			_vm->_screen._shakeCountdown = 80;
 
 		if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
 			_scene->_activeAnimation->setCurrentFrame(nextFrame);
@@ -3308,7 +3308,7 @@ void Scene319::step() {
 
 		_animFrame = _scene->_activeAnimation->getCurrentFrame();
 		_slacheTalkingFl = true;
-		warning("TODO: shake_countdown = 1;");
+		_vm->_screen._shakeCountdown = 1;
 
 		for (int i = 0; i <= 1; i++) {
 			int oldIdx = _globals._sequenceIndexes[i];
@@ -3325,7 +3325,7 @@ void Scene319::step() {
 		_vm->_palette->setColorValues(0, 0, 0);
 		_vm->_palette->fadeOut(_vm->_palette->_mainPalette, nullptr, 18, 228,
 			248, 0, 1, 16);
-		warning("TODO: shake_countdown = 1;");
+		_vm->_screen._shakeCountdown = 1;
 		_scene->_reloadSceneFlag = true;
 		break;
 
@@ -3706,7 +3706,7 @@ void Scene320::step() {
 
 			case 417:
 			case 457:
-				warning("TODO: shake_countdown = 40;");
+				_vm->_screen._shakeCountdown = 40;
 				_vm->_sound->command(59);
 				break;
 

@@ -197,8 +197,11 @@ public:
 };
 
 class ScreenSurface : public MSurface {
+private:
+	uint16 _random;
 public:
 	Common::Point _offset;
+	int _shakeCountdown;
 public:
 	/**
 	 * Constructor
