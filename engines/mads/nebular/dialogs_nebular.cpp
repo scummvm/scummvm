@@ -404,7 +404,7 @@ void PictureDialog::save() {
 
 	// Fade the screen to grey
 	int numColors = PALETTE_COUNT - PALETTE_RESERVED_LOW_COUNT - PALETTE_RESERVED_HIGH_COUNT;
-	palette.fadeToGrey(palette._mainPalette, &map[PALETTE_RESERVED_LOW_COUNT],
+	palette.fadeOut(palette._mainPalette, &map[PALETTE_RESERVED_LOW_COUNT],
 		PALETTE_RESERVED_LOW_COUNT, numColors, 248, 8, 1, 16);
 
 	// Remap the greyed out screen to use the small greyscale range
@@ -521,7 +521,7 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
 		_vm->_palette->setFullPalette(pal);
 	} else {
 		_vm->_palette->getFullPalette(pal);
-		_vm->_palette->fadeOut(pal, 0, PALETTE_COUNT, 16, 1, 1, 0, 0, 0);
+		_vm->_palette->fadeOut(pal, nullptr, 0, PALETTE_COUNT, 0, 1, 1, 16);
 	}
 
 	_vm->_screen.copyTo(&_savedSurface);

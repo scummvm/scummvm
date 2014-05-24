@@ -232,9 +232,9 @@ public:
 	int rgbMerge(RGB6 &palEntry);
 
 	/**
-	* Fades the given palette to greyscale
+	* Fades the given palette out to black or grey
 	*/
-	void fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
+	void fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
 		int baseColor, int numColors, int baseGrey, int numGreys,
 		int tickDelay, int steps);
 };
@@ -311,7 +311,6 @@ public:
 
 	void setColorFlags(byte r, byte g, byte b);
 	void setColorValues(byte r, byte g, byte b);
-	void fadeOut(byte palette[PALETTE_SIZE], int start, int count, int v1, int v2, int v3, int v4, int v5, int v6);
 
 	void lock();
 	void unlock();

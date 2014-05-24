@@ -3323,7 +3323,8 @@ void Scene319::step() {
 	case 72:
 		_vm->_palette->setColorFlags(0xFF, 0, 0);
 		_vm->_palette->setColorValues(0, 0, 0);
-		_vm->_palette->fadeOut(_vm->_palette->_mainPalette, 18, 228, 16, 1, 8, 248, 0, 0);
+		_vm->_palette->fadeOut(_vm->_palette->_mainPalette, nullptr, 18, 228,
+			248, 0, 1, 16);
 		warning("TODO: shake_countdown = 1;");
 		_scene->_reloadSceneFlag = true;
 		break;
