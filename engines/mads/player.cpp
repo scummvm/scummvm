@@ -694,8 +694,7 @@ void Player::releasePlayerSprites() {
 	_spritesLoaded = false;
 	_spritesChanged = true;
 
-	// FIXME: Find out why this occurs
-	if (scene._sprites.size() > 0) {
+	if (scene._sprites._assetCount > 0) {
 		warning("Player::releasePlayerSprites(): leftover sprites remain, clearing list");
 		scene._sprites.clear();
 	}
