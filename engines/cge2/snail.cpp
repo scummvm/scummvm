@@ -342,11 +342,17 @@ void CGE2Engine::snMskDlg(int clr, int set) {
 }
 
 void CGE2Engine::snSeq(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snSeq()");
+	if (spr) {
+		if (isHero(spr) && val == 0)
+			((Hero*)spr)->park();
+		else
+			spr->step(val);
+	}
 }
 
 void CGE2Engine::snRSeq(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snRSeq()");
+	if (spr)
+		snSeq(spr, spr->_seqPtr + val);
 }
 
 void CGE2Engine::snSend(Sprite *spr, int val) {
