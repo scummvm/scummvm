@@ -38,10 +38,11 @@ class VQAPlayer {
 	BladeRunnerEngine           *_vm;
 	Common::SeekableReadStream  *_s;
 	VQADecoder                   _decoder;
-	Graphics::Surface           *_surface;
+	const Graphics::Surface     *_surface;
 	Audio::QueuingAudioStream   *_audioStream;
 
 	int _curFrame;
+	int _decodedFrame;
 	int _curLoop;
 	int _loopSpecial;
 	int _loopDefault;
@@ -52,12 +53,13 @@ class VQAPlayer {
 
 public:
 
-	VQAPlayer(BladeRunnerEngine *vm, Graphics::Surface *surface)
+	VQAPlayer(BladeRunnerEngine *vm)
 		: _vm(vm),
 		  _s(nullptr),
-		  _surface(surface),
+		  _surface(nullptr),
 		  _audioStream(nullptr),
 		  _curFrame(-1),
+		  _decodedFrame(-1),
 		  _curLoop(-1),
 		  _loopSpecial(-1),
 		  _loopDefault(-1),
@@ -65,11 +67,22 @@ public:
 		  _audioStarted(false)
 	{}
 
+	~VQAPlayer() {
+		close();
+	}
+
 	bool open(const Common::String &name);
+	void close();
+
 	int  update();
+	const Graphics::Surface *getSurface() const;
 
 	void setLoopSpecial(int loop, bool wait);
 	void setLoopDefault(int loop);
+
+private:
+	int calcNextFrame(int frame) const;
+	void queueAudioFrame(Audio::AudioStream *audioStream);
 };
 
 }; // End of namespace BladeRunner

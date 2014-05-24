@@ -12,7 +12,8 @@ MODULE_OBJS = \
 	image.o \
 	outtake.o \
 	settings.o \
-	vqa_decoder.o
+	vqa_decoder.o \
+	vqa_player.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BLADERUNNER), DYNAMIC_PLUGIN)

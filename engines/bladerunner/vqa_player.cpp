@@ -35,91 +35,98 @@ bool VQAPlayer::open(const Common::String &name) {
 	if (!_s)
 		return false;
 
-	if(!_decoder.open(_s)) {
+	if(!_decoder.loadStream(_s)) {
 		delete _s;
 		_s = nullptr;
 		return false;
 	}
 
-	_audioStream = Audio::makeQueuingAudioStream(_decoder._header.freq, _decoder._header.channels == 2);
+	_audioStream = Audio::makeQueuingAudioStream(_decoder.frequency(), false);
 
 	return true;
 }
 
-int VQAPlayer::update() {
-	uint32 now = _vm->_system->getMillis();
-
-	if (_nextFrameTime == 0)
-		_nextFrameTime = now;
-
-	if (now < _nextFrameTime)
-		return -1;
-
-	_nextFrameTime += 1000 / _decoder._header.frameRate;
-
-	if (_decoder._loopInfo.loopCount) {
-		if (_loopSpecial >= 0) {
-			_curLoop = _loopSpecial;
-			_loopSpecial = -3;
-
-			_curFrame = _decoder._loopInfo.loops[_curLoop].begin;
-			_decoder.seekToFrame(_curFrame);
-		} else if (_curLoop == -1 && _loopDefault >= 0) {
-			_curLoop = _loopDefault;
-			_curFrame = _decoder._loopInfo.loops[_curLoop].begin;
-			_decoder.seekToFrame(_curFrame);
-		} else if (_curLoop >= 0 && _curFrame == _decoder._loopInfo.loops[_curLoop].end) {
-			if (_loopDefault == -1)
-				return -3;
-
-			_curLoop = _loopDefault;
-			_curFrame = _decoder._loopInfo.loops[_curLoop].begin;
-			_decoder.seekToFrame(_curFrame);
-		}
-		else
-			++_curFrame;
-	}
-	else
-		++_curFrame;
-
-	if (_curFrame >= _decoder._header.numFrames) {
-		if (_audioStream)
-			_audioStream->finish();
-		return -3;
-	}
-
-	_decoder.readFrame();
-	_decoder.decodeFrame((uint16*)_surface->getPixels());
-
-	if (_audioStream) {
-		int16 *audioFrame = (int16*)malloc(2940);
-		memcpy(audioFrame, _decoder.getAudioFrame(), 2940);
-		_audioStream->queueBuffer((byte*)audioFrame, 2940, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
-
-		if (!_audioStarted)
-			_vm->_mixer->playStream(
-				Audio::Mixer::kPlainSoundType,
-				&_soundHandle,
-				_audioStream,
-				-1
-			);
-
-		_audioStarted = true;
-	}
-
-	return _curFrame;
+void VQAPlayer::close() {
+	_vm->_mixer->stopHandle(_soundHandle);
+	delete[] _s;
+	_s = nullptr;
 }
 
-void VQAPlayer::setLoopSpecial(int loop, bool wait)
-{
+int VQAPlayer::update() {
+	uint32 now = 60 * _vm->_system->getMillis();
+
+	if (_curFrame == -1) {
+		_curFrame = 0;
+		if (_curFrame >= 0) {
+			_decoder.readNextPacket();
+			queueAudioFrame(_decoder.decodeAudioFrame());
+			_surface = _decoder.decodeVideoFrame();
+		}
+
+		_decodedFrame = calcNextFrame(_curFrame);
+		if (_decodedFrame >= 0) {
+			_decoder.readNextPacket();
+			queueAudioFrame(_decoder.decodeAudioFrame());
+		}
+
+		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _audioStream);
+		_audioStarted = true;
+
+		_nextFrameTime = now + 60000 / 15;
+		return _curFrame;
+	}
+
+	if (now >= _nextFrameTime) {
+		_curFrame = _decodedFrame;
+		if (_curFrame >= 0) {
+			_surface = _decoder.decodeVideoFrame();
+		}
+
+		_decodedFrame = calcNextFrame(_curFrame);
+		if (_decodedFrame >= 0) {
+			_decoder.readNextPacket();
+			queueAudioFrame(_decoder.decodeAudioFrame());
+		}
+
+		_nextFrameTime += 60000 / 15;
+		return _curFrame;
+	}
+
+	_surface = nullptr;
+	return -1;
+}
+
+const Graphics::Surface *VQAPlayer::getSurface() const {
+	return _surface;
+}
+
+void VQAPlayer::setLoopSpecial(int loop, bool wait) {
 	_loopSpecial = loop;
 	if (!wait)
 		_curLoop = -1;
 }
 
-void VQAPlayer::setLoopDefault(int loop)
-{
+void VQAPlayer::setLoopDefault(int loop) {
 	_loopDefault = loop;
+}
+
+int VQAPlayer::calcNextFrame(int frame) const {
+	if (frame < 0)
+		return -3;
+
+	frame += 1;
+
+	if (frame == _decoder.numFrames())
+		frame = -3;
+
+	return frame;
+}
+
+void VQAPlayer::queueAudioFrame(Audio::AudioStream *audioStream) {
+	int n = _audioStream->numQueuedStreams();
+	if (n == 0)
+		warning("numQueuedStreams: %d", n);
+	_audioStream->queueAudioStream(audioStream, DisposeAfterUse::YES);
 }
 
 }; // End of namespace BladeRunner

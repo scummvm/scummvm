@@ -38,7 +38,7 @@
 
 namespace BladeRunner {
 
-class VQADecoder : public Video::VideoDecoder
+class VQADecoder
 {
 public:
 	VQADecoder();
@@ -46,8 +46,20 @@ public:
 
 	bool loadStream(Common::SeekableReadStream *s);
 
-protected:
 	void readNextPacket();
+
+	const Graphics::Surface    *decodeVideoFrame();
+	Audio::SeekableAudioStream *decodeAudioFrame();
+
+	uint16 numFrames() const { return _header.numFrames; }
+	uint8  frameRate() const { return _header.frameRate; }
+
+	uint16 offsetX() const { return _header.offsetX; }
+	uint16 offsetY() const { return _header.offsetY; }
+
+	uint16 frequency() const { return _header.freq; }
+
+protected:
 
 private:
 	struct Header
@@ -121,9 +133,6 @@ private:
 	VQAVideoTrack *_videoTrack;
 	VQAAudioTrack *_audioTrack;
 
-	// bool   _hasView;
-	// view_t view;
-
 	bool readVQHD(Common::SeekableReadStream *s, uint32 size);
 	bool readMSCI(Common::SeekableReadStream *s, uint32 size);
 	bool readMFCI(Common::SeekableReadStream *s, uint32 size);
@@ -133,7 +142,7 @@ private:
 	bool readLNIN(Common::SeekableReadStream *s, uint32 size);
 	bool readCLIP(Common::SeekableReadStream *s, uint32 size);
 
-	class VQAVideoTrack : public FixedRateVideoTrack {
+	class VQAVideoTrack {
 	public:
 		VQAVideoTrack(VQADecoder *vqaDecoder);
 		~VQAVideoTrack();
@@ -143,7 +152,7 @@ private:
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const;
 		int getFrameCount() const;
-		const Graphics::Surface *decodeNextFrame();
+		const Graphics::Surface *decodeVideoFrame();
 
 		bool readVQFR(Common::SeekableReadStream *s, uint32 size);
 		bool readVPTR(Common::SeekableReadStream *s, uint32 size);
@@ -156,6 +165,8 @@ private:
 
 	protected:
 		Common::Rational getFrameRate() const;
+
+		bool useAudioSync() const { return false; }
 
 	private:
 		Graphics::Surface *_surface;
@@ -172,22 +183,21 @@ private:
 		uint32  _maxCBFZSize;
 		uint32  _maxZBUFChunkSize;
 
-		size_t   _codebookSize;
+		uint32   _codebookSize;
 		uint8   *_codebook;
 		uint8   *_cbfz;
 		uint8   *_zbufChunk;
 
-		size_t   _vptrSize;
+		uint32   _vptrSize;
 		uint8   *_vptr;
 
 		int      _curFrame;
-
 
 		void VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
 		bool decodeFrame(uint16 *frame);
 	};
 
-	class VQAAudioTrack : public AudioTrack {
+	class VQAAudioTrack {
 	public:
 		VQAAudioTrack(VQADecoder *vqaDecoder);
 		~VQAAudioTrack();
@@ -195,33 +205,14 @@ private:
 		bool readSND2(Common::SeekableReadStream *s, uint32 size);
 		bool readSN2J(Common::SeekableReadStream *s, uint32 size);
 
+		Audio::SeekableAudioStream *decodeAudioFrame();
 	protected:
-		Audio::AudioStream *getAudioStream() const;
 
 	private:
-		Audio::QueuingAudioStream *_audioStream;
-
+		uint16               _frequency;
 		ADPCMWestwoodDecoder _adpcmDecoder;
 		uint8                _compressedAudioFrame[735];
 	};
-
-/*
-	bool readFrame();
-
-	int getFrameTime() { return 1000 / _header.frameRate; }
-
-	void VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false) const;
-
-	bool seekToFrame(int frame);
-	bool decodeFrame(uint16 *frame);
-
-	int16 *getAudioFrame();
-
-	// bool get_view(view_t *view);
-	bool getZBUF(uint16 *zbuf);
-
-	friend class VQAPlayer;
-*/
 };
 
 }; // End of namespace BladeRunner

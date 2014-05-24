@@ -23,7 +23,9 @@
 #include "bladerunner/outtake.h"
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/vqa_decoder.h"
+#include "bladerunner/vqa_player.h"
+
+#include "audio/audiostream.h"
 
 #include "common/debug.h"
 #include "common/events.h"
@@ -43,30 +45,26 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	else
 		resName = name + "_E.VQA";
 
-	Common::SeekableReadStream *s = _vm->getResourceStream(resName);
+	VQAPlayer vqa_player(_vm);
 
-	_vqaDecoder = new VQADecoder();
-	_vqaDecoder->loadStream(s);
+	vqa_player.open(resName);
 
-	_vqaDecoder->start();
-
-	uint32 last = _vm->_system->getMillis();
-
-	while (!_vqaDecoder->endOfVideo() && !_vm->shouldQuit()) {
-		if (_vqaDecoder->needsUpdate()) {
-			uint32 now = _vm->_system->getMillis();
-			debug("delta: %d", now - last);
-			last = now;
-
-			const Graphics::Surface *surface = _vqaDecoder->decodeNextFrame();
-			_vm->_system->copyRectToScreen((const byte *)surface->getBasePtr(0, 0), surface->pitch, 0, 0, 640, 480);
-			_vm->_system->updateScreen();
-		}
-
+	_vm->_mixer->stopAll();
+	while (!_vm->shouldQuit()) {
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event))
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
 				return;
+
+		int frame = vqa_player.update();
+		if (frame == -3)
+			break;
+
+		if (frame >= 0) {
+			const Graphics::Surface *surface = vqa_player.getSurface();
+			_vm->_system->copyRectToScreen((const byte *)surface->getBasePtr(0, 0), surface->pitch, 0, 0, 640, 480);
+			_vm->_system->updateScreen();
+		}
 
 		_vm->_system->delayMillis(10);
 	}

@@ -128,7 +128,7 @@ VQADecoder::~VQADecoder() {
 }
 
 bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
-	close();
+	// close();
 	_s = s;
 
 	IFFChunkHeader chd;
@@ -160,22 +160,22 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 			case kMSCI: rc = readMSCI(s, chd.size); break;
 			case kVQHD: rc = readVQHD(s, chd.size); break;
 			default:
-				debug("Unhandled chunk '%s'", strTag(chd.id));
+				warning("Unhandled chunk '%s'", strTag(chd.id));
 				s->skip(roundup(chd.size));
 				rc = true;
 		}
 
 		if (!rc) {
-			debug("failed to handle chunk %s", strTag(chd.id));
+			warning("failed to handle chunk %s", strTag(chd.id));
 			return false;
 		}
 	} while (chd.id != kFINF);
 
 	_videoTrack = new VQAVideoTrack(this);
-	addTrack(_videoTrack);
+	// addTrack(_videoTrack);
 
 	_audioTrack = new VQAAudioTrack(this);
-	addTrack(_audioTrack);
+	// addTrack(_audioTrack);
 
 	/*
 	for (int i = 0; i != _loopInfo.loopCount; ++i) {
@@ -187,6 +187,14 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 	*/
 
 	return true;
+}
+
+const Graphics::Surface *VQADecoder::decodeVideoFrame() {
+	return _videoTrack->decodeVideoFrame();
+}
+
+Audio::SeekableAudioStream *VQADecoder::decodeAudioFrame() {
+	return _audioTrack->decodeAudioFrame();
 }
 
 void VQADecoder::readNextPacket() {
@@ -286,6 +294,12 @@ bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size)
 		debug("_header.unk5         %d", _header.unk5);
 	}
 
+	assert(_header.version == 2);
+	assert(_header.freq == 22050);
+	assert(_header.channels == 1);
+	assert(_header.bits == 16);
+	assert(_header.colors == 0);
+
 	return true;
 }
 
@@ -345,18 +359,18 @@ bool VQADecoder::readMSCI(Common::SeekableReadStream *s, uint32 size)
 		{
 		case kVIEW:
 			_maxVIEWChunkSize = size;
-			debug("max VIEW size: %08x", _maxVIEWChunkSize);
+			// debug("max VIEW size: %08x", _maxVIEWChunkSize);
 			break;
 		case kZBUF:
 			_maxZBUFChunkSize = size;
-			debug("max ZBUF size: %08x", _maxZBUFChunkSize);
+			// debug("max ZBUF size: %08x", _maxZBUFChunkSize);
 			break;
 		case kAESC:
 			_maxAESCChunkSize = size;
-			debug("max AESC size: %08x", _maxAESCChunkSize);
+			// debug("max AESC size: %08x", _maxAESCChunkSize);
 			break;
 		default:
-			debug("Unknown tag in MSCT: %s", strTag(tag));
+			warning("Unknown tag in MSCT: %s", strTag(tag));
 		}
 
 		uint32 zero;
@@ -483,7 +497,7 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size)
 
 	for (int i = 0; i != loopNamesCount; ++i) {
 		char   *begin = names + loopNameOffsets[i];
-		size_t  len   = ((i == loopNamesCount) ? chd.size : loopNameOffsets[i+1]) - loopNameOffsets[i];
+		uint32  len   = ((i == loopNamesCount) ? chd.size : loopNameOffsets[i+1]) - loopNameOffsets[i];
 
 		_loopInfo.loops[i].name = Common::String(begin, len);
 	}
@@ -571,8 +585,7 @@ Common::Rational VQADecoder::VQAVideoTrack::getFrameRate() const {
 	return _frameRate;
 }
 
-const Graphics::Surface *VQADecoder::VQAVideoTrack::decodeNextFrame() {
-	debug("_curFrame: %d", _curFrame);
+const Graphics::Surface *VQADecoder::VQAVideoTrack::decodeVideoFrame() {
 	if (_hasNewFrame) {
 		decodeFrame((uint16*)_surface->getPixels());
 		_curFrame++;
@@ -607,7 +620,7 @@ bool VQADecoder::VQAVideoTrack::readVQFL(Common::SeekableReadStream *s, uint32 s
 
 bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 size) {
 	if (size > _maxCBFZSize) {
-		debug("%d > %d", size, _maxCBFZSize);
+		warning("readCBFZ: chunk too large: %d > %d", size, _maxCBFZSize);
 		return false;
 	}
 
@@ -871,7 +884,7 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(uint16 *frame)
 			dstBlock += count;
 			break;
 		default:
-			debug("Undefined case %d", command >> 13);
+			warning("VQAVideoTrack::decodeFrame: Undefined case %d", command >> 13);
 		}
 	}
 
@@ -879,32 +892,31 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(uint16 *frame)
 }
 
 VQADecoder::VQAAudioTrack::VQAAudioTrack(VQADecoder *vqaDecoder) {
-	_audioStream = Audio::makeQueuingAudioStream(vqaDecoder->_header.freq, false);
+	_frequency = vqaDecoder->_header.freq;
 }
 
 VQADecoder::VQAAudioTrack::~VQAAudioTrack() {
-	delete _audioStream;
 }
 
-Audio::AudioStream *VQADecoder::VQAAudioTrack::getAudioStream() const {
-	return _audioStream;
+Audio::SeekableAudioStream *VQADecoder::VQAAudioTrack::decodeAudioFrame() {
+	int16 *audioFrame = (int16*)malloc(4 * 735);
+	memset(audioFrame, 0, 4 * 735);
+
+	_adpcmDecoder.decode(_compressedAudioFrame, 735, audioFrame);
+
+	uint flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+
+	return Audio::makeRawStream((byte*)audioFrame, 4 * 735, _frequency, flags, DisposeAfterUse::YES);
 }
 
 bool VQADecoder::VQAAudioTrack::readSND2(Common::SeekableReadStream *s, uint32 size)
 {
 	if (size != 735) {
-		error("audio frame size: %d", size);
+		warning("audio frame size: %d", size);
 		return false;
 	}
 
 	s->read(_compressedAudioFrame, roundup(size));
-
-	int16 *audioFrame = (int16*)malloc(4 * size);
-	memset(audioFrame, 0, 4 * size);
-
-	_adpcmDecoder.decode(_compressedAudioFrame, size, audioFrame);
-
-	_audioStream->queueBuffer((byte*)audioFrame, 4 * size, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 
 	return true;
 }
