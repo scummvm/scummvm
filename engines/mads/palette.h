@@ -187,6 +187,7 @@ private:
 	void insertionSort(int size, byte *id, byte *value);
 protected:
 	MADSEngine *_vm;
+	byte _rgb64Map[PALETTE_COUNT];
 public:
 	bool _colorFlags[4];
 	int _colorValues[4];
@@ -223,12 +224,12 @@ public:
 	/**
 	* Calculates a merge/hash for a given palette entry
 	*/
-	static int rgbMerge(byte r, byte g, byte b);
+	int rgbMerge(byte r, byte g, byte b);
 
 	/**
 	* Calculates a merge/hash for a given palette entry
 	*/
-	static int rgbMerge(RGB6 &palEntry);
+	int rgbMerge(RGB6 &palEntry);
 
 	/**
 	* Fades the given palette to greyscale

@@ -30,7 +30,6 @@
 namespace MADS {
 
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-#define VGA_COLOR_REV(x) ((x) * 63 / 255)
 
 void RGB6::load(Common::SeekableReadStream *f) {
 	r = VGA_COLOR_TRANS(f->readByte());
@@ -342,6 +341,19 @@ Fader::Fader(MADSEngine *vm): _vm(vm) {
 	_colorFlags[3] = false;
 	_colorValues[0] = _colorValues[1] = 0;
 	_colorValues[2] = _colorValues[3] = 0;
+
+	// TODO: It would be better if the fader routines could be refactored
+	// to work directly with 8-bit RGB values rather than 6-bit RGB values
+	Common::fill(&_rgb64Map[0], &_rgb64Map[PALETTE_COUNT], 0);
+	for (int i = 0; i < 64; ++i)
+		_rgb64Map[VGA_COLOR_TRANS(i)] = i;
+	byte v = 0;
+	for (int i = 0; i < PALETTE_COUNT; ++i) {
+		if (_rgb64Map[i])
+			v = _rgb64Map[i];
+		else
+			_rgb64Map[i] = v;
+	}
 }
 
 
@@ -377,7 +389,7 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 				intensity = _colorValues[colorCtr];
 			}
 
-			int diff = intensity - VGA_COLOR_REV(palette[palCtr * 3 + colorCtr]);
+			int diff = intensity - _rgb64Map[palette[palCtr * 3 + colorCtr]];
 			palIndex[palCtr][colorCtr] = (byte)ABS(diff);
 			signs[palCtr][colorCtr] = (diff == 0) ? 0 : (diff < 0 ? -1 : 1);
 		}
@@ -391,7 +403,7 @@ void Fader::fadeToGrey(byte palette[PALETTE_SIZE], byte *paletteMap,
 				while (map[index]._accum[colorCtr] >= steps) {
 					map[index]._accum[colorCtr] -= steps;
 
-					byte rgb63 = VGA_COLOR_REV(palette[palCtr * 3 + colorCtr]) +
+					byte rgb63 = _rgb64Map[palette[palCtr * 3 + colorCtr]] +
 						signs[palCtr][colorCtr];
 					palette[palCtr * 3 + colorCtr] = VGA_COLOR_TRANS(rgb63);
 				}
@@ -561,7 +573,7 @@ int Fader::rgbMerge(RGB6 &palEntry) {
 }
 
 int Fader::rgbMerge(byte r, byte g, byte b) {
-	return VGA_COLOR_REV(r) * 38 + VGA_COLOR_REV(g) * 76 + VGA_COLOR_REV(b) * 14;
+	return _rgb64Map[r] * 38 + _rgb64Map[g] * 76 + _rgb64Map[b] * 14;
 }
 
 /*------------------------------------------------------------------------*/
