@@ -422,6 +422,64 @@ void Fader::fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
 	}
 }
 
+void Fader::fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
+	int baseColor, int numColors, int baseGrey, int numGreys,
+	int tickDelay, int steps) {
+	GreyEntry map[PALETTE_COUNT];
+	byte tempPal[PALETTE_SIZE];;
+	int8 signs[PALETTE_COUNT][3];
+	byte palIndex[PALETTE_COUNT][3];
+	int intensity;
+
+	Common::copy(destPalette, destPalette + PALETTE_SIZE, tempPal);
+
+	mapToGreyRamp(tempPal, baseColor, numColors, baseGrey, numGreys, map);
+
+	for (int palCtr = baseColor; palCtr < (baseColor + numColors); ++palCtr) {
+		int index = palCtr - baseColor;
+		for (int colorCtr = 0; colorCtr < 3; ++colorCtr) {
+			if (_colorFlags[colorCtr]) {
+				int shiftSign = _colorValues[colorCtr];
+				if (shiftSign >= 0) {
+					intensity = map[index]._intensity << shiftSign;
+				}
+				else {
+					intensity = map[index]._intensity >> abs(shiftSign);
+				}
+			}
+			else {
+				intensity = _colorValues[colorCtr];
+			}
+
+			int diff = _rgb64Map[destPalette[palCtr * 3 + colorCtr]] - intensity;
+			palIndex[palCtr][colorCtr] = (byte)ABS(diff);
+			signs[palCtr][colorCtr] = (diff == 0) ? 0 : (diff < 0 ? -1 : 1);
+
+			map[index]._accum[colorCtr] = 0;
+		}
+	}
+
+	for (int stepCtr = 0; stepCtr < steps; ++stepCtr) {
+		for (int palCtr = baseColor; palCtr < (baseColor + numColors); ++palCtr) {
+			int index = palCtr - baseColor;
+			for (int colorCtr = 0; colorCtr < 3; ++colorCtr) {
+				map[index]._accum[colorCtr] += palIndex[palCtr][colorCtr];
+				while (map[index]._accum[colorCtr] >= steps) {
+					map[index]._accum[colorCtr] -= steps;
+
+					byte rgb63 = _rgb64Map[palette[palCtr * 3 + colorCtr]] +
+						signs[palCtr][colorCtr];
+					palette[palCtr * 3 + colorCtr] = VGA_COLOR_TRANS(rgb63);
+				}
+			}
+		}
+
+		setFullPalette(palette);
+
+		_vm->_events->waitForNextFrame();
+	}
+}
+
 void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColors,
 		int baseGrey, int numGreys, GreyEntry *map) {
 	byte greyList[PALETTE_COUNT];

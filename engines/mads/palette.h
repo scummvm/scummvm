@@ -237,6 +237,13 @@ public:
 	void fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
 		int baseColor, int numColors, int baseGrey, int numGreys,
 		int tickDelay, int steps);
+
+	/**
+	 * Fade into the given palette
+	 */
+	void fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
+		int baseColor, int numColors, int baseGrey, int numGreys,
+		int tickDelay, int steps);
 };
 
 class Palette: public Fader {

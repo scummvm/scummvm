@@ -570,14 +570,27 @@ void ScreenSurface::updateScreen() {
 }
 
 void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag) {
-	switch (transitionType) {
-	case kTransitionFadeOutIn:
-		fadeOut();
-		fadeIn();
-		break;
+	Palette &pal = *_vm->_palette;
+	byte palData[PALETTE_SIZE];
 
+	switch (transitionType) {
 	case kTransitionFadeIn:
-		fadeIn();
+	case kTransitionFadeOutIn:
+		Common::fill(&pal._colorValues[0], &pal._colorValues[3], 0);
+		Common::fill(&pal._colorFlags[0], &pal._colorFlags[3], false);
+
+		if (transitionType == kTransitionFadeOutIn) {
+			// Fade out
+			pal.getFullPalette(palData);
+			pal.fadeOut(palData, nullptr, 0, PALETTE_COUNT, 0, 0, 1, 16);
+		}
+
+		// Reset palette to black
+		Common::fill(&palData[0], &palData[PALETTE_SIZE], 0);
+		pal.setFullPalette(palData);
+
+		copyRectToScreen(getBounds());
+		pal.fadeIn(palData, pal._mainPalette, 0, 256, 0, 1, 1, 16);
 		break;
 
 	case kTransitionBoxInBottomLeft:
@@ -604,16 +617,6 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 		// Quick transitions
 		break;
 	}
-}
-
-void ScreenSurface::fadeOut() {
-	warning("TODO: Proper fade out");
-}
-
-void ScreenSurface::fadeIn() {
-	warning("TODO: Proper fade in");
-	_vm->_palette->setFullPalette(_vm->_palette->_mainPalette);
-	_vm->_screen.copyRectToScreen(Common::Rect(0, 0, 320, 200));
 }
 
 } // End of namespace MADS

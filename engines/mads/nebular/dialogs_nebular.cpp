@@ -388,6 +388,8 @@ void PictureDialog::save() {
 	_rgbList.copy(palette._rgbList);
 
 	// Set up palette allocation
+	Common::fill(&palette._colorFlags[0], &palette._colorFlags[3], true);
+
 	uint32 *palFlagP = &palette._palFlags[0];
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx, ++palFlagP) {
 		if (idx < PALETTE_RESERVED_LOW_COUNT ||

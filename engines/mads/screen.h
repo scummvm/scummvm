@@ -197,16 +197,6 @@ public:
 };
 
 class ScreenSurface : public MSurface {
-private:
-	/**
-	 * Handles screen fade out
-	 */
-	void fadeOut();
-
-	/**
-	 * Handles screen fade in
-	 */
-	void fadeIn();
 public:
 	Common::Point _offset;
 public:
