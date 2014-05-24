@@ -72,7 +72,7 @@ public:
 	~Sound();
 	void open();
 	void close();
-	void play(DataCk *wav, int pan);
+	void play(DataCk *wav, int pan = 8);
 	int16 getRepeat();
 	void setRepeat(int16 count);
 	void stop();
@@ -88,23 +88,18 @@ private:
 
 class Fx {
 	CGE2Engine *_vm;
-	struct Handler {
-		int _ref;
-		DataCk *_wav;
-	} *_cache;
 	int _size;
 
-	DataCk *load(int idx, int ref);
 	DataCk *loadWave(EncryptedStream *file);
-	int find(int ref);
+	Common::String name(int ref, int sub);
 public:
 	DataCk *_current;
 
 	Fx(CGE2Engine *vm, int size);
 	~Fx();
 	void clear();
-	void name(int ref, int sub);
-	DataCk *operator[](int ref);
+	bool exist(int ref, int sub = 0);
+	DataCk *load(int ref, int sub = 0);
 };
 
 class MusicPlayer: public Audio::MidiPlayer {

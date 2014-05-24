@@ -29,6 +29,7 @@
 #include "cge2/fileio.h"
 #include "cge2/hero.h"
 #include "cge2/text.h"
+#include "cge2/sound.h"
 
 namespace CGE2 {
 
@@ -284,7 +285,7 @@ void CommandHandler::runCommand() {
 			_vm->snReach(spr, tailCmd._val);
 			break;
 		case kCmdSound:
-			_vm->snSound(spr, tailCmd._val, _count);
+			_vm->snSound(spr, tailCmd._val);
 			_count = 1;
 			break;
 		case kCmdMap:
@@ -462,8 +463,21 @@ void CGE2Engine::snReach(Sprite *spr, int val) {
 	warning("STUB: CGE2Engine::snReach()");
 }
 
-void CGE2Engine::snSound(Sprite *spr, int val, int cnt) {
-	warning("STUB: CGE2Engine::snSound()");
+void CGE2Engine::snSound(Sprite *spr, int wav) {
+	if (wav == -1)
+		_sound->stop();
+	else {
+		if (_sound->_smpinf._counter && wav < 20)
+			return;
+		if (_commandStat._wait && ((wav & 255) > 80))
+			return;
+
+		_commandStat._ref[1] = wav;
+		_commandStat._ref[0] = !_fx->exist(_commandStat._ref[1]);
+		_sound->play(_fx->load(_commandStat._ref[1], _commandStat._ref[0]),
+			(spr) ? (spr->_pos2D.x / (kScrWidth / 16)) : 8);
+	}
+	
 }
 
 void CGE2Engine::snRoom(Sprite *spr, int val) {

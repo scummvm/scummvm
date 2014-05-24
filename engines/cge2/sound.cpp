@@ -61,7 +61,8 @@ void Sound::close() {
 
 void Sound::open() {
 	setRepeat(1);
-	play((*_vm->_fx)[30000], 8);
+	warning("STUB: Sound::open()");
+	play(_vm->_fx->load(99, 99));
 }
 
 void Sound::setRepeat(int16 count) {
@@ -111,60 +112,37 @@ void Sound::sndDigiStop(SmpInfo *PSmpInfo) {
 }
 
 Fx::Fx(CGE2Engine *vm, int size) : _current(NULL), _vm(vm) {
-	_cache = new Handler[size];
-	for (_size = 0; _size < size; _size++) {
-		_cache[_size]._ref = 0;
-		_cache[_size]._wav = NULL;
-	}
 }
 
 Fx::~Fx() {
 	clear();
-	delete[] _cache;
 }
 
 void Fx::clear() {
-	for (Handler *p = _cache, *q = p + _size; p < q; p++) {
-		if (p->_ref) {
-			p->_ref = 0;
-			delete p->_wav;
-			p->_wav = NULL;
-		}
-	}
+	if (_current)
+		delete _current;
 	_current = NULL;
 }
 
-int Fx::find(int ref) {
-	int i = 0;
-	for (Handler *p = _cache, *q = p + _size; p < q; p++) {
-		if (p->_ref == ref)
-			break;
-		else
-			++i;
-	}
-	return i;
+Common::String Fx::name(int ref, int sub) {
+	char name[] = "%.2dfx%.2d.WAV\0";
+	char subn[] = "%.2dfx%.2d?.WAV\0";
+	char *p = (sub) ? subn : name;
+	Common::String filename = Common::String::format(p, ref >> 8, ref & 0xFF);
+	if (sub)
+		filename.setChar('@' + sub, 6);
+	return filename;
 }
 
-void Fx::name(int ref, int sub) {
-	warning("STUB:  Fx::name()");
+bool Fx::exist(int ref, int sub) {
+	return _vm->_resman->exist(name(ref, sub).c_str());
 }
 
-DataCk *Fx::load(int idx, int ref) {
-	char filename[12];
-	warning("TODO: Implement Fx::load() with the use of Fx::name() properly in paralell with Snail! It just won't work this way.");
-	sprintf(filename, "FX%05d.WAV", ref);
-
-	EncryptedStream file(_vm, filename);
-	DataCk *wav = loadWave(&file);
-	if (wav) {
-		Handler *p = &_cache[idx];
-		delete p->_wav;
-		p->_wav = wav;
-		p->_ref = ref;
-	} else {
-		warning("Unable to load %s", filename);
-	}
-	return wav;
+DataCk *Fx::load(int ref, int sub) {
+	Common::String filename = name(ref, sub);
+	EncryptedStream file(_vm, filename.c_str());
+	clear();
+	return (_current = loadWave(&file));
 }
 
 DataCk *Fx::loadWave(EncryptedStream *file) {
@@ -176,20 +154,6 @@ DataCk *Fx::loadWave(EncryptedStream *file) {
 	file->read(data, file->size());
 
 	return new DataCk(data, file->size());
-}
-
-DataCk *Fx::operator[](int ref) {
-	int i;
-	if ((i = find(ref)) < _size)
-		_current = _cache[i]._wav;
-	else {
-		if ((i = find(0)) >= _size) {
-			clear();
-			i = 0;
-		}
-		_current = load(i, ref);
-	}
-	return _current;
 }
 
 MusicPlayer::MusicPlayer(CGE2Engine *vm) : _vm(vm) {

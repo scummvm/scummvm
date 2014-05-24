@@ -173,7 +173,7 @@ public:
 	void snLight(int val);
 	void snWalk(Sprite *spr, int val);
 	void snReach(Sprite *spr, int val);
-	void snSound(Sprite *spr, int val, int cnt);
+	void snSound(Sprite *spr, int wav);
 	void snRoom(Sprite *spr, int val);
 	void snGhost(Bitmap *bmp);
 
