@@ -911,7 +911,7 @@ void Scene804::enter() {
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(133, 139));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(133, 139));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
 	}
 
@@ -931,7 +931,7 @@ void Scene804::step() {
 		if ((_throttleGone) && (_movingThrottle) && (_scene->_activeAnimation->getCurrentFrame() == 39)) {
 			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle
 				(_globals._spriteIndexes[1], false, 1);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(133, 139));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(133, 139));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
 			_throttleGone = false;
 		}
@@ -1329,7 +1329,7 @@ void Scene808::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(248, 211));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 211));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 			break;
@@ -1343,7 +1343,7 @@ void Scene808::actions() {
 				_vm->_sound->command(25);
 			}
 			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(248, 211));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 211));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 			break;
@@ -1365,7 +1365,7 @@ void Scene808::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(248, 186));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 186));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 			break;
@@ -1378,7 +1378,7 @@ void Scene808::actions() {
 			}
 			_globals[kTopButtonPushed] = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(248, 186));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 186));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
 			break;
@@ -1395,7 +1395,7 @@ void Scene808::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(248, 163));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 163));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 			break;
@@ -1409,7 +1409,7 @@ void Scene808::actions() {
 			 }
 			_globals[kTopButtonPushed] = true;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(248, 163));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 163));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 			break;
@@ -1426,7 +1426,7 @@ void Scene808::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(168, 211));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(168, 211));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 			break;
@@ -1443,7 +1443,7 @@ void Scene808::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(172, 163));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(172, 163));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 			break;
@@ -1460,7 +1460,7 @@ void Scene808::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(172, 186));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(172, 186));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 			break;

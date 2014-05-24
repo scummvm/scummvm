@@ -68,7 +68,7 @@ struct SequenceEntry {
 	bool _nonFixed;
 	uint32 _flags;
 
-	Common::Point _msgPos;
+	Common::Point _position;
 	int _field18;
 	int _field1A;
 	int _field1C;
@@ -113,7 +113,7 @@ public:
 	void setAnimRange(int seqIndex, int startVal, int endVal);
 	void scan();
 	void setDepth(int seqIndex, int depth);
-	void setMsgPosition(int seqIndex, const Common::Point &pt);
+	void setPosition(int seqIndex, const Common::Point &pt);
 	int addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks,
 		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 	int addReverseSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks,
@@ -126,12 +126,7 @@ public:
 	void setScale(int spriteIdx, int scale);
 	void setMsgLayout(int seqIndex);
 	void setDone(int seqIndex);
-	void setMotion(int seqIndex, int flags, int deltaX, int deltaY) {
-		warning("TODO: setMotion()");
-		// HACK: Just offset by the delta for now
-		_entries[seqIndex]._msgPos.x += deltaX;
-		_entries[seqIndex]._msgPos.y += deltaY;
-	}
+	void setMotion(int seqIndex, int flags, int deltaX, int deltaY);
 };
 
 } // End of namespace MADS

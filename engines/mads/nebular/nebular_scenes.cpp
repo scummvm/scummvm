@@ -420,7 +420,7 @@ void SceneTeleporter::teleporterHandleKey() {
 		_game._player._stepEnabled = false;
 		Common::Point msgPos = teleporterComputeLocation();
 		_handSequenceId = _scene->_sequences.startReverseCycle(_handSpriteId, false, 4, 2, 0, 0);
-		_scene->_sequences.setMsgPosition(_handSequenceId, msgPos);
+		_scene->_sequences.setPosition(_handSequenceId, msgPos);
 		_scene->_sequences.setDepth(_handSequenceId, 2);
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_LOOP, 0, 1);
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);

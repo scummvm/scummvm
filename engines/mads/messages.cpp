@@ -210,8 +210,8 @@ void KernelMessages::processText(int msgIndex) {
 			x1 = frame->getBounds().left;
 			y1 = frame->getBounds().top;
 		} else {
-			x1 = seqEntry._msgPos.x;
-			y1 = seqEntry._msgPos.y;
+			x1 = seqEntry._position.x;
+			y1 = seqEntry._position.y;
 		}
 	}
 

@@ -141,7 +141,7 @@ void Scene701::enter() {
 	}
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+	_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 
 	int boatStatus = (_scene->_priorSceneId == 703) ? BOAT_GONE : _globals[kBoatStatus];
@@ -182,7 +182,7 @@ void Scene701::enter() {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
 		_scene->_sequences.addTimer(15, 60);
 	} else if (_scene->_priorSceneId == 703) {
 		_game._player._playerPos = Common::Point(231, 127);
@@ -207,7 +207,7 @@ void Scene701::step() {
 	case 60:
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		break;
 
@@ -221,7 +221,7 @@ void Scene701::step() {
 		_vm->_sound->command(16);
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		break;
@@ -234,7 +234,7 @@ void Scene701::step() {
 	case 72:
 		_vm->_sound->command(17);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 		break;
@@ -242,7 +242,7 @@ void Scene701::step() {
 	case 73:
 		_game._player._stepEnabled = true;
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_kernelMessages.reset();
 		break;
@@ -285,14 +285,14 @@ void Scene701::actions() {
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1: {
 			int temp = _globals._sequenceIndexes[5];
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], temp);
 			_scene->_sequences.addTimer(15, 2);
 			}
@@ -312,7 +312,7 @@ void Scene701::actions() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_vm->_sound->command(16);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x310, 34, 0, 120, _game.getQuote(0x30D));
@@ -327,14 +327,14 @@ void Scene701::actions() {
 		case 3:
 			_vm->_sound->command(17);
 			_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 			break;
 
 		case 4:
 			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_globals[kResurrectRoom] = 701;
 			_scene->_nextSceneId = 605;
@@ -1221,10 +1221,10 @@ void Scene704::enter() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		if (_scene->_priorSceneId == 705) {
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		} else {
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(190, 122));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(190, 122));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
 		}
 		int idx = _scene->_dynamicHotspots.add(NOUN_BONES, 0xD1, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
@@ -1250,7 +1250,7 @@ void Scene704::enter() {
 		_scene->_activeAnimation->setCurrentFrame(8);
 	} else if (_boatDirection == 2) {
 		if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId) {
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(123, 125));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		}
 		_scene->loadAnimation(formAnimName('A', -1));
@@ -1812,7 +1812,7 @@ void Scene706::handleTakeVase() {
 		if (_vaseMode == 1) {
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
 			int idx = _scene->_dynamicHotspots.add(NOUN_BOTTLE, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 			_game._objects.setRoom(OBJ_BOTTLE, _scene->_currentSceneId);
@@ -1844,7 +1844,7 @@ void Scene706::enter() {
 	} else if (_game._objects.isInRoom(OBJ_BOTTLE)) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
 		int idx = _scene->_dynamicHotspots.add(NOUN_BOTTLE, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 	}
@@ -1918,7 +1918,7 @@ void Scene706::step() {
 
 					_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 					_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
-					_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
+					_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
 					int idx = _scene->_dynamicHotspots.add(NOUN_BOTTLE, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 					_scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 				}
@@ -2199,7 +2199,7 @@ void Scene751::enter() {
 	}
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+	_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 
 	if (_scene->_priorSceneId == 752) {
@@ -2211,7 +2211,7 @@ void Scene751::enter() {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
 		_scene->_sequences.addTimer(15, 70);
 	} else if (_scene->_priorSceneId != -2) {
 		_game._player._playerPos = Common::Point(22, 131);
@@ -2249,7 +2249,7 @@ void Scene751::step() {
 	case 70:
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		break;
 
@@ -2275,7 +2275,7 @@ void Scene751::step() {
 		_vm->_sound->command(16);
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
 		break;
@@ -2288,14 +2288,14 @@ void Scene751::step() {
 	case 62:
 		_vm->_sound->command(17);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
 		break;
 
 	case 63:
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 		_game._player._stepEnabled = true;
 		_scene->_kernelMessages.reset();
@@ -2357,14 +2357,14 @@ void Scene751::actions() {
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
 
 		case 1: {
 			int syncIdx = _globals._sequenceIndexes[4];
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_sequences.addTimer(15, 2);
 			}
@@ -2384,7 +2384,7 @@ void Scene751::actions() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_vm->_sound->command(16);
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x30D));
@@ -2399,14 +2399,14 @@ void Scene751::actions() {
 		case 3:
 			_vm->_sound->command(17);
 			_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 5, 1, 0, 0);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 			break;
 
 		case 4:
 			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(48, 136));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 			_scene->_sequences.addTimer(60, 5);
 			break;

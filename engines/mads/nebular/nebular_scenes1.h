@@ -154,7 +154,7 @@ private:
 	bool _shadowFl;
 	bool _firstEmergingFl;
 
-	int _msgPosY;
+	int _positionY;
 
 public:
 	Scene106(MADSEngine *vm);

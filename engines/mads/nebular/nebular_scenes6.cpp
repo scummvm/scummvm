@@ -1608,20 +1608,20 @@ void Scene608::setCarAnimations() {
 	_scene->freeAnimation();
 	if (_globals[kCarStatus] == 0) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[6], Common::Point(143, 98));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[6], Common::Point(143, 98));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 6);
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[7], Common::Point(141, 67));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[7], Common::Point(141, 67));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 15);
 	} else {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[6], Common::Point(143, 128));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[6], Common::Point(143, 128));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 6);
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[7], Common::Point(141, 97));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[7], Common::Point(141, 97));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 15);
 		_globals._sequenceIndexes[8] = _scene->_sequences.startCycle(_globals._spriteIndexes[8], false, 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[8], Common::Point(144, 126));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[8], Common::Point(144, 126));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 5);
 	}
 }
@@ -2613,7 +2613,7 @@ void Scene609::step() {
 		if (!_globals[kHasTalkedToHermit] && (_game._difficulty != DIFFICULTY_HARD)) {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 26, 2, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(287, 73));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(287, 73));
 			_scene->_sequences.setScale(_globals._sequenceIndexes[3], 47);
 		}
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
@@ -2636,7 +2636,7 @@ void Scene609::step() {
 		if (!_globals[kHasTalkedToHermit]) {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 26, 2, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], Common::Point(287, 73));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[3], Common::Point(287, 73));
 			_scene->_sequences.setScale(_globals._sequenceIndexes[3], 47);
 		}
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);

@@ -887,7 +887,7 @@ void Scene402::enter() {
 	if (!_game._objects.isInInventory(OBJ_REPAIR_LIST)) {
 		_globals._sequenceIndexes[14] = _scene->_sequences.startCycle(_globals._spriteIndexes[14], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[14], 7);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[14], Common::Point(210, 80));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[14], Common::Point(210, 80));
 		int idx = _scene->_dynamicHotspots.add(NOUN_REPAIR_LIST, 0xD1, _globals._sequenceIndexes[14], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_NONE);
 	}
@@ -902,14 +902,14 @@ void Scene402::enter() {
 	if (!_game._objects.isInRoom(OBJ_ALIEN_LIQUOR) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP)) {
 		_globals._sequenceIndexes[15] = _scene->_sequences.startCycle(_globals._spriteIndexes[15], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[15], 8);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[15], Common::Point(250, 80));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[15], Common::Point(250, 80));
 		int idx = _scene->_dynamicHotspots.add(NOUN_CREDIT_CHIP, 0x4, _globals._sequenceIndexes[15], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_NONE);
 	}
 
 	_globals._sequenceIndexes[20] = _scene->_sequences.startCycle(_globals._spriteIndexes[20], false, 1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[20], 7);
-	_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[20], Common::Point(234, 72));
+	_scene->_sequences.setPosition(_globals._sequenceIndexes[20], Common::Point(234, 72));
 
 	if (_globals[kBottleDisplayed]) {
 		_globals._sequenceIndexes[8] = _scene->_sequences.startCycle(_globals._spriteIndexes[8], false, 4);
@@ -1021,7 +1021,7 @@ void Scene402::step() {
 		case 21:
 			_globals._sequenceIndexes[15] = _scene->_sequences.startCycle(_globals._spriteIndexes[15], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[15], 8);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[15], Common::Point(250, 80));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[15], Common::Point(250, 80));
 			break;
 
 		default:
@@ -1106,7 +1106,7 @@ void Scene402::step() {
 		case 21: {
 			_globals._sequenceIndexes[15] = _scene->_sequences.startCycle(_globals._spriteIndexes[15], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[15], 8);
-			_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[15], Common::Point(250, 80));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[15], Common::Point(250, 80));
 			int idx = _scene->_dynamicHotspots.add(NOUN_CREDIT_CHIP, 0x4, _globals._sequenceIndexes[15], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_NONE);
 			}
@@ -1678,7 +1678,7 @@ void Scene402::step() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 		_globals._sequenceIndexes[20] = _scene->_sequences.startCycle(_globals._spriteIndexes[20], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[20], 8);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[20], Common::Point(234, 72));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[20], Common::Point(234, 72));
 		}
 		break;
 
@@ -1937,7 +1937,7 @@ void Scene402::step() {
 
 		_globals._sequenceIndexes[20] = _scene->_sequences.startCycle(_globals._spriteIndexes[20], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[20], 8);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[20], Common::Point(234, 72));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[20], Common::Point(234, 72));
 	}
 
 	if (_game._trigger == 85) {
@@ -2204,7 +2204,7 @@ void Scene402::actions() {
 		_game._player._visible = false;
 		_globals._sequenceIndexes[22] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[22], false, 7, 2, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[22], 1, 2);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[22], Common::Point(_game._player._playerPos.x, _game._player._playerPos.y + 1));
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[22], Common::Point(_game._player._playerPos.x, _game._player._playerPos.y + 1));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[22], 5);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[22], 88);
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -2499,7 +2499,7 @@ void Scene405::actions() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
 		Common::Point msgPos = Common::Point(_game._player._playerPos.x, _game._player._playerPos.y + 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], msgPos);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], msgPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
 	} else if ((_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, 0x251) || _action.isAction(VERB_CLOSE, NOUN_WIDE_DOOR)) && _globals[kArmoryDoorOpen]) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -2508,7 +2508,7 @@ void Scene405::actions() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 7, 2, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], _game._player._playerPos);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], _game._player._playerPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
 	} else if (_action.isAction(VERB_PUT, NOUN_CARD_SLOT)) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -2517,7 +2517,7 @@ void Scene405::actions() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 7, 2, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[3], _game._player._playerPos);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[3], _game._player._playerPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[3], 87);
 	} else if (_action.isAction(VERB_LOOK, NOUN_CANNON_BALLS))
 		_vm->_dialogs->show(40510);
@@ -2707,7 +2707,7 @@ void Scene406::actions() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
 		Common::Point msgPos = Common::Point(_game._player._playerPos.x, _game._player._playerPos.y + 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], msgPos);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], msgPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[2], 87);
 	} else if (_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, 0x251) && _globals[kStorageDoorOpen]) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -2717,7 +2717,7 @@ void Scene406::actions() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 		Common::Point msgPos = Common::Point(_game._player._playerPos.x, _game._player._playerPos.y + 1);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], msgPos);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], msgPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[2], 87);
 	} else if (_action.isAction(VERB_PUT, NOUN_CARD_SLOT)) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -2726,7 +2726,7 @@ void Scene406::actions() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 7, 2, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 110);
-		_scene->_sequences.setMsgPosition(_globals._sequenceIndexes[2], _game._player._playerPos);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], _game._player._playerPos);
 		_scene->_sequences.setScale(_globals._sequenceIndexes[2], 87);
 	} else if (_action.isAction(VERB_LOOK, NOUN_TRASH))
 		_vm->_dialogs->show(40610);

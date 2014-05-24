@@ -123,8 +123,8 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 	_entries[seqIndex]._depth = depth;
 	_entries[seqIndex]._scale = scale;
 	_entries[seqIndex]._nonFixed = nonFixed;
-	_entries[seqIndex]._msgPos.x = msgX;
-	_entries[seqIndex]._msgPos.y = msgY;
+	_entries[seqIndex]._position.x = msgX;
+	_entries[seqIndex]._position.y = msgY;
 	_entries[seqIndex]._numTicks = numTicks;
 	_entries[seqIndex]._extraTicks = extraTicks;
 
@@ -192,7 +192,7 @@ void SequenceList::setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot) {
 	spriteSlot._scale = timerEntry._scale;
 
 	if (!timerEntry._nonFixed) {
-		spriteSlot._position = timerEntry._msgPos;
+		spriteSlot._position = timerEntry._position;
 	} else {
 		MSprite *sprite = spriteSet.getFrame(timerEntry._frameIndex - 1);
 		spriteSlot._position = sprite->_offset;
@@ -231,14 +231,14 @@ bool SequenceList::loadSprites(int seqIndex) {
 				seqEntry._field20 += seqEntry._field18;
 				if (seqEntry._field20 >= 100) {
 					int v = seqEntry._field20 / 100;
-					seqEntry._msgPos.x += v * seqEntry._field1C;
+					seqEntry._position.x += v * seqEntry._field1C;
 					seqEntry._field20 -= v * 100;
 				}
 
 				seqEntry._field22 += seqEntry._field1A;
 				if (seqEntry._field22 >= 100) {
 					int v = seqEntry._field22 / 100;
-					seqEntry._msgPos.y += v * seqEntry._field1E;
+					seqEntry._position.y += v * seqEntry._field1E;
 					seqEntry._field22 -= v * 100;
 				}
 			}
@@ -424,8 +424,8 @@ void SequenceList::setDepth(int seqIndex, int depth) {
 	_entries[seqIndex]._depth = depth;
 }
 
-void SequenceList::setMsgPosition(int seqIndex, const Common::Point &pt) {
-	_entries[seqIndex]._msgPos = pt;
+void SequenceList::setPosition(int seqIndex, const Common::Point &pt) {
+	_entries[seqIndex]._position = pt;
 	_entries[seqIndex]._nonFixed = false;
 }
 
@@ -497,7 +497,7 @@ void SequenceList::setScale(int spriteIdx, int scale) {
 void SequenceList::setMsgLayout(int seqIndex) {
 	Player &player = _vm->_game->_player;
 	int yp = player._playerPos.y + (player._centerOfGravity * player._currentScale) / 100;
-	setMsgPosition(seqIndex, Common::Point(player._playerPos.x, yp));
+	setPosition(seqIndex, Common::Point(player._playerPos.x, yp));
 	setDepth(seqIndex, player._currentDepth);
 	setScale(seqIndex, player._currentScale);
 	updateTimeout(-1, seqIndex);
@@ -506,6 +506,13 @@ void SequenceList::setMsgLayout(int seqIndex) {
 void SequenceList::setDone(int seqIndex) {
 	_entries[seqIndex]._doneFlag = true;
 	_entries[seqIndex]._timeout = _vm->_game->_player._priorTimer;
+}
+
+void SequenceList::setMotion(int seqIndex, int flags, int deltaX, int deltaY) {
+	warning("TODO: setMotion()");
+	// HACK: Just offset by the delta for now
+	_entries[seqIndex]._position.x += deltaX;
+	_entries[seqIndex]._position.y += deltaY;
 }
 
 } // End of namespace
