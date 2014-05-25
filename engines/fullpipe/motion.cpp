@@ -817,7 +817,7 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 	return 0;
 }
 
-MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x1, int y1, int a8, int flag1) {
+MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x1, int y1, int stid2, int flag1) {
 #if 0
 	PicAniInfo picinfo;
 
@@ -837,46 +837,38 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 		return 0;
 	}
 
-	v13 = _callback1(ani, movitem, rescount);
-	v14 = MovGraph_getItemIndexByStaticAni(this, ani);
-	v15 = v14 << 6;
+	MessageQueue *res = 0;
+
+	MovArr *goal = _callback1(ani, movitem, rescount);
+	int idx = getItemIndexByStaticAni(ani);
 	v16 = 0;
 
-	movgitem = _items[v14];
+	movgitem = _items[idx];
 	v18 = movgitem->count;
 
 	if (v18 > 0) {
 		v19 = movgitem->movitems;
-		while (v19->movarr != v13) {
+		while (v19->movarr != goal) {
 			++v16;
 			++v19;
 			if (v16 >= v18)
-				goto LABEL_6;
+				break;
 		}
-		v21 = v16;
-		v22 = movgitem->movitems[v21].movarr;
-		v23 = movgitem->movarr._movSteps;
-		movarr = movgitem->movitems[v21].movarr;
 
-		if (v23)
-			CObjectFree(v23);
+		if (v16 < v18) {
+			movgitem->movarr._movSteps.clear();
+			_items[idx]->movarr = movgitem->movitems[v16].movarr;
+			_items[idx]->movarr._movSteps = movgitem->movitems[v16].movarr->_movSteps;
+			_items[idx]->movarr._afield_8 = -1;
+			_items[idx]->movarr._link = 0;
 
-		memcpy((char *)&this->_items->movarr + v15, v22, 0x20u);
-		*(MovStep **)((char *)&this->_items->movarr._movSteps + v15) = (MovStep *)operator new(8 * movarr->_movStepCount);
-		memcpy(*(void **)((char *)&this->_items->movarr._movSteps + v15), movarr->_movSteps, 8 * movarr->_movStepCount);
-		*(int *)((char *)&this->_items->movarr._afield_8 + v15) = -1;
-		*(MovGraphLink **)((char *)&this->_items->movarr._link + v15) = 0;
-		v24 = fillMGMinfo(*(StaticANIObject **)((char *)&this->_items->ani + v15), (MovArr *)((char *)&this->_items->movarr + v15), a8);
-
-		result = v24;
-	} else {
-	LABEL_6:
-		result = 0;
+			res = fillMGMinfo(_items[idx]->ani, _items[idx]->movarr, stid2);
+		}
 	}
 
 	ani->setPicAniInfo(&picinfo);
 
-	return result;
+	return res;
 #endif
 	warning("STUB: *MovGraph::sub1()");
 
