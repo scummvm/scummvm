@@ -817,7 +817,67 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 	return 0;
 }
 
-MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9) {
+MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x1, int y1, int a8, int flag1) {
+#if 0
+	PicAniInfo picinfo;
+
+	ani->getPicAniInfo(&picinfo);
+
+	ani->_statics = ani->getStaticsById(stid);
+	ani->_movement = 0;
+	ani->setOXY(x, y);
+
+	int rescount;
+
+	MovItem *movitem = method28(ani, x1, y1, flag1, &rescount);
+
+	if (!movitem) {
+		ani->setPicAniInfo(&picinfo);
+
+		return 0;
+	}
+
+	v13 = _callback1(ani, movitem, rescount);
+	v14 = MovGraph_getItemIndexByStaticAni(this, ani);
+	v15 = v14 << 6;
+	v16 = 0;
+
+	movgitem = _items[v14];
+	v18 = movgitem->count;
+
+	if (v18 > 0) {
+		v19 = movgitem->movitems;
+		while (v19->movarr != v13) {
+			++v16;
+			++v19;
+			if (v16 >= v18)
+				goto LABEL_6;
+		}
+		v21 = v16;
+		v22 = movgitem->movitems[v21].movarr;
+		v23 = movgitem->movarr._movSteps;
+		movarr = movgitem->movitems[v21].movarr;
+
+		if (v23)
+			CObjectFree(v23);
+
+		memcpy((char *)&this->_items->movarr + v15, v22, 0x20u);
+		*(MovStep **)((char *)&this->_items->movarr._movSteps + v15) = (MovStep *)operator new(8 * movarr->_movStepCount);
+		memcpy(*(void **)((char *)&this->_items->movarr._movSteps + v15), movarr->_movSteps, 8 * movarr->_movStepCount);
+		*(int *)((char *)&this->_items->movarr._afield_8 + v15) = -1;
+		*(MovGraphLink **)((char *)&this->_items->movarr._link + v15) = 0;
+		v24 = fillMGMinfo(*(StaticANIObject **)((char *)&this->_items->ani + v15), (MovArr *)((char *)&this->_items->movarr + v15), a8);
+
+		result = v24;
+	} else {
+	LABEL_6:
+		result = 0;
+	}
+
+	ani->setPicAniInfo(&picinfo);
+
+	return result;
+#endif
 	warning("STUB: *MovGraph::sub1()");
 
 	return 0;
