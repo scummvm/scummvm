@@ -64,7 +64,7 @@ const char *gScummVMFullVersion = "ResidualVM " SCUMMVM_VERSION " - PlayStation2
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
 const char *gScummVMVersionDate = SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
 const char *gScummVMFullVersion = "ResidualVM " SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
-#else
+#endif
 const char *gScummVMFeatures = ""
 #ifdef TAINTED_BUILD
 	// TAINTED means the build contains engines/subengines not enabled by default
