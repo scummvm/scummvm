@@ -1379,6 +1379,9 @@ ps2)
 	_host_os=ps2
 	_host_cpu=mips64r5900el
 	_host_alias=ee
+	# PS2 bogus dirs: they actually depend on launch medium
+	datadir='host:data'
+	docdir='host:docs'
 	;;
 ps3)
 	_host_os=ps3
@@ -1828,6 +1831,15 @@ if test "$_global_constructors" = yes; then
 fi
 echo $_global_constructors
 
+echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
+if test ! "x$(which $_host_alias-strings 2>/dev/null)" = "x"; then
+_strings=$_host_alias-strings
+echo yes >> "$TMPLOG"
+else
+_strings=strings
+echo no >> "$TMPLOG"
+fi
+
 #
 # Check for endianness
 #
@@ -1842,9 +1854,9 @@ void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
 $CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
-if strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
+if $_strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
 	_endian=big
-elif strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
 echo $_endian;
@@ -2301,6 +2313,9 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -G2"
 		DEFINES="$DEFINES -D_EE"
 		DEFINES="$DEFINES -D__PLAYSTATION2__"
+		if test -z "$PS2SDK_OLD"; then
+			DEFINES="$DEFINES -D__NEW_PS2SDK__"
+		fi
 		;;
 	ps3)
 		# Force use of SDL and freetype from the ps3 toolchain
@@ -2683,6 +2698,8 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 			DEFINES="$DEFINES -DDISABLE_SID"
 			DEFINES="$DEFINES -DDISABLE_NES_APU"
+			CXXFLAGS="$CXXFLAGS -fno-exceptions"
+			CXXFLAGS="$CXXFLAGS -fno-rtti"
 			_backend="ps2"
 			_build_scalers=no
 			_mt32emu=no
@@ -2690,10 +2707,15 @@ if test -n "$_host"; then
 			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
 			# libtremor, while our code later on expects it to be called libvorbisidec.
 			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
+			# Disable this for older SDK as this breaks the build otherwise...
+			if test -z "$PS2SDK_OLD"; then
+				_tremor=yes
+			fi
 			_mad=yes
 			_zlib=yes
 			# HACK to fix compilation of C source files for now.
-			add_line_to_config_mk 'CC = ee-gcc'
+			add_line_to_config_mk 'CC := ee-gcc'
+			add_line_to_config_mk 'CFLAGS := -std=c99 -W -Wno-unused-parameter -Wconversion -pedantic -G2 -s -O2 -Wuninitialized'
 			# HACK to fix linking for now. It seems ee-g++ does not handle linking correctly.
 			LD=ee-gcc
 
@@ -3210,9 +3232,10 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 		;;
 	ps2)
 		_elf_loader=yes
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
 _mak_plugins='
-LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
-PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
+LDFLAGS         += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
+PLUGIN_LDFLAGS  += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
 '
 		;;
 	psp)
@@ -3348,6 +3371,8 @@ if test "$_tremor" = yes && test "$_vorbis" = no; then
 	if test "$_tremolo" = yes ; then
 		add_line_to_config_h '#define USE_TREMOLO'
 		LIBS="$LIBS $TREMOR_LIBS -ltremolo"
+	elif test "$_host" = ps2 ; then
+		LIBS="-ltremor $LIBS"
 	else
 		LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
 	fi
@@ -4096,6 +4121,10 @@ else
 	darwin*)
 		echo "osx"
 		_taskbar=yes
+		;;
+	ps2)
+		# PS2 bogus dir: it actually depends on launch medium
+		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"host:plugins\\\""
 		;;
 	*)
 		if test "$_libunity" = yes; then
