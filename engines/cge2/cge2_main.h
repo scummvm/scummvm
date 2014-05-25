@@ -36,8 +36,8 @@ namespace CGE2 {
 #define kTabName          "CGE.TAB"
 #define kInfoW            140
 #define kPocketFull       170
-#define kGameFrameDelay   (1000 / 50)
-#define kGameTickDelay    (1000 / 62)
+#define kGameFrameDelay   (750 / 50)
+#define kGameTickDelay    (750 / 62)
 
 } // End of namespace CGE2
 
