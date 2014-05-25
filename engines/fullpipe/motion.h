@@ -371,8 +371,8 @@ public:
 	int getItemIndexByStaticAni(StaticANIObject *ani);
 	Common::Array<MovArr *> *genMovArr(int x, int y, int *arrSize, int flag1, int flag2);
 	void shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
-	Common::Array<Common::Rect *> *getBboxes(MovArr *movarr1, MovArr *movarr2, int *listCount);
-	void calcBbox(Common::Rect *rect, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
+	Common::Array<MovItem *> *calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount);
+	void genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
 	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);
 	MessageQueue *sub1(StaticANIObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9);
 	MessageQueue *fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId);

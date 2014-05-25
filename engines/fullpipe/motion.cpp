@@ -1176,7 +1176,7 @@ void MovGraph::shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<
 	}
 }
 
-Common::Array<Common::Rect *> *MovGraph::getBboxes(MovArr *movarr1, MovArr *movarr2, int *listCount) {
+Common::Array<MovItem *> *MovGraph::calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount) {
 	Common::Array<MovGraphLink *> tempObList1;
 	Common::Array<MovGraphLink *> tempObList2;
 
@@ -1189,12 +1189,12 @@ Common::Array<Common::Rect *> *MovGraph::getBboxes(MovArr *movarr1, MovArr *mova
 
 	*listCount = tempObList2.size();
 
-	Common::Array<Common::Rect *> *res = new Common::Array<Common::Rect *>;
+	Common::Array<MovItem *> *res = new Common::Array<MovItem *>;
 
 	for (int i = 0; i < *listCount; i++) {
-		Common::Rect *r = new Common::Rect;
+		MovItem *r = new MovItem;
 
-		calcBbox(r, tempObList2[i], movarr1, movarr2);
+		genMovItem(r, tempObList2[i], movarr1, movarr2);
 
 		delete tempObList2[i];
 	}
@@ -1204,8 +1204,8 @@ Common::Array<Common::Rect *> *MovGraph::getBboxes(MovArr *movarr1, MovArr *mova
 	return res;
 }
 
-void MovGraph::calcBbox(Common::Rect *rect, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2) {
-	warning("STUB: MovGraph::calcBbox()");
+void MovGraph::genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2) {
+	warning("STUB: MovGraph::genMovItem()");
 }
 
 bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
