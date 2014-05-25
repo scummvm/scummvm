@@ -3114,12 +3114,12 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 	for (uint i = 0; i < _programWalkTable.size(); ++i) {
 		const ProgramWalkData *pwd = &_programWalkTable[i];
 		if ((pwd->point1 & 0x4000) == 0) {
-			int distance = 32000;
 			ProgramPointData *pts1 = &_programPointsTable[pwd->point1];
 			ProgramPointData *pts2 = &_programPointsTable[pwd->point2];
 			if (pts1->order != 0) {
 				int dx = pts2->x - pts1->x;
 				int dy = pts2->y - pts1->y;
+				int distance = 32000;
 				if (dx == 0) {
 					if (dstPosY > MIN(pts2->y, pts1->y) && dstPosY < MAX(pts2->y, pts1->y)) {
 						int d = ABS(dstPosX - pts1->x);
