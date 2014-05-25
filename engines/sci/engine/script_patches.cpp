@@ -2373,11 +2373,91 @@ static const uint16 sq1vgaPatchEgoShowsCard[] = {
 	PATCH_END
 };
 
+// The spider droid on planet Korona has a fixed movement speed,
+//  which is way faster than the default movement speed of ego.
+// This means that the player would have to turn up movement speed,
+//  otherwise it will be impossible to escape it.
+// We fix this issue by making the droid move a bit slower than ego
+//  does (relative to movement speed setting).
+//
+// Applies to at least: English PC floppy
+// Responsible method: spider::doit
+static const uint16 sq1vgaSignatureSpiderDroidTiming[] = {
+	SIG_MAGICDWORD,
+	0x63, 0x4e,                         // pToa script
+	0x30, SIG_UINT16(0x0005),           // bnt [further method code]
+	0x35, 0x00,                         // ldi 00
+	0x32, SIG_UINT16(0x0062),           // jmp [super-call]
+	0x38, SIG_UINT16(0x0088),           // pushi 0088h (script)
+	0x76,                               // push0
+	0x81, 0x02,                         // lag global[2] (current room)
+	0x4a, 0x04,                         // send 04 (get [current room].script)
+	0x30, SIG_UINT16(0x0005),           // bnt [further method code]
+	0x35, 0x00,                         // ldi 00
+	0x32, SIG_UINT16(0x0052),           // jmp [super-call]
+	0x89, 0xa6,                         // lsg global[a6]
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0012),           // bnt [2nd code], in case global A6 <> 1
+	0x81, 0xb5,                         // lag global[b5]
+	0x30, SIG_UINT16(0x000d),           // bnt [2nd code], in case global B5 == 0
+	0x38, SIG_UINT16(0x008c),           // pushi 008c
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x1cb6),           // lofsa 1CB6 (moveToPath)
+	0x36,                               // push
+	0x54, 0x06,                         // self 06
+	0x32, SIG_UINT16(0x0038),           // jmp [super-call]
+	0x81, 0xb5,                         // lag global[B5]
+	0x18,                               // not
+	0x30, SIG_UINT16(0x0032),           // bnt [super-call], in case global B5 <> 0
+	SIG_END
+}; // 58 bytes)
+
+static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
+	0x63, 0x4e,                         // pToa script
+	0x2f, 0x68,                         // bt [super-call]
+	0x38, PATCH_UINT16(0x0088),         // pushi 0088 (script)
+	0x76,                               // push0
+	0x81, 0x02,                         // lag global[2] (current room)
+	0x4a, 0x04,                         // send 04
+	0x2f, 0x5e,                         // bt [super-call]
+	// --> 12 bytes saved
+	// new code
+	0x38, PATCH_UINT16(0x0176),         // pushi 0176 (egoMoveSpeed)
+	0x76,                               // push0
+	0x81, 0x01,                         // lag global[1]
+	0x4a, 0x04,                         // send 04 - sq1::egoMoveSpeed
+	0x36,                               // push
+	0x36,                               // push
+	0x35, 0x03,                         // ldi 03
+	0x0c,                               // shr
+	0x02,                               // add --> egoMoveSpeed + (egoMoveSpeed >> 3)
+	0x39, 0x01,                         // push 01 (waste 1 byte)
+	0x02,                               // add --> egoMoveSpeed++
+	0x65, 0x4c,                         // aTop cycleSpeed
+	0x65, 0x5e,                         // aTop moveSpeed
+	// new code end
+	0x89, 0xb5,                         // lsg global[B5]
+	0x31, 0x13,                         // bnt [2nd code chunk]
+	0x89, 0xa6,                         // lsg global[A6]
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x3e,                         // bnt [super-call]
+	0x38, PATCH_UINT16(0x008c),         // pushi 008c
+	0x78,                               // push1
+	0x72, PATCH_UINT16(0x1cb6),         // lofsa moveToPath
+	0x36,                               // push
+	0x54, 0x06,                         // self 06 - spider::setScript(movePath)
+	0x33, 0x32,                         // jmp [super-call]
+	// --> 9 bytes saved
+	PATCH_END
+};
 
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
+	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
