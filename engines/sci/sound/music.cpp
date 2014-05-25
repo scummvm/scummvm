@@ -1169,8 +1169,12 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 
 			int neededVoices = channel._voices;
 			// do we have enough free voices?
-			// We only care for essential channels
-			if (map->_freeVoices < neededVoices && prio > 0) {
+			if (map->_freeVoices < neededVoices) {
+				// We only care for essential channels
+				if (prio > 0) {
+					debug("   not enough voices; need %d, have %d. Skipping this channel.", neededVoices, map->_freeVoices);
+					continue;
+				}
 				do {
 					int j = map->lowestPrio();
 					if (j == -1) {
