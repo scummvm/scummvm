@@ -818,7 +818,6 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 }
 
 MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x1, int y1, int stid2, int flag1) {
-#if 0
 	PicAniInfo picinfo;
 
 	ani->getPicAniInfo(&picinfo);
@@ -829,9 +828,9 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 
 	int rescount;
 
-	MovItem *movitem = method28(ani, x1, y1, flag1, &rescount);
+	Common::Array<MovItem *> *movitems = method28(ani, x1, y1, flag1, &rescount);
 
-	if (!movitem) {
+	if (!movitems) {
 		ani->setPicAniInfo(&picinfo);
 
 		return 0;
@@ -839,40 +838,27 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 
 	MessageQueue *res = 0;
 
-	MovArr *goal = _callback1(ani, movitem, rescount);
+	MovArr *goal = _callback1(ani, movitems, rescount);
 	int idx = getItemIndexByStaticAni(ani);
-	v16 = 0;
 
-	movgitem = _items[idx];
-	v18 = movgitem->count;
+	MovGraphItem *movgitem = _items[idx];
+	int cnt = movgitem->count;
 
-	if (v18 > 0) {
-		v19 = movgitem->movitems;
-		while (v19->movarr != goal) {
-			++v16;
-			++v19;
-			if (v16 >= v18)
-				break;
-		}
-
-		if (v16 < v18) {
+	for (int nidx = 0; nidx < cnt; nidx++) {
+		if ((*movgitem->movitems)[nidx]->movarr == goal) {
 			movgitem->movarr._movSteps.clear();
-			_items[idx]->movarr = movgitem->movitems[v16].movarr;
-			_items[idx]->movarr._movSteps = movgitem->movitems[v16].movarr->_movSteps;
+			_items[idx]->movarr = *(*movgitem->movitems)[nidx]->movarr;
+			_items[idx]->movarr._movSteps = (*movgitem->movitems)[nidx]->movarr->_movSteps;
 			_items[idx]->movarr._afield_8 = -1;
 			_items[idx]->movarr._link = 0;
 
-			res = fillMGMinfo(_items[idx]->ani, _items[idx]->movarr, stid2);
+			res = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, stid2);
 		}
 	}
 
 	ani->setPicAniInfo(&picinfo);
 
 	return res;
-#endif
-	warning("STUB: *MovGraph::sub1()");
-
-	return 0;
 }
 
 MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId) {
