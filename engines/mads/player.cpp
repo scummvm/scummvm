@@ -414,7 +414,7 @@ void Player::move() {
 				_walkOffScreen = _walkOffScreenSceneId;
 				_walkAnywhere = true;
 				_walkOffScreenSceneId = 0;
-				_stepEnabled = true;
+				_stepEnabled = false;
 				newFacing = false;
 			}
 
