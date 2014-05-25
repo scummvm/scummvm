@@ -2738,7 +2738,7 @@ void Scene109::actions() {
 						_scene->_spriteSlots.fullRefresh();
 						_scene->_sequences.scan();
 						if (_game._player._visible) {
-							_game._player._spritesChanged = true;
+							_game._player._forceRefresh = true;
 							_game._player.update();
 						}
 
