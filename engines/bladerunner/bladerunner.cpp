@@ -289,4 +289,9 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 	return 0;
 }
 
+void BladeRunnerEngine::ISez(const char *str) {
+	debug("\t%s", str);
+}
+
+
 } // End of namespace BladeRunner

@@ -87,6 +87,8 @@ public:
 	bool isArchiveOpen(const Common::String &name);
 
 	Common::SeekableReadStream *getResourceStream(const Common::String &name);
+
+	void ISez(const char *str);
 };
 
 } // End of namespace BladeRunner

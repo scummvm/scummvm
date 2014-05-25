@@ -30,6 +30,27 @@ void ScriptRC01::InitializeScene() {
 	_vm->outtakePlay(28, true);
 	_vm->outtakePlay(41, true);
 	_vm->outtakePlay( 0, false);
+
+	_vm->ISez("Blade Runner");
+	_vm->ISez("");
+	_vm->ISez("From the dark recesses of David Leary's imagination comes a game unlike any");
+	_vm->ISez("other. Blade Runner immerses you in the underbelly of future Los Angeles. Right");
+	_vm->ISez("from the start, the story pulls you in with graphic descriptions of a");
+	_vm->ISez("grandmother doing the shimmy in her underwear, child molestation, brutal");
+	_vm->ISez("cold-blooded slaying of innocent animals, vomiting on desks, staring at a");
+	_vm->ISez("woman's ass, the list goes on. And when the game starts, the real fun begins -");
+	_vm->ISez("shoot down-on-their-luck homeless people and toss them into a dumpster. Watch");
+	_vm->ISez("with sadistic glee as a dog gets blown into chunky, bloody, bits by an");
+	_vm->ISez("explosive, and even murder a shy little girl who loves you. If you think David");
+	_vm->ISez("Leary is sick, and you like sick, this is THE game for you.");
+	_vm->ISez("");
+	_vm->ISez("JW: Don't forget the wasting of helpless mutated cripples in the underground.");
+	_vm->ISez("It's such a beautiful thing!");
+	_vm->ISez("");
+	_vm->ISez("DL: Go ahead.  Just keep beating that snarling pit bull...ignore the foam");
+	_vm->ISez("around his jaws. There's room on the top shelf of my fridge for at least one");
+	_vm->ISez("more head... - Psychotic Dave");
+	_vm->ISez("");
 }
 
 void ScriptRC01::SceneLoaded() {
