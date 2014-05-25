@@ -258,7 +258,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds,
 }
 
 void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
-	DepthSurface *depthsSurface, int scale, int transparentColor) {
+	DepthSurface *depthSurface, int scale, int transparentColor) {
 
 	int destX = destPos.x, destY = destPos.y;
 	if (scale == 100) {
@@ -285,20 +285,19 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 
 		byte *data = src->getData();
 		byte *srcPtr = data + (src->getWidth() * copyRect.top + copyRect.left);
-		byte *depthsData = depthsSurface->getData();
-		byte *depthsPtr = depthsData + (depthsSurface->pitch * destY) + destX;
 		byte *destPtr = (byte *)pixels + (destY * pitch) + destX;
 
 		// 100% scaling variation
 		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
 			// Copy each byte one at a time checking against the depth
 			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
-				if ((depth <= (depthsPtr[xCtr] & 0x7f)) && (srcPtr[xCtr] != transparentColor))
+				int pixelDepth = depthSurface == nullptr ? 15 :
+					depthSurface->getDepth(Common::Point(destX + xCtr, destY + rowCtr));
+				if ((depth <= pixelDepth) && (srcPtr[xCtr] != transparentColor))
 					destPtr[xCtr] = srcPtr[xCtr];
 			}
 
 			srcPtr += src->getWidth();
-			depthsPtr += depthsSurface->getWidth();
 			destPtr += getWidth();
 		}
 
@@ -379,7 +378,6 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		return;
 
 	byte *destPixelsP = this->getBasePtr(destX + spriteLeft, destY + spriteTop);
-	const byte *depthPixelsP = depthsSurface->getBasePtr(destX + spriteLeft, destY + spriteTop);
 
 	spriteLeft = (spriteLeft * (normalFrame ? 1 : -1));
 
@@ -395,8 +393,8 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 
 		// Found a line to display. Loop through the pixels
 		const byte *srcP = srcPixelsP;
-		const byte *depthP = depthPixelsP;
 		byte *destP = destPixelsP;
+
 		for (int xp = 0, sprX = 0; xp < frameWidth; ++xp, ++srcP) {
 			if (xp < spriteLeft)
 				// Not yet reached start of display area
@@ -405,16 +403,19 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 				// Not a display pixel
 				continue;
 
-			if ((*srcP != transparentColor) && (depth <= (*depthP & 0x7f)))
+			// Get depth of current output pixel in depth surface
+			Common::Point pt((destP - (byte *)this->pixels) % this->pitch,
+				(destP - (byte *)this->pixels) / this->pitch);
+			int pixelDepth = (depthSurface == nullptr) ? 15 : depthSurface->getDepth(pt);
+	
+			if ((*srcP != transparentColor) && (depth <= pixelDepth))
 				*destP = *srcP;
 
 			++destP;
-			++depthP;
 		}
 
 		// Move to the next destination line
 		destPixelsP += this->pitch;
-		depthPixelsP += depthsSurface->pitch;
 	}
 }
 
