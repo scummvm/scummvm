@@ -1902,7 +1902,9 @@ void maskBgOverlay(const byte *bgPtr, const byte *maskPtr, int16 width, int16 he
 
 			destPtr++;
 			srcPtr++;
-			maskPtr++;
+
+			if (maskPtr)
+				maskPtr++;
 		}
 	}
 
