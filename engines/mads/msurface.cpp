@@ -258,7 +258,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds,
 }
 
 void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
-	MSurface *depthsSurface, int scale, int transparentColor) {
+	DepthSurface *depthsSurface, int scale, int transparentColor) {
 
 	int destX = destPos.x, destY = destPos.y;
 	if (scale == 100) {

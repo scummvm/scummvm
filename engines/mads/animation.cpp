@@ -172,7 +172,7 @@ Animation::~Animation() {
 	}
 }
 
-void Animation::load(UserInterface &interfaceSurface, MSurface &depthSurface,
+void Animation::load(UserInterface &interfaceSurface, DepthSurface &depthSurface,
 		const Common::String &resName, int flags, Common::Array<PaletteCycle> *palCycles,
 		SceneInfo *sceneInfo) {
 	Common::String resourceName = resName;
@@ -366,7 +366,7 @@ bool Animation::drawFrame(SpriteAsset &spriteSet, const Common::Point &pt, int f
 	return 0;
 }
 
-void Animation::loadInterface(UserInterface &interfaceSurface, MSurface &depthSurface,
+void Animation::loadInterface(UserInterface &interfaceSurface, DepthSurface &depthSurface,
 		AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo) {
 	_scene->_depthStyle = 0;
 	if (header._bgType <= ANIMBG_FULL_SIZE) {

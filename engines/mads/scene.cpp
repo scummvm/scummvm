@@ -176,7 +176,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 		flags |= ANIMFLAG_LOAD_BACKGROUND_ONLY;
 
 	_animationData = Animation::init(_vm, this);
-	MSurface depthSurface;
+	DepthSurface depthSurface(_vm);
 	_animationData->load(_userInterface, depthSurface, prefix, flags, nullptr, nullptr);
 
 	_vm->_palette->_paletteUsage.load(&_scenePaletteUsage);
@@ -592,7 +592,7 @@ void Scene::checkKeyboard() {
 
 void Scene::loadAnimation(const Common::String &resName, int trigger) {
 	assert(_activeAnimation == nullptr);
-	MSurface depthSurface;
+	DepthSurface depthSurface(_vm);
 	UserInterface interfaceSurface(_vm);
 
 	_activeAnimation = Animation::init(_vm, this);

@@ -168,7 +168,7 @@ private:
 	/**
 	 * Load the user interface display for an animation
 	 */
-	void loadInterface(UserInterface &interfaceSurface, MSurface &depthSurface,
+	void loadInterface(UserInterface &interfaceSurface, DepthSurface &depthSurface,
 		AAHeader &header, int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo);
 
 	/**
@@ -196,7 +196,7 @@ public:
 	/**
 	 * Loads animation data
 	 */
-	void load(UserInterface &interfaceSurface, MSurface &depthSurface, const Common::String &resName,
+	void load(UserInterface &interfaceSurface, DepthSurface &depthSurface, const Common::String &resName,
 		int flags, Common::Array<PaletteCycle> *palCycles, SceneInfo *sceneInfo);
 
 	/**

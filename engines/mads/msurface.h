@@ -32,6 +32,7 @@ namespace MADS {
 
 class MADSEngine;
 class MSprite;
+class DepthSurface;
 
 /**
  * Basic sprite information
@@ -162,7 +163,7 @@ public:
 	* @param depthSurface	Depth surface to use with sprite depth
 	* @param transparentColor	Transparency palette index
 	*/
-	void copyFrom(MSurface *src, const Common::Point &destPos, int depth, MSurface *depthSurface,
+	void copyFrom(MSurface *src, const Common::Point &destPos, int depth, DepthSurface *depthSurface,
 		int scale, int transparentColor = -1);
 
 	/**

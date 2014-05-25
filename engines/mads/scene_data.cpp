@@ -110,7 +110,7 @@ SceneInfo *SceneInfo::init(MADSEngine *vm) {
 }
 
 void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
-		int flags, MSurface &depthSurface, MSurface &bgSurface) {
+		int flags, DepthSurface &depthSurface, MSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
 
 	// Figure out the resource to use

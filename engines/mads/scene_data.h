@@ -186,7 +186,7 @@ public:
 	 * loads the data
 	 */
 	void load(int sceneId, int variant, const Common::String &resName, int flags,
-		MSurface &depthSurface, MSurface &bgSurface);
+		DepthSurface &depthSurface, MSurface &bgSurface);
 
 	/**
 	 * Loads the palette for a scene
