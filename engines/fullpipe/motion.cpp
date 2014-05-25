@@ -1296,6 +1296,28 @@ bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
 	return res;
 }
 
+void MovGraph::setEnds(MovStep *step1, MovStep *step2) {
+	if (step1->link->_movGraphNode1 == step2->link->_movGraphNode2) {
+		step1->sfield_0 = 1;
+		step2->sfield_0 = 1;
+
+		return;
+	}
+
+	if (step1->link->_movGraphNode1 == step2->link->_movGraphNode1) {
+		step1->sfield_0 = 1;
+		step2->sfield_0 = 0;
+	} else {
+		step1->sfield_0 = 0;
+
+		if (step1->link->_movGraphNode2 != step2->link->_movGraphNode1) {
+			step2->sfield_0 = 1;
+		} else {
+			step2->sfield_0 = 0;
+		}
+	}
+}
+
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
 	for (uint i = 0; i < _items2.size(); i++)
 		if (_items2[i]->_objectId == objectId)

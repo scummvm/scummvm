@@ -376,6 +376,7 @@ public:
 	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);
 	MessageQueue *sub1(StaticANIObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9);
 	MessageQueue *fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId);
+	void setEnds(MovStep *step1, MovStep *step2);
 };
 
 class Movement;
