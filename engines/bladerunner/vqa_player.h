@@ -48,6 +48,7 @@ class VQAPlayer {
 	int _loopDefault;
 
 	uint32 _nextFrameTime;
+	bool   _hasAudio;
 	bool   _audioStarted;
 	Audio::SoundHandle _soundHandle;
 
@@ -64,6 +65,7 @@ public:
 		  _loopSpecial(-1),
 		  _loopDefault(-1),
 		  _nextFrameTime(0),
+		  _hasAudio(false),
 		  _audioStarted(false)
 	{}
 

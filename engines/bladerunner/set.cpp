@@ -20,43 +20,26 @@
  *
  */
 
-#ifndef BLADERUNNER_CHAPTERS_H
-#define BLADERUNNER_CHAPTERS_H
+#include "bladerunner/set.h"
+
+#include "bladerunner/bladerunner.h"
+
+#include "common/ptr.h"
+#include "common/str.h"
+#include "common/stream.h"
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
+#define kSet0 0x53657430
 
-class Chapters {
-	BladeRunnerEngine *_vm;
+bool Set::open(const Common::String &name) {
+	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(name));
 
-	int  _chapter;
-	int  _resourceIds[6];
-	bool _hasOpenResources;
+	uint32 sig = s->readUint32BE();
+	if (sig != kSet0)
+		return false;
 
-public:
-	Chapters(BladeRunnerEngine *vm)
-		: _vm(vm), _chapter(0)
-	{
-		_chapter = 0;
-
-		_resourceIds[0] = 1;
-		_resourceIds[1] = 1;
-		_resourceIds[2] = 2;
-		_resourceIds[3] = 2;
-		_resourceIds[4] = 3;
-		_resourceIds[5] = 4;
-
-		_hasOpenResources = false;
-	}
-
-	bool enterChapter(int chapter);
-	void closeResources();
-
-	bool hasOpenResources() { return _hasOpenResources; }
-	int  currentResourceId() { return _chapter ? _resourceIds[_chapter] : -1; }
-};
+	return true;
+}
 
 } // End of namespace BladeRunner
-
-#endif

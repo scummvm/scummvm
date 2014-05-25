@@ -57,6 +57,7 @@ public:
 	uint16 offsetX() const { return _header.offsetX; }
 	uint16 offsetY() const { return _header.offsetY; }
 
+	bool   hasAudio() const { return _header.channels != 0; }
 	uint16 frequency() const { return _header.freq; }
 
 protected:

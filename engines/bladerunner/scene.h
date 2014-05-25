@@ -20,41 +20,43 @@
  *
  */
 
-#ifndef BLADERUNNER_CHAPTERS_H
-#define BLADERUNNER_CHAPTERS_H
+#ifndef BLADERUNNER_SCENE_H
+#define BLADERUNNER_SCENE_H
+
+#include "bladerunner/vqa_player.h"
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-class Chapters {
+class Scene {
 	BladeRunnerEngine *_vm;
 
-	int  _chapter;
-	int  _resourceIds[6];
-	bool _hasOpenResources;
+public:
+	int         _setId;
+	int         _sceneId;
+	VQAPlayer   _vqaPlayer;
+	int         _defaultLoop;
+	int         _nextSetId;
+	int         _nextSceneId;
+	int         _frame;
+	bool        _playerWalkedIn;
 
 public:
-	Chapters(BladeRunnerEngine *vm)
-		: _vm(vm), _chapter(0)
+	Scene(BladeRunnerEngine *vm)
+		: _vm(vm),
+		  _setId(-1),
+		  _sceneId(-1),
+		  _vqaPlayer(vm),
+		  _defaultLoop(0),
+		  _nextSetId(-1),
+		  _nextSceneId(-1),
+		  _playerWalkedIn(false)
 	{
-		_chapter = 0;
-
-		_resourceIds[0] = 1;
-		_resourceIds[1] = 1;
-		_resourceIds[2] = 2;
-		_resourceIds[3] = 2;
-		_resourceIds[4] = 3;
-		_resourceIds[5] = 4;
-
-		_hasOpenResources = false;
 	}
 
-	bool enterChapter(int chapter);
-	void closeResources();
-
-	bool hasOpenResources() { return _hasOpenResources; }
-	int  currentResourceId() { return _chapter ? _resourceIds[_chapter] : -1; }
+	bool open(int setId, int sceneId, bool isLoadingGame);
+	int advanceFrame(Graphics::Surface &surface);
 };
 
 } // End of namespace BladeRunner

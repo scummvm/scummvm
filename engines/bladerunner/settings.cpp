@@ -24,6 +24,9 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/chapters.h"
+#include "bladerunner/scene.h"
+
+#include "common/debug.h"
 
 namespace BladeRunner {
 
@@ -33,17 +36,16 @@ Settings::Settings(BladeRunnerEngine *vm)
 	_chapter = 1;
 	_gamma = 1.0f;
 
-	_chapterChanged;
-	_newChapter;
-	_newScene;
-	_newSet;
+	_chapterChanged = false;
+	_newChapter = -1;
+	_newScene = -1;
+	_newSet = -1;
 
-	_startingGame;
-	_loadingGame;
+	_startingGame = true;
+	_loadingGame = false;
 
-	_fullHDFrames;
-	_mst3k;
-
+	_fullHDFrames = true;
+	_mst3k = false;
 }
 
 bool Settings::openNewScene() {
@@ -57,9 +59,9 @@ bool Settings::openNewScene() {
 		// Stop ambient audio and music
 	}
 
-	// int currentSet = _vm->scene()->getSet();
-	// int newSet     = _newSet;
-	// int newScene   = _newScene;
+	int currentSet = _vm->_scene->_setId;
+	int newSet     = _newSet;
+	int newScene   = _newScene;
 
 	_newSet = -1;
 	_newScene = -1;
@@ -71,8 +73,7 @@ bool Settings::openNewScene() {
 		int newChapter = _newChapter;
 		_chapterChanged = false;
 		_newChapter = 0;
-		if (!_vm->_chapters->enterChapter(newChapter))
-		{
+		if (!_vm->_chapters->enterChapter(newChapter)) {
 			_vm->_gameIsRunning = false;
 			return false;
 		}
@@ -81,16 +82,14 @@ bool Settings::openNewScene() {
 			_startingGame = false;
 	}
 
-	// if (!_vm->scene()->open(newSet, newScene, _loadingGame))
-	// {
-	// 	_vm->_gameIsRunning = false;
-	// 	return false;
-	// }
+	if (!_vm->_scene->open(newSet, newScene, _loadingGame)) {
+		_vm->_gameIsRunning = false;
+		return false;
+	}
 
-	// if (!_loadingGame && currentSet != newSet) {
-	// 	// TODO: Reset actors for new set
-
-	// }
+	if (!_loadingGame && currentSet != newSet) {
+		// TODO: Reset actors for new set
+	}
 
 	_loadingGame = false;
 	return true;

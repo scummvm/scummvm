@@ -20,43 +20,24 @@
  *
  */
 
-#ifndef BLADERUNNER_CHAPTERS_H
-#define BLADERUNNER_CHAPTERS_H
+#include "bladerunner/script/script.h"
+
+#include "bladerunner/bladerunner.h"
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
+void ScriptRC01::InitializeScene() {
+	_vm->outtakePlay(28, true);
+	_vm->outtakePlay(41, true);
+	_vm->outtakePlay( 0, false);
+}
 
-class Chapters {
-	BladeRunnerEngine *_vm;
+void ScriptRC01::SceneLoaded() {
 
-	int  _chapter;
-	int  _resourceIds[6];
-	bool _hasOpenResources;
+}
 
-public:
-	Chapters(BladeRunnerEngine *vm)
-		: _vm(vm), _chapter(0)
-	{
-		_chapter = 0;
+void ScriptRC01::SceneFrameAdvanced(int frame) {
 
-		_resourceIds[0] = 1;
-		_resourceIds[1] = 1;
-		_resourceIds[2] = 2;
-		_resourceIds[3] = 2;
-		_resourceIds[4] = 3;
-		_resourceIds[5] = 4;
-
-		_hasOpenResources = false;
-	}
-
-	bool enterChapter(int chapter);
-	void closeResources();
-
-	bool hasOpenResources() { return _hasOpenResources; }
-	int  currentResourceId() { return _chapter ? _resourceIds[_chapter] : -1; }
-};
+}
 
 } // End of namespace BladeRunner
-
-#endif

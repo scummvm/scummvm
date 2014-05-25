@@ -20,41 +20,26 @@
  *
  */
 
-#ifndef BLADERUNNER_CHAPTERS_H
-#define BLADERUNNER_CHAPTERS_H
+#ifndef BLADERUNNER_SET_H
+#define BLADERUNNER_SET_H
+
+#include "common/str.h"
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-class Chapters {
+class VQADecoder;
+
+class Set {
 	BladeRunnerEngine *_vm;
 
-	int  _chapter;
-	int  _resourceIds[6];
-	bool _hasOpenResources;
-
 public:
-	Chapters(BladeRunnerEngine *vm)
-		: _vm(vm), _chapter(0)
+	Set(BladeRunnerEngine *vm)
 	{
-		_chapter = 0;
-
-		_resourceIds[0] = 1;
-		_resourceIds[1] = 1;
-		_resourceIds[2] = 2;
-		_resourceIds[3] = 2;
-		_resourceIds[4] = 3;
-		_resourceIds[5] = 4;
-
-		_hasOpenResources = false;
 	}
 
-	bool enterChapter(int chapter);
-	void closeResources();
-
-	bool hasOpenResources() { return _hasOpenResources; }
-	int  currentResourceId() { return _chapter ? _resourceIds[_chapter] : -1; }
+	bool open(const Common::String &name);
 };
 
 } // End of namespace BladeRunner

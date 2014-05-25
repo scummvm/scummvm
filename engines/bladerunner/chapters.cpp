@@ -32,10 +32,10 @@ bool Chapters::enterChapter(int chapter) {
 	if (!_vm->openArchive("A.TLK"))
 		return false;
 
-	if (!_vm->openArchive(Common::String::format("VQA%d.MIX", MAX(id, 3))))
+	if (!_vm->openArchive(Common::String::format("VQA%d.MIX", MIN(id, 3))))
 		return false;
 
-	if (!_vm->openArchive(Common::String::format("%d.TLK", MAX(id, 3))))
+	if (!_vm->openArchive(Common::String::format("%d.TLK", MIN(id, 3))))
 		return false;
 
 	if (!_vm->openArchive(Common::String::format("OUTTAKE%d.MIX", id)))
@@ -50,8 +50,8 @@ void Chapters::closeResources() {
 	int id = _resourceIds[_chapter];
 
 	_vm->closeArchive("A.TLK");
-	_vm->closeArchive(Common::String::format("VQA%d.MIX", MAX(id, 3)));
-	_vm->closeArchive(Common::String::format("%d.TLK", MAX(id, 3)));
+	_vm->closeArchive(Common::String::format("VQA%d.MIX", MIN(id, 3)));
+	_vm->closeArchive(Common::String::format("%d.TLK", MIN(id, 3)));
 	_vm->closeArchive(Common::String::format("OUTTAKE%d.MIX", id));
 	_hasOpenResources = false;
 }

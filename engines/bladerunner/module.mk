@@ -11,6 +11,10 @@ MODULE_OBJS = \
 	gameinfo.o \
 	image.o \
 	outtake.o \
+	scene.o \
+	script/rc01.o \
+	script/script.o \
+	set.o \
 	settings.o \
 	vqa_decoder.o \
 	vqa_player.o

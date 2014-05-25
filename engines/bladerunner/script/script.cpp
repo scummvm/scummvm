@@ -20,43 +20,36 @@
  *
  */
 
-#ifndef BLADERUNNER_CHAPTERS_H
-#define BLADERUNNER_CHAPTERS_H
+#include "bladerunner/script/script.h"
+
+#include "bladerunner/bladerunner.h"
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
+bool Script::open(const Common::String &name) {
+	delete _currentScript;
 
-class Chapters {
-	BladeRunnerEngine *_vm;
+	if (name == "RC01") { _currentScript = new ScriptRC01(_vm); return true; }
 
-	int  _chapter;
-	int  _resourceIds[6];
-	bool _hasOpenResources;
+	return false;
+}
 
-public:
-	Chapters(BladeRunnerEngine *vm)
-		: _vm(vm), _chapter(0)
-	{
-		_chapter = 0;
+void Script::InitializeScene() {
+	_inScriptCounter++;
+	_currentScript->InitializeScene();
+	_inScriptCounter--;
+}
 
-		_resourceIds[0] = 1;
-		_resourceIds[1] = 1;
-		_resourceIds[2] = 2;
-		_resourceIds[3] = 2;
-		_resourceIds[4] = 3;
-		_resourceIds[5] = 4;
+void Script::SceneLoaded() {
+	_inScriptCounter++;
+	_currentScript->SceneLoaded();
+	_inScriptCounter--;
+}
 
-		_hasOpenResources = false;
-	}
-
-	bool enterChapter(int chapter);
-	void closeResources();
-
-	bool hasOpenResources() { return _hasOpenResources; }
-	int  currentResourceId() { return _chapter ? _resourceIds[_chapter] : -1; }
-};
+void Script::SceneFrameAdvanced(int frame) {
+	_inScriptCounter++;
+	_currentScript->SceneFrameAdvanced(frame);
+	_inScriptCounter--;
+}
 
 } // End of namespace BladeRunner
-
-#endif

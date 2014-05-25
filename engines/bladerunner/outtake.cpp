@@ -53,7 +53,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	while (!_vm->shouldQuit()) {
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event))
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+			if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				return;
 
 		int frame = vqa_player.update();

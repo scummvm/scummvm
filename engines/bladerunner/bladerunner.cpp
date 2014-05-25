@@ -26,6 +26,8 @@
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/image.h"
 #include "bladerunner/outtake.h"
+#include "bladerunner/scene.h"
+#include "bladerunner/script/script.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/vqa_decoder.h"
 
@@ -46,6 +48,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst) : Engine(syst) {
 	_gameIsRunning  = true;
 
 	_chapters = nullptr;
+	_scene = new Scene(this);
+	_script = new Script(this);
 	_settings = new Settings(this);
 }
 
@@ -105,12 +109,12 @@ bool BladeRunnerEngine::startup() {
 	if (!r)
 		return false;
 
-	initActors();
+	initChapterAndScene();
 
 	return true;
 }
 
-void BladeRunnerEngine::initActors() {
+void BladeRunnerEngine::initChapterAndScene() {
 	// TODO: Init actors...
 
 	_settings->setChapter(1);
@@ -168,10 +172,6 @@ void BladeRunnerEngine::gameTick() {
 		// TODO: Only run if not in Kia, script, nor AI
 		_settings->openNewScene();
 
-		outtakePlay(28, true);
-		outtakePlay(41, true);
-		outtakePlay( 0, false);
-
 		// TODO: Autosave
 		// TODO: Kia
 		// TODO: Spinner
@@ -184,11 +184,17 @@ void BladeRunnerEngine::gameTick() {
 		// TODO: ZBUF repair dirty rects
 		// TODO: Tick Ambient Audio (in Replicant)
 
-		// TODO: Advance frame (in Replicant)
+		bool backgroundChanged = false;
+		int frame = _scene->advanceFrame(_surface1);
+		if (frame >= 0) {
+			_script->SceneFrameAdvanced(frame);
+			backgroundChanged = true;
+		}
+
 		// TODO: Render overlays (mostly in Replicant)
 		// TODO: Tick Actor AI and Timers (timers in Replicant)
 
-		if (_settings->getNewScene() == -1 /* || in_script_counter || in_ai */) {
+		if (_settings->getNewScene() == -1 || _script->_inScriptCounter /* || in_ai */) {
 
 			// TODO: Tick and draw all actors in current set (drawing works in Replicant)
 			// TODO: Draw items (drawing works in Replicant)
@@ -198,7 +204,9 @@ void BladeRunnerEngine::gameTick() {
 			// TODO: Process AUD (audio in Replicant)
 			// TODO: Footstep sound
 
+			_system->copyRectToScreen((const byte *) _surface1.getBasePtr(0, 0), _surface1.pitch, 0, 0, 640, 480);
 			_system->updateScreen();
+			_system->delayMillis(10);
 		}
 	}
 }

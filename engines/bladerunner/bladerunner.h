@@ -38,17 +38,20 @@ namespace BladeRunner {
 const Graphics::PixelFormat RGB555(2, 5, 5, 5, 0, 10, 5, 0, 0);
 
 class Chapters;
+class Scene;
+class Script;
 class Settings;
 class GameInfo;
 
 class BladeRunnerEngine : public Engine {
-	GameInfo *_gameInfo;
-
 public:
 	bool      _gameIsRunning;
 	bool      _windowIsActive;
 
 	Chapters *_chapters;
+	GameInfo *_gameInfo;
+	Scene    *_scene;
+	Script   *_script;
 	Settings *_settings;
 
 	int in_script_counter;
@@ -67,7 +70,7 @@ public:
 	Common::Error BladeRunnerEngine::run();
 
 	bool startup();
-	void initActors();
+	void initChapterAndScene();
 	void shutdown();
 
 	void loadSplash();

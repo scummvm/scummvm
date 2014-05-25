@@ -295,9 +295,11 @@ bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size)
 	}
 
 	assert(_header.version == 2);
-	assert(_header.freq == 22050);
-	assert(_header.channels == 1);
-	assert(_header.bits == 16);
+	if (_header.channels != 0) {
+		assert(_header.freq == 22050);
+		assert(_header.channels == 1);
+		assert(_header.bits == 16);
+	}
 	assert(_header.colors == 0);
 
 	return true;
@@ -497,9 +499,11 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size)
 
 	for (int i = 0; i != loopNamesCount; ++i) {
 		char   *begin = names + loopNameOffsets[i];
-		uint32  len   = ((i == loopNamesCount) ? chd.size : loopNameOffsets[i+1]) - loopNameOffsets[i];
+		uint32  len   = ((i == loopNamesCount - 1) ? chd.size : loopNameOffsets[i+1]) - loopNameOffsets[i];
 
 		_loopInfo.loops[i].name = Common::String(begin, len);
+
+		// debug("%2d: %s", i, _loopInfo.loops[i].name.c_str());
 	}
 
 	return true;

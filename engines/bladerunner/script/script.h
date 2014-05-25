@@ -20,42 +20,63 @@
  *
  */
 
-#ifndef BLADERUNNER_CHAPTERS_H
-#define BLADERUNNER_CHAPTERS_H
+#ifndef BLADERUNNER_SCRIPT_H
+#define BLADERUNNER_SCRIPT_H
+
+#include "common/str.h"
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class ScriptBase;
 
-class Chapters {
+class Script {
+public:
+	BladeRunnerEngine *_vm;
+	int                _inScriptCounter;
+	ScriptBase        *_currentScript;
+
+	Script(BladeRunnerEngine *vm)
+		: _vm(vm),
+		  _inScriptCounter(0),
+		  _currentScript(nullptr)
+	{}
+
+	bool open(const Common::String &name);
+
+	void InitializeScene();
+	void SceneLoaded();
+	void SceneFrameAdvanced(int frame);
+};
+
+class ScriptBase {
+protected:
 	BladeRunnerEngine *_vm;
 
-	int  _chapter;
-	int  _resourceIds[6];
-	bool _hasOpenResources;
+	ScriptBase(BladeRunnerEngine *vm)
+		: _vm(vm)
+	{}
 
 public:
-	Chapters(BladeRunnerEngine *vm)
-		: _vm(vm), _chapter(0)
-	{
-		_chapter = 0;
-
-		_resourceIds[0] = 1;
-		_resourceIds[1] = 1;
-		_resourceIds[2] = 2;
-		_resourceIds[3] = 2;
-		_resourceIds[4] = 3;
-		_resourceIds[5] = 4;
-
-		_hasOpenResources = false;
-	}
-
-	bool enterChapter(int chapter);
-	void closeResources();
-
-	bool hasOpenResources() { return _hasOpenResources; }
-	int  currentResourceId() { return _chapter ? _resourceIds[_chapter] : -1; }
+	virtual void InitializeScene() = 0;
+	virtual void SceneLoaded() = 0;
+	virtual void SceneFrameAdvanced(int frame) = 0;
 };
+
+#define DECLARE_SCRIPT(name) \
+class Script##name : public ScriptBase { \
+public: \
+	Script##name(BladeRunnerEngine *_vm) \
+		: ScriptBase(_vm) \
+	{} \
+	void InitializeScene(); \
+	void SceneLoaded(); \
+	void SceneFrameAdvanced(int frame); \
+};
+
+DECLARE_SCRIPT(RC01)
+
+#undef DECLARE_SCRIPT
 
 } // End of namespace BladeRunner
 

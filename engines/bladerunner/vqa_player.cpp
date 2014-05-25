@@ -41,7 +41,9 @@ bool VQAPlayer::open(const Common::String &name) {
 		return false;
 	}
 
-	_audioStream = Audio::makeQueuingAudioStream(_decoder.frequency(), false);
+	_hasAudio = _decoder.hasAudio();
+	if (_hasAudio)
+		_audioStream = Audio::makeQueuingAudioStream(_decoder.frequency(), false);
 
 	return true;
 }
@@ -59,18 +61,22 @@ int VQAPlayer::update() {
 		_curFrame = 0;
 		if (_curFrame >= 0) {
 			_decoder.readNextPacket();
-			queueAudioFrame(_decoder.decodeAudioFrame());
+			if (_hasAudio)
+				queueAudioFrame(_decoder.decodeAudioFrame());
 			_surface = _decoder.decodeVideoFrame();
 		}
 
 		_decodedFrame = calcNextFrame(_curFrame);
 		if (_decodedFrame >= 0) {
 			_decoder.readNextPacket();
-			queueAudioFrame(_decoder.decodeAudioFrame());
+			if (_hasAudio)
+				queueAudioFrame(_decoder.decodeAudioFrame());
 		}
 
-		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _audioStream);
-		_audioStarted = true;
+		if (_hasAudio) {
+			_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _audioStream);
+			_audioStarted = true;
+		}
 
 		_nextFrameTime = now + 60000 / 15;
 		return _curFrame;
@@ -85,7 +91,8 @@ int VQAPlayer::update() {
 		_decodedFrame = calcNextFrame(_curFrame);
 		if (_decodedFrame >= 0) {
 			_decoder.readNextPacket();
-			queueAudioFrame(_decoder.decodeAudioFrame());
+			if (_hasAudio)
+				queueAudioFrame(_decoder.decodeAudioFrame());
 		}
 
 		_nextFrameTime += 60000 / 15;
