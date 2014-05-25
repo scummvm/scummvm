@@ -256,7 +256,7 @@ void SpriteSlots::drawBackground() {
 
 
 				if (spriteSlot._depth <= 1) {
-					frame->copyTo(&scene._backgroundSurface, frame->getTransparencyIndex());
+					frame->copyTo(&scene._backgroundSurface, pt, frame->getTransparencyIndex());
 				} else if (scene._depthStyle == 0) {
 					scene._backgroundSurface.copyFrom(frame, pt, spriteSlot._depth, &scene._depthSurface,
 						100, frame->getTransparencyIndex());
