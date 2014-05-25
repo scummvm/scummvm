@@ -353,7 +353,8 @@ int getGameStateFileSlot(const char *filename);
 enum GameState {
 	kGameStateGameLoop,
 	kGameStateOptionsDialog,
-	kGameStateQuitDialog
+	kGameStateQuitDialog,
+	kGameStateNone
 };
 
 class MidiPlayer;
