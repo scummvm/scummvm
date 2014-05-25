@@ -332,9 +332,9 @@ byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat form
 
 	// Save the palette to the output in the specified format
 	for (uint i = firstIndex; i < firstIndex + numColors; i++) {
-		const uint r = (_colors[i].r * rNewMax) / rOrigMax;
-		const uint g = (_colors[i].g * gNewMax) / gOrigMax;
-		const uint b = (_colors[i].b * bNewMax) / bOrigMax;
+		const uint r = (_colors[i].r * rNewMax) / (rOrigMax == 0 ? 1 : rOrigMax);
+		const uint g = (_colors[i].g * gNewMax) / (gOrigMax == 0 ? 1 : gOrigMax);
+		const uint b = (_colors[i].b * bNewMax) / (bOrigMax == 0 ? 1 : bOrigMax);
 
 		buf[i * format.bytesPerPixel + rBytePos] |= r << (format.rShift % 8);
 		buf[i * format.bytesPerPixel + gBytePos] |= g << (format.gShift % 8);
