@@ -84,7 +84,6 @@ void MADSAction::clear() {
 	_action._objectNameId = -1;
 	_action._indirectObjectId = -1;
 	_textChanged = true;
-	_pickedWord = 0;
 }
 
 void MADSAction::appendVocab(int vocabId, bool capitalize) {
