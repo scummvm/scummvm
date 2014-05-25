@@ -535,7 +535,10 @@ void TuckerEngine::loadObj() {
 		return;
 	}
 	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
-	if ((_gameFlags & kGameFlagDemo) == 0) {
+	// If a savegame is loaded from the launcher, skip the display chapter
+	if (_startSlot != -1)
+		_startSlot = -1;
+	else if ((_gameFlags & kGameFlagDemo) == 0) {
 		handleNewPartSequence();
 	}
 	_currentPartNum = _partNum;

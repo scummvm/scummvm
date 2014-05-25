@@ -50,6 +50,7 @@ TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 fl
 	_currentSaveLoadGameState = 1;
 	_fileLoadSize = 0;
 	_csDataSize = 0;
+	_startSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 	_player = nullptr;
 	_loadTempBuf = nullptr;
@@ -91,7 +92,8 @@ Common::Error TuckerEngine::run() {
 	initGraphics(kScreenWidth, kScreenHeight, false);
 	syncSoundSettings();
 	_compressedSound.openFile();
-	handleIntroSequence();
+	if (_startSlot == -1)
+		handleIntroSequence();
 	if ((_gameFlags & kGameFlagIntroOnly) == 0 && !shouldQuit()) {
 		mainLoop();
 	}

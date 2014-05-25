@@ -40,7 +40,7 @@ void TuckerEngine::handleIntroSequence() {
 	_player = new AnimationSequencePlayer(_system, _mixer, _eventMan, &_compressedSound, firstSequence);
 	_player->mainLoop();
 	delete _player;
-	_player = 0;
+	_player = nullptr;
 }
 
 void TuckerEngine::handleCreditsSequence() {
