@@ -591,7 +591,11 @@ void Scene::checkKeyboard() {
 }
 
 void Scene::loadAnimation(const Common::String &resName, int trigger) {
-	assert(_activeAnimation == nullptr);
+	// WORKAROUND: If there's already a previous active animation used by the
+	// scene, then free it before we create the new one
+	if (_activeAnimation)
+		freeAnimation();
+	
 	DepthSurface depthSurface(_vm);
 	UserInterface interfaceSurface(_vm);
 
