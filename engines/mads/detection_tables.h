@@ -63,6 +63,24 @@ static const MADSGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Rex Nebular and the Cosmic Gender Bender DOS English 8.49 Atlernate
+		{
+			"nebular",
+			0,
+			{
+				{ "section1.hag", 0, "d583576923e3437937fb7f46f4b6274f", 927222 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GType_RexNebular,
+		0
+	},
+
+	{
 		// Return of the Phantom DOS English
 		{
 			"phantom",
