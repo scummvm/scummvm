@@ -513,7 +513,8 @@ void CGE2Engine::runGame() {
 		
 	_infoLine->gotoxyz(V3D(kInfoX, kInfoY, 0));
 	_infoLine->setText(nullptr);
-	_vga->_showQ->insert(_infoLine);
+	//_vga->_showQ->insert(_infoLine);
+	warning("STUB: CGE2Engine::runGame() - Info Line is missing!");
 
 	caveUp(_now);
 	_startupMode = 0;
