@@ -416,7 +416,7 @@ void Scene802::preActions() {
 void Scene802::actions() {
 	if (_action.isAction(VERB_TAKE, NOUN_SHIELD_MODULATOR) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
 		switch (_game._trigger) {
-		case (0):
+		case 0:
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], true, 7, 2, 0, 0);
@@ -448,7 +448,7 @@ void Scene802::actions() {
 		}
 	} else if ((_action.isAction(VERB_TAKE, NOUN_REMOTE)) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
 		switch (_game._trigger) {
-		case (0):
+		case 0:
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], true, 7, 2, 0, 0);

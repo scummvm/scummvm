@@ -2930,7 +2930,7 @@ void Scene408::actions() {
 		_vm->_sound->command(58);
 	} else if (_action.isAction(VERB_TAKE, NOUN_TARGET_MODULE) && (_game._objects.isInRoom(OBJ_TARGET_MODULE) || _game._trigger)) {
 		switch (_game._trigger) {
-		case (0):
+		case 0:
 			_vm->_sound->command(57);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
@@ -3178,7 +3178,7 @@ void Scene410::actions() {
 		_scene->_nextSceneId = 406;
 	else if (_action.isAction(VERB_TAKE, NOUN_CHARGE_CASES) && (_game._objects.isInRoom(OBJ_CHARGE_CASES) || _game._trigger)) {
 		switch (_game._trigger) {
-		case (0):
+		case 0:
 			_vm->_sound->command(57);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
@@ -3447,18 +3447,18 @@ int Scene411::computeQuoteAndQuantity() {
 
 void Scene411::handleKettleAction() {
 	switch (_globals[kNextIngredient]) {
-	case (1):
+	case 1:
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4],
 			false, 15, 0, 0, 0);
 		break;
 
-	case (2):
+	case 2:
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4],
 			false, 6, 0, 0, 0);
 		break;
 
-	case (3):
+	case 3:
 		_makeMushroomCloud = true;
 		break;
 
@@ -3511,19 +3511,19 @@ void Scene411::handleDialog() {
 
 void Scene411::giveToRex(int object) {
 	switch (object) {
-	case (0):
+	case 0:
 		_game._objects.addToInventory(OBJ_ALIEN_LIQUOR);
 		break;
 
-	case (1):
+	case 1:
 		_game._objects.addToInventory(OBJ_LECITHIN);
 		break;
 
-	case (2):
+	case 2:
 		_game._objects.addToInventory(OBJ_PETROX);
 		break;
 
-	case (3):
+	case 3:
 		_game._objects.addToInventory(OBJ_FORMALDEHYDE);
 		break;
 
@@ -3606,7 +3606,7 @@ void Scene411::enter() {
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 0, 0);
 			break;
 
-		case (4):
+		case 4:
 			_vm->_sound->command(53);
 			_vm->_sound->command(54);
 			_vm->_sound->command(55);
@@ -3713,10 +3713,10 @@ void Scene411::step() {
 				}
 				break;
 
-			case (22):
-			case (41):
-			case (59):
-			case (115):
+			case 22:
+			case 41:
+			case 59:
+			case 115:
 				if (_makeMushroomCloud) {
 					_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 5, 1, 0, 0);
 					_makeMushroomCloud = false;
@@ -3838,7 +3838,7 @@ void Scene411::actions() {
 
 	if (_action.isAction(VERB_TAKE, NOUN_PETROX) && (_game._objects.isInRoom(OBJ_PETROX) || _game._trigger)) {
 		switch (_game._trigger) {
-		case (0):
+		case 0:
 			_vm->_sound->command(57);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
@@ -3875,7 +3875,7 @@ void Scene411::actions() {
 
 	if (_action.isAction(VERB_TAKE, NOUN_LECITHIN) && (_game._objects.isInRoom(OBJ_LECITHIN) || _game._trigger)) {
 		switch (_game._trigger) {
-		case (0):
+		case 0:
 			_vm->_sound->command(57);
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
@@ -3937,19 +3937,19 @@ void Scene411::actions() {
 		if (_action.isObject(NOUN_PETROX) || _action.isObject(NOUN_FORMALDEHYDE) || _action.isObject(NOUN_LECITHIN) || _action.isObject(NOUN_ALIEN_LIQUOR)) {
 			_newIngredient = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			switch (_newIngredient) {
-			case (OBJ_ALIEN_LIQUOR):
+			case OBJ_ALIEN_LIQUOR:
 				_dialog1.start();
 				break;
 
-			case (OBJ_FORMALDEHYDE):
+			case OBJ_FORMALDEHYDE:
 				_dialog3.start();
 				break;
 
-			case (OBJ_PETROX):
+			case OBJ_PETROX:
 				_dialog4.start();
 				break;
 
-			case (OBJ_LECITHIN):
+			case OBJ_LECITHIN:
 				_dialog2.start();
 				break;
 
