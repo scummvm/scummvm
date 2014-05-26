@@ -58,6 +58,9 @@ protected:
 	{}
 
 public:
+	virtual ~ScriptBase()
+	{}
+
 	virtual void InitializeScene() = 0;
 	virtual void SceneLoaded() = 0;
 	virtual void SceneFrameAdvanced(int frame) = 0;
