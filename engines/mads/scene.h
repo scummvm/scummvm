@@ -53,7 +53,7 @@ private:
 	void loadVocabStrings();
 
 	/*
-	 * Initialises the data for palette animation within the scene
+	 * Initializes the data for palette animation within the scene
 	 */
 	void initPaletteAnimation(Common::Array<PaletteCycle> &palCycles, bool animFlag);
 

@@ -197,7 +197,7 @@ ASound::ASound(Audio::Mixer *mixer, const Common::String &filename, int dataOffs
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1,
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
-	// Initialise the Adlib
+	// Initialize the Adlib
 	adlibInit();
 
 	// Reset the adlib

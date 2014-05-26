@@ -47,7 +47,7 @@ public:
 	~SoundManager();
 
 	/**
-	 * Initialises the sound driver for a given game section
+	 * Initializes the sound driver for a given game section
 	 */
 	void init(int sectionNumber);
 

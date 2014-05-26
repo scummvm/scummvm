@@ -209,7 +209,7 @@ public:
 	ScreenSurface();
 
 	/**
-	 * Initialise the surface
+	 * Initialize the surface
 	 */
 	void init();
 

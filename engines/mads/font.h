@@ -52,7 +52,7 @@ private:
 	static Common::HashMap<Common::String, Font *> *_fonts;
 public:
 	/**
-	 * Initialise the font system
+	 * Initialize the font system
 	 */
 	static void init(MADSEngine *vm);
 

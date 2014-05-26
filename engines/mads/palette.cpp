@@ -504,7 +504,7 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 	// Sort the mapping lists
 	insertionSort(numColors, greyList, greyMapping);
 
-	// Initialise state variables
+	// Initialize state variables
 	int greySum = 0;
 	int greyScan = 0;
 	int greyMark = 0;

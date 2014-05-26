@@ -82,7 +82,7 @@ public:
 	virtual ~MSurface();
 
 	/**
-	 * Reinitialises a surface to have a given set of dimensions
+	 * Reinitializes a surface to have a given set of dimensions
 	 */
 	void setSize(int width, int height);
 

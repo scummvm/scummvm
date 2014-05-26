@@ -83,7 +83,7 @@ private:
 	/**
 	 * Handles basic initialisation
 	 */
-	void initialise();
+	void initialize();
 protected:
 	// Engine APIs
 	virtual Common::Error run();

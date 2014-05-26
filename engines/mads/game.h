@@ -97,7 +97,7 @@ protected:
 	Game(MADSEngine *vm);
 
 	/**
-	 * Initialises the current section number of the game
+	 * Initializes the current section number of the game
 	 */
 	void initSection(int sectionNumber);
 
@@ -110,7 +110,7 @@ protected:
 	virtual ProtectionResult checkCopyProtection() = 0;
 
 	/**
-	 * Initialises global variables for a new game
+	 * Initializes global variables for a new game
 	 */
 	virtual void initializeGlobals() = 0;
 

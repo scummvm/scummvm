@@ -38,7 +38,7 @@ namespace MADS {
 MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _randomSource("MADS") {
 
-	// Initialise fields
+	// Initialize fields
 	_easyMouse = true;
 	_invObjectsAnimated = true;
 	_textWindowStill = false;
@@ -68,7 +68,7 @@ MADSEngine::~MADSEngine() {
 	delete _sound;
 }
 
-void MADSEngine::initialise() {
+void MADSEngine::initialize() {
 	// Set up debug channels
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
@@ -96,7 +96,7 @@ void MADSEngine::initialise() {
 
 Common::Error MADSEngine::run() {
 	initGraphics(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, false);
-	initialise();
+	initialize();
 
 	// Run the game
 	_game->run();

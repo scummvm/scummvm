@@ -249,7 +249,7 @@ public:
 class Palette : public Fader {
 private:
 	/**
-	 * Initialises the first 16 palette indexes with the equivalent
+	 * Initializes the first 16 palette indexes with the equivalent
 	 * standard VGA palette
 	 */
 	void initVGAPalette(byte *palette);
@@ -300,7 +300,7 @@ public:
 	void resetGamePalette(int v1, int v2);
 
 	/**
-	 * Initialises the main palette
+	 * Initializes the main palette
 	 */
 	void initPalette();
 

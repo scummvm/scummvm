@@ -154,7 +154,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 	_sceneInfo->load(_currentSceneId, _variant, Common::String(), flags,
 		_depthSurface, _backgroundSurface);
 
-	// Initialise palette animation for the scene
+	// Initialize palette animation for the scene
 	initPaletteAnimation(_sceneInfo->_paletteCycles, false);
 
 	// Copy over nodes
