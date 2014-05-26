@@ -72,7 +72,6 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	_savedFields._commandError = false;
 	_verbType = VERB_INIT;
 	_prepType = PREP_NONE;
-	_pickedWord = -1;
 }
 
 void MADSAction::clear() {
