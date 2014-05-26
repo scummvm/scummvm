@@ -1925,22 +1925,14 @@ void Scene608::step() {
 	if ((_carMode == 4) && (_scene->_activeAnimation != nullptr)) {
 		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
 			_carFrame = _scene->_activeAnimation->getCurrentFrame();
-			int nextFrame = -1;
 
 			if (_carFrame == 10) {
 				_game._player._visible = true;
 				_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
-			}
-
-			if (_carFrame == 56) {
+			} else if (_carFrame == 56) {
 				resetDogVariables();
 				_animationMode = 0;
 				_nextTrigger = 2;
-			}
-
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
-				_carFrame = nextFrame;
 			}
 		}
 	}
@@ -1948,48 +1940,30 @@ void Scene608::step() {
 	if ((_carMode == 5) && (_scene->_activeAnimation != nullptr)) {
 		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
 			_carFrame = _scene->_activeAnimation->getCurrentFrame();
-			int nextFrame = -1;
-
 			if (_carFrame == 10) {
 				_game._player._visible = true;
 				_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
-			}
-
-			if (_carFrame == 52) {
+			} else if (_carFrame == 52) {
 				resetDogVariables();
 				_animationMode = 0;
 				_nextTrigger = 2;
 			}
-
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
-				_carFrame = nextFrame;
-			}
 		}
 	}
-
 
 	if ((_carMode == 6) && (_scene->_activeAnimation != nullptr)) {
 		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
 			_carFrame = _scene->_activeAnimation->getCurrentFrame();
-			int nextFrame = -1;
 
 			if (_carFrame == 11) {
 				_game._player._visible = true;
 				_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
-			}
-
-			if (_carFrame == 41) {
+			} else if (_carFrame == 41) {
 				_globals._sequenceIndexes[10] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[10], false, 9, 0, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 10, 11);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 6);
 				_dogUnderCar = true;
 				_nextTrigger = 2;
-			}
-
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
-				_carFrame = nextFrame;
 			}
 		}
 	}
