@@ -1994,10 +1994,10 @@ void Scene511::preActions() {
 	if (!_handingLine)
 		return;
 
-	if (_action.isAction(VERB_LOOK) || _action.isAction(0x87) || _action.isAction(VERB_TALKTO))
+	if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_FISHING_LINE) || _action.isAction(VERB_TALKTO))
 		_game._player._needToWalk = false;
 
-	if ((!_action.isAction(0x170, 0x87, 0x345) || !_action.isAction(0x19, 0x87, 0x345)) && _game._player._needToWalk) {
+	if ((!_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) || !_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) && _game._player._needToWalk) {
 		if (_game._trigger == 0) {
 			_game._player._readyToWalk = false;
 			_game._player._stepEnabled = false;
@@ -2085,7 +2085,7 @@ void Scene511::actions() {
 		} else {
 			_vm->_dialogs->show(51130);
 		}
-	} else if (_action.isAction(0x170, 0x87, 0x345) || _action.isAction(0x19, 0x87, 0x345)) {
+	} else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) || _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51131);
 		else if (_globals[kLineStatus] == 1)
@@ -2141,8 +2141,8 @@ void Scene511::actions() {
 	else if (_action.isAction(VERB_UNLOCK, 0xFF, 0x37C) || _action.isAction(VERB_UNLOCK, 0x6F, 0x37C))
 		_vm->_dialogs->show(51119);
 	else if ( (_action.isAction(VERB_PUT) || _action.isAction(VERB_THROW))
-		 && (_action.isAction(0x171) || _action.isAction(0x2A) || _action.isAction(0x2B))
-		 && _action.isAction(0x37C))
+		 && (_action.isObject(NOUN_TIMEBOMB) || _action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS))
+		 && _action.isObject(NOUN_DOME_ENTRANCE))
 		_vm->_dialogs->show(51120);
 	else if (_action.isAction(VERB_LOOK, NOUN_RESTAURANT)) {
 		if (_globals[kBoatRaised])

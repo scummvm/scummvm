@@ -2032,7 +2032,7 @@ void Scene402::preActions() {
 		_game._player._needToWalk = true;
 
 	if (_roxOnStool) {
-		if (_action.isAction(VERB_LOOK) || _action.isAction(0x24A) || _action.isAction(VERB_TALKTO))
+		if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_BAR_STOOL) || _action.isAction(VERB_TALKTO))
 			_game._player._needToWalk = false;
 
 		if (_action.isAction(VERB_TAKE, NOUN_REPAIR_LIST) || _action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP))
@@ -2917,7 +2917,7 @@ void Scene408::enter() {
 }
 
 void Scene408::preActions() {
-	if ((_action.isAction(VERB_TAKE) && !_action.isAction(0x167)) || _action.isAction(VERB_PULL, NOUN_PIN) || _action.isAction(VERB_OPEN, NOUN_CARTON))
+	if ((_action.isAction(VERB_TAKE) && !_action.isObject(NOUN_TARGET_MODULE)) || _action.isAction(VERB_PULL, NOUN_PIN) || _action.isAction(VERB_OPEN, NOUN_CARTON))
 		_game._player._needToWalk = false;
 
 	if ((_action.isAction(VERB_LOOK, NOUN_TARGET_MODULE) && _game._objects.isInRoom(OBJ_TARGET_MODULE)) || _action.isAction(VERB_LOOK, NOUN_CHEST))
@@ -3160,7 +3160,7 @@ void Scene410::step() {
 }
 
 void Scene410::preActions() {
-	if (_action.isAction(VERB_TAKE) && !_action.isAction(0x48))
+	if (_action.isAction(VERB_TAKE) && !_action.isObject(NOUN_CHARGE_CASES))
 		_game._player._needToWalk = false;
 
 	if (_action.isAction(VERB_LOOK, NOUN_CHARGE_CASES) && _game._objects.isInRoom(OBJ_CHARGE_CASES))
@@ -3934,7 +3934,7 @@ void Scene411::actions() {
 		_vm->_dialogs->showItem(OBJ_FORMALDEHYDE, 41124);
 
 	if (_action.isAction(VERB_PUT, NOUN_KETTLE)) {
-		if (_action.isAction(0x2D7) || _action.isAction(0x2D6) || _action.isAction(0x3A9) || _action.isAction(0x306)) {
+		if (_action.isObject(NOUN_PETROX) || _action.isObject(NOUN_FORMALDEHYDE) || _action.isObject(NOUN_LECITHIN) || _action.isObject(NOUN_ALIEN_LIQUOR)) {
 			_newIngredient = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			switch (_newIngredient) {
 			case (OBJ_ALIEN_LIQUOR):

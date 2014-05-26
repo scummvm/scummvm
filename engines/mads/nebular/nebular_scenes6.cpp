@@ -149,7 +149,7 @@ void Scene601::step() {
 void Scene601::actions() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_ENTRANCE))
 		_scene->_nextSceneId = 602;
-	else if (_action.isAction(0x325, 0x324)) {
+	else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -688,9 +688,9 @@ void Scene603::actions() {
 	} else if (_action.isAction(VERB_LOOK, NOUN_COMPACT_CASE) && (_action._mainObjectSource == 4))
 		_vm->_dialogs->show(60329);
 	// For the next two checks, the second part of the check wasn't surrounded par parenthesis, which was obviously wrong
-	else if (_action.isAction(VERB_LOOK) && (_action.isAction(0x31) || _action.isAction(0x3EA) || _action.isAction(0x3E8)))
+	else if (_action.isAction(VERB_LOOK) && (_action.isObject(NOUN_BRA) || _action.isObject(NOUN_BOA) || _action.isObject(NOUN_SLIP)))
 		_vm->_dialogs->show(60331);
-	else if (_action.isAction(VERB_TAKE) && (_action.isAction(0x31) || _action.isAction(0x3EA) || _action.isAction(0x3E8)))
+	else if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_BRA) || _action.isObject(NOUN_BOA) || _action.isObject(NOUN_SLIP)))
 		_vm->_dialogs->show(60332);
 	else
 		return;
@@ -904,7 +904,7 @@ void Scene604::handleBombActions() {
 }
 
 void Scene604::actions() {
-	if (_action.isAction(0x325, 0x324)) {
+	if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -943,9 +943,9 @@ void Scene604::actions() {
 			break;
 		}
 	} else if ((_action.isAction(VERB_PUT, NOUN_LEDGE) || _action.isAction(VERB_PUT, NOUN_VIEWPORT) || _action.isAction(VERB_THROW, NOUN_VIEWPORT))
-		&& (_action.isAction(0x2A) || _action.isAction(0x2B)))
+		&& (_action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS)))
 		_vm->_dialogs->show(60420);
-	else if (_action.isAction(VERB_PUT, NOUN_TIMEBOMB, 0x3F6) || _action.isAction(VERB_PUT, NOUN_TIMEBOMB, 0x181)) {
+	else if (_action.isAction(VERB_PUT, NOUN_TIMEBOMB, NOUN_LEDGE) || _action.isAction(VERB_PUT, NOUN_TIMEBOMB, NOUN_VIEWPORT)) {
 		_bombMode = 1;
 		if ((_game._difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
 			handleBombActions();
@@ -1393,7 +1393,7 @@ void Scene607::preActions() {
 void Scene607::actions() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_SIDE_ENTRANCE))
 		_scene->_nextSceneId = 608;
-	else if (_action.isAction(0x325, 0x324)) {
+	else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1490,7 +1490,7 @@ void Scene607::actions() {
 		_vm->_dialogs->show(60728);
 	else if (_action.isAction(VERB_WALK_DOWN, NOUN_STREET))
 		_vm->_dialogs->show(60730);
-	else if (_action.isAction(0x3FF) && (_action.isAction(VERB_OPEN) || _action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)))
+	else if (_action.isObject(NOUN_GARAGE_DOOR) && (_action.isAction(VERB_OPEN) || _action.isAction(VERB_PUSH) || _action.isAction(VERB_PULL)))
 		_vm->_dialogs->show(60731);
 	else
 		return;
@@ -2466,11 +2466,11 @@ void Scene608::actions() {
 			_vm->_dialogs->show(60812);
 		else
 			_vm->_dialogs->show(60811);
-	} else if (_action.isAction(VERB_LOOK) && (_action.isAction(0x412) || _action.isAction(0x408) || _action.isAction(0x414)
-					|| _action.isAction(0x40D) || _action.isAction(0x41C)))
+	} else if (_action.isAction(VERB_LOOK) && (_action.isObject(NOUN_MUFFLER) || _action.isObject(NOUN_CAR_SEAT) || _action.isObject(NOUN_HUBCAP)
+					|| _action.isObject(NOUN_COILS) || _action.isObject(NOUN_QUARTER_PANEL)))
 		_vm->_dialogs->show(60813);
-	else if (_action.isAction(VERB_TAKE) && (_action.isAction(0x412) || _action.isAction(0x408) || _action.isAction(0x414)
-					|| _action.isAction(0x40D) || _action.isAction(0x41C)))
+	else if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_MUFFLER) || _action.isObject(NOUN_CAR_SEAT) || _action.isObject(NOUN_HUBCAP)
+					|| _action.isObject(NOUN_COILS) || _action.isObject(NOUN_QUARTER_PANEL)))
 		_vm->_dialogs->show(60814);
 	else if (_action.isAction(VERB_LOOK, NOUN_GARAGE_FLOOR) || _action.isAction(VERB_LOOK, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_LOOK, NOUN_REAR_OF_GARAGE)) {
 		if (_dogActiveFl)
@@ -2790,7 +2790,7 @@ void Scene609::actions() {
 	} else if (_action.isAction(VERB_UNLOCK, 0x6F, 0x425)) {
 		_videoDoorMode = 1;
 		enterStore();
-	} else if (_action.isAction(0x325, 0x324)) {
+	} else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -3046,10 +3046,10 @@ void Scene610::actions() {
 	else if (_action.isAction(VERB_PUT, NOUN_RETURN_SLOT)
 		&& _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(61029);
-	else if ( _action.isAction(0x44F) || _action.isAction(0x444) || _action.isAction(0x430)
-		|| _action.isAction(0x44C) || _action.isAction(0x44D) || _action.isAction(0x446)
-		|| _action.isAction(0x497) || _action.isAction(0x449) || _action.isAction(0x44E)
-		|| _action.isAction(0x450) || _action.isAction(0x42C)) {
+	else if ( _action.isObject(NOUN_CLASSIC_VIDEOS) || _action.isObject(NOUN_MORE_CLASSIC_VIDEOS) || _action.isObject(NOUN_DRAMA_VIDEOS)
+		|| _action.isObject(NOUN_NEW_RELEASE_VIDEOS) || _action.isObject(NOUN_PORNO_VIDEOS) || _action.isObject(NOUN_EDUCATIONAL_VIDEOS)
+		|| _action.isObject(NOUN_INSTRUCTIONAL_VIDEOS) || _action.isObject(NOUN_WORKOUT_VIDEOS) || _action.isObject(NOUN_FOREIGN_VIDEOS)
+		|| _action.isObject(NOUN_ADVENTURE_VIDEOS) || _action.isObject(NOUN_COMEDY_VIDEOS)) {
 		if (_action.isAction(VERB_LOOK))
 			_vm->_dialogs->show(61030);
 		else if (_action.isAction(VERB_TAKE))
@@ -4441,7 +4441,7 @@ void Scene611::actions() {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(nextQuote));
 			_scene->_sequences.addTimer(120, 90);
 		}
-	} else if ((_action.isAction(VERB_WALKTO) || _action.isAction(VERB_LOOK)) && _action.isAction(0x275)) {
+	} else if ((_action.isAction(VERB_WALKTO) || _action.isAction(VERB_LOOK)) && _action.isObject(NOUN_RAT)) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->_kernelMessages.reset();
@@ -4633,7 +4633,7 @@ void Scene612::step() {
 }
 
 void Scene612::actions() {
-	if (_action.isAction(0x325, 0x324)) {
+	if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;

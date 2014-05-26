@@ -1028,7 +1028,7 @@ void Scene703::step() {
 void Scene703::actions() {
 	if (_game._screenObjects._inputMode == 1)
 		handleFillBottle(_action._activeAction._verbId);
-	else if (_action.isAction(0x3B1, 0x3B0)) {
+	else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B0)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kMonsterAlive])
 			_curSequence = 8;
@@ -1036,7 +1036,7 @@ void Scene703::actions() {
 			_curSequence = 5;
 		else
 			_curSequence = 3;
-	} else if (_action.isAction(0x3B1, 0x3B2)) {
+	} else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B2)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kMonsterAlive]) {
 			_startMonsterTimer = false;
@@ -1078,7 +1078,7 @@ void Scene703::actions() {
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
-	} else if (_action.isAction(VERB_PUT, NOUN_BOTTLE, 0x18F) || _action.isAction(0x85, 0x2E, 0x18F)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_WATER) || _action.isAction(VERB_FILL, NOUN_BOTTLE, NOUN_WATER)) {
 		if (_globals[kBottleStatus] != 4) {
 			handleBottleInterface();
 			_dialog1.start();
@@ -1414,13 +1414,13 @@ void Scene704::step() {
 void Scene704::actions() {
 	if (_game._screenObjects._inputMode == 1)
 		handleFillBottle(_action._activeAction._verbId);
-	else if (_action.isAction(0x3B1, 0x3B4)) {
+	else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B4)) {
 		_game._player._stepEnabled = false;
 		if (_boatDirection == 1)
 			_animationMode = 5;
 		else
 			_animationMode = 3;
-	} else if (_action.isAction(0x3B1, 0x3B2)) {
+	} else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B2)) {
 		_game._player._stepEnabled = false;
 		if (_boatDirection == 2)
 			_animationMode = 4;
@@ -1436,7 +1436,7 @@ void Scene704::actions() {
 				_animationMode = 7;
 			}
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_BOTTLE, 0x18F) || _action.isAction(0x85, 0x2E, 0x18F)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_WATER) || _action.isAction(VERB_FILL, NOUN_BOTTLE, NOUN_WATER)) {
 		if (_game._objects.isInInventory(OBJ_BOTTLE)) {
 			if (_globals[kBottleStatus] != 4) {
 				_takeBottleFl = false;
@@ -1664,7 +1664,7 @@ void Scene705::step() {
 void Scene705::actions() {
 	if (_game._screenObjects._inputMode == 1)
 		handleFillBottle(_action._activeAction._verbId);
-	else if (_action.isAction(0x3B1, 0x3B4)) {
+	else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B4)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1710,7 +1710,7 @@ void Scene705::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(0x85, 0x2E, 0x18F) || _action.isAction(VERB_PUT, NOUN_BOTTLE, 0x18F)) {
+	} else if (_action.isAction(VERB_FILL, NOUN_BOTTLE, NOUN_WATER) || _action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_WATER)) {
 		if (_globals[kBottleStatus] != 4) {
 			handleBottleInterface();
 			_dialog1.start();
@@ -2106,7 +2106,7 @@ void Scene710::step() {
 }
 
 void Scene710::actions() {
-	if (_action.isAction(0x46F, 0x27)) {
+	if (_action.isAction(VERB_PUT_DOWN, 0x27)) {
 		_game._player._stepEnabled = false;
 
 		if (_game._globals[kCityFlooded])
@@ -2319,10 +2319,10 @@ void Scene751::preActions() {
 	if (!_rexHandingLine)
 		return;
 
-	if (_action.isAction(VERB_LOOK) || _action.isAction(0x87) || _action.isAction(VERB_TALKTO))
+	if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_FISHING_LINE) || _action.isAction(VERB_TALKTO))
 		_game._player._needToWalk = false;
 
-	if ((!_action.isAction(VERB_PUT, NOUN_FISHING_LINE, 0x467) || !_action.isAction(0x170, 0x87, 0x467) || !_action.isAction(0x19, 0x87, 0x467))
+	if ((!_action.isAction(VERB_PUT, NOUN_FISHING_LINE, 0x467) || !_action.isAction(VERB_TIE, NOUN_FISHING_LINE, 0x467) || !_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, 0x467))
 	&& (_game._player._needToWalk)) {
 		switch (_game._trigger) {
 		case 0:
@@ -2419,7 +2419,7 @@ void Scene751::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_FISHING_LINE, 0x467) || _action.isAction(0x170, 0x87, 0x467) || _action.isAction(0x19, 0x87, 0x467)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_FISHING_LINE, 0x467) || _action.isAction(VERB_TIE, NOUN_FISHING_LINE, 0x467) || _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, 0x467)) {
 		if (_globals[kLineStatus] == 1) {
 			switch (_game._trigger) {
 			case 0:
@@ -2490,7 +2490,7 @@ void Scene751::actions() {
 		_vm->_dialogs->show(75121);
 	else if (_action.isAction(VERB_LOOK, NOUN_TALL_BUILDING))
 		_vm->_dialogs->show(75122);
-	else if (_action.isAction(0x170, 0x87, 0x316) || _action.isAction(0x19, 0x87, 0x316))
+	else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, 0x316) || _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, 0x316))
 		_vm->_dialogs->show(75123);
 	else
 		return;

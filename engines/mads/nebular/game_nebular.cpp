@@ -296,9 +296,9 @@ void GameNebular::doObjectAction() {
 		dialogs.show(444);
 	} else if (action.isAction(VERB_EAT, NOUN_STUFFED_FISH)) {
 		dialogs.show(445);
-	} else if (action.isAction(401, 289)) {
+	} else if (action.isAction(VERB_WEAR, NOUN_REBREATHER)) {
 		dialogs.show(scene._currentSceneId > 103 && scene._currentSceneId < 111 ? 446 : 447);
-	} else if (action.isAction(306, 371)) {
+	} else if (action.isAction(VERB_SET, 371)) {
 		dialogs.show(448);
 	} else if (action.isAction(951, 35)) {
 		dialogs.show(449);
@@ -320,7 +320,7 @@ void GameNebular::doObjectAction() {
 		dialogs.show(456);
 	} else if (action.isAction(1189, OBJ_VASE)) {
 		dialogs.show(457);
-	} else if (action.isAction(306, 369)) {
+	} else if (action.isAction(VERB_SET, 369)) {
 		dialogs.show(458);
 	} else if (action.isAction(1192, 774)) {
 		dialogs.show(459);
@@ -551,7 +551,7 @@ void GameNebular::doObjectAction() {
 			_globals[kDurafailRecharged] = _difficulty != 1 || _globals[kHandsetCellStatus] ? 1 : 2;
 			dialogs.show(425);
 		}
-	} else if (action.isAction(306, 369)) {
+	} else if (action.isAction(VERB_SET, 369)) {
 		dialogs.show(427);
 	} else if (action.isAction(VERB_PUT, 42, 73) || action.isAction(VERB_PUT, 43, 73)) {
 		_objects.setRoom(OBJ_CHICKEN, PLAYER_INVENTORY);
@@ -578,7 +578,7 @@ void GameNebular::unhandledAction() {
 	if (action.isAction(VERB_THROW, NOUN_BOMB) || action.isAction(VERB_THROW, NOUN_BOMBS)
 	|| action.isAction(VERB_THROW, NOUN_TIMEBOMB) || action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB))
 		_vm->_dialogs->show(42);
-	else if (action.isAction(0x6C))
+	else if (action.isAction(VERB_DISASSEMBLE))
 		_vm->_dialogs->show(435);
 	else if ((action.isAction(VERB_EAT, NOUN_DEAD_FISH) || action.isAction(VERB_EAT, NOUN_STUFFED_FISH)) && _vm->_game->_objects.isInInventory(_vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId)))
 		_vm->_dialogs->show(12);
@@ -589,10 +589,10 @@ void GameNebular::unhandledAction() {
 	else if ((action.isAction(VERB_SHOOT) || action.isAction(VERB_HOSE_DOWN)) && action.isObject(NOUN_BLOWGUN)) {
 		if ((_scene._currentSceneId >= 104) && (_scene._currentSceneId <= 111))
 			_vm->_dialogs->show(38);
-		else if (action.isAction(0x10D))
+		else if (action.isObject(NOUN_PIRANHA))
 			_vm->_dialogs->show(41);
-		else if (action.isObject(NOUN_CHICKEN) || action.isAction(0x185) || action.isAction(0x14D)
-				|| action.isAction(0x1DD) || action.isAction(0x15F) || action.isObject(NOUN_CAPTIVE_CREATURE)) {
+		else if (action.isObject(NOUN_CHICKEN) || action.isObject(NOUN_VULTURE) || action.isObject(NOUN_SPIDER)
+				|| action.isObject(NOUN_YELLOW_BIRD) || action.isObject(NOUN_SWOOPING_CREATURE) || action.isObject(NOUN_CAPTIVE_CREATURE)) {
 			_vm->_dialogs->show(40);
 		} else
 			_vm->_dialogs->show(39);
@@ -618,7 +618,7 @@ void GameNebular::unhandledAction() {
 		else
 			_vm->_dialogs->show(6);
 	} else if (action.isAction(VERB_LOOK)) {
-		if (action.isAction(0x27) && (action._activeAction._indirectObjectId > 0))
+		if (action.isObject(NOUN_BINOCULARS) && (action._activeAction._indirectObjectId > 0))
 			_vm->_dialogs->show(10);
 		else if (randVal < 600)
 			_vm->_dialogs->show(7);
@@ -667,9 +667,9 @@ void GameNebular::unhandledAction() {
 			_vm->_dialogs->show(28);
 		else
 			_vm->_dialogs->show(29);
-	} else if (!action.isAction(VERB_WALKTO) && !action.isAction(0x187) && !action.isAction(0x18C) && !action.isAction(0x1AD)
-			&& !action.isAction(0x15C) && !action.isAction(0x159) && !action.isAction(0x15A) && !action.isAction(0x15B)
-			&& !action.isAction(0x15E)) {
+	} else if (!action.isAction(VERB_WALKTO) && !action.isAction(VERB_WALK_ACROSS) && !action.isAction(VERB_WALK_TOWARDS) && !action.isAction(VERB_WALK_DOWN)
+			&& !action.isAction(VERB_SWIM_TO) && !action.isAction(VERB_SWIM_ACROSS) && !action.isAction(VERB_SWIM_INTO) && !action.isAction(VERB_SWIM_THROUGH)
+			&& !action.isAction(VERB_SWIM_UNDER)) {
 		if (randVal <= 100)
 			_vm->_dialogs->show(36);
 		else if (randVal <= 200)

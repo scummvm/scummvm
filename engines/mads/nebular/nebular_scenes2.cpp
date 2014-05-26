@@ -1581,9 +1581,9 @@ void Scene207::preActions() {
 		_game._player._walkOffScreenSceneId = 208;
 
 	if ((_action.isAction(VERB_WALKTO)) || (_action.isAction(VERB_LOOK))) {
-		if (_action.isAction(0x185)) {
+		if (_action.isObject(NOUN_VULTURE)) {
 			_vultureTime = -9999;
-		} else if (_action.isAction(0x14D)) {
+		} else if (_action.isObject(NOUN_SPIDER)) {
 			_spiderTime = -9999;
 		}
 	}
@@ -3551,7 +3551,7 @@ void Scene209::actions() {
 	}
 
 	if (_action.isAction(VERB_THROW, NOUN_MONKEY) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId))) {
-		if (!_action.isAction(0x114)) {
+		if (!_action.isObject(NOUN_POISON_DARTS)) {
 			_vm->_dialogs->show(20915);
 		}
 		_action._inProgress = false;
@@ -5102,7 +5102,7 @@ void Scene214::step() {
 void Scene214::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21427);
-	else if (_action.isAction(0x18A, 0xAA))
+	else if (_action.isAction(VERB_WALK_OUTSIDE, 0xAA))
 		_scene->_nextSceneId = 207;
 	else if (_action.isAction(VERB_TAKE, NOUN_POISON_DARTS) && (_game._trigger || _game._objects.isInRoom(OBJ_POISON_DARTS))) {
 		switch (_game._trigger) {
@@ -5313,7 +5313,7 @@ void Scene215::actions() {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(idx));
 		}
-	} else if (_action.isAction(0x18A, 0xAA))
+	} else if (_action.isAction(VERB_WALK_OUTSIDE, 0xAA))
 		_scene->_nextSceneId = 210;
 	else if (_action.isAction(VERB_LOOK, NOUN_BEAR_RUG))
 		_vm->_dialogs->show(21501);

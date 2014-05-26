@@ -1153,7 +1153,7 @@ void Scene307::actions() {
 		_vm->_dialogs->show(30713);
 	else if (_action.isAction(VERB_LOOK, NOUN_TOILET))
 		_vm->_dialogs->show(30714);
-	else if (_action.isAction(0x134, 0x12C))
+	else if (_action.isAction(VERB_SHARPEN, NOUN_SCALPEL))
 		_vm->_dialogs->show(30716);
 	else if (_action.isAction(VERB_LOOK, NOUN_CELL_WALL))
 		_vm->_dialogs->show(30717);
@@ -1926,7 +1926,7 @@ void Scene313::actions() {
 			_vm->_dialogs->show(31301);
 		}
 		_scene->_nextSceneId = 366;
-	} else if (!_action.isAction(0x301, 0x2D4))
+	} else if (!_action.isAction(VERB_CRAWL_DOWN, NOUN_AIR_SHAFT))
 		return;
 
 	_action._inProgress = false;
@@ -3134,7 +3134,7 @@ void Scene319::enter() {
 		_slacheInitFl = true;
 
 		if (_globals[kRexHasMetSlache]) {
-			handleSlacheDialogs(0x18A, 2, 9999999);
+			handleSlacheDialogs(VERB_WALK_OUTSIDE, 2, 9999999);
 			_slachePosY = 3;
 		} else {
 			handleSlacheDialogs(0x186, 4, 9999999);
@@ -4279,7 +4279,7 @@ void Scene352::preActions() {
 	if (_action.isAction(VERB_OPEN, NOUN_VAULT))
 		_game._player.walk(Common::Point(266, 111), FACING_NORTHEAST);
 
-	if (_vaultOpenFl && !_action.isAction(0x1F8) && !_action.isAction(0x2F6) && !_action.isAction(0x2F5) && !_action.isAction(0x2F4)) {
+	if (_vaultOpenFl && !_action.isObject(NOUN_VAULT) && !_action.isObject(NOUN_LAMP) && !_action.isObject(NOUN_OTHER_STUFF) && !_action.isObject(NOUN_YOUR_STUFF)) {
 		if (_globals[kHaveYourStuff]) {
 			_commonSpriteIndex = _globals._spriteIndexes[13];
 			_commonSequenceIdx = _globals._sequenceIndexes[13];
