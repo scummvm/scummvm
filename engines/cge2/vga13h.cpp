@@ -278,10 +278,9 @@ Sprite *Sprite::expand() {
 		char tmpStr[kLineMax + 1];
 
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()){
-			int len = line.size();
-			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-			if (len == 0 || *tmpStr == ';')
+			if (line.size() == 0)
 				continue;
+			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 
 			char *p = _vm->token(tmpStr);
 			if (*p == '@') {

@@ -242,7 +242,10 @@ bool EncryptedStream::seek(int32 offset) {
 
 Common::String EncryptedStream::readLine() {
 	_lineCount++;
-	return _readStream->readLine();
+	Common::String line = _readStream->readLine();
+	if (!line.empty() && (line[0] == ';' || line[0] == '.' || line[0] == '*'))
+		line.clear(); // Returns an empty string, if the line is invalid.
+	return line;
 }
 
 int32 EncryptedStream::size() {

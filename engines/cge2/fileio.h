@@ -105,6 +105,7 @@ public:
 	bool exist(const char *name);
 };
 
+// TODO: Revise the whole class!
 class EncryptedStream {
 private:
 	CGE2Engine *_vm;

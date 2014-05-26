@@ -116,11 +116,10 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 		Common::String line;
 
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()){
-			int len = line.size();
-			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-			if (len == 0 || *tmpStr == ';')
+			if (line.size() == 0)
 				continue;
-					
+			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
+				
 			char *p;
 			p = token(tmpStr);
 			if (*p == '@') {
@@ -260,13 +259,14 @@ void CGE2Engine::loadScript(const char *fname) {
 	Common::String line;
 
 	for (line = scrf.readLine(); !scrf.eos(); line = scrf.readLine()) {
+		if (line.size() == 0)
+			continue;
+
 		char *p;
 
 		lcnt++;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-		if ((line.size() == 0) || (*tmpStr == ';')) // Comments start with ';' - don't bother with them.
-			continue;
-
+		
 		ok = false; // not OK if break
 
 		V3D P;
