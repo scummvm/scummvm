@@ -69,8 +69,8 @@ public:
 #define DECLARE_SCRIPT(name) \
 class Script##name : public ScriptBase { \
 public: \
-	Script##name(BladeRunnerEngine *_vm) \
-		: ScriptBase(_vm) \
+	Script##name(BladeRunnerEngine *vm) \
+		: ScriptBase(vm) \
 	{} \
 	void InitializeScene(); \
 	void SceneLoaded(); \
