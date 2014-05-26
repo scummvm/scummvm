@@ -612,8 +612,10 @@ void CGE2Engine::cge2_main() {
 	_mode++;
 
 	if (showTitle("WELCOME")) {
+#if 0
 		if (_mode == 1)
 			movie(kIntroExt);
+#endif
 		if (_text->getText(255) != NULL) {
 			runGame();
 			_startupMode = 2;
