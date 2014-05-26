@@ -324,7 +324,7 @@ void SpriteSlots::drawSprites(MSurface *s) {
 		}
 
 		if ((slot._scale < 100) && (slot._scale != -1)) {
-			// Minimalised drawing
+			// Minimalized drawing
 			s->copyFrom(spr, slot._position, slot._depth, &scene._depthSurface,
 				slot._scale, sprite->getTransparencyIndex());
 		} else {
