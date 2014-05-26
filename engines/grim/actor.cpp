@@ -896,7 +896,7 @@ void Actor::setRestChore(int chore, Costume *cost) {
 	if (_restChore.equals(cost, chore))
 		return;
 
-	_restChore.stop(true);
+	_restChore.stop(g_grim->getGameType() == GType_GRIM);
 
 	if (!cost) {
 		cost = _restChore._costume;
@@ -907,7 +907,7 @@ void Actor::setRestChore(int chore, Costume *cost) {
 
 	_restChore = ActionChore(cost, chore, Chore::CHORE_REST);
 
-	_restChore.playLooping(true);
+	_restChore.playLooping(g_grim->getGameType() == GType_GRIM);
 }
 
 int Actor::getRestChore() const {
@@ -921,7 +921,9 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 	if (_walkedLast && _walkChore.isPlaying()) {
 		_walkChore.stop(true);
 
-		_restChore.playLooping(true);
+		if (g_grim->getGameType() == GType_GRIM) {
+			_restChore.playLooping(true);
+		}
 	}
 
 	if (!cost) {
@@ -1477,7 +1479,7 @@ void Actor::update(uint frameTime) {
 	// The rest chore might have been stopped because of a
 	// StopActorChore(nil).  Restart it if so.
 	if (!_walkedCur && _currTurnDir == 0 && !_restChore.isPlaying()) {
-		_restChore.playLooping(true);
+		_restChore.playLooping(g_grim->getGameType() == GType_GRIM);
 	}
 
 	_walkedLast = _walkedCur;
