@@ -45,6 +45,6 @@ public:
 	void decode(uint8 *in, size_t size, int16 *out);
 };
 
-};
+}
 
 #endif
