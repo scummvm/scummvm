@@ -50,7 +50,7 @@ bool VQAPlayer::open(const Common::String &name) {
 
 void VQAPlayer::close() {
 	_vm->_mixer->stopHandle(_soundHandle);
-	delete[] _s;
+	delete _s;
 	_s = nullptr;
 }
 
