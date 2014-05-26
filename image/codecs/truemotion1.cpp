@@ -30,6 +30,7 @@
 #include "image/codecs/truemotion1data.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/rect.h"
 #include "common/util.h"
 
 namespace Image {
@@ -91,6 +92,7 @@ static const CompressionType compressionTypes[17] = {
 TrueMotion1Decoder::TrueMotion1Decoder(uint16 width, uint16 height) {
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, getPixelFormat());
+	_surface->fillRect(Common::Rect(width, height), getPixelFormat().RGBToColor(0, 0, 0));
 
 	_vertPred = 0;
 
