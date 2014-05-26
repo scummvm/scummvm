@@ -2670,7 +2670,7 @@ ASound7::ASound7(Audio::Mixer *mixer) : ASound(mixer, "asound.007", 0x1460) {
 }
 
 int ASound7::command(int commandId, int param) {
-	if (commandId > 38)
+	if (commandId > 37)
 		return 0;
 
 	_frameCounter = 0;
@@ -2876,7 +2876,7 @@ ASound8::ASound8(Audio::Mixer *mixer) : ASound(mixer, "asound.008", 0x1490) {
 }
 
 int ASound8::command(int commandId, int param) {
-	if (commandId > 38)
+	if (commandId > 37)
 		return 0;
 
 	_frameCounter = 0;
