@@ -67,7 +67,6 @@ private:
 	int _frameCount;
 	Common::Array<uint32> _frameOffsets;
 	Common::Array<SpriteAssetFrame> _frames;
-	uint32 _frameStartOffset;
 	uint8 _mode;
 	bool _isBackground;
 
