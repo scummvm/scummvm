@@ -1018,7 +1018,7 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 	if (_items.size() == 0)
 		return 0;
 
-	int idx;
+	uint idx;
 	int movidx;
 	bool done = false;
 
