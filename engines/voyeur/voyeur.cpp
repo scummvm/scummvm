@@ -500,8 +500,9 @@ void VoyeurEngine::doOpening() {
 
 			if (textPic) {
 				_graphicsManager->sDrawPic(textPic, _graphicsManager->_vPort, textPos);
-				flipPageAndWait();
 			}
+			
+			flipPageAndWait();
 		}
 
 		_eventsManager->getMouseInfo();
