@@ -1892,7 +1892,6 @@ void Scene608::step() {
 		_dogTimer2 = _scene->_frameStartTime;
 	}
 
-	// CHECKME: _checkFl is always false?
 	if (_dogRunTimer >= 480 && !_checkFl && !_buttonPressedonTimeFl && !_dogFirstEncounter && _dogUnderCar && _dogActiveFl) {
 		_checkFl = true;
 		_dogSquashFl = false;
@@ -1987,7 +1986,6 @@ void Scene608::step() {
 				_dogUnderCar = true;
 				_nextTrigger = 2;
 			}
-
 
 			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
 				_scene->_activeAnimation->setCurrentFrame(nextFrame);
