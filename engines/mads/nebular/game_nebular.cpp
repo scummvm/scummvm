@@ -658,7 +658,7 @@ void GameNebular::unhandledAction() {
 			_scene._kernelMessages.reset();
 			_scene._kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, tmpMsg);
 		}
-	} else if (action.isAction(VERB_GIVE, NOUN_DOOR, 0x46) || action.isAction(VERB_CLOSE, NOUN_CHAIR))
+	} else if (action.isAction(VERB_GIVE, NOUN_DOOR, NOUN_CEILING) || action.isAction(VERB_CLOSE, NOUN_CHAIR))
 		_vm->_dialogs->show(3);
 	else if (action.isAction(VERB_THROW)) {
 		int objId = _vm->_game->_objects.getIdFromDesc(action._activeAction._objectNameId);

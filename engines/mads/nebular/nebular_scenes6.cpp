@@ -97,7 +97,7 @@ void Scene601::enter() {
 
 	if (_globals[kLaserHoleIsThere]) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
-		_scene->_dynamicHotspots.add(NOUN_LASER_BEAM, 0xD1, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_LOOK_AT, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	}
 
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
@@ -411,14 +411,14 @@ void Scene602::actions() {
 		_safeMode = 2;
 		_cycleIndex = -1;
 		handleSafeActions();
-	} else if (_action.isAction(VERB_UNLOCK, 0x3A7, 0x3D3)) {
+	} else if (_action.isAction(VERB_UNLOCK, NOUN_COMBINATION, NOUN_SAFE)) {
 		if ((_globals[kSafeStatus] == 0) && (_game._difficulty != DIFFICULTY_HARD)) {
 			_safeMode = 3;
 			_cycleIndex = -2;
 			handleSafeActions();
 		}
-	} else if ((_action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, 0x343) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, 0x343)
-		|| _action.isAction(VERB_REFLECT, 0x57, 0x343) || _action.isAction(VERB_REFLECT, 0x120, 0x343)) && (_globals[kSafeStatus] == 0)) {
+	} else if ((_action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM)
+		|| _action.isAction(VERB_REFLECT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM) || _action.isAction(VERB_REFLECT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM)) && (_globals[kSafeStatus] == 0)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_dialogs->show(60230);
@@ -522,7 +522,7 @@ void Scene602::actions() {
 			_vm->_dialogs->show(60235);
 		else
 			_vm->_dialogs->show(60236);
-	} else if (_action.isAction(VERB_UNLOCK, 0x6F, 0x3D3) || _action.isAction(VERB_UNLOCK, 0xFF, 0x3D3))
+	} else if (_action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_SAFE) || _action.isAction(VERB_UNLOCK, NOUN_PADLOCK_KEY, NOUN_SAFE))
 		_vm->_dialogs->show(60225);
 	else if (_action.isAction(VERB_PULL, NOUN_SAFE))
 		_vm->_dialogs->show(60226);
@@ -534,7 +534,7 @@ void Scene602::actions() {
 		_vm->_dialogs->show(60229);
 	else if (_action.isAction(VERB_LOOK, NOUN_FLOWER_BOX))
 		_vm->_dialogs->show(60231);
-	else if (_action.isAction(VERB_THROW, NOUN_BOMB, 0x3D3) || _action.isAction(VERB_THROW, NOUN_BOMBS, 0x3D3))
+	else if (_action.isAction(VERB_THROW, NOUN_BOMB, NOUN_SAFE) || _action.isAction(VERB_THROW, NOUN_BOMBS, NOUN_SAFE))
 		_vm->_dialogs->show(60232);
 	else if (_action.isAction(VERB_PUT, NOUN_TIMEBOMB))
 		_vm->_dialogs->show(60233);
@@ -1383,10 +1383,10 @@ void Scene607::preActions() {
 		_dogTimer = 0;
 	}
 
-	if (_action.isAction(VERB_THROW, NOUN_BONES, 0x471) || _action.isAction(VERB_THROW, NOUN_BONE, 0x471))
+	if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG))
 		_game._player.walk(Common::Point(193, 100), FACING_NORTHEAST);
 
-	if (_action.isAction(VERB_THROW, NOUN_BONES, 0x2C3) || _action.isAction(VERB_THROW, NOUN_BONE, 0x2C3))
+	if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_FENCE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FENCE))
 		_game._player.walk(Common::Point(201, 107), FACING_SOUTHEAST);
 }
 
@@ -1430,7 +1430,7 @@ void Scene607::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_THROW, NOUN_BONES, 0x471) || _action.isAction(VERB_THROW, NOUN_BONE, 0x471)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) {
 		if (_game._difficulty != DIFFICULTY_EASY) {
 			_animationMode = 1;
 			_scene->_kernelMessages.reset();
@@ -1439,7 +1439,7 @@ void Scene607::actions() {
 
 			handleThrowingBone();
 		}
-	} else if ((_action.isAction(VERB_THROW, NOUN_BONES, 0x2C3) || _action.isAction(VERB_THROW, NOUN_BONE, 0x2C3)) && (_game._difficulty != DIFFICULTY_EASY)
+	} else if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_FENCE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FENCE)) && (_game._difficulty != DIFFICULTY_EASY)
 		 && ((_globals[kDogStatus] == 1) || _game._trigger)) {
 		_animationMode = 2;
 		if (_game._trigger == 0) {
@@ -4671,7 +4671,7 @@ void Scene612::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_UNLOCK, 0xFF, 0x45F)) {
+	} else if (_action.isAction(VERB_UNLOCK, NOUN_PADLOCK_KEY, NOUN_CONTROL_BOX)) {
 		_cycleIndex = -2;
 		_actionMode = 1;
 		handleWinchMovement();
