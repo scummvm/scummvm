@@ -32,8 +32,8 @@
 #include "cge2/general.h"
 #include "cge2/vga13h.h"
 #include "cge2/bitmap.h"
-//#include "cge/text.h"
-//#include "cge/cge_main.h"
+#include "cge2/text.h"
+#include "cge2/cge2_main.h"
 #include "cge2/cge2.h"
 #include "cge2/vga13h.h"
 

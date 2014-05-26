@@ -35,6 +35,7 @@ namespace CGE2 {
 
 class CGE2Engine;
 class EncryptedStream;
+class V2D;
 
 #define kMaxPath  128
 enum {

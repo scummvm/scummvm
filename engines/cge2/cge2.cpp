@@ -37,6 +37,7 @@
 #include "cge2/spare.h"
 #include "cge2/events.h"
 #include "cge2/talk.h"
+#include "cge2/cge2_main.h"
 
 namespace CGE2 {
 

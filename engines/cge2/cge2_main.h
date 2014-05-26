@@ -28,11 +28,12 @@
 #ifndef CGE2_MAIN_H
 #define CGE2_MAIN_H
 
+#include "cge2/events.h"
+
 namespace CGE2 {
 
 #define kLineMax          512
 #define kIntroExt         ".I80"
-#define kNoByte           -1 // Recheck this! We have no proof for it's original value.
 #define kTabName          "CGE.TAB"
 #define kInfoW            140
 #define kPocketFull       170

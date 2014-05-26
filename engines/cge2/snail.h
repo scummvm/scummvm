@@ -29,12 +29,13 @@
 #define CGE2_SNAIL_H
 
 #include "cge2/cge2.h"
-#include "cge2/cge2_main.h"
 
 namespace CGE2 {
 
 #define kCommandFrameRate  80
 #define kCommandFrameDelay (1000 / kCommandFrameRate)
+#define kNoByte            -1 // Recheck this! We have no proof for it's original value.
+
 
 enum CommandType {
 	kCmdCom0 = 128,

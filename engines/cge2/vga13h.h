@@ -34,8 +34,8 @@
 #include "cge2/general.h"
 #include "cge2/bitmap.h"
 #include "cge2/snail.h"
-#include "cge2/cge2.h"
 #include "cge2/spare.h"
+#include "cge2/cge2.h"
 
 namespace CGE2 {
 
@@ -50,6 +50,53 @@ namespace CGE2 {
 #define kSprExt          ".SPR"
 #define kPalCount        256
 #define kPalSize         (kPalCount * 3)
+
+// From CGETYPE.H:
+class V3D {
+public:
+	double _x, _y, _z;
+	V3D(void) { }
+	V3D(double x, double y, double z = 0) : _x(x), _y(y), _z(z) { }
+	V3D(const V3D &p) : _x(p._x), _y(p._y), _z(p._z) { }
+	V3D operator+(const V3D &p) const { return V3D(_x + p._x, _y + p._y, _z + p._z); }
+	V3D operator-(const V3D &p) const { return V3D(_x - p._x, _y - p._y, _z - p._z); }
+	V3D operator*(long n) const { return V3D(_x * n, _y * n, _z * n); }
+	V3D operator/ (long n) const { return V3D(_x / n, _y / n, _z / n); }
+	bool operator==(V3D &p) const { return _x == p._x && _y == p._y && _z == p._z; }
+	bool operator!=(V3D &p) const { return _x != p._x || _y != p._y || _z != p._z; }
+	V3D& operator+=(const V3D &x) { return *this = *this + x; }
+	V3D& operator-=(const V3D &x) { return *this = *this - x; }
+};
+
+class V2D : public Common::Point {
+	CGE2Engine *_vm;
+public:
+	V2D& operator=(const V3D &p3) {
+		double m = _vm->_eye->_z / (p3._z - _vm->_eye->_z);
+		x = round((_vm->_eye->_x + (_vm->_eye->_x - p3._x) * m));
+		y = round((_vm->_eye->_y + (_vm->_eye->_y - p3._y) * m));
+		return *this;
+	}
+	V2D(CGE2Engine *vm) : _vm(vm) { }
+	V2D(CGE2Engine *vm, const V3D &p3) : _vm(vm) { *this = p3; }
+	V2D(CGE2Engine *vm, int x, int y) : _vm(vm), Common::Point(x, y) { }
+	bool operator<(const V2D &p) const { return (x <  p.x) && (y <  p.y); }
+	bool operator<=(const V2D &p) const { return (x <= p.x) && (y <= p.y); }
+	bool operator>(const V2D &p) const { return (x >  p.x) && (y >  p.y); }
+	bool operator>=(const V2D &p) const { return (x >= p.x) && (y >= p.y); }
+	V2D operator+(const V2D &p) const { return V2D(_vm, x + p.x, y + p.y); }
+	V2D operator-(const V2D &p) const { return V2D(_vm, x - p.x, y - p.y); }
+	uint16 area(void) { return x * y; }
+	bool limited(const V2D &p) {
+		return (uint16(x) < uint16(p.x)) && (uint16(y) < uint16(p.y));
+	}
+	V2D scale(int z) {
+		double m = _vm->_eye->_z / (_vm->_eye->_z - z);
+		return V2D(_vm, trunc(m * x), trunc(m * y));
+	}
+	static double trunc(double d) { return (d > 0) ? floor(d) : ceil(d); }
+	static double round(double number) { return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5); }
+};
 
 struct Seq {
 	uint8 _now;
