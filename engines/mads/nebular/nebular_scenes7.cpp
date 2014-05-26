@@ -191,11 +191,11 @@ void Scene701::enter() {
 		_game._player._stepEnabled = false;
 		_scene->loadAnimation(formAnimName('B', 1), 80);
 		_vm->_sound->command(28);
-	} else if (_scene->_priorSceneId != -2 && _scene->_priorSceneId != -620) {
+	} else if (_scene->_priorSceneId != -2 && _scene->_priorSceneId != 620) {
 		_game._player._playerPos = Common::Point(22, 131);
 		_game._player._facing = FACING_EAST;
 		_game._player._stepEnabled = false;
-		_scene->_sequences.addTimer(1 * 60, 70);
+		_scene->_sequences.addTimer(60, 70);
 	}
 
 	_game.loadQuoteSet(0x310, 0x30F, 0);
@@ -228,7 +228,7 @@ void Scene701::step() {
 
 	case 71:
 		_game._player.walk(Common::Point(61, 131), FACING_EAST);
-		_scene->_sequences.addTimer(2 * 60, 72);
+		_scene->_sequences.addTimer(120, 72);
 		break;
 
 	case 72:
@@ -321,7 +321,7 @@ void Scene701::actions() {
 
 		case 1:
 			_game._player.walk(Common::Point(22, 131), FACING_EAST);
-			_scene->_sequences.addTimer(2 * 60, 3);
+			_scene->_sequences.addTimer(120, 3);
 			break;
 
 		case 3:
