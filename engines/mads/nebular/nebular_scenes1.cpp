@@ -1592,10 +1592,10 @@ void Scene103::actions() {
 }
 
 void Scene103::postActions() {
-	if (_action.isAction(27) && !_action.isAction(VERB_WALKTO)) {
+	if (_action.isObject(NOUN_AUXILIARY_POWER) && !_action.isAction(VERB_WALKTO)) {
 		_vm->_dialogs->show(10305);
 		_action._inProgress = false;
-	} else if (_action.isAction(VERB_PUT, 85, 144)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_COAL, NOUN_FURNACE)) {
 		Common::String msg = _game.getQuote(73);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, msg);
 		_action._inProgress = false;
