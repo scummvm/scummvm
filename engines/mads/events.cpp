@@ -46,7 +46,6 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_mouseMoved = false;
 	_vD8 = 0;
 	_rightMousePressed = false;
-	_cursorId = _newCursorId = CURSOR_NONE;
 }
 
 EventsManager::~EventsManager() {
