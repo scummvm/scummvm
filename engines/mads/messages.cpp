@@ -173,7 +173,7 @@ void KernelMessages::processText(int msgIndex) {
 
 	if ((msg._flags & KMSG_EXPIRE) != 0) {
 		scene._textDisplay.expire(msg._textDisplayIndex);
-		msg._flags &= !KMSG_ACTIVE;
+		msg._flags &= ~KMSG_ACTIVE;
 		return;
 	}
 
