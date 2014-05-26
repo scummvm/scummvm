@@ -150,10 +150,10 @@ void InventoryObjects::addToInventory(int objectId) {
 		_inventoryList.push_back(objectId);
 		userInterface._selectedInvIndex = _inventoryList.size() - 1;
 		userInterface._inventoryTopIndex = CLIP(userInterface._inventoryTopIndex,
-			0, (int)_inventoryList.size() - 1);
+			0, userInterface._selectedInvIndex);
 
 		if ((userInterface._inventoryTopIndex + 5) <= (int)_inventoryList.size())
-			userInterface._inventoryTopIndex = size() - 4;
+			userInterface._inventoryTopIndex = _inventoryList.size() - 5;
 		userInterface._inventoryChanged = true;
 
 		(*this)[objectId]._roomNumber = PLAYER_INVENTORY;
