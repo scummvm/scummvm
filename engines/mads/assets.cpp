@@ -29,11 +29,11 @@
 
 namespace MADS {
 
-SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int flags) :
-	_vm(vm) {
+SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int flags) : _vm(vm) {
 	Common::String resName = resourceName;
 	if (!resName.hasSuffix(".SS") && !resName.hasSuffix(".ss"))
 		resName += ".SS";
+	_srcSize = 0;
 
 	File file(resName);
 	load(&file, flags);
@@ -41,8 +41,9 @@ SpriteAsset::SpriteAsset(MADSEngine *vm, const Common::String &resourceName, int
 	file.close();
 }
 
-SpriteAsset::SpriteAsset(MADSEngine *vm, Common::SeekableReadStream *stream, int flags) :
-		_vm(vm) {
+SpriteAsset::SpriteAsset(MADSEngine *vm, Common::SeekableReadStream *stream, int flags) : _vm(vm) {
+	_srcSize = 0;
+
 	load(stream, flags);
 }
 
