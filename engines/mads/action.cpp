@@ -55,6 +55,7 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	_statusTextIndex = -1;
 	_selectedAction = 0;
 	_inProgress = false;
+	_pickedWord = -1;
 
 	_savedFields._commandSource = 0;
 	_savedFields._mainObjectSource = 0;
