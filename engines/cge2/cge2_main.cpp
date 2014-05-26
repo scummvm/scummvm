@@ -37,6 +37,18 @@
 
 namespace CGE2 {
 
+System::System(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
+	warning("STUB: System::System()");
+}
+
+void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
+	warning("STUB: System::touch()");
+}
+
+void System::tick() {
+	warning("STUB: System::tick()");
+}
+
 int CGE2Engine::number(char *s) { // TODO: Rework it later to include the preceding token() call!
 	int r = atoi(s);
 	char *pp = strchr(s, ':');

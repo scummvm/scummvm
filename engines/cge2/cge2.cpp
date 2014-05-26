@@ -63,6 +63,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_talk = nullptr;
 	for (int i = 0; i < kMaxPoint; i++)
 		_point[i] = nullptr;
+	_sys = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -101,6 +102,7 @@ void CGE2Engine::init() {
 	_keyboard = new Keyboard(this);
 	for (int i = 0; i < kMaxPoint; i++)
 		_point[i] = new V3D();
+	_sys = new System(this);
 }
 
 void CGE2Engine::deinit() {
@@ -131,6 +133,7 @@ void CGE2Engine::deinit() {
 	for (int i = 0; i < kMaxPoint; i++) {
 		delete _point[i];
 	}
+	delete _sys;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {

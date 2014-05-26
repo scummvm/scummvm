@@ -39,6 +39,20 @@ namespace CGE2 {
 #define kGameFrameDelay   (750 / 50)
 #define kGameTickDelay    (750 / 62)
 
+class System : public Sprite {
+public:
+	int _funDel;
+	int _blinkCounter;
+	Sprite *_blinkSprite;
+
+	System(CGE2Engine *vm);
+	
+	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
+	void tick();
+private:
+	CGE2Engine *_vm;
+};
+
 } // End of namespace CGE2
 
 #endif // CGE2_MAIN_H

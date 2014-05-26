@@ -54,6 +54,7 @@ class Keyboard;
 class Talk;
 class Hero;
 class Bitmap;
+class System;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -217,6 +218,7 @@ public:
 	Keyboard *_keyboard;
 	Talk *_talk;
 	V3D *_point[kMaxPoint];
+	System *_sys;
 private:
 	void init();
 	void deinit();
