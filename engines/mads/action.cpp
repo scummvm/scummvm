@@ -341,7 +341,7 @@ void MADSAction::startAction() {
 				startWalkingDirectly(hs._feetPos.x);
 			} else if (hs._feetPos.x == 0) {
 				player._prepareWalkFacing = hs._facing;
-			} else if (_savedFields._commandSource == CAT_NONE || hs._cursor >= CURSOR_WAIT) {
+			} else if (_savedFields._commandSource == CAT_NONE || hs._cursor < CURSOR_WAIT) {
 				player._needToWalk = true;
 				player._prepareWalkPos = hs._feetPos;
 			}
@@ -351,7 +351,7 @@ void MADSAction::startAction() {
 		}
 	}
 
-	if (hotspotId >= 0 && hotspotId < (int)hotspots.size()) {
+	if (hotspotId >= 0) {
 		Hotspot &hs = hotspots[hotspotId];
 
 		if (hs._feetPos.x == -1 || hs._feetPos.x == -3) {
