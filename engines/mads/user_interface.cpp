@@ -104,7 +104,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 		UISlot &slot = (*this)[idx];
 
 		if (dirtyArea._active && dirtyArea._bounds.width() > 0
-				&& dirtyArea._bounds.height() > 0 && slot._flags >= -20) {
+				&& dirtyArea._bounds.height() > 0 && slot._flags > -20) {
 
 			if (slot._flags >= IMG_ERASE) {
 				// Merge area
@@ -449,7 +449,8 @@ void UserInterface::mergeFrom(MSurface *src, const Common::Rect &srcBounds,
 	for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
 		// Process each line of the area
 		for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
-			// Check for the range used for on-screen text, which should be kept intact
+			// Check for the range used for the user interface background, 
+			// which are the only pixels that can be replaced
 			if ((destPtr[xCtr] >= 8 && destPtr[xCtr] <= 15) && (int)srcPtr[xCtr] != transparencyIndex)
 				destPtr[xCtr] = srcPtr[xCtr];
 		}
@@ -884,7 +885,7 @@ void UserInterface::inventoryAnim() {
 	// Loop through the slots list for inventory animation entry
 	for (uint i = 0; i < _uiSlots.size(); ++i) {
 		if (_uiSlots[i]._segmentId == IMG_SPINNING_OBJECT)
-			_uiSlots[i]._flags = IMG_UPDATE_ONLY;
+			_uiSlots[i]._flags = IMG_FULL_UPDATE;
 	}
 
 	// Add a new slot entry for the inventory animation
