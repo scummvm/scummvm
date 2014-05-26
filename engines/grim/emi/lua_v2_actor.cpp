@@ -360,7 +360,7 @@ void Lua_V2::AdvanceChore() {
 				c->getOwner()->playChore(c->getName());
 			}
 		}
-		c->setTime(time * 1000);
+		c->advance(time * 1000);
 	}
 }
 

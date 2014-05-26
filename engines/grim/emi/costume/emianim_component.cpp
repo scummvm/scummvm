@@ -117,6 +117,10 @@ void EMIAnimComponent::fade(Animation::FadeMode mode, int fadeLength) {
 	_animState->fade(mode, fadeLength);
 }
 
+void EMIAnimComponent::advance(uint msecs) {
+	_animState->advance(msecs);
+}
+
 void EMIAnimComponent::draw() {
 }
 

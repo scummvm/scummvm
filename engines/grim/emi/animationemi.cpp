@@ -323,4 +323,8 @@ void AnimationStateEmi::fade(Animation::FadeMode mode, int fadeLength) {
 	_fadeLength = fadeLength;
 }
 
+void AnimationStateEmi::advance(uint msecs) {
+	_time += msecs;
+}
+
 } // end of namespace Grim

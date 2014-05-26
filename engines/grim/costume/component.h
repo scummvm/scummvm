@@ -53,6 +53,7 @@ public:
 	virtual void draw() { }
 	virtual void reset() { }
 	virtual void fade(Animation::FadeMode, int) { }
+	virtual void advance(uint msecs) { }
 	virtual void resetColormap() { }
 	virtual void saveState(SaveGame *) { }
 	virtual void restoreState(SaveGame *) { }

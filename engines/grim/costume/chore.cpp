@@ -203,6 +203,19 @@ void Chore::fadeOut(uint msecs) {
 	fade(Animation::FadeOut, msecs);
 }
 
+void Chore::advance(uint msecs) {
+	setKeys(_currTime, _currTime + msecs);
+
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = getComponentForTrack(i);
+		if (comp) {
+			comp->advance(msecs);
+		}
+	}
+
+	_currTime += msecs;
+}
+
 void Chore::saveState(SaveGame *state) const {
 	state->writeBool(_hasPlayed);
 	state->writeBool(_playing);

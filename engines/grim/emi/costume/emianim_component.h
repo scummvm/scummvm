@@ -40,6 +40,7 @@ public:
 	int update(uint time);
 	void reset();
 	void fade(Animation::FadeMode mode, int fadeLength);
+	void advance(uint msecs);
 	void draw();
 
 private:

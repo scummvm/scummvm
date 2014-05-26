@@ -86,6 +86,7 @@ public:
 	void setLooping(bool loop);
 	void setSkeleton(Skeleton *skel);
 	void fade(Animation::FadeMode mode, int fadeLength);
+	void advance(uint msecs);
 
 private:
 	friend class Skeleton;

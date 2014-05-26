@@ -69,7 +69,7 @@ public:
 	bool isPlaying() { return _playing; }
 	bool isLooping() { return _looping; }
 
-	void setTime(float t) { _currTime = t; }
+	void advance(uint msecs);
 
 	const char *getName() const { return _name; }
 
