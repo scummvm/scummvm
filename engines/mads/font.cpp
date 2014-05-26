@@ -63,10 +63,16 @@ Font *Font::getFont(const Common::String &fontName) {
 }
 
 Font::Font() {
+	_charWidths = nullptr;
+	_charOffs = nullptr;
+	_charData = nullptr;
 	setFont(FONT_INTERFACE);
 }
 
 Font::Font(const Common::String &filename) {
+	_charWidths = nullptr;
+	_charOffs = nullptr;
+	_charData = nullptr;
 	setFont(filename);
 }
 
