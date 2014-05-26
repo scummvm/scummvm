@@ -135,6 +135,7 @@ public:
 	void loadUser();
 	void checkSaySwitch();
 	void qGame();
+	void loadPos();
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);

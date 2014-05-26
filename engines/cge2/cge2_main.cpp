@@ -556,7 +556,35 @@ void CGE2Engine::runGame() {
 }
 
 void CGE2Engine::loadUser() {
-	warning("STUB: CGE2Engine::loadUser()");
+	// set scene
+	if (_mode == 0) { // user .SVG file found
+		warning("STUB: CGE2Engine::loadUser()");
+		// Missing loading from save file. TODO: Implement it with the saving/loading!
+	} else if (_mode == 1) {
+		loadScript("CGE.INI");
+		loadPos();
+		// Missing saving to save file. TODO: Implement it with the saving/loading!
+	}
+}
+
+void CGE2Engine::loadPos() {
+	if (_resman->exist("CGE.HXY")) {
+		for (int cav = 0; cav < kCaveMax; cav++)
+			_heroTab[1]->_posTab[cav] = new V2D(this, 180, 10);
+		
+		EncryptedStream file(this, "CGE.HXY");
+
+		for (int cav = 0; cav < kCaveMax; cav++) {
+			_heroTab[0]->_posTab[cav]->x = file.readSint16LE();
+			_heroTab[0]->_posTab[cav]->y = file.readSint16LE();
+		}
+
+		for (int cav = 0; cav < 41; cav++) { // (564 - 400) / 4 = 41
+			_heroTab[1]->_posTab[cav]->x = file.readSint16LE();
+			_heroTab[1]->_posTab[cav]->y = file.readSint16LE();
+		}
+	} else
+		error("Missing file: CGE.HXY");
 }
 
 void CGE2Engine::checkSaySwitch() {
@@ -575,11 +603,10 @@ void CGE2Engine::loadTab() {
 
 	if (_resman->exist(kTabName)) {
 		EncryptedStream f(this, kTabName);
-		Common::File output;
 		for (int i = 0; i < kCaveMax; i++) {
 			for (int j = 0; j < 3; j++) {
-				signed b = f.readSigned();
-				unsigned a = f.readUnsigned();
+				signed b = f.readSint16BE();
+				unsigned a = f.readUint16BE();
 				uint16 round = uint16((long(a) << 16) / 100);
 				
 				if (round > 0x7FFF)
