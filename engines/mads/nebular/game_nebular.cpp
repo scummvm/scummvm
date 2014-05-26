@@ -278,6 +278,51 @@ void GameNebular::checkShowDialog() {
 	}
 }
 
+void GameNebular::showRecipe() {
+	Dialogs &dialogs = *_vm->_dialogs;
+	int count;
+
+	for (count = 0; count < 4; count++) {
+		switch(_globals[kIngredientQuantity + count]) {
+		case 0:
+			dialogs._indexList[count] = NOUN_DROP;
+			break;
+		case 1:
+			dialogs._indexList[count] = NOUN_DOLLOP;
+			break;
+		case 2:
+			dialogs._indexList[count] = NOUN_DASH;
+			break;
+		case 3:
+			dialogs._indexList[count] = NOUN_SPLASH;
+			break;
+		default:
+			break;
+		}
+	}
+
+	for (count = 0; count < 4; count++) {
+		switch(_globals[kIngredientList + count]) {
+		case 0:
+			dialogs._indexList[count + 4] = NOUN_ALCOHOL;
+			break;
+		case 1:
+			dialogs._indexList[count + 4] = NOUN_LECITHIN;
+			break;
+		case 2:
+			dialogs._indexList[count + 4] = NOUN_PETROX;
+			break;
+		case 3:
+			dialogs._indexList[count + 4] = NOUN_FORMALDEHYDE;
+			break;
+		default:
+			break;
+		}
+	}
+
+	_vm->_dialogs->show(401);
+}
+
 void GameNebular::doObjectAction() {
 	Scene &scene = _scene;
 	MADSAction &action = _scene._action;
@@ -424,7 +469,7 @@ void GameNebular::doObjectAction() {
 		_objects.setRoom(OBJ_AUDIO_TAPE, OBJ_TAPE_PLAYER);
 	} else if (action.isAction(VERB_ACTIVATE, NOUN_TAPE_PLAYER) && _objects.isInInventory(OBJ_TAPE_PLAYER)) {
 		if (_objects[OBJ_AUDIO_TAPE]._roomNumber == OBJ_TAPE_PLAYER) {
-			warning("TODO: Show the recipe");
+			showRecipe();
 		} else {
 			dialogs.show(406);
 		}

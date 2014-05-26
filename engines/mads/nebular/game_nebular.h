@@ -117,6 +117,8 @@ public:
 
 	virtual void doObjectAction();
 
+	void showRecipe();
+
 	virtual void unhandledAction();
 
 	virtual void step();
