@@ -556,15 +556,10 @@ void CGE2Engine::runGame() {
 }
 
 void CGE2Engine::loadUser() {
-	// set scene
-	if (_mode == 0) { // user .SVG file found
-		warning("STUB: CGE2Engine::loadUser()");
-		// Missing loading from save file. TODO: Implement it with the saving/loading!
-	} else if (_mode == 1) {
-		loadScript("CGE.INI");
-		loadPos();
-		// Missing saving to save file. TODO: Implement it with the saving/loading!
-	}
+	warning("STUB: CGE2Engine::loadUser()");
+	// Missing loading from file. TODO: Implement it with the saving/loading!
+	loadScript("CGE.INI");
+	loadPos();
 }
 
 void CGE2Engine::loadPos() {
