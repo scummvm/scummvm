@@ -67,7 +67,7 @@ public:
 
 	bool hasFeature(EngineFeature f) const;
 
-	Common::Error BladeRunnerEngine::run();
+	Common::Error run();
 
 	bool startup();
 	void initChapterAndScene();
