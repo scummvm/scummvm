@@ -35,7 +35,7 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 	, _number(0), _visible(false), _state(MOVE), _middleX(0), _middleY(0)
 	, _boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0)
 	, _lastDirection(DOWN), _destDirection(DOWN), _talkTime(0), _boredomTime(0), _phase(0)
-	, _specAnim(0), _drawX(0), _drawY(0), _randomSource("prince"), _zoomFactor(0), _scaleValue(0)
+	, _specAnim(0), _drawX(0), _drawY(0), _zoomFactor(0), _scaleValue(0)
 	, _shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0)
 	, _frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0)
 {
@@ -695,7 +695,7 @@ void Hero::showHero() {
 					break;
 				}
 				if (_phase == _moveSet[_moveSetType]->getFrameCount() - 1) {
-					_boreNum = _randomSource.getRandomNumber(1); // rand one of two 'bored' animation
+					_boreNum = _vm->_randomSource.getRandomNumber(1); // rand one of two 'bored' animation
 					_lastDirection = DOWN;
 					_state = STAY;
 				}

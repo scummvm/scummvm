@@ -108,6 +108,7 @@ struct BASA {
 
 // background and normal animation
 struct Anim {
+	BASA _basaData;
 	int32 _addr; //animation adress
 	//int32 _seq;
 	int16 _usage;
@@ -205,6 +206,8 @@ public:
 	//Common::Array<Anim> _backAnimList;
 	Common::Array<BackgroundAnim> _backAnimList;
 
+	Common::RandomSource _randomSource;
+
 	int testAnimNr;
 	int testAnimFrame;
 
@@ -219,6 +222,7 @@ private:
 	void init();
 	void showLogo();
 	void showBackAnims();
+	void setBackAnim();
 	void makeShadowTable(int brightness);
 
 	uint32 getTextWidth(const char *s);

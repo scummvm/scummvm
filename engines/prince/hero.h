@@ -101,7 +101,6 @@ public:
 
 	Hero(PrinceEngine *vm, GraphicsMan *graph);
 	~Hero();
-	Common::RandomSource _randomSource;
 	bool loadAnimSet(uint32 heroAnimNumber);
 
 	Graphics::Surface *getSurface();

@@ -78,7 +78,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
 	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), testAnimNr(0), testAnimFrame(0),
 	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
-	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0) {
+	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince") {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -244,7 +244,8 @@ bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 	_type = type;
 	_fileNumber = stream.readUint16LE();
 	_startPhase = stream.readUint16LE();
-	_endPhase = stream.readUint16LE();
+	//_endPhase = stream.readUint16LE();
+	_endPhase = stream.readSint16LE();
 	_loopPhase = stream.readUint16LE();
 	_x = stream.readSint16LE();
 	_y = stream.readSint16LE();
@@ -333,6 +334,8 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	}
 	_backAnimList.clear();
 	*/
+	_backAnimList.clear();
+
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
 
 	_graph->makeShadowTable(70, _graph->_shadowTable70);
@@ -701,21 +704,22 @@ void PrinceEngine::showTexts() {
 	}
 }
 
+void PrinceEngine::setBackAnim() {
+
+}
+
 void PrinceEngine::showBackAnims() {
-	int tempAnimNr = 0;
+
 	for (uint i = 0; i < _backAnimList.size(); i++) {
-		if (_backAnimList[i].backAnims[tempAnimNr]._state == 0) {
+		int activeSubAnim = _backAnimList[i]._seq._currRelative;
+		if (_backAnimList[i].backAnims[activeSubAnim]._state == 0) {
 			_backAnimList[i]._seq._counter++;
 
 			if (_backAnimList[i]._seq._type == 2) {
 				if (_backAnimList[i]._seq._currRelative == 0) {
 					if (_backAnimList[i]._seq._counter >= _backAnimList[i]._seq._data) {
 						//change_back_anim
-					} else {
-						//not_type_2_1
 					}
-				} else {
-					//not_type_2_1
 				}
 			}
 
@@ -725,45 +729,140 @@ void PrinceEngine::showBackAnims() {
 					if (_backAnimList[i]._seq._counter < _backAnimList[i]._seq._data2) {
 						//empty_frame - do not show anything
 					} else {
-						//movzx	eax,w [ebx+size BAS+BASA_Num]
-						//mov	d [ebx.BAS_Current],eax
-						//call	SetBackAnim
-						//inc	d [ebx.BAS_CurrRelative]
+						_backAnimList[i]._seq._current++; // or change to nr of animation
+						_backAnimList[i]._seq._currRelative++;
+						//SetBackAnim
+						int start = _backAnimList[i].backAnims[activeSubAnim]._basaData._start;
+						if (start != -1) {
+							_backAnimList[i].backAnims[activeSubAnim]._frame = start;
+							_backAnimList[i].backAnims[activeSubAnim]._showFrame = start;
+							_backAnimList[i].backAnims[activeSubAnim]._loopFrame = start;
+						}
+						int end = _backAnimList[i].backAnims[activeSubAnim]._basaData._end;
+						if (end != -1) {
+							_backAnimList[i].backAnims[activeSubAnim]._lastFrame = end;
+						}
+						_backAnimList[i]._seq._counter = 0;
+						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
 					}
-				} else {
-					//not_type_3_1
 				}
 			}
 			//not_type_3_1:
-
 			//show_bugger
-
-			debug("frame: %d", _backAnimList[i].backAnims[tempAnimNr]._lastFrame);
-			if (_backAnimList[i].backAnims[tempAnimNr]._frame == _backAnimList[i].backAnims[tempAnimNr]._lastFrame) {
+			if (_backAnimList[i].backAnims[activeSubAnim]._frame == _backAnimList[i].backAnims[activeSubAnim]._lastFrame) {
 				//loop_back_anim
-				_backAnimList[i].backAnims[tempAnimNr]._frame = _backAnimList[i].backAnims[tempAnimNr]._loopFrame;
-
+				_backAnimList[i].backAnims[activeSubAnim]._frame = _backAnimList[i].backAnims[activeSubAnim]._loopFrame;
+				//debug("loopFrame: %d", _backAnimList[i].backAnims[tempAnimNr]._loopFrame);
 				//change_back_anim
 				if (_backAnimList[i]._seq._type == 0) {
-					//show_bugger ??
-					_backAnimList[i].backAnims[tempAnimNr]._frame++; //??
+					//show_bugger
+					_backAnimList[i].backAnims[activeSubAnim]._frame++;
 					//not_end
 				} else if (_backAnimList[i]._seq._type == 1) {
 					//repeat_rnd
+					if (_backAnimList[i]._seq._anims <= 1) {
+						//show_bugger
+						_backAnimList[i].backAnims[activeSubAnim]._frame++;
+						//not_end
+					} else {
+						int rnd;
+						do {
+							rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._anims - 1);
+						} while (rnd == _backAnimList[i]._seq._currRelative);
+						//debug("rnd: %d", rnd);
+						_backAnimList[i]._seq._currRelative = rnd;
+						_backAnimList[i]._seq._current = rnd; // or nr of animation from lst
+						activeSubAnim = rnd;
+						//only_1_type_1:
+						//SetBackAnim
+						int start = _backAnimList[i].backAnims[activeSubAnim]._basaData._start;
+						if (start != -1) {
+							_backAnimList[i].backAnims[activeSubAnim]._frame = start;
+							_backAnimList[i].backAnims[activeSubAnim]._showFrame = start;
+							_backAnimList[i].backAnims[activeSubAnim]._loopFrame = start;
+						}
+						int end = _backAnimList[i].backAnims[activeSubAnim]._basaData._end;
+						if (end != -1) {
+							_backAnimList[i].backAnims[activeSubAnim]._lastFrame = end;
+						}
+						_backAnimList[i]._seq._counter = 0;
+						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
+						//show_bugger
+						_backAnimList[i].backAnims[activeSubAnim]._frame++;
+						//not_end
+					}
+				} else if (_backAnimList[i]._seq._type == 2) {
+					//not_type_1
+					if (_backAnimList[i]._seq._currRelative == 0) {
+						//zero
+						if (_backAnimList[i]._seq._counter < _backAnimList[i]._seq._data) {
+							//show_bugger
+							_backAnimList[i].backAnims[activeSubAnim]._frame++;
+							//not_end
+						} else {
+							if (_backAnimList[i]._seq._anims > 2) { //??
+								int rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._anims - 2); //?
+								rnd++;
+								//debug("rnd: %d", rnd);
+								_backAnimList[i]._seq._currRelative = rnd;
+								_backAnimList[i]._seq._current = rnd; // or nr of animation from lst
+								activeSubAnim = rnd;
+							}
+							//only_1_type_2
+						}
+					} else {
+						_backAnimList[i]._seq._currRelative = 0;
+						_backAnimList[i]._seq._current = 0; // or nr of animation from lst
+						activeSubAnim = 0;
+						//only_1_type_1
+					}
+					//SetBackAnim
+					int start = _backAnimList[i].backAnims[activeSubAnim]._basaData._start;
+					if (start != -1) {
+						_backAnimList[i].backAnims[activeSubAnim]._frame = start;
+						_backAnimList[i].backAnims[activeSubAnim]._showFrame = start;
+						_backAnimList[i].backAnims[activeSubAnim]._loopFrame = start;
+					}
+					int end = _backAnimList[i].backAnims[activeSubAnim]._basaData._end;
+					if (end != -1) {
+						_backAnimList[i].backAnims[activeSubAnim]._lastFrame = end;
+					}
+					_backAnimList[i]._seq._counter = 0;
+					_backAnimList[i].backAnims[activeSubAnim]._state = 0;
+					//show_bugger
+					_backAnimList[i].backAnims[activeSubAnim]._frame++;
+					//not_end
+				} else if (_backAnimList[i]._seq._type == 3) {
+					//not_type_2
+					_backAnimList[i]._seq._currRelative = 0;
+					//_backAnimList[i]._seq._current = 0; // or nr of animation from lst
+					_backAnimList[i]._seq._counter = 0;
+					int rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._data - 1); //?
+					_backAnimList[i]._seq._data2 = rnd;
+					//show_bugger
+					_backAnimList[i].backAnims[activeSubAnim]._frame++;
+					//not_end
+				} else {
+					//show_bugger
+					_backAnimList[i].backAnims[activeSubAnim]._frame++;
+					//not_end
 				}
 			} else {
-				_backAnimList[i].backAnims[tempAnimNr]._frame++;
+				_backAnimList[i].backAnims[activeSubAnim]._frame++;
 				//not_end
 			}
 
 			//not_end:
-			_backAnimList[i].backAnims[tempAnimNr]._showFrame = _backAnimList[i].backAnims[tempAnimNr]._frame;
+			_backAnimList[i].backAnims[activeSubAnim]._showFrame = _backAnimList[i].backAnims[activeSubAnim]._frame;
 			//ShowFrameCode
 			//ShowFrameCodeShadow
 
-			int frame = _backAnimList[i].backAnims[tempAnimNr]._frame;
-			Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[tempAnimNr]._animData->getFrame(frame);
-			_graph->drawTransparent(_backAnimList[i].backAnims[tempAnimNr]._x, _backAnimList[i].backAnims[tempAnimNr]._y, backAnimSurface); // out of range now - crash .exe
+			int frame = _backAnimList[i].backAnims[activeSubAnim]._showFrame;
+			int phaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseFrameIndex(frame);
+			Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex);
+			int x = _backAnimList[i].backAnims[activeSubAnim]._x + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(frame);
+			int y = _backAnimList[i].backAnims[activeSubAnim]._y + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetY(frame);
+			_graph->drawTransparent(x, y, backAnimSurface); // out of range now - crash .exe
 			backAnimSurface->free();
 			delete backAnimSurface;
 		}
