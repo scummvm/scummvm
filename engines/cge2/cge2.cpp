@@ -59,6 +59,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_commandHandlerTurbo = nullptr;
 	_infoLine = nullptr;
 	_mouse = nullptr;
+	_keyboard = nullptr;
 	_talk = nullptr;
 	for (int i = 0; i < kMaxPoint; i++)
 		_point[i] = nullptr;
@@ -97,6 +98,7 @@ void CGE2Engine::init() {
 	_commandHandlerTurbo = new CommandHandler(this, true);
 	_infoLine = new InfoLine(this, kInfoW);
 	_mouse = new Mouse(this);
+	_keyboard = new Keyboard(this);
 	for (int i = 0; i < kMaxPoint; i++)
 		_point[i] = new V3D();
 }
@@ -123,6 +125,7 @@ void CGE2Engine::deinit() {
 	delete _commandHandlerTurbo;
 	delete _infoLine;
 	delete _mouse;
+	delete _keyboard;
 	if (_talk != nullptr)
 		delete _talk;
 	for (int i = 0; i < kMaxPoint; i++) {

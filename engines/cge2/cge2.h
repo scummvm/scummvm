@@ -50,6 +50,7 @@ class Spare;
 class CommandHandler;
 class InfoLine;
 class Mouse;
+class Keyboard;
 class Talk;
 class Hero;
 class Bitmap;
@@ -213,6 +214,7 @@ public:
 	CommandHandler *_commandHandlerTurbo;
 	InfoLine *_infoLine;
 	Mouse *_mouse;
+	Keyboard *_keyboard;
 	Talk *_talk;
 	V3D *_point[kMaxPoint];
 private:

@@ -34,6 +34,35 @@
 
 namespace CGE2 {
 
+/*----------------- KEYBOARD interface -----------------*/
+
+#define kEventMax   256
+
+enum EventMask {
+	kMouseRoll = 1 << 0,
+	kMouseLeftDown = 1 << 1,
+	kMouseLeftUp = 1 << 2,
+	kMouseRightDown = 1 << 3,
+	kMouseRightUp = 1 << 4,
+	kEventAttn = 1 << 5,
+	kEventKeyb = 1 << 7
+};
+
+class Keyboard {
+private:
+	bool getKey(Common::Event &event);
+	CGE2Engine *_vm;
+public:
+	Sprite *_client;
+	bool _keyAlt;
+
+	void newKeyboard(Common::Event &event);
+	Sprite *setClient(Sprite *spr);
+
+	Keyboard(CGE2Engine *vm);
+	~Keyboard();
+};
+
 /*----------------- MOUSE interface -----------------*/
 
 class Mouse : public Sprite {

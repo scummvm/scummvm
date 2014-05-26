@@ -36,6 +36,30 @@
 #include "cge2/cge2_main.h"
 
 namespace CGE2 {
+
+/*----------------- KEYBOARD interface -----------------*/
+
+Keyboard::Keyboard(CGE2Engine *vm) : _client(NULL), _vm(vm) {
+	warning("STUB: Keyboard::Keyboard() - Recheck the whole implementation!!!");
+}
+
+Keyboard::~Keyboard() {
+}
+
+Sprite *Keyboard::setClient(Sprite *spr) {
+	warning("STUB: Keyboard::setClient()");
+	return spr;
+}
+
+bool Keyboard::getKey(Common::Event &event) {
+	warning("STUB: Keyboard::getKey()");
+	return false;
+}
+
+void Keyboard::newKeyboard(Common::Event &event) {
+	warning("STUB: Keyboard::newKeyboard()");
+}
+
 /*----------------- MOUSE interface -----------------*/
 
 Mouse::Mouse(CGE2Engine *vm) : Sprite(vm), _busy(NULL), _hold(NULL), _hx(0), _vm(vm) {
