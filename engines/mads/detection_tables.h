@@ -63,7 +63,7 @@ static const MADSGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Rex Nebular and the Cosmic Gender Bender DOS English 8.49 Atlernate
+		// Rex Nebular and the Cosmic Gender Bender DOS English 8.49 Alternate
 		{
 			"nebular",
 			0,
