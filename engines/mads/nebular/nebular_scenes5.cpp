@@ -396,6 +396,7 @@ void Scene501::actions() {
 		case 2:
 		case 3:
 			handleSlotActions();
+			break;
 
 		case 4:
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
