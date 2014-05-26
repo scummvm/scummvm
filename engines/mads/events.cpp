@@ -101,7 +101,7 @@ void EventsManager::changeCursor() {
 			if (cursorData[(cursor->h - 1) * cursor->w + idx] != transIndex)
 				hotspotX = idx;
 
-			if (cursorData[(cursor->h + 1) * cursor->w - 1] != transIndex)
+			if (cursorData[(idx + 1) * cursor->w - 1] != transIndex)
 				hotspotY = idx;
 		}
 
