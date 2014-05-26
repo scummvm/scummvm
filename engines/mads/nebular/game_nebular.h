@@ -96,7 +96,7 @@ enum InventoryObject {
 	OBJ_LECITHIN = 54
 };
 
-class GameNebular: public Game {
+class GameNebular : public Game {
 	friend class Game;
 protected:
 	GameNebular(MADSEngine *vm);
@@ -127,7 +127,7 @@ public:
 };
 
 
-class Section1Handler: public SectionHandler {
+class Section1Handler : public SectionHandler {
 public:
 	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
 

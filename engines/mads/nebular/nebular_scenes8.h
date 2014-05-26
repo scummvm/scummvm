@@ -52,7 +52,7 @@ public:
 	Scene8xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
-class Scene801: public Scene8xx{
+class Scene801 : public Scene8xx{
 private:
 	bool _walkThroughDoor;
 
@@ -67,7 +67,7 @@ public:
 	virtual void actions();
 };
 
-class Scene802: public Scene8xx{
+class Scene802 : public Scene8xx{
 public:
 	Scene802(MADSEngine *vm) : Scene8xx(vm) {}
 
@@ -78,7 +78,7 @@ public:
 	virtual void actions();
 };
 
-class Scene803: public Scene8xx{
+class Scene803 : public Scene8xx{
 public:
 	Scene803(MADSEngine *vm) : Scene8xx(vm) {}
 
@@ -89,7 +89,7 @@ public:
 	virtual void actions();
 };
 
-class Scene804: public Scene8xx {
+class Scene804 : public Scene8xx {
 private:
 	bool _messWithThrottle;
 	bool _movingThrottle;
@@ -111,7 +111,7 @@ public:
 	virtual void actions() {};
 };
 
-class Scene805: public Scene8xx{
+class Scene805 : public Scene8xx{
 public:
 	Scene805(MADSEngine *vm) : Scene8xx(vm) {}
 
@@ -122,7 +122,7 @@ public:
 	virtual void actions();
 };
 
-class Scene807: public SceneTeleporter {
+class Scene807 : public SceneTeleporter {
 public:
 	Scene807(MADSEngine *vm) : SceneTeleporter(vm) {}
 
@@ -132,7 +132,7 @@ public:
 	virtual void actions();
 };
 
-class Scene808: public Scene8xx{
+class Scene808 : public Scene8xx{
 private:
 	bool _goingTo803;
 
@@ -145,7 +145,7 @@ public:
 	virtual void actions();
 };
 
-class Scene810: public Scene8xx{
+class Scene810 : public Scene8xx{
 private:
 	bool _moveAllowed;
 

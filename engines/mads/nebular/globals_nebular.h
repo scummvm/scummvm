@@ -280,7 +280,7 @@ enum {
 #define TELEPORTER_WORK_COUNT 6  // Total number that actually work
 
 
-class NebularGlobals: public Globals {
+class NebularGlobals : public Globals {
 public:
 	SynchronizedList _spriteIndexes;
 	SynchronizedList _sequenceIndexes;

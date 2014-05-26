@@ -80,7 +80,7 @@ public:
 	virtual void preActions();
 };
 
-class Scene301: public Scene3xx {
+class Scene301 : public Scene3xx {
 public:
 	Scene301(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -89,7 +89,7 @@ public:
 	virtual void step();
 };
 
-class Scene302: public Scene3xx {
+class Scene302 : public Scene3xx {
 private:
 	int _oldFrame;
 
@@ -102,7 +102,7 @@ public:
 	virtual void step();
 };
 
-class Scene303: public Scene3xx {
+class Scene303 : public Scene3xx {
 public:
 	Scene303(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -111,7 +111,7 @@ public:
 	virtual void step();
 };
 
-class Scene304: public Scene3xx {
+class Scene304 : public Scene3xx {
 private:
 	int _explosionSpriteId;
 
@@ -124,7 +124,7 @@ public:
 	virtual void step();
 };
 
-class Scene307: public Scene3xx {
+class Scene307 : public Scene3xx {
 private:
 	ForceField _forceField;
 
@@ -162,7 +162,7 @@ public:
 	virtual void actions();
 };
 
-class Scene308: public Scene3xx {
+class Scene308 : public Scene3xx {
 private:
 	ForceField _forceField;
 
@@ -175,7 +175,7 @@ public:
 	virtual void step();
 };
 
-class Scene309: public Scene3xx {
+class Scene309 : public Scene3xx {
 private:
 	ForceField _forceField;
 	int _characterSpriteIndexes[3];
@@ -191,7 +191,7 @@ public:
 	virtual void step();
 };
 
-class Scene310: public Scene3xx {
+class Scene310 : public Scene3xx {
 private:
 	ForceField _forceField;
 
@@ -204,7 +204,7 @@ public:
 	virtual void step();
 };
 
-class Scene311: public Scene3xx {
+class Scene311 : public Scene3xx {
 private:
 	bool _checkGuardFl;
 
@@ -218,7 +218,7 @@ public:
 	virtual void actions();
 };
 
-class Scene313: public Scene3xx {
+class Scene313 : public Scene3xx {
 public:
 	Scene313(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -227,7 +227,7 @@ public:
 	virtual void actions();
 };
 
-class Scene316: public Scene3xx {
+class Scene316 : public Scene3xx {
 private:
 	void handleRexInGrate();
 	void handleRoxInGrate();
@@ -242,7 +242,7 @@ public:
 	virtual void actions();
 };
 
-class Scene318: public Scene3xx {
+class Scene318 : public Scene3xx {
 private:
 	uint32 _dropTimer;
 
@@ -278,7 +278,7 @@ public:
 	virtual void actions();
 };
 
-class Scene319: public Scene3xx {
+class Scene319 : public Scene3xx {
 private:
 	Conversation _dialog1, _dialog2, _dialog3;
 
@@ -306,7 +306,7 @@ public:
 	virtual void actions();
 };
 
-class Scene320: public Scene300s {
+class Scene320 : public Scene300s {
 private:
 	void setRightView(int view);
 	void setLeftView(int view);
@@ -331,7 +331,7 @@ public:
 	virtual void actions();
 };
 
-class Scene321: public Scene3xx {
+class Scene321 : public Scene3xx {
 public:
 	Scene321(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -340,7 +340,7 @@ public:
 	virtual void step();
 };
 
-class Scene322: public SceneTeleporter {
+class Scene322 : public SceneTeleporter {
 public:
 	Scene322(MADSEngine *vm) : SceneTeleporter(vm) {}
 
@@ -350,7 +350,7 @@ public:
 	virtual void actions();
 };
 
-class Scene351: public Scene3xx {
+class Scene351 : public Scene3xx {
 public:
 	Scene351(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -360,7 +360,7 @@ public:
 	virtual void actions();
 };
 
-class Scene352: public Scene3xx {
+class Scene352 : public Scene3xx {
 private:
 	bool _vaultOpenFl;
 	bool _mustPutArmDownFl;
@@ -385,7 +385,7 @@ public:
 	virtual void actions();
 };
 
-class Scene353: public Scene3xx {
+class Scene353 : public Scene3xx {
 public:
 	Scene353(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -394,7 +394,7 @@ public:
 	virtual void actions();
 };
 
-class Scene354: public Scene3xx {
+class Scene354 : public Scene3xx {
 public:
 	Scene354(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -404,7 +404,7 @@ public:
 	virtual void actions();
 };
 
-class Scene357: public Scene3xx {
+class Scene357 : public Scene3xx {
 public:
 	Scene357(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -414,7 +414,7 @@ public:
 	virtual void actions();
 };
 
-class Scene358: public Scene3xx {
+class Scene358 : public Scene3xx {
 public:
 	Scene358(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -424,7 +424,7 @@ public:
 	virtual void actions();
 };
 
-class Scene359: public Scene3xx {
+class Scene359 : public Scene3xx {
 private:
 	int _cardHotspotId;
 
@@ -438,7 +438,7 @@ public:
 	virtual void actions();
 };
 
-class Scene360: public Scene3xx {
+class Scene360 : public Scene3xx {
 public:
 	Scene360(MADSEngine *vm) : Scene3xx(vm) {}
 
@@ -448,7 +448,7 @@ public:
 	virtual void actions();
 };
 
-class Scene361: public Scene3xx {
+class Scene361 : public Scene3xx {
 private:
 	void handleRexAction();
 	void handleRoxAction();
@@ -463,7 +463,7 @@ public:
 	virtual void actions();
 };
 
-class Scene366: public Scene300s {
+class Scene366 : public Scene300s {
 public:
 	Scene366(MADSEngine *vm) : Scene300s(vm) {}
 
@@ -472,7 +472,7 @@ public:
 	virtual void actions();
 };
 
-class Scene387: public Scene300s {
+class Scene387 : public Scene300s {
 public:
 	Scene387(MADSEngine *vm) : Scene300s(vm) {}
 
@@ -481,7 +481,7 @@ public:
 	virtual void actions();
 };
 
-class Scene388: public Scene300s {
+class Scene388 : public Scene300s {
 public:
 	Scene388(MADSEngine *vm) : Scene300s(vm) {}
 
@@ -490,7 +490,7 @@ public:
 	virtual void actions();
 };
 
-class Scene389: public Scene300s {
+class Scene389 : public Scene300s {
 private:
 	uint32 _monsterTime;
 
@@ -506,7 +506,7 @@ public:
 	virtual void actions();
 };
 
-class Scene390: public Scene300s {
+class Scene390 : public Scene300s {
 public:
 	Scene390(MADSEngine *vm) : Scene300s(vm) {}
 
@@ -515,7 +515,7 @@ public:
 	virtual void actions();
 };
 
-class Scene391: public Scene300s {
+class Scene391 : public Scene300s {
 public:
 	Scene391(MADSEngine *vm) : Scene300s(vm) {}
 
@@ -524,7 +524,7 @@ public:
 	virtual void actions();
 };
 
-class Scene399: public Scene300s {
+class Scene399 : public Scene300s {
 public:
 	Scene399(MADSEngine *vm) : Scene300s(vm) {}
 

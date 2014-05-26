@@ -131,7 +131,7 @@ struct RegisterValue {
 /**
  * Base class for the sound player resource files
  */
-class ASound: public Audio::AudioStream {
+class ASound : public Audio::AudioStream {
 private:
 	struct CachedDataEntry {
 		int _offset;
@@ -365,7 +365,7 @@ public:
 	virtual int getRate() const { return 11025; }
 };
 
-class ASound1: public ASound {
+class ASound1 : public ASound {
 private:
 	typedef int (ASound1::*CommandPtr)();
 	static const CommandPtr _commandList[42];

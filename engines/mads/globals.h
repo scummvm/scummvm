@@ -30,7 +30,7 @@
 
 namespace MADS {
 
-class Globals: public SynchronizedList {
+class Globals : public SynchronizedList {
 public:
 	Globals() {}
 

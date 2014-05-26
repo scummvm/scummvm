@@ -677,7 +677,7 @@ public:
 };
 
 // TODO: Temporary, remove once implemented properly
-class DummyScene: public DragonsphereScene {
+class DummyScene : public DragonsphereScene {
 public:
 	DummyScene(MADSEngine *vm) : DragonsphereScene(vm) {
 		warning("Unimplemented scene");

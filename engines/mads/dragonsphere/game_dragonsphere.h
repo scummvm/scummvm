@@ -89,7 +89,7 @@ enum InventoryObject {
 };
 
 // HACK: A stub for now, remove from here once it's implemented properly
-class DragonsphereGlobals: public Globals {
+class DragonsphereGlobals : public Globals {
 public:
 	DragonsphereGlobals() {
 		resize(210);	// Rex has 210 globals
@@ -97,7 +97,7 @@ public:
 	virtual ~DragonsphereGlobals() {}
 };
 
-class GameDragonsphere: public Game {
+class GameDragonsphere : public Game {
 	friend class Game;
 protected:
 	GameDragonsphere(MADSEngine *vm);
@@ -125,7 +125,7 @@ public:
 };
 
 
-class Section1Handler: public SectionHandler {
+class Section1Handler : public SectionHandler {
 public:
 	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
 

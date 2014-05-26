@@ -503,7 +503,7 @@ public:
 };
 
 // TODO: Temporary, remove once implemented properly
-class DummyScene: public PhantomScene {
+class DummyScene : public PhantomScene {
 public:
 	DummyScene(MADSEngine *vm) : PhantomScene(vm) {
 		warning("Unimplemented scene");

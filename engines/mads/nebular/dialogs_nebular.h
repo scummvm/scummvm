@@ -33,7 +33,7 @@ namespace Nebular {
 
 enum CapitalizationMode { kUppercase = 0, kLowercase = 1, kUpperAndLower = 2 };
 
-class DialogsNebular: public Dialogs {
+class DialogsNebular : public Dialogs {
 	friend class Dialogs;
 private:
 	int _dialogWidth;
@@ -62,7 +62,7 @@ struct HOGANUS {
 	Common::String _word;
 };
 
-class CopyProtectionDialog: public TextDialog {
+class CopyProtectionDialog : public TextDialog {
 private:
 	HOGANUS _hogEntry;
 

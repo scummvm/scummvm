@@ -50,7 +50,7 @@ public:
 	Scene4xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
-class Scene401: public Scene4xx {
+class Scene401 : public Scene4xx {
 private:
 	bool _northFl;
 	Common::Point _destPos;
@@ -67,7 +67,7 @@ public:
 	virtual void actions();
 };
 
-class Scene402: public Scene4xx {
+class Scene402 : public Scene4xx {
 private:
 	bool _lightOn;
 	bool _blowingSmoke;
@@ -128,7 +128,7 @@ public:
 	virtual void actions();
 };
 
-class Scene405: public Scene4xx {
+class Scene405 : public Scene4xx {
 public:
 	Scene405(MADSEngine *vm) : Scene4xx(vm) {}
 
@@ -139,7 +139,7 @@ public:
 	virtual void actions();
 };
 
-class Scene406: public Scene4xx {
+class Scene406 : public Scene4xx {
 private:
 	bool _hitStorageDoor;
 
@@ -154,7 +154,7 @@ public:
 	virtual void actions();
 };
 
-class Scene407: public Scene4xx {
+class Scene407 : public Scene4xx {
 private:
 	bool _fromNorth;
 	Common::Point _destPos;
@@ -170,7 +170,7 @@ public:
 	virtual void actions();
 };
 
-class Scene408: public Scene4xx {
+class Scene408 : public Scene4xx {
 public:
 	Scene408(MADSEngine *vm) : Scene4xx(vm) {}
 
@@ -180,7 +180,7 @@ public:
 	virtual void actions();
 };
 
-class Scene409: public SceneTeleporter {
+class Scene409 : public SceneTeleporter {
 public:
 	Scene409(MADSEngine *vm) : SceneTeleporter(vm) {}
 
@@ -190,7 +190,7 @@ public:
 	virtual void actions();
 };
 
-class Scene410: public Scene4xx {
+class Scene410 : public Scene4xx {
 public:
 	Scene410(MADSEngine *vm) : Scene4xx(vm) {}
 
@@ -201,7 +201,7 @@ public:
 	virtual void actions();
 };
 
-class Scene411: public Scene4xx {
+class Scene411 : public Scene4xx {
 private:
 	int _curAnimationFrame;
 	int _newIngredient;
@@ -237,7 +237,7 @@ public:
 	virtual void actions();
 };
 
-class Scene413: public Scene4xx {
+class Scene413 : public Scene4xx {
 private:
 	int _rexDeath;
 	int _canMove;

@@ -32,7 +32,7 @@ namespace MADS {
 class MADSEngine;
 class Game;
 
-class VisitedScenes: public SynchronizedList {
+class VisitedScenes : public SynchronizedList {
 public:
 	/**
 	 * Stores true when a previously visited scene is revisited

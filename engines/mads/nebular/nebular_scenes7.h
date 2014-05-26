@@ -50,7 +50,7 @@ public:
 	Scene7xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
-class Scene701: public Scene7xx {
+class Scene701 : public Scene7xx {
 private:
 	int _fishingLineId;
 
@@ -65,7 +65,7 @@ public:
 	virtual void step();
 };
 
-class Scene702: public Scene7xx {
+class Scene702 : public Scene7xx {
 public:
 	Scene702(MADSEngine *vm) : Scene7xx(vm) {}
 
@@ -75,7 +75,7 @@ public:
 	virtual void actions();
 };
 
-class Scene703: public Scene7xx{
+class Scene703 : public Scene7xx{
 private:
 	int _monsterMode;
 	int _boatFrame;
@@ -106,7 +106,7 @@ public:
 	virtual void actions();
 };
 
-class Scene704: public Scene7xx{
+class Scene704 : public Scene7xx{
 private:
 	int _bottleHotspotId;
 	int _boatCurrentFrame;
@@ -131,7 +131,7 @@ public:
 	virtual void actions();
 };
 
-class Scene705: public Scene7xx{
+class Scene705 : public Scene7xx{
 private:
 	Conversation _dialog1;
 
@@ -149,7 +149,7 @@ public:
 	virtual void actions();
 };
 
-class Scene706: public Scene7xx{
+class Scene706 : public Scene7xx{
 private:
 	int _vaseHotspotId;
 	int _vaseMode;
@@ -172,7 +172,7 @@ public:
 	virtual void actions();
 };
 
-class Scene707: public SceneTeleporter {
+class Scene707 : public SceneTeleporter {
 public:
 	Scene707(MADSEngine *vm) : SceneTeleporter(vm) {}
 
@@ -182,7 +182,7 @@ public:
 	virtual void actions();
 };
 
-class Scene710: public Scene7xx {
+class Scene710 : public Scene7xx {
 public:
 	Scene710(MADSEngine *vm) : Scene7xx(vm) {}
 
@@ -192,7 +192,7 @@ public:
 	virtual void actions();
 };
 
-class Scene711: public SceneTeleporter {
+class Scene711 : public SceneTeleporter {
 public:
 	Scene711(MADSEngine *vm) : SceneTeleporter(vm) {}
 
@@ -202,7 +202,7 @@ public:
 	virtual void actions();
 };
 
-class Scene751: public Scene7xx{
+class Scene751 : public Scene7xx{
 private:
 	bool _rexHandingLine;
 
@@ -217,7 +217,7 @@ public:
 	virtual void actions();
 };
 
-class Scene752: public Scene7xx {
+class Scene752 : public Scene7xx {
 private:
 	int _cardId;
 

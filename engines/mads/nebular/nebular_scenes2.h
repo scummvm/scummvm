@@ -49,7 +49,7 @@ public:
 	Scene2xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
-class Scene201: public Scene2xx {
+class Scene201 : public Scene2xx {
 private:
 	bool _pterodactylFlag;
 
@@ -63,7 +63,7 @@ public:
 	virtual void actions();
 };
 
-class Scene202: public Scene2xx {
+class Scene202 : public Scene2xx {
 private:
 	bool _activeMsgFl, _ladderTopFl, _waitingMeteoFl, _toStationFl, _toTeleportFl;
 	int _ladderHotspotId, _lastRoute, _stationCounter, _meteoFrame;
@@ -88,7 +88,7 @@ public:
 	void setRandomKernelMessage();
 };
 
-class Scene203: public Scene2xx {
+class Scene203 : public Scene2xx {
 private:
 	bool _rhotundaEat2Fl, _rhotundaEatFl;
 
@@ -103,7 +103,7 @@ public:
 	virtual void actions();
 };
 
-class Scene205: public Scene2xx {
+class Scene205 : public Scene2xx {
 private:
 	uint32 _lastFishTime, _chickenTime;
 	bool _beingKicked;
@@ -122,7 +122,7 @@ public:
 	virtual void actions();
 };
 
-class Scene207: public Scene2xx {
+class Scene207 : public Scene2xx {
 private:
 	bool _vultureFl, _spiderFl, _eyeFl;
 	int _spiderHotspotId, _vultureHotspotId;
@@ -142,7 +142,7 @@ public:
 	virtual void actions();
 };
 
-class Scene208: public Scene2xx {
+class Scene208 : public Scene2xx {
 private:
 	bool _rhotundaTurnFl, _boundingFl;
 	int32 _rhotundaTime;
@@ -161,7 +161,7 @@ public:
 	virtual void actions();
 };
 
-class Scene209: public Scene2xx {
+class Scene209 : public Scene2xx {
 private:
 	bool _dodgeFl, _forceDodgeFl, _shouldDodgeFl;
 	bool _pitchFl;
@@ -207,7 +207,7 @@ public:
 	virtual void actions();
 };
 
-class Scene210: public Scene2xx {
+class Scene210 : public Scene2xx {
 private:
 	int _curDialogNode;
 	int _nextHandsPlace;
@@ -246,7 +246,7 @@ public:
 	virtual void actions();
 };
 
-class Scene211: public Scene2xx {
+class Scene211 : public Scene2xx {
 private:
 	bool _ambushFl, _wakeFl;
 	int _monkeyFrame, _scrollY;
@@ -263,7 +263,7 @@ public:
 	virtual void actions();
 };
 
-class Scene212: public Scene2xx {
+class Scene212 : public Scene2xx {
 public:
 	Scene212(MADSEngine *vm) : Scene2xx(vm) {}
 	virtual void setup();
@@ -273,7 +273,7 @@ public:
 	virtual void actions();
 };
 
-class Scene213: public SceneTeleporter {
+class Scene213 : public SceneTeleporter {
 public:
 	Scene213(MADSEngine *vm) : SceneTeleporter(vm) {}
 
@@ -283,7 +283,7 @@ public:
 	virtual void actions();
 };
 
-class Scene214: public Scene2xx {
+class Scene214 : public Scene2xx {
 private:
 	uint32 _devilTime;
 	bool _devilRunningFl;
@@ -298,7 +298,7 @@ public:
 	virtual void actions();
 };
 
-class Scene215: public Scene2xx {
+class Scene215 : public Scene2xx {
 public:
 	Scene215(MADSEngine *vm) : Scene2xx(vm) {}
 
@@ -308,7 +308,7 @@ public:
 	virtual void actions();
 };
 
-class Scene216: public Scene2xx {
+class Scene216 : public Scene2xx {
 public:
 	Scene216(MADSEngine *vm) : Scene2xx(vm) {}
 

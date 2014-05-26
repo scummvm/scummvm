@@ -77,7 +77,7 @@ public:
 	int getQuality(int qualityId) const;
 };
 
-class InventoryObjects: public Common::Array<InventoryObject> {
+class InventoryObjects : public Common::Array<InventoryObject> {
 private:
 	MADSEngine *_vm;
 

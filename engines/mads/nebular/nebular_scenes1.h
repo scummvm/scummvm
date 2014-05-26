@@ -53,7 +53,7 @@ public:
 	Scene1xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
-class Scene101: public Scene1xx {
+class Scene101 : public Scene1xx {
 private:
 	bool _sittingFl;
 	bool _panelOpened;

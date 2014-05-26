@@ -65,7 +65,7 @@ enum InventoryObject {
 };
 
 // HACK: A stub for now, remove from here once it's implemented properly
-class PhantomGlobals: public Globals {
+class PhantomGlobals : public Globals {
 public:
 	PhantomGlobals() {
 		resize(210);	// Rex has 210 globals
@@ -73,7 +73,7 @@ public:
 	virtual ~PhantomGlobals() {}
 };
 
-class GamePhantom: public Game {
+class GamePhantom : public Game {
 	friend class Game;
 protected:
 	GamePhantom(MADSEngine *vm);
@@ -101,7 +101,7 @@ public:
 };
 
 
-class Section1Handler: public SectionHandler {
+class Section1Handler : public SectionHandler {
 public:
 	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
 

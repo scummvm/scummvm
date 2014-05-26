@@ -107,7 +107,7 @@ struct SpriteFrameHeader {
 	uint32 reserved8;
 };
 
-class MSprite: public MSurface {
+class MSprite : public MSurface {
 private:
 	void loadSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette);
 public:

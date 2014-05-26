@@ -96,7 +96,7 @@ public:
 
 #define TEXT_DIALOG_MAX_LINES 20
 
-class TextDialog: protected Dialog {
+class TextDialog : protected Dialog {
 private:
 	/**
 	 * Append text to the currently end line.
@@ -192,7 +192,7 @@ public:
 	virtual void show();
 };
 
-class MessageDialog: public TextDialog {
+class MessageDialog : public TextDialog {
 public:
 	MessageDialog(MADSEngine *vm, int lines, ...);
 

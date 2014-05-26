@@ -246,7 +246,7 @@ public:
 		int tickDelay, int steps);
 };
 
-class Palette: public Fader {
+class Palette : public Fader {
 private:
 	/**
 	 * Initialises the first 16 palette indexes with the equivalent

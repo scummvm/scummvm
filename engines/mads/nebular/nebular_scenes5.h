@@ -50,7 +50,7 @@ public:
 	Scene5xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
-class Scene501: public Scene5xx{
+class Scene501 : public Scene5xx{
 private:
 	int _mainSequenceId;
 	int _mainSpriteId;
@@ -70,7 +70,7 @@ public:
 	virtual void actions();
 };
 
-class Scene502: public SceneTeleporter {
+class Scene502 : public SceneTeleporter {
 public:
 	Scene502(MADSEngine *vm) : SceneTeleporter(vm) {}
 
@@ -80,7 +80,7 @@ public:
 	virtual void actions();
 };
 
-class Scene503: public Scene5xx{
+class Scene503 : public Scene5xx{
 private:
 	int _detonatorHotspotId;
 
@@ -93,7 +93,7 @@ public:
 	virtual void actions();
 };
 
-class Scene504: public Scene5xx{
+class Scene504 : public Scene5xx{
 private:
 	int _carAnimationMode;
 	int _carFrame;
@@ -109,7 +109,7 @@ public:
 	virtual void actions();
 };
 
-class Scene505: public Scene5xx{
+class Scene505 : public Scene5xx{
 private:
 	int _frame;
 	int _nextButtonId;
@@ -129,7 +129,7 @@ public:
 	virtual void actions();
 };
 
-class Scene506: public Scene5xx{
+class Scene506 : public Scene5xx{
 private:
 	Common::Point _doorPos;
 	Facing _heroFacing;
@@ -155,7 +155,7 @@ public:
 	virtual void actions();
 };
 
-class Scene507: public Scene5xx{
+class Scene507 : public Scene5xx{
 private:
 	int _penlightHotspotId;
 
@@ -168,7 +168,7 @@ public:
 	virtual void actions();
 };
 
-class Scene508: public Scene5xx{
+class Scene508 : public Scene5xx{
 private:
 	int _chosenObject;
 
@@ -184,7 +184,7 @@ public:
 	virtual void actions();
 };
 
-class Scene511: public Scene5xx{
+class Scene511 : public Scene5xx{
 private:
 	bool _handingLine;
 	bool _lineMoving;
@@ -204,7 +204,7 @@ public:
 	virtual void actions();
 };
 
-class Scene512: public Scene5xx{
+class Scene512 : public Scene5xx{
 private:
   int _fishingRodHotspotId;
   int _keyHotspotId;
@@ -218,7 +218,7 @@ public:
 	virtual void actions();
 };
 
-class Scene513: public Scene5xx{
+class Scene513 : public Scene5xx{
 public:
 	Scene513(MADSEngine *vm) : Scene5xx(vm) {}
 
@@ -228,7 +228,7 @@ public:
 	virtual void actions();
 };
 
-class Scene515: public Scene5xx{
+class Scene515 : public Scene5xx{
 public:
 	Scene515(MADSEngine *vm) : Scene5xx(vm) {}
 
@@ -238,7 +238,7 @@ public:
 	virtual void actions() {};
 };
 
-class Scene551: public Scene5xx{
+class Scene551 : public Scene5xx{
 public:
 	Scene551(MADSEngine *vm) : Scene5xx(vm) {}
 

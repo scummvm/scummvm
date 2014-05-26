@@ -72,7 +72,7 @@ struct RandomEntry {
 	RandomEntry() { _handle = _quoteId = -1; }
 };
 
-class RandomMessages: public Common::Array<RandomEntry> {
+class RandomMessages : public Common::Array<RandomEntry> {
 public:
 	Common::Rect _bounds;
 	int _randomSpacing;
@@ -147,7 +147,7 @@ public:
 
 #define TEXT_DISPLAY_SIZE 40
 
-class TextDisplayList: public Common::Array<TextDisplay> {
+class TextDisplayList : public Common::Array<TextDisplay> {
 private:
 	MADSEngine *_vm;
 public:
