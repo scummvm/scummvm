@@ -33,6 +33,8 @@ namespace MADS {
 EventsManager::EventsManager(MADSEngine *vm) {
 	_vm = vm;
 	_cursorSprites = nullptr;
+	_cursorId = CURSOR_NONE;
+	_newCursorId = CURSOR_NONE;
 	_frameCounter = 10;
 	_priorFrameTime = 0;
 	_mouseClicked = false;
