@@ -544,8 +544,8 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_cbfz      = nullptr;
 	_zbufChunk = nullptr;
 
-	_vptrSize = 0;
-	_vptr = nullptr;
+	_vpointerSize = 0;
+	_vpointer = nullptr;
 
 	_curFrame = -1;
 
@@ -560,7 +560,7 @@ VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
 	delete[] _codebook;
 	delete[] _cbfz;
 	delete[] _zbufChunk;
-	delete[] _vptr;
+	delete[] _vpointer;
 
 	delete _surface;
 }
@@ -773,11 +773,11 @@ bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 s
 	if (size > _maxVPTRSize)
 		return false;
 
-	if (!_vptr)
-		_vptr = new uint8[roundup(_maxVPTRSize)];
+	if (!_vpointer)
+		_vpointer = new uint8[roundup(_maxVPTRSize)];
 
-	_vptrSize = size;
-	s->read(_vptr, roundup(size));
+	_vpointerSize = size;
+	s->read(_vpointer, roundup(size));
 
 	_hasNewFrame = true;
 
@@ -829,11 +829,11 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(uint16 *frame, unsigned int dstBl
 
 bool VQADecoder::VQAVideoTrack::decodeFrame(uint16 *frame)
 {
-	if (!_codebook || !_vptr)
+	if (!_codebook || !_vpointer)
 		return false;
 
-	uint8 *src = _vptr;
-	uint8 *end = _vptr + _vptrSize;
+	uint8 *src = _vpointer;
+	uint8 *end = _vpointer + _vpointerSize;
 
 	uint16 count, srcBlock, dstBlock = 0;
 	(void)srcBlock;

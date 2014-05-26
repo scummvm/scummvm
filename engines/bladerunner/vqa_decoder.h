@@ -189,8 +189,8 @@ private:
 		uint8   *_cbfz;
 		uint8   *_zbufChunk;
 
-		uint32   _vptrSize;
-		uint8   *_vptr;
+		uint32   _vpointerSize;
+		uint8   *_vpointer;
 
 		int      _curFrame;
 
