@@ -597,6 +597,74 @@ void MovGraph::freeItems() {
 	_items.clear();
 }
 Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) {
+#if 0
+	*rescount = 0;
+
+	if (_itemsCount <= 0)
+		return 0;
+
+	int idx = 0;
+
+	while (_items[idx]->ani != ani) {
+		idx++;
+
+		if (idx >= _itemsCount)
+			return 0;
+	}
+	_items[idx]->free();
+
+	calcNodeDistancesAndAngles();
+
+	_items[idx].movarr._movSteps.clear();
+
+	v15 = ani->_oy;
+	point1.x = ani->_ox;
+	point1.y = v15;
+
+	if (!MovGraph_calcChunk(this, idx, ani->_ox, v15, &_items[idx]->movarr, 0))
+		MovGraph_findClosestLink(this, idx, &point1, &_items[idx]->movarr);
+
+	_items[idx]->count = 0;
+
+	delete _items[idx]->movitems;
+	_items[idx]->movitems = 0;
+
+	v18 = (int)MovGraph_genMovArr(this, x, y, &arrSize, flag1, 0);
+	v26 = v18;
+	if (v18) {
+		flag1 = 0;
+		if (arrSize > 0) {
+			v19 = v18;
+			x = v18;
+			do {
+				int sz;
+				v20 = MovGraph_calcMovItems(this, _items[idx]->movarr, (MovArr *)v19, &sz);
+				Memory = v20;
+				if (sz > 0) {
+					_items[idx]->movitems = MovGraph_arr16_realloc(_items[idx]->movitems, _items[idx]->count, sz + _items[idx]->count);
+					memcpy(_items[idx]->movitems[_items[idx]->count], v20, 16 * sz);
+					_items[idx]->count += sz;
+					CObjectFree(Memory);
+					v19 = x;
+				}
+				v19 += 32;
+				v22 = __OFSUB__(flag1 + 1, arrSize);
+				v21 = flag1++ + 1 - arrSize < 0;
+				x = v19;
+			} while ( v21 ^ v22 );
+			v18 = v26;
+		}
+		CObjectFree((void *)v18);
+	}
+
+	if (_items[idx]->count) {
+		*rescount = _items[idx]->count;
+
+		return _items[idx]->movitems;
+	}
+
+	return 0;
+#endif
 	warning("STUB: MovGraph::method28()");
 
 	return 0;
