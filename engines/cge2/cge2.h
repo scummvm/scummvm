@@ -68,6 +68,9 @@ class System;
 #define kPocketMax       4
 #define kCaveMax       100
 #define kMaxPoint        4
+#define kInfoX         160
+#define kInfoY         -11
+#define kInfoW         180
 
 enum CallbackType {
 	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume
@@ -129,6 +132,9 @@ public:
 	void handleFrame();
 	Sprite *locate(int ref);
 	bool isHero(Sprite *spr);
+	void loadUser();
+	void checkSaySwitch();
+	void qGame();
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
@@ -199,6 +205,8 @@ public:
 		int _ref[2];
 	} _commandStat;
 	bool _taken;
+	bool _endGame;
+	bool _flag[4];
 
 	ResourceManager *_resman;
 	Vga *_vga;
@@ -219,6 +227,8 @@ public:
 	Talk *_talk;
 	V3D *_point[kMaxPoint];
 	System *_sys;
+	Sprite *_busyPtr;
+	Sprite *_vol[2];
 private:
 	void init();
 	void deinit();

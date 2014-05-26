@@ -498,7 +498,74 @@ void CGE2Engine::busy(bool on) {
 }
 
 void CGE2Engine::runGame() {
-	warning("STUB: CGE2Engine::runGame()");
+	if (_quitFlag)
+		return;
+
+	selectPocket(-1);
+
+	loadUser();
+
+	_commandHandlerTurbo->addCommand(kCmdSeq, kMusicRef, _music, nullptr);
+	if (!_music)
+		_midiPlayer->killMidi();
+
+	checkSaySwitch();
+		
+	_infoLine->gotoxyz(V3D(kInfoX, kInfoY, 0));
+	_infoLine->setText(nullptr);
+	_vga->_showQ->insert(_infoLine);
+
+	caveUp(_now);
+	_startupMode = 0;
+	_mouse->center();
+	_mouse->off();
+	_mouse->on();
+
+	_keyboard->setClient(_sys);
+	_commandHandler->addCommand(kCmdSeq, kPowerRef, 1, nullptr);
+
+	_busyPtr = _vga->_showQ->locate(kBusyRef);
+
+	_vol[0] = _vga->_showQ->locate(kDvolRef);
+	_vol[1] = _vga->_showQ->locate(kMvolRef);
+
+	// these sprites are loaded with SeqPtr==0 (why?!)
+	if (_vol[0])
+		_vol[0]->step((/*(int)SNDDrvInfo.VOL4.DL * */ _vol[0]->_seqCnt + _vol[0]->_seqCnt / 2) >> 4);
+	if (_vol[1])
+		_vol[1]->step((/*(int)SNDDrvInfo.VOL4.ML * */ _vol[1]->_seqCnt + _vol[1]->_seqCnt / 2) >> 4);
+	// TODO: Recheck these! ^
+
+	// main loop
+	while (!_endGame && !_quitFlag) {
+		if (_flag[3]) // Flag FINIS
+			_commandHandler->addCallback(kCmdExec, -1, 0, kQGame);
+		mainLoop();
+	}
+
+	// If finishing game due to closing ScummVM window, explicitly save the game
+	if (!_endGame && canSaveGameStateCurrently())
+		qGame();
+
+	_keyboard->setClient(nullptr);
+	_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
+	_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
+	_mouse->off();
+	_vga->_showQ->clear();
+	_vga->_spareQ->clear();
+}
+
+void CGE2Engine::loadUser() {
+	warning("STUB: CGE2Engine::loadUser()");
+}
+
+void CGE2Engine::checkSaySwitch() {
+	warning("STUB: CGE2Engine::checkSaySwitch()");
+}
+
+void CGE2Engine::qGame() {
+	warning("STUB: CGE2Engine::qGame()");
+	_endGame = true;
 }
 
 void CGE2Engine::loadTab() {

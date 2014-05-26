@@ -65,6 +65,9 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	for (int i = 0; i < kMaxPoint; i++)
 		_point[i] = nullptr;
 	_sys = nullptr;
+	_busyPtr = nullptr;
+	for (int i = 0; i < 2; i++)
+		_vol[i] = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -81,6 +84,9 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_waitRef = 0;
 	_commandStat = { nullptr, { 0 , 0 } };
 	_taken = false;
+	_endGame = false;
+	for (int i = 0; i < 4; i++)
+		_flag[i] = false;
 }
 
 void CGE2Engine::init() {

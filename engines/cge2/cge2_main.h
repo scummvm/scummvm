@@ -40,6 +40,15 @@ namespace CGE2 {
 #define kGameFrameDelay   (750 / 50)
 #define kGameTickDelay    (750 / 62)
 
+#define kMusicRef         122
+#define kPowerRef         123
+#define kDvolRef          124
+#define kMvolRef	      125
+#define kRef              126
+#define kBusyRef	      127
+#define kCapRef           128
+#define kVoxRef           129
+
 class System : public Sprite {
 public:
 	int _funDel;
