@@ -40,7 +40,7 @@ uint32 decompress_lcw(uint8 *inBuf, uint32 inLen, uint8 *outBuf, uint32 outLen) 
 		++src;
 	}
 
-	while (src[0] != 0x80 && src < inBuf + inLen && dst < outEnd)
+	while (src < inBuf + inLen && dst < outEnd && src[0] != 0x80)
 	{
 		out_remain = (int)(outEnd - dst);
 
