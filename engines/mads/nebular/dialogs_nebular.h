@@ -39,7 +39,7 @@ private:
 	int _dialogWidth;
 	CapitalizationMode _capitalizationMode;
 
-	DialogsNebular(MADSEngine *vm): Dialogs(vm) {}
+	DialogsNebular(MADSEngine *vm): Dialogs(vm), _capitalizationMode(kUppercase) {}
 
 	virtual Common::String getVocab(int vocabId);
 
