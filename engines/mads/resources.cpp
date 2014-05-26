@@ -44,9 +44,10 @@ private:
 		uint32 _offset;
 		uint32 _size;
 
-		HagEntry(): _offset(0), _size(0) {}
-		HagEntry(Common::String resourceName, uint32 offset, uint32 size):
-			_resourceName(resourceName), _offset(offset), _size(size) {}
+		HagEntry() : _offset(0), _size(0) {}
+		HagEntry(Common::String resourceName, uint32 offset, uint32 size)
+			: _resourceName(resourceName), _offset(offset), _size(size) {
+		}
 	};
 
 	class HagIndex {

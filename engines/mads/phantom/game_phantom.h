@@ -103,7 +103,7 @@ public:
 
 class Section1Handler: public SectionHandler {
 public:
-	Section1Handler(MADSEngine *vm): SectionHandler(vm) {}
+	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
 
 	// TODO: Properly implement handler methods
 	virtual void preLoadSection() {}

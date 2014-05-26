@@ -65,8 +65,9 @@ public:
 	PrepType _prepType;
 
 	VerbInit() {}
-	VerbInit(int id, VerbType verbType, PrepType prepType): _id(id),
-		_verbType(verbType), _prepType(prepType) {}
+	VerbInit(int id, VerbType verbType, PrepType prepType)
+		: _id(id), _verbType(verbType), _prepType(prepType) {
+	}
 };
 
 class SceneLogic {

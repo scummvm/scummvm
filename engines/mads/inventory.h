@@ -87,7 +87,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	InventoryObjects(MADSEngine *vm): _vm(vm) {}
+	InventoryObjects(MADSEngine *vm) : _vm(vm) {}
 
 	/**
 	 * Loads the game's object list

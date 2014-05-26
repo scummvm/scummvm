@@ -59,7 +59,7 @@ class SectionHandler {
 protected:
 	MADSEngine *_vm;
 public:
-	SectionHandler(MADSEngine *vm): _vm(vm) {}
+	SectionHandler(MADSEngine *vm) : _vm(vm) {}
 	virtual ~SectionHandler() {}
 
 	virtual void preLoadSection() = 0;

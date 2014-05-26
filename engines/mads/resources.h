@@ -58,12 +58,12 @@ public:
 /**
  * Derived file class
  */
-class File: public Common::File {
+class File : public Common::File {
 public:
 	/**
 	 * Constructor
 	 */
-	File(): Common::File() {}
+	File() : Common::File() {}
 
 	/**
 	 * Constructor

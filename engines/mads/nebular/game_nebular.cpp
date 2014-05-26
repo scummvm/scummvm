@@ -35,7 +35,8 @@ namespace MADS {
 
 namespace Nebular {
 
-GameNebular::GameNebular(MADSEngine *vm): Game(vm) {
+GameNebular::GameNebular(MADSEngine *vm)
+	: Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
 	_difficulty = DIFFICULTY_EASY;

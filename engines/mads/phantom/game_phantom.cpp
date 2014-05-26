@@ -35,7 +35,8 @@ namespace MADS {
 
 namespace Phantom {
 
-GamePhantom::GamePhantom(MADSEngine *vm): Game(vm) {
+GamePhantom::GamePhantom(MADSEngine *vm)
+	: Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
 }

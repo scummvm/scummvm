@@ -42,7 +42,8 @@ void RandomMessages::reset() {
 }
 
 
-KernelMessages::KernelMessages(MADSEngine *vm): _vm(vm) {
+KernelMessages::KernelMessages(MADSEngine *vm)
+	: _vm(vm) {
 	for (int i = 0; i < KERNEL_MESSAGES_SIZE; ++i) {
 		KernelMessage rec;
 		_entries.push_back(rec);

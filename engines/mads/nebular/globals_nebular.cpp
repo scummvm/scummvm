@@ -28,7 +28,8 @@ namespace MADS {
 
 namespace Nebular {
 
-NebularGlobals::NebularGlobals(): Globals() {
+NebularGlobals::NebularGlobals()
+	: Globals() {
 	// Initialize lists
 	resize(210);
 	_spriteIndexes.resize(30);

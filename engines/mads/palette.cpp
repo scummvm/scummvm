@@ -336,7 +336,8 @@ void RGBList::copy(RGBList &src) {
 
 /*------------------------------------------------------------------------*/
 
-Fader::Fader(MADSEngine *vm): _vm(vm) {
+Fader::Fader(MADSEngine *vm)
+	: _vm(vm) {
 	_colorFlags[0] = _colorFlags[1] = _colorFlags[2] = true;
 	_colorFlags[3] = false;
 	_colorValues[0] = _colorValues[1] = 0;

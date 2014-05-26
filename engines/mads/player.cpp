@@ -32,7 +32,8 @@ const int Player::_directionListIndexes[32] = {
 	0, 7, 4, 3, 6, 0, 2, 5, 0, 1, 9, 4, 1, 2, 7, 9, 3, 8, 9, 6, 7, 2, 3, 6, 1, 7, 9, 4, 7, 8, 0, 0
 };
 
-Player::Player(MADSEngine *vm): _vm(vm) {
+Player::Player(MADSEngine *vm)
+	: _vm(vm) {
 	_action = nullptr;
 	_facing = FACING_NORTH;
 	_turnToFacing = FACING_NORTH;

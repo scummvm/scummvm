@@ -29,8 +29,9 @@
 
 namespace MADS {
 
-Dialog::Dialog(MADSEngine *vm): _vm(vm), _savedSurface(nullptr),
-		_position(Common::Point(-1, -1)), _width(0), _height(0) {
+Dialog::Dialog(MADSEngine *vm)
+	: _vm(vm), _savedSurface(nullptr), _position(Common::Point(-1, -1)),
+	  _width(0), _height(0) {
 	TEXTDIALOG_CONTENT1 = 0XF8;
 	TEXTDIALOG_CONTENT2 = 0XF9;
 	TEXTDIALOG_EDGE = 0XFA;
@@ -136,8 +137,8 @@ void Dialog::drawContent(const Common::Rect &r, int seed, byte color1, byte colo
 /*------------------------------------------------------------------------*/
 
 TextDialog::TextDialog(MADSEngine *vm, const Common::String &fontName,
-		const Common::Point &pos, int maxChars):
-		Dialog(vm) {
+		const Common::Point &pos, int maxChars)
+	: Dialog(vm) {
 	_vm = vm;
 	_font = _vm->_font->getFont(fontName);
 	_position = pos;
@@ -363,8 +364,8 @@ void TextDialog::show() {
 
 /*------------------------------------------------------------------------*/
 
-MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...):
-		TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), maxChars) {
+MessageDialog::MessageDialog(MADSEngine *vm, int maxChars, ...)
+	: TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), maxChars) {
 	// Add in passed line list
 	va_list va;
 	va_start(va, maxChars);
@@ -389,7 +390,8 @@ Dialogs *Dialogs::init(MADSEngine *vm) {
 	return new Nebular::DialogsNebular(vm);
 }
 
-Dialogs::Dialogs(MADSEngine *vm): _vm(vm) {
+Dialogs::Dialogs(MADSEngine *vm)
+	: _vm(vm) {
 	_pendingDialog = DIALOG_NONE;
 }
 

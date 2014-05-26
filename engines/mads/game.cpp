@@ -56,8 +56,9 @@ Game *Game::init(MADSEngine *vm) {
 	return nullptr;
 }
 
-Game::Game(MADSEngine *vm): _vm(vm), _surface(nullptr), _objects(vm),
-		_scene(vm), _screenObjects(vm), _player(vm) {
+Game::Game(MADSEngine *vm)
+	: _vm(vm), _surface(nullptr), _objects(vm), _scene(vm),
+	  _screenObjects(vm), _player(vm) {
 	_sectionNumber = _priorSectionNumber = 0;
 	_loadGameSlot = -1;
 	_lastSave = -1;

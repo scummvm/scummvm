@@ -934,7 +934,8 @@ const ASound1::CommandPtr ASound1::_commandList[42] = {
 	&ASound1::command40, &ASound1::command41
 };
 
-ASound1::ASound1(Audio::Mixer *mixer): ASound(mixer, "asound.001", 0x1520) {
+ASound1::ASound1(Audio::Mixer *mixer)
+	: ASound(mixer, "asound.001", 0x1520) {
 	_cmd23Toggle = false;
 
 	// Load sound samples
