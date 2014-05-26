@@ -241,7 +241,7 @@ public:
 	void freeAnimation();
 
 	/**
-	* Synchronise the game
+	* Synchronize the game
 	*/
 	void synchronize(Common::Serializer &s);
 };

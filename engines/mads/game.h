@@ -184,9 +184,9 @@ public:
 	virtual void step() = 0;
 
 	/**
-	 * Synchronise the game data
+	 * Synchronize the game data
 	 * @param s			Serializer
-	 * @param phase1	If true, it's synchronising the basic scene information
+	 * @param phase1	If true, it's synchronizing the basic scene information
 	 */
 	virtual void synchronize(Common::Serializer &s, bool phase1);
 
