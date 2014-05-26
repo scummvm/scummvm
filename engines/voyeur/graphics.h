@@ -61,7 +61,6 @@ typedef void (GraphicsManager::*ViewPortRestorePtr)(ViewPortResource *);
 
 class GraphicsManager {
 public:
-	VoyeurEngine *_vm;
 	byte _VGAColors[PALETTE_SIZE];
 	PictureResource *_backgroundPage;
 	int _SVGAMode;
@@ -77,6 +76,8 @@ public:
 	DrawInfo *_drawPtr;
 	DrawInfo _defaultDrawInfo;
 private:
+	VoyeurEngine *_vm;
+
 	void restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
 		PictureResource *srcPic, PictureResource *destPic);
 public:
