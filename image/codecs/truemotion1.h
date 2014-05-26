@@ -54,7 +54,6 @@ private:
 	byte *_buf, *_mbChangeBits, *_indexStream;
 	int _indexStreamSize;
 
-	uint16 _width, _height;
 	int _flags;
 
 	struct PredictorTableEntry {
