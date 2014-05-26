@@ -394,7 +394,7 @@ void File::openFile(const Common::String &filename) {
 /*------------------------------------------------------------------------*/
 
 void SynchronizedList::synchronize(Common::Serializer &s) {
-	int v;
+	int v = 0;
 	int count = size();
 	s.syncAsUint16LE(count);
 
