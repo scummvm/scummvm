@@ -65,6 +65,14 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	_savedFields._secondObjectSource = 0;
 	_savedFields._articleNumber = PREP_NONE;
 	_savedFields._lookFlag = false;
+
+	_activeAction._verbId = VERB_NONE;
+	_activeAction._objectNameId = -1;
+	_activeAction._indirectObjectId = -1;
+	_savedFields._commandError = false;
+	_verbType = VERB_INIT;
+	_prepType = PREP_NONE;
+	_pickedWord = -1;
 }
 
 void MADSAction::clear() {
