@@ -65,24 +65,31 @@ void MadsPack::initialise(Common::SeekableReadStream *stream) {
 
 	for (int i = 0; i < _count; ++i, header += 10) {
 		// Get header data
-		_items[i].hash = READ_LE_UINT16(header);
-		_items[i].size = READ_LE_UINT32(header + 2);
-		_items[i].compressedSize = READ_LE_UINT32(header + 6);
+		_items[i]._type = (CompressionType)*header;
+		_items[i]._priority = *(header + 1);
+		_items[i]._size = READ_LE_UINT32(header + 2);
+		_items[i]._compressedSize = READ_LE_UINT32(header + 6);
 
-		byte *sourceData = new byte[_items[i].compressedSize];
-		stream->read(sourceData, _items[i].compressedSize);
+		byte *sourceData = new byte[_items[i]._compressedSize];
+		stream->read(sourceData, _items[i]._compressedSize);
 
-		if (_items[i].size == _items[i].compressedSize &&
-				!FabDecompressor::isCompressed(sourceData)) {
+		switch (_items[i]._type) {
+		case COMPRESS_NONE:
 			// Entry isn't compressed
-			_items[i].data = sourceData;
-		} else {
+			_items[i]._data = sourceData;
+			break;
+
+		case COMPRESS_FAB:
 			// Decompress the entry
-			_items[i].data = new byte[_items[i].size];
+			_items[i]._data = new byte[_items[i]._size];
 
 			FabDecompressor fab;
-			fab.decompress(sourceData, _items[i].compressedSize, _items[i].data, _items[i].size);
+			fab.decompress(sourceData, _items[i]._compressedSize, _items[i]._data, _items[i]._size);
 			delete[] sourceData;
+			break;
+
+		default:
+			error("Unknown compression type encountered");
 		}
 	}
 
@@ -92,15 +99,11 @@ void MadsPack::initialise(Common::SeekableReadStream *stream) {
 
 MadsPack::~MadsPack() {
 	for (int i = 0; i < _count; ++i)
-		delete[] _items[i].data;
+		delete[] _items[i]._data;
 	delete[] _items;
 }
 
 //--------------------------------------------------------------------------
-
-bool FabDecompressor::isCompressed(const byte *srcData) {
-	return strncmp((const char *)srcData, "FAB", 3) == 0;
-}
 
 void FabDecompressor::decompress(const byte *srcData, int srcSize, byte *destData, int destSize) {
 	byte copyLen, copyOfsShift, copyOfsMask, copyLenMask;

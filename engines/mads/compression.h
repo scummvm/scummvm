@@ -32,12 +32,15 @@
 
 namespace MADS {
 
+enum CompressionType { COMPRESS_NONE = 0, COMPRESS_FAB = 1 };
+
 struct MadsPackEntry {
 public:
-	uint16 hash;
-	uint32 size;
-	uint32 compressedSize;
-	byte *data;
+	CompressionType _type;
+	byte _priority;
+	uint32 _size;
+	uint32 _compressedSize;
+	byte *_data;
 };
 
 class MadsPack {
@@ -63,7 +66,7 @@ public:
 	}
 	Common::MemoryReadStream *getItemStream(int index) {
 		assert(index < _count);
-		return new Common::MemoryReadStream(_items[index].data, _items[index].size,
+		return new Common::MemoryReadStream(_items[index]._data, _items[index]._size,
 			DisposeAfterUse::NO);
 	}
 	int getDataOffset() const { return _dataOffset; }
@@ -79,8 +82,6 @@ private:
 	int getBit();
 public:
 	void decompress(const byte *srcData, int srcSize, byte *destData, int destSize);
-
-	static bool isCompressed(const byte *srcData);
 };
 
 } // End of namespace MADS
