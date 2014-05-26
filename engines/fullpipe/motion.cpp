@@ -516,7 +516,14 @@ MovGraphItem::MovGraphItem() {
 }
 
 void MovGraphItem::free() {
-	warning("STUB: MovGraphItem::free()");
+	for (uint i = 0; i < movitems->size(); i++) {
+		(*movitems)[i]->movarr->_movSteps.clear();
+		delete (*movitems)[i]->movarr;
+	}
+
+	delete movitems;
+
+	movitems = 0;
 }
 
 int MovGraph_messageHandler(ExCommand *cmd);
