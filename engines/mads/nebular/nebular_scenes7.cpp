@@ -1028,7 +1028,7 @@ void Scene703::step() {
 void Scene703::actions() {
 	if (_game._screenObjects._inputMode == 1)
 		handleFillBottle(_action._activeAction._verbId);
-	else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B0)) {
+	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_DOCK_TO_SOUTH)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kMonsterAlive])
 			_curSequence = 8;
@@ -1036,7 +1036,7 @@ void Scene703::actions() {
 			_curSequence = 5;
 		else
 			_curSequence = 3;
-	} else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B2)) {
+	} else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_BUILDING_TO_NORTH)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kMonsterAlive]) {
 			_startMonsterTimer = false;
@@ -1049,30 +1049,30 @@ void Scene703::actions() {
 			_curSequence = 4;
 		else
 			_curSequence = 1;
-	} else if (_action.isAction(VERB_THROW, NOUN_BONE, 0x468) || _action.isAction(VERB_THROW, NOUN_BONES, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BONE, NOUN_SEA_MONSTER) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_activeAnimation->setCurrentFrame(19);
-	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
-	} else if (_action.isAction(VERB_THROW, NOUN_TWINKIFRUIT, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_TWINKIFRUIT, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_activeAnimation->setCurrentFrame(39);
-	} else if (_action.isAction(VERB_THROW, NOUN_BOMB, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BOMB, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
 		_monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_activeAnimation->setCurrentFrame(59);
-	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB, 0x468)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB, NOUN_SEA_MONSTER)) {
 		_useBomb = true;
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
@@ -1227,7 +1227,7 @@ void Scene704::enter() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(190, 122));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
 		}
-		int idx = _scene->_dynamicHotspots.add(NOUN_BONES, 0xD1, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BONES, VERB_LOOK_AT, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_bottleHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
@@ -1414,13 +1414,13 @@ void Scene704::step() {
 void Scene704::actions() {
 	if (_game._screenObjects._inputMode == 1)
 		handleFillBottle(_action._activeAction._verbId);
-	else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B4)) {
+	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_OPEN_WATER_TO_SOUTH)) {
 		_game._player._stepEnabled = false;
 		if (_boatDirection == 1)
 			_animationMode = 5;
 		else
 			_animationMode = 3;
-	} else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B2)) {
+	} else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_BUILDING_TO_NORTH)) {
 		_game._player._stepEnabled = false;
 		if (_boatDirection == 2)
 			_animationMode = 4;
@@ -1664,7 +1664,7 @@ void Scene705::step() {
 void Scene705::actions() {
 	if (_game._screenObjects._inputMode == 1)
 		handleFillBottle(_action._activeAction._verbId);
-	else if (_action.isAction(VERB_STEER_TOWARDS, 0x3B4)) {
+	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_OPEN_WATER_TO_SOUTH)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -1959,7 +1959,7 @@ void Scene706::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_BOTTLE, 0x344)) {
+	if (_action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_PEDESTAL)) {
 		if ((_globals[kBottleStatus] == 2 && _game._difficulty == DIFFICULTY_HARD) ||
 			 (_globals[kBottleStatus] != 0 && _game._difficulty != DIFFICULTY_HARD)) {
 			if (!_game._objects.isInInventory(OBJ_VASE) || _game._trigger) {
@@ -2106,7 +2106,7 @@ void Scene710::step() {
 }
 
 void Scene710::actions() {
-	if (_action.isAction(VERB_PUT_DOWN, 0x27)) {
+	if (_action.isAction(VERB_PUT_DOWN, NOUN_BINOCULARS)) {
 		_game._player._stepEnabled = false;
 
 		if (_game._globals[kCityFlooded])
@@ -2194,7 +2194,7 @@ void Scene751::enter() {
 	if (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
-		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, 0xD, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
 	}
 
@@ -2228,7 +2228,7 @@ void Scene751::enter() {
 	} else if (_globals[kLineStatus] == 2) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
-		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, 0xD, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
 	}
 
@@ -2310,7 +2310,7 @@ void Scene751::preActions() {
 	if (_action.isAction(VERB_LOOK, NOUN_TALL_BUILDING))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTHEAST);
 
-	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, 0x470))
+	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_TALL_BUILDING))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTH);
 
 	if (_action.isAction(VERB_WALKTO, NOUN_EAST_END_OF_PLATFORM))
@@ -2322,7 +2322,7 @@ void Scene751::preActions() {
 	if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_FISHING_LINE) || _action.isAction(VERB_TALKTO))
 		_game._player._needToWalk = false;
 
-	if ((!_action.isAction(VERB_PUT, NOUN_FISHING_LINE, 0x467) || !_action.isAction(VERB_TIE, NOUN_FISHING_LINE, 0x467) || !_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, 0x467))
+	if ((!_action.isAction(VERB_PUT, NOUN_FISHING_LINE, NOUN_HOOK) || !_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_HOOK) || !_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_HOOK))
 	&& (_game._player._needToWalk)) {
 		switch (_game._trigger) {
 		case 0:
@@ -2351,7 +2351,7 @@ void Scene751::preActions() {
 void Scene751::actions() {
 	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
 		; // Nothing
-	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, 0x470)) {
+	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_TALL_BUILDING)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -2419,7 +2419,7 @@ void Scene751::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_FISHING_LINE, 0x467) || _action.isAction(VERB_TIE, NOUN_FISHING_LINE, 0x467) || _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, 0x467)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_FISHING_LINE, NOUN_HOOK) || _action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_HOOK) || _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_HOOK)) {
 		if (_globals[kLineStatus] == 1) {
 			switch (_game._trigger) {
 			case 0:
@@ -2452,7 +2452,7 @@ void Scene751::actions() {
 				_game._player._visible = true;
 				_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
-				int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, 0xD, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+				int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
 				_scene->_kernelMessages.reset();
 				_game._objects.setRoom(OBJ_FISHING_LINE, _scene->_currentSceneId);
@@ -2490,7 +2490,7 @@ void Scene751::actions() {
 		_vm->_dialogs->show(75121);
 	else if (_action.isAction(VERB_LOOK, NOUN_TALL_BUILDING))
 		_vm->_dialogs->show(75122);
-	else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, 0x316) || _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, 0x316))
+	else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_CEMENT_PYLON) || _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_CEMENT_PYLON))
 		_vm->_dialogs->show(75123);
 	else
 		return;

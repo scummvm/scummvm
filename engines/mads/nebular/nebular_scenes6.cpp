@@ -2190,15 +2190,15 @@ void Scene608::step() {
 void Scene608::preActions() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 
-	if ((_action.isAction(VERB_THROW, NOUN_BONE, 0x410) || _action.isAction(VERB_THROW, NOUN_BONES, 0x410)
-		|| _action.isAction(VERB_THROW, NOUN_BONE, 0x411) || _action.isAction(VERB_THROW, NOUN_BONES, 0x411)
-		|| _action.isAction(VERB_THROW, NOUN_BONES, 0x471) || _action.isAction(VERB_THROW, NOUN_BONE, 0x471)) && _dogActiveFl) {
+	if ((_action.isAction(VERB_THROW, NOUN_BONE, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_REAR_OF_GARAGE)
+		|| _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_FRONT_OF_GARAGE)
+		|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) && _dogActiveFl) {
 		_game._player._stepEnabled = false;
 		_game._player.walk(Common::Point(56, 146), FACING_EAST);
 	}
 
-	if ((_action.isAction(VERB_THROW, NOUN_BONES, 0x41D) || _action.isAction(VERB_THROW, NOUN_BONE, 0x41D)
-		|| _action.isAction(VERB_THROW, NOUN_BONES, 0x41E) || _action.isAction(VERB_THROW, NOUN_BONE, 0x41E)) && _dogActiveFl) {
+	if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_AREA_BEHIND_CAR)
+		|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_DANGER_ZONE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_DANGER_ZONE)) && _dogActiveFl) {
 		_game._player._stepEnabled = false;
 		_game._player.walk(Common::Point(75, 136), FACING_EAST);
 	}
@@ -2337,8 +2337,8 @@ void Scene608::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_THROW, NOUN_BONE, 0x410) || _action.isAction(VERB_THROW, NOUN_BONES, 0x410)
-					|| _action.isAction(VERB_THROW, NOUN_BONES, 0x471) || _action.isAction(VERB_THROW, NOUN_BONE, 0x471)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BONE, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_REAR_OF_GARAGE)
+					|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) {
 		_game._player._stepEnabled = true;
 		if (_dogActiveFl) {
 			if (_game._trigger == 0) {
@@ -2349,7 +2349,7 @@ void Scene608::actions() {
 			handleThrowingBone();
 		} else
 			_vm->_dialogs->show(60841);
-	} else if (_action.isAction(VERB_THROW, NOUN_BONE, 0x411) || _action.isAction(VERB_THROW, NOUN_BONES, 0x411)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BONE, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_FRONT_OF_GARAGE)) {
 		_game._player._stepEnabled = true;
 		if (_dogActiveFl) {
 			if (_game._trigger == 0) {
@@ -2360,8 +2360,8 @@ void Scene608::actions() {
 			handleThrowingBone();
 		} else
 			_vm->_dialogs->show(60841);
-	} else if (_action.isAction(VERB_THROW, NOUN_BONES, 0x41D) || _action.isAction(VERB_THROW, NOUN_BONE, 0x41D)
-					|| _action.isAction(VERB_THROW, NOUN_BONES, 0x41E) || _action.isAction(VERB_THROW, NOUN_BONE, 0x41E)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_AREA_BEHIND_CAR)
+					|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_DANGER_ZONE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_DANGER_ZONE)) {
 		_game._player._stepEnabled = true;
 		if ((_globals[kCarStatus] == 0) && _dogActiveFl) {
 			if (_dogActiveFl) {
@@ -2711,7 +2711,7 @@ void Scene609::enterStore() {
 }
 
 void Scene609::preActions() {
-	if (_action.isAction(VERB_UNLOCK, 0x6F, 0x425))
+	if (_action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_VIDEO_STORE_DOOR))
 		_game._player.walk(Common::Point(78, 99), FACING_NORTHWEST);
 }
 
@@ -2759,7 +2759,7 @@ void Scene609::actions() {
 			_videoDoorMode = 2;
 			enterStore();
 		}
-	} else if (_action.isAction(VERB_UNLOCK, 0x6F, 0x425)) {
+	} else if (_action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_VIDEO_STORE_DOOR)) {
 		_videoDoorMode = 1;
 		enterStore();
 	} else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
@@ -2948,7 +2948,7 @@ void Scene610::actions() {
 				break;
 			}
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_PHONE_HANDSET, 0x42F)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_PHONE_HANDSET, NOUN_PHONE_CRADLE)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -4347,7 +4347,7 @@ void Scene611::preActions() {
 void Scene611::actions() {
 	if (_game._screenObjects._inputMode == 1)
 		handleDialog();
-	else if ((_action.isAction(VERB_GIVE, NOUN_PHONE_CELLS, 0x45A)) || (_action.isAction(VERB_GIVE, NOUN_DURAFAIL_CELLS, 0x45A))) {
+	else if ((_action.isAction(VERB_GIVE, NOUN_PHONE_CELLS, NOUN_HERMIT)) || (_action.isAction(VERB_GIVE, NOUN_DURAFAIL_CELLS, NOUN_HERMIT))) {
 		_action._activeAction._verbId = 0x294;
 		_giveBatteriesFl = true;
 		handleSubDialog1();

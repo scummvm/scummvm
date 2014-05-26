@@ -804,7 +804,7 @@ void Scene307::enter() {
 	if (_grateOpenedFl) {
 		_scene->_hotspots.activate(17, false);
 
-		int idx = _scene->_dynamicHotspots.add(17, 0x2F7, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
+		int idx = _scene->_dynamicHotspots.add(17, VERB_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
 		int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 		_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 
@@ -932,7 +932,7 @@ void Scene307::actions() {
 			setDialogNode(node);
 			break;
 		}
-	} else if (_action.isAction(VERB_PRY, 0x12C, 0x11)) {
+	} else if (_action.isAction(VERB_PRY, NOUN_SCALPEL, NOUN_AIR_VENT)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -991,7 +991,7 @@ void Scene307::actions() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 			_grateOpenedFl = true;
 			_scene->_hotspots.activate(17, false);
-			int idx = _scene->_dynamicHotspots.add(17, 0x2F7, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
+			int idx = _scene->_dynamicHotspots.add(17, NOUN_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
 			int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 			_game._objects.removeFromInventory(OBJ_SCALPEL, NOWHERE);
@@ -4036,7 +4036,7 @@ void Scene351::actions() {
 	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH))
 		_scene->_nextSceneId = 352;
 	else if (_action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP)) {
-		if (_game._trigger || !_game._objects.isInInventory(0xF)) {
+		if (_game._trigger || !_game._objects.isInInventory(OBJ_CREDIT_CHIP)) {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
@@ -4163,7 +4163,7 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 
 	case 2: {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 		_scene->changeVariant(0);
 		}
@@ -4172,7 +4172,7 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 	case 3:
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x100));
-		_game._objects.setRoom(0x2F, _scene->_currentSceneId);
+		_game._objects.setRoom(OBJ_GUARDS_ARM, _scene->_currentSceneId);
 		_game._player._visible = true;
 		if (corridorExit)
 			_scene->_sequences.addTimer(48, 6);
@@ -4244,7 +4244,7 @@ void Scene352::enter() {
 	if (_game._objects.isInRoom(OBJ_TAPE_PLAYER)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 5);
-		int idx = _scene->_dynamicHotspots.add(NOUN_TAPE_PLAYER, 0xD, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_TAPE_PLAYER, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_tapePlayerHotspotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(84, 145), FACING_WEST);
 	}
 
@@ -4258,7 +4258,7 @@ void Scene352::enter() {
 
 	if (_game._objects.isInRoom(OBJ_GUARDS_ARM)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM, 0xD, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 	} else
 		_mustPutArmDownFl = true;
@@ -4315,14 +4315,14 @@ void Scene352::preActions() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM, 0x1F3)) {
+	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM, NOUN_SCANNER)) {
 		if (_globals[kSexOfRex] == REX_MALE)
 			_game._player.walk(Common::Point(269, 111), FACING_NORTHEAST);
 		else
 			_game._player.walk(Common::Point(271, 111), FACING_NORTHEAST);
 	}
 
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM, 0x89)) {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM, NOUN_FLOOR)) {
 		if (_game._objects.isInInventory(OBJ_GUARDS_ARM))
 			_game._player.walk(Common::Point(230, 117), FACING_NORTHWEST);
 	}
@@ -4401,7 +4401,7 @@ void Scene352::actions() {
 		exit_doorway = true;
 	}
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM, 0x89)) {
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM, NOUN_FLOOR)) {
 		if (_mustPutArmDownFl)
 			putArmDown(exit_corridor, exit_doorway);
 		else if (exit_corridor)
@@ -4441,7 +4441,7 @@ void Scene352::actions() {
 			case 2:
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
-				_vm->_dialogs->showItem(0x2F, 0x899C);
+				_vm->_dialogs->showItem(OBJ_GUARDS_ARM, 0x899C);
 				break;
 			}
 			_action._inProgress = false;
@@ -4449,7 +4449,7 @@ void Scene352::actions() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM, 0x1F3)) {
+	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM, NOUN_SCANNER)) {
 		if (!_vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -4510,7 +4510,7 @@ void Scene352::actions() {
 				_vaultOpenFl = true;
 				int idx;
 				if (!_globals[kHaveYourStuff]) {
-					idx = _scene->_dynamicHotspots.add(NOUN_YOUR_STUFF, 0xD, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
+					idx = _scene->_dynamicHotspots.add(NOUN_YOUR_STUFF, VERB_WALKTO, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
 					_hotspot2Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(280, 111), FACING_NORTHEAST);
 					_globals._sequenceIndexes[1] = _commonSequenceIdx;
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x102));
@@ -4519,9 +4519,9 @@ void Scene352::actions() {
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x103));
 				}
 
-				idx = _scene->_dynamicHotspots.add(NOUN_OTHER_STUFF, 0xD, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));
+				idx = _scene->_dynamicHotspots.add(NOUN_OTHER_STUFF, VERB_WALKTO, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));
 				_hotspot1Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
-				idx = _scene->_dynamicHotspots.add(NOUN_LAMP, 0xD, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
+				idx = _scene->_dynamicHotspots.add(NOUN_LAMP, VERB_WALKTO, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
 				_lampHostpotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
 				_game._player._stepEnabled = true;
 				}
@@ -4933,7 +4933,7 @@ void Scene359::enter() {
 
 	if (_game._objects.isInRoom(OBJ_SECURITY_CARD)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_cardHotspotId = _scene->_dynamicHotspots.add(NOUN_SECURITY_CARD, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_cardHotspotId = _scene->_dynamicHotspots.add(NOUN_SECURITY_CARD, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
 	}
 

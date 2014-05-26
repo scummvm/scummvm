@@ -206,7 +206,7 @@ void Scene101::enter() {
 		_globals._sequenceIndexes[11] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[11], false, 3, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 17);
 		_scene->_hotspots.activate(NOUN_CHAIR, false);
-		_chairHotspotId = _scene->_dynamicHotspots.add(NOUN_CHAIR, 0x13F, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
+		_chairHotspotId = _scene->_dynamicHotspots.add(NOUN_CHAIR, VERB_SIT_IN, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
 		if (_scene->_priorSceneId == 112)
 			sayDang();
 	} else {
@@ -394,7 +394,7 @@ void Scene101::actions() {
 				_game._player._stepEnabled = true;
 				_sittingFl = true;
 				_scene->_hotspots.activate(71, false);
-				_chairHotspotId = _scene->_dynamicHotspots.add(71, 0x13F, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
+				_chairHotspotId = _scene->_dynamicHotspots.add(NOUN_CHAIR, VERB_SIT_IN, -1, Common::Rect(159, 84, 159 + 33, 84 + 36));
 				if (!_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN)) {
 					_action._inProgress = false;
 					return;
@@ -2618,7 +2618,7 @@ void Scene109::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE)) && (_action.isTarget(0x146) || _action.isTarget(0x178))) {
+	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE)) && (_action.isTarget(NOUN_SMALL_HOLE) || _action.isTarget(NOUN_TUNNEL))) {
 		if (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER)) {
 			_throwingObjectId = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			if (_throwingObjectId >= 0) {
@@ -3000,11 +3000,11 @@ void Scene111::enter() {
 	_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 	_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 
-	int idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-	idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
-	idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 
 	_launch1Fl = false;
@@ -3055,14 +3055,14 @@ void Scene111::step() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 5, 1, 0, 0);
 		_launch1Fl = true;
-		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
 	if (!_launched2Fl && (_vm->getRandomNumber(1, 30000) == 1)) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 5, 1, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, 0xD1, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BATS, VERB_LOOK_AT, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 		_launched2Fl = true;
 	}

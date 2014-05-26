@@ -871,7 +871,7 @@ void Scene202::actions() {
 			_action._inProgress = false;
 			return;
 		}
-	} else if (((_action.isAction(VERB_LOOK, NOUN_BINOCULARS, 0x82)) || (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, 0x1B6))) && (_globals[kSexOfRex] == SEX_MALE)) {
+	} else if (((_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_FIELD_TO_NORTH)) || (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_STRANGE_DEVICE))) && (_globals[kSexOfRex] == SEX_MALE)) {
 		if (!_ladderTopFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -1343,7 +1343,7 @@ void Scene205::actions() {
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(20502);
-	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, 0x1C8))
+	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_OPPOSITE_BANK))
 		_vm->_dialogs->show(20518);
 	else if (_action.isAction(VERB_TALKTO, NOUN_NATIVE_WOMAN)) {
 		if (_game._trigger == 0) {
@@ -3538,7 +3538,7 @@ void Scene209::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_GIVE, NOUN_TWINKIFRUIT, 0xE3) || _action.isAction(VERB_THROW, NOUN_TWINKIFRUIT, 0xE3)) {
+	if (_action.isAction(VERB_GIVE, NOUN_TWINKIFRUIT, NOUN_MONKEY) || _action.isAction(VERB_THROW, NOUN_TWINKIFRUIT, NOUN_MONKEY)) {
 		_vm->_dialogs->show(20909);
 		_action._inProgress = false;
 		return;
@@ -3558,7 +3558,7 @@ void Scene209::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_THROW, NOUN_POISON_DARTS, 0xE3)) {
+	if (_action.isAction(VERB_THROW, NOUN_POISON_DARTS, NOUN_MONKEY)) {
 		_vm->_dialogs->show(20916);
 		_action._inProgress = false;
 		return;
@@ -4442,7 +4442,7 @@ void Scene210::preActions() {
 }
 
 void Scene210::actions() {
-	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, 0x1C0)) {
+	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_HUT_TO_NORTH)) {
 		_vm->_dialogs->show(21017);
 	} else if (_game._screenObjects._inputMode == 1) {
 		handleConversations();
@@ -4847,7 +4847,7 @@ void Scene211::preActions() {
 void Scene211::actions() {
 	if (_action._lookFlag && (_globals[kMonkeyStatus] == MONKEY_AMBUSH_READY))
 		_vm->_dialogs->show(21111);
-	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, 0x100))
+	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_PALM_TREE))
 		_vm->_dialogs->show(21116);
 	else if (_action.isAction(VERB_LOOK, NOUN_BUSHY_FERN))
 		_vm->_dialogs->show(21101);
@@ -5102,7 +5102,7 @@ void Scene214::step() {
 void Scene214::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21427);
-	else if (_action.isAction(VERB_WALK_OUTSIDE, 0xAA))
+	else if (_action.isAction(VERB_WALK_OUTSIDE, NOUN_HUT))
 		_scene->_nextSceneId = 207;
 	else if (_action.isAction(VERB_TAKE, NOUN_POISON_DARTS) && (_game._trigger || _game._objects.isInRoom(OBJ_POISON_DARTS))) {
 		switch (_game._trigger) {
@@ -5194,9 +5194,9 @@ void Scene214::actions() {
 		_vm->_dialogs->show(21414);
 	else if (_action.isAction(VERB_TALKTO, NOUN_CAPTIVE_CREATURE))
 		_vm->_dialogs->show(21415);
-	else if (_action.isAction(VERB_GIVE, NOUN_TWINKIFRUIT, 0x1C3))
+	else if (_action.isAction(VERB_GIVE, NOUN_TWINKIFRUIT, NOUN_CAPTIVE_CREATURE))
 		_vm->_dialogs->show(21416);
-	else if (_action.isAction(VERB_SHOOT, 0x29, 0x1C3) || _action.isAction(VERB_HOSE_DOWN, 0x29, 0x1C3))
+	else if (_action.isAction(VERB_SHOOT, NOUN_BLOWGUN, NOUN_CAPTIVE_CREATURE) || _action.isAction(VERB_HOSE_DOWN, NOUN_BLOWGUN, NOUN_CAPTIVE_CREATURE))
 		_vm->_dialogs->show(21417);
 	else if (_action.isAction(VERB_LOOK, NOUN_BIG_HEADS))
 		_vm->_dialogs->show(21418);
@@ -5313,7 +5313,7 @@ void Scene215::actions() {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(idx));
 		}
-	} else if (_action.isAction(VERB_WALK_OUTSIDE, 0xAA))
+	} else if (_action.isAction(VERB_WALK_OUTSIDE, NOUN_HUT))
 		_scene->_nextSceneId = 210;
 	else if (_action.isAction(VERB_LOOK, NOUN_BEAR_RUG))
 		_vm->_dialogs->show(21501);

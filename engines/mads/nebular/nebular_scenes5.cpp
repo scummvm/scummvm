@@ -174,7 +174,7 @@ void Scene501::enter() {
 	}
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
-	int idx = _scene->_dynamicHotspots.add(NOUN_DOOR, 0x18B, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_DOOR, VERB_WALK_THROUGH, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 	_doorHotspotid = _scene->_dynamicHotspots.setPosition(idx,Common::Point(282, 110), FACING_NORTH);
 	_scene->_dynamicHotspots.setCursor(_doorHotspotid, CURSOR_GO_UP);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
@@ -241,7 +241,7 @@ void Scene501::step() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_vm->_sound->command(12);
-			_doorHotspotid = _scene->_dynamicHotspots.add(NOUN_DOOR, 0x18B, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			_doorHotspotid = _scene->_dynamicHotspots.add(NOUN_DOOR, VERB_WALK_THROUGH, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(_globals._sequenceIndexes[3], Common::Point(282, 110), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(_doorHotspotid, CURSOR_GO_UP);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
@@ -343,9 +343,9 @@ void Scene501::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, 0x251))
+	} else if (_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, NOUN_CARD_SLOT))
 		_vm->_dialogs->show(50113);
-	else if (_action.isAction(VERB_PUT, NOUN_FAKE_ID, 0x251)) {
+	else if (_action.isAction(VERB_PUT, NOUN_FAKE_ID, NOUN_CARD_SLOT)) {
 		switch (_game._trigger) {
 		case 0:
 		case 1:
@@ -389,7 +389,7 @@ void Scene501::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_ID_CARD, 0x251)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_ID_CARD, NOUN_CARD_SLOT)) {
 		switch (_game._trigger) {
 		case 0:
 		case 1:
@@ -559,7 +559,7 @@ void Scene503::enter() {
 
 	if (_game._objects[OBJ_DETONATORS]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_detonatorHotspotId = _scene->_dynamicHotspots.add(NOUN_DETONATORS, 0xD, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_detonatorHotspotId = _scene->_dynamicHotspots.add(NOUN_DETONATORS, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
 	}
 
@@ -1197,12 +1197,12 @@ void Scene506::enter() {
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_3");
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
-	int idx = _scene->_dynamicHotspots.add(NOUN_LABORATORY, 0x242, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_LABORATORY, VERB_WALK_INTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 	int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(65, 125), FACING_NORTHWEST);
 	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
-	idx = _scene->_dynamicHotspots.add(NOUN_SOFTWARE_STORE, 0x242, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+	idx = _scene->_dynamicHotspots.add(NOUN_SOFTWARE_STORE, VERB_WALK_INTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 	hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(112, 102), FACING_NORTHWEST);
 	_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
@@ -1328,7 +1328,7 @@ void Scene506::handleDoorSequences() {
 
 	case 83: {
 		_doorSequenceIdx = _scene->_sequences.startCycle(_doorSpriteIdx, false, 1);
-		int idx = _scene->_dynamicHotspots.add(_doorWord, 0x242, _doorSequenceIdx, Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(_doorWord, VERB_WALK_INTO, _doorSequenceIdx, Common::Rect(0, 0, 0, 0));
 		int hotspotId = _scene->_dynamicHotspots.setPosition(idx, _doorPos, FACING_NORTHWEST);
 		_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_LEFT);
 		_scene->_sequences.setDepth(_doorSequenceIdx, _doorDepth);
@@ -1766,10 +1766,10 @@ void Scene508::actions() {
 		} else {
 			_vm->_dialogs->show(50837);
 		}
-	} else if (_action.isAction(VERB_REFLECT, 0x120, 0x343) || _action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, 0x344) || _action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, 0x343)) {
+	} else if (_action.isAction(VERB_REFLECT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM) || _action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_PEDESTAL) || _action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM)) {
 		_chosenObject = 1;
 		handlePedestral();
-	} else if (_action.isAction(VERB_PUT, NOUN_COMPACT_CASE, 0x344) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, 0x343) || _action.isAction(VERB_REFLECT, 0x57, 0x343)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_PEDESTAL) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM) || _action.isAction(VERB_REFLECT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM)) {
 		_chosenObject = 2;
 		handlePedestral();
 	} else if (_action._lookFlag)
@@ -2139,7 +2139,7 @@ void Scene511::actions() {
 		_vm->_dialogs->show(51117);
 	else if (_action.isAction(VERB_LOOK, NOUN_DOME_ENTRANCE))
 		_vm->_dialogs->show(51118);
-	else if (_action.isAction(VERB_UNLOCK, 0xFF, 0x37C) || _action.isAction(VERB_UNLOCK, 0x6F, 0x37C))
+	else if (_action.isAction(VERB_UNLOCK, NOUN_PADLOCK_KEY, NOUN_DOME_ENTRANCE) || _action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_DOME_ENTRANCE))
 		_vm->_dialogs->show(51119);
 	else if ( (_action.isAction(VERB_PUT) || _action.isAction(VERB_THROW))
 		 && (_action.isObject(NOUN_TIMEBOMB) || _action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS))
@@ -2621,7 +2621,7 @@ void Scene513::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_PUT, NOUN_ID_CARD, 0x251) || _action.isAction(VERB_PUT, NOUN_FAKE_ID, 0x251)) {
+	} else if (_action.isAction(VERB_PUT, NOUN_ID_CARD, NOUN_CARD_SLOT) || _action.isAction(VERB_PUT, NOUN_FAKE_ID, NOUN_CARD_SLOT)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -2694,7 +2694,7 @@ void Scene513::actions() {
 		_vm->_dialogs->show(51321);
 	else if (_action.isAction(VERB_LOOK, NOUN_BRICK_WALL))
 		_vm->_dialogs->show(51322);
-	else if (_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, 0x251))
+	else if (_action.isAction(VERB_PUT, NOUN_SECURITY_CARD, NOUN_CARD_SLOT))
 		_vm->_dialogs->show(51320);
 	else
 		return;
