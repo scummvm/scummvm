@@ -185,6 +185,9 @@ protected:
 		void loadPaletteFromChunk(Common::SeekableReadStream *chunk);
 		void useInitialPalette();
 
+		bool isTruemotion1() const;
+		void forceDimensions(uint16 width, uint16 height);
+
 		bool isRewindable() const { return true; }
 		bool rewind();
 
@@ -257,6 +260,7 @@ protected:
 	uint16 getStreamType(uint32 tag) const { return tag & 0xFFFF; }
 	byte getStreamIndex(uint32 tag) const;
 	void forceVideoEnd();
+	void checkTruemotion1();
 
 public:
 	virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);

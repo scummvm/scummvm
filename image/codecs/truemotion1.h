@@ -39,7 +39,7 @@ namespace Image {
  */
 class TrueMotion1Decoder : public Codec {
 public:
-	TrueMotion1Decoder(uint16 width, uint16 height);
+	TrueMotion1Decoder();
 	~TrueMotion1Decoder();
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);

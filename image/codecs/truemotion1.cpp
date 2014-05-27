@@ -89,11 +89,8 @@ static const CompressionType compressionTypes[17] = {
 	{ ALGO_RGB24H, 2, 2, BLOCK_2x2 }
 };
 
-TrueMotion1Decoder::TrueMotion1Decoder(uint16 width, uint16 height) {
-	_surface = new Graphics::Surface();
-	_surface->create(width, height, getPixelFormat());
-	_surface->fillRect(Common::Rect(width, height), getPixelFormat().RGBToColor(0, 0, 0));
-
+TrueMotion1Decoder::TrueMotion1Decoder() {
+	_surface = 0;
 	_vertPred = 0;
 
 	_buf = _mbChangeBits = _indexStream = 0;
@@ -101,8 +98,11 @@ TrueMotion1Decoder::TrueMotion1Decoder(uint16 width, uint16 height) {
 }
 
 TrueMotion1Decoder::~TrueMotion1Decoder() {
-	_surface->free();
-	delete _surface;
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+
 	delete[] _vertPred;
 }
 
@@ -192,6 +192,11 @@ void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream &stream) {
 		// there is a vertical predictor for each pixel in a line; each vertical
 		// predictor is 0 to start with
 		_vertPred = new uint32[_header.xsize];
+	}
+
+	if (!_surface) {
+		_surface = new Graphics::Surface();
+		_surface->create(_header.xsize, _header.ysize, getPixelFormat());
 	}
 
 	// There is 1 change bit per 4 pixels, so each change byte represents
