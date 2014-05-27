@@ -1218,7 +1218,7 @@ static const uint16 kq6CDPatchAudioTextSupportGirlInTheTower[] = {
 //  Adds another button state for the text/audio button. We currently use the "speech" view for "dual" mode.
 // View 947, loop 9, cel 0+1 -> "text"
 // View 947, loop 8, cel 0+1 -> "speech"
-// View 947, loop 12, cel 0+1 -> "dual" (TODO: inject our own 2 views for the new "dual" mode)
+// View 947, loop 12, cel 0+1 -> "dual" (this view is injected by us into the game)
 // Applies to at least: PC-CD
 // Patched method: iconTextSwitch::show, iconTextSwitch::doit
 static const uint16 kq6CDSignatureAudioTextMenuSupport[] = {
@@ -1595,6 +1595,57 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 	PATCH_END
 };
 
+// Opening/Closing the east door in the pterodactyl room doesn't
+//  check, if it's locked and will open/close the door internally
+//  even when it is.
+//
+// It will get wired shut later in the game by Laura Bow and will be
+//  "locked" because of this. We patch in a check for the locked
+//  state.
+//
+// Applies to at least: English PC-CD, separate patch for English PC-Floppy
+// Responsible method (CD): eastDoor::doVerb
+// Responsible method (Floppy): eastDoor::<noname300>
+// Fixes bug: #6458 (partly)
+static const uint16 laurabow2CDSignatureFixWiredEastDoor[] = {
+	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
+	SIG_MAGICDWORD,
+	0x67, 0x76,                         // pTos doorState
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x31, 0x08,                         // bnt [close door code]
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixWiredEastDoor[] = {
+	0x31, 0x23,                         // bnt [skip hand action] (saves 1 byte)
+	0x63, 0x6a,                         // pToa locked
+	0x2f, 0x1f,                         // bt [skip hand action]
+	0x63, 0x76,                         // pToa doorState
+	0x2f, 0x08,                         // bt [close door code]
+	PATCH_END
+};
+
+// Separate patch for English-Floppy
+static const uint16 laurabow2FloppySignatureFixWiredEastDoor[] = {
+	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
+	SIG_MAGICDWORD,
+	0x67, 0x72,                         // pTos state
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x31, 0x08,                         // bnt [close door code]
+	SIG_END
+};
+
+static const uint16 laurabow2FloppyPatchFixWiredEastDoor[] = {
+	0x31, 0x23,                         // bnt [skip hand action] (saves 1 byte)
+	0x63, 0x6a,                         // pToa <noname590> (effectively locked)
+	0x2f, 0x1f,                         // bt [skip hand action]
+	0x63, 0x72,                         // pToa state
+	0x2f, 0x08,                         // bt [close door code]
+	PATCH_END
+};
+
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
 //  We already sync the settings from ScummVM (see SciEngine::syncIngameAudioOptions())
 //  and this script code would make it impossible to see the intro using "dual" mode w/o using debugger command
@@ -1617,7 +1668,7 @@ static const uint16 laurabow2CDPatchAudioTextSupportModeReset[] = {
 //  That way it's possible to use a new "dual" mode view in the game menu
 // View 995, loop 13, cel 0 -> "text"
 // View 995, loop 13, cel 1 -> "speech"
-// View 995, loop 13, cel 2 -> "dual" (TODO: inject our own view for the new "dual" mode)
+// View 995, loop 13, cel 2 -> "dual"  (this view is injected by us into the game)
 // Patched method: gcWin::open
 static const uint16 laurabow2CDSignatureAudioTextMenuSupport1[] = {
 	SIG_MAGICDWORD,
@@ -1636,7 +1687,6 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport1[] = {
 };
 
 //  Adds another button state for the text/audio button. We currently use the "speech" view for "dual" mode.
-//  TODO: inject our own 2 views for the new "dual" mode
 // Patched method: iconMode::doit
 static const uint16 laurabow2CDSignatureAudioTextMenuSupport2[] = {
 	SIG_MAGICDWORD,
@@ -1684,6 +1734,8 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   560, "CD: painting closing immediately",            1, laurabow2CDSignaturePaintingClosing,           laurabow2CDPatchPaintingClosing },
 	{  true,     0, "CD: fix problematic icon bar",                1, laurabow2CDSignatureFixProblematicIconBar,     laurabow2CDPatchFixProblematicIconBar },
+	{  true,   430, "CD: fix wired east door",                     1, laurabow2CDSignatureFixWiredEastDoor,          laurabow2CDPatchFixWiredEastDoor },
+	{  true,   430, "Floppy: fix wired east door",                 1, laurabow2FloppySignatureFixWiredEastDoor,      laurabow2FloppyPatchFixWiredEastDoor },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                  1, kq6laurabow2CDSignatureAudioTextSupport1,      kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                  1, kq6laurabow2CDSignatureAudioTextSupport2,      kq6laurabow2CDPatchAudioTextSupport2 },
