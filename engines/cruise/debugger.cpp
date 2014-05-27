@@ -29,7 +29,7 @@
 namespace Cruise {
 
 Debugger::Debugger(): GUI::Debugger() {
-	registerCmd("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue",			WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("hotspots",				WRAP_METHOD(Debugger, cmd_hotspots));
 	registerCmd("items",				WRAP_METHOD(Debugger, cmd_items));
 }

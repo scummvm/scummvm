@@ -29,7 +29,7 @@ namespace MADS {
 Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	_showMousePos = false;
 
-	registerCmd("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
 	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
 	registerCmd("show_hotspots", WRAP_METHOD(Debugger, Cmd_ShowHotSpots));

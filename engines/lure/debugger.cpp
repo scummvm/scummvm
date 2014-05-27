@@ -35,7 +35,7 @@
 namespace Lure {
 
 Debugger::Debugger(): GUI::Debugger() {
-	registerCmd("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue",			WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("enter",				WRAP_METHOD(Debugger, cmd_enterRoom));
 	registerCmd("rooms",				WRAP_METHOD(Debugger, cmd_listRooms));
 	registerCmd("fields",				WRAP_METHOD(Debugger, cmd_listFields));

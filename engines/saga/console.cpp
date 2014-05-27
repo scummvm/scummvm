@@ -35,7 +35,7 @@ namespace Saga {
 Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	registerCmd("continue",			WRAP_METHOD(Console, Cmd_Exit));
+	registerCmd("continue",			WRAP_METHOD(Console, cmdExit));
 
 	// Actor commands
 	registerCmd("actor_walk_to",		WRAP_METHOD(Console, cmdActorWalkTo));

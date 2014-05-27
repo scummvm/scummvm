@@ -30,7 +30,7 @@ namespace Hopkins {
 
 Debugger::Debugger(HopkinsEngine *vm) : GUI::Debugger() {
 	_vm = vm;
-	registerCmd("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("rects", WRAP_METHOD(Debugger, cmd_DirtyRects));
 	registerCmd("teleport", WRAP_METHOD(Debugger, cmd_Teleport));
 	registerCmd("show_room", WRAP_METHOD(Debugger, cmd_ShowCurrentRoom));

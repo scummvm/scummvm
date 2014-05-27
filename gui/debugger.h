@@ -168,7 +168,7 @@ protected:
 	virtual void postEnter();
 
 	/**
-	 * Subclasses should invoke the detach() method in their Cmd_FOO methods
+	 * Subclasses should invoke the detach() method in their cmdFOO methods
 	 * if that command will resume execution of the program (as opposed to
 	 * executing, say, a "single step through code" command).
 	 *
@@ -190,13 +190,13 @@ private:
 	virtual bool handleCommand(int argc, const char **argv, bool &keepRunning);
 
 protected:
-	bool Cmd_Exit(int argc, const char **argv);
-	bool Cmd_Help(int argc, const char **argv);
-	bool Cmd_OpenLog(int argc, const char **argv);
-	bool Cmd_DebugLevel(int argc, const char **argv);
-	bool Cmd_DebugFlagsList(int argc, const char **argv);
-	bool Cmd_DebugFlagEnable(int argc, const char **argv);
-	bool Cmd_DebugFlagDisable(int argc, const char **argv);
+	bool cmdExit(int argc, const char **argv);
+	bool cmdHelp(int argc, const char **argv);
+	bool cmdOpenLog(int argc, const char **argv);
+	bool cmdDebugLevel(int argc, const char **argv);
+	bool cmdDebugFlagsList(int argc, const char **argv);
+	bool cmdDebugFlagEnable(int argc, const char **argv);
+	bool cmdDebugFlagDisable(int argc, const char **argv);
 
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 private:

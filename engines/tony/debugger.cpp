@@ -28,7 +28,7 @@
 namespace Tony {
 
 Debugger::Debugger() : GUI::Debugger() {
-	registerCmd("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
 	registerCmd("dirty_rects",	WRAP_METHOD(Debugger, Cmd_DirtyRects));
 }

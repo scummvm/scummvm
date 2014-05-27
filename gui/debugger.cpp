@@ -55,17 +55,17 @@ Debugger::Debugger() {
 	registerVar("debug_countdown", &_frameCountdown, DVAR_INT, 0);
 
 	// Register commands
-	//registerCmd("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
-	registerCmd("exit",				WRAP_METHOD(Debugger, Cmd_Exit));
-	registerCmd("quit",				WRAP_METHOD(Debugger, Cmd_Exit));
+	//registerCmd("continue",			WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("exit",				WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("quit",				WRAP_METHOD(Debugger, cmdExit));
 
-	registerCmd("help",				WRAP_METHOD(Debugger, Cmd_Help));
-	registerCmd("openlog",			WRAP_METHOD(Debugger, Cmd_OpenLog));
+	registerCmd("help",				WRAP_METHOD(Debugger, cmdHelp));
+	registerCmd("openlog",			WRAP_METHOD(Debugger, cmdOpenLog));
 
-	registerCmd("debuglevel",		WRAP_METHOD(Debugger, Cmd_DebugLevel));
-	registerCmd("debugflag_list",		WRAP_METHOD(Debugger, Cmd_DebugFlagsList));
-	registerCmd("debugflag_enable",	WRAP_METHOD(Debugger, Cmd_DebugFlagEnable));
-	registerCmd("debugflag_disable",	WRAP_METHOD(Debugger, Cmd_DebugFlagDisable));
+	registerCmd("debuglevel",		WRAP_METHOD(Debugger, cmdDebugLevel));
+	registerCmd("debugflag_list",		WRAP_METHOD(Debugger, cmdDebugFlagsList));
+	registerCmd("debugflag_enable",	WRAP_METHOD(Debugger, cmdDebugFlagEnable));
+	registerCmd("debugflag_disable",	WRAP_METHOD(Debugger, cmdDebugFlagDisable));
 }
 
 Debugger::~Debugger() {
@@ -428,14 +428,14 @@ void Debugger::registerCmd(const Common::String &cmdname, Debuglet *debuglet) {
 
 
 // Detach ("exit") the debugger
-bool Debugger::Cmd_Exit(int argc, const char **argv) {
+bool Debugger::cmdExit(int argc, const char **argv) {
 	detach();
 	return false;
 }
 
 // Print a list of all registered commands (and variables, if any),
 // nicely word-wrapped.
-bool Debugger::Cmd_Help(int argc, const char **argv) {
+bool Debugger::cmdHelp(int argc, const char **argv) {
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	const int charsPerLine = _debuggerDialog->getCharsPerLine();
 #elif defined(USE_READLINE)
@@ -494,7 +494,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_OpenLog(int argc, const char **argv) {
+bool Debugger::cmdOpenLog(int argc, const char **argv) {
 	if (g_system->hasFeature(OSystem::kFeatureDisplayLogFile))
 		g_system->displayLogFile();
 	else
@@ -503,7 +503,7 @@ bool Debugger::Cmd_OpenLog(int argc, const char **argv) {
 }
 
 
-bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
+bool Debugger::cmdDebugLevel(int argc, const char **argv) {
 	if (argc == 1) { // print level
 		debugPrintf("Debugging is currently %s (set at level %d)\n", (gDebugLevel >= 0) ? "enabled" : "disabled", gDebugLevel);
 		debugPrintf("Usage: %s <n> where n is 0 to 10 or -1 to disable debugging\n", argv[0]);
@@ -522,7 +522,7 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
+bool Debugger::cmdDebugFlagsList(int argc, const char **argv) {
 	const Common::DebugManager::DebugChannelList &debugLevels = DebugMan.listDebugChannels();
 
 	debugPrintf("Engine debug levels:\n");
@@ -540,7 +540,7 @@ bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_DebugFlagEnable(int argc, const char **argv) {
+bool Debugger::cmdDebugFlagEnable(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("debugflag_enable <flag>\n");
 	} else {
@@ -553,7 +553,7 @@ bool Debugger::Cmd_DebugFlagEnable(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_DebugFlagDisable(int argc, const char **argv) {
+bool Debugger::cmdDebugFlagDisable(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("debugflag_disable <flag>\n");
 	} else {

@@ -29,8 +29,8 @@ namespace Voyeur {
 
 Debugger::Debugger(VoyeurEngine *vm) : GUI::Debugger(), _vm(vm) {
 	// Register methods
-	registerCmd("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	registerCmd("exit", WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("exit", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("time", WRAP_METHOD(Debugger, Cmd_Time));
 	registerCmd("hotspots", WRAP_METHOD(Debugger, Cmd_Hotspots));
 	registerCmd("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));

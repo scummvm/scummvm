@@ -82,8 +82,8 @@ Debugger::Debugger(Sword2Engine *vm)
 
 	// Register commands
 
-	registerCmd("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	registerCmd("q",        WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("q",        WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("mem",      WRAP_METHOD(Debugger, Cmd_Mem));
 	registerCmd("tony",     WRAP_METHOD(Debugger, Cmd_Tony));
 	registerCmd("res",      WRAP_METHOD(Debugger, Cmd_Res));

@@ -40,7 +40,7 @@ Debugger::Debugger(KyraEngine_v1 *vm)
 }
 
 void Debugger::initialize() {
-	registerCmd("continue",           WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue",           WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("screen_debug_mode",  WRAP_METHOD(Debugger, cmd_setScreenDebug));
 	registerCmd("load_palette",       WRAP_METHOD(Debugger, cmd_loadPalette));
 	registerCmd("facings",            WRAP_METHOD(Debugger, cmd_showFacings));

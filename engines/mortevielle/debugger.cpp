@@ -27,7 +27,7 @@ namespace Mortevielle {
 
 Debugger::Debugger(MortevielleEngine *vm) : GUI::Debugger() {
 	_vm = vm;
-	registerCmd("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("show_questions", WRAP_METHOD(Debugger, Cmd_showAllQuestions));
 	registerCmd("reset_parano", WRAP_METHOD(Debugger, Cmd_resetParano));
 }

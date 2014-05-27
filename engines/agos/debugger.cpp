@@ -32,7 +32,7 @@ Debugger::Debugger(AGOSEngine *vm)
 	: GUI::Debugger() {
 	_vm = vm;
 
-	registerCmd("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("music",    WRAP_METHOD(Debugger, Cmd_PlayMusic));
 	registerCmd("sound",    WRAP_METHOD(Debugger, Cmd_PlaySound));
 	registerCmd("voice",    WRAP_METHOD(Debugger, Cmd_PlayVoice));

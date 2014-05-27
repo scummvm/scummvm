@@ -1207,13 +1207,13 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 		return true;
 	}
 
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
 	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;
 
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 // The scripts get IDs ranging from 100->199, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
@@ -1606,7 +1606,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 		filename.hasSuffix(".rbt") || filename.hasSuffix(".duk")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
-		return Cmd_Exit(0, 0);
+		return cmdExit(0, 0);
 	} else {
 		debugPrintf("Unknown video file type\n");
 		return true;
@@ -2108,7 +2108,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		debugPrintf("Map %d is not available.\n", map);
 		return true;
 	}
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdSongLib(int argc, const char **argv) {
@@ -2153,7 +2153,7 @@ bool Console::cmdStartSound(int argc, const char **argv) {
 	}
 
 	g_sci->_soundCmd->startNewSound(number);
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdToggleSound(int argc, const char **argv) {
@@ -2786,7 +2786,7 @@ bool Console::cmdTrace(int argc, const char **argv) {
 		_debugState.runningStep = atoi(argv[1]) - 1;
 	_debugState.debugging = true;
 
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdStepOver(int argc, const char **argv) {
@@ -2794,14 +2794,14 @@ bool Console::cmdStepOver(int argc, const char **argv) {
 	_debugState.seekLevel = _engine->_gamestate->_executionStack.size();
 	_debugState.debugging = true;
 
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
 	_debugState.stopOnEvent = true;
 	_debugState.debugging = true;
 
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdStepRet(int argc, const char **argv) {
@@ -2809,7 +2809,7 @@ bool Console::cmdStepRet(int argc, const char **argv) {
 	_debugState.seekLevel = _engine->_gamestate->_executionStack.size() - 1;
 	_debugState.debugging = true;
 
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdStepGlobal(int argc, const char **argv) {
@@ -2823,7 +2823,7 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 	_debugState.seekSpecial = atoi(argv[1]);
 	_debugState.debugging = true;
 
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdStepCallk(int argc, const char **argv) {
@@ -2856,7 +2856,7 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 	}
 	_debugState.debugging = true;
 
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdDisassemble(int argc, const char **argv) {
@@ -3205,7 +3205,7 @@ bool Console::cmdGo(int argc, const char **argv) {
 	// CHECKME: is this necessary?
 	_debugState.seeking = kDebugSeekNothing;
 
-	return Cmd_Exit(argc, argv);
+	return cmdExit(argc, argv);
 }
 
 bool Console::cmdLogKernel(int argc, const char **argv) {
@@ -3619,7 +3619,7 @@ bool Console::cmdQuit(int argc, const char **argv) {
 		return true;
 	}
 
-	return Cmd_Exit(0, 0);
+	return cmdExit(0, 0);
 }
 
 bool Console::cmdAddresses(int argc, const char **argv) {

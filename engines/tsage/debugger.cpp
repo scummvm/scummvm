@@ -30,7 +30,7 @@
 namespace TsAGE {
 
 Debugger::Debugger() : GUI::Debugger() {
-	registerCmd("continue",         WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue",         WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene",            WRAP_METHOD(Debugger, Cmd_Scene));
 	registerCmd("walk_regions",     WRAP_METHOD(Debugger, Cmd_WalkRegions));
 	registerCmd("priority_regions", WRAP_METHOD(Debugger, Cmd_PriorityRegions));

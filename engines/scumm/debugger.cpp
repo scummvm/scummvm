@@ -64,7 +64,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	registerVar("scumm_vars", &_vm->_scummVars, DVAR_INTARRAY, _vm->_numVariables);
 
 	// Register commands
-	registerCmd("continue",  WRAP_METHOD(ScummDebugger, Cmd_Exit));
+	registerCmd("continue",  WRAP_METHOD(ScummDebugger, cmdExit));
 	registerCmd("restart",   WRAP_METHOD(ScummDebugger, Cmd_Restart));
 
 	registerCmd("actor",     WRAP_METHOD(ScummDebugger, Cmd_Actor));

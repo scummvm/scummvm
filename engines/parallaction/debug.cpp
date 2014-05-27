@@ -33,7 +33,7 @@ Debugger::Debugger(Parallaction *vm)
 	: GUI::Debugger() {
 	_vm = vm;
 
-	registerCmd("continue",	WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("continue",	WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("location",	WRAP_METHOD(Debugger, Cmd_Location));
 	registerCmd("give",		WRAP_METHOD(Debugger, Cmd_Give));
 	registerCmd("zones",		WRAP_METHOD(Debugger, Cmd_Zones));

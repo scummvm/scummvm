@@ -146,7 +146,7 @@ void Debugger::copyCommand(int argc, const char **argv) {
 	}
 
 	// Exit the debugger!
-	Cmd_Exit(0, 0);
+	cmdExit(0, 0);
 }
 
 void Debugger::callCommand() {
@@ -345,7 +345,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdShowFrame);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			Sequence sequence(filename);
 			if (sequence.load(getArchive(filename))) {
@@ -407,7 +407,7 @@ bool Debugger::cmdShowBg(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdShowBg);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			clearBg(GraphicsManager::kBackgroundC);
 
@@ -462,7 +462,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdPlaySeq);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			Sequence *sequence = new Sequence(filename);
 			if (sequence->load(getArchive(filename))) {
@@ -582,7 +582,7 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdPlaySbe);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			SubtitleManager subtitle(_engine->getFont());
 			if (subtitle.load(getArchive(filename))) {
@@ -648,7 +648,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdPlayNis);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 			// Make sure we are not called in a loop
 			_numParams = 0;
@@ -706,7 +706,7 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 			_command = WRAP_METHOD(Debugger, cmdLoadScene);
 			copyCommand(argc, argv);
 
-			return Cmd_Exit(0, 0);
+			return cmdExit(0, 0);
 		} else {
 
 			clearBg(GraphicsManager::kBackgroundAll);
