@@ -54,6 +54,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_palette = nullptr;
 	_resources = nullptr;
 	_sound = nullptr;
+	_audio = nullptr;
 }
 
 MADSEngine::~MADSEngine() {
