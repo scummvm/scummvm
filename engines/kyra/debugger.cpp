@@ -41,18 +41,18 @@ Debugger::Debugger(KyraEngine_v1 *vm)
 
 void Debugger::initialize() {
 	registerCmd("continue",           WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("screen_debug_mode",  WRAP_METHOD(Debugger, cmd_setScreenDebug));
-	registerCmd("load_palette",       WRAP_METHOD(Debugger, cmd_loadPalette));
-	registerCmd("facings",            WRAP_METHOD(Debugger, cmd_showFacings));
-	registerCmd("gamespeed",          WRAP_METHOD(Debugger, cmd_gameSpeed));
-	registerCmd("flags",              WRAP_METHOD(Debugger, cmd_listFlags));
-	registerCmd("toggleflag",         WRAP_METHOD(Debugger, cmd_toggleFlag));
-	registerCmd("queryflag",          WRAP_METHOD(Debugger, cmd_queryFlag));
-	registerCmd("timers",             WRAP_METHOD(Debugger, cmd_listTimers));
-	registerCmd("settimercountdown",  WRAP_METHOD(Debugger, cmd_setTimerCountdown));
+	registerCmd("screen_debug_mode",  WRAP_METHOD(Debugger, cmdSetScreenDebug));
+	registerCmd("load_palette",       WRAP_METHOD(Debugger, cmdLoadPalette));
+	registerCmd("facings",            WRAP_METHOD(Debugger, cmdShowFacings));
+	registerCmd("gamespeed",          WRAP_METHOD(Debugger, cmdGameSpeed));
+	registerCmd("flags",              WRAP_METHOD(Debugger, cmdListFlags));
+	registerCmd("toggleflag",         WRAP_METHOD(Debugger, cmdToggleFlag));
+	registerCmd("queryflag",          WRAP_METHOD(Debugger, cmdQueryFlag));
+	registerCmd("timers",             WRAP_METHOD(Debugger, cmdListTimers));
+	registerCmd("settimercountdown",  WRAP_METHOD(Debugger, cmdSetTimerCountdown));
 }
 
-bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
+bool Debugger::cmdSetScreenDebug(int argc, const char **argv) {
 	if (argc > 1) {
 		if (scumm_stricmp(argv[1], "enable") == 0)
 			_vm->screen()->enableScreenDebug(true);
@@ -67,7 +67,7 @@ bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_loadPalette(int argc, const char **argv) {
+bool Debugger::cmdLoadPalette(int argc, const char **argv) {
 	Palette palette(_vm->screen()->getPalette(0).getNumColors());
 
 	if (argc <= 1) {
@@ -111,7 +111,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_showFacings(int argc, const char **argv) {
+bool Debugger::cmdShowFacings(int argc, const char **argv) {
 	debugPrintf("Facing directions:\n");
 	debugPrintf("7  0  1\n");
 	debugPrintf(" \\ | / \n");
@@ -121,7 +121,7 @@ bool Debugger::cmd_showFacings(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_gameSpeed(int argc, const char **argv) {
+bool Debugger::cmdGameSpeed(int argc, const char **argv) {
 	if (argc == 2) {
 		int val = atoi(argv[1]);
 
@@ -138,7 +138,7 @@ bool Debugger::cmd_gameSpeed(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_listFlags(int argc, const char **argv) {
+bool Debugger::cmdListFlags(int argc, const char **argv) {
 	for (int i = 0, p = 0; i < (int)sizeof(_vm->_flagsTable) * 8; i++, ++p) {
 		debugPrintf("(%-3i): %-2i", i, _vm->queryGameFlag(i));
 		if (p == 5) {
@@ -150,7 +150,7 @@ bool Debugger::cmd_listFlags(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_toggleFlag(int argc, const char **argv) {
+bool Debugger::cmdToggleFlag(int argc, const char **argv) {
 	if (argc > 1) {
 		uint flag = atoi(argv[1]);
 		if (_vm->queryGameFlag(flag))
@@ -165,7 +165,7 @@ bool Debugger::cmd_toggleFlag(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_queryFlag(int argc, const char **argv) {
+bool Debugger::cmdQueryFlag(int argc, const char **argv) {
 	if (argc > 1) {
 		uint flag = atoi(argv[1]);
 		debugPrintf("Flag %i is %i\n", flag, _vm->queryGameFlag(flag));
@@ -176,7 +176,7 @@ bool Debugger::cmd_queryFlag(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_listTimers(int argc, const char **argv) {
+bool Debugger::cmdListTimers(int argc, const char **argv) {
 	debugPrintf("Current time: %-8u\n", g_system->getMillis());
 	for (int i = 0; i < _vm->timer()->count(); i++)
 		debugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i %-8u\n", i, _vm->timer()->isEnabled(i) ? "Yes" : "No", _vm->timer()->getDelay(i), _vm->timer()->getNextRun(i));
@@ -184,7 +184,7 @@ bool Debugger::cmd_listTimers(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
+bool Debugger::cmdSetTimerCountdown(int argc, const char **argv) {
 	if (argc > 2) {
 		uint timer = atoi(argv[1]);
 		uint countdown = atoi(argv[2]);
@@ -204,14 +204,14 @@ Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
 }
 
 void Debugger_LoK::initialize() {
-	registerCmd("enter",              WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
-	registerCmd("scenes",             WRAP_METHOD(Debugger_LoK, cmd_listScenes));
-	registerCmd("give",               WRAP_METHOD(Debugger_LoK, cmd_giveItem));
-	registerCmd("birthstones",        WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
+	registerCmd("enter",              WRAP_METHOD(Debugger_LoK, cmdEnterRoom));
+	registerCmd("scenes",             WRAP_METHOD(Debugger_LoK, cmdListScenes));
+	registerCmd("give",               WRAP_METHOD(Debugger_LoK, cmdGiveItem));
+	registerCmd("birthstones",        WRAP_METHOD(Debugger_LoK, cmdListBirthstones));
 	Debugger::initialize();
 }
 
-bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
+bool Debugger_LoK::cmdEnterRoom(int argc, const char **argv) {
 	uint direction = 0;
 	if (argc > 1) {
 		int room = atoi(argv[1]);
@@ -250,7 +250,7 @@ bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_LoK::cmd_listScenes(int argc, const char **argv) {
+bool Debugger_LoK::cmdListScenes(int argc, const char **argv) {
 	for (int i = 0; i < _vm->_roomTableSize; i++) {
 		debugPrintf("%-3i: %-10s", i, _vm->_roomFilenameTable[_vm->_roomTable[i].nameIndex]);
 		if (!(i % 8))
@@ -261,7 +261,7 @@ bool Debugger_LoK::cmd_listScenes(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_LoK::cmd_giveItem(int argc, const char **argv) {
+bool Debugger_LoK::cmdGiveItem(int argc, const char **argv) {
 	if (argc == 2) {
 		int item = atoi(argv[1]);
 
@@ -280,7 +280,7 @@ bool Debugger_LoK::cmd_giveItem(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_LoK::cmd_listBirthstones(int argc, const char **argv) {
+bool Debugger_LoK::cmdListBirthstones(int argc, const char **argv) {
 	debugPrintf("Needed birthstone gems:\n");
 	for (int i = 0; i < ARRAYSIZE(_vm->_birthstoneGemTable); ++i)
 		debugPrintf("%-3d '%s'\n", _vm->_birthstoneGemTable[i], _vm->_itemList[_vm->_birthstoneGemTable[i]]);
@@ -293,16 +293,16 @@ Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_v2::initialize() {
-	registerCmd("character_info",     WRAP_METHOD(Debugger_v2, cmd_characterInfo));
-	registerCmd("enter",              WRAP_METHOD(Debugger_v2, cmd_enterScene));
-	registerCmd("scenes",             WRAP_METHOD(Debugger_v2, cmd_listScenes));
-	registerCmd("scene_info",         WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
-	registerCmd("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
-	registerCmd("give",               WRAP_METHOD(Debugger_v2, cmd_giveItem));
+	registerCmd("character_info",     WRAP_METHOD(Debugger_v2, cmdCharacterInfo));
+	registerCmd("enter",              WRAP_METHOD(Debugger_v2, cmdEnterScene));
+	registerCmd("scenes",             WRAP_METHOD(Debugger_v2, cmdListScenes));
+	registerCmd("scene_info",         WRAP_METHOD(Debugger_v2, cmdSceneInfo));
+	registerCmd("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmdSceneToFacing));
+	registerCmd("give",               WRAP_METHOD(Debugger_v2, cmdGiveItem));
 	Debugger::initialize();
 }
 
-bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
+bool Debugger_v2::cmdEnterScene(int argc, const char **argv) {
 	uint direction = 0;
 	if (argc > 1) {
 		int scene = atoi(argv[1]);
@@ -341,7 +341,7 @@ bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_v2::cmd_listScenes(int argc, const char **argv) {
+bool Debugger_v2::cmdListScenes(int argc, const char **argv) {
 	int shown = 1;
 	for (int i = 0; i < _vm->_sceneListSize; ++i) {
 		if (_vm->_sceneList[i].filename1[0]) {
@@ -356,7 +356,7 @@ bool Debugger_v2::cmd_listScenes(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_v2::cmd_sceneInfo(int argc, const char **argv) {
+bool Debugger_v2::cmdSceneInfo(int argc, const char **argv) {
 	debugPrintf("Current scene: %d '%s'\n", _vm->_currentScene, _vm->_sceneList[_vm->_currentScene].filename1);
 	debugPrintf("\n");
 	debugPrintf("Exit information:\n");
@@ -379,7 +379,7 @@ bool Debugger_v2::cmd_sceneInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_v2::cmd_characterInfo(int argc, const char **argv) {
+bool Debugger_v2::cmdCharacterInfo(int argc, const char **argv) {
 	debugPrintf("Main character is in scene: %d '%s'\n", _vm->_mainCharacter.sceneId, _vm->_sceneList[_vm->_mainCharacter.sceneId].filename1);
 	debugPrintf("Position: %dx%d\n", _vm->_mainCharacter.x1, _vm->_mainCharacter.y1);
 	debugPrintf("Facing: %d\n", _vm->_mainCharacter.facing);
@@ -392,7 +392,7 @@ bool Debugger_v2::cmd_characterInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_v2::cmd_sceneToFacing(int argc, const char **argv) {
+bool Debugger_v2::cmdSceneToFacing(int argc, const char **argv) {
 	if (argc == 2) {
 		int facing = atoi(argv[1]);
 		int16 exit = -1;
@@ -426,7 +426,7 @@ bool Debugger_v2::cmd_sceneToFacing(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_v2::cmd_giveItem(int argc, const char **argv) {
+bool Debugger_v2::cmdGiveItem(int argc, const char **argv) {
 	if (argc == 2) {
 		int item = atoi(argv[1]);
 
@@ -449,11 +449,11 @@ Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm) : Debugger_v2(vm), _vm(vm) {
 }
 
 void Debugger_HoF::initialize() {
-	registerCmd("pass_codes",         WRAP_METHOD(Debugger_HoF, cmd_passcodes));
+	registerCmd("pass_codes",         WRAP_METHOD(Debugger_HoF, cmdPasscodes));
 	Debugger_v2::initialize();
 }
 
-bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
+bool Debugger_HoF::cmdPasscodes(int argc, const char **argv) {
 	if (argc == 2) {
 		int val = atoi(argv[1]);
 
@@ -482,19 +482,19 @@ Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_EoB::initialize() {
-	registerCmd("import_savefile", WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
-	registerCmd("save_original", WRAP_METHOD(Debugger_EoB, cmd_saveOriginal));
-	registerCmd("list_monsters", WRAP_METHOD(Debugger_EoB, cmd_listMonsters));
-	registerCmd("show_position", WRAP_METHOD(Debugger_EoB, cmd_showPosition));
-	registerCmd("set_position", WRAP_METHOD(Debugger_EoB, cmd_setPosition));
-	registerCmd("open_door", WRAP_METHOD(Debugger_EoB, cmd_openDoor));
-	registerCmd("close_door", WRAP_METHOD(Debugger_EoB, cmd_closeDoor));
-	registerCmd("list_flags", WRAP_METHOD(Debugger_EoB, cmd_listFlags));
-	registerCmd("set_flag", WRAP_METHOD(Debugger_EoB, cmd_setFlag));
-	registerCmd("clear_flag", WRAP_METHOD(Debugger_EoB, cmd_clearFlag));
+	registerCmd("import_savefile", WRAP_METHOD(Debugger_EoB, cmdImportSaveFile));
+	registerCmd("save_original", WRAP_METHOD(Debugger_EoB, cmdSaveOriginal));
+	registerCmd("list_monsters", WRAP_METHOD(Debugger_EoB, cmdListMonsters));
+	registerCmd("show_position", WRAP_METHOD(Debugger_EoB, cmdShowPosition));
+	registerCmd("set_position", WRAP_METHOD(Debugger_EoB, cmdSetPosition));
+	registerCmd("open_door", WRAP_METHOD(Debugger_EoB, cmdOpenDoor));
+	registerCmd("close_door", WRAP_METHOD(Debugger_EoB, cmdCloseDoor));
+	registerCmd("list_flags", WRAP_METHOD(Debugger_EoB, cmdListFlags));
+	registerCmd("set_flag", WRAP_METHOD(Debugger_EoB, cmdSetFlag));
+	registerCmd("clear_flag", WRAP_METHOD(Debugger_EoB, cmdClearFlag));
 }
 
-bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
+bool Debugger_EoB::cmdImportSaveFile(int argc, const char **argv) {
 	if (!_vm->_allowImport) {
 		debugPrintf("This command only works from the main menu.\n");
 		return true;
@@ -516,7 +516,7 @@ bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_EoB::cmd_saveOriginal(int argc, const char **argv) {
+bool Debugger_EoB::cmdSaveOriginal(int argc, const char **argv) {
 	if (!_vm->_runFlag) {
 		debugPrintf("This command doesn't work during intro or outro sequences,\nfrom the main menu or from the character generation.\n");
 		return true;
@@ -566,7 +566,7 @@ bool Debugger_EoB::cmd_saveOriginal(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_EoB::cmd_listMonsters(int, const char **) {
+bool Debugger_EoB::cmdListMonsters(int, const char **) {
 	debugPrintf("\nCurrent level: %d\n----------------------\n\n", _vm->_currentLevel);
 	debugPrintf("Id        Type      Unit      Block     Position  Direction Sub Level Mode      Dst.block HP        Flags\n--------------------------------------------------------------------------------------------------------------\n");
 
@@ -580,12 +580,12 @@ bool Debugger_EoB::cmd_listMonsters(int, const char **) {
 	return true;
 }
 
-bool Debugger_EoB::cmd_showPosition(int, const char **) {
+bool Debugger_EoB::cmdShowPosition(int, const char **) {
 	debugPrintf("\nCurrent level:      %d\nCurrent Sub Level:  %d\nCurrent block:      %d (0x%.04x)\nNext block:         %d (0x%.04x)\nCurrent direction:  %d\n\n", _vm->_currentLevel, _vm->_currentSub, _vm->_currentBlock, _vm->_currentBlock, _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->_currentDirection);
 	return true;
 }
 
-bool Debugger_EoB::cmd_setPosition(int argc, const char **argv) {
+bool Debugger_EoB::cmdSetPosition(int argc, const char **argv) {
 	if (argc == 4) {
 		_vm->_currentBlock = atoi(argv[3]);
 		int sub = atoi(argv[2]);
@@ -622,7 +622,7 @@ bool Debugger_EoB::cmd_setPosition(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_EoB::cmd_openDoor(int, const char **) {
+bool Debugger_EoB::cmdOpenDoor(int, const char **) {
 	debugPrintf("Warning: Using this command may cause glitches.\n");
 	uint16 block = _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection);
 	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
@@ -637,7 +637,7 @@ bool Debugger_EoB::cmd_openDoor(int, const char **) {
 	return true;
 }
 
-bool Debugger_EoB::cmd_closeDoor(int, const char **) {
+bool Debugger_EoB::cmdCloseDoor(int, const char **) {
 	debugPrintf("Warning: Using this command may cause glitches.\n");
 	uint16 block = _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection);
 	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
@@ -651,7 +651,7 @@ bool Debugger_EoB::cmd_closeDoor(int, const char **) {
 	return true;
 }
 
-bool Debugger_EoB::cmd_listFlags(int, const char **) {
+bool Debugger_EoB::cmdListFlags(int, const char **) {
 	debugPrintf("Flag           Status\n----------------------\n\n");
 	for (int i = 0; i < 32; i++) {
 		uint32 flag = 1 << i;
@@ -661,7 +661,7 @@ bool Debugger_EoB::cmd_listFlags(int, const char **) {
 	return true;
 }
 
-bool Debugger_EoB::cmd_setFlag(int argc, const char **argv) {
+bool Debugger_EoB::cmdSetFlag(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax:   set_flag <flag>\n\n");
 		return true;
@@ -678,7 +678,7 @@ bool Debugger_EoB::cmd_setFlag(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_EoB::cmd_clearFlag(int argc, const char **argv) {
+bool Debugger_EoB::cmdClearFlag(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax:   clear_flag <flag>\n\n");
 		return true;
