@@ -242,23 +242,23 @@ bool Debugger::parseCommand(const char *inputOrig) {
 	}
 
 	// It's not a command, so things get a little tricky for variables. Do fuzzy matching to ignore things like subscripts.
-	for (uint i = 0; i < _dvars.size(); i++) {
-		if (!strncmp(_dvars[i].name.c_str(), param[0], _dvars[i].name.size())) {
+	for (uint i = 0; i < _vars.size(); i++) {
+		if (!strncmp(_vars[i].name.c_str(), param[0], _vars[i].name.size())) {
 			if (num_params > 1) {
 				// Alright, we need to check the TYPE of the variable to deref and stuff... the array stuff is a bit ugly :)
-				switch (_dvars[i].type) {
+				switch (_vars[i].type) {
 				// Integer
 				case DVAR_BYTE:
-					*(byte *)_dvars[i].variable = atoi(param[1]);
-					debugPrintf("byte%s = %d\n", param[0], *(byte *)_dvars[i].variable);
+					*(byte *)_vars[i].variable = atoi(param[1]);
+					debugPrintf("byte%s = %d\n", param[0], *(byte *)_vars[i].variable);
 					break;
 				case DVAR_INT:
-					*(int32 *)_dvars[i].variable = atoi(param[1]);
-					debugPrintf("(int)%s = %d\n", param[0], *(int32 *)_dvars[i].variable);
+					*(int32 *)_vars[i].variable = atoi(param[1]);
+					debugPrintf("(int)%s = %d\n", param[0], *(int32 *)_vars[i].variable);
 					break;
 				case DVAR_BOOL:
-					if (Common::parseBool(param[1], *(bool *)_dvars[i].variable))
-						debugPrintf("(bool)%s = %s\n", param[0], *(bool *)_dvars[i].variable ? "true" : "false");
+					if (Common::parseBool(param[1], *(bool *)_vars[i].variable))
+						debugPrintf("(bool)%s = %s\n", param[0], *(bool *)_vars[i].variable ? "true" : "false");
 					else
 						debugPrintf("Invalid value for boolean variable. Valid values are \"true\", \"false\", \"1\", \"0\", \"yes\", \"no\"\n");
 					break;
@@ -269,9 +269,9 @@ bool Debugger::parseCommand(const char *inputOrig) {
 						debugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
 						int element = atoi(chr+1);
-						int32 *var = *(int32 **)_dvars[i].variable;
-						if (element >= _dvars[i].arraySize) {
-							debugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].arraySize);
+						int32 *var = *(int32 **)_vars[i].variable;
+						if (element >= _vars[i].arraySize) {
+							debugPrintf("%s is out of range (array is %d elements big)\n", param[0], _vars[i].arraySize);
 						} else {
 							var[element] = atoi(param[1]);
 							debugPrintf("(int)%s = %d\n", param[0], var[element]);
@@ -280,21 +280,21 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					}
 					break;
 				default:
-					debugPrintf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name.c_str(), param[1]);
+					debugPrintf("Failed to set variable %s to %s - unknown type\n", _vars[i].name.c_str(), param[1]);
 					break;
 				}
 			} else {
 				// And again, type-dependent prints/defrefs. The array one is still ugly.
-				switch (_dvars[i].type) {
+				switch (_vars[i].type) {
 				// Integer
 				case DVAR_BYTE:
-					debugPrintf("(byte)%s = %d\n", param[0], *(const byte *)_dvars[i].variable);
+					debugPrintf("(byte)%s = %d\n", param[0], *(const byte *)_vars[i].variable);
 					break;
 				case DVAR_INT:
-					debugPrintf("(int)%s = %d\n", param[0], *(const int32 *)_dvars[i].variable);
+					debugPrintf("(int)%s = %d\n", param[0], *(const int32 *)_vars[i].variable);
 					break;
 				case DVAR_BOOL:
-					debugPrintf("(bool)%s = %s\n", param[0], *(const bool *)_dvars[i].variable ? "true" : "false");
+					debugPrintf("(bool)%s = %s\n", param[0], *(const bool *)_vars[i].variable ? "true" : "false");
 					break;
 				// Integer array
 				case DVAR_INTARRAY: {
@@ -303,9 +303,9 @@ bool Debugger::parseCommand(const char *inputOrig) {
 						debugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
 						int element = atoi(chr+1);
-						const int32 *var = *(const int32 **)_dvars[i].variable;
-						if (element >= _dvars[i].arraySize) {
-							debugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].arraySize);
+						const int32 *var = *(const int32 **)_vars[i].variable;
+						if (element >= _vars[i].arraySize) {
+							debugPrintf("%s is out of range (array is %d elements big)\n", param[0], _vars[i].arraySize);
 						} else {
 							debugPrintf("(int)%s = %d\n", param[0], var[element]);
 						}
@@ -314,7 +314,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 				break;
 				// String
 				case DVAR_STRING:
-					debugPrintf("(string)%s = %s\n", param[0], ((Common::String *)_dvars[i].variable)->c_str());
+					debugPrintf("(string)%s = %s\n", param[0], ((Common::String *)_vars[i].variable)->c_str());
 					break;
 				default:
 					debugPrintf("%s = (unknown type)\n", param[0]);
@@ -411,13 +411,13 @@ void Debugger::registerVar(const Common::String &varname, void *pointer, VarType
 	// TODO: Sort this list? Then we can do binary search later on when doing lookups.
 	assert(pointer);
 
-	DVar tmp;
+	Var tmp;
 	tmp.name = varname;
 	tmp.type = type;
 	tmp.variable = pointer;
 	tmp.arraySize = arraySize;
 
-	_dvars.push_back(tmp);
+	_vars.push_back(tmp);
 }
 
 // Command registration function
@@ -473,12 +473,12 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 	}
 	debugPrintf("\n");
 
-	if (!_dvars.empty()) {
+	if (!_vars.empty()) {
 		debugPrintf("\n");
 		debugPrintf("Variables are:\n");
 		width = 0;
-		for (i = 0; i < _dvars.size(); i++) {
-			size = _dvars[i].name.size() + 1;
+		for (i = 0; i < _vars.size(); i++) {
+			size = _vars[i].name.size() + 1;
 
 			if ((width + size) >= charsPerLine) {
 				debugPrintf("\n");
@@ -486,7 +486,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 			} else
 				width += size;
 
-			debugPrintf("%s ", _dvars[i].name.c_str());
+			debugPrintf("%s ", _vars[i].name.c_str());
 		}
 		debugPrintf("\n");
 	}

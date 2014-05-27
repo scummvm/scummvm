@@ -89,7 +89,7 @@ protected:
 		DVAR_STRING
 	};
 
-	struct DVar {
+	struct Var {
 		Common::String name;
 		void *variable;
 		VarType type;
@@ -125,7 +125,7 @@ private:
 	 */
 	uint _frameCountdown;
 
-	Common::Array<DVar> _dvars;
+	Common::Array<Var> _vars;
 
 	typedef Common::HashMap<Common::String, Common::SharedPtr<Debuglet>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CommandsMap;
 	CommandsMap _cmds;
