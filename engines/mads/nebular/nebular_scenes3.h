@@ -39,6 +39,14 @@ typedef struct {
 	int _seqId[40];
 	uint32 _timer;
 
+	void init() {
+		_flag = false;
+		_vertical = _horizontal = -1;
+		_timer = 0;
+		for (int i = 0; i < 40; ++i)
+			_seqId[i] = -1;
+	}
+
 	void synchronize(Common::Serializer &s) {
 		s.syncAsByte(_flag);
 		s.syncAsSint32LE(_vertical);
@@ -167,7 +175,7 @@ private:
 	ForceField _forceField;
 
 public:
-	Scene308(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene308(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();
@@ -196,7 +204,7 @@ private:
 	ForceField _forceField;
 
 public:
-	Scene310(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene310(MADSEngine *vm);
 	virtual void synchronize(Common::Serializer &s);
 
 	virtual void setup();

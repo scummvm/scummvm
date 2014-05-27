@@ -492,6 +492,8 @@ Scene307::Scene307(MADSEngine *vm) : Scene3xx(vm) {
 	_prisonerTimer = 0;
 
 	_subQuote2 = "";
+
+	_forceField.init();
 }
 
 void Scene307::synchronize(Common::Serializer &s) {
@@ -1188,15 +1190,20 @@ void Scene307::actions() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene308::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
+Scene308::Scene308(MADSEngine *vm) : Scene3xx(vm) {
+	_forceField.init();
 }
 
 void Scene308::synchronize(Common::Serializer &s) {
 	Scene3xx::synchronize(s);
 
 	_forceField.synchronize(s);
+}
+
+
+void Scene308::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
 }
 
 void Scene308::enter() {
@@ -1324,6 +1331,7 @@ Scene309::Scene309(MADSEngine *vm) : Scene3xx(vm) {
 	}
 	
 	_lastFrame = -1;
+	_forceField.init();
 }
 
 void Scene309::synchronize(Common::Serializer &s) {
@@ -1523,15 +1531,19 @@ void Scene309::step() {
 
 /*------------------------------------------------------------------------*/
 
-void Scene310::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
+Scene310::Scene310(MADSEngine *vm) : Scene3xx(vm) {
+	_forceField.init();
 }
 
 void Scene310::synchronize(Common::Serializer &s) {
 	Scene3xx::synchronize(s);
 
 	_forceField.synchronize(s);
+}
+
+void Scene310::setup() {
+	setPlayerSpritesPrefix();
+	setAAName();
 }
 
 void Scene310::enter() {
