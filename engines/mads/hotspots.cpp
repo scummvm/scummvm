@@ -154,6 +154,7 @@ void DynamicHotspots::synchronize(Common::Serializer &s) {
 		for (int i = 0; i < count; ++i)
 			_entries[i].synchronize(s);
 	} else {
+		_entries.clear();
 		DynamicHotspot rec;
 		rec.synchronize(s);
 		_entries.push_back(rec);

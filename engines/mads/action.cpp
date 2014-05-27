@@ -685,6 +685,10 @@ void MADSAction::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_statusTextIndex);
 	s.syncAsSint16LE(_hotspotId);
 	_savedFields.synchronize(s);
+
+	// TODO: When saving in Rex Village Hut, _senetence size() doesn't match
+	// string length. Find out why not
+	_sentence = Common::String(_sentence.c_str());
 	s.syncString(_sentence);
 
 	s.syncAsSint16LE(_verbType);
