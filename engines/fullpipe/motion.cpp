@@ -597,10 +597,9 @@ void MovGraph::freeItems() {
 	_items.clear();
 }
 Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) {
-#if 0
 	*rescount = 0;
 
-	if (_itemsCount <= 0)
+	if (_items.size() <= 0)
 		return 0;
 
 	int idx = 0;
@@ -608,39 +607,39 @@ Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y,
 	while (_items[idx]->ani != ani) {
 		idx++;
 
-		if (idx >= _itemsCount)
+		if (idx >= _items.size())
 			return 0;
 	}
 	_items[idx]->free();
 
 	calcNodeDistancesAndAngles();
 
-	_items[idx].movarr._movSteps.clear();
+	_items[idx]->movarr._movSteps.clear();
 
 	Common::Point point;
 
 	point.x = ani->_ox;
 	point.y = ani->_oy;
 
-	if (!MovGraph_calcChunk(this, idx, ani->_ox, ani->_oy, &_items[idx]->movarr, 0))
-		MovGraph_findClosestLink(this, idx, &point, &_items[idx]->movarr);
+	if (!calcChunk(idx, ani->_ox, ani->_oy, &_items[idx]->movarr, 0))
+		findClosestLink(idx, &point, &_items[idx]->movarr);
 
 	_items[idx]->count = 0;
 
 	delete _items[idx]->movitems;
 	_items[idx]->movitems = 0;
 
+	int arrSize;
 	Common::Array<MovArr *> *movarr = genMovArr(x, y, &arrSize, flag1, 0);
 
 	if (movarr) {
 		for (int i = 0; i < arrSize; i++) {
 			int sz;
-			Common::Array<MovItem *> *movitems = calcMovItems(_items[idx]->movarr, movarr[i], &sz);
+			Common::Array<MovItem *> *movitems = calcMovItems(&_items[idx]->movarr, (*movarr)[i], &sz);
 
 			if (sz > 0) {
-				_items[idx]->movitems = MovGraph_arr16_realloc(_items[idx]->movitems, _items[idx]->count, sz + _items[idx]->count);
-				memcpy(_items[idx]->movitems[_items[idx]->count], *movitems, 16 * sz);
-				_items[idx]->count += sz;
+				for (uint j = 0; j < sz; j++)
+					_items[idx]->movitems->push_back(movitems[j]);
 
 				delete movitems;
 			}
@@ -654,10 +653,6 @@ Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y,
 
 		return _items[idx]->movitems;
 	}
-
-	return 0;
-#endif
-	warning("STUB: MovGraph::method28()");
 
 	return 0;
 }
