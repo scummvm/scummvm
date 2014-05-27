@@ -575,15 +575,19 @@ void ScreenDialog::addLine(const Common::String &msg, DialogTextAlign align,
 	DialogLine *line;
 
 	if (_lineIndex < (int)_lines.size()) {
-		if (_lines.size() >= 20)
-			goto finish;
+		if (_lines.size() >= 20) {
+			++_lineIndex;
+			return;
+		}
 
 		_lines.push_back(msg);
 		line = &_lines[_lines.size() - 1];
 	} else {
 		line = &_lines[_lineIndex];
-		if (msg.compareToIgnoreCase(msg))
-			goto finish;
+		if (msg.compareToIgnoreCase(msg)) {
+			++_lineIndex;
+			return;
+		}
 
 		if (line->_textDisplayIndex >= 0) {
 			TextDisplay &textDisplay = scene._textDisplay[line->_textDisplayIndex];
@@ -630,7 +634,6 @@ void ScreenDialog::addLine(const Common::String &msg, DialogTextAlign align,
 		break;
 	}
 
-finish:
 	++_lineIndex;
 }
 
