@@ -198,8 +198,8 @@ public:
 	uint16 _cameraX;
 	uint16 _newCameraX;
 	uint16 _sceneWidth;
-	uint32 _picWindowX;
-	uint32 _picWindowY;
+	int32 _picWindowX;
+	int32 _picWindowY;
 	Image::BitmapDecoder *_roomBmp;
 
 	Common::Array<AnimListItem> _animList;

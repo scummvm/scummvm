@@ -711,15 +711,16 @@ void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int
 	int sprHeight = backAnimSurface->h;
 	int sprModulo = 0;
 
-	if (destX - _picWindowX < 0) { // x1 on visible part of screen?
+	destX -= _picWindowX;
+	if (destX < 0) { // x1 on visible part of screen?
 		// X1 signed, we add spriteWidth for x2
-		if (sprWidth + destX - _picWindowX - 1 < 0) {
+		if (sprWidth + destX < 1) {
 			//exit - x2 is negative - out of window
 			return; // don't draw
 		} else {
-			//esi += _picWindowX - destX;
-			sprWidth -= _picWindowX - destX;
-			sprModulo += _picWindowX - destX;
+			//esi += -1 * destX;
+			sprWidth -= -1 * destX;
+			sprModulo += -1 * destX;
 			destX = 0; // x1 = 0;
 		}
 	}
@@ -732,13 +733,14 @@ void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int
 		sprModulo += destX - kNormalWidth;
 	}
 	//right_x_check_ok
-	if (destY - _picWindowY < 0) {
-		if (sprHeight + destY - _picWindowY - 1 < 0) {
+	destY -= _picWindowY;
+	if (destY < 0) {
+		if (sprHeight + destY < 1) {
 			//exit - y2 is negative - out of window
 			return; // don't draw
 		} else {
-			sprHeight -= _picWindowY - destY;
-			//esi += (sprWidth + sprModulo) * (_picWindowY - destY);
+			sprHeight -= -1 * destY;
+			//esi += (sprWidth + sprModulo) * (-1 * destY);
 			destY = 0;
 		}
 	}
@@ -751,7 +753,7 @@ void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int
 	}
 	//lower_y_check_ok
 
-	_graph->drawTransparent(destX - _picWindowX, destY - _picWindowY, backAnimSurface); // TODO
+	_graph->drawTransparent(destX, destY, backAnimSurface); // TODO
 }
 
 void PrinceEngine::showBackAnims() {
@@ -908,9 +910,9 @@ void PrinceEngine::showBackAnims() {
 			int y = _backAnimList[i].backAnims[activeSubAnim]._y + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetY(frame);
 			//debug("x: %d", x);
 			//debug("picWindowX: %d", _picWindowX);
-			if (x - _picWindowX >= 0) { //  || x - _picWindowX + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(frame) >= 0 ??
+			//if (x >= _picWindowX) { //  || x - _picWindowX + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(frame) >= 0 ??
 				showSprite(backAnimSurface, x, y);
-			}
+			//}
 			backAnimSurface->free();
 			delete backAnimSurface;
 
