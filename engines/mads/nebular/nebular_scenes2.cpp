@@ -348,6 +348,8 @@ Scene202::Scene202(MADSEngine *vm) : Scene2xx(vm) {
 	_lastRoute = 0;
 	_stationCounter = 0;
 	_meteoFrame = 0;
+	_startTime = 0;
+	_meteorologistSpecial = false;
 }
 
 void Scene202::synchronize(Common::Serializer &s) {
