@@ -35,7 +35,7 @@ ToucheConsole::~ToucheConsole() {
 
 bool ToucheConsole::Cmd_StartMusic(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Usage: startMusic <num>\n");
+		debugPrintf("Usage: startMusic <num>\n");
 		return true;
 	}
 

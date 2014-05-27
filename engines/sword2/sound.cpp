@@ -49,7 +49,7 @@
 #include "audio/decoders/wave.h"
 #include "audio/decoders/xa.h"
 
-#define Debug_Printf _vm->_debugger->DebugPrintf
+#define Debug_Printf _vm->_debugger->debugPrintf
 
 namespace Sword2 {
 

@@ -126,7 +126,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 		// track left buttton clicks, if requested
 		if (curEvent.type == SCI_EVENT_MOUSE_PRESS && curEvent.data == 1 && g_debug_track_mouse_clicks) {
-			g_sci->getSciDebugger()->DebugPrintf("Mouse clicked at %d, %d\n",
+			g_sci->getSciDebugger()->debugPrintf("Mouse clicked at %d, %d\n",
 						mousePos.x, mousePos.y);
 		}
 
@@ -163,20 +163,20 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 		// A SCI event occurred, and we have been asked to stop, so open the debug console
 		Console *con = g_sci->getSciDebugger();
-		con->DebugPrintf("SCI event occurred: ");
+		con->debugPrintf("SCI event occurred: ");
 		switch (curEvent.type) {
 		case SCI_EVENT_QUIT:
-			con->DebugPrintf("quit event\n");
+			con->debugPrintf("quit event\n");
 			break;
 		case SCI_EVENT_KEYBOARD:
-			con->DebugPrintf("keyboard event\n");
+			con->debugPrintf("keyboard event\n");
 			break;
 		case SCI_EVENT_MOUSE_RELEASE:
 		case SCI_EVENT_MOUSE_PRESS:
-			con->DebugPrintf("mouse click event\n");
+			con->debugPrintf("mouse click event\n");
 			break;
 		default:
-			con->DebugPrintf("unknown or no event (event type %d)\n", curEvent.type);
+			con->debugPrintf("unknown or no event (event type %d)\n", curEvent.type);
 		}
 
 		con->attach();

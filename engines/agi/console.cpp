@@ -52,7 +52,7 @@ Console::Console(AgiEngine *vm) : GUI::Debugger() {
 
 bool Console::Cmd_SetVar(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Usage: setvar <varnum> <value>\n");
+		debugPrintf("Usage: setvar <varnum> <value>\n");
 		return true;
 	}
 	int p1 = (int)atoi(argv[1]);
@@ -64,7 +64,7 @@ bool Console::Cmd_SetVar(int argc, const char **argv) {
 
 bool Console::Cmd_SetFlag(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Usage: setvar <varnum> <value>\n");
+		debugPrintf("Usage: setvar <varnum> <value>\n");
 		return true;
 	}
 	int p1 = (int)atoi(argv[1]);
@@ -76,7 +76,7 @@ bool Console::Cmd_SetFlag(int argc, const char **argv) {
 
 bool Console::Cmd_SetObj(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Usage: setvar <varnum> <value>\n");
+		debugPrintf("Usage: setvar <varnum> <value>\n");
 		return true;
 	}
 	int p1 = (int)atoi(argv[1]);
@@ -88,7 +88,7 @@ bool Console::Cmd_SetObj(int argc, const char **argv) {
 
 bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: runopcode <name> <parameter0> ....\n");
+		debugPrintf("Usage: runopcode <name> <parameter0> ....\n");
 		return true;
 	}
 
@@ -96,7 +96,7 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 		if (!strcmp(argv[1], logicNamesCmd[i].name)) {
 			uint8 p[16];
 			if ((argc - 2) != logicNamesCmd[i].argumentsLength()) {
-				DebugPrintf("AGI command wants %d arguments\n", logicNamesCmd[i].argumentsLength());
+				debugPrintf("AGI command wants %d arguments\n", logicNamesCmd[i].argumentsLength());
 				return 0;
 			}
 			p[0] = argv[2] ? (char)strtoul(argv[2], NULL, 0) : 0;
@@ -113,7 +113,7 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 		}
 	}
 
-	DebugPrintf("Unknown opcode\n");
+	debugPrintf("Unknown opcode\n");
 
 	return true;
 }
@@ -125,7 +125,7 @@ bool Console::Cmd_Agiver(int argc, const char **argv) {
 	maj = (ver >> 12) & 0xf;
 	min = ver & 0xfff;
 
-	DebugPrintf(maj <= 2 ? "%x.%03x\n" : "%x.002.%03x\n", maj, min);
+	debugPrintf(maj <= 2 ? "%x.%03x\n" : "%x.002.%03x\n", maj, min);
 
 	return true;
 }
@@ -133,17 +133,17 @@ bool Console::Cmd_Agiver(int argc, const char **argv) {
 bool Console::Cmd_Flags(int argc, const char **argv) {
 	int i, j;
 
-	DebugPrintf("    ");
+	debugPrintf("    ");
 	for (j = 0; j < 10; j++)
-		DebugPrintf("%d ", j);
-	DebugPrintf("\n");
+		debugPrintf("%d ", j);
+	debugPrintf("\n");
 
 	for (i = 0; i < 255;) {
-		DebugPrintf("%3d ", i);
+		debugPrintf("%3d ", i);
 		for (j = 0; j < 10; j++, i++) {
-			DebugPrintf("%c ", _vm->getflag(i) ? 'T' : 'F');
+			debugPrintf("%c ", _vm->getflag(i) ? 'T' : 'F');
 		}
-		DebugPrintf("\n");
+		debugPrintf("\n");
 	}
 
 	return true;
@@ -154,9 +154,9 @@ bool Console::Cmd_Vars(int argc, const char **argv) {
 
 	for (i = 0; i < 255;) {
 		for (j = 0; j < 5; j++, i++) {
-			DebugPrintf("%03d:%3d ", i, _vm->getvar(i));
+			debugPrintf("%03d:%3d ", i, _vm->getvar(i));
 		}
-		DebugPrintf("\n");
+		debugPrintf("\n");
 	}
 
 	return true;
@@ -166,7 +166,7 @@ bool Console::Cmd_Objs(int argc, const char **argv) {
 	unsigned int i;
 
 	for (i = 0; i < _vm->_game.numObjects; i++) {
-		DebugPrintf("%3d]%-24s(%3d)\n", i, _vm->objectName(i), _vm->objectGetLocation(i));
+		debugPrintf("%3d]%-24s(%3d)\n", i, _vm->objectName(i), _vm->objectGetLocation(i));
 	}
 
 	return true;
@@ -174,7 +174,7 @@ bool Console::Cmd_Objs(int argc, const char **argv) {
 
 bool Console::Cmd_Opcode(int argc, const char **argv) {
 	if (argc != 2 || (strcmp(argv[1], "on") && strcmp(argv[1], "off"))) {
-		DebugPrintf("Usage: opcode on|off\n");
+		debugPrintf("Usage: opcode on|off\n");
 		return true;
 	}
 
@@ -185,7 +185,7 @@ bool Console::Cmd_Opcode(int argc, const char **argv) {
 
 bool Console::Cmd_Logic0(int argc, const char **argv) {
 	if (argc != 2 || (strcmp(argv[1], "on") && strcmp(argv[1], "off"))) {
-		DebugPrintf("Usage: logic0 on|off\n");
+		debugPrintf("Usage: logic0 on|off\n");
 		return true;
 	}
 
@@ -196,7 +196,7 @@ bool Console::Cmd_Logic0(int argc, const char **argv) {
 
 bool Console::Cmd_Trigger(int argc, const char **argv) {
 	if (argc != 2 || (strcmp(argv[1], "on") && strcmp(argv[1], "off"))) {
-		DebugPrintf("Usage: trigger on|off\n");
+		debugPrintf("Usage: trigger on|off\n");
 		return true;
 	}
 	_vm->_debug.ignoretriggers = strcmp (argv[1], "on");
@@ -236,13 +236,13 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 		_vm->newRoom(strtoul(argv[1], NULL, 0));
 	}
 
-	DebugPrintf("Current room: %d\n", _vm->getvar(0));
+	debugPrintf("Current room: %d\n", _vm->getvar(0));
 
 	return true;
 }
 
 bool Console::Cmd_BT(int argc, const char **argv) {
-	DebugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.lognum, _vm->_game.execStack.size());
+	debugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.lognum, _vm->_game.execStack.size());
 
 	uint8 *code = NULL;
 	uint8 op = 0;
@@ -257,12 +257,12 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 		memmove(p, &code[it->curIP], num);
 		memset(p + num, 0, CMD_BSIZE - num);
 
-		DebugPrintf("%d(%d): %s(", it->script, it->curIP, logicNamesCmd[op].name);
+		debugPrintf("%d(%d): %s(", it->script, it->curIP, logicNamesCmd[op].name);
 
 		for (int i = 0; i < num; i++)
-			DebugPrintf("%d, ", p[i]);
+			debugPrintf("%d, ", p[i]);
 
-		DebugPrintf(")\n");
+		debugPrintf(")\n");
 	}
 
 	return true;
@@ -287,7 +287,7 @@ bool MickeyConsole::Cmd_Room(int argc, const char **argv) {
 
 bool MickeyConsole::Cmd_DrawPic(int argc, const char **argv) {
 	if (argc != 2)
-		DebugPrintf("Usage: %s <Picture number>\n", argv[0]);
+		debugPrintf("Usage: %s <Picture number>\n", argv[0]);
 	else
 		_mickey->drawPic(atoi(argv[1]));
 	return true;
@@ -295,7 +295,7 @@ bool MickeyConsole::Cmd_DrawPic(int argc, const char **argv) {
 
 bool MickeyConsole::Cmd_DrawObj(int argc, const char **argv) {
 	if (argc != 2)
-		DebugPrintf("Usage: %s <Object number>\n", argv[0]);
+		debugPrintf("Usage: %s <Object number>\n", argv[0]);
 	else
 		_mickey->drawObj((ENUM_MSA_OBJECT)atoi(argv[1]), 0, 0);
 	return true;

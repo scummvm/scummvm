@@ -76,7 +76,7 @@ Debugger::~Debugger() {
 
 
 // Initialisation Functions
-int Debugger::DebugPrintf(const char *format, ...) {
+int Debugger::debugPrintf(const char *format, ...) {
 	va_list	argptr;
 
 	va_start(argptr, format);
@@ -153,13 +153,13 @@ void Debugger::enter() {
 
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	if (_firstTime) {
-		DebugPrintf("Debugger started, type 'exit' to return to the game.\n");
-		DebugPrintf("Type 'help' to see a little list of commands and variables.\n");
+		debugPrintf("Debugger started, type 'exit' to return to the game.\n");
+		debugPrintf("Type 'help' to see a little list of commands and variables.\n");
 		_firstTime = false;
 	}
 
 	if (_errStr) {
-		DebugPrintf("ERROR: %s\n\n", _errStr);
+		debugPrintf("ERROR: %s\n\n", _errStr);
 		free(_errStr);
 		_errStr = NULL;
 	}
@@ -250,37 +250,37 @@ bool Debugger::parseCommand(const char *inputOrig) {
 				// Integer
 				case DVAR_BYTE:
 					*(byte *)_dvars[i].variable = atoi(param[1]);
-					DebugPrintf("byte%s = %d\n", param[0], *(byte *)_dvars[i].variable);
+					debugPrintf("byte%s = %d\n", param[0], *(byte *)_dvars[i].variable);
 					break;
 				case DVAR_INT:
 					*(int32 *)_dvars[i].variable = atoi(param[1]);
-					DebugPrintf("(int)%s = %d\n", param[0], *(int32 *)_dvars[i].variable);
+					debugPrintf("(int)%s = %d\n", param[0], *(int32 *)_dvars[i].variable);
 					break;
 				case DVAR_BOOL:
 					if (Common::parseBool(param[1], *(bool *)_dvars[i].variable))
-						DebugPrintf("(bool)%s = %s\n", param[0], *(bool *)_dvars[i].variable ? "true" : "false");
+						debugPrintf("(bool)%s = %s\n", param[0], *(bool *)_dvars[i].variable ? "true" : "false");
 					else
-						DebugPrintf("Invalid value for boolean variable. Valid values are \"true\", \"false\", \"1\", \"0\", \"yes\", \"no\"\n");
+						debugPrintf("Invalid value for boolean variable. Valid values are \"true\", \"false\", \"1\", \"0\", \"yes\", \"no\"\n");
 					break;
 				// Integer Array
 				case DVAR_INTARRAY: {
 					const char *chr = strchr(param[0], '[');
 					if (!chr) {
-						DebugPrintf("You must access this array as %s[element]\n", param[0]);
+						debugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
 						int element = atoi(chr+1);
 						int32 *var = *(int32 **)_dvars[i].variable;
 						if (element >= _dvars[i].arraySize) {
-							DebugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].arraySize);
+							debugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].arraySize);
 						} else {
 							var[element] = atoi(param[1]);
-							DebugPrintf("(int)%s = %d\n", param[0], var[element]);
+							debugPrintf("(int)%s = %d\n", param[0], var[element]);
 						}
 					}
 					}
 					break;
 				default:
-					DebugPrintf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name.c_str(), param[1]);
+					debugPrintf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name.c_str(), param[1]);
 					break;
 				}
 			} else {
@@ -288,36 +288,36 @@ bool Debugger::parseCommand(const char *inputOrig) {
 				switch (_dvars[i].type) {
 				// Integer
 				case DVAR_BYTE:
-					DebugPrintf("(byte)%s = %d\n", param[0], *(const byte *)_dvars[i].variable);
+					debugPrintf("(byte)%s = %d\n", param[0], *(const byte *)_dvars[i].variable);
 					break;
 				case DVAR_INT:
-					DebugPrintf("(int)%s = %d\n", param[0], *(const int32 *)_dvars[i].variable);
+					debugPrintf("(int)%s = %d\n", param[0], *(const int32 *)_dvars[i].variable);
 					break;
 				case DVAR_BOOL:
-					DebugPrintf("(bool)%s = %s\n", param[0], *(const bool *)_dvars[i].variable ? "true" : "false");
+					debugPrintf("(bool)%s = %s\n", param[0], *(const bool *)_dvars[i].variable ? "true" : "false");
 					break;
 				// Integer array
 				case DVAR_INTARRAY: {
 					const char *chr = strchr(param[0], '[');
 					if (!chr) {
-						DebugPrintf("You must access this array as %s[element]\n", param[0]);
+						debugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
 						int element = atoi(chr+1);
 						const int32 *var = *(const int32 **)_dvars[i].variable;
 						if (element >= _dvars[i].arraySize) {
-							DebugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].arraySize);
+							debugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].arraySize);
 						} else {
-							DebugPrintf("(int)%s = %d\n", param[0], var[element]);
+							debugPrintf("(int)%s = %d\n", param[0], var[element]);
 						}
 					}
 				}
 				break;
 				// String
 				case DVAR_STRING:
-					DebugPrintf("(string)%s = %s\n", param[0], ((Common::String *)_dvars[i].variable)->c_str());
+					debugPrintf("(string)%s = %s\n", param[0], ((Common::String *)_dvars[i].variable)->c_str());
 					break;
 				default:
-					DebugPrintf("%s = (unknown type)\n", param[0]);
+					debugPrintf("%s = (unknown type)\n", param[0]);
 					break;
 				}
 			}
@@ -327,7 +327,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 		}
 	}
 
-	DebugPrintf("Unknown command or variable\n");
+	debugPrintf("Unknown command or variable\n");
 	free(input);
 	return true;
 }
@@ -448,7 +448,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 	int width, size;
 	uint i;
 
-	DebugPrintf("Commands are:\n");
+	debugPrintf("Commands are:\n");
 
 	// Obtain a list of sorted command names
 	Common::Array<Common::String> cmds;
@@ -464,31 +464,31 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 		size = cmds[i].size() + 1;
 
 		if ((width + size) >= charsPerLine) {
-			DebugPrintf("\n");
+			debugPrintf("\n");
 			width = size;
 		} else
 			width += size;
 
-		DebugPrintf("%s ", cmds[i].c_str());
+		debugPrintf("%s ", cmds[i].c_str());
 	}
-	DebugPrintf("\n");
+	debugPrintf("\n");
 
 	if (!_dvars.empty()) {
-		DebugPrintf("\n");
-		DebugPrintf("Variables are:\n");
+		debugPrintf("\n");
+		debugPrintf("Variables are:\n");
 		width = 0;
 		for (i = 0; i < _dvars.size(); i++) {
 			size = _dvars[i].name.size() + 1;
 
 			if ((width + size) >= charsPerLine) {
-				DebugPrintf("\n");
+				debugPrintf("\n");
 				width = size;
 			} else
 				width += size;
 
-			DebugPrintf("%s ", _dvars[i].name.c_str());
+			debugPrintf("%s ", _dvars[i].name.c_str());
 		}
-		DebugPrintf("\n");
+		debugPrintf("\n");
 	}
 
 	return true;
@@ -498,24 +498,24 @@ bool Debugger::Cmd_OpenLog(int argc, const char **argv) {
 	if (g_system->hasFeature(OSystem::kFeatureDisplayLogFile))
 		g_system->displayLogFile();
 	else
-		DebugPrintf("Opening the log file not supported on this system\n");
+		debugPrintf("Opening the log file not supported on this system\n");
 	return true;
 }
 
 
 bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 	if (argc == 1) { // print level
-		DebugPrintf("Debugging is currently %s (set at level %d)\n", (gDebugLevel >= 0) ? "enabled" : "disabled", gDebugLevel);
-		DebugPrintf("Usage: %s <n> where n is 0 to 10 or -1 to disable debugging\n", argv[0]);
+		debugPrintf("Debugging is currently %s (set at level %d)\n", (gDebugLevel >= 0) ? "enabled" : "disabled", gDebugLevel);
+		debugPrintf("Usage: %s <n> where n is 0 to 10 or -1 to disable debugging\n", argv[0]);
 	} else { // set level
 		gDebugLevel = atoi(argv[1]);
 		if (gDebugLevel >= 0 && gDebugLevel < 11) {
-			DebugPrintf("Debug level set to level %d\n", gDebugLevel);
+			debugPrintf("Debug level set to level %d\n", gDebugLevel);
 		} else if (gDebugLevel < 0) {
-			DebugPrintf("Debugging is now disabled\n");
+			debugPrintf("Debugging is now disabled\n");
 		} else {
-			DebugPrintf("Invalid debug level value\n");
-			DebugPrintf("Usage: %s <n> where n is 0 to 10 or -1 to disable debugging\n", argv[0]);
+			debugPrintf("Invalid debug level value\n");
+			debugPrintf("Usage: %s <n> where n is 0 to 10 or -1 to disable debugging\n", argv[0]);
 		}
 	}
 
@@ -525,29 +525,29 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 bool Debugger::Cmd_DebugFlagsList(int argc, const char **argv) {
 	const Common::DebugManager::DebugChannelList &debugLevels = DebugMan.listDebugChannels();
 
-	DebugPrintf("Engine debug levels:\n");
-	DebugPrintf("--------------------\n");
+	debugPrintf("Engine debug levels:\n");
+	debugPrintf("--------------------\n");
 	if (debugLevels.empty()) {
-		DebugPrintf("No engine debug levels\n");
+		debugPrintf("No engine debug levels\n");
 		return true;
 	}
 	for (Common::DebugManager::DebugChannelList::const_iterator i = debugLevels.begin(); i != debugLevels.end(); ++i) {
-		DebugPrintf("%c%s - %s (%s)\n", i->enabled ? '+' : ' ',
+		debugPrintf("%c%s - %s (%s)\n", i->enabled ? '+' : ' ',
 				i->name.c_str(), i->description.c_str(),
 				i->enabled ? "enabled" : "disabled");
 	}
-	DebugPrintf("\n");
+	debugPrintf("\n");
 	return true;
 }
 
 bool Debugger::Cmd_DebugFlagEnable(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("debugflag_enable <flag>\n");
+		debugPrintf("debugflag_enable <flag>\n");
 	} else {
 		if (DebugMan.enableDebugChannel(argv[1])) {
-			DebugPrintf("Enabled debug flag '%s'\n", argv[1]);
+			debugPrintf("Enabled debug flag '%s'\n", argv[1]);
 		} else {
-			DebugPrintf("Failed to enable debug flag '%s'\n", argv[1]);
+			debugPrintf("Failed to enable debug flag '%s'\n", argv[1]);
 		}
 	}
 	return true;
@@ -555,12 +555,12 @@ bool Debugger::Cmd_DebugFlagEnable(int argc, const char **argv) {
 
 bool Debugger::Cmd_DebugFlagDisable(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("debugflag_disable <flag>\n");
+		debugPrintf("debugflag_disable <flag>\n");
 	} else {
 		if (DebugMan.disableDebugChannel(argv[1])) {
-			DebugPrintf("Disabled debug flag '%s'\n", argv[1]);
+			debugPrintf("Disabled debug flag '%s'\n", argv[1]);
 		} else {
-			DebugPrintf("Failed to disable debug flag '%s'\n", argv[1]);
+			debugPrintf("Failed to disable debug flag '%s'\n", argv[1]);
 		}
 	}
 	return true;

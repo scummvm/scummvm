@@ -1308,7 +1308,7 @@ void WinnieEngine::printStrWinnie(char *szMsg) {
 // Console-related functions
 
 void WinnieEngine::debugCurRoom() {
-	_console->DebugPrintf("Current Room = %d\n", _room);
+	_console->debugPrintf("Current Room = %d\n", _room);
 }
 
 WinnieEngine::WinnieEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {

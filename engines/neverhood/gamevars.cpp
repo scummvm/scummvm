@@ -127,7 +127,7 @@ int16 GameVars::getSubVarIndex(int16 varIndex, uint32 subNameHash) {
 void GameVars::dumpVars(Console *con) {
 	for (Common::Array<GameVar>::iterator it = _vars.begin(); it != _vars.end(); ++it) {
 		GameVar gameVar = *it;
-		con->DebugPrintf("hash: %08X, var: %08X, first index: %3d, next index: %3d\n", gameVar.nameHash, gameVar.value, gameVar.firstIndex, gameVar.nextIndex);
+		con->debugPrintf("hash: %08X, var: %08X, first index: %3d, next index: %3d\n", gameVar.nameHash, gameVar.value, gameVar.firstIndex, gameVar.nextIndex);
 	}
 }
 

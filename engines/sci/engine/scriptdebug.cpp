@@ -604,7 +604,7 @@ bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t sen
 	Common::List<Breakpoint>::const_iterator bpIter;
 	for (bpIter = _debugState._breakpoints.begin(); bpIter != _debugState._breakpoints.end(); ++bpIter) {
 		if ((*bpIter).type == breakpointType && (*bpIter).name == methodName) {
-			_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
+			_console->debugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
 			_debugState.debugging = true;
 			_debugState.breakpointWasHit = true;
 			return true;
@@ -620,7 +620,7 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 		Common::List<Breakpoint>::const_iterator bp;
 		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
 			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
-				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
+				_console->debugPrintf("Break on script %d, export %d\n", script, pubfunct);
 				_debugState.debugging = true;
 				_debugState.breakpointWasHit = true;
 				return true;
@@ -666,12 +666,12 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 			reg_t selectorValue = *varp.getPointer(segMan);
 			if (!argc && (activeBreakpointTypes & BREAK_SELECTORREAD)) {
 				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORREAD, send_obj, selector))
-					con->DebugPrintf("Read from selector (%s:%s): %04x:%04x\n",
+					con->debugPrintf("Read from selector (%s:%s): %04x:%04x\n",
 							objectName, selectorName,
 							PRINT_REG(selectorValue));
 			} else if (argc && (activeBreakpointTypes & BREAK_SELECTORWRITE)) {
 				if (g_sci->checkSelectorBreakpoint(BREAK_SELECTORWRITE, send_obj, selector))
-					con->DebugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n",
+					con->debugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n",
 							objectName, selectorName,
 							PRINT_REG(selectorValue), PRINT_REG(argp[1]));
 			}
@@ -690,13 +690,13 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 			if (true) {
 				if (true) {
 #endif
-					con->DebugPrintf("%s::%s(", objectName, selectorName);
+					con->debugPrintf("%s::%s(", objectName, selectorName);
 					for (int i = 0; i < argc; i++) {
-						con->DebugPrintf("%04x:%04x", PRINT_REG(argp[i+1]));
+						con->debugPrintf("%04x:%04x", PRINT_REG(argp[i+1]));
 						if (i + 1 < argc)
-							con->DebugPrintf(", ");
+							con->debugPrintf(", ");
 					}
-					con->DebugPrintf(") at %04x:%04x\n", PRINT_REG(funcp));
+					con->debugPrintf(") at %04x:%04x\n", PRINT_REG(funcp));
 				}
 			}
 		break;

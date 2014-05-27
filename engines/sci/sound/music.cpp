@@ -666,7 +666,7 @@ void SciMusic::printPlayList(Console *con) {
 
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		MusicEntry *song = _playList[i];
-		con->DebugPrintf("%d: %04x:%04x (%s), resource id: %d, status: %s, %s type\n",
+		con->debugPrintf("%d: %04x:%04x (%s), resource id: %d, status: %s, %s type\n",
 						i, PRINT_REG(song->soundObj),
 						g_sci->getEngineState()->_segMan->getObjectName(song->soundObj),
 						song->resourceId, musicStatus[song->status],
@@ -683,26 +683,26 @@ void SciMusic::printSongInfo(reg_t obj, Console *con) {
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		MusicEntry *song = *i;
 		if (song->soundObj == obj) {
-			con->DebugPrintf("Resource id: %d, status: %s\n", song->resourceId, musicStatus[song->status]);
-			con->DebugPrintf("dataInc: %d, hold: %d, loop: %d\n", song->dataInc, song->hold, song->loop);
-			con->DebugPrintf("signal: %d, priority: %d\n", song->signal, song->priority);
-			con->DebugPrintf("ticker: %d, volume: %d\n", song->ticker, song->volume);
+			con->debugPrintf("Resource id: %d, status: %s\n", song->resourceId, musicStatus[song->status]);
+			con->debugPrintf("dataInc: %d, hold: %d, loop: %d\n", song->dataInc, song->hold, song->loop);
+			con->debugPrintf("signal: %d, priority: %d\n", song->signal, song->priority);
+			con->debugPrintf("ticker: %d, volume: %d\n", song->ticker, song->volume);
 
 			if (song->pMidiParser) {
-				con->DebugPrintf("Type: MIDI\n");
+				con->debugPrintf("Type: MIDI\n");
 				if (song->soundRes) {
 					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId());
-					con->DebugPrintf("Channels: %d\n", track->channelCount);
+					con->debugPrintf("Channels: %d\n", track->channelCount);
 				}
 			} else if (song->pStreamAud || song->pLoopStream) {
-				con->DebugPrintf("Type: digital audio (%s), sound active: %s\n",
+				con->debugPrintf("Type: digital audio (%s), sound active: %s\n",
 					song->pStreamAud ? "non looping" : "looping",
 					_pMixer->isSoundHandleActive(song->hCurrentAud) ? "yes" : "no");
 				if (song->soundRes) {
-					con->DebugPrintf("Sound resource information:\n");
+					con->debugPrintf("Sound resource information:\n");
 					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 					if (track && track->digitalChannelNr != -1) {
-						con->DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
+						con->debugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 							track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 					}
 				}
@@ -712,7 +712,7 @@ void SciMusic::printSongInfo(reg_t obj, Console *con) {
 		}
 	}
 
-	con->DebugPrintf("Song object not found in playlist");
+	con->debugPrintf("Song object not found in playlist");
 }
 
 MusicEntry::MusicEntry() {

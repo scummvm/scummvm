@@ -62,7 +62,7 @@ static int strToInt(const char *s) {
  */
 bool HugoConsole::Cmd_gotoScreen(int argc, const char **argv) {
 	if ((argc != 2) || (strToInt(argv[1]) > _vm->_numScreens)){
-		DebugPrintf("Usage: %s <screen number>\n", argv[0]);
+		debugPrintf("Usage: %s <screen number>\n", argv[0]);
 		return true;
 	}
 
@@ -75,13 +75,13 @@ bool HugoConsole::Cmd_gotoScreen(int argc, const char **argv) {
  */
 bool HugoConsole::Cmd_listScreens(int argc, const char **argv) {
 	if (argc != 1) {
-		DebugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 
-	DebugPrintf("Available screens for this game are:\n");
+	debugPrintf("Available screens for this game are:\n");
 	for (int i = 0; i < _vm->_numScreens; i++)
-		DebugPrintf("%2d - %s\n", i, _vm->_text->getScreenNames(i));
+		debugPrintf("%2d - %s\n", i, _vm->_text->getScreenNames(i));
 	return true;
 }
 
@@ -90,14 +90,14 @@ bool HugoConsole::Cmd_listScreens(int argc, const char **argv) {
  */
 bool HugoConsole::Cmd_listObjects(int argc, const char **argv) {
 	if (argc != 1) {
-		DebugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 
-	DebugPrintf("Available objects for this game are:\n");
+	debugPrintf("Available objects for this game are:\n");
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
 		if (_vm->_object->_objects[i]._genericCmd & TAKE)
-			DebugPrintf("%2d - %s\n", i, _vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2));
+			debugPrintf("%2d - %s\n", i, _vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2));
 	}
 	return true;
 }
@@ -107,14 +107,14 @@ bool HugoConsole::Cmd_listObjects(int argc, const char **argv) {
  */
 bool HugoConsole::Cmd_getObject(int argc, const char **argv) {
 	if ((argc != 2) || (strToInt(argv[1]) > _vm->_object->_numObj)) {
-		DebugPrintf("Usage: %s <object number>\n", argv[0]);
+		debugPrintf("Usage: %s <object number>\n", argv[0]);
 		return true;
 	}
 
 	if (_vm->_object->_objects[strToInt(argv[1])]._genericCmd & TAKE)
 		_vm->_parser->takeObject(&_vm->_object->_objects[strToInt(argv[1])]);
 	else
-		DebugPrintf("Object not available\n");
+		debugPrintf("Object not available\n");
 
 	return true;
 }
@@ -124,7 +124,7 @@ bool HugoConsole::Cmd_getObject(int argc, const char **argv) {
  */
 bool HugoConsole::Cmd_getAllObjects(int argc, const char **argv) {
 	if (argc != 1) {
-		DebugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 
@@ -141,7 +141,7 @@ bool HugoConsole::Cmd_getAllObjects(int argc, const char **argv) {
  */
 bool HugoConsole::Cmd_boundaries(int argc, const char **argv) {
 	if (argc != 1) {
-		DebugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 

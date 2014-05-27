@@ -40,7 +40,7 @@ public:
 	Debugger();
 	virtual ~Debugger();
 
-	int DebugPrintf(const char *format, ...) GCC_PRINTF(2, 3);
+	int debugPrintf(const char *format, ...) GCC_PRINTF(2, 3);
 
 	/**
 	 * The onFrame() method should be invoked by the engine at regular

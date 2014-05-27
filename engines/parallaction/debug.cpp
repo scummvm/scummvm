@@ -81,7 +81,7 @@ bool Debugger::Cmd_Location(int argc, const char **argv) {
 		break;
 
 	case 1:
-		DebugPrintf("location <location name> [character name]\n");
+		debugPrintf("location <location name> [character name]\n");
 
 	}
 
@@ -90,13 +90,13 @@ bool Debugger::Cmd_Location(int argc, const char **argv) {
 
 bool Debugger::Cmd_Locations(int argc, const char **argv) {
 
-	DebugPrintf("+------------------------------+---------+\n"
+	debugPrintf("+------------------------------+---------+\n"
 				"| location name                |  flags  |\n"
 				"+------------------------------+---------+\n");
 	for (uint i = 0; i < _vm->_numLocations; i++) {
-		DebugPrintf("|%-30s| %08x|\n", _vm->_locationNames[i], _vm->_localFlags[i]);
+		debugPrintf("|%-30s| %08x|\n", _vm->_locationNames[i], _vm->_localFlags[i]);
 	}
-	DebugPrintf("+------------------------------+---------+\n");
+	debugPrintf("+------------------------------+---------+\n");
 
 	return true;
 }
@@ -105,14 +105,14 @@ bool Debugger::Cmd_GlobalFlags(int argc, const char **argv) {
 
 	uint32 flags = g_globalFlags;
 
-	DebugPrintf("+------------------------------+---------+\n"
+	debugPrintf("+------------------------------+---------+\n"
 				"| flag name                    |  value  |\n"
 				"+------------------------------+---------+\n");
 	for (uint i = 0; i < _vm->_globalFlagsNames->count(); i++) {
 		const char *value = ((flags & (1 << i)) == 0) ? "OFF" : "ON";
-		DebugPrintf("|%-30s|   %-6s|\n", _vm->_globalFlagsNames->item(i),  value);
+		debugPrintf("|%-30s|   %-6s|\n", _vm->_globalFlagsNames->item(i),  value);
 	}
-	DebugPrintf("+------------------------------+---------+\n");
+	debugPrintf("+------------------------------+---------+\n");
 
 	return true;
 }
@@ -125,7 +125,7 @@ bool Debugger::Cmd_ToggleGlobalFlag(int argc, const char **argv) {
 	case 2:
 		i = _vm->_globalFlagsNames->lookup(argv[1]);
 		if (i == Table::notFound) {
-			DebugPrintf("invalid flag '%s'\n", argv[1]);
+			debugPrintf("invalid flag '%s'\n", argv[1]);
 		} else {
 			i--;
 			if ((g_globalFlags & (1 << i)) == 0)
@@ -136,7 +136,7 @@ bool Debugger::Cmd_ToggleGlobalFlag(int argc, const char **argv) {
 		break;
 
 	default:
-		DebugPrintf("toggleglobalflag <flag name>\n");
+		debugPrintf("toggleglobalflag <flag name>\n");
 
 	}
 
@@ -147,14 +147,14 @@ bool Debugger::Cmd_LocalFlags(int argc, const char **argv) {
 
 	uint32 flags = _vm->getLocationFlags();
 
-	DebugPrintf("+------------------------------+---------+\n"
+	debugPrintf("+------------------------------+---------+\n"
 				"| flag name                    |  value  |\n"
 				"+------------------------------+---------+\n");
 	for (uint i = 0; i < _vm->_localFlagNames->count(); i++) {
 		const char *value = ((flags & (1 << i)) == 0) ? "OFF" : "ON";
-		DebugPrintf("|%-30s|   %-6s|\n", _vm->_localFlagNames->item(i),  value);
+		debugPrintf("|%-30s|   %-6s|\n", _vm->_localFlagNames->item(i),  value);
 	}
-	DebugPrintf("+------------------------------+---------+\n");
+	debugPrintf("+------------------------------+---------+\n");
 
 	return true;
 }
@@ -162,13 +162,13 @@ bool Debugger::Cmd_LocalFlags(int argc, const char **argv) {
 bool Debugger::Cmd_Give(int argc, const char **argv) {
 
 	if (argc == 1) {
-		DebugPrintf("give <item name>\n");
+		debugPrintf("give <item name>\n");
 	} else {
 		int index = _vm->_objectsNames->lookup(argv[1]);
 		if (index != Table::notFound)
 			_vm->addInventoryItem(index + 4);
 		else
-			DebugPrintf("invalid item name '%s'\n", argv[1]);
+			debugPrintf("invalid item name '%s'\n", argv[1]);
 	}
 
 	return true;
@@ -181,15 +181,15 @@ bool Debugger::Cmd_Zones(int argc, const char **argv) {
 	ZoneList::iterator e = _vm->_location._zones.end();
 	Common::Rect r;
 
-	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n"
+	debugPrintf("+--------------------+---+---+---+---+--------+--------+\n"
 				"| name               | l | t | r | b |  type  |  flag  |\n"
 				"+--------------------+---+---+---+---+--------+--------+\n");
 	for ( ; b != e; ++b) {
 		ZonePtr z = *b;
 		z->getRect(r);
-		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_name, r.left, r.top, r.right, r.bottom, z->_type, z->_flags );
+		debugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_name, r.left, r.top, r.right, r.bottom, z->_type, z->_flags );
 	}
-	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
+	debugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
 
 
 	return true;
@@ -260,15 +260,15 @@ bool Debugger::Cmd_Animations(int argc, const char **argv) {
 	AnimationList::iterator e = _vm->_location._animations.end();
 	Common::String flags;
 
-	DebugPrintf("+--------------------+----+----+----+---+--------+----------------------------------------+\n"
+	debugPrintf("+--------------------+----+----+----+---+--------+----------------------------------------+\n"
 				"| name               | x  | y  | z  | f |  type  |                 flags                  | \n"
 				"+--------------------+----+----+----+---+--------+----------------------------------------+\n");
 	for ( ; b != e; ++b) {
 		AnimationPtr a = *b;
 		flags = decodeZoneFlags(a->_flags);
-		DebugPrintf("|%-20s|%4i|%4i|%4i|%3i|%8x|%-40s|\n", a->_name, a->getX(), a->getY(), a->getZ(), a->getF(), a->_type, flags.c_str() );
+		debugPrintf("|%-20s|%4i|%4i|%4i|%3i|%8x|%-40s|\n", a->_name, a->getX(), a->getY(), a->getZ(), a->getF(), a->_type, flags.c_str() );
 	}
-	DebugPrintf("+--------------------+---+---+---+---+--------+----------------------------------------+\n");
+	debugPrintf("+--------------------+---+---+---+---+--------+----------------------------------------+\n");
 
 
 	return true;
@@ -278,7 +278,7 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 
 	const char *objType[] = { "DOOR", "GET", "ANIM" };
 
-	DebugPrintf("+--------------------+-----+-----+-----+-----+-----+-------+-----+--------+\n"
+	debugPrintf("+--------------------+-----+-----+-----+-----+-----+-------+-----+--------+\n"
 				"| name               |  x  |  y  |  w  |  h  |  z  | layer |  f  |  type  |\n"
 				"+--------------------+-----+-----+-----+-----+-----+-------+-----+--------+\n");
 
@@ -289,11 +289,11 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 	for ( ; b != e; ++b) {
 		GfxObj *obj = *b;
 		obj->getRect(obj->frame, r);
-		DebugPrintf("|%-20s|%5i|%5i|%5i|%5i|%5i|%7i|%5i|%8s|\n", obj->getName(), r.left, r.top, r.width(), r.height(),
+		debugPrintf("|%-20s|%5i|%5i|%5i|%5i|%5i|%7i|%5i|%8s|\n", obj->getName(), r.left, r.top, r.width(), r.height(),
 			obj->z, obj->layer, obj->frame, objType[obj->type]);
 	}
 
-	DebugPrintf("+--------------------+-----+-----+-----+-----+-----+-------+-----+--------+\n");
+	debugPrintf("+--------------------+-----+-----+-----+-----+-----+-------+-----+--------+\n");
 
 	return true;
 }
@@ -307,14 +307,14 @@ bool Debugger::Cmd_Programs(int argc, const char** argv) {
 
 	int i = 1;
 
-	DebugPrintf("+---+--------------------+--------+----------+\n"
+	debugPrintf("+---+--------------------+--------+----------+\n"
 				"| # | bound animation    |  size  |  status  |\n"
 				"+---+--------------------+--------+----------+\n");
 	for ( ; b != e; b++, i++) {
 		ProgramPtr p = *b;
-		DebugPrintf("|%3i|%-20s|%8i|%-10s|\n", i, p->_anim->_name, p->_instructions.size(), status[p->_status] );
+		debugPrintf("|%3i|%-20s|%8i|%-10s|\n", i, p->_anim->_name, p->_instructions.size(), status[p->_status] );
 	}
-	DebugPrintf("+---+--------------------+--------+----------+\n");
+	debugPrintf("+---+--------------------+--------+----------+\n");
 
 	return true;
 }

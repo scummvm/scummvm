@@ -40,7 +40,7 @@ PegasusConsole::~PegasusConsole() {
 
 bool PegasusConsole::Cmd_Die(int argc, const char **argv) {
 	if (argc == 1) {
-		DebugPrintf("Usage: die <death reason>\n");
+		debugPrintf("Usage: die <death reason>\n");
 		return true;
 	}
 
@@ -54,7 +54,7 @@ bool PegasusConsole::Cmd_Die(int argc, const char **argv) {
 
 
 	if (invalidReason) {
-		DebugPrintf("Invalid death reason %d\n", reason);
+		debugPrintf("Invalid death reason %d\n", reason);
 		return true;
 	}
 
@@ -65,14 +65,14 @@ bool PegasusConsole::Cmd_Die(int argc, const char **argv) {
 bool PegasusConsole::Cmd_Jump(int argc, const char **argv) {
 	if (!g_interface) {
 		// TODO
-		DebugPrintf("Cannot jump without interface set up\n");
+		debugPrintf("Cannot jump without interface set up\n");
 		return true;
 	}
 
 	// TODO: Default room/direction for each neighborhood
 
 	if (argc < 4) {
-		DebugPrintf("Usage: jump <neighborhood> <room> <direction>\n");
+		debugPrintf("Usage: jump <neighborhood> <room> <direction>\n");
 		return true;
 	}
 
@@ -82,14 +82,14 @@ bool PegasusConsole::Cmd_Jump(int argc, const char **argv) {
 
 	if ((neighborhood < kCaldoriaID || neighborhood > kNoradDeltaID || neighborhood == kFinalTSAID) &&
 			neighborhood != kNoradSubChaseID) {
-		DebugPrintf("Invalid neighborhood %d", neighborhood);
+		debugPrintf("Invalid neighborhood %d", neighborhood);
 		return true;
 	}
 
 	// No real way to check room validity at this point
 
 	if (direction > kWest) {
-		DebugPrintf("Invalid direction %d", direction);
+		debugPrintf("Invalid direction %d", direction);
 		return true;
 	}
 

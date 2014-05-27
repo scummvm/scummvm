@@ -61,7 +61,7 @@ bool Cheater_Geisha::cheat(GUI::Debugger &console) {
 		uint32 digit5 = READ_VARO_UINT32(0x778);
 
 		if (digit1 && digit2 && digit3 && digit4 && digit5)
-			console.DebugPrintf("Mastermind solution: %d %d %d %d %d\n",
+			console.debugPrintf("Mastermind solution: %d %d %d %d %d\n",
 			                    digit1, digit2, digit3, digit4, digit5);
 
 		return true;

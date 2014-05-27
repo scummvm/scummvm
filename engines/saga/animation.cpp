@@ -914,14 +914,14 @@ void Anim::animInfo() {
 
 	animCount = getAnimationCount();
 
-	_vm->_console->DebugPrintf("There are %d animations loaded:\n", animCount);
+	_vm->_console->debugPrintf("There are %d animations loaded:\n", animCount);
 
 	for (i = 0; i < MAX_ANIMATIONS; i++) {
 		if (_animations[i] == NULL) {
 			continue;
 		}
 
-		_vm->_console->DebugPrintf("%02d: Frames: %u Flags: %u\n", i, _animations[i]->maxFrame, _animations[i]->flags);
+		_vm->_console->debugPrintf("%02d: Frames: %u Flags: %u\n", i, _animations[i]->maxFrame, _animations[i]->flags);
 	}
 }
 
@@ -929,10 +929,10 @@ void Anim::animInfo() {
 void Anim::cutawayInfo() {
 	uint16 i;
 
-	_vm->_console->DebugPrintf("There are %d cutaways loaded:\n", _cutawayList.size());
+	_vm->_console->debugPrintf("There are %d cutaways loaded:\n", _cutawayList.size());
 
 	for (i = 0; i < _cutawayList.size(); i++) {
-		_vm->_console->DebugPrintf("%02d: Bg res: %u Anim res: %u Cycles: %u Framerate: %u\n", i,
+		_vm->_console->debugPrintf("%02d: Bg res: %u Anim res: %u Cycles: %u Framerate: %u\n", i,
 			_cutawayList[i].backgroundResourceId, _cutawayList[i].animResourceId,
 			_cutawayList[i].cycles, _cutawayList[i].frameRate);
 	}

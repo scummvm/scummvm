@@ -41,7 +41,7 @@ Debugger::Debugger(HopkinsEngine *vm) : GUI::Debugger() {
 // Turns dirty rects on or off
 bool Debugger::cmd_DirtyRects(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("%s: [on | off]\n", argv[0]);
+		debugPrintf("%s: [on | off]\n", argv[0]);
 		return true;
 	} else {
 		_vm->_graphicsMan->_showDirtyRects = !strcmp(argv[1], "on");
@@ -52,7 +52,7 @@ bool Debugger::cmd_DirtyRects(int argc, const char **argv) {
 // Change room number
 bool Debugger::cmd_Teleport(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("%s: [Room number]\n", argv[0]);
+		debugPrintf("%s: [Room number]\n", argv[0]);
 		return true;
 	} else {
 		_vm->_globals->_exitId = atoi(argv[1]);
@@ -62,13 +62,13 @@ bool Debugger::cmd_Teleport(int argc, const char **argv) {
 
 // Display room number
 bool Debugger::cmd_ShowCurrentRoom(int argc, const char **argv) {
-	DebugPrintf("Current room: %d\n", _vm->_globals->_curRoomNum);
+	debugPrintf("Current room: %d\n", _vm->_globals->_curRoomNum);
 	return true;
 }
 
 bool Debugger::cmd_Zones(int argc, const char **argv) {
 if (argc != 2) {
-		DebugPrintf("%s: [on | off]\n", argv[0]);
+		debugPrintf("%s: [on | off]\n", argv[0]);
 		return true;
 	} else {
 		_vm->_graphicsMan->_showZones = !strcmp(argv[1], "on");
@@ -78,7 +78,7 @@ if (argc != 2) {
 
 bool Debugger::cmd_Lines(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("%s: [on | off]\n", argv[0]);
+		debugPrintf("%s: [on | off]\n", argv[0]);
 		return true;
 	} else {
 		_vm->_graphicsMan->_showLines = !strcmp(argv[1], "on");

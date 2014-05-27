@@ -81,7 +81,7 @@ bool Debugger::cmd_pc(int argc, const char **argv) {
 		int val = getNumber(argv[1]);
 		_script->_currentInstruction = val;
 	}
-	DebugPrintf("pc = 0x%04X (%d)\n", _script->_currentInstruction, _script->_currentInstruction);
+	debugPrintf("pc = 0x%04X (%d)\n", _script->_currentInstruction, _script->_currentInstruction);
 	return true;
 }
 
@@ -97,9 +97,9 @@ bool Debugger::cmd_mem(int argc, const char **argv) {
 			// Get
 			val = _script->_variables[pos];
 		}
-		DebugPrintf("mem[0x%04X] = 0x%02X\n", pos, val);
+		debugPrintf("mem[0x%04X] = 0x%02X\n", pos, val);
 	} else {
-		DebugPrintf("Syntax: mem <addr> [<val>]\n");
+		debugPrintf("Syntax: mem <addr> [<val>]\n");
 	}
 	return true;
 }
@@ -109,7 +109,7 @@ bool Debugger::cmd_loadgame(int argc, const char **argv) {
 		int slot = getNumber(argv[1]);
 		_script->loadgame(slot);
 	} else {
-		DebugPrintf("Syntax: load <slot>\n");
+		debugPrintf("Syntax: load <slot>\n");
 	}
 	return true;
 }
@@ -119,7 +119,7 @@ bool Debugger::cmd_savegame(int argc, const char **argv) {
 		int slot = getNumber(argv[1]);
 		_script->savegame(slot);
 	} else {
-		DebugPrintf("Syntax: save <slot>\n");
+		debugPrintf("Syntax: save <slot>\n");
 	}
 	return true;
 }
@@ -129,7 +129,7 @@ bool Debugger::cmd_playref(int argc, const char **argv) {
 		int ref = getNumber(argv[1]);
 		_script->playvideofromref(ref);
 	} else {
-		DebugPrintf("Syntax: playref <videorefnum>\n");
+		debugPrintf("Syntax: playref <videorefnum>\n");
 	}
 	return true;
 }
@@ -140,7 +140,7 @@ bool Debugger::cmd_dumppal(int argc, const char **argv) {
 	_vm->_system->getPaletteManager()->grabPalette(palettedump, 0, 256);
 
 	for (i = 0; i < 256; i++) {
-		DebugPrintf("%3d: %3d,%3d,%3d\n", i, palettedump[(i * 3)], palettedump[(i * 3) + 1], palettedump[(i * 3) + 2]);
+		debugPrintf("%3d: %3d,%3d,%3d\n", i, palettedump[(i * 3)], palettedump[(i * 3) + 1], palettedump[(i * 3) + 2]);
 	}
 	return true;
 }

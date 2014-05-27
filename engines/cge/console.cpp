@@ -37,7 +37,7 @@ CGEConsole::~CGEConsole() {
  */
 bool CGEConsole::Cmd_boundaries(int argc, const char **argv) {
 	if (argc != 1) {
-		DebugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 

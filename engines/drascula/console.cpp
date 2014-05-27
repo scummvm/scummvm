@@ -35,7 +35,7 @@ Console::~Console() {
 
 bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: room <number>\n");
+		debugPrintf("Usage: room <number>\n");
 		return true;
 	}
 

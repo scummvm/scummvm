@@ -65,7 +65,7 @@ static int strToInt(const char *s) {
 
 bool Debugger::Cmd_Mouse(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: %s [ on | off ]\n", argv[0]);
+		debugPrintf("Usage: %s [ on | off ]\n", argv[0]);
 	} else {
 		_showMousePos = strcmp(argv[1], "on") == 0;
 	}
@@ -75,8 +75,8 @@ bool Debugger::Cmd_Mouse(int argc, const char **argv) {
 
 bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Current scene is: %d\n", _vm->_game->_scene._currentSceneId);
-		DebugPrintf("Usage: %s <scene number>\n", argv[0]);
+		debugPrintf("Current scene is: %d\n", _vm->_game->_scene._currentSceneId);
+		debugPrintf("Usage: %s <scene number>\n", argv[0]);
 		return true;
 	} else {
 		_vm->_game->_scene._nextSceneId = strToInt(argv[1]);
@@ -106,10 +106,10 @@ bool Debugger::Cmd_ShowHotSpots(int argc, const char **argv) {
 bool Debugger::Cmd_ListHotSpots(int argc, const char **argv) {
 	Hotspots &hotspots = _vm->_game->_scene._hotspots;
 
-	DebugPrintf("%d hotspots present\n", hotspots.size());
+	debugPrintf("%d hotspots present\n", hotspots.size());
 
 	for (uint index = 0; index < hotspots.size(); ++index) {
-		DebugPrintf("(%d): %p x1 = %d; y1 = %d; x2 = %d; y2 = %d\n",
+		debugPrintf("(%d): %p x1 = %d; y1 = %d; x2 = %d; y2 = %d\n",
 			index, (void *)&hotspots[index],
 			hotspots[index]._bounds.left, hotspots[index]._bounds.top,
 			hotspots[index]._bounds.right, hotspots[index]._bounds.bottom);
@@ -120,7 +120,7 @@ bool Debugger::Cmd_ListHotSpots(int argc, const char **argv) {
 
 bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: %s <sound file>\n", argv[0]);
+		debugPrintf("Usage: %s <sound file>\n", argv[0]);
 	} else {
 		int commandId = strToInt(argv[1]);
 		int param = (argc >= 3) ? strToInt(argv[2]) : 0;
@@ -133,8 +133,8 @@ bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
 
 bool Debugger::Cmd_PlayAudio(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: %s <sound index> <sound group>\n", argv[0]);
-		DebugPrintf("If the sound group isn't defined, the default one will be used\n");
+		debugPrintf("Usage: %s <sound index> <sound group>\n", argv[0]);
+		debugPrintf("If the sound group isn't defined, the default one will be used\n");
 	} else {
 		int index = strToInt(argv[1]);
 		Common::String soundGroup = (argc >= 3) ? argv[2] : "";
@@ -170,13 +170,13 @@ bool Debugger::Cmd_ShowCodes(int argc, const char **argv) {
 
 bool Debugger::Cmd_DumpFile(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Usage: %s <resource>\n", argv[0]);
+		debugPrintf("Usage: %s <resource>\n", argv[0]);
 	} else {
 		Common::DumpFile outFile;
 		Common::File inFile;
 
 		if (!inFile.open(argv[1])) {
-			DebugPrintf("Specified resource does not exist\n");
+			debugPrintf("Specified resource does not exist\n");
 		} else {
 			outFile.open(argv[1]);
 			byte *data = new byte[inFile.size()];
@@ -189,7 +189,7 @@ bool Debugger::Cmd_DumpFile(int argc, const char **argv) {
 			inFile.close();
 			outFile.close();
 
-			DebugPrintf("File written successfully.\n");
+			debugPrintf("File written successfully.\n");
 		}
 	}
 
@@ -198,9 +198,9 @@ bool Debugger::Cmd_DumpFile(int argc, const char **argv) {
 
 bool Debugger::Cmd_ShowQuote(int argc, const char **argv) {
 	if (argc != 2)
-		DebugPrintf("Usage: %s <quote number>\n", argv[0]);
+		debugPrintf("Usage: %s <quote number>\n", argv[0]);
 	else
-		DebugPrintf("%s", _vm->_game->getQuote(strToInt(argv[1])).c_str());
+		debugPrintf("%s", _vm->_game->getQuote(strToInt(argv[1])).c_str());
 
 	return true;
 }
@@ -208,11 +208,11 @@ bool Debugger::Cmd_ShowQuote(int argc, const char **argv) {
 bool Debugger::Cmd_ShowVocab(int argc, const char **argv) {
 	if (argc != 2) {
 		for (uint32 i = 0; i < _vm->_game->_scene.getVocabStringsCount(); i++) {
-			DebugPrintf("%03d: '%s'\n", i, _vm->_game->_scene.getVocab(i + 1).c_str());
+			debugPrintf("%03d: '%s'\n", i, _vm->_game->_scene.getVocab(i + 1).c_str());
 		}
 	} else {
 		int vocabId = strToInt(argv[1]);
-		DebugPrintf("%03d: '%s'\n", vocabId, _vm->_game->_scene.getVocab(vocabId + 1).c_str());
+		debugPrintf("%03d: '%s'\n", vocabId, _vm->_game->_scene.getVocab(vocabId + 1).c_str());
 	}
 
 	return true;
@@ -240,20 +240,20 @@ bool Debugger::Cmd_DumpVocab(int argc, const char **argv) {
 	outFile.flush();
 	outFile.close();
 
-	DebugPrintf("Game vocab dumped\n");
+	debugPrintf("Game vocab dumped\n");
 
 	return true;
 }
 
 bool Debugger::Cmd_ShowMessage(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Usage: %s <message number>\n", argv[0]);
+		debugPrintf("Usage: %s <message number>\n", argv[0]);
 	} else {
 		int messageId = strToInt(argv[1]);
 		Common::StringArray msg = _vm->_game->getMessage(messageId);
 		for (uint idx = 0; idx < msg.size(); ++idx) {
 			Common::String srcLine = msg[idx];
-			DebugPrintf("%s\n", srcLine.c_str());
+			debugPrintf("%s\n", srcLine.c_str());
 		}
 	}
 
@@ -266,12 +266,12 @@ bool Debugger::Cmd_ShowItem(int argc, const char **argv) {
 	if (argc != 2) {
 		for (uint32 i = 0; i < objects.size(); i++) {
 			Common::String desc = _vm->_game->_scene.getVocab(objects[i]._descId);
-			DebugPrintf("%03d: '%s'\n", i, desc.c_str());
+			debugPrintf("%03d: '%s'\n", i, desc.c_str());
 		}
 	} else {
 		int vocabId = strToInt(argv[1]);
 		Common::String desc = _vm->_game->_scene.getVocab(objects[vocabId]._descId);
-		DebugPrintf("%03d: '%s'\n", vocabId, desc.c_str());
+		debugPrintf("%03d: '%s'\n", vocabId, desc.c_str());
 	}
 
 	return true;
@@ -301,7 +301,7 @@ bool Debugger::Cmd_DumpItems(int argc, const char **argv) {
 	outFile.flush();
 	outFile.close();
 
-	DebugPrintf("Game items dumped\n");
+	debugPrintf("Game items dumped\n");
 
 	return true;
 }
@@ -310,7 +310,7 @@ bool Debugger::Cmd_Item(int argc, const char **argv) {
 	InventoryObjects &objects = _vm->_game->_objects;
 
 	if (argc != 2) {
-		DebugPrintf("Usage: %s <item number>\n", argv[0]);
+		debugPrintf("Usage: %s <item number>\n", argv[0]);
 		return true;
 	} else {
 		int objectId = strToInt(argv[1]);
@@ -318,7 +318,7 @@ bool Debugger::Cmd_Item(int argc, const char **argv) {
 		if (!objects.isInInventory(objectId))
 			objects.addToInventory(objectId);
 
-		DebugPrintf("Item added.\n");
+		debugPrintf("Item added.\n");
 		return false;
 	}
 }

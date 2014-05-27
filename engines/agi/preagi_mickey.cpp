@@ -2228,10 +2228,10 @@ void MickeyEngine::waitAnyKey(bool anim) {
 // Console-related functions
 
 void MickeyEngine::debugCurRoom() {
-	_console->DebugPrintf("Current Room = %d\n", _gameStateMickey.iRoom);
+	_console->debugPrintf("Current Room = %d\n", _gameStateMickey.iRoom);
 
 	if (_gameStateMickey.iRmObj[_gameStateMickey.iRoom] != IDI_MSA_OBJECT_NONE) {
-		_console->DebugPrintf("Object %d is in the room\n", _gameStateMickey.iRmObj[_gameStateMickey.iRoom]);
+		_console->debugPrintf("Object %d is in the room\n", _gameStateMickey.iRmObj[_gameStateMickey.iRoom]);
 	}
 }
 
