@@ -58,10 +58,10 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	_vm = s;
 
 	// Register variables
-	DVar_Register("scumm_speed", &_vm->_fastMode, DVAR_BYTE, 0);
-	DVar_Register("scumm_room", &_vm->_currentRoom, DVAR_BYTE, 0);
-	DVar_Register("scumm_roomresource", &_vm->_roomResource, DVAR_INT, 0);
-	DVar_Register("scumm_vars", &_vm->_scummVars, DVAR_INTARRAY, _vm->_numVariables);
+	registerVar("scumm_speed", &_vm->_fastMode, DVAR_BYTE, 0);
+	registerVar("scumm_room", &_vm->_currentRoom, DVAR_BYTE, 0);
+	registerVar("scumm_roomresource", &_vm->_roomResource, DVAR_INT, 0);
+	registerVar("scumm_vars", &_vm->_scummVars, DVAR_INTARRAY, _vm->_numVariables);
 
 	// Register commands
 	DCmd_Register("continue",  WRAP_METHOD(ScummDebugger, Cmd_Exit));

@@ -79,11 +79,11 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	assert(_engine->_gamestate);
 
 	// Variables
-	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
-	DVar_Register("gc_interval",		&engine->_gamestate->scriptGCInterval, DVAR_INT, 0);
-	DVar_Register("simulated_key",		&g_debug_simulated_key, DVAR_INT, 0);
-	DVar_Register("track_mouse_clicks",	&g_debug_track_mouse_clicks, DVAR_BOOL, 0);
-	DVar_Register("script_abort_flag",	&_engine->_gamestate->abortScriptProcessing, DVAR_INT, 0);
+	registerVar("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
+	registerVar("gc_interval",		&engine->_gamestate->scriptGCInterval, DVAR_INT, 0);
+	registerVar("simulated_key",		&g_debug_simulated_key, DVAR_INT, 0);
+	registerVar("track_mouse_clicks",	&g_debug_track_mouse_clicks, DVAR_BOOL, 0);
+	registerVar("script_abort_flag",	&_engine->_gamestate->abortScriptProcessing, DVAR_INT, 0);
 
 	// General
 	DCmd_Register("help",				WRAP_METHOD(Console, cmdHelp));

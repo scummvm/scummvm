@@ -107,7 +107,7 @@ protected:
 	 *
 	 * @todo	replace this single method by type safe variants.
 	 */
-	void DVar_Register(const Common::String &varname, void *variable, VarType type, int arraySize);
+	void registerVar(const Common::String &varname, void *variable, VarType type, int arraySize);
 	void DCmd_Register(const Common::String &cmdname, Debuglet *debuglet);
 
 
