@@ -208,6 +208,9 @@ public:
 
 	Common::RandomSource _randomSource;
 
+	static const int16 kNormalWidth = 640;
+	static const int16 kNormalHeight = 480;
+
 	int testAnimNr;
 	int testAnimFrame;
 
@@ -222,7 +225,7 @@ private:
 	void init();
 	void showLogo();
 	void showBackAnims();
-	void setBackAnim();
+	void showSprite(Graphics::Surface *backAnimSurface, int destX, int destY);
 	void makeShadowTable(int brightness);
 
 	uint32 getTextWidth(const char *s);

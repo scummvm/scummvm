@@ -43,7 +43,6 @@ public:
 	static const int16 kMaxPicWidth = 1280;
 	static const int16 kMaxPicHeight = 480;
 	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
-	static const int16 kNormalWidth = 640;
 	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
 	static const int32 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
 	static const int16 kScreenWidth = 640;

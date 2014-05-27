@@ -115,13 +115,15 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
-	/*
-	for (uint i = 0; i < _backAnimList.size(); i++) {
-		delete _backAnimList[i]._animData;
-		delete _backAnimList[i]._shadowData;
+	for (uint32 i = 0; i < _backAnimList.size(); i++) {
+		int anims = _backAnimList[i]._seq._anims != 0 ? _backAnimList[i]._seq._anims : 1;
+		for (uint32 j = 0; j < anims; j++) {
+			delete _backAnimList[i].backAnims[j]._animData;
+			delete _backAnimList[i].backAnims[j]._shadowData;
+		}
+		_backAnimList[i].backAnims.clear();
 	}
 	_backAnimList.clear();
-	*/
 
 	for (uint i = 0; i < _mainHero->_moveSet.size(); i++) {
 		delete _mainHero->_moveSet[i];
@@ -244,8 +246,7 @@ bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 	_type = type;
 	_fileNumber = stream.readUint16LE();
 	_startPhase = stream.readUint16LE();
-	//_endPhase = stream.readUint16LE();
-	_endPhase = stream.readSint16LE();
+	_endPhase = stream.readUint16LE();
 	_loopPhase = stream.readUint16LE();
 	_x = stream.readSint16LE();
 	_y = stream.readSint16LE();
@@ -327,13 +328,14 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	_room->loadRoom(_script->getRoomOffset(_locationNr));
-	/*
 	for (uint32 i = 0; i < _backAnimList.size(); i++) {
-		delete _backAnimList[i]._animData;
-		delete _backAnimList[i]._shadowData;
+		int anims = _backAnimList[i]._seq._anims != 0 ? _backAnimList[i]._seq._anims : 1;
+		for (uint32 j = 0; j < anims; j++) {
+			delete _backAnimList[i].backAnims[j]._animData;
+			delete _backAnimList[i].backAnims[j]._shadowData;
+		}
+		_backAnimList[i].backAnims.clear();
 	}
-	_backAnimList.clear();
-	*/
 	_backAnimList.clear();
 
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
@@ -704,15 +706,59 @@ void PrinceEngine::showTexts() {
 	}
 }
 
-void PrinceEngine::setBackAnim() {
+void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int destY) {
+	int sprWidth = backAnimSurface->w;
+	int sprHeight = backAnimSurface->h;
+	int sprModulo = 0;
 
+	if (destX - _picWindowX < 0) { // x1 on visible part of screen?
+		// X1 signed, we add spriteWidth for x2
+		if (sprWidth + destX - _picWindowX - 1 < 0) {
+			//exit - x2 is negative - out of window
+			return; // don't draw
+		} else {
+			//esi += _picWindowX - destX;
+			sprWidth -= _picWindowX - destX;
+			sprModulo += _picWindowX - destX;
+			destX = 0; // x1 = 0;
+		}
+	}
+	//left_x_check_ok
+	if (destX >= kNormalWidth) { // x1 outside of screen on right side
+		return; // don't draw
+	}
+	if (destX + sprWidth > kNormalWidth) { // x2 too far?
+		sprWidth -= destX - kNormalWidth;
+		sprModulo += destX - kNormalWidth;
+	}
+	//right_x_check_ok
+	if (destY - _picWindowY < 0) {
+		if (sprHeight + destY - _picWindowY - 1 < 0) {
+			//exit - y2 is negative - out of window
+			return; // don't draw
+		} else {
+			sprHeight -= _picWindowY - destY;
+			//esi += (sprWidth + sprModulo) * (_picWindowY - destY);
+			destY = 0;
+		}
+	}
+	//upper_y_check_ok
+	if (destY >= kNormalHeight) {
+		return; // don't draw
+	}
+	if (destY + sprHeight > kNormalHeight) {
+		sprHeight -= destY + sprHeight - kNormalHeight;
+	}
+	//lower_y_check_ok
+
+	_graph->drawTransparent(destX - _picWindowX, destY - _picWindowY, backAnimSurface); // TODO
 }
 
 void PrinceEngine::showBackAnims() {
 
 	for (uint i = 0; i < _backAnimList.size(); i++) {
 		int activeSubAnim = _backAnimList[i]._seq._currRelative;
-		if (_backAnimList[i].backAnims[activeSubAnim]._state == 0) {
+		if (_backAnimList[i].backAnims[activeSubAnim]._state == 0 && _backAnimList[i]._seq._type != 2 && _backAnimList[i]._seq._type != 3 && _backAnimList[i]._seq._type != 4) { //TEMP 
 			_backAnimList[i]._seq._counter++;
 
 			if (_backAnimList[i]._seq._type == 2) {
@@ -749,10 +795,9 @@ void PrinceEngine::showBackAnims() {
 			}
 			//not_type_3_1:
 			//show_bugger
-			if (_backAnimList[i].backAnims[activeSubAnim]._frame == _backAnimList[i].backAnims[activeSubAnim]._lastFrame) {
+			if (_backAnimList[i].backAnims[activeSubAnim]._frame == _backAnimList[i].backAnims[activeSubAnim]._lastFrame - 1) { // TEST
 				//loop_back_anim
 				_backAnimList[i].backAnims[activeSubAnim]._frame = _backAnimList[i].backAnims[activeSubAnim]._loopFrame;
-				//debug("loopFrame: %d", _backAnimList[i].backAnims[tempAnimNr]._loopFrame);
 				//change_back_anim
 				if (_backAnimList[i]._seq._type == 0) {
 					//show_bugger
@@ -854,17 +899,22 @@ void PrinceEngine::showBackAnims() {
 
 			//not_end:
 			_backAnimList[i].backAnims[activeSubAnim]._showFrame = _backAnimList[i].backAnims[activeSubAnim]._frame;
-			//ShowFrameCode
-			//ShowFrameCodeShadow
 
+			//ShowFrameCode
 			int frame = _backAnimList[i].backAnims[activeSubAnim]._showFrame;
 			int phaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseFrameIndex(frame);
 			Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex);
 			int x = _backAnimList[i].backAnims[activeSubAnim]._x + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(frame);
 			int y = _backAnimList[i].backAnims[activeSubAnim]._y + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetY(frame);
-			_graph->drawTransparent(x, y, backAnimSurface); // out of range now - crash .exe
+			//debug("x: %d", x);
+			//debug("picWindowX: %d", _picWindowX);
+			if (x - _picWindowX >= 0) { //  || x - _picWindowX + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(frame) >= 0 ??
+				showSprite(backAnimSurface, x, y);
+			}
 			backAnimSurface->free();
 			delete backAnimSurface;
+
+			//ShowFrameCodeShadow
 		}
 	}
 }

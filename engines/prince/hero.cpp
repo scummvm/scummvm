@@ -754,14 +754,14 @@ void Hero::scrollHero() {
 	*/
 
 	int locationWidth = _vm->_sceneWidth;
-	int difference = locationWidth - kNormalWidth / 2;
+	int difference = locationWidth - _vm->kNormalWidth / 2;
 
 	int destValue = 0;
-	if (position > kNormalWidth / 2) {
-		destValue = difference - kNormalWidth / 2;
+	if (position > _vm->kNormalWidth / 2) {
+		destValue = difference - _vm->kNormalWidth / 2;
 	}
 	if (position < difference) {
-		destValue = position - kNormalWidth / 2;
+		destValue = position - _vm->kNormalWidth / 2;
 	}
 	if(destValue < 0) {
 		destValue = 0;
