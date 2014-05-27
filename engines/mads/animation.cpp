@@ -164,6 +164,17 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_resetFlag = false;
 	_messageCtr = 0;
 	_skipLoad = false;
+	_freeFlag = false;
+	_unkIndex = -1;
+	_nextFrameTimer = 0;
+	_nextScrollTimer = 0;
+	_trigger = 0;
+	_triggerMode = SEQUENCE_TRIGGER_PREPARE;
+	_actionDetails._verbId = VERB_NONE;
+	_actionDetails._objectNameId = -1;
+	_actionDetails._indirectObjectId = -1;
+	_currentFrame = 0;
+	_oldFrameEntry = 0;
 }
 
 Animation::~Animation() {
