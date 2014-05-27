@@ -111,7 +111,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 			uint32 pix = * (uint32 *) in;
 			int a = (pix >> TransparentSurface::kAShift) & 0xff;
 
-			if (a != 0) { // Full opacity (Any value not exactly 0 is Opaque here)
+			if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
 				* (uint32 *) out = pix;
 				out[kAIndex] = 0xFF;
 			}
@@ -522,7 +522,7 @@ systems.
 
 TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
 
-	assert(transform._angle != 0);  // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
+	assert(transform._angle != 0);   // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
 
 	Point32 newHotspot;
 	Common::Rect srcRect(0, 0, (int16) w, (int16) h);
