@@ -123,7 +123,6 @@ protected:
 	int _screenId;
 	int _menuSpritesIndex;
 	int _lineIndex;
-	bool _enterFlag;
 	int _textLineCount;
 
 	/**

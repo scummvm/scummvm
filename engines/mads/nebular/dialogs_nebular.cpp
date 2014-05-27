@@ -547,6 +547,8 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
 	_vm->_palette->setEntry(13, 45, 45, 0);
 	_vm->_palette->setEntry(14, 63, 63, 63);
 	_vm->_palette->setEntry(15, 45, 45, 45);
+
+	_lineIndex = -1;
 }
 
 void ScreenDialog::clearLines() {
@@ -636,7 +638,6 @@ void ScreenDialog::initVars() {
 	_v1 = -1;
 	_selectedLine = -1;
 	_lineIndex = 0;
-	_enterFlag = false;
 	_textLineCount = 0;
 }
 
