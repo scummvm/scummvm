@@ -4259,7 +4259,8 @@ void Scene210::enter() {
 		}
 
 		restoreDialogNode(_curDialogNode, quote, number);
-		_scene->_activeAnimation->setCurrentFrame(131);
+		if (_scene->_activeAnimation)
+			_scene->_activeAnimation->setCurrentFrame(131);
 	}
 
 	_vm->_palette->setEntry(252, 63, 63, 10);
