@@ -76,8 +76,10 @@ Game::Game(MADSEngine *vm)
 	_anyEmergency = false;
 	_triggerMode = SEQUENCE_TRIGGER_PARSER;
 	_triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+	_trigger = 0;
 	_winStatus = 0;
 	_widepipeCtr = 0;
+	_fx = kTransitionNone;
 
 	// Load the inventory object list
 	_objects.load();

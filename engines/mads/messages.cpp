@@ -32,6 +32,9 @@ namespace MADS {
 RandomMessages::RandomMessages() {
 	reserve(RANDOM_MESSAGE_SIZE);
 	_randomSpacing = 0;
+	_color = -1;
+	_duration = 0;
+	_scrollRate = -1;
 }
 
 void RandomMessages::reset() {

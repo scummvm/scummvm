@@ -32,6 +32,7 @@ DynamicHotspot::DynamicHotspot() {
 	_verbId = 0;
 	_articleNumber = 0;
 	_cursor = CURSOR_NONE;
+	_active = false;
 }
 
 void DynamicHotspot::synchronize(Common::Serializer &s) {
