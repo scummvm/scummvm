@@ -344,6 +344,19 @@ void SceneInfoNebular::loadCodes(MSurface &depthSurface, Common::SeekableReadStr
 
 /*------------------------------------------------------------------------*/
 
+SceneTeleporter::SceneTeleporter(MADSEngine *vm) : NebularScene(vm) {
+	_buttonTyped = -1;
+	_curCode = -1;
+	_digitCount = -1;
+	_curMessageId = -1;
+	_handSpriteId = -1;
+	_handSequenceId = -1;
+	_finishedCodeCounter = -1;
+	_meteorologistNextPlace = -1;
+	_meteorologistCurPlace = -1;
+	_teleporterSceneId = -1;
+}
+
 int SceneTeleporter::teleporterAddress(int code, bool working) {
 	int limit = working ? 6 : 10;
 

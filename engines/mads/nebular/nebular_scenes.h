@@ -1408,7 +1408,7 @@ protected:
 	/**
 	* Constructor
 	*/
-	SceneTeleporter(MADSEngine *vm) : NebularScene(vm) {}
+	SceneTeleporter(MADSEngine *vm);
 };
 
 } // End of namespace Nebular
