@@ -3642,7 +3642,7 @@ void Scene210::handleConversations() {
 		_scene->_kernelMessages.reset();
 		_game._player._stepEnabled = false;
 		Common::String curQuote = _game.getQuote(_action._activeAction._verbId);
-		if (_vm->_font->getWidth(curQuote, _scene->_textSpacing) > 200) {
+		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
 			Common::String subQuote1;
 			_game.splitQuote(curQuote, subQuote1, _subQuote2);
 			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, subQuote1);

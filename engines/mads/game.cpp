@@ -152,6 +152,18 @@ void Game::run() {
 		gameLoop();
 }
 
+void Game::splitQuote(const Common::String &source, Common::String &line1, Common::String &line2) {
+	// Make the first line up the end of the word at the half-way point
+	const char *strP = source.c_str() + source.size() / 2;
+	while (*strP != ' ') ++strP;
+
+	line1 = Common::String(source.c_str(), strP);
+
+	// The rest of the string goes in the second line
+	while (*strP == ' ') ++strP;
+	line2 = Common::String(strP);
+}
+
 void Game::gameLoop() {
 	while (!_vm->shouldQuit() && _statusFlag) {
 		if (_loadGameSlot != -1) {

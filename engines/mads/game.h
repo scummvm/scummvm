@@ -158,9 +158,21 @@ public:
 	 */
 	void run();
 
+	/**
+	 * Return the number of quotes
+	 */
 	uint32 getQuotesSize() { return _quotes.size(); }
+
+	/**
+	 * Get a specific quote string
+	 */
 	const Common::String &getQuote(uint32 index) { return _quotes[index - 1]; }
-	void splitQuote(Common::String quote, Common::String part1, Common::String part2) {warning("TODO: splitQuote()");}
+
+	/**
+	 * Split a quote into two lines for display on-screen
+	 */
+	void splitQuote(const Common::String &source, Common::String &line1, Common::String &line2);
+
 	Common::StringArray getMessage(uint32 id);
 
 	/**
