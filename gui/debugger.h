@@ -96,7 +96,7 @@ protected:
 		int arraySize;
 	};
 
-
+private:
 	/**
 	 * Register a variable with the debugger. This allows the user to read and modify
 	 * this variable.
@@ -104,10 +104,30 @@ protected:
 	 * @param variable	pointer to the actual storage of the variable
 	 * @param type		the type of the variable (byte, int, bool, ...)
 	 * @paral arraySize	for type DVAR_INTARRAY this specifies the size of the array
-	 *
-	 * @todo	replace this single method by type safe variants.
 	 */
 	void registerVar(const Common::String &varname, void *variable, VarType type, int arraySize);
+
+protected:
+	void registerVar(const Common::String &varname, byte *variable) {
+		registerVar(varname, variable, DVAR_BYTE, 0);
+	}
+
+	void registerVar(const Common::String &varname, int *variable) {
+		registerVar(varname, variable, DVAR_INT, 0);
+	}
+
+	void registerVar(const Common::String &varname, bool *variable) {
+		registerVar(varname, variable, DVAR_BOOL, 0);
+	}
+
+	void registerVar(const Common::String &varname, int32 **variable, int arraySize) {
+		registerVar(varname, variable, DVAR_INTARRAY, arraySize);
+	}
+
+	void registerVar(const Common::String &varname, Common::String *variable) {
+		registerVar(varname, variable, DVAR_STRING, 0);
+	}
+
 	void registerCmd(const Common::String &cmdname, Debuglet *debuglet);
 
 
