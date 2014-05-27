@@ -150,14 +150,10 @@ void DynamicHotspots::synchronize(Common::Serializer &s) {
 	int count = _entries.size();
 	s.syncAsSint16LE(count);
 
-	if (s.isSaving()) {
-		for (int i = 0; i < count; ++i)
-			_entries[i].synchronize(s);
-	} else {
-		_entries.clear();
-		DynamicHotspot rec;
-		rec.synchronize(s);
-		_entries.push_back(rec);
+	// The MIN in the below loop is a workaround to fix earlier savegame
+	// loading accidentally adding new dynamic hotspots to the fixed list
+	for (int i = 0; i < count; ++i) {
+		_entries[MIN(i, (int)_entries.size() - 1)].synchronize(s);
 	}
 }
 
