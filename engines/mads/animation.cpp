@@ -110,9 +110,15 @@ void AnimFrameEntry::load(Common::SeekableReadStream *f, bool uiFlag) {
 		_spriteSlot._position.y = f->readSint16LE();
 	} else {
 		_frameNumber = f->readUint16LE();
+		if (_frameNumber & 0x8000)
+			_frameNumber = -(_frameNumber & 0x7fff);
+
 		_seqIndex = f->readByte();
 		_spriteSlot._spritesIndex = f->readByte();
-		_spriteSlot._frameNumber = f->readSint16LE();
+		_spriteSlot._frameNumber = f->readUint16LE();
+		if (_spriteSlot._frameNumber & 0x8000)
+			_spriteSlot._frameNumber = -(_spriteSlot._frameNumber & 0x7fff);
+
 		_spriteSlot._position.x = f->readSint16LE();
 		_spriteSlot._position.y = f->readSint16LE();
 		_spriteSlot._depth = f->readSByte();
