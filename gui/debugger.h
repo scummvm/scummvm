@@ -74,8 +74,8 @@ protected:
 	 * Convenience macro that makes it easier to register a method
 	 * of a debugger subclass as a command.
 	 * Usage example:
-	 *   registerCmd("COMMAND", WRAP_METHOD(MyDebugger, MyCmd));
-	 * would register the method MyDebugger::MyCmd(int, const char **)
+	 *   registerCmd("COMMAND", WRAP_METHOD(MyDebugger, myCmd));
+	 * would register the method MyDebugger::myCmd(int, const char **)
 	 * under the command name "COMMAND".
 	 */
 	#define WRAP_METHOD(cls, method) \
