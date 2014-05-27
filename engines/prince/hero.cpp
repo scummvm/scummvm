@@ -445,14 +445,14 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					if (ct_loop > shadWallSkipX && ct_loop - shadWallSkipX > shadWallModulo) {
 						//WALL_copy_trans
 						shadWDFlag = false;
-						int shadZoomX = _scaleValue;
+						int shadZoomXWall = _scaleValue;
 						int backgroundDiffWall = 0;
 						int shadowHeroXWall = 0;
 						//ct_loop:
 						for (int m = 0; m < ct_loop; m++) {
-							shadZoomX -= 100;
-							if (shadZoomX < 0 && _scaleValue != 10000) {
-								shadZoomX += _scaleValue;
+							shadZoomXWall -= 100;
+							if (shadZoomXWall < 0 && _scaleValue != 10000) {
+								shadZoomXWall += _scaleValue;
 							} else {
 								//point_ok:
 								if (*shadowHero == kShadowColor) {
