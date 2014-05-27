@@ -30,12 +30,12 @@ namespace Hopkins {
 
 Debugger::Debugger(HopkinsEngine *vm) : GUI::Debugger() {
 	_vm = vm;
-	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("rects", WRAP_METHOD(Debugger, cmd_DirtyRects));
-	DCmd_Register("teleport", WRAP_METHOD(Debugger, cmd_Teleport));
-	DCmd_Register("show_room", WRAP_METHOD(Debugger, cmd_ShowCurrentRoom));
-	DCmd_Register("zones", WRAP_METHOD(Debugger, cmd_Zones));
-	DCmd_Register("lines", WRAP_METHOD(Debugger, cmd_Lines));
+	registerCmd("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("rects", WRAP_METHOD(Debugger, cmd_DirtyRects));
+	registerCmd("teleport", WRAP_METHOD(Debugger, cmd_Teleport));
+	registerCmd("show_room", WRAP_METHOD(Debugger, cmd_ShowCurrentRoom));
+	registerCmd("zones", WRAP_METHOD(Debugger, cmd_Zones));
+	registerCmd("lines", WRAP_METHOD(Debugger, cmd_Lines));
 }
 
 // Turns dirty rects on or off

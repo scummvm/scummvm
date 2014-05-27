@@ -29,22 +29,22 @@ namespace MADS {
 Debugger::Debugger(MADSEngine *vm) : GUI::Debugger(), _vm(vm) {
 	_showMousePos = false;
 
-	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
-	DCmd_Register("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
-	DCmd_Register("show_hotspots", WRAP_METHOD(Debugger, Cmd_ShowHotSpots));
-	DCmd_Register("list_hotspots", WRAP_METHOD(Debugger, Cmd_ListHotSpots));
-	DCmd_Register("play_sound", WRAP_METHOD(Debugger, Cmd_PlaySound));
-	DCmd_Register("play_audio", WRAP_METHOD(Debugger, Cmd_PlayAudio));
-	DCmd_Register("show_codes", WRAP_METHOD(Debugger, Cmd_ShowCodes));
-	DCmd_Register("dump_file", WRAP_METHOD(Debugger, Cmd_DumpFile));
-	DCmd_Register("show_quote", WRAP_METHOD(Debugger, Cmd_ShowQuote));
-	DCmd_Register("show_vocab", WRAP_METHOD(Debugger, Cmd_ShowVocab));
-	DCmd_Register("dump_vocab", WRAP_METHOD(Debugger, Cmd_DumpVocab));
-	DCmd_Register("show_message", WRAP_METHOD(Debugger, Cmd_ShowMessage));
-	DCmd_Register("show_item", WRAP_METHOD(Debugger, Cmd_ShowItem));
-	DCmd_Register("dump_items", WRAP_METHOD(Debugger, Cmd_DumpItems));
-	DCmd_Register("item", WRAP_METHOD(Debugger, Cmd_Item));
+	registerCmd("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
+	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
+	registerCmd("show_hotspots", WRAP_METHOD(Debugger, Cmd_ShowHotSpots));
+	registerCmd("list_hotspots", WRAP_METHOD(Debugger, Cmd_ListHotSpots));
+	registerCmd("play_sound", WRAP_METHOD(Debugger, Cmd_PlaySound));
+	registerCmd("play_audio", WRAP_METHOD(Debugger, Cmd_PlayAudio));
+	registerCmd("show_codes", WRAP_METHOD(Debugger, Cmd_ShowCodes));
+	registerCmd("dump_file", WRAP_METHOD(Debugger, Cmd_DumpFile));
+	registerCmd("show_quote", WRAP_METHOD(Debugger, Cmd_ShowQuote));
+	registerCmd("show_vocab", WRAP_METHOD(Debugger, Cmd_ShowVocab));
+	registerCmd("dump_vocab", WRAP_METHOD(Debugger, Cmd_DumpVocab));
+	registerCmd("show_message", WRAP_METHOD(Debugger, Cmd_ShowMessage));
+	registerCmd("show_item", WRAP_METHOD(Debugger, Cmd_ShowItem));
+	registerCmd("dump_items", WRAP_METHOD(Debugger, Cmd_DumpItems));
+	registerCmd("item", WRAP_METHOD(Debugger, Cmd_Item));
 }
 
 static int strToInt(const char *s) {

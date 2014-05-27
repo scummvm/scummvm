@@ -55,17 +55,17 @@ Debugger::Debugger() {
 	registerVar("debug_countdown", &_frameCountdown, DVAR_INT, 0);
 
 	// Register commands
-	//DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("exit",				WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("quit",				WRAP_METHOD(Debugger, Cmd_Exit));
+	//registerCmd("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("exit",				WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("quit",				WRAP_METHOD(Debugger, Cmd_Exit));
 
-	DCmd_Register("help",				WRAP_METHOD(Debugger, Cmd_Help));
-	DCmd_Register("openlog",			WRAP_METHOD(Debugger, Cmd_OpenLog));
+	registerCmd("help",				WRAP_METHOD(Debugger, Cmd_Help));
+	registerCmd("openlog",			WRAP_METHOD(Debugger, Cmd_OpenLog));
 
-	DCmd_Register("debuglevel",		WRAP_METHOD(Debugger, Cmd_DebugLevel));
-	DCmd_Register("debugflag_list",		WRAP_METHOD(Debugger, Cmd_DebugFlagsList));
-	DCmd_Register("debugflag_enable",	WRAP_METHOD(Debugger, Cmd_DebugFlagEnable));
-	DCmd_Register("debugflag_disable",	WRAP_METHOD(Debugger, Cmd_DebugFlagDisable));
+	registerCmd("debuglevel",		WRAP_METHOD(Debugger, Cmd_DebugLevel));
+	registerCmd("debugflag_list",		WRAP_METHOD(Debugger, Cmd_DebugFlagsList));
+	registerCmd("debugflag_enable",	WRAP_METHOD(Debugger, Cmd_DebugFlagEnable));
+	registerCmd("debugflag_disable",	WRAP_METHOD(Debugger, Cmd_DebugFlagDisable));
 }
 
 Debugger::~Debugger() {
@@ -421,7 +421,7 @@ void Debugger::registerVar(const Common::String &varname, void *pointer, VarType
 }
 
 // Command registration function
-void Debugger::DCmd_Register(const Common::String &cmdname, Debuglet *debuglet) {
+void Debugger::registerCmd(const Common::String &cmdname, Debuglet *debuglet) {
 	assert(debuglet && debuglet->isValid());
 	_cmds[cmdname] = Common::SharedPtr<Debuglet>(debuglet);
 }

@@ -28,11 +28,11 @@
 namespace Pegasus {
 
 PegasusConsole::PegasusConsole(PegasusEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("die", WRAP_METHOD(PegasusConsole, Cmd_Die));
+	registerCmd("die", WRAP_METHOD(PegasusConsole, Cmd_Die));
 
 	// These functions are non-demo specific
 	if (!_vm->isDemo())
-		DCmd_Register("jump", WRAP_METHOD(PegasusConsole, Cmd_Jump));
+		registerCmd("jump", WRAP_METHOD(PegasusConsole, Cmd_Jump));
 }
 
 PegasusConsole::~PegasusConsole() {

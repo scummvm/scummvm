@@ -36,15 +36,15 @@ namespace Queen {
 Debugger::Debugger(QueenEngine *vm)
 	: _vm(vm), _flags(0) {
 
-	DCmd_Register("areas", WRAP_METHOD(Debugger, Cmd_Areas));
-	DCmd_Register("asm",   WRAP_METHOD(Debugger, Cmd_Asm));
-	DCmd_Register("bob",   WRAP_METHOD(Debugger, Cmd_Bob));
-	DCmd_Register("bobs",  WRAP_METHOD(Debugger, Cmd_PrintBobs));
-	DCmd_Register("gs",    WRAP_METHOD(Debugger, Cmd_GameState));
-	DCmd_Register("info",  WRAP_METHOD(Debugger, Cmd_Info));
-	DCmd_Register("items", WRAP_METHOD(Debugger, Cmd_Items));
-	DCmd_Register("room",  WRAP_METHOD(Debugger, Cmd_Room));
-	DCmd_Register("song",  WRAP_METHOD(Debugger, Cmd_Song));
+	registerCmd("areas", WRAP_METHOD(Debugger, Cmd_Areas));
+	registerCmd("asm",   WRAP_METHOD(Debugger, Cmd_Asm));
+	registerCmd("bob",   WRAP_METHOD(Debugger, Cmd_Bob));
+	registerCmd("bobs",  WRAP_METHOD(Debugger, Cmd_PrintBobs));
+	registerCmd("gs",    WRAP_METHOD(Debugger, Cmd_GameState));
+	registerCmd("info",  WRAP_METHOD(Debugger, Cmd_Info));
+	registerCmd("items", WRAP_METHOD(Debugger, Cmd_Items));
+	registerCmd("room",  WRAP_METHOD(Debugger, Cmd_Room));
+	registerCmd("song",  WRAP_METHOD(Debugger, Cmd_Song));
 }
 
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__

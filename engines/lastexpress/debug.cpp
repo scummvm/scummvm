@@ -60,33 +60,33 @@ Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(NULL),
 	// Register the debugger commands
 
 	// General
-	DCmd_Register("help",      WRAP_METHOD(Debugger, cmdHelp));
+	registerCmd("help",      WRAP_METHOD(Debugger, cmdHelp));
 
 	// Data
-	DCmd_Register("ls",        WRAP_METHOD(Debugger, cmdListFiles));
-	DCmd_Register("dump",      WRAP_METHOD(Debugger, cmdDumpFiles));
+	registerCmd("ls",        WRAP_METHOD(Debugger, cmdListFiles));
+	registerCmd("dump",      WRAP_METHOD(Debugger, cmdDumpFiles));
 
-	DCmd_Register("showframe", WRAP_METHOD(Debugger, cmdShowFrame));
-	DCmd_Register("showbg",    WRAP_METHOD(Debugger, cmdShowBg));
-	DCmd_Register("playseq",   WRAP_METHOD(Debugger, cmdPlaySeq));
-	DCmd_Register("playsnd",   WRAP_METHOD(Debugger, cmdPlaySnd));
-	DCmd_Register("playsbe",   WRAP_METHOD(Debugger, cmdPlaySbe));
-	DCmd_Register("playnis",   WRAP_METHOD(Debugger, cmdPlayNis));
+	registerCmd("showframe", WRAP_METHOD(Debugger, cmdShowFrame));
+	registerCmd("showbg",    WRAP_METHOD(Debugger, cmdShowBg));
+	registerCmd("playseq",   WRAP_METHOD(Debugger, cmdPlaySeq));
+	registerCmd("playsnd",   WRAP_METHOD(Debugger, cmdPlaySnd));
+	registerCmd("playsbe",   WRAP_METHOD(Debugger, cmdPlaySbe));
+	registerCmd("playnis",   WRAP_METHOD(Debugger, cmdPlayNis));
 
 	// Scene & interaction
-	DCmd_Register("loadscene", WRAP_METHOD(Debugger, cmdLoadScene));
-	DCmd_Register("fight",     WRAP_METHOD(Debugger, cmdFight));
-	DCmd_Register("beetle",    WRAP_METHOD(Debugger, cmdBeetle));
+	registerCmd("loadscene", WRAP_METHOD(Debugger, cmdLoadScene));
+	registerCmd("fight",     WRAP_METHOD(Debugger, cmdFight));
+	registerCmd("beetle",    WRAP_METHOD(Debugger, cmdBeetle));
 
 	// Game
-	DCmd_Register("delta",     WRAP_METHOD(Debugger, cmdTimeDelta));
-	DCmd_Register("time",      WRAP_METHOD(Debugger, cmdTime));
-	DCmd_Register("show",      WRAP_METHOD(Debugger, cmdShow));
-	DCmd_Register("entity",    WRAP_METHOD(Debugger, cmdEntity));
+	registerCmd("delta",     WRAP_METHOD(Debugger, cmdTimeDelta));
+	registerCmd("time",      WRAP_METHOD(Debugger, cmdTime));
+	registerCmd("show",      WRAP_METHOD(Debugger, cmdShow));
+	registerCmd("entity",    WRAP_METHOD(Debugger, cmdEntity));
 
 	// Misc
-	DCmd_Register("chapter",   WRAP_METHOD(Debugger, cmdSwitchChapter));
-	DCmd_Register("clear",     WRAP_METHOD(Debugger, cmdClear));
+	registerCmd("chapter",   WRAP_METHOD(Debugger, cmdSwitchChapter));
+	registerCmd("clear",     WRAP_METHOD(Debugger, cmdClear));
 
 	resetCommand();
 

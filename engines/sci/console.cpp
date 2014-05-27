@@ -86,141 +86,141 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerVar("script_abort_flag",	&_engine->_gamestate->abortScriptProcessing, DVAR_INT, 0);
 
 	// General
-	DCmd_Register("help",				WRAP_METHOD(Console, cmdHelp));
+	registerCmd("help",				WRAP_METHOD(Console, cmdHelp));
 	// Kernel
-//	DCmd_Register("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
-	DCmd_Register("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
-	DCmd_Register("selector",			WRAP_METHOD(Console, cmdSelector));
-	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
-	DCmd_Register("functions",			WRAP_METHOD(Console, cmdKernelFunctions));
-	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
+//	registerCmd("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
+	registerCmd("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
+	registerCmd("selector",			WRAP_METHOD(Console, cmdSelector));
+	registerCmd("selectors",			WRAP_METHOD(Console, cmdSelectors));
+	registerCmd("functions",			WRAP_METHOD(Console, cmdKernelFunctions));
+	registerCmd("class_table",		WRAP_METHOD(Console, cmdClassTable));
 	// Parser
-	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
-	DCmd_Register("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
-	DCmd_Register("parser_nodes",		WRAP_METHOD(Console, cmdParserNodes));
-	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
-	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
-	DCmd_Register("parse",				WRAP_METHOD(Console, cmdParse));
-	DCmd_Register("set_parse_nodes",	WRAP_METHOD(Console, cmdSetParseNodes));
-	DCmd_Register("said",				WRAP_METHOD(Console, cmdSaid));
+	registerCmd("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
+	registerCmd("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
+	registerCmd("parser_nodes",		WRAP_METHOD(Console, cmdParserNodes));
+	registerCmd("parser_words",		WRAP_METHOD(Console, cmdParserWords));
+	registerCmd("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
+	registerCmd("parse",				WRAP_METHOD(Console, cmdParse));
+	registerCmd("set_parse_nodes",	WRAP_METHOD(Console, cmdSetParseNodes));
+	registerCmd("said",				WRAP_METHOD(Console, cmdSaid));
 	// Resources
-	DCmd_Register("diskdump",			WRAP_METHOD(Console, cmdDiskDump));
-	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
-	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
-	DCmd_Register("resource_info",		WRAP_METHOD(Console, cmdResourceInfo));
-	DCmd_Register("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
-	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
-	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
-	DCmd_Register("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
+	registerCmd("diskdump",			WRAP_METHOD(Console, cmdDiskDump));
+	registerCmd("hexdump",			WRAP_METHOD(Console, cmdHexDump));
+	registerCmd("resource_id",		WRAP_METHOD(Console, cmdResourceId));
+	registerCmd("resource_info",		WRAP_METHOD(Console, cmdResourceInfo));
+	registerCmd("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
+	registerCmd("list",				WRAP_METHOD(Console, cmdList));
+	registerCmd("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
+	registerCmd("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
 	// Game
-	DCmd_Register("save_game",			WRAP_METHOD(Console, cmdSaveGame));
-	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
-	DCmd_Register("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
-	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
-	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
-	DCmd_Register("quit",				WRAP_METHOD(Console, cmdQuit));
-	DCmd_Register("list_saves",			WRAP_METHOD(Console, cmdListSaves));
+	registerCmd("save_game",			WRAP_METHOD(Console, cmdSaveGame));
+	registerCmd("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
+	registerCmd("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
+	registerCmd("version",			WRAP_METHOD(Console, cmdGetVersion));
+	registerCmd("room",				WRAP_METHOD(Console, cmdRoomNumber));
+	registerCmd("quit",				WRAP_METHOD(Console, cmdQuit));
+	registerCmd("list_saves",			WRAP_METHOD(Console, cmdListSaves));
 	// Graphics
-	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
-	DCmd_Register("set_palette",		WRAP_METHOD(Console, cmdSetPalette));
-	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
-	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
-	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
-	DCmd_Register("pic_visualize",		WRAP_METHOD(Console, cmdPicVisualize));
-	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
-	DCmd_Register("animate_list",       WRAP_METHOD(Console, cmdAnimateList));
-	DCmd_Register("al",                 WRAP_METHOD(Console, cmdAnimateList));	// alias
-	DCmd_Register("window_list",        WRAP_METHOD(Console, cmdWindowList));
-	DCmd_Register("wl",                 WRAP_METHOD(Console, cmdWindowList));	// alias
-	DCmd_Register("plane_list",         WRAP_METHOD(Console, cmdPlaneList));
-	DCmd_Register("pl",                 WRAP_METHOD(Console, cmdPlaneList));	// alias
-	DCmd_Register("plane_items",        WRAP_METHOD(Console, cmdPlaneItemList));
-	DCmd_Register("pi",                 WRAP_METHOD(Console, cmdPlaneItemList));	// alias
-	DCmd_Register("saved_bits",         WRAP_METHOD(Console, cmdSavedBits));
-	DCmd_Register("show_saved_bits",    WRAP_METHOD(Console, cmdShowSavedBits));
+	registerCmd("show_map",			WRAP_METHOD(Console, cmdShowMap));
+	registerCmd("set_palette",		WRAP_METHOD(Console, cmdSetPalette));
+	registerCmd("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
+	registerCmd("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
+	registerCmd("undither",           WRAP_METHOD(Console, cmdUndither));
+	registerCmd("pic_visualize",		WRAP_METHOD(Console, cmdPicVisualize));
+	registerCmd("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
+	registerCmd("animate_list",       WRAP_METHOD(Console, cmdAnimateList));
+	registerCmd("al",                 WRAP_METHOD(Console, cmdAnimateList));	// alias
+	registerCmd("window_list",        WRAP_METHOD(Console, cmdWindowList));
+	registerCmd("wl",                 WRAP_METHOD(Console, cmdWindowList));	// alias
+	registerCmd("plane_list",         WRAP_METHOD(Console, cmdPlaneList));
+	registerCmd("pl",                 WRAP_METHOD(Console, cmdPlaneList));	// alias
+	registerCmd("plane_items",        WRAP_METHOD(Console, cmdPlaneItemList));
+	registerCmd("pi",                 WRAP_METHOD(Console, cmdPlaneItemList));	// alias
+	registerCmd("saved_bits",         WRAP_METHOD(Console, cmdSavedBits));
+	registerCmd("show_saved_bits",    WRAP_METHOD(Console, cmdShowSavedBits));
 	// Segments
-	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
-	DCmd_Register("segtable",			WRAP_METHOD(Console, cmdPrintSegmentTable));	// alias
-	DCmd_Register("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
-	DCmd_Register("seginfo",			WRAP_METHOD(Console, cmdSegmentInfo));			// alias
-	DCmd_Register("segment_kill",		WRAP_METHOD(Console, cmdKillSegment));
-	DCmd_Register("segkill",			WRAP_METHOD(Console, cmdKillSegment));			// alias
+	registerCmd("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
+	registerCmd("segtable",			WRAP_METHOD(Console, cmdPrintSegmentTable));	// alias
+	registerCmd("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
+	registerCmd("seginfo",			WRAP_METHOD(Console, cmdSegmentInfo));			// alias
+	registerCmd("segment_kill",		WRAP_METHOD(Console, cmdKillSegment));
+	registerCmd("segkill",			WRAP_METHOD(Console, cmdKillSegment));			// alias
 	// Garbage collection
-	DCmd_Register("gc",					WRAP_METHOD(Console, cmdGCInvoke));
-	DCmd_Register("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
-	DCmd_Register("gc_reachable",		WRAP_METHOD(Console, cmdGCShowReachable));
-	DCmd_Register("gc_freeable",		WRAP_METHOD(Console, cmdGCShowFreeable));
-	DCmd_Register("gc_normalize",		WRAP_METHOD(Console, cmdGCNormalize));
+	registerCmd("gc",					WRAP_METHOD(Console, cmdGCInvoke));
+	registerCmd("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
+	registerCmd("gc_reachable",		WRAP_METHOD(Console, cmdGCShowReachable));
+	registerCmd("gc_freeable",		WRAP_METHOD(Console, cmdGCShowFreeable));
+	registerCmd("gc_normalize",		WRAP_METHOD(Console, cmdGCNormalize));
 	// Music/SFX
-	DCmd_Register("songlib",			WRAP_METHOD(Console, cmdSongLib));
-	DCmd_Register("songinfo",			WRAP_METHOD(Console, cmdSongInfo));
-	DCmd_Register("is_sample",			WRAP_METHOD(Console, cmdIsSample));
-	DCmd_Register("startsound",			WRAP_METHOD(Console, cmdStartSound));
-	DCmd_Register("togglesound",		WRAP_METHOD(Console, cmdToggleSound));
-	DCmd_Register("stopallsounds",		WRAP_METHOD(Console, cmdStopAllSounds));
-	DCmd_Register("sfx01_header",		WRAP_METHOD(Console, cmdSfx01Header));
-	DCmd_Register("sfx01_track",		WRAP_METHOD(Console, cmdSfx01Track));
-	DCmd_Register("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
-	DCmd_Register("map_instrument",		WRAP_METHOD(Console, cmdMapInstrument));
+	registerCmd("songlib",			WRAP_METHOD(Console, cmdSongLib));
+	registerCmd("songinfo",			WRAP_METHOD(Console, cmdSongInfo));
+	registerCmd("is_sample",			WRAP_METHOD(Console, cmdIsSample));
+	registerCmd("startsound",			WRAP_METHOD(Console, cmdStartSound));
+	registerCmd("togglesound",		WRAP_METHOD(Console, cmdToggleSound));
+	registerCmd("stopallsounds",		WRAP_METHOD(Console, cmdStopAllSounds));
+	registerCmd("sfx01_header",		WRAP_METHOD(Console, cmdSfx01Header));
+	registerCmd("sfx01_track",		WRAP_METHOD(Console, cmdSfx01Track));
+	registerCmd("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
+	registerCmd("map_instrument",		WRAP_METHOD(Console, cmdMapInstrument));
 	// Script
-	DCmd_Register("addresses",			WRAP_METHOD(Console, cmdAddresses));
-	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
-	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
-	DCmd_Register("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
-	DCmd_Register("bt",					WRAP_METHOD(Console, cmdBacktrace));	// alias
-	DCmd_Register("trace",				WRAP_METHOD(Console, cmdTrace));
-	DCmd_Register("t",					WRAP_METHOD(Console, cmdTrace));		// alias
-	DCmd_Register("s",					WRAP_METHOD(Console, cmdTrace));		// alias
-	DCmd_Register("stepover",			WRAP_METHOD(Console, cmdStepOver));
-	DCmd_Register("p",					WRAP_METHOD(Console, cmdStepOver));		// alias
-	DCmd_Register("step_ret",			WRAP_METHOD(Console, cmdStepRet));
-	DCmd_Register("pret",				WRAP_METHOD(Console, cmdStepRet));		// alias
-	DCmd_Register("step_event",			WRAP_METHOD(Console, cmdStepEvent));
-	DCmd_Register("se",					WRAP_METHOD(Console, cmdStepEvent));	// alias
-	DCmd_Register("step_global",		WRAP_METHOD(Console, cmdStepGlobal));
-	DCmd_Register("sg",					WRAP_METHOD(Console, cmdStepGlobal));	// alias
-	DCmd_Register("step_callk",			WRAP_METHOD(Console, cmdStepCallk));
-	DCmd_Register("snk",				WRAP_METHOD(Console, cmdStepCallk));	// alias
-	DCmd_Register("disasm",				WRAP_METHOD(Console, cmdDisassemble));
-	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDisassembleAddress));
-	DCmd_Register("find_callk",			WRAP_METHOD(Console, cmdFindKernelFunctionCall));
-	DCmd_Register("send",				WRAP_METHOD(Console, cmdSend));
-	DCmd_Register("go",					WRAP_METHOD(Console, cmdGo));
-	DCmd_Register("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
+	registerCmd("addresses",			WRAP_METHOD(Console, cmdAddresses));
+	registerCmd("registers",			WRAP_METHOD(Console, cmdRegisters));
+	registerCmd("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
+	registerCmd("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
+	registerCmd("bt",					WRAP_METHOD(Console, cmdBacktrace));	// alias
+	registerCmd("trace",				WRAP_METHOD(Console, cmdTrace));
+	registerCmd("t",					WRAP_METHOD(Console, cmdTrace));		// alias
+	registerCmd("s",					WRAP_METHOD(Console, cmdTrace));		// alias
+	registerCmd("stepover",			WRAP_METHOD(Console, cmdStepOver));
+	registerCmd("p",					WRAP_METHOD(Console, cmdStepOver));		// alias
+	registerCmd("step_ret",			WRAP_METHOD(Console, cmdStepRet));
+	registerCmd("pret",				WRAP_METHOD(Console, cmdStepRet));		// alias
+	registerCmd("step_event",			WRAP_METHOD(Console, cmdStepEvent));
+	registerCmd("se",					WRAP_METHOD(Console, cmdStepEvent));	// alias
+	registerCmd("step_global",		WRAP_METHOD(Console, cmdStepGlobal));
+	registerCmd("sg",					WRAP_METHOD(Console, cmdStepGlobal));	// alias
+	registerCmd("step_callk",			WRAP_METHOD(Console, cmdStepCallk));
+	registerCmd("snk",				WRAP_METHOD(Console, cmdStepCallk));	// alias
+	registerCmd("disasm",				WRAP_METHOD(Console, cmdDisassemble));
+	registerCmd("disasm_addr",		WRAP_METHOD(Console, cmdDisassembleAddress));
+	registerCmd("find_callk",			WRAP_METHOD(Console, cmdFindKernelFunctionCall));
+	registerCmd("send",				WRAP_METHOD(Console, cmdSend));
+	registerCmd("go",					WRAP_METHOD(Console, cmdGo));
+	registerCmd("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
 	// Breakpoints
-	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
-	DCmd_Register("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
-	DCmd_Register("bl",					WRAP_METHOD(Console, cmdBreakpointList));			// alias
-	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
-	DCmd_Register("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
-	DCmd_Register("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
-	DCmd_Register("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
-	DCmd_Register("bpx",				WRAP_METHOD(Console, cmdBreakpointMethod));			// alias
-	DCmd_Register("bp_read",			WRAP_METHOD(Console, cmdBreakpointRead));
-	DCmd_Register("bpr",				WRAP_METHOD(Console, cmdBreakpointRead));			// alias
-	DCmd_Register("bp_write",			WRAP_METHOD(Console, cmdBreakpointWrite));
-	DCmd_Register("bpw",				WRAP_METHOD(Console, cmdBreakpointWrite));			// alias
-	DCmd_Register("bp_kernel",			WRAP_METHOD(Console, cmdBreakpointKernel));
-	DCmd_Register("bpk",				WRAP_METHOD(Console, cmdBreakpointKernel));			// alias
-	DCmd_Register("bp_function",		WRAP_METHOD(Console, cmdBreakpointFunction));
-	DCmd_Register("bpe",				WRAP_METHOD(Console, cmdBreakpointFunction));		// alias
+	registerCmd("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
+	registerCmd("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
+	registerCmd("bl",					WRAP_METHOD(Console, cmdBreakpointList));			// alias
+	registerCmd("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
+	registerCmd("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
+	registerCmd("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
+	registerCmd("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
+	registerCmd("bpx",				WRAP_METHOD(Console, cmdBreakpointMethod));			// alias
+	registerCmd("bp_read",			WRAP_METHOD(Console, cmdBreakpointRead));
+	registerCmd("bpr",				WRAP_METHOD(Console, cmdBreakpointRead));			// alias
+	registerCmd("bp_write",			WRAP_METHOD(Console, cmdBreakpointWrite));
+	registerCmd("bpw",				WRAP_METHOD(Console, cmdBreakpointWrite));			// alias
+	registerCmd("bp_kernel",			WRAP_METHOD(Console, cmdBreakpointKernel));
+	registerCmd("bpk",				WRAP_METHOD(Console, cmdBreakpointKernel));			// alias
+	registerCmd("bp_function",		WRAP_METHOD(Console, cmdBreakpointFunction));
+	registerCmd("bpe",				WRAP_METHOD(Console, cmdBreakpointFunction));		// alias
 	// VM
-	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
-	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
-	DCmd_Register("vmvarlist",			WRAP_METHOD(Console, cmdVMVarlist));				// alias
-	DCmd_Register("vl",					WRAP_METHOD(Console, cmdVMVarlist));				// alias
-	DCmd_Register("vm_vars",			WRAP_METHOD(Console, cmdVMVars));
-	DCmd_Register("vmvars",				WRAP_METHOD(Console, cmdVMVars));					// alias
-	DCmd_Register("vv",					WRAP_METHOD(Console, cmdVMVars));					// alias
-	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
-	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
-	DCmd_Register("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
-	DCmd_Register("view_reference",		WRAP_METHOD(Console, cmdViewReference));
-	DCmd_Register("vr",					WRAP_METHOD(Console, cmdViewReference));			// alias
-	DCmd_Register("view_object",		WRAP_METHOD(Console, cmdViewObject));
-	DCmd_Register("vo",					WRAP_METHOD(Console, cmdViewObject));				// alias
-	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
-	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
+	registerCmd("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
+	registerCmd("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
+	registerCmd("vmvarlist",			WRAP_METHOD(Console, cmdVMVarlist));				// alias
+	registerCmd("vl",					WRAP_METHOD(Console, cmdVMVarlist));				// alias
+	registerCmd("vm_vars",			WRAP_METHOD(Console, cmdVMVars));
+	registerCmd("vmvars",				WRAP_METHOD(Console, cmdVMVars));					// alias
+	registerCmd("vv",					WRAP_METHOD(Console, cmdVMVars));					// alias
+	registerCmd("stack",				WRAP_METHOD(Console, cmdStack));
+	registerCmd("value_type",			WRAP_METHOD(Console, cmdValueType));
+	registerCmd("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
+	registerCmd("view_reference",		WRAP_METHOD(Console, cmdViewReference));
+	registerCmd("vr",					WRAP_METHOD(Console, cmdViewReference));			// alias
+	registerCmd("view_object",		WRAP_METHOD(Console, cmdViewObject));
+	registerCmd("vo",					WRAP_METHOD(Console, cmdViewObject));				// alias
+	registerCmd("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
+	registerCmd("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
 
 	_debugState.seeking = kDebugSeekNothing;
 	_debugState.seekLevel = 0;

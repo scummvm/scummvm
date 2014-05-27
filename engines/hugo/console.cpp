@@ -30,12 +30,12 @@
 namespace Hugo {
 
 HugoConsole::HugoConsole(HugoEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("listscreens",   WRAP_METHOD(HugoConsole, Cmd_listScreens));
-	DCmd_Register("listobjects",   WRAP_METHOD(HugoConsole, Cmd_listObjects));
-	DCmd_Register("getobject",     WRAP_METHOD(HugoConsole, Cmd_getObject));
-	DCmd_Register("getallobjects", WRAP_METHOD(HugoConsole, Cmd_getAllObjects));
-	DCmd_Register("gotoscreen",    WRAP_METHOD(HugoConsole, Cmd_gotoScreen));
-	DCmd_Register("Boundaries",    WRAP_METHOD(HugoConsole, Cmd_boundaries));
+	registerCmd("listscreens",   WRAP_METHOD(HugoConsole, Cmd_listScreens));
+	registerCmd("listobjects",   WRAP_METHOD(HugoConsole, Cmd_listObjects));
+	registerCmd("getobject",     WRAP_METHOD(HugoConsole, Cmd_getObject));
+	registerCmd("getallobjects", WRAP_METHOD(HugoConsole, Cmd_getAllObjects));
+	registerCmd("gotoscreen",    WRAP_METHOD(HugoConsole, Cmd_gotoScreen));
+	registerCmd("Boundaries",    WRAP_METHOD(HugoConsole, Cmd_boundaries));
 }
 
 HugoConsole::~HugoConsole() {

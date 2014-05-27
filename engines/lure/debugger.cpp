@@ -35,20 +35,20 @@
 namespace Lure {
 
 Debugger::Debugger(): GUI::Debugger() {
-	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("enter",				WRAP_METHOD(Debugger, cmd_enterRoom));
-	DCmd_Register("rooms",				WRAP_METHOD(Debugger, cmd_listRooms));
-	DCmd_Register("fields",				WRAP_METHOD(Debugger, cmd_listFields));
-	DCmd_Register("setfield",			WRAP_METHOD(Debugger, cmd_setField));
-	DCmd_Register("queryfield",			WRAP_METHOD(Debugger, cmd_queryField));
-	DCmd_Register("give",				WRAP_METHOD(Debugger, cmd_giveItem));
-	DCmd_Register("hotspots",			WRAP_METHOD(Debugger, cmd_hotspots));
-	DCmd_Register("hotspot",			WRAP_METHOD(Debugger, cmd_hotspot));
-	DCmd_Register("room",				WRAP_METHOD(Debugger, cmd_room));
-	DCmd_Register("showanim",			WRAP_METHOD(Debugger, cmd_showAnim));
-	DCmd_Register("strings",			WRAP_METHOD(Debugger, cmd_saveStrings));
-	DCmd_Register("debug",				WRAP_METHOD(Debugger, cmd_debug));
-	DCmd_Register("script",				WRAP_METHOD(Debugger, cmd_script));
+	registerCmd("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("enter",				WRAP_METHOD(Debugger, cmd_enterRoom));
+	registerCmd("rooms",				WRAP_METHOD(Debugger, cmd_listRooms));
+	registerCmd("fields",				WRAP_METHOD(Debugger, cmd_listFields));
+	registerCmd("setfield",			WRAP_METHOD(Debugger, cmd_setField));
+	registerCmd("queryfield",			WRAP_METHOD(Debugger, cmd_queryField));
+	registerCmd("give",				WRAP_METHOD(Debugger, cmd_giveItem));
+	registerCmd("hotspots",			WRAP_METHOD(Debugger, cmd_hotspots));
+	registerCmd("hotspot",			WRAP_METHOD(Debugger, cmd_hotspot));
+	registerCmd("room",				WRAP_METHOD(Debugger, cmd_room));
+	registerCmd("showanim",			WRAP_METHOD(Debugger, cmd_showAnim));
+	registerCmd("strings",			WRAP_METHOD(Debugger, cmd_saveStrings));
+	registerCmd("debug",				WRAP_METHOD(Debugger, cmd_debug));
+	registerCmd("script",				WRAP_METHOD(Debugger, cmd_script));
 }
 
 static int strToInt(const char *s) {

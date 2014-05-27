@@ -27,7 +27,7 @@
 namespace Drascula {
 
 Console::Console(DrasculaEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("room",			WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
 }
 
 Console::~Console() {

@@ -32,22 +32,22 @@ namespace Agi {
 Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("debug",      WRAP_METHOD(Console, Cmd_Debug));
-	DCmd_Register("cont",       WRAP_METHOD(Console, Cmd_Cont));
-	DCmd_Register("agiver",     WRAP_METHOD(Console, Cmd_Agiver));
-	DCmd_Register("flags",      WRAP_METHOD(Console, Cmd_Flags));
-	DCmd_Register("logic0",     WRAP_METHOD(Console, Cmd_Logic0));
-	DCmd_Register("objs",       WRAP_METHOD(Console, Cmd_Objs));
-	DCmd_Register("runopcode",  WRAP_METHOD(Console, Cmd_RunOpcode));
-	DCmd_Register("opcode",     WRAP_METHOD(Console, Cmd_Opcode));
-	DCmd_Register("step",       WRAP_METHOD(Console, Cmd_Step));
-	DCmd_Register("trigger",    WRAP_METHOD(Console, Cmd_Trigger));
-	DCmd_Register("vars",       WRAP_METHOD(Console, Cmd_Vars));
-	DCmd_Register("setvar",     WRAP_METHOD(Console, Cmd_SetVar));
-	DCmd_Register("setflag",    WRAP_METHOD(Console, Cmd_SetFlag));
-	DCmd_Register("setobj",     WRAP_METHOD(Console, Cmd_SetObj));
-	DCmd_Register("room",       WRAP_METHOD(Console, Cmd_Room));
-	DCmd_Register("bt",         WRAP_METHOD(Console, Cmd_BT));
+	registerCmd("debug",      WRAP_METHOD(Console, Cmd_Debug));
+	registerCmd("cont",       WRAP_METHOD(Console, Cmd_Cont));
+	registerCmd("agiver",     WRAP_METHOD(Console, Cmd_Agiver));
+	registerCmd("flags",      WRAP_METHOD(Console, Cmd_Flags));
+	registerCmd("logic0",     WRAP_METHOD(Console, Cmd_Logic0));
+	registerCmd("objs",       WRAP_METHOD(Console, Cmd_Objs));
+	registerCmd("runopcode",  WRAP_METHOD(Console, Cmd_RunOpcode));
+	registerCmd("opcode",     WRAP_METHOD(Console, Cmd_Opcode));
+	registerCmd("step",       WRAP_METHOD(Console, Cmd_Step));
+	registerCmd("trigger",    WRAP_METHOD(Console, Cmd_Trigger));
+	registerCmd("vars",       WRAP_METHOD(Console, Cmd_Vars));
+	registerCmd("setvar",     WRAP_METHOD(Console, Cmd_SetVar));
+	registerCmd("setflag",    WRAP_METHOD(Console, Cmd_SetFlag));
+	registerCmd("setobj",     WRAP_METHOD(Console, Cmd_SetObj));
+	registerCmd("room",       WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("bt",         WRAP_METHOD(Console, Cmd_BT));
 }
 
 bool Console::Cmd_SetVar(int argc, const char **argv) {
@@ -271,9 +271,9 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 MickeyConsole::MickeyConsole(MickeyEngine *mickey) : GUI::Debugger() {
 	_mickey = mickey;
 
-	DCmd_Register("room",        WRAP_METHOD(MickeyConsole, Cmd_Room));
-	DCmd_Register("drawPic",     WRAP_METHOD(MickeyConsole, Cmd_DrawPic));
-	DCmd_Register("drawObj",     WRAP_METHOD(MickeyConsole, Cmd_DrawObj));
+	registerCmd("room",        WRAP_METHOD(MickeyConsole, Cmd_Room));
+	registerCmd("drawPic",     WRAP_METHOD(MickeyConsole, Cmd_DrawPic));
+	registerCmd("drawObj",     WRAP_METHOD(MickeyConsole, Cmd_DrawObj));
 }
 
 bool MickeyConsole::Cmd_Room(int argc, const char **argv) {
@@ -304,7 +304,7 @@ bool MickeyConsole::Cmd_DrawObj(int argc, const char **argv) {
 WinnieConsole::WinnieConsole(WinnieEngine *winnie) : GUI::Debugger() {
 	_winnie = winnie;
 
-	DCmd_Register("curRoom", WRAP_METHOD(WinnieConsole, Cmd_CurRoom));
+	registerCmd("curRoom", WRAP_METHOD(WinnieConsole, Cmd_CurRoom));
 }
 
 bool WinnieConsole::Cmd_CurRoom(int argc, const char **argv) {

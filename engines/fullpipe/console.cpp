@@ -28,7 +28,7 @@
 namespace Fullpipe {
 
 Console::Console(FullpipeEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("scene",			WRAP_METHOD(Console, Cmd_Scene));
+	registerCmd("scene",			WRAP_METHOD(Console, Cmd_Scene));
 }
 
 bool Console::Cmd_Scene(int argc, const char **argv) {

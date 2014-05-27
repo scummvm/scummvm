@@ -34,13 +34,13 @@
 namespace Neverhood {
 
 Console::Console(NeverhoodEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("cheat",			WRAP_METHOD(Console, Cmd_Cheat));
-	DCmd_Register("checkresource",	WRAP_METHOD(Console, Cmd_CheckResource));
-	DCmd_Register("dumpresource",	WRAP_METHOD(Console, Cmd_DumpResource));
-	DCmd_Register("dumpvars",		WRAP_METHOD(Console, Cmd_Dumpvars));
-	DCmd_Register("playsound",		WRAP_METHOD(Console, Cmd_PlaySound));
-	DCmd_Register("scene",			WRAP_METHOD(Console, Cmd_Scene));
-	DCmd_Register("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
+	registerCmd("cheat",			WRAP_METHOD(Console, Cmd_Cheat));
+	registerCmd("checkresource",	WRAP_METHOD(Console, Cmd_CheckResource));
+	registerCmd("dumpresource",	WRAP_METHOD(Console, Cmd_DumpResource));
+	registerCmd("dumpvars",		WRAP_METHOD(Console, Cmd_Dumpvars));
+	registerCmd("playsound",		WRAP_METHOD(Console, Cmd_PlaySound));
+	registerCmd("scene",			WRAP_METHOD(Console, Cmd_Scene));
+	registerCmd("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
 }
 
 Console::~Console() {

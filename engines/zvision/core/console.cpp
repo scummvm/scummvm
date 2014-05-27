@@ -45,18 +45,18 @@
 namespace ZVision {
 
 Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
-	DCmd_Register("loadimage", WRAP_METHOD(Console, cmdLoadImage));
-	DCmd_Register("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
-	DCmd_Register("loadsound", WRAP_METHOD(Console, cmdLoadSound));
-	DCmd_Register("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
-	DCmd_Register("setrenderstate", WRAP_METHOD(Console, cmdSetRenderState));
-	DCmd_Register("generaterendertable", WRAP_METHOD(Console, cmdGenerateRenderTable));
-	DCmd_Register("setpanoramafov", WRAP_METHOD(Console, cmdSetPanoramaFoV));
-	DCmd_Register("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
-	DCmd_Register("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
-	DCmd_Register("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
-	DCmd_Register("parseallscrfiles", WRAP_METHOD(Console, cmdParseAllScrFiles));
-	DCmd_Register("rendertext", WRAP_METHOD(Console, cmdRenderText));
+	registerCmd("loadimage", WRAP_METHOD(Console, cmdLoadImage));
+	registerCmd("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
+	registerCmd("loadsound", WRAP_METHOD(Console, cmdLoadSound));
+	registerCmd("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
+	registerCmd("setrenderstate", WRAP_METHOD(Console, cmdSetRenderState));
+	registerCmd("generaterendertable", WRAP_METHOD(Console, cmdGenerateRenderTable));
+	registerCmd("setpanoramafov", WRAP_METHOD(Console, cmdSetPanoramaFoV));
+	registerCmd("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
+	registerCmd("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
+	registerCmd("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
+	registerCmd("parseallscrfiles", WRAP_METHOD(Console, cmdParseAllScrFiles));
+	registerCmd("rendertext", WRAP_METHOD(Console, cmdRenderText));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {

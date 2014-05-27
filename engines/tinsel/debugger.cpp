@@ -62,11 +62,11 @@ int strToInt(const char *s) {
 //----------------- CONSOLE CLASS  ---------------------
 
 Console::Console() : GUI::Debugger() {
-	DCmd_Register("item",		WRAP_METHOD(Console, cmd_item));
-	DCmd_Register("scene",		WRAP_METHOD(Console, cmd_scene));
-	DCmd_Register("music",		WRAP_METHOD(Console, cmd_music));
-	DCmd_Register("sound",		WRAP_METHOD(Console, cmd_sound));
-	DCmd_Register("string",		WRAP_METHOD(Console, cmd_string));
+	registerCmd("item",		WRAP_METHOD(Console, cmd_item));
+	registerCmd("scene",		WRAP_METHOD(Console, cmd_scene));
+	registerCmd("music",		WRAP_METHOD(Console, cmd_music));
+	registerCmd("sound",		WRAP_METHOD(Console, cmd_sound));
+	registerCmd("string",		WRAP_METHOD(Console, cmd_string));
 }
 
 Console::~Console() {

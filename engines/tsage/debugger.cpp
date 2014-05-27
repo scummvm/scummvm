@@ -30,19 +30,19 @@
 namespace TsAGE {
 
 Debugger::Debugger() : GUI::Debugger() {
-	DCmd_Register("continue",         WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("scene",            WRAP_METHOD(Debugger, Cmd_Scene));
-	DCmd_Register("walk_regions",     WRAP_METHOD(Debugger, Cmd_WalkRegions));
-	DCmd_Register("priority_regions", WRAP_METHOD(Debugger, Cmd_PriorityRegions));
-	DCmd_Register("scene_regions",    WRAP_METHOD(Debugger, Cmd_SceneRegions));
-	DCmd_Register("setflag",          WRAP_METHOD(Debugger, Cmd_SetFlag));
-	DCmd_Register("getflag",          WRAP_METHOD(Debugger, Cmd_GetFlag));
-	DCmd_Register("clearflag",        WRAP_METHOD(Debugger, Cmd_ClearFlag));
-	DCmd_Register("listobjects",      WRAP_METHOD(Debugger, Cmd_ListObjects));
-	DCmd_Register("moveobject",       WRAP_METHOD(Debugger, Cmd_MoveObject));
-	DCmd_Register("hotspots",         WRAP_METHOD(Debugger, Cmd_Hotspots));
-	DCmd_Register("sound",            WRAP_METHOD(Debugger, Cmd_Sound));
-	DCmd_Register("setdebug",         WRAP_METHOD(Debugger, Cmd_SetDebug));
+	registerCmd("continue",         WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("scene",            WRAP_METHOD(Debugger, Cmd_Scene));
+	registerCmd("walk_regions",     WRAP_METHOD(Debugger, Cmd_WalkRegions));
+	registerCmd("priority_regions", WRAP_METHOD(Debugger, Cmd_PriorityRegions));
+	registerCmd("scene_regions",    WRAP_METHOD(Debugger, Cmd_SceneRegions));
+	registerCmd("setflag",          WRAP_METHOD(Debugger, Cmd_SetFlag));
+	registerCmd("getflag",          WRAP_METHOD(Debugger, Cmd_GetFlag));
+	registerCmd("clearflag",        WRAP_METHOD(Debugger, Cmd_ClearFlag));
+	registerCmd("listobjects",      WRAP_METHOD(Debugger, Cmd_ListObjects));
+	registerCmd("moveobject",       WRAP_METHOD(Debugger, Cmd_MoveObject));
+	registerCmd("hotspots",         WRAP_METHOD(Debugger, Cmd_Hotspots));
+	registerCmd("sound",            WRAP_METHOD(Debugger, Cmd_Sound));
+	registerCmd("setdebug",         WRAP_METHOD(Debugger, Cmd_SetDebug));
 }
 
 static int strToInt(const char *s) {

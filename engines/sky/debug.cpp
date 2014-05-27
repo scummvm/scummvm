@@ -1087,14 +1087,14 @@ void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 
 Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact)
 : GUI::Debugger(), _logic(logic), _mouse(mouse), _screen(screen), _skyCompact(skyCompact), _showGrid(false) {
-	DCmd_Register("info",       WRAP_METHOD(Debugger, Cmd_Info));
-	DCmd_Register("showgrid",   WRAP_METHOD(Debugger, Cmd_ShowGrid));
-	DCmd_Register("reloadgrid", WRAP_METHOD(Debugger, Cmd_ReloadGrid));
-	DCmd_Register("compact",    WRAP_METHOD(Debugger, Cmd_ShowCompact));
-	DCmd_Register("logiccmd",   WRAP_METHOD(Debugger, Cmd_LogicCommand));
-	DCmd_Register("scriptvar",  WRAP_METHOD(Debugger, Cmd_ScriptVar));
-	DCmd_Register("section",    WRAP_METHOD(Debugger, Cmd_Section));
-	DCmd_Register("logiclist",  WRAP_METHOD(Debugger, Cmd_LogicList));
+	registerCmd("info",       WRAP_METHOD(Debugger, Cmd_Info));
+	registerCmd("showgrid",   WRAP_METHOD(Debugger, Cmd_ShowGrid));
+	registerCmd("reloadgrid", WRAP_METHOD(Debugger, Cmd_ReloadGrid));
+	registerCmd("compact",    WRAP_METHOD(Debugger, Cmd_ShowCompact));
+	registerCmd("logiccmd",   WRAP_METHOD(Debugger, Cmd_LogicCommand));
+	registerCmd("scriptvar",  WRAP_METHOD(Debugger, Cmd_ScriptVar));
+	registerCmd("section",    WRAP_METHOD(Debugger, Cmd_Section));
+	registerCmd("logiclist",  WRAP_METHOD(Debugger, Cmd_LogicList));
 }
 
 Debugger::~Debugger() {} // we need this here for __SYMBIAN32__

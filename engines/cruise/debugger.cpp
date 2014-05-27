@@ -29,9 +29,9 @@
 namespace Cruise {
 
 Debugger::Debugger(): GUI::Debugger() {
-	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("hotspots",				WRAP_METHOD(Debugger, cmd_hotspots));
-	DCmd_Register("items",				WRAP_METHOD(Debugger, cmd_items));
+	registerCmd("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("hotspots",				WRAP_METHOD(Debugger, cmd_hotspots));
+	registerCmd("items",				WRAP_METHOD(Debugger, cmd_items));
 }
 
 /**

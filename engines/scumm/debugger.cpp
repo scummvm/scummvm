@@ -64,39 +64,39 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	registerVar("scumm_vars", &_vm->_scummVars, DVAR_INTARRAY, _vm->_numVariables);
 
 	// Register commands
-	DCmd_Register("continue",  WRAP_METHOD(ScummDebugger, Cmd_Exit));
-	DCmd_Register("restart",   WRAP_METHOD(ScummDebugger, Cmd_Restart));
+	registerCmd("continue",  WRAP_METHOD(ScummDebugger, Cmd_Exit));
+	registerCmd("restart",   WRAP_METHOD(ScummDebugger, Cmd_Restart));
 
-	DCmd_Register("actor",     WRAP_METHOD(ScummDebugger, Cmd_Actor));
-	DCmd_Register("actors",    WRAP_METHOD(ScummDebugger, Cmd_PrintActor));
-	DCmd_Register("box",       WRAP_METHOD(ScummDebugger, Cmd_PrintBox));
-	DCmd_Register("matrix",    WRAP_METHOD(ScummDebugger, Cmd_PrintBoxMatrix));
-	DCmd_Register("camera",    WRAP_METHOD(ScummDebugger, Cmd_Camera));
-	DCmd_Register("room",      WRAP_METHOD(ScummDebugger, Cmd_Room));
-	DCmd_Register("objects",   WRAP_METHOD(ScummDebugger, Cmd_PrintObjects));
-	DCmd_Register("object",    WRAP_METHOD(ScummDebugger, Cmd_Object));
-	DCmd_Register("script",    WRAP_METHOD(ScummDebugger, Cmd_Script));
-	DCmd_Register("scr",       WRAP_METHOD(ScummDebugger, Cmd_Script));
-	DCmd_Register("scripts",   WRAP_METHOD(ScummDebugger, Cmd_PrintScript));
-	DCmd_Register("importres", WRAP_METHOD(ScummDebugger, Cmd_ImportRes));
+	registerCmd("actor",     WRAP_METHOD(ScummDebugger, Cmd_Actor));
+	registerCmd("actors",    WRAP_METHOD(ScummDebugger, Cmd_PrintActor));
+	registerCmd("box",       WRAP_METHOD(ScummDebugger, Cmd_PrintBox));
+	registerCmd("matrix",    WRAP_METHOD(ScummDebugger, Cmd_PrintBoxMatrix));
+	registerCmd("camera",    WRAP_METHOD(ScummDebugger, Cmd_Camera));
+	registerCmd("room",      WRAP_METHOD(ScummDebugger, Cmd_Room));
+	registerCmd("objects",   WRAP_METHOD(ScummDebugger, Cmd_PrintObjects));
+	registerCmd("object",    WRAP_METHOD(ScummDebugger, Cmd_Object));
+	registerCmd("script",    WRAP_METHOD(ScummDebugger, Cmd_Script));
+	registerCmd("scr",       WRAP_METHOD(ScummDebugger, Cmd_Script));
+	registerCmd("scripts",   WRAP_METHOD(ScummDebugger, Cmd_PrintScript));
+	registerCmd("importres", WRAP_METHOD(ScummDebugger, Cmd_ImportRes));
 
 	if (_vm->_game.id == GID_LOOM)
-		DCmd_Register("drafts",  WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
+		registerCmd("drafts",  WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
 
 	if (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformSegaCD)
-		DCmd_Register("passcode",  WRAP_METHOD(ScummDebugger, Cmd_Passcode));
+		registerCmd("passcode",  WRAP_METHOD(ScummDebugger, Cmd_Passcode));
 
-	DCmd_Register("loadgame",  WRAP_METHOD(ScummDebugger, Cmd_LoadGame));
-	DCmd_Register("savegame",  WRAP_METHOD(ScummDebugger, Cmd_SaveGame));
+	registerCmd("loadgame",  WRAP_METHOD(ScummDebugger, Cmd_LoadGame));
+	registerCmd("savegame",  WRAP_METHOD(ScummDebugger, Cmd_SaveGame));
 
-	DCmd_Register("debug",     WRAP_METHOD(ScummDebugger, Cmd_Debug));
+	registerCmd("debug",     WRAP_METHOD(ScummDebugger, Cmd_Debug));
 
-	DCmd_Register("show",      WRAP_METHOD(ScummDebugger, Cmd_Show));
-	DCmd_Register("hide",      WRAP_METHOD(ScummDebugger, Cmd_Hide));
+	registerCmd("show",      WRAP_METHOD(ScummDebugger, Cmd_Show));
+	registerCmd("hide",      WRAP_METHOD(ScummDebugger, Cmd_Hide));
 
-	DCmd_Register("imuse",     WRAP_METHOD(ScummDebugger, Cmd_IMuse));
+	registerCmd("imuse",     WRAP_METHOD(ScummDebugger, Cmd_IMuse));
 
-	DCmd_Register("resetcursors",    WRAP_METHOD(ScummDebugger, Cmd_ResetCursors));
+	registerCmd("resetcursors",    WRAP_METHOD(ScummDebugger, Cmd_ResetCursors));
 }
 
 ScummDebugger::~ScummDebugger() {

@@ -40,16 +40,16 @@ Debugger::Debugger(KyraEngine_v1 *vm)
 }
 
 void Debugger::initialize() {
-	DCmd_Register("continue",           WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("screen_debug_mode",  WRAP_METHOD(Debugger, cmd_setScreenDebug));
-	DCmd_Register("load_palette",       WRAP_METHOD(Debugger, cmd_loadPalette));
-	DCmd_Register("facings",            WRAP_METHOD(Debugger, cmd_showFacings));
-	DCmd_Register("gamespeed",          WRAP_METHOD(Debugger, cmd_gameSpeed));
-	DCmd_Register("flags",              WRAP_METHOD(Debugger, cmd_listFlags));
-	DCmd_Register("toggleflag",         WRAP_METHOD(Debugger, cmd_toggleFlag));
-	DCmd_Register("queryflag",          WRAP_METHOD(Debugger, cmd_queryFlag));
-	DCmd_Register("timers",             WRAP_METHOD(Debugger, cmd_listTimers));
-	DCmd_Register("settimercountdown",  WRAP_METHOD(Debugger, cmd_setTimerCountdown));
+	registerCmd("continue",           WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("screen_debug_mode",  WRAP_METHOD(Debugger, cmd_setScreenDebug));
+	registerCmd("load_palette",       WRAP_METHOD(Debugger, cmd_loadPalette));
+	registerCmd("facings",            WRAP_METHOD(Debugger, cmd_showFacings));
+	registerCmd("gamespeed",          WRAP_METHOD(Debugger, cmd_gameSpeed));
+	registerCmd("flags",              WRAP_METHOD(Debugger, cmd_listFlags));
+	registerCmd("toggleflag",         WRAP_METHOD(Debugger, cmd_toggleFlag));
+	registerCmd("queryflag",          WRAP_METHOD(Debugger, cmd_queryFlag));
+	registerCmd("timers",             WRAP_METHOD(Debugger, cmd_listTimers));
+	registerCmd("settimercountdown",  WRAP_METHOD(Debugger, cmd_setTimerCountdown));
 }
 
 bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
@@ -204,10 +204,10 @@ Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
 }
 
 void Debugger_LoK::initialize() {
-	DCmd_Register("enter",              WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
-	DCmd_Register("scenes",             WRAP_METHOD(Debugger_LoK, cmd_listScenes));
-	DCmd_Register("give",               WRAP_METHOD(Debugger_LoK, cmd_giveItem));
-	DCmd_Register("birthstones",        WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
+	registerCmd("enter",              WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
+	registerCmd("scenes",             WRAP_METHOD(Debugger_LoK, cmd_listScenes));
+	registerCmd("give",               WRAP_METHOD(Debugger_LoK, cmd_giveItem));
+	registerCmd("birthstones",        WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
 	Debugger::initialize();
 }
 
@@ -293,12 +293,12 @@ Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_v2::initialize() {
-	DCmd_Register("character_info",     WRAP_METHOD(Debugger_v2, cmd_characterInfo));
-	DCmd_Register("enter",              WRAP_METHOD(Debugger_v2, cmd_enterScene));
-	DCmd_Register("scenes",             WRAP_METHOD(Debugger_v2, cmd_listScenes));
-	DCmd_Register("scene_info",         WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
-	DCmd_Register("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
-	DCmd_Register("give",               WRAP_METHOD(Debugger_v2, cmd_giveItem));
+	registerCmd("character_info",     WRAP_METHOD(Debugger_v2, cmd_characterInfo));
+	registerCmd("enter",              WRAP_METHOD(Debugger_v2, cmd_enterScene));
+	registerCmd("scenes",             WRAP_METHOD(Debugger_v2, cmd_listScenes));
+	registerCmd("scene_info",         WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
+	registerCmd("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
+	registerCmd("give",               WRAP_METHOD(Debugger_v2, cmd_giveItem));
 	Debugger::initialize();
 }
 
@@ -449,7 +449,7 @@ Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm) : Debugger_v2(vm), _vm(vm) {
 }
 
 void Debugger_HoF::initialize() {
-	DCmd_Register("pass_codes",         WRAP_METHOD(Debugger_HoF, cmd_passcodes));
+	registerCmd("pass_codes",         WRAP_METHOD(Debugger_HoF, cmd_passcodes));
 	Debugger_v2::initialize();
 }
 
@@ -482,16 +482,16 @@ Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_EoB::initialize() {
-	DCmd_Register("import_savefile", WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
-	DCmd_Register("save_original", WRAP_METHOD(Debugger_EoB, cmd_saveOriginal));
-	DCmd_Register("list_monsters", WRAP_METHOD(Debugger_EoB, cmd_listMonsters));
-	DCmd_Register("show_position", WRAP_METHOD(Debugger_EoB, cmd_showPosition));
-	DCmd_Register("set_position", WRAP_METHOD(Debugger_EoB, cmd_setPosition));
-	DCmd_Register("open_door", WRAP_METHOD(Debugger_EoB, cmd_openDoor));
-	DCmd_Register("close_door", WRAP_METHOD(Debugger_EoB, cmd_closeDoor));
-	DCmd_Register("list_flags", WRAP_METHOD(Debugger_EoB, cmd_listFlags));
-	DCmd_Register("set_flag", WRAP_METHOD(Debugger_EoB, cmd_setFlag));
-	DCmd_Register("clear_flag", WRAP_METHOD(Debugger_EoB, cmd_clearFlag));
+	registerCmd("import_savefile", WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
+	registerCmd("save_original", WRAP_METHOD(Debugger_EoB, cmd_saveOriginal));
+	registerCmd("list_monsters", WRAP_METHOD(Debugger_EoB, cmd_listMonsters));
+	registerCmd("show_position", WRAP_METHOD(Debugger_EoB, cmd_showPosition));
+	registerCmd("set_position", WRAP_METHOD(Debugger_EoB, cmd_setPosition));
+	registerCmd("open_door", WRAP_METHOD(Debugger_EoB, cmd_openDoor));
+	registerCmd("close_door", WRAP_METHOD(Debugger_EoB, cmd_closeDoor));
+	registerCmd("list_flags", WRAP_METHOD(Debugger_EoB, cmd_listFlags));
+	registerCmd("set_flag", WRAP_METHOD(Debugger_EoB, cmd_setFlag));
+	registerCmd("clear_flag", WRAP_METHOD(Debugger_EoB, cmd_clearFlag));
 }
 
 bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {

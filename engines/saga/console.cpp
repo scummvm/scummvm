@@ -35,15 +35,15 @@ namespace Saga {
 Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("continue",			WRAP_METHOD(Console, Cmd_Exit));
+	registerCmd("continue",			WRAP_METHOD(Console, Cmd_Exit));
 
 	// Actor commands
-	DCmd_Register("actor_walk_to",		WRAP_METHOD(Console, cmdActorWalkTo));
+	registerCmd("actor_walk_to",		WRAP_METHOD(Console, cmdActorWalkTo));
 
 	// Animation commands
-	DCmd_Register("anim_info",			WRAP_METHOD(Console, cmdAnimInfo));
-	DCmd_Register("cutaway_info",		WRAP_METHOD(Console, cmdCutawayInfo));
-	DCmd_Register("play_cutaway",		WRAP_METHOD(Console, cmdPlayCutaway));
+	registerCmd("anim_info",			WRAP_METHOD(Console, cmdAnimInfo));
+	registerCmd("cutaway_info",		WRAP_METHOD(Console, cmdCutawayInfo));
+	registerCmd("play_cutaway",		WRAP_METHOD(Console, cmdPlayCutaway));
 
 	// Game stuff
 
@@ -60,28 +60,28 @@ Console::Console(SagaEngine *vm) : GUI::Debugger() {
 #endif
 
 	// Scene commands
-	DCmd_Register("current_scene",		WRAP_METHOD(Console, cmdCurrentScene));
-	DCmd_Register("current_chapter",	WRAP_METHOD(Console, cmdCurrentChapter));
-	DCmd_Register("scene_change",		WRAP_METHOD(Console, cmdSceneChange));
-	DCmd_Register("chapter_change",		WRAP_METHOD(Console, cmdChapterChange));
+	registerCmd("current_scene",		WRAP_METHOD(Console, cmdCurrentScene));
+	registerCmd("current_chapter",	WRAP_METHOD(Console, cmdCurrentChapter));
+	registerCmd("scene_change",		WRAP_METHOD(Console, cmdSceneChange));
+	registerCmd("chapter_change",		WRAP_METHOD(Console, cmdChapterChange));
 
-	DCmd_Register("action_map_info",	WRAP_METHOD(Console, cmdActionMapInfo));
-	DCmd_Register("object_map_info",	WRAP_METHOD(Console, cmdObjectMapInfo));
+	registerCmd("action_map_info",	WRAP_METHOD(Console, cmdActionMapInfo));
+	registerCmd("object_map_info",	WRAP_METHOD(Console, cmdObjectMapInfo));
 
 	// Script commands
-	DCmd_Register("wake_up_threads",	WRAP_METHOD(Console, cmdWakeUpThreads));
+	registerCmd("wake_up_threads",	WRAP_METHOD(Console, cmdWakeUpThreads));
 
 	// Panel commands
-	DCmd_Register("current_panel_mode",	WRAP_METHOD(Console, cmdCurrentPanelMode));
-	DCmd_Register("set_panel_mode",		WRAP_METHOD(Console, cmdSetPanelMode));
+	registerCmd("current_panel_mode",	WRAP_METHOD(Console, cmdCurrentPanelMode));
+	registerCmd("set_panel_mode",		WRAP_METHOD(Console, cmdSetPanelMode));
 
 	// Font commands
-	DCmd_Register("set_font_mapping",	WRAP_METHOD(Console, cmdSetFontMapping));
+	registerCmd("set_font_mapping",	WRAP_METHOD(Console, cmdSetFontMapping));
 
 	// Global flags commands
-	DCmd_Register("global_flags_info",	WRAP_METHOD(Console, cmdGlobalFlagsInfo));
-	DCmd_Register("set_global_flag",	WRAP_METHOD(Console, cmdSetGlobalFlag));
-	DCmd_Register("clear_global_flag",	WRAP_METHOD(Console, cmdClearGlobalFlag));
+	registerCmd("global_flags_info",	WRAP_METHOD(Console, cmdGlobalFlagsInfo));
+	registerCmd("set_global_flag",	WRAP_METHOD(Console, cmdSetGlobalFlag));
+	registerCmd("clear_global_flag",	WRAP_METHOD(Console, cmdClearGlobalFlag));
 }
 
 Console::~Console() {

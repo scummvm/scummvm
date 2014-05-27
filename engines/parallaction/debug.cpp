@@ -33,18 +33,18 @@ Debugger::Debugger(Parallaction *vm)
 	: GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("continue",	WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("location",	WRAP_METHOD(Debugger, Cmd_Location));
-	DCmd_Register("give",		WRAP_METHOD(Debugger, Cmd_Give));
-	DCmd_Register("zones",		WRAP_METHOD(Debugger, Cmd_Zones));
-	DCmd_Register("animations",	WRAP_METHOD(Debugger, Cmd_Animations));
-	DCmd_Register("globalflags",WRAP_METHOD(Debugger, Cmd_GlobalFlags));
-	DCmd_Register("toggleglobalflag",WRAP_METHOD(Debugger, Cmd_ToggleGlobalFlag));
-	DCmd_Register("localflags",	WRAP_METHOD(Debugger, Cmd_LocalFlags));
-	DCmd_Register("locations",	WRAP_METHOD(Debugger, Cmd_Locations));
-	DCmd_Register("gfxobjects",	WRAP_METHOD(Debugger, Cmd_GfxObjects));
-	DCmd_Register("programs",	WRAP_METHOD(Debugger, Cmd_Programs));
-	DCmd_Register("showmouse",	WRAP_METHOD(Debugger, Cmd_ShowMouse));
+	registerCmd("continue",	WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("location",	WRAP_METHOD(Debugger, Cmd_Location));
+	registerCmd("give",		WRAP_METHOD(Debugger, Cmd_Give));
+	registerCmd("zones",		WRAP_METHOD(Debugger, Cmd_Zones));
+	registerCmd("animations",	WRAP_METHOD(Debugger, Cmd_Animations));
+	registerCmd("globalflags",WRAP_METHOD(Debugger, Cmd_GlobalFlags));
+	registerCmd("toggleglobalflag",WRAP_METHOD(Debugger, Cmd_ToggleGlobalFlag));
+	registerCmd("localflags",	WRAP_METHOD(Debugger, Cmd_LocalFlags));
+	registerCmd("locations",	WRAP_METHOD(Debugger, Cmd_Locations));
+	registerCmd("gfxobjects",	WRAP_METHOD(Debugger, Cmd_GfxObjects));
+	registerCmd("programs",	WRAP_METHOD(Debugger, Cmd_Programs));
+	registerCmd("showmouse",	WRAP_METHOD(Debugger, Cmd_ShowMouse));
 }
 
 

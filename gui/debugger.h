@@ -74,7 +74,7 @@ protected:
 	 * Convenience macro that makes it easier to register a method
 	 * of a debugger subclass as a command.
 	 * Usage example:
-	 *   DCmd_Register("COMMAND", WRAP_METHOD(MyDebugger, MyCmd));
+	 *   registerCmd("COMMAND", WRAP_METHOD(MyDebugger, MyCmd));
 	 * would register the method MyDebugger::MyCmd(int, const char **)
 	 * under the command name "COMMAND".
 	 */
@@ -108,7 +108,7 @@ protected:
 	 * @todo	replace this single method by type safe variants.
 	 */
 	void registerVar(const Common::String &varname, void *variable, VarType type, int arraySize);
-	void DCmd_Register(const Common::String &cmdname, Debuglet *debuglet);
+	void registerCmd(const Common::String &cmdname, Debuglet *debuglet);
 
 
 private:

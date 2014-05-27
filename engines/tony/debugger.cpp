@@ -28,9 +28,9 @@
 namespace Tony {
 
 Debugger::Debugger() : GUI::Debugger() {
-	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
-	DCmd_Register("dirty_rects",	WRAP_METHOD(Debugger, Cmd_DirtyRects));
+	registerCmd("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
+	registerCmd("dirty_rects",	WRAP_METHOD(Debugger, Cmd_DirtyRects));
 }
 
 static int strToInt(const char *s) {

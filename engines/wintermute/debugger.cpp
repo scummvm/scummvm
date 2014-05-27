@@ -29,8 +29,8 @@
 namespace Wintermute {
 
 Console::Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {
-	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
-	DCmd_Register("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
+	registerCmd("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
+	registerCmd("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
 }
 
 Console::~Console(void) {

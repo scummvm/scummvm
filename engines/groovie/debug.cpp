@@ -36,16 +36,16 @@ Debugger::Debugger(GroovieEngine *vm) :
 	_vm(vm), _script(_vm->_script) {
 
 	// Register the debugger comands
-	DCmd_Register("step", WRAP_METHOD(Debugger, cmd_step));
-	DCmd_Register("go", WRAP_METHOD(Debugger, cmd_go));
-	DCmd_Register("pc", WRAP_METHOD(Debugger, cmd_pc));
-	DCmd_Register("fg", WRAP_METHOD(Debugger, cmd_fg));
-	DCmd_Register("bg", WRAP_METHOD(Debugger, cmd_bg));
-	DCmd_Register("mem", WRAP_METHOD(Debugger, cmd_mem));
-	DCmd_Register("load", WRAP_METHOD(Debugger, cmd_loadgame));
-	DCmd_Register("save", WRAP_METHOD(Debugger, cmd_savegame));
-	DCmd_Register("playref", WRAP_METHOD(Debugger, cmd_playref));
-	DCmd_Register("dumppal", WRAP_METHOD(Debugger, cmd_dumppal));
+	registerCmd("step", WRAP_METHOD(Debugger, cmd_step));
+	registerCmd("go", WRAP_METHOD(Debugger, cmd_go));
+	registerCmd("pc", WRAP_METHOD(Debugger, cmd_pc));
+	registerCmd("fg", WRAP_METHOD(Debugger, cmd_fg));
+	registerCmd("bg", WRAP_METHOD(Debugger, cmd_bg));
+	registerCmd("mem", WRAP_METHOD(Debugger, cmd_mem));
+	registerCmd("load", WRAP_METHOD(Debugger, cmd_loadgame));
+	registerCmd("save", WRAP_METHOD(Debugger, cmd_savegame));
+	registerCmd("playref", WRAP_METHOD(Debugger, cmd_playref));
+	registerCmd("dumppal", WRAP_METHOD(Debugger, cmd_dumppal));
 }
 
 Debugger::~Debugger() {

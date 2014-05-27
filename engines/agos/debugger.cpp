@@ -32,18 +32,18 @@ Debugger::Debugger(AGOSEngine *vm)
 	: GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("music",    WRAP_METHOD(Debugger, Cmd_PlayMusic));
-	DCmd_Register("sound",    WRAP_METHOD(Debugger, Cmd_PlaySound));
-	DCmd_Register("voice",    WRAP_METHOD(Debugger, Cmd_PlayVoice));
-	DCmd_Register("bit",      WRAP_METHOD(Debugger, Cmd_SetBit));
-	DCmd_Register("bit2",     WRAP_METHOD(Debugger, Cmd_SetBit2));
-	DCmd_Register("bit3",     WRAP_METHOD(Debugger, Cmd_SetBit3));
-	DCmd_Register("var",      WRAP_METHOD(Debugger, Cmd_SetVar));
-	DCmd_Register("obj",      WRAP_METHOD(Debugger, Cmd_SetObjectFlag));
-	DCmd_Register("sub",      WRAP_METHOD(Debugger, Cmd_StartSubroutine));
-	DCmd_Register("dumpimage",      WRAP_METHOD(Debugger, Cmd_dumpImage));
-	DCmd_Register("dumpscript",     WRAP_METHOD(Debugger, Cmd_dumpScript));
+	registerCmd("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("music",    WRAP_METHOD(Debugger, Cmd_PlayMusic));
+	registerCmd("sound",    WRAP_METHOD(Debugger, Cmd_PlaySound));
+	registerCmd("voice",    WRAP_METHOD(Debugger, Cmd_PlayVoice));
+	registerCmd("bit",      WRAP_METHOD(Debugger, Cmd_SetBit));
+	registerCmd("bit2",     WRAP_METHOD(Debugger, Cmd_SetBit2));
+	registerCmd("bit3",     WRAP_METHOD(Debugger, Cmd_SetBit3));
+	registerCmd("var",      WRAP_METHOD(Debugger, Cmd_SetVar));
+	registerCmd("obj",      WRAP_METHOD(Debugger, Cmd_SetObjectFlag));
+	registerCmd("sub",      WRAP_METHOD(Debugger, Cmd_StartSubroutine));
+	registerCmd("dumpimage",      WRAP_METHOD(Debugger, Cmd_dumpImage));
+	registerCmd("dumpscript",     WRAP_METHOD(Debugger, Cmd_dumpScript));
 
 }
 

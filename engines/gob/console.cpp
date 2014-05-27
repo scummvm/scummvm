@@ -29,14 +29,14 @@
 namespace Gob {
 
 GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm), _cheater(0) {
-	DCmd_Register("varSize",      WRAP_METHOD(GobConsole, cmd_varSize));
-	DCmd_Register("dumpVars",     WRAP_METHOD(GobConsole, cmd_dumpVars));
-	DCmd_Register("var8",         WRAP_METHOD(GobConsole, cmd_var8));
-	DCmd_Register("var16",        WRAP_METHOD(GobConsole, cmd_var16));
-	DCmd_Register("var32",        WRAP_METHOD(GobConsole, cmd_var32));
-	DCmd_Register("varString",    WRAP_METHOD(GobConsole, cmd_varString));
-	DCmd_Register("cheat",        WRAP_METHOD(GobConsole, cmd_cheat));
-	DCmd_Register("listArchives", WRAP_METHOD(GobConsole, cmd_listArchives));
+	registerCmd("varSize",      WRAP_METHOD(GobConsole, cmd_varSize));
+	registerCmd("dumpVars",     WRAP_METHOD(GobConsole, cmd_dumpVars));
+	registerCmd("var8",         WRAP_METHOD(GobConsole, cmd_var8));
+	registerCmd("var16",        WRAP_METHOD(GobConsole, cmd_var16));
+	registerCmd("var32",        WRAP_METHOD(GobConsole, cmd_var32));
+	registerCmd("varString",    WRAP_METHOD(GobConsole, cmd_varString));
+	registerCmd("cheat",        WRAP_METHOD(GobConsole, cmd_cheat));
+	registerCmd("listArchives", WRAP_METHOD(GobConsole, cmd_listArchives));
 }
 
 GobConsole::~GobConsole() {

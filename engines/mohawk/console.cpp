@@ -49,20 +49,20 @@ namespace Mohawk {
 #ifdef ENABLE_MYST
 
 MystConsole::MystConsole(MohawkEngine_Myst *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("changeCard",			WRAP_METHOD(MystConsole, Cmd_ChangeCard));
-	DCmd_Register("curCard",			WRAP_METHOD(MystConsole, Cmd_CurCard));
-	DCmd_Register("var",				WRAP_METHOD(MystConsole, Cmd_Var));
-	DCmd_Register("curStack",			WRAP_METHOD(MystConsole, Cmd_CurStack));
-	DCmd_Register("changeStack",		WRAP_METHOD(MystConsole, Cmd_ChangeStack));
-	DCmd_Register("drawImage",			WRAP_METHOD(MystConsole, Cmd_DrawImage));
-	DCmd_Register("drawRect",			WRAP_METHOD(MystConsole, Cmd_DrawRect));
-	DCmd_Register("setResourceEnable",	WRAP_METHOD(MystConsole, Cmd_SetResourceEnable));
-	DCmd_Register("playSound",			WRAP_METHOD(MystConsole, Cmd_PlaySound));
-	DCmd_Register("stopSound",			WRAP_METHOD(MystConsole, Cmd_StopSound));
-	DCmd_Register("playMovie",			WRAP_METHOD(MystConsole, Cmd_PlayMovie));
-	DCmd_Register("disableInitOpcodes",	WRAP_METHOD(MystConsole, Cmd_DisableInitOpcodes));
-	DCmd_Register("cache",				WRAP_METHOD(MystConsole, Cmd_Cache));
-	DCmd_Register("resources",			WRAP_METHOD(MystConsole, Cmd_Resources));
+	registerCmd("changeCard",			WRAP_METHOD(MystConsole, Cmd_ChangeCard));
+	registerCmd("curCard",			WRAP_METHOD(MystConsole, Cmd_CurCard));
+	registerCmd("var",				WRAP_METHOD(MystConsole, Cmd_Var));
+	registerCmd("curStack",			WRAP_METHOD(MystConsole, Cmd_CurStack));
+	registerCmd("changeStack",		WRAP_METHOD(MystConsole, Cmd_ChangeStack));
+	registerCmd("drawImage",			WRAP_METHOD(MystConsole, Cmd_DrawImage));
+	registerCmd("drawRect",			WRAP_METHOD(MystConsole, Cmd_DrawRect));
+	registerCmd("setResourceEnable",	WRAP_METHOD(MystConsole, Cmd_SetResourceEnable));
+	registerCmd("playSound",			WRAP_METHOD(MystConsole, Cmd_PlaySound));
+	registerCmd("stopSound",			WRAP_METHOD(MystConsole, Cmd_StopSound));
+	registerCmd("playMovie",			WRAP_METHOD(MystConsole, Cmd_PlayMovie));
+	registerCmd("disableInitOpcodes",	WRAP_METHOD(MystConsole, Cmd_DisableInitOpcodes));
+	registerCmd("cache",				WRAP_METHOD(MystConsole, Cmd_Cache));
+	registerCmd("resources",			WRAP_METHOD(MystConsole, Cmd_Resources));
 }
 
 MystConsole::~MystConsole() {
@@ -323,21 +323,21 @@ bool MystConsole::Cmd_Resources(int argc, const char **argv) {
 #ifdef ENABLE_RIVEN
 
 RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("changeCard",		WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
-	DCmd_Register("curCard",		WRAP_METHOD(RivenConsole, Cmd_CurCard));
-	DCmd_Register("var",			WRAP_METHOD(RivenConsole, Cmd_Var));
-	DCmd_Register("playSound",		WRAP_METHOD(RivenConsole, Cmd_PlaySound));
-	DCmd_Register("playSLST",       WRAP_METHOD(RivenConsole, Cmd_PlaySLST));
-	DCmd_Register("stopSound",		WRAP_METHOD(RivenConsole, Cmd_StopSound));
-	DCmd_Register("curStack",		WRAP_METHOD(RivenConsole, Cmd_CurStack));
-	DCmd_Register("changeStack",	WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
-	DCmd_Register("hotspots",		WRAP_METHOD(RivenConsole, Cmd_Hotspots));
-	DCmd_Register("zipMode",		WRAP_METHOD(RivenConsole, Cmd_ZipMode));
-	DCmd_Register("dumpScript",     WRAP_METHOD(RivenConsole, Cmd_DumpScript));
-	DCmd_Register("listZipCards",   WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
-	DCmd_Register("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
-	DCmd_Register("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
-	DCmd_Register("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
+	registerCmd("changeCard",		WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
+	registerCmd("curCard",		WRAP_METHOD(RivenConsole, Cmd_CurCard));
+	registerCmd("var",			WRAP_METHOD(RivenConsole, Cmd_Var));
+	registerCmd("playSound",		WRAP_METHOD(RivenConsole, Cmd_PlaySound));
+	registerCmd("playSLST",       WRAP_METHOD(RivenConsole, Cmd_PlaySLST));
+	registerCmd("stopSound",		WRAP_METHOD(RivenConsole, Cmd_StopSound));
+	registerCmd("curStack",		WRAP_METHOD(RivenConsole, Cmd_CurStack));
+	registerCmd("changeStack",	WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
+	registerCmd("hotspots",		WRAP_METHOD(RivenConsole, Cmd_Hotspots));
+	registerCmd("zipMode",		WRAP_METHOD(RivenConsole, Cmd_ZipMode));
+	registerCmd("dumpScript",     WRAP_METHOD(RivenConsole, Cmd_DumpScript));
+	registerCmd("listZipCards",   WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
+	registerCmd("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
+	registerCmd("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
+	registerCmd("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
 }
 
 RivenConsole::~RivenConsole() {
@@ -661,10 +661,10 @@ bool RivenConsole::Cmd_SliderState(int argc, const char **argv) {
 #endif // ENABLE_RIVEN
 
 LivingBooksConsole::LivingBooksConsole(MohawkEngine_LivingBooks *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("playSound",			WRAP_METHOD(LivingBooksConsole, Cmd_PlaySound));
-	DCmd_Register("stopSound",			WRAP_METHOD(LivingBooksConsole, Cmd_StopSound));
-	DCmd_Register("drawImage",			WRAP_METHOD(LivingBooksConsole, Cmd_DrawImage));
-	DCmd_Register("changePage",			WRAP_METHOD(LivingBooksConsole, Cmd_ChangePage));
+	registerCmd("playSound",			WRAP_METHOD(LivingBooksConsole, Cmd_PlaySound));
+	registerCmd("stopSound",			WRAP_METHOD(LivingBooksConsole, Cmd_StopSound));
+	registerCmd("drawImage",			WRAP_METHOD(LivingBooksConsole, Cmd_DrawImage));
+	registerCmd("changePage",			WRAP_METHOD(LivingBooksConsole, Cmd_ChangePage));
 }
 
 LivingBooksConsole::~LivingBooksConsole() {
@@ -725,14 +725,14 @@ bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
 #ifdef ENABLE_CSTIME
 
 CSTimeConsole::CSTimeConsole(MohawkEngine_CSTime *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("playSound",			WRAP_METHOD(CSTimeConsole, Cmd_PlaySound));
-	DCmd_Register("stopSound",			WRAP_METHOD(CSTimeConsole, Cmd_StopSound));
-	DCmd_Register("drawImage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawImage));
-	DCmd_Register("drawSubimage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawSubimage));
-	DCmd_Register("changeCase",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeCase));
-	DCmd_Register("changeScene",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeScene));
-	DCmd_Register("caseVariable",			WRAP_METHOD(CSTimeConsole, Cmd_CaseVariable));
-	DCmd_Register("invItem",			WRAP_METHOD(CSTimeConsole, Cmd_InvItem));
+	registerCmd("playSound",			WRAP_METHOD(CSTimeConsole, Cmd_PlaySound));
+	registerCmd("stopSound",			WRAP_METHOD(CSTimeConsole, Cmd_StopSound));
+	registerCmd("drawImage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawImage));
+	registerCmd("drawSubimage",			WRAP_METHOD(CSTimeConsole, Cmd_DrawSubimage));
+	registerCmd("changeCase",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeCase));
+	registerCmd("changeScene",			WRAP_METHOD(CSTimeConsole, Cmd_ChangeScene));
+	registerCmd("caseVariable",			WRAP_METHOD(CSTimeConsole, Cmd_CaseVariable));
+	registerCmd("invItem",			WRAP_METHOD(CSTimeConsole, Cmd_InvItem));
 }
 
 CSTimeConsole::~CSTimeConsole() {

@@ -29,11 +29,11 @@ namespace Voyeur {
 
 Debugger::Debugger(VoyeurEngine *vm) : GUI::Debugger(), _vm(vm) {
 	// Register methods
-	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("exit", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("time", WRAP_METHOD(Debugger, Cmd_Time));
-	DCmd_Register("hotspots", WRAP_METHOD(Debugger, Cmd_Hotspots));
-	DCmd_Register("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
+	registerCmd("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("exit", WRAP_METHOD(Debugger, Cmd_Exit));
+	registerCmd("time", WRAP_METHOD(Debugger, Cmd_Time));
+	registerCmd("hotspots", WRAP_METHOD(Debugger, Cmd_Hotspots));
+	registerCmd("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
 
 	// Set fields
 	_isTimeActive = true;
