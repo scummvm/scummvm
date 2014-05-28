@@ -25,6 +25,7 @@
 
 #include "math/matrix4.h"
 #include "engines/grim/object.h"
+#include "engines/grim/animation.h"
 
 namespace Grim {
 
@@ -51,6 +52,7 @@ public:
 	virtual void setupTexture() { }
 	virtual void draw() { }
 	virtual void reset() { }
+	virtual void fade(Animation::FadeMode, int) { }
 	virtual void resetColormap() { }
 	virtual void saveState(SaveGame *) { }
 	virtual void restoreState(SaveGame *) { }

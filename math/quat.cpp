@@ -102,6 +102,16 @@ Matrix4 Quaternion::toMatrix() const {
 	return dst;
 }
 
+Quaternion Quaternion::inverse() const {
+	float norm = x() * x() + y() * y() + z() * z() + w() * w();
+	if (norm > 0.f) {
+		float invNorm = 1.0f / norm;
+		return Quaternion(-x() * invNorm, -y() * invNorm, -z() * invNorm, w() * invNorm);
+	} else {
+		return Quaternion();
+	}
+}
+
 	Quaternion Quaternion::fromEuler(const Angle &yaw, const Angle &pitch, const Angle &roll) {
 		float cr, cp, cy, sr, sp, sy, cpcy, spsy;
 

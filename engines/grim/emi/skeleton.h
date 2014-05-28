@@ -34,6 +34,7 @@ class SeekableReadStream;
 
 namespace Grim {
 
+class AnimationStateEmi;
 class AnimationEmi;
 
 struct Joint {
@@ -41,8 +42,6 @@ struct Joint {
 	Common::String _parent;
 	Math::Vector3d _trans;
 	Math::Quaternion _quat;
-	// calculated;
-	int _animIndex[2];
 	int _parentIndex;
 	Math::Matrix4 _absMatrix;
 	Math::Matrix4 _relMatrix;
@@ -50,24 +49,45 @@ struct Joint {
 	Math::Quaternion _finalQuat;
 };
 
+struct JointAnimation {
+	Math::Vector3d _pos;
+	Math::Quaternion _quat;
+	float _transWeight;
+	float _rotWeight;
+};
+
+struct AnimationLayer {
+	JointAnimation* _jointAnims;
+};
+
 class Skeleton : public Object {
 
 	void loadSkeleton(Common::SeekableReadStream *data);
 	void initBone(int index);
 	void initBones();
+	void resetAnim();
+	void commitAnim();
 public:
+	// Note: EMI uses priority 5 at most.
+	static const int MAX_ANIMATION_LAYERS = 8;
+
 	int _numJoints;
 	Joint *_joints;
 
 	Skeleton(const Common::String &filename, Common::SeekableReadStream *data);
 	~Skeleton();
-	void commitAnim();
-	void resetAnim();
+	void animate();
+	void addAnimation(AnimationStateEmi *anim);
+	void removeAnimation(AnimationStateEmi *anim);
 	int findJointIndex(const Common::String &name, int max) const;
 	bool hasJoint(const Common::String &name) const;
 	Joint *getJointNamed(const Common::String &name) const;
 	Joint *getParentJoint(const Joint *j) const;
 	int getJointIndex(const Joint *j) const;
+	AnimationLayer* getLayer(int priority) const;
+private:
+	AnimationLayer *_animLayers;
+	Common::List<AnimationStateEmi*> _activeAnims;
 };
 
 } // end of namespace Grim

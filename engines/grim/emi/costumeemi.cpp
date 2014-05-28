@@ -213,9 +213,6 @@ void EMICostume::sortPlayingChores() {
 }
 
 int EMICostume::update(uint time) {
-	if (_emiSkel)
-		_emiSkel->reset();
-
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		Chore *c = *i;
 		c->update(time);
@@ -231,8 +228,6 @@ int EMICostume::update(uint time) {
 			--i;
 		}
 	}
-	if (_emiSkel)
-		_emiSkel->commit();
 
 	return 0;
 }

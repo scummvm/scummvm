@@ -167,9 +167,8 @@ void Chore::update(uint time) {
 void Chore::fade(Animation::FadeMode mode, uint msecs) {
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = getComponentForTrack(i);
-		if (comp && comp->isComponentType('K','E','Y','F')) {
-			KeyframeComponent *kf = static_cast<KeyframeComponent *>(comp);
-			kf->fade(mode, msecs);
+		if (comp) {
+			comp->fade(mode, msecs);
 		}
 	}
 }

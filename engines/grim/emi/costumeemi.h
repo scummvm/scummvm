@@ -46,7 +46,6 @@ public:
 	void playChore(int num) override;
 	void playChoreLooping(int num) override;
 
-	int update(uint frameTime);
 	void draw();
 
 	void saveState(SaveGame *state) const override;
