@@ -1329,7 +1329,7 @@ Scene309::Scene309(MADSEngine *vm) : Scene3xx(vm) {
 		_characterSpriteIndexes[i] = -1;
 		_messagesIndexes[i] = -1;
 	}
-	
+
 	_lastFrame = -1;
 	_forceField.init();
 }

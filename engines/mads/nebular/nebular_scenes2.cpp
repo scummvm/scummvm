@@ -789,7 +789,7 @@ void Scene202::actions() {
 		_vm->_dialogs->show(20219);
 		return;
 	}
-	
+
 	if (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER)) {
 		_action._inProgress = false;
 		return;

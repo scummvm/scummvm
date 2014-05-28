@@ -94,7 +94,7 @@ private:
 public:
 	Common::Array<KernelMessage> _entries;
 	Font *_talkFont;
-public:	
+public:
 	KernelMessages(MADSEngine *vm);
 	~KernelMessages();
 

@@ -233,7 +233,7 @@ bool Debugger::Cmd_DumpVocab(int argc, const char **argv) {
 		}
 
 		Common::String cur = "\tNOUN_" + curVocab + " = 0x" + curId + ",\n";
-		
+
 		outFile.writeString(cur.c_str());
 	}
 
@@ -294,7 +294,7 @@ bool Debugger::Cmd_DumpItems(int argc, const char **argv) {
 		}
 
 		Common::String cur = "\tOBJ_" + desc + " = " + curId + ",\n";
-		
+
 		outFile.writeString(cur.c_str());
 	}
 

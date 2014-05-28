@@ -596,7 +596,7 @@ void Scene::loadAnimation(const Common::String &resName, int trigger) {
 	// scene, then free it before we create the new one
 	if (_activeAnimation)
 		freeAnimation();
-	
+
 	DepthSurface depthSurface(_vm);
 	UserInterface interfaceSurface(_vm);
 

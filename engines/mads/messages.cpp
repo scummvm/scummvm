@@ -337,7 +337,7 @@ int KernelMessages::checkRandom() {
 		if (_randomMessages[i]._handle >= 0)
 			++total;
 	}
-	
+
 	return total;
 }
 

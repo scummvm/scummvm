@@ -67,7 +67,7 @@ public:
 	int _field1D;
 	int _field1E;
 	int _field1F;
-	
+
 	// TODO: Only used by asound.003. Figure out usage
 	byte _field20;
 public:

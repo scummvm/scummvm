@@ -407,7 +407,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 			Common::Point pt((destP - (byte *)this->pixels) % this->pitch,
 				(destP - (byte *)this->pixels) / this->pitch);
 			int pixelDepth = (depthSurface == nullptr) ? 15 : depthSurface->getDepth(pt);
-	
+
 			if ((*srcP != transparentColor) && (depth <= pixelDepth))
 				*destP = *srcP;
 
