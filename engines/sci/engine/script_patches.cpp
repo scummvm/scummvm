@@ -1608,7 +1608,7 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 // Applies to at least: English PC-CD, English PC-Floppy
 // Responsible method (CD): eastDoor::doVerb
 // Responsible method (Floppy): eastDoor::<noname300>
-// Fixes bug: #6458 (partly, see additional patch above)
+// Fixes bug: #6458 (partly, see additional patch below)
 static const uint16 laurabow2CDSignatureFixWiredEastDoor[] = {
 	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
 	0x67, SIG_ADDTOOFFSET(+1),          // pTos CD: doorState, Floppy: state
