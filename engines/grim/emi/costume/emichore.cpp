@@ -70,7 +70,7 @@ void EMIChore::update(uint time) {
 
 	setKeys(_currTime, newTime);
 
-	if (newTime > _length) {
+	if (_length >= 0.0f && newTime > _length) {
 		if (!_looping && _fadeMode != Animation::FadeOut) {
 			stop(0);
 		}

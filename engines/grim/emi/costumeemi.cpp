@@ -61,7 +61,9 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		float length = get_float(f);
 		int numTracks = data->readUint32LE();
 
-		if (length < 1000)
+		if (length == 1000)
+			length = -1.0f;
+		else
 			length *= 1000;
 
 		EMIChore *chore = new EMIChore(name, i, this, (int)length, numTracks);
@@ -114,10 +116,6 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 			}
 			delete[] componentName;
 		}
-
-		// Some chores report duration 1000 while they have components with
-		// keyframes after 1000. See elaine_wedding/take_contract, for example.
-		chore->_length = ceil(length);
 	}
 
 	_numComponents = components.size();
