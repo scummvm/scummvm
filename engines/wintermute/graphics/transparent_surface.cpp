@@ -41,11 +41,22 @@
 
 namespace Wintermute {
 
+static const int kBShift = 8;//img->format.bShift;
+static const int kGShift = 16;//img->format.gShift;
+static const int kRShift = 24;//img->format.rShift;
+static const int kAShift = 0;//img->format.aShift;
+
+static const int kBModShift = 0;//img->format.bShift;
+static const int kGModShift = 8;//img->format.gShift;
+static const int kRModShift = 16;//img->format.rShift;
+static const int kAModShift = 24;//img->format.aShift;
+
 #ifdef SCUMM_LITTLE_ENDIAN
 static const int kAIndex = 0;
 static const int kBIndex = 1;
 static const int kGIndex = 2;
 static const int kRIndex = 3;
+
 #else
 static const int kAIndex = 3;
 static const int kBIndex = 2;
@@ -60,6 +71,7 @@ void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uin
 void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 
 TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
+
 TransparentSurface::TransparentSurface(const Surface &surf, bool copyData) : Surface(), _alphaMode(ALPHA_FULL) {
 	if (copyData) {
 		copyFrom(surf);
@@ -108,11 +120,11 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 		out = outo;
 		in = ino;
 		for (uint32 j = 0; j < width; j++) {
-			uint32 pix = * (uint32 *) in;
-			int a = (pix >> TransparentSurface::kAShift) & 0xff;
+			uint32 pix = *(uint32 *)in;
+			int a = (pix >> kAShift) & 0xff;
 
 			if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
-				* (uint32 *) out = pix;
+				*(uint32 *)out = pix;
 				out[kAIndex] = 0xFF;
 			}
 			out += 4;
@@ -152,10 +164,10 @@ void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 		}
 	} else {
 
-		byte ca = (color >> TransparentSurface::kAModShift) & 0xFF;
-		byte cr = (color >> TransparentSurface::kRModShift) & 0xFF;
-		byte cg = (color >> TransparentSurface::kGModShift) & 0xFF;
-		byte cb = (color >> TransparentSurface::kBModShift) & 0xFF;
+		byte ca = (color >> kAModShift) & 0xFF;
+		byte cr = (color >> kRModShift) & 0xFF;
+		byte cg = (color >> kGModShift) & 0xFF;
+		byte cb = (color >> kBModShift) & 0xFF;
 
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
@@ -209,10 +221,10 @@ void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uin
 		}
 	} else {
 
-		byte ca = (color >> TransparentSurface::kAModShift) & 0xFF;
-		byte cr = (color >> TransparentSurface::kRModShift) & 0xFF;
-		byte cg = (color >> TransparentSurface::kGModShift) & 0xFF;
-		byte cb = (color >> TransparentSurface::kBModShift) & 0xFF;
+		byte ca = (color >> kAModShift) & 0xFF;
+		byte cr = (color >> kRModShift) & 0xFF;
+		byte cg = (color >> kGModShift) & 0xFF;
+		byte cb = (color >> kBModShift) & 0xFF;
 
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
@@ -276,10 +288,10 @@ void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, 
 		}
 	} else {
 
-		byte ca = (color >> TransparentSurface::kAModShift) & 0xFF;
-		byte cr = (color >> TransparentSurface::kRModShift) & 0xFF;
-		byte cg = (color >> TransparentSurface::kGModShift) & 0xFF;
-		byte cb = (color >> TransparentSurface::kBModShift) & 0xFF;
+		byte ca = (color >> kAModShift) & 0xFF;
+		byte cr = (color >> kRModShift) & 0xFF;
+		byte cg = (color >> kGModShift) & 0xFF;
+		byte cb = (color >> kBModShift) & 0xFF;
 
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
@@ -324,9 +336,9 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	// Check if we need to draw anything at all
 	int ca = (color >> 24) & 0xff;
 
-	if (ca == 0)
+	if (ca == 0) {
 		return retSize;
-
+	}
 	// Create an encapsulating surface for the data
 	TransparentSurface srcImage(*this, false);
 	// TODO: Is the data really in the screen format?
@@ -353,23 +365,25 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		srcImage.h = pPartRect->height();
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping,
-		      pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
+				  pPartRect->left,  pPartRect->top, pPartRect->width(), pPartRect->height(), color, width, height);
 	} else {
 
 		debug(6, "Blit(%d, %d, %d, [%d, %d, %d, %d], %08x, %d, %d)", posX, posY, flipping, 0, 0,
-		      srcImage.w, srcImage.h, color, width, height);
+				  srcImage.w, srcImage.h, color, width, height);
 	}
 
-	if (width == -1)
+	if (width == -1) {
 		width = srcImage.w;
-	if (height == -1)
+	}
+	if (height == -1) {
 		height = srcImage.h;
+	}
 
-	#ifdef SCALING_TESTING
+#ifdef SCALING_TESTING
 	// Hardcode scaling to 66% to test scaling
 	width = width * 2 / 3;
 	height = height * 2 / 3;
-	#endif
+#endif
 
 	Graphics::Surface *img = nullptr;
 	Graphics::Surface *imgScaled = nullptr;
@@ -377,7 +391,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
 		img = imgScaled = srcImage.scale(width, height);
-		savedPixels = (byte *) img->getPixels();
+		savedPixels = (byte *)img->getPixels();
 	} else {
 		img = &srcImage;
 	}
@@ -385,13 +399,13 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	// Handle off-screen clipping
 	if (posY < 0) {
 		img->h = MAX(0, (int) img->h - -posY);
-		img->setPixels((byte *) img->getBasePtr(0, -posY));
+		img->setPixels((byte *)img->getBasePtr(0, -posY));
 		posY = 0;
 	}
 
 	if (posX < 0) {
 		img->w = MAX(0, (int) img->w - -posX);
-		img->setPixels((byte *) img->getBasePtr(-posX, 0));
+		img->setPixels((byte *)img->getBasePtr(-posX, 0));
 		posX = 0;
 	}
 
@@ -413,8 +427,8 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 			yp = img->h - 1;
 		}
 
-		byte *ino = (byte *) img->getBasePtr(xp, yp);
-		byte *outo = (byte *) target.getBasePtr(posX, posY);
+		byte *ino = (byte *)img->getBasePtr(xp, yp);
+		byte *outo = (byte *)target.getBasePtr(posX, posY);
 
 		if (color == 0xFFFFFFFF && blendMode == BLEND_NORMAL && _alphaMode == ALPHA_OPAQUE) {
 			doBlitOpaqueFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
@@ -456,15 +470,15 @@ void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool 
 	assert(format.bytesPerPixel == 4);
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
-			uint32 pix = ((uint32 *) pixels) [i * w + j];
+			uint32 pix = ((uint32 *)pixels) [i * w + j];
 			uint8 r, g, b, a;
 			format.colorToARGB(pix, a, r, g, b);
 			if (r == rKey && g == gKey && b == bKey) {
 				a = 0;
-				((uint32 *) pixels) [i * w + j] = format.ARGBToColor(a, r, g, b);
+				((uint32 *)pixels) [i * w + j] = format.ARGBToColor(a, r, g, b);
 			} else if (overwriteAlpha) {
 				a = 255;
-				((uint32 *) pixels) [i * w + j] = format.ARGBToColor(a, r, g, b);
+				((uint32 *)pixels) [i * w + j] = format.ARGBToColor(a, r, g, b);
 			}
 		}
 	}
@@ -570,7 +584,7 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 	int sw = srcW - 1;
 	int sh = srcH - 1;
 
-	tColorRGBA *pc = (tColorRGBA *) target->getBasePtr(0, 0);
+	tColorRGBA *pc = (tColorRGBA *)target->getBasePtr(0, 0);
 
 	for (int y = 0; y < dstH; y++) {
 		int t = cy - y;
@@ -582,9 +596,9 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 			if (flipx) dx = sw - dx;
 			if (flipy) dy = sh - dy;
 
-			#ifdef ENABLE_BILINEAR
+#ifdef ENABLE_BILINEAR
 			if ((dx > -1) && (dy > -1) && (dx < sw) && (dy < sh)) {
-				const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(dx, dy);
+				const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
 				tColorRGBA c00, c01, c10, c11, cswap;
 				c00 = *sp;
 				sp += 1;
@@ -630,10 +644,10 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 			}
 			#else
 			if ((dx >= 0) && (dy >= 0) && (dx < srcW) && (dy < srcH)) {
-				const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(dx, dy);
+				const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
 				*pc = *sp;
 			}
-			#endif
+#endif
 			sdx += icosx;
 			sdy += isiny;
 			pc++;
@@ -658,16 +672,11 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 
 	target->create((uint16) dstW, (uint16) dstH, this->format);
 
-	#ifdef ENABLE_BILINEAR
+#ifdef ENABLE_BILINEAR
 
 	// NB: The actual order of these bytes may not be correct, but
 	// since all values are treated equal, that does not matter.
-	struct tColorRGBA {
-		byte r;
-		byte g;
-		byte b;
-		byte a;
-	};
+	struct tColorRGBA { byte r; byte g; byte b; byte a; };
 
 	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
 
@@ -716,8 +725,8 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 		}
 	}
 
-	const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0, 0);
-	tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0, 0);
+	const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(0, 0);
+	tColorRGBA *dp = (tColorRGBA *)target->getBasePtr(0, 0);
 	int spixelgap = srcW;
 
 	if (flipx)
@@ -808,21 +817,21 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 	delete[] sax;
 	delete[] say;
 
-	#else
+#else
 
 	int *scaleCacheX = new int[dstW];
 	for (int x = 0; x < dstW; x++)
 		scaleCacheX[x] = (x * srcW) / dstW;
 
 	for (int y = 0; y < dstH; y++) {
-		uint32 *destP = (uint32 *) target->getBasePtr(0, y);
-		const uint32 *srcP = (const uint32 *) getBasePtr(0, (y * srcH) / dstH);
+		uint32 *destP = (uint32 *)target->getBasePtr(0, y);
+		const uint32 *srcP = (const uint32 *)getBasePtr(0, (y * srcH) / dstH);
 		for (int x = 0; x < dstW; x++)
 			*destP++ = srcP[scaleCacheX[x]];
 	}
 	delete[] scaleCacheX;
 
-	#endif
+#endif
 
 	return target;
 
