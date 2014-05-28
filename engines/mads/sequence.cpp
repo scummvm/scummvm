@@ -45,9 +45,17 @@ SequenceEntry::SequenceEntry() {
 	_numTicks = 0;
 	_extraTicks = 0;
 	_timeout = 0;
+	_active = false;
+	_nonFixed = false;
+	_flags = 0;
+	for (int i = 0; i < 5; ++i)
+		_entries._mode[i] = SEQUENCE_TRIGGER_EXPIRE;
 
 	_entries._count = 0;
-	Common::fill(&_entries._mode[0], &_entries._mode[SEQUENCE_ENTRY_SUBSET_MAX], SEQUENCE_TRIGGER_EXPIRE);
+	_actionNouns._verbId = VERB_NONE;
+	_actionNouns._objectNameId = -1;
+	_actionNouns._indirectObjectId = -1;
+
 	Common::fill(&_entries._frameIndex[0], &_entries._frameIndex[SEQUENCE_ENTRY_SUBSET_MAX], 0);
 	Common::fill(&_entries._trigger[0], &_entries._trigger[SEQUENCE_ENTRY_SUBSET_MAX], 0);
 }

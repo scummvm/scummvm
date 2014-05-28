@@ -331,6 +331,10 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	_highlightedItemVocabIndex = -1;
 	_dirtyAreas.resize(50);
 	_inventoryChanged = false;
+	_noSegmentsActive = 0;
+	_someSegmentsActive = 0;
+	_rectP = nullptr;
+
 	Common::fill(&_categoryIndexes[0], &_categoryIndexes[7], 0);
 
 	// Map the user interface to the bottom of the game's screen surface
