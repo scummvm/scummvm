@@ -803,7 +803,7 @@ void Scene202::actions() {
 				_globals[kMeteorologistStatus] = METEOROLOGIST_ABSENT;
 		}
 		_scene->_nextSceneId = 201;
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONE) && (_action._mainObjectSource == 4)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONE) && (_action._savedFields._mainObjectSource == 4)) {
 		switch (_game._trigger) {
 		case 0:
 			if (_game._objects.isInInventory(OBJ_BONES)) {
@@ -1010,6 +1010,8 @@ void Scene202::actions() {
 		_vm->_dialogs->show(20216);
 	} else if (_action.isAction(VERB_LOOK, NOUN_BONES) && _action._commandSource == 4) {
 		_vm->_dialogs->show(20217);
+	} else {
+		return;
 	}
 
 	_action._inProgress = false;
