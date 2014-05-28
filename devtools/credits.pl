@@ -645,6 +645,12 @@ begin_credits("Credits");
 				add_person("Filippos Karapetis", "[md5]", "");
 			end_section();
 
+			begin_section("MADS");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+			end_section();
+
 			begin_section("Mohawk");
 				add_person("Bastien Bouclet", "bgk", "");
 				add_person("Matthew Hoops", "clone2727", "");
