@@ -35,12 +35,20 @@ public:
 	EMIChore(char name[32], int id, Costume *owner, int length, int numTracks);
 	static int32 getStaticTag() { return MKTAG('C', 'H', 'O', 'R'); }
 
+	void update(uint msecs) override;
+	void stop(uint msecs) override;
+	void fade(Animation::FadeMode mode, uint msecs) override;
 	void addComponent(Component *component);
 	bool isWearChore() { return _mesh && _skeleton; }
 	EMIMeshComponent *getMesh() { return _mesh; }
 	EMISkelComponent *getSkeleton() { return _skeleton; }
 
 private:
+	Animation::FadeMode _fadeMode;
+	float _fade;
+	float _startFade;
+	int _fadeLength;
+
 	EMIMeshComponent *_mesh;
 	EMISkelComponent *_skeleton;
 };

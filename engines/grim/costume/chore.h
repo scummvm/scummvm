@@ -57,11 +57,11 @@ public:
 	virtual ~Chore();
 
 	void load(TextSplitter &ts);
-	void play();
-	void playLooping();
+	virtual void play(uint msecs);
+	virtual void playLooping(uint msecs);
 	void setLooping(bool val) { _looping = val; }
-	void stop();
-	void update(uint time);
+	virtual void stop(uint msecs);
+	virtual void update(uint time);
 	void setLastFrame();
 	void fadeIn(uint msecs);
 	void fadeOut(uint msecs);
@@ -81,9 +81,9 @@ public:
 	void restoreState(SaveGame *state);
 	ChoreType getChoreType() const { return _choreType; };
 	void setChoreType(ChoreType choreType) { _choreType = choreType; };
-private:
+protected:
 	void setKeys(int startTime, int stopTime);
-	void fade(Animation::FadeMode, uint msecs);
+	virtual void fade(Animation::FadeMode, uint msecs);
 	Component *getComponentForTrack(int i) const;
 
 	Costume *_owner;

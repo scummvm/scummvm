@@ -130,20 +130,22 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 	_isWearChoreActive = true;
 }
 
-void EMICostume::playChore(int num) {
+void EMICostume::playChore(int num, uint msecs) {
+	// FIXME: Original EMI can play multiple instances of a chore at the same time.
 	EMIChore *chore = static_cast<EMIChore *>(_chores[num]);
 	if (chore->isWearChore()) {
 		setWearChore(chore);
 	}
-	Costume::playChore(num);
+	Costume::playChore(num, msecs);
 }
 
-void EMICostume::playChoreLooping(int num) {
+void EMICostume::playChoreLooping(int num, uint msecs) {
+	// FIXME: Original EMI can play multiple instances of a chore at the same time.
 	EMIChore *chore = static_cast<EMIChore *>(_chores[num]);
 	if (chore->isWearChore()) {
 		setWearChore(chore);
 	}
-	Costume::playChoreLooping(num);
+	Costume::playChoreLooping(num, msecs);
 }
 
 Component *EMICostume::loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent) {

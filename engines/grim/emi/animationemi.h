@@ -97,6 +97,7 @@ private:
 	bool _paused;
 	float _time;
 	float _fade;
+	float _startFade;
 	Animation::FadeMode _fadeMode;
 	int _fadeLength;
 };

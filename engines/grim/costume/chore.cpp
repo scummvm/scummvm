@@ -64,22 +64,28 @@ void Chore::load(TextSplitter &ts) {
 	}
 }
 
-void Chore::play() {
+void Chore::play(uint msecs) {
 	_playing = true;
 	_hasPlayed = true;
 	_looping = false;
 	_currTime = -1;
 
-	fade(Animation::None, 0);
+	if (msecs > 0)
+		fade(Animation::FadeIn, msecs);
+	else
+		fade(Animation::None, 0);
 }
 
-void Chore::playLooping() {
+void Chore::playLooping(uint msecs) {
 	_playing = true;
 	_hasPlayed = true;
 	_looping = true;
 	_currTime = -1;
 
-	fade(Animation::None, 0);
+	if (msecs > 0)
+		fade(Animation::FadeIn, msecs);
+	else
+		fade(Animation::None, 0);
 }
 
 Component *Chore::getComponentForTrack(int i) const {
@@ -89,7 +95,10 @@ Component *Chore::getComponentForTrack(int i) const {
 		return _owner->_components[_tracks[i].compID];
 }
 
-void Chore::stop() {
+void Chore::stop(uint msecs) {
+	if (msecs > 0)
+		fade(Animation::FadeOut, msecs);
+
 	_playing = false;
 	_hasPlayed = false;
 
@@ -165,6 +174,17 @@ void Chore::update(uint time) {
 }
 
 void Chore::fade(Animation::FadeMode mode, uint msecs) {
+	if (mode == Animation::FadeIn) {
+		if (!_playing) {
+			_playing = true;
+			_hasPlayed = true;
+			_currTime = -1;
+		}
+	} else if (mode == Animation::FadeOut) {
+		// Stop the chore, but do not alter the components state.
+		_playing = false;
+	}
+
 	for (int i = 0; i < _numTracks; i++) {
 		Component *comp = getComponentForTrack(i);
 		if (comp) {
@@ -174,12 +194,6 @@ void Chore::fade(Animation::FadeMode mode, uint msecs) {
 }
 
 void Chore::fadeIn(uint msecs) {
-	if (!_playing) {
-		_playing = true;
-		_hasPlayed = true;
-		_currTime = -1;
-	}
-
 	fade(Animation::FadeIn, msecs);
 }
 
@@ -187,9 +201,6 @@ void Chore::fadeOut(uint msecs) {
 	// Note: It doesn't matter whether the chore is playing or not. The keyframe
 	// components should fade out in either case.
 	fade(Animation::FadeOut, msecs);
-
-	// Stop the chore, but do not alter the components state.
-	_playing = false;
 }
 
 void Chore::saveState(SaveGame *state) const {

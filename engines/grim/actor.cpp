@@ -2294,18 +2294,20 @@ Actor::ActionChore::ActionChore(Costume *cost, int chore, Chore::ChoreType chore
 
 void Actor::ActionChore::play(bool fade, unsigned int time) {
 	if (isValid()) {
-		_costume->playChore(_chore);
 		if (fade) {
-			_costume->fadeChoreIn(_chore, time);
+			_costume->playChore(_chore, time);
+		} else {
+			_costume->playChore(_chore);
 		}
 	}
 }
 
 void Actor::ActionChore::playLooping(bool fade, unsigned int time) {
 	if (isValid()) {
-		_costume->playChoreLooping(_chore);
 		if (fade) {
-			_costume->fadeChoreIn(_chore, time);
+			_costume->playChoreLooping(_chore, time);
+		} else {
+			_costume->playChoreLooping(_chore);
 		}
 	}
 }
@@ -2313,9 +2315,10 @@ void Actor::ActionChore::playLooping(bool fade, unsigned int time) {
 void Actor::ActionChore::stop(bool fade, unsigned int time) {
 	if (isValid()) {
 		if (fade) {
-			_costume->fadeChoreOut(_chore, time);
+			_costume->stopChore(_chore, time);
+		} else {
+			_costume->stopChore(_chore);
 		}
-		_costume->stopChore(_chore);
 	}
 }
 

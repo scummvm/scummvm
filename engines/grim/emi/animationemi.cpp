@@ -210,8 +210,8 @@ Bone::~Bone() {
 }
 
 AnimationStateEmi::AnimationStateEmi(const Common::String &anim) :
-	_skel(NULL), _looping(false), _active(false),
-	_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(0.0f) {
+		_skel(NULL), _looping(false), _active(false),
+		_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(0.0f), _startFade(1.0f) {
 	_anim = g_resourceloader->getAnimationEmi(anim);
 }
 
@@ -258,13 +258,13 @@ void AnimationStateEmi::update(uint time) {
 
 	if (_fadeMode != Animation::None) {
 		if (_fadeMode == Animation::FadeIn) {
-			_fade += (float)time / _fadeLength;
+			_fade += (float)time * (1.0f - _startFade) / _fadeLength;
 			if (_fade >= 1.f) {
 				_fade = 1.f;
 				_fadeMode = Animation::None;
 			}
 		} else {
-			_fade -= (float)time / _fadeLength;
+			_fade -= (float)time * _startFade / _fadeLength;
 			if (_fade <= 0.f) {
 				_fade = 0.f;
 				// Don't reset the _fadeMode here. This way if fadeOut() was called
@@ -275,9 +275,6 @@ void AnimationStateEmi::update(uint time) {
 			}
 		}
 	}
-	else {
-		_fade = 1.f;
-	}
 }
 
 void AnimationStateEmi::play() {
@@ -285,18 +282,16 @@ void AnimationStateEmi::play() {
 		_time = 0.f;
 		if (_fadeMode == Animation::FadeOut)
 			_fadeMode = Animation::None;
-		activate();
+		if (_fadeMode == Animation::FadeIn || _fade > 0.f)
+			activate();
 	}
 	_paused = false;
 }
 
 void AnimationStateEmi::stop() {
-	if (_fadeMode != Animation::FadeOut) {
-		_fadeMode = Animation::None;
-		_time = 0.f;
-		_fade = 1.f;
-		deactivate();
-	}
+	_fadeMode = Animation::None;
+	_time = 0.f;
+	deactivate();
 }
 
 void AnimationStateEmi::pause() {
@@ -318,12 +313,12 @@ void AnimationStateEmi::setSkeleton(Skeleton *skel) {
 }
 
 void AnimationStateEmi::fade(Animation::FadeMode mode, int fadeLength) {
-	if (!_active) {
-		if (mode == Animation::FadeIn) {
-			_fade = 0.f;
-		}
+	if (mode == Animation::None) {
+		_fade = 1.f;
+	} else if (_fadeMode != Animation::FadeOut && mode == Animation::FadeIn) {
+		_fade = 0.f;
 	}
-
+	_startFade = _fade;
 	_fadeMode = mode;
 	_fadeLength = fadeLength;
 }

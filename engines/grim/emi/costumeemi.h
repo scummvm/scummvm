@@ -43,10 +43,11 @@ public:
 
 	void load(Common::SeekableReadStream *data);
 
-	void playChore(int num) override;
-	void playChoreLooping(int num) override;
-
 	void draw();
+	int update(uint time);
+
+	void playChore(int num, uint msecs = 0) override;
+	void playChoreLooping(int num, uint msecs = 0) override;
 
 	void saveState(SaveGame *state) const override;
 	bool restoreState(SaveGame *state) override;
