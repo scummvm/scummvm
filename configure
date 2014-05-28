@@ -2227,6 +2227,25 @@ case $_host_os in
 			fi
 		fi
 
+		# Homebrew
+		brew_version=`brew -v 2>/dev/null`
+		if test "$?" -eq 0; then
+			brew_version="`echo "${brew_version}" | sed -ne 's/Homebrew \([0-9.]*\)/\1/gp'`"
+			echo_n "You seem to be running Homebrew version ${brew_version}..."
+
+			brew_prefix=`brew --prefix`
+
+			echo "adding ${brew_prefix} to paths"
+
+			LDFLAGS="-L${brew_prefix}/lib $LDFLAGS"
+			CXXFLAGS="-I${brew_prefix}/include $CXXFLAGS"
+
+			if test -z "$_staticlibpath"; then
+				_staticlibpath=${brew_prefix}
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			fi
+		fi
+
 		# If _staticlibpath is not set yet try first /sw (fink) then /usr/local
 		# (the macports case is handled above).
 		if test -z "$_staticlibpath"; then
