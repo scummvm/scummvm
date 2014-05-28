@@ -709,51 +709,32 @@ void PrinceEngine::showTexts() {
 void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int destY) {
 	int sprWidth = backAnimSurface->w;
 	int sprHeight = backAnimSurface->h;
-	int sprModulo = 0;
-
 	destX -= _picWindowX;
-	if (destX < 0) { // x1 on visible part of screen?
-		// X1 signed, we add spriteWidth for x2
-		if (sprWidth + destX < 1) {
-			//exit - x2 is negative - out of window
-			return; // don't draw
-		} else {
-			//esi += -1 * destX;
-			sprWidth -= -1 * destX;
-			sprModulo += -1 * destX;
-			destX = 0; // x1 = 0;
-		}
-	}
-	//left_x_check_ok
-	if (destX >= kNormalWidth) { // x1 outside of screen on right side
-		return; // don't draw
-	}
-	if (destX + sprWidth > kNormalWidth) { // x2 too far?
-		sprWidth -= destX - kNormalWidth;
-		sprModulo += destX - kNormalWidth;
-	}
-	//right_x_check_ok
 	destY -= _picWindowY;
-	if (destY < 0) {
-		if (sprHeight + destY < 1) {
-			//exit - y2 is negative - out of window
-			return; // don't draw
-		} else {
-			sprHeight -= -1 * destY;
-			//esi += (sprWidth + sprModulo) * (-1 * destY);
-			destY = 0;
+
+	 // if x1 is on visible part of screen
+	if (destX < 0) {
+		if (destX + sprWidth < 1) {
+			//x2 is negative - out of window
+			return;
 		}
 	}
-	//upper_y_check_ok
-	if (destY >= kNormalHeight) {
-		return; // don't draw
+	 // if x1 is outside of screen on right side
+	if (destX >= kNormalWidth) {
+		return;
 	}
-	if (destY + sprHeight > kNormalHeight) {
-		sprHeight -= destY + sprHeight - kNormalHeight;
-	}
-	//lower_y_check_ok
 
-	_graph->drawTransparent(destX, destY, backAnimSurface); // TODO
+	if (destY < 0) {
+		if (destY + sprHeight < 1) {
+			//y2 is negative - out of window
+			return;
+		}
+	}
+	if (destY >= kNormalHeight) {
+		return;
+	}
+
+	_graph->drawTransparent(destX, destY, backAnimSurface);
 }
 
 void PrinceEngine::showBackAnims() {
