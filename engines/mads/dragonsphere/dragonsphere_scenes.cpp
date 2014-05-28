@@ -39,9 +39,6 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	// TODO
 	//scene.addActiveVocab(NOUN_DROP);
 
-	// TODO: Just return a dummy scene for now
-	return new DummyScene(vm);
-
 	switch (scene._nextSceneId) {
 	// Scene group #1 (Castle, river and caves)
 	case 101:	// king's bedroom
