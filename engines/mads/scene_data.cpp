@@ -95,6 +95,22 @@ void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 
 /*------------------------------------------------------------------------*/
 
+SceneInfo::SceneInfo(MADSEngine *vm) : _vm(vm) {
+	_sceneId = 0;
+	_artFileNum = 0;
+	_depthStyle = 0;
+	_width = 0;
+	_height = 0;
+	_yBandsEnd = 0;
+	_yBandsStart = 0;
+	_maxScale = 0;
+	_minScale = 0;
+	_field4A = 0;
+	_usageIndex = 0;
+	for (int i = 0; i < 15; ++i)
+		_depthList[i] = 0;
+}
+
 SceneInfo *SceneInfo::init(MADSEngine *vm) {
 	switch (vm->getGameID()) {
 	case GType_RexNebular:

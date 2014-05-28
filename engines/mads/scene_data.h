@@ -154,7 +154,7 @@ protected:
 	/**
 	 * Constructor
 	 */
-	SceneInfo(MADSEngine *vm) : _vm(vm) {}
+	SceneInfo(MADSEngine *vm);
 public:
 	int _sceneId;
 	int _artFileNum;
@@ -167,7 +167,7 @@ public:
 	int _maxScale;
 	int _minScale;
 	int _depthList[DEPTH_BANDS_SIZE];
-	int _field4A;
+	int _field4A; // Useless field ?
 
 	int _usageIndex;
 	Common::Array<PaletteCycle> _paletteCycles;
