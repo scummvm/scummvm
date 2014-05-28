@@ -784,13 +784,17 @@ void PrinceEngine::showBackAnims() {
 				//change_back_anim
 				if (_backAnimList[i]._seq._type == 0) {
 					//show_bugger
-					_backAnimList[i].backAnims[activeSubAnim]._frame++;
+					if (_backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() > 1) {
+						_backAnimList[i].backAnims[activeSubAnim]._frame++;
+					}
 					//not_end
 				} else if (_backAnimList[i]._seq._type == 1) {
 					//repeat_rnd
 					if (_backAnimList[i]._seq._anims <= 1) {
 						//show_bugger
-						_backAnimList[i].backAnims[activeSubAnim]._frame++;
+						if (_backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() > 1) {
+							_backAnimList[i].backAnims[activeSubAnim]._frame++;
+						}
 						//not_end
 					} else {
 						int rnd;
@@ -816,7 +820,9 @@ void PrinceEngine::showBackAnims() {
 						_backAnimList[i]._seq._counter = 0;
 						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
 						//show_bugger
-						_backAnimList[i].backAnims[activeSubAnim]._frame++;
+						if (_backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() > 1) {
+							_backAnimList[i].backAnims[activeSubAnim]._frame++;
+						}
 						//not_end
 					}
 				} else if (_backAnimList[i]._seq._type == 2) {
@@ -884,11 +890,27 @@ void PrinceEngine::showBackAnims() {
 			_backAnimList[i].backAnims[activeSubAnim]._showFrame = _backAnimList[i].backAnims[activeSubAnim]._frame;
 
 			//ShowFrameCode
-			int frame = _backAnimList[i].backAnims[activeSubAnim]._showFrame;
-			int phaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseFrameIndex(frame);
-			Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex);
-			int x = _backAnimList[i].backAnims[activeSubAnim]._x + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(frame);
-			int y = _backAnimList[i].backAnims[activeSubAnim]._y + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetY(frame);
+			int phaseCount = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount();
+			int frameCount = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameCount();
+			//debug("frameCount: %d", frameCount);
+			//debug("phaseCount: %d", phaseCount);
+			int phase = _backAnimList[i].backAnims[activeSubAnim]._showFrame;
+			if (phase >= phaseCount) {
+				debug("p >= pC: i-%d, activ-%d, phase-%d, phaseC-%d", i, activeSubAnim, phase, phaseCount);
+				debug("type: %d", _backAnimList[i]._seq._type);
+			}
+			int phaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseFrameIndex(phase);
+			if (phaseFrameIndex < 0) {
+				debug("pFrameIndex: i-%d, activ-%d, phaseFrInd-%d, frameC-%d", i, activeSubAnim, phaseFrameIndex, frameCount);
+				debug("type: %d", _backAnimList[i]._seq._type);
+			}
+			if (phaseFrameIndex >= frameCount) {
+				debug("pFrameIndex2: i-%d, activ-%d, phaseFrInd-%d, frameC-%d", i, activeSubAnim, phaseFrameIndex, frameCount);
+				debug("type: %d", _backAnimList[i]._seq._type);
+			}
+			Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex); //still out of bounds
+			int x = _backAnimList[i].backAnims[activeSubAnim]._x + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(phase);
+			int y = _backAnimList[i].backAnims[activeSubAnim]._y + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetY(phase);
 			//debug("x: %d", x);
 			//debug("picWindowX: %d", _picWindowX);
 			//if (x >= _picWindowX) { //  || x - _picWindowX + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(frame) >= 0 ??
