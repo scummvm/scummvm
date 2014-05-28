@@ -43,6 +43,8 @@ void WalkNode::load(Common::SeekableReadStream *f) {
 Rails::Rails() {
 	_depthSurface = nullptr;
 	_routeLength = 0;
+	_depthStyle = 0;
+	_next = 0;
 }
 
 void Rails::load(const WalkNodeList &nodes, DepthSurface *depthSurface, int depthStyle) {

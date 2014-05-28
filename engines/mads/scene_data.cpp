@@ -47,6 +47,7 @@ KernelMessage::KernelMessage() {
 	_actionDetails._verbId = VERB_NONE;
 	_actionDetails._objectNameId = 0;
 	_actionDetails._indirectObjectId = 0;
+	_textDisplayIndex = 0;
 }
 
 /*------------------------------------------------------------------------*/

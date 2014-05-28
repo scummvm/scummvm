@@ -72,6 +72,14 @@ Player::Player(MADSEngine *vm)
 	_frameListIndex = 0;
 	_stopWalkerIndex = 0;
 	_totalDistance = 0;
+	_distAccum = 0;
+	_pixelAccum = 0;
+	_deltaDistance = 0;
+	_xDirection = 0;
+	_yDirection = 0;
+	_moving = false;
+	_walkOffScreen = 0;
+	_walkOffScreenSceneId = -1;
 
 	Common::fill(&_stopWalkerList[0], &_stopWalkerList[12], 0);
 	Common::fill(&_stopWalkerTrigger[0], &_stopWalkerTrigger[12], 0);

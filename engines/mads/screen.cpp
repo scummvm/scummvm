@@ -247,6 +247,7 @@ ScreenObject::ScreenObject() {
 	_category = CAT_NONE;
 	_descId = 0;
 	_layer = 0;
+	_active = false;
 }
 
 /*------------------------------------------------------------------------*/

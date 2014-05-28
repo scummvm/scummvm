@@ -185,6 +185,13 @@ ASound::ASound(Audio::Mixer *mixer, const Common::String &filename, int dataOffs
 	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
 	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
 
+	for (int i = 0; i < 11; ++i) {
+		_channelData[i]._field0 = 0;
+		_channelData[i]._freqMask = 0;
+		_channelData[i]._freqBase = 0;
+		_channelData[i]._field6 = 0;
+	}
+
 	AdlibChannel::_channelsEnabled = false;
 
 	// Store passed parameters, and setup OPL
