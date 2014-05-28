@@ -425,7 +425,8 @@ void GameNebular::doObjectAction() {
 	} else if ((action.isAction(VERB_LOOK) || action.isAction(VERB_READ)) &&
 			((id = _objects.getIdFromDesc(action._activeAction._objectNameId)) > 0 ||
 			(action._activeAction._indirectObjectId > 0 &&
-			(id = _objects.getIdFromDesc(action._activeAction._indirectObjectId))))) {
+			(id = _objects.getIdFromDesc(action._activeAction._indirectObjectId)))) &&
+			_objects.isInInventory(id)) {
 		if (id == OBJ_REPAIR_LIST) {
 			dialogs._indexList[0] = _globals[kTeleporterCode + 7];
 			dialogs._indexList[1] = _globals[kTeleporterCode + 8];
