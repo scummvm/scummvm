@@ -145,6 +145,9 @@ void DynamicHotspots::refresh() {
 			}
 		}
 	}
+
+	// Reset the list's changed flag
+	_changed = false;
 }
 
 void DynamicHotspots::synchronize(Common::Serializer &s) {
