@@ -17,17 +17,17 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 	float winv;
 
 	// coordinates
-	winv = (float)(1.0 / v->pc.W);
-	v->zp.x = (int)(v->pc.X * winv * c->viewport.scale.X + c->viewport.trans.X);
-	v->zp.y = (int)(v->pc.Y * winv * c->viewport.scale.Y + c->viewport.trans.Y);
-	v->zp.z = (int)(v->pc.Z * winv * c->viewport.scale.Z + c->viewport.trans.Z);
+	winv = (float)(1.0 / v->pc.getW());
+	v->zp.x = (int)(v->pc.getX() * winv * c->viewport.scale.getX() + c->viewport.trans.getX());
+	v->zp.y = (int)(v->pc.getY() * winv * c->viewport.scale.getY() + c->viewport.trans.getY());
+	v->zp.z = (int)(v->pc.getZ() * winv * c->viewport.scale.getZ() + c->viewport.trans.getZ());
 	// color
 	if (c->lighting_enabled) {
-		v->zp.r = (int)(v->color.v[0] * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN)
+		v->zp.r = (int)(v->color.getX() * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN)
 					+ ZB_POINT_RED_MIN);
-		v->zp.g = (int)(v->color.v[1] * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN)
+		v->zp.g = (int)(v->color.getY() * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN)
 					+ ZB_POINT_GREEN_MIN);
-		v->zp.b = (int)(v->color.v[2] * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN)
+		v->zp.b = (int)(v->color.getZ() * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN)
 					+ ZB_POINT_BLUE_MIN);
 	} else {
 		// no need to convert to integer if no lighting : take current color
@@ -38,8 +38,8 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 
 	// texture
 	if (c->texture_2d_enabled) {
-		v->zp.s = (int)(v->tex_coord.X * (ZB_POINT_S_MAX - ZB_POINT_S_MIN) + ZB_POINT_S_MIN);
-		v->zp.t = (int)(v->tex_coord.Y * (ZB_POINT_S_MAX - ZB_POINT_S_MIN) + ZB_POINT_S_MIN);
+		v->zp.s = (int)(v->tex_coord.getX() * (ZB_POINT_S_MAX - ZB_POINT_S_MIN) + ZB_POINT_S_MIN);
+		v->zp.t = (int)(v->tex_coord.getY() * (ZB_POINT_S_MAX - ZB_POINT_S_MIN) + ZB_POINT_S_MIN);
 	}
 }
 
@@ -74,14 +74,9 @@ void gl_draw_point(GLContext *c, GLVertex *p0) {
 // line
 
 static inline void interpolate(GLVertex *q, GLVertex *p0, GLVertex *p1, float t) {
-	q->pc.X = p0->pc.X + (p1->pc.X - p0->pc.X) * t;
-	q->pc.Y = p0->pc.Y + (p1->pc.Y - p0->pc.Y) * t;
-	q->pc.Z = p0->pc.Z + (p1->pc.Z - p0->pc.Z) * t;
-	q->pc.W = p0->pc.W + (p1->pc.W - p0->pc.W) * t;
 
-	q->color.v[0] = p0->color.v[0] + (p1->color.v[0] - p0->color.v[0]) * t;
-	q->color.v[1] = p0->color.v[1] + (p1->color.v[1] - p0->color.v[1]) * t;
-	q->color.v[2] = p0->color.v[2] + (p1->color.v[2] - p0->color.v[2]) * t;
+	q->pc = p0->pc + (p1->pc - p0->pc) * t;
+	q->color = p0->color + (p1->color - p0->color) * t;
 }
 
 // Line Clipping
@@ -130,14 +125,14 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 	} else if ((cc1 & cc2) != 0) {
 		return;
 	} else {
-		dx = p2->pc.X - p1->pc.X;
-		dy = p2->pc.Y - p1->pc.Y;
-		dz = p2->pc.Z - p1->pc.Z;
-		dw = p2->pc.W - p1->pc.W;
-		x1 = p1->pc.X;
-		y1 = p1->pc.Y;
-		z1 = p1->pc.Z;
-		w1 = p1->pc.W;
+		dx = p2->pc.getX() - p1->pc.getX();
+		dy = p2->pc.getY() - p1->pc.getY();
+		dz = p2->pc.getZ() - p1->pc.getZ();
+		dw = p2->pc.getW() - p1->pc.getW();
+		x1 = p1->pc.getX();
+		y1 = p1->pc.getY();
+		z1 = p1->pc.getZ();
+		w1 = p1->pc.getW();
 
 		tmin = 0;
 		tmax = 1;
@@ -169,21 +164,21 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 // of the intersection if x=a+t(b-a).
 
 #define clip_func(name, sign, dir, dir1, dir2) \
-static float name(V4 *c, V4 *a, V4 *b) { \
+static float name(Vector4 *c, Vector4 *a, Vector4 *b) { \
 	float t, dX, dY, dZ, dW, den;\
-	dX = (b->X - a->X); \
-	dY = (b->Y - a->Y); \
-	dZ = (b->Z - a->Z); \
-	dW = (b->W - a->W); \
+	dX = (b->getX() - a->getX()); \
+	dY = (b->getY() - a->getY()); \
+	dZ = (b->getZ() - a->getZ()); \
+	dW = (b->getW() - a->getW()); \
 	den = -(sign d ## dir) + dW; \
 	if (den == 0) \
 		t = 0; \
 	else \
-		t = (sign a->dir - a->W) / den; \
-	c->dir1 = a->dir1 + t * d ## dir1; \
-	c->dir2 = a->dir2 + t * d ## dir2; \
-	c->W = a->W + t * dW; \
-	c->dir = sign c->W; \
+		t = (sign a->get ## dir () - a->getW()) / den; \
+	c->set ## dir1 (a->get ## dir1 () + t * d ## dir1); \
+	c->set ## dir2 (a->get ## dir2 () + t * d ## dir2); \
+	c->setW(a->getW() + t * dW); \
+	c->set ## dir (sign c->getW()); \
 	return t; \
 }
 
@@ -194,7 +189,7 @@ clip_func(clip_ymax, +, Y, X, Z)
 clip_func(clip_zmin, -, Z, X, Y)
 clip_func(clip_zmax, +, Z, X, Y)
 
-float(*clip_proc[6])(V4 *, V4 *, V4 *) =  {
+float(*clip_proc[6])(Vector4 *, Vector4 *, Vector4 *) =  {
 	clip_xmin, clip_xmax,
 	clip_ymin, clip_ymax,
 	clip_zmin, clip_zmax
@@ -203,21 +198,18 @@ float(*clip_proc[6])(V4 *, V4 *, V4 *) =  {
 static inline void updateTmp(GLContext *c, GLVertex *q,
 							 GLVertex *p0, GLVertex *p1, float t) {
 	if (c->current_shade_model == TGL_SMOOTH) {
-		q->color.v[0] = p0->color.v[0] + (p1->color.v[0] - p0->color.v[0]) * t;
-		q->color.v[1] = p0->color.v[1] + (p1->color.v[1] - p0->color.v[1]) * t;
-		q->color.v[2] = p0->color.v[2] + (p1->color.v[2] - p0->color.v[2]) * t;
+		q->color = p0->color + (p1->color - p0->color) * t;
 	} else {
-		q->color.v[0] = p0->color.v[0];
-		q->color.v[1] = p0->color.v[1];
-		q->color.v[2] = p0->color.v[2];
+		q->color = p0->color;
 	}
 
 	if (c->texture_2d_enabled) {
-		q->tex_coord.X = p0->tex_coord.X + (p1->tex_coord.X - p0->tex_coord.X) * t;
-		q->tex_coord.Y = p0->tex_coord.Y + (p1->tex_coord.Y - p0->tex_coord.Y) * t;
+		//NOTE: This could be implemented with operator overloading, but i'm not 100% sure that we can completely disregard Z and W components so I'm leaving it like this for now.
+		q->tex_coord.setX(p0->tex_coord.getX() + (p1->tex_coord.getX() - p0->tex_coord.getX()) * t);
+		q->tex_coord.setY(p0->tex_coord.getY() + (p1->tex_coord.getY() - p0->tex_coord.getY()) * t);
 	}
 
-	q->clip_code = gl_clipcode(q->pc.X, q->pc.Y, q->pc.Z, q->pc.W);
+	q->clip_code = gl_clipcode(q->pc.getX(), q->pc.getY(), q->pc.getZ(), q->pc.getW());
 	if (q->clip_code == 0)
 		gl_transform_to_viewport(c, q);
 }

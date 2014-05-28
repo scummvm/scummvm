@@ -54,28 +54,28 @@ struct GLSpecBuf {
 };
 
 struct GLLight {
-	V4 ambient;
-	V4 diffuse;
-	V4 specular;
-	V4 position;
-	V3 spot_direction;
+	Vector4 ambient;
+	Vector4 diffuse;
+	Vector4 specular;
+	Vector4 position;
+	Vector3 spot_direction;
 	float spot_exponent;
 	float spot_cutoff;
 	float attenuation[3];
 	// precomputed values
 	float cos_spot_cutoff;
-	V3 norm_spot_direction;
-	V3 norm_position;
+	Vector3 norm_spot_direction;
+	Vector3 norm_position;
 	// we use a linked list to know which are the enabled lights
 	int enabled;
 	struct GLLight *next, *prev;
 };
 
 struct GLMaterial {
-	V4 emission;
-	V4 ambient;
-	V4 diffuse;
-	V4 specular;
+	Vector4 emission;
+	Vector4 ambient;
+	Vector4 diffuse;
+	Vector4 specular;
 	float shininess;
 
 	// computed values
@@ -86,8 +86,8 @@ struct GLMaterial {
 
 struct GLViewport {
 	int xmin, ymin, xsize, ysize;
-	V3 scale;
-	V3 trans;
+	Vector3 scale;
+	Vector3 trans;
 	int updated;
 };
 
@@ -111,14 +111,14 @@ struct GLList {
 
 struct GLVertex {
 	int edge_flag;
-	V3 normal;
-	V4 coord;
-	V4 tex_coord;
-	V4 color;
+	Vector3 normal;
+	Vector4 coord;
+	Vector4 tex_coord;
+	Vector4 color;
 
 	// computed values
-	V4 ec;                // eye coordinates
-	V4 pc;                // coordinates in the normalized volume
+	Vector4 ec;                // eye coordinates
+	Vector4 pc;                // coordinates in the normalized volume
 	int clip_code;        // clip code
 	ZBufferPoint zp;      // integer coordinates for the rasterization
 };
@@ -159,7 +159,7 @@ struct GLContext {
 	// lights
 	GLLight lights[T_MAX_LIGHTS];
 	GLLight *first_light;
-	V4 ambient_light_model;
+	Vector4 ambient_light_model;
 	int local_light_model;
 	int lighting_enabled;
 	int light_model_two_side;
@@ -184,12 +184,12 @@ struct GLContext {
 
 	// matrix
 	int matrix_mode;
-	M4 *matrix_stack[3];
-	M4 *matrix_stack_ptr[3];
+	Matrix4 *matrix_stack[3];
+	Matrix4 *matrix_stack_ptr[3];
 	int matrix_stack_depth_max[3];
 
-	M4 matrix_model_view_inv;
-	M4 matrix_model_projection;
+	Matrix4 matrix_model_view_inv;
+	Matrix4 matrix_model_projection;
 	int matrix_model_projection_updated;
 	int matrix_model_projection_no_w_transform;
 	int apply_texture_matrix;
@@ -222,13 +222,13 @@ struct GLContext {
 
 	// clear
 	float clear_depth;
-	V4 clear_color;
+	Vector4 clear_color;
 
 	// current vertex state
-	V4 current_color;
+	Vector4 current_color;
 	unsigned int longcurrent_color[3]; // precomputed integer color
-	V4 current_normal;
-	V4 current_tex_coord;
+	Vector4 current_normal;
+	Vector4 current_tex_coord;
 	int current_edge_flag;
 
 	// glBegin / glEnd

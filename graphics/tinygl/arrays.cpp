@@ -25,18 +25,18 @@ void glopArrayElement(GLContext *c, GLParam *param) {
 	}
 	if (states & NORMAL_ARRAY) {
 		i = idx * (3 + c->normal_array_stride);
-		c->current_normal.X = c->normal_array[i];
-		c->current_normal.Y = c->normal_array[i + 1];
-		c->current_normal.Z = c->normal_array[i + 2];
-		c->current_normal.W = 0.0f;
+		c->current_normal.setX(c->normal_array[i]);
+		c->current_normal.setY(c->normal_array[i + 1]);
+		c->current_normal.setZ(c->normal_array[i + 2]);
+		c->current_normal.setW(0.0f); // NOTE: this used to be Z but assigning Z again seemed like a bug...
 	}
 	if (states & TEXCOORD_ARRAY) {
 		int size = c->texcoord_array_size;
 		i = idx * (size + c->texcoord_array_stride);
-		c->current_tex_coord.X = c->texcoord_array[i];
-		c->current_tex_coord.Y = c->texcoord_array[i + 1];
-		c->current_tex_coord.Z = size > 2 ? c->texcoord_array[i + 2] : 0.0f;
-		c->current_tex_coord.W = size > 3 ? c->texcoord_array[i + 3] : 1.0f;
+		c->current_tex_coord.setX(c->texcoord_array[i]);
+		c->current_tex_coord.setY(c->texcoord_array[i + 1]);
+		c->current_tex_coord.setZ(size > 2 ? c->texcoord_array[i + 2] : 0.0f);
+		c->current_tex_coord.setW(size > 3 ? c->texcoord_array[i + 3] : 1.0f);
 	}
 	if (states & VERTEX_ARRAY) {
 		GLParam p[5];

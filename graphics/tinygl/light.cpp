@@ -6,7 +6,7 @@ namespace TinyGL {
 void glopMaterial(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
-	float v[4] = { p[3].f, p[4].f, p[5].f, p[6].f };
+	Vector4 v(p[3].f, p[4].f, p[5].f, p[6].f);
 	GLMaterial *m;
 
 	if (mode == TGL_FRONT_AND_BACK) {
@@ -21,30 +21,24 @@ void glopMaterial(GLContext *c, GLParam *p) {
 
 	switch (type) {
 	case TGL_EMISSION:
-		for (int i = 0; i < 4; i++)
-			m->emission.v[i] = v[i];
+		m->emission = v;
 		break;
 	case TGL_AMBIENT:
-		for (int i = 0; i < 4; i++)
-			m->ambient.v[i] = v[i];
+		m->ambient = v;
 		break;
 	case TGL_DIFFUSE:
-		for (int i = 0; i < 4; i++)
-			m->diffuse.v[i] = v[i];
+		m->diffuse = v;
 		break;
 	case TGL_SPECULAR:
-		for (int i = 0; i < 4; i++)
-			m->specular.v[i] = v[i];
+		m->specular = v;
 		break;
 	case TGL_SHININESS:
-		m->shininess = v[0];
-		m->shininess_i = (int)(v[0] / 128.0f) * SPECULAR_BUFFER_RESOLUTION;
+		m->shininess = v.getX();
+		m->shininess_i = (int)(v.getX() / 128.0f) * SPECULAR_BUFFER_RESOLUTION;
 		break;
 	case TGL_AMBIENT_AND_DIFFUSE:
-		for (int i = 0; i < 4; i++)
-			m->diffuse.v[i] = v[i];
-		for (int i = 0; i < 4; i++)
-			m->ambient.v[i] = v[i];
+		m->diffuse = v;
+		m->ambient = v;
 		break;
 	default:
 		assert(0);
@@ -62,15 +56,12 @@ void glopColorMaterial(GLContext *c, GLParam *p) {
 void glopLight(GLContext *c, GLParam *p) {
 	int light = p[1].i;
 	int type = p[2].i;
-	V4 v;
+	Vector4 v(p[3].f, p[4].f,p[5].f,p[6].f);
 	GLLight *l;
 
 	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0 + T_MAX_LIGHTS);
 
 	l = &c->lights[light - TGL_LIGHT0];
-
-	for (int i = 0; i < 4; i++)
-		v.v[i] = p[3 + i].f;
 
 	switch (type) {
 	case TGL_AMBIENT:
@@ -83,32 +74,26 @@ void glopLight(GLContext *c, GLParam *p) {
 		l->specular = v;
 		break;
 	case TGL_POSITION: {
-		V4 pos;
-		gl_M4_MulV4(&pos, c->matrix_stack_ptr[0], &v);
+		Vector4 pos = c->matrix_stack_ptr[0]->transform(v);
 
 		l->position = pos;
 
-		if (l->position.v[3] == 0) {
-			l->norm_position.X = pos.X;
-			l->norm_position.Y = pos.Y;
-			l->norm_position.Z = pos.Z;
-
-			gl_V3_Norm(&l->norm_position);
+		if (l->position.getW() == 0) {
+			l->norm_position = pos.toVector3();
+			l->norm_position.normalize();
 		}
 	}
 	break;
 	case TGL_SPOT_DIRECTION:
-		for (int i = 0; i < 3; i++) {
-			l->spot_direction.v[i] = v.v[i];
-			l->norm_spot_direction.v[i] = v.v[i];
-		}
-		gl_V3_Norm(&l->norm_spot_direction);
+		l->spot_direction = v.toVector3();
+		l->norm_spot_direction = v.toVector3();
+		l->norm_spot_direction.normalize();
 		break;
 	case TGL_SPOT_EXPONENT:
-		l->spot_exponent = v.v[0];
+		l->spot_exponent = v.getX();
 		break;
 	case TGL_SPOT_CUTOFF: {
-		float a = v.v[0];
+		float a = v.getX();
 		assert(a == 180 || (a >= 0 && a <= 90));
 		l->spot_cutoff = a;
 		if (a != 180)
@@ -116,13 +101,13 @@ void glopLight(GLContext *c, GLParam *p) {
 	}
 	break;
 	case TGL_CONSTANT_ATTENUATION:
-		l->attenuation[0] = v.v[0];
+		l->attenuation[0] = v.getX();
 		break;
 	case TGL_LINEAR_ATTENUATION:
-		l->attenuation[1] = v.v[0];
+		l->attenuation[1] = v.getX();
 		break;
 	case TGL_QUADRATIC_ATTENUATION:
-		l->attenuation[2] = v.v[0];
+		l->attenuation[2] = v.getX();
 		break;
 	default:
 		assert(0);
@@ -131,18 +116,16 @@ void glopLight(GLContext *c, GLParam *p) {
 
 void glopLightModel(GLContext *c, GLParam *p) {
 	int pname = p[1].i;
-	float v[4] = { p[2].f, p[3].f, p[4].f, p[5].f };
 
 	switch (pname) {
 	case TGL_LIGHT_MODEL_AMBIENT:
-		for (int i = 0; i < 4; i++)
-			c->ambient_light_model.v[i] = v[i];
+		c->ambient_light_model = Vector4(p[2].f, p[3].f, p[4].f, p[5].f);
 		break;
 	case TGL_LIGHT_MODEL_LOCAL_VIEWER:
-		c->local_light_model = (int)v[0];
+		c->local_light_model = (int)p[2].f;
 		break;
 	case TGL_LIGHT_MODEL_TWO_SIDE:
-		c->light_model_two_side = (int)v[0];
+		c->light_model_two_side = (int)p[2].f;
 		break;
 	default:
 		warning("glopLightModel: illegal pname: 0x%x", pname);
@@ -187,64 +170,56 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 	float R, G, B, A;
 	GLMaterial *m;
 	GLLight *l;
-	V3 n, s, d;
+	Vector3 n, s, d;
 	float dist, tmp, att, dot, dot_spot, dot_spec;
 	int twoside = c->light_model_two_side;
 
 	m = &c->materials[0];
 
-	n.X = v->normal.X;
-	n.Y = v->normal.Y;
-	n.Z = v->normal.Z;
+	n = v->normal;
 
-	R = m->emission.v[0] + m->ambient.v[0] * c->ambient_light_model.v[0];
-	G = m->emission.v[1] + m->ambient.v[1] * c->ambient_light_model.v[1];
-	B = m->emission.v[2] + m->ambient.v[2] * c->ambient_light_model.v[2];
-	A = clampf(m->diffuse.v[3], 0, 1);
+	R = m->emission.getX() + m->ambient.getX() * c->ambient_light_model.getX();
+	G = m->emission.getY() + m->ambient.getY() * c->ambient_light_model.getY();
+	B = m->emission.getZ() + m->ambient.getZ() * c->ambient_light_model.getZ();
+	A = clampf(m->diffuse.getW(), 0, 1);
 
 	for (l = c->first_light; l != NULL; l = l->next) {
 		float lR, lB, lG;
 
 		// ambient
-		lR = l->ambient.v[0] * m->ambient.v[0];
-		lG = l->ambient.v[1] * m->ambient.v[1];
-		lB = l->ambient.v[2] * m->ambient.v[2];
+		lR = l->ambient.getX() * m->ambient.getX();
+		lG = l->ambient.getY() * m->ambient.getY();
+		lB = l->ambient.getZ() * m->ambient.getZ();
 
-		if (l->position.v[3] == 0) {
+		if (l->position.getW() == 0) {
 			// light at infinity
-			d.X = l->position.v[0];
-			d.Y = l->position.v[1];
-			d.Z = l->position.v[2];
+			d = l->position.toVector3();
 			att = 1;
 		} else {
 			// distance attenuation
-			d.X = l->position.v[0] - v->ec.v[0];
-			d.Y = l->position.v[1] - v->ec.v[1];
-			d.Z = l->position.v[2] - v->ec.v[2];
-			dist = sqrt(d.X * d.X + d.Y * d.Y + d.Z * d.Z);
+			d = l->position.toVector3() - v->ec.toVector3();
+			dist = d.getLength();
 			if (dist > 1E-3) {
 				tmp = 1 / dist;
-				d.X *= tmp;
-				d.Y *= tmp;
-				d.Z *= tmp;
+				d *= tmp;
 			}
 			att = 1.0f / (l->attenuation[0] + dist * (l->attenuation[1] +
 					dist * l->attenuation[2]));
 		}
-		dot = d.X * n.X + d.Y * n.Y + d.Z * n.Z;
+		dot = Vector3::dot(d,n);
 		if (twoside && dot < 0)
 			dot = -dot;
 		if (dot > 0) {
 			// diffuse light
-			lR += dot * l->diffuse.v[0] * m->diffuse.v[0];
-			lG += dot * l->diffuse.v[1] * m->diffuse.v[1];
-			lB += dot * l->diffuse.v[2] * m->diffuse.v[2];
+			lR += dot * l->diffuse.getX() * m->diffuse.getX();
+			lG += dot * l->diffuse.getY() * m->diffuse.getY();
+			lB += dot * l->diffuse.getZ() * m->diffuse.getZ();
 
 			// spot light
 			if (l->spot_cutoff != 180) {
-				dot_spot = -(d.X * l->norm_spot_direction.v[0] +
-							 d.Y * l->norm_spot_direction.v[1] +
-							 d.Z * l->norm_spot_direction.v[2]);
+				dot_spot = -(d.getX() * l->norm_spot_direction.getX() +
+							 d.getY() * l->norm_spot_direction.getY() +
+							 d.getZ() * l->norm_spot_direction.getZ());
 				if (twoside && dot_spot < 0)
 					dot_spot = -dot_spot;
 				if (dot_spot < l->cos_spot_cutoff) {
@@ -261,26 +236,24 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 			// specular light
 
 			if (c->local_light_model) {
-				V3 vcoord;
-				vcoord.X = v->ec.X;
-				vcoord.Y = v->ec.Y;
-				vcoord.Z = v->ec.Z;
-				gl_V3_Norm(&vcoord);
-				s.X = d.X - vcoord.X;
-				s.Y = d.Y - vcoord.X;
-				s.Z = d.Z - vcoord.X;
+				Vector3 vcoord;
+				vcoord = v->ec.toVector3();
+				vcoord.normalize();
+				s.setX(d.getX() - vcoord.getX());
+				s.setY(d.getX() - vcoord.getX());
+				s.setZ(d.getX() - vcoord.getX());
+				//NOTE: this operation is rather suspicious, this code should be tested.
 			} else {
-				s.X = d.X;
-				s.Y = d.Y;
-				s.Z = (float)(d.Z + 1.0);
+				s = d;
+				s.setZ(s.getZ() + 1.0);
 			}
-			dot_spec = n.X * s.X + n.Y * s.Y + n.Z * s.Z;
+			dot_spec = Vector3::dot(n,s);
 			if (twoside && dot_spec < 0)
 				dot_spec = -dot_spec;
 			if (dot_spec > 0) {
 				GLSpecBuf *specbuf;
 				int idx;
-				tmp = sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
+				tmp = s.getLength();
 				if (tmp > 1E-3) {
 					dot_spec = dot_spec / tmp;
 				}
@@ -296,9 +269,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 					idx = (int)tmp;
 
 				dot_spec = specbuf->buf[idx];
-				lR += dot_spec * l->specular.v[0] * m->specular.v[0];
-				lG += dot_spec * l->specular.v[1] * m->specular.v[1];
-				lB += dot_spec * l->specular.v[2] * m->specular.v[2];
+				lR += dot_spec * l->specular.getX() * m->specular.getX();
+				lG += dot_spec * l->specular.getY() * m->specular.getY();
+				lB += dot_spec * l->specular.getZ() * m->specular.getZ();
 			}
 		}
 
@@ -307,10 +280,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 		B += att * lB;
 	}
 
-	v->color.v[0] = clampf(R, 0, 1);
-	v->color.v[1] = clampf(G, 0, 1);
-	v->color.v[2] = clampf(B, 0, 1);
-	v->color.v[3] = A;
+	v->color = Vector4(clampf(R, 0, 1), clampf(G, 0, 1), clampf(B, 0, 1), A);
 }
 
 } // end of namespace TinyGL

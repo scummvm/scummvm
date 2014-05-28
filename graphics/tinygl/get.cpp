@@ -35,6 +35,7 @@ void tglGetIntegerv(int pname, int *params) {
 }
 
 void tglGetFloatv(int pname, float *v) {
+	TinyGL::Matrix4* m;
 	int i;
 	int mnr = 0; // just a trick to return the correct matrix
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
@@ -44,13 +45,11 @@ void tglGetFloatv(int pname, float *v) {
 	case TGL_PROJECTION_MATRIX:
 		mnr++;
 	case TGL_MODELVIEW_MATRIX: {
-		float *p = &c->matrix_stack_ptr[mnr]->m[0][0];;
 		for (i = 0; i < 4; i++) {
-			*v++ = p[0];
-			*v++ = p[4];
-			*v++ = p[8];
-			*v++ = p[12];
-			p++;
+			*v++ = c->matrix_stack_ptr[mnr]->get(0,i);
+			*v++ = c->matrix_stack_ptr[mnr]->get(1,i);
+			*v++ = c->matrix_stack_ptr[mnr]->get(2,i);
+			*v++ = c->matrix_stack_ptr[mnr]->get(3,i);
 		}
 	}
 	break;

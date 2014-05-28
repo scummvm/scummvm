@@ -5,130 +5,6 @@
 
 namespace TinyGL {
 
-void gl_M4_Id(M4 *a) {
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			if (i == j)
-				a->m[i][j] = 1.0;
-			else
-				a->m[i][j] = 0.0;
-		}
-	}
-}
-
-int gl_M4_IsId(const M4 *a) {
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			if (i == j) {
-				if (a->m[i][j] != 1.0)
-					return 0;
-			} else if (a->m[i][j] != 0.0)
-				return 0;
-		}
-	}
-	return 1;
-}
-
-void gl_M4_Mul(M4 *c, const M4 *a, const M4 *b) {
-	float s;
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			s = 0.0;
-			for (int k = 0; k < 4; k++)
-				s += a->m[i][k] * b->m[k][j];
-			c->m[i][j] = s;
-		}
-	}
-}
-
-// c=c*a
-void gl_M4_MulLeft(M4 *c, const M4 *b) {
-	float s;
-	M4 a;
-
-	//memcpy(&a, c, 16 * sizeof(float));
-	a = *c;
-
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			s = 0.0;
-			for (int k = 0; k < 4; k++)
-				s += a.m[i][k] * b->m[k][j];
-			c->m[i][j] = s;
-		}
-	}
-}
-
-void gl_M4_Move(M4 *a, const M4 *b) {
-	memcpy(a, b, sizeof(M4));
-}
-
-void gl_MoveV3(V3 *a, const V3 *b) {
-	memcpy(a, b, sizeof(V3));
-}
-
-void gl_MulM4V3(V3 *a, const M4 *b, const V3 *c) {
-	a->X = b->m[0][0] * c->X + b->m[0][1] * c->Y + b->m[0][2] * c->Z + b->m[0][3];
-	a->Y = b->m[1][0] * c->X + b->m[1][1] * c->Y + b->m[1][2] * c->Z + b->m[1][3];
-	a->Z = b->m[2][0] * c->X + b->m[2][1] * c->Y + b->m[2][2] * c->Z + b->m[2][3];
-}
-
-void gl_MulM3V3(V3 *a, const M4 *b, const V3 *c) {
-	a->X = b->m[0][0] * c->X + b->m[0][1] * c->Y + b->m[0][2] * c->Z;
-	a->Y = b->m[1][0] * c->X + b->m[1][1] * c->Y + b->m[1][2] * c->Z;
-	a->Z = b->m[2][0] * c->X + b->m[2][1] * c->Y + b->m[2][2] * c->Z;
-}
-
-void gl_M4_MulV4(V4 *a, const M4 *b, const V4 *c) {
-	a->X = b->m[0][0] * c->X + b->m[0][1] * c->Y + b->m[0][2] * c->Z + b->m[0][3] * c->W;
-	a->Y = b->m[1][0] * c->X + b->m[1][1] * c->Y + b->m[1][2] * c->Z + b->m[1][3] * c->W;
-	a->Z = b->m[2][0] * c->X + b->m[2][1] * c->Y + b->m[2][2] * c->Z + b->m[2][3] * c->W;
-	a->W = b->m[3][0] * c->X + b->m[3][1] * c->Y + b->m[3][2] * c->Z + b->m[3][3] * c->W;
-}
-
-// transposition of a 4x4 matrix
-void gl_M4_Transpose(M4 *a, const M4 *b) {
-	a->m[0][0] = b->m[0][0];
-	a->m[0][1] = b->m[1][0];
-	a->m[0][2] = b->m[2][0];
-	a->m[0][3] = b->m[3][0];
-
-	a->m[1][0] = b->m[0][1];
-	a->m[1][1] = b->m[1][1];
-	a->m[1][2] = b->m[2][1];
-	a->m[1][3] = b->m[3][1];
-
-	a->m[2][0] = b->m[0][2];
-	a->m[2][1] = b->m[1][2];
-	a->m[2][2] = b->m[2][2];
-	a->m[2][3] = b->m[3][2];
-
-	a->m[3][0] = b->m[0][3];
-	a->m[3][1] = b->m[1][3];
-	a->m[3][2] = b->m[2][3];
-	a->m[3][3] = b->m[3][3];
-}
-
-// inversion of an orthogonal matrix of type Y=M.X+P
-void gl_M4_InvOrtho(M4 *a, const M4 &b) {
-	int i, j;
-	float s;
-	for (i = 0; i < 3; i++) {
-		for (j = 0; j < 3; j++)
-			a->m[i][j] = b.m[j][i];
-		a->m[3][0] = 0.0;
-		a->m[3][1] = 0.0;
-		a->m[3][2] = 0.0;
-		a->m[3][3] = 1.0;
-		for (i = 0; i < 3; i++) {
-			s = 0;
-			for (j = 0; j < 3; j++)
-				s -= b.m[j][i] * b.m[j][3];
-			a->m[i][3] = s;
-		}
-	}
-}
-
 // Inversion of a general nxn matrix.
 // Note : m is destroyed
 
@@ -188,85 +64,6 @@ int Matrix_Inv(float *r, float *m, int n) {
 	return 0;
 }
 
-// inversion of a 4x4 matrix
-
-void gl_M4_Inv(M4 *a, const M4 *b) {
-	M4 tmp;
-	memcpy(&tmp, b, 16 * sizeof(float));
-	//tmp = *b
-	Matrix_Inv(&a->m[0][0], &tmp.m[0][0], 4);
-}
-
-void gl_M4_Rotate(M4 *a, float t, int u) {
-	float s, c;
-	int v, w;
-
-	if ((v = u + 1) > 2)
-		v = 0;
-	if ((w = v + 1) > 2)
-		w = 0;
-	s = sin(t);
-	c = cos(t);
-	gl_M4_Id(a);
-	a->m[v][v] = c;
-	a->m[v][w] = -s;
-	a->m[w][v] = s;
-	a->m[w][w] = c;
-}
-
-/*
-// inverse of a 3x3 matrix
-void gl_M3_Inv(M3 *a, const M3 *m) {
-	float det;
-
-	det = m->m[0][0] * m->m[1][1] * m->m[2][2] - m->m[0][0] * m->m[1][2] * m->m[2][1] -
-		  m->m[1][0] * m->m[0][1] * m->m[2][2] + m->m[1][0] * m->m[0][2] * m->m[2][1] +
-		  m->m[2][0] * m->m[0][1] * m->m[1][2] - m->m[2][0] * m->m[0][2] * m->m[1][1];
-
-	a->m[0][0] = (m->m[1][1] * m->m[2][2] - m->m[1][2] * m->m[2][1]) / det;
-	a->m[0][1] = -(m->m[0][1] * m->m[2][2] - m->m[0][2] * m->m[2][1]) / det;
-	a->m[0][2] = -(-m->m[0][1] * m->m[1][2] + m->m[0][2] * m->m[1][1]) / det;
-
-	a->m[1][0] = -(m->m[1][0] * m->m[2][2] - m->m[1][2] * m->m[2][0]) / det;
-	a->m[1][1] = (m->m[0][0] * m->m[2][2] - m->m[0][2] * m->m[2][0]) / det;
-	a->m[1][2] = -(m->m[0][0] * m->m[1][2] - m->m[0][2] * m->m[1][0]) / det;
-
-	a->m[2][0] = (m->m[1][0] * m->m[2][1] - m->m[1][1] * m->m[2][0]) / det;
-	a->m[2][1] = -(m->m[0][0] * m->m[2][1] - m->m[0][1] * m->m[2][0]) / det;
-	a->m[2][2] = (m->m[0][0] * m->m[1][1] - m->m[0][1] * m->m[1][0]) / det;
-}
-*/
-
-// vector arithmetic
-
-int gl_V3_Norm(V3 *a) {
-	float n;
-	n = sqrt(a->X * a->X + a->Y * a->Y + a->Z * a->Z);
-	if (n == 0)
-		return 1;
-	a->X /= n;
-	a->Y /= n;
-	a->Z /= n;
-	return 0;
-}
-
-V3 gl_V3_New(float x, float y, float z) {
-	V3 a;
-	a.X = x;
-	a.Y = y;
-	a.Z = z;
-	return a;
-}
-
-V4 gl_V4_New(float x, float y, float z, float w) {
-	V4 a;
-	a.X = x;
-	a.Y = y;
-	a.Z = z;
-	a.W = w;
-	return a;
-}
-
 Vector3::Vector3() {
 	// Empty constructor, no overhead
 }
@@ -303,10 +100,16 @@ Vector4::Vector4(float x, float y, float z, float w) {
 	_v[3] = w;
 }
 
+Vector4::Vector4(const Vector3 &vec, float w) {
+	_v[0] = vec.getX();
+	_v[1] = vec.getY();
+	_v[2] = vec.getZ();
+	_v[3] = w;
+}
+
 Matrix4::Matrix4() {
 	// Empty constructor, no overhead
 }
-
 
 Matrix4::Matrix4(const Matrix4 &other) {
 	memcpy(_m,other._m,sizeof(_m));
@@ -348,7 +151,7 @@ TinyGL::Matrix4 Matrix4::transpose() const {
 	return a;
 }
 
-TinyGL::Matrix4 Matrix4::inverseOrtho() const {
+Matrix4 Matrix4::inverseOrtho() const {
 	Matrix4 a;
 
 	int i, j;
@@ -371,7 +174,7 @@ TinyGL::Matrix4 Matrix4::inverseOrtho() const {
 	return a;
 }
 
-TinyGL::Matrix4 Matrix4::inverse() const {
+Matrix4 Matrix4::inverse() const {
 	Matrix4 source(*this);
 	int k;
 	float max, tmp, t;
@@ -424,7 +227,7 @@ TinyGL::Matrix4 Matrix4::inverse() const {
 	return result;
 }
 
-TinyGL::Matrix4 Matrix4::rotation(float t, int u) const {
+Matrix4 Matrix4::rotation(float t, int u) {
 	Matrix4 a = identity();
 	float s, c;
 	int v, w;
@@ -443,31 +246,29 @@ TinyGL::Matrix4 Matrix4::rotation(float t, int u) const {
 	return a;
 }
 
-TinyGL::Vector3 Matrix4::transform(const Vector3 &vector) const {
-	return Vector3( 
-		vector.getX() * get(0,0) + vector.getY() * get(0,1) + vector.getZ() * get(0,2) + get(0,3),
-		vector.getX() * get(1,0) + vector.getY() * get(1,1) + vector.getZ() * get(1,2) + get(1,3),
-		vector.getX() * get(2,0) + vector.getY() * get(2,1) + vector.getZ() * get(2,2) + get(2,3));
+Vector3 Matrix4::transform(const Vector3 &vector) const {
+	return Vector3(
+	           vector.getX() * get(0,0) + vector.getY() * get(0,1) + vector.getZ() * get(0,2) + get(0,3),
+	           vector.getX() * get(1,0) + vector.getY() * get(1,1) + vector.getZ() * get(1,2) + get(1,3),
+	           vector.getX() * get(2,0) + vector.getY() * get(2,1) + vector.getZ() * get(2,2) + get(2,3));
 }
 
-TinyGL::Vector3 Matrix4::transform3x3( const Vector3 &vector ) const
-{
-	return Vector3( 
-		vector.getX() * get(0,0) + vector.getY() * get(0,1) + vector.getZ() * get(0,2),
-		vector.getX() * get(1,0) + vector.getY() * get(1,1) + vector.getZ() * get(1,2),
-		vector.getX() * get(2,0) + vector.getY() * get(2,1) + vector.getZ() * get(2,2));
+Vector3 Matrix4::transform3x3(const Vector3 &vector) const {
+	return Vector3(
+	           vector.getX() * get(0,0) + vector.getY() * get(0,1) + vector.getZ() * get(0,2),
+	           vector.getX() * get(1,0) + vector.getY() * get(1,1) + vector.getZ() * get(1,2),
+	           vector.getX() * get(2,0) + vector.getY() * get(2,1) + vector.getZ() * get(2,2));
 }
 
-TinyGL::Vector4 Matrix4::transform(const Vector4 &vector) const {
-	return Vector4( 
-		vector.getX() * get(0,0) + vector.getY() * get(0,1) + vector.getZ() * get(0,2) + vector.getW() * get(0,3),
-		vector.getX() * get(1,0) + vector.getY() * get(1,1) + vector.getZ() * get(1,2) + vector.getW() * get(1,3),
-		vector.getX() * get(2,0) + vector.getY() * get(2,1) + vector.getZ() * get(2,2) + vector.getW() * get(2,3),
-		vector.getX() * get(3,0) + vector.getY() * get(3,1) + vector.getZ() * get(3,2) + vector.getW() * get(3,3));
+Vector4 Matrix4::transform(const Vector4 &vector) const {
+	return Vector4(
+	           vector.getX() * get(0,0) + vector.getY() * get(0,1) + vector.getZ() * get(0,2) + vector.getW() * get(0,3),
+	           vector.getX() * get(1,0) + vector.getY() * get(1,1) + vector.getZ() * get(1,2) + vector.getW() * get(1,3),
+	           vector.getX() * get(2,0) + vector.getY() * get(2,1) + vector.getZ() * get(2,2) + vector.getW() * get(2,3),
+	           vector.getX() * get(3,0) + vector.getY() * get(3,1) + vector.getZ() * get(3,2) + vector.getW() * get(3,3));
 }
 
-bool Matrix4::IsIdentity() const
-{
+bool Matrix4::IsIdentity() const {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (i == j) {

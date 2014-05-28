@@ -4,23 +4,11 @@
 namespace TinyGL {
 
 void glopNormal(GLContext *c, GLParam *p) {
-	V3 v;
-
-	v.X = p[1].f;
-	v.Y = p[2].f;
-	v.Z = p[3].f;
-
-	c->current_normal.X = v.X;
-	c->current_normal.Y = v.Y;
-	c->current_normal.Z = v.Z;
-	c->current_normal.W = 0;
+	c->current_normal = Vector4(p[1].f,p[2].f,p[3].f,0.0f);
 }
 
 void glopTexCoord(GLContext *c, GLParam *p) {
-	c->current_tex_coord.X = p[1].f;
-	c->current_tex_coord.Y = p[2].f;
-	c->current_tex_coord.Z = p[3].f;
-	c->current_tex_coord.W = p[4].f;
+	c->current_tex_coord = Vector4(p[1].f,p[2].f,p[3].f,p[4].f);
 }
 
 void glopEdgeFlag(GLContext *c, GLParam *p) {
@@ -28,10 +16,7 @@ void glopEdgeFlag(GLContext *c, GLParam *p) {
 }
 
 void glopColor(GLContext *c, GLParam *p) {
-	c->current_color.X = p[1].f;
-	c->current_color.Y = p[2].f;
-	c->current_color.Z = p[3].f;
-	c->current_color.W = p[4].f;
+	c->current_color = Vector4(p[1].f,p[2].f,p[3].f,p[4].f);
 	c->longcurrent_color[0] = p[5].ui;
 	c->longcurrent_color[1] = p[6].ui;
 	c->longcurrent_color[2] = p[7].ui;
@@ -55,18 +40,17 @@ void gl_eval_viewport(GLContext *c) {
 
 	v = &c->viewport;
 
-	v->trans.X = (float)(((v->xsize - 0.5) / 2.0) + v->xmin);
-	v->trans.Y = (float)(((v->ysize - 0.5) / 2.0) + v->ymin);
-	v->trans.Z = (float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2);
+	v->trans.setX((float)(((v->xsize - 0.5) / 2.0) + v->xmin));
+	v->trans.setY((float)(((v->ysize - 0.5) / 2.0) + v->ymin));
+	v->trans.setZ((float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2));
 
-	v->scale.X = (float)((v->xsize - 0.5) / 2.0);
-	v->scale.Y = (float)(-(v->ysize - 0.5) / 2.0);
-	v->scale.Z = (float)(-((zsize - 0.5) / 2.0));
+	v->scale.setX((float)((v->xsize - 0.5) / 2.0));
+	v->scale.setY((float)(-(v->ysize - 0.5) / 2.0));
+	v->scale.setZ((float)(-((zsize - 0.5) / 2.0)));
 }
 
 void glopBegin(GLContext *c, GLParam *p) {
 	int type;
-	M4 tmp;
 
 	assert(c->in_begin == 0);
 
@@ -79,22 +63,18 @@ void glopBegin(GLContext *c, GLParam *p) {
 	if (c->matrix_model_projection_updated) {
 		if (c->lighting_enabled) {
 			// precompute inverse modelview
-			gl_M4_Inv(&tmp, c->matrix_stack_ptr[0]);
-			gl_M4_Transpose(&c->matrix_model_view_inv, &tmp);
+			c->matrix_model_view_inv = c->matrix_stack_ptr[0]->inverse().transpose();
 		} else {
-			float *m = &c->matrix_model_projection.m[0][0];
 			// precompute projection matrix
-			gl_M4_Mul(&c->matrix_model_projection,
-					  c->matrix_stack_ptr[1],
-					  c->matrix_stack_ptr[0]);
+			c->matrix_model_projection = (*c->matrix_stack_ptr[1]) * (*c->matrix_stack_ptr[0]);
 			// test to accelerate computation
 			c->matrix_model_projection_no_w_transform = 0;
-			if (m[12] == 0.0 && m[13] == 0.0 && m[14] == 0.0)
+			if (c->matrix_model_projection.get(3,0) == 0.0 && c->matrix_model_projection.get(3,1) == 0.0 && c->matrix_model_projection.get(3,2) == 0.0)
 				c->matrix_model_projection_no_w_transform = 1;
 		}
 
 		// test if the texture matrix is not Identity
-		c->apply_texture_matrix = !gl_M4_IsId(c->matrix_stack_ptr[2]);
+		c->apply_texture_matrix = !c->matrix_stack_ptr[2]->IsIdentity();
 
 		c->matrix_model_projection_updated = 0;
 	}
@@ -137,55 +117,39 @@ void glopBegin(GLContext *c, GLParam *p) {
 // coords, tranformation, clip code and projection
 // TODO : handle all cases
 static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
-	float *m;
-	V4 *n;
+	Matrix4 *m;
+	Vector4 *n;
 
 	if (c->lighting_enabled) {
 		// eye coordinates needed for lighting
 
-		m = &c->matrix_stack_ptr[0]->m[0][0];
-		v->ec.X = (v->coord.X * m[0] + v->coord.Y * m[1] +
-				   v->coord.Z * m[2] + m[3]);
-		v->ec.Y = (v->coord.X * m[4] + v->coord.Y * m[5] +
-				   v->coord.Z * m[6] + m[7]);
-		v->ec.Z = (v->coord.X * m[8] + v->coord.Y * m[9] +
-				   v->coord.Z * m[10] + m[11]);
-		v->ec.W = (v->coord.X * m[12] + v->coord.Y * m[13] +
-				   v->coord.Z * m[14] + m[15]);
+		m = c->matrix_stack_ptr[0];
+		v->ec = m->transform(v->coord);
 
 		// projection coordinates
-		m = &c->matrix_stack_ptr[1]->m[0][0];
-		v->pc.X = (v->ec.X * m[0] + v->ec.Y * m[1] + v->ec.Z * m[2] + v->ec.W * m[3]);
-		v->pc.Y = (v->ec.X * m[4] + v->ec.Y * m[5] + v->ec.Z * m[6] + v->ec.W * m[7]);
-		v->pc.Z = (v->ec.X * m[8] + v->ec.Y * m[9] + v->ec.Z * m[10] + v->ec.W * m[11]);
-		v->pc.W = (v->ec.X * m[12] + v->ec.Y * m[13] + v->ec.Z * m[14] + v->ec.W * m[15]);
+		m = c->matrix_stack_ptr[1];
+		v->pc = m->transform(v->ec);
 
-		m = &c->matrix_model_view_inv.m[0][0];
+		m = &c->matrix_model_view_inv;
 		n = &c->current_normal;
 
-		v->normal.X = (n->X * m[0] + n->Y * m[1] + n->Z * m[2]);
-		v->normal.Y = (n->X * m[4] + n->Y * m[5] + n->Z * m[6]);
-		v->normal.Z = (n->X * m[8] + n->Y * m[9] + n->Z * m[10]);
+		v->normal = m->transform3x3(n->toVector3());
 
 		if (c->normalize_enabled) {
-			gl_V3_Norm(&v->normal);
+			v->normal.normalize();
 		}
 	} else {
 		// no eye coordinates needed, no normal
 		// NOTE: W = 1 is assumed
-		m = &c->matrix_model_projection.m[0][0];
+		m = &c->matrix_model_projection;
 
-		v->pc.X = (v->coord.X * m[0] + v->coord.Y * m[1] + v->coord.Z * m[2] + m[3]);
-		v->pc.Y = (v->coord.X * m[4] + v->coord.Y * m[5] + v->coord.Z * m[6] + m[7]);
-		v->pc.Z = (v->coord.X * m[8] + v->coord.Y * m[9] + v->coord.Z * m[10] + m[11]);
+		v->pc = m->transform(v->coord);
 		if (c->matrix_model_projection_no_w_transform) {
-			v->pc.W = m[15];
-		} else {
-			v->pc.W = (v->coord.X * m[12] + v->coord.Y * m[13] + v->coord.Z * m[14] + m[15]);
+			v->pc.setW(m->get(3,3)); 
 		}
 	}
 
-	v->clip_code = gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);
+	v->clip_code = gl_clipcode(v->pc.getX(), v->pc.getY(), v->pc.getZ(), v->pc.getW());
 }
 
 void glopVertex(GLContext *c, GLParam *p) {
@@ -215,10 +179,7 @@ void glopVertex(GLContext *c, GLParam *p) {
 	v = &c->vertex[n];
 	n++;
 
-	v->coord.X = p[1].f;
-	v->coord.Y = p[2].f;
-	v->coord.Z = p[3].f;
-	v->coord.W = p[4].f;
+	v->coord = Vector4(p[1].f,p[2].f,p[3].f,p[4].f);
 
 	gl_vertex_transform(c, v);
 
@@ -234,7 +195,7 @@ void glopVertex(GLContext *c, GLParam *p) {
 
 	if (c->texture_2d_enabled) {
 		if (c->apply_texture_matrix) {
-			gl_M4_MulV4(&v->tex_coord, c->matrix_stack_ptr[2], &c->current_tex_coord);
+			v->tex_coord = c->matrix_stack_ptr[2]->transform(c->current_tex_coord);
 		} else {
 			v->tex_coord = c->current_tex_coord;
 		}

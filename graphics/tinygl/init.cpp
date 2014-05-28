@@ -61,13 +61,13 @@ void glInit(void *zbuffer1) {
 	// lights
 	for (int i = 0; i < T_MAX_LIGHTS; i++) {
 		GLLight *l = &c->lights[i];
-		l->ambient = gl_V4_New(0, 0, 0, 1);
-		l->diffuse = gl_V4_New(1, 1, 1, 1);
-		l->specular = gl_V4_New(1, 1, 1, 1);
-		l->position = gl_V4_New(0, 0, 1, 0);
-		l->norm_position = gl_V3_New(0, 0, 1);
-		l->spot_direction = gl_V3_New(0, 0, -1);
-		l->norm_spot_direction = gl_V3_New(0, 0, - 1);
+		l->ambient = Vector4(0, 0, 0, 1);
+		l->diffuse = Vector4(1, 1, 1, 1);
+		l->specular = Vector4(1, 1, 1, 1);
+		l->position = Vector4(0, 0, 1, 0);
+		l->norm_position = Vector3(0, 0, 1);
+		l->spot_direction = Vector3(0, 0, -1);
+		l->norm_spot_direction = Vector3(0, 0, - 1);
 		l->spot_exponent = 0;
 		l->spot_cutoff = 180;
 		l->attenuation[0] = 1;
@@ -76,7 +76,7 @@ void glInit(void *zbuffer1) {
 		l->enabled = 0;
 	}
 	c->first_light = NULL;
-	c->ambient_light_model = gl_V4_New(0.2f, 0.2f, 0.2f, 1);
+	c->ambient_light_model = Vector4(0.2f, 0.2f, 0.2f, 1);
 	c->local_light_model = 0;
 	c->lighting_enabled = 0;
 	c->light_model_two_side = 0;
@@ -84,10 +84,10 @@ void glInit(void *zbuffer1) {
 	// default materials */
 	for (int i = 0; i < 2; i++) {
 		GLMaterial *m = &c->materials[i];
-		m->emission = gl_V4_New(0, 0, 0, 1);
-		m->ambient = gl_V4_New(0.2f, 0.2f, 0.2f, 1);
-		m->diffuse = (gl_V4_New(0.8f, 0.8f, 0.8f, 1));
-		m->specular = gl_V4_New(0, 0, 0, 1);
+		m->emission = Vector4(0, 0, 0, 1);
+		m->ambient = Vector4(0.2f, 0.2f, 0.2f, 1);
+		m->diffuse = Vector4(0.8f, 0.8f, 0.8f, 1);
+		m->specular = Vector4(0, 0, 0, 1);
 		m->shininess = 0;
 	}
 	c->current_color_material_mode = TGL_FRONT_AND_BACK;
@@ -98,25 +98,16 @@ void glInit(void *zbuffer1) {
 	glInitTextures(c);
 
 	// default state
-	c->current_color.X = 1.0;
-	c->current_color.Y = 1.0;
-	c->current_color.Z = 1.0;
-	c->current_color.W = 1.0;
+	c->current_color = Vector4(1.0f,1.0f,1.0f,1.0f);
 	c->longcurrent_color[0] = 65535;
 	c->longcurrent_color[1] = 65535;
 	c->longcurrent_color[2] = 65535;
 
-	c->current_normal.X = 1.0;
-	c->current_normal.Y = 0.0;
-	c->current_normal.Z = 0.0;
-	c->current_normal.W = 0.0;
+	c->current_normal = Vector4(1.0f,0.0f,0.0f,0.0f);
 
 	c->current_edge_flag = 1;
 
-	c->current_tex_coord.X = 0;
-	c->current_tex_coord.Y = 0;
-	c->current_tex_coord.Z = 0;
-	c->current_tex_coord.W = 1;
+	c->current_tex_coord = Vector4(0.0f,0.0f,0.0f,1.0f);
 
 	c->polygon_mode_front = TGL_FILL;
 	c->polygon_mode_back = TGL_FILL;
@@ -127,10 +118,7 @@ void glInit(void *zbuffer1) {
 	c->cull_face_enabled = 0;
 
 	// clear
-	c->clear_color.v[0] = 0;
-	c->clear_color.v[1] = 0;
-	c->clear_color.v[2] = 0;
-	c->clear_color.v[3] = 0;
+	c->clear_color = Vector4(0.0f,0.0f,0.0f,0.0f);
 	c->clear_depth = 0;
 
 	// selection
@@ -146,7 +134,7 @@ void glInit(void *zbuffer1) {
 	c->matrix_stack_depth_max[2] = MAX_TEXTURE_STACK_DEPTH;
 
 	for (int i = 0; i < 3; i++) {
-		c->matrix_stack[i] = (M4 *)gl_zalloc(c->matrix_stack_depth_max[i] * sizeof(M4));
+		c->matrix_stack[i] = (Matrix4*)gl_zalloc(c->matrix_stack_depth_max[i] * sizeof(Matrix4));
 		c->matrix_stack_ptr[i] = c->matrix_stack[i];
 	}
 
