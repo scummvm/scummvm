@@ -82,7 +82,7 @@ public:
 	void update(uint time);
 	void play();
 	void stop();
-	void pause();
+	void setPaused(bool paused);
 	void setLooping(bool loop);
 	void setSkeleton(Skeleton *skel);
 	void fade(Animation::FadeMode mode, int fadeLength);

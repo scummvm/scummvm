@@ -57,6 +57,7 @@ public:
 	void setLastFrame();
 	void fadeIn(uint msecs);
 	void fadeOut(uint msecs);
+	void setPaused(bool paused);
 
 	bool isPlaying() { return _playing; }
 	bool isLooping() { return _looping; }
@@ -84,7 +85,7 @@ protected:
 	ChoreTrack *_tracks;
 	char _name[32];
 
-	bool _hasPlayed, _playing, _looping;
+	bool _hasPlayed, _playing, _looping, _paused;
 	int _currTime;
 
 	friend class EMICostume;

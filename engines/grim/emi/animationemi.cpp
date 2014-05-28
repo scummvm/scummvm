@@ -294,8 +294,8 @@ void AnimationStateEmi::stop() {
 	deactivate();
 }
 
-void AnimationStateEmi::pause() {
-	_paused = true;
+void AnimationStateEmi::setPaused(bool paused) {
+	_paused = paused;
 }
 
 void AnimationStateEmi::setLooping(bool loop) {

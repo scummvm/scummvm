@@ -64,7 +64,7 @@ void EMIAnimComponent::setKey(int f) {
 		_animState->play();
 		break;
 	case 2: // Pause
-		_animState->pause();
+		_animState->setPaused(true);
 		break;
 	case 3: // Loop
 		_animState->setLooping(true);
@@ -119,6 +119,10 @@ void EMIAnimComponent::fade(Animation::FadeMode mode, int fadeLength) {
 
 void EMIAnimComponent::advance(uint msecs) {
 	_animState->advance(msecs);
+}
+
+void EMIAnimComponent::setPaused(bool paused) {
+	_animState->setPaused(paused);
 }
 
 void EMIAnimComponent::draw() {

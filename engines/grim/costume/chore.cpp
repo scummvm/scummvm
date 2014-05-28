@@ -32,7 +32,7 @@ namespace Grim {
 
 // Should initialize the status variables so the chore can't play unexpectedly
 Chore::Chore(char name[32], int id, Costume *owner, int length, int numTracks) :
-		_hasPlayed(false), _playing(false), _looping(false), _currTime(-1),
+		_hasPlayed(false), _playing(false), _looping(false), _paused(false), _currTime(-1),
 		_numTracks(numTracks), _length(length), _choreId(id), _owner(owner) {
 
 	memcpy(_name, name, 32);
@@ -65,6 +65,7 @@ void Chore::load(TextSplitter &ts) {
 
 void Chore::play(uint msecs) {
 	_playing = true;
+	_paused = false;
 	_hasPlayed = true;
 	_looping = false;
 	_currTime = -1;
@@ -77,6 +78,7 @@ void Chore::play(uint msecs) {
 
 void Chore::playLooping(uint msecs) {
 	_playing = true;
+	_paused = false;
 	_hasPlayed = true;
 	_looping = true;
 	_currTime = -1;
@@ -137,6 +139,7 @@ void Chore::setLastFrame() {
 
 	_currTime = -1;
 	_playing = false;
+	_paused = false;
 	_hasPlayed = true;
 	_looping = false;
 
@@ -148,7 +151,7 @@ void Chore::setLastFrame() {
 }
 
 void Chore::update(uint time) {
-	if (!_playing)
+	if (!_playing || _paused)
 		return;
 
 	int newTime;
@@ -200,6 +203,17 @@ void Chore::fadeOut(uint msecs) {
 	// Note: It doesn't matter whether the chore is playing or not. The keyframe
 	// components should fade out in either case.
 	fade(Animation::FadeOut, msecs);
+}
+
+void Chore::setPaused(bool paused) {
+	_paused = paused;
+
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = getComponentForTrack(i);
+		if (comp) {
+			comp->setPaused(paused);
+		}
+	}
 }
 
 void Chore::advance(uint msecs) {

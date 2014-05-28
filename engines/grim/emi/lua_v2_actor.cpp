@@ -307,7 +307,11 @@ void Lua_V2::PlayChore() {
 	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
 		return;
 	int chore = lua_getuserdata(choreObj);
-	warning("Lua_V2::PlayChore: stub, chore: %d", chore);
+
+	Chore *c = EMIChore::getPool().getObject(chore);
+	if (c) {
+		c->setPaused(false);
+	}
 }
 
 void Lua_V2::PauseChore() {
@@ -316,7 +320,11 @@ void Lua_V2::PauseChore() {
 	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
 		return;
 	int chore = lua_getuserdata(choreObj);
-	warning("Lua_V2::PauseChore: stub, chore: %d", chore);
+
+	Chore *c = EMIChore::getPool().getObject(chore);
+	if (c) {
+		c->setPaused(true);
+	}
 }
 
 void Lua_V2::StopChore() {

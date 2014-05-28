@@ -41,6 +41,7 @@ public:
 	void reset();
 	void fade(Animation::FadeMode mode, int fadeLength);
 	void advance(uint msecs);
+	void setPaused(bool paused);
 	void draw();
 
 private:

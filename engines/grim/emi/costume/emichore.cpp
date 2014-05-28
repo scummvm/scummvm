@@ -42,7 +42,7 @@ void EMIChore::addComponent(Component *component) {
 }
 
 void EMIChore::update(uint time) {
-	if (!_playing)
+	if (!_playing || _paused)
 		return;
 
 	if (_fadeMode != Animation::None) {
