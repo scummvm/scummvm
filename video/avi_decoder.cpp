@@ -183,7 +183,7 @@ void AVIDecoder::handleList(uint32 listSize) {
 		_decodedHeader = true;
 		break;
 	case ID_INFO: // Metadata
-	case ID_PRMI: // Unknown metadata, should be safe to ignore
+	case ID_PRMI: // Adobe Premiere metadata, safe to ignore
 		// Ignore metadata
 		_fileStream->skip(listSize);
 		return;
