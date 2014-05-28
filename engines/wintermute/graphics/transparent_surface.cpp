@@ -137,6 +137,14 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 
 /**
  * Optimized version of doBlit to be used with alpha blended blitting
+ * @param ino a pointer to the input surface
+ * @param outo a pointer to the output surface
+ * @param width width of the input surface
+ * @param height height of the input surface
+ * @param pitch pitch of the output surface - that is, width in bytes of every row, usually bpp * width of the TARGET surface (the area we are blitting to might be smaller, do the math)
+ * @inStep size in bytes to skip to address each pixel, usually bpp of the source surface
+ * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
+ * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
  */
 void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
 	byte *in;
