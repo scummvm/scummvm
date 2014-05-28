@@ -45,13 +45,13 @@ static const int TIME_STATES[] = {
 
 bool Debugger::Cmd_Time(int argc, const char **argv) {
 	if (argc < 2) {
-		// Get the current day and time of day 
+		// Get the current day and time of day
 		Common::String dtString = _vm->getDayName();
 		Common::String timeString = _vm->getTimeOfDay();
 		if (!timeString.empty())
 			dtString += " " + timeString;
 
-		debugPrintf("Time period = %d, date/time is: %s, time is %s\n", 
+		debugPrintf("Time period = %d, date/time is: %s, time is %s\n",
 			_vm->_voy->_transitionId, dtString.c_str(), _isTimeActive ? "on" : "off");
 		debugPrintf("Format: %s [on | off | 1..17 | val <amount>]\n\n", argv[0]);
 	} else {
@@ -131,14 +131,14 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 
 			for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
 				if (_vm->_voy->_audioHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
-					debugPrintf("Hotspot %d %s Audio slot %d, time: %d to %d\n", 
+					debugPrintf("Hotspot %d %s Audio slot %d, time: %d to %d\n",
 						hotspotIdx, pos.c_str(), arrIndex,
 						_vm->_voy->_audioHotspotTimes._min[arrIndex][hotspotIdx],
 						_vm->_voy->_audioHotspotTimes._max[arrIndex][hotspotIdx]);
 				}
 
 				if (_vm->_voy->_evidenceHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
-					debugPrintf("Hotspot %d %s Evidence slot %d, time: %d to %d\n", 
+					debugPrintf("Hotspot %d %s Evidence slot %d, time: %d to %d\n",
 						hotspotIdx, pos.c_str(), arrIndex,
 						_vm->_voy->_evidenceHotspotTimes._min[arrIndex][hotspotIdx],
 						_vm->_voy->_evidenceHotspotTimes._max[arrIndex][hotspotIdx]);
@@ -147,7 +147,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 
 			for (int arrIndex = 0; arrIndex < 8; ++arrIndex) {
 				if (_vm->_voy->_videoHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
-					debugPrintf("Hotspot %d %s Video slot %d, time: %d to %d\n", 
+					debugPrintf("Hotspot %d %s Video slot %d, time: %d to %d\n",
 						hotspotIdx, pos.c_str(), arrIndex,
 						_vm->_voy->_videoHotspotTimes._min[arrIndex][hotspotIdx],
 						_vm->_voy->_videoHotspotTimes._max[arrIndex][hotspotIdx]);

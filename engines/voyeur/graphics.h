@@ -54,7 +54,7 @@ public:
 	DrawInfo(int penColor, const Common::Point &pos);
 };
 
-typedef void (GraphicsManager::*GraphicMethodPtr)(); 
+typedef void (GraphicsManager::*GraphicMethodPtr)();
 typedef void (GraphicsManager::*ViewPortSetupPtr)(ViewPortResource *);
 typedef void (GraphicsManager::*ViewPortAddPtr)(ViewPortResource *, int idx, const Common::Rect &bounds);
 typedef void (GraphicsManager::*ViewPortRestorePtr)(ViewPortResource *);
@@ -87,7 +87,7 @@ public:
 	void sInitGraphics();
 
 	void setupMCGASaveRect(ViewPortResource *viewPort);
-	void addRectOptSaveRect(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);	
+	void addRectOptSaveRect(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);
 	void restoreMCGASaveRect(ViewPortResource *viewPort);
 	void addRectNoSaveBack(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);
 
@@ -102,7 +102,7 @@ public:
 	void resetPalette();
 	void setColor(int idx, byte r, byte g, byte b);
 	void setOneColor(int idx, byte r, byte g, byte b);
-	void setColors(int start, int count, const byte *pal);	
+	void setColors(int start, int count, const byte *pal);
 	void screenReset();
 	void fadeDownICF1(int steps);
 	void fadeUpICF1(int steps = 0);

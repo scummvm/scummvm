@@ -105,7 +105,7 @@ private:
 
 	class RL2VideoTrack : public FixedRateVideoTrack {
 	public:
-		RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack, 
+		RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack,
 			Common::SeekableReadStream *stream);
 		~RL2VideoTrack();
 

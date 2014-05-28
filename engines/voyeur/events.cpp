@@ -73,7 +73,7 @@ EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
 	Common::fill(&_cycleTime[0], &_cycleTime[4], 0);
 	Common::fill(&_cycleNext[0], &_cycleNext[4], (byte *)nullptr);
 	_cyclePtr = NULL;
-	
+
 	_leftClick = _rightClick = false;
 	_mouseClicked = _newMouseClicked = false;
 	_newLeftClick = _newRightClick = false;;
@@ -158,7 +158,7 @@ void EventsManager::checkForNextFrameCounter() {
 			showMousePosition();
 
 		// Display the frame
-		g_system->copyRectToScreen((byte *)_vm->_graphicsManager->_screenSurface.getPixels(), 
+		g_system->copyRectToScreen((byte *)_vm->_graphicsManager->_screenSurface.getPixels(),
 			SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		g_system->updateScreen();
 
@@ -218,7 +218,7 @@ void EventsManager::videoTimer() {
 		_gameData._hasPalette = false;
 
 		g_system->getPaletteManager()->setPalette(_gameData._palette +
-			_gameData._palStartIndex * 3, _gameData._palStartIndex, 
+			_gameData._palStartIndex * 3, _gameData._palStartIndex,
 			_gameData._palEndIndex - _gameData._palStartIndex + 1);
 	}
 }
@@ -241,7 +241,7 @@ void EventsManager::delayClick(int cycles) {
 	do {
 		g_system->delayMillis(10);
 		getMouseInfo();
-	} while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd 
+	} while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd
 			&& !_vm->_eventsManager->_mouseClicked);
 }
 
@@ -315,7 +315,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 			palEntry._bEntry = vgaP[2] << 8;
 			int bDiff = (cMap->_entries[mapIndex * 3 + 2] << 8) - palEntry._bEntry;
 			palEntry._bChange = bDiff / cMap->_steps;
-			
+
 			palEntry._palIndex = idx;
 			if (!(cMap->_fadeStatus & 1))
 				++mapIndex;
@@ -431,12 +431,12 @@ void EventsManager::vDoCycleInt() {
 					byte b = pPal[start * 3 + 2];
 
 					Common::copy(&pPal[start * 3 + 3], &pPal[end * 3 + 3], &pPal[start * 3]);
-					
+
 					// Place the original saved entry at the end of the range
 					pPal[end * 3] = r;
 					pPal[end * 3 + 1] = g;
 					pPal[end * 3 + 2] = b;
-					
+
 					if (_fadeStatus & 1) {
 						//dx = start, di = end
 						warning("TODO: Adjustment of ViewPortListResource");
@@ -454,12 +454,12 @@ void EventsManager::vDoCycleInt() {
 
 					// Move the remainder of the range forwards one entry
 					Common::copy_backward(&pPal[start * 3], &pPal[end * 3], &pPal[end * 3 + 3]);
-					
+
 					// Place the original saved entry at the end of the range
 					pPal[start * 3] = r;
 					pPal[start * 3 + 1] = g;
 					pPal[start * 3 + 2] = b;
-					
+
 					if (_fadeStatus & 1) {
 						//dx = start, di = end
 						warning("TODO: Adjustment of ViewPortListResource");
