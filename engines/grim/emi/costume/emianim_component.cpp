@@ -58,11 +58,49 @@ int EMIAnimComponent::update(uint time) {
 
 void EMIAnimComponent::setKey(int f) {
 	switch (f) {
-	case 1: // Play?
+	case 0: // Stop
+		_animState->stop();
+	case 1: // Play
 		_animState->play();
 		break;
-	case 3: // Looping?
+	case 2: // Pause
+		_animState->pause();
+		break;
+	case 3: // Loop
 		_animState->setLooping(true);
+		break;
+	case 4: // No loop
+		_animState->setLooping(false);
+		break;
+	case 5: // Fade in 1
+		_animState->fade(Animation::FadeIn, 1000);
+		break;
+	case 6: // Fade in 3/4
+		_animState->fade(Animation::FadeIn, 750);
+		break;
+	case 7: // Fade in 1/2
+		_animState->fade(Animation::FadeIn, 500);
+		break;
+	case 8: // Fade in 1/4
+		_animState->fade(Animation::FadeIn, 250);
+		break;
+	case 9: // Fade in 1/8
+		_animState->fade(Animation::FadeIn, 125);
+		break;
+	case 10: // Fade out 1
+		_animState->fade(Animation::FadeOut, 1000);
+		break;
+	case 11: // Fade out 3/4
+		_animState->fade(Animation::FadeOut, 750);
+		break;
+	case 12: // Fade out 1/2
+		_animState->fade(Animation::FadeOut, 500);
+		break;
+	case 13: // Fade out 1/4
+		_animState->fade(Animation::FadeOut, 250);
+		break;
+	case 14: // Fade out 1/8
+		_animState->fade(Animation::FadeOut, 125);
 		break;
 	default:
 		Debug::warning(Debug::Costumes, "Unknown key %d for component %s", f, _name.c_str());
