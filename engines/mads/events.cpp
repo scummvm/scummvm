@@ -120,7 +120,7 @@ void EventsManager::changeCursor() {
 		}
 
 		// Set the raw cursor data to use
-		CursorMan.replaceCursor(destCursor, cursor->w - 1, cursor->h - 1, 
+		CursorMan.replaceCursor(destCursor, cursor->w - 1, cursor->h - 1,
 			hotspotX, hotspotY, transIndex);
 		showCursor();
 		delete[] destCursor;

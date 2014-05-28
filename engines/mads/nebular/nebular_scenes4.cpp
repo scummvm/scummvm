@@ -3782,8 +3782,8 @@ void Scene411::actions() {
 		return;
 	}
 
-	if ((_globals[kNextIngredient] >= 4) && (_action.isAction(VERB_TAKE, NOUN_EXPLOSIVES) || _action.isAction(VERB_PUT, NOUN_CHARGE_CASES, NOUN_EXPLOSIVES)) 
-			&& !_game._objects[OBJ_CHARGE_CASES].getQuality(3) 
+	if ((_globals[kNextIngredient] >= 4) && (_action.isAction(VERB_TAKE, NOUN_EXPLOSIVES) || _action.isAction(VERB_PUT, NOUN_CHARGE_CASES, NOUN_EXPLOSIVES))
+			&& !_game._objects[OBJ_CHARGE_CASES].getQuality(3)
 			&& _game._objects.isInInventory(OBJ_CHARGE_CASES)) {
 		switch (_game._trigger) {
 		case 0:

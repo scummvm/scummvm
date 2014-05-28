@@ -453,7 +453,7 @@ void UserInterface::mergeFrom(MSurface *src, const Common::Rect &srcBounds,
 	for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
 		// Process each line of the area
 		for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
-			// Check for the range used for the user interface background, 
+			// Check for the range used for the user interface background,
 			// which are the only pixels that can be replaced
 			if ((destPtr[xCtr] >= 8 && destPtr[xCtr] <= 15) && (int)srcPtr[xCtr] != transparencyIndex)
 				destPtr[xCtr] = srcPtr[xCtr];
@@ -502,7 +502,7 @@ void UserInterface::updateInventoryScroller() {
 
 	_scrollbarActive = SCROLLBAR_NONE;
 
-	if ((screenObjects._category == CAT_INV_SCROLLER) || (screenObjects._category != CAT_INV_SCROLLER 
+	if ((screenObjects._category == CAT_INV_SCROLLER) || (screenObjects._category != CAT_INV_SCROLLER
 			&& _scrollbarOldActive == SCROLLBAR_ELEVATOR && _vm->_events->_mouseStatusCopy)) {
 		if (_vm->_events->_mouseStatusCopy || _vm->_easyMouse) {
 			if ((_vm->_events->_mouseClicked || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))

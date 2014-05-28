@@ -2352,7 +2352,7 @@ void Scene512::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
-		
+
 		case 1:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
 			_game._player._visible = true;
@@ -2369,12 +2369,12 @@ void Scene512::actions() {
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
-		
+
 		case 2:
 			_globals[kRegisterOpen] = false;
 			_game._player._stepEnabled = true;
 			break;
-		
+
 		default:
 			break;
 		}
@@ -2397,7 +2397,7 @@ void Scene512::actions() {
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, endVal, 1);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				break;
-			
+
 			case 1:
 				if (_game._player._playerPos == Common::Point(218, 152)) {
 					_scene->_sequences.remove(_globals._sequenceIndexes[6]);
@@ -2412,13 +2412,13 @@ void Scene512::actions() {
 				_game._objects.addToInventory(OBJ_PADLOCK_KEY);
 				_vm->_dialogs->showItem(OBJ_PADLOCK_KEY, 51226);
 				break;
-			
+
 			case 2:
 				_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
 				_game._player._visible = true;
 				_game._player._stepEnabled = true;
 				break;
-				
+
 			default:
 				break;
 			}
@@ -2494,19 +2494,19 @@ void Scene513::enter() {
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_9");
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXMRC_9");
 
-	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2); 
+	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2); 
+	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 
 	if ((_scene->_priorSceneId == 751) || (_scene->_priorSceneId == 701)) {
 		_game._player._playerPos = Common::Point(296, 147);
-		_game._player._facing = FACING_WEST; 
+		_game._player._facing = FACING_WEST;
 		_game._player._stepEnabled = false;
 		_scene->_sequences.addTimer(15, 80);
 	} else if (_scene->_priorSceneId != -2) {
-		_game._player._playerPos = Common::Point(63, 149); 
+		_game._player._playerPos = Common::Point(63, 149);
 		_game._player._facing = FACING_NORTHEAST;
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
@@ -2514,7 +2514,7 @@ void Scene513::enter() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		_scene->loadAnimation(formAnimName('R', 1), 70);
-	} 
+	}
 
 	sceneEntrySound();
 
@@ -2533,7 +2533,7 @@ void Scene513::step() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 		_vm->_sound->command(24);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
-		break; 
+		break;
 
 	case 81:
 		_game._player.walk(Common::Point(265, 152), FACING_WEST);
@@ -2545,10 +2545,10 @@ void Scene513::step() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 		_vm->_sound->command(25);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
-		break; 
+		break;
 
 	case 83:
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2); 
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 		_game._player._stepEnabled = true;
 		break;
@@ -2569,13 +2569,13 @@ void Scene513::step() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
-		break; 
+		break;
 
 	case 72:
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2); 
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		_game._player._stepEnabled = true;
-		break; 
+		break;
 
 	default:
 		break;
@@ -2587,7 +2587,7 @@ void Scene513::actions() {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
-			_scene->_sequences.remove(_globals._sequenceIndexes[1]); 
+			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -2613,7 +2613,7 @@ void Scene513::actions() {
 			int syncIdx = _globals._sequenceIndexes[3];
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
-			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx); 
+			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_nextSceneId = 504;
 			}
 			break;
@@ -2625,7 +2625,7 @@ void Scene513::actions() {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
-			_game._player._visible = false; 
+			_game._player._visible = false;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
@@ -2645,7 +2645,7 @@ void Scene513::actions() {
 			break;
 
 		case 2:
-			_game._player.walk(Common::Point(296, 147), FACING_WEST); 
+			_game._player.walk(Common::Point(296, 147), FACING_WEST);
 			_scene->_sequences.addTimer(120, 3);
 			break;
 
@@ -2657,7 +2657,7 @@ void Scene513::actions() {
 			break;
 
 		case 4:
-			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2); 
+			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 			_game._player._stepEnabled = true;
 			if (_globals[kCityFlooded])
@@ -2809,10 +2809,10 @@ void Scene551::step() {
 	case 90:
 		if (_globals[kSexOfRex] == REX_MALE) {
 			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8); 
-		} else { 
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
+		} else {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8); 
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		}
 		_vm->_sound->command(28);
 		_scene->_sequences.addTimer(60, 91);
@@ -2820,7 +2820,7 @@ void Scene551::step() {
 
 	case 91:
 		_scene->_reloadSceneFlag = true;
-		break; 
+		break;
 
 	default:
 		break;

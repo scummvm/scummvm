@@ -1270,7 +1270,7 @@ int ASound2::command9() {
 		command1();
 		_channels[0].load(pData1);
 		_channels[2].load(loadData(0x123E, 130));
-		
+
 		command9Randomize();
 		_channels[1].load(loadData(0x120C, 50));
 	}
@@ -1432,7 +1432,7 @@ int ASound2::command21() {
 	playSound(0x49DE, 16);
 	playSound(0x49EE, 16);
 	playSound(0x49FF, 16);
-	
+
 	return 0;
 }
 
@@ -1633,7 +1633,7 @@ int ASound3::command(int commandId, int param) {
 
 int ASound3::command9() {
 	AdlibChannel::_channelsEnabled = _commandParam != 0;
-	
+
 	return 0;
 }
 
@@ -2069,7 +2069,7 @@ int ASound4::command12() {
 
 int ASound4::command19() {
 	playSound(0x28EC, 8);
-	
+
 	return 0;
 }
 
@@ -2664,7 +2664,7 @@ const ASound7::CommandPtr ASound7::_commandList[38] = {
 	&ASound7::nullCommand, &ASound7::nullCommand, &ASound7::nullCommand, &ASound7::command15,
 	&ASound7::command16, &ASound7::command16, &ASound7::command18, &ASound7::command19,
 	&ASound7::command20, &ASound7::command21, &ASound7::command22, &ASound7::command23,
-	&ASound7::command24, &ASound7::command25, &ASound7::command26, &ASound7::command27, 
+	&ASound7::command24, &ASound7::command25, &ASound7::command26, &ASound7::command27,
 	&ASound7::command28, &ASound7::nullCommand, &ASound7::command30, &ASound7::nullCommand,
 	&ASound7::command32, &ASound7::command33, &ASound7::command34, &ASound7::command35,
 	&ASound7::command36, &ASound7::command37
@@ -3024,7 +3024,7 @@ int ASound8::command28() {
 		command1();
 		_channels[0].load(pData1);
 		_channels[2].load(loadData(0x12F8, 130));
-		
+
 		byte *pData = loadData(0x12C6, 50);
 		method1(pData);
 		_channels[1].load(pData);

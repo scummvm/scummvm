@@ -226,7 +226,7 @@ void DirtyAreas::copyToScreen(const Common::Point &posAdjust) {
 		// Check if this is a sane rectangle before attempting to create it
 		if (srcBounds.left >= srcBounds.right || srcBounds.top >= srcBounds.bottom)
 			continue;
-		
+
 		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
 			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
 
@@ -575,14 +575,14 @@ void ScreenSurface::updateScreen() {
 			offset = 0;
 
 		// Copy the screen with the left hand hide side of the screen of a given
-		// offset width shown at the very right. The offset changes to give 
+		// offset width shown at the very right. The offset changes to give
 		// an effect of shaking the screen
 		offset *= 4;
 		const byte *buf = getBasePtr(offset, 0);
 		g_system->copyRectToScreen(buf, this->pitch, 0, 0,
 			this->pitch - offset, this->h);
 		if (offset > 0)
-			g_system->copyRectToScreen(this->pixels, this->pitch, 
+			g_system->copyRectToScreen(this->pixels, this->pitch,
 				this->pitch - offset, 0, offset, this->h);
 	}
 
