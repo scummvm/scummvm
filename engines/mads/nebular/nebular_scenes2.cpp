@@ -751,14 +751,14 @@ int Scene202::subStep4(int randVal) {
 void Scene202::preActions() {
 	Player &player = _vm->_game->_player;
 
-	if (player._readyToWalk)
+	if (player._needToWalk)
 		_scene->_kernelMessages.reset();
 
-	if (!_ladderTopFl && (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER) || !player._readyToWalk)) {
+	if (_ladderTopFl && (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER) || player._needToWalk)) {
 		if (_game._trigger == 0) {
 			_vm->_sound->command(29);
 			player._readyToWalk = false;
-			_game._player._stepEnabled = false;
+			player._stepEnabled = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
 			_globals._sequenceIndexes[8] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 1);
@@ -766,21 +766,21 @@ void Scene202::preActions() {
 		} else if (_game._trigger == 1) {
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[8]);
 			_scene->_dynamicHotspots.remove(_ladderHotspotId);
-			_game._player._visible = true;
+			player._visible = true;
 			player._readyToWalk = true;
-			_game._player._stepEnabled = true;
+			player._stepEnabled = true;
 			_ladderTopFl = false;
 		}
 	}
 
 	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS) && (_action._activeAction._indirectObjectId > 0)) {
 		if (!player._readyToWalk || _ladderTopFl)
-			_game._player._needToWalk = false;
+			player._needToWalk = false;
 		else
-			_game._player._needToWalk = true;
+			player._needToWalk = true;
 
 		if (!_ladderTopFl)
-			_game._player.walk(Common::Point(171, 122), FACING_NORTH);
+			player.walk(Common::Point(171, 122), FACING_NORTH);
 	}
 }
 
