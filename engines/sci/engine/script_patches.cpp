@@ -1601,49 +1601,77 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 //
 // It will get wired shut later in the game by Laura Bow and will be
 //  "locked" because of this. We patch in a check for the locked
-//  state.
+//  state. We also add code, that will set the "locked" state
+//  in case our eastDoor-wired-global is set. This makes the locked
+//  state effectively persistent.
 //
-// Applies to at least: English PC-CD, separate patch for English PC-Floppy
+// Applies to at least: English PC-CD, English PC-Floppy
 // Responsible method (CD): eastDoor::doVerb
 // Responsible method (Floppy): eastDoor::<noname300>
-// Fixes bug: #6458 (partly)
+// Fixes bug: #6458 (partly, see additional patch above)
 static const uint16 laurabow2CDSignatureFixWiredEastDoor[] = {
 	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
-	SIG_MAGICDWORD,
-	0x67, 0x76,                         // pTos doorState
+	0x67, SIG_ADDTOOFFSET(+1),          // pTos CD: doorState, Floppy: state
 	0x35, 0x00,                         // ldi 00
 	0x1a,                               // eq?
 	0x31, 0x08,                         // bnt [close door code]
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x39, 0x63,                         // pushi 63h
+	0x45, 0x04, 0x02,                   // callb export000_4, 02 (sets door-bitflag)
+	0x33, 0x06,                         // jmp [super-code]
+	0x78,                               // push1
+	0x39, 0x63,                         // pushi 63h
+	0x45, 0x03, 0x02,                   // callb export000_3, 02 (resets door-bitflag)
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi CD: 011dh, Floppy: 012ch
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp param[01]
+	0x59, 0x02,                         // rest 02
+	0x57, SIG_ADDTOOFFSET(+1), 0x06,    // super CD: LbDoor, Floppy: Door, 06
+	0x33, 0x0b,                         // jmp [ret]
 	SIG_END
 };
 
 static const uint16 laurabow2CDPatchFixWiredEastDoor[] = {
 	0x31, 0x23,                         // bnt [skip hand action] (saves 1 byte)
-	0x63, 0x6a,                         // pToa locked
-	0x2f, 0x1f,                         // bt [skip hand action]
-	0x63, 0x76,                         // pToa doorState
-	0x2f, 0x08,                         // bt [close door code]
+	0x81,   97,                         // lag 97d (get our eastDoor-wired-global)
+	0x31, 0x04,                         // bnt [skip setting locked property]
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x6a,                         // aTop locked (set eastDoor::locked to 1)
+	0x63, 0x6a,                         // pToa locked (get eastDoor::locked)
+	0x2f, 0x17,                         // bt [skip hand action]
+	0x63, PATCH_GETORIGINALBYTE(+4),    // pToa CD: doorState, Floppy: state
+	0x78,                               // push1
+	0x39, 0x63,                         // pushi 63h
+	0x2f, 0x05,                         // bt [close door code]
+	0x45, 0x04, 0x02,                   // callb export000_4, 02 (sets door-bitflag)
+	0x33, 0x0b,                         // jmp [super-code]
+	0x45, 0x03, 0x02,                   // callb export000_3, 02 (resets door-bitflag)
+	0x33, 0x06,                         // jmp [super-code]
 	PATCH_END
 };
 
-// Separate patch for English-Floppy
-static const uint16 laurabow2FloppySignatureFixWiredEastDoor[] = {
-	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
+// We patch in code, so that our eastDoor-wired-global will get set to 1.
+//  This way the wired-state won't get lost when exiting room 430.
+//
+// Applies to at least: English PC-CD, English PC-Floppy
+// Responsible method (CD): sWireItShut::changeState
+// Responsible method (Floppy): sWireItShut::<noname144>
+// Fixes bug: #6458 (partly, see additional patch above)
+static const uint16 laurabow2SignatureRememberWiredEastDoor[] = {
 	SIG_MAGICDWORD,
-	0x67, 0x72,                         // pTos state
-	0x35, 0x00,                         // ldi 00
+	0x33, 0x27,                         // jmp [ret]
+	0x3c,                               // dup
+	0x35, 0x06,                         // ldi 06
 	0x1a,                               // eq?
-	0x31, 0x08,                         // bnt [close door code]
+	0x31, 0x21,                         // bnt [skip step]
 	SIG_END
 };
 
-static const uint16 laurabow2FloppyPatchFixWiredEastDoor[] = {
-	0x31, 0x23,                         // bnt [skip hand action] (saves 1 byte)
-	0x63, 0x6a,                         // pToa <noname590> (effectively locked)
-	0x2f, 0x1f,                         // bt [skip hand action]
-	0x63, 0x72,                         // pToa state
-	0x2f, 0x08,                         // bt [close door code]
-	PATCH_END
+static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
+	PATCH_ADDTOOFFSET(+2),              // skip jmp [ret]
+	0x34, PATCH_UINT16(0x0001),         // ldi 0001
+	0xa1, PATCH_UINT16(97),             // sag 97d (set our eastDoor-wired-global)
 };
 
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
@@ -1734,8 +1762,8 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   560, "CD: painting closing immediately",            1, laurabow2CDSignaturePaintingClosing,           laurabow2CDPatchPaintingClosing },
 	{  true,     0, "CD: fix problematic icon bar",                1, laurabow2CDSignatureFixProblematicIconBar,     laurabow2CDPatchFixProblematicIconBar },
-	{  true,   430, "CD: fix wired east door",                     1, laurabow2CDSignatureFixWiredEastDoor,          laurabow2CDPatchFixWiredEastDoor },
-	{  true,   430, "Floppy: fix wired east door",                 1, laurabow2FloppySignatureFixWiredEastDoor,      laurabow2FloppyPatchFixWiredEastDoor },
+	{  true,   430, "CD/Floppy: make wired east door persistent",  1, laurabow2SignatureRememberWiredEastDoor,       laurabow2PatchRememberWiredEastDoor },
+	{  true,   430, "CD/Floppy: fix wired east door",              1, laurabow2CDSignatureFixWiredEastDoor,          laurabow2CDPatchFixWiredEastDoor },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                  1, kq6laurabow2CDSignatureAudioTextSupport1,      kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                  1, kq6laurabow2CDSignatureAudioTextSupport2,      kq6laurabow2CDPatchAudioTextSupport2 },
