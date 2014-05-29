@@ -1086,17 +1086,17 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 			b = 800 - dx;
 		}
 
-		int32 pp = b * a; //(0x51EB851F * b * a) >> 32) >> 8; // TODO FIXME
+		int32 pp = b * a;
 
-		snd->setPanAndVolume(pan + (pp >> 31) + pp, par);
+		snd->setPanAndVolume(pan + pp / 800, par);
 
 		return;
 	}
 
 	int dx = _screct.left - ani->_ox;
 	if (dx <= 800) {
-		int32 s = 0x51EB851F * (800 - dx) * (g_fp->_sfxVolume - (-3500)); // TODO FIXME
-		int32 p = -3500 + (s >> 31) + (s >> 8);
+		int32 s = (800 - dx) * (g_fp->_sfxVolume - (-3500));
+		int32 p = -3500 + s / 800;
 
 		if (p > g_fp->_sfxVolume)
 			p = g_fp->_sfxVolume;
