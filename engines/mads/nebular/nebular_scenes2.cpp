@@ -4971,13 +4971,14 @@ void Scene213::enter() {
 	teleporterEnter();
 
 	// The original is calling Scene2xx::sceneEntrySound()
-		if (_vm->_musicFlag) {
-			if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
-				_vm->_sound->command(1);
-			else
-				_vm->_sound->command(9);
-		} else
-			_vm->_sound->command(2);
+	if (_vm->_musicFlag) {
+		if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
+			_vm->_sound->command(1);
+		else
+			_vm->_sound->command(9);
+	} else {
+		_vm->_sound->command(2);
+	}
 }
 
 void Scene213::step() {
