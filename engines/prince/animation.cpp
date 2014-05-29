@@ -68,12 +68,12 @@ int16 Animation::getLoopCount() const {
 }
 
 // AH_Fazy
-uint Animation::getPhaseCount() const {
+int32 Animation::getPhaseCount() const {
 	return READ_LE_UINT16(_data + 4);
 }
 
 // AH_Ramki
-uint Animation::getFrameCount() const {
+int32 Animation::getFrameCount() const {
 	return READ_LE_UINT16(_data + 6);
 }
 
@@ -113,7 +113,7 @@ int16 Animation::getFrameHeight(uint frameIndex) const {
 	return READ_LE_UINT16(frameData + 2);
 }
 
-Graphics::Surface *Animation::getFrame(uint frameIndex) {
+Graphics::Surface *Animation::getFrame(uint frameIndex, int i, int phase) {
 	byte *frameData = _data + READ_LE_UINT32(_data + 16 + frameIndex * 4);
 	int16 width = READ_LE_UINT16(frameData + 0);
 	int16 height = READ_LE_UINT16(frameData + 2);
@@ -132,6 +132,7 @@ Graphics::Surface *Animation::getFrame(uint frameIndex) {
 		}
 		free(ddata);
 	} else {
+		debug("nr: %d, phase: %d", i, phase);
 		// Uncompressed
         for (uint16 i = 0; i < height; i++) {
             memcpy(surf->getBasePtr(0, i), frameData + 4 + width * i, width);

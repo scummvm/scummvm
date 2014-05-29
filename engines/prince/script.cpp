@@ -222,8 +222,12 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList,
 			newAnim._basaData._num = READ_UINT16(&_data[animOffset + 28 + i * 8]);
 			newAnim._basaData._start = READ_UINT16(&_data[animOffset + 28 + i * 8 + 2]);
 			newAnim._basaData._end = READ_UINT16(&_data[animOffset + 28 + i * 8 + 4]);
-			debug("start1: %d", newAnim._basaData._start);
-			debug("end1: %d", newAnim._basaData._end);
+			if (newAnim._basaData._start != -1) {
+				debug("start1: %d", newAnim._basaData._start);
+			}
+			if (newAnim._basaData._end != -1) {
+				debug("end1: %d", newAnim._basaData._end);
+			}
 			int animNumber = newAnim._basaData._num;
 			const Common::String animName = Common::String::format("AN%02d", animNumber);
 			const Common::String shadowName = Common::String::format("AN%02dS", animNumber);
@@ -267,34 +271,34 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList,
 		newBackgroundAnim._seq._type = READ_UINT32(&_data[animOffset]);
 		debug("type: %d", newBackgroundAnim._seq._type);
 		newBackgroundAnim._seq._data = READ_UINT32(&_data[animOffset + 4]);
-		debug("data: %d", newBackgroundAnim._seq._data);
+		//debug("data: %d", newBackgroundAnim._seq._data);
 		newBackgroundAnim._seq._anims = READ_UINT32(&_data[animOffset + 8]);
 		anims = newBackgroundAnim._seq._anims;
 		debug("anims: %d", newBackgroundAnim._seq._anims);
 		//newBackgroundAnim._seq._current = READ_UINT32(&_data[animOffset + 12]);
 		newBackgroundAnim._seq._current = 0; // nr on list like now or should it be fileNr of anim - check it
-		debug("current: %d", newBackgroundAnim._seq._current);
+		//debug("current: %d", newBackgroundAnim._seq._current);
 		//newBackgroundAnim._seq._counter = READ_UINT32(&_data[animOffset + 16]);
 		newBackgroundAnim._seq._counter = 0;
-		debug("counter: %d", newBackgroundAnim._seq._counter);
+		//debug("counter: %d", newBackgroundAnim._seq._counter);
 		//newBackgroundAnim._seq._currRelative = READ_UINT32(&_data[animOffset + 20]);
 		newBackgroundAnim._seq._currRelative = 0;
-		debug("currRelative: %d", newBackgroundAnim._seq._currRelative);
+		//debug("currRelative: %d", newBackgroundAnim._seq._currRelative);
 		newBackgroundAnim._seq._data2 = READ_UINT32(&_data[animOffset + 24]);
-		debug("data2: %d", newBackgroundAnim._seq._data2);
+		//debug("data2: %d", newBackgroundAnim._seq._data2);
 
 		int start = newBackgroundAnim.backAnims[0]._basaData._start; // BASA_Start of first frame
-		debug("start2: %d", start);
 		int end = newBackgroundAnim.backAnims[0]._basaData._end; //BASA_End of first frame
-		debug("end2: %d", end);
 
 		if (start != -1) {
+			debug("start2: %d", start);
 			newBackgroundAnim.backAnims[0]._frame = start;
 			newBackgroundAnim.backAnims[0]._showFrame = start;
 			newBackgroundAnim.backAnims[0]._loopFrame = start;
 		}
 
 		if (end != -1) {
+			debug("end2: %d", end);
 			newBackgroundAnim.backAnims[0]._lastFrame = end;
 		}
 

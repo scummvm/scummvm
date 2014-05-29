@@ -40,12 +40,12 @@ public:
 	int16 getLoopCount() const;
 	int16 getBaseX() const;
 	int16 getBaseY() const;
-	uint getPhaseCount() const;
-	uint getFrameCount() const;
+	int32 getPhaseCount() const;
+	int32 getFrameCount() const;
 	int16 getPhaseOffsetX(uint phaseIndex) const;
 	int16 getPhaseOffsetY(uint phaseIndex) const;
 	int16 getPhaseFrameIndex(uint phaseIndex) const;
-	Graphics::Surface *getFrame(uint frameIndex);
+	Graphics::Surface *getFrame(uint frameIndex, int i, int phase);
 	int16 getFrameWidth(uint frameIndex) const;
 	int16 getFrameHeight(uint frameIndex) const;
 	int16 getZoom(uint16 offset) const;
