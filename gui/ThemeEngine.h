@@ -171,7 +171,8 @@ public:
 		kDialogBackgroundSpecial,
 		kDialogBackgroundPlain,
 		kDialogBackgroundTooltip,
-		kDialogBackgroundDefault
+		kDialogBackgroundDefault,
+		kDialogBackgroundNone
 	};
 
 	/// State of the widget to be drawn
