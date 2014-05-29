@@ -142,6 +142,8 @@ void SciMusic::init() {
 	_driverLastChannel = _pMidiDrv->getLastChannel();
 	if (getSciVersion() <= SCI_VERSION_0_LATE)
 		_globalReverb = _pMidiDrv->getReverb();	// Init global reverb for SCI0
+		
+	_currentlyPlayingSample = NULL;
 }
 
 void SciMusic::miditimerCallback(void *p) {
@@ -432,6 +434,17 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	if (pSnd->pStreamAud) {
 		if (!_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
+			if ((_currentlyPlayingSample) && (_pMixer->isSoundHandleActive(_currentlyPlayingSample->hCurrentAud))) {
+				// Another sample is already playing, we have to stop that one
+				// SSCI is only able to play 1 sample at a time
+				// In Space Quest 5 room 250 the player is able to open the air-hatch and kill himself.
+				//  In that situation the scripts are playing 2 samples at the same time and the first sample
+				//  is not supposed to play.
+				// TODO: SSCI actually calls kDoAudio(play) internally, which stops other samples from being played
+				//        but such a change isn't trivial, because we also handle Sound resources in here, that contain samples
+				_pMixer->stopHandle(_currentlyPlayingSample->hCurrentAud);
+				warning("kDoSound: sample already playing, old resource %d, new resource %d", _currentlyPlayingSample->resourceId, pSnd->resourceId);
+			}
 			// Sierra SCI ignores volume set when playing samples via kDoSound
 			//  At least freddy pharkas/CD has a script bug that sets volume to 0
 			//  when playing the "score" sample
@@ -449,6 +462,8 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 										pSnd->pStreamAud, -1, _pMixer->kMaxChannelVolume, 0,
 										DisposeAfterUse::NO);
 			}
+			// Remember the sample, that is now playing
+			_currentlyPlayingSample = pSnd;
 		}
 	} else {
 		if (pSnd->pMidiParser) {
@@ -495,8 +510,11 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		pSnd->isQueued = false;
-	if (pSnd->pStreamAud)
+	if (pSnd->pStreamAud) {
+		if (_currentlyPlayingSample == pSnd)
+			_currentlyPlayingSample = NULL;
 		_pMixer->stopHandle(pSnd->hCurrentAud);
+	}
 
 	if (pSnd->pMidiParser) {
 		Common::StackLock lock(_mutex);
@@ -556,6 +574,10 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 	_mutex.unlock();
 
 	if (pSnd->pStreamAud) {
+		if (_currentlyPlayingSample == pSnd) {
+			// Forget about this sound, in case it was currently playing
+			_currentlyPlayingSample = NULL;
+		}
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 		delete pSnd->pStreamAud;
 		pSnd->pStreamAud = NULL;
