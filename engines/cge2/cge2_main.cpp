@@ -383,8 +383,7 @@ void CGE2Engine::caveUp(int cav) {
 	_vga->show();
 
 	_sprite = _vga->_showQ->first();
-	if (_startupMode)
-		_vga->sunrise(_vga->_sysPal);
+	_vga->sunrise(_vga->_sysPal);
 
 	feedSnail(_vga->_showQ->locate(bakRef + 255), kNear, _heroTab[_sex]->_ptr);
 	//setDrawColors(); - It's only for debugging purposes. Can be left out for now.
