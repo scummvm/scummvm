@@ -31,7 +31,7 @@
 namespace Grim {
 
 MeshComponent::MeshComponent(Component *p, int parentID, const char *name, tag32 t) :
-		Component(p, parentID, name, t), _node(NULL) {
+		Component(p, parentID, name, t), _node(nullptr) {
 	if (sscanf(name, "mesh %d", &_num) < 1)
 		error("Couldn't parse mesh name %s", name);
 
@@ -45,8 +45,8 @@ void MeshComponent::init() {
 		_model = mc->getModel();
 	} else {
 		Debug::warning(Debug::Costumes, "Parent of mesh %d was not a model", _num);
-		_node = NULL;
-		_model = NULL;
+		_node = nullptr;
+		_model = nullptr;
 	}
 }
 
@@ -56,7 +56,7 @@ CMap *MeshComponent::cmap() {
 		ModelComponent *mc = static_cast<ModelComponent *>(_parent);
 		return mc->getCMap();
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MeshComponent::setKey(int val) {

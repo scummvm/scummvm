@@ -41,7 +41,7 @@ MaterialComponent::MaterialComponent(Component *p, int parentID, const char *fil
 }
 
 void MaterialComponent::init() {
-	_mat = NULL;
+	_mat = nullptr;
 	if (_parent->isComponentType('M','M','D','L') ||
 		_parent->isComponentType('M','O','D','L')) {
 		ModelComponent *p = static_cast<ModelComponent *>(_parent);

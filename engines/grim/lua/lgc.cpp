@@ -42,7 +42,7 @@ int32 luaC_ref(TObject *o, int32 lock) {
 			for (ref = oldSize; ref < refSize; ref++) {
 				refArray[ref].status = FREE;
 				refArray[ref].o.ttype = LUA_T_NIL;
-				refArray[ref].o.value.ts = NULL;
+				refArray[ref].o.value.ts = nullptr;
 			}
 			ref = oldSize;
 		}
@@ -57,7 +57,7 @@ void lua_unref(int32 r) {
 	if (r >= 0 && r < refSize) {
 		refArray[r].status = FREE;
 		refArray[r].o.ttype = LUA_T_NIL;
-		refArray[r].o.value.ts = NULL;
+		refArray[r].o.value.ts = nullptr;
 	}
 }
 
@@ -67,7 +67,7 @@ TObject* luaC_getref(int32 r) {
 	if (r >= 0 && r < refSize && (refArray[r].status == LOCK || refArray[r].status == HOLD))
 		return &refArray[r].o;
 	else
-		return NULL;
+		return nullptr;
 }
 
 static void travlock() {
@@ -130,7 +130,7 @@ void luaC_strcallIM(TaggedString *l) {
 }
 
 static GCnode *listcollect(GCnode *l) {
-	GCnode *frees = NULL;
+	GCnode *frees = nullptr;
 	while (l) {
 		GCnode *next = l->next;
 		l->marked = 0;

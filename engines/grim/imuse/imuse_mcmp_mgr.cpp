@@ -32,12 +32,12 @@ namespace Grim {
 uint16 imuseDestTable[5786];
 
 McmpMgr::McmpMgr() {
-	_compTable = NULL;
+	_compTable = nullptr;
 	_numCompItems = 0;
 	_curSample = -1;
-	_compInput = NULL;
+	_compInput = nullptr;
 	_outputSize = 0;
-	_file = NULL;
+	_file = nullptr;
 	_lastBlock = -1;
 }
 

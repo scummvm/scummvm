@@ -66,7 +66,7 @@ static TaggedString *LoadTString(ZIO *Z) {
 	int32 i;
 
 	if (size == 0)
-		return NULL;
+		return nullptr;
 	else {
 		char *s = luaL_openspace(size);
 		ezread(Z, s, size);
@@ -86,7 +86,7 @@ static void LoadLocals(TProtoFunc *tf, ZIO *Z) {
 		tf->locvars[i].varname = LoadTString(Z);
 	}
 	tf->locvars[i].line = -1;		// flag end of vector
-	tf->locvars[i].varname = NULL;
+	tf->locvars[i].varname = nullptr;
 }
 
 static void LoadConstants(TProtoFunc *tf, ZIO *Z) {
@@ -109,7 +109,7 @@ static void LoadConstants(TProtoFunc *tf, ZIO *Z) {
 			break;
 		case ID_FUN:
 			ttype(o) = LUA_T_PROTO;
-			tfvalue(o) = NULL;
+			tfvalue(o) = nullptr;
 		default:
 			break;
 		}
@@ -181,7 +181,7 @@ TProtoFunc *luaU_undump1(ZIO *Z) {
 		return LoadChunk(Z);
 	else if (c != EOZ)
 		luaL_verror("%s is not a Lua binary file", zname(Z));
-	return NULL;
+	return nullptr;
 }
 
 } // end of namespace Grim

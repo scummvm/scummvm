@@ -47,7 +47,7 @@ void AnimComponent::setKey(int val) {
 	if (!state) {
 		Set *set = g_grim->getCurrSet();
 		state = set->addObjectState(set->getSetup(), (_overlay ? ObjectState::OBJSTATE_OVERLAY : ObjectState::OBJSTATE_UNDERLAY),
-									_name.c_str(), NULL, false);
+									_name.c_str(), nullptr, false);
 	}
 	_created = true;
 

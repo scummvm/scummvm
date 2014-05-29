@@ -35,7 +35,7 @@
 
 namespace Grim {
 
-Imuse *g_imuse = NULL;
+Imuse *g_imuse = nullptr;
 
 extern uint16 imuseDestTable[];
 extern ImuseTable grimStateMusicTable[];
@@ -265,7 +265,7 @@ void Imuse::callback() {
 			}
 
 			assert(track->stream);
-			byte *data = NULL;
+			byte *data = nullptr;
 			int32 result = 0;
 
 			if (track->curRegion == -1) {

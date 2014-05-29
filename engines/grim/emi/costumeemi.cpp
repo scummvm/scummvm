@@ -40,7 +40,7 @@
 namespace Grim {
 
 EMICostume::EMICostume(const Common::String &fname, Costume *prevCost) :
-		Costume(fname, prevCost), _wearChore(NULL), _emiSkel(NULL) {
+		Costume(fname, prevCost), _wearChore(nullptr), _emiSkel(nullptr) {
 }
 
 void EMICostume::load(Common::SeekableReadStream *data) {
@@ -50,7 +50,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 	_chores = new Chore *[_numChores];
 	for (int i = 0; i < _numChores; i++) {
 		uint32 nameLength;
-		Component *prevComponent = NULL;
+		Component *prevComponent = nullptr;
 		nameLength = data->readUint32LE();
 		assert(nameLength < 32);
 
@@ -86,10 +86,10 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 				prevComponent = _prevCostume->getComponent(0);
 				// Make sure that the component is valid
 				if (!prevComponent->isComponentType('M', 'M', 'D', 'L'))
-					prevComponent = NULL;
+					prevComponent = nullptr;
 			}
 			// Actually load the appropriate component
-			Component *component = loadEMIComponent(parentID < 0 ? NULL : components[parentID], parentID, componentName, prevComponent);
+			Component *component = loadEMIComponent(parentID < 0 ? nullptr : components[parentID], parentID, componentName, prevComponent);
 			if (component) {
 				component->setCostume(this);
 				component->init();
@@ -183,7 +183,7 @@ Component *EMICostume::loadEMIComponent(Component *parent, int parentID, const c
 		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void EMICostume::draw() {
@@ -258,13 +258,13 @@ Material *EMICostume::findMaterial(const Common::String &name) {
 			return *it;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Material *EMICostume::loadMaterial(const Common::String &name) {
 	Material *mat = findMaterial(name);
 	if (!mat) {
-		mat = g_resourceloader->loadMaterial(name.c_str(), NULL);
+		mat = g_resourceloader->loadMaterial(name.c_str(), nullptr);
 		_materials.push_back(mat);
 	}
 	return mat;

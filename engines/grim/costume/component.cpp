@@ -28,7 +28,7 @@ namespace Grim {
 
 Component::Component(Component *p, int parentID, const char *name, tag32 t) :
 		_visible(true), _tag(t), _parentID(parentID), _name(name),
-		_previousCmap(NULL), _cmap(NULL), _cost(NULL) {
+		_previousCmap(nullptr), _cmap(nullptr), _cost(nullptr) {
 
 	setParent(p);
 }
@@ -39,7 +39,7 @@ Component::~Component() {
 
 	Component *child = _child;
 	while (child) {
-		child->_parent = NULL;
+		child->_parent = nullptr;
 		child = child->_sibling;
 	}
 }
@@ -71,8 +71,8 @@ CMap *Component::getCMap() {
 
 void Component::setParent(Component *newParent) {
 	_parent = newParent;
-	_child = NULL;
-	_sibling = NULL;
+	_child = nullptr;
+	_sibling = nullptr;
 	if (_parent) {
 		_sibling = _parent->_child;
 		_parent->_child = this;
@@ -85,7 +85,7 @@ void Component::removeChild(Component *child) {
 		childPos = &(*childPos)->_sibling;
 	if (*childPos) {
 		*childPos = child->_sibling;
-		child->_parent = NULL;
+		child->_parent = nullptr;
 	}
 }
 

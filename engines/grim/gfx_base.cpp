@@ -31,7 +31,7 @@ GfxBase::GfxBase() :
 		_renderBitmaps(true), _renderZBitmaps(true), _shadowModeActive(false),
 		_currentPos(0, 0, 0), _currentQuat(0, 0, 0, 1), _dimLevel(0.0f),
 		_screenWidth(0), _screenHeight(0), _screenSize(0), _isFullscreen(false),
-		_scaleW(1.0f), _scaleH(1.0f), _currentShadowArray(NULL),
+		_scaleW(1.0f), _scaleH(1.0f), _currentShadowArray(nullptr),
 		_shadowColorR(255), _shadowColorG(255), _shadowColorB(255) {
 
 }
@@ -109,7 +109,7 @@ void SpecialtyMaterial::create(const char *data, int width, int height) {
 	_texture->_height = height;
 	_texture->_bpp = 4;
 	_texture->_colorFormat = BM_RGBA;
-	g_driver->createMaterial(_texture, data, NULL);
+	g_driver->createMaterial(_texture, data, nullptr);
 }
 
 }

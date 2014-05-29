@@ -39,7 +39,7 @@ namespace Grim {
 
 ModelComponent::ModelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
 		Component(p, parentID, filename, t),
-		_obj(NULL), _hier(NULL), _animation(NULL), _animated(false) {
+		_obj(nullptr), _hier(nullptr), _animation(nullptr), _animated(false) {
 	const char *comma = strchr(filename, ',');
 
 	// Can be called with a comma and a numeric parameter afterward, but

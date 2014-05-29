@@ -110,7 +110,7 @@ void Model::loadBinary(Common::SeekableReadStream *data) {
 	for (int i = 0; i < _numMaterials; i++) {
 		data->read(_materialNames[i], 32);
 		_materialsShared[i] = false;
-		_materials[i] = NULL;
+		_materials[i] = nullptr;
 		loadMaterial(i, _cmap);
 	}
 	data->seek(32, SEEK_CUR); // skip name
@@ -145,7 +145,7 @@ void Model::loadText(TextSplitter *ts) {
 		char materialName[32];
 		int num;
 		_materialsShared[i] = false;
-		_materials[i] = NULL;
+		_materials[i] = nullptr;
 
 		ts->scanString("%d: %32s", 2, &num, materialName);
 		strcpy(_materialNames[num], materialName);
@@ -177,24 +177,24 @@ void Model::loadText(TextSplitter *ts) {
 		_rootHierNode[num]._flags = (int)flags;
 		_rootHierNode[num]._type = (int)type;
 		if (mesh < 0)
-			_rootHierNode[num]._mesh = NULL;
+			_rootHierNode[num]._mesh = nullptr;
 		else
 			_rootHierNode[num]._mesh = &_geosets[0]._meshes[mesh];
 		if (parent >= 0) {
 			_rootHierNode[num]._parent = &_rootHierNode[parent];
 			_rootHierNode[num]._depth = _rootHierNode[parent]._depth + 1;
 		} else {
-			_rootHierNode[num]._parent = NULL;
+			_rootHierNode[num]._parent = nullptr;
 			_rootHierNode[num]._depth = 0;
 		}
 		if (child >= 0)
 			_rootHierNode[num]._child = &_rootHierNode[child];
 		else
-			_rootHierNode[num]._child = NULL;
+			_rootHierNode[num]._child = nullptr;
 		if (sibling >= 0)
 			_rootHierNode[num]._sibling = &_rootHierNode[sibling];
 		else
-			_rootHierNode[num]._sibling = NULL;
+			_rootHierNode[num]._sibling = nullptr;
 
 		_rootHierNode[num]._numChildren = numChildren;
 		_rootHierNode[num]._pos = Math::Vector3d(x, y, z);
@@ -204,7 +204,7 @@ void Model::loadText(TextSplitter *ts) {
 		_rootHierNode[num]._pivot = Math::Vector3d(pivotx, pivoty, pivotz);
 		_rootHierNode[num]._meshVisible = true;
 		_rootHierNode[num]._hierVisible = true;
-		_rootHierNode[num]._sprite = NULL;
+		_rootHierNode[num]._sprite = nullptr;
 		_rootHierNode[num]._initialized = true;
 	}
 
@@ -231,11 +231,11 @@ void Model::reload(CMap *cmap) {
 }
 
 void Model::loadMaterial(int index, CMap *cmap) {
-	Material *mat = NULL;
+	Material *mat = nullptr;
 	if (!_materialsShared[index]) {
 		mat = _materials[index];
 	}
-	_materials[index] = NULL;
+	_materials[index] = nullptr;
 	if (_parent) {
 		_materials[index] = _parent->findMaterial(_materialNames[index], cmap);
 		if (_materials[index]) {
@@ -264,7 +264,7 @@ Material *Model::findMaterial(const char *name, CMap *cmap) const {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -398,9 +398,9 @@ void MeshFace::draw(const Mesh *mesh) const {
  */
 Mesh::Mesh() :
 		_numFaces(0), _radius(0.0f), _shadow(0), _geometryMode(0),
-		_lightingMode(0), _textureMode(0), _numVertices(0), _materialid(NULL),
-		_vertices(NULL), _verticesI(NULL), _vertNormals(NULL),
-		_numTextureVerts(0), _textureVerts(NULL), _faces(NULL), _userData(NULL) {
+		_lightingMode(0), _textureMode(0), _numVertices(0), _materialid(nullptr),
+		_vertices(nullptr), _verticesI(nullptr), _vertNormals(nullptr),
+		_numTextureVerts(0), _textureVerts(nullptr), _faces(nullptr), _userData(nullptr) {
 	_name[0] = '\0';
 
 }
@@ -598,7 +598,7 @@ ModelNode::ModelNode() :
 ModelNode::~ModelNode() {
 	ModelNode *child = _child;
 	while (child) {
-		child->_parent = NULL;
+		child->_parent = nullptr;
 		child = child->_sibling;
 	}
 }
@@ -611,7 +611,7 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 	_type = data->readUint32LE();
 	int meshNum = data->readUint32LE();
 	if (meshNum < 0)
-		_mesh = NULL;
+		_mesh = nullptr;
 	else
 		_mesh = g->_meshes + meshNum;
 	_depth = data->readUint32LE();
@@ -633,24 +633,24 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 	_animPitch = 0;
 	_animYaw = 0;
 	_animRoll = 0;
-	_sprite = NULL;
+	_sprite = nullptr;
 
 	data->seek(48, SEEK_CUR);
 
 	if (parentPtr != 0)
 		_parent = hierNodes + data->readUint32LE();
 	else
-		_parent = NULL;
+		_parent = nullptr;
 
 	if (childPtr != 0)
 		_child = hierNodes + data->readUint32LE();
 	else
-		_child = NULL;
+		_child = nullptr;
 
 	if (siblingPtr != 0)
 		_sibling = hierNodes + data->readUint32LE();
 	else
-		_sibling = NULL;
+		_sibling = nullptr;
 
 	_meshVisible = true;
 	_hierVisible = true;
@@ -725,7 +725,7 @@ void ModelNode::removeChild(ModelNode *child) {
 		childPos = &(*childPos)->_sibling;
 	if (*childPos) {
 		*childPos = child->_sibling;
-		child->_parent = NULL;
+		child->_parent = nullptr;
 	}
 }
 
@@ -777,7 +777,7 @@ void ModelNode::addSprite(Sprite *sprite) {
 
 void ModelNode::removeSprite(const Sprite *sprite) {
 	Sprite *curr = _sprite;
-	Sprite *prev = NULL;
+	Sprite *prev = nullptr;
 	while (curr) {
 		if (curr == sprite) {
 			if (prev)

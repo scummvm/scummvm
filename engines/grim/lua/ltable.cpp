@@ -211,7 +211,7 @@ TObject *luaH_get(Hash *t, TObject *r) {
 	if (ttype(ref(node(t, h))) != LUA_T_NIL)
 		return val(node(t, h));
 	else
-		return NULL;
+		return nullptr;
 }
 
 /*
@@ -236,11 +236,11 @@ static Node *hashnext(Hash *t, int32 i) {
 	Node *n;
 	int32 tsize = nhash(t);
 	if (i >= tsize)
-		return NULL;
+		return nullptr;
 	n = node(t, i);
 	while (ttype(ref(n)) == LUA_T_NIL || ttype(val(n)) == LUA_T_NIL) {
 		if (++i >= tsize)
-			return NULL;
+			return nullptr;
 		n = node(t, i);
 	}
 	return node(t, i);

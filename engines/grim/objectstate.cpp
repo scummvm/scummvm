@@ -34,11 +34,11 @@ ObjectState::ObjectState(int setup, ObjectState::Position position, const char *
 	if (zbitmap) {
 		_zbitmap = Bitmap::create(zbitmap);
 	} else
-		_zbitmap = NULL;
+		_zbitmap = nullptr;
 }
 
 ObjectState::ObjectState() :
-		_bitmap(NULL), _zbitmap(NULL) {
+		_bitmap(nullptr), _zbitmap(nullptr) {
 
 }
 

@@ -162,7 +162,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	_numFaces = data->readUint32LE();
 	if (data->eos()) {
 		_numFaces = 0;
-		_faces = NULL;
+		_faces = nullptr;
 		return;
 	}
 
@@ -206,8 +206,8 @@ void EMIModel::setSkeleton(Skeleton *skel) {
 		return;
 	}
 	int boneVert = 0;
-	delete[] _vertexBoneInfo; _vertexBoneInfo = NULL;
-	delete[] _vertexBone; _vertexBone = NULL;
+	delete[] _vertexBoneInfo; _vertexBoneInfo = nullptr;
+	delete[] _vertexBone; _vertexBone = nullptr;
 	_vertexBoneInfo = new int[_numBoneInfos];
 	_vertexBone = new int[_numBoneInfos]; // Oversized, but yeah.
 
@@ -280,29 +280,29 @@ void EMIModel::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
 EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMICostume *costume) :
 		_fname(filename), _costume(costume) {
 	_numVertices = 0;
-	_vertices = NULL;
-	_drawVertices = NULL;
-	_normals = NULL;
-	_colorMap = NULL;
-	_texVerts = NULL;
+	_vertices = nullptr;
+	_drawVertices = nullptr;
+	_normals = nullptr;
+	_colorMap = nullptr;
+	_texVerts = nullptr;
 	_numFaces = 0;
-	_faces = NULL;
+	_faces = nullptr;
 	_numTextures = 0;
-	_texNames = NULL;
-	_mats = NULL;
+	_texNames = nullptr;
+	_mats = nullptr;
 	_numBones = 0;
-	_boneInfos = NULL;
+	_boneInfos = nullptr;
 	_numBoneInfos = 0;
-	_vertexBoneInfo = NULL;
-	_vertexBone = NULL;
-	_skeleton = NULL;
+	_vertexBoneInfo = nullptr;
+	_vertexBone = nullptr;
+	_skeleton = nullptr;
 	_radius = 0;
 	_center = new Math::Vector3d();
 	_boxData = new Math::Vector3d();
 	_boxData2 = new Math::Vector3d();
 	_numTexSets = 0;
 	_setType = 0;
-	_boneNames = NULL;
+	_boneNames = nullptr;
 
 	loadMesh(data);
 	g_driver->createEMIModel(this);

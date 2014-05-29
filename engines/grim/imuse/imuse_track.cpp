@@ -72,7 +72,7 @@ int Imuse::allocSlot(int priority) {
 
 bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority, Track *otherTrack) {
 	Common::StackLock lock(_mutex);
-	Track *track = NULL;
+	Track *track = nullptr;
 	int i;
 
 	// If the track is fading out bring it back to the normal running tracks
@@ -182,17 +182,17 @@ Track *Imuse::findTrack(const char *soundName) {
 			return track;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Imuse::setPriority(const char *soundName, int priority) {
 	Common::StackLock lock(_mutex);
-	Track *changeTrack = NULL;
+	Track *changeTrack = nullptr;
 	assert ((priority >= 0) && (priority <= 127));
 
 	changeTrack = findTrack(soundName);
 	// Check to make sure we found the track
-	if (changeTrack == NULL) {
+	if (changeTrack == nullptr) {
 		warning("Unable to find track '%s' to change priority", soundName);
 		return;
 	}
@@ -204,7 +204,7 @@ void Imuse::setVolume(const char *soundName, int volume) {
 	Track *changeTrack;
 
 	changeTrack = findTrack(soundName);
-	if (changeTrack == NULL) {
+	if (changeTrack == nullptr) {
 		warning("Unable to find track '%s' to change volume", soundName);
 		return;
 	}
@@ -216,7 +216,7 @@ void Imuse::setPan(const char *soundName, int pan) {
 	Track *changeTrack;
 
 	changeTrack = findTrack(soundName);
-	if (changeTrack == NULL) {
+	if (changeTrack == nullptr) {
 		warning("Unable to find track '%s' to change pan", soundName);
 		return;
 	}
@@ -228,7 +228,7 @@ int Imuse::getVolume(const char *soundName) {
 	Track *getTrack;
 
 	getTrack = findTrack(soundName);
-	if (getTrack == NULL) {
+	if (getTrack == nullptr) {
 		warning("Unable to find track '%s' to get volume", soundName);
 		return 0;
 	}
@@ -240,7 +240,7 @@ void Imuse::setHookId(const char *soundName, int hookId) {
 	Track *changeTrack;
 
 	changeTrack = findTrack(soundName);
-	if (changeTrack == NULL) {
+	if (changeTrack == nullptr) {
 		warning("Unable to find track '%s' to change hook id", soundName);
 		return;
 	}
@@ -270,7 +270,7 @@ void Imuse::selectVolumeGroup(const char *soundName, int volGroupId) {
 		volGroupId = 3;
 
 	changeTrack = findTrack(soundName);
-	if (changeTrack == NULL) {
+	if (changeTrack == nullptr) {
 		warning("Unable to find track '%s' to change volume group id", soundName);
 		return;
 	}
@@ -282,7 +282,7 @@ void Imuse::setFadeVolume(const char *soundName, int destVolume, int duration) {
 	Track *changeTrack;
 
 	changeTrack = findTrack(soundName);
-	if (changeTrack == NULL) {
+	if (changeTrack == nullptr) {
 		warning("Unable to find track '%s' to change fade volume", soundName);
 		return;
 	}
@@ -297,7 +297,7 @@ void Imuse::setFadePan(const char *soundName, int destPan, int duration) {
 	Track *changeTrack;
 
 	changeTrack = findTrack(soundName);
-	if (changeTrack == NULL) {
+	if (changeTrack == nullptr) {
 		warning("Unable to find track '%s' to change fade pan", soundName);
 		return;
 	}
@@ -315,7 +315,7 @@ char *Imuse::getCurMusicSoundName() {
 			return track->soundName;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 int Imuse::getCurMusicPan() {
@@ -370,7 +370,7 @@ Track *Imuse::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 
 	if (track->toBeRemoved) {
 		error("cloneToFadeOutTrack: Tried to clone a track to be removed, please bug report");
-		return NULL;
+		return nullptr;
 	}
 
 	assert(track->trackId < MAX_IMUSE_TRACKS);
@@ -413,7 +413,7 @@ Track *Imuse::moveToFadeOutTrack(Track *track, int fadeDelay) {
 
 	if (track->toBeRemoved) {
 		error("moveToFadeOutTrack: Tried to move a track to be removed, please bug report");
-		return NULL;
+		return nullptr;
 	}
 
 	// Clamp fade time to remaining time in the current region
@@ -427,7 +427,7 @@ Track *Imuse::moveToFadeOutTrack(Track *track, int fadeDelay) {
 
 	if (fadeDelay <= 0) {
 		flushTrack(track);
-		return NULL;
+		return nullptr;
 	}
 
 	assert(track->trackId < MAX_IMUSE_TRACKS);

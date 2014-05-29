@@ -40,7 +40,7 @@ struct GrimGameDescription {
 static const PlainGameDescriptor grimGames[] = {
 	{"grim", "Grim Fandango"},
 	{"monkey4", "Escape From Monkey Island"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #define GAMEOPTION_LOAD_DATAUSR GUIO_GAMEOPTIONS1
@@ -419,7 +419,7 @@ static const GrimGameDescription gameDescriptions[] = {
 
 static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"grimdemo", "grim", Common::kPlatformWindows},
-	{0, 0, Common::kPlatformUnknown}
+	{nullptr, nullptr, Common::kPlatformUnknown}
 };
 
 class GrimMetaEngine : public AdvancedMetaEngine {
@@ -463,7 +463,7 @@ bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		}
 	}
 
-	return gd != 0;
+	return gd != nullptr;
 }
 
 bool GrimMetaEngine::hasFeature(MetaEngineFeature f) const {

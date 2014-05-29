@@ -18,7 +18,7 @@ namespace Grim {
 
 #define gcsizestring(l)	(1 + (l / 64))  // "weight" for a string with length 'l'
 
-TaggedString EMPTY = {{NULL, 2}, 0, 0L, {LUA_T_NIL, {NULL}}, {0}};
+TaggedString EMPTY = {{nullptr, 2}, 0, 0L, {LUA_T_NIL, {nullptr}}, {0}};
 
 void luaS_init() {
 	int32 i;
@@ -26,7 +26,7 @@ void luaS_init() {
 	for (i = 0; i < NUM_HASHS; i++) {
 		string_root[i].size = 0;
 		string_root[i].nuse = 0;
-		string_root[i].hash = NULL;
+		string_root[i].hash = nullptr;
 	}
 }
 
@@ -52,7 +52,7 @@ static void grow(stringtable *tb) {
 	int32 i;
 
 	for (i = 0; i < newsize; i++)
-		newhash[i] = NULL;
+		newhash[i] = nullptr;
 	// rehash
 	tb->nuse = 0;
 	for (i = 0; i < tb->size; i++) {
@@ -101,7 +101,7 @@ static TaggedString *insert(const char *buff, int32 tag, stringtable *tb) {
 		grow(tb);
 		size = tb->size;
 	}
-	for (i = h % size; (ts = tb->hash[i]) != NULL; ) {
+	for (i = h % size; (ts = tb->hash[i]) != nullptr; ) {
 		if (ts == &EMPTY)
 			j = i;
 		else if ((ts->constindex >= 0) ? // is a string?
@@ -166,7 +166,7 @@ static void remove_from_list(GCnode *l) {
 }
 
 TaggedString *luaS_collector() {
-	TaggedString *frees = NULL;
+	TaggedString *frees = nullptr;
 	int32 i;
 	remove_from_list(&rootglobal);
 	for (i = 0; i < NUM_HASHS; i++) {
@@ -189,9 +189,9 @@ TaggedString *luaS_collector() {
 }
 
 TaggedString *luaS_collectudata() {
-	TaggedString *frees = NULL;
+	TaggedString *frees = nullptr;
 	int32 i;
-	rootglobal.next = NULL;  // empty list of globals
+	rootglobal.next = nullptr;  // empty list of globals
 	for (i = 0; i < NUM_HASHS; i++) {
 		stringtable *tb = &string_root[i];
 		int32 j;
@@ -236,7 +236,7 @@ char *luaS_travsymbol (int32 (*fn)(TObject *)) {
 	for (g = (TaggedString *)rootglobal.next; g; g = (TaggedString *)g->head.next)
 		if (fn(&g->globalval))
 			return g->str;
-	return NULL;
+	return nullptr;
 }
 
 int32 luaS_globaldefined(const char *name) {

@@ -45,7 +45,7 @@ Chore::~Chore() {
 			delete[] _tracks[i].keys;
 
 		delete[] _tracks;
-		_tracks = NULL;
+		_tracks = nullptr;
 	}
 }
 

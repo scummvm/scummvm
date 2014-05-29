@@ -56,7 +56,7 @@ MsCabinet::~MsCabinet() {
 }
 
 MsCabinet::MsCabinet(Common::SeekableReadStream *data) :
-	_data(data), _decompressor(0) {
+	_data(data), _decompressor(nullptr) {
 	if (!_data)
 		return;
 
@@ -178,7 +178,7 @@ Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::S
 	byte *fileBuf;
 
 	if (!hasFile(name))
-		return 0;
+		return nullptr;
 
 	const FileEntry &entry = _fileMap[name];
 
@@ -196,7 +196,7 @@ Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::S
 		}
 
 		if (!_decompressor->decompressFile(fileBuf, entry))
-			return 0;
+			return nullptr;
 
 		_cache[name] = fileBuf;
 	}
@@ -205,7 +205,7 @@ Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::S
 }
 
 MsCabinet::Decompressor::Decompressor(const MsCabinet::FolderEntry *folder, Common::SeekableReadStream *data) :
-	_curFolder(folder), _data(data), _curBlock(-1), _compressedBlock(0), _decompressedBlock(0), _fileBuf(0),
+	_curFolder(folder), _data(data), _curBlock(-1), _compressedBlock(nullptr), _decompressedBlock(nullptr), _fileBuf(nullptr),
 	_inBlockEnd(0), _inBlockStart(0), _endBlock(0), _startBlock(0) {
 
 	//Alloc the decompression buffers
@@ -292,7 +292,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 			return false;
 
 		//Decompress the block. If it isn't the first, provide the previous block as dictonary
-		dict = (_curBlock >= 0) ? _decompressedBlock : 0;
+		dict = (_curBlock >= 0) ? _decompressedBlock : nullptr;
 		decRes = Common::inflateZlibHeaderless(_decompressedBlock, uncompressedLen, _compressedBlock + 2, compressedLen - 2, dict, kCabBlockSize);
 		if (!decRes)
 			return false;
@@ -304,7 +304,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 	}
 
 	fileBuf = _fileBuf;
-	_fileBuf = 0;
+	_fileBuf = nullptr;
 	return true;
 #else
 	warning("zlib required to extract MSCAB");

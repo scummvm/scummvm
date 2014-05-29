@@ -33,7 +33,7 @@
 
 namespace Grim {
 
-EMIEngine *g_emi = NULL;
+EMIEngine *g_emi = nullptr;
 
 EMIEngine::EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
 		GrimEngine(syst, gameFlags, gameType, platform, language), _sortOrderInvalidated(false), _textObjectsSortOrderInvalidated(true) {
@@ -45,9 +45,9 @@ EMIEngine::EMIEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Com
 
 
 EMIEngine::~EMIEngine() {
-	g_emi = NULL;
+	g_emi = nullptr;
 	delete g_emiregistry;
-	g_emiregistry = NULL;
+	g_emiregistry = nullptr;
 }
 
 LuaBase *EMIEngine::createLua() {
@@ -80,7 +80,7 @@ const char *EMIEngine::getUpdateFilename() {
 				break;
 		}
 	} else
-		return 0;
+		return nullptr;
 }
 
 void EMIEngine::pushText() {

@@ -146,7 +146,7 @@ void Blocky8::makeTablesInterpolation(int param) {
 	int32 b1, b2;
 	int32 value_table47_1_2, value_table47_1_1, value_table47_2_2, value_table47_2_1;
 	int32 tableSmallBig[64], tmp, s;
-	const int8 *table47_1 = 0, *table47_2 = 0;
+	const int8 *table47_1 = nullptr, *table47_2 = nullptr;
 	int32 *ptr_small_big;
 	byte *ptr;
 	int i, x, y;
@@ -552,7 +552,7 @@ Blocky8::Blocky8() {
 	_tableSmall = new byte[32768];
 	memset(_tableBig, 0, 99328);
 	memset(_tableSmall, 0, 32768);
-	_deltaBuf = NULL;
+	_deltaBuf = nullptr;
 	_width = -1;
 	_height = -1;
 	_frameSize = 0;
@@ -560,12 +560,12 @@ Blocky8::Blocky8() {
 	_offset2 = 0;
 	_prevSeqNb = 0;
 	_lastTableWidth = 0;
-	_deltaBufs[0] = NULL;
-	_deltaBufs[1] = NULL;
-	_curBuf = NULL;
+	_deltaBufs[0] = nullptr;
+	_deltaBufs[1] = nullptr;
+	_curBuf = nullptr;
 	_d_pitch = 0;
-	_d_src = NULL;
-	_paramPtr = NULL;
+	_d_src = nullptr;
+	_paramPtr = nullptr;
 }
 
 void Blocky8::init(int width, int height) {
@@ -590,9 +590,9 @@ void Blocky8::deinit() {
 	_lastTableWidth = -1;
 	if (_deltaBuf) {
 		delete[] _deltaBuf;
-		_deltaBuf = NULL;
-		_deltaBufs[0] = NULL;
-		_deltaBufs[1] = NULL;
+		_deltaBuf = nullptr;
+		_deltaBufs[0] = nullptr;
+		_deltaBufs[1] = nullptr;
 	}
 }
 
@@ -600,16 +600,16 @@ Blocky8::~Blocky8() {
 	deinit();
 	if (_tableBig) {
 		delete[] _tableBig;
-		_tableBig = NULL;
+		_tableBig = nullptr;
 	}
 	if (_tableSmall) {
 		delete[] _tableSmall;
-		_tableSmall = NULL;
+		_tableSmall = nullptr;
 	}
 }
 
 bool Blocky8::decode(byte *dst, const byte *src) {
-	if ((_tableBig == NULL) || (_tableSmall == NULL) || (_deltaBuf == NULL))
+	if ((_tableBig == nullptr) || (_tableSmall == nullptr) || (_deltaBuf == nullptr))
 		return false;
 
 	_offset1 = _deltaBufs[1] - _curBuf;

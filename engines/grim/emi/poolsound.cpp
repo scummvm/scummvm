@@ -27,10 +27,10 @@
 
 namespace Grim {
 
-PoolSound::PoolSound() : _filename(""), _track(NULL) {
+PoolSound::PoolSound() : _filename(""), _track(nullptr) {
 }
 
-PoolSound::PoolSound(const Common::String &filename) : _filename(""), _track(NULL) {
+PoolSound::PoolSound(const Common::String &filename) : _filename(""), _track(nullptr) {
 	openFile(filename);
 }
 

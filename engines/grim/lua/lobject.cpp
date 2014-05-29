@@ -15,10 +15,10 @@ namespace Grim {
 
 const char *luaO_typenames[] = { // ORDER LUA_T
 	"userdata", "number", "string", "table", "function", "function", "task",
-	"nil", "function", "mark", "mark", "mark", "line", NULL
+	"nil", "function", "mark", "mark", "mark", "line", nullptr
 };
 
-TObject luaO_nilobject = { LUA_T_NIL, { NULL } };
+TObject luaO_nilobject = { LUA_T_NIL, { nullptr } };
 
 
 // hash dimensions values

@@ -44,7 +44,7 @@ LipSync::LipSync(const Common::String &filename, Common::SeekableReadStream *dat
 
 	// There are cases where the lipsync file has no entries
 	if (_numEntries == 0) {
-		_entries = NULL;
+		_entries = nullptr;
 		return;
 	}
 

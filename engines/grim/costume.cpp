@@ -107,7 +107,7 @@ namespace Grim {
 // along setKey requests to the actual bitmap object.
 
 Costume::Costume(const Common::String &fname, Costume *prevCost) :
-		Object(), _head(new Head()), _chores(NULL), _components(NULL),
+		Object(), _head(new Head()), _chores(nullptr), _components(nullptr),
 		_numComponents(0), _numChores(0), _fname(fname) {
 
 	_lookAtRate = 200;
@@ -140,7 +140,7 @@ void Costume::load(Common::SeekableReadStream *data) {
 	for (int i = 0; i < _numComponents; i++) {
 		int id, tagID, hash, parentID, namePos;
 		const char *line = ts.getCurrentLine();
-		Component *prevComponent = NULL;
+		Component *prevComponent = nullptr;
 
 		if (sscanf(line, " %d %d %d %d %n", &id, &tagID, &hash, &parentID, &namePos) < 4)
 			error("Bad component specification line: `%s'", line);
@@ -158,7 +158,7 @@ void Costume::load(Common::SeekableReadStream *data) {
 				prevComponent = _prevCostume->_components[0];
 				// Make sure that the component is valid
 				if (!prevComponent->isComponentType('M','M','D','L'))
-					prevComponent = NULL;
+					prevComponent = nullptr;
 			} else if (id > 0) {
 				// Use the MainModelComponent of this costume as prevComponent,
 				// so that the component can use its colormap.
@@ -166,7 +166,7 @@ void Costume::load(Common::SeekableReadStream *data) {
 			}
 		}
 		// Actually load the appropriate component
-		_components[id] = loadComponent(tags[tagID], parentID < 0 ? NULL : _components[parentID], parentID, line + namePos, prevComponent);
+		_components[id] = loadComponent(tags[tagID], parentID < 0 ? nullptr : _components[parentID], parentID, line + namePos, prevComponent);
 		_components[id]->setCostume(this);
 	}
 
@@ -239,7 +239,7 @@ Component *Costume::loadComponent (tag32 tag, Component *parent, int parentID, c
 	char t[4];
 	memcpy(t, &tag, sizeof(tag32));
 	warning("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);
-	return NULL;
+	return nullptr;
 }
 
 ModelComponent *Costume::getMainModelComponent() const {
@@ -249,7 +249,7 @@ ModelComponent *Costume::getMainModelComponent() const {
 		if (_components[i] && _components[i]->isComponentType('M','M','D','L'))
 			return static_cast<ModelComponent *>(_components[i]);
 	}
-	return NULL;
+	return nullptr;
 }
 
 ModelNode *Costume::getModelNodes() {
@@ -257,7 +257,7 @@ ModelNode *Costume::getModelNodes() {
 	if (comp) {
 		return comp->getHierarchy();
 	}
-	return NULL;
+	return nullptr;
 }
 
 Model *Costume::getModel() {
@@ -265,7 +265,7 @@ Model *Costume::getModel() {
 	if (comp) {
 		return comp->getModel();
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Costume::setChoreLastFrame(int num) {
@@ -312,11 +312,11 @@ Chore *Costume::getChore(const char *name) {
 			return _chores[i];
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 int Costume::getChoreId(const char *name) {
-	if (name == NULL) {
+	if (name == nullptr) {
 		return -1;
 	}
 	for (int i = 0; i < _numChores; ++i) {
@@ -364,7 +364,7 @@ void Costume::setColormap(const Common::String &map) {
 	_cmap = g_resourceloader->getColormap(map);
 	for (int i = 0; i < _numComponents; i++)
 		if (_components[i])
-			_components[i]->setColormap(NULL);
+			_components[i]->setColormap(nullptr);
 }
 
 void Costume::stopChores(bool ignoreLoopingChores, int msecs) {

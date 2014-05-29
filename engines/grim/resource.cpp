@@ -53,7 +53,7 @@
 
 namespace Grim {
 
-ResourceLoader *g_resourceloader = NULL;
+ResourceLoader *g_resourceloader = nullptr;
 
 class LabListComperator {
 	const Common::String _labName;
@@ -90,7 +90,7 @@ ResourceLoader::ResourceLoader() {
 
 		// Check if the update has been correctly loaded
 		if (!SearchMan.hasArchive("update")) {
-			const char *errorMessage = 0;
+			const char *errorMessage = nullptr;
 			if (g_grim->getGameType() == GType_GRIM) {
 				errorMessage =  "The original patch of Grim Fandango\n"
 								"is missing. Please download it from\n"
@@ -234,7 +234,7 @@ static int sortCallback(const void *entry1, const void *entry2) {
 Common::SeekableReadStream *ResourceLoader::getFileFromCache(const Common::String &filename) const {
 	ResourceLoader::ResourceCache *entry = getEntryFromCache(filename);
 	if (!entry)
-		return NULL;
+		return nullptr;
 
 	return new Common::MemoryReadStream(entry->resPtr, entry->len);
 
@@ -242,7 +242,7 @@ Common::SeekableReadStream *ResourceLoader::getFileFromCache(const Common::Strin
 
 ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::String &filename) const {
 	if (_cache.empty())
-		return NULL;
+		return nullptr;
 
 	if (_cacheDirty) {
 		qsort(_cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
@@ -256,11 +256,11 @@ ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::S
 }
 
 Common::SeekableReadStream *ResourceLoader::loadFile(const Common::String &filename) const {
-	Common::SeekableReadStream *rs = NULL;
+	Common::SeekableReadStream *rs = nullptr;
 	if (SearchMan.hasFile(filename))
 		rs = SearchMan.createReadStreamForMember(filename);
 	else
-		return NULL;
+		return nullptr;
 
 	rs = wrapPatchedFile(rs, filename);
 	return rs;
@@ -275,7 +275,7 @@ Common::SeekableReadStream *ResourceLoader::openNewStreamFile(Common::String fna
 		if (!s) {
 			s = loadFile(fname);
 			if (!s)
-				return NULL;
+				return nullptr;
 
 			uint32 size = s->size();
 			byte *buf = new byte[size];
@@ -385,7 +385,7 @@ LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 
 	stream = openNewStreamFile(filename.c_str());
 	if (!stream)
-		return NULL;
+		return nullptr;
 
 	result = new LipSync(filename, stream);
 
@@ -394,7 +394,7 @@ LipSync *ResourceLoader::loadLipSync(const Common::String &filename) {
 		_lipsyncs.push_back(result);
 	else {
 		delete result;
-		result = NULL;
+		result = nullptr;
 	}
 	delete stream;
 
@@ -413,7 +413,7 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c) 
 		if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGameFlags() & ADGF_DEMO) {
 			const Common::String replacement("fx/candle.sprb");
 			warning("Could not find material %s, using %s instead", filename.c_str(), replacement.c_str());
-			return loadMaterial(replacement, NULL);
+			return loadMaterial(replacement, nullptr);
 		} else {
 			error("Could not find material %s", filename.c_str());
 		}
@@ -447,7 +447,7 @@ EMIModel *ResourceLoader::loadModelEMI(const Common::String &filename, EMICostum
 	stream = openNewStreamFile(fname.c_str());
 	if (!stream) {
 		warning("Could not find model %s", filename.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	EMIModel *result = new EMIModel(filename, stream, costume);
@@ -464,7 +464,7 @@ Skeleton *ResourceLoader::loadSkeleton(const Common::String &filename) {
 	stream = openNewStreamFile(fname.c_str(), true);
 	if (!stream) {
 		warning("Could not find skeleton %s", filename.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	Skeleton *result = new Skeleton(filename, stream);
@@ -482,7 +482,7 @@ Sprite *ResourceLoader::loadSprite(const Common::String &filename, EMICostume *c
 	stream = openNewStreamFile(fname.c_str(), true);
 	if (!stream) {
 		warning("Could not find sprite %s", fname.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	Sprite *result = new Sprite();
@@ -499,7 +499,7 @@ AnimationEmi *ResourceLoader::loadAnimationEmi(const Common::String &filename) {
 	stream = openNewStreamFile(fname.c_str(), true);
 	if (!stream) {
 		warning("Could not find animation %s", filename.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	AnimationEmi *result = new AnimationEmi(filename, stream);

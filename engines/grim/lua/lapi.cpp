@@ -232,7 +232,7 @@ float lua_getnumber(lua_Object object) {
 
 const char *lua_getstring (lua_Object object) {
 	if (object == LUA_NOOBJECT || tostring(Address(object)))
-		return NULL;
+		return nullptr;
 	else
 		return (svalue(Address(object)));
 }
@@ -246,7 +246,7 @@ int32 lua_getuserdata(lua_Object object) {
 
 lua_CFunction lua_getcfunction(lua_Object object) {
 	if (!lua_iscfunction(object))
-		return NULL;
+		return nullptr;
 	else
 		return fvalue(luaA_protovalue(Address(object)));
 }
@@ -358,8 +358,8 @@ void lua_settag(int32 tag) {
 */
 
 // Hooks
-lua_CHFunction lua_callhook = NULL;
-lua_LHFunction lua_linehook = NULL;
+lua_CHFunction lua_callhook = nullptr;
+lua_LHFunction lua_linehook = nullptr;
 
 lua_Function lua_stackedfunction(int32 level) {
 	StkId i;

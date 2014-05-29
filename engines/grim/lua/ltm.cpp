@@ -20,7 +20,7 @@ namespace Grim {
 const char *luaT_eventname[] = {  // ORDER IM
 	"gettable", "settable", "index", "getglobal", "setglobal", "add",
 	"sub", "mul", "div", "pow", "unm", "lt", "le", "gt", "ge",
-	"concat", "gc", "function", NULL
+	"concat", "gc", "function", nullptr
 };
 
 static int32 luaI_checkevent(const char *name, const char *list[]) {
@@ -146,7 +146,7 @@ const char *luaT_travtagmethods(int32 (*fn)(TObject *)) {
 			if (fn(luaT_getim(t, e)))
 				return luaT_eventname[e];
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*
@@ -184,7 +184,7 @@ static luaL_reg tmFB[] = {
 static bool tmFBAdded = false;
 
 void luaT_setfallback() {
-	static const char *oldnames [] = { "error", "getglobal", "arith", "order", NULL };
+	static const char *oldnames [] = { "error", "getglobal", "arith", "order", nullptr };
 	TObject oldfunc;
 	lua_CFunction replace;
 	if (!tmFBAdded) {
@@ -232,7 +232,7 @@ void luaT_setfallback() {
 				replace = (e == IM_GC || e == IM_INDEX) ? nilFB : typeFB;
 			} else {
 				luaL_verror("`%.50s' is not a valid fallback name", name);
-				replace = NULL;  // to avoid warnings
+				replace = nullptr;  // to avoid warnings
 				oldfunc.ttype = LUA_T_NIL; // to avoid warnings
 			}
 		}

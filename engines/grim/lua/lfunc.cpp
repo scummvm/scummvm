@@ -27,12 +27,12 @@ Closure *luaF_newclosure(int32 nelems) {
 
 TProtoFunc *luaF_newproto() {
 	TProtoFunc *f = luaM_new(TProtoFunc);
-	f->code = NULL;
+	f->code = nullptr;
 	f->lineDefined = 0;
-	f->fileName = NULL;
-	f->consts = NULL;
+	f->fileName = nullptr;
+	f->consts = nullptr;
 	f->nconsts = 0;
-	f->locvars = NULL;
+	f->locvars = nullptr;
 	luaO_insertlist(&rootproto, (GCnode *)f);
 	nblocks += gcsizeproto(f);
 	return f;
@@ -71,17 +71,17 @@ void luaF_freeclosure(Closure *l) {
 */
 char *luaF_getlocalname (TProtoFunc *func, int32 local_number, int32 line) {
 	int32 count = 0;
-	char *varname = NULL;
+	char *varname = nullptr;
 	LocVar *lv = func->locvars;
 	if (!lv)
-		return NULL;
+		return nullptr;
 	for (; lv->line != -1 && lv->line < line; lv++) {
 		if (lv->varname) {  // register
 			if (++count == local_number)
 				varname = lv->varname->str;
 		} else {  // unregister
 			if (--count < local_number) {
-				varname = NULL;
+				varname = nullptr;
 			}
 		}
 	}

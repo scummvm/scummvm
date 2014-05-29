@@ -167,7 +167,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::allocSlot() {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGroupId) {
@@ -184,12 +184,12 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 
 	strcpy(sound->name, soundName);
 	sound->volGroupId = volGroupId;
-	sound->inStream = NULL;
+	sound->inStream = nullptr;
 
 	sound->inStream = g_resourceloader->openNewStreamFile(soundName);
 	if (!sound->inStream) {
 		closeSound(sound);
-		return NULL;
+		return nullptr;
 	}
 
 	if (!_demo && scumm_stricmp(extension, "imu") == 0) {
@@ -201,7 +201,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 		sound->mcmpMgr = new McmpMgr();
 		if (!sound->mcmpMgr->openSound(soundName, sound->inStream, headerSize)) {
 			closeSound(sound);
-			return NULL;
+			return nullptr;
 		}
 		parseSoundHeader(sound, headerSize);
 		sound->mcmpData = true;
@@ -217,22 +217,22 @@ void ImuseSndMgr::closeSound(SoundDesc *sound) {
 
 	if (sound->mcmpMgr) {
 		delete sound->mcmpMgr;
-		sound->mcmpMgr = NULL;
+		sound->mcmpMgr = nullptr;
 	}
 
 	if (sound->region) {
 		delete[] sound->region;
-		sound->region = NULL;
+		sound->region = nullptr;
 	}
 
 	if (sound->jump) {
 		delete[] sound->jump;
-		sound->jump = NULL;
+		sound->jump = nullptr;
 	}
 
 	if (sound->inStream) {
 		delete sound->inStream;
-		sound->inStream = NULL;
+		sound->inStream = nullptr;
 	}
 
 	memset(sound, 0, sizeof(SoundDesc));

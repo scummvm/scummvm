@@ -265,7 +265,7 @@ const ControlDescriptor controls[] = {
 // tell EMI there is no joystick selected
 	{ "joy_selected", -1 },
 
-	{ NULL, 0 }
+	{ nullptr, 0 }
 };
 
 // CHAR_KEY tests to see whether a keycode is for

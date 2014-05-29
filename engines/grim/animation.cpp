@@ -202,7 +202,7 @@ AnimManager::~AnimManager() {
 	foreach (const AnimationEntry &entry, _activeAnims) {
 		Animation *anim = entry._anim;
 		// Don't call deactivate() here so we don't mess with the list we're using.
-		anim->_manager = NULL;
+		anim->_manager = nullptr;
 		anim->_active = false;
 	}
 }

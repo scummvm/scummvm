@@ -70,12 +70,12 @@
 
 namespace Grim {
 
-GrimEngine *g_grim = NULL;
-GfxBase *g_driver = NULL;
+GrimEngine *g_grim = nullptr;
+GfxBase *g_driver = nullptr;
 int g_imuseState = -1;
 
 GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		Engine(syst), _currSet(NULL), _selectedActor(NULL), _pauseStartTime(0) {
+		Engine(syst), _currSet(nullptr), _selectedActor(nullptr), _pauseStartTime(0) {
 	g_grim = this;
 
 	_debugger = new Debugger();
@@ -87,12 +87,12 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	if (getGameType() == GType_GRIM)
 		g_registry = new Registry();
 	else
-		g_registry = NULL;
+		g_registry = nullptr;
 
-	g_resourceloader = NULL;
-	g_localizer = NULL;
-	g_movie = NULL;
-	g_imuse = NULL;
+	g_resourceloader = nullptr;
+	g_localizer = nullptr;
+	g_movie = nullptr;
+	g_imuse = nullptr;
 
 	//Set default settings
 	ConfMan.registerDefault("soft_renderer", false);
@@ -110,8 +110,8 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	_currSet = NULL;
-	_selectedActor = NULL;
+	_currSet = nullptr;
+	_selectedActor = nullptr;
 	_controlsEnabled = new bool[KEYCODE_EXTRA_LAST];
 	_controlsState = new bool[KEYCODE_EXTRA_LAST];
 	for (int i = 0; i < KEYCODE_EXTRA_LAST; i++) {
@@ -128,8 +128,8 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	else
 		_speedLimitMs = 1000 / speed;
 	ConfMan.setInt("engine_speed", 1000 / _speedLimitMs);
-	_listFilesIter = NULL;
-	_savedState = NULL;
+	_listFilesIter = nullptr;
+	_savedState = nullptr;
 	_fps[0] = 0;
 	_iris = new Iris();
 	_buildActiveActorsList = false;
@@ -141,7 +141,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_printLineDefaults.setWidth(0);
 	_printLineDefaults.setHeight(0);
 	_printLineDefaults.setFGColor(c);
-	_printLineDefaults.setFont(NULL);
+	_printLineDefaults.setFont(nullptr);
 	_printLineDefaults.setJustify(TextObject::LJUSTIFY);
 
 	_sayLineDefaults.setX(0);
@@ -149,7 +149,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_sayLineDefaults.setWidth(0);
 	_sayLineDefaults.setHeight(0);
 	_sayLineDefaults.setFGColor(c);
-	_sayLineDefaults.setFont(NULL);
+	_sayLineDefaults.setFont(nullptr);
 	_sayLineDefaults.setJustify(TextObject::CENTER);
 
 	_blastTextDefaults.setX(0);
@@ -157,7 +157,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_blastTextDefaults.setWidth(0);
 	_blastTextDefaults.setHeight(0);
 	_blastTextDefaults.setFGColor(c);
-	_blastTextDefaults.setFont(NULL);
+	_blastTextDefaults.setFont(nullptr);
 	_blastTextDefaults.setJustify(TextObject::LJUSTIFY);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -177,20 +177,20 @@ GrimEngine::~GrimEngine() {
 	if (g_registry) {
 		g_registry->save();
 		delete g_registry;
-		g_registry = NULL;
+		g_registry = nullptr;
 	}
 	delete g_movie;
-	g_movie = NULL;
+	g_movie = nullptr;
 	delete g_imuse;
-	g_imuse = NULL;
+	g_imuse = nullptr;
 	delete g_sound;
-	g_sound = NULL;
+	g_sound = nullptr;
 	delete g_localizer;
-	g_localizer = NULL;
+	g_localizer = nullptr;
 	delete g_resourceloader;
-	g_resourceloader = NULL;
+	g_resourceloader = nullptr;
 	delete g_driver;
-	g_driver = NULL;
+	g_driver = nullptr;
 	delete _iris;
 	delete _debugger;
 
@@ -207,7 +207,7 @@ void GrimEngine::clearPools() {
 	Font::getPool().deleteObjects();
 	ObjectState::getPool().deleteObjects();
 
-	_currSet = NULL;
+	_currSet = nullptr;
 }
 
 LuaBase *GrimEngine::createLua() {
@@ -237,7 +237,7 @@ const char *GrimEngine::getUpdateFilename() {
 	if (!(getGameFlags() & ADGF_DEMO))
 		return "gfupd101.exe";
 	else
-		return 0;
+		return nullptr;
 }
 
 Common::Error GrimEngine::run() {
@@ -292,7 +292,7 @@ Common::Error GrimEngine::run() {
 		warning("TODO: Play Aspyr logo");
 	}
 
-	Bitmap *splash_bm = NULL;
+	Bitmap *splash_bm = nullptr;
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
 		splash_bm = Bitmap::create("splash.bm");
 	else if ((_gameFlags & ADGF_DEMO) && getGameType() == GType_MONKEY4)
@@ -302,7 +302,7 @@ Common::Error GrimEngine::run() {
 
 	g_driver->clearScreen();
 
-	if (splash_bm != NULL)
+	if (splash_bm != nullptr)
 		splash_bm->draw();
 
 	// This flipBuffer() may make the OpenGL renderer show garbage instead of the splash,
@@ -384,7 +384,7 @@ void GrimEngine::savegameCallback() {
 }
 
 void GrimEngine::handleDebugLoadResource() {
-	void *resource = NULL;
+	void *resource = nullptr;
 	int c, i = 0;
 	char buf[513];
 
@@ -402,7 +402,7 @@ void GrimEngine::handleDebugLoadResource() {
 	else if (strstr(buf, ".cmp"))
 		resource = (void *)g_resourceloader->loadColormap(buf);
 	else if (strstr(buf, ".cos"))
-		resource = (void *)g_resourceloader->loadCostume(buf, NULL);
+		resource = (void *)g_resourceloader->loadCostume(buf, nullptr);
 	else if (strstr(buf, ".lip"))
 		resource = (void *)g_resourceloader->loadLipSync(buf);
 	else if (strstr(buf, ".snm"))
@@ -820,9 +820,9 @@ void GrimEngine::savegameRestore() {
 	if (g_registry)
 	    g_registry->save();
 
-	_selectedActor = NULL;
+	_selectedActor = nullptr;
 	delete _currSet;
-	_currSet = NULL;
+	_currSet = nullptr;
 
 	Bitmap::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Bitmaps restored successfully.");
@@ -1080,7 +1080,7 @@ Set *GrimEngine::findSet(const Common::String &name) {
 		if (s->getName() == name)
 			return s;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void GrimEngine::setSetLock(const char *name, bool lockStatus) {

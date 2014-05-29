@@ -36,7 +36,7 @@ namespace Grim {
 
 static bool decompress_codec3(const char *compressed, char *result, int maxBytes);
 
-Common::HashMap<Common::String, BitmapData *> *BitmapData::_bitmaps = NULL;
+Common::HashMap<Common::String, BitmapData *> *BitmapData::_bitmaps = nullptr;
 
 BitmapData *BitmapData::getBitmapData(const Common::String &fname) {
 	Common::String str(fname);
@@ -57,7 +57,7 @@ BitmapData *BitmapData::getBitmapData(const Common::String &fname) {
 BitmapData::BitmapData(const Common::String &fname) {
 	_fname = fname;
 	_refCount = 1;
-	_data = 0;
+	_data = nullptr;
 	_loaded = false;
 	_keepData = true;
 
@@ -71,19 +71,19 @@ BitmapData::BitmapData(const Common::String &fname) {
 	_numTex = 0;
 	_bpp = 0;
 	_colorFormat = 0;
-	_texIds = NULL;
+	_texIds = nullptr;
 	_hasTransparency = 0;
 
-	_texc = NULL;
+	_texc = nullptr;
 
-	_verts = NULL;
-	_layers = NULL;
+	_verts = nullptr;
+	_layers = nullptr;
 
 	_numCoords = 0;
 	_numVerts = 0;
 	_numLayers = 0;
 
-	_userData = NULL;
+	_userData = nullptr;
 }
 
 void BitmapData::load() {
@@ -170,7 +170,7 @@ bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 	// Initially, no GPU-side textures created. the createBitmap
 	// function will allocate some if necessary (and successful)
 	_numTex = 0;
-	_texIds = NULL;
+	_texIds = nullptr;
 
 	g_driver->createBitmap(this);
 	return true;
@@ -186,7 +186,7 @@ BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const cha
 	_height = h;
 	_format = 1;
 	_numTex = 0;
-	_texIds = NULL;
+	_texIds = nullptr;
 	_bpp = buf.getFormat().bytesPerPixel * 8;
 	_hasTransparency = false;
 	_colorFormat = BM_RGB565;
@@ -196,16 +196,16 @@ BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const cha
 	_loaded = true;
 	_keepData = true;
 
-	_userData = NULL;
+	_userData = nullptr;
 
 	g_driver->createBitmap(this);
 }
 
 BitmapData::BitmapData() :
 		_numImages(0), _width(0), _height(0), _x(0), _y(0), _format(0), _numTex(0),
-		_bpp(0), _colorFormat(0), _texIds(0), _hasTransparency(false), _data(NULL),
-		_refCount(1), _loaded(false), _keepData(false), _texc(NULL), _verts(NULL),
-		_layers(NULL), _numCoords(0), _numVerts(0), _numLayers(0), _userData(NULL) {
+		_bpp(0), _colorFormat(0), _texIds(nullptr), _hasTransparency(false), _data(nullptr),
+		_refCount(1), _loaded(false), _keepData(false), _texc(nullptr), _verts(nullptr),
+		_layers(nullptr), _numCoords(0), _numVerts(0), _numLayers(0), _userData(nullptr) {
 }
 
 BitmapData::~BitmapData() {
@@ -220,7 +220,7 @@ BitmapData::~BitmapData() {
 		}
 		if (_bitmaps->empty()) {
 			delete _bitmaps;
-			_bitmaps = NULL;
+			_bitmaps = nullptr;
 		}
 	}
 }
@@ -228,7 +228,7 @@ BitmapData::~BitmapData() {
 void BitmapData::freeData() {
 	if (!_keepData) {
 		delete[] _data;
-		_data = NULL;
+		_data = nullptr;
 	}
 }
 
@@ -383,7 +383,7 @@ Bitmap::Bitmap() {
 Bitmap *Bitmap::create(const Common::String &filename) {
 	if (!SearchMan.hasFile(filename)) {
 		warning("Could not find bitmap %s", filename.c_str());
-		return NULL;
+		return nullptr;
 	}
 	Bitmap *b = new Bitmap(filename);
 	return b;
@@ -447,7 +447,7 @@ void Bitmap::freeData() {
 	--_data->_refCount;
 	if (_data->_refCount < 1) {
 		delete _data;
-		_data = 0;
+		_data = nullptr;
 	}
 }
 

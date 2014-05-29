@@ -28,7 +28,7 @@
 namespace Grim {
 
 Head::Joint::Joint() :
-		_node(NULL), _pitch(0.f), _yaw(0.f), _roll(0.f) {
+		_node(nullptr), _pitch(0.f), _yaw(0.f), _roll(0.f) {
 }
 
 void Head::Joint::init(ModelNode *node) {

@@ -79,7 +79,7 @@ static void skipspace(LexState *LS) {
 }
 
 static int32 checkcond(char *buff) {
-	static const char *opts[] = { "nil", "1", NULL };
+	static const char *opts[] = { "nil", "1", nullptr };
 	int32 i = luaO_findstring(buff, opts);
 	if (i >= 0)
 		return i;
@@ -120,7 +120,7 @@ static void ifskip (LexState *LS) {
 
 static void inclinenumber (LexState *LS) {
 	static const char *pragmas [] =
-	{ "debug", "nodebug", "endinput", "end", "ifnot", "if", "else", NULL };
+	{ "debug", "nodebug", "endinput", "end", "ifnot", "if", "else", nullptr };
 	next(LS);  // skip '\n'
 	++LS->linenumber;
 	if (LS->current == '$') {  // is a pragma?

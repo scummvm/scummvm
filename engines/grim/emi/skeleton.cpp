@@ -197,7 +197,7 @@ Joint *Skeleton::getJointNamed(const Common::String &name) const {
 		return & _joints[0];
 	} else if (idx == -1) {
 		warning("Skeleton has no joint named '%s'!", name.c_str());
-		return NULL;
+		return nullptr;
 	} else {
 		return & _joints[idx];
 	}
@@ -206,7 +206,7 @@ Joint *Skeleton::getJointNamed(const Common::String &name) const {
 Joint *Skeleton::getParentJoint(const Joint *j) const {
 	assert(j);
 	if (j->_parentIndex == -1)
-		return NULL;
+		return nullptr;
 	return &_joints[j->_parentIndex];
 }
 

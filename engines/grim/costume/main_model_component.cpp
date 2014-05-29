@@ -29,7 +29,7 @@
 namespace Grim {
 
 MainModelComponent::MainModelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
-		ModelComponent(p, parentID, filename, prevComponent, t), _hierShared(false), _parentModel(NULL) {
+		ModelComponent(p, parentID, filename, prevComponent, t), _hierShared(false), _parentModel(nullptr) {
 	if (parentID == -2 && prevComponent && prevComponent->isComponentType('M','M','D','L')) {
 		MainModelComponent *mmc = static_cast<MainModelComponent *>(prevComponent);
 
@@ -46,14 +46,14 @@ MainModelComponent::MainModelComponent(Component *p, int parentID, const char *f
 
 MainModelComponent::~MainModelComponent() {
 	if (_hierShared) {
-		_obj = NULL; // Keep ~ModelComp from deleting it
-		_animation = NULL;
+		_obj = nullptr; // Keep ~ModelComp from deleting it
+		_animation = nullptr;
 	}
 
 	foreach (MainModelComponent *child, _children) {
-		child->_obj = NULL;
-		child->_hier = NULL;
-		child->_parentModel = NULL;
+		child->_obj = nullptr;
+		child->_hier = nullptr;
+		child->_parentModel = nullptr;
 	}
 
 	if (_parentModel) {

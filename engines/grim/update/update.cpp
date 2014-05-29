@@ -39,7 +39,7 @@ Common::Archive *loadUpdateArchive(Common::SeekableReadStream *data) {
 	Common::ArchiveMemberList list;
 	if (update->listMembers(list) == 0) {
 		delete update;
-		return 0;
+		return nullptr;
 	} else
 		return update;
 

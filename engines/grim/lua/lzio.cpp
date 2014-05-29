@@ -16,7 +16,7 @@ int32 zgeteoz(ZIO *) {
 
 ZIO *zopen(ZIO *z, const char *b, int32 size, const char *name) {
 	if (!b)
-		return NULL;
+		return nullptr;
 	z->n = size;
 	z->p = (const byte *)b;
 	z->name = name;

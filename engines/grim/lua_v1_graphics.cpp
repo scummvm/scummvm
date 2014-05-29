@@ -85,7 +85,7 @@ void Lua_V1::StartFullscreenMovie() {
 
 	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::SmushMode);
-	g_grim->setMovieSubtitle(NULL);
+	g_grim->setMovieSubtitle(nullptr);
 	bool looping = getbool(2);
 	bool result = g_movie->play(lua_getstring(name), looping, 0, 0);
 	if (!result)
@@ -134,7 +134,7 @@ void Lua_V1::IsMoviePlaying() {
 void Lua_V1::StopMovie() {
 	g_movie->stop();
 	// Delete subtitles that may have not expired.
-	g_grim->setMovieSubtitle(NULL);
+	g_grim->setMovieSubtitle(nullptr);
 }
 
 void Lua_V1::PauseMovie() {
