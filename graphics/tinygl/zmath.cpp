@@ -7,7 +7,6 @@ namespace TinyGL {
 
 // Inversion of a general nxn matrix.
 // Note : m is destroyed
-
 int Matrix_Inv(float *r, float *m, int n) {
 	int k;
 	float max, tmp, t;
@@ -63,6 +62,87 @@ int Matrix_Inv(float *r, float *m, int n) {
 
 	return 0;
 }
+
+/*
+// inversion of a 4x4 matrix
+
+void gl_M4_Inv(M4 *a, const M4 *b) {
+	M4 tmp;
+	memcpy(&tmp, b, 16 * sizeof(float));
+	//tmp = *b
+	Matrix_Inv(&a->m[0][0], &tmp.m[0][0], 4);
+}
+
+void gl_M4_Rotate(M4 *a, float t, int u) {
+	float s, c;
+	int v, w;
+
+	if ((v = u + 1) > 2)
+		v = 0;
+	if ((w = v + 1) > 2)
+		w = 0;
+	s = sin(t);
+	c = cos(t);
+	gl_M4_Id(a);
+	a->m[v][v] = c;
+	a->m[v][w] = -s;
+	a->m[w][v] = s;
+	a->m[w][w] = c;
+}
+
+/*
+// inverse of a 3x3 matrix
+void gl_M3_Inv(M3 *a, const M3 *m) {
+	float det;
+
+	det = m->m[0][0] * m->m[1][1] * m->m[2][2] - m->m[0][0] * m->m[1][2] * m->m[2][1] -
+		  m->m[1][0] * m->m[0][1] * m->m[2][2] + m->m[1][0] * m->m[0][2] * m->m[2][1] +
+		  m->m[2][0] * m->m[0][1] * m->m[1][2] - m->m[2][0] * m->m[0][2] * m->m[1][1];
+
+	a->m[0][0] = (m->m[1][1] * m->m[2][2] - m->m[1][2] * m->m[2][1]) / det;
+	a->m[0][1] = -(m->m[0][1] * m->m[2][2] - m->m[0][2] * m->m[2][1]) / det;
+	a->m[0][2] = -(-m->m[0][1] * m->m[1][2] + m->m[0][2] * m->m[1][1]) / det;
+
+	a->m[1][0] = -(m->m[1][0] * m->m[2][2] - m->m[1][2] * m->m[2][0]) / det;
+	a->m[1][1] = (m->m[0][0] * m->m[2][2] - m->m[0][2] * m->m[2][0]) / det;
+	a->m[1][2] = -(m->m[0][0] * m->m[1][2] - m->m[0][2] * m->m[1][0]) / det;
+
+	a->m[2][0] = (m->m[1][0] * m->m[2][1] - m->m[1][1] * m->m[2][0]) / det;
+	a->m[2][1] = -(m->m[0][0] * m->m[2][1] - m->m[0][1] * m->m[2][0]) / det;
+	a->m[2][2] = (m->m[0][0] * m->m[1][1] - m->m[0][1] * m->m[1][0]) / det;
+}
+*/
+
+// vector arithmetic
+/*
+int gl_V3_Norm(V3 *a) {
+	float n;
+	n = sqrt(a->X * a->X + a->Y * a->Y + a->Z * a->Z);
+	if (n == 0)
+		return 1;
+	a->X /= n;
+	a->Y /= n;
+	a->Z /= n;
+	return 0;
+}
+
+V3 gl_V3_New(float x, float y, float z) {
+	V3 a;
+	a.X = x;
+	a.Y = y;
+	a.Z = z;
+	return a;
+}
+
+V4 gl_V4_New(float x, float y, float z, float w) {
+	V4 a;
+	a.X = x;
+	a.Y = y;
+	a.Z = z;
+	a.W = w;
+	return a;
+}
+*/
 
 Vector3::Vector3() {
 	// Empty constructor, no overhead
@@ -175,55 +255,9 @@ Matrix4 Matrix4::inverseOrtho() const {
 }
 
 Matrix4 Matrix4::inverse() const {
-	Matrix4 source(*this);
-	int k;
-	float max, tmp, t;
-
-	// identitée dans r
-	Matrix4 result = identity();
-
-	for (int j = 0; j < 4; j++) {
-		max = source.get(j,j);
-		k = j;
-		for (int i = j + 1; i < 4; i++) {
-			if (fabs(source.get(i,j)) > fabs(max)) {
-				k = i;
-				max = source.get(i,j);
-			}
-		}
-		// non intersible matrix
-		if (max == 0)
-			return result;
-
-		if (k != j) {
-			for (int i = 0; i < 4; i++) {
-				tmp = source.get(j,i);
-				source.set(j,i, source.get(k,i));
-				source.set(k,i, tmp);
-
-				tmp = result.get(j,i);
-				result.set(j,i, source.get(k,i));
-				result.set(k,i,tmp);
-			}
-		}
-
-		max = 1 / max;
-		for (int i = 0; i < 4; i++) {
-			source.set(j,i, max * source.get(j,i));
-			result.set(j,i, max * result.get(j,i));
-		}
-
-		for (int l = 0; l < 4; l++) {
-			if (l != j) {
-				t = source.get(l,j);
-				for (int i = 0; i < 4; i++) {
-					source.set(l,i, source.get(l,i) - t * source.get(j,i));
-					result.set(l,i, result.get(l,i) - t * result.get(j,i));
-				}
-			}
-		}
-	}
-
+	Matrix4 result;
+	Matrix4 source = *this;
+	Matrix_Inv((float*)result._m,(float*)source._m,4);
 	return result;
 }
 
@@ -248,27 +282,36 @@ Matrix4 Matrix4::rotation(float t, int u) {
 
 Vector3 Matrix4::transform(const Vector3 &vector) const {
 	return Vector3(
-	           vector.getX() * get(0,0) + vector.getY() * get(0,1) + vector.getZ() * get(0,2) + get(0,3),
-	           vector.getX() * get(1,0) + vector.getY() * get(1,1) + vector.getZ() * get(1,2) + get(1,3),
-	           vector.getX() * get(2,0) + vector.getY() * get(2,1) + vector.getZ() * get(2,2) + get(2,3));
+	           vector.getX() * get(0,0) + vector.getY() * get(1,0) + vector.getZ() * get(2,0) + get(3,0),
+	           vector.getX() * get(0,1) + vector.getY() * get(1,1) + vector.getZ() * get(2,1) + get(3,1),
+	           vector.getX() * get(0,2) + vector.getY() * get(1,2) + vector.getZ() * get(2,2) + get(3,2));
 }
 
 Vector3 Matrix4::transform3x3(const Vector3 &vector) const {
 	return Vector3(
-	           vector.getX() * get(0,0) + vector.getY() * get(0,1) + vector.getZ() * get(0,2),
-	           vector.getX() * get(1,0) + vector.getY() * get(1,1) + vector.getZ() * get(1,2),
-	           vector.getX() * get(2,0) + vector.getY() * get(2,1) + vector.getZ() * get(2,2));
+	           vector.getX() * get(0,0) + vector.getY() * get(1,0) + vector.getZ() * get(2,0),
+	           vector.getX() * get(0,1) + vector.getY() * get(1,1) + vector.getZ() * get(2,1),
+	           vector.getX() * get(0,2) + vector.getY() * get(1,2) + vector.getZ() * get(2,2));
+}
+
+TinyGL::Vector4 Matrix4::transform3x4( const Vector4 &vector ) const {
+	return Vector4(
+		vector.getX() * get(0,0) + vector.getY() * get(1,0) + vector.getZ() * get(2,0) + get(3,0),
+		vector.getX() * get(0,1) + vector.getY() * get(1,1) + vector.getZ() * get(2,1) + get(3,1),
+		vector.getX() * get(0,2) + vector.getY() * get(1,2) + vector.getZ() * get(2,2) + get(3,2),
+		vector.getX() * get(0,3) + vector.getY() * get(1,3) + vector.getZ() * get(2,3) + get(3,3));
 }
 
 Vector4 Matrix4::transform(const Vector4 &vector) const {
 	return Vector4(
-	           vector.getX() * get(0,0) + vector.getY() * get(0,1) + vector.getZ() * get(0,2) + vector.getW() * get(0,3),
-	           vector.getX() * get(1,0) + vector.getY() * get(1,1) + vector.getZ() * get(1,2) + vector.getW() * get(1,3),
-	           vector.getX() * get(2,0) + vector.getY() * get(2,1) + vector.getZ() * get(2,2) + vector.getW() * get(2,3),
-	           vector.getX() * get(3,0) + vector.getY() * get(3,1) + vector.getZ() * get(3,2) + vector.getW() * get(3,3));
+	           vector.getX() * get(0,0) + vector.getY() * get(1,0) + vector.getZ() * get(2,0) + vector.getW() * get(3,0),
+	           vector.getX() * get(0,1) + vector.getY() * get(1,1) + vector.getZ() * get(2,1) + vector.getW() * get(3,1),
+	           vector.getX() * get(0,2) + vector.getY() * get(1,2) + vector.getZ() * get(2,2) + vector.getW() * get(3,2),
+	           vector.getX() * get(0,3) + vector.getY() * get(1,3) + vector.getZ() * get(2,3) + vector.getW() * get(3,3));
 }
 
 bool Matrix4::IsIdentity() const {
+	//NOTE: This might need to be implemented in a fault-tolerant way.
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (i == j) {

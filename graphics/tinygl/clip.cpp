@@ -198,9 +198,14 @@ float(*clip_proc[6])(Vector4 *, Vector4 *, Vector4 *) =  {
 static inline void updateTmp(GLContext *c, GLVertex *q,
 							 GLVertex *p0, GLVertex *p1, float t) {
 	if (c->current_shade_model == TGL_SMOOTH) {
+		float a = q->color.getW();
 		q->color = p0->color + (p1->color - p0->color) * t;
+		q->color.setW(a);
 	} else {
-		q->color = p0->color;
+		q->color.setX(p0->color.getX());
+		q->color.setY(p0->color.getY());
+		q->color.setZ(p0->color.getZ());
+		//q->color = p0->color;
 	}
 
 	if (c->texture_2d_enabled) {

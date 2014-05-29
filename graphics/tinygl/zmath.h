@@ -239,6 +239,7 @@ public:
 
 	Vector3 transform(const Vector3 &vector) const;
 	Vector3 transform3x3(const Vector3 &vector) const; // Transform the vector as if this were a 3x3 matrix.
+	Vector4 transform3x4(const Vector4 &vector) const; // Transform the vector as if this were a 3x4 matrix.
 	Vector4 transform(const Vector4 &vector) const;
 private:
 	float _m[4][4];

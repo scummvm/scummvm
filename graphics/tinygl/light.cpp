@@ -240,8 +240,8 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 				vcoord = v->ec.toVector3();
 				vcoord.normalize();
 				s.setX(d.getX() - vcoord.getX());
-				s.setY(d.getX() - vcoord.getX());
-				s.setZ(d.getX() - vcoord.getX());
+				s.setY(d.getY() - vcoord.getX());
+				s.setZ(d.getZ() - vcoord.getX());
 				//NOTE: this operation is rather suspicious, this code should be tested.
 			} else {
 				s = d;

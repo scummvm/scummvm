@@ -69,7 +69,7 @@ void glopBegin(GLContext *c, GLParam *p) {
 			c->matrix_model_projection = (*c->matrix_stack_ptr[1]) * (*c->matrix_stack_ptr[0]);
 			// test to accelerate computation
 			c->matrix_model_projection_no_w_transform = 0;
-			if (c->matrix_model_projection.get(3,0) == 0.0 && c->matrix_model_projection.get(3,1) == 0.0 && c->matrix_model_projection.get(3,2) == 0.0)
+			if (c->matrix_model_projection.get(0,3) == 0.0 && c->matrix_model_projection.get(1,3) == 0.0 && c->matrix_model_projection.get(2,3) == 0.0)
 				c->matrix_model_projection_no_w_transform = 1;
 		}
 
@@ -124,7 +124,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 		// eye coordinates needed for lighting
 
 		m = c->matrix_stack_ptr[0];
-		v->ec = m->transform(v->coord);
+		v->ec = m->transform3x4(v->coord);
 
 		// projection coordinates
 		m = c->matrix_stack_ptr[1];
@@ -143,7 +143,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 		// NOTE: W = 1 is assumed
 		m = &c->matrix_model_projection;
 
-		v->pc = m->transform(v->coord);
+		v->pc = m->transform3x4(v->coord);
 		if (c->matrix_model_projection_no_w_transform) {
 			v->pc.setW(m->get(3,3)); 
 		}
