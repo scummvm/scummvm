@@ -42,7 +42,7 @@ int EMILuaVarComponent::update(uint time) {
 }
 
 void EMILuaVarComponent::setKey(int val) {
-	warning("LuaV component: setting %s to %d", _name.c_str(), val);
+	Debug::debug(Debug::Lua, "LuaV component: setting %s to %d", _name.c_str(), val);
 	lua_pushnumber(val);
 	lua_setglobal(_name.c_str());
 }
