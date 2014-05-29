@@ -26,6 +26,7 @@
 #include "fullpipe/messages.h"
 #include "fullpipe/modal.h"
 #include "fullpipe/statics.h"
+#include "fullpipe/gameloader.h"
 
 namespace Fullpipe {
 
@@ -394,8 +395,18 @@ void MessageQueue::update() {
 }
 
 void MessageQueue::messageQueueCallback1(int par) {
-	// Autosave
-	debug(3, "STUB: MessageQueue::messageQueueCallback1()");
+	if (g_fp->_isSaveAllowed && par == 16) {
+		if (g_fp->_globalMessageQueueList->size() && (*g_fp->_globalMessageQueueList)[0] != 0) {
+			for (int i = 0; i < g_fp->_globalMessageQueueList->size(); i++) {
+				if ((*g_fp->_globalMessageQueueList)[i]->_flags & 1)
+					if ((*g_fp->_globalMessageQueueList)[i] != this && !(*g_fp->_globalMessageQueueList)[i]->_isFinished)
+						return;
+			}
+		}
+
+		if (g_fp->_currentScene)
+			g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, "savetmp.sav");
+	}
 }
 
 void MessageQueue::addExCommand(ExCommand *ex) {
