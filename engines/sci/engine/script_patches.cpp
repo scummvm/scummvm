@@ -1672,6 +1672,7 @@ static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
 	PATCH_ADDTOOFFSET(+2),              // skip jmp [ret]
 	0x34, PATCH_UINT16(0x0001),         // ldi 0001
 	0xa1, PATCH_UINT16(97),             // sag 97d (set our eastDoor-wired-global)
+	PATCH_END
 };
 
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
