@@ -231,6 +231,7 @@ public:
 	~PicButtonWidget();
 
 	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled);
+	void setAGfx(const Graphics::TransparentSurface *gfx, int statenum = kPicButtonStateEnabled, ThemeEngine::AutoScaleMode mode = ThemeEngine::kAutoScaleNone);
 	void setGfx(int w, int h, int r, int g, int b, int statenum = kPicButtonStateEnabled);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
@@ -241,9 +242,12 @@ protected:
 	void drawWidget();
 
 	Graphics::Surface _gfx[kPicButtonStateMax + 1];
+	Graphics::TransparentSurface _agfx[kPicButtonStateMax + 1];
 	int _alpha;
 	bool _transparency;
 	bool _showButton;
+	bool _isAlpha;
+	ThemeEngine::AutoScaleMode _mode;
 };
 
 /* CheckboxWidget */
