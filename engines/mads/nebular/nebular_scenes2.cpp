@@ -405,7 +405,7 @@ void Scene202::enter() {
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(149, 113));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
-	int idx = _scene->_dynamicHotspots.add(NOUN_BONE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+	int idx = _scene->_dynamicHotspots.add(NOUN_SKULL, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(153, 97), FACING_SOUTH);
 
 	if (!(_globals[kBone202Status] & 1)) {
@@ -852,7 +852,7 @@ void Scene202::actions() {
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
 
-			_ladderHotspotId = _scene->_dynamicHotspots.add(NOUN_LADDER, 79, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
+			_ladderHotspotId = _scene->_dynamicHotspots.add(NOUN_LADDER, 78, -1, Common::Rect(241, 68, 241 + 12, 68 + 54));
 			_scene->_dynamicHotspots.setPosition(_ladderHotspotId, Common::Point(246, 124), FACING_NORTH);
 			_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 1);
