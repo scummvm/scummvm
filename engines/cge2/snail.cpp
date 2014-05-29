@@ -361,7 +361,39 @@ void CGE2Engine::snRSeq(Sprite *spr, int val) {
 }
 
 void CGE2Engine::snSend(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snSend()");
+	if (!spr)
+		return;
+	
+	// Sending", spr->File
+	// from cave", spr->Cave
+	// to cave", val
+	bool was1 = (_vga->_showQ->locate(spr->_ref) != nullptr);
+	bool val1 = (val == 0 || val == _now);
+	spr->_scene = val;
+	releasePocket(spr);
+	if (val1 != was1) {
+		if (was1) {
+			// deactivating
+			hide1(spr);
+			spr->_flags._slav = false;
+			if (spr == _heroTab[_sex]->_ptr)
+				if (_heroTab[!_sex]->_ptr->_scene == _now)
+					switchHero(!_sex);
+			_spare->dispose(spr);
+		} else {
+			// activating
+			if (byte(spr->_ref) == 0)
+				_bitmapPalette = _vga->_sysPal;
+			_vga->_showQ->insert(spr);
+			if (isHero(spr)) {
+				V2D p = *_heroTab[spr->_ref & 1]->_posTab[val];
+				spr->gotoxyz(V3D(p.x, 0, p.y));
+				((Hero*)spr)->setCurrent();
+			}
+			_taken = false;
+			_bitmapPalette = NULL;
+		}
+	}
 }
 
 void CGE2Engine::snSwap(Sprite *spr, int val) {
@@ -490,6 +522,10 @@ void CGE2Engine::snRoom(Sprite *spr, int val) {
 
 void CGE2Engine::snGhost(Bitmap *bmp) {
 	warning("STUB: CGE2Engine::snGhost()");
+}
+
+void CGE2Engine::hide1(Sprite *spr) {
+	_commandHandlerTurbo->addCommand(kCmdGhost, -1, 0, spr->ghost());
 }
 
 void CommandHandler::addCommand(CommandType com, int ref, int val, void *ptr) {

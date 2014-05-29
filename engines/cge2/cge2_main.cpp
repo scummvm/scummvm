@@ -582,6 +582,10 @@ void CGE2Engine::loadPos() {
 		error("Missing file: CGE.HXY");
 }
 
+void CGE2Engine::releasePocket(Sprite *spr) {
+	warning("STUB: CGE2Engine::releasePocket()");
+}
+
 void CGE2Engine::checkSaySwitch() {
 	warning("STUB: CGE2Engine::checkSaySwitch()");
 }
@@ -746,6 +750,10 @@ void CGE2Engine::killText() {
 
 	_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, _talk);
 	_talk = NULL;
+}
+
+void CGE2Engine::switchHero(bool sex) {
+	warning("STUB: CGE2Engine::switchHero()");
 }
 
 } // End of namespace CGE2

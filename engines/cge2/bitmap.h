@@ -50,7 +50,7 @@ enum {
 struct HideDesc {
 	uint16 _skip;
 	uint16 _hide;
-} PACKED_STRUCT;
+};
 
 #include "common/pack-end.h"
 

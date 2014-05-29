@@ -136,6 +136,8 @@ public:
 	void checkSaySwitch();
 	void qGame();
 	void loadPos();
+	void releasePocket(Sprite *spr);
+	void switchHero(bool sex);
 
 	void setEye(V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
@@ -185,6 +187,8 @@ public:
 	void snSound(Sprite *spr, int wav);
 	void snRoom(Sprite *spr, int val);
 	void snGhost(Bitmap *bmp);
+	
+	void hide1(Sprite *spr);
 
 	const ADGameDescription *_gameDescription;
 
