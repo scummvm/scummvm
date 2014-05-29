@@ -521,7 +521,12 @@ void CGE2Engine::snRoom(Sprite *spr, int val) {
 }
 
 void CGE2Engine::snGhost(Bitmap *bmp) {
-	warning("STUB: CGE2Engine::snGhost()");
+	V2D p(this, *bmp->_v & 0xFFFF, *bmp->_v >> 16);
+	bmp->hide(p.x, p.y);
+	delete bmp->_b;
+	bmp->_v = nullptr;
+	bmp->_b = nullptr;
+	delete bmp;
 }
 
 void CGE2Engine::hide1(Sprite *spr) {

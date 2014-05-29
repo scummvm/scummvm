@@ -606,12 +606,18 @@ void Sprite::hide() {
 BitmapPtr Sprite::ghost() {
 	SprExt *e = _ext;
 	if (!e->_b1)
-		return NULL;
+		return nullptr;
 
-	BitmapPtr bmp = new Bitmap(_vm, 0, 0, (uint8 *)NULL);
-	assert(bmp != NULL);
-
-	warning("STUB: Sprite::ghost()");
+	BitmapPtr bmp = new Bitmap(_vm, 0, 0, (uint8 *)nullptr);
+	assert(bmp != nullptr);
+	bmp->_w = e->_b1->_w;
+	bmp->_h = e->_b1->_h;
+	bmp->_b = new HideDesc[bmp->_h];
+	assert(bmp->_b != nullptr);
+	memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc)* bmp->_h);
+	uint8 *v = new uint8;
+	*v = (e->_p1.y << 16) + e->_p1.x;
+	bmp->_v = v;
 
 	return bmp;
 }
