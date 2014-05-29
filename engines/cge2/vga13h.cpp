@@ -187,13 +187,6 @@ bool Sprite::seqTest(int n) {
 	return true;
 }
 
-//CommandHandler::Command *Sprite::snList(SnList type) {
-//	SprExt *e = _ext;
-//	if (e)
-//		return (type == kNear) ? e->_near : e->_take;
-//	return NULL;
-//}
-
 void Sprite::setName(char *newName) {
 	if (!_ext)
 		return;
