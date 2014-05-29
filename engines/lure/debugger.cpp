@@ -563,7 +563,7 @@ bool Debugger::cmd_saveStrings(int argc, const char **argv) {
 	}
 
 	uint16 id = strToInt(argv[1]);
-	strings.getString(id, buffer, NULL, NULL);
+	strings.getString(id, buffer);
 	debugPrintf("%s\n", buffer);
 
 /* Commented out code for saving all text strings - note that 0x1000 is chosen
