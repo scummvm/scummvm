@@ -327,7 +327,11 @@ void CGE2Engine::snKill(Sprite *spr) {
 }
 
 void CGE2Engine::snHide(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snHide()");
+	if (spr) {
+		spr->_flags._hide = (val >= 0) ? (val != 0) : (!spr->_flags._hide);
+		if (spr->_flags._shad)
+			spr->_prev->_flags._hide = spr->_flags._hide;
+	}
 }
 
 void CGE2Engine::snMidi(int val) {
