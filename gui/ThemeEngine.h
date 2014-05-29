@@ -686,10 +686,10 @@ protected:
 	GUI::ThemeEval *_themeEval;
 
 	/** Main screen surface. This is blitted straight into the overlay. */
-	Graphics::Surface _screen;
+	Graphics::TransparentSurface _screen;
 
 	/** Backbuffer surface. Stores previous states of the screen to blit back */
-	Graphics::Surface _backBuffer;
+	Graphics::TransparentSurface _backBuffer;
 
 	/** Sets whether the current drawing is being buffered (stored for later
 	    processing) or drawn directly to the screen. */
