@@ -32,12 +32,12 @@ class Material;
 class MaterialComponent : public Component {
 public:
 	MaterialComponent(Component *parent, int parentID, const char *filename, tag32 tag);
-	void init();
-	void setKey(int val);
-	void reset();
-	void resetColormap();
-	void saveState(SaveGame *state);
-	void restoreState(SaveGame *state);
+	void init() override;
+	void setKey(int val) override;
+	void reset() override;
+	void resetColormap() override;
+	void saveState(SaveGame *state) override;
+	void restoreState(SaveGame *state) override;
 
 private:
 	Material *_mat;

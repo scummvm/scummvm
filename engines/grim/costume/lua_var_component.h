@@ -30,7 +30,7 @@ namespace Grim {
 class LuaVarComponent : public Component {
 public:
 	LuaVarComponent(Component *parent, int parentID, const char *name, tag32 tag);
-	void setKey(int val);
+	void setKey(int val) override;
 };
 
 } // end of namespace Grim

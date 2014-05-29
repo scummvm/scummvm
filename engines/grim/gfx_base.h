@@ -61,7 +61,7 @@ public:
 	SpecialtyMaterial() { _texture = NULL; }
 	~SpecialtyMaterial() { delete _texture; }
 	void create(const char *data, int width, int height);
-	virtual void select() const;
+	virtual void select() const override;
 	Texture *_texture;
 };
 

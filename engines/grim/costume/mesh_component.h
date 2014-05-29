@@ -34,15 +34,15 @@ class ModelNode;
 class MeshComponent : public Component {
 public:
 	MeshComponent(Component *parent, int parentID, const char *name, tag32 tag);
-	void init();
+	void init() override;
 	CMap *cmap();
-	void setKey(int val);
-	int update(uint time);
-	void reset();
-	void saveState(SaveGame *state);
-	void restoreState(SaveGame *state);
+	void setKey(int val) override;
+	int update(uint time) override;
+	void reset() override;
+	void saveState(SaveGame *state) override;
+	void restoreState(SaveGame *state) override;
 
-	void setMatrix(const Math::Matrix4 &matrix) { _matrix = matrix; };
+	void setMatrix(const Math::Matrix4 &matrix) override { _matrix = matrix; };
 
 	ModelNode *getNode() { return _node; }
 	Model *getModel() { return _model; }

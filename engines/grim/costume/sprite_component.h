@@ -34,11 +34,11 @@ public:
 	SpriteComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	~SpriteComponent();
 
-	void init();
-	void setKey(int val);
-	void reset();
-	void saveState(SaveGame *state);
-	void restoreState(SaveGame *state);
+	void init() override;
+	void setKey(int val) override;
+	void reset() override;
+	void saveState(SaveGame *state) override;
+	void restoreState(SaveGame *state) override;
 
 private:
 	Sprite *_sprite;

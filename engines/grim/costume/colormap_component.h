@@ -32,7 +32,7 @@ public:
 	ColormapComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	ColormapComponent *copy(Component *newParent);
 
-	void init();
+	void init() override;
 };
 
 } // end of namespace Grim

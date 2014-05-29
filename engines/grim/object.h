@@ -156,7 +156,7 @@ public:
 	}
 
 protected:
-	void resetPointer() {
+	void resetPointer() override {
 		_obj = NULL;
 	}
 

@@ -33,13 +33,13 @@ class SmushPlayer : public MoviePlayer {
 public:
 	SmushPlayer(bool demo);
 
-	void restore(SaveGame *state);
+	void restore(SaveGame *state) override;
 
 private:
-	bool loadFile(const Common::String &filename);
-	void handleFrame();
-	void postHandleFrame();
-	void init();
+	bool loadFile(const Common::String &filename) override;
+	void handleFrame() override;
+	void postHandleFrame() override;
+	void init() override;
 	bool _demo;
 	SmushDecoder *_smushDecoder;
 };

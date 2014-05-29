@@ -33,10 +33,10 @@ class EMISpriteComponent : public Component {
 public:
 	EMISpriteComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~EMISpriteComponent();
-	void init();
-	int update(uint time);
-	void reset();
-	void draw();
+	void init() override;
+	int update(uint time) override;
+	void reset() override;
+	void draw() override;
 
 public:
 	Sprite *_sprite;

@@ -37,12 +37,12 @@ public:
 	SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 	~SCXStream();
 
-	bool isStereo() const { return _channels == 2; }
-	bool endOfData() const { return _xaStreams[0]->endOfData(); }
-	int getRate() const { return _rate; }
-	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const override { return _channels == 2; }
+	bool endOfData() const override { return _xaStreams[0]->endOfData(); }
+	int getRate() const override { return _rate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool rewind();
+	bool rewind() override;
 
 private:
 	int _channels;

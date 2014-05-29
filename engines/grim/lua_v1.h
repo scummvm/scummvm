@@ -39,9 +39,9 @@ namespace Grim {
 class Lua_V1 : public LuaBase {
 public:
 	typedef Lua_V1 LuaClass;
-	void registerOpcodes();
-	void boot();
-	void postRestoreHandle();
+	void registerOpcodes() override;
+	void boot() override;
+	void postRestoreHandle() override;
 
 protected:
 	// Opcodes

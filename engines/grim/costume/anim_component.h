@@ -31,8 +31,8 @@ namespace Grim {
 class AnimComponent : public Component {
 public:
 	AnimComponent(Component *parent, int parentID, const char *filename, tag32 tag);
-	void setKey(int val);
-	void reset();
+	void setKey(int val) override;
+	void reset() override;
 
 private:
 	bool _created;

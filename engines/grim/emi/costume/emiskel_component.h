@@ -35,11 +35,11 @@ class EMISkelComponent : public Component {
 public:
 	EMISkelComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~EMISkelComponent();
-	void init();
-	void animate();
-	int update(uint time);
-	void reset();
-	void draw();
+	void init() override;
+	void animate() override;
+	int update(uint time) override;
+	void reset() override;
+	void draw() override;
 
 public:
 	bool _hierShared;

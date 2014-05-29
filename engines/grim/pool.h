@@ -138,8 +138,8 @@ public:
 
 	virtual ~PoolObject();
 
-	int getId() const;
-	virtual int32 getTag() const { return T::getStaticTag(); }
+	int getId() const override;
+	virtual int32 getTag() const override { return T::getStaticTag(); }
 
 	static Pool &getPool();
 
