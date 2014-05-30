@@ -104,7 +104,7 @@ void CommandHandler::runCommand() {
 		}
 		++_tail;
 		_vm->_taken = false;
-		Sprite *spr;
+		Sprite *spr = nullptr;
 		if (tailCmd._commandType > kCmdSpr)
 			spr = (tailCmd._ref < 0) ? ((Sprite *)tailCmd._spritePtr) : _vm->locate(tailCmd._ref);
 
@@ -314,7 +314,7 @@ void CommandHandler::runCommand() {
 			break;
 		}
 
-		if (_vm->_taken)
+		if (_vm->_taken && spr)
 			_vm->_spare->dispose(spr);
 
 		if (!_turbo)
