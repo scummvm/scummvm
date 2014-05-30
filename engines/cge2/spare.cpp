@@ -38,10 +38,9 @@ void Spare::clear() {
 }
 
 Sprite *Spare::locate(int ref) {
-	for (int i = 0; i < _container.size(); i++) {
-		if (_container[i]->_ref == ref) {
+	for (uint i = 0; i < _container.size(); ++i) {
+		if (_container[i]->_ref == ref)
 			return _container[i];
-		}
 	}
 	return nullptr;
 }
@@ -49,7 +48,7 @@ Sprite *Spare::locate(int ref) {
 void Spare::takeCave(int cav) {
 	int bakRef = cav << 8;
 	Common::Array<Sprite*> tempCont = _container;
-	for (int i = 0; i < tempCont.size(); i++) {
+	for (uint i = 0; i < tempCont.size(); ++i) {
 		Sprite *spr = tempCont[i];
 		int c = spr->_scene;
 		if ((c == _vm->_now || c == 0) && spr->_ref != bakRef) {
@@ -73,7 +72,7 @@ void Spare::dispose(Sprite *spr) {
 		_vm->_vga->_showQ->remove(spr);
 		update(spr->contract());
 		if (!_vm->isHero(spr)) {
-			for (int i = 0; i < _container.size(); i++) {
+			for (uint i = 0; i < _container.size(); ++i) {
 				if (spr == _container[i]) {
 					_container.remove_at(i);
 					delete spr;
@@ -89,10 +88,9 @@ void Spare::dispose(int ref) {
 }
 
 void Spare::dispose() {
-	for (int i = 0; i < _container.size(); i++) {
-		if (_container[i]->_ref > 255) {
+	for (uint i = 0; i < _container.size(); ++i) {
+		if (_container[i]->_ref > 255)
 			dispose(_container[i]);
-		}
 	}
 }
 
