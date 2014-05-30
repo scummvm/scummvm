@@ -27,6 +27,8 @@
 #include "fullpipe/sound.h"
 #include "fullpipe/ngiarchive.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/statics.h"
+
 #include "common/memstream.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
@@ -132,7 +134,75 @@ void Sound::updateVolume() {
 }
 
 void Sound::setPanAndVolumeByStaticAni() {
-	debug(3, "STUB Sound::setPanAndVolumeByStaticAni()");
+	if (!_objectId)
+		return;
+
+	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(_objectId, -1);
+	if (!ani)
+		return;
+
+	int a, b;
+
+	if (ani->_ox >= g_fp->_sceneRect.left) {
+		int par, pan;
+
+		if (ani->_ox <= g_fp->_sceneRect.right) {
+			int dx;
+
+			if (ani->_oy <= g_fp->_sceneRect.bottom) {
+				if (ani->_oy >= g_fp->_sceneRect.top) {
+					setPanAndVolume(g_fp->_sfxVolume, 0);
+
+					return;
+				}
+				dx = g_fp->_sceneRect.top - ani->_oy;
+			} else {
+				dx = ani->_oy - g_fp->_sceneRect.bottom;
+			}
+
+		    par = 0;
+
+			if (dx > 800) {
+				setPanAndVolume(-3500, 0);
+				return;
+			}
+
+			pan = -3500;
+			a = g_fp->_sfxVolume - (-3500);
+			b = 800 - dx;
+		} else {
+			int dx = ani->_ox - g_fp->_sceneRect.right;
+
+			if (dx > 800) {
+				setPanAndVolume(-3500, 0);
+				return;
+			}
+
+			pan = -3500;
+			par = dx * (-3500) / -800;
+			a = g_fp->_sfxVolume - (-3500);
+			b = 800 - dx;
+		}
+
+		int32 pp = b * a;
+
+		setPanAndVolume(pan + pp / 800, par);
+
+		return;
+	}
+
+	int dx = g_fp->_sceneRect.left - ani->_ox;
+	if (dx <= 800) {
+		int32 s = (800 - dx) * (g_fp->_sfxVolume - (-3500));
+		int32 p = -3500 + s / 800;
+
+		if (p > g_fp->_sfxVolume)
+			p = g_fp->_sfxVolume;
+
+		setPanAndVolume(p, dx * (-3500) / 800);
+	} else {
+		setPanAndVolume(-3500, 0);
+	}
 }
 
 void Sound::setPanAndVolume(int vol, int pan) {

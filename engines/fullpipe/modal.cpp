@@ -1105,8 +1105,6 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 	} else {
 		snd->setPanAndVolume(-3500, 0);
 	}
-
-	warning("STUB: ModalMainMenu::updateSoundVolume()");
 }
 
 void ModalMainMenu::updateSliderPos() {
