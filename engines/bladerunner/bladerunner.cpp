@@ -60,7 +60,8 @@ bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
 Common::Error BladeRunnerEngine::run() {
 	initGraphics(640, 480, true, &RGB555);
 
-	startup();
+	if (!startup())
+		return Common::Error(Common::kUnknownError, "Failed to initialize resources");
 
 	if (warnUserAboutUnsupportedGame()) {
 		init2();
