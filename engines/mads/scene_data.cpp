@@ -265,13 +265,13 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		assert(asset && _depthStyle != 2);
 
 		MSprite *spr = asset->getFrame(asset->getCount() - 1);
-		bgSurface.copyFrom(spr, si._position, si._depth, &depthSurface, si._scale,
-			spr->getTransparencyIndex());
+		bgSurface.copyFromScaled(spr, si._position, si._depth, &depthSurface, 
+			si._scale, spr->getTransparencyIndex());
 	}
 
 	// Free the sprite sets
 	for (int i = (int)spriteSets.size() - 1; i >= 0; --i) {
-		warning("TODO: sub_201C8 SPRITE_SET.field_6");
+		_vm->_palette->_paletteUsage.resetPalFlags(spriteSets[i]->_usageIndex);
 		delete spriteSets[i];
 	}
 }

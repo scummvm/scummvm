@@ -419,6 +419,27 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	}
 }
 
+void MSurface::copyFromScaled(MSurface *src, const Common::Point &destPos, int depth,
+		DepthSurface *depthSurface, int scale, int transparentColor) {
+	int distXCount = 0, distYCount = 0;
+	int highestDim = MAX(src->w, src->h);
+	int accum = 0;
+
+	for (int idx = 0; idx < highestDim; ++idx) {
+		accum += scale;
+		if (accum >= 100) {
+			accum -= 100;
+			if (idx < src->w)
+				++distXCount;
+			if (idx < src->h)
+				++distYCount;
+		}
+	}
+
+	Common::Point newPos(destPos.x - distXCount / 2, destPos.y - distYCount);
+	copyFrom(src, src->getBounds(), newPos, transparentColor);
+}
+
 void MSurface::scrollX(int xAmount) {
 	if (xAmount == 0)
 		return;

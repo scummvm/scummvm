@@ -161,9 +161,24 @@ public:
 	* @param destPos		Destination position to draw in current surface
 	* @param depth			Depth of sprite
 	* @param depthSurface	Depth surface to use with sprite depth
+	* @param scale			Scale for image
 	* @param transparentColor	Transparency palette index
 	*/
 	void copyFrom(MSurface *src, const Common::Point &destPos, int depth, DepthSurface *depthSurface,
+		int scale, int transparentColor = -1);
+
+	/**
+	* Copys a sub-section of another surface into the current one, taking into
+	* account variation in the destination copy position based on item size
+	* and scaling.
+	* @param src			Source surface
+	* @param destPos		Destination position to draw in current surface
+	* @param depth			Depth of sprite
+	* @param depthSurface	Depth surface to use with sprite depth
+	* @param scale			Scale for image
+	* @param transparentColor	Transparency palette index
+	*/
+	void copyFromScaled(MSurface *src, const Common::Point &destPos, int depth, DepthSurface *depthSurface,
 		int scale, int transparentColor = -1);
 
 	/**
