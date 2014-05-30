@@ -583,7 +583,6 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 		byte ptr = spr->_actionCtrl[snq]._ptr;
 		CommandHandler::Command *comtab = spr->snList(snq);
 		CommandHandler::Command *c = &comtab[ptr];
-		CommandHandler::Command *p;
 		CommandHandler::Command *q = &comtab[cnt];
 
 		warning("STUB: CGE2Engine::feedSnail()");
@@ -591,7 +590,8 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 		/*
 		int pocFre = freePockets(hero->_ref & 1);
 		int pocReq = 0;
-		for (p = c; p < q && p->_commandType != kCmdNext; p++) { // scan commands
+		CommandHandler::Command *p = c;
+		for (; p < q && p->_commandType != kCmdNext; p++) { // scan commands
 			// drop from pocket?
 			if ((p->_commandType == kCmdSend && p->_val != _now)
 				|| p->_commandType == kCmdGive) {
