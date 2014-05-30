@@ -303,7 +303,7 @@ void Scene302::step() {
 			_game._objects.setRoom(OBJ_DEAD_FISH, 1);
 			_game._objects.setRoom(OBJ_BURGER, 1);
 
-			int count = (int)_game._objects._inventoryList.size();
+			int count = (int)_game._objects.size();
 			for (int idx = 0; idx < count; idx++) {
 				if (_game._objects.isInInventory(idx))
 					_game._objects.setRoom(idx, 50);

@@ -191,25 +191,24 @@ void InventoryObjects::removeFromInventory(int objectId, int newScene) {
 	// Remove the item from the inventory list
 	_inventoryList.remove_at(invIndex);
 
-	if (invIndex > userInterface._inventoryTopIndex) {
+	if (!noSelection) {
+		if (selectedIndex >= invIndex)
+			--selectedIndex;
+		if (selectedIndex < 0 && _inventoryList.size() > 0)
+			selectedIndex = 0;
+	}
+
+	if (invIndex <= userInterface._inventoryTopIndex) {
 		userInterface._inventoryTopIndex = MAX(userInterface._inventoryTopIndex, 0);
 	}
 
 	userInterface._inventoryChanged = true;
 	(*this)[objectId]._roomNumber = newScene;
 
-	int newIndex = selectedIndex;
-	if (!noSelection) {
-		if (newIndex >= invIndex)
-			--newIndex;
-		if (newIndex < 0 && size() > 0)
-			newIndex = 0;
-	}
-
 	if (_vm->_game->_kernelMode == KERNEL_ACTIVE_CODE &&
 			_vm->_game->_screenObjects._inputMode == kInputBuildingSentences) {
 		userInterface.categoryChanged();
-		userInterface.selectObject(newIndex);
+		userInterface.selectObject(selectedIndex);
 	}
 }
 
