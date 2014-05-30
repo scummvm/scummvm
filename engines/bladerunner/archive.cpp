@@ -108,13 +108,13 @@ int32 tlk_id(const Common::String &name) {
 	for (uint i = 0; i != name.size() && i < 12u; ++i)
 		buffer[i] = (char)toupper(name[i]);
 
-	int actor_id  =   10 * (name[0] - '0') +
-	                       (name[1] - '0');
+	int actor_id  =   10 * (buffer[0] - '0') +
+	                       (buffer[1] - '0');
 
-	int speech_id = 1000 * (name[3] - '0') +
-	                 100 * (name[4] - '0') +
-	                  10 * (name[5] - '0') +
-	                       (name[6] - '0');
+	int speech_id = 1000 * (buffer[3] - '0') +
+	                 100 * (buffer[4] - '0') +
+	                  10 * (buffer[5] - '0') +
+	                       (buffer[6] - '0');
 
 	return 10000 * actor_id + speech_id;
 }
