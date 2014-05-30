@@ -113,7 +113,7 @@ int16 Animation::getFrameHeight(uint frameIndex) const {
 	return READ_LE_UINT16(frameData + 2);
 }
 
-Graphics::Surface *Animation::getFrame(uint frameIndex, int i, int phase) {
+Graphics::Surface *Animation::getFrame(uint frameIndex) {
 	byte *frameData = _data + READ_LE_UINT32(_data + 16 + frameIndex * 4);
 	int16 width = READ_LE_UINT16(frameData + 0);
 	int16 height = READ_LE_UINT16(frameData + 2);
@@ -132,7 +132,6 @@ Graphics::Surface *Animation::getFrame(uint frameIndex, int i, int phase) {
 		}
 		free(ddata);
 	} else {
-		debug("nr: %d, phase: %d", i, phase);
 		// Uncompressed
         for (uint16 i = 0; i < height; i++) {
             memcpy(surf->getBasePtr(0, i), frameData + 4 + width * i, width);

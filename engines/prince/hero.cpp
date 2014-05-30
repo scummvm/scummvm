@@ -80,7 +80,7 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 Graphics::Surface *Hero::getSurface() {
 	if (_moveSet[_moveSetType]) {
 		int16 phaseFrameIndex = _moveSet[_moveSetType]->getPhaseFrameIndex(_phase);
-		Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex, 0, 0);
+		Graphics::Surface *heroFrame = _moveSet[_moveSetType]->getFrame(phaseFrameIndex);
 		return heroFrame;
 	}
 	return NULL;

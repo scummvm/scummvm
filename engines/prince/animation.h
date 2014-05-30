@@ -45,7 +45,7 @@ public:
 	int16 getPhaseOffsetX(uint phaseIndex) const;
 	int16 getPhaseOffsetY(uint phaseIndex) const;
 	int16 getPhaseFrameIndex(uint phaseIndex) const;
-	Graphics::Surface *getFrame(uint frameIndex, int i, int phase);
+	Graphics::Surface *getFrame(uint frameIndex);
 	int16 getFrameWidth(uint frameIndex) const;
 	int16 getFrameHeight(uint frameIndex) const;
 	int16 getZoom(uint16 offset) const;

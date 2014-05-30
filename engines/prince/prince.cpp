@@ -748,31 +748,19 @@ void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int
 }
 
 void PrinceEngine::showBackAnims() {
-
 	for (uint i = 0; i < _backAnimList.size(); i++) {
 		int activeSubAnim = _backAnimList[i]._seq._currRelative;
-		if (_backAnimList[i].backAnims[activeSubAnim]._state == 0 && _backAnimList[i]._seq._type != 0 && _backAnimList[i]._seq._type != 1 && _backAnimList[i]._seq._type != 2) { //TEMP
-			_backAnimList[i]._seq._counter++;
 
-			/*
-			if (_backAnimList[i]._seq._type == 2) {
-				if (_backAnimList[i]._seq._currRelative == 0) {
-					if (_backAnimList[i]._seq._counter >= _backAnimList[i]._seq._data) {
-						//change_back_anim
-					}
-				}
-			}
-			*/
+		if (_backAnimList[i].backAnims[activeSubAnim]._state == 0) {
+			_backAnimList[i]._seq._counter++;
 			if (_backAnimList[i]._seq._type == 2) {
 				//not_type_1
 				if (_backAnimList[i]._seq._currRelative == 0) {
 					//zero
-					debug("counter: %d, data: %d", _backAnimList[i]._seq._counter, _backAnimList[i]._seq._data);
 					if (_backAnimList[i]._seq._counter >= _backAnimList[i]._seq._data) {
 						if (_backAnimList[i]._seq._anims > 2) {
-							int rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._anims - 2); //?
+							int rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._anims - 2);
 							rnd++;
-							//debug("rnd: %d", rnd);
 							_backAnimList[i]._seq._currRelative = rnd;
 							_backAnimList[i]._seq._current = rnd; // or nr of animation from lst
 							activeSubAnim = rnd;
@@ -791,53 +779,17 @@ void PrinceEngine::showBackAnims() {
 						}
 						_backAnimList[i]._seq._counter = 0;
 						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
-						/*
-						//show_bugger
-						if (_backAnimList[i].backAnims[activeSubAnim]._frame < _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() - 1) {
-							_backAnimList[i].backAnims[activeSubAnim]._frame++;
-						}
-						//not_end
-						*/
 					}
-				} else {
-					/*
-					_backAnimList[i]._seq._currRelative = 0;
-					_backAnimList[i]._seq._current = 0; // or nr of animation from lst
-					activeSubAnim = 0;
-					//only_1_type_1
-					//SetBackAnim
-					int start = _backAnimList[i].backAnims[activeSubAnim]._basaData._start;
-					if (start != -1) {
-						_backAnimList[i].backAnims[activeSubAnim]._frame = start;
-						_backAnimList[i].backAnims[activeSubAnim]._showFrame = start;
-						_backAnimList[i].backAnims[activeSubAnim]._loopFrame = start;
-					}
-					int end = _backAnimList[i].backAnims[activeSubAnim]._basaData._end;
-					if (end != -1) {
-						_backAnimList[i].backAnims[activeSubAnim]._lastFrame = end;
-					}
-					_backAnimList[i]._seq._counter = 0;
-					_backAnimList[i].backAnims[activeSubAnim]._state = 0;
-					//show_bugger
-					if (_backAnimList[i].backAnims[activeSubAnim]._frame < _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() - 1) {
-						_backAnimList[i].backAnims[activeSubAnim]._frame++;
-					}
-					//not_end
-					*/
 				}
 			}
 
 			//not_type_2_1:
 			if (_backAnimList[i]._seq._type == 3) {
 				if (_backAnimList[i]._seq._currRelative == 0) {
-					//debug("count: %d, data2: %d", _backAnimList[i]._seq._counter, _backAnimList[i]._seq._data2);
 					if (_backAnimList[i]._seq._counter < _backAnimList[i]._seq._data2) {
 						//empty_frame - do not show anything
 						continue;
 					} else {
-						//_backAnimList[i]._seq._current++; // or change to nr of animation
-						//_backAnimList[i]._seq._currRelative++; //sth wrong
-						//activeSubAnim++;
 						//SetBackAnim
 						int start = _backAnimList[i].backAnims[activeSubAnim]._basaData._start;
 						if (start != -1) {
@@ -849,40 +801,23 @@ void PrinceEngine::showBackAnims() {
 						if (end != -1) {
 							_backAnimList[i].backAnims[activeSubAnim]._lastFrame = end;
 						}
-						//_backAnimList[i]._seq._counter = 0;
 						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
 					}
 				}
 			}
 			//not_type_3_1:
 			//show_bugger
-			//debug("lastFrame: %d", _backAnimList[i].backAnims[activeSubAnim]._lastFrame);
-			if (_backAnimList[i].backAnims[activeSubAnim]._frame == _backAnimList[i].backAnims[activeSubAnim]._lastFrame - 1) { // TEST
+			if (_backAnimList[i].backAnims[activeSubAnim]._frame == _backAnimList[i].backAnims[activeSubAnim]._lastFrame - 1) {
 				//loop_back_anim
 				_backAnimList[i].backAnims[activeSubAnim]._frame = _backAnimList[i].backAnims[activeSubAnim]._loopFrame;
 				//change_back_anim
-				if (_backAnimList[i]._seq._type == 0) {
-					//show_bugger
-					//if (_backAnimList[i].backAnims[activeSubAnim]._frame < _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() - 1) {
-						//_backAnimList[i].backAnims[activeSubAnim]._frame++;
-					//}
-					//not_end
-				} else if (_backAnimList[i]._seq._type == 1) {
+				if (_backAnimList[i]._seq._type == 1) {
 					//repeat_rnd
-					if (_backAnimList[i]._seq._anims <= 1) {
-						/*
-						//show_bugger
-						if (_backAnimList[i].backAnims[activeSubAnim]._frame < _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() - 1) {
-							_backAnimList[i].backAnims[activeSubAnim]._frame++;
-						}
-						//not_end
-						*/
-					} else {
+					if (_backAnimList[i]._seq._anims > 1) {
 						int rnd;
 						do {
 							rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._anims - 1);
 						} while (rnd == _backAnimList[i]._seq._currRelative);
-						//debug("rnd: %d", rnd);
 						_backAnimList[i]._seq._currRelative = rnd;
 						_backAnimList[i]._seq._current = rnd; // or nr of animation from lst
 						activeSubAnim = rnd;
@@ -900,13 +835,6 @@ void PrinceEngine::showBackAnims() {
 						}
 						_backAnimList[i]._seq._counter = 0;
 						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
-						/*
-						//show_bugger
-						if (_backAnimList[i].backAnims[activeSubAnim]._frame < _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() - 1) {
-							_backAnimList[i].backAnims[activeSubAnim]._frame++;
-						}
-						*/
-						//not_end
 					}
 				} else if (_backAnimList[i]._seq._type == 2) {
 					if (_backAnimList[i]._seq._currRelative != 0) {
@@ -927,40 +855,18 @@ void PrinceEngine::showBackAnims() {
 						}
 						_backAnimList[i]._seq._counter = 0;
 						_backAnimList[i].backAnims[activeSubAnim]._state = 0;
-						/*
-						//show_bugger
-						if (_backAnimList[i].backAnims[activeSubAnim]._frame < _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() - 1) {
-							_backAnimList[i].backAnims[activeSubAnim]._frame++;
-						}
-						//not_end
-						*/
-					} /*else if (_backAnimList[i]._seq._counter < _backAnimList[i]._seq._data) {
-						//show_bugger
-						if (_backAnimList[i].backAnims[activeSubAnim]._frame < _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount() - 1) {
-							_backAnimList[i].backAnims[activeSubAnim]._frame++;
-						}
-						//not_end
-					}*/
+					}
 				} else if (_backAnimList[i]._seq._type == 3) {
 					//not_type_2
 					_backAnimList[i]._seq._currRelative = 0;
-					//_backAnimList[i]._seq._current = 0; // or nr of animation from lst
+					_backAnimList[i]._seq._current = 0; // or nr of animation from lst
 					_backAnimList[i]._seq._counter = 0;
-					//debug("data: %d", _backAnimList[i]._seq._data);
 					int rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._data - 1);
 					_backAnimList[i]._seq._data2 = rnd;
 					continue; // for bug in original game
-					//show_bugger
-					//_backAnimList[i].backAnims[activeSubAnim]._frame++;
-					//not_end
-				} else {
-					//show_bugger
-					//_backAnimList[i].backAnims[activeSubAnim]._frame++;
-					//not_end
 				}
 			} else {
 				_backAnimList[i].backAnims[activeSubAnim]._frame++;
-				//not_end
 			}
 
 			//not_end:
@@ -969,57 +875,16 @@ void PrinceEngine::showBackAnims() {
 			//ShowFrameCode
 			int phaseCount = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount();
 			int frameCount = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameCount();
-			//debug("frameCount: %d", frameCount);
-			//debug("phaseCount: %d", phaseCount);
 			int phase = _backAnimList[i].backAnims[activeSubAnim]._showFrame;
-			if (phase < 0) {
-				debug("phase < 0");
-			}
-			if (phase >= phaseCount) {
-				debug("p >= pC: i-%d, activ-%d, phase-%d, phaseC-%d", i, activeSubAnim, phase, phaseCount);
-				debug("type: %d", _backAnimList[i]._seq._type);
-			}
 			int phaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseFrameIndex(phase);
-			if (phaseFrameIndex < 0) {
-				debug("pFrameIndex: i-%d, activ-%d, phaseFrInd-%d, frameC-%d", i, activeSubAnim, phaseFrameIndex, frameCount);
-				debug("type: %d", _backAnimList[i]._seq._type);
-			}
-			if (phaseFrameIndex >= frameCount) {
-				debug("pFrameIndex2: i-%d, activ-%d, phaseFrInd-%d, frameC-%d", i, activeSubAnim, phaseFrameIndex, frameCount);
-				debug("type: %d", _backAnimList[i]._seq._type);
-			}
-
 			int x = _backAnimList[i].backAnims[activeSubAnim]._x + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(phase);
 			int y = _backAnimList[i].backAnims[activeSubAnim]._y + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetY(phase);
 
 			if (x != 0 || y != 0 || phaseCount != 1 || frameCount != 1) { // fix for room no. 5 - animation 8 (propably unnecessary anim)
-				Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex, i, phase); //still out of bounds
-
-				//debug("x: %d", x);
-				//debug("picWindowX: %d", _picWindowX);
-				//if (x >= _picWindowX) { //  || x - _picWindowX + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(frame) >= 0 ??
-					showSprite(backAnimSurface, x, y);
-				//}
+				Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex); //still with memory leak
+				showSprite(backAnimSurface, x, y);
 				backAnimSurface->free();
 				delete backAnimSurface;
-
-				//if (_backAnimList[i].backAnims[activeSubAnim]._lastFrame == 1) {
-					//debug("nr: %d, phase: %d, frame: %d", i, phase, phaseFrameIndex);
-					//debug("phaseCount: %d, frameCount: %d, lastFrame: %d", phaseCount, frameCount, _backAnimList[i].backAnims[activeSubAnim]._lastFrame);
-					//debug("x: %d", _backAnimList[i].backAnims[activeSubAnim]._x);
-					//debug("y: %d", _backAnimList[i].backAnims[activeSubAnim]._y);
-					//debug("offX: %d", _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(phase));
-					//debug("offX: %d", _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetY(phase));
-					//debug("x: %d, y: %d", x, y);
-				//}
-
-				if (_backAnimList[i].backAnims[activeSubAnim]._x == 0 && _backAnimList[i].backAnims[activeSubAnim]._y == 0) {
-					debug("x = 0, y = 0");
-				}
-
-				if (phaseCount == 1 && frameCount == 1) {
-					debug("pC = 1, fC = 1");
-				}
 			}
 			//ShowFrameCodeShadow
 		}
