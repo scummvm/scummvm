@@ -361,7 +361,7 @@ void CGE2Engine::caveUp(int cav) {
 	if (_music)
 		_midiPlayer->loadMidi(bakRef);
 	showBak(bakRef);
-	_eye = _eyeTab[_now];
+	*_eye = *(_eyeTab[_now]);
 	_mouseTop = V2D(this, V3D(0, 1, kScrDepth)).y;
 	_spare->takeCave(_now);
 	openPocket();
@@ -598,7 +598,7 @@ void CGE2Engine::qGame() {
 void CGE2Engine::loadTab() {
 	setEye(_text->getText(240));
 	for (int i = 0; i < kCaveMax; i++)
-		_eyeTab[i] = _eye;
+		*(_eyeTab[i]) = *_eye;
 
 	if (_resman->exist(kTabName)) {
 		EncryptedStream f(this, kTabName);
@@ -660,8 +660,8 @@ char *CGE2Engine::mergeExt(char *buf, const char *name, const char *ext) {
 	return buf;
 }
 
-void CGE2Engine::setEye(V3D &e) { 
-	_eye = &e;
+void CGE2Engine::setEye(const V3D &e) { 
+	*_eye = e;
 }
 
 void CGE2Engine::setEye(const V2D& e2, int z) {

@@ -139,7 +139,7 @@ public:
 	void releasePocket(Sprite *spr);
 	void switchHero(bool sex);
 
-	void setEye(V3D &e);
+	void setEye(const V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
 	void setEye(const char *s);
 

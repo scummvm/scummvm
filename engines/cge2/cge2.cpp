@@ -124,12 +124,9 @@ void CGE2Engine::deinit() {
 	for (int i = 0; i < 2; i++)
 		delete _heroTab[i];
 	for (int i = 0; i < kCaveMax; i++) {
-		if (_eye == _eyeTab[i])
-			_eye = nullptr;
 		delete _eyeTab[i];
 	}
-	if (_eye != nullptr)
-		delete _eye;
+	delete _eye;
 	delete _spare;
 	delete _sprite;
 	delete _commandHandler;
