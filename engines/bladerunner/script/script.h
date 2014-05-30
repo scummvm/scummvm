@@ -41,6 +41,7 @@ public:
 		  _inScriptCounter(0),
 		  _currentScript(nullptr)
 	{}
+	~Script();
 
 	bool open(const Common::String &name);
 

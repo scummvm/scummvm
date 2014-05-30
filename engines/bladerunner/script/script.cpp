@@ -34,6 +34,10 @@ bool Script::open(const Common::String &name) {
 	return false;
 }
 
+Script::~Script() {
+	delete _currentScript;
+}
+
 void Script::InitializeScene() {
 	_inScriptCounter++;
 	_currentScript->InitializeScene();
