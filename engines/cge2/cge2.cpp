@@ -82,7 +82,9 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_lastTick = 0;
 	_waitSeq = 0;
 	_waitRef = 0;
-	_commandStat = { nullptr, { 0 , 0 } };
+	_commandStat._wait = nullptr;
+	_commandStat._ref[0] = 0;
+	_commandStat._ref[1] = 0;
 	_taken = false;
 	_endGame = false;
 	for (int i = 0; i < 4; i++)
