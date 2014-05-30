@@ -446,7 +446,7 @@ void Sprite::step(int nr) {
 
 	if (_ext) {
 		V3D p = _pos3D;
-		Seq *seq;
+		Seq *seq = nullptr;
 
 		if (nr < 0)
 			_seqPtr = _ext->_seq[_seqPtr]._next;
@@ -466,7 +466,7 @@ void Sprite::step(int nr) {
 				warning("Sprite::step()");
 			}
 		}
-		if (seq->_dly >= 0)
+		if (seq && (seq->_dly >= 0))
 			_time = seq->_dly;
 	} else if (_vm->_waitRef && _vm->_waitRef == _ref)
 		_vm->_waitRef = 0;
