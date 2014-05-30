@@ -162,7 +162,7 @@ void Scene201::enter() {
 	if (_globals[kTeleporterCommand]) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
-		int sepChar = (_globals[kSexOfRex] == SEX_UNKNOWN) ? 't' : 'u';
+		int sepChar = (_globals[kSexOfRex] == SEX_MALE) ? 't' : 'u';
 		// Guess values. What is the default value used by the compiler?
 		int suffixNum = -1;
 		int abortTimers = -1;
