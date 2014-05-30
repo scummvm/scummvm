@@ -58,7 +58,8 @@ bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error BladeRunnerEngine::run() {
-	initGraphics(640, 480, true, &RGB555);
+	Graphics::PixelFormat format = createRGB555();
+	initGraphics(640, 480, true, &format);
 
 	if (!startup())
 		return Common::Error(Common::kUnknownError, "Failed to initialize resources");
@@ -78,7 +79,7 @@ Common::Error BladeRunnerEngine::run() {
 bool BladeRunnerEngine::startup() {
 	bool r;
 
-	_surface1.create(640, 480, RGB555);
+	_surface1.create(640, 480, createRGB555());
 
 	r = openArchive("STARTUP.MIX");
 	if (!r)

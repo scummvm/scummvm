@@ -35,8 +35,6 @@
 
 namespace BladeRunner {
 
-const Graphics::PixelFormat RGB555(2, 5, 5, 5, 0, 10, 5, 0, 0);
-
 class Chapters;
 class Scene;
 class Script;
@@ -90,6 +88,11 @@ public:
 
 	void ISez(const char *str);
 };
+
+static inline
+const Graphics::PixelFormat createRGB555() {
+	return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+}
 
 } // End of namespace BladeRunner
 

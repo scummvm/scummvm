@@ -550,7 +550,7 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_zbufChunk = new uint8[roundup(_maxZBUFChunkSize)];
 
 	_surface = new Graphics::Surface();
-	_surface->create(_width, _height, RGB555);
+	_surface->create(_width, _height, createRGB555());
 }
 
 VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
