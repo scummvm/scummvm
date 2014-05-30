@@ -240,7 +240,7 @@ int16 findFileInDisks(const char *name) {
 	int disk;
 	int fileIdx;
 
-	strcpy(fileName, name);
+	Common::strlcpy(fileName, name, sizeof(fileName));
 	strToUpper(fileName);
 
 	if (!volumeDataLoaded) {
