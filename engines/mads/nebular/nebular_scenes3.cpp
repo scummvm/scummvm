@@ -2457,7 +2457,7 @@ void Scene318::handleDialog() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], synxIdx);
 		_vm->_sound->command(3);
-		_scene->_userInterface.setup(kInputLimitedSentences);
+		_scene->_userInterface.setup(kInputBuildingSentences);
 		_game._player._stepEnabled = true;
 	} else {
 		if (_action._activeAction._verbId < 0x19C)
