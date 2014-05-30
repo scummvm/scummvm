@@ -630,7 +630,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 		stop();
 	}
 
-	strcpy(_musicName, song);
+	Common::strlcpy(_musicName, song, sizeof(_musicName));
 	_songPlayed = false;
 	_looping = false;
 	_sfxData = readBundleSoundFile(song);
@@ -652,7 +652,7 @@ bool PCSoundFxPlayer::load(const char *song) {
 			if (dot) {
 				*dot = '\0';
 			}
-			strcat(instrument, _driver->getInstrumentExtension());
+			Common::strlcat(instrument, _driver->getInstrumentExtension(), sizeof(instrument));
 			_instrumentsData[i] = readBundleSoundFile(instrument);
 			if (!_instrumentsData[i]) {
 				warning("Unable to load soundfx instrument '%s'", instrument);

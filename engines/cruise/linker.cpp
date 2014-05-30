@@ -165,7 +165,7 @@ int updateScriptImport(int ovlIdx) {
 							int out1;
 							int out2;
 
-							strcpy(buffer, ptrImportName + ptrImportData->offsetToName);
+							Common::strlcpy(buffer, ptrImportName + ptrImportData->offsetToName, sizeof(buffer));
 							ptrDest2 = parseExport(&out1, &out2, buffer);
 
 							if (ptrDest2 && out2) {
@@ -230,7 +230,7 @@ int updateScriptImport(int ovlIdx) {
 			int linkType;
 			int linkEntryIdx;
 
-			strcpy(buffer, ovlData->arrayNameRelocGlob + ovlData->arrayRelocGlob[i].nameOffset);
+			Common::strlcpy(buffer, ovlData->arrayNameRelocGlob + ovlData->arrayRelocGlob[i].nameOffset, sizeof(buffer));
 
 			pFoundExport = parseExport(&out1, &foundExportIdx, buffer);
 
