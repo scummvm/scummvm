@@ -194,7 +194,8 @@ MessageQueue *MctlCompound::method34(StaticANIObject *ani, int sourceX, int sour
 	if (idx == sourceIdx)
 		return _motionControllers[idx]->_motionControllerObj->method34(ani, sourceX, sourceY, fuzzyMatch, staticsId);
 
-	MctlConnectionPoint *cp = findClosestConnectionPoint(ani->_ox, ani->_oy, idx, sourceX, sourceY, sourceIdx, &sourceIdx);
+	double dist;
+	MctlConnectionPoint *cp = findClosestConnectionPoint(ani->_ox, ani->_oy, idx, sourceX, sourceY, sourceIdx, &dist);
 
 	if (!cp)
 		return 0;
@@ -262,7 +263,8 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 	if (match1 == match2)
 		return _motionControllers[match1]->_motionControllerObj->doWalkTo(subj, xpos, ypos, fuzzyMatch, staticsId);
 
-	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &match2);
+	double dist;
+	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &dist);
 
 	if (!closestP)
 		return 0;
@@ -428,7 +430,55 @@ MessageQueue *MctlLadder::controllerWalkTo(StaticANIObject *ani, int off) {
 	return doWalkTo(ani, _ladderX + off * _width, _ladderY + off * _height, 1, 0);
 }
 
-MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr) {
+MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, double *minDistancePtr) {
+#if 0
+	if (destIndex == sourceIndex) {
+		*minDistancePtr = sqrt((double)((oy - connectionY) * (oy - connectionY) + (ox - connectionX) * (ox - connectionX)));
+
+		return 0;
+	}
+
+	v11 = this->_motionControllers.m_pData;
+	currDistance = 0.0;
+	v12 = 0;
+	v13 = (MctlCompoundArrayItem *)*(&v11->vmt + sourceIndex);
+	minDistance = 1.0e10;
+	minConnectionPoint = 0;
+	if (v13->mctlConnectionPointsArray.CObArray.m_nSize > 0) {
+		do {
+			v14 = 0;
+			for (currMctlIndex = 0; v14 < this->_motionControllers.m_nSize; currMctlIndex = v14) {
+				v15 = this->_motionControllers.m_pData;
+				v16 = *(MovGraphReact **)(*(&v15->vmt + v14) + offsetof(MctlCompoundArrayItem, movGraphReactObj));
+				if (v16) {
+					v17 = *(MctlConnectionPoint **)(*(_DWORD *)(*(&v15->vmt + sourceIndex) + 0x10) + 4 * v12);// MctlCompoundArrayItem.mctlConnectionPointsArray.CObArray.m_pData
+					LOBYTE(v18) = (*(bool (__thiscall **)(MovGraphReact *, int, int))(v16->CObject.vmt + offsetof(MovGraphReactVmt, pointInRegion)))(v16, v17->_connectionX, v17->_connectionY);
+					if (v18) {
+						v14 = currMctlIndex;
+						v19 = *(MctlConnectionPoint **)(*(_DWORD *)(*(&this->_motionControllers.m_pData->vmt + sourceIndex) + 0x10) + 4 * v12);
+						v20 = MctlCompound_findClosestConnectionPoint(this, ox, oy, destIndex, v19->_connectionX, v19->_connectionY, currMctlIndex, (int *)&currDistance);
+						if (currDistance < minDistance) {
+							minDistance = currDistance;
+							if (v20)
+								minConnectionPoint = v20;
+							else
+								minConnectionPoint = *(MctlConnectionPoint **)(*(_DWORD *)(*(&this->_motionControllers.m_pData->vmt + sourceIndex) + 0x10) + 4 * v12);
+						}
+					} else {
+						v14 = currMctlIndex;
+					}
+				}
+				++v14;
+			}
+			++v12;
+		} while (v12 < *(_DWORD *)(*(&this->_motionControllers.m_pData->vmt + sourceIndex) + 0x14)); // MctlCompoundArrayItem.mctlConnectionPointsArray.CObArray.m_nSize
+	}
+
+	*minDistancePtr = minDistance;
+
+	return minConnectionPoint;
+}
+#endif
 	warning("STUB: MctlCompound::findClosestConnectionPoint()");
 
 	return 0;

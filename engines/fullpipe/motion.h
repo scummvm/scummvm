@@ -117,7 +117,7 @@ public:
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
 	void initMovGraph2();
-	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr);
+	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, double *minDistancePtr);
 	void replaceNodeX(int from, int to);
 
 	uint getMotionControllerCount() { return _motionControllers.size(); }
