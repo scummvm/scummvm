@@ -35,7 +35,7 @@ static const PlainGameDescriptor CGE2Games[] = {
 	{ 0, 0 }
 };
 
-static const ADGameDescription gameDescriptions[] = { // TODO: Add ENG version too.
+static const ADGameDescription gameDescriptions[] = {
 	{
 		"sfinx", "Sfinx Freeware",
 		{
@@ -45,7 +45,15 @@ static const ADGameDescription gameDescriptions[] = { // TODO: Add ENG version t
 		},
 		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
 	},
-	
+	{
+		"sfinx", "Sfinx English Alfa v0.1",
+		{
+			{"vol.cat", 0, "41a61030468e33828f3531fd53ef0319", 129024},
+			{"vol.dat", 0, "978ebe56442c111d193fdb4d960cc58d", 34382498},	
+			AD_LISTEND
+		},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+	},
 	AD_TABLE_END_MARKER
 };
 
