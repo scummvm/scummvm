@@ -292,7 +292,7 @@ void Scene201::actions() {
 	if (_action._lookFlag == false) {
 		if (_action.isAction(VERB_WALK_TOWARDS, NOUN_FIELD_TO_SOUTH))
 			_scene->_nextSceneId = 202;
-		else if ((_action.isAction(VERB_CLIMB_UP, NOUN_STEPS)) || (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) || (_action.isAction(VERB_WALK_INSIDE, NOUN_STRANGE_DEVICE))) {
+		else if (_action.isAction(VERB_CLIMB_UP, NOUN_STEPS) || (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) || (_action.isAction(VERB_WALK_INSIDE, NOUN_STRANGE_DEVICE))) {
 			if (_game._trigger == 0) {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
@@ -844,7 +844,7 @@ void Scene202::actions() {
 		}
 
 		_action._inProgress = false;
-	} else if ((_action.isAction(VERB_CLIMB_UP, NOUN_LADDER)) && !_globals[kLadderBroken]) {
+	} else if (_action.isAction(VERB_CLIMB_UP, NOUN_LADDER) && !_globals[kLadderBroken]) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_sound->command(29);
@@ -873,7 +873,7 @@ void Scene202::actions() {
 			_action._inProgress = false;
 			return;
 		}
-	} else if (((_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_FIELD_TO_NORTH)) || (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_STRANGE_DEVICE))) && (_globals[kSexOfRex] == SEX_MALE)) {
+	} else if ((_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_FIELD_TO_NORTH) || (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_STRANGE_DEVICE))) && (_globals[kSexOfRex] == SEX_MALE)) {
 		if (!_ladderTopFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -1584,7 +1584,7 @@ void Scene207::preActions() {
 	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_OPEN_FIELD_TO_EAST))
 		_game._player._walkOffScreenSceneId = 208;
 
-	if ((_action.isAction(VERB_WALKTO)) || (_action.isAction(VERB_LOOK))) {
+	if (_action.isAction(VERB_WALKTO) || _action.isAction(VERB_LOOK)) {
 		if (_action.isObject(NOUN_VULTURE)) {
 			_vultureTime = -9999;
 		} else if (_action.isObject(NOUN_SPIDER)) {
@@ -3296,7 +3296,7 @@ void Scene209::actions() {
 		return;
 	}
 
-	if ((_action.isAction(VERB_TALKTO, NOUN_MONKEY)) && !_pitchFl && !_playingDialogFl) {
+	if (_action.isAction(VERB_TALKTO, NOUN_MONKEY) && !_pitchFl && !_playingDialogFl) {
 		_scene->_sequences.addTimer(1, _dialogAbortVal);
 		_playingDialogFl = true;
 		_game._player._stepEnabled = false;
