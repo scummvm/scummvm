@@ -463,7 +463,7 @@ void Sprite::step(int nr) {
 				p._z += seq->_dz;
 				//if (!_flags._kept)
 				//	gotoxyz(p);
-				warning("Sprite::step()");
+				warning("STUB: Sprite::step()");
 			}
 		}
 		if (seq && (seq->_dly >= 0))
