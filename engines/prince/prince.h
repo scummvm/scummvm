@@ -201,7 +201,6 @@ public:
 	Image::BitmapDecoder *_roomBmp;
 
 	Common::Array<AnimListItem> _animList;
-	//Common::Array<Anim> _backAnimList;
 	Common::Array<BackgroundAnim> _backAnimList;
 
 	Common::RandomSource _randomSource;
@@ -223,6 +222,7 @@ private:
 	void init();
 	void showLogo();
 	void showBackAnims();
+	void clearBackAnimList();
 	bool spriteCheck(Graphics::Surface *backAnimSurface, int destX, int destY);
 	void showSprite(Graphics::Surface *backAnimSurface, int destX, int destY);
 	void showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY);

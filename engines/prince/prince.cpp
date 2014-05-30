@@ -115,15 +115,7 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
-	for (uint i = 0; i < _backAnimList.size(); i++) {
-		int anims = _backAnimList[i]._seq._anims != 0 ? _backAnimList[i]._seq._anims : 1;
-		for (int j = 0; j < anims; j++) {
-			delete _backAnimList[i].backAnims[j]._animData;
-			delete _backAnimList[i].backAnims[j]._shadowData;
-		}
-		_backAnimList[i].backAnims.clear();
-	}
-	_backAnimList.clear();
+	clearBackAnimList();
 
 	for (uint i = 0; i < _mainHero->_moveSet.size(); i++) {
 		delete _mainHero->_moveSet[i];
@@ -328,16 +320,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	_room->loadRoom(_script->getRoomOffset(_locationNr));
-	for (uint i = 0; i < _backAnimList.size(); i++) {
-		int anims = _backAnimList[i]._seq._anims != 0 ? _backAnimList[i]._seq._anims : 1;
-		for (int j = 0; j < anims; j++) {
-			delete _backAnimList[i].backAnims[j]._animData;
-			delete _backAnimList[i].backAnims[j]._shadowData;
-		}
-		_backAnimList[i].backAnims.clear();
-	}
-	_backAnimList.clear();
-
+	clearBackAnimList();
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
 
 	_graph->makeShadowTable(70, _graph->_shadowTable70);
@@ -917,6 +900,18 @@ void PrinceEngine::showBackAnims() {
 			}
 		}
 	}
+}
+
+void PrinceEngine::clearBackAnimList() {
+	for (uint i = 0; i < _backAnimList.size(); i++) {
+		int anims = _backAnimList[i]._seq._anims != 0 ? _backAnimList[i]._seq._anims : 1;
+		for (int j = 0; j < anims; j++) {
+			delete _backAnimList[i].backAnims[j]._animData;
+			delete _backAnimList[i].backAnims[j]._shadowData;
+		}
+		_backAnimList[i].backAnims.clear();
+	}
+	_backAnimList.clear();
 }
 
 void PrinceEngine::drawScreen() {
