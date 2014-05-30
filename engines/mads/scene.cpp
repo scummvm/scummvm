@@ -468,6 +468,9 @@ void Scene::doFrame() {
 		_cyclingActive = true;
 	_vm->_game->_fx = kTransitionNone;
 
+	// Handle freeing animation if necessary
+	if (_activeAnimation && _activeAnimation->freeFlag())
+		_freeAnimationFlag = true;
 	if (_freeAnimationFlag)
 		freeAnimation();
 }
