@@ -62,6 +62,7 @@ private:
 
 public:
 	BladeRunnerEngine(OSystem *syst);
+	~BladeRunnerEngine();
 
 	bool hasFeature(EngineFeature f) const;
 

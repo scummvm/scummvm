@@ -42,15 +42,24 @@
 namespace BladeRunner {
 
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst) : Engine(syst) {
-	_gameInfo = nullptr;
-
 	_windowIsActive = true;
 	_gameIsRunning  = true;
 
 	_chapters = nullptr;
+	_gameInfo = nullptr;
 	_scene = new Scene(this);
 	_script = new Script(this);
 	_settings = new Settings(this);
+}
+
+BladeRunnerEngine::~BladeRunnerEngine() {
+	delete _settings;
+	delete _script;
+	delete _scene;
+	delete _gameInfo;
+	delete _chapters;
+
+	_surface1.free();
 }
 
 bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
