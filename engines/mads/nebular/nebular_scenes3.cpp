@@ -869,8 +869,7 @@ void Scene307::step() {
 		}
 		_lastFrameTime = _scene->_frameStartTime;
 
-		// FIXME: The active animation is never a zero pointer, so the guards never show up
-		if ((_guardTime > 3000) && !_duringPeeingFl /*&& (_scene->_activeAnimation == nullptr)*/
+		if ((_guardTime > 3000) && !_duringPeeingFl && (_scene->_activeAnimation == nullptr)
 		&& (_game._screenObjects._inputMode != 1) && _globals[kMetBuddyBeast] && !_activePrisonerFl) {
 			if (!_game._objects.isInInventory(OBJ_SCALPEL) && !_grateOpenedFl) {
 				_game._player._stepEnabled = false;
