@@ -30,20 +30,13 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class VQADecoder;
 
 class OuttakePlayer {
 	BladeRunnerEngine *_vm;
 
-	bool               _isVQAOpen;
-	VQADecoder        *_vqaDecoder;
-	Graphics::Surface *_surface;
-
 public:
 	OuttakePlayer(BladeRunnerEngine *vm) :
-		_vm(vm),
-		_isVQAOpen(false),
-		_vqaDecoder(nullptr)
+		_vm(vm)
 	{}
 
 	void play(const Common::String &name, bool noLocalization, int container);
