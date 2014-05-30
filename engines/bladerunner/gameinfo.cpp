@@ -106,7 +106,9 @@ bool GameInfo::open(const Common::String &name) {
 			debug("%2d: %s.VQA", i, _outtakes[i]);
 	}
 
-	return !s->err();
+	bool err = s->err();
+	delete s;
+	return !err;
 }
 
 } // End of namespace BladeRunner
