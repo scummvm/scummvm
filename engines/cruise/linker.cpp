@@ -40,18 +40,18 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer
 	*out1 = 0;
 	*pExportedFuncionIdx = 0;
 
-	strcpy(localBuffer, buffer);
+	Common::strlcpy(localBuffer, buffer, sizeof(localBuffer));
 	dotPtr = strchr(localBuffer, '.');
 
 	if (dotPtr) {
-		strcpy(functionName, dotPtr + 1);
+		Common::strlcpy(functionName, dotPtr + 1, sizeof(functionName));
 		*dotPtr = 0;
 
 		strcpy(overlayName, localBuffer);
 	} else {
 		overlayName[0] = 0;
 
-		strcpy(functionName, buffer);
+		Common::strlcpy(functionName, buffer, sizeof(functionName));
 	}
 
 	ptr2 = strchr((char *)functionName, ':');
@@ -89,7 +89,7 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer
 		char exportedName[256];
 		char *name = entity1Name + currentExportEntry->offsetToName;
 
-		strcpy(exportedName, name);
+		Common::strlcpy(exportedName, name, sizeof(exportedName));
 		strToUpper(exportedName);
 
 		if (!strcmp(functionName, exportedName)) {
