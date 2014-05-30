@@ -48,7 +48,6 @@ public:
 	Graphics::Surface *getFrame(uint frameIndex);
 	int16 getFrameWidth(uint frameIndex) const;
 	int16 getFrameHeight(uint frameIndex) const;
-	int16 getZoom(uint16 offset) const;
 	void clear();
 
 private:

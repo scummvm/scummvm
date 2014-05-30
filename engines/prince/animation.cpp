@@ -57,11 +57,6 @@ void Animation::clear() {
 	}
 }
 
-// TEMP
-int16 Animation::getZoom(uint16 offset) const {
-	return READ_LE_UINT16(_data + offset);
-}
-
 // AH_Loop
 int16 Animation::getLoopCount() const {
 	return READ_LE_UINT16(_data + 2);

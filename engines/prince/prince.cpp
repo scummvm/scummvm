@@ -296,9 +296,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 		_graph->setPalette(_roomBmp->getPalette());
 	}
 
-	_mainHero->_zoomBitmap->clear();
-	Resource::loadResource(_mainHero->_zoomBitmap, "zoom", false);
-
+	loadZoom(_mainHero->_zoomBitmap, _mainHero->kZoomBitmapLen, "zoom");
 	loadShadow(_mainHero->_shadowBitmap, _mainHero->kShadowBitmapSize, "shadow", "shadow2");
 
 	_picWindowX = 0;
@@ -475,8 +473,22 @@ bool PrinceEngine::loadAnim(uint16 animNr, bool loop) {
 	return true;
 }
 
-bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2) {
+bool PrinceEngine::loadZoom(byte *zoomBitmap, uint32 dataSize, const char *resourceName) {
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName);
+	if (!stream) {
+		delete stream;
+		return false;
+	}
+	if (stream->read(zoomBitmap, dataSize) != dataSize) {
+		free(zoomBitmap);
+		delete stream;
+		return false;
+	}
+	delete stream;
+	return true;
+}
 
+bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(resourceName1);
 	if (!stream) {
 		delete stream;

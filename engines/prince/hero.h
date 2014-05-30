@@ -38,11 +38,13 @@ class GraphicsMan;
 
 class Hero {
 public:
-	static const uint32 kMoveSetSize = 26;
-	static const int16 kZoomStep = 4;
 	static const int16 kMaxPicWidth = 1280;
 	static const int16 kMaxPicHeight = 480;
+	static const uint32 kMoveSetSize = 26;
+	static const int16 kZoomStep = 4;
+	static const int32 kZoomBitmapLen = kMaxPicHeight / kZoomStep * kMaxPicWidth / kZoomStep;
 	static const int16 kZoomBitmapWidth = kMaxPicWidth / kZoomStep;
+	static const int16 kZoomBitmapHeight = kMaxPicHeight / kZoomStep;
 	static const int16 kShadowLineArraySize = 2 * 1280 * 4;
 	static const int32 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
 	static const int16 kScreenWidth = 640;
@@ -178,7 +180,7 @@ public:
 	// AnimSet number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
 	// TurnAnim ??
-	Animation *_zoomBitmap; // change to sth else, not Animation ??
+	byte *_zoomBitmap;
 	byte *_shadowBitmap;
 	byte *_shadowLine;
 	

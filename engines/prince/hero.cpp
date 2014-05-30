@@ -39,13 +39,13 @@ Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph)
 	, _shadZoomFactor(0), _shadScaleValue(0), _shadLineLen(0), _shadDrawX(0), _shadDrawY(0)
 	, _frameXSize(0), _frameYSize(0), _scaledFrameXSize(0), _scaledFrameYSize(0)
 {
-	_zoomBitmap = new Animation();
+	_zoomBitmap = (byte *)malloc(kZoomBitmapLen);
 	_shadowBitmap = (byte *)malloc(2 * kShadowBitmapSize);
 	_shadowLine = new byte[kShadowLineArraySize];
 }
 
 Hero::~Hero() {
-	delete _zoomBitmap;
+	free(_zoomBitmap);
 	free(_shadowBitmap);
 	delete[] _shadowLine;
 }
@@ -552,7 +552,7 @@ void Hero::setScale(int8 zoomBitmapValue) {
 }
 
 void Hero::selectZoom() {
-	int8 zoomBitmapValue = _zoomBitmap->getZoom(_middleY / 4 * kZoomBitmapWidth + _middleX / 4);
+	int8 zoomBitmapValue = *(_zoomBitmap + _middleY / 4 * kZoomBitmapWidth + _middleX / 4);
 	setScale(zoomBitmapValue);
 }
 
