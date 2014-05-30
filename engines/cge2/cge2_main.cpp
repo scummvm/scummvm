@@ -598,7 +598,7 @@ void CGE2Engine::qGame() {
 void CGE2Engine::loadTab() {
 	setEye(_text->getText(240));
 	for (int i = 0; i < kCaveMax; i++)
-		_eyeTab[i] == _eye;
+		_eyeTab[i] = _eye;
 
 	if (_resman->exist(kTabName)) {
 		EncryptedStream f(this, kTabName);
