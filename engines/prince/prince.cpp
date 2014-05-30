@@ -117,7 +117,7 @@ PrinceEngine::~PrinceEngine() {
 
 	for (uint i = 0; i < _backAnimList.size(); i++) {
 		int anims = _backAnimList[i]._seq._anims != 0 ? _backAnimList[i]._seq._anims : 1;
-		for (uint j = 0; j < anims; j++) {
+		for (int j = 0; j < anims; j++) {
 			delete _backAnimList[i].backAnims[j]._animData;
 			delete _backAnimList[i].backAnims[j]._shadowData;
 		}
@@ -328,9 +328,9 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	_room->loadRoom(_script->getRoomOffset(_locationNr));
-	for (uint32 i = 0; i < _backAnimList.size(); i++) {
+	for (uint i = 0; i < _backAnimList.size(); i++) {
 		int anims = _backAnimList[i]._seq._anims != 0 ? _backAnimList[i]._seq._anims : 1;
-		for (uint32 j = 0; j < anims; j++) {
+		for (int j = 0; j < anims; j++) {
 			delete _backAnimList[i].backAnims[j]._animData;
 			delete _backAnimList[i].backAnims[j]._shadowData;
 		}

@@ -245,7 +245,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 
 		for (int x = 0; x < _frameXSize; x++, dst++, src++) {
 			if (*src != 0xFF) {
-				*dst = kShadowColor;
+				*dst = _graph->kShadowColor;
 			} else {
 				*dst = *src;
 			}
@@ -397,7 +397,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 					if (shadZoomX < 0 && _scaleValue != 10000) {
 						shadZoomX += _scaleValue;
 					} else {
-						if (*shadowHero == kShadowColor) {
+						if (*shadowHero == _graph->kShadowColor) {
 							if ((shadBitMaskCopyTrans & _shadowBitmap[shadBitAddrCopyTrans]) != 0) {
 								if (shadWallDown == 0) {
 									if ((shadBitMaskCopyTrans & _shadowBitmap[shadBitAddrCopyTrans + kShadowBitmapSize]) != 0) {
@@ -455,7 +455,7 @@ void Hero::showHeroShadow(Graphics::Surface *heroFrame) {
 								shadZoomXWall += _scaleValue;
 							} else {
 								//point_ok:
-								if (*shadowHero == kShadowColor) {
+								if (*shadowHero == _graph->kShadowColor) {
 									if ((shadBitMaskWallCopyTrans & _shadowBitmap[shadBitAddrWallCopyTrans + kShadowBitmapSize]) != 0) {
 										*background = *(sprShadow + *background);
 									}

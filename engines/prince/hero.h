@@ -47,8 +47,6 @@ public:
 	static const int32 kShadowBitmapSize = kMaxPicWidth * kMaxPicHeight / 8;
 	static const int16 kScreenWidth = 640;
 
-	static const byte kShadowColor = 191;
-
 	enum State {
 		STAY = 0,
 		TURN = 1,
@@ -163,7 +161,7 @@ public:
 	// DestDir 
 	// LeftRight previous left/right direction
 	// UpDown previous up/down direction
-	uint _phase; // Phase animation phase
+	int32 _phase; // Phase animation phase
 	// Step x/y step size depends on direction
 	// MaxBoredom stand still timeout
 	int16 _boredomTime;// Boredom current boredom time in frames

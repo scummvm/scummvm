@@ -54,6 +54,8 @@ public:
 	byte *_shadowTable70;
 	byte *_shadowTable50;
 
+	static const byte kShadowColor = 191;
+
 private:
 
 	PrinceEngine *_vm;
