@@ -85,7 +85,7 @@ struct AnimListItem {
 	int16 _y;
 	uint16 _loopType;
 	uint16 _nextAnim; // number of animation to do for loop = 3
-	uint16 _flags; // byte 0 - draw overlays, byte 1 - draw in front of overlay, byte 2 - load but turn off drawing
+	uint16 _flags; // byte 0 - draw masks, byte 1 - draw in front of mask, byte 2 - load but turn off drawing
 	bool loadFromStream(Common::SeekableReadStream &stream);
 };
 
@@ -142,15 +142,16 @@ struct BackgroundAnim {
 };
 
 // Nak (PL - Nakladka)
-struct Overlay {
+struct Mask {
 	int16 _state; // visible / invisible
-	int16 _flags; // turning on / turning off of an overlay
+	int16 _flags; // turning on / turning off of an mask
 	int16 _x1;
 	int16 _y1;
 	int16 _x2;
 	int16 _y2;
 	int16 _z;
 	int16 _number; // number of mask for background recreating
+	byte *_data;
 };
 
 struct DebugChannel {
@@ -221,7 +222,9 @@ public:
 	static const int16 kNormalWidth = 640;
 	static const int16 kNormalHeight = 480;
 
-	void checkNak(int x1, int y1, int sprWidth, int sprHeight, int z);
+	void checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z);
+	void insertMasks();
+	void showMask(int maskNr);
 
 	int testAnimNr;
 	int testAnimFrame;
@@ -269,7 +272,7 @@ private:
 	Animation *_zoom;
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
-	Common::Array<Overlay> _overlayList;
+	Common::Array<Mask> _maskList;
 
 	bool _flicLooped;
 	

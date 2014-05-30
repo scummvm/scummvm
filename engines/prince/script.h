@@ -39,7 +39,7 @@ class PrinceEngine;
 class Animation;
 struct Anim;
 struct BackgroundAnim;
-struct Overlay;
+struct Mask;
 
 namespace Detail {
 	template <typename T> T LittleEndianReader(void *data);
@@ -54,7 +54,7 @@ public:
 	int _mobs; // mob flag offset
 	int _backAnim; // offset to array of animation numbers
 	int _obj; // offset to array of object numbers
-	int _nak; // offset to array of overlays
+	int _nak; // offset to array of masks
 	int _itemUse;
 	int _itemGive;
 	int _walkTo; // offset to array of WALKTO events or 0
@@ -135,7 +135,7 @@ public:
 	uint8 *getRoomOffset(int locationNr);
 	void installBackAnims(Common::Array<BackgroundAnim> &_backanimList, int offset);
 	void installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset);
-	void loadOverlays(Common::Array<Overlay> &overlayList, int offset);
+	bool loadAllMasks(Common::Array<Mask> &maskList, int offset);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);

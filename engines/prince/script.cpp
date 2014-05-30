@@ -291,33 +291,53 @@ void Script::installBackAnims(Common::Array<BackgroundAnim> &backanimList, int o
 	}
 }
 
-void Script::loadOverlays(Common::Array<Overlay> &overlayList, int offset) {
-	Overlay tempOverlay;
+bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
+	Mask tempMask;
 	while (1) {
-		tempOverlay._state = READ_UINT32(&_data[offset]);
-		if (tempOverlay._state == -1) {
+		tempMask._state = READ_UINT32(&_data[offset]);
+		if (tempMask._state == -1) {
 			break;
 		}
-		debug("tempOverlay._state: %d", tempOverlay._state);
-		tempOverlay._flags = READ_UINT32(&_data[offset + 2]);
-		debug("tempOverlay._flags: %d", tempOverlay._flags);
-		tempOverlay._x1 = READ_UINT32(&_data[offset + 4]);
-		debug("tempOverlay._x1: %d", tempOverlay._x1);
-		tempOverlay._y1 = READ_UINT32(&_data[offset + 6]);
-		debug("tempOverlay._y1: %d", tempOverlay._y1);
-		tempOverlay._x2 = READ_UINT32(&_data[offset + 8]);
-		debug("tempOverlay._x2: %d", tempOverlay._x2);
-		tempOverlay._y2 = READ_UINT32(&_data[offset + 10]);
-		debug("tempOverlay._y2: %d", tempOverlay._y2);
-		tempOverlay._z = READ_UINT32(&_data[offset + 12]);
-		debug("tempOverlay._z: %d", tempOverlay._z);
-		tempOverlay._number = READ_UINT32(&_data[offset + 14]);
-		debug("tempOverlay._number: %d\n", tempOverlay._number);
-		overlayList.push_back(tempOverlay);
-		offset += 16; // size of Overlay (Nak) struct
+		debug("tempMask._state: %d", tempMask._state);
+		tempMask._flags = READ_UINT32(&_data[offset + 2]);
+		debug("tempMask._flags: %d", tempMask._flags);
+		tempMask._x1 = READ_UINT32(&_data[offset + 4]);
+		debug("tempMask._x1: %d", tempMask._x1);
+		tempMask._y1 = READ_UINT32(&_data[offset + 6]);
+		debug("tempMask._y1: %d", tempMask._y1);
+		tempMask._x2 = READ_UINT32(&_data[offset + 8]);
+		debug("tempMask._x2: %d", tempMask._x2);
+		tempMask._y2 = READ_UINT32(&_data[offset + 10]);
+		debug("tempMask._y2: %d", tempMask._y2);
+		tempMask._z = READ_UINT32(&_data[offset + 12]);
+		debug("tempMask._z: %d", tempMask._z);
+		tempMask._number = READ_UINT32(&_data[offset + 14]);
+		debug("tempMask._number: %d\n", tempMask._number);
+
+		const Common::String msStreamName = Common::String::format("MS%02d", tempMask._number);
+		Common::SeekableReadStream *msStream = SearchMan.createReadStreamForMember(msStreamName);
+		if (!msStream) {
+			error("Can't load %s", msStreamName.c_str());
+			delete msStream;
+			return false;
+		}
+		uint32 dataSize = msStream->size();
+		if (dataSize != -1) {
+			tempMask._data = (byte *)malloc(dataSize);
+			if (msStream->read(tempMask._data, dataSize) != dataSize) {
+				free(tempMask._data);
+				delete msStream;
+				return false;
+			}
+			delete msStream;
+		}
+
+		maskList.push_back(tempMask);
+		offset += 16; // size of tempMask (Nak) struct
 	}
-	debug("NAK size: %d", sizeof(Overlay));
-	debug("overlayList size: %d", overlayList.size());
+	debug("Mask size: %d", sizeof(tempMask));
+	debug("maskList size: %d", maskList.size());
+	return true;
 }
 
 InterpreterFlags::InterpreterFlags() {

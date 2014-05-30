@@ -299,10 +299,11 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	loadZoom(_mainHero->_zoomBitmap, _mainHero->kZoomBitmapLen, "zoom");
 	loadShadow(_mainHero->_shadowBitmap, _mainHero->kShadowBitmapSize, "shadow", "shadow2");
 
-	_picWindowX = 0;
-
 	_mobList.clear();
 	Resource::loadResource(_mobList, "mob.lst", false);
+
+	_animList.clear();
+	Resource::loadResource(_animList, "anim.lst", false);
 
 	for (uint32 i = 0; i < _objList.size(); i++) {
 		delete _objList[i];
@@ -310,17 +311,19 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_objList.clear();
 	Resource::loadResource(_objList, "obj.lst", false);
 
-	_animList.clear();
-	Resource::loadResource(_animList, "anim.lst", false);
+	_room->loadRoom(_script->getRoomOffset(_locationNr));
+
+	for (uint i = 0; i < _maskList.size(); i++) {
+		free(_maskList[i]._data);
+	}
+	_maskList.clear();
+	_script->loadAllMasks(_maskList, _room->_nak);
+
+	_picWindowX = 0;
 
 	_mainHero->_lightX = _script->getLightX(_locationNr);
 	_mainHero->_lightY = _script->getLightY(_locationNr);
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
-
-	_room->loadRoom(_script->getRoomOffset(_locationNr));
-
-	_overlayList.clear();
-	_script->loadOverlays(_overlayList, _room->_nak);
 
 	clearBackAnimList();
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
@@ -746,22 +749,39 @@ bool PrinceEngine::spriteCheck(Graphics::Surface *backAnimSurface, int destX, in
 	return true;
 }
 
-void PrinceEngine::checkNak(int x1, int y1, int sprWidth, int sprHeight, int z) {
+// CheckNak
+void PrinceEngine::checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z) {
 	int x2 = x1 + sprWidth - 1;
 	int y2 = y1 + sprHeight - 1;
 	if (x1 < 0) {
 		x1 = 0;
 	}
-	for (uint i = 0; i < _overlayList.size() ; i++) {
-		if (_overlayList[i]._state != 1 && _overlayList[i]._flags != 1) {
-			if (_overlayList[i]._z > z) {
-				if (_overlayList[i]._x1 <= x2 && _overlayList[i]._x2 >= x1) {
-					if (_overlayList[i]._y1 <= y2 && _overlayList[i]._y2 >= y1) {
-						_overlayList[i]._state = 1;
+	for (uint i = 0; i < _maskList.size() ; i++) {
+		if (_maskList[i]._state != 1 && _maskList[i]._flags != 1) {
+			if (_maskList[i]._z > z) {
+				if (_maskList[i]._x1 <= x2 && _maskList[i]._x2 >= x1) {
+					if (_maskList[i]._y1 <= y2 && _maskList[i]._y2 >= y1) {
+						_maskList[i]._state = 1;
 					}
 				}
 			}
 		}
+	}
+}
+
+// InsertNakladki
+void PrinceEngine::insertMasks() {
+	for (uint i = 0; i < _maskList.size(); i++) {
+		if (_maskList[i]._state == 1) {
+			showMask(i);
+		}
+	}
+}
+
+// ShowNak
+void PrinceEngine::showMask(int maskNr) {
+	if (_maskList[maskNr]._flags == 0) {
+
 	}
 }
 

@@ -208,7 +208,7 @@ void Hero::countDrawPosition() {
 	tempMiddleX = _middleX - width; //eax
 	int z = _middleY; //ebp
 	int y = _middleY - _scaledFrameYSize; //ecx
-	_vm->checkNak(tempMiddleX, y, _scaledFrameXSize, _scaledFrameYSize, z);
+	_vm->checkMasks(tempMiddleX, y, _scaledFrameXSize, _scaledFrameYSize, z);
 
 	if (_zoomFactor != 0) {
 		//notfullSize
