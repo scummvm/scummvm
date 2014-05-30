@@ -353,23 +353,20 @@ bool VQADecoder::readMSCI(Common::SeekableReadStream *s, uint32 size)
 
 	for (uint32 i = 0; i < count; ++i)
 	{
-		uint32 tag, size;
+		uint32 tag, max_size;
 		tag  = s->readUint32BE();
-		size = s->readUint32LE();
+		max_size = s->readUint32LE();
 
 		switch (tag)
 		{
 		case kVIEW:
-			_maxVIEWChunkSize = size;
-			// debug("max VIEW size: %08x", _maxVIEWChunkSize);
+			_maxVIEWChunkSize = max_size;
 			break;
 		case kZBUF:
-			_maxZBUFChunkSize = size;
-			// debug("max ZBUF size: %08x", _maxZBUFChunkSize);
+			_maxZBUFChunkSize = max_size;
 			break;
 		case kAESC:
-			_maxAESCChunkSize = size;
-			// debug("max AESC size: %08x", _maxAESCChunkSize);
+			_maxAESCChunkSize = max_size;
 			break;
 		default:
 			warning("Unknown tag in MSCT: %s", strTag(tag));
