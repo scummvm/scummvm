@@ -34,6 +34,10 @@ Image::Image(BladeRunnerEngine *vm)
 {
 }
 
+Image::~Image() {
+	_surface.free();
+}
+
 bool Image::open(const Common::String &name) {
 	Common::SeekableReadStream *stream = _vm->getResourceStream(name);
 	if (!stream) {
@@ -67,6 +71,7 @@ bool Image::open(const Common::String &name) {
 	_surface.init(width, height, 2*width, data, pixelFormat);
 
 	delete[] buf;
+	delete stream;
 
 	return true;
 }

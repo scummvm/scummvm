@@ -37,6 +37,7 @@ class Image {
 	Graphics::Surface  _surface;
 public:
 	Image(BladeRunnerEngine *vm);
+	~Image();
 
 	bool open(const Common::String &name);
 	void copyToSurface(Graphics::Surface *surface) const;
