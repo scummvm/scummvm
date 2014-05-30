@@ -45,7 +45,7 @@ class Text;
 struct HeroTab;
 class V3D;
 class V2D;
-class Dac;
+struct Dac;
 class Spare;
 class CommandHandler;
 class InfoLine;
