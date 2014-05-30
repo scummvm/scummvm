@@ -222,12 +222,6 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList,
 			newAnim._basaData._num = READ_UINT16(&_data[animOffset + 28 + i * 8]);
 			newAnim._basaData._start = READ_UINT16(&_data[animOffset + 28 + i * 8 + 2]);
 			newAnim._basaData._end = READ_UINT16(&_data[animOffset + 28 + i * 8 + 4]);
-			if (newAnim._basaData._start != -1) {
-				debug("start1: %d", newAnim._basaData._start);
-			}
-			if (newAnim._basaData._end != -1) {
-				debug("end1: %d", newAnim._basaData._end);
-			}
 			int animNumber = newAnim._basaData._num;
 			const Common::String animName = Common::String::format("AN%02d", animNumber);
 			const Common::String shadowName = Common::String::format("AN%02dS", animNumber);
@@ -238,7 +232,6 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList,
 				delete newAnim._shadowData;
 				newAnim._shadowData = nullptr;
 			}
-			//newAnim._seq = 0;
 			newAnim._usage = 0;
 			newAnim._state = 0; // enabled
 			if ((_vm->_animList[animNumber]._flags & 4) != 0) {
@@ -251,7 +244,6 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList,
 			}
 			newAnim._flags = _vm->_animList[animNumber]._flags;
 			newAnim._lastFrame = _vm->_animList[animNumber]._endPhase;
-			debug("lastFrame: %d", _vm->_animList[animNumber]._endPhase);
 			newAnim._loopFrame = _vm->_animList[animNumber]._loopPhase;
 			newAnim._loopType = _vm->_animList[animNumber]._loopType;
 			newAnim._nextAnim = _vm->_animList[animNumber]._nextAnim;
@@ -265,40 +257,26 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList,
 			newAnim._packFlag = 0;
 			newAnim._shadowBack = _vm->_animList[animNumber]._type;
 			newBackgroundAnim.backAnims.push_back(newAnim);
-			debug("%d - animNo: %d", i, animNumber);
 		}
 
 		newBackgroundAnim._seq._type = READ_UINT32(&_data[animOffset]);
-		debug("type: %d", newBackgroundAnim._seq._type);
 		newBackgroundAnim._seq._data = READ_UINT32(&_data[animOffset + 4]);
-		//debug("data: %d", newBackgroundAnim._seq._data);
 		newBackgroundAnim._seq._anims = READ_UINT32(&_data[animOffset + 8]);
-		anims = newBackgroundAnim._seq._anims;
-		debug("anims: %d", newBackgroundAnim._seq._anims);
-		//newBackgroundAnim._seq._current = READ_UINT32(&_data[animOffset + 12]);
-		newBackgroundAnim._seq._current = 0; // nr on list like now or should it be fileNr of anim - check it
-		//debug("current: %d", newBackgroundAnim._seq._current);
-		//newBackgroundAnim._seq._counter = READ_UINT32(&_data[animOffset + 16]);
+		newBackgroundAnim._seq._current = newBackgroundAnim.backAnims[0]._basaData._num;
 		newBackgroundAnim._seq._counter = 0;
-		//debug("counter: %d", newBackgroundAnim._seq._counter);
-		//newBackgroundAnim._seq._currRelative = READ_UINT32(&_data[animOffset + 20]);
 		newBackgroundAnim._seq._currRelative = 0;
-		//debug("currRelative: %d", newBackgroundAnim._seq._currRelative);
 		newBackgroundAnim._seq._data2 = READ_UINT32(&_data[animOffset + 24]);
-		//debug("data2: %d", newBackgroundAnim._seq._data2);
 
 		int start = newBackgroundAnim.backAnims[0]._basaData._start; // BASA_Start of first frame
 		int end = newBackgroundAnim.backAnims[0]._basaData._end; //BASA_End of first frame
 
 		if (start != -1) {
-			debug("start2: %d", start);
 			newBackgroundAnim.backAnims[0]._frame = start;
 			newBackgroundAnim.backAnims[0]._showFrame = start;
 			newBackgroundAnim.backAnims[0]._loopFrame = start;
 		}
 
 		if (end != -1) {
-			debug("end2: %d", end);
 			newBackgroundAnim.backAnims[0]._lastFrame = end;
 		}
 

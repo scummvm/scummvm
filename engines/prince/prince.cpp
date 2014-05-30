@@ -778,7 +778,7 @@ void PrinceEngine::showBackAnims() {
 							int rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._anims - 2);
 							rnd++;
 							_backAnimList[i]._seq._currRelative = rnd;
-							_backAnimList[i]._seq._current = rnd; // or nr of animation from lst
+							_backAnimList[i]._seq._current = _backAnimList[i].backAnims[rnd]._basaData._num;
 							activeSubAnim = rnd;
 						}
 						//only_1_type_2
@@ -835,7 +835,7 @@ void PrinceEngine::showBackAnims() {
 							rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._anims - 1);
 						} while (rnd == _backAnimList[i]._seq._currRelative);
 						_backAnimList[i]._seq._currRelative = rnd;
-						_backAnimList[i]._seq._current = rnd; // or nr of animation from lst
+						_backAnimList[i]._seq._current = _backAnimList[i].backAnims[rnd]._basaData._num;
 						activeSubAnim = rnd;
 						//only_1_type_1:
 						//SetBackAnim
@@ -855,7 +855,7 @@ void PrinceEngine::showBackAnims() {
 				} else if (_backAnimList[i]._seq._type == 2) {
 					if (_backAnimList[i]._seq._currRelative != 0) {
 						_backAnimList[i]._seq._currRelative = 0;
-						_backAnimList[i]._seq._current = 0; // or nr of animation from lst
+						_backAnimList[i]._seq._current = _backAnimList[i].backAnims[0]._basaData._num;
 						activeSubAnim = 0;
 						//only_1_type_1
 						//SetBackAnim
@@ -875,7 +875,7 @@ void PrinceEngine::showBackAnims() {
 				} else if (_backAnimList[i]._seq._type == 3) {
 					//not_type_2
 					_backAnimList[i]._seq._currRelative = 0;
-					_backAnimList[i]._seq._current = 0; // or nr of animation from lst
+					_backAnimList[i]._seq._current = _backAnimList[i].backAnims[0]._basaData._num;
 					_backAnimList[i]._seq._counter = 0;
 					int rnd = _randomSource.getRandomNumber(_backAnimList[i]._seq._data - 1);
 					_backAnimList[i]._seq._data2 = rnd;
