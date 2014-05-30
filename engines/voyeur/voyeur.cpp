@@ -37,7 +37,7 @@ VoyeurEngine *g_vm;
 
 VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _randomSource("Voyeur"),
-		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1, 
+		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1,
 			Common::Point(1, 1), 1, 0, 0) {
 	_debugger = nullptr;
 	_eventsManager = nullptr;
@@ -158,7 +158,7 @@ void VoyeurEngine::initInput() {
 
 bool VoyeurEngine::doHeadTitle() {
 //	char dest[144];
-	
+
 	_eventsManager->startMainClockInt();
 
 	if (_loadGameSlot == -1) {
@@ -205,7 +205,7 @@ bool VoyeurEngine::doHeadTitle() {
 			_voy->addEvent(18, 7, EVTYPE_VIDEO, 40, 0, 998, -1);
 			_voy->addEvent(18, 8, EVTYPE_VIDEO, 43, 0, 998, -1);
 			_voy->addEvent(19, 1, EVTYPE_AUDIO, 20, 0, 998, -1);
-		} 
+		}
 	}
 
 	_voy->_aptLoadMode = 140;
@@ -271,7 +271,7 @@ bool VoyeurEngine::doLock() {
 		_graphicsManager->setColor(2, 96, 96, 96);
 		_graphicsManager->setColor(3, 160, 160, 160);
 		_graphicsManager->setColor(4, 224, 224, 224);
-		
+
 		// Set up the cursor
 		_eventsManager->setCursor(cursorPic);
 		_eventsManager->showCursor();
@@ -464,11 +464,11 @@ void VoyeurEngine::doOpening() {
 	_eventsManager->_intPtr._hasPalette = true;
 	_graphicsManager->_vPort->setupViewPort();
 	flipPageAndWait();
-	
+
 	RL2Decoder decoder;
 	decoder.loadRL2File("a2300100.rl2", false);
 	decoder.start();
-	
+
 	while (!shouldQuit() && !decoder.endOfVideo() && !_eventsManager->_mouseClicked) {
 		if (decoder.hasDirtyPalette()) {
 			const byte *palette = decoder.getPalette();
@@ -487,7 +487,7 @@ void VoyeurEngine::doOpening() {
 					textPic = _bVoy->boltEntry(frameIndex / 2 + 0x202)._picResource;
 					textPos = Common::Point(READ_LE_UINT16(xyTable + frameIndex * 2),
 						READ_LE_UINT16(xyTable + (frameIndex + 1) * 2));
-					
+
 					creditShow = false;
 				} else {
 					textPic = nullptr;
@@ -500,8 +500,9 @@ void VoyeurEngine::doOpening() {
 
 			if (textPic) {
 				_graphicsManager->sDrawPic(textPic, _graphicsManager->_vPort, textPos);
-				flipPageAndWait();
 			}
+
+			flipPageAndWait();
 		}
 
 		_eventsManager->getMouseInfo();
@@ -560,9 +561,9 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	RL2Decoder decoder;
 	decoder.loadVideo(videoId);
 
-	decoder.seek(Audio::Timestamp(_voy->_vocSecondsOffset * 1000)); 
+	decoder.seek(Audio::Timestamp(_voy->_vocSecondsOffset * 1000));
 	decoder.start();
-	int endFrame = decoder.getCurFrame() + totalFrames; 
+	int endFrame = decoder.getCurFrame() + totalFrames;
 
 	_eventsManager->getMouseInfo();
 	_eventsManager->startCursorBlink();
@@ -603,9 +604,9 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 
 void VoyeurEngine::playAudio(int audioId) {
 	_bVoy->getBoltGroup(0x7F00);
-	_graphicsManager->_backgroundPage = _bVoy->boltEntry(0x7F00 + 
+	_graphicsManager->_backgroundPage = _bVoy->boltEntry(0x7F00 +
 		BLIND_TABLE[audioId] * 2)._picResource;
-	_graphicsManager->_backColors = _bVoy->boltEntry(0x7F01 + 
+	_graphicsManager->_backColors = _bVoy->boltEntry(0x7F01 +
 		BLIND_TABLE[audioId] * 2)._cMapResource;
 
 	_graphicsManager->_vPort->setupViewPort();
@@ -620,7 +621,7 @@ void VoyeurEngine::playAudio(int audioId) {
 	_voy->_eventFlags |= EVTFLAG_RECORDING;
 	_eventsManager->startCursorBlink();
 
-	while (!shouldQuit() && !_eventsManager->_mouseClicked && 
+	while (!shouldQuit() && !_eventsManager->_mouseClicked &&
 			_soundManager->getVOCStatus())
 		_eventsManager->delayClick(1);
 
@@ -657,7 +658,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	fi._justifyHeight = 120;
 
 	_graphicsManager->_vPort->drawText(time);
-	
+
 	if (!location.empty()) {
 		fi._pos = Common::Point(0, 138);
 		fi._justify = ALIGN_CENTER;
@@ -723,7 +724,7 @@ void VoyeurEngine::showEndingNews() {
 		_soundManager->startVOCPlay(fname);
 
 		_eventsManager->getMouseInfo();
-		while (!shouldQuit() && !_eventsManager->_mouseClicked && 
+		while (!shouldQuit() && !_eventsManager->_mouseClicked &&
 				_soundManager->getVOCStatus()) {
 			_eventsManager->delay(1);
 			_eventsManager->getMouseInfo();
@@ -901,7 +902,7 @@ void VoyeurSavegameHeader::write(Common::OutSaveFile *f, VoyeurEngine *vm, const
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-	::createThumbnail(thumb, (byte *)vm->_graphicsManager->_screenSurface.getPixels(), 
+	::createThumbnail(thumb, (byte *)vm->_graphicsManager->_screenSurface.getPixels(),
 		SCREEN_WIDTH, SCREEN_HEIGHT, vm->_graphicsManager->_VGAColors);
 	Graphics::saveThumbnail(*f, *thumb);
 	thumb->free();

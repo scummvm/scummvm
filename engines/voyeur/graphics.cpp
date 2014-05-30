@@ -97,9 +97,9 @@ void GraphicsManager::restoreMCGASaveRect(ViewPortResource *viewPort) {
 
 	restoreBack(*viewPort->_rectListPtr[1], viewPort->_rectListCount[1], viewPort->_pages[0],
 		viewPort->_pages[1]);
-	
+
 	int count = viewPort->_rectListCount[0];
-	restoreBack(*viewPort->_rectListPtr[0], viewPort->_rectListCount[0], 
+	restoreBack(*viewPort->_rectListPtr[0], viewPort->_rectListCount[0],
 		viewPort->_activePage, viewPort->_currentPic);
 
 	SWAP(viewPort->_rectListPtr[0], viewPort->_rectListPtr[1]);
@@ -150,7 +150,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		destPic = (PictureResource *)destDisplay;
 	}
 
-	Common::Point offset = Common::Point(initialOffset.x + srcPic->_bounds.left - destPic->_bounds.left, 
+	Common::Point offset = Common::Point(initialOffset.x + srcPic->_bounds.left - destPic->_bounds.left,
 		initialOffset.y + srcPic->_bounds.top - destPic->_bounds.top);
 	width1 = width2 = srcPic->_bounds.width();
 	height1 = srcPic->_bounds.height();
@@ -178,7 +178,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			srcOffset -= tmpHeight * width2;
 			height1 += tmpHeight;
 			offset.y = newBounds.top;
-			
+
 			if (height1 <= 0)
 				return;
 
@@ -258,7 +258,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
 			if (imageDataShift < 4)
 				++imageDataShift;
-		}		
+		}
 	} else {
 		srcImgData = srcPic->_imgData;
 		destImgData = destPic->_imgData;
@@ -367,7 +367,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 							width2 = srcPic->_bounds.width();
 							height1 = tmpHeight + height1;
-							
+
 							for (int yp = 0; yp < height1; ++yp) {
 								runLength = 0;
 
@@ -509,7 +509,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			if (srcFlags & DISPFLAG_2) {
 				if (!(srcFlags & DISPFLAG_8)) {
 					srcP = srcImgData + srcOffset;
-					
+
 					if (destFlags & DISPFLAG_8) {
 						// loc_272C3
 						error("TODO: sDrawPic variation");
@@ -786,7 +786,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 						} else {
 							// loc_271F0
 							srcP = srcImgData;
-							
+
 							if (isClipped) {
 								// loc_2700A
 								tmpWidth = (tmpWidth < 0) ? -tmpWidth : 0;
@@ -886,7 +886,7 @@ void GraphicsManager::flipPage() {
 
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
 		if (viewPorts[idx]->_flags & DISPFLAG_20) {
-			if ((viewPorts[idx]->_flags & (DISPFLAG_8 || DISPFLAG_1)) 
+			if ((viewPorts[idx]->_flags & (DISPFLAG_8 || DISPFLAG_1))
 					== (DISPFLAG_8 || DISPFLAG_1)) {
 				if (_planeSelect == idx)
 					sDisplayPic(viewPorts[idx]->_currentPic);
@@ -992,7 +992,7 @@ void GraphicsManager::screenReset() {
 
 	_backgroundPage = NULL;
 	_vPort->setupViewPort(NULL);
-	fillPic(_vPort, 0);	
+	fillPic(_vPort, 0);
 
 	_vm->flipPageAndWait();
 }

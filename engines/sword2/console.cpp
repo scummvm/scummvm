@@ -82,55 +82,55 @@ Debugger::Debugger(Sword2Engine *vm)
 
 	// Register commands
 
-	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("q",        WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("mem",      WRAP_METHOD(Debugger, Cmd_Mem));
-	DCmd_Register("tony",     WRAP_METHOD(Debugger, Cmd_Tony));
-	DCmd_Register("res",      WRAP_METHOD(Debugger, Cmd_Res));
-	DCmd_Register("reslist",  WRAP_METHOD(Debugger, Cmd_ResList));
-	DCmd_Register("starts",   WRAP_METHOD(Debugger, Cmd_Starts));
-	DCmd_Register("start",    WRAP_METHOD(Debugger, Cmd_Start));
-	DCmd_Register("s",        WRAP_METHOD(Debugger, Cmd_Start));
-	DCmd_Register("info",     WRAP_METHOD(Debugger, Cmd_Info));
-	DCmd_Register("walkgrid", WRAP_METHOD(Debugger, Cmd_WalkGrid));
-	DCmd_Register("mouse",    WRAP_METHOD(Debugger, Cmd_Mouse));
-	DCmd_Register("player",   WRAP_METHOD(Debugger, Cmd_Player));
-	DCmd_Register("reslook",  WRAP_METHOD(Debugger, Cmd_ResLook));
-	DCmd_Register("cur",      WRAP_METHOD(Debugger, Cmd_CurrentInfo));
-	DCmd_Register("runlist",  WRAP_METHOD(Debugger, Cmd_RunList));
-	DCmd_Register("kill",     WRAP_METHOD(Debugger, Cmd_Kill));
-	DCmd_Register("nuke",     WRAP_METHOD(Debugger, Cmd_Nuke));
-	DCmd_Register("var",      WRAP_METHOD(Debugger, Cmd_Var));
-	DCmd_Register("rect",     WRAP_METHOD(Debugger, Cmd_Rect));
-	DCmd_Register("clear",    WRAP_METHOD(Debugger, Cmd_Clear));
-	DCmd_Register("debugon",  WRAP_METHOD(Debugger, Cmd_DebugOn));
-	DCmd_Register("debugoff", WRAP_METHOD(Debugger, Cmd_DebugOff));
-	DCmd_Register("saverest", WRAP_METHOD(Debugger, Cmd_SaveRest));
-	DCmd_Register("timeon",   WRAP_METHOD(Debugger, Cmd_TimeOn));
-	DCmd_Register("timeoff",  WRAP_METHOD(Debugger, Cmd_TimeOff));
-	DCmd_Register("text",     WRAP_METHOD(Debugger, Cmd_Text));
-	DCmd_Register("showvar",  WRAP_METHOD(Debugger, Cmd_ShowVar));
-	DCmd_Register("hidevar",  WRAP_METHOD(Debugger, Cmd_HideVar));
-	DCmd_Register("version",  WRAP_METHOD(Debugger, Cmd_Version));
-	DCmd_Register("animtest", WRAP_METHOD(Debugger, Cmd_AnimTest));
-	DCmd_Register("texttest", WRAP_METHOD(Debugger, Cmd_TextTest));
-	DCmd_Register("linetest", WRAP_METHOD(Debugger, Cmd_LineTest));
-	DCmd_Register("events",   WRAP_METHOD(Debugger, Cmd_Events));
-	DCmd_Register("sfx",      WRAP_METHOD(Debugger, Cmd_Sfx));
-	DCmd_Register("english",  WRAP_METHOD(Debugger, Cmd_English));
-	DCmd_Register("finnish",  WRAP_METHOD(Debugger, Cmd_Finnish));
-	DCmd_Register("polish",   WRAP_METHOD(Debugger, Cmd_Polish));
-	DCmd_Register("fxq",      WRAP_METHOD(Debugger, Cmd_FxQueue));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("q",        WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("mem",      WRAP_METHOD(Debugger, Cmd_Mem));
+	registerCmd("tony",     WRAP_METHOD(Debugger, Cmd_Tony));
+	registerCmd("res",      WRAP_METHOD(Debugger, Cmd_Res));
+	registerCmd("reslist",  WRAP_METHOD(Debugger, Cmd_ResList));
+	registerCmd("starts",   WRAP_METHOD(Debugger, Cmd_Starts));
+	registerCmd("start",    WRAP_METHOD(Debugger, Cmd_Start));
+	registerCmd("s",        WRAP_METHOD(Debugger, Cmd_Start));
+	registerCmd("info",     WRAP_METHOD(Debugger, Cmd_Info));
+	registerCmd("walkgrid", WRAP_METHOD(Debugger, Cmd_WalkGrid));
+	registerCmd("mouse",    WRAP_METHOD(Debugger, Cmd_Mouse));
+	registerCmd("player",   WRAP_METHOD(Debugger, Cmd_Player));
+	registerCmd("reslook",  WRAP_METHOD(Debugger, Cmd_ResLook));
+	registerCmd("cur",      WRAP_METHOD(Debugger, Cmd_CurrentInfo));
+	registerCmd("runlist",  WRAP_METHOD(Debugger, Cmd_RunList));
+	registerCmd("kill",     WRAP_METHOD(Debugger, Cmd_Kill));
+	registerCmd("nuke",     WRAP_METHOD(Debugger, Cmd_Nuke));
+	registerCmd("var",      WRAP_METHOD(Debugger, Cmd_Var));
+	registerCmd("rect",     WRAP_METHOD(Debugger, Cmd_Rect));
+	registerCmd("clear",    WRAP_METHOD(Debugger, Cmd_Clear));
+	registerCmd("debugon",  WRAP_METHOD(Debugger, Cmd_DebugOn));
+	registerCmd("debugoff", WRAP_METHOD(Debugger, Cmd_DebugOff));
+	registerCmd("saverest", WRAP_METHOD(Debugger, Cmd_SaveRest));
+	registerCmd("timeon",   WRAP_METHOD(Debugger, Cmd_TimeOn));
+	registerCmd("timeoff",  WRAP_METHOD(Debugger, Cmd_TimeOff));
+	registerCmd("text",     WRAP_METHOD(Debugger, Cmd_Text));
+	registerCmd("showvar",  WRAP_METHOD(Debugger, Cmd_ShowVar));
+	registerCmd("hidevar",  WRAP_METHOD(Debugger, Cmd_HideVar));
+	registerCmd("version",  WRAP_METHOD(Debugger, Cmd_Version));
+	registerCmd("animtest", WRAP_METHOD(Debugger, Cmd_AnimTest));
+	registerCmd("texttest", WRAP_METHOD(Debugger, Cmd_TextTest));
+	registerCmd("linetest", WRAP_METHOD(Debugger, Cmd_LineTest));
+	registerCmd("events",   WRAP_METHOD(Debugger, Cmd_Events));
+	registerCmd("sfx",      WRAP_METHOD(Debugger, Cmd_Sfx));
+	registerCmd("english",  WRAP_METHOD(Debugger, Cmd_English));
+	registerCmd("finnish",  WRAP_METHOD(Debugger, Cmd_Finnish));
+	registerCmd("polish",   WRAP_METHOD(Debugger, Cmd_Polish));
+	registerCmd("fxq",      WRAP_METHOD(Debugger, Cmd_FxQueue));
 }
 
 void Debugger::varGet(int var) {
-	DebugPrintf("%d\n", _vm->_logic->readVar(var));
+	debugPrintf("%d\n", _vm->_logic->readVar(var));
 }
 
 void Debugger::varSet(int var, int val) {
-	DebugPrintf("was %d, ", _vm->_logic->readVar(var));
+	debugPrintf("was %d, ", _vm->_logic->readVar(var));
 	_vm->_logic->writeVar(var, val);
-	DebugPrintf("now %d\n", _vm->_logic->readVar(var));
+	debugPrintf("now %d\n", _vm->_logic->readVar(var));
 }
 
 void Debugger::preEnter() {
@@ -184,8 +184,8 @@ bool Debugger::Cmd_Mem(int argc, const char **argv) {
 
 	qsort(blocks, numBlocks, sizeof(MemBlock *), compare_blocks);
 
-	DebugPrintf("     size id  res  type                 name\n");
-	DebugPrintf("---------------------------------------------------------------------------\n");
+	debugPrintf("     size id  res  type                 name\n");
+	debugPrintf("---------------------------------------------------------------------------\n");
 
 	for (i = 0; i < numBlocks; i++) {
 		const char *type;
@@ -235,21 +235,21 @@ bool Debugger::Cmd_Mem(int argc, const char **argv) {
 			break;
 		}
 
-		DebugPrintf("%9d %-3d %-4d %-20s %s\n",
+		debugPrintf("%9d %-3d %-4d %-20s %s\n",
 				blocks[i]->size, blocks[i]->id, blocks[i]->uid,
 				type, _vm->_resman->fetchName(blocks[i]->ptr));
 	}
 
 	free(blocks);
 
-	DebugPrintf("---------------------------------------------------------------------------\n");
-	DebugPrintf("%9d\n", _vm->_memory->getTotAlloc());
+	debugPrintf("---------------------------------------------------------------------------\n");
+	debugPrintf("%9d\n", _vm->_memory->getTotAlloc());
 
 	return true;
 }
 
 bool Debugger::Cmd_Tony(int argc, const char **argv) {
-	DebugPrintf("What about him?\n");
+	debugPrintf("What about him?\n");
 	return true;
 }
 
@@ -257,7 +257,7 @@ bool Debugger::Cmd_Res(int argc, const char **argv) {
 	uint32 numClusters = _vm->_resman->getNumClusters();
 
 	if (!numClusters) {
-		DebugPrintf("Argh! No resources!\n");
+		debugPrintf("Argh! No resources!\n");
 		return true;
 	}
 
@@ -266,10 +266,10 @@ bool Debugger::Cmd_Res(int argc, const char **argv) {
 	for (uint i = 0; i < numClusters; i++) {
 		const char *locStr[3] = { "HDD", "CD1", "CD2" };
 
-		DebugPrintf("%-20s %s\n", resFiles[i].fileName, locStr[resFiles[i].cd]);
+		debugPrintf("%-20s %s\n", resFiles[i].fileName, locStr[resFiles[i].cd]);
 	}
 
-	DebugPrintf("%d resources\n", _vm->_resman->getNumResFiles());
+	debugPrintf("%d resources\n", _vm->_resman->getNumResFiles());
 	return true;
 }
 
@@ -285,7 +285,7 @@ bool Debugger::Cmd_ResList(int argc, const char **argv) {
 
 	for (uint i = 0; i < numResFiles; i++) {
 		if (resList[i].ptr && resList[i].refCount >= minCount) {
-			DebugPrintf("%-4d: %-35s refCount: %-3d\n", i, _vm->_resman->fetchName(resList[i].ptr), resList[i].refCount);
+			debugPrintf("%-4d: %-35s refCount: %-3d\n", i, _vm->_resman->fetchName(resList[i].ptr), resList[i].refCount);
 		}
 	}
 
@@ -296,21 +296,21 @@ bool Debugger::Cmd_Starts(int argc, const char **argv) {
 	uint32 numStarts = _vm->getNumStarts();
 
 	if (!numStarts) {
-		DebugPrintf("Sorry - no startup positions registered?\n");
+		debugPrintf("Sorry - no startup positions registered?\n");
 
 		uint32 numScreenManagers = _vm->getNumScreenManagers();
 
 		if (!numScreenManagers)
-			DebugPrintf("There is a problem with startup.inf\n");
+			debugPrintf("There is a problem with startup.inf\n");
 		else
-			DebugPrintf(" (%d screen managers found in startup.inf)\n", numScreenManagers);
+			debugPrintf(" (%d screen managers found in startup.inf)\n", numScreenManagers);
 		return true;
 	}
 
 	StartUp *startList = _vm->getStartList();
 
 	for (uint i = 0; i < numStarts; i++)
-		DebugPrintf("%d  (%s)\n", i, startList[i].description);
+		debugPrintf("%d  (%s)\n", i, startList[i].description);
 
 	return true;
 }
@@ -319,25 +319,25 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 	uint8 pal[3] = { 255, 255, 255 };
 
 	if (argc != 2) {
-		DebugPrintf("Usage: %s number\n", argv[0]);
+		debugPrintf("Usage: %s number\n", argv[0]);
 		return true;
 	}
 
 	uint32 numStarts = _vm->getNumStarts();
 
 	if (!numStarts) {
-		DebugPrintf("Sorry - there are no startups!\n");
+		debugPrintf("Sorry - there are no startups!\n");
 		return true;
 	}
 
 	int start = atoi(argv[1]);
 
 	if (start < 0 || start >= (int)numStarts) {
-		DebugPrintf("Not a legal start position\n");
+		debugPrintf("Not a legal start position\n");
 		return true;
 	}
 
-	DebugPrintf("Running start %d\n", start);
+	debugPrintf("Running start %d\n", start);
 
 	_vm->runStart(start);
 	_vm->_screen->setPalette(187, 1, pal, RDPAL_INSTANT);
@@ -348,9 +348,9 @@ bool Debugger::Cmd_Info(int argc, const char **argv) {
 	_displayDebugText = !_displayDebugText;
 
 	if (_displayDebugText)
-		DebugPrintf("Info text on\n");
+		debugPrintf("Info text on\n");
 	else
-		DebugPrintf("Info Text off\n");
+		debugPrintf("Info Text off\n");
 
 	return true;
 }
@@ -359,9 +359,9 @@ bool Debugger::Cmd_WalkGrid(int argc, const char **argv) {
 	_displayWalkGrid = !_displayWalkGrid;
 
 	if (_displayWalkGrid)
-		DebugPrintf("Walk-grid display on\n");
+		debugPrintf("Walk-grid display on\n");
 	else
-		DebugPrintf("Walk-grid display off\n");
+		debugPrintf("Walk-grid display off\n");
 
 	return true;
 }
@@ -370,9 +370,9 @@ bool Debugger::Cmd_Mouse(int argc, const char **argv) {
 	_displayMouseMarker = !_displayMouseMarker;
 
 	if (_displayMouseMarker)
-		DebugPrintf("Mouse marker on\n");
+		debugPrintf("Mouse marker on\n");
 	else
-		DebugPrintf("Mouse marker off\n");
+		debugPrintf("Mouse marker off\n");
 
 	return true;
 }
@@ -381,16 +381,16 @@ bool Debugger::Cmd_Player(int argc, const char **argv) {
 	_displayPlayerMarker = !_displayPlayerMarker;
 
 	if (_displayPlayerMarker)
-		DebugPrintf("Player feet marker on\n");
+		debugPrintf("Player feet marker on\n");
 	else
-		DebugPrintf("Player feet marker off\n");
+		debugPrintf("Player feet marker off\n");
 
 	return true;
 }
 
 bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Usage: %s number\n", argv[0]);
+		debugPrintf("Usage: %s number\n", argv[0]);
 		return true;
 	}
 
@@ -398,13 +398,13 @@ bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 	uint32 numResFiles = _vm->_resman->getNumResFiles();
 
 	if (res < 0 || res >= (int)numResFiles) {
-		DebugPrintf("Illegal resource %d. There are %d resources, 0-%d.\n",
+		debugPrintf("Illegal resource %d. There are %d resources, 0-%d.\n",
 			res, numResFiles, numResFiles - 1);
 		return true;
 	}
 
 	if (!_vm->_resman->checkValid(res)) {
-		DebugPrintf("%d is a null & void resource number\n", res);
+		debugPrintf("%d is a null & void resource number\n", res);
 		return true;
 	}
 
@@ -413,40 +413,40 @@ bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 
 	switch (type) {
 	case ANIMATION_FILE:
-		DebugPrintf("<anim> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<anim> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case SCREEN_FILE:
-		DebugPrintf("<layer> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<layer> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case GAME_OBJECT:
-		DebugPrintf("<game object> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<game object> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case WALK_GRID_FILE:
-		DebugPrintf("<walk grid> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<walk grid> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case GLOBAL_VAR_FILE:
-		DebugPrintf("<global variables> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<global variables> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case PARALLAX_FILE_null:
-		DebugPrintf("<parallax file NOT USED!> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<parallax file NOT USED!> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case RUN_LIST:
-		DebugPrintf("<run list> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<run list> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case TEXT_FILE:
-		DebugPrintf("<text file> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<text file> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case SCREEN_MANAGER:
-		DebugPrintf("<screen manager> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<screen manager> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case MOUSE_FILE:
-		DebugPrintf("<mouse pointer> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<mouse pointer> %s\n", _vm->_resman->fetchName(res));
 		break;
 	case ICON_FILE:
-		DebugPrintf("<menu icon> %s\n", _vm->_resman->fetchName(res));
+		debugPrintf("<menu icon> %s\n", _vm->_resman->fetchName(res));
 		break;
 	default:
-		DebugPrintf("unrecognized fileType %d\n", type);
+		debugPrintf("unrecognized fileType %d\n", type);
 		break;
 	}
 
@@ -458,13 +458,13 @@ bool Debugger::Cmd_CurrentInfo(int argc, const char **argv) {
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	if (screenInfo->background_layer_id) {
-		DebugPrintf("background layer id %d\n", screenInfo->background_layer_id);
-		DebugPrintf("%d wide, %d high\n", screenInfo->screen_wide, screenInfo->screen_deep);
-		DebugPrintf("%d normal layers\n", screenInfo->number_of_layers);
+		debugPrintf("background layer id %d\n", screenInfo->background_layer_id);
+		debugPrintf("%d wide, %d high\n", screenInfo->screen_wide, screenInfo->screen_deep);
+		debugPrintf("%d normal layers\n", screenInfo->number_of_layers);
 
 		Cmd_RunList(argc, argv);
 	} else
-		DebugPrintf("No screen\n");
+		debugPrintf("No screen\n");
 	return true;
 }
 
@@ -476,26 +476,26 @@ bool Debugger::Cmd_RunList(int argc, const char **argv) {
 
 		readS.seek(ResHeader::size());
 
-		DebugPrintf("Runlist number %d\n", runList);
+		debugPrintf("Runlist number %d\n", runList);
 
 		while (1) {
 			uint32 res = readS.readUint32LE();
 			if (!res)
 				break;
 
-			DebugPrintf("%d %s\n", res, _vm->_resman->fetchName(res));
+			debugPrintf("%d %s\n", res, _vm->_resman->fetchName(res));
 		}
 
 		_vm->_resman->closeResource(runList);
 	} else
-		DebugPrintf("No run list set\n");
+		debugPrintf("No run list set\n");
 
 	return true;
 }
 
 bool Debugger::Cmd_Kill(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Usage: %s number\n", argv[0]);
+		debugPrintf("Usage: %s number\n", argv[0]);
 		return true;
 	}
 
@@ -503,7 +503,7 @@ bool Debugger::Cmd_Kill(int argc, const char **argv) {
 	uint32 numResFiles = _vm->_resman->getNumResFiles();
 
 	if (res < 0 || res >= (int)numResFiles) {
-		DebugPrintf("Illegal resource %d. There are %d resources, 0-%d.\n",
+		debugPrintf("Illegal resource %d. There are %d resources, 0-%d.\n",
 			res, numResFiles, numResFiles - 1);
 		return true;
 	}
@@ -511,22 +511,22 @@ bool Debugger::Cmd_Kill(int argc, const char **argv) {
 	Resource *resList = _vm->_resman->getResList();
 
 	if (!resList[res].ptr) {
-		DebugPrintf("Resource %d is not in memory\n", res);
+		debugPrintf("Resource %d is not in memory\n", res);
 		return true;
 	}
 
 	if (resList[res].refCount) {
-		DebugPrintf("Resource %d is open - cannot remove\n", res);
+		debugPrintf("Resource %d is open - cannot remove\n", res);
 		return true;
 	}
 
 	_vm->_resman->remove(res);
-	DebugPrintf("Trashed %d\n", res);
+	debugPrintf("Trashed %d\n", res);
 	return true;
 }
 
 bool Debugger::Cmd_Nuke(int argc, const char **argv) {
-	DebugPrintf("Killing all resources except variable file and player object\n");
+	debugPrintf("Killing all resources except variable file and player object\n");
 	_vm->_resman->killAll(true);
 	return true;
 }
@@ -540,7 +540,7 @@ bool Debugger::Cmd_Var(int argc, const char **argv) {
 		varSet(atoi(argv[1]), atoi(argv[2]));
 		break;
 	default:
-		DebugPrintf("Usage: %s number value\n", argv[0]);
+		debugPrintf("Usage: %s number value\n", argv[0]);
 		break;
 	}
 
@@ -554,10 +554,10 @@ bool Debugger::Cmd_Rect(int argc, const char **argv) {
 
 	if (_definingRectangles) {
 		_vm->setInputEventFilter(filter & ~(RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP));
-		DebugPrintf("Mouse rectangles enabled\n");
+		debugPrintf("Mouse rectangles enabled\n");
 	} else {
 		_vm->setInputEventFilter(filter | RD_LEFTBUTTONUP | RD_RIGHTBUTTONUP);
-		DebugPrintf("Mouse rectangles disabled\n");
+		debugPrintf("Mouse rectangles disabled\n");
 	}
 
 	_draggingRectangle = 0;
@@ -575,7 +575,7 @@ bool Debugger::Cmd_DebugOn(int argc, const char **argv) {
 	_displayMouseMarker = true;
 	_displayPlayerMarker = true;
 	_displayTextNumbers = true;
-	DebugPrintf("Enabled all on-screen debug info\n");
+	debugPrintf("Enabled all on-screen debug info\n");
 	return true;
 }
 
@@ -585,7 +585,7 @@ bool Debugger::Cmd_DebugOff(int argc, const char **argv) {
 	_displayMouseMarker = false;
 	_displayPlayerMarker = false;
 	_displayTextNumbers = false;
-	DebugPrintf("Disabled all on-screen debug info\n");
+	debugPrintf("Disabled all on-screen debug info\n");
 	return true;
 }
 
@@ -593,9 +593,9 @@ bool Debugger::Cmd_SaveRest(int argc, const char **argv) {
 	_testingSnR = !_testingSnR;
 
 	if (_testingSnR)
-		DebugPrintf("Enabled S&R logic_script stability checking\n");
+		debugPrintf("Enabled S&R logic_script stability checking\n");
 	else
-		DebugPrintf("Disabled S&R logic_script stability checking\n");
+		debugPrintf("Disabled S&R logic_script stability checking\n");
 
 	return true;
 }
@@ -606,13 +606,13 @@ bool Debugger::Cmd_TimeOn(int argc, const char **argv) {
 	else if (_startTime == 0)
 		_startTime = _vm->_system->getMillis();
 	_displayTime = true;
-	DebugPrintf("Timer display on\n");
+	debugPrintf("Timer display on\n");
 	return true;
 }
 
 bool Debugger::Cmd_TimeOff(int argc, const char **argv) {
 	_displayTime = false;
-	DebugPrintf("Timer display off\n");
+	debugPrintf("Timer display off\n");
 	return true;
 }
 
@@ -620,9 +620,9 @@ bool Debugger::Cmd_Text(int argc, const char **argv) {
 	_displayTextNumbers = !_displayTextNumbers;
 
 	if (_displayTextNumbers)
-		DebugPrintf("Text numbers on\n");
+		debugPrintf("Text numbers on\n");
 	else
-		DebugPrintf("Text numbers off\n");
+		debugPrintf("Text numbers off\n");
 
 	return true;
 }
@@ -632,7 +632,7 @@ bool Debugger::Cmd_ShowVar(int argc, const char **argv) {
 	int32 varNo;
 
 	if (argc != 2) {
-		DebugPrintf("Usage: %s number\n", argv[0]);
+		debugPrintf("Usage: %s number\n", argv[0]);
 		return true;
 	}
 
@@ -649,11 +649,11 @@ bool Debugger::Cmd_ShowVar(int argc, const char **argv) {
 		if (_showVar[showVarNo] == 0) {
 			// empty slot - add it to the list at this slot
 			_showVar[showVarNo] = varNo;
-			DebugPrintf("var(%d) added to the watch-list\n", varNo);
+			debugPrintf("var(%d) added to the watch-list\n", varNo);
 		} else
-			DebugPrintf("var(%d) already in the watch-list!\n", varNo);
+			debugPrintf("var(%d) already in the watch-list!\n", varNo);
 	} else
-		DebugPrintf("Sorry - no more allowed - hide one or extend the system watch-list\n");
+		debugPrintf("Sorry - no more allowed - hide one or extend the system watch-list\n");
 
 	return true;
 }
@@ -663,7 +663,7 @@ bool Debugger::Cmd_HideVar(int argc, const char **argv) {
 	int32 varNo;
 
 	if (argc != 2) {
-		DebugPrintf("Usage: %s number\n", argv[0]);
+		debugPrintf("Usage: %s number\n", argv[0]);
 		return true;
 	}
 
@@ -676,9 +676,9 @@ bool Debugger::Cmd_HideVar(int argc, const char **argv) {
 	if (showVarNo < MAX_SHOWVARS) {
 		// We've found 'varNo' in the list - clear this slot
 		_showVar[showVarNo] = 0;
-		DebugPrintf("var(%d) removed from watch-list\n", varNo);
+		debugPrintf("var(%d) removed from watch-list\n", varNo);
 	} else
-		DebugPrintf("Sorry - can't find var(%d) in the list\n", varNo);
+		debugPrintf("Sorry - can't find var(%d) in the list\n", varNo);
 
 	return true;
 }
@@ -687,13 +687,13 @@ bool Debugger::Cmd_Version(int argc, const char **argv) {
 	// This function used to print more information, but nothing we
 	// particularly care about.
 
-	DebugPrintf("\"Broken Sword II\" (c) Revolution Software 1997.\n");
+	debugPrintf("\"Broken Sword II\" (c) Revolution Software 1997.\n");
 	return true;
 }
 
 bool Debugger::Cmd_AnimTest(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Usage: %s value\n", argv[0]);
+		debugPrintf("Usage: %s value\n", argv[0]);
 		return true;
 	}
 
@@ -703,13 +703,13 @@ bool Debugger::Cmd_AnimTest(int argc, const char **argv) {
 	// Same as typing "VAR 912 <value>" at the console
 	varSet(912, atoi(argv[1]));
 
-	DebugPrintf("Setting flag 'system_testing_anims'\n");
+	debugPrintf("Setting flag 'system_testing_anims'\n");
 	return true;
 }
 
 bool Debugger::Cmd_TextTest(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Usage: %s value\n", argv[0]);
+		debugPrintf("Usage: %s value\n", argv[0]);
 		return true;
 	}
 
@@ -721,14 +721,14 @@ bool Debugger::Cmd_TextTest(int argc, const char **argv) {
 
 	_displayTextNumbers = true;
 
-	DebugPrintf("Setting flag 'system_testing_text'\n");
-	DebugPrintf("Text numbers on\n");
+	debugPrintf("Setting flag 'system_testing_text'\n");
+	debugPrintf("Text numbers on\n");
 	return true;
 }
 
 bool Debugger::Cmd_LineTest(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Usage: %s value1 value2\n", argv[0]);
+		debugPrintf("Usage: %s value1 value2\n", argv[0]);
 		return true;
 	}
 
@@ -743,24 +743,24 @@ bool Debugger::Cmd_LineTest(int argc, const char **argv) {
 
 	_displayTextNumbers = true;
 
-	DebugPrintf("Setting flag 'system_testing_text'\n");
-	DebugPrintf("Setting flag 'system_test_line_no'\n");
-	DebugPrintf("Text numbers on\n");
+	debugPrintf("Setting flag 'system_testing_text'\n");
+	debugPrintf("Setting flag 'system_test_line_no'\n");
+	debugPrintf("Text numbers on\n");
 	return true;
 }
 
 bool Debugger::Cmd_Events(int argc, const char **argv) {
 	EventUnit *eventList = _vm->_logic->getEventList();
 
-	DebugPrintf("EVENT LIST:\n");
+	debugPrintf("EVENT LIST:\n");
 
 	for (uint32 i = 0; i < MAX_events; i++) {
 		if (eventList[i].id) {
 			uint32 target = eventList[i].id;
 			uint32 script = eventList[i].interact_id;
 
-			DebugPrintf("slot %2d: id = %s (%d)\n", i, _vm->_resman->fetchName(target), target);
-			DebugPrintf("         script = %s (%d) pos %d\n", _vm->_resman->fetchName(script / 65536), script / 65536, script % 65536);
+			debugPrintf("slot %2d: id = %s (%d)\n", i, _vm->_resman->fetchName(target), target);
+			debugPrintf("         script = %s (%d) pos %d\n", _vm->_resman->fetchName(script / 65536), script / 65536, script % 65536);
 		}
 	}
 
@@ -771,28 +771,28 @@ bool Debugger::Cmd_Sfx(int argc, const char **argv) {
 	_vm->_wantSfxDebug = !_vm->_wantSfxDebug;
 
 	if (_vm->_wantSfxDebug)
-		DebugPrintf("SFX logging activated\n");
+		debugPrintf("SFX logging activated\n");
 	else
-		DebugPrintf("SFX logging deactivated\n");
+		debugPrintf("SFX logging deactivated\n");
 
 	return true;
 }
 
 bool Debugger::Cmd_English(int argc, const char **argv) {
 	_vm->initializeFontResourceFlags(DEFAULT_TEXT);
-	DebugPrintf("Default fonts selected\n");
+	debugPrintf("Default fonts selected\n");
 	return true;
 }
 
 bool Debugger::Cmd_Finnish(int argc, const char **argv) {
 	_vm->initializeFontResourceFlags(FINNISH_TEXT);
-	DebugPrintf("Finnish fonts selected\n");
+	debugPrintf("Finnish fonts selected\n");
 	return true;
 }
 
 bool Debugger::Cmd_Polish(int argc, const char **argv) {
 	_vm->initializeFontResourceFlags(POLISH_TEXT);
-	DebugPrintf("Polish fonts selected\n");
+	debugPrintf("Polish fonts selected\n");
 	return true;
 }
 

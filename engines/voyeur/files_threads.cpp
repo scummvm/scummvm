@@ -97,7 +97,7 @@ void ThreadResource::unloadAStack(int stackId) {
 }
 
 bool ThreadResource::doState() {
-	if (!getStateInfo()) 
+	if (!getStateInfo())
 		return false;
 
 	getButtonsFlags();
@@ -122,7 +122,7 @@ bool ThreadResource::getStateInfo() {
 		uint32 fld = READ_LE_UINT32(_ctlPtr + 2);
 		fld += _stateId << 3;
 		_nextStateId = READ_LE_UINT32(_ctlPtr + fld + 4);
-		
+
 		fld = READ_LE_UINT32(_ctlPtr + fld);
 		byte *baseP = _ctlPtr + fld;
 		_stateCount = READ_LE_UINT16(baseP);
@@ -133,7 +133,7 @@ bool ThreadResource::getStateInfo() {
 		_playCommandsPtr += (READ_LE_UINT32(baseP + 6) / 2) << 1;
 
 		_threadInfoPtr = baseP + 10;
-		
+
 		getButtonsText();
 		return true;
 	}
@@ -146,7 +146,7 @@ byte *ThreadResource::getDataOffset() {
 
 void ThreadResource::getButtonsText() {
 	int idx = 0;
-	
+
 	for (const byte *p = _threadInfoPtr; *p != 0x49; p = getNextRecord(p)) {
 		if (*p == 0xC0) {
 			++p;
@@ -162,7 +162,7 @@ void ThreadResource::getButtonsText() {
 
 void ThreadResource::getButtonsFlags() {
 	int idx = 0;
-	
+
 	for (const byte *p = _threadInfoPtr; *p != 0x49; p = getNextRecord(p)) {
 		if (*p == 0xC0) {
 			if (*++p & 0x20)
@@ -379,9 +379,9 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_eventsManager->incrementTime(1);
 					_vm->_audioVideoId = -1;
 					parseIndex = 999;
-				}				
-			} 
-			
+				}
+			}
+
 			dataP += 8;
 			break;
 
@@ -408,7 +408,7 @@ void ThreadResource::parsePlayCommands() {
 					_vm->_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
 					_vm->_voy->addVideoEventEnd();
 					_vm->_eventsManager->incrementTime(1);
-				
+
 					_vm->_audioVideoId = -1;
 					_vm->_playStampGroupId = -1;
 
@@ -494,7 +494,7 @@ void ThreadResource::parsePlayCommands() {
 				_vm->_audioVideoId = -1;
 				parseIndex = 999;
 			}
-			break;			
+			break;
 
 		case 5:
 			// Check whether transition to a given time period is allowed, and
@@ -587,8 +587,8 @@ void ThreadResource::parsePlayCommands() {
 		case 10:
 			// Pick the person who is to die, during startup
 			if (_vm->_iForceDeath == -1) {
-				// No specific person has been preset to be killed, so pick one randomly. 
-				// The loop below was used because the victim was persisted from the previous 
+				// No specific person has been preset to be killed, so pick one randomly.
+				// The loop below was used because the victim was persisted from the previous
 				// play-through, so it ensured that a different victim is picked.
 				int randomVal;
 				do {
@@ -663,7 +663,7 @@ void ThreadResource::parsePlayCommands() {
 
 			if (v2 == 0 || _vm->_controlPtr->_state->_victimIndex == v2)
 				_vm->_voy->_murderThreshold = v3;
-			
+
 			dataP += 4;
 			break;
 
@@ -819,7 +819,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	case 24:
 	case 27:
 	case 28:
-		subId -= 3;	
+		subId -= 3;
 		// Deliberate fall-through
 
 	case 21:
@@ -858,13 +858,13 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 						++count;
 				}
 			}
-			
+
 			++card;
 		} else {
 			if (cardPerform2(card, id)) {
 				card += subId;
 				card = cardPerform(card);
-				while (*card++ != 61) ;		
+				while (*card++ != 61) ;
 			} else {
 				card += subId;
 				while (*card != 61 && *card != 29)
@@ -878,7 +878,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 		assert(bVal < 8);
 		card += 6;
 		break;
-	
+
 	case 45:
 		_newStateId = _nextStateId;
 		_newStackId = _stackId;
@@ -929,12 +929,12 @@ bool ThreadResource::cardPerform2(const byte *pSrc, int cardCmdId) {
 		return vLong != vLong2;
 
 	case 25:
-		vLong = _vm->_controlPtr->_state->_vals[*pSrc]; 
+		vLong = _vm->_controlPtr->_state->_vals[*pSrc];
 		vLong2 = (int32)READ_LE_UINT32(pSrc + 1);
 		return vLong < vLong2;
 
 	case 26:
-		vLong = _vm->_controlPtr->_state->_vals[*pSrc]; 
+		vLong = _vm->_controlPtr->_state->_vals[*pSrc];
 		vLong2 = (int32)READ_LE_UINT32(pSrc + 1);
 		return vLong > vLong2;
 
@@ -951,13 +951,13 @@ bool ThreadResource::cardPerform2(const byte *pSrc, int cardCmdId) {
 	default:
 		return false;
 	}
-}	
+}
 
 int ThreadResource::doApt() {
 	loadTheApt();
 
 	_vm->_currentVocId = 151;
-	_vm->_voy->_viewBounds = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._rectResource; 
+	_vm->_voy->_viewBounds = _vm->_bVoy->boltEntry(_vm->_playStampGroupId)._rectResource;
 	Common::Array<RectEntry> &hotspots = _vm->_bVoy->boltEntry(
 		_vm->_playStampGroupId + 1)._rectResource->_entries;
 	_vm->_eventsManager->getMouseInfo();
@@ -1039,7 +1039,7 @@ int ThreadResource::doApt() {
 						hotspotId = 5;
 
 					// Draw the text description for the highlighted hotspot
-					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 
+					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId +
 						hotspotId + 6)._picResource;
 					_vm->_graphicsManager->sDrawPic(pic, _vm->_graphicsManager->_vPort,
 						Common::Point(106, 200));
@@ -1101,10 +1101,10 @@ int ThreadResource::doApt() {
 void ThreadResource::doRoom() {
 	VoyeurEngine &vm = *_vm;
 	SVoy voy = *vm._voy;
-	
+
 	vm.makeViewFinderP();
 	voy._fadingType = 0;
-	
+
 	if (!vm._bVoy->getBoltGroup(vm._playStampGroupId))
 		return;
 
@@ -1116,7 +1116,7 @@ void ThreadResource::doRoom() {
 	voy._fadingStep1 = 2;
 	voy._fadingStep2 = 0;
 	voy._fadingType = 1;
-	
+
 	Common::Array<RectEntry> &hotspots = vm._bVoy->boltEntry(vm._playStampGroupId + 4)._rectResource->_entries;
 	int hotspotId = -1;
 
@@ -1214,7 +1214,7 @@ void ThreadResource::doRoom() {
 				vm._eventsManager->_mouseClicked = false;
 				vm._eventsManager->startCursorBlink();
 
-				int totalChars = vm.doComputerText(9999); 
+				int totalChars = vm.doComputerText(9999);
 				if (totalChars)
 					vm._voy->addComputerEventEnd(totalChars);
 
@@ -1345,12 +1345,12 @@ int ThreadResource::doInterface() {
 	Common::String fname = _vm->_soundManager->getVOCFileName(_vm->_currentVocId);
 	_vm->_soundManager->startVOCPlay(fname);
 	_vm->_eventsManager->getMouseInfo();
-	
+
 	_vm->_graphicsManager->setColor(240, 220, 220, 220);
 	_vm->_eventsManager->_intPtr._hasPalette = true;
 	_vm->_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
-	// Set the cusor 
+	// Set the cusor
 	PictureResource *crosshairsCursor = _vm->_bVoy->boltEntry(0x112)._picResource;
 	PictureResource *eyeCursor = _vm->_bVoy->boltEntry(0x113)._picResource;
 	PictureResource *listenCursor = _vm->_bVoy->boltEntry(0x114)._picResource;
@@ -1382,7 +1382,7 @@ int ThreadResource::doInterface() {
 		if (!mansionViewBounds.contains(pt))
 			pt = Common::Point(-1, -1);
 		else
-			pt = _vm->_mansionViewPos + 
+			pt = _vm->_mansionViewPos +
 				Common::Point(pt.x - MANSION_VIEW_X, pt.y - MANSION_VIEW_Y);
 		regionIndex = -1;
 
@@ -1420,20 +1420,20 @@ int ThreadResource::doInterface() {
 
 		// Regularly update the time display
 		if (_vm->_voy->_RTANum & 2) {
-			_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort, 
+			_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort,
 				_vm->_gameMinute / 10, Common::Point(190, 25));
-			_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort, 
+			_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort,
 				_vm->_gameMinute % 10, Common::Point(201, 25));
 
 			if (_vm->_voy->_RTANum & 4) {
 				int v = _vm->_gameHour / 10;
-				_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort, 
+				_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort,
 					v == 0 ? 10 : v, Common::Point(161, 25));
-				_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort, 
+				_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort,
 					_vm->_gameHour % 10, Common::Point(172, 25));
 
 				pic = _vm->_bVoy->boltEntry(_vm->_voy->_isAM ? 272 : 273)._picResource;
-				_vm->_graphicsManager->sDrawPic(pic, _vm->_graphicsManager->_vPort, 
+				_vm->_graphicsManager->sDrawPic(pic, _vm->_graphicsManager->_vPort,
 					Common::Point(215, 27));
 			}
 		}
@@ -1462,7 +1462,7 @@ int ThreadResource::doInterface() {
 				_vm->makeViewFinder();
 
 				_vm->initIFace();
-				
+
 				hotspots = &_vm->_bVoy->boltEntry(_vm->_playStampGroupId + 1)._rectResource->_entries;
 				_vm->_eventsManager->getMouseInfo();
 
@@ -1471,7 +1471,7 @@ int ThreadResource::doInterface() {
 				_vm->_eventsManager->_intPtr._flashTimer = 0;
 			}
 		}
-	} while (!_vm->_eventsManager->_rightClick && !_vm->shouldQuit() && 
+	} while (!_vm->_eventsManager->_rightClick && !_vm->shouldQuit() &&
 		(!_vm->_eventsManager->_leftClick || regionIndex == -1));
 
 	_vm->_eventsManager->hideCursor();
@@ -1612,7 +1612,7 @@ void ThreadResource::loadTheApt() {
 	}
 
 	CMapResource *pal = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 4)._cMapResource;
-	pal->_steps = 1; 
+	pal->_steps = 1;
 	pal->startFade();
 	_vm->flipPageAndWaitForFade();
 }
@@ -1715,7 +1715,7 @@ void ThreadResource::doAptAnim(int mode) {
 void ThreadResource::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_aptPos.x);
 	s.syncAsSint16LE(_aptPos.y);
-	
+
 	int stateId = _stateId;
 	int stackId = _stackId;
 	s.syncAsSint16LE(stateId);

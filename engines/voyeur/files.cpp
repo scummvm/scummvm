@@ -421,8 +421,8 @@ byte *BoltFile::getBoltMember(uint32 id) {
 }
 
 void BoltFile::initDefault() {
-	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size, 
-		_state._curMemberPtr->_mode);	
+	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size,
+		_state._curMemberPtr->_mode);
 }
 
 /*------------------------------------------------------------------------*/
@@ -505,7 +505,7 @@ void BVoyBoltFile::initSoundMap() {
 }
 
 void BVoyBoltFile::sInitRect() {
-	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size, 
+	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size,
 		_state._curMemberPtr->_mode);
 
 	// Check whether the resource Id is in the list of extended rects
@@ -522,7 +522,7 @@ void BVoyBoltFile::sInitRect() {
 void BVoyBoltFile::sInitPic() {
 	// Read in the header data
 	_state._curMemberPtr->_data = _state.decompress(NULL, 24, _state._curMemberPtr->_mode);
-	_state._curMemberPtr->_picResource = new PictureResource(_state, 
+	_state._curMemberPtr->_picResource = new PictureResource(_state,
 		_state._curMemberPtr->_data);
 }
 
@@ -567,14 +567,14 @@ void StampBoltFile::initResource(int resType) {
 void StampBoltFile::initThread() {
 	initDefault();
 
-	_state._curMemberPtr->_threadResource = new ThreadResource(_state, 
+	_state._curMemberPtr->_threadResource = new ThreadResource(_state,
 		_state._curMemberPtr->_data);
 }
 
 void StampBoltFile::initPtr() {
 	initDefault();
 
-	_state._curMemberPtr->_ptrResource = new PtrResource(_state, 
+	_state._curMemberPtr->_ptrResource = new PtrResource(_state,
 		_state._curMemberPtr->_data);
 }
 
@@ -585,7 +585,7 @@ void StampBoltFile::initControl() {
 	initDefault();
 
 	ControlResource *res;
-	_state._curMemberPtr->_controlResource = res = new ControlResource(_state, 
+	_state._curMemberPtr->_controlResource = res = new ControlResource(_state,
 		_state._curMemberPtr->_data);
 
 	_state._vm->_controlGroupPtr = _state._curGroupPtr;
@@ -596,7 +596,7 @@ void StampBoltFile::initState() {
 	initDefault();
 
 	assert(_state._curMemberPtr->_size == 16);
-	_state._curMemberPtr->_stateResource = new StateResource(_state, 
+	_state._curMemberPtr->_stateResource = new StateResource(_state,
 		_state._curMemberPtr->_data);
 }
 
@@ -658,7 +658,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f, uint16 id): _file(f), _id(id
 	_mode = buffer[0];
 	_initMethod = buffer[3];
 	_size = READ_LE_UINT32(&buffer[4]) & 0xffffff;
-	_fileOffset = READ_LE_UINT32(&buffer[8]); 
+	_fileOffset = READ_LE_UINT32(&buffer[8]);
 }
 
 BoltEntry::~BoltEntry() {
@@ -687,7 +687,7 @@ void BoltEntry::load() {
  */
 bool BoltEntry::hasResource() const {
 	return _rectResource ||  _picResource || _viewPortResource || _viewPortListResource
-		|| _fontResource || _fontInfoResource || _cMapResource || _vInitCycleResource 
+		|| _fontResource || _fontInfoResource || _cMapResource || _vInitCycleResource
 		|| _ptrResource || _controlResource || _stateResource || _threadResource;
 }
 
@@ -719,7 +719,7 @@ RectResource::RectResource(const byte *src, int size, bool isExtendedRects) {
 
 		int x1 = READ_LE_UINT16(src);
 		int y1 = READ_LE_UINT16(src + 2);
-		int x2 = READ_LE_UINT16(src + 4); 
+		int x2 = READ_LE_UINT16(src + 4);
 		int y2 = READ_LE_UINT16(src + 6);
 
 		_entries.push_back(RectEntry(x1, y1, x2, y2, arrIndex, rectCount));
@@ -896,7 +896,7 @@ int DisplayResource::drawText(const Common::String &msg) {
 				viewPort->_fontRect.top -= fontInfo._shadow.y;
 			}
 		}
-	} 
+	}
 
 	if (gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT)) {
 		viewPort->addSaveRect(viewPort->_pageIndex, viewPort->_fontRect);
@@ -971,7 +971,7 @@ int DisplayResource::drawText(const Common::String &msg) {
 			fontChar._imgData = fontData._charImages + offset * 2;
 
 			gfxManager.sDrawPic(&fontChar, this, Common::Point(xp, yp));
-			
+
 			fontChar._imgData = NULL;
 			xp += charWidth + padding;
 			msgWidth += charWidth + padding;
@@ -1056,7 +1056,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 			byte *imgData = state._curLibPtr->boltEntry(id)._picResource->_imgData;
 			_freeImgData = DisposeAfterUse::NO;
 
-			// TODO: Double check code below. Despite different coding in the 
+			// TODO: Double check code below. Despite different coding in the
 			// original, both looked like they do the same formula
 			if (_flags & PICFLAG_PIC_OFFSET) {
 				_imgData = imgData + (READ_LE_UINT32(&src[18]) & 0xffff);
@@ -1082,7 +1082,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 
 		if (mode != state._vm->_graphicsManager->_SVGAMode) {
 			state._vm->_graphicsManager->_SVGAMode = mode;
-			state._vm->_graphicsManager->clearPalette();			
+			state._vm->_graphicsManager->clearPalette();
 		}
 
 		int screenOffset = READ_LE_UINT32(&src[18]) & 0xffff;
@@ -1118,7 +1118,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 			_imgData = new byte[nbytes];
 			Common::fill(_imgData, _imgData + nbytes, 0);
 		} else {
-			_imgData = state.decompress(NULL, nbytes, state._curMemberPtr->_mode);			
+			_imgData = state.decompress(NULL, nbytes, state._curMemberPtr->_mode);
 		}
 	}
 }
@@ -1131,7 +1131,7 @@ PictureResource::PictureResource(Graphics::Surface *surface) {
 	_maskData = 0;
 	_planeSize = 0;
 	_keyColor = 0;
-	
+
 	_bounds = Common::Rect(0, 0, surface->w, surface->h);
 	_imgData = (byte *)surface->getPixels();
 	_freeImgData = DisposeAfterUse::NO;
@@ -1150,7 +1150,7 @@ PictureResource::PictureResource() {
 	_freeImgData = DisposeAfterUse::NO;
 }
 
-PictureResource::PictureResource(int flags, int select, int pick, int onOff, 
+PictureResource::PictureResource(int flags, int select, int pick, int onOff,
 		const Common::Rect &bounds, int maskData, byte *imgData, int planeSize) {
 	_flags = flags;
 	_select = select;
@@ -1189,7 +1189,7 @@ void PictureResource::flipVertical(const byte *data) {
 	for (int y = 0; y < _bounds.height(); ++y) {
 		Common::copy(srcP, srcP + _bounds.width(), destP);
 		srcP += _bounds.width();
-		destP -= _bounds.width();	
+		destP -= _bounds.width();
 	}
 }
 
@@ -1205,7 +1205,7 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 
 	int xs = READ_LE_UINT16(src + 12);
 	int ys = READ_LE_UINT16(src + 14);
-	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 16), 
+	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 16),
 		ys + READ_LE_UINT16(src + 18));
 
 	_currentPic = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x20));
@@ -1285,7 +1285,7 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clippi
 		yDiff = r.bottom - page->_bounds.bottom;
 
 		if (xDiff > 0)
-			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0); 
+			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0);
 		if (yDiff > 0)
 			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
 	}
@@ -1305,7 +1305,7 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clippi
 			r.top = clippingRect->top;
 			r.setHeight(yDiff <= height ? height - yDiff : 0);
 		}
-		
+
 		xDiff = r.right - clippingRect->right;
 		yDiff = r.bottom - clippingRect->bottom;
 
@@ -1339,7 +1339,7 @@ void ViewPortResource::setupViewPort(PictureResource *pic, Common::Rect *clippin
 
 void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
 	Common::Rect rect = r;
-	
+
 	if (clipRect(rect)) {
 		if (_addFn) {
 			(_state._vm->_graphicsManager->*_addFn)(this, pageIndex, rect);
@@ -1355,21 +1355,21 @@ void ViewPortResource::fillPic(byte onOff) {
 
 void ViewPortResource::drawIfaceTime() {
 	// Hour display
-	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort, 
+	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort,
 		(_state._vm->_gameHour / 10) == 0 ? 10 : _state._vm->_gameHour / 10,
 		Common::Point(161, 25));
-	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort, 
+	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort,
 		_state._vm->_gameHour % 10, Common::Point(172, 25));
 
 	// Minute display
-	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort, 
+	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort,
 		_state._vm->_gameMinute / 10, Common::Point(190, 25));
-	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort, 
+	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort,
 		_state._vm->_gameMinute % 10, Common::Point(201, 25));
 
 	// AM/PM indicator
 	PictureResource *pic = _state._vm->_bVoy->boltEntry(_state._vm->_voy->_isAM ? 272 : 273)._picResource;
-	_state._vm->_graphicsManager->sDrawPic(pic, _state._vm->_graphicsManager->_vPort, 
+	_state._vm->_graphicsManager->sDrawPic(pic, _state._vm->_graphicsManager->_vPort,
 		Common::Point(215, 27));
 }
 
@@ -1488,9 +1488,9 @@ FontInfoResource::FontInfoResource() {
 	_shadowColor = 0;
 }
 
-FontInfoResource::FontInfoResource(byte picFlags, byte picSelect, byte picPick, byte picOnOff, 
-		byte fontFlags, FontJustify justify, int fontSaveBack, const Common::Point &pos, 
-		int justifyWidth, int justifyHeight, const Common::Point &shadow, int foreColor, 
+FontInfoResource::FontInfoResource(byte picFlags, byte picSelect, byte picPick, byte picOnOff,
+		byte fontFlags, FontJustify justify, int fontSaveBack, const Common::Point &pos,
+		int justifyWidth, int justifyHeight, const Common::Point &shadow, int foreColor,
 		int backColor, int shadowColor) {
 	_curFont = NULL;
 	_picFlags = picFlags;
@@ -1516,7 +1516,7 @@ CMapResource::CMapResource(BoltFilesState &state, const byte *src): _vm(state._v
 	_fadeStatus = src[1];
 	_start = READ_LE_UINT16(src + 2);
 	_end = READ_LE_UINT16(src + 4);
-	
+
 	int count = _end - _start + 1;
 	_entries = new byte[count * 3];
 	Common::copy(src + 6, src + 6 + 3 * count, _entries);
@@ -1607,7 +1607,7 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 /*------------------------------------------------------------------------*/
 
 StateResource::StateResource(BoltFilesState &state, const byte *src):
-		_victimIndex(_vals[1]), _victimEvidenceIndex(_vals[2]), 
+		_victimIndex(_vals[1]), _victimEvidenceIndex(_vals[2]),
 		_victimMurderIndex(_vals[3]) {
 	for (int i = 0; i < 4; ++i)
 		_vals[i] = READ_LE_UINT32(src + i * 4);

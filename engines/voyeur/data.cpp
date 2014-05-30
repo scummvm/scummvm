@@ -94,7 +94,7 @@ SVoy::SVoy(VoyeurEngine *vm):_vm(vm) {
 		_evCmPtrs[i] = nullptr;
 }
 
-void SVoy::addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId, 
+void SVoy::addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId,
 		int on, int off, int dead) {
 	VoyeurEvent &e = _events[_eventCount++];
 
@@ -309,7 +309,7 @@ bool SVoy::checkForKey() {
 				if (e._audioVideoId == 40 && e._computerOn < 2 && e._computerOff > 6)
 					state->_victimEvidenceIndex = 4;
 				break;
-			
+
 			default:
 				break;
 			}
@@ -321,7 +321,7 @@ bool SVoy::checkForKey() {
 				if (e._audioVideoId == 8 && e._computerOn < 2 && e._computerOff > 26)
 					state->_victimEvidenceIndex = 1;
 				break;
-	
+
 			case 3:
 				if (e._audioVideoId == 20 && e._computerOn < 2 && e._computerOff > 28)
 					state->_victimEvidenceIndex = 3;

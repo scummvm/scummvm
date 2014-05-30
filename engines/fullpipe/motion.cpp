@@ -125,9 +125,10 @@ void MctlCompound::addObject(StaticANIObject *obj) {
 }
 
 int MctlCompound::removeObject(StaticANIObject *obj) {
-	warning("STUB: MctlCompound::removeObject()");
+	for (uint i = 0; i < _motionControllers.size(); i++)
+		_motionControllers[i]->_motionControllerObj->removeObject(obj);
 
-	return 0;
+	return 1;
 }
 
 void MctlCompound::initMovGraph2() {
@@ -193,7 +194,8 @@ MessageQueue *MctlCompound::method34(StaticANIObject *ani, int sourceX, int sour
 	if (idx == sourceIdx)
 		return _motionControllers[idx]->_motionControllerObj->method34(ani, sourceX, sourceY, fuzzyMatch, staticsId);
 
-	MctlConnectionPoint *cp = findClosestConnectionPoint(ani->_ox, ani->_oy, idx, sourceX, sourceY, sourceIdx, &sourceIdx);
+	double dist;
+	MctlConnectionPoint *cp = findClosestConnectionPoint(ani->_ox, ani->_oy, idx, sourceX, sourceY, sourceIdx, &dist);
 
 	if (!cp)
 		return 0;
@@ -261,7 +263,8 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 	if (match1 == match2)
 		return _motionControllers[match1]->_motionControllerObj->doWalkTo(subj, xpos, ypos, fuzzyMatch, staticsId);
 
-	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &match2);
+	double dist;
+	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &dist);
 
 	if (!closestP)
 		return 0;
@@ -427,14 +430,75 @@ MessageQueue *MctlLadder::controllerWalkTo(StaticANIObject *ani, int off) {
 	return doWalkTo(ani, _ladderX + off * _width, _ladderY + off * _height, 1, 0);
 }
 
-MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr) {
+MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, double *minDistancePtr) {
+#if 0
+	if (destIndex == sourceIndex) {
+		*minDistancePtr = sqrt((double)((oy - connectionY) * (oy - connectionY) + (ox - connectionX) * (ox - connectionX)));
+
+		return 0;
+	}
+
+	v11 = this->_motionControllers.m_pData;
+	currDistance = 0.0;
+	v12 = 0;
+	v13 = (MctlCompoundArrayItem *)*(&v11->vmt + sourceIndex);
+	minDistance = 1.0e10;
+	minConnectionPoint = 0;
+	if (v13->mctlConnectionPointsArray.CObArray.m_nSize > 0) {
+		do {
+			v14 = 0;
+			for (currMctlIndex = 0; v14 < this->_motionControllers.m_nSize; currMctlIndex = v14) {
+				v15 = this->_motionControllers.m_pData;
+				v16 = *(MovGraphReact **)(*(&v15->vmt + v14) + offsetof(MctlCompoundArrayItem, movGraphReactObj));
+				if (v16) {
+					v17 = *(MctlConnectionPoint **)(*(_DWORD *)(*(&v15->vmt + sourceIndex) + 0x10) + 4 * v12);// MctlCompoundArrayItem.mctlConnectionPointsArray.CObArray.m_pData
+					LOBYTE(v18) = (*(bool (__thiscall **)(MovGraphReact *, int, int))(v16->CObject.vmt + offsetof(MovGraphReactVmt, pointInRegion)))(v16, v17->_connectionX, v17->_connectionY);
+					if (v18) {
+						v14 = currMctlIndex;
+						v19 = *(MctlConnectionPoint **)(*(_DWORD *)(*(&this->_motionControllers.m_pData->vmt + sourceIndex) + 0x10) + 4 * v12);
+						v20 = MctlCompound_findClosestConnectionPoint(this, ox, oy, destIndex, v19->_connectionX, v19->_connectionY, currMctlIndex, (int *)&currDistance);
+						if (currDistance < minDistance) {
+							minDistance = currDistance;
+							if (v20)
+								minConnectionPoint = v20;
+							else
+								minConnectionPoint = *(MctlConnectionPoint **)(*(_DWORD *)(*(&this->_motionControllers.m_pData->vmt + sourceIndex) + 0x10) + 4 * v12);
+						}
+					} else {
+						v14 = currMctlIndex;
+					}
+				}
+				++v14;
+			}
+			++v12;
+		} while (v12 < *(_DWORD *)(*(&this->_motionControllers.m_pData->vmt + sourceIndex) + 0x14)); // MctlCompoundArrayItem.mctlConnectionPointsArray.CObArray.m_nSize
+	}
+
+	*minDistancePtr = minDistance;
+
+	return minConnectionPoint;
+}
+#endif
 	warning("STUB: MctlCompound::findClosestConnectionPoint()");
 
 	return 0;
 }
 
 void MctlCompound::replaceNodeX(int from, int to) {
-	warning("STUB: MctlCompound::replaceNodeX()");
+	for (uint i = 0; i < _motionControllers.size(); i++) {
+		if (_motionControllers[i]->_motionControllerObj->_objtype == kObjTypeMovGraph) {
+			MovGraph *gr = (MovGraph *)_motionControllers[i]->_motionControllerObj;
+
+			for (ObList::iterator n = gr->_nodes.begin(); n != gr->_nodes.end(); ++n) {
+				MovGraphNode *node = (MovGraphNode *)*n;
+
+				if (node->_x == from)
+					node->_x = to;
+			}
+
+			gr->calcNodeDistancesAndAngles();
+		}
+	}
 }
 
 MctlConnectionPoint::MctlConnectionPoint() {
@@ -493,15 +557,7 @@ bool MctlCompoundArray::load(MfcArchive &file) {
 MovGraphItem::MovGraphItem() {
 	ani = 0;
 	field_4 = 0;
-	field_8 = 0;
-	field_C = 0;
-	field_10 = 0;
-	field_14 = 0;
-	field_18 = 0;
-	field_1C = 0;
-	field_20 = 0;
-	field_24 = 0;
-	items = 0;
+	movitems = 0;
 	count = 0;
 	field_30 = 0;
 	field_34 = 0;
@@ -509,16 +565,36 @@ MovGraphItem::MovGraphItem() {
 	field_3C = 0;
 }
 
+void MovGraphItem::free() {
+	for (uint i = 0; i < movitems->size(); i++) {
+		(*movitems)[i]->movarr->_movSteps.clear();
+		delete (*movitems)[i]->movarr;
+	}
+
+	delete movitems;
+
+	movitems = 0;
+}
+
 int MovGraph_messageHandler(ExCommand *cmd);
 
-int MovGraphCallback(int a1, int a2, int a3) {
-	warning("STUB: MovgraphCallback");
+MovArr *movGraphCallback(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter) {
+	int residx = 0;
+	int itemidx = 0;
 
-	return 0;
+	while (counter > 1) {
+		if ((*items)[itemidx]->_mfield_4 > (*items)[itemidx + 1]->_mfield_4)
+			residx = itemidx;
+
+		counter--;
+		itemidx++;
+	}
+
+	return (*items)[residx]->movarr;
 }
 
 MovGraph::MovGraph() {
-	_callback1 = MovGraphCallback;
+	_callback1 = movGraphCallback;
 	_field_44 = 0;
 	insertMessageHandler(MovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
 
@@ -562,54 +638,482 @@ int MovGraph::removeObject(StaticANIObject *obj) {
 }
 
 void MovGraph::freeItems() {
-	warning("STUB: MovGraph::freeItems()");
-}
+	for (uint i = 0; i < _items.size(); i++) {
+		_items[i]->free();
 
-int MovGraph::method28() {
-	warning("STUB: MovGraph::method28()");
+		_items[i]->movarr._movSteps.clear();
+	}
+
+	_items.clear();
+}
+Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) {
+	*rescount = 0;
+
+	if (_items.size() <= 0)
+		return 0;
+
+	int idx = 0;
+
+	while (_items[idx]->ani != ani) {
+		idx++;
+
+		if (idx >= _items.size())
+			return 0;
+	}
+	_items[idx]->free();
+
+	calcNodeDistancesAndAngles();
+
+	_items[idx]->movarr._movSteps.clear();
+
+	Common::Point point;
+
+	point.x = ani->_ox;
+	point.y = ani->_oy;
+
+	if (!calcChunk(idx, ani->_ox, ani->_oy, &_items[idx]->movarr, 0))
+		findClosestLink(idx, &point, &_items[idx]->movarr);
+
+	_items[idx]->count = 0;
+
+	delete _items[idx]->movitems;
+	_items[idx]->movitems = 0;
+
+	int arrSize;
+	Common::Array<MovArr *> *movarr = genMovArr(x, y, &arrSize, flag1, 0);
+
+	if (movarr) {
+		for (int i = 0; i < arrSize; i++) {
+			int sz;
+			Common::Array<MovItem *> *movitems = calcMovItems(&_items[idx]->movarr, (*movarr)[i], &sz);
+
+			if (sz > 0) {
+				for (uint j = 0; j < sz; j++)
+					_items[idx]->movitems->push_back(movitems[j]);
+
+				delete movitems;
+			}
+		}
+
+		delete movarr;
+	}
+
+	if (_items[idx]->count) {
+		*rescount = _items[idx]->count;
+
+		return _items[idx]->movitems;
+	}
 
 	return 0;
 }
 
-int MovGraph::method2C(StaticANIObject *obj, int x, int y) {
+bool MovGraph::method2C(StaticANIObject *obj, int x, int y) {
 	obj->setOXY(x, y);
 	return method3C(obj, 1);
 }
 
-MessageQueue *MovGraph::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	warning("STUB: MovGraph::method34()");
+MessageQueue *MovGraph::method34(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	if (!ani) {
+		if (!_items.size())
+			return 0;
 
-	return 0;
+		ani = _items[0]->ani;
+	}
+
+	if (ABS(ani->_ox - xpos) < 50 && ABS(ani->_oy - ypos) < 50)
+		return 0;
+
+	if (!ani->isIdle())
+		return 0;
+
+	if (ani->_flags & 0x100)
+		return 0;
+
+	int count;
+	Common::Array<MovItem *> *movitems = method28(ani, xpos, ypos, fuzzyMatch, &count);
+
+	if (!movitems)
+		return 0;
+
+	if (ani->_movement) {
+		Common::Point point;
+
+		ani->calcStepLen(&point);
+
+		MessageQueue *mq = sub1(ani, ani->_ox - point.x, ani->_oy - point.y, ani->_movement->_staticsObj1->_staticsId, xpos, ypos, 0, fuzzyMatch);
+
+		if (!mq || !mq->getExCommandByIndex(0))
+			return 0;
+
+		ExCommand *ex = mq->getExCommandByIndex(0);
+
+		if ((ex->_messageKind != 1 && ex->_messageKind != 20) || ex->_messageNum != ani->_movement->_id ||
+			(ex->_field_14 >= 1 && ex->_field_14 <= ani->_movement->_currDynamicPhaseIndex)) {
+			mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+
+			ex = new ExCommand(ani->_id, 21, 0, 0, 0, 0, 1, 0, 0, 0);
+			ex->_keyCode = ani->_okeyCode;
+			ex->_field_3C = 1;
+			ex->_field_24 = 0;
+			mq->addExCommandToEnd(ex);
+
+			ex = new ExCommand(ani->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
+			ex->_keyCode = ani->_okeyCode;
+			ex->_field_3C = 1;
+			ex->_field_24 = 0;
+			ex->_field_20 = fuzzyMatch;
+			mq->addExCommandToEnd(ex);
+
+			if (mq->chain(0))
+				return mq;
+
+			delete mq;
+
+			return 0;
+		}
+
+		int count2;
+
+		ani->setSomeDynamicPhaseIndex(ex->_field_14);
+		method28(ani, xpos, ypos, fuzzyMatch, &count2);
+
+		int idx = getItemIndexByStaticAni(ani);
+		count = _items[idx]->count;
+		movitems = _items[idx]->movitems;
+	}
+
+	return method50(ani, _callback1(ani, movitems, count), staticsId);
 }
 
-int MovGraph::changeCallback() {
-	warning("STUB: MovGraph::changeCallback()");
-
-	return 0;
+void MovGraph::changeCallback(MovArr *(*callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) {
+	_callback1 = callback1;
 }
 
-int MovGraph::method3C(StaticANIObject *ani, int flag) {
-	warning("STUB: MovGraph::method3C()");
+bool MovGraph::method3C(StaticANIObject *ani, int flag) {
+	int idx = getItemIndexByStaticAni(ani);
 
-	return 0;
+	if (idx == -1)
+		return false;
+
+	Common::Point point;
+	MovArr movarr;
+
+	point.x = ani->_ox;
+	point.y = ani->_oy;
+
+	findClosestLink(idx, &point, &movarr);
+	ani->setOXY(point.x, point.y);
+
+	if (flag) {
+		Statics *st;
+
+		if (ani->_statics) {
+			int t = _mgm.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44]);
+			if (t > _mgm.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44 + 1]))
+				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44 + 1]);
+			else
+				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44]);
+		} else {
+			ani->stopAnim_maybe();
+			st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44]);
+		}
+
+		ani->_statics = st;
+	}
+
+	return true;
 }
 
-int MovGraph::method44() {
-	warning("STUB: MovGraph::method44()");
+bool MovGraph::method44(StaticANIObject *ani, int x, int y) {
+	int idx = getItemIndexByStaticAni(ani);
+	MovArr m;
 
-	return 0;
+	if (idx != -1) {
+		if (x != -1 || y != -1) {
+			int counter;
+
+			Common::Array<MovItem *> *movitem = method28(ani, x, y, 0, &counter);
+
+			if (movitem) {
+				MovArr *movarr = _callback1(ani, movitem, counter);
+				int cnt = movarr->_movStepCount;
+
+				if (cnt > 0) {
+					if (movarr->_movSteps[cnt - 1]->link->_flags & 0x4000000)
+						return true;
+				}
+			}
+		} else if (calcChunk(idx, ani->_ox, ani->_oy, &m, 0) && m._link && (m._link->_flags & 0x4000000)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	warning("STUB: MovGraph::doWalkTo()");
+	PicAniInfo picAniInfo;
+	int ss;
+
+	Common::Array<MovItem *> *movitem = method28(subj, xpos, ypos, fuzzyMatch, &ss);
+
+	subj->getPicAniInfo(&picAniInfo);
+
+	if (movitem) {
+		MovArr *goal = _callback1(subj, movitem, ss);
+		int idx = getItemIndexByStaticAni(subj);
+
+		for (int i = 0; i < _items[idx]->count; i++) {
+			if ((*_items[idx]->movitems)[i]->movarr == goal) {
+				if (subj->_movement) {
+					Common::Point point;
+
+					subj->calcStepLen(&point);
+
+					MessageQueue *mq = sub1(subj, subj->_ox - point.x, subj->_oy - point.y, subj->_movement->_staticsObj1->_staticsId, xpos, ypos, 0, fuzzyMatch);
+
+					if (!mq || !mq->getExCommandByIndex(0))
+						return 0;
+					
+					ExCommand *ex = mq->getExCommandByIndex(0);
+
+					if ((ex->_messageKind != 1 && ex->_messageKind != 20) || 
+						ex->_messageNum != subj->_movement->_id || 
+						(ex->_field_14 >= 1 && ex->_field_14 <= subj->_movement->_currDynamicPhaseIndex))
+						subj->playIdle();
+				}
+			}
+		}
+	}
+
+	movitem = method28(subj, xpos, ypos, fuzzyMatch, &ss);
+	if (movitem) {
+		MovArr *goal = _callback1(subj, movitem, ss);
+		int idx = getItemIndexByStaticAni(subj);
+
+		if (_items[idx]->count > 0) {
+			int arridx = 0;
+
+			while ((*_items[idx]->movitems)[arridx]->movarr != goal) {
+				arridx++;
+
+				if (arridx >= _items[idx]->count) {
+					subj->setPicAniInfo(&picAniInfo);
+					return 0;
+				}
+			}
+
+			_items[idx]->movarr._movSteps.clear();
+			_items[idx]->movarr = *(*_items[idx]->movitems)[arridx]->movarr;
+			_items[idx]->movarr._movSteps = (*_items[idx]->movitems)[arridx]->movarr->_movSteps;
+			_items[idx]->movarr._afield_8 = -1;
+			_items[idx]->movarr._link = 0;
+
+			MessageQueue *mq = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, staticsId);
+			if (mq) {
+				ExCommand *ex = new ExCommand();
+				ex->_messageKind = 17;
+				ex->_messageNum = 54;
+				ex->_parentId = subj->_id;
+				ex->_field_3C = 1;
+				mq->addExCommandToEnd(ex);
+			}
+			subj->setPicAniInfo(&picAniInfo);
+
+			return mq;
+		}
+	}
+
+	subj->setPicAniInfo(&picAniInfo);
 
 	return 0;
 }
 
-int MovGraph::method50() {
-	warning("STUB: MovGraph::method50()");
+MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x1, int y1, int stid2, int flag1) {
+	PicAniInfo picinfo;
 
-	return 0;
+	ani->getPicAniInfo(&picinfo);
+
+	ani->_statics = ani->getStaticsById(stid);
+	ani->_movement = 0;
+	ani->setOXY(x, y);
+
+	int rescount;
+
+	Common::Array<MovItem *> *movitems = method28(ani, x1, y1, flag1, &rescount);
+
+	if (!movitems) {
+		ani->setPicAniInfo(&picinfo);
+
+		return 0;
+	}
+
+	MessageQueue *res = 0;
+
+	MovArr *goal = _callback1(ani, movitems, rescount);
+	int idx = getItemIndexByStaticAni(ani);
+
+	MovGraphItem *movgitem = _items[idx];
+	int cnt = movgitem->count;
+
+	for (int nidx = 0; nidx < cnt; nidx++) {
+		if ((*movgitem->movitems)[nidx]->movarr == goal) {
+			movgitem->movarr._movSteps.clear();
+			_items[idx]->movarr = *(*movgitem->movitems)[nidx]->movarr;
+			_items[idx]->movarr._movSteps = (*movgitem->movitems)[nidx]->movarr->_movSteps;
+			_items[idx]->movarr._afield_8 = -1;
+			_items[idx]->movarr._link = 0;
+
+			res = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, stid2);
+		}
+	}
+
+	ani->setPicAniInfo(&picinfo);
+
+	return res;
+}
+
+MessageQueue *MovGraph::fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId) {
+	if (!movarr->_movStepCount)
+		return 0;
+
+	MessageQueue *mq = 0;
+	int ox = ani->_ox;
+	int oy = ani->_oy;
+	int id1 = 0;
+	int id2;
+
+	for (int i = 0; i < movarr->_movStepCount; i++) {
+		while (i < movarr->_movStepCount - 1) {
+			if (movarr->_movSteps[i    ]->link->_dwordArray1[movarr->_movSteps[i - 1]->sfield_0 + _field_44] !=
+				movarr->_movSteps[i + 1]->link->_dwordArray1[movarr->_movSteps[i    ]->sfield_0 + _field_44])
+				break;
+			i++;
+		}
+
+		MovStep *st = movarr->_movSteps[i];
+
+		ani->getMovementById(st->link->_dwordArray1[_field_44 + st->sfield_0]);
+
+		if (i == movarr->_movStepCount - 1 && staticsId) {
+			id2 = staticsId;
+		} else {
+			if (i < movarr->_movStepCount - 1)
+				id2 = ani->getMovementById(movarr->_movSteps[i + 1]->link->_dwordArray1[_field_44 + st->sfield_0])->_staticsObj1->_staticsId;
+			else
+				id2 = st->link->_dwordArray2[_field_44 + st->sfield_0];
+		}
+
+		int nx, ny, nd;
+
+		if (i == movarr->_movStepCount - 1) {
+			nx = movarr->_point.x;
+			ny = movarr->_point.y;
+			nd = st->link->_movGraphNode1->_distance;
+		} else {
+			if (st->sfield_0) {
+				nx = st->link->_movGraphNode1->_x;
+				ny = st->link->_movGraphNode1->_y;
+				nd = st->link->_movGraphNode1->_distance;
+			} else {
+				nx = st->link->_movGraphNode2->_x;
+				ny = st->link->_movGraphNode2->_y;
+				nd = st->link->_movGraphNode2->_distance;
+			}
+		}
+
+		MGMInfo mgminfo;
+
+		memset(&mgminfo, 0, sizeof(mgminfo));
+		mgminfo.ani = ani;
+		mgminfo.staticsId2 = id2;
+		mgminfo.staticsId1 = id1;
+		mgminfo.x1 = nx;
+		mgminfo.x2 = ox;
+		mgminfo.y2 = oy;
+		mgminfo.y1 = ny;
+		mgminfo.field_1C = nd;
+		mgminfo.movementId = st->link->_dwordArray1[_field_44 + st->sfield_0];
+
+		mgminfo.flags = 0xe;
+		if (mq)
+			mgminfo.flags |= 0x31;
+
+		MessageQueue *newmq = _mgm.genMovement(&mgminfo);
+
+		if (mq) {
+			if (newmq) {
+				mq->transferExCommands(newmq);
+
+				delete newmq;
+			}
+		} else {
+			mq = newmq;
+		}
+
+		ox = nx;
+		oy = ny;
+		id1 = id2;
+	}
+
+	return mq;
+}
+
+MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int staticsId) {
+	if (_items.size() == 0)
+		return 0;
+
+	uint idx;
+	int movidx;
+	bool done = false;
+
+	for (idx = 0; idx <= _items.size() && !done; idx++) {
+		if (idx == _items.size())
+			return 0;
+
+		if (_items[idx]->ani == ani) {
+			if (!_items[idx]->movitems)
+				return 0;
+
+			if (_items[idx]->count < 1)
+				return 0;
+
+			for (movidx = 0; movidx < _items[idx]->count; movidx++) {
+				if ((*_items[idx]->movitems)[movidx]->movarr == movarr) {
+					done = true;
+
+					break;
+				}
+			}
+		}
+	}
+
+	_items[idx]->movarr._movSteps.clear();
+	_items[idx]->movarr = *(*_items[idx]->movitems)[movidx]->movarr;
+	_items[idx]->movarr._movSteps = (*_items[idx]->movitems)[movidx]->movarr->_movSteps;
+	_items[idx]->movarr._afield_8 = -1;
+	_items[idx]->movarr._link = 0;
+
+	MessageQueue *mq = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, 0);
+
+	if (!mq)
+		return 0;
+
+	ExCommand *ex = new ExCommand();
+
+	ex->_messageKind = 17;
+	ex->_messageNum = 54;
+	ex->_parentId = ani->_id;
+	ex->_field_3C = 1;
+	mq->addExCommandToEnd(ex);
+
+	if (!mq->chain(ani)) {
+		delete mq;
+
+		return 0;
+	}
+
+	return mq;
 }
 
 double MovGraph::calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch) {
@@ -660,12 +1164,270 @@ void MovGraph::calcNodeDistancesAndAngles() {
 	}
 }
 
+bool MovGraph::findClosestLink(int unusedArg, Common::Point *p, MovArr *movarr) {
+	MovGraphLink *link = 0;
+	double mindist = 1.0e20;
+	int resx = 0, resy = 0;
+
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		MovGraphLink *lnk = (MovGraphLink *)*i;
+
+		if ((lnk->_flags & 0x10000000) && !(lnk->_flags & 0x20000000) ) {
+			double dx1 = lnk->_movGraphNode1->_x - p->x;
+			double dy1 = lnk->_movGraphNode1->_y - p->y;
+			double dx2 = lnk->_movGraphNode2->_x - p->x;
+			double dy2 = lnk->_movGraphNode2->_y - p->y;
+			double dx3 = lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x;
+			double dy3 = lnk->_movGraphNode2->_y - lnk->_movGraphNode1->_y;
+			double sq1 = sqrt(dy1 * dy1 + dx1 * dx1);
+			double sdist = (dy3 * dy1 + dx3 * dx1) / lnk->_distance / sq1;
+			double ldist = sdist * sq1;
+			double dist = sqrt(1.0 - sdist * sdist) * sq1;
+
+			if (ldist < 0.0) {
+				ldist = 0.0;
+				dist = sqrt(dx1 * dx1 + dy1 * dy1);
+			}
+
+			if (ldist > lnk->_distance) {
+				ldist = lnk->_distance;
+				dist = sqrt(dx2 * dx2 + dy2 * dy2);
+			}
+
+			if (ldist >= 0.0 && ldist <= lnk->_distance && dist < mindist) {
+				resx = lnk->_movGraphNode1->_x + (int)(dx3 * ldist / lnk->_distance);
+				resy = lnk->_movGraphNode1->_y + (int)(dy3 * ldist / lnk->_distance);
+
+				mindist = dist;
+				link = lnk;
+			}
+		}
+	}
+
+	if (mindist < 1.0e20) {
+		if (movarr)
+			movarr->_link = link;
+
+		if (p) {
+			p->x = resx;
+			p->y = resy;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 int MovGraph::getItemIndexByStaticAni(StaticANIObject *ani) {
 	for (uint i = 0; i < _items.size(); i++)
 		if (_items[i]->ani == ani)
 			return i;
 
 	return -1;
+}
+
+Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int flag1, int flag2) {
+	if (!_links.size()) {
+		*arrSize = 0;
+
+		return 0;
+	}
+
+	Common::Array<MovArr *> *arr = new Common::Array<MovArr *>;
+	MovArr *movarr;
+
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		MovGraphLink *lnk = (MovGraphLink *)*i;
+
+		if (flag1) {
+			Common::Point point(x, y);
+			double dist = calcDistance(&point, lnk, 0);
+
+			if (dist >= 0.0 && dist < 2.0) {
+				movarr = new MovArr;
+
+				movarr->_link = lnk;
+				movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - point.y) + 
+								 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(point.x - lnk->_movGraphNode1->_x)) / 
+					lnk->_distance / lnk->_distance;
+				movarr->_point = point;
+
+				arr->push_back(movarr);
+			}
+		} else {
+			if (lnk->_movGraphReact) {
+				if (lnk->_movGraphReact->pointInRegion(x, y)) {
+					if (!(lnk->_flags & 0x10000000) || lnk->_flags & 0x20000000) {
+						if (!flag2) {
+							movarr = new MovArr;
+							movarr->_link = lnk;
+							movarr->_dist = 0.0;
+							movarr->_point.x = lnk->_movGraphNode1->_x;
+							movarr->_point.y = lnk->_movGraphNode1->_y;
+							arr->push_back(movarr);
+
+							movarr = new MovArr;
+							movarr->_link = lnk;
+							movarr->_dist = 1.0;
+							movarr->_point.x = lnk->_movGraphNode1->_x;
+							movarr->_point.y = lnk->_movGraphNode1->_y;
+							arr->push_back(movarr);
+						}
+					} else {
+						movarr = new MovArr;
+						movarr->_link = lnk;
+						movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - y) + 
+										 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(x - lnk->_movGraphNode1->_x)) / 
+							lnk->_distance / lnk->_distance;
+						movarr->_point.x = x;
+						movarr->_point.y = y;
+
+						calcDistance(&movarr->_point, lnk, 0);
+
+						arr->push_back(movarr);
+					}
+				}
+			}
+		}
+	}
+
+	*arrSize = arr->size();
+
+	return arr;
+}
+
+void MovGraph::shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2) {
+	if (lnk == lnk2) {
+		for (uint i = 0; i < tempObList1.size(); i++)
+			tempObList2.push_back(tempObList1[i]);
+
+		tempObList2.push_back(lnk);
+	} else {
+		lnk->_flags |= 0x80000000;
+
+		tempObList1.push_back(lnk);
+
+		for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
+			MovGraphLink *l = (MovGraphLink *)*i;
+
+			if (l->_movGraphNode1 != lnk->_movGraphNode1) {
+				if (l->_movGraphNode2 != lnk->_movGraphNode1) {
+					if (l->_movGraphNode1 != lnk->_movGraphNode2 && l->_movGraphNode2 != lnk->_movGraphNode2)
+						continue;
+				}
+			}
+
+			if (!(l->_flags & 0xA0000000))
+				shuffleTree(l, lnk2, tempObList1, tempObList2);
+		}
+
+		lnk->_flags &= 0x7FFFFFFF;
+	}
+}
+
+Common::Array<MovItem *> *MovGraph::calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount) {
+	Common::Array<MovGraphLink *> tempObList1;
+	Common::Array<MovGraphLink *> tempObList2;
+
+	shuffleTree(movarr1->_link, movarr2->_link, tempObList1, tempObList2);
+
+	*listCount = 0;
+
+	if (!tempObList2.size())
+		return 0;
+
+	*listCount = tempObList2.size();
+
+	Common::Array<MovItem *> *res = new Common::Array<MovItem *>;
+
+	for (int i = 0; i < *listCount; i++) {
+		MovItem *r = new MovItem;
+
+		genMovItem(r, tempObList2[i], movarr1, movarr2);
+
+		delete tempObList2[i];
+	}
+
+	movarr2->_link = movarr1->_link;
+
+	return res;
+}
+
+void MovGraph::genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2) {
+	warning("STUB: MovGraph::genMovItem()");
+}
+
+bool MovGraph::calcChunk(int idx, int x, int y, MovArr *arr, int a6) {
+	int staticsId;
+
+	if (_items[idx]->ani->_statics) {
+		staticsId = _items[idx]->ani->_statics->_staticsId;
+	} else {
+		if (!_items[idx]->ani->_movement->_staticsObj2)
+			return 0;
+
+		staticsId = _items[idx]->ani->_movement->_staticsObj2->_staticsId;
+	}
+
+	int arrSize;
+
+	Common::Array<MovArr *> *movarr = genMovArr(x, y, &arrSize, 0, 1);
+
+	if (!movarr)
+		return findClosestLink(idx, 0, arr);
+
+	bool res = false;
+
+	int idxmin = -1;
+	int offmin = 100;
+
+	for (int i = 0; i < arrSize; i++) {
+		int off = _mgm.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44]);
+
+		if (off < offmin) {
+			offmin = off;
+			idxmin = i;
+		}
+
+		off = _mgm.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44 + 1]);
+		if (off < offmin) {
+			offmin = off;
+			idxmin = i;
+		}
+	}
+
+	if (idxmin != -1) {
+		*arr = *(*movarr)[idxmin];
+
+		res = true;
+	}
+
+	delete movarr;
+
+	return res;
+}
+
+void MovGraph::setEnds(MovStep *step1, MovStep *step2) {
+	if (step1->link->_movGraphNode1 == step2->link->_movGraphNode2) {
+		step1->sfield_0 = 1;
+		step2->sfield_0 = 1;
+
+		return;
+	}
+
+	if (step1->link->_movGraphNode1 == step2->link->_movGraphNode1) {
+		step1->sfield_0 = 1;
+		step2->sfield_0 = 0;
+	} else {
+		step1->sfield_0 = 0;
+
+		if (step1->link->_movGraphNode2 != step2->link->_movGraphNode1) {
+			step2->sfield_0 = 1;
+		} else {
+			step2->sfield_0 = 0;
+		}
+	}
 }
 
 int MovGraph2::getItemIndexByGameObjectId(int objectId) {
@@ -1089,7 +1851,10 @@ int MovGraph2::removeObject(StaticANIObject *obj) {
 }
 
 void MovGraph2::freeItems() {
-	warning("STUB: MovGraph2::freeItems()");
+	for (uint i = 0; i < _items2.size(); i++)
+		delete _items2[i];
+
+	_items2.clear();
 }
 
 MessageQueue *MovGraph2::method34(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
@@ -1139,6 +1904,8 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	MovInfo1 movInfo1;
 	PicAniInfo picAniInfo;
 	Common::Point point;
+
+	debug(0, "MovGraph2::doWalkTo(%d, %d, %d, %d, %d)", obj->_id, xpos, ypos, fuzzyMatch, staticsId);
 
 	int idx = getItemIndexByGameObjectId(obj->_id);
 
@@ -2528,7 +3295,10 @@ MovGraphLink::MovGraphLink() {
 }
 
 MovGraphLink::~MovGraphLink() {
-	warning("STUB: MovGraphLink::~MovGraphLink()");
+	delete _movGraphReact;
+
+	_dwordArray1.clear();
+	_dwordArray2.clear();
 }
 
 
@@ -2764,26 +3534,26 @@ bool MovGraphReact::pointInRegion(int x, int y) {
 	}
 }
 
-int startWalkTo(int objId, int objKey, int x, int y, int a5) {
-	MctlCompound *mc = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
+int startWalkTo(int objId, int objKey, int x, int y, int fuzzyMatch) {
+	MctlCompound *mc = getCurrSceneSc2MotionController();
 
 	if (mc)
-		return (mc->method34(g_fp->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, a5, 0) != 0);
+		return (mc->method34(g_fp->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, fuzzyMatch, 0) != 0);
 
 	return 0;
 }
 
-int doSomeAnimation(int objId, int objKey, int a3) {
+bool doSomeAnimation(int objId, int objKey, int a3) {
 	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(objId, objKey);
 	MctlCompound *cmp = getCurrSceneSc2MotionController();
 
 	if (ani && cmp)
 		return cmp->method3C(ani, a3);
 
-	return 0;
+	return false;
 }
 
-int doSomeAnimation2(int objId, int objKey) {
+bool doSomeAnimation2(int objId, int objKey) {
 	return doSomeAnimation(objId, objKey, 0);
 }
 

@@ -32,10 +32,7 @@ class Sound;
 struct FileInfo {
 	char filename[260];
 	bool empty;
-	int day;
-	int month;
-	int year;
-	int time;
+	char date[16];
 	int fx1;
 	int fx2;
 	int fy1;
@@ -46,9 +43,10 @@ class BaseModalObject {
  public:
 
 	BaseModalObject *_parentObj;
+	ObjType _objtype;
 
  public:
- 	BaseModalObject() : _parentObj(0) {}
+	BaseModalObject() : _parentObj(0) { _objtype = kObjTypeDefault; }
 	virtual ~BaseModalObject() {}
 
 
@@ -256,17 +254,19 @@ public:
 	virtual ~ModalSaveGame();
 
 	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return false; }
+	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff);
-	virtual void update() {}
-	virtual void saveload() {}
+	virtual void update();
+	virtual void saveload();
+
+	void processMouse(int x, int y);
 
 	void setScene(Scene *sc);
 	void setup(Scene *sc, int mode);
 	void processKey(int key);
 
 	char *getSaveName();
-	bool getFileInfo(char *filename, FileInfo *fileinfo);
+	bool getFileInfo(int slot, FileInfo *fileinfo);
 
 	Common::Rect _rect;
 	int _oldBgX;

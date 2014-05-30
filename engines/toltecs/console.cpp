@@ -31,8 +31,8 @@
 namespace Toltecs {
 
 Console::Console(ToltecsEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("room",			WRAP_METHOD(Console, Cmd_Room));
-	DCmd_Register("dump",			WRAP_METHOD(Console, Cmd_Dump));
+	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("dump",			WRAP_METHOD(Console, Cmd_Dump));
 }
 
 Console::~Console() {
@@ -40,10 +40,10 @@ Console::~Console() {
 
 bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Current room number is %d\n", _vm->_sceneResIndex);
+		debugPrintf("Current room number is %d\n", _vm->_sceneResIndex);
 #if 0
-		DebugPrintf("Calling this command with the room number changes the room\n");
-		DebugPrintf("WARNING: It's a bad idea to warp to rooms with this, as the room object scripts are not loaded\n");
+		debugPrintf("Calling this command with the room number changes the room\n");
+		debugPrintf("WARNING: It's a bad idea to warp to rooms with this, as the room object scripts are not loaded\n");
 #endif
 		return true;
 #if 0
@@ -65,13 +65,13 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 
 bool Console::Cmd_Dump(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: dump <resource number>\n");
+		debugPrintf("Usage: dump <resource number>\n");
 		return true;
 	}
 
 	int resNum = atoi(argv[1]);
 	_vm->_arc->dump(resNum);
-	DebugPrintf("Resource %d has been dumped to disk\n", resNum);
+	debugPrintf("Resource %d has been dumped to disk\n", resNum);
 
 	return true;
 }

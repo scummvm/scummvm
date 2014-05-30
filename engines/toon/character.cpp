@@ -1059,12 +1059,14 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 	_specialAnim->loadAnimation(animName);
 
 	_animSpecialId = animId;
-
-	_animationInstance->setAnimation(_specialAnim);
-	_animationInstance->setAnimationRange(0, _specialAnim->_numFrames - 1);
-	_animationInstance->reset();
-	_animationInstance->stopAnimation();
-	_animationInstance->setLooping(false);
+	
+	if (_animationInstance) {
+		_animationInstance->setAnimation(_specialAnim);
+		_animationInstance->setAnimationRange(0, _specialAnim->_numFrames - 1);
+		_animationInstance->reset();
+		_animationInstance->stopAnimation();
+		_animationInstance->setLooping(false);
+	}
 }
 
 int32 Character::getAnimFlag() {

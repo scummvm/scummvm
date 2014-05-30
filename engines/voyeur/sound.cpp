@@ -62,7 +62,7 @@ void SoundManager::startVOCPlay(const Common::String &filename) {
 	if (!f.open(filename))
 		error("Could not find voc file - %s", filename.c_str());
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(f.readStream(f.size()), 
+	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(f.readStream(f.size()),
 		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream);

@@ -613,6 +613,7 @@ protected:
 	CompressedSound _compressedSound;
 	Common::Language _gameLang;
 	uint32 _gameFlags;
+	int _startSlot;
 
 	bool _quitGame;
 	bool _fastMode;

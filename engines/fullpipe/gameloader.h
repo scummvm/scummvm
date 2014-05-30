@@ -29,6 +29,8 @@
 
 namespace Fullpipe {
 
+#define FULLPIPE_SAVEGAME_VERSION 1
+
 class SceneTag;
 class MctlCompound;
 class InputController;
@@ -72,6 +74,12 @@ class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
+struct FullpipeSavegameHeader {
+	uint8 version;
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
+};
+
 class GameLoader : public CObject {
  public:
 	GameLoader();
@@ -88,6 +96,11 @@ class GameLoader : public CObject {
 	int getSceneTagBySceneId(int sceneId, SceneTag **st);
 	void applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount);
 	void saveScenePicAniInfos(int sceneId);
+
+	void readSavegame(const char *fname);
+	void writeSavegame(Scene *sc, const char *fname);
+
+	void restoreDefPicAniInfos();
 
 	GameProject *_gameProject;
 	InteractionController *_interactionController;
@@ -107,6 +120,9 @@ class GameLoader : public CObject {
 	int _preloadSceneId;
 	int _preloadEntranceId;
 };
+
+const char *getSavegameFile(int saveGameIdx);
+bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header);
 
 Inventory2 *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();

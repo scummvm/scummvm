@@ -1843,6 +1843,15 @@ if test "$_global_constructors" = yes; then
 fi
 echo $_global_constructors
 
+echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
+if test ! "x$(which $_host_alias-strings 2>/dev/null)" = "x"; then
+_strings=$_host_alias-strings
+echo yes >> "$TMPLOG"
+else
+_strings=strings
+echo no >> "$TMPLOG"
+fi
+
 #
 # Check for endianness
 #
@@ -1857,9 +1866,9 @@ void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
 $CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
-if strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
+if $_strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
 	_endian=big
-elif strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
 echo $_endian;
@@ -2194,6 +2203,49 @@ case $_host_os in
 				echo "Set staticlib-prefix to ${_staticlibpath}"
 			fi
 		fi
+
+		# Fink
+		# There is no way to get the prefix, so implementing a hack here
+		fink_version=`fink -V 2>/dev/null`
+		if test "$?" -eq 0; then
+			fink_version="`echo "${fink_version}" | sed -ne 's/Package manager version: \([0-9.]*\)/\1/gp'`"
+			echo_n "You seem to be running Fink version ${fink_version}..."
+
+			fink_prefix=`which fink`
+			# strip off /bin/fink from /sw/bin/port
+			fink_prefix=`dirname ${fink_prefix}`
+			fink_prefix=`dirname ${fink_prefix}`
+
+			echo "adding ${fink_prefix} to paths"
+
+			LDFLAGS="-L${fink_prefix}/lib $LDFLAGS"
+			CXXFLAGS="-I${fink_prefix}/include $CXXFLAGS"
+
+			if test -z "$_staticlibpath"; then
+				_staticlibpath=${fink_prefix}
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			fi
+		fi
+
+		# Homebrew
+		brew_version=`brew -v 2>/dev/null`
+		if test "$?" -eq 0; then
+			brew_version="`echo "${brew_version}" | sed -ne 's/Homebrew \([0-9.]*\)/\1/gp'`"
+			echo_n "You seem to be running Homebrew version ${brew_version}..."
+
+			brew_prefix=`brew --prefix`
+
+			echo "adding ${brew_prefix} to paths"
+
+			LDFLAGS="-L${brew_prefix}/lib $LDFLAGS"
+			CXXFLAGS="-I${brew_prefix}/include $CXXFLAGS"
+
+			if test -z "$_staticlibpath"; then
+				_staticlibpath=${brew_prefix}
+				echo "Set staticlib-prefix to ${_staticlibpath}"
+			fi
+		fi
+
 		# If _staticlibpath is not set yet try first /sw (fink) then /usr/local
 		# (the macports case is handled above).
 		if test -z "$_staticlibpath"; then
@@ -2710,7 +2762,10 @@ if test -n "$_host"; then
 			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
 			# libtremor, while our code later on expects it to be called libvorbisidec.
 			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
-			_tremor=yes
+			# Disable this for older SDK as this breaks the build otherwise...
+			if test -z "$PS2SDK_OLD"; then
+				_tremor=yes
+			fi
 			_mad=yes
 			_zlib=yes
 			# HACK to fix compilation of C source files for now.

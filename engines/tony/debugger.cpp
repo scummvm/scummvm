@@ -28,9 +28,9 @@
 namespace Tony {
 
 Debugger::Debugger() : GUI::Debugger() {
-	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
-	DCmd_Register("dirty_rects",	WRAP_METHOD(Debugger, Cmd_DirtyRects));
+	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
+	registerCmd("dirty_rects",	WRAP_METHOD(Debugger, Cmd_DirtyRects));
 }
 
 static int strToInt(const char *s) {
@@ -82,13 +82,13 @@ void DebugChangeScene(CORO_PARAM, const void *param) {
  */
 bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: %s <scene number> [<x> <y>]\n", argv[0]);
+		debugPrintf("Usage: %s <scene number> [<x> <y>]\n", argv[0]);
 		return true;
 	}
 
 	int sceneNumber = strToInt(argv[1]);
 	if (sceneNumber >= g_vm->_theBoxes.getLocBoxesCount()) {
-		DebugPrintf("Invalid scene\n");
+		debugPrintf("Invalid scene\n");
 		return true;
 	}
 
@@ -118,7 +118,7 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
  */
 bool Debugger::Cmd_DirtyRects(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Usage; %s [on | off]\n", argv[0]);
+		debugPrintf("Usage; %s [on | off]\n", argv[0]);
 		return true;
 	} else {
 		g_vm->_window.showDirtyRects(strcmp(argv[1], "on") == 0);

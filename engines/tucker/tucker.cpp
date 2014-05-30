@@ -50,6 +50,7 @@ TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 fl
 	_currentSaveLoadGameState = 1;
 	_fileLoadSize = 0;
 	_csDataSize = 0;
+	_startSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 	_player = nullptr;
 	_loadTempBuf = nullptr;
@@ -91,7 +92,8 @@ Common::Error TuckerEngine::run() {
 	initGraphics(kScreenWidth, kScreenHeight, false);
 	syncSoundSettings();
 	_compressedSound.openFile();
-	handleIntroSequence();
+	if (_startSlot == -1)
+		handleIntroSequence();
 	if ((_gameFlags & kGameFlagIntroOnly) == 0 && !shouldQuit()) {
 		mainLoop();
 	}
@@ -604,6 +606,7 @@ void TuckerEngine::mainLoop() {
 				_flagsTable[236] = 74;
 			}
 		}
+
 		if (_flagsTable[236] > 70) {
 			handleCreditsSequence();
 			_quitGame = true;
@@ -890,9 +893,8 @@ void TuckerEngine::updateCharPosition() {
 				if (action->_testFlag1Num < 500) {
 					if (action->_testFlag1Num >= 300)
 						error("updateCharPosition() - Unexpected value for _testFlag1Num : %d", action->_testFlag1Num);
-					if (_flagsTable[action->_testFlag1Num] != action->_testFlag1Value) {
+					if (_flagsTable[action->_testFlag1Num] != action->_testFlag1Value)
 						skip = false;
-					}
 				} else if (_inventoryItemsState[action->_testFlag1Num - 500] != action->_testFlag1Value) {
 					skip = false;
 				}
@@ -900,9 +902,10 @@ void TuckerEngine::updateCharPosition() {
 			}
 			if (action->_testFlag2Num != 0) {
 				if (action->_testFlag2Num < 500) {
-					if (_flagsTable[action->_testFlag2Num] != action->_testFlag2Value) {
+					if (action->_testFlag2Num >= 300)
+						error("updateCharPosition() - Unexpected value for _testFlag1Num : %d", action->_testFlag1Num);
+					if (_flagsTable[action->_testFlag2Num] != action->_testFlag2Value)
 						skip = false;
-					}
 				} else if (_inventoryItemsState[action->_testFlag2Num - 500] != action->_testFlag2Value) {
 					skip = false;
 				}

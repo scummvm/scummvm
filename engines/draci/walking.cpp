@@ -453,7 +453,7 @@ void WalkingState::callback() {
 	_callback = NULL;
 	_vm->_script->runWrapper(originalCallback, _callbackOffset, true, false);
 	_callbackLast = NULL;
-	_callbackOffset = NULL;
+	_callbackOffset = 0;
 }
 
 void WalkingState::callbackLast() {

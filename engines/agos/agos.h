@@ -61,6 +61,14 @@ struct Surface;
 
 namespace AGOS {
 
+enum {
+	kDebugOpcode = 1 << 0,
+	kDebugVGAOpcode = 1 << 1,
+	kDebugSubroutine = 1 << 2,
+	kDebugVGAScript = 1 << 3,
+	kDebugImageDump = 1 << 4
+};
+
 uint fileReadItemID(Common::SeekableReadStream *in);
 
 #define CHECK_BOUNDS(x, y) assert((uint)(x) < ARRAYSIZE(y))
@@ -324,15 +332,9 @@ protected:
 	bool _fastMode;
 	bool _backFlag;
 
-	uint16 _debugMode;
 	Common::Language _language;
 	bool _copyProtection;
 	bool _pause;
-	bool _dumpScripts;
-	bool _dumpOpcodes;
-	bool _dumpVgaScripts;
-	bool _dumpVgaOpcodes;
-	bool _dumpImages;
 	bool _speech;
 	bool _subtitles;
 	bool _vgaVar9;

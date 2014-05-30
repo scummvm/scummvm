@@ -30,6 +30,7 @@
 #include "image/codecs/truemotion1data.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/rect.h"
 #include "common/util.h"
 
 namespace Image {
@@ -88,24 +89,20 @@ static const CompressionType compressionTypes[17] = {
 	{ ALGO_RGB24H, 2, 2, BLOCK_2x2 }
 };
 
-TrueMotion1Decoder::TrueMotion1Decoder(uint16 width, uint16 height) {
-	_surface = new Graphics::Surface();
-	_width = width;
-	_height = height;
-
-	_surface->create(width, height, getPixelFormat());
-
-	// there is a vertical predictor for each pixel in a line; each vertical
-	// predictor is 0 to start with
-	_vertPred = new uint32[_width];
+TrueMotion1Decoder::TrueMotion1Decoder() {
+	_surface = 0;
+	_vertPred = 0;
 
 	_buf = _mbChangeBits = _indexStream = 0;
 	_lastDeltaset = _lastVectable = -1;
 }
 
 TrueMotion1Decoder::~TrueMotion1Decoder() {
-	_surface->free();
-	delete _surface;
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+
 	delete[] _vertPred;
 }
 
@@ -170,11 +167,6 @@ void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream &stream) {
 	byte headerBuffer[128];  // logical maximum size of the header
 	const byte *selVectorTable;
 
-	// There is 1 change bit per 4 pixels, so each change byte represents
-	// 32 pixels; divide width by 4 to obtain the number of change bits and
-	// then round up to the nearest byte.
-	_mbChangeBitsRowSize = ((_width >> 2) + 7) >> 3;
-
 	_header.headerSize = ((_buf[0] >> 5) | (_buf[0] << 3)) & 0x7f;
 
 	if (_buf[0] < 0x10)
@@ -195,6 +187,22 @@ void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream &stream) {
 	_header.headerType = headerBuffer[10];
 	_header.flags = headerBuffer[11];
 	_header.control = headerBuffer[12];
+
+	if (!_vertPred) {
+		// there is a vertical predictor for each pixel in a line; each vertical
+		// predictor is 0 to start with
+		_vertPred = new uint32[_header.xsize];
+	}
+
+	if (!_surface) {
+		_surface = new Graphics::Surface();
+		_surface->create(_header.xsize, _header.ysize, getPixelFormat());
+	}
+
+	// There is 1 change bit per 4 pixels, so each change byte represents
+	// 32 pixels; divide width by 4 to obtain the number of change bits and
+	// then round up to the nearest byte.
+	_mbChangeBitsRowSize = ((_header.xsize >> 2) + 7) >> 3;
 
 	// Version 2
 	if (_header.version >= 2) {
@@ -240,7 +248,7 @@ void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream &stream) {
 		_indexStream = _mbChangeBits;
 	} else {
 		// one change bit per 4x4 block
-		_indexStream = _mbChangeBits + _mbChangeBitsRowSize * (_height >> 2);
+		_indexStream = _mbChangeBits + _mbChangeBitsRowSize * (_header.ysize >> 2);
 	}
 
 	_indexStreamSize = stream.size() - (_indexStream - _buf);
@@ -306,11 +314,11 @@ void TrueMotion1Decoder::decode16() {
 	int index;
 
 	// clean out the line buffer
-	memset(_vertPred, 0, _width * 4);
+	memset(_vertPred, 0, _header.xsize * 4);
 
 	GET_NEXT_INDEX();
 
-	for (int y = 0; y < _height; y++) {
+	for (int y = 0; y < _header.ysize; y++) {
 		// re-init variables for the next line iteration
 		uint32 horizPred = 0;
 		uint32 *currentPixelPair = (uint32 *)_surface->getBasePtr(0, y);
@@ -319,7 +327,7 @@ void TrueMotion1Decoder::decode16() {
 		byte mbChangeByte = _mbChangeBits[mbChangeIndex++];
 		byte mbChangeByteMask = 1;
 
-		for (int pixelsLeft = _width; pixelsLeft > 0; pixelsLeft -= 4) {
+		for (int pixelsLeft = _header.xsize; pixelsLeft > 0; pixelsLeft -= 4) {
 			if (keyframe || (mbChangeByte & mbChangeByteMask) == 0) {
 				switch (y & 3) {
 				case 0:

@@ -22,7 +22,6 @@ private:
 	Parallaction *_vm;
 	MouseTriState _mouseState;
 
-	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_Location(int argc, const char **argv);
 	bool Cmd_Give(int argc, const char **argv);
 	bool Cmd_Zones(int argc, const char **argv);

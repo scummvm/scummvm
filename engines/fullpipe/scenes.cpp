@@ -590,10 +590,8 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	scene->setPictureObjectsFlag4();
 
-	for (PtrList::iterator s = scene->_staticANIObjectList1.begin(); s != scene->_staticANIObjectList1.end(); ++s) {
-		StaticANIObject *o = (StaticANIObject *)*s;
-		o->setFlags(o->_flags & 0xFE7F);
-	}
+	for (uint i = 0; i < scene->_staticANIObjectList1.size(); i++)
+		scene->_staticANIObjectList1[i]->_flags &= 0xFE7F;
 
 	PictureObject *p = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);
 	p->setFlags(p->_flags & 0xFFFB);
@@ -1456,9 +1454,28 @@ void BallChain::init(Ball **ball) {
 }
 
 Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
-	warning("STUB: BallChain::sub04");
+	if (!pTail) {
+		cPlex = (byte *)calloc(cPlexLen, sizeof(Ball));
 
-	return pTail;
+		Ball *runPtr = (Ball *)&cPlex[(cPlexLen - 1) * sizeof(Ball)];
+
+		for (int i = 0; i < cPlexLen; i++) {
+			runPtr->p0 = pTail;
+			pTail = runPtr;
+
+			runPtr -= sizeof(Ball);
+		}
+	}
+
+	Ball *res = pTail;
+
+	pTail = res->p0;
+	res->p1 = ballP;
+	res->p0 = ballN;
+	numBalls++;
+	res->ani = 0;
+
+	return res;
 }
 
 void BallChain::removeBall(Ball *ball) {

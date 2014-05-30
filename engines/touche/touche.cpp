@@ -46,32 +46,32 @@
 namespace Touche {
 
 ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
-	: Engine(system), _midiPlayer(0), _language(language), _rnd("touche") {
+	: Engine(system), _midiPlayer(nullptr), _language(language), _rnd("touche") {
 	_saveLoadCurrentPage = 0;
 	_saveLoadCurrentSlot = 0;
 	_hideInventoryTexts = false;
 
 	_numOpcodes = 0;
 	_compressedSpeechData = 0;
-	_textData = 0;
-	_backdropBuffer = 0;
-	_menuKitData = 0;
-	_convKitData = 0;
+	_textData = nullptr;
+	_backdropBuffer = nullptr;
+	_menuKitData = nullptr;
+	_convKitData = nullptr;
 
 	for (int i = 0; i < NUM_SEQUENCES; i++)
-		_sequenceDataTable[i] = 0;
+		_sequenceDataTable[i] = nullptr;
 
-	_programData = 0;
+	_programData = nullptr;
 	_programDataSize = 0;
-	_mouseData = 0;
-	_iconData = 0;
+	_mouseData = nullptr;
+	_iconData = nullptr;
 	_currentBitmapWidth = 0;
 	_currentBitmapHeight = 0;
 	_currentImageWidth = 0;
 	_currentImageHeight = 0;
 	_roomWidth = 0;
-	_programTextDataPtr = 0;
-	_offscreenBuffer = 0;
+	_programTextDataPtr = nullptr;
+	_offscreenBuffer = nullptr;
 
 	_screenRect = Common::Rect(kScreenWidth, kScreenHeight);
 	_roomAreaRect = Common::Rect(kScreenWidth, kRoomHeight);
@@ -124,11 +124,11 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_script.opcodeNum = 0;
 	_script.dataOffset = 0;
 	_script.keyCharNum = 0;
-	_script.dataPtr = 0;
-	_script.stackDataPtr = 0;
-	_script.stackDataBasePtr = 0;
+	_script.dataPtr = nullptr;
+	_script.stackDataPtr = nullptr;
+	_script.stackDataBasePtr = nullptr;
 	_script.quitFlag = 0;
-	_opcodesTable = 0;
+	_opcodesTable = nullptr;
 
 	for (uint i = 0; i < NUM_SPRITES; i++)
 		memset(&_spritesTable[i], 0, sizeof(SpriteData));
@@ -138,10 +138,10 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 
 	_talkListEnd = 0;
 	_talkListCurrent = 0;
-	_talkTextRectDefined = 0;
-	_talkTextDisplayed = 0;
-	_talkTextInitialized = 0;
-	_skipTalkText = 0;
+	_talkTextRectDefined = false;
+	_talkTextDisplayed = false;
+	_talkTextInitialized = false;
+	_skipTalkText = false;
 	_talkTextSpeed = 0;
 	_keyCharTalkCounter = 0;
 	_talkTableLastTalkingKeyChar = 0;
@@ -151,14 +151,14 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	for (uint i = 0; i < NUM_TALK_ENTRIES; i++)
 		memset(&_talkTable[i], 0, sizeof(TalkEntry));
 
-	_conversationChoicesUpdated = 0;
+	_conversationChoicesUpdated = false;
 	_conversationReplyNum = 0;
-	_conversationEnded = 0;
+	_conversationEnded = false;
 	_conversationNum = 0;
 	_scrollConversationChoiceOffset = 0;
 	_currentConversation = 0;
-	_disableConversationScript = 0;
-	_conversationAreaCleared = 0;
+	_disableConversationScript = false;
+	_conversationAreaCleared = false;
 
 	for (uint i = 0; i < NUM_CONVERSATION_CHOICES; i++)
 		memset(&_conversationChoicesTable[i], 0, sizeof(ConversationChoice));
@@ -167,6 +167,26 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 		_sortedKeyCharsTable[i] = 0;
 
 	_currentKeyCharNum = 0;
+	_inp_leftMouseButtonPressed = false;
+	_inp_rightMouseButtonPressed = false;
+	_disabledInputCounter = 0;
+	_gameState = kGameStateNone;
+	_displayQuitDialog = false;
+	_newMusicNum = 0;
+	_currentMusicNum = 0;
+	_newSoundNum = 0;
+	_newSoundDelay = 0;
+	_newSoundPriority = 0;
+	for (int i = 0; i < 3; ++i) {
+		_inventoryStateTable[i].displayOffset = 0;
+		_inventoryStateTable[i].lastItem = 0;
+		_inventoryStateTable[i].itemsPerLine = 0;
+		_inventoryStateTable[i].itemsList = nullptr;
+	}
+	_inventoryVar1 = nullptr;
+	_inventoryVar2 = nullptr;
+	_currentCursorObject = 0;
+	_talkTextMode = 0;
 }
 
 ToucheEngine::~ToucheEngine() {
@@ -3094,12 +3114,12 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 	for (uint i = 0; i < _programWalkTable.size(); ++i) {
 		const ProgramWalkData *pwd = &_programWalkTable[i];
 		if ((pwd->point1 & 0x4000) == 0) {
-			int distance = 32000;
 			ProgramPointData *pts1 = &_programPointsTable[pwd->point1];
 			ProgramPointData *pts2 = &_programPointsTable[pwd->point2];
 			if (pts1->order != 0) {
 				int dx = pts2->x - pts1->x;
 				int dy = pts2->y - pts1->y;
+				int distance = 32000;
 				if (dx == 0) {
 					if (dstPosY > MIN(pts2->y, pts1->y) && dstPosY < MAX(pts2->y, pts1->y)) {
 						int d = ABS(dstPosX - pts1->x);

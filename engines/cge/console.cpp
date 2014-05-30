@@ -26,7 +26,7 @@
 namespace CGE {
 
 CGEConsole::CGEConsole(CGEEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("Boundaries",    WRAP_METHOD(CGEConsole, Cmd_boundaries));
+	registerCmd("Boundaries",    WRAP_METHOD(CGEConsole, Cmd_boundaries));
 }
 
 CGEConsole::~CGEConsole() {
@@ -37,7 +37,7 @@ CGEConsole::~CGEConsole() {
  */
 bool CGEConsole::Cmd_boundaries(int argc, const char **argv) {
 	if (argc != 1) {
-		DebugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 

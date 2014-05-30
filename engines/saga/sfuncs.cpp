@@ -139,7 +139,7 @@ void Script::setupITEScriptFuncList() {
 void Script::sfPutString(SCRIPTFUNC_PARAMS) {
 	const char *str = thread->_strings->getString(thread->pop());
 
-	_vm->_console->DebugPrintf("sfPutString: %s\n",str);
+	_vm->_console->debugPrintf("sfPutString: %s\n",str);
 	debug(0, "sfPutString: %s", str);
 }
 

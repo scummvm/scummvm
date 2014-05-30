@@ -805,7 +805,7 @@ void ScummEngine::resetScummVars() {
 	}
 
 	if (VAR_DEBUGMODE != 0xFF) {
-		VAR(VAR_DEBUGMODE) = _debugMode;
+		VAR(VAR_DEBUGMODE) = (_debugMode ? 1 : 0);
 		if (_game.heversion >= 80 && _debugMode)
 			VAR(85) = 1;
 	}

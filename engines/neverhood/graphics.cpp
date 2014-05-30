@@ -47,6 +47,7 @@ BaseSurface::BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 h
 }
 
 BaseSurface::~BaseSurface() {
+	_surface->free();
 	delete _surface;
 }
 

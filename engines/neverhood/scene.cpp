@@ -148,7 +148,7 @@ void Scene::printSurfaces(Console *con) {
 		NDrawRect drawRect = _surfaces[index]->getDrawRect();
 		NRect clipRect = _surfaces[index]->getClipRect();
 		int priority = _surfaces[index]->getPriority();
-		con->DebugPrintf("%d ('%s'): Priority %d, draw rect (%d, %d, %d, %d), clip rect (%d, %d, %d, %d)\n",
+		con->debugPrintf("%d ('%s'): Priority %d, draw rect (%d, %d, %d, %d), clip rect (%d, %d, %d, %d)\n",
 			index, _surfaces[index]->getName().c_str(), priority,
 			drawRect.x, drawRect.y, drawRect.x2(), drawRect.y2(),
 			clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2);

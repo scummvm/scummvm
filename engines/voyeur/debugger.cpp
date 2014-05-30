@@ -29,11 +29,10 @@ namespace Voyeur {
 
 Debugger::Debugger(VoyeurEngine *vm) : GUI::Debugger(), _vm(vm) {
 	// Register methods
-	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("exit", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("time", WRAP_METHOD(Debugger, Cmd_Time));
-	DCmd_Register("hotspots", WRAP_METHOD(Debugger, Cmd_Hotspots));
-	DCmd_Register("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("time", WRAP_METHOD(Debugger, Cmd_Time));
+	registerCmd("hotspots", WRAP_METHOD(Debugger, Cmd_Hotspots));
+	registerCmd("mouse", WRAP_METHOD(Debugger, Cmd_Mouse));
 
 	// Set fields
 	_isTimeActive = true;
@@ -46,44 +45,44 @@ static const int TIME_STATES[] = {
 
 bool Debugger::Cmd_Time(int argc, const char **argv) {
 	if (argc < 2) {
-		// Get the current day and time of day 
+		// Get the current day and time of day
 		Common::String dtString = _vm->getDayName();
 		Common::String timeString = _vm->getTimeOfDay();
 		if (!timeString.empty())
 			dtString += " " + timeString;
 
-		DebugPrintf("Time period = %d, date/time is: %s, time is %s\n", 
+		debugPrintf("Time period = %d, date/time is: %s, time is %s\n",
 			_vm->_voy->_transitionId, dtString.c_str(), _isTimeActive ? "on" : "off");
-		DebugPrintf("Format: %s [on | off | 1..17 | val <amount>]\n\n", argv[0]);
+		debugPrintf("Format: %s [on | off | 1..17 | val <amount>]\n\n", argv[0]);
 	} else {
 		if (!strcmp(argv[1], "on")) {
 			_isTimeActive = true;
-			DebugPrintf("Time is now on\n\n");
+			debugPrintf("Time is now on\n\n");
 		} else if (!strcmp(argv[1], "off")) {
 			_isTimeActive = false;
-			DebugPrintf("Time is now off\n\n");
+			debugPrintf("Time is now off\n\n");
 		} else if (!strcmp(argv[1], "val")) {
 			if (argc < 3) {
-				DebugPrintf("Time expired is currently %d.\n", _vm->_voy->_RTVNum);
+				debugPrintf("Time expired is currently %d.\n", _vm->_voy->_RTVNum);
 			} else {
 				_vm->_voy->_RTVNum = atoi(argv[2]);
-				DebugPrintf("Time expired is now %d.\n", _vm->_voy->_RTVNum);
+				debugPrintf("Time expired is now %d.\n", _vm->_voy->_RTVNum);
 			}
 		} else {
 			int timeId = atoi(argv[1]);
 			if (timeId >= 1 && timeId < 17) {
 				int stateId = TIME_STATES[timeId - 1];
 				if (!stateId) {
-					DebugPrintf("Given time period is not used in-game\n");
+					debugPrintf("Given time period is not used in-game\n");
 				} else {
-					DebugPrintf("Changing to time period: %d\n", timeId);
+					debugPrintf("Changing to time period: %d\n", timeId);
 					if (_vm->_mainThread->goToState(-1, stateId))
 						_vm->_mainThread->parsePlayCommands();
 
 					return false;
 				}
 			} else {
-				DebugPrintf("Unknown parameter\n\n");
+				debugPrintf("Unknown parameter\n\n");
 			}
 		}
 	}
@@ -93,7 +92,7 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 
 bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 	if (_vm->_voy->_computerTextId >= 0) {
-		DebugPrintf("Hotspot Computer Screen %d - %d,%d->%d,%d\n",
+		debugPrintf("Hotspot Computer Screen %d - %d,%d->%d,%d\n",
 			_vm->_voy->_computerTextId,
 			_vm->_voy->_computerScreenRect.left,
 			_vm->_voy->_computerScreenRect.top,
@@ -112,9 +111,9 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 				hotspots[hotspotIdx].right, hotspots[hotspotIdx].bottom);
 			int arrIndex = hotspots[hotspotIdx]._arrIndex;
 			if (_vm->_voy->_roomHotspotsEnabled[arrIndex - 1]) {
-				DebugPrintf("Hotspot Room %d - %s - Enabled\n", arrIndex, pos);
+				debugPrintf("Hotspot Room %d - %s - Enabled\n", arrIndex, pos);
 			} else {
-				DebugPrintf("Hotspot Room - %s - Disabled\n", pos);
+				debugPrintf("Hotspot Room - %s - Disabled\n", pos);
 			}
 		}
 	}
@@ -132,14 +131,14 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 
 			for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
 				if (_vm->_voy->_audioHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
-					DebugPrintf("Hotspot %d %s Audio slot %d, time: %d to %d\n", 
+					debugPrintf("Hotspot %d %s Audio slot %d, time: %d to %d\n",
 						hotspotIdx, pos.c_str(), arrIndex,
 						_vm->_voy->_audioHotspotTimes._min[arrIndex][hotspotIdx],
 						_vm->_voy->_audioHotspotTimes._max[arrIndex][hotspotIdx]);
 				}
 
 				if (_vm->_voy->_evidenceHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
-					DebugPrintf("Hotspot %d %s Evidence slot %d, time: %d to %d\n", 
+					debugPrintf("Hotspot %d %s Evidence slot %d, time: %d to %d\n",
 						hotspotIdx, pos.c_str(), arrIndex,
 						_vm->_voy->_evidenceHotspotTimes._min[arrIndex][hotspotIdx],
 						_vm->_voy->_evidenceHotspotTimes._max[arrIndex][hotspotIdx]);
@@ -148,7 +147,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 
 			for (int arrIndex = 0; arrIndex < 8; ++arrIndex) {
 				if (_vm->_voy->_videoHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
-					DebugPrintf("Hotspot %d %s Video slot %d, time: %d to %d\n", 
+					debugPrintf("Hotspot %d %s Video slot %d, time: %d to %d\n",
 						hotspotIdx, pos.c_str(), arrIndex,
 						_vm->_voy->_videoHotspotTimes._min[arrIndex][hotspotIdx],
 						_vm->_voy->_videoHotspotTimes._max[arrIndex][hotspotIdx]);
@@ -157,16 +156,16 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 		}
 	}
 
-	DebugPrintf("\nEnd of list\n");
+	debugPrintf("\nEnd of list\n");
 	return true;
 }
 
 bool Debugger::Cmd_Mouse(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("mouse [ on | off ]\n");
+		debugPrintf("mouse [ on | off ]\n");
 	} else {
 		_showMousePosition = !strcmp(argv[1], "on");
-		DebugPrintf("Mouse position is now %s\n", _showMousePosition ? "on" : "off");
+		debugPrintf("Mouse position is now %s\n", _showMousePosition ? "on" : "off");
 	}
 
 	return true;

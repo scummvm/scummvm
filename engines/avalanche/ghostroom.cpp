@@ -49,6 +49,9 @@ GhostRoom::GhostRoom(AvalancheEngine *vm) {
 	_greldetCount = 0;
 	_redGreldet = false;
 	_wasLoaded = false;
+
+	_ghost = nullptr;
+	_glerk = nullptr;
 }
 
 GhostRoom::~GhostRoom() {

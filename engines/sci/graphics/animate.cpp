@@ -726,7 +726,7 @@ void GfxAnimate::printAnimateList(Console *con) {
 		Script *scr = _s->_segMan->getScriptIfLoaded(it->object.getSegment());
 		int16 scriptNo = scr ? scr->getScriptNumber() : -1;
 
-		con->DebugPrintf("%04x:%04x (%s), script %d, view %d (%d, %d), pal %d, "
+		con->debugPrintf("%04x:%04x (%s), script %d, view %d (%d, %d), pal %d, "
 			"at %d, %d, scale %d, %d / %d (z: %d, prio: %d, shown: %d, signal: %d)\n",
 			PRINT_REG(it->object), _s->_segMan->getObjectName(it->object),
 			scriptNo, it->viewId, it->loopNo, it->celNo, it->paletteNo,

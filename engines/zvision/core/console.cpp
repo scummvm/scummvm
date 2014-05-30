@@ -45,25 +45,25 @@
 namespace ZVision {
 
 Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
-	DCmd_Register("loadimage", WRAP_METHOD(Console, cmdLoadImage));
-	DCmd_Register("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
-	DCmd_Register("loadsound", WRAP_METHOD(Console, cmdLoadSound));
-	DCmd_Register("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
-	DCmd_Register("setrenderstate", WRAP_METHOD(Console, cmdSetRenderState));
-	DCmd_Register("generaterendertable", WRAP_METHOD(Console, cmdGenerateRenderTable));
-	DCmd_Register("setpanoramafov", WRAP_METHOD(Console, cmdSetPanoramaFoV));
-	DCmd_Register("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
-	DCmd_Register("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
-	DCmd_Register("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
-	DCmd_Register("parseallscrfiles", WRAP_METHOD(Console, cmdParseAllScrFiles));
-	DCmd_Register("rendertext", WRAP_METHOD(Console, cmdRenderText));
+	registerCmd("loadimage", WRAP_METHOD(Console, cmdLoadImage));
+	registerCmd("loadvideo", WRAP_METHOD(Console, cmdLoadVideo));
+	registerCmd("loadsound", WRAP_METHOD(Console, cmdLoadSound));
+	registerCmd("raw2wav", WRAP_METHOD(Console, cmdRawToWav));
+	registerCmd("setrenderstate", WRAP_METHOD(Console, cmdSetRenderState));
+	registerCmd("generaterendertable", WRAP_METHOD(Console, cmdGenerateRenderTable));
+	registerCmd("setpanoramafov", WRAP_METHOD(Console, cmdSetPanoramaFoV));
+	registerCmd("setpanoramascale", WRAP_METHOD(Console, cmdSetPanoramaScale));
+	registerCmd("changelocation", WRAP_METHOD(Console, cmdChangeLocation));
+	registerCmd("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
+	registerCmd("parseallscrfiles", WRAP_METHOD(Console, cmdParseAllScrFiles));
+	registerCmd("rendertext", WRAP_METHOD(Console, cmdRenderText));
 }
 
 bool Console::cmdLoadImage(int argc, const char **argv) {
 	if (argc == 4)
 		_engine->getRenderManager()->renderImageToScreen(argv[1], atoi(argv[2]), atoi(argv[3]));
 	else {
-		DebugPrintf("Use loadimage <fileName> <destinationX> <destinationY> to load an image to the screen\n");
+		debugPrintf("Use loadimage <fileName> <destinationX> <destinationY> to load an image to the screen\n");
 		return true;
 	}
 
@@ -72,7 +72,7 @@ bool Console::cmdLoadImage(int argc, const char **argv) {
 
 bool Console::cmdLoadVideo(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Use loadvideo <fileName> to load a video to the screen\n");
+		debugPrintf("Use loadvideo <fileName> to load a video to the screen\n");
 		return true;
 	}
 
@@ -86,7 +86,7 @@ bool Console::cmdLoadVideo(int argc, const char **argv) {
 
 bool Console::cmdLoadSound(int argc, const char **argv) {
 	if (!Common::File::exists(argv[1])) {
-		DebugPrintf("File does not exist\n");
+		debugPrintf("File does not exist\n");
 		return true;
 	}
 
@@ -105,7 +105,7 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 		Audio::SoundHandle handle;
 		_engine->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, soundStream, -1, 100, 0, DisposeAfterUse::YES, false, false);
 	} else {
-		DebugPrintf("Use loadsound <fileName> [<rate> <isStereo: 1 or 0>] to load a sound\n");
+		debugPrintf("Use loadsound <fileName> [<rate> <isStereo: 1 or 0>] to load a sound\n");
 		return true;
 	}
 
@@ -114,7 +114,7 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 
 bool Console::cmdRawToWav(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Use raw2wav <rawFilePath> <wavFileName> to dump a .RAW file to .WAV\n");
+		debugPrintf("Use raw2wav <rawFilePath> <wavFileName> to dump a .RAW file to .WAV\n");
 		return true;
 	}
 
@@ -124,7 +124,7 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 
 bool Console::cmdSetRenderState(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
+		debugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
 		return true;
 	}
 
@@ -137,7 +137,7 @@ bool Console::cmdSetRenderState(int argc, const char **argv) {
 	else if (renderState.matchString("flat", true))
 		_engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::FLAT);
 	else
-		DebugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
+		debugPrintf("Use setrenderstate <RenderState: panorama, tilt, flat> to change the current render state\n");
 
 	return true;
 }
@@ -150,7 +150,7 @@ bool Console::cmdGenerateRenderTable(int argc, const char **argv) {
 
 bool Console::cmdSetPanoramaFoV(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Use setpanoramafov <fieldOfView> to change the current panorama field of view\n");
+		debugPrintf("Use setpanoramafov <fieldOfView> to change the current panorama field of view\n");
 		return true;
 	}
 
@@ -161,7 +161,7 @@ bool Console::cmdSetPanoramaFoV(int argc, const char **argv) {
 
 bool Console::cmdSetPanoramaScale(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Use setpanoramascale <scale> to change the current panorama scale\n");
+		debugPrintf("Use setpanoramascale <scale> to change the current panorama scale\n");
 		return true;
 	}
 
@@ -172,7 +172,7 @@ bool Console::cmdSetPanoramaScale(int argc, const char **argv) {
 
 bool Console::cmdChangeLocation(int argc, const char **argv) {
 	if (argc != 6) {
-		DebugPrintf("Use changelocation <char: world> <char: room> <char:node> <char:view> <int: x position> to change your location\n");
+		debugPrintf("Use changelocation <char: world> <char: room> <char:node> <char:view> <int: x position> to change your location\n");
 		return true;
 	}
 
@@ -183,7 +183,7 @@ bool Console::cmdChangeLocation(int argc, const char **argv) {
 
 bool Console::cmdDumpFile(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Use dumpfile <fileName> to dump a file\n");
+		debugPrintf("Use dumpfile <fileName> to dump a file\n");
 		return true;
 	}
 
@@ -205,7 +205,7 @@ bool Console::cmdParseAllScrFiles(int argc, const char **argv) {
 
 bool Console::cmdRenderText(int argc, const char **argv) {
 	if (argc != 7) {
-		DebugPrintf("Use rendertext <text> <fontNumber> <destX> <destY> <maxWidth> <1 or 0: wrap> to render text\n");
+		debugPrintf("Use rendertext <text> <fontNumber> <destX> <destY> <maxWidth> <1 or 0: wrap> to render text\n");
 		return true;
 	}
 

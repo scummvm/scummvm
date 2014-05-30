@@ -231,7 +231,7 @@ int ObjectMap::hitTest(const Point& testPoint) {
 }
 
 void ObjectMap::cmdInfo() {
-	_vm->_console->DebugPrintf("%d zone(s) loaded.\n\n", _hitZoneList.size());
+	_vm->_console->debugPrintf("%d zone(s) loaded.\n\n", _hitZoneList.size());
 }
 
 } // End of namespace Saga

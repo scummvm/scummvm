@@ -37,6 +37,7 @@
 #include "fullpipe/scenes.h"
 #include "fullpipe/floaters.h"
 #include "fullpipe/console.h"
+#include "fullpipe/constants.h"
 
 namespace Fullpipe {
 
@@ -205,7 +206,39 @@ void FullpipeEngine::initialize() {
 }
 
 void FullpipeEngine::restartGame() {
-	warning("STUB: FullpipeEngine::restartGame()");
+	_floaters->stopAll();
+
+	clearGlobalMessageQueueList();
+	clearMessages();
+
+	initObjectStates();
+
+	if (_scene2) {
+		_scene2->getAniMan();
+		_scene2 = 0;
+	}
+
+	if (_currentScene) {
+		_gameLoader->unloadScene(_currentScene->_sceneId);
+
+		_currentScene = 0;
+	}
+
+	_gameLoader->restoreDefPicAniInfos();
+
+	getGameLoaderInventory()->clear();
+	getGameLoaderInventory()->addItem(ANI_INV_MAP, 1);
+	getGameLoaderInventory()->rebuildItemRects();
+
+	initMap();
+
+	if (_flgPlayIntro) {
+		_gameLoader->loadScene(SC_INTRO1);
+		_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
+	} else {
+		_gameLoader->loadScene(SC_1);
+		_gameLoader->gotoScene(SC_1, TrubaLeft);
+	}
 }
 
 Common::Error FullpipeEngine::run() {
@@ -347,7 +380,7 @@ void FullpipeEngine::updateEvents() {
 		case Common::EVENT_QUIT:
 			_gameContinue = false;
 			break;
-			case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
 				ex = new ExCommand(0, 17, 107, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
@@ -477,7 +510,20 @@ void FullpipeEngine::setObjectState(const char *name, int state) {
 }
 
 void FullpipeEngine::disableSaves(ExCommand *ex) {
-	warning("STUB: FullpipeEngine::disableSaves()");
+	if (_isSaveAllowed) {
+		_isSaveAllowed = false;
+
+		if (_globalMessageQueueList->size() && (*_globalMessageQueueList)[0] != 0) {
+			for (int i = 0; i < _globalMessageQueueList->size(); i++) {
+				if ((*_globalMessageQueueList)[i]->_flags & 1)
+					if ((*_globalMessageQueueList)[i]->_id != ex->_parId && !(*_globalMessageQueueList)[i]->_isFinished)
+						return;
+			}
+		}
+
+		if (_currentScene)
+			_gameLoader->writeSavegame(_currentScene, "savetmp.sav");
+	}
 }
 
 

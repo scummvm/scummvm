@@ -145,7 +145,7 @@ void Background::addPictureObject(PictureObject *pct) {
 
 	bool inserted = false;
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i])->_priority <= pct->_priority) {
+		if (_picObjList[i]->_priority <= pct->_priority) {
 			_picObjList.insert_at(i, pct);
 			inserted = true;
 			break;
@@ -192,7 +192,7 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 
 	_picture->load(file);
 
-	_pictureObject2List = new PtrList();
+	_pictureObject2List = new Common::Array<GameObject *>;
 
 	int count = file.readUint16LE();
 
@@ -351,7 +351,25 @@ void GameObject::setOXY(int x, int y) {
 	_oy = y;
 }
 
-void GameObject::renumPictures(PtrList *lst) {
+void GameObject::renumPictures(Common::Array<StaticANIObject *> *lst) {
+	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
+
+	for (uint i = 0; i < lst->size(); i++) {
+		if (_id == ((GameObject *)((*lst)[i]))->_id)
+			buf[((GameObject *)((*lst)[i]))->_okeyCode] = 1;
+	}
+
+	if (buf[_okeyCode]) {
+		uint count;
+		for (count = 1; buf[count] && count < lst->size() + 2; count++)
+			;
+		_okeyCode = count;
+	}
+
+	free(buf);
+}
+
+void GameObject::renumPictures(Common::Array<PictureObject *> *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
@@ -380,6 +398,7 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 		info->ox = _ox;
 		info->oy = _oy;
 		info->priority = _priority;
+		warning("Yep %d", _id);
 
 		return true;
 	}

@@ -1220,7 +1220,7 @@ void Scene::cmdSceneChange(int argc, const char **argv) {
 	scene_num = atoi(argv[1]);
 
 	if ((scene_num < 1) || (uint(scene_num) >= _sceneLUT.size())) {
-		_vm->_console->DebugPrintf("Invalid scene number.\n");
+		_vm->_console->debugPrintf("Invalid scene number.\n");
 		return;
 	}
 

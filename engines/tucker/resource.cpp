@@ -535,7 +535,10 @@ void TuckerEngine::loadObj() {
 		return;
 	}
 	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
-	if ((_gameFlags & kGameFlagDemo) == 0) {
+	// If a savegame is loaded from the launcher, skip the display chapter
+	if (_startSlot != -1)
+		_startSlot = -1;
+	else if ((_gameFlags & kGameFlagDemo) == 0) {
 		handleNewPartSequence();
 	}
 	_currentPartNum = _partNum;
@@ -662,15 +665,13 @@ void TuckerEngine::loadData4() {
 	t.findNextToken(kDataTokenDw);
 	_gameDebug = t.getNextInteger() != 0;
 	_displayGameHints = t.getNextInteger() != 0;
-	// forces game hints feature
-//	_displayGameHints = true;
 	_locationObjectsCount = 0;
 	if (t.findIndex(_locationNum)) {
 		while (t.findNextToken(kDataTokenDw)) {
 			int i = t.getNextInteger();
-			if (i < 0) {
+			if (i < 0)
 				break;
-			}
+
 			assert(_locationObjectsCount < kLocationObjectsTableSize);
 			LocationObject *d = &_locationObjectsTable[_locationObjectsCount++];
 			d->_xPos = i;
@@ -851,60 +852,63 @@ void TuckerEngine::unloadSprC02_01() {
 void TuckerEngine::loadFx() {
 	loadFile("fx.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
-	t.findIndex(_locationNum);
-	t.findNextToken(kDataTokenDw);
-	_locationSoundsCount = t.getNextInteger();
-	_currentFxSet = 0;
-	for (int i = 0; i < _locationSoundsCount; ++i) {
-		LocationSound *s = &_locationSoundsTable[i];
-		s->_offset = 0;
-		s->_num = t.getNextInteger();
-		s->_volume = t.getNextInteger();
-		s->_type = t.getNextInteger();
-		switch (s->_type) {
-		case 5:
-			_currentFxSet = 1;
-			_currentFxIndex = i;
-			_currentFxVolume = s->_volume;
-			_currentFxDist = t.getNextInteger();
-			_currentFxScale = t.getNextInteger();
-			break;
-		case 6:
-		case 7:
-		case 8:
-			s->_startFxSpriteState = t.getNextInteger();
-			s->_startFxSpriteNum = t.getNextInteger();
-			s->_updateType = t.getNextInteger();
-			if (s->_type == 7) {
-				s->_flagNum = t.getNextInteger();
-				s->_flagValueStartFx = t.getNextInteger();
-				s->_stopFxSpriteState = t.getNextInteger();
-				s->_stopFxSpriteNum = t.getNextInteger();
-				s->_flagValueStopFx = t.getNextInteger();
+	if (t.findIndex(_locationNum)) {
+		t.findNextToken(kDataTokenDw);
+		_locationSoundsCount = t.getNextInteger();
+		_currentFxSet = 0;
+		for (int i = 0; i < _locationSoundsCount; ++i) {
+			LocationSound *s = &_locationSoundsTable[i];
+			s->_offset = 0;
+			s->_num = t.getNextInteger();
+			s->_volume = t.getNextInteger();
+			s->_type = t.getNextInteger();
+			switch (s->_type) {
+			case 5:
+				_currentFxSet = 1;
+				_currentFxIndex = i;
+				_currentFxVolume = s->_volume;
+				_currentFxDist = t.getNextInteger();
+				_currentFxScale = t.getNextInteger();
+				break;
+			case 6:
+			case 7:
+			case 8:
+				s->_startFxSpriteState = t.getNextInteger();
+				s->_startFxSpriteNum = t.getNextInteger();
+				s->_updateType = t.getNextInteger();
+				if (s->_type == 7) {
+					s->_flagNum = t.getNextInteger();
+					s->_flagValueStartFx = t.getNextInteger();
+					s->_stopFxSpriteState = t.getNextInteger();
+					s->_stopFxSpriteNum = t.getNextInteger();
+					s->_flagValueStopFx = t.getNextInteger();
+				}
+				break;
 			}
-			break;
-		}
-		if (s->_type == 8) {
-			s->_type = 6;
-		}
-	}
-	t.findNextToken(kDataTokenDw);
-	int count = t.getNextInteger();
-	_locationMusicsCount = 0;
-	for (int i = 0; i < count; ++i) {
-		int flagNum = t.getNextInteger();
-		int flagValue = t.getNextInteger();
-		if (flagValue == _flagsTable[flagNum]) {
-			LocationMusic *m = &_locationMusicsTable[_locationMusicsCount++];
-			m->_offset = 0;
-			m->_num = t.getNextInteger();
-			m->_volume = t.getNextInteger();
-			m->_flag = t.getNextInteger();
-		} else {
-			for (int j = 0; j < 3; ++j) {
-				t.getNextInteger();
+			if (s->_type == 8) {
+				s->_type = 6;
 			}
 		}
+		t.findNextToken(kDataTokenDw);
+		int count = t.getNextInteger();
+		_locationMusicsCount = 0;
+		for (int i = 0; i < count; ++i) {
+			int flagNum = t.getNextInteger();
+			int flagValue = t.getNextInteger();
+			if (flagValue == _flagsTable[flagNum]) {
+				LocationMusic *m = &_locationMusicsTable[_locationMusicsCount++];
+				m->_offset = 0;
+				m->_num = t.getNextInteger();
+				m->_volume = t.getNextInteger();
+				m->_flag = t.getNextInteger();
+			} else {
+				for (int j = 0; j < 3; ++j) {
+					t.getNextInteger();
+				}
+			}
+		}
+	} else {
+		error("loadFx() - Index not found for location %d", _locationNum);
 	}
 }
 

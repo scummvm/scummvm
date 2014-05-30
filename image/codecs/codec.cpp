@@ -58,10 +58,10 @@ Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 		return new CinepakDecoder(bitsPerPixel);
 	case MKTAG('I','V','3','2'):
 		return new Indeo3Decoder(width, height);
-#ifdef VIDEO_CODECS_TRUEMOTION1_H
+#ifdef IMAGE_CODECS_TRUEMOTION1_H
 	case MKTAG('D','U','C','K'):
 	case MKTAG('d','u','c','k'):
-		return new TrueMotion1Decoder(width, height);
+		return new TrueMotion1Decoder();
 #endif
 #ifdef USE_MPEG2
 	case MKTAG('m','p','g','2'):

@@ -38,7 +38,7 @@ class CMapResource;
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 
 typedef void (EventsManager::*EventMethodPtr)();
- 
+
 class IntNode {
 public:
 	EventMethodPtr _intFunc;

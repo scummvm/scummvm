@@ -397,7 +397,7 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 	ntrules_nr = _vocab_rule_list_length(ntlist);
 
 	if (verbose)
-		con->DebugPrintf("Starting with %d rules\n", ntrules_nr);
+		con->debugPrintf("Starting with %d rules\n", ntrules_nr);
 
 	new_tlist = tlist;
 	tlist = NULL;
@@ -425,17 +425,17 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 		termrules = _vocab_rule_list_length(new_new_tlist);
 
 		if (verbose)
-			con->DebugPrintf("After iteration #%d: %d new term rules\n", ++iterations, termrules);
+			con->debugPrintf("After iteration #%d: %d new term rules\n", ++iterations, termrules);
 
 	} while (termrules && (iterations < 30));
 
 	freeRuleList(ntlist);
 
 	if (verbose) {
-		con->DebugPrintf("\nGNF rules:\n");
+		con->debugPrintf("\nGNF rules:\n");
 		tlist->print();
-		con->DebugPrintf("%d allocd rules\n", _allocd_rules);
-		con->DebugPrintf("Freeing rule list...\n");
+		con->debugPrintf("%d allocd rules\n", _allocd_rules);
+		con->debugPrintf("Freeing rule list...\n");
 		freeRuleList(tlist);
 		return NULL;
 	}
@@ -548,7 +548,7 @@ int Vocabulary::parseGNF(const ResultWordListList &words, bool verbose) {
 		ParseRuleList *seeker, *subseeker;
 
 		if (verbose)
-			con->DebugPrintf("Adding word %d...\n", word);
+			con->debugPrintf("Adding word %d...\n", word);
 
 		seeker = work;
 		while (seeker) {
@@ -562,7 +562,7 @@ int Vocabulary::parseGNF(const ResultWordListList &words, bool verbose) {
 		if (reduced_rules == NULL) {
 			freeRuleList(work);
 			if (verbose)
-				con->DebugPrintf("No results.\n");
+				con->debugPrintf("No results.\n");
 			return 1;
 		}
 
@@ -592,10 +592,10 @@ int Vocabulary::parseGNF(const ResultWordListList &words, bool verbose) {
 
 		work = new_work;
 		if (verbose)
-			con->DebugPrintf("Now at %d candidates\n", _vocab_rule_list_length(work));
+			con->debugPrintf("Now at %d candidates\n", _vocab_rule_list_length(work));
 		if (work == NULL) {
 			if (verbose)
-				con->DebugPrintf("No results.\n");
+				con->debugPrintf("No results.\n");
 			return 1;
 		}
 	}
@@ -603,9 +603,9 @@ int Vocabulary::parseGNF(const ResultWordListList &words, bool verbose) {
 	results = work;
 
 	if (verbose) {
-		con->DebugPrintf("All results (excluding the surrounding '(141 %03x' and ')'):\n", _parserBranches[0].id);
+		con->debugPrintf("All results (excluding the surrounding '(141 %03x' and ')'):\n", _parserBranches[0].id);
 		results->print();
-		con->DebugPrintf("\n");
+		con->debugPrintf("\n");
 	}
 
 	// now use the first result

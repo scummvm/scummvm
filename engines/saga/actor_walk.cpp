@@ -1378,7 +1378,7 @@ void Actor::cmdActorWalkTo(int argc, const char **argv) {
 	location.fromScreenPoint(movePoint);
 
 	if (!validActorId(actorId)) {
-		_vm->_console->DebugPrintf("Actor::cmActorWalkTo Invalid actorId 0x%X.\n", actorId);
+		_vm->_console->debugPrintf("Actor::cmActorWalkTo Invalid actorId 0x%X.\n", actorId);
 		return;
 	}
 

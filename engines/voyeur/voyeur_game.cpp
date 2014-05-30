@@ -33,7 +33,7 @@ void VoyeurEngine::playStamp() {
 	_stampLibPtr->getBoltGroup(0);
 	_controlPtr->_state = _stampLibPtr->boltEntry(_controlPtr->_stateId >> 16)._stateResource;
 	assert(_controlPtr->_state);
-	
+
 	_resolvePtr = &RESOLVE_TABLE[0];
 	initStamp();
 
@@ -57,11 +57,11 @@ void VoyeurEngine::playStamp() {
 		_mainThread->parsePlayCommands();
 
 		bool flag = breakFlag = (_voy->_eventFlags & EVTFLAG_2) != 0;
-		 
+
 		switch (_voy->_playStampMode) {
 		case 5:
 			buttonId = _mainThread->doInterface();
-			
+
 			if (buttonId == -2) {
 				switch (_mainThread->doApt()) {
 				case 0:
@@ -110,7 +110,7 @@ void VoyeurEngine::playStamp() {
 		case 16:
 			_voy->_transitionId = 17;
 			buttonId = _mainThread->doApt();
-			
+
 			switch (buttonId) {
 			case 1:
 				_mainThread->chooseSTAMPButton(22);
@@ -234,19 +234,19 @@ void VoyeurEngine::closeStamp() {
 void VoyeurEngine::doTailTitle() {
 	_graphicsManager->_vPort->setupViewPort(NULL);
 	_graphicsManager->screenReset();
-	
+
 	if (_bVoy->getBoltGroup(0x600)) {
 		RL2Decoder decoder;
 		decoder.loadRL2File("a1100200.rl2", false);
 		decoder.start();
 		decoder.play(this);
-		
+
 		if (!shouldQuit() && !_eventsManager->_mouseClicked) {
 			doClosingCredits();
 
 			if (!shouldQuit() && !_eventsManager->_mouseClicked) {
 				_graphicsManager->screenReset();
-				
+
 				PictureResource *pic = _bVoy->boltEntry(0x602)._picResource;
 				CMapResource *pal = _bVoy->boltEntry(0x603)._cMapResource;
 
@@ -315,7 +315,7 @@ void VoyeurEngine::doClosingCredits() {
 			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 		}
-		
+
 		if (flags & 0x40) {
 			fi._foreColor = 2;
 			fi._curFont = _bVoy->boltEntry(0x400)._fontResource;
@@ -345,7 +345,7 @@ void VoyeurEngine::doClosingCredits() {
 			fi._justifyHeight = 240;
 			fi._pos = Common::Point(198, READ_LE_UINT16(entry));
 
-			_graphicsManager->_vPort->drawText(msg);			
+			_graphicsManager->_vPort->drawText(msg);
 			msg += strlen(msg) + 1;
 		}
 
@@ -500,7 +500,7 @@ void VoyeurEngine::reviewTape() {
 
 					Common::String msg = _eventsManager->getEvidString(eventNum);
 					_graphicsManager->_backgroundPage->drawText(msg);
-					
+
 					yp += 15;
 				}
 
@@ -527,7 +527,7 @@ void VoyeurEngine::reviewTape() {
 					break;
 				}
 			}
-			
+
 			pt = _eventsManager->getMousePos();
 			if (tempPos.x >= 68 && tempPos.x <= 277 && tempPos.y >= 31 && tempPos.y <= 154) {
 				tempPos.y -= 2;
@@ -545,7 +545,7 @@ void VoyeurEngine::reviewTape() {
 					flipPageAndWait();
 
 					_graphicsManager->_drawPtr->_penColor = 0;
-					_graphicsManager->_drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);				
+					_graphicsManager->_drawPtr->_pos = Common::Point(tempRect.left, tempRect.top);
 					_graphicsManager->_backgroundPage->sFillBox(tempRect.width(), tempRect.height());
 
 					int yp = 45;
@@ -642,7 +642,7 @@ void VoyeurEngine::reviewTape() {
 				foundIndex = -1;
 				_eventsManager->_rightClick = 0;
 			}
-			
+
 			if (_eventsManager->_rightClick)
 				foundIndex = 0;
 
@@ -652,7 +652,7 @@ void VoyeurEngine::reviewTape() {
 		_voy->_fadingType = 0;
 		_voy->_viewBounds = nullptr;
 		_graphicsManager->_vPort->setupViewPort(NULL);
-			
+
 		if (_currentVocId != -1) {
 			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
 			_soundManager->stopVOCPlay();
@@ -693,7 +693,7 @@ void VoyeurEngine::reviewTape() {
 			uint32 secondsDuration = e._computerOff;
 
 			_eventsManager->getMouseInfo();
-			while (!_eventsManager->_mouseClicked && _soundManager->getVOCStatus() && 
+			while (!_eventsManager->_mouseClicked && _soundManager->getVOCStatus() &&
 					_soundManager->getVOCFrame() < secondsDuration) {
 				_eventsManager->getMouseInfo();
 				_eventsManager->delay(10);
@@ -707,7 +707,7 @@ void VoyeurEngine::reviewTape() {
 
 		case EVTYPE_EVID:
 			_voy->reviewAnEvidEvent(eventIndex);
-			
+
 			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
 			_soundManager->stopVOCPlay();
 			_bVoy->getBoltGroup(0x900);
@@ -715,7 +715,7 @@ void VoyeurEngine::reviewTape() {
 
 		case EVTYPE_COMPUTER:
 			_voy->reviewComputerEvent(eventIndex);
-			
+
 			_voy->_vocSecondsOffset = _voy->_RTVNum - _voy->_musicStartTime;
 			_soundManager->stopVOCPlay();
 			_bVoy->getBoltGroup(0x900);
@@ -863,7 +863,7 @@ bool VoyeurEngine::checkForIncriminate() {
 
 	for (int idx = 0; idx < _voy->_eventCount; ++idx) {
 		VoyeurEvent &evt = _voy->_events[idx];
-		
+
 		if (evt._type == EVTYPE_VIDEO) {
 			if (evt._audioVideoId == 44 && evt._computerOn <= 40 &&
 					(evt._computerOff + evt._computerOn) >= 70) {
@@ -908,7 +908,7 @@ void VoyeurEngine::playAVideoEvent(int eventIndex) {
 	_voy->_vocSecondsOffset = evt._computerOn;
 	_eventsManager->_videoDead = evt._dead;
 	_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
-	
+
 	playAVideoDuration(_audioVideoId, evt._computerOff);
 
 	_voy->_eventFlags |= EVTFLAG_TIME_DISABLED;
@@ -929,7 +929,7 @@ void VoyeurEngine::playAVideoEvent(int eventIndex) {
 
 int VoyeurEngine::getChooseButton()  {
 	int prevIndex = -2;
-	Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(_playStampGroupId 
+	Common::Array<RectEntry> &hotspots = _bVoy->boltEntry(_playStampGroupId
 		+ 6)._rectResource->_entries;
 	int selectedIndex = -1;
 
@@ -949,7 +949,7 @@ int VoyeurEngine::getChooseButton()  {
 			_eventsManager->getMouseInfo();
 			selectedIndex = -1;
 			Common::Point pt = _eventsManager->getMousePos();
-			
+
 			for (uint idx = 0; idx < hotspots.size(); ++idx) {
 				if (hotspots[idx].contains(pt)) {
 					if (!_voy->_victimMurdered || ((int)idx + 1) != _controlPtr->_state->_victimIndex) {
@@ -984,7 +984,7 @@ int VoyeurEngine::getChooseButton()  {
 
 void VoyeurEngine::makeViewFinder() {
 	_graphicsManager->_backgroundPage = _bVoy->boltEntry(0x103)._picResource;
-	_graphicsManager->sDrawPic(_graphicsManager->_backgroundPage, 
+	_graphicsManager->sDrawPic(_graphicsManager->_backgroundPage,
 		_graphicsManager->_vPort, Common::Point(0, 0));
 	CMapResource *pal = _bVoy->boltEntry(0x104)._cMapResource;
 
@@ -1067,7 +1067,7 @@ void VoyeurEngine::initIFace() {
 	_mansionViewPos = Common::Point((MANSION_MAX_X - MANSION_VIEW_WIDTH) / 2,
 		(MANSION_MAX_Y - MANSION_VIEW_HEIGHT) / 2);
 	doScroll(_mansionViewPos);
-	
+
 	_voy->_viewBounds = _bVoy->boltEntry(_playStampGroupId)._rectResource;
 
 	// Show the cursor using ScummVM functionality
@@ -1150,7 +1150,7 @@ Common::String VoyeurEngine::getDayName() {
 	case 3:
 	case 4:
 		return SATURDAY;
-	case 17: 
+	case 17:
 		return MONDAY;
 	default:
 		return SUNDAY;
@@ -1277,7 +1277,7 @@ void VoyeurEngine::doTimeBar() {
 	if (_voy->_RTVLimit > 0) {
 		if (_voy->_RTVNum > _voy->_RTVLimit || _voy->_RTVNum < 0)
 			_voy->_RTVNum = _voy->_RTVLimit - 1;
-		
+
 		_timeBarVal = _voy->_RTVNum;
 		int height = ((_voy->_RTVLimit - _voy->_RTVNum) * 59) / _voy->_RTVLimit;
 		int fullHeight = MAX(151 - height, 93);
@@ -1308,14 +1308,14 @@ void VoyeurEngine::flashTimeBar() {
 			_graphicsManager->setColor(240, 220, 20, 20);
 		else
 			_graphicsManager->setColor(240, 220, 220, 220);
-		
+
 		_eventsManager->_intPtr._hasPalette = true;
 		_flashTimeFlag = !_flashTimeFlag;
 	}
 }
 
 void VoyeurEngine::checkPhoneCall() {
-	if ((_voy->_RTVLimit - _voy->_RTVNum) >= 36 && _voy->_totalPhoneCalls < 5 && 
+	if ((_voy->_RTVLimit - _voy->_RTVNum) >= 36 && _voy->_totalPhoneCalls < 5 &&
 			_currentVocId <= 151 && _currentVocId > 146) {
 		if ((_voy->_switchBGNum < _checkPhoneVal || _checkPhoneVal > 180) &&
 				!_soundManager->getVOCStatus()) {
@@ -1361,9 +1361,9 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 
 	if (count > 0) {
 		for (int idx = 1; idx <= count; ++idx) {
-			_voy->_evPicPtrs[idx - 1] = _bVoy->boltEntry(_voy->_boltGroupId2 + 
+			_voy->_evPicPtrs[idx - 1] = _bVoy->boltEntry(_voy->_boltGroupId2 +
 				(evidId + idx) * 2)._picResource;
-			_voy->_evCmPtrs[idx - 1] = _bVoy->boltEntry(_voy->_boltGroupId2 + 
+			_voy->_evCmPtrs[idx - 1] = _bVoy->boltEntry(_voy->_boltGroupId2 +
 				(evidId + idx) * 2 + 1)._cMapResource;
 		}
 	}
@@ -1394,7 +1394,7 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 			break;
 		if (count == 0 || evidIdx >= eventId)
 			continue;
-		
+
 		pic = _voy->_evPicPtrs[arrIndex];
 		_graphicsManager->sDrawPic(pic, _graphicsManager->_vPort,
 			Common::Point((384 - pic->_bounds.width()) / 2,

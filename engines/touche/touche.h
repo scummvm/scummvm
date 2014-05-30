@@ -346,15 +346,107 @@ enum StringType {
 	kStringTypeConversation
 };
 
-void readGameStateDescription(Common::ReadStream *f, char *description, int len);
-Common::String generateGameStateFileName(const char *target, int slot, bool prefixOnly = false);
-int getGameStateFileSlot(const char *filename);
-
 enum GameState {
 	kGameStateGameLoop,
 	kGameStateOptionsDialog,
-	kGameStateQuitDialog
+	kGameStateQuitDialog,
+	kGameStateNone
 };
+
+enum ActionId {
+	kActionNone,
+
+	// settings menu
+	kActionLoadMenu,
+	kActionSaveMenu,
+	kActionRestartGame,
+	kActionPlayGame,
+	kActionQuitGame,
+	kActionTextOnly,
+	kActionVoiceOnly,
+	kActionTextAndVoice,
+	kActionLowerVolume,
+	kActionUpperVolume,
+
+	// saveLoad menu
+	kActionGameState1,
+	kActionGameState2,
+	kActionGameState3,
+	kActionGameState4,
+	kActionGameState5,
+	kActionGameState6,
+	kActionGameState7,
+	kActionGameState8,
+	kActionGameState9,
+	kActionGameState10,
+	kActionScrollUpSaves,
+	kActionScrollDownSaves,
+	kActionPerformSaveLoad,
+	kActionCancelSaveLoad
+};
+
+enum MenuMode {
+	kMenuSettingsMode = 0,
+	kMenuLoadStateMode,
+	kMenuSaveStateMode
+};
+
+enum ButtonFlags {
+	kButtonBorder = 1 << 0,
+	kButtonText   = 1 << 1,
+	kButtonArrow  = 1 << 2
+};
+
+struct Button {
+	int x, y;
+	int w, h;
+	ActionId action;
+	int data;
+	uint8 flags;
+};
+
+struct MenuData {
+	MenuMode mode;
+	Button *buttonsTable;
+	uint buttonsCount;
+	bool quit;
+	bool exit;
+	char saveLoadDescriptionsTable[kMaxSaveStates][33];
+
+	void removeLastCharFromDescription(int slot) {
+		char *description = saveLoadDescriptionsTable[slot];
+		int descriptionLen = strlen(description);
+		if (descriptionLen > 0) {
+			--descriptionLen;
+			description[descriptionLen] = 0;
+		}
+	}
+
+	void addCharToDescription(int slot, char chr) {
+		char *description = saveLoadDescriptionsTable[slot];
+		int descriptionLen = strlen(description);
+		if (descriptionLen < 32 && Common::isPrint(chr)) {
+			description[descriptionLen] = chr;
+			description[descriptionLen + 1] = 0;
+		}
+	}
+
+	const Button *findButtonUnderCursor(int cursorX, int cursorY) const {
+		for (uint i = 0; i < buttonsCount; ++i) {
+			const Button *button = &buttonsTable[i];
+			if (cursorX >= button->x && cursorX < button->x + button->w &&
+				cursorY >= button->y && cursorY < button->y + button->h) {
+					return button;
+			}
+		}
+		return 0;
+	}
+};
+
+
+void readGameStateDescription(Common::ReadStream *f, char *description, int len);
+Common::String generateGameStateFileName(const char *target, int slot, bool prefixOnly = false);
+int getGameStateFileSlot(const char *filename);
 
 class MidiPlayer;
 
@@ -631,9 +723,9 @@ protected:
 	void res_loadSpeechSegment(int num);
 	void res_stopSpeech();
 
-	void drawButton(void *button);
-	void redrawMenu(void *menu);
-	void handleMenuAction(void *menu, int actionId);
+	void drawButton(Button *button);
+	void redrawMenu(MenuData *menu);
+	void handleMenuAction(MenuData *menu, int actionId);
 	void handleOptions(int forceDisplay);
 	void drawActionsPanel(int dstX, int dstY, int deltaX, int deltaY);
 	void drawConversationPanelBorder(int dstY, int srcX, int srcY);

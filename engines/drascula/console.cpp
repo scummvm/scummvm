@@ -27,7 +27,7 @@
 namespace Drascula {
 
 Console::Console(DrasculaEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("room",			WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
 }
 
 Console::~Console() {
@@ -35,7 +35,7 @@ Console::~Console() {
 
 bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Usage: room <number>\n");
+		debugPrintf("Usage: room <number>\n");
 		return true;
 	}
 

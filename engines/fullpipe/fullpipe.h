@@ -99,7 +99,6 @@ public:
 	const ADGameDescription *_gameDescription;
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
-	bool hasFeature(EngineFeature f) const;
 
 	Common::RandomSource *_rnd;
 

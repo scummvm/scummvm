@@ -22,6 +22,7 @@
 
 // Item script opcodes for Simon1/Simon2
 
+#include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -987,7 +988,7 @@ int AGOSEngine::runScript() {
 		return 1;
 
 	do {
-		if (_dumpOpcodes)
+		if (DebugMan.isDebugChannelEnabled(kDebugOpcode))
 			dumpOpcode(_codePtr);
 
 		if (getGameType() == GType_ELVIRA1) {

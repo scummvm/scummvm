@@ -29,7 +29,7 @@ bool labyrinthCheat;
 
 CineConsole::CineConsole(CineEngine *vm) : GUI::Debugger(), _vm(vm) {
 	assert(_vm);
-	DCmd_Register("labyrinthCheat", WRAP_METHOD(CineConsole, Cmd_LabyrinthCheat));
+	registerCmd("labyrinthCheat", WRAP_METHOD(CineConsole, Cmd_LabyrinthCheat));
 
 	labyrinthCheat = false;
 }

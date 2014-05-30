@@ -114,7 +114,7 @@ public:
 	void resolveIt(uint32 id, byte **p);
 	void resolveFunction(uint32 id, GraphicMethodPtr *fn);
 
-	BoltEntry &boltEntry(uint16 id); 
+	BoltEntry &boltEntry(uint16 id);
 	BoltEntry &getBoltEntryFromLong(uint32 id);
 	PictureResource *getPictureResource(uint32 id);
 	CMapResource *getCMapResource(uint32 id);
@@ -160,7 +160,7 @@ public:
 	int _fileOffset;
 	Common::Array<BoltEntry> _entries;
 public:
-	BoltGroup(Common::SeekableReadStream *f); 
+	BoltGroup(Common::SeekableReadStream *f);
 	virtual ~BoltGroup();
 
 	void load(uint16 groupId);
@@ -234,15 +234,15 @@ public:
 /* bvoy.blt resource types */
 
 enum PictureFlag {
-	PICFLAG_2 = 2, PICFLAG_PIC_OFFSET = 8, PICFLAG_CLEAR_SCREEN = 0x10, 
+	PICFLAG_2 = 2, PICFLAG_PIC_OFFSET = 8, PICFLAG_CLEAR_SCREEN = 0x10,
 	PICFLAG_20 = 0x20, PICFLAG_HFLIP = 0x40, PICFLAG_VFLIP = 0x80, PICFLAG_100 = 0x100,
-	PICFLAG_CLEAR_SCREEN00 = 0x1000 
+	PICFLAG_CLEAR_SCREEN00 = 0x1000
 };
 
 enum DisplayFlag {
-	DISPFLAG_1 = 1, DISPFLAG_2 = 2, DISPFLAG_4 = 4, DISPFLAG_8 = 8, 
+	DISPFLAG_1 = 1, DISPFLAG_2 = 2, DISPFLAG_4 = 4, DISPFLAG_8 = 8,
 	DISPFLAG_10 = 0x10, DISPFLAG_20 = 0x20, DISPFLAG_40 = 0x40, DISPFLAG_80 = 0x80,
-	DISPFLAG_100 = 0x100, DISPFLAG_200 = 0x200, DISPFLAG_400 = 0x400, 
+	DISPFLAG_100 = 0x100, DISPFLAG_200 = 0x200, DISPFLAG_400 = 0x400,
 	DISPFLAG_800 = 0x800, DISPFLAG_1000 = 0x1000, DISPFLAG_2000 = 0x2000,
 	DISPFLAG_4000 = 0x4000, DISPFLAG_VIEWPORT = 0x8000, DISPFLAG_CURSOR = 0x10000,
 	DISPFLAG_NONE = 0};
@@ -256,7 +256,7 @@ public:
 	DisplayResource();
 	DisplayResource(VoyeurEngine *vm);
 
-	/** 
+	/**
 	 * Fill a box of the given size at the current _drawPtr location
 	 */
 	void sFillBox(int width, int height);
@@ -308,7 +308,7 @@ public:
 	DisposeAfterUse::Flag _freeImgData;
 public:
 	PictureResource(BoltFilesState &state, const byte *src);
-	PictureResource(int flags, int select, int pick, int onOff, 
+	PictureResource(int flags, int select, int pick, int onOff,
 		const Common::Rect &bounds, int maskData, byte *imgData, int planeSize);
 	PictureResource(Graphics::Surface *surface);
 	PictureResource();
@@ -334,7 +334,7 @@ public:
 	PictureResource *_pages[2];
 
 	// Rect lists and counts. Note that _rectListCount values of '-1' seem to have
-	// special significance, which is why I'm not making them redundant in favor 
+	// special significance, which is why I'm not making them redundant in favor
 	// of the arrays' .size() method
 	Common::Array<Common::Rect> *_rectListPtr[3];
 	int _rectListCount[3];
@@ -413,9 +413,9 @@ public:
 public:
 	FontInfoResource(BoltFilesState &state, const byte *src);
 	FontInfoResource();
-	FontInfoResource(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags, 
-		FontJustify justify, int fontSaveBack, const Common::Point &pos, int justifyWidth, 
-		int justifyHeight, const Common::Point &shadow, int foreColor, int backColor, 
+	FontInfoResource(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags,
+		FontJustify justify, int fontSaveBack, const Common::Point &pos, int justifyWidth,
+		int justifyHeight, const Common::Point &shadow, int foreColor, int backColor,
 		int shadowColor);
 };
 

@@ -68,6 +68,7 @@ enum ObjType {
 	kObjTypeDefault,
 	kObjTypeExCommand,
 	kObjTypeExCommand2,
+	kObjTypeModalSaveGame,
 	kObjTypeMovGraph,
 	kObjTypeMovGraphLink,
 	kObjTypeMovGraphNode,
@@ -147,8 +148,6 @@ class DWordArray : public Common::Array<int32>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
-
-typedef Common::Array<void *> PtrList;
 
 char *genFileName(int superId, int sceneId, const char *ext);
 byte *transCyrillic(byte *s);

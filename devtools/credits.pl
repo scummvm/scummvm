@@ -645,6 +645,12 @@ begin_credits("Credits");
 				add_person("Filippos Karapetis", "[md5]", "");
 			end_section();
 
+			begin_section("MADS");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+			end_section();
+
 			begin_section("Mohawk");
 				add_person("Bastien Bouclet", "bgk", "");
 				add_person("Matthew Hoops", "clone2727", "");
@@ -765,6 +771,11 @@ begin_credits("Credits");
 
 			begin_section("Tucker");
 				add_person("Gregory Montoir", "cyx", "(retired)");
+			end_section();
+
+			begin_section("Voyeur");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
 			end_section();
 
 			begin_section("Wintermute");

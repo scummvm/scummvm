@@ -4054,7 +4054,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("SCI Capture the Flag", "4cd679a51d93b8b27c6b38d81be24b8b", 432, "98ae1f6ed7b4c21f88addbf643dd1d2f", 147878),
 	FANMADE("SCI Companion Template", "ad54d4f504086cd597aa2348d0aa3b09", 354, "6798b7b601ce8154c1d1bc0f0edcdd18", 113061),
 	FANMADE("SCI Logging Demo", "615c30c1445ea9349847e8868312a674", 558, "2df6858526177612ef9473e7af5b31c6", 171012),
-#ifdef 0
+#if 0
 	// Disabled as this requires network access to the Google Translate API, which is not available as OSystem has no network API.
 	FANMADE("SCI Narration Demo", "731f4f2b726a13c153380af08da16591", 360, "38c80558fb942e8568f011d4a1a4af59", 109789),
 #endif

@@ -34,6 +34,8 @@
 #include "graphics/palette.h"
 #include "video/avi_decoder.h"
 
+#include "engines/savestate.h"
+
 namespace Fullpipe {
 
 ModalIntro::ModalIntro() {
@@ -1084,17 +1086,17 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 			b = 800 - dx;
 		}
 
-		int32 pp = b * a; //(0x51EB851F * b * a) >> 32) >> 8; // TODO FIXME
+		int32 pp = b * a;
 
-		snd->setPanAndVolume(pan + (pp >> 31) + pp, par);
+		snd->setPanAndVolume(pan + pp / 800, par);
 
 		return;
 	}
 
 	int dx = _screct.left - ani->_ox;
 	if (dx <= 800) {
-		int32 s = 0x51EB851F * (800 - dx) * (g_fp->_sfxVolume - (-3500)); // TODO FIXME
-		int32 p = -3500 + (s >> 31) + (s >> 8);
+		int32 s = (800 - dx) * (g_fp->_sfxVolume - (-3500));
+		int32 p = -3500 + s / 800;
 
 		if (p > g_fp->_sfxVolume)
 			p = g_fp->_sfxVolume;
@@ -1103,8 +1105,6 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 	} else {
 		snd->setPanAndVolume(-3500, 0);
 	}
-
-	warning("STUB: ModalMainMenu::updateSoundVolume()");
 }
 
 void ModalMainMenu::updateSliderPos() {
@@ -1460,6 +1460,8 @@ ModalSaveGame::ModalSaveGame() {
 	_rect = g_fp->_sceneRect;
 	_queryDlg = 0;
 	_mode = 1;
+
+	_objtype = kObjTypeModalSaveGame;
 }
 
 ModalSaveGame::~ModalSaveGame() {
@@ -1591,9 +1593,9 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 		fileinfo = new FileInfo;
 		memset(fileinfo, 0, sizeof(FileInfo));
 
-		snprintf(fileinfo->filename, 160, "save%02d.sav", i);
+		strncpy(fileinfo->filename, getSavegameFile(i), 160);
 
-		if (!getFileInfo(fileinfo->filename, fileinfo)) {
+		if (!getFileInfo(i, fileinfo)) {
 			fileinfo->empty = true;
 			w = _emptyD->getDimensions(&point)->x;
 		} else {
@@ -1623,10 +1625,173 @@ char *ModalSaveGame::getSaveName() {
 	return _files[_queryRes]->filename;
 }
 
-bool ModalSaveGame::getFileInfo(char *filename, FileInfo *fileinfo) {
-	warning("STUB: ModalSaveGame::getFileInfo()");
+bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
+		Fullpipe::getSavegameFile(slot));
+
+	if (!f)
+		return false;
+
+	Fullpipe::FullpipeSavegameHeader header;
+	Fullpipe::readSavegameHeader(f, header);
+	delete f;
+
+	// Create the return descriptor
+	SaveStateDescriptor desc(slot, header.saveName);
+	char res[17];
+
+	snprintf(res, 17, "%s  %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
+
+	for (int i = 0; i < 16; i++) {
+		switch(res[i]) {
+		case '.':
+			fileinfo->date[i] = 11;
+			break;
+		case ' ':
+			fileinfo->date[i] = 12;
+			break;
+		case ':':
+			fileinfo->date[i] = 10;
+			break;
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			fileinfo->date[i] = res[i] - '0';
+			break;
+		default:
+			error("Incorrect date format: %s", res);
+		}
+	}
+
+	return true;
+}
+
+void ModalSaveGame::update() {
+	if (_menuScene)
+		_menuScene->draw();
+
+	_bgr->draw();
+
+	if (_queryDlg) {
+		_queryDlg->update();
+
+		return;
+	}
+
+	g_fp->_cursorId = PIC_CSR_DEFAULT;
+
+	g_fp->setCursor(g_fp->_cursorId);
+
+	Common::Point point;
+
+	for (uint i = 0; i < _files.size(); i++) {
+		if (g_fp->_mouseScreenPos.x < _files[i]->fx1 || g_fp->_mouseScreenPos.x > _files[i]->fx2 ||
+			g_fp->_mouseScreenPos.y < _files[i]->fy1 || g_fp->_mouseScreenPos.y > _files[i]->fy2 ) {
+			if (_files[i]->empty) {
+				_emptyD->setOXY(_files[i]->fx1, _files[i]->fy1);
+				_emptyD->draw();
+			} else {
+				int x = _files[i]->fx1;
+
+				for (int j = 0; j < 16; j++) {
+					_arrayL[_files[i]->date[j]]->setOXY(x + 1, _files[i]->fy1);
+					_arrayL[_files[i]->date[j]]->draw();
+
+					x += _arrayL[_files[i]->date[j]]->getDimensions(&point)->x + 2;
+				}
+			}
+		} else {
+			if (_files[i]->empty) {
+				_emptyL->setOXY(_files[i]->fx1, _files[i]->fy1);
+				_emptyL->draw();
+			} else {
+				int x = _files[i]->fx1;
+
+				for (int j = 0; j < 16; j++) {
+					_arrayD[_files[i]->date[j]]->setOXY(x + 1, _files[i]->fy1);
+					_arrayD[_files[i]->date[j]]->draw();
+
+					x += _arrayD[_files[i]->date[j]]->getDimensions(&point)->x + 2;
+				}
+			}
+		}
+	}
+	if (_cancelL->isPixelHitAtPos(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+		_cancelL->draw();
+	else if (_okL->isPixelHitAtPos(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+		_okL->draw();
+}
+
+bool ModalSaveGame::handleMessage(ExCommand *cmd) {
+	if (_queryDlg)
+		return _queryDlg->handleMessage(cmd);
+
+	if (cmd->_messageNum == 29)
+		processMouse(cmd->_x, cmd->_y);
+	else if (cmd->_messageNum == 36)
+		processKey(cmd->_keyCode);
 
 	return false;
+}
+
+void ModalSaveGame::processMouse(int x, int y) {
+	for (uint i = 0; i < _files.size(); i++) {
+		if (x >= _files[i]->fx1 && x <= _files[i]->fx2 && y >= _files[i]->fy1 && y <= _files[i]->fy2) {
+			_queryRes = i + 1;
+
+			if (_mode) {
+				if (!_files[i]->empty) {
+					_queryDlg = new ModalQuery;
+
+					_queryDlg->create(_menuScene, 0, PIC_MOV_BGR);
+				}
+			}
+
+			return;
+		}
+	}
+
+	if (_cancelL->isPixelHitAtPos(x, y))
+		_queryRes = 0;
+}
+
+void ModalSaveGame::saveload() {
+	if (_objtype != kObjTypeModalSaveGame)
+		return;
+
+	if (_mode) {
+		if (getSaveName()) {
+			bool allowed = true;
+
+			for (Common::Array<MessageQueue *>::iterator s = g_fp->_globalMessageQueueList->begin(); s != g_fp->_globalMessageQueueList->end(); ++s) {
+				if (!(*s)->_isFinished && ((*s)->getFlags() & 1))
+					allowed = false;
+			}
+
+			if (g_fp->_isSaveAllowed && allowed)
+				g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, getSaveName());
+		}
+	} else {
+		if (getSaveName()) {
+			if (_parentObj) {
+				delete _parentObj;
+
+				_parentObj = 0;
+			}
+
+			g_fp->stopAllSoundStreams();
+			g_fp->stopSoundStream2();
+
+			g_fp->_gameLoader->readSavegame(getSaveName());
+		}
+	}
 }
 
 void FullpipeEngine::openHelp() {

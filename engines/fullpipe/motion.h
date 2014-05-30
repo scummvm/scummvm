@@ -31,10 +31,12 @@ class MctlConnectionPoint;
 class MovGraphLink;
 class MessageQueue;
 class ExCommand2;
+struct MovArr;
+struct MovItem;
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
-int doSomeAnimation(int objId, int objKey, int a3);
-int doSomeAnimation2(int objId, int objKey);
+bool doSomeAnimation(int objId, int objKey, int a3);
+bool doSomeAnimation2(int objId, int objKey);
 
 class MotionController : public CObject {
 public:
@@ -52,14 +54,14 @@ public:
 	virtual void addObject(StaticANIObject *obj) {}
 	virtual int removeObject(StaticANIObject *obj) { return 0; }
 	virtual void freeItems() {}
-	virtual int method28() { return 0; }
-	virtual int method2C(StaticANIObject *obj, int x, int y) { return 0; }
+	virtual Common::Array<MovItem *> *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) { return 0; }
+	virtual bool method2C(StaticANIObject *obj, int x, int y) { return false; }
 	virtual int method30() { return 0; }
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
-	virtual int changeCallback() { return 0; }
-	virtual int method3C(StaticANIObject *ani, int flag) { return 0; }
+	virtual void changeCallback(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) {}
+	virtual bool method3C(StaticANIObject *ani, int flag) { return 0; }
 	virtual int method40() { return 0; }
-	virtual int method44() { return 0; }
+	virtual bool method44(StaticANIObject *ani, int x, int y) { return false; }
 	virtual int method48() { return -1; }
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 
@@ -115,7 +117,7 @@ public:
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
 	void initMovGraph2();
-	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, int *minDistancePtr);
+	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, double *minDistancePtr);
 	void replaceNodeX(int from, int to);
 
 	uint getMotionControllerCount() { return _motionControllers.size(); }
@@ -299,18 +301,32 @@ class MovGraphLink : public CObject {
 	void calcNodeDistanceAndAngle();
 };
 
+struct MovStep {
+	int sfield_0;
+	MovGraphLink *link;
+};
+
+struct MovArr {
+	Common::Array<MovStep *> _movSteps;
+	int _movStepCount;
+	int _afield_8;
+	MovGraphLink *_link;
+	double _dist;
+	Common::Point _point;
+};
+
+struct MovItem {
+	MovArr *movarr;
+	int _mfield_4;
+	int _mfield_8;
+	int _mfield_C;
+};
+
 struct MovGraphItem {
 	StaticANIObject *ani;
 	int field_4;
-	int field_8;
-	int field_C;
-	int field_10;
-	int field_14;
-	int field_18;
-	int field_1C;
-	int field_20;
-	int field_24;
-	int items;
+	MovArr movarr;
+	Common::Array<MovItem *> *movitems;
 	int count;
 	int field_30;
 	int field_34;
@@ -318,6 +334,7 @@ struct MovGraphItem {
 	int field_3C;
 
 	MovGraphItem();
+	void free();
 };
 
 class MovGraph : public MotionController {
@@ -326,7 +343,7 @@ public:
 	ObList _links;
 	int _field_44;
 	Common::Array<MovGraphItem *> _items;
-	int (*_callback1)(int, int, int);
+	MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter);
 	MGM _mgm;
 
 public:
@@ -338,19 +355,28 @@ public:
 	virtual void addObject(StaticANIObject *obj);
 	virtual int removeObject(StaticANIObject *obj);
 	virtual void freeItems();
-	virtual int method28();
-	virtual int method2C(StaticANIObject *obj, int x, int y);
+	virtual Common::Array<MovItem *> *method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount);
+	virtual bool method2C(StaticANIObject *obj, int x, int y);
 	virtual MessageQueue *method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual int changeCallback();
-	virtual int method3C(StaticANIObject *ani, int flag);
-	virtual int method44();
+	virtual void changeCallback(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter));
+	virtual bool method3C(StaticANIObject *ani, int flag);
+	virtual bool method44(StaticANIObject *ani, int x, int y);
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual int method50();
+	virtual MessageQueue *method50(StaticANIObject *ani, MovArr *movarr, int staticsId);
 
 	double calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
 	void calcNodeDistancesAndAngles();
+	bool findClosestLink(int unusedArg, Common::Point *p, MovArr *movarr);
 	MovGraphNode *calcOffset(int ox, int oy);
 	int getItemIndexByStaticAni(StaticANIObject *ani);
+	Common::Array<MovArr *> *genMovArr(int x, int y, int *arrSize, int flag1, int flag2);
+	void shuffleTree(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
+	Common::Array<MovItem *> *calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount);
+	void genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
+	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);
+	MessageQueue *sub1(StaticANIObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9);
+	MessageQueue *fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId);
+	void setEnds(MovStep *step1, MovStep *step2);
 };
 
 class Movement;

@@ -392,12 +392,10 @@ int global_messageHandler3(ExCommand *cmd) {
 			}
 			return result;
 		case 29:
-			if (!g_fp->_currentScene)
-				return result;
-
-			if (g_fp->_gameLoader->_interactionController->_flag24) {
+			if (g_fp->_gameLoader->_interactionController->_flag24 && g_fp->_currentScene) {
 				ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				ani2 = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_gameLoader->_field_FA, -1);
+
 				if (ani) {
 					if (g_fp->_msgObjectId2 == ani->_id && g_fp->_msgId == ani->_okeyCode) {
 						cmd->_messageKind = 0;

@@ -101,7 +101,7 @@ public:
 	 */
 	bool isInRange(int slotIndex, int hotspotIndex, int v) const {
 		return _min[slotIndex][hotspotIndex] <= v &&
-			v < _max[slotIndex][hotspotIndex];				
+			v < _max[slotIndex][hotspotIndex];
 	}
 };
 
@@ -164,7 +164,7 @@ public:
 	/**
 	 * Add an event to the list of game events that have occurred
 	 */
-	void addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId, 
+	void addEvent(int hour, int minute, VoyeurEventType type, int audioVideoId,
 		int on, int off, int dead);
 
 	/**
@@ -181,7 +181,7 @@ public:
 	 * Adds the start of an audio event happening
 	 */
 	void addAudioEventStart();
-	
+
 	/**
 	 * Adsd the finish of an audio event happening
 	 */
@@ -191,17 +191,17 @@ public:
 	 * Adds the start of an evidence event happening
 	 */
 	void addEvidEventStart(int v);
-	
+
 	/**
 	 * Adds the finish of an evidence event happening
 	 */
 	void addEvidEventEnd(int totalPages);
-	
+
 	/**
 	 * Adds the start of a computer event happening
 	 */
 	void addComputerEventStart();
-	
+
 	/**
 	 * Adds the finish of a computer event happening
 	 */

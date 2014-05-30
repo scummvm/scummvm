@@ -1218,7 +1218,7 @@ static const uint16 kq6CDPatchAudioTextSupportGirlInTheTower[] = {
 //  Adds another button state for the text/audio button. We currently use the "speech" view for "dual" mode.
 // View 947, loop 9, cel 0+1 -> "text"
 // View 947, loop 8, cel 0+1 -> "speech"
-// View 947, loop 12, cel 0+1 -> "dual" (TODO: inject our own 2 views for the new "dual" mode)
+// View 947, loop 12, cel 0+1 -> "dual" (this view is injected by us into the game)
 // Applies to at least: PC-CD
 // Patched method: iconTextSwitch::show, iconTextSwitch::doit
 static const uint16 kq6CDSignatureAudioTextMenuSupport[] = {
@@ -1595,6 +1595,86 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 	PATCH_END
 };
 
+// Opening/Closing the east door in the pterodactyl room doesn't
+//  check, if it's locked and will open/close the door internally
+//  even when it is.
+//
+// It will get wired shut later in the game by Laura Bow and will be
+//  "locked" because of this. We patch in a check for the locked
+//  state. We also add code, that will set the "locked" state
+//  in case our eastDoor-wired-global is set. This makes the locked
+//  state effectively persistent.
+//
+// Applies to at least: English PC-CD, English PC-Floppy
+// Responsible method (CD): eastDoor::doVerb
+// Responsible method (Floppy): eastDoor::<noname300>
+// Fixes bug: #6458 (partly, see additional patch below)
+static const uint16 laurabow2CDSignatureFixWiredEastDoor[] = {
+	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
+	0x67, SIG_ADDTOOFFSET(+1),          // pTos CD: doorState, Floppy: state
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x31, 0x08,                         // bnt [close door code]
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x39, 0x63,                         // pushi 63h
+	0x45, 0x04, 0x02,                   // callb export000_4, 02 (sets door-bitflag)
+	0x33, 0x06,                         // jmp [super-code]
+	0x78,                               // push1
+	0x39, 0x63,                         // pushi 63h
+	0x45, 0x03, 0x02,                   // callb export000_3, 02 (resets door-bitflag)
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi CD: 011dh, Floppy: 012ch
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp param[01]
+	0x59, 0x02,                         // rest 02
+	0x57, SIG_ADDTOOFFSET(+1), 0x06,    // super CD: LbDoor, Floppy: Door, 06
+	0x33, 0x0b,                         // jmp [ret]
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixWiredEastDoor[] = {
+	0x31, 0x23,                         // bnt [skip hand action] (saves 1 byte)
+	0x81,   97,                         // lag 97d (get our eastDoor-wired-global)
+	0x31, 0x04,                         // bnt [skip setting locked property]
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x6a,                         // aTop locked (set eastDoor::locked to 1)
+	0x63, 0x6a,                         // pToa locked (get eastDoor::locked)
+	0x2f, 0x17,                         // bt [skip hand action]
+	0x63, PATCH_GETORIGINALBYTE(+4),    // pToa CD: doorState, Floppy: state
+	0x78,                               // push1
+	0x39, 0x63,                         // pushi 63h
+	0x2f, 0x05,                         // bt [close door code]
+	0x45, 0x04, 0x02,                   // callb export000_4, 02 (sets door-bitflag)
+	0x33, 0x0b,                         // jmp [super-code]
+	0x45, 0x03, 0x02,                   // callb export000_3, 02 (resets door-bitflag)
+	0x33, 0x06,                         // jmp [super-code]
+	PATCH_END
+};
+
+// We patch in code, so that our eastDoor-wired-global will get set to 1.
+//  This way the wired-state won't get lost when exiting room 430.
+//
+// Applies to at least: English PC-CD, English PC-Floppy
+// Responsible method (CD): sWireItShut::changeState
+// Responsible method (Floppy): sWireItShut::<noname144>
+// Fixes bug: #6458 (partly, see additional patch above)
+static const uint16 laurabow2SignatureRememberWiredEastDoor[] = {
+	SIG_MAGICDWORD,
+	0x33, 0x27,                         // jmp [ret]
+	0x3c,                               // dup
+	0x35, 0x06,                         // ldi 06
+	0x1a,                               // eq?
+	0x31, 0x21,                         // bnt [skip step]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
+	PATCH_ADDTOOFFSET(+2),              // skip jmp [ret]
+	0x34, PATCH_UINT16(0x0001),         // ldi 0001
+	0xa1, PATCH_UINT16(97),             // sag 97d (set our eastDoor-wired-global)
+	PATCH_END
+};
+
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
 //  We already sync the settings from ScummVM (see SciEngine::syncIngameAudioOptions())
 //  and this script code would make it impossible to see the intro using "dual" mode w/o using debugger command
@@ -1617,7 +1697,7 @@ static const uint16 laurabow2CDPatchAudioTextSupportModeReset[] = {
 //  That way it's possible to use a new "dual" mode view in the game menu
 // View 995, loop 13, cel 0 -> "text"
 // View 995, loop 13, cel 1 -> "speech"
-// View 995, loop 13, cel 2 -> "dual" (TODO: inject our own view for the new "dual" mode)
+// View 995, loop 13, cel 2 -> "dual"  (this view is injected by us into the game)
 // Patched method: gcWin::open
 static const uint16 laurabow2CDSignatureAudioTextMenuSupport1[] = {
 	SIG_MAGICDWORD,
@@ -1636,7 +1716,6 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport1[] = {
 };
 
 //  Adds another button state for the text/audio button. We currently use the "speech" view for "dual" mode.
-//  TODO: inject our own 2 views for the new "dual" mode
 // Patched method: iconMode::doit
 static const uint16 laurabow2CDSignatureAudioTextMenuSupport2[] = {
 	SIG_MAGICDWORD,
@@ -1684,6 +1763,8 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   560, "CD: painting closing immediately",            1, laurabow2CDSignaturePaintingClosing,           laurabow2CDPatchPaintingClosing },
 	{  true,     0, "CD: fix problematic icon bar",                1, laurabow2CDSignatureFixProblematicIconBar,     laurabow2CDPatchFixProblematicIconBar },
+	{  true,   430, "CD/Floppy: make wired east door persistent",  1, laurabow2SignatureRememberWiredEastDoor,       laurabow2PatchRememberWiredEastDoor },
+	{  true,   430, "CD/Floppy: fix wired east door",              1, laurabow2CDSignatureFixWiredEastDoor,          laurabow2CDPatchFixWiredEastDoor },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                  1, kq6laurabow2CDSignatureAudioTextSupport1,      kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                  1, kq6laurabow2CDSignatureAudioTextSupport2,      kq6laurabow2CDPatchAudioTextSupport2 },
@@ -2373,11 +2454,91 @@ static const uint16 sq1vgaPatchEgoShowsCard[] = {
 	PATCH_END
 };
 
+// The spider droid on planet Korona has a fixed movement speed,
+//  which is way faster than the default movement speed of ego.
+// This means that the player would have to turn up movement speed,
+//  otherwise it will be impossible to escape it.
+// We fix this issue by making the droid move a bit slower than ego
+//  does (relative to movement speed setting).
+//
+// Applies to at least: English PC floppy
+// Responsible method: spider::doit
+static const uint16 sq1vgaSignatureSpiderDroidTiming[] = {
+	SIG_MAGICDWORD,
+	0x63, 0x4e,                         // pToa script
+	0x30, SIG_UINT16(0x0005),           // bnt [further method code]
+	0x35, 0x00,                         // ldi 00
+	0x32, SIG_UINT16(0x0062),           // jmp [super-call]
+	0x38, SIG_UINT16(0x0088),           // pushi 0088h (script)
+	0x76,                               // push0
+	0x81, 0x02,                         // lag global[2] (current room)
+	0x4a, 0x04,                         // send 04 (get [current room].script)
+	0x30, SIG_UINT16(0x0005),           // bnt [further method code]
+	0x35, 0x00,                         // ldi 00
+	0x32, SIG_UINT16(0x0052),           // jmp [super-call]
+	0x89, 0xa6,                         // lsg global[a6]
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0012),           // bnt [2nd code], in case global A6 <> 1
+	0x81, 0xb5,                         // lag global[b5]
+	0x30, SIG_UINT16(0x000d),           // bnt [2nd code], in case global B5 == 0
+	0x38, SIG_UINT16(0x008c),           // pushi 008c
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x1cb6),           // lofsa 1CB6 (moveToPath)
+	0x36,                               // push
+	0x54, 0x06,                         // self 06
+	0x32, SIG_UINT16(0x0038),           // jmp [super-call]
+	0x81, 0xb5,                         // lag global[B5]
+	0x18,                               // not
+	0x30, SIG_UINT16(0x0032),           // bnt [super-call], in case global B5 <> 0
+	SIG_END
+}; // 58 bytes)
+
+static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
+	0x63, 0x4e,                         // pToa script
+	0x2f, 0x68,                         // bt [super-call]
+	0x38, PATCH_UINT16(0x0088),         // pushi 0088 (script)
+	0x76,                               // push0
+	0x81, 0x02,                         // lag global[2] (current room)
+	0x4a, 0x04,                         // send 04
+	0x2f, 0x5e,                         // bt [super-call]
+	// --> 12 bytes saved
+	// new code
+	0x38, PATCH_UINT16(0x0176),         // pushi 0176 (egoMoveSpeed)
+	0x76,                               // push0
+	0x81, 0x01,                         // lag global[1]
+	0x4a, 0x04,                         // send 04 - sq1::egoMoveSpeed
+	0x36,                               // push
+	0x36,                               // push
+	0x35, 0x03,                         // ldi 03
+	0x0c,                               // shr
+	0x02,                               // add --> egoMoveSpeed + (egoMoveSpeed >> 3)
+	0x39, 0x01,                         // push 01 (waste 1 byte)
+	0x02,                               // add --> egoMoveSpeed++
+	0x65, 0x4c,                         // aTop cycleSpeed
+	0x65, 0x5e,                         // aTop moveSpeed
+	// new code end
+	0x89, 0xb5,                         // lsg global[B5]
+	0x31, 0x13,                         // bnt [2nd code chunk]
+	0x89, 0xa6,                         // lsg global[A6]
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x3e,                         // bnt [super-call]
+	0x38, PATCH_UINT16(0x008c),         // pushi 008c
+	0x78,                               // push1
+	0x72, PATCH_UINT16(0x1cb6),         // lofsa moveToPath
+	0x36,                               // push
+	0x54, 0x06,                         // self 06 - spider::setScript(movePath)
+	0x33, 0x32,                         // jmp [super-call]
+	// --> 9 bytes saved
+	PATCH_END
+};
 
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
+	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

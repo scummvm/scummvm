@@ -142,6 +142,8 @@ void SciMusic::init() {
 	_driverLastChannel = _pMidiDrv->getLastChannel();
 	if (getSciVersion() <= SCI_VERSION_0_LATE)
 		_globalReverb = _pMidiDrv->getReverb();	// Init global reverb for SCI0
+		
+	_currentlyPlayingSample = NULL;
 }
 
 void SciMusic::miditimerCallback(void *p) {
@@ -432,6 +434,17 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	if (pSnd->pStreamAud) {
 		if (!_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
+			if ((_currentlyPlayingSample) && (_pMixer->isSoundHandleActive(_currentlyPlayingSample->hCurrentAud))) {
+				// Another sample is already playing, we have to stop that one
+				// SSCI is only able to play 1 sample at a time
+				// In Space Quest 5 room 250 the player is able to open the air-hatch and kill himself.
+				//  In that situation the scripts are playing 2 samples at the same time and the first sample
+				//  is not supposed to play.
+				// TODO: SSCI actually calls kDoAudio(play) internally, which stops other samples from being played
+				//        but such a change isn't trivial, because we also handle Sound resources in here, that contain samples
+				_pMixer->stopHandle(_currentlyPlayingSample->hCurrentAud);
+				warning("kDoSound: sample already playing, old resource %d, new resource %d", _currentlyPlayingSample->resourceId, pSnd->resourceId);
+			}
 			// Sierra SCI ignores volume set when playing samples via kDoSound
 			//  At least freddy pharkas/CD has a script bug that sets volume to 0
 			//  when playing the "score" sample
@@ -449,6 +462,8 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 										pSnd->pStreamAud, -1, _pMixer->kMaxChannelVolume, 0,
 										DisposeAfterUse::NO);
 			}
+			// Remember the sample, that is now playing
+			_currentlyPlayingSample = pSnd;
 		}
 	} else {
 		if (pSnd->pMidiParser) {
@@ -495,8 +510,11 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		pSnd->isQueued = false;
-	if (pSnd->pStreamAud)
+	if (pSnd->pStreamAud) {
+		if (_currentlyPlayingSample == pSnd)
+			_currentlyPlayingSample = NULL;
 		_pMixer->stopHandle(pSnd->hCurrentAud);
+	}
 
 	if (pSnd->pMidiParser) {
 		Common::StackLock lock(_mutex);
@@ -556,6 +574,10 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 	_mutex.unlock();
 
 	if (pSnd->pStreamAud) {
+		if (_currentlyPlayingSample == pSnd) {
+			// Forget about this sound, in case it was currently playing
+			_currentlyPlayingSample = NULL;
+		}
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 		delete pSnd->pStreamAud;
 		pSnd->pStreamAud = NULL;
@@ -666,7 +688,7 @@ void SciMusic::printPlayList(Console *con) {
 
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		MusicEntry *song = _playList[i];
-		con->DebugPrintf("%d: %04x:%04x (%s), resource id: %d, status: %s, %s type\n",
+		con->debugPrintf("%d: %04x:%04x (%s), resource id: %d, status: %s, %s type\n",
 						i, PRINT_REG(song->soundObj),
 						g_sci->getEngineState()->_segMan->getObjectName(song->soundObj),
 						song->resourceId, musicStatus[song->status],
@@ -683,26 +705,26 @@ void SciMusic::printSongInfo(reg_t obj, Console *con) {
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		MusicEntry *song = *i;
 		if (song->soundObj == obj) {
-			con->DebugPrintf("Resource id: %d, status: %s\n", song->resourceId, musicStatus[song->status]);
-			con->DebugPrintf("dataInc: %d, hold: %d, loop: %d\n", song->dataInc, song->hold, song->loop);
-			con->DebugPrintf("signal: %d, priority: %d\n", song->signal, song->priority);
-			con->DebugPrintf("ticker: %d, volume: %d\n", song->ticker, song->volume);
+			con->debugPrintf("Resource id: %d, status: %s\n", song->resourceId, musicStatus[song->status]);
+			con->debugPrintf("dataInc: %d, hold: %d, loop: %d\n", song->dataInc, song->hold, song->loop);
+			con->debugPrintf("signal: %d, priority: %d\n", song->signal, song->priority);
+			con->debugPrintf("ticker: %d, volume: %d\n", song->ticker, song->volume);
 
 			if (song->pMidiParser) {
-				con->DebugPrintf("Type: MIDI\n");
+				con->debugPrintf("Type: MIDI\n");
 				if (song->soundRes) {
 					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId());
-					con->DebugPrintf("Channels: %d\n", track->channelCount);
+					con->debugPrintf("Channels: %d\n", track->channelCount);
 				}
 			} else if (song->pStreamAud || song->pLoopStream) {
-				con->DebugPrintf("Type: digital audio (%s), sound active: %s\n",
+				con->debugPrintf("Type: digital audio (%s), sound active: %s\n",
 					song->pStreamAud ? "non looping" : "looping",
 					_pMixer->isSoundHandleActive(song->hCurrentAud) ? "yes" : "no");
 				if (song->soundRes) {
-					con->DebugPrintf("Sound resource information:\n");
+					con->debugPrintf("Sound resource information:\n");
 					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 					if (track && track->digitalChannelNr != -1) {
-						con->DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
+						con->debugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 							track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 					}
 				}
@@ -712,7 +734,7 @@ void SciMusic::printSongInfo(reg_t obj, Console *con) {
 		}
 	}
 
-	con->DebugPrintf("Song object not found in playlist");
+	con->debugPrintf("Song object not found in playlist");
 }
 
 MusicEntry::MusicEntry() {
@@ -1169,8 +1191,14 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 
 			int neededVoices = channel._voices;
 			// do we have enough free voices?
-			// We only care for essential channels
-			if (map->_freeVoices < neededVoices && prio > 0) {
+			if (map->_freeVoices < neededVoices) {
+				// We only care for essential channels
+				if (prio > 0) {
+#ifdef DEBUG_REMAP
+					debug("   not enough voices; need %d, have %d. Skipping this channel.", neededVoices, map->_freeVoices);
+#endif
+					continue;
+				}
 				do {
 					int j = map->lowestPrio();
 					if (j == -1) {

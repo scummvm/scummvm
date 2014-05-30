@@ -31,7 +31,7 @@
 namespace Avalanche {
 
 AvalancheConsole::AvalancheConsole(AvalancheEngine *vm) : GUI::Debugger(), _vm(vm) {
-	DCmd_Register("magic_lines", WRAP_METHOD(AvalancheConsole, Cmd_MagicLines));
+	registerCmd("magic_lines", WRAP_METHOD(AvalancheConsole, Cmd_MagicLines));
 }
 
 AvalancheConsole::~AvalancheConsole() {
@@ -42,7 +42,7 @@ AvalancheConsole::~AvalancheConsole() {
  */
 bool AvalancheConsole::Cmd_MagicLines(int argc, const char **argv) {
 	if (argc != 1) {
-		DebugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 

@@ -29,9 +29,9 @@
 namespace Cruise {
 
 Debugger::Debugger(): GUI::Debugger() {
-	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("hotspots",				WRAP_METHOD(Debugger, cmd_hotspots));
-	DCmd_Register("items",				WRAP_METHOD(Debugger, cmd_items));
+	registerCmd("continue",			WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("hotspots",				WRAP_METHOD(Debugger, cmd_hotspots));
+	registerCmd("items",				WRAP_METHOD(Debugger, cmd_items));
 }
 
 /**
@@ -70,7 +70,7 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 			if (*pObjectName) {
 				getMultipleObjectParam(currentObject->overlay, currentObject->idx, &params);
 
-				DebugPrintf("%s %s - %d,%d\n", pObjectName, pObjType, params.X, params.Y);
+				debugPrintf("%s %s - %d,%d\n", pObjectName, pObjType, params.X, params.Y);
 			}
 		}
 
@@ -96,7 +96,7 @@ bool Debugger::cmd_items(int argc, const char **argv) {
 						getSingleObjectParam(i, j, 5, &returnVar);
 
 						if (returnVar < -1)
-							DebugPrintf("%s\n", getObjectName(j, pOvlData->arrayNameObj));
+							debugPrintf("%s\n", getObjectName(j, pOvlData->arrayNameObj));
 					}
 				}
 			}

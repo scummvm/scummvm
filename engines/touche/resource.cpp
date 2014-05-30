@@ -150,38 +150,38 @@ void ToucheEngine::res_allocateTables() {
 
 void ToucheEngine::res_deallocateTables() {
 	free(_textData);
-	_textData = 0;
+	_textData = nullptr;
 
 	free(_backdropBuffer);
-	_backdropBuffer = 0;
+	_backdropBuffer = nullptr;
 
 	free(_menuKitData);
-	_menuKitData = 0;
+	_menuKitData = nullptr;
 
 	free(_convKitData);
-	_convKitData = 0;
+	_convKitData = nullptr;
 
 	for (int i = 0; i < NUM_SEQUENCES; ++i) {
 		free(_sequenceDataTable[i]);
-		_sequenceDataTable[i] = 0;
+		_sequenceDataTable[i] = nullptr;
 	}
 
 	free(_programData);
-	_programData = 0;
+	_programData = nullptr;
 
 	free(_mouseData);
-	_mouseData = 0;
+	_mouseData = nullptr;
 
 	free(_iconData);
-	_iconData = 0;
+	_iconData = nullptr;
 
 	for (int i = 0; i < NUM_SPRITES; ++i) {
 		free(_spritesTable[i].ptr);
-		_spritesTable[i].ptr = 0;
+		_spritesTable[i].ptr = nullptr;
 	}
 
 	free(_offscreenBuffer);
-	_offscreenBuffer = 0;
+	_offscreenBuffer = nullptr;
 }
 
 uint32 ToucheEngine::res_getDataOffset(ResourceType type, int num, uint32 *size) {
