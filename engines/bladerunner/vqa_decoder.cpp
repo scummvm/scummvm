@@ -118,6 +118,9 @@ const char *strTag(uint32 tag)
 
 VQADecoder::VQADecoder()
 	: _s(nullptr),
+	  _frameInfo(nullptr),
+	  _videoTrack(nullptr),
+	  _audioTrack(nullptr),
 	  _maxVIEWChunkSize(0),
 	  _maxZBUFChunkSize(0),
 	  _maxAESCChunkSize(0)
@@ -125,6 +128,9 @@ VQADecoder::VQADecoder()
 }
 
 VQADecoder::~VQADecoder() {
+	delete _audioTrack;
+	delete _videoTrack;
+	delete[] _frameInfo;
 }
 
 bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
@@ -172,10 +178,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 	} while (chd.id != kFINF);
 
 	_videoTrack = new VQAVideoTrack(this);
-	// addTrack(_videoTrack);
-
 	_audioTrack = new VQAAudioTrack(this);
-	// addTrack(_audioTrack);
 
 	/*
 	for (int i = 0; i != _loopInfo.loopCount; ++i) {
@@ -559,6 +562,8 @@ VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
 	delete[] _zbufChunk;
 	delete[] _vpointer;
 
+	if (_surface)
+		_surface->free();
 	delete _surface;
 }
 

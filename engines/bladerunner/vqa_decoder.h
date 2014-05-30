@@ -107,8 +107,12 @@ private:
 		Loop   *loops;
 
 		LoopInfo()
-			: loopCount(0)
+			: loopCount(0),
+			  loops(nullptr)
 		{}
+		~LoopInfo() {
+			delete[] loops;
+		}
 	};
 
 	struct ClipInfo
