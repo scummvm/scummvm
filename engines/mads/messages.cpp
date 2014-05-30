@@ -64,6 +64,7 @@ void KernelMessages::clear() {
 	for (uint i = 0; i < _entries.size(); ++i)
 		_entries[i]._flags = 0;
 
+	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
 	scene._textSpacing = -1;
 }
 
@@ -154,7 +155,6 @@ void KernelMessages::reset() {
 	for (uint i = 0; i < _entries.size(); ++i)
 		remove(i);
 
-	_talkFont = _vm->_font->getFont(FONT_CONVERSATION);
 	_randomMessages.clear();
 }
 
