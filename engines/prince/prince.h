@@ -141,6 +141,18 @@ struct BackgroundAnim {
 	Common::Array<Anim> backAnims;
 };
 
+// Nak (PL - Nakladka)
+struct Overlay {
+	int16 _state; // visible / invisible
+	int16 _flags; // turning on / turning off of an overlay
+	int16 _x1;
+	int16 _y1;
+	int16 _x2;
+	int16 _y2;
+	int16 _z;
+	int16 _number; // number of mask for background recreating
+};
+
 struct DebugChannel {
 
 enum Type {
@@ -209,6 +221,8 @@ public:
 	static const int16 kNormalWidth = 640;
 	static const int16 kNormalHeight = 480;
 
+	void checkNak(int x1, int y1, int sprWidth, int sprHeight, int z);
+
 	int testAnimNr;
 	int testAnimFrame;
 
@@ -255,6 +269,7 @@ private:
 	Animation *_zoom;
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
+	Common::Array<Overlay> _overlayList;
 
 	bool _flicLooped;
 	

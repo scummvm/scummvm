@@ -140,10 +140,6 @@ int Hero::getScaledValue(int size) {
 	}
 }
 
-void Hero::checkNak() {
-
-}
-
 Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 	Graphics::Surface *zoomedFrame = new Graphics::Surface();
 	zoomedFrame->create(_scaledFrameXSize, _scaledFrameYSize, Graphics::PixelFormat::createFormatCLUT8());
@@ -191,6 +187,7 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 }
 
 void Hero::countDrawPosition() {
+	int16 tempMiddleX;
 	int16 tempMiddleY;
 	int16 baseX = _moveSet[_moveSetType]->getBaseX();
 	int16 baseY = _moveSet[_moveSetType]->getBaseY();
@@ -206,12 +203,12 @@ void Hero::countDrawPosition() {
 	_scaledFrameYSize = getScaledValue(_frameYSize);
 	
 	//TODO
-	//int tempHeroHeight = scaledY; // not used? global?
-	//int width = scaledX / 2;
-	//tempMiddleX = _middleX - width; //eax
-	//int z = _middleY; //ebp
-	//int y = _middleY - scaledY; //ecx
-	//checkNak();
+	int tempHeroHeight = _scaledFrameYSize; // not used? global?
+	int width = _frameXSize / 2;
+	tempMiddleX = _middleX - width; //eax
+	int z = _middleY; //ebp
+	int y = _middleY - _scaledFrameYSize; //ecx
+	_vm->checkNak(tempMiddleX, y, _scaledFrameXSize, _scaledFrameYSize, z);
 
 	if (_zoomFactor != 0) {
 		//notfullSize

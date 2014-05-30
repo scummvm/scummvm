@@ -284,11 +284,40 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList,
 	}
 }
 
-void Script::installBackAnims(Common::Array<BackgroundAnim> &_backanimList, int offset) {
+void Script::installBackAnims(Common::Array<BackgroundAnim> &backanimList, int offset) {
 	for (uint i = 0; i < 64; i++) {
-		installSingleBackAnim(_backanimList, offset);
+		installSingleBackAnim(backanimList, offset);
 		offset += 4;
 	}
+}
+
+void Script::loadOverlays(Common::Array<Overlay> &overlayList, int offset) {
+	Overlay tempOverlay;
+	while (1) {
+		tempOverlay._state = READ_UINT32(&_data[offset]);
+		if (tempOverlay._state == -1) {
+			break;
+		}
+		debug("tempOverlay._state: %d", tempOverlay._state);
+		tempOverlay._flags = READ_UINT32(&_data[offset + 2]);
+		debug("tempOverlay._flags: %d", tempOverlay._flags);
+		tempOverlay._x1 = READ_UINT32(&_data[offset + 4]);
+		debug("tempOverlay._x1: %d", tempOverlay._x1);
+		tempOverlay._y1 = READ_UINT32(&_data[offset + 6]);
+		debug("tempOverlay._y1: %d", tempOverlay._y1);
+		tempOverlay._x2 = READ_UINT32(&_data[offset + 8]);
+		debug("tempOverlay._x2: %d", tempOverlay._x2);
+		tempOverlay._y2 = READ_UINT32(&_data[offset + 10]);
+		debug("tempOverlay._y2: %d", tempOverlay._y2);
+		tempOverlay._z = READ_UINT32(&_data[offset + 12]);
+		debug("tempOverlay._z: %d", tempOverlay._z);
+		tempOverlay._number = READ_UINT32(&_data[offset + 14]);
+		debug("tempOverlay._number: %d\n", tempOverlay._number);
+		overlayList.push_back(tempOverlay);
+		offset += 16; // size of Overlay (Nak) struct
+	}
+	debug("NAK size: %d", sizeof(Overlay));
+	debug("overlayList size: %d", overlayList.size());
 }
 
 InterpreterFlags::InterpreterFlags() {

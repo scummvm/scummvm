@@ -39,6 +39,7 @@ class PrinceEngine;
 class Animation;
 struct Anim;
 struct BackgroundAnim;
+struct Overlay;
 
 namespace Detail {
 	template <typename T> T LittleEndianReader(void *data);
@@ -134,6 +135,7 @@ public:
 	uint8 *getRoomOffset(int locationNr);
 	void installBackAnims(Common::Array<BackgroundAnim> &_backanimList, int offset);
 	void installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset);
+	void loadOverlays(Common::Array<Overlay> &overlayList, int offset);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);

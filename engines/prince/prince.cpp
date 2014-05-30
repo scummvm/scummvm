@@ -318,6 +318,10 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mainHero->setShadowScale(_script->getShadowScale(_locationNr));
 
 	_room->loadRoom(_script->getRoomOffset(_locationNr));
+
+	_overlayList.clear();
+	_script->loadOverlays(_overlayList, _room->_nak);
+
 	clearBackAnimList();
 	_script->installBackAnims(_backAnimList, _room->_backAnim);
 
@@ -740,6 +744,25 @@ bool PrinceEngine::spriteCheck(Graphics::Surface *backAnimSurface, int destX, in
 	}
 
 	return true;
+}
+
+void PrinceEngine::checkNak(int x1, int y1, int sprWidth, int sprHeight, int z) {
+	int x2 = x1 + sprWidth - 1;
+	int y2 = y1 + sprHeight - 1;
+	if (x1 < 0) {
+		x1 = 0;
+	}
+	for (uint i = 0; i < _overlayList.size() ; i++) {
+		if (_overlayList[i]._state != 1 && _overlayList[i]._flags != 1) {
+			if (_overlayList[i]._z > z) {
+				if (_overlayList[i]._x1 <= x2 && _overlayList[i]._x2 >= x1) {
+					if (_overlayList[i]._y1 <= y2 && _overlayList[i]._y2 >= y1) {
+						_overlayList[i]._state = 1;
+					}
+				}
+			}
+		}
+	}
 }
 
 void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int destY) {

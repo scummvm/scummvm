@@ -115,7 +115,6 @@ public:
 	int getScaledValue(int size);
 	void selectZoom();
 	void countDrawPosition();
-	void checkNak();
 	Graphics::Surface *zoomSprite(Graphics::Surface *heroFrame);
 	void showHeroAnimFrame();
 	void line(int x1, int y1, int x2, int y2);
