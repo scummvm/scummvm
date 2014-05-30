@@ -115,9 +115,9 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
-	for (uint32 i = 0; i < _backAnimList.size(); i++) {
+	for (uint i = 0; i < _backAnimList.size(); i++) {
 		int anims = _backAnimList[i]._seq._anims != 0 ? _backAnimList[i]._seq._anims : 1;
-		for (uint32 j = 0; j < anims; j++) {
+		for (uint j = 0; j < anims; j++) {
 			delete _backAnimList[i].backAnims[j]._animData;
 			delete _backAnimList[i].backAnims[j]._shadowData;
 		}
@@ -716,7 +716,7 @@ void PrinceEngine::showTexts() {
 	}
 }
 
-void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int destY) {
+bool PrinceEngine::spriteCheck(Graphics::Surface *backAnimSurface, int destX, int destY) {
 	int sprWidth = backAnimSurface->w;
 	int sprHeight = backAnimSurface->h;
 	destX -= _picWindowX;
@@ -726,25 +726,41 @@ void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int
 	if (destX < 0) {
 		if (destX + sprWidth < 1) {
 			//x2 is negative - out of window
-			return;
+			return false;
 		}
 	}
 	 // if x1 is outside of screen on right side
 	if (destX >= kNormalWidth) {
-		return;
+		return false;
 	}
 
 	if (destY < 0) {
 		if (destY + sprHeight < 1) {
 			//y2 is negative - out of window
-			return;
+			return false;
 		}
 	}
 	if (destY >= kNormalHeight) {
-		return;
+		return false;
 	}
 
-	_graph->drawTransparent(destX, destY, backAnimSurface);
+	return true;
+}
+
+void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int destY) {
+	if (spriteCheck(backAnimSurface, destX, destY)) {
+		destX -= _picWindowX;
+		destY -= _picWindowY;
+		_graph->drawTransparent(destX, destY, backAnimSurface);
+	}
+}
+
+void PrinceEngine::showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY) {
+	if (spriteCheck(shadowSurface, destX, destY)) {
+		destX -= _picWindowX;
+		destY -= _picWindowY;
+		_graph->drawAsShadow(destX, destY, shadowSurface, _graph->_shadowTable70);
+	}
 }
 
 void PrinceEngine::showBackAnims() {
@@ -873,6 +889,7 @@ void PrinceEngine::showBackAnims() {
 			_backAnimList[i].backAnims[activeSubAnim]._showFrame = _backAnimList[i].backAnims[activeSubAnim]._frame;
 
 			//ShowFrameCode
+			//ShowAnimFrame
 			int phaseCount = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseCount();
 			int frameCount = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameCount();
 			int phase = _backAnimList[i].backAnims[activeSubAnim]._showFrame;
@@ -886,7 +903,18 @@ void PrinceEngine::showBackAnims() {
 				backAnimSurface->free();
 				delete backAnimSurface;
 			}
+
 			//ShowFrameCodeShadow
+			//ShowAnimFrameShadow
+			if (_backAnimList[i].backAnims[activeSubAnim]._shadowData != nullptr) {
+				int shadowPhaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getPhaseFrameIndex(phase);
+				int shadowX = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getBaseX() + _backAnimList[i].backAnims[activeSubAnim]._shadowData->getPhaseOffsetX(phase);
+				int shadowY = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getBaseY() + _backAnimList[i].backAnims[activeSubAnim]._shadowData->getPhaseOffsetY(phase);
+				Graphics::Surface *shadowSurface = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getFrame(shadowPhaseFrameIndex); //still with memory leak
+				showSpriteShadow(shadowSurface, shadowX, shadowY);
+				shadowSurface->free();
+				delete shadowSurface;
+			}
 		}
 	}
 }

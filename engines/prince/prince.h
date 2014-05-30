@@ -110,7 +110,6 @@ struct BASA {
 struct Anim {
 	BASA _basaData;
 	int32 _addr; //animation adress
-	//int32 _seq;
 	int16 _usage;
 	int16 _state; // state of animation: 0 - turning on, 1 - turning off
 	int16 _flags;
@@ -128,7 +127,6 @@ struct Anim {
 	int16 _currW;
 	int16 _currH;
 	int16 _packFlag;
-	int32 _shadow;
 	int32 _currShadowFrame;
 	int16 _packShadowFlag;
 	int32 _shadowBack;
@@ -225,7 +223,9 @@ private:
 	void init();
 	void showLogo();
 	void showBackAnims();
+	bool spriteCheck(Graphics::Surface *backAnimSurface, int destX, int destY);
 	void showSprite(Graphics::Surface *backAnimSurface, int destX, int destY);
+	void showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY);
 	void makeShadowTable(int brightness);
 
 	uint32 getTextWidth(const char *s);

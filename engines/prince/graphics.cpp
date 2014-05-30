@@ -89,6 +89,23 @@ void GraphicsMan::drawTransparent(int32 posX, int32 posY, const Graphics::Surfac
 	change();
 }
 
+void GraphicsMan::drawAsShadow(int32 posX, int32 posY, const Graphics::Surface *s, byte *shadowTable) {
+	for (int y = 0; y < s->h; y++) {
+		for (int x = 0; x < s->w; x++) {
+			byte pixel = *((byte*)s->getBasePtr(x, y));
+			if (pixel != 255) {
+				if (x + posX < _frontScreen->w && x + posX >= 0) {
+					if (y + posY < _frontScreen->h && y + posY >= 0) {
+						byte *background = (byte *)_frontScreen->getBasePtr(x + posX, y + posY);
+						*background = *(shadowTable + *background);
+					}
+				}
+			}
+		}
+	}
+	change();
+}
+
 void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {
 	int32 redFirstOrg, greenFirstOrg, blueFirstOrg;
 	int32 redSecondOrg, greenSecondOrg, blueSecondOrg;

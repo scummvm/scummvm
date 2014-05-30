@@ -64,7 +64,6 @@ public:
 	int _pullClose;
 	int _talk;
 	int _give;
-	//Room_Pad	db	64-(Room_Pad-Room_Mobs) dup (0) ???
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 	bool loadRoom(byte *roomData);
