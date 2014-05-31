@@ -822,7 +822,7 @@ void Scene307::enter() {
 	sceneEntrySound();
 
 	if ((_scene->_priorSceneId == 318) || (_scene->_priorSceneId == 387))
-		_scene->_kernelMessages.addQuote(0xF3, 120, 0);
+		_scene->_kernelMessages.addQuote(0xF3, 0, 120);
 }
 
 void Scene307::step() {
@@ -996,7 +996,7 @@ void Scene307::actions() {
 			int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 			_game._objects.removeFromInventory(OBJ_SCALPEL, NOWHERE);
-			_scene->_kernelMessages.addQuote(0xF2, 120, 7);
+			_scene->_kernelMessages.addQuote(0xF2, 7, 120);
 			}
 			break;
 
