@@ -324,7 +324,7 @@ void SpriteSlots::drawSprites(MSurface *s) {
 		}
 
 		if ((slot._scale < 100) && (slot._scale != -1)) {
-			// Minimalized drawing
+			// Scaled drawing
 			s->copyFrom(spr, slot._position, slot._depth, &scene._depthSurface,
 				slot._scale, sprite->getTransparencyIndex());
 		} else {
@@ -341,7 +341,7 @@ void SpriteSlots::drawSprites(MSurface *s) {
 			if (slot._depth > 1) {
 				// Draw the frame with depth processing
 				s->copyFrom(spr, Common::Point(xp, yp), slot._depth, &scene._depthSurface,
-					100, sprite->getTransparencyIndex());
+					-1, sprite->getTransparencyIndex());
 			} else {
 				// No depth, so simply draw the image
 				spr->copyTo(s, Common::Point(xp, yp), sprite->getTransparencyIndex());

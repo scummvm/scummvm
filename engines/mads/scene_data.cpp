@@ -265,7 +265,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		assert(asset && _depthStyle != 2);
 
 		MSprite *spr = asset->getFrame(asset->getCount() - 1);
-		bgSurface.copyFromScaled(spr, si._position, si._depth, &depthSurface, 
+		bgSurface.copyFrom(spr, si._position, si._depth, &depthSurface, 
 			si._scale, spr->getTransparencyIndex());
 	}
 

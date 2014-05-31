@@ -259,24 +259,52 @@ void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds,
 
 void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	DepthSurface *depthSurface, int scale, int transparentColor) {
-
 	int destX = destPos.x, destY = destPos.y;
-	if (scale == 100) {
+	int frameWidth = src->getWidth();
+	int frameHeight = src->getHeight();
+
+	int highestDim = MAX(frameWidth, frameHeight);
+	bool lineDist[MADS_SCREEN_WIDTH];
+	int distIndex = 0;
+	int distXCount = 0, distYCount = 0;
+
+	if (scale != -1) {
+		int distCtr = 0;
+		do {
+			distCtr += scale;
+			if (distCtr < 100) {
+				lineDist[distIndex] = false;
+			} else {
+				lineDist[distIndex] = true;
+				distCtr -= 100;
+
+				if (distIndex < frameWidth)
+					++distXCount;
+
+				if (distIndex < frameHeight)
+					++distYCount;
+			}
+		} while (++distIndex < highestDim);
+
+		destX -= distXCount / 2;
+		destY -= distYCount - 1;
+	}
+
+	// Special case for quicker drawing of non-scaled images
+	if (scale == 100 || scale == -1) {
 		// Copy the specified area
 		Common::Rect copyRect(0, 0, src->getWidth(), src->getHeight());
 
 		if (destX < 0) {
 			copyRect.left += -destX;
 			destX = 0;
-		}
-		else if (destX + copyRect.width() > w) {
+		} else if (destX + copyRect.width() > w) {
 			copyRect.right -= destX + copyRect.width() - w;
 		}
 		if (destY < 0) {
 			copyRect.top += -destY;
 			destY = 0;
-		}
-		else if (destY + copyRect.height() > h) {
+		} else if (destY + copyRect.height() > h) {
 			copyRect.bottom -= destY + copyRect.height() - h;
 		}
 
@@ -310,33 +338,6 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	int destRight = this->getWidth() - 1;
 	int destBottom = this->getHeight() - 1;
 	bool normalFrame = true;
-	int frameWidth = src->getWidth();
-	int frameHeight = src->getHeight();
-
-	int highestDim = MAX(frameWidth, frameHeight);
-	bool lineDist[MADS_SCREEN_WIDTH];
-	int distIndex = 0;
-	int distXCount = 0, distYCount = 0;
-
-	int distCtr = 0;
-	do {
-		distCtr += scale;
-		if (distCtr < 100) {
-			lineDist[distIndex] = false;
-		} else {
-			lineDist[distIndex] = true;
-			distCtr -= 100;
-
-			if (distIndex < frameWidth)
-				++distXCount;
-
-			if (distIndex < frameHeight)
-				++distYCount;
-		}
-	} while (++distIndex < highestDim);
-
-	destX -= distXCount / 2;
-	destY -= distYCount - 1;
 
 	// Check x bounding area
 	int spriteLeft = 0;
@@ -417,27 +418,6 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		// Move to the next destination line
 		destPixelsP += this->pitch;
 	}
-}
-
-void MSurface::copyFromScaled(MSurface *src, const Common::Point &destPos, int depth,
-		DepthSurface *depthSurface, int scale, int transparentColor) {
-	int distXCount = 0, distYCount = 0;
-	int highestDim = MAX(src->w, src->h);
-	int accum = 0;
-
-	for (int idx = 0; idx < highestDim; ++idx) {
-		accum += scale;
-		if (accum >= 100) {
-			accum -= 100;
-			if (idx < src->w)
-				++distXCount;
-			if (idx < src->h)
-				++distYCount;
-		}
-	}
-
-	Common::Point newPos(destPos.x - distXCount / 2, destPos.y - distYCount);
-	copyFrom(src, src->getBounds(), newPos, transparentColor);
 }
 
 void MSurface::scrollX(int xAmount) {
