@@ -87,9 +87,7 @@ int16 Op_Exec() {
 
 	int numOfArgToPop = popVar();
 
-	int i = 0;
-
-	for (i = 0; i < numOfArgToPop; i++) {
+	for (int i = 0; i < numOfArgToPop; i++) {
 		popTable[numOfArgToPop - i - 1] = popVar();
 	}
 
@@ -111,7 +109,7 @@ int16 Op_Exec() {
 
 	ptr2 = ptr;
 
-	for (i = 0; i < numOfArgToPop; i++) {
+	for (int i = 0; i < numOfArgToPop; i++) {
 		WRITE_BE_UINT16(ptr2, popTable[i]);
 		ptr2 += 2;
 	}

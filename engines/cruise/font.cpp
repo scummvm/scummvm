@@ -89,7 +89,7 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 	if (lineLength > 0)
 		total += rightBorder_X;
 
-	return (total / rightBorder_X);
+	return (total / (rightBorder_X == 0 ? 1 : rightBorder_X));
 }
 
 void loadFNT(const char *fileName) {
