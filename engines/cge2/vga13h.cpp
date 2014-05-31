@@ -957,13 +957,41 @@ void Vga::sunset() {
 }
 
 void Vga::show() {
-	for (Sprite *spr = _showQ->first(); spr; spr = spr->_next)
-		spr->show();
-	update();
-	for (Sprite *spr = _showQ->first(); spr; spr = spr->_next)
-		spr->hide();
+	_vm->_infoLine->update();
 
-	_frmCnt++;
+	for (Sprite *spr = _showQ->first(); spr; spr = spr->_next) {
+		spr->show();
+	}
+
+	//_vm->_mouse->show();
+	update();
+
+	for (Sprite *spr = _showQ->first(); spr; spr = spr->_next) {
+		spr->hide();
+		if (spr->_flags._zmov) {
+			Sprite *s = nullptr;
+			Sprite *p = spr->_prev;
+			Sprite *n = spr->_next;
+
+			if (spr->_flags._shad) {
+				s = p;
+				p = s->_prev;
+			}
+
+			if ((p && spr->_pos3D._z > p->_pos3D._z) ||
+				(n && spr->_pos3D._z < n->_pos3D._z)) {
+				_showQ->insert(_showQ->remove(spr));
+				if (s) {
+					//s->gotoxyz(V3D(s->_pos3D._x, s->_pos3D._y, spr->_pos3D._z));
+					//_showQ->insert(_showQ->remove(s), spr);
+					// These two lines are also commented out in the original.
+				}
+			}
+			spr->_flags._zmov = false;
+		}
+	}
+	//_vm->_mouse->hide();
+	warning("STUB: Vga::show() - Mouse handling is missing!");
 }
 
 void Vga::updateColors() {
