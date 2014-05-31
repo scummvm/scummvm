@@ -279,10 +279,6 @@ void Game::sectionLoop() {
 		_trigger = 0;
 		_priorFrameTimer = _scene._frameStartTime;
 
-		// Call the scene logic for entering the given scene
-		_triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-		_scene._sceneLogic->enter();
-
 		// If in the middle of restoring a game, handle the rest of the loading
 		if (_saveFile != nullptr) {
 			Common::Serializer s(_saveFile, nullptr);
@@ -290,6 +286,10 @@ void Game::sectionLoop() {
 			delete _saveFile;
 			_saveFile = nullptr;
 		}
+
+		// Call the scene logic for entering the given scene
+		_triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		_scene._sceneLogic->enter();
 
 		// Set player data
 		_player._targetPos = _player._playerPos;
