@@ -1084,6 +1084,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Rhiannon: Curse of the four Branches (English PC DVD)
+	{
+		"rhiannon",
+		"DVD",
+		AD_ENTRY1s("data.dcp", "6736bbc921bb6ce5161b3ad095a97bd4", 1053441028),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde
 	{
 		"ritter",
