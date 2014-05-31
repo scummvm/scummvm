@@ -298,21 +298,13 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 		if (tempMask._state == -1) {
 			break;
 		}
-		debug("tempMask._state: %d", tempMask._state);
 		tempMask._flags = READ_UINT32(&_data[offset + 2]);
-		debug("tempMask._flags: %d", tempMask._flags);
 		tempMask._x1 = READ_UINT32(&_data[offset + 4]);
-		debug("tempMask._x1: %d", tempMask._x1);
 		tempMask._y1 = READ_UINT32(&_data[offset + 6]);
-		debug("tempMask._y1: %d", tempMask._y1);
 		tempMask._x2 = READ_UINT32(&_data[offset + 8]);
-		debug("tempMask._x2: %d", tempMask._x2);
 		tempMask._y2 = READ_UINT32(&_data[offset + 10]);
-		debug("tempMask._y2: %d", tempMask._y2);
 		tempMask._z = READ_UINT32(&_data[offset + 12]);
-		debug("tempMask._z: %d", tempMask._z);
 		tempMask._number = READ_UINT32(&_data[offset + 14]);
-		debug("tempMask._number: %d", tempMask._number);
 
 		const Common::String msStreamName = Common::String::format("MS%02d", tempMask._number);
 		Common::SeekableReadStream *msStream = SearchMan.createReadStreamForMember(msStreamName);
@@ -334,14 +326,10 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 		}
 		tempMask._width = tempMask.getWidth();
 		tempMask._height = tempMask.getHeight();
-		debug("width: %d, height: %d\n", tempMask._width, tempMask._height);
-		debug("dataSize: %d", dataSize);
 
 		maskList.push_back(tempMask);
 		offset += 16; // size of Mask (Nak) struct
 	}
-	debug("Mask size: %d", sizeof(tempMask));
-	debug("maskList size: %d", maskList.size());
 	return true;
 }
 
