@@ -825,6 +825,10 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 
 	glDisable(GL_LIGHT0 + lightId);
 	glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
+	if (lightId == 0) {
+		GLfloat nullLight[] = {0.0f, 0.0f, 0.0f, 1.0f};
+		glLightfv(GL_LIGHT0, GL_SPECULAR, nullLight);
+	}
 	glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
