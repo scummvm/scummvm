@@ -102,12 +102,12 @@ void GraphicsMan::drawMask(int32 posX, int32 posY, int32 width, int32 height, by
 						byte orgPixel = *((byte*)originalRoomSurface->getBasePtr(x + posX, y + posY));
 						*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = orgPixel;
 					}
-					maskCounter >>= 1;
-					if (maskCounter == 0) {
-						maskCounter = 128;
-						tempMaskPostion++;
-					}
 				}
+			}
+			maskCounter >>= 1;
+			if (maskCounter == 0) {
+				maskCounter = 128;
+				tempMaskPostion++;
 			}
 		}
 		maskPostion += maskWidth;

@@ -746,38 +746,6 @@ bool PrinceEngine::spriteCheck(int sprWidth, int sprHeight, int destX, int destY
 
 	return true;
 }
-/*
-bool PrinceEngine::spriteCheck(Graphics::Surface *backAnimSurface, int destX, int destY) {
-	int sprWidth = backAnimSurface->w;
-	int sprHeight = backAnimSurface->h;
-	destX -= _picWindowX;
-	destY -= _picWindowY;
-
-	 // if x1 is on visible part of screen
-	if (destX < 0) {
-		if (destX + sprWidth < 1) {
-			//x2 is negative - out of window
-			return false;
-		}
-	}
-	 // if x1 is outside of screen on right side
-	if (destX >= kNormalWidth) {
-		return false;
-	}
-
-	if (destY < 0) {
-		if (destY + sprHeight < 1) {
-			//y2 is negative - out of window
-			return false;
-		}
-	}
-	if (destY >= kNormalHeight) {
-		return false;
-	}
-
-	return true;
-}
-*/
 
 // CheckNak
 void PrinceEngine::checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z) {
