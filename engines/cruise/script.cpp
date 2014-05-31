@@ -455,9 +455,7 @@ int32 opcodeType9() {		// stop script
 }
 
 void setupFuncArray() {
-	int i;
-
-	for (i = 0; i < 64; i++) {
+	for (int i = 0; i < 64; i++) {
 		opcodeTypeTable[i] = NULL;
 	}
 

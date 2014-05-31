@@ -981,11 +981,9 @@ int16 Op_SetColor()	{
 	int endIdx = popVar();
 	int startIdx = popVar();
 
-	int i;
-
 #define convertRatio 36.571428571428571428571428571429
 
-	for (i = startIdx; i <= endIdx; i++) {
+	for (int i = startIdx; i <= endIdx; i++) {
 		int offsetTable[3];
 
 		offsetTable[0] = (int)(colorR * convertRatio);

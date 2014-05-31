@@ -183,11 +183,10 @@ void line(int x1, int y1, int x2, int y2, char c) {
 
 static void add_intersect(int *intersect, int x, byte &num) {
 	if (num < MAXPTS) {
-		int i;
 
-		for (i = num; i > 0 && intersect[i - 1] > x; i--) {
+		int i = 0;
+		for (i = num; i > 0 && intersect[i - 1] > x; i--)
 			intersect[i] = intersect[i - 1];
-		}
 
 		intersect[i] = x;
 		num++;

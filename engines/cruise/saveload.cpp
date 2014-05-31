@@ -881,17 +881,15 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (filesDatabase[i].subData.ptr) {
-			int j;
-			int k;
-
-			for (j = i + 1; j < NUM_FILE_ENTRIES &&
+			int j = i + 1;
+			for (; j < NUM_FILE_ENTRIES &&
 			        filesDatabase[j].subData.ptr &&
 			        !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) &&
 			        (filesDatabase[j].subData.index == (j - i));
 			        j++)
 				;
 
-			for (k = i; k < j; k++) {
+			for (int k = i; k < j; k++) {
 				filesDatabase[k].subData.ptr = NULL;
 				filesDatabase[k].subData.ptrMask = NULL;
 			}

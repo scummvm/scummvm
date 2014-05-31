@@ -110,7 +110,6 @@ void loadPackedFileToMem(int fileIdx, uint8 *buffer) {
 int getNumObjectsByClass(int scriptIdx, int param) {
 	objDataStruct *ptr2;
 	int counter;
-	int i;
 
 	if (!overlayTable[scriptIdx].ovlData)
 		return (0);
@@ -125,7 +124,7 @@ int getNumObjectsByClass(int scriptIdx, int param) {
 
 	counter = 0;
 
-	for (i = 0; i < overlayTable[scriptIdx].ovlData->numObj; i++) {
+	for (int i = 0; i < overlayTable[scriptIdx].ovlData->numObj; i++) {
 		if (ptr2[i]._class == param) {
 			counter++;
 		}
@@ -135,15 +134,12 @@ int getNumObjectsByClass(int scriptIdx, int param) {
 }
 
 void resetFileEntryRange(int start, int count) {
-	int i;
-
-	for (i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 		resetFileEntry(start + i);
 }
 
 int getProcParam(int overlayIdx, int param2, const char *name) {
 	int numSymbGlob;
-	int i;
 	exportEntryStruct *arraySymbGlob;
 	char *exportNamePtr;
 	char exportName[80];
@@ -161,7 +157,7 @@ int getProcParam(int overlayIdx, int param2, const char *name) {
 	if (!exportNamePtr)
 		return 0;
 
-	for (i = 0; i < numSymbGlob; i++) {
+	for (int i = 0; i < numSymbGlob; i++) {
 		if (arraySymbGlob[i].var4 == param2) {
 			Common::strlcpy(exportName, arraySymbGlob[i].offsetToName + exportNamePtr, sizeof(exportName));
 
@@ -188,9 +184,7 @@ void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScri
 }
 
 void initBigVar3() {
-	int i;
-
-	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
+	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (filesDatabase[i].subData.ptr) {
 			MemFree(filesDatabase[i].subData.ptr);
 		}
@@ -338,13 +332,12 @@ void removeExtention(const char *name, char *buffer) {	// not like in original
 int lastFileSize;
 
 int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
-	int i;
 	char buffer[256];
 	int fileIdx;
 	int unpackedSize;
 	uint8 *unpackedBuffer;
 
-	for (i = 0; i < 64; i++) {
+	for (int i = 0; i < 64; i++) {
 		if (preloadData[i].ptr) {
 			if (!strcmp(preloadData[i].name, name)) {
 				error("Unsupported code in loadFIleSub1");
@@ -440,8 +433,6 @@ uint8 *mainProc14(uint16 overlay, uint16 idx) {
 }
 
 void CruiseEngine::initAllData() {
-	int i;
-
 	setupFuncArray();
 	initOverlayTable();
 
@@ -457,15 +448,13 @@ void CruiseEngine::initAllData() {
 
 	menuTable[0] = NULL;
 
-	for (i = 0; i < 2000; i++) {
+	for (int i = 0; i < 2000; i++)
 		globalVars[i] = 0;
-	}
 
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++)
 		backgroundTable[i].name[0] = 0;
-	}
 
-	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
+	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		filesDatabase[i].subData.ptr = NULL;
 		filesDatabase[i].subData.ptrMask = NULL;
 	}
@@ -963,12 +952,11 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 	bool found = false;
 	bool first = true;
 	int testState = -1;
-	int j;
 	int16 objectState;
 
 	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
 
-	for (j = 1; j < numOfLoadedOverlay; j++) {
+	for (int j = 1; j < numOfLoadedOverlay; j++) {
 		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 

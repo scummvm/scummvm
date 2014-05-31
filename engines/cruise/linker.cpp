@@ -35,7 +35,6 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer
 	int numSymbGlob;
 	exportEntryStruct *currentExportEntry;
 	char *entity1Name;
-	int i;
 
 	*out1 = 0;
 	*pExportedFuncionIdx = 0;
@@ -85,7 +84,7 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer
 	if (!entity1Name)
 		return (0);
 
-	for (i = 0; i < numSymbGlob; i++) {
+	for (int i = 0; i < numSymbGlob; i++) {
 		char exportedName[256];
 		char *name = entity1Name + currentExportEntry->offsetToName;
 
@@ -221,9 +220,7 @@ int updateScriptImport(int ovlIdx) {
 
 	if (ovlData->arrayRelocGlob && ovlData->arrayNameRelocGlob && numRelocGlob) {
 		int numImport2 = numRelocGlob;
-		int i;
-
-		for (i = 0; i < numImport2; i++) {
+		for (int i = 0; i < numImport2; i++) {
 			int out1;
 			int foundExportIdx;
 			exportEntryStruct *pFoundExport;
@@ -264,12 +261,9 @@ int updateScriptImport(int ovlIdx) {
 
 // check that the newly loaded isn't used by the already loaded overlays
 void updateAllScriptsImports() {
-	int i;
-
-	for (i = 0; i < 90; i++) {
-		if (overlayTable[i].ovlData && overlayTable[i].alreadyLoaded) {
+	for (int i = 0; i < 90; i++) {
+		if (overlayTable[i].ovlData && overlayTable[i].alreadyLoaded)
 			updateScriptImport(i);
-		}
 	}
 }
 

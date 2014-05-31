@@ -130,13 +130,12 @@ void pushDecomp(char *string, ...) {
 
 void resolveDecompShort(char *buffer) {
 	ovlData3Struct *data3Ptr = currentScript;
-	int i;
 
 	importScriptStruct *importEntry =
 	    (importScriptStruct *)(data3Ptr->dataPtr +
 	                           data3Ptr->offsetToImportData);
 
-	for (i = 0; i < data3Ptr->numRelocGlob; i++) {
+	for (int i = 0; i < data3Ptr->numRelocGlob; i++) {
 		switch (importEntry->type) {
 		case 20:	// script
 		case 30:
@@ -177,13 +176,12 @@ void resolveDecompShort(char *buffer) {
 
 void resolveDecompChar(char *buffer) {
 	ovlData3Struct *data3Ptr = currentScript;
-	int i;
 
 	importScriptStruct *importEntry =
 	    (importScriptStruct *)(data3Ptr->dataPtr +
 	                           data3Ptr->offsetToImportData);
 
-	for (i = 0; i < data3Ptr->numRelocGlob; i++) {
+	for (int i = 0; i < data3Ptr->numRelocGlob; i++) {
 		switch (importEntry->type) {
 		default: {
 			if (importEntry->offset ==
@@ -315,9 +313,7 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 	}
 
 	if (!strcmp(ovlIdxString, "0")) {
-		int i;
-
-		for (i = 0; i < currentDecompOvl->numSymbGlob; i++) {
+		for (int i = 0; i < currentDecompOvl->numSymbGlob; i++) {
 			if (varIdx == currentDecompOvl->arraySymbGlob[i].idx) {
 				if (((currentDecompOvl->arraySymbGlob[i].var4 & 0xF0) == 0) && varType != 0x20) {	// var
 					strcpy(outputName,
@@ -733,7 +729,6 @@ int decompFunction() {
 		unsigned long int numArg = atoi(popDecomp());
 		char *ovlStr;
 		char *idxStr;
-		int i;
 		char functionName[100];
 
 		idxStr = popDecomp();
@@ -743,7 +738,7 @@ int decompFunction() {
 
 		sprintf(tempbuffer, "_startASync(%s", functionName);
 
-		for (i = 0; i < numArg; i++) {
+		for (int i = 0; i < numArg; i++) {
 			strcatuint8(tempbuffer, ",");
 			strcatuint8(tempbuffer, popDecomp());
 		}
@@ -1094,7 +1089,6 @@ int decompFunction() {
 		unsigned long int numArg = atoi(popDecomp());
 		char *ovlStr;
 		char *idxStr;
-		int i;
 		char functionName[256];
 
 		idxStr = popDecomp();
@@ -1104,7 +1098,7 @@ int decompFunction() {
 
 		sprintf(tempbuffer, "%s(", functionName);
 
-		for (i = 0; i < numArg; i++) {
+		for (int i = 0; i < numArg; i++) {
 			if (i)
 				strcatuint8(tempbuffer, ",");
 			strcatuint8(tempbuffer, popDecomp());
@@ -1174,14 +1168,13 @@ int decompFunction() {
 		unsigned long int numArg = atoi(popDecomp());
 		char *ovlStr;
 		char *idxStr;
-		int i;
 
 		idxStr = popDecomp();
 		ovlStr = popDecomp();
 
 		sprintf(tempbuffer, "_op_6F(%s,%s", idxStr, ovlStr);
 
-		for (i = 0; i < numArg; i++) {
+		for (int i = 0; i < numArg; i++) {
 			strcatuint8(tempbuffer, ",");
 			strcatuint8(tempbuffer, popDecomp());
 		}
@@ -1286,9 +1279,7 @@ int decompBreak() {
 }
 
 void generateIndentation() {
-	int i, j;
-
-	for (i = 0; i < positionInDecompileLineTable; i++) {
+	for (int i = 0; i < positionInDecompileLineTable; i++) {
 		if (decompileLineTable[i].type != 0) {
 			char *gotoStatement;
 			int destLine;
@@ -1302,7 +1293,7 @@ void generateIndentation() {
 			destLine = atoi(gotoStatement);
 			destLineIdx = -1;
 
-			for (j = 0; j < positionInDecompileLineTable; j++) {
+			for (int j = 0; j < positionInDecompileLineTable; j++) {
 				if (decompileLineTable[j].lineOffset == destLine) {
 					destLineIdx = j;
 					break;
@@ -1312,7 +1303,7 @@ void generateIndentation() {
 			assert(destLineIdx != -1);
 
 			if (destLineIdx > i) {
-				for (j = i + 1; j < destLineIdx; j++) {
+				for (int j = i + 1; j < destLineIdx; j++) {
 					decompileLineTable[j].indent++;
 				}
 
@@ -1328,7 +1319,6 @@ void generateIndentation() {
 void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 	uint8 opcodeType;
 	char buffer[256];
-	int i;
 
 	char temp[256];
 	char scriptName[256];
@@ -1367,9 +1357,8 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 	decompileStackPosition = 0;
 
-	for (i = 0; i < 64; i++) {
+	for (int i = 0; i < 64; i++)
 		decompOpcodeTypeTable[i] = NULL;
-	}
 
 	decompOpcodeTypeTable[1] = decompLoadVar;
 	decompOpcodeTypeTable[2] = decompSaveVar;
@@ -1412,9 +1401,7 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 	generateIndentation();
 
-	for (i = 0; i < positionInDecompileLineTable; i++) {
-		int j;
-
+	for (int i = 0; i < positionInDecompileLineTable; i++) {
 		if (decompileLineTable[i].pendingElse) {
 			fprintf(fHandle, "%05d:\t",
 			        decompileLineTable[i].lineOffset);
@@ -1423,9 +1410,9 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 		}
 
 		fprintf(fHandle, "%05d:\t", decompileLineTable[i].lineOffset);
-		for (j = 0; j < decompileLineTable[i].indent; j++) {
+		for (int j = 0; j < decompileLineTable[i].indent; j++)
 			fprintf(fHandle, "\t");
-		}
+
 		fprintf(fHandle, "%s", decompileLineTable[i].line);
 		fprintf(fHandle, "\n");
 	}

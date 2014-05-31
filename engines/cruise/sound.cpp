@@ -379,13 +379,12 @@ void AdLibSoundDriver::stopChannel(int channel) {
 }
 
 void AdLibSoundDriver::stopAll() {
-	int i;
-	for (i = 0; i < 18; ++i) {
+	for (int i = 0; i < 18; ++i)
 		OPLWriteReg(_opl, 0x40 | _operatorsTable[i], 63);
-	}
-	for (i = 0; i < 9; ++i) {
+
+	for (int i = 0; i < 9; ++i)
 		OPLWriteReg(_opl, 0xB0 | i, 0);
-	}
+
 	OPLWriteReg(_opl, 0xBD, 0);
 }
 
