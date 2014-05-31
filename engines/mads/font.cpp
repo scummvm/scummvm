@@ -89,7 +89,11 @@ void Font::setFont(const Common::String &filename) {
 
 	_filename = filename;
 
-	MadsPack fontData(filename, _vm);
+	Common::String resName = filename;
+	if (!resName.hasSuffix(".FF"))
+		resName += ".FF";
+
+	MadsPack fontData(resName, _vm);
 	Common::SeekableReadStream *fontFile = fontData.getItemStream(0);
 
 	_maxHeight = fontFile->readByte();
