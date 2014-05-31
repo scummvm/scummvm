@@ -121,7 +121,7 @@ void luaV_gettable() {
 */
 void luaV_settable(TObject *t, int32 mode) {
 	struct Stack *S = &lua_state->stack;
-	TObject *im = (mode == 0) ? NULL : luaT_getimbyObj(t, IM_SETTABLE);
+	TObject *im = (mode == 0) ? nullptr : luaT_getimbyObj(t, IM_SETTABLE);
 	if (ttype(t) == LUA_T_ARRAY && (!im || ttype(im) == LUA_T_NIL)) {
 		TObject *h = luaH_set(avalue(t), t + 1);
 		*h = *(S->top - 1);

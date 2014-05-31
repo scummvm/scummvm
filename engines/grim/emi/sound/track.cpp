@@ -31,8 +31,8 @@
 namespace Grim {
 
 SoundTrack::SoundTrack() {
-	_stream = NULL;
-	_handle = NULL;
+	_stream = nullptr;
+	_handle = nullptr;
 	_paused = false;
 	_balance = 0;
 	_volume = Audio::Mixer::kMaxChannelVolume;

@@ -89,7 +89,7 @@ void next_script() {
 	if (type == LUA_T_TASK) {
 		uint32 task = (uint32)nvalue(Address(paramObj));
 		LState *state;
-		for (state = lua_rootState->next; state != NULL; state = state->next) {
+		for (state = lua_rootState->next; state != nullptr; state = state->next) {
 			if (state->id == task) {
 				if (state->next) {
 					ttype(lua_state->stack.top) = LUA_T_TASK;
@@ -120,7 +120,7 @@ void stop_script() {
 
 	if (type == LUA_T_TASK) {
 		uint32 task = (uint32)nvalue(Address(paramObj));
-		for (state = lua_rootState->next; state != NULL; state = state->next) {
+		for (state = lua_rootState->next; state != nullptr; state = state->next) {
 			if (state->id == task)
 				break;
 		}
@@ -131,7 +131,7 @@ void stop_script() {
 			}
 		}
 	} else if (type == LUA_T_PROTO || type == LUA_T_CPROTO) {
-		for (state = lua_rootState->next; state != NULL;) {
+		for (state = lua_rootState->next; state != nullptr;) {
 			bool match;
 			if (type == LUA_T_PROTO) {
 				match = (state->taskFunc.ttype == type && tfvalue(&state->taskFunc) == tfvalue(Address(paramObj)));
@@ -159,7 +159,7 @@ void identify_script() {
 
 	uint32 task = (uint32)nvalue(Address(paramObj));
 	LState *state;
-	for (state = lua_rootState->next; state != NULL; state = state->next) {
+	for (state = lua_rootState->next; state != nullptr; state = state->next) {
 		if (state->id == task) {
 			luaA_pushobject(&state->taskFunc);
 			return;
@@ -188,7 +188,7 @@ void find_script() {
 	if (type == LUA_T_TASK) {
 		uint32 task = (uint32)nvalue(Address(paramObj));
 		LState *state;
-		for (state = lua_rootState->next; state != NULL; state = state->next) {
+		for (state = lua_rootState->next; state != nullptr; state = state->next) {
 			if (state->id == task) {
 				lua_pushobject(paramObj);
 				lua_pushnumber(1.0f);
@@ -199,7 +199,7 @@ void find_script() {
 		int task = -1, countTasks = 0;
 		bool match;
 		LState *state;
-		for (state = lua_rootState->next; state != NULL; state = state->next) {
+		for (state = lua_rootState->next; state != nullptr; state = state->next) {
 			if (type == LUA_T_PROTO) {
 				match = (state->taskFunc.ttype == type && tfvalue(&state->taskFunc) == tfvalue(Address(paramObj)));
 			} else {
@@ -234,7 +234,7 @@ void pause_script() {
 
 	uint32 task = (uint32)nvalue(Address(taskObj));
 	LState *state;
-	for (state = lua_rootState->next; state != NULL; state = state->next) {
+	for (state = lua_rootState->next; state != nullptr; state = state->next) {
 		if (state->id == task) {
 			state->paused = true;
 			return;
@@ -251,7 +251,7 @@ void pause_scripts() {
 		p = true;
 
 
-	for (t = lua_rootState->next; t != NULL; t = t->next) {
+	for (t = lua_rootState->next; t != nullptr; t = t->next) {
 		if (lua_state != t) {
 			if (p) {
 				t->all_paused++;
@@ -273,7 +273,7 @@ void unpause_script() {
 
 	uint32 task = (uint32)nvalue(Address(taskObj));
 	LState *state;
-	for (state = lua_rootState->next; state != NULL; state = state->next) {
+	for (state = lua_rootState->next; state != nullptr; state = state->next) {
 		if (state->id == task) {
 			state->paused = false;
 			return;
@@ -289,7 +289,7 @@ void unpause_scripts() {
 	if (!lua_isnil(boolObj))
 		p = true;
 
-	for (t = lua_rootState->next; t != NULL; t = t->next) {
+	for (t = lua_rootState->next; t != nullptr; t = t->next) {
 		if (lua_state != t) {
 			if (p) {
 				if (t->all_paused > 0)
@@ -341,20 +341,20 @@ void lua_runtasks() {
 void runtasks(LState *const rootState) {
 	lua_state = lua_state->next;
 	while (lua_state) {
-		LState *nextState = NULL;
+		LState *nextState = nullptr;
 		bool stillRunning;
 		if (!lua_state->all_paused && !lua_state->updated && !lua_state->paused) {
 			jmp_buf	errorJmp;
 			lua_state->errorJmp = &errorJmp;
 			if (setjmp(errorJmp)) {
 				lua_Task *t, *m;
-				for (t = lua_state->task; t != NULL;) {
+				for (t = lua_state->task; t != nullptr;) {
 					m = t->next;
 					luaM_free(t);
 					t = m;
 				}
 				stillRunning = false;
-				lua_state->task = NULL;
+				lua_state->task = nullptr;
 			} else {
 				if (lua_state->task) {
 					stillRunning = luaD_call(lua_state->task->some_base, lua_state->task->some_results);

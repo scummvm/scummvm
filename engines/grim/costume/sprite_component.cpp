@@ -33,7 +33,7 @@
 namespace Grim {
 
 SpriteComponent::SpriteComponent(Component *p, int parentID, const char *filename, tag32 t) :
-		Component(p, parentID, filename, t), _sprite(NULL) {
+		Component(p, parentID, filename, t), _sprite(nullptr) {
 
 }
 
@@ -66,7 +66,7 @@ void SpriteComponent::init() {
 			mc->getNode()->removeSprite(_sprite);
 		}
 		delete _sprite;
-		_sprite = NULL;
+		_sprite = nullptr;
 	}
 
 	if (comma) {

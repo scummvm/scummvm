@@ -46,8 +46,8 @@ MoviePlayer::MoviePlayer() {
 	_frame = -1;
 	_x = 0;
 	_y = 0;
-	_videoDecoder = NULL;
-	_internalSurface = NULL;
+	_videoDecoder = nullptr;
+	_internalSurface = nullptr;
 	_externalSurface = new Graphics::Surface();
 	_timerStarted = false;
 }
@@ -141,7 +141,7 @@ void MoviePlayer::deinit() {
 	if (_videoDecoder)
 		_videoDecoder->close();
 
-	_internalSurface = NULL;
+	_internalSurface = nullptr;
 
 	if (_externalSurface)
 		_externalSurface->free();
@@ -165,7 +165,7 @@ bool MoviePlayer::play(const Common::String &filename, bool looping, int x, int 
 	Debug::debug(Debug::Movie, "Playing video '%s'.\n", filename.c_str());
 
 	init();
-	_internalSurface = NULL;
+	_internalSurface = nullptr;
 
 	if (start) {
 		_videoDecoder->start();
@@ -246,16 +246,16 @@ public:
 	~NullPlayer() {}
 	bool play(const Common::String &filename, bool looping, int x, int y, bool start = true, bool showSubtitles = false) override { return true; }
 	bool loadFile(const Common::String &filename) override { return true; }
-	void stop() {}
-	void pause(bool p) {}
+	void stop() override {}
+	void pause(bool p) override {}
 	void saveState(SaveGame *state) {}
 	void restoreState(SaveGame *state) {}
 private:
 	static void timerCallback(void *ptr) {}
-	void handleFrame() {}
-	bool prepareFrame() { return false; }
-	void init() {}
-	void deinit() {}
+	void handleFrame() override {}
+	bool prepareFrame() override { return false; }
+	void init() override {}
+	void deinit() override {}
 };
 #endif
 

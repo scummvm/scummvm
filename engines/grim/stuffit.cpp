@@ -33,7 +33,7 @@
 namespace Grim {
 
 StuffItArchive::StuffItArchive() : Common::Archive() {
-	_stream = 0;
+	_stream = nullptr;
 }
 
 StuffItArchive::~StuffItArchive() {
@@ -154,7 +154,7 @@ bool StuffItArchive::open(const Common::String &filename) {
 }
 
 void StuffItArchive::close() {
-	delete _stream; _stream = 0;
+	delete _stream; _stream = nullptr;
 	_map.clear();
 }
 
@@ -175,7 +175,7 @@ const Common::ArchiveMemberPtr StuffItArchive::getMember(const Common::String &n
 
 Common::SeekableReadStream *StuffItArchive::createReadStreamForMember(const Common::String &name) const {
 	if (!_stream || !_map.contains(name))
-		return 0;
+		return nullptr;
 
 	const FileEntry &entry = _map[name];
 
@@ -192,7 +192,7 @@ Common::SeekableReadStream *StuffItArchive::createReadStreamForMember(const Comm
 		error("Unhandled StuffIt compression %d", entry.compression);
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void StuffItArchive::update14(uint16 first, uint16 last, byte *code, uint16 *freq) const {

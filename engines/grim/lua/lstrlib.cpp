@@ -119,7 +119,7 @@ static int32 capture_to_close(Capture *cap) {
 
 
 static const char *bracket_end(const char *p) {
-	return (*p == 0) ? NULL : strchr((*p == '^') ? p + 2 : p + 1, ']');
+	return (*p == 0) ? nullptr : strchr((*p == '^') ? p + 2 : p + 1, ']');
 }
 
 static int32 matchclass(int32 c, int32 cl) {
@@ -199,7 +199,7 @@ int32 luaI_singlematch(int32 c, const char *p, const char **ep) {
 
 static const char *matchbalance(const char *s, int32 b, int32 e) {
 	if (*s != b)
-		return NULL;
+		return nullptr;
 	else {
 		int32 cont = 1;
 		while (*(++s)) {
@@ -210,7 +210,7 @@ static const char *matchbalance(const char *s, int32 b, int32 e) {
 				cont++;
 		}
 	}
-	return NULL;  // string ends out of balance
+	return nullptr;  // string ends out of balance
 }
 
 static const char *matchitem(const char *s, const char *p, Capture *cap, const char **ep) {
@@ -222,7 +222,7 @@ static const char *matchitem(const char *s, const char *p, Capture *cap, const c
 			if (strncmp(cap->capture[l].init, s, cap->capture[l].len) == 0)
 				return s + cap->capture[l].len;
 			else
-				return NULL;
+				return nullptr;
 		} else if (*p == 'b') {  // balanced string
 			p++;
 			if (*p == 0 || *(p + 1) == 0)
@@ -232,7 +232,7 @@ static const char *matchitem(const char *s, const char *p, Capture *cap, const c
 		} else
 			p--;  // and go through
 	}
-	return (luaI_singlematch((byte)*s, p, ep) ? s + 1 : NULL);
+	return (luaI_singlematch((byte)*s, p, ep) ? s + 1 : nullptr);
 }
 
 static const char *match(const char *s, const char *p, Capture *cap) {
@@ -301,7 +301,7 @@ init:
 						s = s1;
 						goto init;
 					} else
-						return NULL;
+						return nullptr;
 				}
 			default:
 				if (s1) {
@@ -309,7 +309,7 @@ init:
 					p = ep;
 					goto init;
 				} else
-					return NULL;
+					return nullptr;
 			}
 		}
 	}
@@ -368,7 +368,7 @@ static void add_s(lua_Object newp, Capture *cap) {
 		luaL_oldbuffer(oldbuff);
 		if (status) {
 			lua_endblock();
-			lua_error(NULL);
+			lua_error(nullptr);
 		}
 		res = lua_getresult(1);
 		addstr(lua_isstring(res) ? lua_getstring(res) : "");

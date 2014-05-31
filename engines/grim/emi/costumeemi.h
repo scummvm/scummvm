@@ -41,10 +41,10 @@ class EMICostume : public Costume {
 public:
 	EMICostume(const Common::String &filename, Costume *prevCost);
 
-	void load(Common::SeekableReadStream *data);
+	void load(Common::SeekableReadStream *data) override;
 
-	void draw();
-	int update(uint time);
+	void draw() override;
+	int update(uint time) override;
 
 	void playChore(int num, uint msecs = 0) override;
 	void playChoreLooping(int num, uint msecs = 0) override;

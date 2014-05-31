@@ -79,8 +79,8 @@ InputDialog::InputDialog(const Common::String &message, const Common::String &st
 		height += kLineHeight + 10;
 	}
 
-	new GUI::ButtonWidget(this, 10, height, buttonWidth, buttonHeight, "Ok", 0, GUI::kOKCmd, Common::ASCII_RETURN); // Confirm dialog
-	new GUI::ButtonWidget(this, _w - buttonWidth - 10, height, buttonWidth, buttonHeight, "Cancel", 0, GUI::kCloseCmd, Common::ASCII_ESCAPE);   // Cancel dialog
+	new GUI::ButtonWidget(this, 10, height, buttonWidth, buttonHeight, "Ok", nullptr, GUI::kOKCmd, Common::ASCII_RETURN); // Confirm dialog
+	new GUI::ButtonWidget(this, _w - buttonWidth - 10, height, buttonWidth, buttonHeight, "Cancel", nullptr, GUI::kCloseCmd, Common::ASCII_ESCAPE);   // Cancel dialog
 }
 
 const Common::String &InputDialog::getString() const {

@@ -161,7 +161,7 @@ void Blocky16::makeTablesInterpolation(int param) {
 	int32 b1, b2;
 	int32 value_table47_1_2, value_table47_1_1, value_table47_2_2, value_table47_2_1;
 	int32 tableSmallBig[64], tmp, s;
-	int8 *table47_1 = 0, *table47_2 = 0;
+	int8 *table47_1 = nullptr, *table47_2 = nullptr;
 	int32 *ptr_small_big;
 	byte *ptr;
 	int i, x, y;
@@ -643,15 +643,15 @@ Blocky16::Blocky16() {
 	_tableSmall = new byte[32768];
 	memset(_tableBig, 0, 99328);
 	memset(_tableSmall, 0, 32768);
-	_deltaBuf = NULL;
-	_deltaBufs[0] = NULL;
-	_deltaBufs[1] = NULL;
-	_curBuf = NULL;
+	_deltaBuf = nullptr;
+	_deltaBufs[0] = nullptr;
+	_deltaBufs[1] = nullptr;
+	_curBuf = nullptr;
 	_prevSeqNb = 0;
 	_lastTableWidth = 0;
-	_d_src = NULL;
-	_paramPtr = NULL;
-	_param6_7Ptr = NULL;
+	_d_src = nullptr;
+	_paramPtr = nullptr;
+	_param6_7Ptr = nullptr;
 	_blocksHeight = _blocksWidth = 0;
 	_height = _width = 0;
 	_offset = _offset1 = _offset2 = 0;
@@ -663,9 +663,9 @@ void Blocky16::deinit() {
 	_lastTableWidth = -1;
 	if (_deltaBuf) {
 		delete[] _deltaBuf;
-		_deltaBuf = NULL;
-		_deltaBufs[0] = NULL;
-		_deltaBufs[1] = NULL;
+		_deltaBuf = nullptr;
+		_deltaBufs[0] = nullptr;
+		_deltaBufs[1] = nullptr;
 	}
 }
 
@@ -673,11 +673,11 @@ Blocky16::~Blocky16() {
 	deinit();
 	if (_tableBig) {
 		delete[] _tableBig;
-		_tableBig = NULL;
+		_tableBig = nullptr;
 	}
 	if (_tableSmall) {
 		delete[] _tableSmall;
-		_tableSmall = NULL;
+		_tableSmall = nullptr;
 	}
 }
 
@@ -828,7 +828,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 	memcpy(dst, _curBuf, _frameSize);
 
 	if (seq_nb == _prevSeqNb + 1) {
-		byte *tmp_ptr = NULL;
+		byte *tmp_ptr = nullptr;
 		if (src[19] == 1) {
 			tmp_ptr = _curBuf;
 			_curBuf = _deltaBufs[1];

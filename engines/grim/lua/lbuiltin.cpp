@@ -168,7 +168,7 @@ static const char *to_string(lua_Object obj) {
 #ifdef LUA_DEBUG
 		LUA_INTERNALERROR("internal error");
 #endif
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -288,7 +288,7 @@ static void luaI_call() {
 		if (strchr(options, 'x'))
 			return;  // return nil to signal the error
 		else
-			lua_error(NULL);
+			lua_error(nullptr);
 	} else { // no errors
 		if (strchr(options, 'p'))
 			luaA_packresults();

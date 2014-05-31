@@ -116,7 +116,7 @@ const Common::ArchiveMemberPtr LangFilter::getMember(const Common::String &name)
 
 Common::SeekableReadStream *LangFilter::createReadStreamForMember(const Common::String &name) const {
 	if (!_arc)
-		return 0;
+		return nullptr;
 
 	//Search the right file
 	Common::String fullName;
@@ -132,7 +132,7 @@ Common::SeekableReadStream *LangFilter::createReadStreamForMember(const Common::
 		}
 
 	if (fullName.empty())
-		return 0;
+		return nullptr;
 
 	return _arc->createReadStreamForMember(fullName);
 }

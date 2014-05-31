@@ -65,7 +65,7 @@ lua_Object luaL_nonnullarg(int32 numArg) {
 	return o;
 }
 
-luaL_libList *list_of_libs = NULL;
+luaL_libList *list_of_libs = nullptr;
 
 void luaL_addlibtolist(luaL_reg *l, int32 n) {
 	luaL_libList *list = (luaL_libList *)luaM_malloc(sizeof(luaL_libList));
@@ -82,7 +82,7 @@ void lua_removelibslists() {
 		luaM_free(list);
 		list = nextList;
 	}
-	list_of_libs = NULL;
+	list_of_libs = nullptr;
 }
 
 void luaL_openlib(luaL_reg *l, int32 n) {

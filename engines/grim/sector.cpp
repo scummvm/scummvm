@@ -32,13 +32,13 @@
 namespace Grim {
 
 Sector::Sector() :
-		_vertices(NULL), _origVertices(NULL), _sortplanes(NULL),_invalid(false),
+		_vertices(nullptr), _origVertices(nullptr), _sortplanes(nullptr),_invalid(false),
 		_shrinkRadius(0.f), _numVertices(0), _id(0), _numSortplanes(0),
 		_type(NoneType), _visible(false), _height(0.f) {
  }
 
 Sector::Sector(const Sector &other) :
-		_vertices(NULL), _origVertices(NULL), _sortplanes(NULL) {
+		_vertices(nullptr), _origVertices(nullptr), _sortplanes(nullptr) {
 	*this = other;
 }
 
@@ -103,7 +103,7 @@ bool Sector::restoreState(SaveGame *savedState) {
 			_origVertices[i] = savedState->readVector3d();
 		}
 	} else {
-		_origVertices = NULL;
+		_origVertices = nullptr;
 	}
 	if (savedState->saveMinorVersion() > 8 && g_grim->getGameType() == GType_MONKEY4) {
 		_numSortplanes = savedState->readLEUint32();
@@ -281,7 +281,7 @@ void Sector::shrink(float radius) {
 			_invalid = true;
 			delete[] _vertices;
 			_vertices = _origVertices;
-			_origVertices = NULL;
+			_origVertices = nullptr;
 			break;
 		}
 	}
@@ -294,7 +294,7 @@ void Sector::unshrink() {
 		if (_origVertices) {
 			delete[] _vertices;
 			_vertices = _origVertices;
-			_origVertices = NULL;
+			_origVertices = nullptr;
 		}
 	}
 }
@@ -519,7 +519,7 @@ Sector &Sector::operator=(const Sector &other) {
 			_origVertices[i] = other._origVertices[i];
 		}
 	} else {
-		_origVertices = NULL;
+		_origVertices = nullptr;
 	}
 	_height = other._height;
 	_normal = other._normal;

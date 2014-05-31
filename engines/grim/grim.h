@@ -66,7 +66,7 @@ class GrimEngine : public Engine {
 
 protected:
 	// Engine APIs
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 public:
 	enum EngineMode {
@@ -92,8 +92,8 @@ public:
 	Common::Language getGameLanguage() { return _gameLanguage; }
 	Common::Platform getGamePlatform() { return _gamePlatform; }
 	virtual const char *getUpdateFilename();
-	bool canLoadGameStateCurrently() { return true; }
-	Common::Error loadGameState(int slot);
+	bool canLoadGameStateCurrently() override { return true; }
+	Common::Error loadGameState(int slot) override;
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
@@ -178,18 +178,18 @@ public:
 	void changeHardwareState();
 
 	// Engine APIs
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
 	Common::StringArray _listFiles;
 	Common::StringArray::const_iterator _listFilesIter;
 
 	TextObjectDefaults _sayLineDefaults, _printLineDefaults, _blastTextDefaults;
 
-	virtual void openMainMenuDialog();
+	virtual void openMainMenuDialog() override;
 	void debugLua(const Common::String &str);
 
 protected:
-	virtual void pauseEngineIntern(bool pause);
+	virtual void pauseEngineIntern(bool pause) override;
 
 	void handleControls(Common::EventType type, const Common::KeyState &key);
 	void handleChars(Common::EventType type, const Common::KeyState &key);

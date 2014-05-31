@@ -104,7 +104,7 @@ void LuaObjects::pushObjects() const {
 }
 
 
-LuaBase *LuaBase::s_instance = NULL;
+LuaBase *LuaBase::s_instance = nullptr;
 
 LuaBase::LuaBase() :
 		_translationMode(0), _frameTimeCollection(0) {
@@ -116,7 +116,7 @@ LuaBase::LuaBase() :
 }
 
 LuaBase::~LuaBase() {
-	s_instance = NULL;
+	s_instance = nullptr;
 
 	lua_removelibslists();
 	lua_close();
@@ -388,7 +388,7 @@ void LuaBase::dummyHandler() {
 }
 
 bool LuaBase::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
-	*costume = NULL;
+	*costume = nullptr;
 	if (lua_isnil(costumeObj))
 		return true;
 	if (lua_isnumber(costumeObj)) {
@@ -398,7 +398,7 @@ bool LuaBase::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume
 	}
 	if (lua_isstring(costumeObj)) {
 		*costume = actor->findCostume(lua_getstring(costumeObj));
-		return *costume != 0;
+		return *costume != nullptr;
 	}
 
 	return false;
@@ -406,7 +406,7 @@ bool LuaBase::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume
 
 Common::String LuaBase::parseMsgText(const char *msg, char *msgId) {
 	Common::String translation = g_localizer->localize(msg);
-	const char *secondSlash = NULL;
+	const char *secondSlash = nullptr;
 
 	if (msg[0] == '/' && msgId) {
 		secondSlash = strchr(msg + 1, '/');
@@ -506,7 +506,7 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 	if (keyObj) {
 		if (g_grim->getGameType() == GType_MONKEY4 && lua_isstring(keyObj)) {
 			const char *str = lua_getstring(keyObj);
-			Font *font = 0;
+			Font *font = nullptr;
 			foreach (Font *f, Font::getPool()) {
 				if (f->getFilename() == str) {
 					font = f;

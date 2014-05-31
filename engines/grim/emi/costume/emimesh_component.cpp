@@ -30,22 +30,22 @@
 namespace Grim {
 
 EMIMeshComponent::EMIMeshComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t, EMICostume *costume) :
-		Component(p, parentID, filename, t), _costume(costume), _obj(NULL), _parentModel(NULL), _hasComplained(false) {
+		Component(p, parentID, filename, t), _costume(costume), _obj(nullptr), _parentModel(nullptr), _hasComplained(false) {
 	_hierShared = false;
 }
 
 EMIMeshComponent::~EMIMeshComponent() {
 	if (_hierShared) {
-		_obj = NULL; // Keep ~ModelComp from deleting it
+		_obj = nullptr; // Keep ~ModelComp from deleting it
 		//_animation = NULL;
 	} else {
 		delete _obj;
 	}
 
 	foreach (EMIMeshComponent *child, _children) {
-		child->_obj = NULL;
+		child->_obj = nullptr;
 		//child->_hier = NULL;
-		child->_parentModel = NULL;
+		child->_parentModel = nullptr;
 	}
 
 	if (_parentModel) {

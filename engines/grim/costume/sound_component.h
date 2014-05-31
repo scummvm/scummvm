@@ -32,8 +32,8 @@ public:
 	SoundComponent(Component *parent, int parentID, const char *name, tag32 tag);
 	~SoundComponent();
 
-	void setKey(int val);
-	void reset();
+	void setKey(int val) override;
+	void reset() override;
 };
 
 } // end of namespace Grim

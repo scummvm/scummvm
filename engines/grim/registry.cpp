@@ -28,7 +28,7 @@
 
 namespace Grim {
 
-Registry *g_registry = NULL;
+Registry *g_registry = nullptr;
 
 // SpewOnError
 // GrimLastSet

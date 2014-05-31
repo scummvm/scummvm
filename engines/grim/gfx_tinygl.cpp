@@ -51,14 +51,14 @@ namespace Grim {
 class BlitImage {
 public:
 	BlitImage() {
-		_lines = NULL;
-		_last = NULL;
+		_lines = nullptr;
+		_last = nullptr;
 		_width = 0;
 		_height = 0;
 	}
 	~BlitImage() {
 		Line *temp = _lines;
-		while (temp != NULL) {
+		while (temp != nullptr) {
 			_lines = temp->next;
 			delete temp;
 			temp = _lines;
@@ -103,7 +103,7 @@ public:
 		line->y = y;
 		line->length = length;
 		line->pixels = pixels;
-		line->next = NULL;
+		line->next = nullptr;
 
 		if (_last) {
 			_last->next = line;
@@ -232,10 +232,10 @@ TGLint tgluProject(TGLfloat objx, TGLfloat objy, TGLfloat objz, const TGLfloat m
 }
 
 GfxTinyGL::GfxTinyGL() :
-		_smushWidth(0), _smushHeight(0), _zb(NULL), _alpha(1.f),
-		_bufferId(0), _currentActor(NULL) {
+		_smushWidth(0), _smushHeight(0), _zb(nullptr), _alpha(1.f),
+		_bufferId(0), _currentActor(nullptr) {
 	g_driver = this;
-	_storedDisplay = NULL;
+	_storedDisplay = nullptr;
 }
 
 GfxTinyGL::~GfxTinyGL() {
@@ -269,7 +269,7 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_storedDisplay.create(_pixelFormat, _gameWidth * _gameHeight, DisposeAfterUse::YES);
 	_storedDisplay.clear(_gameWidth * _gameHeight);
 
-	_currentShadowArray = NULL;
+	_currentShadowArray = nullptr;
 
 	TGLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
@@ -339,7 +339,7 @@ void GfxTinyGL::delBuffer(int id) {
 
 void GfxTinyGL::selectBuffer(int id) {
 	if (id == 0) {
-		ZB_selectOffscreenBuffer(_zb, NULL);
+		ZB_selectOffscreenBuffer(_zb, nullptr);
 	} else {
 		ZB_selectOffscreenBuffer(_zb, _buffers[id]);
 	}
@@ -668,7 +668,7 @@ void GfxTinyGL::finishActorDraw() {
 	}
 
 	if (_currentShadowArray) {
-		tglSetShadowMaskBuf(NULL);
+		tglSetShadowMaskBuf(nullptr);
 	}/* else {
 		uint16 *dst = (uint16 *)_zb->pbuf;
 		uint16 c = 0xffff;
@@ -687,7 +687,7 @@ void GfxTinyGL::finishActorDraw() {
 	}*/
 
 	tglColorMask(TGL_TRUE, TGL_TRUE, TGL_TRUE, TGL_TRUE);
-	_currentActor = NULL;
+	_currentActor = nullptr;
 }
 
 void GfxTinyGL::drawShadowPlanes() {
@@ -708,7 +708,7 @@ void GfxTinyGL::drawShadowPlanes() {
 		}
 		tglEnd();
 	}
-	tglSetShadowMaskBuf(NULL);
+	tglSetShadowMaskBuf(nullptr);
 	tglDisable(TGL_SHADOW_MASK_MODE);
 }
 
@@ -1113,7 +1113,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 		blit(bitmap->getPixelFormat(num), &b[num], (byte *)_zb->pbuf.getRawBuffer(), (byte *)bitmap->getData(num).getRawBuffer(),
 			 x, y, bitmap->getWidth(), bitmap->getHeight(), true);
 	else
-		blit(bitmap->getPixelFormat(num), NULL, (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
+		blit(bitmap->getPixelFormat(num), nullptr, (byte *)_zb->zbuf, (byte *)bitmap->getData(num).getRawBuffer(),
 			 x, y, bitmap->getWidth(), bitmap->getHeight(), false);
 }
 
@@ -1218,7 +1218,7 @@ void GfxTinyGL::drawTextObject(const TextObject *text) {
 	if (userData) {
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
-			blit(_pixelFormat, NULL, (byte *)_zb->pbuf.getRawBuffer(), userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
+			blit(_pixelFormat, nullptr, (byte *)_zb->pbuf.getRawBuffer(), userData[i].data, userData[i].x, userData[i].y, userData[i].width, userData[i].height, true);
 		}
 	}
 }
@@ -1240,7 +1240,7 @@ void GfxTinyGL::createMaterial(Texture *material, const char *data, const CMap *
 	char *texdata = new char[material->_width * material->_height * 4];
 	char *texdatapos = texdata;
 
-	if (cmap != NULL) { // EMI doesn't have colour-maps
+	if (cmap != nullptr) { // EMI doesn't have colour-maps
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
 				uint8 col = *(const uint8 *)(data);
@@ -1316,7 +1316,7 @@ void GfxTinyGL::drawMovieFrame(int offsetX, int offsetY) {
 	if (_smushWidth == _gameWidth && _smushHeight == _gameHeight) {
 		_zb->pbuf.copyBuffer(0, _gameWidth * _gameHeight, _smushBitmap);
 	} else {
-		blit(_pixelFormat, NULL, (byte *)_zb->pbuf.getRawBuffer(), _smushBitmap.getRawBuffer(), offsetX, offsetY, _smushWidth, _smushHeight, false);
+		blit(_pixelFormat, nullptr, (byte *)_zb->pbuf.getRawBuffer(), _smushBitmap.getRawBuffer(), offsetX, offsetY, _smushWidth, _smushHeight, false);
 	}
 }
 

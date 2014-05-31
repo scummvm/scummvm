@@ -172,7 +172,7 @@ void Lua_V2::StartMovie() {
 
 	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::SmushMode);
-	g_grim->setMovieSubtitle(NULL);
+	g_grim->setMovieSubtitle(nullptr);
 	bool result = g_movie->play(lua_getstring(name), false, 0, 0, true, showSubtitles);
 	if (!result)
 		g_grim->setMode(prevEngineMode);
@@ -218,7 +218,7 @@ void Lua_V2::GetFontDimensions() {
 
 	const char *fontName = lua_getstring(fontObj);
 
-	Font *font = NULL;
+	Font *font = nullptr;
 	foreach (Font *f, Font::getPool()) {
 		if (f->getFilename() == fontName) {
 			font = f;
@@ -437,7 +437,7 @@ void Lua_V2::NewLayer() {
 	lua_Object param2 = lua_getparam(2);
 	lua_Object param3 = lua_getparam(3);
 
-	const char *til = NULL;
+	const char *til = nullptr;
 	int sortorder = 0; // zero = 0;
 	if (lua_isstring(param1) && lua_isnumber(param2) && lua_isnumber(param3)) {
 		til = lua_getstring(param1);

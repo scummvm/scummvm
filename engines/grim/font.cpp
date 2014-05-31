@@ -32,8 +32,8 @@
 namespace Grim {
 
 Font::Font() :
-		_userData(NULL),
-		_fontData(NULL), _charHeaders(NULL), _charIndex(NULL),
+		_userData(nullptr),
+		_fontData(nullptr), _charHeaders(nullptr), _charIndex(nullptr),
 		_numChars(0), _dataSize(0), _height(0), _baseOffsetY(0),
 		_firstChar(0), _lastChar(0) {
 
@@ -135,11 +135,11 @@ void Font::restoreState(SaveGame *state) {
 
 	g_driver->destroyFont(this);
 	delete[] _fontData;
-	_fontData = NULL;
+	_fontData = nullptr;
 	delete[] _charIndex;
-	_charIndex = NULL;
+	_charIndex = nullptr;
 	delete[] _charHeaders;
-	_charHeaders = NULL;
+	_charHeaders = nullptr;
 
 	stream = g_resourceloader->openNewStreamFile(fname.c_str(), true);
 	load(fname, stream);

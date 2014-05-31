@@ -163,7 +163,7 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 				char *allowed = parseCharacterClass(code, &isNegated);
 
 				while (src != end) {
-					bool inSet = strchr(allowed, src[0]) != NULL;
+					bool inSet = strchr(allowed, src[0]) != nullptr;
 					if ((isNegated && inSet) || (!isNegated && !inSet))
 						break;
 
@@ -193,7 +193,7 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 			if (strcmp(code, "d") == 0) {
 				*(int*)var = atoi(s);
 			} else if (strcmp(code, "x") == 0) {
-				*(int*)var = strtol(s, (char **) NULL, 16);
+				*(int*)var = strtol(s, (char **) nullptr, 16);
 			} else if (strcmp(code, "f") == 0) {
 				*(float*)var = str2float(s);
 			} else if (strcmp(code, "c") == 0) {
@@ -272,7 +272,7 @@ TextSplitter::TextSplitter(const Common::String &fname, Common::SeekableReadStre
 		_lines[i] = lastLine;
 		line++;
 	}
-	_currLine = NULL;
+	_currLine = nullptr;
 	processLine();
 }
 

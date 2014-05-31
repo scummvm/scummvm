@@ -107,7 +107,7 @@ void Lua_V1::PrintWarning() {
 void Lua_V1::FunctionName() {
 	const char *name;
 	char buf[256];
-	const char *filename = 0;
+	const char *filename = nullptr;
 	int32 line;
 	lua_Object param1 = lua_getparam(1);
 
@@ -133,7 +133,7 @@ void Lua_V1::FunctionName() {
 				sprintf(buf, "%.100s", filename);
 			else {
 				sprintf(buf, "function (%.100s:%d)", filename, (int)line);
-				filename = NULL;
+				filename = nullptr;
 			}
 		}
 	}
@@ -385,7 +385,7 @@ void Lua_V1::RotateVector() {
 
 void Lua_V1::FileFindDispose() {
 	g_grim->_listFiles.clear();
-	g_grim->_listFilesIter = NULL;
+	g_grim->_listFilesIter = nullptr;
 }
 
 void Lua_V1::FileFindNext() {

@@ -353,7 +353,7 @@ void Lua_V1::NewObjectState() {
 	int val = (int)lua_getnumber(lua_getparam(2));
 	ObjectState::Position pos = (ObjectState::Position)val;
 	const char *bitmap = lua_getstring(lua_getparam(3));
-	const char *zbitmap = NULL;
+	const char *zbitmap = nullptr;
 	if (!lua_isnil(lua_getparam(4)))
 		zbitmap = lua_getstring(lua_getparam(4));
 	bool transparency = getbool(5);

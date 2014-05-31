@@ -50,14 +50,14 @@ bool SmushDecoder::_demo = false;
 static uint16 smushDestTable[5786];
 
 SmushDecoder::SmushDecoder() {
-	_file = 0;
+	_file = nullptr;
 
 	_videoLooping = false;
 	_startPos = 0;
-	_frames = NULL;
+	_frames = nullptr;
 
-	_videoTrack = NULL;
-	_audioTrack = NULL;
+	_videoTrack = nullptr;
+	_audioTrack = nullptr;
 	_videoPause = false;
 }
 
@@ -118,15 +118,15 @@ void SmushDecoder::initFrames() {
 
 void SmushDecoder::close() {
 	VideoDecoder::close();
-	_audioTrack = NULL;
-	_videoTrack = NULL;
+	_audioTrack = nullptr;
+	_videoTrack = nullptr;
 	_videoLooping = false;
 	_startPos = 0;
 	delete[] _frames;
-	_frames = NULL;
+	_frames = nullptr;
 	if (_file) {
 		delete _file;
-		_file = NULL;
+		_file = nullptr;
 	}
 }
 
@@ -450,9 +450,9 @@ SmushDecoder::SmushVideoTrack::SmushVideoTrack(int width, int height, int fps, i
 	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	if (!is16Bit) { // Demo
 		_blocky8 = new Blocky8();
-		_blocky16 = 0;
+		_blocky16 = nullptr;
 	} else {
-		_blocky8 = 0;
+		_blocky8 = nullptr;
 		_blocky16 = new Blocky16();
 		_blocky16->init(width, height);
 	}

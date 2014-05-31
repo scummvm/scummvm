@@ -41,7 +41,7 @@ SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 	Common::InSaveFile *inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
 	if (!inSaveFile) {
 		warning("SaveGame::openForLoading() Error opening savegame file %s", filename.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	SaveGame *save = new SaveGame();
@@ -52,7 +52,7 @@ SaveGame *SaveGame::openForLoading(const Common::String &filename) {
 	uint32 tag = inSaveFile->readUint32BE();
 	if (tag != SAVEGAME_HEADERTAG) {
 		delete save;
-		return NULL;
+		return nullptr;
 	}
 	save->_majorVersion = inSaveFile->readUint32BE();
 	save->_minorVersion = inSaveFile->readUint32BE();
@@ -64,7 +64,7 @@ SaveGame *SaveGame::openForSaving(const Common::String &filename) {
 	Common::OutSaveFile *outSaveFile =  g_system->getSavefileManager()->openForSaving(filename);
 	if (!outSaveFile) {
 		warning("SaveGame::openForSaving() Error creating savegame file %s", filename.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	SaveGame *save = new SaveGame();

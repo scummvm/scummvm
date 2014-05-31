@@ -159,7 +159,7 @@ const Common::ArchiveMemberPtr Lab::getMember(const Common::String &name) const 
 
 Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String &filename) const {
 	if (!hasFile(filename))
-		return 0;
+		return nullptr;
 
 	Common::String fname(filename);
 	fname.toLowercase();

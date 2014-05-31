@@ -1393,7 +1393,7 @@ void Lua_V1::SetActorConstrain() {
 
 void Lua_V1::GetVisibleThings() {
 	lua_Object actorObj = lua_getparam(1);
-	Actor *actor = NULL;
+	Actor *actor = nullptr;
 	if (lua_isnil(actorObj)) {
 		actor = g_grim->getSelectedActor();
 		if (!actor)

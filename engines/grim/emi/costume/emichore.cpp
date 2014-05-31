@@ -26,7 +26,7 @@
 namespace Grim {
 
 EMIChore::EMIChore(char name[32], int id, Costume *owner, int length, int numTracks) :
-		Chore(name, id, owner, length, numTracks), _mesh(NULL), _skeleton(NULL),
+		Chore(name, id, owner, length, numTracks), _mesh(nullptr), _skeleton(nullptr),
 		_fadeMode(Animation::None), _fade(1.f), _fadeLength(0), _startFade(1.0f) {
 }
 

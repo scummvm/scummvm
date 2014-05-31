@@ -30,10 +30,10 @@ namespace Grim {
 class Lua_V2 : public Lua_V1 {
 public:
 	typedef Lua_V2 LuaClass;
-	void registerOpcodes();
+	void registerOpcodes() override;
 
 protected:
-	virtual bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume);
+	virtual bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) override;
 	void setChoreAndCostume(lua_Object choreObj, lua_Object costumeObj, Actor *actor, Costume *&costume, int &chore);
 
 	DECLARE_LUA_OPCODE(UndimAll);

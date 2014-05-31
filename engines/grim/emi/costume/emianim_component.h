@@ -35,14 +35,14 @@ class EMIAnimComponent : public Component {
 public:
 	EMIAnimComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~EMIAnimComponent();
-	void init();
-	void setKey(int);
-	int update(uint time);
-	void reset();
-	void fade(Animation::FadeMode mode, int fadeLength);
-	void advance(uint msecs);
-	void setPaused(bool paused);
-	void draw();
+	void init() override;
+	void setKey(int) override;
+	int update(uint time) override;
+	void reset() override ;
+	void fade(Animation::FadeMode mode, int fadeLength) override ;
+	void advance(uint msecs) override ;
+	void setPaused(bool paused) override;
+	void draw() override;
 
 private:
 	AnimationStateEmi *_animState;

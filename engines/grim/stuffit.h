@@ -49,10 +49,10 @@ public:
 	bool isOpen() const { return _stream != 0; }
 
 	// Common::Archive API implementation
-	bool hasFile(const Common::String &name) const;
-	int listMembers(Common::ArchiveMemberList &list) const;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 private:
 	struct FileEntry {

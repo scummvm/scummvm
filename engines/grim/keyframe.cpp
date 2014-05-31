@@ -87,7 +87,7 @@ void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
 	// not always the case so we should not skip this operation
 	data->seek(136, SEEK_SET);
 	for (int i = 0; i < _numJoints; i++) {
-		_nodes[i] = NULL;
+		_nodes[i] = nullptr;
 		int nodeNum;
 		// The first 32 bytes (of a keyframe) are the name handle
 		char nameHandle[32];
@@ -135,7 +135,7 @@ void KeyframeAnim::loadText(TextSplitter &ts) {
 			ts.scanString("%f %d", 2, &_markers[i].frame, &_markers[i].val);
 	} else {
 		_numMarkers = 0;
-		_markers = NULL;
+		_markers = nullptr;
 	}
 
 	ts.expectString("section: keyframe nodes");
@@ -143,7 +143,7 @@ void KeyframeAnim::loadText(TextSplitter &ts) {
 	ts.scanString("nodes %d", 1, &numNodes);
 	_nodes = new KeyframeNode *[_numJoints];
 	for (int i = 0; i < _numJoints; i++)
-		_nodes[i] = NULL;
+		_nodes[i] = nullptr;
 	for (int i = 0; i < numNodes; i++) {
 		int which;
 		ts.scanString("node %d", 1, &which);

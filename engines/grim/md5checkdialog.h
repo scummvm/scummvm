@@ -34,8 +34,8 @@ public:
 	MD5CheckDialog();
 
 protected:
-	virtual void handleTickle();
-	virtual void drawDialog();
+	virtual void handleTickle() override;
+	virtual void drawDialog() override;
 
 private:
 	void check();

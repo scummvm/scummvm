@@ -27,14 +27,14 @@
 
 namespace Grim {
 
-SoundPlayer *g_sound = NULL;
+SoundPlayer *g_sound = nullptr;
 
 SoundPlayer::SoundPlayer() {
 	// TODO: Replace this with g_emiSound when we get a full working sound-system for more than voices.
 	if (g_grim->getGameType() == GType_MONKEY4)
 		_emiSound = new EMISound();
 	else
-		_emiSound = NULL;
+		_emiSound = nullptr;
 }
 
 SoundPlayer::~SoundPlayer() {

@@ -33,7 +33,7 @@ namespace Grim {
 
 TextObjectCommon::TextObjectCommon() :
 		_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
-		_font(NULL), _duration(0), _positioned(false),
+		_font(nullptr), _duration(0), _positioned(false),
 		_posX(0), _posY(0), _layer(0) {
 	if (g_grim)
 		g_grim->invalidateTextObjectsSortOrder();
@@ -47,7 +47,7 @@ void TextObjectCommon::setLayer(int layer) {
 
 TextObject::TextObject() :
 		TextObjectCommon(), _numberLines(1), _textID(""), _elapsedTime(0),
-		_maxLineWidth(0), _lines(NULL), _userData(NULL), _created(false),
+		_maxLineWidth(0), _lines(nullptr), _userData(nullptr), _created(false),
 		_blastDraw(false), _isSpeech(false), _stackLevel(0) {
 }
 
@@ -123,7 +123,7 @@ bool TextObject::restoreState(SaveGame *state) {
 
 	setupText();
 	_created = false;
-	_userData = NULL;
+	_userData = nullptr;
 
 	return true;
 }
@@ -146,7 +146,7 @@ int TextObject::getBitmapHeight() const {
 
 int TextObject::getTextCharPosition(int pos) {
 	int width = 0;
-	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), NULL);
+	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), nullptr);
 	for (int i = 0; (msg[i] != '\0') && (i < pos); ++i) {
 		width += _font->getCharWidth(msg[i]);
 	}
@@ -186,7 +186,7 @@ void TextObject::reposition() {
 }
 
 void TextObject::setupText() {
-	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), NULL);
+	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), nullptr);
 	Common::String message;
 
 	// remove spaces (NULL_TEXT) from the end of the string,
@@ -200,7 +200,7 @@ void TextObject::setupText() {
 	}
 	delete[] _lines;
 	if (msg.size() == 0) {
-		_lines = NULL;
+		_lines = nullptr;
 		return;
 	}
 

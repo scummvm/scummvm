@@ -53,7 +53,7 @@ bool BinkPlayer::bikCheck(Common::SeekableReadStream *stream, uint32 pos) {
 }
 
 void BinkPlayer::deinit() {
-	g_grim->setMovieSubtitle(NULL);
+	g_grim->setMovieSubtitle(nullptr);
 	MoviePlayer::deinit();
 }
 
@@ -86,7 +86,7 @@ void BinkPlayer::handleFrame() {
 		}
 	} else if (endFrame < curFrame) {
 		if (_subtitleIndex->active) {
-			g_grim->setMovieSubtitle(NULL);
+			g_grim->setMovieSubtitle(nullptr);
 			_subtitleIndex->active = false;
 			_subtitleIndex++;
 		}
@@ -180,7 +180,7 @@ bool BinkPlayer::loadFile(const Common::String &filename) {
 		return false;
 	}
 
-	Common::SeekableReadStream *bink = 0;
+	Common::SeekableReadStream *bink = nullptr;
 	bink = new Common::SeekableSubReadStream(stream, startBinkPos, stream->size(), DisposeAfterUse::YES);
 	return _videoDecoder->loadStream(bink);
 }

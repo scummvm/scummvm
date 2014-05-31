@@ -30,7 +30,7 @@
 
 namespace Grim {
 
-EMISkelComponent::EMISkelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(NULL), _parentModel(NULL), _hierShared(false) {
+EMISkelComponent::EMISkelComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(nullptr), _parentModel(nullptr), _hierShared(false) {
 }
 
 EMISkelComponent::~EMISkelComponent() {

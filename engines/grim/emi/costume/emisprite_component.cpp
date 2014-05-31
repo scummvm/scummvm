@@ -28,7 +28,7 @@
 
 namespace Grim {
 
-EMISpriteComponent::EMISpriteComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _sprite(NULL) {
+EMISpriteComponent::EMISpriteComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _sprite(nullptr) {
 }
 
 EMISpriteComponent::~EMISpriteComponent() {

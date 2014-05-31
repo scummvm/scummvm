@@ -48,7 +48,7 @@
 namespace Grim {
 
 Shadow::Shadow() :
-		shadowMask(NULL), shadowMaskSize(0), active(false), dontNegate(false), userData(NULL) {
+		shadowMask(nullptr), shadowMaskSize(0), active(false), dontNegate(false), userData(nullptr) {
 }
 
 static int animTurn(float turnAmt, const Math::Angle &dest, Math::Angle *cur) {
@@ -87,7 +87,7 @@ Actor::Actor() :
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f),
 		_turnRateMultiplier(0.f), _talkAnim(0),
 		_reflectionAngle(80), _scale(1.f), _timeScale(1.f),
-		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
+		_visible(true), _lipSync(nullptr), _turning(false), _walking(false),
 		_walkedLast(false), _walkedCur(false),
 		_collisionMode(CollisionOff), _collisionScale(1.f),
 		_lastTurnDir(0), _currTurnDir(0),
@@ -302,14 +302,14 @@ bool Actor::restoreState(SaveGame *savedState) {
 		Common::String fn = savedState->readString();
 		_lipSync = g_resourceloader->getLipSync(fn);
 	} else {
-		_lipSync = NULL;
+		_lipSync = nullptr;
 	}
 
 	uint32 size = savedState->readLEUint32();
 	for (uint32 i = 0; i < size; ++i) {
 		Common::String fname = savedState->readString();
 		const int depth = savedState->readLESint32();
-		Costume *pc = NULL;
+		Costume *pc = nullptr;
 		if (depth > 0) {    //build all the previousCostume hierarchy
 			Common::String *names = new Common::String[depth];
 			for (int j = 0; j < depth; ++j) {
@@ -368,7 +368,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 		shadow.pos = savedState->readVector3d();
 
 		size = savedState->readLEUint32();
-		Set *scene = NULL;
+		Set *scene = nullptr;
 		for (uint32 j = 0; j < size; ++j) {
 			Common::String actorSetName = savedState->readString();
 			Common::String secName = savedState->readString();
@@ -388,7 +388,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 			shadow.shadowMask = new byte[shadow.shadowMaskSize];
 			savedState->read(shadow.shadowMask, shadow.shadowMaskSize);
 		} else {
-			shadow.shadowMask = NULL;
+			shadow.shadowMask = nullptr;
 		}
 		shadow.active = savedState->readBool();
 		shadow.dontNegate = savedState->readBool();
@@ -461,7 +461,7 @@ void Actor::setPos(const Math::Vector3d &position) {
 	// This is necessary after solving the tree pump puzzle, when the bone
 	// wagon returns to the signopost set.
 	if (_followBoxes) {
-		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
+		g_grim->getCurrSet()->findClosestSector(_pos, nullptr, &_pos);
 	}
 }
 
@@ -481,8 +481,8 @@ void Actor::calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, 
 
 	Math::Vector3d up = actorUp;
 	if (_puckOrient) {
-		Sector *s = NULL;
-		g_grim->getCurrSet()->findClosestSector(_pos, &s, NULL);
+		Sector *s = nullptr;
+		g_grim->getCurrSet()->findClosestSector(_pos, &s, nullptr);
 		if (s) {
 			up = s->getNormal();
 		}
@@ -544,18 +544,18 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			bool pathFound = false;
 
 			Set *currSet = g_grim->getCurrSet();
-			currSet->findClosestSector(p, NULL, &_destPos);
+			currSet->findClosestSector(p, nullptr, &_destPos);
 
 			Common::List<PathNode *> openList;
 			Common::List<PathNode *> closedList;
 
 			PathNode *start = new PathNode;
-			start->parent = NULL;
+			start->parent = nullptr;
 			start->pos = _pos;
 			start->dist = 0.f;
 			start->cost = 0.f;
 			openList.push_back(start);
-			currSet->findClosestSector(_pos, &start->sect, NULL);
+			currSet->findClosestSector(_pos, &start->sect, nullptr);
 
 			Common::List<Sector *> sectors;
 			for (int i = 0; i < currSet->getSectorCount(); ++i) {
@@ -566,11 +566,11 @@ void Actor::walkTo(const Math::Vector3d &p) {
 				}
 			}
 
-			Sector *endSec = NULL;
-			currSet->findClosestSector(_destPos, &endSec, NULL);
+			Sector *endSec = nullptr;
+			currSet->findClosestSector(_destPos, &endSec, nullptr);
 
 			do {
-				PathNode *node = NULL;
+				PathNode *node = nullptr;
 				float cost = -1.f;
 				for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
 					PathNode *n = *j;
@@ -635,7 +635,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 					}
 					best = handleCollisionTo(node->pos, best);
 
-					PathNode *n = NULL;
+					PathNode *n = nullptr;
 					for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
 						if ((*j)->sect == s) {
 							n = *j;
@@ -751,7 +751,7 @@ void Actor::walkForward() {
 
 	int tries = 0;
 	while (dist > 0.0f) {
-		Sector *currSector = NULL, *prevSector = NULL, *startSector = NULL;
+		Sector *currSector = nullptr, *prevSector = nullptr, *startSector = nullptr;
 		Sector::ExitInfo ei;
 
 		g_grim->getCurrSet()->findClosestSector(_pos, &currSector, &_pos);
@@ -1237,7 +1237,7 @@ void Actor::shutUp() {
 	if (_lipSync) {
 		if (_talkAnim != -1)
 			_talkChore[_talkAnim].stop(g_grim->getGameType() == GType_MONKEY4, ActionChore::talkFadeTime);
-		_lipSync = NULL;
+		_lipSync = nullptr;
 	}
 	// having a lipsync is no guarantee the mumble chore is no running. the talk chores may be -1 (domino in do)
 	stopMumbleChore();
@@ -1268,7 +1268,7 @@ void Actor::pushCostume(const char *n) {
 
 	Costume *newCost = g_resourceloader->loadCostume(n, getCurrentCostume());
 
-	newCost->setColormap(NULL);
+	newCost->setColormap(nullptr);
 	if (Common::String("fx/dumbshadow.cos").equals(n))
 		_costumeStack.push_front(newCost);
 	else
@@ -1341,7 +1341,7 @@ Costume *Actor::findCostume(const Common::String &n) {
 			return *i;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void Actor::updateWalk() {
@@ -1381,7 +1381,7 @@ void Actor::update(uint frameTime) {
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
 	if (_followBoxes && !_walking) {
-		set->findClosestSector(_pos, NULL, &_pos);
+		set->findClosestSector(_pos, nullptr, &_pos);
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
@@ -1558,7 +1558,7 @@ bool Actor::updateTalk(uint frameTime) {
 	if (_talking) {
 		// If there's no sound file then we're obviously not talking
 		GrimEngine::SpeechMode m = g_grim->getSpeechMode();
-		TextObject *textObject = NULL;
+		TextObject *textObject = nullptr;
 		if (_sayLineText)
 			textObject = TextObject::getPool().getObject(_sayLineText);
 		if (m == GrimEngine::TextOnly && !textObject) {
@@ -1590,7 +1590,7 @@ void Actor::draw() {
 				continue;
 			g_driver->setShadow(&_shadowArray[l]);
 			g_driver->drawShadowPlanes();
-			g_driver->setShadow(NULL);
+			g_driver->setShadow(nullptr);
 		}
 	}
 
@@ -1648,7 +1648,7 @@ void Actor::drawCostume(Costume *costume) {
 		costume->draw();
 		g_driver->finishActorDraw();
 		g_driver->clearShadowMode();
-		g_driver->setShadow(NULL);
+		g_driver->setShadow(nullptr);
 	}
 
 	bool isShadowCostume = costume->getFilename().equals("fx/dumbshadow.cos");
@@ -1747,7 +1747,7 @@ void Actor::clearShadowPlanes() {
 		}
 		delete[] shadow->shadowMask;
 		shadow->shadowMaskSize = 0;
-		shadow->shadowMask = NULL;
+		shadow->shadowMask = nullptr;
 		shadow->active = false;
 		shadow->dontNegate = false;
 	}
@@ -2194,7 +2194,7 @@ int Actor::getEffectiveSortOrder() const {
 }
 
 void Actor::attachToActor(Actor *other, const char *joint) {
-	assert(other != NULL);
+	assert(other != nullptr);
 	if (other->getId() == _attachedActor)
 		return;
 	if (_attachedActor != 0)
@@ -2281,7 +2281,7 @@ unsigned const int Actor::ActionChore::fadeTime = 150;
 unsigned const int Actor::ActionChore::talkFadeTime = 50;
 
 Actor::ActionChore::ActionChore() :
-	_costume(NULL),
+	_costume(nullptr),
 	_chore(-1) {
 
 }
@@ -2347,7 +2347,7 @@ void Actor::ActionChore::restoreState(SaveGame *savedState, Actor *actor) {
 		Common::String fname = savedState->readString();
 		_costume = actor->findCostume(fname);
 	} else {
-		_costume = NULL;
+		_costume = nullptr;
 	}
 	_chore = savedState->readLESint32();
 }

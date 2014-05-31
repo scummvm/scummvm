@@ -34,13 +34,13 @@ class KeyframeComponent : public Component {
 public:
 	KeyframeComponent(Component *parent, int parentID, const char *filename, tag32 tag);
 	~KeyframeComponent();
-	void init();
+	void init() override;
 	void fade(Animation::FadeMode, int fadeLength);
-	void setKey(int val);
-	int update(uint time);
-	void reset();
-	void saveState(SaveGame *state);
-	void restoreState(SaveGame *state);
+	void setKey(int val) override;
+	int update(uint time) override;
+	void reset() override;
+	void saveState(SaveGame *state) override;
+	void restoreState(SaveGame *state) override;
 
 private:
 	Animation *_anim;

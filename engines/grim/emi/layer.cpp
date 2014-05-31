@@ -28,7 +28,7 @@
 
 namespace Grim {
 
-Layer::Layer() : _filename(""), _sortOrder(0), _frame(0), _bitmap(NULL) {
+Layer::Layer() : _filename(""), _sortOrder(0), _frame(0), _bitmap(nullptr) {
 }
 
 Layer::Layer(const Common::String &filename, int sortOrder) : _filename(filename), _sortOrder(sortOrder), _frame(0) {

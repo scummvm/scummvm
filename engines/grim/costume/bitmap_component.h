@@ -30,7 +30,7 @@ namespace Grim {
 class BitmapComponent : public Component {
 public:
 	BitmapComponent(Component *parent, int parentID, const char *filename, tag32 tag);
-	void setKey(int val);
+	void setKey(int val) override;
 };
 
 } // end of namespace Grim

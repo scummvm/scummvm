@@ -270,13 +270,13 @@ void Lua_V1::SetSayLineDefaults() {
 void Lua_V1::SayLine() {
 	int vol = 127, buffer = 64, paramId = 1, x = -1, y = -1;
 	bool background = true;
-	const char *msgId = NULL;
+	const char *msgId = nullptr;
 	Common::String msg;
 	lua_Object paramObj = lua_getparam(paramId++);
 
 	if ((lua_isuserdata(paramObj) && lua_tag(paramObj) == MKTAG('A','C','T','R'))
 			|| lua_isstring(paramObj) || lua_istable(paramObj)) {
-		Actor *actor = NULL;//some_Actor, maybe some current actor
+		Actor *actor = nullptr;//some_Actor, maybe some current actor
 		if (lua_isuserdata(paramObj) && lua_tag(paramObj) == MKTAG('A','C','T','R')) {
 			actor = getactor(paramObj);
 			paramObj = lua_getparam(paramId++);

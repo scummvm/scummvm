@@ -145,7 +145,7 @@ void VimaTrack::playTrack() {
 	if (!_stream) {
 		error("Stream not loaded");
 	}
-	byte *data = NULL;
+	byte *data = nullptr;
 	int32 result = 0;
 
 	int32 curRegion = -1;
@@ -208,10 +208,10 @@ void VimaTrack::playTrack() {
 VimaTrack::VimaTrack(const Common::String &soundName) {
 	_soundType = Audio::Mixer::kSpeechSoundType;
 	_handle = new Audio::SoundHandle();
-	_file = NULL;
+	_file = nullptr;
 	setSoundName(soundName);
-	_mcmp = NULL;
-	_desc = NULL;
+	_mcmp = nullptr;
+	_desc = nullptr;
 }
 
 VimaTrack::~VimaTrack() {

@@ -29,7 +29,7 @@
 
 namespace Grim {
 
-EmiRegistry *g_emiregistry = NULL;
+EmiRegistry *g_emiregistry = nullptr;
 
 const char *EmiRegistry::_translTable[][2] = {
 	{"speech_mode",		""},	//Translated key not needed, see below
@@ -47,7 +47,7 @@ const char *EmiRegistry::_translTable[][2] = {
 	{"miscfx",			"misc_video_effects"},
 	{"moviequality",	"movie_quality"},
 	{"musicquality",	"music_quality"},
-	{0,0}
+	{nullptr,nullptr}
 };
 
 const char *EmiRegistry::_boolValues[] = {
@@ -58,19 +58,19 @@ const char *EmiRegistry::_boolValues[] = {
 	"vocfx",
 	"moviequality",
 	"musicquality",
-	0
+	nullptr
 };
 
 
 EmiRegistry::EmiRegistry() {
 	int i = 0;
-	while (_translTable[i][0] != 0) {
+	while (_translTable[i][0] != nullptr) {
 		_transMap[_translTable[i][0]] = _translTable[i][1];
 		++i;
 	}
 
 	i = 0;
-	while (_boolValues[i] != 0) {
+	while (_boolValues[i] != nullptr) {
 		_boolSet[_boolValues[i]] = true;
 		++i;
 	}

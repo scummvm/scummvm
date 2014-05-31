@@ -39,13 +39,13 @@ public:
 	bool load(Common::SeekableReadStream *file, const Common::String &patchName);
 
 	// Common::ReadStream implementation
-	virtual bool eos() const;
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual bool eos() const override;
+	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
 
 	// Common::SeekableReadStream implementation
-	virtual int32 pos() const;
-	virtual int32 size() const;
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
+	virtual int32 pos() const override;
+	virtual int32 size() const override;
+	virtual bool seek(int32 offset, int whence = SEEK_SET) override;
 
 private:
 	// Consts
@@ -83,7 +83,7 @@ const uint32 PatchedFile::_kHeaderSize = 48;
 const uint32 PatchedFile::_kMd5size = 5000;
 
 PatchedFile::PatchedFile():
-		_file(NULL), _ctrl(NULL), _diff(NULL), _extra(NULL), _pos(0),
+		_file(nullptr), _ctrl(nullptr), _diff(nullptr), _extra(nullptr), _pos(0),
 		_instrLeft(0), _jump(0), _newSize(0), _flags(0), _extraCopy(0),
 		_diffCopy(0) {
 	_diffBuffer = new uint8[_kDiffBufferSize];
@@ -371,7 +371,7 @@ bool PatchedFile::seek(int32 offset, int whence) {
 
 Common::SeekableReadStream *wrapPatchedFile(Common::SeekableReadStream *rs, const Common::String &filename) {
 	if (!rs)
-		return NULL;
+		return nullptr;
 
 	Common::String patchfile = filename + ".patchr";
 	int i = 1;

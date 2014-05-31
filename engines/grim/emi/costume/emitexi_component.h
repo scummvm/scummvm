@@ -35,11 +35,11 @@ public:
 	EMITexiComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~EMITexiComponent();
 
-	void init();
-	int update(uint time);
-	void reset();
-	void draw();
-	void setKey(int k);
+	void init() override;
+	int update(uint time) override;
+	void reset() override;
+	void draw() override;
+	void setKey(int k) override;
 
 private:
 	MaterialPtr _mat;

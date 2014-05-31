@@ -185,7 +185,7 @@ int32 luaD_call(StkId base, int32 nResults) {
 	}
 
 	while (1) {
-		lua_CFunction function = NULL;
+		lua_CFunction function = nullptr;
 		StkId firstResult = 0;
 		TObject *funcObj = lua_state->stack.stack + base - 1;
 		if (ttype(funcObj) == LUA_T_CLOSURE) {
@@ -230,7 +230,7 @@ int32 luaD_call(StkId base, int32 nResults) {
 				firstResult = luaV_execute(lua_state->task);
 		} else if (ttype(funcObj) == LUA_T_PROTO) {
 			ttype(funcObj) = LUA_T_PMARK;
-			lua_taskresume(lua_state->task, NULL, tfvalue(funcObj), base);
+			lua_taskresume(lua_state->task, nullptr, tfvalue(funcObj), base);
 			firstResult = luaV_execute(lua_state->task);
 		} else if (ttype(funcObj) == LUA_T_CPROTO) {
 			ttype(funcObj) = LUA_T_CMARK;
@@ -307,7 +307,7 @@ static void travstack(struct Stack *S, int32 (*fn)(TObject *)) {
 */
 void luaD_travstack(int32(*fn)(TObject *)) {
 	LState *t;
-	for (t = lua_rootState; t != NULL; t = t->next) {
+	for (t = lua_rootState; t != nullptr; t = t->next) {
 		travstack(&t->stack, fn);
 	}
 }
@@ -389,13 +389,13 @@ static int32 protectedparser(ZIO *z, int32 bin) {
 		tf = bin ? luaU_undump1(z) : luaY_parser(z);
 		status = 0;
 	} else {
-		tf = NULL;
+		tf = nullptr;
 		status = 1;
 	}
 	lua_state->errorJmp = oldErr;
 	if (status)
 		return 1;  // error code
-	if (tf == NULL)
+	if (tf == nullptr)
 		return 2;  // 'natural' end
 	luaD_adjusttop(lua_state->Cstack.base + 1);  // one slot for the pseudo-function
 	lua_state->stack.stack[lua_state->Cstack.base].ttype = LUA_T_PROTO;
@@ -436,7 +436,7 @@ void luaD_gcIM(TObject *o) {
 #define SSIZE_PREF "20"
 
 static void build_name (const char *str, char *name) {
-	if (str == NULL || *str == ID_CHUNK)
+	if (str == nullptr || *str == ID_CHUNK)
 		strcpy(name, "(buffer)");
 	else {
 		char *temp;
@@ -450,7 +450,7 @@ static void build_name (const char *str, char *name) {
 }
 
 int32 lua_dostring(const char *str) {
-	return lua_dobuffer(str, strlen(str), NULL);
+	return lua_dobuffer(str, strlen(str), nullptr);
 }
 
 int32 lua_dobuffer(const char *buff, int32 size, const char *name) {

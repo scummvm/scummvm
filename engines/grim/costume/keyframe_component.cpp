@@ -28,7 +28,7 @@
 namespace Grim {
 
 KeyframeComponent::KeyframeComponent(Component *p, int parentID, const char *filename, tag32 t) :
-		Component(p, parentID, filename, t), _priority1(1), _priority2(5), _anim(NULL) {
+		Component(p, parentID, filename, t), _priority1(1), _priority2(5), _anim(nullptr) {
 	const char *comma = strchr(filename, ',');
 	if (comma) {
 		_name = Common::String(filename, comma);
@@ -120,7 +120,7 @@ void KeyframeComponent::init() {
 		_anim = new Animation(_name, mc->getAnimManager(), _priority1, _priority2);
 	} else {
 		Debug::warning(Debug::Costumes, "Parent of %s was not a model", _name.c_str());
-		_anim = NULL;
+		_anim = nullptr;
 	}
 }
 

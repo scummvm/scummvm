@@ -34,10 +34,10 @@
 
 namespace Grim {
 
-Common::List<MaterialData *> *MaterialData::_materials = NULL;
+Common::List<MaterialData *> *MaterialData::_materials = nullptr;
 
 MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap) :
-		_fname(filename), _cmap(cmap), _refCount(1), _textures(NULL) {
+		_fname(filename), _cmap(cmap), _refCount(1), _textures(nullptr) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		initEMI(data);
@@ -72,9 +72,9 @@ void MaterialData::initGrim(Common::SeekableReadStream *data) {
 		t->_width = data->readUint32LE();
 		t->_height = data->readUint32LE();
 		t->_hasAlpha = data->readUint32LE();
-		t->_texture = NULL;
+		t->_texture = nullptr;
 		t->_colorFormat = BM_RGBA;
-		t->_data = NULL;
+		t->_data = nullptr;
 		if (t->_width == 0 || t->_height == 0) {
 			Debug::warning(Debug::Materials, "skip load texture: bad texture size (%dx%d) for texture %d of material %s",
 						   t->_width, t->_height, i, _fname.c_str());
@@ -93,7 +93,7 @@ void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 
 	t->_width = tgaSurface->w;
 	t->_height = tgaSurface->h;
-	t->_texture = NULL;
+	t->_texture = nullptr;
 
 	int bpp = tgaSurface->format.bytesPerPixel;
 	if (bpp == 4) {
@@ -141,7 +141,7 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 				_textures[i]._width = 0;
 				_textures[i]._height = 0;
 				_textures[i]._texture = new int(1); // HACK to avoid initializing.
-				_textures[i]._data = NULL;
+				_textures[i]._data = nullptr;
 				continue;
 			}
 			loadTGA(texData, _textures + i);
@@ -166,7 +166,7 @@ MaterialData::~MaterialData() {
 	_materials->remove(this);
 	if (_materials->empty()) {
 		delete _materials;
-		_materials = NULL;
+		_materials = nullptr;
 	}
 
 	for (int i = 0; i < _numImages; ++i) {
@@ -206,7 +206,7 @@ Material::Material(const Common::String &filename, Common::SeekableReadStream *d
 }
 
 Material::Material() :
-		Object(), _currImage(0), _data(NULL) {
+		Object(), _currImage(0), _data(nullptr) {
 }
 
 void Material::reload(CMap *cmap) {
@@ -229,7 +229,7 @@ void Material::select() const {
 		if (!t->_texture) {
 			g_driver->createMaterial(t, t->_data, _data->_cmap);
 			delete[] t->_data;
-			t->_data = NULL;
+			t->_data = nullptr;
 		}
 		g_driver->selectMaterial(t);
 	}

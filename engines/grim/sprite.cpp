@@ -31,7 +31,7 @@
 namespace Grim {
 
 Sprite::Sprite() :
-		_width(0), _height(0), _visible(false), _material(NULL), _next(NULL) {
+		_width(0), _height(0), _visible(false), _material(nullptr), _next(nullptr) {
 }
 
 
@@ -76,7 +76,7 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	_material = costume->loadMaterial(texname);
 	_width = width;
 	_height = height;
-	_next = NULL;
+	_next = nullptr;
 	_visible = true;
 	_pos.set(offX, offY, 0);
 

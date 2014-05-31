@@ -51,10 +51,10 @@ Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 }
 
 Set::Set() :
-		_cmaps(NULL), _locked(false), _enableLights(false), _numSetups(0),
+		_cmaps(nullptr), _locked(false), _enableLights(false), _numSetups(0),
 		_numLights(0), _numSectors(0), _numObjectStates(0), _minVolume(0),
-		_maxVolume(0), _numCmaps(0), _currSetup(NULL), _setups(NULL),
-		_lights(NULL), _sectors(NULL) {
+		_maxVolume(0), _numCmaps(0), _currSetup(nullptr), _setups(nullptr),
+		_lights(nullptr), _sectors(nullptr) {
 
 }
 
@@ -112,8 +112,8 @@ void Set::loadText(TextSplitter &ts) {
 
 	_numSectors = -1;
 	_numLights = -1;
-	_lights = NULL;
-	_sectors = NULL;
+	_lights = nullptr;
+	_sectors = nullptr;
 
 	_minVolume = 0;
 	_maxVolume = 0;
@@ -161,7 +161,7 @@ void Set::loadText(TextSplitter &ts) {
 
 void Set::loadBinary(Common::SeekableReadStream *data) {
 	// yes, an array of size 0
-	_cmaps = NULL;//new CMapPtr[0];
+	_cmaps = nullptr;//new CMapPtr[0];
 
 
 	_numSetups = data->readUint32LE();
@@ -172,8 +172,8 @@ void Set::loadBinary(Common::SeekableReadStream *data) {
 
 	_numSectors = 0;
 	_numLights = 0;
-	_lights = NULL;
-	_sectors = NULL;
+	_lights = nullptr;
+	_sectors = nullptr;
 
 	_minVolume = 0;
 	_maxVolume = 0;
@@ -277,7 +277,7 @@ bool Set::restoreState(SaveGame *savedState) {
 			_sectors[i]->restoreState(savedState);
 		}
 	} else {
-		_sectors = NULL;
+		_sectors = nullptr;
 	}
 
 	_numLights = savedState->readLESint32();
@@ -301,7 +301,7 @@ void Set::Setup::load(Set *set, int id, TextSplitter &ts) {
 	_bkgndBm = loadBackground(buf);
 
 	// ZBuffer is optional
-	_bkgndZBm = NULL;
+	_bkgndZBm = nullptr;
 	if (ts.checkString("zbuffer")) {
 		ts.scanString(" zbuffer %256s", 1, buf);
 		// Don't even try to load if it's the "none" bitmap
@@ -347,7 +347,7 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	char *fileName = new char[fNameLen];
 	data->read(fileName, fNameLen);
 
-	_bkgndZBm = NULL;
+	_bkgndZBm = nullptr;
 	_bkgndBm = loadBackground(fileName);
 
 	char v[4 * 4];
@@ -671,11 +671,11 @@ Sector *Set::findPointSector(const Math::Vector3d &p, Sector::SectorType type) {
 		if (sector && (sector->getType() & type) && sector->isVisible() && sector->isPointInSector(p))
 			return sector;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Set::findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPoint) {
-	Sector *resultSect = NULL;
+	Sector *resultSect = nullptr;
 	Math::Vector3d resultPt = p;
 	float minDist = 0.0;
 
@@ -817,7 +817,7 @@ Sector *Set::getSectorBase(int id) {
 	if ((_numSectors >= 0) && (id < _numSectors))
 		return _sectors[id];
 	else
-		return NULL;
+		return nullptr;
 }
 
 Sector *Set::getSectorByName(const Common::String &name) {
@@ -827,7 +827,7 @@ Sector *Set::getSectorByName(const Common::String &name) {
 			return sector;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Sector *Set::getSectorBySubstring(const Common::String &str) {
@@ -837,7 +837,7 @@ Sector *Set::getSectorBySubstring(const Common::String &str) {
 			return sector;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Sector *Set::getSectorBySubstring(const Common::String &str, const Math::Vector3d &pos) {
@@ -847,7 +847,7 @@ Sector *Set::getSectorBySubstring(const Common::String &str, const Math::Vector3
 			return sector;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Set::setSoundParameters(int minVolume, int maxVolume) {
@@ -889,7 +889,7 @@ ObjectState *Set::findState(const Common::String &filename) {
 			return *i;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Set::moveObjectStateToFront(const ObjectState::Ptr &s) {

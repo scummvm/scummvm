@@ -32,11 +32,11 @@ class EMILuaVarComponent : public Component {
 public:
 	EMILuaVarComponent(Component *parent, int parentID, const char *name, Component *prevComponent, tag32 tag);
 	~EMILuaVarComponent();
-	void init();
-	int update(uint time);
-	void reset();
-	void draw();
-	void setKey(int val);
+	void init() override;
+	int update(uint time) override;
+	void reset() override;
+	void draw() override;
+	void setKey(int val) override;
 private:
 };
 

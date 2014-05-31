@@ -52,8 +52,8 @@ int32 last_tag;
 struct IM *IMtable;
 int32 IMtable_size;
 
-LState *lua_state = NULL;
-LState *lua_rootState = NULL;
+LState *lua_state = nullptr;
+LState *lua_rootState = nullptr;
 
 int globalTaskSerialId = 0;
 
@@ -66,15 +66,15 @@ static luaL_reg stdErrorRimFunc[] = {
 static void lua_openthr() {
 	Mbuffsize = 0;
 	Mbuffnext = 0;
-	Mbuffbase = NULL;
-	Mbuffer = NULL;
+	Mbuffbase = nullptr;
+	Mbuffer = nullptr;
 }
 
 #define STACK_UNIT	256
 
 void lua_stateinit(LState *state) {
-	state->prev = NULL;
-	state->next = NULL;
+	state->prev = nullptr;
+	state->next = nullptr;
 	state->all_paused = 0;
 	state->paused = false;
 	state->state_counter1 = 0;
@@ -85,10 +85,10 @@ void lua_stateinit(LState *state) {
 	state->Cstack.base = 0;
 	state->Cstack.lua2C = 0;
 	state->Cstack.num = 0;
-	state->errorJmp = NULL;
+	state->errorJmp = nullptr;
 	state->id = globalTaskSerialId++;
-	state->task = NULL;
-	state->some_task = NULL;
+	state->task = nullptr;
+	state->some_task = nullptr;
 	state->taskFunc.ttype = LUA_T_NIL;
 	state->sleepFor = 0;
 
@@ -102,12 +102,12 @@ void lua_statedeinit(LState *state) {
 		state->prev->next = state->next;
 	if (state->next)
 		state->next->prev = state->prev;
-	state->next = NULL;
-	state->prev = NULL;
+	state->next = nullptr;
+	state->prev = nullptr;
 
 	if (state->task) {
 		lua_Task *t, *m;
-		for (t = state->task; t != NULL;) {
+		for (t = state->task; t != nullptr;) {
 			m = t->next;
 			luaM_free(t);
 			t = m;
@@ -120,15 +120,15 @@ void lua_statedeinit(LState *state) {
 void lua_resetglobals() {
 	lua_openthr();
 
-	rootproto.next = NULL;
+	rootproto.next = nullptr;
 	rootproto.marked = 0;
-	rootcl.next = NULL;
+	rootcl.next = nullptr;
 	rootcl.marked = 0;
-	rootglobal.next = NULL;
+	rootglobal.next = nullptr;
 	rootglobal.marked = 0;
-	roottable.next = NULL;
+	roottable.next = nullptr;
 	roottable.marked = 0;
-	refArray = NULL;
+	refArray = nullptr;
 	refSize = 0;
 	GCthreshold = GARBAGE_BLOCK;
 	nblocks = 0;
@@ -226,17 +226,17 @@ void lua_close() {
 	luaM_free(Mbuffer);
 
 	LState *tmpState, *state;
-	for (state = lua_rootState; state != NULL;) {
+	for (state = lua_rootState; state != nullptr;) {
 		tmpState = state->next;
 		lua_statedeinit(state);
 		luaM_free(state);
 		state = tmpState;
 	}
 
-	Mbuffer = NULL;
-	IMtable = NULL;
-	refArray = NULL;
-	lua_rootState = lua_state = NULL;
+	Mbuffer = nullptr;
+	IMtable = nullptr;
+	refArray = nullptr;
+	lua_rootState = lua_state = nullptr;
 
 #ifdef LUA_DEBUG
 	printf("total de blocos: %ld\n", numblocks);

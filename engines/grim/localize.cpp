@@ -30,7 +30,7 @@
 
 namespace Grim {
 
-Localizer *g_localizer = NULL;
+Localizer *g_localizer = nullptr;
 
 Localizer::Localizer() {
 	if (g_grim->getGameType() == GType_GRIM && g_grim->getGameFlags() & ADGF_DEMO)
@@ -85,13 +85,13 @@ Localizer::Localizer() {
 	Common::String last_entry;
 	//Read file till end
 	for (char *line = data + 4; line - data <= filesize; line = nextline + 1) {
-		if (line == NULL || nextline == NULL) {
+		if (line == nullptr || nextline == nullptr) {
 			break;
 		}
 
 		nextline = strchr(line, '\n');
 		//if there is no next line we arrived the last one
-		if (nextline == NULL) {
+		if (nextline == nullptr) {
 			nextline = strchr(line, '\0');
 		}
 
@@ -111,7 +111,7 @@ Localizer::Localizer() {
 
 		char *tab = strchr(line, '\t');
 		//skip line if no tab found
-		if (tab == NULL) {
+		if (tab == nullptr) {
 			continue;
 		}
 

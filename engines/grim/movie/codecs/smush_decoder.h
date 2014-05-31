@@ -46,11 +46,11 @@ public:
 	int getX() const { return _videoTrack->_x; }
 	int getY() const { return _videoTrack->_y; }
 	void setLooping(bool l);
-	bool isRewindable() const { return true; }
-	bool isSeekable() const { return true; }
-	bool rewind();
-	bool seekIntern(const Audio::Timestamp &time);
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool isRewindable() const override { return true; }
+	bool isSeekable() const override { return true; }
+	bool rewind() override;
+	bool seekIntern(const Audio::Timestamp &time) override;
+	bool loadStream(Common::SeekableReadStream *stream) override;
 
 protected:
 	bool readHeader();
@@ -59,32 +59,32 @@ protected:
 	bool handleFramesHeader();
 	void handleFRME(Common::SeekableReadStream *stream, uint32 size);
 	void init();
-	void close();
-	const Graphics::Surface *decodeNextFrame();
+	void close() override;
+	const Graphics::Surface *decodeNextFrame() override;
 	class SmushVideoTrack : public FixedRateVideoTrack {
 	public:
 		SmushVideoTrack(int width, int height, int fps, int numFrames, bool is16Bit);
 		~SmushVideoTrack();
 
-		uint16 getWidth() const { return _width; }
-		uint16 getHeight() const { return _height; }
-		Graphics::PixelFormat getPixelFormat() const { return _format; }
-		int getCurFrame() const { return _curFrame; }
+		uint16 getWidth() const override { return _width; }
+		uint16 getHeight() const override { return _height; }
+		Graphics::PixelFormat getPixelFormat() const override { return _format; }
+		int getCurFrame() const override { return _curFrame; }
 		void setCurFrame(int frame) { _curFrame = frame; }
-		int getFrameCount() const {	return _nbframes; }
-		Common::Rational getFrameRate() const { return _frameRate; }
+		int getFrameCount() const override {	return _nbframes; }
+		Common::Rational getFrameRate() const override { return _frameRate; }
 		void setMsPerFrame(int ms);
 
 		void finishFrame();
-		bool isSeekable() const { return true; }
-		bool seek(const Audio::Timestamp &time) { return true; }
+		bool isSeekable() const override { return true; }
+		bool seek(const Audio::Timestamp &time) override { return true; }
 		void setFrameStart(int frame);
 
 		void handleBlocky16(Common::SeekableReadStream *stream, uint32 size);
 		void handleFrameObject(Common::SeekableReadStream *stream, uint32 size);
 		void handleDeltaPalette(Common::SeekableReadStream *stream, int32 size);
 		void init();
-		Graphics::Surface *decodeNextFrame();
+		Graphics::Surface *decodeNextFrame() override;
 
 		byte *getPal() { return _pal; }
 		int _x, _y;
@@ -109,9 +109,9 @@ protected:
 		SmushAudioTrack(bool isVima, int freq = 22050, int channels = -1);
 		~SmushAudioTrack();
 
-		Audio::AudioStream *getAudioStream() const { return _queueStream; }
-		bool isSeekable() const { return true; }
-		bool seek(const Audio::Timestamp &time);
+		Audio::AudioStream *getAudioStream() const override { return _queueStream; }
+		bool isSeekable() const override { return true; }
+		bool seek(const Audio::Timestamp &time) override;
 		void skipSamples(int samples);
 		inline int getRate() const { return _queueStream->getRate(); }
 

@@ -30,7 +30,7 @@ namespace Grim {
 const uint32 PackFile::_knownOffsets[] = { 0x1c000, 0x21000, 0x23000, 0x24000, 0 };
 
 PackFile::PackFile(Common::SeekableReadStream *data):
-	_codeTable(NULL), _orgStream(data), _offset(0), _kCodeTableSize(0x100) {
+	_codeTable(nullptr), _orgStream(data), _offset(0), _kCodeTableSize(0x100) {
 
 	uint32 magicContainer, magicCabinet, key;
 
@@ -53,7 +53,7 @@ PackFile::PackFile(Common::SeekableReadStream *data):
 				break;
 			else {
 				delete[] _codeTable;
-				_codeTable = NULL;
+				_codeTable = nullptr;
 				_offset = 0;
 				continue;
 			}

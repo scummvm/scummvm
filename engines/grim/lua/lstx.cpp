@@ -353,7 +353,7 @@ static void luaI_registerlocalvar (TaggedString *varname, int line)
 
 static void luaI_unregisterlocalvar (int line)
 {
-	luaI_registerlocalvar(NULL, line);
+	luaI_registerlocalvar(nullptr, line);
 }
 
 
@@ -620,7 +620,7 @@ static void init_state (TaggedString *filename) {
 	f->fileName = filename;
 	fs->pc = 0;
 	fs->maxcode = 0;
-	f->code = NULL;
+	f->code = nullptr;
 	fs->maxconsts = 0;
 	if (lua_debug) {
 		fs->nvars = 0;
@@ -649,7 +649,7 @@ static TProtoFunc *close_func() {
 	f->code = luaM_reallocvector(f->code, lua_state->currState->pc, byte);
 	f->consts = luaM_reallocvector(f->consts, f->nconsts, TObject);
 	if (lua_state->currState->maxvars != -1) {  /* debug information? */
-		luaI_registerlocalvar(NULL, -1);  /* flag end of vector */
+		luaI_registerlocalvar(nullptr, -1);  /* flag end of vector */
 		f->locvars = luaM_reallocvector(f->locvars, lua_state->currState->nvars, LocVar);
 	}
 	lua_state->currState--;

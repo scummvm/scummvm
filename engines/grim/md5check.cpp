@@ -335,7 +335,7 @@ const char *emid_voice[] = {
 
 
 bool MD5Check::_initted = false;
-Common::Array<MD5Check::MD5Sum> *MD5Check::_files = NULL;
+Common::Array<MD5Check::MD5Sum> *MD5Check::_files = nullptr;
 int MD5Check::_iterator = -1;
 
 void MD5Check::init() {
@@ -427,7 +427,7 @@ void MD5Check::init() {
 
 void MD5Check::clear() {
 	delete _files;
-	_files = NULL;
+	_files = nullptr;
 	_initted = false;
 }
 

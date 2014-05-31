@@ -48,10 +48,10 @@ class SoundTrack;
 EMISound::EMISound() {
 	_channels = new SoundTrack*[NUM_CHANNELS];
 	for (int i = 0; i < NUM_CHANNELS; i++) {
-		_channels[i] = NULL;
+		_channels[i] = nullptr;
 	}
 	_curMusicState = -1;
-	_music = NULL;
+	_music = nullptr;
 	initMusicTable();
 }
 
@@ -64,7 +64,7 @@ EMISound::~EMISound() {
 
 int32 EMISound::getFreeChannel() {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
-		if (_channels[i] == NULL)
+		if (_channels[i] == nullptr)
 			return i;
 	}
 	return -1;
@@ -80,7 +80,7 @@ int32 EMISound::getChannelByName(const Common::String &name) {
 
 void EMISound::freeChannel(int32 channel) {
 	delete _channels[channel];
-	_channels[channel] = NULL;
+	_channels[channel] = nullptr;
 }
 
 void EMISound::freeAllChannels() {
@@ -177,11 +177,11 @@ void EMISound::setMusicState(int stateId) {
 		return;
 	if (_music) {
 		delete _music;
-		_music = NULL;
+		_music = nullptr;
 	}
 	if (stateId == 0)
 		return;
-	if (_musicTable == NULL) {
+	if (_musicTable == nullptr) {
 		Debug::debug(Debug::Sound, "No music table loaded");
 		return;
 	}
@@ -254,7 +254,7 @@ MusicEntry *initMusicTableRetail(MusicEntry *table, const Common::String &filena
 	if (!data) {
 		warning("Couldn't open %s", filename.c_str());
 		delete[] table;
-		return NULL;
+		return nullptr;
 	}
 	
 	MusicEntry *musicTable = table;
@@ -296,7 +296,7 @@ MusicEntry *initMusicTableRetail(MusicEntry *table, const Common::String &filena
 }
 
 void tableLoadErrorDialog(const char *filename) {
-	const char *errorMessage = 0;
+	const char *errorMessage = nullptr;
 	errorMessage =  "ERROR: Missing file for music-support.\n"
 	"Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
 	"you need to copy both files from both CDs to Textures/, and rename\n"
@@ -314,16 +314,16 @@ void EMISound::initMusicTable() {
 	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
 		// TODO, fill this in, data is in the binary.
 		//initMusicTablePS2()
-		_musicTable = NULL;
+		_musicTable = nullptr;
 		_musicPrefix = "";
 	} else {
-		_musicTable = NULL;
+		_musicTable = nullptr;
 		_musicTable = initMusicTableRetail(_musicTable, "Textures/FullMonkeyMap1.imt");
-		if (_musicTable == NULL) {
+		if (_musicTable == nullptr) {
 			tableLoadErrorDialog("Textures/FullMonkeyMap1.imt");
 		}
 		_musicTable = initMusicTableRetail(_musicTable, "Textures/FullMonkeyMap2.imt");
-		if (_musicTable == NULL) {
+		if (_musicTable == nullptr) {
 			tableLoadErrorDialog("Textures/FullMonkeyMap2.imt");
 		}
 		_musicPrefix = "Textures/spago/"; // Hardcode the high-quality music for now.
@@ -349,7 +349,7 @@ void EMISound::pushStateToStack() {
 	if (_music)
 		_music->pause();
 	_stateStack.push(_music);
-	_music = NULL;
+	_music = nullptr;
 }
 
 void EMISound::popStateFromStack() {
@@ -381,7 +381,7 @@ void EMISound::restoreState(SaveGame *savedState) {
 	// Stack:
 	uint32 stackSize = savedState->readLEUint32();
 	for (uint32 i = 0; i < stackSize; i++) {
-		SoundTrack *track = NULL;
+		SoundTrack *track = nullptr;
 		Common::String soundName = savedState->readString();
 		if (!soundName.empty()) {
 			track = createEmptyMusicTrack();

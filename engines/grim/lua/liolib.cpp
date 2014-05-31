@@ -45,7 +45,7 @@ LuaFile *g_stderr;
 static int32 s_id = 0;
 Common::HashMap<int32, LuaFile *> *g_files;
 
-LuaFile::LuaFile() : _in(NULL), _out(NULL), _stdin(false), _stdout(false), _stderr(false) {
+LuaFile::LuaFile() : _in(nullptr), _out(nullptr), _stdin(false), _stdout(false), _stderr(false) {
 }
 
 LuaFile::~LuaFile() {
@@ -55,8 +55,8 @@ LuaFile::~LuaFile() {
 void LuaFile::close() {
 	delete _in;
 	delete _out;
-	_in = NULL;
-	_out = NULL;
+	_in = nullptr;
+	_out = nullptr;
 	_stdin = _stdout = _stderr = false;
 }
 
@@ -126,7 +126,7 @@ static LuaFile *getfile(int32 id) {
 		return (*g_files)[id];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 static LuaFile *getfile(const char *name) {
@@ -189,7 +189,7 @@ static void io_readfrom() {
 	} else {
 		const char *s = luaL_check_string(FIRSTARG);
 		Common::String fileName = Common::lastPathComponent(s, '\\');
-		Common::SeekableReadStream *inFile = NULL;
+		Common::SeekableReadStream *inFile = nullptr;
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		inFile = saveFileMan->openForLoading(fileName);
 		if (!inFile) {
@@ -225,7 +225,7 @@ static void io_writeto() {
 	} else {
 		Common::String s = Common::lastPathComponent(luaL_check_string(FIRSTARG), '\\');
 		LuaFile *current;
-		Common::WriteStream *outFile = NULL;
+		Common::WriteStream *outFile = nullptr;
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		outFile = saveFileMan->openForSaving(s, false);
 		if (!outFile) {
@@ -241,7 +241,7 @@ static void io_writeto() {
 
 static void io_appendto() {
 	Common::String s = Common::lastPathComponent(luaL_check_string(FIRSTARG), '\\');
-	Common::SeekableReadStream *inFile = NULL;
+	Common::SeekableReadStream *inFile = nullptr;
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	inFile = saveFileMan->openForLoading(s);
 	if (!inFile) {
@@ -253,7 +253,7 @@ static void io_appendto() {
 	inFile->read(buf, size);
 	delete inFile;
 
-	Common::WriteStream *outFile = NULL;
+	Common::WriteStream *outFile = nullptr;
 	outFile = saveFileMan->openForSaving(s);
 	if (!outFile)
 		pushresult(0);
@@ -332,7 +332,7 @@ static void io_write() {
 	LuaFile *f = (LuaFile *)getfileparam(FOUTPUT, &arg);
 	int32 status = 1;
 	const char *s;
-	while ((s = luaL_opt_string(arg++, NULL)) != NULL)
+	while ((s = luaL_opt_string(arg++, nullptr)) != nullptr)
 		status = status && ((int32)f->write(s, strlen(s)) != EOF);
 	pushresult(status);
 }
@@ -378,7 +378,7 @@ static void lua_printstack() {
 					sprintf(buf, "%s", filename);
 				else
 					sprintf(buf, "function (%s:%d)", filename, (int)linedefined);
-				filename = NULL;
+				filename = nullptr;
 			}
 		}
 		g_stderr->write(buf, strlen(buf));

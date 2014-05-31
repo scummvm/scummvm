@@ -34,10 +34,10 @@ class EMIMeshComponent : public Component {
 public:
 	EMIMeshComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag, EMICostume *costume);
 	~EMIMeshComponent();
-	void init();
-	int update(uint time);
-	void reset();
-	void draw();
+	void init() override;
+	int update(uint time) override;
+	void reset() override;
+	void draw() override;
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
 
 public:

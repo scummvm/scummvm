@@ -46,11 +46,11 @@ public:
 private:
 	Common::List<Subtitle> _subtitles;
 	Common::List<Subtitle>::iterator _subtitleIndex;
-	bool loadFile(const Common::String &filename);
+	bool loadFile(const Common::String &filename) override;
 	bool _demo;
 	bool bikCheck(Common::SeekableReadStream *stream, uint32 pos);
 	virtual void deinit() override;
-	virtual void handleFrame();
+	virtual void handleFrame() override;
 };
 
 } // end of namespace Grim

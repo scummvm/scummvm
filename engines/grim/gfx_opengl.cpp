@@ -96,9 +96,9 @@ static char dimFragSrc[] =
 	END\n";
 
 GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
-		_smushTexIds(NULL), _smushWidth(0), _smushHeight(0),
+		_smushTexIds(nullptr), _smushWidth(0), _smushHeight(0),
 		_useDepthShader(false), _fragmentProgram(0), _useDimShader(0),
-		_dimFragProgram(0), _maxLights(0), _storedDisplay(NULL), 
+		_dimFragProgram(0), _maxLights(0), _storedDisplay(nullptr), 
 		_emergFont(0), _alpha(1.f) {
 	g_driver = this;
 	// GL_LEQUAL as glDepthFunc ensures that subsequent drawing attempts for
@@ -150,7 +150,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	memset(_storedDisplay, 0, _screenSize);
 	_smushNumTex = 0;
 
-	_currentShadowArray = NULL;
+	_currentShadowArray = nullptr;
 	glViewport(0, 0, _screenWidth, _screenHeight);
 
 	GLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -161,7 +161,7 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	initExtensions();
 	glGetIntegerv(GL_MAX_LIGHTS, &_maxLights);
 
-	return NULL;
+	return nullptr;
 }
 
 void GfxOpenGL::initExtensions() {
@@ -546,7 +546,7 @@ void GfxOpenGL::finishActorDraw() {
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	_currentActor = NULL;
+	_currentActor = nullptr;
 }
 
 void GfxOpenGL::setShadow(Shadow *shadow) {
@@ -874,8 +874,8 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		textures = (GLuint *)bitmap->_texIds;
 		glGenTextures(bitmap->_numTex * bitmap->_numImages, textures);
 
-		byte *texData = 0;
-		byte *texOut = 0;
+		byte *texData = nullptr;
+		byte *texOut = nullptr;
 
 		GLint format = GL_RGBA;
 		GLint type = GL_UNSIGNED_BYTE;
@@ -891,7 +891,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			if (bitmap->_format == 1 && bitmap->_bpp == 16 && bitmap->_colorFormat != BM_RGB1555) {
-				if (texData == 0)
+				if (texData == nullptr)
 					texData = new byte[4 * bitmap->_width * bitmap->_height];
 				// Convert data to 32-bit RGBA format
 				byte *texDataPtr = texData;
@@ -925,7 +925,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-				glTexImage2D(GL_TEXTURE_2D, 0, format, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, format, type, NULL);
+				glTexImage2D(GL_TEXTURE_2D, 0, format, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, format, type, nullptr);
 			}
 
 			int cur_tex_idx = bitmap->_numTex * pic;
@@ -1095,7 +1095,7 @@ void GfxOpenGL::destroyBitmap(BitmapData *bitmap) {
 	if (textures) {
 		glDeleteTextures(bitmap->_numTex * bitmap->_numImages, textures);
 		delete[] textures;
-		bitmap->_texIds = 0;
+		bitmap->_texIds = nullptr;
 	}
 }
 
@@ -1282,7 +1282,7 @@ void GfxOpenGL::createMaterial(Texture *material, const char *data, const CMap *
 	char *texdata = new char[material->_width * material->_height * 4];
 	char *texdatapos = texdata;
 
-	if (cmap != NULL) { // EMI doesn't have colour-maps
+	if (cmap != nullptr) { // EMI doesn't have colour-maps
 		for (int y = 0; y < material->_height; y++) {
 			for (int x = 0; x < material->_width; x++) {
 				uint8 col = *(const uint8 *)(data);
@@ -1366,7 +1366,7 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 
 	if (y + h == 480) {
 		glRasterPos2i(x, _screenHeight - 1);
-		glBitmap(0, 0, 0, 0, 0, -1, NULL);
+		glBitmap(0, 0, 0, 0, 0, -1, nullptr);
 	} else
 		glRasterPos2i(x, y + h);
 
@@ -1407,7 +1407,7 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, nullptr);
 	}
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
@@ -1567,7 +1567,7 @@ void GfxOpenGL::copyStoredToDisplay() {
 	glDepthMask(GL_FALSE);
 
 	glRasterPos2i(0, _screenHeight - 1);
-	glBitmap(0, 0, 0, 0, 0, -1, NULL);
+	glBitmap(0, 0, 0, 0, 0, -1, nullptr);
 	glDrawPixels(_screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, _storedDisplay);
 
 	glDepthMask(GL_TRUE);
@@ -1600,7 +1600,7 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
