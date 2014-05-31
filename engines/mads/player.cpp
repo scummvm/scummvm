@@ -127,7 +127,7 @@ bool Player::loadSprites(const Common::String &prefix) {
 				setIndex = _vm->_game->_scene._sprites.addSprites(setName, 4);
 				++_numSprites;
 			}  else if (fileIndex < 5) {
-				_highSprites = 0;
+				_highSprites = false;
 				return true;
 			} else {
 				_spriteSetsPresent[fileIndex] = false;
@@ -139,13 +139,13 @@ bool Player::loadSprites(const Common::String &prefix) {
 
 		_spritesLoaded = true;
 		_spritesChanged = false;
-		_highSprites = false;
-		return false;
 	} else {
 		Common::fill(&_spriteSetsPresent[0], &_spriteSetsPresent[PLAYER_SPRITES_FILE_COUNT], false);
-		_highSprites = false;
-		return false;
+		_visible = false;
 	}
+
+	_highSprites = false;
+	return false;
 }
 
 void Player::setFinalFacing() {
