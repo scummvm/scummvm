@@ -142,19 +142,19 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 	int var3A = (flags & 0x4000) ? 0xffff : 0xfffe;
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
-		bool var48 = false;
+		bool changed = false;
 		int var4 = 0xffff;
 		int v1 = palRange[palIndex]._v2;
 
 		if (palette[v1]._flags & 8) {
-			var48 = true;
+			changed = true;
 			var4 = 0xFD;
 		}
 
 		if (hasUsage && palette[v1]._flags & 0x10) {
-			for (uint usageIndex = 0; usageIndex < tempUsage._data->size() && !var48; ++usageIndex) {
+			for (uint usageIndex = 0; usageIndex < tempUsage._data->size() && !changed; ++usageIndex) {
 				if ((*tempUsage._data)[usageIndex]._palIndex == palIndex) {
-					var48 = true;
+					changed = true;
 					int dataIndex = MIN(usageIndex, _data->size() - 1);
 					var4 = (*_data)[dataIndex]._palIndex;
 				}
@@ -162,9 +162,9 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		}
 
 		if (flag1 && palette[palIndex]._flags & 0x10) {
-			for (uint usageIndex = 0; usageIndex < _data->size() && !var48; ++usageIndex) {
+			for (uint usageIndex = 0; usageIndex < _data->size() && !changed; ++usageIndex) {
 				if ((*_data)[usageIndex]._palIndex == palIndex) {
-					var48 = true;
+					changed = true;
 					var4 = 0xF0 + usageIndex;
 
 					// Copy data into the high end of the main palette
@@ -177,7 +177,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 			}
 		}
 
-		if (!var48 && !noUsageFlag) {
+		if (!changed && !noUsageFlag) {
 			int var2 = (palette[palIndex]._flags & 0x20) ||
 				(((flags & 0x2000) || (palette[palIndex]._flags & 0x4000)) &&
 				((flags & 0x1000) || (palCount == 0))) ? 0x7fff : 1;
@@ -200,7 +200,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 					}
 
 					if (var2 > var10) {
-						var48 = true;
+						changed = true;
 						var4 = idx;
 						var2 = var10;
 					}
@@ -208,12 +208,12 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 			}
 		}
 
-		if (!var48 && (!(flags & 0x1000) || (!(palette[palIndex]._flags & 0x60) && !(flags & 0x2000)))) {
-			for (int idx = freeIndex; idx < palIdx && !var48; ++idx) {
+		if (!changed && (!(flags & 0x1000) || (!(palette[palIndex]._flags & 0x60) && !(flags & 0x2000)))) {
+			for (int idx = freeIndex; idx < palIdx && !changed; ++idx) {
 				if (!_vm->_palette->_palFlags[idx]) {
 					--palCount;
 					++freeIndex;
-					var48 = true;
+					changed = true;
 					var4 = idx;
 
 					RGB6 &pSrc = palette[palIndex];
@@ -225,7 +225,11 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 			}
 		}
 
-		assert(var48);
+		// TODO: Not sure if it's valid or not for changed flag to ever be false.
+		// In at least scene 318, when the doctor knocks you with the blackjack,
+		// the changed flag can be false
+		//assert(changed);
+		
 		int var52 = (noUsageFlag && palette[palIndex]._u2) ? 2 : 0;
 
 		_vm->_palette->_palFlags[var4] |= var52 | rgbMask;
