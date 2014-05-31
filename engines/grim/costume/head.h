@@ -63,6 +63,10 @@ public:
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);
 
+	int getJoint1() const { return _joint1Node; }
+	int getJoint2() const { return _joint2Node; }
+	int getJoint3() const { return _joint3Node; }
+
 private:
 	int _joint1Node;
 	int _joint2Node;

@@ -1135,7 +1135,7 @@ void Lua_V1::ActorLookAt() {
 			actor->setLookAtRate(lua_getnumber(rateObj));
 	} else if (lua_isuserdata(xObj) && lua_tag(xObj) == MKTAG('A','C','T','R')) { // look at another actor
 		Actor *lookedAct = getactor(xObj);
-		actor->setLookAtVector(lookedAct->getPos());
+		actor->setLookAtVector(lookedAct->getHeadPos());
 
 		if (lua_isnumber(yObj))
 			actor->setLookAtRate(lua_getnumber(yObj));
