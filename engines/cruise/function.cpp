@@ -397,8 +397,7 @@ int16 Op_FreeOverlay() {
 	char *namePtr;
 
 	namePtr = (char *) popPtr();
-
-	strcpy(localName, namePtr);
+	Common::strlcpy(localName, namePtr, sizeof(localName));
 
 	if (localName[0]) {
 		strToUpper(localName);
@@ -497,7 +496,7 @@ int16 Op_LoadBackground() {
 
 	ptr = (char *) popPtr();
 
-	strcpy(bgName, ptr);
+	Common::strlcpy(bgName, ptr, sizeof(bgName));
 
 	bgIdx = popVar();
 
@@ -537,12 +536,10 @@ int16 Op_LoadFrame() {
 	int param1;
 	int param2;
 	int param3;
+
 	char name[36] = "";
-	char *ptr;
-
-	ptr = (char *) popPtr();
-
-	strcpy(name, ptr);
+	char *ptr = (char *) popPtr();
+	Common::strlcpy(name, ptr, sizeof(name));
 
 	param1 = popVar();
 	param2 = popVar();
@@ -663,8 +660,7 @@ int16 Op_FindOverlay() {
 	char *ptr;
 
 	ptr = (char *) popPtr();
-
-	strcpy(name, ptr);
+	Common::strlcpy(name, ptr, sizeof(name));
 	strToUpper(name);
 
 	return (isOverlayLoaded(name));
@@ -1353,7 +1349,7 @@ int16 Op_LoadSong() {
 	const char *ptr = (const char *)popPtr();
 	char buffer[33];
 
-	strcpy(buffer, ptr);
+	Common::strlcpy(buffer, ptr, sizeof(buffer));
 	strToUpper(buffer);
 	_vm->sound().loadMusic(buffer);
 
@@ -1576,7 +1572,7 @@ int16 Op_FindObject() {
 	var_26[0] = 0;
 
 	if (ptr) {
-		strcpy(var_26, ptr);
+		Common::strlcpy(var_26, ptr, sizeof(var_26));
 	}
 
 	overlayIdx = popVar();
@@ -1649,7 +1645,7 @@ int16 Op_SongExist() {
 
 	if (songName) {
 		char name[33];
-		strcpy(name, songName);
+		Common::strlcpy(name, songName, sizeof(name));
 		strToUpper(name);
 
 		if (!strcmp(_vm->sound().musicName(), name))
