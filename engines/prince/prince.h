@@ -30,6 +30,7 @@
 #include "common/textconsole.h"
 #include "common/rect.h"
 #include "common/events.h"
+#include "common/endian.h"
 
 #include "image/bmp.h"
 
@@ -262,7 +263,7 @@ private:
 	void showLogo();
 	void showBackAnims();
 	void clearBackAnimList();
-	bool spriteCheck(Graphics::Surface *backAnimSurface, int destX, int destY);
+	bool spriteCheck(int sprWidth, int sprHeight, int destX, int destY);
 	void showSprite(Graphics::Surface *backAnimSurface, int destX, int destY);
 	void showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY);
 	void makeShadowTable(int brightness);

@@ -203,7 +203,7 @@ void Hero::countDrawPosition() {
 	_scaledFrameYSize = getScaledValue(_frameYSize);
 	
 	//TODO
-	int tempHeroHeight = _scaledFrameYSize; // not used? global?
+	//int tempHeroHeight = _scaledFrameYSize; // not used? global?
 	int width = _frameXSize / 2;
 	tempMiddleX = _middleX - width; //eax
 	int z = _middleY; //ebp

@@ -718,6 +718,35 @@ void PrinceEngine::showTexts() {
 	}
 }
 
+bool PrinceEngine::spriteCheck(int sprWidth, int sprHeight, int destX, int destY) {
+	destX -= _picWindowX;
+	destY -= _picWindowY;
+
+	 // if x1 is on visible part of screen
+	if (destX < 0) {
+		if (destX + sprWidth < 1) {
+			//x2 is negative - out of window
+			return false;
+		}
+	}
+	 // if x1 is outside of screen on right side
+	if (destX >= kNormalWidth) {
+		return false;
+	}
+
+	if (destY < 0) {
+		if (destY + sprHeight < 1) {
+			//y2 is negative - out of window
+			return false;
+		}
+	}
+	if (destY >= kNormalHeight) {
+		return false;
+	}
+
+	return true;
+}
+/*
 bool PrinceEngine::spriteCheck(Graphics::Surface *backAnimSurface, int destX, int destY) {
 	int sprWidth = backAnimSurface->w;
 	int sprHeight = backAnimSurface->h;
@@ -748,6 +777,7 @@ bool PrinceEngine::spriteCheck(Graphics::Surface *backAnimSurface, int destX, in
 
 	return true;
 }
+*/
 
 // CheckNak
 void PrinceEngine::checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z) {
@@ -774,6 +804,7 @@ void PrinceEngine::insertMasks(const Graphics::Surface *originalRoomSurface) {
 	for (uint i = 0; i < _maskList.size(); i++) {
 		if (_maskList[i]._state == 1) {
 			showMask(i, originalRoomSurface);
+			_maskList[i]._state = 0; // here or somewhere else?
 		}
 	}
 }
@@ -781,12 +812,16 @@ void PrinceEngine::insertMasks(const Graphics::Surface *originalRoomSurface) {
 // ShowNak
 void PrinceEngine::showMask(int maskNr, const Graphics::Surface *originalRoomSurface) {
 	if (_maskList[maskNr]._flags == 0) {
-		_graph->drawMask(_maskList[maskNr]._x1, _maskList[maskNr]._y1, _maskList[maskNr]._width, _maskList[maskNr]._height, _maskList[maskNr].getMask(), originalRoomSurface);
+		if (spriteCheck(_maskList[maskNr]._width, _maskList[maskNr]._height, _maskList[maskNr]._x1, _maskList[maskNr]._y1)) {
+			int destX = _maskList[maskNr]._x1 - _picWindowX;
+			int destY = _maskList[maskNr]._y1 - _picWindowY;
+			_graph->drawMask(destX, destY, _maskList[maskNr]._width, _maskList[maskNr]._height, _maskList[maskNr].getMask(), originalRoomSurface);
+		}
 	}
 }
 
 void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int destY) {
-	if (spriteCheck(backAnimSurface, destX, destY)) {
+	if (spriteCheck(backAnimSurface->w, backAnimSurface->h, destX, destY)) {
 		destX -= _picWindowX;
 		destY -= _picWindowY;
 		_graph->drawTransparent(destX, destY, backAnimSurface);
@@ -794,7 +829,7 @@ void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int
 }
 
 void PrinceEngine::showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY) {
-	if (spriteCheck(shadowSurface, destX, destY)) {
+	if (spriteCheck(shadowSurface->w, shadowSurface->h, destX, destY)) {
 		destX -= _picWindowX;
 		destY -= _picWindowY;
 		_graph->drawAsShadow(destX, destY, shadowSurface, _graph->_shadowTable70);

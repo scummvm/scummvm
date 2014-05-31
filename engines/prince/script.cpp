@@ -332,9 +332,10 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 			}
 			delete msStream;
 		}
-		tempMask._width = tempMask.getHeight();
+		tempMask._width = tempMask.getWidth();
 		tempMask._height = tempMask.getHeight();
 		debug("width: %d, height: %d\n", tempMask._width, tempMask._height);
+		debug("dataSize: %d", dataSize);
 
 		maskList.push_back(tempMask);
 		offset += 16; // size of Mask (Nak) struct

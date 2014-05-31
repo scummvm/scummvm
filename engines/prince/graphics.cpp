@@ -90,15 +90,28 @@ void GraphicsMan::drawTransparent(int32 posX, int32 posY, const Graphics::Surfac
 }
 
 void GraphicsMan::drawMask(int32 posX, int32 posY, int32 width, int32 height, byte *maskData, const Graphics::Surface *originalRoomSurface) {
+	int maskWidth = width >> 3;
+	int maskPostion = 0;
+	int maskCounter = 128;
 	for (int y = 0; y < height; y++) {
+		int tempMaskPostion = maskPostion;
 		for (int x = 0; x < width; x++) {
 			if (x + posX < _frontScreen->w && x + posX >= 0) {
 				if (y + posY < _frontScreen->h && y + posY >= 0) {
-					byte orgPixel = *((byte*)originalRoomSurface->getBasePtr(x + posX, y + posY));
-					*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = orgPixel;
+					if ((maskData[tempMaskPostion] & maskCounter) != 0) {
+						byte orgPixel = *((byte*)originalRoomSurface->getBasePtr(x + posX, y + posY));
+						*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = orgPixel;
+					}
+					maskCounter >>= 1;
+					if (maskCounter == 0) {
+						maskCounter = 128;
+						tempMaskPostion++;
+					}
 				}
 			}
 		}
+		maskPostion += maskWidth;
+		maskCounter = 128;
 	}
 	change();
 }
