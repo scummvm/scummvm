@@ -139,6 +139,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
+	// Bickadoodle (Ver 1.1)
+	{
+		"bickadoodle",
+		"Version 1.1",
+		AD_ENTRY1s("data.dcp", "8bb52ac9a9ee129c5059e8e808b669d7", 35337760),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// Bickadoodle (download from http://aethericgames.com/games/bickadoodle/download-bickadoodle/)
 	{
 		"bickadoodle",
