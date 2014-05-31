@@ -156,22 +156,22 @@ struct Mask {
 	int16 _height;
 	byte *_data;
 
-	int16 Mask::getX() const {
+	int16 getX() const {
 		return READ_LE_UINT16(_data);
 	}
 
-	int16 Mask::getY() const {
+	int16 getY() const {
 		return READ_LE_UINT16(_data + 2);
 	}
 
-	int16 Mask::getWidth() const {
+	int16 getWidth() const {
 		return READ_LE_UINT16(_data + 4);
 	}
 
-	int16 Mask::getHeight() const {
+	int16 getHeight() const {
 		return READ_LE_UINT16(_data + 6);
 	}
-	byte *Mask::getMask() const {
+	byte *getMask() const {
 		return (byte *)(_data + 8);
 	}
 };
