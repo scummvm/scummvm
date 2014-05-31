@@ -115,6 +115,11 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
+	for (uint i = 0; i < _maskList.size(); i++) {
+		free(_maskList[i]._data);
+	}
+	_maskList.clear();
+
 	clearBackAnimList();
 
 	for (uint i = 0; i < _mainHero->_moveSet.size(); i++) {
