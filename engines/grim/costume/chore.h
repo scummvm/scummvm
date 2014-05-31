@@ -43,16 +43,8 @@ struct ChoreTrack {
 	Component *component;
 };
 
-
 class Chore {
 public:
-	enum ChoreType {
-		CHORE_WEAR = 0,
-		CHORE_REST = 1,
-		CHORE_WALK = 2,
-		CHORE_OTHER = 3
-	};
-
 	Chore(char name[32], int id, Costume *owner, int length, int numTracks);
 	virtual ~Chore();
 
@@ -73,14 +65,12 @@ public:
 
 	const char *getName() const { return _name; }
 
-	int getChoreId() const { return _choreId; }
+	int getChoreId() { return _choreId; }
 
 	Costume *getOwner() { return _owner; }
 
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);
-	ChoreType getChoreType() const { return _choreType; };
-	void setChoreType(ChoreType choreType) { _choreType = choreType; };
 protected:
 	void setKeys(int startTime, int stopTime);
 	virtual void fade(Animation::FadeMode, uint msecs);
@@ -96,7 +86,6 @@ protected:
 
 	bool _hasPlayed, _playing, _looping;
 	int _currTime;
-	ChoreType _choreType;
 
 	friend class EMICostume;
 };

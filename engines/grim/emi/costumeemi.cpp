@@ -206,14 +206,6 @@ void EMICostume::draw() {
 	}
 }
 
-bool EMICostume::compareChores(const Chore *c1, const Chore *c2) {
-	return c1->getChoreType() < c2->getChoreType();
-}
-
-void EMICostume::sortPlayingChores() {
-	stableBubbleSort(_playingChores.begin(), _playingChores.end(), compareChores);
-}
-
 int EMICostume::update(uint time) {
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		Chore *c = *i;

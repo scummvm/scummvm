@@ -284,14 +284,6 @@ void Costume::setChoreLooping(int num, bool val) {
 	_chores[num]->setLooping(val);
 }
 
-void Costume::setChoreType(int num, Chore::ChoreType choreType) {
-	if (num < 0 || num >= _numChores) {
-		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
-		return;
-	}
-	_chores[num]->setChoreType(choreType);
-}
-
 void Costume::playChoreLooping(const char *name, uint msecs) {
 	for (int i = 0; i < _numChores; ++i) {
 		if (strcmp(_chores[i]->getName(), name) == 0) {
@@ -308,11 +300,10 @@ void Costume::playChoreLooping(int num, uint msecs) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
+
 	_chores[num]->playLooping(msecs);
-	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end()) {
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end())
 		_playingChores.push_back(_chores[num]);
-		sortPlayingChores();
-	}
 }
 
 Chore *Costume::getChore(const char *name) {
@@ -353,10 +344,8 @@ void Costume::playChore(int num, uint msecs) {
 		return;
 	}
 	_chores[num]->play(msecs);
-	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end()) {
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end())
 		_playingChores.push_back(_chores[num]);
-		sortPlayingChores();
-	}
 }
 
 void Costume::stopChore(int num, uint msecs) {
@@ -393,10 +382,8 @@ void Costume::fadeChoreIn(int chore, uint msecs) {
 		return;
 	}
 	_chores[chore]->fadeIn(msecs);
-	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[chore]) == _playingChores.end()) {
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[chore]) == _playingChores.end())
 		_playingChores.push_back(_chores[chore]);
-		sortPlayingChores();
-	}
 }
 
 void Costume::fadeChoreOut(int chore, uint msecs) {
@@ -580,7 +567,6 @@ bool Costume::restoreState(SaveGame *state) {
 		int id = state->readLESint32();
 		_playingChores.push_back(_chores[id]);
 	}
-	sortPlayingChores();
 
 	_lookAtRate = state->readFloat();
 	_head->restoreState(state);

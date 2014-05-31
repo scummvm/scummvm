@@ -37,7 +37,6 @@ Chore::Chore(char name[32], int id, Costume *owner, int length, int numTracks) :
 
 	memcpy(_name, name, 32);
 	_tracks = new ChoreTrack[_numTracks];
-	_choreType = CHORE_OTHER;
 }
 
 Chore::~Chore() {
