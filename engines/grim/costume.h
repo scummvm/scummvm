@@ -28,7 +28,6 @@
 #include "math/matrix4.h"
 
 #include "engines/grim/object.h"
-#include "engines/grim/costume/chore.h"
 
 namespace Grim {
 
@@ -51,20 +50,19 @@ public:
 	virtual void load(Common::SeekableReadStream *data);
 
 	const Common::String &getFilename() const { return _fname; }
-	void playChore(const char *name);
-	virtual void playChore(int num);
-	void playChoreLooping(const char *name);
-	virtual void playChoreLooping(int num);
-	void setChoreType(int num, Chore::ChoreType choreType);
+	void playChore(const char *name, uint msecs = 0);
+	virtual void playChore(int num, uint msecs = 0);
+	void playChoreLooping(const char *name, uint msecs = 0);
+	virtual void playChoreLooping(int num, uint msecs = 0);
 	void setChoreLastFrame(int num);
 	void setChoreLooping(int num, bool val);
-	void stopChore(int num);
-	void fadeChoreIn(int chore, int msecs);
-	void fadeChoreOut(int chore, int msecs);
+	void stopChore(int num, uint msecs = 0);
+	void fadeChoreIn(int chore, uint msecs);
+	void fadeChoreOut(int chore, uint msecs);
 	ModelNode *getModelNodes();
 	Model *getModel();
 	void setColormap(const Common::String &map);
-	void stopChores(bool ignoreLoopingChores = false);
+	void stopChores(bool ignoreLoopingChores = false, int msecs = 0);
 	int isChoring(const char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);
 	int isChoring(bool excludeLooping);
@@ -97,7 +95,7 @@ public:
 	Component *getComponent(int num) { return _components[num]; }
 protected:
 	virtual Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
-	virtual void sortPlayingChores() {};
+
 	void load(TextSplitter &ts, Costume *prevCost);
 
 	ModelComponent *getMainModelComponent() const;

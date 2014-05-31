@@ -26,7 +26,6 @@
 #include "engines/grim/pool.h"
 #include "engines/grim/object.h"
 #include "engines/grim/color.h"
-#include "engines/grim/costume/chore.h"
 #include "math/vector3d.h"
 #include "math/angle.h"
 #include "math/quat.h"
@@ -601,7 +600,7 @@ private:
 	class ActionChore {
 	public:
 		ActionChore();
-		ActionChore(Costume *cost, int chore, Chore::ChoreType choreType = Chore::CHORE_OTHER);
+		ActionChore(Costume *cost, int chore);
 
 		void play(bool fade = false, unsigned int time = fadeTime);
 		void playLooping(bool fade = false, unsigned int time = fadeTime);
@@ -615,12 +614,13 @@ private:
 		}
 
 		void saveState(SaveGame *state) const;
-		void restoreState(SaveGame *state, Actor *actor, Chore::ChoreType choreType = Chore::CHORE_OTHER);
+		void restoreState(SaveGame *state, Actor *actor);
 
 		Costume *_costume;
 		int _chore;
 
 		static const unsigned int fadeTime;
+		static const unsigned int talkFadeTime;
 	};
 	ActionChore _restChore;
 

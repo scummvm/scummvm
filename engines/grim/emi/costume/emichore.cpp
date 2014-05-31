@@ -26,7 +26,8 @@
 namespace Grim {
 
 EMIChore::EMIChore(char name[32], int id, Costume *owner, int length, int numTracks) :
-		Chore(name, id, owner, length, numTracks), _mesh(NULL), _skeleton(NULL) {
+		Chore(name, id, owner, length, numTracks), _mesh(NULL), _skeleton(NULL),
+		_fadeMode(Animation::None), _fade(1.f), _fadeLength(0), _startFade(1.0f) {
 }
 
 void EMIChore::addComponent(Component *component) {
@@ -37,6 +38,80 @@ void EMIChore::addComponent(Component *component) {
 	}
 	if (_mesh && _mesh->_obj && _skeleton) {
 		_mesh->_obj->setSkeleton(_skeleton->_obj);
+	}
+}
+
+void EMIChore::update(uint time) {
+	if (!_playing || _paused)
+		return;
+
+	if (_fadeMode != Animation::None) {
+		if (_fadeMode == Animation::FadeIn) {
+			_fade += (float)time * (1.0f - _startFade) / _fadeLength;
+			if (_fade >= 1.f) {
+				_fade = 1.f;
+				_fadeMode = Animation::None;
+			}
+		} else {
+			_fade -= (float)time * _startFade / _fadeLength;
+			if (_fade <= 0.f) {
+				_fade = 0.f;
+				stop(0);
+				return;
+			}
+		}
+	}
+
+	int newTime;
+	if (_currTime < 0)
+		newTime = 0; // For first time through
+	else
+		newTime = _currTime + time;
+
+	setKeys(_currTime, newTime);
+
+	if (_length >= 0.0f && newTime > _length) {
+		if (!_looping && _fadeMode != Animation::FadeOut) {
+			stop(0);
+		}
+		else {
+			do {
+				newTime -= _length;
+				setKeys(-1, newTime);
+			} while (newTime > _length);
+		}
+	}
+	_currTime = newTime;
+}
+
+void EMIChore::stop(uint msecs) {
+	if (msecs > 0) {
+		fade(Animation::FadeOut, msecs);
+	} else {
+		_playing = false;
+		_hasPlayed = false;
+
+		for (int i = 0; i < _numTracks; i++) {
+			Component *comp = getComponentForTrack(i);
+			if (comp)
+				comp->reset();
+		}
+	}
+}
+
+void EMIChore::fade(Animation::FadeMode mode, uint msecs) {
+	if (mode == Animation::None) {
+		_fade = 1.0f;
+	}
+	_startFade = _fade;
+	_fadeMode = mode;
+	_fadeLength = msecs;
+
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = getComponentForTrack(i);
+		if (comp) {
+			comp->fade(mode, msecs);
+		}
 	}
 }
 

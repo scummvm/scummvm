@@ -34,38 +34,73 @@
 
 namespace Grim {
 
-EMIAnimComponent::EMIAnimComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) : Component(p, parentID, filename, t), _obj(NULL), _looping(false), _active(false) {
+EMIAnimComponent::EMIAnimComponent(Component *p, int parentID, const char *filename, Component *prevComponent, tag32 t) :
+		Component(p, parentID, filename, t), _animState(NULL) {
 }
 
 EMIAnimComponent::~EMIAnimComponent() {
-	delete _obj;
+	delete _animState;
 }
 
 void EMIAnimComponent::init() {
 	_visible = true;
-	_obj = g_resourceloader->loadAnimationEmi(_name);
+	_animState = new AnimationStateEmi(_name);
 }
 
 int EMIAnimComponent::update(uint time) {
-	if (_obj && _active) {
-		EMISkelComponent *skel = ((EMICostume *) _cost)->_emiSkel;
-		_active = _obj->animate(skel->_obj, time, _looping);
+	EMISkelComponent *skel = ((EMICostume *)_cost)->_emiSkel;
+	if (skel) {
+		_animState->setSkeleton(skel->_obj);
+		_animState->update(time);
 	}
 	return 0;
 }
 
 void EMIAnimComponent::setKey(int f) {
 	switch (f) {
-	case 1: // Play?
-		// We had it so that if f == 1 it would always reset the animation, but that caused
-		// issues with idle animations resetting too early. We now reset the animation
-		// only if this is not a looping animation. Similar behavior exists in Grim.
-		if (!_looping)
-			_obj->reset();
-		_active = true;
+	case 0: // Stop
+		_animState->stop();
+	case 1: // Play
+		_animState->play();
 		break;
-	case 3: // Looping?
-		_looping = true;
+	case 2: // Pause
+		_animState->setPaused(true);
+		break;
+	case 3: // Loop
+		_animState->setLooping(true);
+		break;
+	case 4: // No loop
+		_animState->setLooping(false);
+		break;
+	case 5: // Fade in 1
+		_animState->fade(Animation::FadeIn, 1000);
+		break;
+	case 6: // Fade in 3/4
+		_animState->fade(Animation::FadeIn, 750);
+		break;
+	case 7: // Fade in 1/2
+		_animState->fade(Animation::FadeIn, 500);
+		break;
+	case 8: // Fade in 1/4
+		_animState->fade(Animation::FadeIn, 250);
+		break;
+	case 9: // Fade in 1/8
+		_animState->fade(Animation::FadeIn, 125);
+		break;
+	case 10: // Fade out 1
+		_animState->fade(Animation::FadeOut, 1000);
+		break;
+	case 11: // Fade out 3/4
+		_animState->fade(Animation::FadeOut, 750);
+		break;
+	case 12: // Fade out 1/2
+		_animState->fade(Animation::FadeOut, 500);
+		break;
+	case 13: // Fade out 1/4
+		_animState->fade(Animation::FadeOut, 250);
+		break;
+	case 14: // Fade out 1/8
+		_animState->fade(Animation::FadeOut, 125);
 		break;
 	default:
 		Debug::warning(Debug::Costumes, "Unknown key %d for component %s", f, _name.c_str());
@@ -75,10 +110,19 @@ void EMIAnimComponent::setKey(int f) {
 
 void EMIAnimComponent::reset() {
 	_visible = true;
-	_looping = false;
-	_active = false;
-	if (_obj)
-		_obj->reset();
+	_animState->stop();
+}
+
+void EMIAnimComponent::fade(Animation::FadeMode mode, int fadeLength) {
+	_animState->fade(mode, fadeLength);
+}
+
+void EMIAnimComponent::advance(uint msecs) {
+	_animState->advance(msecs);
+}
+
+void EMIAnimComponent::setPaused(bool paused) {
+	_animState->setPaused(paused);
 }
 
 void EMIAnimComponent::draw() {

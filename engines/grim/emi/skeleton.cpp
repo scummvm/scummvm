@@ -38,6 +38,10 @@ Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *d
 }
 
 Skeleton::~Skeleton() {
+	for (int i = 0; i < MAX_ANIMATION_LAYERS; ++i) {
+		delete[] _animLayers[i]._jointAnims;
+	}
+	delete[] _animLayers;
 	delete[] _joints;
 }
 
@@ -81,16 +85,88 @@ void Skeleton::initBones() {
 	for (int i = 0; i < _numJoints; i++) {
 		initBone(i);
 	}
+
+	_animLayers = new AnimationLayer[MAX_ANIMATION_LAYERS];
+	for (int i = 0; i < MAX_ANIMATION_LAYERS; ++i) {
+		_animLayers[i]._jointAnims = new JointAnimation[_numJoints];
+	}
 }
 
 void Skeleton::resetAnim() {
+	for (int i = 0; i < MAX_ANIMATION_LAYERS; ++i) {
+		AnimationLayer &layer = _animLayers[i];
+		for (int j = 0; j < _numJoints; ++j) {
+			JointAnimation &jointAnim = layer._jointAnims[j];
+			jointAnim._pos.set(0.f, 0.f, 0.f);
+			jointAnim._quat.set(0.f, 0.f, 0.f, 1.f);
+			jointAnim._transWeight = 0.0f;
+			jointAnim._rotWeight = 0.0f;
+		}
+	}
 	for (int i = 0; i < _numJoints; ++i) {
 		_joints[i]._finalMatrix = _joints[i]._relMatrix;
 		_joints[i]._finalQuat = _joints[i]._quat;
 	}
 }
 
+void Skeleton::animate() {
+	resetAnim();
+	commitAnim();
+}
+
+void Skeleton::addAnimation(AnimationStateEmi *anim) {
+	_activeAnims.push_back(anim);
+}
+void Skeleton::removeAnimation(AnimationStateEmi *anim) {
+	_activeAnims.remove(anim);
+}
+
 void Skeleton::commitAnim() {
+	// This first pass over the animations calculates bone-specific sums of blend weights for all
+	// animation layers. The sums must be pre-computed in order to be able to normalize the blend
+	// weights properly in the next step.
+	for (Common::List<AnimationStateEmi*>::iterator j = _activeAnims.begin(); j != _activeAnims.end(); ++j) {
+		(*j)->_anim->computeWeights(this, (*j)->_fade);
+	}
+
+	// Now make a second pass over the animations to actually accumulate animation to layers.
+	for (Common::List<AnimationStateEmi*>::iterator j = _activeAnims.begin(); j != _activeAnims.end(); ++j) {
+		(*j)->_anim->animate(this, (*j)->_time, (*j)->_looping, (*j)->_fade);
+	}
+
+	// Blend the layers together in priority order to produce the final result. Highest priority
+	// layer will get as much weight as it wants, while the next highest priority will get the
+	// amount that remains and so on.
+	for (int i = 0; i < _numJoints; ++i) {
+		float remainingTransWeight = 1.0f;
+		float remainingRotWeight = 1.0f;
+
+		for (int j = MAX_ANIMATION_LAYERS - 1; j >= 0; --j) {
+			AnimationLayer &layer = _animLayers[j];
+			JointAnimation &jointAnim = layer._jointAnims[i];
+
+			if (remainingRotWeight > 0.0f && jointAnim._rotWeight != 0.0f) {
+				Math::Vector3d pos = _joints[i]._finalMatrix.getPosition();
+				_joints[i]._finalQuat = _joints[i]._finalQuat.slerpQuat(_joints[i]._finalQuat * jointAnim._quat, remainingRotWeight);
+				_joints[i]._finalQuat.toMatrix(_joints[i]._finalMatrix);
+				_joints[i]._finalMatrix.setPosition(pos);
+
+				remainingRotWeight *= 1.0f - jointAnim._rotWeight;
+			}
+
+			if (remainingTransWeight > 0.0f && jointAnim._transWeight != 0.0f) {
+				Math::Vector3d pos = _joints[i]._finalMatrix.getPosition();
+				Math::Vector3d delta = jointAnim._pos;
+				_joints[i]._finalMatrix.setPosition(pos + delta * remainingTransWeight);
+
+				remainingTransWeight *= 1.0f - jointAnim._transWeight;
+			}
+
+			if (remainingRotWeight <= 0.0f && remainingTransWeight <= 0.0f)
+				break;
+		}
+	}
+
 	for (int m = 0; m < _numJoints; ++m) {
 		const Joint *parent = getParentJoint(&_joints[m]);
 		if (parent) {
@@ -138,6 +214,11 @@ int Skeleton::getJointIndex(const Joint *j) const {
 	int idx = j - _joints;
 	assert(idx >= 0 && idx < _numJoints);
 	return idx;
+}
+
+AnimationLayer* Skeleton::getLayer(int priority) const {
+	assert(priority >= 0 && priority < MAX_ANIMATION_LAYERS);
+	return &_animLayers[priority];
 }
 
 

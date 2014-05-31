@@ -503,6 +503,7 @@ AnimationEmi *ResourceLoader::loadAnimationEmi(const Common::String &filename) {
 	}
 
 	AnimationEmi *result = new AnimationEmi(filename, stream);
+	_emiAnims.push_back(result);
 	delete stream;
 
 	return result;
@@ -542,6 +543,10 @@ void ResourceLoader::uncacheKeyframe(KeyframeAnim *k) {
 
 void ResourceLoader::uncacheLipSync(LipSync *s) {
 	_lipsyncs.remove(s);
+}
+
+void ResourceLoader::uncacheAnimationEmi(AnimationEmi *a) {
+	_emiAnims.remove(a);
 }
 
 ModelPtr ResourceLoader::getModel(const Common::String &fname, CMap *c) {
@@ -594,6 +599,19 @@ LipSyncPtr ResourceLoader::getLipSync(const Common::String &fname) {
 	}
 
 	return loadLipSync(fname);
+}
+
+AnimationEmiPtr ResourceLoader::getAnimationEmi(const Common::String &fname) {
+	Common::String filename = fname;
+	filename.toLowercase();
+	for (Common::List<AnimationEmi *>::const_iterator i = _emiAnims.begin(); i != _emiAnims.end(); ++i) {
+		AnimationEmi *a = *i;
+		if (filename == a->getFilename()) {
+			return a;
+		}
+	}
+
+	return loadAnimationEmi(fname);
 }
 
 } // end of namespace Grim

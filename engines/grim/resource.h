@@ -52,6 +52,7 @@ typedef ObjectPtr<CMap> CMapPtr;
 typedef ObjectPtr<KeyframeAnim> KeyframeAnimPtr;
 typedef ObjectPtr<Font> FontPtr;
 typedef ObjectPtr<LipSync> LipSyncPtr;
+typedef ObjectPtr<AnimationEmi> AnimationEmiPtr;
 
 class ResourceLoader {
 public:
@@ -75,10 +76,12 @@ public:
 	CMapPtr getColormap(const Common::String &fname);
 	KeyframeAnimPtr getKeyframe(const Common::String &fname);
 	LipSyncPtr getLipSync(const Common::String &fname);
+	AnimationEmiPtr getAnimationEmi(const Common::String &fname);
 	void uncacheModel(Model *m);
 	void uncacheColormap(CMap *c);
 	void uncacheKeyframe(KeyframeAnim *kf);
 	void uncacheLipSync(LipSync *l);
+	void uncacheAnimationEmi(AnimationEmi *a);
 
 	struct ResourceCache {
 		char *fname;
@@ -104,6 +107,7 @@ private:
 	Common::List<CMap *> _colormaps;
 	Common::List<KeyframeAnim *> _keyframeAnims;
 	Common::List<LipSync *> _lipsyncs;
+	Common::List<AnimationEmi *> _emiAnims;
 };
 
 extern ResourceLoader *g_resourceloader;

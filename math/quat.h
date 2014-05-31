@@ -52,6 +52,8 @@ public:
 	
 	Matrix4 toMatrix() const;
 	void toMatrix(Matrix4 &dst) const;
+	Quaternion inverse() const;
+
 	/**
 	 * Slerps between this quaternion and to by factor t
 	 * @param to	the quaternion to slerp between

@@ -42,22 +42,20 @@ void EMISkelComponent::init() {
 	_obj = g_resourceloader->loadSkeleton(_name);
 }
 
+void EMISkelComponent::animate() {
+	if (_obj)
+		_obj->animate();
+}
+
 int EMISkelComponent::update(uint time) {
 	return 0;
 }
 
 void EMISkelComponent::reset() {
 	_visible = true;
-	if (_obj)
-		_obj->resetAnim();
 }
 
 void EMISkelComponent::draw() {
-}
-
-void EMISkelComponent::commit() {
-	if (_obj)
-		_obj->commitAnim();
 }
 
 } // end of namespace Grim

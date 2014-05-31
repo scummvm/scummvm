@@ -284,18 +284,10 @@ void Costume::setChoreLooping(int num, bool val) {
 	_chores[num]->setLooping(val);
 }
 
-void Costume::setChoreType(int num, Chore::ChoreType choreType) {
-	if (num < 0 || num >= _numChores) {
-		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
-		return;
-	}
-	_chores[num]->setChoreType(choreType);
-}
-
-void Costume::playChoreLooping(const char *name) {
+void Costume::playChoreLooping(const char *name, uint msecs) {
 	for (int i = 0; i < _numChores; ++i) {
 		if (strcmp(_chores[i]->getName(), name) == 0) {
-			playChoreLooping(i);
+			playChoreLooping(i, msecs);
 			return;
 		}
 	}
@@ -303,16 +295,15 @@ void Costume::playChoreLooping(const char *name) {
 	return;
 }
 
-void Costume::playChoreLooping(int num) {
+void Costume::playChoreLooping(int num, uint msecs) {
 	if (num < 0 || num >= _numChores) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
-	_chores[num]->playLooping();
-	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end()) {
+
+	_chores[num]->playLooping(msecs);
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end())
 		_playingChores.push_back(_chores[num]);
-		sortPlayingChores();
-	}
 }
 
 Chore *Costume::getChore(const char *name) {
@@ -336,10 +327,10 @@ int Costume::getChoreId(const char *name) {
 	return -1;
 }
 
-void Costume::playChore(const char *name) {
+void Costume::playChore(const char *name, uint msecs) {
 	for (int i = 0; i < _numChores; ++i) {
 		if (strcmp(_chores[i]->getName(), name) == 0) {
-			playChore(i);
+			playChore(i, msecs);
 			return;
 		}
 	}
@@ -347,25 +338,22 @@ void Costume::playChore(const char *name) {
 	return;
 }
 
-void Costume::playChore(int num) {
+void Costume::playChore(int num, uint msecs) {
 	if (num < 0 || num >= _numChores) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
-	_chores[num]->play();
-	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end()) {
+	_chores[num]->play(msecs);
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[num]) == _playingChores.end())
 		_playingChores.push_back(_chores[num]);
-		sortPlayingChores();
-	}
 }
 
-void Costume::stopChore(int num) {
+void Costume::stopChore(int num, uint msecs) {
 	if (num < 0 || num >= _numChores) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
-	_chores[num]->stop();
-	_playingChores.remove(_chores[num]);
+	_chores[num]->stop(msecs);
 }
 
 void Costume::setColormap(const Common::String &map) {
@@ -379,29 +367,26 @@ void Costume::setColormap(const Common::String &map) {
 			_components[i]->setColormap(NULL);
 }
 
-void Costume::stopChores(bool ignoreLoopingChores) {
+void Costume::stopChores(bool ignoreLoopingChores, int msecs) {
 	for (int i = 0; i < _numChores; i++) {
 		if (ignoreLoopingChores && _chores[i]->isLooping()) {
 			continue;
 		}
-		_chores[i]->stop();
-		_playingChores.remove(_chores[i]);
+		_chores[i]->stop(msecs);
 	}
 }
 
-void Costume::fadeChoreIn(int chore, int msecs) {
+void Costume::fadeChoreIn(int chore, uint msecs) {
 	if (chore < 0 || chore >= _numChores) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
 		return;
 	}
 	_chores[chore]->fadeIn(msecs);
-	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[chore]) == _playingChores.end()) {
+	if (Common::find(_playingChores.begin(), _playingChores.end(), _chores[chore]) == _playingChores.end())
 		_playingChores.push_back(_chores[chore]);
-		sortPlayingChores();
-	}
 }
 
-void Costume::fadeChoreOut(int chore, int msecs) {
+void Costume::fadeChoreOut(int chore, uint msecs) {
 	if (chore < 0 || chore >= _numChores) {
 		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
 		return;
@@ -582,7 +567,6 @@ bool Costume::restoreState(SaveGame *state) {
 		int id = state->readLESint32();
 		_playingChores.push_back(_chores[id]);
 	}
-	sortPlayingChores();
 
 	_lookAtRate = state->readFloat();
 	_head->restoreState(state);

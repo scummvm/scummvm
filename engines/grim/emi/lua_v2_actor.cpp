@@ -307,7 +307,11 @@ void Lua_V2::PlayChore() {
 	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
 		return;
 	int chore = lua_getuserdata(choreObj);
-	warning("Lua_V2::PlayChore: stub, chore: %d", chore);
+
+	Chore *c = EMIChore::getPool().getObject(chore);
+	if (c) {
+		c->setPaused(false);
+	}
 }
 
 void Lua_V2::PauseChore() {
@@ -316,29 +320,31 @@ void Lua_V2::PauseChore() {
 	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
 		return;
 	int chore = lua_getuserdata(choreObj);
-	warning("Lua_V2::PauseChore: stub, chore: %d", chore);
+
+	Chore *c = EMIChore::getPool().getObject(chore);
+	if (c) {
+		c->setPaused(true);
+	}
 }
 
 void Lua_V2::StopChore() {
 	lua_Object choreObj = lua_getparam(1);
-	lua_Object timeObj = lua_getparam(2);
+	lua_Object fadeTimeObj = lua_getparam(2);
 
 	if (!lua_isuserdata(choreObj) || lua_tag(choreObj) != MKTAG('C','H','O','R'))
 		return;
 
 	int chore = lua_getuserdata(choreObj);
+	float fadeTime = 0.0f;
 
-	if (!lua_isnumber(timeObj)) {
-		float time = lua_getnumber(timeObj);
-		warning("Lua_V2::StopChore: stub, chore: %d time: %f", chore, time);
-	} else {
-		warning("Lua_V2::StopChore: stub, chore: %d", chore);
+	if (!lua_isnil(fadeTimeObj)) {
+		if (lua_isnumber(fadeTimeObj))
+			fadeTime = lua_getnumber(fadeTimeObj);
 	}
 
-	// FIXME: implement missing rest part of code
 	Chore *c = EMIChore::getPool().getObject(chore);
 	if (c) {
-		c->stop();
+		c->stop((int)(fadeTime * 1000));
 	}
 }
 
@@ -362,7 +368,7 @@ void Lua_V2::AdvanceChore() {
 				c->getOwner()->playChore(c->getName());
 			}
 		}
-		c->setTime(time * 1000);
+		c->advance(time * 1000);
 	}
 }
 
@@ -572,14 +578,14 @@ void Lua_V2::SetActorTalkChore() {
 	}
 
 	int index = (int)lua_getnumber(indexObj);
-	if (index < 1 || index > 16)
+	if (index < 0 || index >= 16)
 		return;
 
 	Actor *actor = getactor(actorObj);
 
 	setChoreAndCostume(choreObj, costumeObj, actor, costume, chore);
 
-	actor->setTalkChore(index, chore, costume);
+	actor->setTalkChore(index + 1, chore, costume);
 }
 
 void Lua_V2::SetActorMumblechore() {
@@ -650,13 +656,12 @@ bool Lua_V2::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume)
 	return (*costume != NULL);
 }
 
-// TODO: Implement, verify, and rename unknown 5th parameter
 void Lua_V2::PlayActorChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
 	lua_Object modeObj = lua_getparam(4);
-	/* lua_Object paramObj = */ lua_getparam(5);
+	lua_Object fadeTimeObj = lua_getparam(5);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -667,14 +672,16 @@ void Lua_V2::PlayActorChore() {
 		lua_pushnil();
 
 	bool mode = false;
-	// float param = 0.0;
+	float fadeTime = 0.0f;
 
 	if (!lua_isnil(modeObj)) {
 		if (lua_getnumber(modeObj) != 0.0)
 			mode = true;
-		//if (!lua_isnil(paramObj))
-		//	if (lua_isnumber(paramObj))
-		//		param = lua_getnumber(paramObj);
+	}
+
+	if (!lua_isnil(fadeTimeObj)) {
+		if (lua_isnumber(fadeTimeObj))
+			fadeTime = lua_getnumber(fadeTimeObj);
 	}
 
 	const char *choreName = lua_getstring(choreObj);
@@ -714,9 +721,9 @@ void Lua_V2::PlayActorChore() {
 	}
 
 	if (mode) {
-		costume->playChoreLooping(choreName);
+		costume->playChoreLooping(choreName, (int)(fadeTime * 1000));
 	} else {
-		costume->playChore(choreName);
+		costume->playChore(choreName, (int)(fadeTime * 1000));
 	}
 	if (chore) {
 		lua_pushusertag(chore->getId(), MKTAG('C','H','O','R'));

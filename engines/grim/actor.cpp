@@ -342,14 +342,14 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_walking = savedState->readBool();
 	_destPos = savedState->readVector3d();
 
-	_restChore.restoreState(savedState, this, Chore::CHORE_REST);
+	_restChore.restoreState(savedState, this);
 
-	_walkChore.restoreState(savedState, this, Chore::CHORE_WALK);
+	_walkChore.restoreState(savedState, this);
 	_walkedLast = savedState->readBool();
 	_walkedCur = savedState->readBool();
 
-	_leftTurnChore.restoreState(savedState, this, Chore::CHORE_WALK);
-	_rightTurnChore.restoreState(savedState, this, Chore::CHORE_WALK);
+	_leftTurnChore.restoreState(savedState, this);
+	_rightTurnChore.restoreState(savedState, this);
 	_lastTurnDir = savedState->readLESint32();
 	_currTurnDir = savedState->readLESint32();
 
@@ -420,7 +420,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 		_haveSectorSortOrder = false;
 		_sectorSortOrder = 0;
 
-		_lastWearChore.restoreState(savedState, this, Chore::CHORE_WEAR);
+		_lastWearChore.restoreState(savedState, this);
 	}
 
 	if (_cleanBuffer) {
@@ -896,7 +896,7 @@ void Actor::setRestChore(int chore, Costume *cost) {
 	if (_restChore.equals(cost, chore))
 		return;
 
-	_restChore.stop(true);
+	_restChore.stop(g_grim->getGameType() == GType_GRIM);
 
 	if (!cost) {
 		cost = _restChore._costume;
@@ -905,9 +905,9 @@ void Actor::setRestChore(int chore, Costume *cost) {
 		cost = getCurrentCostume();
 	}
 
-	_restChore = ActionChore(cost, chore, Chore::CHORE_REST);
+	_restChore = ActionChore(cost, chore);
 
-	_restChore.playLooping(true);
+	_restChore.playLooping(g_grim->getGameType() == GType_GRIM);
 }
 
 int Actor::getRestChore() const {
@@ -921,7 +921,9 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 	if (_walkedLast && _walkChore.isPlaying()) {
 		_walkChore.stop(true);
 
-		_restChore.playLooping(true);
+		if (g_grim->getGameType() == GType_GRIM) {
+			_restChore.playLooping(true);
+		}
 	}
 
 	if (!cost) {
@@ -931,7 +933,7 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 		cost = getCurrentCostume();
 	}
 
-	_walkChore = ActionChore(cost, chore, Chore::CHORE_WALK);
+	_walkChore = ActionChore(cost, chore);
 }
 
 void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
@@ -949,8 +951,8 @@ void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
 	_rightTurnChore.stop(true);
 	_lastTurnDir = 0;
 
-	_leftTurnChore = ActionChore(cost, left_chore, Chore::CHORE_WALK);
-	_rightTurnChore = ActionChore(cost, right_chore, Chore::CHORE_WALK);
+	_leftTurnChore = ActionChore(cost, left_chore);
+	_rightTurnChore = ActionChore(cost, right_chore);
 
 	if ((left_chore >= 0 && right_chore < 0) || (left_chore < 0 && right_chore >= 0))
 		error("Unexpectedly got only one turn chore");
@@ -1010,7 +1012,7 @@ bool Actor::playLastWearChore() {
 
 void Actor::setLastWearChore(int chore, Costume *cost) {
 	if (! _costumeStack.empty() && cost == _costumeStack.back()) {
-		_lastWearChore = ActionChore(cost, chore, Chore::CHORE_WEAR);
+		_lastWearChore = ActionChore(cost, chore);
 	}
 }
 
@@ -1234,7 +1236,7 @@ void Actor::shutUp() {
 
 	if (_lipSync) {
 		if (_talkAnim != -1)
-			_talkChore[_talkAnim].stop();
+			_talkChore[_talkAnim].stop(g_grim->getGameType() == GType_MONKEY4, ActionChore::talkFadeTime);
 		_lipSync = NULL;
 	}
 	// having a lipsync is no guarantee the mumble chore is no running. the talk chores may be -1 (domino in do)
@@ -1422,7 +1424,7 @@ void Actor::update(uint frameTime) {
 			if (!_walkChore.isPlaying()) {
 				_walkChore.playLooping(true);
 			}
-			if (_restChore.isPlaying()) {
+			if (g_grim->getGameType() == GType_GRIM && _restChore.isPlaying()) {
 				_restChore.stop(true);
 			}
 		} else {
@@ -1439,7 +1441,7 @@ void Actor::update(uint frameTime) {
 		if (_walkedCur || _walkedLast)
 			_currTurnDir = 0;
 
-		if (_restChore.isValid()) {
+		if (g_grim->getGameType() == GType_GRIM && _restChore.isValid()) {
 			if (_currTurnDir != 0) {
 				if (getTurnChore(_currTurnDir)->isPlaying() && _restChore.isPlaying()) {
 					_restChore.stop(true, 500);
@@ -1477,7 +1479,7 @@ void Actor::update(uint frameTime) {
 	// The rest chore might have been stopped because of a
 	// StopActorChore(nil).  Restart it if so.
 	if (!_walkedCur && _currTurnDir == 0 && !_restChore.isPlaying()) {
-		_restChore.playLooping(true);
+		_restChore.playLooping(g_grim->getGameType() == GType_GRIM);
 	}
 
 	_walkedLast = _walkedCur;
@@ -1502,14 +1504,18 @@ void Actor::update(uint frameTime) {
 					if (_talkChore[anim].isValid()) {
 						stopMumbleChore();
 						if (_talkAnim != -1) {
-							_talkChore[_talkAnim].stop();
+							_talkChore[_talkAnim].stop(g_grim->getGameType() == GType_MONKEY4, ActionChore::talkFadeTime);
 						}
-
-						// Run the stop_talk chore so that it resets the components
-						// to the right visibility.
-						stopTalking();
+						if (g_grim->getGameType() == GType_GRIM) {
+							// Run the stop_talk chore so that it resets the components
+							// to the right visibility.
+							stopTalking();
+						} else {
+							// Make sure the talk rest chore isn't playing.
+							_talkChore[0].stop();
+						}
 						_talkAnim = anim;
-						_talkChore[_talkAnim].play();
+						_talkChore[_talkAnim].play(g_grim->getGameType() == GType_MONKEY4, ActionChore::talkFadeTime);
 					} else if (_mumbleChore.isValid() && !_mumbleChore.isPlaying()) {
 						_mumbleChore.playLooping();
 						_talkAnim = -1;
@@ -1517,7 +1523,7 @@ void Actor::update(uint frameTime) {
 				} else {
 					stopMumbleChore();
 					if (_talkAnim != -1)
-						_talkChore[_talkAnim].stop();
+						_talkChore[_talkAnim].stop(true, ActionChore::talkFadeTime);
 
 					_talkAnim = 0;
 					stopTalking();
@@ -2272,6 +2278,7 @@ void Actor::restoreCleanBuffer() {
 }
 
 unsigned const int Actor::ActionChore::fadeTime = 150;
+unsigned const int Actor::ActionChore::talkFadeTime = 50;
 
 Actor::ActionChore::ActionChore() :
 	_costume(NULL),
@@ -2279,28 +2286,28 @@ Actor::ActionChore::ActionChore() :
 
 }
 
-Actor::ActionChore::ActionChore(Costume *cost, int chore, Chore::ChoreType choreType) :
+Actor::ActionChore::ActionChore(Costume *cost, int chore) :
 	_costume(cost),
 	_chore(chore) {
-	if (isValid()) {
-		_costume->setChoreType(_chore, choreType);
-	}
+
 }
 
 void Actor::ActionChore::play(bool fade, unsigned int time) {
 	if (isValid()) {
-		_costume->playChore(_chore);
 		if (fade) {
-			_costume->fadeChoreIn(_chore, time);
+			_costume->playChore(_chore, time);
+		} else {
+			_costume->playChore(_chore);
 		}
 	}
 }
 
 void Actor::ActionChore::playLooping(bool fade, unsigned int time) {
 	if (isValid()) {
-		_costume->playChoreLooping(_chore);
 		if (fade) {
-			_costume->fadeChoreIn(_chore, time);
+			_costume->playChoreLooping(_chore, time);
+		} else {
+			_costume->playChoreLooping(_chore);
 		}
 	}
 }
@@ -2308,9 +2315,10 @@ void Actor::ActionChore::playLooping(bool fade, unsigned int time) {
 void Actor::ActionChore::stop(bool fade, unsigned int time) {
 	if (isValid()) {
 		if (fade) {
-			_costume->fadeChoreOut(_chore, time);
+			_costume->stopChore(_chore, time);
+		} else {
+			_costume->stopChore(_chore);
 		}
-		_costume->stopChore(_chore);
 	}
 }
 
@@ -2334,7 +2342,7 @@ void Actor::ActionChore::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_chore);
 }
 
-void Actor::ActionChore::restoreState(SaveGame *savedState, Actor *actor, Chore::ChoreType choreType) {
+void Actor::ActionChore::restoreState(SaveGame *savedState, Actor *actor) {
 	if (savedState->readBool()) {
 		Common::String fname = savedState->readString();
 		_costume = actor->findCostume(fname);
@@ -2342,9 +2350,6 @@ void Actor::ActionChore::restoreState(SaveGame *savedState, Actor *actor, Chore:
 		_costume = NULL;
 	}
 	_chore = savedState->readLESint32();
-	if (isValid()) {
-		_costume->setChoreType(_chore, choreType);
-	}
 }
 
 } // end of namespace Grim

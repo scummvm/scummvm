@@ -26,6 +26,7 @@
 #include "common/str.h"
 #include "math/mathfwd.h"
 #include "math/quat.h"
+#include "engines/grim/animation.h"
 #include "engines/grim/object.h"
 #include "engines/grim/emi/skeleton.h"
 
@@ -44,7 +45,7 @@ struct AnimTranslation {
 struct Bone {
 	Common::String _boneName;
 	int _operation;
-	int _b;
+	int _priority;
 	int _c;
 	int _count;
 	AnimRotation *_rotations;
@@ -59,15 +60,47 @@ class AnimationEmi : public Object {
 	void loadAnimation(Common::SeekableReadStream *data);
 public:
 	Common::String _name;
+	Common::String _fname;
 	float _duration;
 	int _numBones;
 	Bone *_bones;
-	float _time;
-	AnimationEmi(const Common::String &filename, Common::SeekableReadStream *data) : _name(""), _duration(0.0f), _numBones(0), _bones(NULL), _time(0.0f) { loadAnimation(data); }
+	AnimationEmi(const Common::String &filename, Common::SeekableReadStream *data);
 	~AnimationEmi();
 
-	bool animate(const Skeleton *skel, float delta, bool loop);
-	void reset();
+	void computeWeights(const Skeleton *skel, float weight);
+	void animate(const Skeleton *skel, float delta, bool loop, float weight);
+	const Common::String &getFilename() const { return _fname; }
+};
+
+class AnimationStateEmi {
+public:
+	AnimationStateEmi(const Common::String &anim);
+	~AnimationStateEmi();
+
+	void activate();
+	void deactivate();
+	void update(uint time);
+	void play();
+	void stop();
+	void setPaused(bool paused);
+	void setLooping(bool loop);
+	void setSkeleton(Skeleton *skel);
+	void fade(Animation::FadeMode mode, int fadeLength);
+	void advance(uint msecs);
+
+private:
+	friend class Skeleton;
+
+	Skeleton *_skel;
+	ObjectPtr<AnimationEmi> _anim;
+	bool _looping;
+	bool _active;
+	bool _paused;
+	float _time;
+	float _fade;
+	float _startFade;
+	Animation::FadeMode _fadeMode;
+	int _fadeLength;
 };
 
 } // end of namespace Grim

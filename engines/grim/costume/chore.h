@@ -43,47 +43,38 @@ struct ChoreTrack {
 	Component *component;
 };
 
-
 class Chore {
 public:
-	enum ChoreType {
-		CHORE_WEAR = 0,
-		CHORE_REST = 1,
-		CHORE_WALK = 2,
-		CHORE_OTHER = 3
-	};
-
 	Chore(char name[32], int id, Costume *owner, int length, int numTracks);
 	virtual ~Chore();
 
 	void load(TextSplitter &ts);
-	void play();
-	void playLooping();
+	virtual void play(uint msecs);
+	virtual void playLooping(uint msecs);
 	void setLooping(bool val) { _looping = val; }
-	void stop();
-	void update(uint time);
+	virtual void stop(uint msecs);
+	virtual void update(uint time);
 	void setLastFrame();
 	void fadeIn(uint msecs);
 	void fadeOut(uint msecs);
+	void setPaused(bool paused);
 
 	bool isPlaying() { return _playing; }
 	bool isLooping() { return _looping; }
 
-	void setTime(float t) { _currTime = t; }
+	void advance(uint msecs);
 
 	const char *getName() const { return _name; }
 
-	int getChoreId() const { return _choreId; }
+	int getChoreId() { return _choreId; }
 
 	Costume *getOwner() { return _owner; }
 
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);
-	ChoreType getChoreType() const { return _choreType; };
-	void setChoreType(ChoreType choreType) { _choreType = choreType; };
-private:
+protected:
 	void setKeys(int startTime, int stopTime);
-	void fade(Animation::FadeMode, uint msecs);
+	virtual void fade(Animation::FadeMode, uint msecs);
 	Component *getComponentForTrack(int i) const;
 
 	Costume *_owner;
@@ -94,9 +85,8 @@ private:
 	ChoreTrack *_tracks;
 	char _name[32];
 
-	bool _hasPlayed, _playing, _looping;
+	bool _hasPlayed, _playing, _looping, _paused;
 	int _currTime;
-	ChoreType _choreType;
 
 	friend class EMICostume;
 };

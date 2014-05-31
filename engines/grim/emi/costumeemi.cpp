@@ -61,7 +61,9 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		float length = get_float(f);
 		int numTracks = data->readUint32LE();
 
-		if (length < 1000)
+		if (length == 1000)
+			length = -1.0f;
+		else
 			length *= 1000;
 
 		EMIChore *chore = new EMIChore(name, i, this, (int)length, numTracks);
@@ -114,10 +116,6 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 			}
 			delete[] componentName;
 		}
-
-		// Some chores report duration 1000 while they have components with
-		// keyframes after 1000. See elaine_wedding/take_contract, for example.
-		chore->_length = ceil(length);
 	}
 
 	_numComponents = components.size();
@@ -130,20 +128,22 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 	_isWearChoreActive = true;
 }
 
-void EMICostume::playChore(int num) {
+void EMICostume::playChore(int num, uint msecs) {
+	// FIXME: Original EMI can play multiple instances of a chore at the same time.
 	EMIChore *chore = static_cast<EMIChore *>(_chores[num]);
 	if (chore->isWearChore()) {
 		setWearChore(chore);
 	}
-	Costume::playChore(num);
+	Costume::playChore(num, msecs);
 }
 
-void EMICostume::playChoreLooping(int num) {
+void EMICostume::playChoreLooping(int num, uint msecs) {
+	// FIXME: Original EMI can play multiple instances of a chore at the same time.
 	EMIChore *chore = static_cast<EMIChore *>(_chores[num]);
 	if (chore->isWearChore()) {
 		setWearChore(chore);
 	}
-	Costume::playChoreLooping(num);
+	Costume::playChoreLooping(num, msecs);
 }
 
 Component *EMICostume::loadEMIComponent(Component *parent, int parentID, const char *name, Component *prevComponent) {
@@ -204,18 +204,7 @@ void EMICostume::draw() {
 	}
 }
 
-bool EMICostume::compareChores(const Chore *c1, const Chore *c2) {
-	return c1->getChoreType() < c2->getChoreType();
-}
-
-void EMICostume::sortPlayingChores() {
-	stableBubbleSort(_playingChores.begin(), _playingChores.end(), compareChores);
-}
-
 int EMICostume::update(uint time) {
-	if (_emiSkel)
-		_emiSkel->reset();
-
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		Chore *c = *i;
 		c->update(time);
@@ -231,8 +220,6 @@ int EMICostume::update(uint time) {
 			--i;
 		}
 	}
-	if (_emiSkel)
-		_emiSkel->commit();
 
 	return 0;
 }

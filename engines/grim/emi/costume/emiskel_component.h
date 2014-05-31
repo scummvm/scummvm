@@ -36,11 +36,10 @@ public:
 	EMISkelComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~EMISkelComponent();
 	void init();
+	void animate();
 	int update(uint time);
 	void reset();
 	void draw();
-
-	void commit();
 
 public:
 	bool _hierShared;

@@ -29,7 +29,7 @@
 
 namespace Grim {
 
-class AnimationEmi;
+class AnimationStateEmi;
 
 class EMIAnimComponent : public Component {
 public:
@@ -39,12 +39,13 @@ public:
 	void setKey(int);
 	int update(uint time);
 	void reset();
+	void fade(Animation::FadeMode mode, int fadeLength);
+	void advance(uint msecs);
+	void setPaused(bool paused);
 	void draw();
 
 private:
-	bool _looping;
-	bool _active;
-	AnimationEmi *_obj;
+	AnimationStateEmi *_animState;
 };
 
 } // end of namespace Grim
