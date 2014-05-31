@@ -79,7 +79,7 @@ void Lua_V1::PrintDebug() {
 }
 
 void Lua_V1::PrintError() {
-	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Info)) {
+	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Error)) {
 		Common::String msg("Error: ");
 		lua_Object strObj = lua_getparam(1);
 		if (lua_isnil(strObj))
@@ -92,7 +92,7 @@ void Lua_V1::PrintError() {
 }
 
 void Lua_V1::PrintWarning() {
-	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Info)) {
+	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Warning)) {
 		Common::String msg("Warning: ");
 		lua_Object strObj = lua_getparam(1);
 		if (lua_isnil(strObj))
