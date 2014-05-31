@@ -28,6 +28,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
 	{"actualdest",      "Actual Destination"},
+	{"agustin",			"Boredom of Agustin Cordes"},
 	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
 	{"bthreshold",      "Beyond the Threshold"},
@@ -103,6 +104,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"actualdest",
 		"",
 		AD_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Boredom of Agustin Cordes
+	{
+		"agustin",
+		"",
+		AD_ENTRY1s("data.dcp", "abb79c16c9b92e9b06525a4c7c3f5861", 2461949),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
