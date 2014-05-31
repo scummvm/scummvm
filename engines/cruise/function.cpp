@@ -335,20 +335,15 @@ int16 Op_RemoveMessage() {
 }
 
 int16 Op_FindSet() {
-	int16 i;
-	char name[36] = "";
-	char *ptr;
-
-	ptr = (char *) popPtr();
-
-	if (!ptr) {
+	char *ptr = (char *) popPtr();
+	if (!ptr)
 		return -1;
-	}
 
-	strcpy(name, ptr);
+	char name[36] = "";
+	Common::strlcpy(name, ptr, sizeof(name));
 	strToUpper(name);
 
-	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
+	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (!strcmp(name, filesDatabase[i].subData.name)) {
 			return (i);
 		}
@@ -409,14 +404,10 @@ int16 Op_FreeOverlay() {
 
 int16 Op_FindProc() {
 	char name[36] = "";
-	char *ptr;
-	int param;
 
-	ptr = (char *)popPtr();
-
-	strcpy(name, ptr);
-
-	param = getProcParam(popVar(), 20, name);
+	char *ptr = (char *)popPtr();
+	Common::strlcpy(name, ptr, sizeof(name));
+	int param = getProcParam(popVar(), 20, name);
 
 	return param;
 }
@@ -572,7 +563,7 @@ int16 Op_LoadAbs() {
 	slot = popVar();
 
 	if ((slot >= 0) && (slot < NUM_FILE_ENTRIES)) {
-		strcpy(name, ptr);
+		Common::strlcpy(name, ptr, sizeof(name));
 		strToUpper(name);
 
 		gfxModuleData_gfxWaitVSync();

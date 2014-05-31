@@ -163,7 +163,7 @@ int getProcParam(int overlayIdx, int param2, const char *name) {
 
 	for (i = 0; i < numSymbGlob; i++) {
 		if (arraySymbGlob[i].var4 == param2) {
-			strcpy(exportName, arraySymbGlob[i].offsetToName + exportNamePtr);
+			Common::strlcpy(exportName, arraySymbGlob[i].offsetToName + exportNamePtr, sizeof(exportName));
 
 			if (!strcmp(exportName, name)) {
 				return (arraySymbGlob[i].idx);
@@ -371,7 +371,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 		 * strcatuint8(buffer,".HP");
 		 * } */
 	} else {
-		strcpy(buffer, name);
+		Common::strlcpy(buffer, name, sizeof(buffer));
 	}
 
 	fileIdx = findFileInDisks(buffer);
@@ -653,8 +653,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 				(currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK ||
 				currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUAL)) {
 			const char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
-
-			strcpy(objectName, pObjectName);
+			Common::strlcpy(objectName, pObjectName, sizeof(objectName));
 
 			if (strlen(objectName) && (currentObject->freeze == 0)) {
 				int objIdx = currentObject->idx;
@@ -863,7 +862,6 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 	bool found = false;
 	int testState1 = -1;
 	int testState2 = -1;
-	int j;
 	int16 objectState;
 	int16 objectState2;
 
@@ -871,7 +869,7 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 
 	menuTable[0] = createMenu(x, y, _vm->langString(ID_SPEAK_ABOUT));
 
-	for (j = 1; j < numOfLoadedOverlay; j++) {
+	for (int j = 1; j < numOfLoadedOverlay; j++) {
 		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 
@@ -895,24 +893,26 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 					}
 
 					if ((thisOvl == objOvl) && (ptrHead->obj2Number == objIdx)) {
-						int verbeOvl = ptrHead->verbOverlay;
+						int verbOvl = ptrHead->verbOverlay;
 						int obj1Ovl = ptrHead->obj1Overlay;
 						int obj2Ovl = ptrHead->obj2Overlay;
 
-						if (!verbeOvl) verbeOvl = j;
-						if (!obj1Ovl)  obj1Ovl = j;
-						if (!obj2Ovl)  obj2Ovl = j;
+						if (!verbOvl)
+							verbOvl = j;
+						if (!obj1Ovl)
+							obj1Ovl = j;
+						if (!obj2Ovl)
+							obj2Ovl = j;
 
-						char verbe_name[80];
-
-						verbe_name[0]	= 0;
+						char verbName[80];
+						verbName[0]	= 0;
 
 						ovlDataStruct *ovl2 = NULL;
 						ovlDataStruct *ovl3 = NULL;
 						ovlDataStruct *ovl4 = NULL;
 
-						if (verbeOvl > 0)
-							ovl2 = overlayTable[verbeOvl].ovlData;
+						if (verbOvl > 0)
+							ovl2 = overlayTable[verbOvl].ovlData;
 
 						if (obj1Ovl > 0)
 							ovl3 = overlayTable[obj1Ovl].ovlData;
@@ -932,9 +932,9 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 						        ((testState2 == -1) || (testState2 == objectState))) {
 							if (ovl2->nameVerbGlob) {
 								const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
-								strcpy(verbe_name, ptr);
+								Common::strlcpy(verbName, ptr, sizeof(verbName));
 
-								if (!strlen(verbe_name))
+								if (!strlen(verbName))
 									attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 								else if (ovl2->nameVerbGlob) {
 									found = true;
@@ -985,23 +985,26 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 
 				if ((thisOvl == objOvl) && (objIdx == ptrHead->obj1Number) && pObject && (pObject->_class != THEME)) {
-					int verbeOvl = ptrHead->verbOverlay;
+					int verbOvl = ptrHead->verbOverlay;
 					int obj1Ovl = ptrHead->obj1Overlay;
 					int obj2Ovl = ptrHead->obj2Overlay;
 
-					if (!verbeOvl) verbeOvl = j;
-					if (!obj1Ovl)  obj1Ovl = j;
-					if (!obj2Ovl)  obj2Ovl = j;
+					if (!verbOvl)
+						verbOvl = j;
+					if (!obj1Ovl)
+						obj1Ovl = j;
+					if (!obj2Ovl)
+						obj2Ovl = j;
 
-					char verbe_name[80];
-					verbe_name[0]	= 0;
+					char verbName[80];
+					verbName[0]	= 0;
 
 					ovlDataStruct *ovl2 = NULL;
 					ovlDataStruct *ovl3 = NULL;
 					//ovlDataStruct *ovl4 = NULL;
 
-					if (verbeOvl > 0)
-						ovl2 = overlayTable[verbeOvl].ovlData;
+					if (verbOvl > 0)
+						ovl2 = overlayTable[verbOvl].ovlData;
 
 					if (obj1Ovl > 0)
 						ovl3 = overlayTable[obj1Ovl].ovlData;
@@ -1022,10 +1025,10 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					if ((ovl2) && (ptrHead->verbNumber >= 0)) {
 						if (ovl2->nameVerbGlob) {
 							const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
-							strcpy(verbe_name, ptr);
+							Common::strlcpy(verbName, ptr, sizeof(verbName));
 
 							if ((!first) && ((testState == -1) || (testState == objectState))) {
-								if (!strlen(verbe_name)) {
+								if (!strlen(verbName)) {
 									if (currentScriptPtr) {
 										attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 									} else {
