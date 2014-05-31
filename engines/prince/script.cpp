@@ -312,7 +312,7 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 		tempMask._z = READ_UINT32(&_data[offset + 12]);
 		debug("tempMask._z: %d", tempMask._z);
 		tempMask._number = READ_UINT32(&_data[offset + 14]);
-		debug("tempMask._number: %d\n", tempMask._number);
+		debug("tempMask._number: %d", tempMask._number);
 
 		const Common::String msStreamName = Common::String::format("MS%02d", tempMask._number);
 		Common::SeekableReadStream *msStream = SearchMan.createReadStreamForMember(msStreamName);
@@ -321,6 +321,7 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 			delete msStream;
 			return false;
 		}
+
 		uint32 dataSize = msStream->size();
 		if (dataSize != -1) {
 			tempMask._data = (byte *)malloc(dataSize);
@@ -331,9 +332,12 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 			}
 			delete msStream;
 		}
+		tempMask._width = tempMask.getHeight();
+		tempMask._height = tempMask.getHeight();
+		debug("width: %d, height: %d\n", tempMask._width, tempMask._height);
 
 		maskList.push_back(tempMask);
-		offset += 16; // size of tempMask (Nak) struct
+		offset += 16; // size of Mask (Nak) struct
 	}
 	debug("Mask size: %d", sizeof(tempMask));
 	debug("maskList size: %d", maskList.size());

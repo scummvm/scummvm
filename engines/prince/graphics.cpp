@@ -89,6 +89,20 @@ void GraphicsMan::drawTransparent(int32 posX, int32 posY, const Graphics::Surfac
 	change();
 }
 
+void GraphicsMan::drawMask(int32 posX, int32 posY, int32 width, int32 height, byte *maskData, const Graphics::Surface *originalRoomSurface) {
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			if (x + posX < _frontScreen->w && x + posX >= 0) {
+				if (y + posY < _frontScreen->h && y + posY >= 0) {
+					byte orgPixel = *((byte*)originalRoomSurface->getBasePtr(x + posX, y + posY));
+					*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = orgPixel;
+				}
+			}
+		}
+	}
+	change();
+}
+
 void GraphicsMan::drawAsShadow(int32 posX, int32 posY, const Graphics::Surface *s, byte *shadowTable) {
 	for (int y = 0; y < s->h; y++) {
 		for (int x = 0; x < s->w; x++) {

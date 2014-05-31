@@ -151,7 +151,28 @@ struct Mask {
 	int16 _y2;
 	int16 _z;
 	int16 _number; // number of mask for background recreating
+	int16 _width;
+	int16 _height;
 	byte *_data;
+
+	int16 Mask::getX() const {
+		return READ_LE_UINT16(_data);
+	}
+
+	int16 Mask::getY() const {
+		return READ_LE_UINT16(_data + 2);
+	}
+
+	int16 Mask::getWidth() const {
+		return READ_LE_UINT16(_data + 4);
+	}
+
+	int16 Mask::getHeight() const {
+		return READ_LE_UINT16(_data + 6);
+	}
+	byte *Mask::getMask() const {
+		return (byte *)(_data + 8);
+	}
 };
 
 struct DebugChannel {
@@ -223,8 +244,8 @@ public:
 	static const int16 kNormalHeight = 480;
 
 	void checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z);
-	void insertMasks();
-	void showMask(int maskNr);
+	void insertMasks(const Graphics::Surface *originalRoomSurface);
+	void showMask(int maskNr, const Graphics::Surface *originalRoomSurface);
 
 	int testAnimNr;
 	int testAnimFrame;

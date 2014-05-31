@@ -770,18 +770,18 @@ void PrinceEngine::checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z
 }
 
 // InsertNakladki
-void PrinceEngine::insertMasks() {
+void PrinceEngine::insertMasks(const Graphics::Surface *originalRoomSurface) {
 	for (uint i = 0; i < _maskList.size(); i++) {
 		if (_maskList[i]._state == 1) {
-			showMask(i);
+			showMask(i, originalRoomSurface);
 		}
 	}
 }
 
 // ShowNak
-void PrinceEngine::showMask(int maskNr) {
+void PrinceEngine::showMask(int maskNr, const Graphics::Surface *originalRoomSurface) {
 	if (_maskList[maskNr]._flags == 0) {
-
+		_graph->drawMask(_maskList[maskNr]._x1, _maskList[maskNr]._y1, _maskList[maskNr]._width, _maskList[maskNr]._height, _maskList[maskNr].getMask(), originalRoomSurface);
 	}
 }
 
@@ -971,8 +971,9 @@ void PrinceEngine::clearBackAnimList() {
 
 void PrinceEngine::drawScreen() {
 	const Graphics::Surface *roomSurface = _roomBmp->getSurface();	
+	Graphics::Surface visiblePart;
 	if (roomSurface) {
-		const Graphics::Surface visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
+		visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
 		_graph->draw(0, 0, &visiblePart);
 	}
 
@@ -1002,6 +1003,9 @@ void PrinceEngine::drawScreen() {
 	*/
 
 	showBackAnims();
+	if (roomSurface) {
+		insertMasks(&visiblePart);
+	}
 
 	playNextFrame();
 

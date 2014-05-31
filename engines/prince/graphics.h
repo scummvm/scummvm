@@ -46,6 +46,7 @@ public:
 	void draw(uint16 x, uint16 y, const Graphics::Surface *s);
 	void drawTransparent(int32 posX, int32 poxY, const Graphics::Surface *s);
 	void drawAsShadow(int32 posX, int32 poxY, const Graphics::Surface *s, byte *shadowTable);
+	void drawMask(int32 posX, int32 posY, int32 width, int32 height, byte *maskData, const Graphics::Surface *originalRoomSurface);
 
 	Graphics::Surface *_frontScreen;
 	Graphics::Surface *_backScreen;
