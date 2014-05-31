@@ -660,32 +660,48 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 }
 
 bool Console::cmdDiskDump(int argc, const char **argv) {
+	int resNumFrom = 0;
+	int resNumTo = 0;
+	int resNumCur = 0;
+	
 	if (argc != 3) {
 		debugPrintf("Dumps the specified resource to disk as a patch file\n");
 		debugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
+		debugPrintf("       <resource number> may be '*' to dump all resources of given type\n");
 		cmdResourceTypes(argc, argv);
 		return true;
 	}
+	
+	if (strcmp(argv[2], "*") == 0) {
+		resNumFrom = 0;
+		resNumTo   = 65535;
+	} else {
+		resNumFrom = atoi(argv[2]);
+		resNumTo   = resNumFrom;
+	}
 
-	int resNum = atoi(argv[2]);
 	ResourceType res = parseResourceType(argv[1]);
 
 	if (res == kResourceTypeInvalid)
 		debugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
-		if (resource) {
-			char outFileName[50];
-			sprintf(outFileName, "%s.%03d", getResourceTypeName(res), resNum);
-			Common::DumpFile *outFile = new Common::DumpFile();
-			outFile->open(outFileName);
-			resource->writeToStream(outFile);
-			outFile->finalize();
-			outFile->close();
-			delete outFile;
-			debugPrintf("Resource %s.%03d (located in %s) has been dumped to disk\n", argv[1], resNum, resource->getResourceLocation().c_str());
-		} else {
-			debugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
+		for (resNumCur = resNumFrom; resNumCur <= resNumTo; resNumCur++) {
+			Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNumCur), 0);
+			if (resource) {
+				char outFileName[50];
+				sprintf(outFileName, "%s.%03d", getResourceTypeName(res), resNumCur);
+				Common::DumpFile *outFile = new Common::DumpFile();
+				outFile->open(outFileName);
+				resource->writeToStream(outFile);
+				outFile->finalize();
+				outFile->close();
+				delete outFile;
+				debugPrintf("Resource %s.%03d (located in %s) has been dumped to disk\n", argv[1], resNumCur, resource->getResourceLocation().c_str());
+			} else {
+				if (resNumFrom == resNumTo) {
+					debugPrintf("Resource %s.%03d not found\n", argv[1], resNumCur);
+				}
+			}
 		}
 	}
 
