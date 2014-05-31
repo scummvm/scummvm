@@ -415,7 +415,9 @@ int32 opcodeType3()	{	// math
 		return (0);
 	}
 	case 1: {
-		pushVar(pop1 / (pop2 == 0 ? 1 : pop2));
+		if (pop2 == 0)
+			error("opcodeType3 - Invalid value for pop2");
+		pushVar(pop1 / pop2);
 		return (0);
 	}
 	case 2: {
@@ -427,7 +429,9 @@ int32 opcodeType3()	{	// math
 		return (0);
 	}
 	case 4: {
-		pushVar(pop1 % (pop2 == 0 ? 1 : pop2));
+		if (pop2 == 0)
+			error("opcodeType3 - Invalid value for pop2");
+		pushVar(pop1 % pop2);
 		return (0);
 	}
 	case 7:

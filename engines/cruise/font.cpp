@@ -50,7 +50,7 @@ int32 getLineHeight(int16 charCount, const FontEntry *fontPtr) {
 }
 
 /**
- * This function determins how many lines the text will have
+ * This function determines how many lines the text will have
  */
 int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
                        const FontEntry *fontData, const char *textString) {
@@ -58,6 +58,9 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 	const char *tempPtr = textString;
 	uint8 ch;
 	int32 total = 0, lineLength = 0;
+
+	if (rightBorder_X == 0)
+		error("getTextLineCount() - invalid parameter");
 
 	if (!*textString)
 		return (0);
@@ -89,7 +92,8 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 	if (lineLength > 0)
 		total += rightBorder_X;
 
-	return (total / (rightBorder_X == 0 ? 1 : rightBorder_X));
+
+	return (total / rightBorder_X);
 }
 
 void loadFNT(const char *fileName) {
