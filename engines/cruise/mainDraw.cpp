@@ -1255,18 +1255,15 @@ void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *d
 
 #ifdef _DEBUG
 void drawCtp() {
-	/*	int i;
-
-		if (ctp_walkboxTable) {
-			for (i = 0; i < 15; i++) {
+	/*	if (ctp_walkboxTable) {
+			for (int i = 0; i < 15; i++) {
 				uint16 *dataPtr = &ctp_walkboxTable[i * 40];
 				int type = walkboxColor[i];	// show different types in different colors
 
 				if (*dataPtr) {
-					int j;
 					fillpoly((short *)dataPtr + 1, *dataPtr, type);
 
-					for (j = 0; j < (*dataPtr - 1); j++) {
+					for (int j = 0; j < (*dataPtr - 1); j++) {
 						line(dataPtr[1 + j * 2],
 						    dataPtr[1 + j * 2 + 1],
 						    dataPtr[1 + (j + 1) * 2],

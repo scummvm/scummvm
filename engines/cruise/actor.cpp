@@ -426,16 +426,13 @@ void explore(int depart, int arrivee) {
 }
 
 void chemin0(int depart, int arrivee) {
-	int i;
-	//int   y=30;
-
 	prem = 0;
 	prem2 = 0;
 	dist_chemin = 0;
 	idsol = 0;
 	solmax = 999;
 
-	for (i = 0; i < 20 + 1; i++)
+	for (int i = 0; i < 20 + 1; i++)
 		fl[i] = -1;
 
 	X = 0, Y = 30;
@@ -582,10 +579,9 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 	}
 
 	if (!flagCt) {
-		int i;
 		int16 *ptr;
-
-		for (i = 0; i < NUM_PERSONS; i++) {	// 10 = num perso
+		int i = 0;
+		for (; i < NUM_PERSONS; i++) {	// 10 = num perso
 			if (!persoTable[i]) {
 				break;
 			}

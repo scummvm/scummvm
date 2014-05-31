@@ -95,7 +95,6 @@ void getWalkBoxCenter(int n, int16 table[][40]) {
 // ax dx bx
 void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, int Y, int scale) {
 	int numPoints;
-	int i;
 	int16 *destination;
 
 	int startX = X - ((upscaleValue(hotPointX, scale) + 0x8000) >> 16);
@@ -105,7 +104,7 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 
 	destination = polyBuffer2;
 
-	for (i = 0; i < numPoints; i++) {
+	for (int i = 0; i < numPoints; i++) {
 		int pointX = *(walkboxData++);
 		int pointY = *(walkboxData++);
 
@@ -119,7 +118,7 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 	m_color = 0;
 	ctpVarUnk = 0;
 
-	for (i = 0; i < numPoints; i++) {
+	for (int i = 0; i < numPoints; i++) {
 		walkboxTable[i] = i;
 	}
 
