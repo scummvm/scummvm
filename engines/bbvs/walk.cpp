@@ -111,10 +111,10 @@ void BbvsEngine::walkObject(SceneObject *sceneObject, const Common::Point &destP
 	int deltaY = destPt.y - (sceneObject->y >> 16);
 	float distance = (float)sqrt((double)(deltaX * deltaX + deltaY * deltaY));
 	// NOTE The original doesn't have this check but without it the whole pathfinding breaks
-	if (distance > 0.0) {
-		sceneObject->walkCount = (int)(distance / ((((float)ABS(deltaX) / distance) + 1.0) * ((float)walkSpeed / 120)));
-		sceneObject->xIncr = (int)(((float)deltaX / sceneObject->walkCount) * 65536.0);
-		sceneObject->yIncr = (int)(((float)deltaY / sceneObject->walkCount) * 65536.0);
+	if (distance > 0.0f) {
+		sceneObject->walkCount = (int)(distance / ((((float)ABS(deltaX) / distance) + 1.0f) * ((float)walkSpeed / 120)));
+		sceneObject->xIncr = (int)(((float)deltaX / sceneObject->walkCount) * 65536.0f);
+		sceneObject->yIncr = (int)(((float)deltaY / sceneObject->walkCount) * 65536.0f);
 		sceneObject->x = (sceneObject->x & 0xFFFF0000) | 0x8000;
 		sceneObject->y = (sceneObject->y & 0xFFFF0000) | 0x8000;
 	} else
@@ -334,10 +334,10 @@ bool BbvsEngine::walkTestLineWalkable(const Common::Point &sourcePt, const Commo
 		return true;
 	if (walkInfo->direction) {
 		const float nDeltaY = wDeltaX * ptDeltaY / ptDeltaX + (float)sourcePt.y - (float)walkInfo->y;
-		return (nDeltaY >= 0.0) && (nDeltaY < (float)walkInfo->delta);
+		return (nDeltaY >= 0.0f) && (nDeltaY < (float)walkInfo->delta);
 	} else {
 		const float nDeltaX = wDeltaY / ptDeltaX * ptDeltaY + (float)sourcePt.x - (float)walkInfo->x;
-		return (nDeltaX >= 0.0) && (nDeltaX < (float)walkInfo->delta);
+		return (nDeltaX >= 0.0f) && (nDeltaX < (float)walkInfo->delta);
 	}
 	return false;
 }

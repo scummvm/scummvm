@@ -412,10 +412,10 @@ bool MinigameBbTennis::updateStatus1(int mouseX, int mouseY, uint mouseButtons) 
 		obj->targetY = mouseY;
 		obj->ballStep = 12;
 		obj->ballStepCtr = 0;
-		obj->fltX = 160.0;
-		obj->fltY = 240.0;
-		obj->fltStepX = ((160 - mouseX) * 0.75) / 12.0;
-		obj->fltStepY = ((240 - mouseY) * 0.75) / 12.0;
+		obj->fltX = 160.0f;
+		obj->fltY = 240.0f;
+		obj->fltStepX = ((160 - mouseX) * 0.75f) / 12.0f;
+		obj->fltStepY = ((240 - mouseY) * 0.75f) / 12.0f;
 		_newBallTimer = _initBallTimer;
 		++_numBalls;
 		playSound(31);
@@ -582,14 +582,14 @@ void MinigameBbTennis::updateTennisBall(int objIndex) {
 		obj->ballStep = 12;
 		++obj->ballStepCtr;
 		if (obj->ballStepCtr == 1) {
-			obj->fltStepX = ((obj->fltX - (float)obj->targetX) * 0.75) / 12.0;
-			obj->fltStepY = ((obj->fltY - (float)obj->targetY) * 0.75) / 12.0;
+			obj->fltStepX = ((obj->fltX - (float)obj->targetX) * 0.75f) / 12.0f;
+			obj->fltStepY = ((obj->fltY - (float)obj->targetY) * 0.75f) / 12.0f;
 		} else if (obj->ballStepCtr == 2) {
-			obj->fltStepX = (obj->fltX - (float)obj->targetX) / 12.0;
-			obj->fltStepY = (obj->fltY - (float)obj->targetY) / 12.0;
+			obj->fltStepX = (obj->fltX - (float)obj->targetX) / 12.0f;
+			obj->fltStepY = (obj->fltY - (float)obj->targetY) / 12.0f;
 		} else {
-			obj->fltStepX = 0.0;
-			obj->fltStepY = 0.0;
+			obj->fltStepX = 0.0f;
+			obj->fltStepY = 0.0f;
 		}
 	}
 
@@ -1087,11 +1087,11 @@ void MinigameBbTennis::updateEnemyTennisBall(int objIndex) {
 		obj->ballStep = 12;
 		--obj->ballStepCtr;
 		if (obj->ballStepCtr == 1) {
-			obj->fltStepX = (obj->fltX - (float)obj->targetX) / 12.0;
-			obj->fltStepY = (obj->fltY - (float)obj->targetY) / 12.0;
+			obj->fltStepX = (obj->fltX - (float)obj->targetX) / 12.0f;
+			obj->fltStepY = (obj->fltY - (float)obj->targetY) / 12.0f;
 		} else if (obj->ballStepCtr == 2) {
-			obj->fltStepX = ((obj->fltX - (float)obj->targetX) * 0.18) / 12.0;
-			obj->fltStepY = ((obj->fltY - (float)obj->targetY) * 0.18) / 12.0;
+			obj->fltStepX = ((obj->fltX - (float)obj->targetX) * 0.18f) / 12.0f;
+			obj->fltStepY = ((obj->fltY - (float)obj->targetY) * 0.18f) / 12.0f;
 		} else {
 			obj->kind = 0;
 			if (_numHearts > 0 && --_numHearts == 0)
@@ -1125,36 +1125,36 @@ void MinigameBbTennis::makeEnemyBall(int x, int y, int frameIndex) {
 	case 6:
 		obj->ballStep = 18;
 		obj->ballStepCtr = 3;
-		obj->fltStepX = 0.0;
-		obj->fltStepY = 0.0;
+		obj->fltStepX = 0.0f;
+		obj->fltStepY = 0.0f;
 		break;
 
 	case 5:
 		obj->ballStep = 12;
 		obj->ballStepCtr = 3;
-		obj->fltStepX = ((float)(x - 160) * 0.07) / 12.0;
-		obj->fltStepY = ((float)(y - 180) * 0.07) / 12.0;
+		obj->fltStepX = ((float)(x - 160) * 0.07f) / 12.0f;
+		obj->fltStepY = ((float)(y - 180) * 0.07f) / 12.0f;
 		break;
 
 	case 4:
 		obj->ballStep = 6;
 		obj->ballStepCtr = 3;
-		obj->fltStepX = ((float)(x - 160) * 0.07) / 6.0;
-		obj->fltStepY = ((float)(y - 180) * 0.07) / 6.0;
+		obj->fltStepX = ((float)(x - 160) * 0.07f) / 6.0f;
+		obj->fltStepY = ((float)(y - 180) * 0.07f) / 6.0f;
 		break;
 
 	case 3:
 		obj->ballStep = 12;
 		obj->ballStepCtr = 2;
-		obj->fltStepX = ((float)(x - 160) * 0.18) / 12.0;
-		obj->fltStepY = ((float)(y - 180) * 0.18) / 12.0;
+		obj->fltStepX = ((float)(x - 160) * 0.18f) / 12.0f;
+		obj->fltStepY = ((float)(y - 180) * 0.18f) / 12.0f;
 		break;
 
 	case 2:
 		obj->ballStep = 6;
 		obj->ballStepCtr = 2;
-		obj->fltStepX = ((float)(x - 160) * 0.18) / 6.0;
-		obj->fltStepY = ((float)(y - 180) * 0.18) / 6.0;
+		obj->fltStepX = ((float)(x - 160) * 0.18f) / 6.0f;
+		obj->fltStepY = ((float)(y - 180) * 0.18f) / 6.0f;
 		break;
 
 	case 1:
