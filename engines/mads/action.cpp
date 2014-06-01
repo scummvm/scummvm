@@ -190,7 +190,7 @@ void MADSAction::set() {
 						verbId = scene._hotspots[_hotspotId]._verbId;
 					} else {
 						// Get the verb Id from the scene object
-						verbId = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._verbId;
+						verbId = scene._dynamicHotspots.get(_hotspotId - scene._hotspots.size())._verbId;
 					}
 
 					if (verbId > 0) {
@@ -213,7 +213,7 @@ void MADSAction::set() {
 					_action._objectNameId = scene._hotspots[_hotspotId]._vocabId;
 				} else {
 					// Get name from temporary scene hotspot
-					_action._objectNameId = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._descId;
+					_action._objectNameId = scene._dynamicHotspots.get(_hotspotId - scene._hotspots.size())._descId;
 				}
 				appendVocab(_action._objectNameId);
 			}
@@ -226,7 +226,7 @@ void MADSAction::set() {
 			} else if (_secondObject < (int)scene._hotspots.size()) {
 				_action._indirectObjectId = scene._hotspots[_secondObject]._vocabId;
 			} else {
-				_action._indirectObjectId = scene._dynamicHotspots[_secondObject - scene._hotspots.size()]._descId;
+				_action._indirectObjectId = scene._dynamicHotspots.get(_secondObject - scene._hotspots.size())._descId;
 			}
 		}
 
@@ -241,7 +241,7 @@ void MADSAction::set() {
 					} else if (_hotspotId < (int)scene._hotspots.size()) {
 						articleNum = scene._hotspots[_hotspotId]._articleNumber;
 					} else {
-						articleNum = scene._dynamicHotspots[_hotspotId - scene._hotspots.size()]._articleNumber;
+						articleNum = scene._dynamicHotspots.get(_hotspotId - scene._hotspots.size())._articleNumber;
 					}
 
 					_statusText += kArticleList[articleNum];
@@ -344,7 +344,7 @@ void MADSAction::startAction() {
 			hotspotId = _savedFields._secondObject;
 
 		if (hotspotId >= (int)hotspots.size()) {
-			DynamicHotspot &hs = dynHotspots[hotspotId - hotspots.size()];
+			DynamicHotspot &hs = dynHotspots.get(hotspotId - hotspots.size());
 			if ((hs._feetPos.x == -1) || (hs._feetPos.x == -3)) {
 				startWalkingDirectly(hs._feetPos.x);
 			} else if (hs._feetPos.x == 0) {

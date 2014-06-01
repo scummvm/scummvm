@@ -77,6 +77,12 @@ public:
 	void refresh();
 
 	/**
+	 * Get an active dynamic hotspot
+	 * @param index		Active index
+	 */
+	DynamicHotspot &get(int index);
+
+	/**
 	* Synchronize the data
 	*/
 	void synchronize(Common::Serializer &s);

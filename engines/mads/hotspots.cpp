@@ -150,6 +150,15 @@ void DynamicHotspots::refresh() {
 	_changed = false;
 }
 
+DynamicHotspot &DynamicHotspots::get(int index) {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		if (_entries[i]._active && index-- == 0)
+			return _entries[i];
+	}
+
+	error("Could not find dynamic hotspot");
+}
+
 void DynamicHotspots::synchronize(Common::Serializer &s) {
 	int count = _entries.size();
 	s.syncAsSint16LE(count);
