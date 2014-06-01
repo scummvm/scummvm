@@ -594,9 +594,9 @@ void MinigameBbTennis::updateTennisBall(int objIndex) {
 	}
 
 	obj->fltX = obj->fltX - obj->fltStepX;
-	obj->x = obj->fltX;
+	obj->x = (int)obj->fltX;
 	obj->fltY = obj->fltY - obj->fltStepY;
-	obj->y = obj->fltY;
+	obj->y = (int)obj->fltY;
 
 }
 
@@ -1100,9 +1100,9 @@ void MinigameBbTennis::updateEnemyTennisBall(int objIndex) {
 	}
 
 	obj->fltX = obj->fltX - obj->fltStepX;
-	obj->x = obj->fltX;
+	obj->x = (int)obj->fltX;
 	obj->fltY = obj->fltY - obj->fltStepY;
-	obj->y = obj->fltY;
+	obj->y = (int)obj->fltY;
 	
 }
 
