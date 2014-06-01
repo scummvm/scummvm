@@ -989,7 +989,6 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 
 					ovlDataStruct *ovl2 = NULL;
 					ovlDataStruct *ovl3 = NULL;
-					//ovlDataStruct *ovl4 = NULL;
 
 					if (verbOvl > 0)
 						ovl2 = overlayTable[verbOvl].ovlData;
@@ -1079,9 +1078,6 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 		}
 
 		if ((obj2Ovl == nOvl) && (pHeader->obj2Number != -1) && (pHeader->obj2Number == nObj)) {
-			int x = 60;
-			int y = 60;
-
 			objectParamsQuery params;
 			memset(&params, 0, sizeof(objectParamsQuery)); // to remove warning
 
@@ -1129,6 +1125,8 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 						}
 					}
 				} else if (pHeader->type == RT_MSG) {
+					int x = 60;
+					int y = 60;
 
 					if (pHeader->obj2Number >= 0) {
 						if ((pHeader->trackX !=-1) && (pHeader->trackY !=-1) &&
@@ -1897,11 +1895,10 @@ void CruiseEngine::mainLoop() {
 		// Raoul appearing when looking at the book is being there are 3 script iterations separation between the
 		// scene being changed to the book, and the Raoul actor being frozen/disabled. This loop is a hack to ensure
 		// that does a few extra script executions for that scene
-		bool bgChanged;
 		int numIterations = 1;
 
 		while (numIterations-- > 0) {
-			bgChanged = backgroundChanged[masterScreen];
+			bool bgChanged = backgroundChanged[masterScreen];
 
 			manageScripts(&relHead);
 			manageScripts(&procHead);
