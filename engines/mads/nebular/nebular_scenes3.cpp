@@ -4174,7 +4174,7 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 
 	case 2: {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM2, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 		_scene->changeVariant(0);
 		}
@@ -4269,7 +4269,7 @@ void Scene352::enter() {
 
 	if (_game._objects.isInRoom(OBJ_GUARDS_ARM)) {
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
-		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM2, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 	} else
 		_mustPutArmDownFl = true;
@@ -4326,14 +4326,14 @@ void Scene352::preActions() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM, NOUN_SCANNER)) {
+	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_SCANNER)) {
 		if (_globals[kSexOfRex] == REX_MALE)
 			_game._player.walk(Common::Point(269, 111), FACING_NORTHEAST);
 		else
 			_game._player.walk(Common::Point(271, 111), FACING_NORTHEAST);
 	}
 
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM, NOUN_FLOOR)) {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_FLOOR)) {
 		if (_game._objects.isInInventory(OBJ_GUARDS_ARM))
 			_game._player.walk(Common::Point(230, 117), FACING_NORTHWEST);
 	}
@@ -4412,7 +4412,7 @@ void Scene352::actions() {
 		exit_doorway = true;
 	}
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM, NOUN_FLOOR)) {
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_FLOOR)) {
 		if (_mustPutArmDownFl)
 			putArmDown(exit_corridor, exit_doorway);
 		else if (exit_corridor)
@@ -4424,7 +4424,7 @@ void Scene352::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_GUARDS_ARM)) {
+	if (_action.isAction(VERB_TAKE, NOUN_GUARDS_ARM2)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_GUARDS_ARM)) {
 			switch (_game._trigger) {
 			case 0:
@@ -4460,7 +4460,7 @@ void Scene352::actions() {
 		}
 	}
 
-	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM, NOUN_SCANNER)) {
+	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_SCANNER)) {
 		if (!_vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -4618,7 +4618,7 @@ void Scene352::actions() {
 
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
-			_vm->_dialogs->showItem(OBJ_TAPE_PLAYER, 0x899B);
+			_vm->_dialogs->showItem(OBJ_TAPE_PLAYER, 35227);
 			break;
 
 		default:
@@ -4639,7 +4639,7 @@ void Scene352::actions() {
 		_vm->_dialogs->show(35215);
 	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
 		_vm->_dialogs->show(35216);
-	else if (_action.isAction(VERB_LOOK, NOUN_GUARDS_ARM) && (_action._savedFields._mainObjectSource == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_GUARDS_ARM2) && (_action._savedFields._mainObjectSource == 4))
 		_vm->_dialogs->show(35217);
 	else if (_action.isAction(VERB_LOOK, NOUN_IRONING_BOARD))
 		_vm->_dialogs->show(35218);
@@ -4674,6 +4674,8 @@ void Scene352::actions() {
 		_vm->_dialogs->show(35235);
 	else
 		return;
+
+	_action._inProgress = false;
 }
 
 /*------------------------------------------------------------------------*/
