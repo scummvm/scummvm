@@ -4158,7 +4158,7 @@ void Scene413::actions() {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		_scene->_nextSceneId = 409;
-	} else if (_action.isAction(VERB_WALK_INSIDE, NOUN_CORRIDOR_TO_SOUTH))
+	} else if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR_TO_SOUTH))
 		_scene->_nextSceneId = 405;
 	else if (_action.isAction(VERB_LOOK, NOUN_WOODEN_STATUE))
 		_vm->_dialogs->show(41310);
