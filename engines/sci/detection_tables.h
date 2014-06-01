@@ -469,6 +469,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO4(GUIO_MIDIGM, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Eco Quest - English DOS Floppy (reported by misterhands in bug #6599)
+	// Game v1.10, interpreter 2.000.286, INT #6.12.92
+	{"ecoquest", "Floppy", {
+		{"resource.map", 0, "acb10c12bf15ffa7d0fac36124b20c8e", 4890},
+		{"resource.000", 0, "89cf7c8eed99afd0a9f4188170b81ebe", 3428654},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Eco Quest - English DOS Floppy
 	// SCI interpreter version 1.000.510
 	{"ecoquest", "Floppy", {
