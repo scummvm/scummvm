@@ -801,6 +801,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	GLfloat lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat lightDir[] = { 0.0f, 0.0f, -1.0f };
 	GLfloat cutoff = 180.0f;
+	GLfloat spot_exp = 0.0f;
 
 	GLfloat intensity = light->_intensity;
 	diffuse[0] = ((GLfloat)light->_color.getRed() / 15.0f) * intensity;
@@ -826,6 +827,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 		specular[0] = diffuse[0];
 		specular[1] = diffuse[1];
 		specular[2] = diffuse[2];
+		spot_exp = 2.0f;
 		cutoff = light->_penumbraangle;
 	}
 
@@ -834,6 +836,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	glLightfv(GL_LIGHT0 + lightId, GL_SPECULAR, specular);
 	glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
+	glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, spot_exp);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
 	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, 0.2f);
 	glEnable(GL_LIGHT0 + lightId);
