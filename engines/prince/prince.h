@@ -250,6 +250,7 @@ public:
 	void checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z);
 	void insertMasks(const Graphics::Surface *originalRoomSurface);
 	void showMask(int maskNr, const Graphics::Surface *originalRoomSurface);
+	void clsMasks();
 
 	int testAnimNr;
 	int testAnimFrame;

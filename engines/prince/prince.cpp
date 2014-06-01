@@ -772,12 +772,19 @@ void PrinceEngine::checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z
 	}
 }
 
+void PrinceEngine::clsMasks() {
+	for (uint i = 0; i < _maskList.size(); i++) {
+		if (_maskList[i]._state == 1) {
+			_maskList[i]._state = 0;
+		}
+	}
+}
+
 // InsertNakladki
 void PrinceEngine::insertMasks(const Graphics::Surface *originalRoomSurface) {
 	for (uint i = 0; i < _maskList.size(); i++) {
 		if (_maskList[i]._state == 1) {
 			showMask(i, originalRoomSurface);
-			_maskList[i]._state = 0; // here or somewhere else?
 		}
 	}
 }
@@ -1041,6 +1048,8 @@ void PrinceEngine::drawScreen() {
 		visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
 		_graph->draw(0, 0, &visiblePart);
 	}
+
+	clsMasks();
 
 	if (_mainHero->_visible) {
 		Graphics::Surface *mainHeroSurface = _mainHero->getSurface();
