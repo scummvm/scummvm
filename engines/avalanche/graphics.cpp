@@ -198,7 +198,7 @@ void GraphicManager::drawToolbar() {
 
 Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	Common::Point endPoint;
-	const double convfac = M_PI / 180.0;
+	const float convfac = (float)M_PI / 180.0f;
 
 	int32 xRadius = radius;
 	int32 yRadius = radius * kScreenWidth / (8 * kScreenHeight); // Just don't ask why...
@@ -231,7 +231,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	uint16 numOfPixels = (uint16)floor(sqrt(3.0) * sqrt(pow(double(xRadius), 2) + pow(double(yRadius), 2)) + 0.5);
 
 	// Calculate the angle precision required.
-	float delta = 90.0 / numOfPixels;
+	float delta = 90.0f / numOfPixels;
 
 	// Always just go over the first 90 degrees. Could be optimized a
 	// bit if startAngle and endAngle lie in the same quadrant, left as an
