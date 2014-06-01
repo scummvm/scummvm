@@ -975,14 +975,16 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 				if ((thisOvl == objOvl) && (objIdx == ptrHead->obj1Number) && pObject && (pObject->_class != THEME)) {
 					int verbOvl = ptrHead->verbOverlay;
 					int obj1Ovl = ptrHead->obj1Overlay;
-					int obj2Ovl = ptrHead->obj2Overlay;
+					// Unused variable
+					// int obj2Ovl = ptrHead->obj2Overlay;
 
 					if (!verbOvl)
 						verbOvl = j;
 					if (!obj1Ovl)
 						obj1Ovl = j;
-					if (!obj2Ovl)
-						obj2Ovl = j;
+					// Unused variable
+					// if (!obj2Ovl)
+					//	obj2Ovl = j;
 
 					char verbName[80];
 					verbName[0]	= 0;
