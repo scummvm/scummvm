@@ -201,7 +201,7 @@ void Rails::setNodePosition(int nodeIndex, const Common::Point &pt) {
 
 			int xDiff = ABS(_nodes[idx]._walkPos.x - pt.x);
 			int yDiff = ABS(_nodes[idx]._walkPos.y - pt.y);
-			hypotenuse = sqrt((double)(xDiff * xDiff + yDiff * yDiff));
+			hypotenuse = (int)sqrt((double)(xDiff * xDiff + yDiff * yDiff));
 
 			if (hypotenuse >= 0x3FFF)
 				// Shouldn't ever be this large

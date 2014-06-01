@@ -648,7 +648,7 @@ void Player::startMovement() {
 		break;
 	}
 
-	_totalDistance = sqrt((double)(xAmt100 * xAmt100 + yAmt100 * yAmt100));
+	_totalDistance = (int)sqrt((double)(xAmt100 * xAmt100 + yAmt100 * yAmt100));
 	_posDiff.x = xDiff + 1;
 	_posDiff.y = yDiff + 1;
 	_posChange.x = xDiff;
