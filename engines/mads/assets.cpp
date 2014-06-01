@@ -101,7 +101,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 	if (flags & (ASSET_TRANSLATE | ASSET_SPINNING_OBJECT)) {
 		_usageIndex = 0;
 
-		if (flags & 8) {
+		if (flags & ASSET_SPINNING_OBJECT) {
 			int newPalCtr = 0;
 
 			for (uint i = 0; i < palette.size(); ++i) {
@@ -131,7 +131,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 			}
 		}
 	} else {
-		_usageIndex = _vm->_palette->_paletteUsage.process(palette, flags);
+		_usageIndex = _vm->_palette->_paletteUsage.process(palette, flags & 0xF800);
 		assert(_usageIndex >= 0);
 	}
 

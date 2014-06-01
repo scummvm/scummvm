@@ -285,7 +285,7 @@ void PaletteUsage::resetPalFlags(int idx) {
 				*flagP = 0;
 		}
 
-		_vm->_palette->_rgbList[idx] = 0;
+		_vm->_palette->_rgbList[idx] = false;
 	}
 }
 
