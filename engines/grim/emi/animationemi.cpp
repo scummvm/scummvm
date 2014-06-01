@@ -153,7 +153,7 @@ void AnimationEmi::animate(const Skeleton *skel, float time, bool loop, float we
 			
 			if (keyfIdx == 0) {
 				vec = curBone._translations[0]._vec;
-			} if (keyfIdx != -1) {
+			} else if (keyfIdx != -1) {
 				float timeDelta = curBone._translations[keyfIdx]._time - curBone._translations[keyfIdx - 1]._time;
 				float interpVal = (time - curBone._translations[keyfIdx - 1]._time) / timeDelta;
 
