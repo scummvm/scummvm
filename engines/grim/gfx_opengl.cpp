@@ -794,15 +794,16 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	}
 
 	glEnable(GL_LIGHTING);
-	GLfloat lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	GLfloat diffuse[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	GLfloat specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat lightDir[] = { 0.0f, 0.0f, -1.0f };
 	GLfloat cutoff = 180.0f;
 
 	GLfloat intensity = light->_intensity;
-	lightColor[0] = ((GLfloat)light->_color.getRed() / 15.0f) * intensity;
-	lightColor[1] = ((GLfloat)light->_color.getGreen() / 15.0f) * intensity;
-	lightColor[2] = ((GLfloat)light->_color.getBlue() / 15.0f) * intensity;
+	diffuse[0] = ((GLfloat)light->_color.getRed() / 15.0f) * intensity;
+	diffuse[1] = ((GLfloat)light->_color.getGreen() / 15.0f) * intensity;
+	diffuse[2] = ((GLfloat)light->_color.getBlue() / 15.0f) * intensity;
 
 	if (light->_type == Light::Omni) {
 		lightPos[0] = light->_pos.x();
@@ -824,11 +825,8 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	}
 
 	glDisable(GL_LIGHT0 + lightId);
-	glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, lightColor);
-	if (lightId == 0) {
-		GLfloat nullLight[] = {0.0f, 0.0f, 0.0f, 1.0f};
-		glLightfv(GL_LIGHT0, GL_SPECULAR, nullLight);
-	}
+	glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0 + lightId, GL_SPECULAR, specular);
 	glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
