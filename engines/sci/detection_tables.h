@@ -894,7 +894,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "3ddf55fdbe14eb0e89a27a2cfc1338bd", 4386},
 		{"resource.001", 0, "e0dd44069a62a463fd124974b915f10d", 519525},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #if 0 // TODO: unknown if these files are corrupt
 	// Hoyle 1 - English Amiga (from www.back2roots.org)
@@ -3597,7 +3597,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "9107c2aa5398e28b5c5406df13491f85", 596768},
 		{"resource.003", 0, "9107c2aa5398e28b5c5406df13491f85", 693573},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Space Quest 3 v1.1 (game says 0.016) - English Mac (supplied by misterhands in bug report #6484)
 	// Executable scanning reports "0.024"
@@ -3608,7 +3608,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "0d8dfe42683b46f3131823233a91ce6a", 776554},
 		{"resource.004", 0, "0d8dfe42683b46f3131823233a91ce6a", 787066},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Space Quest 4 - English Amiga
 	// Executable scanning reports "1.004.024"
