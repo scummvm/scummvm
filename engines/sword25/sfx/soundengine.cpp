@@ -114,7 +114,7 @@ float SoundEngine::getVolume(SOUND_TYPES type) {
 		error("Unknown SOUND_TYPE");
 	}
 
-	return (float)val / 255.0;
+	return (float)val / 255.0f;
 }
 
 void SoundEngine::pauseAll() {
@@ -302,7 +302,7 @@ float SoundEngine::getSoundVolume(uint handle) {
 	SndHandle* sndHandle = findHandle(handle);
 	if (sndHandle == NULL)
 		return 0.f;
-	return (float)_mixer->getChannelVolume(sndHandle->handle) / 255.0;
+	return (float)_mixer->getChannelVolume(sndHandle->handle) / 255.0f;
 }
 
 float SoundEngine::getSoundPanning(uint handle) {
@@ -311,7 +311,7 @@ float SoundEngine::getSoundPanning(uint handle) {
 	SndHandle* sndHandle = findHandle(handle);
 	if (sndHandle == NULL)
 		return 0.f;
-	return (float)_mixer->getChannelBalance(sndHandle->handle) / 127.0;
+	return (float)_mixer->getChannelBalance(sndHandle->handle) / 127.0f;
 }
 
 Resource *SoundEngine::loadResource(const Common::String &fileName) {
