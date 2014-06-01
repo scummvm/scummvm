@@ -942,8 +942,27 @@ void PrinceEngine::showBackAnims() {
 			int phaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseFrameIndex(phase);
 			int x = _backAnimList[i].backAnims[activeSubAnim]._x + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetX(phase);
 			int y = _backAnimList[i].backAnims[activeSubAnim]._y + _backAnimList[i].backAnims[activeSubAnim]._animData->getPhaseOffsetY(phase);
+			int animFlag = _backAnimList[i].backAnims[activeSubAnim]._flags;
+			int checkMaskFlag = (animFlag & 1);
+			int maxFrontFlag = (animFlag & 2);
+			int specialZFlag = _backAnimList[i].backAnims[activeSubAnim]._nextAnim;
+			int z = _backAnimList[i].backAnims[activeSubAnim]._nextAnim;
+			int frameWidth = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameWidth(phaseFrameIndex);
+			int frameHeight = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameHeight(phaseFrameIndex);
 
 			if (x != 0 || y != 0 || phaseCount != 1 || frameCount != 1) { // fix for room no. 5 - animation 8 (propably unnecessary anim)
+				if (checkMaskFlag != 0) {
+					if (_backAnimList[i].backAnims[activeSubAnim]._nextAnim == 0) {
+						z = y + frameHeight - 1;
+					}
+					checkMasks(x, y, frameWidth, frameHeight, z);
+				}
+				if (maxFrontFlag != 0) {
+					z = kMaxPicHeight + 1;
+				}
+				if (specialZFlag != 0) {
+					z = specialZFlag;
+				}
 				Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex); //still with memory leak
 				showSprite(backAnimSurface, x, y);
 				backAnimSurface->free();

@@ -244,6 +244,8 @@ public:
 
 	static const int16 kNormalWidth = 640;
 	static const int16 kNormalHeight = 480;
+	static const int16 kMaxPicWidth = 1280;
+	static const int16 kMaxPicHeight = 480;
 
 	void checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z);
 	void insertMasks(const Graphics::Surface *originalRoomSurface);
