@@ -187,7 +187,6 @@ Graphics::Surface *Hero::zoomSprite(Graphics::Surface *heroFrame) {
 }
 
 void Hero::countDrawPosition() {
-	int16 tempMiddleX;
 	int16 tempMiddleY;
 	int16 baseX = _moveSet[_moveSetType]->getBaseX();
 	int16 baseY = _moveSet[_moveSetType]->getBaseY();
@@ -202,21 +201,16 @@ void Hero::countDrawPosition() {
 	_scaledFrameXSize = getScaledValue(_frameXSize);
 	_scaledFrameYSize = getScaledValue(_frameYSize);
 
-	//int tempHeroHeight = _scaledFrameYSize; // not used? global?
-	int width = _frameXSize / 2;
-	tempMiddleX = _middleX - width;
-	int z = _middleY;
-	int y = _middleY - _scaledFrameYSize;
-	_vm->checkMasks(tempMiddleX, y, _scaledFrameXSize, _scaledFrameYSize, z);
-
 	if (_zoomFactor != 0) {
 		//notfullSize
 		_drawX = _middleX - _scaledFrameXSize / 2;
 		_drawY = tempMiddleY + 1 - _scaledFrameYSize;
+		_vm->checkMasks(_drawX, _drawY - 1, _scaledFrameXSize, _scaledFrameYSize, _middleY);
 	} else {
 		//fullSize
 		_drawX = _middleX - _frameXSize / 2;
 		_drawY = tempMiddleY + 1 - _frameYSize;
+		_vm->checkMasks(_drawX, _drawY - 1, _frameXSize, _frameYSize, _middleY);
 	}
 }
 
