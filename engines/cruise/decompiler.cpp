@@ -697,46 +697,39 @@ int decompSwapStack() {
 
 int decompFunction() {
 	currentScriptOpcodeType = getByteFromDecompScriptReal();
-//    addDecomp("OP_%X", currentScriptOpcodeType);
 	switch (currentScriptOpcodeType) {
-	case 0x1: {
-		pushDecomp("_setdoFade()");
+	case 0x1:
+		pushDecomp("Op_FadeIn()");
 		break;
-	}
-	case 0x2: {
-		pushDecomp("_prepareFade()");
+
+	case 0x2:
+		pushDecomp("Op_FadeOut()");
 		break;
-	}
-	case 0x3: {
-		sprintf(tempbuffer, "_loadBackground(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x3:
+		sprintf(tempbuffer, "Op_loadBackground(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x4: {
-		sprintf(tempbuffer, "_loadFullBundle(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x4:
+		sprintf(tempbuffer, "Op_LoadAbs(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x5: {
-		sprintf(tempbuffer, "_addCell(%s,%s,%s)", popDecomp(),
-		        popDecomp(), popDecomp());
+
+	case 0x5:
+		sprintf(tempbuffer, "Op_AddCell(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
+
 	case 0x6: {
 		unsigned long int numArg = atoi(popDecomp());
-		char *ovlStr;
-		char *idxStr;
 		char functionName[100];
 
-		idxStr = popDecomp();
-		ovlStr = popDecomp();
+		char *idxStr = popDecomp();
+		char *ovlStr = popDecomp();
 
 		resolveVarName(ovlStr, 0x20, idxStr, functionName);
-
-		sprintf(tempbuffer, "_startASync(%s", functionName);
+		sprintf(tempbuffer, "Op_AddProc(%s", functionName);
 
 		for (int i = 0; i < numArg; i++) {
 			strcatuint8(tempbuffer, ",");
@@ -747,74 +740,62 @@ int decompFunction() {
 
 		pushDecomp(tempbuffer);
 		break;
-	}
+		}
+
 	case 0x7: {
-		char *var1;
-		char *objIdxStr;
-		char *ovlStr;
+		char *var1 = popDecomp();
+		char *objIdxStr = popDecomp();
+		char *ovlStr = popDecomp();
 
-		var1 = popDecomp();
-		objIdxStr = popDecomp();
-		ovlStr = popDecomp();
+		sprintf(tempbuffer, "Op_InitializeState(ovl:%s,dataIdx:%s,%s)", ovlStr, objIdxStr, var1);
+		pushDecomp(tempbuffer);
+		break;
+		}
 
-		sprintf(tempbuffer,
-		        "_createObjectFromOvlData(ovl:%s,dataIdx:%s,%s)",
-		        ovlStr, objIdxStr, var1);
+	case 0x8:
+		sprintf(tempbuffer, "Op_RemoveCell(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x8: {
-		sprintf(tempbuffer, "_removeCell(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x9:
+		pushDecomp("Op_FreeCell()");
+		break;
+
+	case 0xA:
+		sprintf(tempbuffer, "Op_RemoveProc(ovl(%s),%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x9: {
-		pushDecomp("_freeobjectList()");
-		break;
-	}
-	case 0xA: {
-		sprintf(tempbuffer, "_removeScript(ovl(%s),%s)",
-		        popDecomp(), popDecomp());
+
+	case 0xB:
+		sprintf(tempbuffer, "Op_RemoveFrame(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0xB: {
-		sprintf(tempbuffer, "_resetFilesEntries(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0xC:
+		sprintf(tempbuffer, "Op_LoadOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0xC: {
-		sprintf(tempbuffer, "_loadOverlay(%s)", popDecomp());
+
+	case 0xD:
+		sprintf(tempbuffer, "Op_SetColor(%s,%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0xD: {
-		sprintf(tempbuffer, "_palManipulation(%s,%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+
+	case 0xE:
+		sprintf(tempbuffer, "Op_PlayFX(%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0xE: {
-		sprintf(tempbuffer, "_playSample(%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+
+	case 0x10:
+		sprintf(tempbuffer, "Op_FreeOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x10: {
-		sprintf(tempbuffer, "_releaseScript2(%s)",
-		        popDecomp());
+
+	case 0x11:
+		sprintf(tempbuffer, "Op_FindOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x11: {
-		sprintf(tempbuffer, "_getOverlayIdx(%s)", popDecomp());
-		pushDecomp(tempbuffer);
-		break;
-	}
+
 	case 0x13: {
 		sprintf(tempbuffer,
 		        "_displayMessage(%s,\"%s\",%s,%s,%s,%s)",
