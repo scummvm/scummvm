@@ -236,12 +236,12 @@ void MADSAction::set() {
 					int articleNum = 0;
 
 					if ((_secondObjectSource == 2) || (_secondObjectSource == 5)) {
-						InventoryObject &invObject = _vm->_game->_objects.getItem(_hotspotId);
+						InventoryObject &invObject = _vm->_game->_objects.getItem(_secondObject);
 						articleNum = invObject._article;
-					} else if (_hotspotId < (int)scene._hotspots.size()) {
-						articleNum = scene._hotspots[_hotspotId]._articleNumber;
+					} else if (_secondObject < (int)scene._hotspots.size()) {
+						articleNum = scene._hotspots[_secondObject]._articleNumber;
 					} else {
-						articleNum = scene._dynamicHotspots.get(_hotspotId - scene._hotspots.size())._articleNumber;
+						articleNum = scene._dynamicHotspots.get(_secondObject - scene._hotspots.size())._articleNumber;
 					}
 
 					_statusText += kArticleList[articleNum];
