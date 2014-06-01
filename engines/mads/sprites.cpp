@@ -36,6 +36,8 @@ enum {
 	kMarker = 2
 };
 
+#define TRANSPARENT_COLOR_INDEX 0xFF
+
 class DepthEntry {
 public:
 	int depth;
@@ -121,34 +123,17 @@ void MSprite::loadSprite(Common::SeekableReadStream *source,
 		}
 	}
 
-	// Do a first post-sprite generation loop to find a pixel that the sprite 
-	// will not use to designate as the transparency
-	bool colorUsed[PALETTE_COUNT];
-	Common::fill(&colorUsed[0], &colorUsed[PALETTE_COUNT], false);
-	for (outp = getData(); spriteSize > 0; --spriteSize, ++outp) {
-		if (*outp != transIndex)
-			colorUsed[palette[*outp]._palIndex] = true;
-	}
-
-	_transparencyIndex = PALETTE_COUNT - 1;
-	while (_transparencyIndex >= 0 && colorUsed[_transparencyIndex])
-		--_transparencyIndex;
-	assert(_transparencyIndex >= 0);
-
 	// Do a final iteration over the sprite to convert it's pixels to
 	// the final positions in the main palette
 	spriteSize = this->w * this->h;
 	for (outp = getData(); spriteSize > 0; --spriteSize, ++outp) {
-		if (*outp != transIndex) {
+		if (*outp != transIndex)
 			*outp = palette[*outp]._palIndex;
-		} else {
-			*outp = _transparencyIndex;
-		}
 	}
 }
 
 byte MSprite::getTransparencyIndex() const {
-	return _transparencyIndex;
+	return TRANSPARENT_COLOR_INDEX;
 }
 
 /*------------------------------------------------------------------------*/
