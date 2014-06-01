@@ -117,6 +117,7 @@ public:
 	virtual ~MSprite();
 
 	Common::Point _offset;
+	int _transparencyIndex;
 
 	byte getTransparencyIndex() const;
 };

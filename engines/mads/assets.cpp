@@ -76,7 +76,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 	spriteStream->skip(32);
 	_frameCount = spriteStream->readUint16LE();
 
-	if ((flags & SPRITE_SET_CHAR_INFO) == 0)
+	if ((flags & ASSET_CHAR_INFO) == 0)
 		_charInfo = nullptr;
 	else
 		_charInfo = new SpriteSetCharInfo(spriteStream);
@@ -98,7 +98,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 	delete palStream;
 
 	// Process the palette data
-	if (flags & 9) {
+	if (flags & (ASSET_TRANSLATE | ASSET_SPINNING_OBJECT)) {
 		_usageIndex = 0;
 
 		if (flags & 8) {

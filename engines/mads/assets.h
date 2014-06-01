@@ -29,7 +29,10 @@
 
 namespace MADS {
 
-#define SPRITE_SET_CHAR_INFO 4
+enum AssetFlags {
+	ASSET_TRANSLATE = 1, ASSET_HEADER_ONLY = 2, ASSET_CHAR_INFO = 4,
+	ASSET_SPINNING_OBJECT = 8
+};
 
 class MADSEngine;
 class MSprite;

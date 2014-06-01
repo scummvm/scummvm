@@ -845,7 +845,7 @@ void UserInterface::loadInventoryAnim(int objectId) {
 
 	if (_vm->_invObjectsAnimated) {
 		Common::String resName = Common::String::format("*OB%.3dI", objectId);
-		SpriteAsset *asset = new SpriteAsset(_vm, resName, 8);
+		SpriteAsset *asset = new SpriteAsset(_vm, resName, ASSET_SPINNING_OBJECT);
 		_invSpritesIndex = scene._sprites.add(asset, 1);
 		if (_invSpritesIndex >= 0) {
 			_invFrameNumber = 1;
