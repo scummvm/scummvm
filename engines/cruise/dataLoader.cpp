@@ -433,7 +433,6 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		int resourceSize;
 		int fileIndex;
 		setHeaderEntry localBuffer;
-		uint8 *ptr5;
 
 		Common::MemoryReadStream s4(ptr + offset + 6, 16);
 
@@ -472,11 +471,8 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 			filesDatabase[fileIndex].width += 2;
 		}
 
-		ptr5 = ptr3 + localBuffer.offset + numIdx * 16;
-
+		uint8 *ptr5 = ptr3 + localBuffer.offset + numIdx * 16;
 		memcpy(filesDatabase[fileIndex].subData.ptr, ptr5, resourceSize);
-
-		ptr5 += resourceSize;
 
 		switch (localBuffer.type) {
 		case 0: { // polygon
