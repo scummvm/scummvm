@@ -201,13 +201,12 @@ void Hero::countDrawPosition() {
 	_frameYSize = _moveSet[_moveSetType]->getFrameHeight(_phase);
 	_scaledFrameXSize = getScaledValue(_frameXSize);
 	_scaledFrameYSize = getScaledValue(_frameYSize);
-	
-	//TODO
+
 	//int tempHeroHeight = _scaledFrameYSize; // not used? global?
 	int width = _frameXSize / 2;
-	tempMiddleX = _middleX - width; //eax
-	int z = _middleY; //ebp
-	int y = _middleY - _scaledFrameYSize; //ecx
+	tempMiddleX = _middleX - width;
+	int z = _middleY;
+	int y = _middleY - _scaledFrameYSize;
 	_vm->checkMasks(tempMiddleX, y, _scaledFrameXSize, _scaledFrameYSize, z);
 
 	if (_zoomFactor != 0) {
