@@ -548,16 +548,16 @@ void SceneTeleporter::teleporterEnter() {
 	if (_teleporterSceneId == 202)
 		_teleporterSceneId = 201;
 
-	int tmpVal = 0;
+	int codeVal = 0;
 	for (int i = 0; i < 10; i++) {
 		if (_teleporterSceneId == _globals[kTeleporterRoom + i])
-			tmpVal = _globals[kTeleporterRoom + i];
+			codeVal = _globals[kTeleporterCode + i];
 
 		if (_globals[kTeleporterRoom + i] == 301)
 			_meteorologistNextPlace = _globals[kTeleporterCode + i];
 	}
 
-	Common::String msgText2 = Common::String::format("#%.4d", tmpVal);
+	Common::String msgText2 = Common::String::format("#%.4d", codeVal);
 
 	if (_scene->_currentSceneId != 711) {
 		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, 9999999, msgText2);
