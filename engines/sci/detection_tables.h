@@ -3582,6 +3582,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Space Quest 3 v1.1 (game says 0.016) - English Mac (supplied by misterhands in bug report #6484
+	// Executable scanning reports "0.024"
+	{"sq3", "", {
+		{"resource.map", 0, "d1574928fc6187f5958d431ac9d8022e", 5844},
+		{"resource.001", 0, "0d8dfe42683b46f3131823233a91ce6a", 771942},
+		{"resource.002", 0, "0d8dfe42683b46f3131823233a91ce6a", 794127},
+		{"resource.003", 0, "0d8dfe42683b46f3131823233a91ce6a", 776554},
+		{"resource.004", 0, "0d8dfe42683b46f3131823233a91ce6a", 787066},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Space Quest 4 - English Amiga
 	// Executable scanning reports "1.004.024"
 	// SCI interpreter version 1.000.200
