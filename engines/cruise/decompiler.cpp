@@ -555,7 +555,7 @@ int decompMath() {
 		break;
 	}
 	case 4: {
-		sprintf(tempbuffer, "%s\%%s", param1, param2);
+		sprintf(tempbuffer, "%s % %s", param1, param2);
 		pushDecomp(tempbuffer);
 		break;
 	}
