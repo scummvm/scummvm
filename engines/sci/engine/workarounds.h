@@ -76,6 +76,7 @@ extern const SciWorkaroundEntry kDirLoop_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
 extern const SciWorkaroundEntry kFindKey_workarounds[];
+extern const SciWorkaroundEntry kDeleteKey_workarounds[];
 extern const SciWorkaroundEntry kGetAngle_workarounds[];
 extern const SciWorkaroundEntry kGraphDrawLine_workarounds[];
 extern const SciWorkaroundEntry kGraphSaveBox_workarounds[];

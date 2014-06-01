@@ -224,6 +224,14 @@ const SciWorkaroundEntry kCelWide_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kDeleteKey_workarounds[] = {
+	{    GID_HOYLE4,     300,   999,  0,     "handleEventList", "delete",        -1,    0, { WORKAROUND_IGNORE, 0 } }, // restarting hearts, while tray is shown - bug #6604
+	{    GID_HOYLE4,     500,   999,  0,     "handleEventList", "delete",        -1,    0, { WORKAROUND_IGNORE, 0 } }, // restarting cribbage, while tray is shown - bug #6604
+	{    GID_HOYLE4,     975,   999,  0,     "handleEventList", "delete",        -1,    0, { WORKAROUND_IGNORE, 0 } }, // going back to gamelist from hearts/cribbage, while tray is shown - bug #6604
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDeviceInfo_workarounds[] = {
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xd1c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
 	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe55,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
