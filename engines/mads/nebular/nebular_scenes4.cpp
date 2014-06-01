@@ -2183,10 +2183,10 @@ void Scene402::actions() {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(120, 44);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(VERB_WALK_ALONG, NOUN_BAR_STOOL) && (_game._player._targetPos.x == 248)){
+	} else if (_action.isAction(VERB_SIT_ON, NOUN_BAR_STOOL) && (_game._player._targetPos.x == 248)){
 		_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 120, _game.getQuote(0x20D));
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x20E));
-	} else if (_action.isAction(VERB_WALK_ALONG, NOUN_BAR_STOOL) && !_roxOnStool && (_game._player._targetPos.x != 248)) {
+	} else if (_action.isAction(VERB_SIT_ON, NOUN_BAR_STOOL) && !_roxOnStool && (_game._player._targetPos.x != 248)) {
 		_game._player._visible = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
