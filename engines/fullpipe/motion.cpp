@@ -337,7 +337,7 @@ void MctlLadder::addObject(StaticANIObject *obj) {
 
 		if (initMovement(obj, movement)) {
 			_mgm.addItem(obj->_id);
-			_movements.push_back(movement);
+			_ladmovements.push_back(movement);
 		} else {
 			delete movement;
 		}
@@ -347,7 +347,7 @@ void MctlLadder::addObject(StaticANIObject *obj) {
 int MctlLadder::findObjectPos(StaticANIObject *obj) {
 	int res = -1;
 
-	for (Common::List<MctlLadderMovement *>::iterator it = _movements.begin(); it != _movements.end(); ++it, ++res)
+	for (Common::List<MctlLadderMovement *>::iterator it = _ladmovements.begin(); it != _ladmovements.end(); ++it, ++res)
 		if ((*it)->objId == obj->_id)
 			break;
 
@@ -401,12 +401,12 @@ bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement
 void MctlLadder::freeItems() {
 	_mgm.clear();
 
-	for (Common::List<MctlLadderMovement *>::iterator it = _movements.begin(); it != _movements.end(); ++it) {
+	for (Common::List<MctlLadderMovement *>::iterator it = _ladmovements.begin(); it != _ladmovements.end(); ++it) {
 		delete (*it)->movVars;
 		delete [] (*it)->staticIds;
 	}
 
-	_movements.clear();
+	_ladmovements.clear();
 }
 
 MessageQueue *MctlLadder::method34(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
