@@ -3720,8 +3720,8 @@ void Scene411::step() {
 				if (_makeMushroomCloud) {
 					_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 5, 1, 0, 0);
 					_makeMushroomCloud = false;
-					_scene->_hotspots.activate(NOUN_EXPLOSIVES, false);
-					_scene->_hotspots.activate(NOUN_KETTLE, true);
+					_scene->_hotspots.activate(NOUN_KETTLE, false);
+					_scene->_hotspots.activate(NOUN_EXPLOSIVES, true);
 				}
 				break;
 
