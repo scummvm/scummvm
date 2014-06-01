@@ -861,7 +861,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "e0dd44069a62a463fd124974b915f10d", 342149},
 		{"resource.003", 0, "e0dd44069a62a463fd124974b915f10d", 328925},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Hoyle 1 - English DOS (supplied by wibble92 in bug report #2644547)
 	// SCI interpreter version 0.000.530
@@ -931,7 +931,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "62ed48d20c580e5a98f102f7cd93706a", 1356},
 		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 222704},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Hoyle 2 - English Macintosh
 	// Executable scanning reports "x.yyy.zzz"
@@ -939,7 +939,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "1af1d3aa3cf564f93477c9f87e53f495", 1728},
 		{"resource.001", 0, "b73b8131669d69d41a326415e4519138", 482882},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #if 0 // TODO: unknown if these files are corrupt
 	// Hoyle 3 - English Amiga (from www.back2roots.org)
