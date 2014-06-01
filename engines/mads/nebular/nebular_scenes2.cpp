@@ -1229,7 +1229,7 @@ void Scene205::enter() {
 
 	if (_globals[kSexOfRex] != SEX_MALE) {
 		_scene->loadAnimation(formAnimName('a', -1));
-		_scene->_activeAnimation->_resetFlag = false;
+		_scene->_activeAnimation->_resetFlag = true;
 	} else {
 		_beingKicked = true;
 		_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 8, 1, 0, 0);
