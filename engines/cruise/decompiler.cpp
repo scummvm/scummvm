@@ -796,128 +796,109 @@ int decompFunction() {
 		pushDecomp(tempbuffer);
 		break;
 
-	case 0x13: {
-		sprintf(tempbuffer,
-		        "_displayMessage(%s,\"%s\",%s,%s,%s,%s)",
-		        popDecomp(), resolveMessage(popDecomp()),
-		        popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+	case 0x13:
+		sprintf(tempbuffer, "Op_AddMessage(%s,\"%s\",%s,%s,%s,%s)", popDecomp(),
+			resolveMessage(popDecomp()), popDecomp(),  popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x14: {
-		sprintf(tempbuffer, "_removeObject(ovl(%s),%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x14:
+		sprintf(tempbuffer, "Op_RemoveMessage(ovl(%s),%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x15: {
-		pushDecomp("_pauseScript()");
+
+	case 0x15:
+		pushDecomp("Op_UserWait()");
 		break;
-	}
-	case 0x16: {
-		sprintf(tempbuffer,
-		        "_Op_FreezeCell(%s,%s,%s,%s,%s,%s)", popDecomp(),
-		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+
+	case 0x16:
+		sprintf(tempbuffer, "Op_FreezeCell(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
+			popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x17: {
-		sprintf(tempbuffer, "_loadCtp(%s)", popDecomp());
+
+	case 0x17:
+		sprintf(tempbuffer, "Op_LoadCt(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x18: {
-		sprintf(tempbuffer,
-		        "_Op_AddAnimation(%s,%s,%s,%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x18:
+		sprintf(tempbuffer, "Op_AddAnimation(%s,%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
+			popDecomp(), popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x19: {
-		sprintf(tempbuffer, "_Op_RemoveAnimation(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x19:
+		sprintf(tempbuffer, "Op_RemoveAnimation(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x1A: {
-		sprintf(tempbuffer, "_setupScaleFormula(%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp());
+
+	case 0x1A:
+		sprintf(tempbuffer, "Op_SetZoom(%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x1E: {
-		sprintf(tempbuffer, "_Op_TrackAnim(%s,%s,%s,%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
-		        popDecomp(), popDecomp());
+
+	case 0x1E:
+		sprintf(tempbuffer, "Op_TrackAnim(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
+			popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x21: {
-		sprintf(tempbuffer, "_isActorLoaded(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x21:
+		sprintf(tempbuffer, "Op_EndAnim(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x22: {
-		sprintf(tempbuffer, "_computeScale(%s)", popDecomp());
+
+	case 0x22:
+		sprintf(tempbuffer, "Op_GetZoom(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x23: {
-		sprintf(tempbuffer, "_convertToScale(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x23:
+		sprintf(tempbuffer, "Op_GetStep(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x24: {
-		sprintf(tempbuffer, "_op_24(%s,%s,%s,%s)", popDecomp(),
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x24:
+		sprintf(tempbuffer, "Op_SetStringColors(%s,%s,%s,%s)", popDecomp(), popDecomp(),
+			popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x27: {
-		sprintf(tempbuffer, "_getWalkBoxCollision(%s,%s)",
-		        popDecomp(), popDecomp());
+
+	case 0x27:
+		sprintf(tempbuffer, "Op_getPixel(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x28: {
-		sprintf(tempbuffer, "_changeSaveAllowedState(%s)",
-		        popDecomp());
+
+	case 0x28:
+		sprintf(tempbuffer, "Op_UserOn(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x29: {
-		pushDecomp("_freeAllPerso()");
+
+	case 0x29:
+		pushDecomp("Op_FreeCT()");
 		break;
-	}
-	case 0x2B: {
-		sprintf(tempbuffer, "_getProcIdx(%s,%s)", popDecomp(),
-		        popDecomp());
+
+	case 0x2B:
+		sprintf(tempbuffer, "Op_FindProc(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x2C: {
-		sprintf(tempbuffer, "_setObjectPosition(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x2C:
+		sprintf(tempbuffer, "Op_WriteObject(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x2E: {
-		sprintf(tempbuffer, "_releaseScript(%s)", popDecomp());
+
+	case 0x2E:
+		sprintf(tempbuffer, "Op_RemoveOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
-	case 0x2F: {
-		sprintf(tempbuffer, "_addBackgroundIncrust(%s,%s,%s)",
-		        popDecomp(), popDecomp(), popDecomp());
+
+	case 0x2F:
+		sprintf(tempbuffer, "Op_AddBackgroundIncrust(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
-	}
+
 	case 0x30: {
 		sprintf(tempbuffer, "_removeBackgroundIncrust(%s,%s)",
 		        popDecomp(), popDecomp());
