@@ -33,9 +33,17 @@ public:
 	Object();
 	~Object();
 
+	int32 _x;
+	int32 _y;
+	int32 _z;
+	int32 _mask; // or flags
+	int32 _zoomInSource;
+	int32 _zoomInLen;
+	int32 _zoomInAddr;
+	int32 _zoomInTime;
+
 	bool loadFromStream(Common::SeekableReadStream &stream);
 	const Graphics::Surface *getSurface() const { return _surface; }
-	uint16 _x, _y, _z, _overlay;
 private:
 	void loadSurface(Common::SeekableReadStream &stream);
 	Graphics::Surface *_surface; 

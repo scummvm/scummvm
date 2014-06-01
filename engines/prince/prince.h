@@ -171,6 +171,7 @@ struct Mask {
 	int16 getHeight() const {
 		return READ_LE_UINT16(_data + 6);
 	}
+
 	byte *getMask() const {
 		return (byte *)(_data + 8);
 	}
@@ -266,6 +267,7 @@ private:
 	bool spriteCheck(int sprWidth, int sprHeight, int destX, int destY);
 	void showSprite(Graphics::Surface *backAnimSurface, int destX, int destY);
 	void showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY);
+	void showObjects();
 	void makeShadowTable(int brightness);
 
 	uint32 getTextWidth(const char *s);

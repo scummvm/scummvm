@@ -977,6 +977,44 @@ void PrinceEngine::clearBackAnimList() {
 	_backAnimList.clear();
 }
 
+void PrinceEngine::showObjects() {
+	if (!_objList.empty()) {
+		for (uint i = 0; i < _objList.size(); i++) {
+			if ((_objList[i]->_mask & 32768) != 0) { // 8000h
+				_objList[i]->_zoomInTime--;
+				if (_objList[i]->_zoomInTime == 0) {
+					_objList[i]->_mask &= 32767; //7FFFh
+				} else {
+					// doZoomIn();
+					// mov edx, d [esi.Obj_ZoomInAddr]
+				}
+			}
+			if ((_objList[i]->_mask & 16384) != 0) { // 4000h
+				_objList[i]->_zoomInTime--;
+				if (_objList[i]->_zoomInTime == 0) {
+					_objList[i]->_mask &= 49151; //0BFFFh
+				} else {
+					// doZoomOut();
+					// mov edx, d [esi.Obj_ZoomInAddr]
+				}
+			}
+			const Graphics::Surface *objSurface = _objList[i]->getSurface();
+			if (spriteCheck(objSurface->w, objSurface->h, _objList[i]->_x, _objList[i]->_y)) {
+				if ((_objList[i]->_mask & 512) == 0) { // 0200h
+					int destX = _objList[i]->_x - _picWindowX;
+					int destY = _objList[i]->_y - _picWindowY;
+					_graph->drawTransparent(destX, destY, objSurface);
+				} else {
+					// showBackSprite();
+				}
+			}
+			if ((_objList[i]->_mask & 1) != 0) {
+				checkMasks(_objList[i]->_x, _objList[i]->_y, objSurface->w, objSurface->h, _objList[i]->_z);
+			}
+		}
+	}
+}
+
 void PrinceEngine::drawScreen() {
 	const Graphics::Surface *roomSurface = _roomBmp->getSurface();	
 	Graphics::Surface visiblePart;
@@ -1002,15 +1040,10 @@ void PrinceEngine::drawScreen() {
 		delete mainHeroSurface;
 	}
 
-	/*
-	if (!_objList.empty()) {
-		for (int i = 0; i < _objList.size(); i++) {
-			_graph->drawTransparent(_objList[i]->_x, _objList[i]->_y, _objList[i]->getSurface());
-		}
-	}
-	*/
-
 	showBackAnims();
+
+	showObjects();
+
 	if (roomSurface) {
 		insertMasks(&visiblePart);
 	}
