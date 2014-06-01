@@ -109,7 +109,7 @@ void BbvsEngine::updateWalkObject(SceneObject *sceneObject) {
 void BbvsEngine::walkObject(SceneObject *sceneObject, const Common::Point &destPt, int walkSpeed) {
 	int deltaX = destPt.x - (sceneObject->x >> 16);
 	int deltaY = destPt.y - (sceneObject->y >> 16);
-	float distance = sqrt((double)(deltaX * deltaX + deltaY * deltaY));
+	float distance = (float)sqrt((double)(deltaX * deltaX + deltaY * deltaY));
 	// NOTE The original doesn't have this check but without it the whole pathfinding breaks
 	if (distance > 0.0) {
 		sceneObject->walkCount = (int)(distance / ((((float)ABS(deltaX) / distance) + 1.0) * ((float)walkSpeed / 120)));
