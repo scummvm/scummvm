@@ -624,7 +624,6 @@ void GfxScreen::dither(bool addToFlag) {
 					switch (_upscaledHires) {
 					case GFX_SCREEN_UPSCALED_DISABLED:
 						*displayPtr = color;
-						displayPtr++;
 						break;
 					default:
 						putScaledPixelOnDisplay(x, y, color);
@@ -632,7 +631,7 @@ void GfxScreen::dither(bool addToFlag) {
 					}
 					*visualPtr = color;
 				}
-				visualPtr++;
+				visualPtr++; displayPtr++;
 			}
 		}
 	} else {
@@ -656,7 +655,6 @@ void GfxScreen::dither(bool addToFlag) {
 					switch (_upscaledHires) {
 					case GFX_SCREEN_UPSCALED_DISABLED:
 						*displayPtr = ditheredColor;
-						displayPtr++;
 						break;
 					default:
 						putScaledPixelOnDisplay(x, y, ditheredColor);
@@ -665,7 +663,7 @@ void GfxScreen::dither(bool addToFlag) {
 					color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
 					*visualPtr = color;
 				}
-				visualPtr++;
+				visualPtr++; displayPtr++;
 			}
 		}
 	}
