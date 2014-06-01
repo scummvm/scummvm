@@ -674,6 +674,7 @@ void Scene::changeVariant(int variant) {
 
 void Scene::resetScene() {
 	_vm->_game->clearQuotes();
+	removeSprites();
 	_spriteSlots.fullRefresh(true);
 	_sequences.clear();
 }
