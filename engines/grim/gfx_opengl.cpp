@@ -155,6 +155,8 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	GLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
+	GLfloat specularReflectance[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularReflectance);
 
 	glPolygonOffset(-6.0, -6.0);
 
@@ -821,6 +823,9 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 		lightDir[0] = light->_dir.x();
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();
+		specular[0] = diffuse[0];
+		specular[1] = diffuse[1];
+		specular[2] = diffuse[2];
 		cutoff = light->_penumbraangle;
 	}
 
@@ -830,8 +835,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
 	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
-	glLightf(GL_LIGHT0 + lightId, GL_LINEAR_ATTENUATION, 0.05f);
-	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, 0.1f);
+	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, 0.2f);
 	glEnable(GL_LIGHT0 + lightId);
 }
 
