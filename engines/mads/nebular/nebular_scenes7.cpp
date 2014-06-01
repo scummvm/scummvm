@@ -1026,7 +1026,7 @@ void Scene703::step() {
 }
 
 void Scene703::actions() {
-	if (_game._screenObjects._inputMode == 1)
+	if (_game._screenObjects._inputMode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
 	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_DOCK_TO_SOUTH)) {
 		_game._player._stepEnabled = false;
@@ -1412,7 +1412,7 @@ void Scene704::step() {
 }
 
 void Scene704::actions() {
-	if (_game._screenObjects._inputMode == 1)
+	if (_game._screenObjects._inputMode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
 	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_OPEN_WATER_TO_SOUTH)) {
 		_game._player._stepEnabled = false;
@@ -1662,7 +1662,7 @@ void Scene705::step() {
 }
 
 void Scene705::actions() {
-	if (_game._screenObjects._inputMode == 1)
+	if (_game._screenObjects._inputMode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
 	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_OPEN_WATER_TO_SOUTH)) {
 		switch (_game._trigger) {

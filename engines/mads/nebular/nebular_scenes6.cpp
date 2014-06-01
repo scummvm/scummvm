@@ -4345,7 +4345,7 @@ void Scene611::preActions() {
 }
 
 void Scene611::actions() {
-	if (_game._screenObjects._inputMode == 1)
+	if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialog();
 	else if ((_action.isAction(VERB_GIVE, NOUN_PHONE_CELLS, NOUN_HERMIT)) || (_action.isAction(VERB_GIVE, NOUN_DURAFAIL_CELLS, NOUN_HERMIT))) {
 		_action._activeAction._verbId = 0x294;

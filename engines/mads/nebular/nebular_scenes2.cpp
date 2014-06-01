@@ -1290,7 +1290,7 @@ void Scene205::handleWomanSpeech(int quote) {
 }
 
 void Scene205::actions() {
-	if (_game._screenObjects._inputMode == 1) {
+	if (_game._screenObjects._inputMode == kInputConversation) {
 		if (_kernelMessage >= 0)
 			_scene->_kernelMessages.remove(_kernelMessage);
 		_kernelMessage = -1;
@@ -4449,7 +4449,7 @@ void Scene210::preActions() {
 void Scene210::actions() {
 	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_HUT_TO_NORTH)) {
 		_vm->_dialogs->show(21017);
-	} else if (_game._screenObjects._inputMode == 1) {
+	} else if (_game._screenObjects._inputMode == kInputConversation) {
 		handleConversations();
 	} else if (_action.isAction(VERB_TALKTO, NOUN_NATIVE_WOMAN) ||
 		((_game._player._playerPos == Common::Point(214, 150)) && (_game._player._facing == FACING_NORTHWEST) && (_twinkleAnimationType == 1) && _stopWalking)) {

@@ -870,7 +870,7 @@ void Scene307::step() {
 		_lastFrameTime = _scene->_frameStartTime;
 
 		if ((_guardTime > 3000) && !_duringPeeingFl && (_scene->_activeAnimation == nullptr)
-		&& (_game._screenObjects._inputMode != 1) && _globals[kMetBuddyBeast] && !_activePrisonerFl) {
+		&& (_game._screenObjects._inputMode != kInputConversation) && _globals[kMetBuddyBeast] && !_activePrisonerFl) {
 			if (!_game._objects.isInInventory(OBJ_SCALPEL) && !_grateOpenedFl) {
 				_game._player._stepEnabled = false;
 				_game._player.walk(Common::Point(151, 119), FACING_SOUTHEAST);
@@ -879,7 +879,7 @@ void Scene307::step() {
 				_scene->loadAnimation(formAnimName('b', -1), 70);
 			}
 			_guardTime = 0;
-		} else if ((_prisonerTimer > 300) && (_game._screenObjects._inputMode != 1) && (_scene->_activeAnimation == nullptr) && !_activePrisonerFl) {
+		} else if ((_prisonerTimer > 300) && (_game._screenObjects._inputMode != kInputConversation) && (_scene->_activeAnimation == nullptr) && !_activePrisonerFl) {
 			if (!_globals[kMetBuddyBeast]) {
 				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(_prisonerMessageId));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);
@@ -909,7 +909,7 @@ void Scene307::step() {
 void Scene307::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(30715);
-	else if (_game._screenObjects._inputMode == 1)
+	else if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialog();
 	else if (_action.isAction(VERB_TALKTO, NOUN_CELL_WALL) || _action.isAction(VERB_TALKTO, NOUN_WALL) || _action.isAction(VERB_TALKTO, NOUN_TOILET)) {
 		int node, say;
@@ -2803,7 +2803,7 @@ void Scene318::step() {
 			_animMode = 3;
 		}
 	} else if ((_animMode == 2) && _explosionFl && _internVisibleFl && !_dialogFl
-			&& !_internWalkingFl && (_game._screenObjects._inputMode != 1)) {
+			&& !_internWalkingFl && (_game._screenObjects._inputMode != kInputConversation)) {
 		if ((diffFrame >= 0) && (diffFrame <= 4))
 			_internCounter += diffFrame;
 		else
@@ -2833,7 +2833,7 @@ void Scene318::preActions() {
 }
 
 void Scene318::actions() {
-	if (_game._screenObjects._inputMode == 1) {
+	if (_game._screenObjects._inputMode == kInputConversation) {
 		handleDialog();
 		_action._inProgress = false;
 		return;
