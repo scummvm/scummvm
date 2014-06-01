@@ -772,6 +772,7 @@ void PrinceEngine::checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z
 	}
 }
 
+// ClsNak
 void PrinceEngine::clsMasks() {
 	for (uint i = 0; i < _maskList.size(); i++) {
 		if (_maskList[i]._state == 1) {
@@ -956,20 +957,26 @@ void PrinceEngine::showBackAnims() {
 			int z = _backAnimList[i].backAnims[activeSubAnim]._nextAnim;
 			int frameWidth = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameWidth(phaseFrameIndex);
 			int frameHeight = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrameHeight(phaseFrameIndex);
+			int shadowZ = 0;
 
 			if (x != 0 || y != 0 || phaseCount != 1 || frameCount != 1) { // fix for room no. 5 - animation 8 (propably unnecessary anim)
+
 				if (checkMaskFlag != 0) {
 					if (_backAnimList[i].backAnims[activeSubAnim]._nextAnim == 0) {
 						z = y + frameHeight - 1;
 					}
 					checkMasks(x, y, frameWidth, frameHeight, z);
 				}
-				if (maxFrontFlag != 0) {
-					z = kMaxPicHeight + 1;
-				}
+
 				if (specialZFlag != 0) {
 					z = specialZFlag;
+				} else if (maxFrontFlag != 0) {
+					z = kMaxPicHeight + 1;
+				} else {
+					z = y + frameHeight - 1;
 				}
+				shadowZ = z;
+
 				Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex); //still with memory leak
 				showSprite(backAnimSurface, x, y);
 				backAnimSurface->free();
@@ -982,6 +989,21 @@ void PrinceEngine::showBackAnims() {
 				int shadowPhaseFrameIndex = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getPhaseFrameIndex(phase);
 				int shadowX = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getBaseX() + _backAnimList[i].backAnims[activeSubAnim]._shadowData->getPhaseOffsetX(phase);
 				int shadowY = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getBaseY() + _backAnimList[i].backAnims[activeSubAnim]._shadowData->getPhaseOffsetY(phase);
+				int shadowFrameWidth = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getFrameWidth(shadowPhaseFrameIndex);
+				int shadowFrameHeight = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getFrameHeight(shadowPhaseFrameIndex);
+
+				if (checkMaskFlag != 0) {
+					checkMasks(shadowX, shadowY, shadowFrameWidth, shadowFrameHeight, shadowY + shadowFrameWidth - 1);
+				}
+
+				if (shadowZ == 0) {
+					if (maxFrontFlag != 0) {
+						shadowZ = kMaxPicHeight + 1;
+					} else {
+						shadowZ = shadowY + shadowFrameWidth - 1;
+					}
+				}
+
 				Graphics::Surface *shadowSurface = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getFrame(shadowPhaseFrameIndex); //still with memory leak
 				showSpriteShadow(shadowSurface, shadowX, shadowY);
 				shadowSurface->free();
