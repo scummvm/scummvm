@@ -115,6 +115,11 @@ PrinceEngine::~PrinceEngine() {
 	}
 	_objList.clear();
 
+	for (uint32 i = 0; i < _pscrList.size(); i++) {
+		delete _pscrList[i];
+	}
+	_pscrList.clear();
+
 	for (uint i = 0; i < _maskList.size(); i++) {
 		free(_maskList[i]._data);
 	}
@@ -251,8 +256,8 @@ bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 	_nextAnim = stream.readUint16LE();
 	_flags = stream.readUint16LE();
 
-	debug("AnimListItem type %d, fileNumber %d, x %d, y %d, flags %d", _type, _fileNumber, _x, _y, _flags);
-	debug("startPhase %d, endPhase %d, loopPhase %d", _startPhase, _endPhase, _loopPhase);
+	//debug("AnimListItem type %d, fileNumber %d, x %d, y %d, flags %d", _type, _fileNumber, _x, _y, _flags);
+	//debug("startPhase %d, endPhase %d, loopPhase %d", _startPhase, _endPhase, _loopPhase);
 
 	// 32 byte aligment
 	stream.seek(pos + 32);
@@ -303,6 +308,12 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	loadZoom(_mainHero->_zoomBitmap, _mainHero->kZoomBitmapLen, "zoom");
 	loadShadow(_mainHero->_shadowBitmap, _mainHero->kShadowBitmapSize, "shadow", "shadow2");
+
+	for (uint32 i = 0; i < _pscrList.size(); i++) {
+		delete _pscrList[i];
+	}
+	_pscrList.clear();
+	Resource::loadResource(_pscrList, "pscr.lst", false);
 
 	_mobList.clear();
 	Resource::loadResource(_mobList, "mob.lst", false);
@@ -801,11 +812,11 @@ void PrinceEngine::showMask(int maskNr, const Graphics::Surface *originalRoomSur
 	}
 }
 
-void PrinceEngine::showSprite(Graphics::Surface *backAnimSurface, int destX, int destY) {
-	if (spriteCheck(backAnimSurface->w, backAnimSurface->h, destX, destY)) {
+void PrinceEngine::showSprite(const Graphics::Surface *spriteSurface, int destX, int destY) {
+	if (spriteCheck(spriteSurface->w, spriteSurface->h, destX, destY)) {
 		destX -= _picWindowX;
 		destY -= _picWindowY;
-		_graph->drawTransparent(destX, destY, backAnimSurface);
+		_graph->drawTransparent(destX, destY, spriteSurface);
 	}
 }
 
@@ -1063,6 +1074,20 @@ void PrinceEngine::showObjects() {
 	}
 }
 
+void PrinceEngine::showParallax() {
+	if (!_pscrList.empty()) {
+		for (uint i = 0; i < _pscrList.size(); i++) {
+			const Graphics::Surface *pscrSurface = _pscrList[i]->getSurface();
+			int x = _pscrList[i]->_x - (_pscrList[i]->_step * _picWindowX / 4);
+			int y = _pscrList[i]->_y;
+			//int z = 1000;
+			if (spriteCheck(pscrSurface->w, pscrSurface->h, x, y)) {
+				showSprite(pscrSurface, x, y);
+			}
+		}
+	}
+}
+
 void PrinceEngine::drawScreen() {
 	const Graphics::Surface *roomSurface = _roomBmp->getSurface();	
 	Graphics::Surface visiblePart;
@@ -1095,6 +1120,8 @@ void PrinceEngine::drawScreen() {
 	if (roomSurface) {
 		insertMasks(&visiblePart);
 	}
+
+	showParallax();
 
 	clsMasks();
 

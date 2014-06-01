@@ -18,7 +18,8 @@ MODULE_OBJS = \
 	decompress.o \
 	hero.o \
 	hero_set.o \
-	cursor.o 
+	cursor.o \
+	pscr.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PRINCE), DYNAMIC_PLUGIN)

@@ -25,19 +25,17 @@
 #include "common/debug.h"
 #include "common/stream.h"
 
-
 #include "graphics/surface.h"
 
-#include "prince/object.h"
+#include "prince/pscr.h"
 
 namespace Prince {
 
-Object::Object() : _surface(NULL), _x(0), _y(0), _z(0), _mask(0),
-	_zoomInSource(0), _zoomInLen(0), _zoomInAddr(0), _zoomInTime(0)
+PScr::PScr() :_file(0), _x(0), _y(0), _step(0), _addr(0), _len(0), _surface(NULL)
 {
 }
 
-Object::~Object() {
+PScr::~PScr() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
@@ -45,45 +43,48 @@ Object::~Object() {
 	}
 }
 
-void Object::loadSurface(Common::SeekableReadStream &stream) {
-	stream.skip(4);
+void PScr::loadSurface(Common::SeekableReadStream &stream) {
+	//stream.skip(4);
+	int x = stream.readUint16LE();
+	int y = stream.readUint16LE();
 	int width = stream.readUint16LE();
 	int height = stream.readUint16LE();
+	debug("x: %d, y: %d", x, y);
+	debug("w: %d, h: %d", width, height);
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
-	for (int h = 0; h < _surface->h; ++h) {
+	for (int h = 0; h < _surface->h; h++) {
 		stream.read(_surface->getBasePtr(0, h), _surface->w);
 	}
 }
 
-bool Object::loadFromStream(Common::SeekableReadStream &stream) {
+bool PScr::loadFromStream(Common::SeekableReadStream &stream) {
 	int32 pos = stream.pos();
-	uint16 x = stream.readUint16LE();
-	if (x == 0xFFFF)
+	uint16 file = stream.readUint16LE();
+	if (file == 0xFFFF)
 		return false;
-	_x = x;
+	_file = file;
+	_x = stream.readUint16LE();
 	_y = stream.readUint16LE();
+	_step = stream.readUint16LE();
+	_addr = stream.readUint32LE();
 
-	const Common::String obStreamName = Common::String::format("OB%02d", stream.readUint16LE());
-	Common::SeekableReadStream *obStream = SearchMan.createReadStreamForMember(obStreamName);
-	if (!obStream) {
-		error("Can't load %s", obStreamName.c_str());
+	const Common::String pscrStreamName = Common::String::format("PS%02d", _file);
+	Common::SeekableReadStream *pscrStream = SearchMan.createReadStreamForMember(pscrStreamName);
+	if (!pscrStream) {
+		error("Can't load %s", pscrStreamName.c_str());
 		return false;
 	}
 
-	loadSurface(*obStream);
-	delete obStream;
-
-	_mask = stream.readUint16LE();
-	_z = stream.readUint16LE();
+	loadSurface(*pscrStream);
+	delete pscrStream;
 	
-	stream.seek(pos + 16);
+	stream.seek(pos + 12); // size of PScrList struct
 
-	//debug("Object x %d, y %d, z %d overlay %d", _x, _y, _z, _mask);
+	debug("Parallex nr %d, x %d, y %d, step %d", _file, _x, _y, _step);
 
 	return true;
 }
 
 }
-/* vim: set tabstop=4 noexpandtab: */

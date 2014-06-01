@@ -45,6 +45,7 @@
 
 #include "prince/mob.h"
 #include "prince/object.h"
+#include "prince/pscr.h"
 
 
 namespace Prince {
@@ -65,6 +66,7 @@ class Font;
 class Hero;
 class Animation;
 class Room;
+class Pscr;
 
 struct Text {
 	const char *_str;
@@ -268,9 +270,10 @@ private:
 	void showBackAnims();
 	void clearBackAnimList();
 	bool spriteCheck(int sprWidth, int sprHeight, int destX, int destY);
-	void showSprite(Graphics::Surface *backAnimSurface, int destX, int destY);
+	void showSprite(const Graphics::Surface *spriteSurface, int destX, int destY);
 	void showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY);
 	void showObjects();
+	void showParallax();
 	void makeShadowTable(int brightness);
 
 	uint32 getTextWidth(const char *s);
@@ -297,6 +300,7 @@ private:
 	Audio::SoundHandle _soundHandle[MAX_SAMPLES];
 
 	Animation *_zoom;
+	Common::Array<PScr *> _pscrList;
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
 	Common::Array<Mask> _maskList;
