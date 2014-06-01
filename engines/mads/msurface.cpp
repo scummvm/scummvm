@@ -258,7 +258,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds,
 }
 
 void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
-	DepthSurface *depthSurface, int scale, int transparentColor) {
+	DepthSurface *depthSurface, int scale, bool flipped, int transparentColor) {
 	int destX = destPos.x, destY = destPos.y;
 	int frameWidth = src->getWidth();
 	int frameHeight = src->getHeight();
@@ -337,12 +337,12 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 
 	int destRight = this->getWidth() - 1;
 	int destBottom = this->getHeight() - 1;
-	bool normalFrame = true;
 
 	// Check x bounding area
 	int spriteLeft = 0;
 	int spriteWidth = distXCount;
 	int widthAmount = destX + distXCount - 1;
+	int direction = flipped ? -1 : 1;
 
 	if (destX < 0) {
 		spriteWidth += destX;
@@ -355,7 +355,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	int spriteRight = spriteLeft + spriteWidth;
 	if (spriteWidth <= 0)
 		return;
-	if (!normalFrame) {
+	if (flipped) {
 		destX += distXCount - 1;
 		spriteLeft = -(distXCount - spriteRight);
 		spriteRight = (-spriteLeft + spriteWidth);
@@ -380,7 +380,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 
 	byte *destPixelsP = this->getBasePtr(destX + spriteLeft, destY + spriteTop);
 
-	spriteLeft = (spriteLeft * (normalFrame ? 1 : -1));
+	spriteLeft = spriteLeft * direction;
 
 	// Loop through the lines of the sprite
 	for (int yp = 0, sprY = -1; yp < frameHeight; ++yp, srcPixelsP += src->pitch) {
@@ -412,7 +412,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 			if ((*srcP != transparentColor) && (depth <= pixelDepth))
 				*destP = *srcP;
 
-			++destP;
+			destP += direction;
 		}
 
 		// Move to the next destination line

@@ -317,16 +317,10 @@ void SpriteSlots::drawSprites(MSurface *s) {
 		assert(frameNumber > 0);
 		MSprite *sprite = spriteSet.getFrame(frameNumber - 1);
 
-		MSurface *spr = sprite;
-		if (flipped) {
-			// Create a flipped copy of the sprite temporarily
-			spr = sprite->flipHorizontal();
-		}
-
 		if ((slot._scale < 100) && (slot._scale != -1)) {
 			// Scaled drawing
-			s->copyFrom(spr, slot._position, slot._depth, &scene._depthSurface,
-				slot._scale, sprite->getTransparencyIndex());
+			s->copyFrom(sprite, slot._position, slot._depth, &scene._depthSurface,
+				slot._scale, flipped, sprite->getTransparencyIndex());
 		} else {
 			int xp, yp;
 
@@ -334,23 +328,29 @@ void SpriteSlots::drawSprites(MSurface *s) {
 				xp = slot._position.x - scene._posAdjust.x;
 				yp = slot._position.y - scene._posAdjust.y;
 			} else {
-				xp = slot._position.x - (spr->w / 2) - scene._posAdjust.x;
-				yp = slot._position.y - spr->h - scene._posAdjust.y + 1;
+				xp = slot._position.x - (sprite->w / 2) - scene._posAdjust.x;
+				yp = slot._position.y - sprite->h - scene._posAdjust.y + 1;
 			}
 
 			if (slot._depth > 1) {
 				// Draw the frame with depth processing
-				s->copyFrom(spr, Common::Point(xp, yp), slot._depth, &scene._depthSurface,
-					-1, sprite->getTransparencyIndex());
+				s->copyFrom(sprite, Common::Point(xp, yp), slot._depth, &scene._depthSurface,
+					-1, flipped, sprite->getTransparencyIndex());
 			} else {
+				MSurface *spr = sprite;
+				if (flipped) {
+					// Create a flipped copy of the sprite temporarily
+					spr = sprite->flipHorizontal();
+				}
+
 				// No depth, so simply draw the image
 				spr->copyTo(s, Common::Point(xp, yp), sprite->getTransparencyIndex());
+
+				// Free sprite if it was a flipped one
+				if (flipped)
+					delete spr;
 			}
 		}
-
-		// Free sprite if it was a flipped one
-		if (flipped)
-			delete spr;
 	}
 }
 

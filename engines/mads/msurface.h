@@ -162,10 +162,11 @@ public:
 	* @param depth			Depth of sprite
 	* @param depthSurface	Depth surface to use with sprite depth
 	* @param scale			Scale for image
+	* @param flipped		Flag for whether image is to be flipped
 	* @param transparentColor	Transparency palette index
 	*/
 	void copyFrom(MSurface *src, const Common::Point &destPos, int depth, DepthSurface *depthSurface,
-		int scale, int transparentColor = -1);
+		int scale, bool flipped, int transparentColor = -1);
 
 	/**
 	 * Copies the surface to a given destination surface
