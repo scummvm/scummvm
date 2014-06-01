@@ -129,7 +129,7 @@ void Sprite::setShapeList(BitmapPtr *shp, int cnt) {
 
 	if (shp) {
 		for (int i = 0; i < cnt; i++) {
-			BitmapPtr p = *shp + i;
+			BitmapPtr p = *(shp + i);
 			if (p->_w > _siz.x)
 				_siz.x = p->_w;
 			if (p->_h > _siz.y)
@@ -472,6 +472,11 @@ void Sprite::step(int nr) {
 		_vm->_waitRef = 0;
 }
 
+#pragma argsused
+void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
+	warning("STUB: Sprite::touch()");
+}
+
 void Sprite::tick() {
 	step();
 }
@@ -530,7 +535,7 @@ void Sprite::gotoxyz(V2D pos) {
 		++trim;
 	}
 	_pos2D.x = pos.x;
-
+	
 	if (pos.y < -kPanHeight) {
 		pos.y = -kPanHeight;
 		++trim;
@@ -963,7 +968,7 @@ void Vga::show() {
 		spr->show();
 	}
 
-	//_vm->_mouse->show();
+	_vm->_mouse->show();
 	update();
 
 	for (Sprite *spr = _showQ->first(); spr; spr = spr->_next) {
@@ -990,8 +995,7 @@ void Vga::show() {
 			spr->_flags._zmov = false;
 		}
 	}
-	//_vm->_mouse->hide();
-	warning("STUB: Vga::show() - Mouse handling is missing!");
+	_vm->_mouse->hide();
 }
 
 void Vga::updateColors() {

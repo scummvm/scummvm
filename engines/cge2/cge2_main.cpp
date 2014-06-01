@@ -385,6 +385,11 @@ void CGE2Engine::caveUp(int cav) {
 	_sprite = _vga->_showQ->first();
 	_vga->sunrise(_vga->_sysPal);
 
+	_dark = false;
+
+	if (!_startupMode)
+		_mouse->on();
+
 	feedSnail(_vga->_showQ->locate(bakRef + 255), kNear, _heroTab[_sex]->_ptr);
 	//setDrawColors(); - It's only for debugging purposes. Can be left out for now.
 }
@@ -414,8 +419,7 @@ void CGE2Engine::mainLoop() {
 	handleFrame();
 
 	// Handle any pending events
-	//_eventManager->poll();
-	warning("STUB: CGE2Engine::mainLoop() - Event handling is missing!");
+	_eventManager->poll();
 
 	// Check shouldQuit()
 	_quitFlag = shouldQuit();
@@ -426,8 +430,7 @@ void CGE2Engine::handleFrame() {
 	uint32 millis = g_system->getMillis();
 	while (!_quitFlag && (millis < (_lastFrame + kGameFrameDelay))) {
 		// Handle any pending events
-		//_eventManager->poll();
-		warning("STUB: CGE2Engine::handleFrame() - Event handling is missing!");
+		_eventManager->poll();
 
 		if (millis >= (_lastTick + kGameTickDelay)) {
 			// Dispatch the tick to any active objects
@@ -476,8 +479,7 @@ void CGE2Engine::tick() {
 		}
 	}
 
-	//Mouse->Tick();
-	warning("STUB: CGE2Engine::tick() - Mouse");
+	_mouse->tick();
 }
 
 void CGE2Engine::loadMap(int cav) {
@@ -754,6 +756,19 @@ void CGE2Engine::killText() {
 
 void CGE2Engine::switchHero(bool sex) {
 	warning("STUB: CGE2Engine::switchHero()");
+}
+
+Sprite *CGE2Engine::spriteAt(int x, int y) {
+	Sprite *spr = NULL, *tail = _vga->_showQ->last();
+	if (tail) {
+		for (spr = tail->_prev; spr; spr = spr->_prev) {
+			if (!spr->_flags._hide && !spr->_flags._tran) {
+				if (spr->shp()->solidAt(x - spr->_pos2D.x, y - spr->_pos2D.y))
+					break;
+			}
+		}
+	}
+	return spr;
 }
 
 } // End of namespace CGE2

@@ -68,6 +68,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_busyPtr = nullptr;
 	for (int i = 0; i < 2; i++)
 		_vol[i] = nullptr;
+	_eventManager = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -112,6 +113,7 @@ void CGE2Engine::init() {
 	for (int i = 0; i < kMaxPoint; i++)
 		_point[i] = new V3D();
 	_sys = new System(this);
+	_eventManager = new EventManager(this);
 }
 
 void CGE2Engine::deinit() {
@@ -140,6 +142,7 @@ void CGE2Engine::deinit() {
 		delete _point[i];
 	}
 	delete _sys;
+	delete _eventManager;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {

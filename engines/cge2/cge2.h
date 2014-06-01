@@ -55,6 +55,7 @@ class Talk;
 class Hero;
 class Bitmap;
 class System;
+class EventManager;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -131,6 +132,7 @@ public:
 	void mainLoop();
 	void handleFrame();
 	Sprite *locate(int ref);
+	Sprite *spriteAt(int x, int y);
 	bool isHero(Sprite *spr);
 	void loadUser();
 	void checkSaySwitch();
@@ -234,6 +236,7 @@ public:
 	System *_sys;
 	Sprite *_busyPtr;
 	Sprite *_vol[2];
+	EventManager *_eventManager;
 private:
 	void init();
 	void deinit();

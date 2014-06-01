@@ -65,6 +65,14 @@ public:
 
 /*----------------- MOUSE interface -----------------*/
 
+struct CGE2Event {
+	uint16 _mask;
+	uint16 _x;
+	uint16 _y;
+	Common::KeyCode _keyCode;
+	Sprite *_spritePtr;
+};
+
 class Mouse : public Sprite {
 public:
 	Sprite *_hold;
@@ -81,6 +89,25 @@ public:
 	void newMouse(Common::Event &event);
 private:
 	CGE2Engine *_vm;
+};
+
+/*----------------- EventManager interface -----------------*/
+
+class EventManager {
+private:
+	CGE2Engine *_vm;
+	Common::Event _event;
+	CGE2Event _eventQueue[kEventMax];
+	uint16 _eventQueueHead;
+	uint16 _eventQueueTail;
+
+	void handleEvents();
+public:
+	EventManager(CGE2Engine *vm);
+	void poll();
+	void clearEvent(Sprite *spr);
+
+	CGE2Event &getNextEvent();
 };
 
 } // End of namespace CGE
