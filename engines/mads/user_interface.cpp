@@ -688,7 +688,7 @@ void UserInterface::loadElements() {
 		// Set up inventory list
 		_categoryIndexes[CAT_INV_LIST - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int idx = 0; idx < 5; ++idx) {
-			getBounds(CAT_INV_LIST, idx, bounds);
+			getBounds(CAT_INV_LIST, _inventoryTopIndex + idx, bounds);
 			moveRect(bounds);
 
 			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_LIST, idx);
