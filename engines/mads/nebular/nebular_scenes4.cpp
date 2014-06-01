@@ -2085,7 +2085,7 @@ void Scene402::actions() {
 	} else if (_game._trigger == 167) {
 		_vm->_dialogs->showItem(OBJ_REPAIR_LIST, 40240);
 		_game._player._stepEnabled = true;
-	} else if (_game._screenObjects._inputMode == 1)
+	} else if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialogs();
 	else if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR_TO_SOUTH))
 		_scene->_nextSceneId = 401;
@@ -3494,7 +3494,7 @@ void Scene411::handleDialog() {
 			_scene->_activeAnimation->setCurrentFrame(_resetFrame);
 		}
 		_scene->_kernelMessages.reset();
-		_newQuantity = computeQuoteAndQuantity ();
+		_newQuantity = computeQuoteAndQuantity();
 
 		if ((_globals[kNextIngredient] == 1) && (_globals[kBadFirstIngredient] > -1))
 			_killRox = true;
@@ -3577,12 +3577,12 @@ void Scene411::enter() {
 	_dialog3.setup(0x5D, 0x254, 0x260, 0x25C, 0x258, 0x262, -1);
 	_dialog4.setup(0x5E, 0x255, 0x261, 0x25D, 0x259, 0x262, -1);
 
-	if (_globals[kNextIngredient] >= 4 && _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
-		_scene->_hotspots.activate(NOUN_EXPLOSIVES, false);
-		_scene->_hotspots.activate(NOUN_KETTLE, true);
-	} else {
+	if (_globals[kNextIngredient] >= 4 && !_game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 		_scene->_hotspots.activate(NOUN_KETTLE, false);
 		_scene->_hotspots.activate(NOUN_EXPLOSIVES, true);
+	} else {
+		_scene->_hotspots.activate(NOUN_EXPLOSIVES, false);
+		_scene->_hotspots.activate(NOUN_KETTLE, true);
 	}
 
 	if (_globals[kNextIngredient] >= 4 && _game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
@@ -3769,7 +3769,7 @@ void Scene411::preActions() {
 }
 
 void Scene411::actions() {
-	if (_game._screenObjects._inputMode != 1) {
+	if (_game._screenObjects._inputMode == kInputConversation) {
 		handleDialog();
 		_action._inProgress = false;
 		return;
@@ -3933,8 +3933,11 @@ void Scene411::actions() {
 	if (_game._trigger == 10)
 		_vm->_dialogs->showItem(OBJ_FORMALDEHYDE, 41124);
 
-	if (_action.isAction(VERB_PUT, NOUN_KETTLE)) {
-		if (_action.isObject(NOUN_PETROX) || _action.isObject(NOUN_FORMALDEHYDE) || _action.isObject(NOUN_LECITHIN) || _action.isObject(NOUN_ALIEN_LIQUOR)) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_KETTLE)) {
+		if (_action.isObject(NOUN_PETROX) ||
+			_action.isObject(NOUN_FORMALDEHYDE) ||
+			_action.isObject(NOUN_LECITHIN) ||
+			_action.isObject(NOUN_ALIEN_LIQUOR)) {
 			_newIngredient = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 			switch (_newIngredient) {
 			case OBJ_ALIEN_LIQUOR:
