@@ -2442,6 +2442,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Mixed-Up Fairy Tales - English DOS Floppy EGA (from misterhands, bug report #6596)
+	// Version 1.0, interpreter 1.000.158, INT# 11.23.91
+	{"fairytales", "EGA", {
+		{"resource.map", 0, "de9e151517013af15e0baf7bd8cbfe0b", 3243},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 840595},
+		{"resource.001", 0, "6ef4acdab49bdcaccf649640ddb12e9a", 115071},
+		{"resource.002", 0, "020d8c9da753a30899dd10c4463682db", 762020},
+		{"resource.003", 0, "9e0dea6b2bfd6cf0007cceb866bcbfb3", 670688},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Mixed-Up Fairy Tales v1.000 - English DOS (supplied by markcoolio in bug report #2723791)
 	// Executable scanning reports "1.000.145"
 	{"fairytales", "", {
