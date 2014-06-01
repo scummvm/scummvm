@@ -60,6 +60,7 @@ void EMIAnimComponent::setKey(int f) {
 	switch (f) {
 	case 0: // Stop
 		_animState->stop();
+		break;
 	case 1: // Play
 		_animState->play();
 		break;
