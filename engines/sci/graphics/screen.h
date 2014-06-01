@@ -32,12 +32,14 @@
 namespace Sci {
 
 #define SCI_SCREEN_UPSCALEDMAXHEIGHT 200
+#define SCI_SCREEN_UPSCALEDMAXWIDTH  320
 
 enum GfxScreenUpscaledMode {
 	GFX_SCREEN_UPSCALED_DISABLED	= 0,
-	GFX_SCREEN_UPSCALED_640x400		= 1,
-	GFX_SCREEN_UPSCALED_640x440		= 2,
-	GFX_SCREEN_UPSCALED_640x480		= 3
+	GFX_SCREEN_UPSCALED_480x300     = 1,
+	GFX_SCREEN_UPSCALED_640x400		= 2,
+	GFX_SCREEN_UPSCALED_640x440		= 3,
+	GFX_SCREEN_UPSCALED_640x480		= 4
 };
 
 enum GfxScreenMasks {
@@ -83,6 +85,7 @@ public:
 	void putPixel(int x, int y, byte drawMask, byte color, byte prio, byte control);
 	void putFontPixel(int startingY, int x, int y, byte color);
 	void putPixelOnDisplay(int x, int y, byte color);
+	void putScaledPixelOnDisplay(int x, int y, byte color);
 	void drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte prio, byte control);
 	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
 		drawLine(Common::Point(left, top), Common::Point(right, bottom), color, prio, control);
@@ -184,10 +187,11 @@ private:
 	GfxScreenUpscaledMode _upscaledHires;
 
 	/**
-	 * This here holds a translation for vertical coordinates between native
+	 * This here holds a translation for vertical+horizontal coordinates between native
 	 * (visual) and actual (display) screen.
 	 */
-	int _upscaledMapping[SCI_SCREEN_UPSCALEDMAXHEIGHT + 1];
+	int _upscaledHeightMapping[SCI_SCREEN_UPSCALEDMAXHEIGHT + 1];
+	int _upscaledWidthMapping[SCI_SCREEN_UPSCALEDMAXWIDTH + 1];
 
 	/**
 	 * This defines whether or not the font we're drawing is already scaled
