@@ -108,11 +108,11 @@ inline int intLog2(uint32 v) {
 #endif
 
 inline float rad2deg(float rad) {
-	return rad * 180.0 / M_PI;
+	return rad * 180.0f / (float)M_PI;
 }
 
 inline float deg2rad(float deg) {
-	return deg * M_PI / 180.0;
+	return deg * (float)M_PI / 180.0f;
 }
 
 } // End of namespace Common
