@@ -491,7 +491,7 @@ int decompOpcodeType2() {
 		char buffer3[256];
 		char varName[256];
 		int byte1 = getByteFromDecompScriptReal();
-		int byte2 = getByteFromDecompScriptReal();
+		getByteFromDecompScriptReal();
 		getShortFromDecompScript(buffer3);
 
 		resolveVarName("0", byte1 & 7, buffer3, varName);
@@ -502,7 +502,7 @@ int decompOpcodeType2() {
 	}
 	case 5: {
 		int byte1 = getByteFromDecompScriptReal();
-		int byte2 = getByteFromDecompScriptReal();
+		getByteFromDecompScriptReal();
 		short int short1 = getShortFromDecompScriptReal();
 
 		int8 *ptr = scriptDataPtrTable[byte1 & 7] + short1;
@@ -1405,16 +1405,14 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 		if (decompileLineTable[i].pendingElse) {
 			fprintf(fHandle, "%05d:\t",
 			        decompileLineTable[i].lineOffset);
-			fprintf(fHandle, "else", decompileLineTable[i].line);
-			fprintf(fHandle, "\n");
+			fprintf(fHandle, "else %s\n", decompileLineTable[i].line);
 		}
 
 		fprintf(fHandle, "%05d:\t", decompileLineTable[i].lineOffset);
 		for (int j = 0; j < decompileLineTable[i].indent; j++)
 			fprintf(fHandle, "\t");
 
-		fprintf(fHandle, "%s", decompileLineTable[i].line);
-		fprintf(fHandle, "\n");
+		fprintf(fHandle, "%s\n", decompileLineTable[i].line);
 	}
 
 	fclose(fHandle);
