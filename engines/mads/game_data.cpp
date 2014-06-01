@@ -46,9 +46,21 @@ bool VisitedScenes::exists(int sceneId) {
 	return false;
 }
 
-void VisitedScenes::synchronize(Common::Serializer &s) {
+void VisitedScenes::synchronize(Common::Serializer &s, int sceneId) {
 	SynchronizedList::synchronize(s);
 	s.syncAsByte(_sceneRevisited);
+
+	// If the scene hasn't been visited yet, remove it from the visited
+	// scenes list. It'll be readded to the list in add() above, from
+	// Game::sectionLoop()
+	if (s.isLoading() && !_sceneRevisited) {
+		for (uint i = 0; i < size(); ++i) {
+			if ((*this)[i] == sceneId) {
+				remove_at(i);
+				return;
+			}
+		}
+	}
 }
 
 } // End of namespace MADS

@@ -52,7 +52,7 @@ public:
 	/**
 	 * Synchronizes the list
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s, int sceneId);
 };
 
 class SectionHandler {

@@ -477,7 +477,7 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 
 		_scene.synchronize(s);
 		_objects.synchronize(s);
-		_visitedScenes.synchronize(s);
+		_visitedScenes.synchronize(s, _scene._nextSceneId);
 		_player.synchronize(s);
 		_screenObjects.synchronize(s);
 	} else {
