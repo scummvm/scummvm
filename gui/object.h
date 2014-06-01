@@ -91,6 +91,10 @@ public:
 
 	virtual void	removeWidget(Widget *widget);
 
+	virtual bool	isPointIn(int x, int y) {
+		return (x >= _x && x < (_x + _w) && (y >= _y) && (y < _y + _h));
+	}
+
 protected:
 	virtual void	releaseFocus() = 0;
 };
