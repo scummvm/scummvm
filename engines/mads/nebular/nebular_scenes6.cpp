@@ -1079,14 +1079,14 @@ void Scene607::enter() {
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_3");
 
 	if (!_game._visitedScenes._sceneRevisited && (_scene->_priorSceneId != 608))
-		_globals[kDogStatus] = 1;
+		_globals[kDogStatus] = DOG_PRESENT;
 
-	if ((_scene->_priorSceneId == 608) && (_globals[kDogStatus] < 3))
-		_globals[kDogStatus] = 3;
+	if ((_scene->_priorSceneId == 608) && (_globals[kDogStatus] < DOG_GONE))
+		_globals[kDogStatus] = DOG_GONE;
 
 	_animationActive = 0;
 
-	if ((_globals[kDogStatus] == 1) && (_game._difficulty != DIFFICULTY_EASY)) {
+	if ((_globals[kDogStatus] == DOG_PRESENT) && (_game._difficulty != DIFFICULTY_EASY)) {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('g', 3));
 		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('g', 7));
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', 0));
@@ -1116,7 +1116,7 @@ void Scene607::enter() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 		_scene->loadAnimation(formAnimName('R', 1), 80);
-	} else if (_globals[kDogStatus] == 2) {
+	} else if (_globals[kDogStatus] == DOG_LEFT) {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('g', 3));
 		_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('g', 7));
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', 0));
@@ -1133,7 +1133,7 @@ void Scene607::enter() {
 }
 
 void Scene607::step() {
-	if (_globals[kDogStatus] == 2) {
+	if (_globals[kDogStatus] == DOG_LEFT) {
 		int32 diff = _scene->_frameStartTime - _lastFrameTime;
 		if ((diff >= 0) && (diff <= 4))
 			_dogTimer += diff;
@@ -1143,7 +1143,7 @@ void Scene607::step() {
 		_lastFrameTime = _scene->_frameStartTime;
 	}
 
-	if ((_dogTimer >= 480) && !_dogLoop && !_shopAvailable && (_globals[kDogStatus] == 2) && !_game._player._special) {
+	if ((_dogTimer >= 480) && !_dogLoop && !_shopAvailable && (_globals[kDogStatus] == DOG_LEFT) && !_game._player._special) {
 		_vm->_sound->command(14);
 		_dogLoop = true;
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 10, 1, 0, 0);
@@ -1157,11 +1157,11 @@ void Scene607::step() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
 		_dogBarking = false;
-		_globals[kDogStatus] = 1;
+		_globals[kDogStatus] = DOG_PRESENT;
 		_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, true);
 	}
 
-	if (!_dogEatsRex && (_game._difficulty != DIFFICULTY_EASY) && !_animationActive && (_globals[kDogStatus] == 1)
+	if (!_dogEatsRex && (_game._difficulty != DIFFICULTY_EASY) && !_animationActive && (_globals[kDogStatus] == DOG_PRESENT)
 	 && !_dogBarking && (_vm->getRandomNumber(1, 50) == 10)) {
 		_dogBarking = true;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -1173,7 +1173,7 @@ void Scene607::step() {
 		_counter = 0;
 	}
 
-	if ((_game._trigger == 70) && !_dogEatsRex && (_globals[kDogStatus] == 1) && !_animationActive) {
+	if ((_game._trigger == 70) && !_dogEatsRex && (_globals[kDogStatus] == DOG_PRESENT) && !_animationActive) {
 		int syncIdx = _globals._sequenceIndexes[1];
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
@@ -1212,16 +1212,16 @@ void Scene607::step() {
 		}
 	}
 
-	if (_game._player._moving && (_game._difficulty != DIFFICULTY_EASY) && !_shopAvailable && (_globals[kDogStatus] == 1) && (_scene->_rails.getNext() > 0)) {
+	if (_game._player._moving && (_game._difficulty != DIFFICULTY_EASY) && !_shopAvailable && (_globals[kDogStatus] == DOG_PRESENT) && (_scene->_rails.getNext() > 0)) {
 		_game._player.cancelCommand();
 		_game._player.startWalking(Common::Point(268, 72), FACING_NORTHEAST);
 		_scene->_rails.resetNext();
 	}
 
-	if ((_game._player._special > 0) && (_game._difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == 1) && _game._player._stepEnabled)
+	if ((_game._player._special > 0) && (_game._difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == DOG_PRESENT) && _game._player._stepEnabled)
 		_game._player._stepEnabled = false;
 
-	if ((_game._difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == 1) && (_game._player._playerPos == Common::Point(268, 72))
+	if ((_game._difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == DOG_PRESENT) && (_game._player._playerPos == Common::Point(268, 72))
 	 && (_game._trigger || !_dogEatsRex)) {
 		_dogEatsRex = true;
 		switch (_game._trigger) {
@@ -1354,7 +1354,7 @@ void Scene607::handleThrowingBone() {
 			quoteId = 0x2F7;
 
 		if (_animationMode == 2) {
-			_globals[kDogStatus] = 2;
+			_globals[kDogStatus] = DOG_LEFT;
 			_dogTimer = 0;
 		}
 
@@ -1378,7 +1378,7 @@ void Scene607::preActions() {
 	if (_action.isAction(VERB_TALKTO, NOUN_OBNOXIOUS_DOG))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(VERB_WALK_THROUGH, NOUN_SIDE_ENTRANCE) && (_globals[kDogStatus] == 2) && (_game._difficulty != DIFFICULTY_EASY)) {
+	if (_action.isAction(VERB_WALK_THROUGH, NOUN_SIDE_ENTRANCE) && (_globals[kDogStatus] == DOG_LEFT) && (_game._difficulty != DIFFICULTY_EASY)) {
 		_shopAvailable = true;
 		_dogTimer = 0;
 	}
@@ -1440,7 +1440,7 @@ void Scene607::actions() {
 			handleThrowingBone();
 		}
 	} else if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_FENCE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FENCE)) && (_game._difficulty != DIFFICULTY_EASY)
-		 && ((_globals[kDogStatus] == 1) || _game._trigger)) {
+		 && ((_globals[kDogStatus] == DOG_PRESENT) || _game._trigger)) {
 		_animationMode = 2;
 		if (_game._trigger == 0) {
 			_scene->_kernelMessages.reset();
@@ -1448,7 +1448,7 @@ void Scene607::actions() {
 		}
 		handleThrowingBone();
 	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_STREET)) {
-		if ((_globals[kDogStatus] == 1) || (_game._difficulty == DIFFICULTY_EASY))
+		if ((_globals[kDogStatus] == DOG_PRESENT) || (_game._difficulty == DIFFICULTY_EASY))
 			_vm->_dialogs->show(60710);
 		else
 			_vm->_dialogs->show(60711);
@@ -1460,7 +1460,7 @@ void Scene607::actions() {
 		_vm->_dialogs->show(60714);
 	else if (_action.isAction(VERB_LOOK, NOUN_MANHOLE))
 		_vm->_dialogs->show(60715);
-	else if (_action.isAction(VERB_LOOK, NOUN_FIRE_HYDRANT) && (_globals[kDogStatus] == 1))
+	else if (_action.isAction(VERB_LOOK, NOUN_FIRE_HYDRANT) && (_globals[kDogStatus] == DOG_PRESENT))
 		_vm->_dialogs->show(60716);
 	else if (_action.isAction(VERB_LOOK, NOUN_SIGN))
 		_vm->_dialogs->show(60717);
@@ -1473,12 +1473,12 @@ void Scene607::actions() {
 	else if (_action.isAction(VERB_LOOK, NOUN_AIR_HOSE))
 		_vm->_dialogs->show(60721);
 	else if (_action.isAction(VERB_LOOK, NOUN_AUTO_SHOP)) {
-		if (_globals[kDogStatus] == 1)
+		if (_globals[kDogStatus] == DOG_PRESENT)
 			_vm->_dialogs->show(60723);
 		else
 			_vm->_dialogs->show(60722);
 	} else if (_action.isAction(VERB_LOOK, NOUN_SIDE_ENTRANCE)) {
-		if (_globals[kDogStatus] == 1)
+		if (_globals[kDogStatus] == DOG_PRESENT)
 			_vm->_dialogs->show(60725);
 		else
 			_vm->_dialogs->show(60724);
@@ -1591,7 +1591,7 @@ void Scene608::restoreAnimations() {
 	if (_throwMode == 6)
 		_dogSquashFl = true;
 
-	if (_globals[kCarStatus] == 0) {
+	if (_globals[kCarStatus] == CAR_UP) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 		_scene->_sequences.remove(_globals._sequenceIndexes[7]);
 		_scene->loadAnimation(formAnimName('A', -1));
@@ -1606,7 +1606,7 @@ void Scene608::restoreAnimations() {
 
 void Scene608::setCarAnimations() {
 	_scene->freeAnimation();
-	if (_globals[kCarStatus] == 0) {
+	if (_globals[kCarStatus] == CAR_UP) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[6], Common::Point(143, 98));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 6);
@@ -1712,12 +1712,12 @@ void Scene608::enter() {
 		_rexBeingEaten = false;
 
 		if (!_game._visitedScenes._sceneRevisited) {
-			_globals[kDogStatus] = 3;
+			_globals[kDogStatus] = DOG_GONE;
 			_dogActiveFl = true;
 		} else
-			_dogActiveFl = (_globals[kDogStatus] != 4);
+			_dogActiveFl = (_globals[kDogStatus] != DOG_DEAD);
 	} else {
-		_globals[kDogStatus] = 4;
+		_globals[kDogStatus] = DOG_DEAD;
 		_dogActiveFl = false;
 	}
 
@@ -1732,20 +1732,20 @@ void Scene608::enter() {
 
 
 	if (!_game._visitedScenes._sceneRevisited)
-		_globals[kCarStatus] = 0;
+		_globals[kCarStatus] = CAR_UP;
 
 	_animationMode = 0;
 	_carMoveMode = 0;
 	_carFrame = -1;
 
-	if (_globals[kCarStatus] == 0) {
+	if (_globals[kCarStatus] == CAR_UP) {
 		_carMode = 0;
 		_dogDeathMode = 0;
 		_resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('A', -1));
-	} else if (_globals[kCarStatus] == 3) {
+	} else if (_globals[kCarStatus] == CAR_DOWN) {
 		_carMode = 0;
 		_dogDeathMode = 0;
 		_resetPositionsFl = false;
@@ -1753,14 +1753,14 @@ void Scene608::enter() {
 		_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_activeAnimation->setCurrentFrame(6);
-	} else if (_globals[kCarStatus] == 1) {
+	} else if (_globals[kCarStatus] == CAR_SQUASHES_DOG) {
 		_carMode = 2;
 		_dogDeathMode = 0;
 		_resetPositionsFl = false;
 		int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 		_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 		_scene->loadAnimation(formAnimName('C', -1));
-	} else if (_globals[kCarStatus] == 2) {
+	} else if (_globals[kCarStatus] == CAR_SQUASHES_DOG_AGAIN) {
 		_carMode = 1;
 		_dogDeathMode = 2;
 		_resetPositionsFl = true;
@@ -1906,7 +1906,7 @@ void Scene608::step() {
 
 	if (_dogActiveFl && _dogSafeFl && !_buttonPressedonTimeFl) {
 		_dogDeathMode = 0;
-		_globals[kCarStatus] = 0;
+		_globals[kCarStatus] = CAR_UP;
 		_carMode = 0;
 		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 		_dogUnderCar = false;
@@ -2000,10 +2000,10 @@ void Scene608::step() {
 			_carFrame = _scene->_activeAnimation->getCurrentFrame();
 			int nextFrame = -1;
 
-			if ((_globals[kCarStatus] == 0) || (_globals[kCarStatus] == 3)) {
+			if ((_globals[kCarStatus] == CAR_UP) || (_globals[kCarStatus] == CAR_DOWN)) {
 				switch (_carMoveMode) {
 				case 0:
-					if (_globals[kCarStatus] == 0)
+					if (_globals[kCarStatus] == CAR_UP)
 						nextFrame = 0;
 					else
 						nextFrame = 6;
@@ -2013,7 +2013,7 @@ void Scene608::step() {
 					if (_scene->_activeAnimation->getCurrentFrame() >= 12) {
 						nextFrame = 0;
 						_carMoveMode = 0;
-						_globals[kCarStatus] = 0;
+						_globals[kCarStatus] = CAR_UP;
 					}
 					break;
 
@@ -2021,7 +2021,7 @@ void Scene608::step() {
 					if (_scene->_activeAnimation->getCurrentFrame() >= 6) {
 						nextFrame = 6;
 						_carMoveMode = 0;
-						_globals[kCarStatus] = 3;
+						_globals[kCarStatus] = CAR_DOWN;
 					}
 					break;
 
@@ -2217,7 +2217,7 @@ void Scene608::actions() {
 		_game._player._stepEnabled = true;
 		switch (_game._trigger) {
 		case 0:
-			if ((_globals[kCarStatus] == 0) || (_globals[kCarStatus] == 1) || (_globals[kCarStatus] == 2)) {
+			if ((_globals[kCarStatus] == CAR_UP) || (_globals[kCarStatus] == CAR_SQUASHES_DOG) || (_globals[kCarStatus] == CAR_SQUASHES_DOG_AGAIN)) {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], true, 6, 2, 0, 0);
@@ -2236,9 +2236,9 @@ void Scene608::actions() {
 			else if (_dogDeathMode == 1) {
 				_scene->_kernelMessages.reset();
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x300));
-				_globals[kCarStatus] = 1;
+				_globals[kCarStatus] = CAR_SQUASHES_DOG;
 				_carMode = 2;
-				_globals[kDogStatus] = 4;
+				_globals[kDogStatus] = DOG_DEAD;
 				_dogActiveFl = false;
 				_dogUnderCar = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
@@ -2262,13 +2262,13 @@ void Scene608::actions() {
 				_scene->_dynamicHotspots.remove(_carHotspotId);
 				int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(100, 100, 100 + 82, 100 + 25));
 				_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
-				if (_globals[kCarStatus] == 1)
+				if (_globals[kCarStatus] == CAR_SQUASHES_DOG)
 					_scene->_sequences.addTimer(120, 3);
 				else {
 					if (_dogDeathMode == 0)
-						_globals[kCarStatus] = 3;
+						_globals[kCarStatus] = CAR_DOWN;
 					else {
-						_globals[kCarStatus] = 4;
+						_globals[kCarStatus] = CAR_DOWN_ON_SQUASHED_DOG;
 						_carMode = 3;
 						_dogDeathMode = 2;
 					}
@@ -2279,7 +2279,7 @@ void Scene608::actions() {
 
 		case 3:
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x302));
-			_globals[kCarStatus] = 4;
+			_globals[kCarStatus] = CAR_DOWN_ON_SQUASHED_DOG;
 			_carMode = 3;
 			_dogDeathMode = 2;
 			_game._player._stepEnabled = true;
@@ -2291,7 +2291,7 @@ void Scene608::actions() {
 	} else if (_action.isAction(VERB_PUSH, NOUN_UP_BUTTON)) {
 		switch (_game._trigger) {
 		case 0:
-			if ((_globals[kCarStatus] == 3) || (_globals[kCarStatus] == 4)) {
+			if ((_globals[kCarStatus] == CAR_DOWN) || (_globals[kCarStatus] == CAR_DOWN_ON_SQUASHED_DOG)) {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], true, 6, 2, 0, 0);
@@ -2321,9 +2321,9 @@ void Scene608::actions() {
 			if (_carMoveMode != 0)
 				_scene->_sequences.addTimer(1, 2);
 			else if (_dogDeathMode == 0)
-				_globals[kCarStatus] = 0;
+				_globals[kCarStatus] = CAR_UP;
 			else if (_dogDeathMode == 2) {
-				_globals[kCarStatus] = 2;
+				_globals[kCarStatus] = CAR_SQUASHES_DOG_AGAIN;
 				_carMode = 3;
 				_dogDeathMode = 2;
 			}
@@ -2363,7 +2363,7 @@ void Scene608::actions() {
 	} else if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_AREA_BEHIND_CAR)
 					|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_DANGER_ZONE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_DANGER_ZONE)) {
 		_game._player._stepEnabled = true;
-		if ((_globals[kCarStatus] == 0) && _dogActiveFl) {
+		if ((_globals[kCarStatus] == CAR_UP) && _dogActiveFl) {
 			if (_dogActiveFl) {
 				if (_game._trigger == 0) {
 					_scene->_kernelMessages.reset();
@@ -2434,7 +2434,7 @@ void Scene608::actions() {
 	} else if (_action._lookFlag) {
 		if (_game._difficulty != DIFFICULTY_HARD)
 			_vm->_dialogs->show(60810);
-		else if (_globals[kDogStatus] == 4)
+		else if (_globals[kDogStatus] == DOG_DEAD)
 			_vm->_dialogs->show(60812);
 		else
 			_vm->_dialogs->show(60811);

@@ -206,10 +206,12 @@ enum GlobalId {
 	kTeleporterCode         = 200
 };
 
-/* Enums used for specific individual globals */
-/* Section #1 */
+// Enums used for specific individual globals
+// Section #1
 // Rex's sex/swimming state
 enum { REX_MALE = 0, REX_MALE_SWIMMER = 1, REX_FEMALE = 2 };
+
+// Section #2
 // State of Meteorologist in the outpost
 enum { METEOROLOGIST_ABSENT = 0, METEOROLOGIST_PRESENT = 1, METEOROLOGIST_GONE = 2 };
 
@@ -234,17 +236,25 @@ enum {
 	TELEPORTER_STEP_OUT = 3, TELEPORTER_WRONG = 4
 };
 
-// TWinkies status
+// Twinkles status
 enum { TWINKLES_AT_HOME = 0, TWINKLES_GONE = 1 };
 
-/* Section #4 */
+// Section #4
 // Status of the explosives
 enum { EXPLOSIVES_INSIDE = 3 };
 
-/* Section # 5 */
+// Section #5
+// Dog status (room 602, outside Abdul's garage)
+enum { DOG_PRESENT = 1, DOG_LEFT = 2, DOG_GONE = 3, DOG_DEAD = 4 };
+
+// Dog status (room 608, inside Abdul's garage)
+enum { CAR_UP = 0, CAR_SQUASHES_DOG = 1, CAR_SQUASHES_DOG_AGAIN = 2, CAR_DOWN = 3, CAR_DOWN_ON_SQUASHED_DOG = 4 };
+
+enum { SAFE_CLOSED = 0, SAFE_OPENED = 1, SAFE_CLOSED_WITH_HOLE = 2, SAFE_OPENED_WITH_HOLE = 3 };
+
 enum { LINE_NOT_DROPPED = 1, LINE_DROPPED = 2, LINE_TIED = 3, LINE_NOW_UNTIED = 4 };
 
-/* Section #6 */
+// Section #6
 enum {
 	NO_CELLS = 0,				// Handset doesn't contain any cells
 	CHARGED_DURAFAIL = 1,		// Handset has charged durafail cells
