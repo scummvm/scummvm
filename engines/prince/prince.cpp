@@ -1049,8 +1049,6 @@ void PrinceEngine::drawScreen() {
 		_graph->draw(0, 0, &visiblePart);
 	}
 
-	clsMasks();
-
 	if (_mainHero->_visible) {
 		Graphics::Surface *mainHeroSurface = _mainHero->getSurface();
 		if (mainHeroSurface) {
@@ -1075,6 +1073,8 @@ void PrinceEngine::drawScreen() {
 	if (roomSurface) {
 		insertMasks(&visiblePart);
 	}
+
+	clsMasks();
 
 	playNextFrame();
 
