@@ -353,7 +353,7 @@ void Mechanical::o_elevatorRotationMove(uint16 op, uint16 var, uint16 argc, uint
 	int16 step = ((rect.bottom - mouse.y) * lever->getNumFrames()) / rect.height();
 	step = CLIP<int16>(step, 0, maxStep);
 
-	_elevatorRotationSpeed = step * 0.1;
+	_elevatorRotationSpeed = step * 0.1f;
 
 	// Draw current frame
 	lever->drawFrame(step);
@@ -386,9 +386,9 @@ void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint
 
 		// Decrease speed
 		while (speed > 2) {
-			speed -= 0.5;
+			speed -= 0.5f;
 
-			_elevatorRotationGearPosition += speed * 0.1;
+			_elevatorRotationGearPosition += speed * 0.1f;
 
 			if (_elevatorRotationGearPosition > 12)
 				break;
