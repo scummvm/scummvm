@@ -262,6 +262,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	int destX = destPos.x, destY = destPos.y;
 	int frameWidth = src->getWidth();
 	int frameHeight = src->getHeight();
+	int direction = flipped ? -1 : 1;
 
 	int highestDim = MAX(frameWidth, frameHeight);
 	bool lineDist[MADS_SCREEN_WIDTH];
@@ -314,15 +315,19 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		byte *data = src->getData();
 		byte *srcPtr = data + (src->getWidth() * copyRect.top + copyRect.left);
 		byte *destPtr = (byte *)pixels + (destY * pitch) + destX;
+		if (flipped)
+			srcPtr += copyRect.width() - 1;
 
 		// 100% scaling variation
 		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
 			// Copy each byte one at a time checking against the depth
 			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
+				byte *srcP = srcPtr + xCtr * direction;
 				int pixelDepth = depthSurface == nullptr ? 15 :
 					depthSurface->getDepth(Common::Point(destX + xCtr, destY + rowCtr));
-				if ((depth <= pixelDepth) && (srcPtr[xCtr] != transparentColor))
-					destPtr[xCtr] = srcPtr[xCtr];
+
+				if ((depth <= pixelDepth) && (*srcP != transparentColor))
+					destPtr[xCtr] = *srcP;
 			}
 
 			srcPtr += src->getWidth();
@@ -342,7 +347,6 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	int spriteLeft = 0;
 	int spriteWidth = distXCount;
 	int widthAmount = destX + distXCount - 1;
-	int direction = flipped ? -1 : 1;
 
 	if (destX < 0) {
 		spriteWidth += destX;
