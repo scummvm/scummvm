@@ -48,11 +48,9 @@ MsCabinet::~MsCabinet() {
 	_folderMap.clear();
 	_fileMap.clear();
 
-	if (_data)
-		delete _data;
+	delete _data;
 
-	if (_decompressor)
-		delete _decompressor;
+	delete _decompressor;
 }
 
 MsCabinet::MsCabinet(Common::SeekableReadStream *data) :
@@ -189,8 +187,7 @@ Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::S
 	else {
 		//Check if the decompressor should be reinitialized
 		if (!_decompressor || entry.folder != _decompressor->getFolder()) {
-			if (_decompressor)
-				delete _decompressor;
+			delete _decompressor;
 
 			_decompressor = new Decompressor(entry.folder, _data);
 		}
@@ -214,14 +211,11 @@ MsCabinet::Decompressor::Decompressor(const MsCabinet::FolderEntry *folder, Comm
 }
 
 MsCabinet::Decompressor::~Decompressor() {
-	if (_decompressedBlock)
-		delete[] _decompressedBlock;
+	delete[] _decompressedBlock;
 
-	if (_compressedBlock)
-		delete[] _compressedBlock;
+	delete[] _compressedBlock;
 
-	if (_fileBuf)
-		delete[] _fileBuf;
+	delete[] _fileBuf;
 }
 
 bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &entry) {

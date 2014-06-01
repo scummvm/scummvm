@@ -66,8 +66,7 @@ PackFile::PackFile(Common::SeekableReadStream *data):
 
 
 PackFile::~PackFile() {
-	if (_codeTable)
-		delete[] _codeTable;
+	delete[] _codeTable;
 
 	delete _orgStream;
 }
@@ -85,8 +84,7 @@ void PackFile::createCodeTable(uint32 key) {
 	const uint32 kRandB = 0x269EC3;
 	uint32 value = key;
 
-	if (_codeTable)
-		delete[] _codeTable;
+	delete[] _codeTable;
 	_codeTable = new uint16[_kCodeTableSize * 2];
 
 	for (uint i = 0; i < _kCodeTableSize; i++) {
