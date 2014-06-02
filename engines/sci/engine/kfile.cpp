@@ -902,7 +902,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 				//  Script 200 / rm200::newRoom will set global C5h directly right after creating a child to the
 				//   current number of children plus 1.
 				//  We can't trust that global, that's why we set the actual savedgame id right here directly after
-				//   restore a saved game.
+				//   restoring a saved game.
 				//  If we didn't, the game would always save to a new slot
 				s->variables[VAR_GLOBAL][0xC5].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
 				break;
