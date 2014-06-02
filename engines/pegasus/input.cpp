@@ -57,7 +57,6 @@ InputDeviceManager::InputDeviceManager() {
 	_keyMap[Common::KEYCODE_p] = false;
 	_keyMap[Common::KEYCODE_TILDE] = false;
 	_keyMap[Common::KEYCODE_BACKQUOTE] = false;
-	_keyMap[Common::KEYCODE_NUMLOCK] = false;
 	_keyMap[Common::KEYCODE_BACKSPACE] = false;
 	_keyMap[Common::KEYCODE_KP_MULTIPLY] = false;
 	_keyMap[Common::KEYCODE_LALT] = false;
@@ -113,7 +112,12 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	if (_keyMap[Common::KEYCODE_ESCAPE] || _keyMap[Common::KEYCODE_p])
 		currentBits |= (kRawButtonDown << kMod3ButtonShift);
 
-	if (_keyMap[Common::KEYCODE_TILDE] || _keyMap[Common::KEYCODE_BACKQUOTE] || _keyMap[Common::KEYCODE_NUMLOCK])
+	// The original also used clear (aka "num lock" on Mac keyboards) here, but it doesn't
+	// work right on most systems. Either SDL or the OS treats num lock specially and the
+	// events don't come as expected. In many cases, the key down event is sent many times
+	// causing the drawer to open and close constantly until pressed again. It only causes
+	// more grief than anything else.
+	if (_keyMap[Common::KEYCODE_TILDE] || _keyMap[Common::KEYCODE_BACKQUOTE])
 		currentBits |= (kRawButtonDown << kLeftFireButtonShift);
 
 	if (_keyMap[Common::KEYCODE_BACKSPACE] || _keyMap[Common::KEYCODE_KP_MULTIPLY])
