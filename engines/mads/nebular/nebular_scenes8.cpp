@@ -1002,7 +1002,8 @@ void Scene804::step() {
 			_game._objects.setRoom(OBJ_POLYCEMENT, NOWHERE);
 		}
 
-		if (_scene->_activeAnimation->getCurrentFrame() == 1) {
+		// FIXME: Original doesn't have resetFrame check. Check why this has been needed
+		if (_resetFrame == -1 &&  _scene->_activeAnimation->getCurrentFrame() == 1) {
 			int randomVal = _vm->getRandomNumber(29) + 1;
 			switch (randomVal) {
 			case 1:
@@ -1090,6 +1091,99 @@ void Scene804::step() {
 		_vm->_sound->command(22);
 		_alreadyOrgan = true;
 	}
+}
+
+void Scene804::actions() {
+	if (_action.isAction(VERB_LOOK, NOUN_SERVICE_PANEL) ||
+		_action.isAction(VERB_OPEN, NOUN_SERVICE_PANEL)) {
+		_scene->_nextSceneId = 805;
+	} else if ((_action.isAction(VERB_ACTIVATE, NOUN_REMOTE)) && _globals[kTopButtonPushed]) {
+		if (!_globals[kInSpace]) {    
+			// Top button pressed on panel in hanger control
+			if (!_globals[kBeamIsUp]) {
+				_globals[kFromCockpit] = true;
+				_globals[kUpBecauseOfRemote] = true;
+				_scene->_nextSceneId = 803;
+			} else {
+				// Player turning off remote
+				_globals[kBeamIsUp] = false;
+				_globals[kUpBecauseOfRemote] = false;
+				_scene->_sequences.remove(_globals._sequenceIndexes[8]);
+				_vm->_sound->command(15);
+			}
+		}
+	} else if (_action.isAction(VERB_PULL, NOUN_THROTTLE)) {
+		_game._player._stepEnabled = false;
+		if (_globals[kBeamIsUp]) {
+			if (!_game._objects.isInInventory(OBJ_VASE) && _globals[kWindowFixed]) {
+				_vm->_dialogs->show(80423);
+				_game._player._stepEnabled = true;
+			} else {
+				_action._inProgress = false;
+
+				//saveGame("REX000.SAV");
+
+				_vm->_dialogs->show(80424);
+				_pullThrottleReally = true;
+				_scene->_kernelMessages.add(Common::Point(78, 75), 0x1110, 0, 0,
+					120, _game.getQuote(791));
+			}
+		} else {
+			_messWithThrottle = true;
+		}
+	}
+	else if (_action.isAction(VERB_APPLY, NOUN_POLYCEMENT, NOUN_CRACK) ||
+		_action.isAction(VERB_PUT, NOUN_POLYCEMENT, NOUN_CRACK)) {
+		if (!_globals[kWindowFixed]) {
+			_resetFrame = 2;
+			_game._player._stepEnabled = false;
+		}
+	} else if (_action.isAction(VERB_EXIT, NOUN_SHIP)) {
+		_globals[kExitShip] = true;
+		_globals[kFromCockpit] = true;
+		if (_globals[kBeamIsUp]) {
+			_vm->_dialogs->show(80425);
+			_scene->_sequences.remove(_globals._sequenceIndexes[8]);
+			_vm->_sound->command(15);
+			_globals[kBeamIsUp] = false;
+		}
+		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
+		_scene->_sequences.addTimer(2, 90);
+	} else  if (_action._lookFlag) {
+		_vm->_dialogs->show(80410);
+	} else if ((_action.isAction(VERB_LOOK, NOUN_WINDOW)) ||
+			(_action.isAction(VERB_LOOK_OUT, NOUN_WINDOW))) {
+		if (_globals[kBeamIsUp]) {
+			_vm->_dialogs->show(80412);
+		} else {
+			_vm->_dialogs->show(80411);
+		}
+	} else if (_action.isAction(VERB_LOOK, NOUN_CRACK)) {
+		if (_globals[kWindowFixed]) {
+			_vm->_dialogs->show(80414);
+		} else {
+			_vm->_dialogs->show(80413);
+		}
+	} else if (_action.isAction(VERB_LOOK, NOUN_CONTROLS)) {
+		_vm->_dialogs->show(80415);
+	} else if (_action.isAction(VERB_LOOK, NOUN_STATUS_PANEL)) {
+		if (_globals[kBeamIsUp]) {
+			_vm->_dialogs->show(80417);
+		} else {
+			_vm->_dialogs->show(80416);
+		}
+	} else if (_action.isAction(VERB_LOOK, NOUN_TP)) {
+		_vm->_dialogs->show(80418);
+	} else if (_action.isAction(VERB_TAKE, NOUN_TP)) {
+		_vm->_dialogs->show(80419);
+	} else if (_action.isAction(VERB_LOOK, NOUN_INSTRUMENTATION)) {
+		_vm->_dialogs->show(80420);
+	} else  if (_action.isAction(VERB_LOOK, NOUN_SEAT)) {
+		_vm->_dialogs->show(80421);
+	} else
+		return;
+
+	_action._inProgress = false;
 }
 
 /*------------------------------------------------------------------------*/

@@ -108,7 +108,7 @@ public:
 	virtual void setup();
 	virtual void enter();
 	virtual void step();
-	virtual void actions() {};
+	virtual void actions();
 };
 
 class Scene805 : public Scene8xx{

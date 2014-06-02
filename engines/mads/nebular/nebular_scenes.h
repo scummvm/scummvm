@@ -118,6 +118,7 @@ enum Verb {
 	VERB_WALK           = 0x32F,
 	VERB_REFLECT        = 0x365,
 	VERB_GET_INTO       = 0x36A,
+	VERB_LOOK_OUT		= 0x397,
 	VERB_APPLY          = 0x3A6,
 	VERB_STEER_TOWARDS  = 0x3B1,
 	VERB_NIBBLE_ON      = 0x3B7,
