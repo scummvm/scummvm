@@ -259,8 +259,8 @@ bool SequenceList::loadSprites(int seqIndex) {
 
 				dynHotspot._bounds.left = MAX(pt.x - width, 0);
 				dynHotspot._bounds.top = MAX(pt.y - height, 0);
-				dynHotspot._bounds.right = dynHotspot._bounds.left + width;
-				dynHotspot._bounds.bottom = dynHotspot._bounds.top + height;
+				dynHotspot._bounds.right = dynHotspot._bounds.left + width + 1;
+				dynHotspot._bounds.bottom = dynHotspot._bounds.top + height + 1;
 
 				scene._dynamicHotspots._changed = true;
 			}
