@@ -39,7 +39,7 @@ GameNebular::GameNebular(MADSEngine *vm)
 	: Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
-	_difficulty = DIFFICULTY_EASY;
+	_difficulty = DIFFICULTY_HARD;
 }
 
 ProtectionResult GameNebular::checkCopyProtection() {
