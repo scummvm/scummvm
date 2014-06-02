@@ -1219,6 +1219,45 @@ void Script::o_copyrecttobg() {	// 0x37
 	uint16 top = readScript16bits();
 	uint16 right = readScript16bits();
 	uint16 bottom = readScript16bits();
+
+	// Sanity checks to prevent bad pointer access crashes
+	if (left > right) {
+		warning("COPYRECT left:%d > right:%d", left, right);
+		// swap over left and right parameters
+		uint16 j;
+		j = right;
+		right = left;
+		left = j;
+	}
+	if (top > bottom) {
+		warning("COPYRECT top:%d > bottom:%d", top, bottom);
+		// swap over top and bottom parameters
+		uint16 j;
+		j = bottom;
+		bottom = top;
+		top = j;
+	}
+	if (top < 80) {
+		warning("COPYRECT top < 80... clamping");
+		top = 80;
+	}
+	if (top >= 480) {
+		warning("COPYRECT top >= 480... clamping");
+		top = 480 - 1;
+	}
+	if (bottom >= 480) {
+		warning("COPYRECT bottom >= 480... clamping");
+		bottom = 480 - 1;
+	}
+	if (left >= 640) {
+		warning("COPYRECT left >= 640... clamping");
+		left = 640 - 1;
+	}
+	if (right >= 640) {
+		warning("COPYRECT right >= 640... clamping");
+		right = 640 - 1;
+	}
+
 	uint16 i, width = right - left, height = bottom - top;
 	uint32 offset = 0;
 	byte *fg, *bg;
