@@ -2607,7 +2607,7 @@ void Scene752::actions() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 			_game._objects.addToInventory(OBJ_ID_CARD);
 			_scene->_dynamicHotspots.remove(_cardId);
-			_vm->_dialogs->show(OBJ_ID_CARD, 830);
+			_vm->_dialogs->showItem(OBJ_ID_CARD, 830);
 			break;
 		case 2:
 			_game._player._visible = true;
@@ -2631,7 +2631,7 @@ void Scene752::actions() {
 			if (_game._objects.isInInventory(OBJ_BONE))
 				_game._objects.setRoom(OBJ_BONE, 1);
 			_game._objects.addToInventory(OBJ_BONES);
-			_vm->_dialogs->show(OBJ_BONES, 75221);
+			_vm->_dialogs->showItem(OBJ_BONES, 75221);
 			break;
 		case 2:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[12]);
