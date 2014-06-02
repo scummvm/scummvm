@@ -755,7 +755,21 @@ void CGE2Engine::killText() {
 }
 
 void CGE2Engine::switchHero(bool sex) {
-	warning("STUB: CGE2Engine::switchHero()");
+	if (sex != _sex) {
+		int scene = _heroTab[sex]->_ptr->_scene;
+		if (_blinkSprite) {
+			_blinkSprite->_flags._hide = false;
+			_blinkSprite = nullptr;
+		}
+		if (scene >= 0) {
+			_commandHandler->addCommand(kCmdSeq, -1, 2, _heroTab[_sex]->_face);
+			_sex = !_sex;
+			switchCave(scene);
+		}
+	}
+	Sprite *face = _heroTab[_sex]->_face;
+	if (face->_seqPtr == 0)
+		_commandHandler->addCommand(kCmdSeq, -1, 1, face);
 }
 
 Sprite *CGE2Engine::spriteAt(int x, int y) {
