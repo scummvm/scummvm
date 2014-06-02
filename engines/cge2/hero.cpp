@@ -209,7 +209,16 @@ Sprite *Hero::expand(void) { // It's very similar to Sprite's expand, but doesn'
 }
 
 void Hero::setCurrent(void) {
-	warning("STUB: Hero::setCurrent()");
+	double m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
+	int h = -(V2D::trunc(m * _siz.y));
+
+	int i = 0;
+	for (; i < kDimMax; i++) {
+		if (h >= (_hig[i] + _hig[i + 1]) / 2)
+			break;
+	}
+
+	_ext->_shpList = &_dim[_curDim = i];
 }
 
 void Hero::hStep(void) {
