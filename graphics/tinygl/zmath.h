@@ -216,8 +216,7 @@ public:
 
 	Matrix4& operator*=(const Matrix4 &b) 
 	{
-		Matrix4 result = *this * b;
-		*this = result;
+		*this = *this * b;
 		return *this;
 	}
 

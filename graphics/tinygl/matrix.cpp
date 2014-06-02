@@ -187,9 +187,9 @@ void glopTranslate(GLContext *c, GLParam *p) {
 	Matrix4 m = Matrix4::identity();
 	float x = p[1].f, y = p[2].f, z = p[3].f;
 
-	m.set(3,0,x);
-	m.set(3,1,y);
-	m.set(3,2,z);
+	m.set(0,3,x);
+	m.set(1,3,y);
+	m.set(2,3,z);
 
 	*c->matrix_stack_ptr[c->matrix_mode] *= m;
 

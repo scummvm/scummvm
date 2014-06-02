@@ -217,9 +217,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 
 			// spot light
 			if (l->spot_cutoff != 180) {
-				dot_spot = -(d.getX() * l->norm_spot_direction.getX() +
-							 d.getY() * l->norm_spot_direction.getY() +
-							 d.getZ() * l->norm_spot_direction.getZ());
+				dot_spot = -Vector3::dot(d,l->norm_spot_direction);
 				if (twoside && dot_spot < 0)
 					dot_spot = -dot_spot;
 				if (dot_spot < l->cos_spot_cutoff) {
