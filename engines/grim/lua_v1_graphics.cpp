@@ -471,10 +471,10 @@ void Lua_V1::SetGamma() {
 
 	if (!lua_isnumber(levelObj))
 		return;
-	int level = (int)lua_getnumber(levelObj);
+	double level = lua_getnumber(levelObj);
 
 	// FIXME: func(level)
-	warning("Lua_V1::SetGamma, implement opcode, level: %d", level);
+	warning("Lua_V1::SetGamma, implement opcode, level: %f", level);
 }
 
 void Lua_V1::Display() {
