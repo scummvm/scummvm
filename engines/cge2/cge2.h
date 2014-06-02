@@ -112,6 +112,7 @@ public:
 	void inf(const char *text, bool wideSpace = false);
 	void movie(const char *ext);
 	void runGame();
+	void loadGame();
 	void loadScript(const char *fname);
 	void loadSprite(const char *fname, int ref, int scene, V3D &pos);
 	void badLab(const char *fn);

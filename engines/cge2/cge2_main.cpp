@@ -561,7 +561,48 @@ void CGE2Engine::loadUser() {
 	warning("STUB: CGE2Engine::loadUser()");
 	// Missing loading from file. TODO: Implement it with the saving/loading!
 	loadScript("CGE.INI");
+	loadGame();
 	loadPos();
+}
+
+void CGE2Engine::loadGame() {
+	warning("STUB: CGE2Engine::loadGame()");
+
+	// load sprites & pocket
+	
+	Sprite *s;
+	Hero *h;
+	
+	// initialize Andzia
+	s = _spare->take(142);
+	if (s) {
+		h = new Hero(this);
+		*(Sprite*)h = *s;
+		delete s;
+		h->expand();
+		_spare->update(h);
+	}
+	_heroTab[0]->_ptr = h;
+	s = _spare->take(152);
+	_vga->_showQ->insert(s);
+	_heroTab[0]->_face = s;
+
+	// initialize Wacek
+	s = _spare->take(141);
+	if (s) {
+		h = new Hero(this);
+		*(Sprite*)h = *s;
+		delete s;
+		h->expand();
+		_spare->update(h);
+	}
+	_heroTab[1]->_ptr = h;
+	s = _spare->take(151);
+	_vga->_showQ->insert(s);
+	_heroTab[1]->_face = s;
+
+	//--- start!
+	switchHero(_sex);
 }
 
 void CGE2Engine::loadPos() {
