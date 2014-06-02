@@ -238,6 +238,7 @@ public:
 	Sprite *_busyPtr;
 	Sprite *_vol[2];
 	EventManager *_eventManager;
+	Sprite *_blinkSprite;
 private:
 	void init();
 	void deinit();

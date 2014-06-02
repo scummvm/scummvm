@@ -69,6 +69,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	for (int i = 0; i < 2; i++)
 		_vol[i] = nullptr;
 	_eventManager = nullptr;
+	_blinkSprite = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -143,6 +144,8 @@ void CGE2Engine::deinit() {
 	}
 	delete _sys;
 	delete _eventManager;
+	if (_blinkSprite != nullptr)
+		delete _blinkSprite;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
