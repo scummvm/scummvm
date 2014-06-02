@@ -76,7 +76,7 @@ Scene::Scene(MADSEngine *vm)
 	_verbList.push_back(VerbInit(VERB_GIVE, VERB_THIS, PREP_TO));
 	_verbList.push_back(VerbInit(VERB_PULL, VERB_THAT, PREP_NONE));
 	_verbList.push_back(VerbInit(VERB_CLOSE, VERB_THAT, PREP_NONE));
-	_verbList.push_back(VerbInit(VERB_THROW, VERB_THIS, PREP_TO));
+	_verbList.push_back(VerbInit(VERB_THROW, VERB_THIS, PREP_AT));
 }
 
 Scene::~Scene() {

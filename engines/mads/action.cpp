@@ -246,8 +246,8 @@ void MADSAction::set() {
 
 					_statusText += kArticleList[articleNum];
 				}
-			} else if ((_articleNumber == VERB_LOOK) || (_vm->getGameID() != GType_RexNebular) ||
-				(_action._indirectObjectId >= 0 && scene._vocabStrings[_action._indirectObjectId] != kFenceStr)) {
+			} else if ((_articleNumber != VERB_LOOK) || (_vm->getGameID() != GType_RexNebular) ||
+				(_action._indirectObjectId >= 0 && scene.getVocab(_action._indirectObjectId) != kFenceStr)) {
 				// Write out the article
 				_statusText += kArticleList[_articleNumber];
 			} else {
