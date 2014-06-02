@@ -30,7 +30,7 @@
 namespace MADS {
 
 enum {
-	NOWHERE = 1
+	PLAYER_INVENTORY = 2, NOWHERE = 1
 };
 
 class MADSEngine;

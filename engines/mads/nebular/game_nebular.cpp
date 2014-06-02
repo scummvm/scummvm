@@ -217,7 +217,7 @@ void GameNebular::initializeGlobals() {
 		_objects.setRoom(OBJ_PLANT_STALK, NOWHERE);
 
 		_globals[kLeavesStatus] = LEAVES_ON_GROUND;
-		_globals[kDurafailRecharged] = true;
+		_globals[kDurafailRecharged] = 1;
 		_globals[kPenlightCellStatus] = FIRST_TIME_CHARGED_DURAFAIL;
 		break;
 
@@ -227,7 +227,7 @@ void GameNebular::initializeGlobals() {
 
 		_globals[kLeavesStatus] = LEAVES_ON_GROUND;
 		_globals[kPenlightCellStatus] = FIRST_TIME_UNCHARGED_DURAFAIL;
-		_globals[kDurafailRecharged] = false;
+		_globals[kDurafailRecharged] = 0;
 		break;
 	}
 
@@ -550,15 +550,14 @@ void GameNebular::doObjectAction() {
 		case 1:
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
 			dialogs.showItem(OBJ_DURAFAIL_CELLS,
-				_difficulty != 1 || _globals[kDurafailRecharged] ? 415 : 414);
+				_difficulty != DIFFICULTY_HARD || _globals[kDurafailRecharged] ? 415 : 414);
 			break;
 		case 2:
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
-			if (_difficulty == 1) {
+			if (_difficulty == DIFFICULTY_HARD) {
 				dialogs.showItem(OBJ_DURAFAIL_CELLS, 416);
-			} else {
-				_globals[kHandsetCellStatus] = 0;
-			}
+			} 
+			_globals[kHandsetCellStatus] = 0;
 			break;
 		case 3:
 			_objects.addToInventory(OBJ_PHONE_CELLS);
@@ -567,6 +566,7 @@ void GameNebular::doObjectAction() {
 		case 4:
 			_objects.addToInventory(OBJ_PHONE_CELLS);
 			dialogs.showItem(OBJ_PHONE_CELLS, 417);
+			_globals[kHandsetCellStatus] = 0;
 			break;
 		default:
 			dialogs.show(478);
@@ -592,16 +592,16 @@ void GameNebular::doObjectAction() {
 		if (_globals[kPenlightCellStatus]) {
 			dialogs.show(424);
 		} else {
-			_objects.setRoom(OBJ_DURAFAIL_CELLS, PLAYER_INVENTORY);
-			_globals[kPenlightCellStatus] = _difficulty != 1 || _globals[kDurafailRecharged] ? 1 : 2;
+			_objects.setRoom(OBJ_DURAFAIL_CELLS, NOWHERE);
+			_globals[kPenlightCellStatus] = _difficulty != DIFFICULTY_HARD || _globals[kDurafailRecharged] ? 1 : 2;
 			dialogs.show(423);
 		}
 	} else if (action.isAction(VERB_PUT, NOUN_DURAFAIL_CELLS, NOUN_PHONE_HANDSET)) {
 		if (_globals[kHandsetCellStatus]) {
-			dialogs.show(424);
+			dialogs.show(426);
 		} else {
-			_objects.setRoom(OBJ_DURAFAIL_CELLS, PLAYER_INVENTORY);
-			_globals[kDurafailRecharged] = _difficulty != 1 || _globals[kHandsetCellStatus] ? 1 : 2;
+			_objects.setRoom(OBJ_DURAFAIL_CELLS, NOWHERE);
+			_globals[kHandsetCellStatus] = _difficulty != DIFFICULTY_HARD || _globals[kHandsetCellStatus] ? 1 : 2;
 			dialogs.show(425);
 		}
 	} else if (action.isAction(VERB_SET, NOUN_TIMEBOMB)) {
