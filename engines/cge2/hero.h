@@ -67,37 +67,37 @@ public:
 	int _maxDist;
 	bool _ignoreMap;
 	Hero(CGE2Engine *vm);
-	void tick(void);
-	Sprite *expand(void);
-	Sprite *contract(void) { return this; }
-	Sprite *setContact(void);
-	int stepSize(void) { return _ext->_seq[7]._dx; }
+	void tick();
+	Sprite *expand();
+	Sprite *contract() { return this; }
+	Sprite *setContact();
+	int stepSize() { return _ext->_seq[7]._dx; }
 	int distance(V3D pos);
 	int distance(Sprite * spr);
 	void turn(Dir d);
-	void park(void);
+	void park();
 	static uint32 len(V2D v);
-	bool findWay(void);
+	bool findWay();
 	static int snap(int p, int q, int grid);
 	void walkTo(V3D pos);
 	void walkTo(V2D pos) { walkTo(screenToGround(pos)); }
 	V3D screenToGround(V2D pos);
 	void walkTo(Sprite *spr);
-	void say(void) { step(_sayStart); }
-	void fun(void);
-	void resetFun(void) { _funDel = _funDel0; }
-	void hStep(void);
+	void say() { step(_sayStart); }
+	void fun();
+	void resetFun() { _funDel = _funDel0; }
+	void hStep();
 	bool lower(Sprite * spr);
 	int cross(const V2D &a, const V2D &b);
 	int mapCross(const V2D &a, const V2D &b);
 	int mapCross(const V3D &a, const V3D &b);
-	Hero *other(void) { return _vm->_heroTab[!(_ref & 1)]->_ptr;}
-	Action action(void) { return (Action)(_ref % 10); }
+	Hero *other() { return _vm->_heroTab[!(_ref & 1)]->_ptr;}
+	Action action() { return (Action)(_ref % 10); }
 	void reach(int mode);
-	void setCurrent(void);
+	void setCurrent();
 	void setCave(int c);
-	void operator++(void);
-	void operator--(void);
+	void operator++();
+	void operator--();
 };
 
 } // End of namespace CGE2

@@ -36,7 +36,7 @@ Hero::Hero(CGE2Engine *vm)
       _curDim(0), _tracePtr(-1), _ignoreMap(false) {
 }
 
-Sprite *Hero::expand(void) { // It's very similar to Sprite's expand, but doesn't bother with "labels" for example. TODO: Try to unify the two later!
+Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bother with "labels" for example. TODO: Try to unify the two later!
 	if (_ext)
 		return this;
 
@@ -208,7 +208,7 @@ Sprite *Hero::expand(void) { // It's very similar to Sprite's expand, but doesn'
 	return this;
 }
 
-void Hero::setCurrent(void) {
+void Hero::setCurrent() {
 	double m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
 	int h = -(V2D::trunc(m * _siz.y));
 
@@ -221,16 +221,16 @@ void Hero::setCurrent(void) {
 	_ext->_shpList = &_dim[_curDim = i];
 }
 
-void Hero::hStep(void) {
+void Hero::hStep() {
 	warning("STUB: Hero::hStep()");
 }
 
-Sprite *Hero::setContact(void) {
+Sprite *Hero::setContact() {
 	warning("STUB: Hero::setContact()");
 	return this;
 }
 
-void Hero::tick(void) {
+void Hero::tick() {
 	warning("STUB: Hero::tick()");
 }
 
@@ -248,7 +248,7 @@ void Hero::turn(Dir d) {
 	warning("STUB: Hero::turn()");
 }
 
-void Hero::park(void) {
+void Hero::park() {
 	warning("STUB: Hero::park()");
 }
 
@@ -261,15 +261,15 @@ void Hero::reach(int mode) {
 	warning("STUB: Hero::reach()");
 }
 
-void Hero::fun(void) {
+void Hero::fun() {
 	warning("STUB: Hero::fun()");
 }
 
-void Hero::operator ++ (void) {
+void Hero::operator ++ () {
 	warning("STUB: Hero::operator ++()");
 }
 
-void Hero::operator -- (void) {
+void Hero::operator -- () {
 	warning("STUB: Hero::operator --()");
 }
 
@@ -278,7 +278,7 @@ uint32 Hero::len(V2D v) {
 	return 0;
 }
 
-bool Hero::findWay(void){
+bool Hero::findWay(){
 	warning("STUB: Hero::findWay()");
 	return false;
 }
