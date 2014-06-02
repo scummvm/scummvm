@@ -551,6 +551,7 @@ void GameNebular::doObjectAction() {
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
 			dialogs.showItem(OBJ_DURAFAIL_CELLS,
 				_difficulty != DIFFICULTY_HARD || _globals[kDurafailRecharged] ? 415 : 414);
+			_globals[kDurafailRecharged] = true;
 			break;
 		case 2:
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);

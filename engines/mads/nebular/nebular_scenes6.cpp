@@ -3156,7 +3156,8 @@ bool Scene611::check2ChargedBatteries() {
 }
 
 bool Scene611::check4ChargedBatteries() {
-	if (_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS) && _globals[136])
+	if (_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS) 
+			&& _globals[kDurafailRecharged])
 		return true;
 
 	return false;
@@ -3954,7 +3955,6 @@ void Scene611::enter() {
 
 	if (!_globals[kHasTalkedToHermit]) {
 		_scene->loadAnimation(Resources::formatName(611, 'h', -1, EXT_AA, ""), 0);
-		_scene->loadAnimation(Resources::formatName(203, 'a', -1, EXT_AA, ""), 81);
 		_nextFrame = 47;
 		_hermitMode = 1;
 		_hermitTalkingFl = false;
@@ -4145,7 +4145,7 @@ void Scene611::step() {
 		_hermitMode = 1;
 	}
 
-	if ((_scene->_activeAnimation->getCurrentFrame() == 240) && _check1Fl) {
+	if (_scene->_activeAnimation != nullptr && (_scene->_activeAnimation->getCurrentFrame() == 240) && _check1Fl) {
 		_check1Fl = false;
 		_scene->_kernelMessages.add(Common::Point(33, 88), 0xFDFC, 0, 0, 90, _game.getQuote(0x27E));
 		_scene->_sequences.addTimer(120, 120);
@@ -4234,7 +4234,7 @@ void Scene611::step() {
 		}
 	}
 
-	if (_scene->_activeAnimation->getCurrentFrame() == 254)
+	if (_scene->_activeAnimation != nullptr && _scene->_activeAnimation->getCurrentFrame() == 254)
 		_game._player._stepEnabled = true;
 
 	if (_game._trigger == 110) {
