@@ -66,12 +66,14 @@ public:
 	int32 _map;
 	HideDesc *_b;
 
+	Bitmap();
 	Bitmap(CGE2Engine *vm, const char *fname);
 	Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map);
 	Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill);
 	Bitmap(CGE2Engine *vm, const Bitmap &bmp);
 	~Bitmap();
 
+	void setVM(CGE2Engine *vm);
 	Bitmap *code();
 	Bitmap &operator=(const Bitmap &bmp);
 	void release();

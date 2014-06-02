@@ -26,15 +26,185 @@
  */
 
 #include "cge2/hero.h"
+#include "cge2/text.h"
+#include "cge2/cge2_main.h"
 
 namespace CGE2 {
 
-Hero::Hero(CGE2Engine *vm) : Sprite(vm) {
-	warning("STUB: Hero::Hero()");
+Hero::Hero(CGE2Engine *vm)
+	: Sprite(vm), _contact(nullptr), _dir(kNoDir),
+      _curDim(0), _tracePtr(-1), _ignoreMap(false) {
 }
 
-Sprite *Hero::expand(void) {
-	warning("STUB: Hero::expand()");
+Sprite *Hero::expand(void) { // It's very similar to Sprite's expand, but doesn't bother with "labels" for example. TODO: Try to unify the two later!
+	if (_ext)
+		return this;
+
+	char *text = _vm->_text->getText(_ref + 100);
+	char fname[kMaxPath];
+	_vm->mergeExt(fname, _file, kSprExt);
+	_ext = new SprExt(_vm);
+	if (_ext == nullptr)
+		error("No core %s", fname);
+
+	if (*_file) {
+		int cnt[kActions];
+		int shpcnt = 0;
+		int seqcnt = 0;
+		int maxnow = 0;
+		int maxnxt = 0;
+		Seq *seq;
+		int section = kIdPhase;
+
+		for (int i = 0; i < kDimMax; i++) {
+			_dim[i] = new Bitmap[_shpCnt];
+			for (int j = 0; j < _shpCnt; j++)
+				_dim[i][j].setVM(_vm);
+		}
+
+		if (_seqCnt) {
+			seq = new Seq[_seqCnt];
+			if (seq == nullptr)
+				error("No core %s", fname);
+		} else
+			seq = nullptr;
+
+		for (int i = 0; i < kActions; i++)
+			cnt[i] = 0;
+
+		for (int i = 0; i < kActions; i++) {
+			byte n = _actionCtrl[i]._cnt;
+			if (n) {
+				_ext->_actions[i] = new CommandHandler::Command[n];
+				if (_ext->_actions[i] == nullptr)
+					error("No core %s", fname);
+			} else
+				_ext->_actions[i] = nullptr;
+		}
+
+		if (_vm->_resman->exist(fname)) { // sprite description file exist
+			EncryptedStream sprf(_vm, fname);
+			if (sprf.err())
+				error("Bad SPR [%s]", fname);
+
+			ID id;
+			Common::String line;
+			char tmpStr[kLineMax + 1];
+
+			for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
+				if (line.size() == 0)
+					continue;
+				Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
+
+				char *p = _vm->token(tmpStr);
+
+				id = _vm->ident(p);
+				switch (id) {
+				case kIdNear:
+				case kIdMTake:
+				case kIdFTake:
+				case kIdPhase:
+				case kIdSeq:
+					section = id;
+					break;
+				case kIdName:
+					Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
+					for (p = tmpStr; *p != '='; p++); // We search for the =
+					setName(_vm->tail(p));
+					break;
+				default:
+					if (id >= kIdNear)
+						break;
+					Seq *s;
+					switch (section) {
+					case kIdNear:
+					case kIdMTake:
+					case kIdFTake:
+						id = (ID)_vm->_commandHandler->com(p);
+						if (_actionCtrl[section]._cnt) {
+							CommandHandler::Command *c = &_ext->_actions[section][cnt[section]++];
+							c->_commandType = CommandType(id);
+							if ((p = _vm->token(nullptr)) == NULL)
+								error("Unexpected end of file! %s", fname);
+							c->_ref = _vm->number(p);
+							if ((p = _vm->token(nullptr)) == NULL)
+								error("Unexpected end of file! %s", fname);
+							c->_val = _vm->number(p);
+							c->_spritePtr = nullptr;
+						}
+						break;
+					case kIdSeq:
+						s = &seq[seqcnt++];
+						s->_now = atoi(p);
+						if (s->_now > maxnow)
+							maxnow = s->_now;
+						if ((p = _vm->token(nullptr)) == NULL)
+							break;
+						s->_next = _vm->number(p);
+						switch (s->_next) {
+						case 0xFF:
+							s->_next = seqcnt;
+							break;
+						case 0xFE:
+							s->_next = seqcnt - 1;
+							break;
+						}
+						if (s->_next > maxnxt)
+							maxnxt = s->_next;
+						if ((p = _vm->token(nullptr)) == NULL)
+							error("Unexpected end of file! %s", fname);
+						s->_dx = _vm->number(p);
+						if ((p = _vm->token(nullptr)) == NULL)
+							error("Unexpected end of file! %s", fname);
+						s->_dy = _vm->number(p);
+						if ((p = _vm->token(nullptr)) == NULL)
+							error("Unexpected end of file! %s", fname);
+						s->_dz = _vm->number(p);
+						if ((p = _vm->token(nullptr)) == NULL)
+							error("Unexpected end of file! %s", fname);
+						s->_dly = _vm->number(p);
+						break;
+					case kIdPhase:
+						for (int i = 0; i < kDimMax; i++) {
+							char *q = p;
+							q[1] = '0' + i;
+							Bitmap b(_vm, q);
+							if (!b.moveHi())
+								error("No EMS %s", q);
+							_dim[i][shpcnt] = b;
+							if (!shpcnt)
+								_hig[i] = b._h;
+						}
+						++shpcnt;
+						break;
+					}
+				}
+			}
+			if (seq) {
+				if (maxnow >= shpcnt)
+					error("Bad PHASE in SEQ %s", fname);
+				if (maxnxt >= seqcnt)
+					error("Bad JUMP in SEQ %s", fname);
+				setSeq(seq);
+			} else
+				setSeq(_stdSeq8);
+
+			BitmapPtr *bmp = new BitmapPtr[shpcnt];
+			for (int i = 0; i < shpcnt; i++)
+				bmp[i] = &_dim[0][i];
+			setShapeList(bmp, shpcnt);
+			delete[] bmp;
+		}
+	}
+	_reachStart = atoi(_vm->token(text));
+	_reachCycle = atoi(_vm->token(nullptr));
+	_sayStart = atoi(_vm->token(nullptr));
+	_funStart = atoi(_vm->token(nullptr));
+	_funDel = _funDel0 = (72 / _ext->_seq[0]._dly) * atoi(_vm->token(nullptr));
+	int i = stepSize() / 2;
+	_maxDist = sqrt(double(i * i * 2));
+	setCurrent();
+	
 	return this;
 }
 
@@ -141,6 +311,23 @@ int Hero::mapCross(const V3D &a, const V3D &b) {
 
 void Hero::setCave(int c) {
 	warning("STUB: Hero::mapCross()");
+}
+
+bool Sprite::works(Sprite *spr) {
+	//if (!spr || !spr->_ext)
+	//	return false;
+
+	//CommandHandler::Command *c = spr->_ext->_take;
+	//if (c != NULL) {
+	//	c += spr->_takePtr;
+	//	if (c->_ref == _ref)
+	//		if (c->_commandType != kCmdLabel || (c->_val == 0 || c->_val == _vm->_now))
+	//			return true;
+	//}
+
+	warning("STUB: Sprite::works()");
+
+	return false;
 }
 
 } // End of namespace CGE2

@@ -96,8 +96,8 @@ public:
 	void reach(int mode);
 	void setCurrent(void);
 	void setCave(int c);
-	void operator ++ (void);
-	void operator -- (void);
+	void operator++(void);
+	void operator--(void);
 };
 
 } // End of namespace CGE2

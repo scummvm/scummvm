@@ -35,7 +35,14 @@
 
 namespace CGE2 {
 
-Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _m(NULL), _v(NULL), _map(0), _vm(vm) {
+Bitmap::Bitmap() : _w(0), _h(0), _v(NULL), _b(NULL) {
+}
+
+void Bitmap::setVM(CGE2Engine *vm) {
+	_vm = vm;
+}
+
+Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _m(NULL), _v(NULL), _b(NULL), _map(0), _vm(vm) {
 	char pat[kMaxPath];
 	forceExt(pat, fname, ".VBM");
 

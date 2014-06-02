@@ -144,23 +144,6 @@ void Sprite::setShapeList(BitmapPtr *shp, int cnt) {
 	}
 }
 
-bool Sprite::works(Sprite *spr) {
-	//if (!spr || !spr->_ext)
-	//	return false;
-
-	//CommandHandler::Command *c = spr->_ext->_take;
-	//if (c != NULL) {
-	//	c += spr->_takePtr;
-	//	if (c->_ref == _ref)
-	//		if (c->_commandType != kCmdLabel || (c->_val == 0 || c->_val == _vm->_now))
-	//			return true;
-	//}
-
-	warning("STUB: Sprite::works()");
-
-	return false;
-}
-
 Seq *Sprite::setSeq(Seq *seq) {
 	expand();
 
@@ -264,7 +247,7 @@ Sprite *Sprite::expand() {
 		Common::String line;
 		char tmpStr[kLineMax + 1];
 
-		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()){
+		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
 			if (line.size() == 0)
 				continue;
 			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
