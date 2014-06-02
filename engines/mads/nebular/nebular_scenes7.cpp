@@ -1716,7 +1716,7 @@ void Scene705::actions() {
 			_dialog1.start();
 		} else
 			_vm->_dialogs->show(70323);
-	} if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_WATER))
+	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_WATER))
 		_vm->_dialogs->show(70511);
 	else if (_action.isAction(VERB_LOOK, NOUN_VOLCANO_RIM))
 		_vm->_dialogs->show(70512);
