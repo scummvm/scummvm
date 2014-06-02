@@ -41,252 +41,31 @@
 
 namespace Wintermute {
 
+static const int kAShift = 0;//img->format.aShift;
+
+static const int kBModShift = 0;//img->format.bShift;
+static const int kGModShift = 8;//img->format.gShift;
+static const int kRModShift = 16;//img->format.rShift;
+static const int kAModShift = 24;//img->format.aShift;
+
+#ifdef SCUMM_LITTLE_ENDIAN
+static const int kAIndex = 0;
+static const int kBIndex = 1;
+static const int kGIndex = 2;
+static const int kRIndex = 3;
+
+#else
+static const int kAIndex = 3;
+static const int kBIndex = 2;
+static const int kGIndex = 1;
+static const int kRIndex = 0;
+#endif
+
 void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
 void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep);
-
-// These gather together various blendPixel functions for use with templates.
-
-class BlenderAdditive {
-public:
-	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
-	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-	inline void blendPixel(byte *in, byte *out);
-	inline void blendPixel(byte *in, byte *out, int colorMod);
-};
-
-class BlenderSubtractive {
-public:
-	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
-	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-	inline void blendPixel(byte *in, byte *out);
-	inline void blendPixel(byte *in, byte *out, int colorMod);
-};
-
-class BlenderNormal {
-public:
-	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb);
-	inline void blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb);
-	inline void blendPixel(byte *in, byte *out);
-	inline void blendPixel(byte *in, byte *out, int colorMod);
-};
-
-/**
- * Perform additive blending of a pixel, applying beforehand a given colormod.
- * @param ina, inr, ing, inb: the input pixel, split into its components.
- * @param *outa, *outr, *outg, *outb pointer to the output pixel.
- * @param *outa, *outr, *outg, *outb pointer to the colormod components.
- */
-void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-	if (*ca != 255) {
-		ina = (ina) * (*ca) >> 8;
-	}
-
-	if (ina == 0) {
-		return;
-	} else {
-		if (*cb != 255) {
-			*outb = MIN(*outb + ((inb * (*cb) * ina) >> 16), 255);
-		} else {
-			*outb = MIN(*outb + (inb * ina >> 8), 255);
-		}
-
-		if (*cg != 255) {
-			*outg = MIN(*outg + ((ing * (*cg) * ina) >> 16), 255);
-		} else {
-			*outg = MIN(*outg + (ing * ina >> 8), 255);
-		}
-
-		if (*cr != 255) {
-			*outr = MIN(*outr + ((inr * (*cr) * ina) >> 16), 255);
-		} else {
-			*outr = MIN(*outr + (inr * ina >> 8), 255);
-		}
-	}
-}
-
-/**
- * Perform subtractive blending of a pixel, applying beforehand a given colormod.
- * @param ina, inr, ing, inb: the input pixel, split into its components.
- * @param *outa, *outr, *outg, *outb pointer to the output pixel.
- * @param *outa, *outr, *outg, *outb pointer to the colormod components.
- */
-void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-	//if (*ca != 255) {
-	//	ina = ina * (*ca) >> 8;
-	// }
-
-	// As weird as it is, evidence suggests that alphamod is ignored when doing
-	// subtractive...
-
-	// TODO if ina == 255 fast version
-
-	if (ina == 0) {
-		return;
-	} else {
-		if (*cb != 255) {
-			*outb = MAX(*outb - ((inb * (*cb)  * (*outb) * ina) >> 24), 0);
-		} else {
-			*outb = MAX(*outb - (inb * (*outb) * ina >> 16), 0);
-		}
-
-		if (*cg != 255) {
-			*outg = MAX(*outg - ((ing * (*cg)  * (*outg) * ina) >> 24), 0);
-		} else {
-			*outg = MAX(*outg - (ing * (*outg) * ina >> 16), 0);
-		}
-
-		if (*cr != 255) {
-			*outr = MAX(*outr - ((inr * (*cr) * (*outr) * ina) >> 24), 0);
-		} else {
-			*outr = MAX(*outr - (inr * (*outr) * ina >> 16), 0);
-		}
-	}
-}
-
-/**
- * Perform "regular" alphablending of a pixel, applying beforehand a given colormod.
- * @param ina, inr, ing, inb: the input pixel, split into its components.
- * @param *outa, *outr, *outg, *outb pointer to the output pixel.
- * @param *outa, *outr, *outg, *outb pointer to the colormod components.
- */
-
-void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb, byte *ca, byte *cr, byte *cg, byte *cb) {
-	if (*ca != 255) {
-		ina = ina * (*ca) >> 8;
-	}
-
-	if (ina == 0) {
-		return;
-	} else if (ina == 255) {
-		if (*cb != 255) {
-			*outb = (inb * (*cb)) >> 8;
-		} else {
-			*outb = inb;
-		}
-
-		if (*cr != 255) {
-			*outr = (inr * (*cr)) >> 8;
-		} else {
-			*outr = inr;
-		}
-
-		if (*cg != 255) {
-			*outg = (ing * (*cg)) >> 8;
-		} else {
-			*outg = ing;
-		}
-
-		*outa = ina;
-
-		return;
-
-	} else {
-
-		*outa = 255;
-		*outb = (*outb * (255 - ina) >> 8);
-		*outr = (*outr * (255 - ina) >> 8);
-		*outg = (*outg * (255 - ina) >> 8);
-
-		if (*cb == 0) {
-			*outb = *outb;
-		} else if (*cb != 255) {
-			*outb = *outb + (inb * ina * (*cb) >> 16);
-		} else {
-			*outb = *outb + (inb * ina >> 8);
-		}
-
-		if (*cr == 0) {
-			*outr = *outr;
-		} else if (*cr != 255) {
-			*outr = *outr + (inr * ina * (*cr) >> 16);
-		} else {
-			*outr = *outr + (inr * ina >> 8);
-		}
-
-		if (*cg == 0) {
-			*outg = *outg;
-		} else if (*cg != 255) {
-			*outg = *outg + (ing * ina * (*cg) >> 16);
-		} else {
-			*outg = *outg + (ing * ina >> 8);
-		}
-
-		return;
-	}
-}
-
-/**
- * Perform "regular" alphablending of a pixel.
- * @param ina, inr, ing, inb: the input pixel, split into its components.
- * @param *outa, *outr, *outg, *outb pointer to the output pixel.
- */
-
-void BlenderNormal::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
-
-	if (ina == 0) {
-		return;
-	} else if (ina == 255) {
-		*outb = inb;
-		*outg = ing;
-		*outr = inr;
-		*outa = ina;
-		return;
-	} else {
-		*outa = 255;
-		*outb = ((inb * ina) + *outb * (255 - ina)) >> 8;
-		*outg = ((ing * ina) + *outg * (255 - ina)) >> 8;
-		*outr = ((inr * ina) + *outr * (255 - ina)) >> 8;
-	}
-}
-
-/**
- * Perform subtractive blending of a pixel.
- * @param ina, inr, ing, inb: the input pixel, split into its components.
- * @param *outa, *outr, *outg, *outb pointer to the output pixel.
- */
-void BlenderSubtractive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
-
-	if (ina == 0) {
-		return;
-	} else if (ina == 255) {
-		*outa = *outa;
-		*outr = *outr - (inr * (*outr) >> 8);
-		*outg = *outg - (ing * (*outg) >> 8);
-		*outb = *outb - (inb * (*outb) >> 8);
-		return;
-	} else {
-		*outa = *outa;
-		*outb = MAX(*outb - ((inb * (*outb)) * ina >> 16), 0);
-		*outg = MAX(*outg - ((ing * (*outg)) * ina >> 16), 0);
-		*outr = MAX(*outr - ((inr * (*outr)) * ina >> 16), 0);
-		return;
-	}
-}
-
-/**
- * Perform additive blending of a pixel.
- * @param ina, inr, ing, inb: the input pixel, split into its components.
- * @param *outa, *outr, *outg, *outb pointer to the output pixel.
- */
-void BlenderAdditive::blendPixel(byte ina, byte inr, byte ing, byte inb, byte *outa, byte *outr, byte *outg, byte *outb) {
-
-	if (ina == 0) {
-		return;
-	} else if (ina == 255) {
-		*outa = *outa;
-		*outr = MIN(*outr + inr, 255);
-		*outg = MIN(*outg + ing, 255);
-		*outb = MIN(*outb + inb, 255);
-		return;
-	} else {
-		*outa = *outa;
-		*outb = MIN((inb * ina >> 8) + *outb, 255);
-		*outg = MIN((ing * ina >> 8) + *outg, 255);
-		*outr = MIN((inr * ina >> 8) + *outr, 255);
-		return;
-	}
-}
-
+void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
+void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
+void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 
 TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
 
@@ -318,7 +97,7 @@ void doBlitOpaqueFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 		in = ino;
 		memcpy(out, in, width * 4);
 		for (uint32 j = 0; j < width; j++) {
-			out[TransparentSurface::kAIndex] = 0xFF;
+			out[kAIndex] = 0xFF;
 			out += 4;
 		}
 		outo += pitch;
@@ -339,12 +118,11 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 		in = ino;
 		for (uint32 j = 0; j < width; j++) {
 			uint32 pix = *(uint32 *)in;
-			int a = (pix >> TransparentSurface::kAShift) & 0xff;
+			int a = (pix >> kAShift) & 0xff;
 
-			if (a == 0) { // Full transparency
-			} else { // Full opacity (Any value not exactly 0 is Opaque here)
+			if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
 				*(uint32 *)out = pix;
-				out[TransparentSurface::kAIndex] = 0xFF;
+				out[kAIndex] = 0xFF;
 			}
 			out += 4;
 			in += inStep;
@@ -355,9 +133,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 }
 
 /**
- * What we have here is a template method that calls blendPixel() from a different
- * class - the one we call it with - thus performing a different type of blending.
- *
+ * Optimized version of doBlit to be used with alpha blended blitting
  * @param ino a pointer to the input surface
  * @param outo a pointer to the output surface
  * @param width width of the input surface
@@ -367,10 +143,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
  * @inoStep width in bytes of every row on the *input* surface / kind of like pitch
  * @color colormod in 0xAARRGGBB format - 0xFFFFFFFF for no colormod
  */
-
-template<class Blender>
-void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
-	Blender b;
+void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
 	byte *in;
 	byte *out;
 
@@ -381,16 +154,12 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
 
-				byte *outa = &out[TransparentSurface::kAIndex];
-				byte *outr = &out[TransparentSurface::kRIndex];
-				byte *outg = &out[TransparentSurface::kGIndex];
-				byte *outb = &out[TransparentSurface::kBIndex];
-
-				b.blendPixel(in[TransparentSurface::kAIndex],
-							 in[TransparentSurface::kRIndex],
-							 in[TransparentSurface::kGIndex],
-							 in[TransparentSurface::kBIndex],
-							 outa, outr, outg, outb);
+				if (in[kAIndex] != 0) {
+					out[kAIndex] = 255;
+					out[kRIndex] = ((in[kRIndex] * in[kAIndex]) + out[kRIndex] * (255 - in[kAIndex])) >> 8;
+					out[kGIndex] = ((in[kGIndex] * in[kAIndex]) + out[kGIndex] * (255 - in[kAIndex])) >> 8;
+					out[kBIndex] = ((in[kBIndex] * in[kAIndex]) + out[kBIndex] * (255 - in[kAIndex])) >> 8;
+				}
 
 				in += inStep;
 				out += 4;
@@ -400,26 +169,158 @@ void doBlit(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, in
 		}
 	} else {
 
-		byte ca = (color >> TransparentSurface::kAModShift) & 0xFF;
-		byte cr = (color >> TransparentSurface::kRModShift) & 0xFF;
-		byte cg = (color >> TransparentSurface::kGModShift) & 0xFF;
-		byte cb = (color >> TransparentSurface::kBModShift) & 0xFF;
+		byte ca = (color >> kAModShift) & 0xFF;
+		byte cr = (color >> kRModShift) & 0xFF;
+		byte cg = (color >> kGModShift) & 0xFF;
+		byte cb = (color >> kBModShift) & 0xFF;
 
 		for (uint32 i = 0; i < height; i++) {
 			out = outo;
 			in = ino;
 			for (uint32 j = 0; j < width; j++) {
 
-				byte *outa = &out[TransparentSurface::kAIndex];
-				byte *outr = &out[TransparentSurface::kRIndex];
-				byte *outg = &out[TransparentSurface::kGIndex];
-				byte *outb = &out[TransparentSurface::kBIndex];
+				uint32 ina = in[kAIndex] * ca >> 8;
+				out[kAIndex] = 255;
+				out[kBIndex] = (out[kBIndex] * (255 - ina) >> 8);
+				out[kGIndex] = (out[kGIndex] * (255 - ina) >> 8);
+				out[kRIndex] = (out[kRIndex] * (255 - ina) >> 8);
 
-				b.blendPixel(in[TransparentSurface::kAIndex],
-							 in[TransparentSurface::kRIndex],
-							 in[TransparentSurface::kGIndex],
-							 in[TransparentSurface::kBIndex],
-							 outa, outr, outg, outb, &ca, &cr, &cg, &cb);
+				out[kBIndex] = out[kBIndex] + (in[kBIndex] * ina * cb >> 16);
+				out[kGIndex] = out[kGIndex] + (in[kGIndex] * ina * cg >> 16);
+				out[kRIndex] = out[kRIndex] + (in[kRIndex] * ina * cr >> 16);
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	}
+}
+
+/**
+ * Optimized version of doBlit to be used with additive blended blitting
+ */
+void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
+	byte *in;
+	byte *out;
+
+	if (color == 0xffffffff) {
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				if (in[kAIndex] != 0) {
+					out[kRIndex] = MIN((in[kRIndex] * in[kAIndex] >> 8) + out[kRIndex], 255);
+					out[kGIndex] = MIN((in[kGIndex] * in[kAIndex] >> 8) + out[kGIndex], 255);
+					out[kBIndex] = MIN((in[kBIndex] * in[kAIndex] >> 8) + out[kBIndex], 255);
+				}
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	} else {
+
+		byte ca = (color >> kAModShift) & 0xFF;
+		byte cr = (color >> kRModShift) & 0xFF;
+		byte cg = (color >> kGModShift) & 0xFF;
+		byte cb = (color >> kBModShift) & 0xFF;
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				uint32 ina = in[kAIndex] * ca >> 8;
+
+				if (cb != 255) {
+					out[kBIndex] = MIN(out[kBIndex] + ((in[kBIndex] * cb * ina) >> 16), 255u);
+				} else {
+					out[kBIndex] = MIN(out[kBIndex] + (in[kBIndex] * ina >> 8), 255u);
+				}
+
+				if (cg != 255) {
+					out[kGIndex] = MIN(out[kGIndex] + ((in[kGIndex] * cg * ina) >> 16), 255u);
+				} else {
+					out[kGIndex] = MIN(out[kGIndex] + (in[kGIndex] * ina >> 8), 255u);
+				}
+
+				if (cr != 255) {
+					out[kRIndex] = MIN(out[kRIndex] + ((in[kRIndex] * cr * ina) >> 16), 255u);
+				} else {
+					out[kRIndex] = MIN(out[kRIndex] + (in[kRIndex] * ina >> 8), 255u);
+				}
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	}
+}
+
+/**
+ * Optimized version of doBlit to be used with subtractive blended blitting
+ */
+void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
+	byte *in;
+	byte *out;
+
+	if (color == 0xffffffff) {
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				if (in[kAIndex] != 0) {
+					out[kRIndex] = MAX(out[kRIndex] - ((in[kRIndex] * out[kRIndex]) * in[kAIndex] >> 16), 0);
+					out[kGIndex] = MAX(out[kGIndex] - ((in[kGIndex] * out[kGIndex]) * in[kAIndex] >> 16), 0);
+					out[kBIndex] = MAX(out[kBIndex] - ((in[kBIndex] * out[kBIndex]) * in[kAIndex] >> 16), 0);
+				}
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	} else {
+
+		byte cr = (color >> kRModShift) & 0xFF;
+		byte cg = (color >> kGModShift) & 0xFF;
+		byte cb = (color >> kBModShift) & 0xFF;
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				out[kAIndex] = 255;
+				if (cb != 255) {
+					out[kBIndex] = MAX(out[kBIndex] - ((in[kBIndex] * cb  * (out[kBIndex]) * in[kAIndex]) >> 24), 0);
+				} else {
+					out[kBIndex] = MAX(out[kBIndex] - (in[kBIndex] * (out[kBIndex]) * in[kAIndex] >> 16), 0);
+				}
+
+				if (cg != 255) {
+					out[kGIndex] = MAX(out[kGIndex] - ((in[kGIndex] * cg  * (out[kGIndex]) * in[kAIndex]) >> 24), 0);
+				} else {
+					out[kGIndex] = MAX(out[kGIndex] - (in[kGIndex] * (out[kGIndex]) * in[kAIndex] >> 16), 0);
+				}
+
+				if (cr != 255) {
+					out[kRIndex] = MAX(out[kRIndex] - ((in[kRIndex] * cr * (out[kRIndex]) * in[kAIndex]) >> 24), 0);
+				} else {
+					out[kRIndex] = MAX(out[kRIndex] - (in[kRIndex] * (out[kRIndex]) * in[kAIndex] >> 16), 0);
+				}
+
 				in += inStep;
 				out += 4;
 			}
@@ -540,12 +441,12 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 			doBlitBinaryFast(ino, outo, img->w, img->h, target.pitch, inStep, inoStep);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
-				doBlit<BlenderAdditive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				doBlit<BlenderSubtractive>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
-				doBlit<BlenderNormal>(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			}
 		}
 
