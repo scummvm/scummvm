@@ -347,7 +347,7 @@ void MADSAction::startAction() {
 			DynamicHotspot &hs = dynHotspots.get(hotspotId - hotspots.size());
 			if ((hs._feetPos.x == -1) || (hs._feetPos.x == -3)) {
 				startWalkingDirectly(hs._feetPos.x);
-			} else if (hs._feetPos.x == 0) {
+			} else if (hs._feetPos.x < 0) {
 				player._prepareWalkFacing = hs._facing;
 			} else if (_savedFields._commandSource == CAT_NONE || hs._cursor < CURSOR_WAIT) {
 				player._needToWalk = true;

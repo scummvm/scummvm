@@ -1227,7 +1227,7 @@ void Scene704::enter() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(190, 122));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 2);
 		}
-		int idx = _scene->_dynamicHotspots.add(NOUN_BONES, VERB_LOOK_AT, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_BOTTLE, VERB_LOOK_AT, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_bottleHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(-2, 0), FACING_NONE);
 	}
 
