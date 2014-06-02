@@ -893,7 +893,7 @@ void StaticANIObject::updateStepPos() {
 	int ox = _movement->_ox;
 	int oy = _movement->_oy;
 
-	_movement->calcSomeXY(point, 1);
+	_movement->calcSomeXY(point, 1, _someDynamicPhaseIndex);
 	int x = point.x;
 	int y = point.y;
 
@@ -917,7 +917,7 @@ Common::Point *StaticANIObject::calcNextStep(Common::Point *pRes) {
 
 	Common::Point point;
 
-	_movement->calcSomeXY(point, 1);
+	_movement->calcSomeXY(point, 1, _someDynamicPhaseIndex);
 
 	int resX = point.x;
 	int resY = point.y;
@@ -1016,11 +1016,11 @@ void StaticANIObject::adjustSomeXY() {
 	if (_movement) {
 		Common::Point point;
 
-		_movement->calcSomeXY(point, 0);
+		_movement->calcSomeXY(point, 0, -1);
 
 		int diff = abs(point.y) - abs(point.x);
 
-		_movement->calcSomeXY(point, 1);
+		_movement->calcSomeXY(point, 1, -1);
 
 		if (diff > 0)
 			_ox += point.x;
@@ -1382,7 +1382,7 @@ Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
 	if (_movement) {
 		Common::Point point;
 
-		_movement->calcSomeXY(point, 0);
+		_movement->calcSomeXY(point, 0, _movement->_currDynamicPhaseIndex);
 
 		p->x = point.x;
 		p->y = point.y;
@@ -1742,7 +1742,7 @@ Common::Point *Movement::getCurrDynamicPhaseXY(Common::Point &p) {
 	return &p;
 }
 
-Common::Point *Movement::calcSomeXY(Common::Point &p, int idx) {
+Common::Point *Movement::calcSomeXY(Common::Point &p, int idx, int dynidx) {
 	int oldox = _ox;
 	int oldoy = _oy;
 	int oldidx = _currDynamicPhaseIndex;
@@ -1765,7 +1765,7 @@ Common::Point *Movement::calcSomeXY(Common::Point &p, int idx) {
 
 	setOXY(x, y);
 
-	while (_currDynamicPhaseIndex != idx)
+	while (_currDynamicPhaseIndex != dynidx)
 		gotoNextFrame(0, 0);
 
 	p.x = _ox;

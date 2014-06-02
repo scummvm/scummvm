@@ -453,7 +453,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		v20 = ani->_ox;
 		v73 = ani->_oy;
 		StaticANIObject_getSomeDynamicPhaseIndex(ani);
-		v21 = ani->_movement->calcSomeXY(&point, 1);
+		v21 = ani->_movement->calcSomeXY(&point, 1, _someDynamicPhaseIndex);
 		v22 = point.x + v20;
 		v23 = point.y + v73;
 		v24 = ani->go.CObject.vmt;
@@ -507,7 +507,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		v33 = ani->_ox;
 		v73 = ani->_oy;
 		v34 = StaticANIObject_getMovementById(ani, LOWORD(v29->movVars->varUpStop));
-		v35 = Movement_calcSomeXY(v34, &point, 0);
+		v35 = Movement_calcSomeXY(v34, &point, 0, -1);
 		v36 = v35->y;
 		v72 = v35->x + v33;
 		v73 += v36;
@@ -589,7 +589,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		v47 = ani->_ox;
 		v73 = ani->_oy;
 		v48 = StaticANIObject_getMovementById(ani, LOWORD(v46->varDownStop));
-		v49 = Movement_calcSomeXY(v48, &point, 0);
+		v49 = Movement_calcSomeXY(v48, &point, 0, -1);
 		v50 = v49->y;
 		v72 = v49->x + v47;
 		v73 += v50;
@@ -1718,7 +1718,7 @@ bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
 
 			item->_subItems[dir]._walk[act]._mov = mov;
 			if (mov) {
-				mov->calcSomeXY(point, 0);
+				mov->calcSomeXY(point, 0, -1);
 				item->_subItems[dir]._walk[act]._mx = point.x;
 				item->_subItems[dir]._walk[act]._my = point.y;
 			}
@@ -1748,7 +1748,7 @@ bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
 
 			item->_subItems[dir]._turn[act]._mov = mov;
 			if (mov) {
-				mov->calcSomeXY(point, 0);
+				mov->calcSomeXY(point, 0, -1);
 				item->_subItems[dir]._turn[act]._mx = point.x;
 				item->_subItems[dir]._turn[act]._my = point.y;
 			}
@@ -1778,7 +1778,7 @@ bool MovGraph2::initDirections(StaticANIObject *obj, MovGraph2Item *item) {
 
 			item->_subItems[dir]._turnS[act]._mov = mov;
 			if (mov) {
-				mov->calcSomeXY(point, 0);
+				mov->calcSomeXY(point, 0, -1);
 				item->_subItems[dir]._turnS[act]._mx = point.x;
 				item->_subItems[dir]._turnS[act]._my = point.y;
 			}
@@ -2149,7 +2149,7 @@ MessageQueue *MovGraph2::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 			newx = obj->_ox;
 			newy = obj->_oy;
 		} else {
-			obj->_movement->calcSomeXY(point, 0);
+			obj->_movement->calcSomeXY(point, 0, picAniInfo.dynamicPhaseIndex);
 			newx = obj->_movement->_ox - point.x;
 			newy = obj->_movement->_oy - point.y;
 			if (idxsub != 1 && idxsub) {
@@ -2834,7 +2834,7 @@ MessageQueue *MGM::genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, 
 	do {
 		subidx = startidx + endidx * _items[idx]->statics.size();
 
-		_items[idx]->subItems[subidx]->movement->calcSomeXY(point, 0);
+		_items[idx]->subItems[subidx]->movement->calcSomeXY(point, 0, -1);
 
 		if (pointArr) {
 			int sz;
@@ -2997,7 +2997,7 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 
 	Common::Point point1;
 
-	mov->calcSomeXY(point1, 0);
+	mov->calcSomeXY(point1, 0, -1);
 
 	int n2x = point1.x;
 	int n2y = point1.y;
@@ -3285,7 +3285,7 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 						item->subItems[subIdx]->field_8 = recalc + 1;
 						item->subItems[subIdx]->field_C = newsz;
 
-						mov->calcSomeXY(point, 0);
+						mov->calcSomeXY(point, 0, -1);
 
 						item->subItems[subIdx]->x = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->x + point.x;
 						item->subItems[subIdx]->y = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->y + point.y;
@@ -3310,7 +3310,7 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 
 							item->subItems[subIdx]->field_C = sz + item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->field_C;
 
-							mov->calcSomeXY(point, 0);
+							mov->calcSomeXY(point, 0, -1);
 
 							item->subItems[subIdx]->x = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->x - point.x;
 							item->subItems[subIdx]->y = item->subItems[stidx + 6 * st2idx * _items[idx]->statics.size()]->y - point.y;
@@ -3350,7 +3350,7 @@ int MGM::refreshOffsets(int objectId, int idx1, int idx2) {
 Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *mult, int *len, int flag) {
 	Common::Point point;
 
-	mov->calcSomeXY(point, 0);
+	mov->calcSomeXY(point, 0, -1);
 	int p1x = point.x;
 	int p1y = point.y;
 
@@ -3358,10 +3358,10 @@ Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y,
 	int oldlen = *len;
 
 	if (abs(p1y) > abs(p1x)) {
-		if (mov->calcSomeXY(point, 0)->y)
-			newmult = (int)((double)y / point.y);
-	} else if (mov->calcSomeXY(point, 0)->x) {
-		newmult = (int)((double)x / point.y);
+		if (mov->calcSomeXY(point, 0, -1)->y)
+			newmult = (int)((double)y / mov->calcSomeXY(point, 0, -1)->y);
+	} else if (mov->calcSomeXY(point, 0, -1)->x) {
+		newmult = (int)((double)x / mov->calcSomeXY(point, 0, -1)->x);
 	}
 
 	if (newmult < 0)
@@ -3374,26 +3374,20 @@ Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y,
 
 	if (flag) {
 		if (abs(p1y) > abs(p1x)) {
-			while (abs(p1y * newmult + mov->calcSomeXY(point, 0)->y) < abs(y)) {
+			while (abs(p1y * newmult + mov->calcSomeXY(point, 0, phase)->y) < abs(y)) {
 				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
-				if (phase >= sz) {
-					phase--;
-
+				if (phase > sz)
 					break;
-				}
 
 				phase++;
 			}
 		} else {
-			while (abs(p1x * newmult + mov->calcSomeXY(point, 0)->x) < abs(x)) {
+			while (abs(p1x * newmult + mov->calcSomeXY(point, 0, phase)->x) < abs(x)) {
 				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
-				if (phase >= sz) {
-					phase--;
-
+				if (phase >= sz)
 					break;
-				}
 
 				phase++;
 			}
@@ -3413,7 +3407,7 @@ Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y,
 	if (oldlen > 0) {
 		++*mult;
 
-		mov->calcSomeXY(point, 0);
+		mov->calcSomeXY(point, 0, oldlen);
 		p2x = point.x;
 		p2y = point.y;
 
