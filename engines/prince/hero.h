@@ -145,6 +145,7 @@ public:
 	int16 _scaledFrameYSize;
 	int16 _drawX;
 	int16 _drawY;
+	int16 _drawZ;
 	
 	int16 _lightX; // for hero's shadow
 	int16 _lightY;

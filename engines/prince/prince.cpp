@@ -389,7 +389,7 @@ bool PrinceEngine::playNextFrame() {
 
 	const Graphics::Surface *s = _flicPlayer.decodeNextFrame();
 	if (s) {
-		_graph->drawTransparent(0, 0, s);
+		_graph->drawTransparentIntro(0, 0, s);
 		_graph->change();
 	} else if (_flicLooped) {
 		_flicPlayer.rewind();
@@ -793,7 +793,7 @@ void PrinceEngine::clsMasks() {
 }
 
 // InsertNakladki
-void PrinceEngine::insertMasks(const Graphics::Surface *originalRoomSurface) {
+void PrinceEngine::insertMasks(Graphics::Surface *originalRoomSurface) {
 	for (uint i = 0; i < _maskList.size(); i++) {
 		if (_maskList[i]._state == 1) {
 			showMask(i, originalRoomSurface);
@@ -801,6 +801,30 @@ void PrinceEngine::insertMasks(const Graphics::Surface *originalRoomSurface) {
 	}
 }
 
+// ShowNak
+void PrinceEngine::showMask(int maskNr, Graphics::Surface *originalRoomSurface) {
+	if (_maskList[maskNr]._flags == 0) {
+		if (spriteCheck(_maskList[maskNr]._width, _maskList[maskNr]._height, _maskList[maskNr]._x1, _maskList[maskNr]._y1)) {
+			int destX = _maskList[maskNr]._x1 - _picWindowX;
+			int destY = _maskList[maskNr]._y1 - _picWindowY;
+			DrawNode newDrawNode;
+			newDrawNode.posX = destX;
+			newDrawNode.posY = destY;
+			newDrawNode.posZ = _maskList[maskNr]._z;
+			newDrawNode.width = _maskList[maskNr]._width;
+			newDrawNode.height = _maskList[maskNr]._height;
+			newDrawNode.s = nullptr;
+			newDrawNode.originalRoomSurface = originalRoomSurface;
+			newDrawNode.data = _maskList[maskNr].getMask();
+			newDrawNode.freeSurfaceSMemory = false;
+			newDrawNode.drawFunction = &_graph->drawMask;
+			_drawNodeList.push_back(newDrawNode);
+			//_graph->drawMask(destX, destY, _maskList[maskNr]._width, _maskList[maskNr]._height, _maskList[maskNr].getMask(), originalRoomSurface);
+		}
+	}
+}
+
+/*
 // ShowNak
 void PrinceEngine::showMask(int maskNr, const Graphics::Surface *originalRoomSurface) {
 	if (_maskList[maskNr]._flags == 0) {
@@ -811,20 +835,44 @@ void PrinceEngine::showMask(int maskNr, const Graphics::Surface *originalRoomSur
 		}
 	}
 }
-
-void PrinceEngine::showSprite(const Graphics::Surface *spriteSurface, int destX, int destY) {
+*/
+void PrinceEngine::showSprite(Graphics::Surface *spriteSurface, int destX, int destY, int destZ, bool freeSurfaceMemory) {
 	if (spriteCheck(spriteSurface->w, spriteSurface->h, destX, destY)) {
 		destX -= _picWindowX;
 		destY -= _picWindowY;
-		_graph->drawTransparent(destX, destY, spriteSurface);
+		DrawNode newDrawNode;
+		newDrawNode.posX = destX;
+		newDrawNode.posY = destY;
+		newDrawNode.posZ = destZ;
+		newDrawNode.width = 0;
+		newDrawNode.height = 0;
+		newDrawNode.s = spriteSurface;
+		newDrawNode.originalRoomSurface = nullptr;
+		newDrawNode.data = nullptr;
+		newDrawNode.freeSurfaceSMemory = freeSurfaceMemory;
+		newDrawNode.drawFunction = &_graph->drawTransparent;
+		_drawNodeList.push_back(newDrawNode);
+		//_graph->drawTransparent(destX, destY, spriteSurface);
 	}
 }
 
-void PrinceEngine::showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY) {
+void PrinceEngine::showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY, int destZ, bool freeSurfaceMemory) {
 	if (spriteCheck(shadowSurface->w, shadowSurface->h, destX, destY)) {
 		destX -= _picWindowX;
 		destY -= _picWindowY;
-		_graph->drawAsShadow(destX, destY, shadowSurface, _graph->_shadowTable70);
+		DrawNode newDrawNode;
+		newDrawNode.posX = destX;
+		newDrawNode.posY = destY;
+		newDrawNode.posZ = destZ;
+		newDrawNode.width = 0;
+		newDrawNode.height = 0;
+		newDrawNode.s = shadowSurface;
+		newDrawNode.originalRoomSurface = nullptr;
+		newDrawNode.data = _graph->_shadowTable70;
+		newDrawNode.freeSurfaceSMemory = freeSurfaceMemory;
+		newDrawNode.drawFunction = &_graph->drawAsShadow;
+		_drawNodeList.push_back(newDrawNode);
+		//_graph->drawAsShadow(destX, destY, shadowSurface, _graph->_shadowTable70);
 	}
 }
 
@@ -989,9 +1037,9 @@ void PrinceEngine::showBackAnims() {
 				shadowZ = z;
 
 				Graphics::Surface *backAnimSurface = _backAnimList[i].backAnims[activeSubAnim]._animData->getFrame(phaseFrameIndex); //still with memory leak
-				showSprite(backAnimSurface, x, y);
-				backAnimSurface->free();
-				delete backAnimSurface;
+				showSprite(backAnimSurface, x, y, z, true);
+				//backAnimSurface->free();
+				//delete backAnimSurface;
 			}
 
 			//ShowFrameCodeShadow
@@ -1016,9 +1064,9 @@ void PrinceEngine::showBackAnims() {
 				}
 
 				Graphics::Surface *shadowSurface = _backAnimList[i].backAnims[activeSubAnim]._shadowData->getFrame(shadowPhaseFrameIndex); //still with memory leak
-				showSpriteShadow(shadowSurface, shadowX, shadowY);
-				shadowSurface->free();
-				delete shadowSurface;
+				showSpriteShadow(shadowSurface, shadowX, shadowY, shadowZ, true);
+				//shadowSurface->free();
+				//delete shadowSurface;
 			}
 		}
 	}
@@ -1057,12 +1105,24 @@ void PrinceEngine::showObjects() {
 					// mov edx, d [esi.Obj_ZoomInAddr]
 				}
 			}
-			const Graphics::Surface *objSurface = _objList[i]->getSurface();
+			Graphics::Surface *objSurface = _objList[i]->getSurface();
 			if (spriteCheck(objSurface->w, objSurface->h, _objList[i]->_x, _objList[i]->_y)) {
 				if ((_objList[i]->_mask & 512) == 0) { // 0200h
 					int destX = _objList[i]->_x - _picWindowX;
 					int destY = _objList[i]->_y - _picWindowY;
-					_graph->drawTransparent(destX, destY, objSurface);
+					DrawNode newDrawNode;
+					newDrawNode.posX = destX;
+					newDrawNode.posY = destY;
+					newDrawNode.posZ = _objList[i]->_z;
+					newDrawNode.width = 0;
+					newDrawNode.height = 0;
+					newDrawNode.s = objSurface;
+					newDrawNode.originalRoomSurface = nullptr;
+					newDrawNode.data = nullptr;
+					newDrawNode.freeSurfaceSMemory = false;
+					newDrawNode.drawFunction = &_graph->drawTransparent;
+					_drawNodeList.push_back(newDrawNode);
+					//_graph->drawTransparent(destX, destY, objSurface);
 				} else {
 					// showBackSprite();
 				}
@@ -1077,15 +1137,42 @@ void PrinceEngine::showObjects() {
 void PrinceEngine::showParallax() {
 	if (!_pscrList.empty()) {
 		for (uint i = 0; i < _pscrList.size(); i++) {
-			const Graphics::Surface *pscrSurface = _pscrList[i]->getSurface();
+			Graphics::Surface *pscrSurface = _pscrList[i]->getSurface();
 			int x = _pscrList[i]->_x - (_pscrList[i]->_step * _picWindowX / 4);
 			int y = _pscrList[i]->_y;
-			//int z = 1000;
+			int z = 1000;
 			if (spriteCheck(pscrSurface->w, pscrSurface->h, x, y)) {
-				showSprite(pscrSurface, x, y);
+				showSprite(pscrSurface, x, y, z, false);
 			}
 		}
 	}
+}
+
+bool PrinceEngine::compareDrawNodes(DrawNode d1, DrawNode d2) {
+	if (d1.posZ < d2.posZ) {
+		return true;
+	}
+	return false;
+}
+
+void PrinceEngine::runDrawNodes() {
+	Common::sort(_drawNodeList.begin(), _drawNodeList.end(), compareDrawNodes);
+
+	for (uint i = 0; i < _drawNodeList.size(); i++) {
+		(*_drawNodeList[i].drawFunction)(_graph->_frontScreen, &_drawNodeList[i]);
+	}
+	_graph->change();
+}
+
+
+void PrinceEngine::freeDrawNodes() {
+	for (uint i = 0; i < _drawNodeList.size(); i++) {
+		if (_drawNodeList[i].freeSurfaceSMemory) {
+			_drawNodeList[i].s->free();
+			delete _drawNodeList[i].s;
+		}
+	}
+	_drawNodeList.clear();
 }
 
 void PrinceEngine::drawScreen() {
@@ -1096,21 +1183,44 @@ void PrinceEngine::drawScreen() {
 		_graph->draw(0, 0, &visiblePart);
 	}
 
+	Graphics::Surface *mainHeroSurface;
 	if (_mainHero->_visible) {
-		Graphics::Surface *mainHeroSurface = _mainHero->getSurface();
+		mainHeroSurface = _mainHero->getSurface();
 		if (mainHeroSurface) {
 			_mainHero->showHeroShadow(mainHeroSurface);
 			if (_mainHero->_zoomFactor != 0) {
 				Graphics::Surface *zoomedHeroSurface = _mainHero->zoomSprite(mainHeroSurface);
-				_graph->drawTransparent(_mainHero->_drawX, _mainHero->_drawY, zoomedHeroSurface);
-				zoomedHeroSurface->free();
-				delete zoomedHeroSurface;
+				DrawNode newDrawNode;
+				newDrawNode.posX = _mainHero->_drawX;
+				newDrawNode.posY = _mainHero->_drawY;
+				newDrawNode.posZ = _mainHero->_drawZ;
+				newDrawNode.width = 0;
+				newDrawNode.height = 0;
+				newDrawNode.s = zoomedHeroSurface;
+				newDrawNode.originalRoomSurface = nullptr;
+				newDrawNode.data = nullptr;
+				newDrawNode.freeSurfaceSMemory = true;
+				newDrawNode.drawFunction = &_graph->drawTransparent;
+				_drawNodeList.push_back(newDrawNode);
+				//_graph->drawTransparent(_mainHero->_drawX, _mainHero->_drawY, zoomedHeroSurface);
+				//zoomedHeroSurface->free();
+				//delete zoomedHeroSurface;
 			} else {
-				_graph->drawTransparent(_mainHero->_drawX, _mainHero->_drawY, mainHeroSurface);
+				DrawNode newDrawNode;
+				newDrawNode.posX = _mainHero->_drawX;
+				newDrawNode.posY = _mainHero->_drawY;
+				newDrawNode.posZ = _mainHero->_drawZ;
+				newDrawNode.width = 0;
+				newDrawNode.height = 0;
+				newDrawNode.s = mainHeroSurface;
+				newDrawNode.originalRoomSurface = nullptr;
+				newDrawNode.data = nullptr;
+				newDrawNode.freeSurfaceSMemory = false;
+				newDrawNode.drawFunction = &_graph->drawTransparent;
+				_drawNodeList.push_back(newDrawNode);
+				//_graph->drawTransparent(_mainHero->_drawX, _mainHero->_drawY, mainHeroSurface);
 			}
 		}
-		mainHeroSurface->free();
-		delete mainHeroSurface;
 	}
 
 	showBackAnims();
@@ -1122,6 +1232,15 @@ void PrinceEngine::drawScreen() {
 	}
 
 	showParallax();
+
+	runDrawNodes();
+
+	freeDrawNodes();
+
+	if (_mainHero->_visible) {
+		mainHeroSurface->free();
+		delete mainHeroSurface;
+	}
 
 	clsMasks();
 

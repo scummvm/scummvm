@@ -43,7 +43,7 @@ public:
 	int32 _zoomInTime;
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
-	const Graphics::Surface *getSurface() const { return _surface; }
+	Graphics::Surface *getSurface() const { return _surface; }
 private:
 	void loadSurface(Common::SeekableReadStream &stream);
 	Graphics::Surface *_surface; 

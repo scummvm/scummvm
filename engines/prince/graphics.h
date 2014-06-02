@@ -29,6 +29,7 @@
 namespace Prince {
 
 class PrinceEngine;
+struct DrawNode;
 
 class GraphicsMan
 {
@@ -44,9 +45,13 @@ public:
 	void makeShadowTable(int brightness, byte *shadowTable);
 
 	void draw(uint16 x, uint16 y, const Graphics::Surface *s);
-	void drawTransparent(int32 posX, int32 poxY, const Graphics::Surface *s);
-	void drawAsShadow(int32 posX, int32 poxY, const Graphics::Surface *s, byte *shadowTable);
-	void drawMask(int32 posX, int32 posY, int32 width, int32 height, byte *maskData, const Graphics::Surface *originalRoomSurface);
+	void drawTransparentIntro(int32 posX, int32 poxY, const Graphics::Surface *s);
+	//void drawAsShadow(int32 posX, int32 poxY, const Graphics::Surface *s, byte *shadowTable);
+	//void drawMask(int32 posX, int32 posY, int32 width, int32 height, byte *maskData, const Graphics::Surface *originalRoomSurface);
+
+	static void drawTransparent(Graphics::Surface *frontScreen, DrawNode *drawNode);
+	static void drawAsShadow(Graphics::Surface *frontScreen, DrawNode *drawNode);
+	static void drawMask(Graphics::Surface *frontScreen, DrawNode *drawNode);
 
 	Graphics::Surface *_frontScreen;
 	Graphics::Surface *_backScreen;

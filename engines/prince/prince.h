@@ -179,6 +179,19 @@ struct Mask {
 	}
 };
 
+struct DrawNode {
+	int posX;
+	int posY;
+	int posZ;
+	int32 width;
+	int32 height;
+	Graphics::Surface *s;
+	Graphics::Surface *originalRoomSurface;
+	byte *data;
+	bool freeSurfaceSMemory;
+	void (*drawFunction)(Graphics::Surface *, DrawNode *);
+};
+
 struct DebugChannel {
 
 enum Type {
@@ -250,8 +263,8 @@ public:
 	static const int16 kMaxPicHeight = 480;
 
 	void checkMasks(int x1, int y1, int sprWidth, int sprHeight, int z);
-	void insertMasks(const Graphics::Surface *originalRoomSurface);
-	void showMask(int maskNr, const Graphics::Surface *originalRoomSurface);
+	void insertMasks(Graphics::Surface *originalRoomSurface);
+	void showMask(int maskNr, Graphics::Surface *originalRoomSurface);
 	void clsMasks();
 
 	int testAnimNr;
@@ -270,10 +283,13 @@ private:
 	void showBackAnims();
 	void clearBackAnimList();
 	bool spriteCheck(int sprWidth, int sprHeight, int destX, int destY);
-	void showSprite(const Graphics::Surface *spriteSurface, int destX, int destY);
-	void showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY);
+	void showSprite(Graphics::Surface *spriteSurface, int destX, int destY, int destZ, bool freeSurfaceMemory);
+	void showSpriteShadow(Graphics::Surface *shadowSurface, int destX, int destY, int destZ, bool freeSurfaceMemory);
 	void showObjects();
 	void showParallax();
+	static bool compareDrawNodes(DrawNode d1, DrawNode d2);
+	void runDrawNodes();
+	void freeDrawNodes();
 	void makeShadowTable(int brightness);
 
 	uint32 getTextWidth(const char *s);
@@ -304,6 +320,8 @@ private:
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
 	Common::Array<Mask> _maskList;
+
+	Common::Array<DrawNode> _drawNodeList;
 
 	bool _flicLooped;
 	
