@@ -896,12 +896,25 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 			gamestate_restore(s, in);
 			delete in;
 
-			if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
+			switch (g_sci->getGameId()) {
+			case GID_MOTHERGOOSE:
+				// WORKAROUND: Mother Goose SCI0
+				//  Script 200 / rm200::newRoom will set global C5h directly right after creating a child to the
+				//   current number of children plus 1.
+				//  We can't trust that global, that's why we set the actual savedgame id right here directly after
+				//   restore a saved game.
+				//  If we didn't, the game would always save to a new slot
+				s->variables[VAR_GLOBAL][0xC5].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
+				break;
+			case GID_MOTHERGOOSE256:
 				// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
 				//  saving a previously restored game.
 				// We set the current savedgame-id directly and remove the script
 				//  code concerning this via script patch.
 				s->variables[VAR_GLOBAL][0xB3].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
+				break;
+			default:
+				break;
 			}
 		} else {
 			s->r_acc = TRUE_REG;
