@@ -2452,7 +2452,7 @@ void Scene512::actions() {
 			_vm->_dialogs->show(51229);
 		else
 			_vm->_dialogs->show(51230);
-	} if (_action.isAction(VERB_LOOK, NOUN_CHAIR))
+	} else if (_action.isAction(VERB_LOOK, NOUN_CHAIR))
 		_vm->_dialogs->show(51231);
 	else if (_action.isAction(VERB_LOOK, NOUN_ROPE))
 		_vm->_dialogs->show(51232);
