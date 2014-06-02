@@ -455,11 +455,6 @@ void Sprite::step(int nr) {
 		_vm->_waitRef = 0;
 }
 
-#pragma argsused
-void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
-	warning("STUB: Sprite::touch()");
-}
-
 void Sprite::tick() {
 	step();
 }

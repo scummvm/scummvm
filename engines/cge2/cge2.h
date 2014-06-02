@@ -141,6 +141,8 @@ public:
 	void loadPos();
 	void releasePocket(Sprite *spr);
 	void switchHero(bool sex);
+	void optionTouch(int opt, uint16 mask);
+	void offUse();
 
 	void setEye(const V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
