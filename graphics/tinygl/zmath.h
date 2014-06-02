@@ -214,6 +214,13 @@ public:
 		return result;
 	}
 
+	Matrix4& operator*=(const Matrix4 &b) 
+	{
+		Matrix4 result = *this * b;
+		*this = result;
+		return *this;
+	}
+
 	static Matrix4 identity();
 	static Matrix4 rotation(float t, int u);
 
