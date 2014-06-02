@@ -12,11 +12,15 @@ MODULE_OBJS := \
 	music.o \
 	player.o \
 	resource.o \
-	roq.o \
 	saveload.o \
 	script.o \
 	stuffit.o \
 	vdx.o
+
+ifdef ENABLE_GROOVIE2
+MODULE_OBJS += \
+	roq.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GROOVIE), DYNAMIC_PLUGIN)

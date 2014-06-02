@@ -29,9 +29,12 @@
 #include "groovie/graphics.h"
 #include "groovie/music.h"
 #include "groovie/resource.h"
-#include "groovie/roq.h"
 #include "groovie/stuffit.h"
 #include "groovie/vdx.h"
+
+#ifdef ENABLE_GROOVIE2
+#include "groovie/roq.h"
+#endif
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -159,7 +162,9 @@ Common::Error GroovieEngine::run() {
 	case kGroovieV2:
 		_resMan = new ResMan_v2();
 		_grvCursorMan = new GrvCursorMan_v2(_system);
+#ifdef ENABLE_GROOVIE2
 		_videoPlayer = new ROQPlayer(this);
+#endif
 		break;
 	}
 
