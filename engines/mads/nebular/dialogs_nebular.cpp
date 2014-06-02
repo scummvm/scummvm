@@ -421,6 +421,8 @@ void PictureDialog::save() {
 	// Get the inventory frame, and adjust the dialog position to allow for it
 	MSprite *frame = asset->getFrame(0);
 	_position.y = frame->h + 12;
+	if ((_position.y + _height) > _vm->_screen.getHeight())
+		_position.y -= (_position.y + _height) - _vm->_screen.getHeight();
 
 	// Draw the inventory picture
 	frame->copyTo(&_vm->_screen, Common::Point(160 - frame->w / 2, 6),
