@@ -455,7 +455,7 @@ public:
 	void clearCostumes();
 	Costume *getCurrentCostume() const {
 		if (_costumeStack.empty())
-			return NULL;
+			return nullptr;
 		else
 			return _costumeStack.back();
 	}

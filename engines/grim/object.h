@@ -70,7 +70,7 @@ protected:
 template<class T> class ObjectPtr : public Pointer {
 public:
 	ObjectPtr() :
-		_obj(NULL) {
+		_obj(nullptr) {
 
 	}
 	ObjectPtr(T *obj) :
@@ -82,7 +82,7 @@ public:
 		}
 	}
 	ObjectPtr(const ObjectPtr<T> &ptr) : Pointer() {
-		_obj = NULL;
+		_obj = nullptr;
 		*this = ptr;
 	}
 	~ObjectPtr() {
@@ -98,7 +98,7 @@ public:
 			if (_obj) {
 				rmPointer(_obj);
 				_obj->dereference();
-				_obj = NULL;
+				_obj = nullptr;
 
 			}
 
@@ -116,7 +116,7 @@ public:
 			if (_obj) {
 				rmPointer(_obj);
 				_obj->dereference();
-				_obj = NULL;
+				_obj = nullptr;
 
 			}
 
@@ -157,7 +157,7 @@ public:
 
 protected:
 	void resetPointer() override {
-		_obj = NULL;
+		_obj = nullptr;
 	}
 
 private:

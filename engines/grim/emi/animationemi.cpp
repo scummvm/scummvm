@@ -30,7 +30,7 @@
 namespace Grim {
 
 AnimationEmi::AnimationEmi(const Common::String &filename, Common::SeekableReadStream *data) :
-		_name(""), _duration(0.0f), _numBones(0), _bones(NULL) {
+		_name(""), _duration(0.0f), _numBones(0), _bones(nullptr) {
 	_fname = filename;
 	loadAnimation(data);
 }
@@ -210,7 +210,7 @@ Bone::~Bone() {
 }
 
 AnimationStateEmi::AnimationStateEmi(const Common::String &anim) :
-		_skel(NULL), _looping(false), _active(false),
+		_skel(nullptr), _looping(false), _active(false),
 		_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(0.0f), _startFade(1.0f) {
 	_anim = g_resourceloader->getAnimationEmi(anim);
 }
