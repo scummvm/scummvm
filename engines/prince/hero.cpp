@@ -205,7 +205,6 @@ void Hero::countDrawPosition() {
 		//notfullSize
 		_drawX = _middleX - _scaledFrameXSize / 2;
 		_drawY = tempMiddleY + 1 - _scaledFrameYSize;
-		_drawZ = _drawY - 1;
 		_vm->checkMasks(_drawX, _drawY - 1, _scaledFrameXSize, _scaledFrameYSize, _middleY);
 	} else {
 		//fullSize
@@ -213,6 +212,8 @@ void Hero::countDrawPosition() {
 		_drawY = tempMiddleY + 1 - _frameYSize;
 		_vm->checkMasks(_drawX, _drawY - 1, _frameXSize, _frameYSize, _middleY);
 	}
+
+	_drawZ = tempMiddleY;
 }
 
 void Hero::plotPoint(int x, int y) {
