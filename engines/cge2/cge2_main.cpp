@@ -399,7 +399,7 @@ void CGE2Engine::switchCave(int cav) {
 }
 
 void CGE2Engine::showBak(int ref) {
-	Sprite *spr = _spare->locate(ref);
+	Sprite *spr = _spare->take(ref);
 	if (spr != nullptr) {
 		_bitmapPalette = _vga->_sysPal;
 		spr->expand();

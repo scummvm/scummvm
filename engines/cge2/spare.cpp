@@ -45,6 +45,19 @@ Sprite *Spare::locate(int ref) {
 	return nullptr;
 }
 
+Sprite *Spare::take(int ref) {
+	Sprite *spr = nullptr;
+	if ((spr = locate(ref)) != nullptr) {
+		for (uint i = 0; i < _container.size(); ++i) {
+			if (spr == _container[i]) {
+				_container.remove_at(i);
+				break;
+			}
+		}
+	}
+	return spr;
+}
+
 void Spare::takeCave(int cav) {
 	int bakRef = cav << 8;
 	Common::Array<Sprite*> tempCont = _container;
@@ -52,6 +65,7 @@ void Spare::takeCave(int cav) {
 		Sprite *spr = tempCont[i];
 		int c = spr->_scene;
 		if ((c == _vm->_now || c == 0) && spr->_ref != bakRef) {
+			spr = take(spr->_ref);
 			_vm->_vga->_showQ->insert(spr);
 		}
 	}
