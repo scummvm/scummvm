@@ -163,7 +163,14 @@ private:
 		Note notes[2];
 
 		int hardwareChannel;
-	} _channels[11];
+	};
+
+	struct SfxSlot {
+		int resource;
+		int priority;
+
+		Channel channels[3];
+	} _sfx[3];
 
 	void startSfx(const byte *resource);
 	void updateSfx();
@@ -180,9 +187,6 @@ private:
 	bool processNoteEnvelope(Note *note);
 
 	int _sfxTimer;
-
-	int _sfxResource[3];
-	int _sfxPriority[3];
 
 	uint8 _rndSeed;
 	uint8 getRnd();

@@ -62,12 +62,13 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	_sfxTimer = 4;
 	_rndSeed = 1;
 
-	memset(_channels, 0, sizeof(_channels));
-	for (int i = 0; i < ARRAYSIZE(_channels); ++i) {
-		_channels[i].hardwareChannel = i;
+	memset(_sfx, 0, sizeof(_sfx));
+	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
+		_sfx[i].resource = -1;
+		for (int j = 0; j < ARRAYSIZE(_sfx[i].channels); ++j) {
+			_sfx[i].channels[j].hardwareChannel = i * 3 + j;
+		}
 	}
-	memset(_sfxResource, 0, sizeof(_sfxResource));
-	memset(_sfxPriority, 0, sizeof(_sfxPriority));
 }
 
 Player_AD::~Player_AD() {
@@ -117,17 +118,15 @@ void Player_AD::startSound(int sound) {
 
 			// Check whether the channel is free or the priority of the new
 			// sfx resource is above the old one.
-			if (_channels[channel * 3 + 0].state
-			    || _channels[channel * 3 + 1].state
-			    || _channels[channel * 3 + 2].state) {
-				if (_sfxPriority[channel] > priority) {
+			if (_sfx[channel].resource != -1) {
+				if (_sfx[channel].priority > priority) {
 					return;
 				}
 			}
 
 			// Lock the new resource
-			_sfxResource[channel] = sound;
-			_sfxPriority[channel] = priority;
+			_sfx[channel].resource = sound;
+			_sfx[channel].priority = priority;
 			_vm->_res->lock(rtSound, sound);
 
 			// Start the actual sfx resource
@@ -146,20 +145,21 @@ void Player_AD::stopSound(int sound) {
 		stopAllSounds();
 	} else {
 		for (int i = 0; i < 3; ++i) {
-			if (_sfxResource[i] == sound) {
-				if (_channels[i * 3 + 0].state
-				    || _channels[i * 3 + 1].state
-				    || _channels[i * 3 + 2].state) {
+			if (_sfx[i].resource == sound) {
+				if (_sfx[i].channels[0].state
+				    || _sfx[i].channels[1].state
+				    || _sfx[i].channels[2].state) {
 					// Unlock the sound resource
 					_vm->_res->unlock(rtSound, sound);
 
 					// Stop the actual sfx playback
-					_channels[i * 3 + 0].state = kChannelStateOff;
-					_channels[i * 3 + 1].state = kChannelStateOff;
-					_channels[i * 3 + 2].state = kChannelStateOff;
-					clearChannel(_channels[i * 3 + 0]);
-					clearChannel(_channels[i * 3 + 1]);
-					clearChannel(_channels[i * 3 + 2]);
+					_sfx[i].channels[0].state = kChannelStateOff;
+					_sfx[i].channels[1].state = kChannelStateOff;
+					_sfx[i].channels[2].state = kChannelStateOff;
+					clearChannel(_sfx[i].channels[i * 3 + 0]);
+					clearChannel(_sfx[i].channels[i * 3 + 1]);
+					clearChannel(_sfx[i].channels[i * 3 + 2]);
+					_sfx[i].resource = -1;
 				}
 			}
 		}
@@ -179,16 +179,21 @@ void Player_AD::stopAllSounds() {
 	_curOffset = 0;
 
 	// Unloack all used sfx resources
-	for (int i = 0; i < 3; ++i) {
-		if (_channels[i * 3 + 0].state || _channels[i * 3 + 1].state || _channels[i * 3 + 2].state) {
-			_vm->_res->unlock(rtSound, _sfxResource[i]);
+	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
+		SfxSlot &sfx = _sfx[i];
+		if (sfx.resource != -1) {
+			_vm->_res->unlock(rtSound, sfx.resource);
+			sfx.resource = -1;
 		}
 	}
 
 	// Reset all the sfx channels
-	for (int i = 0; i < 9; ++i) {
-		_channels[i].state = kChannelStateOff;
-		clearChannel(_channels[i]);
+	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
+		SfxSlot &sfx = _sfx[i];
+		for (int j = 0; j < ARRAYSIZE(sfx.channels); ++j) {
+			sfx.channels[j].state = kChannelStateOff;
+			clearChannel(sfx.channels[j]);
+		}
 	}
 
 	writeReg(0xBD, 0x00);
@@ -559,23 +564,23 @@ void Player_AD::startSfx(const byte *resource) {
 
 	// The second byte of the resource defines the logical channel where
 	// the sound effect should be played.
-	const int startChannel = resource[1] * 3;
+	SfxSlot &sfx = _sfx[resource[1]];
 
 	// Clear the channel.
-	_channels[startChannel + 0].state = kChannelStateOff;
-	_channels[startChannel + 1].state = kChannelStateOff;
-	_channels[startChannel + 2].state = kChannelStateOff;
+	sfx.channels[0].state = kChannelStateOff;
+	sfx.channels[1].state = kChannelStateOff;
+	sfx.channels[2].state = kChannelStateOff;
 
-	clearChannel(_channels[startChannel + 0]);
-	clearChannel(_channels[startChannel + 1]);
-	clearChannel(_channels[startChannel + 2]);
+	clearChannel(sfx.channels[0]);
+	clearChannel(sfx.channels[1]);
+	clearChannel(sfx.channels[2]);
 
 	// Set up the first channel to pick up playback.
-	_channels[startChannel].currentOffset = _channels[startChannel].startOffset = resource + 2;
-	_channels[startChannel].state = kChannelStateParse;
+	sfx.channels[0].currentOffset = sfx.channels[0].startOffset = resource + 2;
+	sfx.channels[0].state = kChannelStateParse;
 
 	// Scan for the start of the other channels and set them up if required.
-	int curChannel = startChannel + 1;
+	int curChannel = 1;
 	const byte *bufferPosition = resource + 2;
 	uint8 command = 0;
 	while ((command = *bufferPosition) != 0xFF) {
@@ -598,9 +603,12 @@ void Player_AD::startSfx(const byte *resource) {
 		default:
 			// START OF CHANNEL
 			bufferPosition += 1;
-			_channels[curChannel].currentOffset = bufferPosition;
-			_channels[curChannel].startOffset = bufferPosition;
-			_channels[curChannel].state = kChannelStateParse;
+			if (curChannel >= 3) {
+				error("AD SFX resource %d uses more than 3 channels", sfx.resource);
+			}
+			sfx.channels[curChannel].currentOffset = bufferPosition;
+			sfx.channels[curChannel].startOffset = bufferPosition;
+			sfx.channels[curChannel].state = kChannelStateParse;
 			++curChannel;
 			break;
 		}
@@ -613,12 +621,16 @@ void Player_AD::updateSfx() {
 	}
 	_sfxTimer = 4;
 
-	for (int i = 0; i <= 9; ++i) {
-		if (!_channels[i].state) {
+	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
+		if (_sfx[i].resource == -1) {
 			continue;
 		}
 
-		updateChannel(&_channels[i]);
+		for (int j = 0; j < ARRAYSIZE(_sfx[i].channels); ++j) {
+			if (_sfx[i].channels[j].state) {
+				updateChannel(&_sfx[i].channels[j]);
+			}
+		}
 	}
 }
 
@@ -686,10 +698,11 @@ void Player_AD::parseSlot(Channel *channel) {
 			// HACK: We shouldn't rely on the hardware channel to match the
 			// logical channel...
 			const int logChannel = channel->hardwareChannel / 3;
-			if (!_channels[logChannel * 3 + 0].state
-			    && !_channels[logChannel * 3 + 1].state
-			    && !_channels[logChannel * 3 + 2].state) {
-				_vm->_res->unlock(rtSound, _sfxResource[logChannel]);
+			if (!_sfx[logChannel].channels[0].state
+			    && !_sfx[logChannel].channels[1].state
+			    && !_sfx[logChannel].channels[2].state) {
+				_vm->_res->unlock(rtSound, _sfx[logChannel].resource);
+				_sfx[logChannel].resource = -1;
 			}
 			return;
 			}
