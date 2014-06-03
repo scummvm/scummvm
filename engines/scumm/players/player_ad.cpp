@@ -662,8 +662,8 @@ void Player_AD::parseSlot(int channel) {
 			++curOffset;
 			_channels[channel].state = 2;
 			noteOffOn(channel);
-			parseNote(channel, 0, curOffset);
-			parseNote(channel, 1, curOffset);
+			parseNote(channel, 0, curOffset + 0);
+			parseNote(channel, 1, curOffset + 5);
 			return;
 
 		case 0x80:
@@ -708,7 +708,7 @@ void Player_AD::updateSlot(int channel) {
 				updateNote = true;
 			}
 		} else {
-			updateNote = processNoteEnvelope(note, _notes[note].instrumentValue);
+			updateNote = processNoteEnvelope(&_notes[note]);
 
 			if (_notes[note].bias) {
 				writeRegisterSpecial(note, _notes[note].bias - _notes[note].instrumentValue, *curOffset & 0x07);
@@ -740,10 +740,6 @@ void Player_AD::updateSlot(int channel) {
 }
 
 void Player_AD::parseNote(int channel, int num, const byte *offset) {
-	if (num) {
-		offset += 5;
-	}
-
 	if (*offset & 0x80) {
 		const int note = channel * 2 + num;
 		_notes[note].state = -1;
@@ -793,7 +789,7 @@ bool Player_AD::processNote(int note, const byte *offset) {
 		}
 
 		int adjustValue = ((_noteAdjustTable[timer2] * _noteAdjustScaleTable[instrumentDataOffset]) >> 16) - noteInstrumentValue;
-		setupNoteEnvelopeState(note, _numStepsTable[timer1], adjustValue);
+		setupNoteEnvelopeState(&_notes[note], _numStepsTable[timer1], adjustValue);
 	}
 
 	return false;
@@ -858,39 +854,39 @@ uint8 Player_AD::readRegisterSpecial(int note, uint8 defaultValue, int offset) {
 	return regValue;
 }
 
-void Player_AD::setupNoteEnvelopeState(int note, int steps, int adjust) {
-	_notes[note].preIncrease = 0;
+void Player_AD::setupNoteEnvelopeState(Note *note, int steps, int adjust) {
+	note->preIncrease = 0;
 	if (ABS(adjust) > steps) {
-		_notes[note].preIncrease = 1;
-		_notes[note].adjust = adjust / steps;
-		_notes[note].envelope.stepIncrease = ABS(adjust % steps);
+		note->preIncrease = 1;
+		note->adjust = adjust / steps;
+		note->envelope.stepIncrease = ABS(adjust % steps);
 	} else {
-		_notes[note].adjust = adjust;
-		_notes[note].envelope.stepIncrease = ABS(adjust);
+		note->adjust = adjust;
+		note->envelope.stepIncrease = ABS(adjust);
 	}
 
-	_notes[note].envelope.step = steps;
-	_notes[note].envelope.stepCounter = 0;
-	_notes[note].envelope.timer = steps;
+	note->envelope.step = steps;
+	note->envelope.stepCounter = 0;
+	note->envelope.timer = steps;
 }
 
-bool Player_AD::processNoteEnvelope(int note, int &instrumentValue) {
-	if (_notes[note].preIncrease) {
-		instrumentValue += _notes[note].adjust;
+bool Player_AD::processNoteEnvelope(Note *note) {
+	if (note->preIncrease) {
+		note->instrumentValue += note->adjust;
 	}
 
-	_notes[note].envelope.stepCounter += _notes[note].envelope.stepIncrease;
-	if (_notes[note].envelope.stepCounter >= _notes[note].envelope.step) {
-		_notes[note].envelope.stepCounter -= _notes[note].envelope.step;
+	note->envelope.stepCounter += note->envelope.stepIncrease;
+	if (note->envelope.stepCounter >= note->envelope.step) {
+		note->envelope.stepCounter -= note->envelope.step;
 
-		if (_notes[note].adjust < 0) {
-			--instrumentValue;
+		if (note->adjust < 0) {
+			--note->instrumentValue;
 		} else {
-			++instrumentValue;
+			++note->instrumentValue;
 		}
 	}
 
-	if (--_notes[note].envelope.timer) {
+	if (--note->envelope.timer) {
 		return false;
 	} else {
 		return true;

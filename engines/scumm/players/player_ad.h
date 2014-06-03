@@ -127,6 +127,23 @@ private:
 	static const uint _rhythmChannelTable[6];
 
 	// SFX handling
+	struct Note {
+		int state;
+		int playTime;
+		int sustainTimer;
+		int instrumentValue;
+		int bias;
+		int preIncrease;
+		int adjust;
+
+		struct Envelope {
+			int stepIncrease;
+			int step;
+			int stepCounter;
+			int timer;
+		} envelope;
+	};
+
 	void startSfx();
 	void updateSfx();
 	void clearChannel(int channel);
@@ -138,8 +155,8 @@ private:
 	void noteOffOn(int channel);
 	void writeRegisterSpecial(int note, uint8 value, int offset);
 	uint8 readRegisterSpecial(int note, uint8 defaultValue, int offset);
-	void setupNoteEnvelopeState(int note, int steps, int adjust);
-	bool processNoteEnvelope(int note, int &instrumentValue);
+	void setupNoteEnvelopeState(Note *note, int steps, int adjust);
+	bool processNoteEnvelope(Note *note);
 
 	int _sfxTimer;
 
@@ -156,22 +173,7 @@ private:
 	uint8 _rndSeed;
 	uint8 getRnd();
 
-	struct Note {
-		int state;
-		int playTime;
-		int sustainTimer;
-		int instrumentValue;
-		int bias;
-		int preIncrease;
-		int adjust;
-		
-		struct Envelope {
-			int stepIncrease;
-			int step;
-			int stepCounter;
-			int timer;
-		} envelope;
-	} _notes[22];
+	Note _notes[22];
 
 	static const uint _noteBiasTable[7];
 	static const uint _numStepsTable[16];
