@@ -618,10 +618,17 @@ void Player_AD::updateSfx() {
 			continue;
 		}
 
+		bool hasActiveChannel = false;
 		for (int j = 0; j < ARRAYSIZE(_sfx[i].channels); ++j) {
 			if (_sfx[i].channels[j].state) {
+				hasActiveChannel = true;
 				updateChannel(&_sfx[i].channels[j]);
 			}
+		}
+
+		// In case no channel is active we will stop the sfx.
+		if (!hasActiveChannel) {
+			stopSfx(&_sfx[i]);
 		}
 	}
 }
@@ -677,26 +684,14 @@ void Player_AD::parseSlot(Channel *channel) {
 			channel->currentOffset = channel->startOffset;
 			break;
 
-		default: {
+		default:
 			// START OF CHANNEL
 			// When we encounter a start of another channel while playback
 			// it means that the current channel is finished. Thus, we will
 			// stop it.
 			clearChannel(*channel);
 			channel->state = kChannelStateOff;
-
-			// If no channel of the sound effect is playing anymore, unlock
-			// the resource.
-			// HACK: We shouldn't rely on the hardware channel to match the
-			// logical channel...
-			const int logChannel = channel->hardwareChannel / 3;
-			if (!_sfx[logChannel].channels[0].state
-			    && !_sfx[logChannel].channels[1].state
-			    && !_sfx[logChannel].channels[2].state) {
-				stopSfx(&_sfx[logChannel]);
-			}
 			return;
-			}
 		}
 	}
 }
