@@ -1268,7 +1268,6 @@ void Actor::pushCostume(const char *n) {
 
 	Costume *newCost = g_resourceloader->loadCostume(n, getCurrentCostume());
 
-	newCost->setColormap(nullptr);
 	if (Common::String("fx/dumbshadow.cos").equals(n))
 		_costumeStack.push_front(newCost);
 	else
