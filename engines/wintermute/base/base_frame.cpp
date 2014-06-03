@@ -76,7 +76,7 @@ BaseFrame::~BaseFrame() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, TSpriteBlendMode blendMode) {
+bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, Graphics::TSpriteBlendMode blendMode) {
 	bool res;
 
 	for (uint32 i = 0; i < _subframes.size(); i++) {

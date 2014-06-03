@@ -29,7 +29,7 @@
 #ifndef WINTERMUTE_RENDER_TICKET_H
 #define WINTERMUTE_RENDER_TICKET_H
 
-#include "engines/wintermute/graphics/transparent_surface.h"
+#include "graphics/transparent_surface.h"
 #include "graphics/surface.h"
 #include "common/rect.h"
 
@@ -51,8 +51,8 @@ class BaseSurfaceOSystem;
  */
 class RenderTicket {
 public:
-	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, TransformStruct transform);
-	RenderTicket() : _isValid(true), _wantsDraw(false), _transform(TransformStruct()) {}
+	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, Graphics::TransformStruct transform);
+	RenderTicket() : _isValid(true), _wantsDraw(false), _transform(Graphics::TransformStruct()) {}
 	~RenderTicket();
 	const Graphics::Surface *getSurface() const { return _surface; }
 	// Non-dirty-rects:
@@ -65,7 +65,7 @@ public:
 	bool _isValid;
 	bool _wantsDraw;
 
-	TransformStruct _transform;
+	Graphics::TransformStruct _transform;
 
 	BaseSurfaceOSystem *_owner;
 	bool operator==(const RenderTicket &a) const;

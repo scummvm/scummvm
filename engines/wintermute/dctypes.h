@@ -200,14 +200,6 @@ enum TTextEncoding {
 	NUM_TEXT_ENCODINGS
 };
 
-enum TSpriteBlendMode {
-	BLEND_UNKNOWN       = -1,
-	BLEND_NORMAL        = 0,
-	BLEND_ADDITIVE      = 1,
-	BLEND_SUBTRACTIVE   = 2,
-	NUM_BLEND_MODES
-};
-
 enum TTTSType {
 	TTS_CAPTION = 0,
 	TTS_TALK,

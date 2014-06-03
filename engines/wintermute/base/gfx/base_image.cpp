@@ -28,7 +28,7 @@
 
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/graphics/transparent_surface.h"
+#include "graphics/transparent_surface.h"
 #include "graphics/surface.h"
 #include "image/png.h"
 #include "image/jpeg.h"
@@ -112,7 +112,7 @@ bool BaseImage::saveBMPFile(const Common::String &filename) const {
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::resize(int newWidth, int newHeight) {
 	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
-	TransparentSurface temp(*_surface, true);
+	Graphics::TransparentSurface temp(*_surface, true);
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
@@ -216,7 +216,7 @@ bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
 
-	TransparentSurface temp(*origImage->_surface, false);
+	Graphics::TransparentSurface temp(*origImage->_surface, false);
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
