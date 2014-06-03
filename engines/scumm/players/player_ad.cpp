@@ -98,7 +98,7 @@ void Player_AD::startSound(int sound) {
 		_vm->_res->lock(rtSound, _soundPlaying);
 
 		// Start the new music resource
-		_resource = res;
+		_musicData = res;
 		startMusic();
 	} else {
 		// Only try to start a sfx when no music is playing.
@@ -128,8 +128,7 @@ void Player_AD::startSound(int sound) {
 			_vm->_res->lock(rtSound, sound);
 
 			// Start the actual sfx resource
-			_resource = res;
-			startSfx();
+			startSfx(res);
 		}
 	}
 
@@ -316,12 +315,12 @@ void Player_AD::startMusic() {
 	memset(_channelB0Reg, 0, sizeof(_channelB0Reg));
 
 	_voiceChannels = 0;
-	uint instruments = _resource[10];
+	uint instruments = _musicData[10];
 	for (uint i = 0; i < instruments; ++i) {
-		const int instrIndex = _resource[11 + i] - 1;
+		const int instrIndex = _musicData[11 + i] - 1;
 		if (0 <= instrIndex && instrIndex < 16) {
 			_instrumentOffset[instrIndex] = i * 16 + 16 + 3;
-			_voiceChannels |= _resource[_instrumentOffset[instrIndex] + 13];
+			_voiceChannels |= _musicData[_instrumentOffset[instrIndex] + 13];
 		}
 	}
 
@@ -344,9 +343,9 @@ void Player_AD::startMusic() {
 
 	const bool isLoom = (_vm->_game.id == GID_LOOM);
 	_timerLimit = isLoom ? 473 : 256;
-	_musicTicks = _resource[3] * (isLoom ? 2 : 1);
-	_loopFlag = (_resource[4] == 0);
-	_musicLoopStart = READ_LE_UINT16(_resource + 5);
+	_musicTicks = _musicData[3] * (isLoom ? 2 : 1);
+	_loopFlag = (_musicData[4] == 0);
+	_musicLoopStart = READ_LE_UINT16(_musicData + 5);
 }
 
 void Player_AD::updateMusic() {
@@ -368,11 +367,11 @@ void Player_AD::updateMusic() {
 	}
 
 	while (true) {
-		uint command = _resource[_curOffset++];
+		uint command = _musicData[_curOffset++];
 		if (command == 0xFF) {
 			// META EVENT
 			// Get the command number.
-			command = _resource[_curOffset++];
+			command = _musicData[_curOffset++];
 			if (command == 47) {
 				// End of track
 				if (_loopFlag) {
@@ -391,14 +390,14 @@ void Player_AD::updateMusic() {
 				_curOffset += 5;
 			} else if (command == 81) {
 				// Change tempo. This is used exclusively in Loom.
-				const uint timing = _resource[_curOffset + 2] | (_resource[_curOffset + 1] << 8);
+				const uint timing = _musicData[_curOffset + 2] | (_musicData[_curOffset + 1] << 8);
 				_musicTicks = 0x73000 / timing;
-				command = _resource[_curOffset++];
+				command = _musicData[_curOffset++];
 				_curOffset += command;
 			} else {
 				// In case an unknown meta event occurs just skip over the
 				// data by using the length supplied.
-				command = _resource[_curOffset++];
+				command = _musicData[_curOffset++];
 				_curOffset += command;
 			}
 		} else {
@@ -409,22 +408,22 @@ void Player_AD::updateMusic() {
 
 				const uint instrOffset = _instrumentOffset[command];
 				if (instrOffset) {
-					if (_resource[instrOffset + 13] != 0) {
-						setupRhythm(_resource[instrOffset + 13], instrOffset);
+					if (_musicData[instrOffset + 13] != 0) {
+						setupRhythm(_musicData[instrOffset + 13], instrOffset);
 					} else {
 						int channel = findFreeChannel();
 						if (channel != -1) {
 							noteOff(channel);
-							setupChannel(channel, instrOffset);
+							setupChannel(channel, _musicData + instrOffset);
 							_channelLastEvent[channel] = command + 0x90;
-							_channelFrequency[channel] = _resource[_curOffset];
-							setupFrequency(channel, _resource[_curOffset]);
+							_channelFrequency[channel] = _musicData[_curOffset];
+							setupFrequency(channel, _musicData[_curOffset]);
 						}
 					}
 				}
 			} else {
 				// NOTE OFF
-				const uint note = _resource[_curOffset];
+				const uint note = _musicData[_curOffset];
 				command += 0x10;
 
 				// Find the output channel which plays the note.
@@ -445,8 +444,8 @@ void Player_AD::updateMusic() {
 					// rhythm instrument played on the channel.
 					command -= 0x90;
 					const uint instrOffset = _instrumentOffset[command];
-					if (instrOffset && _resource[instrOffset + 13] != 0) {
-						const uint rhythmInstr = _resource[instrOffset + 13];
+					if (instrOffset && _musicData[instrOffset + 13] != 0) {
+						const uint rhythmInstr = _musicData[instrOffset + 13];
 						if (rhythmInstr < 6) {
 							_mdvdrState &= _mdvdrTable[rhythmInstr] ^ 0xFF;
 							writeReg(0xBD, _mdvdrState);
@@ -459,17 +458,17 @@ void Player_AD::updateMusic() {
 		}
 
 		// In case there is a delay till the next event stop handling.
-		if (_resource[_curOffset] != 0) {
+		if (_musicData[_curOffset] != 0) {
 			break;
 		}
 		++_curOffset;
 	}
 
-	_nextEventTimer = _resource[_curOffset++];
+	_nextEventTimer = _musicData[_curOffset++];
 	if (_nextEventTimer & 0x80) {
 		_nextEventTimer -= 0x80;
 		_nextEventTimer <<= 7;
-		_nextEventTimer |= _resource[_curOffset++];
+		_nextEventTimer |= _musicData[_curOffset++];
 	}
 
 	_nextEventTimer >>= (_vm->_game.id == GID_LOOM) ? 2 : 1;
@@ -516,17 +515,17 @@ void Player_AD::setupFrequency(uint channel, int8 frequency) {
 
 void Player_AD::setupRhythm(uint rhythmInstr, uint instrOffset) {
 	if (rhythmInstr == 1) {
-		setupChannel(6, instrOffset);
-		writeReg(0xA6, _resource[instrOffset++]);
-		writeReg(0xB6, _resource[instrOffset] & 0xDF);
+		setupChannel(6, _musicData + instrOffset);
+		writeReg(0xA6, _musicData[instrOffset++]);
+		writeReg(0xB6, _musicData[instrOffset] & 0xDF);
 		_mdvdrState |= 0x10;
 		writeReg(0xBD, _mdvdrState);
 	} else if (rhythmInstr < 6) {
-		const byte *secondOperatorOffset = _resource + instrOffset + 8;
+		const byte *secondOperatorOffset = _musicData + instrOffset + 8;
 		setupOperator(_rhythmOperatorTable[rhythmInstr], secondOperatorOffset);
-		writeReg(0xA0 + _rhythmChannelTable[rhythmInstr], _resource[instrOffset++]);
-		writeReg(0xB0 + _rhythmChannelTable[rhythmInstr], _resource[instrOffset++] & 0xDF);
-		writeReg(0xC0 + _rhythmChannelTable[rhythmInstr], _resource[instrOffset]);
+		writeReg(0xA0 + _rhythmChannelTable[rhythmInstr], _musicData[instrOffset++]);
+		writeReg(0xB0 + _rhythmChannelTable[rhythmInstr], _musicData[instrOffset++] & 0xDF);
+		writeReg(0xC0 + _rhythmChannelTable[rhythmInstr], _musicData[instrOffset]);
 		_mdvdrState |= _mdvdrTable[rhythmInstr];
 		writeReg(0xBD, _mdvdrState);
 	}
@@ -552,12 +551,12 @@ const uint Player_AD::_rhythmChannelTable[6] = {
 
 // SFX
 
-void Player_AD::startSfx() {
+void Player_AD::startSfx(const byte *resource) {
 	writeReg(0xBD, 0x00);
 
 	// The second byte of the resource defines the logical channel where
 	// the sound effect should be played.
-	const int startChannel = _resource[1] * 3;
+	const int startChannel = resource[1] * 3;
 
 	// Clear the channel.
 	_channels[startChannel + 0].state = kChannelStateOff;
@@ -569,12 +568,12 @@ void Player_AD::startSfx() {
 	clearChannel(startChannel + 2);
 
 	// Set up the first channel to pick up playback.
-	_channels[startChannel].currentOffset = _channels[startChannel].startOffset = _resource + 2;
+	_channels[startChannel].currentOffset = _channels[startChannel].startOffset = resource + 2;
 	_channels[startChannel].state = kChannelStateParse;
 
 	// Scan for the start of the other channels and set them up if required.
 	int curChannel = startChannel + 1;
-	const byte *bufferPosition = _resource + 2;
+	const byte *bufferPosition = resource + 2;
 	uint8 command = 0;
 	while ((command = *bufferPosition) != 0xFF) {
 		switch (command) {

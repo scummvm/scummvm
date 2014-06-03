@@ -86,15 +86,9 @@ private:
 	uint8 readReg(int r) const;
 
 	// Instrument setup
-	void setupChannel(const uint channel, uint instrOffset) {
-		setupChannel(channel, _resource + instrOffset);
-	}
 	void setupChannel(const uint channel, const byte *instrOffset);
 	void setupOperator(const uint opr, const byte *&instrOffset);
 	static const int _operatorOffsetTable[18];
-
-	// Sound data
-	const byte *_resource;
 
 	// Music handling
 	void startMusic();
@@ -104,6 +98,7 @@ private:
 	void setupFrequency(uint channel, int8 frequency);
 	void setupRhythm(uint rhythmInstr, uint instrOffset);
 
+	const byte *_musicData;
 	uint _timerLimit;
 	uint _musicTicks;
 	uint _musicTimer;
@@ -153,7 +148,7 @@ private:
 		} envelope;
 	};
 
-	void startSfx();
+	void startSfx(const byte *resource);
 	void updateSfx();
 	void clearChannel(int channel);
 	void updateChannel(int channel);
