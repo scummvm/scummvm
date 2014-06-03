@@ -151,9 +151,9 @@ void Player_AD::stopSound(int sound) {
 					_vm->_res->unlock(rtSound, sound);
 
 					// Stop the actual sfx playback
-					_channels[i * 3 + 0].state = 0;
-					_channels[i * 3 + 1].state = 0;
-					_channels[i * 3 + 2].state = 0;
+					_channels[i * 3 + 0].state = kChannelStateOff;
+					_channels[i * 3 + 1].state = kChannelStateOff;
+					_channels[i * 3 + 2].state = kChannelStateOff;
 					clearChannel(i * 3 + 0);
 					clearChannel(i * 3 + 1);
 					clearChannel(i * 3 + 2);
@@ -184,7 +184,7 @@ void Player_AD::stopAllSounds() {
 
 	// Reset all the sfx channels
 	for (int i = 0; i < 9; ++i) {
-		_channels[i].state = 0;
+		_channels[i].state = kChannelStateOff;
 		clearChannel(i);
 	}
 
