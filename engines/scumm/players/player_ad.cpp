@@ -113,29 +113,26 @@ void Player_AD::startSound(int sound) {
 		_musicData = res;
 		startMusic();
 	} else {
-		// Only try to start a sfx when no music is playing.
-		if (_soundPlaying == -1) {
-			const byte priority = res[0];
-			// The original specified the channel to use in the sound
-			// resource. However, since we play as much as possible we sill
-			// ignore it and simply use the priority value to determine
-			// whether the sfx can be played or not.
-			//const byte channel  = res[1];
+		const byte priority = res[0];
+		// The original specified the channel to use in the sound
+		// resource. However, since we play as much as possible we sill
+		// ignore it and simply use the priority value to determine
+		// whether the sfx can be played or not.
+		//const byte channel  = res[1];
 
-			// Try to allocate a sfx slot for playback.
-			SfxSlot *sfx = allocateSfxSlot(priority);
-			if (!sfx) {
-				::debugC(3, DEBUG_SOUND, "AdLib: No free sfx slot for sound %d", sound);
-				return;
-			}
+		// Try to allocate a sfx slot for playback.
+		SfxSlot *sfx = allocateSfxSlot(priority);
+		if (!sfx) {
+			::debugC(3, DEBUG_SOUND, "AdLib: No free sfx slot for sound %d", sound);
+			return;
+		}
 
-			// Try to start sfx playback
-			sfx->resource = sound;
-			sfx->priority = priority;
-			if (startSfx(sfx, res)) {
-				// Lock the new resource
-				_vm->_res->lock(rtSound, sound);
-			}
+		// Try to start sfx playback
+		sfx->resource = sound;
+		sfx->priority = priority;
+		if (startSfx(sfx, res)) {
+			// Lock the new resource
+			_vm->_res->lock(rtSound, sound);
 		}
 	}
 
@@ -200,13 +197,11 @@ int Player_AD::readBuffer(int16 *buffer, const int numSamples) {
 
 	while (len > 0) {
 		if (!_samplesTillCallback) {
-			// Run the update callback for music or sfx depending on which is
-			// active.
 			if (_curOffset) {
 				updateMusic();
-			} else {
-				updateSfx();
 			}
+
+			updateSfx();
 
 			_samplesTillCallback = _samplesPerCallback;
 			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
