@@ -385,13 +385,13 @@ void Bitmap::xLatPos(V2D& p) {
 	p.y = kWorldHeight - p.y - _h;
 }
 
-bool Bitmap::moveHi(void) {
-	warning("STUB: Bitmap::moveHi()");
+bool Bitmap::moveHi() {
+	// No implementation needed in ScummVM
 	return true;
 }
 
-bool Bitmap::moveLo(void) {
-	warning("STUB: Bitmap::moveLo()");
+bool Bitmap::moveLo() {
+	// No implementation needed in ScummVM
 	return true;
 }
 
