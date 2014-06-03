@@ -49,4 +49,11 @@ bool SCXTrack::openSound(const Common::String &soundName, Common::SeekableReadSt
 	return true;
 }
 
+bool SCXTrack::isPlaying() {
+	if (!_handle)
+		return false;
+
+	return g_system->getMixer()->isSoundHandleActive(*_handle);
+}
+
 } // end of namespace Grim
