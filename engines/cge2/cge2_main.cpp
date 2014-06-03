@@ -579,6 +579,7 @@ void CGE2Engine::loadGame() {
 		h = new Hero(this);
 		*(Sprite*)h = *s;
 		delete s;
+		s = nullptr;
 		h->expand();
 		_spare->update(h);
 	}
@@ -593,6 +594,7 @@ void CGE2Engine::loadGame() {
 		h = new Hero(this);
 		*(Sprite*)h = *s;
 		delete s;
+		s = nullptr;
 		h->expand();
 		_spare->update(h);
 	}

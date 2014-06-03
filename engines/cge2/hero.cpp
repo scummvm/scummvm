@@ -194,6 +194,7 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 				bmp[i] = &_dim[0][i];
 			setShapeList(bmp, shpcnt);
 			delete[] bmp;
+			bmp = nullptr;
 		}
 	}
 	_reachStart = atoi(_vm->token(text));

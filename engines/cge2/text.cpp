@@ -85,7 +85,7 @@ void Text::clear() {
 		if (p->_ref) {
 			p->_ref = 0;
 			delete[] p->_text;
-			p->_text = NULL;
+			p->_text = nullptr;
 		}
 	}
 }

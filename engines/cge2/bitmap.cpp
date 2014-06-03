@@ -124,6 +124,8 @@ Bitmap::~Bitmap() {
 void Bitmap::release() {
 	free(_m);
 	delete[] _v;
+	_m = nullptr;
+	_v = nullptr;
 }
 
 Bitmap &Bitmap::operator=(const Bitmap &bmp) {
@@ -137,6 +139,7 @@ Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 	_map = 0;
 	_vm = bmp._vm;
 	delete[] _v;
+	_v = nullptr;
 
 	if (v0 == NULL) {
 		_v = NULL;
@@ -169,7 +172,7 @@ BitmapPtr Bitmap::code() {
 
 	if (_v) {                                        // old X-map exists, so remove it
 		delete[] _v;
-		_v = NULL;
+		_v = nullptr;
 	}
 
 	while (true) {                                  // at most 2 times: for (V == NULL) & for allocated block;

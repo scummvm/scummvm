@@ -90,6 +90,7 @@ void Spare::dispose(Sprite *spr) {
 				if (spr == _container[i]) {
 					_container.remove_at(i);
 					delete spr;
+					spr = nullptr;
 					break;
 				}
 			}

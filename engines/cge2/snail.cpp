@@ -527,6 +527,7 @@ void CGE2Engine::snGhost(Bitmap *bmp) {
 	bmp->_v = nullptr;
 	bmp->_b = nullptr;
 	delete bmp;
+	bmp = nullptr;
 }
 
 void CGE2Engine::hide1(Sprite *spr) {

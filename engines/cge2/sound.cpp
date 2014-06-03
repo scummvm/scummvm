@@ -121,7 +121,7 @@ Fx::~Fx() {
 void Fx::clear() {
 	if (_current)
 		delete _current;
-	_current = NULL;
+	_current = nullptr;
 }
 
 Common::String Fx::name(int ref, int sub) {
@@ -186,7 +186,7 @@ void MusicPlayer::killMidi() {
 	Audio::MidiPlayer::stop();
 
 	free(_data);
-	_data = NULL;
+	_data = nullptr;
 }
 
 void MusicPlayer::loadMidi(int ref) {

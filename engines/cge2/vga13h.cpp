@@ -170,7 +170,7 @@ void Sprite::setName(char *newName) {
 
 	if (_ext->_name) {
 		delete[] _ext->_name;
-		_ext->_name = NULL;
+		_ext->_name = nullptr;
 	}
 	if (newName) {
 		_ext->_name = new char[strlen(newName) + 1];
@@ -394,25 +394,33 @@ Sprite *Sprite::contract() {
 	if (notify)
 		notify();
 
-	if (e->_name)
+	if (e->_name) {
 		delete[] e->_name;
+		e->_name = nullptr;
+	}
 
 	if (e->_shpList) {
 		for (int i = 0; i < _shpCnt; i++)
 			e->_shpList[i]->release();
 		delete[] e->_shpList;
+		e->_shpList = nullptr;
 	}
 
 	if (e->_seq) {
 		if (e->_seq == _stdSeq8)
 			_seqCnt = 0;
-		else
+		else {
 			delete[] e->_seq;
+			e->_seq = nullptr;
+		}
 	}
 
-	for (int i = 0; i < kActions; i++)
-		if (e->_actions[i])
+	for (int i = 0; i < kActions; i++) {
+		if (e->_actions[i]) {
 			delete[] e->_actions[i];
+			e->_actions[i];
+		}
+	}
 
 	_ext = nullptr;
 
@@ -479,9 +487,9 @@ void Sprite::killXlat() {
 
 	uint8 *m = (*_ext->_shpList)->_m;
 	free(m);
-
+	
 	for (BitmapPtr *b = _ext->_shpList; *b; b++)
-		(*b)->_m = NULL;
+		(*b)->_m = nullptr;
 	_flags._xlat = false;
 }
 
@@ -677,8 +685,10 @@ Queue::~Queue() {
 void Queue::clear() {
 	while (_head) {
 		Sprite *s = remove(_head);
-		if (s->_flags._kill)
+		if (s->_flags._kill) {
 			delete s;
+			s = nullptr;
+		}
 	}
 }
 
