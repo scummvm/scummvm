@@ -105,6 +105,7 @@ private:
 
 	// Music handling
 	void startMusic();
+	void stopMusic();
 	void updateMusic();
 	void noteOff(uint channel);
 	void setupFrequency(uint channel, int8 frequency);

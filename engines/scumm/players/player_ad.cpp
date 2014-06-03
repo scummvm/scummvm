@@ -147,7 +147,7 @@ void Player_AD::stopSound(int sound) {
 	Common::StackLock lock(_mutex);
 
 	if (sound == _soundPlaying) {
-		stopAllSounds();
+		stopMusic();
 	} else {
 		for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
 			if (_sfx[i].resource == sound) {
@@ -160,21 +160,8 @@ void Player_AD::stopSound(int sound) {
 void Player_AD::stopAllSounds() {
 	Common::StackLock lock(_mutex);
 
-	// Unlock the music resource if present
-	if (_soundPlaying != -1) {
-		_vm->_res->unlock(rtSound, _soundPlaying);
-		_soundPlaying = -1;
-	}
-
-	// Stop the music playback
-	_curOffset = 0;
-
-	// Stop all music voice channels
-	for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
-		if (_voiceChannels[i].lastEvent) {
-			noteOff(i);
-		}
-	}
+	// Stop the music
+	stopMusic();
 
 	// Stop all the sfx playback
 	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
@@ -382,6 +369,26 @@ void Player_AD::startMusic() {
 	_musicTicks = _musicData[3] * (isLoom ? 2 : 1);
 	_loopFlag = (_musicData[4] == 0);
 	_musicLoopStart = READ_LE_UINT16(_musicData + 5);
+}
+
+void Player_AD::stopMusic() {
+	if (_soundPlaying == -1) {
+		return;
+	}
+
+	// Unlock the music resource if present
+	_vm->_res->unlock(rtSound, _soundPlaying);
+	_soundPlaying = -1;
+
+	// Stop the music playback
+	_curOffset = 0;
+
+	// Stop all music voice channels
+	for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
+		if (_voiceChannels[i].lastEvent) {
+			noteOff(i);
+		}
+	}
 }
 
 void Player_AD::updateMusic() {
