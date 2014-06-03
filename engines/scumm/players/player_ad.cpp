@@ -71,6 +71,12 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	}
 
 	memset(_hwChannels, 0, sizeof(_hwChannels));
+	_numHWChannels = ARRAYSIZE(_hwChannels);
+
+	memset(_voiceChannels, 0, sizeof(_voiceChannels));
+	for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
+		_voiceChannels[i].hardwareChannel = -1;
+	}
 }
 
 Player_AD::~Player_AD() {
@@ -163,6 +169,13 @@ void Player_AD::stopAllSounds() {
 	// Stop the music playback
 	_curOffset = 0;
 
+	// Stop all music voice channels
+	for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
+		if (_voiceChannels[i].lastEvent) {
+			noteOff(i);
+		}
+	}
+
 	// Stop all the sfx playback
 	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
 		stopSfx(&_sfx[i]);
@@ -250,7 +263,7 @@ void Player_AD::setupVolume() {
 
 int Player_AD::allocateHWChannel(int priority, SfxSlot *owner) {
 	// First pass: Check whether there's any unallocated channel
-	for (int i = 0; i < ARRAYSIZE(_hwChannels); ++i) {
+	for (int i = 0; i < _numHWChannels; ++i) {
 		if (!_hwChannels[i].allocated) {
 			_hwChannels[i].allocated = true;
 			_hwChannels[i].priority = priority;
@@ -260,7 +273,7 @@ int Player_AD::allocateHWChannel(int priority, SfxSlot *owner) {
 	}
 
 	// Second pass: Reassign channels based on priority
-	for (int i = 0; i < ARRAYSIZE(_hwChannels); ++i) {
+	for (int i = 0; i < _numHWChannels; ++i) {
 		if (_hwChannels[i].priority <= priority) {
 			// In case the HW channel belongs to a SFX we will completely
 			// stop playback of that SFX.
@@ -283,6 +296,15 @@ void Player_AD::freeHWChannel(int channel) {
 	assert(_hwChannels[channel].allocated);
 	_hwChannels[channel].allocated = false;
 	_hwChannels[channel].sfxOwner = nullptr;
+}
+
+void Player_AD::limitHWChannels(int newCount) {
+	for (int i = newCount; i < ARRAYSIZE(_hwChannels); ++i) {
+		if (_hwChannels[i].allocated) {
+			freeHWChannel(i);
+		}
+	}
+	_numHWChannels = newCount;
 }
 
 void Player_AD::writeReg(int r, int v) {
@@ -327,26 +349,23 @@ const int Player_AD::_operatorOffsetTable[18] = {
 
 void Player_AD::startMusic() {
 	memset(_instrumentOffset, 0, sizeof(_instrumentOffset));
-	memset(_channelLastEvent, 0, sizeof(_channelLastEvent));
-	memset(_channelFrequency, 0, sizeof(_channelFrequency));
-	memset(_channelB0Reg, 0, sizeof(_channelB0Reg));
 
-	_voiceChannels = 0;
+	bool hasRhythmData = false;
 	uint instruments = _musicData[10];
 	for (uint i = 0; i < instruments; ++i) {
 		const int instrIndex = _musicData[11 + i] - 1;
 		if (0 <= instrIndex && instrIndex < 16) {
 			_instrumentOffset[instrIndex] = i * 16 + 16 + 3;
-			_voiceChannels |= _musicData[_instrumentOffset[instrIndex] + 13];
+			hasRhythmData |= (_musicData[_instrumentOffset[instrIndex] + 13] != 0);
 		}
 	}
 
-	if (_voiceChannels) {
+	if (hasRhythmData) {
 		_mdvdrState = 0x20;
-		_voiceChannels = 6;
+		limitHWChannels(6);
 	} else {
 		_mdvdrState = 0;
-		_voiceChannels = 9;
+		limitHWChannels(9);
 	}
 
 	_curOffset = 0x93;
@@ -428,12 +447,11 @@ void Player_AD::updateMusic() {
 					if (_musicData[instrOffset + 13] != 0) {
 						setupRhythm(_musicData[instrOffset + 13], instrOffset);
 					} else {
-						int channel = findFreeChannel();
+						int channel = allocateVoiceChannel();
 						if (channel != -1) {
-							noteOff(channel);
-							setupChannel(channel, _musicData + instrOffset);
-							_channelLastEvent[channel] = command + 0x90;
-							_channelFrequency[channel] = _musicData[_curOffset];
+							setupChannel(_voiceChannels[channel].hardwareChannel, _musicData + instrOffset);
+							_voiceChannels[channel].lastEvent = command + 0x90;
+							_voiceChannels[channel].frequency = _musicData[_curOffset];
 							setupFrequency(channel, _musicData[_curOffset]);
 						}
 					}
@@ -445,8 +463,8 @@ void Player_AD::updateMusic() {
 
 				// Find the output channel which plays the note.
 				uint channel = 0xFF;
-				for (uint i = 0; i < _voiceChannels; ++i) {
-					if (_channelFrequency[i] == note && _channelLastEvent[i] == command) {
+				for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
+					if (_voiceChannels[i].frequency == note && _voiceChannels[i].lastEvent == command) {
 						channel = i;
 						break;
 					}
@@ -495,18 +513,9 @@ void Player_AD::updateMusic() {
 }
 
 void Player_AD::noteOff(uint channel) {
-	_channelLastEvent[channel] = 0;
-	writeReg(0xB0 + channel, _channelB0Reg[channel] & 0xDF);
-}
-
-int Player_AD::findFreeChannel() {
-	for (uint i = 0; i < _voiceChannels; ++i) {
-		if (!_channelLastEvent[i]) {
-			return i;
-		}
-	}
-
-	return -1;
+	VoiceChannel &vChannel = _voiceChannels[channel];
+	writeReg(0xB0 + vChannel.hardwareChannel, vChannel.b0Reg & 0xDF);
+	freeVoiceChannel(channel);
 }
 
 void Player_AD::setupFrequency(uint channel, int8 frequency) {
@@ -521,13 +530,14 @@ void Player_AD::setupFrequency(uint channel, int8 frequency) {
 		++octave;
 	}
 
+	VoiceChannel &vChannel = _voiceChannels[channel];
 	const uint noteFrequency = _noteFrequencies[frequency];
 	octave <<= 2;
 	octave |= noteFrequency >> 8;
 	octave |= 0x20;
-	writeReg(0xA0 + channel, noteFrequency & 0xFF);
-	_channelB0Reg[channel] = octave;
-	writeReg(0xB0 + channel, octave);
+	writeReg(0xA0 + vChannel.hardwareChannel, noteFrequency & 0xFF);
+	vChannel.b0Reg = octave;
+	writeReg(0xB0 + vChannel.hardwareChannel, octave);
 }
 
 void Player_AD::setupRhythm(uint rhythmInstr, uint instrOffset) {
@@ -546,6 +556,34 @@ void Player_AD::setupRhythm(uint rhythmInstr, uint instrOffset) {
 		_mdvdrState |= _mdvdrTable[rhythmInstr];
 		writeReg(0xBD, _mdvdrState);
 	}
+}
+
+int Player_AD::allocateVoiceChannel() {
+	for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
+		if (!_voiceChannels[i].lastEvent) {
+			// 256 makes sure it's a higher prority than any SFX
+			_voiceChannels[i].hardwareChannel = allocateHWChannel(256);
+			if (_voiceChannels[i].hardwareChannel != -1) {
+				return i;
+			} else {
+				// No free HW channels => cancel
+				return -1;
+			}
+		}
+	}
+
+	return -1;
+}
+
+void Player_AD::freeVoiceChannel(uint channel) {
+	VoiceChannel &vChannel = _voiceChannels[channel];
+	assert(vChannel.hardwareChannel != -1);
+
+	freeHWChannel(vChannel.hardwareChannel);
+	vChannel.hardwareChannel = -1;
+	vChannel.lastEvent = 0;
+	vChannel.b0Reg = 0;
+	vChannel.frequency = 0;
 }
 
 const uint Player_AD::_noteFrequencies[12] = {

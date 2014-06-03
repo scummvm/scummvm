@@ -87,9 +87,11 @@ private:
 		int priority;
 		SfxSlot *sfxOwner;
 	} _hwChannels[9];
+	int _numHWChannels;
 
 	int allocateHWChannel(int priority, SfxSlot *owner = nullptr);
 	void freeHWChannel(int channel);
+	void limitHWChannels(int newCount);
 
 	// AdLib register utilities
 	uint8 _registerBackUpTable[256];
@@ -105,7 +107,6 @@ private:
 	void startMusic();
 	void updateMusic();
 	void noteOff(uint channel);
-	int findFreeChannel();
 	void setupFrequency(uint channel, int8 frequency);
 	void setupRhythm(uint rhythmInstr, uint instrOffset);
 
@@ -117,13 +118,19 @@ private:
 	bool _loopFlag;
 	uint _musicLoopStart;
 	uint _instrumentOffset[16];
-	uint _channelLastEvent[9];
-	uint _channelFrequency[9];
-	uint _channelB0Reg[9];
+
+	struct VoiceChannel {
+		uint lastEvent;
+		uint frequency;
+		uint b0Reg;
+
+		int hardwareChannel;
+	} _voiceChannels[9];
+	int allocateVoiceChannel();
+	void freeVoiceChannel(uint channel);
 
 	uint _mdvdrState;
-	uint _voiceChannels;
-	
+
 	uint _curOffset;
 	uint _nextEventTimer;
 
