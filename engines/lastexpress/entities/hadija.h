@@ -70,10 +70,10 @@ public:
 	 */
 	DECLARE_FUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
-	DECLARE_FUNCTION(compartment6)
-	DECLARE_FUNCTION(compartment8)
-	DECLARE_FUNCTION(compartment6to8)
-	DECLARE_FUNCTION(compartment8to6)
+	DECLARE_FUNCTION(peekF)
+	DECLARE_FUNCTION(peekH)
+	DECLARE_FUNCTION(goFtoH)
+	DECLARE_FUNCTION(goHtoF)
 
 	/**
 	 * Setup Chapter 1
@@ -130,7 +130,7 @@ public:
 	DECLARE_FUNCTION(chapter5Handler)
 
 	DECLARE_FUNCTION(function22)
-	DECLARE_FUNCTION(function23)
+	DECLARE_FUNCTION(hiding)
 
 	DECLARE_NULL_FUNCTION()
 };

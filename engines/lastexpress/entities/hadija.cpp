@@ -38,10 +38,10 @@ Hadija::Hadija(LastExpressEngine *engine) : Entity(engine, kEntityHadija) {
 	ADD_CALLBACK_FUNCTION(Hadija, playSound);
 	ADD_CALLBACK_FUNCTION(Hadija, updateFromTime);
 	ADD_CALLBACK_FUNCTION(Hadija, updateEntity);
-	ADD_CALLBACK_FUNCTION(Hadija, compartment6);
-	ADD_CALLBACK_FUNCTION(Hadija, compartment8);
-	ADD_CALLBACK_FUNCTION(Hadija, compartment6to8);
-	ADD_CALLBACK_FUNCTION(Hadija, compartment8to6);
+	ADD_CALLBACK_FUNCTION(Hadija, peekF);
+	ADD_CALLBACK_FUNCTION(Hadija, peekH);
+	ADD_CALLBACK_FUNCTION(Hadija, goFtoH);
+	ADD_CALLBACK_FUNCTION(Hadija, goHtoF);
 	ADD_CALLBACK_FUNCTION(Hadija, chapter1);
 	ADD_CALLBACK_FUNCTION(Hadija, chapter1Handler);
 	ADD_CALLBACK_FUNCTION(Hadija, function12);
@@ -55,7 +55,7 @@ Hadija::Hadija(LastExpressEngine *engine) : Entity(engine, kEntityHadija) {
 	ADD_CALLBACK_FUNCTION(Hadija, chapter5);
 	ADD_CALLBACK_FUNCTION(Hadija, chapter5Handler);
 	ADD_CALLBACK_FUNCTION(Hadija, function22);
-	ADD_CALLBACK_FUNCTION(Hadija, function23);
+	ADD_CALLBACK_FUNCTION(Hadija, hiding);
 	ADD_NULL_FUNCTION();
 }
 
@@ -85,22 +85,22 @@ IMPLEMENT_FUNCTION_II(5, Hadija, updateEntity, CarIndex, EntityPosition)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(6, Hadija, compartment6)
+IMPLEMENT_FUNCTION(6, Hadija, peekF)
 	Entity::goToCompartment(savepoint, kObjectCompartment6, kPosition_4070, "619Cf", "619Df");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(7, Hadija, compartment8)
+IMPLEMENT_FUNCTION(7, Hadija, peekH)
 	Entity::goToCompartment(savepoint, kObjectCompartment8, kPosition_2740, "619Ch", "619Dh");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(8, Hadija, compartment6to8)
+IMPLEMENT_FUNCTION(8, Hadija, goFtoH)
 	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment6, kPosition_4070, "619Bf", kObjectCompartment8, kPosition_2740, "619Ah");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(9, Hadija, compartment8to6)
+IMPLEMENT_FUNCTION(9, Hadija, goHtoF)
 	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment8, kPosition_2740, "619Bh", kObjectCompartment6, kPosition_4070, "619Af");
 IMPLEMENT_FUNCTION_END
 
@@ -134,7 +134,7 @@ IMPLEMENT_FUNCTION(11, Hadija, chapter1Handler)
 			break;
 
 label_callback1:
-		if (Entity::timeCheckCallback(kTime1084500, params->param2, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6to8)))
+		if (Entity::timeCheckCallback(kTime1084500, params->param2, 2, WRAP_SETUP_FUNCTION(Hadija, setup_goFtoH)))
 			break;
 
 label_callback2:
@@ -147,7 +147,7 @@ label_callback2:
 
 					if (!params->param3) {
 						setCallback(3);
-						setup_compartment8();
+						setup_peekH();
 						return;
 					}
 				}
@@ -159,11 +159,11 @@ label_callback2:
 			params->param3 = kTimeInvalid;
 
 			setCallback(3);
-			setup_compartment8();
+			setup_peekH();
 		}
 
 label_callback3:
-		if (Entity::timeCheckCallback(kTime1156500, params->param4, 4, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6)))
+		if (Entity::timeCheckCallback(kTime1156500, params->param4, 4, WRAP_SETUP_FUNCTION(Hadija, setup_goHtoF)))
 			break;
 
 label_callback4:
@@ -175,7 +175,7 @@ label_callback4:
 
 					if (!params->param5) {
 						setCallback(5);
-						setup_compartment6();
+						setup_peekF();
 						return;
 					}
 				}
@@ -187,7 +187,7 @@ label_callback4:
 			params->param5 = kTimeInvalid;
 
 			setCallback(5);
-			setup_compartment6();
+			setup_peekF();
 		}
 		break;
 
@@ -254,7 +254,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 		}
 
 		if (params->param2 == kTimeInvalid || getState()->time <= kTime1786500) {
-			Entity::timeCheckCallback(kTime1822500, params->param3, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6));
+			Entity::timeCheckCallback(kTime1822500, params->param3, 2, WRAP_SETUP_FUNCTION(Hadija, setup_goHtoF));
 			break;
 		}
 
@@ -264,7 +264,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 				params->param2 = (uint)getState()->time + 75;
 
 			if (params->param2 >= getState()->time) {
-				Entity::timeCheckCallback(kTime1822500, params->param3, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6));
+				Entity::timeCheckCallback(kTime1822500, params->param3, 2, WRAP_SETUP_FUNCTION(Hadija, setup_goHtoF));
 				break;
 			}
 		}
@@ -272,7 +272,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 		params->param2 = kTimeInvalid;
 
 		setCallback(1);
-		setup_compartment8();
+		setup_peekH();
 		break;
 
 	case kActionCallback:
@@ -281,7 +281,7 @@ IMPLEMENT_FUNCTION(14, Hadija, chapter2Handler)
 			break;
 
 		case 1:
-			Entity::timeCheckCallback(kTime1822500, params->param3, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6));
+			Entity::timeCheckCallback(kTime1822500, params->param3, 2, WRAP_SETUP_FUNCTION(Hadija, setup_goHtoF));
 			break;
 
 		case 2:
@@ -321,24 +321,24 @@ IMPLEMENT_FUNCTION(16, Hadija, chapter3Handler)
 		break;
 
 	case kActionNone:
-		if (Entity::timeCheckCallback(kTime1998000, params->param1, 1, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6to8)))
+		if (Entity::timeCheckCallback(kTime1998000, params->param1, 1, WRAP_SETUP_FUNCTION(Hadija, setup_goFtoH)))
 			break;
 
 label_callback1:
-		if (Entity::timeCheckCallback(kTime2020500, params->param2, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6)))
+		if (Entity::timeCheckCallback(kTime2020500, params->param2, 2, WRAP_SETUP_FUNCTION(Hadija, setup_goHtoF)))
 			break;
 
 label_callback2:
-		if (Entity::timeCheckCallback(kTime2079000, params->param3, 3, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6to8)))
+		if (Entity::timeCheckCallback(kTime2079000, params->param3, 3, WRAP_SETUP_FUNCTION(Hadija, setup_goFtoH)))
 			break;
 
 label_callback3:
-		if (Entity::timeCheckCallback(kTime2187000, params->param4, 4, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6)))
+		if (Entity::timeCheckCallback(kTime2187000, params->param4, 4, WRAP_SETUP_FUNCTION(Hadija, setup_goHtoF)))
 			break;
 
 label_callback4:
 		if (params->param5 != kTimeInvalid && getState()->time > kTime2196000) {
-			if (Entity::timeCheckCar(kTime2254500, params->param5, 5, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6)))
+			if (Entity::timeCheckCar(kTime2254500, params->param5, 5, WRAP_SETUP_FUNCTION(Hadija, setup_peekF)))
 				break;
 		}
 		break;
@@ -394,21 +394,21 @@ IMPLEMENT_FUNCTION(18, Hadija, chapter4Handler)
 
 	case kActionNone:
 		if (params->param1 != kTimeInvalid) {
-			if (Entity::timeCheckCar(kTime1714500, params->param1, 1, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6)))
+			if (Entity::timeCheckCar(kTime1714500, params->param1, 1, WRAP_SETUP_FUNCTION(Hadija, setup_peekF)))
 				break;
 		}
 
 label_callback1:
-		if (Entity::timeCheckCallback(kTime2367000, params->param2, 2, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6to8)))
+		if (Entity::timeCheckCallback(kTime2367000, params->param2, 2, WRAP_SETUP_FUNCTION(Hadija, setup_goFtoH)))
 			break;
 
 label_callback2:
-		if (Entity::timeCheckCallback(kTime2421000, params->param3, 3, WRAP_SETUP_FUNCTION(Hadija, setup_compartment8to6)))
+		if (Entity::timeCheckCallback(kTime2421000, params->param3, 3, WRAP_SETUP_FUNCTION(Hadija, setup_goHtoF)))
 			break;
 
 label_callback3:
 		if (params->param4 != kTimeInvalid && getState()->time > kTime2425500) {
-			if (Entity::timeCheckCar(kTime2484000, params->param4, 4, WRAP_SETUP_FUNCTION(Hadija, setup_compartment6)))
+			if (Entity::timeCheckCar(kTime2484000, params->param4, 4, WRAP_SETUP_FUNCTION(Hadija, setup_peekF)))
 				break;
 		}
 		break;
@@ -483,7 +483,7 @@ IMPLEMENT_FUNCTION(22, Hadija, function22)
 		if (!Entity::updateParameter(params->param1, getState()->time, 2700))
 			break;
 
-		setup_function23();
+		setup_hiding();
 		break;
 
 	case kActionDefault:
@@ -494,14 +494,14 @@ IMPLEMENT_FUNCTION(22, Hadija, function22)
 
 	case kActionDrawScene:
 		if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping)) {
-			setup_function23();
+			setup_hiding();
 		}
 		break;
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(23, Hadija, function23)
+IMPLEMENT_FUNCTION(23, Hadija, hiding)
 	switch (savepoint.action) {
 	default:
 		break;
