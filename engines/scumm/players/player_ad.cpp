@@ -419,7 +419,7 @@ void Player_AD::startMusic() {
 	_timerLimit = isLoom ? 473 : 256;
 	_musicTicks = _musicData[3] * (isLoom ? 2 : 1);
 	_loopFlag = (_musicData[4] == 0);
-	_musicLoopStart = READ_LE_UINT16(_musicData + 5);
+	_musicLoopStart = _curOffset + READ_LE_UINT16(_musicData + 5);
 }
 
 void Player_AD::stopMusic() {
@@ -476,6 +476,7 @@ void Player_AD::updateMusic() {
 					// In case the track is looping jump to the start.
 					_curOffset = _musicLoopStart;
 					_nextEventTimer = 0;
+					continue;
 				} else {
 					// Otherwise completely stop playback.
 					stopMusic();
