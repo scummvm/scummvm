@@ -77,7 +77,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_music = true;
 	_startupMode = 1;
 	_now = 1;
-	_sex = true;
+	_sex = 1;
 	_mouseTop = kWorldHeight / 3;
 	_dark = false;
 	_lastFrame = 0;

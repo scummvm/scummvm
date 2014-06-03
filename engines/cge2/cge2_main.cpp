@@ -573,7 +573,7 @@ void CGE2Engine::loadGame() {
 	Sprite *s;
 	Hero *h;
 	
-	// initialize Andzia
+	// initialize Andzia/Anna
 	s = _spare->take(142);
 	if (s) {
 		h = new Hero(this);
@@ -587,7 +587,7 @@ void CGE2Engine::loadGame() {
 	_vga->_showQ->insert(s);
 	_heroTab[0]->_face = s;
 
-	// initialize Wacek
+	// initialize Wacek/Vincent
 	s = _spare->take(141);
 	if (s) {
 		h = new Hero(this);
@@ -795,7 +795,7 @@ void CGE2Engine::killText() {
 	_talk = NULL;
 }
 
-void CGE2Engine::switchHero(bool sex) {
+void CGE2Engine::switchHero(int sex) {
 	if (sex != _sex) {
 		int scene = _heroTab[sex]->_ptr->_scene;
 		if (_blinkSprite) {
@@ -804,7 +804,7 @@ void CGE2Engine::switchHero(bool sex) {
 		}
 		if (scene >= 0) {
 			_commandHandler->addCommand(kCmdSeq, -1, 2, _heroTab[_sex]->_face);
-			_sex = !_sex;
+			_sex ^= 1;
 			switchCave(scene);
 		}
 	}
@@ -843,10 +843,10 @@ void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	}
 
 	if (_vm->isHero(this) && !_vm->_blinkSprite) {
-		_vm->switchHero(this == _vm->_heroTab[1]->_ptr);
+		_vm->switchHero((this == _vm->_heroTab[1]->_ptr) ? 1 : 0);
 	} else if (_flags._kept) { // sprite in pocket
-		for (int sex = 0; sex < 2; sex++) {
-			for (int p = 0; p < kPocketMax; p++) {
+		for (int sex = 0; sex < 2; ++sex) {
+			for (int p = 0; p < kPocketMax; ++p) {
 				if (_vm->_heroTab[sex]->_pocket[p] == this) {
 					_vm->switchHero(sex);
 					if (_vm->_sex == sex) {

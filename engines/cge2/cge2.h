@@ -140,7 +140,7 @@ public:
 	void qGame();
 	void loadPos();
 	void releasePocket(Sprite *spr);
-	void switchHero(bool sex);
+	void switchHero(int sex);
 	void optionTouch(int opt, uint16 mask);
 	void offUse();
 
@@ -205,7 +205,7 @@ public:
 	bool _music;
 	int _startupMode;
 	int _now;
-	bool _sex;
+	int _sex;
 	int _mouseTop;
 	bool _dark;
 	int _waitSeq;
