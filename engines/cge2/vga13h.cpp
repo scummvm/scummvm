@@ -528,9 +528,9 @@ void Sprite::gotoxyz(V2D pos) {
 
 	if (!_follow) {
 		double m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
-		_pos3D._x = (_vm->_eye->_x + V2D::round(_vm->_eye->_x - _pos2D.x) / m);
+		_pos3D._x = V2D::round(_vm->_eye->_x + (_vm->_eye->_x - _pos2D.x) / m);
 		if (!_constY)
-			_pos3D._y = (_vm->_eye->_y + V2D::round(_vm->_eye->_y - _pos2D.y) / m);
+			_pos3D._y = V2D::round(_vm->_eye->_y + (_vm->_eye->_y - _pos2D.y) / m);
 	}
 
 	if (_next && _next->_flags._slav)
@@ -538,9 +538,6 @@ void Sprite::gotoxyz(V2D pos) {
 
 	if (_flags._shad)
 		_prev->gotoxyz(_prev->_pos2D - o + _pos2D);
-
-	if (_ref == 141 && _pos3D._y >= 5)
-		warning("Sprite::gotoxyz - asm nop");
 }
 
 void Sprite::gotoxyz_(V2D pos) {
