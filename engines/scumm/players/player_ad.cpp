@@ -239,6 +239,12 @@ void Player_AD::setupVolume() {
 		const uint reg = 0x40 + _operatorOffsetTable[i];
 		writeReg(reg, readReg(reg));
 	}
+
+	// Reset note on status
+	for (int i = 0; i < ARRAYSIZE(_hwChannels); ++i) {
+		const uint reg = 0xB0 + i;
+		writeReg(reg, readReg(reg));
+	}
 }
 
 int Player_AD::allocateHWChannel(int priority, SfxSlot *owner) {
@@ -320,6 +326,26 @@ void Player_AD::writeReg(int r, int v) {
 			vol = vol * scale / Audio::Mixer::kMaxChannelVolume;
 			v &= 0xA0;
 			v |= (0x3F - vol);
+		}
+	}
+
+	// Since AdLib's lowest volume level does not imply that the sound is
+	// completely silent we ignore key on in such a case.
+	if (r >= 0xB0 && r <= 0xB8) {
+		const int channel = r - 0xB0;
+		bool mute = false;
+		if (_hwChannels[channel].sfxOwner) {
+			if (!_sfxVolume) {
+				mute = true;
+			}
+		} else {
+			if (!_musicVolume) {
+				mute = true;
+			}
+		}
+
+		if (mute) {
+			v &= ~0x20;
 		}
 	}
 
