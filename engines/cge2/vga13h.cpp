@@ -367,13 +367,13 @@ Sprite *Sprite::expand() {
 	setShapeList(shapeList, shpcnt);
 
 	if (_file[2] == '~') { // FLY-type sprite
-		Seq *curSeq = _ext->_seq;
-		int x = (curSeq + 1)->_dx, y = (curSeq + 1)->_dy, z = (curSeq + 1)->_dz;
+		Seq *nextSeq = _ext->_seq;
+		int x = (nextSeq + 1)->_dx, y = (nextSeq + 1)->_dy, z = (nextSeq + 1)->_dz;
 		// random position
-		curSeq->_dx = _vm->newRandom(x + x) - x;
-		curSeq->_dy = _vm->newRandom(y + y) - y;
-		curSeq->_dz = _vm->newRandom(z + z) - z;
-		gotoxyz(_pos3D + V3D(curSeq->_dx, curSeq->_dy, curSeq->_dz));
+		nextSeq->_dx = _vm->newRandom(x + x) - x;
+		nextSeq->_dy = _vm->newRandom(y + y) - y;
+		nextSeq->_dz = _vm->newRandom(z + z) - z;
+		gotoxyz(_pos3D + V3D(nextSeq->_dx, nextSeq->_dy, nextSeq->_dz));
 	}
 
 	return this;

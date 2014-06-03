@@ -125,9 +125,9 @@ void Fx::clear() {
 }
 
 Common::String Fx::name(int ref, int sub) {
-	char name[] = "%.2dfx%.2d.WAV\0";
-	char subn[] = "%.2dfx%.2d?.WAV\0";
-	char *p = (sub) ? subn : name;
+	char fxname[] = "%.2dfx%.2d.WAV\0";
+	char subName[] = "%.2dfx%.2d?.WAV\0";
+	char *p = (sub) ? subName : fxname;
 	Common::String filename = Common::String::format(p, ref >> 8, ref & 0xFF);
 	if (sub)
 		filename.setChar('@' + sub, 6);

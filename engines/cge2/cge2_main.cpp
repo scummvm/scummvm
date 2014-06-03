@@ -818,13 +818,11 @@ void CGE2Engine::switchHero(int sex) {
 }
 
 Sprite *CGE2Engine::spriteAt(int x, int y) {
-	Sprite *spr = NULL, *tail = _vga->_showQ->last();
-	if (tail) {
-		for (spr = tail->_prev; spr; spr = spr->_prev) {
-			if (!spr->_flags._hide && !spr->_flags._tran) {
-				if (spr->getShp()->solidAt(x - spr->_pos2D.x, y - spr->_pos2D.y))
-					break;
-			}
+	Sprite *spr = NULL, *queueTail = _vga->_showQ->last();
+	if (queueTail) {
+		for (spr = queueTail->_prev; spr; spr = spr->_prev) {
+			if (!spr->_flags._hide && !spr->_flags._tran && spr->getShp()->solidAt(x - spr->_pos2D.x, y - spr->_pos2D.y))
+				break;
 		}
 	}
 	return spr;
