@@ -172,7 +172,9 @@ private:
 		Channel channels[3];
 	} _sfx[3];
 
-	void startSfx(const byte *resource);
+	void startSfx(SfxSlot *sfx, const byte *resource);
+	void stopSfx(SfxSlot *sfx);
+
 	void updateSfx();
 	void clearChannel(const Channel &channel);
 	void updateChannel(Channel *channel);
