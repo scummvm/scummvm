@@ -108,34 +108,26 @@ void Player_AD::startSound(int sound) {
 		// Only try to start a sfx when no music is playing.
 		if (_soundPlaying == -1) {
 			const byte priority = res[0];
-			const byte channel  = res[1];
+			// The original specified the channel to use in the sound
+			// resource. However, since we play as much as possible we sill
+			// ignore it and simply use the priority value to determine
+			// whether the sfx can be played or not.
+			//const byte channel  = res[1];
 
-			// Check for out of bounds access
-			if (channel >= 3) {
-				warning("AdLib sfx resource %d uses channel %d", sound, channel);
+			// Try to allocate a sfx slot for playback.
+			SfxSlot *sfx = allocateSfxSlot(priority);
+			if (!sfx) {
+				::debugC(3, DEBUG_SOUND, "AdLib: No free sfx slot for sound %d", sound);
 				return;
 			}
 
-			// Check whether the channel is free or the priority of the new
-			// sfx resource is above the old one.
-			if (_sfx[channel].resource != -1) {
-				if (_sfx[channel].priority > priority) {
-					return;
-				} else {
-					// If we overwrite a channel we will properly stop the old
-					// sfx slot first. This makes sure that the resource is
-					// unlocked properly.
-					stopSfx(&_sfx[channel]);
-				}
-			}
-
 			// Lock the new resource
-			_sfx[channel].resource = sound;
-			_sfx[channel].priority = priority;
+			sfx->resource = sound;
+			sfx->priority = priority;
 			_vm->_res->lock(rtSound, sound);
 
 			// Start the actual sfx resource
-			startSfx(&_sfx[channel], res);
+			startSfx(sfx, res);
 		}
 	}
 
@@ -536,6 +528,26 @@ const uint Player_AD::_rhythmChannelTable[6] = {
 };
 
 // SFX
+
+Player_AD::SfxSlot *Player_AD::allocateSfxSlot(int priority) {
+	// First pass: Check whether there's a unused slot
+	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
+		if (_sfx[i].resource == -1) {
+			return &_sfx[i];
+		}
+	}
+
+	// Second pass: Look for a slot with lower priority
+	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
+		if (_sfx[i].priority <= priority) {
+			// Stop the old sfx
+			stopSfx(&_sfx[i]);
+			return &_sfx[i];
+		}
+	}
+
+	return nullptr;
+}
 
 void Player_AD::startSfx(SfxSlot *sfx, const byte *resource) {
 	writeReg(0xBD, 0x00);

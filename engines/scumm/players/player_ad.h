@@ -172,6 +172,7 @@ private:
 		Channel channels[3];
 	} _sfx[3];
 
+	SfxSlot *allocateSfxSlot(int priority);
 	void startSfx(SfxSlot *sfx, const byte *resource);
 	void stopSfx(SfxSlot *sfx);
 
