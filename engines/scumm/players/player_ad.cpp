@@ -661,8 +661,8 @@ void Player_AD::parseSlot(int channel) {
 			++curOffset;
 			_channels[channel].state = kChannelStatePlay;
 			noteOffOn(channel);
-			parseNote(&_notes[channel * 2 + 0], channel, curOffset + 0);
-			parseNote(&_notes[channel * 2 + 1], channel, curOffset + 5);
+			parseNote(&_channels[channel].notes[0], channel, curOffset + 0);
+			parseNote(&_channels[channel].notes[1], channel, curOffset + 5);
 			return;
 
 		case 0x80:
@@ -699,7 +699,7 @@ void Player_AD::updateSlot(int channel) {
 			continue;
 		}
 
-		Note *const note = &_notes[channel * 2 + num];
+		Note *const note = &_channels[channel].notes[num];
 		bool updateNote = false;
 
 		if (note->state == kNoteStateSustain) {

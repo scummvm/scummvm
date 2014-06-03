@@ -178,12 +178,12 @@ private:
 		const byte *currentOffset;
 		const byte *startOffset;
 		uint8 instrumentData[7];
+
+		Note notes[2];
 	} _channels[11];
 
 	uint8 _rndSeed;
 	uint8 getRnd();
-
-	Note _notes[22];
 
 	static const uint _noteBiasTable[7];
 	static const uint _numStepsTable[16];
