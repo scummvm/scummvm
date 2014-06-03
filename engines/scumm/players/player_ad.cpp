@@ -681,9 +681,9 @@ void Player_AD::parseSlot(int channel) {
 			// If no channel of the sound effect is playing anymore, unlock
 			// the resource.
 			channel /= 3;
-			if (!_channels[channel + 0].state
-			    && !_channels[channel + 1].state
-			    && !_channels[channel + 2].state) {
+			if (!_channels[channel * 3 + 0].state
+			    && !_channels[channel * 3 + 1].state
+			    && !_channels[channel * 3 + 2].state) {
 				_vm->_res->unlock(rtSound, _sfxResource[channel]);
 			}
 			return;
