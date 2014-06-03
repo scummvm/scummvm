@@ -473,8 +473,8 @@ int SequenceList::startReverseCycle(int srcSpriteIndex, bool flipped, int numTic
 	int depth = _vm->_game->_scene._depthSurface.getDepth(Common::Point(
 		frame->_offset.x + frame->w / 2, frame->_offset.y + frame->h / 2));
 
-	return add(srcSpriteIndex, flipped, 1, triggerCountdown, timeoutTicks, extraTicks,
-		numTicks, 0, 0, true, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);
+	return add(srcSpriteIndex, flipped, sprites->getCount(), triggerCountdown, timeoutTicks, 
+		extraTicks, numTicks, 0, 0, true, 100, depth - 1, -1, ANIMTYPE_REVERSIBLE, 0, 0);
 }
 
 void SequenceList::updateTimeout(int spriteIdx, int seqIndex) {
