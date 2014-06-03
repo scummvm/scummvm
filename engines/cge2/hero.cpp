@@ -49,10 +49,6 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 
 	if (*_file) {
 		int cnt[kActions];
-		int shpcnt = 0;
-		int seqcnt = 0;
-		int maxnow = 0;
-		int maxnxt = 0;
 		Seq *seq;
 		int section = kIdPhase;
 
@@ -90,6 +86,10 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 			ID id;
 			Common::String line;
 			char tmpStr[kLineMax + 1];
+			int shpcnt = 0;
+			int seqcnt = 0;
+			int maxnow = 0;
+			int maxnxt = 0;
 
 			for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
 				if (line.size() == 0)
