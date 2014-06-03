@@ -111,7 +111,7 @@ Sprite::~Sprite() {
 	contract();
 }
 
-BitmapPtr Sprite::shp() {
+BitmapPtr Sprite::getShp() {
 	SprExt *e = _ext;
 	if (!e || !e->_seq)
 		return NULL;
@@ -282,7 +282,7 @@ Sprite *Sprite::expand() {
 				case kIdNear:
 				case kIdMTake:
 				case kIdFTake:
-					id = (ID)_vm->_commandHandler->com(p);
+					id = (ID)_vm->_commandHandler->getComId(p);
 					if (_actionCtrl[section]._cnt) {
 						CommandHandler::Command *c = &_ext->_actions[section][cnt[section]++];
 						c->_commandType = CommandType(id);
@@ -327,12 +327,15 @@ Sprite *Sprite::expand() {
 						error("Unexpected end of file! %s", fname);
 					s->_dly = _vm->number(p);
 					break;
-				case kIdPhase:
+				case kIdPhase: {
 					BitmapPtr bmp = new Bitmap(_vm, p);
 					shplist[shpcnt] = bmp;
 					if (!shplist[shpcnt]->moveHi())
 						error("No EMS");
 					shpcnt++;
+					break;
+				}
+				default:
 					break;
 				}
 				break;
@@ -382,10 +385,10 @@ Sprite *Sprite::contract() {
 		return this;
 
 	if (_file[2] == '~') { // FLY-type sprite
-		Seq *seq = _ext->_seq;
+		Seq *curSeq = _ext->_seq;
 		// return to middle
-		gotoxyz(_pos3D - V3D(seq->_dx, seq->_dy, seq->_dz));
-		seq->_dx = seq->_dy = seq->_dz = 0;
+		gotoxyz(_pos3D - V3D(curSeq->_dx, curSeq->_dy, curSeq->_dz));
+		curSeq->_dx = curSeq->_dy = curSeq->_dz = 0;
 	}
 
 	if (notify)
@@ -564,7 +567,7 @@ void Sprite::show() {
 		e->_p0 = e->_p1;
 		e->_b0 = e->_b1;
 		e->_p1 = _pos2D;
-		e->_b1 = shp();
+		e->_b1 = getShp();
 	}
 	if (!_flags._hide)
 		e->_b1->show(e->_p1.x, e->_p1.y);
@@ -573,7 +576,7 @@ void Sprite::show() {
 void Sprite::show(uint16 pg) {
 	Graphics::Surface *a = _vm->_vga->_page[1];
 	_vm->_vga->_page[1] = _vm->_vga->_page[pg];
-	shp()->show(_pos2D.x, _pos2D.y);
+	getShp()->show(_pos2D.x, _pos2D.y);
 	_vm->_vga->_page[1] = a;
 }
 

@@ -569,7 +569,7 @@ void CommandHandler::clear() {
 	_timerExpiry = 0;
 }
 
-int CommandHandler::com(const char *com) {
+int CommandHandler::getComId(const char *com) {
 	int i = _vm->takeEnum(_commandText, com);
 	return (i < 0) ? i : i + kCmdCom0 + 1;
 }

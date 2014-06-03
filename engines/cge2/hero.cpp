@@ -120,7 +120,7 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 					case kIdNear:
 					case kIdMTake:
 					case kIdFTake:
-						id = (ID)_vm->_commandHandler->com(p);
+						id = (ID)_vm->_commandHandler->getComId(p);
 						if (_actionCtrl[section]._cnt) {
 							CommandHandler::Command *c = &_ext->_actions[section][cnt[section]++];
 							c->_commandType = CommandType(id);

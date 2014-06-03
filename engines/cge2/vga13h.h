@@ -73,8 +73,8 @@ class V2D : public Common::Point {
 public:
 	V2D& operator=(const V3D &p3) {
 		double m = _vm->_eye->_z / (p3._z - _vm->_eye->_z);
-		x = round((_vm->_eye->_x + (_vm->_eye->_x - p3._x) * m));
-		y = round((_vm->_eye->_y + (_vm->_eye->_y - p3._y) * m));
+		x = round(_vm->_eye->_x + (_vm->_eye->_x - p3._x) * m);
+		y = round(_vm->_eye->_y + (_vm->_eye->_y - p3._y) * m);
 		return *this;
 	}
 	V2D(CGE2Engine *vm) : _vm(vm) { }
@@ -170,7 +170,7 @@ public:
 	Sprite(CGE2Engine *vm);
 	Sprite(CGE2Engine *vm, BitmapPtr *shp, int cnt);
 	virtual ~Sprite();
-	BitmapPtr shp();
+	BitmapPtr getShp();
 	void setShapeList(BitmapPtr *shp, int cnt);
 	void moveShapesHi(void);
 	void moveShapesLo(void);

@@ -179,7 +179,7 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 				case kIdNear:
 				case kIdMTake:
 				case kIdFTake:
-					if (_commandHandler->com(p) >= 0)
+					if (_commandHandler->getComId(p) >= 0)
 						++cnt[section];
 					else
 						error("Bad line %d [%s]", sprf.getLineCount(), tmpStr);
@@ -818,7 +818,7 @@ Sprite *CGE2Engine::spriteAt(int x, int y) {
 	if (tail) {
 		for (spr = tail->_prev; spr; spr = spr->_prev) {
 			if (!spr->_flags._hide && !spr->_flags._tran) {
-				if (spr->shp()->solidAt(x - spr->_pos2D.x, y - spr->_pos2D.y))
+				if (spr->getShp()->solidAt(x - spr->_pos2D.x, y - spr->_pos2D.y))
 					break;
 			}
 		}

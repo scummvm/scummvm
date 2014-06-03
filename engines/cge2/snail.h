@@ -136,7 +136,7 @@ public:
 	bool idle();
 	void reset();
 	void clear();
-	int com(const char *com);
+	int getComId(const char *com);
 private:
 	CGE2Engine *_vm;
 	bool _turbo;
