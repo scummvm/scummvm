@@ -79,7 +79,7 @@ public:
 	}
 	V2D(CGE2Engine *vm) : _vm(vm) { }
 	V2D(CGE2Engine *vm, const V3D &p3) : _vm(vm) { *this = p3; }
-	V2D(CGE2Engine *vm, int x, int y) : _vm(vm), Common::Point(x, y) { }
+	V2D(CGE2Engine *vm, int posx, int posy) : _vm(vm), Common::Point(posx, posy) { }
 	bool operator<(const V2D &p) const { return (x <  p.x) && (y <  p.y); }
 	bool operator<=(const V2D &p) const { return (x <= p.x) && (y <= p.y); }
 	bool operator>(const V2D &p) const { return (x >  p.x) && (y >  p.y); }

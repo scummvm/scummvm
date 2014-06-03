@@ -40,8 +40,8 @@
 namespace CGE2 {
 
 Seq *getConstantSeq(bool seqFlag) {
-	const Seq seq1[] = { { 0, 0, 0, 0, 0 } };
-	const Seq seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
+	const Seq seq1[] = { { 0, 0, 0, 0, 0, 0 } };
+	const Seq seq2[] = { { 0, 1, 0, 0, 0, 0 }, { 1, 0, 0, 0, 0, 0 } };
 
 	Seq *seq;
 	if (seqFlag) {
@@ -215,13 +215,13 @@ Sprite *Sprite::expand() {
 	char fname[kPathMax];
 	_vm->mergeExt(fname, _file, kSprExt);
 
-	Seq *seq;
+	Seq *curSeq;
 	if (_seqCnt) {
-		seq = new Seq[_seqCnt];
-		if (seq == NULL)
+		curSeq = new Seq[_seqCnt];
+		if (curSeq == nullptr)
 			error("No core %s", fname);
 	} else
-		seq = nullptr;
+		curSeq = nullptr;
 
 	for (int i = 0; i < kActions; i++)
 		cnt[i] = 0;
@@ -297,7 +297,7 @@ Sprite *Sprite::expand() {
 					}
 					break;
 				case kIdSeq:
-					s = &seq[seqcnt++];
+					s = &curSeq[seqcnt++];
 					s->_now = atoi(p);
 					if (s->_now > maxnow)
 						maxnow = s->_now;
@@ -348,12 +348,12 @@ Sprite *Sprite::expand() {
 		} else // no sprite description: try to read immediately from .BMP
 		shplist[shpcnt++] = new Bitmap (_vm, _file);
 
-	if (seq) {
+	if (curSeq) {
 		if (maxnow >= shpcnt)
 			error("Bad PHASE in SEQ %s", fname);
 		if (maxnxt && maxnxt >= seqcnt)
 			error("Bad JUMP in SEQ %s", fname);
-		setSeq(seq);
+		setSeq(curSeq);
 	} else {
 		setSeq(_stdSeq8);
 		_seqCnt = (shpcnt < ARRAYSIZE(_stdSeq8)) ? shpcnt : ARRAYSIZE(_stdSeq8);
@@ -367,13 +367,13 @@ Sprite *Sprite::expand() {
 	setShapeList(shapeList, shpcnt);
 
 	if (_file[2] == '~') { // FLY-type sprite
-		Seq *seq = _ext->_seq;
-		int x = (seq + 1)->_dx, y = (seq + 1)->_dy, z = (seq + 1)->_dz;
+		Seq *curSeq = _ext->_seq;
+		int x = (curSeq + 1)->_dx, y = (curSeq + 1)->_dy, z = (curSeq + 1)->_dz;
 		// random position
-		seq->_dx = _vm->newRandom(x + x) - x;
-		seq->_dy = _vm->newRandom(y + y) - y;
-		seq->_dz = _vm->newRandom(z + z) - z;
-		gotoxyz(_pos3D + V3D(seq->_dx, seq->_dy, seq->_dz));
+		curSeq->_dx = _vm->newRandom(x + x) - x;
+		curSeq->_dy = _vm->newRandom(y + y) - y;
+		curSeq->_dz = _vm->newRandom(z + z) - z;
+		gotoxyz(_pos3D + V3D(curSeq->_dx, curSeq->_dy, curSeq->_dz));
 	}
 
 	return this;
@@ -418,7 +418,7 @@ Sprite *Sprite::contract() {
 	for (int i = 0; i < kActions; i++) {
 		if (e->_actions[i]) {
 			delete[] e->_actions[i];
-			e->_actions[i];
+			e->_actions[i] = nullptr;
 		}
 	}
 

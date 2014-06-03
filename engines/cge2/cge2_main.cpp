@@ -194,6 +194,8 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 						badLab(fname);
 					++seqcnt;
 					break;
+				default:
+					break;
 				}
 				break;
 			}
