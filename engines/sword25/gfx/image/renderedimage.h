@@ -39,6 +39,7 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/image/image.h"
 #include "sword25/gfx/graphicengine.h"
+#include "graphics/transparent_surface.h"
 
 namespace Sword25 {
 
@@ -60,10 +61,10 @@ public:
 	virtual ~RenderedImage();
 
 	virtual int getWidth() const {
-		return _width;
+		return _surface.w;
 	}
 	virtual int getHeight() const {
-		return _height;
+		return _surface.h;
 	}
 	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
 		return GraphicEngine::CF_ARGB32;
@@ -72,7 +73,7 @@ public:
 	void copyDirectly(int posX, int posY);
 
 	virtual bool blit(int posX = 0, int posY = 0,
-	                  int flipping = Image::FLIP_NONE,
+	                  int flipping = Graphics::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
@@ -108,9 +109,7 @@ public:
 	virtual bool isSolid() const { return !_isTransparent; }
 
 private:
-	byte *_data;
-	int  _width;
-	int  _height;
+	Graphics::TransparentSurface _surface;
 	bool _doCleanup;
 	bool _isTransparent;
 

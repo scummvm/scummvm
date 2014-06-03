@@ -209,7 +209,7 @@ public:
 	}
 	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
 	virtual bool blit(int posX = 0, int posY = 0,
-	                  int flipping = FLIP_NONE,
+	                  int flipping = Graphics::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,

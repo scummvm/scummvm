@@ -52,7 +52,7 @@ void art_rgb_fill_run1(byte *buf, byte r, byte g, byte b, int n) {
 		memset(buf, g, n + n + n + n);
 	} else {
 		uint32 *alt = (uint32 *)buf;
-		uint32 color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(0xff, r, g, b);
+		uint32 color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(r, g, b, 0xff);
 
 		for (i = 0; i < n; i++)
 			*alt++ = color;
@@ -66,22 +66,22 @@ void art_rgb_run_alpha1(byte *buf, byte r, byte g, byte b, int alpha, int n) {
 	for (i = 0; i < n; i++) {
 #if defined(SCUMM_LITTLE_ENDIAN)
 		v = *buf;
+		*buf++ = MIN(v + alpha, 0xff);
+		v = *buf;
 		*buf++ = v + (((b - v) * alpha + 0x80) >> 8);
 		v = *buf;
 		*buf++ = v + (((g - v) * alpha + 0x80) >> 8);
 		v = *buf;
 		*buf++ = v + (((r - v) * alpha + 0x80) >> 8);
-		v = *buf;
-		*buf++ = MIN(v + alpha, 0xff);
 #else
 		v = *buf;
-		*buf++ = MIN(v + alpha, 0xff);
-		v = *buf;
 		*buf++ = v + (((r - v) * alpha + 0x80) >> 8);
 		v = *buf;
 		*buf++ = v + (((g - v) * alpha + 0x80) >> 8);
 		v = *buf;
 		*buf++ = v + (((b - v) * alpha + 0x80) >> 8);
+		v = *buf;
+		*buf++ = MIN(v + alpha, 0xff);
 #endif
 	}
 }

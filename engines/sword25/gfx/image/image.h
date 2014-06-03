@@ -43,6 +43,7 @@
 #include "sword25/kernel/common.h"
 #include "common/rect.h"
 #include "sword25/gfx/graphicengine.h"
+#include "graphics/transparent_surface.h"
 
 namespace Sword25 {
 
@@ -51,23 +52,6 @@ class RectangleList;
 class Image {
 public:
 	virtual ~Image() {}
-
-	// Enums
-	/**
-	    @brief The possible flipping parameters for the blit methode.
-	*/
-	enum FLIP_FLAGS {
-		/// The image will not be flipped.
-		FLIP_NONE = 0,
-		/// The image will be flipped at the horizontal axis.
-		FLIP_H = 1,
-		/// The image will be flipped at the vertical axis.
-		FLIP_V = 2,
-		/// The image will be flipped at the horizontal and vertical axis.
-		FLIP_HV = FLIP_H | FLIP_V,
-		/// The image will be flipped at the horizontal and vertical axis.
-		FLIP_VH = FLIP_H | FLIP_V
-	};
 
 	//@{
 	/** @name Accessor methods */
@@ -100,7 +84,7 @@ public:
 	    @param PosY the position on the Y-axis in the target image in pixels where the image is supposed to be rendered.<br>
 	                The default value is 0.
 	    @param Flipping how the the image should be flipped.<br>
-	                    The default value is BS_Image::FLIP_NONE (no flipping)
+	                    The default value is Graphics::FLIP_NONE (no flipping)
 	    @param pSrcPartRect Pointer on Common::Rect which specifies the section to be rendered. If the whole image has to be rendered the Pointer is NULL.<br>
 	                        This referes to the unflipped and unscaled image.<br>
 	                        The default value is NULL.
@@ -128,7 +112,7 @@ public:
 	            - IsSetContentAllowed()
 	*/
 	virtual bool blit(int posX = 0, int posY = 0,
-	                  int flipping = FLIP_NONE,
+	                  int flipping = Graphics::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
