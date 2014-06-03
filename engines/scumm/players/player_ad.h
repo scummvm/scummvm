@@ -80,6 +80,17 @@ private:
 	int _soundPlaying;
 	int _engineMusicTimer;
 
+	struct SfxSlot;
+
+	struct HardwareChannel {
+		bool allocated;
+		int priority;
+		SfxSlot *sfxOwner;
+	} _hwChannels[9];
+
+	int allocateHWChannel(int priority, SfxSlot *owner = nullptr);
+	void freeHWChannel(int channel);
+
 	// AdLib register utilities
 	uint8 _registerBackUpTable[256];
 	void writeReg(int r, int v);
@@ -173,7 +184,7 @@ private:
 	} _sfx[3];
 
 	SfxSlot *allocateSfxSlot(int priority);
-	void startSfx(SfxSlot *sfx, const byte *resource);
+	bool startSfx(SfxSlot *sfx, const byte *resource);
 	void stopSfx(SfxSlot *sfx);
 
 	void updateSfx();

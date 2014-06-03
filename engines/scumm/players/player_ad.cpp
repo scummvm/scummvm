@@ -66,9 +66,11 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
 		_sfx[i].resource = -1;
 		for (int j = 0; j < ARRAYSIZE(_sfx[i].channels); ++j) {
-			_sfx[i].channels[j].hardwareChannel = i * 3 + j;
+			_sfx[i].channels[j].hardwareChannel = -1;
 		}
 	}
+
+	memset(_hwChannels, 0, sizeof(_hwChannels));
 }
 
 Player_AD::~Player_AD() {
@@ -121,13 +123,13 @@ void Player_AD::startSound(int sound) {
 				return;
 			}
 
-			// Lock the new resource
+			// Try to start sfx playback
 			sfx->resource = sound;
 			sfx->priority = priority;
-			_vm->_res->lock(rtSound, sound);
-
-			// Start the actual sfx resource
-			startSfx(sfx, res);
+			if (startSfx(sfx, res)) {
+				// Lock the new resource
+				_vm->_res->lock(rtSound, sound);
+			}
 		}
 	}
 
@@ -244,6 +246,43 @@ void Player_AD::setupVolume() {
 	} else {
 		_mixer->setChannelVolume(_soundHandle, soundVolumeSfx);
 	}
+}
+
+int Player_AD::allocateHWChannel(int priority, SfxSlot *owner) {
+	// First pass: Check whether there's any unallocated channel
+	for (int i = 0; i < ARRAYSIZE(_hwChannels); ++i) {
+		if (!_hwChannels[i].allocated) {
+			_hwChannels[i].allocated = true;
+			_hwChannels[i].priority = priority;
+			_hwChannels[i].sfxOwner = owner;
+			return i;
+		}
+	}
+
+	// Second pass: Reassign channels based on priority
+	for (int i = 0; i < ARRAYSIZE(_hwChannels); ++i) {
+		if (_hwChannels[i].priority <= priority) {
+			// In case the HW channel belongs to a SFX we will completely
+			// stop playback of that SFX.
+			// TODO: Maybe be more fine grained in the future and allow
+			// detachment of individual channels of a SFX?
+			if (_hwChannels[i].sfxOwner) {
+				stopSfx(_hwChannels[i].sfxOwner);
+			}
+			_hwChannels[i].allocated = true;
+			_hwChannels[i].priority = priority;
+			_hwChannels[i].sfxOwner = owner;
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void Player_AD::freeHWChannel(int channel) {
+	assert(_hwChannels[channel].allocated);
+	_hwChannels[channel].allocated = false;
+	_hwChannels[channel].sfxOwner = nullptr;
 }
 
 void Player_AD::writeReg(int r, int v) {
@@ -549,19 +588,21 @@ Player_AD::SfxSlot *Player_AD::allocateSfxSlot(int priority) {
 	return nullptr;
 }
 
-void Player_AD::startSfx(SfxSlot *sfx, const byte *resource) {
+bool Player_AD::startSfx(SfxSlot *sfx, const byte *resource) {
 	writeReg(0xBD, 0x00);
 
-	// Clear the channel.
+	// Clear the channels.
 	sfx->channels[0].state = kChannelStateOff;
 	sfx->channels[1].state = kChannelStateOff;
 	sfx->channels[2].state = kChannelStateOff;
 
-	clearChannel(sfx->channels[0]);
-	clearChannel(sfx->channels[1]);
-	clearChannel(sfx->channels[2]);
-
 	// Set up the first channel to pick up playback.
+	// Try to allocate a hardware channel.
+	sfx->channels[0].hardwareChannel = allocateHWChannel(sfx->priority, sfx);
+	if (sfx->channels[0].hardwareChannel == -1) {
+		::debugC(3, DEBUG_SOUND, "AD No hardware channel available");
+		return false;
+	}
 	sfx->channels[0].currentOffset = sfx->channels[0].startOffset = resource + 2;
 	sfx->channels[0].state = kChannelStateParse;
 
@@ -592,6 +633,11 @@ void Player_AD::startSfx(SfxSlot *sfx, const byte *resource) {
 			if (curChannel >= 3) {
 				error("AD SFX resource %d uses more than 3 channels", sfx->resource);
 			}
+			sfx->channels[curChannel].hardwareChannel = allocateHWChannel(sfx->priority, sfx);
+			if (sfx->channels[curChannel].hardwareChannel == -1) {
+				::debugC(3, DEBUG_SOUND, "AD No hardware channel available");
+				return false;
+			}
 			sfx->channels[curChannel].currentOffset = bufferPosition;
 			sfx->channels[curChannel].startOffset = bufferPosition;
 			sfx->channels[curChannel].state = kChannelStateParse;
@@ -599,6 +645,8 @@ void Player_AD::startSfx(SfxSlot *sfx, const byte *resource) {
 			break;
 		}
 	}
+
+	return true;
 }
 
 void Player_AD::stopSfx(SfxSlot *sfx) {
@@ -611,6 +659,11 @@ void Player_AD::stopSfx(SfxSlot *sfx) {
 		if (sfx->channels[i].state) {
 			clearChannel(sfx->channels[i]);
 			sfx->channels[i].state = kChannelStateOff;
+		}
+
+		if (sfx->channels[i].hardwareChannel != -1) {
+			freeHWChannel(sfx->channels[i].hardwareChannel);
+			sfx->channels[i].hardwareChannel = -1;
 		}
 	}
 
