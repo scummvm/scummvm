@@ -164,8 +164,6 @@ void Player_AD::stopAllSounds() {
 	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
 		stopSfx(&_sfx[i]);
 	}
-
-	writeReg(0xBD, 0x00);
 }
 
 int Player_AD::getMusicTimer() {
@@ -384,6 +382,10 @@ void Player_AD::stopMusic() {
 			noteOff(i);
 		}
 	}
+
+	// Reset rhythm state
+	writeReg(0xBD, 0x00);
+	limitHWChannels(9);
 }
 
 void Player_AD::updateMusic() {
