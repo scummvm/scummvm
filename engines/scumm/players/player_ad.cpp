@@ -63,6 +63,9 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	_rndSeed = 1;
 
 	memset(_channels, 0, sizeof(_channels));
+	for (int i = 0; i < ARRAYSIZE(_channels); ++i) {
+		_channels[i].hardwareChannel = i;
+	}
 	memset(_sfxResource, 0, sizeof(_sfxResource));
 	memset(_sfxPriority, 0, sizeof(_sfxPriority));
 }
@@ -710,9 +713,9 @@ void Player_AD::updateSlot(int channel) {
 			updateNote = processNoteEnvelope(note);
 
 			if (note->bias) {
-				writeRegisterSpecial(channel, note->bias - note->instrumentValue, *curOffset & 0x07);
+				writeRegisterSpecial(_channels[channel].hardwareChannel, note->bias - note->instrumentValue, *curOffset & 0x07);
 			} else {
-				writeRegisterSpecial(channel, note->instrumentValue, *curOffset & 0x07);
+				writeRegisterSpecial(_channels[channel].hardwareChannel, note->instrumentValue, *curOffset & 0x07);
 			}
 		}
 
@@ -764,7 +767,7 @@ bool Player_AD::processNote(Note *note, int channel, const byte *offset) {
 		instrumentDataValue = _channels[channel].instrumentData[instrumentDataOffset];
 	}
 
-	uint8 noteInstrumentValue = readRegisterSpecial(channel, instrumentDataValue, instrumentDataOffset);
+	uint8 noteInstrumentValue = readRegisterSpecial(_channels[channel].hardwareChannel, instrumentDataValue, instrumentDataOffset);
 	if (note->bias) {
 		noteInstrumentValue = note->bias - noteInstrumentValue;
 	}

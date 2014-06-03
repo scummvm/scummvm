@@ -180,6 +180,8 @@ private:
 		uint8 instrumentData[7];
 
 		Note notes[2];
+
+		int hardwareChannel;
 	} _channels[11];
 
 	uint8 _rndSeed;
