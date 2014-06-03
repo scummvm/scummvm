@@ -711,9 +711,9 @@ void Player_AD::updateSlot(int channel) {
 			updateNote = processNoteEnvelope(&_notes[note]);
 
 			if (_notes[note].bias) {
-				writeRegisterSpecial(note, _notes[note].bias - _notes[note].instrumentValue, *curOffset & 0x07);
+				writeRegisterSpecial(channel, _notes[note].bias - _notes[note].instrumentValue, *curOffset & 0x07);
 			} else {
-				writeRegisterSpecial(note, _notes[note].instrumentValue, *curOffset & 0x07);
+				writeRegisterSpecial(channel, _notes[note].instrumentValue, *curOffset & 0x07);
 			}
 		}
 
@@ -766,7 +766,7 @@ bool Player_AD::processNote(int note, const byte *offset) {
 		instrumentDataValue = _channels[note / 2].instrumentData[instrumentDataOffset];
 	}
 
-	uint8 noteInstrumentValue = readRegisterSpecial(note, instrumentDataValue, instrumentDataOffset);
+	uint8 noteInstrumentValue = readRegisterSpecial(note / 2, instrumentDataValue, instrumentDataOffset);
 	if (_notes[note].bias) {
 		noteInstrumentValue = _notes[note].bias - noteInstrumentValue;
 	}
@@ -801,19 +801,16 @@ void Player_AD::noteOffOn(int channel) {
 	writeReg(0xB0 | channel, regValue | 0x20);
 }
 
-void Player_AD::writeRegisterSpecial(int note, uint8 value, int offset) {
+void Player_AD::writeRegisterSpecial(int channel, uint8 value, int offset) {
 	if (offset == 6) {
 		return;
 	}
 
-	// Division by 2 extracts the channel number out of the note.
-	note /= 2;
-
 	uint8 regNum;
 	if (_useOperatorTable[offset]) {
-		regNum = _operatorOffsetTable[_channelOperatorOffsetTable[offset] + note * 2];
+		regNum = _operatorOffsetTable[_channelOperatorOffsetTable[offset] + channel * 2];
 	} else {
-		regNum = _channelOffsetTable[note];
+		regNum = _channelOffsetTable[channel];
 	}
 
 	regNum += _baseRegisterTable[offset];
@@ -824,19 +821,16 @@ void Player_AD::writeRegisterSpecial(int note, uint8 value, int offset) {
 	writeReg(regNum, regValue);
 }
 
-uint8 Player_AD::readRegisterSpecial(int note, uint8 defaultValue, int offset) {
+uint8 Player_AD::readRegisterSpecial(int channel, uint8 defaultValue, int offset) {
 	if (offset == 6) {
 		return 0;
 	}
 
-	// Division by 2 extracts the channel number out of the note.
-	note /= 2;
-
 	uint8 regNum;
 	if (_useOperatorTable[offset]) {
-		regNum = _operatorOffsetTable[_channelOperatorOffsetTable[offset] + note * 2];
+		regNum = _operatorOffsetTable[_channelOperatorOffsetTable[offset] + channel * 2];
 	} else {
-		regNum = _channelOffsetTable[note];
+		regNum = _channelOffsetTable[channel];
 	}
 
 	regNum += _baseRegisterTable[offset];

@@ -153,8 +153,8 @@ private:
 	void parseNote(int channel, int num, const byte *offset);
 	bool processNote(int note, const byte *offset);
 	void noteOffOn(int channel);
-	void writeRegisterSpecial(int note, uint8 value, int offset);
-	uint8 readRegisterSpecial(int note, uint8 defaultValue, int offset);
+	void writeRegisterSpecial(int channel, uint8 value, int offset);
+	uint8 readRegisterSpecial(int channel, uint8 defaultValue, int offset);
 	void setupNoteEnvelopeState(Note *note, int steps, int adjust);
 	bool processNoteEnvelope(Note *note);
 
