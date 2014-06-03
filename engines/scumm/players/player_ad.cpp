@@ -661,8 +661,8 @@ void Player_AD::parseSlot(int channel) {
 			++curOffset;
 			_channels[channel].state = kChannelStatePlay;
 			noteOffOn(channel);
-			parseNote(channel, 0, curOffset + 0);
-			parseNote(channel, 1, curOffset + 5);
+			parseNote(&_notes[channel * 2 + 0], channel, curOffset + 0);
+			parseNote(&_notes[channel * 2 + 1], channel, curOffset + 5);
 			return;
 
 		case 0x80:
@@ -699,25 +699,25 @@ void Player_AD::updateSlot(int channel) {
 			continue;
 		}
 
-		const int note = channel * 2 + num;
+		Note *const note = &_notes[channel * 2 + num];
 		bool updateNote = false;
 
-		if (_notes[note].state == kNoteStateSustain) {
-			if (!--_notes[note].sustainTimer) {
+		if (note->state == kNoteStateSustain) {
+			if (!--note->sustainTimer) {
 				updateNote = true;
 			}
 		} else {
-			updateNote = processNoteEnvelope(&_notes[note]);
+			updateNote = processNoteEnvelope(note);
 
-			if (_notes[note].bias) {
-				writeRegisterSpecial(channel, _notes[note].bias - _notes[note].instrumentValue, *curOffset & 0x07);
+			if (note->bias) {
+				writeRegisterSpecial(channel, note->bias - note->instrumentValue, *curOffset & 0x07);
 			} else {
-				writeRegisterSpecial(channel, _notes[note].instrumentValue, *curOffset & 0x07);
+				writeRegisterSpecial(channel, note->instrumentValue, *curOffset & 0x07);
 			}
 		}
 
 		if (updateNote) {
-			if (processNote(note, curOffset)) {
+			if (processNote(note, channel, curOffset)) {
 				if (!(*curOffset & 0x08)) {
 					_channels[channel].currentOffset += 11;
 					_channels[channel].state = kChannelStateParse;
@@ -726,69 +726,68 @@ void Player_AD::updateSlot(int channel) {
 					noteOffOn(channel);
 				}
 
-				_notes[note].state = kNoteStatePreInit;
-				processNote(note, curOffset);
+				note->state = kNoteStatePreInit;
+				processNote(note, channel, curOffset);
 			}
 		}
 
-		if ((*curOffset & 0x20) && !--_notes[note].playTime) {
+		if ((*curOffset & 0x20) && !--note->playTime) {
 			_channels[channel].currentOffset += 11;
 			_channels[channel].state = kChannelStateParse;
 		}
 	}
 }
 
-void Player_AD::parseNote(int channel, int num, const byte *offset) {
+void Player_AD::parseNote(Note *note, int channel, const byte *offset) {
 	if (*offset & 0x80) {
-		const int note = channel * 2 + num;
-		_notes[note].state = kNoteStatePreInit;
-		processNote(note, offset);
-		_notes[note].playTime = 0;
+		note->state = kNoteStatePreInit;
+		processNote(note, channel, offset);
+		note->playTime = 0;
 
 		if (*offset & 0x20) {
-			_notes[note].playTime = (*(offset + 4) >> 4) * 118;
-			_notes[note].playTime += (*(offset + 4) & 0x0F) * 8;
+			note->playTime = (*(offset + 4) >> 4) * 118;
+			note->playTime += (*(offset + 4) & 0x0F) * 8;
 		}
 	}
 }
 
-bool Player_AD::processNote(int note, const byte *offset) {
-	if (++_notes[note].state == kNoteStateOff) {
+bool Player_AD::processNote(Note *note, int channel, const byte *offset) {
+	if (++note->state == kNoteStateOff) {
 		return true;
 	}
 
 	const int instrumentDataOffset = *offset & 0x07;
-	_notes[note].bias = _noteBiasTable[instrumentDataOffset];
+	note->bias = _noteBiasTable[instrumentDataOffset];
 
 	uint8 instrumentDataValue = 0;
-	if (_notes[note].state == kNoteStateAttack) {
-		instrumentDataValue = _channels[note / 2].instrumentData[instrumentDataOffset];
+	if (note->state == kNoteStateAttack) {
+		instrumentDataValue = _channels[channel].instrumentData[instrumentDataOffset];
 	}
 
-	uint8 noteInstrumentValue = readRegisterSpecial(note / 2, instrumentDataValue, instrumentDataOffset);
-	if (_notes[note].bias) {
-		noteInstrumentValue = _notes[note].bias - noteInstrumentValue;
+	uint8 noteInstrumentValue = readRegisterSpecial(channel, instrumentDataValue, instrumentDataOffset);
+	if (note->bias) {
+		noteInstrumentValue = note->bias - noteInstrumentValue;
 	}
-	_notes[note].instrumentValue = noteInstrumentValue;
+	note->instrumentValue = noteInstrumentValue;
 
-	if (_notes[note].state == kNoteStateSustain) {
-		_notes[note].sustainTimer = _numStepsTable[*(offset + 3) >> 4];
+	if (note->state == kNoteStateSustain) {
+		note->sustainTimer = _numStepsTable[*(offset + 3) >> 4];
 
 		if (*offset & 0x40) {
-			_notes[note].sustainTimer = (((getRnd() << 8) * _notes[note].sustainTimer) >> 16) + 1;
+			note->sustainTimer = (((getRnd() << 8) * note->sustainTimer) >> 16) + 1;
 		}
 	} else {
 		int timer1, timer2;
-		if (_notes[note].state == kNoteStateRelease) {
+		if (note->state == kNoteStateRelease) {
 			timer1 = *(offset + 3) & 0x0F;
 			timer2 = 0;
 		} else {
-			timer1 = *(offset + _notes[note].state + 1) >> 4;
-			timer2 = *(offset + _notes[note].state + 1) & 0x0F;
+			timer1 = *(offset + note->state + 1) >> 4;
+			timer2 = *(offset + note->state + 1) & 0x0F;
 		}
 
 		int adjustValue = ((_noteAdjustTable[timer2] * _noteAdjustScaleTable[instrumentDataOffset]) >> 16) - noteInstrumentValue;
-		setupNoteEnvelopeState(&_notes[note], _numStepsTable[timer1], adjustValue);
+		setupNoteEnvelopeState(note, _numStepsTable[timer1], adjustValue);
 	}
 
 	return false;

@@ -154,8 +154,8 @@ private:
 	void updateChannel(int channel);
 	void parseSlot(int channel);
 	void updateSlot(int channel);
-	void parseNote(int channel, int num, const byte *offset);
-	bool processNote(int note, const byte *offset);
+	void parseNote(Note *note, int channel, const byte *offset);
+	bool processNote(Note *note, int channel, const byte *offset);
 	void noteOffOn(int channel);
 	void writeRegisterSpecial(int channel, uint8 value, int offset);
 	uint8 readRegisterSpecial(int channel, uint8 defaultValue, int offset);
