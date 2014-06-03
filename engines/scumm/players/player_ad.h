@@ -148,25 +148,6 @@ private:
 		} envelope;
 	};
 
-	void startSfx(const byte *resource);
-	void updateSfx();
-	void clearChannel(int channel);
-	void updateChannel(int channel);
-	void parseSlot(int channel);
-	void updateSlot(int channel);
-	void parseNote(Note *note, int channel, const byte *offset);
-	bool processNote(Note *note, int channel, const byte *offset);
-	void noteOffOn(int channel);
-	void writeRegisterSpecial(int channel, uint8 value, int offset);
-	uint8 readRegisterSpecial(int channel, uint8 defaultValue, int offset);
-	void setupNoteEnvelopeState(Note *note, int steps, int adjust);
-	bool processNoteEnvelope(Note *note);
-
-	int _sfxTimer;
-
-	int _sfxResource[3];
-	int _sfxPriority[3];
-
 	enum {
 		kChannelStateOff = 0,
 		kChannelStateParse = 1,
@@ -183,6 +164,25 @@ private:
 
 		int hardwareChannel;
 	} _channels[11];
+
+	void startSfx(const byte *resource);
+	void updateSfx();
+	void clearChannel(const Channel &channel);
+	void updateChannel(Channel *channel);
+	void parseSlot(Channel *channel);
+	void updateSlot(Channel *channel);
+	void parseNote(Note *note, const Channel &channel, const byte *offset);
+	bool processNote(Note *note, const Channel &channel, const byte *offset);
+	void noteOffOn(int channel);
+	void writeRegisterSpecial(int channel, uint8 value, int offset);
+	uint8 readRegisterSpecial(int channel, uint8 defaultValue, int offset);
+	void setupNoteEnvelopeState(Note *note, int steps, int adjust);
+	bool processNoteEnvelope(Note *note);
+
+	int _sfxTimer;
+
+	int _sfxResource[3];
+	int _sfxPriority[3];
 
 	uint8 _rndSeed;
 	uint8 getRnd();

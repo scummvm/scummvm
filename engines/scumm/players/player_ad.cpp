@@ -157,9 +157,9 @@ void Player_AD::stopSound(int sound) {
 					_channels[i * 3 + 0].state = kChannelStateOff;
 					_channels[i * 3 + 1].state = kChannelStateOff;
 					_channels[i * 3 + 2].state = kChannelStateOff;
-					clearChannel(i * 3 + 0);
-					clearChannel(i * 3 + 1);
-					clearChannel(i * 3 + 2);
+					clearChannel(_channels[i * 3 + 0]);
+					clearChannel(_channels[i * 3 + 1]);
+					clearChannel(_channels[i * 3 + 2]);
 				}
 			}
 		}
@@ -188,7 +188,7 @@ void Player_AD::stopAllSounds() {
 	// Reset all the sfx channels
 	for (int i = 0; i < 9; ++i) {
 		_channels[i].state = kChannelStateOff;
-		clearChannel(i);
+		clearChannel(_channels[i]);
 	}
 
 	writeReg(0xBD, 0x00);
@@ -566,9 +566,9 @@ void Player_AD::startSfx(const byte *resource) {
 	_channels[startChannel + 1].state = kChannelStateOff;
 	_channels[startChannel + 2].state = kChannelStateOff;
 
-	clearChannel(startChannel + 0);
-	clearChannel(startChannel + 1);
-	clearChannel(startChannel + 2);
+	clearChannel(_channels[startChannel + 0]);
+	clearChannel(_channels[startChannel + 1]);
+	clearChannel(_channels[startChannel + 2]);
 
 	// Set up the first channel to pick up playback.
 	_channels[startChannel].currentOffset = _channels[startChannel].startOffset = resource + 2;
@@ -618,91 +618,94 @@ void Player_AD::updateSfx() {
 			continue;
 		}
 
-		updateChannel(i);
+		updateChannel(&_channels[i]);
 	}
 }
 
-void Player_AD::clearChannel(int channel) {
-	writeReg(0xA0 + channel, 0x00);
-	writeReg(0xB0 + channel, 0x00);
+void Player_AD::clearChannel(const Channel &channel) {
+	writeReg(0xA0 + channel.hardwareChannel, 0x00);
+	writeReg(0xB0 + channel.hardwareChannel, 0x00);
 }
 
-void Player_AD::updateChannel(int channel) {
-	if (_channels[channel].state == kChannelStateParse) {
+void Player_AD::updateChannel(Channel *channel) {
+	if (channel->state == kChannelStateParse) {
 		parseSlot(channel);
 	} else {
 		updateSlot(channel);
 	}
 }
 
-void Player_AD::parseSlot(int channel) {
+void Player_AD::parseSlot(Channel *channel) {
 	while (true) {
-		const byte *curOffset = _channels[channel].currentOffset;
+		const byte *curOffset = channel->currentOffset;
 
 		switch (*curOffset) {
 		case 1:
 			// INSTRUMENT DEFINITION
 			++curOffset;
-			_channels[channel].instrumentData[0] = *(curOffset + 0);
-			_channels[channel].instrumentData[1] = *(curOffset + 2);
-			_channels[channel].instrumentData[2] = *(curOffset + 9);
-			_channels[channel].instrumentData[3] = *(curOffset + 8);
-			_channels[channel].instrumentData[4] = *(curOffset + 4);
-			_channels[channel].instrumentData[5] = *(curOffset + 3);
-			_channels[channel].instrumentData[6] = 0;
+			channel->instrumentData[0] = *(curOffset + 0);
+			channel->instrumentData[1] = *(curOffset + 2);
+			channel->instrumentData[2] = *(curOffset + 9);
+			channel->instrumentData[3] = *(curOffset + 8);
+			channel->instrumentData[4] = *(curOffset + 4);
+			channel->instrumentData[5] = *(curOffset + 3);
+			channel->instrumentData[6] = 0;
 
-			setupChannel(channel, curOffset);
+			setupChannel(channel->hardwareChannel, curOffset);
 
-			writeReg(0xA0 + channel, *(curOffset + 0));
-			writeReg(0xB0 + channel, *(curOffset + 1) & 0xDF);
+			writeReg(0xA0 + channel->hardwareChannel, *(curOffset + 0));
+			writeReg(0xB0 + channel->hardwareChannel, *(curOffset + 1) & 0xDF);
 
-			_channels[channel].currentOffset += 15;
+			channel->currentOffset += 15;
 			break;
 
 		case 2:
 			// NOTE DEFINITION
 			++curOffset;
-			_channels[channel].state = kChannelStatePlay;
-			noteOffOn(channel);
-			parseNote(&_channels[channel].notes[0], channel, curOffset + 0);
-			parseNote(&_channels[channel].notes[1], channel, curOffset + 5);
+			channel->state = kChannelStatePlay;
+			noteOffOn(channel->hardwareChannel);
+			parseNote(&channel->notes[0], *channel, curOffset + 0);
+			parseNote(&channel->notes[1], *channel, curOffset + 5);
 			return;
 
 		case 0x80:
 			// LOOP
-			_channels[channel].currentOffset = _channels[channel].startOffset;
+			channel->currentOffset = channel->startOffset;
 			break;
 
-		default:
+		default: {
 			// START OF CHANNEL
 			// When we encounter a start of another channel while playback
 			// it means that the current channel is finished. Thus, we will
 			// stop it.
-			clearChannel(channel);
-			_channels[channel].state = kChannelStateOff;
+			clearChannel(*channel);
+			channel->state = kChannelStateOff;
 
 			// If no channel of the sound effect is playing anymore, unlock
 			// the resource.
-			channel /= 3;
-			if (!_channels[channel * 3 + 0].state
-			    && !_channels[channel * 3 + 1].state
-			    && !_channels[channel * 3 + 2].state) {
-				_vm->_res->unlock(rtSound, _sfxResource[channel]);
+			// HACK: We shouldn't rely on the hardware channel to match the
+			// logical channel...
+			const int logChannel = channel->hardwareChannel / 3;
+			if (!_channels[logChannel * 3 + 0].state
+			    && !_channels[logChannel * 3 + 1].state
+			    && !_channels[logChannel * 3 + 2].state) {
+				_vm->_res->unlock(rtSound, _sfxResource[logChannel]);
 			}
 			return;
+			}
 		}
 	}
 }
 
-void Player_AD::updateSlot(int channel) {
-	const byte *curOffset = _channels[channel].currentOffset + 1;
+void Player_AD::updateSlot(Channel *channel) {
+	const byte *curOffset = channel->currentOffset + 1;
 
 	for (int num = 0; num <= 1; ++num, curOffset += 5) {
 		if (!(*curOffset & 0x80)) {
 			continue;
 		}
 
-		Note *const note = &_channels[channel].notes[num];
+		Note *const note = &channel->notes[num];
 		bool updateNote = false;
 
 		if (note->state == kNoteStateSustain) {
@@ -713,35 +716,35 @@ void Player_AD::updateSlot(int channel) {
 			updateNote = processNoteEnvelope(note);
 
 			if (note->bias) {
-				writeRegisterSpecial(_channels[channel].hardwareChannel, note->bias - note->instrumentValue, *curOffset & 0x07);
+				writeRegisterSpecial(channel->hardwareChannel, note->bias - note->instrumentValue, *curOffset & 0x07);
 			} else {
-				writeRegisterSpecial(_channels[channel].hardwareChannel, note->instrumentValue, *curOffset & 0x07);
+				writeRegisterSpecial(channel->hardwareChannel, note->instrumentValue, *curOffset & 0x07);
 			}
 		}
 
 		if (updateNote) {
-			if (processNote(note, channel, curOffset)) {
+			if (processNote(note, *channel, curOffset)) {
 				if (!(*curOffset & 0x08)) {
-					_channels[channel].currentOffset += 11;
-					_channels[channel].state = kChannelStateParse;
+					channel->currentOffset += 11;
+					channel->state = kChannelStateParse;
 					continue;
 				} else if (*curOffset & 0x10) {
-					noteOffOn(channel);
+					noteOffOn(channel->hardwareChannel);
 				}
 
 				note->state = kNoteStatePreInit;
-				processNote(note, channel, curOffset);
+				processNote(note, *channel, curOffset);
 			}
 		}
 
 		if ((*curOffset & 0x20) && !--note->playTime) {
-			_channels[channel].currentOffset += 11;
-			_channels[channel].state = kChannelStateParse;
+			channel->currentOffset += 11;
+			channel->state = kChannelStateParse;
 		}
 	}
 }
 
-void Player_AD::parseNote(Note *note, int channel, const byte *offset) {
+void Player_AD::parseNote(Note *note, const Channel &channel, const byte *offset) {
 	if (*offset & 0x80) {
 		note->state = kNoteStatePreInit;
 		processNote(note, channel, offset);
@@ -754,7 +757,7 @@ void Player_AD::parseNote(Note *note, int channel, const byte *offset) {
 	}
 }
 
-bool Player_AD::processNote(Note *note, int channel, const byte *offset) {
+bool Player_AD::processNote(Note *note, const Channel &channel, const byte *offset) {
 	if (++note->state == kNoteStateOff) {
 		return true;
 	}
@@ -764,10 +767,10 @@ bool Player_AD::processNote(Note *note, int channel, const byte *offset) {
 
 	uint8 instrumentDataValue = 0;
 	if (note->state == kNoteStateAttack) {
-		instrumentDataValue = _channels[channel].instrumentData[instrumentDataOffset];
+		instrumentDataValue = channel.instrumentData[instrumentDataOffset];
 	}
 
-	uint8 noteInstrumentValue = readRegisterSpecial(_channels[channel].hardwareChannel, instrumentDataValue, instrumentDataOffset);
+	uint8 noteInstrumentValue = readRegisterSpecial(channel.hardwareChannel, instrumentDataValue, instrumentDataOffset);
 	if (note->bias) {
 		noteInstrumentValue = note->bias - noteInstrumentValue;
 	}
