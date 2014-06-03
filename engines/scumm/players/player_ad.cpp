@@ -121,6 +121,11 @@ void Player_AD::startSound(int sound) {
 			if (_sfx[channel].resource != -1) {
 				if (_sfx[channel].priority > priority) {
 					return;
+				} else {
+					// If we overwrite a channel we will properly stop the old
+					// sfx slot first. This makes sure that the resource is
+					// unlocked properly.
+					stopSfx(&_sfx[channel]);
 				}
 			}
 
