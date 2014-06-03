@@ -560,9 +560,9 @@ void Player_AD::startSfx() {
 	const int startChannel = _resource[1] * 3;
 
 	// Clear the channel.
-	_channels[startChannel + 0].state = 0;
-	_channels[startChannel + 1].state = 0;
-	_channels[startChannel + 2].state = 0;
+	_channels[startChannel + 0].state = kChannelStateOff;
+	_channels[startChannel + 1].state = kChannelStateOff;
+	_channels[startChannel + 2].state = kChannelStateOff;
 
 	clearChannel(startChannel + 0);
 	clearChannel(startChannel + 1);
@@ -570,7 +570,7 @@ void Player_AD::startSfx() {
 
 	// Set up the first channel to pick up playback.
 	_channels[startChannel].currentOffset = _channels[startChannel].startOffset = _resource + 2;
-	_channels[startChannel].state = 1;
+	_channels[startChannel].state = kChannelStateParse;
 
 	// Scan for the start of the other channels and set them up if required.
 	int curChannel = startChannel + 1;
@@ -598,7 +598,7 @@ void Player_AD::startSfx() {
 			bufferPosition += 1;
 			_channels[curChannel].currentOffset = bufferPosition;
 			_channels[curChannel].startOffset = bufferPosition;
-			_channels[curChannel].state = 1;
+			_channels[curChannel].state = kChannelStateParse;
 			++curChannel;
 			break;
 		}
@@ -626,7 +626,7 @@ void Player_AD::clearChannel(int channel) {
 }
 
 void Player_AD::updateChannel(int channel) {
-	if (_channels[channel].state == 1) {
+	if (_channels[channel].state == kChannelStateParse) {
 		parseSlot(channel);
 	} else {
 		updateSlot(channel);
@@ -660,7 +660,7 @@ void Player_AD::parseSlot(int channel) {
 		case 2:
 			// NOTE DEFINITION
 			++curOffset;
-			_channels[channel].state = 2;
+			_channels[channel].state = kChannelStatePlay;
 			noteOffOn(channel);
 			parseNote(channel, 0, curOffset + 0);
 			parseNote(channel, 1, curOffset + 5);
@@ -677,7 +677,7 @@ void Player_AD::parseSlot(int channel) {
 			// it means that the current channel is finished. Thus, we will
 			// stop it.
 			clearChannel(channel);
-			_channels[channel].state = 0;
+			_channels[channel].state = kChannelStateOff;
 
 			// If no channel of the sound effect is playing anymore, unlock
 			// the resource.
@@ -703,7 +703,7 @@ void Player_AD::updateSlot(int channel) {
 		const int note = channel * 2 + num;
 		bool updateNote = false;
 
-		if (_notes[note].state == 2) {
+		if (_notes[note].state == kNoteStateSustain) {
 			if (!--_notes[note].sustainTimer) {
 				updateNote = true;
 			}
@@ -721,20 +721,20 @@ void Player_AD::updateSlot(int channel) {
 			if (processNote(note, curOffset)) {
 				if (!(*curOffset & 0x08)) {
 					_channels[channel].currentOffset += 11;
-					_channels[channel].state = 1;
+					_channels[channel].state = kChannelStateParse;
 					continue;
 				} else if (*curOffset & 0x10) {
 					noteOffOn(channel);
 				}
 
-				_notes[note].state = -1;
+				_notes[note].state = kNoteStatePreInit;
 				processNote(note, curOffset);
 			}
 		}
 
 		if ((*curOffset & 0x20) && !--_notes[note].playTime) {
 			_channels[channel].currentOffset += 11;
-			_channels[channel].state = 1;
+			_channels[channel].state = kChannelStateParse;
 		}
 	}
 }
@@ -742,7 +742,7 @@ void Player_AD::updateSlot(int channel) {
 void Player_AD::parseNote(int channel, int num, const byte *offset) {
 	if (*offset & 0x80) {
 		const int note = channel * 2 + num;
-		_notes[note].state = -1;
+		_notes[note].state = kNoteStatePreInit;
 		processNote(note, offset);
 		_notes[note].playTime = 0;
 
@@ -754,7 +754,7 @@ void Player_AD::parseNote(int channel, int num, const byte *offset) {
 }
 
 bool Player_AD::processNote(int note, const byte *offset) {
-	if (++_notes[note].state == 4) {
+	if (++_notes[note].state == kNoteStateOff) {
 		return true;
 	}
 
@@ -762,7 +762,7 @@ bool Player_AD::processNote(int note, const byte *offset) {
 	_notes[note].bias = _noteBiasTable[instrumentDataOffset];
 
 	uint8 instrumentDataValue = 0;
-	if (_notes[note].state == 0) {
+	if (_notes[note].state == kNoteStateAttack) {
 		instrumentDataValue = _channels[note / 2].instrumentData[instrumentDataOffset];
 	}
 
@@ -772,7 +772,7 @@ bool Player_AD::processNote(int note, const byte *offset) {
 	}
 	_notes[note].instrumentValue = noteInstrumentValue;
 
-	if (_notes[note].state == 2) {
+	if (_notes[note].state == kNoteStateSustain) {
 		_notes[note].sustainTimer = _numStepsTable[*(offset + 3) >> 4];
 
 		if (*offset & 0x40) {
@@ -780,7 +780,7 @@ bool Player_AD::processNote(int note, const byte *offset) {
 		}
 	} else {
 		int timer1, timer2;
-		if (_notes[note].state == 3) {
+		if (_notes[note].state == kNoteStateRelease) {
 			timer1 = *(offset + 3) & 0x0F;
 			timer2 = 0;
 		} else {

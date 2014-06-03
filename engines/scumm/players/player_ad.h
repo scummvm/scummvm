@@ -127,6 +127,15 @@ private:
 	static const uint _rhythmChannelTable[6];
 
 	// SFX handling
+	enum {
+		kNoteStatePreInit = -1,
+		kNoteStateAttack = 0,
+		kNoteStateDecay = 1,
+		kNoteStateSustain = 2,
+		kNoteStateRelease = 3,
+		kNoteStateOff = 4
+	};
+
 	struct Note {
 		int state;
 		int playTime;
@@ -162,6 +171,12 @@ private:
 
 	int _sfxResource[3];
 	int _sfxPriority[3];
+
+	enum {
+		kChannelStateOff = 0,
+		kChannelStateParse = 1,
+		kChannelStatePlay = 2
+	};
 
 	struct Channel {
 		int state;
