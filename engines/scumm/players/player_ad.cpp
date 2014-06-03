@@ -108,7 +108,7 @@ void Player_AD::startSound(int sound) {
 
 	if (res[2] == 0x80) {
 		// Stop the current sounds
-		stopAllSounds();
+		stopMusic();
 
 		// Lock the new music resource
 		_soundPlaying = sound;
@@ -478,7 +478,7 @@ void Player_AD::updateMusic() {
 					_nextEventTimer = 0;
 				} else {
 					// Otherwise completely stop playback.
-					stopAllSounds();
+					stopMusic();
 				}
 				return;
 			} else if (command == 88) {
