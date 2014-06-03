@@ -571,7 +571,7 @@ void CGE2Engine::loadGame() {
 	// load sprites & pocket
 	
 	Sprite *s;
-	Hero *h;
+	Hero *h = nullptr;
 	
 	// initialize Andzia/Anna
 	s = _spare->take(142);

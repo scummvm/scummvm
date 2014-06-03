@@ -35,14 +35,14 @@
 
 namespace CGE2 {
 
-Bitmap::Bitmap() : _w(0), _h(0), _v(NULL), _b(NULL) {
+Bitmap::Bitmap() : _w(0), _h(0), _v(nullptr), _b(nullptr), _m(nullptr), _map(0), _vm(nullptr) {
 }
 
 void Bitmap::setVM(CGE2Engine *vm) {
 	_vm = vm;
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _m(NULL), _v(NULL), _b(NULL), _map(0), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _m(nullptr), _v(nullptr), _b(nullptr), _map(0), _vm(vm) {
 	char pat[kMaxPath];
 	forceExt(pat, fname, ".VBM");
 
@@ -57,7 +57,7 @@ Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _m(NULL), _v(NULL), _b(NULL)
 	}
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL), _map(0), _b(NULL), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(nullptr), _map(0), _b(nullptr), _vm(vm) {
 	if (map)
 		code();
 }
@@ -67,7 +67,7 @@ Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _
 // especially for text line real time display
 Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill)
 	: _w((w + 3) & ~3),                              // only full uint32 allowed!
-	  _h(h), _m(NULL), _map(0), _b(NULL), _vm(vm) {
+	  _h(h), _m(nullptr), _map(0), _b(nullptr), _vm(vm) {
 
 	uint16 dsiz = _w >> 2;                           // data size (1 plane line size)
 	uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
@@ -104,7 +104,7 @@ Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill)
 	_b = b;
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), _map(0), _b(NULL), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(nullptr), _v(nullptr), _map(0), _b(nullptr), _vm(vm) {
 	uint8 *v0 = bmp._v;
 	if (!v0)
 		return;
@@ -112,7 +112,7 @@ Bitmap::Bitmap(CGE2Engine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(N
 	uint16 vsiz = (uint8 *)(bmp._b) - (uint8 *)(v0);
 	uint16 siz = vsiz + _h * sizeof(HideDesc);
 	uint8 *v1 = new uint8[siz];
-	assert(v1 != NULL);
+	assert(v1 != nullptr);
 	memcpy(v1, v0, siz);
 	_b = (HideDesc *)((_v = v1) + vsiz);
 }
@@ -135,19 +135,19 @@ Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 	uint8 *v0 = bmp._v;
 	_w = bmp._w;
 	_h = bmp._h;
-	_m = NULL;
+	_m = nullptr;
 	_map = 0;
 	_vm = bmp._vm;
 	delete[] _v;
 	_v = nullptr;
 
-	if (v0 == NULL) {
-		_v = NULL;
+	if (v0 == nullptr) {
+		_v = nullptr;
 	} else {
 		uint16 vsiz = (uint8 *)bmp._b - (uint8 *)v0;
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		uint8 *v1 = new uint8[siz];
-		assert(v1 != NULL);
+		assert(v1 != nullptr);
 		memcpy(v1, v0, siz);
 		_b = (HideDesc *)((_v = v1) + vsiz);
 	}

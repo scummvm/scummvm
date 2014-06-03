@@ -523,7 +523,7 @@ void CGE2Engine::snRoom(Sprite *spr, int val) {
 void CGE2Engine::snGhost(Bitmap *bmp) {
 	V2D p(this, *bmp->_v & 0xFFFF, *bmp->_v >> 16);
 	bmp->hide(p.x, p.y);
-	delete bmp->_b;
+	delete[] bmp->_b;
 	bmp->_v = nullptr;
 	bmp->_b = nullptr;
 	delete bmp;
