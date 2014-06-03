@@ -77,6 +77,8 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
 		_voiceChannels[i].hardwareChannel = -1;
 	}
+
+	_musicVolume = _sfxVolume = 255;
 }
 
 Player_AD::~Player_AD() {
@@ -97,6 +99,9 @@ void Player_AD::setMusicVolume(int vol) {
 
 void Player_AD::startSound(int sound) {
 	Common::StackLock lock(_mutex);
+
+	// Setup the sound volume
+	setupVolume();
 
 	// Query the sound resource
 	const byte *res = _vm->getResourceAddress(rtSound, sound);
@@ -135,9 +140,6 @@ void Player_AD::startSound(int sound) {
 			_vm->_res->lock(rtSound, sound);
 		}
 	}
-
-	// Setup the sound volume
-	setupVolume();
 }
 
 void Player_AD::stopSound(int sound) {
@@ -222,22 +224,20 @@ int Player_AD::readBuffer(int16 *buffer, const int numSamples) {
 
 void Player_AD::setupVolume() {
 	// Setup the correct volume
-	int soundVolumeMusic = CLIP<int>(ConfMan.getInt("music_volume"), 0, Audio::Mixer::kMaxChannelVolume);
-	int soundVolumeSfx = CLIP<int>(ConfMan.getInt("sfx_volume"), 0, Audio::Mixer::kMaxChannelVolume);
+	_musicVolume = CLIP<int>(ConfMan.getInt("music_volume"), 0, Audio::Mixer::kMaxChannelVolume);
+	_sfxVolume = CLIP<int>(ConfMan.getInt("sfx_volume"), 0, Audio::Mixer::kMaxChannelVolume);
+
 	if (ConfMan.hasKey("mute")) {
 		if (ConfMan.getBool("mute")) {
-			soundVolumeMusic = 0;
-			soundVolumeSfx = 0;
+			_musicVolume = 0;
+			_sfxVolume = 0;
 		}
 	}
 
-	// In case a music is being played set the music volume. Set the sfx
-	// volume otherwise. This is safe because in the latter case either
-	// sfx are playing or there is no sound being played at all.
-	if (_soundPlaying != -1) {
-		_mixer->setChannelVolume(_soundHandle, soundVolumeMusic);
-	} else {
-		_mixer->setChannelVolume(_soundHandle, soundVolumeSfx);
+	// Update current output levels
+	for (int i = 0; i < ARRAYSIZE(_operatorOffsetTable); ++i) {
+		const uint reg = 0x40 + _operatorOffsetTable[i];
+		writeReg(reg, readReg(reg));
 	}
 }
 
@@ -287,10 +287,42 @@ void Player_AD::limitHWChannels(int newCount) {
 	_numHWChannels = newCount;
 }
 
+const int Player_AD::_operatorOffsetToChannel[22] = {
+	 0,  1,  2,  0,  1,  2, -1, -1,
+	 3,  4,  5,  3,  4,  5, -1, -1,
+	 6,  7,  8,  6,  7,  8
+};
+
 void Player_AD::writeReg(int r, int v) {
 	if (r >= 0 && r < ARRAYSIZE(_registerBackUpTable)) {
 		_registerBackUpTable[r] = v;
 	}
+
+	// Handle volume scaling depending on the sound type.
+	if (r >= 0x40 && r <= 0x55) {
+		const int operatorOffset = r - 0x40;
+		const int channel = _operatorOffsetToChannel[operatorOffset];
+		if (channel != -1) {
+			const bool twoOPOutput = (readReg(0xC0 + channel) & 0x01) != 0;
+
+			int scale = Audio::Mixer::kMaxChannelVolume;
+			// We only scale the volume of operator 2 unless both operators
+			// are set to directly produce sound.
+			if (twoOPOutput || operatorOffset == _operatorOffsetTable[channel * 2 + 1]) {
+				if (_hwChannels[channel].sfxOwner) {
+					scale = _sfxVolume;
+				} else {
+					scale = _musicVolume;
+				}
+			}
+
+			int vol = 0x3F - (v & 0x3F);
+			vol = vol * scale / Audio::Mixer::kMaxChannelVolume;
+			v &= 0xA0;
+			v |= (0x3F - vol);
+		}
+	}
+
 	_opl2->writeReg(r, v);
 }
 

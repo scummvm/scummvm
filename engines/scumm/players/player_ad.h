@@ -68,7 +68,10 @@ private:
 	Audio::Mixer *const _mixer;
 	const int _rate;
 	Audio::SoundHandle _soundHandle;
+
 	void setupVolume();
+	int _musicVolume;
+	int _sfxVolume;
 
 	OPL::OPL *_opl2;
 
@@ -88,6 +91,7 @@ private:
 		SfxSlot *sfxOwner;
 	} _hwChannels[9];
 	int _numHWChannels;
+	static const int _operatorOffsetToChannel[22];
 
 	int allocateHWChannel(int priority, SfxSlot *owner = nullptr);
 	void freeHWChannel(int channel);
