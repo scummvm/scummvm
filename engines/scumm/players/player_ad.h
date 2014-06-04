@@ -133,6 +133,9 @@ private:
 	} _voiceChannels[9];
 	void freeVoiceChannel(uint channel);
 
+	void musicSeekTo(const uint position);
+	bool _isSeeking;
+
 	uint _mdvdrState;
 
 	uint _curOffset;

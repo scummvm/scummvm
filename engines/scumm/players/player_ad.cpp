@@ -77,6 +77,7 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	memset(_voiceChannels, 0, sizeof(_voiceChannels));
 
 	_musicVolume = _sfxVolume = 255;
+	_isSeeking = false;
 }
 
 Player_AD::~Player_AD() {
@@ -329,6 +330,7 @@ void Player_AD::writeReg(int r, int v) {
 
 	// Since AdLib's lowest volume level does not imply that the sound is
 	// completely silent we ignore key on in such a case.
+	// We also ignore key on for music whenever we do seeking.
 	if (r >= 0xB0 && r <= 0xB8) {
 		const int channel = r - 0xB0;
 		bool mute = false;
@@ -339,6 +341,8 @@ void Player_AD::writeReg(int r, int v) {
 		} else {
 			if (!_musicVolume) {
 				mute = true;
+			} else {
+				mute = _isSeeking;
 			}
 		}
 
@@ -648,6 +652,35 @@ void Player_AD::freeVoiceChannel(uint channel) {
 	vChannel.lastEvent = 0;
 	vChannel.b0Reg = 0;
 	vChannel.frequency = 0;
+}
+
+void Player_AD::musicSeekTo(const uint position) {
+	// This method is actually dangerous to use and should only be used for
+	// loading save games because it does not set up anything like the engine
+	// music timer or similar.
+	_isSeeking = true;
+
+	// Seek until the given position.
+	while (_curOffset != position) {
+		if (parseCommand()) {
+			// We encountered an EOT command. This should not happen unless
+			// we try to seek to an illegal position. In this case just abort
+			// seeking.
+			::debugC(3, DEBUG_SOUND, "AD illegal seek to %u", position);
+			break;
+		}
+		parseVLQ();
+	}
+
+	_isSeeking = false;
+
+	// Turn on all notes.
+	for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
+		if (_voiceChannels[i].lastEvent != 0) {
+			const int reg = 0xB0 + i;
+			writeReg(reg, readReg(reg));
+		}
+	}
 }
 
 const uint Player_AD::_noteFrequencies[12] = {
