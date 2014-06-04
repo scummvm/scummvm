@@ -209,7 +209,7 @@ IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
 		RESET_ENTITY_STATE(kEntityPascale, Pascale, setup_function19);
 		RESET_ENTITY_STATE(kEntityWaiter1, Waiter1, setup_function22);
 		RESET_ENTITY_STATE(kEntityWaiter2, Waiter2, setup_function16);
-		RESET_ENTITY_STATE(kEntityCooks, Cooks, setup_function7);
+		RESET_ENTITY_STATE(kEntityCooks, Cooks, setup_lockUp);
 
 		RESET_ENTITY_STATE(kEntityMertens, Mertens, setup_function42);
 		RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_chapter1Handler);
