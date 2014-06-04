@@ -777,7 +777,6 @@ Vga::Vga(CGE2Engine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), 
 	_oldColors = NULL;
 	_newColors = NULL;
 	_showQ = new Queue(true);
-	_spareQ = new Queue(false);
 	_sysPal = new Dac[kPalCount];
 
 	for (int idx = 0; idx < 4; idx++) {
@@ -821,7 +820,6 @@ Vga::~Vga() {
 	debugN("%s", buffer.c_str());
 
 	delete _showQ;
-	delete _spareQ;
 	delete[] _sysPal;
 
 	for (int idx = 0; idx < 4; idx++) {

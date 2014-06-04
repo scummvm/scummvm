@@ -556,7 +556,6 @@ void CGE2Engine::runGame() {
 	_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, nullptr);
 	_mouse->off();
 	_vga->_showQ->clear();
-	_vga->_spareQ->clear();
 }
 
 void CGE2Engine::loadUser() {
