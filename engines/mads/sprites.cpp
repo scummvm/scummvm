@@ -253,15 +253,14 @@ void SpriteSlots::drawBackground() {
 				if (spriteSlot._scale != -1) {
 					// Adjust the drawing position
 					pt.x -= frame->w / 2;
-					pt.y -= frame->h / 2;
+					pt.y -= frame->h - 1;
 				}
-
 
 				if (spriteSlot._depth <= 1) {
 					frame->copyTo(&scene._backgroundSurface, pt, frame->getTransparencyIndex());
 				} else if (scene._depthStyle == 0) {
 					scene._backgroundSurface.copyFrom(frame, pt, spriteSlot._depth, &scene._depthSurface,
-						100, frame->getTransparencyIndex());
+						-1, false, frame->getTransparencyIndex());
 				} else {
 					error("Unsupported depth style");
 				}
