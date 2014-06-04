@@ -397,7 +397,7 @@ void MessageQueue::update() {
 void MessageQueue::messageQueueCallback1(int par) {
 	if (g_fp->_isSaveAllowed && par == 16) {
 		if (g_fp->_globalMessageQueueList->size() && (*g_fp->_globalMessageQueueList)[0] != 0) {
-			for (int i = 0; i < g_fp->_globalMessageQueueList->size(); i++) {
+			for (uint i = 0; i < g_fp->_globalMessageQueueList->size(); i++) {
 				if ((*g_fp->_globalMessageQueueList)[i]->_flags & 1)
 					if ((*g_fp->_globalMessageQueueList)[i] != this && !(*g_fp->_globalMessageQueueList)[i]->_isFinished)
 						return;

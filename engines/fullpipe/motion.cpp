@@ -345,7 +345,7 @@ void MctlLadder::addObject(StaticANIObject *obj) {
 }
 
 int MctlLadder::findObjectPos(StaticANIObject *obj) {
-	for (int i = 0; i < _ladmovements.size(); i++)
+	for (uint i = 0; i < _ladmovements.size(); i++)
 		if (_ladmovements[i]->objId == obj->_id)
 			return i;
 
@@ -399,7 +399,7 @@ bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement
 void MctlLadder::freeItems() {
 	_mgm.clear();
 
-	for (int i = 0; i < _ladmovements.size(); i++) {
+	for (uint i = 0; i < _ladmovements.size(); i++) {
 		delete _ladmovements[i]->movVars;
 		delete[] _ladmovements[i]->staticIds;
 	}
@@ -630,7 +630,7 @@ MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, in
 	MctlConnectionPoint *minConnectionPoint = 0;
 
 	for (uint i = 0; i < _motionControllers[sourceIdx]->_connectionPoints.size(); i++) {
-		for (int j = 0; j < _motionControllers.size(); j++) {
+		for (uint j = 0; j < _motionControllers.size(); j++) {
 			if (_motionControllers[j]->_movGraphReactObj) {
 				MctlConnectionPoint *pt = _motionControllers[sourceIdx]->_connectionPoints[i];
 
@@ -823,7 +823,7 @@ Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y,
 	if (_items.size() <= 0)
 		return 0;
 
-	int idx = 0;
+	uint idx = 0;
 
 	while (_items[idx]->ani != ani) {
 		idx++;
@@ -859,7 +859,7 @@ Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y,
 			Common::Array<MovItem *> *movitems = calcMovItems(&_items[idx]->movarr, (*movarr)[i], &sz);
 
 			if (sz > 0) {
-				for (uint j = 0; j < sz; j++)
+				for (int j = 0; j < sz; j++)
 					_items[idx]->movitems->push_back(movitems[j]);
 
 				delete movitems;
