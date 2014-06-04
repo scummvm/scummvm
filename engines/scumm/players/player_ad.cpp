@@ -185,8 +185,51 @@ void Player_AD::saveLoadWithSerializer(Serializer *ser) {
 		return;
 	}
 
-	// TODO: Be nicer than the original and save the data to continue the
-	// currently played sound resources on load?
+	if (ser->getVersion() >= VER(96)) {
+		int32 res[4] = {
+			_soundPlaying, _sfx[0].resource, _sfx[1].resource, _sfx[2].resource
+		};
+
+		// The first thing we save is a list of sound resources being played
+		// at the moment.
+		ser->saveLoadArrayOf(res, 4, sizeof(res[0]), sleInt32);
+
+		// If we are loading start the music again at this point.
+		if (ser->isLoading()) {
+			if (res[0] != -1) {
+				startSound(res[0]);
+			}
+		}
+
+		uint32 musicOffset = _curOffset;
+
+		static const SaveLoadEntry musicData[] = {
+			MKLINE(Player_AD, _engineMusicTimer, sleInt32, VER(96)),
+			MKLINE(Player_AD, _musicTimer, sleUint32, VER(96)),
+			MKLINE(Player_AD, _internalMusicTimer, sleUint32, VER(96)),
+			MKLINE(Player_AD, _curOffset, sleUint32, VER(96)),
+			MKLINE(Player_AD, _nextEventTimer, sleUint32, VER(96)),
+			MKEND()
+		};
+
+		ser->saveLoadEntries(this, musicData);
+
+		// We seek back to the old music position.
+		if (ser->isLoading()) {
+			SWAP(musicOffset, _curOffset);
+			musicSeekTo(musicOffset);
+		}
+
+		// Finally start up the SFX. This makes sure that they are not
+		// accidently stopped while seeking to the old music position.
+		if (ser->isLoading()) {
+			for (int i = 1; i < ARRAYSIZE(res); ++i) {
+				if (res[i] != -1) {
+					startSound(res[i]);
+				}
+			}
+		}
+	}
 }
 
 int Player_AD::readBuffer(int16 *buffer, const int numSamples) {

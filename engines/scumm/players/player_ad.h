@@ -81,7 +81,7 @@ private:
 	int _samplesTillCallbackRemainder;
 
 	int _soundPlaying;
-	int _engineMusicTimer;
+	int32 _engineMusicTimer;
 
 	struct SfxSlot;
 
@@ -120,8 +120,8 @@ private:
 	const byte *_musicData;
 	uint _timerLimit;
 	uint _musicTicks;
-	uint _musicTimer;
-	uint _internalMusicTimer;
+	uint32 _musicTimer;
+	uint32 _internalMusicTimer;
 	bool _loopFlag;
 	uint _musicLoopStart;
 	uint _instrumentOffset[16];
@@ -138,8 +138,8 @@ private:
 
 	uint _mdvdrState;
 
-	uint _curOffset;
-	uint _nextEventTimer;
+	uint32 _curOffset;
+	uint32 _nextEventTimer;
 
 	static const uint _noteFrequencies[12];
 	static const uint _mdvdrTable[6];
