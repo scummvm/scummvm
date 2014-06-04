@@ -188,10 +188,6 @@ void Scene101::enter() {
 	_scene->_hotspots.activate(NOUN_SHIELD_MODULATOR, false);
 	_panelOpened = false;
 
-	// HACK: set the prior scene to 102 for now when the game starts, to avoid Rex's getting up animation
-	if (_scene->_priorSceneId == -1)
-		_scene->_priorSceneId = 102;
-
 	if (_scene->_priorSceneId != -1)
 		_globals[kNeedToStandUp] = false;
 
