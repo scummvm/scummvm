@@ -514,7 +514,7 @@ void FullpipeEngine::disableSaves(ExCommand *ex) {
 		_isSaveAllowed = false;
 
 		if (_globalMessageQueueList->size() && (*_globalMessageQueueList)[0] != 0) {
-			for (int i = 0; i < _globalMessageQueueList->size(); i++) {
+			for (uint i = 0; i < _globalMessageQueueList->size(); i++) {
 				if ((*_globalMessageQueueList)[i]->_flags & 1)
 					if ((*_globalMessageQueueList)[i]->_id != ex->_parId && !(*_globalMessageQueueList)[i]->_isFinished)
 						return;
