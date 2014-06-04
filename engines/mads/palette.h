@@ -309,13 +309,6 @@ public:
 	 */
 	void setLowRange();
 
-	/**
-	 * Set up the palette as the game ends
-	 */
-	void close() {
-		warning("TODO: Palette::close");
-	}
-
 	void setColorFlags(byte r, byte g, byte b);
 	void setColorValues(byte r, byte g, byte b);
 

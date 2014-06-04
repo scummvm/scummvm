@@ -192,8 +192,6 @@ void Game::gameLoop() {
 		_vm->_events->freeCursors();
 		_vm->_sound->closeDriver();
 	}
-
-	_vm->_palette->close();
 }
 
 void Game::sectionLoop() {
