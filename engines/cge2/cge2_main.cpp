@@ -646,6 +646,7 @@ void CGE2Engine::loadTab() {
 	for (int i = 0; i < kCaveMax; i++)
 		*(_eyeTab[i]) = *_eye;
 
+	/*
 	if (_resman->exist(kTabName)) {
 		EncryptedStream f(this, kTabName);
 		for (int i = 0; i < kCaveMax; i++) {
@@ -672,8 +673,8 @@ void CGE2Engine::loadTab() {
 			}
 		}
 	}
-
-	warning("STUB: CGE2Engine::loadTab() - Recheck this");
+	*/
+	warning("STUB: CGE2Engine::loadTab()");
 }
 
 void CGE2Engine::cge2_main() {
