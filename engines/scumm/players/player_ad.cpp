@@ -24,6 +24,7 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
 #include "scumm/resource.h"
+#include "scumm/saveload.h"
 
 #include "audio/fmopl.h"
 

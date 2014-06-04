@@ -24,9 +24,10 @@
 #define SCUMM_MUSIC_H
 
 #include "common/scummsys.h"
-#include "engines/scumm/saveload.h"
 
 namespace Scumm {
+
+class Serializer;
 
 /**
  * Pure virtual base class for the various music/sound engines used in Scumm
