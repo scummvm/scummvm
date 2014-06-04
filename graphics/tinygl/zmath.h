@@ -9,7 +9,7 @@ public:
 	Vector3();
 	Vector3(const Vector3 &other);
 	Vector3(float x, float y, float z);
-	
+
 	float getX() const { return _v[0]; }
 	float getY() const { return _v[1]; }
 	float getZ() const { return _v[2]; }
@@ -20,30 +20,26 @@ public:
 
 	void normalize();
 
-	float getLength() const { return sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]); }
+	inline float getLength() const { return sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]); }
 
-	static float dot(const Vector3& a, const Vector3& b) {
-		return a._v[0] * b._v[0] + a._v[1] * b._v[1] + a._v[2] * b._v[2]; 
+	inline static float dot(const Vector3 &a, const Vector3 &b) {
+		return a._v[0] * b._v[0] + a._v[1] * b._v[1] + a._v[2] * b._v[2];
 	}
 
-	bool operator==(const Vector3& other) const
-	{
+	bool operator==(const Vector3 &other) const {
 		return _v[0] == other._v[0] && _v[1] == other._v[1] && _v[2] == other._v[2];
 	}
 
-	bool operator!=(const Vector3& other) const
-	{
+	bool operator!=(const Vector3 &other) const {
 		return _v[0] != other._v[0] || _v[1] != other._v[1] || _v[2] != other._v[2];
 	}
 
-	Vector3& operator=(const Vector3 &other)
-	{
+	Vector3 &operator=(const Vector3 &other) {
 		memcpy(_v,other._v,sizeof(_v));
 		return *this;
 	}
 
-	Vector3 operator-() const
-	{
+	Vector3 operator-() const {
 		return Vector3(-_v[0],-_v[1],-_v[2]);
 	}
 
@@ -59,21 +55,21 @@ public:
 		return Vector3(_v[0] - other._v[0], _v[1] - other._v[1], _v[2] - other._v[2]);
 	}
 
-	Vector3& operator*=(float factor) {
+	Vector3 &operator*=(float factor) {
 		_v[0] *= factor;
 		_v[1] *= factor;
 		_v[2] *= factor;
 		return *this;
 	}
 
-	Vector3& operator+=(float value) {
+	Vector3 &operator+=(float value) {
 		_v[0] += value;
 		_v[1] += value;
 		_v[2] += value;
 		return *this;
 	}
 
-	Vector3& operator-=(float value) {
+	Vector3 &operator-=(float value) {
 		_v[0] -= value;
 		_v[1] -= value;
 		_v[2] -= value;
@@ -86,27 +82,23 @@ private:
 class Vector4 {
 public:
 	Vector4();
-	Vector4(const Vector3& vec, float w);
+	Vector4(const Vector3 &vec, float w);
 	Vector4(float x, float y, float z, float w);
-	
-	Vector4& operator=(const Vector4 &other)
-	{
+
+	Vector4 &operator=(const Vector4 &other) {
 		memcpy(_v,other._v,sizeof(_v));
 		return *this;
 	}
 
-	bool operator==(const Vector4& other) const
-	{
+	bool operator==(const Vector4 &other) const {
 		return _v[0] == other._v[0] && _v[1] == other._v[1] && _v[2] == other._v[2] && _v[3] == other._v[3];
 	}
 
-	bool operator!=(const Vector4& other) const
-	{
+	bool operator!=(const Vector4 &other) const {
 		return _v[0] != other._v[0] || _v[1] != other._v[1] || _v[2] != other._v[2] || _v[3] != other._v[3];
 	}
 
-	Vector4 operator-() const
-	{
+	Vector4 operator-() const {
 		return Vector4(-_v[0],-_v[1],-_v[2],-_v[3]);
 	}
 
@@ -122,7 +114,7 @@ public:
 		return Vector4(_v[0] - other._v[0], _v[1] - other._v[1], _v[2] - other._v[2], _v[3] - other._v[3]);
 	}
 
-	Vector4& operator*=(float factor) {
+	Vector4 &operator*=(float factor) {
 		_v[0] *= factor;
 		_v[1] *= factor;
 		_v[2] *= factor;
@@ -130,7 +122,7 @@ public:
 		return *this;
 	}
 
-	Vector4& operator+=(float value) {
+	Vector4 &operator+=(float value) {
 		_v[0] += value;
 		_v[1] += value;
 		_v[2] += value;
@@ -138,7 +130,7 @@ public:
 		return *this;
 	}
 
-	Vector4& operator-=(float value) {
+	Vector4 &operator-=(float value) {
 		_v[0] -= value;
 		_v[1] -= value;
 		_v[2] -= value;
@@ -171,36 +163,32 @@ public:
 
 	bool IsIdentity() const;
 
-	Matrix4& operator=(const Matrix4 &other)
-	{
+	Matrix4 &operator=(const Matrix4 &other) {
 		memcpy(_m,other._m,sizeof(_m));
 		return *this;
 	}
-	
-	Matrix4 operator+(const Matrix4& b) const
-	{
+
+	Matrix4 operator+(const Matrix4 &b) const {
 		Matrix4 result;
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
 				result.set(i,j, get(i,j) + b.get(i,j));
 			}
 		}
 		return result;
 	}
 
-	Matrix4 operator-(const Matrix4& b) const
-	{
+	Matrix4 operator-(const Matrix4 &b) const {
 		Matrix4 result;
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
 				result.set(i,j, get(i,j) - b.get(i,j));
 			}
 		}
 		return result;
 	}
 
-	Matrix4 operator*(const Matrix4 &b) const
-	{
+	Matrix4 operator*(const Matrix4 &b) const {
 		Matrix4 result;
 		float s;
 		for (int i = 0; i < 4; i++) {
@@ -214,8 +202,7 @@ public:
 		return result;
 	}
 
-	Matrix4& operator*=(const Matrix4 &b) 
-	{
+	Matrix4 &operator*=(const Matrix4 &b) {
 		*this = *this * b;
 		return *this;
 	}
@@ -224,8 +211,8 @@ public:
 	static Matrix4 rotation(float t, int u);
 
 	void fill(float val) {
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
 				_m[i][j] = val;
 			}
 		}

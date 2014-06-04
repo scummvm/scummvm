@@ -56,7 +56,7 @@ void glopColorMaterial(GLContext *c, GLParam *p) {
 void glopLight(GLContext *c, GLParam *p) {
 	int light = p[1].i;
 	int type = p[2].i;
-	Vector4 v(p[3].f, p[4].f,p[5].f,p[6].f);
+	Vector4 v(p[3].f, p[4].f, p[5].f, p[6].f);
 	GLLight *l;
 
 	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0 + T_MAX_LIGHTS);
@@ -204,9 +204,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 				d *= tmp;
 			}
 			att = 1.0f / (l->attenuation[0] + dist * (l->attenuation[1] +
-					dist * l->attenuation[2]));
+			              dist * l->attenuation[2]));
 		}
-		dot = Vector3::dot(d,n);
+		dot = Vector3::dot(d, n);
 		if (twoside && dot < 0)
 			dot = -dot;
 		if (dot > 0) {
@@ -217,7 +217,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 
 			// spot light
 			if (l->spot_cutoff != 180) {
-				dot_spot = -Vector3::dot(d,l->norm_spot_direction);
+				dot_spot = -Vector3::dot(d, l->norm_spot_direction);
 				if (twoside && dot_spot < 0)
 					dot_spot = -dot_spot;
 				if (dot_spot < l->cos_spot_cutoff) {
@@ -245,7 +245,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 				s = d;
 				s.setZ(s.getZ() + 1.0);
 			}
-			dot_spec = Vector3::dot(n,s);
+			dot_spec = Vector3::dot(n, s);
 			if (twoside && dot_spec < 0)
 				dot_spec = -dot_spec;
 			if (dot_spec > 0) {

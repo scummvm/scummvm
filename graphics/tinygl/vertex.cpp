@@ -4,11 +4,11 @@
 namespace TinyGL {
 
 void glopNormal(GLContext *c, GLParam *p) {
-	c->current_normal = Vector4(p[1].f,p[2].f,p[3].f,0.0f);
+	c->current_normal = Vector4(p[1].f, p[2].f, p[3].f, 0.0f);
 }
 
 void glopTexCoord(GLContext *c, GLParam *p) {
-	c->current_tex_coord = Vector4(p[1].f,p[2].f,p[3].f,p[4].f);
+	c->current_tex_coord = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
 }
 
 void glopEdgeFlag(GLContext *c, GLParam *p) {
@@ -16,7 +16,7 @@ void glopEdgeFlag(GLContext *c, GLParam *p) {
 }
 
 void glopColor(GLContext *c, GLParam *p) {
-	c->current_color = Vector4(p[1].f,p[2].f,p[3].f,p[4].f);
+	c->current_color = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
 	c->longcurrent_color[0] = p[5].ui;
 	c->longcurrent_color[1] = p[6].ui;
 	c->longcurrent_color[2] = p[7].ui;
@@ -128,7 +128,11 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 
 		// projection coordinates
 		m = c->matrix_stack_ptr[1];
-		v->pc = m->transform(v->ec);
+		// NOTE: this transformation is not an ordinary matrix vector multiplication.
+		v->pc = Vector4(v->ec.getX() * m->get(0, 0) + v->ec.getY() * m->get(1, 0) + v->ec.getZ() * m->get(2, 0) + v->ec.getW() * m->get(3, 0),
+		                v->ec.getX() * m->get(0, 1) + v->ec.getY() * m->get(1, 1) + v->ec.getZ() * m->get(2, 1) + v->ec.getW() * m->get(3, 1),
+		                v->ec.getX() * m->get(0, 2) + v->ec.getY() * m->get(1, 2) + v->ec.getZ() * m->get(2, 2) + v->ec.getW() * m->get(3, 2),
+		                v->ec.getX() * m->get(0, 3) + v->ec.getY() * m->get(1, 3) + v->ec.getZ() * m->get(2, 3) + v->ec.getW() * m->get(3, 3));
 
 		m = &c->matrix_model_view_inv;
 		n = &c->current_normal;
@@ -145,7 +149,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 
 		v->pc = m->transform3x4(v->coord);
 		if (c->matrix_model_projection_no_w_transform) {
-			v->pc.setW(m->get(3,3)); 
+			v->pc.setW(m->get(3,3));
 		}
 	}
 
@@ -179,7 +183,7 @@ void glopVertex(GLContext *c, GLParam *p) {
 	v = &c->vertex[n];
 	n++;
 
-	v->coord = Vector4(p[1].f,p[2].f,p[3].f,p[4].f);
+	v->coord = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
 
 	gl_vertex_transform(c, v);
 

@@ -40,10 +40,10 @@ void glopLoadMatrix(GLContext *c, GLParam *p) {
 	q = p + 1;
 
 	for (int i = 0; i < 4; i++) {
-		m->set(0,i, q[0].f);
-		m->set(1,i, q[1].f);
-		m->set(2,i, q[2].f);
-		m->set(3,i, q[3].f);
+		m->set(0, i, q[0].f);
+		m->set(1, i, q[1].f);
+		m->set(2, i, q[2].f);
+		m->set(3, i, q[3].f);
 		q += 4;
 	}
 
@@ -62,10 +62,10 @@ void glopMultMatrix(GLContext *c, GLParam *p) {
 	q = p + 1;
 
 	for (int i = 0; i < 4; i++) {
-		m.set(0,i,q[0].f);
-		m.set(1,i,q[1].f);
-		m.set(2,i,q[2].f);
-		m.set(3,i,q[3].f);
+		m.set(0, i, q[0].f);
+		m.set(1, i, q[1].f);
+		m.set(2, i, q[2].f);
+		m.set(3, i, q[3].f);
 		q += 4;
 	}
 
@@ -116,15 +116,15 @@ void glopRotate(GLContext *c, GLParam *p) {
 		break;
 	case 4:
 		if (u[0] < 0) angle = -angle;
-		m = Matrix4::rotation(angle,0);
+		m = Matrix4::rotation(angle, 0);
 		break;
 	case 2:
 		if (u[1] < 0) angle = -angle;
-		m = Matrix4::rotation(angle,1);
+		m = Matrix4::rotation(angle, 1);
 		break;
 	case 1:
 		if (u[2] < 0) angle = -angle;
-		m = Matrix4::rotation(angle,2);
+		m = Matrix4::rotation(angle, 2);
 		break;
 	default: {
 		float cost, sint;
@@ -174,9 +174,9 @@ void glopScale(GLContext *c, GLParam *p) {
 
 	Matrix4 m = Matrix4::identity();
 
-	m.set(0,0,x);
-	m.set(1,1,y);
-	m.set(2,2,z);
+	m.set(0, 0, x);
+	m.set(1, 1, y);
+	m.set(2, 2, z);
 
 	*c->matrix_stack_ptr[c->matrix_mode] *= m;
 
@@ -187,9 +187,9 @@ void glopTranslate(GLContext *c, GLParam *p) {
 	Matrix4 m = Matrix4::identity();
 	float x = p[1].f, y = p[2].f, z = p[3].f;
 
-	m.set(0,3,x);
-	m.set(1,3,y);
-	m.set(2,3,z);
+	m.set(0, 3, x);
+	m.set(1, 3, y);
+	m.set(2, 3, z);
 
 	*c->matrix_stack_ptr[c->matrix_mode] *= m;
 

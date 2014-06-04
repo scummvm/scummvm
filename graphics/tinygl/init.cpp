@@ -98,16 +98,16 @@ void glInit(void *zbuffer1) {
 	glInitTextures(c);
 
 	// default state
-	c->current_color = Vector4(1.0f,1.0f,1.0f,1.0f);
+	c->current_color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	c->longcurrent_color[0] = 65535;
 	c->longcurrent_color[1] = 65535;
 	c->longcurrent_color[2] = 65535;
 
-	c->current_normal = Vector4(1.0f,0.0f,0.0f,0.0f);
+	c->current_normal = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 
 	c->current_edge_flag = 1;
 
-	c->current_tex_coord = Vector4(0.0f,0.0f,0.0f,1.0f);
+	c->current_tex_coord = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	c->polygon_mode_front = TGL_FILL;
 	c->polygon_mode_back = TGL_FILL;
@@ -118,7 +118,7 @@ void glInit(void *zbuffer1) {
 	c->cull_face_enabled = 0;
 
 	// clear
-	c->clear_color = Vector4(0.0f,0.0f,0.0f,0.0f);
+	c->clear_color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 	c->clear_depth = 0;
 
 	// selection

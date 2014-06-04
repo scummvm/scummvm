@@ -4,7 +4,7 @@
 namespace TinyGL {
 
 void glopClearColor(GLContext *c, GLParam *p) {
-	c->clear_color = Vector4(p[1].f,p[2].f,p[3].f,p[4].f);
+	c->clear_color = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
 }
 
 void glopClearDepth(GLContext *c, GLParam *p) {
