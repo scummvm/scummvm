@@ -445,6 +445,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 	MGMInfo mgminfo;
 	PicAniInfo picinfo;
 	MessageQueue *mq;
+	ExCommand *ex;
 	Common::Point point;
 
 	if (ani->_movement) {
@@ -521,110 +522,95 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		mgminfo.staticsId1 = _ladmovements[pos].staticIds[0];
 		mgminfo.movementId = _ladmovements[pos]->movVars->varDownGo;
 
-		v41 = _mgm->genMovement(&mgminfo);
-		v42 = (MessageQueue *)v41;
-		v72 = v41;
-		v43 = (ExCommand *)operator new(0x48u);
-		point.x = (LONG)v43;
-		v76 = 0;
-		if (v43) {
-			v44 = ExCommand_ctor(v43, ani->_id, 1, _ladmovements.m_pData[pos].movVars->varUpStop, 0, 0, 0, 1, 0, 0, 0);
-			v42 = (MessageQueue *)v72;
-		LABEL_29:
-			v45 = v44->_excFlags | 2;
-			v44->msg._keyCode = ani->_okeyCode;
-			v76 = -1;
-			v44->_excFlags = v45;
-			MessageQueue_insertExCommandAt(v42, 0, v44);
-			return v42;
-		}
-	LABEL_28:
-		v44 = 0;
-		goto LABEL_29;
+		mq = _mgm->genMovement(&mgminfo);
+
+		ex = new ExCommand(ani->_id, 1, _ladmovements.m_pData[pos].movVars->varUpStop, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = ani->_okeyCode;
+		ex->_excFlags |= 2;
+
+		mq->insertExCommandAt(0, ex);
+
+		return mq;
 	}
+
 	if (ani->_statics->_staticsId != _ladmovements[pos].staticIds[3]) {
-		v72 = (int)MGM_genMQ(&_mgm, ani, _ladmovements[pos].staticIds[0], 0, 0, 0);
-		if (v72) {
-			v58 = ani->_statics;
-			v59 = ani->_ox;
-			point.y = ani->_oy;
-			v60 = _ladmovements.m_pData;
-			LOWORD(v58) = v58->_staticsId;
-			point.x = v59;
-			v61 = MGM_getPoint(&_mgm, &point1, ani->_id, (__int16)v58, *(_WORD *)v60[pos].staticIds);
-			v62 = v61->y;
-			point.x += v61->x;
-			point.y += v62;
-			GameObject_getPicAniInfo(ani, &picinfo);
-			v63 = StaticANIObject_getStaticsById(ani, (Objects)*(_WORD *)_ladmovements.m_pData[pos].staticIds);
-			v64 = point.x;
-			v65 = ani->go.CObject.vmt;
-			ani->_statics = v63;
-			v66 = point.y;
-			ani->_movement = 0;
-			ani->sotOXY(v64, v66);
-			v67 = doWalkTo(ani, normx, normy, fuzzyMatch, staticsId);
-			v68 = v72;
-			v69 = v67;
-			MessageQueue_transferExCommands((MessageQueue *)v72, v67);
-			if ( v69 )
-				(*(void (__thiscall **)(MessageQueue *, signed int))(v69->CObject.vmt + 4))(v69, 1);
-			GameObject_setPicAniInfo(ani, &picinfo);
-			return (MessageQueue *)v68;
-		}
-		return 0;
+		mq = _mgm->genMQ(ani, _ladmovements[pos].staticIds[0], 0, 0, 0);
+
+		if (!mq)
+			return 0;
+
+		int nx = ani->_ox;
+		int ny = ani->_oy;
+
+		_mgm->getPoint(&point, ani->_id, ani->_statics->_staticsId, _ladmovements[pos].staticIds[0]);
+
+		nx += point.x;
+		ny += point.y;
+
+		ani->getPicAniInfo(&picinfo);
+
+		ani->_statics = ani->getStaticsById(_ladmovements[pos].staticIds[0]);
+		ani->_movement = 0;
+		ani->setOXY(nx, ny);
+
+		MessageQueue *newmq = doWalkTo(ani, normx, normy, fuzzyMatch, staticsId);
+
+		mq->transferExCommands(newmq);
+
+		if (newmq)
+			delete newmq
+
+		ani->setPicAniInfo(&picinfo);
+
+		return mq;
 	}
 
 	if (!direction) {
-		v46 = _ladmovements[pos]->movVars;
-		v47 = ani->_ox;
-		v73 = ani->_oy;
-		v48 = StaticANIObject_getMovementById(ani, LOWORD(v46->varDownStop));
-		v49 = Movement_calcSomeXY(v48, &point, 0, -1);
-		v50 = v49->y;
-		v72 = v49->x + v47;
-		v73 += v50;
-		memset(&mgminfo, 0, sizeof(mgminfo));
+		int nx = ani->_ox;
+		int ny = ani->_oy;
+
+		ani->getMovementById(_ladmovements[pos]->movVars->varDownStop)->calcSomeXY(&point, 0, -1);
+
+		nx += point.x;
+		ny += point.y;
+
 		mgminfo.ani = ani;
-		if ((_WORD)staticsId)
-			mgminfo.staticsId2 = (unsigned __int16)staticsId;
+		if (staticsId)
+			mgminfo.staticsId2 = staticsId;
 		else
-			mgminfo.staticsId2 = *_ladmovements.m_pData[pos].staticIds;
-		v51 = _ladder_field_14;
-		mgminfo.y1 = normy;
-		mgminfo.field_1C = v51;
-		v52 = _ladmovements.m_pData;
+			mgminfo.staticsId2 = _ladmovements.m_pData[pos].staticIds[0];
+
+		mgminfo.field_1C = _ladder_field_14;
 		mgminfo.x1 = normx;
-		mgminfo.y2 = v73;
-		v53 = &v52[pos];
-		mgminfo.x2 = v72;
-		v54 = v52[pos].staticIds[1];
+		mgminfo.y1 = normy;
+		mgminfo.y2 = ny;
+		mgminfo.x2 = nx;
 		mgminfo.flags = 63;
-		mgminfo.staticsId1 = v54;
-		mgminfo.movementId = v53->movVars->varUpGo;
-		v55 = MGM_genMovement(&_mgm, &mgminfo);
-		v42 = v55;
-		v72 = (int)v55;
-		v56 = (ExCommand *)operator new(0x48u);
-		point.x = (LONG)v56;
-		v76 = 1;
-		if (v56) {
-			v44 = ExCommand_ctor(v56, ani->_id, 1, _ladmovements[pos].movVars->varDownStop, 0, 0, 0, 1, 0, 0, 0);
-			v42 = (MessageQueue *)v72;
-			goto LABEL_29;
-		}
-		goto LABEL_28;
+		mgminfo.staticsId1 = _ladmovements[pos].staticIds[1];
+		mgminfo.movementId = _ladmovements[pos]->movVars->varUpGo;
+
+		mq = _mgm->genMovement(&mgminfo);
+
+		ex = new ExCommand(ani->_id, 1, _ladmovements[pos].movVars->varDownStop, 0, 0, 0, 1, 0, 0, 0);
+		ex->_keyCode = ani->_okeyCode;
+		ex->_excFlags |= 2;
+
+		mq->insertExCommandAt(0, ex);
+
+		return mq;
 	}
-	memset(&mgminfo, 0, sizeof(mgminfo));
+
+
 	mgminfo.ani = ani;
-	if ((_WORD)staticsId)
-		mgminfo.staticsId2 = (unsigned __int16)staticsId;
+
+	if (staticsId)
+		mgminfo.staticsId2 = staticsId;
 	else
 		mgminfo.staticsId2 = _ladmovements[pos]->staticIds[1];
+
 	mgminfo.x1 = normx;
-	v57 = _ladder_field_14;
 	mgminfo.y1 = normy;
-	mgminfo.field_1C = v57;
+	mgminfo.field_1C = _ladder_field_14;
 	mgminfo.flags = 14;
 	mgminfo.movementId = _ladmovements[pos]->movVars->varDownGo;
 
