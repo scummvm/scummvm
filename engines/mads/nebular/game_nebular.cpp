@@ -351,10 +351,10 @@ void GameNebular::doObjectAction() {
 	} else if (action.isAction(VERB_LICK, NOUN_POISON_DARTS)) {
 		dialogs.show(450);
 	} else if (action.isAction(VERB_EAT, NOUN_TWINKIFRUIT)) {
-		_objects.setRoom(OBJ_TWINKIFRUIT, PLAYER_INVENTORY);
+		_objects.setRoom(OBJ_TWINKIFRUIT, NOWHERE);
 		dialogs.show(451);
 	} else if (action.isAction(VERB_GORGE_ON, NOUN_TWINKIFRUIT)) {
-		_objects.setRoom(OBJ_TWINKIFRUIT, PLAYER_INVENTORY);
+		_objects.setRoom(OBJ_TWINKIFRUIT, NOWHERE);
 		dialogs.show(452);
 	} else if (action.isAction(VERB_GNAW_ON)) {
 		dialogs.show(453);
@@ -419,7 +419,7 @@ void GameNebular::doObjectAction() {
 		dialogs.show(479);
 	} else if ((action.isAction(VERB_READ) || action.isAction(VERB_LOOK_AT) || action.isAction(VERB_LOOK)) &&
 			action.isObject(NOUN_NOTE) && _objects.isInInventory(OBJ_NOTE)) {
-		_objects.setRoom(OBJ_NOTE, PLAYER_INVENTORY);
+		_objects.setRoom(OBJ_NOTE, NOWHERE);
 		_objects.addToInventory(OBJ_COMBINATION);
 		dialogs.showItem(OBJ_COMBINATION, 851);
 	} else if ((action.isAction(VERB_LOOK) || action.isAction(VERB_READ)) &&
@@ -488,8 +488,8 @@ void GameNebular::doObjectAction() {
 	} else if ((action.isAction(VERB_ATTACH, NOUN_DETONATORS, NOUN_CHARGE_CASES) || action.isAction(VERB_PUT, NOUN_DETONATORS, NOUN_CHARGE_CASES)) &&
 			_objects.isInInventory(OBJ_DETONATORS) && _objects.isInInventory(OBJ_CHARGE_CASES)) {
 		if (_objects[OBJ_CHARGE_CASES].getQuality(3)) {
-			_objects.setRoom(OBJ_CHARGE_CASES, 1);
-			_objects.setRoom(OBJ_DETONATORS, 1);
+			_objects.setRoom(OBJ_CHARGE_CASES, NOWHERE);
+			_objects.setRoom(OBJ_DETONATORS, NOWHERE);
 			_objects.addToInventory(OBJ_BOMBS);
 			dialogs.showItem(OBJ_BOMBS, 403);
 		} else {
@@ -501,13 +501,13 @@ void GameNebular::doObjectAction() {
 			|| action.isAction(VERB_PUT, NOUN_TIMER_MODULE, NOUN_BOMB)) && _objects.isInInventory(OBJ_TIMER_MODULE) && (
 			_objects.isInInventory(OBJ_BOMBS) || _objects.isInInventory(OBJ_BOMB))) {
 		if (_objects.isInInventory(OBJ_BOMBS)) {
-			_objects.setRoom(OBJ_BOMBS, PLAYER_INVENTORY);
+			_objects.setRoom(OBJ_BOMBS, NOWHERE);
 			_objects.addToInventory(OBJ_BOMB);
 		} else {
-			_objects.setRoom(OBJ_BOMB, PLAYER_INVENTORY);
+			_objects.setRoom(OBJ_BOMB, NOWHERE);
 		}
 
-		_objects.setRoom(OBJ_TIMER_MODULE, PLAYER_INVENTORY);
+		_objects.setRoom(OBJ_TIMER_MODULE, NOWHERE);
 		_objects.addToInventory(OBJ_TIMEBOMB);
 		dialogs.showItem(OBJ_TIMEBOMB, 404);
 	} else if (action.isAction(VERB_FONDLE, NOUN_PLANT_STALK)) {
@@ -576,7 +576,7 @@ void GameNebular::doObjectAction() {
 	} else if (action.isAction(VERB_PUT, NOUN_PHONE_CELLS, NOUN_PENLIGHT)) {
 		if (_globals[kPenlightCellStatus] == 0) {
 			_globals[kPenlightCellStatus] = 3;
-			_objects.setRoom(OBJ_PHONE_CELLS, PLAYER_INVENTORY);
+			_objects.setRoom(OBJ_PHONE_CELLS, NOWHERE);
 			dialogs.show(419);
 		} else {
 			dialogs.show(420);
@@ -584,7 +584,7 @@ void GameNebular::doObjectAction() {
 	} else if (action.isAction(VERB_PUT, NOUN_PHONE_CELLS, NOUN_PHONE_HANDSET)) {
 		if (_globals[kHandsetCellStatus] == 0) {
 			_globals[kHandsetCellStatus] = 3;
-			_objects.setRoom(OBJ_PHONE_CELLS, PLAYER_INVENTORY);
+			_objects.setRoom(OBJ_PHONE_CELLS, NOWHERE);
 			dialogs.show(421);
 		} else {
 			dialogs.show(422);
@@ -608,12 +608,12 @@ void GameNebular::doObjectAction() {
 	} else if (action.isAction(VERB_SET, NOUN_TIMEBOMB)) {
 		dialogs.show(427);
 	} else if (action.isAction(VERB_PUT, NOUN_BOMB, NOUN_CHICKEN) || action.isAction(VERB_PUT, NOUN_BOMBS, NOUN_CHICKEN)) {
-		_objects.setRoom(OBJ_CHICKEN, PLAYER_INVENTORY);
+		_objects.setRoom(OBJ_CHICKEN, NOWHERE);
 		if (_objects.isInInventory(OBJ_BOMBS)) {
-			_objects.setRoom(OBJ_BOMBS, PLAYER_INVENTORY);
+			_objects.setRoom(OBJ_BOMBS, NOWHERE);
 			_objects.addToInventory(OBJ_BOMB);
 		} else {
-			_objects.setRoom(OBJ_BOMB, PLAYER_INVENTORY);
+			_objects.setRoom(OBJ_BOMB, NOWHERE);
 		}
 
 		_objects.addToInventory(OBJ_CHICKEN_BOMB);
