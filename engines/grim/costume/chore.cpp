@@ -234,6 +234,7 @@ void Chore::saveState(SaveGame *state) const {
 	state->writeBool(_playing);
 	state->writeBool(_looping);
 	state->writeLESint32(_currTime);
+	state->writeBool(_paused);
 }
 
 void Chore::restoreState(SaveGame *state) {
@@ -241,6 +242,8 @@ void Chore::restoreState(SaveGame *state) {
 	_playing = state->readBool();
 	_looping = state->readBool();
 	_currTime = state->readLESint32();
+	if (state->saveMinorVersion() >= 10)
+		_paused = state->readBool();
 }
 
 } // end of namespace Grim

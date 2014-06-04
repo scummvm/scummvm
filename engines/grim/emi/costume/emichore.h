@@ -40,6 +40,8 @@ public:
 	void fade(Animation::FadeMode mode, uint msecs) override;
 	void addComponent(Component *component);
 	bool isWearChore() { return _mesh && _skeleton; }
+	void saveState(SaveGame *state) const override;
+	void restoreState(SaveGame *state) override;
 	EMIMeshComponent *getMesh() { return _mesh; }
 	EMISkelComponent *getSkeleton() { return _skeleton; }
 

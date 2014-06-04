@@ -70,8 +70,8 @@ public:
 
 	Costume *getOwner() { return _owner; }
 
-	void saveState(SaveGame *state) const;
-	void restoreState(SaveGame *state);
+	virtual void saveState(SaveGame *state) const;
+	virtual void restoreState(SaveGame *state);
 protected:
 	void setKeys(int startTime, int stopTime);
 	virtual void fade(Animation::FadeMode, uint msecs);

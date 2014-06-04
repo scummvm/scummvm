@@ -115,4 +115,24 @@ void EMIChore::fade(Animation::FadeMode mode, uint msecs) {
 	}
 }
 
+void EMIChore::saveState(SaveGame *state) const {
+	Chore::saveState(state);
+
+	state->writeLESint32((int)_fadeMode);
+	state->writeFloat(_fade);
+	state->writeFloat(_startFade);
+	state->writeLESint32(_fadeLength);
+}
+
+void EMIChore::restoreState(SaveGame *state) {
+	Chore::restoreState(state);
+
+	if (state->saveMinorVersion() >= 10) {
+		_fadeMode = (Animation::FadeMode)state->readLESint32();
+		_fade = state->readFloat();
+		_startFade = state->readFloat();
+		_fadeLength = state->readLESint32();
+	}
+}
+
 } // end of namespace Grim

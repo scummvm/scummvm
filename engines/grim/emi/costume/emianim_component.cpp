@@ -129,4 +129,12 @@ void EMIAnimComponent::setPaused(bool paused) {
 void EMIAnimComponent::draw() {
 }
 
+void EMIAnimComponent::saveState(SaveGame *state) {
+	_animState->saveState(state);
+}
+
+void EMIAnimComponent::restoreState(SaveGame *state) {
+	_animState->restoreState(state);
+}
+
 } // end of namespace Grim

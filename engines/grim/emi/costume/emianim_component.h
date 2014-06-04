@@ -43,6 +43,8 @@ public:
 	void advance(uint msecs) override ;
 	void setPaused(bool paused) override;
 	void draw() override;
+	void saveState(SaveGame *state) override;
+	void restoreState(SaveGame *state) override;
 
 private:
 	AnimationStateEmi *_animState;

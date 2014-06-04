@@ -327,4 +327,31 @@ void AnimationStateEmi::advance(uint msecs) {
 	_time += msecs;
 }
 
+void AnimationStateEmi::saveState(SaveGame *state) {
+	state->writeBool(_looping);
+	state->writeBool(_active);
+	state->writeBool(_paused);
+	state->writeFloat(_time);
+	state->writeFloat(_fade);
+	state->writeFloat(_startFade);
+	state->writeLESint32((int)_fadeMode);
+	state->writeLESint32(_fadeLength);
+}
+
+void AnimationStateEmi::restoreState(SaveGame *state) {
+	if (state->saveMinorVersion() >= 10) {
+		_looping = state->readBool();
+		bool active = state->readBool();
+		_paused = state->readBool();
+		_time = state->readFloat();
+		_fade = state->readFloat();
+		_startFade = state->readFloat();
+		_fadeMode = (Animation::FadeMode)state->readLESint32();
+		_fadeLength = state->readLESint32();
+
+		if (active)
+			activate();
+	}
+}
+
 } // end of namespace Grim

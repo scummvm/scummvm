@@ -87,6 +87,8 @@ public:
 	void setSkeleton(Skeleton *skel);
 	void fade(Animation::FadeMode mode, int fadeLength);
 	void advance(uint msecs);
+	void saveState(SaveGame *state);
+	void restoreState(SaveGame *state);
 
 private:
 	friend class Skeleton;
