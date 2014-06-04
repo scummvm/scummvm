@@ -39,29 +39,29 @@ Waiter2::Waiter2(LastExpressEngine *engine) : Entity(engine, kEntityWaiter2) {
 	ADD_CALLBACK_FUNCTION(Waiter2, callbackActionOnDirection);
 	ADD_CALLBACK_FUNCTION(Waiter2, callSavepoint);
 	ADD_CALLBACK_FUNCTION(Waiter2, playSound);
-	ADD_CALLBACK_FUNCTION(Waiter2, function7);
+	ADD_CALLBACK_FUNCTION(Waiter2, monsieurServeUs);
 	ADD_CALLBACK_FUNCTION(Waiter2, chapter1);
-	ADD_CALLBACK_FUNCTION(Waiter2, function9);
-	ADD_CALLBACK_FUNCTION(Waiter2, function10);
-	ADD_CALLBACK_FUNCTION(Waiter2, function11);
-	ADD_CALLBACK_FUNCTION(Waiter2, function12);
-	ADD_CALLBACK_FUNCTION(Waiter2, function13);
-	ADD_CALLBACK_FUNCTION(Waiter2, chapter1Handler);
+	ADD_CALLBACK_FUNCTION(Waiter2, milosOrder);
+	ADD_CALLBACK_FUNCTION(Waiter2, monsieurOrder);
+	ADD_CALLBACK_FUNCTION(Waiter2, clearAlexei);
+	ADD_CALLBACK_FUNCTION(Waiter2, clearMilos);
+	ADD_CALLBACK_FUNCTION(Waiter2, clearMonsieur);
+	ADD_CALLBACK_FUNCTION(Waiter2, servingDinner);
 	ADD_CALLBACK_FUNCTION(Waiter2, function15);
 	ADD_CALLBACK_FUNCTION(Waiter2, function16);
 	ADD_CALLBACK_FUNCTION(Waiter2, chapter2);
-	ADD_CALLBACK_FUNCTION(Waiter2, chapter2Handler);
-	ADD_CALLBACK_FUNCTION(Waiter2, function19);
-	ADD_CALLBACK_FUNCTION(Waiter2, function20);
-	ADD_CALLBACK_FUNCTION(Waiter2, function21);
+	ADD_CALLBACK_FUNCTION(Waiter2, inKitchen);
+	ADD_CALLBACK_FUNCTION(Waiter2, tatianaClearTableB);
+	ADD_CALLBACK_FUNCTION(Waiter2, ivoComeHere);
+	ADD_CALLBACK_FUNCTION(Waiter2, ivoClearTableC);
 	ADD_CALLBACK_FUNCTION(Waiter2, chapter3);
-	ADD_CALLBACK_FUNCTION(Waiter2, chapter3Handler);
-	ADD_CALLBACK_FUNCTION(Waiter2, function24);
+	ADD_CALLBACK_FUNCTION(Waiter2, serving3);
+	ADD_CALLBACK_FUNCTION(Waiter2, annaBringTea3);
 	ADD_CALLBACK_FUNCTION(Waiter2, chapter4);
-	ADD_CALLBACK_FUNCTION(Waiter2, chapter4Handler);
-	ADD_CALLBACK_FUNCTION(Waiter2, function27);
-	ADD_CALLBACK_FUNCTION(Waiter2, function28);
-	ADD_CALLBACK_FUNCTION(Waiter2, function29);
+	ADD_CALLBACK_FUNCTION(Waiter2, serving4);
+	ADD_CALLBACK_FUNCTION(Waiter2, augustNeedsADrink);
+	ADD_CALLBACK_FUNCTION(Waiter2, serveAugustADrink);
+	ADD_CALLBACK_FUNCTION(Waiter2, annaNeedsADrink);
 	ADD_CALLBACK_FUNCTION(Waiter2, chapter5);
 	ADD_CALLBACK_FUNCTION(Waiter2, chapter5Handler);
 	ADD_NULL_FUNCTION()
@@ -105,7 +105,7 @@ IMPLEMENT_FUNCTION_S(6, Waiter2, playSound)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(7, Waiter2, function7)
+IMPLEMENT_FUNCTION(7, Waiter2, monsieurServeUs)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -154,7 +154,7 @@ IMPLEMENT_FUNCTION(8, Waiter2, chapter1)
 		break;
 
 	case kActionNone:
-		setup_chapter1Handler();
+		setup_servingDinner();
 		break;
 
 	case kActionDefault:
@@ -178,7 +178,7 @@ IMPLEMENT_FUNCTION(8, Waiter2, chapter1)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(9, Waiter2, function9)
+IMPLEMENT_FUNCTION(9, Waiter2, milosOrder)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -224,7 +224,7 @@ IMPLEMENT_FUNCTION(9, Waiter2, function9)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(10, Waiter2, function10)
+IMPLEMENT_FUNCTION(10, Waiter2, monsieurOrder)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -270,22 +270,22 @@ IMPLEMENT_FUNCTION(10, Waiter2, function10)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(11, Waiter2, function11)
+IMPLEMENT_FUNCTION(11, Waiter2, clearAlexei)
 	serveTable(savepoint, "919", kEntityTables1, "005H", "005J", "921", &ENTITY_PARAM(0, 3), 63);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(12, Waiter2, function12)
+IMPLEMENT_FUNCTION(12, Waiter2, clearMilos)
 	serveTable(savepoint, "923", kEntityTables2, "009F", "009G", "926", &ENTITY_PARAM(0, 4));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(13, Waiter2, function13)
+IMPLEMENT_FUNCTION(13, Waiter2, clearMonsieur)
 	serveTable(savepoint, "923", kEntityTables2, "009F", "009G", "926", &ENTITY_PARAM(0, 5));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(14, Waiter2, chapter1Handler)
+IMPLEMENT_FUNCTION(14, Waiter2, servingDinner)
 switch (savepoint.action) {
 	default:
 		break;
@@ -296,31 +296,31 @@ switch (savepoint.action) {
 
 		if (ENTITY_PARAM(0, 1)) {
 			setCallback(1);
-			setup_function9();
+			setup_milosOrder();
 			break;
 		}
 
 		if (ENTITY_PARAM(1, 2)) {
 			setCallback(2);
-			setup_function10();
+			setup_monsieurOrder();
 			break;
 		}
 
 		if (ENTITY_PARAM(0, 3)) {
 			setCallback(3);
-			setup_function11();
+			setup_clearAlexei();
 			break;
 		}
 
 		if (ENTITY_PARAM(0, 4)) {
 			setCallback(4);
-			setup_function12();
+			setup_clearMilos();
 			break;
 		}
 
 		if (ENTITY_PARAM(0, 5)) {
 			setCallback(5);
-			setup_function13();
+			setup_clearMonsieur();
 		}
 		break;
 
@@ -367,7 +367,7 @@ IMPLEMENT_FUNCTION(17, Waiter2, chapter2)
 		break;
 
 	case kActionNone:
-		setup_chapter2Handler();
+		setup_inKitchen();
 		break;
 
 	case kActionDefault:
@@ -387,7 +387,7 @@ IMPLEMENT_FUNCTION(17, Waiter2, chapter2)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(18, Waiter2, chapter2Handler)
+IMPLEMENT_FUNCTION(18, Waiter2, inKitchen)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -398,21 +398,21 @@ IMPLEMENT_FUNCTION(18, Waiter2, chapter2Handler)
 
 		if (ENTITY_PARAM(0, 6)) {
 			setCallback(1);
-			setup_function19();
+			setup_tatianaClearTableB();
 			break;
 		}
 
 label_callback_1:
 		if (ENTITY_PARAM(0, 7)) {
 			setCallback(2);
-			setup_function20();
+			setup_ivoComeHere();
 			break;
 		}
 
 label_callback_2:
 		if (ENTITY_PARAM(0, 8) || ENTITY_PARAM(0, 5)) {
 			setCallback(3);
-			setup_function21();
+			setup_ivoClearTableC();
 		}
 		break;
 
@@ -442,12 +442,12 @@ label_callback_2:
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(19, Waiter2, function19)
+IMPLEMENT_FUNCTION(19, Waiter2, tatianaClearTableB)
 	serveTable(savepoint, "969", kEntityTables1, "005H2", "018A", "971", &ENTITY_PARAM(0, 6), 63);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(20, Waiter2, function20)
+IMPLEMENT_FUNCTION(20, Waiter2, ivoComeHere)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -473,7 +473,7 @@ IMPLEMENT_FUNCTION(20, Waiter2, function20)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(21, Waiter2, function21)
+IMPLEMENT_FUNCTION(21, Waiter2, ivoClearTableC)
 	serveTable(savepoint, "974", kEntityTables2, "009F2", "009G", "976", &ENTITY_PARAM(0, 8), 0, true, &ENTITY_PARAM(0, 5));
 IMPLEMENT_FUNCTION_END
 
@@ -484,7 +484,7 @@ IMPLEMENT_FUNCTION(22, Waiter2, chapter3)
 		break;
 
 	case kActionNone:
-		setup_chapter3Handler();
+		setup_serving3();
 		break;
 
 	case kActionDefault:
@@ -503,7 +503,7 @@ IMPLEMENT_FUNCTION(22, Waiter2, chapter3)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(23, Waiter2, chapter3Handler)
+IMPLEMENT_FUNCTION(23, Waiter2, serving3)
 	if (savepoint.action != kActionNone)
 		return;
 
@@ -512,18 +512,18 @@ IMPLEMENT_FUNCTION(23, Waiter2, chapter3Handler)
 
 	if (ENTITY_PARAM(1, 1)) {
 		setCallback(1);
-		setup_function24();
+		setup_annaBringTea3();
 		return;
 	}
 
 	if (ENTITY_PARAM(1, 2)) {
 		setCallback(2);
-		setup_function7();
+		setup_monsieurServeUs();
 	}
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(24, Waiter2, function24)
+IMPLEMENT_FUNCTION(24, Waiter2, annaBringTea3)
 	serveSalon(savepoint, "927", "Ann3143A", kEntityAnna, "Ann31444", "112C", kAction122288808, "928", &ENTITY_PARAM(1, 1));
 IMPLEMENT_FUNCTION_END
 
@@ -534,7 +534,7 @@ IMPLEMENT_FUNCTION(25, Waiter2, chapter4)
 		break;
 
 	case kActionNone:
-		setup_chapter4Handler();
+		setup_serving4();
 		break;
 
 	case kActionDefault:
@@ -556,7 +556,7 @@ IMPLEMENT_FUNCTION(25, Waiter2, chapter4)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(26, Waiter2, chapter4Handler)
+IMPLEMENT_FUNCTION(26, Waiter2, serving4)
 	switch (savepoint.action) {
 	default:
 		break;
@@ -574,19 +574,19 @@ IMPLEMENT_FUNCTION(26, Waiter2, chapter4Handler)
 
 		if (ENTITY_PARAM(1, 5)) {
 			setCallback(2);
-			setup_function28();
+			setup_serveAugustADrink();
 			break;
 		}
 
 		if (ENTITY_PARAM(1, 4)) {
 			setCallback(3);
-			setup_function29();
+			setup_annaNeedsADrink();
 			break;
 		}
 
 		if (ENTITY_PARAM(1, 2)) {
 			setCallback(4);
-			setup_function7();
+			setup_monsieurServeUs();
 		}
 		break;
 
@@ -608,17 +608,17 @@ IMPLEMENT_FUNCTION(26, Waiter2, chapter4Handler)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(27, Waiter2, function27)
+IMPLEMENT_FUNCTION(27, Waiter2, augustNeedsADrink)
 	serveSalon(savepoint, "929", "", kEntityAugust, "Aug4003", "122D", kAction134486752, "930", &ENTITY_PARAM(1, 3));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(28, Waiter2, function28)
+IMPLEMENT_FUNCTION(28, Waiter2, serveAugustADrink)
 	serveSalon(savepoint, "931", "", kEntityAugust, "Aug4004", "122E", kAction125826561, "930", &ENTITY_PARAM(1, 5));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(29, Waiter2, function29)
+IMPLEMENT_FUNCTION(29, Waiter2, annaNeedsADrink)
 	serveSalon(savepoint, "932", "", kEntityAnna, "Ann4151", "127D", kAction122288808, "930", &ENTITY_PARAM(1, 4));
 IMPLEMENT_FUNCTION_END
 

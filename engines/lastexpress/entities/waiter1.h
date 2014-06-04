@@ -80,29 +80,24 @@ public:
 	 */
 	DECLARE_FUNCTION_1(playSound, const char *filename)
 
-	DECLARE_FUNCTION(function7)
-	DECLARE_FUNCTION(function8)
-	DECLARE_FUNCTION(function9)
-	DECLARE_FUNCTION(function10)
+	DECLARE_FUNCTION(rebeccaFeedUs)
+	DECLARE_FUNCTION(rebeccaClearOurTable)
+	DECLARE_FUNCTION(abbotCheckMe)
+	DECLARE_FUNCTION(abbotClearTable)
 
 	/**
 	 * Setup Chapter 1
 	 */
 	DECLARE_FUNCTION(chapter1)
-	DECLARE_FUNCTION(function12)
-	DECLARE_FUNCTION(function13)
-	DECLARE_FUNCTION(function14)
-	DECLARE_FUNCTION(function15)
-	DECLARE_FUNCTION(function16)
-	DECLARE_FUNCTION(function17)
-	DECLARE_FUNCTION(function18)
-	DECLARE_FUNCTION(function19)
-
-	/**
-	 * Handle Chapter 1 events
-	 */
-	DECLARE_FUNCTION(chapter1Handler)
-
+	DECLARE_FUNCTION(annaOrder)
+	DECLARE_FUNCTION(augustOrder)
+	DECLARE_FUNCTION(serveAnna)
+	DECLARE_FUNCTION(serveAugust)
+	DECLARE_FUNCTION(clearAnna)
+	DECLARE_FUNCTION(clearTatiana)
+	DECLARE_FUNCTION(clearAugust1)
+	DECLARE_FUNCTION(clearAugust2)
+	DECLARE_FUNCTION(servingDinner)
 	DECLARE_FUNCTION(function21)
 	DECLARE_FUNCTION(function22)
 
@@ -110,41 +105,26 @@ public:
 	 * Setup Chapter 2
 	 */
 	DECLARE_FUNCTION(chapter2)
-
-	/**
-	 * Handle Chapter 2 events
-	 */
-	DECLARE_FUNCTION(chapter2Handler)
-
-	DECLARE_FUNCTION(function25)
-	DECLARE_FUNCTION(function26)
+	DECLARE_FUNCTION(inKitchen)
+	DECLARE_FUNCTION(augustComeHere2)
+	DECLARE_FUNCTION(augustClearTable2)
 
 	/**
 	 * Setup Chapter 3
 	 */
 	DECLARE_FUNCTION(chapter3)
-
-	/**
-	 * Handle Chapter 3 events
-	 */
-	DECLARE_FUNCTION(chapter3Handler)
-
-	DECLARE_FUNCTION(augustAnnaDateOrder)
-	DECLARE_FUNCTION(function30)
+	DECLARE_FUNCTION(serving3)
+	DECLARE_FUNCTION(annaComeHere3)
+	DECLARE_FUNCTION(abbotServeLunch3)
 
 	/**
 	 * Setup Chapter 4
 	 */
 	DECLARE_FUNCTION(chapter4)
-
-	/**
-	 * Handle Chapter 4 events
-	 */
-	DECLARE_FUNCTION(chapter4Handler)
-
-	DECLARE_FUNCTION(augustOrderSteak)
-	DECLARE_FUNCTION(augustServeDuck)
-	DECLARE_FUNCTION(function35)
+	DECLARE_FUNCTION(serving4)
+	DECLARE_FUNCTION(augustOrder4)
+	DECLARE_FUNCTION(serveAugust4)
+	DECLARE_FUNCTION(augustClearTable)
 
 	/**
 	 * Setup Chapter 5

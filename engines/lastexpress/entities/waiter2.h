@@ -80,24 +80,19 @@ public:
 	 */
 	DECLARE_FUNCTION_1(playSound, const char *filename)
 
-	DECLARE_FUNCTION(function7)
+	DECLARE_FUNCTION(monsieurServeUs)
 
 	/**
 	 * Setup Chapter 1
 	 */
 	DECLARE_FUNCTION(chapter1)
 
-	DECLARE_FUNCTION(function9)
-	DECLARE_FUNCTION(function10)
-	DECLARE_FUNCTION(function11)
-	DECLARE_FUNCTION(function12)
-	DECLARE_FUNCTION(function13)
-
-	/**
-	 * Handle Chapter 1 events
-	 */
-	DECLARE_FUNCTION(chapter1Handler)
-
+	DECLARE_FUNCTION(milosOrder)
+	DECLARE_FUNCTION(monsieurOrder)
+	DECLARE_FUNCTION(clearAlexei)
+	DECLARE_FUNCTION(clearMilos)
+	DECLARE_FUNCTION(clearMonsieur)
+	DECLARE_FUNCTION(servingDinner)
 	DECLARE_FUNCTION(function15)
 	DECLARE_FUNCTION(function16)
 
@@ -105,41 +100,26 @@ public:
 	 * Setup Chapter 2
 	 */
 	DECLARE_FUNCTION(chapter2)
-
-	/**
-	 * Handle Chapter 2 events
-	 */
-	DECLARE_FUNCTION(chapter2Handler)
-
-	DECLARE_FUNCTION(function19)
-	DECLARE_FUNCTION(function20)
-	DECLARE_FUNCTION(function21)
+	DECLARE_FUNCTION(inKitchen)
+	DECLARE_FUNCTION(tatianaClearTableB)
+	DECLARE_FUNCTION(ivoComeHere)
+	DECLARE_FUNCTION(ivoClearTableC)
 
 	/**
 	 * Setup Chapter 3
 	 */
 	DECLARE_FUNCTION(chapter3)
-
-	/**
-	 * Handle Chapter 3 events
-	 */
-	DECLARE_FUNCTION(chapter3Handler)
-
-	DECLARE_FUNCTION(function24)
+	DECLARE_FUNCTION(serving3)
+	DECLARE_FUNCTION(annaBringTea3)
 
 	/**
 	 * Setup Chapter 4
 	 */
 	DECLARE_FUNCTION(chapter4)
-
-	/**
-	 * Handle Chapter 4 events
-	 */
-	DECLARE_FUNCTION(chapter4Handler)
-
-	DECLARE_FUNCTION(function27)
-	DECLARE_FUNCTION(function28)
-	DECLARE_FUNCTION(function29)
+	DECLARE_FUNCTION(serving4)
+	DECLARE_FUNCTION(augustNeedsADrink)
+	DECLARE_FUNCTION(serveAugustADrink)
+	DECLARE_FUNCTION(annaNeedsADrink)
 
 	/**
 	 * Setup Chapter 5

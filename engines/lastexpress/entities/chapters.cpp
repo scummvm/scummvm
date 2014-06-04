@@ -1518,8 +1518,8 @@ label_callback_4:
 			RESET_ENTITY_STATE(kEntityAugust, August, setup_function65);
 			RESET_ENTITY_STATE(kEntityMertens, Mertens, setup_function48);
 			RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_function53);
-			RESET_ENTITY_STATE(kEntityWaiter1, Waiter1, setup_chapter4Handler);
-			RESET_ENTITY_STATE(kEntityWaiter2, Waiter2, setup_chapter4Handler);
+			RESET_ENTITY_STATE(kEntityWaiter1, Waiter1, setup_serving4);
+			RESET_ENTITY_STATE(kEntityWaiter2, Waiter2, setup_serving4);
 			RESET_ENTITY_STATE(kEntityPascale, Pascale, setup_chapter4Handler);
 			RESET_ENTITY_STATE(kEntityVerges, Verges, setup_chapter4Handler);
 			RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function49);
