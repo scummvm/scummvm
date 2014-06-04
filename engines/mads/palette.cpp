@@ -143,12 +143,12 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 	for (uint palIndex = 0; palIndex < palette.size(); ++palIndex) {
 		bool changed = false;
-		int var4 = 0xffff;
+		int newPalIndex = -1;
 		int v1 = palRange[palIndex]._v2;
 
 		if (palette[v1]._flags & 8) {
 			changed = true;
-			var4 = 0xFD;
+			newPalIndex = 0xFD;
 		}
 
 		if (hasUsage && palette[v1]._flags & 0x10) {
@@ -156,7 +156,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 				if ((*tempUsage._data)[usageIndex]._palIndex == palIndex) {
 					changed = true;
 					int dataIndex = MIN(usageIndex, _data->size() - 1);
-					var4 = (*_data)[dataIndex]._palIndex;
+					newPalIndex = (*_data)[dataIndex]._palIndex;
 				}
 			}
 		}
@@ -165,11 +165,11 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 			for (uint usageIndex = 0; usageIndex < _data->size() && !changed; ++usageIndex) {
 				if ((*_data)[usageIndex]._palIndex == palIndex) {
 					changed = true;
-					var4 = 0xF0 + usageIndex;
+					newPalIndex = 0xF0 + usageIndex;
 
 					// Copy data into the high end of the main palette
 					RGB6 &pSrc = palette[palIndex];
-					byte *pDest = &_vm->_palette->_mainPalette[var4 * 3];
+					byte *pDest = &_vm->_palette->_mainPalette[newPalIndex * 3];
 					pDest[0] = pSrc.r;
 					pDest[1] = pSrc.g;
 					pDest[2] = pSrc.b;
@@ -201,7 +201,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 					if (var2 > var10) {
 						changed = true;
-						var4 = idx;
+						newPalIndex = idx;
 						var2 = var10;
 					}
 				}
@@ -214,7 +214,7 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 					--palCount;
 					++freeIndex;
 					changed = true;
-					var4 = idx;
+					newPalIndex = idx;
 
 					RGB6 &pSrc = palette[palIndex];
 					byte *pDest = &_vm->_palette->_mainPalette[idx * 3];
@@ -229,11 +229,12 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		// In at least scene 318, when the doctor knocks you with the blackjack,
 		// the changed flag can be false
 		//assert(changed);
+		assert(newPalIndex != -1);
 		
 		int var52 = (noUsageFlag && palette[palIndex]._u2) ? 2 : 0;
 
-		_vm->_palette->_palFlags[var4] |= var52 | rgbMask;
-		palette[palIndex]._palIndex = var4;
+		_vm->_palette->_palFlags[newPalIndex] |= var52 | rgbMask;
+		palette[palIndex]._palIndex = newPalIndex;
 	}
 
 	_vm->_palette->_rgbList[rgbIndex] = true;

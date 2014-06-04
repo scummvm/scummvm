@@ -310,8 +310,10 @@ void Animation::load(UserInterface &interfaceSurface, DepthSurface &depthSurface
 	for (int idx = 0; idx < _header._spriteSetsCount; ++idx)
 		usageList.push_back(_spriteSets[idx]->_usageIndex);
 
-	if (usageList.size() > 0)
-		_vm->_palette->_paletteUsage.updateUsage(usageList, _header._messagesCount);
+	if (usageList.size() > 0) {
+		int spritesUsageIndex = _spriteSets[0]->_usageIndex;
+		_vm->_palette->_paletteUsage.updateUsage(usageList, spritesUsageIndex);
+	}
 
 	// Remaps the sprite list indexes for frames to the loaded sprite list indexes
 	for (uint i = 0; i < _frameEntries.size(); ++i) {
