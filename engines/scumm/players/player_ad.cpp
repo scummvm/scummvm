@@ -324,7 +324,7 @@ void Player_AD::writeReg(int r, int v) {
 
 			int vol = 0x3F - (v & 0x3F);
 			vol = vol * scale / Audio::Mixer::kMaxChannelVolume;
-			v &= 0xA0;
+			v &= 0xC0;
 			v |= (0x3F - vol);
 		}
 	}
