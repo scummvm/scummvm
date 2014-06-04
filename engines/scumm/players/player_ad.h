@@ -128,10 +128,7 @@ private:
 		uint lastEvent;
 		uint frequency;
 		uint b0Reg;
-
-		int hardwareChannel;
 	} _voiceChannels[9];
-	int allocateVoiceChannel();
 	void freeVoiceChannel(uint channel);
 
 	uint _mdvdrState;

@@ -74,9 +74,6 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	_numHWChannels = ARRAYSIZE(_hwChannels);
 
 	memset(_voiceChannels, 0, sizeof(_voiceChannels));
-	for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
-		_voiceChannels[i].hardwareChannel = -1;
-	}
 
 	_musicVolume = _sfxVolume = 255;
 }
@@ -510,9 +507,11 @@ void Player_AD::updateMusic() {
 					if (_musicData[instrOffset + 13] != 0) {
 						setupRhythm(_musicData[instrOffset + 13], instrOffset);
 					} else {
-						int channel = allocateVoiceChannel();
+						// Priority 256 makes sure we always prefer music
+						// channels over SFX channels.
+						int channel = allocateHWChannel(256);
 						if (channel != -1) {
-							setupChannel(_voiceChannels[channel].hardwareChannel, _musicData + instrOffset);
+							setupChannel(channel, _musicData + instrOffset);
 							_voiceChannels[channel].lastEvent = command + 0x90;
 							_voiceChannels[channel].frequency = _musicData[_curOffset];
 							setupFrequency(channel, _musicData[_curOffset]);
@@ -576,8 +575,7 @@ void Player_AD::updateMusic() {
 }
 
 void Player_AD::noteOff(uint channel) {
-	VoiceChannel &vChannel = _voiceChannels[channel];
-	writeReg(0xB0 + vChannel.hardwareChannel, vChannel.b0Reg & 0xDF);
+	writeReg(0xB0 + channel, _voiceChannels[channel].b0Reg & 0xDF);
 	freeVoiceChannel(channel);
 }
 
@@ -593,14 +591,13 @@ void Player_AD::setupFrequency(uint channel, int8 frequency) {
 		++octave;
 	}
 
-	VoiceChannel &vChannel = _voiceChannels[channel];
 	const uint noteFrequency = _noteFrequencies[frequency];
 	octave <<= 2;
 	octave |= noteFrequency >> 8;
 	octave |= 0x20;
-	writeReg(0xA0 + vChannel.hardwareChannel, noteFrequency & 0xFF);
-	vChannel.b0Reg = octave;
-	writeReg(0xB0 + vChannel.hardwareChannel, octave);
+	writeReg(0xA0 + channel, noteFrequency & 0xFF);
+	_voiceChannels[channel].b0Reg = octave;
+	writeReg(0xB0 + channel, octave);
 }
 
 void Player_AD::setupRhythm(uint rhythmInstr, uint instrOffset) {
@@ -621,29 +618,11 @@ void Player_AD::setupRhythm(uint rhythmInstr, uint instrOffset) {
 	}
 }
 
-int Player_AD::allocateVoiceChannel() {
-	for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
-		if (!_voiceChannels[i].lastEvent) {
-			// 256 makes sure it's a higher prority than any SFX
-			_voiceChannels[i].hardwareChannel = allocateHWChannel(256);
-			if (_voiceChannels[i].hardwareChannel != -1) {
-				return i;
-			} else {
-				// No free HW channels => cancel
-				return -1;
-			}
-		}
-	}
-
-	return -1;
-}
-
 void Player_AD::freeVoiceChannel(uint channel) {
 	VoiceChannel &vChannel = _voiceChannels[channel];
-	assert(vChannel.hardwareChannel != -1);
+	assert(vChannel.lastEvent);
 
-	freeHWChannel(vChannel.hardwareChannel);
-	vChannel.hardwareChannel = -1;
+	freeHWChannel(channel);
 	vChannel.lastEvent = 0;
 	vChannel.b0Reg = 0;
 	vChannel.frequency = 0;
