@@ -57,12 +57,12 @@ MADSAction::MADSAction(MADSEngine *vm) : _vm(vm) {
 	_inProgress = false;
 	_pickedWord = -1;
 
-	_savedFields._commandSource = 0;
-	_savedFields._mainObjectSource = 0;
+	_savedFields._commandSource = CAT_NONE;
+	_savedFields._mainObjectSource = CAT_NONE;
 	_savedFields._command = -1;
 	_savedFields._mainObject = 0;
 	_savedFields._secondObject = 0;
-	_savedFields._secondObjectSource = 0;
+	_savedFields._secondObjectSource = CAT_NONE;
 	_savedFields._articleNumber = PREP_NONE;
 	_savedFields._lookFlag = false;
 
