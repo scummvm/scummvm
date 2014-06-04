@@ -210,7 +210,7 @@ public:
 	int _height;
 	int _ladder_field_20;
 	int _ladder_field_24;
-	Common::List<MctlLadderMovement *> _ladmovements;
+	Common::Array<MctlLadderMovement *> _ladmovements;
 	MGM _mgm;
 
 public:
