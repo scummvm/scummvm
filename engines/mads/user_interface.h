@@ -180,7 +180,7 @@ private:
 	/**
 	 * Draw the inventory scroller
 	 */
-	void drawScrolller();
+	void drawScroller();
 
 	/**
 	 * Called when the inventory scrollbar has changed

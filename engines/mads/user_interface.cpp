@@ -487,7 +487,7 @@ void UserInterface::drawItemVocabList() {
 	}
 }
 
-void UserInterface::drawScrolller() {
+void UserInterface::drawScroller() {
 	if (_scrollbarActive)
 		writeVocab(CAT_INV_SCROLLER, _scrollbarActive);
 	writeVocab(CAT_INV_SCROLLER, 4);
@@ -573,7 +573,7 @@ void UserInterface::scrollbarChanged() {
 	Common::Rect r(73, 4, 73 + 9, 4 + 38);
 	_uiSlots.add(r);
 	_uiSlots.draw(false, false);
-	drawScrolller();
+	drawScroller();
 	updateRect(r);
 }
 
