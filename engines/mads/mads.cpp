@@ -67,6 +67,7 @@ MADSEngine::~MADSEngine() {
 	delete _palette;
 	delete _resources;
 	delete _sound;
+	delete _audio;
 }
 
 void MADSEngine::initialize() {
