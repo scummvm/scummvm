@@ -56,7 +56,7 @@ Seq *getConstantSeq(bool seqFlag) {
 	return seq;
 }
 
-void(*Sprite::notify) (void) = nullptr;
+void (*Sprite::notify)() = nullptr;
 
 byte Sprite::_constY = 0;
 byte Sprite::_follow = 0;
@@ -427,7 +427,7 @@ Sprite *Sprite::contract() {
 	return this;
 }
 
-void Sprite::backShow(void) {
+void Sprite::backShow() {
 	expand();
 	show(2);
 	show(1);
@@ -496,7 +496,7 @@ void Sprite::gotoxyz(int x, int y, int z) {
 	gotoxyz(V3D(x, y, z));
 }
 
-void Sprite::gotoxyz(void) {
+void Sprite::gotoxyz() {
 	gotoxyz(_pos3D);
 }
 
