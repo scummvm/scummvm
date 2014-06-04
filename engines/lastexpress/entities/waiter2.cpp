@@ -572,6 +572,12 @@ IMPLEMENT_FUNCTION(26, Waiter2, serving4)
 		if (!getEntities()->isInKitchen(kEntityWaiter2) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
 
+		if (ENTITY_PARAM(1, 3)) {
+			setCallback(1);
+			setup_augustNeedsADrink();
+			break;
+		}
+
 		if (ENTITY_PARAM(1, 5)) {
 			setCallback(2);
 			setup_serveAugustADrink();
