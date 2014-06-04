@@ -463,96 +463,18 @@ void Player_AD::updateMusic() {
 	}
 
 	while (true) {
-		uint command = _musicData[_curOffset++];
-		if (command == 0xFF) {
-			// META EVENT
-			// Get the command number.
-			command = _musicData[_curOffset++];
-			if (command == 47) {
-				// End of track
-				if (_loopFlag) {
-					// In case the track is looping jump to the start.
-					_curOffset = _musicLoopStart;
-					_nextEventTimer = 0;
-					continue;
-				} else {
-					// Otherwise completely stop playback.
-					stopMusic();
-				}
+		if (parseCommand()) {
+			// We received an EOT command. In case there's no music playing
+			// we know there was no looping enabled. Thus, we stop further
+			// handling. Otherwise we will just continue parsing. It is
+			// important to note that we need to parse a command directly
+			// at the new position, i.e. there is no time value we need to
+			// parse.
+			if (_soundPlaying == -1) {
 				return;
-			} else if (command == 88) {
-				// This is proposedly a debug information insertion. The CMS
-				// player code handles this differently, but is still using
-				// the same resources...
-				_curOffset += 5;
-			} else if (command == 81) {
-				// Change tempo. This is used exclusively in Loom.
-				const uint timing = _musicData[_curOffset + 2] | (_musicData[_curOffset + 1] << 8);
-				_musicTicks = 0x73000 / timing;
-				command = _musicData[_curOffset++];
-				_curOffset += command;
 			} else {
-				// In case an unknown meta event occurs just skip over the
-				// data by using the length supplied.
-				command = _musicData[_curOffset++];
-				_curOffset += command;
+				continue;
 			}
-		} else {
-			if (command >= 0x90) {
-				// NOTE ON
-				// Extract the channel number and save it in command.
-				command -= 0x90;
-
-				const uint instrOffset = _instrumentOffset[command];
-				if (instrOffset) {
-					if (_musicData[instrOffset + 13] != 0) {
-						setupRhythm(_musicData[instrOffset + 13], instrOffset);
-					} else {
-						// Priority 256 makes sure we always prefer music
-						// channels over SFX channels.
-						int channel = allocateHWChannel(256);
-						if (channel != -1) {
-							setupChannel(channel, _musicData + instrOffset);
-							_voiceChannels[channel].lastEvent = command + 0x90;
-							_voiceChannels[channel].frequency = _musicData[_curOffset];
-							setupFrequency(channel, _musicData[_curOffset]);
-						}
-					}
-				}
-			} else {
-				// NOTE OFF
-				const uint note = _musicData[_curOffset];
-				command += 0x10;
-
-				// Find the output channel which plays the note.
-				uint channel = 0xFF;
-				for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
-					if (_voiceChannels[i].frequency == note && _voiceChannels[i].lastEvent == command) {
-						channel = i;
-						break;
-					}
-				}
-
-				if (channel != 0xFF) {
-					// In case a output channel playing the note was found,
-					// stop it.
-					noteOff(channel);
-				} else {
-					// In case there is no such note this will disable the
-					// rhythm instrument played on the channel.
-					command -= 0x90;
-					const uint instrOffset = _instrumentOffset[command];
-					if (instrOffset && _musicData[instrOffset + 13] != 0) {
-						const uint rhythmInstr = _musicData[instrOffset + 13];
-						if (rhythmInstr < 6) {
-							_mdvdrState &= _mdvdrTable[rhythmInstr] ^ 0xFF;
-							writeReg(0xBD, _mdvdrState);
-						}
-					}
-				}
-			}
-
-			_curOffset += 2;
 		}
 
 		// In case there is a delay till the next event stop handling.
@@ -562,17 +484,116 @@ void Player_AD::updateMusic() {
 		++_curOffset;
 	}
 
-	_nextEventTimer = _musicData[_curOffset++];
-	if (_nextEventTimer & 0x80) {
-		_nextEventTimer -= 0x80;
-		_nextEventTimer <<= 7;
-		_nextEventTimer |= _musicData[_curOffset++];
-	}
-
+	_nextEventTimer = parseVLQ();
 	_nextEventTimer >>= (_vm->_game.id == GID_LOOM) ? 2 : 1;
 	if (!_nextEventTimer) {
 		_nextEventTimer = 1;
 	}
+}
+
+bool Player_AD::parseCommand() {
+	uint command = _musicData[_curOffset++];
+	if (command == 0xFF) {
+		// META EVENT
+		// Get the command number.
+		command = _musicData[_curOffset++];
+		if (command == 47) {
+			// End of track
+			if (_loopFlag) {
+				// In case the track is looping jump to the start.
+				_curOffset = _musicLoopStart;
+				_nextEventTimer = 0;
+			} else {
+				// Otherwise completely stop playback.
+				stopMusic();
+			}
+			return true;
+		} else if (command == 88) {
+			// This is proposedly a debug information insertion. The CMS
+			// player code handles this differently, but is still using
+			// the same resources...
+			_curOffset += 5;
+		} else if (command == 81) {
+			// Change tempo. This is used exclusively in Loom.
+			const uint timing = _musicData[_curOffset + 2] | (_musicData[_curOffset + 1] << 8);
+			_musicTicks = 0x73000 / timing;
+			command = _musicData[_curOffset++];
+			_curOffset += command;
+		} else {
+			// In case an unknown meta event occurs just skip over the
+			// data by using the length supplied.
+			command = _musicData[_curOffset++];
+			_curOffset += command;
+		}
+	} else {
+		if (command >= 0x90) {
+			// NOTE ON
+			// Extract the channel number and save it in command.
+			command -= 0x90;
+
+			const uint instrOffset = _instrumentOffset[command];
+			if (instrOffset) {
+				if (_musicData[instrOffset + 13] != 0) {
+					setupRhythm(_musicData[instrOffset + 13], instrOffset);
+				} else {
+					// Priority 256 makes sure we always prefer music
+					// channels over SFX channels.
+					int channel = allocateHWChannel(256);
+					if (channel != -1) {
+						setupChannel(channel, _musicData + instrOffset);
+						_voiceChannels[channel].lastEvent = command + 0x90;
+						_voiceChannels[channel].frequency = _musicData[_curOffset];
+						setupFrequency(channel, _musicData[_curOffset]);
+					}
+				}
+			}
+		} else {
+			// NOTE OFF
+			const uint note = _musicData[_curOffset];
+			command += 0x10;
+
+			// Find the output channel which plays the note.
+			uint channel = 0xFF;
+			for (int i = 0; i < ARRAYSIZE(_voiceChannels); ++i) {
+				if (_voiceChannels[i].frequency == note && _voiceChannels[i].lastEvent == command) {
+					channel = i;
+					break;
+				}
+			}
+
+			if (channel != 0xFF) {
+				// In case a output channel playing the note was found,
+				// stop it.
+				noteOff(channel);
+			} else {
+				// In case there is no such note this will disable the
+				// rhythm instrument played on the channel.
+				command -= 0x90;
+				const uint instrOffset = _instrumentOffset[command];
+				if (instrOffset && _musicData[instrOffset + 13] != 0) {
+					const uint rhythmInstr = _musicData[instrOffset + 13];
+					if (rhythmInstr < 6) {
+						_mdvdrState &= _mdvdrTable[rhythmInstr] ^ 0xFF;
+						writeReg(0xBD, _mdvdrState);
+					}
+				}
+			}
+		}
+
+		_curOffset += 2;
+	}
+
+	return false;
+}
+
+uint Player_AD::parseVLQ() {
+	uint vlq = _musicData[_curOffset++];
+	if (vlq & 0x80) {
+		vlq -= 0x80;
+		vlq <<= 7;
+		vlq |= _musicData[_curOffset++];
+	}
+	return vlq;
 }
 
 void Player_AD::noteOff(uint channel) {

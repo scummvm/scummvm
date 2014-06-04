@@ -111,6 +111,8 @@ private:
 	void startMusic();
 	void stopMusic();
 	void updateMusic();
+	bool parseCommand();
+	uint parseVLQ();
 	void noteOff(uint channel);
 	void setupFrequency(uint channel, int8 frequency);
 	void setupRhythm(uint rhythmInstr, uint instrOffset);
