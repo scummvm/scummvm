@@ -35,8 +35,6 @@ MODULE_OBJS := \
 	entities/pascale.o \
 	entities/rebecca.o \
 	entities/salko.o \
-	entities/servers0.o \
-	entities/servers1.o \
 	entities/sophie.o \
 	entities/tables.o \
 	entities/tatiana.o \
@@ -44,6 +42,8 @@ MODULE_OBJS := \
 	entities/vassili.o \
 	entities/verges.o \
 	entities/vesna.o \
+	entities/waiter1.o \
+	entities/waiter2.o \
 	entities/yasmin.o \
 	fight/fight.o \
 	fight/fighter.o \

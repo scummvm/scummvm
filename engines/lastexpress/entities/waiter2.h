@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef LASTEXPRESS_SERVERS1_H
-#define LASTEXPRESS_SERVERS1_H
+#ifndef LASTEXPRESS_WAITER2_H
+#define LASTEXPRESS_WAITER2_H
 
 #include "lastexpress/entities/entity.h"
 
@@ -29,10 +29,10 @@ namespace LastExpress {
 
 class LastExpressEngine;
 
-class Servers1 : public Entity {
+class Waiter2 : public Entity {
 public:
-	Servers1(LastExpressEngine *engine);
-	~Servers1() {}
+	Waiter2(LastExpressEngine *engine);
+	~Waiter2() {}
 
 	/**
 	 * Updates parameter 2 using time value
@@ -160,4 +160,4 @@ private:
 
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_SERVERS1_H
+#endif // LASTEXPRESS_WAITER2_H

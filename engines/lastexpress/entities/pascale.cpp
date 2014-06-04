@@ -584,8 +584,8 @@ IMPLEMENT_FUNCTION(18, Pascale, function18)
 	if (getState()->time > kTime1242000 && !params->param1) {
 		params->param1 = 1;
 
-		getSavePoints()->push(kEntityPascale, kEntityServers0, kAction101632192);
-		getSavePoints()->push(kEntityPascale, kEntityServers1, kAction101632192);
+		getSavePoints()->push(kEntityPascale, kEntityWaiter1, kAction101632192);
+		getSavePoints()->push(kEntityPascale, kEntityWaiter2, kAction101632192);
 		getSavePoints()->push(kEntityPascale, kEntityCooks, kAction101632192);
 		getSavePoints()->push(kEntityPascale, kEntityVerges, kAction101632192);
 

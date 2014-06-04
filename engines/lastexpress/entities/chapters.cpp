@@ -44,13 +44,13 @@
 #include "lastexpress/entities/pascale.h"
 #include "lastexpress/entities/rebecca.h"
 #include "lastexpress/entities/salko.h"
-#include "lastexpress/entities/servers0.h"
-#include "lastexpress/entities/servers1.h"
 #include "lastexpress/entities/sophie.h"
 #include "lastexpress/entities/tatiana.h"
 #include "lastexpress/entities/vassili.h"
 #include "lastexpress/entities/verges.h"
 #include "lastexpress/entities/vesna.h"
+#include "lastexpress/entities/waiter1.h"
+#include "lastexpress/entities/waiter2.h"
 #include "lastexpress/entities/yasmin.h"
 
 #include "lastexpress/game/action.h"
@@ -207,8 +207,8 @@ IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
 
 	case kActionDefault:
 		RESET_ENTITY_STATE(kEntityPascale, Pascale, setup_function19);
-		RESET_ENTITY_STATE(kEntityServers0, Servers0, setup_function22);
-		RESET_ENTITY_STATE(kEntityServers1, Servers1, setup_function16);
+		RESET_ENTITY_STATE(kEntityWaiter1, Waiter1, setup_function22);
+		RESET_ENTITY_STATE(kEntityWaiter2, Waiter2, setup_function16);
 		RESET_ENTITY_STATE(kEntityCooks, Cooks, setup_function7);
 
 		RESET_ENTITY_STATE(kEntityMertens, Mertens, setup_function42);
@@ -1518,8 +1518,8 @@ label_callback_4:
 			RESET_ENTITY_STATE(kEntityAugust, August, setup_function65);
 			RESET_ENTITY_STATE(kEntityMertens, Mertens, setup_function48);
 			RESET_ENTITY_STATE(kEntityCoudert, Coudert, setup_function53);
-			RESET_ENTITY_STATE(kEntityServers0, Servers0, setup_chapter4Handler);
-			RESET_ENTITY_STATE(kEntityServers1, Servers1, setup_chapter4Handler);
+			RESET_ENTITY_STATE(kEntityWaiter1, Waiter1, setup_chapter4Handler);
+			RESET_ENTITY_STATE(kEntityWaiter2, Waiter2, setup_chapter4Handler);
 			RESET_ENTITY_STATE(kEntityPascale, Pascale, setup_chapter4Handler);
 			RESET_ENTITY_STATE(kEntityVerges, Verges, setup_chapter4Handler);
 			RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function49);
@@ -1539,8 +1539,8 @@ label_callback_4:
 			getSavePoints()->push(kEntityChapters, kEntityAnna, kAction201431954);
 			getSavePoints()->push(kEntityChapters, kEntityMertens, kAction201431954);
 			getSavePoints()->push(kEntityChapters, kEntityCoudert, kAction201431954);
-			getSavePoints()->push(kEntityChapters, kEntityServers0, kAction201431954);
-			getSavePoints()->push(kEntityChapters, kEntityServers1, kAction201431954);
+			getSavePoints()->push(kEntityChapters, kEntityWaiter1, kAction201431954);
+			getSavePoints()->push(kEntityChapters, kEntityWaiter2, kAction201431954);
 			getSavePoints()->push(kEntityChapters, kEntityPascale, kAction201431954);
 			getSavePoints()->push(kEntityChapters, kEntityVerges, kAction201431954);
 

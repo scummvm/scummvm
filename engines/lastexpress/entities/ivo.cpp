@@ -464,7 +464,7 @@ IMPLEMENT_FUNCTION(20, Ivo, function20)
 		break;
 
 	case kActionDefault:
-		getSavePoints()->push(kEntityIvo, kEntityServers1, kAction189688608);
+		getSavePoints()->push(kEntityIvo, kEntityWaiter2, kAction189688608);
 		getEntities()->drawSequenceLeft(kEntityIvo, "023B");
 		break;
 
@@ -474,7 +474,7 @@ IMPLEMENT_FUNCTION(20, Ivo, function20)
 			break;
 
 		case 1:
-			 getSavePoints()->push(kEntityIvo, kEntityServers1, kAction101106391);
+			 getSavePoints()->push(kEntityIvo, kEntityWaiter2, kAction101106391);
 			 getEntities()->drawSequenceLeft(kEntityIvo, "023B");
 			 params->param1 = 1;
 			break;
@@ -485,7 +485,7 @@ IMPLEMENT_FUNCTION(20, Ivo, function20)
 			break;
 
 		case 3:
-			getSavePoints()->push(kEntityIvo, kEntityServers1, kAction236237423);
+			getSavePoints()->push(kEntityIvo, kEntityWaiter2, kAction236237423);
 			setup_function21();
 			break;
 		}

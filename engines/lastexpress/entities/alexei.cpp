@@ -607,7 +607,7 @@ IMPLEMENT_FUNCTION(19, Alexei, returnCompartment)
 
 		case 7:
 			getEntities()->updatePositionExit(kEntityAlexei, kCarRestaurant, 63);
-			getSavePoints()->push(kEntityAlexei, kEntityServers1, kAction302996448);
+			getSavePoints()->push(kEntityAlexei, kEntityWaiter2, kAction302996448);
 
 			setCallback(8);
 			setup_draw("934");

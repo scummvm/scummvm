@@ -51,8 +51,6 @@
 #include "lastexpress/entities/pascale.h"
 #include "lastexpress/entities/rebecca.h"
 #include "lastexpress/entities/salko.h"
-#include "lastexpress/entities/servers0.h"
-#include "lastexpress/entities/servers1.h"
 #include "lastexpress/entities/sophie.h"
 #include "lastexpress/entities/tables.h"
 #include "lastexpress/entities/tatiana.h"
@@ -60,6 +58,8 @@
 #include "lastexpress/entities/vassili.h"
 #include "lastexpress/entities/verges.h"
 #include "lastexpress/entities/vesna.h"
+#include "lastexpress/entities/waiter1.h"
+#include "lastexpress/entities/waiter2.h"
 #include "lastexpress/entities/yasmin.h"
 
 // Game
@@ -134,8 +134,8 @@ Entities::Entities(LastExpressEngine *engine) : _engine(engine) {
 	ADD_ENTITY(Mertens);
 	ADD_ENTITY(Coudert);
 	ADD_ENTITY(Pascale);
-	ADD_ENTITY(Servers0);
-	ADD_ENTITY(Servers1);
+	ADD_ENTITY(Waiter1);
+	ADD_ENTITY(Waiter2);
 	ADD_ENTITY(Cooks);
 	ADD_ENTITY(Verges);
 	ADD_ENTITY(Tatiana);

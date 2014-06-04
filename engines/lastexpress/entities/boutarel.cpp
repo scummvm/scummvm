@@ -310,7 +310,7 @@ IMPLEMENT_FUNCTION_I(14, Boutarel, function14, bool)
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityBoutarel, kEntityServers1, kAction326144276);
+			getSavePoints()->push(kEntityBoutarel, kEntityWaiter2, kAction326144276);
 			getEntities()->drawSequenceRight(kEntityBoutarel, "812DS");
 			if (getEntities()->isInRestaurant(kEntityPlayer))
 				getEntities()->updateFrame(kEntityBoutarel);
@@ -674,7 +674,7 @@ IMPLEMENT_FUNCTION(20, Boutarel, function20)
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityBoutarel, kEntityServers1, kAction256200848);
+			getSavePoints()->push(kEntityBoutarel, kEntityWaiter2, kAction256200848);
 			break;
 
 		case 3:
@@ -937,7 +937,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 
 	case kActionNone:
 		if (Entity::updateParameter(params->param2, getState()->time, 450)) {
-			getSavePoints()->push(kEntityBoutarel, kEntityServers1, kAction256200848);
+			getSavePoints()->push(kEntityBoutarel, kEntityWaiter2, kAction256200848);
 		}
 
 		if (!params->param1)
@@ -1086,7 +1086,7 @@ IMPLEMENT_FUNCTION(33, Boutarel, function33)
 			break;
 
 		case 2:
-			getSavePoints()->push(kEntityBoutarel, kEntityServers1, kAction256200848);
+			getSavePoints()->push(kEntityBoutarel, kEntityWaiter2, kAction256200848);
 			break;
 
 		case 3:

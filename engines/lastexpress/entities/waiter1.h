@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef LASTEXPRESS_SERVERS0_H
-#define LASTEXPRESS_SERVERS0_H
+#ifndef LASTEXPRESS_WAITER1_H
+#define LASTEXPRESS_WAITER1_H
 
 #include "lastexpress/entities/entity.h"
 
@@ -29,10 +29,10 @@ namespace LastExpress {
 
 class LastExpressEngine;
 
-class Servers0 : public Entity {
+class Waiter1 : public Entity {
 public:
-	Servers0(LastExpressEngine *engine);
-	~Servers0() {}
+	Waiter1(LastExpressEngine *engine);
+	~Waiter1() {}
 
 	/**
 	 * Call a savepoint (or draw sequence in default case)
@@ -165,4 +165,4 @@ private:
 
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_SERVERS0_H
+#endif // LASTEXPRESS_WAITER1_H
