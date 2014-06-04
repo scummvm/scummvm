@@ -2603,7 +2603,7 @@ void Scene752::actions() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
-			_vm->_sound->command(0xF);
+			_vm->_sound->command(15);
 			_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 			_game._objects.addToInventory(OBJ_ID_CARD);
 			_scene->_dynamicHotspots.remove(_cardId);
@@ -2616,7 +2616,8 @@ void Scene752::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4) && (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) && 
+			(!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -2627,9 +2628,9 @@ void Scene752::actions() {
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 		case 1:
-			_vm->_sound->command(0xF);
+			_vm->_sound->command(15);
 			if (_game._objects.isInInventory(OBJ_BONE))
-				_game._objects.setRoom(OBJ_BONE, 1);
+				_game._objects.setRoom(OBJ_BONE, NOWHERE);
 			_game._objects.addToInventory(OBJ_BONES);
 			_vm->_dialogs->showItem(OBJ_BONES, 75221);
 			break;
@@ -2658,12 +2659,12 @@ void Scene752::actions() {
 		_vm->_dialogs->show(75217);
 	else if (_action.isAction(VERB_LOOK, NOUN_TELEPORTER))
 		_vm->_dialogs->show(75218);
-	else if ((_action.isAction(VERB_LOOK, NOUN_BONES) || _action.isAction(VERB_LOOK, NOUN_ID_CARD)) && (_action._mainObjectSource == 4)) {
+	else if ((_action.isAction(VERB_LOOK, NOUN_BONES) || _action.isAction(VERB_LOOK, NOUN_ID_CARD)) && (_action._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects[OBJ_ID_CARD]._roomNumber == 752)
 			_vm->_dialogs->show(75219);
 		else
 			_vm->_dialogs->show(75220);
-	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._mainObjectSource == 4)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT)) {
 		if (_game._objects.isInInventory(OBJ_BONES))
 			_vm->_dialogs->show(75222);
 	} else
