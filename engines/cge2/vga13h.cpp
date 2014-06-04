@@ -455,8 +455,7 @@ void Sprite::step(int nr) {
 				p._x += seq->_dx;
 				p._y += seq->_dy;
 				p._z += seq->_dz;
-				if (!_flags._kept)
-					gotoxyz(p);
+				gotoxyz(p);
 			}
 		}
 		if (seq && (seq->_dly >= 0))
