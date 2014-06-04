@@ -35,14 +35,14 @@
 
 namespace CGE2 {
 
-Bitmap::Bitmap() : _w(0), _h(0), _v(nullptr), _b(nullptr), _m(nullptr), _map(0), _vm(nullptr) {
+Bitmap::Bitmap() : _w(0), _h(0), _v(nullptr), _b(nullptr), _map(0), _vm(nullptr) {
 }
 
 void Bitmap::setVM(CGE2Engine *vm) {
 	_vm = vm;
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _m(nullptr), _v(nullptr), _b(nullptr), _map(0), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _v(nullptr), _b(nullptr), _map(0), _vm(vm) {
 	char pat[kMaxPath];
 	forceExt(pat, fname, ".VBM");
 
@@ -57,9 +57,9 @@ Bitmap::Bitmap(CGE2Engine *vm, const char *fname) : _m(nullptr), _v(nullptr), _b
 	}
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(nullptr), _map(0), _b(nullptr), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _v(nullptr), _map(0), _b(nullptr), _vm(vm) {
 	if (map)
-		code();
+		code(map);
 }
 
 // following routine creates filled rectangle
@@ -67,7 +67,7 @@ Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _
 // especially for text line real time display
 Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill)
 	: _w((w + 3) & ~3),                              // only full uint32 allowed!
-	  _h(h), _m(nullptr), _map(0), _b(nullptr), _vm(vm) {
+	  _h(h), _map(0), _b(nullptr), _vm(vm) {
 
 	uint16 dsiz = _w >> 2;                           // data size (1 plane line size)
 	uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
@@ -104,7 +104,7 @@ Bitmap::Bitmap(CGE2Engine *vm, uint16 w, uint16 h, uint8 fill)
 	_b = b;
 }
 
-Bitmap::Bitmap(CGE2Engine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(nullptr), _v(nullptr), _map(0), _b(nullptr), _vm(vm) {
+Bitmap::Bitmap(CGE2Engine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _v(nullptr), _map(0), _b(nullptr), _vm(vm) {
 	uint8 *v0 = bmp._v;
 	if (!v0)
 		return;
@@ -122,9 +122,7 @@ Bitmap::~Bitmap() {
 }
 
 void Bitmap::release() {
-	free(_m);
 	delete[] _v;
-	_m = nullptr;
 	_v = nullptr;
 }
 
@@ -135,7 +133,6 @@ Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 	uint8 *v0 = bmp._v;
 	_w = bmp._w;
 	_h = bmp._h;
-	_m = nullptr;
 	_map = 0;
 	_vm = bmp._vm;
 	delete[] _v;
@@ -164,8 +161,8 @@ char *Bitmap::forceExt(char *buf, const char *name, const char *ext) {
 	return buf;
 }
 
-BitmapPtr Bitmap::code() {
-	if (!_m)
+BitmapPtr Bitmap::code(uint8 *map) {
+	if (!map)
 		return NULL;
 
 	uint16 cnt;
@@ -187,7 +184,7 @@ BitmapPtr Bitmap::code() {
 			}
 		}
 		for (bpl = 0; bpl < 4; bpl++) {              // once per each bitplane
-			uint8 *bm = _m;
+			uint8 *bm = map;
 			bool skip = (bm[bpl] == kPixelTransp);
 			uint16 j;
 

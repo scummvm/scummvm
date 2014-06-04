@@ -196,8 +196,6 @@ public:
 	void show();
 	void hide();
 	BitmapPtr ghost();
-	void makeXlat(uint8 *x);
-	void killXlat();
 	void step(int nr = -1);
 	Seq *setSeq(Seq *seq);
 	CommandHandler::Command *snList(Action type);

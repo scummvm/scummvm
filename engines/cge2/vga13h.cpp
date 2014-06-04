@@ -468,29 +468,6 @@ void Sprite::tick() {
 	step();
 }
 
-void Sprite::makeXlat(uint8 *x) {
-	if (!_ext)
-		return;
-
-	if (_flags._xlat)
-		killXlat();
-	for (BitmapPtr *b = _ext->_shpList; *b; b++)
-		(*b)->_m = x;
-	_flags._xlat = true;
-}
-
-void Sprite::killXlat() {
-	if (!_flags._xlat || !_ext)
-		return;
-
-	uint8 *m = (*_ext->_shpList)->_m;
-	free(m);
-	
-	for (BitmapPtr *b = _ext->_shpList; *b; b++)
-		(*b)->_m = nullptr;
-	_flags._xlat = false;
-}
-
 void Sprite::gotoxyz(int x, int y, int z) {
 	gotoxyz(V3D(x, y, z));
 }
@@ -1019,59 +996,6 @@ void Vga::clear(uint8 color) {
 void Vga::copyPage(uint16 d, uint16 s) {
 	_page[d]->copyFrom(*_page[s]);
 }
-
-//--------------------------------------------------------------------------
-
-void Bitmap::xShow(int16 x, int16 y) {
-	const byte *srcP = (const byte *)_v;
-	byte *destEndP = (byte *)_vm->_vga->_page[1]->getBasePtr(0, kScrHeight);
-	byte *lookupTable = _m;
-
-	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
-	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
-	// must be decompressed and inserted into the surface
-	for (int planeCtr = 0; planeCtr < 4; planeCtr++) {
-		byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(x + planeCtr, y);
-
-		for (;;) {
-			uint16 v = READ_LE_UINT16(srcP);
-			srcP += 2;
-			int cmd = v >> 14;
-			int count = v & 0x3FFF;
-
-			if (cmd == 0) {
-				// End of image
-				break;
-			}
-
-			assert(destP < destEndP);
-
-			if (cmd == 2)
-				srcP++;
-			else if (cmd == 3)
-				srcP += count;
-
-			// Handle a set of pixels
-			while (count-- > 0) {
-				// Transfer operation
-				switch (cmd) {
-				case 1:
-					// SKIP
-					break;
-				case 2:
-				case 3:
-					// TINT
-					*destP = lookupTable[*destP];
-					break;
-				}
-
-				// Move to next dest position
-				destP += 4;
-			}
-		}
-	}
-}
-
 
 void Bitmap::show(int16 x, int16 y) {
 	V2D pos(_vm, x, y);

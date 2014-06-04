@@ -61,7 +61,6 @@ class Bitmap {
 public:
 	uint16 _w;
 	uint16 _h;
-	uint8 *_m;
 	uint8 *_v;
 	int32 _map;
 	HideDesc *_b;
@@ -74,12 +73,11 @@ public:
 	~Bitmap();
 
 	void setVM(CGE2Engine *vm);
-	Bitmap *code();
+	Bitmap *code(uint8 *map);
 	Bitmap &operator=(const Bitmap &bmp);
 	void release();
 	void hide(int16 x, int16 y);
 	void show(int16 x, int16 y);
-	void xShow(int16 x, int16 y);
 	bool solidAt(int16 x, int16 y);
 	void xLatPos(V2D& p);
 	bool moveHi();
