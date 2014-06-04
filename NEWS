@@ -54,6 +54,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Changed the saved game naming scheme of HE games to always contain
      the target name.
    - Fixed having multiple coaches in Backyard Football.
+   - Improved AdLib support for Loom and Indiana Jones and the Last Crusade.
+     This makes sound effects like, for example, the typewriter and waterfall
+     in Indiana Jones and the Last Crusade sound like in the original.
 
  Tinsel:
    - Discworld 1 and 2 no longer crash on big-endian systems.
