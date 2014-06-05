@@ -85,7 +85,6 @@ bool DebugManager::disableDebugChannel(const String &name) {
 	}
 }
 
-
 DebugManager::DebugChannelList DebugManager::listDebugChannels() {
 	DebugChannelList tmp;
 	for (DebugChannelMap::iterator i = gDebugChannels.begin(); i != gDebugChannels.end(); ++i)
@@ -93,6 +92,16 @@ DebugManager::DebugChannelList DebugManager::listDebugChannels() {
 	sort(tmp.begin(), tmp.end(), DebugLevelComperator());
 
 	return tmp;
+}
+
+void DebugManager::enableAllDebugChannels() {
+	for (DebugChannelMap::iterator i = gDebugChannels.begin(); i != gDebugChannels.end(); ++i)
+		enableDebugChannel(i->_value.name);
+}
+
+void DebugManager::disableAllDebugChannels() {
+	for (DebugChannelMap::iterator i = gDebugChannels.begin(); i != gDebugChannels.end(); ++i)
+		disableDebugChannel(i->_value.name);
 }
 
 bool DebugManager::isDebugChannelEnabled(uint32 channel) {

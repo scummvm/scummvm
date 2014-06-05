@@ -542,9 +542,12 @@ bool Debugger::cmdDebugFlagsList(int argc, const char **argv) {
 
 bool Debugger::cmdDebugFlagEnable(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("debugflag_enable <flag>\n");
+		debugPrintf("debugflag_enable [<flag> | all]\n");
 	} else {
-		if (DebugMan.enableDebugChannel(argv[1])) {
+		if (Common::String(argv[1]) == "all") {
+			debugPrintf("Enabled all debug flags\n");
+			DebugMan.enableAllDebugChannels();
+		} else if (DebugMan.enableDebugChannel(argv[1])) {
 			debugPrintf("Enabled debug flag '%s'\n", argv[1]);
 		} else {
 			debugPrintf("Failed to enable debug flag '%s'\n", argv[1]);
@@ -555,9 +558,12 @@ bool Debugger::cmdDebugFlagEnable(int argc, const char **argv) {
 
 bool Debugger::cmdDebugFlagDisable(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("debugflag_disable <flag>\n");
+		debugPrintf("debugflag_disable [<flag> | all]\n");
 	} else {
-		if (DebugMan.disableDebugChannel(argv[1])) {
+		if (Common::String(argv[1]) == "all") {
+			debugPrintf("Disabled all debug flags\n");
+			DebugMan.disableAllDebugChannels();
+		} else if (DebugMan.disableDebugChannel(argv[1])) {
 			debugPrintf("Disabled debug flag '%s'\n", argv[1]);
 		} else {
 			debugPrintf("Failed to disable debug flag '%s'\n", argv[1]);
