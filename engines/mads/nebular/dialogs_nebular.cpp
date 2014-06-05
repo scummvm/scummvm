@@ -28,6 +28,7 @@
 #include "mads/msurface.h"
 #include "mads/staticres.h"
 #include "mads/nebular/dialogs_nebular.h"
+#include "mads/nebular/game_nebular.h"
 
 namespace MADS {
 
@@ -461,6 +462,7 @@ void PictureDialog::restore() {
 /*------------------------------------------------------------------------*/
 
 ScreenDialog::DialogLine::DialogLine() {
+	_active = true;
 	_state = 0;
 	_textDisplayIndex = -1;
 	_font = nullptr;
@@ -559,6 +561,27 @@ void ScreenDialog::clearLines() {
 	scene._spriteSlots.fullRefresh(true);
 }
 
+void ScreenDialog::setClickableLines() {
+	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
+
+	for (uint idx = 0; idx < _lines.size(); ++idx) {
+		if (_lines[idx]._active) {
+			const Common::Point &pt = _lines[idx]._pos;
+			int strWidth = _lines[idx]._font->getWidth(_lines[idx]._msg);
+			int maxHeight = _lines[idx]._font->getHeight();
+
+			screenObjects.add(Common::Rect(pt.x, pt.y, pt.x + strWidth, pt.y + maxHeight - 1),
+				LAYER_GUI, CAT_COMMAND, idx);
+		}
+	}
+
+	if (_vm->_dialogs->_pendingDialog == DIALOG_SAVE ||
+			_vm->_dialogs->_pendingDialog == DIALOG_RESTORE) {
+		screenObjects.add(Common::Rect(293, 26, 312, 75), LAYER_GUI, CAT_INV_LIST, 50);
+		screenObjects.add(Common::Rect(293, 78, 312, 127), LAYER_GUI, CAT_INV_LIST, 51);
+	}
+}
+
 void ScreenDialog::addQuote(int id1, int id2, DialogTextAlign align,
 		const Common::Point &pt, Font *font) {
 	Common::String msg = _vm->_game->getQuote(id1);
@@ -575,6 +598,9 @@ void ScreenDialog::addLine(const Common::String &msg, DialogTextAlign align,
 		const Common::Point &pt, Font *font) {
 	Scene &scene = _vm->_game->_scene;
 	DialogLine *line;
+
+	if (font == nullptr)
+		font = _vm->_font->getFont(FONT_CONVERSATION);
 
 	if (_lineIndex < (int)_lines.size()) {
 		if (_lines.size() >= 20) {
@@ -680,10 +706,64 @@ void ScreenDialog::setFrame(int frameNumber, int depth) {
 
 }
 
+void ScreenDialog::show() {
+	while (_selectedLine < 1) {
+		bool continueFlag = handleEvents();
+		_vm->_events->waitForNextFrame();
+		_vm->_game->_fx = kTransitionNone;
+
+		if (!continueFlag)
+			break;
+	}
+}
+
+bool ScreenDialog::handleEvents() {
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+DifficultyDialog::DifficultyDialog(MADSEngine *vm) : ScreenDialog(vm) {
+	setFrame(8, 2);
+	setLines();
+	setClickableLines();
+}
+
+void DifficultyDialog::setLines() {
+	Font *font = _vm->_font->getFont(FONT_CONVERSATION);
+	int yp = 78 - ((font->getHeight() + 1) * 4 + 6) / 2;
+
+	addQuote(41, 0, ALIGN_CENTER, Common::Point(0, yp), font);
+	yp += 6;
+
+	for (int id = 42; id <= 44; ++id) {
+		yp += font->getHeight();
+		addQuote(id, 0, ALIGN_CENTER, Common::Point(0, yp));
+	}
+}
+
+void DifficultyDialog::show() {
+	ScreenDialog::show();
+	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
+
+	switch (_selectedLine) {
+	case 1:
+		game._difficulty = Nebular::DIFFICULTY_HARD;
+		break;
+	case 2:
+		game._difficulty = Nebular::DIFFICULTY_MEDIUM;
+		break;
+	case 3:
+		game._difficulty = Nebular::DIFFICULTY_EASY;
+		break;
+	default:
+		_vm->quitGame();
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 GameMenuDialog::GameMenuDialog(MADSEngine *vm) : ScreenDialog(vm) {
-	clearLines();
 	setFrame(1, 2);
 }
 

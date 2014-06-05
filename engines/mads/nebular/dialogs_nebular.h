@@ -103,6 +103,7 @@ enum DialogTextAlign { ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3
 
 class ScreenDialog {
 	struct DialogLine {
+		bool _active;
 		int _state;
 		Common::Point _pos;
 		int _textDisplayIndex;
@@ -131,14 +132,19 @@ protected:
 	void clearLines();
 
 	/**
+	 * Setup lines to be clickable
+	 */
+	void setClickableLines();
+
+	/**
 	 * Add a quote to the lines list
 	 */
-	void addQuote(int id1, int id2, DialogTextAlign align, const Common::Point &pt, Font *font);
+	void addQuote(int id1, int id2, DialogTextAlign align, const Common::Point &pt, Font *font = nullptr);
 
 	/**
 	 * Adds a line to the lines list
 	 */
-	void addLine(const Common::String &msg, DialogTextAlign align, const Common::Point &pt, Font *font);
+	void addLine(const Common::String &msg, DialogTextAlign align, const Common::Point &pt, Font *font = nullptr);
 
 	/**
 	 * Initializes variables
@@ -154,11 +160,36 @@ protected:
 	 * Choose the background to display for the dialog
 	 */
 	void chooseBackground();
+
+	/**
+	 * Handle events whilst the dialog is active
+	 */
+	bool handleEvents();
 public:
 	/**
 	 * Constructor
 	 */
 	ScreenDialog(MADSEngine *vm);
+
+	/**
+	 * Show the dialog
+	 */
+	virtual void show();
+};
+
+class DifficultyDialog : public ScreenDialog {
+private:
+	/**
+	 * Set the lines for the dialog 
+	 */
+	void setLines();
+public:
+	DifficultyDialog(MADSEngine *vm);
+
+	/**
+	* Show the dialog
+	*/
+	virtual void show();
 };
 
 class GameMenuDialog : public ScreenDialog {
