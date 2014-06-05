@@ -129,6 +129,12 @@ PrinceEngine::~PrinceEngine() {
 
 	clearBackAnimList();
 
+	for (uint i = 0; i < _allInvList.size(); i++) {
+		_allInvList[i]._surface->free();
+		delete _allInvList[i]._surface;
+	}
+	_allInvList.clear();
+
 	for (uint i = 0; i < _mainHero->_moveSet.size(); i++) {
 		delete _mainHero->_moveSet[i];
 	}
@@ -218,6 +224,8 @@ void PrinceEngine::init() {
 	invTxtStream->read(_invTxt, _invTxtSize);
 
 	delete invTxtStream;
+
+	loadAllInv();
 
 	_roomBmp = new Image::BitmapDecoder();
 
@@ -552,6 +560,34 @@ bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *r
 
 	delete stream;
 	delete stream2;
+	return true;
+}
+
+bool PrinceEngine::loadAllInv() {
+	for (int i = 0; i < kMaxInv; i++) {
+		InvItem tempInvItem;
+
+		const Common::String invStreamName = Common::String::format("INV%02d", i);
+		Common::SeekableReadStream *invStream = SearchMan.createReadStreamForMember(invStreamName);
+		if (!invStream) {
+			delete invStream;
+			return true;
+		}
+
+		invStream->skip(4);
+		int width = invStream->readUint16LE();
+		int height = invStream->readUint16LE();
+		tempInvItem._surface = new Graphics::Surface();
+		tempInvItem._surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+		for (int h = 0; h < tempInvItem._surface->h; h++) {
+			invStream->read(tempInvItem._surface->getBasePtr(0, h), tempInvItem._surface->w);
+		}
+
+		_allInvList.push_back(tempInvItem);
+		delete invStream;
+	}
+
 	return true;
 }
 
@@ -1192,6 +1228,8 @@ void PrinceEngine::drawScreen() {
 
 	showParallax();
 
+	displayInventory(); // temp
+
 	runDrawNodes();
 
 	freeDrawNodes();
@@ -1219,6 +1257,7 @@ void PrinceEngine::rememberScreenInv() {
 }
 
 void PrinceEngine::prepareInventoryToView() {
+	_invMobList.clear();
 	int invItem = _mainHero->_inventory.size();
 	_invLine =  invItem / 3;
 	if (invItem % 3 != 0) {
@@ -1239,14 +1278,16 @@ void PrinceEngine::prepareInventoryToView() {
 	for (int i = 0 ; i < _invLines; i++) {
 		for (int j = 0; j < _invLine; j++) {
 			Mob tempMobItem;
-			tempMobItem._mask =  _mainHero->_inventory[item] - 1;
-			tempMobItem._x1 = currInvX + _picWindowX; //picWindowX2 ?
-			tempMobItem._x2 = currInvX + _picWindowX + _invLineW  - 1; // picWindowX2 ?
-			tempMobItem._y1 = currInvY;
-			tempMobItem._y2 = currInvY + _invLineH - 1;
-			//tempMobItem._name = ;
-			//tempMobItem._examText = ;
-			_invMobList.push_back(tempMobItem);
+			if (item < _mainHero->_inventory.size()) {
+				tempMobItem._mask =  _mainHero->_inventory[item] - 1;
+				tempMobItem._x1 = currInvX + _picWindowX; //picWindowX2 ?
+				tempMobItem._x2 = currInvX + _picWindowX + _invLineW  - 1; // picWindowX2 ?
+				tempMobItem._y1 = currInvY;
+				tempMobItem._y2 = currInvY + _invLineH - 1;
+				//tempMobItem._name = ;
+				//tempMobItem._examText = ;
+				_invMobList.push_back(tempMobItem);
+			}
 			currInvX += _invLineW + _invLineSkipX;
 			item++;
 		}
@@ -1260,8 +1301,43 @@ void PrinceEngine::prepareInventoryToView() {
 	//mov	d MobPriAddr,o InvMobPri
 }
 
-void PrinceEngine::displayInventory() {
+void PrinceEngine::drawInvItems() {
+	int currInvX = _invLineX;
+	int currInvY = _invLineY;
+	uint item = 0;
+	for (int i = 0 ; i < _invLines; i++) {
+		for (int j = 0; j < _invLine; j++) {
+			if (item < _mainHero->_inventory.size()) {
+				//MST_Shadow
+				// TODO!
+				//shad0:
+				if (_mainHero->_inventory[item] != 0) {
+					int itemNr = _mainHero->_inventory[item];
+					if (itemNr != 68) {
+						showSprite(_allInvList[itemNr].getSurface(), currInvX, currInvY, 10000, false); // temp
+					} else {
+						// candle item:
+					}
+				}
+			}
+			currInvX += _invLineW + _invLineSkipX;
+			item++;
+		}
+		currInvX = _invLineX;
+		currInvY += _invLineSkipY + _invLineH;
+	}
+}
 
+void PrinceEngine::displayInventory() {
+	_mainHero->_inventory.clear();
+	_mainHero->_inventory.push_back(0);
+	_mainHero->_inventory.push_back(1);
+	_mainHero->_inventory.push_back(2);
+	_mainHero->_inventory.push_back(3);
+	_mainHero->_inventory.push_back(4);
+	_mainHero->_inventory.push_back(5);
+	prepareInventoryToView();
+	drawInvItems();
 }
 
 void PrinceEngine::mainLoop() {

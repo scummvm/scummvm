@@ -179,6 +179,11 @@ struct Mask {
 	}
 };
 
+struct InvItem {
+	Graphics::Surface *_surface;
+	Graphics::Surface *getSurface() const { return _surface; }
+};
+
 struct DrawNode {
 	int posX;
 	int posY;
@@ -265,21 +270,25 @@ public:
 	void showMask(int maskNr, Graphics::Surface *originalRoomSurface);
 	void clsMasks();
 
+	static const int16 kMaxInv = 90; // max amount of inventory items in whole game
+
 	uint32 _invTxtSize;
 	byte *_invTxt;
 
 	int _invLineX;
 	int _invLineY;
-	int _invLine;
-	int _invLines;
+	int _invLine;  // number of items in one line
+	int _invLines; // number of lines with inventory items
 	int _invLineW;
 	int _invLineH;
 	int _maxInvW;
 	int _invLineSkipX;
 	int _invLineSkipY;
 
+	bool loadAllInv();
 	void rememberScreenInv();
 	void prepareInventoryToView();
+	void drawInvItems();
 	void displayInventory();
 
 	int testAnimNr;
@@ -334,6 +343,7 @@ private:
 	Common::Array<Object *> _objList;
 	Common::Array<Mask> _maskList;
 	Common::Array<DrawNode> _drawNodeList;
+	Common::Array<InvItem> _allInvList;
 	Common::Array<Mob> _invMobList;
 
 	bool _flicLooped;
