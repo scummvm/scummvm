@@ -754,7 +754,8 @@ bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 s
 	if (size != 56)
 		return false;
 
-	s->skip(size);
+	_view.read(s);
+
 	return true;
 }
 

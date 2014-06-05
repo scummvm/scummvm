@@ -105,6 +105,7 @@ int Scene::advanceFrame(Graphics::Surface &surface) {
 	int frame = _vqaPlayer.update();
 	if (frame >= 0) {
 		surface.copyFrom(*_vqaPlayer.getSurface());
+		_view = _vqaPlayer.getView();
 	}
 	return frame;
 }

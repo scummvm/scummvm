@@ -64,6 +64,7 @@ int VQAPlayer::update() {
 			if (_hasAudio)
 				queueAudioFrame(_decoder.decodeAudioFrame());
 			_surface = _decoder.decodeVideoFrame();
+			_view = _decoder.getView();
 		}
 
 		_decodedFrame = calcNextFrame(_curFrame);
@@ -86,6 +87,7 @@ int VQAPlayer::update() {
 		_curFrame = _decodedFrame;
 		if (_curFrame >= 0) {
 			_surface = _decoder.decodeVideoFrame();
+			_view = _decoder.getView();
 		}
 
 		_decodedFrame = calcNextFrame(_curFrame);

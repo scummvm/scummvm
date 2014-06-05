@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	script/script.o \
 	set.o \
 	settings.o \
+	view.o \
 	vqa_decoder.o \
 	vqa_player.o
 

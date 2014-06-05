@@ -47,6 +47,8 @@ class VQAPlayer {
 	int _loopSpecial;
 	int _loopDefault;
 
+	View _view;
+
 	uint32 _nextFrameTime;
 	bool   _hasAudio;
 	bool   _audioStarted;
@@ -78,6 +80,7 @@ public:
 
 	int  update();
 	const Graphics::Surface *getSurface() const;
+	const View &getView() const { return _view; }
 
 	void setLoopSpecial(int loop, bool wait);
 	void setLoopDefault(int loop);

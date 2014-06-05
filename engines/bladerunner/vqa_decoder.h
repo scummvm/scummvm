@@ -24,6 +24,7 @@
 #define BLADERUNNER_VQA_DECODER_H
 
 #include "bladerunner/aud_decoder.h"
+#include "bladerunner/view.h"
 
 #include "audio/audiostream.h"
 
@@ -50,6 +51,8 @@ public:
 
 	const Graphics::Surface    *decodeVideoFrame();
 	Audio::SeekableAudioStream *decodeAudioFrame();
+
+	const View &getView() { return _videoTrack->getView(); }
 
 	uint16 numFrames() const { return _header.numFrames; }
 	uint8  frameRate() const { return _header.frameRate; }
@@ -158,6 +161,7 @@ private:
 		int getCurFrame() const;
 		int getFrameCount() const;
 		const Graphics::Surface *decodeVideoFrame();
+		const View &getView() { return _view; }
 
 		bool readVQFR(Common::SeekableReadStream *s, uint32 size);
 		bool readVPTR(Common::SeekableReadStream *s, uint32 size);
@@ -197,6 +201,8 @@ private:
 		uint8   *_vpointer;
 
 		int      _curFrame;
+
+		View     _view;
 
 		void VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
 		bool decodeFrame(uint16 *frame);

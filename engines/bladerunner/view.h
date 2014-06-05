@@ -20,45 +20,36 @@
  *
  */
 
-#ifndef BLADERUNNER_SCENE_H
-#define BLADERUNNER_SCENE_H
+#ifndef BLADERUNNER_VIEW_H
+#define BLADERUNNER_VIEW_H
 
-#include "bladerunner/view.h"
-#include "bladerunner/vqa_player.h"
+#include "matrix.h"
+
+namespace Common {
+	class ReadStream;
+}
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
-
-class Scene {
-	BladeRunnerEngine *_vm;
-
+class View {
 public:
-	int         _setId;
-	int         _sceneId;
-	VQAPlayer   _vqaPlayer;
-	int         _defaultLoop;
-	int         _nextSetId;
-	int         _nextSceneId;
-	int         _frame;
-	bool        _playerWalkedIn;
-	View        _view;
+	float     _fovX;
+	Matrix4x3 _frameViewMatrix;
+	Matrix4x3 _sliceViewMatrix;
+	uint32    _frame;
 
-public:
-	Scene(BladeRunnerEngine *vm)
-		: _vm(vm),
-		  _setId(-1),
-		  _sceneId(-1),
-		  _vqaPlayer(vm),
-		  _defaultLoop(0),
-		  _nextSetId(-1),
-		  _nextSceneId(-1),
-		  _playerWalkedIn(false)
-	{
-	}
+	Vector3   _cameraPosition;
 
-	bool open(int setId, int sceneId, bool isLoadingGame);
-	int advanceFrame(Graphics::Surface &surface);
+	float     _viewportHalfWidth;
+	float     _viewportHalfHeight;
+	float     _viewportDistance;
+
+	bool read(Common::ReadStream *stream);
+
+private:
+	void setFovX(float fovX);
+	void calculateSliceViewMatrix();
+	void calculateCameraPosition();
 };
 
 } // End of namespace BladeRunner
