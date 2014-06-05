@@ -19,7 +19,9 @@ def buildTheme(themeName):
 
 	zf.write('THEMERC', './THEMERC')
 
-	for filename in os.listdir('.'):
+	filenames = os.listdir('.')
+	filenames.sort()
+	for filename in filenames:
 		if os.path.isfile(filename) and not filename[0] == '.' and filename.endswith(THEME_FILE_EXTENSIONS):
 			zf.write(filename, './' + filename)
 			print ("    Adding file: " + filename)
@@ -65,7 +67,9 @@ def buildDefTheme(themeName):
 	def_file.write(""" "<?xml version = '1.0'?>"\n""")
 	strlitcount = 24
 
-	for filename in os.listdir(themeName):
+	filenames = os.listdir(themeName)
+	filenames.sort()
+	for filename in filenames:
 		filename = os.path.join(themeName, filename)
 		if os.path.isfile(filename) and filename.endswith(".stx"):
 			theme_file = open(filename, "r")
