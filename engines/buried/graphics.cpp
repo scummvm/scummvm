@@ -583,16 +583,21 @@ Graphics::Surface *GraphicsManager::remapPalettedFrame(const Graphics::Surface *
 Common::SeekableReadStream *GraphicsManager::findArialStream(bool bold) const {
 	Common::SeekableReadStream *stream = 0;
 
+	// Try to see if the user supplied a font
+	Common::String defaultBaseName = bold ? "arialbd.ttf" : "arial.ttf";
+	stream = SearchMan.createReadStreamForMember(defaultBaseName);
+	if (stream)
+		return stream;
+
 	// HACK: Try to load the system font
 #if defined(WIN32)
-	Common::String baseName = bold ? "arialbd.ttf" : "arial.ttf";
-	Common::FSNode fontPath("C:/WINDOWS/Fonts/" + baseName);
+	Common::FSNode fontPath("C:/WINDOWS/Fonts/" + defaultBaseName);
 
 	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
 		stream = fontPath.createReadStream();
 
 	if (!stream) {
-		Common::FSNode win2kFontPath("C:/WINNT/Fonts/" + baseName);
+		Common::FSNode win2kFontPath("C:/WINNT/Fonts/" + defaultBaseName);
 
 		if (win2kFontPath.exists() && !win2kFontPath.isDirectory() && win2kFontPath.isReadable())
 			stream = win2kFontPath.createReadStream();
@@ -720,6 +725,11 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size) const {
 Common::SeekableReadStream *GraphicsManager::findMSGothicStream() const {
 	Common::SeekableReadStream *stream = 0;
 
+	// Try to see if the user supplied a font
+	stream = SearchMan.createReadStreamForMember("msgothic.ttc");
+	if (stream)
+		return stream;
+
 	// HACK: Try to load the system font
 #if defined(WIN32)
 	Common::FSNode fontPath("C:/WINDOWS/Fonts/msgothic.ttc");
@@ -733,12 +743,6 @@ Common::SeekableReadStream *GraphicsManager::findMSGothicStream() const {
 		if (win2kFontPath.exists() && !win2kFontPath.isDirectory() && win2kFontPath.isReadable())
 			stream = win2kFontPath.createReadStream();
 	}
-#elif defined(MACOSX)
-	// Attempt to load the font from MS Gothic.ttf
-	Common::FSNode fontPath(Common::String::format("/Library/Fonts/Microsoft/MS Gothic.ttf"));
-
-	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
-		stream = fontPath.createReadStream();
 #endif
 
 	if (!stream) {
