@@ -70,18 +70,9 @@ public:
 	 */
 	DECLARE_FUNCTION_2(savegame, SavegameType savegameType, uint32 param)
 
-	/**
-	 * Handle Chapter 1 & 2 events
-	 */
-	DECLARE_FUNCTION(chapter12_handler)
-
-	DECLARE_FUNCTION(function7)
-
-	/**
-	 * Handle Chapter 4 events
-	 */
-	DECLARE_FUNCTION(chapter4Handler)
-
+	DECLARE_FUNCTION(withAnna)
+	DECLARE_FUNCTION(guardingCompartment)
+	DECLARE_FUNCTION(inCageFriendly)
 	DECLARE_FUNCTION(function9)
 
 	/**
@@ -104,8 +95,8 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter3Handler)
 
-	DECLARE_FUNCTION(freeFromCage)
-	DECLARE_FUNCTION(function15)
+	DECLARE_FUNCTION(inCageMad)
+	DECLARE_FUNCTION(letMeIn)
 
 	/**
 	 * Setup Chapter 4

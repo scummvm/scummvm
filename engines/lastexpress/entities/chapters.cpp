@@ -1539,7 +1539,7 @@ label_callback_4:
 			RESET_ENTITY_STATE(kEntityYasmin, Yasmin, setup_function17);
 			RESET_ENTITY_STATE(kEntityHadija, Hadija, setup_function19);
 			RESET_ENTITY_STATE(kEntityAlouan, Alouan, setup_function19);
-			RESET_ENTITY_STATE(kEntityMax, Max, setup_chapter4Handler);
+			RESET_ENTITY_STATE(kEntityMax, Max, setup_inCageFriendly);
 			getSavePoints()->push(kEntityChapters, kEntityAnna, kAction201431954);
 			getSavePoints()->push(kEntityChapters, kEntityMertens, kAction201431954);
 			getSavePoints()->push(kEntityChapters, kEntityCoudert, kAction201431954);
