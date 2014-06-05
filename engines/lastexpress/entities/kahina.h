@@ -69,7 +69,7 @@ public:
 	 */
 	DECLARE_FUNCTION_NOSETUP(updateFromTicks)
 
-	DECLARE_FUNCTION_1(function6, TimeValue timeValue)
+	DECLARE_FUNCTION_1(lookingForCath, TimeValue timeValue)
 
 	/**
 	 * Updates the entity
@@ -105,20 +105,16 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter1Handler)
 
-	DECLARE_FUNCTION(function12)
-	DECLARE_FUNCTION(function13)
+	DECLARE_FUNCTION(awaitingCath)
+	DECLARE_FUNCTION(cathDone)
 	DECLARE_FUNCTION(function14)
-	DECLARE_FUNCTION(function15)
+	DECLARE_FUNCTION(searchTrain)
 
 	/**
 	 * Setup Chapter 2
 	 */
 	DECLARE_FUNCTION(chapter2)
-
-	/**
-	 * Handle Chapter 2 events
-	 */
-	DECLARE_FUNCTION(chapter2Handler)
+	DECLARE_FUNCTION(inSeclusionPart2)
 
 	/**
 	 * Setup Chapter 3
@@ -133,18 +129,14 @@ public:
 	 */
 	DECLARE_FUNCTION_2(function19, CarIndex car, EntityPosition entityPosition)
 
-	/**
-	 * Handle Chapter 3 events
-	 */
-	DECLARE_FUNCTION(chapter3Handler)
-
-	DECLARE_FUNCTION(function21)
-	DECLARE_FUNCTION(function22)
-	DECLARE_FUNCTION(function23)
-	DECLARE_FUNCTION(function24)
-	DECLARE_FUNCTION(function25)
-	DECLARE_FUNCTION(function26)
-	DECLARE_FUNCTION(function27)
+	DECLARE_FUNCTION(beforeConcert)
+	DECLARE_FUNCTION(concert)
+	DECLARE_FUNCTION(finished)
+	DECLARE_FUNCTION(findFirebird)
+	DECLARE_FUNCTION(seekCath)
+	DECLARE_FUNCTION(searchCath)
+	DECLARE_FUNCTION(searchTatiana)
+	DECLARE_FUNCTION(killCathAnywhere)
 
 	/**
 	 * Setup Chapter 4

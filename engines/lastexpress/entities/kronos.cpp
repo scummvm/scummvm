@@ -668,7 +668,7 @@ IMPLEMENT_FUNCTION(20, Kronos, duringConcert)
 			getData()->entityPosition = kPosition_6000;
 			getAction()->playAnimation(kEventConcertLeaveWithBriefcase);
 
-			RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_function21);
+			RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_concert);
 
 			getScenes()->loadSceneFromPosition(kCarKronos, 87);
 			break;

@@ -220,7 +220,7 @@ IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
 		getSavePoints()->push(kEntityChapters, kEntityVerges, kAction201431954);
 
 		RESET_ENTITY_STATE(kEntityKronos, Kronos, setup_function10);
-		RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_function13);
+		RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_cathDone);
 		RESET_ENTITY_STATE(kEntityAnna, Anna, setup_asleep);
 		RESET_ENTITY_STATE(kEntityAugust, August, setup_function34);
 		RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function24);
@@ -269,7 +269,6 @@ IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
 
 		if (getSoundQueue()->isBuffered("ZFX1007B"))
 			getSoundQueue()->processEntry("ZFX1007B");
-
 
 		getSound()->playSound(kEntityPlayer, "MUS008", kFlagDefault);
 		getInventory()->unselectItem();
@@ -1753,7 +1752,6 @@ IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
 		break;
 	}
 IMPLEMENT_FUNCTION_END
-
 
 //////////////////////////////////////////////////////////////////////////
 // Private functions
