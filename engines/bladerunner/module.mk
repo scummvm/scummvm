@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	detection.o \
 	gameinfo.o \
 	image.o \
+	matrix.o \
 	outtake.o \
 	scene.o \
 	script/rc01.o \
