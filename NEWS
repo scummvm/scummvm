@@ -28,13 +28,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added back support for MPEG-2 videos.
 
  CGE:
-   - Added an option to enable Color Blind mode the ScummVM GUI.
+   - Added an option to enable "Color Blind Mode" to the ScummVM GUI.
 
  Gob:
    - Improved video quality in Urban Runner.
 
  Hopkins:
-   - Added an option to toggle Gore Mode from the ScummVM GUI.
+   - Added an option to toggle "Gore Mode" from the ScummVM GUI.
    - Fixed bug that could cause the music to stop prematurely.
 
  SCI:
