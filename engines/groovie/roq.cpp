@@ -64,7 +64,7 @@ ROQPlayer::~ROQPlayer() {
 
 uint16 ROQPlayer::loadInternal() {
 	// Begin reading the file
-	debugC(1, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Loading video");
+	debugC(1, kDebugVideo, "Groovie::ROQ: Loading video");
 
 	// Read the file header
 	ROQBlockHeader blockHeader;
@@ -131,7 +131,7 @@ void ROQPlayer::buildShowBuf() {
 }
 
 bool ROQPlayer::playFrameInternal() {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Playing frame");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Playing frame");
 
 	// Process the needed blocks until the next video frame
 	bool endframe = false;
@@ -168,9 +168,9 @@ bool ROQPlayer::readBlockHeader(ROQBlockHeader &blockHeader) {
 		blockHeader.size = _file->readUint32LE();
 		blockHeader.param = _file->readUint16LE();
 
-		debugC(10, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Block type = 0x%02X", blockHeader.type);
-		debugC(10, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Block size = 0x%08X", blockHeader.size);
-		debugC(10, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Block param = 0x%04X", blockHeader.param);
+		debugC(10, kDebugVideo, "Groovie::ROQ: Block type = 0x%02X", blockHeader.type);
+		debugC(10, kDebugVideo, "Groovie::ROQ: Block size = 0x%08X", blockHeader.size);
+		debugC(10, kDebugVideo, "Groovie::ROQ: Block param = 0x%04X", blockHeader.param);
 
 		return true;
 	}
@@ -238,7 +238,7 @@ bool ROQPlayer::processBlock() {
 }
 
 bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing info block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing info block");
 
 	// Verify the block header
 	if (blockHeader.type != 0x1001 || blockHeader.size != 8 || (blockHeader.param != 0 && blockHeader.param != 1)) {
@@ -285,7 +285,7 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 }
 
 bool ROQPlayer::processBlockQuadCodebook(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad codebook block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing quad codebook block");
 
 	// Get the number of 2x2 pixel blocks to read
 	int newNum2blocks = blockHeader.param >> 8;
@@ -333,7 +333,7 @@ bool ROQPlayer::processBlockQuadCodebook(ROQBlockHeader &blockHeader) {
 }
 
 bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad vector block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing quad vector block");
 
 	// Get the mean motion vectors
 	int8 Mx = blockHeader.param >> 8;
@@ -396,7 +396,7 @@ void ROQPlayer::processBlockQuadVectorBlock(int baseX, int baseY, int8 Mx, int8 
 }
 
 void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, int8 My) {
-	debugC(6, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad vector sub block");
+	debugC(6, kDebugVideo, "Groovie::ROQ: Processing quad vector sub block");
 
 	uint16 codingType = getCodingType();
 	switch (codingType) {
@@ -422,7 +422,7 @@ void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, in
 }
 
 bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing still (JPEG) block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing still (JPEG) block");
 
 	Image::JPEGDecoder jpg;
 
@@ -440,7 +440,7 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 }
 
 bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing mono sound block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing mono sound block");
 
 	// Verify the block header
 	if (blockHeader.type != 0x1020) {
@@ -483,7 +483,7 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 }
 
 bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing stereo sound block");
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing stereo sound block");
 
 	// Verify the block header
 	if (blockHeader.type != 0x1021) {
@@ -539,7 +539,7 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 }
 
 bool ROQPlayer::processBlockAudioContainer(ROQBlockHeader &blockHeader) {
-	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing audio container block: 0x%04X", blockHeader.param);
+	debugC(5, kDebugVideo, "Groovie::ROQ: Processing audio container block: 0x%04X", blockHeader.param);
 	return true;
 }
 

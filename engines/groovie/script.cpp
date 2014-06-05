@@ -47,14 +47,14 @@
 
 namespace Groovie {
 
+// FIXME - Outdated. Can be replaced by debugC() and debugCN() calls.
 static void debugScript(int level, bool nl, const char *s, ...) GCC_PRINTF(3, 4);
 
 static void debugScript(int level, bool nl, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
-	if (!DebugMan.isDebugChannelEnabled(kGroovieDebugScript) &&
-	    !DebugMan.isDebugChannelEnabled(kGroovieDebugAll))
+	if (!DebugMan.isDebugChannelEnabled(kDebugScript))
 		return;
 
 	va_start(va, s);
@@ -120,7 +120,7 @@ Script::~Script() {
 
 void Script::setVariable(uint16 variablenum, byte value) {
 	_variables[variablenum] = value;
-	debugC(1, kGroovieDebugScriptvars | kGroovieDebugAll, "script variable[0x%03X] = %d (0x%04X)", variablenum, value, value);
+	debugC(1, kDebugScriptvars, "script variable[0x%03X] = %d (0x%04X)", variablenum, value, value);
 }
 
 void Script::setDebugger(Debugger *debugger) {
@@ -369,8 +369,7 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 	bool contained = rect.contains(mousepos);
 
 	// Show hotspots when debugging
-	if (DebugMan.isDebugChannelEnabled(kGroovieDebugHotspots) ||
-	    DebugMan.isDebugChannelEnabled(kGroovieDebugAll)) {
+	if (DebugMan.isDebugChannelEnabled(kDebugHotspots)) {
 		rect.translate(0, -80);
 		_vm->_graphicsMan->_foreground.frameRect(rect, 250);
 		_vm->_system->copyRectToScreen(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_foreground.pitch, 0, 80, 640, 320);
@@ -416,7 +415,7 @@ void Script::savegame(uint slot) {
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
 
 	if (!file) {
-		debugC(9, kGroovieDebugScript, "Save file pointer is null");
+		debugC(9, kDebugScript, "Save file pointer is null");
 		GUI::MessageDialog dialog(_("Failed to save game"), _("OK"));
 		dialog.runModal();
 		return;
@@ -532,7 +531,7 @@ void Script::o_videofromref() {			// 0x09
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
 		debugScript(1, false, "VIDEOFROMREF(0x%04X) (Not fully imp): Play video file from ref", fileref);
-		debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%04X via 0x09", fileref);
+		debugC(5, kDebugVideo, "Playing video 0x%04X via 0x09", fileref);
 	}
 	switch (fileref) {
 	case 0x1C03:	// Trilobyte logo
@@ -913,7 +912,7 @@ void Script::o_vdxtransition() {		// 0x1C
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
 		debugScript(1, true, "VDX transition fileref = 0x%04X", fileref);
-		debugC(1, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%04X with transition", fileref);
+		debugC(1, kDebugVideo, "Playing video 0x%04X with transition", fileref);
 	}
 
 	// Set bit 1
@@ -1654,7 +1653,7 @@ void Script::o2_videofromref() {
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
 		debugScript(1, true, "VIDEOFROMREF(0x%08X) (Not fully imp): Play video file from ref", fileref);
-		debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%08X via 0x09", fileref);
+		debugC(5, kDebugVideo, "Playing video 0x%08X via 0x09", fileref);
 	}
 
 	// Play the video
@@ -1670,7 +1669,7 @@ void Script::o2_vdxtransition() {
 	// Show the debug information just when starting the playback
 	if (fileref != _videoRef) {
 		debugScript(1, true, "VDX transition fileref = 0x%08X", fileref);
-		debugC(1, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%08X with transition", fileref);
+		debugC(1, kDebugVideo, "Playing video 0x%08X with transition", fileref);
 	}
 
 	// Set bit 1
