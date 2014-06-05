@@ -544,7 +544,7 @@ bool Debugger::cmdDebugFlagEnable(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("debugflag_enable [<flag> | all]\n");
 	} else {
-		if (Common::String(argv[1]) == "all") {
+		if (!scumm_stricmp(argv[1], "all")) {
 			debugPrintf("Enabled all debug flags\n");
 			DebugMan.enableAllDebugChannels();
 		} else if (DebugMan.enableDebugChannel(argv[1])) {
@@ -560,7 +560,7 @@ bool Debugger::cmdDebugFlagDisable(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("debugflag_disable [<flag> | all]\n");
 	} else {
-		if (Common::String(argv[1]) == "all") {
+		if (!scumm_stricmp(argv[1], "all")) {
 			debugPrintf("Disabled all debug flags\n");
 			DebugMan.disableAllDebugChannels();
 		} else if (DebugMan.disableDebugChannel(argv[1])) {
