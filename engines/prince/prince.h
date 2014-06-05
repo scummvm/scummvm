@@ -245,8 +245,6 @@ public:
 	Hero *_mainHero;
 	Hero *_secondHero;
 
-	uint16 _cameraX;
-	uint16 _newCameraX;
 	uint16 _sceneWidth;
 	int32 _picWindowX;
 	int32 _picWindowY;
@@ -274,8 +272,6 @@ private:
 	bool playNextFrame();
 	void keyHandler(Common::Event event);
 	void hotspot();
-	void scrollCameraRight(int16 delta);
-	void scrollCameraLeft(int16 delta);
 	void drawScreen();
 	void showTexts();
 	void init();

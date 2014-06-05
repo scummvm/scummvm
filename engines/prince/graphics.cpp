@@ -116,7 +116,7 @@ void GraphicsMan::drawMask(Graphics::Surface *frontScreen, DrawNode *drawNode) {
 					if ((drawNode->data[tempMaskPostion] & maskCounter) != 0) {
 						byte orgPixel = *((byte*)drawNode->originalRoomSurface->getBasePtr(x + drawNode->posX, y + drawNode->posY));
 						*((byte*)frontScreen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = orgPixel;
-						//*((byte*)frontScreen->getBasePtr(x + posX, y + posY)) = 0; // for debugging
+						//*((byte*)frontScreen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = 0; // for debugging
 					}
 				}
 			}

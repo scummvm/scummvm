@@ -77,7 +77,7 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) : 
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
 	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), testAnimNr(0), testAnimFrame(0),
-	_cameraX(0), _newCameraX(0), _frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
+	_frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince") {
 
 	// Debug/console setup
@@ -279,9 +279,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	_locationNr = locationNr;
 	_debugger->_locationNr = locationNr;
-	_cameraX = 0;
-	_newCameraX = 0;
-	
+
 	_flags->setFlagValue(Flags::CURRROOM, _locationNr);
 	_interpreter->stopBg();
 
@@ -544,24 +542,6 @@ bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *r
 	return true;
 }
 
-void PrinceEngine::scrollCameraLeft(int16 delta) {
-    if (_newCameraX > 0) {
-        if (_newCameraX < delta)
-            _newCameraX = 0;
-        else
-            _newCameraX -= delta;
-    }   
-}
-
-void PrinceEngine::scrollCameraRight(int16 delta) {
-    if (_newCameraX != _sceneWidth - 640) {
-        if (_sceneWidth - 640 < delta + _newCameraX)
-            delta += (_sceneWidth - 640) - (delta + _newCameraX);
-        _newCameraX += delta;
-        debugEngine("PrinceEngine::scrollCameraRight() _newCameraX = %d; delta = %d", _newCameraX, delta);
-    }   
-}
-
 void PrinceEngine::keyHandler(Common::Event event) {
 	uint16 nChar = event.kbd.keycode;
 	switch (nChar) {
@@ -571,14 +551,12 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		}
 		break;
 	case Common::KEYCODE_LEFT:
-		scrollCameraLeft(32);
 		if(testAnimNr > 0) {
 			testAnimNr--;
 		}
 		debug("testAnimNr: %d", testAnimNr);
 		break;
 	case Common::KEYCODE_RIGHT:
-		scrollCameraRight(32);
 		testAnimNr++;
 		debug("testAnimNr: %d", testAnimNr);
 		break;
@@ -652,7 +630,7 @@ void PrinceEngine::keyHandler(Common::Event event) {
 
 void PrinceEngine::hotspot() {
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
-	Common::Point mousePosCamera(mousepos.x + _cameraX, mousepos.y);
+	Common::Point mousePosCamera(mousepos.x + _picWindowX, mousepos.y);
 
 	for (Common::Array<Mob>::const_iterator it = _mobList.begin(); it != _mobList.end() ; it++) {
 		const Mob& mob = *it;
@@ -1272,9 +1250,8 @@ void PrinceEngine::mainLoop() {
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
 		_system->delayMillis(delay);
-		
-		_cameraX = _newCameraX;
-		++_frameNr;
+
+		_frameNr++;
 
 		if (_debugger->_locationNr != _locationNr)
 			loadLocation(_debugger->_locationNr);
