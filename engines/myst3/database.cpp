@@ -932,7 +932,7 @@ void Database::loadSoundNames(Common::ReadStreamEndian *s) {
 }
 
 Common::String Database::getSoundName(uint32 id) {
-	const Common::String &result = _soundNames.getVal(id, "");
+	const Common::String result = _soundNames.getVal(id, "");
 	if (result.empty())
 		error("Unable to find a sound with id %d", id);
 
