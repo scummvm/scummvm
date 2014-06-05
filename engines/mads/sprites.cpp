@@ -54,14 +54,14 @@ typedef Common::List<DepthEntry> DepthList;
 
 /*------------------------------------------------------------------------*/
 
-MSprite::MSprite()
-	: MSurface() {
+MSprite::MSprite() : MSurface() {
+	_transparencyIndex = TRANSPARENT_COLOR_INDEX;
 }
 
 MSprite::MSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette,
 		const Common::Rect &bounds)
 	: MSurface(bounds.width(), bounds.height()),
-	  _offset(Common::Point(bounds.left, bounds.top)), _transparencyIndex(0xFF) {
+	  _offset(Common::Point(bounds.left, bounds.top)), _transparencyIndex(TRANSPARENT_COLOR_INDEX) {
 	// Load the sprite data
 	loadSprite(source, palette);
 }
@@ -133,7 +133,7 @@ void MSprite::loadSprite(Common::SeekableReadStream *source,
 }
 
 byte MSprite::getTransparencyIndex() const {
-	return TRANSPARENT_COLOR_INDEX;
+	return _transparencyIndex;
 }
 
 /*------------------------------------------------------------------------*/
