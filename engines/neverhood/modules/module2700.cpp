@@ -461,6 +461,7 @@ void Module2700::updateScene() {
 			_vm->_soundMan->deleteMusic(_musicFileHash);
 			_vm->_soundMan->startMusic(0x04020210, 0, 2);
 			_vm->_soundMan->deleteSoundGroup(0x42212411);
+			_radioMusicInitialized = false;
 			createScene(20, 3);
 			break;
 		case 22:
