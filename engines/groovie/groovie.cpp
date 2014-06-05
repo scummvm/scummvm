@@ -68,17 +68,16 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 		_modeSpeed = kGroovieSpeedFast;
 
 	// Initialize the custom debug levels
-	DebugMan.addDebugChannel(kGroovieDebugAll, "All", "Debug everything");
-	DebugMan.addDebugChannel(kGroovieDebugVideo, "Video", "Debug video and audio playback");
-	DebugMan.addDebugChannel(kGroovieDebugResource, "Resource", "Debug resouce management");
-	DebugMan.addDebugChannel(kGroovieDebugScript, "Script", "Debug the scripts");
-	DebugMan.addDebugChannel(kGroovieDebugUnknown, "Unknown", "Report values of unknown data in files");
-	DebugMan.addDebugChannel(kGroovieDebugHotspots, "Hotspots", "Show the hotspots");
-	DebugMan.addDebugChannel(kGroovieDebugCursor, "Cursor", "Debug cursor decompression / switching");
-	DebugMan.addDebugChannel(kGroovieDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
-	DebugMan.addDebugChannel(kGroovieDebugScriptvars, "Scriptvars", "Print out any change to script variables");
-	DebugMan.addDebugChannel(kGroovieDebugCell, "Cell", "Debug the cell game (in the microscope)");
-	DebugMan.addDebugChannel(kGroovieDebugFast, "Fast", "Play videos quickly, with no sound (unstable)");
+	DebugMan.addDebugChannel(kDebugVideo, "Video", "Debug video and audio playback");
+	DebugMan.addDebugChannel(kDebugResource, "Resource", "Debug resouce management");
+	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
+	DebugMan.addDebugChannel(kDebugUnknown, "Unknown", "Report values of unknown data in files");
+	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Show the hotspots");
+	DebugMan.addDebugChannel(kDebugCursor, "Cursor", "Debug cursor decompression / switching");
+	DebugMan.addDebugChannel(kDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
+	DebugMan.addDebugChannel(kDebugScriptvars, "Scriptvars", "Print out any change to script variables");
+	DebugMan.addDebugChannel(kDebugCell, "Cell", "Debug the cell game (in the microscope)");
+	DebugMan.addDebugChannel(kDebugFast, "Fast", "Play videos quickly, with no sound (unstable)");
 }
 
 GroovieEngine::~GroovieEngine() {

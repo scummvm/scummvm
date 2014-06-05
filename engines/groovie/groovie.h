@@ -58,18 +58,18 @@ class Script;
 class VideoPlayer;
 
 enum DebugLevels {
-	kGroovieDebugAll = 1 << 0,
-	kGroovieDebugVideo = 1 << 1,
-	kGroovieDebugResource = 1 << 2,
-	kGroovieDebugScript = 1 << 3,
-	kGroovieDebugUnknown = 1 << 4,
-	kGroovieDebugHotspots = 1 << 5,
-	kGroovieDebugCursor = 1 << 6,
-	kGroovieDebugMIDI = 1 << 7,
-	kGroovieDebugScriptvars = 1 << 8,
-	kGroovieDebugCell = 1 << 9,
-	kGroovieDebugFast = 1 << 10
-		// the current limitation is 32 debug levels (1 << 31 is the last one)
+	kDebugVideo = 1 << 0,
+	kDebugResource = 1 << 1,
+	kDebugScript = 1 << 2,
+	kDebugUnknown = 1 << 3,
+	kDebugHotspots = 1 << 4,
+	kDebugCursor = 1 << 5,
+	kDebugMIDI = 1 << 6,
+	kDebugScriptvars = 1 << 7,
+	kDebugCell = 1 << 8,
+	kDebugFast = 1 << 9
+	// the current limitation is 32 debug levels (1 << 31 is the last one)
+	// but some are used by system, so avoid high values.
 };
 
 /**

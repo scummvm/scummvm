@@ -94,13 +94,13 @@ void VideoPlayer::waitFrame() {
 	} else {
 		uint32 millisDiff = currTime - _lastFrameTime;
 		if (millisDiff < _millisBetweenFrames) {
-			debugC(7, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::Player: Delaying %d (currTime=%d, _lastFrameTime=%d, millisDiff=%d, _millisBetweenFrame=%d)",
+			debugC(7, kDebugVideo, "Groovie::Player: Delaying %d (currTime=%d, _lastFrameTime=%d, millisDiff=%d, _millisBetweenFrame=%d)",
 					_millisBetweenFrames - millisDiff, currTime, _lastFrameTime, millisDiff, _millisBetweenFrames);
 			_syst->delayMillis(_millisBetweenFrames - millisDiff);
 			currTime = _syst->getMillis();
-			debugC(7, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::Player: Finished delay at %d", currTime);
+			debugC(7, kDebugVideo, "Groovie::Player: Finished delay at %d", currTime);
 		}
-		debugC(6, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::Player: Frame displayed at %d (%f FPS)", currTime, 1000.0 / (currTime - _lastFrameTime));
+		debugC(6, kDebugVideo, "Groovie::Player: Frame displayed at %d (%f FPS)", currTime, 1000.0 / (currTime - _lastFrameTime));
 		_lastFrameTime = currTime;
 	}
 }
