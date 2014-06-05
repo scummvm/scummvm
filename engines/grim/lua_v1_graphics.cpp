@@ -320,14 +320,13 @@ void Lua_V1::ChangePrimitive() {
 	lua_pushstring("y2");
 	lua_Object y2 = lua_gettable();
 	if (lua_isnumber(x2) || lua_isnumber(y2)) {
-		//int x = -1;
-		//int y = -1;
+		int x = -1;
+		int y = -1;
 		if (lua_isnumber(x2))
-			/*x = (int)*/lua_getnumber(x2);
+			x = (int)lua_getnumber(x2);
 		if (lua_isnumber(y2))
-			/*y = (int)*/lua_getnumber(y2);
-		// TODO pmodify->setSize(x, y);
-		assert(0);
+			y = (int)lua_getnumber(y2);
+		pmodify->setEndpoint(x, y);
 	}
 
 	lua_pushobject(tableObj);

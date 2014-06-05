@@ -54,6 +54,7 @@ public:
 	Common::Point getP3() const { return _p3; }
 	Common::Point getP4() const { return _p4; }
 	void setPos(int x, int y);
+	void setEndpoint(int x, int y);
 	void setColor(const Color &color) { _color = color; }
 	Color getColor() const { return _color; }
 	PrimType getType() const { return _type; }

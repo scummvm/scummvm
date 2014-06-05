@@ -132,4 +132,11 @@ void PrimitiveObject::setPos(int x, int y) {
 	}
 }
 
+void PrimitiveObject::setEndpoint(int x, int y) {
+	assert(_type == LineType);
+
+	_p2.x = x;
+	_p2.y = y;
+}
+
 } // end of namespace Grim
