@@ -995,8 +995,8 @@ void UserInterface::selectObject(int invIndex) {
 		noInventoryAnim();
 	} else {
 		loadInventoryAnim(_vm->_game->_objects._inventoryList[invIndex]);
-		_vm->_palette->setPalette(_vm->_palette->_mainPalette, 7, 1);
-		_vm->_palette->setPalette(_vm->_palette->_mainPalette, 246, 2);
+		_vm->_palette->setPalette(&_vm->_palette->_mainPalette[7 * 3], 7, 1);
+		_vm->_palette->setPalette(&_vm->_palette->_mainPalette[246 * 3], 246, 2);
 	}
 }
 
