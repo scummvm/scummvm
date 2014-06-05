@@ -242,7 +242,7 @@ GfxTinyGL::~GfxTinyGL() {
 	if (_zb) {
 		delBuffer(1);
 		TinyGL::glClose();
-		ZB_close(_zb);
+		delete _zb;
 	}
 }
 
@@ -262,7 +262,7 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	g_system->setWindowCaption("ResidualVM: Software 3D Renderer");
 
 	_pixelFormat = buf.getFormat();
-	_zb = TinyGL::ZB_open(screenW, screenH, buf);
+	_zb = new TinyGL::ZBuffer(screenW, screenH, buf);
 	TinyGL::glInit(_zb);
 
 	_screenSize = _gameWidth * _gameHeight * _pixelFormat.bytesPerPixel;
@@ -360,28 +360,28 @@ void GfxTinyGL::flipBuffer() {
 }
 
 int GfxTinyGL::genBuffer() {
-	TinyGL::Buffer *buf = ZB_genOffscreenBuffer(_zb);
+	TinyGL::Buffer *buf = _zb->genOffscreenBuffer();
 	_buffers[++_bufferId] = buf;
 
 	return _bufferId;
 }
 
 void GfxTinyGL::delBuffer(int id) {
-	ZB_delOffscreenBuffer(_zb, _buffers[id]);
+	_zb->delOffscreenBuffer(_buffers[id]);
 	_buffers.erase(id);
 }
 
 void GfxTinyGL::selectBuffer(int id) {
 	if (id == 0) {
-		ZB_selectOffscreenBuffer(_zb, nullptr);
+		_zb->selectOffscreenBuffer(NULL);
 	} else {
-		ZB_selectOffscreenBuffer(_zb, _buffers[id]);
+		_zb->selectOffscreenBuffer(_buffers[id]);
 	}
 }
 
 void GfxTinyGL::clearBuffer(int id) {
 	TinyGL::Buffer *buf = _buffers[id];
-	ZB_clearOffscreenBuffer(_zb, buf);
+	_zb->clearOffscreenBuffer(buf);
 }
 
 void GfxTinyGL::drawBuffers() {
@@ -389,13 +389,13 @@ void GfxTinyGL::drawBuffers() {
 	Common::HashMap<int, TinyGL::Buffer *>::iterator i = _buffers.begin();
 	for (++i; i != _buffers.end(); ++i) {
 		TinyGL::Buffer *buf = i->_value;
-		ZB_blitOffscreenBuffer(_zb, buf);
+		_zb->blitOffscreenBuffer(buf);
 		//this is not necessary, but it prevents the buffers to be blitted every frame, if it is not needed
 		buf->used = false;
 	}
 
 	selectBuffer(0);
-	ZB_blitOffscreenBuffer(_zb, _buffers[1]);
+	_zb->blitOffscreenBuffer(_buffers[1]);
 }
 
 void GfxTinyGL::refreshBuffers() {

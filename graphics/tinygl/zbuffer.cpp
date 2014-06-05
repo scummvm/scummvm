@@ -13,88 +13,6 @@ namespace TinyGL {
 
 uint8 PSZB;
 
-ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer) {
-	ZBuffer *zb;
-	int size;
-
-	zb = (ZBuffer *)gl_malloc(sizeof(ZBuffer));
-	if (!zb)
-		return NULL;
-
-	zb->xsize = xsize;
-	zb->ysize = ysize;
-	zb->cmode = frame_buffer.getFormat();
-	PSZB = zb->pixelbytes = zb->cmode.bytesPerPixel;
-	zb->pixelbits = zb->cmode.bytesPerPixel * 8;
-	zb->linesize = (xsize * zb->pixelbytes + 3) & ~3;
-
-	size = zb->xsize * zb->ysize * sizeof(unsigned int);
-
-	zb->zbuf = (unsigned int *)gl_malloc(size);
-	if (!zb->zbuf)
-		goto error;
-
-	if (!frame_buffer) {
-		byte *pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
-		if (!pbuf) {
-			gl_free(zb->zbuf);
-			goto error;
-		}
-		zb->pbuf.set(zb->cmode, pbuf);
-		zb->frame_buffer_allocated = 1;
-	} else {
-		zb->frame_buffer_allocated = 0;
-		zb->pbuf = frame_buffer;
-	}
-
-	zb->current_texture = NULL;
-	zb->shadow_mask_buf = NULL;
-
-	zb->buffer.pbuf = zb->pbuf.getRawBuffer();
-	zb->buffer.zbuf = zb->zbuf;
-
-	return zb;
-error:
-	gl_free(zb);
-	return NULL;
-}
-
-void ZB_close(ZBuffer *zb) {
-	if (zb->frame_buffer_allocated)
-		zb->pbuf.free();
-
-	gl_free(zb->zbuf);
-	gl_free(zb);
-}
-
-void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize) {
-	int size;
-
-	// xsize must be a multiple of 4
-	xsize = xsize & ~3;
-
-	zb->xsize = xsize;
-	zb->ysize = ysize;
-	zb->linesize = (xsize * zb->pixelbytes + 3) & ~3;
-
-	size = zb->xsize * zb->ysize * sizeof(unsigned int);
-
-	gl_free(zb->zbuf);
-	zb->zbuf = (unsigned int *)gl_malloc(size);
-
-	if (zb->frame_buffer_allocated)
-		zb->pbuf.free();
-
-	if (!frame_buffer) {
-		byte *pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
-		zb->pbuf.set(zb->cmode, pbuf);
-		zb->frame_buffer_allocated = 1;
-	} else {
-		zb->pbuf = (byte *)frame_buffer;
-		zb->frame_buffer_allocated = 0;
-	}
-}
-
 static void ZB_copyBuffer(ZBuffer *zb, void *buf, int linesize) {
 	unsigned char *p1;
 	byte *q;
@@ -158,67 +76,103 @@ void memset_l(void *adr, int val, int count) {
 		*p++ = val;
 }
 
-void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b) {
-	uint32 color;
-	byte *pp;
+ZBuffer::ZBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer) {
+	int size;
 
-	if (clear_z) {
-		memset_l(zb->zbuf, z, zb->xsize * zb->ysize);
+	this->xsize = xsize;
+	this->ysize = ysize;
+	this->cmode = frame_buffer.getFormat();
+	PSZB = this->pixelbytes = this->cmode.bytesPerPixel;
+	this->pixelbits = this->cmode.bytesPerPixel * 8;
+	this->linesize = (xsize * this->pixelbytes + 3) & ~3;
+
+	size = this->xsize * this->ysize * sizeof(unsigned int);
+
+	this->zbuf = (unsigned int *)gl_malloc(size);
+
+	if (!frame_buffer) {
+		byte *pbuf = (byte *)gl_malloc(this->ysize * this->linesize);
+		this->pbuf.set(this->cmode, pbuf);
+		this->frame_buffer_allocated = 1;
+	} else {
+		this->frame_buffer_allocated = 0;
+		this->pbuf = frame_buffer;
 	}
-	if (clear_color) {
-		pp = zb->pbuf.getRawBuffer();
-		for (int y = 0; y < zb->ysize; y++) {
-			color = zb->cmode.RGBToColor(r, g, b);
-			memset_s(pp, color, zb->xsize);
-			pp = pp + zb->linesize;
-		}
-	}
+
+	this->current_texture = NULL;
+	this->shadow_mask_buf = NULL;
+
+	this->buffer.pbuf = this->pbuf.getRawBuffer();
+	this->buffer.zbuf = this->zbuf;
 }
 
-Buffer *ZB_genOffscreenBuffer(ZBuffer *zb) {
+ZBuffer::~ZBuffer() {
+	if (frame_buffer_allocated)
+		pbuf.free();
+	gl_free(zbuf);
+}
+
+Buffer* ZBuffer::genOffscreenBuffer() {
 	Buffer *buf = (Buffer *)gl_malloc(sizeof(Buffer));
-	buf->pbuf = (byte *)gl_malloc(zb->ysize * zb->linesize);
-	int size = zb->xsize * zb->ysize * sizeof(unsigned int);
+	buf->pbuf = (byte *)gl_malloc(this->ysize * this->linesize);
+	int size = this->xsize * this->ysize * sizeof(unsigned int);
 	buf->zbuf = (unsigned int *)gl_malloc(size);
 
 	return buf;
 }
 
-void ZB_delOffscreenBuffer(ZBuffer *zb, Buffer *buf) {
+void ZBuffer::delOffscreenBuffer(Buffer *buf) {
 	gl_free(buf->pbuf);
 	gl_free(buf->zbuf);
 	gl_free(buf);
 }
 
-void ZB_blitOffscreenBuffer(ZBuffer *zb, Buffer *buf) {
+void ZBuffer::clear( int clear_z, int z, int clear_color, int r, int g, int b ) {
+	uint32 color;
+	byte *pp;
+
+	if (clear_z) {
+		memset_l(this->zbuf, z, this->xsize * this->ysize);
+	}
+	if (clear_color) {
+		pp = this->pbuf.getRawBuffer();
+		for (int y = 0; y < this->ysize; y++) {
+			color = this->cmode.RGBToColor(r, g, b);
+			memset_s(pp, color, this->xsize);
+			pp = pp + this->linesize;
+		}
+	}
+}
+
+void ZBuffer::blitOffscreenBuffer( Buffer* buf ) {
 	// TODO: could be faster, probably.
 	if (buf->used) {
-		for (int i = 0; i < zb->xsize * zb->ysize; ++i) {
+		for (int i = 0; i < this->xsize * this->ysize; ++i) {
 			unsigned int d1 = buf->zbuf[i];
-			unsigned int d2 = zb->zbuf[i];
+			unsigned int d2 = this->zbuf[i];
 			if (d1 > d2) {
 				const int offset = i * PSZB;
-				memcpy(zb->pbuf.getRawBuffer() + offset, buf->pbuf + offset, PSZB);
-				memcpy(zb->zbuf + i, buf->zbuf + i, sizeof(int));
+				memcpy(this->pbuf.getRawBuffer() + offset, buf->pbuf + offset, PSZB);
+				memcpy(this->zbuf + i, buf->zbuf + i, sizeof(int));
 			}
 		}
 	}
 }
 
-void ZB_selectOffscreenBuffer(ZBuffer *zb, Buffer *buf) {
+void ZBuffer::selectOffscreenBuffer( Buffer* buf ) {
 	if (buf) {
-		zb->pbuf = buf->pbuf;
-		zb->zbuf = buf->zbuf;
+		this->pbuf = buf->pbuf;
+		this->zbuf = buf->zbuf;
 		buf->used = true;
 	} else {
-		zb->pbuf = zb->buffer.pbuf;
-		zb->zbuf = zb->buffer.zbuf;
+		this->pbuf = this->buffer.pbuf;
+		this->zbuf = this->buffer.zbuf;
 	}
 }
 
-void ZB_clearOffscreenBuffer(ZBuffer *zb, Buffer *buf) {
-	memset(buf->pbuf, 0, zb->ysize * zb->linesize);
-	memset(buf->zbuf, 0, zb->ysize * zb->xsize * sizeof(unsigned int));
+void ZBuffer::clearOffscreenBuffer( Buffer* buf ) {
+	memset(buf->pbuf, 0, this->ysize * this->linesize);
+	memset(buf->zbuf, 0, this->ysize * this->xsize * sizeof(unsigned int));
 	buf->used = false;
 }
 
