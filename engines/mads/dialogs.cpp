@@ -64,7 +64,7 @@ void Dialog::restore() {
 
 		Common::copy(&_dialogPalette[0], &_dialogPalette[8 * 3],
 			&_vm->_palette->_mainPalette[248 * 3]);
-		_vm->_palette->setPalette(_vm->_palette->_mainPalette, 248, 8);
+		_vm->_palette->setPalette(&_vm->_palette->_mainPalette[248 * 3], 248, 8);
 	}
 }
 
