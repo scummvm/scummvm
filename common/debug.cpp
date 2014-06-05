@@ -46,6 +46,11 @@ struct DebugLevelComperator {
 } // end of anonymous namespace
 
 bool DebugManager::addDebugChannel(uint32 channel, const String &name, const String &description) {
+	if (name.equalsIgnoreCase("all")) {
+		warning("Debug channel 'all' is reserved for internal use");
+		return false;
+	}
+
 	if (gDebugChannels.contains(name))
 		warning("Duplicate declaration of engine debug channel '%s'", name.c_str());
 
