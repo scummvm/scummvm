@@ -36,25 +36,30 @@
 namespace BladeRunner {
 
 class Chapters;
+class GameInfo;
 class Scene;
 class Script;
 class Settings;
-class GameInfo;
+class SliceAnimations;
+class SliceRenderer;
 
 class BladeRunnerEngine : public Engine {
 public:
 	bool      _gameIsRunning;
 	bool      _windowIsActive;
 
-	Chapters *_chapters;
-	GameInfo *_gameInfo;
-	Scene    *_scene;
-	Script   *_script;
-	Settings *_settings;
+	Chapters        *_chapters;
+	GameInfo        *_gameInfo;
+	Scene           *_scene;
+	Script          *_script;
+	Settings        *_settings;
+	SliceAnimations *_sliceAnimations;
+	SliceRenderer   *_sliceRenderer;
 
 	int in_script_counter;
 
 	Graphics::Surface _surface1;
+	Graphics::Surface _surface2;
 
 private:
 	static const int kArchiveCount = 10;

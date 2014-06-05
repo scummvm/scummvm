@@ -29,6 +29,8 @@
 #include "bladerunner/scene.h"
 #include "bladerunner/script/script.h"
 #include "bladerunner/settings.h"
+#include "bladerunner/slice_animations.h"
+#include "bladerunner/slice_renderer.h"
 #include "bladerunner/vqa_decoder.h"
 
 #include "common/error.h"
@@ -50,9 +52,13 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst) : Engine(syst) {
 	_scene = new Scene(this);
 	_script = new Script(this);
 	_settings = new Settings(this);
+	_sliceAnimations = new SliceAnimations(this);
+	_sliceRenderer = new SliceRenderer(this);
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
+	delete _sliceRenderer;
+	delete _sliceAnimations;
 	delete _settings;
 	delete _script;
 	delete _scene;
@@ -60,6 +66,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	delete _chapters;
 
 	_surface1.free();
+	_surface2.free();
 }
 
 bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
@@ -117,6 +124,18 @@ bool BladeRunnerEngine::startup() {
 		return false;
 
 	r = openArchive("SPCHSFX.TLK");
+	if (!r)
+		return false;
+
+	r = _sliceAnimations->open("INDEX.DAT");
+	if (!r)
+		return false;
+
+	r = _sliceAnimations->openCoreAnim();
+	if (!r)
+		return false;
+
+	r = _sliceAnimations->openHDFrames();
 	if (!r)
 		return false;
 
@@ -201,6 +220,7 @@ void BladeRunnerEngine::gameTick() {
 			_script->SceneFrameAdvanced(frame);
 			backgroundChanged = true;
 		}
+		_surface2.copyFrom(_surface1);
 
 		// TODO: Render overlays (mostly in Replicant)
 		// TODO: Tick Actor AI and Timers (timers in Replicant)
@@ -208,6 +228,16 @@ void BladeRunnerEngine::gameTick() {
 		if (_settings->getNewScene() == -1 || _script->_inScriptCounter /* || in_ai */) {
 
 			// TODO: Tick and draw all actors in current set (drawing works in Replicant)
+
+			// Hardcode McCoy in place to test the slice renderer
+			Vector3 pos(-151.98f, -0.30f, 318.15f);
+			Vector3 draw_pos(pos.x, -pos.z, pos.y + 2);
+			float facing = -1.570796f;
+
+			_sliceRenderer->setView(_scene->_view);
+			_sliceRenderer->setupFrame(19, 1, draw_pos, facing);
+			_sliceRenderer->drawFrame(_surface2);
+
 			// TODO: Draw items (drawing works in Replicant)
 			// TODO: Draw item pickup (understood, drawing works in Replicant)
 			// TODO: Draw dialogue menu
@@ -215,7 +245,7 @@ void BladeRunnerEngine::gameTick() {
 			// TODO: Process AUD (audio in Replicant)
 			// TODO: Footstep sound
 
-			_system->copyRectToScreen((const byte *) _surface1.getBasePtr(0, 0), _surface1.pitch, 0, 0, 640, 480);
+			_system->copyRectToScreen((const byte *)_surface2.getBasePtr(0, 0), _surface2.pitch, 0, 0, 640, 480);
 			_system->updateScreen();
 			_system->delayMillis(10);
 		}

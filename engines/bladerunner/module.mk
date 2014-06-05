@@ -17,6 +17,8 @@ MODULE_OBJS = \
 	script/script.o \
 	set.o \
 	settings.o \
+	slice_animations.o \
+	slice_renderer.o \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o
