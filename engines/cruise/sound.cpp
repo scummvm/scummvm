@@ -342,9 +342,7 @@ void AdLibSoundDriver::adjustVolume(int channel, int volume) {
 		volume = 0;
 	}
 	volume += volume / 4;
-	if (volume > 127) {
-		volume = 127;
-	}
+	// The higher possible value for volume is 100
 
 	int volAdjust = (channel == 4) ? _sfxVolume : _musicVolume;
 	volume = (volume * volAdjust) / 128;
