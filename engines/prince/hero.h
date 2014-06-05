@@ -35,6 +35,7 @@ namespace Prince {
 class Animation;
 class PrinceEngine;
 class GraphicsMan;
+struct InventoryItem;
 
 class Hero {
 public:
@@ -173,8 +174,8 @@ public:
 
 	uint16 _currHeight; // height of current anim phase
 
-	// Inventory array of items
-	// Inventory2 array of items
+	Common::Array<int> _inventory; // Inventory array of items
+	Common::Array<int> _inventory2; // Inventory2 array of items
 	// Font subtitiles font
 	// Color subtitiles color
 	// AnimSet number of animation set

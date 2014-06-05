@@ -265,6 +265,23 @@ public:
 	void showMask(int maskNr, Graphics::Surface *originalRoomSurface);
 	void clsMasks();
 
+	uint32 _invTxtSize;
+	byte *_invTxt;
+
+	int _invLineX;
+	int _invLineY;
+	int _invLine;
+	int _invLines;
+	int _invLineW;
+	int _invLineH;
+	int _maxInvW;
+	int _invLineSkipX;
+	int _invLineSkipY;
+
+	void rememberScreenInv();
+	void prepareInventoryToView();
+	void displayInventory();
+
 	int testAnimNr;
 	int testAnimFrame;
 
@@ -316,8 +333,8 @@ private:
 	Common::Array<Mob> _mobList;
 	Common::Array<Object *> _objList;
 	Common::Array<Mask> _maskList;
-
 	Common::Array<DrawNode> _drawNodeList;
+	Common::Array<Mob> _invMobList;
 
 	bool _flicLooped;
 	

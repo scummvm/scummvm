@@ -78,7 +78,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	Engine(syst), _gameDescription(gameDesc), _graph(nullptr), _script(nullptr), _interpreter(nullptr), _flags(nullptr),
 	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), testAnimNr(0), testAnimFrame(0),
 	_frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
-	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince") {
+	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
+	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _invLineSkipX(2), _invLineSkipY(3) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -107,6 +108,7 @@ PrinceEngine::~PrinceEngine() {
 	delete _suitcaseBmp;
 	delete _variaTxt;
 	delete[] _talkTxt;
+	delete[] _invTxt;
 	delete _graph;
 	delete _room;
 
@@ -205,6 +207,17 @@ void PrinceEngine::init() {
 	talkTxtStream->read(_talkTxt, _talkTxtSize);
 
 	delete talkTxtStream;
+
+	Common::SeekableReadStream *invTxtStream = SearchMan.createReadStreamForMember("invtxt.dat");
+	if (!invTxtStream) {
+		error("Can't load invTxtStream");
+		return;
+	}
+	_invTxtSize = invTxtStream->size();
+	_invTxt = new byte[_invTxtSize];
+	invTxtStream->read(_invTxt, _invTxtSize);
+
+	delete invTxtStream;
 
 	_roomBmp = new Image::BitmapDecoder();
 
@@ -1141,7 +1154,7 @@ void PrinceEngine::drawScreen() {
 		_graph->draw(0, 0, &visiblePart);
 	}
 
-	Graphics::Surface *mainHeroSurface;
+	Graphics::Surface *mainHeroSurface = NULL;
 	if (_mainHero->_visible) {
 		mainHeroSurface = _mainHero->getSurface();
 		if (mainHeroSurface) {
@@ -1199,6 +1212,56 @@ void PrinceEngine::drawScreen() {
 	getDebugger()->onFrame();
 
 	_graph->update();
+}
+
+void PrinceEngine::rememberScreenInv() {
+
+}
+
+void PrinceEngine::prepareInventoryToView() {
+	int invItem = _mainHero->_inventory.size();
+	_invLine =  invItem / 3;
+	if (invItem % 3 != 0) {
+		_invLine++;
+	}
+	if (_invLine < 4) {
+		_invLine = 4;
+	}
+	_maxInvW = (374 - 2 * _invLine) / _invLine;
+	_invLineW = _maxInvW - 2;
+
+	rememberScreenInv();
+
+	int currInvX = _invLineX;
+	int currInvY = _invLineY;
+
+	int item = 0;
+	for (int i = 0 ; i < _invLines; i++) {
+		for (int j = 0; j < _invLine; j++) {
+			Mob tempMobItem;
+			tempMobItem._mask =  _mainHero->_inventory[item] - 1;
+			tempMobItem._x1 = currInvX + _picWindowX; //picWindowX2 ?
+			tempMobItem._x2 = currInvX + _picWindowX + _invLineW  - 1; // picWindowX2 ?
+			tempMobItem._y1 = currInvY;
+			tempMobItem._y2 = currInvY + _invLineH - 1;
+			//tempMobItem._name = ;
+			//tempMobItem._examText = ;
+			_invMobList.push_back(tempMobItem);
+			currInvX += _invLineW + _invLineSkipX;
+			item++;
+		}
+		currInvX = _invLineX;
+		currInvY += _invLineSkipY + _invLineH;
+	}
+	//moblistcreated:
+	//mov	w [edi.Mob_Visible],-1
+	//mov	eax,d InvMobList
+	//mov	d MobListAddr,eax
+	//mov	d MobPriAddr,o InvMobPri
+}
+
+void PrinceEngine::displayInventory() {
+
 }
 
 void PrinceEngine::mainLoop() {
