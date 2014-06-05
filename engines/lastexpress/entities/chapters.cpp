@@ -77,7 +77,7 @@ Chapters::Chapters(LastExpressEngine *engine) : Entity(engine, kEntityChapters) 
 	ADD_CALLBACK_FUNCTION(Chapters, exitStation);
 	ADD_CALLBACK_FUNCTION(Chapters, chapter1);
 	ADD_CALLBACK_FUNCTION(Chapters, resetMainEntities);
-	ADD_CALLBACK_FUNCTION(Chapters, chapter1End);
+	ADD_CALLBACK_FUNCTION(Chapters, firstDream);
 	ADD_CALLBACK_FUNCTION(Chapters, chapter1Init);
 	ADD_CALLBACK_FUNCTION(Chapters, chapter1Handler);
 	ADD_CALLBACK_FUNCTION(Chapters, chapter1Next);
@@ -154,7 +154,8 @@ IMPLEMENT_FUNCTION(5, Chapters, resetMainEntities)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION(6, Chapters, chapter1End)
+IMPLEMENT_FUNCTION(6, Chapters, firstDream)
+	// Chapter 1 end
 	switch (savepoint.action) {
 	default:
 		break;
@@ -384,6 +385,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Chapters, chapter1Handler)
+	// Moving at night
 	switch (savepoint.action) {
 	default:
 		break;
@@ -704,7 +706,7 @@ label_chapter1_next:
 			setup_chapter1Next();
 		} else {
 			setCallback(23);
-			setup_chapter1End();
+			setup_firstDream();
 		}
 		break;
 	}
@@ -917,6 +919,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(15, Chapters, chapter3Handler)
+	// Moving during the afternoon
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1077,6 +1080,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(16, Chapters, viennaEvents)
+	// End in Vienna
 	switch (savepoint.action) {
 	default:
 		break;
@@ -1224,6 +1228,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(19, Chapters, chapter4Handler)
+	// Moving during the second night
 	switch (savepoint.action) {
 	default:
 		break;
