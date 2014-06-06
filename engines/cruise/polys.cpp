@@ -211,20 +211,15 @@ void fillpoly(int16 *point_data, int lineCount, ColorP color) {
 	}
 
 	// Reinit array counters
-
-	int x1, y1, x2, y2;
-	int y, i;
-
-	for (i = 0; i < SCREENHEIGHT; i++) {
+	for (int i = 0; i < SCREENHEIGHT; i++) {
 		num_intersect[i] = 0;
 	}
 
 	// Find the top/bottom of the polygon.
-
 	int top = point_data[1];
 	int bottom = point_data[1];
 
-	for (i = 1; i < lineCount; i++) {
+	for (int i = 1; i < lineCount; i++) {
 		if (point_data[2 * i + 1] < top)
 			top = point_data[2 * i + 1];
 		else if (point_data[2 * i + 1] > bottom)
@@ -237,14 +232,13 @@ void fillpoly(int16 *point_data, int lineCount, ColorP color) {
 		bottom = SCREENHEIGHT - 1;
 
 	// Calculate intersections for each scan line
+	for (int y = top; y <= bottom; y++) {
+		int x2 = point_data[2 * lineCount - 2];
+		int y2 = point_data[2 * lineCount - 1];
 
-	for (y = top; y <= bottom; y++) {
-		x2 = point_data[2 * lineCount - 2];
-		y2 = point_data[2 * lineCount - 1];
-
-		for (i = 0; i < lineCount; i++) {
-			x1 = x2;
-			y1 = y2;
+		for (int i = 0; i < lineCount; i++) {
+			int x1 = x2;
+			int y1 = y2;
 			x2 = point_data[2 * i];
 			y2 = point_data[2 * i + 1];
 
@@ -264,9 +258,8 @@ void fillpoly(int16 *point_data, int lineCount, ColorP color) {
 	}
 
 	// Drawing.
-
-	for (y = top; y <= bottom; y++) {
-		for (i = 0; i < num_intersect[y]; i += 2) {
+	for (int y = top; y <= bottom; y++) {
+		for (int i = 0; i < num_intersect[y]; i += 2) {
 			hline(intersect[y][i], intersect[y][i + 1], y, color);
 		}
 	}
