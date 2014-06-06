@@ -324,6 +324,7 @@ private:
 	void runDrawNodes();
 	void freeDrawNodes();
 	void makeShadowTable(int brightness);
+	void pause();
 
 	uint32 getTextWidth(const char *s);
 	void debugEngine(const char *s, ...);

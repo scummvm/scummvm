@@ -1264,6 +1264,13 @@ void PrinceEngine::drawScreen() {
 	_graph->update();
 }
 
+void PrinceEngine::pause() {
+	uint32 currentTime = _system->getMillis();
+	int delay = 1000/15 - int32(_system->getMillis() - currentTime);
+	delay = delay < 0 ? 0 : delay;
+	_system->delayMillis(delay);
+}
+
 void PrinceEngine::addInvObj() {
 	changeCursor(0); // turn on cursor later?
 	//prepareInventoryToView();
@@ -1276,35 +1283,23 @@ void PrinceEngine::addInvObj() {
 
 		_mst_shadow2 = 1;
 		while (_mst_shadow2 < 512) {
-			uint32 currentTime = _system->getMillis();
 			displayInventory();
-			//getDebugger()->onFrame();
 			_graph->update();
 			_mst_shadow2 += 50;
-			int delay = 1000/15 - int32(_system->getMillis() - currentTime);
-			delay = delay < 0 ? 0 : delay;
-			_system->delayMillis(delay);
+			pause();
 		}
 		while (_mst_shadow2 > 256) {
-			uint32 currentTime = _system->getMillis();
 			displayInventory();
-			//getDebugger()->onFrame();
 			_graph->update();
 			_mst_shadow2 -= 42;
-			int delay = 1000/15 - int32(_system->getMillis() - currentTime);
-			delay = delay < 0 ? 0 : delay;
-			_system->delayMillis(delay);
+			pause();
 		}
 		_mst_shadow2 = 0;
 
 		for (int i = 0; i < 20; i++) {
-			uint32 currentTime = _system->getMillis();
 			displayInventory();
-			//getDebugger()->onFrame();
 			_graph->update();
-			int delay = 1000/15 - int32(_system->getMillis() - currentTime);
-			delay = delay < 0 ? 0 : delay;
-			_system->delayMillis(delay);
+			pause();
 		}
 
 	} else {
