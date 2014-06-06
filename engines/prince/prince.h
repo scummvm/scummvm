@@ -275,6 +275,8 @@ public:
 	uint32 _invTxtSize;
 	byte *_invTxt;
 
+	bool _showInventoryFlag;
+	bool _inventoryBackgroundRemember;
 	int _invLineX;
 	int _invLineY;
 	int _invLine;  // number of items in one line
@@ -285,11 +287,14 @@ public:
 	int _invLineSkipX;
 	int _invLineSkipY;
 
+	void inventoryFlagChange();
 	bool loadAllInv();
 	void rememberScreenInv();
 	void prepareInventoryToView();
 	void drawInvItems();
 	void displayInventory();
+
+	Graphics::Surface *_backgroundForInventory;
 
 	int testAnimNr;
 	int testAnimFrame;

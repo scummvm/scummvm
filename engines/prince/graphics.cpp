@@ -73,11 +73,11 @@ void GraphicsMan::draw(uint16 posX, uint16 posY, const Graphics::Surface *s) {
 	change();
 }
 
-void GraphicsMan::drawTransparentIntro(int32 posX, int32 posY, const Graphics::Surface *s) {
+void GraphicsMan::drawTransparentSurface(int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
 	for (int y = 0; y < s->h; y++) {
 		for (int x = 0; x < s->w; x++) {
 			byte pixel = *((byte*)s->getBasePtr(x, y));
-			if (pixel != 255) {
+			if (pixel != transColor) {
 				if (x + posX < _frontScreen->w && x + posX >= 0) {
 					if (y + posY < _frontScreen->h && y + posY >= 0) {
 						*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = pixel;

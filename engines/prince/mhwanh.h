@@ -38,7 +38,7 @@ public:
 	// ImageDecoder API
 	void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
+	virtual Graphics::Surface *getSurface() const { return _surface; }
 	virtual const byte *getPalette() const { return _palette; }
 	uint16 getPaletteCount() const { return _paletteColorCount; }
 

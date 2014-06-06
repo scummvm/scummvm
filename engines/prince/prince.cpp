@@ -79,7 +79,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), testAnimNr(0), testAnimFrame(0),
 	_frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
-	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _invLineSkipX(2), _invLineSkipY(3) {
+	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _invLineSkipX(2), _invLineSkipY(3),
+	_showInventoryFlag(false), _inventoryBackgroundRemember(false) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -408,7 +409,7 @@ bool PrinceEngine::playNextFrame() {
 
 	const Graphics::Surface *s = _flicPlayer.decodeNextFrame();
 	if (s) {
-		_graph->drawTransparentIntro(0, 0, s);
+		_graph->drawTransparentSurface(0, 0, s, 255);
 		_graph->change();
 	} else if (_flicLooped) {
 		_flicPlayer.rewind();
@@ -654,6 +655,7 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_i:
 		_mainHero->_middleY -= 5;
+		inventoryFlagChange();
 		break;
 	case Common::KEYCODE_k:
 		_mainHero->_middleY += 5;
@@ -1183,69 +1185,76 @@ void PrinceEngine::freeDrawNodes() {
 }
 
 void PrinceEngine::drawScreen() {
-	const Graphics::Surface *roomSurface = _roomBmp->getSurface();	
-	Graphics::Surface visiblePart;
-	if (roomSurface) {
-		visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
-		_graph->draw(0, 0, &visiblePart);
-	}
-
-	Graphics::Surface *mainHeroSurface = NULL;
-	if (_mainHero->_visible) {
-		mainHeroSurface = _mainHero->getSurface();
-		if (mainHeroSurface) {
-			_mainHero->showHeroShadow(mainHeroSurface);
-
-			DrawNode newDrawNode;
-			newDrawNode.posX = _mainHero->_drawX;
-			newDrawNode.posY = _mainHero->_drawY;
-			newDrawNode.posZ = _mainHero->_drawZ;
-			newDrawNode.width = 0;
-			newDrawNode.height = 0;
-			newDrawNode.originalRoomSurface = nullptr;
-			newDrawNode.data = nullptr;
-			newDrawNode.drawFunction = &_graph->drawTransparent;
-
-			if (_mainHero->_zoomFactor != 0) {
-				Graphics::Surface *zoomedHeroSurface = _mainHero->zoomSprite(mainHeroSurface);
-				newDrawNode.s = zoomedHeroSurface;
-				newDrawNode.freeSurfaceSMemory = true;
-			} else {
-				newDrawNode.s = mainHeroSurface;
-				newDrawNode.freeSurfaceSMemory = false;
-			}
-			_drawNodeList.push_back(newDrawNode);
+	if (!_showInventoryFlag || _inventoryBackgroundRemember) {
+		const Graphics::Surface *roomSurface = _roomBmp->getSurface();
+		Graphics::Surface visiblePart;
+		if (roomSurface) {
+			visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
+			_graph->draw(0, 0, &visiblePart);
 		}
+
+		Graphics::Surface *mainHeroSurface = NULL;
+		if (_mainHero->_visible) {
+			mainHeroSurface = _mainHero->getSurface();
+			if (mainHeroSurface) {
+				_mainHero->showHeroShadow(mainHeroSurface);
+
+				DrawNode newDrawNode;
+				newDrawNode.posX = _mainHero->_drawX;
+				newDrawNode.posY = _mainHero->_drawY;
+				newDrawNode.posZ = _mainHero->_drawZ;
+				newDrawNode.width = 0;
+				newDrawNode.height = 0;
+				newDrawNode.originalRoomSurface = nullptr;
+				newDrawNode.data = nullptr;
+				newDrawNode.drawFunction = &_graph->drawTransparent;
+
+				if (_mainHero->_zoomFactor != 0) {
+					Graphics::Surface *zoomedHeroSurface = _mainHero->zoomSprite(mainHeroSurface);
+					newDrawNode.s = zoomedHeroSurface;
+					newDrawNode.freeSurfaceSMemory = true;
+				} else {
+					newDrawNode.s = mainHeroSurface;
+					newDrawNode.freeSurfaceSMemory = false;
+				}
+				_drawNodeList.push_back(newDrawNode);
+			}
+		}
+
+		showBackAnims();
+
+		showObjects();
+
+		if (roomSurface) {
+			insertMasks(&visiblePart);
+		}
+
+		showParallax();
+
+		runDrawNodes();
+
+		freeDrawNodes();
+
+		if (_mainHero->_visible) {
+			mainHeroSurface->free();
+			delete mainHeroSurface;
+		}
+
+		clsMasks();
+
+		playNextFrame();
+
+		if (!_inventoryBackgroundRemember) {
+			hotspot();
+			showTexts();
+		} else {
+			rememberScreenInv();
+			_inventoryBackgroundRemember = false;
+		}
+
+	} else {
+		displayInventory();
 	}
-
-	showBackAnims();
-
-	showObjects();
-
-	if (roomSurface) {
-		insertMasks(&visiblePart);
-	}
-
-	showParallax();
-
-	displayInventory(); // temp
-
-	runDrawNodes();
-
-	freeDrawNodes();
-
-	if (_mainHero->_visible) {
-		mainHeroSurface->free();
-		delete mainHeroSurface;
-	}
-
-	clsMasks();
-
-	playNextFrame();
-
-	hotspot();
-
-	showTexts();
 
 	getDebugger()->onFrame();
 
@@ -1253,7 +1262,16 @@ void PrinceEngine::drawScreen() {
 }
 
 void PrinceEngine::rememberScreenInv() {
+	_backgroundForInventory = _graph->_frontScreen;
+}
 
+void PrinceEngine::inventoryFlagChange() {
+	if (!_showInventoryFlag) {
+		_showInventoryFlag = true;
+		_inventoryBackgroundRemember = true;
+	} else {
+		_showInventoryFlag = false;
+	}
 }
 
 void PrinceEngine::prepareInventoryToView() {
@@ -1269,12 +1287,10 @@ void PrinceEngine::prepareInventoryToView() {
 	_maxInvW = (374 - 2 * _invLine) / _invLine;
 	_invLineW = _maxInvW - 2;
 
-	rememberScreenInv();
-
 	int currInvX = _invLineX;
 	int currInvY = _invLineY;
 
-	int item = 0;
+	uint item = 0;
 	for (int i = 0 ; i < _invLines; i++) {
 		for (int j = 0; j < _invLine; j++) {
 			Mob tempMobItem;
@@ -1311,14 +1327,14 @@ void PrinceEngine::drawInvItems() {
 				//MST_Shadow
 				// TODO!
 				//shad0:
-				if (_mainHero->_inventory[item] != 0) {
+				//if (_mainHero->_inventory[item] != 0) {
 					int itemNr = _mainHero->_inventory[item];
 					if (itemNr != 68) {
-						showSprite(_allInvList[itemNr].getSurface(), currInvX, currInvY, 10000, false); // temp
+						_graph->drawTransparentSurface(currInvX, currInvY, _allInvList[itemNr].getSurface(), 0);
 					} else {
 						// candle item:
 					}
-				}
+				//}
 			}
 			currInvX += _invLineW + _invLineSkipX;
 			item++;
@@ -1336,7 +1352,13 @@ void PrinceEngine::displayInventory() {
 	_mainHero->_inventory.push_back(3);
 	_mainHero->_inventory.push_back(4);
 	_mainHero->_inventory.push_back(5);
+
 	prepareInventoryToView();
+
+	_graph->drawTransparentSurface(0, 0, _backgroundForInventory, 0);
+	Graphics::Surface *suitcase = _suitcaseBmp->getSurface();
+	_graph->drawTransparentSurface(0, 0, suitcase, 0);
+
 	drawInvItems();
 }
 

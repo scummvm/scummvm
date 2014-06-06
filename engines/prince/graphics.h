@@ -45,7 +45,7 @@ public:
 	void makeShadowTable(int brightness, byte *shadowTable);
 
 	void draw(uint16 x, uint16 y, const Graphics::Surface *s);
-	void drawTransparentIntro(int32 posX, int32 poxY, const Graphics::Surface *s);
+	void drawTransparentSurface(int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
 
 	static void drawTransparent(Graphics::Surface *frontScreen, DrawNode *drawNode);
 	static void drawAsShadow(Graphics::Surface *frontScreen, DrawNode *drawNode);
