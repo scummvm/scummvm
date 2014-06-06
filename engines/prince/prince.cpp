@@ -79,8 +79,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_locationNr(0), _debugger(nullptr), _midiPlayer(nullptr), _room(nullptr), testAnimNr(0), testAnimFrame(0),
 	_frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
-	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _invLineSkipX(2), _invLineSkipY(3),
-	_showInventoryFlag(false), _inventoryBackgroundRemember(false) {
+	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
+	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -1262,7 +1262,6 @@ void PrinceEngine::drawScreen() {
 }
 
 void PrinceEngine::rememberScreenInv() {
-	_backgroundForInventory = _graph->_frontScreen;
 }
 
 void PrinceEngine::inventoryFlagChange() {
@@ -1330,7 +1329,16 @@ void PrinceEngine::drawInvItems() {
 				//if (_mainHero->_inventory[item] != 0) {
 					int itemNr = _mainHero->_inventory[item];
 					if (itemNr != 68) {
-						_graph->drawTransparentSurface(currInvX, currInvY, _allInvList[itemNr].getSurface(), 0);
+						Graphics::Surface *itemSurface = _allInvList[itemNr].getSurface();
+						int drawX = currInvX;
+						int drawY = currInvY;
+						if (itemSurface->w < _maxInvW) {
+							drawX += (_maxInvW - itemSurface->w) / 2;
+						}
+						if (itemSurface->h < _maxInvH) {
+							drawY += (_maxInvH - itemSurface->h) / 2;
+						}
+						_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0);
 					} else {
 						// candle item:
 					}
@@ -1345,6 +1353,7 @@ void PrinceEngine::drawInvItems() {
 }
 
 void PrinceEngine::displayInventory() {
+	// temp:
 	_mainHero->_inventory.clear();
 	_mainHero->_inventory.push_back(0);
 	_mainHero->_inventory.push_back(1);
@@ -1355,7 +1364,7 @@ void PrinceEngine::displayInventory() {
 
 	prepareInventoryToView();
 
-	_graph->drawTransparentSurface(0, 0, _backgroundForInventory, 0);
+	_graph->drawTransparentSurface(0, 0, _graph->_frontScreen, 0);
 	Graphics::Surface *suitcase = _suitcaseBmp->getSurface();
 	_graph->drawTransparentSurface(0, 0, suitcase, 0);
 

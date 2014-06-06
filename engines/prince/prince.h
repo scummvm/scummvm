@@ -284,6 +284,7 @@ public:
 	int _invLineW;
 	int _invLineH;
 	int _maxInvW;
+	int _maxInvH;
 	int _invLineSkipX;
 	int _invLineSkipY;
 
@@ -293,8 +294,6 @@ public:
 	void prepareInventoryToView();
 	void drawInvItems();
 	void displayInventory();
-
-	Graphics::Surface *_backgroundForInventory;
 
 	int testAnimNr;
 	int testAnimFrame;
