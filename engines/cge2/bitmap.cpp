@@ -122,7 +122,8 @@ Bitmap::~Bitmap() {
 }
 
 void Bitmap::release() {
-	delete[] _v;
+	if (_v != nullptr)
+		delete[] _v;
 	_v = nullptr;
 }
 

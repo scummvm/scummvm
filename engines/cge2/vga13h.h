@@ -116,7 +116,7 @@ public:
 	V2D _p1;
 	BitmapPtr _b0;
 	BitmapPtr _b1;
-	BitmapPtr *_shpList;
+	BitmapPtr _shpList;
 	int _location;
 	Seq *_seq;
 	char *_name;
@@ -171,10 +171,10 @@ public:
 		return _ext != NULL;
 	}
 	Sprite(CGE2Engine *vm);
-	Sprite(CGE2Engine *vm, BitmapPtr *shp, int cnt);
+	Sprite(CGE2Engine *vm, BitmapPtr shp, int cnt);
 	virtual ~Sprite();
 	BitmapPtr getShp();
-	void setShapeList(BitmapPtr *shp, int cnt);
+	void setShapeList(BitmapPtr shp, int cnt);
 	void moveShapesHi();
 	void moveShapesLo();
 	int labVal(Action snq, int lab);

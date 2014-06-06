@@ -74,10 +74,9 @@ Mouse::Mouse(CGE2Engine *vm) : Sprite(vm), _busy(NULL), _hold(NULL), _hx(0), _vm
 	
 	setSeq(_stdSeq8);
 
-	BitmapPtr *MC = new BitmapPtr[3];
-	MC[0] = new Bitmap(_vm, "MOUSE");
-	MC[1] = new Bitmap(_vm, "DUMMY");
-	MC[2] = NULL;
+	BitmapPtr MC = new Bitmap[2];
+	MC[0] = Bitmap(_vm, "MOUSE");
+	MC[1] = Bitmap(_vm, "DUMMY");
 	setShapeList(MC, 2);
 
 	step(1);

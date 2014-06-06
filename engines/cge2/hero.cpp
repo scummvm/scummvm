@@ -189,12 +189,7 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 			} else
 				setSeq(_stdSeq8);
 
-			BitmapPtr *bmp = new BitmapPtr[shpcnt];
-			for (int i = 0; i < shpcnt; i++)
-				bmp[i] = &_dim[0][i];
-			setShapeList(bmp, shpcnt);
-			delete[] bmp;
-			bmp = nullptr;
+			setShapeList(_dim[0], shpcnt);
 		}
 	}
 	_reachStart = atoi(_vm->token(text));
@@ -219,7 +214,7 @@ void Hero::setCurrent() {
 			break;
 	}
 
-	_ext->_shpList = &_dim[_curDim = i];
+	_ext->_shpList = _dim[_curDim = i];
 }
 
 void Hero::hStep() {

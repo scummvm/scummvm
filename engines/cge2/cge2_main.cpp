@@ -737,13 +737,13 @@ bool CGE2Engine::showTitle(const char *name) {
 		return false;
 
 	_bitmapPalette = _vga->_sysPal;
-	BitmapPtr *LB = new BitmapPtr[2];
-	LB[0] = new Bitmap(this, name);
-	LB[1] = NULL;
-	_bitmapPalette = NULL;
+	BitmapPtr LB = new Bitmap[1];
+	LB[0] = Bitmap(this, name);
+	_bitmapPalette = nullptr;
 
 	Sprite D(this, LB, 1);
 	D._flags._kill = true;
+	strcpy(D._file, "hatter");
 	warning("STUB: Sprite::showTitle() - Flags changed compared to CGE1's Sprite type.");
 	D.gotoxyz(kScrWidth >> 1, -(kPanHeight >> 1));
 	_vga->sunset();
@@ -758,7 +758,7 @@ bool CGE2Engine::showTitle(const char *name) {
 	_vga->update();
 
 	warning("STUB: CGE2Engine::showTitle()");
-
+	
 	return true;
 }
 

@@ -91,7 +91,7 @@ Sprite::Sprite(CGE2Engine *vm)
 	_flags._frnt = 1;
 }
 
-Sprite::Sprite(CGE2Engine *vm, BitmapPtr *shpP, int cnt)
+Sprite::Sprite(CGE2Engine *vm, BitmapPtr shpP, int cnt)
 	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
      _next(NULL), _prev(NULL), _time(0),
      _ext(NULL), _ref(-1), _scene(0), _vm(vm),
@@ -119,17 +119,17 @@ BitmapPtr Sprite::getShp() {
 	int i = e->_seq[_seqPtr]._now;
 	if (i >= _shpCnt)
 		error("Invalid PHASE in SPRITE::Shp() %s", _file);
-	return e->_shpList[i];
+	return e->_shpList + i;
 }
 
-void Sprite::setShapeList(BitmapPtr *shp, int cnt) {
+void Sprite::setShapeList(BitmapPtr shp, int cnt) {
 	_shpCnt = cnt;
 	_siz.x = 0;
 	_siz.y = 0;
 
 	if (shp) {
 		for (int i = 0; i < cnt; i++) {
-			BitmapPtr p = *(shp + i);
+			BitmapPtr p = shp + i;
 			if (p->_w > _siz.x)
 				_siz.x = p->_w;
 			if (p->_h > _siz.y)
@@ -202,9 +202,7 @@ Sprite *Sprite::expand() {
 	if (!*_file)
 		return this;
 
-	Common::Array<BitmapPtr> shplist;
-	for (int i = 0; i < _shpCnt; ++i)
-		shplist.push_back(NULL);
+	BitmapPtr shplist = new Bitmap[_shpCnt];
 
 	int cnt[kActions],
 		shpcnt = 0,
@@ -328,9 +326,8 @@ Sprite *Sprite::expand() {
 					s->_dly = _vm->number(p);
 					break;
 				case kIdPhase: {
-					BitmapPtr bmp = new Bitmap(_vm, p);
-					shplist[shpcnt] = bmp;
-					if (!shplist[shpcnt]->moveHi())
+					shplist[shpcnt] = Bitmap(_vm, p);
+					if (!shplist[shpcnt].moveHi())
 						error("No EMS");
 					shpcnt++;
 					break;
@@ -346,7 +343,7 @@ Sprite *Sprite::expand() {
 		if (!shpcnt)
 			error("No shapes - %s", fname);
 		} else // no sprite description: try to read immediately from .BMP
-		shplist[shpcnt++] = new Bitmap (_vm, _file);
+		shplist[shpcnt++] = Bitmap(_vm, _file);
 
 	if (curSeq) {
 		if (maxnow >= shpcnt)
@@ -359,12 +356,7 @@ Sprite *Sprite::expand() {
 		_seqCnt = (shpcnt < ARRAYSIZE(_stdSeq8)) ? shpcnt : ARRAYSIZE(_stdSeq8);
 	}
 
-	// Set the shape list
-	BitmapPtr *shapeList = new BitmapPtr[shplist.size()];
-	for (uint i = 0; i < shplist.size(); ++i)
-		shapeList[i] = shplist[i];
-
-	setShapeList(shapeList, shpcnt);
+	setShapeList(shplist, shpcnt);
 
 	if (_file[2] == '~') { // FLY-type sprite
 		Seq *nextSeq = _ext->_seq;
@@ -401,7 +393,7 @@ Sprite *Sprite::contract() {
 
 	if (e->_shpList) {
 		for (int i = 0; i < _shpCnt; i++)
-			e->_shpList[i]->release();
+			e->_shpList[i].release();
 		delete[] e->_shpList;
 		e->_shpList = nullptr;
 	}
@@ -1055,53 +1047,19 @@ void Bitmap::hide(int16 x, int16 y) {
 /*--------------------------------------------------------------------------*/
 
 HorizLine::HorizLine(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
-	// Set the sprite list
-	BitmapPtr *HL = new BitmapPtr[2];
-	HL[0] = new Bitmap(_vm, "HLINE");
-	HL[1] = NULL;
-
-	setShapeList(HL, 1);
-
-	warning("HorizLine::HorizLine() - Recheck this!");
+	warning("HorizLine::HorizLine()");
 }
 
 SceneLight::SceneLight(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
-	// Set the sprite list
-	BitmapPtr *PR = new BitmapPtr[2];
-	PR[0] = new Bitmap(_vm, "PRESS");
-	PR[1] = NULL;
-
-	setShapeList(PR, 1);
-
-	warning("SceneLight::SceneLight() - Recheck this!");
+	warning("SceneLight::SceneLight()");
 }
 
 Speaker::Speaker(CGE2Engine *vm): Sprite(vm), _vm(vm) {
-	// Set the sprite list
-	BitmapPtr *SP = new BitmapPtr[3];
-	SP[0] = new Bitmap(_vm, "SPK_L");
-	SP[1] = new Bitmap(_vm, "SPK_R");
-	SP[2] = NULL;
-
-	setShapeList(SP, 2);
-
-	warning("Speaker::Speaker() - Recheck this!");
+	warning("Speaker::Speaker()");
 }
 
 PocLight::PocLight(CGE2Engine *vm): Sprite(vm), _vm(vm) {
-	// Set the sprite list
-	BitmapPtr *LI = new BitmapPtr[5];
-	LI[0] = new Bitmap(_vm, "LITE0");
-	LI[1] = new Bitmap(_vm, "LITE1");
-	LI[2] = new Bitmap(_vm, "LITE2");
-	LI[3] = new Bitmap(_vm, "LITE3");
-	LI[4] = NULL;
-
-	setShapeList(LI, 4);
-
-	_flags._kill = false;
-
-	warning("PocLight::PocLight() - Recheck this!");
+	warning("PocLight::PocLight()");
 }
 
 } // End of namespace CGE2
