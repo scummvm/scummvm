@@ -137,6 +137,7 @@ _opengl=auto
 _opengles=auto
 _readline=auto
 _freetype2=auto
+_iconv=auto
 _taskbar=auto
 _updates=no
 _libunity=auto
@@ -981,6 +982,8 @@ Optional Libraries:
                            installed (optional)
   --disable-freetype2     disable freetype2 TTF library usage [autodetect]
 
+  --disable-iconv          disable iconv support [autodetect]
+
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
@@ -1051,6 +1054,8 @@ for ac_option in $@; do
 	--disable-readline)       _readline=no    ;;
 	--enable-freetype2)       _freetype2=yes  ;;
 	--disable-freetype2)      _freetype2=no   ;;
+	--enable-iconv)           _iconv=yes      ;;
+	--disable-iconv)          _iconv=no       ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
 	--enable-updates)         _updates=yes    ;;
@@ -3964,6 +3969,82 @@ echocheck "FreeType2"
 echo "$_freetype2"
 
 define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
+
+#
+# Check for iconv
+#
+# TODO: Support prefix for iconv
+echo_n "Checking whether iconv.h is present... "
+if test "$_iconv" = auto ; then
+	_iconv=no
+	cat > $TMPC << EOF
+#include <iconv.h>
+int main(int, char **) {
+	return 0;
+}
+EOF
+	cc_check && _iconv=yes
+fi
+
+create_iconv_test() {
+	cat > $TMPC << EOF
+#include <iconv.h>
+int main(int, char **) {
+	iconv_t iconv = iconv_open("UTF-32", "SJIS");
+	iconv_close(iconv);
+	return 0;
+}
+EOF
+}
+echo "$_iconv"
+
+if test "$_iconv" = yes ; then
+	echo_n "Checking whether iconv needs linking against libiconv... "
+
+	needs_iconvlib='auto'
+	create_iconv_test
+	cc_check -liconv && needs_iconvlib='yes'
+	# We do check linking without -liconv here too, just in case
+	# it would fail otherwise too
+	create_iconv_test
+	cc_check && needs_iconvlib='no'
+
+	if test "$needs_iconvlib" = auto ; then
+		_iconv=no
+		echo "does not link at all"
+	else
+		if test "$needs_iconvlib" = yes ; then
+			LIBS="$LIBS -liconv"
+		fi
+		echo "$needs_iconvlib"
+
+		echo_n "Checking signature of iconv... "
+		uses_const=no
+
+		cat > $TMPC << EOF
+#include <iconv.h>
+int main(int argc, char **argv) {
+	iconv_t iconvP;
+	const char **inbuf = 0;
+	iconv(iconvP, inbuf, 0, 0, 0);
+	return 0;
+}
+EOF
+		cc_check $_iconvlibs && uses_const=yes
+
+		if test "$uses_const" = yes ; then
+			echo "iconv_t, const char **, size_t *, char **, size_t *"
+		else
+			echo "iconv_t, char **, size_t *, char **, size_t *"
+		fi
+
+		define_in_config_if_yes "$uses_const" 'ICONV_USES_CONST'
+	fi
+fi
+
+echocheck "iconv"
+define_in_config_if_yes "$_iconv" 'USE_ICONV'
+echo "$_iconv"
 
 #
 # Check for OpenGL (ES)
