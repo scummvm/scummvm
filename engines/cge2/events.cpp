@@ -155,6 +155,7 @@ EventManager::EventManager(CGE2Engine *vm) : _vm(vm){
 
 void EventManager::poll() {
 	while (g_system->getEventManager()->pollEvent(_event)) {
+		_event.mouse.y = kScrHeight - _event.mouse.y;
 		switch (_event.type) {
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
@@ -186,7 +187,7 @@ void EventManager::handleEvents() {
 
 			// update mouse cursor position
 			if (e._mask & kMouseRoll)
-				_vm->_mouse->gotoxyz(e._x, kWorldHeight - e._y);
+				_vm->_mouse->gotoxyz(e._x, e._y);
 
 			// activate current touched SPRITE
 			if (e._spritePtr) {
