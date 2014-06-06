@@ -1378,7 +1378,6 @@ void PrinceEngine::drawInvItems() {
 				_mst_shadow = 0;
 				if (_mst_shadow2 != 0) {
 					if (!_flags->getFlagValue(Flags::CURSEBLINK)) {
-						//normal:
 						if (item + 1 == _mainHero->_inventory.size()) { // last item in inventory
 							_mst_shadow = 1;
 						}
@@ -1386,7 +1385,6 @@ void PrinceEngine::drawInvItems() {
 						_mst_shadow = 1;
 					}
 				}
-				//shad0:
 				if (itemNr != 68) {
 					Graphics::Surface *itemSurface = _allInvList[itemNr].getSurface();
 					int drawX = currInvX;
@@ -1401,7 +1399,7 @@ void PrinceEngine::drawInvItems() {
 						_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0);
 					} else {
 						_mst_shadow = _mst_shadow2;
-						_graph->drawTransparentWithBlend(drawX, drawY, itemSurface, 0); //TODO - ShowSprite01
+						_graph->drawTransparentWithBlend(drawX, drawY, itemSurface, 0);
 					}
 				} else {
 					// candle item:

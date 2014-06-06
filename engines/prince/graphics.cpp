@@ -185,19 +185,14 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor)
 	if (_blendTable[pixelColor] != 255) {
 		currColor = _blendTable[pixelColor];
 	} else {
-		const byte *originalPalette = _vm->_roomBmp->getPalette(); //?
-		const byte *suitcasePalette = _vm->_suitcaseBmp->getPalette(); //?
+		const byte *originalPalette = _vm->_roomBmp->getPalette();
 
-		//debug("backgroundPixelColor: %d", backgroundPixelColor);
-		//debug("orgpalette: %d", pixelColor);
-		//debug("mst_shadow: %d",  _vm->_mst_shadow);
-
-		redFirstOrg = originalPalette[pixelColor * 4] * _vm->_mst_shadow / 256;
+		redFirstOrg = originalPalette[pixelColor * 3] * _vm->_mst_shadow / 256;
 		if (redFirstOrg >= 256) {
 			redFirstOrg = 255;
 		}
 		if (_vm->_mst_shadow <= 256) {
-			redFirstBack = suitcasePalette[backgroundPixelColor * 4] * (256 - _vm->_mst_shadow) / 256;
+			redFirstBack = originalPalette[backgroundPixelColor * 3] * (256 - _vm->_mst_shadow) / 256;
 			if (redFirstBack >= 256) {
 				redFirstBack = 255;
 			}
@@ -207,12 +202,12 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor)
 			}
 		}
 
-		greenFirstOrg = originalPalette[pixelColor * 4 + 1] * _vm->_mst_shadow / 256;
+		greenFirstOrg = originalPalette[pixelColor * 3 + 1] * _vm->_mst_shadow / 256;
 		if (greenFirstOrg >= 256) {
 			greenFirstOrg = 255;
 		}
 		if (_vm->_mst_shadow <= 256) {
-			greenFirstBack = suitcasePalette[backgroundPixelColor * 4 + 1] * (256 - _vm->_mst_shadow) / 256;
+			greenFirstBack = originalPalette[backgroundPixelColor * 3 + 1] * (256 - _vm->_mst_shadow) / 256;
 			if (greenFirstBack >= 256) {
 				greenFirstBack = 255;
 			}
@@ -222,12 +217,12 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor)
 			}
 		}
 
-		blueFirstOrg = originalPalette[pixelColor * 4 + 2] * _vm->_mst_shadow / 256;
+		blueFirstOrg = originalPalette[pixelColor * 3 + 2] * _vm->_mst_shadow / 256;
 		if (blueFirstOrg >= 256) {
 			blueFirstOrg = 255;
 		}
 		if (_vm->_mst_shadow <= 256) {
-			blueFirstBack = suitcasePalette[backgroundPixelColor * 4 + 2] * (256 - _vm->_mst_shadow) / 256;
+			blueFirstBack = originalPalette[backgroundPixelColor * 3 + 2] * (256 - _vm->_mst_shadow) / 256;
 			if (blueFirstBack >= 256) {
 				blueFirstBack = 255;
 			}
@@ -265,7 +260,6 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor)
 		}
 		_blendTable[pixelColor] = currColor;
 	}
-	//debug("currColor: %d", currColor);
 	return currColor;
 }
 
