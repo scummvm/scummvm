@@ -1518,6 +1518,8 @@ Common::Array<MovItem *> *MovGraph::calcMovItems(MovArr *movarr1, MovArr *movarr
 
 		genMovItem(r, tempObList2[i], movarr1, movarr2);
 
+		res->push_back(r);
+
 		delete tempObList2[i];
 	}
 
