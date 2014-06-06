@@ -70,6 +70,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 		_vol[i] = nullptr;
 	_eventManager = nullptr;
 	_blinkSprite = nullptr;
+	_font = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -115,6 +116,7 @@ void CGE2Engine::init() {
 		_point[i] = new V3D();
 	_sys = new System(this);
 	_eventManager = new EventManager(this);
+	_font = new Font(this);
 }
 
 void CGE2Engine::deinit() {
@@ -146,6 +148,7 @@ void CGE2Engine::deinit() {
 	delete _eventManager;
 	if (_blinkSprite != nullptr)
 		delete _blinkSprite;
+	delete _font;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {

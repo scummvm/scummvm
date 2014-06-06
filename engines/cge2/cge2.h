@@ -56,6 +56,7 @@ class Hero;
 class Bitmap;
 class System;
 class EventManager;
+class Font;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -78,20 +79,6 @@ enum CallbackType {
 };
 
 enum Action { kNear, kMTake, kFTake, kActions };
-
-class Font {
-	char _path[kPathMax];
-	void load();
-	CGE2Engine *_vm;
-public:
-	uint8  *_widthArr;
-	uint16 *_pos;
-	uint8  *_map;
-	Font(CGE2Engine *vm, const char *name);
-	~Font();
-	uint16 width(const char *text);
-	void save();
-};
 
 class CGE2Engine : public Engine {
 private:
@@ -241,6 +228,7 @@ public:
 	Sprite *_vol[2];
 	EventManager *_eventManager;
 	Sprite *_blinkSprite;
+	Font *_font;
 private:
 	void init();
 	void deinit();

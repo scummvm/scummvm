@@ -33,8 +33,6 @@
 
 namespace CGE2 {
 
-#define kTextColFG         kVgaColDark              // foreground color
-#define kTextColBG         kVgaColGray              // background color
 #define kTextHMargin      (6&~1)                    // EVEN horizontal margins!
 #define kTextVMargin       5                        // vertical margins
 #define kTextLineSpace     2                        // line spacing
@@ -44,6 +42,23 @@ namespace CGE2 {
 #define kMapSize          (256*8)
 #define kFontHigh          8
 #define kFontExt           ".CFT"
+#define kCaptionSide       24
+#define kInfName           101
+#define kSayName           102
+#define kColorNum          6
+
+class Font {
+	void load();
+	CGE2Engine *_vm;
+public:
+	uint8  *_widthArr;
+	uint16 *_pos;
+	uint8  *_map;
+	uint8  _colorSet[kColorNum][4];
+	Font(CGE2Engine *vm);
+	~Font();
+	uint16 width(const char *text);
+};
 
 enum TextBoxStyle { kTBPure, kTBRect, kTBRound };
 
