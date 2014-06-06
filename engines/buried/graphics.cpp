@@ -153,7 +153,7 @@ Graphics::Font *GraphicsManager::createFont(int size, bool bold) const {
 	// MS Gothic for the Japanese version
 	// Arial or Arial Bold for everything else
 	if (_vm->getLanguage() == Common::JA_JPN)
-		return createMSGothicFont(size);
+		return createMSGothicFont(size, bold);
 
 	return createArialFont(size, bold);
 }
@@ -686,7 +686,7 @@ void GraphicsManager::crossBlit(Graphics::Surface *dst, int xDst, int yDst, int 
 		memcpy(dst->getBasePtr(xDst, yDst + y), src->getBasePtr(xSrc, ySrc + y), w * src->format.bytesPerPixel);
 }
 
-Graphics::Font *GraphicsManager::createMSGothicFont(int size) const {
+Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 	Common::SeekableReadStream *stream = findMSGothicStream();
 
 	if (!stream)
@@ -713,6 +713,7 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size) const {
 	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
 	// with the TrueType font on Win7/Win8 (at least)
 	// TODO: shift-jis codepage (932) and mapping
+	// TODO: Retrieve the bold version from the TTC file
 	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, s_codePage1252);
 
 	if (!font)

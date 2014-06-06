@@ -126,7 +126,7 @@ private:
 	Common::SeekableReadStream *findArialStream(bool bold) const;
 	Common::SeekableReadStream *getThemeFontStream(const Common::String &fileName) const;
 
-	Graphics::Font *createMSGothicFont(int size) const;
+	Graphics::Font *createMSGothicFont(int size, bool bold) const;
 	Common::SeekableReadStream *findMSGothicStream() const;
 };
 
