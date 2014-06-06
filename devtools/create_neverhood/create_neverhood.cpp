@@ -467,7 +467,15 @@ public:
 	std::vector<LISTCLASS*> lists;
 
 	void add(LISTCLASS *list) {
-		lists.push_back(list);
+		bool doAppend = true;
+		for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
+			if ((*it)->id == list->id) {
+				doAppend = false;
+				break;
+			}
+		}
+		if (doAppend)
+			lists.push_back(list);
 	}
 
 	void loadListVector(const uint32 *offsets) {
@@ -475,7 +483,6 @@ public:
 			LISTCLASS *list = new LISTCLASS();
 			list->loadList(offsets[i], offsets[i + 1]);
 			bool doAppend = true;
-			// Bad
 			for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
 				if ((*it)->id == list->id) {
 					doAppend = false;

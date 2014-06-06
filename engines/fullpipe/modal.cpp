@@ -1456,6 +1456,9 @@ ModalSaveGame::ModalSaveGame() {
 	_cancelL = 0;
 	_emptyD = 0;
 	_emptyL = 0;
+	_fullD = 0;
+	_fullL = 0;
+	_menuScene = 0;
 	_queryRes = -1;
 	_rect = g_fp->_sceneRect;
 	_queryDlg = 0;

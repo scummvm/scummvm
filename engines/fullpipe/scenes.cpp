@@ -1455,6 +1455,9 @@ void BallChain::init(Ball **ball) {
 
 Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
 	if (!pTail) {
+		if (!cPlexLen)
+			error("BallChain::sub04: cPlexLen is 0");
+
 		cPlex = (byte *)calloc(cPlexLen, sizeof(Ball));
 
 		Ball *runPtr = (Ball *)&cPlex[(cPlexLen - 1) * sizeof(Ball)];
@@ -1463,7 +1466,7 @@ Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
 			runPtr->p0 = pTail;
 			pTail = runPtr;
 
-			runPtr -= sizeof(Ball);
+			runPtr--;
 		}
 	}
 

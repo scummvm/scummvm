@@ -554,8 +554,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 
 		mq->transferExCommands(newmq);
 
-		if (newmq)
-			delete newmq;
+		delete newmq;
 
 		ani->setPicAniInfo(&picinfo);
 
@@ -1136,6 +1135,8 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 			_items[idx]->movarr._link = 0;
 
 			res = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, stid2);
+
+			break;
 		}
 	}
 
@@ -1516,6 +1517,8 @@ Common::Array<MovItem *> *MovGraph::calcMovItems(MovArr *movarr1, MovArr *movarr
 		MovItem *r = new MovItem;
 
 		genMovItem(r, tempObList2[i], movarr1, movarr2);
+
+		res->push_back(r);
 
 		delete tempObList2[i];
 	}
