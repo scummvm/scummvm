@@ -554,8 +554,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 
 		mq->transferExCommands(newmq);
 
-		if (newmq)
-			delete newmq;
+		delete newmq;
 
 		ani->setPicAniInfo(&picinfo);
 
