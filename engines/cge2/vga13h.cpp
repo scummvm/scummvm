@@ -970,19 +970,6 @@ void Vga::update() {
 		updateColors();
 		_setPal = false;
 	}
-	/*if (_vm->_showBoundariesFl) {
-		Vga::_page[0]->hLine(0, 200 - kPanHeight, 320, 0xee);
-		if (_vm->_barriers[_vm->_now]._horz != 255) {
-		for (int i = 0; i < 8; i++)
-		Vga::_page[0]->vLine((_vm->_barriers[_vm->_now]._horz * 8) + i, 0, 200, 0xff);
-		}
-		if (_vm->_barriers[_vm->_now]._vert != 255) {
-		for (int i = 0; i < 4; i++)
-		Vga::_page[0]->hLine(0, 80 + (_vm->_barriers[_vm->_now]._vert * 4) + i, 320, 0xff);
-		}
-		}*/
-
-	warning("STUB: Vga::update()");
 
 	g_system->copyRectToScreen(Vga::_page[0]->getPixels(), kScrWidth, 0, 0, kScrWidth, kScrHeight);
 	g_system->updateScreen();
