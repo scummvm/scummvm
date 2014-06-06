@@ -129,8 +129,6 @@ int updateScriptImport(int ovlIdx) {
 	// do it for the 2 first string types
 	do {
 
-		int i = 0;
-
 		if (param == 0) {
 			var_32 = numData3;
 		} else {
@@ -138,16 +136,16 @@ int updateScriptImport(int ovlIdx) {
 		}
 
 		if (var_32) {
+			int i = 0;
 			do {
 				importScriptStruct *ptrImportData;
 				const char *ptrImportName;
 				uint8 *ptrData;
 
-				if (param == 0) {
+				if (param == 0)
 					pScript = getOvlData3Entry(ovlIdx, i);
-				} else {
+				else
 					pScript = scriptFunc1Sub2(ovlIdx, i);
-				}
 
 				ptrImportData = (importScriptStruct *)(pScript->dataPtr + pScript->offsetToImportData);	// import data
 				ptrImportName = (const char*)(pScript->dataPtr + pScript->offsetToImportName);	// import name

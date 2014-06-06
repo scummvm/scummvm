@@ -116,14 +116,10 @@ int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuer
 }
 
 void setObjectPosition(int16 ovlIdx, int16 objIdx, int16 param3, int16 param4) {
-	objDataStruct *ptr;
-	objectParams *ptr2;
-
-	ptr = getObjectDataFromOverlay(ovlIdx, objIdx);
-
-	if (!ptr) {
+	objDataStruct *ptr = getObjectDataFromOverlay(ovlIdx, objIdx);
+	if (!ptr)
 		return;
-	}
+
 	//overlayTable[param1].ovlData
 
 	switch (ptr->_class) {
@@ -138,7 +134,7 @@ void setObjectPosition(int16 ovlIdx, int16 objIdx, int16 param3, int16 param4) {
 	case UNIQUE:
 		return;
 	case VARIABLE: {
-		ptr2 =  &overlayTable[ovlIdx].ovlData->arrayObjVar[ptr->_varTableIdx];
+		objectParams *ptr2 =  &overlayTable[ovlIdx].ovlData->arrayObjVar[ptr->_varTableIdx];
 
 		switch (param3) {
 		case 0: {	// x

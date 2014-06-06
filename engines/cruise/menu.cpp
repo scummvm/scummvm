@@ -233,7 +233,6 @@ static void handleSaveLoad(bool saveFlag) {
 }
 
 int playerMenu(int menuX, int menuY) {
-	int retourMenu;
 	//int restartGame = 0;
 
 	if (playerMenuEnabled && displayOn) {
@@ -277,7 +276,7 @@ int playerMenu(int menuX, int menuY) {
 		addSelectableMenuEntry(0, 6, menuTable[0], 1, -1, _vm->langString(ID_RESTART));
 		addSelectableMenuEntry(0, 7, menuTable[0], 1, -1, _vm->langString(ID_QUIT));
 
-		retourMenu = processMenu(menuTable[0]);
+		int retourMenu = processMenu(menuTable[0]);
 
 		freeMenu(menuTable[0]);
 		menuTable[0] = NULL;
