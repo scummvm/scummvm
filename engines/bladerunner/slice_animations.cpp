@@ -94,7 +94,7 @@ bool SliceAnimations::open(const Common::String &name) {
 }
 
 SliceAnimations::~SliceAnimations() {
-	for (uint32 i = 0; i != _pageCount; ++i)
+	for (uint32 i = 0; i != _pages.size(); ++i)
 		free(_pages[i]._data);
 }
 
