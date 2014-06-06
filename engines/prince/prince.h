@@ -287,6 +287,8 @@ public:
 	int _maxInvH;
 	int _invLineSkipX;
 	int _invLineSkipY;
+	int _mst_shadow;
+	int _mst_shadow2; // blinking after adding new item
 
 	void inventoryFlagChange();
 	bool loadAllInv();
@@ -294,6 +296,7 @@ public:
 	void prepareInventoryToView();
 	void drawInvItems();
 	void displayInventory();
+	void addInvObj();
 
 	int testAnimNr;
 	int testAnimFrame;

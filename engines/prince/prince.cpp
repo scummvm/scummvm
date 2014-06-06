@@ -80,7 +80,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_frameNr(0), _cursor1(nullptr), _cursor2(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
-	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false) {
+	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
+	_mst_shadow(0), _mst_shadow2(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -659,6 +660,7 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_k:
 		_mainHero->_middleY += 5;
+		addInvObj();
 		break;
 	case Common::KEYCODE_j:
 		_mainHero->_middleX -= 5;
@@ -1261,6 +1263,55 @@ void PrinceEngine::drawScreen() {
 	_graph->update();
 }
 
+void PrinceEngine::addInvObj() {
+	changeCursor(0); // turn on cursor later?
+	//prepareInventoryToView();
+	//inventoryFlagChange();
+
+	if (!_flags->getFlagValue(Flags::CURSEBLINK)) {
+
+		loadSample(27, "PRZEDMIO.WAV");
+		playSample(27, 0);
+
+		_mst_shadow2 = 1;
+		while (_mst_shadow2 < 512) {
+			uint32 currentTime = _system->getMillis();
+			displayInventory();
+			//getDebugger()->onFrame();
+			_graph->update();
+			_mst_shadow2 += 50;
+			int delay = 1000/15 - int32(_system->getMillis() - currentTime);
+			delay = delay < 0 ? 0 : delay;
+			_system->delayMillis(delay);
+		}
+		while (_mst_shadow2 > 256) {
+			uint32 currentTime = _system->getMillis();
+			displayInventory();
+			//getDebugger()->onFrame();
+			_graph->update();
+			_mst_shadow2 -= 42;
+			int delay = 1000/15 - int32(_system->getMillis() - currentTime);
+			delay = delay < 0 ? 0 : delay;
+			_system->delayMillis(delay);
+		}
+		_mst_shadow2 = 0;
+
+		for (int i = 0; i < 20; i++) {
+			uint32 currentTime = _system->getMillis();
+			displayInventory();
+			//getDebugger()->onFrame();
+			_graph->update();
+			int delay = 1000/15 - int32(_system->getMillis() - currentTime);
+			delay = delay < 0 ? 0 : delay;
+			_system->delayMillis(delay);
+		}
+
+	} else {
+		//CURSEBLINK:
+
+	}
+}
+
 void PrinceEngine::rememberScreenInv() {
 }
 
@@ -1323,26 +1374,37 @@ void PrinceEngine::drawInvItems() {
 	for (int i = 0 ; i < _invLines; i++) {
 		for (int j = 0; j < _invLine; j++) {
 			if (item < _mainHero->_inventory.size()) {
-				//MST_Shadow
-				// TODO!
-				//shad0:
-				//if (_mainHero->_inventory[item] != 0) {
-					int itemNr = _mainHero->_inventory[item];
-					if (itemNr != 68) {
-						Graphics::Surface *itemSurface = _allInvList[itemNr].getSurface();
-						int drawX = currInvX;
-						int drawY = currInvY;
-						if (itemSurface->w < _maxInvW) {
-							drawX += (_maxInvW - itemSurface->w) / 2;
+				int itemNr = _mainHero->_inventory[item];
+				_mst_shadow = 0;
+				if (_mst_shadow2 != 0) {
+					if (!_flags->getFlagValue(Flags::CURSEBLINK)) {
+						//normal:
+						if (item + 1 == _mainHero->_inventory.size()) { // last item in inventory
+							_mst_shadow = 1;
 						}
-						if (itemSurface->h < _maxInvH) {
-							drawY += (_maxInvH - itemSurface->h) / 2;
-						}
-						_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0);
-					} else {
-						// candle item:
+					} else if (itemNr == 1 || itemNr == 3 || itemNr == 4 || itemNr == 7) {
+						_mst_shadow = 1;
 					}
-				//}
+				}
+				//shad0:
+				if (itemNr != 68) {
+					Graphics::Surface *itemSurface = _allInvList[itemNr].getSurface();
+					int drawX = currInvX;
+					int drawY = currInvY;
+					if (itemSurface->w < _maxInvW) {
+						drawX += (_maxInvW - itemSurface->w) / 2;
+					}
+					if (itemSurface->h < _maxInvH) {
+						drawY += (_maxInvH - itemSurface->h) / 2;
+					}
+					if (!_mst_shadow) {
+						_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0); //TODO - ShowSprite0
+					} else {
+						_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0); //TODO - ShowSprite01
+					}
+				} else {
+					// candle item:
+				}
 			}
 			currInvX += _invLineW + _invLineSkipX;
 			item++;
