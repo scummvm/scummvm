@@ -915,17 +915,14 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 	while (currentcellHead) {
 		if (currentcellHead->type == 5) {
-			uint8 *ptr = mainProc14(currentcellHead->overlay, currentcellHead->idx);
-
 			ASSERT(0);
-
-			if (ptr) {
-				ASSERT(0);
-				//*(int16 *)(currentcellHead->datas+0x2E) = getSprite(ptr,*(int16 *)(currentcellHead->datas+0xE));
-			} else {
-				ASSERT(0);
-				//*(int16 *)(currentcellHead->datas+0x2E) = 0;
-			}
+#if 0
+			uint8 *ptr = mainProc14(currentcellHead->overlay, currentcellHead->idx);
+			if (ptr)
+				*(int16 *)(currentcellHead->datas+0x2E) = getSprite(ptr,*(int16 *)(currentcellHead->datas+0xE));
+			else
+				*(int16 *)(currentcellHead->datas+0x2E) = 0;
+#endif
 		}
 
 		currentcellHead = currentcellHead->next;
