@@ -1463,7 +1463,7 @@ Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
 			runPtr->p0 = pTail;
 			pTail = runPtr;
 
-			runPtr -= sizeof(Ball);
+			runPtr--;
 		}
 	}
 
