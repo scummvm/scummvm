@@ -364,6 +364,17 @@ void ScreenObjects::check(bool scanFlag) {
 	}
 }
 
+int ScreenObjects::scan(const Common::Point &pt, int layer) {
+	for (uint i = 1; i <= size(); ++i) {
+		ScreenObject &sObj = (*this)[i];
+		if (sObj._active && sObj._bounds.contains(pt) && sObj._layer == layer)
+			return i;
+	}
+
+	// Entry not found
+	return 0;
+}
+
 int ScreenObjects::scanBackwards(const Common::Point &pt, int layer) {
 	for (int i = (int)size(); i >= 1; --i) {
 		ScreenObject &sObj = (*this)[i];

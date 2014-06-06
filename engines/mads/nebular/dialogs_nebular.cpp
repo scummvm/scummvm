@@ -463,14 +463,14 @@ void PictureDialog::restore() {
 
 ScreenDialog::DialogLine::DialogLine() {
 	_active = true;
-	_state = 0;
+	_state = DLGSTATE_UNSELECTED;
 	_textDisplayIndex = -1;
 	_font = nullptr;
 	_widthAdjust = 0;
 }
 
 ScreenDialog::DialogLine::DialogLine(const Common::String &s) {
-	_state = 0;
+	_state = DLGSTATE_UNSELECTED;
 	_textDisplayIndex = -1;
 	_font = nullptr;
 	_widthAdjust = -1;
@@ -485,6 +485,8 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
 	Scene &scene = game._scene;
 
 	_v1 = 0;
+	_v2 = 0;
+	_v3 = false;
 	_selectedLine = 0;
 	_dirFlag = false;
 	_textLineCount = 0;
@@ -557,6 +559,7 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
 
 void ScreenDialog::clearLines() {
 	Scene &scene = _vm->_game->_scene;
+	_v2 = 0;
 	_lines.clear();
 	scene._spriteSlots.fullRefresh(true);
 }
@@ -630,7 +633,7 @@ void ScreenDialog::addLine(const Common::String &msg, DialogTextAlign align,
 	}
 
 	line->_font = font;
-	line->_state = 0;
+	line->_state = DLGSTATE_UNSELECTED;
 	line->_pos = pt;
 	line->_widthAdjust = -1;
 	line->_textDisplayIndex = -1;
@@ -707,18 +710,126 @@ void ScreenDialog::setFrame(int frameNumber, int depth) {
 }
 
 void ScreenDialog::show() {
+	Scene &scene = _vm->_game->_scene;
+
 	while (_selectedLine < 1) {
-		bool continueFlag = handleEvents();
+		handleEvents();
+		if (_v3) {
+			if (!_v1)
+				_v1 = -1;
+
+			refreshText();
+			scene.drawElements(_vm->_game->_fx, _vm->_game->_fx);
+			_v3 = false;
+		}
+
 		_vm->_events->waitForNextFrame();
 		_vm->_game->_fx = kTransitionNone;
-
-		if (!continueFlag)
-			break;
 	}
 }
 
-bool ScreenDialog::handleEvents() {
-	return true;
+void ScreenDialog::handleEvents() {
+	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
+	EventsManager &events = *_vm->_events;
+	Nebular::DialogsNebular &dialogs = *(Nebular::DialogsNebular *)_vm->_dialogs;
+	int v1 = _v1;
+
+	// Mark all the lines as initially unselected
+	for (uint i = 0; i < _lines.size(); ++i)
+		_lines[i]._state = DLGSTATE_UNSELECTED;
+
+	// Process pending events
+	_vm->_events->pollEvents();
+
+	// Scan for objects in the dialog
+	int objIndex = screenObjects.scan(events.currentPos() - _vm->_screen._offset, LAYER_GUI);
+
+	if (_v2) {
+		int yp = events.currentPos().y - _vm->_screen._offset.y;
+		if (yp < screenObjects[1]._bounds.top) {
+			if (!events._mouseReleased)
+				_lines[1]._state = DLGSTATE_SELECTED;
+			objIndex = 19;
+		}
+
+		if (yp < screenObjects[7]._bounds.bottom) {
+			if (!events._mouseReleased)
+				_lines[1]._state = DLGSTATE_SELECTED;
+			objIndex = 20;
+		}
+	}
+
+	int line = -1;
+	if (objIndex == 0 || events._mouseButtons) {
+		line = screenObjects[objIndex]._descId;
+		if (dialogs._pendingDialog == DIALOG_SAVE || dialogs._pendingDialog == DIALOG_RESTORE) {
+			if (line > 7 && line <= 14) {
+				_lines[line]._state = DLGSTATE_UNSELECTED;
+				line -= 7;
+			}
+
+			int v2 = (line > 0 && line < 8) ? 1 : 0;
+			if (events._mouseMoved)
+				_v2 = v2;
+		}
+
+		if (screenObjects[objIndex]._category == CAT_COMMAND) {
+			_lines[line]._state = DLGSTATE_SELECTED;
+		}
+	}
+	if (!line)
+		line = -1;
+
+	if (dialogs._pendingDialog == DIALOG_ERROR && line == 1)
+		line = -1;
+
+	if (events._mouseReleased) {
+		if (!_v2 || line <= 18)
+			_selectedLine = line;
+		_v3 = true;
+	}
+
+	_v1 = line;
+	if (v1 == line || _selectedLine >= 0)
+		_v3 = true;
+}
+
+void ScreenDialog::refreshText() {
+	Scene &scene = _vm->_game->_scene;
+
+	for (uint i = 0; i < _lines.size(); ++i) {
+		if (_lines[i]._active) {
+			int fontColor;
+			switch (_lines[i]._state) {
+			case DLGSTATE_UNSELECTED:
+				fontColor = 0xB0A;
+				break;
+			case DLGSTATE_SELECTED:
+				fontColor = 0xD0C;
+				break;
+			default:
+				fontColor = 0xF0E;
+				break;
+			}
+
+			bool skipFlag = false;
+			if (_lines[i]._textDisplayIndex >= 0) {
+				TextDisplay &textDisplay = scene._textDisplay[_lines[i]._textDisplayIndex];
+				int currCol = textDisplay._color1;
+				if (currCol != fontColor) {
+					scene._textDisplay.expire(_lines[i]._textDisplayIndex);
+					_lines[i]._textDisplayIndex = -1;
+				} else {
+					skipFlag = true;
+				}
+			}
+
+			if (!skipFlag) {
+				_lines[i]._textDisplayIndex = scene._textDisplay.add(_lines[i]._pos.x, _lines[i]._pos.y, 
+					fontColor, _lines[i]._widthAdjust, _lines[i]._msg, _lines[i]._font);
+			}
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/

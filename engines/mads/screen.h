@@ -165,8 +165,14 @@ public:
 	void add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId);
 
 	/**
-	*/
+	 * Check objects on the screen
+	 */
 	void check(bool scanFlag);
+
+	/**
+	 * Scan the registered screen objects
+	 */
+	int scan(const Common::Point &pt, int layer);
 
 	/**
 	 * Handle an element being highlighted on the screen, and make it active.

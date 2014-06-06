@@ -101,10 +101,12 @@ public:
 
 enum DialogTextAlign { ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
 
+enum DialogState { DLGSTATE_UNSELECTED = 0, DLGSTATE_SELECTED = 1, DLGSTATE_FOCUSED = 2 };
+
 class ScreenDialog {
 	struct DialogLine {
 		bool _active;
-		int _state;
+		DialogState _state;
 		Common::Point _pos;
 		int _textDisplayIndex;
 		Common::String _msg;
@@ -119,6 +121,8 @@ protected:
 	MSurface _savedSurface;
 	Common::Array<DialogLine> _lines;
 	int _v1;
+	int _v2;
+	bool _v3;
 	int _selectedLine;
 	bool _dirFlag;
 	int _screenId;
@@ -164,7 +168,12 @@ protected:
 	/**
 	 * Handle events whilst the dialog is active
 	 */
-	bool handleEvents();
+	void handleEvents();
+
+	/**
+	 * Refresh the display of the dialog's text
+	 */
+	void refreshText();
 public:
 	/**
 	 * Constructor
