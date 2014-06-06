@@ -693,9 +693,7 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 		error("Failed to find MS Gothic font");
 
 	switch (size) {
-	case 10:
-		size = 7;
-		break;		
+	case 10:	
 	case 11:
 		size = 8;
 		break;
