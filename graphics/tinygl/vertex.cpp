@@ -69,7 +69,7 @@ void glopBegin(GLContext *c, GLParam *p) {
 			c->matrix_model_projection = (*c->matrix_stack_ptr[1]) * (*c->matrix_stack_ptr[0]);
 			// test to accelerate computation
 			c->matrix_model_projection_no_w_transform = 0;
-			if (c->matrix_model_projection.get(0,3) == 0.0 && c->matrix_model_projection.get(1,3) == 0.0 && c->matrix_model_projection.get(2,3) == 0.0)
+			if (c->matrix_model_projection.get(3,0) == 0.0 && c->matrix_model_projection.get(3,1) == 0.0 && c->matrix_model_projection.get(3,2) == 0.0)
 				c->matrix_model_projection_no_w_transform = 1;
 		}
 
@@ -128,11 +128,15 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 
 		// projection coordinates
 		m = c->matrix_stack_ptr[1];
+		v->pc = m->transform(v->ec);
+
+		/*
 		// NOTE: this transformation is not an ordinary matrix vector multiplication.
 		v->pc = Vector4(v->ec.getX() * m->get(0, 0) + v->ec.getY() * m->get(1, 0) + v->ec.getZ() * m->get(2, 0) + v->ec.getW() * m->get(3, 0),
 		                v->ec.getX() * m->get(0, 1) + v->ec.getY() * m->get(1, 1) + v->ec.getZ() * m->get(2, 1) + v->ec.getW() * m->get(3, 1),
 		                v->ec.getX() * m->get(0, 2) + v->ec.getY() * m->get(1, 2) + v->ec.getZ() * m->get(2, 2) + v->ec.getW() * m->get(3, 2),
 		                v->ec.getX() * m->get(0, 3) + v->ec.getY() * m->get(1, 3) + v->ec.getZ() * m->get(2, 3) + v->ec.getW() * m->get(3, 3));
+		*/
 
 		m = &c->matrix_model_view_inv;
 		n = &c->current_normal;

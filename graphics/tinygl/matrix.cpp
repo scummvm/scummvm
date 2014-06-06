@@ -213,10 +213,10 @@ void glopFrustum(GLContext *c, GLParam *p) {
 	C = -(farp + nearp) / (farp - nearp);
 	D = (float)(-(2.0 * farp * nearp) / (farp - nearp));
 
-	m.set(0,0, x); m.set(1,0, 0); m.set(2,0, A);  m.set(3,0, 0);
-	m.set(0,1, 0); m.set(1,1, y); m.set(2,1, B);  m.set(3,1, 0);
-	m.set(0,2, 0); m.set(1,2, 0); m.set(2,2, C);  m.set(3,2, D);
-	m.set(0,3, 0); m.set(1,3, 0); m.set(2,3, -1); m.set(3,3, 0);
+	m.set(0, 0, x); m.set(0, 1, 0); m.set(0, 2, A);  m.set(0, 3, 0);
+	m.set(1, 0, 0); m.set(1, 1, y); m.set(1, 2, B);  m.set(1, 3, 0);
+	m.set(2, 0, 0); m.set(2, 1, 0); m.set(2, 2, C);  m.set(2, 3, D);
+	m.set(3, 0, 0); m.set(3, 1, 0); m.set(3, 2, -1); m.set(3, 3, 0);
 
 	*c->matrix_stack_ptr[c->matrix_mode] *= m;
 

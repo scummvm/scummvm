@@ -200,9 +200,9 @@ Matrix4 Matrix4::rotation(float t, int u) {
 
 Vector3 Matrix4::transform(const Vector3 &vector) const {
 	return Vector3(
-	           vector.getX() * get(0, 0) + vector.getY() * get(1, 0) + vector.getZ() * get(2, 0) + get(3, 0),
-	           vector.getX() * get(0, 1) + vector.getY() * get(1, 1) + vector.getZ() * get(2, 1) + get(3, 1),
-	           vector.getX() * get(0, 2) + vector.getY() * get(1, 2) + vector.getZ() * get(2, 2) + get(3, 2));
+	           vector.getX() * get(0, 0) + vector.getY() * get(0, 1) + vector.getZ() * get(0, 2) + get(0, 3),
+	           vector.getX() * get(1, 0) + vector.getY() * get(1, 1) + vector.getZ() * get(1, 2) + get(1, 3),
+	           vector.getX() * get(2, 0) + vector.getY() * get(2, 1) + vector.getZ() * get(2, 2) + get(2, 3));
 }
 
 Vector3 Matrix4::transform3x3(const Vector3 &vector) const {
