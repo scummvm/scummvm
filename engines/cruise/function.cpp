@@ -196,13 +196,22 @@ int16 Op_Random() {
 
 int16 Op_PlayFX() {
 	int volume = popVar();
+
+#if 0
 	int speed = popVar();
-	/*int channelNum = */popVar();
+	int channelNum = popVar();
+#else
+	popVar();
+	popVar();
+#endif
+
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
+#if 0
 		if (speed == -1)
 			speed = filesDatabase[sampleNum].subData.transparency;
+#endif
 
 		_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr,
 			filesDatabase[sampleNum].width, volume);
@@ -213,13 +222,23 @@ int16 Op_PlayFX() {
 
 int16 Op_LoopFX() {
 	int volume = popVar();
+
+#if 0
 	int speed = popVar();
-	/*int channelNum = */popVar();
+	int channelNum = popVar();
+#else
+	popVar();
+	popVar();
+#endif
+
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
+
+#if 0
 		if (speed == -1)
 			speed = filesDatabase[sampleNum].subData.transparency;
+#endif
 
 		_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr,
 			filesDatabase[sampleNum].width, volume);
@@ -552,15 +571,13 @@ int16 Op_LoadFrame() {
 }
 
 int16 Op_LoadAbs() {
-	int slot;
-	char name[36] = "";
-	char *ptr;
 	int result = 0;
 
-	ptr = (char *) popPtr();
-	slot = popVar();
+	char *ptr = (char *) popPtr();
+	int slot = popVar();
 
 	if ((slot >= 0) && (slot < NUM_FILE_ENTRIES)) {
+		char name[36] = "";
 		Common::strlcpy(name, ptr, sizeof(name));
 		strToUpper(name);
 
@@ -1360,12 +1377,11 @@ int16 Op_RestoreSong() {
 }
 
 int16 Op_SongSize() {
-	int size, oldSize;
-
+	int oldSize;
 	if (_vm->sound().songLoaded()) {
 		oldSize = _vm->sound().numOrders();
 
-		size = popVar();
+		int size = popVar();
 		if ((size >= 1) && (size < 128))
 			_vm->sound().setNumOrders(size);
 	} else
@@ -1495,8 +1511,6 @@ int16 Op_Itoa() {
 	int nbp = popVar();
 	int param[160];
 	char txt[40];
-	char format[30];
-	char nbf[20];
 
 	for (int i = nbp - 1; i >= 0; i--)
 		param[i] = popVar();
@@ -1507,6 +1521,8 @@ int16 Op_Itoa() {
 	if (!nbp)
 		sprintf(txt, "%d", val);
 	else {
+		char format[30];
+		char nbf[20];
 		strcpy(format, "%");
 		sprintf(nbf, "%d", param[0]);
 		strcat(format, nbf);
