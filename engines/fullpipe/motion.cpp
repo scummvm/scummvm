@@ -1135,6 +1135,8 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 			_items[idx]->movarr._link = 0;
 
 			res = fillMGMinfo(_items[idx]->ani, &_items[idx]->movarr, stid2);
+
+			break;
 		}
 	}
 
