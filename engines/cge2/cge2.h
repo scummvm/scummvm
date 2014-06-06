@@ -130,6 +130,7 @@ public:
 	void switchHero(int sex);
 	void optionTouch(int opt, uint16 mask);
 	void offUse();
+	void setAutoColors();
 
 	void setEye(const V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);

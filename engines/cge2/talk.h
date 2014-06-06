@@ -62,17 +62,21 @@ public:
 
 enum TextBoxStyle { kTBPure, kTBRect, kTBRound };
 
+enum ColorBank { kCBRel, kCBStd, kCBSay, kCBInf, kCBMnu, kCBWar };
+
 class Talk : public Sprite {
 protected:
 	TextBoxStyle _mode;
-	BitmapPtr *_ts;
-	Bitmap *box(uint16 w, uint16 h);
+	bool _created;
+	uint8 *box(V2D siz);
 	bool _wideSpace;
 public:
-	Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode, bool wideSpace = false);
-	Talk(CGE2Engine *vm);
+	uint8 *_color;
 
-	virtual void update(const char *text);
+	Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode = kTBPure, ColorBank color = kCBStd, bool wideSpace = false);
+	Talk(CGE2Engine *vm, ColorBank color = kCBStd);
+
+	void update(const char *text);
 private:
 	CGE2Engine *_vm;
 };
