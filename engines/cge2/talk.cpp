@@ -244,20 +244,71 @@ void Talk::update(const char *text) {
 	setShapeList(b, 1);
 }
 
-InfoLine::InfoLine(CGE2Engine *vm, uint16 w) : Talk(vm), _oldText(NULL), _vm(vm) {
-	warning("STUB: InfoLine::InfoLine()");
+InfoLine::InfoLine(CGE2Engine *vm, uint16 w, ColorBank color)
+: Talk(vm), _oldText(nullptr), _newText(nullptr), _realTime(false), _vm(vm) {
+	BitmapPtr b = new Bitmap[1];
+	if (color == kCBRel)
+		_vm->setAutoColors();
+	_color = _vm->_font->_colorSet[color];
+	V2D siz = V2D(_vm, w, kFontHigh);
+	b[0] = Bitmap(_vm, siz.x, siz.y, _color[2]);
+	setShapeList(b, 1);
 }
 
 void InfoLine::update(const char *text) {
-	warning("STUB: InfoLine::update()");
-}
+	if (!_realTime && text == _oldText)
+		return;
 
-void InfoLine::update() {
-	warning("STUB: InfoLine::update()");
-}
+	_oldText = text;
 
-void InfoLine::setText(const char *txt) {
-	warning("STUB: InfoLine::setText()");
+	uint16 w = _ext->_shpList->_w;
+	uint16 h = _ext->_shpList->_h;
+	uint8 *v = _ext->_shpList->_v;
+	uint16 dsiz = w >> 2;                           // data size (1 plane line size)
+	uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
+	uint16 psiz = h * lsiz;                         // - last gape, but + plane trailer
+	uint16 size = 4 * psiz;                         // whole map size
+	uint8 fg = _color[0];
+	uint8 bg = _color[2];
+
+	// clear whole rectangle
+	memset(v + 2, bg, dsiz);                // data bytes
+	for (byte *pDest = v + lsiz; pDest < (v + psiz); pDest += lsiz) {
+		Common::copy(v, v + lsiz, pDest);
+	}
+	*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI);  // plane trailer uint16
+	for (byte *pDest = v + psiz; pDest < (v + 4 * psiz); pDest += psiz) {
+		Common::copy(v, v + psiz, pDest);
+	}
+
+	// paint text line
+	if (_newText) {
+		uint8 *p = v + 2, *q = p + size;
+
+		while (*text) {
+			uint16 cw = _vm->_font->_widthArr[(unsigned char)*text];
+			uint8 *fp = _vm->_font->_map + _vm->_font->_pos[(unsigned char)*text];
+
+			// Handle properly space size, after it was enlarged to display properly
+			// 'F1' text.
+			int8 fontStart = 0;
+			if ((*text == 0x20) && (cw > 4) && (!_wideSpace))
+				fontStart = 2;
+
+			for (int i = fontStart; i < cw; i++) {
+				uint16 b = fp[i];
+				for (uint16 n = 0; n < kFontHigh; n++) {
+					if (b & 1)
+						*p = fg;
+					b >>= 1;
+					p += lsiz;
+				}
+				if (p >= q)
+					p = p - size + 1;
+			}
+			text++;
+		}
+	}
 }
 
 } // End of namespace CGE2

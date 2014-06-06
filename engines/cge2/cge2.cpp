@@ -58,6 +58,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_spare = nullptr;
 	_commandHandler = nullptr;
 	_commandHandlerTurbo = nullptr;
+	_font = nullptr;
 	_infoLine = nullptr;
 	_mouse = nullptr;
 	_keyboard = nullptr;
@@ -70,7 +71,6 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 		_vol[i] = nullptr;
 	_eventManager = nullptr;
 	_blinkSprite = nullptr;
-	_font = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -109,6 +109,7 @@ void CGE2Engine::init() {
 	_spare = new Spare(this);
 	_commandHandler = new CommandHandler(this, false);
 	_commandHandlerTurbo = new CommandHandler(this, true);
+	_font = new Font(this);
 	_infoLine = new InfoLine(this, kInfoW);
 	_mouse = new Mouse(this);
 	_keyboard = new Keyboard(this);
@@ -116,7 +117,6 @@ void CGE2Engine::init() {
 		_point[i] = new V3D();
 	_sys = new System(this);
 	_eventManager = new EventManager(this);
-	_font = new Font(this);
 }
 
 void CGE2Engine::deinit() {
@@ -136,6 +136,7 @@ void CGE2Engine::deinit() {
 	delete _sprite;
 	delete _commandHandler;
 	delete _commandHandlerTurbo;
+	delete _font;
 	delete _infoLine;
 	delete _mouse;
 	delete _keyboard;
@@ -148,7 +149,6 @@ void CGE2Engine::deinit() {
 	delete _eventManager;
 	if (_blinkSprite != nullptr)
 		delete _blinkSprite;
-	delete _font;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {

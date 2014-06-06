@@ -219,6 +219,7 @@ public:
 	Spare *_spare;
 	CommandHandler *_commandHandler;
 	CommandHandler *_commandHandlerTurbo;
+	Font *_font;
 	InfoLine *_infoLine;
 	Mouse *_mouse;
 	Keyboard *_keyboard;
@@ -229,7 +230,6 @@ public:
 	Sprite *_vol[2];
 	EventManager *_eventManager;
 	Sprite *_blinkSprite;
-	Font *_font;
 private:
 	void init();
 	void deinit();

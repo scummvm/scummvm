@@ -82,12 +82,13 @@ private:
 };
 
 class InfoLine : public Talk {
-	const char *_oldText;
+	const char *_oldText, *_newText;
 public:
-	InfoLine(CGE2Engine *vm, uint16 wid);
+	bool _realTime;
+	InfoLine(CGE2Engine *vm, uint16 wid, ColorBank color = kCBStd);
 	void update(const char *text);
-	void update();
-	void setText(const char *txt);
+	void update() { update(_newText); }
+	void setText(const char *txt) { _newText = txt; }
 private:
 	CGE2Engine *_vm;
 };
