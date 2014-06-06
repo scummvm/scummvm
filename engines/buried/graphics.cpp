@@ -707,12 +707,11 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 		error("Unknown MS Gothic font size %d", size);
 	}
 
-	// TODO: Make the monochrome mode optional
-	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
-	// with the TrueType font on Win7/Win8 (at least)
 	// TODO: shift-jis codepage (932) and mapping
-	// TODO: Retrieve the bold version from the TTC file
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, s_codePage1252);
+	// TODO: Fake a bold version
+
+	// Force monochrome, since the original uses the bitmap glyphs in the font
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, Graphics::kTTFRenderModeMonochrome, s_codePage1252);
 
 	if (!font)
 		error("Failed to load MS Gothic font");
