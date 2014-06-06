@@ -202,24 +202,25 @@ int16 findFileInList(char *fileName) {
 void askDisk(int16 discNumber) {
 	char fileName[256];
 	char string[256];
-	char messageDrawn = 0;
 
 	if (discNumber != -1) {
 		currentDiskNumber = discNumber;
 	}
-	// skip drive selection stuff
 
 	sprintf(fileName, "VOL.%d", currentDiskNumber);
-
 	sprintf(string, "INSERER LE DISQUE %d EN ", currentDiskNumber);
 
-	//while (Common::File::exists((const char*)fileName))
-	{
+#if 0 // skip drive selection stuff
+	bool messageDrawn = false;
+	while (Common::File::exists((const char*)fileName)) {
 		if (!messageDrawn) {
 			drawMsgString(string);
-			messageDrawn = 1;
+			messageDrawn = true;
 		}
 	}
+#else
+	drawMsgString(string);
+#endif
 
 	changeCursor(currentCursor);
 }
