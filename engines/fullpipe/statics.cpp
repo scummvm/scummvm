@@ -979,11 +979,12 @@ void StaticANIObject::stopAnim_maybe() {
 					_ox += point.x;
 					_oy += point.y;
 				}
+			} else {
+			  _statics = _movement->_staticsObj2;
 			}
-		}
-
-		if (_movement->_currDynamicPhaseIndex || !(_flags & 0x40))
+		} else {
 			_statics = _movement->_staticsObj2;
+		}
 
 		_statics->getSomeXY(point);
 
