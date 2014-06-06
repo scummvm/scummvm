@@ -24,6 +24,8 @@
 
 #include "prince/prince.h"
 
+#include "prince/mhwanh.h"
+
 #include "graphics/palette.h"
 
 #include "common/memstream.h"
@@ -89,6 +91,29 @@ void GraphicsMan::drawTransparentSurface(int32 posX, int32 posY, const Graphics:
 	change();
 }
 
+void GraphicsMan::drawTransparentWithBlend(int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
+	_blendTable = new byte[256];
+	for (int i = 0; i < 256; i++) {
+		_blendTable[i] = 255;
+	}
+	for (int y = 0; y < s->h; y++) {
+		for (int x = 0; x < s->w; x++) {
+			byte pixel = *((byte*)s->getBasePtr(x, y));
+			if (pixel != transColor) {
+				if (x + posX < _frontScreen->w && x + posX >= 0) {
+					if (y + posY < _frontScreen->h && y + posY >= 0) {
+						byte backgroundPixel = *((byte*)_frontScreen->getBasePtr(x + posX, y + posY));
+						byte blendPixel = getBlendTableColor(pixel, backgroundPixel);
+						*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = blendPixel;
+					}
+				}
+			}
+		}
+	}
+	delete _blendTable;
+	change();
+}
+
 void GraphicsMan::drawTransparent(Graphics::Surface *frontScreen, DrawNode *drawNode) {
 	for (int y = 0; y < drawNode->s->h; y++) {
 		for (int x = 0; x < drawNode->s->w; x++) {
@@ -145,6 +170,103 @@ void GraphicsMan::drawAsShadow(Graphics::Surface *frontScreen, DrawNode *drawNod
 			}
 		}
 	}
+}
+
+byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor) {
+	int32 redFirstOrg, greenFirstOrg, blueFirstOrg;
+	int32 redFirstBack, greenFirstBack, blueFirstBack;
+	int32 redSecondOrg, greenSecondOrg, blueSecondOrg;
+	int32 redNew, greenNew, blueNew;
+
+	int32 sumOfColorValues;
+	int32 bigValue;
+	int32 currColor;
+
+	if (_blendTable[pixelColor] != 255) {
+		currColor = _blendTable[pixelColor];
+	} else {
+		const byte *originalPalette = _vm->_roomBmp->getPalette(); //?
+		const byte *suitcasePalette = _vm->_suitcaseBmp->getPalette(); //?
+
+		//debug("backgroundPixelColor: %d", backgroundPixelColor);
+		//debug("orgpalette: %d", pixelColor);
+		//debug("mst_shadow: %d",  _vm->_mst_shadow);
+
+		redFirstOrg = originalPalette[pixelColor * 4] * _vm->_mst_shadow / 256;
+		if (redFirstOrg >= 256) {
+			redFirstOrg = 255;
+		}
+		if (_vm->_mst_shadow <= 256) {
+			redFirstBack = suitcasePalette[backgroundPixelColor * 4] * (256 - _vm->_mst_shadow) / 256;
+			if (redFirstBack >= 256) {
+				redFirstBack = 255;
+			}
+			redFirstOrg += redFirstBack;
+			if (redFirstOrg >= 256) {
+				redFirstOrg = 255;
+			}
+		}
+
+		greenFirstOrg = originalPalette[pixelColor * 4 + 1] * _vm->_mst_shadow / 256;
+		if (greenFirstOrg >= 256) {
+			greenFirstOrg = 255;
+		}
+		if (_vm->_mst_shadow <= 256) {
+			greenFirstBack = suitcasePalette[backgroundPixelColor * 4 + 1] * (256 - _vm->_mst_shadow) / 256;
+			if (greenFirstBack >= 256) {
+				greenFirstBack = 255;
+			}
+			greenFirstOrg += greenFirstBack;
+			if (greenFirstOrg >= 256) {
+				greenFirstOrg = 255;
+			}
+		}
+
+		blueFirstOrg = originalPalette[pixelColor * 4 + 2] * _vm->_mst_shadow / 256;
+		if (blueFirstOrg >= 256) {
+			blueFirstOrg = 255;
+		}
+		if (_vm->_mst_shadow <= 256) {
+			blueFirstBack = suitcasePalette[backgroundPixelColor * 4 + 2] * (256 - _vm->_mst_shadow) / 256;
+			if (blueFirstBack >= 256) {
+				blueFirstBack = 255;
+			}
+			blueFirstOrg += blueFirstBack;
+			if (blueFirstOrg >= 256) {
+				blueFirstOrg = 255;
+			}
+		}
+
+		currColor = 0;
+		bigValue = 999999999; // infinity
+		for (int j = 0; j < 256; j++) {
+			redSecondOrg = originalPalette[3 * j];
+			redNew = redFirstOrg - redSecondOrg;
+			redNew = redNew * redNew;
+
+			greenSecondOrg = originalPalette[3 * j + 1];
+			greenNew = greenFirstOrg - greenSecondOrg;
+			greenNew = greenNew * greenNew;
+
+			blueSecondOrg = originalPalette[3 * j + 2];
+			blueNew = blueFirstOrg - blueSecondOrg;
+			blueNew = blueNew * blueNew;
+
+			sumOfColorValues = redNew + greenNew + blueNew;
+
+			if (sumOfColorValues < bigValue) {
+				bigValue = sumOfColorValues;
+				currColor = j;
+			}
+
+			if (sumOfColorValues == 0) {
+				break;
+			}
+		}
+		_blendTable[pixelColor] = currColor;
+	}
+	//debug("currColor: %d", currColor);
+	return currColor;
 }
 
 void GraphicsMan::makeShadowTable(int brightness, byte *shadowPalette) {

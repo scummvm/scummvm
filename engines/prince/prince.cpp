@@ -1398,9 +1398,10 @@ void PrinceEngine::drawInvItems() {
 						drawY += (_maxInvH - itemSurface->h) / 2;
 					}
 					if (!_mst_shadow) {
-						_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0); //TODO - ShowSprite0
+						_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0);
 					} else {
-						_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0); //TODO - ShowSprite01
+						_mst_shadow = _mst_shadow2;
+						_graph->drawTransparentWithBlend(drawX, drawY, itemSurface, 0); //TODO - ShowSprite01
 					}
 				} else {
 					// candle item:
@@ -1418,11 +1419,8 @@ void PrinceEngine::displayInventory() {
 	// temp:
 	_mainHero->_inventory.clear();
 	_mainHero->_inventory.push_back(0);
-	_mainHero->_inventory.push_back(1);
 	_mainHero->_inventory.push_back(2);
-	_mainHero->_inventory.push_back(3);
-	_mainHero->_inventory.push_back(4);
-	_mainHero->_inventory.push_back(5);
+	_mainHero->_inventory.push_back(1);
 
 	prepareInventoryToView();
 

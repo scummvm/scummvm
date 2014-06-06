@@ -30,6 +30,7 @@ namespace Prince {
 
 class PrinceEngine;
 struct DrawNode;
+class MhwanhDecoder;
 
 class GraphicsMan
 {
@@ -46,10 +47,13 @@ public:
 
 	void draw(uint16 x, uint16 y, const Graphics::Surface *s);
 	void drawTransparentSurface(int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
+	void drawTransparentWithBlend(int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
 
 	static void drawTransparent(Graphics::Surface *frontScreen, DrawNode *drawNode);
 	static void drawAsShadow(Graphics::Surface *frontScreen, DrawNode *drawNode);
 	static void drawMask(Graphics::Surface *frontScreen, DrawNode *drawNode);
+
+	byte getBlendTableColor(byte pixelColor, byte backgroundPixelColor);
 
 	Graphics::Surface *_frontScreen;
 	Graphics::Surface *_backScreen;
@@ -59,6 +63,8 @@ public:
 	byte *_shadowTable50;
 
 	static const byte kShadowColor = 191;
+
+	byte *_blendTable;
 
 private:
 

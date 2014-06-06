@@ -254,6 +254,7 @@ public:
 	int32 _picWindowX;
 	int32 _picWindowY;
 	Image::BitmapDecoder *_roomBmp;
+	MhwanhDecoder *_suitcaseBmp;
 
 	Common::Array<AnimListItem> _animList;
 	Common::Array<BackgroundAnim> _backAnimList;
@@ -330,7 +331,6 @@ private:
 	Common::RandomSource *_rnd;
 	Cursor *_cursor1;
 	Cursor *_cursor2;
-	MhwanhDecoder *_suitcaseBmp;
 	Debugger *_debugger;
 	GraphicsMan *_graph;
 	Script *_script;
