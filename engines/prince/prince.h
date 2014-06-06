@@ -180,6 +180,8 @@ struct Mask {
 };
 
 struct InvItem {
+	int _x;
+	int _y;
 	Graphics::Surface *_surface;
 	Graphics::Surface *getSurface() const { return _surface; }
 };
@@ -290,6 +292,7 @@ public:
 	int _invLineSkipY;
 	int _mst_shadow;
 	int _mst_shadow2; // blinking after adding new item
+	int _candleCounter; // special counter for candle inventory item
 
 	void inventoryFlagChange();
 	bool loadAllInv();

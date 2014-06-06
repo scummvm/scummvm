@@ -81,7 +81,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
-	_mst_shadow(0), _mst_shadow2(0) {
+	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -576,7 +576,8 @@ bool PrinceEngine::loadAllInv() {
 			return true;
 		}
 
-		invStream->skip(4);
+		tempInvItem._x = invStream->readUint16LE();
+		tempInvItem._y = invStream->readUint16LE();
 		int width = invStream->readUint16LE();
 		int height = invStream->readUint16LE();
 		tempInvItem._surface = new Graphics::Surface();
@@ -1374,7 +1375,7 @@ void PrinceEngine::drawInvItems() {
 	for (int i = 0 ; i < _invLines; i++) {
 		for (int j = 0; j < _invLine; j++) {
 			if (item < _mainHero->_inventory.size()) {
-				int itemNr = _mainHero->_inventory[item];
+				int itemNr = _mainHero->_inventory[item]; // itemNr =- 1 ?
 				_mst_shadow = 0;
 				if (_mst_shadow2 != 0) {
 					if (!_flags->getFlagValue(Flags::CURSEBLINK)) {
@@ -1385,24 +1386,35 @@ void PrinceEngine::drawInvItems() {
 						_mst_shadow = 1;
 					}
 				}
+
+				int drawX = currInvX;
+				int drawY = currInvY;
+				Graphics::Surface *itemSurface = NULL;
 				if (itemNr != 68) {
-					Graphics::Surface *itemSurface = _allInvList[itemNr].getSurface();
-					int drawX = currInvX;
-					int drawY = currInvY;
-					if (itemSurface->w < _maxInvW) {
-						drawX += (_maxInvW - itemSurface->w) / 2;
-					}
+					itemSurface = _allInvList[itemNr].getSurface();
 					if (itemSurface->h < _maxInvH) {
 						drawY += (_maxInvH - itemSurface->h) / 2;
 					}
-					if (!_mst_shadow) {
-						_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0);
-					} else {
-						_mst_shadow = _mst_shadow2;
-						_graph->drawTransparentWithBlend(drawX, drawY, itemSurface, 0);
-					}
 				} else {
 					// candle item:
+					if (_candleCounter == 8) {
+						_candleCounter = 0;
+					}
+					itemNr = _candleCounter;
+					_candleCounter++;
+					itemNr &= 7;
+					itemNr += 71;
+					itemSurface = _allInvList[itemNr].getSurface();
+					drawY += _allInvList[itemNr]._y + (_maxInvH - 76) / 2 - 200;
+				}
+				if (itemSurface->w < _maxInvW) {
+					drawX += (_maxInvW - itemSurface->w) / 2;
+				}
+				if (!_mst_shadow) {
+					_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0);
+				} else {
+					_mst_shadow = _mst_shadow2;
+					_graph->drawTransparentWithBlend(drawX, drawY, itemSurface, 0);
 				}
 			}
 			currInvX += _invLineW + _invLineSkipX;
@@ -1416,9 +1428,11 @@ void PrinceEngine::drawInvItems() {
 void PrinceEngine::displayInventory() {
 	// temp:
 	_mainHero->_inventory.clear();
-	_mainHero->_inventory.push_back(0);
-	_mainHero->_inventory.push_back(2);
 	_mainHero->_inventory.push_back(1);
+	_mainHero->_inventory.push_back(3);
+	_mainHero->_inventory.push_back(7);
+	_mainHero->_inventory.push_back(4);
+	_mainHero->_inventory.push_back(68);
 
 	prepareInventoryToView();
 
