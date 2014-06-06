@@ -121,12 +121,10 @@ void gfxModuleData_setPalColor(int idx, int r, int g, int b) {
 }
 
 void gfxModuleData_setPalEntries(const byte *ptr, int start, int num) {
-	int R, G, B, i;
-
-	for (i = start; i < start + num; i++) {
-		R = *(ptr++);
-		G = *(ptr++);
-		B = *(ptr++);
+	for (int i = start; i < start + num; i++) {
+		int R = *(ptr++);
+		int G = *(ptr++);
+		int B = *(ptr++);
 
 		lpalette[i].R = R;
 		lpalette[i].G = G;
@@ -339,7 +337,6 @@ void resetBitmap(uint8 *dataPtr, int32 dataSize) {
  */
 void switchBackground(const byte *newBg) {
 	const byte *bg = gfxModuleData.pPage00;
-	int sliceXStart, sliceXEnd;
 
 	// If both the upper corners are different, presume it's a full screen change
 	if ((*newBg != *bg) && (*(newBg + 319) != *(bg + 319))) {
@@ -352,7 +349,8 @@ void switchBackground(const byte *newBg) {
 	 */
 
 	for (int yp = 0; yp < 200; ++yp) {
-		sliceXStart = -1; sliceXEnd = -1;
+		int sliceXStart = -1;
+		int sliceXEnd = -1;
 		for (int xp = 0; xp < 320; ++xp, ++bg, ++newBg) {
 			if (*bg != *newBg) {
 				if (sliceXStart == -1) {
