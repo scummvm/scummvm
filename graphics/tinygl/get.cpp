@@ -35,7 +35,6 @@ void tglGetIntegerv(int pname, int *params) {
 }
 
 void tglGetFloatv(int pname, float *v) {
-	TinyGL::Matrix4* m;
 	int i;
 	int mnr = 0; // just a trick to return the correct matrix
 	TinyGL::GLContext *c = TinyGL::gl_get_context();

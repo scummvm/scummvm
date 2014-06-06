@@ -8,67 +8,132 @@ namespace TinyGL {
 // Inversion of a general nxn matrix.
 // Note : m is destroyed
 int Matrix_Inv(float *r, float *m, int n) {
-	int k;
-	float max, tmp, t;
+	double inv[16], det;
+	int i;
 
-	// identitée dans r
-	for (int i = 0; i < n * n; i++)
-		r[i] = 0;
-	for (int i = 0; i < n; i++)
-		r[i * n + i] = 1;
+	inv[0] = m[5]  * m[10] * m[15] - 
+		m[5]  * m[11] * m[14] - 
+		m[9]  * m[6]  * m[15] + 
+		m[9]  * m[7]  * m[14] +
+		m[13] * m[6]  * m[11] - 
+		m[13] * m[7]  * m[10];
 
-	for (int j = 0; j < n; j++) {
-		max = m[j * n + j];
-		k = j;
-		for (int i = j + 1; i < n; i++) {
-			if (fabs(m[i * n + j]) > fabs(max)) {
-				k = i;
-				max = m[i * n + j];
-			}
-		}
-		// non intersible matrix
-		if (max == 0)
-			return 1;
+	inv[4] = -m[4]  * m[10] * m[15] + 
+		m[4]  * m[11] * m[14] + 
+		m[8]  * m[6]  * m[15] - 
+		m[8]  * m[7]  * m[14] - 
+		m[12] * m[6]  * m[11] + 
+		m[12] * m[7]  * m[10];
 
-		if (k != j) {
-			for (int i = 0; i < n; i++) {
-				tmp = m[j * n + i];
-				m[j * n + i] = m[k * n + i];
-				m[k * n + i] = tmp;
+	inv[8] = m[4]  * m[9] * m[15] - 
+		m[4]  * m[11] * m[13] - 
+		m[8]  * m[5] * m[15] + 
+		m[8]  * m[7] * m[13] + 
+		m[12] * m[5] * m[11] - 
+		m[12] * m[7] * m[9];
 
-				tmp = r[j * n + i];
-				r[j * n + i] = r[k * n + i];
-				r[k * n + i] = tmp;
-			}
-		}
+	inv[12] = -m[4]  * m[9] * m[14] + 
+		m[4]  * m[10] * m[13] +
+		m[8]  * m[5] * m[14] - 
+		m[8]  * m[6] * m[13] - 
+		m[12] * m[5] * m[10] + 
+		m[12] * m[6] * m[9];
 
-		max = 1 / max;
-		for (int i = 0; i < n; i++) {
-			m[j * n + i] *= max;
-			r[j * n + i] *= max;
-		}
+	inv[1] = -m[1]  * m[10] * m[15] + 
+		m[1]  * m[11] * m[14] + 
+		m[9]  * m[2] * m[15] - 
+		m[9]  * m[3] * m[14] - 
+		m[13] * m[2] * m[11] + 
+		m[13] * m[3] * m[10];
 
+	inv[5] = m[0]  * m[10] * m[15] - 
+		m[0]  * m[11] * m[14] - 
+		m[8]  * m[2] * m[15] + 
+		m[8]  * m[3] * m[14] + 
+		m[12] * m[2] * m[11] - 
+		m[12] * m[3] * m[10];
 
-		for (int l = 0; l < n; l++) {
-			if (l != j) {
-				t = m[l * n + j];
-				for (int i = 0; i < n; i++) {
-					m[l * n + i] -= m[j * n + i] * t;
-					r[l * n + i] -= r[j * n + i] * t;
-				}
-			}
-		}
-	}
+	inv[9] = -m[0]  * m[9] * m[15] + 
+		m[0]  * m[11] * m[13] + 
+		m[8]  * m[1] * m[15] - 
+		m[8]  * m[3] * m[13] - 
+		m[12] * m[1] * m[11] + 
+		m[12] * m[3] * m[9];
 
-	return 0;
-}
+	inv[13] = m[0]  * m[9] * m[14] - 
+		m[0]  * m[10] * m[13] - 
+		m[8]  * m[1] * m[14] + 
+		m[8]  * m[2] * m[13] + 
+		m[12] * m[1] * m[10] - 
+		m[12] * m[2] * m[9];
 
-Vector3::Vector3() {
-	// Empty constructor, no overhead
-}
+	inv[2] = m[1]  * m[6] * m[15] - 
+		m[1]  * m[7] * m[14] - 
+		m[5]  * m[2] * m[15] + 
+		m[5]  * m[3] * m[14] + 
+		m[13] * m[2] * m[7] - 
+		m[13] * m[3] * m[6];
 
-Vector3::Vector3(const Vector3 &other) {
-	memcpy(_v, other._v, sizeof(_v));
+	inv[6] = -m[0]  * m[6] * m[15] + 
+		m[0]  * m[7] * m[14] + 
+		m[4]  * m[2] * m[15] - 
+		m[4]  * m[3] * m[14] - 
+		m[12] * m[2] * m[7] + 
+		m[12] * m[3] * m[6];
+
+	inv[10] = m[0]  * m[5] * m[15] - 
+		m[0]  * m[7] * m[13] - 
+		m[4]  * m[1] * m[15] + 
+		m[4]  * m[3] * m[13] + 
+		m[12] * m[1] * m[7] - 
+		m[12] * m[3] * m[5];
+
+	inv[14] = -m[0]  * m[5] * m[14] + 
+		m[0]  * m[6] * m[13] + 
+		m[4]  * m[1] * m[14] - 
+		m[4]  * m[2] * m[13] - 
+		m[12] * m[1] * m[6] + 
+		m[12] * m[2] * m[5];
+
+	inv[3] = -m[1] * m[6] * m[11] + 
+		m[1] * m[7] * m[10] + 
+		m[5] * m[2] * m[11] - 
+		m[5] * m[3] * m[10] - 
+		m[9] * m[2] * m[7] + 
+		m[9] * m[3] * m[6];
+
+	inv[7] = m[0] * m[6] * m[11] - 
+		m[0] * m[7] * m[10] - 
+		m[4] * m[2] * m[11] + 
+		m[4] * m[3] * m[10] + 
+		m[8] * m[2] * m[7] - 
+		m[8] * m[3] * m[6];
+
+	inv[11] = -m[0] * m[5] * m[11] + 
+		m[0] * m[7] * m[9] + 
+		m[4] * m[1] * m[11] - 
+		m[4] * m[3] * m[9] - 
+		m[8] * m[1] * m[7] + 
+		m[8] * m[3] * m[5];
+
+	inv[15] = m[0] * m[5] * m[10] - 
+		m[0] * m[6] * m[9] - 
+		m[4] * m[1] * m[10] + 
+		m[4] * m[2] * m[9] + 
+		m[8] * m[1] * m[6] - 
+		m[8] * m[2] * m[5];
+
+	det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+
+	if (det == 0)
+		return false;
+
+	det = 1.0 / det;
+
+	for (i = 0; i < 16; i++)
+		r[i] = inv[i] * det;
+
+	return true;
 }
 
 Vector3::Vector3(float x, float y, float z) {
@@ -87,10 +152,6 @@ void Vector3::normalize() {
 	}
 }
 
-Vector4::Vector4() {
-	// Empty constructor, no overhead
-}
-
 Vector4::Vector4(float x, float y, float z, float w) {
 	_v[0] = x;
 	_v[1] = y;
@@ -99,18 +160,10 @@ Vector4::Vector4(float x, float y, float z, float w) {
 }
 
 Vector4::Vector4(const Vector3 &vec, float w) {
-	_v[0] = vec.getX();
-	_v[1] = vec.getY();
-	_v[2] = vec.getZ();
+	_v[0] = vec.X;
+	_v[1] = vec.Y;
+	_v[2] = vec.Z;
 	_v[3] = w;
-}
-
-Matrix4::Matrix4() {
-	// Empty constructor, no overhead
-}
-
-Matrix4::Matrix4(const Matrix4 &other) {
-	memcpy(_m, other._m, sizeof(_m));
 }
 
 TinyGL::Matrix4 Matrix4::identity() {
@@ -126,27 +179,51 @@ TinyGL::Matrix4 Matrix4::identity() {
 TinyGL::Matrix4 Matrix4::transpose() const {
 	Matrix4 a;
 
-	a.set(0, 0, this->get(0, 0));
-	a.set(0, 1, this->get(1, 0));
-	a.set(0, 2, this->get(2, 0));
-	a.set(0, 3, this->get(3, 0));
+	a.set(0, 0, this->_m[0][0]);
+	a.set(0, 1, this->_m[1][0]);
+	a.set(0, 2, this->_m[2][0]);
+	a.set(0, 3, this->_m[3][0]);
 
-	a.set(1, 0, this->get(0, 1));
-	a.set(1, 1, this->get(1, 1));
-	a.set(1, 2, this->get(2, 1));
-	a.set(1, 3, this->get(3, 1));
+	a.set(1, 0, this->_m[0][1]);
+	a.set(1, 1, this->_m[1][1]);
+	a.set(1, 2, this->_m[2][1]);
+	a.set(1, 3, this->_m[3][1]);
 
-	a.set(2, 0, this->get(0, 2));
-	a.set(2, 1, this->get(1, 2));
-	a.set(2, 2, this->get(2, 2));
-	a.set(2, 3, this->get(3, 2));
+	a.set(2, 0, this->_m[0][2]);
+	a.set(2, 1, this->_m[1][2]);
+	a.set(2, 2, this->_m[2][2]);
+	a.set(2, 3, this->_m[3][2]);
 
-	a.set(3, 0, this->get(0, 3));
-	a.set(3, 1, this->get(1, 3));
-	a.set(3, 2, this->get(2, 3));
-	a.set(3, 3, this->get(3, 3));
+	a.set(3, 0, this->_m[0][3]);
+	a.set(3, 1, this->_m[1][3]);
+	a.set(3, 2, this->_m[2][3]);
+	a.set(3, 3, this->_m[3][3]);
 
 	return a;
+}
+
+void Matrix4::transpose()
+{
+	Matrix4 tmp = *this;
+	this->set(0, 0, tmp._m[0][0]);
+	this->set(0, 1, tmp._m[1][0]);
+	this->set(0, 2, tmp._m[2][0]);
+	this->set(0, 3, tmp._m[3][0]);
+
+	this->set(1, 0, tmp._m[0][1]);
+	this->set(1, 1, tmp._m[1][1]);
+	this->set(1, 2, tmp._m[2][1]);
+	this->set(1, 3, tmp._m[3][1]);
+
+	this->set(2, 0, tmp._m[0][2]);
+	this->set(2, 1, tmp._m[1][2]);
+	this->set(2, 2, tmp._m[2][2]);
+	this->set(2, 3, tmp._m[3][2]);
+
+	this->set(3, 0, tmp._m[0][3]);
+	this->set(3, 1, tmp._m[1][3]);
+	this->set(3, 2, tmp._m[2][3]);
+	this->set(3, 3, tmp._m[3][3]);
 }
 
 Matrix4 Matrix4::inverseOrtho() const {
@@ -198,36 +275,6 @@ Matrix4 Matrix4::rotation(float t, int u) {
 	return a;
 }
 
-Vector3 Matrix4::transform(const Vector3 &vector) const {
-	return Vector3(
-	           vector.getX() * get(0, 0) + vector.getY() * get(0, 1) + vector.getZ() * get(0, 2) + get(0, 3),
-	           vector.getX() * get(1, 0) + vector.getY() * get(1, 1) + vector.getZ() * get(1, 2) + get(1, 3),
-	           vector.getX() * get(2, 0) + vector.getY() * get(2, 1) + vector.getZ() * get(2, 2) + get(2, 3));
-}
-
-Vector3 Matrix4::transform3x3(const Vector3 &vector) const {
-	return Vector3(
-	           vector.getX() * get(0, 0) + vector.getY() * get(0, 1) + vector.getZ() * get(0, 2),
-	           vector.getX() * get(1, 0) + vector.getY() * get(1, 1) + vector.getZ() * get(1, 2),
-	           vector.getX() * get(2, 0) + vector.getY() * get(2, 1) + vector.getZ() * get(2, 2));
-}
-
-TinyGL::Vector4 Matrix4::transform3x4(const Vector4 &vector) const {
-	return Vector4(
-	           vector.getX() * get(0, 0) + vector.getY() * get(0, 1) + vector.getZ() * get(0, 2) + get(0, 3),
-	           vector.getX() * get(1, 0) + vector.getY() * get(1, 1) + vector.getZ() * get(1, 2) + get(1, 3),
-	           vector.getX() * get(2, 0) + vector.getY() * get(2, 1) + vector.getZ() * get(2, 2) + get(2, 3),
-	           vector.getX() * get(3, 0) + vector.getY() * get(3, 1) + vector.getZ() * get(3, 2) + get(3, 3));
-}
-
-Vector4 Matrix4::transform(const Vector4 &vector) const {
-	return Vector4(
-	           vector.getX() * get(0, 0) + vector.getY() * get(0, 1) + vector.getZ() * get(0, 2) + vector.getW() * get(0, 3),
-	           vector.getX() * get(1, 0) + vector.getY() * get(1, 1) + vector.getZ() * get(1, 2) + vector.getW() * get(1, 3),
-	           vector.getX() * get(2, 0) + vector.getY() * get(2, 1) + vector.getZ() * get(2, 2) + vector.getW() * get(2, 3),
-	           vector.getX() * get(3, 0) + vector.getY() * get(3, 1) + vector.getZ() * get(3, 2) + vector.getW() * get(3, 3));
-}
-
 bool Matrix4::IsIdentity() const {
 	//NOTE: This might need to be implemented in a fault-tolerant way.
 	for (int i = 0; i < 4; i++) {
@@ -240,6 +287,12 @@ bool Matrix4::IsIdentity() const {
 		}
 	}
 	return true;
+}
+
+void Matrix4::invert()
+{
+	Matrix4 source = *this;
+	Matrix_Inv((float *)this->_m, (float *)source._m, 4);
 }
 
 } // end of namespace TinyGL

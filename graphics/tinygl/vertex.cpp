@@ -40,13 +40,13 @@ void gl_eval_viewport(GLContext *c) {
 
 	v = &c->viewport;
 
-	v->trans.setX((float)(((v->xsize - 0.5) / 2.0) + v->xmin));
-	v->trans.setY((float)(((v->ysize - 0.5) / 2.0) + v->ymin));
-	v->trans.setZ((float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2));
+	v->trans.X = ((float)(((v->xsize - 0.5) / 2.0) + v->xmin));
+	v->trans.Y = ((float)(((v->ysize - 0.5) / 2.0) + v->ymin));
+	v->trans.Z = ((float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2));
 
-	v->scale.setX((float)((v->xsize - 0.5) / 2.0));
-	v->scale.setY((float)(-(v->ysize - 0.5) / 2.0));
-	v->scale.setZ((float)(-((zsize - 0.5) / 2.0)));
+	v->scale.X = ((float)((v->xsize - 0.5) / 2.0));
+	v->scale.Y = ((float)(-(v->ysize - 0.5) / 2.0));
+	v->scale.Z = ((float)(-((zsize - 0.5) / 2.0)));
 }
 
 void glopBegin(GLContext *c, GLParam *p) {
@@ -63,7 +63,9 @@ void glopBegin(GLContext *c, GLParam *p) {
 	if (c->matrix_model_projection_updated) {
 		if (c->lighting_enabled) {
 			// precompute inverse modelview
-			c->matrix_model_view_inv = c->matrix_stack_ptr[0]->inverse().transpose();
+			c->matrix_model_view_inv = *c->matrix_stack_ptr[0];
+			c->matrix_model_view_inv.invert();
+			c->matrix_model_view_inv.transpose();
 		} else {
 			// precompute projection matrix
 			c->matrix_model_projection = (*c->matrix_stack_ptr[1]) * (*c->matrix_stack_ptr[0]);
@@ -153,11 +155,11 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 
 		v->pc = m->transform3x4(v->coord);
 		if (c->matrix_model_projection_no_w_transform) {
-			v->pc.setW(m->get(3,3));
+			v->pc.W = (m->get(3,3));
 		}
 	}
 
-	v->clip_code = gl_clipcode(v->pc.getX(), v->pc.getY(), v->pc.getZ(), v->pc.getW());
+	v->clip_code = gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);
 }
 
 void glopVertex(GLContext *c, GLParam *p) {

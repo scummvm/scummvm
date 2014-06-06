@@ -172,26 +172,25 @@ void glopRotate(GLContext *c, GLParam *p) {
 void glopScale(GLContext *c, GLParam *p) {
 	float x = p[1].f, y = p[2].f, z = p[3].f;
 
-	Matrix4 m = Matrix4::identity();
+	Matrix4 *m = c->matrix_stack_ptr[c->matrix_mode];
 
-	m.set(0, 0, x);
-	m.set(1, 1, y);
-	m.set(2, 2, z);
-
-	*c->matrix_stack_ptr[c->matrix_mode] *= m;
+	m->set(0, 0, m->get(0, 0) * x); m->set(0, 1, m->get(0, 1) * y); m->set(0, 2, m->get(0, 2) * z);
+	m->set(1, 0, m->get(1, 0) * x); m->set(1, 1, m->get(1, 1) * y); m->set(1, 2, m->get(1, 2) * z);
+	m->set(2, 0, m->get(2, 0) * x); m->set(2, 1, m->get(2, 1) * y); m->set(2, 2, m->get(2, 2) * z);
+	m->set(3, 0, m->get(3, 0) * x); m->set(3, 1, m->get(3, 1) * y); m->set(3, 2, m->get(3, 2) * z);
 
 	gl_matrix_update(c);
 }
 
 void glopTranslate(GLContext *c, GLParam *p) {
-	Matrix4 m = Matrix4::identity();
 	float x = p[1].f, y = p[2].f, z = p[3].f;
 
-	m.set(0, 3, x);
-	m.set(1, 3, y);
-	m.set(2, 3, z);
+	Matrix4 *m = c->matrix_stack_ptr[c->matrix_mode];
 
-	*c->matrix_stack_ptr[c->matrix_mode] *= m;
+	m->set(0, 3, m->get(0,0) * x + m->get(0,1) * y + m->get(0,2) * z + m->get(0,3));
+	m->set(1, 3, m->get(1,0) * x + m->get(1,1) * y + m->get(1,2) * z + m->get(1,3));
+	m->set(2, 3, m->get(2,0) * x + m->get(2,1) * y + m->get(2,2) * z + m->get(2,3));
+	m->set(3, 3, m->get(3,0) * x + m->get(3,1) * y + m->get(3,2) * z + m->get(3,3));
 
 	gl_matrix_update(c);
 }

@@ -33,8 +33,8 @@ void glopMaterial(GLContext *c, GLParam *p) {
 		m->specular = v;
 		break;
 	case TGL_SHININESS:
-		m->shininess = v.getX();
-		m->shininess_i = (int)(v.getX() / 128.0f) * SPECULAR_BUFFER_RESOLUTION;
+		m->shininess = v.X;
+		m->shininess_i = (int)(v.X / 128.0f) * SPECULAR_BUFFER_RESOLUTION;
 		break;
 	case TGL_AMBIENT_AND_DIFFUSE:
 		m->diffuse = v;
@@ -78,7 +78,7 @@ void glopLight(GLContext *c, GLParam *p) {
 
 		l->position = pos;
 
-		if (l->position.getW() == 0) {
+		if (l->position.W == 0) {
 			l->norm_position = pos.toVector3();
 			l->norm_position.normalize();
 		}
@@ -90,10 +90,10 @@ void glopLight(GLContext *c, GLParam *p) {
 		l->norm_spot_direction.normalize();
 		break;
 	case TGL_SPOT_EXPONENT:
-		l->spot_exponent = v.getX();
+		l->spot_exponent = v.X;
 		break;
 	case TGL_SPOT_CUTOFF: {
-		float a = v.getX();
+		float a = v.X;
 		assert(a == 180 || (a >= 0 && a <= 90));
 		l->spot_cutoff = a;
 		if (a != 180)
@@ -101,13 +101,13 @@ void glopLight(GLContext *c, GLParam *p) {
 	}
 	break;
 	case TGL_CONSTANT_ATTENUATION:
-		l->attenuation[0] = v.getX();
+		l->attenuation[0] = v.X;
 		break;
 	case TGL_LINEAR_ATTENUATION:
-		l->attenuation[1] = v.getX();
+		l->attenuation[1] = v.X;
 		break;
 	case TGL_QUADRATIC_ATTENUATION:
-		l->attenuation[2] = v.getX();
+		l->attenuation[2] = v.X;
 		break;
 	default:
 		assert(0);
@@ -178,26 +178,26 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 
 	n = v->normal;
 
-	R = m->emission.getX() + m->ambient.getX() * c->ambient_light_model.getX();
-	G = m->emission.getY() + m->ambient.getY() * c->ambient_light_model.getY();
-	B = m->emission.getZ() + m->ambient.getZ() * c->ambient_light_model.getZ();
-	A = clampf(m->diffuse.getW(), 0, 1);
+	R = m->emission.X + m->ambient.X * c->ambient_light_model.X;
+	G = m->emission.Y + m->ambient.Y * c->ambient_light_model.Y;
+	B = m->emission.Z + m->ambient.Z * c->ambient_light_model.Z;
+	A = clampf(m->diffuse.W, 0, 1);
 
 	for (l = c->first_light; l != NULL; l = l->next) {
 		float lR, lB, lG;
 
 		// ambient
-		lR = l->ambient.getX() * m->ambient.getX();
-		lG = l->ambient.getY() * m->ambient.getY();
-		lB = l->ambient.getZ() * m->ambient.getZ();
+		lR = l->ambient.X * m->ambient.X;
+		lG = l->ambient.Y * m->ambient.Y;
+		lB = l->ambient.Z * m->ambient.Z;
 
-		if (l->position.getW() == 0) {
+		if (l->position.W == 0) {
 			// light at infinity
 			d = l->position.toVector3();
 			att = 1;
 		} else {
 			// distance attenuation
-			d = l->position.toVector3() - v->ec.toVector3();
+			d = (l->position - v->ec).toVector3();
 			dist = d.getLength();
 			if (dist > 1E-3) {
 				tmp = 1 / dist;
@@ -211,9 +211,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 			dot = -dot;
 		if (dot > 0) {
 			// diffuse light
-			lR += dot * l->diffuse.getX() * m->diffuse.getX();
-			lG += dot * l->diffuse.getY() * m->diffuse.getY();
-			lB += dot * l->diffuse.getZ() * m->diffuse.getZ();
+			lR += dot * l->diffuse.X * m->diffuse.X;
+			lG += dot * l->diffuse.Y * m->diffuse.Y;
+			lB += dot * l->diffuse.Z * m->diffuse.Z;
 
 			// spot light
 			if (l->spot_cutoff != 180) {
@@ -237,13 +237,13 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 				Vector3 vcoord;
 				vcoord = v->ec.toVector3();
 				vcoord.normalize();
-				s.setX(d.getX() - vcoord.getX());
-				s.setY(d.getY() - vcoord.getX());
-				s.setZ(d.getZ() - vcoord.getX());
+				s.X = (d.X - vcoord.X);
+				s.Y = (d.Y - vcoord.X);
+				s.Z = (d.Z - vcoord.X);
 				//NOTE: this operation is rather suspicious, this code should be tested.
 			} else {
 				s = d;
-				s.setZ(s.getZ() + 1.0);
+				s.Z = (s.Z + 1.0);
 			}
 			dot_spec = Vector3::dot(n, s);
 			if (twoside && dot_spec < 0)
@@ -267,9 +267,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 					idx = (int)tmp;
 
 				dot_spec = specbuf->buf[idx];
-				lR += dot_spec * l->specular.getX() * m->specular.getX();
-				lG += dot_spec * l->specular.getY() * m->specular.getY();
-				lB += dot_spec * l->specular.getZ() * m->specular.getZ();
+				lR += dot_spec * l->specular.X * m->specular.X;
+				lG += dot_spec * l->specular.Y * m->specular.Y;
+				lB += dot_spec * l->specular.Z * m->specular.Z;
 			}
 		}
 
