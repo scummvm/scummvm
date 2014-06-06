@@ -155,7 +155,7 @@ EventManager::EventManager(CGE2Engine *vm) : _vm(vm){
 
 void EventManager::poll() {
 	while (g_system->getEventManager()->pollEvent(_event)) {
-		_event.mouse.y = kScrHeight - _event.mouse.y;
+		_event.mouse.y = kWorldHeight - _event.mouse.y;
 		switch (_event.type) {
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
