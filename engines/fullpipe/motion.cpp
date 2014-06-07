@@ -816,6 +816,7 @@ void MovGraph::freeItems() {
 
 	_items.clear();
 }
+
 Common::Array<MovItem *> *MovGraph::method28(StaticANIObject *ani, int x, int y, int flag1, int *rescount) {
 	*rescount = 0;
 
@@ -1629,8 +1630,22 @@ int MovGraph2::getItemSubIndexByMovementId(int idx, int movId) {
 	return -1;
 }
 
-int MovGraph2::getItemSubIndexByMGM(int idx, StaticANIObject *ani) {
-	warning("STUB: MovGraph2::getItemSubIndexByMGM()");
+int MovGraph2::getItemSubIndexByMGM(int index, StaticANIObject *ani) {
+	if (findNode(ani->_ox, ani->_oy, 0) || findLink1(ani->_ox, ani->_oy, -1, 0) || findLink2(ani->_ox, ani->_oy)) {
+		int minidx = -1;
+		int min = 0;
+
+		for (int i = 0; i < 4; i++) {
+			int tmp = _mgm.refreshOffsets(ani->_id, ani->_statics->_staticsId, _items2[index]->_subItems[i]._staticsId1);
+
+			if (tmp >= 0 && (minidx == -1 || tmp < min)) {
+				minidx = i;
+				min = tmp;
+			}
+		}
+
+		return minidx;
+	}
 
 	return -1;
 }
