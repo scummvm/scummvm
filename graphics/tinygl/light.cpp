@@ -197,8 +197,10 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 			att = 1;
 		} else {
 			// distance attenuation
-			d = (l->position - v->ec).toVector3();
-			dist = d.getLength();
+			d.X = l->position.X - v->ec.X;
+			d.Y = l->position.Y - v->ec.Y;
+			d.Z = l->position.Z - v->ec.Z;
+			dist = sqrt(d.X * d.X + d.Y * d.Y + d.Z * d.Z);
 			if (dist > 1E-3) {
 				tmp = 1 / dist;
 				d *= tmp;
@@ -251,7 +253,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 			if (dot_spec > 0) {
 				GLSpecBuf *specbuf;
 				int idx;
-				tmp = s.getLength();
+				tmp = sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
 				if (tmp > 1E-3) {
 					dot_spec = dot_spec / tmp;
 				}

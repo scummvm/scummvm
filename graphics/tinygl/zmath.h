@@ -14,14 +14,6 @@ public:
 	Vector3() { }
 	Vector3(float x, float y, float z);
 
-	//float getX() const { return _v[0]; }
-	//float getY() const { return _v[1]; }
-	//float getZ() const { return _v[2]; }
-
-	//void setX(float val) { _v[0] = val; }
-	//void setY(float val) { _v[1] = val; }
-	//void setZ(float val) { _v[2] = val; }
-
 	void normalize();
 
 	float getLength() const { return sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]); }
@@ -136,16 +128,6 @@ public:
 		return Vector3(_v[0],_v[1],_v[2]);
 	}
 
-	//float getX() const { return _v[0]; }
-	//float getY() const { return _v[1]; }
-	//float getZ() const { return _v[2]; }
-	//float getW() const { return _v[3]; }
-
-	//void setX(float val) { _v[0] = val; }
-	//void setY(float val) { _v[1] = val; }
-	//void setZ(float val) { _v[2] = val; }
-	//void setW(float val) { _v[3] = val; }
-
 	float _v[4];
 };
 
@@ -159,7 +141,7 @@ public:
 		Matrix4 result;
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-				result.set(i,j, get(i,j) + b.get(i,j));
+				result._m[i][j] = _m[i][j] + b._m[i][j];
 			}
 		}
 		return result;
@@ -169,7 +151,7 @@ public:
 		Matrix4 result;
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-				result.set(i,j, get(i,j) - b.get(i,j));
+				result._m[i][j] = _m[i][j] - b._m[i][j];
 			}
 		}
 		return result;
@@ -181,8 +163,8 @@ public:
 			for (int j = 0; j < 4; j++) {
 				float s = 0.0;
 				for (int k = 0; k < 4; k++)
-					s += this->get(i,k) * b.get(k,j);
-				result.set(i,j,s);
+					s += _m[i][k] * b._m[k][j];
+				result._m[i][j] = s;
 			}
 		}
 		return result;
@@ -195,8 +177,8 @@ public:
 			for (int j = 0; j < 4; j++) {
 				s = 0.0;
 				for (int k = 0; k < 4; k++)
-					s += a.get(i,k) * b.get(k,j);
-				this->set(i,j,s);
+					s += a._m[i][k] * b._m[k][j];
+				this->_m[i][j] = s;
 			}
 		}
 		return *this;
@@ -221,12 +203,17 @@ public:
 		return _m[x][y];
 	}
 
+	void scale(float x, float y, float z);
+	void translate(float x, float y, float z);
+
 	void invert();
 	void transpose();
 
 	Matrix4 transpose() const;
 	Matrix4 inverseOrtho() const;
 	Matrix4 inverse() const;
+
+	static Matrix4 frustrum(float left, float right, float bottom, float top, float nearp, float farp);
 
 	inline Vector3 transform(const Vector3 &vector) const {
 		return Vector3(

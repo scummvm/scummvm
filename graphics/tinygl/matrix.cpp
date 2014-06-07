@@ -170,52 +170,23 @@ void glopRotate(GLContext *c, GLParam *p) {
 }
 
 void glopScale(GLContext *c, GLParam *p) {
-	float x = p[1].f, y = p[2].f, z = p[3].f;
-
-	Matrix4 *m = c->matrix_stack_ptr[c->matrix_mode];
-
-	m->set(0, 0, m->get(0, 0) * x); m->set(0, 1, m->get(0, 1) * y); m->set(0, 2, m->get(0, 2) * z);
-	m->set(1, 0, m->get(1, 0) * x); m->set(1, 1, m->get(1, 1) * y); m->set(1, 2, m->get(1, 2) * z);
-	m->set(2, 0, m->get(2, 0) * x); m->set(2, 1, m->get(2, 1) * y); m->set(2, 2, m->get(2, 2) * z);
-	m->set(3, 0, m->get(3, 0) * x); m->set(3, 1, m->get(3, 1) * y); m->set(3, 2, m->get(3, 2) * z);
-
+	c->matrix_stack_ptr[c->matrix_mode]->scale(p[1].f,p[2].f,p[3].f);
 	gl_matrix_update(c);
 }
 
 void glopTranslate(GLContext *c, GLParam *p) {
-	float x = p[1].f, y = p[2].f, z = p[3].f;
-
-	Matrix4 *m = c->matrix_stack_ptr[c->matrix_mode];
-
-	m->set(0, 3, m->get(0,0) * x + m->get(0,1) * y + m->get(0,2) * z + m->get(0,3));
-	m->set(1, 3, m->get(1,0) * x + m->get(1,1) * y + m->get(1,2) * z + m->get(1,3));
-	m->set(2, 3, m->get(2,0) * x + m->get(2,1) * y + m->get(2,2) * z + m->get(2,3));
-	m->set(3, 3, m->get(3,0) * x + m->get(3,1) * y + m->get(3,2) * z + m->get(3,3));
-
+	c->matrix_stack_ptr[c->matrix_mode]->translate(p[1].f,p[2].f,p[3].f);
 	gl_matrix_update(c);
 }
 
 void glopFrustum(GLContext *c, GLParam *p) {
-	Matrix4 m;
 	float left = p[1].f;
 	float right = p[2].f;
 	float bottom = p[3].f;
 	float top = p[4].f;
 	float nearp = p[5].f;
 	float farp = p[6].f;
-	float x, y, A, B, C, D;
-
-	x = (float)((2.0 * nearp) / (right - left));
-	y = (float)((2.0 * nearp) / (top - bottom));
-	A = (right + left) / (right - left);
-	B = (top + bottom) / (top - bottom);
-	C = -(farp + nearp) / (farp - nearp);
-	D = (float)(-(2.0 * farp * nearp) / (farp - nearp));
-
-	m.set(0, 0, x); m.set(0, 1, 0); m.set(0, 2, A);  m.set(0, 3, 0);
-	m.set(1, 0, 0); m.set(1, 1, y); m.set(1, 2, B);  m.set(1, 3, 0);
-	m.set(2, 0, 0); m.set(2, 1, 0); m.set(2, 2, C);  m.set(2, 3, D);
-	m.set(3, 0, 0); m.set(3, 1, 0); m.set(3, 2, -1); m.set(3, 3, 0);
+	Matrix4 m = Matrix4::frustrum(left,right,bottom,top,nearp,farp);
 
 	*c->matrix_stack_ptr[c->matrix_mode] *= m;
 

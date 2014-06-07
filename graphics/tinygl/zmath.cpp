@@ -179,51 +179,51 @@ TinyGL::Matrix4 Matrix4::identity() {
 TinyGL::Matrix4 Matrix4::transpose() const {
 	Matrix4 a;
 
-	a.set(0, 0, this->_m[0][0]);
-	a.set(0, 1, this->_m[1][0]);
-	a.set(0, 2, this->_m[2][0]);
-	a.set(0, 3, this->_m[3][0]);
+	a._m[0][0] = this->_m[0][0];
+	a._m[0][1] = this->_m[1][0];
+	a._m[0][2] = this->_m[2][0];
+	a._m[0][3] = this->_m[3][0];
 
-	a.set(1, 0, this->_m[0][1]);
-	a.set(1, 1, this->_m[1][1]);
-	a.set(1, 2, this->_m[2][1]);
-	a.set(1, 3, this->_m[3][1]);
+	a._m[1], 0, this->_m[0][1];
+	a._m[1], 1, this->_m[1][1];
+	a._m[1], 2, this->_m[2][1];
+	a._m[1], 3, this->_m[3][1];
 
-	a.set(2, 0, this->_m[0][2]);
-	a.set(2, 1, this->_m[1][2]);
-	a.set(2, 2, this->_m[2][2]);
-	a.set(2, 3, this->_m[3][2]);
+	a._m[2][0] = this->_m[0][2];
+	a._m[2][1] = this->_m[1][2];
+	a._m[2][2] = this->_m[2][2];
+	a._m[2][3] = this->_m[3][2];
 
-	a.set(3, 0, this->_m[0][3]);
-	a.set(3, 1, this->_m[1][3]);
-	a.set(3, 2, this->_m[2][3]);
-	a.set(3, 3, this->_m[3][3]);
+	a._m[3][0] = this->_m[0][3];
+	a._m[3][1] = this->_m[1][3];
+	a._m[3][2] = this->_m[2][3];
+	a._m[3][3] = this->_m[3][3];
 
 	return a;
 }
 
-void Matrix4::transpose()
-{
+
+void Matrix4::transpose() {
 	Matrix4 tmp = *this;
-	this->set(0, 0, tmp._m[0][0]);
-	this->set(0, 1, tmp._m[1][0]);
-	this->set(0, 2, tmp._m[2][0]);
-	this->set(0, 3, tmp._m[3][0]);
+	this->_m[0][0] = tmp._m[0][0];
+	this->_m[0][1] = tmp._m[1][0];
+	this->_m[0][2] = tmp._m[2][0];
+	this->_m[0][3] = tmp._m[3][0];
 
-	this->set(1, 0, tmp._m[0][1]);
-	this->set(1, 1, tmp._m[1][1]);
-	this->set(1, 2, tmp._m[2][1]);
-	this->set(1, 3, tmp._m[3][1]);
+	this->_m[1], 0, tmp._m[0][1];
+	this->_m[1], 1, tmp._m[1][1];
+	this->_m[1], 2, tmp._m[2][1];
+	this->_m[1], 3, tmp._m[3][1];
 
-	this->set(2, 0, tmp._m[0][2]);
-	this->set(2, 1, tmp._m[1][2]);
-	this->set(2, 2, tmp._m[2][2]);
-	this->set(2, 3, tmp._m[3][2]);
+	this->_m[2][0] = tmp._m[0][2];
+	this->_m[2][1] = tmp._m[1][2];
+	this->_m[2][2] = tmp._m[2][2];
+	this->_m[2][3] = tmp._m[3][2];
 
-	this->set(3, 0, tmp._m[0][3]);
-	this->set(3, 1, tmp._m[1][3]);
-	this->set(3, 2, tmp._m[2][3]);
-	this->set(3, 3, tmp._m[3][3]);
+	this->_m[3][0] = tmp._m[0][3];
+	this->_m[3][1] = tmp._m[1][3];
+	this->_m[3][2] = tmp._m[2][3];
+	this->_m[3][3] = tmp._m[3][3];
 }
 
 Matrix4 Matrix4::inverseOrtho() const {
@@ -233,16 +233,16 @@ Matrix4 Matrix4::inverseOrtho() const {
 	float s;
 	for (i = 0; i < 3; i++) {
 		for (j = 0; j < 3; j++)
-			a.set(i, j, this->get(j, i));
-		a.set(3, 0, 0.0f);
-		a.set(3, 1, 0.0f);
-		a.set(3, 2, 0.0f);
-		a.set(3, 3, 1.0f);
+			a.set(i, j, this->_m[j][i]);
+		a._m[3][0] = 0.0f;
+		a._m[3][1] = 0.0f;
+		a._m[3][2] = 0.0f;
+		a._m[3][3] = 1.0f;
 		for (i = 0; i < 3; i++) {
 			s = 0;
 			for (j = 0; j < 3; j++)
-				s -= this->get(j, i) * this->get(j, 3);
-			a.set(i,3,s);
+				s -= this->_m[j][i] * this->_m[j][3];
+			a._m[i][3] = s;
 		}
 	}
 
@@ -267,10 +267,10 @@ Matrix4 Matrix4::rotation(float t, int u) {
 		w = 0;
 	s = sin(t);
 	c = cos(t);
-	a.set(v, v, c);
-	a.set(v, w, -s);
-	a.set(w, v, s);
-	a.set(w, w, c);
+	a._m[v][v] = c;
+	a._m[v][w] = -s;
+	a._m[w][v] = s;
+	a._m[w][w] = c;
 
 	return a;
 }
@@ -289,10 +289,43 @@ bool Matrix4::IsIdentity() const {
 	return true;
 }
 
-void Matrix4::invert()
-{
+void Matrix4::invert() {
 	Matrix4 source = *this;
 	Matrix_Inv((float *)this->_m, (float *)source._m, 4);
+}
+
+Matrix4 Matrix4::frustrum( float left, float right, float bottom, float top, float nearp, float farp ) {
+	float x, y, A, B, C, D;
+
+	x = (float)((2.0 * nearp) / (right - left));
+	y = (float)((2.0 * nearp) / (top - bottom));
+	A = (right + left) / (right - left);
+	B = (top + bottom) / (top - bottom);
+	C = -(farp + nearp) / (farp - nearp);
+	D = (float)(-(2.0 * farp * nearp) / (farp - nearp));
+
+	Matrix4 m;
+
+	m._m[0][0] = x; m._m[0][1] = 0; m._m[0][2] = A; m._m[0][3] = 0;
+	m._m[1][0] = 0; m._m[1][1] = y; m._m[1][2] = B; m._m[1][3] = 0;
+	m._m[2][0] = 0; m._m[2][1] = 0; m._m[2][2] = C; m._m[2][3] = D;
+	m._m[3][0] = 0; m._m[3][1] = 0; m._m[3][2] = -1; m._m[3][3] = 0;
+
+	return m;
+}
+
+void Matrix4::translate( float x, float y, float z ) {
+	_m[0][3] += _m[0][0] * x + _m[0][1] * y + _m[0][2] * z;
+	_m[1][3] += _m[1][0] * x + _m[1][1] * y + _m[1][2] * z;
+	_m[2][3] += _m[2][0] * x + _m[2][1] * y + _m[2][2] * z;
+	_m[3][3] += _m[3][0] * x + _m[3][1] * y + _m[3][2] * z;
+}
+
+void Matrix4::scale( float x, float y, float z ) {
+	_m[0][0] *= x; _m[0][1] *= y; _m[0][2] *= z;
+	_m[1][0] *= x; _m[1][1] *= y; _m[1][2] *= z;
+	_m[2][0] *= x; _m[2][1] *= y; _m[2][2] *= z;
+	_m[3][0] *= x; _m[3][1] *= y; _m[3][2] *= z;
 }
 
 } // end of namespace TinyGL
