@@ -717,7 +717,7 @@ void Scene102::enter() {
 	if (_scene->_priorSceneId == 101) {
 		_game._player._playerPos = Common::Point(229, 109);
 		_game._player._stepEnabled = false;
-		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 2, 0);
+		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
 	} else if (_scene->_priorSceneId == 103)
 		_game._player._playerPos = Common::Point(47, 152);
