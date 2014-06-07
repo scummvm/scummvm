@@ -274,8 +274,8 @@ void DialogsNebular::showDialog() {
 		DifficultyDialog *dlg = new DifficultyDialog(_vm);
 		dlg->show();
 		delete dlg;
-		break;
 */
+		break;
 	}
 	default:
 		break;
@@ -487,8 +487,7 @@ ScreenDialog::DialogLine::DialogLine(const Common::String &s) {
 
 /*------------------------------------------------------------------------*/
 
-ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
-		_savedSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT) {
+ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm) {
 	Game &game = *_vm->_game;
 	Scene &scene = game._scene;
 
@@ -500,6 +499,7 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
 	_textLineCount = 0;
 	_screenId = 920;
 
+	chooseBackground();
 	game.loadQuoteSet(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
 		17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
 		34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 0);
@@ -524,7 +524,7 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
 	scene._priorSceneId = priorSceneId;
 	scene._currentSceneId = currentSceneId;
 	scene._nextSceneId = nextSceneId;
-	_vm->_screen._offset.y = 22;
+	scene._posAdjust.y = 22;
 	_vm->_sound->pauseNewCommands();
 	_vm->_events->initVars();
 	game._kernelMode = KERNEL_ROOM_INIT;
@@ -541,17 +541,10 @@ ScreenDialog::ScreenDialog(MADSEngine *vm) : _vm(vm),
 		_vm->_palette->fadeOut(pal, nullptr, 0, PALETTE_COUNT, 0, 1, 1, 16);
 	}
 
-	_vm->_screen.copyTo(&_savedSurface);
-	/*
+	_vm->_screen.empty();
 	_vm->_screen.hLine(0, 0, MADS_SCREEN_WIDTH, 2);
-	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y,
-		MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 1));
-	_vm->_screen.copyRectToScreen(Common::Rect(0, _vm->_screen._offset.y + 157,
-		MADS_SCREEN_WIDTH, _vm->_screen._offset.y + 157));
-	*/
 
-	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ?
-		kCenterVertTransition : kTransitionFadeIn;
+	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
 	game._trigger = 0;
 	_vm->_events->setCursor(CURSOR_ARROW);
 
@@ -714,7 +707,6 @@ void ScreenDialog::setFrame(int frameNumber, int depth) {
 	spriteSlot._seqIndex = 1;
 	spriteSlot._spritesIndex = _menuSpritesIndex;
 	spriteSlot._frameNumber = frameNumber;
-
 }
 
 void ScreenDialog::show() {
@@ -768,7 +760,7 @@ void ScreenDialog::handleEvents() {
 	}
 
 	int line = -1;
-	if (objIndex == 0 || events._mouseButtons) {
+	if (objIndex > 0 || events._mouseButtons) {
 		line = screenObjects[objIndex]._descId;
 		if (dialogs._pendingDialog == DIALOG_SAVE || dialogs._pendingDialog == DIALOG_RESTORE) {
 			if (line > 7 && line <= 14) {

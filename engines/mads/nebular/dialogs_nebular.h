@@ -118,7 +118,6 @@ class ScreenDialog {
 	};
 protected:
 	MADSEngine *_vm;
-	MSurface _savedSurface;
 	Common::Array<DialogLine> _lines;
 	int _v1;
 	int _v2;
