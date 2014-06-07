@@ -105,7 +105,7 @@ void Dialogs::setReadyLight(byte state) {
 		color = kColorGreen;
 		break; // Hit a key
 	}
-	
+
 	_vm->_graphics->drawReadyLight(color);
 	CursorMan.showMouse(true);
 	_vm->_ledStatus = state;

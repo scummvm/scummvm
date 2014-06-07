@@ -196,9 +196,9 @@ bool Help::handleMouse(const Common::Event &event) {
 		}
 
 		// Erase the previous highlight only if it's needed:
-		if (_highlightWas != highlightIs) 
+		if (_highlightWas != highlightIs)
 			_vm->_graphics->helpDrawHighlight(_highlightWas, kColorBlue);
-			
+
 		// Highlight the current one with the proper color:
 		if ((highlightIs != 177) && (_buttons[highlightIs]._trigger != Common::KEYCODE_INVALID)) {
 			_highlightWas = highlightIs;

@@ -533,7 +533,7 @@ void GraphicManager::ghostDrawMonster(byte ***picture, uint16 destX, int16 destY
 	// Only for the Ghost:
 	const byte kPlaneToUse[4] = { 0, 0, 0, 1 };
 	int yStart = 0;
-	
+
 	// Constants from the original code:
 	switch (type) {
 	case kMonsterTypeGhost:
@@ -820,7 +820,7 @@ void GraphicManager::menuLoadPictures() {
 
 	int height = 33;
 	int width = 9 * 8;
-	
+
 	for (int plane = 0; plane < 4; plane++) {
 		// The icons themselves:
 		int n = 0;
@@ -853,7 +853,7 @@ void GraphicManager::menuLoadPictures() {
 		_menu.fillRect(Common::Rect(114, 70 + i * 33, 584, 73 + i * 33), kColorWhite);
 		_menu.fillRect(Common::Rect(114, 100 + i * 33, 584, 103 + i * 33), kColorDarkgray);
 	}
-	
+
 	file.close();
 
 	// The title on the top of the screen:

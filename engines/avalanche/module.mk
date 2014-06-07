@@ -22,7 +22,7 @@ MODULE_OBJS = \
 	shootemup.o \
 	mainmenu.o \
 	highscore.o
-	
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)
 PLUGIN := 1

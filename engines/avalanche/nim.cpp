@@ -77,7 +77,7 @@ void Nim::playNim() {
 
 	_vm->_dialogs->displayScrollChain('Q', 3);
 	_playedNim++;
-	
+
 	_vm->_graphics->saveScreen();
 	_vm->fadeOut();
 
@@ -87,7 +87,7 @@ void Nim::playNim() {
 	//CursorMan.showMouse(true);
 
 	do {
-		
+
 		startMove();
 		if (_dogfoodsTurn)
 			dogFood();
@@ -122,7 +122,7 @@ void Nim::playNim() {
 		_vm->refreshObjectList();
 		_vm->_wonNim = true;
 		_vm->_background->draw(-1, -1, 0); // Show the settle with no lute on it.
-		
+
 		// 7 points for winning!
 		_vm->incScore(7);
 	}
@@ -135,7 +135,7 @@ void Nim::playNim() {
 
 void Nim::chalk(int x, int y, Common::String text) {
 	const Color greys[] = { kColorBlack, kColorDarkgray, kColorLightgray, kColorWhite };
-	
+
 	for (int i = 0; i < 4; i++) {
 		_vm->_graphics->drawNormalText(text, _vm->_font, 8, x - i, y, greys[i]);
 		_vm->_graphics->refreshScreen();
@@ -159,7 +159,7 @@ void Nim::setup() {
 	// Bottom right rectangle.
 	_vm->_graphics->drawRectangle(Common::Rect(394, 50, 635, 198), kColorRed);
 	_vm->_graphics->drawFilledRectangle(Common::Rect(395, 51, 634, 197), kColorBrown);
-		
+
 	_vm->_graphics->nimDrawLogo();
 	_vm->_graphics->nimDrawInitials();
 
@@ -167,7 +167,7 @@ void Nim::setup() {
 	_vm->_graphics->drawNormalText("Turn:", _vm->_font, 8, 420, 55, kColorYellow);
 	_vm->_graphics->drawNormalText("Player:", _vm->_font, 8, 490, 55, kColorYellow);
 	_vm->_graphics->drawNormalText("Move:", _vm->_font, 8, 570, 55, kColorYellow);
-	
+
 	chalk(27, 7, "Take pieces away with:");
 	chalk(77, 17, "1) the mouse (click leftmost)");
 	chalk(53, 27, "or 2) the keyboard:");
@@ -364,7 +364,7 @@ bool Nim::checkInput() {
 
 void Nim::takeSome() {
 	_number = 1;
-	
+
 	do {
 		byte sr;
 		do {
@@ -377,7 +377,7 @@ void Nim::takeSome() {
 				_number = 1;
 			}
 		} while (sr == 0);
-		
+
 		if (_number > sr)
 			_number = sr;
 
@@ -391,7 +391,7 @@ void Nim::takeSome() {
 		bool confirm = false;
 		do {
 			confirm = checkInput();
-			
+
 			if (!confirm) {
 				_vm->_graphics->drawRectangle(Common::Rect(x1, y1, x2, y2), kColorBlack); // Erase the previous selection.
 				x1 = 63 + (_stones[_row] - _number) * 64;
@@ -402,7 +402,7 @@ void Nim::takeSome() {
 				_vm->_graphics->refreshScreen();
 			}
 		} while (!confirm);
-		
+
 		return;
 
 	} while (true);

@@ -217,7 +217,7 @@ void AvalancheEngine::setup() {
 		delete mainmenu;
 		if (_letMeOut)
 			return;
-		
+
 		newGame();
 
 		thinkAbout(kObjectMoney, kThing);

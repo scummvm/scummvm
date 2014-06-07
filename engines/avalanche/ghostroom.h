@@ -56,7 +56,7 @@ private:
 	static const byte kWaveOrder[5];
 	static const byte kGlerkFade[26];
 	static const byte kGreldetFade[18];
-	
+
 	Common::Point dummyCoord;
 	byte ****_ghost;// [5][2][66][26]
 	Graphics::Surface _eyes[2];
