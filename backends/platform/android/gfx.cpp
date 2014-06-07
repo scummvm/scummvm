@@ -755,7 +755,7 @@ void OSystem_Android::setMouseCursor(const void *buf, uint w, uint h,
 			return;
 		}
 
-		uint16 *s = (uint16 *)buf;
+		const uint16 *s = (const uint16 *)buf;
 		uint16 *d = (uint16 *)tmp;
 		for (uint16 y = 0; y < h; ++y, d += pitch / 2 - w)
 			for (uint16 x = 0; x < w; ++x, d++)
