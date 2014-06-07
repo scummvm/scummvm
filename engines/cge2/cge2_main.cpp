@@ -368,9 +368,19 @@ void CGE2Engine::caveUp(int cav) {
 	_spare->takeCave(_now);
 	openPocket();
 	
-	warning("STUB: CGE2Engine::caveUp()");
-	// TODO: Implement "Hero" things here!
-
+	for (int i = 0; i < 2; i++) {
+		Hero *h = _heroTab[i]->_ptr;
+		if (h && h->_scene == _now) {
+			V2D p = *_heroTab[i]->_posTab[_now];
+			h->gotoxyz(V3D(p.x, 0, p.y));
+			h->clrHide();
+			_vga->_showQ->insert(h);
+			h->park();
+			h->setCurrent();
+			h->setContact();
+		}
+	}
+	
 	_sound->stop();
 	_fx->clear();
 

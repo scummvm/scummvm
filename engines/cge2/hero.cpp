@@ -222,8 +222,19 @@ void Hero::hStep() {
 }
 
 Sprite *Hero::setContact() {
-	warning("STUB: Hero::setContact()");
-	return this;
+	Sprite *spr;
+	int md = _maxDist << 1;
+	for (spr = _vm->_vga->_showQ->first(); spr; spr = spr->_next) {
+		if (spr->_actionCtrl[kNear]._cnt && (spr->_ref & 255) != 255) {
+			if (distance(spr) <= md) {
+				if (spr == _contact)
+					return nullptr;
+				else
+					break;
+			}
+		}
+	}
+	return (_contact = spr);
 }
 
 void Hero::tick() {
@@ -231,13 +242,29 @@ void Hero::tick() {
 }
 
 int Hero::distance(V3D pos) {
-	warning("STUB: Hero::distance()");
-	return 0;
+	V3D di = _pos3D - pos;
+	long x = V2D::round(di._x);
+	long z = V2D::round(di._z);
+	return ((x * x + z * z) * (x * x + z * z));
 }
 
 int Hero::distance(Sprite *spr) {
-	warning("STUB: Hero::distance()");
-	return 0;
+	V3D pos = spr->_pos3D;
+	int mdx = (spr->_siz.x >> 1) + (_siz.x >> 1);
+	int dx = V2D::round(_pos3D._x - spr->_pos3D._x);
+	if (dx < 0) {
+		mdx = -mdx;
+		if (dx > mdx)
+			pos._x = _pos3D._x;
+		else
+			pos._x += mdx;
+	} else {
+		if (dx < mdx)
+			pos._x = _pos3D._x;
+		else
+			pos._x += mdx;
+	}
+	return distance(pos);
 }
 
 void Hero::turn(Dir d) {
@@ -245,7 +272,17 @@ void Hero::turn(Dir d) {
 }
 
 void Hero::park() {
-	warning("STUB: Hero::park()");
+	if (_dir != kNoDir) {
+		step(8 + 5 * _dir);
+		_dir = kNoDir;
+		_trace[0] = _pos3D;
+		_tracePtr = -1;
+		setCurrent();
+		_flags._zmov = true;
+	}
+	_ignoreMap = false;
+	if (_time == 0)
+		++_time;
 }
 
 bool Hero::lower(Sprite * spr) {
