@@ -665,6 +665,9 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_j:
 		_mainHero->_middleX -= 5;
+		_flags->setFlagValue(Flags::CURSEBLINK, 1);
+		addInvObj();
+		_flags->setFlagValue(Flags::CURSEBLINK, 0);
 		break;
 	case Common::KEYCODE_l:
 		_mainHero->_middleX += 5;
@@ -1274,7 +1277,6 @@ void PrinceEngine::pause() {
 void PrinceEngine::addInvObj() {
 	changeCursor(0); // turn on cursor later?
 	//prepareInventoryToView();
-	//inventoryFlagChange();
 
 	if (!_flags->getFlagValue(Flags::CURSEBLINK)) {
 
@@ -1294,17 +1296,29 @@ void PrinceEngine::addInvObj() {
 			_mst_shadow2 -= 42;
 			pause();
 		}
-		_mst_shadow2 = 0;
-
-		for (int i = 0; i < 20; i++) {
-			displayInventory();
-			_graph->update();
-			pause();
-		}
-
 	} else {
 		//CURSEBLINK:
-
+		for (int i = 0; i < 3; i++) {
+			_mst_shadow2 = 256;
+			while (_mst_shadow2 < 512) {
+				displayInventory();
+				_graph->update();
+				_mst_shadow2 += 50;
+				pause();
+			}
+			while (_mst_shadow2 > 256) {
+				displayInventory();
+				_graph->update();
+				_mst_shadow2 -= 50;
+				pause();
+			}
+		}
+	}
+	_mst_shadow2 = 0;
+	for (int i = 0; i < 20; i++) {
+		displayInventory();
+		_graph->update();
+		pause();
 	}
 }
 
