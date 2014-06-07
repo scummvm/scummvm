@@ -181,6 +181,11 @@ public:
 	ScreenDialog(MADSEngine *vm);
 
 	/**
+	 * Destructor
+	 */
+	virtual ~ScreenDialog() {}
+
+	/**
 	 * Show the dialog
 	 */
 	virtual void show();
