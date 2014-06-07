@@ -226,6 +226,12 @@ int EMICostume::update(uint time) {
 
 void EMICostume::saveState(SaveGame *state) const {
 	Costume::saveState(state);
+
+	for (int i = 0; i < _numChores; ++i) {
+		EMIChore *chore = (EMIChore *)_chores[i];
+		state->writeLESint32(chore->getId());
+	}
+
 	Common::List<Material *>::const_iterator it = _materials.begin();
 	for (; it != _materials.end(); ++it) {
 		state->writeLESint32((*it)->getActiveTexture());
@@ -236,6 +242,23 @@ void EMICostume::saveState(SaveGame *state) const {
 bool EMICostume::restoreState(SaveGame *state) {
 	bool ret = Costume::restoreState(state);
 	if (ret) {
+		if (state->saveMinorVersion() >= 11) {
+			EMIChore::Pool &pool = EMIChore::getPool();
+			for (int i = 0; i < _numChores; ++i) {
+				EMIChore *chore = (EMIChore *)_chores[i];
+				int id = state->readLESint32();
+				pool.removeObject(chore->getId());
+				EMIChore* oldChore = pool.getObject(id);
+				if (oldChore) {
+					pool.removeObject(id);
+					oldChore->setId(chore->getId());
+					pool.addObject(oldChore);
+				}
+				chore->setId(id);
+				pool.addObject(chore);
+			}
+		}
+
 		Common::List<Material *>::const_iterator it = _materials.begin();
 		for (; it != _materials.end(); ++it) {
 			(*it)->setActiveTexture(state->readLESint32());
