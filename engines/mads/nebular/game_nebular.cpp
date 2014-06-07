@@ -48,16 +48,52 @@ ProtectionResult GameNebular::checkCopyProtection() {
 	_globals[kCopyProtectFailed] = -1;
 
 	if (!ConfMan.getBool("copy_protection"))
-		return true;
+	return true;
 
 	* DEBUG: Disabled for now
 	CopyProtectionDialog *dlg = new CopyProtectionDialog(_vm, false);
 	dlg->show();
 	delete dlg;
 	*/
-
-	// DEBUG: Return that copy protection failed
 	return PROTECTION_SUCCEED;
+}
+
+void GameNebular::startGame() {
+	// Show the main menu
+	// TODO: Show the main menu here
+
+	// Check copy protection
+	ProtectionResult protectionResult = checkCopyProtection();
+	switch (protectionResult) {
+	case PROTECTION_FAIL:
+		// Copy protection failed
+		_scene._nextSceneId = 804;
+		initializeGlobals();
+		_globals[kCopyProtectFailed] = true;
+		return;
+	case PROTECTION_ESCAPE:
+		// User escaped out of copy protection dialog
+		_vm->quitGame();
+		return;
+	default:
+		// Copy protection check succeeded
+		break;
+	}
+
+	initSection(_sectionNumber);
+	_statusFlag = true;
+
+	_vm->_dialogs->_pendingDialog = DIALOG_DIFFICULTY;
+	_vm->_dialogs->showDialog();
+	_vm->_dialogs->_pendingDialog = DIALOG_NONE;
+
+	_priorSectionNumber = 0;
+	_priorSectionNumber = -1;
+	_scene._priorSceneId = 0;
+	_scene._currentSceneId = -1;
+	_scene._nextSceneId = 101;
+
+	initializeGlobals();
 }
 
 void GameNebular::initializeGlobals() {

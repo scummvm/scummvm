@@ -269,6 +269,14 @@ void DialogsNebular::showDialog() {
 	case DIALOG_GAME_MENU:
 		//GameMenuDialog::show();
 		break;
+	case DIALOG_DIFFICULTY: {
+/*
+		DifficultyDialog *dlg = new DifficultyDialog(_vm);
+		dlg->show();
+		delete dlg;
+		break;
+*/
+	}
 	default:
 		break;
 	}
@@ -712,7 +720,7 @@ void ScreenDialog::setFrame(int frameNumber, int depth) {
 void ScreenDialog::show() {
 	Scene &scene = _vm->_game->_scene;
 
-	while (_selectedLine < 1) {
+	while (_selectedLine < 1 && !_vm->shouldQuit()) {
 		handleEvents();
 		if (_v3) {
 			if (!_v1)

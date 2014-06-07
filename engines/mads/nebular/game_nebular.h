@@ -38,6 +38,11 @@ enum Difficulty {
 	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
 };
 
+
+enum ProtectionResult {
+	PROTECTION_SUCCEED = 0, PROTECTION_FAIL = 1, PROTECTION_ESCAPE = 2
+};
+
 enum InventoryObject {
 	OBJ_NONE = -1,
 	OBJ_BINOCULARS = 0,
@@ -98,10 +103,12 @@ enum InventoryObject {
 
 class GameNebular : public Game {
 	friend class Game;
+private:
+	ProtectionResult checkCopyProtection();
 protected:
 	GameNebular(MADSEngine *vm);
 
-	virtual ProtectionResult checkCopyProtection();
+	virtual void startGame();
 
 	virtual void initializeGlobals();
 

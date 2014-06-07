@@ -102,7 +102,7 @@ class GameDragonsphere : public Game {
 protected:
 	GameDragonsphere(MADSEngine *vm);
 
-	virtual ProtectionResult checkCopyProtection();
+	virtual void startGame();
 
 	virtual void initializeGlobals();
 

@@ -44,10 +44,6 @@ enum KernelMode {
 	KERNEL_ROOM_PRELOAD = 3, KERNEL_ROOM_INIT = 4, KERNEL_ACTIVE_CODE = 5
 };
 
-enum ProtectionResult {
-	PROTECTION_SUCCEED = 0, PROTECTION_FAIL = 1, PROTECTION_ESCAPE = 2
-};
-
 #define MADS_SAVEGAME_VERSION 1
 
 struct MADSSavegameHeader {
@@ -101,9 +97,9 @@ protected:
 	/** @name Virtual Method list */
 
 	/**
-	 * Perform any copy protection check
+	 * Perform any game-specifcic startup
 	 */
-	virtual ProtectionResult checkCopyProtection() = 0;
+	virtual void startGame() = 0;
 
 	/**
 	 * Initializes global variables for a new game
