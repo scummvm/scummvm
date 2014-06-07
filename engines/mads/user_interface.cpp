@@ -154,7 +154,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 				bool flipped = slot._frameNumber < 0;
 
 				if (slot._segmentId == IMG_SPINNING_OBJECT) {
-					MSprite *sprite = asset->getFrame(frameNumber);
+					MSprite *sprite = asset->getFrame(frameNumber - 1);
 					sprite->copyTo(&userInterface, slot._position,
 						sprite->getTransparencyIndex());
 				} else {
