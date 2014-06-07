@@ -471,19 +471,13 @@ void setupFuncArray() {
 }
 
 int removeScript(int overlay, int idx, scriptInstanceStruct *headPtr) {
-	scriptInstanceStruct *scriptPtr;
+	scriptInstanceStruct *scriptPtr = headPtr->nextScriptPtr;
 
-	scriptPtr = headPtr->nextScriptPtr;
+	while (scriptPtr) {
+		if (scriptPtr->overlayNumber == overlay && (scriptPtr->scriptNumber == idx || idx == -1))
+			scriptPtr->scriptNumber = -1;
 
-	if (scriptPtr) {
-		do {
-			if (scriptPtr->overlayNumber == overlay
-			        && (scriptPtr->scriptNumber == idx || idx == -1)) {
-				scriptPtr->scriptNumber = -1;
-			}
-
-			scriptPtr = scriptPtr->nextScriptPtr;
-		} while (scriptPtr);
+		scriptPtr = scriptPtr->nextScriptPtr;
 	}
 
 	return (0);
@@ -492,77 +486,61 @@ int removeScript(int overlay, int idx, scriptInstanceStruct *headPtr) {
 uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overlayNumber, int16 param, int16 arg0, int16 arg1, int16 arg2, scriptTypeEnum scriptType) {
 	int useArg3Neg = 0;
 	ovlData3Struct *data3Ptr;
-	scriptInstanceStruct *tempPtr;
 	int var_C;
 	scriptInstanceStruct *oldTail;
 
-	//debug("Starting script %d of overlay %s", param,overlayTable[overlayNumber].overlayName);
-
 	if (scriptType < 0) {
 		useArg3Neg = 1;
-		scriptType = (scriptTypeEnum) - scriptType;
+		scriptType = (scriptTypeEnum) -scriptType;
 	}
 
-	if (scriptType == 20) {
+	if (scriptType == 20)
 		data3Ptr = getOvlData3Entry(overlayNumber, param);
-	} else {
-		if (scriptType == 30) {
-			data3Ptr = scriptFunc1Sub2(overlayNumber, param);
-		} else {
-			return (NULL);
-		}
-	}
-
-	if (!data3Ptr) {
+	else if (scriptType == 30)
+		data3Ptr = scriptFunc1Sub2(overlayNumber, param);
+	else
 		return (NULL);
-	}
 
-	if (!data3Ptr->dataPtr) {
+	if (!data3Ptr)
 		return (NULL);
-	}
+
+	if (!data3Ptr->dataPtr)
+		return (NULL);
 
 	var_C = data3Ptr->sysKey;
-
 	oldTail = scriptHandlePtr;
 
-	while (oldTail->nextScriptPtr) {	// go to the end of the list
+	while (oldTail->nextScriptPtr)	// go to the end of the list
 		oldTail = oldTail->nextScriptPtr;
-	}
 
-	tempPtr =
-	    (scriptInstanceStruct *)
-	    mallocAndZero(sizeof(scriptInstanceStruct));
+	scriptInstanceStruct *tempPtr = (scriptInstanceStruct *)mallocAndZero(sizeof(scriptInstanceStruct));
 
 	if (!tempPtr)
 		return (NULL);
 
 	tempPtr->data = NULL;
 
-	if (var_C) {
+	if (var_C)
 		tempPtr->data = (uint8 *) mallocAndZero(var_C);
-	}
 
 	tempPtr->dataSize = var_C;
 	tempPtr->nextScriptPtr = NULL;
 	tempPtr->scriptOffset = 0;
-
 	tempPtr->scriptNumber = param;
 	tempPtr->overlayNumber = overlayNumber;
 
-	if (scriptType == 20) {	// Obj or not ?
+	if (scriptType == 20)   // Obj or not ?
 		tempPtr->sysKey = useArg3Neg;
-	} else {
+	else
 		tempPtr->sysKey = 1;
-	}
 
 	tempPtr->freeze = 0;
 	tempPtr->type = scriptType;
 	tempPtr->var18 = arg2;
 	tempPtr->var16 = arg1;
 	tempPtr->var1A = arg0;
-	tempPtr->nextScriptPtr = oldTail->nextScriptPtr;	// should always be NULL as it's the tail
-
-	oldTail->nextScriptPtr = tempPtr;	// attache the new node to the list
+	tempPtr->nextScriptPtr = oldTail->nextScriptPtr;   // should always be NULL as it's the tail
+	oldTail->nextScriptPtr = tempPtr;   // attach the new node to the list
 
 	return (tempPtr->data);
 }
@@ -575,27 +553,18 @@ int executeScripts(scriptInstanceStruct *ptr) {
 
 	numScript2 = ptr->scriptNumber;
 
-	if (ptr->type == 20) {
+	if (ptr->type == 20)
 		ptr2 = getOvlData3Entry(ptr->overlayNumber, numScript2);
+	else if (ptr->type == 30)
+		ptr2 = scriptFunc1Sub2(ptr->overlayNumber, numScript2);
+	else
+		return (-6);
 
-		if (!ptr2) {
-			return (-4);
-		}
-	} else {
-		if (ptr->type == 30) {
-			ptr2 = scriptFunc1Sub2(ptr->overlayNumber, numScript2);
+	if (!ptr2)
+		return (-4);
 
-			if (!ptr2) {
-				return (-4);
-			}
-		} else {
-			return (-6);
-		}
-	}
-
-	if (!overlayTable[ptr->overlayNumber].alreadyLoaded) {
+	if (!overlayTable[ptr->overlayNumber].alreadyLoaded)
 		return (-7);
-	}
 
 	ovlData = overlayTable[ptr->overlayNumber].ovlData;
 
@@ -603,14 +572,11 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		return (-4);
 
 	currentData3DataPtr = ptr2->dataPtr;
-
 	scriptDataPtrTable[1] = (uint8 *) ptr->data;
 	scriptDataPtrTable[2] = getDataFromData3(ptr2, 1);
 	scriptDataPtrTable[5] = ovlData->data4Ptr;	// free strings
 	scriptDataPtrTable[6] = ovlData->ptr8;
-
 	currentScriptPtr = ptr;
-
 	positionInStack = 0;
 
 	do {
@@ -644,21 +610,15 @@ int executeScripts(scriptInstanceStruct *ptr) {
 void manageScripts(scriptInstanceStruct *scriptHandle) {
 	scriptInstanceStruct *ptr = scriptHandle;
 
-	if (ptr) {
-		do {
-			if (!overlayTable[ptr->overlayNumber].executeScripts) {
-				if ((ptr->scriptNumber != -1) && (ptr->freeze == 0) && (ptr->sysKey != 0)) {
-					executeScripts(ptr);
-				}
+	while (ptr) {
+		if (!overlayTable[ptr->overlayNumber].executeScripts) {
+			if ((ptr->scriptNumber != -1) && (ptr->freeze == 0) && (ptr->sysKey != 0))
+				executeScripts(ptr);
 
-				if (ptr->sysKey == 0) {
-					ptr->sysKey = 1;
-				}
-			}
-
-			ptr = ptr->nextScriptPtr;
-
-		} while (ptr);
+			if (ptr->sysKey == 0)
+				ptr->sysKey = 1;
+		}
+		ptr = ptr->nextScriptPtr;
 	}
 }
 
