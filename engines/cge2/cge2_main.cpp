@@ -55,7 +55,6 @@ void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 	} else {
 		if (_vm->_startupMode)
 			return;
-		int selectedScene = 0;
 		_vm->_infoLine->setText(nullptr);
 		
 		if (mask & kMouseLeftUp) {
