@@ -909,14 +909,14 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 						if (obj2Ovl > 0)
 							ovl4 = overlayTable[obj2Ovl].ovlData;
 
-						if ((ovl3) && (ptrHead->obj1Number >= 0)) {
+						if (ovl3 && (ptrHead->obj1Number >= 0)) {
 							testState1 = ptrHead->obj1OldState;
 						}
-						if ((ovl4) && (ptrHead->obj2Number >= 0)) {
+						if (ovl4 && (ptrHead->obj2Number >= 0)) {
 							testState2 = ptrHead->obj2OldState;
 						}
 
-						if ((ovl4) && (ptrHead->verbNumber >= 0) &&
+						if (ovl4 && ovl2 && (ptrHead->verbNumber >= 0) &&
 						        ((testState1 == -1) || (testState1 == objectState2)) &&
 						        ((testState2 == -1) || (testState2 == objectState))) {
 							if (ovl2->nameVerbGlob) {
