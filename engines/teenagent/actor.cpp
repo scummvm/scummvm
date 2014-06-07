@@ -134,10 +134,6 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	default:
 		return Common::Rect();
 	}
-	if (s == NULL) {
-		warning("no surface, skipping");
-		return Common::Rect();
-	}
 
 	Common::Rect dirty;
 	Common::Rect clip(0, 0, s->w, s->h);
