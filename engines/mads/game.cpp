@@ -108,7 +108,6 @@ void Game::run() {
 	}
 
 	_statusFlag = true;
-	int startResult = -1;
 
 	if (_loadGameSlot == -1) {
 		startGame();
