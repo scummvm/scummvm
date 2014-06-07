@@ -73,6 +73,7 @@ class Font;
 #define kInfoX         160
 #define kInfoY         -11
 #define kInfoW         180
+#define kPocketsWidth   59
 
 enum CallbackType {
 	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume

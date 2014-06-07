@@ -41,8 +41,60 @@ System::System(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
 	warning("STUB: System::System()");
 }
 
-void System::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
-	warning("STUB: System::touch()");
+void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
+	if (mask & kEventKeyb) {
+		if (keyCode == Common::KEYCODE_ESCAPE) {
+			// The original was calling keyClick()
+			// The sound is uselessly annoying and noisy, so it has been removed
+			_vm->killText();
+			if (_vm->_startupMode == 1) {
+				_vm->_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
+				return;
+			}
+		}
+	} else {
+		if (_vm->_startupMode)
+			return;
+		int selectedScene = 0;
+		_vm->_infoLine->setText(nullptr);
+		
+		if (mask & kMouseLeftUp) {
+			if (pos.y >= 0)	{ // world
+				if (!_vm->_talk && pos.y < _vm->_mouseTop)
+					_vm->_heroTab[_vm->_sex]->_ptr->walkTo(pos);
+			} else { // panel
+				if (_vm->_commandHandler->idle()) {
+					int sex = pos.x < kPocketsWidth;
+					if (sex || pos.x >= kScrWidth - kPocketsWidth) {
+						_vm->switchHero(sex);
+						if (_vm->_sex == sex) {
+							int dx = kPocketsWidth >> 1,
+								dy = 1 - (kPanHeight >> 1);
+							Sprite *s;
+							if (!sex)
+								pos.x -= kScrWidth - kPocketsWidth;
+							dx -= pos.x;
+							dy -= pos.y;
+							if (dx * dx + dy * dy > 10 * 10) {
+								int n = 0;
+								if (1 - pos.y >= (kPanHeight >> 1))
+									n += 2;
+								if (pos.x >= (kPocketsWidth >> 1))
+									++n;
+								s = _vm->_heroTab[_vm->_sex]->_pocket[n];
+								if (_vm->_blinkSprite)
+									_vm->_blinkSprite->_flags._hide = false;
+								if (_vm->_blinkSprite == s)
+									_vm->_blinkSprite = nullptr;
+								else
+									_vm->_blinkSprite = s;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void System::tick() {

@@ -56,7 +56,7 @@ public:
 
 	System(CGE2Engine *vm);
 	
-	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
+	virtual void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
 	void tick();
 private:
 	CGE2Engine *_vm;

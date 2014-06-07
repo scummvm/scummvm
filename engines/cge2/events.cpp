@@ -196,7 +196,7 @@ void EventManager::handleEvents() {
 				else
 					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_pos2D.x, e._y - e._spritePtr->_pos2D.y, e._keyCode);
 			} else if (_vm->_sys)
-				_vm->_sys->touch(e._mask, e._x, e._y, e._keyCode);
+				_vm->_sys->touch(e._mask, V2D(_vm, e._x, e._y), e._keyCode);
 
 			if (e._mask & kMouseLeftDown) {
 				_vm->_mouse->_hold = e._spritePtr;
