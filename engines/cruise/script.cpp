@@ -51,12 +51,13 @@ int32 opcodeType0() {
 	int index = 0;
 
 	switch (currentScriptOpcodeType) {
-	case 0: {
+	case 0:
 		pushVar(getShortFromScript());
 		return (0);
-	}
+
 	case 5:
 		index = saveOpcodeVar;
+		// No break on purpose
 	case 1: {
 		uint8 *address = 0;
 		int type = getByteFromScript();
@@ -131,12 +132,12 @@ int32 opcodeType1()	{
 	int offset = 0;
 
 	switch (currentScriptOpcodeType) {
-	case 0: {
+	case 0:
 		return (0);	// strange, but happens also in original interpreter
-	}
-	case 5: {
+
+	case 5:
 		offset = saveOpcodeVar;
-	}
+		//no break on purpose
 	case 1: {
 		int var_A = 0;
 
@@ -226,6 +227,7 @@ int32 opcodeType2() {
 	switch (currentScriptOpcodeType) {
 	case 5:
 		index = saveOpcodeVar;
+		// No break on purpose
 	case 1: {
 		uint8* adresse = NULL;
 		int type = getByteFromScript();
@@ -261,6 +263,7 @@ int32 opcodeType2() {
 		}
 
 	}
+	break;
 	}
 
 	return 0;
@@ -281,37 +284,35 @@ int32 opcodeType4() {		// test
 	int var2 = popVar();
 
 	switch (currentScriptOpcodeType) {
-	case 0: {
+	case 0:
 		if (var2 != var1)
 			boolVar = 1;
 		break;
-	}
-	case 1: {
+
+	case 1:
 		if (var2 == var1)
 			boolVar = 1;
 		break;
-	}
-	case 2: {
+
+	case 2:
 		if (var2 < var1)
 			boolVar = 1;
 		break;
-	}
-	case 3: {
+
+	case 3:
 		if (var2 <= var1)
 			boolVar = 1;
 		break;
-	}
-	case 4: {
+
+	case 4:
 		if (var2 > var1)
 			boolVar = 1;
 		break;
-	}
-	case 5: {
+
+	case 5:
 		if (var2 >= var1)
 			boolVar = 1;
 		break;
-	}
-
 	}
 
 	pushVar(boolVar);
@@ -327,13 +328,11 @@ int32 opcodeType6() {
 	if (!pop)
 		si = 1;
 
-	if (pop < 0) {
+	if (pop < 0)
 		si |= 4;
-	}
 
-	if (pop > 0) {
+	if (pop > 0)
 		si |= 2;
-	}
 
 	currentScriptPtr->ccr = si;
 
@@ -357,49 +356,48 @@ int32 opcodeType5() {
 	int bitMask = currentScriptPtr->ccr;
 
 	switch (currentScriptOpcodeType) {
-	case 0: {
-		if (!(bitMask & 1)) {
+	case 0:
+		if (!(bitMask & 1))
 			currentScriptPtr->scriptOffset = newSi;
-		}
+
 		break;
-	}
-	case 1: {
-		if (bitMask & 1) {
+
+	case 1:
+		if (bitMask & 1)
 			currentScriptPtr->scriptOffset = newSi;
-		}
+
 		break;
-	}
-	case 2: {
-		if (bitMask & 2) {
+
+	case 2:
+		if (bitMask & 2)
 			currentScriptPtr->scriptOffset = newSi;
-		}
+
 		break;
-	}
-	case 3: {
-		if (bitMask & 3) {
+
+	case 3:
+		if (bitMask & 3)
 			currentScriptPtr->scriptOffset = newSi;
-		}
+
 		break;
-	}
-	case 4: {
-		if (bitMask & 4) {
+
+	case 4:
+		if (bitMask & 4)
 			currentScriptPtr->scriptOffset = newSi;
-		}
+
 		break;
-	}
-	case 5: {
-		if (bitMask & 5) {
+
+	case 5:
+		if (bitMask & 5)
 			currentScriptPtr->scriptOffset = newSi;
-		}
+
 		break;
-	}
-	case 6: {
+
+	case 6:
 		break;	// never
-	}
-	case 7: {
+
+	case 7:
 		currentScriptPtr->scriptOffset = newSi;	//always
 		break;
-	}
 	}
 
 	return (0);
@@ -410,39 +408,39 @@ int32 opcodeType3()	{	// math
 	int pop2 = popVar();
 
 	switch (currentScriptOpcodeType) {
-	case 0: {
+	case 0:
 		pushVar(pop1 + pop2);
 		return (0);
-	}
-	case 1: {
+
+	case 1:
 		if (pop2 == 0)
 			error("opcodeType3 - Invalid value for pop2");
 		pushVar(pop1 / pop2);
 		return (0);
-	}
-	case 2: {
+
+	case 2:
 		pushVar(pop1 - pop2);
 		return (0);
-	}
-	case 3: {
+
+	case 3:
 		pushVar(pop1 * pop2);
 		return (0);
-	}
-	case 4: {
+
+	case 4:
 		if (pop2 == 0)
 			error("opcodeType3 - Invalid value for pop2");
 		pushVar(pop1 % pop2);
 		return (0);
-	}
+
 	case 7:
-	case 5: {
+	case 5:
 		pushVar(pop2 | pop1);
 		return (0);
-	}
-	case 6: {
+
+	case 6:
 		pushVar(pop2 & pop1);
 		return (0);
-	}
+
 	}
 
 	return 0;
@@ -455,9 +453,8 @@ int32 opcodeType9() {		// stop script
 }
 
 void setupFuncArray() {
-	for (int i = 0; i < 64; i++) {
+	for (int i = 0; i < 64; i++)
 		opcodeTypeTable[i] = NULL;
-	}
 
 	opcodeTypeTable[1] = opcodeType0;
 	opcodeTypeTable[2] = opcodeType1;
