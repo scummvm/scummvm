@@ -352,29 +352,22 @@ int loadFullBundle(const char *name, int startIdx) {
 }
 
 int loadFNTSub(uint8 *ptr, int destIdx) {
-	uint8 *ptr2 = ptr;
-	uint8 *destPtr;
-	int fileIndex;
-	//uint32 fontSize;
-
-	ptr2 += 4;
+	uint8 *ptr2 = ptr + 4;
 	loadFileVar1 = READ_BE_UINT32(ptr2);
 
-	if (destIdx == -1) {
+	int fileIndex;
+	if (destIdx == -1)
 		fileIndex = createResFileEntry(loadFileVar1, 1, loadFileVar1, 1);
-	} else {
+	else
 		fileIndex = updateResFileEntry(loadFileVar1, 1, loadFileVar1, destIdx, 1);
-	}
 
-	destPtr = filesDatabase[fileIndex].subData.ptr;
+	if (fileIndex < 0)
+		error("Unable to load FNT resource");
+
+	uint8 *destPtr = filesDatabase[fileIndex].subData.ptr;
 
 	if (destPtr != NULL) {
-		int32 i;
-		uint8 *currentPtr;
-
 		memcpy(destPtr, ptr2, loadFileVar1);
-
-		//fontSize = READ_BE_UINT32(ptr2);
 
 		destPtr = filesDatabase[fileIndex].subData.ptr;
 
@@ -382,9 +375,9 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 		bigEndianLongToNative((int32 *)(destPtr + 4));
 		flipGen(destPtr + 8, 6);
 
-		currentPtr = destPtr + 14;
+		uint8 *currentPtr = destPtr + 14;
 
-		for (i = 0; i < (int16)READ_UINT16(destPtr + 8); i++) {
+		for (int i = 0; i < (int16)READ_UINT16(destPtr + 8); i++) {
 			bigEndianLongToNative((int32 *) currentPtr);
 			currentPtr += 4;
 
@@ -397,16 +390,17 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 }
 
 int loadSPLSub(uint8 *ptr, int destIdx) {
-	uint8 *destPtr;
 	int fileIndex;
 
-	if (destIdx == -1) {
+	if (destIdx == -1)
 		fileIndex = createResFileEntry(loadFileVar1, 1, loadFileVar1, 1);
-	} else {
+	else
 		fileIndex = updateResFileEntry(loadFileVar1, 1, loadFileVar1, destIdx, 1);
-	}
 
-	destPtr = filesDatabase[fileIndex].subData.ptr;
+	if (fileIndex < 0)
+		error("Unable to load SPL resource");
+
+	uint8* destPtr = filesDatabase[fileIndex].subData.ptr;
 	memcpy(destPtr, ptr, loadFileVar1);
 
 	return 1;
@@ -419,131 +413,119 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 	int sec = 0;
 	uint16 numIdx;
 
-	if (!strcmp((char *)ptr, "SEC")) {
+	if (!strcmp((char *)ptr, "SEC"))
 		sec = 1;
-	}
 
 	numIdx = READ_BE_UINT16(ptr + 4);
-
 	ptr3 = ptr + 6;
-
 	offset = currentEntryIdx * 16;
 
-	{
-		int resourceSize;
-		int fileIndex;
-		setHeaderEntry localBuffer;
+	int resourceSize;
+	int fileIndex;
+	setHeaderEntry localBuffer;
 
-		Common::MemoryReadStream s4(ptr + offset + 6, 16);
+	Common::MemoryReadStream s4(ptr + offset + 6, 16);
 
-		localBuffer.offset = s4.readUint32BE();
-		localBuffer.width = s4.readUint16BE();
-		localBuffer.height = s4.readUint16BE();
-		localBuffer.type = s4.readUint16BE();
-		localBuffer.transparency = s4.readUint16BE() & 0x1F;
-		localBuffer.hotspotY = s4.readUint16BE();
-		localBuffer.hotspotX = s4.readUint16BE();
+	localBuffer.offset = s4.readUint32BE();
+	localBuffer.width = s4.readUint16BE();
+	localBuffer.height = s4.readUint16BE();
+	localBuffer.type = s4.readUint16BE();
+	localBuffer.transparency = s4.readUint16BE() & 0x1F;
+	localBuffer.hotspotY = s4.readUint16BE();
+	localBuffer.hotspotX = s4.readUint16BE();
 
-		if (sec == 1)
-			// Type 1: Width - (1*2) , Type 5: Width - (5*2)
-			localBuffer.width -= localBuffer.type * 2;
+	if (sec == 1)
+		// Type 1: Width - (1*2) , Type 5: Width - (5*2)
+		localBuffer.width -= localBuffer.type * 2;
 
-		resourceSize = localBuffer.width * localBuffer.height;
+	resourceSize = localBuffer.width * localBuffer.height;
 
-		if (!sec && (localBuffer.type == 5))
-			// Type 5: Width - (2*5)
-			localBuffer.width -= 10;
+	if (!sec && (localBuffer.type == 5))
+		// Type 5: Width - (2*5)
+		localBuffer.width -= 10;
 
-		if (currentDestEntry == -1) {
-			fileIndex = createResFileEntry(localBuffer.width, localBuffer.height, resourceSize, localBuffer.type);
-		} else {
-			fileIndex = updateResFileEntry(localBuffer.height, localBuffer.width, resourceSize, currentDestEntry, localBuffer.type);
-		}
+	if (currentDestEntry == -1)
+		fileIndex = createResFileEntry(localBuffer.width, localBuffer.height, resourceSize, localBuffer.type);
+	else
+		fileIndex = updateResFileEntry(localBuffer.height, localBuffer.width, resourceSize, currentDestEntry, localBuffer.type);
 
-		if (fileIndex < 0) {
-			return -1;	// TODO: buffer is not freed
-		}
+	if (fileIndex < 0)
+		return -1;	// TODO: buffer is not freed
 
-		if (!sec && (localBuffer.type == 5)) {
-			// There are sometimes sprites with a reduced width than what their pixels provide.
-			// The original handled this here by copy parts of each line - for ScummVM, we're
-			// simply setting the width in bytes and letting the decoder do the rest
-			filesDatabase[fileIndex].width += 2;
-		}
+	if (!sec && (localBuffer.type == 5)) {
+		// There are sometimes sprites with a reduced width than what their pixels provide.
+		// The original handled this here by copy parts of each line - for ScummVM, we're
+		// simply setting the width in bytes and letting the decoder do the rest
+		filesDatabase[fileIndex].width += 2;
+	}
 
-		uint8 *ptr5 = ptr3 + localBuffer.offset + numIdx * 16;
-		memcpy(filesDatabase[fileIndex].subData.ptr, ptr5, resourceSize);
+	uint8 *ptr5 = ptr3 + localBuffer.offset + numIdx * 16;
+	memcpy(filesDatabase[fileIndex].subData.ptr, ptr5, resourceSize);
 
-		switch (localBuffer.type) {
-		case 0: { // polygon
+	switch (localBuffer.type) {
+		case 0:   // polygon
 			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_POLY;
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			break;
-			}
-		case 1: {
+
+		case 1:
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
 			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_BGMASK;
 			decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = 0;
 			break;
-			}
-		case 4: {
+
+		case 4:
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
 			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
 			decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 			break;
-			}
-		case 5: {
+
+		case 5:
 			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
 			decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
 			break;
-			}
-		case 8: {
+
+		case 8:
 			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
 			break;
-			}
-		default: {
+
+		default:
 			warning("Unsupported gfx loading type: %d", localBuffer.type);
 			break;
-			}
-		}
+	}
 
-		if (name != filesDatabase[fileIndex].subData.name)
-			Common::strlcpy(filesDatabase[fileIndex].subData.name, name, sizeof(filesDatabase[fileIndex].subData.name));
+	if (name != filesDatabase[fileIndex].subData.name)
+		Common::strlcpy(filesDatabase[fileIndex].subData.name, name, sizeof(filesDatabase[fileIndex].subData.name));
 
-		// create the mask
-		switch (localBuffer.type) {
+	// create the mask
+	switch (localBuffer.type) {
 		case 1:
 		case 4:
 		case 5:
-		case 8: {
-			int maskX;
-			int maskY;
-
+		case 8:
 			memset(filesDatabase[fileIndex].subData.ptrMask, 0, filesDatabase[fileIndex].width / 8 * filesDatabase[fileIndex].height);
 
-			for (maskY = 0; maskY < filesDatabase[fileIndex].height; maskY++) {
-				for (maskX = 0; maskX < filesDatabase[fileIndex].width; maskX++) {
+			for (int maskY = 0; maskY < filesDatabase[fileIndex].height; maskY++) {
+				for (int maskX = 0; maskX < filesDatabase[fileIndex].width; maskX++) {
 					if (*(filesDatabase[fileIndex].subData.ptr + filesDatabase[fileIndex].width * maskY + maskX) != filesDatabase[fileIndex].subData.transparency) {
 						*(filesDatabase[fileIndex].subData.ptrMask + filesDatabase[fileIndex].width / 8 * maskY + maskX / 8) |= 0x80 >> (maskX & 7);
 					}
 				}
 			}
-
 			break;
-		}
-		default: {
-		}
-		}
+
+		default:
+			break;
 	}
 
 	// TODO: free
