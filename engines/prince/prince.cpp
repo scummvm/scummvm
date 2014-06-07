@@ -81,7 +81,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
-	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0) {
+	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0), _invX1(53), _invY1(18), _invWidth(536), _invHeight(438),
+	_invCurInside(false) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -1450,6 +1451,26 @@ void PrinceEngine::displayInventory() {
 	_graph->drawTransparentSurface(0, 0, suitcase, 0);
 
 	drawInvItems();
+
+	Common::Rect _inventoryRect;
+	_inventoryRect.left = _invX1;
+	_inventoryRect.top = _invY1;
+	_inventoryRect.right = _invX1 + _invWidth;
+	_inventoryRect.bottom = _invY1 + _invHeight;
+	Common::Point mousePos = _system->getEventManager()->getMousePos();
+
+	if (!_invCurInside && _inventoryRect.contains(mousePos)) {
+		_invCurInside = true;
+	}
+
+	if (_invCurInside && !_inventoryRect.contains(mousePos)) {
+		inventoryFlagChange();
+		_invCurInside = false;
+	}
+}
+
+void PrinceEngine::makeInvCursor() {
+
 }
 
 void PrinceEngine::mainLoop() {

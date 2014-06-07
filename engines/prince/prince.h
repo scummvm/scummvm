@@ -290,6 +290,11 @@ public:
 	int _maxInvH;
 	int _invLineSkipX;
 	int _invLineSkipY;
+	int _invX1;
+	int _invY1;
+	int _invWidth;
+	int _invHeight;
+	bool _invCurInside;
 	int _mst_shadow;
 	int _mst_shadow2; // blinking after adding new item
 	int _candleCounter; // special counter for candle inventory item
@@ -301,6 +306,7 @@ public:
 	void drawInvItems();
 	void displayInventory();
 	void addInvObj();
+	void makeInvCursor();
 
 	int testAnimNr;
 	int testAnimFrame;
