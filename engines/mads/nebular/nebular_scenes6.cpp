@@ -3254,7 +3254,6 @@ void Scene611::handleSubDialog1() {
 		handleTalking(500);
 		displayHermitQuestions(17);
 		_dialog1.write(0x290, false);
-		_dialog1.write(0x28E, false);
 		if (!_dialog1.read(0x28F))
 			_dialog1.write(0x291, true);
 
