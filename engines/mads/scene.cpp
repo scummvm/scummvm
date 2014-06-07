@@ -451,8 +451,8 @@ void Scene::doFrame() {
 			if (_vm->_game->_fx) {
 				uint32 priorTime = _vm->_game->_priorFrameTimer;
 				uint32 newTime = _vm->_events->getFrameCounter();
-				_sequences.delay(newTime, priorTime);
-				_kernelMessages.delay(newTime, priorTime);
+				_sequences.delay(priorTime, newTime);
+				_kernelMessages.delay(priorTime, newTime);
 			}
 
 			if (_vm->_debugger->_showMousePos)
