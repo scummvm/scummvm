@@ -307,12 +307,33 @@ void Hero::operator -- () {
 }
 
 uint32 Hero::len(V2D v) {
-	warning("STUB: Hero::works()");
-	return 0;
+	long x = v.x, y = v.y;
+	return (uint32)((x * x + y * y) * (x * x + y * y));
 }
 
 bool Hero::findWay(){
-	warning("STUB: Hero::findWay()");
+	V2D p0(_vm, V2D::round(_pos3D._x), V2D::round(_pos3D._z));
+	V2D p1(_vm, V2D::round(_trace[_tracePtr]._x), V2D::round(_trace[_tracePtr]._z));
+	bool pvOk;
+	bool phOk;
+	V2D ph(_vm, p1.x, p0.y);
+	V2D pv(_vm, p0.x, p1.y);
+	pvOk = (!mapCross(p0, pv) && !mapCross(pv, p1));
+	phOk = (!mapCross(p0, ph) && !mapCross(ph, p1));
+	int md = (_maxDist >> 1);
+	if (pvOk && (len(ph - p0) <= md || len(p1 - ph) <= md))
+		return true;
+	if (phOk && (len(pv - p0) <= md || len(p1 - pv) <= md))
+		return true;
+
+	if (pvOk) {
+		_trace[++_tracePtr] = V3D(pv.x, 0, pv.y);
+		return true;
+	}
+	if (phOk) {
+		_trace[++_tracePtr] = V3D(ph.x, 0, ph.y);
+		return true;
+	}
 	return false;
 }
 
@@ -380,22 +401,48 @@ V3D Hero::screenToGround(V2D pos) {
 
 
 int Hero::cross(const V2D &a, const V2D &b) {
-	warning("STUB: Hero::cross()");
+	int x = V2D::trunc(_pos3D._x);
+	int z = V2D::trunc(_pos3D._z);
+	int r = ((_siz.x / 3) * V2D::trunc(_vm->_eye->_z)) / (V2D::trunc(_vm->_eye->_z) - z);
+	return _vm->cross(a, b, V2D(_vm, x - r, z), V2D(_vm, x + r, z)) << 1;
+}
+
+
+
+bool CGE2Engine::cross(const V2D &a, const V2D &b, const V2D &c, const V2D &d) {
+	warning("STUB: CGE2Engine::cross()");
+	return false;
+}
+
+bool CGE2Engine::contain(const V2D &a, const V2D &b, const V2D &p) {
+	warning("STUB: CGE2Engine::contain()");
+	return false;
+}
+
+int CGE2Engine::sgn(long n) {
+	warning("STUB: CGE2Engine::sgn()");
 	return 0;
 }
 
 int Hero::mapCross(const V2D &a, const V2D &b) {
-	warning("STUB: Hero::mapCross()");
-	return 0;
+	Hero *o = other();
+	int n = (o->_scene == _scene) ? o->cross(a, b) : 0;
+	if (!_ignoreMap)
+		n += _vm->mapCross(a, b);
+	return n;
 }
 
 int Hero::mapCross(const V3D &a, const V3D &b) {
-	warning("STUB: Hero::mapCross()");
+	return mapCross(V2D(_vm, V2D::round(a._x), V2D::round(a._z)), V2D(_vm, V2D::round(b._x), V2D::round(b._z)));
+}
+
+int CGE2Engine::mapCross(const V2D &a, const V2D &b) {
+	warning("STUB: CGE2Engine::cross()");
 	return 0;
 }
 
 void Hero::setCave(int c) {
-	warning("STUB: Hero::mapCross()");
+	warning("STUB: Hero::setCave()");
 }
 
 bool Sprite::works(Sprite *spr) {

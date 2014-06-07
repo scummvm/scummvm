@@ -132,6 +132,10 @@ public:
 	void optionTouch(int opt, uint16 mask);
 	void offUse();
 	void setAutoColors();
+	bool cross(const V2D &a, const V2D &b, const V2D &c, const V2D &d);
+	bool contain(const V2D &a, const V2D &b, const V2D &p);
+	int sgn(long n);
+	int mapCross(const V2D &a, const V2D &b);
 
 	void setEye(const V3D &e);
 	void setEye(const V2D& e2, int z = -kScrWidth);
