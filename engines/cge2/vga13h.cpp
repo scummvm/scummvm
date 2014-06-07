@@ -696,6 +696,9 @@ void Queue::insert(Sprite *spr, Sprite *nxt) {
 }
 
 void Queue::insert(Sprite *spr) {
+	if (locate(spr))
+		return; // We only queue it if it's not already queued.
+
 	Sprite *s;
 	for (s = _head; s; s = s->_next)
 		if (s->_pos3D._z < spr->_pos3D._z)
