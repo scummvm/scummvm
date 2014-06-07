@@ -317,16 +317,59 @@ bool Hero::findWay(){
 }
 
 int Hero::snap(int p, int q, int grid) {
-	warning("STUB: Hero::findWay()");
-	return 0;
+	int d = q - p;
+	d = ((d >= 0) ? d : -d) % grid;
+	if (d > (grid >> 1))
+		d -= grid;
+	return (q >= p) ? (q - d) : (q + d);
 }
 
 void Hero::walkTo(V3D pos) {
-	warning("STUB: Hero::walkTo()");
+	if (distance(pos) <= _maxDist)
+		return;
+	int stp = stepSize();
+	pos._x = snap(V2D::round(_pos3D._x), V2D::round(pos._x), stp);
+	pos._y = 0;
+	pos._z = snap(V2D::round(_pos3D._z), V2D::round(pos._z), stp);
+
+	V2D p0(_vm, V2D::round(_pos3D._x), V2D::round(_pos3D._z));
+	V2D p1(_vm, V2D::round(pos._x), V2D::round(pos._z));
+	resetFun();
+	int cnt = mapCross(p0, p1);
+	if ((cnt & 1) == 0) { // even == way exists
+		_trace[_tracePtr = 0] = pos;
+		if (!findWay()) {
+			int i;
+			++_tracePtr;
+			for (i = stp; i < kMaxTry; i += stp) {
+				_trace[_tracePtr] = pos + V3D(i, 0, 0);
+				if (!mapCross(_trace[_tracePtr - 1], _trace[_tracePtr]) && findWay())
+					break;
+
+				_trace[_tracePtr] = pos + V3D(-i, 0, 0);
+				if (!mapCross(_trace[_tracePtr - 1], _trace[_tracePtr]) && findWay())
+					break;
+
+				_trace[_tracePtr] = pos + V3D(0, 0, i);
+				if (!mapCross(_trace[_tracePtr - 1], _trace[_tracePtr]) && findWay())
+					break;
+
+				_trace[_tracePtr] = pos + V3D(0, 0, -i);
+				if (!mapCross(_trace[_tracePtr - 1], _trace[_tracePtr]) && findWay())
+					break;
+			}
+			if (i >= kMaxTry)
+				_trace[_tracePtr] = V3D(_pos3D._x, 0, pos._z); // not found
+		}
+	}
 }
 
 void Hero::walkTo(Sprite *spr) {
-	warning("STUB: Hero::walkTo()");
+	int mdx = _siz.x >> 1;
+	int stp = (stepSize() + 1) / 2;
+	if (!spr->_flags._east)
+		mdx = -mdx;
+	walkTo(spr->_pos3D + V3D(mdx, 0, (!spr->_flags._frnt || spr->_pos3D._z < 8) ? stp : -stp));
 }
 
 V3D Hero::screenToGround(V2D pos) {

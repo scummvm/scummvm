@@ -31,6 +31,8 @@
 #include "cge2/vga13h.h"
 #include "cge2/snail.h"
 
+#define	kMaxTry	400
+
 namespace CGE2 {
 
 #define kMaxTry 400
