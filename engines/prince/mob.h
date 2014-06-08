@@ -66,10 +66,6 @@ public:
 
 	bool _visible; 
 	uint16 _type;
-	uint16 _x1; // initialize this?
-	uint16 _y1;
-	uint16 _x2;
-	uint16 _y2;
 	uint16 _mask;
 	Common::Rect _rect;
 

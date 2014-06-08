@@ -82,7 +82,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
 	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0), _invX1(53), _invY1(18), _invWidth(536), _invHeight(438),
-	_invCurInside(false) {
+	_invCurInside(false), _optionsFlag(false), _currentMob(0), _optionEnabled(0), _invOptionsNumber(5),
+	_invExamY(120) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -685,7 +686,7 @@ void PrinceEngine::keyHandler(Common::Event event) {
 	}
 }
 
-void PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList) {
+int PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList) {
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
 	Common::Point mousePosCamera(mousepos.x + _picWindowX, mousepos.y);
 
@@ -700,7 +701,7 @@ void PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 				textW += _font->getCharWidth(mob._name[i]);
 			}
 
-			uint16 x = mousepos.x - textW/2;
+			uint16 x = mousepos.x - textW / 2;
 			if (x > screen->w) {
 				x = 0;
 			}
@@ -715,9 +716,10 @@ void PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			}
 
 			_font->drawString(screen, mob._name, x, y, screen->w, 216);
-			break;
+			return mob._mask;
 		}
 	}
+	return 0;
 }
 
 void PrinceEngine::printAt(uint32 slot, uint8 color, const char *s, uint16 x, uint16 y) {
@@ -740,7 +742,7 @@ uint32 PrinceEngine::getTextWidth(const char *s) {
 	return textW;
 }
 
-void PrinceEngine::showTexts() {
+void PrinceEngine::showTexts(Graphics::Surface *screen) {
 	for (uint32 slot = 0; slot < MAXTEXTS; ++slot) {
 		Text& text = _textSlots[slot];
 		if (!text._str && !text._time)
@@ -751,11 +753,11 @@ void PrinceEngine::showTexts() {
 
 		for (uint8 i = 0; i < lines.size(); ++i) {
 			_font->drawString(
-				_graph->_frontScreen,
+				screen,
 				lines[i],
 				text._x - getTextWidth(lines[i].c_str())/2,
 				text._y - (lines.size() - i) * (_font->getFontHeight()),
-				_graph->_frontScreen->w,
+				screen->w,
 				text._color
 			);
 		}
@@ -1249,8 +1251,8 @@ void PrinceEngine::drawScreen() {
 		playNextFrame();
 
 		if (!_inventoryBackgroundRemember) {
-			hotspot(_graph->_frontScreen, _mobList);
-			showTexts();
+			_currentMob = hotspot(_graph->_frontScreen, _mobList);
+			showTexts(_graph->_frontScreen);
 		} else {
 			_inventoryBackgroundRemember = false;
 		}
@@ -1372,18 +1374,13 @@ void PrinceEngine::prepareInventoryToView() {
 		for (int j = 0; j < _invLine; j++) {
 			Mob tempMobItem;
 			if (item < _mainHero->_inventory.size()) {
-				int itemNr =  _mainHero->_inventory[item];
+				int itemNr = _mainHero->_inventory[item];
 				tempMobItem._visible = 0;
 				tempMobItem._mask =  itemNr; // itemNr - 1??
-				tempMobItem._x1 = currInvX + _picWindowX; //picWindowX2 ?
-				tempMobItem._x2 = currInvX + _picWindowX + _invLineW  - 1; // picWindowX2 ?
-				tempMobItem._y1 = currInvY;
-				tempMobItem._y2 = currInvY + _invLineH - 1;
-
-				tempMobItem._rect.left = tempMobItem._x1;
-				tempMobItem._rect.right = tempMobItem._x2;
-				tempMobItem._rect.top = tempMobItem._y1;
-				tempMobItem._rect.bottom = tempMobItem._y2;
+				tempMobItem._rect.left = currInvX + _picWindowX; //picWindowX2 ?
+				tempMobItem._rect.right = currInvX + _picWindowX + _invLineW  - 1; // picWindowX2 ?
+				tempMobItem._rect.top = currInvY;
+				tempMobItem._rect.bottom = currInvY + _invLineH - 1;
 
 				tempMobItem._name = "";
 				tempMobItem._examText = "";
@@ -1466,6 +1463,59 @@ void PrinceEngine::drawInvItems() {
 	}
 }
 
+void PrinceEngine::inventoryLeftButton() {
+	if (_optionsFlag == 1) {
+		//check_opt
+		if (_currentMob != 0) {
+			if (_optionEnabled < _invOptionsNumber) {
+				_optionsFlag = 0;
+				// ebp = _currentMob;
+			} else {
+				return;
+			}
+		} else {
+			// test bx, RMBMask 7996 ?
+		}
+	} else {
+		if (_currentMob != 0) {
+			//if (_currentPointerNumber != 2) {
+				if (_currentMob != 29) {
+					_optionEnabled = 0;
+				} else {
+					_optionEnabled = 1;
+				}
+				//do_option
+			//} else {
+				//use_item_on_item
+			//}
+		}
+	}
+	//do_option
+	int selectedMob = _currentMob; // no _currentMob just selectedMob as global for _currentMob.mask ?
+	if (_optionEnabled == 0) {
+		int invObjExamEvent = _script->scanInvObjExamEvents(selectedMob); // test this
+		if (invObjExamEvent == -1) {
+			// do_standard
+			printAt(0, 216, _invMobList[selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
+			showTexts(_graph->_screenForInventory); // here?
+			// setSpecVoice();
+		} else {
+			//store_new_pc
+			// storeNewPC();
+			_flags->setFlagValue(Flags::CURRMOB, selectedMob);
+			_currentMob = 0;
+			//_optionsMob = 0;
+		}
+	} else {
+		// not_examine
+
+	}
+}
+
+void PrinceEngine::inventoryRightButton() {
+
+}
+
 void PrinceEngine::displayInventory() {
 	// temp:
 	_mainHero->_inventory.clear();
@@ -1475,36 +1525,14 @@ void PrinceEngine::displayInventory() {
 	_mainHero->_inventory.push_back(4);
 	_mainHero->_inventory.push_back(68);
 
+	_mainHero->_inventory.push_back(29);
+	_mainHero->_inventory.push_back(13);
+	_mainHero->_inventory.push_back(44);
+	_mainHero->_inventory.push_back(67);
+
 	prepareInventoryToView();
 
 	while (!shouldQuit()) {
-
-		Common::Event event;
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				keyHandler(event);
-				break;
-			case Common::EVENT_KEYUP:
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_RBUTTONDOWN:
-				break;
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_RBUTTONUP:
-				break;
-			case Common::EVENT_QUIT:
-				break;
-			default:
-				break;
-			}
-		}
-
-		if (shouldQuit())
-			return;
 
 		rememberScreenInv();
 
@@ -1530,7 +1558,37 @@ void PrinceEngine::displayInventory() {
 			break;
 		}
 
-		hotspot(_graph->_screenForInventory, _invMobList);
+		_currentMob = hotspot(_graph->_screenForInventory, _invMobList);
+
+		Common::Event event;
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				keyHandler(event);
+				break;
+			case Common::EVENT_KEYUP:
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				inventoryLeftButton();
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				break;
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
+				break;
+			case Common::EVENT_QUIT:
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (shouldQuit())
+			return;
+
 		getDebugger()->onFrame();
 		_graph->update(_graph->_screenForInventory);
 		pause();

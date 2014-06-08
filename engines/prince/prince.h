@@ -273,12 +273,18 @@ public:
 	void showMask(int maskNr, Graphics::Surface *originalRoomSurface);
 	void clsMasks();
 
+	int _currentMob; // number of selected Mob / inventory item
+
 	static const int16 kMaxInv = 90; // max amount of inventory items in whole game
 
 	uint32 _invTxtSize;
 	byte *_invTxt;
 
 	bool _showInventoryFlag;
+	bool _optionsFlag;
+	int _optionEnabled;
+	int _invOptionsNumber;
+	int _invExamY;
 	bool _inventoryBackgroundRemember;
 	int _invLineX;
 	int _invLineY;
@@ -307,6 +313,8 @@ public:
 	void displayInventory();
 	void addInvObj();
 	void makeInvCursor();
+	void inventoryLeftButton();
+	void inventoryRightButton();
 
 	int testAnimNr;
 	int testAnimFrame;
@@ -314,9 +322,9 @@ public:
 private:
 	bool playNextFrame();
 	void keyHandler(Common::Event event);
-	void hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList);
+	int hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList);
 	void drawScreen();
-	void showTexts();
+	void showTexts(Graphics::Surface *screen);
 	void init();
 	void showLogo();
 	void showBackAnims();
