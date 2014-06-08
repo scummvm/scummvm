@@ -1351,18 +1351,35 @@ void PrinceEngine::prepareInventoryToView() {
 	int currInvX = _invLineX;
 	int currInvY = _invLineY;
 
+	Common::MemoryReadStream stream(_invTxt, _invTxtSize);
+	byte c;
+
 	uint item = 0;
 	for (int i = 0 ; i < _invLines; i++) {
 		for (int j = 0; j < _invLine; j++) {
 			Mob tempMobItem;
 			if (item < _mainHero->_inventory.size()) {
-				tempMobItem._mask =  _mainHero->_inventory[item] - 1;
+				int itemNr =  _mainHero->_inventory[item];
+				tempMobItem._mask =  itemNr; // itemNr - 1??
 				tempMobItem._x1 = currInvX + _picWindowX; //picWindowX2 ?
 				tempMobItem._x2 = currInvX + _picWindowX + _invLineW  - 1; // picWindowX2 ?
 				tempMobItem._y1 = currInvY;
 				tempMobItem._y2 = currInvY + _invLineH - 1;
-				//tempMobItem._name = ;
-				//tempMobItem._examText = ;
+
+				tempMobItem._name = "";
+				tempMobItem._examText = "";
+				int txtOffset = READ_UINT32(&_invTxt[itemNr * 8]);
+				int examTxtOffset = READ_UINT32(&_invTxt[itemNr * 8 + 4]);
+
+				stream.seek(txtOffset);
+				while ((c = stream.readByte())) {
+					tempMobItem._name += c;
+				}
+
+				stream.seek(examTxtOffset);
+				while ((c = stream.readByte())) {
+					tempMobItem._examText += c;
+				}
 				_invMobList.push_back(tempMobItem);
 			}
 			currInvX += _invLineW + _invLineSkipX;
