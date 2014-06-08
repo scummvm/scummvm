@@ -53,8 +53,8 @@ static bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset) 
 	byte buf[32768];
 
 	byte signature[8];
-	((uint32 *)signature)[0] = PACKAGE_MAGIC_1;
-	((uint32 *)signature)[1] = PACKAGE_MAGIC_2;
+	WRITE_LE_UINT32(signature + 0, PACKAGE_MAGIC_1);
+	WRITE_LE_UINT32(signature + 4, PACKAGE_MAGIC_2);
 
 	uint32 fileSize = (uint32)f->size();
 	uint32 startPos = 1024 * 1024;
