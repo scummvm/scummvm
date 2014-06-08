@@ -443,7 +443,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			return STATUS_OK;
 		}
 		float val;
-		(*(uint32 *)&val) = _readFile->readUint32LE();
+		WRITE_UINT32(&val, _readFile->readUint32LE());
 		if (!_readFile->err()) {
 			stack->pushFloat(val);
 		} else {

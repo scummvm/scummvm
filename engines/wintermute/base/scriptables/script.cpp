@@ -488,7 +488,8 @@ double ScScript::getFloat() {
 	SWAP(buffer[3], buffer[4]);
 #endif
 
-	double ret = *(double *)(buffer);
+	double ret;
+	memcpy(&ret, buffer, sizeof(double));
 	_iP += 8; // Hardcode the double-size used originally.
 	return ret;
 }
