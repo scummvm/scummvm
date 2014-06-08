@@ -36,7 +36,7 @@ Map::~Map() {
 	_container.clear();
 }
 
-int	Map::convertCoord(int coord) {
+int Map::convertCoord(int coord) {
 	return (coord + (kMapGrid >> 1)) & kMapMask;
 }
 
