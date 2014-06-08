@@ -4931,8 +4931,8 @@ int Scene1337::getPreventionCardId(int cardId) {
 }
 
 bool Scene1337::isAttackPossible(int victimId, int cardId) {
-	if (victimId < 0 || victimId > ARRAYSIZE(_gameBoardSide))
-		error("Scene1337::isAttackPossible() victimId:%d out of range 0 to %d", victimId, ARRAYSIZE(_gameBoardSide));
+	if (victimId < 0 || victimId >= ARRAYSIZE(_gameBoardSide))
+		error("Scene1337::isAttackPossible() victimId:%d out of range 0 to %d", victimId, ARRAYSIZE(_gameBoardSide)-1);
 
 	for (int i = 0; i <= 7; i++) {
 		if (_gameBoardSide[victimId]._outpostStation[i]._cardId != 0) {
@@ -5982,16 +5982,16 @@ void Scene1337::handlePlayer1() {
 			for (int j = 0; j <= 3; j++) {
 				//CHECKME: tmpVal or rndVal?
 				// FIXME: This is probably meant to be rndVal, but not clear...
-				if (tmpVal < 0 || tmpVal > ARRAYSIZE(_gameBoardSide))
-					error("Scene1337::handlePlayer1() tmpVal:%d out of range 0 to %d", tmpVal, ARRAYSIZE(_gameBoardSide));
+				if (tmpVal < 0 || tmpVal >= ARRAYSIZE(_gameBoardSide))
+					error("Scene1337::handlePlayer1() tmpVal:%d out of range 0 to %d", tmpVal, ARRAYSIZE(_gameBoardSide)-1);
 
 				if (tmpVal != 1) {
 					if ((_gameBoardSide[tmpVal]._delayCard._cardId == 0) && isAttackPossible(tmpVal, _gameBoardSide[1]._handCard[i]._cardId))
 						count = tmpVal;
 				}
 
-				if (count < 0 || count > ARRAYSIZE(_gameBoardSide))
-					error("Scene1337::handlePlayer1() count:%d out of range 0 to %d", count, ARRAYSIZE(_gameBoardSide));
+				if (count < 0 || count >= ARRAYSIZE(_gameBoardSide))
+					error("Scene1337::handlePlayer1() count:%d out of range 0 to %d", count, ARRAYSIZE(_gameBoardSide)-1);
 
 				if (count != -1) {
 					playDelayCard(&_gameBoardSide[1]._handCard[i], &_gameBoardSide[count]._delayCard);
