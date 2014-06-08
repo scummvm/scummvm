@@ -178,7 +178,7 @@ int loadBackground(const char *name, int idx) {
 			break;
 
 		default:
-			ASSERT(0);
+			assert(0);
 		}
 
 		gfxModuleData_setPal256(palScreen[idx]);

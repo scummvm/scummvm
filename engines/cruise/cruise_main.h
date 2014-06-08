@@ -62,9 +62,6 @@ enum MouseButton {
 /*#define DUMP_SCRIPT
 #define DUMP_OBJECT*/
 
-#define ASSERT_PTR assert
-#define ASSERT assert
-
 enum ResType {
 	OBJ_TYPE_LINE = 0,
 	OBJ_TYPE_MASK = 1,

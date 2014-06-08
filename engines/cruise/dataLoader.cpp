@@ -225,7 +225,7 @@ fileTypeEnum getFileType(const char *name) {
 		newFileType = type_FNT;
 	}
 
-	ASSERT(newFileType != type_UNK);
+	assert(newFileType != type_UNK);
 
 	return newFileType;
 }

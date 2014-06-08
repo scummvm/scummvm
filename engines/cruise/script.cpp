@@ -170,7 +170,7 @@ int32 opcodeType1()	{
 			if (var_6 == 5) {
 				ptr = overlayTable[byte2].ovlData->data4Ptr + var_C;
 			} else {
-				ASSERT(0);
+				assert(0);
 			}
 		} else {
 			ptr = scriptDataPtrTable[var_6] + var_C;
@@ -249,7 +249,7 @@ int32 opcodeType2() {
 			if (!overlayTable[overlay].ovlData) {
 				return (-4);
 			}
-			ASSERT(0);
+			assert(0);
 		}
 
 		adresse += offset;

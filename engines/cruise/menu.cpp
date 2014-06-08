@@ -39,7 +39,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 	menuStruct *entry;
 
 	entry = (menuStruct *) MemAlloc(sizeof(menuStruct));
-	ASSERT(entry);
+	assert(entry);
 
 	entry->x = X - 160 / 2;
 	entry->y = Y;
@@ -69,7 +69,7 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 					if (!strcmp(var_6->string, menuText)) {
 						pNewElement = var_6;
 						pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
-						ASSERT(pSubStruct);
+						assert(pSubStruct);
 
 						pSubStruct->pNext = NULL;
 						pSubStruct->ovlIdx = ovlIdx;
@@ -99,9 +99,9 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 		}
 
 		pNewElement = (menuElementStruct *)allocAndZero(sizeof(menuElementStruct));
-		ASSERT(pNewElement);
+		assert(pNewElement);
 		pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
-		ASSERT(pSubStruct);
+		assert(pSubStruct);
 
 		pNewElement->string = menuText;
 		pNewElement->next = NULL;
@@ -266,7 +266,7 @@ int playerMenu(int menuX, int menuY) {
 		freeDisk();
 
 		menuTable[0] = createMenu(menuX, menuY, _vm->langString(ID_PLAYER_MENU));
-		ASSERT(menuTable[0]);
+		assert(menuTable[0]);
 
 		//addSelectableMenuEntry(0, 3, menuTable[0], 1, -1, "Save game disk");
 		if (userEnabled) {

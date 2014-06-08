@@ -44,7 +44,7 @@ int16 popVar() {
 
 	positionInStack--;
 
-	ASSERT(scriptStack[positionInStack].type == STACK_SHORT);
+	assert(scriptStack[positionInStack].type == STACK_SHORT);
 
 	return (scriptStack[positionInStack].data.shortVar);
 }
@@ -66,7 +66,7 @@ void *popPtr() {
 
 	positionInStack--;
 
-	ASSERT(scriptStack[positionInStack].type == STACK_PTR);
+	assert(scriptStack[positionInStack].type == STACK_PTR);
 
 	return (scriptStack[positionInStack].data.ptrVar);
 }

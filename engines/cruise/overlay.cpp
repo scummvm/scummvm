@@ -295,7 +295,7 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->numMsgRelHeader) {	// link data
-		ASSERT(sizeof(linkDataStruct) == 0x22);
+		assert(sizeof(linkDataStruct) == 0x22);
 
 		ovlData->arrayMsgRelHeader = (linkDataStruct *) mallocAndZero(ovlData->numMsgRelHeader * sizeof(linkDataStruct));
 
@@ -626,7 +626,7 @@ int loadOverlay(const char *scriptName) {
 		sprintf(nameBundle, "%s-objs.txt", scriptName);
 
 		fHandle = fopen(nameBundle, "w+");
-		ASSERT(fHandle);
+		assert(fHandle);
 
 		for (int i = 0; i < ovlData->numMsgRelHeader; i++) {
 			linkDataStruct *var_34;

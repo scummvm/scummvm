@@ -284,7 +284,7 @@ static void syncOverlays2(Common::Serializer &s) {
 
 				if (ovlRestoreData[i]._sBssSize) {
 					ovlRestoreData[i]._pBss = (uint8 *) mallocAndZero(ovlRestoreData[i]._sBssSize);
-					ASSERT(ovlRestoreData[i]._pBss);
+					assert(ovlRestoreData[i]._pBss);
 
 					s.syncBytes(ovlRestoreData[i]._pBss, ovlRestoreData[i]._sBssSize);
 				}
@@ -293,7 +293,7 @@ static void syncOverlays2(Common::Serializer &s) {
 
 				if (ovlRestoreData[i]._sNumObj) {
 					ovlRestoreData[i]._pObj = (objectParams *) mallocAndZero(ovlRestoreData[i]._sNumObj * sizeof(objectParams));
-					ASSERT(ovlRestoreData[i]._pObj);
+					assert(ovlRestoreData[i]._pObj);
 
 					for (int j = 0; j < ovlRestoreData[i]._sNumObj; j++) {
 						s.syncAsSint16LE(ovlRestoreData[i]._pObj[j].X);
@@ -915,7 +915,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 	while (currentcellHead) {
 		if (currentcellHead->type == 5) {
-			ASSERT(0);
+			assert(0);
 #if 0
 			uint8 *ptr = mainProc14(currentcellHead->overlay, currentcellHead->idx);
 			if (ptr)

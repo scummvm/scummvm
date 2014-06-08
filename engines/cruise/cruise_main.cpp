@@ -427,7 +427,7 @@ void resetFileEntry(int32 entryNumber) {
 }
 
 uint8 *mainProc14(uint16 overlay, uint16 idx) {
-	ASSERT(0);
+	assert(0);
 
 	return NULL;
 }
@@ -1359,7 +1359,7 @@ void closeAllMenu() {
 		menuTable[1] = NULL;
 	}
 	if (linkedMsgList) {
-		ASSERT(0);
+		assert(0);
 //					freeMsgList(linkedMsgList);
 	}
 
@@ -1514,7 +1514,7 @@ int CruiseEngine::processInput() {
 					menuTable[0] = NULL;
 
 					if (linkedMsgList) {
-						ASSERT(0);
+						assert(0);
 						//					freeMsgList(linkedMsgList);
 					}
 
@@ -1918,7 +1918,7 @@ void CruiseEngine::mainLoop() {
 		processAnimation();
 
 		if (remdo) {
-			// ASSERT(0);
+			// assert(0);
 			/*    main3 = 0;
 			 * var24 = 0;
 			 * var23 = 0;
@@ -1927,7 +1927,7 @@ void CruiseEngine::mainLoop() {
 		}
 
 		if (cmdLine[0]) {
-			ASSERT(0);
+			assert(0);
 			/*        redrawStrings(0,&cmdLine,8);
 
 			        waitForPlayerInput();

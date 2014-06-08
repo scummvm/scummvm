@@ -1608,7 +1608,7 @@ int16 Op_GetNodeX() {
 
 	int result = getNode(nodeInfo, node);
 
-	ASSERT(result == 0);
+	assert(result == 0);
 
 	return nodeInfo[0];
 }
@@ -1620,7 +1620,7 @@ int16 Op_GetNodeY() {
 
 	int result = getNode(nodeInfo, node);
 
-	ASSERT(result == 0);
+	assert(result == 0);
 
 	return nodeInfo[1];
 }

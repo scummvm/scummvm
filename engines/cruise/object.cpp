@@ -163,14 +163,14 @@ void setObjectPosition(int16 ovlIdx, int16 objIdx, int16 param3, int16 param4) {
 			break;
 		}
 		default: {
-			ASSERT(0);
+			assert(0);
 		}
 		}
 
 		break;
 	}
 	default: {
-		ASSERT(0);
+		assert(0);
 	}
 	}
 }
