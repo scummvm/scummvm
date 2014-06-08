@@ -86,8 +86,8 @@ int Map::size() {
 	return _container.size();
 }
 
-V2D &Map::operator[](int idx) {
-	return _container[idx];
+V2D *Map::getCoord(int idx) {
+	return &_container[idx];
 }
 
 } // End of namespace CGE2

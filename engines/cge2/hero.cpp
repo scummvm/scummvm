@@ -28,6 +28,7 @@
 #include "cge2/hero.h"
 #include "cge2/text.h"
 #include "cge2/cge2_main.h"
+#include "cge2/map.h"
 
 namespace CGE2 {
 
@@ -437,8 +438,23 @@ int Hero::mapCross(const V3D &a, const V3D &b) {
 }
 
 int CGE2Engine::mapCross(const V2D &a, const V2D &b) {
-	warning("STUB: CGE2Engine::mapCross()");
-	return 0;
+	int cnt = 0;
+	V2D *n0 = nullptr;
+	V2D *p = nullptr;
+	for (int i = 0; i < _map->size(); i++) {
+		V2D *n = _map->getCoord(i);
+		if (p) {
+			if (cross(a, b, *n0, *n))
+				++cnt;
+		
+			if (n == p)
+				p = nullptr;	
+		} else {
+			p = n;
+		}
+		n0 = n;
+	}
+	return cnt;
 }
 
 void Hero::setCave(int c) {

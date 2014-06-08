@@ -47,7 +47,7 @@ public:
 	void clear();
 	void load(int scene);
 	int size();
-	V2D &operator[](int idx);
+	V2D *getCoord(int idx);
 };
 
 } // End of namespace CGE2
