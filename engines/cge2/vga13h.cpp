@@ -246,7 +246,7 @@ Sprite *Sprite::expand() {
 		char tmpStr[kLineMax + 1];
 
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
-			if (line.size() == 0)
+			if (line.empty())
 				continue;
 			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 

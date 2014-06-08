@@ -81,7 +81,7 @@ void Font::load() {
 	int n = 0;
 
 	for (line = colorFile.readLine(); !colorFile.eos(); line = colorFile.readLine()){
-		if (line.size() == 0)
+		if (line.empty())
 			continue;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 		

@@ -52,7 +52,7 @@ void Map::load(int scene) {
 	
 	Common::String line;
 	for (line = file.readLine(); !file.eos(); line = file.readLine()) {
-		if (line.size() == 0)
+		if (line.empty())
 			continue;
 
 		char tmpStr[kLineMax + 1];

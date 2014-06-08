@@ -168,7 +168,7 @@ void CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) {
 		Common::String line;
 
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()){
-			if (line.size() == 0)
+			if (line.empty())
 				continue;
 			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 				
@@ -313,7 +313,7 @@ void CGE2Engine::loadScript(const char *fname) {
 	Common::String line;
 
 	for (line = scrf.readLine(); !scrf.eos(); line = scrf.readLine()) {
-		if (line.size() == 0)
+		if (line.empty())
 			continue;
 
 		char *p;

@@ -92,7 +92,7 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 			int maxnxt = 0;
 
 			for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
-				if (line.size() == 0)
+				if (line.empty())
 					continue;
 				Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 
