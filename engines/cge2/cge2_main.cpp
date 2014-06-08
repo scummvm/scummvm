@@ -34,6 +34,7 @@
 #include "cge2/hero.h"
 #include "cge2/spare.h"
 #include "cge2/events.h"
+#include "cge2/map.h"
 
 namespace CGE2 {
 
@@ -416,6 +417,7 @@ void CGE2Engine::caveUp(int cav) {
 	showBak(bakRef);
 	*_eye = *(_eyeTab[_now]);
 	_mouseTop = V2D(this, V3D(0, 1, kScrDepth)).y;
+	_map->load(_now);
 	_spare->takeCave(_now);
 	openPocket();
 	
@@ -543,10 +545,6 @@ void CGE2Engine::tick() {
 	}
 
 	_mouse->tick();
-}
-
-void CGE2Engine::loadMap(int cav) {
-	warning("STUB: CGE2Engine::loadMap()");
 }
 
 void CGE2Engine::openPocket() {

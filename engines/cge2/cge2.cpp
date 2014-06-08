@@ -38,6 +38,7 @@
 #include "cge2/events.h"
 #include "cge2/talk.h"
 #include "cge2/cge2_main.h"
+#include "cge2/map.h"
 
 namespace CGE2 {
 
@@ -71,6 +72,7 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 		_vol[i] = nullptr;
 	_eventManager = nullptr;
 	_blinkSprite = nullptr;
+	_map = nullptr;
 	
 	_quitFlag = false;
 	_bitmapPalette = nullptr;
@@ -117,6 +119,7 @@ void CGE2Engine::init() {
 		_point[i] = new V3D();
 	_sys = new System(this);
 	_eventManager = new EventManager(this);
+	_map = new Map(this);
 }
 
 void CGE2Engine::deinit() {
@@ -149,6 +152,7 @@ void CGE2Engine::deinit() {
 	delete _eventManager;
 	if (_blinkSprite != nullptr)
 		delete _blinkSprite;
+	delete _map;
 }
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {

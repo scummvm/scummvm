@@ -57,6 +57,7 @@ class Bitmap;
 class System;
 class EventManager;
 class Font;
+class Map;
 
 #define kScrWidth      320
 #define kScrHeight     240
@@ -109,7 +110,6 @@ public:
 	void showBak(int ref);
 	void loadTab();
 	int newRandom(int range);
-	void loadMap(int cav);
 	void openPocket();
 	void selectPocket(int n);
 	void busy(bool on);
@@ -238,6 +238,7 @@ public:
 	Sprite *_vol[2];
 	EventManager *_eventManager;
 	Sprite *_blinkSprite;
+	Map *_map;
 private:
 	void init();
 	void deinit();
