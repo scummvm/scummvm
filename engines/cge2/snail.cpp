@@ -309,6 +309,8 @@ void CommandHandler::runCommand() {
 		case kCmdGhost:
 			_vm->snGhost((Bitmap *)tailCmd._spritePtr);
 			break;
+		case kCmdNop: // Do nothing.
+			break;
 		default:
 			warning("Unhandled command");
 			break;
