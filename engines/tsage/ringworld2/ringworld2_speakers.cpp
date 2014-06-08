@@ -1057,7 +1057,7 @@ void SpeakerNej2800::animateSpeaker() {
 
 		_object1.setup(4023, 3, 1);
 		if (_object2->_visage == 2801)
-			_object1.setPosition(Common::Point(R2_GLOBALS._player._position.x - 12, R2_GLOBALS._player._position.y));
+			_object1.setPosition(Common::Point(_object2->_position.x - 12, _object2->_position.y));
 		_object1.animate(ANIM_MODE_5, this);
 	}
 }
