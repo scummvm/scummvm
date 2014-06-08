@@ -276,7 +276,7 @@ void CommandHandler::runCommand() {
 			_vm->snLight(tailCmd._val != 0);
 			break;
 		case kCmdCycle:
-			warning("Unhandled command - kCmdCycle");
+			_vm->snCycle(tailCmd._val);
 			break;
 		case kCmdWalk:
 			_vm->snWalk(spr, tailCmd._val);
@@ -298,7 +298,7 @@ void CommandHandler::runCommand() {
 			_vm->snRoom(spr, tailCmd._val);
 			break;
 		case kCmdDim:
-			warning("Unhandled command - kCmdDim");
+			_vm->snDim(spr, tailCmd._val);
 			break;
 		case kCmdExec:
 			warning("Unhandled command - kCmdExec");
@@ -491,6 +491,10 @@ void CGE2Engine::snLight(int val) {
 	warning("STUB: CGE2Engine::snLight()");
 }
 
+void CGE2Engine::snCycle(int cnt) {
+	warning("STUB: CGE2Engine::snCycle()");
+}
+
 void CGE2Engine::snWalk(Sprite *spr, int val) {
 	warning("STUB: CGE2Engine::snWalk()");
 }
@@ -518,6 +522,15 @@ void CGE2Engine::snSound(Sprite *spr, int wav) {
 
 void CGE2Engine::snRoom(Sprite *spr, int val) {
 	warning("STUB: CGE2Engine::snRoom()");
+}
+
+void CGE2Engine::snDim(Sprite *spr, int val) {
+	if (isHero(spr)) {
+		if (val > 0)
+			++*(Hero*)spr;
+		if (val < 0)
+			--*(Hero*)spr;
+	}
 }
 
 void CGE2Engine::snGhost(Bitmap *bmp) {
