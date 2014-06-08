@@ -437,7 +437,7 @@ int Hero::mapCross(const V3D &a, const V3D &b) {
 }
 
 int CGE2Engine::mapCross(const V2D &a, const V2D &b) {
-	warning("STUB: CGE2Engine::cross()");
+	warning("STUB: CGE2Engine::mapCross()");
 	return 0;
 }
 
