@@ -2990,7 +2990,7 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	int n2x = point1.x;
 	int n2y = point1.y;
 	int mult;
-	int len;
+	int len = -1;
 
 	if (mgminfo->flags & 0x40) {
 		mult = mgminfo->field_10;
