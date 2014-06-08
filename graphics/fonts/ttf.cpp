@@ -101,7 +101,7 @@ public:
 	TTFFont();
 	virtual ~TTFFont();
 
-	bool load(Common::SeekableReadStream &stream, int size, uint dpi, bool monochrome, const uint32 *mapping);
+	bool load(Common::SeekableReadStream &stream, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping);
 
 	virtual int getFontHeight() const;
 
@@ -135,13 +135,15 @@ private:
 	bool _allowLateCaching;
 	void assureCached(uint32 chr) const;
 
-	bool _monochrome;
+	FT_Int32 _loadFlags;
+	FT_Render_Mode _renderMode;
 	bool _hasKerning;
 };
 
 TTFFont::TTFFont()
     : _initialized(false), _face(), _ttfFile(0), _size(0), _width(0), _height(0), _ascent(0),
-      _descent(0), _glyphs(), _monochrome(false), _hasKerning(false), _allowLateCaching(false) {
+      _descent(0), _glyphs(), _loadFlags(FT_LOAD_TARGET_NORMAL), _renderMode(FT_RENDER_MODE_NORMAL),
+      _hasKerning(false), _allowLateCaching(false) {
 }
 
 TTFFont::~TTFFont() {
@@ -158,7 +160,7 @@ TTFFont::~TTFFont() {
 	}
 }
 
-bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, bool monochrome, const uint32 *mapping) {
+bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
 	if (!g_ttf.isInitialized())
 		return false;
 
@@ -203,7 +205,22 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, bool 
 		return false;
 	}
 
-	_monochrome = monochrome;
+	switch (renderMode) {
+	case kTTFRenderModeNormal:
+		_loadFlags = FT_LOAD_TARGET_NORMAL;
+		_renderMode = FT_RENDER_MODE_NORMAL;
+		break;
+
+	case kTTFRenderModeLight:
+		_loadFlags = FT_LOAD_TARGET_LIGHT;
+		_renderMode = FT_RENDER_MODE_LIGHT;
+		break;
+
+	case kTTFRenderModeMonochrome:
+		_loadFlags = FT_LOAD_TARGET_MONO;
+		_renderMode = FT_RENDER_MODE_MONO;
+		break;
+	}
 
 	FT_Fixed yScale = _face->size->metrics.y_scale;
 	_ascent = ftCeil26_6(FT_MulFix(_face->ascender, yScale));
@@ -413,10 +430,10 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 	// We use the light target and render mode to improve the looks of the
 	// glyphs. It is most noticable in FreeSansBold.ttf, where otherwise the
 	// 't' glyph looks like it is cut off on the right side.
-	if (FT_Load_Glyph(_face, slot, (_monochrome ? FT_LOAD_TARGET_MONO : FT_LOAD_TARGET_LIGHT)))
+	if (FT_Load_Glyph(_face, slot, _loadFlags))
 		return false;
 
-	if (FT_Render_Glyph(_face->glyph, (_monochrome ? FT_RENDER_MODE_MONO : FT_RENDER_MODE_LIGHT)))
+	if (FT_Render_Glyph(_face->glyph, _renderMode))
 		return false;
 
 	if (_face->glyph->format != FT_GLYPH_FORMAT_BITMAP)
@@ -503,10 +520,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, uint dpi, bool monochrome, const uint32 *mapping) {
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, size, dpi, monochrome, mapping)) {
+	if (!font->load(stream, size, dpi, renderMode, mapping)) {
 		delete font;
 		return 0;
 	}
