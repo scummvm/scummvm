@@ -974,10 +974,10 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	GLfloat cutoff = 180.0f;
 	GLfloat spot_exp = 0.0f;
 
-	GLfloat intensity = light->_intensity;
-	lightColor[0] = ((GLfloat)light->_color.getRed() / 15.0f) * intensity;
-	lightColor[1] = ((GLfloat)light->_color.getGreen() / 15.0f) * intensity;
-	lightColor[2] = ((GLfloat)light->_color.getBlue() / 15.0f) * intensity;
+	GLfloat intensity = light->_intensity / 15.0f;
+	lightColor[0] = (GLfloat)light->_color.getRed() * intensity;
+	lightColor[1] = (GLfloat)light->_color.getGreen() * intensity;
+	lightColor[2] = (GLfloat)light->_color.getBlue() * intensity;
 
 	if (light->_type == Light::Omni) {
 		lightPos[0] = light->_pos.x();

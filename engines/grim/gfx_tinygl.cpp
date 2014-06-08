@@ -896,10 +896,10 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 	float cutoff = 180.0f;
 	float spot_exp = 0.0f;
 
-	float intensity = light->_intensity / 1.3f;
-	lightColor[0] = ((float)light->_color.getRed() / 15.0f) * intensity;
-	lightColor[1] = ((float)light->_color.getGreen() / 15.0f) * intensity;
-	lightColor[2] = ((float)light->_color.getBlue() / 15.0f) * intensity;
+	float intensity = light->_intensity / 15.0f;
+	lightColor[0] = (float)light->_color.getRed() * intensity;
+	lightColor[1] = (float)light->_color.getGreen() * intensity;
+	lightColor[2] = (float)light->_color.getBlue() * intensity;
 
 	if (light->_type == Light::Omni) {
 		lightPos[0] = light->_pos.x();
