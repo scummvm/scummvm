@@ -135,12 +135,6 @@ int Matrix_Inv(float *r, float *m, int n) {
 	return true;
 }
 
-Vector3::Vector3(float x, float y, float z) {
-	_v[0] = x;
-	_v[1] = y;
-	_v[2] = z;
-}
-
 void Vector3::normalize() {
 	float n;
 	n = sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]);
@@ -149,13 +143,6 @@ void Vector3::normalize() {
 		_v[1] /= n;
 		_v[2] /= n;
 	}
-}
-
-Vector4::Vector4(float x, float y, float z, float w) {
-	_v[0] = x;
-	_v[1] = y;
-	_v[2] = z;
-	_v[3] = w;
 }
 
 Vector4::Vector4(const Vector3 &vec, float w) {
@@ -276,10 +263,12 @@ bool Matrix4::IsIdentity() const {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (i == j) {
-				if (_m[i][j] != 1.0)
+				if (_m[i][j] != 1.0) {
 					return false;
-			} else if (_m[i][j] != 0.0)
+				}
+			} else if (_m[i][j] != 0.0) {
 				return false;
+			}
 		}
 	}
 	return true;

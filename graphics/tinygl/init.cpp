@@ -134,7 +134,7 @@ void glInit(void *zbuffer1) {
 	c->matrix_stack_depth_max[2] = MAX_TEXTURE_STACK_DEPTH;
 
 	for (int i = 0; i < 3; i++) {
-		c->matrix_stack[i] = (Matrix4*)gl_zalloc(c->matrix_stack_depth_max[i] * sizeof(Matrix4));
+		c->matrix_stack[i] = (Matrix4 *)gl_zalloc(c->matrix_stack_depth_max[i] * sizeof(Matrix4));
 		c->matrix_stack_ptr[i] = c->matrix_stack[i];
 	}
 

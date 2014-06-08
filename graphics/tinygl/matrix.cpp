@@ -168,12 +168,12 @@ void glopRotate(GLContext *c, GLParam *p) {
 }
 
 void glopScale(GLContext *c, GLParam *p) {
-	c->matrix_stack_ptr[c->matrix_mode]->scale(p[1].f,p[2].f,p[3].f);
+	c->matrix_stack_ptr[c->matrix_mode]->scale(p[1].f, p[2].f, p[3].f);
 	gl_matrix_update(c);
 }
 
 void glopTranslate(GLContext *c, GLParam *p) {
-	c->matrix_stack_ptr[c->matrix_mode]->translate(p[1].f,p[2].f,p[3].f);
+	c->matrix_stack_ptr[c->matrix_mode]->translate(p[1].f, p[2].f, p[3].f);
 	gl_matrix_update(c);
 }
 
@@ -184,7 +184,7 @@ void glopFrustum(GLContext *c, GLParam *p) {
 	float top = p[4].f;
 	float nearp = p[5].f;
 	float farp = p[6].f;
-	Matrix4 m = Matrix4::frustrum(left,right,bottom,top,nearp,farp);
+	Matrix4 m = Matrix4::frustrum(left, right, bottom, top, nearp, farp);
 
 	*c->matrix_stack_ptr[c->matrix_mode] *= m;
 

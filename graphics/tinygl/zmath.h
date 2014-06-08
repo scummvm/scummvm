@@ -12,15 +12,15 @@ namespace TinyGL {
 class Vector3 {
 public:
 	Vector3() { }
-	Vector3(float x, float y, float z);
+	Vector3(float x, float y, float z) {
+		X = x;
+		Y = y;
+		Z = z;
+	}
 
 	void normalize();
 
 	float getLength() const { return sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]); }
-
-	static float dot(const Vector3 &a, const Vector3 &b) {
-		return a._v[0] * b._v[0] + a._v[1] * b._v[1] + a._v[2] * b._v[2];
-	}
 
 	bool operator==(const Vector3 &other) const {
 		return _v[0] == other._v[0] && _v[1] == other._v[1] && _v[2] == other._v[2];
@@ -74,7 +74,13 @@ class Vector4 {
 public:
 	Vector4() { }
 	Vector4(const Vector3 &vec, float w);
-	Vector4(float x, float y, float z, float w);
+
+	Vector4(float x, float y, float z, float w) {
+		X = x;
+		Y = y;
+		Z = z;
+		W = w;
+	}
 
 	bool operator==(const Vector4 &other) const {
 		return _v[0] == other._v[0] && _v[1] == other._v[1] && _v[2] == other._v[2] && _v[3] == other._v[3];

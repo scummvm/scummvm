@@ -214,7 +214,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 			att = 1.0f / (l->attenuation[0] + dist * (l->attenuation[1] +
 			              dist * l->attenuation[2]));
 		}
-		dot = Vector3::dot(d, n);
+		dot = d.X * n.X + d.Y * n.Y + d.Z * n.Z;//Vector3::dot(d, n);
 		if (twoside && dot < 0)
 			dot = -dot;
 		if (dot > 0) {
@@ -225,7 +225,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 
 			// spot light
 			if (l->spot_cutoff != 180) {
-				dot_spot = -Vector3::dot(d, l->norm_spot_direction);
+				dot_spot = -( d.X * l->norm_spot_direction.X + d.Y * l->norm_spot_direction.Y + d.Z * l->norm_spot_direction.Z); //Vector3::dot(d, l->norm_spot_direction);
 				if (twoside && dot_spot < 0)
 					dot_spot = -dot_spot;
 				if (dot_spot < l->cos_spot_cutoff) {
@@ -255,7 +255,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 				s = d;
 				s.Z = (s.Z + 1.0);
 			}
-			dot_spec = Vector3::dot(n, s);
+			dot_spec = n.X * s.X + n.Y + s.Y + n.Z * s.Z; //Vector3::dot(n, s);
 			if (twoside && dot_spec < 0)
 				dot_spec = -dot_spec;
 			if (dot_spec > 0) {
