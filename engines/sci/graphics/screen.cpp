@@ -778,6 +778,10 @@ void GfxScreen::adjustBackUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativ
 	}
 
 	switch (_upscaledHires) {
+	case GFX_SCREEN_UPSCALED_480x300:
+		x = (x << 1) / 3;
+		y = (y << 1) / 3;
+		break;
 	case GFX_SCREEN_UPSCALED_640x400:
 		x /= 2;
 		y /= 2;
