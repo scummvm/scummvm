@@ -128,21 +128,21 @@ Talk::Talk(CGE2Engine *vm, ColorBank color)
 }
 
 uint8 *Talk::box(V2D siz) {
-	uint8 *b, *p, *q;
 	uint16 n, r = (_mode == kTBRound) ? kTextRoundCorner : 0;
 	const byte lt = _color[1], bg = _color[2], dk = _color[3];
-	int i;
 
-	if (siz.x < 8) siz.x = 8;
-	if (siz.y < 8) siz.y = 8;
-	b = new uint8[n = siz.area()];
+	if (siz.x < 8)
+		siz.x = 8;
+	if (siz.y < 8)
+		siz.y = 8;
+	uint8 *b = new uint8[n = siz.area()];
 	if (!b)
 		error("No core!");
 	memset(b, bg, n);
 
 	if (_mode) {
-		p = b;
-		q = b + n - siz.x;
+		uint8 *p = b;
+		uint8 *q = b + n - siz.x;
 		memset(p, lt, siz.x);
 		memset(q, dk, siz.x);
 		while (p < q) {
@@ -151,9 +151,9 @@ uint8 *Talk::box(V2D siz) {
 			*p = lt;
 		}
 		p = b;
-		for (i = 0; i < r; i++) {
-			int j;
-			for (j = 0; j < r - i; j++) {
+		for (int i = 0; i < r; i++) {
+			int j = 0;
+			for (; j < r - i; j++) {
 				p[j] = kPixelTransp;
 				p[siz.x - j - 1] = kPixelTransp;
 				q[j] = kPixelTransp;
