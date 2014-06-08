@@ -4,11 +4,17 @@
 namespace TinyGL {
 
 void glopNormal(GLContext *c, GLParam *p) {
-	c->current_normal = Vector4(p[1].f, p[2].f, p[3].f, 0.0f);
+	c->current_normal.X = p[1].f;
+	c->current_normal.Y = p[2].f;
+	c->current_normal.Z = p[3].f;
+	c->current_normal.W = 0.0f;
 }
 
 void glopTexCoord(GLContext *c, GLParam *p) {
-	c->current_tex_coord = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
+	c->current_tex_coord.X = p[1].f;
+	c->current_tex_coord.Y = p[2].f;
+	c->current_tex_coord.Z = p[3].f;
+	c->current_tex_coord.W = p[4].f;
 }
 
 void glopEdgeFlag(GLContext *c, GLParam *p) {
@@ -16,7 +22,10 @@ void glopEdgeFlag(GLContext *c, GLParam *p) {
 }
 
 void glopColor(GLContext *c, GLParam *p) {
-	c->current_color = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
+	c->current_color.X = p[1].f;
+	c->current_color.Y = p[2].f;
+	c->current_color.Z = p[3].f;
+	c->current_color.W = p[4].f;
 	c->longcurrent_color[0] = p[5].ui;
 	c->longcurrent_color[1] = p[6].ui;
 	c->longcurrent_color[2] = p[7].ui;
@@ -71,7 +80,7 @@ void glopBegin(GLContext *c, GLParam *p) {
 			c->matrix_model_projection = (*c->matrix_stack_ptr[1]) * (*c->matrix_stack_ptr[0]);
 			// test to accelerate computation
 			c->matrix_model_projection_no_w_transform = 0;
-			if (c->matrix_model_projection.get(3,0) == 0.0 && c->matrix_model_projection.get(3,1) == 0.0 && c->matrix_model_projection.get(3,2) == 0.0)
+			if (c->matrix_model_projection._m[3][0] == 0.0 && c->matrix_model_projection._m[3][1] == 0.0 && c->matrix_model_projection._m[3][2] == 0.0)
 				c->matrix_model_projection_no_w_transform = 1;
 		}
 
@@ -143,7 +152,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 		m = &c->matrix_model_view_inv;
 		n = &c->current_normal;
 
-		v->normal = m->transform3x3(n->toVector3());
+		v->normal = m->transform3x3(*n);
 
 		if (c->normalize_enabled) {
 			v->normal.normalize();
@@ -155,7 +164,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 
 		v->pc = m->transform3x4(v->coord);
 		if (c->matrix_model_projection_no_w_transform) {
-			v->pc.W = (m->get(3,3));
+			v->pc.W = (m->_m[3][3]);
 		}
 	}
 
@@ -189,7 +198,10 @@ void glopVertex(GLContext *c, GLParam *p) {
 	v = &c->vertex[n];
 	n++;
 
-	v->coord = Vector4(p[1].f, p[2].f, p[3].f, p[4].f);
+	v->coord.X = p[1].f;
+	v->coord.Y = p[2].f;
+	v->coord.Z = p[3].f;
+	v->coord.W = p[4].f;
 
 	gl_vertex_transform(c, v);
 

@@ -40,10 +40,10 @@ void glopLoadMatrix(GLContext *c, GLParam *p) {
 	q = p + 1;
 
 	for (int i = 0; i < 4; i++) {
-		m->set(0, i, q[0].f);
-		m->set(1, i, q[1].f);
-		m->set(2, i, q[2].f);
-		m->set(3, i, q[3].f);
+		m->_m[0][i] = q[0].f;
+		m->_m[1][i] = q[1].f;
+		m->_m[2][i] = q[2].f;
+		m->_m[3][i] = q[3].f;
 		q += 4;
 	}
 
@@ -51,8 +51,7 @@ void glopLoadMatrix(GLContext *c, GLParam *p) {
 }
 
 void glopLoadIdentity(GLContext *c, GLParam *) {
-	*c->matrix_stack_ptr[c->matrix_mode] = Matrix4::identity();
-
+	c->matrix_stack_ptr[c->matrix_mode]->identity();
 	gl_matrix_update(c);
 }
 
@@ -62,10 +61,10 @@ void glopMultMatrix(GLContext *c, GLParam *p) {
 	q = p + 1;
 
 	for (int i = 0; i < 4; i++) {
-		m.set(0, i, q[0].f);
-		m.set(1, i, q[1].f);
-		m.set(2, i, q[2].f);
-		m.set(3, i, q[3].f);
+		m._m[0][i] = q[0].f;
+		m._m[1][i] = q[1].f;
+		m._m[2][i] = q[2].f;
+		m._m[3][i] = q[3].f;
 		q += 4;
 	}
 
@@ -112,19 +111,19 @@ void glopRotate(GLContext *c, GLParam *p) {
 
 	switch (dir_code) {
 	case 0:
-		m = Matrix4::identity();
+		m.identity();
 		break;
 	case 4:
 		if (u[0] < 0) angle = -angle;
-		m = Matrix4::rotation(angle, 0);
+		m.rotation(angle, 0);
 		break;
 	case 2:
 		if (u[1] < 0) angle = -angle;
-		m = Matrix4::rotation(angle, 1);
+		m.rotation(angle, 1);
 		break;
 	case 1:
 		if (u[2] < 0) angle = -angle;
-		m = Matrix4::rotation(angle, 2);
+		m.rotation(angle, 2);
 		break;
 	default: {
 		float cost, sint;
@@ -143,24 +142,23 @@ void glopRotate(GLContext *c, GLParam *p) {
 		sint = sin(angle);
 
 		// fill in the values
-		m.set(3,0,0.0f);
-		m.set(3,1,0.0f);
-		m.set(3,2,0.0f);
-		m.set(0,3,0.0f);
-		m.set(1,3,0.0f);
-		m.set(2,3,0.0f);
-		m.set(3,3,1.0f);
+		m._m[3][0] = 0.0f;
+		m._m[3][2] = 0.0f;
+		m._m[0][3] = 0.0f;
+		m._m[1][3] = 0.0f;
+		m._m[2][3] = 0.0f;
+		m._m[3][3] = 1.0f;
 
 		// do the math
-		m.set(0,0, u[0] * u[0] + cost * (1 - u[0] * u[0]));
-		m.set(1,0, u[0] * u[1] * (1 -cost) - u[2] * sint);
-		m.set(2,0, u[2] * u[0] * (1 -cost) + u[1] * sint);
-		m.set(0,1, u[0] * u[1] * (1 -cost) + u[2] * sint);
-		m.set(1,1, u[1] * u[1] + cost * (1 - u[1] * u[1]));
-		m.set(2,1, u[1] * u[2] * (1 - cost) - u[0] * sint);
-		m.set(0,2, u[2] * u[0] * (1 - cost) - u[1] * sint);
-		m.set(1,2, u[1] * u[2] * (1 - cost) + u[0] * sint);
-		m.set(2,2, u[2] * u[2] + cost * (1 - u[2] * u[2]));
+		m._m[0][0] = u[0] * u[0] + cost * (1 - u[0] * u[0]);
+		m._m[1][0] = u[0] * u[1] * (1 -cost) - u[2] * sint;
+		m._m[2][0] = u[2] * u[0] * (1 -cost) + u[1] * sint;
+		m._m[0][1] = u[0] * u[1] * (1 -cost) + u[2] * sint;
+		m._m[1][1] = u[1] * u[1] + cost * (1 - u[1] * u[1]);
+		m._m[2][1] = u[1] * u[2] * (1 - cost) - u[0] * sint;
+		m._m[0][2] = u[2] * u[0] * (1 - cost) - u[1] * sint;
+		m._m[1][2] = u[1] * u[2] * (1 - cost) + u[0] * sint;
+		m._m[2][2] = u[2] * u[2] + cost * (1 - u[2] * u[2]);
 	}
 	}
 

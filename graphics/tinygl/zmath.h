@@ -124,10 +124,6 @@ public:
 		return *this;
 	}
 
-	Vector3 toVector3() const {
-		return Vector3(_v[0],_v[1],_v[2]);
-	}
-
 	float _v[4];
 };
 
@@ -184,27 +180,10 @@ public:
 		return *this;
 	}
 
-	static Matrix4 identity();
-	static Matrix4 rotation(float t, int u);
-
-	void fill(float val) {
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				_m[i][j] = val;
-			}
-		}
-	}
-
-	inline void set(int x,int y,float val) {
-		_m[x][y] = val;
-	}
-
-	inline float get(int x, int y) const {
-		return _m[x][y];
-	}
-
 	void scale(float x, float y, float z);
 	void translate(float x, float y, float z);
+	void identity();
+	void rotation(float t, int);
 
 	void invert();
 	void transpose();
@@ -230,6 +209,14 @@ public:
 			vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2]);
 	}
 
+	// Transform the vector as if this were a 3x3 matrix.
+	inline Vector3 transform3x3(const Vector4 &vector) const {
+		return Vector3(
+			vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2],
+			vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2],
+			vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2]);
+	}
+
 	// Transform the vector as if this were a 3x4 matrix.
 	inline Vector4 transform3x4(const Vector4 &vector) const {
 		return Vector4(
@@ -247,7 +234,6 @@ public:
 			vector.X * _m[3][0] + vector.Y * _m[3][1] + vector.Z * _m[3][2] + vector.W * _m[3][3]);
 	}
 
-private:
 	float _m[4][4];
 };
 

@@ -79,14 +79,18 @@ void glopLight(GLContext *c, GLParam *p) {
 		l->position = pos;
 
 		if (l->position.W == 0) {
-			l->norm_position = pos.toVector3();
+			l->norm_position.X = pos.X;
+			l->norm_position.Y = pos.Y;
+			l->norm_position.Z = pos.Z;
 			l->norm_position.normalize();
 		}
 	}
 	break;
 	case TGL_SPOT_DIRECTION:
-		l->spot_direction = v.toVector3();
-		l->norm_spot_direction = v.toVector3();
+		l->spot_direction.X = v.X;
+		l->spot_direction.Y = v.Y;
+		l->spot_direction.Z = v.Z;
+		l->norm_spot_direction = l->spot_direction;
 		l->norm_spot_direction.normalize();
 		break;
 	case TGL_SPOT_EXPONENT:
@@ -193,7 +197,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 
 		if (l->position.W == 0) {
 			// light at infinity
-			d = l->position.toVector3();
+			d.X = l->position.X;
+			d.Y = l->position.Y;
+			d.Z = l->position.Z;
 			att = 1;
 		} else {
 			// distance attenuation
@@ -237,7 +243,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 
 			if (c->local_light_model) {
 				Vector3 vcoord;
-				vcoord = v->ec.toVector3();
+				vcoord.X = v->ec.X;
+				vcoord.Y = v->ec.Y;
+				vcoord.Z = v->ec.Z;
 				vcoord.normalize();
 				s.X = (d.X - vcoord.X);
 				s.Y = (d.Y - vcoord.X);
@@ -280,7 +288,10 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 		B += att * lB;
 	}
 
-	v->color = Vector4(clampf(R, 0, 1), clampf(G, 0, 1), clampf(B, 0, 1), A);
+	v->color.X = clampf(R, 0, 1);
+	v->color.Y = clampf(G, 0, 1);
+	v->color.Z = clampf(B, 0, 1);
+	v->color.W = clampf(A, 0, 1);
 }
 
 } // end of namespace TinyGL

@@ -1,4 +1,3 @@
-
 #include "common/scummsys.h"
 
 #include "graphics/tinygl/zmath.h"
@@ -166,17 +165,16 @@ Vector4::Vector4(const Vector3 &vec, float w) {
 	_v[3] = w;
 }
 
-TinyGL::Matrix4 Matrix4::identity() {
-	Matrix4 a;
-	a.fill(0);
-	a.set(0, 0, 1.0f);
-	a.set(1, 1, 1.0f);
-	a.set(2, 2, 1.0f);
-	a.set(3, 3, 1.0f);
-	return a;
+void Matrix4::identity()
+{
+	memset(_m,0,sizeof(_m));
+	_m[0][0] = 1.0f;
+	_m[1][1] = 1.0f;
+	_m[2][2] = 1.0f;
+	_m[3][3] = 1.0f;
 }
 
-TinyGL::Matrix4 Matrix4::transpose() const {
+Matrix4 Matrix4::transpose() const {
 	Matrix4 a;
 
 	a._m[0][0] = this->_m[0][0];
@@ -233,7 +231,7 @@ Matrix4 Matrix4::inverseOrtho() const {
 	float s;
 	for (i = 0; i < 3; i++) {
 		for (j = 0; j < 3; j++)
-			a.set(i, j, this->_m[j][i]);
+			a._m[i][j] = this->_m[j][i];
 		a._m[3][0] = 0.0f;
 		a._m[3][1] = 0.0f;
 		a._m[3][2] = 0.0f;
@@ -256,8 +254,8 @@ Matrix4 Matrix4::inverse() const {
 	return result;
 }
 
-Matrix4 Matrix4::rotation(float t, int u) {
-	Matrix4 a = identity();
+void Matrix4::rotation(float t, int u) {
+	identity();
 	float s, c;
 	int v, w;
 
@@ -267,12 +265,10 @@ Matrix4 Matrix4::rotation(float t, int u) {
 		w = 0;
 	s = sin(t);
 	c = cos(t);
-	a._m[v][v] = c;
-	a._m[v][w] = -s;
-	a._m[w][v] = s;
-	a._m[w][w] = c;
-
-	return a;
+	_m[v][v] = c;
+	_m[v][w] = -s;
+	_m[w][v] = s;
+	_m[w][w] = c;
 }
 
 bool Matrix4::IsIdentity() const {

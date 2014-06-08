@@ -174,7 +174,7 @@ static float name(Vector4 *c, Vector4 *a, Vector4 *b) { \
 	if (den == 0) \
 		t = 0; \
 	else \
-		t = (sign a-> dir  - a->W) / den; \
+		t = (sign a->dir - a->W) / den; \
 	c-> dir1 = (a-> dir1  + t * d ## dir1); \
 	c-> dir2 = (a-> dir2  + t * d ## dir2); \
 	c->W = (a->W + t * dW); \
