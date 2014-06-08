@@ -1063,9 +1063,7 @@ void VoyeurEngine::initIFace() {
 	CMapResource *pal = _bVoy->boltEntry(_playStampGroupId + 2)._cMapResource;
 	pal->startFade();
 
-	// Start the mansion off centered
-	_mansionViewPos = Common::Point((MANSION_MAX_X - MANSION_VIEW_WIDTH) / 2,
-		(MANSION_MAX_Y - MANSION_VIEW_HEIGHT) / 2);
+	// Reset the mansion view off to it's prior position (if any)
 	doScroll(_mansionViewPos);
 
 	_voy->_viewBounds = _bVoy->boltEntry(_playStampGroupId)._rectResource;
@@ -1138,6 +1136,7 @@ void VoyeurEngine::checkTransition() {
 		}
 
 		_checkTransitionId = _voy->_transitionId;
+		centerMansionView();
 	}
 }
 
@@ -1418,6 +1417,11 @@ void VoyeurEngine::doEvidDisplay(int evidId, int eventId) {
 		_bVoy->freeBoltMember(_voy->_boltGroupId2 + (evidId + idx) * 2);
 		_bVoy->freeBoltMember(_voy->_boltGroupId2 + (evidId + idx) * 2 + 1);
 	}
+}
+
+void VoyeurEngine::centerMansionView() {
+	_mansionViewPos = Common::Point((MANSION_MAX_X - MANSION_VIEW_WIDTH) / 2,
+		(MANSION_MAX_Y - MANSION_VIEW_HEIGHT) / 2);
 }
 
 } // End of namespace Voyeur

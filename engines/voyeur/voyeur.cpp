@@ -82,6 +82,8 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_glGoStack = -1;
 	_resolvePtr = nullptr;
 	_mainThread = nullptr;
+
+	centerMansionView();
 }
 
 VoyeurEngine::~VoyeurEngine() {

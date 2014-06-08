@@ -150,6 +150,11 @@ private:
 	 * Synchronizes the game data
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Resets the mansion view position
+	 */
+	void centerMansionView();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
