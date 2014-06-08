@@ -299,7 +299,7 @@ public:
 	int _mst_shadow2; // blinking after adding new item
 	int _candleCounter; // special counter for candle inventory item
 
-	void inventoryFlagChange();
+	void inventoryFlagChange(bool inventoryState);
 	bool loadAllInv();
 	void rememberScreenInv();
 	void prepareInventoryToView();
@@ -314,7 +314,7 @@ public:
 private:
 	bool playNextFrame();
 	void keyHandler(Common::Event event);
-	void hotspot();
+	void hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList);
 	void drawScreen();
 	void showTexts();
 	void init();

@@ -38,25 +38,25 @@ public:
 	GraphicsMan(PrinceEngine *vm);
 	~GraphicsMan();
 	
-	void update();
+	void update(Graphics::Surface *screen);
 
 	void change();
 
 	void setPalette(const byte *palette);
 	void makeShadowTable(int brightness, byte *shadowTable);
 
-	void draw(uint16 x, uint16 y, const Graphics::Surface *s);
-	void drawTransparentSurface(int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
-	void drawTransparentWithBlend(int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
+	void draw(Graphics::Surface *screen, uint16 x, uint16 y, const Graphics::Surface *s);
+	void drawTransparentSurface(Graphics::Surface *screen, int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
+	void drawTransparentWithBlend(Graphics::Surface *screen, int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
 
-	static void drawTransparent(Graphics::Surface *frontScreen, DrawNode *drawNode);
-	static void drawAsShadow(Graphics::Surface *frontScreen, DrawNode *drawNode);
-	static void drawMask(Graphics::Surface *frontScreen, DrawNode *drawNode);
+	static void drawTransparent(Graphics::Surface *screen, DrawNode *drawNode);
+	static void drawAsShadow(Graphics::Surface *screen, DrawNode *drawNode);
+	static void drawMask(Graphics::Surface *screen, DrawNode *drawNode);
 
 	byte getBlendTableColor(byte pixelColor, byte backgroundPixelColor);
 
 	Graphics::Surface *_frontScreen;
-	Graphics::Surface *_backScreen;
+	Graphics::Surface *_screenForInventory;
 	const Graphics::Surface *_roomBackground;
 
 	byte *_shadowTable70;

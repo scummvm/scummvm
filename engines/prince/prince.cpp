@@ -245,8 +245,8 @@ void PrinceEngine::showLogo() {
 	MhwanhDecoder logo;
 	if (Resource::loadResource(&logo, "logo.raw", true)) {
 		_graph->setPalette(logo.getPalette());
-		_graph->draw(0, 0, logo.getSurface());
-		_graph->update();
+		_graph->draw(_graph->_frontScreen, 0, 0, logo.getSurface());
+		_graph->update(_graph->_frontScreen);
 		_system->delayMillis(700);
 	}
 }
@@ -411,7 +411,7 @@ bool PrinceEngine::playNextFrame() {
 
 	const Graphics::Surface *s = _flicPlayer.decodeNextFrame();
 	if (s) {
-		_graph->drawTransparentSurface(0, 0, s, 255);
+		_graph->drawTransparentSurface(_graph->_frontScreen, 0, 0, s, 255);
 		_graph->change();
 	} else if (_flicLooped) {
 		_flicPlayer.rewind();
@@ -658,7 +658,6 @@ void PrinceEngine::keyHandler(Common::Event event) {
 		break;
 	case Common::KEYCODE_i:
 		_mainHero->_middleY -= 5;
-		inventoryFlagChange();
 		break;
 	case Common::KEYCODE_k:
 		_mainHero->_middleY += 5;
@@ -686,38 +685,36 @@ void PrinceEngine::keyHandler(Common::Event event) {
 	}
 }
 
-void PrinceEngine::hotspot() {
+void PrinceEngine::hotspot(Graphics::Surface *screen, Common::Array<Mob> &mobList) {
 	Common::Point mousepos = _system->getEventManager()->getMousePos();
 	Common::Point mousePosCamera(mousepos.x + _picWindowX, mousepos.y);
 
-	for (Common::Array<Mob>::const_iterator it = _mobList.begin(); it != _mobList.end() ; it++) {
+	for (Common::Array<Mob>::const_iterator it = mobList.begin(); it != mobList.end() ; it++) {
 		const Mob& mob = *it;
-		if (mob._visible)
+		if (mob._visible != 0) { // 0 is for visible
 			continue;
+		}
 		if (mob._rect.contains(mousePosCamera)) {
 			uint16 textW = 0;
-			for (uint16 i = 0; i < mob._name.size(); ++i)
+			for (uint16 i = 0; i < mob._name.size(); i++) {
 				textW += _font->getCharWidth(mob._name[i]);
+			}
 
 			uint16 x = mousepos.x - textW/2;
-			if (x > _graph->_frontScreen->w)
+			if (x > screen->w) {
 				x = 0;
+			}
 
-			if (x + textW > _graph->_frontScreen->w)
-				x = _graph->_frontScreen->w - textW;
+			if (x + textW > screen->w) {
+				x = screen->w - textW;
+			}
 
 			uint16 y = mousepos.y - _font->getFontHeight();
-			if (y > _graph->_frontScreen->h)
+			if (y > screen->h) {
 				y = _font->getFontHeight() - 2;
+			}
 
-			_font->drawString(
-				_graph->_frontScreen, 
-				mob._name, 
-				x,
-				y,
-				_graph->_frontScreen->w,
-				216
-			);
+			_font->drawString(screen, mob._name, x, y, screen->w, 216);
 			break;
 		}
 	}
@@ -1197,7 +1194,7 @@ void PrinceEngine::drawScreen() {
 		Graphics::Surface visiblePart;
 		if (roomSurface) {
 			visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
-			_graph->draw(0, 0, &visiblePart);
+			_graph->draw(_graph->_frontScreen, 0, 0, &visiblePart);
 		}
 
 		Graphics::Surface *mainHeroSurface = NULL;
@@ -1252,20 +1249,18 @@ void PrinceEngine::drawScreen() {
 		playNextFrame();
 
 		if (!_inventoryBackgroundRemember) {
-			hotspot();
+			hotspot(_graph->_frontScreen, _mobList);
 			showTexts();
 		} else {
-			rememberScreenInv();
 			_inventoryBackgroundRemember = false;
 		}
+
+		getDebugger()->onFrame();
+		_graph->update(_graph->_frontScreen);
 
 	} else {
 		displayInventory();
 	}
-
-	getDebugger()->onFrame();
-
-	_graph->update();
 }
 
 void PrinceEngine::pause() {
@@ -1276,8 +1271,13 @@ void PrinceEngine::pause() {
 }
 
 void PrinceEngine::addInvObj() {
-	changeCursor(0); // turn on cursor later?
+	changeCursor(0);
 	//prepareInventoryToView();
+
+	_inventoryBackgroundRemember = true;
+	drawScreen();
+
+	Graphics::Surface *suitcase = _suitcaseBmp->getSurface();
 
 	if (!_flags->getFlagValue(Flags::CURSEBLINK)) {
 
@@ -1285,15 +1285,20 @@ void PrinceEngine::addInvObj() {
 		playSample(27, 0);
 
 		_mst_shadow2 = 1;
+
 		while (_mst_shadow2 < 512) {
-			displayInventory();
-			_graph->update();
+			rememberScreenInv();
+			_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+			drawInvItems();
+			_graph->update(_graph->_screenForInventory);
 			_mst_shadow2 += 50;
 			pause();
 		}
 		while (_mst_shadow2 > 256) {
-			displayInventory();
-			_graph->update();
+			rememberScreenInv();
+			_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+			drawInvItems();
+			_graph->update(_graph->_screenForInventory);
 			_mst_shadow2 -= 42;
 			pause();
 		}
@@ -1302,14 +1307,18 @@ void PrinceEngine::addInvObj() {
 		for (int i = 0; i < 3; i++) {
 			_mst_shadow2 = 256;
 			while (_mst_shadow2 < 512) {
-				displayInventory();
-				_graph->update();
+				rememberScreenInv();
+				_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+				drawInvItems();
+				_graph->update(_graph->_screenForInventory);
 				_mst_shadow2 += 50;
 				pause();
 			}
 			while (_mst_shadow2 > 256) {
-				displayInventory();
-				_graph->update();
+				rememberScreenInv();
+				_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+				drawInvItems();
+				_graph->update(_graph->_screenForInventory);
 				_mst_shadow2 -= 50;
 				pause();
 			}
@@ -1317,17 +1326,21 @@ void PrinceEngine::addInvObj() {
 	}
 	_mst_shadow2 = 0;
 	for (int i = 0; i < 20; i++) {
-		displayInventory();
-		_graph->update();
+		rememberScreenInv();
+		_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+		drawInvItems();
+		_graph->update(_graph->_screenForInventory);
 		pause();
 	}
+	changeCursor(1); // here?
 }
 
 void PrinceEngine::rememberScreenInv() {
+	_graph->_screenForInventory->copyFrom(*_graph->_frontScreen);
 }
 
-void PrinceEngine::inventoryFlagChange() {
-	if (!_showInventoryFlag) {
+void PrinceEngine::inventoryFlagChange(bool inventoryState) {
+	if (inventoryState) {
 		_showInventoryFlag = true;
 		_inventoryBackgroundRemember = true;
 	} else {
@@ -1360,11 +1373,17 @@ void PrinceEngine::prepareInventoryToView() {
 			Mob tempMobItem;
 			if (item < _mainHero->_inventory.size()) {
 				int itemNr =  _mainHero->_inventory[item];
+				tempMobItem._visible = 0;
 				tempMobItem._mask =  itemNr; // itemNr - 1??
 				tempMobItem._x1 = currInvX + _picWindowX; //picWindowX2 ?
 				tempMobItem._x2 = currInvX + _picWindowX + _invLineW  - 1; // picWindowX2 ?
 				tempMobItem._y1 = currInvY;
 				tempMobItem._y2 = currInvY + _invLineH - 1;
+
+				tempMobItem._rect.left = tempMobItem._x1;
+				tempMobItem._rect.right = tempMobItem._x2;
+				tempMobItem._rect.top = tempMobItem._y1;
+				tempMobItem._rect.bottom = tempMobItem._y2;
 
 				tempMobItem._name = "";
 				tempMobItem._examText = "";
@@ -1388,11 +1407,6 @@ void PrinceEngine::prepareInventoryToView() {
 		currInvX = _invLineX;
 		currInvY += _invLineSkipY + _invLineH;
 	}
-	//moblistcreated:
-	//mov	w [edi.Mob_Visible],-1
-	//mov	eax,d InvMobList
-	//mov	d MobListAddr,eax
-	//mov	d MobPriAddr,o InvMobPri
 }
 
 void PrinceEngine::drawInvItems() {
@@ -1438,10 +1452,10 @@ void PrinceEngine::drawInvItems() {
 					drawX += (_maxInvW - itemSurface->w) / 2;
 				}
 				if (!_mst_shadow) {
-					_graph->drawTransparentSurface(drawX, drawY, itemSurface, 0);
+					_graph->drawTransparentSurface(_graph->_screenForInventory, drawX, drawY, itemSurface, 0);
 				} else {
 					_mst_shadow = _mst_shadow2;
-					_graph->drawTransparentWithBlend(drawX, drawY, itemSurface, 0);
+					_graph->drawTransparentWithBlend(_graph->_screenForInventory, drawX, drawY, itemSurface, 0);
 				}
 			}
 			currInvX += _invLineW + _invLineSkipX;
@@ -1463,26 +1477,63 @@ void PrinceEngine::displayInventory() {
 
 	prepareInventoryToView();
 
-	_graph->drawTransparentSurface(0, 0, _graph->_frontScreen, 0);
-	Graphics::Surface *suitcase = _suitcaseBmp->getSurface();
-	_graph->drawTransparentSurface(0, 0, suitcase, 0);
+	while (!shouldQuit()) {
 
-	drawInvItems();
+		Common::Event event;
+		Common::EventManager *eventMan = _system->getEventManager();
+		while (eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				keyHandler(event);
+				break;
+			case Common::EVENT_KEYUP:
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+				break;
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
+				break;
+			case Common::EVENT_QUIT:
+				break;
+			default:
+				break;
+			}
+		}
 
-	Common::Rect _inventoryRect;
-	_inventoryRect.left = _invX1;
-	_inventoryRect.top = _invY1;
-	_inventoryRect.right = _invX1 + _invWidth;
-	_inventoryRect.bottom = _invY1 + _invHeight;
-	Common::Point mousePos = _system->getEventManager()->getMousePos();
+		if (shouldQuit())
+			return;
 
-	if (!_invCurInside && _inventoryRect.contains(mousePos)) {
-		_invCurInside = true;
-	}
+		rememberScreenInv();
 
-	if (_invCurInside && !_inventoryRect.contains(mousePos)) {
-		inventoryFlagChange();
-		_invCurInside = false;
+		Graphics::Surface *suitcase = _suitcaseBmp->getSurface();
+		_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
+
+		drawInvItems();
+
+		Common::Rect _inventoryRect;
+		_inventoryRect.left = _invX1;
+		_inventoryRect.top = _invY1;
+		_inventoryRect.right = _invX1 + _invWidth;
+		_inventoryRect.bottom = _invY1 + _invHeight;
+		Common::Point mousePos = _system->getEventManager()->getMousePos();
+
+		if (!_invCurInside && _inventoryRect.contains(mousePos)) {
+			_invCurInside = true;
+		}
+
+		if (_invCurInside && !_inventoryRect.contains(mousePos)) {
+			inventoryFlagChange(false);
+			_invCurInside = false;
+			break;
+		}
+
+		hotspot(_graph->_screenForInventory, _invMobList);
+		getDebugger()->onFrame();
+		_graph->update(_graph->_screenForInventory);
+		pause();
 	}
 }
 
@@ -1541,6 +1592,12 @@ void PrinceEngine::mainLoop() {
 		_system->delayMillis(delay);
 
 		_frameNr++;
+
+		// inventory turning on:
+		Common::Point mousePos = _system->getEventManager()->getMousePos();
+		if (mousePos.y == 0 && !_showInventoryFlag) {
+			inventoryFlagChange(true);
+		}
 
 		if (_debugger->_locationNr != _locationNr)
 			loadLocation(_debugger->_locationNr);

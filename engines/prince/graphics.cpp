@@ -37,6 +37,8 @@ GraphicsMan::GraphicsMan(PrinceEngine *vm)
 	initGraphics(640, 480, true);
 	_frontScreen = new Graphics::Surface();
 	_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+	_screenForInventory = new Graphics::Surface();
+	_screenForInventory->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	_shadowTable70 = new byte[256];
 	_shadowTable50 = new byte[256];
 }
@@ -48,9 +50,9 @@ GraphicsMan::~GraphicsMan() {
 	delete[] _shadowTable50;
 }
 
-void GraphicsMan::update() {
+void GraphicsMan::update(Graphics::Surface *screen) {
 	if (_changed) {
-		_vm->_system->copyRectToScreen((byte*)_frontScreen->getBasePtr(0,0), 640, 0, 0, 640, 480);
+		_vm->_system->copyRectToScreen((byte*)screen->getBasePtr(0,0), 640, 0, 0, 640, 480);
 
 		_vm->_system->updateScreen();
 		_changed = false;
@@ -65,24 +67,24 @@ void GraphicsMan::change() {
 	_changed = true;
 }
 
-void GraphicsMan::draw(uint16 posX, uint16 posY, const Graphics::Surface *s) {
-	uint16 w = MIN(_frontScreen->w, s->w);
+void GraphicsMan::draw(Graphics::Surface *screen, uint16 posX, uint16 posY, const Graphics::Surface *s) {
+	uint16 w = MIN(screen->w, s->w);
 	for (uint y = 0; y < s->h; y++) {
-		if (y < _frontScreen->h) {
-		   memcpy((byte*)_frontScreen->getBasePtr(0, y), (byte*)s->getBasePtr(0, y), w);
+		if (y < screen->h) {
+		   memcpy((byte*)screen->getBasePtr(0, y), (byte*)s->getBasePtr(0, y), w);
 		}
 	}
 	change();
 }
 
-void GraphicsMan::drawTransparentSurface(int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
+void GraphicsMan::drawTransparentSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
 	for (int y = 0; y < s->h; y++) {
 		for (int x = 0; x < s->w; x++) {
 			byte pixel = *((byte*)s->getBasePtr(x, y));
 			if (pixel != transColor) {
-				if (x + posX < _frontScreen->w && x + posX >= 0) {
-					if (y + posY < _frontScreen->h && y + posY >= 0) {
-						*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = pixel;
+				if (x + posX < screen->w && x + posX >= 0) {
+					if (y + posY < screen->h && y + posY >= 0) {
+						*((byte*)screen->getBasePtr(x + posX, y + posY)) = pixel;
 					}
 				}
 			}
@@ -91,7 +93,7 @@ void GraphicsMan::drawTransparentSurface(int32 posX, int32 posY, const Graphics:
 	change();
 }
 
-void GraphicsMan::drawTransparentWithBlend(int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
+void GraphicsMan::drawTransparentWithBlend(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
 	_blendTable = new byte[256];
 	for (int i = 0; i < 256; i++) {
 		_blendTable[i] = 255;
@@ -100,11 +102,11 @@ void GraphicsMan::drawTransparentWithBlend(int32 posX, int32 posY, const Graphic
 		for (int x = 0; x < s->w; x++) {
 			byte pixel = *((byte*)s->getBasePtr(x, y));
 			if (pixel != transColor) {
-				if (x + posX < _frontScreen->w && x + posX >= 0) {
-					if (y + posY < _frontScreen->h && y + posY >= 0) {
-						byte backgroundPixel = *((byte*)_frontScreen->getBasePtr(x + posX, y + posY));
+				if (x + posX < screen->w && x + posX >= 0) {
+					if (y + posY < screen->h && y + posY >= 0) {
+						byte backgroundPixel = *((byte*)screen->getBasePtr(x + posX, y + posY));
 						byte blendPixel = getBlendTableColor(pixel, backgroundPixel);
-						*((byte*)_frontScreen->getBasePtr(x + posX, y + posY)) = blendPixel;
+						*((byte*)screen->getBasePtr(x + posX, y + posY)) = blendPixel;
 					}
 				}
 			}
@@ -114,14 +116,14 @@ void GraphicsMan::drawTransparentWithBlend(int32 posX, int32 posY, const Graphic
 	change();
 }
 
-void GraphicsMan::drawTransparent(Graphics::Surface *frontScreen, DrawNode *drawNode) {
+void GraphicsMan::drawTransparent(Graphics::Surface *screen, DrawNode *drawNode) {
 	for (int y = 0; y < drawNode->s->h; y++) {
 		for (int x = 0; x < drawNode->s->w; x++) {
 			byte pixel = *((byte*)drawNode->s->getBasePtr(x, y));
 			if (pixel != 255) {
-				if (x + drawNode->posX < frontScreen->w && x + drawNode->posX >= 0) {
-					if (y + drawNode->posY < frontScreen->h && y + drawNode->posY >= 0) {
-						*((byte*)frontScreen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = pixel;
+				if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
+					if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+						*((byte*)screen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = pixel;
 					}
 				}
 			}
@@ -129,19 +131,19 @@ void GraphicsMan::drawTransparent(Graphics::Surface *frontScreen, DrawNode *draw
 	}
 }
 
-void GraphicsMan::drawMask(Graphics::Surface *frontScreen, DrawNode *drawNode) {
+void GraphicsMan::drawMask(Graphics::Surface *screen, DrawNode *drawNode) {
 	int maskWidth = drawNode->width >> 3;
 	int maskPostion = 0;
 	int maskCounter = 128;
 	for (int y = 0; y < drawNode->height; y++) {
 		int tempMaskPostion = maskPostion;
 		for (int x = 0; x < drawNode->width; x++) {
-			if (x + drawNode->posX < frontScreen->w && x + drawNode->posX >= 0) {
-				if (y + drawNode->posY < frontScreen->h && y + drawNode->posY >= 0) {
+			if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
+				if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
 					if ((drawNode->data[tempMaskPostion] & maskCounter) != 0) {
 						byte orgPixel = *((byte*)drawNode->originalRoomSurface->getBasePtr(x + drawNode->posX, y + drawNode->posY));
-						*((byte*)frontScreen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = orgPixel;
-						//*((byte*)frontScreen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = 0; // for debugging
+						*((byte*)screen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = orgPixel;
+						//*((byte*)screen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = 0; // for debugging
 					}
 				}
 			}
@@ -156,14 +158,14 @@ void GraphicsMan::drawMask(Graphics::Surface *frontScreen, DrawNode *drawNode) {
 	}
 }
 
-void GraphicsMan::drawAsShadow(Graphics::Surface *frontScreen, DrawNode *drawNode) {
+void GraphicsMan::drawAsShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 	for (int y = 0; y < drawNode->s->h; y++) {
 		for (int x = 0; x < drawNode->s->w; x++) {
 			byte pixel = *((byte*)drawNode->s->getBasePtr(x, y));
 			if (pixel == kShadowColor) {
-				if (x + drawNode->posX < frontScreen->w && x + drawNode->posX >= 0) {
-					if (y + drawNode->posY < frontScreen->h && y + drawNode->posY >= 0) {
-						byte *background = (byte *)frontScreen->getBasePtr(x + drawNode->posX, y + drawNode->posY);
+				if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
+					if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
+						byte *background = (byte *)screen->getBasePtr(x + drawNode->posX, y + drawNode->posY);
 						*background = *(drawNode->data + *background);
 					}
 				}
