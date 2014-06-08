@@ -39,13 +39,14 @@ class Map {
 	CGE2Engine *_vm;
 	Common::Array<V2D> _container;
 
-	int	convertCoord(int coord);
+	int convertCoord(int coord);
+	int nextNum(char *currPos);
 public:
 	Map(CGE2Engine *vm);
 	~Map();
-	void load(int cave);
-	int size();
 	void clear();
+	void load(int scene);
+	int size();
 	V2D &operator[](int idx);
 };
 

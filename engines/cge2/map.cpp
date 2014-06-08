@@ -36,53 +36,54 @@ Map::~Map() {
 	_container.clear();
 }
 
-int Map::convertCoord(int coord) {
-	return (coord + (kMapGrid >> 1)) & kMapMask;
+void Map::clear() {
+	_container.clear();
 }
 
-void Map::load(int cave) {
-	char fname[] = "%.2d.MAP\0";
-	Common::String filename = Common::String::format(fname, cave);
+void Map::load(int scene) {
 	clear();
-	if (!_vm->_resman->exist(filename.c_str()))
+
+	char fname[] = "%.2d.MAP\0";
+	Common::String fileName = Common::String::format(fname, scene);
+	if (!_vm->_resman->exist(fileName.c_str()))
 		return;
 
-	EncryptedStream file(_vm, filename.c_str());
+	EncryptedStream file(_vm, fileName.c_str());
 	
-	char tmpStr[kLineMax + 1];
 	Common::String line;
-
 	for (line = file.readLine(); !file.eos(); line = file.readLine()) {
 		if (line.size() == 0)
 			continue;
 
+		char tmpStr[kLineMax + 1];
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 
 		char *currPos = tmpStr;
-		currPos = strtok(currPos, " (),");
-		int x = atoi(currPos);
-		currPos = strtok(nullptr, " (),");
-		int y = atoi(currPos);
-		_container.push_back(V2D(_vm, convertCoord(x), convertCoord(y)));
-
+		int x = nextNum(currPos);
 		while (true) {
-			currPos = strtok(nullptr, " (),");
-			if (currPos == nullptr)
-				break;
-			int x = atoi(currPos);
-			currPos = strtok(nullptr, " (),");
-			int y = atoi(currPos);
+			int y = nextNum(nullptr);
 			_container.push_back(V2D(_vm, convertCoord(x), convertCoord(y)));
+			x = nextNum(nullptr);
+			if (x == -1) // We stop if there are no more data left to process in the current line.
+				break;
 		}
 	}
 }
 
-int Map::size() {
-	return _container.size();
+int Map::nextNum(char *currPos) {
+	currPos = strtok(currPos, " (),");
+	if (currPos == nullptr)
+		return -1;
+	int num = atoi(currPos);
+	return num;
 }
 
-void Map::clear() {
-	_container.clear();
+int Map::convertCoord(int coord) {
+	return (coord + (kMapGrid >> 1)) & kMapMask;
+}
+
+int Map::size() {
+	return _container.size();
 }
 
 V2D &Map::operator[](int idx) {
