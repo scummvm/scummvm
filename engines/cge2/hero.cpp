@@ -298,14 +298,6 @@ void Hero::fun() {
 	warning("STUB: Hero::fun()");
 }
 
-void Hero::operator ++ () {
-	warning("STUB: Hero::operator ++()");
-}
-
-void Hero::operator -- () {
-	warning("STUB: Hero::operator --()");
-}
-
 int Hero::len(V2D v) {
 	return ((v.x * v.x + v.y * v.y) * (v.x * v.x + v.y * v.y));
 }
@@ -450,7 +442,18 @@ int CGE2Engine::mapCross(const V2D &a, const V2D &b) {
 }
 
 void Hero::setCave(int c) {
-	warning("STUB: Hero::setCave()");
+	_scene = c;
+	resetFun();
+}
+
+void Hero::operator++() {
+	if (_curDim > 0)
+		_ext->_shpList = _dim[--_curDim];
+}
+
+void Hero::operator--() {
+	if (_curDim < kDimMax - 1)
+		_ext->_shpList = _dim[++_curDim];
 }
 
 bool Sprite::works(Sprite *spr) {
