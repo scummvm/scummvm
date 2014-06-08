@@ -229,6 +229,7 @@ protected:
 			kWaveFormatPCM = 1,
 			kWaveFormatMSADPCM = 2,
 			kWaveFormatMSIMAADPCM = 17,
+			kWaveFormatMP3 = 85,
 			kWaveFormatDK3 = 98		// rogue format number
 		};
 
