@@ -1056,13 +1056,18 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 			byte *imgData = state._curLibPtr->boltEntry(id)._picResource->_imgData;
 			_freeImgData = DisposeAfterUse::NO;
 
+#if 0
 			// TODO: Double check code below. Despite different coding in the
-			// original, both looked like they do the same formula
+			// original, both looked like they do the same formula.
+			// Until it's clarified, this check is disabled and replaced by the
+			// common code.
 			if (_flags & PICFLAG_PIC_OFFSET) {
 				_imgData = imgData + (READ_LE_UINT32(&src[18]) & 0xffff);
 			} else {
 				_imgData = imgData + (READ_LE_UINT32(&src[18]) & 0xffff);
 			}
+#endif
+			_imgData = imgData + (READ_LE_UINT32(&src[18]) & 0xffff);
 		}
 	} else if (_flags & PICFLAG_PIC_OFFSET) {
 		int mode = 0;
