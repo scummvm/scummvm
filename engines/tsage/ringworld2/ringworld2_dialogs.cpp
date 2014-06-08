@@ -365,7 +365,7 @@ void HelpDialog::show() {
 	HelpDialog *dlg = new HelpDialog();
 	dlg->draw();
 
-	// Show the character selection dialog
+	// Show the help dialog
 	GfxButton *btn = dlg->execute(&dlg->_btnResume);
 
 	// If a function button was selected, take care of it
@@ -456,6 +456,36 @@ HelpDialog::HelpDialog() {
 	frame();
 	_bounds.collapse(-6, -6);
 	setCenter(160, 100);
+}
+
+bool HelpDialog::handleKeypress(Event &event, GfxButton *&btn) {
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_F2:
+		btn = &_btnList[0];
+		break;
+	case Common::KEYCODE_F3:
+		btn = &_btnList[1];
+		break;
+	case Common::KEYCODE_F4:
+		btn = &_btnList[2];
+		break;
+	case Common::KEYCODE_F5:
+		btn = &_btnList[3];
+		break;
+	case Common::KEYCODE_F7:
+		btn = &_btnList[4];
+		break;
+	case Common::KEYCODE_F8:
+		btn = &_btnList[5];
+		break;
+	case Common::KEYCODE_F10:
+		btn = &_btnList[6];
+		break;
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Ringworld2

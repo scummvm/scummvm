@@ -343,6 +343,8 @@ public:
 	virtual void draw();
 
 	static void setPalette();
+
+	virtual bool handleKeypress(Event &evt, GfxButton *&btn) { return false; }
 };
 
 GfxSurface *surfaceGetArea(GfxSurface &src, const Rect &bounds);

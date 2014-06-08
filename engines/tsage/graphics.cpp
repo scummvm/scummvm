@@ -1229,6 +1229,8 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 					selectedButton = defaultButton;
 					breakFlag = true;
 					break;
+				} else if (event.eventType == EVENT_KEYPRESS && handleKeypress(event, selectedButton)) {
+					breakFlag = true;
 				}
 			}
 		}

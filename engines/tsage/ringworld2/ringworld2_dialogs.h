@@ -83,6 +83,8 @@ public:
 	virtual ~HelpDialog() {}
 
 	static void show();
+
+	virtual bool handleKeypress(Event &event, GfxButton *&btn);
 };
 
 } // End of namespace Ringworld2
