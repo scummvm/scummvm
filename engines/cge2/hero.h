@@ -78,7 +78,7 @@ public:
 	int distance(Sprite * spr);
 	void turn(Dir d);
 	void park();
-	static uint32 len(V2D v);
+	int len(V2D v);
 	bool findWay();
 	static int snap(int p, int q, int grid);
 	void walkTo(V3D pos);

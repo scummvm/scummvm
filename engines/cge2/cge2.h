@@ -134,6 +134,7 @@ public:
 	void setAutoColors();
 	bool cross(const V2D &a, const V2D &b, const V2D &c, const V2D &d);
 	bool contain(const V2D &a, const V2D &b, const V2D &p);
+	long det(const V2D &a, const V2D &b, const V2D &c);
 	int sgn(long n);
 	int mapCross(const V2D &a, const V2D &b);
 

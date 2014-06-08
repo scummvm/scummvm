@@ -306,9 +306,8 @@ void Hero::operator -- () {
 	warning("STUB: Hero::operator --()");
 }
 
-uint32 Hero::len(V2D v) {
-	long x = v.x, y = v.y;
-	return (uint32)((x * x + y * y) * (x * x + y * y));
+int Hero::len(V2D v) {
+	return ((v.x * v.x + v.y * v.y) * (v.x * v.x + v.y * v.y));
 }
 
 bool Hero::findWay(){
@@ -399,7 +398,6 @@ V3D Hero::screenToGround(V2D pos) {
 	return V3D(V2D::round(x), 0, V2D::round(z));
 }
 
-
 int Hero::cross(const V2D &a, const V2D &b) {
 	int x = V2D::trunc(_pos3D._x);
 	int z = V2D::trunc(_pos3D._z);
@@ -407,21 +405,31 @@ int Hero::cross(const V2D &a, const V2D &b) {
 	return _vm->cross(a, b, V2D(_vm, x - r, z), V2D(_vm, x + r, z)) << 1;
 }
 
-
-
 bool CGE2Engine::cross(const V2D &a, const V2D &b, const V2D &c, const V2D &d) {
-	warning("STUB: CGE2Engine::cross()");
-	return false;
+	if (contain(a, b, c))
+		return true;
+	if (contain(a, b, d))
+		return true;
+	if (contain(c, d, a))
+		return true;
+	if (contain(c, d, b))
+		return true;
+	return sgn(det(a, b, c)) != sgn(det(a, b, d)) && sgn(det(c, d, a)) != sgn(det(c, d, b));
 }
 
 bool CGE2Engine::contain(const V2D &a, const V2D &b, const V2D &p) {
-	warning("STUB: CGE2Engine::contain()");
-	return false;
+	if (det(a, b, p))
+		return false;
+	return ((long)(a.x - p.x) * (p.x - b.x) >= 0 && (long)(a.y - p.y) * (p.y - b.y) >= 0);
+}
+
+long CGE2Engine::det(const V2D &a, const V2D &b, const V2D &c) {
+	long n = ((long)a.x * b.y + (long)b.x * c.y + (long)c.x*a.y) - ((long)c.x*b.y + (long)b.x*a.y + (long)a.x*c.y);
+	return n;
 }
 
 int CGE2Engine::sgn(long n) {
-	warning("STUB: CGE2Engine::sgn()");
-	return 0;
+	return (n == 0) ? 0 : ((n > 0) ? 1 : -1);
 }
 
 int Hero::mapCross(const V2D &a, const V2D &b) {
