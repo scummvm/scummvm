@@ -1766,8 +1766,8 @@ Common::Point *Movement::calcSomeXY(Common::Point &p, int idx, int dynidx) {
 
 	setOXY(x, y);
 
-	while (_currDynamicPhaseIndex != dynidx)
-		gotoNextFrame(0, 0);
+	while (_currDynamicPhaseIndex != dynidx && gotoNextFrame(0, 0))
+		;
 
 	p.x = _ox;
 	p.y = _oy;
