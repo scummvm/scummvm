@@ -533,13 +533,11 @@ bool CGE2Engine::isHero(Sprite *spr) {
 
 void CGE2Engine::tick() {
 	for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
-		if (spr->_time) {
-			if (--spr->_time == 0)
+		if (spr->_time && (--spr->_time == 0))
 				spr->tick();
-		}
+		
 		if (_waitRef) {
-			if (_waitRef == spr->_ref)
-				if (spr->seqTest(_waitSeq))
+			if (_waitRef == spr->_ref && spr->seqTest(_waitSeq))
 					_waitRef = 0;
 		}
 	}
