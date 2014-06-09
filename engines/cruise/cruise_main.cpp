@@ -1937,7 +1937,7 @@ void CruiseEngine::mainLoop() {
 
 		if (displayOn) {
 			if (doFade)
-				PCFadeFlag = 0;
+				PCFadeFlag = false;
 
 			/*if (!PCFadeFlag)*/
 			mainDraw(userWait);

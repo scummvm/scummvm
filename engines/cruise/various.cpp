@@ -24,8 +24,8 @@
 
 namespace Cruise {
 
-uint16 remdo = 0;
-uint16 PCFadeFlag;
+bool remdo = false;
+bool PCFadeFlag;
 
 char *getText(int textIndex, int overlayIndex) {
 	if (!overlayTable[overlayIndex].ovlData) {

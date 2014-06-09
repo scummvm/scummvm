@@ -644,7 +644,7 @@ int16 Op_FadeOut() {
 	flip();
 
 	fadeFlag = 1;
-	PCFadeFlag = 1;
+	PCFadeFlag = true;
 
 	return 0;
 }

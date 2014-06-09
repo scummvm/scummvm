@@ -27,8 +27,8 @@
 
 namespace Cruise {
 
-extern uint16 remdo;
-extern uint16 PCFadeFlag;
+extern bool remdo;
+extern bool PCFadeFlag;
 
 int16 objInit(int ovlIdx, int param1, int param2);
 char *getText(int textIndex, int overlayIndex);

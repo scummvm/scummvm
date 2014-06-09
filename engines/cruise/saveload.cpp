@@ -735,7 +735,7 @@ void initVars() {
 	resetBackgroundIncrustList(&backgroundIncrustHead);
 
 	vblLimit = 0;
-	remdo = 0;
+	remdo = false;
 	songLoaded = 0;
 	songPlayed = 0;
 	songLoop = 1;
@@ -777,7 +777,7 @@ void initVars() {
 	buttonDown = 0;
 	var41 = 0;
 	playerMenuEnabled = 0;
-	PCFadeFlag = 0;
+	PCFadeFlag = false;
 }
 
 Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName) {

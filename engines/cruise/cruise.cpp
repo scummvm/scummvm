@@ -50,6 +50,16 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_debugger = new Debugger();
 	_sound = new PCSound(_mixer, this);
 
+	PCFadeFlag = false;
+	_preLoad = false;
+	_savedCursor = CURSOR_NOMOUSE;
+	lastTick = 0;
+	lastTickDebug = 0;
+	_gameSpeed = GAME_FRAME_DELAY_1;
+	_speedFlag = false;
+	_polyStructs = nullptr;
+	_polyStruct = nullptr;
+
 	// Setup mixer
 	syncSoundSettings();
 }
@@ -87,9 +97,6 @@ Common::Error CruiseEngine::run() {
 	Cruise::changeCursor(Cruise::CURSOR_NORMAL);
 	CursorMan.showMouse(true);
 
-	lastTick = 0;
-	lastTickDebug = 0;
-
 	mainLoop();
 
 	deinitialize();
@@ -98,24 +105,12 @@ Common::Error CruiseEngine::run() {
 }
 
 void CruiseEngine::initialize() {
-	PCFadeFlag = 0;
-	_gameSpeed = GAME_FRAME_DELAY_1;
-	_speedFlag = false;
-
-	/*volVar1 = 0;
-	 * fileData1 = 0; */
-
-	/*PAL_fileHandle = -1; */
-
 	// video init stuff
-
 	initSystem();
 	gfxModuleData_Init();
 
 	// another bit of video init
-
 	readVolCnf();
-	_vm->_polyStruct = NULL;
 }
 
 void CruiseEngine::deinitialize() {

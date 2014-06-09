@@ -120,7 +120,7 @@ void fadeIn() {
 	gfxModuleData_setPal256(workpal);
 
 	fadeFlag = 0;
-	PCFadeFlag = 0;
+	PCFadeFlag = false;
 }
 
 void flipScreen() {
