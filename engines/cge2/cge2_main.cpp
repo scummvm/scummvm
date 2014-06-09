@@ -538,7 +538,7 @@ void CGE2Engine::tick() {
 				spr->tick();
 		}
 		if (_waitRef) {
-			if (_waitRef == _sprite->_ref)
+			if (_waitRef == spr->_ref)
 				if (spr->seqTest(_waitSeq))
 					_waitRef = 0;
 		}
