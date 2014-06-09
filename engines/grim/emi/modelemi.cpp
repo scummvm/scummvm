@@ -268,7 +268,17 @@ void EMIModel::prepareTextures() {
 
 void EMIModel::draw() {
 	prepareForRender();
-	updateLighting(_costume->getActor()->getFinalMatrix());
+
+	Actor *actor = _costume->getOwner();
+	Math::Matrix4 modelToWorld = actor->getFinalMatrix();
+
+	if (!actor->isInOverworld()) {
+		Math::AABB bounds = calculateWorldBounds(modelToWorld);
+		if (bounds.isValid() && !g_grim->getCurrSet()->getFrustum().isInside(bounds))
+			return;
+	}
+
+	updateLighting(modelToWorld);
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
 	for (uint32 i = 0; i < _numFaces; i++) {
@@ -370,6 +380,14 @@ void EMIModel::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
 	}
 }
 
+Math::AABB EMIModel::calculateWorldBounds(const Math::Matrix4 &matrix) const {
+	Math::AABB bounds;
+	for (int i = 0; i < _numVertices; i++) {
+		bounds.expand(_drawVertices[i]);
+	}
+	bounds.transform(matrix);
+	return bounds;
+}
 
 EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMICostume *costume) :
 		_fname(filename), _costume(costume) {

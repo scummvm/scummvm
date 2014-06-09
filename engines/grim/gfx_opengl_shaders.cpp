@@ -428,6 +428,32 @@ void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d 
 }
 
 
+Math::Matrix4 GfxOpenGLS::getModelView() {
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Math::Matrix4 invertZ;
+		invertZ(2, 2) = -1.0f;
+
+		Math::Matrix4 viewMatrix = _currentQuat.toMatrix();
+		viewMatrix.transpose();
+
+		Math::Matrix4 camPos;
+		camPos(0, 3) = -_currentPos.x();
+		camPos(1, 3) = -_currentPos.y();
+		camPos(2, 3) = -_currentPos.z();
+
+		Math::Matrix4 modelView = invertZ * viewMatrix * camPos;
+		return modelView;
+	} else {
+		return _mvpMatrix;
+	}
+}
+Math::Matrix4 GfxOpenGLS::getProjection() {
+	Math::Matrix4 proj = _projMatrix;
+	proj.transpose();
+	return proj;
+}
+
+
 void GfxOpenGLS::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

@@ -318,13 +318,13 @@ bool Actor::restoreState(SaveGame *savedState) {
 			for (int j = depth - 1; j >= 0; --j) {
 				pc = findCostume(names[j]);
 				if (!pc) {
-					pc = g_resourceloader->loadCostume(names[j], pc);
+					pc = g_resourceloader->loadCostume(names[j], this, pc);
 				}
 			}
 			delete[] names;
 		}
 
-		Costume *c = g_resourceloader->loadCostume(fname, pc);
+		Costume *c = g_resourceloader->loadCostume(fname, this, pc);
 		c->restoreState(savedState);
 		_costumeStack.push_back(c);
 	}
@@ -1266,7 +1266,7 @@ void Actor::pushCostume(const char *n) {
 		return;
 	}
 
-	Costume *newCost = g_resourceloader->loadCostume(n, getCurrentCostume());
+	Costume *newCost = g_resourceloader->loadCostume(n, this, getCurrentCostume());
 
 	if (Common::String("fx/dumbshadow.cos").equals(n))
 		_costumeStack.push_front(newCost);
@@ -1654,7 +1654,6 @@ void Actor::drawCostume(Costume *costume) {
 	if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
 		// normal draw actor
 		g_driver->startActorDraw(this);
-		costume->setActor(this);
 		costume->draw();
 		g_driver->finishActorDraw();
 	}

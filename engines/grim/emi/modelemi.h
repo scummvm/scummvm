@@ -28,6 +28,7 @@
 #include "math/vector2d.h"
 #include "math/vector3d.h"
 #include "math/vector4d.h"
+#include "math/aabb.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -123,6 +124,7 @@ public:
 	void draw();
 	void updateLighting(const Math::Matrix4 &matrix);
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
+	Math::AABB calculateWorldBounds(const Math::Matrix4 &matrix) const;
 };
 
 } // end of namespace Grim

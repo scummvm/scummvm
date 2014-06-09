@@ -53,6 +53,9 @@ public:
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll);
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll);
 
+	Math::Matrix4 getModelView();
+	Math::Matrix4 getProjection();
+
 	virtual void clearScreen();
 
 	/**

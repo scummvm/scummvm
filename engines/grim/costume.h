@@ -45,7 +45,7 @@ class Actor;
 
 class Costume : public Object {
 public:
-	Costume(const Common::String &filename, Costume *prevCost);
+	Costume(const Common::String &filename, Actor *owner, Costume *prevCost);
 
 	virtual ~Costume();
 	virtual void load(Common::SeekableReadStream *data);
@@ -88,8 +88,7 @@ public:
 	void setPosRotate(const Math::Vector3d &pos, const Math::Angle &pitch,
 					  const Math::Angle &yaw, const Math::Angle &roll);
 	Math::Matrix4 getMatrix() const;
-	void setActor(Actor *actor) { _actor = actor; }
-	Actor *getActor() { return _actor; }
+	Actor *getOwner() const { return _owner; }
 
 	Costume *getPreviousCostume() const;
 
@@ -117,7 +116,7 @@ protected:
 	Chore **_chores;
 	Common::List<Chore*> _playingChores;
 	Math::Matrix4 _matrix;
-	Actor *_actor;
+	Actor *_owner;
 
 	float _lookAtRate;
 

@@ -256,6 +256,35 @@ void GfxOpenGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &
 	}
 }
 
+Math::Matrix4 GfxOpenGL::getModelView() {
+	Math::Matrix4 modelView;
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		glMultMatrixf(worldRot.getData());
+		glTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+
+		glGetFloatv(GL_MODELVIEW_MATRIX, modelView.getData());
+
+		glPopMatrix();
+	} else {
+		glGetFloatv(GL_MODELVIEW_MATRIX, modelView.getData());
+	}
+
+	modelView.transpose();
+	return modelView;
+}
+
+Math::Matrix4 GfxOpenGL::getProjection() {
+	Math::Matrix4 projection;
+	glGetFloatv(GL_PROJECTION_MATRIX, projection.getData());
+	projection.transpose();
+	return projection;
+}
+
 void GfxOpenGL::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

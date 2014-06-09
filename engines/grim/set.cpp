@@ -34,6 +34,8 @@
 
 #include "engines/grim/sound.h"
 
+#include "math/frustum.h"
+
 namespace Grim {
 
 Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
@@ -679,6 +681,11 @@ void Set::drawBitmaps(ObjectState::Position stage) {
 		if ((*i)->getPos() == stage && _currSetup == _setups + (*i)->getSetupID())
 			(*i)->draw();
 	}
+}
+
+void Set::setupCamera() {
+	_currSetup->setupCamera();
+	_frustum.setup(g_driver->getProjection() * g_driver->getModelView());
 }
 
 Sector *Set::findPointSector(const Math::Vector3d &p, Sector::SectorType type) {

@@ -316,6 +316,36 @@ void GfxTinyGL::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &
 	}
 }
 
+Math::Matrix4 GfxTinyGL::getModelView() {
+	Math::Matrix4 modelView;
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		tglMatrixMode(TGL_MODELVIEW);
+		tglPushMatrix();
+
+		Math::Matrix4 worldRot = _currentQuat.toMatrix();
+		tglMultMatrixf(worldRot.getData());
+		tglTranslatef(-_currentPos.x(), -_currentPos.y(), -_currentPos.z());
+
+		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView.getData());
+
+		tglPopMatrix();
+	}
+	else {
+		tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView.getData());
+	}
+
+	modelView.transpose();
+	return modelView;
+}
+
+Math::Matrix4 GfxTinyGL::getProjection() {
+	Math::Matrix4 projection;
+	tglGetFloatv(TGL_PROJECTION_MATRIX, projection.getData());
+	projection.transpose();
+	return projection;
+}
+
 void GfxTinyGL::clearScreen() {
 	_zb->pbuf.clear(_screenSize);
 	memset(_zb->zbuf, 0, _gameWidth * _gameHeight * sizeof(unsigned int));

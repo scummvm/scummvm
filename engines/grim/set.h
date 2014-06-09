@@ -29,6 +29,7 @@
 #include "engines/grim/sector.h"
 #include "engines/grim/objectstate.h"
 #include "math/quat.h"
+#include "math/frustum.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -59,9 +60,7 @@ public:
 	static Bitmap::Ptr loadBackground(const char *fileName);
 	void drawBackground() const;
 	void drawBitmaps(ObjectState::Position stage);
-	void setupCamera() {
-		_currSetup->setupCamera();
-	}
+	void setupCamera();
 
 	void setupLights(const Math::Vector3d &pos);
 
@@ -133,6 +132,7 @@ public:
 
 	Setup *getCurrSetup() { return _currSetup; }
 	const Common::List<Light *> &getLights() { return _lightsList; }
+	const Math::Frustum &getFrustum() { return _frustum; }
 
 private:
 	bool _locked;
@@ -149,6 +149,8 @@ private:
 	Setup *_currSetup;
 	typedef Common::List<ObjectState::Ptr> StateList;
 	StateList _states;
+
+	Math::Frustum _frustum;
 
 	friend class GrimEngine;
 };
