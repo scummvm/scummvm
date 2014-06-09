@@ -165,18 +165,23 @@ void GraphicsMan::drawMask(Graphics::Surface *screen, DrawNode *drawNode) {
 }
 
 void GraphicsMan::drawAsShadow(Graphics::Surface *screen, DrawNode *drawNode) {
+	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
+	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
+
 	for (int y = 0; y < drawNode->s->h; y++) {
-		for (int x = 0; x < drawNode->s->w; x++) {
-			byte pixel = *((byte*)drawNode->s->getBasePtr(x, y));
-			if (pixel == kShadowColor) {
+		byte *src2 = src1;
+		byte *dst2 = dst1;
+		for (int x = 0; x < drawNode->s->w; x++, src2++, dst2++) {
+			if (*src2 == kShadowColor) {
 				if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
 					if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
-						byte *background = (byte *)screen->getBasePtr(x + drawNode->posX, y + drawNode->posY);
-						*background = *(drawNode->data + *background);
+						*dst2 = *(drawNode->data + *dst2);
 					}
 				}
 			}
 		}
+		src1 += drawNode->s->pitch;
+		dst1 += screen->pitch;
 	}
 }
 
