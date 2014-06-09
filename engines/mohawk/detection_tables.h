@@ -312,6 +312,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
+	// Version 1.? (5CD)
+	// From dodomorandi on bug #6629
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1("a_Data.MHK", "0e21e89df7788f32056b6521abf2e81a"),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_RIVEN,
+		0,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
 	// Version 1.? (DVD, From "Myst 10th Anniversary Edition")
 	// From Clone2727
 	{
