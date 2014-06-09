@@ -35,10 +35,10 @@ namespace Cruise {
 
 enum RelationType {RT_REL = 30, RT_MSG = 50};
 
-static int playerDontAskQuit;
+static bool _playerDontAskQuit;
 unsigned int timer = 0;
 
-gfxEntryStruct* linkedMsgList = NULL;
+gfxEntryStruct *linkedMsgList = nullptr;
 
 typedef CruiseEngine::MemInfo MemInfo;
 
@@ -1706,7 +1706,7 @@ bool manageEvents() {
 			break;
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
-			playerDontAskQuit = 1;
+			_playerDontAskQuit = true;
 			break;
 		case Common::EVENT_KEYUP:
 			switch (event.kbd.keycode) {
@@ -1779,9 +1779,7 @@ void CruiseEngine::mainLoop() {
 
 	initAllData();
 
-	playerDontAskQuit = 0;
-	int quitValue2 = 1;
-	int quitValue = 0;
+	_playerDontAskQuit = false;
 
 	if (ConfMan.hasKey("save_slot"))
 		loadGameState(ConfMan.getInt("save_slot"));
@@ -1839,12 +1837,12 @@ void CruiseEngine::mainLoop() {
 				currentTick = g_system->getMillis();
 			}
 
-			if (playerDontAskQuit)
+			if (_playerDontAskQuit)
 				break;
 
 			_vm->getDebugger()->onFrame();
 		} while (currentTick < lastTick + _gameSpeed && !bFastMode);
-		if (playerDontAskQuit)
+		if (_playerDontAskQuit)
 			break;
 
 		lastTick = g_system->getMillis();
@@ -1871,8 +1869,8 @@ void CruiseEngine::mainLoop() {
 			currentMouseButton = 0;
 		}
 
-		playerDontAskQuit = processInput();
-		if (playerDontAskQuit)
+		_playerDontAskQuit = processInput();
+		if (_playerDontAskQuit)
 			break;
 
 		if (enableUser) {
@@ -1976,7 +1974,7 @@ void CruiseEngine::mainLoop() {
 			g_system->updateScreen();
 		}
 
-	} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
+	} while (!_playerDontAskQuit);
 
 	// Free data
 	removeAllScripts(&relHead);
