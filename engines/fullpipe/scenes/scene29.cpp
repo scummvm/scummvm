@@ -972,7 +972,7 @@ int sceneHandler29(ExCommand *cmd) {
 		break;
 
 	case MSG_SC29_SHOWLASTRED:
-		if (g_vars->scene29_balls.numBalls) {
+		if (g_vars->scene29_redBalls.numBalls) { // original uses scene29_balls which looks like a copy/paste error
 			g_vars->scene29_redBalls.field_8->ani->show1(-1, -1, -1, 0);
 			g_vars->scene29_redBalls.field_8->ani->startAnim(MV_SHR_HITASS, 0, -1);
 		}
