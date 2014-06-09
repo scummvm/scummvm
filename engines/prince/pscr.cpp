@@ -44,13 +44,9 @@ PScr::~PScr() {
 }
 
 void PScr::loadSurface(Common::SeekableReadStream &stream) {
-	//stream.skip(4);
-	int x = stream.readUint16LE();
-	int y = stream.readUint16LE();
+	stream.skip(4);
 	int width = stream.readUint16LE();
 	int height = stream.readUint16LE();
-	debug("x: %d, y: %d", x, y);
-	debug("w: %d, h: %d", width, height);
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
