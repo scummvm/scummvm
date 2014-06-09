@@ -607,6 +607,13 @@ PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 	_sfxData = NULL;
 	_fadeOutCounter = 0;
 	_driver->setUpdateCallback(updateCallback, this);
+
+	_currentPos = 0;
+	_currentOrder = 0;
+	_numOrders = 0;
+	_eventsDelay = 0;
+	_looping = false;
+	_updateTicksCounter = 0;
 }
 
 PCSoundFxPlayer::~PCSoundFxPlayer() {
@@ -792,6 +799,7 @@ PCSound::PCSound(Audio::Mixer *mixer, CruiseEngine *vm) {
 	_mixer = mixer;
 	_soundDriver = new AdLibSoundDriverADL(_mixer);
 	_player = new PCSoundFxPlayer(_soundDriver);
+	_genVolume = 0;
 }
 
 PCSound::~PCSound() {

@@ -1512,6 +1512,9 @@ int16 Op_Itoa() {
 	int param[160];
 	char txt[40];
 
+	for (int i = 0; i < 160; ++i)
+		param[i] = 0;
+
 	for (int i = nbp - 1; i >= 0; i--)
 		param[i] = popVar();
 
