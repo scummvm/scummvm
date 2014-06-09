@@ -138,18 +138,22 @@ void GraphicsMan::drawTransparent(Graphics::Surface *screen, DrawNode *drawNode)
 }
 
 void GraphicsMan::drawMask(Graphics::Surface *screen, DrawNode *drawNode) {
+	byte *src1 = (byte *)drawNode->originalRoomSurface->getBasePtr(drawNode->posX, drawNode->posY);
+	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
 	int maskWidth = drawNode->width >> 3;
 	int maskPostion = 0;
 	int maskCounter = 128;
+
 	for (int y = 0; y < drawNode->height; y++) {
+		byte *src2 = src1;
+		byte *dst2 = dst1;
 		int tempMaskPostion = maskPostion;
-		for (int x = 0; x < drawNode->width; x++) {
+		for (int x = 0; x < drawNode->width; x++, src2++, dst2++) {
 			if (x + drawNode->posX < screen->w && x + drawNode->posX >= 0) {
 				if (y + drawNode->posY < screen->h && y + drawNode->posY >= 0) {
 					if ((drawNode->data[tempMaskPostion] & maskCounter) != 0) {
-						byte orgPixel = *((byte*)drawNode->originalRoomSurface->getBasePtr(x + drawNode->posX, y + drawNode->posY));
-						*((byte*)screen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = orgPixel;
-						//*((byte*)screen->getBasePtr(x + drawNode->posX, y + drawNode->posY)) = 0; // for debugging
+						*dst2 = *src2;
+						//*dst2 = 0; // for debugging
 					}
 				}
 			}
@@ -159,6 +163,8 @@ void GraphicsMan::drawMask(Graphics::Surface *screen, DrawNode *drawNode) {
 				tempMaskPostion++;
 			}
 		}
+		src1 += drawNode->originalRoomSurface->pitch;
+		dst1 += screen->pitch;
 		maskPostion += maskWidth;
 		maskCounter = 128;
 	}
