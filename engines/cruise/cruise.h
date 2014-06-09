@@ -60,7 +60,7 @@ private:
 	PCSound *_sound;
 	Common::StringArray _langStrings;
 	CursorType _savedCursor;
-	uint32 lastTick, lastTickDebug;
+	uint32 _lastTick;
 	int _gameSpeed;
 	bool _speedFlag;
 

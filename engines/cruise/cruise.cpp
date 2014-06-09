@@ -53,8 +53,7 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	PCFadeFlag = false;
 	_preLoad = false;
 	_savedCursor = CURSOR_NOMOUSE;
-	lastTick = 0;
-	lastTickDebug = 0;
+	_lastTick = 0;
 	_gameSpeed = GAME_FRAME_DELAY_1;
 	_speedFlag = false;
 	_polyStructs = nullptr;

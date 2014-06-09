@@ -1829,10 +1829,7 @@ void CruiseEngine::mainLoop() {
 			if (!skipEvents || bFastMode)
 				skipEvents = manageEvents();
 
-			if (bFastMode) {
-				if (currentTick >= (lastTickDebug + 10))
-					lastTickDebug = currentTick;
-			} else {
+			if (!bFastMode) {
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
 			}
@@ -1841,11 +1838,11 @@ void CruiseEngine::mainLoop() {
 				break;
 
 			_vm->getDebugger()->onFrame();
-		} while (currentTick < lastTick + _gameSpeed && !bFastMode);
+		} while (currentTick < _lastTick + _gameSpeed && !bFastMode);
 		if (_playerDontAskQuit)
 			break;
 
-		lastTick = g_system->getMillis();
+		_lastTick = g_system->getMillis();
 
 		// Handle switchover in game speed after intro
 		if (!_speedFlag && canLoadGameStateCurrently()) {
