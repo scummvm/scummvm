@@ -55,6 +55,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"looky",           "Looky"},
 	{"julia",           "J.U.L.I.A."},
 	{"mirage",          "Mirage"},
+	{"oknytt",          "Oknytt"},
 	{"paintaria",       "Paintaria"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"projectdoom",     "Project: Doom"},
@@ -692,6 +693,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"mirage",
 		"",
 		AD_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Oknytt
+	{
+		"oknytt",
+		"Version 1.0",
+		AD_ENTRY1s("data.dcp", "6456cf8f429905c83f07509f9da536dd", 109502959),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
