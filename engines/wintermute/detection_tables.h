@@ -74,6 +74,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"tib",             "Fairy Tales About Toshechka and Boshechka"},
 	{"tradestory",      "The Trader of Stories"},
 	{"twc",             "the white chamber"},
+	{"vsevolod",        "Vsevolod"},
 	{"wintermute",      "Wintermute engine game"},
 	{"wtetris",         "Wilma Tetris"},
 	{"zilm",            "Zilm: A Game of Reflex"},
@@ -1287,6 +1288,17 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Vsevolod Prologue (Demo)
+	{
+		"vsevolod",
+		"Prologue",
+		AD_ENTRY1s("data.dcp", "f2dcffd2692dbfcc9371fa1a87970fe7", 388669493),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
 		GUIO0()
 	},
 	// Wilma Tetris
