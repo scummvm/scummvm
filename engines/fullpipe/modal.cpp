@@ -1596,7 +1596,7 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 		fileinfo = new FileInfo;
 		memset(fileinfo, 0, sizeof(FileInfo));
 
-		strncpy(fileinfo->filename, getSavegameFile(i), 160);
+		Common::strlcpy(fileinfo->filename, getSavegameFile(i), 160);
 
 		if (!getFileInfo(i, fileinfo)) {
 			fileinfo->empty = true;
