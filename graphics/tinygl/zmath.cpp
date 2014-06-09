@@ -137,19 +137,19 @@ int Matrix_Inv(float *r, float *m, int n) {
 
 void Vector3::normalize() {
 	float n;
-	n = sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]);
+	n = sqrt(X * X + Y * Y + Z * Z);
 	if (n != 0) {
-		_v[0] /= n;
-		_v[1] /= n;
-		_v[2] /= n;
+		X /= n;
+		Y /= n;
+		Z /= n;
 	}
 }
 
 Vector4::Vector4(const Vector3 &vec, float w) {
-	_v[0] = vec.X;
-	_v[1] = vec.Y;
-	_v[2] = vec.Z;
-	_v[3] = w;
+	X = vec.X;
+	Y = vec.Y;
+	Z = vec.Z;
+	W = w;
 }
 
 void Matrix4::identity()

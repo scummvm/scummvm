@@ -74,7 +74,8 @@ void glopLight(GLContext *c, GLParam *p) {
 		l->specular = v;
 		break;
 	case TGL_POSITION: {
-		Vector4 pos = c->matrix_stack_ptr[0]->transform(v);
+		Vector4 pos;
+		c->matrix_stack_ptr[0]->transform(v, pos);
 
 		l->position = pos;
 

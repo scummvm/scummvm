@@ -31,39 +31,39 @@ public:
 	}
 
 	Vector3 operator-() const {
-		return Vector3(-_v[0],-_v[1],-_v[2]);
+		return Vector3(-X,-Y,-Z);
 	}
 
 	Vector3 operator*(float factor) const {
-		return Vector3(_v[0] * factor, _v[1] * factor, _v[2] * factor);
+		return Vector3(X * factor, Y * factor, Z * factor);
 	}
 
 	Vector3 operator+(const Vector3 &other) const {
-		return Vector3(_v[0] + other._v[0], _v[1] + other._v[1], _v[2] + other._v[2]);
+		return Vector3(X + other.X, Y + other.Y, Z + other.Z);
 	}
 
 	Vector3 operator-(const Vector3 &other) const {
-		return Vector3(_v[0] - other._v[0], _v[1] - other._v[1], _v[2] - other._v[2]);
+		return Vector3(X - other.X, Y - other.Y, Z - other.Z);
 	}
 
 	Vector3 &operator*=(float factor) {
-		_v[0] *= factor;
-		_v[1] *= factor;
-		_v[2] *= factor;
+		X *= factor;
+		Y *= factor;
+		Z *= factor;
 		return *this;
 	}
 
 	Vector3 &operator+=(float value) {
-		_v[0] += value;
-		_v[1] += value;
-		_v[2] += value;
+		X += value;
+		Y += value;
+		Z += value;
 		return *this;
 	}
 
 	Vector3 &operator-=(float value) {
-		_v[0] -= value;
-		_v[1] -= value;
-		_v[2] -= value;
+		X -= value;
+		Y -= value;
+		Z -= value;
 		return *this;
 	}
 
@@ -83,50 +83,50 @@ public:
 	}
 
 	bool operator==(const Vector4 &other) const {
-		return _v[0] == other._v[0] && _v[1] == other._v[1] && _v[2] == other._v[2] && _v[3] == other._v[3];
+		return X == other.X && Y == other.Y && Z == other.Z && W == other.W;
 	}
 
 	bool operator!=(const Vector4 &other) const {
-		return _v[0] != other._v[0] || _v[1] != other._v[1] || _v[2] != other._v[2] || _v[3] != other._v[3];
+		return X != other.X || Y != other.Y || Z != other.Z || W != other.W;
 	}
 
 	Vector4 operator-() const {
-		return Vector4(-_v[0],-_v[1],-_v[2],-_v[3]);
+		return Vector4(-X,-Y,-Z,-W);
 	}
 
 	Vector4 operator*(float factor) const {
-		return Vector4(_v[0] * factor, _v[1] * factor, _v[2] * factor,_v[3] * factor);
+		return Vector4(X * factor, Y * factor, Z * factor,W * factor);
 	}
 
 	Vector4 operator+(const Vector4 &other) const {
-		return Vector4(_v[0] + other._v[0], _v[1] + other._v[1], _v[2] + other._v[2], _v[3] + other._v[3]);
+		return Vector4(X + other.X, Y + other.Y, Z + other.Z, W + other.W);
 	}
 
 	Vector4 operator-(const Vector4 &other) const {
-		return Vector4(_v[0] - other._v[0], _v[1] - other._v[1], _v[2] - other._v[2], _v[3] - other._v[3]);
+		return Vector4(X - other.X, Y - other.Y, Z - other.Z, W - other.W);
 	}
 
 	Vector4 &operator*=(float factor) {
-		_v[0] *= factor;
-		_v[1] *= factor;
-		_v[2] *= factor;
-		_v[3] *= factor;
+		X *= factor;
+		Y *= factor;
+		Z *= factor;
+		W *= factor;
 		return *this;
 	}
 
 	Vector4 &operator+=(float value) {
-		_v[0] += value;
-		_v[1] += value;
-		_v[2] += value;
-		_v[3] += value;
+		X += value;
+		Y += value;
+		Z += value;
+		W += value;
 		return *this;
 	}
 
 	Vector4 &operator-=(float value) {
-		_v[0] -= value;
-		_v[1] -= value;
-		_v[2] -= value;
-		_v[3] -= value;
+		X -= value;
+		Y -= value;
+		Z -= value;
+		W -= value;
 		return *this;
 	}
 
@@ -200,44 +200,39 @@ public:
 
 	static Matrix4 frustrum(float left, float right, float bottom, float top, float nearp, float farp);
 
-	inline Vector3 transform(const Vector3 &vector) const {
-		return Vector3(
-			vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2] + _m[0][3],
-			vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2] + _m[1][3],
-			vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2] + _m[2][3]);
+	inline void transform(const Vector3 &vector, Vector3 &out) const {
+		out.X = vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2] + _m[0][3];
+		out.Y = vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2] + _m[1][3];
+		out.Z = vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2] + _m[2][3];
 	}
 
 	// Transform the vector as if this were a 3x3 matrix.
-	inline Vector3 transform3x3(const Vector3 &vector) const {
-		return Vector3(
-			vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2],
-			vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2],
-			vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2]);
+	inline void transform3x3(const Vector3 &vector, Vector3 &out) const {
+		out.X = vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2];
+		out.Y = vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2];
+		out.Z = vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2];
 	}
 
 	// Transform the vector as if this were a 3x3 matrix.
-	inline Vector3 transform3x3(const Vector4 &vector) const {
-		return Vector3(
-			vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2],
-			vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2],
-			vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2]);
+	inline void transform3x3(const Vector4 &vector, Vector3 &out) const {
+		out.X = vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2];
+		out.Y = vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2];
+		out.Z = vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2];
 	}
 
 	// Transform the vector as if this were a 3x4 matrix.
-	inline Vector4 transform3x4(const Vector4 &vector) const {
-		return Vector4(
-			vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2] + _m[0][3],
-			vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2] + _m[1][3],
-			vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2] + _m[2][3],
-			vector.X * _m[3][0] + vector.Y * _m[3][1] + vector.Z * _m[3][2] + _m[3][3]);
+	inline void transform3x4(const Vector4 &vector, Vector4 &out) const {
+		out.X = vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2] + _m[0][3];
+		out.Y = vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2] + _m[1][3];
+		out.Z = vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2] + _m[2][3];
+		out.W = vector.X * _m[3][0] + vector.Y * _m[3][1] + vector.Z * _m[3][2] + _m[3][3];
 	}
 
-	inline Vector4 transform(const Vector4 &vector) const {
-		return Vector4(
-			vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2] + vector.W * _m[0][3],
-			vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2] + vector.W * _m[1][3],
-			vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2] + vector.W * _m[2][3],
-			vector.X * _m[3][0] + vector.Y * _m[3][1] + vector.Z * _m[3][2] + vector.W * _m[3][3]);
+	inline void transform(const Vector4 &vector, Vector4 &out) const {
+		out.X = vector.X * _m[0][0] + vector.Y * _m[0][1] + vector.Z * _m[0][2] + vector.W * _m[0][3];
+		out.Y = vector.X * _m[1][0] + vector.Y * _m[1][1] + vector.Z * _m[1][2] + vector.W * _m[1][3];
+		out.Z = vector.X * _m[2][0] + vector.Y * _m[2][1] + vector.Z * _m[2][2] + vector.W * _m[2][3];
+		out.W = vector.X * _m[3][0] + vector.Y * _m[3][1] + vector.Z * _m[3][2] + vector.W * _m[3][3];
 	}
 
 	float _m[4][4];

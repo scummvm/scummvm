@@ -49,13 +49,13 @@ void gl_eval_viewport(GLContext *c) {
 
 	v = &c->viewport;
 
-	v->trans.X = ((float)(((v->xsize - 0.5) / 2.0) + v->xmin));
-	v->trans.Y = ((float)(((v->ysize - 0.5) / 2.0) + v->ymin));
-	v->trans.Z = ((float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2));
+	v->trans.X = (float)(((v->xsize - 0.5) / 2.0) + v->xmin);
+	v->trans.Y = (float)(((v->ysize - 0.5) / 2.0) + v->ymin);
+	v->trans.Z = (float)(((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2);
 
-	v->scale.X = ((float)((v->xsize - 0.5) / 2.0));
-	v->scale.Y = ((float)(-(v->ysize - 0.5) / 2.0));
-	v->scale.Z = ((float)(-((zsize - 0.5) / 2.0)));
+	v->scale.X = (float)((v->xsize - 0.5) / 2.0);
+	v->scale.Y = (float)(-(v->ysize - 0.5) / 2.0);
+	v->scale.Z = (float)(-((zsize - 0.5) / 2.0));
 }
 
 void glopBegin(GLContext *c, GLParam *p) {
@@ -135,16 +135,16 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 		// eye coordinates needed for lighting
 
 		m = c->matrix_stack_ptr[0];
-		v->ec = m->transform3x4(v->coord);
+		m->transform3x4(v->coord,v->ec);
 
 		// projection coordinates
 		m = c->matrix_stack_ptr[1];
-		v->pc = m->transform(v->ec);
+		m->transform(v->ec, v->pc);
 
 		m = &c->matrix_model_view_inv;
 		n = &c->current_normal;
 
-		v->normal = m->transform3x3(*n);
+		m->transform3x3(*n, v->normal);
 
 		if (c->normalize_enabled) {
 			v->normal.normalize();
@@ -154,7 +154,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 		// NOTE: W = 1 is assumed
 		m = &c->matrix_model_projection;
 
-		v->pc = m->transform3x4(v->coord);
+		m->transform3x4(v->coord, v->pc);
 		if (c->matrix_model_projection_no_w_transform) {
 			v->pc.W = (m->_m[3][3]);
 		}
@@ -209,7 +209,7 @@ void glopVertex(GLContext *c, GLParam *p) {
 
 	if (c->texture_2d_enabled) {
 		if (c->apply_texture_matrix) {
-			v->tex_coord = c->matrix_stack_ptr[2]->transform(c->current_tex_coord);
+			c->matrix_stack_ptr[2]->transform(c->current_tex_coord, v->tex_coord);
 		} else {
 			v->tex_coord = c->current_tex_coord;
 		}
