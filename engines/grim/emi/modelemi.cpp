@@ -134,6 +134,9 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 	_numVertices = data->readUint32LE();
 
 	_lighting = new Math::Vector3d[_numVertices];
+	for (int i = 0; i < _numVertices; i++) {
+		_lighting[i].set(1.0f, 1.0f, 1.0f);
+	}
 
 	// Vertices
 	_vertices = new Math::Vector3d[_numVertices];
@@ -278,7 +281,17 @@ void EMIModel::draw() {
 			return;
 	}
 
-	updateLighting(modelToWorld);
+	Actor::LightMode lightMode = actor->getLightMode();
+	if (lightMode != Actor::LightNone) {
+		if (lightMode != Actor::LightStatic)
+			_lightingDirty = true;
+
+		if (_lightingDirty) {
+			updateLighting(modelToWorld);
+			_lightingDirty = false;
+		}
+	}
+
 	// We will need to add a call to the skeleton, to get the modified vertices, but for now,
 	// I'll be happy with just static drawing
 	for (uint32 i = 0; i < _numFaces; i++) {
@@ -416,6 +429,7 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_setType = 0;
 	_boneNames = nullptr;
 	_lighting = nullptr;
+	_lightingDirty = true;
 
 	loadMesh(data);
 	g_driver->createEMIModel(this);
