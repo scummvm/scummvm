@@ -31,7 +31,52 @@ int Font::getKerningOffset(uint32 left, uint32 right) const {
 	return 0;
 }
 
+Common::Rect Font::getBoundingBox(uint32 chr) const {
+	return Common::Rect(getCharWidth(chr), getFontHeight());
+}
+
 namespace {
+
+template<class StringType>
+Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, int y, int w, TextAlign align, int deltax) {
+	// We follow the logic of drawStringImpl here. The only exception is
+	// that we do allow an empty width to be specified here. This allows us
+	// to obtain the complete bounding box of a string.
+	const int leftX = x, rightX = w ? (x + w) : 0x7FFFFFFF;
+	int width = font.getStringWidth(str);
+
+	if (align == kTextAlignCenter)
+		x = x + (w - width)/2;
+	else if (align == kTextAlignRight)
+		x = x + w - width;
+	x += deltax;
+
+	bool first = true;
+	Common::Rect bbox;
+
+	typename StringType::unsigned_type last = 0;
+	for (typename StringType::const_iterator i = str.begin(), end = str.end(); i != end; ++i) {
+		const typename StringType::unsigned_type cur = *i;
+		x += font.getKerningOffset(last, cur);
+		last = cur;
+		w = font.getCharWidth(cur);
+		if (x+w > rightX)
+			break;
+		if (x+w >= leftX) {
+			Common::Rect charBox = font.getBoundingBox(cur);
+			charBox.translate(x, y);
+			if (first) {
+				bbox = charBox;
+				first = false;
+			} else {
+				bbox.extend(charBox);
+			}
+		}
+		x += w;
+	}
+
+	return bbox;
+}
 
 template<class StringType>
 int getStringWidthImpl(const Font &font, const StringType &str) {
@@ -49,6 +94,8 @@ int getStringWidthImpl(const Font &font, const StringType &str) {
 
 template<class StringType>
 void drawStringImpl(const Font &font, Surface *dst, const StringType &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) {
+	// The logic in getBoundingImpl is the same as we use here. In case we
+	// ever change something here we will need to change it there too.
 	assert(dst != 0);
 
 	const int leftX = x, rightX = x + w;
@@ -175,6 +222,40 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 
 } // End of anonymous namespace
 
+Common::Rect Font::getBoundingBox(const Common::String &input, int x, int y, const int w, TextAlign align, int deltax, bool useEllipsis) const {
+	// In case no width was given we cannot use ellipsis or any alignment
+	// apart from left alignment.
+	if (w == 0) {
+		if (useEllipsis) {
+			warning("Font::getBoundingBox: Requested ellipsis when no width was specified");
+		}
+
+		if (align != kTextAlignLeft) {
+			warning("Font::getBoundingBox: Requested text alignment when no width was specified");
+		}
+
+		useEllipsis = false;
+		align = kTextAlignLeft;
+	}
+
+	const Common::String str = useEllipsis ? handleEllipsis(input, w) : input;
+	return getBoundingBoxImpl(*this, str, x, y, w, align, deltax);
+}
+
+Common::Rect Font::getBoundingBox(const Common::U32String &str, int x, int y, const int w, TextAlign align) const {
+	// In case no width was given we cannot any alignment apart from left
+	// alignment.
+	if (w == 0) {
+		if (align != kTextAlignLeft) {
+			warning("Font::getBoundingBox: Requested text alignment when no width was specified");
+		}
+
+		align = kTextAlignLeft;
+	}
+
+	return getBoundingBoxImpl(*this, str, x, y, w, align, 0);
+}
+
 int Font::getStringWidth(const Common::String &str) const {
 	return getStringWidthImpl(*this, str);
 }
@@ -183,12 +264,28 @@ int Font::getStringWidth(const Common::U32String &str) const {
 	return getStringWidthImpl(*this, str);
 }
 
-void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
-	Common::String s = sOld;
-	int width = getStringWidth(s);
-	Common::String str;
+void Font::drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+	Common::String renderStr = useEllipsis ? handleEllipsis(str, w) : str;
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax);
+}
 
-	if (useEllipsis && width > w && s.hasSuffix("...")) {
+void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align) const {
+	drawStringImpl(*this, dst, str, x, y, w, color, align, 0);
+}
+
+int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines);
+}
+
+int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines);
+}
+
+Common::String Font::handleEllipsis(const Common::String &input, int w) const {
+	Common::String s = input;
+	int width = getStringWidth(s);
+
+	if (width > w && s.hasSuffix("...")) {
 		// String is too wide. Check whether it ends in an ellipsis
 		// ("..."). If so, remove that and try again!
 		s.deleteLastChar();
@@ -197,7 +294,9 @@ void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, in
 		width = getStringWidth(s);
 	}
 
-	if (useEllipsis && width > w) {
+	if (width > w) {
+		Common::String str;
+
 		// String is too wide. So we shorten it "intelligently" by
 		// replacing parts of the string by an ellipsis. There are
 		// three possibilities for this: replace the start, the end, or
@@ -212,9 +311,9 @@ void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, in
 		const int halfWidth = (w - ellipsisWidth) / 2;
 		int w2 = 0;
 		Common::String::unsigned_type last = 0;
-		uint i;
+		uint i = 0;
 
-		for (i = 0; i < s.size(); ++i) {
+		for (; i < s.size(); ++i) {
 			const Common::String::unsigned_type cur = s[i];
 			int charWidth = getCharWidth(cur) + getKerningOffset(last, cur);
 			if (w2 + charWidth > halfWidth)
@@ -247,24 +346,10 @@ void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, in
 			str += s[i];
 		}
 
-		width = getStringWidth(str);
+		return str;
 	} else {
-		str = s;
+		return s;
 	}
-
-	drawStringImpl(*this, dst, str, x, y, w, color, align, deltax);
-}
-
-void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align) const {
-	drawStringImpl(*this, dst, str, x, y, w, color, align, 0);
-}
-
-int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines);
-}
-
-int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines);
 }
 
 } // End of namespace Graphics

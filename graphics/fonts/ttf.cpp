@@ -111,6 +111,8 @@ public:
 
 	virtual int getKerningOffset(uint32 left, uint32 right) const;
 
+	virtual Common::Rect getBoundingBox(uint32 chr) const;
+
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 private:
 	bool _initialized;
@@ -307,6 +309,19 @@ int TTFFont::getKerningOffset(uint32 left, uint32 right) const {
 	FT_Vector kerningVector;
 	FT_Get_Kerning(_face, leftGlyph, rightGlyph, FT_KERNING_DEFAULT, &kerningVector);
 	return (kerningVector.x / 64);
+}
+
+Common::Rect TTFFont::getBoundingBox(uint32 chr) const {
+	assureCached(chr);
+	GlyphCache::const_iterator glyphEntry = _glyphs.find(chr);
+	if (glyphEntry == _glyphs.end()) {
+		return Common::Rect();
+	} else {
+		const int xOffset = glyphEntry->_value.xOffset;
+		const int yOffset = glyphEntry->_value.yOffset;
+		const Graphics::Surface &image = glyphEntry->_value.image;
+		return Common::Rect(xOffset, yOffset, xOffset + image.w, yOffset + image.h);
+	}
 }
 
 namespace {
