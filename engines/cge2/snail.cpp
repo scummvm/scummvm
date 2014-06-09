@@ -422,7 +422,13 @@ void CGE2Engine::snGive(Sprite *spr, int val) {
 }
 
 void CGE2Engine::snGoto(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snGoto()");
+	if (spr) {
+		V3D eye = *_eye;
+		if (spr->_scene > 0)
+			setEye(*_eyeTab[spr->_scene]);
+		spr->gotoxyz(*_point[val]);
+		setEye(eye);
+	}
 }
 
 void CGE2Engine::snMove(Sprite *spr, V3D pos) {
@@ -446,7 +452,11 @@ void CGE2Engine::snMouse(int val) {
 }
 
 void CGE2Engine::snNNext(Sprite *spr, Action act, int val) {
-	warning("STUB: CGE2Engine::snNNext()");
+	if (spr) {
+		if (val > 255)
+			val = spr->labVal(act, val >> 8);
+		spr->_actionCtrl[act]._ptr = val;
+	}
 }
 
 void CGE2Engine::snRNNext(Sprite *spr, int val) {
@@ -466,7 +476,8 @@ void CGE2Engine::snRmNear(Sprite *spr) {
 }
 
 void CGE2Engine::snRmMTake(Sprite *spr) {
-	warning("STUB: CGE2Engine::snRmMTake()");
+	if (spr)
+		spr->_actionCtrl[kMTake]._cnt = 0;
 }
 
 void CGE2Engine::snRmFTake(Sprite *spr) {
