@@ -399,14 +399,15 @@ void Lua_V1::SetObjectType() {
 
 void Lua_V1::SetAmbientLight() {
 	int mode = (int)lua_getnumber(lua_getparam(1));
+	Set *set = g_grim->getCurrSet();
+
+	if (set == nullptr)
+		return;
+
 	if (mode == 0) {
-		if (g_grim->getCurrSet()) {
-			g_grim->getCurrSet()->setLightEnableState(true);
-		}
+		set->setLightEnableState(true);
 	} else if (mode == 1) {
-		if (g_grim->getCurrSet()) {
-			g_grim->getCurrSet()->setLightEnableState(false);
-		}
+		set->setLightEnableState(false);
 	}
 }
 
