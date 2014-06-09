@@ -454,24 +454,10 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 	if (_face->glyph->format != FT_GLYPH_FORMAT_BITMAP)
 		return false;
 
-	FT_Glyph_Metrics &metrics = _face->glyph->metrics;
-
 	glyph.xOffset = _face->glyph->bitmap_left;
-	int xMax = glyph.xOffset + ftCeil26_6(metrics.width);
 	glyph.yOffset = _ascent - _face->glyph->bitmap_top;
 
 	glyph.advance = ftCeil26_6(_face->glyph->advance.x);
-
-	// In case we got a negative xMin we adjust that, this might make some
-	// characters make a bit odd, but it's the only way we can assure no
-	// invalid memory writes with the current font API
-	if (glyph.xOffset < 0) {
-		xMax -= glyph.xOffset;
-		glyph.xOffset = 0;
-
-		if (xMax > glyph.advance)
-			glyph.advance = xMax;
-	}
 
 	const FT_Bitmap &bitmap = _face->glyph->bitmap;
 	glyph.image.create(bitmap.width, bitmap.rows, PixelFormat::createFormatCLUT8());
