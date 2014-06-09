@@ -32,8 +32,7 @@ class PrinceEngine;
 struct DrawNode;
 class MhwanhDecoder;
 
-class GraphicsMan
-{
+class GraphicsMan {
 public:
 	GraphicsMan(PrinceEngine *vm);
 	~GraphicsMan();
