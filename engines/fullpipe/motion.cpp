@@ -2430,7 +2430,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 
 	int y = info->pt2.y - info->pt1.y - my2 - my1;
 	int x = info->pt2.x - info->pt1.x - mx2 - mx1;
-	int a2;
+	int a2 = 0;
 	int mgmLen;
 
 	_mgm.calcLength(&point, _items2[info->index]->_subItems[info->subIndex]._walk[1]._mov, x, y, &mgmLen, &a2, info->flags & 1);
