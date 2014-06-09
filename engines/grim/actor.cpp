@@ -1654,6 +1654,7 @@ void Actor::drawCostume(Costume *costume) {
 	if (!isShadowCostume || (isShadowCostume && _costumeStack.size() > 1 && _shadowActive)) {
 		// normal draw actor
 		g_driver->startActorDraw(this);
+		costume->setActor(this);
 		costume->draw();
 		g_driver->finishActorDraw();
 	}

@@ -77,6 +77,8 @@ public:
 	Math::Vector3d *_vertices;
 	Math::Vector3d *_drawVertices;
 	Math::Vector3d *_normals;
+	Math::Vector3d *_drawNormals;
+	Math::Vector3d *_lighting;
 	EMIColormap *_colorMap;
 	Math::Vector2d *_texVerts;
 
@@ -119,6 +121,7 @@ public:
 	void prepareForRender();
 	void prepareTextures();
 	void draw();
+	void updateLighting(const Math::Matrix4 &matrix);
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
 };
 

@@ -28,6 +28,7 @@
 #include "engines/grim/color.h"
 #include "engines/grim/sector.h"
 #include "engines/grim/objectstate.h"
+#include "math/quat.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -131,6 +132,7 @@ public:
 	};
 
 	Setup *getCurrSetup() { return _currSetup; }
+	const Common::List<Light *> &getLights() { return _lightsList; }
 
 private:
 	bool _locked;
@@ -159,17 +161,17 @@ public:
 	bool restoreState(SaveGame *savedState);
 
 	enum LightType {
-		Spot = 1,
-		Direct = 2,
-		Omni = 3,
-		UnknownLight = 4
+		Omni = 1,
+		Spot = 2,
+		Direct = 3,
+		Ambient = 4
 	};
 
 	Common::String _name;
 	LightType _type;
 	Math::Vector3d _pos, _dir;
 	Color _color;
-	float _intensity, _umbraangle, _penumbraangle;
+	float _intensity, _umbraangle, _penumbraangle, _falloffNear, _falloffFar;
 	bool _enabled;
 	// there may be more lights with the same position, so this is used to make the sort stable
 	int _id;

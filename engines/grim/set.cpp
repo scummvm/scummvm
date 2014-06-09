@@ -452,26 +452,25 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	data->read(name, 32);
 	_name = name;
 
-	// All guesses.
 	data->read(&_pos.x(), 4);
 	data->read(&_pos.y(), 4);
 	data->read(&_pos.z(), 4);
-	data->read(&_dir.x(), 4);
-	data->read(&_dir.y(), 4);
-	data->read(&_dir.z(), 4);
-	data->read(&_intensity, 4);
 
-	// This relies on the order of the LightType enum, which might not be correct.
-	// The order should only affect EMI, and not Grim.
+	Math::Quaternion quat;
+	data->read(&quat.x(), 4);
+	data->read(&quat.y(), 4);
+	data->read(&quat.z(), 4);
+	data->read(&quat.w(), 4);
+
+	_dir.set(0, 0, -1);
+	Math::Matrix4 rot = quat.toMatrix();
+	rot.transform(&_dir, false);
+
+	// This relies on the order of the LightType enum.
 	_type = (LightType)data->readSint32LE();
 
-	if (_type == UnknownLight) {
-		warning("light %s using UnkownLight", name);
-	}
+	data->read(&_intensity, 4);
 
-	// No ideas for these two.
-	float i;
-	data->read(&i, 4);
 	int j = data->readSint32LE();
 	// This always seems to be 0
 	if (j != 0) {
@@ -482,12 +481,10 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	_color.getGreen() = data->readSint32LE();
 	_color.getBlue() = data->readSint32LE();
 
-	//Don't know what any of these do.
-	float n, o, p, q;
-	data->read(&n, 4);
-	data->read(&o, 4);
-	data->read(&p, 4);
-	data->read(&q, 4);
+	data->read(&_falloffNear, 4);
+	data->read(&_falloffFar, 4);
+	data->read(&_umbraangle, 4);
+	data->read(&_penumbraangle, 4);
 
 	_enabled = true;
 }
@@ -514,7 +511,20 @@ bool Light::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 	_enabled = savedState->readBool();
 	if (savedState->saveMinorVersion() > 7) {
-		_type = (LightType)savedState->readLEUint32();
+		if (savedState->saveMinorVersion() >= 12) {
+			_type = (LightType)savedState->readLEUint32();
+		} else {
+			int type = savedState->readLEUint32();
+			if (type == 1) {
+				_type = Spot;
+			} else if (type == 2) {
+				_type = Direct;
+			} else if (type == 3) {
+				_type = Omni;
+			} else if (type == 4) {
+				_type = Ambient;
+			}
+		}
 	} else {
 		Common::String type = savedState->readString();
 		if (type == "spot") {
@@ -578,6 +588,12 @@ public:
 };
 
 void Set::setupLights(const Math::Vector3d &pos) {
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		// Currently we do lighting in software for EMI.
+		g_driver->disableLights();
+		return;
+	}
+
 	if (!_enableLights) {
 		g_driver->disableLights();
 		return;
