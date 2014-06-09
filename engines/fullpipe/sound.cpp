@@ -268,7 +268,7 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 
 		while (sub) {
 			if (_musicAllowed & sub->_value.intValue) {
-				strcpy(_sceneTracks[_numSceneTracks], sub->_varName);
+				strncpy(_sceneTracks[_numSceneTracks], sub->_varName, 260);
 
 				_numSceneTracks++;
 			}
