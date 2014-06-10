@@ -1103,19 +1103,19 @@ void PrinceEngine::clearBackAnimList() {
 void PrinceEngine::showObjects() {
 	if (!_objList.empty()) {
 		for (uint i = 0; i < _objList.size(); i++) {
-			if ((_objList[i]->_mask & 32768) != 0) { // 8000h
+			if ((_objList[i]->_mask & 0x8000) != 0) {
 				_objList[i]->_zoomInTime--;
 				if (_objList[i]->_zoomInTime == 0) {
-					_objList[i]->_mask &= 32767; //7FFFh
+					_objList[i]->_mask &= 0x7FFF;
 				} else {
 					// doZoomIn();
 					// mov edx, d [esi.Obj_ZoomInAddr]
 				}
 			}
-			if ((_objList[i]->_mask & 16384) != 0) { // 4000h
+			if ((_objList[i]->_mask & 0x4000) != 0) {
 				_objList[i]->_zoomInTime--;
 				if (_objList[i]->_zoomInTime == 0) {
-					_objList[i]->_mask &= 49151; //0BFFFh
+					_objList[i]->_mask &= 0xBFFF;
 				} else {
 					// doZoomOut();
 					// mov edx, d [esi.Obj_ZoomInAddr]
@@ -1123,7 +1123,7 @@ void PrinceEngine::showObjects() {
 			}
 			Graphics::Surface *objSurface = _objList[i]->getSurface();
 			if (spriteCheck(objSurface->w, objSurface->h, _objList[i]->_x, _objList[i]->_y)) {
-				if ((_objList[i]->_mask & 512) == 0) { // 0200h
+				if ((_objList[i]->_mask & 0x0200) == 0) {
 					int destX = _objList[i]->_x - _picWindowX;
 					int destY = _objList[i]->_y - _picWindowY;
 					DrawNode newDrawNode;
