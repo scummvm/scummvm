@@ -294,7 +294,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
-	// Version 1.? (5CD)
+	// Version 1.? (5CD) - Spanish
 	// From jvprat
 	{
 		{
@@ -312,7 +312,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
-	// Version 1.? (5CD)
+	// Version 1.0 (5CD) - Italian
 	// From dodomorandi on bug #6629
 	{
 		{
