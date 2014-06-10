@@ -52,7 +52,7 @@ GraphicsMan::~GraphicsMan() {
 
 void GraphicsMan::update(Graphics::Surface *screen) {
 	if (_changed) {
-		_vm->_system->copyRectToScreen((byte*)screen->getBasePtr(0,0), 640, 0, 0, 640, 480);
+		_vm->_system->copyRectToScreen((byte *)screen->getBasePtr(0, 0), 640, 0, 0, 640, 480);
 
 		_vm->_system->updateScreen();
 		_changed = false;
