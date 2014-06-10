@@ -28,7 +28,7 @@
 #include "cge2/bitmap.h"
 #include "cge2/cge2.h"
 #include "cge2/vga13h.h"
-//#include "cge/cge_main.h"
+#include "cge2/talk.h"
 #include "common/system.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -391,6 +391,70 @@ bool Bitmap::moveHi() {
 bool Bitmap::moveLo() {
 	// No implementation needed in ScummVM
 	return true;
+}
+
+#define	_    kPixelTransp,
+#define L               1,
+#define G               2,
+#define D               3,
+#define kDesignSize   240
+
+uint8 *Bitmap::paint(int which, uint8 colorSet[][4]) {
+	uint8 kSLDesign[kDesignSize] = {
+		G G G G G G G G G _ _ _ _ _ _
+		L G G G G G G G G D _ _ _ _ _
+		_ L G G G G G G G D _ _ _ _ _
+		_ _ L G G G G G G G D _ _ _ _
+		_ _ _ L G G G G G G D _ _ _ _
+		_ _ _ _ L G G G G G D _ _ _ _
+		_ _ _ _ _ L G G G G G D _ _ _
+		_ _ _ _ _ _ L G G G G D _ _ _
+		_ _ _ _ _ _ _ L G G G D _ _ _
+		_ _ _ _ _ _ _ _ L G G G D _ _
+		_ _ _ _ _ _ _ _ _ L G G D _ _
+		_ _ _ _ _ _ _ _ _ _ L G D _ _
+		_ _ _ _ _ _ _ _ _ _ _ L G D _
+		_ _ _ _ _ _ _ _ _ _ _ _ L D _
+		_ _ _ _ _ _ _ _ _ _ _ _ _ L D
+		_ _ _ _ _ _ _ _ _ _ _ _ _ _ D
+	};
+
+	uint8 kSRDesign[kDesignSize] = {
+		_ _ _ _ _ _ G G G G G G G G G
+		_ _ _ _ _ L G G G G G G G G D
+		_ _ _ _ _ L G G G G G G G D _
+		_ _ _ _ L G G G G G G G D _ _
+		_ _ _ _ L G G G G G G D _ _ _
+		_ _ _ _ L G G G G G D _ _ _ _
+		_ _ _ L G G G G G D _ _ _ _ _
+		_ _ _ L G G G G D _ _ _ _ _ _
+		_ _ _ L G G G D _ _ _ _ _ _ _
+		_ _ L G G G D _ _ _ _ _ _ _ _
+		_ _ L G G D _ _ _ _ _ _ _ _ _
+		_ _ L G D _ _ _ _ _ _ _ _ _ _
+		_ L G D _ _ _ _ _ _ _ _ _ _ _
+		_ L D _ _ _ _ _ _ _ _ _ _ _ _
+		L D _ _ _ _ _ _ _ _ _ _ _ _ _
+		D _ _ _ _ _ _ _ _ _ _ _ _ _ _
+	};
+
+	uint8 *des = new uint8[kDesignSize];
+	switch (which) {
+	case 0:
+		memcpy(des, kSLDesign, sizeof(kSLDesign));
+		break;
+	case 1:
+		memcpy(des, kSRDesign, sizeof(kSRDesign));
+		break;
+	default:
+		error("Wrong parameter in Bitmap::paint!");
+		break;
+	}
+
+	for (int i = 0; i < kDesignSize; i++)
+		if (des[i] >= 1 && des[i] <= 3)
+			des[i] = colorSet[kCBSay][des[i]];
+	return des;
 }
 
 } // End of namespace CGE2

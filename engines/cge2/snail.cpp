@@ -126,8 +126,7 @@ void CommandHandler::runCommand() {
 			_vm->snHide(spr, tailCmd._val);
 			break;
 		case kCmdSay:
-			if (spr && spr->active() && _talkEnable) //-- mouth animation
-				warning("STUB: CommandHandler::runCommand() - Mouth animation missing!");
+			_vm->snSay(spr, tailCmd._val);
 			break;
 		case kCmdInf:
 			if (_talkEnable)
@@ -557,6 +556,24 @@ void CGE2Engine::snGhost(Bitmap *bmp) {
 	bmp->_b = nullptr;
 	delete bmp;
 	bmp = nullptr;
+}
+
+void CGE2Engine::snSay(Sprite *spr, int val) {
+	if (spr && spr->active() && _commandHandler->_talkEnable) {
+		//-- mouth animation
+		if (isHero(spr) && spr->seqTest(-1))
+			((Hero *)spr)->say();
+		if (_sayCap)
+			_text->say(_text->getText(val), spr);
+		if (_sayVox) {
+			int i = val;
+			if (i < 256)
+				i -= 100;
+			// TODO: These 2 lines may need some re-check with the whole sound-code!
+			snSound(spr, i);
+			_commandStat._wait = &_sound->_smpinf._counter;
+		}
+	}
 }
 
 void CGE2Engine::hide1(Sprite *spr) {

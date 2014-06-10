@@ -1114,7 +1114,15 @@ SceneLight::SceneLight(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
 }
 
 Speaker::Speaker(CGE2Engine *vm): Sprite(vm), _vm(vm) {
-	warning("Speaker::Speaker()");
+	// Set the sprite list
+	BitmapPtr SP = new Bitmap[2];
+	uint8 *map = Bitmap::paint(0, _vm->_font->_colorSet);
+	SP[0] = Bitmap(_vm, 15, 16, map);
+	delete[] map;
+	map = Bitmap::paint(1, _vm->_font->_colorSet);
+	SP[1] = Bitmap(_vm, 15, 16, map);
+	delete[] map;
+	setShapeList(SP, 2);
 }
 
 PocLight::PocLight(CGE2Engine *vm): Sprite(vm), _vm(vm) {

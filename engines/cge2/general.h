@@ -32,8 +32,6 @@
 
 namespace CGE2 {
 
-#define SCR_WID_ 320
-
 class CGE2Engine;
 
 struct Dac {

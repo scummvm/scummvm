@@ -94,6 +94,8 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 	_endGame = false;
 	for (int i = 0; i < 4; i++)
 		_flag[i] = false;
+	_sayCap = true;
+	_sayVox = true;
 }
 
 void CGE2Engine::init() {

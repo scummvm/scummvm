@@ -189,6 +189,7 @@ public:
 	void snRoom(Sprite *spr, int val);
 	void snDim(Sprite *spr, int val);
 	void snGhost(Bitmap *bmp);
+	void snSay(Sprite *spr, int val);
 	
 	void hide1(Sprite *spr);
 
@@ -214,6 +215,8 @@ public:
 	bool _taken;
 	bool _endGame;
 	bool _flag[4];
+	bool _sayCap;
+	bool _sayVox;
 
 	ResourceManager *_resman;
 	Vga *_vga;

@@ -37,7 +37,8 @@ class CGE2Engine;
 class EncryptedStream;
 class V2D;
 
-#define kMaxPath  128
+#define kMaxPath      128
+
 enum {
 	kBmpEOI = 0x0000,
 	kBmpSKP = 0x4000,
@@ -56,9 +57,13 @@ struct HideDesc {
 
 class Bitmap {
 	CGE2Engine *_vm;
+
 	char *forceExt(char *buf, const char *name, const char *ext);
 	bool loadVBM(EncryptedStream *f);
 public:
+	static uint8 *kSLDesign;
+	static uint8 *kSRDesign;
+
 	uint16 _w;
 	uint16 _h;
 	uint8 *_v;
@@ -82,6 +87,8 @@ public:
 	void xLatPos(V2D& p);
 	bool moveHi();
 	bool moveLo();
+
+	static uint8 *paint(int des, uint8 colorSet[][4]);
 };
 
 

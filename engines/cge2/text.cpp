@@ -132,7 +132,50 @@ char *Text::getText(int ref) {
 }
 
 void Text::say(const char *text, Sprite *spr) {
-	warning("STUB: Text::say()");
+	_vm->killText();
+
+	_vm->_talk = new Talk(_vm, text, kTBRound, kCBSay);
+	if (!_vm->_talk)
+		return;
+
+	Speaker *speaker = new Speaker(_vm);
+
+	bool east = spr->_flags._east;
+	V2D d(_vm, 20, spr->_siz.y - 2);
+	if (!east)
+		d.x = -d.x;
+	if (_vm->isHero(spr))
+		d = d.scale(V2D::trunc(spr->_pos3D._z));
+	V2D pos = spr->_pos2D + d;
+	uint16 sw = (speaker->_siz.x >> 1);
+	if (!east)
+		sw = -sw;
+
+	if (east) {
+		if (pos.x + sw + kTextRoundCorner + kCaptionSide >= kScrWidth)
+			east = false;
+	} else {
+		if (pos.x <= kCaptionSide + kTextRoundCorner - sw)
+			east = true;
+	}
+	if (east != (d.x > 0)) {
+		d.x = -d.x;
+		sw = -sw;
+	}
+	pos.x = spr->_pos2D.x + d.x + sw;
+
+	_vm->_talk->_flags._kill = true;
+	_vm->_talk->setName(getText(kSayName));
+	_vm->_talk->gotoxyz(pos.x, pos.y + speaker->_siz.y - 1, 0);
+
+	speaker->gotoxyz(pos.x, V2D::trunc(_vm->_talk->_pos3D._y) - speaker->_siz.y + 1, 0);
+	speaker->_flags._slav = true;
+	speaker->_flags._kill = true;
+	speaker->setName(getText(kSayName));
+	speaker->step(east);
+
+	_vm->_vga->_showQ->append(_vm->_talk);
+	_vm->_vga->_showQ->append(speaker);
 }
 
 void CGE2Engine::inf(const char *text, bool wideSpace) {
