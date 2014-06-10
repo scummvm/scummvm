@@ -4,9 +4,9 @@
 
 namespace TinyGL {
 
-// Inversion of a general nxn matrix.
-// Note : m is destroyed
-int Matrix_Inv(float *r, float *m, int n) {
+// Inversion of a 4x4 matrix.
+// It's not just unrolling, this is a different implementation that directly uses the formula whereas the other one is using another method (which is generic and thus, slower) 
+int MatrixInverse(float *m) {
 	double inv[16], det;
 	int i;
 
@@ -129,9 +129,9 @@ int Matrix_Inv(float *r, float *m, int n) {
 
 	det = 1.0 / det;
 
-	for (i = 0; i < 16; i++)
-		r[i] = inv[i] * det;
-
+	for (i = 0; i < 16; i++) {
+		m[i] = inv[i] * det;
+	}
 	return true;
 }
 
@@ -152,9 +152,8 @@ Vector4::Vector4(const Vector3 &vec, float w) {
 	W = w;
 }
 
-void Matrix4::identity()
-{
-	memset(_m,0,sizeof(_m));
+void Matrix4::identity() {
+	memset(_m, 0, sizeof(_m));
 	_m[0][0] = 1.0f;
 	_m[1][1] = 1.0f;
 	_m[2][2] = 1.0f;
@@ -187,7 +186,6 @@ Matrix4 Matrix4::transpose() const {
 	return a;
 }
 
-
 void Matrix4::transpose() {
 	Matrix4 tmp = *this;
 	this->_m[0][0] = tmp._m[0][0];
@@ -195,10 +193,10 @@ void Matrix4::transpose() {
 	this->_m[0][2] = tmp._m[2][0];
 	this->_m[0][3] = tmp._m[3][0];
 
-	this->_m[1], 0, tmp._m[0][1];
-	this->_m[1], 1, tmp._m[1][1];
-	this->_m[1], 2, tmp._m[2][1];
-	this->_m[1], 3, tmp._m[3][1];
+	this->_m[1][0] = tmp._m[0][1];
+	this->_m[1][1] = tmp._m[1][1];
+	this->_m[1][2] = tmp._m[2][1];
+	this->_m[1][3] = tmp._m[3][1];
 
 	this->_m[2][0] = tmp._m[0][2];
 	this->_m[2][1] = tmp._m[1][2];
@@ -217,16 +215,18 @@ Matrix4 Matrix4::inverseOrtho() const {
 	int i, j;
 	float s;
 	for (i = 0; i < 3; i++) {
-		for (j = 0; j < 3; j++)
+		for (j = 0; j < 3; j++) {
 			a._m[i][j] = this->_m[j][i];
+		}
 		a._m[3][0] = 0.0f;
 		a._m[3][1] = 0.0f;
 		a._m[3][2] = 0.0f;
 		a._m[3][3] = 1.0f;
 		for (i = 0; i < 3; i++) {
 			s = 0;
-			for (j = 0; j < 3; j++)
+			for (j = 0; j < 3; j++) {
 				s -= this->_m[j][i] * this->_m[j][3];
+			}
 			a._m[i][3] = s;
 		}
 	}
@@ -235,9 +235,8 @@ Matrix4 Matrix4::inverseOrtho() const {
 }
 
 Matrix4 Matrix4::inverse() const {
-	Matrix4 result;
-	Matrix4 source = *this;
-	Matrix_Inv((float *)result._m, (float *)source._m, 4);
+	Matrix4 result = *this;
+	MatrixInverse((float *)result._m);
 	return result;
 }
 
@@ -258,7 +257,7 @@ void Matrix4::rotation(float t, int u) {
 	_m[w][w] = c;
 }
 
-bool Matrix4::IsIdentity() const {
+bool Matrix4::isIdentity() const {
 	//NOTE: This might need to be implemented in a fault-tolerant way.
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -275,8 +274,7 @@ bool Matrix4::IsIdentity() const {
 }
 
 void Matrix4::invert() {
-	Matrix4 source = *this;
-	Matrix_Inv((float *)this->_m, (float *)source._m, 4);
+	MatrixInverse((float *)this->_m);
 }
 
 Matrix4 Matrix4::frustrum( float left, float right, float bottom, float top, float nearp, float farp ) {

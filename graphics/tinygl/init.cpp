@@ -67,7 +67,7 @@ void glInit(void *zbuffer1) {
 		l->position = Vector4(0, 0, 1, 0);
 		l->norm_position = Vector3(0, 0, 1);
 		l->spot_direction = Vector3(0, 0, -1);
-		l->norm_spot_direction = Vector3(0, 0, - 1);
+		l->norm_spot_direction = Vector3(0, 0, -1);
 		l->spot_exponent = 0;
 		l->spot_cutoff = 180;
 		l->attenuation[0] = 1;

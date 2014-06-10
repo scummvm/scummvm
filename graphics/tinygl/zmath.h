@@ -20,18 +20,18 @@ public:
 
 	void normalize();
 
-	float getLength() const { return sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]); }
+	float getLength() const { return sqrt(X * X + Y * Y + Z * Z); }
 
 	bool operator==(const Vector3 &other) const {
-		return _v[0] == other._v[0] && _v[1] == other._v[1] && _v[2] == other._v[2];
+		return X == other.X && Y == other.Y && Z == other.Z;
 	}
 
 	bool operator!=(const Vector3 &other) const {
-		return _v[0] != other._v[0] || _v[1] != other._v[1] || _v[2] != other._v[2];
+		return X != other.X || Y != other.Y || Z != other.Z;
 	}
 
 	Vector3 operator-() const {
-		return Vector3(-X,-Y,-Z);
+		return Vector3(-X, -Y, -Z);
 	}
 
 	Vector3 operator*(float factor) const {
@@ -91,7 +91,7 @@ public:
 	}
 
 	Vector4 operator-() const {
-		return Vector4(-X,-Y,-Z,-W);
+		return Vector4(-X, -Y, -Z, -W);
 	}
 
 	Vector4 operator*(float factor) const {
@@ -137,7 +137,7 @@ class Matrix4 {
 public:
 	Matrix4() { }
 
-	bool IsIdentity() const;
+	bool isIdentity() const;
 
 	inline Matrix4 operator+(const Matrix4 &b) const {
 		Matrix4 result;

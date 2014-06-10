@@ -215,7 +215,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 			att = 1.0f / (l->attenuation[0] + dist * (l->attenuation[1] +
 			              dist * l->attenuation[2]));
 		}
-		dot = d.X * n.X + d.Y * n.Y + d.Z * n.Z;//Vector3::dot(d, n);
+		dot = d.X * n.X + d.Y * n.Y + d.Z * n.Z;
 		if (twoside && dot < 0)
 			dot = -dot;
 		if (dot > 0) {
@@ -226,7 +226,9 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 
 			// spot light
 			if (l->spot_cutoff != 180) {
-				dot_spot = -( d.X * l->norm_spot_direction.X + d.Y * l->norm_spot_direction.Y + d.Z * l->norm_spot_direction.Z); //Vector3::dot(d, l->norm_spot_direction);
+				dot_spot = -(d.X * l->norm_spot_direction.X +
+							 d.Y * l->norm_spot_direction.Y +
+							 d.Z * l->norm_spot_direction.Z);
 				if (twoside && dot_spot < 0)
 					dot_spot = -dot_spot;
 				if (dot_spot < l->cos_spot_cutoff) {
@@ -248,15 +250,16 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 				vcoord.Y = v->ec.Y;
 				vcoord.Z = v->ec.Z;
 				vcoord.normalize();
-				s.X = (d.X - vcoord.X);
-				s.Y = (d.Y - vcoord.X);
-				s.Z = (d.Z - vcoord.X);
+				s.X = d.X - vcoord.X;
+				s.Y = d.Y - vcoord.X;
+				s.Z = d.Z - vcoord.X;
 				//NOTE: this operation is rather suspicious, this code should be tested.
 			} else {
-				s = d;
-				s.Z = (s.Z + 1.0);
+				s.X = d.X;
+				s.Y = d.Y;
+				s.Z = (float)(d.Z + 1.0);
 			}
-			dot_spec = n.X * s.X + n.Y + s.Y + n.Z * s.Z; //Vector3::dot(n, s);
+			dot_spec = n.X * s.X + n.Y * s.Y + n.Z * s.Z;
 			if (twoside && dot_spec < 0)
 				dot_spec = -dot_spec;
 			if (dot_spec > 0) {
@@ -292,7 +295,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 	v->color.X = clampf(R, 0, 1);
 	v->color.Y = clampf(G, 0, 1);
 	v->color.Z = clampf(B, 0, 1);
-	v->color.W = clampf(A, 0, 1);
+	v->color.W = A;
 }
 
 } // end of namespace TinyGL

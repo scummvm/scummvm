@@ -85,7 +85,7 @@ void glopBegin(GLContext *c, GLParam *p) {
 		}
 
 		// test if the texture matrix is not Identity
-		c->apply_texture_matrix = !c->matrix_stack_ptr[2]->IsIdentity();
+		c->apply_texture_matrix = !c->matrix_stack_ptr[2]->isIdentity();
 
 		c->matrix_model_projection_updated = 0;
 	}
@@ -129,7 +129,6 @@ void glopBegin(GLContext *c, GLParam *p) {
 // TODO : handle all cases
 static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 	Matrix4 *m;
-	Vector4 *n;
 
 	if (c->lighting_enabled) {
 		// eye coordinates needed for lighting
@@ -142,9 +141,8 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 		m->transform(v->ec, v->pc);
 
 		m = &c->matrix_model_view_inv;
-		n = &c->current_normal;
 
-		m->transform3x3(*n, v->normal);
+		m->transform3x3(c->current_normal, v->normal);
 
 		if (c->normalize_enabled) {
 			v->normal.normalize();
