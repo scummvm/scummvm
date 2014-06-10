@@ -104,11 +104,6 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 	case OSystem::kFeatureFullscreenMode:
 		assert(getTransactionMode() != kTransactionNone);
 		_wantsFullScreen = enable;
-		// When we switch to windowed mode we will ignore resize events. This
-		// avoids bad resizes to the (former) fullscreen resolution.
-		if (!enable) {
-			_ignoreResizeEvents = 10;
-		}
 		break;
 
 	case OSystem::kFeatureIconifyWindow:
@@ -358,6 +353,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		notifyContextCreate(rgba8888, rgba8888);
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
 	}
+
+	// Ignore resize events (from SDL) for a few frames. This avoids
+	// bad resizes to a (former) resolution for which we haven't
+	// processed an event yet.
+	_ignoreResizeEvents = 10;
 
 	return _hwScreen != nullptr;
 }
