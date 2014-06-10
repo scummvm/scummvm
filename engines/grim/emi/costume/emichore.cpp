@@ -132,6 +132,9 @@ void EMIChore::restoreState(SaveGame *state) {
 		_fade = state->readFloat();
 		_startFade = state->readFloat();
 		_fadeLength = state->readLESint32();
+	} else {
+		if (_length == -1 && _playing)
+			_currTime = -1;
 	}
 }
 
