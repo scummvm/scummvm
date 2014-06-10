@@ -633,6 +633,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 		mq1->addExCommandToEnd(mq2->getExCommandByIndex(0)->createClone());
 
 		delete mq2;
+		mq2 = 0;
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
@@ -661,6 +662,9 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 		ex->_keyCode = ani->_okeyCode;
 		mq1->addExCommandToEnd(ex);
 	}
+
+	if (mq2)
+		delete mq2;
 
 	return mq1;
 }
