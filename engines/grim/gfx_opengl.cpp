@@ -487,6 +487,9 @@ void GfxOpenGL::startActorDraw(const Actor *actor) {
 	}
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
+		glEnable(GL_CULL_FACE);
+		glFrontFace(GL_CW);
+
 		if (actor->isInOverworld()) {
 			const Math::Vector3d &pos = actor->getWorldPos();
 			const Math::Quaternion &quat = actor->getRotationQuat();
@@ -546,6 +549,9 @@ void GfxOpenGL::finishActorDraw() {
 		glEnable(GL_LIGHTING);
 		glColor3f(1.0f, 1.0f, 1.0f);
 		glDisable(GL_POLYGON_OFFSET_FILL);
+	}
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		glDisable(GL_CULL_FACE);
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	_currentActor = nullptr;
