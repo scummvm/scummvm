@@ -934,16 +934,18 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 	}
 
 	// Create the audio stream
-	Audio::AudioStream *audStream = Audio::SeekableAudioStream::openStreamFile(info.filename);
+	Audio::SeekableAudioStream *seekStream = Audio::SeekableAudioStream::openStreamFile(info.filename);
 
-	if (!audStream) {
+	if (!seekStream) {
 		warning("Could not play audio file '%s'", info.filename.c_str());
 		return false;
 	}
 
+	Audio::AudioStream *audStream = seekStream;
+
 	// Loop if requested
 	if (loop)
-		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
+		audStream = Audio::makeLoopingAudioStream(seekStream, 0);
 
 	// MIDI player handles volume reset on load, IOS player doesn't - force update here
 	updateVolume();

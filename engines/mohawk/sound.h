@@ -156,13 +156,13 @@ private:
 	MidiParser *_midiParser;
 	byte *_midiData;
 
-	static Audio::AudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = NULL);
-	static Audio::AudioStream *makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream);
+	static Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = NULL);
+	static Audio::RewindableAudioStream *makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream);
 	void initMidi();
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
-	Audio::AudioStream *makeAudioStream(uint16 id, CueList *cueList = NULL);
+	Audio::RewindableAudioStream *makeAudioStream(uint16 id, CueList *cueList = NULL);
 	uint16 convertMystID(uint16 id);
 
 	// Myst-specific

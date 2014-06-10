@@ -86,7 +86,7 @@ public:
  * to its initial state. Note that rewinding itself is not required to
  * be working when the stream is being played by Mixer!
  */
-class RewindableAudioStream : public AudioStream {
+class RewindableAudioStream : public virtual AudioStream {
 public:
 	/**
 	 * Rewinds the stream to its start.
@@ -153,7 +153,7 @@ AudioStream *makeLoopingAudioStream(RewindableAudioStream *stream, uint loops);
  * interface for seeking. The seeking itself is not required to be
  * working while the stream is being played by Mixer!
  */
-class SeekableAudioStream : public RewindableAudioStream {
+class SeekableAudioStream : public virtual RewindableAudioStream {
 public:
 	/**
 	 * Tries to load a file by trying all available formats.
