@@ -1832,7 +1832,7 @@ int16 Op_ThemeReset() {
 }
 
 int16 Op_UserWait() {
-	userWait = 1;
+	userWait = true;
 	if (currentScriptPtr->type == scriptType_PROC) {
 		changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &procHead, -1, 9999);
 	} else if (currentScriptPtr->type == scriptType_REL) {

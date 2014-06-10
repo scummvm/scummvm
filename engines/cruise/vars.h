@@ -156,9 +156,7 @@ extern char nextOverlay[38];
 extern int16 currentActiveMenu;
 extern int16 autoMsg;
 extern menuElementSubStruct* linkedRelation;
-extern int16 main21;
-extern int16 main22;
-extern int16 userWait;
+extern bool userWait;
 extern int16 autoTrack;
 
 extern int16 currentDiskNumber;

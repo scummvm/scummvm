@@ -53,9 +53,7 @@ char nextOverlay[38];
 int16 currentActiveMenu;
 int16 autoMsg;
 menuElementSubStruct* linkedRelation;
-int16 main21;
-int16 main22;
-int16 userWait;
+bool userWait;
 int16 autoTrack;
 
 int16 currentDiskNumber = 1;

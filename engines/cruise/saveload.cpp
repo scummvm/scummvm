@@ -947,7 +947,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 	// to finish
 
 	changeCursor(CURSOR_NORMAL);
-	mainDraw(1);
+	mainDraw(true);
 	flipScreen();
 
 	return Common::kNoError;

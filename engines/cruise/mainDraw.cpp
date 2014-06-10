@@ -1377,7 +1377,7 @@ int getValueFromObjectQuerry(objectParamsQuery *params, int idx) {
 	return 0;
 }
 
-void mainDraw(int16 param) {
+void mainDraw(bool waitFl) {
 	uint8 *bgPtr;
 	cellStruct *currentObjPtr;
 	int16 currentObjIdx;
@@ -1461,7 +1461,7 @@ void mainDraw(int16 param) {
 			}
 
 			// automatic animation process
-			if (currentObjPtr->animStep && !param) {
+			if (currentObjPtr->animStep && !waitFl) {
 				if (currentObjPtr->animCounter <= 0) {
 
 					bool change = true;

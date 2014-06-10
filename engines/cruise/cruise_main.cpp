@@ -1157,7 +1157,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 						createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, 0, 0);
 					}
 
-					userWait = 1;
+					userWait = true;
 					autoOvl = ovlIdx;
 					autoMsg = pHeader->id;
 
@@ -1186,7 +1186,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 
 							pTrack->flag = 1;
 							autoTrack = true;
-							userWait = 0;
+							userWait = false;
 							userEnabled = 0;
 							freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
 						}
@@ -1303,7 +1303,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, 0, 0);
 				}
 
-				userWait = 1;
+				userWait = true;
 				autoOvl = ovlIdx;
 				autoMsg = pHeader->id;
 
@@ -1334,7 +1334,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 						pTrack->flag = 1;
 
 						autoTrack = true;
-						userWait = 0;
+						userWait = false;
 						userEnabled = 0;
 						freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
 					}
@@ -1455,7 +1455,7 @@ int CruiseEngine::processInput() {
 	if (userWait) {
 		// Check for left mouse button click or Space to end user waiting
 		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == CRS_MB_LEFT))
-			userWait = 0;
+			userWait = false;
 
 		keyboardCode = Common::KEYCODE_INVALID;
 		return 0;
@@ -1772,9 +1772,7 @@ void CruiseEngine::mainLoop() {
 	currentActiveMenu = -1;
 	autoMsg = -1;
 	linkedRelation = 0;
-	main21 = 0;
-	main22 = 0;
-	userWait = 0;
+	userWait = false;
 	autoTrack = false;
 
 	initAllData();
@@ -1857,7 +1855,7 @@ void CruiseEngine::mainLoop() {
 
 //      readKeyboard();
 
-		bool isUserWait = userWait != 0;
+		bool isUserWait = userWait;
 		// WORKAROUND: This prevents hotspots responding during
 		// delays i.e. Menu opening if you click fast on another
 		// hotspot after trying to open a locked door, which
@@ -1938,7 +1936,7 @@ void CruiseEngine::mainLoop() {
 			mainDraw(userWait);
 			flipScreen();
 
-			if (userWait == 1) {
+			if (userWait) {
 				// Waiting for press - original wait loop has been integrated into the
 				// main event loop
 				continue;
@@ -1953,7 +1951,7 @@ void CruiseEngine::mainLoop() {
 						char* pText = getText(autoMsg, autoOvl);
 
 						if (strlen(pText))
-							userWait = 1;
+							userWait = true;
 					}
 
 					changeScriptParamInList(-1, -1, &relHead, 9998, 0);

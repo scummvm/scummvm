@@ -160,7 +160,7 @@ int processMenu(menuStruct *pMenu) {
 	int si;
 	currentActiveMenu = 0;
 
-	mainDraw(1);
+	mainDraw(true);
 	flipScreen();
 
 	di = 0;
@@ -179,7 +179,7 @@ int processMenu(menuStruct *pMenu) {
 			di = 1;
 		}
 
-		mainDraw(1);
+		mainDraw(true);
 		flipScreen();
 
 		manageEvents();
@@ -190,7 +190,7 @@ int processMenu(menuStruct *pMenu) {
 
 	currentActiveMenu = -1;
 
-	mainDraw(1);
+	mainDraw(true);
 	flipScreen();
 
 	if (mouseButton & 1) {
