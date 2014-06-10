@@ -180,8 +180,64 @@ void Sprite::setName(char *newName) {
 }
 
 int Sprite::labVal(Action snq, int lab) {
-	warning("STUB: Sprite::labVal()");
-	return 0;
+	int lv = -1;
+	if (active()) {
+		int n = _actionCtrl[snq]._cnt;
+		CommandHandler::Command *com = snList(snq);
+
+		int i;
+		for (i = 0; i < n; i++)
+			if (com[i]._lab == lab)
+				break;
+		if (i < n)
+			return i;
+	} else {
+		char tmpStr[kLineMax + 1];
+		_vm->mergeExt(tmpStr, _file, kSprExt);
+
+		if (_vm->_resman->exist(tmpStr)) { // sprite description file exist
+			EncryptedStream sprf(_vm, tmpStr);
+			if (sprf.err())
+				error("Bad SPR [%s]", tmpStr);
+
+			int cnt = 0;
+			int section = kIdPhase;
+			ID id;
+			Common::String line;
+
+			while (lv == -1 && !sprf.eos()) {
+				line = sprf.readLine();
+				if (line.empty())
+					continue;
+
+				Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
+
+				char *p;
+				p = _vm->token(tmpStr);
+
+				if (*p == '@') {
+					if (section == snq && atoi(p + 1) == lab)
+						lv = cnt;
+				} else {
+					id = _vm->ident(p);
+					switch (id) {
+					case kIdMTake:
+					case kIdFTake:
+					case kIdNear:
+					case kIdPhase:
+					case kIdSeq:
+						section = id;
+						break;
+					default:
+						if (id < 0 && section == snq)
+							++cnt;
+						break;
+					}
+				}
+			}
+		}
+	}
+	return lv;
 }
 
 CommandHandler::Command *Sprite::snList(Action type) {
