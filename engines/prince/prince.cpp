@@ -246,7 +246,7 @@ void PrinceEngine::showLogo() {
 	MhwanhDecoder logo;
 	if (Resource::loadResource(&logo, "logo.raw", true)) {
 		_graph->setPalette(logo.getPalette());
-		_graph->draw(_graph->_frontScreen, 0, 0, logo.getSurface());
+		_graph->draw(_graph->_frontScreen, logo.getSurface());
 		_graph->update(_graph->_frontScreen);
 		_system->delayMillis(700);
 	}
@@ -872,7 +872,7 @@ void PrinceEngine::showSprite(Graphics::Surface *spriteSurface, int destX, int d
 		newDrawNode.originalRoomSurface = nullptr;
 		newDrawNode.data = nullptr;
 		newDrawNode.freeSurfaceSMemory = freeSurfaceMemory;
-		newDrawNode.drawFunction = &_graph->drawTransparent;
+		newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
 		_drawNodeList.push_back(newDrawNode);
 	}
 }
@@ -1136,7 +1136,7 @@ void PrinceEngine::showObjects() {
 					newDrawNode.originalRoomSurface = nullptr;
 					newDrawNode.data = nullptr;
 					newDrawNode.freeSurfaceSMemory = false;
-					newDrawNode.drawFunction = &_graph->drawTransparent;
+					newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
 					_drawNodeList.push_back(newDrawNode);
 				} else {
 					// showBackSprite();
@@ -1196,7 +1196,7 @@ void PrinceEngine::drawScreen() {
 		Graphics::Surface visiblePart;
 		if (roomSurface) {
 			visiblePart = roomSurface->getSubArea(Common::Rect(_picWindowX, 0, roomSurface->w, roomSurface->h));
-			_graph->draw(_graph->_frontScreen, 0, 0, &visiblePart);
+			_graph->draw(_graph->_frontScreen, &visiblePart);
 		}
 
 		Graphics::Surface *mainHeroSurface = NULL;
@@ -1213,7 +1213,7 @@ void PrinceEngine::drawScreen() {
 				newDrawNode.height = 0;
 				newDrawNode.originalRoomSurface = nullptr;
 				newDrawNode.data = nullptr;
-				newDrawNode.drawFunction = &_graph->drawTransparent;
+				newDrawNode.drawFunction = &_graph->drawTransparentDrawNode;
 
 				if (_mainHero->_zoomFactor != 0) {
 					Graphics::Surface *zoomedHeroSurface = _mainHero->zoomSprite(mainHeroSurface);
@@ -1294,6 +1294,12 @@ void PrinceEngine::addInvObj() {
 			drawInvItems();
 			_graph->update(_graph->_screenForInventory);
 			_mst_shadow2 += 50;
+			Common::Event event;
+			Common::EventManager *eventMan = _system->getEventManager();
+			eventMan->pollEvent(event);
+			if (shouldQuit()) {
+				return;
+			}
 			pause();
 		}
 		while (_mst_shadow2 > 256) {
@@ -1302,6 +1308,12 @@ void PrinceEngine::addInvObj() {
 			drawInvItems();
 			_graph->update(_graph->_screenForInventory);
 			_mst_shadow2 -= 42;
+			Common::Event event;
+			Common::EventManager *eventMan = _system->getEventManager();
+			eventMan->pollEvent(event);
+			if (shouldQuit()) {
+				return;
+			}
 			pause();
 		}
 	} else {
@@ -1314,6 +1326,12 @@ void PrinceEngine::addInvObj() {
 				drawInvItems();
 				_graph->update(_graph->_screenForInventory);
 				_mst_shadow2 += 50;
+				Common::Event event;
+				Common::EventManager *eventMan = _system->getEventManager();
+				eventMan->pollEvent(event);
+				if (shouldQuit()) {
+					return;
+				}
 				pause();
 			}
 			while (_mst_shadow2 > 256) {
@@ -1322,6 +1340,12 @@ void PrinceEngine::addInvObj() {
 				drawInvItems();
 				_graph->update(_graph->_screenForInventory);
 				_mst_shadow2 -= 50;
+				Common::Event event;
+				Common::EventManager *eventMan = _system->getEventManager();
+				eventMan->pollEvent(event);
+				if (shouldQuit()) {
+					return;
+				}
 				pause();
 			}
 		}
@@ -1332,6 +1356,12 @@ void PrinceEngine::addInvObj() {
 		_graph->drawTransparentSurface(_graph->_screenForInventory, 0, 0, suitcase, 0);
 		drawInvItems();
 		_graph->update(_graph->_screenForInventory);
+		Common::Event event;
+		Common::EventManager *eventMan = _system->getEventManager();
+		eventMan->pollEvent(event);
+		if (shouldQuit()) {
+			return;
+		}
 		pause();
 	}
 	changeCursor(1); // here?
@@ -1467,6 +1497,7 @@ void PrinceEngine::inventoryLeftButton() {
 	if (_optionsFlag == 1) {
 		//check_opt
 		if (_currentMob != 0) {
+			//inv_check_mob
 			if (_optionEnabled < _invOptionsNumber) {
 				_optionsFlag = 0;
 				// ebp = _currentMob;
@@ -1474,7 +1505,7 @@ void PrinceEngine::inventoryLeftButton() {
 				return;
 			}
 		} else {
-			// test bx, RMBMask 7996 ?
+			// test bx, RMBMask 7996 ? right mouse button here?
 		}
 	} else {
 		if (_currentMob != 0) {
@@ -1575,6 +1606,7 @@ void PrinceEngine::displayInventory() {
 				inventoryLeftButton();
 				break;
 			case Common::EVENT_RBUTTONDOWN:
+				inventoryRightButton();
 				break;
 			case Common::EVENT_LBUTTONUP:
 			case Common::EVENT_RBUTTONUP:
