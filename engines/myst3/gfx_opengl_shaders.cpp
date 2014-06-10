@@ -20,6 +20,23 @@
  *
  */
 
+// Matrix calculations taken from the glm library
+// Which is covered by the MIT license
+// And has this additional copyright note:
+/* Copyright (c) 2005 - 2012 G-Truc Creation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ */
+
+
 #if defined(WIN32)
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
@@ -186,7 +203,6 @@ void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fo
   float nclip = 1.0, fclip = 10000.0;
   float aspect = _viewport.getWidth() / _viewport.getHeight();
 
-  // taken from glm
   float range = nclip * tan(glFOV / 2 * (LOCAL_PI / 180));
   float left = -range * aspect;
   float right = range * aspect;
