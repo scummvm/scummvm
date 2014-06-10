@@ -67,28 +67,37 @@ void GraphicsMan::change() {
 	_changed = true;
 }
 
-void GraphicsMan::draw(Graphics::Surface *screen, uint16 posX, uint16 posY, const Graphics::Surface *s) {
+void GraphicsMan::draw(Graphics::Surface *screen, const Graphics::Surface *s) {
 	uint16 w = MIN(screen->w, s->w);
+	byte *src = (byte *)s->getBasePtr(0, 0);
+	byte *dst = (byte *)screen->getBasePtr(0, 0);
 	for (uint y = 0; y < s->h; y++) {
 		if (y < screen->h) {
-		   memcpy((byte*)screen->getBasePtr(0, y), (byte*)s->getBasePtr(0, y), w);
+			memcpy(dst, src, w);
 		}
+		src += s->pitch;
+		dst += screen->pitch;
 	}
 	change();
 }
 
 void GraphicsMan::drawTransparentSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
+	byte *src1 = (byte *)s->getBasePtr(0, 0);
+	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
 	for (int y = 0; y < s->h; y++) {
-		for (int x = 0; x < s->w; x++) {
-			byte pixel = *((byte*)s->getBasePtr(x, y));
-			if (pixel != transColor) {
+		byte *src2 = src1;
+		byte *dst2 = dst1;
+		for (int x = 0; x < s->w; x++, src2++, dst2++) {
+			if (*src2 != transColor) {
 				if (x + posX < screen->w && x + posX >= 0) {
 					if (y + posY < screen->h && y + posY >= 0) {
-						*((byte*)screen->getBasePtr(x + posX, y + posY)) = pixel;
+						*dst2 = *src2;
 					}
 				}
 			}
 		}
+		src1 += s->pitch;
+		dst1 += screen->pitch;
 	}
 	change();
 }
@@ -119,7 +128,7 @@ void GraphicsMan::drawTransparentWithBlend(Graphics::Surface *screen, int32 posX
 	change();
 }
 
-void GraphicsMan::drawTransparent(Graphics::Surface *screen, DrawNode *drawNode) {
+void GraphicsMan::drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
 	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
 
