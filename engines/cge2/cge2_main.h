@@ -32,7 +32,6 @@
 
 namespace CGE2 {
 
-#define kLineMax          512
 #define kIntroExt         ".I80"
 #define kTabName          "CGE.TAB"
 #define kPocketFull       170

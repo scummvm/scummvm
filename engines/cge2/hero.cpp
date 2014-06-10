@@ -27,7 +27,6 @@
 
 #include "cge2/hero.h"
 #include "cge2/text.h"
-#include "cge2/cge2_main.h"
 #include "cge2/map.h"
 
 namespace CGE2 {

@@ -26,7 +26,6 @@
  */
 
 #include "cge2/map.h"
-#include "cge2/cge2_main.h"
 
 namespace CGE2 {
 

@@ -75,6 +75,7 @@ class Map;
 #define kInfoY         -11
 #define kInfoW         180
 #define kPocketsWidth   59
+#define kLineMax       512
 
 enum CallbackType {
 	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume

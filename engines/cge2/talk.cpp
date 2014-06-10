@@ -27,7 +27,6 @@
 
 #include "cge2/general.h"
 #include "cge2/talk.h"
-#include "cge2/cge2_main.h"
 
 namespace CGE2 {
 

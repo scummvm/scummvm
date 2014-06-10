@@ -30,7 +30,6 @@
 //#include "cge/talk.h"
 //#include "cge/game.h"
 //#include "cge/snail.h"
-#include "cge2/cge2_main.h"
 #include "common/str.h"
 
 namespace CGE2 {
