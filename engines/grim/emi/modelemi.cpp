@@ -305,22 +305,28 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 	// FastDyn is requested. We assume that FastDyn mode was used only for the purpose of
 	// performance optimization, but NormDyn mode is visually superior in all cases.
 
-	for (int i = 0; i < _numVertices; i++) {
-		_lighting[i].set(0.0f, 0.0f, 0.0f);
+	Common::Array<Grim::Light *> activeLights;
+	bool hasAmbient = false;
+
+	foreach(Light *l, g_grim->getCurrSet()->getLights()) {
+		if (l->_enabled) {
+			activeLights.push_back(l);
+			if (l->_type == Light::Ambient)
+				hasAmbient = true;
+		}
 	}
 
 	for (int i = 0; i < _numVertices; i++) {
 		Math::Vector3d &result = _lighting[i];
+		result.set(0.0f, 0.0f, 0.0f);
+
 		Math::Vector3d normal = _drawNormals[i];
 		Math::Vector3d vertex = _drawVertices[i];
 		modelToWorld.transform(&vertex, true);
 		modelToWorld.transform(&normal, false);
 
-		bool hasAmbient = false;
-		foreach(Light *l, g_grim->getCurrSet()->getLights()) {
-			if (!l->_enabled)
-				continue;
-
+		for (uint j = 0; j < activeLights.size(); ++j) {
+			Light *l = activeLights[j];
 			float shade = l->_intensity;
 		
 			if (l->_type != Light::Ambient) {
@@ -356,8 +362,6 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 
 				float dot = MAX(0.0f, normal.dotProduct(dir));
 				shade *= dot;
-			} else {
-				hasAmbient = true;
 			}
 
 			shade = MIN(1.0f, shade);
