@@ -20,6 +20,22 @@
  *
  */
 
+// Matrix calculations taken from the glm library
+// Which is covered by the MIT license
+// And has this additional copyright note:
+/* Copyright (c) 2005 - 2012 G-Truc Creation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ */
+
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/savegame.h"
 
@@ -112,7 +128,6 @@ void SpecialtyMaterial::create(const char *data, int width, int height) {
 	g_driver->createMaterial(_texture, data, nullptr);
 }
 
-// taken from glm
 Math::Matrix4 GfxBase::makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
 	Math::Vector3d f = (interest - pos).getNormalized();
 	Math::Vector3d u = up.getNormalized();
@@ -138,7 +153,6 @@ Math::Matrix4 GfxBase::makeLookMatrix(const Math::Vector3d& pos, const Math::Vec
 	return look;
 }
 
-// taken from glm
 Math::Matrix4 GfxBase::makeProjMatrix(float fov, float nclip, float fclip) {
 	float right = nclip * tan(fov / 2 * (LOCAL_PI / 180));
 	float left = -right;

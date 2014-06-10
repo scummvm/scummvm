@@ -20,6 +20,23 @@
  *
  */
 
+// Matrix calculations taken from the glm library
+// Which is covered by the MIT license
+// And has this additional copyright note:
+/* Copyright (c) 2005 - 2012 G-Truc Creation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ */
+
+
 #if defined(WIN32) && !defined(__SYMBIAN32__)
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
@@ -124,7 +141,6 @@ struct ShadowUserData {
 };
 
 
-// taken from glm
 Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
 	Math::Vector3d f = (interest - pos).getNormalized();
 	Math::Vector3d u = up.getNormalized();
@@ -150,7 +166,6 @@ Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& in
 	return look;
 }
 
-// taken from glm
 Math::Matrix4 makeRotationMatrix(const Math::Angle& angle, Math::Vector3d axis) {
 	float c = angle.getCosine();
 	float s = angle.getSine();
@@ -354,7 +369,6 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 	return NULL;
 }
 
-// matrix calculation based on the glm library.
 void GfxOpenGLS::setupCamera(float fov, float nclip, float fclip, float roll) {
 	if (_fov == fov && _nclip == nclip && _fclip == fclip)
 		return;
