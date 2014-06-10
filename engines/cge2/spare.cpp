@@ -79,6 +79,8 @@ void Spare::update(Sprite *spr) {
 	Sprite *sp = locate(spr->_ref);
 	if (sp == nullptr)
 		store(spr);
+	else
+		*sp = *spr;
 }
 
 void Spare::dispose(Sprite *spr) {

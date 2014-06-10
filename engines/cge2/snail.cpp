@@ -488,8 +488,11 @@ void CGE2Engine::snFlag(int ref, int val) {
 	warning("STUB: CGE2Engine::snFlag()");
 }
 
-void CGE2Engine::snSetRef(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snSetRef()");
+void CGE2Engine::snSetRef(Sprite *spr, int val) { // TODO:: Recheck this!
+	if (spr) {
+		spr->_ref = val;
+		_spare->update(spr);
+	}
 }
 
 void CGE2Engine::snBackPt(Sprite *spr, int val) {
