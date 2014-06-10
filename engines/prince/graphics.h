@@ -52,7 +52,7 @@ public:
 	static void drawAsShadow(Graphics::Surface *screen, DrawNode *drawNode);
 	static void drawMask(Graphics::Surface *screen, DrawNode *drawNode);
 
-	byte getBlendTableColor(byte pixelColor, byte backgroundPixelColor);
+	byte getBlendTableColor(byte pixelColor, byte backgroundPixelColor, byte *blendTable);
 
 	Graphics::Surface *_frontScreen;
 	Graphics::Surface *_screenForInventory;
@@ -62,8 +62,6 @@ public:
 	byte *_shadowTable50;
 
 	static const byte kShadowColor = 191;
-
-	byte *_blendTable;
 
 private:
 

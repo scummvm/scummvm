@@ -94,25 +94,28 @@ void GraphicsMan::drawTransparentSurface(Graphics::Surface *screen, int32 posX, 
 }
 
 void GraphicsMan::drawTransparentWithBlend(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
-	_blendTable = new byte[256];
+	byte *src1 = (byte *)s->getBasePtr(0, 0);
+	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
+	byte *blendTable = (byte *)malloc(256);
 	for (int i = 0; i < 256; i++) {
-		_blendTable[i] = 255;
+		blendTable[i] = 255;
 	}
 	for (int y = 0; y < s->h; y++) {
-		for (int x = 0; x < s->w; x++) {
-			byte pixel = *((byte*)s->getBasePtr(x, y));
-			if (pixel != transColor) {
+		byte *src2 = src1;
+		byte *dst2 = dst1;
+		for (int x = 0; x < s->w; x++, src2++, dst2++) {
+			if (*src2 != transColor) {
 				if (x + posX < screen->w && x + posX >= 0) {
 					if (y + posY < screen->h && y + posY >= 0) {
-						byte backgroundPixel = *((byte*)screen->getBasePtr(x + posX, y + posY));
-						byte blendPixel = getBlendTableColor(pixel, backgroundPixel);
-						*((byte*)screen->getBasePtr(x + posX, y + posY)) = blendPixel;
+						*dst2 = getBlendTableColor(*src2, *dst2, blendTable);
 					}
 				}
 			}
 		}
+		src1 += s->pitch;
+		dst1 += screen->pitch;
 	}
-	delete _blendTable;
+	free(blendTable);
 	change();
 }
 
@@ -191,7 +194,7 @@ void GraphicsMan::drawAsShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 	}
 }
 
-byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor) {
+byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor, byte *blendTable) {
 	int32 redFirstOrg, greenFirstOrg, blueFirstOrg;
 	int32 redFirstBack, greenFirstBack, blueFirstBack;
 	int32 redSecondOrg, greenSecondOrg, blueSecondOrg;
@@ -201,54 +204,36 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor)
 	int32 bigValue;
 	int32 currColor;
 
-	if (_blendTable[pixelColor] != 255) {
-		currColor = _blendTable[pixelColor];
+	if (blendTable[pixelColor] != 255) {
+		currColor = blendTable[pixelColor];
 	} else {
 		const byte *originalPalette = _vm->_roomBmp->getPalette();
 
 		redFirstOrg = originalPalette[pixelColor * 3] * _vm->_mst_shadow / 256;
-		if (redFirstOrg >= 256) {
-			redFirstOrg = 255;
-		}
+		CLIP(redFirstOrg, 0, 255);
 		if (_vm->_mst_shadow <= 256) {
 			redFirstBack = originalPalette[backgroundPixelColor * 3] * (256 - _vm->_mst_shadow) / 256;
-			if (redFirstBack >= 256) {
-				redFirstBack = 255;
-			}
+			CLIP(redFirstBack, 0, 255);
 			redFirstOrg += redFirstBack;
-			if (redFirstOrg >= 256) {
-				redFirstOrg = 255;
-			}
+			CLIP(redFirstOrg, 0, 255);
 		}
 
 		greenFirstOrg = originalPalette[pixelColor * 3 + 1] * _vm->_mst_shadow / 256;
-		if (greenFirstOrg >= 256) {
-			greenFirstOrg = 255;
-		}
+		CLIP(greenFirstOrg, 0, 255);
 		if (_vm->_mst_shadow <= 256) {
 			greenFirstBack = originalPalette[backgroundPixelColor * 3 + 1] * (256 - _vm->_mst_shadow) / 256;
-			if (greenFirstBack >= 256) {
-				greenFirstBack = 255;
-			}
+			CLIP(greenFirstBack, 0, 255);
 			greenFirstOrg += greenFirstBack;
-			if (greenFirstOrg >= 256) {
-				greenFirstOrg = 255;
-			}
+			CLIP(greenFirstOrg, 0, 255);
 		}
 
 		blueFirstOrg = originalPalette[pixelColor * 3 + 2] * _vm->_mst_shadow / 256;
-		if (blueFirstOrg >= 256) {
-			blueFirstOrg = 255;
-		}
+		CLIP(blueFirstOrg, 0, 255);
 		if (_vm->_mst_shadow <= 256) {
 			blueFirstBack = originalPalette[backgroundPixelColor * 3 + 2] * (256 - _vm->_mst_shadow) / 256;
-			if (blueFirstBack >= 256) {
-				blueFirstBack = 255;
-			}
+			CLIP(blueFirstBack, 0, 255);
 			blueFirstOrg += blueFirstBack;
-			if (blueFirstOrg >= 256) {
-				blueFirstOrg = 255;
-			}
+			CLIP(blueFirstOrg, 0, 255);
 		}
 
 		currColor = 0;
@@ -277,7 +262,7 @@ byte GraphicsMan::getBlendTableColor(byte pixelColor, byte backgroundPixelColor)
 				break;
 			}
 		}
-		_blendTable[pixelColor] = currColor;
+		blendTable[pixelColor] = currColor;
 	}
 	return currColor;
 }
