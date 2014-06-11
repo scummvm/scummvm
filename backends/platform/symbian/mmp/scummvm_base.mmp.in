@@ -35,7 +35,7 @@ TARGETTYPE      lib
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
 // using option -Wno-psabi to supress warning "note: the mangling of 'va_list' has changed in GCC 4.4"
-// compiler will use png.h from libpng.lib instead ScummVM's
+// compiler must use png.h from libpng.lib instead ScummVM's
 OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char -Wno-psabi -I'/Symbian/S60_5th_Edition_SDK_v1.0/epoc32/include/png'
 ALWAYS_BUILD_AS_ARM
 
@@ -85,6 +85,14 @@ SOURCEPATH ..\..\..\..\graphics
 //STOP_AUTO_OBJECTS_GRAPHICS_//
 
 
+SOURCEPATH ..\..\..\..\image
+//START_AUTO_OBJECTS_IMAGE_//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_IMAGE_//
+
+
 SOURCEPATH ..\..\..\..\gui
 //START_AUTO_OBJECTS_GUI_//
 
@@ -122,6 +130,7 @@ SOURCEPATH ..\..\..\..\video
 // add a few files manually, since they are not parsed from modules.mk files
 SOURCE	   theora_decoder.cpp
 SOURCE	   bink_decoder.cpp
+// add a few files manually, since they are not parsed from modules.mk files
 SOURCE	   codecs\mpeg.cpp
 
 SOURCEPATH ..\..\..\..

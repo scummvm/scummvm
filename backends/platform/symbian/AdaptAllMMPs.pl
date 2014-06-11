@@ -14,45 +14,48 @@ chdir("../../../");
 	"mmp/scummvm_cine.mmp",
 	"mmp/scummvm_composer.mmp",
 	"mmp/scummvm_cruise.mmp",
+	"mmp/scummvm_draci.mmp",
 	"mmp/scummvm_drascula.mmp",
 	"mmp/scummvm_gob.mmp",
 	"mmp/scummvm_groovie.mmp",
+	"mmp/scummvm_hopkins.mmp",
+	"mmp/scummvm_hugo.mmp",
 	"mmp/scummvm_kyra.mmp",
 	"mmp/scummvm_lure.mmp",
 	"mmp/scummvm_m4.mmp",
 	"mmp/scummvm_made.mmp",
+	"mmp/scummvm_mohawk.mmp",
+	"mmp/scummvm_neverhood.mmp",
 	"mmp/scummvm_parallaction.mmp",
+	"mmp/scummvm_pegasus.mmp",
 	"mmp/scummvm_queen.mmp",
 	"mmp/scummvm_saga.mmp",
+	"mmp/scummvm_sci.mmp",
 	"mmp/scummvm_scumm.mmp",
 	"mmp/scummvm_sky.mmp",
 	"mmp/scummvm_sword1.mmp",
 	"mmp/scummvm_sword2.mmp",
-	"mmp/scummvm_touche.mmp",
-	"mmp/scummvm_tinsel.mmp",
-	"mmp/scummvm_tucker.mmp",
-	"mmp/scummvm_sci.mmp",
-	"mmp/scummvm_draci.mmp",
 	"mmp/scummvm_teenagent.mmp",
-	"mmp/scummvm_mohawk.mmp",
-	"mmp/scummvm_hugo.mmp",
-	"mmp/scummvm_toon.mmp",
-	"mmp/scummvm_lastexpress.mmp",
-	"mmp/scummvm_tsage.mmp",
-	"mmp/scummvm_tony.mmp",
-	"mmp/scummvm_hopkins.mmp",
+	"mmp/scummvm_tinsel.mmp",
 	"mmp/scummvm_toltecs.mmp",
-	"mmp/scummvm_pegasus.mmp",
+	"mmp/scummvm_tony.mmp",
+	"mmp/scummvm_toon.mmp",
+	"mmp/scummvm_touche.mmp",
+	"mmp/scummvm_tsage.mmp",
+	"mmp/scummvm_tucker.mmp",
 	"mmp/scummvm_wintermute.mmp",
 	# New engines
 	"mmp/scummvm_avalanche.mmp",
+	"mmp/scummvm_bbvs.mmp",
 	"mmp/scummvm_dreamweb.mmp",
 	"mmp/scummvm_fullpipe.mmp",
+	"mmp/scummvm_lastexpress.mmp",
+	"mmp/scummvm_mads.mmp",
 	"mmp/scummvm_mortevielle.mmp",
-	"mmp/scummvm_neverhood.mmp",
 	"mmp/scummvm_sword25.mmp",
 	"mmp/scummvm_testbed.mmp",
 	"mmp/scummvm_zvision.mmp",
+	"mmp/scummvm_voyeur.mmp",
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",
 	"S60v3/ScummVM_S60v3.mmp",
@@ -89,7 +92,7 @@ Preparing to update all the Symbian MMP project files with objects from module.m
 # some modules.mk files have #ifndef ENABLE_XXXX blocks:
 my @section_empty = (""); # section standard: no #ifdef's in module.mk files
 my @sections_agos = ("", "ENABLE_AGOS2"); # special sections for engine AGOS
-my @section_video = ("", "USE_BINK", "USE_MPEG2"); # special sections for engine VIDEO ###, "USE_THEORADEC"
+my @section_video = ("", "USE_BINK"); # special sections for engine VIDEO ###, "USE_THEORADEC"
 my @sections_groovie = ("", "ENABLE_GROOVIE2"); # special sections for engine GROOVIE
 my @sections_kyra = ("", "ENABLE_LOL","ENABLE_EOB"); # special sections for engine KYRA
 my @sections_mohawk = ("", "ENABLE_CSTIME", "ENABLE_MYST", "ENABLE_RIVEN");  # special sections for engine MOHAWK
@@ -144,6 +147,7 @@ ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, 
 ParseModule("_base",	"common",	\@section_empty);
 ParseModule("_base",	"gui",		\@section_empty,		\@excludes_gui);
 ParseModule("_base",	"graphics",	\@section_empty,		\@excludes_graphics);
+ParseModule("_base",	"image",	\@section_empty);
 ParseModule("_base",	"audio",	\@section_empty,		\@excludes_snd);
 ParseModule("_base",	"video",	\@section_video); #
 
@@ -151,8 +155,8 @@ chdir("engines/");
 ParseModule("_scumm",	"scumm",	\@sections_scumm,		\@excludes_scumm );
 ParseModule("_queen",	"queen",	\@section_empty);
 ParseModule("_agos",	"agos",		\@sections_agos);
-ParseModule("_sky",	"sky",		\@section_empty);
-ParseModule("_gob",	"gob",		\@section_empty);
+ParseModule("_sky",		"sky",		\@section_empty);
+ParseModule("_gob",		"gob",		\@section_empty);
 ParseModule("_saga",	"saga",		\@sections_saga);
 ParseModule("_kyra",	"kyra",		\@sections_kyra);
 ParseModule("_sword1",	"sword1",	\@section_empty);
@@ -161,25 +165,25 @@ ParseModule("_lure",	"lure",		\@section_empty);
 ParseModule("_cine",	"cine",		\@section_empty);
 ParseModule("_cge",	    "cge",		\@section_empty);
 ParseModule("_composer","composer",	\@section_empty);
-ParseModule("_agi",	"agi",		\@section_empty);
+ParseModule("_agi",		"agi",		\@section_empty);
 ParseModule("_touche",	"touche",	\@section_empty);
 ParseModule("_parallaction","parallaction",\@section_empty);
 ParseModule("_cruise",	"cruise",	\@section_empty);
 ParseModule("_drascula","drascula",	\@section_empty);
 ParseModule("_made",	"made",		\@section_empty);
-ParseModule("_m4",	"m4",		\@section_empty);
+ParseModule("_m4",		"m4",		\@section_empty);
 ParseModule("_tinsel",	"tinsel",	\@section_empty);
 ParseModule("_groovie",	"groovie",	\@sections_groovie);
 ParseModule("_tucker",	"tucker",	\@section_empty);
-ParseModule("_sci",	"sci",		\@sections_sci);
+ParseModule("_sci",		"sci",		\@sections_sci);
 ParseModule("_draci",	"draci",	\@section_empty);
 ParseModule("_teenagent","teenagent",	\@section_empty);
 ParseModule("_mohawk"   ,"mohawk",	\@sections_mohawk);
 ParseModule("_hugo"     ,"hugo",	\@section_empty);
 ParseModule("_toon"     ,"toon",	\@section_empty);
 ParseModule("_lastexpress","lastexpress",	\@section_empty);
-ParseModule("_tsage","tsage",	\@section_empty);
-ParseModule("_tony",	"tony",	\@section_empty);
+ParseModule("_tsage",	"tsage",	\@section_empty);
+ParseModule("_tony",	"tony",		\@section_empty);
 ParseModule("_toltecs","toltecs",	\@section_empty);
 ParseModule("_hopkins","hopkins",	\@section_empty);
 ParseModule("_pegasus","pegasus",	\@section_empty);
@@ -188,11 +192,14 @@ ParseModule("_wintermute","wintermute",	\@section_empty);
 ParseModule("_avalanche"     ,"avalanche",	\@section_empty);
 ParseModule("_dreamweb"     ,"dreamweb",	\@section_empty);
 ParseModule("_fullpipe"     ,"fullpipe",	\@section_empty);
+ParseModule("_mads"			,"mads",	\@section_empty);
 ParseModule("_mortevielle"  ,"mortevielle",	\@section_empty);
 ParseModule("_neverhood"  ,"neverhood",	\@section_empty);
 ParseModule("_sword25"     ,"sword25",	\@section_empty);
 ParseModule("_testbed"     ,"testbed",	\@section_empty);
 ParseModule("_zvision"     ,"zvision",	\@section_empty);
+ParseModule("_voyeur"     ,"voyeur",	\@section_empty);
+ParseModule("_bbvs"     	,"bbvs",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

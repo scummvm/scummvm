@@ -35,6 +35,9 @@ TARGETPATH      sys\bin
 TARGETTYPE      exe
 
 OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char
+// fixes error "section .data loaded at [...] overlaps section .text loaded at [...]"
+// in future simple add 'a'
+LINKEROPTION GCCE -Tdata 0xAA00000
 
 UID             0x100039ce 0xA0000658
 
