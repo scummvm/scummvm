@@ -335,13 +335,14 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 
 				if (l->_type != Light::Direct) {
 					dir = l->_pos - vertex;
-					float dist = dir.getMagnitude();
-					if (dist > l->_falloffFar)
+					float distSq = dir.getSquareMagnitude();
+					if (distSq > l->_falloffFar * l->_falloffFar)
 						continue;
 
 					dir.normalize();
 
-					if (dist > l->_falloffNear) {
+					if (distSq > l->_falloffNear * l->_falloffNear) {
+						float dist = sqrt(distSq);
 						float attn = 1.0f - (dist - l->_falloffNear) / (l->_falloffFar - l->_falloffNear);
 						shade *= attn;
 					}
