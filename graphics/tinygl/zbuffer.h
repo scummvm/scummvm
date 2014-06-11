@@ -43,7 +43,7 @@ struct ZBuffer {
 	ZBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer);
 	~ZBuffer();
 
-	Buffer* genOffscreenBuffer();
+	Buffer *genOffscreenBuffer();
 	void delOffscreenBuffer(Buffer *buffer);
 	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
 
@@ -52,9 +52,10 @@ struct ZBuffer {
 	* Eack pixel is copied if and only if its depth value is bigger than the
 	* depth value of the screen pixel, so if it is 'above'.
 	*/
-	void blitOffscreenBuffer(Buffer* buffer);
-	void selectOffscreenBuffer(Buffer* buffer);
-	void clearOffscreenBuffer(Buffer* buffer);
+	void blitOffscreenBuffer(Buffer *buffer);
+	void selectOffscreenBuffer(Buffer *buffer);
+	void clearOffscreenBuffer(Buffer *buffer);
+	void setTexture(const Graphics::PixelBuffer &texture);
 
 	int xsize, ysize;
 	int linesize; // line size, in bytes
@@ -85,15 +86,10 @@ struct ZBufferPoint {
 	float sz, tz;  // temporary coordinates for mapping
 };
 
-// zline.c
-
 void ZB_plot(ZBuffer *zb, ZBufferPoint *p);
 void ZB_line(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2);
 void ZB_line_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2);
 
-// ztriangle.c */
-
-void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture);
 void ZB_fillTriangleDepthOnly(ZBuffer *zb, ZBufferPoint *p1,
 							  ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p1,

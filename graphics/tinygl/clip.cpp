@@ -397,7 +397,7 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 #ifdef TINYGL_PROFILE
 		count_triangles_textured++;
 #endif
-		ZB_setTexture(c->zb, c->current_texture->images[0].pixmap);
+		c->zb->setTexture(c->current_texture->images[0].pixmap);
 		ZB_fillTriangleMappingPerspective(c->zb, &p0->zp, &p1->zp, &p2->zp);
 	} else if (c->current_shade_model == TGL_SMOOTH) {
 		ZB_fillTriangleSmooth(c->zb, &p0->zp, &p1->zp, &p2->zp);
