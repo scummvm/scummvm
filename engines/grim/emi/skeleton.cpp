@@ -33,7 +33,8 @@ namespace Grim {
 #define ROTATE_OP 4
 #define TRANSLATE_OP 3
 
-Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) {
+Skeleton::Skeleton(const Common::String &filename, Common::SeekableReadStream *data) :
+		_numJoints(0), _joints(nullptr), _animLayers(nullptr) {
 	loadSkeleton(data);
 }
 
@@ -60,7 +61,9 @@ void Skeleton::loadSkeleton(Common::SeekableReadStream *data) {
 		_joints[i]._trans.readFromStream(data);
 		_joints[i]._quat.readFromStream(data);
 
-		_joints[i]._parentIndex = findJointIndex(_joints[i]._parent, i);
+		_joints[i]._parentIndex = findJointIndex(_joints[i]._parent);
+
+		_jointsMap[_joints[i]._name] = i;
 	}
 	initBones();
 	resetAnim();
@@ -176,23 +179,19 @@ void Skeleton::commitAnim() {
 	}
 }
 
-int Skeleton::findJointIndex(const Common::String &name, int max) const {
-	if (_numJoints > 0) {
-		for (int i = 0; i < max; i++) {
-			if (!_joints[i]._name.compareToIgnoreCase(name)) {
-				return i;
-			}
-		}
-	}
+int Skeleton::findJointIndex(const Common::String &name) const {
+	JointMap::const_iterator it = _jointsMap.find(name);
+	if (it != _jointsMap.end())
+		return it->_value;
 	return -1;
 }
 
 bool Skeleton::hasJoint(const Common::String &name) const {
-	return name.empty() || findJointIndex(name, _numJoints) >= 0;
+	return name.empty() || findJointIndex(name) >= 0;
 }
 
 Joint *Skeleton::getJointNamed(const Common::String &name) const {
-	int idx = findJointIndex(name, _numJoints);
+	int idx = findJointIndex(name);
 	if (name.empty()) {
 		return & _joints[0];
 	} else if (idx == -1) {
