@@ -67,8 +67,6 @@ public:
 	AnimationEmi(const Common::String &filename, Common::SeekableReadStream *data);
 	~AnimationEmi();
 
-	void computeWeights(const Skeleton *skel, float weight);
-	void animate(const Skeleton *skel, float delta, bool loop, float weight);
 	const Common::String &getFilename() const { return _fname; }
 };
 
@@ -77,9 +75,9 @@ public:
 	AnimationStateEmi(const Common::String &anim);
 	~AnimationStateEmi();
 
-	void activate();
-	void deactivate();
 	void update(uint time);
+	void computeWeights();
+	void animate();
 	void play();
 	void stop();
 	void setPaused(bool paused);
@@ -91,6 +89,9 @@ public:
 	void restoreState(SaveGame *state);
 
 private:
+	void activate();
+	void deactivate();
+
 	friend class Skeleton;
 
 	Skeleton *_skel;

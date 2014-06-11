@@ -129,12 +129,12 @@ void Skeleton::commitAnim() {
 	// animation layers. The sums must be pre-computed in order to be able to normalize the blend
 	// weights properly in the next step.
 	for (Common::List<AnimationStateEmi*>::iterator j = _activeAnims.begin(); j != _activeAnims.end(); ++j) {
-		(*j)->_anim->computeWeights(this, (*j)->_fade);
+		(*j)->computeWeights();
 	}
 
 	// Now make a second pass over the animations to actually accumulate animation to layers.
 	for (Common::List<AnimationStateEmi*>::iterator j = _activeAnims.begin(); j != _activeAnims.end(); ++j) {
-		(*j)->_anim->animate(this, (*j)->_time, (*j)->_looping, (*j)->_fade);
+		(*j)->animate();
 	}
 
 	// Blend the layers together in priority order to produce the final result. Highest priority
