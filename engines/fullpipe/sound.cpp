@@ -286,7 +286,7 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 	if (seq) {
 		_sceneTrackHasSequence = true;
 
-		strcpy(_trackName, seq->_value.stringValue);
+		Common::strlcpy(_trackName, seq->_value.stringValue, 2600);
 	}
 
 	if (_musicLocal)
