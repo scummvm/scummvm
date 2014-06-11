@@ -21,3 +21,6 @@ The changes made from the original version of TinyGL 0.4 are:
 	* pass-by-const-reference instead of by-value when possible
 * Changed the math-functions to use const-pointers if possible.
 * Reformatted the source to use the same code-formatting conventions as the rest of ResidualVM (indentation-wise, not variable-naming wise)
+* Refactored all the maths code in a C++ fashion, removed some unused functions.
+
+For more information refer to log changes in github: https://github.com/residualvm/residualvm
