@@ -273,7 +273,10 @@ public:
 	void showMask(int maskNr, Graphics::Surface *originalRoomSurface);
 	void clsMasks();
 
-	int _currentMob; // number of selected Mob / inventory item
+	int _selectedMob; // number of selected Mob / inventory item
+	int _selectedItem; // number of item on mouse cursor
+	int _selectedMode;
+	int _currentPointerNumber;
 
 	static const int16 kMaxInv = 90; // max amount of inventory items in whole game
 
@@ -283,6 +286,7 @@ public:
 	bool _showInventoryFlag;
 	bool _optionsFlag;
 	int _optionEnabled;
+	int _optionsMob;
 	int _invOptionsNumber;
 	int _invExamY;
 	bool _inventoryBackgroundRemember;
@@ -312,7 +316,9 @@ public:
 	void drawInvItems();
 	void displayInventory();
 	void addInvObj();
-	void makeInvCursor();
+	void makeInvCursor(int itemNr);
+	void enableOptions();
+	void checkInvOptions();
 	void inventoryLeftButton();
 	void inventoryRightButton();
 

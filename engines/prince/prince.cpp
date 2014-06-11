@@ -82,8 +82,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
 	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0), _invX1(53), _invY1(18), _invWidth(536), _invHeight(438),
-	_invCurInside(false), _optionsFlag(false), _currentMob(0), _optionEnabled(0), _invOptionsNumber(5),
-	_invExamY(120) {
+	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invOptionsNumber(5), _invExamY(120),
+	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -1251,7 +1251,7 @@ void PrinceEngine::drawScreen() {
 		playNextFrame();
 
 		if (!_inventoryBackgroundRemember) {
-			_currentMob = hotspot(_graph->_frontScreen, _mobList);
+			_selectedMob = hotspot(_graph->_frontScreen, _mobList);
 			showTexts(_graph->_frontScreen);
 		} else {
 			_inventoryBackgroundRemember = false;
@@ -1496,54 +1496,122 @@ void PrinceEngine::drawInvItems() {
 void PrinceEngine::inventoryLeftButton() {
 	if (_optionsFlag == 1) {
 		//check_opt
-		if (_currentMob != 0) {
+		if (_selectedMob != 0)  {
 			//inv_check_mob
 			if (_optionEnabled < _invOptionsNumber) {
 				_optionsFlag = 0;
-				// ebp = _currentMob;
+				//do_option
 			} else {
 				return;
 			}
 		} else {
-			// test bx, RMBMask 7996 ? right mouse button here?
+			// test bx, RMBMask 7996 ? right mouse button here? - > return;
+			//disable_use
+			if (_currentPointerNumber == 2) {
+				//disableuseuse
+				changeCursor(1);
+				_currentPointerNumber = 1;
+				//exit_normally
+			} else {
+				return;
+			}
 		}
 	} else {
-		if (_currentMob != 0) {
-			//if (_currentPointerNumber != 2) {
-				if (_currentMob != 29) {
+		if (_selectedMob != 0) {
+			if (_currentPointerNumber != 2) {
+				if (_selectedMob != 29) {
 					_optionEnabled = 0;
 				} else {
+					// map item
 					_optionEnabled = 1;
 				}
 				//do_option
-			//} else {
+			} else {
 				//use_item_on_item
-			//}
+
+			}
+		} else {
+			return;
 		}
 	}
 	//do_option
-	int selectedMob = _currentMob; // no _currentMob just selectedMob as global for _currentMob.mask ?
 	if (_optionEnabled == 0) {
-		int invObjExamEvent = _script->scanInvObjExamEvents(selectedMob); // test this
+		int invObjExamEvent = _script->scanInvObjExamEvents(_selectedMob); // test this
 		if (invObjExamEvent == -1) {
 			// do_standard
-			printAt(0, 216, _invMobList[selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
+			printAt(0, 216, _invMobList[_selectedMob]._examText.c_str(), kNormalWidth / 2, _invExamY);
 			showTexts(_graph->_screenForInventory); // here?
 			// setSpecVoice();
+			// disableuseuse
+			changeCursor(0);
+			_currentPointerNumber = 1;
+			//exit_normally
 		} else {
 			//store_new_pc
 			// storeNewPC();
-			_flags->setFlagValue(Flags::CURRMOB, selectedMob);
-			_currentMob = 0;
-			//_optionsMob = 0;
+			_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
+			_selectedMob = 0;
+			_optionsMob = 0;
+			//bye_inv
 		}
-	} else {
+	} else if (_optionEnabled == 1) {
 		// not_examine
+		int invObjUse = _script->scanInvObjUseEvents(_selectedMob); // test this
+		if (invObjUse == -1) {
+			// do_standard_use
+			_selectedMode = 0;
+			_selectedItem = _selectedMob;
+			makeInvCursor(_selectedMob);
+			_currentPointerNumber = 2;
+			changeCursor(2);
+			//exit_normally
+		} else {
+			//store_new_pc
+			// storeNewPC();
+			_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
+			_selectedMob = 0;
+			_optionsMob = 0;
+			//bye_inv
+		}
+	} else if (_optionEnabled == 4) {
+		// not_use_inv
+		// do_standard_give
+		_selectedMode = 1;
+		_selectedItem = _selectedMob;
+		makeInvCursor(_selectedMob);
+		_currentPointerNumber = 2;
+		changeCursor(2);
+		//exit_normally
+	} else {
+		// use_item_on_item
 
 	}
+	//exit_normally
+	_selectedMob = 0;
+	_optionsMob = 0;
 }
 
 void PrinceEngine::inventoryRightButton() {
+	enableOptions();
+}
+
+void PrinceEngine::enableOptions() {
+	if (_optionsFlag != 1) {
+		changeCursor(1);
+		_currentPointerNumber = 1;
+		if (_selectedMob != 0) {
+			//if (_mobType != 0x100) {
+				_optionsMob = _selectedMob;
+				// test opt sprite here
+				//_optionsX =
+				//_optionsY =
+				_optionsFlag = 1;
+			//}
+		}
+	}
+}
+
+void PrinceEngine::checkInvOptions() {
 
 }
 
@@ -1589,7 +1657,7 @@ void PrinceEngine::displayInventory() {
 			break;
 		}
 
-		_currentMob = hotspot(_graph->_screenForInventory, _invMobList);
+		_selectedMob = hotspot(_graph->_screenForInventory, _invMobList);
 
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
@@ -1627,7 +1695,7 @@ void PrinceEngine::displayInventory() {
 	}
 }
 
-void PrinceEngine::makeInvCursor() {
+void PrinceEngine::makeInvCursor(int itemNr) {
 
 }
 

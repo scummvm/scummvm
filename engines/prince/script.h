@@ -138,6 +138,7 @@ public:
 	bool loadAllMasks(Common::Array<Mask> &maskList, int offset);
 
 	int scanInvObjExamEvents(int mobMask);
+	int scanInvObjUseEvents(int mobMask);
 
 	const char *getString(uint32 offset) {
 		return (const char *)(&_data[offset]);

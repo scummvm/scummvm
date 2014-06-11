@@ -226,6 +226,22 @@ int Script::scanInvObjExamEvents(int mobMask) {
 	return -1; // or sth else?
 }
 
+int Script::scanInvObjUseEvents(int mobMask) {
+	RE tempRE;
+	int i = 0;
+	do {
+		tempRE._mob = (int)READ_UINT16(&_data[_scriptInfo.invObjUse + i * 6]);
+		debug("mob: %d", tempRE._mob);
+		tempRE._code = (int)READ_UINT32(&_data[_scriptInfo.invObjUse + i * 6 + 2]);
+		debug("code: %d", tempRE._code);
+		if (tempRE._mob == mobMask) {
+			return tempRE._code;
+		}
+		i++;
+	} while (tempRE._mob != -1); //?? || i <= 1 or without this (no items there)
+	return -1; // or sth else?
+}
+
 void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &_backanimList, int offset) {
 
 	BackgroundAnim newBackgroundAnim;
