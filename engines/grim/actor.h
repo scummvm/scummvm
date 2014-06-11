@@ -510,6 +510,7 @@ public:
 	void detach();
 	Math::Quaternion getRotationQuat() const;
 	const Math::Matrix4 getFinalMatrix() const;
+	Math::Vector3d getHeadPos() const;
 
 	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
 	bool isInOverworld() const { return _inOverworld; }

@@ -483,6 +483,10 @@ void Costume::moveHead(bool entering, const Math::Vector3d &lookAt) {
 	_head->lookAt(entering, lookAt, _lookAtRate, _matrix);
 }
 
+int Costume::getHeadJoint() const {
+	return _head->getJoint3();
+}
+
 void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
 	_head->setJoints(joint1, joint2, joint3);
 	_head->loadJoints(getModelNodes());

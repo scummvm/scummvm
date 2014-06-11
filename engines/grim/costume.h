@@ -75,6 +75,7 @@ public:
 	void setLookAtRate(float rate);
 	float getLookAtRate() const;
 	void moveHead(bool entering, const Math::Vector3d &lookAt);
+	int getHeadJoint() const;
 
 	CMap *getCMap() { return _cmap; }
 

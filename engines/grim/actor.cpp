@@ -2176,6 +2176,34 @@ Math::Quaternion Actor::getRotationQuat() const {
 	}
 }
 
+Math::Vector3d Actor::getHeadPos() const {
+	for (Common::List<Costume *>::const_iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		int headJoint = (*i)->getHeadJoint();
+		if (headJoint == -1)
+			continue;
+
+		ModelNode *allNodes = (*i)->getModelNodes();
+		ModelNode *node = allNodes + headJoint;
+
+		node->_needsUpdate = true;
+		ModelNode *root = node;
+		while (root->_parent) {
+			root = root->_parent;
+			root->_needsUpdate = true;
+		}
+
+		Math::Matrix4 matrix;
+		matrix.setPosition(_pos);
+		matrix.buildFromPitchYawRoll(_pitch, _yaw, _roll);
+		root->setMatrix(matrix);
+		root->update();
+
+		return node->_pivotMatrix.getPosition();
+	}
+
+	return _pos;
+}
+
 int Actor::getSortOrder() const {
 	if (_attachedActor != 0) {
 		Actor *attachedActor = Actor::getPool().getObject(_attachedActor);
