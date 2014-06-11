@@ -104,6 +104,7 @@ private:
 	float _startFade;
 	Animation::FadeMode _fadeMode;
 	int _fadeLength;
+	int *_boneJoints;
 };
 
 } // end of namespace Grim

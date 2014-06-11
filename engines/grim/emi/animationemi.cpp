@@ -100,12 +100,16 @@ Bone::~Bone() {
 
 AnimationStateEmi::AnimationStateEmi(const Common::String &anim) :
 		_skel(nullptr), _looping(false), _active(false),
-		_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(0.0f), _startFade(1.0f) {
+		_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(0.0f), _startFade(1.0f),
+		_boneJoints(nullptr) {
 	_anim = g_resourceloader->getAnimationEmi(anim);
+	if (_anim)
+		_boneJoints = new int[_anim->_numBones];
 }
 
 AnimationStateEmi::~AnimationStateEmi() {
 	deactivate();
+	delete[] _boneJoints;
 }
 
 void AnimationStateEmi::activate() {
@@ -172,13 +176,11 @@ void AnimationStateEmi::computeWeights() {
 
 	for (int bone = 0; bone < _anim->_numBones; ++bone) {
 		Bone &curBone = _anim->_bones[bone];
-		Joint *target = _skel->getJointNamed(curBone._boneName);
-		if (!target) {
+		int jointIndex = _boneJoints[bone];
+		if (jointIndex == -1)
 			continue;
-		}
 
 		AnimationLayer *layer = _skel->getLayer(curBone._priority);
-		int jointIndex = _skel->getJointIndex(target);
 		JointAnimation &jointAnim = layer->_jointAnims[jointIndex];
 
 		if (curBone._rotations) {
@@ -196,13 +198,12 @@ void AnimationStateEmi::animate() {
 
 	for (int bone = 0; bone < _anim->_numBones; ++bone) {
 		Bone &curBone = _anim->_bones[bone];
-		Joint *target = _skel->getJointNamed(curBone._boneName);
-		if (!target) {
+		int jointIndex = _boneJoints[bone];
+		if (jointIndex == -1)
 			continue;
-		}
 
+		Joint *target = &_skel->_joints[jointIndex];
 		AnimationLayer *layer = _skel->getLayer(curBone._priority);
-		int jointIndex = _skel->getJointIndex(target);
 		JointAnimation &jointAnim = layer->_jointAnims[jointIndex];
 
 		if (curBone._rotations) {
@@ -313,6 +314,12 @@ void AnimationStateEmi::setSkeleton(Skeleton *skel) {
 		_skel = skel;
 		if (_active)
 			skel->addAnimation(this);
+
+		if (_anim) {
+			for (int i = 0; i < _anim->_numBones; ++i) {
+				_boneJoints[i] = skel->findJointIndex(_anim->_bones[i]._boneName);
+			}
+		}
 	}
 }
 
