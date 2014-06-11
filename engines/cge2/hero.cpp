@@ -245,7 +245,7 @@ int Hero::distance(V3D pos) {
 	V3D di = _pos3D - pos;
 	long x = V2D::round(di._x);
 	long z = V2D::round(di._z);
-	return ((x * x + z * z) * (x * x + z * z));
+	return (int)sqrt((long double)(x * x + z * z));
 }
 
 int Hero::distance(Sprite *spr) {
