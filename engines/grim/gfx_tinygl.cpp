@@ -615,6 +615,9 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 	const float &scale = actor->getScale();
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
+		tglEnable(TGL_CULL_FACE);
+		tglFrontFace(TGL_CW);
+
 		if (actor->isInOverworld()) {
 			const Math::Vector3d &pos = actor->getWorldPos();
 			tglMatrixMode(TGL_PROJECTION);
@@ -685,6 +688,10 @@ void GfxTinyGL::finishActorDraw() {
 			WRITE_LE_UINT16(dst + _gameWidth * y + g_winX2, c);
 		}
 	}*/
+
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		tglDisable(TGL_CULL_FACE);
+	}
 
 	tglColorMask(TGL_TRUE, TGL_TRUE, TGL_TRUE, TGL_TRUE);
 	_currentActor = nullptr;

@@ -522,6 +522,9 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	const float alpha = actor->getEffectiveAlpha();
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
+		glEnable(GL_CULL_FACE);
+		glFrontFace(GL_CW);
+
 		const Math::Matrix4 &viewMatrix = _currentQuat.toMatrix();
 		Math::Matrix4 modelMatrix = actor->getFinalMatrix();
 		modelMatrix.transpose();
@@ -603,6 +606,9 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 void GfxOpenGLS::finishActorDraw() {
 	_currentActor = NULL;
 	glDisable(GL_POLYGON_OFFSET_FILL);
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		glDisable(GL_CULL_FACE);
+	}
 }
 
 void GfxOpenGLS::setShadow(Shadow *shadow) {
