@@ -450,7 +450,7 @@ void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed
 	if (seq) {
 		_sceneTrackHasSequence = true;
 
-		strcpy(_trackName, seq->_value.stringValue);
+		Common::strlcpy(_trackName, seq->_value.stringValue, 2600);
 	}
 
 	if (delayed) {
