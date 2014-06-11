@@ -853,6 +853,7 @@ begin_credits("Credits");
 			begin_section("SymbianOS");
 				add_person("Jurgen Braam", "SumthinWicked", "");
 				add_person("Lars Persson", "AnotherGuest", "");
+				add_person("Fedor Strizhniou", "zanac", "");
 			end_section();
 
 			begin_section("Tizen / BADA");
