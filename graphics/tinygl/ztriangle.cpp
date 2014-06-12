@@ -352,6 +352,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 
 				Graphics::PixelBuffer buf = zb->pbuf;
 				buf = pp1 + x1 * PSZB;
+				Graphics::PixelFormat textureFormat = texture.getFormat();
 
 				pz = pz1 + x1;
 				z = z1;
@@ -380,7 +381,12 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 							int pixel = ((ttt | sss) >> 1) ;
 
 							uint8 alpha, c_r, c_g, c_b;
-							texture.getARGBAt(pixel, alpha, c_r, c_g, c_b);
+							uint32 *textureBuffer = (uint32 *)texture.getRawBuffer(pixel);
+							uint32 col = *textureBuffer;
+							alpha = (col >> textureFormat.aShift) & 0xFF; 
+							c_r = (col >> textureFormat.rShift) & 0xFF; 
+							c_g = (col >> textureFormat.gShift) & 0xFF; 
+							c_b = (col >> textureFormat.bShift) & 0xFF;
 							if (alpha == 0xFF) {
 								tmp = rgb & 0xF81F07E0;
 								unsigned int light = tmp | (tmp >> 16);
@@ -417,6 +423,8 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 					dtdx = (int)((dtzdx - tt * fdzdx) * zinv);
 				}
 
+				int bytePerPixel = texture.getFormat().bytesPerPixel;
+
 				while (n >= 0) {
 					{
 						if (ZCMP(z, pz[0])) {
@@ -425,7 +433,12 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 							int pixel = ((ttt | sss) >> 1) ;
 
 							uint8 alpha, c_r, c_g, c_b;
-							texture.getARGBAt(pixel, alpha, c_r, c_g, c_b);
+							uint32 *textureBuffer = (uint32 *)texture.getRawBuffer(pixel);
+							uint32 col = *textureBuffer;
+							alpha = (col >> textureFormat.aShift) & 0xFF; 
+							c_r = (col >> textureFormat.rShift) & 0xFF; 
+							c_g = (col >> textureFormat.gShift) & 0xFF; 
+							c_b = (col >> textureFormat.bShift) & 0xFF;
 							if (alpha == 0xFF) {
 								tmp = rgb & 0xF81F07E0;
 								unsigned int light = tmp | (tmp >> 16);
