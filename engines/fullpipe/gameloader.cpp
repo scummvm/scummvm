@@ -635,7 +635,16 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 }
 
 void GameLoader::restoreDefPicAniInfos() {
-	warning("STUB: restoreDefPicAniInfos()");
+	for (uint i = 0; i < _sc2array.size(); i++) {
+		if (_sc2array[i]._picAniInfos) {
+			free(_sc2array[i]._picAniInfos);
+			_sc2array[i]._picAniInfos = 0;
+			_sc2array[i]._picAniInfosCount = 0;
+		}
+
+		if (_sc2array[i]._scene)
+			applyPicAniInfos(_sc2array[i]._scene, _sc2array[i]._defPicAniInfos, _sc2array[i]._defPicAniInfosCount);
+	}
 }
 
 GameVar *FullpipeEngine::getGameLoaderGameVar() {
