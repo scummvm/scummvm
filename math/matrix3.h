@@ -53,6 +53,22 @@ public:
 	void buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection, 
 						   const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
 
+	inline Matrix<3, 3> operator*(const Matrix<3, 3> &m2) const {
+		Matrix<3, 3> result;
+		const float *d1 = getData();
+		const float *d2 = m2.getData();
+		float *r = result.getData();
+
+		for (int i = 0; i < 9; i += 3) {
+			for (int j = 0; j < 3; ++j) {
+				r[i + j] = (d1[i + 0] * d2[j + 0])
+					+ (d1[i + 1] * d2[j + 3])
+					+ (d1[i + 2] * d2[j + 6]);
+			}
+		}
+
+		return result;
+	}
 };
 
 typedef Matrix<3, 3> Matrix3;

@@ -75,6 +75,23 @@ public:
 
 	void transpose();
 
+	inline Matrix<4, 4> operator*(const Matrix<4, 4> &m2) const {
+		Matrix<4, 4> result;
+		const float *d1 = getData();
+		const float *d2 = m2.getData();
+		float *r = result.getData();
+
+		for (int i = 0; i < 16; i += 4) {
+			for (int j = 0; j < 4; ++j) {
+				r[i + j] = (d1[i + 0] * d2[j + 0])
+					+ (d1[i + 1] * d2[j + 4])
+					+ (d1[i + 2] * d2[j + 8])
+					+ (d1[i + 3] * d2[j + 12]);
+			}
+		}
+
+		return result;
+	}
 };
 
 typedef Matrix<4, 4> Matrix4;
