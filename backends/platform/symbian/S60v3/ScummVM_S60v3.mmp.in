@@ -149,7 +149,7 @@ source engines\obsolete.cpp
 LIBRARY cone.lib  eikcore.lib
 LIBRARY euser.lib apparc.lib fbscli.lib
 LIBRARY estlib.lib apgrfx.lib
-LIBRARY gdi.lib hal.lib bitgdi.lib
+LIBRARY gdi.lib hal.lib bitgdi.lib esock.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
 library avkon.lib bafl.lib  remconcoreapi.lib remconinterfacebase.lib
 
