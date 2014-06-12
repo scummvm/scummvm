@@ -475,9 +475,11 @@ ScreenDialog::DialogLine::DialogLine() {
 	_textDisplayIndex = -1;
 	_font = nullptr;
 	_widthAdjust = 0;
+	_msg = "";
 }
 
 ScreenDialog::DialogLine::DialogLine(const Common::String &s) {
+	_active = true;
 	_state = DLGSTATE_UNSELECTED;
 	_textDisplayIndex = -1;
 	_font = nullptr;
