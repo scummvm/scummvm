@@ -22,22 +22,23 @@
 
 namespace Prince {
 
-// Mazovia coding (with U2 negation)
+// PL - Mazovia coding (with U2 negation for special letters)
+// DE - Still problem with special letters
 
 const char invOptionsTextPL[5][18] = {
-	{ 'O', 'b', 'e', 'j', 'r', 'z', 'y', 'j', '\0' }, 
+	"Obejrzyj",
 	{ 'U', -89, 'y', 'j', '\0' },
 	{ 'O', 't', 'w', -94, 'r', 'z', '/', 'P', 'c', 'h', 'n', 'i', 'j', '\0' },
 	{ 'Z', 'a', 'm', 'k', 'n', 'i', 'j', '/', 'P', 'o', 'c', 'i', -122, 'g', 'n', 'i', 'j', '\0' },
-	{ 'D', 'a', 'j', '\0' }
+	"Daj"
 };
 
 // TODO
-const char *invOptionsTextDE[] = {
+const char invOptionsTextDE[5][17] = {
 	"Anschauen",
 	"Benutzen",
-	"÷ffnen/Stoﬂen",
-	"Schlieﬂen/Ziehen",
+	{ '÷', 'f', 'f', 'n', 'e', 'n', '/', 'S', 't', 'o', 'ﬂ', 'e', 'n', '\0' },
+	{ 'S', 'c', 'h', 'l', 'i', 'e', 'ﬂ', 'e', 'n', '/', 'Z', 'i', 'e', 'h', 'e', 'n', '\0' },
 	"Geben"
 };
 
@@ -51,22 +52,22 @@ const char *invOptionsTextEN[] = {
 
 const char optionsTextPL[7][18] = {
 	{ 'P', 'o', 'd', 'e', 'j', 'd', -90, '\0' },
-	{ 'O', 'b', 'e', 'j', 'r', 'z', 'y', 'j', '\0' },
-	{ 'Z', 'a', 'b', 'i', 'e', 'r', 'z', '\0' },
+	"Obejrzyj",
+	"Zabierz",
 	{ 'U', -89, 'y', 'j' },
 	{ 'O', 't', 'w', -94, 'r', 'z', '/', 'P', 'c', 'h', 'n', 'i', 'j', '\0' },
 	{ 'Z', 'a', 'm', 'k', 'n', 'i', 'j', '/', 'P', 'o', 'c', 'i', -122, 'g', 'n', 'i', 'j', '\0' },
-	{ 'P', 'o', 'r', 'o', 'z', 'm', 'a', 'w', 'i', 'a', 'j', '\0' }
+	"Porozmawiaj"
 };
 
 // TODO
-const char *optionsTextDE[] = {
+const char optionsTextDE[7][17] = {
 	"Hingehen",
 	"Anschauen",
 	"Wegnehmen",
 	"Benutzen",
-	"÷ffnen/Stoﬂen",
-	"Schlieﬂen/Ziehen",
+	{ '÷', 'f', 'f', 'n', 'e', 'n', '/', 'S', 't', 'o', 'ﬂ', 'e', 'n', '\0' },
+	{ 'S', 'c', 'h', 'l', 'i', 'e', 'ﬂ', 'e', 'n', '/', 'Z', 'i', 'e', 'h', 'e', 'n', '\0' },
 	"Ansprechen"
 };
 
