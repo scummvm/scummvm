@@ -243,6 +243,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 	pz1 = zb->zbuf + p0->y * zb->xsize;
 
 	texture = zb->current_texture;
+	assert(texture.getFormat().bytesPerPixel == 4);
 	fdzdx = (float)dzdx;
 	fndzdx = NB_INTERP * fdzdx;
 	ndszdx = NB_INTERP * dszdx;
