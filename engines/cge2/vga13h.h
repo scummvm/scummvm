@@ -51,19 +51,74 @@ namespace CGE2 {
 #define kPalCount        256
 #define kPalSize         (kPalCount * 3)
 
+// From FXP.H
+class FXP	// fixed point
+{
+	uint16 f;
+	int16 i;
+	long& Joined (void) const { return *(long *)&f; }
+public:
+	FXP (void) { }
+	FXP (int i0, int f0 = 0) : i(i0), f((int) ((((long) f0) << 16)/100)) { }
+	FXP& operator = (const int& x) { i = x; f = 0; return *this; }
+	FXP operator + (const FXP& x) const { FXP y; y.Joined() = Joined()+x.Joined(); return y; }
+	FXP operator - (const FXP& x) const { FXP y; y.Joined() = Joined()-x.Joined(); return y; }
+	FXP operator * (const FXP& x) const {
+		FXP y; long t;
+		y.i = i * x.i;
+		t = ((long) f * x.f) >> 16;
+		t += ((long) i * x.f) + ((long) f  * x.i);
+		y.f = t & 0xFFFF;
+		y.i += t >> 16;
+		return y;
+	}
+	FXP operator / (const FXP& x) const {
+		FXP y; bool sign = false;
+		long j = Joined(), jx = x.Joined();
+		if (j < 0) {
+			j = -j;
+			sign ^= 1;
+		}
+		if (jx < 0) {
+			jx = -jx;
+			sign ^= 1;
+		}
+		y.i = signed(j / jx);
+		long r = j - jx * y.i;
+		//-- binary division
+		y.f = unsigned((r << 4) / (jx >> 12));
+		//------------------
+		if (sign)
+			y.Joined() = -y.Joined();
+
+		return y;
+	}
+	//int& operator = (int& a, const FXP& b) { return a = b.i; }
+	friend int& operator += (int& a, const FXP& b) { return a += b.i; }
+	friend int& operator -= (int& a, const FXP& b) { return a -= b.i; }
+	friend FXP& operator += (FXP& a, const int& b) { a.i += b; return a; }
+	friend FXP& operator -= (FXP& a, const int& b) { a.i -= b; return a; }
+	friend bool operator == (const FXP &a, const FXP &b) { return (a.i == b.i) && (a.f == b.f); }
+	friend bool operator != (const FXP &a, const FXP &b) { return (a.i != b.i) || (a.f != b.f); }
+	friend bool operator < (const FXP &a, const FXP &b) { return (a.i < b.i) || ((a.i == b.i) && (a.f < b.f)); }
+	friend bool operator > (const FXP &a, const FXP &b) { return (a.i > b.i) || ((a.i == b.i) && (a.f > b.f)); }
+	int trunc(void) const { return i; }
+	int round(void) const { return i + (f > 0x7FFF); }
+};
+
 // From CGETYPE.H:
 class V3D {
 public:
-	double _x, _y, _z;
+	FXP _x, _y, _z;
 	V3D() { }
-	V3D(double x, double y, double z = 0) : _x(x), _y(y), _z(z) { }
+	V3D(FXP x, FXP y, FXP z = 0) : _x(x), _y(y), _z(z) { }
 	V3D(const V3D &p) : _x(p._x), _y(p._y), _z(p._z) { }
 	V3D operator+(const V3D &p) const { return V3D(_x + p._x, _y + p._y, _z + p._z); }
 	V3D operator-(const V3D &p) const { return V3D(_x - p._x, _y - p._y, _z - p._z); }
 	V3D operator*(long n) const { return V3D(_x * n, _y * n, _z * n); }
 	V3D operator/ (long n) const { return V3D(_x / n, _y / n, _z / n); }
-	bool operator==(V3D &p) const { return _x == p._x && _y == p._y && _z == p._z; }
-	bool operator!=(V3D &p) const { return _x != p._x || _y != p._y || _z != p._z; }
+	bool operator==(const V3D &p) const { return _x == p._x && _y == p._y && _z == p._z; }
+	bool operator!=(const V3D &p) const { return _x != p._x || _y != p._y || _z != p._z; }
 	V3D& operator+=(const V3D &x) { return *this = *this + x; }
 	V3D& operator-=(const V3D &x) { return *this = *this - x; }
 };
@@ -72,11 +127,11 @@ class V2D : public Common::Point {
 	CGE2Engine *_vm;
 public:
 	V2D& operator=(const V3D &p3) {
-		if (p3._z == 200)
-			warning("");
-		double m = _vm->_eye->_z / (p3._z - _vm->_eye->_z);
-		x = round(_vm->_eye->_x + (_vm->_eye->_x - p3._x) * m);
-		y = round(_vm->_eye->_y + (_vm->_eye->_y - p3._y) * m);
+		FXP m = _vm->_eye->_z / (p3._z - _vm->_eye->_z);
+		FXP posx = _vm->_eye->_x + (_vm->_eye->_x - p3._x) * m;
+		x = posx.round();
+		FXP posy = _vm->_eye->_y + (_vm->_eye->_y - p3._y) * m;
+		y = posy.round();
 		return *this;
 	}
 	V2D(CGE2Engine *vm) : _vm(vm) { }
@@ -88,14 +143,17 @@ public:
 	bool operator>=(const V2D &p) const { return (x >= p.x) && (y >= p.y); }
 	V2D operator+(const V2D &p) const { return V2D(_vm, x + p.x, y + p.y); }
 	V2D operator-(const V2D &p) const { return V2D(_vm, x - p.x, y - p.y); }
+	bool operator==(const V3D &p) const { V3D tmp(x, y); return tmp._x == p._x && tmp._y == p._y && tmp._z == p._z; }
+	bool operator!=(const V3D &p) const { V3D tmp(x, y); return tmp._x != p._x || tmp._y != p._y || tmp._z == p._z; }
 	uint16 area() { return x * y; }
 	bool limited(const V2D &p) {
-		return (uint16(x) < uint16(p.x)) && (uint16(y) < uint16(p.y));
+		return ((x < p.x) && (y < p.y));
 	}
-	V2D scale(int z) {
-		double m = _vm->_eye->_z / (_vm->_eye->_z - z);
-		warning("scale: %f %f %f, x, y, m");
-		return V2D(_vm, trunc(m * x), trunc(m * y));
+	V2D scale (int z) {
+		FXP m = _vm->_eye->_z / (_vm->_eye->_z - z);
+		FXP posx = m * x;
+		FXP posy = m * y;
+		return V2D(_vm, posx.trunc(), posy.trunc());
 	}
 	static double trunc(double d) { return (d > 0) ? floor(d) : ceil(d); }
 	static double round(double number) { return number < 0.0 ? ceil(number) : floor(number); }

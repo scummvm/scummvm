@@ -205,8 +205,9 @@ Sprite *Hero::expand() { // It's very similar to Sprite's expand, but doesn't bo
 }
 
 void Hero::setCurrent() {
-	double m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
-	int h = -(V2D::trunc(m * _siz.y));
+	FXP m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
+	FXP tmp = m * _siz.y;
+	int h = -(tmp.trunc());
 
 	int i = 0;
 	for (; i < kDimMax; i++) {
@@ -243,15 +244,15 @@ void Hero::tick() {
 
 int Hero::distance(V3D pos) {
 	V3D di = _pos3D - pos;
-	long x = V2D::round(di._x);
-	long z = V2D::round(di._z);
-	return (int)sqrt((long double)(x * x + z * z));
+	int x = di._x.round();
+	int z = di._z.round();
+	return ((int)sqrt((long double)x * x + z * z));
 }
 
 int Hero::distance(Sprite *spr) {
 	V3D pos = spr->_pos3D;
 	int mdx = (spr->_siz.x >> 1) + (_siz.x >> 1);
-	int dx = V2D::round(_pos3D._x - spr->_pos3D._x);
+	int dx = (_pos3D._x - spr->_pos3D._x).round();
 	if (dx < 0) {
 		mdx = -mdx;
 		if (dx > mdx)
@@ -303,8 +304,8 @@ int Hero::len(V2D v) {
 }
 
 bool Hero::findWay(){
-	V2D p0(_vm, V2D::round(_pos3D._x), V2D::round(_pos3D._z));
-	V2D p1(_vm, V2D::round(_trace[_tracePtr]._x), V2D::round(_trace[_tracePtr]._z));
+	V2D p0(_vm, _pos3D._x.round(), _pos3D._z.round());
+	V2D p1(_vm, _trace[_tracePtr]._x.round(), _trace[_tracePtr]._z.round());
 	bool pvOk;
 	bool phOk;
 	V2D ph(_vm, p1.x, p0.y);
@@ -340,12 +341,12 @@ void Hero::walkTo(V3D pos) {
 	if (distance(pos) <= _maxDist)
 		return;
 	int stp = stepSize();
-	pos._x = snap(V2D::round(_pos3D._x), V2D::round(pos._x), stp);
+	pos._x = snap(_pos3D._x.round(), pos._x.round(), stp);
 	pos._y = 0;
-	pos._z = snap(V2D::round(_pos3D._z), V2D::round(pos._z), stp);
+	pos._z = snap(_pos3D._z.round(), pos._z.round(), stp);
 
-	V2D p0(_vm, V2D::round(_pos3D._x), V2D::round(_pos3D._z));
-	V2D p1(_vm, V2D::round(pos._x), V2D::round(pos._z));
+	V2D p0(_vm, _pos3D._x.round(), _pos3D._z.round());
+	V2D p1(_vm, pos._x.round(), pos._z.round());
 	resetFun();
 	int cnt = mapCross(p0, p1);
 	if ((cnt & 1) == 0) { // even == way exists
@@ -385,15 +386,15 @@ void Hero::walkTo(Sprite *spr) {
 }
 
 V3D Hero::screenToGround(V2D pos) {
-	double z = _vm->_eye->_z + (_vm->_eye->_y * _vm->_eye->_z) / (double(pos.y) - _vm->_eye->_y);
-	double x = _vm->_eye->_x - ((double(pos.x) - _vm->_eye->_x) * (z - _vm->_eye->_z)) / _vm->_eye->_z;
-	return V3D(V2D::round(x), 0, V2D::round(z));
+	FXP z = _vm->_eye->_z + (_vm->_eye->_y * _vm->_eye->_z) / (FXP(pos.y) - _vm->_eye->_y);
+	FXP x = _vm->_eye->_x - ((FXP(pos.x) - _vm->_eye->_x) * (z - _vm->_eye->_z)) / _vm->_eye->_z;
+	return V3D(x.round(), 0, z.round());
 }
 
 int Hero::cross(const V2D &a, const V2D &b) {
-	int x = V2D::trunc(_pos3D._x);
-	int z = V2D::trunc(_pos3D._z);
-	int r = ((_siz.x / 3) * V2D::trunc(_vm->_eye->_z)) / (V2D::trunc(_vm->_eye->_z) - z);
+	int x = _pos3D._x.trunc();
+	int z = _pos3D._z.trunc();
+	int r = ((_siz.x / 3) * _vm->_eye->_z.trunc()) / (_vm->_eye->_z.trunc()- z);
 	return _vm->cross(a, b, V2D(_vm, x - r, z), V2D(_vm, x + r, z)) << 1;
 }
 
@@ -433,7 +434,7 @@ int Hero::mapCross(const V2D &a, const V2D &b) {
 }
 
 int Hero::mapCross(const V3D &a, const V3D &b) {
-	return mapCross(V2D(_vm, V2D::round(a._x), V2D::round(a._z)), V2D(_vm, V2D::round(b._x), V2D::round(b._z)));
+	return mapCross(V2D(_vm, a._x.round(), a._z.round()), V2D(_vm, b._x.round(), b._z.round()));
 }
 
 int CGE2Engine::mapCross(const V2D &a, const V2D &b) {

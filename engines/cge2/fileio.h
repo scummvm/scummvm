@@ -125,6 +125,7 @@ public:
 	unsigned readUint16BE();
 	signed readSint16BE();
 	signed readSint16LE();
+	signed readUint16LE();
 	Common::String readLine();
 	int getLineCount() { return _lineCount; }
 

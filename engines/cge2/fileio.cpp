@@ -228,6 +228,10 @@ signed EncryptedStream::readSint16LE() {
 	return _readStream->readSint16LE();
 }
 
+signed EncryptedStream::readUint16LE() {
+	return _readStream->readUint16LE();
+}
+
 bool EncryptedStream::err() {
 	return (_error & _readStream->err());
 }

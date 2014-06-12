@@ -145,7 +145,7 @@ void Text::say(const char *text, Sprite *spr) {
 	if (!east)
 		d.x = -d.x;
 	if (_vm->isHero(spr))
-		d = d.scale(V2D::trunc(spr->_pos3D._z));
+		d = d.scale(spr->_pos3D._z.trunc());
 	V2D pos = spr->_pos2D + d;
 	uint16 sw = (speaker->_siz.x >> 1);
 	if (!east)
@@ -168,7 +168,7 @@ void Text::say(const char *text, Sprite *spr) {
 	_vm->_talk->setName(getText(kSayName));
 	_vm->_talk->gotoxyz(pos.x, pos.y + speaker->_siz.y - 1, 0);
 
-	speaker->gotoxyz(pos.x, V2D::trunc(_vm->_talk->_pos3D._y) - speaker->_siz.y + 1, 0);
+	speaker->gotoxyz(pos.x, _vm->_talk->_pos3D._y.trunc() - speaker->_siz.y + 1, 0);
 	speaker->_flags._slav = true;
 	speaker->_flags._kill = true;
 	speaker->setName(getText(kSayName));

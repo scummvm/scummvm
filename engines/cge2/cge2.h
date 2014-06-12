@@ -43,6 +43,7 @@ class Fx;
 class Sound;
 class Text;
 struct HeroTab;
+class FXP;
 class V3D;
 class V2D;
 struct Dac;

@@ -531,9 +531,9 @@ void Sprite::gotoxyz(V2D pos) {
 	byte trim = 0;
 
 	if (_ref / 10 == 14) { // HERO
-		int z = V2D::trunc(_pos3D._z);
-		ctr = (ctr * V2D::trunc(_vm->_eye->_z) / (V2D::trunc(_vm->_eye->_z) - z));
-		rem = (rem * V2D::trunc(_vm->_eye->_z) / (V2D::trunc(_vm->_eye->_z) - z));
+		int z = _pos3D._z.trunc();
+		ctr = (ctr * _vm->_eye->_z.trunc()) / (_vm->_eye->_z.trunc() - z);
+		rem = (rem * _vm->_eye->_z.trunc()) / (_vm->_eye->_z.trunc() - z);
 		ctr = (ctr * 3) / 4;
 		rem = (rem * 3) / 4;
 	}
@@ -561,10 +561,15 @@ void Sprite::gotoxyz(V2D pos) {
 	_flags._trim = (trim != 0);
 
 	if (!_follow) {
-		double m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
-		_pos3D._x = V2D::round(_vm->_eye->_x + (_vm->_eye->_x - _pos2D.x) / m);
-		if (!_constY)
-			_pos3D._y = V2D::round(_vm->_eye->_y + (_vm->_eye->_y - _pos2D.y) / m);
+		// CHECKME: Original was using Pos2d.Eye, which shouldn't make a difference (static var)
+		FXP m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
+		_pos3D._x = (_vm->_eye->_x + (_vm->_eye->_x - _pos2D.x) / m);
+		_pos3D._x.round();
+
+		if (!_constY) {
+			_pos3D._y = _vm->_eye->_y + (_vm->_eye->_y - _pos2D.y) / m;
+			_pos3D._y.round();
+		}
 	}
 
 	if (_next && _next->_flags._slav)
@@ -685,9 +690,23 @@ void Sprite::sync(Common::Serializer &s) {
 		s.syncAsUint16LE(flags);
 	}
 
-	s.syncAsUint16LE(_pos3D._x);
-	s.syncAsUint16LE(_pos3D._y);
-	s.syncAsByte(_pos3D._z);
+	int pos = 0;
+	if (s.isLoading()) {
+		s.syncAsSint16LE(pos);
+		_pos3D._x = FXP(pos, 0);
+		s.syncAsSint16LE(pos);
+		_pos3D._y = pos;
+		s.syncAsSint16LE(pos);
+		_pos3D._z = pos;
+	} else {
+		pos = _pos3D._x.trunc();
+		s.syncAsUint16LE(pos);
+		pos = _pos3D._y.trunc();
+		s.syncAsUint16LE(pos);
+		pos = _pos3D._z.trunc();
+		s.syncAsByte(pos);
+	}
+
 	s.syncAsUint16LE(_time);
 	s.syncAsSint16LE(_seqPtr);
 	s.syncAsUint16LE(_shpCnt);
