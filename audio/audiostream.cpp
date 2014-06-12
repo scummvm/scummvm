@@ -318,7 +318,7 @@ public:
 
 	virtual bool endOfData() const {
 		Common::StackLock lock(_mutex);
-		return _queue.empty();
+		return _queue.empty() || _queue.front()._stream->endOfData();
 	}
 
 	virtual bool endOfStream() const {
@@ -365,11 +365,17 @@ int QueuingAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 		AudioStream *stream = _queue.front()._stream;
 		samplesDecoded += stream->readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
 
-		if (stream->endOfData()) {
+		// Done with the stream completely
+		if (stream->endOfStream()) {
 			StreamHolder tmp = _queue.pop();
 			if (tmp._disposeAfterUse == DisposeAfterUse::YES)
 				delete stream;
+			continue;
 		}
+
+		// Done with data but not the stream, bail out
+		if (stream->endOfData())
+			break;
 	}
 
 	return samplesDecoded;
