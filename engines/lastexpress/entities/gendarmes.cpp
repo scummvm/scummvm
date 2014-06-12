@@ -169,6 +169,9 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 			strcpy((char *)&parameters1->seq3, "632F");
 		}
 
+		// The sequence 3 string needs to be a maximum of 9 characters, leaving 5 characters after the initial setup
+		assert(Common::String(params->seq1).size() <= 5);
+
 		strcat((char *)&parameters1->seq1, (char *)&params->seq1);
 		strcat((char *)&parameters1->seq2, (char *)&params->seq1);
 		strcat((char *)&parameters1->seq3, (char *)&params->seq1);
