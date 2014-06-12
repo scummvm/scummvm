@@ -452,11 +452,17 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 		}
 
 		if (params->param1) {
-			strcpy((char *)&parameters->seq2, Common::String::format("%s%s", (char *)&parameters->seq1, "Gc").c_str());
+			Common::String sequence = Common::String::format("%s%s", (char *)&parameters->seq1, "Gc");
+			assert(sequence.size() <= 13);
+
+			strcpy((char *)&parameters->seq2, sequence.c_str());
 
 			getObjects()->update(kObjectCompartment3, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 		} else {
-			strcpy((char *)&parameters->seq2, Common::String::format("%s%s", (char *)&parameters->seq1, "Ec").c_str());
+			Common::String sequence = Common::String::format("%s%s", (char *)&parameters->seq1, "Ec");
+			assert(sequence.size() <= 13);
+
+			strcpy((char *)&parameters->seq2, sequence.c_str());
 		}
 
 		setCallback(1);
@@ -484,15 +490,22 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 				setCallback(2);
 				setup_playSound("AUG2094");
 			}
+
 			}
 			break;
 
 		case 2:
-		case 3:
+		case 3: {
 			getSavePoints()->push(kEntityAugust, kEntityMertens, kAction269436673);
-			strcpy((char *)&parameters->seq2, Common::String::format("%s%s", (char *)&parameters->seq1, "Qc").c_str());
+
+			Common::String sequence = Common::String::format("%s%s", (char *)&parameters->seq1, "Qc");
+			assert(sequence.size() <= 13);
+
+			strcpy((char *)&parameters->seq2, sequence.c_str());
 
 			getEntities()->drawSequenceLeft(kEntityAugust, (char *)&parameters->seq2);
+
+			}
 			break;
 		}
 		break;
