@@ -102,7 +102,28 @@ void GraphicsMan::drawTransparentSurface(Graphics::Surface *screen, int32 posX, 
 	change();
 }
 
-void GraphicsMan::drawTransparentWithBlend(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
+void GraphicsMan::drawAsShadowSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, byte *shadowTable) {
+	byte *src1 = (byte *)s->getBasePtr(0, 0);
+	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
+
+	for (int y = 0; y < s->h; y++) {
+		byte *src2 = src1;
+		byte *dst2 = dst1;
+		for (int x = 0; x < s->w; x++, src2++, dst2++) {
+			if (*src2 == kShadowColor) {
+				if (x + posX < screen->w && x + posX >= 0) {
+					if (y + posY < screen->h && y + posY >= 0) {
+						*dst2 = *(shadowTable + *dst2);
+					}
+				}
+			}
+		}
+		src1 += s->pitch;
+		dst1 += screen->pitch;
+	}
+}
+
+void GraphicsMan::drawTransparentWithBlendSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, int transColor) {
 	byte *src1 = (byte *)s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(posX, posY);
 	byte *blendTable = (byte *)malloc(256);
@@ -149,7 +170,7 @@ void GraphicsMan::drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *d
 	}
 }
 
-void GraphicsMan::drawMask(Graphics::Surface *screen, DrawNode *drawNode) {
+void GraphicsMan::drawMaskDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
 	byte *src1 = (byte *)drawNode->originalRoomSurface->getBasePtr(drawNode->posX, drawNode->posY);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
 	int maskWidth = drawNode->width >> 3;
@@ -182,7 +203,7 @@ void GraphicsMan::drawMask(Graphics::Surface *screen, DrawNode *drawNode) {
 	}
 }
 
-void GraphicsMan::drawAsShadow(Graphics::Surface *screen, DrawNode *drawNode) {
+void GraphicsMan::drawAsShadowDrawNode(Graphics::Surface *screen, DrawNode *drawNode) {
 	byte *src1 = (byte *)drawNode->s->getBasePtr(0, 0);
 	byte *dst1 = (byte *)screen->getBasePtr(drawNode->posX, drawNode->posY);
 

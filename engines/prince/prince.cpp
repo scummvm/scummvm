@@ -83,7 +83,8 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
 	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0), _invX1(53), _invY1(18), _invWidth(536), _invHeight(438),
 	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invOptionsNumber(5), _invExamY(120),
-	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0) {
+	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0), 
+	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -138,6 +139,12 @@ PrinceEngine::~PrinceEngine() {
 		delete _allInvList[i]._surface;
 	}
 	_allInvList.clear();
+
+	_optionsPic->free();
+	delete _optionsPic;
+
+	_optionsPicInInventory->free();
+	delete _optionsPicInInventory;
 
 	for (uint i = 0; i < _mainHero->_moveSet.size(); i++) {
 		delete _mainHero->_moveSet[i];
@@ -230,6 +237,24 @@ void PrinceEngine::init() {
 	delete invTxtStream;
 
 	loadAllInv();
+
+	_optionsPic = new Graphics::Surface();
+	_optionsPic->create(_optionsWidth, _optionsHeight, Graphics::PixelFormat::createFormatCLUT8());
+	Common::Rect picRect;
+	picRect.left = 0;
+	picRect.top = 0;
+	picRect.right = _optionsWidth;
+	picRect.bottom = _optionsHeight;
+	_optionsPic->fillRect(picRect, _graph->kShadowColor);
+
+	_optionsPicInInventory = new Graphics::Surface();
+	_optionsPicInInventory->create(_invOptionsWidth, _invOptionsHeight, Graphics::PixelFormat::createFormatCLUT8());
+	Common::Rect invPicRect;
+	invPicRect.left = 0;
+	invPicRect.top = 0;
+	invPicRect.right = _invOptionsWidth;
+	invPicRect.bottom = _invOptionsHeight;
+	_optionsPicInInventory->fillRect(invPicRect, _graph->kShadowColor);
 
 	_roomBmp = new Image::BitmapDecoder();
 
@@ -852,7 +877,7 @@ void PrinceEngine::showMask(int maskNr, Graphics::Surface *originalRoomSurface) 
 			newDrawNode.originalRoomSurface = originalRoomSurface;
 			newDrawNode.data = _maskList[maskNr].getMask();
 			newDrawNode.freeSurfaceSMemory = false;
-			newDrawNode.drawFunction = &_graph->drawMask;
+			newDrawNode.drawFunction = &_graph->drawMaskDrawNode;
 			_drawNodeList.push_back(newDrawNode);
 		}
 	}
@@ -891,7 +916,7 @@ void PrinceEngine::showSpriteShadow(Graphics::Surface *shadowSurface, int destX,
 		newDrawNode.originalRoomSurface = nullptr;
 		newDrawNode.data = _graph->_shadowTable70;
 		newDrawNode.freeSurfaceSMemory = freeSurfaceMemory;
-		newDrawNode.drawFunction = &_graph->drawAsShadow;
+		newDrawNode.drawFunction = &_graph->drawAsShadowDrawNode;
 		_drawNodeList.push_back(newDrawNode);
 	}
 }
@@ -1482,7 +1507,7 @@ void PrinceEngine::drawInvItems() {
 					_graph->drawTransparentSurface(_graph->_screenForInventory, drawX, drawY, itemSurface, 0);
 				} else {
 					_mst_shadow = _mst_shadow2;
-					_graph->drawTransparentWithBlend(_graph->_screenForInventory, drawX, drawY, itemSurface, 0);
+					_graph->drawTransparentWithBlendSurface(_graph->_screenForInventory, drawX, drawY, itemSurface, 0);
 				}
 			}
 			currInvX += _invLineW + _invLineSkipX;
@@ -1601,10 +1626,26 @@ void PrinceEngine::enableOptions() {
 		_currentPointerNumber = 1;
 		if (_selectedMob != 0) {
 			//if (_mobType != 0x100) {
+				Common::Point mousePos = _system->getEventManager()->getMousePos();
+				int x1 = mousePos.x - _optionsWidth / 2;
+				int x2 = mousePos.x + _optionsWidth / 2;
+				if (x1 < 0) {
+					x1 = 0;
+					x2 = _optionsWidth;
+				} else if (x2 >= kNormalWidth) {
+					x1 = kNormalWidth - _optionsWidth;
+					x2 = kNormalWidth;
+				}
+				int y1 = mousePos.y - 10;
+				if (y1 < 0) {
+					y1 = 0;
+				}
+				if (y1 + _optionsHeight >= kNormalHeight) {
+					y1 = kNormalHeight - _optionsHeight;
+				}
 				_optionsMob = _selectedMob;
-				// test opt sprite here
-				//_optionsX =
-				//_optionsY =
+				_optionsX = x1;
+				_optionsY = y1;
 				_optionsFlag = 1;
 			//}
 		}
@@ -1612,7 +1653,20 @@ void PrinceEngine::enableOptions() {
 }
 
 void PrinceEngine::checkInvOptions() {
-
+	if (_optionsFlag) {
+		Common::Rect optionsRect;
+		optionsRect.left = _optionsX;
+		optionsRect.top = _optionsY;
+		optionsRect.right = _optionsX + _invOptionsWidth;
+		optionsRect.bottom = _optionsY + _invOptionsHeight;
+		Common::Point mousePos = _system->getEventManager()->getMousePos();
+		if (!optionsRect.contains(mousePos)) {
+			_optionsFlag = 0;
+			_selectedMob = 0;
+			return;
+		}
+		_graph->drawAsShadowSurface(_graph->_screenForInventory, _optionsX, _optionsY, _optionsPicInInventory, _graph->_shadowTable50);
+	}
 }
 
 void PrinceEngine::displayInventory() {
@@ -1640,24 +1694,28 @@ void PrinceEngine::displayInventory() {
 
 		drawInvItems();
 
-		Common::Rect _inventoryRect;
-		_inventoryRect.left = _invX1;
-		_inventoryRect.top = _invY1;
-		_inventoryRect.right = _invX1 + _invWidth;
-		_inventoryRect.bottom = _invY1 + _invHeight;
+		Common::Rect inventoryRect;
+		inventoryRect.left = _invX1;
+		inventoryRect.top = _invY1;
+		inventoryRect.right = _invX1 + _invWidth;
+		inventoryRect.bottom = _invY1 + _invHeight;
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
 
-		if (!_invCurInside && _inventoryRect.contains(mousePos)) {
+		if (!_invCurInside && inventoryRect.contains(mousePos)) {
 			_invCurInside = true;
 		}
 
-		if (_invCurInside && !_inventoryRect.contains(mousePos)) {
+		if (_invCurInside && !inventoryRect.contains(mousePos)) {
 			inventoryFlagChange(false);
 			_invCurInside = false;
 			break;
 		}
 
-		_selectedMob = hotspot(_graph->_screenForInventory, _invMobList);
+		if (!_optionsFlag) { // test this
+			_selectedMob = hotspot(_graph->_screenForInventory, _invMobList);
+		}
+
+		checkInvOptions();
 
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();

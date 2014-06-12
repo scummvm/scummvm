@@ -46,11 +46,12 @@ public:
 
 	void draw(Graphics::Surface *screen, const Graphics::Surface *s);
 	void drawTransparentSurface(Graphics::Surface *screen, int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
-	void drawTransparentWithBlend(Graphics::Surface *screen, int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
+	void drawAsShadowSurface(Graphics::Surface *screen, int32 posX, int32 posY, const Graphics::Surface *s, byte *shadowTable);
+	void drawTransparentWithBlendSurface(Graphics::Surface *screen, int32 posX, int32 poxY, const Graphics::Surface *s, int transColor);
 
 	static void drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *drawNode);
-	static void drawAsShadow(Graphics::Surface *screen, DrawNode *drawNode);
-	static void drawMask(Graphics::Surface *screen, DrawNode *drawNode);
+	static void drawAsShadowDrawNode(Graphics::Surface *screen, DrawNode *drawNode);
+	static void drawMaskDrawNode(Graphics::Surface *screen, DrawNode *drawNode);
 
 	byte getBlendTableColor(byte pixelColor, byte backgroundPixelColor, byte *blendTable);
 

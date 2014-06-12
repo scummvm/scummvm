@@ -283,10 +283,20 @@ public:
 	uint32 _invTxtSize;
 	byte *_invTxt;
 
-	bool _showInventoryFlag;
+	Graphics::Surface *_optionsPic;
+	Graphics::Surface *_optionsPicInInventory;
+
 	bool _optionsFlag;
 	int _optionEnabled;
 	int _optionsMob;
+	int _optionsX;
+	int _optionsY;
+	int _optionsWidth;
+	int _optionsHeight;
+	int _invOptionsWidth;
+	int _invOptionsHeight;
+
+	bool _showInventoryFlag;
 	int _invOptionsNumber;
 	int _invExamY;
 	bool _inventoryBackgroundRemember;
