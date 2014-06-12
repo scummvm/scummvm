@@ -28,7 +28,6 @@
 
 #include "lastexpress/lastexpress.h"
 
-
 namespace LastExpress {
 
 SavePoints::SavePoints(LastExpressEngine *engine) : _engine(engine) {
@@ -57,7 +56,7 @@ void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	_savepoints.push_back(point);
 }
 
-void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const char *param) {
+void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String param) {
 	if (_savepoints.size() >= _savePointsMaxSize)
 		return;
 
@@ -65,7 +64,9 @@ void SavePoints::push(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	point.entity1 = entity1;
 	point.action = action;
 	point.entity2 = entity2;
-	strcpy((char *)&point.param.charValue, param);
+
+	assert(param.size() <= 5);
+	strncpy((char *)&point.param.charValue, param.c_str(), 5);
 
 	_savepoints.push_back(point);
 }
@@ -75,7 +76,6 @@ SavePoint SavePoints::pop() {
 	_savepoints.pop_front();
 	return point;
 }
-
 
 void SavePoints::pushAll(EntityIndex entity, ActionIndex action, uint32 param) {
 	for (uint32 index = 1; index < 40; index++) {
@@ -156,16 +156,18 @@ void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	}
 }
 
-void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const char *param) const {
+void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex action, const Common::String param) const {
 	SavePoint point;
 	point.entity1 = entity1;
 	point.action = action;
 	point.entity2 = entity2;
-	strcpy((char *)&point.param.charValue, param);
+
+	assert(param.size() <= 5);
+	strncpy((char *)&point.param.charValue, param.c_str(), 5);
 
 	Callback *callback = getCallback(entity1);
 	if (callback != NULL && callback->isValid()) {
-		debugC(8, kLastExpressDebugLogic, "Savepoint: entity1=%s, action=%s, entity2=%s, param=%s", ENTITY_NAME(entity1), ACTION_NAME(action), ENTITY_NAME(entity2), param);
+		debugC(8, kLastExpressDebugLogic, "Savepoint: entity1=%s, action=%s, entity2=%s, param=%s", ENTITY_NAME(entity1), ACTION_NAME(action), ENTITY_NAME(entity2), param.c_str());
 		(*callback)(point);
 	}
 }
