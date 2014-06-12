@@ -60,6 +60,7 @@
 #include "prince/hero.h"
 #include "prince/resource.h"
 #include "prince/animation.h"
+#include "prince/option_text.h"
 
 namespace Prince {
 
@@ -82,9 +83,10 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
 	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
 	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0), _invX1(53), _invY1(18), _invWidth(536), _invHeight(438),
-	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invOptionsNumber(5), _invExamY(120),
+	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invExamY(120),
 	_optionsMob(0), _currentPointerNumber(1), _selectedMob(0), _selectedItem(0), _selectedMode(0), 
-	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130) {
+	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
+	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(0xFF00EC), _optionsColor2(0xFF00FC) {
 
 	// Debug/console setup
 	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
@@ -1666,6 +1668,47 @@ void PrinceEngine::checkInvOptions() {
 			return;
 		}
 		_graph->drawAsShadowSurface(_graph->_screenForInventory, _optionsX, _optionsY, _optionsPicInInventory, _graph->_shadowTable50);
+
+		_optionEnabled = -1;
+		int optionsYCord = mousePos.y - (_optionsY + 16);
+		if (optionsYCord >= 0) {
+			int selectedOptionNr = optionsYCord / _invOptionsStep;
+			if (selectedOptionNr < _optionsNumber) {
+				_optionEnabled = selectedOptionNr;
+			}
+		}
+		//NoBackgroundFlag = 1;
+		//int eax = _optionsX + _invOptionsWidth / 2;
+		//int ecx = _optionsNumber;
+		int optionsColor;
+		int textY = _optionsY + 16;
+		for (int i = 0; i < _invOptionsNumber; i++) {
+			if (i != _optionEnabled) {
+				optionsColor = _optionsColor1;
+			} else {
+				optionsColor = _optionsColor2;
+			}
+			Common::String invText;
+			switch(getLanguage()) {
+			case Common::PL_POL:
+				invText = invOptionsTextPL[i];
+				break;
+			case Common::DE_DEU:
+				invText = invOptionsTextDE[i];
+				break;
+			case Common::EN_ANY:
+				invText = invOptionsTextEN[i];
+				break;
+			};
+			uint16 textW = 0;
+			for (uint16 i = 0; i < invText.size(); i++) {
+				textW += _font->getCharWidth(invText[i]);
+			}
+			uint16 textX = _optionsX + _optionsWidth / 2 - textW / 2;
+			_font->drawString(_graph->_screenForInventory, invText, textX, textY, _graph->_screenForInventory->w, optionsColor);
+			textY += _invOptionsStep;
+		}
+		//NoBackgroundFlag = 1;
 	}
 }
 

@@ -295,9 +295,14 @@ public:
 	int _optionsHeight;
 	int _invOptionsWidth;
 	int _invOptionsHeight;
+	int _optionsStep;
+	int _invOptionsStep;
+	int _optionsNumber;
+	int _invOptionsNumber;
+	int _optionsColor1; // color for non-selected options
+	int _optionsColor2; // color for selected option
 
 	bool _showInventoryFlag;
-	int _invOptionsNumber;
 	int _invExamY;
 	bool _inventoryBackgroundRemember;
 	int _invLineX;
