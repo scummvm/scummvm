@@ -705,16 +705,28 @@ void CGE2Engine::loadTab() {
 if  (_resman->exist(kTabName)) {
 		EncryptedStream f(this, kTabName);
 		for (int i = 0; i < kCaveMax; i++) {
-			int16 varI = f.readSint16LE();
-			int16 varF = f.readUint16LE();
+			int16 varI = f.readSint16BE();
+			int16 varF = f.readUint16BE();
+			if (varF & 0x8000) {
+				varI = -varI;
+				varF &= 0x7FFF;
+			}
 			_eyeTab[i]->_x = FXP(varI, varF);
 
-			varI = f.readSint16LE();
-			varF = f.readUint16LE();
+			varI = f.readSint16BE();
+			varF = f.readUint16BE();
+			if (varF & 0x8000) {
+				varI = -varI;
+				varF &= 0x7FFF;
+			}
 			_eyeTab[i]->_y = FXP(varI, varF);
 
-			varI = f.readSint16LE();
-			varF = f.readUint16LE();
+			varI = f.readSint16BE();
+			varF = f.readUint16BE();
+			if (varF & 0x8000) {
+				varI = -varI;
+				varF &= 0x7FFF;
+			}
 			_eyeTab[i]->_z = FXP(varI, varF);
 		}
 	}
