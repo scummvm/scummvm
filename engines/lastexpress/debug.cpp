@@ -653,7 +653,6 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 			// Make sure we are not called in a loop
 			_numParams = 0;
 
-
 			// Check if we got a nis filename or an animation index
 			if (name.contains('.')) {
 				Animation animation;
@@ -796,7 +795,10 @@ bool Debugger::cmdFight(int argc, const char **argv) {
 			break;
 		}
 
-		loadArchive(index);
+		if (!loadArchive(index)) {
+			debugPrintf("Error: failed to load archive %d\n", index);
+			return true;
+		}
 
 		// Store command
 		if (!hasCommand()) {
@@ -854,7 +856,10 @@ error:
 bool Debugger::cmdBeetle(int argc, const char **argv) {
 	if (argc == 1) {
 		// Load proper data file (beetle game in in Cd2)
-		loadArchive(kArchiveCd2);
+		if (!loadArchive(kArchiveCd2)) {
+			debugPrintf("Error: failed to load archive 2");
+			return true;
+		}
 
 		// Store command
 		if (!hasCommand()) {
@@ -923,7 +928,6 @@ bool Debugger::cmdBeetle(int argc, const char **argv) {
 						_engine->getCursor()->setStyle(style);
 						break;
 					}
-
 
 					case Common::EVENT_LBUTTONUP:
 					case Common::EVENT_RBUTTONUP:
