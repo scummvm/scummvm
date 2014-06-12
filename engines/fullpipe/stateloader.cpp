@@ -162,7 +162,43 @@ GameVar::GameVar() {
 }
 
 GameVar::~GameVar() {
-	warning("STUB: GameVar::~GameVar()");
+	if (_varType == 2)
+		free(_value.stringValue);
+
+	if (_parentVarObj && !_prevVarObj ) {
+		if (_parentVarObj->_subVars == this) {
+			_parentVarObj->_subVars = _nextVarObj;
+		} else if (_parentVarObj->_field_14 == this) {
+			_parentVarObj->_field_14 = _nextVarObj;
+		} else {
+			_parentVarObj = 0;
+		}
+	}
+
+	if (_prevVarObj)
+		_prevVarObj->_nextVarObj = _nextVarObj;
+
+	if (_nextVarObj)
+		_nextVarObj->_prevVarObj = _prevVarObj;
+
+	_prevVarObj = 0;
+	_nextVarObj = 0;
+
+	GameVar *s = _subVars;
+
+	while (s) {
+		delete s;
+		s = _subVars;
+	}
+
+	s = _field_14;
+
+	while (s) {
+		delete s;
+		s = _field_14;
+	}
+
+	free(_varName);
 }
 
 bool GameVar::load(MfcArchive &file) {
