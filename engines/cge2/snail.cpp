@@ -585,9 +585,7 @@ void CGE2Engine::snSay(Sprite *spr, int val) {
 			int i = val;
 			if (i < 256)
 				i -= 100;
-			// TODO: These 2 lines may need some re-check with the whole sound-code!
-			snSound(spr, i);
-			_commandStat._wait = &_sound->_smpinf._counter;
+			warning("STUB: CGE2Engine::snSay"); // TODO: Implement it with the revision of the sound code!
 		}
 	}
 }
