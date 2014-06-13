@@ -34,6 +34,7 @@
 #include "fullpipe/modal.h"
 #include "fullpipe/input.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/statics.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/floaters.h"
 #include "fullpipe/console.h"
@@ -420,7 +421,13 @@ void FullpipeEngine::updateEvents() {
 }
 
 void FullpipeEngine::freeGameLoader() {
-	warning("STUB: FullpipeEngine::freeGameLoader()");
+	setCursor(0);
+	delete _movTable;
+	_floaters->stopAll();
+	delete _gameLoader;
+	_currentScene = 0;
+	_scene2 = 0;
+	_loaderScene = 0;
 }
 
 void FullpipeEngine::cleanup() {
