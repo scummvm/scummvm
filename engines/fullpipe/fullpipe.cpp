@@ -424,7 +424,15 @@ void FullpipeEngine::freeGameLoader() {
 }
 
 void FullpipeEngine::cleanup() {
-	warning("STUB: FullpipeEngine::cleanup()");
+	//cleanRecorder();
+	clearMessageHandlers();
+	clearMessages();
+	_globalMessageQueueList->compact();
+
+	for (uint i = 0; i < _globalMessageQueueList->size(); i++)
+		delete (*_globalMessageQueueList)[i];
+
+	stopAllSoundStreams();
 }
 
 void FullpipeEngine::updateScreen() {
