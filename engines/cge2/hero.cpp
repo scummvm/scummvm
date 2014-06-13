@@ -513,7 +513,7 @@ int CGE2Engine::mapCross(const V2D &a, const V2D &b) {
 }
 
 void Hero::setCave(int c) {
-	_scene = c;
+	Sprite::setCave(c);
 	resetFun();
 }
 
