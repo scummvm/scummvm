@@ -565,7 +565,7 @@ void CGE2Engine::snDim(Sprite *spr, int val) {
 }
 
 void CGE2Engine::snGhost(Bitmap *bmp) {
-	V2D p(this, *bmp->_v & 0xFFFF, *bmp->_v >> 16);
+	V2D p(this, bmp->_map & 0xFFFF, bmp->_map >> 16);
 	bmp->hide(p.x, p.y);
 	delete[] bmp->_b;
 	bmp->_v = nullptr;

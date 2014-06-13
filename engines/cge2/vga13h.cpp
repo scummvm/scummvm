@@ -641,6 +641,7 @@ BitmapPtr Sprite::ghost() {
 	uint8 *v = new uint8;
 	*v = (e->_p1.y << 16) + e->_p1.x;
 	bmp->_v = v;
+	bmp->_map = (e->_p1.y << 16) + e->_p1.x;
 
 	return bmp;
 }
