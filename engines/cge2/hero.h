@@ -46,6 +46,11 @@ struct HeroTab {
 	int _pocPtr;
 	V2D *_posTab[kCaveMax];
 	HeroTab(CGE2Engine *vm) {
+		_ptr = nullptr;
+		_face = nullptr;
+		for (int i = 0; i < kPocketMax + 1; i++)
+			_pocket[i] = nullptr;
+		_pocPtr = 0;
 		for (int i = 0; i < kCaveMax; i++)
 			_posTab[i] = new V2D(vm);
 	}
