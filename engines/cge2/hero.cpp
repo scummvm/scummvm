@@ -239,7 +239,62 @@ Sprite *Hero::setContact() {
 }
 
 void Hero::tick() {
-	warning("STUB: Hero::tick()");
+	int z = _pos3D._z.trunc();
+	//-- maybe not exactly wid/2, but wid/3 ?
+	int d = ((_siz.x / 2) * _vm->_eye->_z.trunc()) / (_vm->_eye->_z.trunc() - z);
+
+	if (_dir != kNoDir) { // just walking...
+		if (_flags._hold || _tracePtr < 0)
+			park();
+		else {
+			Sprite *spr = setContact();
+			if (spr)
+				_vm->feedSnail(spr, kNear, this);
+		}
+	}
+	//---------------------------------------------------------------
+	if (_tracePtr >= 0) {
+		if (distance(_trace[_tracePtr]) <= _maxDist)
+			--_tracePtr;
+
+		if (_tracePtr < 0)
+			park();
+		else {
+			int stp = stepSize() / 2;
+			int dx = _trace[_tracePtr]._x.round() - _pos3D._x.round();
+			int dz = _trace[_tracePtr]._z.round() - _pos3D._z.round();
+			Dir dir = (dx > stp) ? kEE : ((-dx > stp) ? kWW : ((dz > stp) ? kNN : kSS));
+			turn(dir);
+		}
+	}
+
+	//---------------------------------------------------------------
+	hStep();
+	setCurrent();
+	switch (_dir) {
+	case kSS:
+		if (_pos3D._z < stepSize() / 2)
+			park();
+		break;
+	case kWW:
+		if (_pos2D.x <= d)
+			park();
+		break;
+	case kNN:
+		if (_pos3D._z > kScrDepth)
+			park();
+		break;
+	case kEE:
+		if (_pos2D.x >= kScrWidth - 1 - d)
+			park();
+		break;
+	}
+	if (_flags._trim)
+		gotoxyz_(_pos2D);
+	if (_pos3D._z.trunc() != z)
+		_flags._zmov = true;
+	if (--_funDel == 0)
+		fun();
 }
 
 int Hero::distance(V3D pos) {
