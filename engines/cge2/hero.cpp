@@ -337,7 +337,12 @@ int Hero::distance(Sprite *spr) {
 }
 
 void Hero::turn(Dir d) {
-	warning("STUB: Hero::turn()");
+	Dir dir = (_dir == kNoDir) ? kSS : _dir;
+	if (d != _dir) {
+		step((d == dir) ? 57 : (8 + 4 * dir + d));
+		_dir = d;
+	}
+	resetFun();
 }
 
 void Hero::park() {
