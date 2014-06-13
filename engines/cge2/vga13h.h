@@ -58,7 +58,7 @@ class FXP	// fixed point
 	int16 i;
 	long& Joined (void) const { return *(long *)&f; }
 public:
-	FXP (void) { }
+	FXP (void): f(0), i(0) { }
 	FXP (int i0, int f0 = 0) : i(i0), f((int) ((((long) f0) << 16)/100)) { }
 	FXP& operator = (const int& x) { i = x; f = 0; return *this; }
 	FXP operator + (const FXP& x) const { FXP y; y.Joined() = Joined()+x.Joined(); return y; }
@@ -74,22 +74,24 @@ public:
 	}
 	FXP operator / (const FXP& x) const {
 		FXP y; bool sign = false;
-		long j = Joined(), jx = x.Joined();
-		if (j < 0) {
-			j = -j;
-			sign ^= 1;
+		if (!x.empty()) {
+			long j = Joined(), jx = x.Joined();
+			if (j < 0) {
+				j = -j;
+				sign ^= 1;
+			}
+			if (jx < 0) {
+				jx = -jx;
+				sign ^= 1;
+			}
+			y.i = signed(j / jx);
+			long r = j - jx * y.i;
+			//-- binary division
+			y.f = unsigned((r << 4) / (jx >> 12));
+			//------------------
+			if (sign)
+				y.Joined() = -y.Joined();
 		}
-		if (jx < 0) {
-			jx = -jx;
-			sign ^= 1;
-		}
-		y.i = signed(j / jx);
-		long r = j - jx * y.i;
-		//-- binary division
-		y.f = unsigned((r << 4) / (jx >> 12));
-		//------------------
-		if (sign)
-			y.Joined() = -y.Joined();
 
 		return y;
 	}
@@ -104,6 +106,7 @@ public:
 	friend bool operator > (const FXP &a, const FXP &b) { return (a.i > b.i) || ((a.i == b.i) && (a.f > b.f)); }
 	int trunc(void) const { return i; }
 	int round(void) const { return i + (f > 0x7FFF); }
+	bool empty() const { return i == 0 && f == 0; }
 };
 
 // From CGETYPE.H:
