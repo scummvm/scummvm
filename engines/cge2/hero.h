@@ -102,7 +102,7 @@ public:
 	Action action() { return (Action)(_ref % 10); }
 	void reach(int mode);
 	void setCurrent();
-	void setCave(int c);
+	void setScene(int c);
 	void operator++();
 	void operator--();
 };

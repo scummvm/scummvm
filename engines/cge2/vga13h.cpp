@@ -516,7 +516,7 @@ void Sprite::tick() {
 	step();
 }
 
-void Sprite::setCave(int c) {
+void Sprite::setScene(int c) {
 	_scene = c;
 }
 

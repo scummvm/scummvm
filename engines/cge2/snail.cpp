@@ -335,7 +335,7 @@ void CGE2Engine::snKill(Sprite *spr) {
 		if (spr->_flags._kill)
 			delete spr;
 		else {
-			spr->setCave(-1);
+			spr->setScene(-1);
 			_spare->dispose(spr);
 		}
 		if (nx && nx->_flags._slav)
@@ -422,7 +422,7 @@ void CGE2Engine::snCover(Sprite *spr, int val) {
 	Sprite *xspr = locate(val);
 	if (spr && xspr) {
 		spr->_flags._hide = true;
-		xspr->setCave(spr->_scene);
+		xspr->setScene(spr->_scene);
 		xspr->gotoxyz(spr->_pos3D);
 		expandSprite(xspr);
 		if ((xspr->_flags._shad = spr->_flags._shad) == true) {
@@ -440,7 +440,7 @@ void CGE2Engine::snCover(Sprite *spr, int val) {
 void CGE2Engine::snUncover(Sprite *spr, Sprite *spr2) {
 	if (spr && spr2) {
 		spr->_flags._hide = false;
-		spr->setCave(spr2->_scene);
+		spr->setScene(spr2->_scene);
 		if ((spr->_flags._shad = spr2->_flags._shad) == true) {
 			_vga->_showQ->insert(_vga->_showQ->remove(spr2->_prev), spr);
 			spr2->_flags._shad = false;
