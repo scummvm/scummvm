@@ -413,13 +413,10 @@ void FullpipeEngine::updateEvents() {
 		}
 	}
 
-		
-#if 0
-	warning("STUB: FullpipeEngine::updateEvents() <mainWindowProc>");
-	if (Msg == MSG_SC11_SHOWSWING && _modalObject) {
-		_modalObject->method14();
-	}
-#endif
+	// pollEvent() is implemented only for video player. So skip it.
+	//if (event.kbd.keycode == MSG_SC11_SHOWSWING && _modalObject) {
+	//	_modalObject->pollEvent();
+	//}
 }
 
 void FullpipeEngine::freeGameLoader() {
