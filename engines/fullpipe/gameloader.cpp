@@ -84,7 +84,34 @@ GameLoader::~GameLoader() {
 	delete _interactionController;
 	delete _inputController;
 
-	warning("STUB: GameLoader::~GameLoader()");
+	g_fp->_gameLoader = 0;
+
+	for (uint i = 0; i < _sc2array.size(); i++) {
+		if (_sc2array[i]._defPicAniInfos)
+			delete _sc2array[i]._defPicAniInfos;
+
+		if (_sc2array[i]._picAniInfos)
+			delete _sc2array[i]._picAniInfos;
+
+		if (_sc2array[i]._motionController)
+			delete _sc2array[i]._motionController;
+
+		if (_sc2array[i]._data1)
+			free(_sc2array[i]._data1);
+
+		if (_sc2array[i]._entranceData)
+			free(_sc2array[i]._entranceData);
+	}
+
+	delete _gameVar;
+	_gameVar = 0;
+
+	if (g_fp->_globalPalette) {
+		free(g_fp->_globalPalette);
+		g_fp->_globalPalette = 0;
+	}
+
+	_sc2array.clear();
 }
 
 bool GameLoader::load(MfcArchive &file) {
