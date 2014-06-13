@@ -193,6 +193,7 @@ public:
 	void snSay(Sprite *spr, int val);
 	
 	void hide1(Sprite *spr);
+	Sprite *expandSprite(Sprite *spr);
 
 	const ADGameDescription *_gameDescription;
 

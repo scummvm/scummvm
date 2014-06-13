@@ -416,12 +416,40 @@ void CGE2Engine::snSend(Sprite *spr, int val) {
 void CGE2Engine::snSwap(Sprite *spr, int val) {
 	warning("STUB: CGE2Engine::snSwap()");
 }
+
 void CGE2Engine::snCover(Sprite *spr, int val) {
-	warning("STUB: CGE2Engine::snCover()");
+	bool tak = _taken;
+	Sprite *xspr = locate(val);
+	if (spr && xspr) {
+		spr->_flags._hide = true;
+		xspr->setCave(spr->_scene);
+		xspr->gotoxyz(spr->_pos3D);
+		expandSprite(xspr);
+		if ((xspr->_flags._shad = spr->_flags._shad) == true) {
+			_vga->_showQ->insert(_vga->_showQ->remove(spr->_prev), xspr);
+			spr->_flags._shad = false;
+		}
+		feedSnail(xspr, kNear, _heroTab[_sex]->_ptr);
+		_taken = false;
+	}
+	if (_taken)
+		_spare->dispose(xspr);
+	_taken = tak;
 }
 
 void CGE2Engine::snUncover(Sprite *spr, Sprite *spr2) {
-	warning("STUB: CGE2Engine::snUncover()");
+	if (spr && spr2) {
+		spr->_flags._hide = false;
+		spr->setCave(spr2->_scene);
+		if ((spr->_flags._shad = spr2->_flags._shad) == true) {
+			_vga->_showQ->insert(_vga->_showQ->remove(spr2->_prev), spr);
+			spr2->_flags._shad = false;
+		}
+		spr->gotoxyz(spr2->_pos3D);
+		snSend(spr2, -1);
+		if (spr->_time == 0)
+			++spr->_time;
+	}
 }
 
 void CGE2Engine::snFocus(int val) {
@@ -592,6 +620,12 @@ void CGE2Engine::snSay(Sprite *spr, int val) {
 
 void CGE2Engine::hide1(Sprite *spr) {
 	_commandHandlerTurbo->addCommand(kCmdGhost, -1, 0, spr->ghost());
+}
+
+Sprite *CGE2Engine::expandSprite(Sprite *spr) {
+	if (spr)
+		_vga->_showQ->insert(spr);
+	return spr;
 }
 
 void CommandHandler::addCommand(CommandType com, int ref, int val, void *ptr) {
