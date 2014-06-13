@@ -219,7 +219,20 @@ void Hero::setCurrent() {
 }
 
 void Hero::hStep() {
-	warning("STUB: Hero::hStep()");
+	if (!_ignoreMap && _ext) {
+		Seq *seq = _ext->_seq;
+		int ptr = seq[_seqPtr]._next;
+		seq += ptr;
+		if (seq->_dx | seq->_dz) {
+			V2D p0(_vm, _pos3D._x.round(), _pos3D._z.round());
+			V2D p1(_vm, p0.x + seq->_dx, p0.y + seq->_dz);
+			if (mapCross(p0, p1)) {
+				park();
+				return;
+			}
+		}
+	}
+	step();
 }
 
 Sprite *Hero::setContact() {
