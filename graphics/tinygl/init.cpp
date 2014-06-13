@@ -33,7 +33,7 @@ void glInit(void *zbuffer1) {
 	c = (GLContext *)gl_zalloc(sizeof(GLContext));
 	gl_ctx = c;
 
-	c->zb = zbuffer;
+	c->fb = zbuffer;
 
 	// allocate GLVertex array
 	c->vertex_max = POLYGON_MAX_VERTEX;
