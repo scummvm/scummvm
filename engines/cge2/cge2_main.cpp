@@ -910,57 +910,59 @@ void Sprite::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 		return;
 	}
 
-	if (_vm->isHero(this) && !_vm->_blinkSprite) {
-		_vm->switchHero((this == _vm->_heroTab[1]->_ptr) ? 1 : 0);
-	} else if (_flags._kept) { // sprite in pocket
-		for (int sex = 0; sex < 2; ++sex) {
-			for (int p = 0; p < kPocketMax; ++p) {
-				if (_vm->_heroTab[sex]->_pocket[p] == this) {
-					_vm->switchHero(sex);
-					if (_vm->_sex == sex) {
-						if (_vm->_blinkSprite)
-							_vm->_blinkSprite->_flags._hide = false;
-						if (_vm->_blinkSprite == this)
-							_vm->_blinkSprite = nullptr;
-						else
-							_vm->_blinkSprite = this;
+	if ((mask & kMouseLeftUp) && _vm->_commandHandler->idle()) {
+		if (_vm->isHero(this) && !_vm->_blinkSprite) {
+			_vm->switchHero((this == _vm->_heroTab[1]->_ptr) ? 1 : 0);
+		} else if (_flags._kept) { // sprite in pocket
+			for (int sex = 0; sex < 2; ++sex) {
+				for (int p = 0; p < kPocketMax; ++p) {
+					if (_vm->_heroTab[sex]->_pocket[p] == this) {
+						_vm->switchHero(sex);
+						if (_vm->_sex == sex) {
+							if (_vm->_blinkSprite)
+								_vm->_blinkSprite->_flags._hide = false;
+							if (_vm->_blinkSprite == this)
+								_vm->_blinkSprite = nullptr;
+							else
+								_vm->_blinkSprite = this;
+						}
 					}
 				}
 			}
-		}
-	} else { // sprite NOT in pocket
-		Hero *h = _vm->_heroTab[_vm->_sex]->_ptr;
-		if (!_vm->_talk) {
-			if ((_ref & 0xFF) < 200 && h->distance(this) > (h->_maxDist << 1))
-				h->walkTo(this);
-			else if (_vm->_blinkSprite) {
-				if (works(_vm->_blinkSprite)) {
-					_vm->feedSnail(_vm->_blinkSprite, (_vm->_sex) ? kMTake : kFTake, _vm->_heroTab[_vm->_sex]->_ptr);
-					_vm->_blinkSprite->_flags._hide = false;
-					_vm->_blinkSprite = nullptr;
-				} else
-					_vm->offUse();
-
-				_vm->selectPocket(-1);
-			// else, no pocket sprite selected
-			} else if (_flags._port) { // portable
-				if (_vm->findActivePocket(-1) < 0)
-					_vm->pocFul();
-				else {
-					_vm->_commandHandler->addCommand(kCmdReach, -2, _ref, nullptr);
-					_vm->_commandHandler->addCommand(kCmdKeep, -1, -1, this);
-					_flags._port = false;
-				}
-			} else { // non-portable
-				Action a = h->action();
-				if (_actionCtrl[a]._cnt) {
-					CommandHandler::Command *cmdList = snList(a);
-					if (cmdList[_actionCtrl[a]._ptr]._commandType == kCmdNext)
+		} else { // sprite NOT in pocket
+			Hero *h = _vm->_heroTab[_vm->_sex]->_ptr;
+			if (!_vm->_talk) {
+				if ((_ref & 0xFF) < 200 && h->distance(this) > (h->_maxDist << 1))
+					h->walkTo(this);
+				else if (_vm->_blinkSprite) {
+					if (works(_vm->_blinkSprite)) {
+						_vm->feedSnail(_vm->_blinkSprite, (_vm->_sex) ? kMTake : kFTake, _vm->_heroTab[_vm->_sex]->_ptr);
+						_vm->_blinkSprite->_flags._hide = false;
+						_vm->_blinkSprite = nullptr;
+					} else
 						_vm->offUse();
-					else
-						_vm->feedSnail(this, a, h);
-				} else
-					_vm->offUse();
+
+					_vm->selectPocket(-1);
+					// else, no pocket sprite selected
+				} else if (_flags._port) { // portable
+					if (_vm->findActivePocket(-1) < 0)
+						_vm->pocFul();
+					else {
+						_vm->_commandHandler->addCommand(kCmdReach, -2, _ref, nullptr);
+						_vm->_commandHandler->addCommand(kCmdKeep, -1, -1, this);
+						_flags._port = false;
+					}
+				} else { // non-portable
+					Action a = h->action();
+					if (_actionCtrl[a]._cnt) {
+						CommandHandler::Command *cmdList = snList(a);
+						if (cmdList[_actionCtrl[a]._ptr]._commandType == kCmdNext)
+							_vm->offUse();
+						else
+							_vm->feedSnail(this, a, h);
+					} else
+						_vm->offUse();
+				}
 			}
 		}
 	}
