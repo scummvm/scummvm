@@ -13,7 +13,7 @@ namespace TinyGL {
 
 uint8 PSZB;
 
-static void ZB_copyBuffer(ZBuffer *zb, void *buf, int linesize) {
+static void ZB_copyBuffer(FrameBuffer *zb, void *buf, int linesize) {
 	unsigned char *p1;
 	byte *q;
 	int n;
@@ -28,7 +28,7 @@ static void ZB_copyBuffer(ZBuffer *zb, void *buf, int linesize) {
 	}
 }
 
-void ZB_copyFrameBuffer(ZBuffer *zb, void *buf, int linesize) {
+void ZB_copyFrameBuffer(FrameBuffer *zb, void *buf, int linesize) {
 	ZB_copyBuffer(zb, buf, linesize);
 }
 
@@ -76,7 +76,7 @@ void memset_l(void *adr, int val, int count) {
 		*p++ = val;
 }
 
-ZBuffer::ZBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer) {
+FrameBuffer::FrameBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer) {
 	int size;
 
 	this->xsize = xsize;
@@ -106,13 +106,13 @@ ZBuffer::ZBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer
 	this->buffer.zbuf = this->zbuf;
 }
 
-ZBuffer::~ZBuffer() {
+FrameBuffer::~FrameBuffer() {
 	if (frame_buffer_allocated)
 		pbuf.free();
 	gl_free(zbuf);
 }
 
-Buffer* ZBuffer::genOffscreenBuffer() {
+Buffer* FrameBuffer::genOffscreenBuffer() {
 	Buffer *buf = (Buffer *)gl_malloc(sizeof(Buffer));
 	buf->pbuf = (byte *)gl_malloc(this->ysize * this->linesize);
 	int size = this->xsize * this->ysize * sizeof(unsigned int);
@@ -121,13 +121,13 @@ Buffer* ZBuffer::genOffscreenBuffer() {
 	return buf;
 }
 
-void ZBuffer::delOffscreenBuffer(Buffer *buf) {
+void FrameBuffer::delOffscreenBuffer(Buffer *buf) {
 	gl_free(buf->pbuf);
 	gl_free(buf->zbuf);
 	gl_free(buf);
 }
 
-void ZBuffer::clear( int clear_z, int z, int clear_color, int r, int g, int b ) {
+void FrameBuffer::clear( int clear_z, int z, int clear_color, int r, int g, int b ) {
 	uint32 color;
 	byte *pp;
 
@@ -144,7 +144,7 @@ void ZBuffer::clear( int clear_z, int z, int clear_color, int r, int g, int b ) 
 	}
 }
 
-void ZBuffer::blitOffscreenBuffer( Buffer* buf ) {
+void FrameBuffer::blitOffscreenBuffer( Buffer* buf ) {
 	// TODO: could be faster, probably.
 	if (buf->used) {
 		for (int i = 0; i < this->xsize * this->ysize; ++i) {
@@ -159,7 +159,7 @@ void ZBuffer::blitOffscreenBuffer( Buffer* buf ) {
 	}
 }
 
-void ZBuffer::selectOffscreenBuffer( Buffer* buf ) {
+void FrameBuffer::selectOffscreenBuffer( Buffer* buf ) {
 	if (buf) {
 		this->pbuf = buf->pbuf;
 		this->zbuf = buf->zbuf;
@@ -170,13 +170,13 @@ void ZBuffer::selectOffscreenBuffer( Buffer* buf ) {
 	}
 }
 
-void ZBuffer::clearOffscreenBuffer( Buffer* buf ) {
+void FrameBuffer::clearOffscreenBuffer( Buffer* buf ) {
 	memset(buf->pbuf, 0, this->ysize * this->linesize);
 	memset(buf->zbuf, 0, this->ysize * this->xsize * sizeof(unsigned int));
 	buf->used = false;
 }
 
-void ZBuffer::setTexture( const Graphics::PixelBuffer &texture ) {
+void FrameBuffer::setTexture( const Graphics::PixelBuffer &texture ) {
 	current_texture = texture;
 }
 

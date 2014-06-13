@@ -47,9 +47,9 @@ struct ZBufferPoint {
 	float sz, tz;  // temporary coordinates for mapping
 };
 
-struct ZBuffer {
-	ZBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer);
-	~ZBuffer();
+struct FrameBuffer {
+	FrameBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer);
+	~FrameBuffer();
 
 	Buffer *genOffscreenBuffer();
 	void delOffscreenBuffer(Buffer *buffer);

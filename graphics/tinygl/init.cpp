@@ -26,7 +26,7 @@ void endSharedState(GLContext *c) {
 }
 
 void glInit(void *zbuffer1) {
-	ZBuffer *zbuffer = (ZBuffer *)zbuffer1;
+	FrameBuffer *zbuffer = (FrameBuffer *)zbuffer1;
 	GLContext *c;
 	GLViewport *v;
 

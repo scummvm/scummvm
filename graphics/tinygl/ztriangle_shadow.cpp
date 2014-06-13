@@ -5,7 +5,7 @@ namespace TinyGL {
 
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
-void ZBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void FrameBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz;
 	unsigned char *pm1;
@@ -155,7 +155,7 @@ void ZBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBu
 	}
 }
 
-void ZBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void FrameBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color;
 	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;

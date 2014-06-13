@@ -262,7 +262,7 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	g_system->setWindowCaption("ResidualVM: Software 3D Renderer");
 
 	_pixelFormat = buf.getFormat();
-	_zb = new TinyGL::ZBuffer(screenW, screenH, buf);
+	_zb = new TinyGL::FrameBuffer(screenW, screenH, buf);
 	TinyGL::glInit(_zb);
 
 	_screenSize = _gameWidth * _gameHeight * _pixelFormat.bytesPerPixel;

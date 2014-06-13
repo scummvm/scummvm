@@ -154,7 +154,7 @@ typedef void (*gl_draw_triangle_func)(GLContext *c, GLVertex *p0, GLVertex *p1, 
 
 struct GLContext {
 	// Z buffer
-	ZBuffer *zb;
+	FrameBuffer *zb;
 
 	// lights
 	GLLight lights[T_MAX_LIGHTS];

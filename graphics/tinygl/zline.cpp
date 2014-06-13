@@ -5,7 +5,7 @@ namespace TinyGL {
 
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
-void ZBuffer::plot(ZBufferPoint *p) {
+void FrameBuffer::plot(ZBufferPoint *p) {
 	unsigned int *pz;
 	PIXEL *pp;
 
@@ -18,28 +18,28 @@ void ZBuffer::plot(ZBufferPoint *p) {
 }
 
 #define INTERP_Z
-void ZBuffer::fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
+void FrameBuffer::fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 #include "graphics/tinygl/zline.h"
 }
 
 // line with color interpolation
 #define INTERP_Z
 #define INTERP_RGB
-void ZBuffer::fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2) {
+void FrameBuffer::fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2) {
 #include "graphics/tinygl/zline.h"
 }
 
 // no Z interpolation
-void ZBuffer::fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
+void FrameBuffer::fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 #include "graphics/tinygl/zline.h"
 }
 
 #define INTERP_RGB
-void ZBuffer::fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2) {
+void FrameBuffer::fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2) {
 #include "graphics/tinygl/zline.h"
 }
 
-void ZBuffer::fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2) {
+void FrameBuffer::fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color1, color2;
 
 	color1 = RGB_TO_PIXEL(p1->r, p1->g, p1->b);
@@ -53,7 +53,7 @@ void ZBuffer::fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2) {
 	}
 }
 
-void ZBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2) {
+void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color1, color2;
 
 	color1 = RGB_TO_PIXEL(p1->r, p1->g, p1->b);
