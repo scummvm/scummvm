@@ -66,7 +66,7 @@ void gl_draw_point(GLContext *c, GLVertex *p0) {
 		if (c->render_mode == TGL_SELECT) {
 			gl_add_select(c, p0->zp.z, p0->zp.z);
 		} else {
-			ZB_plot(c->zb, &p0->zp);
+			c->zb->plot(&p0->zp);
 		}
 	}
 }
@@ -118,9 +118,9 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 			gl_add_select1(c, p1->zp.z, p2->zp.z, p2->zp.z);
 		} else {
 			if (c->depth_test)
-				ZB_line_z(c->zb, &p1->zp, &p2->zp);
+				c->zb->fillLineZ(&p1->zp, &p2->zp);
 			else
-				ZB_line(c->zb, &p1->zp, &p2->zp);
+				c->zb->fillLine(&p1->zp, &p2->zp);
 		}
 	} else if ((cc1 & cc2) != 0) {
 		return;
@@ -148,9 +148,9 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 			gl_transform_to_viewport(c, &q2);
 
 			if (c->depth_test)
-				ZB_line_z(c->zb, &q1.zp, &q2.zp);
+				c->zb->fillLineZ(&q1.zp, &q2.zp);
 			else
-				ZB_line(c->zb, &q1.zp, &q2.zp);
+				c->zb->fillLine(&q1.zp, &q2.zp);
 		}
 	}
 }
@@ -385,24 +385,24 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 
 	if (c->color_mask == 0) {
 		// FIXME: Accept more than just 0 or 1.
-		ZB_fillTriangleDepthOnly(c->zb, &p0->zp, &p1->zp, &p2->zp);
+		c->zb->fillTriangleDepthOnly(&p0->zp, &p1->zp, &p2->zp);
 	}
 	if (c->shadow_mode & 1) {
 		assert(c->zb->shadow_mask_buf);
-		ZB_fillTriangleFlatShadowMask(c->zb, &p0->zp, &p1->zp, &p2->zp);
+		c->zb->fillTriangleFlatShadowMask(&p0->zp, &p1->zp, &p2->zp);
 	} else if (c->shadow_mode & 2) {
 		assert(c->zb->shadow_mask_buf);
-		ZB_fillTriangleFlatShadow(c->zb, &p0->zp, &p1->zp, &p2->zp);
+		c->zb->fillTriangleFlatShadow(&p0->zp, &p1->zp, &p2->zp);
 	} else if (c->texture_2d_enabled) {
 #ifdef TINYGL_PROFILE
 		count_triangles_textured++;
 #endif
 		c->zb->setTexture(c->current_texture->images[0].pixmap);
-		ZB_fillTriangleMappingPerspective(c->zb, &p0->zp, &p1->zp, &p2->zp);
+		c->zb->fillTriangleMappingPerspective(&p0->zp, &p1->zp, &p2->zp);
 	} else if (c->current_shade_model == TGL_SMOOTH) {
-		ZB_fillTriangleSmooth(c->zb, &p0->zp, &p1->zp, &p2->zp);
+		c->zb->fillTriangleSmooth(&p0->zp, &p1->zp, &p2->zp);
 	} else {
-		ZB_fillTriangleFlat(c->zb, &p0->zp, &p1->zp, &p2->zp);
+		c->zb->fillTriangleFlat(&p0->zp, &p1->zp, &p2->zp);
 	}
 }
 
@@ -411,29 +411,29 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 void gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	if (c->depth_test) {
 		if (p0->edge_flag)
-			ZB_line_z(c->zb, &p0->zp, &p1->zp);
+			c->zb->fillLineZ(&p0->zp, &p1->zp);
 		if (p1->edge_flag)
-			ZB_line_z(c->zb, &p1->zp, &p2->zp);
+			c->zb->fillLineZ(&p1->zp, &p2->zp);
 		if (p2->edge_flag)
-			ZB_line_z(c->zb, &p2->zp, &p0->zp);
+			c->zb->fillLineZ(&p2->zp, &p0->zp);
 	} else {
 		if (p0->edge_flag)
-			ZB_line(c->zb, &p0->zp, &p1->zp);
+			c->zb->fillLine(&p0->zp, &p1->zp);
 		if (p1->edge_flag)
-			ZB_line(c->zb, &p1->zp, &p2->zp);
+			c->zb->fillLine(&p1->zp, &p2->zp);
 		if (p2->edge_flag)
-			ZB_line(c->zb, &p2->zp, &p0->zp);
+			c->zb->fillLine(&p2->zp, &p0->zp);
 	}
 }
 
 // Render a clipped triangle in point mode
 void gl_draw_triangle_point(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	if (p0->edge_flag)
-		ZB_plot(c->zb, &p0->zp);
+		c->zb->plot(&p0->zp);
 	if (p1->edge_flag)
-		ZB_plot(c->zb, &p1->zp);
+		c->zb->plot(&p1->zp);
 	if (p2->edge_flag)
-		ZB_plot(c->zb, &p2->zp);
+		c->zb->plot(&p2->zp);
 }
 
 } // end of namespace TinyGL

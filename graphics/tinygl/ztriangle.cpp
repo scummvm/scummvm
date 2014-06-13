@@ -6,7 +6,7 @@ namespace TinyGL {
 
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
-void ZB_fillTriangleDepthOnly(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 
 #define INTERP_Z
 
@@ -23,7 +23,7 @@ void ZB_fillTriangleDepthOnly(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, Z
 }
 
 
-void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color;
 
 #define INTERP_Z
@@ -46,7 +46,7 @@ void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBuffe
 // Smooth filled triangle.
 // The code below is very tricky :)
 
-void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	int _drgbdx;
 
 #define INTERP_Z
@@ -72,7 +72,7 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 
 #define DRAW_LINE()	{								\
 	register unsigned int *pz;						\
-	Graphics::PixelBuffer buf = zb->pbuf;			\
+	Graphics::PixelBuffer buf = pbuf;			\
 	register unsigned int z, rgb, drgbdx;			\
 	register int n;									\
 	n = (x2 >> 16) - x1;							\
@@ -108,14 +108,14 @@ void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture) {
 	zb->current_texture = texture;
 }
 
-void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillTriangleMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	Graphics::PixelBuffer texture;
 
 #define INTERP_Z
 #define INTERP_ST
 
 #define DRAW_INIT()	{				\
-	texture = zb->current_texture;	\
+	texture = current_texture;	\
 }
 
 #define PUT_PIXEL(_a) {						\
@@ -131,7 +131,7 @@ void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBu
 #include "graphics/tinygl/ztriangle.h"
 }
 
-void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	Graphics::PixelBuffer texture;
 	float fdzdx, fndzdx, ndszdx, ndtzdx;
 	int _drgbdx;
@@ -239,10 +239,10 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 
 	// screen coordinates
 
-	byte *pp1 = zb->pbuf.getRawBuffer() + zb->linesize * p0->y;
-	pz1 = zb->zbuf + p0->y * zb->xsize;
+	byte *pp1 = pbuf.getRawBuffer() + linesize * p0->y;
+	pz1 = zbuf + p0->y * xsize;
 
-	texture = zb->current_texture;
+	texture = current_texture;
 	assert(texture.getFormat().bytesPerPixel == 4);
 	fdzdx = (float)dzdx;
 	fndzdx = NB_INTERP * fdzdx;
@@ -351,7 +351,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 				fz = (float)z1;
 				zinv = (float)(1.0 / fz);
 
-				Graphics::PixelBuffer buf = zb->pbuf;
+				Graphics::PixelBuffer buf = pbuf;
 				buf = pp1 + x1 * PSZB;
 				Graphics::PixelFormat textureFormat = texture.getFormat();
 
@@ -495,8 +495,8 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 			x2 += dx2dy2;
 
 			// screen coordinates
-			pp1 += zb->linesize;
-			pz1 += zb->xsize;
+			pp1 += linesize;
+			pz1 += xsize;
 		}
 	}
 }

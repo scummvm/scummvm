@@ -20,10 +20,10 @@
 		p1 = p2;
 		p2 = tmp;
 	}
-	sx = zb->xsize;
-	pp = (PIXEL *)((char *) zb->pbuf.getRawBuffer() + zb->linesize * p1->y + p1->x * PSZB);
+	sx = xsize;
+	pp = (PIXEL *)((char *) pbuf.getRawBuffer() + linesize * p1->y + p1->x * PSZB);
 #ifdef INTERP_Z
-	pz = zb->zbuf + (p1->y * sx + p1->x);
+	pz = zbuf + (p1->y * sx + p1->x);
 	z = p1->z;
 #endif
 

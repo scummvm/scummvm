@@ -5,7 +5,7 @@ namespace TinyGL {
 
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
-void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz;
 	unsigned char *pm1;
@@ -50,7 +50,7 @@ void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *
 
 	// screen coordinates
 
-	pm1 = zb->shadow_mask_buf + zb->xsize * p0->y;
+	pm1 = shadow_mask_buf + xsize * p0->y;
 
 	for (part = 0; part < 2; part++) {
 		if (part == 0) {
@@ -150,12 +150,12 @@ void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *
 			x2 += dx2dy2;
 
 			// screen coordinates
-			pm1 = pm1 + zb->xsize;
+			pm1 = pm1 + xsize;
 		}
 	}
 }
 
-void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color;
 	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
@@ -215,11 +215,11 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 
 	// screen coordinates
 
-	pp1 = zb->pbuf.getRawBuffer() + zb->linesize * p0->y;
-	pm1 = zb->shadow_mask_buf + p0->y * zb->xsize;
-	pz1 = zb->zbuf + p0->y * zb->xsize;
+	pp1 = pbuf.getRawBuffer() + linesize * p0->y;
+	pm1 = shadow_mask_buf + p0->y * xsize;
+	pz1 = zbuf + p0->y * xsize;
 
-	color = RGB_TO_PIXEL(zb->shadow_color_r, zb->shadow_color_g, zb->shadow_color_b);
+	color = RGB_TO_PIXEL(shadow_color_r, shadow_color_g, shadow_color_b);
 
 	for (part = 0; part < 2; part++) {
 		if (part == 0) {
@@ -300,7 +300,7 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 
 				n = (x2 >> 16) - x1;
 
-				Graphics::PixelBuffer buf = zb->pbuf;
+				Graphics::PixelBuffer buf = pbuf;
 				buf = pp1 + x1 * PSZB;
 
 				pm = pm1 + x1;
@@ -346,9 +346,9 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 			x2 += dx2dy2;
 
 			// screen coordinates
-			pp1 += zb->linesize;
-			pz1 += zb->xsize;
-			pm1 += zb->xsize;
+			pp1 += linesize;
+			pz1 += xsize;
+			pm1 += xsize;
 		}
 	}
 }

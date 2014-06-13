@@ -5,12 +5,12 @@ namespace TinyGL {
 
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
-void ZB_plot(ZBuffer *zb, ZBufferPoint *p) {
+void ZBuffer::plot(ZBufferPoint *p) {
 	unsigned int *pz;
 	PIXEL *pp;
 
-	pz = zb->zbuf + (p->y * zb->xsize + p->x);
-	pp = (PIXEL *)((char *) zb->pbuf.getRawBuffer() + zb->linesize * p->y + p->x * PSZB);
+	pz = zbuf + (p->y * xsize + p->x);
+	pp = (PIXEL *)((char *) pbuf.getRawBuffer() + linesize * p->y + p->x * PSZB);
 	if (ZCMP((unsigned int)p->z, *pz)) {
 		*pp = RGB_TO_PIXEL(p->r, p->g, p->b);
 		*pz = p->z;
@@ -18,28 +18,28 @@ void ZB_plot(ZBuffer *zb, ZBufferPoint *p) {
 }
 
 #define INTERP_Z
-static void ZB_line_flat_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2, int color) {
+void ZBuffer::fillLineFlatZ(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 #include "graphics/tinygl/zline.h"
 }
 
 // line with color interpolation
 #define INTERP_Z
 #define INTERP_RGB
-static void ZB_line_interp_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillLineInterpZ(ZBufferPoint *p1, ZBufferPoint *p2) {
 #include "graphics/tinygl/zline.h"
 }
 
 // no Z interpolation
-static void ZB_line_flat(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2, int color) {
+void ZBuffer::fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
 #include "graphics/tinygl/zline.h"
 }
 
 #define INTERP_RGB
-static void ZB_line_interp(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2) {
 #include "graphics/tinygl/zline.h"
 }
 
-void ZB_line_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillLineZ(ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color1, color2;
 
 	color1 = RGB_TO_PIXEL(p1->r, p1->g, p1->b);
@@ -47,13 +47,13 @@ void ZB_line_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
 
 	// choose if the line should have its color interpolated or not
 	if (color1 == color2) {
-		ZB_line_flat_z(zb, p1, p2, color1);
+		fillLineFlatZ(p1, p2, color1);
 	} else {
-		ZB_line_interp_z(zb, p1, p2);
+		fillLineInterpZ(p1, p2);
 	}
 }
 
-void ZB_line(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
+void ZBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2) {
 	int color1, color2;
 
 	color1 = RGB_TO_PIXEL(p1->r, p1->g, p1->b);
@@ -61,9 +61,9 @@ void ZB_line(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
 
 	// choose if the line should have its color interpolated or not
 	if (color1 == color2) {
-		ZB_line_flat(zb, p1, p2, color1);
+		fillLineFlat(p1, p2, color1);
 	} else {
-		ZB_line_interp(zb, p1, p2);
+		fillLineInterp(p1, p2);
 	}
 }
 

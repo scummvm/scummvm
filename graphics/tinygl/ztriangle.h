@@ -131,8 +131,8 @@
 
 	// screen coordinates
 
-	pp1 = (PIXEL *)((char *)zb->pbuf.getRawBuffer() + zb->linesize * p0->y);
-	pz1 = zb->zbuf + p0->y * zb->xsize;
+	pp1 = (PIXEL *)((char *)pbuf.getRawBuffer() + linesize * p0->y);
+	pz1 = zbuf + p0->y * xsize;
 
 	DRAW_INIT();
 
@@ -346,8 +346,8 @@
 			x2 += dx2dy2;
 
 			// screen coordinates
-			pp1 = (PIXEL *)((char *)pp1 + zb->linesize);
-			pz1 += zb->xsize;
+			pp1 = (PIXEL *)((char *)pp1 + linesize);
+			pz1 += xsize;
 		}
 	}
 }
