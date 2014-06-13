@@ -685,7 +685,16 @@ void CGE2Engine::loadPos() {
 }
 
 void CGE2Engine::releasePocket(Sprite *spr) {
-	warning("STUB: CGE2Engine::releasePocket()");
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < kPocketMax; j++) {
+			Sprite *poc = _heroTab[i]->_pocket[j];
+			if (poc == spr) {
+				spr->_flags._kept = false;
+				poc = nullptr;
+				return;
+			}
+		}
+	}
 }
 
 void CGE2Engine::checkSaySwitch() {
