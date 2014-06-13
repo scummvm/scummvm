@@ -516,6 +516,10 @@ void Sprite::tick() {
 	step();
 }
 
+void Sprite::setCave(int c) {
+	_scene = c;
+}
+
 void Sprite::gotoxyz(int x, int y, int z) {
 	gotoxyz(V3D(x, y, z));
 }

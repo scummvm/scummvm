@@ -30,6 +30,7 @@
 #include "cge2/hero.h"
 #include "cge2/text.h"
 #include "cge2/sound.h"
+#include "cge2/events.h"
 
 namespace CGE2 {
 
@@ -324,7 +325,22 @@ void CommandHandler::runCommand() {
 }
 
 void CGE2Engine::snKill(Sprite *spr) {
-	warning("STUB: CGE2Engine::snKill()");
+	if (spr) {
+		if (spr->_flags._kept)
+			releasePocket(spr);
+		Sprite *nx = spr->_next;
+		hide1(spr);
+		_vga->_showQ->remove(spr);
+		_eventManager->clearEvent(spr);
+		if (spr->_flags._kill)
+			delete spr;
+		else {
+			spr->setCave(-1);
+			_spare->dispose(spr);
+		}
+		if (nx && nx->_flags._slav)
+			snKill(nx);
+	}
 }
 
 void CGE2Engine::snHide(Sprite *spr, int val) {
